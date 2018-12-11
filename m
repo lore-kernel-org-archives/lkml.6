@@ -2,30 +2,30 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-5.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 179D6C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 20:04:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 483FEC5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 20:05:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD25C20870
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 20:04:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD25C20870
+	by mail.kernel.org (Postfix) with ESMTP id 1903820811
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 20:05:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1903820811
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726256AbeLKUEj (ORCPT
+        id S1726275AbeLKUFZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 15:04:39 -0500
-Received: from sauhun.de ([88.99.104.3]:45336 "EHLO pokefinder.org"
+        Tue, 11 Dec 2018 15:05:25 -0500
+Received: from sauhun.de ([88.99.104.3]:45348 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726125AbeLKUEi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 15:04:38 -0500
+        id S1726125AbeLKUFZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 15:05:25 -0500
 Received: from localhost (p54B334A7.dip0.t-ipconnect.de [84.179.52.167])
-        by pokefinder.org (Postfix) with ESMTPSA id 9B7524C0E8F;
-        Tue, 11 Dec 2018 21:04:36 +0100 (CET)
-Date:   Tue, 11 Dec 2018 21:04:36 +0100
+        by pokefinder.org (Postfix) with ESMTPSA id 871354C0E8F;
+        Tue, 11 Dec 2018 21:05:23 +0100 (CET)
+Date:   Tue, 11 Dec 2018 21:05:23 +0100
 From:   Wolfram Sang <wsa@the-dreams.de>
 To:     "Adamski, Krzysztof (Nokia - PL/Wroclaw)" 
         <krzysztof.adamski@nokia.com>
@@ -36,15 +36,15 @@ Cc:     "Sverdlin, Alexander (Nokia - DE/Ulm)" <alexander.sverdlin@nokia.com>,
         Guenter Roeck <linux@roeck-us.net>,
         Tobias Jordan <Tobias.Jordan@elektrobit.com>,
         Peter Rosin <peda@axentia.se>
-Subject: Re: [PATCH 3/3] i2c-axxia: support sequence command mode
-Message-ID: <20181211200435.abk3jdsmltz7c26w@ninjato>
+Subject: Re: [PATCH 1/3] i2c-axxia: dedicated function to set client addr
+Message-ID: <20181211200522.ckfyo3uhv6f6kjdn@ninjato>
 References: <cover.1544453688.git.krzysztof.adamski@nokia.com>
- <8515ba7093f5be3ad7bd31d68efedcbe17958282.1544453688.git.krzysztof.adamski@nokia.com>
+ <120bc3dbc7fad29807ff9f7c74575a66e6da15a6.1544453688.git.krzysztof.adamski@nokia.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="c3m5n2s5rtnxudgq"
+        protocol="application/pgp-signature"; boundary="7ttcironrq3vt57y"
 Content-Disposition: inline
-In-Reply-To: <8515ba7093f5be3ad7bd31d68efedcbe17958282.1544453688.git.krzysztof.adamski@nokia.com>
+In-Reply-To: <120bc3dbc7fad29807ff9f7c74575a66e6da15a6.1544453688.git.krzysztof.adamski@nokia.com>
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -52,60 +52,40 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---c3m5n2s5rtnxudgq
+--7ttcironrq3vt57y
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Mon, Dec 10, 2018 at 03:00:52PM +0000, Adamski, Krzysztof (Nokia - PL/Wr=
+oclaw) wrote:
+> This patch moves configuration of hardware registers used for setting
+> i2c client address to separate function. It is preparatory change for
+> next commit.
+>=20
+> Signed-off-by: Krzysztof Adamski <krzysztof.adamski@nokia.com>
 
-> +static void axxia_i2c_handle_seq_nak(struct axxia_i2c_dev *idev)
-> +{
-> +	while (readl(idev->base + MST_COMMAND) & CMD_BUSY)
-> +		udelay(100);
-> +}
-
-My code checkers rightfully complain about this:
-
-  CHECKPATCH
-CHECK: usleep_range is preferred over udelay; see Documentation/timers/timers-howto.txt
-
-  SMATCH
-drivers/i2c/busses/i2c-axxia.c:382 axxia_i2c_handle_seq_nak() warn: this loop depends on readl() succeeding
-
-(and I get those as well, but not related to your patch; still while I am here)
-
-  GCC
-drivers/i2c/busses/i2c-axxia.c:98: warning: cannot understand function prototype: 'struct axxia_i2c_dev '
-drivers/i2c/busses/i2c-axxia.c:130: warning: Function parameter or member 'ns' not described in 'ns_to_clk'
-drivers/i2c/busses/i2c-axxia.c:130: warning: Function parameter or member 'clk_mhz' not described in 'ns_to_clk'
-drivers/i2c/busses/i2c-axxia.c:229: warning: Function parameter or member 'idev' not described in 'axxia_i2c_empty_rx_fifo'
-drivers/i2c/busses/i2c-axxia.c:261: warning: Function parameter or member 'idev' not described in 'axxia_i2c_fill_tx_fifo'
-
-Also, for $subject, please change the prefix to "i2c: axxia:"
-
-Thanks,
-
-   Wolfram
+Applied to for-next, thanks!
 
 
---c3m5n2s5rtnxudgq
+--7ttcironrq3vt57y
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlwQGFMACgkQFA3kzBSg
-KbZjBQ/+JKkZOieWNTHYtxct2MfgBqvV/GjQ2LNchV0lAsarOYL5+70J8ZRiX3e9
-PB/cb5mkjw8muL0fl41fOonxiel/mxy8X9JdVrnPJj7xSbsbbn9s91dBmaKXr8Tp
-hGDfBdtTQm2EPwWWIeKsCbd6aRwXsCDdUiQLFSiw21F0QuGBJxywKT4V0rNkfBDK
-whew5E94SpVKO74DZZhUO3qT3zGbJIdwfgl3jU9aPAJbpD4GxLWDMenEVkI7bnIO
-SOMsmF6S6sp+O1ZSRARaO6qm28RYoi4I96hU/aoJxmT73LiUagbPuPFd9P9aV/vs
-ucxXDjQhscVbvqeY+EMLU05mwLicfhwT38j0au8Xa0zDLYCKyzUNa2F7gu82yMpS
-lL+LyUYsKWWLUp36pkriH3Hk24jjwXaxqv9JlTuuMf0/QuVRhoIexA9h/eUh/keB
-7Xr2wHvGvLgY9VfIlXpC8PyJvnvBT6wxc/R0p8h1IRuOp234DagQhenDySV0htnx
-s+9Dl+HusBfufX7ACPa/l+PwIOGCBJ7oEHASq+E5NXJ4zdtSi4d1xZToldT2JBdj
-Sm0n6R2p+Gc0vegX9fmin0lqIynb9girYSl3LYbVY0ZE6eXg+8bWun4rJ3447OE7
-QOFSN06zcuedwhaqcg6u2v1kBTRYJZ3qRYjMIbiSu9EwjHK9Jic=
-=Oulp
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlwQGIIACgkQFA3kzBSg
+KbYq6A//Sr3+jIT+p/2/Ix/BN0y8eelGwSLZXrLUnCgPWkPwGLChH65KD8POy8y7
+SS5DNLKH/MtooOW5XKLlZwkbrSD7WtCw1sS/5MWHEkQU8Op4rH97NgaFxn9xwGmz
+fY2wZyu3rNTtMIezMScRzHTIAmPR31IHmNwCegzPtMrzhpFyW+kDU7eVDbp4Ux3A
+BP9rJGeG0lvTHmzgDkWO2ESzlzKDWGNy24zTs9bgPcx9VOpEdAT7TF3WibT6VlKW
+JyH1nlXfcQLfyd/t5zb/lzcCORxPVqu27NiX1SKcNllY5BvgeYfaLFvnwXQGpxYG
+nC+xEduAgWXXlP6rRcA4L0yV6e8AbrrXzDaRly5uxPIq+y+yGZTZB4n5TRwCJsRf
+uaKHV5HhYYAELv6uD/5EuSH/GGgnqhl0qj2x3xRXX2rb1PEh5VY622Yflw5PAQgY
+UdZ/3ws9wjobDbTY9zqr3GVJAw7NlmQEN6MovduNphxxUh/gtj6yfDGbRI9z9wZV
+vaBRPRIalXuApW2QXf89WmG98LmiKWDqy3usVNBVGLGDyiVuumO8+puRWPtiK9z8
+FC79Wscei24+TuPRokmqexGnlVPVFwtF2tRpIUtOo8hKurUa3HDdxbuiaqfpugbL
+Ma2R+vOze1ZQz4+apMAkd4MAxU4L+xmRB7tBZLq1kt7Z7zY1HyA=
+=JZ0g
 -----END PGP SIGNATURE-----
 
---c3m5n2s5rtnxudgq--
+--7ttcironrq3vt57y--
