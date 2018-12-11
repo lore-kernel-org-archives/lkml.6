@@ -7,49 +7,50 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B583C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:51:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6261DC5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:51:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F75420855
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:51:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 297A62084E
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:51:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544543513;
-	bh=V0GYWbTHsDivVqu4NGm9It4+OSUKyh2tynjczkVjM5A=;
+	s=default; t=1544543516;
+	bh=KfRCR3UdT9NugeHao/WzekZ0NSWv9wGr5C0RpM0sdlw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=iE9H6kiRMe3NqyW42KI+6P8Yz3z6HY1olcD3cBCxe1s9/OgmB/pVxhwNNjb+8DZz1
-	 ADHQdEDvKAJY9nBjTGTY4iDHkEqipmQVOEXi1l2VgP1quIm02BFCwXgHkyd2AF0gq3
-	 lWxcQzbUgMHNdg5Pk35TvQDhRkJLgoMGyBIClZNw=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F75420855
+	b=T0xqYis02AUa7F2C75C8xy5/8CzGy0PKjmvxzVajsHWeBjG7TpmHKJzYWOQXup2VO
+	 pwDf51NBlQZKz2ACWLYLMt0hotuxWkvfcXTVfQZeqkfOcA+xrZRVerNdWyKXsQ4KF6
+	 OKYD451zqDCcPckA81Wxkw0gH2BlvttaLCKntMhw=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 297A62084E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729603AbeLKPvw (ORCPT
+        id S1729615AbeLKPvy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:51:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40524 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:51:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40476 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728815AbeLKPvu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:51:50 -0500
+        id S1729580AbeLKPvr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:51:47 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4F1302084E;
-        Tue, 11 Dec 2018 15:51:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A5BBE2084E;
+        Tue, 11 Dec 2018 15:51:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543509;
-        bh=V0GYWbTHsDivVqu4NGm9It4+OSUKyh2tynjczkVjM5A=;
+        s=default; t=1544543507;
+        bh=KfRCR3UdT9NugeHao/WzekZ0NSWv9wGr5C0RpM0sdlw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ylpTX1eOQ6LIz7lLGbYTw1vZQrJ0SJZpE2MsMAdsCEeZwTYkoHxeNdpdq+58LeMnO
-         ACtfD72heBnL4+7egq8K42/2outlX+Hvts0rsPHn7i1AMVNx6CxB1hgVJmSLxdn3/C
-         2eDehvjggWgx2KkTKNPgEh/TF+5zYHWZXiGN1610=
+        b=f7GhVlUeQv7ZQTc4cr0gGiqDYtYkudH8RVKENG6Df5kQGAruCi65F1BgC+Ltst+95
+         zd3ydh0X1n5XlzcgCI6oqUKZ9WO2VK6MBP4G6zE1RGckYvSno9ywj9IG7lpqAwqNPb
+         jiPdywqKkmQ29WGu/rawED4bQZXId58F+3rQfw+s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pan Bian <bianpan2016@163.com>,
-        Joerg Roedel <jroedel@suse.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 25/67] iommu/vt-d: Use memunmap to free memremap
-Date:   Tue, 11 Dec 2018 16:41:25 +0100
-Message-Id: <20181211151631.675949181@linuxfoundation.org>
+        stable@vger.kernel.org, Vincent Chen <vincentc@andestech.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 24/67] net: faraday: ftmac100: remove netif_running(netdev) check before disabling interrupts
+Date:   Tue, 11 Dec 2018 16:41:24 +0100
+Message-Id: <20181211151631.624840219@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151630.378216233@linuxfoundation.org>
 References: <20181211151630.378216233@linuxfoundation.org>
@@ -68,32 +69,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 829383e183728dec7ed9150b949cd6de64127809 ]
+[ Upstream commit 426a593e641ebf0d9288f0a2fcab644a86820220 ]
 
-memunmap() should be used to free the return of memremap(), not
-iounmap().
+In the original ftmac100_interrupt(), the interrupts are only disabled when
+the condition "netif_running(netdev)" is true. However, this condition
+causes kerenl hang in the following case. When the user requests to
+disable the network device, kernel will clear the bit __LINK_STATE_START
+from the dev->state and then call the driver's ndo_stop function. Network
+device interrupts are not blocked during this process. If an interrupt
+occurs between clearing __LINK_STATE_START and stopping network device,
+kernel cannot disable the interrupts due to the condition
+"netif_running(netdev)" in the ISR. Hence, kernel will hang due to the
+continuous interruption of the network device.
 
-Fixes: dfddb969edf0 ('iommu/vt-d: Switch from ioremap_cache to memremap')
-Signed-off-by: Pan Bian <bianpan2016@163.com>
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+In order to solve the above problem, the interrupts of the network device
+should always be disabled in the ISR without being restricted by the
+condition "netif_running(netdev)".
+
+[V2]
+Remove unnecessary curly braces.
+
+Signed-off-by: Vincent Chen <vincentc@andestech.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iommu/intel-iommu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/faraday/ftmac100.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-index aaf3fed97477..e86c1c8ec7f6 100644
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -3086,7 +3086,7 @@ static int copy_context_table(struct intel_iommu *iommu,
- 			}
+diff --git a/drivers/net/ethernet/faraday/ftmac100.c b/drivers/net/ethernet/faraday/ftmac100.c
+index 66928a922824..415fd93e9930 100644
+--- a/drivers/net/ethernet/faraday/ftmac100.c
++++ b/drivers/net/ethernet/faraday/ftmac100.c
+@@ -870,11 +870,10 @@ static irqreturn_t ftmac100_interrupt(int irq, void *dev_id)
+ 	struct net_device *netdev = dev_id;
+ 	struct ftmac100 *priv = netdev_priv(netdev);
  
- 			if (old_ce)
--				iounmap(old_ce);
-+				memunmap(old_ce);
+-	if (likely(netif_running(netdev))) {
+-		/* Disable interrupts for polling */
+-		ftmac100_disable_all_int(priv);
++	/* Disable interrupts for polling */
++	ftmac100_disable_all_int(priv);
++	if (likely(netif_running(netdev)))
+ 		napi_schedule(&priv->napi);
+-	}
  
- 			ret = 0;
- 			if (devfn < 0x80)
+ 	return IRQ_HANDLED;
+ }
 -- 
 2.19.1
 
