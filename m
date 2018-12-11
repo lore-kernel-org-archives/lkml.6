@@ -2,64 +2,77 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42834C6783B
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 21:57:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17AABC6783B
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 21:58:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 065CD2084C
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 21:57:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544565457;
-	bh=rBsQ/SdO14Lx68BAJmHBDqKYnX0YCBKpXOGs3ZF8Lqg=;
-	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
-	b=XrrofBG00fSnLKmnk7sOyYZw4C8HiAmGCWNLIDD2mrwahatIqYlJg3fYbgdhBhtNr
-	 C0ulXU0x8mGY5+eUC8WnftzYWdElR113dQLSsEFmEyYeVJ+c+iI5cKxnSyRuWp+uTd
-	 Pt+0E6b0BlPlcb0pnpMijqp6oQN3gbRhP/y6GV70=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 065CD2084C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id CFF962084C
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 21:58:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QPzK0G4l"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFF962084C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726253AbeLKV5g (ORCPT
+        id S1726262AbeLKV6d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 16:57:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52994 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726136AbeLKV5f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 16:57:35 -0500
-Received: from [10.80.45.159] (unknown [71.69.156.42])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0FFC320672;
-        Tue, 11 Dec 2018 21:57:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544565454;
-        bh=rBsQ/SdO14Lx68BAJmHBDqKYnX0YCBKpXOGs3ZF8Lqg=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=ioH33CHptg0BsMe74OQbGaFG2taQCy/DQqDMn40shAT5O9AEFDQxjy5RnWPRS1+rP
-         5q3/os3tkbwvdHrszwZsdaveGo7X2/8/ju9WinAURs4UtFfubhB81Y4WB/GQmNcLVl
-         Wah6aOFnGzirh4qLIyx4GJEPg5EJB4gblcsKGdbM=
-Subject: Re: [PATCH v3 2/3] ACPI / OSL: Allow PCI to be disabled
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20181210181315.5023-1-okaya@kernel.org>
- <20181210181315.5023-2-okaya@kernel.org> <20181211170957.GA335@infradead.org>
- <342c5dd9-cb3d-d714-c87f-814a942cf395@kernel.org>
- <CAJZ5v0ia+eotSZgjbitt7TAT0ECSmTAz1XJhS3Auz5w5Z61SZA@mail.gmail.com>
-From:   Sinan Kaya <okaya@kernel.org>
-Message-ID: <a9c7cbe1-eef3-40ad-de62-8194df12ca20@kernel.org>
-Date:   Tue, 11 Dec 2018 16:57:32 -0500
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
+        Tue, 11 Dec 2018 16:58:33 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:34527 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726146AbeLKV6d (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 16:58:33 -0500
+Received: by mail-pg1-f194.google.com with SMTP id 17so7284032pgg.1;
+        Tue, 11 Dec 2018 13:58:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=JsizWuxivQwCor4f18/Dzhh5JdhzgqGGUKMUTx0zDIw=;
+        b=QPzK0G4lussss1f7j7yBd9IhovSVNXeu0kE4XXlrurIaPgODoNRJL0gSQcMGhBAFNP
+         F5t/m1p5iTbAw/yBCPBW+sWXa4HDdFvOlsQQfuco46k2qXqfhs/GD95qtf63DBZCL926
+         Od7/TdeDefD93TXph91VrWxyO6TSU/sUR+RYIJcGtfjzef3gbyQGHZgtGmOeezOVn/Bg
+         iuuTBedPBY8XmqXZXFHNSBCGMsA5x4uUsdOn4vMgLe/ERqRtch8m4zesnYfCPwc8oMxd
+         nf+HA2RJ32rra6On9T4uIrQkPmgGw8lPuccrvbgW7cMq5ByD02ukwAaqlEYWqEdf8vbq
+         KeQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=JsizWuxivQwCor4f18/Dzhh5JdhzgqGGUKMUTx0zDIw=;
+        b=GUY0465A7Jx1xvvmkTjdWOi5kAeCntyX6IWco0fL6HtLewJ2U1H/uR0X6oK6a+YVeF
+         N8MME/R8OrNh2eg8Bu/C+B3tiB/0rlljoSU6LAqaAHjqBSFwcjc2D1NjpcOotgl8WHNs
+         2oKxSEiSyL/XADuOyocamptdhASWzLmSScfkuLQVrKNWN3loBcpSHZ7gaH3m2Nf+O68F
+         lFtrmEiA1wJLW1LCFvF/Gjo2rXUGYM0lYkxMM61X6l4Up2N2zyoWbNk/sKV0pr/9QO3W
+         rSzCvwM+YwdX432zeytbL1l8yrKY3sAqLYXYFs/qvVBZqKfITWvK37iSshZODgmNv2NZ
+         xihg==
+X-Gm-Message-State: AA+aEWZ5Nh1+hXcYBTG+PeHKa+wQfc6QXtUyIgyYJ32mNTjgeEaBEfaw
+        I3xVuyTD45v4+UPGU4F7Uw2uvdUB
+X-Google-Smtp-Source: AFSGD/W8slIh3kRiCmY5kFUb06t+EqglhUuAg+6xZizNyfzgi4MABJZZr81vZQRohLFaacKwGZYvPw==
+X-Received: by 2002:aa7:8354:: with SMTP id z20mr17642302pfm.81.1544565512259;
+        Tue, 11 Dec 2018 13:58:32 -0800 (PST)
+Received: from [192.168.1.70] (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
+        by smtp.gmail.com with ESMTPSA id r83sm26342337pfc.115.2018.12.11.13.58.31
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 11 Dec 2018 13:58:31 -0800 (PST)
+Subject: Re: [PATCH] of: add dtc annotations functionality to dtx_diff
+From:   Frank Rowand <frowand.list@gmail.com>
+To:     Rob Herring <robh+dt@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Julia Lawall <julia.lawall@lip6.fr>
+References: <1543233669-8696-1-git-send-email-frowand.list@gmail.com>
+Message-ID: <deded1fc-1e3c-01b3-1325-51b1636b0b63@gmail.com>
+Date:   Tue, 11 Dec 2018 13:58:30 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <CAJZ5v0ia+eotSZgjbitt7TAT0ECSmTAz1XJhS3Auz5w5Z61SZA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <1543233669-8696-1-git-send-email-frowand.list@gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -67,40 +80,86 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/11/2018 4:46 PM, Rafael J. Wysocki wrote:
-> On Tue, Dec 11, 2018 at 6:37 PM Sinan Kaya <okaya@kernel.org> wrote:
->>
->> On 12/11/2018 12:09 PM, Christoph Hellwig wrote:
->>> On Mon, Dec 10, 2018 at 06:13:14PM +0000, Sinan Kaya wrote:
->>>> Getting ready to allow PCI to be disabled with ACPI enabled. Stub
->>>> out calls that depend on PCI.
->>>
->>> I think you want to skip building at least all of hwpci.c if CONFIG_PCI
->>> is disabled.  Or replace that whole stiking pile of crap with something
->>> resembling C code..
->>>
->>
->> I can give it a try but I'm under the impression that we don't touch
->> ACPICA code in general.
->>
->> Feel free to correct me.
+Hi Rob,
+
+
+On 11/26/18 4:01 AM, frowand.list@gmail.com wrote:
+> From: Frank Rowand <frank.rowand@sony.com>
 > 
-> We don't as a rule, but depending on what the patch looks like, we
-> might not follow the rule this time.
+> Add -T and --annotations command line arguments to dtx_diff.  These
+> arguments will be passed through to dtc.  dtc will then add source
+> location annotations to its output.
+> 
+> Signed-off-by: Frank Rowand <frank.rowand@sony.com>
+> ---
+> 
+> This feature depends upon commit 5667e7ef9a9a ("annotations: add the
+> annotation functionality") in the dtc git repository.  To use the
+
+Ping. Your subsequent patch on 11/30, "[PATCH 1/3] scripts/dtc:
+Update to upstream version v1.4.7-57-gf267e674d145" adds the required
+commit.
+
+-Frank
+
+
+> new flags before the new version of dtc is imported to the linux
+> kernel, download the dtc repository, compile dtc with the make command,
+> then add the path of the dtc repository to the shell PATH variable.> 
+>  scripts/dtc/dtx_diff | 13 ++++++++++++-
+>  1 file changed, 12 insertions(+), 1 deletion(-)
+> 
+> diff --git a/scripts/dtc/dtx_diff b/scripts/dtc/dtx_diff
+> index 8c4fbad2055e..0d8572008729 100755
+> --- a/scripts/dtc/dtx_diff
+> +++ b/scripts/dtc/dtx_diff
+> @@ -21,6 +21,7 @@ Usage:
+>          diff DTx_1 and DTx_2
+>  
+>  
+> +      --annotate    synonym for -T
+>         -f           print full dts in diff (--unified=99999)
+>         -h           synonym for --help
+>         -help        synonym for --help
+> @@ -28,6 +29,7 @@ Usage:
+>         -s SRCTREE   linux kernel source tree is at path SRCTREE
+>                          (default is current directory)
+>         -S           linux kernel source tree is at root of current git repo
+> +       -T           Annotate output .dts with input source file and line (-T -T for more details)
+>         -u           unsorted, do not sort DTx
+>  
+>  
+> @@ -174,6 +176,7 @@ compile_to_dts() {
+>  
+>  # -----  start of script
+>  
+> +annotate=""
+>  cmd_diff=0
+>  diff_flags="-u"
+>  dtx_file_1=""
+> @@ -208,6 +211,14 @@ while [ $# -gt 0 ] ; do
+>  		shift
+>  		;;
+>  
+> +	-T | --annotate )
+> +		if [ "${annotate}"  = "" ] ; then
+> +			annotate="-T"
+> +		elif [ "${annotate}"  = "-T" ] ; then
+> +			annotate="-T -T"
+> +		fi
+> +		shift
+> +		;;
+>  	-u )
+>  		dtc_sort=""
+>  		shift
+> @@ -327,7 +338,7 @@ cpp_flags="\
+>  DTC="\
+>  	${DTC}                                     \
+>  	-i ${srctree}/scripts/dtc/include-prefixes \
+> -	-O dts -qq -f ${dtc_sort} -o -"
+> +	-O dts -qq -f ${dtc_sort} ${annotate} -o -"
+>  
+>  
+>  # -----  do the diff or decompile
 > 
 
-OK. Good to know. I'll take a stab at it.
-
-> I wonder though what we do if some AML wants to access PCI config
-> space via an opregion in there.  Have you thought about that?
-> 
-
-Return an error.
-
-AFAIK, ACPI spec says that AML code running on non-existing op-regions to be
-discarded last time I checked.
-
-I know Linux is noisy about these.
-
-I did boot QEMU without CONFIG_PCI. There was a bunch of ACPI errors reported
-during boot as expected but boot succeeded. There was no hard lockup/failure.
