@@ -2,119 +2,135 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 230ECC07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 07:44:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAA98C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 07:46:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E23A12082F
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 07:44:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E23A12082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 735402082F
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 07:46:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="LiG2mHX5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 735402082F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726239AbeLKHok (ORCPT
+        id S1726137AbeLKHqc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 02:44:40 -0500
-Received: from mx2.suse.de ([195.135.220.15]:51486 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726036AbeLKHok (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 02:44:40 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 9EA0AAEF2;
-        Tue, 11 Dec 2018 07:44:37 +0000 (UTC)
-Subject: Re: [PATCH 2/2] scsi: aacraid: change event_wait to a completion
-To:     Arnd Bergmann <arnd@arndb.de>,
-        Adaptec OEM Raid Solutions <aacraid@microsemi.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     Raghava Aditya Renukunta <RaghavaAditya.Renukunta@microsemi.com>,
-        Prasad B Munirathnam <prasad.munirathnam@microsemi.com>,
-        Dave Carroll <david.carroll@microsemi.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20181210213301.1065510-1-arnd@arndb.de>
- <20181210213301.1065510-2-arnd@arndb.de>
-From:   Johannes Thumshirn <jthumshirn@suse.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jthumshirn@suse.de; prefer-encrypt=mutual; keydata=
- xsFNBFTTwPEBEADOadCyru0ZmVLaBn620Lq6WhXUlVhtvZF5r1JrbYaBROp8ZpiaOc9YpkN3
- rXTgBx+UoDGtnz9DZnIa9fwxkcby63igMPFJEYpwt9adN6bA1DiKKBqbaV5ZbDXR1tRrSvCl
- 2V4IgvgVuO0ZJEt7gakOQlqjQaOvIzDnMIi/abKLSSzYAThsOUf6qBEn2G46r886Mk8MwkJN
- hilcQ7F5UsKfcVVGrTBoim6j69Ve6EztSXOXjFgsoBw4pEhWuBQCkDWPzxkkQof1WfkLAVJ2
- X9McVokrRXeuu3mmB+ltamYcZ/DtvBRy8K6ViAgGyNRWmLTNWdJj19Qgw9Ef+Q9O5rwfbPZy
- SHS2PVE9dEaciS+EJkFQ3/TBRMP1bGeNbZUgrMwWOvt37yguvrCOglbHW+a8/G+L7vz0hasm
- OpvD9+kyTOHjqkknVJL69BOJeCIVUtSjT9EXaAOkqw3EyNJzzhdaMXcOPwvTXNkd8rQZIHft
- SPg47zMp2SJtVdYrA6YgLv7OMMhXhNkUsvhU0HZWUhcXZnj+F9NmDnuccarez9FmLijRUNgL
- 6iU+oypB/jaBkO6XLLwo2tf7CYmBYMmvXpygyL8/wt+SIciNiM34Yc+WIx4xv5nDVzG1n09b
- +iXDTYoWH82Dq1xBSVm0gxlNQRUGMmsX1dCbCS2wmWbEJJDEeQARAQABzSdKb2hhbm5lcyBU
- aHVtc2hpcm4gPGp0aHVtc2hpcm5Ac3VzZS5kZT7CwYAEEwEIACoCGwMFCwkIBwIGFQgJCgsC
- BBYCAwECHgECF4AFCQo9ta8FAlohZmoCGQEACgkQA5OWnS12CFATLQ//ajhNDVJLK9bjjiOH
- 53B0+hCrRBj5jQiT8I60+4w+hssvRHWkgsujF+V51jcmX3NOXeSyLC1Gk43A9vCz5gXnqyqG
- tOlYm26bihzG02eAoWr/glHBQyy7RYcd97SuRSv77WzuXT3mCnM15TKiqXYNzRCK7u5nx4eu
- szAU+AoXAC/y1gtuDMvANBEuHWE4LNQLkTwJshU1vwoNcTSl+JuQWe89GB8eeeMnHuY92T6A
- ActzHN14R1SRD/51N9sebAxGVZntXzSVKyMID6eGdNegWrz4q55H56ZrOMQ6IIaa7KSz3QSj
- 3E8VIY4FawfjCSOuA2joemnXH1a1cJtuqbDPZrO2TUZlNGrO2TRi9e2nIzouShc5EdwmL6qt
- WG5nbGajkm1wCNb6t4v9ueYMPkHsr6xJorFZHlu7PKqB6YY3hRC8dMcCDSLkOPWf+iZrqtpE
- odFBlnYNfmAXp+1ynhUvaeH6eSOqCN3jvQbITUo8mMQsdVgVeJwRdeAOFhP7fsxNugii721U
- acNVDPpEz4QyxfZtfu9QGI405j9MXF/CPrHlNLD5ZM5k9NxnmIdCM9i1ii4nmWvmz9JdVJ+8
- 6LkxauROr2apgTXxMnJ3Desp+IRWaFvTVhbwfxmwC5F3Kr0ouhr5Kt8jkQeD/vuqYuxOAyDI
- egjo3Y7OGqct+5nybmbOwU0EVNPA8QEQAN/79cFVNpC+8rmudnXGbob9sk0J99qnwM2tw33v
- uvQjEGAJTVCOHrewDbHmqZ5V1X1LI9cMlLUNMR3W0+L04+MH8s/JxshFST+hOaijGc81AN2P
- NrAQD7IKpA78Q2F3I6gpbMzyMy0DxmoKF73IAMQIknrhzn37DgM+x4jQgkvhFMqnnZ/xIQ9d
- QEBKDtfxH78QPosDqCzsN9HRArC75TiKTKOxC12ZRNFZfEPnmqJ260oImtmoD/L8QiBsdA4m
- Mdkmo6Pq6iAhbGQ5phmhUVuj+7O8rTpGRXySMLZ44BimM8yHWTaiLWxCehHgfUWRNLwFbrd+
- nYJYHoqyFGueZFBNxY4bS2rIEDg+nSKiAwJv3DUJDDd/QJpikB5HIjg/5kcSm7laqfbr1pmC
- ZbR2JCTp4FTABVLxt7pJP40SuLx5He63aA/VyxoInLcZPBNvVfq/3v3fkoILphi77ZfTvKrl
- RkDdH6PkFOFpnrctdTWbIFAYfU96VvySFAOOg5fsCeLv9/zD4dQEGsvva/qKZXkH/l2LeVp3
- xEXoFsUZtajPZgyRBxer0nVWRyeVwUQnLG8kjEOcZzX27GUpughi8w42p4oMD+96tr3BKTAr
- guRHJnU1M1xwRPbw5UsNXEOgYsFc8cdto0X7hQ2Ugc07CRSDvyH50IKXf2++znOTXFDhABEB
- AAHCwV8EGAECAAkFAlTTwPECGwwACgkQA5OWnS12CFAdRg//ZGV0voLRjjgX9ODzaz6LP+IP
- /ebGLXe3I+QXz8DaTkG45evOu6B2J53IM8t1xEug0OnfnTo1z0AFg5vU53L24LAdpi12CarV
- Da53WvHzG4BzCVGOGrAvJnMvUXf0/aEm0Sen2Mvf5kvOwsr9UTHJ8N/ucEKSXAXf+KZLYJbL
- NL4LbOFP+ywxtjV+SgLpDgRotM43yCRbONUXEML64SJ2ST+uNzvilhEQT/mlDP7cY259QDk7
- 1K6B+/ACE3Dn7X0/kp8a+ZoNjUJZkQQY4JyMOkITD6+CJ1YsxhX+/few9k5uVrwK/Cw+Vmae
- A85gYfFn+OlLFO/6RGjMAKOsdtPFMltNOZoT+YjgAcW6Q9qGgtVYKcVOxusL8C3v8PAYf7Ul
- Su7c+/Ayr3YV9Sp8PH4X4jK/zk3+DDY1/ASE94c95DW1lpOcyx3n1TwQbwp6TzPMRe1IkkYe
- 0lYj9ZgKaZ8hEmzuhg6FKXk9Dah+H73LdV57M4OFN8Xwb7v+oEG23vdsb2KBVG5K6Tv7Hb2N
- sfHWRdU3quYIistrNWWeGmfTlhVLgDhEmAsKZFH05QsAv3pQv7dH/JD+Tbn6sSnNAVrATff1
- AD3dXmt+5d3qYuUxam1UFGufGzV7jqG5QNStp0yvLP0xroB8y0CnnX2FY6bAVCU+CqKu+n1B
- LGlgwABHRtLCwe0EGAEIACAWIQTsOJyrwsTyXYYA0NADk5adLXYIUAUCWsTXAwIbAgCBCRAD
- k5adLXYIUHYgBBkWCAAdFiEEx1U9vxg1xAeUwus20p7yIq+KHe4FAlrE1wMACgkQ0p7yIq+K
- He6RfAEA+frSSvrHiuatNqvgYAJcraYhp1GQJrWSWMmi2eFcGskBAJyLp47etEn3xhJBLVVh
- 2y2K4Nobb6ZgxA4Svfnkf7AAdicQALiaOKDwKD3tgf90ypEoummYzAxv8MxyPXZ7ylRnkheA
- eQDxuoc/YwMA4qyxhzf6K4tD/aT12XJd95gk+YAL6flGkJD8rA3jsEucPmo5eko4Ms2rOEdG
- jKsZetkdPKGBd2qVxxyZgzUkgRXduvyux04b9erEpJmoIXs/lE0IRbL9A9rJ6ASjFPGpXYrb
- 73pb6Dtkdpvv+hoe4cKeae4dS0AnDc7LWSW3Ub0n61uk/rqpTmKuesmTZeB2GHzLN5GAXfNj
- ELHAeSVfFLPRFrjF5jjKJkpiyq98+oUnvTtDIPMTg05wSN2JtwKnoQ0TAIHWhiF6coGeEfY8
- ikdVLSZDEjW54Td5aIXWCRTBWa6Zqz/G6oESF+Lchu/lDv5+nuN04KZRAwCpXLS++/givJWo
- M9FMnQSvt4N95dVQE3kDsasl960ct8OzxaxuevW0OV/jQEd9gH50RaFif412DTrsuaPsBz6O
- l2t2TyTuHm7wVUY2J3gJYgG723/PUGW4LaoqNrYQUr/rqo6NXw6c+EglRpm1BdpkwPwAng63
- W5VOQMdnozD2RsDM5GfA4aEFi5m00tE+8XPICCtkduyWw+Z+zIqYk2v+zraPLs9Gs0X2C7X0
- yvqY9voUoJjG6skkOToGZbqtMX9K4GOv9JAxVs075QRXL3brHtHONDt6udYobzz+
-Message-ID: <d881c7e1-311a-e236-2bfa-cb4b8547f368@suse.de>
-Date:   Tue, 11 Dec 2018 08:44:37 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 11 Dec 2018 02:46:32 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:38446 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726036AbeLKHqb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 02:46:31 -0500
+Received: by mail-it1-f193.google.com with SMTP id h65so2250928ith.3
+        for <linux-kernel@vger.kernel.org>; Mon, 10 Dec 2018 23:46:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3AhxpeOqpWnyFViFDItH8CiCNbu5SMJal2oVMCV4pbg=;
+        b=LiG2mHX5Od8Q/LQ4ZTjckNK+y1vp1KT0X/VnWm3eQUqkFwh7uONktYzWUvMNpvgYcc
+         lhkLhdrz5E9MnrBDtgNQ5RdutMtMnbgTXcaeGr+Qmk4NNNHPIgVEE374EhgBz6yq0Q+C
+         SB76923dmg5DDObTtp/pAX48r+Yr88PM6P9o8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3AhxpeOqpWnyFViFDItH8CiCNbu5SMJal2oVMCV4pbg=;
+        b=gcQyCATBnjv+t72NihZAUMp+KDuih68bBspqdl8B6mGHY7jNdlqlo2Y2xV/yvW500y
+         iQ1qP6jsc2vUAvdbMzHWCPhvTaF9Mf1TT2rkFtM+DaujkTQhSKQsEXmMBiocyngbzYne
+         5L9ryI9Kkfe4CN7MmS8f7X/IFoxuZz4UIkgfncr8ibLKsTeaZZkj0Nc6BoGcLQEJAfhU
+         ABppG4/j1MhPodKXfhwHnIay3o7+Lt8VWlCJeJWRQTpPZ7xmsSov0ynXMQnWCJEFwxx8
+         tbnmqyDdhrkPY2np9tJEz/c+Kty23WIu2qOdfJZIOaSOQOxx7FBUrYRx68Cq/oJFzERc
+         LhTg==
+X-Gm-Message-State: AA+aEWYDc3aIAhUOLJdablw0q1gnWrDcLOAoDiB7i4sZRJNAhNqY0saS
+        f/Slth0qATyQS9sU0zs0qhXJXKzoHVOeTsd9eDeAgg==
+X-Google-Smtp-Source: AFSGD/UCBO4f8xsA5OAm/jdeKmMBIQCtC7FPR0WfZFuvoi6uzIjRtO7vnKb5vsgch/VJdDNa6o6CeMd47C75kf/3prw=
+X-Received: by 2002:a24:6f42:: with SMTP id x63mr1319531itb.152.1544514390569;
+ Mon, 10 Dec 2018 23:46:30 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181210213301.1065510-2-arnd@arndb.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20181210210139.3336002-1-arnd@arndb.de>
+In-Reply-To: <20181210210139.3336002-1-arnd@arndb.de>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Tue, 11 Dec 2018 08:46:19 +0100
+Message-ID: <CAKfTPtDPjqdRjRTt=DH2UwzfDXKDt8jNvxdC9Lsh20SvteMpSQ@mail.gmail.com>
+Subject: Re: [PATCH] sched/fair: move capacity_margin definition into #ifdef
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>, smuchun@gmail.com,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Looks good,
-Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
--- 
-Johannes Thumshirn                            SUSE Labs Filesystems
-jthumshirn@suse.de                                +49 911 74053 689
-SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
-Key fingerprint = EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
+Hi Arnd,
+
+On Mon, 10 Dec 2018 at 22:01, Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> Marking the variable static showed that it's only used for
+> SMP builds, as seen from this warning:
+>
+> kernel/sched/fair.c:119:21: error: 'capacity_margin' defined but not used [-Werror=unused-variable]
+>  static unsigned int capacity_margin   = 1280;
+
+Olof sent a similar patch 2 weeks ago: https://lkml.org/lkml/2018/11/26/115
+
+Vincent
+>
+> This has apparently been true since the variable has first been
+> introduced, but only now started causing a compile time warning.
+>
+> Fixes: ed8885a14433 ("sched/fair: Make some variables static")
+> Fixes: 3273163c6775 ("sched/fair: Let asymmetric CPU configurations balance at wake-up")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  kernel/sched/fair.c | 16 ++++++++--------
+>  1 file changed, 8 insertions(+), 8 deletions(-)
+>
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index e30dea59d215..27928809e6ed 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -110,14 +110,6 @@ int __weak arch_asym_cpu_priority(int cpu)
+>  unsigned int sysctl_sched_cfs_bandwidth_slice          = 5000UL;
+>  #endif
+>
+> -/*
+> - * The margin used when comparing utilization with CPU capacity:
+> - * util * margin < capacity * 1024
+> - *
+> - * (default: ~20%)
+> - */
+> -static unsigned int capacity_margin                    = 1280;
+> -
+>  static inline void update_load_add(struct load_weight *lw, unsigned long inc)
+>  {
+>         lw->weight += inc;
+> @@ -3046,6 +3038,14 @@ static inline void cfs_rq_util_change(struct cfs_rq *cfs_rq, int flags)
+>  }
+>
+>  #ifdef CONFIG_SMP
+> +/*
+> + * The margin used when comparing utilization with CPU capacity:
+> + * util * margin < capacity * 1024
+> + *
+> + * (default: ~20%)
+> + */
+> +static unsigned int capacity_margin                    = 1280;
+> +
+>  #ifdef CONFIG_FAIR_GROUP_SCHED
+>  /**
+>   * update_tg_load_avg - update the tg's load avg
+> --
+> 2.20.0
+>
