@@ -7,52 +7,52 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11219C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:05:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DE80C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:06:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6A9E2081B
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:05:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0163E2081B
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:06:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544544354;
-	bh=qXYyaj13Xh80nzrLbDPxfU6XQ0RTKL7Qy9fPk9Pktr4=;
+	s=default; t=1544544363;
+	bh=30GIALfjgWxMhKADEfJXrTVf4gh4vI8PwZIcXzDG0MM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=AOeRdK+g8aMYkvqj1rbUc703Vpro5ekLVEhW8/oG4EGjgO0hBuF3G1RasOGehInAf
-	 M8m2hldfj788pnh7m8O0fFLAjcjJMRJHcC06RN8C7vnsFNbuE5q6yHlI/2HSkUjKO7
-	 tYYBN+vZDL6crmHvr3KMA2sNUzq7Pf7DGqtl86lY=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6A9E2081B
+	b=OG+RYUzRKw6TlX2+1cFF2cqp4OcNWYC3LK+/tXeC/eLJb0tAv7VDua3Sc0ByJ4bM5
+	 g8WXwH10Ziq/9NDdLC/7sNRBik/CBd08dZLinYRpYjqoJooKGS2aqXZTk1NwZ3CMBl
+	 BEEfva5hjVh/qCrCx2gDw8Fuw61w8k/qLXjpKKxA=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0163E2081B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731015AbeLKQFx (ORCPT
+        id S1730278AbeLKPyx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 11:05:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43534 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:54:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43488 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730293AbeLKPy5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:54:57 -0500
+        id S1730243AbeLKPyv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:54:51 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ED46F20855;
-        Tue, 11 Dec 2018 15:54:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CFF3D20855;
+        Tue, 11 Dec 2018 15:54:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543696;
-        bh=qXYyaj13Xh80nzrLbDPxfU6XQ0RTKL7Qy9fPk9Pktr4=;
+        s=default; t=1544543691;
+        bh=30GIALfjgWxMhKADEfJXrTVf4gh4vI8PwZIcXzDG0MM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dHpf5GkqTmp0sa0owIXZLKG++lYYFA7sEqXiVrCHaFUPdOEoHtibMKfk0rslyKM5J
-         XeNUjn+JVhvRR/66I5d5pClslYPsqwBUprhA1ri0SVwxdENcHeiuxMr/BsEFbJlYZY
-         H5Ftqsv1WYRXBFEXLQcbaEQ4BC9N7P22ydhZ9/xg=
+        b=anrualZDY4kn3KE+Sky2LaHFED/pRuYcIIxOdeGGjtZHZ9FlbttIoqeFNCyIU3g0J
+         PFzNF99/r3TdoFFePBJ3ZtfUdE4G1BiCyC4O7XCF41KgUPdLhkCxPqMh+BDohFYpm7
+         US5sfok2qO0tNs3Q38Cz8E9vU78m3wumKdjYYIJY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Harry Wentland <harry.wentland@amd.com>,
+        Vasundhara Volam <vasundhara-v.volam@broadcom.com>,
+        Michael Chan <michael.chan@broadcom.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 028/118] drm/amd/display: Support amdgpu "max bpc" connector property (v2)
-Date:   Tue, 11 Dec 2018 16:40:47 +0100
-Message-Id: <20181211151645.374705595@linuxfoundation.org>
+Subject: [PATCH 4.19 026/118] bnxt_en: Fix filling time in bnxt_fill_coredump_record()
+Date:   Tue, 11 Dec 2018 16:40:45 +0100
+Message-Id: <20181211151645.296085178@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151644.216668863@linuxfoundation.org>
 References: <20181211151644.216668863@linuxfoundation.org>
@@ -71,108 +71,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 07e3a1cfb0568b6d8d7862077029af96af6690ea ]
+[ Upstream commit 8dc5ae2d48976764cf3498e97963fa06befefb0e ]
 
-[Why]
-Many panels support more than 8bpc but some modes are unavailable while
-running at greater than 8bpc due to DP/HDMI bandwidth constraints.
+Fix the year and month offset while storing it in
+bnxt_fill_coredump_record().
 
-Support for more than 8bpc was added recently in the driver but it
-defaults to the maximum supported bpc - locking out these modes.
-
-This should be a user configurable option such that the user can select
-what bpc configuration they would like.
-
-[How]
-This patch adds support for getting and setting the amdgpu driver
-specific "max bpc" property on the connector.
-
-It also adds support for limiting the output bpc based on the property
-value. The default limitation is the lowest value in the range, 8bpc.
-This was the old value before the range was uncapped.
-
-This patch should be updated/replaced later once common drm support
-for max bpc lands.
-
-Bugzilla: https://bugs.freedesktop.org/108542
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=201585
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=200645
-Fixes: e03fd3f300f6 ("drm/amd/display: Do not limit color depth to 8bpc")
-
-v2: rebase on upstream (Alex)
-
-Signed-off-by: Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>
-Acked-by: Alex Deucher <alexander.deucher@amd.com>
-Reviewed-by: Harry Wentland <harry.wentland@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Fixes: 6c5657d085ae ("bnxt_en: Add support for ethtool get dump.")
+Signed-off-by: Vasundhara Volam <vasundhara-v.volam@broadcom.com>
+Signed-off-by: Michael Chan <michael.chan@broadcom.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c    | 16 ++++++++++++++++
- .../gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h    |  1 +
- 2 files changed, 17 insertions(+)
+ drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-index ef5c6af4d964..299def84e69c 100644
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-@@ -2213,8 +2213,15 @@ static void update_stream_scaling_settings(const struct drm_display_mode *mode,
- static enum dc_color_depth
- convert_color_depth_from_display_info(const struct drm_connector *connector)
- {
-+	struct dm_connector_state *dm_conn_state =
-+		to_dm_connector_state(connector->state);
- 	uint32_t bpc = connector->display_info.bpc;
- 
-+	/* TODO: Remove this when there's support for max_bpc in drm */
-+	if (dm_conn_state && bpc > dm_conn_state->max_bpc)
-+		/* Round down to nearest even number. */
-+		bpc = dm_conn_state->max_bpc - (dm_conn_state->max_bpc & 1);
-+
- 	switch (bpc) {
- 	case 0:
- 		/* Temporary Work around, DRM don't parse color depth for
-@@ -2796,6 +2803,9 @@ int amdgpu_dm_connector_atomic_set_property(struct drm_connector *connector,
- 	} else if (property == adev->mode_info.underscan_property) {
- 		dm_new_state->underscan_enable = val;
- 		ret = 0;
-+	} else if (property == adev->mode_info.max_bpc_property) {
-+		dm_new_state->max_bpc = val;
-+		ret = 0;
- 	}
- 
- 	return ret;
-@@ -2838,6 +2848,9 @@ int amdgpu_dm_connector_atomic_get_property(struct drm_connector *connector,
- 	} else if (property == adev->mode_info.underscan_property) {
- 		*val = dm_state->underscan_enable;
- 		ret = 0;
-+	} else if (property == adev->mode_info.max_bpc_property) {
-+		*val = dm_state->max_bpc;
-+		ret = 0;
- 	}
- 	return ret;
- }
-@@ -3658,6 +3671,9 @@ void amdgpu_dm_connector_init_helper(struct amdgpu_display_manager *dm,
- 	drm_object_attach_property(&aconnector->base.base,
- 				adev->mode_info.underscan_vborder_property,
- 				0);
-+	drm_object_attach_property(&aconnector->base.base,
-+				adev->mode_info.max_bpc_property,
-+				0);
- 
- }
- 
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h
-index aba2c5c1d2f8..74aedcffc4bb 100644
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h
-@@ -213,6 +213,7 @@ struct dm_connector_state {
- 	enum amdgpu_rmx_type scaling;
- 	uint8_t underscan_vborder;
- 	uint8_t underscan_hborder;
-+	uint8_t max_bpc;
- 	bool underscan_enable;
- 	struct mod_freesync_user_enable user_enable;
- 	bool freesync_capable;
+diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c b/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
+index e52d7af3ab3e..da9b87689996 100644
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
+@@ -2862,8 +2862,8 @@ bnxt_fill_coredump_record(struct bnxt *bp, struct bnxt_coredump_record *record,
+ 	record->asic_state = 0;
+ 	strlcpy(record->system_name, utsname()->nodename,
+ 		sizeof(record->system_name));
+-	record->year = cpu_to_le16(tm.tm_year);
+-	record->month = cpu_to_le16(tm.tm_mon);
++	record->year = cpu_to_le16(tm.tm_year + 1900);
++	record->month = cpu_to_le16(tm.tm_mon + 1);
+ 	record->day = cpu_to_le16(tm.tm_mday);
+ 	record->hour = cpu_to_le16(tm.tm_hour);
+ 	record->minute = cpu_to_le16(tm.tm_min);
 -- 
 2.19.1
 
