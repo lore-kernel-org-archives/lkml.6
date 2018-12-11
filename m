@@ -2,129 +2,570 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 152C8C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:44:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CBB1C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:45:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D562D2084A
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:44:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D562D2084A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=physik.fu-berlin.de
+	by mail.kernel.org (Postfix) with ESMTP id 4DED02082F
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:45:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DED02082F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726476AbeLKKov (ORCPT
+        id S1726501AbeLKKo7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 05:44:51 -0500
-Received: from outpost1.zedat.fu-berlin.de ([130.133.4.66]:53903 "EHLO
-        outpost1.zedat.fu-berlin.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726114AbeLKKov (ORCPT
+        Tue, 11 Dec 2018 05:44:59 -0500
+Received: from lb3-smtp-cloud7.xs4all.net ([194.109.24.31]:59366 "EHLO
+        lb3-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726114AbeLKKo6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 05:44:51 -0500
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.85)
-          with esmtps (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id <1gWfWj-0015DK-8m>; Tue, 11 Dec 2018 11:44:33 +0100
-Received: from suse-laptop.physik.fu-berlin.de ([160.45.32.140])
-          by inpost2.zedat.fu-berlin.de (Exim 4.85)
-          with esmtpsa (TLSv1.2:AES128-SHA:128)
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id <1gWfWj-000cBo-3H>; Tue, 11 Dec 2018 11:44:33 +0100
-Subject: Re: Can we drop upstream Linux x32 support?
-To:     Florian Weimer <fweimer@redhat.com>
-Cc:     Andy Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Mike Frysinger <vapier@gentoo.org>,
-        "H. J. Lu" <hjl.tools@gmail.com>, Rich Felker <dalias@libc.org>,
-        x32@buildd.debian.org, Arnd Bergmann <arnd@arndb.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-References: <CALCETrXoRAibsbWa9nfbDrt0iEuebMnCMhSFg-d9W-J2g8mDjw@mail.gmail.com>
- <70bb54b2-8ed3-b5ee-c02d-6ef66c4f27eb@physik.fu-berlin.de>
- <87in00z6ux.fsf@oldenburg2.str.redhat.com>
-From:   John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=glaubitz@physik.fu-berlin.de; keydata=
- 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
- scOkTAZQGVpD/8AaLH4v1w==
-Message-ID: <873573ba-4d15-07c8-3fcf-ccf36eee14f1@physik.fu-berlin.de>
-Date:   Tue, 11 Dec 2018 11:44:32 +0100
+        Tue, 11 Dec 2018 05:44:58 -0500
+Received: from [IPv6:2001:983:e9a7:1:5434:d88b:a352:4c5a] ([IPv6:2001:983:e9a7:1:5434:d88b:a352:4c5a])
+        by smtp-cloud7.xs4all.net with ESMTPA
+        id WfWqgG1ddQMWUWfWrg6vFW; Tue, 11 Dec 2018 11:44:53 +0100
+Subject: Re: [PATCH v7 2/2] media: platform: Add Aspeed Video Engine driver
+To:     Eddie James <eajames@linux.ibm.com>, linux-kernel@vger.kernel.org
+Cc:     mark.rutland@arm.com, devicetree@vger.kernel.org,
+        linux-aspeed@lists.ozlabs.org, robh+dt@kernel.org,
+        mchehab@kernel.org, linux-media@vger.kernel.org
+References: <1544480791-92746-1-git-send-email-eajames@linux.ibm.com>
+ <1544480791-92746-3-git-send-email-eajames@linux.ibm.com>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <6567e0a4-ad58-1340-199e-e5d5b267f3ac@xs4all.nl>
+Date:   Tue, 11 Dec 2018 11:44:40 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.2
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-In-Reply-To: <87in00z6ux.fsf@oldenburg2.str.redhat.com>
+In-Reply-To: <1544480791-92746-3-git-send-email-eajames@linux.ibm.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: 160.45.32.140
+X-CMAE-Envelope: MS4wfPTzEw3sx9WVtesCZli37Nu/cCJPcE8SouihVLF91uf9qqjoxm1VM+o1ZKJ3SeGOJwzU0x+pv4+fB+/o9njDFfCsQdKmFn2wwydq5dZ2UqtlQuEOHWep
+ LgM/Bh39QDc8pKbZ+8PO3sSgvzF+3u5kThkhUrkY96W833IkzC5LXG5Z/M62VKD/ZBeiMA6wcF7fGS1vcn1CfGI+sfzy/u9Mb0hn4NSsuxzH/WSVg6iKH+j3
+ k6GX20kTABoi0wMipNNkM7L9swXD6cuhv6E+JjR4HP78SgQOhUGR56A+InkZqIxNoIm0BLLOiGSioKpf4xmC8x9tbA33xziZhodT/XJU+Pni5BBq/Q2EORwl
+ 0Cz/NkuojijKZEp1ASfCGuciGjg24+ITrrJsy+qGRwAkdNLOVv9mleBwDwtQvXHI5Dp5Lyjr3QIMg17C8W3MSiJX+nHAU3sfDRy5zopiXsoeRvvYB0f55eV+
+ ZvxdWqrOYQ8S1tk7zPc0ZjOE1/ROjyTby9U+FXWBQMgY2aujm7H0MgLI5do=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/11/18 11:37 AM, Florian Weimer wrote:
-> Note that OpenJDK (well, Hotspot) has its own 32-bit pointer support for
-> the Java heap (compressed oops), so only the native code parts (and JNI)
-> benefit from x32 anyway.
+On 12/10/18 11:26 PM, Eddie James wrote:
+> The Video Engine (VE) embedded in the Aspeed AST2400 and AST2500 SOCs
+> can capture and compress video data from digital or analog sources. With
+> the Aspeed chip acting a service processor, the Video Engine can capture
+> the host processor graphics output.
+> 
+> Add a V4L2 driver to capture video data and compress it to JPEG images.
+> Make the video frames available through the V4L2 streaming interface.
+> 
+> Signed-off-by: Eddie James <eajames@linux.ibm.com>
+> ---
 
-Yeah, I was actually only talking about this single commit by me to add
-Zero build support for x86_64-linux-gnux32:
+<snip>
 
-> http://hg.openjdk.java.net/jdk/jdk/rev/9ce4a0d718c7
+> +static void aspeed_video_irq_res_change(struct aspeed_video *video)
+> +{
+> +	dev_dbg(video->dev, "Resolution changed; resetting\n");
+> +
+> +	set_bit(VIDEO_RES_CHANGE, &video->flags);
+> +	clear_bit(VIDEO_FRAME_INPRG, &video->flags);
+> +
+> +	aspeed_video_off(video);
+> +	aspeed_video_bufs_done(video, VB2_BUF_STATE_ERROR);
+> +
+> +	schedule_delayed_work(&video->res_work, RESOLUTION_CHANGE_DELAY);
+> +}
+> +
+> +static irqreturn_t aspeed_video_irq(int irq, void *arg)
+> +{
+> +	struct aspeed_video *video = arg;
+> +	u32 sts = aspeed_video_read(video, VE_INTERRUPT_STATUS);
+> +
+> +	/* Resolution changed; reset entire engine and reinitialize */
+> +	if (sts & VE_INTERRUPT_MODE_DETECT_WD) {
 
-Adrian
+Does this only trigger when the resolution changed, or also when the signal
+disappears? For the purpose of this review I assume that it is also triggered
+when the signal goes away. The comment should be updated in that case that
+it is not just resolution changes, but also a dropped video signal.
 
--- 
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer - glaubitz@debian.org
-`. `'   Freie Universitaet Berlin - glaubitz@physik.fu-berlin.de
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+> +		aspeed_video_irq_res_change(video);
+> +		return IRQ_HANDLED;
+> +	}
+> +
+> +	if (sts & VE_INTERRUPT_MODE_DETECT) {
+> +		if (test_bit(VIDEO_RES_DETECT, &video->flags)) {
+> +			aspeed_video_update(video, VE_INTERRUPT_CTRL,
+> +					    VE_INTERRUPT_MODE_DETECT, 0);
+> +			aspeed_video_write(video, VE_INTERRUPT_STATUS,
+> +					   VE_INTERRUPT_MODE_DETECT);
+> +
+> +			set_bit(VIDEO_MODE_DETECT_DONE, &video->flags);
+> +			wake_up_interruptible_all(&video->wait);
+> +		} else {
+> +			aspeed_video_irq_res_change(video);
+> +			return IRQ_HANDLED;
+> +		}
+> +	}
+> +
+> +	if ((sts & VE_INTERRUPT_COMP_COMPLETE) &&
+> +	    (sts & VE_INTERRUPT_CAPTURE_COMPLETE)) {
+> +		struct aspeed_video_buffer *buf;
+> +		u32 frame_size = aspeed_video_read(video,
+> +						   VE_OFFSET_COMP_STREAM);
+> +
+> +		spin_lock(&video->lock);
+> +		clear_bit(VIDEO_FRAME_INPRG, &video->flags);
+> +		buf = list_first_entry_or_null(&video->buffers,
+> +					       struct aspeed_video_buffer,
+> +					       link);
+> +		if (buf) {
+> +			vb2_set_plane_payload(&buf->vb.vb2_buf, 0, frame_size);
+> +
+> +			if (!list_is_last(&buf->link, &video->buffers)) {
+> +				buf->vb.vb2_buf.timestamp = ktime_get_ns();
+> +				buf->vb.sequence = video->sequence++;
+> +				buf->vb.field = V4L2_FIELD_NONE;
+> +				vb2_buffer_done(&buf->vb.vb2_buf,
+> +						VB2_BUF_STATE_DONE);
+> +				list_del(&buf->link);
+> +			}
+> +		}
+> +		spin_unlock(&video->lock);
+> +
+> +		aspeed_video_update(video, VE_SEQ_CTRL,
+> +				    VE_SEQ_CTRL_TRIG_CAPTURE |
+> +				    VE_SEQ_CTRL_FORCE_IDLE |
+> +				    VE_SEQ_CTRL_TRIG_COMP, 0);
+> +		aspeed_video_update(video, VE_INTERRUPT_CTRL,
+> +				    VE_INTERRUPT_COMP_COMPLETE |
+> +				    VE_INTERRUPT_CAPTURE_COMPLETE, 0);
+> +		aspeed_video_write(video, VE_INTERRUPT_STATUS,
+> +				   VE_INTERRUPT_COMP_COMPLETE |
+> +				   VE_INTERRUPT_CAPTURE_COMPLETE);
+> +
+> +		if (test_bit(VIDEO_STREAMING, &video->flags) && buf)
+> +			aspeed_video_start_frame(video);
+> +	}
+> +
+> +	return IRQ_HANDLED;
+> +}
+
+<snip>
+
+> +static void aspeed_video_get_resolution(struct aspeed_video *video)
+> +{
+> +	bool invalid_resolution = true;
+> +	int rc;
+> +	int tries = 0;
+> +	u32 mds;
+> +	u32 src_lr_edge;
+> +	u32 src_tb_edge;
+> +	u32 sync;
+> +	struct v4l2_bt_timings *det = &video->detected_timings;
+> +
+> +	det->width = MIN_WIDTH;
+> +	det->height = MIN_HEIGHT;
+> +	video->v4l2_input_status = V4L2_IN_ST_NO_SIGNAL;
+> +
+> +	/*
+> +	 * Since we need max buffer size for detection, free the second source
+> +	 * buffer first.
+> +	 */
+> +	if (video->srcs[1].size)
+> +		aspeed_video_free_buf(video, &video->srcs[1]);
+> +
+> +	if (video->srcs[0].size < VE_MAX_SRC_BUFFER_SIZE) {
+> +		if (video->srcs[0].size)
+> +			aspeed_video_free_buf(video, &video->srcs[0]);
+> +
+> +		if (!aspeed_video_alloc_buf(video, &video->srcs[0],
+> +					    VE_MAX_SRC_BUFFER_SIZE)) {
+> +			dev_err(video->dev,
+> +				"Failed to allocate source buffers\n");
+> +			return;
+> +		}
+> +	}
+> +
+> +	aspeed_video_write(video, VE_SRC0_ADDR, video->srcs[0].dma);
+> +
+> +	do {
+> +		if (tries) {
+> +			set_current_state(TASK_INTERRUPTIBLE);
+> +			if (schedule_timeout(INVALID_RESOLUTION_DELAY))
+> +				return;
+> +		}
+> +
+> +		set_bit(VIDEO_RES_DETECT, &video->flags);
+> +		aspeed_video_enable_mode_detect(video);
+> +
+> +		rc = wait_event_interruptible_timeout(video->wait,
+> +						      res_check(video),
+> +						      MODE_DETECT_TIMEOUT);
+> +		if (!rc) {
+> +			dev_err(video->dev, "Timed out; first mode detect\n");
+> +			clear_bit(VIDEO_RES_DETECT, &video->flags);
+> +			return;
+> +		}
+> +
+> +		/* Disable mode detect in order to re-trigger */
+> +		aspeed_video_update(video, VE_SEQ_CTRL,
+> +				    VE_SEQ_CTRL_TRIG_MODE_DET, 0);
+> +
+> +		aspeed_video_check_and_set_polarity(video);
+> +
+> +		aspeed_video_enable_mode_detect(video);
+> +
+> +		rc = wait_event_interruptible_timeout(video->wait,
+> +						      res_check(video),
+> +						      MODE_DETECT_TIMEOUT);
+> +		clear_bit(VIDEO_RES_DETECT, &video->flags);
+> +		if (!rc) {
+> +			dev_err(video->dev, "Timed out; second mode detect\n");
+> +			return;
+> +		}
+> +
+> +		src_lr_edge = aspeed_video_read(video, VE_SRC_LR_EDGE_DET);
+> +		src_tb_edge = aspeed_video_read(video, VE_SRC_TB_EDGE_DET);
+> +		mds = aspeed_video_read(video, VE_MODE_DETECT_STATUS);
+> +		sync = aspeed_video_read(video, VE_SYNC_STATUS);
+> +
+> +		video->frame_bottom = (src_tb_edge & VE_SRC_TB_EDGE_DET_BOT) >>
+> +			VE_SRC_TB_EDGE_DET_BOT_SHF;
+> +		video->frame_top = src_tb_edge & VE_SRC_TB_EDGE_DET_TOP;
+> +		det->vfrontporch = video->frame_top;
+> +		det->vbackporch = ((mds & VE_MODE_DETECT_V_LINES) >>
+> +			VE_MODE_DETECT_V_LINES_SHF) - video->frame_bottom;
+> +		det->vsync = (sync & VE_SYNC_STATUS_VSYNC) >>
+> +			VE_SYNC_STATUS_VSYNC_SHF;
+> +		if (video->frame_top > video->frame_bottom)
+> +			continue;
+> +
+> +		video->frame_right = (src_lr_edge & VE_SRC_LR_EDGE_DET_RT) >>
+> +			VE_SRC_LR_EDGE_DET_RT_SHF;
+> +		video->frame_left = src_lr_edge & VE_SRC_LR_EDGE_DET_LEFT;
+> +		det->hfrontporch = video->frame_left;
+> +		det->hbackporch = (mds & VE_MODE_DETECT_H_PIXELS) -
+> +			video->frame_right;
+> +		det->hsync = sync & VE_SYNC_STATUS_HSYNC;
+> +		if (video->frame_left > video->frame_right)
+> +			continue;
+> +
+> +		invalid_resolution = false;
+> +	} while (invalid_resolution && (tries++ < INVALID_RESOLUTION_RETRIES));
+> +
+> +	if (invalid_resolution) {
+> +		dev_err(video->dev, "Invalid resolution detected\n");
+> +		return;
+> +	}
+> +
+> +	det->height = (video->frame_bottom - video->frame_top) + 1;
+> +	det->width = (video->frame_right - video->frame_left) + 1;
+> +	video->v4l2_input_status = 0;
+> +
+> +	/*
+> +	 * Enable mode-detect watchdog, resolution-change watchdog and
+> +	 * automatic compression after frame capture.
+> +	 */
+> +	aspeed_video_update(video, VE_INTERRUPT_CTRL, 0,
+> +			    VE_INTERRUPT_MODE_DETECT_WD);
+> +	aspeed_video_update(video, VE_SEQ_CTRL, 0,
+> +			    VE_SEQ_CTRL_AUTO_COMP | VE_SEQ_CTRL_EN_WATCHDOG);
+> +
+> +	dev_dbg(video->dev, "Got resolution: %dx%d\n", det->width,
+> +		det->height);
+> +}
+> +
+> +static void aspeed_video_set_resolution(struct aspeed_video *video)
+> +{
+> +	struct v4l2_bt_timings *act = &video->active_timings;
+> +	unsigned int size = act->width * act->height;
+> +
+> +	aspeed_video_calc_compressed_size(video, size);
+> +
+> +	/* Don't use direct mode below 1024 x 768 (irqs don't fire) */
+> +	if (size < DIRECT_FETCH_THRESHOLD) {
+> +		aspeed_video_write(video, VE_TGS_0,
+> +				   FIELD_PREP(VE_TGS_FIRST,
+> +					      video->frame_left - 1) |
+> +				   FIELD_PREP(VE_TGS_LAST,
+> +					      video->frame_right));
+> +		aspeed_video_write(video, VE_TGS_1,
+> +				   FIELD_PREP(VE_TGS_FIRST, video->frame_top) |
+> +				   FIELD_PREP(VE_TGS_LAST,
+> +					      video->frame_bottom + 1));
+> +		aspeed_video_update(video, VE_CTRL, 0, VE_CTRL_INT_DE);
+> +	} else {
+> +		aspeed_video_update(video, VE_CTRL, 0, VE_CTRL_DIRECT_FETCH);
+> +	}
+> +
+> +	/* Set capture/compression frame sizes */
+> +	aspeed_video_write(video, VE_CAP_WINDOW,
+> +			   act->width << 16 | act->height);
+> +	aspeed_video_write(video, VE_COMP_WINDOW,
+> +			   act->width << 16 | act->height);
+> +	aspeed_video_write(video, VE_SRC_SCANLINE_OFFSET, act->width * 4);
+> +
+> +	size *= 4;
+> +
+> +	if (size == video->srcs[0].size / 2) {
+> +		aspeed_video_write(video, VE_SRC1_ADDR,
+> +				   video->srcs[0].dma + size);
+> +	} else if (size == video->srcs[0].size) {
+> +		if (!aspeed_video_alloc_buf(video, &video->srcs[1], size))
+> +			goto err_mem;
+> +
+> +		aspeed_video_write(video, VE_SRC1_ADDR, video->srcs[1].dma);
+> +	} else {
+> +		aspeed_video_free_buf(video, &video->srcs[0]);
+> +
+> +		if (!aspeed_video_alloc_buf(video, &video->srcs[0], size))
+> +			goto err_mem;
+> +
+> +		if (!aspeed_video_alloc_buf(video, &video->srcs[1], size))
+> +			goto err_mem;
+> +
+> +		aspeed_video_write(video, VE_SRC0_ADDR, video->srcs[0].dma);
+> +		aspeed_video_write(video, VE_SRC1_ADDR, video->srcs[1].dma);
+> +	}
+> +
+> +	return;
+> +
+> +err_mem:
+> +	dev_err(video->dev, "Failed to allocate source buffers\n");
+> +
+> +	if (video->srcs[0].size)
+> +		aspeed_video_free_buf(video, &video->srcs[0]);
+> +}
+> +
+> +static void aspeed_video_init_regs(struct aspeed_video *video)
+> +{
+> +	u32 comp_ctrl = VE_COMP_CTRL_RSVD |
+> +		FIELD_PREP(VE_COMP_CTRL_DCT_LUM, video->jpeg_quality) |
+> +		FIELD_PREP(VE_COMP_CTRL_DCT_CHR, video->jpeg_quality | 0x10);
+> +	u32 ctrl = VE_CTRL_AUTO_OR_CURSOR;
+> +	u32 seq_ctrl = VE_SEQ_CTRL_JPEG_MODE;
+> +
+> +	if (video->frame_rate)
+> +		ctrl |= FIELD_PREP(VE_CTRL_FRC, video->frame_rate);
+> +
+> +	if (video->yuv420)
+> +		seq_ctrl |= VE_SEQ_CTRL_YUV420;
+> +
+> +	/* Unlock VE registers */
+> +	aspeed_video_write(video, VE_PROTECTION_KEY, VE_PROTECTION_KEY_UNLOCK);
+> +
+> +	/* Disable interrupts */
+> +	aspeed_video_write(video, VE_INTERRUPT_CTRL, 0);
+> +	aspeed_video_write(video, VE_INTERRUPT_STATUS, 0xffffffff);
+> +
+> +	/* Clear the offset */
+> +	aspeed_video_write(video, VE_COMP_PROC_OFFSET, 0);
+> +	aspeed_video_write(video, VE_COMP_OFFSET, 0);
+> +
+> +	aspeed_video_write(video, VE_JPEG_ADDR, video->jpeg.dma);
+> +
+> +	/* Set control registers */
+> +	aspeed_video_write(video, VE_SEQ_CTRL, seq_ctrl);
+> +	aspeed_video_write(video, VE_CTRL, ctrl);
+> +	aspeed_video_write(video, VE_COMP_CTRL, comp_ctrl);
+> +
+> +	/* Don't downscale */
+> +	aspeed_video_write(video, VE_SCALING_FACTOR, 0x10001000);
+> +	aspeed_video_write(video, VE_SCALING_FILTER0, 0x00200000);
+> +	aspeed_video_write(video, VE_SCALING_FILTER1, 0x00200000);
+> +	aspeed_video_write(video, VE_SCALING_FILTER2, 0x00200000);
+> +	aspeed_video_write(video, VE_SCALING_FILTER3, 0x00200000);
+> +
+> +	/* Set mode detection defaults */
+> +	aspeed_video_write(video, VE_MODE_DETECT, 0x22666500);
+> +}
+> +
+> +static void aspeed_video_start(struct aspeed_video *video)
+> +{
+> +	aspeed_video_on(video);
+> +
+> +	aspeed_video_init_regs(video);
+> +
+> +	aspeed_video_get_resolution(video);
+> +
+> +	/* Set timings since the device is being opened for the first time */
+> +	video->active_timings = video->detected_timings;
+
+OK, so as far as I can tell the get_resolution() function sets detected_timings
+to a default value (VGA) if it can't find a valid signal.
+
+Correct?
+
+> +	aspeed_video_set_resolution(video);
+> +
+> +	video->pix_fmt.width = video->active_timings.width;
+> +	video->pix_fmt.height = video->active_timings.height;
+> +	video->pix_fmt.sizeimage = video->max_compressed_size;
+> +}
+> +
+> +static void aspeed_video_stop(struct aspeed_video *video)
+> +{
+> +	set_bit(VIDEO_STOPPED, &video->flags);
+> +	cancel_delayed_work_sync(&video->res_work);
+> +
+> +	aspeed_video_off(video);
+> +
+> +	if (video->srcs[0].size)
+> +		aspeed_video_free_buf(video, &video->srcs[0]);
+> +
+> +	if (video->srcs[1].size)
+> +		aspeed_video_free_buf(video, &video->srcs[1]);
+> +
+> +	video->v4l2_input_status = V4L2_IN_ST_NO_SIGNAL;
+> +	video->flags = 0;
+> +}
+
+<snip>
+
+> +static int aspeed_video_query_dv_timings(struct file *file, void *fh,
+> +					 struct v4l2_dv_timings *timings)
+> +{
+> +	int rc;
+> +	struct aspeed_video *video = video_drvdata(file);
+> +
+> +	/*
+> +	 * This blocks only if the driver is currently in the process of
+> +	 * detecting a new resolution; in the event of no signal or timeout
+> +	 * this function is woken up.
+> +	 */
+> +	if (file->f_flags & O_NONBLOCK) {
+> +		if (test_bit(VIDEO_RES_CHANGE, &video->flags))
+> +			return -EAGAIN;
+> +	} else {
+> +		rc = wait_event_interruptible(video->wait,
+> +					      !test_bit(VIDEO_RES_CHANGE,
+> +							&video->flags));
+> +		if (rc)
+> +			return -EINTR;
+> +	}
+> +
+> +	timings->type = V4L2_DV_BT_656_1120;
+> +	timings->bt = video->detected_timings;
+> +
+> +	return 0;
+
+
+This does not return the right error if no signal was found.
+
+I think this should be:
+
+	return video->v4l2_input_status ? -ENOLINK : 0;
+
+> +}
+
+<snip>
+
+> +static void aspeed_video_resolution_work(struct work_struct *work)
+> +{
+> +	struct delayed_work *dwork = to_delayed_work(work);
+> +	struct aspeed_video *video = container_of(dwork, struct aspeed_video,
+> +						  res_work);
+> +
+> +	aspeed_video_on(video);
+> +
+> +	/* Exit early in case no clients remain */
+> +	if (test_bit(VIDEO_STOPPED, &video->flags))
+> +		goto done;
+> +
+> +	aspeed_video_init_regs(video);
+> +
+> +	aspeed_video_get_resolution(video);
+> +
+> +	if (video->detected_timings.width != video->active_timings.width ||
+> +	    video->detected_timings.height != video->active_timings.height) {
+
+I don't think this test is sufficient. Suppose the active timings are VGA,
+and now the signal disappears. The detected_timings will be set to VGA as
+well in that case, so there is no change. This test should take whether the
+'signal present' status changes as well.
+
+> +		static const struct v4l2_event ev = {
+> +			.type = V4L2_EVENT_SOURCE_CHANGE,
+> +			.u.src_change.changes = V4L2_EVENT_SRC_CH_RESOLUTION,
+> +		};
+> +
+> +		v4l2_event_queue(&video->vdev, &ev);
+> +	} else if (test_bit(VIDEO_STREAMING, &video->flags)) {
+> +		/* No resolution change so just restart streaming */
+> +		aspeed_video_start_frame(video);
+> +	}
+> +
+> +done:
+> +	clear_bit(VIDEO_RES_CHANGE, &video->flags);
+> +	wake_up_interruptible_all(&video->wait);
+> +}
+> +
+> +static int aspeed_video_open(struct file *file)
+> +{
+> +	int rc;
+> +	struct aspeed_video *video = video_drvdata(file);
+> +
+> +	mutex_lock(&video->video_lock);
+> +
+> +	rc = v4l2_fh_open(file);
+> +	if (rc) {
+> +		mutex_unlock(&video->video_lock);
+> +		return rc;
+> +	}
+> +
+> +	if (v4l2_fh_is_singular_file(file))
+> +		aspeed_video_start(video);
+> +
+> +	mutex_unlock(&video->video_lock);
+> +
+> +	return 0;
+> +}
+> +
+> +static int aspeed_video_release(struct file *file)
+> +{
+> +	int rc;
+> +	struct aspeed_video *video = video_drvdata(file);
+> +
+> +	mutex_lock(&video->video_lock);
+> +
+> +	if (v4l2_fh_is_singular_file(file))
+> +		aspeed_video_stop(video);
+> +
+> +	rc = _vb2_fop_release(file, NULL);
+> +
+> +	mutex_unlock(&video->video_lock);
+> +
+> +	return rc;
+> +}
+
+<snip>
+
+This is now looking very good. Just a few small issues remaining.
+
+Running checkpatch.pl --strict over the patch gives me three 'CHECK' items
+they you should also address:
+
+CHECK: struct mutex definition without comment
+#312: FILE: drivers/media/platform/aspeed-video.c:222:
++       struct mutex video_lock;
+
+CHECK: spinlock_t definition without comment
+#315: FILE: drivers/media/platform/aspeed-video.c:225:
++       spinlock_t lock;
+
+CHECK: usleep_range is preferred over udelay; see Documentation/timers/timers-howto.txt
+#580: FILE: drivers/media/platform/aspeed-video.c:490:
++       udelay(100);
+
+I think v8 can be the final version. It probably won't make 4.21, though.
+If I'll get a v8 today, then there is a small chance it might still make it.
+If not, then it'll be merged early in the 4.22 cycle.
+
+Regards,
+
+	Hans
