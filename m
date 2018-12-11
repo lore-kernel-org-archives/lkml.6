@@ -6,48 +6,49 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E22EC5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:58:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF766C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:58:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40EA1208E7
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:58:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 94DAB20855
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:58:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544543910;
-	bh=rm7OpMeeljMOVL1T1Yq9FWR0rU904UztWpyVoIuc3pM=;
+	s=default; t=1544543913;
+	bh=2e/IGuvrPklVs+SVlSvonoj0C2i29Ir5DHLUgZ33gRY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=DZUNv+ldAn8Me3Jr5WFkpyB/TkgW53ytC3eHGBvOeOi6NO/qQJSohqCp51yxQootk
-	 J7nfYVySLvB9vgO/16QXzZWLucRBEV3fYL02AEnEDcxoVYAcV+t+lECNTd0nyvnTvi
-	 iEy1PptR/9b8iC9nAagse8uUW931vZwuJ6DR/flY=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40EA1208E7
+	b=rcQ6+IxRU52dwZg8k0IA2j0yvY/mpKND6CLc7nFpXGlFRDnWU+or+u5UGicWg2naD
+	 XJYDFCHvYevHjFcCKmFRRsU3BrXbWRdQOD1DtNPgohLdSeAxrZOR2FvVRhEzDI4GCx
+	 9G69pDoy9BvtqgHI2FcUuBdHCuQTR9vnSdCwsywE=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94DAB20855
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726957AbeLKP62 (ORCPT
+        id S1727050AbeLKP6c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:58:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47882 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:58:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47936 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726859AbeLKP6Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:58:25 -0500
+        id S1731014AbeLKP62 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:58:28 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6D445208E7;
-        Tue, 11 Dec 2018 15:58:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EF8B32086D;
+        Tue, 11 Dec 2018 15:58:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543904;
-        bh=rm7OpMeeljMOVL1T1Yq9FWR0rU904UztWpyVoIuc3pM=;
+        s=default; t=1544543907;
+        bh=2e/IGuvrPklVs+SVlSvonoj0C2i29Ir5DHLUgZ33gRY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eBAIDS4/WEB++S92P6kVkler9pbk8Z1EM1saMHh9DTpliW7dicjtrVeWqmVIxvhOF
-         /ZeRxtG6QKeIcdAIvOC/ADH/9Ru/e5Y2j4/Pj3sYsp6u1YwufNugKuK1BDe6dZiAJ9
-         DxcyC/Q9eQLZMlKbsSlTmQFqL9xB8rXJ5JAKsPuk=
+        b=aow4bzYslacsAokcBWjvqQRyKJqlC06m0oKL5fLUAvSJKHEl+BXpDKs210PhBRYxr
+         iqlqV6ioZ6KsYok23faAhqtS/beXPETru1yv6NxW2TZN1F4lbyj6ddHk8ij6M3ODYz
+         LVZ6KnA9DmMfg/wIMHUFWWr2WdZxlmark38yKhaQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.19 108/118] gnss: sirf: fix activation retry handling
-Date:   Tue, 11 Dec 2018 16:42:07 +0100
-Message-Id: <20181211151648.625438898@linuxfoundation.org>
+        stable@vger.kernel.org, Macpaul Lin <macpaul@gmail.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>
+Subject: [PATCH 4.19 109/118] kgdboc: fix KASAN global-out-of-bounds bug in param_set_kgdboc_var()
+Date:   Tue, 11 Dec 2018 16:42:08 +0100
+Message-Id: <20181211151648.665278775@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151644.216668863@linuxfoundation.org>
 References: <20181211151644.216668863@linuxfoundation.org>
@@ -66,47 +67,82 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Johan Hovold <johan@kernel.org>
+From: Macpaul Lin <macpaul@gmail.com>
 
-commit 06fd9ab12b804451b14d538adbf98a57c2d6846b upstream.
+commit dada6a43b0402eba438a17ac86fdc64ac56a4607 upstream.
 
-Fix activation helper which would return -ETIMEDOUT even if the last
-retry attempt was successful.
+This patch is trying to fix KE issue due to
+"BUG: KASAN: global-out-of-bounds in param_set_kgdboc_var+0x194/0x198"
+reported by Syzkaller scan."
 
-Also change the semantics of the retries variable so that it actually
-holds the number of retries (rather than tries).
+[26364:syz-executor0][name:report8t]BUG: KASAN: global-out-of-bounds in param_set_kgdboc_var+0x194/0x198
+[26364:syz-executor0][name:report&]Read of size 1 at addr ffffff900e44f95f by task syz-executor0/26364
+[26364:syz-executor0][name:report&]
+[26364:syz-executor0]CPU: 7 PID: 26364 Comm: syz-executor0 Tainted: G W 0
+[26364:syz-executor0]Call trace:
+[26364:syz-executor0][<ffffff9008095cf8>] dump_bacIctrace+Ox0/0x470
+[26364:syz-executor0][<ffffff9008096de0>] show_stack+0x20/0x30
+[26364:syz-executor0][<ffffff90089cc9c8>] dump_stack+Oxd8/0x128
+[26364:syz-executor0][<ffffff90084edb38>] print_address_description +0x80/0x4a8
+[26364:syz-executor0][<ffffff90084ee270>] kasan_report+Ox178/0x390
+[26364:syz-executor0][<ffffff90084ee4a0>] _asan_report_loadi_noabort+Ox18/0x20
+[26364:syz-executor0][<ffffff9008b092ac>] param_set_kgdboc_var+Ox194/0x198
+[26364:syz-executor0][<ffffff900813af64>] param_attr_store+Ox14c/0x270
+[26364:syz-executor0][<ffffff90081394c8>] module_attr_store+0x60/0x90
+[26364:syz-executor0][<ffffff90086690c0>] sysfs_kl_write+Ox100/0x158
+[26364:syz-executor0][<ffffff9008666d84>] kernfs_fop_write+0x27c/0x3a8
+[26364:syz-executor0][<ffffff9008508264>] do_loop_readv_writev+0x114/0x1b0
+[26364:syz-executor0][<ffffff9008509ac8>] do_readv_writev+0x4f8/0x5e0
+[26364:syz-executor0][<ffffff9008509ce4>] vfs_writev+0x7c/Oxb8
+[26364:syz-executor0][<ffffff900850ba64>] SyS_writev+Oxcc/0x208
+[26364:syz-executor0][<ffffff90080883f0>] elO_svc_naked +0x24/0x28
+[26364:syz-executor0][name:report&]
+[26364:syz-executor0][name:report&]The buggy address belongs to the variable:
+[26364:syz-executor0][name:report&] kgdb_tty_line+Ox3f/0x40
+[26364:syz-executor0][name:report&]
+[26364:syz-executor0][name:report&]Memory state around the buggy address:
+[26364:syz-executor0] ffffff900e44f800: 00 00 00 00 00 04 fa fa fa fa fa fa 00 fa fa fa
+[26364:syz-executor0] ffffff900e44f880: fa fa fa fa 00 fa fa fa fa fa fa fa 00 fa fa fa
+[26364:syz-executor0]> ffffff900e44f900: fa fa fa fa 04 fa fa fa fa fa fa fa 00 00 00 00
+[26364:syz-executor0][name:report&]                                       ^
+[26364:syz-executor0] ffffff900e44f980: 00 fa fa fa fa fa fa fa 04 fa fa fa fa fa fa fa
+[26364:syz-executor0] ffffff900e44fa00: 04 fa fa fa fa fa fa fa 00 fa fa fa fa fa fa fa
+[26364:syz-executor0][name:report&]
+[26364:syz-executor0][name:panic&]Disabling lock debugging due to kernel taint
+[26364:syz-executor0]------------[cut here]------------
 
-Fixes: d2efbbd18b1e ("gnss: add driver for sirfstar-based receivers")
-Cc: stable <stable@vger.kernel.org>	# 4.19
-Signed-off-by: Johan Hovold <johan@kernel.org>
+After checking the source code, we've found there might be an out-of-bounds
+access to "config[len - 1]" array when the variable "len" is zero.
+
+Signed-off-by: Macpaul Lin <macpaul@gmail.com>
+Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gnss/sirf.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/tty/serial/kgdboc.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/gnss/sirf.c
-+++ b/drivers/gnss/sirf.c
-@@ -168,7 +168,7 @@ static int sirf_set_active(struct sirf_d
- 	else
- 		timeout = SIRF_HIBERNATE_TIMEOUT;
+--- a/drivers/tty/serial/kgdboc.c
++++ b/drivers/tty/serial/kgdboc.c
+@@ -230,7 +230,7 @@ static void kgdboc_put_char(u8 chr)
+ static int param_set_kgdboc_var(const char *kmessage,
+ 				const struct kernel_param *kp)
+ {
+-	int len = strlen(kmessage);
++	size_t len = strlen(kmessage);
  
--	while (retries-- > 0) {
-+	do {
- 		sirf_pulse_on_off(data);
- 		ret = sirf_wait_for_power_state(data, active, timeout);
- 		if (ret < 0) {
-@@ -179,9 +179,9 @@ static int sirf_set_active(struct sirf_d
- 		}
+ 	if (len >= MAX_CONFIG_LEN) {
+ 		printk(KERN_ERR "kgdboc: config string too long\n");
+@@ -252,7 +252,7 @@ static int param_set_kgdboc_var(const ch
  
- 		break;
--	}
-+	} while (retries--);
+ 	strcpy(config, kmessage);
+ 	/* Chop out \n char as a result of echo */
+-	if (config[len - 1] == '\n')
++	if (len && config[len - 1] == '\n')
+ 		config[len - 1] = '\0';
  
--	if (retries == 0)
-+	if (retries < 0)
- 		return -ETIMEDOUT;
- 
- 	return 0;
+ 	if (configured == 1)
 
 
