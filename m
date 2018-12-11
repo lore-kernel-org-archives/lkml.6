@@ -2,53 +2,55 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF766C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:58:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F70FC5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:58:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94DAB20855
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:58:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1AF2220855
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:58:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544543913;
-	bh=2e/IGuvrPklVs+SVlSvonoj0C2i29Ir5DHLUgZ33gRY=;
+	s=default; t=1544543920;
+	bh=X3k0x04FPCOy37LjcYQiV90JjboTVqFTm1BE3JV2DSw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=rcQ6+IxRU52dwZg8k0IA2j0yvY/mpKND6CLc7nFpXGlFRDnWU+or+u5UGicWg2naD
-	 XJYDFCHvYevHjFcCKmFRRsU3BrXbWRdQOD1DtNPgohLdSeAxrZOR2FvVRhEzDI4GCx
-	 9G69pDoy9BvtqgHI2FcUuBdHCuQTR9vnSdCwsywE=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94DAB20855
+	b=Z10Uf7SBPNKuvPJ8FfD86ia0QPu/a8V78YO4IxV7j+cs5DKtJx0KbhH3gixICMsAu
+	 NeTB7FN8Hc8qBaTjHIvvJkzjGQh0ALYoBi/KsGToxN3+S7engTTwNxKOYlt4lveakx
+	 5f9tiO0hhtT+iNtx8zFFdpKeL9tY+YxKnXVW3dGA=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AF2220855
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727050AbeLKP6c (ORCPT
+        id S1731041AbeLKP6i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:58:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47936 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:58:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47982 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731014AbeLKP62 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:58:28 -0500
+        id S1727016AbeLKP6b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:58:31 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EF8B32086D;
-        Tue, 11 Dec 2018 15:58:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9781C205C9;
+        Tue, 11 Dec 2018 15:58:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543907;
-        bh=2e/IGuvrPklVs+SVlSvonoj0C2i29Ir5DHLUgZ33gRY=;
+        s=default; t=1544543910;
+        bh=X3k0x04FPCOy37LjcYQiV90JjboTVqFTm1BE3JV2DSw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aow4bzYslacsAokcBWjvqQRyKJqlC06m0oKL5fLUAvSJKHEl+BXpDKs210PhBRYxr
-         iqlqV6ioZ6KsYok23faAhqtS/beXPETru1yv6NxW2TZN1F4lbyj6ddHk8ij6M3ODYz
-         LVZ6KnA9DmMfg/wIMHUFWWr2WdZxlmark38yKhaQ=
+        b=pODLwA3LWjfUCAb3F4Fzw4yVSJzdj2HWZOvsODOlJCjO+6y+rpN/KhZ0do/1q28Sh
+         nW35ZaxEnwNL4MwYfnXiyGFMQa6kvFq6kD0oTEipIZ1c92Igdm+Skxw804Ktsb8ylq
+         ZgFAeuL1UuhL+8UW4SH1SpRTrrrtfH2ubYYj0KW4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Macpaul Lin <macpaul@gmail.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>
-Subject: [PATCH 4.19 109/118] kgdboc: fix KASAN global-out-of-bounds bug in param_set_kgdboc_var()
-Date:   Tue, 11 Dec 2018 16:42:08 +0100
-Message-Id: <20181211151648.665278775@linuxfoundation.org>
+        stable@vger.kernel.org, Patrick Geary <patrickg@supermicro.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>
+Subject: [PATCH 4.19 110/118] libnvdimm, pfn: Pad pfn namespaces relative to other regions
+Date:   Tue, 11 Dec 2018 16:42:09 +0100
+Message-Id: <20181211151648.704393916@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151644.216668863@linuxfoundation.org>
 References: <20181211151644.216668863@linuxfoundation.org>
@@ -67,82 +69,194 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Macpaul Lin <macpaul@gmail.com>
+From: Dan Williams <dan.j.williams@intel.com>
 
-commit dada6a43b0402eba438a17ac86fdc64ac56a4607 upstream.
+commit ae86cbfef3818300f1972e52f67a93211acb0e24 upstream.
 
-This patch is trying to fix KE issue due to
-"BUG: KASAN: global-out-of-bounds in param_set_kgdboc_var+0x194/0x198"
-reported by Syzkaller scan."
+Commit cfe30b872058 "libnvdimm, pmem: adjust for section collisions with
+'System RAM'" enabled Linux to workaround occasions where platform
+firmware arranges for "System RAM" and "Persistent Memory" to collide
+within a single section boundary. Unfortunately, as reported in this
+issue [1], platform firmware can inflict the same collision between
+persistent memory regions.
 
-[26364:syz-executor0][name:report8t]BUG: KASAN: global-out-of-bounds in param_set_kgdboc_var+0x194/0x198
-[26364:syz-executor0][name:report&]Read of size 1 at addr ffffff900e44f95f by task syz-executor0/26364
-[26364:syz-executor0][name:report&]
-[26364:syz-executor0]CPU: 7 PID: 26364 Comm: syz-executor0 Tainted: G W 0
-[26364:syz-executor0]Call trace:
-[26364:syz-executor0][<ffffff9008095cf8>] dump_bacIctrace+Ox0/0x470
-[26364:syz-executor0][<ffffff9008096de0>] show_stack+0x20/0x30
-[26364:syz-executor0][<ffffff90089cc9c8>] dump_stack+Oxd8/0x128
-[26364:syz-executor0][<ffffff90084edb38>] print_address_description +0x80/0x4a8
-[26364:syz-executor0][<ffffff90084ee270>] kasan_report+Ox178/0x390
-[26364:syz-executor0][<ffffff90084ee4a0>] _asan_report_loadi_noabort+Ox18/0x20
-[26364:syz-executor0][<ffffff9008b092ac>] param_set_kgdboc_var+Ox194/0x198
-[26364:syz-executor0][<ffffff900813af64>] param_attr_store+Ox14c/0x270
-[26364:syz-executor0][<ffffff90081394c8>] module_attr_store+0x60/0x90
-[26364:syz-executor0][<ffffff90086690c0>] sysfs_kl_write+Ox100/0x158
-[26364:syz-executor0][<ffffff9008666d84>] kernfs_fop_write+0x27c/0x3a8
-[26364:syz-executor0][<ffffff9008508264>] do_loop_readv_writev+0x114/0x1b0
-[26364:syz-executor0][<ffffff9008509ac8>] do_readv_writev+0x4f8/0x5e0
-[26364:syz-executor0][<ffffff9008509ce4>] vfs_writev+0x7c/Oxb8
-[26364:syz-executor0][<ffffff900850ba64>] SyS_writev+Oxcc/0x208
-[26364:syz-executor0][<ffffff90080883f0>] elO_svc_naked +0x24/0x28
-[26364:syz-executor0][name:report&]
-[26364:syz-executor0][name:report&]The buggy address belongs to the variable:
-[26364:syz-executor0][name:report&] kgdb_tty_line+Ox3f/0x40
-[26364:syz-executor0][name:report&]
-[26364:syz-executor0][name:report&]Memory state around the buggy address:
-[26364:syz-executor0] ffffff900e44f800: 00 00 00 00 00 04 fa fa fa fa fa fa 00 fa fa fa
-[26364:syz-executor0] ffffff900e44f880: fa fa fa fa 00 fa fa fa fa fa fa fa 00 fa fa fa
-[26364:syz-executor0]> ffffff900e44f900: fa fa fa fa 04 fa fa fa fa fa fa fa 00 00 00 00
-[26364:syz-executor0][name:report&]                                       ^
-[26364:syz-executor0] ffffff900e44f980: 00 fa fa fa fa fa fa fa 04 fa fa fa fa fa fa fa
-[26364:syz-executor0] ffffff900e44fa00: 04 fa fa fa fa fa fa fa 00 fa fa fa fa fa fa fa
-[26364:syz-executor0][name:report&]
-[26364:syz-executor0][name:panic&]Disabling lock debugging due to kernel taint
-[26364:syz-executor0]------------[cut here]------------
+The approach of interrogating iomem_resource does not work in this
+case because platform firmware may merge multiple regions into a single
+iomem_resource range. Instead provide a method to interrogate regions
+that share the same parent bus.
 
-After checking the source code, we've found there might be an out-of-bounds
-access to "config[len - 1]" array when the variable "len" is zero.
+This is a stop-gap until the core-MM can grow support for hotplug on
+sub-section boundaries.
 
-Signed-off-by: Macpaul Lin <macpaul@gmail.com>
-Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+[1]: https://github.com/pmem/ndctl/issues/76
+
+Fixes: cfe30b872058 ("libnvdimm, pmem: adjust for section collisions with...")
+Cc: <stable@vger.kernel.org>
+Reported-by: Patrick Geary <patrickg@supermicro.com>
+Tested-by: Patrick Geary <patrickg@supermicro.com>
+Reviewed-by: Vishal Verma <vishal.l.verma@intel.com>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/serial/kgdboc.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/nvdimm/nd-core.h     |    2 +
+ drivers/nvdimm/pfn_devs.c    |   64 ++++++++++++++++++++++++-------------------
+ drivers/nvdimm/region_devs.c |   41 +++++++++++++++++++++++++++
+ 3 files changed, 80 insertions(+), 27 deletions(-)
 
---- a/drivers/tty/serial/kgdboc.c
-+++ b/drivers/tty/serial/kgdboc.c
-@@ -230,7 +230,7 @@ static void kgdboc_put_char(u8 chr)
- static int param_set_kgdboc_var(const char *kmessage,
- 				const struct kernel_param *kp)
+--- a/drivers/nvdimm/nd-core.h
++++ b/drivers/nvdimm/nd-core.h
+@@ -112,6 +112,8 @@ resource_size_t nd_pmem_available_dpa(st
+ 		struct nd_mapping *nd_mapping, resource_size_t *overlap);
+ resource_size_t nd_blk_available_dpa(struct nd_region *nd_region);
+ resource_size_t nd_region_available_dpa(struct nd_region *nd_region);
++int nd_region_conflict(struct nd_region *nd_region, resource_size_t start,
++		resource_size_t size);
+ resource_size_t nvdimm_allocated_dpa(struct nvdimm_drvdata *ndd,
+ 		struct nd_label_id *label_id);
+ int alias_dpa_busy(struct device *dev, void *data);
+--- a/drivers/nvdimm/pfn_devs.c
++++ b/drivers/nvdimm/pfn_devs.c
+@@ -590,14 +590,47 @@ static u64 phys_pmem_align_down(struct n
+ 			ALIGN_DOWN(phys, nd_pfn->align));
+ }
+ 
++/*
++ * Check if pmem collides with 'System RAM', or other regions when
++ * section aligned.  Trim it accordingly.
++ */
++static void trim_pfn_device(struct nd_pfn *nd_pfn, u32 *start_pad, u32 *end_trunc)
++{
++	struct nd_namespace_common *ndns = nd_pfn->ndns;
++	struct nd_namespace_io *nsio = to_nd_namespace_io(&ndns->dev);
++	struct nd_region *nd_region = to_nd_region(nd_pfn->dev.parent);
++	const resource_size_t start = nsio->res.start;
++	const resource_size_t end = start + resource_size(&nsio->res);
++	resource_size_t adjust, size;
++
++	*start_pad = 0;
++	*end_trunc = 0;
++
++	adjust = start - PHYS_SECTION_ALIGN_DOWN(start);
++	size = resource_size(&nsio->res) + adjust;
++	if (region_intersects(start - adjust, size, IORESOURCE_SYSTEM_RAM,
++				IORES_DESC_NONE) == REGION_MIXED
++			|| nd_region_conflict(nd_region, start - adjust, size))
++		*start_pad = PHYS_SECTION_ALIGN_UP(start) - start;
++
++	/* Now check that end of the range does not collide. */
++	adjust = PHYS_SECTION_ALIGN_UP(end) - end;
++	size = resource_size(&nsio->res) + adjust;
++	if (region_intersects(start, size, IORESOURCE_SYSTEM_RAM,
++				IORES_DESC_NONE) == REGION_MIXED
++			|| !IS_ALIGNED(end, nd_pfn->align)
++			|| nd_region_conflict(nd_region, start, size + adjust))
++		*end_trunc = end - phys_pmem_align_down(nd_pfn, end);
++}
++
+ static int nd_pfn_init(struct nd_pfn *nd_pfn)
  {
--	int len = strlen(kmessage);
-+	size_t len = strlen(kmessage);
+ 	u32 dax_label_reserve = is_nd_dax(&nd_pfn->dev) ? SZ_128K : 0;
+ 	struct nd_namespace_common *ndns = nd_pfn->ndns;
+-	u32 start_pad = 0, end_trunc = 0;
++	struct nd_namespace_io *nsio = to_nd_namespace_io(&ndns->dev);
+ 	resource_size_t start, size;
+-	struct nd_namespace_io *nsio;
+ 	struct nd_region *nd_region;
++	u32 start_pad, end_trunc;
+ 	struct nd_pfn_sb *pfn_sb;
+ 	unsigned long npfns;
+ 	phys_addr_t offset;
+@@ -629,30 +662,7 @@ static int nd_pfn_init(struct nd_pfn *nd
  
- 	if (len >= MAX_CONFIG_LEN) {
- 		printk(KERN_ERR "kgdboc: config string too long\n");
-@@ -252,7 +252,7 @@ static int param_set_kgdboc_var(const ch
+ 	memset(pfn_sb, 0, sizeof(*pfn_sb));
  
- 	strcpy(config, kmessage);
- 	/* Chop out \n char as a result of echo */
--	if (config[len - 1] == '\n')
-+	if (len && config[len - 1] == '\n')
- 		config[len - 1] = '\0';
+-	/*
+-	 * Check if pmem collides with 'System RAM' when section aligned and
+-	 * trim it accordingly
+-	 */
+-	nsio = to_nd_namespace_io(&ndns->dev);
+-	start = PHYS_SECTION_ALIGN_DOWN(nsio->res.start);
+-	size = resource_size(&nsio->res);
+-	if (region_intersects(start, size, IORESOURCE_SYSTEM_RAM,
+-				IORES_DESC_NONE) == REGION_MIXED) {
+-		start = nsio->res.start;
+-		start_pad = PHYS_SECTION_ALIGN_UP(start) - start;
+-	}
+-
+-	start = nsio->res.start;
+-	size = PHYS_SECTION_ALIGN_UP(start + size) - start;
+-	if (region_intersects(start, size, IORESOURCE_SYSTEM_RAM,
+-				IORES_DESC_NONE) == REGION_MIXED
+-			|| !IS_ALIGNED(start + resource_size(&nsio->res),
+-				nd_pfn->align)) {
+-		size = resource_size(&nsio->res);
+-		end_trunc = start + size - phys_pmem_align_down(nd_pfn,
+-				start + size);
+-	}
+-
++	trim_pfn_device(nd_pfn, &start_pad, &end_trunc);
+ 	if (start_pad + end_trunc)
+ 		dev_info(&nd_pfn->dev, "%s alignment collision, truncate %d bytes\n",
+ 				dev_name(&ndns->dev), start_pad + end_trunc);
+@@ -663,7 +673,7 @@ static int nd_pfn_init(struct nd_pfn *nd
+ 	 * implementation will limit the pfns advertised through
+ 	 * ->direct_access() to those that are included in the memmap.
+ 	 */
+-	start += start_pad;
++	start = nsio->res.start + start_pad;
+ 	size = resource_size(&nsio->res);
+ 	npfns = PFN_SECTION_ALIGN_UP((size - start_pad - end_trunc - SZ_8K)
+ 			/ PAGE_SIZE);
+--- a/drivers/nvdimm/region_devs.c
++++ b/drivers/nvdimm/region_devs.c
+@@ -1184,6 +1184,47 @@ int nvdimm_has_cache(struct nd_region *n
+ }
+ EXPORT_SYMBOL_GPL(nvdimm_has_cache);
  
- 	if (configured == 1)
++struct conflict_context {
++	struct nd_region *nd_region;
++	resource_size_t start, size;
++};
++
++static int region_conflict(struct device *dev, void *data)
++{
++	struct nd_region *nd_region;
++	struct conflict_context *ctx = data;
++	resource_size_t res_end, region_end, region_start;
++
++	if (!is_memory(dev))
++		return 0;
++
++	nd_region = to_nd_region(dev);
++	if (nd_region == ctx->nd_region)
++		return 0;
++
++	res_end = ctx->start + ctx->size;
++	region_start = nd_region->ndr_start;
++	region_end = region_start + nd_region->ndr_size;
++	if (ctx->start >= region_start && ctx->start < region_end)
++		return -EBUSY;
++	if (res_end > region_start && res_end <= region_end)
++		return -EBUSY;
++	return 0;
++}
++
++int nd_region_conflict(struct nd_region *nd_region, resource_size_t start,
++		resource_size_t size)
++{
++	struct nvdimm_bus *nvdimm_bus = walk_to_nvdimm_bus(&nd_region->dev);
++	struct conflict_context ctx = {
++		.nd_region = nd_region,
++		.start = start,
++		.size = size,
++	};
++
++	return device_for_each_child(&nvdimm_bus->dev, &ctx, region_conflict);
++}
++
+ void __exit nd_region_devs_exit(void)
+ {
+ 	ida_destroy(&region_ida);
 
 
