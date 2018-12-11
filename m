@@ -7,52 +7,50 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D37A3C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:02:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1C31C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:02:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B68B2084E
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:02:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 79BE62084E
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:02:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544544123;
-	bh=BTtkimGuGQkuQeaMWEc1mv9ww5EFL9N8nS4IFLM76zM=;
+	s=default; t=1544544126;
+	bh=GOkEG5vwq4/oubRfc6Y3ezEkX/tAb1L5TDhDzXe0/gc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=sm5sfO+TDBhcsMw5877Yd27Kyw4vgg1U2//K27VG2cCLdIM3Y7wHXDq4GX+hm5FRA
-	 VkjJ1OK8hf35eqW8UkT3RzMG3PMi0BQoPjCaQ4TK/B6qjDZcrLHufgpo40dct06sqW
-	 IGF3aaeygulSP70aybZ5uDBozRjaA7o3GJthbFns=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B68B2084E
+	b=hJnyvMDPAXo2wxmOk46MtvHbz1il4AyO3BY9lXZYX1Zt1yBrhUlGNfhTXKBXH2fv+
+	 KGQ63iGsmFWOToRzZlmDRnOIrthU27bJwlOB5eCV+ifSjnxNNTE+qrVgafD/xpG8rn
+	 k6DIz8wgu21WhbjCwDN3Qh5yZzTYHOn/ATvkBupE=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79BE62084E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730732AbeLKP5F (ORCPT
+        id S1731081AbeLKQCF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:57:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45866 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 11:02:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45978 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730704AbeLKP5A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:57:00 -0500
+        id S1730727AbeLKP5F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:57:05 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CB12A205C9;
-        Tue, 11 Dec 2018 15:56:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DD5082086D;
+        Tue, 11 Dec 2018 15:57:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543819;
-        bh=BTtkimGuGQkuQeaMWEc1mv9ww5EFL9N8nS4IFLM76zM=;
+        s=default; t=1544543824;
+        bh=GOkEG5vwq4/oubRfc6Y3ezEkX/tAb1L5TDhDzXe0/gc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=o8OVEc6TN0E4p/El0KXskH1OoLBLeLgpZ44EeSjkYH2xCqp1ptsaqjtAyU6wJRvar
-         rENn6VVANEOgeGOw9AcBhHIVmi3zmVyomQ5bcTazwHlWvss3LkrdLt5Pmf1YYPJran
-         R/4WcppN29CfXelj+lxviQuS9VmYLDd60nXvp/x0=
+        b=dbtGxq6bZIXU0dj989aXgAp/ghmDxE/elwMbFD0B+kEfCNAm5tG8jSmemE722O2xI
+         Bj/yav1m5s777J2SE9Ebc6s6iM4ljjpdLg0AgHK7zhIYG8HDevVXKgt+U7y0MjNA7n
+         6hoFmFpTELyKpVTVf/mYVxTuUQvFDx+7Hw0rkcyg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Adrian Amborzewicz <adrian.ambrozewicz@intel.com>,
-        Thor Thayer <thor.thayer@linux.intel.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 041/118] mtd: spi-nor: Fix Cadence QSPI page fault kernel panic
-Date:   Tue, 11 Dec 2018 16:41:00 +0100
-Message-Id: <20181211151645.894859419@linuxfoundation.org>
+Subject: [PATCH 4.19 043/118] NFSv4: Fix a NFSv4 state manager deadlock
+Date:   Tue, 11 Dec 2018 16:41:02 +0100
+Message-Id: <20181211151645.981856431@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151644.216668863@linuxfoundation.org>
 References: <20181211151644.216668863@linuxfoundation.org>
@@ -71,74 +69,78 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit a6a66f80c85e8e20573ca03fabf32445954a88d5 ]
+[ Upstream commit aeabb3c96186a0f944fc2b1f25c84d5eb3a93fa9 ]
 
-The current Cadence QSPI driver caused a kernel panic sporadically
-when writing to QSPI. The problem was caused by writing more bytes
-than needed because the QSPI operated on 4 bytes at a time.
-<snip>
-[   11.202044] Unable to handle kernel paging request at virtual address bffd3000
-[   11.209254] pgd = e463054d
-[   11.211948] [bffd3000] *pgd=2fffb811, *pte=00000000, *ppte=00000000
-[   11.218202] Internal error: Oops: 7 [#1] SMP ARM
-[   11.222797] Modules linked in:
-[   11.225844] CPU: 1 PID: 1317 Comm: systemd-hwdb Not tainted 4.17.7-d0c45cd44a8f
-[   11.235796] Hardware name: Altera SOCFPGA Arria10
-[   11.240487] PC is at __raw_writesl+0x70/0xd4
-[   11.244741] LR is at cqspi_write+0x1a0/0x2cc
-</snip>
-On a page boundary limit the number of bytes copied from the tx buffer
-to remain within the page.
+Fix a deadlock whereby the NFSv4 state manager can get stuck in the
+delegation return code, waiting for a layout return to complete in
+another thread. If the server reboots before that other thread
+completes, then we need to be able to start a second state
+manager thread in order to perform recovery.
 
-This patch uses a temporary buffer to hold the 4 bytes to write and then
-copies only the bytes required from the tx buffer.
-
-Reported-by: Adrian Amborzewicz <adrian.ambrozewicz@intel.com>
-Signed-off-by: Thor Thayer <thor.thayer@linux.intel.com>
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mtd/spi-nor/cadence-quadspi.c | 19 ++++++++++++++++---
- 1 file changed, 16 insertions(+), 3 deletions(-)
+ fs/nfs/nfs4_fs.h   |  2 ++
+ fs/nfs/nfs4state.c | 16 +++++++++++-----
+ 2 files changed, 13 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/mtd/spi-nor/cadence-quadspi.c b/drivers/mtd/spi-nor/cadence-quadspi.c
-index 6e9cbd1a0b6d..0806c7a81c0f 100644
---- a/drivers/mtd/spi-nor/cadence-quadspi.c
-+++ b/drivers/mtd/spi-nor/cadence-quadspi.c
-@@ -644,9 +644,23 @@ static int cqspi_indirect_write_execute(struct spi_nor *nor, loff_t to_addr,
- 		ndelay(cqspi->wr_delay);
+diff --git a/fs/nfs/nfs4_fs.h b/fs/nfs/nfs4_fs.h
+index 3a6904173214..63287d911c08 100644
+--- a/fs/nfs/nfs4_fs.h
++++ b/fs/nfs/nfs4_fs.h
+@@ -41,6 +41,8 @@ enum nfs4_client_state {
+ 	NFS4CLNT_MOVED,
+ 	NFS4CLNT_LEASE_MOVED,
+ 	NFS4CLNT_DELEGATION_EXPIRED,
++	NFS4CLNT_RUN_MANAGER,
++	NFS4CLNT_DELEGRETURN_RUNNING,
+ };
  
- 	while (remaining > 0) {
-+		size_t write_words, mod_bytes;
-+
- 		write_bytes = remaining > page_size ? page_size : remaining;
--		iowrite32_rep(cqspi->ahb_base, txbuf,
--			      DIV_ROUND_UP(write_bytes, 4));
-+		write_words = write_bytes / 4;
-+		mod_bytes = write_bytes % 4;
-+		/* Write 4 bytes at a time then single bytes. */
-+		if (write_words) {
-+			iowrite32_rep(cqspi->ahb_base, txbuf, write_words);
-+			txbuf += (write_words * 4);
-+		}
-+		if (mod_bytes) {
-+			unsigned int temp = 0xFFFFFFFF;
-+
-+			memcpy(&temp, txbuf, mod_bytes);
-+			iowrite32(temp, cqspi->ahb_base);
-+			txbuf += mod_bytes;
-+		}
+ #define NFS4_RENEW_TIMEOUT		0x01
+diff --git a/fs/nfs/nfs4state.c b/fs/nfs/nfs4state.c
+index 18920152da14..d2f645d34eb1 100644
+--- a/fs/nfs/nfs4state.c
++++ b/fs/nfs/nfs4state.c
+@@ -1210,6 +1210,7 @@ void nfs4_schedule_state_manager(struct nfs_client *clp)
+ 	struct task_struct *task;
+ 	char buf[INET6_ADDRSTRLEN + sizeof("-manager") + 1];
  
- 		if (!wait_for_completion_timeout(&cqspi->transfer_complete,
- 					msecs_to_jiffies(CQSPI_TIMEOUT_MS))) {
-@@ -655,7 +669,6 @@ static int cqspi_indirect_write_execute(struct spi_nor *nor, loff_t to_addr,
- 			goto failwr;
++	set_bit(NFS4CLNT_RUN_MANAGER, &clp->cl_state);
+ 	if (test_and_set_bit(NFS4CLNT_MANAGER_RUNNING, &clp->cl_state) != 0)
+ 		return;
+ 	__module_get(THIS_MODULE);
+@@ -2485,6 +2486,7 @@ static void nfs4_state_manager(struct nfs_client *clp)
+ 
+ 	/* Ensure exclusive access to NFSv4 state */
+ 	do {
++		clear_bit(NFS4CLNT_RUN_MANAGER, &clp->cl_state);
+ 		if (test_bit(NFS4CLNT_PURGE_STATE, &clp->cl_state)) {
+ 			section = "purge state";
+ 			status = nfs4_purge_lease(clp);
+@@ -2575,14 +2577,18 @@ static void nfs4_state_manager(struct nfs_client *clp)
  		}
  
--		txbuf += write_bytes;
- 		remaining -= write_bytes;
+ 		nfs4_end_drain_session(clp);
+-		if (test_and_clear_bit(NFS4CLNT_DELEGRETURN, &clp->cl_state)) {
+-			nfs_client_return_marked_delegations(clp);
+-			continue;
++		nfs4_clear_state_manager_bit(clp);
++
++		if (!test_and_set_bit(NFS4CLNT_DELEGRETURN_RUNNING, &clp->cl_state)) {
++			if (test_and_clear_bit(NFS4CLNT_DELEGRETURN, &clp->cl_state)) {
++				nfs_client_return_marked_delegations(clp);
++				set_bit(NFS4CLNT_RUN_MANAGER, &clp->cl_state);
++			}
++			clear_bit(NFS4CLNT_DELEGRETURN_RUNNING, &clp->cl_state);
+ 		}
  
- 		if (remaining > 0)
+-		nfs4_clear_state_manager_bit(clp);
+ 		/* Did we race with an attempt to give us more work? */
+-		if (clp->cl_state == 0)
++		if (!test_bit(NFS4CLNT_RUN_MANAGER, &clp->cl_state))
+ 			return;
+ 		if (test_and_set_bit(NFS4CLNT_MANAGER_RUNNING, &clp->cl_state) != 0)
+ 			return;
 -- 
 2.19.1
 
