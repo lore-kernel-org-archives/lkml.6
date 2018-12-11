@@ -2,127 +2,94 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3CCCC5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:04:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E4DCC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:05:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74E372082F
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:04:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74E372082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 5BC0C2081B
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:05:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BC0C2081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=8bytes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726639AbeLKPEV (ORCPT
+        id S1726652AbeLKPFR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:04:21 -0500
-Received: from foss.arm.com ([217.140.101.70]:49152 "EHLO foss.arm.com"
+        Tue, 11 Dec 2018 10:05:17 -0500
+Received: from 8bytes.org ([81.169.241.247]:53510 "EHLO theia.8bytes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726328AbeLKPEV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:04:21 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 72F741596;
-        Tue, 11 Dec 2018 07:04:20 -0800 (PST)
-Received: from queper01-lin (queper01-lin.cambridge.arm.com [10.1.195.48])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 55B443F575;
-        Tue, 11 Dec 2018 07:04:16 -0800 (PST)
-Date:   Tue, 11 Dec 2018 15:04:11 +0000
-From:   Quentin Perret <quentin.perret@arm.com>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     peterz@infradead.org, rjw@rjwysocki.net,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        gregkh@linuxfoundation.org, mingo@redhat.com,
-        dietmar.eggemann@arm.com, morten.rasmussen@arm.com,
-        chris.redpath@arm.com, patrick.bellasi@arm.com,
-        valentin.schneider@arm.com, vincent.guittot@linaro.org,
-        thara.gopinath@linaro.org, viresh.kumar@linaro.org,
-        tkjos@google.com, joel@joelfernandes.org, smuckle@google.com,
-        adharmap@codeaurora.org, skannan@codeaurora.org,
-        pkondeti@codeaurora.org, juri.lelli@redhat.com,
-        edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
-        currojerez@riseup.net, javi.merino@kernel.org
-Subject: Re: [PATCH v10 04/15] PM / EM: Expose the Energy Model in sysfs
-Message-ID: <20181211150409.vn25xlmzonqhd4fi@queper01-lin>
-References: <20181203095628.11858-1-quentin.perret@arm.com>
- <20181203095628.11858-5-quentin.perret@arm.com>
- <20181211141827.GA85618@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181211141827.GA85618@gmail.com>
-User-Agent: NeoMutt/20171215
+        id S1726231AbeLKPFQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:05:16 -0500
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id 501241EC; Tue, 11 Dec 2018 16:05:15 +0100 (CET)
+From:   Joerg Roedel <joro@8bytes.org>
+To:     iommu@lists.linux-foundation.org
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Hanjun Guo <hanjun.guo@linaro.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Joerg Roedel <joro@8bytes.org>, jroedel@suse.de,
+        Robin Murphy <robin.murphy@arm.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/4] iommu/sysfs: Rename iommu_release_device()
+Date:   Tue, 11 Dec 2018 16:05:10 +0100
+Message-Id: <20181211150513.15161-2-joro@8bytes.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181211150513.15161-1-joro@8bytes.org>
+References: <20181211150513.15161-1-joro@8bytes.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tuesday 11 Dec 2018 at 15:18:28 (+0100), Ingo Molnar wrote:
-> 
-> * Quentin Perret <quentin.perret@arm.com> wrote:
-> 
-> > Expose the Energy Model (read-only) of all performance domains in sysfs
-> > for convenience. To do so, add a kobject to the CPU subsystem under the
-> > umbrella of which a kobject for each performance domain is attached.
-> > 
-> > The resulting hierarchy is as follows for a platform with two
-> > performance domains for example:
-> > 
-> >    /sys/devices/system/cpu/energy_model
-> >    ├── pd0
-> >    │   ├── cost
-> >    │   ├── cpus
-> >    │   ├── frequency
-> >    │   └── power
-> >    └── pd4
-> >        ├── cost
-> >        ├── cpus
-> >        ├── frequency
-> >        └── power
-> > 
-> > In this implementation, the kobject abstraction is only used as a
-> > convenient way of exposing data to sysfs. However, it could also be
-> > used in the future to allocate and release performance domains in a more
-> > dynamic way using reference counting.
-> > 
-> > Cc: Peter Zijlstra <peterz@infradead.org>
-> > Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-> > Signed-off-by: Quentin Perret <quentin.perret@arm.com>
-> > ---
-> >  include/linux/energy_model.h |  2 +
-> >  kernel/power/energy_model.c  | 90 ++++++++++++++++++++++++++++++++++++
-> >  2 files changed, 92 insertions(+)
-> 
-> Why is a read-only ABI added for 'convenience'? We really don't do that 
-> as ABIs are final and they come with responsibilities.
-> 
-> I think if this is for debug purposes it should be declared and put into 
-> debugfs or so.
-> 
-> If it's for some other purpose that purpose should be declared.
+From: Joerg Roedel <jroedel@suse.de>
 
-This is basically supposed to look like the CPUFreq policy entries.
-You can get things like this for CPUFreq:
+Remove the iommu_ prefix from the function and a few other
+static data structures so that the iommu_release_device name
+can be re-used in iommu core code.
 
-  $ cat /sys/devices/system/cpu/cpufreq/policy1/scaling_available_frequencies
-  450000 625000 800000 950000 1100000
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
+---
+ drivers/iommu/iommu-sysfs.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-And things like this for the EM:
+diff --git a/drivers/iommu/iommu-sysfs.c b/drivers/iommu/iommu-sysfs.c
+index 36d1a7ce7fc4..71c2249d3260 100644
+--- a/drivers/iommu/iommu-sysfs.c
++++ b/drivers/iommu/iommu-sysfs.c
+@@ -22,25 +22,25 @@ static struct attribute *devices_attr[] = {
+ 	NULL,
+ };
+ 
+-static const struct attribute_group iommu_devices_attr_group = {
++static const struct attribute_group devices_attr_group = {
+ 	.name = "devices",
+ 	.attrs = devices_attr,
+ };
+ 
+-static const struct attribute_group *iommu_dev_groups[] = {
+-	&iommu_devices_attr_group,
++static const struct attribute_group *dev_groups[] = {
++	&devices_attr_group,
+ 	NULL,
+ };
+ 
+-static void iommu_release_device(struct device *dev)
++static void release_device(struct device *dev)
+ {
+ 	kfree(dev);
+ }
+ 
+ static struct class iommu_class = {
+ 	.name = "iommu",
+-	.dev_release = iommu_release_device,
+-	.dev_groups = iommu_dev_groups,
++	.dev_release = release_device,
++	.dev_groups = dev_groups,
+ };
+ 
+ static int __init iommu_dev_init(void)
+-- 
+2.17.1
 
-$ cat /sys/devices/system/cpu/energy_model/pd1/power
-  160 239 343 454 583
-
-In general, I expect these two interfaces to be used for similar
-purposes. Now, whether or not they should be exposed in debugfs is a
-good question. I went for sysfs for consistency with CPUFreq, but I'm
-not opposed to a change in this area for the EM if you feel it's
-preferable.
-
-Also, I'm happy to just drop this patch for now and to begin by not
-exposing the EM at all. It's easier to expose it later than to remove it
-once userspace tools depend on it.
-
-Thanks,
-Quentin
