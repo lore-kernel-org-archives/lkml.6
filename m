@@ -2,97 +2,113 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BA97C67839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:27:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02D89C67839
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:28:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F00552084C
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:27:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="vAZb0Grw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F00552084C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
+	by mail.kernel.org (Postfix) with ESMTP id BA5B22084C
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:28:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA5B22084C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726243AbeLKW1c (ORCPT
+        id S1726255AbeLKW2g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 17:27:32 -0500
-Received: from imap.thunk.org ([74.207.234.97]:51158 "EHLO imap.thunk.org"
+        Tue, 11 Dec 2018 17:28:36 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:60462 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726158AbeLKW1c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 17:27:32 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
-         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=/IvcuDQvm/h8iDQ8f8xLaqi/5qgNLsbF4rzZemI8Wow=; b=vAZb0GrwGoIUy4KgcPhLhaWgiV
-        SKt4Zdkdu1acTeRXn6Y+D6kg/3erX+NWnNvD4fxfId8KOw/fxEW2dAzwD6ApY0W1Na6+lNL9VRy8l
-        KNPrVesYlAiO5nX3gY2mtI7GdraUxeYjWO+v699f2ONZRimx1GoRZFUP4B2TYhnqdzEE=;
-Received: from root (helo=callcc.thunk.org)
-        by imap.thunk.org with local-esmtp (Exim 4.89)
-        (envelope-from <tytso@thunk.org>)
-        id 1gWqUt-0006r1-Ds; Tue, 11 Dec 2018 22:27:23 +0000
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 982097A4FCA; Tue, 11 Dec 2018 17:27:21 -0500 (EST)
-Date:   Tue, 11 Dec 2018 17:27:21 -0500
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Chandan Rajendra <chandan@linux.vnet.ibm.com>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
-        Eric Biggers <ebiggers@kernel.org>, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-fscrypt@vger.kernel.org
-Subject: Re: [BUG BISECT next] Files cannot be opened after "fsverity: Move
- verity status check to fsverity_file_open"
-Message-ID: <20181211222721.GC4464@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Chandan Rajendra <chandan@linux.vnet.ibm.com>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
-        Eric Biggers <ebiggers@kernel.org>, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-fscrypt@vger.kernel.org
-References: <CAJKOXPdNS+Qs6t1GwrgYhWT5EbtORJwYMzSrDPf8oAxv7ndNBg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJKOXPdNS+Qs6t1GwrgYhWT5EbtORJwYMzSrDPf8oAxv7ndNBg@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+        id S1726158AbeLKW2g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 17:28:36 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id ED8353082139;
+        Tue, 11 Dec 2018 22:28:35 +0000 (UTC)
+Received: from ovpn-116-73.ams2.redhat.com (ovpn-116-73.ams2.redhat.com [10.36.116.73])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 29B675D736;
+        Tue, 11 Dec 2018 22:28:33 +0000 (UTC)
+Message-ID: <0ffb8bc11613ea082179142f7c90830d4e419491.camel@redhat.com>
+Subject: Re: [PATCH net-next v2 1/4] indirect call wrappers: helpers to
+ speed-up indirect calls of builtin
+From:   Paolo Abeni <pabeni@redhat.com>
+To:     David Woodhouse <dwmw2@infradead.org>, netdev@vger.kernel.org
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        Paul Turner <pjt@google.com>, linux-kernel@vger.kernel.org
+Date:   Tue, 11 Dec 2018 23:28:32 +0100
+In-Reply-To: <2c80b9d34540dad337ed2fce6f9d16233105a2c2.camel@infradead.org>
+References: <cover.1544032300.git.pabeni@redhat.com>
+         <07aaed31eb0b515c173138e1358c412157e58ec2.1544032300.git.pabeni@redhat.com>
+         <b72eeb67a0c83d2b497ef5b2537a6211d18f847d.camel@infradead.org>
+         <f692efbbc9df09acb5f18ad16907e28cda520e4d.camel@redhat.com>
+         <2c80b9d34540dad337ed2fce6f9d16233105a2c2.camel@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.2 (3.30.2-2.fc29) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Tue, 11 Dec 2018 22:28:36 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 11, 2018 at 03:15:53PM +0100, Krzysztof Kozlowski wrote:
-> Hi,
+Hi,
+
+I'm sorry for the long delay, I was (and still I am) diverted by some
+other duty.
+
+On Fri, 2018-12-07 at 21:46 +0000, David Woodhouse wrote:
+> On Fri, 2018-12-07 at 21:46 +0100, Paolo Abeni wrote:
+> > > I wonder if we can declare the common case functions as 'weak' so that
+> > > the link failures don't happen when they're absent.
+> > 
+> > I experimented a previous version with alias. I avoided weak alias
+> > usage, because I [mis?]understood not all compilers have a complete
+> > support for them (e.g. clang).
+> > Also, with weak ref, a coding error that is now discovered at build
+> > time will result in worse performance at runtime, likely with some
+> > uncommon configuration, possibly not as easily detected. I'm unsure
+> > that would be better ?!?
 > 
-> Bisect from today's next pointed me to:
-> commit 4de97efb578a094e8fbf279522d41eb9ece1e3e0
-> Author: Chandan Rajendra <chandan@linux.vnet.ibm.com>
-> Date:   Sat Dec 8 12:21:43 2018 +0530
->     fsverity: Move verity status check to fsverity_file_open
+> I think everything supports weak linkage; we've been using it for
+> years.
+
+Ok, I likely was confused by some old, non first-hand info.
+
+Anyway weak alias will turn a compile time issue in a possible run-time 
+(small) regression. I think the first option would be preferable.
+
+> > I'm sorry, I don't follow here. I think static keys can't be used for
+> > the reported network case: we have different list elements each
+> > contaning a different function pointer and we access/use
+> > different ptr on a per packet basis.
 > 
-> as a reason of "Operation not supported" when reading any file from
-> mounted ext4fs (from SD card). Rootfs from nfsroot works but reading
-> from /home with ext4fs fails.
+> Yes, the alternatives would be used to change the "likely" case.
+> 
+> We still do the "if (fn == default_fn) default_fn(); else (*fn)();"
+> part; or even the variant with two (or more) common cases. 
+> 
+> It's just that the value of 'default_fn' can be changed at runtime
+> (with patching like alternatives/static keys, since of course it has to
+> be a direct call).
 
-Can you send me an compressed e2image of your sdcard?
+Thanks for clarifying. If I understood correctly, you would like some
+helper for:
 
-	e2image -Q /dev/mmcblk0p2 sdcard.qcow2
-	bzip2 -z sdcard.qcow2
+if (static_branch_likely(&use_default_fn_a))
+    INDIRECT_CALL_1(f, default_fn_a, <args>)
+else if (static_branch_likely(&use_default_fn_b))
+    INDIRECT_CALL_1(f, default_fn_b, <args>)
+// ...
 
-Thanks!
+if so, I think we can eventually add support for this kind of stuff on
+top of the proposed macros. WDYT?
 
-					- Ted
+Thanks,
+
+Paolo
+
+
