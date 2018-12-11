@@ -2,202 +2,135 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 581F7C67839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 03:22:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AE86C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 03:24:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D86E2084C
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 03:22:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544498525;
-	bh=FO9I1OCXE44/F8PRjLU1uMnj5r987K3vv0glqJU8rkE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=yR7/L8fzmo252dC0Nh3F5uVqtaQzVNbwdxq+81ueGcXUyXqewdgmbDKRHUBsVC+hS
-	 AZ8Koa3U0c0M06L8SlLpKKQLnc+KVatEA9+SNOAx4L8EKIH0eOmHTEoMdKFHg+m8pN
-	 q9HbHc0rqm13zen3AZhYC95jvvlS9yiO3Ww7Up14=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D86E2084C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id F423F20645
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 03:24:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="Pc2BG8br"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F423F20645
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729863AbeLKDWE (ORCPT
+        id S1729878AbeLKDYL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 22:22:04 -0500
-Received: from mail-yb1-f193.google.com ([209.85.219.193]:33366 "EHLO
-        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728584AbeLKDWE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 22:22:04 -0500
-Received: by mail-yb1-f193.google.com with SMTP id f125so6159495ybc.0;
-        Mon, 10 Dec 2018 19:22:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=WZNmerNVp1OzoQvVK2tSTUhw2j6CZgTEH86VJHmZyEY=;
-        b=GKb2SP422Og9aXteBCggxYkcj/IhViZy8dTo6WfDrdcJZuENf2BAutcLxILDRJ2CKC
-         HdEq7OJiD1oiw+VyncHxes2CNycZAjg8F5mfCUQoOoUmthawil3J5YVGY1LdIPsOy0L0
-         eJ7lVraTiugN1I0m/EFH01ITmGLA486FiYt1L3ocvBjmqzj8LdZxzoaD9AcbB1KOyr+p
-         DDWl2oY3c4PTrv//vAYRutu02BgCIRkE6HSl66UrX6TJa6XZrW64Enn/SA9cytT7JU0w
-         vZV8hRrVRvLHYLLwJJEByl9s2TRCPmj2y7h1YuIUKrCTG3lBwg/pJxZjNmR4h0hTcES6
-         G5Hw==
-X-Gm-Message-State: AA+aEWY14qHpjQkZP+zHkyjJtRyI2G11GGNlg9NfCQqT8tUJmeiDEqq0
-        eg+UoqEgqKxNY+VZve4M/Kk=
-X-Google-Smtp-Source: AFSGD/Wcc9LMd74JAttNgCgQsp5UIy2Bi7zB07z4H9czoXyP1DinwFtIs89fAfs1i5xdldpX0AHRoQ==
-X-Received: by 2002:a25:1585:: with SMTP id 127-v6mr14699787ybv.208.1544498522650;
-        Mon, 10 Dec 2018 19:22:02 -0800 (PST)
-Received: from dennisz-mbp.dhcp.thefacebook.com ([2620:10d:c091:180::1:c7f8])
-        by smtp.gmail.com with ESMTPSA id j6sm4403463ywi.110.2018.12.10.19.22.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 10 Dec 2018 19:22:01 -0800 (PST)
-Date:   Mon, 10 Dec 2018 22:21:59 -0500
-From:   Dennis Zhou <dennis@kernel.org>
-To:     Josef Bacik <josef@toxicpanda.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>, kernel-team@fb.com,
-        linux-block@vger.kernel.org, cgroups@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] block: fix iolat timestamp and restore accounting
- semantics
-Message-ID: <20181211032159.GB40583@dennisz-mbp.dhcp.thefacebook.com>
-References: <20181210163510.58985-1-dennis@kernel.org>
- <20181210182507.qtoj5egbflr5s366@macbook-pro-91.dhcp.thefacebook.com>
+        Mon, 10 Dec 2018 22:24:11 -0500
+Received: from mail-eopbgr140053.outbound.protection.outlook.com ([40.107.14.53]:53529
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728584AbeLKDYL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 10 Dec 2018 22:24:11 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=kkw+VQ2kzCV/S0gzxRdHxDfYF103nbCPIOZ+DCj7Bec=;
+ b=Pc2BG8brssWqTHUFt2U8bV+vZZalqFTC8OWL6wqAM0pJpnNTKodg+0IrKa2BgVgPGuf1oJ0wZZeH4oysoMhb1n1KwV3ELJ5tnaEZFdPR2okyI8eSEXj3R38REytV8IjvxJ1VNkNYZpP6Iea7s2AXpC9d0urUn5XksugeeWYbECk=
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
+ DB3PR0402MB3786.eurprd04.prod.outlook.com (52.134.71.21) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1404.22; Tue, 11 Dec 2018 03:24:06 +0000
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::adf8:f49d:deb4:58fd]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::adf8:f49d:deb4:58fd%3]) with mapi id 15.20.1404.026; Tue, 11 Dec 2018
+ 03:24:06 +0000
+From:   Anson Huang <anson.huang@nxp.com>
+To:     "jic23@kernel.org" <jic23@kernel.org>,
+        "knaack.h@gmx.de" <knaack.h@gmx.de>,
+        "lars@metafoo.de" <lars@metafoo.de>,
+        "pmeerw@pmeerw.net" <pmeerw@pmeerw.net>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "preid@electromag.com.au" <preid@electromag.com.au>
+CC:     dl-linux-imx <linux-imx@nxp.com>
+Subject: [PATCH V4 1/2] dt-bindings: iio: light: isl29018: update power supply
+ name
+Thread-Topic: [PATCH V4 1/2] dt-bindings: iio: light: isl29018: update power
+ supply name
+Thread-Index: AQHUkQD4MSDhDZC7ZkypeO9dPwUjuA==
+Date:   Tue, 11 Dec 2018 03:24:06 +0000
+Message-ID: <1544498291-2716-1-git-send-email-Anson.Huang@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: git-send-email 2.7.4
+x-clientproxiedby: HK2PR04CA0067.apcprd04.prod.outlook.com
+ (2603:1096:202:15::11) To DB3PR0402MB3916.eurprd04.prod.outlook.com
+ (2603:10a6:8:10::18)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=anson.huang@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DB3PR0402MB3786;6:H1zXtSiJFeuP2lwphQPR+pqZ0IdMYg3ZrvZsJZvbNSpULNtKSasqm0+4Wp6NP5czumaV3r8qHA2HVAMtoCMkqmQkJ7vZCIoZh7UISXqI/DFGre0pTVCRm6bnyuofQg05NRxy7wzuV7xnRzXQi6m2qHjkroKKHHJ7TTdlWux6pGxd+81ABZS45kduIOpakoB9HGK8uztorRXQXderfu2427yzcToTwr0DIm1bkvd5Xmfd5r1YjD5LOH5eSaY03EKPojNeXSyhU9rM+QU/TM42hFx45jdCBYcr3H8qIfPrzZ0lKps2NuUo/jJtXEM6VhQGEb7gHt/JU+l7Xs8kFbXGcjUA//yPdykpWrl4Dmdlygl4GKl5sgHe5RsVFQIZW5OQ2b1PCoS0KRPYcNBOf6jit9fhGtJHS1zyvp5MjxSHmf3Gw2Wz9rDVYUHTo+FVq44LdmT4fzkSvvrDuOpnf/57hw==;5:i1PUAviETzUhSVWmVh33vpouBmPFLTmG5vhvueXagZe+gxwPT7e4DDv4HOd3INPqlbsd+UXLqnWJX4jH4wLvVKEytHAQvzaXNjo0ol34ZCsqlQk6Nv31gbM2c8uLDNxZ8Zd2OJ06yNzRlOprOZQ5JJl2R9Vs/1D40zpQINVIQvA=;7:GPUBpiFTZ7jO3cNHNct2SgHSF2FLbFMgbqEASi1ZT2T1bsN0BkFC2I7RiLL2GlwUKFc43EXIo7NFlMWokDn10XjH71azO/d+n3gWvAazEB8ZgoPuT8akI06Pu2Ul3GZgZz+51XRB/OopPM8Pv4YnEg==
+x-ms-office365-filtering-correlation-id: 15876912-68fe-42c0-5d59-08d65f181b09
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DB3PR0402MB3786;
+x-ms-traffictypediagnostic: DB3PR0402MB3786:
+x-microsoft-antispam-prvs: <DB3PR0402MB3786E5324EE72E94602FC2C3F5A60@DB3PR0402MB3786.eurprd04.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231455)(999002)(944501520)(52105112)(10201501046)(93006095)(93001095)(3002001)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123564045)(20161123558120)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:DB3PR0402MB3786;BCL:0;PCL:0;RULEID:;SRVR:DB3PR0402MB3786;
+x-forefront-prvs: 08831F51DC
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(376002)(366004)(136003)(346002)(39860400002)(189003)(199004)(478600001)(2501003)(6486002)(14454004)(305945005)(97736004)(3846002)(6512007)(2201001)(5660300001)(86362001)(7416002)(4326008)(2616005)(39060400002)(36756003)(71200400001)(7736002)(71190400001)(6116002)(316002)(186003)(476003)(2906002)(8676002)(386003)(106356001)(25786009)(105586002)(26005)(66066001)(50226002)(102836004)(6506007)(110136005)(81156014)(52116002)(6436002)(99286004)(14444005)(256004)(486006)(53936002)(8936002)(81166006)(15650500001)(68736007)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3786;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: 4cd2r4+nC4ai8Z5EG9sOD1tkMX5x7gpM590ILJyVCY9ZBUOwiDGjgYsPQ/XPdy7lrsmEarg5yKLt6P/izI7/prAxLE6SRQLdZ2xApngzRkq8WW/Jw9cggYRI6xgAF0PTv4/3J/dndIlHjgONsrfk0i/ijy5W3KWhRH+XCA/WPhVUf7S2+scAO53NYapLhbnhb3KIiElXYiPsURZzJsyJERXaAgGYvO1R6l/Oeq0Wd6skz//UJGbhCTiUU2dW+3S3a6ldBXQK4THEeegSNhWCKYjamSIQyDXBvYJPfFWBCmLo5AKF2nJ8QXUVe95zGwMd
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181210182507.qtoj5egbflr5s366@macbook-pro-91.dhcp.thefacebook.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 15876912-68fe-42c0-5d59-08d65f181b09
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Dec 2018 03:24:06.3911
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3786
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Josef,
+According to datasheet, the isl29018 has "vddd/vdda" power
+supply, and isl29023/isl29035 ONLY has "vdd" power supply,
+update the power supply name with "vdd" and "vdda" according
+to datasheet to cover all devices and avoid confusion.
 
-On Mon, Dec 10, 2018 at 01:25:08PM -0500, Josef Bacik wrote:
-> On Mon, Dec 10, 2018 at 11:35:10AM -0500, Dennis Zhou wrote:
-> > The blk-iolatency controller measures the time from rq_qos_throttle() to
-> > rq_qos_done_bio() and attributes this time to the first bio that needs
-> > to create the request. This means if a bio is plug-mergeable or
-> > bio-mergeable, it gets to bypass the blk-iolatency controller.
-> > 
-> > The recent series, to tag all bios w/ blkgs in [1] changed the timing
-> > incorrectly as well. First, the iolatency controller was tagging bios
-> > and using that information if it should process it in rq_qos_done_bio().
-> > However, now that all bios are tagged, this caused the atomic_t for the
-> > struct rq_wait inflight count to underflow resulting in a stall. Second,
-> > now the timing was using the duration a bio from generic_make_request()
-> > rather than the timing mentioned above.
-> > 
-> > This patch fixes the errors by accounting time separately in a bio
-> > adding the field bi_start. If this field is set, the bio should be
-> > processed by blk-iolatency in rq_qos_done_bio().
-> > 
-> > [1] https://lore.kernel.org/lkml/20181205171039.73066-1-dennis@kernel.org/
-> > 
-> > Signed-off-by: Dennis Zhou <dennis@kernel.org>
-> > Cc: Josef Bacik <josef@toxicpanda.com>
-> > ---
-> >  block/blk-iolatency.c     | 17 ++++++-----------
-> >  include/linux/blk_types.h | 12 ++++++++++++
-> >  2 files changed, 18 insertions(+), 11 deletions(-)
-> > 
-> > diff --git a/block/blk-iolatency.c b/block/blk-iolatency.c
-> > index bee092727cad..52d5d7cc387c 100644
-> > --- a/block/blk-iolatency.c
-> > +++ b/block/blk-iolatency.c
-> > @@ -463,6 +463,8 @@ static void blkcg_iolatency_throttle(struct rq_qos *rqos, struct bio *bio)
-> >  	if (!blk_iolatency_enabled(blkiolat))
-> >  		return;
-> >  
-> > +	bio->bi_start = ktime_get_ns();
-> > +
-> >  	while (blkg && blkg->parent) {
-> >  		struct iolatency_grp *iolat = blkg_to_lat(blkg);
-> >  		if (!iolat) {
-> > @@ -480,18 +482,12 @@ static void blkcg_iolatency_throttle(struct rq_qos *rqos, struct bio *bio)
-> >  }
-> >  
-> >  static void iolatency_record_time(struct iolatency_grp *iolat,
-> > -				  struct bio_issue *issue, u64 now,
-> > +				  struct bio *bio, u64 now,
-> >  				  bool issue_as_root)
-> >  {
-> > -	u64 start = bio_issue_time(issue);
-> > +	u64 start = bio->bi_start;
-> >  	u64 req_time;
-> >  
-> > -	/*
-> > -	 * Have to do this so we are truncated to the correct time that our
-> > -	 * issue is truncated to.
-> > -	 */
-> > -	now = __bio_issue_time(now);
-> > -
-> >  	if (now <= start)
-> >  		return;
-> >  
-> > @@ -593,7 +589,7 @@ static void blkcg_iolatency_done_bio(struct rq_qos *rqos, struct bio *bio)
-> >  	bool enabled = false;
-> >  
-> >  	blkg = bio->bi_blkg;
-> > -	if (!blkg)
-> > +	if (!blkg || !bio->bi_start)
-> >  		return;
-> >  
-> >  	iolat = blkg_to_lat(bio->bi_blkg);
-> > @@ -612,8 +608,7 @@ static void blkcg_iolatency_done_bio(struct rq_qos *rqos, struct bio *bio)
-> >  		atomic_dec(&rqw->inflight);
-> >  		if (!enabled || iolat->min_lat_nsec == 0)
-> >  			goto next;
-> > -		iolatency_record_time(iolat, &bio->bi_issue, now,
-> > -				      issue_as_root);
-> > +		iolatency_record_time(iolat, bio, now, issue_as_root);
-> >  		window_start = atomic64_read(&iolat->window_start);
-> >  		if (now > window_start &&
-> >  		    (now - window_start) >= iolat->cur_win_nsec) {
-> > diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
-> > index 46c005d601ac..c2c02ec08d7c 100644
-> > --- a/include/linux/blk_types.h
-> > +++ b/include/linux/blk_types.h
-> > @@ -181,6 +181,18 @@ struct bio {
-> >  	 */
-> >  	struct blkcg_gq		*bi_blkg;
-> >  	struct bio_issue	bi_issue;
-> > +#ifdef CONFIG_BLK_CGROUP_IOLATENCY
-> > +	/*
-> > +	 * blk-iolatency measure the time a bio takes between rq_qos_throttle()
-> > +	 * and rq_qos_done_bio().  It attributes the time to the bio that gets
-> > +	 * the request allowing any bios that can tag along via plug merging or
-> > +	 * bio merging to be free (from blk-iolatency's perspective). This is
-> > +	 * different from the time a bio takes from generic_make_request() to
-> > +	 * the end of its life.  So, this also serves as a marker for which bios
-> > +	 * should be processed by blk-iolatency.
-> > +	 */
-> > +	u64			bi_start;
-> > +#endif /* CONFIG_BLK_CGROUP_IOLATENCY */
-> 
-> So now we have bi_issue and bi_start, both count basically the same thing.  Does
-> using bi_issue actually matter?  I assume that it's going to be basically the
-> same as bi_start for the most part, you are just getting us to only care about
-> the bio's that we care about.
-> 
-> What if we just add a bio flag to indicate that we've gone through io-latency?
-> Once that's in place do these problems go away?  Or is the extra time counted
-> from make_request_time to rq_qos_throttle() actually matter?  I feel like it
-> shouldn't since it's mostly just checks, but I could be mistaken.  Thanks,
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+ Documentation/devicetree/bindings/iio/light/isl29018.txt | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Yeah after talking with Jens about this, it sounds like a good way
-forward would be to reuse BIO_QUEUE_ENTERED. My initial concern with
-the flag only approach was the time of stacked drivers. But as they
-should not be calling into blk_mq_make_request(), tagging in that
-function should allow us to properly ignore them.
+diff --git a/Documentation/devicetree/bindings/iio/light/isl29018.txt b/Doc=
+umentation/devicetree/bindings/iio/light/isl29018.txt
+index b9bbde3..36f737d 100644
+--- a/Documentation/devicetree/bindings/iio/light/isl29018.txt
++++ b/Documentation/devicetree/bindings/iio/light/isl29018.txt
+@@ -15,7 +15,9 @@ Optional properties:
+   Refer to interrupt-controller/interrupts.txt for generic interrupt clien=
+t
+   node bindings.
+=20
+-  - vcc-supply: phandle to the regulator that provides power to the sensor=
+.
++  - vdd-supply: phandle to the regulator that provides vdd power to the se=
+nsor.
++
++  - vdda-supply: phandle to the regulator that provides vdda power to the =
+sensor.
+=20
+ Example:
+=20
+--=20
+2.7.4
 
-It sounds like in the general case where a bio does make it to
-blk_mq_make_request(), the overhead of the checks prior should be
-minimal. I'll have a v2 out soon doing tagging with BIO_QUEUE_ENTERED.
-
-Thanks,
-Dennis
