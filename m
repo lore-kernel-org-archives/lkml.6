@@ -2,152 +2,111 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25969C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 09:42:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94486C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 09:43:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E772820811
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 09:42:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E772820811
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
+	by mail.kernel.org (Postfix) with ESMTP id 5B3A22084A
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 09:43:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544521386;
+	bh=aIcEkkhNlcKbrQBNe9VU1OQXv8faUp2xmhrX9FJeFRo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=Zh+3O3afXD+Nvfp63Zuy8mAQUL8UIUCZEuuXh0+NVK4831Wqx6qDUao2HsJh++elL
+	 dJRlyvUJaSsyXiHf60bB/W/pXyITUZSegg3c3vXcKXBQtoLOqvppJkio2nGY6bvRxB
+	 NK8jv+GXz+9bAgYvUQOMqOxlLGexTm2vLWDCyDmo=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B3A22084A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726211AbeLKJmz (ORCPT
+        id S1726232AbeLKJnF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 04:42:55 -0500
-Received: from mail-sz2.amlogic.com ([211.162.65.114]:7702 "EHLO
-        mail-sz2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726114AbeLKJmz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 04:42:55 -0500
-Received: from [10.28.18.115] (10.28.18.115) by mail-sz2.amlogic.com
- (10.28.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Tue, 11 Dec
- 2018 17:43:11 +0800
-Subject: Re: [PATCH v7 2/2] mtd: rawnand: meson: add support for Amlogic NAND
- flash controller
-To:     Miquel Raynal <miquel.raynal@bootlin.com>
-CC:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        Jianxin Pan <jianxin.pan@amlogic.com>,
-        <linux-mtd@lists.infradead.org>, Yixun Lan <yixun.lan@amlogic.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Carlo Caione <carlo@caione.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Rob Herring <robh@kernel.org>, Jian Hu <jian.hu@amlogic.com>,
-        Hanjie Lin <hanjie.lin@amlogic.com>,
-        Victor Wan <victor.wan@amlogic.com>,
-        <linux-amlogic@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <1542386439-30166-1-git-send-email-jianxin.pan@amlogic.com>
- <1542386439-30166-3-git-send-email-jianxin.pan@amlogic.com>
- <20181207102456.1dc67e07@xps13>
- <823825a3-86fb-9a20-ae29-85cc52d44093@amlogic.com>
- <20181210123809.5ade45c4@bbrezillon>
- <79a797c2-f37f-7f7c-e907-2d3c2283ec2d@amlogic.com>
- <20181210155057.38788656@xps13>
- <d60bac6f-732d-0ddc-2644-17f650dfa885@amlogic.com>
- <20181211085445.68e57e0e@xps13>
- <356aed95-518d-7cd0-4337-184f181472ad@amlogic.com>
- <20181211100718.51d2cd6c@xps13>
-From:   Liang Yang <liang.yang@amlogic.com>
-Message-ID: <ce821991-423b-837a-a936-699716791aad@amlogic.com>
-Date:   Tue, 11 Dec 2018 17:43:11 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; rv:60.0) Gecko/20100101
- Thunderbird/60.3.2
-MIME-Version: 1.0
-In-Reply-To: <20181211100718.51d2cd6c@xps13>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.28.18.115]
-X-ClientProxiedBy: mail-sz2.amlogic.com (10.28.11.6) To mail-sz2.amlogic.com
- (10.28.11.6)
+        Tue, 11 Dec 2018 04:43:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43852 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726114AbeLKJnE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 04:43:04 -0500
+Received: from devnote (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A6BDB20811;
+        Tue, 11 Dec 2018 09:43:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544521384;
+        bh=aIcEkkhNlcKbrQBNe9VU1OQXv8faUp2xmhrX9FJeFRo=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=ywJOsOjROIeudqZs4fB1TMHFPBUkPFSC26CrYrUgLO6LGZ0lT9h3ZFOynvRc9kSHT
+         Z2CLFbymuRh+MbG+ej/DTQlt796CrmuL+AQNdSvemNUq7Xn+PmvQrzWtr1aUfiW+1y
+         rxrlNd5t++ehpKYW5SHKW8nBwK9v+zB/9FCfNfg8=
+Date:   Tue, 11 Dec 2018 18:43:00 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Andrea Righi <righi.andrea@gmail.com>
+Cc:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kprobes/x86/xen: blacklist non-attachable xen interrupt
+ functions
+Message-Id: <20181211184300.810577f6087339bb0781068c@kernel.org>
+In-Reply-To: <20181210151256.GA1977@Dell>
+References: <20181210151256.GA1977@Dell>
+X-Mailer: Sylpheed 3.5.0 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Miquel,
+On Mon, 10 Dec 2018 16:12:57 +0100
+Andrea Righi <righi.andrea@gmail.com> wrote:
 
-On 2018/12/11 17:07, Miquel Raynal wrote:
-> Hi Liang,
+> Blacklist symbols in Xen probe-prohibited areas, so that user can see
+> these prohibited symbols in debugfs.
 > 
-> Liang Yang <liang.yang@amlogic.com> wrote on Tue, 11 Dec 2018 16:36:47
-> +0800:
+> See also: a50480cb6d61.
+
+Looks good to me, thanks!
+
+Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+
 > 
->> Hi Miquel,
->>
->> Thanks for your quickly reply.
->>
->> On 2018/12/11 15:54, Miquel Raynal wrote:
->>> Hi Liang,
->>>
->>> Liang Yang <liang.yang@amlogic.com> wrote on Tue, 11 Dec 2018 09:56:25
->>> +0800:
->>>    
->>>> Hi Miquel,
->>>>
->>>> On 2018/12/10 22:50, Miquel Raynal wrote:
->>>>> Hi Liang,
->>>>>
->>>>> Liang Yang <liang.yang@amlogic.com> wrote on Mon, 10 Dec 2018 20:12:39
->>>>> +0800:
->>>>>     >>>> On 2018/12/10 19:38, Boris Brezillon wrote:
->>>>>>> On Mon, 10 Dec 2018 19:23:46 +0800
->>>>>>> Liang Yang <liang.yang@amlogic.com> wrote:
->>>>>>>      >>>>>> +			mtd->ecc_stats.failed++;
->>>>>>>>>> +			continue;
->>>>>>>>>> +		}
->>>>>>>>>> +		mtd->ecc_stats.corrected += ECC_ERR_CNT(*info);
->>>>>>>>>> +		bitflips = max_t(u32, bitflips, ECC_ERR_CNT(*info));
->>>>>>>>>> +	}
->>>>>>>>>
->>>>>>>>> Are you sure you handle correctly empty pages with bf?
->>>>>>>>>       >> if scramble is enable, i would say yes here.
->>>>>>>> when scramble is disabled, i am considering how to use the helper
->>>>>>>> nand_check_erased_ecc_chunk, but it seems that i can't get the ecc
->>>>>>>> bytes which is caculated by ecc engine.by the way, nfc dma doesn't send
->>>>>>>> out the ecc parity bytes.
->>>>>>>
->>>>>>> Even if the ECC engine is disabled?
->>>>>>>      >> No.
->>>>>> When ECC engine is disabled, it can read the ecc parity bytes ; but there is another problem that i need to consider how code struct looks better when reading error with ecc opened and then try to raw read.
->>>>>> Is there a good idea?
->>>>>
->>>>> When reading with ECC enabled, in case of uncorrectable error you
->>>>> must re-read without ECC, then check if the page is empty or not with
->>>>> the core helpers (nand_check_erased_*()).
->>>>>
->>>>> Is this what you meant?
->>>>>     >> yes. when uncorrectable ECC error, i need firstly read out the ECC bytes without ECC engine and then use the helper nand_check_erased_ecc_chunk to check if blank page.
->>>> Of course, the precondition is without scrambler, or the bland page can be detected by meson NFC.
->>>
->>> A suppose you meant "blank page"? If yes, then you don't need the
->>> helper to check for only-0xFF pages. If the controller tells you if the
->>> page was blank, then just check for that bit.
->>>    
->>
->> i think not. we need to return back the previous problem that how i can get the bitflips of one blank page. i think i need the helper.
+> Signed-off-by: Andrea Righi <righi.andrea@gmail.com>
+> ---
+>  arch/x86/xen/xen-asm_64.S | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> You are right, I suppose the "blank page" flag is only triggered if
-> there is no bitflip. In this case you can assume there are no
-> bitflips. Otherwise the controller will trigger an
-> uncorrectable error event and you will have to re-read the page
-> without ECC and check for bitflips with the helper.
+> diff --git a/arch/x86/xen/xen-asm_64.S b/arch/x86/xen/xen-asm_64.S
+> index bb1c2da0381d..1e9ef0ba30a5 100644
+> --- a/arch/x86/xen/xen-asm_64.S
+> +++ b/arch/x86/xen/xen-asm_64.S
+> @@ -12,6 +12,7 @@
+>  #include <asm/segment.h>
+>  #include <asm/asm-offsets.h>
+>  #include <asm/thread_info.h>
+> +#include <asm/asm.h>
+>  
+>  #include <xen/interface/xen.h>
+>  
+> @@ -24,6 +25,7 @@ ENTRY(xen_\name)
+>  	pop %r11
+>  	jmp  \name
+>  END(xen_\name)
+> +_ASM_NOKPROBE(xen_\name)
+>  .endm
+>  
+>  xen_pv_trap divide_error
+> -- 
+> 2.17.1
 > 
-yes, that is right. i will do the "re-read" process.
-> 
-> Thanks,
-> Miquèl
-> 
-> .
-> 
+
+
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
