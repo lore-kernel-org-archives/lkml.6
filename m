@@ -2,93 +2,189 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17F80C67839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:14:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07572C67839
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:14:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA3D92086D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:14:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA3D92086D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mirbsd.de
+	by mail.kernel.org (Postfix) with ESMTP id BFA1A2084E
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:14:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=mailprotect.be header.i=@mailprotect.be header.b="V3og8mQB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFA1A2084E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726287AbeLKWOH convert rfc822-to-8bit (ORCPT
+        id S1726364AbeLKWOM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 17:14:07 -0500
-Received: from static-87-79-237-121.netcologne.de ([87.79.237.121]:45957 "EHLO
-        herc.mirbsd.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726209AbeLKWOH (ORCPT
+        Tue, 11 Dec 2018 17:14:12 -0500
+Received: from com-out001.mailprotect.be ([83.217.72.83]:49255 "EHLO
+        com-out001.mailprotect.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726295AbeLKWOK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 17:14:07 -0500
-X-Greylist: delayed 627 seconds by postgrey-1.27 at vger.kernel.org; Tue, 11 Dec 2018 17:14:06 EST
-Received: from herc.mirbsd.org (tg@herc.mirbsd.org [192.168.0.82])
-        by herc.mirbsd.org (8.14.9/8.14.5) with ESMTP id wBBLrpFu017954
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Tue, 11 Dec 2018 21:53:53 GMT
-Date:   Tue, 11 Dec 2018 21:53:51 +0000 (UTC)
-From:   Thorsten Glaser <tg@mirbsd.de>
-X-X-Sender: tg@herc.mirbsd.org
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-cc:     Andrew Lutomirski <luto@kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        linux-api@vger.kernel.org, Peter Anvin <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>, bp@alien8.de,
-        fweimer@redhat.com, vapier@gentoo.org, hjl.tools@gmail.com,
-        dalias@libc.org, x32@buildd.debian.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Subject: Re: Can we drop upstream Linux x32 support?
-In-Reply-To: <CAHk-=wi_Kp=3XmGDdzmadzFSPFvuL+aAJ6ZPAR=o4z=KwYT2vw@mail.gmail.com>
-Message-ID: <Pine.BSM.4.64L.1812112150480.21176@herc.mirbsd.org>
-References: <CALCETrXoRAibsbWa9nfbDrt0iEuebMnCMhSFg-d9W-J2g8mDjw@mail.gmail.com>
- <CAHk-=wi_Kp=3XmGDdzmadzFSPFvuL+aAJ6ZPAR=o4z=KwYT2vw@mail.gmail.com>
-Content-Language: de-DE-1901, en-GB
-X-Message-Flag: Your mailer is broken. Get an update at http://www.washington.edu/pine/getpine/pcpine.html for free.
+        Tue, 11 Dec 2018 17:14:10 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=mailprotect.be; s=mail; h=Content-Transfer-Encoding:MIME-Version:References
+        :In-Reply-To:Message-Id:Date:Subject:Cc:To:From:reply-to:sender:bcc:
+        content-type; bh=6TBw9HciqOM/lwo4hJEaBzvDuh7ItZop2Zh7M+10lfY=; b=V3og8mQBzYHt
+        O7aeBuzUjgnUpSUPTlYDIkUL6fgc/ZuDyDf0hdClgUbAgD+rD/6EXx+88UEc/Sg/AMnbPoe4vSPYw
+        HhCRO9tfx6j0Gf/3rukVqEO/Nnl/GoILnqi4sdAwoX4z1896IMlUxFNWkawfV2VXlUMgjzLhLO9nX
+        ECvJyuaaJQpWH6AXLj30kXmRGuA2QQPMpp+K4gvhw0HIzRRC/Dq+oZQWnIThLBWwanRIZ1hPhZOqW
+        5H3MJWQr2rad48G6n9tFPHZkFAcBUYPbeMj2gKZNUGoAA0fN5qhowl7NZuX7d9aa8Rm2iyyxj0jNK
+        NbYftMYtLRlY0BgFFK/PeA==;
+Received: from smtp-auth.mailprotect.be ([178.208.39.155])
+        by com-mpt-out001.mailprotect.be with esmtp (Exim 4.89)
+        (envelope-from <bvanassche@acm.org>)
+        id 1gWqHr-0005M7-99; Tue, 11 Dec 2018 23:13:55 +0100
+Received: from desktop-bart.svl.corp.google.com (unknown [104.133.8.89])
+        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by smtp-auth.mailprotect.be (Postfix) with ESMTPSA id 7E089C0718;
+        Tue, 11 Dec 2018 23:13:53 +0100 (CET)
+From:   Bart Van Assche <bvanassche@acm.org>
+To:     peterz@infradead.org
+Cc:     mingo@redhat.com, tj@kernel.org, longman@redhat.com,
+        johannes.berg@intel.com, linux-kernel@vger.kernel.org,
+        Bart Van Assche <bvanassche@acm.org>,
+        Johannes Berg <johannes@sipsolutions.net>
+Subject: [PATCH v4 09/15] locking/lockdep: Introduce lockdep_next_lockchain() and lock_chain_count()
+Date:   Tue, 11 Dec 2018 14:13:15 -0800
+Message-Id: <20181211221321.196536-10-bvanassche@acm.org>
+X-Mailer: git-send-email 2.20.0.rc2.403.gdbc3b29805-goog
+In-Reply-To: <20181211221321.196536-1-bvanassche@acm.org>
+References: <20181211221321.196536-1-bvanassche@acm.org>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: 178.208.39.155
+X-SpamExperts-Domain: mailprotect.be
+X-SpamExperts-Username: 178.208.39.128/27
+Authentication-Results: mailprotect.be; auth=pass smtp.auth=178.208.39.128/27@mailprotect.be
+X-SpamExperts-Outgoing-Class: ham
+X-SpamExperts-Outgoing-Evidence: Combined (0.01)
+X-Recommended-Action: accept
+X-Filter-ID: EX5BVjFpneJeBchSMxfU5n2wTVPwVRqPCK75WJF/4Ih602E9L7XzfQH6nu9C/Fh9KJzpNe6xgvOx
+ q3u0UDjvO1tLifGj39bI0bcPyaJsYTb/+zriNZuqQk0xRpGwjn+MTR8dtByWYYhgj25jR+mEA3YO
+ AtfhCcV13BpIh8lqRXSSiFVwqwU9VgKUrYQ0lqWyFDaym8oavoPYsm7m1mVEGf0/5ST3nkt5XYDK
+ YAuRpmF7E2F3eqKXiTd2ECUghryWXlqwG31yUGf3t09vBVYS71V1Pk0aHudBU1wyWVTA5OYS1waI
+ XXCBiQFDV0yen8nGcSeERs4TOTnIH1kc1IWc5eLazqbUYkjl7F1LyK0RORqMDhGSMOPAtAq2zO2m
+ ucQJSNgvEAWLFiDAlQR6Wu0I/iWDegq4fQ11AxLVlrI7DVFg5Rj2g0fgHrO2rAGaVRcnzDg6HYuT
+ CyYgL61SIkBTYXPEvhymCNb22qmKERGbL1SqvGGff0htQqhQf0/aDrhpLM4xnCPpmyyS7jgD9Nen
+ VVoB/PLX+rmdznc91veCJAwpCI+5VHpzDqRcT2+GtIE8SRAgmLDKAcp9i+Q+BEiSUj07SNjVkl0P
+ Pj+OUYZX3/1fKPQPEuPra72LpiTN2rUT6Y9xm3kmEG6YzhU+GhpkbBQllJXXeGX8fAMzPNqrCG8d
+ f68W0InH/+bTMKNm38MHmfnhF9U/dVeZ9xbDBH3UiCDt3yfQxlhCaKc8coJFU+8pOMQJvQ/Ck3ii
+ U+4DQAj38VcpxSBd167NiiR0DMS/T4GvZUhi7BJ7QOeRk66G/m8FNKZFrpMP+RrTJ6+mm5EZOT1q
+ 4pJ09dBcmR/UrOOnoFoctcgZ9lG1WA2Bfw5JpOqqltsYPx2OGpapJQwbU6lxiSPQp1QN34zBsoOP
+ LAVTMEsOC75ReJHeVybconOP07vieGH1wwKQhUuVJ6kr80wTGaiTXW7z2lMqAnbumOwh0pBt+CpM
+ AQh13vqug5h3DxzAScKSjE0+NurrjVE3zNotOwxvo+EQDEAo6C9vewMp9ZIAiDKO1d3jsySf+J0s
+ zc3volzWZu5fe7ghC/HzOt6Mfqb5R4VemuUI6bcEARsm0JyPNwoZFF/BeruF9IPYgMLyX2cd5RrN
+ VWdImRunoKaV5Izq4VabSfIGUY8RJ38dSGEP+JYPRX76oPSBtBBPLYw1mZQfhvSXPX1npIQpGBE7
+ MnJiHvQ8gQs8eCOaG4DvtrnB4hxWBV/7jCqhcJq0hur2OKHH5lr9xXvSM4nM3avg
+X-Report-Abuse-To: spam@com-mpt-mgt001.mailprotect.be
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Note: please keep me in Cc because I am not subscribed.
+This patch does not change any functionality but makes the next patch in
+this series easier to read.
 
-Linus Torvalds dixit:
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Waiman Long <longman@redhat.com>
+Cc: Johannes Berg <johannes@sipsolutions.net>
+Signed-off-by: Bart Van Assche <bvanassche@acm.org>
+---
+ kernel/locking/lockdep.c           | 16 +++++++++++++++-
+ kernel/locking/lockdep_internals.h |  3 ++-
+ kernel/locking/lockdep_proc.c      | 12 ++++++------
+ 3 files changed, 23 insertions(+), 8 deletions(-)
 
->I'm not opposed to trying to sunset the support, but let's see who complains..
+diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
+index 2da45621f741..cdab3831beb2 100644
+--- a/kernel/locking/lockdep.c
++++ b/kernel/locking/lockdep.c
+@@ -2092,7 +2092,7 @@ check_prevs_add(struct task_struct *curr, struct held_lock *next)
+ 	return 0;
+ }
+ 
+-unsigned long nr_lock_chains;
++static unsigned long nr_lock_chains;
+ struct lock_chain lock_chains[MAX_LOCKDEP_CHAINS];
+ int nr_chain_hlocks;
+ static u16 chain_hlocks[MAX_LOCKDEP_CHAIN_HLOCKS];
+@@ -2226,6 +2226,20 @@ static int check_no_collision(struct task_struct *curr,
+ 	return 1;
+ }
+ 
++/*
++ * Given an index that is >= -1, return the index of the next lock chain.
++ * Return -2 if there is no next lock chain.
++ */
++long lockdep_next_lockchain(long i)
++{
++	return i + 1 < nr_lock_chains ? i + 1 : -2;
++}
++
++unsigned long lock_chain_count(void)
++{
++	return nr_lock_chains;
++}
++
+ /*
+  * Adds a dependency chain into chain hashtable. And must be called with
+  * graph_lock held.
+diff --git a/kernel/locking/lockdep_internals.h b/kernel/locking/lockdep_internals.h
+index 88c847a41c8a..ba8a4ac7bd04 100644
+--- a/kernel/locking/lockdep_internals.h
++++ b/kernel/locking/lockdep_internals.h
+@@ -96,7 +96,8 @@ struct lock_class *lock_chain_get_class(struct lock_chain *chain, int i);
+ 
+ extern unsigned long nr_lock_classes;
+ extern unsigned long nr_list_entries;
+-extern unsigned long nr_lock_chains;
++long lockdep_next_lockchain(long i);
++unsigned long lock_chain_count(void);
+ extern int nr_chain_hlocks;
+ extern unsigned long nr_stack_trace_entries;
+ 
+diff --git a/kernel/locking/lockdep_proc.c b/kernel/locking/lockdep_proc.c
+index 3d31f9b0059e..9c49ec645d8b 100644
+--- a/kernel/locking/lockdep_proc.c
++++ b/kernel/locking/lockdep_proc.c
+@@ -104,18 +104,18 @@ static const struct seq_operations lockdep_ops = {
+ #ifdef CONFIG_PROVE_LOCKING
+ static void *lc_start(struct seq_file *m, loff_t *pos)
+ {
++	if (*pos < 0)
++		return NULL;
++
+ 	if (*pos == 0)
+ 		return SEQ_START_TOKEN;
+ 
+-	if (*pos - 1 < nr_lock_chains)
+-		return lock_chains + (*pos - 1);
+-
+-	return NULL;
++	return lock_chains + (*pos - 1);
+ }
+ 
+ static void *lc_next(struct seq_file *m, void *v, loff_t *pos)
+ {
+-	(*pos)++;
++	*pos = lockdep_next_lockchain(*pos - 1) + 1;
+ 	return lc_start(m, pos);
+ }
+ 
+@@ -268,7 +268,7 @@ static int lockdep_stats_show(struct seq_file *m, void *v)
+ 
+ #ifdef CONFIG_PROVE_LOCKING
+ 	seq_printf(m, " dependency chains:             %11lu [max: %lu]\n",
+-			nr_lock_chains, MAX_LOCKDEP_CHAINS);
++			lock_chain_count(), MAX_LOCKDEP_CHAINS);
+ 	seq_printf(m, " dependency chain hlocks:       %11d [max: %lu]\n",
+ 			nr_chain_hlocks, MAX_LOCKDEP_CHAIN_HLOCKS);
+ #endif
+-- 
+2.20.0.rc2.403.gdbc3b29805-goog
 
-I will hereby complain.
-
-I’m using Debian/x32 on my main desktop at work, and do
-occasionally help out with porting issues. It’s a good
-way to make more out of 64-bit machines without going
-all 64 bit; it’s also helped me find bugs in software.
-It’s a nice architectural idea, and a way forward for
-things that are constricted to 32 bits while opening
-up stuff like 64-bit time_t without taking up half the
-available CPU registers (while more than doubling the
-number of the available CPU registers, too).
-
-I was also considering investing a nontrivial amount of
-work into porting klibc to x32, since hpa does not wish
-to do it himself. Thankfully I have only done a bit yet.
-
-Furthermore, x32 was the first of the many *64ilp32
-architectures; I know I’ve seen amd64ilp32 and at least
-one other I don’t recall. It will have prototyped many
-of the problems users of these will run in, and I’d prefer
-to keep it (completely selfish because I don’t wish to
-have to crossgrade a whole system yet again).
-
-Thanks for your consideration,
-//mirabilos
---  
-When he found out that the m68k port was in a pretty bad shape, he did
-not, like many before him, shrug and move on; instead, he took it upon
-himself to start compiling things, just so he could compile his shell.
-How's that for dedication. -- Wouter, about my Debian/m68k revival
