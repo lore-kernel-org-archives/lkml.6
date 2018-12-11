@@ -2,167 +2,170 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBF7DC07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 17:23:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACB5DC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 17:27:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2F7420851
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 17:23:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2F7420851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 6A86F20851
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 17:27:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544549278;
+	bh=dwqK2tKwgQnPscC9YeC7ymqibML7h+WGcSdCOVkbTuM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=1BTUWM3gi6fjtSYiQkOovd+AACez6fMGT282C+9b6CMkS2Btfno7G9grZlKBr8QAF
+	 pOuPRWXKIX7jn4S2/0NE/C2JvMJ0cXQ4dKBdckgtLeO9uCzAcCcTJFKZ+mD2Oo2vkZ
+	 1KRDU3pPEpLe9RYoGoRpPJV8OBdz4wxjFkdWdgwQ=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A86F20851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726913AbeLKRX5 (ORCPT
+        id S1726669AbeLKR15 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 12:23:57 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54134 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726417AbeLKRX5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 12:23:57 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8929B1596;
-        Tue, 11 Dec 2018 09:23:56 -0800 (PST)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 576133F6A8;
-        Tue, 11 Dec 2018 09:23:56 -0800 (PST)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id 671691AE0D04; Tue, 11 Dec 2018 17:24:19 +0000 (GMT)
-Date:   Tue, 11 Dec 2018 17:24:19 +0000
-From:   Will Deacon <will.deacon@arm.com>
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     catalin.marinas@arm.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, jonathan.cameron@huawei.com,
-        cyrilc@xilinx.com, james.morse@arm.com, anshuman.khandual@arm.com
-Subject: Re: [PATCH] arm64: Add memory hotplug support
-Message-ID: <20181211172418.GA29593@edgewater-inn.cambridge.arm.com>
-References: <0a0c7d3b8fbe1b2b399eeb6889027031335d2af1.1544453739.git.robin.murphy@arm.com>
- <20181211163605.GC12597@edgewater-inn.cambridge.arm.com>
- <b6a21681-beee-4083-89ce-cdfdbb958cbf@arm.com>
+        Tue, 11 Dec 2018 12:27:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33492 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726231AbeLKR14 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 12:27:56 -0500
+Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9A82F208E7;
+        Tue, 11 Dec 2018 17:27:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544549274;
+        bh=dwqK2tKwgQnPscC9YeC7ymqibML7h+WGcSdCOVkbTuM=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Op0YYhUj02LYPWdCTH0KtZn8FkhOn6Z/gWtCYFv8QnCAWj2OSNUUYpFFqwe6KSpLo
+         bOq0FGq/4iSvDlJsxr2Aj6jRtvi0i3W+Qyqk5D4aa2LuZDGy9fkU8g+q4dsDmSZSXs
+         ig+zRFIYBN8aTCXhVekIhQ5ioiccCBFw+nNE0OWs=
+Received: by mail-qk1-f176.google.com with SMTP id n12so9036965qkh.11;
+        Tue, 11 Dec 2018 09:27:54 -0800 (PST)
+X-Gm-Message-State: AA+aEWZzaTm2NBzFEInpOn2rXCDg0BmPlMWYTtgZUj3PWleRG01tjaTf
+        pAGshJyp8W2maQf2hnwniS5kjIlo+j74bLPPQw==
+X-Google-Smtp-Source: AFSGD/XwlzAiPOBrjfdPJpXIRaUqkVkbrXSMV8u4qlU8iWw2cTQkUxTxBayxpWCiSzeTmhdmU65Tfe0tiNCYzd98MmU=
+X-Received: by 2002:a37:5686:: with SMTP id k128mr14520681qkb.29.1544549273756;
+ Tue, 11 Dec 2018 09:27:53 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b6a21681-beee-4083-89ce-cdfdbb958cbf@arm.com>
-User-Agent: Mutt/1.11.1+30 (d10eec459b35) ()
+References: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com>
+ <1541542052-10081-5-git-send-email-jacek.anaszewski@gmail.com>
+ <5bea0eb8.1c69fb81.6b921.80e6@mx.google.com> <dfb5bd23-bcb9-7501-a608-969cb0464168@gmail.com>
+ <0a0b176c-4eb4-4b0e-6c3c-b3c6c8f5fff5@gmail.com> <CAL_JsqKEpbJjExkQKSXwYma9wPPO+8E0QMTyWTPs1nkGSd49_g@mail.gmail.com>
+ <20181130210814.GA5756@amd> <CAL_JsqK4oaUTBemXiTZzLeOKOndQ_GZp2F7mJ0VzGEKVGHY20Q@mail.gmail.com>
+ <fa5add90-e1b7-d527-374f-175abdf88455@gmail.com>
+In-Reply-To: <fa5add90-e1b7-d527-374f-175abdf88455@gmail.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Tue, 11 Dec 2018 11:27:41 -0600
+X-Gmail-Original-Message-ID: <CAL_Jsq+EsTXghh-bEtBmQ3oXEW45RJZJEJ2Zn1z-LfhvhNiXnQ@mail.gmail.com>
+Message-ID: <CAL_Jsq+EsTXghh-bEtBmQ3oXEW45RJZJEJ2Zn1z-LfhvhNiXnQ@mail.gmail.com>
+Subject: Re: [PATCH 04/24] dt-bindings: leds: Add function and color properties
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc:     Pavel Machek <pavel@ucw.cz>,
+        Linux LED Subsystem <linux-leds@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        Daniel Mack <daniel@zonque.org>, Dan Murphy <dmurphy@ti.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Oleh Kravchenko <oleg@kaa.org.ua>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Simon Shields <simon@lineageos.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 11, 2018 at 05:21:24PM +0000, Robin Murphy wrote:
-> On 11/12/2018 16:36, Will Deacon wrote:
-> > On Mon, Dec 10, 2018 at 03:29:01PM +0000, Robin Murphy wrote:
-> > > Wire up the basic support for hot-adding memory. Since memory hotplug
-> > > is fairly tightly coupled to sparsemem, we tweak pfn_valid() to also
-> > > cross-check the presence of a section in the manner of the generic
-> > > implementation, before falling back to memblock to check for no-map
-> > > regions within a present section as before. By having arch_add_memory(()
-> > > create the linear mapping first, this then makes everything work in the
-> > > way that __add_section() expects.
-> > > 
-> > > We expect hotplug to be ACPI-driven, so the swapper_pg_dir updates
-> > > should be safe from races by virtue of the global device hotplug lock.
-> > > 
-> > > Signed-off-by: Robin Murphy <robin.murphy@arm.com>
-> > > ---
-> > > 
-> > > Looks like I'm not going to have the whole pte_devmap story figured out
-> > > in time to land any ZONE_DEVICE support this cycle, but since this patch
-> > > also stands alone as a complete feature (and has ended up remarkably
-> > > simple and self-contained), I hope we might consider getting it merged
-> > > on its own merit.
-> > > 
-> > > Robin.
-> > > 
-> > >   arch/arm64/Kconfig   |  3 +++
-> > >   arch/arm64/mm/init.c |  8 ++++++++
-> > >   arch/arm64/mm/mmu.c  | 12 ++++++++++++
-> > >   arch/arm64/mm/numa.c | 10 ++++++++++
-> > >   4 files changed, 33 insertions(+)
-> > > 
-> > > diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-> > > index 6d2b25f51bb3..7b855ae45747 100644
-> > > --- a/arch/arm64/Kconfig
-> > > +++ b/arch/arm64/Kconfig
-> > > @@ -261,6 +261,9 @@ config ZONE_DMA32
-> > >   config HAVE_GENERIC_GUP
-> > >   	def_bool y
-> > > +config ARCH_ENABLE_MEMORY_HOTPLUG
-> > > +	def_bool y
-> > > +
-> > >   config SMP
-> > >   	def_bool y
-> > > diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
-> > > index 2983e0fc1786..82e0b08f2e31 100644
-> > > --- a/arch/arm64/mm/init.c
-> > > +++ b/arch/arm64/mm/init.c
-> > > @@ -291,6 +291,14 @@ int pfn_valid(unsigned long pfn)
-> > >   	if ((addr >> PAGE_SHIFT) != pfn)
-> > >   		return 0;
-> > > +
-> > > +#ifdef CONFIG_SPARSEMEM
-> > > +	if (pfn_to_section_nr(pfn) >= NR_MEM_SECTIONS)
-> > > +		return 0;
-> > > +
-> > > +	if (!valid_section(__nr_to_section(pfn_to_section_nr(pfn))))
-> > > +		return 0;
-> > 
-> > I'm a bit nervous about the call to __nr_to_section() here. How do we
-> > ensure that the section number we're passing stays within the bounds of
-> > the mem_section array?
-> 
-> The same way every other sparsemem user (apart from arch/arm) does, I guess
-> - this is literally a copy-paste of the generic pfn_valid() implementation
-> :/
+On Sat, Dec 1, 2018 at 3:17 PM Jacek Anaszewski
+<jacek.anaszewski@gmail.com> wrote:
+>
+> On 11/30/2018 11:19 PM, Rob Herring wrote:
+> > On Fri, Nov 30, 2018 at 3:08 PM Pavel Machek <pavel@ucw.cz> wrote:
+> >>
+> >> Hi!
+> >>
+> >>>> Pavel gave following examples:
+> >>>>
+> >>>> eth0:green:link
+> >>>> adsl0:green:link
+> >>>> adsl0:red:error
+> >>>>
+> >>>> So we would have e.g.:
+> >>>>
+> >>>> associated-vl42-device = <&camera1>;
+> >>>> associated-network-device = <&phy1>;
+> >>>> associated-block-device = <&phy1>;
+> >>>
+> >>> Variable property names are kind of a pain to parse.
+> >>
+> >> Ok, would it be enough to have associated-device = <&whatever>?
+> >
+> > Yeah, but I though you needed the device type name in there.
+> >
+> >>> Perhaps when LEDs are associated with a device, we shouldn't care
+> >>> within the context of the LED subsystem what the name is. The
+> >>> association is more important and if you have that exposed, then you
+> >>> don't really need to care what the name is. You still have to deal
+> >>> with a device with more than 1 LED, but that becomes a problem local
+> >>> to that device.
+> >>>
+> >>> What I'm getting at is following a more standard binding pattern of
+> >>> providers and consumers like we have for gpios, clocks, etc. So we'd
+> >>> have something like this:
+> >>>
+> >>> ethernet {
+> >>>   ...
+> >>>   leds = <&green_led>, <&red_led>;
+> >>>   led-names = "link", "err";
+> >>> };
+> >>
+> >> Basically every single device could have a LED associated with it
+> >> ("activity"). Would doing it like this mean we'd have to modify every
+> >> single driver to parse leds / led-names properties?
+> >
+> > Normally, that's how properties like this would work. A driver is also
+> > what knows how the leds should function.
+>
+> This is not true in case of associations where LED controller is
+> an independent device, as in Pavel's example [0].
 
-I don't trust the generic pfn_valid() at all :)
+I'm not really following how the HDD example is different. The parent
+of an LED would be the controller. The link to the led node would be
+in the disk controller node. Though maybe if things get complicated
+enough, we'd want to describe the drives or drive bays in DT.
 
-> Given the implementation of __nr_to_section() respective of how
-> memory_present() and sparse_index_init() set up mem_section in the first
-> place, I can't see how there can be a problem. You did see the bit 4 lines
-> above, right?
+> > A driver can retrieve the led
+> > and associate it with the 'foo-bar' function. The 'foo-bar' function
+> > then doesn't have to be defined in DT nor exposed to userspace. It
+> > wouldn't even have to be driver specific. The driver's subsystem could
+> > handle it all if the led functions are standardized. Though then you'd
+> > be back to needing standard names for 'led-names', but that's no worse
+> > that trigger names. This model would also allow getting rid of
+> > 'linux,default-trigger' properties in a lot of cases which wouldn't be
+> > a bad thing.
+> >
+> > However, having drivers handle this is not required. You can iterate
+> > thru the tree for nodes with 'leds' and find the node which has a
+> > phandle to the led node you care about.
+>
+> This way of discovering associations between devices and LEDs
+> would be more reliable than by devicename part of LED class device
+> as discussed previously.
+>
+> However, I've just tried to verify how it works, but
+> I can't find the way to get the of_node phandle from sysfs.
+>
+> The "of_node" link in per-device dirs in /sys/devices point
+> to the directories containing DT properties of the node, but
+> I see no way to obtain the node phandle.
 
-D'oh, yes, I read that and then instantly forgot it. Ok, so that should be
-fine.
+You probably don't want to be doing this in userspace. It's possible,
+but you've got to read the 'leds' property to get the phandle and then
+walk the tree to find the node with the matching phandle property
+value (i.e. reimplement what the kernel does). You'd probably would
+instead want to define a LED specific symlink sysfs attr either in the
+associated device to the led device or vice versa.
 
-> > > +#endif
-> > >   	return memblock_is_map_memory(addr);
-> > >   }
-> > >   EXPORT_SYMBOL(pfn_valid);
-> > > diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-> > > index e1b2d58a311a..22379a74d289 100644
-> > > --- a/arch/arm64/mm/mmu.c
-> > > +++ b/arch/arm64/mm/mmu.c
-> > > @@ -1044,3 +1044,15 @@ int pud_free_pmd_page(pud_t *pudp, unsigned long addr)
-> > >   	pmd_free(NULL, table);
-> > >   	return 1;
-> > >   }
-> > > +
-> > > +#ifdef CONFIG_MEMORY_HOTPLUG
-> > > +int arch_add_memory(int nid, u64 start, u64 size, struct vmem_altmap *altmap,
-> > > +		    bool want_memblock)
-> > > +{
-> > > +	__create_pgd_mapping(swapper_pg_dir, start, __phys_to_virt(start),
-> > > +			     size, PAGE_KERNEL, pgd_pgtable_alloc, 0);
-> > > +
-> > > +	return __add_pages(nid, start >> PAGE_SHIFT, size >> PAGE_SHIFT,
-> > > +			   altmap, want_memblock);
-> > > +}
-> > 
-> > If we're mapping the new memory into the linear map, shouldn't we be
-> > respecting rodata_full and debug page alloc by forcing page granularity
-> > and tweaking the permissions?
-> 
-> Bah, James mentioned debug_pagealloc long ago, and I did have a slight
-> nagging feeling that I was still missing something - yes, I need to fix the
-> flags for that case. I'm not sure about rodata_full (do you mean
-> STRICT_KERNEL_RWX?) since a section being added here won't contain kernel
-> text nor data, and I can't seem to find anywhere that rodata options affect
-> the linear mapping of plain free RAM.
-
-Ah, we've got code queued on for-next/core so that changing vmalloc()
-permissions makes the same changes to the linear map.
-
-Will
+Rob
