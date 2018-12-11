@@ -2,70 +2,74 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49E03C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 19:17:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 752D7C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 19:17:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE65120880
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 19:17:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 403D12087F
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 19:17:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="GVMdYczn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE65120880
+	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="lzOEtcYA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 403D12087F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lightnvm.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726742AbeLKTRB (ORCPT
+        id S1726331AbeLKTRG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 14:17:01 -0500
-Received: from mail-lj1-f169.google.com ([209.85.208.169]:41584 "EHLO
-        mail-lj1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726365AbeLKTRB (ORCPT
+        Tue, 11 Dec 2018 14:17:06 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:44468 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726365AbeLKTRD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 14:17:01 -0500
-Received: by mail-lj1-f169.google.com with SMTP id k15-v6so14030579ljc.8
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 11:16:59 -0800 (PST)
+        Tue, 11 Dec 2018 14:17:03 -0500
+Received: by mail-lj1-f194.google.com with SMTP id k19-v6so13994476lji.11
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 11:17:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=O7fFUM/mepqe/i69Sla4D4jNze3fp3adihc9Ic58eOA=;
-        b=GVMdYcznBYlKwHrs356gHcEOIfsmsx5lPAhb8TO1oLbB61FlvuWNkBJbDYyStRXq/3
-         bYFDpK19xBxdgpdiA/AeJbwuRYewaAqp3bn2rVf5vxehF5pwMGuBQaHXUTpPU5CfGlju
-         CD2y74vRSpwqJDIi6CTobxG3klItOP9Cq1qSFkhWF5BvdB98avUkADApQW+6Nk276DJ9
-         Ow4SIBV1+3rVfYNxqsj+YpByNnlqokCsALKWzPvagoOjnArxYc2g8kTXZ/SKo6+mKsKl
-         WG9wdogzou19092v2aCfgkZCQ0EkQBHtfvi6RgFcL+qaer7BOiA8kXIYguMO6au+ujd0
-         772Q==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=EAAvZB5EbkafXfB/nQ8jKNvQ2dQs06mVyegUe1IKNXs=;
+        b=lzOEtcYAkliKJkbxwBrdhYEMD+GTwp2RMPuopkhSqBjw4wEJpQCYlBgBF/lDitqViW
+         /08yLQWhRdNLo4g3XqeQrciKXNP95mZcALPOG2CvMCDIthp6Knf9dIqKC39Rybu4MV4g
+         pKoC0nuZ+VduwOqk5eO/jgFKue7E+Fse60QBN1rroTsirPC2y2q7LYQlUhwiid/1KE/f
+         Qb3ztOYU7I5WK/pL4EYCwS2n18FuXYvpEWYWWrF1phL6UPX3l0Sr88/g9Cl9QBr3uZEI
+         GyNWjfqnPEoAAFYXoPrBjLxuJZl6pLDtbpoeChbP6b1lQB4yLaHpADk2tEAKZPT45n+n
+         +dWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=O7fFUM/mepqe/i69Sla4D4jNze3fp3adihc9Ic58eOA=;
-        b=b2zH4OHx/gO0XA+/8kZmT96MO1Y4QlF4my5aZ6lbzoHZ6tvqSPLHxkNtHV314ldULw
-         GdFpvdgzBuGFRD8Y5YdE6We5HkcmWZnaQFgH0RKZRiY6npa9l+c6ZPzm6Ixn9pPB7iRj
-         PmekhcHIDP8v7fgbn6JYzGaWIa2uCKhfzJylCjQhV4vmD9CVaFoCYmxd6ziiTQ24yGVq
-         NmOFlLSI2ezw16y7trKLQL5/qphn8uTiEasQU0Sg6oXyIhp+1YEnSo2f3fRTfKp58Kjh
-         dSEs6NnBrXF8WVJ3NMefzMcC/0PRK+ZLHtqvu5ZYVwSkVxbKqD9Johvydd6eTHVrEr7t
-         r1FA==
-X-Gm-Message-State: AA+aEWZrC7F0x6BqhhfQ/c0xZ7JfstnpMluH0ue3/wTrYwXU5rC0YVkb
-        bNgToMKrPvVai5r5LYo2D6P//A==
-X-Google-Smtp-Source: AFSGD/UOcBuxUW1xRyZpOcd3ar6Jna83QvZZGqIYibKxiqnOLfLeHH6dWeAnDSDA4UHzaSlpFD3aJw==
-X-Received: by 2002:a2e:9783:: with SMTP id y3-v6mr10423226lji.167.1544555819041;
-        Tue, 11 Dec 2018 11:16:59 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=EAAvZB5EbkafXfB/nQ8jKNvQ2dQs06mVyegUe1IKNXs=;
+        b=SHeTjnUzAsfQVmn/+yAvqAKShLjJs3dQ+6cmABOM7qZG5ee7ULqTtiDKOczTWHDnOq
+         KEys1mLIGMVaKwfuHZaycEV5nBHIzxFzrU4AbPSEp5479JnERCyHjhgIaQKKgbAlpWy9
+         e7rdYS6/A39mVvZfwRSSB5+v6qLLKZPB6UgWFpMe2qtKUrDdhdH8gMJW4L9c5qJEp5G9
+         e/GN3+1T/AC5XwvQ7OJ/VQZxl76LwKOEGdbFWtzb8ZdY5Pa8bnMsOLOezNzbrnIMeIGz
+         F/jnSemhkqA05pKz2QTlE03ymyTMBa6cawxrj/SeojjcyEBKCF/lxY60pIqDfNRBD8aA
+         Kfvw==
+X-Gm-Message-State: AA+aEWYwWLIlu77iPIK/jYp8L+0sgpczgzb6uAT9hm78zxGYfH9LcvNZ
+        O51Jt0KxrO37Ac3T3lmyDfEnjMwga08=
+X-Google-Smtp-Source: AFSGD/XDHUA/r76FNrnzaaEtoXbTWySAe7CO33Ssv7XIEK3Xe/KMdAcZSzA2DvPP+UK172BOCF1QdQ==
+X-Received: by 2002:a2e:302:: with SMTP id 2-v6mr10215088ljd.137.1544555820306;
+        Tue, 11 Dec 2018 11:17:00 -0800 (PST)
 Received: from skyninja.webspeed.dk (95-166-82-66-cable.dk.customer.tdc.net. [95.166.82.66])
-        by smtp.gmail.com with ESMTPSA id v64sm2764583lfa.48.2018.12.11.11.16.58
+        by smtp.gmail.com with ESMTPSA id v64sm2764583lfa.48.2018.12.11.11.16.59
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Dec 2018 11:16:58 -0800 (PST)
+        Tue, 11 Dec 2018 11:16:59 -0800 (PST)
 From:   =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
 To:     axboe@fb.com
 Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Zhoujie Wu <zjwu@marvell.com>,
         =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-Subject: [GIT PULL 00/21] lightnvm updates for 4.21
-Date:   Tue, 11 Dec 2018 20:16:06 +0100
-Message-Id: <20181211191627.15542-1-mb@lightnvm.io>
+Subject: [GIT PULL 01/21] lightnvm: pblk: ignore the smeta oob area scan
+Date:   Tue, 11 Dec 2018 20:16:07 +0100
+Message-Id: <20181211191627.15542-2-mb@lightnvm.io>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181211191627.15542-1-mb@lightnvm.io>
+References: <20181211191627.15542-1-mb@lightnvm.io>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -74,75 +78,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jens,
+From: Zhoujie Wu <zjwu@marvell.com>
 
-Would you please pick up the following patches for 4.21?
+The smeta area l2p mapping is empty, and actually the
+recovery procedure only need to restore data sector's l2p
+mapping. So ignore the smeta oob scan.
 
-Changelog:
+Signed-off-by: Zhoujie Wu <zjwu@marvell.com>
+Reviewed-by: Javier González <javier@javigon.com>
+Reviewed-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
+Signed-off-by: Matias Bjørling <mb@lightnvm.io>
+---
+ drivers/lightnvm/pblk-recovery.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
- - Igor added packed metadata to pblk. Now drives without metadata
-   per LBA can be used as well.
- - Fix from Geert on uninitialized value on chunk metadata reads.
- - Fixes from Hans and Javier to pblk recovery and write path.
- - Fix from Hua Su to fix a race condition in the pblk recovery code.
- - Scan optimization added to pblk recovery from Zhoujie.
- - Small geometry cleanup from me.
-
-Thank you,
-Matias
-
-Geert Uytterhoeven (1):
-  lightnvm: Fix uninitialized return value in nvm_get_chunk_meta()
-
-Hans Holmberg (8):
-  lightnvm: pblk: fix chunk close trace event check
-  lightnvm: pblk: fix resubmission of overwritten write err lbas
-  lightnvm: pblk: account for write error sectors in emeta
-  lightnvm: pblk: stop writes gracefully when running out of lines
-  lightnvm: pblk: set conservative threshold for user writes
-  lightnvm: pblk: remove unused macro
-  lightnvm: pblk: fix pblk_lines_init error handling path
-  lightnvm: pblk: remove dead code in pblk_recov_l2p
-
-Hua Su (2):
-  lightnvm: pblk: fix spelling in comment
-  lightnvm: pblk: add lock protection to list operations
-
-Igor Konopko (6):
-  lightnvm: pblk: move lba list to partial read context
-  lightnvm: pblk: add helpers for OOB metadata
-  lightnvm: dynamic DMA pool entry size
-  lightnvm: disable interleaved metadata
-  lightnvm: pblk: support packed metadata
-  lightnvm: pblk: do not overwrite ppa list with meta list
-
-Javier González (2):
-  lightnvm: pblk: add comments wrt locking in recovery path
-  lightnvm: pblk: avoid ref warning on cache creation
-
-Matias Bjørling (1):
-  lightnvm: simplify geometry enumeration
-
-Zhoujie Wu (1):
-  lightnvm: pblk: ignore the smeta oob area scan
-
- drivers/lightnvm/core.c          |  23 ++++---
- drivers/lightnvm/pblk-core.c     |  77 ++++++++++++++++++-----
- drivers/lightnvm/pblk-init.c     | 103 ++++++++++++++++++++++++-------
- drivers/lightnvm/pblk-map.c      |  63 ++++++++++++-------
- drivers/lightnvm/pblk-rb.c       |   5 +-
- drivers/lightnvm/pblk-read.c     |  66 +++++++++++---------
- drivers/lightnvm/pblk-recovery.c |  46 +++++++++-----
- drivers/lightnvm/pblk-rl.c       |   5 +-
- drivers/lightnvm/pblk-sysfs.c    |   7 +++
- drivers/lightnvm/pblk-write.c    |  64 +++++++++++++------
- drivers/lightnvm/pblk.h          |  43 +++++++++++--
- drivers/nvme/host/core.c         |  18 +++---
- drivers/nvme/host/lightnvm.c     |  27 ++++----
- drivers/nvme/host/nvme.h         |   2 -
- include/linux/lightnvm.h         |   3 +-
- 15 files changed, 383 insertions(+), 169 deletions(-)
-
+diff --git a/drivers/lightnvm/pblk-recovery.c b/drivers/lightnvm/pblk-recovery.c
+index 5740b7509bd8..0fbd30e0a587 100644
+--- a/drivers/lightnvm/pblk-recovery.c
++++ b/drivers/lightnvm/pblk-recovery.c
+@@ -334,6 +334,7 @@ static int pblk_recov_scan_oob(struct pblk *pblk, struct pblk_line *line,
+ 			       struct pblk_recov_alloc p)
+ {
+ 	struct nvm_tgt_dev *dev = pblk->dev;
++	struct pblk_line_meta *lm = &pblk->lm;
+ 	struct nvm_geo *geo = &dev->geo;
+ 	struct ppa_addr *ppa_list;
+ 	struct pblk_sec_meta *meta_list;
+@@ -342,12 +343,12 @@ static int pblk_recov_scan_oob(struct pblk *pblk, struct pblk_line *line,
+ 	void *data;
+ 	dma_addr_t dma_ppa_list, dma_meta_list;
+ 	__le64 *lba_list;
+-	u64 paddr = 0;
++	u64 paddr = pblk_line_smeta_start(pblk, line) + lm->smeta_sec;
+ 	bool padded = false;
+ 	int rq_ppas, rq_len;
+ 	int i, j;
+ 	int ret;
+-	u64 left_ppas = pblk_sec_in_open_line(pblk, line);
++	u64 left_ppas = pblk_sec_in_open_line(pblk, line) - lm->smeta_sec;
+ 
+ 	if (pblk_line_wp_is_unbalanced(pblk, line))
+ 		pblk_warn(pblk, "recovering unbalanced line (%d)\n", line->id);
 -- 
 2.17.1
 
