@@ -2,90 +2,206 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55A64C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 17:13:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89F79C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 17:14:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25BB92081B
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 17:13:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25BB92081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 319322081B
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 17:14:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 319322081B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726707AbeLKRNd convert rfc822-to-8bit (ORCPT
+        id S1726769AbeLKRON (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 12:13:33 -0500
-Received: from mga03.intel.com ([134.134.136.65]:56296 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726241AbeLKRNc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 12:13:32 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Dec 2018 09:13:32 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,342,1539673200"; 
-   d="scan'208";a="97923112"
-Received: from orsmsx108.amr.corp.intel.com ([10.22.240.6])
-  by orsmga007.jf.intel.com with ESMTP; 11 Dec 2018 09:13:31 -0800
-Received: from orsmsx154.amr.corp.intel.com (10.22.226.12) by
- ORSMSX108.amr.corp.intel.com (10.22.240.6) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Tue, 11 Dec 2018 09:13:31 -0800
-Received: from orsmsx110.amr.corp.intel.com ([169.254.10.212]) by
- ORSMSX154.amr.corp.intel.com ([169.254.11.172]) with mapi id 14.03.0415.000;
- Tue, 11 Dec 2018 09:13:31 -0800
-From:   "Luck, Tony" <tony.luck@intel.com>
-To:     Christoph Hellwig <hch@lst.de>
-CC:     "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jesper Dangaard Brouer <brouer@redhat.com>,
-        Tariq Toukan <tariqt@mellanox.com>,
-        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
-        =?iso-8859-1?Q?Toke_H=F8iland-J=F8rgensen?= <toke@toke.dk>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        "Yu, Fenghua" <fenghua.yu@intel.com>,
-        "Marek Szyprowski" <m.szyprowski@samsung.com>,
-        "Busch, Keith" <keith.busch@intel.com>,
-        "Derrick, Jonathan" <jonathan.derrick@intel.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-ia64@vger.kernel.org" <linux-ia64@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [RFC] avoid indirect calls for DMA direct mappings v2
-Thread-Topic: [RFC] avoid indirect calls for DMA direct mappings v2
-Thread-Index: AQHUjmAj8kDGnIzvDkKqiRXJVUlss6V4iC+AgAEc+wCAABlGEIAADc/A
-Date:   Tue, 11 Dec 2018 17:13:30 +0000
-Message-ID: <3908561D78D1C84285E8C5FCA982C28F7D4922D6@ORSMSX110.amr.corp.intel.com>
-References: <20181207190720.18517-1-hch@lst.de>
- <20181210215113.GA22180@agluck-desk> <20181211065112.GA13668@lst.de> 
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiOWRlMjM5NWMtOThjMy00ODUyLTk2MGEtMjcxYWRkYzFkMjU4IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiQXJnbkJERjNGR0dvcnFISncrMzRLUzEra3UyK3lnZjhKVDkyNHN6Sk94bXdmODE5XC9ZWE9xTzBCUlFlYys0MSsifQ==
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.22.254.139]
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: 8BIT
+        Tue, 11 Dec 2018 12:14:13 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:16111 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726241AbeLKROM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 12:14:12 -0500
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 5002126038ACD;
+        Wed, 12 Dec 2018 01:14:06 +0800 (CST)
+Received: from S00293818-DELL1.china.huawei.com (10.202.226.54) by
+ DGGEMS403-HUB.china.huawei.com (10.3.19.203) with Microsoft SMTP Server id
+ 14.3.408.0; Wed, 12 Dec 2018 01:14:00 +0800
+From:   Salil Mehta <salil.mehta@huawei.com>
+To:     <davem@davemloft.net>
+CC:     <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
+        <lipeng321@huawei.com>, <mehta.salil@opnsrc.net>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linuxarm@huawei.com>, liuzhongzhu <liuzhongzhu@huawei.com>
+Subject: [PATCH net-next 1/6] net: hns3: Add "bd info" query function
+Date:   Tue, 11 Dec 2018 17:13:25 +0000
+Message-ID: <20181211171330.20592-2-salil.mehta@huawei.com>
+X-Mailer: git-send-email 2.8.3
+In-Reply-To: <20181211171330.20592-1-salil.mehta@huawei.com>
+References: <20181211171330.20592-1-salil.mehta@huawei.com>
 MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.202.226.54]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> But that might not be your fault. My ancient system is getting flaky. A v4.19 build that
-> has booted before is also resetting :-(
+From: liuzhongzhu <liuzhongzhu@huawei.com>
 
-After a power-cycle (and some time to let the machine cool off). System now boots
-with your patch series plus the __phys_to_pfn() #define
+This patch prints Sending and receiving
+packet descriptor information.
 
-So if you can figure the right way to fix that, you are good to go.
+debugfs command:
+echo dump bd info 1 > cmd
 
-Tested-by: Tony Luck <tony.luck@intel.com>
+Sample Command:
+root@(none)# echo bd info 1 > cmd
+hns3 0000:7d:00.0: TX Queue Num: 0, BD Index: 0
+hns3 0000:7d:00.0: (TX) addr: 0x0
+hns3 0000:7d:00.0: (TX)vlan_tag: 0
+hns3 0000:7d:00.0: (TX)send_size: 0
+hns3 0000:7d:00.0: (TX)vlan_tso: 0
+hns3 0000:7d:00.0: (TX)l2_len: 0
+hns3 0000:7d:00.0: (TX)l3_len: 0
+hns3 0000:7d:00.0: (TX)l4_len: 0
+hns3 0000:7d:00.0: (TX)vlan_tag: 0
+hns3 0000:7d:00.0: (TX)tv: 0
+hns3 0000:7d:00.0: (TX)vlan_msec: 0
+hns3 0000:7d:00.0: (TX)ol2_len: 0
+hns3 0000:7d:00.0: (TX)ol3_len: 0
+hns3 0000:7d:00.0: (TX)ol4_len: 0
+hns3 0000:7d:00.0: (TX)paylen: 0
+hns3 0000:7d:00.0: (TX)vld_ra_ri: 0
+hns3 0000:7d:00.0: (TX)mss: 0
+hns3 0000:7d:00.0: RX Queue Num: 0, BD Index: 120
+hns3 0000:7d:00.0: (RX)addr: 0xffee7000
+hns3 0000:7d:00.0: (RX)pkt_len: 0
+hns3 0000:7d:00.0: (RX)size: 0
+hns3 0000:7d:00.0: (RX)rss_hash: 0
+hns3 0000:7d:00.0: (RX)fd_id: 0
+hns3 0000:7d:00.0: (RX)vlan_tag: 0
+hns3 0000:7d:00.0: (RX)o_dm_vlan_id_fb: 0
+hns3 0000:7d:00.0: (RX)ot_vlan_tag: 0
+hns3 0000:7d:00.0: (RX)bd_base_info: 0
+
+Signed-off-by: liuzhongzhu <liuzhongzhu@huawei.com>
+Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
+---
+ drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c | 79 +++++++++++++++++++++-
+ 1 file changed, 78 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c b/drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c
+index 86d667a..9a02655 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3_debugfs.c
+@@ -52,7 +52,7 @@ static int hns3_dbg_queue_info(struct hnae3_handle *h, char *cmd_buf)
+ 		    test_bit(HNS3_NIC_STATE_RESETTING, &priv->state))
+ 			return -EPERM;
+ 
+-		ring = ring_data[i + h->kinfo.num_tqps].ring;
++		ring = ring_data[(u32)(i + h->kinfo.num_tqps)].ring;
+ 		base_add_h = readl_relaxed(ring->tqp->io_base +
+ 					   HNS3_RING_RX_RING_BASEADDR_H_REG);
+ 		base_add_l = readl_relaxed(ring->tqp->io_base +
+@@ -125,10 +125,85 @@ static int hns3_dbg_queue_info(struct hnae3_handle *h, char *cmd_buf)
+ 	return 0;
+ }
+ 
++static int hns3_dbg_bd_info(struct hnae3_handle *h, char *cmd_buf)
++{
++	struct hns3_nic_priv *priv = h->priv;
++	struct hns3_nic_ring_data *ring_data;
++	struct hns3_desc *rx_desc, *tx_desc;
++	struct device *dev = &h->pdev->dev;
++	struct hns3_enet_ring *ring;
++	u32 tx_index, rx_index;
++	u32 q_num, value;
++	int cnt;
++
++	cnt = sscanf(&cmd_buf[8], "%u %u", &q_num, &tx_index);
++	if (cnt == 2) {
++		rx_index = tx_index;
++	} else if (cnt != 1) {
++		dev_err(dev, "bd info: bad command string, cnt=%d\n", cnt);
++		return -EINVAL;
++	}
++
++	if (q_num >= h->kinfo.num_tqps) {
++		dev_err(dev, "Queue number(%u) is out of range(%u)\n", q_num,
++			h->kinfo.num_tqps - 1);
++		return -EINVAL;
++	}
++
++	ring_data = priv->ring_data;
++	ring  = ring_data[q_num].ring;
++	value = readl_relaxed(ring->tqp->io_base + HNS3_RING_TX_RING_TAIL_REG);
++	tx_index = (cnt == 1) ? value : tx_index;
++
++	if (tx_index >= ring->desc_num) {
++		dev_err(dev, "bd index (%u) is out of range(%u)\n", tx_index,
++			ring->desc_num - 1);
++		return -EINVAL;
++	}
++
++	tx_desc = &ring->desc[tx_index];
++	dev_info(dev, "TX Queue Num: %u, BD Index: %u\n", q_num, tx_index);
++	dev_info(dev, "(TX) addr: 0x%llx\n", tx_desc->addr);
++	dev_info(dev, "(TX)vlan_tag: %u\n", tx_desc->tx.vlan_tag);
++	dev_info(dev, "(TX)send_size: %u\n", tx_desc->tx.send_size);
++	dev_info(dev, "(TX)vlan_tso: %u\n", tx_desc->tx.type_cs_vlan_tso);
++	dev_info(dev, "(TX)l2_len: %u\n", tx_desc->tx.l2_len);
++	dev_info(dev, "(TX)l3_len: %u\n", tx_desc->tx.l3_len);
++	dev_info(dev, "(TX)l4_len: %u\n", tx_desc->tx.l4_len);
++	dev_info(dev, "(TX)vlan_tag: %u\n", tx_desc->tx.outer_vlan_tag);
++	dev_info(dev, "(TX)tv: %u\n", tx_desc->tx.tv);
++	dev_info(dev, "(TX)vlan_msec: %u\n", tx_desc->tx.ol_type_vlan_msec);
++	dev_info(dev, "(TX)ol2_len: %u\n", tx_desc->tx.ol2_len);
++	dev_info(dev, "(TX)ol3_len: %u\n", tx_desc->tx.ol3_len);
++	dev_info(dev, "(TX)ol4_len: %u\n", tx_desc->tx.ol4_len);
++	dev_info(dev, "(TX)paylen: %u\n", tx_desc->tx.paylen);
++	dev_info(dev, "(TX)vld_ra_ri: %u\n", tx_desc->tx.bdtp_fe_sc_vld_ra_ri);
++	dev_info(dev, "(TX)mss: %u\n", tx_desc->tx.mss);
++
++	ring  = ring_data[q_num + h->kinfo.num_tqps].ring;
++	value = readl_relaxed(ring->tqp->io_base + HNS3_RING_RX_RING_TAIL_REG);
++	rx_index = (cnt == 1) ? value : tx_index;
++	rx_desc	 = &ring->desc[rx_index];
++
++	dev_info(dev, "RX Queue Num: %u, BD Index: %u\n", q_num, rx_index);
++	dev_info(dev, "(RX)addr: 0x%llx\n", rx_desc->addr);
++	dev_info(dev, "(RX)pkt_len: %u\n", rx_desc->rx.pkt_len);
++	dev_info(dev, "(RX)size: %u\n", rx_desc->rx.size);
++	dev_info(dev, "(RX)rss_hash: %u\n", rx_desc->rx.rss_hash);
++	dev_info(dev, "(RX)fd_id: %u\n", rx_desc->rx.fd_id);
++	dev_info(dev, "(RX)vlan_tag: %u\n", rx_desc->rx.vlan_tag);
++	dev_info(dev, "(RX)o_dm_vlan_id_fb: %u\n", rx_desc->rx.o_dm_vlan_id_fb);
++	dev_info(dev, "(RX)ot_vlan_tag: %u\n", rx_desc->rx.ot_vlan_tag);
++	dev_info(dev, "(RX)bd_base_info: %u\n", rx_desc->rx.bd_base_info);
++
++	return 0;
++}
++
+ static void hns3_dbg_help(struct hnae3_handle *h)
+ {
+ 	dev_info(&h->pdev->dev, "available commands\n");
+ 	dev_info(&h->pdev->dev, "queue info [number]\n");
++	dev_info(&h->pdev->dev, "bd info [q_num] <bd index>\n");
+ 	dev_info(&h->pdev->dev, "dump fd tcam\n");
+ 	dev_info(&h->pdev->dev, "dump tc\n");
+ 	dev_info(&h->pdev->dev, "dump tm\n");
+@@ -205,6 +280,8 @@ static ssize_t hns3_dbg_cmd_write(struct file *filp, const char __user *buffer,
+ 		hns3_dbg_help(handle);
+ 	else if (strncmp(cmd_buf, "queue info", 10) == 0)
+ 		ret = hns3_dbg_queue_info(handle, cmd_buf);
++	else if (strncmp(cmd_buf, "bd info", 7) == 0)
++		ret = hns3_dbg_bd_info(handle, cmd_buf);
+ 	else if (handle->ae_algo->ops->dbg_run_cmd)
+ 		ret = handle->ae_algo->ops->dbg_run_cmd(handle, cmd_buf);
+ 
+-- 
+2.7.4
+
+
