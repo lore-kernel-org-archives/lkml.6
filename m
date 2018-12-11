@@ -2,111 +2,129 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9197EC67839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 21:49:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADC67C67839
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 21:50:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 575582086D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 21:49:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544564959;
-	bh=g3bZKrBIESL7oyXrOsvKbwjByucYBLypnBo+lO9AmxU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=JSgswNz2+qRWsCbU2odl2gHhnUFXnh7REdwycTkPDLfeEdZpqHfP/iouxH50MmFV/
-	 /skFd7iEAWuGmQrtchud23ZgSLRS6AV6/ynIB4qRUeCIFJkt/Xs5TV/mua7G6GCzAq
-	 r/RExhLdXjlBKYPL6WdUj/ekdiH/G3ONrgRNhnoM=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 575582086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 7119B20672
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 21:50:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="TGkK6NvH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7119B20672
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726263AbeLKVtS (ORCPT
+        id S1726293AbeLKVu2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 16:49:18 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:44414 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726146AbeLKVtS (ORCPT
+        Tue, 11 Dec 2018 16:50:28 -0500
+Received: from mail-pg1-f173.google.com ([209.85.215.173]:36840 "EHLO
+        mail-pg1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726230AbeLKVu1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 16:49:18 -0500
-Received: by mail-ot1-f68.google.com with SMTP id f18so15594920otl.11;
-        Tue, 11 Dec 2018 13:49:17 -0800 (PST)
+        Tue, 11 Dec 2018 16:50:27 -0500
+Received: by mail-pg1-f173.google.com with SMTP id n2so7266721pgm.3
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 13:50:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:content-transfer-encoding:in-reply-to:message-id:to
+         :subject:from:user-agent:references:cc:date;
+        bh=LvALdq5ixfhfExX7iT7b3jHkcXIyzZRjeMrmXprDN7c=;
+        b=TGkK6NvHvPCOZkEDDwn4ONv4ed7di9Pb8nqI2SI1jJLBPzbcifjLn8j9zVpbu6BY2a
+         Xs+saaWJS5YUJUap1EEtTSsMq/x0iwYShbhsE1em3coQ6GgSroSnbJpMdve/s9MUinwS
+         soLNV9rU/XSvEAEssful1I7wRRdhMctYkFCRs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=f+jqbTXgJcnaNmwXr4mvE8v4D3fDUTKKXNhqcpfB32k=;
-        b=sFU5wBZIao8xk5LHZceQNsNr4uadZPbKt21QVfKvlFIFQfWIwJL7PSMzLv33gMeX9Q
-         z/t+aU1Bmr4YpkhYnY1IABUc5r7d8y4XI7zPwH3+qhT438/l8eEeZvPUTuZ6j2j4accw
-         gm5Ejq3mrQwIb+LNgNQtS94go7svvppT5+OzKm+7wrdmuYQN22YObugNc6lQrEhR+VtI
-         FEgD0e0lyhZxVhNbbqyTFrlzxjqgbZRwmc7lc0CrWx/3iUpv+vg+dJAnoNWlIvcLG8/Z
-         MWzgWyDJImLrTlr4vIXfkW2pUe5NrxvkkNj7/JQTgV3zZeCV4cPP/axZ2KhC54MvzLbV
-         IqdQ==
-X-Gm-Message-State: AA+aEWZO7ZpPLt+77xC7wyj8MU8bhg8RFrMZEpCFH0TW5ACI5ayzxoUQ
-        1SdVBZ7QZwd/4YKvPcQ0Mxj8Pp0GGl0tlVuw48g=
-X-Google-Smtp-Source: AFSGD/VZ7S1N/46qsE9QmxUrC3ly74yF0S95wgxza2rk/cyGjquDbOhUrq+ZVeWfreeABytTt6RFl3Yvh5fJ5H2M2cM=
-X-Received: by 2002:a9d:2062:: with SMTP id n89mr11824902ota.244.1544564957226;
- Tue, 11 Dec 2018 13:49:17 -0800 (PST)
+        h=x-gm-message-state:mime-version:content-transfer-encoding
+         :in-reply-to:message-id:to:subject:from:user-agent:references:cc
+         :date;
+        bh=LvALdq5ixfhfExX7iT7b3jHkcXIyzZRjeMrmXprDN7c=;
+        b=Gc/bqRYNMePO5lDVyKlyomqwn+YLQSbE42GXjuScNv4fj3jbevkV96px/xW4NdELJ9
+         tamqzdq2pzKVv006QsaFirTC/kOMvolFiPlhHxD6FDB8VvZsdZrVqTNUV/jgLzYzS2N0
+         E5Ddo+YIac9UoB3N78o1sj4mSrmRWvI1rJfSJrIZrKvQdhXkd1mee94Si15xQfvPfkEn
+         HF4CiY3WaEtt6ttnIJ0il1rlhkzktv7vHgAAGv5mUut1lcpZQaqEOaBiV6+ubHyVoITJ
+         gTWV/aatrdSUAGmMCZEzuf2u+g4wcXGhnFwReGXm7xLei03r8Ai9r4HaKfwUVPuiCTmj
+         DjtA==
+X-Gm-Message-State: AA+aEWah1IcHPyRhgI8cJ7L9aW+7Zoa7DcxzsfR+SiZYGrl3G7S+Ouy4
+        +U/GHtSeqnJqAJzrIC5d2Uilrw==
+X-Google-Smtp-Source: AFSGD/VseJkQ2qO+DWL2/WCGUwDlv1gM2oqTvZbTeRan7hSXRw+H1Zix73X0LMQip73ffLFdQJdlOg==
+X-Received: by 2002:a62:29c3:: with SMTP id p186mr18214870pfp.117.1544565026400;
+        Tue, 11 Dec 2018 13:50:26 -0800 (PST)
+Received: from localhost ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id 69sm26831249pgg.86.2018.12.11.13.50.25
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 11 Dec 2018 13:50:25 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20181208214644.5374-1-okaya@kernel.org> <CAJZ5v0jV+UZ7A46Kiyv6JysoFJ=_ts7O_p3z9F1Uze3OwZdh_Q@mail.gmail.com>
- <4aa65942-bf97-c957-7f77-38bfdf7d1d3a@kernel.org>
-In-Reply-To: <4aa65942-bf97-c957-7f77-38bfdf7d1d3a@kernel.org>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Tue, 11 Dec 2018 22:49:05 +0100
-Message-ID: <CAJZ5v0gsq4-pzMrqrKuiUysXbnjc5AfVnY3=2OxQRZPsma=ZMA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] ACPI: Allow PCI to be disabled for reboot
-To:     okaya@kernel.org
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <00d91f90-ccf1-3486-0d42-0c4105058e61@codeaurora.org>
+Message-ID: <154456502486.17204.11345601448030201032@swboyd.mtv.corp.google.com>
+To:     Rajendra Nayak <rnayak@codeaurora.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH v6 10/10] soc: qcom: rpmhpd: Mark mx as a parent for cx
+From:   Stephen Boyd <swboyd@chromium.org>
+User-Agent: alot/0.7
+References: <20181211094938.25086-1-rnayak@codeaurora.org> <20181211094938.25086-11-rnayak@codeaurora.org> <CAPDyKFof-rkzmzibWOrAhDFysU=y+C8Bp0cK=_iht4=vmv-0vw@mail.gmail.com> <00d91f90-ccf1-3486-0d42-0c4105058e61@codeaurora.org>
+Cc:     Andy Gross <andy.gross@linaro.org>, Rob Herring <robh@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        David Collins <collinsd@codeaurora.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        DTML <devicetree@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Date:   Tue, 11 Dec 2018 13:50:24 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 11, 2018 at 5:54 PM Sinan Kaya <okaya@kernel.org> wrote:
->
-> On 12/11/2018 5:12 AM, Rafael J. Wysocki wrote:
-> > On Sat, Dec 8, 2018 at 10:47 PM Sinan Kaya <okaya@kernel.org> wrote:
+Quoting Rajendra Nayak (2018-12-11 02:33:23)
+>=20
+>=20
+> On 12/11/2018 3:52 PM, Ulf Hansson wrote:
+> > On Tue, 11 Dec 2018 at 10:50, Rajendra Nayak <rnayak@codeaurora.org> wr=
+ote:
 > >>
-> >> Make PCI reboot conditional on PCI support being present on the kernel
-> >> configuration.
+> >> Specify the active + sleep and active-only MX power domains as
+> >> the parents of the corresponding CX power domains. This will ensure th=
+at
+> >> performance state requests on CX automatically generate equivalent req=
+uests
+> >> on MX power domains.
 > >>
-> >> Signed-off-by: Sinan Kaya <okaya@kernel.org>
-> >
-> > Same comment as for patch [2/3]: make the subject say clearly that
-> > this is about CONFIG_PCI.
->
-> Sure
->
-> >>          case ACPI_ADR_SPACE_PCI_CONFIG:
-> >> +       {
-> >> +#ifdef CONFIG_PCI
-> >> +               unsigned int devfn;
-> >> +               struct pci_bus *bus0;
-> >> +
-> >>                  /* The reset register can only live on bus 0. */
-> >>                  bus0 = pci_find_bus(0, 0);
-> >>                  if (!bus0)
-> >> @@ -45,7 +48,10 @@ void acpi_reboot(void)
-> >>                  pci_bus_write_config_byte(bus0, devfn,
-> >>                                  (rr->address & 0xffff), reset_value);
-> >>                  break;
-> >> -
-> >> +#else
-> >> +               return;
-> >
-> > Why not "break"?
-> >
->
-> I struggled between break and return. Existing code seems to return on failure
-> when bus0 is NULL. I assumed it would be more logical to return as someone could
-> put some code after here that assumes everything is in order.
+> >> This is used to enforce a requirement that exists for various
+> >> hardware blocks on SDM845 that MX performance state >=3D CX performance
+> >> state for a given operating frequency.
+> >=20
+> > I assume that also means the MX power domain must not be power off as
+> > long as the CX power domain is powered on?
+>=20
+> So with rpmh, there's really no separate on/off control, we just put
+> it in the lowest perf state at off.
 
-Well, there's no such code ATM, so there's no practical difference
-between the two and you don't really need the #else branch at all, do
-you?
+I think in theory the answer is MX can't be off if CX is on, but in
+reality, MX and CX are never turned off, just set to something really
+low and even then the constraint applies for MX >=3D CX. Is that right?
+
+>=20
+> >=20
+> > Just to make sure there are no conflicting hierarchical constraints
+> > between idle management and performance state management!?
+> >=20
+
+I'm not sure what idle states mean to the CX and MX domains. Would it be
+some sort of idle state governor attached at genpd creation time that
+would adjust the main SoC power rails when all devices attached are
+idle? Maybe I don't understand how idle states are different from
+performance states.
+
+My understanding is that devices using these domains would almost always
+expect their clk frequency and clk on/off state to decide what the
+performance state is, unless they need to ignore clk state because they
+aren't managing clks and bump up the voltage directly when the device is
+active. Either way, devices are actively managing the voltage they need
+these voltage domains to operate at by using the genpd performance
+states APIs.
+
