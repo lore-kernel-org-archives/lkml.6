@@ -2,97 +2,101 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AABBC5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:52:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D608FC5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:54:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0ACBF20851
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:52:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0ACBF20851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 9A7E12086D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 16:54:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544547283;
+	bh=1ywB8z3U2NPnha7Yi+fI2RReg0XIqXApRroyT5ZHqqc=;
+	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
+	b=zT5GuC2BSxbQCqRY1PW4C9BngFHACqYbqhaTmEqysPWi36jXdpqoINBhi5u3oOzCC
+	 +rENJWmkJTMMSjVoRSPExApvgskqSVZiDhodgNF+4Z2ApL0FwDUpcOXJm+shbQAj0X
+	 QrSxu1R0xjnB+hb48xNm4wdOysiZ8uAUcVh/2100=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A7E12086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728113AbeLKQwz (ORCPT
+        id S1728122AbeLKQym (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 11:52:55 -0500
-Received: from mga04.intel.com ([192.55.52.120]:1363 "EHLO mga04.intel.com"
+        Tue, 11 Dec 2018 11:54:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45612 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726808AbeLKQwy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 11:52:54 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Dec 2018 08:52:53 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,342,1539673200"; 
-   d="scan'208";a="117757867"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.154])
-  by FMSMGA003.fm.intel.com with ESMTP; 11 Dec 2018 08:52:53 -0800
-Date:   Tue, 11 Dec 2018 08:52:53 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Josh Triplett <josh@joshtriplett.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
-        linux-sgx@vger.kernel.org,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        Jethro Beekman <jethro@fortanix.com>,
-        "Dr . Greg Wettstein" <greg@enjellic.com>
-Subject: Re: [RFC PATCH v3 0/4] x86: Add exception fixup for SGX ENCLU
-Message-ID: <20181211165253.GB14731@linux.intel.com>
-References: <20181210232141.5425-1-sean.j.christopherson@intel.com>
- <20181210232449.GA11843@localhost>
- <EEE078E7-7F37-4F74-8874-46E16C1E0A77@amacapital.net>
+        id S1726808AbeLKQym (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 11:54:42 -0500
+Received: from [10.80.45.159] (unknown [71.69.156.42])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9E7E320851;
+        Tue, 11 Dec 2018 16:54:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544547281;
+        bh=1ywB8z3U2NPnha7Yi+fI2RReg0XIqXApRroyT5ZHqqc=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=mHB4+qf4TVEKi4Hi+zYZIMm5ZUY+ez1vmIxiOrqiopaCdkiUdVxb+eOta0Qg+RvPB
+         74TK6mp98gcUEKz0tU66EipLcVd0dorDpekj5FXjb7JEGzp4QZgBbLiNt1x7+Licu9
+         ts6inJKo6lVViof24J7DgrlAUStrHsDT7d4R6KBY=
+Subject: Re: [PATCH v2 1/3] ACPI: Allow PCI to be disabled for reboot
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20181208214644.5374-1-okaya@kernel.org>
+ <CAJZ5v0jV+UZ7A46Kiyv6JysoFJ=_ts7O_p3z9F1Uze3OwZdh_Q@mail.gmail.com>
+From:   Sinan Kaya <okaya@kernel.org>
+Message-ID: <4aa65942-bf97-c957-7f77-38bfdf7d1d3a@kernel.org>
+Date:   Tue, 11 Dec 2018 11:54:39 -0500
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <EEE078E7-7F37-4F74-8874-46E16C1E0A77@amacapital.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <CAJZ5v0jV+UZ7A46Kiyv6JysoFJ=_ts7O_p3z9F1Uze3OwZdh_Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 11, 2018 at 07:41:27AM -0800, Andy Lutomirski wrote:
+On 12/11/2018 5:12 AM, Rafael J. Wysocki wrote:
+> On Sat, Dec 8, 2018 at 10:47 PM Sinan Kaya <okaya@kernel.org> wrote:
+>>
+>> Make PCI reboot conditional on PCI support being present on the kernel
+>> configuration.
+>>
+>> Signed-off-by: Sinan Kaya <okaya@kernel.org>
 > 
+> Same comment as for patch [2/3]: make the subject say clearly that
+> this is about CONFIG_PCI.
+
+Sure
+
+>>          case ACPI_ADR_SPACE_PCI_CONFIG:
+>> +       {
+>> +#ifdef CONFIG_PCI
+>> +               unsigned int devfn;
+>> +               struct pci_bus *bus0;
+>> +
+>>                  /* The reset register can only live on bus 0. */
+>>                  bus0 = pci_find_bus(0, 0);
+>>                  if (!bus0)
+>> @@ -45,7 +48,10 @@ void acpi_reboot(void)
+>>                  pci_bus_write_config_byte(bus0, devfn,
+>>                                  (rr->address & 0xffff), reset_value);
+>>                  break;
+>> -
+>> +#else
+>> +               return;
 > 
-> > On Dec 10, 2018, at 3:24 PM, Josh Triplett <josh@joshtriplett.org> wrote:
-> > 
-> >> On Mon, Dec 10, 2018 at 03:21:37PM -0800, Sean Christopherson wrote:
-> >> At that point I realized it's a hell of a lot easier to simply provide
-> >> an IOCTL via /dev/sgx that allows userspace to register a per-process
-> >> ENCLU exception handler.  At a high level, the basic idea is the same
-> >> as the vDSO approach: provide a hardcoded fixup handler for ENCLU and
-> >> attempt to fixup select unhandled exceptions that occurred in user code.
-> > 
-> > So, on the one hand, this is *absolutely* much cleaner than the VDSO
-> > approach. On the other hand, this is global process state and has some
-> > of the same problems as a signal handler as a result.
+> Why not "break"?
 > 
-> I liked the old version better for this reason 
 
-This isn't fundamentally different than forcing all EENTER calls through
-the vDSO, which is also per-process.  Technically this is more flexible
-in that regard since userspace gets to choose where their one ENCLU gets
-to reside.  Userspace can have per-enclave entry flows so long as the
-actual ENLU[EENTER] is common, same as vDSO.
-
-> and for another reason:
-> while this new one looks very very simple, it still has the hidden
-> complexity that the magic values written to registers in the event of an
-> exception are very much Linux specific.
-
-Definitely more magical, but not necessarily more difficult to document.
-It'd essentially be an extension of hardware's AEE/AEP behavior.
-
-> OTOH, the old approach clobbered more regs than needed, but that’s a easy fix.
+I struggled between break and return. Existing code seems to return on failure
+when bus0 is NULL. I assumed it would be more logical to return as someone could
+put some code after here that assumes everything is in order.
