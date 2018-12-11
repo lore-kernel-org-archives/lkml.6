@@ -7,52 +7,51 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B290C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:47:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41487C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:47:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5BDE2146D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:47:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 092E4208E7
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:47:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544543229;
-	bh=UcY9bugxz+DHqZpQVPXsVM+fY6aWZ+XYkvmPCkEqUBI=;
+	s=default; t=1544543232;
+	bh=+tDiGDUrpjcNjsU3ps1Bta9sIwPnUrXZhQ5sLItSs+0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ii1NSHFVs7yksidhtPLfgg3YAHubGlVdm4erRyxW68rL59G5XQDdJZ7kMDtJKu39k
-	 IzUmgGdEOdT7aYc4fw/UpZDa58NHuon4HPJKz0ol3Ha3w9ymmfleVpymXLFJuClSzU
-	 aaEZQV5R2fMQu2zje9Aj3xx9/02gnbtfP/Z/3Acw=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5BDE2146D
+	b=jChJuVPD/lZ6AfoBrS6mwxsgVJX86V55Nyy6EVVWhwnL9+XN4NVxBemZYAG+JB6DW
+	 qCKuS15uoJkjN/kqM4As0lPLa71wHX18SuX05M6xD2bpKDeNBL5raR+O5wmCGM3L+G
+	 3chu47eRI+5gsLB8VS/r6JeyygwTWQN5NRiMY8Ps=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 092E4208E7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728476AbeLKPrH (ORCPT
+        id S1728491AbeLKPrK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:47:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35508 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:47:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35530 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728458AbeLKPrF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:47:05 -0500
+        id S1728472AbeLKPrH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:47:07 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4E3502133F;
-        Tue, 11 Dec 2018 15:47:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C8D952145D;
+        Tue, 11 Dec 2018 15:47:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543224;
-        bh=UcY9bugxz+DHqZpQVPXsVM+fY6aWZ+XYkvmPCkEqUBI=;
+        s=default; t=1544543227;
+        bh=+tDiGDUrpjcNjsU3ps1Bta9sIwPnUrXZhQ5sLItSs+0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bVaKUBw/CRkRzAYjHiWJWvPaw4hrqiZXEwCTqV+m2kL5kpXjD4jbwpiOpUS4X9pt0
-         uw++BzhpX6kdpfxRd1P/g9EV1BJe/tH43KJi14F5Gz0KHCTzoRstdL3J/e4wGYBCHo
-         drv/Dhqcm7TTOABUFUiiARKXWpjlZa1otCAyiJFQ=
+        b=U+hKwPscmGMH/6Rc7FjstX355N5LttObtg41OP2EAq34l4LDOYm4W/HGgAbh+IYr/
+         QUoR26p6hmMFAce9fLSm8jjhkeuS79LtFkSJ37iKZ/zBZOoejCobwSyYb5h/ZS7Cix
+         hN4U9WYj418xdY6/Xx67jdgronIQ/BO7slsdrghc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sudarsana Reddy Kalluru <Sudarsana.Kalluru@cavium.com>,
-        Michal Kalderon <Michal.Kalderon@cavium.com>,
+        stable@vger.kernel.org, Denis Bolotin <denis.bolotin@cavium.com>,
+        Michal Kalderon <michal.kalderon@cavium.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 61/91] bnx2x: Assign unique DMAE channel number for FW DMAE transactions.
-Date:   Tue, 11 Dec 2018 16:41:20 +0100
-Message-Id: <20181211151611.020726539@linuxfoundation.org>
+Subject: [PATCH 4.4 62/91] qed: Fix PTT leak in qed_drain()
+Date:   Tue, 11 Dec 2018 16:41:21 +0100
+Message-Id: <20181211151611.116801917@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151606.026852373@linuxfoundation.org>
 References: <20181211151606.026852373@linuxfoundation.org>
@@ -71,64 +70,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 77e461d14ed141253573eeeb4d34eccc51e38328 ]
+[ Upstream commit 9aaa4e8ba12972d674caeefbc5f88d83235dd697 ]
 
-Driver assigns DMAE channel 0 for FW as part of START_RAMROD command. FW
-uses this channel for DMAE operations (e.g., TIME_SYNC implementation).
-Driver also uses the same channel 0 for DMAE operations for some of the PFs
-(e.g., PF0 on Port0). This could lead to concurrent access to the DMAE
-channel by FW and driver which is not legal. Hence need to assign unique
-DMAE id for FW.
-Currently following DMAE channels are used by the clients,
-  MFW - OCBB/OCSD functionality uses DMAE channel 14/15
-  Driver 0-3 and 8-11 (for PF dmae operations)
-         4 and 12 (for stats requests)
-Assigning unique dmae_id '13' to the FW.
+Release PTT before entering error flow.
 
-Changes from previous version:
-------------------------------
-v2: Incorporated the review comments.
-
-Signed-off-by: Sudarsana Reddy Kalluru <Sudarsana.Kalluru@cavium.com>
-Signed-off-by: Michal Kalderon <Michal.Kalderon@cavium.com>
+Signed-off-by: Denis Bolotin <denis.bolotin@cavium.com>
+Signed-off-by: Michal Kalderon <michal.kalderon@cavium.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
-
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/broadcom/bnx2x/bnx2x.h    | 7 +++++++
- drivers/net/ethernet/broadcom/bnx2x/bnx2x_sp.c | 1 +
- 2 files changed, 8 insertions(+)
+ drivers/net/ethernet/qlogic/qed/qed_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x.h b/drivers/net/ethernet/broadcom/bnx2x/bnx2x.h
-index 1ea068815419..2491cdc2535c 100644
---- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x.h
-+++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x.h
-@@ -2291,6 +2291,13 @@ void bnx2x_igu_clear_sb_gen(struct bnx2x *bp, u8 func, u8 idu_sb_id,
- #define PMF_DMAE_C(bp)			(BP_PORT(bp) * MAX_DMAE_C_PER_PORT + \
- 					 E1HVN_MAX)
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_main.c b/drivers/net/ethernet/qlogic/qed/qed_main.c
+index 35e1468d8196..b8ae6ed5c7ba 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_main.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_main.c
+@@ -1124,9 +1124,9 @@ static int qed_drain(struct qed_dev *cdev)
+ 			return -EBUSY;
+ 		}
+ 		rc = qed_mcp_drain(hwfn, ptt);
++		qed_ptt_release(hwfn, ptt);
+ 		if (rc)
+ 			return rc;
+-		qed_ptt_release(hwfn, ptt);
+ 	}
  
-+/* Following is the DMAE channel number allocation for the clients.
-+ *   MFW: OCBB/OCSD implementations use DMAE channels 14/15 respectively.
-+ *   Driver: 0-3 and 8-11 (for PF dmae operations)
-+ *           4 and 12 (for stats requests)
-+ */
-+#define BNX2X_FW_DMAE_C                 13 /* Channel for FW DMAE operations */
-+
- /* PCIE link and speed */
- #define PCICFG_LINK_WIDTH		0x1f00000
- #define PCICFG_LINK_WIDTH_SHIFT		20
-diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_sp.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_sp.c
-index ff702a707a91..343e3366d751 100644
---- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_sp.c
-+++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_sp.c
-@@ -5931,6 +5931,7 @@ static inline int bnx2x_func_send_start(struct bnx2x *bp,
- 	rdata->sd_vlan_tag	= cpu_to_le16(start_params->sd_vlan_tag);
- 	rdata->path_id		= BP_PATH(bp);
- 	rdata->network_cos_mode	= start_params->network_cos_mode;
-+	rdata->dmae_cmd_id	= BNX2X_FW_DMAE_C;
- 
- 	rdata->vxlan_dst_port	= cpu_to_le16(start_params->vxlan_dst_port);
- 	rdata->geneve_dst_port	= cpu_to_le16(start_params->geneve_dst_port);
+ 	return 0;
 -- 
 2.19.1
 
