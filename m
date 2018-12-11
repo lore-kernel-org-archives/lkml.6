@@ -7,49 +7,51 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20283C67839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:23:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5773C6783B
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:23:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA6CE2084C
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:23:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B9942084C
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 22:23:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="H4kconNm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA6CE2084C
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="LNTpgDMY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B9942084C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726359AbeLKWXf (ORCPT
+        id S1726389AbeLKWXn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 17:23:35 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:46202 "EHLO mail.skyhub.de"
+        Tue, 11 Dec 2018 17:23:43 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:46274 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726202AbeLKWXb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 17:23:31 -0500
+        id S1726346AbeLKWXe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 17:23:34 -0500
 Received: from zn.tnic (p200300EC2BCD2B0010F6E1EC68D6BA6C.dip0.t-ipconnect.de [IPv6:2003:ec:2bcd:2b00:10f6:e1ec:68d6:ba6c])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 45AFD1EC0BFC;
-        Tue, 11 Dec 2018 23:23:30 +0100 (CET)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id DF11F1EC0C11;
+        Tue, 11 Dec 2018 23:23:32 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1544567010;
+        t=1544567013;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=PbCAF2XcCAjQWK1b11rF+GVjG1oyepoSMGI1yKiTULM=;
-        b=H4kconNmMwqaWh5v6kq1qFO5UhvBZX0Pr+YzCwF6Q8jNd7YO0iJWPLCfmC9GeH3SWf+yWS
-        7OWmUG8rc5zQwFGROIttfH5lMxkDP4mgbGONDFYApSTS7RXZ0B992hdKOZD3BGfiP6Q8oc
-        f+NNkdYG+nEfVMALV81mZS8tBwBw8oU=
+        bh=GKywmujzPhFneQ5I17/1RpzWlb/UISTliKsdCm3/o3U=;
+        b=LNTpgDMYzGmXbBMPkw4FU+nOeHJjP+76PyTeTXM6lG0VG/QcRnHBqPql5QgM3Vu4EpSGrR
+        cNQekHLkZz3te/4omAgWnIBtNL6TILRDM9UCeHaSuY/kTTR/vbdOx1UyzQSBPZ9F0SVgkq
+        /9NIm0Ecy+K3T3IEAFhZfVirZ+kJEyI=
 From:   Borislav Petkov <bp@alien8.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     X86 ML <x86@kernel.org>, Andy Lutomirski <luto@amacapital.net>,
         "H. Peter Anvin" <hpa@zytor.com>,
         Josh Poimboeuf <jpoimboe@redhat.com>,
         Peter Zijlstra <peterz@infradead.org>,
-        Tom Lendacky <thomas.lendacky@amd.com>
-Subject: [RFC PATCH 1/4] x86/alternatives: Add macro comments
-Date:   Tue, 11 Dec 2018 23:23:23 +0100
-Message-Id: <20181211222326.14581-2-bp@alien8.de>
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        John Stultz <john.stultz@linaro.org>
+Subject: [RFC PATCH 4/4] x86/TSC: Use RDTSCP
+Date:   Tue, 11 Dec 2018 23:23:26 +0100
+Message-Id: <20181211222326.14581-5-bp@alien8.de>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181211222326.14581-1-bp@alien8.de>
 References: <20181211222326.14581-1-bp@alien8.de>
@@ -62,83 +64,74 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Borislav Petkov <bp@suse.de>
 
-... so that when one stares at the .s output, one can find her way
-around the resulting asm magic.
+Currently, the kernel uses
 
-For example, ALTERNATIVE looks like this now:
+  [LM]FENCE; RDTSC
 
-          # ALT: oldnstr
-  661:
-          ...
-  662:
-          # ALT: padding
-  .skip ...
-  663:
-  .pushsection .altinstructions,"a"
+in the timekeeping code, to guarantee monotonicity of time where the
+*FENCE is selected based on vendor.
 
-  ...
+Replace that sequence with RDTSCP which is faster or on-par and gives
+the same guarantees.
 
-  .popsection
-  .pushsection .altinstr_replacement, "ax"
-          # ALT: replacement 1
-  6641:
-  	...
-  6651:
-          .popsection
+A microbenchmark on Intel shows that the change is on-par.
 
-Merge __OLDINSTR() into OLDINSTR(), while at it.
+On AMD, the change is either on-par with the current LFENCE-prefixed
+RDTSC and some are slightly better with RDTSCP.
 
-No functional changes.
+The comparison is done with the LFENCE-prefixed RDTSC (and not with the
+MFENCE-prefixed one, as one would normally expect) because all modern
+AMD families make LFENCE serializing and thus avoid the heavy MFENCE by
+effectively enabling X86_FEATURE_LFENCE_RDTSC.
 
+Co-developed-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: John Stultz <john.stultz@linaro.org>
+Cc: x86@kernel.org
+Link: https://lkml.kernel.org/r/20181119184556.11479-1-bp@alien8.de
 ---
- arch/x86/include/asm/alternative.h | 16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
+ arch/x86/include/asm/msr.h | 16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/include/asm/alternative.h b/arch/x86/include/asm/alternative.h
-index d7faa16622d8..8d38b296a18a 100644
---- a/arch/x86/include/asm/alternative.h
-+++ b/arch/x86/include/asm/alternative.h
-@@ -87,13 +87,12 @@ static inline int alternatives_text_reserved(void *start, void *end)
- #define alt_total_slen		alt_end_marker"b-661b"
- #define alt_rlen(num)		e_replacement(num)"f-"b_replacement(num)"f"
- 
--#define __OLDINSTR(oldinstr, num)					\
-+#define OLDINSTR(oldinstr, num)						\
-+	"# ALT: oldnstr\n"						\
- 	"661:\n\t" oldinstr "\n662:\n"					\
-+	"# ALT: padding\n"						\
- 	".skip -(((" alt_rlen(num) ")-(" alt_slen ")) > 0) * "		\
--		"((" alt_rlen(num) ")-(" alt_slen ")),0x90\n"
--
--#define OLDINSTR(oldinstr, num)						\
--	__OLDINSTR(oldinstr, num)					\
-+		"((" alt_rlen(num) ")-(" alt_slen ")),0x90\n"		\
- 	alt_end_marker ":\n"
- 
- /*
-@@ -109,7 +108,9 @@ static inline int alternatives_text_reserved(void *start, void *end)
-  * additionally longer than the first replacement alternative.
+diff --git a/arch/x86/include/asm/msr.h b/arch/x86/include/asm/msr.h
+index 91e4cf189914..5cc3930cb465 100644
+--- a/arch/x86/include/asm/msr.h
++++ b/arch/x86/include/asm/msr.h
+@@ -217,6 +217,8 @@ static __always_inline unsigned long long rdtsc(void)
   */
- #define OLDINSTR_2(oldinstr, num1, num2) \
-+	"# ALT: oldinstr2\n"									\
- 	"661:\n\t" oldinstr "\n662:\n"								\
-+	"# ALT: padding2\n"									\
- 	".skip -((" alt_max_short(alt_rlen(num1), alt_rlen(num2)) " - (" alt_slen ")) > 0) * "	\
- 		"(" alt_max_short(alt_rlen(num1), alt_rlen(num2)) " - (" alt_slen ")), 0x90\n"	\
- 	alt_end_marker ":\n"
-@@ -122,8 +123,9 @@ static inline int alternatives_text_reserved(void *start, void *end)
- 	" .byte " alt_rlen(num) "\n"			/* replacement len */ \
- 	" .byte " alt_pad_len "\n"			/* pad len */
+ static __always_inline unsigned long long rdtsc_ordered(void)
+ {
++	DECLARE_ARGS(val, low, high);
++
+ 	/*
+ 	 * The RDTSC instruction is not ordered relative to memory
+ 	 * access.  The Intel SDM and the AMD APM are both vague on this
+@@ -227,9 +229,19 @@ static __always_inline unsigned long long rdtsc_ordered(void)
+ 	 * ordering guarantees as reading from a global memory location
+ 	 * that some other imaginary CPU is updating continuously with a
+ 	 * time stamp.
++	 *
++	 * Thus, use the preferred barrier on the respective CPU, aiming for
++	 * RDTSCP as the default.
+ 	 */
+-	barrier_nospec();
+-	return rdtsc();
++	asm volatile(ALTERNATIVE_3("rdtsc",
++				   "mfence; rdtsc", X86_FEATURE_MFENCE_RDTSC,
++				   "lfence; rdtsc", X86_FEATURE_LFENCE_RDTSC,
++				   "rdtscp", X86_FEATURE_RDTSCP)
++			: EAX_EDX_RET(val, low, high)
++			/* RDTSCP clobbers ECX with MSR_TSC_AUX. */
++			:: "ecx");
++
++	return EAX_EDX_VAL(val, low, high);
+ }
  
--#define ALTINSTR_REPLACEMENT(newinstr, feature, num)	/* replacement */     \
--	b_replacement(num)":\n\t" newinstr "\n" e_replacement(num) ":\n\t"
-+#define ALTINSTR_REPLACEMENT(newinstr, feature, num)	/* replacement */	\
-+	"# ALT: replacement " #num "\n"						\
-+	b_replacement(num)":\n\t" newinstr "\n" e_replacement(num) ":\n"
- 
- /* alternative assembly primitive: */
- #define ALTERNATIVE(oldinstr, newinstr, feature)			\
+ static inline unsigned long long native_read_pmc(int counter)
 -- 
 2.19.1
 
