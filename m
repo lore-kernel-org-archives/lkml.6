@@ -2,177 +2,104 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.9 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3615CC07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 13:31:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D582C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 13:33:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0420B2082F
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 13:31:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0420B2082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 3FFE62082F
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 13:33:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Tb7KyShu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FFE62082F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726540AbeLKNbh (ORCPT
+        id S1726532AbeLKNdL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 08:31:37 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:52581 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726254AbeLKNbh (ORCPT
+        Tue, 11 Dec 2018 08:33:11 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:49118 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726203AbeLKNdK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 08:31:37 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBBDVTAk4004762
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 11 Dec 2018 05:31:29 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBBDVTNF4004759;
-        Tue, 11 Dec 2018 05:31:29 -0800
-Date:   Tue, 11 Dec 2018 05:31:29 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Borislav Petkov <tipbot@zytor.com>
-Message-ID: <tip-3bfaf95cb1fe81872df884956c704469e68a5bee@git.kernel.org>
-Cc:     hpa@zytor.com, mingo@kernel.org, tglx@linutronix.de, bp@suse.de,
-        linux-kernel@vger.kernel.org, tony.luck@intel.com
-Reply-To: hpa@zytor.com, mingo@kernel.org, tglx@linutronix.de, bp@suse.de,
-          linux-kernel@vger.kernel.org, tony.luck@intel.com
-In-Reply-To: <20181205200913.GR29510@zn.tnic>
-References: <20181205200913.GR29510@zn.tnic>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:ras/core] x86/mce: Unify pr_* prefix
-Git-Commit-ID: 3bfaf95cb1fe81872df884956c704469e68a5bee
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 11 Dec 2018 08:33:10 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id wBBDWdDA086348;
+        Tue, 11 Dec 2018 07:32:39 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1544535159;
+        bh=Y+yfj3rJdcOxf0IL9jSvKQdzDMJM+vVEZXfNt4j07Uc=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=Tb7KyShu+CJ1Sr/oQVgZ9B3QFWgEzskbta27jwI/5VLuU33+JalBvQEk8i6d6p9gV
+         ADZ7gewfuw4pgfKaYXMe9mZjd7LVofLGnQtOCwAy3dtt6hT+nmb7ca2rJivBi51Sjq
+         OQuS+9W7TJhWnI/GTEVaTXvkmkfVldM9MQ69Ukeg=
+Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wBBDWdua082186
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 11 Dec 2018 07:32:39 -0600
+Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Tue, 11
+ Dec 2018 07:32:39 -0600
+Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Tue, 11 Dec 2018 07:32:39 -0600
+Received: from [172.24.190.172] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wBBDWZLB030930;
+        Tue, 11 Dec 2018 07:32:35 -0600
+Subject: Re: [PATCH 2/2] arm64: dts: ti: k3-am654-base-board: Add MMC/SD
+ support
+To:     Tony Lindgren <tony@atomide.com>, Nishanth Menon <nm@ti.com>
+CC:     Faiz Abbas <faiz_abbas@ti.com>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <mark.rutland@arm.com>,
+        <robh+dt@kernel.org>, <t-kristo@ti.com>, <kishon@ti.com>,
+        <ulf.hansson@linaro.org>, <adrian.hunter@intel.com>,
+        <michal.simek@xilinx.com>, Arnd Bergmann <arnd@arndb.de>
+References: <20181207084233.13700-1-faiz_abbas@ti.com>
+ <20181207084233.13700-3-faiz_abbas@ti.com>
+ <20181208155427.jmidz4vsw4k4qj36@akan>
+ <c1dd9783-84dc-9dad-ea94-9a14a4ad814d@ti.com>
+ <20181210120647.i3ply3p7umvedb3u@akan> <20181210234730.GH6707@atomide.com>
+From:   Sekhar Nori <nsekhar@ti.com>
+Message-ID: <f2f31347-3aa3-8dda-84a3-bd112aa3ff9d@ti.com>
+Date:   Tue, 11 Dec 2018 19:02:34 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+In-Reply-To: <20181210234730.GH6707@atomide.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  3bfaf95cb1fe81872df884956c704469e68a5bee
-Gitweb:     https://git.kernel.org/tip/3bfaf95cb1fe81872df884956c704469e68a5bee
-Author:     Borislav Petkov <bp@suse.de>
-AuthorDate: Wed, 5 Dec 2018 21:05:13 +0100
-Committer:  Borislav Petkov <bp@suse.de>
-CommitDate: Thu, 6 Dec 2018 12:04:52 +0100
+Hi Tony,
 
-x86/mce: Unify pr_* prefix
+On 11/12/18 5:17 AM, Tony Lindgren wrote:
+> * Nishanth Menon <nm@ti.com> [181210 12:07]:
+>> I really am curious how Arnd / Tony actually pull this one off.. If they
+>> have continous cron job for checking if your patch is ready... I doubt
+>> it..
+> 
+> The only way that works in a distributed manner is for the patch
+> authors to resend after the dependencies have cleared.
+> 
+> As some people don't know this, at least I try to reply with
+> something about tagging patch as read and assuming it will get
+> resent after dependencies have cleard.
+> 
+> Otherwise the todo list just keeps growing eternally :)
 
-Move the pr_fmt prefix to internal.h and include it everywhere. This
-way, all pr_* printed strings will be prepended with "mce: ".
+Alright, if the preference is to resend patches after dependencies are
+cleared, I think it will also be better to mark the initial review-only
+version as "RFC" (as Nishanth requested).
 
-No functional changes.
-
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: Tony Luck <tony.luck@intel.com>
-Link: https://lkml.kernel.org/r/20181205200913.GR29510@zn.tnic
----
- arch/x86/kernel/cpu/mce/core.c        | 2 --
- arch/x86/kernel/cpu/mce/dev-mcelog.c  | 2 --
- arch/x86/kernel/cpu/mce/internal.h    | 3 +++
- arch/x86/kernel/cpu/mce/p5.c          | 2 ++
- arch/x86/kernel/cpu/mce/therm_throt.c | 2 ++
- arch/x86/kernel/cpu/mce/threshold.c   | 2 ++
- arch/x86/kernel/cpu/mce/winchip.c     | 2 ++
- 7 files changed, 11 insertions(+), 4 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/core.c
-index b0ae12cf7827..ad8f62a0c706 100644
---- a/arch/x86/kernel/cpu/mce/core.c
-+++ b/arch/x86/kernel/cpu/mce/core.c
-@@ -8,8 +8,6 @@
-  * Author: Andi Kleen
-  */
- 
--#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
--
- #include <linux/thread_info.h>
- #include <linux/capability.h>
- #include <linux/miscdevice.h>
-diff --git a/arch/x86/kernel/cpu/mce/dev-mcelog.c b/arch/x86/kernel/cpu/mce/dev-mcelog.c
-index 41d9169d27fa..9690ec5c8051 100644
---- a/arch/x86/kernel/cpu/mce/dev-mcelog.c
-+++ b/arch/x86/kernel/cpu/mce/dev-mcelog.c
-@@ -8,8 +8,6 @@
-  * Author: Andi Kleen
-  */
- 
--#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
--
- #include <linux/miscdevice.h>
- #include <linux/slab.h>
- #include <linux/kmod.h>
-diff --git a/arch/x86/kernel/cpu/mce/internal.h b/arch/x86/kernel/cpu/mce/internal.h
-index ceb67cd5918f..af5eab1e65e2 100644
---- a/arch/x86/kernel/cpu/mce/internal.h
-+++ b/arch/x86/kernel/cpu/mce/internal.h
-@@ -2,6 +2,9 @@
- #ifndef __X86_MCE_INTERNAL_H__
- #define __X86_MCE_INTERNAL_H__
- 
-+#undef pr_fmt
-+#define pr_fmt(fmt) "mce: " fmt
-+
- #include <linux/device.h>
- #include <asm/mce.h>
- 
-diff --git a/arch/x86/kernel/cpu/mce/p5.c b/arch/x86/kernel/cpu/mce/p5.c
-index 5cddf831720f..4ae6df556526 100644
---- a/arch/x86/kernel/cpu/mce/p5.c
-+++ b/arch/x86/kernel/cpu/mce/p5.c
-@@ -14,6 +14,8 @@
- #include <asm/mce.h>
- #include <asm/msr.h>
- 
-+#include "internal.h"
-+
- /* By default disabled */
- int mce_p5_enabled __read_mostly;
- 
-diff --git a/arch/x86/kernel/cpu/mce/therm_throt.c b/arch/x86/kernel/cpu/mce/therm_throt.c
-index 2da67b70ba98..df01ff8513a5 100644
---- a/arch/x86/kernel/cpu/mce/therm_throt.c
-+++ b/arch/x86/kernel/cpu/mce/therm_throt.c
-@@ -30,6 +30,8 @@
- #include <asm/msr.h>
- #include <asm/trace/irq_vectors.h>
- 
-+#include "internal.h"
-+
- /* How long to wait between reporting thermal events */
- #define CHECK_INTERVAL		(300 * HZ)
- 
-diff --git a/arch/x86/kernel/cpu/mce/threshold.c b/arch/x86/kernel/cpu/mce/threshold.c
-index 2b584b319eff..10586a85c23f 100644
---- a/arch/x86/kernel/cpu/mce/threshold.c
-+++ b/arch/x86/kernel/cpu/mce/threshold.c
-@@ -10,6 +10,8 @@
- #include <asm/mce.h>
- #include <asm/trace/irq_vectors.h>
- 
-+#include "internal.h"
-+
- static void default_threshold_interrupt(void)
- {
- 	pr_err("Unexpected threshold interrupt at vector %x\n",
-diff --git a/arch/x86/kernel/cpu/mce/winchip.c b/arch/x86/kernel/cpu/mce/winchip.c
-index 3b45b270a865..a30ea13cccc2 100644
---- a/arch/x86/kernel/cpu/mce/winchip.c
-+++ b/arch/x86/kernel/cpu/mce/winchip.c
-@@ -13,6 +13,8 @@
- #include <asm/mce.h>
- #include <asm/msr.h>
- 
-+#include "internal.h"
-+
- /* Machine check handler for WinChip C6: */
- static void winchip_machine_check(struct pt_regs *regs, long error_code)
- {
+Thanks,
+Sekhar
