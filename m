@@ -2,143 +2,210 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2F10C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:29:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A907AC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:29:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6197B20811
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:29:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PxtX7Ph1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6197B20811
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 6CF0220811
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:29:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CF0220811
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=physik.fu-berlin.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726285AbeLKK3A (ORCPT
+        id S1726296AbeLKK3n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 05:29:00 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:43399 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726114AbeLKK27 (ORCPT
+        Tue, 11 Dec 2018 05:29:43 -0500
+Received: from outpost1.zedat.fu-berlin.de ([130.133.4.66]:60727 "EHLO
+        outpost1.zedat.fu-berlin.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726114AbeLKK3m (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 05:28:59 -0500
-Received: by mail-ed1-f66.google.com with SMTP id f9so12055789eds.10;
-        Tue, 11 Dec 2018 02:28:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=QSPrtZQYZXN39pKVzh92qREJOV/EYg+x0RyqoXiL8OQ=;
-        b=PxtX7Ph1nHq4RVANc6gL0DxPkrwU1lLsxH5Pz3K2z9TMHOS57mYFGbSEZ0jTxF1keC
-         +vNRAGuCuusFTN24EtaBKTMY8qvAWj3pKHySLRm6MaQPeDmWiczLQgAaKEbwX8V6KJ4q
-         CVOzK1a+/KL3rmId7gPCGCXbBtAz1uoFeaRloeUs5euUC5HCBkyv/6IdRv+wLzH6fzzo
-         UloL96HZ8KJ1rYYxHlL6+yMx2nrQa+YjuHx4o6FVSh9dXWUcIqLbUX6LXrqOrap28+Im
-         +fBwpEb2kmPgUFPIrwF6xaoc0oux+l5f1i8vyrIMQOfrz8qLRq5mOfvjm/gG8GtwJPtc
-         yjsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=QSPrtZQYZXN39pKVzh92qREJOV/EYg+x0RyqoXiL8OQ=;
-        b=QbUvMctaLL5p9gMBWUXYVmO3I2+aY/fBdR/DL4BIoaAmU35RlctIz7O42NYWrI0brB
-         ONSep1ch1g9GZq9XDjNoD3Ag27mAYy+Ucy2/9j8Vfku/bn7U6T0EQuReZJSIQNEE+Dud
-         2ZX23FAxMBDURYtJ+svA/1PN0+lF7t26qpUiaFdOl8JxYyJ+eLWqAK4X8xXewL1x51Ou
-         QGnRsBa1q5AyBC8uMf/H+fyae+AeGhra9ckdqx+eKpT1VdunH/cy9SH/hxwOvNcq7K8N
-         ofeo3qUw8tXIEgjajEwLg6nzgwJvb9XUTk6EtN8FJtre8uzIDw7meH2Cy+ODpqws9UdP
-         D5Ag==
-X-Gm-Message-State: AA+aEWYPBn5xHHTznd9/jlouqN1Zs91GlSROWp92LsYz7RCVa81lmWkS
-        HYmNyJZFf5zwfVnPBW9Lmrw=
-X-Google-Smtp-Source: AFSGD/WFCFry5EVCc3sgebol5+ZtN8VHWQl8peA9+Woyc9EiYDXanZOeoch3AbHM8hIs/oFaKW77gw==
-X-Received: by 2002:a50:e0cb:: with SMTP id j11mr14587211edl.195.1544524137646;
-        Tue, 11 Dec 2018 02:28:57 -0800 (PST)
-Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
-        by smtp.gmail.com with ESMTPSA id t15-v6sm2127812ejt.0.2018.12.11.02.28.56
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 11 Dec 2018 02:28:57 -0800 (PST)
-Date:   Tue, 11 Dec 2018 11:28:56 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     arm-soc <arm@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/4] ARM: tegra: avoid section mismatch warning
-Message-ID: <20181211102856.GI14426@ulmo>
-References: <20181210215856.2238253-1-arnd@arndb.de>
- <20181210215856.2238253-2-arnd@arndb.de>
- <20181211100550.GD14426@ulmo>
- <CAK8P3a1zbmYMFZB8R+rs=vdJY=KNqgRPBCQNO91LcSSTR0O03Q@mail.gmail.com>
+        Tue, 11 Dec 2018 05:29:42 -0500
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.85)
+          with esmtps (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id <1gWfHv-000yHy-0f>; Tue, 11 Dec 2018 11:29:15 +0100
+Received: from suse-laptop.physik.fu-berlin.de ([160.45.32.140])
+          by inpost2.zedat.fu-berlin.de (Exim 4.85)
+          with esmtpsa (TLSv1.2:AES128-SHA:128)
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id <1gWfHu-000Zgt-Ln>; Tue, 11 Dec 2018 11:29:14 +0100
+Subject: Re: Can we drop upstream Linux x32 support?
+To:     Andy Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Florian Weimer <fweimer@redhat.com>,
+        Mike Frysinger <vapier@gentoo.org>,
+        "H. J. Lu" <hjl.tools@gmail.com>, Rich Felker <dalias@libc.org>,
+        x32@buildd.debian.org, Arnd Bergmann <arnd@arndb.de>,
+        Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+References: <CALCETrXoRAibsbWa9nfbDrt0iEuebMnCMhSFg-d9W-J2g8mDjw@mail.gmail.com>
+From:   John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=glaubitz@physik.fu-berlin.de; keydata=
+ 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
+ scOkTAZQGVpD/8AaLH4v1w==
+Message-ID: <70bb54b2-8ed3-b5ee-c02d-6ef66c4f27eb@physik.fu-berlin.de>
+Date:   Tue, 11 Dec 2018 11:29:14 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="byLs0wutDcxFdwtm"
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a1zbmYMFZB8R+rs=vdJY=KNqgRPBCQNO91LcSSTR0O03Q@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CALCETrXoRAibsbWa9nfbDrt0iEuebMnCMhSFg-d9W-J2g8mDjw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: 160.45.32.140
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello!
 
---byLs0wutDcxFdwtm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I'm Debian's principal maintainer of the x32 port.
 
-On Tue, Dec 11, 2018 at 11:08:53AM +0100, Arnd Bergmann wrote:
-> On Tue, Dec 11, 2018 at 11:05 AM Thierry Reding
-> <thierry.reding@gmail.com> wrote:
-> >
-> > On Mon, Dec 10, 2018 at 10:58:37PM +0100, Arnd Bergmann wrote:
-> > > WARNING: vmlinux.o(.text+0x39ecc): Section mismatch in reference from=
- the function tegra114_gic_cpu_pm_registration() to the (unknown reference)=
- .init.rodata:(unknown)
-> > > The function tegra114_gic_cpu_pm_registration() references
-> > > the (unknown reference) __initconst (unknown).
-> > > This is often because tegra114_gic_cpu_pm_registration lacks a __init=
-const
-> > > annotation or the annotation of (unknown) is wrong.
-> > >
-> > > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> > > ---
-> > >  arch/arm/mach-tegra/irq.c | 4 ++--
-> > >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> > I'm not seeing these. Do I need to enable any special options to trigger
-> > these? Or are these just so new that I haven't run into them yet?
->=20
-> My guess would be that this is a result of the CONFIG_NO_AUTO_INLINE
-> option that is now available in linux-next.
+On 12/11/18 2:23 AM, Andy Lutomirski wrote:
+> 1. It's not entirely clear that it has users.  As far as I know, it's
+> supported on Gentoo and Debian, and the Debian popcon graph for x32
+> has been falling off dramatically.  I don't think that any enterprise
+> distro has ever supported x32.
 
-Okay, that would explain. It's not set in my configurations currently.
+There are definitely some users of this port. I don't know the actual
+number, but I hear from users from time to time. As for the popcon
+curve, I wouldn't say it has dropped dramatically as it was never
+high in the first place.
 
-Do you want to apply this to ARM-SoC directly with my Acked-by, or
-should I queue it up for v4.22?
+> https://popcon.debian.org/stat/sub-x32.png
 
-Thierry
+It seems that the highest number of recorded users was 18 and it's
+now down to 7. Keep in mind though that popcon participation is
+opt-in, so the actual number of users should be higher. According
+to popcon, there are also only 172331 Debian installations on x86_64:
 
---byLs0wutDcxFdwtm
-Content-Type: application/pgp-signature; name="signature.asc"
+> https://popcon.debian.org/
 
------BEGIN PGP SIGNATURE-----
+As for the enterprise support, this seems to be correct. I don't know
+of any enterprise distribution with x32 support either.
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlwPkWgACgkQ3SOs138+
-s6HFnRAAi5OjsnSOJjvHFV0izhJIfhiufCH8ED7aqLMBkYuDJK5t5cKaiSNqeZyy
-fpCTBk4mjNBx9MyrDDhZB0YyDs8wDtf6keaBI/7eE+2YOj1Va8o5vMbNWP1EJS3V
-3/8O9dXwjEHOiA0aPQ6Gea854Yi4z14aEeH67OqC9UTJ1jIGzYjrYZloV1qSwIUu
-o1NVD175zaSK6aFFYWUiDwvTwgA0gnJvho7Uj+zmJ3jdg5vyQxcvqRG41bAdyuZ4
-gKksCTnUMT22gyJm0q/w5MHOGekoX4ZmnHJD/H5L47kcjzCqEyjz3kt4ukuRnYIa
-aYSe12zAmEE8zrIDn/csSt/FJGgATFBzg3ab0rrUqLP5tLUgE/DOz8RQTeXlF/xN
-OrJjrc+0JpiwUiDLcoeAFO0MEf+Z7viPWDNae0X3LQ4Vp4qqrUQW9AlvLtjphAx9
-hKMfWbNjEn3w2jXabQ4611nMT8ThIn5P0Mj4y8gTPWFNBb+ruc4t1HBDrZlAKTw3
-pIigbiqPp7idDXCu2ybbDe2VxoVi7QnB65L0zj9spF5GfiwkJXelI3G9IjPuwU12
-2sN6KZcZ8UcHKMbyOZcyVDuYh0cZn+z9LdGc8HyO5gvwewR1XD4yJ4NeGTNSvF+1
-xLcHRPsrRj2AS4g4WYk8P8FKZd8LydwGTbwI4a3uh2tt+IIFFYk=
-=INA3
------END PGP SIGNATURE-----
+> 2. The way that system calls work is very strange.  Most syscalls on
+> x32 enter through their *native* (i.e. not COMPAT_SYSCALL_DEFINE)
+> entry point, and this is intentional.  For example, adjtimex() uses
+> the native entry, not the compat entry, because x32's struct timex
+> matches the x86_64 layout.  But a handful of syscalls have separate
+> entry points -- these are the syscalls starting at 512.  These enter
+> through the COMPAT_SYSCALL_DEFINE entry points.
+> 
+> The x32 syscalls that are *not* in the 512 range violate all semblance
+> of kernel syscall convention.  In the syscall handlers,
+> in_compat_syscall() returns true, but the COMPAT_SYSCALL_DEFINE entry
+> is not invoked.   This is nutty and risks breaking things when people
+> refactor their syscall implementations.  And no one tests these
+> things.  Similarly, if someone calls any of the syscalls below 512 but
+> sets bit 31 in RAX, then the native entry will be called with
+> in_compat_set().
+> 
+> Conversely, if you call a syscall in the 512 range with bit 31
+> *clear*, then the compat entry is set with in_compat_syscall()
+> *clear*.  This is also nutty.
 
---byLs0wutDcxFdwtm--
+I can't say anything about the syscall interface. However, what I do know
+is that the weird combination of a 32-bit userland with a 64-bit kernel
+interface is sometimes causing issues. For example, application code usually
+expects things like time_t to be 32-bit on a 32-bit system. However, this
+isn't the case for x32 which is why code fails to build.
+
+Additionally, x32 support in many applications is either rudimentary
+or broken. For example, while LLVM has support for x32, the backend
+isn't really stable on this target meaning that compilers like clang
+or Rust are partially broken or crash. I'm not sure whether anyone
+is interested in fixing this.
+
+It's also that the performance benefits of x32 are often eaten up by
+the fact that none of the scripted languages that I know of provide
+a JIT that supports x32. Thus, things like Javascript are either
+unsupported or slow on x32.
+
+> I propose that we make CONFIG_X86_X32 depend on BROKEN for a release
+> or two and then remove all the code if no one complains.  If anyone
+> wants to re-add it, IMO they're welcome to do so, but they need to do
+> it in a way that is maintainable.
+
+I'm not terribly opposed to this change. I'm usually for keeping support
+for things that people are using, but the maintenance is a huge burden
+to upstream projects, I'm fine with letting it go.
+
+There are other architectures in the kernel like Alpha, HPPA, M68K, PowerPC,
+SH and SPARC that I care much more about than x32.
+
+If x32 is eventually to be removed, we should also take care of removing
+x32 support from userland code. From the top of my head, this would at least
+concern:
+
+ * OpenJDK
+ * LLVM
+ * gcc
+ * glibc
+ * Rust
+ * binutils
+
+I can take care of these once I know about the decision regarding the kernel.
+Usually, it's a matter of grepping the commit history for "x32" and revert
+the corresponding commits.
+
+Thanks,
+Adrian
+
+-- 
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer - glaubitz@debian.org
+`. `'   Freie Universitaet Berlin - glaubitz@physik.fu-berlin.de
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
