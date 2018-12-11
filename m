@@ -2,372 +2,146 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0030C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:49:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5CC4C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:49:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C6EF2084C
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:49:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C6EF2084C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 5F0F220849
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:49:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="P3kpqB0F"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F0F220849
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726724AbeLKOtM (ORCPT
+        id S1726744AbeLKOtt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 09:49:12 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43694 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726676AbeLKOtK (ORCPT
+        Tue, 11 Dec 2018 09:49:49 -0500
+Received: from esa3.microchip.iphmx.com ([68.232.153.233]:29139 "EHLO
+        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726231AbeLKOts (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 09:49:10 -0500
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBBEglFO049900
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 09:49:08 -0500
-Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2paec33bww-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 09:49:08 -0500
-Received: from localhost
-        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Tue, 11 Dec 2018 14:49:07 -0000
-Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
-        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 11 Dec 2018 14:49:01 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBBEn01X14942394
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 11 Dec 2018 14:49:00 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8A810B2064;
-        Tue, 11 Dec 2018 14:49:00 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5A993B205F;
-        Tue, 11 Dec 2018 14:49:00 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.38])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Tue, 11 Dec 2018 14:49:00 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 573EF16C17E6; Tue, 11 Dec 2018 06:49:00 -0800 (PST)
-Date:   Tue, 11 Dec 2018 06:49:00 -0800
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     David Goldblatt <davidtgoldblatt@gmail.com>
-Cc:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Florian Weimer <fweimer@redhat.com>, triegel@redhat.com,
-        libc-alpha@sourceware.org, stern@rowland.harvard.edu,
-        andrea.parri@amarulasolutions.com,
-        Will Deacon <will.deacon@arm.com>, peterz@infradead.org,
-        boqun.feng@gmail.com, npiggin@gmail.com, dhowells@redhat.com,
-        j.alglave@ucl.ac.uk, luc.maranget@inria.fr, akiyks@gmail.com,
-        dlustig@nvidia.com, linux-arch@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] Linux: Implement membarrier function
-Reply-To: paulmck@linux.ibm.com
-References: <8736rldyzm.fsf@oldenburg.str.redhat.com>
- <1543444466.5493.220.camel@redhat.com>
- <87y39c2dsg.fsf@oldenburg.str.redhat.com>
- <1689938209.14804.1543502662882.JavaMail.zimbra@efficios.com>
- <20181129150433.GH4170@linux.ibm.com>
- <CAHD6eXcvx1bskbp-X+vuMYoMQiCLOt0PiCZ5FT1yFsda9Ud-yA@mail.gmail.com>
- <20181206215405.GL4170@linux.ibm.com>
- <CAHD6eXeoAXBhGJpx6wY6g9UV4G+zmqTbjbUHnqXnVh2xiNLvug@mail.gmail.com>
+        Tue, 11 Dec 2018 09:49:48 -0500
+X-IronPort-AV: E=Sophos;i="5.56,342,1539673200"; 
+   d="scan'208";a="24236732"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 11 Dec 2018 07:49:47 -0700
+Received: from NAM03-BY2-obe.outbound.protection.outlook.com (10.10.215.89) by
+ email.microchip.com (10.10.76.107) with Microsoft SMTP Server (TLS) id
+ 14.3.352.0; Tue, 11 Dec 2018 07:49:47 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=microchiptechnology.onmicrosoft.com;
+ s=selector1-microchiptechnology-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=TNKu8IAA+qKn5ERU3lyO8d+jgFQpq/KVmfE9jMqNrQ0=;
+ b=P3kpqB0F1Ixkv1HsGHufNWnzIZ4Xso6I3HcwpC5QhVX5cCMrwFIZ7SY7mPF2qe/TEVT5cDq40mYS4bDThr27Ve4XRLFn233/aOmiIX11yelGgmhmhnRJ1k8IERE1a7oqokFrSRfH2PlHk+SSTTcGPs+iYx2woovn7+6gIT7MyVU=
+Received: from BN6PR11MB1842.namprd11.prod.outlook.com (10.175.99.146) by
+ BN6PR11MB1363.namprd11.prod.outlook.com (10.173.33.7) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1404.24; Tue, 11 Dec 2018 14:49:44 +0000
+Received: from BN6PR11MB1842.namprd11.prod.outlook.com
+ ([fe80::d88c:1d67:5fb0:12ae]) by BN6PR11MB1842.namprd11.prod.outlook.com
+ ([fe80::d88c:1d67:5fb0:12ae%2]) with mapi id 15.20.1404.026; Tue, 11 Dec 2018
+ 14:49:44 +0000
+From:   <Tudor.Ambarus@microchip.com>
+To:     <boris.brezillon@bootlin.com>
+CC:     <Nicolas.Ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+        <Ludovic.Desroches@microchip.com>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <Cyrille.Pitchen@microchip.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mtd@lists.infradead.org>, <broonie@kernel.org>,
+        <linux-spi@vger.kernel.org>
+Subject: Re: [PATCH] ARM: dts: at91: sama5d2 Xplained: add QSPI0 + SPI NOR
+ memory nodes
+Thread-Topic: [PATCH] ARM: dts: at91: sama5d2 Xplained: add QSPI0 + SPI NOR
+ memory nodes
+Thread-Index: AQHUkKvzXXGQaMBmgEiVjL0m4mUE46V5nZmAgAACiIA=
+Date:   Tue, 11 Dec 2018 14:49:44 +0000
+Message-ID: <6e2aa831-dc12-8431-d089-10f35cec4cd6@microchip.com>
+References: <20181210171511.21002-1-tudor.ambarus@microchip.com>
+ <20181211154033.076506aa@bbrezillon>
+In-Reply-To: <20181211154033.076506aa@bbrezillon>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: VI1PR03CA0065.eurprd03.prod.outlook.com
+ (2603:10a6:803:50::36) To BN6PR11MB1842.namprd11.prod.outlook.com
+ (2603:10b6:404:103::18)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Tudor.Ambarus@microchip.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [86.120.240.19]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BN6PR11MB1363;6:mD7pnay1GdXrdJ09aQJEpFBRCEfkGzNdlLzX6t4cYzkN/Osc7BX6a/rAARmt6eKkpzR8BGq3jZ8h+W/Cm/g/Hk3OP7EUJ+v6Voe91w1vrEHz44G6+yd9W9R+WjzchiF82h2Cffps4JL5o+HFC9xZ7DSuDpYSARPTt107ncKOR6U4lqrOfnNUNqTfbI/OQF2BFQO+VFWaIo49tTXjHuRXoFbSHWSiS+X4WNbmx/nf1UvXtraAy89rAXPq8kwN8rgA6aXEOrUqWMB7C1hMG4vZfK6N30J5eYBH4LYBiM8E4p0qdF2AR5RqUYjkGjykEopA/gA26eVAq6z4epetD+rgjOGPyS/FyJ/CWH2E/4HJxV2A1Ht1f29MxqOBU83GVeM4rKvzU/e2X+1alxiCabYxIeFoFwrqZQRWK8Xh1gL17nIGtrS/4GnsgBNxmdzxg/MB7xLHS19wyQ6l4Ih6YECovw==;5:LcBqHL8lz2Fcznzk8LsZ2s92aa+1PkMBBAagOUC118971sTHRdNIMpDzUzsZKfEcnPJK3TqdXPh2zXf5Q0fiEAAPwcGkHz6grmf1k2c1Rg7H5Nx5EF0lL+e7lu9Ni6iJ5Xpl8nBJ4T4UkeiP1q5dPt6yWt9ziAJbn2NRt6sQfxc=;7:OL3QBwaSgBbChusIcFneOOFY7QO8dmBLp7LCG2CKdBYGqHn8rCNDNW47EBMqIBheJMHTpsJmgzsWhAHJReEMwWIKjBVmiCNFzrJE9wQFCLDvImk66++h1fsAfEFCcOaTOXL6pq/cUlaJ77M3paC6uw==
+x-ms-office365-filtering-correlation-id: 86c0f57b-36c2-427c-7080-08d65f77e37a
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BN6PR11MB1363;
+x-ms-traffictypediagnostic: BN6PR11MB1363:
+x-microsoft-antispam-prvs: <BN6PR11MB136376FA5B0DF859EE126FA3F0A60@BN6PR11MB1363.namprd11.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(3230017)(999002)(6040522)(2401047)(5005006)(8121501046)(3002001)(3231472)(944501520)(52105112)(10201501046)(93006095)(93001095)(148016)(149066)(150057)(6041310)(20161123560045)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:BN6PR11MB1363;BCL:0;PCL:0;RULEID:;SRVR:BN6PR11MB1363;
+x-forefront-prvs: 08831F51DC
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(366004)(136003)(39860400002)(346002)(376002)(189003)(199004)(8676002)(6512007)(86362001)(36756003)(6486002)(53936002)(5660300001)(31696002)(14444005)(256004)(478600001)(316002)(72206003)(8936002)(6916009)(106356001)(4326008)(229853002)(25786009)(31686004)(2906002)(486006)(81156014)(2616005)(81166006)(476003)(97736004)(105586002)(446003)(76176011)(11346002)(14454004)(6246003)(186003)(52116002)(54906003)(66066001)(71190400001)(26005)(7416002)(386003)(102836004)(53546011)(71200400001)(6506007)(217873002)(7736002)(6116002)(6436002)(99286004)(305945005)(3846002)(68736007);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR11MB1363;H:BN6PR11MB1842.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: microchip.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: lZTt+nImGvAkaBkh4f8ns1A9PV5aDcaKfNRyH/dzUJvUBo2HOpyNu4brL32MOGT8If+DEI8xNmuf5rWrrzFs/plXrfRVqtKq/B3kU1FCjhNPEfBXhIZudhyD3VZuvFo817bhlhCjGVkSJTOPhlXuPzb6MJm87L3Q15XwQXqgCffqLfeHU+DeaIcWroP8ZgziKCecn0l8FfaSxwFfTl38tqujyfO65frB9iFguLHmoYUH0kXHAr3M1WhtnT4XEueUZ0NK/qgeH5uLB442OB88sSBL7o1355uvzTk2PgNbkJT4BRsUUaFzQOPeKRlKDvod
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <5AE205E46F5C584988A42C922C116D79@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHD6eXeoAXBhGJpx6wY6g9UV4G+zmqTbjbUHnqXnVh2xiNLvug@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18121114-0064-0000-0000-000003848AB9
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010213; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01130244; UDB=6.00587291; IPR=6.00910377;
- MB=3.00024654; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-11 14:49:06
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18121114-0065-0000-0000-00003BA3F5AA
-Message-Id: <20181211144900.GI4170@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-11_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812110133
+X-MS-Exchange-CrossTenant-Network-Message-Id: 86c0f57b-36c2-427c-7080-08d65f77e37a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Dec 2018 14:49:44.5556
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR11MB1363
+X-OriginatorOrg: microchip.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 10, 2018 at 10:42:25PM -0800, David Goldblatt wrote:
-> Hi Paul, thank you for thinking about all this.
-> 
-> I think the modelling you suggest captures most of the algorithms I
-> would want to write. I think it's slightly too weak, though, to
-> implement the model suggested in P1202R0[1], which permits the SC
-> outcome to be recovered in C-Goldblat-memb-2[2] by inserting a second
-> smp_memb() after the first, which is a rather nice property (and I
-> believe is supported by the underlying implementation options). I
-> afraid though that I'm not familiar enough with the Linux herd
-> definitions to suggest a tweak (or know how easy a tweak might be).
-
-Actually, there has been an offlist discussion on exactly this.
-
-What is the general rule?  Is it that a given cycle have at least as
-many heavy barriers as it does light ones?  Either way, why?
-
-Gah!  I updated the tests to add the second "t", apologies!!!
-
-							Thanx, Paul
-
-> - David
-> 
-> [1] Which I think may be strengthened a little bit more even in R1.
-> [2] As a nit, my name has two "t"'s in it, although I'd throw into the
-> ring "memb-pairwise", "memb-nontransitive", and "memb-sequenced" if
-> these get non-placeholder names.
-> 
-> On Thu, Dec 6, 2018 at 1:54 PM Paul E. McKenney <paulmck@linux.ibm.com> wrote:
-> >
-> > Hello, David,
-> >
-> > I took a crack at extending LKMM to accommodate what I think would
-> > support what you have in your paper.  Please see the very end of this
-> > email for a patch against the "dev" branch of my -rcu tree.
-> >
-> > This gives the expected result for the following three litmus tests,
-> > but is probably deficient or otherwise misguided in other ways.  I have
-> > added the LKMM maintainers on CC for their amusement.  ;-)
-> >
-> > Thoughts?
-> >
-> >                                                 Thanx, Paul
-> >
-> > ------------------------------------------------------------------------
-> >
-> > C C-Goldblat-memb-1
-> > {
-> > }
-> >
-> > P0(int *x0, int *x1)
-> > {
-> >         WRITE_ONCE(*x0, 1);
-> >         r1 = READ_ONCE(*x1);
-> > }
-> >
-> >
-> > P1(int *x0, int *x1)
-> > {
-> >         WRITE_ONCE(*x1, 1);
-> >         smp_memb();
-> >         r2 = READ_ONCE(*x0);
-> > }
-> >
-> > exists (0:r1=0 /\ 1:r2=0)
-> >
-> > ------------------------------------------------------------------------
-> >
-> > C C-Goldblat-memb-2
-> > {
-> > }
-> >
-> > P0(int *x0, int *x1)
-> > {
-> >         WRITE_ONCE(*x0, 1);
-> >         r1 = READ_ONCE(*x1);
-> > }
-> >
-> >
-> > P1(int *x1, int *x2)
-> > {
-> >         WRITE_ONCE(*x1, 1);
-> >         smp_memb();
-> >         r1 = READ_ONCE(*x2);
-> > }
-> >
-> > P2(int *x2, int *x0)
-> > {
-> >         WRITE_ONCE(*x2, 1);
-> >         r1 = READ_ONCE(*x0);
-> > }
-> >
-> > exists (0:r1=0 /\ 1:r1=0 /\ 2:r1=0)
-> >
-> > ------------------------------------------------------------------------
-> >
-> > C C-Goldblat-memb-3
-> > {
-> > }
-> >
-> > P0(int *x0, int *x1)
-> > {
-> >         WRITE_ONCE(*x0, 1);
-> >         r1 = READ_ONCE(*x1);
-> > }
-> >
-> >
-> > P1(int *x1, int *x2)
-> > {
-> >         WRITE_ONCE(*x1, 1);
-> >         smp_memb();
-> >         r1 = READ_ONCE(*x2);
-> > }
-> >
-> > P2(int *x2, int *x3)
-> > {
-> >         WRITE_ONCE(*x2, 1);
-> >         r1 = READ_ONCE(*x3);
-> > }
-> >
-> > P3(int *x3, int *x0)
-> > {
-> >         WRITE_ONCE(*x3, 1);
-> >         smp_memb();
-> >         r1 = READ_ONCE(*x0);
-> > }
-> >
-> > exists (0:r1=0 /\ 1:r1=0 /\ 2:r1=0 /\ 3:r1=0)
-> >
-> > ------------------------------------------------------------------------
-> >
-> > On Thu, Nov 29, 2018 at 11:02:17AM -0800, David Goldblatt wrote:
-> > > One note with the suggested patch is that
-> > > `atomic_thread_fence(memory_order_acq_rel)` should probably be
-> > > `atomic_thread_fence (memory_order_seq_cst)` (otherwise the call would
-> > > be a no-op on, say, x86, which it very much isn't).
-> > >
-> > > The non-transitivity thing makes the resulting description arguably
-> > > incorrect, but this is informal enough that it might not be a big deal
-> > > to add something after "For these threads, the membarrier function
-> > > call turns an existing compiler barrier (see above) executed by these
-> > > threads into full memory barriers" that clarifies it. E.g. you could
-> > > make it into "turns an existing compiler barrier [...] into full
-> > > memory barriers, with respect to the calling thread".
-> > >
-> > > Since this is targeting the description of the OS call (and doesn't
-> > > have to concern itself with also being implementable by other
-> > > asymmetric techniques or degrading to architectural barriers), I think
-> > > that the description in "approach 2" in P1202 would also make sense
-> > > for a formal description of the syscall. (Of course, without the
-> > > kernel itself committing to a rigorous semantics, anything specified
-> > > on top of it will be on slightly shaky ground).
-> > >
-> > > - David
-> > >
-> > > On Thu, Nov 29, 2018 at 7:04 AM Paul E. McKenney <paulmck@linux.ibm.com> wrote:
-> > > >
-> > > > On Thu, Nov 29, 2018 at 09:44:22AM -0500, Mathieu Desnoyers wrote:
-> > > > > ----- On Nov 29, 2018, at 8:50 AM, Florian Weimer fweimer@redhat.com wrote:
-> > > > >
-> > > > > > * Torvald Riegel:
-> > > > > >
-> > > > > >> On Wed, 2018-11-28 at 16:05 +0100, Florian Weimer wrote:
-> > > > > >>> This is essentially a repost of last year's patch, rebased to the glibc
-> > > > > >>> 2.29 symbol version and reflecting the introduction of
-> > > > > >>> MEMBARRIER_CMD_GLOBAL.
-> > > > > >>>
-> > > > > >>> I'm not including any changes to manual/ here because the set of
-> > > > > >>> supported operations is evolving rapidly, we could not get consensus for
-> > > > > >>> the language I proposed the last time, and I do not want to contribute
-> > > > > >>> to the manual for the time being.
-> > > > > >>
-> > > > > >> Fair enough.  Nonetheless, can you summarize how far you're along with
-> > > > > >> properly defining the semantics (eg, based on the C/C++ memory model)?
-> > > > > >
-> > > > > > I wrote down what you could, but no one liked it.
-> > > > > >
-> > > > > > <https://sourceware.org/ml/libc-alpha/2017-12/msg00796.html>
-> > > > > >
-> > > > > > I expect that a formalization would interact in non-trivial ways with
-> > > > > > any potential formalization of usable relaxed memory order semantics,
-> > > > > > and I'm not sure if anyone knows how to do the latter today.
-> > > > >
-> > > > > Adding Paul E. McKenney in CC.
-> > > >
-> > > > There is some prototype C++ memory model wording from David Goldblatt (CCed)
-> > > > here (search for "Standarese"):
-> > > >
-> > > > http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p1202r0.pdf
-> > > >
-> > > > David's key insight is that (in Linuxese) light fences cannot pair with
-> > > > each other.
-> >
-> > ------------------------------------------------------------------------
-> >
-> > commit 17e3b6b60e57d1cb791f68a1a6a36e942cb2baad
-> > Author: Paul E. McKenney <paulmck@linux.ibm.com>
-> > Date:   Thu Dec 6 13:40:40 2018 -0800
-> >
-> >     EXP tools/memory-model: Add semantics for sys_membarrier()
-> >
-> >     This prototype commit extends LKMM to accommodate sys_membarrier(),
-> >     which is a asymmetric barrier with a limited ability to insert full
-> >     ordering into tasks that provide only compiler ordering.  This commit
-> >     currently uses the "po" relation for this purpose, but something more
-> >     sophisticated will be required when plain accesses are added, which
-> >     the compiler can reorder.
-> >
-> >     For more detail, please see David Goldblatt's C++ working paper:
-> >     http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p1202r0.pdf
-> >
-> >     Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
-> >
-> > diff --git a/tools/memory-model/linux-kernel.bell b/tools/memory-model/linux-kernel.bell
-> > index 9c42cd9ddcb4..4ef41453f569 100644
-> > --- a/tools/memory-model/linux-kernel.bell
-> > +++ b/tools/memory-model/linux-kernel.bell
-> > @@ -24,6 +24,7 @@ instructions RMW[{'once,'acquire,'release}]
-> >  enum Barriers = 'wmb (*smp_wmb*) ||
-> >                 'rmb (*smp_rmb*) ||
-> >                 'mb (*smp_mb*) ||
-> > +               'memb (*sys_membarrier*) ||
-> >                 'rcu-lock (*rcu_read_lock*)  ||
-> >                 'rcu-unlock (*rcu_read_unlock*) ||
-> >                 'sync-rcu (*synchronize_rcu*) ||
-> > diff --git a/tools/memory-model/linux-kernel.cat b/tools/memory-model/linux-kernel.cat
-> > index 8dcb37835b61..837c3ee20bea 100644
-> > --- a/tools/memory-model/linux-kernel.cat
-> > +++ b/tools/memory-model/linux-kernel.cat
-> > @@ -33,9 +33,10 @@ let mb = ([M] ; fencerel(Mb) ; [M]) |
-> >         ([M] ; po? ; [LKW] ; fencerel(After-spinlock) ; [M]) |
-> >         ([M] ; po ; [UL] ; (co | po) ; [LKW] ;
-> >                 fencerel(After-unlock-lock) ; [M])
-> > +let memb = [M] ; fencerel(Memb) ; [M]
-> >  let gp = po ; [Sync-rcu | Sync-srcu] ; po?
-> >
-> > -let strong-fence = mb | gp
-> > +let strong-fence = mb | gp | memb
-> >
-> >  (* Release Acquire *)
-> >  let acq-po = [Acquire] ; po ; [M]
-> > @@ -86,6 +87,13 @@ acyclic hb as happens-before
-> >  let pb = prop ; strong-fence ; hb*
-> >  acyclic pb as propagation
-> >
-> > +(********************)
-> > +(* sys_membarrier() *)
-> > +(********************)
-> > +
-> > +let memb-step = ( prop ; po ; prop )? ; memb
-> > +acyclic memb-step as memb-before
-> > +
-> >  (*******)
-> >  (* RCU *)
-> >  (*******)
-> > diff --git a/tools/memory-model/linux-kernel.def b/tools/memory-model/linux-kernel.def
-> > index 1d6a120cde14..9ff0691c5f2c 100644
-> > --- a/tools/memory-model/linux-kernel.def
-> > +++ b/tools/memory-model/linux-kernel.def
-> > @@ -17,6 +17,7 @@ rcu_dereference(X) __load{once}(X)
-> >  smp_store_mb(X,V) { __store{once}(X,V); __fence{mb}; }
-> >
-> >  // Fences
-> > +smp_memb() { __fence{memb}; }
-> >  smp_mb() { __fence{mb}; }
-> >  smp_rmb() { __fence{rmb}; }
-> >  smp_wmb() { __fence{wmb}; }
-> >
-> 
-
+SGksIEJvcmlzLA0KDQpPbiAxMi8xMS8yMDE4IDA0OjQwIFBNLCBCb3JpcyBCcmV6aWxsb24gd3Jv
+dGU6DQo+IE9uIE1vbiwgMTAgRGVjIDIwMTggMTc6MTU6MjkgKzAwMDANCj4gPFR1ZG9yLkFtYmFy
+dXNAbWljcm9jaGlwLmNvbT4gd3JvdGU6DQo+IA0KPj4gRnJvbTogQ3lyaWxsZSBQaXRjaGVuIDxj
+eXJpbGxlLnBpdGNoZW5AbWljcm9jaGlwLmNvbT4NCj4+DQo+PiBUaGlzIHBhdGNoIGNvbmZpZ3Vy
+ZXMgdGhlIFFTUEkwIGNvbnRyb2xsZXIgcGluIG11eGluZyBhbmQgZGVjbGFyZXMNCj4+IGEgamVk
+ZWMsc3BpLW5vciBtZW1vcnkuDQo+Pg0KPj4gc2FtYTVkMiBYcGxhaW5lZCBSZXZCIGFuZCBSZXZD
+IHVzZSB0aGUgTWFjcm9uaXggTVgyNUwyNTY3M0cgZmxhc2gNCj4+IG1lbW9yeSB3aGljaCBhZHZl
+cnRpc2VzIGEgbWF4aW11bSBmcmVxdWVuY3kgb2YgODBNSHogZm9yIFF1YWQgSU8NCj4+IEZhc3Qg
+UmVhZC4gU2V0IHRoZSBzcGktbWF4LWZyZXF1ZW5jeSB0byA4ME1IeiBrbm93aW5nIHRoYXQgYWN0
+dWFsbHkNCj4+IHRoZSBRU1BJIGRydmVyIHdpbGwgc2V0IHRoZSBTUEkgYnVzIGNsb2NrIHRvIDE2
+Nk1IeiAvIDMgPSA1NS4zTUh6Lg0KDQpzL2RydmVyL2RyaXZlcg0KDQo+Pg0KPj4gU2lnbmVkLW9m
+Zi1ieTogQ3lyaWxsZSBQaXRjaGVuIDxjeXJpbGxlLnBpdGNoZW5AbWljcm9jaGlwLmNvbT4NCj4+
+IFt0dWRvci5hbWJhcnVzQG1pY3JvY2hpcC5jb206DQo+PiAtIGRyb3AgcGFydGl0aW9ucywNCj4+
+IC0gYWRkIHNwaS1yeC90eC1idXMtd2lkdGgNCj4+IC0gY2hhbmdlIHNwaS1tYXgtZnJlcXVlbmN5
+IHRvIG1hdGNoIHRoZSA4ME1IeiBsaW1pdCBhZHZlcnRpc2VkIGJ5DQo+PiAgIE1YMjVMMjU2NzNH
+IGZvciBRdWFkIElPIEZhc3QgUmVhZCwNCj4+IC0gcmV3b3JkIGNvbW1pdCBtZXNzYWdlIGFuZCBz
+dWJqZWN0Ll0NCj4+IFNpZ25lZC1vZmYtYnk6IFR1ZG9yIEFtYmFydXMgPHR1ZG9yLmFtYmFydXNA
+bWljcm9jaGlwLmNvbT4NCj4+IC0tLQ0KPj4gIGFyY2gvYXJtL2Jvb3QvZHRzL2F0OTEtc2FtYTVk
+Ml94cGxhaW5lZC5kdHMgfCAzMSArKysrKysrKysrKysrKysrKysrKysrKysrKysrKw0KPj4gIDEg
+ZmlsZSBjaGFuZ2VkLCAzMSBpbnNlcnRpb25zKCspDQo+Pg0KPj4gZGlmZiAtLWdpdCBhL2FyY2gv
+YXJtL2Jvb3QvZHRzL2F0OTEtc2FtYTVkMl94cGxhaW5lZC5kdHMgYi9hcmNoL2FybS9ib290L2R0
+cy9hdDkxLXNhbWE1ZDJfeHBsYWluZWQuZHRzDQo+PiBpbmRleCA1MThlMmIwOTVjY2YuLjE3MWJj
+ODJjZmJiZiAxMDA2NDQNCj4+IC0tLSBhL2FyY2gvYXJtL2Jvb3QvZHRzL2F0OTEtc2FtYTVkMl94
+cGxhaW5lZC5kdHMNCj4+ICsrKyBiL2FyY2gvYXJtL2Jvb3QvZHRzL2F0OTEtc2FtYTVkMl94cGxh
+aW5lZC5kdHMNCj4+IEBAIC0xMDgsNiArMTA4LDIxIEBADQo+PiAgCQl9Ow0KPj4gIA0KPj4gIAkJ
+YXBiIHsNCj4+ICsJCQlxc3BpMDogc3BpQGYwMDIwMDAwIHsNCj4+ICsJCQkJcGluY3RybC1uYW1l
+cyA9ICJkZWZhdWx0IjsNCj4+ICsJCQkJcGluY3RybC0wID0gPCZwaW5jdHJsX3FzcGkwX2RlZmF1
+bHQ+Ow0KPj4gKwkJCQkvKiBzdGF0dXMgPSAib2theSI7ICovIC8qIGNvbmZsaWN0IHdpdGggc2Rt
+bWMxICovDQo+PiArDQo+PiArCQkJCWZsYXNoQDAgew0KPj4gKwkJCQkJY29tcGF0aWJsZSA9ICJq
+ZWRlYyxzcGktbm9yIjsNCj4+ICsJCQkJCXJlZyA9IDwwPjsNCj4+ICsJCQkJCXNwaS1tYXgtZnJl
+cXVlbmN5ID0gPDgwMDAwMDAwPjsNCj4+ICsJCQkJCXNwaS10eC1idXMtd2lkdGggPSA8ND47DQo+
+PiArCQkJCQlzcGktcngtYnVzLXdpZHRoID0gPDQ+Ow0KPj4gKwkJCQkJbTI1cCxmYXN0LXJlYWQ7
+DQo+PiArCQkJCX07DQo+IA0KPiBJJ20gYSBiaXQgbG9zdC4gV2hhdCdzIHRoZSBwb2ludCBvZiBk
+ZWZpbmluZyB0aGlzIGlmIHRoZSBRU1BJDQo+IGNvbnRyb2xsZXIgaXMgbm90IGVuYWJsZWQ/DQoN
+CllvdSBjYW4gZW5hYmxlIHFzcGkgaWYgeW91IGRpc2FibGUgc2RtbWMxLiBJIHRob3VnaHQgb2Yg
+aGF2aW5nIGFsbCBkZXNjcmliZWQNCnRvZ2V0aGVyIGFuZCBjaG9vc2Ugb25lIG9yIGFub3RoZXIg
+ZGVwZW5kaW5nIG9uIG5lZWRzLg0KDQp0YQ0K
