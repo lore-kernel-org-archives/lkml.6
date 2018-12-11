@@ -2,115 +2,100 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA289C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 13:00:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 402EDC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 13:01:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5F6420849
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 13:00:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 034FC20849
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 13:01:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="KUzYHY86"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5F6420849
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="VeM35Ykd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 034FC20849
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726519AbeLKNAO (ORCPT
+        id S1726530AbeLKNBq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 08:00:14 -0500
-Received: from conssluserg-05.nifty.com ([210.131.2.90]:30117 "EHLO
-        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726203AbeLKNAO (ORCPT
+        Tue, 11 Dec 2018 08:01:46 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:53204 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726190AbeLKNBq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 08:00:14 -0500
-Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com [209.85.222.41]) (authenticated)
-        by conssluserg-05.nifty.com with ESMTP id wBBD02hW027415;
-        Tue, 11 Dec 2018 22:00:03 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com wBBD02hW027415
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1544533203;
-        bh=twubWNm7C/dHzNFwoFHVCUMciZ0Sld3ahZ1E7w/D48Q=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=KUzYHY86ID8JjhXQ6Ey2ZIpONlHlRutHRwgJBti2rHRSozoW00BY2kn/r/mT7SShH
-         7Jv5WJ0xKj8X/b6FBGgDFybditq/MO64GzZrN1JxTLx0H770Pkej3N+p3QdFSGXjuK
-         SCi7YaGh48TBDJW3rg35i3bgcX5/pDoZ1E5XtsqxwsyBf8S99plf7UvkYZY3Unnlw+
-         oOjjl3ia1QXUTtIzZWEwZro3g0DfD7q6Bu9DGG3mfUB7FAkpNMgZeVKne/Za9HgpF2
-         TsbM0OyPGU4Sz+VWbA20/BfC2HR3QYYplUqUP7qLvl+eT1Q6i1C7knx1daTUtSyE0y
-         +0TubPkvbpJeg==
-X-Nifty-SrcIP: [209.85.222.41]
-Received: by mail-ua1-f41.google.com with SMTP id e16so5069081uam.12;
-        Tue, 11 Dec 2018 05:00:03 -0800 (PST)
-X-Gm-Message-State: AA+aEWb4jrFmOXNjnRt47e9bXBzoPyptyMPzwwm5UJbuPJWav1Vq2THG
-        HD/iDXWYI9bRNq6Xt0LrIvLCq3wu/SbWc7cuz0s=
-X-Google-Smtp-Source: AFSGD/VqzOYRbYT45HUtGTBbZIr4xjI6beS8S0eCVtRR639tWGfJa672xNME7Tgo1tY98gGLM+L1YJnc5uvfT2jUn3I=
-X-Received: by 2002:ab0:6705:: with SMTP id q5mr7405382uam.89.1544533202351;
- Tue, 11 Dec 2018 05:00:02 -0800 (PST)
+        Tue, 11 Dec 2018 08:01:46 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wBBCt7eK122711;
+        Tue, 11 Dec 2018 13:00:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=5sB+7yK4V2ZLdr6eMRKGor5tcQDc9e0qsluthOpRXdw=;
+ b=VeM35Ykd4OK9FQ4YwuhO814LNFbXffhL7hYj3jOcoH2DS+NxzePS9/izkkt0mnqt8fd+
+ W2wDIrIRwh9nsloJuAyGpxu30rosFa947v8MIQemgXGJ/o6KaAhEbbzBjV6FH1C6JVlv
+ iGz4C0aLDraU8zZ+C94+qNnGuYte9K/OVJsc+o1VsOcYgkBWMQlTTWc9aVLcEHKbCUW/
+ LxoWcweOu54p++mw2iz9z6icfHvjeUPW0eabenG2gGJdph4xQDdFLgYkZVyJb2gDXkJj
+ uLycBQRUCgDSCj8D0wTag+6uuE6R6fRCuKyifw/WN5Vv2Q/DZDINkKxRZG6H1qdJ6CW/ xA== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2120.oracle.com with ESMTP id 2p86kqumga-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 11 Dec 2018 13:00:59 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wBBD0wLD001518
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 11 Dec 2018 13:00:58 GMT
+Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wBBD0ugC026053;
+        Tue, 11 Dec 2018 13:00:56 GMT
+Received: from kadam (/10.175.36.120)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 11 Dec 2018 05:00:55 -0800
+Date:   Tue, 11 Dec 2018 16:00:39 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Aaron Strahlberger <aaron.strahlberger@posteo.de>
+Cc:     Gao Xiang <gaoxiang25@huawei.com>, devel@driverdev.osuosl.org,
+        Julius Wiedmann <julius.wiedmann@fau.de>,
+        linux-kernel@i4.cs.fau.de,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Chao Yu <yuchao0@huawei.com>, linux-kernel@vger.kernel.org,
+        Dominik Huber <domi250@gmx.de>, linux-erofs@lists.ozlabs.org
+Subject: Re: [PATCH 1/5] drivers: staging: erofs: Fix alignment.
+Message-ID: <20181211130039.GE3116@kadam>
+References: <0ed9f3e7-9081-4a8a-06b0-e5ad14e2c872@huawei.com>
+ <20181211105443.21826-1-aaron.strahlberger@posteo.de>
+ <20181211105443.21826-2-aaron.strahlberger@posteo.de>
 MIME-Version: 1.0
-References: <1544009286-15705-1-git-send-email-yamada.masahiro@socionext.com>
- <1544009286-15705-2-git-send-email-yamada.masahiro@socionext.com> <20181206150325.GA2726@infradead.org>
-In-Reply-To: <20181206150325.GA2726@infradead.org>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Tue, 11 Dec 2018 21:59:26 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAS7hh4f8mYoZc7RUWStnchhftUN0nU5MJ_trjyNJx50Lw@mail.gmail.com>
-Message-ID: <CAK7LNAS7hh4f8mYoZc7RUWStnchhftUN0nU5MJ_trjyNJx50Lw@mail.gmail.com>
-Subject: Re: [PATCH 2/3] kbuild: generate asm-generic wrappers if mandatory
- headers are missing
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Michal Marek <michal.lkml@markovi.net>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181211105443.21826-2-aaron.strahlberger@posteo.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9103 signatures=668679
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=660
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1812110118
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Christoph,
+On Tue, Dec 11, 2018 at 11:54:39AM +0100, Aaron Strahlberger wrote:
+> Fix of 17 `CHECK: Alignment should match open parenthesis` checkpatch.pl
+> issues.
+> 
+> Signed-off-by: Aaron Strahlberger <aaron.strahlberger@posteo.de>
+> Signed-off-by: Julius Wiedmann <julius.wiedmann@fau.de>
+> Signed-off-by: Dominik Huber <domi250@gmx.de>
+> 
+> LocalWords:  Alighnment
+  ^^^^^^^^^^^^^^^^^^^^^^^
 
+Remove this.
 
-On Fri, Dec 7, 2018 at 12:04 AM Christoph Hellwig <hch@infradead.org> wrote:
->
-> On Wed, Dec 05, 2018 at 08:28:05PM +0900, Masahiro Yamada wrote:
-> > Some time ago, Sam pointed out a certain degree of overwrap between
-> > generic-y and mandatory-y. (https://lkml.org/lkml/2017/7/10/121)
-> >
-> > I a bit tweaked the meaning of mandatory-y; now it defines the minimum
-> > set of ASM headers that all architectures must have.
-> >
-> > If arch does not have specific implementation of a mandatory header,
-> > Kbuild will let it fallback to the asm-generic one by automatically
-> > generating a wrapper. This will allow to drop lots of redundant
-> > generic-y defines.
-> >
-> > Previously, "mandatory" was used in the context of UAPI, but I guess
-> > this can be extended to kernel space ASM headers.
->
-> How useful is it to keep the generic-y behavior around at all vs making
-> everything useful mandatory?
+Please wait at least a day before resending a patch.
 
+regards,
+dan carpenter
 
-What I can tell is not all architectures
-support kvm_para.h, ucontext.h
-
-I guess they will stay as arch-specific generic-y,
-but I am not an expert in this area.
-
-
-kvm_para.h is missing csky, nds32, riscv.
-
-ucontext.h is missing in alpha, arm, m68k, parisc, sparc, xtensa
-
-
-
-bpf_perf_event.h could be promoted to mandatory-y ?
-All architectures have it.
-
-
--- 
-Best Regards
-Masahiro Yamada
