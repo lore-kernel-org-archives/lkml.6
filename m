@@ -2,107 +2,96 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7DB9C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 18:52:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63E99C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 18:53:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4CBC92086D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 18:52:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2EFF12086D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 18:53:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="eAk6Whgz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4CBC92086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="w20jgmv5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EFF12086D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726829AbeLKSwN (ORCPT
+        id S1726651AbeLKSxI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 13:52:13 -0500
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:45246 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726350AbeLKSwM (ORCPT
+        Tue, 11 Dec 2018 13:53:08 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:41363 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726313AbeLKSxI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 13:52:12 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=eBoBIBoRrHRYuOOgMw9n2Hqx0rIngU7nMXfR6hoP2bs=; b=eAk6Whgz68y96T21vvB7GB8zt
-        bl/0bFzg/eK780cco2XZfeGAb9qqYOX/x9cZRaIb3WBBAXx3PfEor6GbCbF6WRDFgXL7vSu2/BTiQ
-        KUFPTS7KFfJi073MY4A+I+kO3x1GsqCTcvzdZ7N7vjp1TgHBkQNssIUxN2CmE+i6wRMng=;
-Received: from n2100.armlinux.org.uk ([2001:4d48:ad52:3201:214:fdff:fe10:4f86]:60956)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1gWn8T-0008S5-Do; Tue, 11 Dec 2018 18:52:01 +0000
-Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
-        (envelope-from <linux@n2100.armlinux.org.uk>)
-        id 1gWn8Q-0003nl-AB; Tue, 11 Dec 2018 18:51:58 +0000
-Date:   Tue, 11 Dec 2018 18:51:56 +0000
-From:   Russell King - ARM Linux <linux@armlinux.org.uk>
-To:     Baruch Siach <baruch@tkos.co.il>
-Cc:     Antoine Tenart <antoine.tenart@bootlin.com>, davem@davemloft.net,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        thomas.petazzoni@bootlin.com, maxime.chevallier@bootlin.com,
-        gregory.clement@bootlin.com, miquel.raynal@bootlin.com,
-        nadavh@marvell.com, stefanc@marvell.com, ymarkman@marvell.com,
-        mw@semihalf.com
-Subject: Re: [PATCH net] net: mvpp2: 10G modes aren't supported on all ports
-Message-ID: <20181211185156.GH30658@n2100.armlinux.org.uk>
-References: <20181211163228.26130-1-antoine.tenart@bootlin.com>
- <20181211163635.GG30658@n2100.armlinux.org.uk>
- <877egg6jbt.fsf@tkos.co.il>
+        Tue, 11 Dec 2018 13:53:08 -0500
+Received: by mail-pf1-f193.google.com with SMTP id b7so7553670pfi.8
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 10:53:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:subject:in-reply-to:references:date:message-id:mime-version;
+        bh=DuQDtI7Ks7igJGjWgewQyDBlOgL+Pl+vbRs9TAT/5aA=;
+        b=w20jgmv5a+J2U1hOgAHPvjaQQfkcUZzIvABmFfEYcpqss/+2m/dtoyAoeMs6l0ZMhQ
+         1P4I3jJ6+qTt5pG3a3dqCzUCNlhr1DN/4/3YxqAOqF8J2llLEXW3RKxq+q1eTCmuZPNi
+         pt0E2j49gw752i4Y+q4MOGRxqlLeGpTazIJyxMzBN9ZUKbHhz+z8tzqf4fFZOAcHh8HT
+         lrx6d/ZmHsvaAHcgw1lR8pYWn98eIQLe8A9TcAaUgGxjRGmkWwW7O6ETXVaskCArlpwq
+         QkEZbOh+gD0NkZM8owxxO2uXDnNT9CNWer1wzAq1iPwzNQQtfVwS3mbNnCWVbUtnWdqF
+         RuiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=DuQDtI7Ks7igJGjWgewQyDBlOgL+Pl+vbRs9TAT/5aA=;
+        b=kYm55AuumgGewBSWpY21D+HH6EwsBNLW1I1upIxnMJ1slP/gnPw0WX0UDhxJIzNkR1
+         mn//xr3eNvrJQrI5SJygc2LZToeTWqEvVe9X3AOWeEsba5FNKgvrVFUotnmEgtmjSwBM
+         7kI7RSxT3WKuloSf/60cy+ttCAkmBiehcbIm79owJQxc+t/ujBBma6QoodgFkd+7mEU/
+         GVE0Id5CUzljIjJuo9o8OhVPfYBXpLFt9h7OsYxxe3aJnD3aUIJpnJYLYZaZmkAVwxnL
+         Hr7dca9N5IEmn0vbA9kEvouuq3r8hQFJ8UUSj7cZxGwSC0Zbq1jIVIcIB/wsk7cpo/cS
+         Me1w==
+X-Gm-Message-State: AA+aEWZgE5I0m9kFgu6IliTXVcsIimmm23j89ASnJsts8Y9v1R/vnBEh
+        k03TqMhROeOfsqgP3HmeHf3jnA==
+X-Google-Smtp-Source: AFSGD/WHEmEEU0h1fThAqx0Tx9Q4zoK2DtOjaWrTweOtuniBWf/igKxVlz5t9jJJM3Pymn5DsZVG/w==
+X-Received: by 2002:a62:cdd:: with SMTP id 90mr17330855pfm.219.1544554387055;
+        Tue, 11 Dec 2018 10:53:07 -0800 (PST)
+Received: from localhost (c-71-197-186-152.hsd1.wa.comcast.net. [71.197.186.152])
+        by smtp.googlemail.com with ESMTPSA id v9sm21267563pfg.144.2018.12.11.10.53.06
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 11 Dec 2018 10:53:06 -0800 (PST)
+From:   Kevin Hilman <khilman@baylibre.com>
+To:     Thomas Meyer <thomas@m3y3r.de>, khilman@kernel.org, nm@ti.com,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PM / AVS: SmartReflex: NULL check before some freeing functions is not needed.
+In-Reply-To: <1543760930051-514988180-4-diffsplit-thomas@m3y3r.de>
+References: <1543760930050-1499171309-0-diffsplit-thomas@m3y3r.de> <1543760930051-514988180-4-diffsplit-thomas@m3y3r.de>
+Date:   Tue, 11 Dec 2018 10:53:05 -0800
+Message-ID: <7hy38vuc8e.fsf@baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <877egg6jbt.fsf@tkos.co.il>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 11, 2018 at 07:53:42PM +0200, Baruch Siach wrote:
-> That is, something like this, right?
-> 
-> diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-> index 125ea99418df..04cb0241ca2b 100644
-> --- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-> +++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-> @@ -4404,13 +4404,18 @@ static void mvpp2_phylink_validate(struct net_device *dev,
->  	switch (state->interface) {
->  	case PHY_INTERFACE_MODE_10GKR:
->  	case PHY_INTERFACE_MODE_XAUI:
-> +		if (port->gop_id != 0)
-> +			goto empty_set;
-> +		/* Fall-through */
->  	case PHY_INTERFACE_MODE_NA:
-> -		phylink_set(mask, 10000baseCR_Full);
-> -		phylink_set(mask, 10000baseSR_Full);
-> -		phylink_set(mask, 10000baseLR_Full);
-> -		phylink_set(mask, 10000baseLRM_Full);
-> -		phylink_set(mask, 10000baseER_Full);
-> -		phylink_set(mask, 10000baseKR_Full);
-> +		if (port->gop_id == 0) {
-> +			phylink_set(mask, 10000baseCR_Full);
-> +			phylink_set(mask, 10000baseSR_Full);
-> +			phylink_set(mask, 10000baseLR_Full);
-> +			phylink_set(mask, 10000baseLRM_Full);
-> +			phylink_set(mask, 10000baseER_Full);
-> +			phylink_set(mask, 10000baseKR_Full);
-> +		}
->  		/* Fall-through */
->  	case PHY_INTERFACE_MODE_RGMII:
->  	case PHY_INTERFACE_MODE_RGMII_ID:
-> 
+Thomas Meyer <thomas@m3y3r.de> writes:
 
-Yep, looks fine to me, thanks.
+> NULL check before some freeing functions is not needed.
+>
+> Signed-off-by: Thomas Meyer <thomas@m3y3r.de>
 
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+Reviewed-by: Kevin Hilman <khilman@baylibre.com>
+
+> ---
+>
+> diff -u -p a/drivers/power/avs/smartreflex.c b/drivers/power/avs/smartreflex.c
+> --- a/drivers/power/avs/smartreflex.c
+> +++ b/drivers/power/avs/smartreflex.c
+> @@ -1010,8 +1010,7 @@ static int omap_sr_remove(struct platfor
+>  
+>  	if (sr_info->autocomp_active)
+>  		sr_stop_vddautocomp(sr_info);
+> -	if (sr_info->dbg_dir)
+> -		debugfs_remove_recursive(sr_info->dbg_dir);
+> +	debugfs_remove_recursive(sr_info->dbg_dir);
+>  
+>  	pm_runtime_disable(&pdev->dev);
+>  	list_del(&sr_info->node);
