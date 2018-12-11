@@ -6,84 +6,81 @@ X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12C33C67839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 21:33:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99C94C6783B
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 21:34:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CDBF42086D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 21:33:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 60CC92086D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 21:34:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="B+UAC0cp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDBF42086D
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nisSlecL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60CC92086D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726279AbeLKVdu (ORCPT
+        id S1726327AbeLKVeC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 16:33:50 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:34679 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726209AbeLKVdu (ORCPT
+        Tue, 11 Dec 2018 16:34:02 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:37762 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726179AbeLKVeC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 16:33:50 -0500
-Received: by mail-pg1-f193.google.com with SMTP id 17so7256237pgg.1
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 13:33:48 -0800 (PST)
+        Tue, 11 Dec 2018 16:34:02 -0500
+Received: by mail-pf1-f195.google.com with SMTP id y126so7758762pfb.4
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 13:34:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:content-transfer-encoding:in-reply-to:message-id:to
          :subject:from:user-agent:references:cc:date;
-        bh=2y6SwtMX5SIXW5zBVJ61CYfaTRs7fsC5P8Axkq/zeNI=;
-        b=B+UAC0cpoERMlhY2qX6w2VB8DX9MXPgOm3FtC8D+XBxI4TU1KGP9JVv0BAGuucbacl
-         Ys1jFKh39XIuKzNAXjYiUQNWfeRcrCnTAjfiXqyI7FqNap8NNONc9g4+h4oPvFhqzR+W
-         fDGoHciwe1u+sF8KBKYt2fR5SE2rXUUTBaLqI=
+        bh=E4R2jPN8BgUUXI+O6RuHCvvD+UsR9iKyuijRiIMusL0=;
+        b=nisSlecLCIrGMR16p22AAORccojOBRloSPVe31x8D61drwztFWVvsMNXg+1ERXYoOd
+         c/BfkyOVmee1oOepn974wqbNWeQVOxyEw9TVRhuhxVqyYmA7jKtDcL/NhqidbuK8jTzn
+         Zkk95jEQY4pJbloQYmrUxLd2trgl6BPKvWDSg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:content-transfer-encoding
          :in-reply-to:message-id:to:subject:from:user-agent:references:cc
          :date;
-        bh=2y6SwtMX5SIXW5zBVJ61CYfaTRs7fsC5P8Axkq/zeNI=;
-        b=D9cW2USPL8YR5SgF5Vp6d6bABQDtvObDICH8DXzwDpsvMLNimCnQrpi8QG91jhDbQX
-         W9USpemCa46yxIIrxsYRlnP4l2XuxctXRXZpqq+Hr7Kxq5sVkgszxjHU+8nJ2pKUkXPu
-         pB0T5V2NH4fmuCw0Hbw4RKcicyT0k+BxPXKz+MFxIhMNfWO9ziyRnqrFmycYke1hcRZr
-         GZU6iqwwxJASHcBGWNmNvLzkq/3cZJvTfEhLxgnJfOTpmUnj3jUXSF5rnttCR/5dxB6a
-         ZRW0OSG3UTTULo1r4ePCgEt9mjd4oKp+qX7PCbLvOEbHD6kUJ5Tjln9szcGAxZsVz8VI
-         xT7Q==
-X-Gm-Message-State: AA+aEWb9cRtcJy+Nu2gxSSB+u1QPfNOHRpa/dLDJ2MSJxDr374MYZ9kv
-        76QjRUzieTatLxA4g9+Ugj28dw==
-X-Google-Smtp-Source: AFSGD/VNt4cHG5dgFHEwm+DX6/DJmcNAIRaMWs+Yo+joPpO2w3+Xm8SIJwiTwYuoS78FLuXLry3X8Q==
-X-Received: by 2002:a63:b34f:: with SMTP id x15mr16327259pgt.243.1544564028683;
-        Tue, 11 Dec 2018 13:33:48 -0800 (PST)
+        bh=E4R2jPN8BgUUXI+O6RuHCvvD+UsR9iKyuijRiIMusL0=;
+        b=nj7nLPgnoZHaQWOf5yEd3j7sZXnvJB8h64Hv2vT7KqYNbfAm1MqT1ZDQNJYPymS6wA
+         z2u730Nv6SHdalZjnBNIK6dMM5qga6Zx6R8+zJ6dbSAZ0m/3YMN2YwzkCQIrBOVnVn6j
+         AbB1v5DgCk87NPt41vIlFsD7FnpwFzsqcWpiZz2KF1pHzoz+GJiCe4UoLUNr061VY9yw
+         pBYBXkEyOVltVIT3IIj7b4FVgMTM6+Et56acBOCfMDS6gTqaru8abfrL7L6hzEYhcjZ7
+         5b2SjpiKBjjdgqJ9Z+nzUMQdDtILtcBTfFYW3X8E1LaEmfnNE9yEsuIiD5DP/D9v66Ke
+         YYDw==
+X-Gm-Message-State: AA+aEWYj0A4Ibw7e51yH9nChbb6v5IM/nIR/EOsYbdz/g6BCvQuhgTUA
+        etLAQAw8axj4lsTlOf918IDkMQ==
+X-Google-Smtp-Source: AFSGD/WgYt6ZtO80El7nxptBioQkpVSW4/0+zOQuEPCt5RtVyNGnuDM6VugX5Hn8g2uqt2g6kKHKyw==
+X-Received: by 2002:a62:113:: with SMTP id 19mr17604773pfb.176.1544564041486;
+        Tue, 11 Dec 2018 13:34:01 -0800 (PST)
 Received: from localhost ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id r130sm30011052pfr.48.2018.12.11.13.33.48
+        by smtp.gmail.com with ESMTPSA id q75sm21152446pfa.38.2018.12.11.13.34.00
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 11 Dec 2018 13:33:48 -0800 (PST)
+        Tue, 11 Dec 2018 13:34:00 -0800 (PST)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20181211094938.25086-9-rnayak@codeaurora.org>
-Message-ID: <154456402728.17204.32625663426080532@swboyd.mtv.corp.google.com>
+In-Reply-To: <20181211094938.25086-10-rnayak@codeaurora.org>
+Message-ID: <154456404022.17204.16925201479684260162@swboyd.mtv.corp.google.com>
 To:     Rajendra Nayak <rnayak@codeaurora.org>, andy.gross@linaro.org,
         collinsd@codeaurora.org, mka@chromium.org, robh@kernel.org,
         ulf.hansson@linaro.org, viresh.kumar@linaro.org
-Subject: Re: [PATCH v6 08/10] PM / Domains: Add a simple_opp_to_performance_state() helper
+Subject: Re: [PATCH v6 09/10] soc: qcom: rpmpd: Use simple_opp_to_performance_state() helper
 From:   Stephen Boyd <swboyd@chromium.org>
 User-Agent: alot/0.7
-References: <20181211094938.25086-1-rnayak@codeaurora.org> <20181211094938.25086-9-rnayak@codeaurora.org>
+References: <20181211094938.25086-1-rnayak@codeaurora.org> <20181211094938.25086-10-rnayak@codeaurora.org>
 Cc:     devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Rajendra Nayak <rnayak@codeaurora.org>
-Date:   Tue, 11 Dec 2018 13:33:47 -0800
+Date:   Tue, 11 Dec 2018 13:34:00 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Rajendra Nayak (2018-12-11 01:49:36)
-> Now that we have atleast 2 genpd providers, both using a simple
-> routine to read a performance state value from device tree and
-> return it, in order to implement the .opp_to_performance_state
-> callback, add a simple_opp_to_performance_state() helper to do
-> it, so it can be resued across all such genpd providers which
-> just need to read the value from DT.
+Quoting Rajendra Nayak (2018-12-11 01:49:37)
+> Get rid of the duplicate code across rpmpd and rpmhpd to read the
+> performance state value from Device tree and use the
+> simple_opp_to_performance_state() helper instead.
 >=20
 > Suggested-by: Stephen Boyd <sboyd@kernel.org>
 > Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
