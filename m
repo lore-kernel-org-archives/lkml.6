@@ -2,230 +2,147 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3929CC07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 11:26:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2A88C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 11:27:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E82FA2082F
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 11:26:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 991252082F
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 11:27:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="NGUDL663"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E82FA2082F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="E3WeafnO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 991252082F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726509AbeLKL0p (ORCPT
+        id S1726526AbeLKL1L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 06:26:45 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:43201 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726465AbeLKL0o (ORCPT
+        Tue, 11 Dec 2018 06:27:11 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:42418 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726190AbeLKL1K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 06:26:44 -0500
-Received: by mail-pl1-f195.google.com with SMTP id gn14so6782612plb.10
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 03:26:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=vGPFU18FRcBHgDNjMcG97Gn8p1v4eOuwzNawMRtl3c0=;
-        b=NGUDL6636OAW+dYdC5wd4YwFZHG1wqsui2WuR7n4cYm2RSbrNcTFnQPoIWvRhyP3Jn
-         xSImzjVN9FIWdeuL1MeM1HF3j9sq8TfDgLGDkMMOEZILXT6yxp16fj1p7iE48acjJ4MR
-         xo978ilSg63xTHs5fAC5Ojz3k6MfF7xXVWrKc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=vGPFU18FRcBHgDNjMcG97Gn8p1v4eOuwzNawMRtl3c0=;
-        b=U74JvPu+SurEPoLIhxGtdKEG/FG7Ur6zgwvXutuSe9dQ0TTq1Dr3u2KyaLrByt/Ogz
-         jTfyKREsMIgrA+y/vS5qfHY6jlncDmmMOW/9T6/4LQdJ88QHB9l44rLlHaQYhWI5Rzka
-         Ix+YxIUx9xfAEwPv5DxEXbzL9uTxBBqbMcO9UJ22dp43q9J7bQvu6Hgre4PzygA8A86o
-         0ctwJXVkSo7jrL4xRKN5tQv7EKDrKwzEFfk3AZBpc5pHFvWy4zmgb3kh0aR8smHJRQtf
-         BlJEdzIm3mfBveRVi3DBGVA8a6xbbjABDecV+mse039xusu+lEM54vyqqziZPx9k7IEJ
-         ncOw==
-X-Gm-Message-State: AA+aEWZLnVJnmkNgXoCjXvCZrMfNHxE8zYEjYvBBCeWzl2jktJ9HKVgw
-        UVPRU5AvNAlw6nQPMRkRAP4gvQ==
-X-Google-Smtp-Source: AFSGD/XOzWz3vaZrWTpOaLhROmaF7sVCum6/7qfuxBihqVLsnWxyyMJ+3h9JAdEXqy0nTfCD7ZmUww==
-X-Received: by 2002:a17:902:20e9:: with SMTP id v38mr14940803plg.250.1544527603082;
-        Tue, 11 Dec 2018 03:26:43 -0800 (PST)
-Received: from localhost ([122.172.23.29])
-        by smtp.gmail.com with ESMTPSA id n22sm29008615pfh.166.2018.12.11.03.26.42
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Dec 2018 03:26:42 -0800 (PST)
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Rafael Wysocki <rjw@rjwysocki.net>,
-        Quentin Perret <quentin.perret@arm.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] OPP: Fix missing debugfs supply directory for OPPs
-Date:   Tue, 11 Dec 2018 16:56:29 +0530
-Message-Id: <46f48aca2e5aef3f430e95d1a5fb68227ec8ec85.1544527580.git.viresh.kumar@linaro.org>
-X-Mailer: git-send-email 2.19.1.568.g152ad8e3369a
-In-Reply-To: <90e3577b5feb42bac1269e16bb3d2bdd8f6df40f.1544527580.git.viresh.kumar@linaro.org>
-References: <90e3577b5feb42bac1269e16bb3d2bdd8f6df40f.1544527580.git.viresh.kumar@linaro.org>
+        Tue, 11 Dec 2018 06:27:10 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id wBBBR4wX005874;
+        Tue, 11 Dec 2018 05:27:04 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1544527624;
+        bh=X5khX2ZoCCT4BojmQacfvqL3XksKsVSGtPdhuhshOyM=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=E3WeafnOVvp1LsNC0OIVvbyOoSuosN5dEH3Ymrmi6uE5H+0+FzFH6MF/N6LSmrTeP
+         Qr8N3+lc52zhwsygnXc8cbmy9cuKx/vwv5qdkuteuDPmP+xZ+VLmphb1kwJGaa7Auy
+         Tajrj4FSeINO5HyfH6MnPpYqw+1n4z2paSREu/Rk=
+Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wBBBR49j053037
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 11 Dec 2018 05:27:04 -0600
+Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Tue, 11
+ Dec 2018 05:27:03 -0600
+Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Tue, 11 Dec 2018 05:27:03 -0600
+Received: from [172.24.190.172] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wBBBQwOo014997;
+        Tue, 11 Dec 2018 05:26:58 -0600
+Subject: Re: [RFC PATCH v2 08/15] usb:cdns3: Implements device operations part
+ of the API
+To:     Peter Chen <hzpeterchen@gmail.com>, <rogerq@ti.com>
+CC:     <pawell@cadence.com>, <devicetree@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <linux-usb@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>,
+        <adouglas@cadence.com>, <jbergsagel@ti.com>, <nm@ti.com>,
+        <sureshp@cadence.com>, <peter.chen@nxp.com>, <pjez@cadence.com>,
+        <kurahul@cadence.com>, <balbi@kernel.org>
+References: <1542535751-16079-1-git-send-email-pawell@cadence.com>
+ <1542535751-16079-9-git-send-email-pawell@cadence.com>
+ <5BFE8883.7090802@ti.com>
+ <CAL411-oKvu3EADStit=JtbcxVzM_fFGF2uPn67-wmXxPzUK6GQ@mail.gmail.com>
+From:   Sekhar Nori <nsekhar@ti.com>
+Message-ID: <6b19b55c-66d7-439e-df8f-7b311b45af5e@ti.com>
+Date:   Tue, 11 Dec 2018 16:56:57 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAL411-oKvu3EADStit=JtbcxVzM_fFGF2uPn67-wmXxPzUK6GQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is one case where we may end up with no "supply" directory for the
-OPPs in debugfs. That happens when the OPP core isn't managing the
-regulators for the device and the device's OPP do have microvolt
-property. It happens because the opp_table->regulator_count remains set
-to 0 and the debugfs routines don't add any supply directory in such a
-case.
+On 10/12/18 7:42 AM, Peter Chen wrote:
+>>> +static struct usb_ep *cdns3_gadget_match_ep(struct usb_gadget *gadget,
+>>> +                                         struct usb_endpoint_descriptor *desc,
+>>> +                                         struct usb_ss_ep_comp_descriptor *comp_desc)
+>>> +{
+>>> +     struct cdns3_device *priv_dev = gadget_to_cdns3_device(gadget);
+>>> +     struct cdns3_endpoint *priv_ep;
+>>> +     unsigned long flags;
+>>> +
+>>> +     priv_ep = cdns3_find_available_ss_ep(priv_dev, desc);
+>>> +     if (IS_ERR(priv_ep)) {
+>>> +             dev_err(&priv_dev->dev, "no available ep\n");
+>>> +             return NULL;
+>>> +     }
+>>> +
+>>> +     dev_dbg(&priv_dev->dev, "match endpoint: %s\n", priv_ep->name);
+>>> +
+>>> +     spin_lock_irqsave(&priv_dev->lock, flags);
+>>> +     priv_ep->endpoint.desc = desc;
+>>> +     priv_ep->dir  = usb_endpoint_dir_in(desc) ? USB_DIR_IN : USB_DIR_OUT;
+>>> +     priv_ep->type = usb_endpoint_type(desc);
+>>> +
+>>> +     list_add_tail(&priv_ep->ep_match_pending_list,
+>>> +                   &priv_dev->ep_match_list);
+>>> +     spin_unlock_irqrestore(&priv_dev->lock, flags);
+>>> +     return &priv_ep->endpoint;
+>>> +}
+>> Why do you need a custom match_ep?
+>> doesn't usb_ep_autoconfig suffice?
+>>
+>> You can check if EP is claimed or not by checking the ep->claimed flag.
+>>
+> It is a special requirement for this IP, the EP type and MaxPacketSize
+> changing can't be done at runtime, eg, at ep->enable. See below commit
+> for detail.
+> 
+>     usb: cdns3: gadget: configure all endpoints before set configuration
+> 
+>     Cadence IP has one limitation that all endpoints must be configured
+>     (Type & MaxPacketSize) before setting configuration through hardware
+>     register, it means we can't change endpoints configuration after
+>     set_configuration.
+> 
+>     In this patch, we add non-control endpoint through usb_ss->ep_match_list,
+>     which is added when the gadget driver uses usb_ep_autoconfig to configure
+>     specific endpoint; When the udc driver receives set_configurion request,
+>     it goes through usb_ss->ep_match_list, and configure all endpoints
+>     accordingly.
+> 
+>     At usb_ep_ops.enable/disable, we only enable and disable endpoint through
+>     ep_cfg register which can be changed after set_configuration, and do
+>     some software operation accordingly.
 
-This commit fixes that by setting opp_table->regulator_count to 1 in
-that particular case. But to make everything work nicely and not break
-other parts of the core, regulator_count is defined as "int" now instead
-of "unsigned int" and it can have different special values now. It is
-set to -1 initially to mark it "uninitialized" and later only we set it
-to 0 or positive values after checking how many supplies are there.
+All this should be part of comments in code along with information about
+controller versions which suffer from the errata.
 
-This also helps in finding the bugs where only few of the OPPs have the
-"opp-microvolt" property set and not all.
+Is there a version of controller available which does not have the
+defect? Is there a future plan to fix this?
 
-Fixes: 1fae788ed640 ("PM / OPP: Don't create debugfs "supply-0" directory unnecessarily")
-Reported-by: Quentin Perret <quentin.perret@arm.com>
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
----
- drivers/opp/core.c | 12 +++++++++---
- drivers/opp/of.c   | 20 ++++++++++++++++----
- drivers/opp/opp.h  |  6 ++++--
- 3 files changed, 29 insertions(+), 9 deletions(-)
+If any of that is yes, you probably want to handle this with runtime
+detection of version (like done with DWC3_REVISION_XXX macros).
+Sometimes the hardware-read versions themselves are incorrect, so its
+better to introduce a version specific compatible too like
+"cdns,usb-1.0.0" (as hinted to by Rob Herring as well).
 
-diff --git a/drivers/opp/core.c b/drivers/opp/core.c
-index 2d3d0d1180ea..23b086fcbf84 100644
---- a/drivers/opp/core.c
-+++ b/drivers/opp/core.c
-@@ -812,6 +812,9 @@ static struct opp_table *_allocate_opp_table(struct device *dev, int index)
- 	mutex_init(&opp_table->lock);
- 	INIT_LIST_HEAD(&opp_table->dev_list);
- 
-+	/* Mark regulator count uninitialized */
-+	opp_table->regulator_count = -1;
-+
- 	opp_dev = _add_opp_dev(dev, opp_table);
- 	if (!opp_dev) {
- 		kfree(opp_table);
-@@ -1028,7 +1031,7 @@ struct dev_pm_opp *_opp_allocate(struct opp_table *table)
- 	int count, supply_size;
- 
- 	/* Allocate space for at least one supply */
--	count = table->regulator_count ? table->regulator_count : 1;
-+	count = table->regulator_count > 0 ? table->regulator_count : 1;
- 	supply_size = sizeof(*opp->supplies) * count;
- 
- 	/* allocate new OPP node and supplies structures */
-@@ -1433,7 +1436,7 @@ struct opp_table *dev_pm_opp_set_regulators(struct device *dev,
- 
- 	kfree(opp_table->regulators);
- 	opp_table->regulators = NULL;
--	opp_table->regulator_count = 0;
-+	opp_table->regulator_count = -1;
- err:
- 	dev_pm_opp_put_opp_table(opp_table);
- 
-@@ -1462,7 +1465,7 @@ void dev_pm_opp_put_regulators(struct opp_table *opp_table)
- 
- 	kfree(opp_table->regulators);
- 	opp_table->regulators = NULL;
--	opp_table->regulator_count = 0;
-+	opp_table->regulator_count = -1;
- 
- put_opp_table:
- 	dev_pm_opp_put_opp_table(opp_table);
-@@ -1615,6 +1618,9 @@ int dev_pm_opp_add(struct device *dev, unsigned long freq, unsigned long u_volt)
- 	if (!opp_table)
- 		return -ENOMEM;
- 
-+	/* Fix regulator count for dynamic OPPs */
-+	opp_table->regulator_count = 1;
-+
- 	ret = _opp_add_v1(opp_table, dev, freq, u_volt, true);
- 	if (ret)
- 		dev_pm_opp_put_opp_table(opp_table);
-diff --git a/drivers/opp/of.c b/drivers/opp/of.c
-index 38a08805a30c..6eb0198ab63d 100644
---- a/drivers/opp/of.c
-+++ b/drivers/opp/of.c
-@@ -150,12 +150,10 @@ static int opp_parse_supplies(struct dev_pm_opp *opp, struct device *dev,
- 			      struct opp_table *opp_table)
- {
- 	u32 *microvolt, *microamp = NULL;
--	int supplies, vcount, icount, ret, i, j;
-+	int supplies = opp_table->regulator_count, vcount, icount, ret, i, j;
- 	struct property *prop = NULL;
- 	char name[NAME_MAX];
- 
--	supplies = opp_table->regulator_count ? opp_table->regulator_count : 1;
--
- 	/* Search for "opp-microvolt-<name>" */
- 	if (opp_table->prop_name) {
- 		snprintf(name, sizeof(name), "opp-microvolt-%s",
-@@ -170,7 +168,13 @@ static int opp_parse_supplies(struct dev_pm_opp *opp, struct device *dev,
- 
- 		/* Missing property isn't a problem, but an invalid entry is */
- 		if (!prop) {
--			if (!opp_table->regulator_count)
-+			if (unlikely(supplies == -1)) {
-+				/* Initialize regulator_count */
-+				opp_table->regulator_count = 0;
-+				return 0;
-+			}
-+
-+			if (!supplies)
- 				return 0;
- 
- 			dev_err(dev, "%s: opp-microvolt missing although OPP managing regulators\n",
-@@ -179,6 +183,14 @@ static int opp_parse_supplies(struct dev_pm_opp *opp, struct device *dev,
- 		}
- 	}
- 
-+	if (unlikely(supplies == -1)) {
-+		/* Initialize regulator_count */
-+		supplies = opp_table->regulator_count = 1;
-+	} else if (unlikely(!supplies)) {
-+		dev_err(dev, "%s: opp-microvolt wasn't expected\n", __func__);
-+		return -EINVAL;
-+	}
-+
- 	vcount = of_property_count_u32_elems(opp->np, name);
- 	if (vcount < 0) {
- 		dev_err(dev, "%s: Invalid %s property (%d)\n",
-diff --git a/drivers/opp/opp.h b/drivers/opp/opp.h
-index 9c6544b4f4f9..14d732ccad08 100644
---- a/drivers/opp/opp.h
-+++ b/drivers/opp/opp.h
-@@ -138,7 +138,9 @@ enum opp_table_access {
-  * @prop_name: A name to postfix to many DT properties, while parsing them.
-  * @clk: Device's clock handle
-  * @regulators: Supply regulators
-- * @regulator_count: Number of power supply regulators
-+ * @regulator_count: Number of power supply regulators. Its value can be -1
-+ * (uninitialized), 0 (no opp-microvolt property) or > 0 (has opp-microvolt
-+ * property).
-  * @genpd_performance_state: Device's power domain support performance state.
-  * @set_opp: Platform specific set_opp callback
-  * @set_opp_data: Data to be passed to set_opp callback
-@@ -176,7 +178,7 @@ struct opp_table {
- 	const char *prop_name;
- 	struct clk *clk;
- 	struct regulator **regulators;
--	unsigned int regulator_count;
-+	int regulator_count;
- 	bool genpd_performance_state;
- 
- 	int (*set_opp)(struct dev_pm_set_opp_data *data);
--- 
-2.19.1.568.g152ad8e3369a
-
+Thanks,
+Sekhar
