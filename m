@@ -2,173 +2,159 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D52EC07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:03:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32F4CC5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:03:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B50A2084A
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:03:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E29CF2084A
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 14:03:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="uN0061dA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B50A2084A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+	dkim=pass (1024-bit key) header.d=virtuozzo.com header.i=@virtuozzo.com header.b="DiSulGKR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E29CF2084A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=virtuozzo.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726728AbeLKODB (ORCPT
+        id S1726750AbeLKODI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 09:03:01 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:54901 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726203AbeLKODA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 09:03:00 -0500
-Received: by mail-it1-f196.google.com with SMTP id i145so3634044ita.4
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 06:03:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=DilIrTL0MCs06tmRGevnvVt8URXH8KtaGCIvIVsGQbo=;
-        b=uN0061dAFMNYsKJ4FAFaNt6dIu/XKXfJK8aEkbq4hvK+ZWHKAZYP3s0IYT9J33MMpO
-         1j9uks1O1LNqPbtdEz6Ta7AnBmN2cirMhvhr4/ne+DI1T2P7KEFSjT8SFvCLAzlbzfjp
-         76QogmT2H+U34VC3M4NA0CpiRGmrSkPsbzJzd88xnGCJ0QxMHxj336yNdZd++ZwZ5Iyd
-         JHd0jNy6fqxllUbAfeieTfYHcM2UI8LYKWoZunZkbLQXPaFQdwM2/njamUn3NdRry/Sq
-         9mgu7Pfb8YtLf3JNpC/uW1H9Wxf4ulKaLh3opILRmcLRCNLG/+LHsmfakHHhtZzXN5L3
-         GvCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=DilIrTL0MCs06tmRGevnvVt8URXH8KtaGCIvIVsGQbo=;
-        b=A2vp5/enypLr+yA2/aETfJ7jTOwZXGdDY5yWO8dk4YmZeRp+jHWIEEZX//QK4W3NoM
-         /8haYEPI9EGES0gX4lChIiSQEr7Osb1dtoXaoKdIkpUsIeZ3M41yudPXqWhm+VaaJvWc
-         Js3jBC86RAcSlQp6ALAzGS1ALQ0p39tnmOswAecJCCVroz/DueVoEIZogC08u3/L8Uxj
-         VyyIj5imcj1QBAZpnjlicvOMF3gt1gevbqVH2aZqcuBIijPfWBURuiIyIMLqJ6sZDBzX
-         IXFYEWvskKQKsXYEaFevmqb8q0QbCqIGHVG+4oKL6Siy7eAVlp+mtsluP4XWnp9OsSOy
-         YyYQ==
-X-Gm-Message-State: AA+aEWYZOVSuD5w5VkcNqwiPjn5hQHYkBeKbSJmc/DlpUAl4DjafaWJj
-        AOT7xAJkJJ2cr16bm2CmCERyz/wsJ9m1h7M6jVmq/ISPyBw=
-X-Google-Smtp-Source: AFSGD/UgOhbJaxH4dIchaZvPqOFf2pUS5aDiqeLfDmEzsLc0ELJrUn3Ht6YxZv5hGr3WalixxJmeXckknjmPMHoC/Ek=
-X-Received: by 2002:a02:98bb:: with SMTP id q56mr15420761jaj.24.1544536979495;
- Tue, 11 Dec 2018 06:02:59 -0800 (PST)
-MIME-Version: 1.0
-References: <20181109172132.30939-1-brgl@bgdev.pl>
-In-Reply-To: <20181109172132.30939-1-brgl@bgdev.pl>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Tue, 11 Dec 2018 15:02:48 +0100
-Message-ID: <CAMRc=MeY_CbdQDF7UOai5MW3OLF1u+a04AAyq5bsux8_Fv5DVQ@mail.gmail.com>
-Subject: Re: [PATCH] irq/irq_sim: store multiple interrupt offsets in a bitmap
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 11 Dec 2018 09:03:08 -0500
+Received: from mail-bgr052101131027.outbound.protection.outlook.com ([52.101.131.27]:49888
+        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726732AbeLKODI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 09:03:08 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=virtuozzo.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QslHw6GWkclbe+2CFm1Nezqo+B3zkOhE/j5udv4eU2s=;
+ b=DiSulGKRXdlWBLjuDZWHLAQbq4WUhGq1GP0tFyc3kZ/gK0Mpnn8Is8Q09Bliy+0wmti5m+WvgvJY1BItcnNNwYNpyWnLotyTW0HATk12t1nOpIojH507qlRR/SW+xO7H16K637EMBMRayzxG++1UWy/8Fn49w6wBQ5R7Cx3KGhM=
+Received: from DB8PR08MB4092.eurprd08.prod.outlook.com (20.179.10.210) by
+ DB8PR08MB4009.eurprd08.prod.outlook.com (20.179.9.202) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1404.22; Tue, 11 Dec 2018 14:02:52 +0000
+Received: from DB8PR08MB4092.eurprd08.prod.outlook.com
+ ([fe80::d41:d012:1944:5810]) by DB8PR08MB4092.eurprd08.prod.outlook.com
+ ([fe80::d41:d012:1944:5810%6]) with mapi id 15.20.1404.026; Tue, 11 Dec 2018
+ 14:02:52 +0000
+From:   Roman Kagan <rkagan@virtuozzo.com>
+To:     Vitaly Kuznetsov <vkuznets@redhat.com>
+CC:     "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?iso-8859-2?Q?Radim_Kr=E8m=E1=F8?= <rkrcmar@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
+        Eduardo Habkost <ehabkost@redhat.com>
+Subject: Re: [PATCH v2 4/7] x86/kvm/hyper-v: Introduce
+ KVM_GET_SUPPORTED_HV_CPUID
+Thread-Topic: [PATCH v2 4/7] x86/kvm/hyper-v: Introduce
+ KVM_GET_SUPPORTED_HV_CPUID
+Thread-Index: AQHUkKznsqV3L84bk0eamd/uIlqfEKV5sPkA///YaQCAAAmpAA==
+Date:   Tue, 11 Dec 2018 14:02:52 +0000
+Message-ID: <20181211140247.GC2378@rkaganb.sw.ru>
+References: <20181210172159.410-1-vkuznets@redhat.com>
+ <20181210172159.410-5-vkuznets@redhat.com>
+ <20181211124956.GA2378@rkaganb.sw.ru> <87bm5sp501.fsf@vitty.brq.redhat.com>
+In-Reply-To: <87bm5sp501.fsf@vitty.brq.redhat.com>
+Accept-Language: en-US, ru-RU
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mutt/1.10.1 (2018-07-13)
+mail-followup-to: =?iso-8859-2?Q?Roman_Kagan_<rkagan@virtuozzo.com>,=09Vitaly_Kuznetsov_<vk?=
+ =?iso-8859-2?Q?uznets@redhat.com>,=09"kvm@vger.kernel.org"_<kvm@vger.kern?=
+ =?iso-8859-2?Q?el.org>,=09Paolo_Bonzini_<pbonzini@redhat.com>,=09Radim_Kr?=
+ =?iso-8859-2?Q?=E8m=E1=F8_<rkrcmar@redhat.com>,=09"linux-kernel@vger.kern?=
+ =?iso-8859-2?Q?el.org"_<linux-kernel@vger.kernel.org>,=09"K._Y._Srinivasa?=
+ =?iso-8859-2?Q?n"_<kys@microsoft.com>,=09Haiyang_Zhang_<haiyangz@microsof?=
+ =?iso-8859-2?Q?t.com>,=09Stephen_Hemminger_<sthemmin@microsoft.com>,=09"x?=
+ =?iso-8859-2?Q?86@kernel.org"_<x86@kernel.org>,=09"Michael_Kelley_(EOSG)"?=
+ =?iso-8859-2?Q?_<Michael.H.Kelley@microsoft.com>,=09Eduardo_Habkost_<ehab?=
+ =?iso-8859-2?Q?kost@redhat.com>?=
+x-originating-ip: [185.231.240.5]
+x-clientproxiedby: HE1P190CA0012.EURP190.PROD.OUTLOOK.COM (2603:10a6:3:bc::22)
+ To DB8PR08MB4092.eurprd08.prod.outlook.com (2603:10a6:10:ab::18)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=rkagan@virtuozzo.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DB8PR08MB4009;7:JwDypHk9qo2JTLaqRhHlwxHCHCLnEa0fCtcn00MoncytP+1dA4AOxi3VwnoKeO76FwcDulNdVvjLCkCbFQ+pnb/FRsi/U2IAWmTOmNfKfc8Ykd6ZF8p4J7Ytmze336niommsOfZOB2scTs2oUqdUwA==;20:Emwr9YZ6Fwt7F8SUfDNUNqEA64qhBQJvGL9yss85zqbZl9Tmc47RPXL47cM0ToigyH6+KVQTTWshdmhugWXqxYo2LKxIeRsBuoYqPPyfp4osf08F/m9ZmokVr4W7qrQByOZwAcaUSJVXxtm2tZSUH1d/951wcs9rIxu3EnG8F+M=
+x-ms-office365-filtering-correlation-id: c5dd3aa3-0c3e-4418-fdd5-08d65f715705
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:DB8PR08MB4009;
+x-ms-traffictypediagnostic: DB8PR08MB4009:|DB8PR08MB4009:
+x-microsoft-antispam-prvs: <DB8PR08MB4009D39C892A785FB07A91FFC9A60@DB8PR08MB4009.eurprd08.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(3231455)(999002)(944501520)(52105112)(93006095)(93001095)(148016)(149066)(150057)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:DB8PR08MB4009;BCL:0;PCL:0;RULEID:;SRVR:DB8PR08MB4009;
+x-forefront-prvs: 08831F51DC
+x-forefront-antispam-report: SFV:SPM;SFS:(10019020)(396003)(346002)(39850400004)(376002)(366004)(136003)(189003)(199004)(54094003)(1076002)(33656002)(305945005)(66066001)(9686003)(486006)(2906002)(6116002)(7736002)(14454004)(3846002)(478600001)(71200400001)(68736007)(97736004)(25786009)(446003)(36756003)(476003)(71190400001)(11346002)(256004)(4326008)(386003)(6246003)(6486002)(81156014)(186003)(26005)(316002)(106356001)(86362001)(105586002)(102836004)(6436002)(54906003)(6916009)(6506007)(8676002)(229853002)(99286004)(93886005)(33896004)(5660300001)(76176011)(6512007)(52116002)(58126008)(53936002)(81166006)(8936002)(7416002)(30126002);DIR:OUT;SFP:1501;SCL:5;SRVR:DB8PR08MB4009;H:DB8PR08MB4092.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: virtuozzo.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: GPpKt4jZmOzGaD0DsQmZJdEPZiCZG0Mkol/LU+sXlb15aD3tOxDnVFCc/OWDqcL4vVekMIsJiLIf9EcadfiQhcOCLlHsGBd6B6ttaBBRYwf/jEmGxCQb0BPBe9NFq+RkmiRg6gKvvxohTizMU1irl4yYHzZw955zWOU2BDAyp4NIzQXcEkh7AgiWiV64xXKzsO5oip/ifz9xZA9SsncqtWlkQwCSFwyujhvuufsw7zVz0nnaACRhQuR6REudXu7OxvMF7oVTeSqgZx6ds0MMS1WXRuzM88mBThqh/kXu8Zq2UaqqaPyW64Qox2HrMXaeV/1NEgI/8+ws+xqQ2DZQgk1cyb2DlFVumwsOTEtOgl181ghjKhjByytwEwrnGSS/w8CTF0tuwZ5XYcJ4yXvwL9JRa+SEvTd6cv0ejrUgKx58CuvF8mF/cQDWurmMIQgc3vjLwdDvh0a4JhZbheaxJgMQtvh5Rb4H6ZdOgMcsqKr6Tc/3OViiyBVg1vp/8wuW
+spamdiagnosticoutput: 1:22
+Content-Type: text/plain; charset="iso-8859-2"
+Content-ID: <8253547EC0A35049BAC975F8D6FF5C48@eurprd08.prod.outlook.com>
 Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: virtuozzo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c5dd3aa3-0c3e-4418-fdd5-08d65f715705
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Dec 2018 14:02:52.3813
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR08MB4009
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-pt., 9 lis 2018 o 18:21 Bartosz Golaszewski <brgl@bgdev.pl> napisa=C5=82(a)=
-:
->
-> Two threads can try to fire the irq_sim with different offsets and will
-> end up fighting for the irq_work asignment. Thomas Gleixner suggested a
-> solution based on a bitfield where we set a bit for every offset
-> associated with an interrupt that should be fired and then iterate over
-> all set bits in the interrupt handler.
->
-> This is a slightly modified solution using a bitmap so that we don't
-> impose a limit on the number of interrupts one can allocate with
-> irq_sim.
->
-> Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-> Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
-> ---
->  include/linux/irq_sim.h |  2 +-
->  kernel/irq/irq_sim.c    | 23 +++++++++++++++++++++--
->  2 files changed, 22 insertions(+), 3 deletions(-)
->
-> diff --git a/include/linux/irq_sim.h b/include/linux/irq_sim.h
-> index 630a57e55db6..4500d453a63e 100644
-> --- a/include/linux/irq_sim.h
-> +++ b/include/linux/irq_sim.h
-> @@ -16,7 +16,7 @@
->
->  struct irq_sim_work_ctx {
->         struct irq_work         work;
-> -       int                     irq;
-> +       unsigned long           *pending;
->  };
->
->  struct irq_sim_irq_ctx {
-> diff --git a/kernel/irq/irq_sim.c b/kernel/irq/irq_sim.c
-> index dd20d0d528d4..98a20e1594ce 100644
-> --- a/kernel/irq/irq_sim.c
-> +++ b/kernel/irq/irq_sim.c
-> @@ -34,9 +34,20 @@ static struct irq_chip irq_sim_irqchip =3D {
->  static void irq_sim_handle_irq(struct irq_work *work)
->  {
->         struct irq_sim_work_ctx *work_ctx;
-> +       unsigned int offset =3D 0;
-> +       struct irq_sim *sim;
-> +       int irqnum;
->
->         work_ctx =3D container_of(work, struct irq_sim_work_ctx, work);
-> -       handle_simple_irq(irq_to_desc(work_ctx->irq));
-> +       sim =3D container_of(work_ctx, struct irq_sim, work_ctx);
-> +
-> +       while (!bitmap_empty(work_ctx->pending, sim->irq_count)) {
-> +               offset =3D find_next_bit(work_ctx->pending,
-> +                                      sim->irq_count, offset);
-> +               clear_bit(offset, work_ctx->pending);
-> +               irqnum =3D irq_sim_irqnum(sim, offset);
-> +               handle_simple_irq(irq_to_desc(irqnum));
-> +       }
->  }
->
->  /**
-> @@ -63,6 +74,13 @@ int irq_sim_init(struct irq_sim *sim, unsigned int num=
-_irqs)
->                 return sim->irq_base;
->         }
->
-> +       sim->work_ctx.pending =3D bitmap_zalloc(num_irqs, GFP_KERNEL);
-> +       if (!sim->work_ctx.pending) {
-> +               kfree(sim->irqs);
-> +               irq_free_descs(sim->irq_base, num_irqs);
-> +               return -ENOMEM;
-> +       }
-> +
->         for (i =3D 0; i < num_irqs; i++) {
->                 sim->irqs[i].irqnum =3D sim->irq_base + i;
->                 sim->irqs[i].enabled =3D false;
-> @@ -89,6 +107,7 @@ EXPORT_SYMBOL_GPL(irq_sim_init);
->  void irq_sim_fini(struct irq_sim *sim)
->  {
->         irq_work_sync(&sim->work_ctx.work);
-> +       bitmap_free(sim->work_ctx.pending);
->         irq_free_descs(sim->irq_base, sim->irq_count);
->         kfree(sim->irqs);
->  }
-> @@ -143,7 +162,7 @@ EXPORT_SYMBOL_GPL(devm_irq_sim_init);
->  void irq_sim_fire(struct irq_sim *sim, unsigned int offset)
->  {
->         if (sim->irqs[offset].enabled) {
-> -               sim->work_ctx.irq =3D irq_sim_irqnum(sim, offset);
-> +               set_bit(offset, sim->work_ctx.pending);
->                 irq_work_queue(&sim->work_ctx.work);
->         }
->  }
-> --
-> 2.19.1
->
+On Tue, Dec 11, 2018 at 02:28:14PM +0100, Vitaly Kuznetsov wrote:
+> Roman Kagan <rkagan@virtuozzo.com> writes:
+>=20
+> > On Mon, Dec 10, 2018 at 06:21:56PM +0100, Vitaly Kuznetsov wrote:
+>=20
+> >> +
+> >> +Currently, the following list of CPUID leaves are returned:
+> >> + HYPERV_CPUID_VENDOR_AND_MAX_FUNCTIONS
+> >> + HYPERV_CPUID_INTERFACE
+> >> + HYPERV_CPUID_VERSION
+> >> + HYPERV_CPUID_FEATURES
+> >> + HYPERV_CPUID_ENLIGHTMENT_INFO
+> >> + HYPERV_CPUID_IMPLEMENT_LIMITS
+> >> + HYPERV_CPUID_NESTED_FEATURES
+> >> +
+> >> +HYPERV_CPUID_NESTED_FEATURES leaf is only exposed when Enlightened VM=
+CS was
+> >> +enabled on the corresponding vCPU (KVM_CAP_HYPERV_ENLIGHTENED_VMCS).
+> >
+> > IOW the output of ioctl(KVM_GET_SUPPORTED_HV_CPUID) depends on
+> > whether ioctl(KVM_ENABLE_CAP, KVM_CAP_HYPERV_ENLIGHTENED_VMCS) has
+> > already been called on that vcpu?  I wonder if this fits the intended
+> > usage?
+>=20
+> I added HYPERV_CPUID_NESTED_FEATURES in the list (and made the new ioctl
+> per-cpu and not per-vm) for consistency. *In theory*
+> KVM_CAP_HYPERV_ENLIGHTENED_VMCS is also enabled per-vcpu so some
+> hypothetical userspace can later check enabled eVMCS versions (which can
+> differ across vCPUs!) with KVM_GET_SUPPORTED_HV_CPUID. We will also have
+> direct tlb flush and other nested features there so to avoid addning new
+> KVM_CAP_* for them we need the CPUID.
 
-Ping and Cc'ing Marc Zyngier. Any chance of getting this in for 4.21?
+This is different from how KVM_GET_SUPPORTED_CPUID is used: QEMU assumes
+that its output doesn't change between calls, and even caches the result
+calling the ioctl only once.
 
-Bart
+> Another thing I'm thinking about is something like 'hv_all' cpu flag for
+> Qemu which would enable everything by setting guest CPUIDs to what
+> KVM_GET_SUPPORTED_HV_CPUID returns. In that case it would also be
+> convenient to have HYPERV_CPUID_NESTED_FEATURES properly filled (or not
+> filled when eVMCS was not enabled).
+
+I think this is orthogonal to the way you obtain capability info from
+the kernel.
+
+Roman.
