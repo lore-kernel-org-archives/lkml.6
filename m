@@ -2,55 +2,53 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 720C8C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:43:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF842C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:43:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36A8D20870
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:43:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9986D20870
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:43:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544543035;
-	bh=53Wr0L3L/6COpfZMkxE6LExuLFFwgS9cUw5kPaTLTJ4=;
+	s=default; t=1544543039;
+	bh=OIZaAMpI6/FOYm/IDIfp7TNnKrLY+BHhod+379IK3qw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=d4MYu50T8BGmol5JaztUvdSbJkl+mgu+Mt4ZXFUAQbewn4Tt1U59j6S20FRrONiCK
-	 JzvvzXW1H+t1bXunDaYgn7KK65dZD5nqAXDEiwYHJQqc4+LE4l+jWTK2cIg2BB6OBM
-	 aCIQy96lPdsU+Vyw6Nrx0QNykLtRjVfMUOpINIUY=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36A8D20870
+	b=q3SW46gIiT+otgep1m1BzqTXX0+iIywGaEAfU9qW1XJIyiT1Esc8Hs0Y89NYWT/BY
+	 wz2CUQVRf0xTKmhaNqRm0vmUTiqvAbIuXX+YlB7nDsmwm5R4g1r4NZqPXHGiRZTstN
+	 /v86T7iqnzRCSI1W0wV2EvUei9rBVn2QV6AEL2SU=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9986D20870
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727667AbeLKPny (ORCPT
+        id S1727684AbeLKPn6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:43:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60432 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:43:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60512 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727647AbeLKPnv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:43:51 -0500
+        id S1727647AbeLKPn4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:43:56 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3127320672;
-        Tue, 11 Dec 2018 15:43:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 42CE02087F;
+        Tue, 11 Dec 2018 15:43:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543030;
-        bh=53Wr0L3L/6COpfZMkxE6LExuLFFwgS9cUw5kPaTLTJ4=;
+        s=default; t=1544543035;
+        bh=OIZaAMpI6/FOYm/IDIfp7TNnKrLY+BHhod+379IK3qw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ezB+LzuPjc9qLSJ+MsKGJFqUxymes83NLrbGjYUKaIcqEccWgBdybVzgYF/oMdpI6
-         maFSuCjpwf85AJpIh0w5i+6wL/oVbxsA4MiJdf14nixO/9sQ4TCiNKcm9t5rMn3SSs
-         i6ci25aXW8pxXey0Ej4iXPtXiaGvvRBXDgl72x2A=
+        b=o69DpDTyRIodZHNircO1ABvSAwwpJOB8iCsAMz+AoFnAXAI70Tx+mE1P360rVpaKV
+         wbskyLFhWDBaLmonaDZ1W3Xjcl2RJYjCVtuUbFkqCzPGLJc+5mrSouQ8oc6BiJSg4f
+         47zzpljbLK58jWdaMeRahrzm9vDMB58A+U2rddyw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 39/54] net: amd: add missing of_node_put()
-Date:   Tue, 11 Dec 2018 16:41:27 +0100
-Message-Id: <20181211151548.275329017@linuxfoundation.org>
+        stable@vger.kernel.org, Harry Pan <harry.pan@intel.com>
+Subject: [PATCH 3.18 41/54] usb: quirk: add no-LPM quirk on SanDisk Ultra Flair device
+Date:   Tue, 11 Dec 2018 16:41:29 +0100
+Message-Id: <20181211151548.385413245@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151546.010073210@linuxfoundation.org>
 References: <20181211151546.010073210@linuxfoundation.org>
@@ -69,43 +67,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit c44c749d3b6fdfca39002e7e48e03fe9f9fe37a3 ]
+From: Harry Pan <harry.pan@intel.com>
 
-of_find_node_by_path() acquires a reference to the node
-returned by it and that reference needs to be dropped by its caller.
-This place doesn't do that, so fix it.
+commit 2f2dde6ba89b1ef1fe23c1138131b315d9aa4019 upstream.
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Some lower volume SanDisk Ultra Flair in 16GB, which the VID:PID is
+in 0781:5591, will aggressively request LPM of U1/U2 during runtime,
+when using this thumb drive as the OS installation key we found the
+device will generate failure during U1 exit path making it dropped
+from the USB bus, this causes a corrupted installation in system at
+the end.
+
+i.e.,
+[  166.918296] hub 2-0:1.0: state 7 ports 7 chg 0000 evt 0004
+[  166.918327] usb usb2-port2: link state change
+[  166.918337] usb usb2-port2: do warm reset
+[  166.970039] usb usb2-port2: not warm reset yet, waiting 50ms
+[  167.022040] usb usb2-port2: not warm reset yet, waiting 200ms
+[  167.276043] usb usb2-port2: status 02c0, change 0041, 5.0 Gb/s
+[  167.276050] usb 2-2: USB disconnect, device number 2
+[  167.276058] usb 2-2: unregistering device
+[  167.276060] usb 2-2: unregistering interface 2-2:1.0
+[  167.276170] xhci_hcd 0000:00:15.0: shutdown urb ffffa3c7cc695cc0 ep1in-bulk
+[  167.284055] sd 0:0:0:0: [sda] tag#0 FAILED Result: hostbyte=DID_NO_CONNECT driverbyte=DRIVER_OK
+[  167.284064] sd 0:0:0:0: [sda] tag#0 CDB: Read(10) 28 00 00 33 04 90 00 01 00 00
+...
+
+Analyzed the USB trace in the link layer we realized it is because
+of the 6-ms timer of tRecoveryConfigurationTimeout which documented
+on the USB 3.2 Revision 1.0, the section 7.5.10.4.2 of "Exit from
+Recovery.Configuration"; device initiates U1 exit -> Recovery.Active
+-> Recovery.Configuration, then the host timer timeout makes the link
+transits to eSS.Inactive -> Rx.Detect follows by a Warm Reset.
+
+Interestingly, the other higher volume of SanDisk Ultra Flair sharing
+the same VID:PID, such as 64GB, would not request LPM during runtime,
+it sticks at U0 always, thus disabling LPM does not affect those thumb
+drives at all.
+
+The same odd occures in SanDisk Ultra Fit 16GB, VID:PID in 0781:5583.
+
+Signed-off-by: Harry Pan <harry.pan@intel.com>
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/net/ethernet/amd/sunlance.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/usb/core/quirks.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/net/ethernet/amd/sunlance.c b/drivers/net/ethernet/amd/sunlance.c
-index 5e4273b7aa27..2bac37b9b4d3 100644
---- a/drivers/net/ethernet/amd/sunlance.c
-+++ b/drivers/net/ethernet/amd/sunlance.c
-@@ -1419,7 +1419,7 @@ static int sparc_lance_probe_one(struct platform_device *op,
+--- a/drivers/usb/core/quirks.c
++++ b/drivers/usb/core/quirks.c
+@@ -177,6 +177,10 @@ static const struct usb_device_id usb_qu
+ 	/* Midiman M-Audio Keystation 88es */
+ 	{ USB_DEVICE(0x0763, 0x0192), .driver_info = USB_QUIRK_RESET_RESUME },
  
- 			prop = of_get_property(nd, "tpe-link-test?", NULL);
- 			if (!prop)
--				goto no_link_test;
-+				goto node_put;
++	/* SanDisk Ultra Fit and Ultra Flair */
++	{ USB_DEVICE(0x0781, 0x5583), .driver_info = USB_QUIRK_NO_LPM },
++	{ USB_DEVICE(0x0781, 0x5591), .driver_info = USB_QUIRK_NO_LPM },
++
+ 	/* M-Systems Flash Disk Pioneers */
+ 	{ USB_DEVICE(0x08ec, 0x1000), .driver_info = USB_QUIRK_RESET_RESUME },
  
- 			if (strcmp(prop, "true")) {
- 				printk(KERN_NOTICE "SunLance: warning: overriding option "
-@@ -1428,6 +1428,8 @@ static int sparc_lance_probe_one(struct platform_device *op,
- 				       "to ecd@skynet.be\n");
- 				auxio_set_lte(AUXIO_LTE_ON);
- 			}
-+node_put:
-+			of_node_put(nd);
- no_link_test:
- 			lp->auto_select = 1;
- 			lp->tpe = 0;
--- 
-2.19.1
-
 
 
