@@ -2,126 +2,387 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ACEBC07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 09:17:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4051C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 09:18:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E04F32082F
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 09:17:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7AF1B2084A
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 09:18:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nokia.onmicrosoft.com header.i=@nokia.onmicrosoft.com header.b="PswYBHwr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E04F32082F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nokia.com
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="L6N+6ZG6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7AF1B2084A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726203AbeLKJR5 (ORCPT
+        id S1726218AbeLKJS2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 04:17:57 -0500
-Received: from mail-eopbgr60122.outbound.protection.outlook.com ([40.107.6.122]:22112
-        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726085AbeLKJR4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 04:17:56 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nokia.onmicrosoft.com;
- s=selector1-nokia-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=48YhWk4sxutAPIods7K/u80nKsdoVSxcxNlSagf3ANc=;
- b=PswYBHwrvlaPKhO2uYGZfbKlDcA8eTjdYrsBpSkAzQnOOsJWazlvhG5Z7LA9SHMQtejM5J4wT9PDWNHL+NbhUufNiSeLgL6Wvtdq8tsdhaYViRc7+vjWA5FaD/4FMVECsTIUed1Z0EaBD0DG1ZUJC5SOA5YY0Kz+3B/xrpDk9pQ=
-Received: from HE1PR07MB3434.eurprd07.prod.outlook.com (10.170.247.141) by
- HE1SPR01MB13.eurprd07.prod.outlook.com (10.170.251.161) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1425.8; Tue, 11 Dec 2018 09:17:52 +0000
-Received: from HE1PR07MB3434.eurprd07.prod.outlook.com
- ([fe80::e491:596c:4d4e:ffdb]) by HE1PR07MB3434.eurprd07.prod.outlook.com
- ([fe80::e491:596c:4d4e:ffdb%2]) with mapi id 15.20.1425.016; Tue, 11 Dec 2018
- 09:17:52 +0000
-From:   "Adamski, Krzysztof (Nokia - PL/Wroclaw)" 
-        <krzysztof.adamski@nokia.com>
-To:     Wolfram Sang <wsa@the-dreams.de>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-        "Sverdlin, Alexander (Nokia - DE/Ulm)" <alexander.sverdlin@nokia.com>
-Subject: [PATCH] MAINTAINERS: add entry for i2c-axxia driver
-Thread-Topic: [PATCH] MAINTAINERS: add entry for i2c-axxia driver
-Thread-Index: AQHUkTJkr6yQ2gQ9AUqQGXAsxjfjrQ==
-Date:   Tue, 11 Dec 2018 09:17:52 +0000
-Message-ID: <20181211091733.GA28051@localhost.localdomain>
-Accept-Language: pl-PL, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: HE1PR05CA0214.eurprd05.prod.outlook.com
- (2603:10a6:3:fa::14) To HE1PR07MB3434.eurprd07.prod.outlook.com
- (2603:10a6:7:2c::13)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=krzysztof.adamski@nokia.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [131.228.2.30]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;HE1SPR01MB13;6:IS8alxsIH6R2XHvwvPHMLfWa8Epm3QzOsnn2hs/1VN9+hNywddJe7pELcrqFTlVmyWqbb/Bj3W2+D4y+5q22oZCVI4ltuPGtWLkeNNUGsSOws0ovmXkQC0XalPdEWU8JC+Wo1VRXYMHWf+iXU07q/hRQT0JuvYHF80GqGEtztqQoE3x6rwInthzz0X+pAG0i0Ntif4ENQF5twoJ/hQEvT8MyTtZhxtLTuLR/UlLkxzz7WXRWW176c6pTUftA9uCwmKN1INp6xff3jhaow9cqX6Fd3IbQveSXBRZEP3siKXMzTQj72t488e6axOhrsbmn3zCRf+z9JmFy+WJDzC3w9xyAQsrr4Fyk9BXPi6Cw6+NX7D4WDUmsGfu0C9wwvnmEkyXj4h5RNSpCfIc8Tj4rGjXNTy75MDZs/yNrUb/FOukdsCVE/G8f18o7iisZSVKnlYPacOJ6yodMRKltjOhntQ==;5:mfSMjf+Of4DjRlA9MZ37PGjaTQqjgxz2VFM1p7mo/qnQDFheULfw2FW2OZgl6jiFCaLIRejlk/IekwOua5uISMVIN178Wc3wM5N6jP4qTFTcdh+SmZCn0pP4wO5K8zUbMAmOXdZQlcglcMUZjjtWq6KlzDJgtSXIcQACnr0fdlg=;7:5A2OrOelCS8v5H0Ef675seBm13hSSJWR9gs+5UlGvLN7ss/Do/1a3fOlemea5vbNrBkhsyqEI3cThq4aC8F3oNmrSzrT6kpcVrMXhZ8l/zGbv6CUQI6RLt4hLIUw6AYxpU+TjmQPVKIwYUsbcYR3Hw==
-x-ms-office365-filtering-correlation-id: 297987a7-8eba-4d39-73fc-08d65f49873f
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:HE1SPR01MB13;
-x-ms-traffictypediagnostic: HE1SPR01MB13:
-x-microsoft-antispam-prvs: <HE1SPR01MB136C3D1A1B48C29975F784EFA60@HE1SPR01MB13.eurprd07.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(10201501046)(3231455)(999002)(11241501185)(806100)(944501520)(52105112)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:HE1SPR01MB13;BCL:0;PCL:0;RULEID:;SRVR:HE1SPR01MB13;
-x-forefront-prvs: 08831F51DC
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(136003)(346002)(366004)(39860400002)(396003)(199004)(189003)(25786009)(68736007)(478600001)(1076002)(53936002)(26005)(186003)(8676002)(106356001)(33656002)(2906002)(61506002)(14444005)(256004)(5660300001)(6116002)(86362001)(575784001)(3846002)(6916009)(66066001)(476003)(97736004)(8936002)(486006)(305945005)(9686003)(6512007)(33896004)(6506007)(386003)(4326008)(99286004)(14454004)(7736002)(52116002)(6486002)(81166006)(71200400001)(71190400001)(81156014)(105586002)(107886003)(6436002)(54906003)(316002)(102836004);DIR:OUT;SFP:1102;SCL:1;SRVR:HE1SPR01MB13;H:HE1PR07MB3434.eurprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nokia.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: VyjCvRoSegtZErG9FL4snuoxOZkTAbTcQstVNVh7gP03M4IwLRsKWyFByw8Nhbd8jqwxQ3bqzWthgLZ91blHGtByhVroFKrFSkeRr5d70JOxZz/J7Mp7C/TWTJVX3Xsgr89flwJFnqAuQK5nP4vyPP6XrhIolFBnXduBptQ3/hNnKtJ/9EC9AXBylpQ/yFXjRf1bdftzydNeaedvP6XWhyqJTx8nfVo6hI62qWJsjvG5S1gG3aGV3bYbGVWNhwWm4caIcDQZ44oUMcLhola8cn5d7G7rw0oIU/RdIg9Th1WM9y8Fto1VEy01s24BTfdk
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <AB6064D8B3D89A45A2D1AA3B0E079A5A@eurprd07.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Tue, 11 Dec 2018 04:18:28 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:36694 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726114AbeLKJS1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 04:18:27 -0500
+Received: by mail-wm1-f66.google.com with SMTP id a18so1408049wmj.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 01:18:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:openpgp:autocrypt:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=b50lWC15gu8mZDu9jZhiwWvJxx3xcw0xuUKOWXm5NRc=;
+        b=L6N+6ZG6W9hMLvT1Nw1HM6IhHU/4s9e0jw082cm6BzYDOdrmSoW7qPMUH2pMS444ml
+         t81lCRMmEZagdn177RSuYzpMwHcPygh0Wy7D17npB90O7V8n+e9KL6AlAUb/6s1M84Q3
+         snPWAx834vWzKIUEFmDATA9KSkk8E9TOF/BYf/oy0UpfjBi3ABa26oKKCQXfx7ZYbNq1
+         qFxVyOptqDAAhsPNzOnfw1UccOEbHjuPbtqDSwbgQyMIfVEc3P4MNufL8SicvY/vERiL
+         hPAUU/3/KuK3Ry3g0tj60AE0iAe9Nzd9LAbzXsv91pudrqAGrcrHMJBkHiF2RBDTfk6+
+         E3Ug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :organization:message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=b50lWC15gu8mZDu9jZhiwWvJxx3xcw0xuUKOWXm5NRc=;
+        b=jtZz4k470HhTx3vrEShDnRahBAAvGfjBbNpu4cYSTBGgUAIVjgMRdvUujGweoh/f8R
+         o4JCrH0EmWLsQlXGwD95melHewUYuODy0XCJXHDxtWd6oDJISmdUwIgjNG5Eq8lJeACB
+         N2i3w/tPht/g/Ju6ro+PSaqBka3EceZtmHiYhlRWHw1XgwAsRPgG5iu8+vSRPAOg/Qsb
+         BcC0UXWqbi52B2o3xLoyDLqnjPU8KxmTWOQkXJ8pg1q0T+BI1KRzxB4SP4AgJ3ClLPrD
+         K5/vdM7Cba8eE1QHVZHEI4e8R0MyG44KPCGkY5GWgJI6efWs9KlyFmDp2Y87CAPKRsKt
+         HHBA==
+X-Gm-Message-State: AA+aEWb4TtMABWty0rHgGQVJPxXeEMcKu+FCV+7QsQU2t0dMW2hGqX4e
+        f9FKMMwmeTAt6jl+02SYlXKlag==
+X-Google-Smtp-Source: AFSGD/XnPh88ZQiSgA8O7NSdmcvIOrnYTSVikpcQGR30XhOr7w94cs34faXUcmiR0eR/HAALbRJbTA==
+X-Received: by 2002:a1c:6a09:: with SMTP id f9mr1613371wmc.150.1544519903914;
+        Tue, 11 Dec 2018 01:18:23 -0800 (PST)
+Received: from ?IPv6:2a01:cb1d:4ce:ea00:a5f8:3197:dbfa:c157? ([2a01:cb1d:4ce:ea00:a5f8:3197:dbfa:c157])
+        by smtp.gmail.com with ESMTPSA id y1sm1162297wme.1.2018.12.11.01.18.22
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 11 Dec 2018 01:18:23 -0800 (PST)
+Subject: Re: [PATCH 2/5] clk: meson: meson8b: use a separate clock table for
+ Meson8
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        jbrunet@baylibre.com, khilman@baylibre.com, robh+dt@kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        sboyd@kernel.org, mturquette@baylibre.com
+References: <20181208171247.22238-1-martin.blumenstingl@googlemail.com>
+ <20181208171247.22238-3-martin.blumenstingl@googlemail.com>
+From:   Neil Armstrong <narmstrong@baylibre.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKE5laWwgQXJtc3Ryb25nIDxuYXJtc3Ryb25nQGJheWxpYnJlLmNvbT7CwHsEEwEKACUC
+ GyMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheABQJXDO2CAhkBAAoJEBaat7Gkz/iubGIH/iyk
+ RqvgB62oKOFlgOTYCMkYpm2aAOZZLf6VKHKc7DoVwuUkjHfIRXdslbrxi4pk5VKU6ZP9AKsN
+ NtMZntB8WrBTtkAZfZbTF7850uwd3eU5cN/7N1Q6g0JQihE7w4GlIkEpQ8vwSg5W7hkx3yQ6
+ 2YzrUZh/b7QThXbNZ7xOeSEms014QXazx8+txR7jrGF3dYxBsCkotO/8DNtZ1R+aUvRfpKg5
+ ZgABTC0LmAQnuUUf2PHcKFAHZo5KrdO+tyfL+LgTUXIXkK+tenkLsAJ0cagz1EZ5gntuheLD
+ YJuzS4zN+1Asmb9kVKxhjSQOcIh6g2tw7vaYJgL/OzJtZi6JlIXOwE0ETVkGzwEIALyKDN/O
+ GURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYpQTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXM
+ coJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hi
+ SvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY4yG6xI99NIPEVE9lNBXBKIlewIyVlkOa
+ YvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoMMtsyw18YoX9BqMFInxqYQQ3j/HpVgTSv
+ mo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUXoUk33HEAEQEAAcLAXwQYAQIACQUCTVkG
+ zwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfnM7IbRuiSZS1unlySUVYu3SD6YBYnNi3G
+ 5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa33eDIHu/zr1HMKErm+2SD6PO9umRef8V8
+ 2o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCSKmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+
+ RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJ
+ C3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTTQbM0WUIBIcGmq38+OgUsMYu4NzLu7uZF
+ Acmp6h8g
+Organization: Baylibre
+Message-ID: <91b498fd-f09c-e877-f14b-2f21529d7cb0@baylibre.com>
+Date:   Tue, 11 Dec 2018 10:18:22 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-X-OriginatorOrg: nokia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 297987a7-8eba-4d39-73fc-08d65f49873f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Dec 2018 09:17:52.7689
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 5d471751-9675-428d-917b-70f44f9630b0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1SPR01MB13
+In-Reply-To: <20181208171247.22238-3-martin.blumenstingl@googlemail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Create separate entry for i2c-axxia and set myself as maintainer.
+On 08/12/2018 18:12, Martin Blumenstingl wrote:
+> The Meson8 SoC is slightly different compared to Meson8b and Meson8m2
+> because it does not have the glitch-free Mali GPU clock mux. For Meson8b
+> and Meson8m2 there are currently no known differences.
+> 
+> Add a separate clk_hw_onecell_data table for Meson8 so these differences
+> can be implemented. For now meson8_hw_onecell_data is a clone of our
+> existing meson8b_hw_onecell_data.
+> 
+> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> ---
+>  drivers/clk/meson/meson8b.c | 203 ++++++++++++++++++++++++++++++++++--
+>  1 file changed, 197 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+> index 950d0e548c75..0b9353d8d4fd 100644
+> --- a/drivers/clk/meson/meson8b.c
+> +++ b/drivers/clk/meson/meson8b.c
+> @@ -1659,6 +1659,185 @@ static MESON_GATE(meson8b_ao_ahb_sram, HHI_GCLK_AO, 1);
+>  static MESON_GATE(meson8b_ao_ahb_bus, HHI_GCLK_AO, 2);
+>  static MESON_GATE(meson8b_ao_iface, HHI_GCLK_AO, 3);
+>  
+> +static struct clk_hw_onecell_data meson8_hw_onecell_data = {
+> +	.hws = {
+> +		[CLKID_XTAL] = &meson8b_xtal.hw,
+> +		[CLKID_PLL_FIXED] = &meson8b_fixed_pll.hw,
+> +		[CLKID_PLL_VID] = &meson8b_vid_pll.hw,
+> +		[CLKID_PLL_SYS] = &meson8b_sys_pll.hw,
+> +		[CLKID_FCLK_DIV2] = &meson8b_fclk_div2.hw,
+> +		[CLKID_FCLK_DIV3] = &meson8b_fclk_div3.hw,
+> +		[CLKID_FCLK_DIV4] = &meson8b_fclk_div4.hw,
+> +		[CLKID_FCLK_DIV5] = &meson8b_fclk_div5.hw,
+> +		[CLKID_FCLK_DIV7] = &meson8b_fclk_div7.hw,
+> +		[CLKID_CPUCLK] = &meson8b_cpu_clk.hw,
+> +		[CLKID_MPEG_SEL] = &meson8b_mpeg_clk_sel.hw,
+> +		[CLKID_MPEG_DIV] = &meson8b_mpeg_clk_div.hw,
+> +		[CLKID_CLK81] = &meson8b_clk81.hw,
+> +		[CLKID_DDR]		    = &meson8b_ddr.hw,
+> +		[CLKID_DOS]		    = &meson8b_dos.hw,
+> +		[CLKID_ISA]		    = &meson8b_isa.hw,
+> +		[CLKID_PL301]		    = &meson8b_pl301.hw,
+> +		[CLKID_PERIPHS]		    = &meson8b_periphs.hw,
+> +		[CLKID_SPICC]		    = &meson8b_spicc.hw,
+> +		[CLKID_I2C]		    = &meson8b_i2c.hw,
+> +		[CLKID_SAR_ADC]		    = &meson8b_sar_adc.hw,
+> +		[CLKID_SMART_CARD]	    = &meson8b_smart_card.hw,
+> +		[CLKID_RNG0]		    = &meson8b_rng0.hw,
+> +		[CLKID_UART0]		    = &meson8b_uart0.hw,
+> +		[CLKID_SDHC]		    = &meson8b_sdhc.hw,
+> +		[CLKID_STREAM]		    = &meson8b_stream.hw,
+> +		[CLKID_ASYNC_FIFO]	    = &meson8b_async_fifo.hw,
+> +		[CLKID_SDIO]		    = &meson8b_sdio.hw,
+> +		[CLKID_ABUF]		    = &meson8b_abuf.hw,
+> +		[CLKID_HIU_IFACE]	    = &meson8b_hiu_iface.hw,
+> +		[CLKID_ASSIST_MISC]	    = &meson8b_assist_misc.hw,
+> +		[CLKID_SPI]		    = &meson8b_spi.hw,
+> +		[CLKID_I2S_SPDIF]	    = &meson8b_i2s_spdif.hw,
+> +		[CLKID_ETH]		    = &meson8b_eth.hw,
+> +		[CLKID_DEMUX]		    = &meson8b_demux.hw,
+> +		[CLKID_AIU_GLUE]	    = &meson8b_aiu_glue.hw,
+> +		[CLKID_IEC958]		    = &meson8b_iec958.hw,
+> +		[CLKID_I2S_OUT]		    = &meson8b_i2s_out.hw,
+> +		[CLKID_AMCLK]		    = &meson8b_amclk.hw,
+> +		[CLKID_AIFIFO2]		    = &meson8b_aififo2.hw,
+> +		[CLKID_MIXER]		    = &meson8b_mixer.hw,
+> +		[CLKID_MIXER_IFACE]	    = &meson8b_mixer_iface.hw,
+> +		[CLKID_ADC]		    = &meson8b_adc.hw,
+> +		[CLKID_BLKMV]		    = &meson8b_blkmv.hw,
+> +		[CLKID_AIU]		    = &meson8b_aiu.hw,
+> +		[CLKID_UART1]		    = &meson8b_uart1.hw,
+> +		[CLKID_G2D]		    = &meson8b_g2d.hw,
+> +		[CLKID_USB0]		    = &meson8b_usb0.hw,
+> +		[CLKID_USB1]		    = &meson8b_usb1.hw,
+> +		[CLKID_RESET]		    = &meson8b_reset.hw,
+> +		[CLKID_NAND]		    = &meson8b_nand.hw,
+> +		[CLKID_DOS_PARSER]	    = &meson8b_dos_parser.hw,
+> +		[CLKID_USB]		    = &meson8b_usb.hw,
+> +		[CLKID_VDIN1]		    = &meson8b_vdin1.hw,
+> +		[CLKID_AHB_ARB0]	    = &meson8b_ahb_arb0.hw,
+> +		[CLKID_EFUSE]		    = &meson8b_efuse.hw,
+> +		[CLKID_BOOT_ROM]	    = &meson8b_boot_rom.hw,
+> +		[CLKID_AHB_DATA_BUS]	    = &meson8b_ahb_data_bus.hw,
+> +		[CLKID_AHB_CTRL_BUS]	    = &meson8b_ahb_ctrl_bus.hw,
+> +		[CLKID_HDMI_INTR_SYNC]	    = &meson8b_hdmi_intr_sync.hw,
+> +		[CLKID_HDMI_PCLK]	    = &meson8b_hdmi_pclk.hw,
+> +		[CLKID_USB1_DDR_BRIDGE]	    = &meson8b_usb1_ddr_bridge.hw,
+> +		[CLKID_USB0_DDR_BRIDGE]	    = &meson8b_usb0_ddr_bridge.hw,
+> +		[CLKID_MMC_PCLK]	    = &meson8b_mmc_pclk.hw,
+> +		[CLKID_DVIN]		    = &meson8b_dvin.hw,
+> +		[CLKID_UART2]		    = &meson8b_uart2.hw,
+> +		[CLKID_SANA]		    = &meson8b_sana.hw,
+> +		[CLKID_VPU_INTR]	    = &meson8b_vpu_intr.hw,
+> +		[CLKID_SEC_AHB_AHB3_BRIDGE] = &meson8b_sec_ahb_ahb3_bridge.hw,
+> +		[CLKID_CLK81_A9]	    = &meson8b_clk81_a9.hw,
+> +		[CLKID_VCLK2_VENCI0]	    = &meson8b_vclk2_venci0.hw,
+> +		[CLKID_VCLK2_VENCI1]	    = &meson8b_vclk2_venci1.hw,
+> +		[CLKID_VCLK2_VENCP0]	    = &meson8b_vclk2_vencp0.hw,
+> +		[CLKID_VCLK2_VENCP1]	    = &meson8b_vclk2_vencp1.hw,
+> +		[CLKID_GCLK_VENCI_INT]	    = &meson8b_gclk_venci_int.hw,
+> +		[CLKID_GCLK_VENCP_INT]	    = &meson8b_gclk_vencp_int.hw,
+> +		[CLKID_DAC_CLK]		    = &meson8b_dac_clk.hw,
+> +		[CLKID_AOCLK_GATE]	    = &meson8b_aoclk_gate.hw,
+> +		[CLKID_IEC958_GATE]	    = &meson8b_iec958_gate.hw,
+> +		[CLKID_ENC480P]		    = &meson8b_enc480p.hw,
+> +		[CLKID_RNG1]		    = &meson8b_rng1.hw,
+> +		[CLKID_GCLK_VENCL_INT]	    = &meson8b_gclk_vencl_int.hw,
+> +		[CLKID_VCLK2_VENCLMCC]	    = &meson8b_vclk2_venclmcc.hw,
+> +		[CLKID_VCLK2_VENCL]	    = &meson8b_vclk2_vencl.hw,
+> +		[CLKID_VCLK2_OTHER]	    = &meson8b_vclk2_other.hw,
+> +		[CLKID_EDP]		    = &meson8b_edp.hw,
+> +		[CLKID_AO_MEDIA_CPU]	    = &meson8b_ao_media_cpu.hw,
+> +		[CLKID_AO_AHB_SRAM]	    = &meson8b_ao_ahb_sram.hw,
+> +		[CLKID_AO_AHB_BUS]	    = &meson8b_ao_ahb_bus.hw,
+> +		[CLKID_AO_IFACE]	    = &meson8b_ao_iface.hw,
+> +		[CLKID_MPLL0]		    = &meson8b_mpll0.hw,
+> +		[CLKID_MPLL1]		    = &meson8b_mpll1.hw,
+> +		[CLKID_MPLL2]		    = &meson8b_mpll2.hw,
+> +		[CLKID_MPLL0_DIV]	    = &meson8b_mpll0_div.hw,
+> +		[CLKID_MPLL1_DIV]	    = &meson8b_mpll1_div.hw,
+> +		[CLKID_MPLL2_DIV]	    = &meson8b_mpll2_div.hw,
+> +		[CLKID_CPU_IN_SEL]	    = &meson8b_cpu_in_sel.hw,
+> +		[CLKID_CPU_IN_DIV2]	    = &meson8b_cpu_in_div2.hw,
+> +		[CLKID_CPU_IN_DIV3]	    = &meson8b_cpu_in_div3.hw,
+> +		[CLKID_CPU_SCALE_DIV]	    = &meson8b_cpu_scale_div.hw,
+> +		[CLKID_CPU_SCALE_OUT_SEL]   = &meson8b_cpu_scale_out_sel.hw,
+> +		[CLKID_MPLL_PREDIV]	    = &meson8b_mpll_prediv.hw,
+> +		[CLKID_FCLK_DIV2_DIV]	    = &meson8b_fclk_div2_div.hw,
+> +		[CLKID_FCLK_DIV3_DIV]	    = &meson8b_fclk_div3_div.hw,
+> +		[CLKID_FCLK_DIV4_DIV]	    = &meson8b_fclk_div4_div.hw,
+> +		[CLKID_FCLK_DIV5_DIV]	    = &meson8b_fclk_div5_div.hw,
+> +		[CLKID_FCLK_DIV7_DIV]	    = &meson8b_fclk_div7_div.hw,
+> +		[CLKID_NAND_SEL]	    = &meson8b_nand_clk_sel.hw,
+> +		[CLKID_NAND_DIV]	    = &meson8b_nand_clk_div.hw,
+> +		[CLKID_NAND_CLK]	    = &meson8b_nand_clk_gate.hw,
+> +		[CLKID_PLL_FIXED_DCO]	    = &meson8b_fixed_pll_dco.hw,
+> +		[CLKID_HDMI_PLL_DCO]	    = &meson8b_hdmi_pll_dco.hw,
+> +		[CLKID_PLL_SYS_DCO]	    = &meson8b_sys_pll_dco.hw,
+> +		[CLKID_CPU_CLK_DIV2]	    = &meson8b_cpu_clk_div2.hw,
+> +		[CLKID_CPU_CLK_DIV3]	    = &meson8b_cpu_clk_div3.hw,
+> +		[CLKID_CPU_CLK_DIV4]	    = &meson8b_cpu_clk_div4.hw,
+> +		[CLKID_CPU_CLK_DIV5]	    = &meson8b_cpu_clk_div5.hw,
+> +		[CLKID_CPU_CLK_DIV6]	    = &meson8b_cpu_clk_div6.hw,
+> +		[CLKID_CPU_CLK_DIV7]	    = &meson8b_cpu_clk_div7.hw,
+> +		[CLKID_CPU_CLK_DIV8]	    = &meson8b_cpu_clk_div8.hw,
+> +		[CLKID_ABP_SEL]		    = &meson8b_abp_clk_sel.hw,
+> +		[CLKID_ABP]		    = &meson8b_abp_clk_gate.hw,
+> +		[CLKID_PERIPH_SEL]	    = &meson8b_periph_clk_sel.hw,
+> +		[CLKID_PERIPH]		    = &meson8b_periph_clk_gate.hw,
+> +		[CLKID_AXI_SEL]		    = &meson8b_axi_clk_sel.hw,
+> +		[CLKID_AXI]		    = &meson8b_axi_clk_gate.hw,
+> +		[CLKID_L2_DRAM_SEL]	    = &meson8b_l2_dram_clk_sel.hw,
+> +		[CLKID_L2_DRAM]		    = &meson8b_l2_dram_clk_gate.hw,
+> +		[CLKID_HDMI_PLL_LVDS_OUT]   = &meson8b_hdmi_pll_lvds_out.hw,
+> +		[CLKID_HDMI_PLL_HDMI_OUT]   = &meson8b_hdmi_pll_hdmi_out.hw,
+> +		[CLKID_VID_PLL_IN_SEL]	    = &meson8b_vid_pll_in_sel.hw,
+> +		[CLKID_VID_PLL_IN_EN]	    = &meson8b_vid_pll_in_en.hw,
+> +		[CLKID_VID_PLL_PRE_DIV]	    = &meson8b_vid_pll_pre_div.hw,
+> +		[CLKID_VID_PLL_POST_DIV]    = &meson8b_vid_pll_post_div.hw,
+> +		[CLKID_VID_PLL_FINAL_DIV]   = &meson8b_vid_pll_final_div.hw,
+> +		[CLKID_VCLK_IN_SEL]	    = &meson8b_vclk_in_sel.hw,
+> +		[CLKID_VCLK_IN_EN]	    = &meson8b_vclk_in_en.hw,
+> +		[CLKID_VCLK_DIV1]	    = &meson8b_vclk_div1_gate.hw,
+> +		[CLKID_VCLK_DIV2_DIV]	    = &meson8b_vclk_div2_div.hw,
+> +		[CLKID_VCLK_DIV2]	    = &meson8b_vclk_div2_div_gate.hw,
+> +		[CLKID_VCLK_DIV4_DIV]	    = &meson8b_vclk_div4_div.hw,
+> +		[CLKID_VCLK_DIV4]	    = &meson8b_vclk_div4_div_gate.hw,
+> +		[CLKID_VCLK_DIV6_DIV]	    = &meson8b_vclk_div6_div.hw,
+> +		[CLKID_VCLK_DIV6]	    = &meson8b_vclk_div6_div_gate.hw,
+> +		[CLKID_VCLK_DIV12_DIV]	    = &meson8b_vclk_div12_div.hw,
+> +		[CLKID_VCLK_DIV12]	    = &meson8b_vclk_div12_div_gate.hw,
+> +		[CLKID_VCLK2_IN_SEL]	    = &meson8b_vclk2_in_sel.hw,
+> +		[CLKID_VCLK2_IN_EN]	    = &meson8b_vclk2_clk_in_en.hw,
+> +		[CLKID_VCLK2_DIV1]	    = &meson8b_vclk2_div1_gate.hw,
+> +		[CLKID_VCLK2_DIV2_DIV]	    = &meson8b_vclk2_div2_div.hw,
+> +		[CLKID_VCLK2_DIV2]	    = &meson8b_vclk2_div2_div_gate.hw,
+> +		[CLKID_VCLK2_DIV4_DIV]	    = &meson8b_vclk2_div4_div.hw,
+> +		[CLKID_VCLK2_DIV4]	    = &meson8b_vclk2_div4_div_gate.hw,
+> +		[CLKID_VCLK2_DIV6_DIV]	    = &meson8b_vclk2_div6_div.hw,
+> +		[CLKID_VCLK2_DIV6]	    = &meson8b_vclk2_div6_div_gate.hw,
+> +		[CLKID_VCLK2_DIV12_DIV]	    = &meson8b_vclk2_div12_div.hw,
+> +		[CLKID_VCLK2_DIV12]	    = &meson8b_vclk2_div12_div_gate.hw,
+> +		[CLKID_CTS_ENCT_SEL]	    = &meson8b_cts_enct_sel.hw,
+> +		[CLKID_CTS_ENCT]	    = &meson8b_cts_enct.hw,
+> +		[CLKID_CTS_ENCP_SEL]	    = &meson8b_cts_encp_sel.hw,
+> +		[CLKID_CTS_ENCP]	    = &meson8b_cts_encp.hw,
+> +		[CLKID_CTS_ENCI_SEL]	    = &meson8b_cts_enci_sel.hw,
+> +		[CLKID_CTS_ENCI]	    = &meson8b_cts_enci.hw,
+> +		[CLKID_HDMI_TX_PIXEL_SEL]   = &meson8b_hdmi_tx_pixel_sel.hw,
+> +		[CLKID_HDMI_TX_PIXEL]	    = &meson8b_hdmi_tx_pixel.hw,
+> +		[CLKID_CTS_ENCL_SEL]	    = &meson8b_cts_encl_sel.hw,
+> +		[CLKID_CTS_ENCL]	    = &meson8b_cts_encl.hw,
+> +		[CLKID_CTS_VDAC0_SEL]	    = &meson8b_cts_vdac0_sel.hw,
+> +		[CLKID_CTS_VDAC0]	    = &meson8b_cts_vdac0.hw,
+> +		[CLKID_HDMI_SYS_SEL]	    = &meson8b_hdmi_sys_sel.hw,
+> +		[CLKID_HDMI_SYS_DIV]	    = &meson8b_hdmi_sys_div.hw,
+> +		[CLKID_HDMI_SYS]	    = &meson8b_hdmi_sys.hw,
+> +		[CLK_NR_CLKS]		    = NULL,
+> +	},
+> +	.num = CLK_NR_CLKS,
+> +};
+> +
+>  static struct clk_hw_onecell_data meson8b_hw_onecell_data = {
+>  	.hws = {
+>  		[CLKID_XTAL] = &meson8b_xtal.hw,
+> @@ -2132,7 +2311,6 @@ static int meson8b_cpu_clk_notifier_cb(struct notifier_block *nb,
+>  
+>  static struct meson8b_nb_data meson8b_cpu_nb_data = {
+>  	.nb.notifier_call = meson8b_cpu_clk_notifier_cb,
+> -	.onecell_data = &meson8b_hw_onecell_data,
+>  };
+>  
+>  static const struct regmap_config clkc_regmap_config = {
+> @@ -2141,7 +2319,8 @@ static const struct regmap_config clkc_regmap_config = {
+>  	.reg_stride     = 4,
+>  };
+>  
+> -static void __init meson8b_clkc_init(struct device_node *np)
+> +static void __init meson8b_clkc_init_common(struct device_node *np,
+> +			struct clk_hw_onecell_data *clk_hw_onecell_data)
+>  {
+>  	struct meson8b_clk_reset *rstc;
+>  	const char *notifier_clk_name;
+> @@ -2192,14 +2371,16 @@ static void __init meson8b_clkc_init(struct device_node *np)
+>  	 */
+>  	for (i = CLKID_XTAL; i < CLK_NR_CLKS; i++) {
+>  		/* array might be sparse */
+> -		if (!meson8b_hw_onecell_data.hws[i])
+> +		if (!clk_hw_onecell_data->hws[i])
+>  			continue;
+>  
+> -		ret = clk_hw_register(NULL, meson8b_hw_onecell_data.hws[i]);
+> +		ret = clk_hw_register(NULL, clk_hw_onecell_data->hws[i]);
+>  		if (ret)
+>  			return;
+>  	}
+>  
+> +	meson8b_cpu_nb_data.onecell_data = clk_hw_onecell_data;
+> +
+>  	/*
+>  	 * FIXME we shouldn't program the muxes in notifier handlers. The
+>  	 * tricky programming sequence will be handled by the forthcoming
+> @@ -2215,13 +2396,23 @@ static void __init meson8b_clkc_init(struct device_node *np)
+>  	}
+>  
+>  	ret = of_clk_add_hw_provider(np, of_clk_hw_onecell_get,
+> -				     &meson8b_hw_onecell_data);
+> +				     clk_hw_onecell_data);
+>  	if (ret)
+>  		pr_err("%s: failed to register clock provider\n", __func__);
+>  }
+>  
+> +static void __init meson8_clkc_init(struct device_node *np)
+> +{
+> +	return meson8b_clkc_init_common(np, &meson8_hw_onecell_data);
+> +}
+> +
+> +static void __init meson8b_clkc_init(struct device_node *np)
+> +{
+> +	return meson8b_clkc_init_common(np, &meson8b_hw_onecell_data);
+> +}
+> +
+>  CLK_OF_DECLARE_DRIVER(meson8_clkc, "amlogic,meson8-clkc",
+> -		      meson8b_clkc_init);
+> +		      meson8_clkc_init);
+>  CLK_OF_DECLARE_DRIVER(meson8b_clkc, "amlogic,meson8b-clkc",
+>  		      meson8b_clkc_init);
+>  CLK_OF_DECLARE_DRIVER(meson8m2_clkc, "amlogic,meson8m2-clkc",
+> 
 
-Even though I don't work for Intel/LSI who is the manufacturer of this
-IP, I do have access to some documentation and the actual hardware using
-this driver and I'm familiar with the code.
+This would happen one day !
 
-Signed-off-by: Krzysztof Adamski <krzysztof.adamski@nokia.com>
----
- MAINTAINERS | 7 +++++++
- 1 file changed, 7 insertions(+)
+Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 0767f1d1b579..2961b4d0a8e8 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2633,6 +2633,13 @@ S:	Maintained
- F:	Documentation/devicetree/bindings/sound/axentia,*
- F:	sound/soc/atmel/tse850-pcm5142.c
-=20
-+AXXIA I2C CONTROLLER
-+M:	Krzysztof Adamski <krzysztof.adamski@nokia.com>
-+L:	linux-i2c@vger.kernel.org
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/i2c/i2c-axxia.txt
-+F:	drivers/i2c/busses/i2c-axxia.c
-+
- AZ6007 DVB DRIVER
- M:	Mauro Carvalho Chehab <mchehab@kernel.org>
- L:	linux-media@vger.kernel.org
---=20
-2.17.2
-
+Neil
