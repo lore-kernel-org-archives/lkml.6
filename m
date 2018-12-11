@@ -7,49 +7,51 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB102C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:46:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2C22C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:46:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7036B21104
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:46:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 885E52087F
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:46:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544543181;
-	bh=FN0nVgiizvVtNgxqljH4hMf2nWkcV5pSPsehAz0hfGY=;
+	s=default; t=1544543186;
+	bh=jM1ZnS6O/x00Y+CTfJujThYY02CVMuhWjH+s5A3xR/A=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=EZssHgWaJpoeJtVqrEcT92EFWOujcD6x6KkNey1JoRp3Uz30MxoeTcIUmViLwbSaN
-	 DiJSupAUNOMerueJahRKVWDA4xlOazUtnfnOTq35K94co+J3fJg+aw9GWLShpUncaT
-	 RBrbbNb6rtSNa4zMhQsy8HlMIHcfj/HYaKpgacI0=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7036B21104
+	b=ZNhPVm/akqkzqrGxgjhagxpx4djzMbmeGQGjmGCja7UMJ6RReOiVYx8GdIPtqSIxQ
+	 VMspIqgJlaHFfHWSHelf9o6jZ9Qv9bk8woDBugnDEjLWlEVFoY8+3xBV2R6hL1i16W
+	 //2dj9LD+s88shTA08IG5MgD9Qf1AbYyHksqWooE=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 885E52087F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728325AbeLKPqU (ORCPT
+        id S1728337AbeLKPqZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:46:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34662 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:46:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34758 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728295AbeLKPqO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:46:14 -0500
+        id S1728295AbeLKPqV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:46:21 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2CA212087F;
-        Tue, 11 Dec 2018 15:46:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A631C20870;
+        Tue, 11 Dec 2018 15:46:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543173;
-        bh=FN0nVgiizvVtNgxqljH4hMf2nWkcV5pSPsehAz0hfGY=;
+        s=default; t=1544543181;
+        bh=jM1ZnS6O/x00Y+CTfJujThYY02CVMuhWjH+s5A3xR/A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BknMEHFVVAXdb2/IvW0W2v9OLSn6dIylJtIFiWUUec7Cr0XkaW/0QnnZqzuUjiaQO
-         HL3Ckdvsdsz36AyYiSxcahSkAdJBWA1GoK6fI0U09SKAq9QJNHgWMq0kAE+DrNEFp9
-         ujmA2TZFalS9ubRvO7xkB/tmXNKyO08ALhSUWJvs=
+        b=dtpakc/jpGRgBjURp89z2XVamY98DB/oWFhRdm1BLsvWRet1T+DQ7obn/ct0tKfkZ
+         l3KfqL2nad+PO0ofLOwsUMHQX71RbGCLyKqe5HNz28kVFn2M0tLPJrZcKMksTYozSe
+         +ZENHZfiZRHJHnSQYbcK1TWXjv50ryCo0U1ORXYw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Laura Abbott <labbott@redhat.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>
-Subject: [PATCH 4.4 40/91] kgdboc: Fix restrict error
-Date:   Tue, 11 Dec 2018 16:40:59 +0100
-Message-Id: <20181211151609.155918034@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Richard Genoud <richard.genoud@gmail.com>,
+        Vinod Koul <vkoul@kernel.org>
+Subject: [PATCH 4.4 16/91] dmaengine: at_hdmac: fix module unloading
+Date:   Tue, 11 Dec 2018 16:40:35 +0100
+Message-Id: <20181211151607.203912382@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151606.026852373@linuxfoundation.org>
 References: <20181211151606.026852373@linuxfoundation.org>
@@ -68,49 +70,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Laura Abbott <labbott@redhat.com>
+From: Richard Genoud <richard.genoud@gmail.com>
 
-commit 2dd453168643d9475028cd867c57e65956a0f7f9 upstream.
+commit 77e75fda94d2ebb86aa9d35fb1860f6395bf95de upstream.
 
-There's an error when compiled with restrict:
+of_dma_controller_free() was not called on module onloading.
+This lead to a soft lockup:
+watchdog: BUG: soft lockup - CPU#0 stuck for 23s!
+Modules linked in: at_hdmac [last unloaded: at_hdmac]
+when of_dma_request_slave_channel() tried to call ofdma->of_dma_xlate().
 
-drivers/tty/serial/kgdboc.c: In function ‘configure_kgdboc’:
-drivers/tty/serial/kgdboc.c:137:2: error: ‘strcpy’ source argument is the same
-as destination [-Werror=restrict]
-  strcpy(config, opt);
-  ^~~~~~~~~~~~~~~~~~~
-
-As the error implies, this is from trying to use config as both source and
-destination. Drop the call to the function where config is the argument
-since nothing else happens in the function.
-
-Signed-off-by: Laura Abbott <labbott@redhat.com>
-Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
+Cc: stable@vger.kernel.org
+Fixes: bbe89c8e3d59 ("at_hdmac: move to generic DMA binding")
+Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
+Signed-off-by: Richard Genoud <richard.genoud@gmail.com>
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/serial/kgdboc.c |    6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/dma/at_hdmac.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/tty/serial/kgdboc.c
-+++ b/drivers/tty/serial/kgdboc.c
-@@ -162,15 +162,13 @@ static int configure_kgdboc(void)
- {
- 	struct tty_driver *p;
- 	int tty_line = 0;
--	int err;
-+	int err = -ENODEV;
- 	char *cptr = config;
- 	struct console *cons;
+--- a/drivers/dma/at_hdmac.c
++++ b/drivers/dma/at_hdmac.c
+@@ -2152,6 +2152,8 @@ static int at_dma_remove(struct platform
+ 	struct resource		*io;
  
--	err = kgdboc_option_setup(config);
--	if (err || !strlen(config) || isspace(config[0]))
-+	if (!strlen(config) || isspace(config[0]))
- 		goto noconfig;
+ 	at_dma_off(atdma);
++	if (pdev->dev.of_node)
++		of_dma_controller_free(pdev->dev.of_node);
+ 	dma_async_device_unregister(&atdma->dma_common);
  
--	err = -ENODEV;
- 	kgdboc_io_ops.is_console = 0;
- 	kgdb_tty_driver = NULL;
- 
+ 	dma_pool_destroy(atdma->memset_pool);
 
 
