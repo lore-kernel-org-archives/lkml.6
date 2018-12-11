@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIM_ADSP_ALL,DKIM_INVALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDAA5C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:17:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED957C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:18:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79D7420851
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:17:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B3CD92084E
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:18:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=plaes.org header.i=@plaes.org header.b="iRdN6gA1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79D7420851
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=plaes.org header.i=@plaes.org header.b="BBGyKQJJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3CD92084E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=plaes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726742AbeLKPRY (ORCPT
+        id S1726867AbeLKPSD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:17:24 -0500
-Received: from plaes.org ([188.166.43.21]:59552 "EHLO plaes.org"
+        Tue, 11 Dec 2018 10:18:03 -0500
+Received: from plaes.org ([188.166.43.21]:59584 "EHLO plaes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726342AbeLKPRV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:17:21 -0500
+        id S1726690AbeLKPRW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:17:22 -0500
 Received: from localhost (unknown [213.204.46.240])
-        by plaes.org (Postfix) with ESMTPSA id 23183409A6;
-        Tue, 11 Dec 2018 15:17:19 +0000 (UTC)
+        by plaes.org (Postfix) with ESMTPSA id 4417641030;
+        Tue, 11 Dec 2018 15:17:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=plaes.org; s=mail;
-        t=1544541439; bh=DNxG4QIovujeB65kr1xY5el00nrx7k3udwttY/HTPZc=;
+        t=1544541440; bh=WJHmPRGpzdjRM9E54gWuAmfTil1kkRXpmiRybmesfIc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iRdN6gA1aWsbOokJIFQyHUIS1TkGG9rwoQkAT9AxOiwfNGZxD+GNOO9r9EYKKcglj
-         a6YcN7n3EoZhvhY3T4ri6hweIduI05vtP6NdjFu8IzzlwvDazrbS2ZTCdLRtB2KDyt
-         rWxj0aMzHvAB8kiuVXX0Aq8pdLZrbQiprfKWQ4WTpCLhGr7uvs4vvJFT6N+YdhWIX3
-         CtMF16x/bZfHY3aRQjNAEXP0NXdHdtFTvSqBCrXpmaAnrmCyBcPh8SKs7uLywgAaiC
-         OzCNm7r23Ax2iKhsvOQv+b0wNolGX71xy7jrPAQHUP0PEUtUG312zQpsM6xqsf88xZ
-         rWnUy5l8OIZPg==
+        b=BBGyKQJJTkZWy/KhWygCZi4ie5tSYgxViGAMmN3Kg8wkjf/dXw7Pm2xOURzsNWDru
+         lZXlq/JcNiCuGI/mdMkM+kU8AvlmtkDhBpbsQekm3o5ARB+2x4V3iLY4zTn3KeinYq
+         AL6SafQU5E+gnHqEd6AdufbmprlU/P8IdOgwmVn9h2bDZlIL65fGOncfTPsi5qIfMx
+         frQX7xxO6fVOVaQOePeWone+OgYWAZdSdo/EEKFsSzX794INLs64u0HJH/27Ujz6WG
+         d8+MUWMf9VPjSA+s44KjoJ+veCXwXmLMjVfexwV2NRwcPVrS44y0rtFULt9bEvH8Uy
+         W7U+dCM+gqUgw==
 From:   Priit Laes <plaes@plaes.org>
 To:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -48,9 +48,9 @@ To:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
         Olliver Schinagl <oliver@schinagl.nl>,
         linux-sunxi <linux-sunxi@googlegroups.com>
 Cc:     Priit Laes <plaes@plaes.org>
-Subject: [PATCH v2 1/8] mfd: axp20x: name voltage ramping define properly
-Date:   Tue, 11 Dec 2018 17:17:05 +0200
-Message-Id: <01367c4f4f1e174fefbef9aac645f6792bda07e5.1544512919.git-series.plaes@plaes.org>
+Subject: [PATCH v2 3/8] dt-bindings: mfd: axp20x: add support for regulator-ramp-delay for AXP209
+Date:   Tue, 11 Dec 2018 17:17:07 +0200
+Message-Id: <78eafc64831c50005fe5d186c174440d48a865e3.1544512919.git-series.plaes@plaes.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <cover.923997dd7d7396bb4d71f8967698b58ca956b929.1544512919.git-series.plaes@plaes.org>
 References: <cover.923997dd7d7396bb4d71f8967698b58ca956b929.1544512919.git-series.plaes@plaes.org>
@@ -63,38 +63,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Olliver Schinagl <oliver@schinagl.nl>
 
-The current axp20x names the ramping register 'scal' which probably
-means scaling. Since the register really has nothing to do with
-scaling, but really is the voltage ramp we rename it appropriately.
+The AXP209 supports ramping up voltages on several regulators such as
+DCDC2 and LDO3, therefore we can use the standard 'regulator-ramp-delay'
+property for those 2 regulators.
+
+Note that the voltage ramp only works when the regulator is already
+enabled. E.g. when going from say 0.7 V to 3.6 V.
+
+When turning on the regulator, no voltage ramp is performed in hardware.
+
+What this means, is that if the bootloader brings up the voltage at 0.7 V,
+the ramp delay property is properly applied. If however, the bootloader
+leaves the power off, no ramp delay is applied when the power is
+enabled by the regulator framework.
 
 Signed-off-by: Olliver Schinagl <oliver@schinagl.nl>
 Signed-off-by: Priit Laes <plaes@plaes.org>
 Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
 ---
- include/linux/mfd/axp20x.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ Documentation/devicetree/bindings/mfd/axp20x.txt | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/include/linux/mfd/axp20x.h b/include/linux/mfd/axp20x.h
-index 2302b62..a353cd2 100644
---- a/include/linux/mfd/axp20x.h
-+++ b/include/linux/mfd/axp20x.h
-@@ -35,7 +35,7 @@ enum axp20x_variants {
- #define AXP152_ALDO_OP_MODE		0x13
- #define AXP152_LDO0_CTRL		0x15
- #define AXP152_DCDC2_V_OUT		0x23
--#define AXP152_DCDC2_V_SCAL		0x25
-+#define AXP152_DCDC2_V_RAMP		0x25
- #define AXP152_DCDC1_V_OUT		0x26
- #define AXP152_DCDC3_V_OUT		0x27
- #define AXP152_ALDO12_V_OUT		0x28
-@@ -53,7 +53,7 @@ enum axp20x_variants {
- #define AXP20X_USB_OTG_STATUS		0x02
- #define AXP20X_PWR_OUT_CTRL		0x12
- #define AXP20X_DCDC2_V_OUT		0x23
--#define AXP20X_DCDC2_LDO3_V_SCAL	0x25
-+#define AXP20X_DCDC2_LDO3_V_RAMP	0x25
- #define AXP20X_DCDC3_V_OUT		0x27
- #define AXP20X_LDO24_V_OUT		0x28
- #define AXP20X_LDO3_V_OUT		0x29
+diff --git a/Documentation/devicetree/bindings/mfd/axp20x.txt b/Documentation/devicetree/bindings/mfd/axp20x.txt
+index 188f037..c626605 100644
+--- a/Documentation/devicetree/bindings/mfd/axp20x.txt
++++ b/Documentation/devicetree/bindings/mfd/axp20x.txt
+@@ -32,6 +32,12 @@ Required properties:
+ - interrupt-controller: The PMIC has its own internal IRQs
+ - #interrupt-cells: Should be set to 1
+ 
++Supported common regulator properties, see ../regulator/regulator.txt for
++more information:
++- regulator-ramp-delay: sets the ramp up delay in uV/us
++			AXP20x/DCDC2: 1600, 800
++			AXP20x/LDO3:  1600, 800
++
+ Optional properties:
+ - x-powers,dcdc-freq: defines the work frequency of DC-DC in KHz
+ 		      AXP152/20X: range:  750-1875, Default: 1.5 MHz
 -- 
 git-series 0.9.1
