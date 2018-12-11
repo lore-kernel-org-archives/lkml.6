@@ -4,50 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66EA0C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:48:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0C34C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:48:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C87D20989
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:48:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 687B22145D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:48:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544543298;
-	bh=oOa5qhhbmJoHdzdPUpLCL/wP25r24gslpxAv6e21Q/o=;
+	s=default; t=1544543301;
+	bh=s+leIqEWRmPpaUafOGtZSiYnqS66qD8NMa/nAeSwmbs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=WvrSF/yZ1PRseyRozfjiEq/TzXUKa0idd8GGJOPJDdK+ODl3yiW/QCaGVf53vGK/e
-	 fu/fCfo3oYo4KxYgfTyEffkrfGzU3Z9qzX/91gl2LQ2Uy+rsANCsgpO5vrvHe/jAfT
-	 /QHnDqxH0j17R+GqTyx0pr1jsEPa7K0Mi980UUyg=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C87D20989
+	b=h0R9AgGnY6qVCxLPPlwG5GsagmMCRulyUhFAF/z0HM2KPbH1PIXi+2wUbElEbjGpH
+	 GTmp1f4RUjIcTCnCTYJPviR2PoTgxJMR2Rpdly8JzVrJChJwTyNswVWYioi/meeFRg
+	 DjMQkQdsG1ArO6V07bUTMH98lHXIjvR6s3J0lO60=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 687B22145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728773AbeLKPsQ (ORCPT
+        id S1728783AbeLKPsU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:48:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36568 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:48:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36620 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727411AbeLKPsN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:48:13 -0500
+        id S1728276AbeLKPsQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:48:16 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D833720870;
-        Tue, 11 Dec 2018 15:48:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 71E7520870;
+        Tue, 11 Dec 2018 15:48:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543293;
-        bh=oOa5qhhbmJoHdzdPUpLCL/wP25r24gslpxAv6e21Q/o=;
+        s=default; t=1544543295;
+        bh=s+leIqEWRmPpaUafOGtZSiYnqS66qD8NMa/nAeSwmbs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Zm+t+NLwt2ZfOGnnX4/VPzRLrTO2TFG+Egm3I7jbkvUMx36i+wz1jn6iWwBebuEtL
-         ioFNW/Mb4T9ozPpOrGDvZh8Az4i24fsh8nX0JE6QHREachqKspui5zy0fAHg5/HEeh
-         bnmgUxF3nF0zzl4urIHXgdFbYdwnmUjYCo9ihDJI=
+        b=KpZC9DbSqBgz79Q3NHoRQjEcUvo7Qg1S2XvRPNsRAH/0fPlalEYA13DSQn1fX+27f
+         iZRZ2YHNd5eAJeVA1jrfvUZNLv/8sQjKMgvHv6HVriPrDwOLyx/ORJwE34tav65y4C
+         JUteGxCwGYJ6QDuSYSqr7RrwBQLz6C1Mc6efSpYU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Shih <pihsun@chromium.org>
-Subject: [PATCH 4.4 85/91] tty: serial: 8250_mtk: always resume the device in probe.
-Date:   Tue, 11 Dec 2018 16:41:44 +0100
-Message-Id: <20181211151613.757661688@linuxfoundation.org>
+        stable@vger.kernel.org, Alexey Brodkin <abrodkin@synopsys.com>,
+        Cupertino Miranda <cmiranda@synopsys.com>,
+        Vineet Gupta <vgupta@synopsys.com>
+Subject: [PATCH 4.4 53/91] arc: [devboards] Add support of NFSv3 ACL
+Date:   Tue, 11 Dec 2018 16:41:12 +0100
+Message-Id: <20181211151610.321985421@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151606.026852373@linuxfoundation.org>
 References: <20181211151606.026852373@linuxfoundation.org>
@@ -66,69 +69,111 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Peter Shih <pihsun@chromium.org>
+From: Alexey Brodkin <abrodkin@synopsys.com>
 
-commit 100bc3e2bebf95506da57cbdf5f26b25f6da4c81 upstream.
+commit 6b04114f6fae5e84d33404c2970b1949c032546e upstream.
 
-serial8250_register_8250_port calls uart_config_port, which calls
-config_port on the port before it tries to power on the port. So we need
-the port to be on before calling serial8250_register_8250_port. Change
-the code to always do a runtime resume in probe before registering port,
-and always do a runtime suspend in remove.
+By default NFSv3 doesn't support ACL (Access Control Lists)
+which might be quite convenient to have so that
+mounted NFS behaves exactly as any other local file-system.
 
-This basically reverts the change in commit 68e5fc4a255a ("tty: serial:
-8250_mtk: use pm_runtime callbacks for enabling"), but still use
-pm_runtime callbacks.
+In particular missing support of ACL makes umask useless.
+This among other thigs fixes Glibc's "nptl/tst-umask1".
 
-Fixes: 68e5fc4a255a ("tty: serial: 8250_mtk: use pm_runtime callbacks for enabling")
-Signed-off-by: Peter Shih <pihsun@chromium.org>
-Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
+Cc: Cupertino Miranda <cmiranda@synopsys.com>
+Cc: stable@vger.kernel.org	#4.14+
+Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/serial/8250/8250_mtk.c |   16 +++++++---------
- 1 file changed, 7 insertions(+), 9 deletions(-)
+ arch/arc/configs/axs101_defconfig          |    1 +
+ arch/arc/configs/axs103_defconfig          |    1 +
+ arch/arc/configs/axs103_smp_defconfig      |    1 +
+ arch/arc/configs/nsimosci_defconfig        |    1 +
+ arch/arc/configs/nsimosci_hs_defconfig     |    1 +
+ arch/arc/configs/nsimosci_hs_smp_defconfig |    1 +
+ arch/arc/configs/vdk_hs38_defconfig        |    1 +
+ arch/arc/configs/vdk_hs38_smp_defconfig    |    1 +
+ 8 files changed, 8 insertions(+)
 
---- a/drivers/tty/serial/8250/8250_mtk.c
-+++ b/drivers/tty/serial/8250/8250_mtk.c
-@@ -231,17 +231,17 @@ static int mtk8250_probe(struct platform
- 
- 	platform_set_drvdata(pdev, data);
- 
--	pm_runtime_enable(&pdev->dev);
--	if (!pm_runtime_enabled(&pdev->dev)) {
--		err = mtk8250_runtime_resume(&pdev->dev);
--		if (err)
--			return err;
--	}
-+	err = mtk8250_runtime_resume(&pdev->dev);
-+	if (err)
-+		return err;
- 
- 	data->line = serial8250_register_8250_port(&uart);
- 	if (data->line < 0)
- 		return data->line;
- 
-+	pm_runtime_set_active(&pdev->dev);
-+	pm_runtime_enable(&pdev->dev);
-+
- 	return 0;
- }
- 
-@@ -252,13 +252,11 @@ static int mtk8250_remove(struct platfor
- 	pm_runtime_get_sync(&pdev->dev);
- 
- 	serial8250_unregister_port(data->line);
-+	mtk8250_runtime_suspend(&pdev->dev);
- 
- 	pm_runtime_disable(&pdev->dev);
- 	pm_runtime_put_noidle(&pdev->dev);
- 
--	if (!pm_runtime_status_suspended(&pdev->dev))
--		mtk8250_runtime_suspend(&pdev->dev);
--
- 	return 0;
- }
- 
+--- a/arch/arc/configs/axs101_defconfig
++++ b/arch/arc/configs/axs101_defconfig
+@@ -98,6 +98,7 @@ CONFIG_NTFS_FS=y
+ CONFIG_TMPFS=y
+ CONFIG_JFFS2_FS=y
+ CONFIG_NFS_FS=y
++CONFIG_NFS_V3_ACL=y
+ CONFIG_NLS_CODEPAGE_437=y
+ CONFIG_NLS_ISO8859_1=y
+ # CONFIG_ENABLE_WARN_DEPRECATED is not set
+--- a/arch/arc/configs/axs103_defconfig
++++ b/arch/arc/configs/axs103_defconfig
+@@ -103,6 +103,7 @@ CONFIG_NTFS_FS=y
+ CONFIG_TMPFS=y
+ CONFIG_JFFS2_FS=y
+ CONFIG_NFS_FS=y
++CONFIG_NFS_V3_ACL=y
+ CONFIG_NLS_CODEPAGE_437=y
+ CONFIG_NLS_ISO8859_1=y
+ # CONFIG_ENABLE_WARN_DEPRECATED is not set
+--- a/arch/arc/configs/axs103_smp_defconfig
++++ b/arch/arc/configs/axs103_smp_defconfig
+@@ -104,6 +104,7 @@ CONFIG_NTFS_FS=y
+ CONFIG_TMPFS=y
+ CONFIG_JFFS2_FS=y
+ CONFIG_NFS_FS=y
++CONFIG_NFS_V3_ACL=y
+ CONFIG_NLS_CODEPAGE_437=y
+ CONFIG_NLS_ISO8859_1=y
+ # CONFIG_ENABLE_WARN_DEPRECATED is not set
+--- a/arch/arc/configs/nsimosci_defconfig
++++ b/arch/arc/configs/nsimosci_defconfig
+@@ -70,5 +70,6 @@ CONFIG_EXT2_FS_XATTR=y
+ CONFIG_TMPFS=y
+ # CONFIG_MISC_FILESYSTEMS is not set
+ CONFIG_NFS_FS=y
++CONFIG_NFS_V3_ACL=y
+ # CONFIG_ENABLE_WARN_DEPRECATED is not set
+ # CONFIG_ENABLE_MUST_CHECK is not set
+--- a/arch/arc/configs/nsimosci_hs_defconfig
++++ b/arch/arc/configs/nsimosci_hs_defconfig
+@@ -69,5 +69,6 @@ CONFIG_EXT2_FS_XATTR=y
+ CONFIG_TMPFS=y
+ # CONFIG_MISC_FILESYSTEMS is not set
+ CONFIG_NFS_FS=y
++CONFIG_NFS_V3_ACL=y
+ # CONFIG_ENABLE_WARN_DEPRECATED is not set
+ # CONFIG_ENABLE_MUST_CHECK is not set
+--- a/arch/arc/configs/nsimosci_hs_smp_defconfig
++++ b/arch/arc/configs/nsimosci_hs_smp_defconfig
+@@ -88,6 +88,7 @@ CONFIG_EXT2_FS_XATTR=y
+ CONFIG_TMPFS=y
+ # CONFIG_MISC_FILESYSTEMS is not set
+ CONFIG_NFS_FS=y
++CONFIG_NFS_V3_ACL=y
+ # CONFIG_ENABLE_WARN_DEPRECATED is not set
+ # CONFIG_ENABLE_MUST_CHECK is not set
+ CONFIG_FTRACE=y
+--- a/arch/arc/configs/vdk_hs38_defconfig
++++ b/arch/arc/configs/vdk_hs38_defconfig
+@@ -89,6 +89,7 @@ CONFIG_NTFS_FS=y
+ CONFIG_TMPFS=y
+ CONFIG_JFFS2_FS=y
+ CONFIG_NFS_FS=y
++CONFIG_NFS_V3_ACL=y
+ CONFIG_NLS_CODEPAGE_437=y
+ CONFIG_NLS_ISO8859_1=y
+ # CONFIG_ENABLE_WARN_DEPRECATED is not set
+--- a/arch/arc/configs/vdk_hs38_smp_defconfig
++++ b/arch/arc/configs/vdk_hs38_smp_defconfig
+@@ -91,6 +91,7 @@ CONFIG_NTFS_FS=y
+ CONFIG_TMPFS=y
+ CONFIG_JFFS2_FS=y
+ CONFIG_NFS_FS=y
++CONFIG_NFS_V3_ACL=y
+ CONFIG_NLS_CODEPAGE_437=y
+ CONFIG_NLS_ISO8859_1=y
+ # CONFIG_ENABLE_WARN_DEPRECATED is not set
 
 
