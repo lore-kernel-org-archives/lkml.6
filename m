@@ -2,129 +2,129 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.9 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EE95C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:23:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 500D3C5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:23:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F08220849
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:23:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F08220849
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 1322920989
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:23:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=mojatatu-com.20150623.gappssmtp.com header.i=@mojatatu-com.20150623.gappssmtp.com header.b="UxvUYo/1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1322920989
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mojatatu.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726808AbeLKPXt (ORCPT
+        id S1726869AbeLKPXz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:23:49 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:41063 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726329AbeLKPXs (ORCPT
+        Tue, 11 Dec 2018 10:23:55 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:34569 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726811AbeLKPXx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:23:48 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBBFNF2f4038981
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 11 Dec 2018 07:23:15 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBBFNEG64038978;
-        Tue, 11 Dec 2018 07:23:14 -0800
-Date:   Tue, 11 Dec 2018 07:23:14 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Bart Van Assche <tipbot@zytor.com>
-Message-ID: <tip-7e9798871a9186cb831cf693d7ff58085384ccbd@git.kernel.org>
-Cc:     tglx@linutronix.de, johannes@sipsolutions.net, longman@redhat.com,
-        sasha.levin@oracle.com, peterz@infradead.org,
-        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        mingo@kernel.org, hpa@zytor.com, bvanassche@acm.org
-Reply-To: bvanassche@acm.org, hpa@zytor.com, mingo@kernel.org,
-          linux-kernel@vger.kernel.org, peterz@infradead.org,
-          torvalds@linux-foundation.org, longman@redhat.com,
-          sasha.levin@oracle.com, johannes@sipsolutions.net,
-          tglx@linutronix.de
-In-Reply-To: <20181207011148.251812-3-bvanassche@acm.org>
-References: <20181207011148.251812-3-bvanassche@acm.org>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:locking/core] tools/lib/lockdep/tests: Fix shellcheck warnings
-Git-Commit-ID: 7e9798871a9186cb831cf693d7ff58085384ccbd
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 11 Dec 2018 10:23:53 -0500
+Received: by mail-it1-f195.google.com with SMTP id x124so11105938itd.1
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 07:23:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=mojatatu-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=yoaN8Y+Eu1T7LptkPRHLCJC61d2gygAwEAcsSxhpB68=;
+        b=UxvUYo/1vxrt2tHkpQXCRI313zVmwCycaYHNmRQLb33etQ5jy86KoxvwXiF8Y4sP1V
+         pdmKPNvo/SM1Yb26n+uceBYgOTRyQG4gZ6A1jbcpk7/JWoQ1CY0m0St0shUXUdbvmqRl
+         qsgp7BErDQ4l01Bcl7ExkoFg+dE0uVcw+GxYlXlIA0KeSpnbjmlLqT5PyDHko87TbK15
+         +x6sxYEh2LvpI+w2MuymA5xRsfm3TQDzmHlyyX4TBFRGsvN7Bu6SggR9PtEW/arYBDXg
+         30IGW2bVDvHQLM97Aw04d+eYkQdC83qZ6zeAKl28sdP+nW8khc1v2NWDY5/etr3IxhvS
+         4V8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=yoaN8Y+Eu1T7LptkPRHLCJC61d2gygAwEAcsSxhpB68=;
+        b=o5zpzFlgd4X9AoNHR807MLQTXVBeFr51iiIsZQfwTB3rGGd6ZUT0GshhU8JtlrubJ+
+         OtwJiglLDFsezkEHYYJ0EeSyX8QN6/83BPtGDMuMNlk1+OKLe83F9OMaRA7NZlxTKEkf
+         VPn+ECtVUAsE5UX2nafZ1JMWaAvWm4R/U+aR1XfZmtHGUxaE4OIZZ2Y1uvtPJE5wwgVP
+         86CR85S2vFdqg2Tevy9pkO685SfCMM8P85ffcUsBTZRzxMN0H+HXfwCpvmHQzzHXgw2M
+         r9kbgtVuNt4Y3fUqVGiMBAoZfs66HJJmzHl8IXhAmtLIoTaQsuW/5AFXMqJ8Td32vLlp
+         C04A==
+X-Gm-Message-State: AA+aEWZs2A9Bbq1rLVlDgA14IPUOKwjQ4HM4+I7iY13vfStEnYTygl2e
+        Wa6Aeumnd/vCboDDj0rmgaSVPg==
+X-Google-Smtp-Source: AFSGD/VFh/2/6jyrNuwQNbL7SwuNv+WE7NroNOfb6i/nFJB8TJ2vP/w8VF5peNgg2IFJj84cv1DedA==
+X-Received: by 2002:a24:128a:: with SMTP id 132mr2516456itp.80.1544541831805;
+        Tue, 11 Dec 2018 07:23:51 -0800 (PST)
+Received: from x220t ([64.26.149.125])
+        by smtp.gmail.com with ESMTPSA id m81sm1349534itb.43.2018.12.11.07.23.50
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 11 Dec 2018 07:23:50 -0800 (PST)
+Date:   Tue, 11 Dec 2018 10:23:45 -0500
+From:   Alexander Aring <aring@mojatatu.com>
+To:     Stefan Schmidt <stefan@datenfreihafen.org>
+Cc:     David Miller <davem@davemloft.net>, yuehaibing@huawei.com,
+        h.morris@cascoda.com, alex.aring@gmail.com,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        linux-wpan@vger.kernel.org
+Subject: Re: [PATCH net-next] ieee802154: ca8210: fix possible u8 overflow in
+ ca8210_rx_done
+Message-ID: <20181211152345.gdlu6rnzng3kddgo@x220t>
+References: <20181211031339.21048-1-yuehaibing@huawei.com>
+ <20181210.220107.751606140724107779.davem@davemloft.net>
+ <87dbac94-8b2e-8cef-5166-8c130529ceb9@datenfreihafen.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+In-Reply-To: <87dbac94-8b2e-8cef-5166-8c130529ceb9@datenfreihafen.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  7e9798871a9186cb831cf693d7ff58085384ccbd
-Gitweb:     https://git.kernel.org/tip/7e9798871a9186cb831cf693d7ff58085384ccbd
-Author:     Bart Van Assche <bvanassche@acm.org>
-AuthorDate: Thu, 6 Dec 2018 17:11:26 -0800
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 11 Dec 2018 14:54:48 +0100
+Hi Stefan,
 
-tools/lib/lockdep/tests: Fix shellcheck warnings
+On Tue, Dec 11, 2018 at 09:26:37AM +0100, Stefan Schmidt wrote:
+> Hello Dave.
+> 
+> On 11.12.18 07:01, David Miller wrote:
+> > From: YueHaibing <yuehaibing@huawei.com>
+> > Date: Tue, 11 Dec 2018 11:13:39 +0800
+> > 
+> >> gcc warning this:
+> >>
+> >> drivers/net/ieee802154/ca8210.c:730:10: warning:
+> >>  comparison is always false due to limited range of data type [-Wtype-limits]
+> >>
+> >> 'len' is u8 type, we get it from buf[1] adding 2, which can overflow.
+> >> This patch change the type of 'len' to unsigned int to avoid this,also fix
+> >> the gcc warning.
+> >>
+> >> Fixes: ded845a781a5 ("ieee802154: Add CA8210 IEEE 802.15.4 device driver")
+> >> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> > 
+> > WPAN maintainers, I am assuming that as maintainers you will be
+> > picking this up and sending it to me.
+> 
+> That's correct. On driver patches I always wait 2 days or so to give the
+> driver maintainer a chance to reply before I go ahead and apply it.
+> 
+> I will take this one directly now and do some smoke testing. It will
+> come together with another fix as pull request to you.
+>
 
-Use find instead of ls to avoid splitting filenames that contain spaces.
-Use rm -f instead of if ... then rm ...; fi. This patch addresses all
-shellcheck complaints about the run_tests.sh shell script.
+If this "len" is related to the frame (error message says packet) length when
+"rx_done()" what the function name tells me, I think what the drivers
+is looking for is:
 
-Signed-off-by: Bart Van Assche <bvanassche@acm.org>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Johannes Berg <johannes@sipsolutions.net>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Sasha Levin <sasha.levin@oracle.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Waiman Long <longman@redhat.com>
-Cc: johannes.berg@intel.com
-Cc: tj@kernel.org
-Link: https://lkml.kernel.org/r/20181207011148.251812-3-bvanassche@acm.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- tools/lib/lockdep/run_tests.sh | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+ieee802154_is_valid_psdu_len() plus maybe before calculation of the length
+depends what else the transceiver put as payload.
 
-diff --git a/tools/lib/lockdep/run_tests.sh b/tools/lib/lockdep/run_tests.sh
-index 9f31f84e7fac..253719ee6377 100755
---- a/tools/lib/lockdep/run_tests.sh
-+++ b/tools/lib/lockdep/run_tests.sh
-@@ -7,7 +7,7 @@ if ! make >/dev/null; then
-     exit 1
- fi
- 
--for i in `ls tests/*.c`; do
-+find tests -name '*.c' | sort | while read -r i; do
- 	testname=$(basename "$i" .c)
- 	echo -ne "$testname... "
- 	if gcc -o "tests/$testname" -pthread "$i" liblockdep.a -Iinclude -D__USE_LIBLOCKDEP &&
-@@ -16,12 +16,10 @@ for i in `ls tests/*.c`; do
- 	else
- 		echo "FAILED!"
- 	fi
--	if [ -f "tests/$testname" ]; then
--		rm tests/$testname
--	fi
-+	rm -f "tests/$testname"
- done
- 
--for i in `ls tests/*.c`; do
-+find tests -name '*.c' | sort | while read -r i; do
- 	testname=$(basename "$i" .c)
- 	echo -ne "(PRELOAD) $testname... "
- 	if gcc -o "tests/$testname" -pthread -Iinclude "$i" &&
-@@ -30,7 +28,5 @@ for i in `ls tests/*.c`; do
- 	else
- 		echo "FAILED!"
- 	fi
--	if [ -f "tests/$testname" ]; then
--		rm tests/$testname
--	fi
-+	rm -f "tests/$testname"
- done
+side note:
+
+All drivers need to check if the length is valid as this is transmitted
+in the PHY header and even not portected by CRC which is only for the
+MAC payload. I had some ugly bufferoverflows expierence with some
+at86rf2xx while my microwave was on.
+
+- Alex
