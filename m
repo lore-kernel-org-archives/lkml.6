@@ -7,66 +7,66 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 752D7C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 19:17:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 488DAC67839
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 19:17:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 403D12087F
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 19:17:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E03320880
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 19:17:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="lzOEtcYA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 403D12087F
+	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="q+Olj5kv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E03320880
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lightnvm.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726331AbeLKTRG (ORCPT
+        id S1726975AbeLKTRJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 14:17:06 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:44468 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726365AbeLKTRD (ORCPT
+        Tue, 11 Dec 2018 14:17:09 -0500
+Received: from mail-lf1-f51.google.com ([209.85.167.51]:46164 "EHLO
+        mail-lf1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726844AbeLKTRG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 14:17:03 -0500
-Received: by mail-lj1-f194.google.com with SMTP id k19-v6so13994476lji.11
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 11:17:01 -0800 (PST)
+        Tue, 11 Dec 2018 14:17:06 -0500
+Received: by mail-lf1-f51.google.com with SMTP id f23so11596610lfc.13
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 11:17:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=EAAvZB5EbkafXfB/nQ8jKNvQ2dQs06mVyegUe1IKNXs=;
-        b=lzOEtcYAkliKJkbxwBrdhYEMD+GTwp2RMPuopkhSqBjw4wEJpQCYlBgBF/lDitqViW
-         /08yLQWhRdNLo4g3XqeQrciKXNP95mZcALPOG2CvMCDIthp6Knf9dIqKC39Rybu4MV4g
-         pKoC0nuZ+VduwOqk5eO/jgFKue7E+Fse60QBN1rroTsirPC2y2q7LYQlUhwiid/1KE/f
-         Qb3ztOYU7I5WK/pL4EYCwS2n18FuXYvpEWYWWrF1phL6UPX3l0Sr88/g9Cl9QBr3uZEI
-         GyNWjfqnPEoAAFYXoPrBjLxuJZl6pLDtbpoeChbP6b1lQB4yLaHpADk2tEAKZPT45n+n
-         +dWg==
+        bh=UQ124e7M0okPx5I+QhLHPxJc1tUUmdIdflct8erdRes=;
+        b=q+Olj5kvTE4ByeL30fchZHkXLJ2PTZE+WB+OrJFgxnSQzEAMQFWo+0TU/ZC99Z8oWq
+         idd/rlOM0uewK1snwCEn3Uj8+D0l7ZP4/2RlN0ukxIGMP8wDKpl1ktlsUCvNABcFibY7
+         Kc2ffqeSgFP/WlBAhlmMphkwi/Nnk4aITAOSvvwTN6ozypoILIa54tM43Xbn9UQonN25
+         K1yLp+MFjS4XPhG5PUaloTsbn6fvOFzXR1X2np5yG0O1UHzvERgCHYoKdQSANXnr2Mmo
+         S1nCEIlm4NippRNTb1MAIE+3+r5gnSDCL42TJj+PNKdd7izC5bIKfFER1Eoi2psWmop1
+         0kZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=EAAvZB5EbkafXfB/nQ8jKNvQ2dQs06mVyegUe1IKNXs=;
-        b=SHeTjnUzAsfQVmn/+yAvqAKShLjJs3dQ+6cmABOM7qZG5ee7ULqTtiDKOczTWHDnOq
-         KEys1mLIGMVaKwfuHZaycEV5nBHIzxFzrU4AbPSEp5479JnERCyHjhgIaQKKgbAlpWy9
-         e7rdYS6/A39mVvZfwRSSB5+v6qLLKZPB6UgWFpMe2qtKUrDdhdH8gMJW4L9c5qJEp5G9
-         e/GN3+1T/AC5XwvQ7OJ/VQZxl76LwKOEGdbFWtzb8ZdY5Pa8bnMsOLOezNzbrnIMeIGz
-         F/jnSemhkqA05pKz2QTlE03ymyTMBa6cawxrj/SeojjcyEBKCF/lxY60pIqDfNRBD8aA
-         Kfvw==
-X-Gm-Message-State: AA+aEWYwWLIlu77iPIK/jYp8L+0sgpczgzb6uAT9hm78zxGYfH9LcvNZ
-        O51Jt0KxrO37Ac3T3lmyDfEnjMwga08=
-X-Google-Smtp-Source: AFSGD/XDHUA/r76FNrnzaaEtoXbTWySAe7CO33Ssv7XIEK3Xe/KMdAcZSzA2DvPP+UK172BOCF1QdQ==
-X-Received: by 2002:a2e:302:: with SMTP id 2-v6mr10215088ljd.137.1544555820306;
-        Tue, 11 Dec 2018 11:17:00 -0800 (PST)
+        bh=UQ124e7M0okPx5I+QhLHPxJc1tUUmdIdflct8erdRes=;
+        b=axNnJJ4LQn+xMCDbb6SaPh/0MRxakYLaHp9+n3CFeJtO96gB4BJEgX4vuNilxdCnnm
+         XSoYG2XDSn6/S6d8/Hv7vneFI9aXDS8sg+wJ3b3jTde6Slf49tC4NQRGue2hv8qbZ5iz
+         ZII0OcbMph3faqp422tWd/wI5HfNqI+4xI+ZVDYzxv/R7v38auvtyDIa9EmHAElguwlp
+         rxGvhKfcstd5pBRFbji/FDa0U1TrCjipskV6XqurplNIbKth9g8otPvfEYoddGaX8PPt
+         0/oduNPFU+NIINZLxIp9PejPCRmneEC0Uvttwi7tP6Ewts0Z1qTHIQkkYu6Zmumn6fly
+         kjvQ==
+X-Gm-Message-State: AA+aEWYpUxQaFTFn2UT9KNjm/TkBiy3xBQyyhK7LdVFIaeMY7zMPrfel
+        Y/dlt6CeSbDH+cbWaR7HOZc03g==
+X-Google-Smtp-Source: AFSGD/X/JXvteVlP10+SWJfpPcxlmAkbHu+WnrggffruESNsqI/uZxjquLRCVXTE58u0eWIa1ZX6Dw==
+X-Received: by 2002:a19:f89:: with SMTP id 9mr9853449lfp.10.1544555824238;
+        Tue, 11 Dec 2018 11:17:04 -0800 (PST)
 Received: from skyninja.webspeed.dk (95-166-82-66-cable.dk.customer.tdc.net. [95.166.82.66])
-        by smtp.gmail.com with ESMTPSA id v64sm2764583lfa.48.2018.12.11.11.16.59
+        by smtp.gmail.com with ESMTPSA id v64sm2764583lfa.48.2018.12.11.11.17.02
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Dec 2018 11:16:59 -0800 (PST)
+        Tue, 11 Dec 2018 11:17:03 -0800 (PST)
 From:   =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
 To:     axboe@fb.com
 Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Zhoujie Wu <zjwu@marvell.com>,
+        Hans Holmberg <hans.holmberg@cnexlabs.com>,
         =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-Subject: [GIT PULL 01/21] lightnvm: pblk: ignore the smeta oob area scan
-Date:   Tue, 11 Dec 2018 20:16:07 +0100
-Message-Id: <20181211191627.15542-2-mb@lightnvm.io>
+Subject: [GIT PULL 04/21] lightnvm: pblk: fix resubmission of overwritten write err lbas
+Date:   Tue, 11 Dec 2018 20:16:10 +0100
+Message-Id: <20181211191627.15542-5-mb@lightnvm.io>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181211191627.15542-1-mb@lightnvm.io>
 References: <20181211191627.15542-1-mb@lightnvm.io>
@@ -78,47 +78,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zhoujie Wu <zjwu@marvell.com>
+From: Hans Holmberg <hans.holmberg@cnexlabs.com>
 
-The smeta area l2p mapping is empty, and actually the
-recovery procedure only need to restore data sector's l2p
-mapping. So ignore the smeta oob scan.
+Make sure we only look up valid lba addresses on the resubmission path.
 
-Signed-off-by: Zhoujie Wu <zjwu@marvell.com>
+If an lba is invalidated in the write buffer, that sector will be
+submitted to disk (as it is already mapped to a ppa), and that write
+might fail, resulting in a crash when trying to look up the lba in the
+mapping table (as the lba is marked as invalid).
+
+Signed-off-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
 Reviewed-by: Javier González <javier@javigon.com>
-Reviewed-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
 Signed-off-by: Matias Bjørling <mb@lightnvm.io>
 ---
- drivers/lightnvm/pblk-recovery.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/lightnvm/pblk-write.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/lightnvm/pblk-recovery.c b/drivers/lightnvm/pblk-recovery.c
-index 5740b7509bd8..0fbd30e0a587 100644
---- a/drivers/lightnvm/pblk-recovery.c
-+++ b/drivers/lightnvm/pblk-recovery.c
-@@ -334,6 +334,7 @@ static int pblk_recov_scan_oob(struct pblk *pblk, struct pblk_line *line,
- 			       struct pblk_recov_alloc p)
- {
- 	struct nvm_tgt_dev *dev = pblk->dev;
-+	struct pblk_line_meta *lm = &pblk->lm;
- 	struct nvm_geo *geo = &dev->geo;
- 	struct ppa_addr *ppa_list;
- 	struct pblk_sec_meta *meta_list;
-@@ -342,12 +343,12 @@ static int pblk_recov_scan_oob(struct pblk *pblk, struct pblk_line *line,
- 	void *data;
- 	dma_addr_t dma_ppa_list, dma_meta_list;
- 	__le64 *lba_list;
--	u64 paddr = 0;
-+	u64 paddr = pblk_line_smeta_start(pblk, line) + lm->smeta_sec;
- 	bool padded = false;
- 	int rq_ppas, rq_len;
- 	int i, j;
- 	int ret;
--	u64 left_ppas = pblk_sec_in_open_line(pblk, line);
-+	u64 left_ppas = pblk_sec_in_open_line(pblk, line) - lm->smeta_sec;
+diff --git a/drivers/lightnvm/pblk-write.c b/drivers/lightnvm/pblk-write.c
+index fa8726493b39..3ddd16f47106 100644
+--- a/drivers/lightnvm/pblk-write.c
++++ b/drivers/lightnvm/pblk-write.c
+@@ -148,9 +148,11 @@ static void pblk_prepare_resubmit(struct pblk *pblk, unsigned int sentry,
+ 		w_ctx = &entry->w_ctx;
  
- 	if (pblk_line_wp_is_unbalanced(pblk, line))
- 		pblk_warn(pblk, "recovering unbalanced line (%d)\n", line->id);
+ 		/* Check if the lba has been overwritten */
+-		ppa_l2p = pblk_trans_map_get(pblk, w_ctx->lba);
+-		if (!pblk_ppa_comp(ppa_l2p, entry->cacheline))
+-			w_ctx->lba = ADDR_EMPTY;
++		if (w_ctx->lba != ADDR_EMPTY) {
++			ppa_l2p = pblk_trans_map_get(pblk, w_ctx->lba);
++			if (!pblk_ppa_comp(ppa_l2p, entry->cacheline))
++				w_ctx->lba = ADDR_EMPTY;
++		}
+ 
+ 		/* Mark up the entry as submittable again */
+ 		flags = READ_ONCE(w_ctx->flags);
 -- 
 2.17.1
 
