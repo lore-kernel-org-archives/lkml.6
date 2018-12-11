@@ -2,164 +2,111 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3192EC6783B
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 21:48:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9197EC67839
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 21:49:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E776F2086D
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 21:48:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E776F2086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 575582086D
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 21:49:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544564959;
+	bh=g3bZKrBIESL7oyXrOsvKbwjByucYBLypnBo+lO9AmxU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=JSgswNz2+qRWsCbU2odl2gHhnUFXnh7REdwycTkPDLfeEdZpqHfP/iouxH50MmFV/
+	 /skFd7iEAWuGmQrtchud23ZgSLRS6AV6/ynIB4qRUeCIFJkt/Xs5TV/mua7G6GCzAq
+	 r/RExhLdXjlBKYPL6WdUj/ekdiH/G3ONrgRNhnoM=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 575582086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726252AbeLKVsX (ORCPT
+        id S1726263AbeLKVtS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 16:48:23 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:40204 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726146AbeLKVsX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 16:48:23 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5AAE858E3F;
-        Tue, 11 Dec 2018 21:48:22 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.18.25.234])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B73F019C7D;
-        Tue, 11 Dec 2018 21:48:21 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 427C52208FC; Tue, 11 Dec 2018 16:48:21 -0500 (EST)
-Date:   Tue, 11 Dec 2018 16:48:21 -0500
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Stephen Smalley <sds@tycho.nsa.gov>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        Ondrej Mosnacek <omosnace@redhat.com>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Mark Salyzyn <salyzyn@android.com>,
-        Paul Moore <paul@paul-moore.com>, linux-kernel@vger.kernel.org,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, selinux@vger.kernel.org,
-        Daniel J Walsh <dwalsh@redhat.com>
-Subject: Re: overlayfs access checks on underlying layers
-Message-ID: <20181211214821.GD17242@redhat.com>
-References: <4c20a261-5ce1-f0a2-8d40-c6032a023216@tycho.nsa.gov>
- <20181204151549.GA21509@redhat.com>
- <20181204152248.GB21509@redhat.com>
- <CAJfpegtFVvq286HAorGLg6ywMsfs51KqaQwFkcuV7Dtu8TLaLg@mail.gmail.com>
- <20181204154243.GA16818@redhat.com>
- <665ec6f3-f16d-681f-30d5-eface14c9808@tycho.nsa.gov>
- <20181204161747.GC16818@redhat.com>
- <e8841bf0-d6b8-0e7d-6a35-055a06441d30@tycho.nsa.gov>
- <20181205134317.GA11337@redhat.com>
- <8eb7f677-fd71-c31b-bfed-29fb7187d132@tycho.nsa.gov>
+        Tue, 11 Dec 2018 16:49:18 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:44414 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726146AbeLKVtS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 16:49:18 -0500
+Received: by mail-ot1-f68.google.com with SMTP id f18so15594920otl.11;
+        Tue, 11 Dec 2018 13:49:17 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=f+jqbTXgJcnaNmwXr4mvE8v4D3fDUTKKXNhqcpfB32k=;
+        b=sFU5wBZIao8xk5LHZceQNsNr4uadZPbKt21QVfKvlFIFQfWIwJL7PSMzLv33gMeX9Q
+         z/t+aU1Bmr4YpkhYnY1IABUc5r7d8y4XI7zPwH3+qhT438/l8eEeZvPUTuZ6j2j4accw
+         gm5Ejq3mrQwIb+LNgNQtS94go7svvppT5+OzKm+7wrdmuYQN22YObugNc6lQrEhR+VtI
+         FEgD0e0lyhZxVhNbbqyTFrlzxjqgbZRwmc7lc0CrWx/3iUpv+vg+dJAnoNWlIvcLG8/Z
+         MWzgWyDJImLrTlr4vIXfkW2pUe5NrxvkkNj7/JQTgV3zZeCV4cPP/axZ2KhC54MvzLbV
+         IqdQ==
+X-Gm-Message-State: AA+aEWZO7ZpPLt+77xC7wyj8MU8bhg8RFrMZEpCFH0TW5ACI5ayzxoUQ
+        1SdVBZ7QZwd/4YKvPcQ0Mxj8Pp0GGl0tlVuw48g=
+X-Google-Smtp-Source: AFSGD/VZ7S1N/46qsE9QmxUrC3ly74yF0S95wgxza2rk/cyGjquDbOhUrq+ZVeWfreeABytTt6RFl3Yvh5fJ5H2M2cM=
+X-Received: by 2002:a9d:2062:: with SMTP id n89mr11824902ota.244.1544564957226;
+ Tue, 11 Dec 2018 13:49:17 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8eb7f677-fd71-c31b-bfed-29fb7187d132@tycho.nsa.gov>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Tue, 11 Dec 2018 21:48:23 +0000 (UTC)
+References: <20181208214644.5374-1-okaya@kernel.org> <CAJZ5v0jV+UZ7A46Kiyv6JysoFJ=_ts7O_p3z9F1Uze3OwZdh_Q@mail.gmail.com>
+ <4aa65942-bf97-c957-7f77-38bfdf7d1d3a@kernel.org>
+In-Reply-To: <4aa65942-bf97-c957-7f77-38bfdf7d1d3a@kernel.org>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Tue, 11 Dec 2018 22:49:05 +0100
+Message-ID: <CAJZ5v0gsq4-pzMrqrKuiUysXbnjc5AfVnY3=2OxQRZPsma=ZMA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] ACPI: Allow PCI to be disabled for reboot
+To:     okaya@kernel.org
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 06, 2018 at 03:26:26PM -0500, Stephen Smalley wrote:
-> On 12/5/18 8:43 AM, Vivek Goyal wrote:
-> > On Tue, Dec 04, 2018 at 11:49:16AM -0500, Stephen Smalley wrote:
-> > > On 12/4/18 11:17 AM, Vivek Goyal wrote:
-> > > > On Tue, Dec 04, 2018 at 11:05:46AM -0500, Stephen Smalley wrote:
-> > > > > On 12/4/18 10:42 AM, Vivek Goyal wrote:
-> > > > > > On Tue, Dec 04, 2018 at 04:31:09PM +0100, Miklos Szeredi wrote:
-> > > > > > > On Tue, Dec 4, 2018 at 4:22 PM Vivek Goyal <vgoyal@redhat.com> wrote:
-> > > > > > > 
-> > > > > > > > Having said that, this still create little anomaly when mknod to client
-> > > > > > > > is not allowed on context label. So a device file, which is on lower
-> > > > > > > > and client can not open it for read/write on host, it can now be opened
-> > > > > > > > for read/write because mounter will allow access. So why it is different
-> > > > > > > > that regular copy up. Well, in regular copy up, we created a copy of
-> > > > > > > > the original object and allowed writing to that object (cp --preserve=all)
-> > > > > > > > model. But in case of device file, writes will go to same original
-> > > > > > > > object. (And not a separate copy).
-> > > > > > > 
-> > > > > > > That's true.
-> > > > > > > 
-> > > > > > > In that sense copy up of special file should result in upper having
-> > > > > > > the same label as of lower, right?
-> > > > > > 
-> > > > > > I guess that might be reasonable (if this behavior is a concern). So even
-> > > > > > after copy up, client will not be able to read/write a device if it was
-> > > > > > not allowed on lower.
-> > > > > > 
-> > > > > > Stephen, what do you think about retaining label of lower for device
-> > > > > > files during copy up. What about socket/fifo.
-> > > > > 
-> > > > > We don't check client task access to the upper inode label, only to the
-> > > > > overlay, right?  So the client is still free to access the device through
-> > > > > the overlay even if we preserve the lower inode label on the upper inode?
-> > > > > What do we gain?
-> > > > 
-> > > > That's only with latest code and Miklos said he will revert it for 4.20.
-> > > > 
-> > > > IOW, I am assuming that we will continue to check access to a file
-> > > > on upper in the context of mounter. Otherwise, client will be able to access
-> > > > files on upper/ which even mounter can't access.
-> > > 
-> > > I was assuming we're talking about the proposed solution, where we check
-> > > client access to the overlay (unchanged), mounter access to lower
-> > > (unchanged), copy-up if denied (new), mounter access to upper (new in the
-> > > sense that previously we didn't copy-up on denials).
-> > > 
-> > > In that situation, propagating the lower inode label to the upper inode only
-> > > impacts the mounter checks, and in that case makes copy-up pointless - if it
-> > > wasn't allowed to lower it won't be allowed to upper.  If it is allowed,
-> > > then client task is free to access the device regardless as long as it has
-> > > permissions to the overlay inode.  So I don't see what we gain by
-> > > propagating the lower inode label to the upper inode in the context mount
-> > > case, and it creates an inconsistency between special files and regular
-> > > ones.
-> > 
-> > If we agree on retaining lower label of lower device file on copy up, then
-> > I am assuming we will change rule c) to copy up only non device files.
-> > (because if you don't have access on lower, you will not have access
-> > even after copy up).
-> > 
-> > There are other paths where copy up happnes. Like link or when file
-> > metadata (ownership, permissions, timestmap) changes. In those cases,
-> > if we retain the lower label over copy up, it probably will help.
-> > 
-> > IOW, just by creating a link to a device, one will not get access to
-> > a device on upper which could not be accessed on lower.
-> > 
-> > Device files are special anyway. In regular files we are creating a
-> > copy and user writes to copy. But that's not the case with device
-> > files. So I guess these will have to be treated differently.
-> 
-> I don't understand what you are suggesting.  In the case of a context mount,
-> the context specified by the mounter must be assigned to the upper inode for
-> any files that are copied up.  Otherwise, changes to file data or metadata
-> made through the overlay will be visible under two different security
-> contexts simultaneously: the context of the overlay inode (i.e. the one
-> specified by the mounter) and the context of the upper inode (in your
-> suggestion, the context from the lower inode). This allows a violation of
-> MAC policy where one can leak data through an overlay to an unauthorized
-> context.
+On Tue, Dec 11, 2018 at 5:54 PM Sinan Kaya <okaya@kernel.org> wrote:
+>
+> On 12/11/2018 5:12 AM, Rafael J. Wysocki wrote:
+> > On Sat, Dec 8, 2018 at 10:47 PM Sinan Kaya <okaya@kernel.org> wrote:
+> >>
+> >> Make PCI reboot conditional on PCI support being present on the kernel
+> >> configuration.
+> >>
+> >> Signed-off-by: Sinan Kaya <okaya@kernel.org>
+> >
+> > Same comment as for patch [2/3]: make the subject say clearly that
+> > this is about CONFIG_PCI.
+>
+> Sure
+>
+> >>          case ACPI_ADR_SPACE_PCI_CONFIG:
+> >> +       {
+> >> +#ifdef CONFIG_PCI
+> >> +               unsigned int devfn;
+> >> +               struct pci_bus *bus0;
+> >> +
+> >>                  /* The reset register can only live on bus 0. */
+> >>                  bus0 = pci_find_bus(0, 0);
+> >>                  if (!bus0)
+> >> @@ -45,7 +48,10 @@ void acpi_reboot(void)
+> >>                  pci_bus_write_config_byte(bus0, devfn,
+> >>                                  (rr->address & 0xffff), reset_value);
+> >>                  break;
+> >> -
+> >> +#else
+> >> +               return;
+> >
+> > Why not "break"?
+> >
+>
+> I struggled between break and return. Existing code seems to return on failure
+> when bus0 is NULL. I assumed it would be more logical to return as someone could
+> put some code after here that assumes everything is in order.
 
-Hi Stephen,
-
-Sorry, I don't understand this point of leaking data through overlay. Even
-if we retain lower label on copy up (for device file), to open that file
-process should have access on overlay context label and then mounter needs
-to have access on upper inode (lower label). This is not different from
-opening a file on lower. Just that metadata of this file on upper might
-be different.
-
-Can you elaborate a bit more on how this is leaking data through overlay
-mount. If it is, then why accessing file on lower is not equivalent of
-leaking of data. 
-
-Thanks
-Vivek
+Well, there's no such code ATM, so there's no practical difference
+between the two and you don't really need the #else branch at all, do
+you?
