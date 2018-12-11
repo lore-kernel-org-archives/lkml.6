@@ -2,90 +2,172 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.9 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77686C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:38:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4A9FC5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:38:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4948B2082F
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:38:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4948B2082F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 85DEE2082F
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 10:38:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85DEE2082F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726401AbeLKKiG (ORCPT
+        id S1726419AbeLKKiJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 05:38:06 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:60842 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726114AbeLKKiF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 05:38:05 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 01C3F308427E;
-        Tue, 11 Dec 2018 10:38:05 +0000 (UTC)
-Received: from oldenburg2.str.redhat.com (ovpn-116-82.ams2.redhat.com [10.36.116.82])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0BDEF5D73F;
-        Tue, 11 Dec 2018 10:37:59 +0000 (UTC)
-From:   Florian Weimer <fweimer@redhat.com>
-To:     John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-Cc:     Andy Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Mike Frysinger <vapier@gentoo.org>,
-        "H. J. Lu" <hjl.tools@gmail.com>, Rich Felker <dalias@libc.org>,
-        x32@buildd.debian.org, Arnd Bergmann <arnd@arndb.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: Can we drop upstream Linux x32 support?
-References: <CALCETrXoRAibsbWa9nfbDrt0iEuebMnCMhSFg-d9W-J2g8mDjw@mail.gmail.com>
-        <70bb54b2-8ed3-b5ee-c02d-6ef66c4f27eb@physik.fu-berlin.de>
-Date:   Tue, 11 Dec 2018 11:37:58 +0100
-In-Reply-To: <70bb54b2-8ed3-b5ee-c02d-6ef66c4f27eb@physik.fu-berlin.de> (John
-        Paul Adrian Glaubitz's message of "Tue, 11 Dec 2018 11:29:14 +0100")
-Message-ID: <87in00z6ux.fsf@oldenburg2.str.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Tue, 11 Dec 2018 05:38:09 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:49727 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726114AbeLKKiJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 05:38:09 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBBAasVE3949364
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 11 Dec 2018 02:36:54 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBBAasWA3949361;
+        Tue, 11 Dec 2018 02:36:54 -0800
+Date:   Tue, 11 Dec 2018 02:36:54 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Michal Hocko <tipbot@zytor.com>
+Message-ID: <tip-d7409e79dbec2d2834fb6ccca53664197ab65505@git.kernel.org>
+Cc:     jkosina@suse.cz, tglx@linutronix.de, torvalds@linux-foundation.org,
+        linux-kernel@vger.kernel.org, pasha.tatashin@soleen.com,
+        dave.hansen@intel.com, hpa@zytor.com, ak@linux.intel.com,
+        mhocko@suse.com, linux-mm@kvack.org, bp@suse.de, mingo@kernel.org
+Reply-To: tglx@linutronix.de, jkosina@suse.cz,
+          torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
+          pasha.tatashin@soleen.com, dave.hansen@intel.com,
+          ak@linux.intel.com, hpa@zytor.com, bp@suse.de, mingo@kernel.org,
+          mhocko@suse.com, linux-mm@kvack.org
+In-Reply-To: <20181113184910.26697-1-mhocko@kernel.org>
+References: <20181113184910.26697-1-mhocko@kernel.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/pti] x86/speculation/l1tf: Drop the swap storage limit
+ restriction when l1tf=off
+Git-Commit-ID: d7409e79dbec2d2834fb6ccca53664197ab65505
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Tue, 11 Dec 2018 10:38:05 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* John Paul Adrian Glaubitz:
+Commit-ID:  d7409e79dbec2d2834fb6ccca53664197ab65505
+Gitweb:     https://git.kernel.org/tip/d7409e79dbec2d2834fb6ccca53664197ab65505
+Author:     Michal Hocko <mhocko@suse.com>
+AuthorDate: Tue, 13 Nov 2018 19:49:10 +0100
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Tue, 11 Dec 2018 11:13:32 +0100
 
-> As for the enterprise support, this seems to be correct. I don't know
-> of any enterprise distribution with x32 support either.
+x86/speculation/l1tf: Drop the swap storage limit restriction when l1tf=off
 
-Me neither.  I would expect a pure userspace port, with limitations in
-what ioctls you can use, and perhaps support from GCC to share more APIs
-with the kernel.
+Swap storage is restricted to max_swapfile_size (~16TB on x86_64) whenever
+the system is deemed affected by L1TF vulnerability. Even though the limit
+is quite high for most deployments it seems to be too restrictive for
+deployments which are willing to live with the mitigation disabled.
 
-(I do not know of any plans to work on this.)
+We have a customer to deploy 8x 6,4TB PCIe/NVMe SSD swap devices which is
+clearly out of the limit.
 
-> I'm not terribly opposed to this change. I'm usually for keeping support
-> for things that people are using, but the maintenance is a huge burden
-> to upstream projects, I'm fine with letting it go.
+Drop the swap restriction when l1tf=off is specified. It also doesn't make
+much sense to warn about too much memory for the l1tf mitigation when it is
+forcefully disabled by the administrator.
 
-Thank you for sharing your perspective.
+[ tglx: Folded the documentation delta change ]
 
-> If x32 is eventually to be removed, we should also take care of removing
-> x32 support from userland code. From the top of my head, this would at least
-> concern:
->
->  * OpenJDK
+Fixes: 377eeaa8e11f ("x86/speculation/l1tf: Limit swap file size to MAX_PA/2")
+Signed-off-by: Michal Hocko <mhocko@suse.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Pavel Tatashin <pasha.tatashin@soleen.com>
+Reviewed-by: Andi Kleen <ak@linux.intel.com>
+Acked-by: Jiri Kosina <jkosina@suse.cz>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Borislav Petkov <bp@suse.de>
+Cc: <linux-mm@kvack.org>
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/20181113184910.26697-1-mhocko@kernel.org
+---
+ Documentation/admin-guide/kernel-parameters.txt | 3 +++
+ Documentation/admin-guide/l1tf.rst              | 6 +++++-
+ arch/x86/kernel/cpu/bugs.c                      | 3 ++-
+ arch/x86/mm/init.c                              | 2 +-
+ 4 files changed, 11 insertions(+), 3 deletions(-)
 
-Note that OpenJDK (well, Hotspot) has its own 32-bit pointer support for
-the Java heap (compressed oops), so only the native code parts (and JNI)
-benefit from x32 anyway.
-
-Thanks,
-Florian
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 05a252e5178d..835e422572eb 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -2095,6 +2095,9 @@
+ 			off
+ 				Disables hypervisor mitigations and doesn't
+ 				emit any warnings.
++				It also drops the swap size and available
++				RAM limit restriction on both hypervisor and
++				bare metal.
+ 
+ 			Default is 'flush'.
+ 
+diff --git a/Documentation/admin-guide/l1tf.rst b/Documentation/admin-guide/l1tf.rst
+index b85dd80510b0..2e65e6cb033e 100644
+--- a/Documentation/admin-guide/l1tf.rst
++++ b/Documentation/admin-guide/l1tf.rst
+@@ -405,6 +405,9 @@ time with the option "l1tf=". The valid arguments for this option are:
+ 
+   off		Disables hypervisor mitigations and doesn't emit any
+ 		warnings.
++		It also drops the swap size and available RAM limit restrictions
++                on both hypervisor and bare metal.
++
+   ============  =============================================================
+ 
+ The default is 'flush'. For details about L1D flushing see :ref:`l1d_flush`.
+@@ -576,7 +579,8 @@ Default mitigations
+   The kernel default mitigations for vulnerable processors are:
+ 
+   - PTE inversion to protect against malicious user space. This is done
+-    unconditionally and cannot be controlled.
++    unconditionally and cannot be controlled. The swap storage is limited
++    to ~16TB.
+ 
+   - L1D conditional flushing on VMENTER when EPT is enabled for
+     a guest.
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index a68b32cb845a..58689ac64440 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -1002,7 +1002,8 @@ static void __init l1tf_select_mitigation(void)
+ #endif
+ 
+ 	half_pa = (u64)l1tf_pfn_limit() << PAGE_SHIFT;
+-	if (e820__mapped_any(half_pa, ULLONG_MAX - half_pa, E820_TYPE_RAM)) {
++	if (l1tf_mitigation != L1TF_MITIGATION_OFF &&
++			e820__mapped_any(half_pa, ULLONG_MAX - half_pa, E820_TYPE_RAM)) {
+ 		pr_warn("System has more than MAX_PA/2 memory. L1TF mitigation not effective.\n");
+ 		pr_info("You may make it effective by booting the kernel with mem=%llu parameter.\n",
+ 				half_pa);
+diff --git a/arch/x86/mm/init.c b/arch/x86/mm/init.c
+index ef99f3892e1f..427a955a2cf2 100644
+--- a/arch/x86/mm/init.c
++++ b/arch/x86/mm/init.c
+@@ -931,7 +931,7 @@ unsigned long max_swapfile_size(void)
+ 
+ 	pages = generic_max_swapfile_size();
+ 
+-	if (boot_cpu_has_bug(X86_BUG_L1TF)) {
++	if (boot_cpu_has_bug(X86_BUG_L1TF) && l1tf_mitigation != L1TF_MITIGATION_OFF) {
+ 		/* Limit the swap file size to MAX_PA/2 for L1TF workaround */
+ 		unsigned long long l1tf_limit = l1tf_pfn_limit();
+ 		/*
