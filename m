@@ -2,137 +2,330 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.9 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B4BBC67839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 21:13:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4322FC67839
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 21:15:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4AD2020851
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 21:13:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AD2020851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id E83A420851
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 21:15:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E83A420851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726312AbeLKVNX (ORCPT
+        id S1726234AbeLKVPX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 16:13:23 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:54491 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726134AbeLKVNW (ORCPT
+        Tue, 11 Dec 2018 16:15:23 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34390 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726134AbeLKVPX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 16:13:22 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBBLD7Df4154210
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 11 Dec 2018 13:13:07 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBBLD5Qh4154207;
-        Tue, 11 Dec 2018 13:13:05 -0800
-Date:   Tue, 11 Dec 2018 13:13:05 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Reinette Chatre <tipbot@zytor.com>
-Message-ID: <tip-80b71c340f17705ec145911b9a193ea781811b16@git.kernel.org>
-Cc:     mingo@kernel.org, tglx@linutronix.de, linux-kernel@vger.kernel.org,
-        reinette.chatre@intel.com, fenghua.yu@intel.com, mingo@redhat.com,
-        hpa@zytor.com, bp@suse.de, tony.luck@intel.com,
-        stable@vger.kernel.org, x86@kernel.org
-Reply-To: bp@suse.de, tony.luck@intel.com, stable@vger.kernel.org,
-          x86@kernel.org, mingo@kernel.org, tglx@linutronix.de,
-          linux-kernel@vger.kernel.org, reinette.chatre@intel.com,
-          fenghua.yu@intel.com, mingo@redhat.com, hpa@zytor.com
-In-Reply-To: <b7b17432a80f95a1fa21a1698ba643014f58ad31.1544476425.git.reinette.chatre@intel.com>
-References: <b7b17432a80f95a1fa21a1698ba643014f58ad31.1544476425.git.reinette.chatre@intel.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86/intel_rdt: Ensure a CPU remains online for the
- region's pseudo-locking sequence
-Git-Commit-ID: 80b71c340f17705ec145911b9a193ea781811b16
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+        Tue, 11 Dec 2018 16:15:23 -0500
+Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0334BB35;
+        Tue, 11 Dec 2018 21:15:20 +0000 (UTC)
+Date:   Tue, 11 Dec 2018 13:15:19 -0800
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Josef Bacik <josef@toxicpanda.com>
+Cc:     kernel-team@fb.com, hannes@cmpxchg.org,
+        linux-kernel@vger.kernel.org, tj@kernel.org, david@fromorbit.com,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, riel@redhat.com,
+        jack@suse.cz
+Subject: Re: [PATCH 3/3] filemap: drop the mmap_sem for all blocking
+ operations
+Message-Id: <20181211131519.8d9e91eac049f16dad7c2d1f@linux-foundation.org>
+In-Reply-To: <20181211173801.29535-4-josef@toxicpanda.com>
+References: <20181211173801.29535-1-josef@toxicpanda.com>
+        <20181211173801.29535-4-josef@toxicpanda.com>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  80b71c340f17705ec145911b9a193ea781811b16
-Gitweb:     https://git.kernel.org/tip/80b71c340f17705ec145911b9a193ea781811b16
-Author:     Reinette Chatre <reinette.chatre@intel.com>
-AuthorDate: Mon, 10 Dec 2018 13:21:54 -0800
-Committer:  Borislav Petkov <bp@suse.de>
-CommitDate: Tue, 11 Dec 2018 21:59:01 +0100
+On Tue, 11 Dec 2018 12:38:01 -0500 Josef Bacik <josef@toxicpanda.com> wrote:
 
-x86/intel_rdt: Ensure a CPU remains online for the region's pseudo-locking sequence
+> Currently we only drop the mmap_sem if there is contention on the page
+> lock.  The idea is that we issue readahead and then go to lock the page
+> while it is under IO and we want to not hold the mmap_sem during the IO.
+> 
+> The problem with this is the assumption that the readahead does
+> anything.  In the case that the box is under extreme memory or IO
+> pressure we may end up not reading anything at all for readahead, which
+> means we will end up reading in the page under the mmap_sem.
+> 
+> Even if the readahead does something, it could get throttled because of
+> io pressure on the system and the process is in a lower priority cgroup.
+> 
+> Holding the mmap_sem while doing IO is problematic because it can cause
+> system-wide priority inversions.  Consider some large company that does
+> a lot of web traffic.  This large company has load balancing logic in
+> it's core web server, cause some engineer thought this was a brilliant
+> plan.  This load balancing logic gets statistics from /proc about the
+> system, which trip over processes mmap_sem for various reasons.  Now the
+> web server application is in a protected cgroup, but these other
+> processes may not be, and if they are being throttled while their
+> mmap_sem is held we'll stall, and cause this nice death spiral.
+> 
+> Instead rework filemap fault path to drop the mmap sem at any point that
+> we may do IO or block for an extended period of time.  This includes
+> while issuing readahead, locking the page, or needing to call ->readpage
+> because readahead did not occur.  Then once we have a fully uptodate
+> page we can return with VM_FAULT_RETRY and come back again to find our
+> nicely in-cache page that was gotten outside of the mmap_sem.
+> 
+> This patch also adds a new helper for locking the page with the mmap_sem
+> dropped.  This doesn't make sense currently as generally speaking if the
+> page is already locked it'll have been read in (unless there was an
+> error) before it was unlocked.  However a forthcoming patchset will
+> change this with the ability to abort read-ahead bio's if necessary,
+> making it more likely that we could contend for a page lock and still
+> have a not uptodate page.  This allows us to deal with this case by
+> grabbing the lock and issuing the IO without the mmap_sem held, and then
+> returning VM_FAULT_RETRY to come back around.
+> 
+> ...
+>
+> --- a/mm/filemap.c
+> +++ b/mm/filemap.c
+> @@ -2304,28 +2304,76 @@ EXPORT_SYMBOL(generic_file_read_iter);
+>  
+>  #ifdef CONFIG_MMU
+>  #define MMAP_LOTSAMISS  (100)
+> +static struct file *maybe_unlock_mmap_for_io(struct vm_fault *vmf,
+> +					     struct file *fpin)
+> +{
+> +	int flags = vmf->flags;
+> +	if (fpin)
+> +		return fpin;
 
-The user triggers the creation of a pseudo-locked region when writing
-the requested schemata to the schemata resctrl file. The pseudo-locking
-of a region is required to be done on a CPU that is associated with the
-cache on which the pseudo-locked region will reside. In order to run the
-locking code on a specific CPU, the needed CPU has to be selected and
-ensured to remain online during the entire locking sequence.
+I think a comment here wouldn't hurt: explain waht's going on, why we're
+handling the fault flag in this fashion.  That's kinda covered in the
+lock_page_maybe_drop_mmap() description, but this code is fairly
+tricky-looking.
 
-At this time, the cpu_hotplug_lock is not taken during the pseudo-lock
-region creation and it is thus possible for a CPU to be selected to run
-the pseudo-locking code and then that CPU to go offline before the
-thread is able to run on it.
 
-Fix this by ensuring that the cpu_hotplug_lock is taken while the CPU on
-which code has to run needs to be controlled. Since the cpu_hotplug_lock
-is always taken before rdtgroup_mutex the lock order is maintained.
+> +	if ((flags & (FAULT_FLAG_ALLOW_RETRY | FAULT_FLAG_RETRY_NOWAIT)) ==
+> +	    FAULT_FLAG_ALLOW_RETRY) {
+> +		fpin = get_file(vmf->vma->vm_file);
+> +		up_read(&vmf->vma->vm_mm->mmap_sem);
+> +	}
+> +	return fpin;
+> +}
+> +
+> +/*
+> + * Works similar to lock_page_or_retry, except it will pin the file and drop the
+> + * mmap_sem if necessary and then lock the page, and return 1 in this case.
 
-Fixes: e0bdfe8e36f3 ("x86/intel_rdt: Support creation/removal of pseudo-locked region")
-Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Fenghua Yu <fenghua.yu@intel.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: gavin.hindman@intel.com
-Cc: jithu.joseph@intel.com
-Cc: stable <stable@vger.kernel.org>
-Cc: x86-ml <x86@kernel.org>
-Link: https://lkml.kernel.org/r/b7b17432a80f95a1fa21a1698ba643014f58ad31.1544476425.git.reinette.chatre@intel.com
----
- arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c | 4 ++++
- 1 file changed, 4 insertions(+)
+This isn't true in the case where the trylock_page() succeeded.  Can we
+expand on that case here?
 
-diff --git a/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c b/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
-index 27937458c231..efa4a519f5e5 100644
---- a/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
-+++ b/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
-@@ -23,6 +23,7 @@
- 
- #define pr_fmt(fmt)	KBUILD_MODNAME ": " fmt
- 
-+#include <linux/cpu.h>
- #include <linux/kernfs.h>
- #include <linux/seq_file.h>
- #include <linux/slab.h>
-@@ -310,9 +311,11 @@ ssize_t rdtgroup_schemata_write(struct kernfs_open_file *of,
- 		return -EINVAL;
- 	buf[nbytes - 1] = '\0';
- 
-+	cpus_read_lock();
- 	rdtgrp = rdtgroup_kn_lock_live(of->kn);
- 	if (!rdtgrp) {
- 		rdtgroup_kn_unlock(of->kn);
-+		cpus_read_unlock();
- 		return -ENOENT;
- 	}
- 	rdt_last_cmd_clear();
-@@ -367,6 +370,7 @@ ssize_t rdtgroup_schemata_write(struct kernfs_open_file *of,
- 
- out:
- 	rdtgroup_kn_unlock(of->kn);
-+	cpus_read_unlock();
- 	return ret ?: nbytes;
- }
- 
+> + * This means the caller needs to deal with the fpin appropriately.  0 return is
+> + * the same as in lock_page_or_retry.
+> + */
+> +static int lock_page_maybe_drop_mmap(struct vm_fault *vmf, struct page *page,
+> +				     struct file **fpin)
+> +{
+> +	if (trylock_page(page))
+> +		return 1;
+> +
+> +	*fpin = maybe_unlock_mmap_for_io(vmf, *fpin);
+> +	if (vmf->flags & FAULT_FLAG_RETRY_NOWAIT)
+> +		return 0;
+
+maybe_unlock_mmap_for_io() doesn't do anything if
+FAULT_FLAG_RETRY_NOWAIT was set, so can we swap the above two
+statements?
+
+> +	if (vmf->flags & FAULT_FLAG_KILLABLE) {
+> +		if (__lock_page_killable(page)) {
+> +			/*
+> +			 * We didn't have the right flags to drop the mmap_sem,
+> +			 * but all fault_handlers only check for fatal signals
+> +			 * if we return VM_FAULT_RETRY, so we need to drop the
+> +			 * mmap_sem here and return 0 if we don't have a fpin.
+> +			 */
+> +			if (*fpin == NULL)
+> +				up_read(&vmf->vma->vm_mm->mmap_sem);
+> +			return 0;
+> +		}
+> +	} else
+> +		__lock_page(page);
+> +	return 1;
+> +}
+> +
+>  
+>  /*
+>   * Synchronous readahead happens when we don't even find
+>   * a page in the page cache at all.
+>   */
+> -static void do_sync_mmap_readahead(struct vm_fault *vmf)
+> +static struct file *do_sync_mmap_readahead(struct vm_fault *vmf)
+
+Let's explain the newly-added return value in the comment?  Under what
+circumstances is it NULL, etc.
+
+>  {
+>  	struct file *file = vmf->vma->vm_file;
+>  	struct file_ra_state *ra = &file->f_ra;
+>  	struct address_space *mapping = file->f_mapping;
+> +	struct file *fpin = NULL;
+>  	pgoff_t offset = vmf->pgoff;
+>  
+>  	/* If we don't want any read-ahead, don't bother */
+>  	if (vmf->vma->vm_flags & VM_RAND_READ)
+> -		return;
+> +		return fpin;
+>  	if (!ra->ra_pages)
+> -		return;
+> +		return fpin;
+>  
+>  	if (vmf->vma->vm_flags & VM_SEQ_READ) {
+> +		fpin = maybe_unlock_mmap_for_io(vmf, fpin);
+>  		page_cache_sync_readahead(mapping, ra, file, offset,
+>  					  ra->ra_pages);
+> -		return;
+> +		return fpin;
+>  	}
+>  
+>  	/* Avoid banging the cache line if not needed */
+> @@ -2337,37 +2385,43 @@ static void do_sync_mmap_readahead(struct vm_fault *vmf)
+>  	 * stop bothering with read-ahead. It will only hurt.
+>  	 */
+>  	if (ra->mmap_miss > MMAP_LOTSAMISS)
+> -		return;
+> +		return fpin;
+>  
+>  	/*
+>  	 * mmap read-around
+>  	 */
+> +	fpin = maybe_unlock_mmap_for_io(vmf, fpin);
+>  	ra->start = max_t(long, 0, offset - ra->ra_pages / 2);
+>  	ra->size = ra->ra_pages;
+>  	ra->async_size = ra->ra_pages / 4;
+>  	ra_submit(ra, mapping, file);
+> +	return fpin;
+>  }
+>  
+>  /*
+>   * Asynchronous readahead happens when we find the page and PG_readahead,
+>   * so we want to possibly extend the readahead further..
+>   */
+> -static void do_async_mmap_readahead(struct vm_fault *vmf,
+> -				    struct page *page)
+> +static struct file *do_async_mmap_readahead(struct vm_fault *vmf,
+> +					    struct page *page)
+>  {
+>  	struct file *file = vmf->vma->vm_file;
+>  	struct file_ra_state *ra = &file->f_ra;
+>  	struct address_space *mapping = file->f_mapping;
+> +	struct file *fpin = NULL;
+>  	pgoff_t offset = vmf->pgoff;
+>  
+>  	/* If we don't want any read-ahead, don't bother */
+>  	if (vmf->vma->vm_flags & VM_RAND_READ)
+> -		return;
+> +		return fpin;
+>  	if (ra->mmap_miss > 0)
+>  		ra->mmap_miss--;
+> -	if (PageReadahead(page))
+> +	if (PageReadahead(page)) {
+> +		fpin = maybe_unlock_mmap_for_io(vmf, fpin);
+>  		page_cache_async_readahead(mapping, ra, file,
+>  					   page, offset, ra->ra_pages);
+> +	}
+> +	return fpin;
+>  }
+>  
+>  /**
+> @@ -2397,6 +2451,7 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
+>  {
+>  	int error;
+>  	struct file *file = vmf->vma->vm_file;
+> +	struct file *fpin = NULL;
+>  	struct address_space *mapping = file->f_mapping;
+>  	struct file_ra_state *ra = &file->f_ra;
+>  	struct inode *inode = mapping->host;
+> @@ -2418,10 +2473,10 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
+>  		 * We found the page, so try async readahead before
+>  		 * waiting for the lock.
+>  		 */
+> -		do_async_mmap_readahead(vmf, page);
+> +		fpin = do_async_mmap_readahead(vmf, page);
+>  	} else if (!page) {
+>  		/* No page in the page cache at all */
+> -		do_sync_mmap_readahead(vmf);
+> +		fpin = do_sync_mmap_readahead(vmf);
+>  		count_vm_event(PGMAJFAULT);
+>  		count_memcg_event_mm(vmf->vma->vm_mm, PGMAJFAULT);
+>  		ret = VM_FAULT_MAJOR;
+> @@ -2433,7 +2488,7 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
+>  			return vmf_error(-ENOMEM);
+
+hm, how does this work.  We might have taken a ref on the file and that
+ref is recorded in fpin but an error here causes us to lose track of
+that elevated refcount?
+
+>  	}
+>  
+> -	if (!lock_page_or_retry(page, vmf->vma->vm_mm, vmf->flags)) {
+> +	if (!lock_page_maybe_drop_mmap(vmf, page, &fpin)) {
+>  		put_page(page);
+>  		return ret | VM_FAULT_RETRY;
+>  	}
+> @@ -2453,6 +2508,16 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
+>  	if (unlikely(!PageUptodate(page)))
+>  		goto page_not_uptodate;
+>  
+> +	/*
+> +	 * We've made it this far and we had to drop our mmap_sem, now is the
+> +	 * time to return to the upper layer and have it re-find the vma and
+> +	 * redo the fault.
+> +	 */
+> +	if (fpin) {
+> +		unlock_page(page);
+> +		goto out_retry;
+> +	}
+> +
+>  	/*
+>  	 * Found the page and have a reference on it.
+>  	 * We must recheck i_size under page lock.
+> @@ -2475,12 +2540,15 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
+>  	 * and we need to check for errors.
+>  	 */
+>  	ClearPageError(page);
+> +	fpin = maybe_unlock_mmap_for_io(vmf, fpin);
+>  	error = mapping->a_ops->readpage(file, page);
+>  	if (!error) {
+>  		wait_on_page_locked(page);
+>  		if (!PageUptodate(page))
+>  			error = -EIO;
+>  	}
+> +	if (fpin)
+> +		goto out_retry;
+>  	put_page(page);
+>  
+>  	if (!error || error == AOP_TRUNCATED_PAGE)
+> @@ -2489,6 +2557,18 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
+>  	/* Things didn't work out. Return zero to tell the mm layer so. */
+>  	shrink_readahead_size_eio(file, ra);
+>  	return VM_FAULT_SIGBUS;
+> +
+> +out_retry:
+> +	/*
+> +	 * We dropped the mmap_sem, we need to return to the fault handler to
+> +	 * re-find the vma and come back and find our hopefully still populated
+> +	 * page.
+> +	 */
+> +	if (page)
+> +		put_page(page);
+> +	if (fpin)
+> +		fput(fpin);
+> +	return ret | VM_FAULT_RETRY;
+>  }
+>  EXPORT_SYMBOL(filemap_fault);
+
