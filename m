@@ -4,60 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 331DCC5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 11:03:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 987A2C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 11:03:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D858C2081B
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 11:03:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D79C2081B
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 11:03:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="Im4WPkcw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D858C2081B
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="TpCMKpVQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D79C2081B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726507AbeLKLDh (ORCPT
+        id S1726613AbeLKLDw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 06:03:37 -0500
-Received: from conuserg-11.nifty.com ([210.131.2.78]:39670 "EHLO
+        Tue, 11 Dec 2018 06:03:52 -0500
+Received: from conuserg-11.nifty.com ([210.131.2.78]:36640 "EHLO
         conuserg-11.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726227AbeLKLDg (ORCPT
+        with ESMTP id S1726510AbeLKLBl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 06:03:36 -0500
+        Tue, 11 Dec 2018 06:01:41 -0500
 Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-11.nifty.com with ESMTP id wBBB1C5w017210;
-        Tue, 11 Dec 2018 20:01:27 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-11.nifty.com wBBB1C5w017210
+        by conuserg-11.nifty.com with ESMTP id wBBB1C5n017210;
+        Tue, 11 Dec 2018 20:01:21 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-11.nifty.com wBBB1C5n017210
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1544526088;
-        bh=tBsTKFpBDaVZFtEdXeCgfra6ewSQbds4MCpGPn41bzg=;
+        s=dec2015msa; t=1544526081;
+        bh=IcgexvJt38ljGJvWC/WL37DAl0lX6I5rv6Nx+cZ8BoY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Im4WPkcw6bjRHZnO1HdZfs9JFn7bo0znz55uqxmyDAp1Amh5xnS33DFM4CAZv3A3m
-         P3U8FgMZmju99ammGCJR7SvI9Ix/oj8XRMclxpYwG1r+1UwKSlwayklXK9DQ5XMgwW
-         tIuuXdVcyXNON8J6rtwl37lGnyklTLfZxPrNU3meqRspXV3Zmw/37gQstFSVypsarx
-         k0wPVWAEze3aAekVozH/9MTxCpyXaZLTdQ0dkirIyagR+EG+WZNM687BHzAiExtPbM
-         sNDoPTYItpjj2gyaC7vejFm7nhFSx2RkCEhIlBeAu5ucCELYQIxmv5EGTRwWEb2J5h
-         rmeMbUPPD3zLQ==
+        b=TpCMKpVQu6uoOgsl2+dJOlS6AOqf77CrWSP3g4VykvNco1bqMVvyZTWwEHXU7kYug
+         DgRf8oEUZpP2RInI4I1ob1HQsSB83VwTE66RIvVeTUEZ56ugH9bj9CS0MLsJsCpT2n
+         jwzyuXILeblIN9gZWBMBE6OB++8m7uLktDmsxF5kViY3PIIBWfJMHbzLu5+rsElxn4
+         ro9kpgV6Zb4UG646p4oxyXma4oWBxbARg23JGuUBDmQfiWc9AGHLREmeAJss1CsXdj
+         Oss1IVYe9Zw7u7l4K15DcXMoqYIuHPKSiPX7e6J1t589bS5QrSRZht+4dsSN43hJ8m
+         J3lVo0QNUW7+g==
 X-Nifty-SrcIP: [153.142.97.92]
 From:   Masahiro Yamada <yamada.masahiro@socionext.com>
 To:     linux-kbuild@vger.kernel.org
 Cc:     Ulf Magnusson <ulfalizer@gmail.com>, linux-kernel@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        David Howells <dhowells@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 21/27] treewide: surround file paths in Kconfig files with double quotes
-Date:   Tue, 11 Dec 2018 20:01:04 +0900
-Message-Id: <1544526070-16690-22-git-send-email-yamada.masahiro@socionext.com>
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: [PATCH 12/27] kconfig: remove redundant menu_block rule
+Date:   Tue, 11 Dec 2018 20:00:55 +0900
+Message-Id: <1544526070-16690-13-git-send-email-yamada.masahiro@socionext.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1544526070-16690-1-git-send-email-yamada.masahiro@socionext.com>
 References: <1544526070-16690-1-git-send-email-yamada.masahiro@socionext.com>
@@ -66,497 +56,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Kconfig lexer supports special characters such as '.' and '/' in
-the parameter context. In my understanding, the reason is just to
-support bare file paths in the source statement.
+The code block surrounded by "menu" ... "endmenu" is stmt_list.
 
-I do not see a good reason to complicate Kconfig for the room of
-ambiguity.
-
-The majority of code already surround file paths with double quotes,
-and it makes sense since the included file paths are constant string
-literals.
-
-Make it treewide consistent now.
+Remove the redundant menu_block symbol entirely.
 
 Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
 
-I will apply this to my Kbuild tree
-because it is necessary for Kconfig clean-ups.
+ scripts/kconfig/zconf.y | 9 +--------
+ 1 file changed, 1 insertion(+), 8 deletions(-)
 
-
- arch/arm/Kconfig             |  2 +-
- arch/arm/kvm/Kconfig         |  2 +-
- arch/arm64/Kconfig           |  2 +-
- arch/arm64/kvm/Kconfig       |  2 +-
- arch/ia64/Kconfig            |  2 +-
- arch/m68k/Kconfig            |  6 +++---
- arch/mips/kvm/Kconfig        |  2 +-
- arch/openrisc/Kconfig        |  2 +-
- arch/powerpc/Kconfig         |  4 ++--
- arch/powerpc/kvm/Kconfig     |  2 +-
- arch/riscv/Kconfig           |  2 +-
- arch/s390/Kconfig            |  2 +-
- arch/s390/kvm/Kconfig        |  2 +-
- arch/sh/Kconfig              |  2 +-
- arch/sparc/Kconfig           |  2 +-
- arch/x86/Kconfig             |  2 +-
- arch/x86/kvm/Kconfig         |  2 +-
- block/Kconfig                |  2 +-
- crypto/Kconfig               |  4 ++--
- drivers/crypto/Kconfig       |  2 +-
- drivers/gpu/drm/i915/Kconfig |  2 +-
- drivers/hwmon/Kconfig        |  2 +-
- drivers/i2c/Kconfig          |  6 +++---
- drivers/pps/Kconfig          |  4 ++--
- drivers/ras/Kconfig          |  2 +-
- drivers/thermal/Kconfig      |  2 +-
- drivers/w1/Kconfig           |  4 ++--
- lib/Kconfig.debug            |  4 ++--
- security/Kconfig             | 16 ++++++++--------
- security/integrity/Kconfig   |  4 ++--
- 30 files changed, 47 insertions(+), 47 deletions(-)
-
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 91be74d..0a7faf8 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -910,7 +910,7 @@ config PLAT_VERSATILE
- 
- source "arch/arm/firmware/Kconfig"
- 
--source arch/arm/mm/Kconfig
-+source "arch/arm/mm/Kconfig"
- 
- config IWMMXT
- 	bool "Enable iWMMXt support"
-diff --git a/arch/arm/kvm/Kconfig b/arch/arm/kvm/Kconfig
-index e2bd35b..3f5320f 100644
---- a/arch/arm/kvm/Kconfig
-+++ b/arch/arm/kvm/Kconfig
-@@ -55,6 +55,6 @@ config KVM_ARM_HOST
- 	---help---
- 	  Provides host support for ARM processors.
- 
--source drivers/vhost/Kconfig
-+source "drivers/vhost/Kconfig"
- 
- endif # VIRTUALIZATION
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index ea2ab03..8a84de3 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -807,7 +807,7 @@ config NEED_PER_CPU_EMBED_FIRST_CHUNK
- config HOLES_IN_ZONE
- 	def_bool y
- 
--source kernel/Kconfig.hz
-+source "kernel/Kconfig.hz"
- 
- config ARCH_SUPPORTS_DEBUG_PAGEALLOC
- 	def_bool y
-diff --git a/arch/arm64/kvm/Kconfig b/arch/arm64/kvm/Kconfig
-index 47b23bf..a3f8562 100644
---- a/arch/arm64/kvm/Kconfig
-+++ b/arch/arm64/kvm/Kconfig
-@@ -61,6 +61,6 @@ config KVM_ARM_PMU
- config KVM_INDIRECT_VECTORS
-        def_bool KVM && (HARDEN_BRANCH_PREDICTOR || HARDEN_EL2_VECTORS)
- 
--source drivers/vhost/Kconfig
-+source "drivers/vhost/Kconfig"
- 
- endif # VIRTUALIZATION
-diff --git a/arch/ia64/Kconfig b/arch/ia64/Kconfig
-index 36773de..0ef105a 100644
---- a/arch/ia64/Kconfig
-+++ b/arch/ia64/Kconfig
-@@ -261,7 +261,7 @@ config HZ
- endif
- 
- if !IA64_HP_SIM
--source kernel/Kconfig.hz
-+source "kernel/Kconfig.hz"
- endif
- 
- config IA64_BRL_EMU
-diff --git a/arch/m68k/Kconfig b/arch/m68k/Kconfig
-index 1bc9f1b..6f18c45 100644
---- a/arch/m68k/Kconfig
-+++ b/arch/m68k/Kconfig
-@@ -123,11 +123,11 @@ config BOOTINFO_PROC
- 
- menu "Platform setup"
- 
--source arch/m68k/Kconfig.cpu
-+source "arch/m68k/Kconfig.cpu"
- 
--source arch/m68k/Kconfig.machine
-+source "arch/m68k/Kconfig.machine"
- 
--source arch/m68k/Kconfig.bus
-+source "arch/m68k/Kconfig.bus"
- 
- endmenu
- 
-diff --git a/arch/mips/kvm/Kconfig b/arch/mips/kvm/Kconfig
-index 76b93a9..c369302 100644
---- a/arch/mips/kvm/Kconfig
-+++ b/arch/mips/kvm/Kconfig
-@@ -72,6 +72,6 @@ config KVM_MIPS_DEBUG_COP0_COUNTERS
- 
- 	  If unsure, say N.
- 
--source drivers/vhost/Kconfig
-+source "drivers/vhost/Kconfig"
- 
- endif # VIRTUALIZATION
-diff --git a/arch/openrisc/Kconfig b/arch/openrisc/Kconfig
-index 285f7d0..d765b4a 100644
---- a/arch/openrisc/Kconfig
-+++ b/arch/openrisc/Kconfig
-@@ -139,7 +139,7 @@ config SMP
- 
- 	  If you don't know what to do here, say N.
- 
--source kernel/Kconfig.hz
-+source "kernel/Kconfig.hz"
- 
- config OPENRISC_NO_SPR_SR_DSX
- 	bool "use SPR_SR_DSX software emulation" if OR1K_1200
-diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-index 8be3126..e1307d6 100644
---- a/arch/powerpc/Kconfig
-+++ b/arch/powerpc/Kconfig
-@@ -393,7 +393,7 @@ config HIGHMEM
- 	bool "High memory support"
- 	depends on PPC32
- 
--source kernel/Kconfig.hz
-+source "kernel/Kconfig.hz"
- 
- config HUGETLB_PAGE_SIZE_VARIABLE
- 	bool
-@@ -816,7 +816,7 @@ config ARCH_WANTS_FREEZER_CONTROL
- 	def_bool y
- 	depends on ADB_PMU
- 
--source kernel/power/Kconfig
-+source "kernel/power/Kconfig"
- 
- config SECCOMP
- 	bool "Enable seccomp to safely compute untrusted bytecode"
-diff --git a/arch/powerpc/kvm/Kconfig b/arch/powerpc/kvm/Kconfig
-index 68a0e9d..bfdde04 100644
---- a/arch/powerpc/kvm/Kconfig
-+++ b/arch/powerpc/kvm/Kconfig
-@@ -204,6 +204,6 @@ config KVM_XIVE
- 	default y
- 	depends on KVM_XICS && PPC_XIVE_NATIVE && KVM_BOOK3S_HV_POSSIBLE
- 
--source drivers/vhost/Kconfig
-+source "drivers/vhost/Kconfig"
- 
- endif # VIRTUALIZATION
-diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-index 55da93f..4f428ab 100644
---- a/arch/riscv/Kconfig
-+++ b/arch/riscv/Kconfig
-@@ -287,6 +287,6 @@ endmenu
- 
- menu "Power management options"
- 
--source kernel/power/Kconfig
-+source "kernel/power/Kconfig"
- 
- endmenu
-diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
-index 5173366..48de9d3 100644
---- a/arch/s390/Kconfig
-+++ b/arch/s390/Kconfig
-@@ -520,7 +520,7 @@ config SCHED_TOPOLOGY
- 	  making when dealing with machines that have multi-threading,
- 	  multiple cores or multiple books.
- 
--source kernel/Kconfig.hz
-+source "kernel/Kconfig.hz"
- 
- config KEXEC
- 	def_bool y
-diff --git a/arch/s390/kvm/Kconfig b/arch/s390/kvm/Kconfig
-index a3dbd45..767453f 100644
---- a/arch/s390/kvm/Kconfig
-+++ b/arch/s390/kvm/Kconfig
-@@ -57,6 +57,6 @@ config KVM_S390_UCONTROL
- 
- # OK, it's a little counter-intuitive to do this, but it puts it neatly under
- # the virtualization menu.
--source drivers/vhost/Kconfig
-+source "drivers/vhost/Kconfig"
- 
- endif # VIRTUALIZATION
-diff --git a/arch/sh/Kconfig b/arch/sh/Kconfig
-index f82a4da..b2581b1 100644
---- a/arch/sh/Kconfig
-+++ b/arch/sh/Kconfig
-@@ -597,7 +597,7 @@ endmenu
- 
- menu "Kernel features"
- 
--source kernel/Kconfig.hz
-+source "kernel/Kconfig.hz"
- 
- config KEXEC
- 	bool "kexec system call (EXPERIMENTAL)"
-diff --git a/arch/sparc/Kconfig b/arch/sparc/Kconfig
-index 490b2c9..29b97f1 100644
---- a/arch/sparc/Kconfig
-+++ b/arch/sparc/Kconfig
-@@ -187,7 +187,7 @@ config NR_CPUS
- 	default 32 if SPARC32
- 	default 4096 if SPARC64
- 
--source kernel/Kconfig.hz
-+source "kernel/Kconfig.hz"
- 
- config RWSEM_GENERIC_SPINLOCK
- 	bool
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 8689e79..59433a52 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -1965,7 +1965,7 @@ config SECCOMP
- 
- 	  If unsure, say Y. Only embedded should say N here.
- 
--source kernel/Kconfig.hz
-+source "kernel/Kconfig.hz"
- 
- config KEXEC
- 	bool "kexec system call"
-diff --git a/arch/x86/kvm/Kconfig b/arch/x86/kvm/Kconfig
-index 1bbec38..72fa955 100644
---- a/arch/x86/kvm/Kconfig
-+++ b/arch/x86/kvm/Kconfig
-@@ -98,6 +98,6 @@ config KVM_MMU_AUDIT
- 
- # OK, it's a little counter-intuitive to do this, but it puts it neatly under
- # the virtualization menu.
--source drivers/vhost/Kconfig
-+source "drivers/vhost/Kconfig"
- 
- endif # VIRTUALIZATION
-diff --git a/block/Kconfig b/block/Kconfig
-index f7045aa..1b91498 100644
---- a/block/Kconfig
-+++ b/block/Kconfig
-@@ -224,4 +224,4 @@ config BLK_MQ_RDMA
- config BLK_PM
- 	def_bool BLOCK && PM
- 
--source block/Kconfig.iosched
-+source "block/Kconfig.iosched"
-diff --git a/crypto/Kconfig b/crypto/Kconfig
-index 05c91eb..d18b1c3 100644
---- a/crypto/Kconfig
-+++ b/crypto/Kconfig
-@@ -1826,7 +1826,7 @@ config CRYPTO_HASH_INFO
- 	bool
- 
- source "drivers/crypto/Kconfig"
--source crypto/asymmetric_keys/Kconfig
--source certs/Kconfig
-+source "crypto/asymmetric_keys/Kconfig"
-+source "certs/Kconfig"
- 
- endif	# if CRYPTO
-diff --git a/drivers/crypto/Kconfig b/drivers/crypto/Kconfig
-index caa98a7f..4db49de 100644
---- a/drivers/crypto/Kconfig
-+++ b/drivers/crypto/Kconfig
-@@ -258,7 +258,7 @@ config CRYPTO_DEV_HIFN_795X_RNG
- 	  Select this option if you want to enable the random number generator
- 	  on the HIFN 795x crypto adapters.
- 
--source drivers/crypto/caam/Kconfig
-+source "drivers/crypto/caam/Kconfig"
- 
- config CRYPTO_DEV_TALITOS
- 	tristate "Talitos Freescale Security Engine (SEC)"
-diff --git a/drivers/gpu/drm/i915/Kconfig b/drivers/gpu/drm/i915/Kconfig
-index 33a458b..148be8e 100644
---- a/drivers/gpu/drm/i915/Kconfig
-+++ b/drivers/gpu/drm/i915/Kconfig
-@@ -131,5 +131,5 @@ config DRM_I915_GVT_KVMGT
- menu "drm/i915 Debugging"
- depends on DRM_I915
- depends on EXPERT
--source drivers/gpu/drm/i915/Kconfig.debug
-+source "drivers/gpu/drm/i915/Kconfig.debug"
- endmenu
-diff --git a/drivers/hwmon/Kconfig b/drivers/hwmon/Kconfig
-index 81da17a..9ccbbd3 100644
---- a/drivers/hwmon/Kconfig
-+++ b/drivers/hwmon/Kconfig
-@@ -1306,7 +1306,7 @@ config SENSORS_PCF8591
- 	  These devices are hard to detect and rarely found on mainstream
- 	  hardware.  If unsure, say N.
- 
--source drivers/hwmon/pmbus/Kconfig
-+source "drivers/hwmon/pmbus/Kconfig"
- 
- config SENSORS_PWM_FAN
- 	tristate "PWM fan"
-diff --git a/drivers/i2c/Kconfig b/drivers/i2c/Kconfig
-index efc3354..c6b7fc7 100644
---- a/drivers/i2c/Kconfig
-+++ b/drivers/i2c/Kconfig
-@@ -68,7 +68,7 @@ config I2C_MUX
- 	  This support is also available as a module.  If so, the module
- 	  will be called i2c-mux.
- 
--source drivers/i2c/muxes/Kconfig
-+source "drivers/i2c/muxes/Kconfig"
- 
- config I2C_HELPER_AUTO
- 	bool "Autoselect pertinent helper modules"
-@@ -94,8 +94,8 @@ config I2C_SMBUS
- 	  This support is also available as a module.  If so, the module
- 	  will be called i2c-smbus.
- 
--source drivers/i2c/algos/Kconfig
--source drivers/i2c/busses/Kconfig
-+source "drivers/i2c/algos/Kconfig"
-+source "drivers/i2c/busses/Kconfig"
- 
- config I2C_STUB
- 	tristate "I2C/SMBus Test Stub"
-diff --git a/drivers/pps/Kconfig b/drivers/pps/Kconfig
-index c6008f2..965aa08 100644
---- a/drivers/pps/Kconfig
-+++ b/drivers/pps/Kconfig
-@@ -37,8 +37,8 @@ config NTP_PPS
- 
- 	  It doesn't work on tickless systems at the moment.
- 
--source drivers/pps/clients/Kconfig
-+source "drivers/pps/clients/Kconfig"
- 
--source drivers/pps/generators/Kconfig
-+source "drivers/pps/generators/Kconfig"
- 
- endif # PPS
-diff --git a/drivers/ras/Kconfig b/drivers/ras/Kconfig
-index 4c3c67d..b834ff5 100644
---- a/drivers/ras/Kconfig
-+++ b/drivers/ras/Kconfig
-@@ -30,6 +30,6 @@ menuconfig RAS
- 
- if RAS
- 
--source arch/x86/ras/Kconfig
-+source "arch/x86/ras/Kconfig"
- 
- endif
-diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
-index 5422523..5fbfabb 100644
---- a/drivers/thermal/Kconfig
-+++ b/drivers/thermal/Kconfig
-@@ -383,7 +383,7 @@ config INTEL_QUARK_DTS_THERMAL
- 	  underlying BIOS/Firmware.
- 
- menu "ACPI INT340X thermal drivers"
--source drivers/thermal/int340x_thermal/Kconfig
-+source "drivers/thermal/int340x_thermal/Kconfig"
- endmenu
- 
- config INTEL_BXT_PMIC_THERMAL
-diff --git a/drivers/w1/Kconfig b/drivers/w1/Kconfig
-index 6743bde..dbb41f4 100644
---- a/drivers/w1/Kconfig
-+++ b/drivers/w1/Kconfig
-@@ -25,7 +25,7 @@ config W1_CON
- 	  2. Userspace commands. Includes read/write and search/alarm search commands.
- 	  3. Replies to userspace commands.
- 
--source drivers/w1/masters/Kconfig
--source drivers/w1/slaves/Kconfig
-+source "drivers/w1/masters/Kconfig"
-+source "drivers/w1/slaves/Kconfig"
- 
- endif # W1
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index 1af29b8..08a95da 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -439,7 +439,7 @@ config DEBUG_KERNEL
- 
- menu "Memory Debugging"
- 
--source mm/Kconfig.debug
-+source "mm/Kconfig.debug"
- 
- config DEBUG_OBJECTS
- 	bool "Debug object operations"
-@@ -1609,7 +1609,7 @@ config LATENCYTOP
- 	  Enable this option if you want to use the LatencyTOP tool
- 	  to find out which userspace is blocking on what kernel operations.
- 
--source kernel/trace/Kconfig
-+source "kernel/trace/Kconfig"
- 
- config PROVIDE_OHCI1394_DMA_INIT
- 	bool "Remote debugging over FireWire early on boot"
-diff --git a/security/Kconfig b/security/Kconfig
-index d9aa521..e4fe2f3 100644
---- a/security/Kconfig
-+++ b/security/Kconfig
-@@ -4,7 +4,7 @@
- 
- menu "Security options"
- 
--source security/keys/Kconfig
-+source "security/keys/Kconfig"
- 
- config SECURITY_DMESG_RESTRICT
- 	bool "Restrict unprivileged access to the kernel syslog"
-@@ -230,14 +230,14 @@ config STATIC_USERMODEHELPER_PATH
- 	  If you wish for all usermode helper programs to be disabled,
- 	  specify an empty string here (i.e. "").
- 
--source security/selinux/Kconfig
--source security/smack/Kconfig
--source security/tomoyo/Kconfig
--source security/apparmor/Kconfig
--source security/loadpin/Kconfig
--source security/yama/Kconfig
-+source "security/selinux/Kconfig"
-+source "security/smack/Kconfig"
-+source "security/tomoyo/Kconfig"
-+source "security/apparmor/Kconfig"
-+source "security/loadpin/Kconfig"
-+source "security/yama/Kconfig"
- 
--source security/integrity/Kconfig
-+source "security/integrity/Kconfig"
- 
- choice
- 	prompt "Default security module"
-diff --git a/security/integrity/Kconfig b/security/integrity/Kconfig
-index da95658..877af1f 100644
---- a/security/integrity/Kconfig
-+++ b/security/integrity/Kconfig
-@@ -66,7 +66,7 @@ config INTEGRITY_AUDIT
- 	  be enabled by specifying 'integrity_audit=1' on the kernel
- 	  command line.
- 
--source security/integrity/ima/Kconfig
--source security/integrity/evm/Kconfig
-+source "security/integrity/ima/Kconfig"
-+source "security/integrity/evm/Kconfig"
- 
- endif   # if INTEGRITY
+diff --git a/scripts/kconfig/zconf.y b/scripts/kconfig/zconf.y
+index dcbf643..eeb449b 100644
+--- a/scripts/kconfig/zconf.y
++++ b/scripts/kconfig/zconf.y
+@@ -354,14 +354,7 @@ menu_end: end
+ 	}
+ };
+ 
+-menu_stmt: menu_entry menu_block menu_end
+-;
+-
+-menu_block:
+-	  /* empty */
+-	| menu_block common_stmt
+-	| menu_block menu_stmt
+-	| menu_block choice_stmt
++menu_stmt: menu_entry stmt_list menu_end
+ ;
+ 
+ source_stmt: T_SOURCE prompt T_EOL
 -- 
 2.7.4
 
