@@ -7,54 +7,55 @@ X-Spam-Status: No, score=-12.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53CE6C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 01:16:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32574C04EB8
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 01:16:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1AC3920851
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 01:16:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB0B02084E
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 01:16:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544491006;
-	bh=TMYwddJZxPyeizYSx3W+iQeDLCMwVtwa/A4kpFx2TRg=;
+	s=default; t=1544491017;
+	bh=AV9FArGHI2bL25vfx+XR79YicBC/Pn6/8vi1YIeC6GY=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=0Zk4RMgv0unnpaxMthTaBjIlruGiAJF/zndsgi/WF5vZPbFu3O8eYTiWSRKO/eRlh
-	 RsYQnHHlOqu8RbGa54HHdNFUVtjunypDRWrCFOivU9LUaFEScgRcgK8oOw7S9RWDNp
-	 TeeG1qA/1Kvp42LxaGbvY+ftgE76ZWQyVfYHY5mA=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AC3920851
+	b=A4Dgf5Hf1f8qUN1AL5QfeuZpcieJ6Ln3V/uavrI/7rES0h/FP+BqQf7O13TPijDzZ
+	 m0YmFb3BRkM7Q5aOxny1MFEXJYY+mGAZLN8DgWWtXkYl0n5GoBeB5Ml6tbRmcu5CM3
+	 3XiW0cKIgP3aQn1dsZTpQrYdhPCZYDidkHY+CN1U=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB0B02084E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728902AbeLKBQo (ORCPT
+        id S1728985AbeLKBQz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 10 Dec 2018 20:16:44 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:51326 "EHLO
+        Mon, 10 Dec 2018 20:16:55 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:51256 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728490AbeLKBQU (ORCPT
+        with ESMTP id S1728421AbeLKBQT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 10 Dec 2018 20:16:20 -0500
+        Mon, 10 Dec 2018 20:16:19 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=7043HACihHE3UK4bGyDMNL61JBlet1+RiUdpBn4JWQ4=; b=jqfkEXuHdGdh
-        fwFJdGIbCLl52pHRAtBN+N1txp3Fpqascfg4U1rWjV3OVn6pA8d0KWDtKHN5l7P95VshY+ew+Sabb
-        WOcOLDzpYjky59F4zPALxqyncAtJQz+F++RXGnkJVKw7X8FRozswFGrRKOY0mrB7MHw6Y3X5lIQpl
-        EtOnM=;
+        List-Archive; bh=2TFN3VrzvzjDa1B0wJFE0OxCet8xQoROaLsnNE7cgyY=; b=NelpsVncELxR
+        +BxEnNbuotrFCFBLRd4IWGBmCMitt6Pjo6aPHe8JCkjQnzD0QQ1i6g1HtJvDyDdVMIOunYqiXljfS
+        c8TkCw+cDNX15IhzYJYLwVn3I8ek+Jh215G6b0YvXm3FaA8vEy/emx1zQUK24QLJXtp/wOAgYDxRj
+        VPnkw=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gWWeo-0000MM-AL; Tue, 11 Dec 2018 01:16:18 +0000
+        id 1gWWel-0000M8-2r; Tue, 11 Dec 2018 01:16:15 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id F27A411254C7; Tue, 11 Dec 2018 01:16:17 +0000 (GMT)
+        id BBF0511254C7; Tue, 11 Dec 2018 01:16:14 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
 To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Applied "regulator: lp8788-ldo: Let core handle GPIO descriptor" to the regulator tree
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Applied "gpio: Export gpiod_get_from_of_node()" to the regulator tree
 In-Reply-To: 
 X-Patchwork-Hint: ignore
-Message-Id: <20181211011617.F27A411254C7@debutante.sirena.org.uk>
-Date:   Tue, 11 Dec 2018 01:16:17 +0000 (GMT)
+Message-Id: <20181211011614.BBF0511254C7@debutante.sirena.org.uk>
+Date:   Tue, 11 Dec 2018 01:16:14 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -62,7 +63,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: lp8788-ldo: Let core handle GPIO descriptor
+   gpio: Export gpiod_get_from_of_node()
 
 has been applied to the regulator tree at
 
@@ -87,42 +88,79 @@ to this mail.
 Thanks,
 Mark
 
-From 2bb8ede0b14187c19b5eedc62cf0b18b3bf00d3b Mon Sep 17 00:00:00 2001
+From fe6c473e3e41114301bfbf5710be56bf0eb233dc Mon Sep 17 00:00:00 2001
 From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 6 Dec 2018 13:43:40 +0100
-Subject: [PATCH] regulator: lp8788-ldo: Let core handle GPIO descriptor
+Date: Thu, 6 Dec 2018 13:43:42 +0100
+Subject: [PATCH] gpio: Export gpiod_get_from_of_node()
 
-Use the gpiod_get() rather than the devm_* version so that the
-regulator core can handle the lifecycle of these descriptors.
+This function already exist inside gpiolib, we were just
+reluctant to make it available to the kernel at large as
+the devm_* seemed to be enough for anyone.
 
-Fixes: 2468f0d51548 ("regulator: lp8788-ldo: Pass descriptor instead of GPIO number")
+However we found out that regulators need to do their own
+lifecycle/refcounting on GPIO descriptors and explicitly
+call gpiod_put() when done with a descriptor, so export
+this function so we can hand the refcounting over to the
+regulator core for these descriptors after retrieveal.
+
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Reviewed-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/lp8788-ldo.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/gpio/gpiolib.h        |  6 ------
+ include/linux/gpio/consumer.h | 13 +++++++++++++
+ 2 files changed, 13 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/regulator/lp8788-ldo.c b/drivers/regulator/lp8788-ldo.c
-index 553b4790050f..2ee22e7ea675 100644
---- a/drivers/regulator/lp8788-ldo.c
-+++ b/drivers/regulator/lp8788-ldo.c
-@@ -501,8 +501,12 @@ static int lp8788_config_ldo_enable_mode(struct platform_device *pdev,
- 		return 0;
- 	}
+diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
+index 087d865286a0..bc57f0dc5953 100644
+--- a/drivers/gpio/gpiolib.h
++++ b/drivers/gpio/gpiolib.h
+@@ -201,12 +201,6 @@ int gpiod_set_array_value_complex(bool raw, bool can_sleep,
+ 				  struct gpio_array *array_info,
+ 				  unsigned long *value_bitmap);
  
--	/* FIXME: check default mode for GPIO here: high or low? */
--	ldo->ena_gpiod = devm_gpiod_get_index_optional(&pdev->dev,
-+	/*
-+	 * Do not use devm* here: the regulator core takes over the
-+	 * lifecycle management of the GPIO descriptor.
-+	 * FIXME: check default mode for GPIO here: high or low?
-+	 */
-+	ldo->ena_gpiod = gpiod_get_index_optional(&pdev->dev,
- 					       "enable",
- 					       enable_id,
- 					       GPIOD_OUT_HIGH |
+-/* This is just passed between gpiolib and devres */
+-struct gpio_desc *gpiod_get_from_of_node(struct device_node *node,
+-					 const char *propname, int index,
+-					 enum gpiod_flags dflags,
+-					 const char *label);
+-
+ extern struct spinlock gpio_lock;
+ extern struct list_head gpio_devices;
+ 
+diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
+index f2f887795d43..348885f2f3d3 100644
+--- a/include/linux/gpio/consumer.h
++++ b/include/linux/gpio/consumer.h
+@@ -172,6 +172,10 @@ int desc_to_gpio(const struct gpio_desc *desc);
+ struct device_node;
+ struct fwnode_handle;
+ 
++struct gpio_desc *gpiod_get_from_of_node(struct device_node *node,
++					 const char *propname, int index,
++					 enum gpiod_flags dflags,
++					 const char *label);
+ struct gpio_desc *devm_gpiod_get_from_of_node(struct device *dev,
+ 					      struct device_node *node,
+ 					      const char *propname, int index,
+@@ -517,6 +521,15 @@ static inline int desc_to_gpio(const struct gpio_desc *desc)
+ struct device_node;
+ struct fwnode_handle;
+ 
++static inline
++struct gpio_desc *gpiod_get_from_of_node(struct device_node *node,
++					 const char *propname, int index,
++					 enum gpiod_flags dflags,
++					 const char *label)
++{
++	return ERR_PTR(-ENOSYS);
++}
++
+ static inline
+ struct gpio_desc *devm_gpiod_get_from_of_node(struct device *dev,
+ 					      struct device_node *node,
 -- 
 2.19.0.rc2
 
