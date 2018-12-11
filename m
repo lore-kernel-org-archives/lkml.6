@@ -2,102 +2,155 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22FC2C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:18:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B059FC5CFFE
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:18:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E59BB2084E
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:18:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E59BB2084E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 7800A2084E
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:18:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544541528;
+	bh=zk88PNm93vOrQRJuhmKV7k46NfJeGzn5XGA9gnCTq4w=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=xz+hOTswCECNWmv24crw2MF+o4TngjUvYrI0c6j3Q0K1AiRI+EIfmOxZX13vPbhZA
+	 eogNT6wxa0YXush37dVEKfcEj8VDZsH2ZGW7kOWWNSAAZ5UpjsRlXoiR1KJpZqJ5Uy
+	 7WI0bZoJ2U637rtk6/t25I0YxXSSpPf9hNmhDfd4=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7800A2084E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726893AbeLKPSL (ORCPT
+        id S1726907AbeLKPSr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:18:11 -0500
-Received: from foss.arm.com ([217.140.101.70]:49600 "EHLO foss.arm.com"
+        Tue, 11 Dec 2018 10:18:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42772 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726672AbeLKPSI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:18:08 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8293F1596;
-        Tue, 11 Dec 2018 07:18:07 -0800 (PST)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 4FC8C3F575;
-        Tue, 11 Dec 2018 07:18:07 -0800 (PST)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id 572D31AE0CE1; Tue, 11 Dec 2018 15:18:30 +0000 (GMT)
-Date:   Tue, 11 Dec 2018 15:18:30 +0000
-From:   Will Deacon <will.deacon@arm.com>
-To:     Andrey Konovalov <andreyknvl@google.com>
-Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christoph Lameter <cl@linux.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Dave Martin <dave.martin@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Paul Lawrence <paullawrence@google.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        kasan-dev@googlegroups.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-sparse@vger.kernel.org, linux-mm@kvack.org,
-        linux-kbuild@vger.kernel.org, Kostya Serebryany <kcc@google.com>,
-        Evgeniy Stepanov <eugenis@google.com>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Jann Horn <jannh@google.com>,
-        Mark Brand <markbrand@google.com>,
-        Chintan Pandya <cpandya@codeaurora.org>,
-        Vishwath Mohan <vishwath@google.com>
-Subject: Re: [PATCH v13 00/25] kasan: add software tag-based mode for arm64
-Message-ID: <20181211151829.GB11718@edgewater-inn.cambridge.arm.com>
-References: <cover.1544099024.git.andreyknvl@google.com>
+        id S1726366AbeLKPSr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:18:47 -0500
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E395520851;
+        Tue, 11 Dec 2018 15:18:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544541526;
+        bh=zk88PNm93vOrQRJuhmKV7k46NfJeGzn5XGA9gnCTq4w=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=f35GcSP7stgx6SclvEjSCP7hqZtcJ42c6FDpL0JQynd4kPGOhKeXAnGpDxd0pNxyH
+         DMfBk0oqt1/akgssgYSTdol3q+7kCsqCu7qxMhqoucV2wbdN/ZE06oR6E7PdITOo/k
+         K+NuppVrDlB4egh8qo6IQS+eHx7heP/mG7iZ+kFQ=
+Received: by mail-qk1-f173.google.com with SMTP id y16so8777279qki.7;
+        Tue, 11 Dec 2018 07:18:45 -0800 (PST)
+X-Gm-Message-State: AA+aEWZc8fz3w7miI2oT4thGCsAcnI/5jipzOKLpmlUXAPZipc6a6m1U
+        dJ2B57EkqPNzrIts1DVnU/yDXmJcSlpKH/Y36g==
+X-Google-Smtp-Source: AFSGD/WI5yD91yt9GqhL/iY1sQifQIMa4uTENA3yixv9s43AO6E7k4c6tCBxQPLbW02djjfpX1UAq7QNSXWnqNSDOa8=
+X-Received: by 2002:a37:7682:: with SMTP id r124mr15036944qkc.79.1544541525112;
+ Tue, 11 Dec 2018 07:18:45 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1544099024.git.andreyknvl@google.com>
-User-Agent: Mutt/1.11.1+30 (d10eec459b35) ()
+References: <1544425521-775-1-git-send-email-Anson.Huang@nxp.com>
+ <20181210232358.GA11621@bogus> <DB3PR0402MB3916E1651ABC07F6F788B265F5A60@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+In-Reply-To: <DB3PR0402MB3916E1651ABC07F6F788B265F5A60@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Tue, 11 Dec 2018 09:18:33 -0600
+X-Gmail-Original-Message-ID: <CAL_Jsq+sP_fsQaoT6FpZNRxjhPAhCcE8e-0xffUUxShcC2LuHw@mail.gmail.com>
+Message-ID: <CAL_Jsq+sP_fsQaoT6FpZNRxjhPAhCcE8e-0xffUUxShcC2LuHw@mail.gmail.com>
+Subject: Re: [PATCH V3 1/2] dt-bindings: iio: light: isl29018: update power
+ supply name
+To:     Anson Huang <anson.huang@nxp.com>
+Cc:     Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald <pmeerw@pmeerw.net>,
+        Mark Rutland <mark.rutland@arm.com>, linux-iio@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andrey,
+On Mon, Dec 10, 2018 at 7:40 PM Anson Huang <anson.huang@nxp.com> wrote:
+>
+> Hi, Rob
+>
+> Best Regards!
+> Anson Huang
+>
+> > -----Original Message-----
+> > From: Rob Herring [mailto:robh@kernel.org]
+> > Sent: 2018=E5=B9=B412=E6=9C=8811=E6=97=A5 7:24
+> > To: Anson Huang <anson.huang@nxp.com>
+> > Cc: jic23@kernel.org; knaack.h@gmx.de; lars@metafoo.de;
+> > pmeerw@pmeerw.net; mark.rutland@arm.com; linux-iio@vger.kernel.org;
+> > devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; dl-linux-imx
+> > <linux-imx@nxp.com>
+> > Subject: Re: [PATCH V3 1/2] dt-bindings: iio: light: isl29018: update p=
+ower
+> > supply name
+> >
+> > On Mon, Dec 10, 2018 at 07:11:19AM +0000, Anson Huang wrote:
+> > > According to datasheet, the isl29018 has "vddd/vdda" power supply, an=
+d
+> > > isl29023/isl29035 ONLY has "vdd" power supply, update the power suppl=
+y
+> > > name with "vdd" and "vdda" according to datasheet to cover all device=
+s
+> > > and avoid confusion.
+> > >
+> > > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> > > ---
+> > >  Documentation/devicetree/bindings/iio/light/isl29018.txt | 4 +++-
+> > >  1 file changed, 3 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/iio/light/isl29018.txt
+> > > b/Documentation/devicetree/bindings/iio/light/isl29018.txt
+> > > index b9bbde3..36f737d 100644
+> > > --- a/Documentation/devicetree/bindings/iio/light/isl29018.txt
+> > > +++ b/Documentation/devicetree/bindings/iio/light/isl29018.txt
+> > > @@ -15,7 +15,9 @@ Optional properties:
+> > >    Refer to interrupt-controller/interrupts.txt for generic interrupt=
+ client
+> > >    node bindings.
+> > >
+> > > -  - vcc-supply: phandle to the regulator that provides power to the =
+sensor.
+> > > +  - vdd-supply: phandle to the regulator that provides vdd power to =
+the
+> > sensor.
+> > > +
+> > > +  - vdda-supply: phandle to the regulator that provides vdda power t=
+o the
+> > sensor.
+> >
+> > Is this in use? You can't just change things if it is.
+>
+> I did NOT see any "vcc" in folder drivers/iio/light/, so I think it is NO=
+T used at all,
+> so I take this chance to update it according to datasheet. Thanks.
 
-On Thu, Dec 06, 2018 at 01:24:18PM +0100, Andrey Konovalov wrote:
-> This patchset adds a new software tag-based mode to KASAN [1].
-> (Initially this mode was called KHWASAN, but it got renamed,
->  see the naming rationale at the end of this section).
-> 
-> The plan is to implement HWASan [2] for the kernel with the incentive,
-> that it's going to have comparable to KASAN performance, but in the same
-> time consume much less memory, trading that off for somewhat imprecise
-> bug detection and being supported only for arm64.
+arch/arm/boot/dts/exynos5420-peach-pit.dts-629- light-sensor@44 {
+arch/arm/boot/dts/exynos5420-peach-pit.dts:630:         compatible =3D
+"isil,isl29018";
+arch/arm/boot/dts/exynos5420-peach-pit.dts-631-         reg =3D <0x44>;
+arch/arm/boot/dts/exynos5420-peach-pit.dts-632-         vcc-supply =3D
+<&tps65090_fet5>;
+arch/arm/boot/dts/exynos5420-peach-pit.dts-633- };
 
-For the arm64 parts:
+arch/arm/boot/dts/exynos5800-peach-pi.dts-629-  light-sensor@44 {
+arch/arm/boot/dts/exynos5800-peach-pi.dts:630:          compatible =3D
+"isil,isl29018";
+arch/arm/boot/dts/exynos5800-peach-pi.dts-631-          reg =3D <0x44>;
+arch/arm/boot/dts/exynos5800-peach-pi.dts-632-          vcc-supply =3D
+<&tps65090_fet5>;
+arch/arm/boot/dts/exynos5800-peach-pi.dts-633-  };
 
-Acked-by: Will Deacon <will.deacon@arm.com>
+The rest of the dts files using this don't have a supply it seems. So
+you need permission from the Exynos folks if you want to just drop
+this. And also update their dts files.
 
-I assume that you plan to replace the current patches in -mm with this
-series?
-
-Cheers,
-
-Will
+Rob
