@@ -2,146 +2,190 @@ Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C72F2C5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 09:50:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 708DCC07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 09:50:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C83F2082F
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 09:50:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 20B522082F
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 09:50:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="n3NMzp/V";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="bxYowwo4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C83F2082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=cadence.com header.i=@cadence.com header.b="n5bRRHw8";
+	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="eyInSm4a"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20B522082F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cadence.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726432AbeLKJuZ (ORCPT
+        id S1726445AbeLKJu2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 04:50:25 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:48912 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726415AbeLKJuY (ORCPT
+        Tue, 11 Dec 2018 04:50:28 -0500
+Received: from mx0b-0014ca01.pphosted.com ([208.86.201.193]:53828 "EHLO
+        mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726384AbeLKJuY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 11 Dec 2018 04:50:24 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 3DC7D60B7E; Tue, 11 Dec 2018 09:50:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1544521823;
-        bh=8J6o5GFaGuB+vwvtTAe6kkisMe8sCWDlRJ75Q1KoJak=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=n3NMzp/VHcTkOpdDizMIKAWQtRiSjhMY94ylyZjxVS2Q5bvMQygeVn+PvoGGvX/mE
-         2611sKRdrL1ioyV7CmaVJf1U/fUzLiqFFzTIrXIK4NxWkeJ2HNy3BrssBtNUcZAJYj
-         jsTVwfjUvr4ZnIMeqg9YGTSPM9PECdEl//m+j73w=
-Received: from blr-ubuntu-173.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: rnayak@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id D687560C5F;
-        Tue, 11 Dec 2018 09:50:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1544521820;
-        bh=8J6o5GFaGuB+vwvtTAe6kkisMe8sCWDlRJ75Q1KoJak=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bxYowwo4rVdYPH1WD2sP024GE/eAjf+EOjB6/IIYfC/tqIM26WdVofaYNsFKqNcfg
-         kmgKTUgInXbSKNXsFrhYACdqOsFbYWuw8UfZWYuBjDjVDJJiyTnUcq6m5bW5TgQT5B
-         fVfxiUF59+9aM6CRANnkJgFfxjpIJIpe5aVk8qGw=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D687560C5F
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
-From:   Rajendra Nayak <rnayak@codeaurora.org>
-To:     andy.gross@linaro.org, robh@kernel.org, viresh.kumar@linaro.org,
-        sboyd@kernel.org, ulf.hansson@linaro.org, collinsd@codeaurora.org,
-        mka@chromium.org
-Cc:     devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Rajendra Nayak <rnayak@codeaurora.org>
-Subject: [PATCH v6 08/10] PM / Domains: Add a simple_opp_to_performance_state() helper
-Date:   Tue, 11 Dec 2018 15:19:36 +0530
-Message-Id: <20181211094938.25086-9-rnayak@codeaurora.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181211094938.25086-1-rnayak@codeaurora.org>
-References: <20181211094938.25086-1-rnayak@codeaurora.org>
+Received: from pps.filterd (m0042333.ppops.net [127.0.0.1])
+        by mx0b-0014ca01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wBB9mKMu007768;
+        Tue, 11 Dec 2018 01:50:13 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=date : from : to :
+ cc : subject : message-id : mime-version : content-type; s=proofpoint;
+ bh=OwvmtHJCkh7BGzpTQZFyBI8j9A7vRc4zug5/PuHBGpo=;
+ b=n5bRRHw8WMjDWM3Mz6K7YOXboJZep0LuWH/vzI4frUNo858vx9qyP9tZYvannr2wsqHe
+ fXs5n2XR9zPXwDONc0fbB984cp/HhnF/v9mKQWwNgxoy+zsDHG1xx+vVV9azWafIzQwa
+ fWhk4V2K8Jkw/n0HHziQC8l2PW1pmKlqNUKuF5bHXbjzcph+UnK5hIXMkVKWPRyuOr83
+ AD7Vq3gL8XcO8CkJztxWqCdpvnxAI8/FMXzb6+cYgpBgH+mn7eAHMxVHq/nERie6qX6x
+ bkPg655OcrKRKmRK+YN8SaXS5Cnoz7oDyL6Bdx7alX2RQmtvnSVXa4B2hfq4dFvQD46y rw== 
+Authentication-Results: cadence.com;
+        spf=pass smtp.mailfrom=pthombar@cadence.com
+Received: from nam05-dm3-obe.outbound.protection.outlook.com (mail-dm3nam05lp2054.outbound.protection.outlook.com [104.47.49.54])
+        by mx0b-0014ca01.pphosted.com with ESMTP id 2p9wg8bkfx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 11 Dec 2018 01:50:13 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OwvmtHJCkh7BGzpTQZFyBI8j9A7vRc4zug5/PuHBGpo=;
+ b=eyInSm4aPynVwyKdpOPwfoBqIv6bCrXda/5wrQIDM1E3SV2Eg/OtaFYPQP+r2nF/C1uHeDVJPQHKzwaQa2SBbng1tPWCXFGO6X3jjs2wrb7XGbix0jU78uZOm9ixbzWBFpUmFXRLe+gg5DsWWFUMtIaC87lSrGKoWZUJOcnsLUw=
+Received: from DM5PR07CA0106.namprd07.prod.outlook.com (2603:10b6:4:ae::35) by
+ CY4PR0701MB3715.namprd07.prod.outlook.com (2603:10b6:910:93::31) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1425.18; Tue, 11 Dec
+ 2018 09:50:10 +0000
+Received: from DM3NAM05FT030.eop-nam05.prod.protection.outlook.com
+ (2a01:111:f400:7e51::207) by DM5PR07CA0106.outlook.office365.com
+ (2603:10b6:4:ae::35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1404.20 via Frontend
+ Transport; Tue, 11 Dec 2018 09:50:10 +0000
+Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
+ cadence.com discourages use of 158.140.1.28 as permitted sender)
+Received: from sjmaillnx1.cadence.com (158.140.1.28) by
+ DM3NAM05FT030.mail.protection.outlook.com (10.152.98.142) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1446.5 via Frontend Transport; Tue, 11 Dec 2018 09:50:09 +0000
+Received: from maileu3.global.cadence.com (maileu3.cadence.com [10.160.88.99])
+        by sjmaillnx1.cadence.com (8.14.4/8.14.4) with ESMTP id wBB9o2Q1014979
+        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
+        Tue, 11 Dec 2018 01:50:03 -0800
+X-CrossPremisesHeadersFilteredBySendConnector: maileu3.global.cadence.com
+Received: from maileu3.global.cadence.com (10.160.88.99) by
+ maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
+ 15.0.1367.3; Tue, 11 Dec 2018 10:50:04 +0100
+Received: from lvlogina.cadence.com (10.165.176.102) by
+ maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
+ 15.0.1367.3 via Frontend Transport; Tue, 11 Dec 2018 10:50:03 +0100
+Received: from lvlogina.cadence.com (localhost.localdomain [127.0.0.1])
+        by lvlogina.cadence.com (8.14.4/8.14.4) with ESMTP id wBB9o1uf002854;
+        Tue, 11 Dec 2018 09:50:01 GMT
+Received: (from pthombar@localhost)
+        by lvlogina.cadence.com (8.14.4/8.14.4/Submit) id wBB9o1XE002853;
+        Tue, 11 Dec 2018 09:50:01 GMT
+Date:   Tue, 11 Dec 2018 09:50:01 +0000
+From:   Parshuram Thombare <pthombar@cadence.com>
+To:     <axboe@kernel.dk>, <tj@kernel.org>, <jbacik@fb.com>,
+        <michaelcallahan@fb.com>, <snitzer@redhat.com>, <osandov@fb.com>,
+        <keith.busch@intel.com>, <ming.lei@redhat.com>, <shli@fb.com>,
+        <dennisszhou@gmail.com>, <linux-kernel@vger.kernel.org>
+CC:     <adouglas@cadence.com>, <jank@cadence.com>, <rafalc@cadence.com>,
+        <pthombar@cadence.com>
+Subject: [PATCH 1/2] block: add bi_crypto_ctx variable in struct bio
+Message-ID: <20181211095001.GA32573@lvlogina.cadence.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+User-Agent: Mutt/1.5.20 (2009-12-10)
+X-OrganizationHeadersPreserved: maileu3.global.cadence.com
+X-EOPAttributedMessage: 0
+X-Forefront-Antispam-Report: CIP:158.140.1.28;IPV:CAL;SCL:-1;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(979002)(346002)(136003)(376002)(39850400004)(396003)(2980300002)(36092001)(189003)(199004)(46406003)(42186006)(316002)(186003)(8936002)(26005)(8676002)(246002)(7416002)(16586007)(2201001)(305945005)(7636002)(86362001)(110136005)(58126008)(87636003)(426003)(54906003)(336012)(478600001)(26826003)(107886003)(33656002)(2906002)(47776003)(126002)(39060400002)(486006)(476003)(50466002)(5660300001)(105596002)(356004)(97756001)(4326008)(23726003)(106466001)(1076002)(18370500001)(921003)(1121003)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:CY4PR0701MB3715;H:sjmaillnx1.cadence.com;FPR:;SPF:SoftFail;LANG:en;PTR:corp.cadence.com;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: 1;DM3NAM05FT030;1:ZBw3o4gPV05YosOIcm2y62rUHEL+oDSc930SjnOtne0u/UJDpSS1dzi3YDSvjXKVpdBwMfmWAaX13oIeIQrTAoX5SqLf3CI+F7tZE73PHtWG7QGpb/eZ/kMz7WOOfit2
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: ab294a52-e374-43aa-4347-08d65f4e0a46
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060);SRVR:CY4PR0701MB3715;
+X-Microsoft-Exchange-Diagnostics: 1;CY4PR0701MB3715;3:opKDXJivMA+yRdHBVSffTbfsQLjg7qYyPvzfkbiCAKqzatSYyUCR9l+uMwjTKvBG9H6wPkdq2cG7TT8NQi2+ckr0XxD7vRYFX3WljqqljkQnYqUj+MCHwIME3nkqniFB8wImC1MDniBbiTeFIwc1JF7EeFfWVilg11CXkrRNheawu40Ljpo4i6tb43fH3Qn7PJYA1xmuJo0WSEJJ0mXZeTeF3/Q9+lWAwW2ePv5uTfR0nLsWdMUJmJ2De2h0Jama7ms3c36Q7k1VvfNZV0v3KchvJ2c8ZikzLNQsUL/s0ZcIynek/OOQJg1tCUPWAoqMzAgVFPr9SmTyNor5vfAykWwfGuYgEtL+o5SJdgT12BQ=;25:ZWPc8Rh3hNcqcaFSuJfa67hOwgy55bIZd9JzkHjdbU33mjXvQZgh2xCtwDjqd05JaNgIdK5R9ca+8kkgB1XhMAMow65prHWfV0ZOt+45pO8JU17uX+Mp9aBh13N59vXq33lwsHxkTsSzbTRaksLopIDHicDKxpvM+qvimzpyR4Zy5CxGzV1OYJFqCEuwgblStiL3qExKW9DK1bDsHCSWh1/MHpyNCBqVG3qZhlT0uYsOAwHLp+kCNAegazX3trtZwq1TzBTIBfjNQBp9YT85LZlcSEpa8TuEKzzEJkdTBIM8ExsuL4KH0bTdm+gF7HhCzONbRNAtqYG6FzIpuMmCPA==
+X-MS-TrafficTypeDiagnostic: CY4PR0701MB3715:
+X-Microsoft-Exchange-Diagnostics: 1;CY4PR0701MB3715;31:1T9n9BtS7KiN3bSnr7/HteI/g/shzcXIzWAwPbY7kGWjT9llTUlouOsJcYr74kk0jUkBCEFjvrskttEFrj9dkdXvmUjWD1a5Ju7EQQOCSFGuU80IDAfL318Rf8oJgMNGNYaLGFeDNoqci2tPGJVjZSgeixiPVJtIVWnk42Cds49uxoFR+JF8yC8tCGEZArL/61Ha7BmGs/vxOb/N4RESLFAT9XVf+ZPcnmUjVz2z7XE=;20:AIWea4mjVpkNYiUBTWOwNrAp0b2GeTYoT5b53uZhuMQaGG8FsRs/mJKCm6QNNxN1yquy56HgXK+MLGCq2t/UvtIA3BaydddXG5F9Mlgi6aPkqXNqO/KobK0ivDkItNv/ts1BGCU+7tBvwNVvizPfa7s7TW9DFWeQORfUG59OEu9qzlVx4Q3fIRRZTRB8wp+9GuPPXrer0ieY2Ozck9bIB8ZLYSoC/jPtU/Y9wFA7tIZbtJRhSJ9WTB7EzpkRoJspaP1yoe89bufqnJ1auEOkez+7EIsZiCPqbnmpy4vuiEmihw2B6s+RC1mHqDcNSvQFeFwvj+UflaV28cLBz+GMRkJt9Oti4Xd1WCV5tZ/egm9PlODeMzaIz6DcokctV9YC6YSA2lgxCDJl0G0XNxe7VEhuB4/EQ/By9UUrYkDfwenPaSPSeZB4biHBsAzxHcqiSszGvQOBx2vq86XZkpVZ7kecXJsrdmXMBCQdzgkrM/pQnRK/0mPSIB+lL52vqrg/
+X-Microsoft-Antispam-PRVS: <CY4PR0701MB3715B54D019CA75D73B938E4C1A60@CY4PR0701MB3715.namprd07.prod.outlook.com>
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(3230017)(999002)(6040522)(2401047)(8121501046)(5005006)(3231472)(944501520)(52105112)(3002001)(93006095)(93003095)(10201501046)(148016)(149066)(150057)(6041310)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:CY4PR0701MB3715;BCL:0;PCL:0;RULEID:;SRVR:CY4PR0701MB3715;
+X-Microsoft-Exchange-Diagnostics: 1;CY4PR0701MB3715;4:hLoRPTIdN9C8roXPtp29RXJgAoKYG7yNkB23szKapMpnjx7v74IvSYrO7EkQFifiWhSk5P7jopn0edQxo+bBeSqW0nkTZupvvscfjwf1d1wLF3fDbLr5OBqEqWjp6jwzwTTc94s1jJ9Po2m0sjvzbVG72GHs1hAehlvD+Bzp0xLwMuJmBk+tlHON7NQUvdTm4LvgQjcKXQnGx79WtuGbdPpb3iNEXZQ1uB6rAgy17pnjG1uqp1uVdZDhJqQuhdkhniVsESLMgGCXqCcwoLnpQw==
+X-Forefront-PRVS: 08831F51DC
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;CY4PR0701MB3715;23:OInrnAhAA4C0CLs9M2JiumFqHpTD+kyi/1etpmn?=
+ =?us-ascii?Q?sY1ZFbu937duXsmpcyoedTyDoz+kelvB5MQmG8LPYjuVot/kT2rL6X/Kq99t?=
+ =?us-ascii?Q?k3+oR/da9DndzIb7CuvZ+uLYNvVcOFy8CcN78TJH14FabQ5NLmwJTugyfCoy?=
+ =?us-ascii?Q?kjopXv1sYZQW9Q4jYpJe20zJcKBj6JVlI3A7KxNO1yK0z1Az8ksQFKnHOGss?=
+ =?us-ascii?Q?yChZEUX55JxrsfvCSOOcliC/DS18McOgAarDiAljISiD+IRE2QZaVzmc2wfV?=
+ =?us-ascii?Q?4VvFVgH8UrlP5auagvxRcGdkUSdD281kBV+ONoTUEe6KM2JV02PXXAtO4Yxy?=
+ =?us-ascii?Q?B8HTpAap0JIaCBVz0sPsxAXkn7idv7Z4UHrKA4iTSrY5VcHVKfEo1ZY44JVY?=
+ =?us-ascii?Q?XGnGAzVArob7qdY8MewylrQlD5wEjNsLA3Bq1udDHN05nVTQSIh0Ef3vBzKv?=
+ =?us-ascii?Q?uaWVKKOABCRthrY3MK/E7/0vP1KIXMljH0+nXtkVTzuhjnUQxM31hxyjSZAo?=
+ =?us-ascii?Q?JlP1j+WD1dzeU1i0q+GfqzkIyu1Dl/TkpkeX412qZFrHXRS9WGlMGGf7fKdt?=
+ =?us-ascii?Q?/p9pIWercp2PAwyLZIgBp2vnzdlksnK850AQzdHi+s/EccULpypKG/2IhUcy?=
+ =?us-ascii?Q?tCiwTXJvLt5i1S28N7w54KJjSL3YvG0lIngiNg/4CbIATvqT1+t6mHZfLaDL?=
+ =?us-ascii?Q?TUjWCRw9GUGc/IJQRrlRYregoHTlOLL/pfFNdMPXap0IFlJNKDXGzlPje4JG?=
+ =?us-ascii?Q?LgDzit3mwPUM+dbW+i3FDYHKXAo8X+fM+5fo2f12SNODMTh9+sVXkcIusxZt?=
+ =?us-ascii?Q?M+3/iy860n8JfUo/Zxxd3ZpTIgU2BCi+JzA2+omkEqFFPs/BBmNfNOpbsFTw?=
+ =?us-ascii?Q?wQ+sVloyFFcCcOwisBY3vLIVcVVAGFjgvSvWhF/ICGfOXdoab0m3H0lWvkvy?=
+ =?us-ascii?Q?UsJQvmEKSa42Q9aT7edhssPfBeGfvj0Wohc3nRwE4fynBrdYP8lzy+6n7VOm?=
+ =?us-ascii?Q?uykQWlCxVwutuGS/2MwlCtEpC6tJ8OXDDVxSadVKnRdYRiNPUI/Kkw1ZTIVM?=
+ =?us-ascii?Q?p3/ccINoRdjK7Mn5LyZd/C3cFvUOiYV3WmoqIxMZao7lsR61/vYC1PoH1MMB?=
+ =?us-ascii?Q?7J/brfeDhw3EdVYa80O1uj8+e5GC5tyiZXLHifFrMooiR2yTwr4eFRAvoZOG?=
+ =?us-ascii?Q?ou1nLzCOUqLsTmrw8QOWsZDz1LU9DG1DtORNGfdaveDHzpqaWYI0Z1gy63ad?=
+ =?us-ascii?Q?j0H4m3LJAqlxAuvfO7x0=3D?=
+X-Microsoft-Antispam-Message-Info: eukZFE+CR9J5boyOJAPgCPzJQo8NQqSOjpndwSoyBfOiTEtjb4SKS/vODlzI+sen4uPky88WXm7bkhi5R8ZdtiREUY4XpJ4+rhqShzjY9bsLkOMuT/xiLdo9YSk1ozMUvaoqFc/yynRBI9w7Nc9Z4mTuHtjPpb4v+bWjOHUFO2Ufjmz7vTUKyesFcQXEsfxNe72gv10+6voSc4W+zToEgMoMZGzau77JPgeTRjIPJLwikdzVxu462LpZ5Yh+hFhpWpKgWd3BCxeX14iTDpL3rwg2tGCQWVrhk/lptWxPTtr3Ibxru6wb2/79KtkC2LjK
+X-Microsoft-Exchange-Diagnostics: 1;CY4PR0701MB3715;6:na/i/kXQ60uE9/aO+nuIU6HbrZYv782KtVjMMQAlmNS7VjsdAdCrqQDW3yMZ5dDoF9UrNf2uIg1HXZ+bt4iuQ5pDJHEop0qbDY+8Lhq/sEzeZN5QSMdbau6GbT46BEexzlRFAK+R44CBDIgXmHZxVKFKSqZ4KbNciWGwdfnhNI6OYDDwORnya24UWx2c3EtiL057jTVvvp5uXzGQLxbv8KzL/pC8R+hT2d03obTSvl+x2hAZeO2o4ydpEsadfylISox5A0owyg89Lupjk87Uju5JWV/hZUe1Dr04Sy4iH+ducVr1OT2VWBZEgQDCjCMRWnCVaqFHSrTKzoJc2tpDvWpztzS1eDcA7HXJQoeyxPN87CWdtnVrYXF8otyHy3qzY1gVm22prRYAmigIC6rBKl597e7TmDJdZYFeDYj6hfvspI6hFCxQfHqXYPJ9//71M6WLgXY9FU+VKYJ6IhkN/Q==;5:olfMN7ZF7E8wvPtg4ChR0T7LVcQjgDETBT6CetIMps7V/Ep8Yj5c4xlDHM+Q2coUeWh27GCKDbxw6ZPbyGEt1egcaSgG6sdPiBjhmp11NEsQp9A+IoXtVujODO5V+SECXjpb5y8sIXwoxVkBUyjARMQ6r9/ScI2Vu1H3MWXk2qE=;7:5tlNrK9xP40CMVLZppwE8mlY8+5OIBnQcV4HhC5kIg4HxVCHTSApSG+P1WU84yY6CZXV9d7MGxERZTGGd975X+mlWUD6oBzMCMK7uRU8rV2kqnY0yT9NsZyPxIa2LJVhFWlMfiTYnQef74V7AZUP/g==
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;CY4PR0701MB3715;20:oHaAdyGDT2gPntbKqeeDlpmH7fW3F3P2zVFBljnfe02PwS7X2Pcw9s3qXyk5TqqM5g5Fs5q+Jr+d4KlkUFPFognlhY77ksnTW9ZHwrjyA6CGiawWRkxIEDcIEsDSzESc4Q5BKetYmBMO+DjS1AGz5NXDghi/6f1g/uliVCN+KI+bVQdqfwa1IpRtR6bx6RTBbVwmOunSoE4atzE9W2VTIsuNTqL5ZwuTmq1HDpXp1OWALOJMXfeEgVcRJeeRltQY
+X-OriginatorOrg: cadence.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Dec 2018 09:50:09.7562
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ab294a52-e374-43aa-4347-08d65f4e0a46
+X-MS-Exchange-CrossTenant-Id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=d36035c5-6ce6-4662-a3dc-e762e61ae4c9;Ip=[158.140.1.28];Helo=[sjmaillnx1.cadence.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR0701MB3715
+X-Proofpoint-SPF-Result: pass
+X-Proofpoint-SPF-Record: v=spf1 include:_spf.salesforce.com include:mktomail.com
+ include:spf-0014ca01.pphosted.com include:spf.protection.outlook.com
+ include:auth.msgapp.com include:spf.mandrillapp.com ~all
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-11_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_check_notspam policy=outbound_check score=0
+ priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0
+ spamscore=0 clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812110093
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that we have atleast 2 genpd providers, both using a simple
-routine to read a performance state value from device tree and
-return it, in order to implement the .opp_to_performance_state
-callback, add a simple_opp_to_performance_state() helper to do
-it, so it can be resued across all such genpd providers which
-just need to read the value from DT.
+Add variable 'void *bi_crypt_ctx' in 'struct bio'. This will
+be used to associate bio with crypto configuration of controller
+supporting real time / inline encryption/decryption.
 
-Suggested-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+Signed-off-by: Parshuram Thombare <pthombar@cadence.com>
 ---
- drivers/base/power/domain.c | 17 +++++++++++++++++
- include/linux/pm_domain.h   |  9 +++++++++
- 2 files changed, 26 insertions(+)
+ include/linux/blk_types.h |    4 ++++
+ 1 files changed, 4 insertions(+), 0 deletions(-)
 
-diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-index 8e554e6a82a2..193872afbe20 100644
---- a/drivers/base/power/domain.c
-+++ b/drivers/base/power/domain.c
-@@ -2520,6 +2520,23 @@ int of_genpd_parse_idle_states(struct device_node *dn,
- }
- EXPORT_SYMBOL_GPL(of_genpd_parse_idle_states);
+diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
+index 1dcf652..bd77603 100644
+--- a/include/linux/blk_types.h
++++ b/include/linux/blk_types.h
+@@ -188,6 +188,10 @@ struct bio {
+ #endif
+ 	};
  
-+unsigned int simple_opp_to_performance_state(struct generic_pm_domain *genpd,
-+					     struct dev_pm_opp *opp,
-+					     const char *name)
-+{
-+	struct device_node *np;
-+	unsigned int perf_state = 0;
++#ifdef CONFIG_BLK_DEV_HW_RT_ENCRYPTION
++	void *bi_crypto_ctx;
++#endif
 +
-+	np = dev_pm_opp_get_of_node(opp);
-+	if (of_property_read_u32(np, name, &perf_state))
-+		pr_err("%s: missing %s property\n", __func__, name);
-+
-+	of_node_put(np);
-+
-+	return perf_state;
-+}
-+EXPORT_SYMBOL_GPL(simple_opp_to_performance_state);
-+
- /**
-  * pm_genpd_opp_to_performance_state - Gets performance state of the genpd from its OPP node.
-  *
-diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
-index 642036952553..7e5777b081ee 100644
---- a/include/linux/pm_domain.h
-+++ b/include/linux/pm_domain.h
-@@ -260,6 +260,9 @@ int of_genpd_parse_idle_states(struct device_node *dn,
- 			       struct genpd_power_state **states, int *n);
- unsigned int pm_genpd_opp_to_performance_state(struct device *genpd_dev,
- 					       struct dev_pm_opp *opp);
-+unsigned int simple_opp_to_performance_state(struct  generic_pm_domain *genpd,
-+					     struct dev_pm_opp *opp,
-+					     const char *name);
+ 	unsigned short		bi_vcnt;	/* how many bio_vec's */
  
- int genpd_dev_pm_attach(struct device *dev);
- struct device *genpd_dev_pm_attach_by_id(struct device *dev,
-@@ -306,6 +309,12 @@ pm_genpd_opp_to_performance_state(struct device *genpd_dev,
- 	return 0;
- }
- 
-+unsigned int simple_opp_to_performance_state(struct generic_pm_domain *genpd,
-+					     struct dev_pm_opp *opp,
-+					     const char *name)
-+{
-+	return 0;
-+}
- static inline int genpd_dev_pm_attach(struct device *dev)
- {
- 	return 0;
+ 	/*
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+1.7.1
 
