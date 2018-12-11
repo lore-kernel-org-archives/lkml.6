@@ -7,50 +7,52 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6261DC5CFFE
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:51:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C48D1C07E85
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:51:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 297A62084E
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:51:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8BFB720855
+	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 15:51:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544543516;
-	bh=KfRCR3UdT9NugeHao/WzekZ0NSWv9wGr5C0RpM0sdlw=;
+	s=default; t=1544543518;
+	bh=7uSbKjd1y5//7PZ2oF7ahL0Iy92SW6xo1X+neNll30M=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=T0xqYis02AUa7F2C75C8xy5/8CzGy0PKjmvxzVajsHWeBjG7TpmHKJzYWOQXup2VO
-	 pwDf51NBlQZKz2ACWLYLMt0hotuxWkvfcXTVfQZeqkfOcA+xrZRVerNdWyKXsQ4KF6
-	 OKYD451zqDCcPckA81Wxkw0gH2BlvttaLCKntMhw=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 297A62084E
+	b=dlH6ykY0qNQ4qZTrhdUiqb0MXI4o4KF/AHFyxgG/H+t7pdGmu1IhZbRLhIAMPcofD
+	 yfmdPrA7YAxpM3A5BN3gs1I3GhNgpv2HVsYWPPA9TA/0o959BDPruyX4hEKd+K2IYU
+	 5klM9i5EtOQwsAGVO+OiMovPbVO7TP6up7aIf76k=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BFB720855
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729615AbeLKPvy (ORCPT
+        id S1729624AbeLKPv5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 10:51:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40476 "EHLO mail.kernel.org"
+        Tue, 11 Dec 2018 10:51:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40554 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729580AbeLKPvr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 10:51:47 -0500
+        id S1729605AbeLKPvx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 10:51:53 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A5BBE2084E;
-        Tue, 11 Dec 2018 15:51:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DA23520880;
+        Tue, 11 Dec 2018 15:51:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544543507;
-        bh=KfRCR3UdT9NugeHao/WzekZ0NSWv9wGr5C0RpM0sdlw=;
+        s=default; t=1544543512;
+        bh=7uSbKjd1y5//7PZ2oF7ahL0Iy92SW6xo1X+neNll30M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=f7GhVlUeQv7ZQTc4cr0gGiqDYtYkudH8RVKENG6Df5kQGAruCi65F1BgC+Ltst+95
-         zd3ydh0X1n5XlzcgCI6oqUKZ9WO2VK6MBP4G6zE1RGckYvSno9ywj9IG7lpqAwqNPb
-         jiPdywqKkmQ29WGu/rawED4bQZXId58F+3rQfw+s=
+        b=PIU7t4PrhvE8+26id/8P0cdo1T4pnJ9s6NyYnHDJ4zkCCNEIUfr14bJ1/JKrLtOGV
+         DC2cH8pX1ns+fL6MkPZnFlbkVaqjGS3ELg2xbNH1CwrGBFlDU9mOiyeLLGeItkNBqt
+         Om+C5T3vJPbwOeH6Rn1EyabOjvvcMXKNTMoi/uqs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vincent Chen <vincentc@andestech.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org,
+        Tigran Mkrtchyan <tigran.mkrtchyan@desy.de>,
+        Rick Macklem <rmacklem@uoguelph.ca>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 24/67] net: faraday: ftmac100: remove netif_running(netdev) check before disabling interrupts
-Date:   Tue, 11 Dec 2018 16:41:24 +0100
-Message-Id: <20181211151631.624840219@linuxfoundation.org>
+Subject: [PATCH 4.14 26/67] flexfiles: use per-mirror specified stateid for IO
+Date:   Tue, 11 Dec 2018 16:41:26 +0100
+Message-Id: <20181211151631.719148510@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181211151630.378216233@linuxfoundation.org>
 References: <20181211151630.378216233@linuxfoundation.org>
@@ -69,52 +71,127 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 426a593e641ebf0d9288f0a2fcab644a86820220 ]
+[ Upstream commit bb21ce0ad227b69ec0f83279297ee44232105d96 ]
 
-In the original ftmac100_interrupt(), the interrupts are only disabled when
-the condition "netif_running(netdev)" is true. However, this condition
-causes kerenl hang in the following case. When the user requests to
-disable the network device, kernel will clear the bit __LINK_STATE_START
-from the dev->state and then call the driver's ndo_stop function. Network
-device interrupts are not blocked during this process. If an interrupt
-occurs between clearing __LINK_STATE_START and stopping network device,
-kernel cannot disable the interrupts due to the condition
-"netif_running(netdev)" in the ISR. Hence, kernel will hang due to the
-continuous interruption of the network device.
+rfc8435 says:
 
-In order to solve the above problem, the interrupts of the network device
-should always be disabled in the ISR without being restricted by the
-condition "netif_running(netdev)".
+  For tight coupling, ffds_stateid provides the stateid to be used by
+  the client to access the file.
 
-[V2]
-Remove unnecessary curly braces.
+However current implementation replaces per-mirror provided stateid with
+by open or lock stateid.
 
-Signed-off-by: Vincent Chen <vincentc@andestech.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Ensure that per-mirror stateid is used by ff_layout_write_prepare_v4 and
+nfs4_ff_layout_prepare_ds.
+
+Signed-off-by: Tigran Mkrtchyan <tigran.mkrtchyan@desy.de>
+Signed-off-by: Rick Macklem <rmacklem@uoguelph.ca>
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/faraday/ftmac100.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ fs/nfs/flexfilelayout/flexfilelayout.c    | 21 +++++++++------------
+ fs/nfs/flexfilelayout/flexfilelayout.h    |  4 ++++
+ fs/nfs/flexfilelayout/flexfilelayoutdev.c | 19 +++++++++++++++++++
+ 3 files changed, 32 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/net/ethernet/faraday/ftmac100.c b/drivers/net/ethernet/faraday/ftmac100.c
-index 66928a922824..415fd93e9930 100644
---- a/drivers/net/ethernet/faraday/ftmac100.c
-+++ b/drivers/net/ethernet/faraday/ftmac100.c
-@@ -870,11 +870,10 @@ static irqreturn_t ftmac100_interrupt(int irq, void *dev_id)
- 	struct net_device *netdev = dev_id;
- 	struct ftmac100 *priv = netdev_priv(netdev);
+diff --git a/fs/nfs/flexfilelayout/flexfilelayout.c b/fs/nfs/flexfilelayout/flexfilelayout.c
+index b0fa83a60754..13612a848378 100644
+--- a/fs/nfs/flexfilelayout/flexfilelayout.c
++++ b/fs/nfs/flexfilelayout/flexfilelayout.c
+@@ -1365,12 +1365,7 @@ static void ff_layout_read_prepare_v4(struct rpc_task *task, void *data)
+ 				task))
+ 		return;
  
--	if (likely(netif_running(netdev))) {
--		/* Disable interrupts for polling */
--		ftmac100_disable_all_int(priv);
-+	/* Disable interrupts for polling */
-+	ftmac100_disable_all_int(priv);
-+	if (likely(netif_running(netdev)))
- 		napi_schedule(&priv->napi);
--	}
- 
- 	return IRQ_HANDLED;
+-	if (ff_layout_read_prepare_common(task, hdr))
+-		return;
+-
+-	if (nfs4_set_rw_stateid(&hdr->args.stateid, hdr->args.context,
+-			hdr->args.lock_context, FMODE_READ) == -EIO)
+-		rpc_exit(task, -EIO); /* lost lock, terminate I/O */
++	ff_layout_read_prepare_common(task, hdr);
  }
+ 
+ static void ff_layout_read_call_done(struct rpc_task *task, void *data)
+@@ -1539,12 +1534,7 @@ static void ff_layout_write_prepare_v4(struct rpc_task *task, void *data)
+ 				task))
+ 		return;
+ 
+-	if (ff_layout_write_prepare_common(task, hdr))
+-		return;
+-
+-	if (nfs4_set_rw_stateid(&hdr->args.stateid, hdr->args.context,
+-			hdr->args.lock_context, FMODE_WRITE) == -EIO)
+-		rpc_exit(task, -EIO); /* lost lock, terminate I/O */
++	ff_layout_write_prepare_common(task, hdr);
+ }
+ 
+ static void ff_layout_write_call_done(struct rpc_task *task, void *data)
+@@ -1734,6 +1724,10 @@ ff_layout_read_pagelist(struct nfs_pgio_header *hdr)
+ 	fh = nfs4_ff_layout_select_ds_fh(lseg, idx);
+ 	if (fh)
+ 		hdr->args.fh = fh;
++
++	if (!nfs4_ff_layout_select_ds_stateid(lseg, idx, &hdr->args.stateid))
++		goto out_failed;
++
+ 	/*
+ 	 * Note that if we ever decide to split across DSes,
+ 	 * then we may need to handle dense-like offsets.
+@@ -1796,6 +1790,9 @@ ff_layout_write_pagelist(struct nfs_pgio_header *hdr, int sync)
+ 	if (fh)
+ 		hdr->args.fh = fh;
+ 
++	if (!nfs4_ff_layout_select_ds_stateid(lseg, idx, &hdr->args.stateid))
++		goto out_failed;
++
+ 	/*
+ 	 * Note that if we ever decide to split across DSes,
+ 	 * then we may need to handle dense-like offsets.
+diff --git a/fs/nfs/flexfilelayout/flexfilelayout.h b/fs/nfs/flexfilelayout/flexfilelayout.h
+index 679cb087ef3f..d6515f1584f3 100644
+--- a/fs/nfs/flexfilelayout/flexfilelayout.h
++++ b/fs/nfs/flexfilelayout/flexfilelayout.h
+@@ -214,6 +214,10 @@ unsigned int ff_layout_fetch_ds_ioerr(struct pnfs_layout_hdr *lo,
+ 		unsigned int maxnum);
+ struct nfs_fh *
+ nfs4_ff_layout_select_ds_fh(struct pnfs_layout_segment *lseg, u32 mirror_idx);
++int
++nfs4_ff_layout_select_ds_stateid(struct pnfs_layout_segment *lseg,
++				u32 mirror_idx,
++				nfs4_stateid *stateid);
+ 
+ struct nfs4_pnfs_ds *
+ nfs4_ff_layout_prepare_ds(struct pnfs_layout_segment *lseg, u32 ds_idx,
+diff --git a/fs/nfs/flexfilelayout/flexfilelayoutdev.c b/fs/nfs/flexfilelayout/flexfilelayoutdev.c
+index d62279d3fc5d..9f69e83810ca 100644
+--- a/fs/nfs/flexfilelayout/flexfilelayoutdev.c
++++ b/fs/nfs/flexfilelayout/flexfilelayoutdev.c
+@@ -369,6 +369,25 @@ out:
+ 	return fh;
+ }
+ 
++int
++nfs4_ff_layout_select_ds_stateid(struct pnfs_layout_segment *lseg,
++				u32 mirror_idx,
++				nfs4_stateid *stateid)
++{
++	struct nfs4_ff_layout_mirror *mirror = FF_LAYOUT_COMP(lseg, mirror_idx);
++
++	if (!ff_layout_mirror_valid(lseg, mirror, false)) {
++		pr_err_ratelimited("NFS: %s: No data server for mirror offset index %d\n",
++			__func__, mirror_idx);
++		goto out;
++	}
++
++	nfs4_stateid_copy(stateid, &mirror->stateid);
++	return 1;
++out:
++	return 0;
++}
++
+ /**
+  * nfs4_ff_layout_prepare_ds - prepare a DS connection for an RPC call
+  * @lseg: the layout segment we're operating on
 -- 
 2.19.1
 
