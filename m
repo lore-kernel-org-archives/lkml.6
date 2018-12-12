@@ -2,106 +2,117 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D82EC04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 09:05:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F466C04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 09:08:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FCE820849
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 09:05:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FCE820849
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 63C0020849
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 09:08:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="vyH/41ES"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63C0020849
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726845AbeLLJFO convert rfc822-to-8bit (ORCPT
+        id S1726746AbeLLJIY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 04:05:14 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:33670 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726728AbeLLJFO (ORCPT
+        Wed, 12 Dec 2018 04:08:24 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:55946 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726242AbeLLJIX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 04:05:14 -0500
-Received: by mail-qt1-f193.google.com with SMTP id l11so19692759qtp.0;
-        Wed, 12 Dec 2018 01:05:12 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=Pe2hX+my2Rep6sFBugNFkpZL8ollwFC2yHQLZVYCr1w=;
-        b=Ua0cQNcMbeXzXEL49nycFKRXn1s5vI84CN7oKfBB12oHh01h9BoThcUw7M2PGAFhXz
-         9RHH4NPYc1x4FjLGnE3g4ZF/NseVKnFvfbc7usYfzvocl+3aXtvsyiQSLMahaf3b9Zwz
-         KJH1DhZK6QklOX0dO6+165Y21EKI7n4cL6UCS/D0dDA41pDKPUDdc9DfSMvb1RkmCwbX
-         T3m1ZJyZKKeIuDqk/TN1sC0rU7jEZ+3jgBptOrhGUoVdiwiMvEsCk1cDgehNp9PP/Yyi
-         dM8/fQ1DFeh7agN3p+uyfwsvWRuje1p8Pp30+xgh1MP1r4FiT8xntsS87eu0STNHZKw4
-         6pIA==
-X-Gm-Message-State: AA+aEWZhbMDrsf+b74KQSzrsDpPPbGCRX+T2v+jMFShaMmO2dWV/iTu5
-        hJyjdUeV69I2qJ28zAA3xFaPwznoPp6Esp9q8dpSvyUW
-X-Google-Smtp-Source: AFSGD/W1p/YrUtvmguy+ptOEDP8NjMzHBwAgMPuT/yiKmybtAkxp8uHu59a4MSbbCg+TQ2MekPSkyUkexr15FPMonBU=
-X-Received: by 2002:aed:35c5:: with SMTP id d5mr18850332qte.212.1544605512042;
- Wed, 12 Dec 2018 01:05:12 -0800 (PST)
+        Wed, 12 Dec 2018 04:08:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=az6nWIJzub1fG/XLd9mMD/gUtKdjaDzbqD9w/4S8LlQ=; b=vyH/41ESX872uRVptejDH6ffo
+        JcZgKMA97Sm09uVJZ5ku/hS3tQdzgSZnwBn1AkwbCf1nXn0B6tMLnqw64fzrHnDdAYzV1EoB2KqwL
+        NQnOLK6ZgBO6ezh2Bz4ggFcF+OJ6hYMfNFwJpblgoyChZryFrANL4vedCRtFIcjB6daaoH/ZGfB4m
+        lg/8bmOd2AXJPvgSAgVTu+uN4zP+5wvY4Svy29LEM2rLAOXbVq4UqQuz6/XV2qc8DdO8dAwXYiyGV
+        rjkkNORrK4Asq17bJ+DzN2LqqAtTex2QuR31wpcd10j0gM26ImIRRG1pOe4SOBf17jfsaGWTR0IU7
+        mA8QHPdIg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gX0Ui-0006U2-Cy; Wed, 12 Dec 2018 09:07:58 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 311242075BF39; Wed, 12 Dec 2018 10:07:51 +0100 (CET)
+Date:   Wed, 12 Dec 2018 10:07:51 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc:     Dmitry Safonov <dima@arista.com>, Jiri Slaby <jslaby@suse.cz>,
+        kernel test robot <rong.a.chen@intel.com>, lkp@01.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mikulas Patocka <mpatocka@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-serial@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Waiman Long <longman@redhat.com>
+Subject: Re: [LKP] [tty] c96cf923a9:
+ WARNING:possible_circular_locking_dependency_detected
+Message-ID: <20181212090751.GU5289@hirez.programming.kicks-ass.net>
+References: <20181211091154.GL23332@shao2-debian>
+ <b8a5b151-9eaa-b098-f24f-b17c1886f456@suse.cz>
+ <2780774e-b397-dcc2-6950-cccb527d5014@arista.com>
+ <20181212034252.GD431@jagdpanzerIV>
 MIME-Version: 1.0
-References: <CALCETrXoRAibsbWa9nfbDrt0iEuebMnCMhSFg-d9W-J2g8mDjw@mail.gmail.com>
- <CAHk-=wi_Kp=3XmGDdzmadzFSPFvuL+aAJ6ZPAR=o4z=KwYT2vw@mail.gmail.com>
- <Pine.BSM.4.64L.1812112150480.21176@herc.mirbsd.org> <CALCETrWgpAX7FV23zHmid83SsgnwFMKD4a_-xSEgB6v0kJR5sA@mail.gmail.com>
- <Pine.BSM.4.64L.1812112327500.21176@herc.mirbsd.org> <CALCETrXf0rmadycxmpGxd41qP9X+PAjyGHTwbGhKyp6oMKMRrA@mail.gmail.com>
- <Pine.BSM.4.64L.1812120231410.21176@herc.mirbsd.org>
-In-Reply-To: <Pine.BSM.4.64L.1812120231410.21176@herc.mirbsd.org>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 12 Dec 2018 10:04:53 +0100
-Message-ID: <CAK8P3a3yurujkdic98H02j0YfctSBf9NeXQreLZVhTzsttoc9g@mail.gmail.com>
-Subject: Re: Can we drop upstream Linux x32 support?
-To:     tg@mirbsd.de
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Florian Weimer <fweimer@redhat.com>, vapier@gentoo.org,
-        "H.J. Lu" <hjl.tools@gmail.com>, Rich Felker <dalias@libc.org>,
-        x32@buildd.debian.org, Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181212034252.GD431@jagdpanzerIV>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 12, 2018 at 3:38 AM Thorsten Glaser <tg@mirbsd.de> wrote:
->
-> Andy Lutomirski dixit:
->
-> >That’s the thing, though: the whole generic kernel compat
-> >infrastructure assumes there are at most two ABIs: native and, if
-> >enabled and relevant, compat. x32 breaks this entirely.
->
-> MIPS had o32, n32, n64 since like forever.
+On Wed, Dec 12, 2018 at 12:42:52PM +0900, Sergey Senozhatsky wrote:
+> Something like this (not tested):
+> 
+> ---
+> 
+>  drivers/tty/serial/serial_core.c | 14 ++++++++------
+>  1 file changed, 8 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/tty/serial/serial_core.c b/drivers/tty/serial/serial_core.c
+> index c439a5a1e6c0..64050f506348 100644
+> --- a/drivers/tty/serial/serial_core.c
+> +++ b/drivers/tty/serial/serial_core.c
+> @@ -268,6 +268,7 @@ static void uart_shutdown(struct tty_struct *tty, struct uart_state *state)
+>  	struct uart_port *uport = uart_port_check(state);
+>  	struct tty_port *port = &state->port;
+>  	unsigned long flags = 0;
+> +	char *xmit_buf = NULL;
+>  
+>  	/*
+>  	 * Set the TTY IO error marker
+> @@ -297,15 +298,16 @@ static void uart_shutdown(struct tty_struct *tty, struct uart_state *state)
+>  	 */
+>  	tty_port_set_suspended(port, 0);
+>  
+> +	uart_port_lock(state, flags);
+> +	xmit_buf = state->xmit.buf;
+> +	state->xmit.buf = NULL;
+> +	uart_port_unlock(uport, flags);
+> +
+>  	/*
+>  	 * Free the transmit buffer page.
+>  	 */
+> -	uart_port_lock(state, flags);
+> -	if (state->xmit.buf) {
+> -		free_page((unsigned long)state->xmit.buf);
+> -		state->xmit.buf = NULL;
+> -	}
+> -	uart_port_unlock(uport, flags);
+> +	if (xmit_buf)
+> +		free_page((unsigned long)xmit_buf);
+>  }
 
-o32 and n32 are practically the same, the only difference on the
-syscall ABI that I can see are the actual syscall numbers, and
-the 'struct sigcontext' definition.
-
-> ARM has old ABI, EABI and now 64-bit.
-
-arm64 intentionally did not attempt to support OABI user space
-because of this, and as I said the ilp32 ABI follows what MIPS
-n32 does using the same data structures as aarch32 (corresponding
-to mips o32).
-
-> >How hard would it be to have __attribute__((ilp64)), with an optional
-> >warning if any embedded structs are not ilp64?  This plus a wrapper to
->
-> You mean LP64. Impossible, because LP64 vs. ILP32 is not the only
-> difference between amd64 and x32.
-
-I think the above is what Intel's compiler does, and similar to what they
-do for mixing big-endian and little-endian code (!). Generally possible yes,
-but a lot of work, as well as error-prone and not particular appealing for
-the GNU toolchain IMHO.
-
-        Arnd
+That looks sensible anyhow. One should strive to not do alloc or free
+under locks as much as possible anyway.
