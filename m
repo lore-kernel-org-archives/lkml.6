@@ -2,175 +2,138 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE981C04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 11:49:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31B3DC04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 11:50:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A75D52086D
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 11:49:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A75D52086D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id E93862086D
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 11:50:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544615442;
+	bh=ZA5wbzAz61RK0HfBR5vrlVRZDquKEeW7Itu7MXAXYlA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=WLxMRhgCWmqnZzc0IgJ2SzuUtelcOdlb5Kpi6KajrR29nZhkYSdBvzUuzGJO8Wvra
+	 OWF5v29Qx9iBR0KWYJ/1BN5BIYqLSuHzuHyubSAXmiwUmaLa1Ql26SdhEdqpwnTPna
+	 8lt+mK2+r0FNS/zjQtTTPmiRa4UAY1VpUOGxP7JE=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E93862086D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727255AbeLLLt1 (ORCPT
+        id S1727299AbeLLLul (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 06:49:27 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39506 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727062AbeLLLt0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 06:49:26 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 17F4CA78;
-        Wed, 12 Dec 2018 03:49:26 -0800 (PST)
-Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 858543F575;
-        Wed, 12 Dec 2018 03:49:24 -0800 (PST)
-Subject: Re: [PATCH v2] arm64: Add memory hotplug support
-To:     Jonathan Cameron <jonathan.cameron@huawei.com>
-Cc:     will.deacon@arm.com, catalin.marinas@arm.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        cyrilc@xilinx.com, james.morse@arm.com, anshuman.khandual@arm.com,
-        linux-mm@kvack.org
-References: <331db1485b4c8c3466217e16a1e1f05618e9bae8.1544553902.git.robin.murphy@arm.com>
- <20181212114236.000030c9@huawei.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <0dc6de46-0b9f-9b0b-f967-e29804279631@arm.com>
-Date:   Wed, 12 Dec 2018 11:49:23 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 12 Dec 2018 06:50:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58500 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726913AbeLLLuk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 06:50:40 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4F3A120849;
+        Wed, 12 Dec 2018 11:50:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544615439;
+        bh=ZA5wbzAz61RK0HfBR5vrlVRZDquKEeW7Itu7MXAXYlA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Cz+7CWwkeO3ibyNhdwDf1q/JvIer2LCazGJjNBTeOlj5P1dGDrx57A6sLqz5vOMPG
+         k7h9fsVKcfaA4qTMIhCOp+5/15bdnieOyIzQP2E5De+jDmTntBB1EkD/KnoROJ3phH
+         uys7m+Jzi/YL+FQjNSK3bp2Ze4vmBdS/KoP4yNck=
+Date:   Wed, 12 Dec 2018 12:50:37 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc:     robh+dt@kernel.org, arnd@arndb.de, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        bjorn.andersson@linaro.org, linux-arm-msm@vger.kernel.org,
+        bkumar@qti.qualcomm.com, thierry.escande@linaro.org
+Subject: Re: [PATCH v2 6/6] misc: fastrpc: Add support for compat ioctls
+Message-ID: <20181212115037.GA31075@kroah.com>
+References: <20181207163513.16412-1-srinivas.kandagatla@linaro.org>
+ <20181207163513.16412-7-srinivas.kandagatla@linaro.org>
+ <20181212105932.GA1990@kroah.com>
+ <864aaef3-8d60-3beb-ce20-a9f41f78a32f@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <20181212114236.000030c9@huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <864aaef3-8d60-3beb-ce20-a9f41f78a32f@linaro.org>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/12/2018 11:42, Jonathan Cameron wrote:
-> On Tue, 11 Dec 2018 18:48:48 +0000
-> Robin Murphy <robin.murphy@arm.com> wrote:
+On Wed, Dec 12, 2018 at 11:44:05AM +0000, Srinivas Kandagatla wrote:
+> Thanks for the comments,
 > 
->> Wire up the basic support for hot-adding memory. Since memory hotplug
->> is fairly tightly coupled to sparsemem, we tweak pfn_valid() to also
->> cross-check the presence of a section in the manner of the generic
->> implementation, before falling back to memblock to check for no-map
->> regions within a present section as before. By having arch_add_memory(()
->> create the linear mapping first, this then makes everything work in the
->> way that __add_section() expects.
->>
->> We expect hotplug to be ACPI-driven, so the swapper_pg_dir updates
->> should be safe from races by virtue of the global device hotplug lock.
->>
->> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
-> Hi Robin,
+> On 12/12/18 10:59, Greg KH wrote:
+> > > This patch adds support for compat ioctl from 32 bits userland to
+> > > Qualcomm fastrpc driver.
+> > Ick, why?
+> > 
+> > Why not just fix up your ioctl structures to not need that at all?  For
+> > new code being added to the kernel, there's no excuse to have to have
+> > compat structures anymore, just make your api sane and all should be
+> > fine.
 > 
-> What tree is this against?
+> Yes, I did try that after comments from Arnd,
 > 
-> rodata_full doesn't seem be exist for me on 4.20-rc6.
+> 
+> > 
+> > What prevents you from doing that and requiring compat support?
+> > 
+> I removed most of the compat IOCTLS except this one.
+> The reason is that this ioctl takes arguments which can vary in number for
+> each call.
 
-Sorry, this is now based on the arm64 for-next/core branch - I was 
-similarly confused when Will first mentioned rodata_full on v1 ;)
+Then do not do that :)
 
-> With v1 I did the 'new node' test and it looked good except for an
-> old cgroups warning that has always been there (and has been on my list
-> to track down for a long time).
+Remember, you get to design the api, fix the structure size to work
+properly everywhere.
 
-Great, thanks for testing!
-
-Robin.
-
+> So args are passed as pointer to structure, rather than fixed
+> size. I could not find better way to rearrange this to give a fixed size
+> data structure. In theory number of arguments can vary from 0-255 for both
+> in & out.
 > 
-> Jonathan
->> ---
->>
->> v2: Handle page-mappings-only cases appropriately
->>
->>   arch/arm64/Kconfig   |  3 +++
->>   arch/arm64/mm/init.c |  8 ++++++++
->>   arch/arm64/mm/mmu.c  | 17 +++++++++++++++++
->>   arch/arm64/mm/numa.c | 10 ++++++++++
->>   4 files changed, 38 insertions(+)
->>
->> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
->> index 4dbef530cf58..be423fda5cec 100644
->> --- a/arch/arm64/Kconfig
->> +++ b/arch/arm64/Kconfig
->> @@ -261,6 +261,9 @@ config ZONE_DMA32
->>   config HAVE_GENERIC_GUP
->>   	def_bool y
->>   
->> +config ARCH_ENABLE_MEMORY_HOTPLUG
->> +	def_bool y
->> +
->>   config SMP
->>   	def_bool y
->>   
->> diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
->> index 6cde00554e9b..4bfe0fc9edac 100644
->> --- a/arch/arm64/mm/init.c
->> +++ b/arch/arm64/mm/init.c
->> @@ -291,6 +291,14 @@ int pfn_valid(unsigned long pfn)
->>   
->>   	if ((addr >> PAGE_SHIFT) != pfn)
->>   		return 0;
->> +
->> +#ifdef CONFIG_SPARSEMEM
->> +	if (pfn_to_section_nr(pfn) >= NR_MEM_SECTIONS)
->> +		return 0;
->> +
->> +	if (!valid_section(__nr_to_section(pfn_to_section_nr(pfn))))
->> +		return 0;
->> +#endif
->>   	return memblock_is_map_memory(addr);
->>   }
->>   EXPORT_SYMBOL(pfn_valid);
->> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
->> index 674c409a8ce4..da513a1facf4 100644
->> --- a/arch/arm64/mm/mmu.c
->> +++ b/arch/arm64/mm/mmu.c
->> @@ -1046,3 +1046,20 @@ int pud_free_pmd_page(pud_t *pudp, unsigned long addr)
->>   	pmd_free(NULL, table);
->>   	return 1;
->>   }
->> +
->> +#ifdef CONFIG_MEMORY_HOTPLUG
->> +int arch_add_memory(int nid, u64 start, u64 size, struct vmem_altmap *altmap,
->> +		    bool want_memblock)
->> +{
->> +	int flags = 0;
->> +
->> +	if (rodata_full || debug_pagealloc_enabled())
->> +		flags = NO_BLOCK_MAPPINGS | NO_CONT_MAPPINGS;
->> +
->> +	__create_pgd_mapping(swapper_pg_dir, start, __phys_to_virt(start),
->> +			     size, PAGE_KERNEL, pgd_pgtable_alloc, flags);
->> +
->> +	return __add_pages(nid, start >> PAGE_SHIFT, size >> PAGE_SHIFT,
->> +			   altmap, want_memblock);
->> +}
->> +#endif
->> diff --git a/arch/arm64/mm/numa.c b/arch/arm64/mm/numa.c
->> index 27a31efd9e8e..ae34e3a1cef1 100644
->> --- a/arch/arm64/mm/numa.c
->> +++ b/arch/arm64/mm/numa.c
->> @@ -466,3 +466,13 @@ void __init arm64_numa_init(void)
->>   
->>   	numa_init(dummy_numa_init);
->>   }
->> +
->> +/*
->> + * We hope that we will be hotplugging memory on nodes we already know about,
->> + * such that acpi_get_node() succeeds and we never fall back to this...
->> + */
->> +int memory_add_physaddr_to_nid(u64 addr)
->> +{
->> +	pr_warn("Unknown node for memory at 0x%llx, assuming node 0\n", addr);
->> +	return 0;
->> +}
+> current data structure looks like this:
 > 
+> struct fastrpc_invoke_args {
+> 	__s32 fd;
+> 	size_t length;
+> 	void *ptr;
+> };
+
+Make length and ptr both __u64 and you should be fine, right?  If you do
+that, might as well make fd __u64 as well to align things better.
+
+> struct fastrpc_invoke {
+> 	__u32 handle;
+> 	__u32 sc;
+> 	struct fastrpc_invoke_args *args;
+> };
 > 
+> Other option is to split this IOCTL into 3 parts
+> SET_INVOKE_METHOD, SET_INVOKE_ARGS and INVOKE
+> with some kinda handle to bind these three.
+> 
+> with below structures:
+> struct fastrpc_invoke {
+> 	__u32 handle;
+> 	__u32 sc;
+> };
+> 
+> struct fastrpc_invoke_arg {
+> 	__s32 fd;
+> 	__u64 length;
+> 	__u64 ptr;
+> };
+> I can try this and see how this works before I send next version of patch!
+
+No need to have 3 calls, just change your one structure and you should
+be fine.
+
+thanks,
+
+greg k-h
