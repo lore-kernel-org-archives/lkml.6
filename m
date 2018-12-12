@@ -2,84 +2,100 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.4 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1810CC04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 12:43:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B631FC04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 12:45:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8FEB20870
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 12:43:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8FEB20870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 798862084E
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 12:45:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="a4pR/xKH";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="imhQgI/S"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 798862084E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727453AbeLLMnc (ORCPT
+        id S1727460AbeLLMpN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 07:43:32 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:34892 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727091AbeLLMnc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 07:43:32 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 1BDAB2037D; Wed, 12 Dec 2018 13:43:30 +0100 (CET)
-Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
-        by mail.bootlin.com (Postfix) with ESMTPSA id E8D932037D;
-        Wed, 12 Dec 2018 13:43:29 +0100 (CET)
-Date:   Wed, 12 Dec 2018 13:43:30 +0100
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-        arm@kernel.org
-Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] ARM: at91: SoC for 4.21
-Message-ID: <20181212124330.GA27581@piout.net>
+        Wed, 12 Dec 2018 07:45:13 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:50438 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727159AbeLLMpM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 07:45:12 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 4389D602FF; Wed, 12 Dec 2018 12:45:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1544618712;
+        bh=bQgKiQOqtRXpI3MSOCfCddTBmmn1fLnC99kZz9N1ZOY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=a4pR/xKHgk9BFGZheGqc4UC1HQFT9ojCg1/cyuOOGLGpFv3289gUEBi8s7URGLgQk
+         kvaWGrsLY7rBhDEWiwv+QKGtwX7PprK/ImgH23IfAihn+y9dAB3hZ2nF9DG2n8CtNs
+         4FojthRbBERHdM3g84Dh85NCIQU8/azDvaKuf8nk=
+Received: from blr-ubuntu-87.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: sibis@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 92DA5601D7;
+        Wed, 12 Dec 2018 12:45:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1544618711;
+        bh=bQgKiQOqtRXpI3MSOCfCddTBmmn1fLnC99kZz9N1ZOY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=imhQgI/S7vPoSLqCHnMmcQHyCqw8B3+iQMKjIuOHC9HN2+Rr3rjZ/AnqZuc2fIvPA
+         I/fZCpBJ16bPbr7MzQiZ+ob/pzCrgTu+0tMY+AXsqP/2qe66Vehnxz48Mw8Dr7pxUF
+         7KnX3cHf7XpMyqj1amwPsmpfsSsga2jfoslcJNVA=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 92DA5601D7
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sibis@codeaurora.org
+From:   Sibi Sankar <sibis@codeaurora.org>
+To:     bjorn.andersson@linaro.org, david.brown@linaro.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, andy.gross@linaro.org
+Cc:     briannorris@chromium.org, akdwived@codeaurora.org,
+        clew@codeaurora.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm-owner@vger.kernel.org, ohad@wizery.com,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        Sibi Sankar <sibis@codeaurora.org>
+Subject: [PATCH 0/2] Add firmware bindings for Q6V5 MSS
+Date:   Wed, 12 Dec 2018 18:14:54 +0530
+Message-Id: <20181212124456.3164-1-sibis@codeaurora.org>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Arnd, Olof,
+Q6V5 MSS on certain SoCs like SDM845 are capable of operating under
+completely different configuration (like Non-Modem WLAN configuration)
+depending on the firmware loaded without any change in boot sequence
+of the Hexagon core. The patch series is ultimately aimed to avoid
+multiple compatibles per SoC to just specify different upstreamed firmware
+locations. This is achieved by introducing "qcom,firmware" binding
+to store the relative path of mba and modem metadata.
 
-Not much this cycle, simply adding new SoC/SP ids to the SoC detection
-code.
+remoteproc@4080000 { 
+	...
+	qcom,firmware = "qcom/sdm845/mss/mba.mbn",
+			"qcom/sdm845/mss/modem.mdt";
+	...
+}
 
-The following changes since commit 651022382c7f8da46cb4872a545ee1da6d097d2a:
+Suggested-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-  Linux 4.20-rc1 (2018-11-04 15:37:52 -0800)
+SibiSankar (2):
+  dt-bindings: remoteproc: qcom: Add firmware bindings for Q6V5 MSS
+  remoteproc: qcom: q6v5-mss: Add support for parsing fw dt bindings
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/at91/linux tags/at91-4.21-soc
-
-for you to fetch changes up to 446e8986a2417148aed14f362831bf2425d434cb:
-
-  ARM: at91: add support in soc driver for new SAM9X60 (2018-12-12 11:55:20 +0100)
-
-----------------------------------------------------------------
-AT91 SoC for 4.21:
-
- - Add new SoC IDs
-
-----------------------------------------------------------------
-Nicolas Ferre (1):
-      ARM: at91: add support in soc driver for LPDDR2 SiP
-
-Sandeep Sheriker Mallikarjun (1):
-      ARM: at91: add support in soc driver for new SAM9X60
-
- drivers/soc/atmel/soc.c | 10 ++++++++++
- drivers/soc/atmel/soc.h |  7 +++++++
- 2 files changed, 17 insertions(+)
+ .../bindings/remoteproc/qcom,q6v5.txt         |  7 +++
+ drivers/remoteproc/qcom_q6v5_mss.c            | 49 ++++++++++++++++---
+ 2 files changed, 48 insertions(+), 8 deletions(-)
 
 -- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
