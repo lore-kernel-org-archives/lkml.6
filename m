@@ -6,21 +6,21 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40164C67839
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 00:12:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24E40C67839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 00:12:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0BC5320672
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 00:12:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BC5320672
+	by mail.kernel.org (Postfix) with ESMTP id EA80020672
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 00:12:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA80020672
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726308AbeLLAML (ORCPT
+        id S1726354AbeLLAM0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 19:12:11 -0500
+        Tue, 11 Dec 2018 19:12:26 -0500
 Received: from mga04.intel.com ([192.55.52.120]:56048 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726211AbeLLAMJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726269AbeLLAMJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 11 Dec 2018 19:12:09 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
@@ -28,7 +28,7 @@ Received: from orsmga005.jf.intel.com ([10.7.209.41])
   by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Dec 2018 16:12:08 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,343,1539673200"; 
-   d="scan'208";a="282839403"
+   d="scan'208";a="282839408"
 Received: from rpedgeco-desk5.jf.intel.com ([10.54.75.141])
   by orsmga005.jf.intel.com with ESMTP; 11 Dec 2018 16:12:07 -0800
 From:   Rick Edgecombe <rick.p.edgecombe@intel.com>
@@ -43,9 +43,9 @@ To:     akpm@linux-foundation.org, luto@kernel.org, will.deacon@arm.com,
 Cc:     kristen@linux.intel.com, dave.hansen@intel.com,
         deneen.t.dock@intel.com,
         Rick Edgecombe <rick.p.edgecombe@intel.com>
-Subject: [PATCH v2 2/4] modules: Add new special vfree flags
-Date:   Tue, 11 Dec 2018 16:03:52 -0800
-Message-Id: <20181212000354.31955-3-rick.p.edgecombe@intel.com>
+Subject: [PATCH v2 4/4] x86/vmalloc: Add TLB efficient x86 arch_vunmap
+Date:   Tue, 11 Dec 2018 16:03:54 -0800
+Message-Id: <20181212000354.31955-5-rick.p.edgecombe@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181212000354.31955-1-rick.p.edgecombe@intel.com>
 References: <20181212000354.31955-1-rick.p.edgecombe@intel.com>
@@ -54,119 +54,176 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add new flags for handling freeing of special permissioned memory in vmalloc,
-and remove places where the handling was done in module.c.
+This adds a more efficient x86 architecture specific implementation of
+arch_vunmap, that can free any type of special permission memory with only 1 TLB
+flush.
 
-This will enable this flag for all architectures.
+In order to enable this, _set_pages_p and _set_pages_np are made non-static and
+renamed set_pages_p_noflush and set_pages_np_noflush to better communicate
+their different (non-flushing) behavior from the rest of the set_pages_*
+functions.
 
+The method for doing this with only 1 TLB flush was suggested by Andy
+Lutomirski.
+
+Suggested-by: Andy Lutomirski <luto@kernel.org>
 Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
 ---
- kernel/module.c | 43 ++++++++++++-------------------------------
- 1 file changed, 12 insertions(+), 31 deletions(-)
+ arch/x86/include/asm/set_memory.h |  2 +
+ arch/x86/mm/Makefile              |  3 +-
+ arch/x86/mm/pageattr.c            | 11 +++--
+ arch/x86/mm/vmalloc.c             | 71 +++++++++++++++++++++++++++++++
+ 4 files changed, 80 insertions(+), 7 deletions(-)
+ create mode 100644 arch/x86/mm/vmalloc.c
 
-diff --git a/kernel/module.c b/kernel/module.c
-index 49a405891587..910f92b402f8 100644
---- a/kernel/module.c
-+++ b/kernel/module.c
-@@ -1941,11 +1941,23 @@ void module_disable_ro(const struct module *mod)
- 	frob_rodata(&mod->init_layout, set_memory_rw);
+diff --git a/arch/x86/include/asm/set_memory.h b/arch/x86/include/asm/set_memory.h
+index 07a25753e85c..70ee81e8914b 100644
+--- a/arch/x86/include/asm/set_memory.h
++++ b/arch/x86/include/asm/set_memory.h
+@@ -84,6 +84,8 @@ int set_pages_x(struct page *page, int numpages);
+ int set_pages_nx(struct page *page, int numpages);
+ int set_pages_ro(struct page *page, int numpages);
+ int set_pages_rw(struct page *page, int numpages);
++int set_pages_np_noflush(struct page *page, int numpages);
++int set_pages_p_noflush(struct page *page, int numpages);
+ 
+ extern int kernel_set_to_readonly;
+ void set_kernel_text_rw(void);
+diff --git a/arch/x86/mm/Makefile b/arch/x86/mm/Makefile
+index 4b101dd6e52f..189681f863a6 100644
+--- a/arch/x86/mm/Makefile
++++ b/arch/x86/mm/Makefile
+@@ -13,7 +13,8 @@ CFLAGS_REMOVE_mem_encrypt_identity.o	= -pg
+ endif
+ 
+ obj-y	:=  init.o init_$(BITS).o fault.o ioremap.o extable.o pageattr.o mmap.o \
+-	    pat.o pgtable.o physaddr.o setup_nx.o tlb.o cpu_entry_area.o
++	    pat.o pgtable.o physaddr.o setup_nx.o tlb.o cpu_entry_area.o \
++	    vmalloc.o
+ 
+ # Make sure __phys_addr has no stackprotector
+ nostackp := $(call cc-option, -fno-stack-protector)
+diff --git a/arch/x86/mm/pageattr.c b/arch/x86/mm/pageattr.c
+index db7a10082238..db0a4dfb5a7f 100644
+--- a/arch/x86/mm/pageattr.c
++++ b/arch/x86/mm/pageattr.c
+@@ -2248,9 +2248,7 @@ int set_pages_rw(struct page *page, int numpages)
+ 	return set_memory_rw(addr, numpages);
  }
  
-+static void module_set_vm_flags(const struct module_layout *layout)
-+{
-+	struct vm_struct *vm = find_vm_area(layout->base);
+-#ifdef CONFIG_DEBUG_PAGEALLOC
+-
+-static int __set_pages_p(struct page *page, int numpages)
++int set_pages_p_noflush(struct page *page, int numpages)
+ {
+ 	unsigned long tempaddr = (unsigned long) page_address(page);
+ 	struct cpa_data cpa = { .vaddr = &tempaddr,
+@@ -2269,7 +2267,7 @@ static int __set_pages_p(struct page *page, int numpages)
+ 	return __change_page_attr_set_clr(&cpa, 0);
+ }
+ 
+-static int __set_pages_np(struct page *page, int numpages)
++int set_pages_np_noflush(struct page *page, int numpages)
+ {
+ 	unsigned long tempaddr = (unsigned long) page_address(page);
+ 	struct cpa_data cpa = { .vaddr = &tempaddr,
+@@ -2288,6 +2286,7 @@ static int __set_pages_np(struct page *page, int numpages)
+ 	return __change_page_attr_set_clr(&cpa, 0);
+ }
+ 
++#ifdef CONFIG_DEBUG_PAGEALLOC
+ void __kernel_map_pages(struct page *page, int numpages, int enable)
+ {
+ 	if (PageHighMem(page))
+@@ -2303,9 +2302,9 @@ void __kernel_map_pages(struct page *page, int numpages, int enable)
+ 	 * and hence no memory allocations during large page split.
+ 	 */
+ 	if (enable)
+-		__set_pages_p(page, numpages);
++		set_pages_p_noflush(page, numpages);
+ 	else
+-		__set_pages_np(page, numpages);
++		set_pages_np_noflush(page, numpages);
+ 
+ 	/*
+ 	 * We should perform an IPI and flush all tlbs,
+diff --git a/arch/x86/mm/vmalloc.c b/arch/x86/mm/vmalloc.c
+new file mode 100644
+index 000000000000..be9ea42c3dfe
+--- /dev/null
++++ b/arch/x86/mm/vmalloc.c
+@@ -0,0 +1,71 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * vmalloc.c: x86 arch version of vmalloc.c
++ *
++ * (C) Copyright 2018 Intel Corporation
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License
++ * as published by the Free Software Foundation; version 2
++ * of the License.
++ */
 +
-+	if (vm) {
-+		vm->flags |= VM_HAS_SPECIAL_PERMS;
-+		vm->flags |= VM_IMMEDIATE_UNMAP;
-+	}
++#include <linux/mm.h>
++#include <linux/set_memory.h>
++#include <linux/vmalloc.h>
++
++static void set_area_direct_np(struct vm_struct *area)
++{
++	int i;
++
++	for (i = 0; i < area->nr_pages; i++)
++		set_pages_np_noflush(area->pages[i], 1);
 +}
 +
- void module_enable_ro(const struct module *mod, bool after_init)
- {
- 	if (!rodata_enabled)
- 		return;
- 
-+	module_set_vm_flags(&mod->core_layout);
-+	module_set_vm_flags(&mod->init_layout);
- 	frob_text(&mod->core_layout, set_memory_ro);
- 	frob_rodata(&mod->core_layout, set_memory_ro);
- 	frob_text(&mod->init_layout, set_memory_ro);
-@@ -1964,15 +1976,6 @@ static void module_enable_nx(const struct module *mod)
- 	frob_writable_data(&mod->init_layout, set_memory_nx);
- }
- 
--static void module_disable_nx(const struct module *mod)
--{
--	frob_rodata(&mod->core_layout, set_memory_x);
--	frob_ro_after_init(&mod->core_layout, set_memory_x);
--	frob_writable_data(&mod->core_layout, set_memory_x);
--	frob_rodata(&mod->init_layout, set_memory_x);
--	frob_writable_data(&mod->init_layout, set_memory_x);
--}
--
- /* Iterate through all modules and set each module's text as RW */
- void set_all_modules_text_rw(void)
- {
-@@ -2016,23 +2019,8 @@ void set_all_modules_text_ro(void)
- 	}
- 	mutex_unlock(&module_mutex);
- }
--
--static void disable_ro_nx(const struct module_layout *layout)
--{
--	if (rodata_enabled) {
--		frob_text(layout, set_memory_rw);
--		frob_rodata(layout, set_memory_rw);
--		frob_ro_after_init(layout, set_memory_rw);
--	}
--	frob_rodata(layout, set_memory_x);
--	frob_ro_after_init(layout, set_memory_x);
--	frob_writable_data(layout, set_memory_x);
--}
--
- #else
--static void disable_ro_nx(const struct module_layout *layout) { }
- static void module_enable_nx(const struct module *mod) { }
--static void module_disable_nx(const struct module *mod) { }
- #endif
- 
- #ifdef CONFIG_LIVEPATCH
-@@ -2163,7 +2151,6 @@ static void free_module(struct module *mod)
- 	mutex_unlock(&module_mutex);
- 
- 	/* This may be empty, but that's OK */
--	disable_ro_nx(&mod->init_layout);
- 	module_arch_freeing_init(mod);
- 	module_memfree(mod->init_layout.base);
- 	kfree(mod->args);
-@@ -2173,7 +2160,6 @@ static void free_module(struct module *mod)
- 	lockdep_free_key_range(mod->core_layout.base, mod->core_layout.size);
- 
- 	/* Finally, free the core (containing the module structure) */
--	disable_ro_nx(&mod->core_layout);
- 	module_memfree(mod->core_layout.base);
- }
- 
-@@ -3497,7 +3483,6 @@ static noinline int do_init_module(struct module *mod)
- #endif
- 	module_enable_ro(mod, true);
- 	mod_tree_remove_init(mod);
--	disable_ro_nx(&mod->init_layout);
- 	module_arch_freeing_init(mod);
- 	mod->init_layout.base = NULL;
- 	mod->init_layout.size = 0;
-@@ -3812,10 +3797,6 @@ static int load_module(struct load_info *info, const char __user *uargs,
- 	module_bug_cleanup(mod);
- 	mutex_unlock(&module_mutex);
- 
--	/* we can't deallocate the module until we clear memory protection */
--	module_disable_ro(mod);
--	module_disable_nx(mod);
--
-  ddebug_cleanup:
- 	ftrace_release_mod(mod);
- 	dynamic_debug_remove(mod, info->debug);
++static void set_area_direct_prw(struct vm_struct *area)
++{
++	int i;
++
++	for (i = 0; i < area->nr_pages; i++)
++		set_pages_p_noflush(area->pages[i], 1);
++}
++
++void arch_vunmap(struct vm_struct *area, int deallocate_pages)
++{
++	int immediate = area->flags & VM_IMMEDIATE_UNMAP;
++	int special = area->flags & VM_HAS_SPECIAL_PERMS;
++
++	/* Unmap from vmalloc area */
++	remove_vm_area(area->addr);
++
++	/* If no need to reset directmap perms, just check if need to flush */
++	if (!(deallocate_pages || special)) {
++		if (immediate)
++			vm_unmap_aliases();
++		return;
++	}
++
++	/* From here we need to make sure to reset the direct map perms */
++
++	/*
++	 * If the area being freed does not have any extra capabilities, we can
++	 * just reset the directmap to RW before freeing.
++	 */
++	if (!immediate) {
++		set_area_direct_prw(area);
++		vm_unmap_aliases();
++		return;
++	}
++
++	/*
++	 * If the vm being freed has security sensitive capabilities such as
++	 * executable we need to make sure there is no W window on the directmap
++	 * before removing the X in the TLB. So we set not present first so we
++	 * can flush without any other CPU picking up the mapping. Then we reset
++	 * RW+P without a flush, since NP prevented it from being cached by
++	 * other cpus.
++	 */
++	set_area_direct_np(area);
++	vm_unmap_aliases();
++	set_area_direct_prw(area);
++}
 -- 
 2.17.1
 
