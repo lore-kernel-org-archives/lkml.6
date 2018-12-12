@@ -5,231 +5,415 @@ X-Spam-Level:
 X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,T_MIXED_ES autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9524C04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 13:51:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A6F2C65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 13:52:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70CB82086D
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 13:51:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D6CE820839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 13:52:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a44j1xTm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70CB82086D
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RFCmDfOf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6CE820839
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727651AbeLLNvw (ORCPT
+        id S1727655AbeLLNwa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 08:51:52 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:33817 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726232AbeLLNvv (ORCPT
+        Wed, 12 Dec 2018 08:52:30 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:45968 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726232AbeLLNw3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 08:51:51 -0500
-Received: by mail-it1-f196.google.com with SMTP id x124so13704997itd.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 05:51:50 -0800 (PST)
+        Wed, 12 Dec 2018 08:52:29 -0500
+Received: by mail-lf1-f68.google.com with SMTP id b20so13534497lfa.12;
+        Wed, 12 Dec 2018 05:52:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=eEpCoLPa3YrSbQPOUuLkkfExo2IQG3MVLYpYKqVQQqM=;
-        b=a44j1xTm7+YjGmVQhZtdjl9niRXGEJI+zMU95jJC3GQmKGbT5qr9vit3NMMUnb4ybW
-         ea14xlejYn5Bs/vD3Shmjl+4CoBJyYJ2p9bVmrZq/M8kCwn4fApbRqD3++mUo3cr6W4h
-         sARjkfLFDoS28YPoITsKGmyeXIpjfzGjayx2y3Pby0xGmVcmN91Tsi5rcXoJ51TpVDSV
-         7OlKQKoW0331ULhS2UiwAwzxPSCyS7Cnus0qCfMPV0dW+L5RUzTl/4jU0fPDbbsFGOLl
-         pPNZ0iO486y0ni0FwqCD0pL5ZxqmYTQrbB3Xcz/zihlZiRHA5BiioUD6G2CbLCD4hlhN
-         Me9A==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=cDcfoEyKqgqxq0f4H6ShPhCBOXCyALx65ifdUSwOIM4=;
+        b=RFCmDfOff30EI04t1FxT2aNi3s7RzOrTGRYX+nAwF5ISntKDLo3RsKBDrWGE6kGe+s
+         7ERYgl9QGah0XFWhAQmE/8VUy6spVwUceQg44jFMZBBA0HYdx32YzUwCf2RyfYkyCGd1
+         jrcptHmAdYrj1OBAJ7AAoutPYD4wHhUo1RqPBd7JdbC0I0yDuKyl+u62TYKj6HLCLQGE
+         HAQfpkk5w2Tcdb/8A4BphXg/hh6el7fCxgfdY1necYUBNClf3DMZ9YIRRrPn4m7Mxt0v
+         1znESBVBS2VubZ401N7iD/Mx5iNAlnOAuQds5b4GFXPsTJpNE7X5A9VJb/iaTrTBateg
+         bgQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=eEpCoLPa3YrSbQPOUuLkkfExo2IQG3MVLYpYKqVQQqM=;
-        b=nwal2r9DR+B7ZcpufJRhN6Bis7w66pn2pVf7M01+RCyJZ84TLNvZmKffZ8AFX9aivu
-         z43fvpNzTUCaHIhU2i1LJWslOKsCi2EfEvRGKY+m/R+qplS8RYu6ZtdrcMjQRyKEfnzD
-         gEyDVuKlD0SFrec/wc2RZwP1DNshT0LEajCQqLOE22cbidE5zxdt3Hipi24m03g9bqcQ
-         /i1gJVbUF3fZN47XWPXbNs++9hoqttlC2jYCP0FuYwOENBwPYYUmZyZWiOCerhQCFHrY
-         6Ai2DX80optIOQW6CUZ/kRH4FWS/qOvXMjHpDgyhu+s9adNyCxcFu4xuOkeEcIOpca/z
-         /7/w==
-X-Gm-Message-State: AA+aEWaKcwwWlIcCCuVlrdSGX0+QHHOdSe88W5koa/fMKfbD5s6R3tn1
-        taIly7Kht39DBbu7/UAzj4trOi8U61xjc4FvoH4=
-X-Google-Smtp-Source: AFSGD/WlNraaJDU+iXTm5iViDyyO+yy39mZAwN6litQXFGstWtT/pRP+KWKwJUbcHqKvyJRMgdoI/DB70YyeNRg1/E0=
-X-Received: by 2002:a24:a08a:: with SMTP id o132mr6095554ite.1.1544622710375;
- Wed, 12 Dec 2018 05:51:50 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=cDcfoEyKqgqxq0f4H6ShPhCBOXCyALx65ifdUSwOIM4=;
+        b=o3KKOApmjO0JoYUkFiabh6004Ozd65ncynuZjuUC7u1SoVyELyd4KebiTN72D1bAbD
+         LwuOf4+k56sG1TnqgYgybHIAxSnHpwTzxmrQBFtxX9FlIvyEz2qLpb4oPBOl9OPUvylN
+         JaCk3IhvA2owEFGA/hiPKeMD5QPUVJuWYAce1hIick7W5NwKaTb0HmFBTvYMHV4hAIbD
+         4T7mxAvqo04vbXM8P8jzcxvYcLu808A+wWOv+Ws0wU14elNnT84hTbJGmN4nie7aheJy
+         dqZhKAWBoK+C5G1wowgR05sUFjtuqovB8NegTL1yLg2s7p4xJ7ECr3bOodrTZhdJ384P
+         MJ/g==
+X-Gm-Message-State: AA+aEWbNuZ+i55+U4apduZ96T9yagBQYHaH6KsjPpTj2/Bc13nRBY2c4
+        u43KSDsMCH+gcRm4nHhAarXQlSVS
+X-Google-Smtp-Source: AFSGD/UPXT3AOWiFbKQNGRYFoUGi36F3ogrX5kg90wttHCt3vKFHEEMg04nXgT2baxHP0xinPc/Hhg==
+X-Received: by 2002:a19:2106:: with SMTP id h6mr11418069lfh.29.1544622744857;
+        Wed, 12 Dec 2018 05:52:24 -0800 (PST)
+Received: from [192.168.2.145] ([94.29.36.169])
+        by smtp.googlemail.com with ESMTPSA id n16sm3226628lfl.35.2018.12.12.05.52.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 12 Dec 2018 05:52:24 -0800 (PST)
+Subject: Re: [PATCH v6 13/21] iommu/tegra: gart: Integrate with Memory
+ Controller driver
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20181209202950.31486-1-digetx@gmail.com>
+ <20181209202950.31486-14-digetx@gmail.com> <20181212101407.GJ15092@ulmo>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <ee3cc3cc-e046-62b8-0f55-243e9a3ef9d0@gmail.com>
+Date:   Wed, 12 Dec 2018 16:52:12 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-References: <20181211051254.16633-1-peterx@redhat.com> <1fc103f7-3164-007d-bcfd-7ad7c60bb6ec@yandex-team.ru>
- <20181212051540.GA8970@xz-x1>
-In-Reply-To: <20181212051540.GA8970@xz-x1>
-From:   Konstantin Khlebnikov <koct9i@gmail.com>
-Date:   Wed, 12 Dec 2018 16:51:38 +0300
-Message-ID: <CALYGNiOSrwH-JCEqsZCeCNwnyJBTy_WtpjVuq5hpo6MYX=db7Q@mail.gmail.com>
-Subject: Re: [PATCH v2] mm: thp: fix flags for pmd migration when split
-To:     peterx@redhat.com
-Cc:     =?UTF-8?B?0JrQvtC90YHRgtCw0L3RgtC40L0g0KXQu9C10LHQvdC40LrQvtCy?= 
-        <khlebnikov@yandex-team.ru>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@suse.com>, dave.jiang@intel.com,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
-        Souptick Joarder <jrdr.linux@gmail.com>, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181212101407.GJ15092@ulmo>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 12, 2018 at 8:15 AM Peter Xu <peterx@redhat.com> wrote:
->
-> On Tue, Dec 11, 2018 at 11:21:44AM +0300, Konstantin Khlebnikov wrote:
-> > On 11.12.2018 8:12, Peter Xu wrote:
-> > > When splitting a huge migrating PMD, we'll transfer all the existing
-> > > PMD bits and apply them again onto the small PTEs.  However we are
-> > > fetching the bits unconditionally via pmd_soft_dirty(), pmd_write()
-> > > or pmd_yound() while actually they don't make sense at all when it's
-> > > a migration entry.  Fix them up by make it conditional.
-> > >
-> > > Note that if my understanding is correct about the problem then if
-> > > without the patch there is chance to lose some of the dirty bits in
-> > > the migrating pmd pages (on x86_64 we're fetching bit 11 which is part
-> > > of swap offset instead of bit 2) and it could potentially corrupt the
-> > > memory of an userspace program which depends on the dirty bit.
-> > >
-> > > CC: Andrea Arcangeli <aarcange@redhat.com>
-> > > CC: Andrew Morton <akpm@linux-foundation.org>
-> > > CC: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-> > > CC: Matthew Wilcox <willy@infradead.org>
-> > > CC: Michal Hocko <mhocko@suse.com>
-> > > CC: Dave Jiang <dave.jiang@intel.com>
-> > > CC: "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>
-> > > CC: Souptick Joarder <jrdr.linux@gmail.com>
-> > > CC: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-> > > CC: linux-mm@kvack.org
-> > > CC: linux-kernel@vger.kernel.org
-> > > Signed-off-by: Peter Xu <peterx@redhat.com>
-> > > ---
-> > > v2:
-> > > - fix it up for young/write/dirty bits too [Konstantin]
-> > > ---
-> > >   mm/huge_memory.c | 15 ++++++++++-----
-> > >   1 file changed, 10 insertions(+), 5 deletions(-)
-> > >
-> > > diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> > > index f2d19e4fe854..b00941b3d342 100644
-> > > --- a/mm/huge_memory.c
-> > > +++ b/mm/huge_memory.c
-> > > @@ -2157,11 +2157,16 @@ static void __split_huge_pmd_locked(struct vm_area_struct *vma, pmd_t *pmd,
-> > >             page = pmd_page(old_pmd);
-> > >     VM_BUG_ON_PAGE(!page_count(page), page);
-> > >     page_ref_add(page, HPAGE_PMD_NR - 1);
-> > > -   if (pmd_dirty(old_pmd))
-> > > -           SetPageDirty(page);
-> > > -   write = pmd_write(old_pmd);
-> > > -   young = pmd_young(old_pmd);
-> > > -   soft_dirty = pmd_soft_dirty(old_pmd);
-> > > +   if (unlikely(pmd_migration)) {
-> > > +           soft_dirty = pmd_swp_soft_dirty(old_pmd);
-> > > +           young = write = false;
-> > > +   } else {
-> > > +           if (pmd_dirty(old_pmd))
-> > > +                   SetPageDirty(page);
-> > > +           write = pmd_write(old_pmd);
-> > > +           young = pmd_young(old_pmd);
-> > > +           soft_dirty = pmd_soft_dirty(old_pmd);
-> > > +   }
-> >
-> > Write/read-only is encoded into migration entry.
-> > I suppose there should be something like this:
-> >
-> > --- a/mm/huge_memory.c
-> > +++ b/mm/huge_memory.c
-> > @@ -2151,16 +2151,21 @@ static void __split_huge_pmd_locked(struct vm_area_struct *vma, pmd_t *pmd,
-> >
-> >                 entry = pmd_to_swp_entry(old_pmd);
-> >                 page = pfn_to_page(swp_offset(entry));
-> > +               write = is_write_migration_entry(entry);
-> > +               young = false;
-> > +               soft_dirty = pmd_swp_soft_dirty(old_pmd);
-> >         } else
-> >  #endif
-> > +       {
-> >                 page = pmd_page(old_pmd);
-> > +               if (pmd_dirty(old_pmd))
-> > +                       SetPageDirty(page);
-> > +               write = pmd_write(old_pmd);
-> > +               young = pmd_young(old_pmd);
-> > +               soft_dirty = pmd_soft_dirty(old_pmd);
-> > +       }
-> >         VM_BUG_ON_PAGE(!page_count(page), page);
-> >         page_ref_add(page, HPAGE_PMD_NR - 1);
-> > -       if (pmd_dirty(old_pmd))
-> > -               SetPageDirty(page);
-> > -       write = pmd_write(old_pmd);
-> > -       young = pmd_young(old_pmd);
-> > -       soft_dirty = pmd_soft_dirty(old_pmd);
-> >
-> >         /*
-> >          * Withdraw the table only after we mark the pmd entry invalid.
-> >
->
-> Oops yes, I missed the write bit.  Thanks for pointing it out.
->
-> Should I repost with your authorship and your sign-off?
+On 12.12.2018 13:14, Thierry Reding wrote:
+> On Sun, Dec 09, 2018 at 11:29:42PM +0300, Dmitry Osipenko wrote:
+>> The device-tree binding has been changed. There is no separate GART device
+>> anymore, it is squashed into the Memory Controller. Integrate GART module
+>> with the MC in a way it is done for the SMMU of Tegra30+.
+>>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>  drivers/iommu/Kconfig      |  1 +
+>>  drivers/iommu/tegra-gart.c | 77 ++++++++++++--------------------------
+>>  drivers/memory/tegra/mc.c  | 41 ++++++++++++++++++++
+>>  include/soc/tegra/mc.h     | 27 +++++++++++++
+>>  4 files changed, 93 insertions(+), 53 deletions(-)
+>>
+>> diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
+>> index d9a25715650e..83c099bb7288 100644
+>> --- a/drivers/iommu/Kconfig
+>> +++ b/drivers/iommu/Kconfig
+>> @@ -282,6 +282,7 @@ config ROCKCHIP_IOMMU
+>>  config TEGRA_IOMMU_GART
+>>  	bool "Tegra GART IOMMU Support"
+>>  	depends on ARCH_TEGRA_2x_SOC
+>> +	depends on TEGRA_MC
+>>  	select IOMMU_API
+>>  	help
+>>  	  Enables support for remapping discontiguous physical memory
+>> diff --git a/drivers/iommu/tegra-gart.c b/drivers/iommu/tegra-gart.c
+>> index 835fea461c59..0a72b6afa842 100644
+>> --- a/drivers/iommu/tegra-gart.c
+>> +++ b/drivers/iommu/tegra-gart.c
+>> @@ -19,16 +19,17 @@
+>>   * 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA.
+>>   */
+>>  
+>> -#include <linux/init.h>
+>>  #include <linux/io.h>
+>>  #include <linux/iommu.h>
+>>  #include <linux/list.h>
+>>  #include <linux/moduleparam.h>
+>> -#include <linux/of_device.h>
+>> +#include <linux/platform_device.h>
+>>  #include <linux/slab.h>
+>>  #include <linux/spinlock.h>
+>>  #include <linux/vmalloc.h>
+>>  
+>> +#include <soc/tegra/mc.h>
+>> +
+>>  /* bitmap of the page sizes currently supported */
+>>  #define GART_IOMMU_PGSIZES	(SZ_4K)
+>>  
+>> @@ -397,9 +398,8 @@ static const struct iommu_ops gart_iommu_ops = {
+>>  	.iotlb_sync	= gart_iommu_sync,
+>>  };
+>>  
+>> -static int tegra_gart_suspend(struct device *dev)
+>> +int tegra_gart_suspend(struct gart_device *gart)
+>>  {
+>> -	struct gart_device *gart = dev_get_drvdata(dev);
+>>  	unsigned long iova;
+>>  	u32 *data = gart->savedata;
+>>  	unsigned long flags;
+>> @@ -411,9 +411,8 @@ static int tegra_gart_suspend(struct device *dev)
+>>  	return 0;
+>>  }
+>>  
+>> -static int tegra_gart_resume(struct device *dev)
+>> +int tegra_gart_resume(struct gart_device *gart)
+>>  {
+>> -	struct gart_device *gart = dev_get_drvdata(dev);
+>>  	unsigned long flags;
+>>  
+>>  	spin_lock_irqsave(&gart->pte_lock, flags);
+>> @@ -422,41 +421,39 @@ static int tegra_gart_resume(struct device *dev)
+>>  	return 0;
+>>  }
+>>  
+>> -static int tegra_gart_probe(struct platform_device *pdev)
+>> +struct gart_device *tegra_gart_probe(struct device *dev,
+>> +				     const struct tegra_smmu_soc *soc,
+>> +				     struct tegra_mc *mc)
+>>  {
+>>  	struct gart_device *gart;
+>> -	struct resource *res, *res_remap;
+>> +	struct resource *res_remap;
+>>  	void __iomem *gart_regs;
+>> -	struct device *dev = &pdev->dev;
+>>  	int ret;
+>>  
+>>  	BUILD_BUG_ON(PAGE_SHIFT != GART_PAGE_SHIFT);
+>>  
+>> +	/* Tegra30+ has an SMMU and no GART */
+>> +	if (soc)
+>> +		return NULL;
+> 
+> This looks weird. Why do we even call tegra_gart_probe() on anything but
+> Tegra20?
 
-Feel free to use this piece for your own patch.
+Probably because I just wanted to replicate the weirdness of calling tegra_smmu_probe() on Tegra20.. for consistency.
 
-> Or even I'll
-> consider to directly drop the CONFIG_ARCH_ENABLE_THP_MIGRATION if with
-> that since I don't see much gain to keep it:
+>> +
+>>  	/* the GART memory aperture is required */
+>> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>> -	res_remap = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+>> -	if (!res || !res_remap) {
+>> +	res_remap = platform_get_resource(to_platform_device(dev),
+>> +					  IORESOURCE_MEM, 1);
+>> +	if (!res_remap) {
+>>  		dev_err(dev, "GART memory aperture expected\n");
+>> -		return -ENXIO;
+>> +		return ERR_PTR(-ENXIO);
+>>  	}
+>>  
+>>  	gart = devm_kzalloc(dev, sizeof(*gart), GFP_KERNEL);
+>>  	if (!gart) {
+>>  		dev_err(dev, "failed to allocate gart_device\n");
+>> -		return -ENOMEM;
+>> +		return ERR_PTR(-ENOMEM);
+>>  	}
+>>  
+>> -	gart_regs = devm_ioremap(dev, res->start, resource_size(res));
+>> -	if (!gart_regs) {
+>> -		dev_err(dev, "failed to remap GART registers\n");
+>> -		return -ENXIO;
+>> -	}
+>> -
+>> -	ret = iommu_device_sysfs_add(&gart->iommu, &pdev->dev, NULL,
+>> -				     dev_name(&pdev->dev));
+>> +	ret = iommu_device_sysfs_add(&gart->iommu, dev, NULL, "gart");
+>>  	if (ret) {
+>>  		dev_err(dev, "Failed to register IOMMU in sysfs\n");
+>> -		return ret;
+>> +		return ERR_PTR(ret);
+>>  	}
+>>  
+>>  	iommu_device_set_ops(&gart->iommu, &gart_iommu_ops);
+>> @@ -468,7 +465,8 @@ static int tegra_gart_probe(struct platform_device *pdev)
+>>  		goto remove_sysfs;
+>>  	}
+>>  
+>> -	gart->dev = &pdev->dev;
+>> +	gart->dev = dev;
+>> +	gart_regs = mc->regs + GART_REG_BASE;
+>>  	spin_lock_init(&gart->pte_lock);
+>>  	spin_lock_init(&gart->client_lock);
+>>  	INIT_LIST_HEAD(&gart->client);
+>> @@ -483,46 +481,19 @@ static int tegra_gart_probe(struct platform_device *pdev)
+>>  		goto unregister_iommu;
+>>  	}
+>>  
+>> -	platform_set_drvdata(pdev, gart);
+>>  	do_gart_setup(gart, NULL);
+>>  
+>>  	gart_handle = gart;
+>>  
+>> -	return 0;
+>> +	return gart;
+>>  
+>>  unregister_iommu:
+>>  	iommu_device_unregister(&gart->iommu);
+>>  remove_sysfs:
+>>  	iommu_device_sysfs_remove(&gart->iommu);
+>>  
+>> -	return ret;
+>> -}
+>> -
+>> -static const struct dev_pm_ops tegra_gart_pm_ops = {
+>> -	.suspend	= tegra_gart_suspend,
+>> -	.resume		= tegra_gart_resume,
+>> -};
+>> -
+>> -static const struct of_device_id tegra_gart_of_match[] = {
+>> -	{ .compatible = "nvidia,tegra20-gart", },
+>> -	{ },
+>> -};
+>> -
+>> -static struct platform_driver tegra_gart_driver = {
+>> -	.probe		= tegra_gart_probe,
+>> -	.driver = {
+>> -		.name	= "tegra-gart",
+>> -		.pm	= &tegra_gart_pm_ops,
+>> -		.of_match_table = tegra_gart_of_match,
+>> -		.suppress_bind_attrs = true,
+>> -	},
+>> -};
+>> -
+>> -static int __init tegra_gart_init(void)
+>> -{
+>> -	return platform_driver_register(&tegra_gart_driver);
+>> +	return ERR_PTR(ret);
+>>  }
+>> -subsys_initcall(tegra_gart_init);
+>>  
+>>  module_param(gart_debug, bool, 0644);
+>>  MODULE_PARM_DESC(gart_debug, "Enable GART debugging");
+>> diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
+>> index 55ecfb2d8cfd..4cae1c3a853b 100644
+>> --- a/drivers/memory/tegra/mc.c
+>> +++ b/drivers/memory/tegra/mc.c
+>> @@ -702,13 +702,54 @@ static int tegra_mc_probe(struct platform_device *pdev)
+>>  				PTR_ERR(mc->smmu));
+>>  	}
+>>  
+>> +	if (IS_ENABLED(CONFIG_TEGRA_IOMMU_GART)) {
+>> +		mc->gart = tegra_gart_probe(&pdev->dev, mc->soc->smmu, mc);
+>> +		if (IS_ERR(mc->gart))
+>> +			dev_err(&pdev->dev, "failed to probe GART: %ld\n",
+>> +				PTR_ERR(mc->gart));
+>> +	}
+> 
+> Perhaps if we add a check for for !mc->soc->smmu here we can avoid
+> passing this data structure to tegra_gart_probe() and remove the
+> corresponding check from tegra_gart_probe(). That seems more like a
+> more logical sequence than attempting to probe GART on device that may
+> not have one and return.
 
-Yep, this ifdef could be removed.
-Without CONFIG_ARCH_ENABLE_THP_MIGRATION
-is_pmd_migration_entry() is constant 0 so compiler should eliminate "if" branch.
+Then we also want to invoke tegra_smmu_probe only if mc->soc->smmu != NULL, don't we? Seems it makes sense to factor out that change into a separate patch that will remove soc->smmu checks from both SMMU and GART drivers, moving out the checks into the MC driver.
 
->
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index f2d19e4fe854..aebade83cec9 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -2145,23 +2145,25 @@ static void __split_huge_pmd_locked(struct vm_area_struct *vma, pmd_t *pmd,
->          */
->         old_pmd = pmdp_invalidate(vma, haddr, pmd);
->
-> -#ifdef CONFIG_ARCH_ENABLE_THP_MIGRATION
->         pmd_migration = is_pmd_migration_entry(old_pmd);
-> -       if (pmd_migration) {
-> +       if (unlikely(pmd_migration)) {
->                 swp_entry_t entry;
->
->                 entry = pmd_to_swp_entry(old_pmd);
->                 page = pfn_to_page(swp_offset(entry));
-> -       } else
-> -#endif
-> +               write = is_write_migration_entry(entry);
-> +               young = false;
-> +               soft_dirty = pmd_swp_soft_dirty(old_pmd);
-> +       } else {
->                 page = pmd_page(old_pmd);
-> +               if (pmd_dirty(old_pmd))
-> +                       SetPageDirty(page);
-> +               write = pmd_write(old_pmd);
-> +               young = pmd_young(old_pmd);
-> +               soft_dirty = pmd_soft_dirty(old_pmd);
-> +       }
->         VM_BUG_ON_PAGE(!page_count(page), page);
->         page_ref_add(page, HPAGE_PMD_NR - 1);
-> -       if (pmd_dirty(old_pmd))
-> -               SetPageDirty(page);
-> -       write = pmd_write(old_pmd);
-> -       young = pmd_young(old_pmd);
-> -       soft_dirty = pmd_soft_dirty(old_pmd);
->
->         /*
->          * Withdraw the table only after we mark the pmd entry invalid.
->
-> Thanks,
->
-> --
-> Peter Xu
->
+> Also, since there's no error return here, do we want to set mc->gart to
+> NULL on error to avoid crashing later on...
+
+Good catch, thanks!
+
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int tegra_mc_suspend(struct device *dev)
+>> +{
+>> +	struct tegra_mc *mc = dev_get_drvdata(dev);
+>> +	int err;
+>> +
+>> +	if (mc->gart) {
+> 
+> ... like here?
+> 
+>> +		err = tegra_gart_suspend(mc->gart);
+>> +		if (err)
+>> +			return err;
+>> +	}
+>> +
+>>  	return 0;
+>>  }
+>>  
+>> +static int tegra_mc_resume(struct device *dev)
+>> +{
+>> +	struct tegra_mc *mc = dev_get_drvdata(dev);
+>> +	int err;
+>> +
+>> +	if (mc->gart) {
+> 
+> And here?
+> 
+>> +		err = tegra_gart_resume(mc->gart);
+>> +		if (err)
+>> +			return err;
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static const struct dev_pm_ops tegra_mc_pm_ops = {
+>> +	.suspend = tegra_mc_suspend,
+>> +	.resume = tegra_mc_resume,
+>> +};
+>> +
+>>  static struct platform_driver tegra_mc_driver = {
+>>  	.driver = {
+>>  		.name = "tegra-mc",
+>>  		.of_match_table = tegra_mc_of_match,
+>> +		.pm = &tegra_mc_pm_ops,
+>>  		.suppress_bind_attrs = true,
+>>  	},
+>>  	.prevent_deferred_probe = true,
+>> diff --git a/include/soc/tegra/mc.h b/include/soc/tegra/mc.h
+>> index db5bfdf589b4..5da42e3fb801 100644
+>> --- a/include/soc/tegra/mc.h
+>> +++ b/include/soc/tegra/mc.h
+>> @@ -77,6 +77,7 @@ struct tegra_smmu_soc {
+>>  
+>>  struct tegra_mc;
+>>  struct tegra_smmu;
+>> +struct gart_device;
+>>  
+>>  #ifdef CONFIG_TEGRA_IOMMU_SMMU
+>>  struct tegra_smmu *tegra_smmu_probe(struct device *dev,
+>> @@ -96,6 +97,31 @@ static inline void tegra_smmu_remove(struct tegra_smmu *smmu)
+>>  }
+>>  #endif
+>>  
+>> +#ifdef CONFIG_TEGRA_IOMMU_GART
+>> +struct gart_device *tegra_gart_probe(struct device *dev,
+>> +				     const struct tegra_smmu_soc *soc,
+>> +				     struct tegra_mc *mc);
+>> +int tegra_gart_suspend(struct gart_device *gart);
+>> +int tegra_gart_resume(struct gart_device *gart);
+>> +#else
+>> +static inline struct gart_device *
+>> +tegra_gart_probe(struct device *dev, const struct tegra_smmu_soc *soc,
+>> +		 struct tegra_mc *mc)
+>> +{
+>> +	return NULL;
+>> +}
+>> +
+>> +static inline int tegra_gart_suspend(struct gart_device *gart)
+>> +{
+>> +	return -ENODEV;
+>> +}
+>> +
+>> +static inline int tegra_gart_resume(struct gart_device *gart)
+>> +{
+>> +	return -ENODEV;
+>> +}
+>> +#endif
+> 
+> That doesn't look right. If we don't enable GART, then the dummy
+> implementations will be used, but they return error codes, so
+> suspend/resume of MC will also fail, causing the whole system to
+> not be able to suspend if GART is disabled.
+
+That's not true because the dummy implementations won't be used at all if GART is disabled, unless something horribly wrong happens that makes mc->gart != NULL.
+
+> I think it'd be better to avoid the dummy functions and instead add
+> extra checks for IS_ENABLED(CONFIG_TEGRA_IOMMU_GART) where these are
+> called. That way references to these functions should be discarded
+> at translation time.
+> 
+> To be specific, tegra_mc_suspend() and tegra_mc_resume() would change
+> like this:
+> 
+> 	if (IS_ENABLED(CONFIG_TEGRA_IOMMU_GART) && mc->gart)
+
+Okay, thanks!
