@@ -2,214 +2,142 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB27CC04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 13:57:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21AC7C67839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 13:57:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7750D20839
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 13:57:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DAF0D20839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 13:57:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EqfXTBqi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7750D20839
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FxHkmUnS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAF0D20839
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727699AbeLLN5a (ORCPT
+        id S1727723AbeLLN5l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 08:57:30 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:38627 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726245AbeLLN53 (ORCPT
+        Wed, 12 Dec 2018 08:57:41 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:40687 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726245AbeLLN5l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 08:57:29 -0500
-Received: by mail-oi1-f194.google.com with SMTP id a77so15054595oii.5;
-        Wed, 12 Dec 2018 05:57:28 -0800 (PST)
+        Wed, 12 Dec 2018 08:57:41 -0500
+Received: by mail-wm1-f68.google.com with SMTP id q26so6024351wmf.5;
+        Wed, 12 Dec 2018 05:57:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=tkxPS/FUeWp+wAYaK/aoc/ohEAKL15aMSBYombMswhA=;
-        b=EqfXTBqiPhoz65W+8nLpi5Ts/qw/t1y/2m246Ih/tKgBOHDOHz6Sm9joiNlLq5xCAM
-         PIE4wR3PBXCCLcOGheWVCxQCsvvNx7jQlheNo4AOo45nvmkmAKYh5Cvc82+ciEpbFJuB
-         btGqSzpoZbQdpw2hBqhryM/ODr4X/8XGRgbLQ2JEmfuObK3q7Pvoq/CT4he5Qwl5YItO
-         789miTEfJzCxCGmc221C9io5hoRH4fOmP03+3aX/VqZiGi5X8JUGc7tvRzoi5Vg9lA7a
-         pvm5moe0sO0j9212rKf+I3ub7JwoSjV2pDOpUdPksuCRJ8Ctc9o05eeufBBkTdk9o+/1
-         N0yA==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=GGYQrYNrsxa0SLJhAqttZsoR7cAQmea0lm/y+oDipNw=;
+        b=FxHkmUnSgac0lH8lZUB0dw08IgxuPb0tkkqX/GX5+wFMGQginhXaEygTvsInsRalpL
+         WTC5R9g79mRTxyRIQ1vRfEzxI235t3Dywq+Ttmvuy1FO3MsLgnwBuiEzchyNspbKX4AL
+         wqURt/zNbJ6PnpRC6KbMIHdHi2/4b4vl+jYVGxi2OyOQx1ayArCLlC1FGq2HbadXvCHj
+         W1Go0QJ4d1veKQsBmJbaUNC5BY4w24NfVYkUJL5EPU9N63WGlbWuCT2EGB9HGtNFh6e6
+         g612oy8a07T38aMzgsQlQGQ3A5Sqt3aMnQZM6c8rbOG1eKcnOyB8KXMOvL0kb3ix1y+3
+         CUrw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=tkxPS/FUeWp+wAYaK/aoc/ohEAKL15aMSBYombMswhA=;
-        b=jvulIRs4Twawt9MGfI4M9/SV/8H17jUbo3lyY27tU1NgFTYH8eytE81YH31pRlaXqs
-         U+gNra7OpmhdzLwGTMNX1v6ZYp5o75caFNQUD3qd6Fx957tegVGAqqebmsjioHYUySmw
-         HzA2Uo2sVLr9u36bAhoqFdTO9hKQeNNFGv/zXPbHnrXF6VHdNv4etXJJTSFhAK9cIuiB
-         Kez7FeWNVwWyBCB696Mp5RaOgShW6Khy30D9jQFNpp2AYfM8SRYhFNWYdwsLlDSoTrVO
-         iH6Thkq4GB0OXw/9DtqgVCEP3iY+IpHVx+ROACApXMu2kM9/TbNb9BwhIKz4vmyzCWVg
-         imCg==
-X-Gm-Message-State: AA+aEWZn1JpslzUZOLsIieiugBo/gTrWAhlYU0knpFbFpvmXuhyr4lXG
-        7FHhtK4oEesPTtx2BzcrBKk=
-X-Google-Smtp-Source: AFSGD/Vxf3uZNbuPKSfnhBKSsvXr9I6hIlwruj4tkFkGIWlJvAVx1VpC8vQsX3OCIPQGpKbC4RiZtA==
-X-Received: by 2002:aca:c715:: with SMTP id x21mr427120oif.139.1544623047593;
-        Wed, 12 Dec 2018 05:57:27 -0800 (PST)
-Received: from ziggy.stardust (cpe-70-124-169-223.austin.res.rr.com. [70.124.169.223])
-        by smtp.gmail.com with ESMTPSA id j11sm8526772oif.9.2018.12.12.05.57.26
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 12 Dec 2018 05:57:26 -0800 (PST)
-Subject: Re: [PATCH 3.16 038/328] tty: fix typo in comment of
- tty_termios_encode_baud_rate
-To:     Ben Hutchings <ben@decadent.org.uk>, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Cc:     akpm@linux-foundation.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-References: <lsq.1544392233.593642394@decadent.org.uk>
-From:   Matthias Brugger <matthias.bgg@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
- 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
- jrHWeQEI2ucSKsNa8FllDmG/fQ==
-Message-ID: <ddddf0dd-5a6b-044b-4875-d9d13cc6eaf3@gmail.com>
-Date:   Wed, 12 Dec 2018 14:57:25 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=GGYQrYNrsxa0SLJhAqttZsoR7cAQmea0lm/y+oDipNw=;
+        b=W0VakkAKb0aaicehDKSbT2fOWoiw3Mg9fNvdiWKK/FC8qjOCVtFBueH6wtrs6nHVYx
+         ZaqxqBauCCKRkp//ofGsiTK8e60Jg6Dj3uZjcF0XuFi+DLMviNQ/TGA81IBbb9R4MMA8
+         6cUTAp4Jbb2jtDS5RYU8yeJkRxRJyYUQaPJyOPo31yih28g1w1gR8qAz2vmhXUTAFS9B
+         kMysy3j7aSSOiWDeY/3Bm1G5c3sJTurJw2gWND9pkGStNDuYSyRqIPqx34CHtlYcA19Z
+         e5HVch3RO6uI575McpTLc3xWh0ein9XB6BM7v1EjB7v3KuiM1o70fpJzgdOTSVM50xc9
+         cc7Q==
+X-Gm-Message-State: AA+aEWbAdyKXL6FOQzKg9vLRHqs7kzDdqhqCHSEw+/2S9tl6Wg5iKtzy
+        CK5IRwfbDzCJaga+iSlc8wo=
+X-Google-Smtp-Source: AFSGD/XWZYf9J41+bKPzSKBfrSJ+fuc17rC9IXPltsy41UAmf5sD+4EIuoNyq5qFweSI9XX8i4BTUQ==
+X-Received: by 2002:a1c:1688:: with SMTP id 130mr6195606wmw.86.1544623058918;
+        Wed, 12 Dec 2018 05:57:38 -0800 (PST)
+Received: from pali ([2a02:2b88:2:1::5cc6:2f])
+        by smtp.gmail.com with ESMTPSA id n127sm3813959wmd.20.2018.12.12.05.57.37
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 12 Dec 2018 05:57:37 -0800 (PST)
+Date:   Wed, 12 Dec 2018 14:57:36 +0100
+From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+To:     Andreas Bombe <andreas.bombe@gmail.com>
+Cc:     Andreas Henriksson <andreas@fatal.se>,
+        Jaroslav Skarvada <jskarvad@redhat.com>,
+        linux-fsdevel@vger.kernel.org, util-linux@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mpluskal@suse.com,
+        base-system@gentoo.org,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Karel Zak <kzak@redhat.com>, Andreas Bombe <aeb@debian.org>,
+        Andreas Dilger <adilger@dilger.ca>,
+        Richard Weinberger <richard.weinberger@gmail.com>
+Subject: Re: Future of dosfstools project (FAT)
+Message-ID: <20181212135736.xtb57r2eatqsgenb@pali>
+References: <20180929084038.an6pfhnsd6tblejl@pali>
+ <20181002081654.jxesr3kj62snzez5@pali>
+ <510499199.34825028.1538469850257.JavaMail.zimbra@redhat.com>
+ <20181012091941.o22srnhse4kzqjhf@fatal.se>
+ <20181114113341.yx2wlzqku5yh3k4h@pali>
+ <CAPXf_qN66-Mi+o+9ENGqCDe-_2tHaf9uM3moRcCGNvmxwH3ExQ@mail.gmail.com>
+ <20181206083828.4bp3oypkto2ngobu@pali>
 MIME-Version: 1.0
-In-Reply-To: <lsq.1544392233.593642394@decadent.org.uk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="eafed3sq2aty4xrs"
+Content-Disposition: inline
+In-Reply-To: <20181206083828.4bp3oypkto2ngobu@pali>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+--eafed3sq2aty4xrs
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 09/12/2018 22:50, Ben Hutchings wrote:
-> 3.16.62-rc1 review patch.  If anyone has any objections, please let me know.
-> 
-> ------------------
-> 
-> From: Matthias Brugger <matthias.bgg@gmail.com>
-> 
-> commit a1d51aa2214cea3f91611893610a2f769cada0e7 upstream.
-> 
-> Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
-> ---
->  drivers/tty/tty_ioctl.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> --- a/drivers/tty/tty_ioctl.c
-> +++ b/drivers/tty/tty_ioctl.c
-> @@ -408,7 +408,7 @@ void tty_termios_encode_baud_rate(struct
->  
->  #ifdef BOTHER
->  	/* If the user asked for a precise weird speed give a precise weird
-> -	   answer. If they asked for a Bfoo speed they many have problems
-> +	   answer. If they asked for a Bfoo speed they may have problems
+On Thursday 06 December 2018 09:38:28 Pali Roh=C3=A1r wrote:
+> On Thursday 06 December 2018 01:53:02 Andreas Bombe wrote:
+> > Pali Roh=C3=A1r <pali.rohar@gmail.com> schrieb am Mi., 14. Nov. 2018 um
+> > 12:33 Uhr:
+> >=20
+> > > And... has somebody else time to look at those pending patches and do
+> > > some initial review? I would really appreciate if somebody look and
+> > > comment them.
+> > >
+> > > There are 14 open pull requests:
+> > > https://github.com/dosfstools/dosfstools/pulls
+> >=20
+> >=20
+> > I'll spend time on this again. It would help if you could make a list of
+> > higher priority PRs you would like see being looked at first.
+>=20
+> So.. here is some list:
+>=20
+> https://github.com/dosfstools/dosfstools/pull/92
+> https://github.com/dosfstools/dosfstools/pull/93
+> https://github.com/dosfstools/dosfstools/pull/94
+> https://github.com/dosfstools/dosfstools/pull/101
+> https://github.com/dosfstools/dosfstools/pull/104
+> https://github.com/dosfstools/dosfstools/pull/84
 
-I don't think fixes of comments are good candidates for stable.
+Maybe you can start with Year 2038 problem in PR 94:
+https://github.com/dosfstools/dosfstools/pull/94
 
-Regards,
-Matthias
+--=20
+Pali Roh=C3=A1r
+pali.rohar@gmail.com
 
->  	   digesting non-exact replies so fuzz a bit */
->  
->  	if ((termios->c_cflag & CBAUD) == BOTHER)
-> 
+--eafed3sq2aty4xrs
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQS4VrIQdKium2krgIWL8Mk9A+RDUgUCXBETzgAKCRCL8Mk9A+RD
+Uq2YAJ9XHKDJnOorsCjLAB4ZvXWTSODHxACcC9nCjO3YLUBaG/rykj/BQ8EgwJY=
+=66Zy
+-----END PGP SIGNATURE-----
+
+--eafed3sq2aty4xrs--
