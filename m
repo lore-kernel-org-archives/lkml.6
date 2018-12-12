@@ -2,286 +2,114 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFB4CC04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 12:47:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC8B7C04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 12:49:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A1402084E
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 12:47:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9478B20870
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 12:49:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="pwYwN2MK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A1402084E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="FsNw8ONu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9478B20870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727478AbeLLMrs (ORCPT
+        id S1727502AbeLLMtR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 07:47:48 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:33482 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727158AbeLLMrs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 07:47:48 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id wBCClH5q069893;
-        Wed, 12 Dec 2018 06:47:17 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1544618837;
-        bh=6On4rvssx1czr/01jCM2ZbfUNBi5Uv/F2BY6+zQj4ss=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=pwYwN2MKXPDcTO9Gg+QSpdubwyrkgkJHj8ZDqCq4wNA/OXjbOh5cP2q8djaWDzCC5
-         TTAypSi5JUqnFYe/+fcU3hdtqRaZ8LYaLV6cs+k7uCa598W4TsGj+5023yynDQLOW9
-         zlsX2bN6yXSqQ5tM8WgCDLbjK4EqbdDtkok0/0kU=
-Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wBCClGvW041497
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 12 Dec 2018 06:47:17 -0600
-Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Wed, 12
- Dec 2018 06:47:16 -0600
-Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Wed, 12 Dec 2018 06:47:16 -0600
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wBCClDlD023840;
-        Wed, 12 Dec 2018 06:47:14 -0600
-Subject: Re: [PATCH 0/2] Graph fixes for using multiple endpoints per port
-To:     Tony Lindgren <tony@atomide.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-CC:     Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Jarkko Nikula <jarkko.nikula@bitmer.com>
-References: <20181211020557.61783-1-tony@atomide.com>
- <8736r4bvf3.wl-kuninori.morimoto.gx@renesas.com>
- <20181211045220.GI6707@atomide.com>
- <871s6obqkb.wl-kuninori.morimoto.gx@renesas.com>
- <20181211053536.GJ6707@atomide.com>
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-Message-ID: <433af235-47c9-8b22-aec2-afb1836c9ee0@ti.com>
-Date:   Wed, 12 Dec 2018 14:48:54 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
-MIME-Version: 1.0
-In-Reply-To: <20181211053536.GJ6707@atomide.com>
+        Wed, 12 Dec 2018 07:49:17 -0500
+Received: from mail-eopbgr140055.outbound.protection.outlook.com ([40.107.14.55]:2662
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727204AbeLLMtQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 07:49:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=i8J7MDbwyvn3G+y11I56ZhGeAOn2/VV+7CP4p+CLu0I=;
+ b=FsNw8ONuSfKXO8cnAPDaSzcUPut3mfZCU5R59VFQ1Am9NwZ9tuZqMKkAMJbYiVDZQClgSqe1FZqjg4AeGz8GpouF140FEBr23GQLFrShmkRMj7NagjACexAHp6xtCeFCSSgac59KRcm2momwx4Pl/Tqeq4/jnVZSiZqSbmSffkE=
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
+ DB3PR0402MB3914.eurprd04.prod.outlook.com (52.134.71.157) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1404.23; Wed, 12 Dec 2018 12:49:11 +0000
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::adf8:f49d:deb4:58fd]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::adf8:f49d:deb4:58fd%3]) with mapi id 15.20.1425.016; Wed, 12 Dec 2018
+ 12:49:11 +0000
+From:   Anson Huang <anson.huang@nxp.com>
+To:     Fabio Estevam <festevam@gmail.com>
+CC:     Rob Herring <robh@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald <pmeerw@pmeerw.net>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [PATCH V3 1/2] dt-bindings: iio: light: isl29018: update power
+ supply name
+Thread-Topic: [PATCH V3 1/2] dt-bindings: iio: light: isl29018: update power
+ supply name
+Thread-Index: AQHUkFeMq54w2saSI0m5D7dfdmdMWaV4nioAgAAlXHCAAOVZgIAA+eGwgABVyoCAABjvMQ==
+Date:   Wed, 12 Dec 2018 12:49:11 +0000
+Message-ID: <96906A60-5318-46E5-B302-207C1FC7578B@nxp.com>
+References: <1544425521-775-1-git-send-email-Anson.Huang@nxp.com>
+ <20181210232358.GA11621@bogus>
+ <DB3PR0402MB3916E1651ABC07F6F788B265F5A60@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+ <CAL_Jsq+sP_fsQaoT6FpZNRxjhPAhCcE8e-0xffUUxShcC2LuHw@mail.gmail.com>
+ <DB3PR0402MB39164538D3969FE51C649B65F5A70@DB3PR0402MB3916.eurprd04.prod.outlook.com>,<CAOMZO5DXNpn18pzngmAt+hyiWNtfwckafxCzbJ17EgndjABwWg@mail.gmail.com>
+In-Reply-To: <CAOMZO5DXNpn18pzngmAt+hyiWNtfwckafxCzbJ17EgndjABwWg@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=anson.huang@nxp.com; 
+x-originating-ip: [183.192.23.231]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DB3PR0402MB3914;6:kq5Bq40U6+i3DLvsW8Ve6yFqAiTh9yvLLZemVcUMCIMTQ8TuFhjj1wyjkUxIOHf6Cq6Id8yhuSKKZTCsxH3EUGFATs0WDKOV5w4SirHTTH6SdjLO3kCBpjNN23oC5tQpWm7i/C+FaAA7CNnBkmAu5S5gaFYmWE9WXLmJ9iBa3XgGmprvAdpYtvGy36xVJ9vUaD/ocR/PfpQjEecx9nhh3RYuGiVs0CUMGBC8+ogOOTB+vfqCMPgY2OwPgC+PHoqtnaEJ34cxcEkreOyfmx0uKDuXL86JELMOKi4m/zrnz0S4Xr15MRr4QWfNiiYmQiIqpQeePVkfkiggdMdIMKgl5tNFBqS+AWWAP5bpAZoyotvc4ltd3ah+Dhl//pvekyZTCYTwoGkptiKA4MI4RtUIA5Yt58s0oP8Z45qBthKJOBfCSsebr1rXdT+S2LoyDM5vfDkXAm/BR2PzAHQDivvEXA==;5:dFAgsRmR0uZnXJ2n/nxf31lSWecVuSRft/FzJdIYxrB4D5xvWHpxoH2wyY1Ny7JBeiVoblmwIz0dfHD0Koa8CbPiHhtiay/oqZL4QLVlixFfqGb8bz3iBO56W9AZrm+Ki4/+dKS7mqlxLu3PLs7lb5DYvhTj7vEh4N8rZlxOAhg=;7:aI3WYo6kCQkM0Rri9vuGY++DLyi4RSmoJUsE/ZDL1ev8RjKBX0q2zzAjJL68/lsNJL7K5IdGjtaRX04ZziLOWmNfpQpPM/tZSjHO9i4Q06e8yRzKyF8BipUnzxEEkL971Y25bSHEQSmdTergu4RkgQ==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 70589ef9-1775-4c8d-8907-08d6603036d4
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DB3PR0402MB3914;
+x-ms-traffictypediagnostic: DB3PR0402MB3914:
+x-microsoft-antispam-prvs: <DB3PR0402MB39142E05933393331CC60F50F5A70@DB3PR0402MB3914.eurprd04.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230017)(999002)(6040522)(2401047)(5005006)(8121501046)(3231472)(944501520)(52105112)(93006095)(93001095)(3002001)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123562045)(20161123558120)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:DB3PR0402MB3914;BCL:0;PCL:0;RULEID:;SRVR:DB3PR0402MB3914;
+x-forefront-prvs: 0884AAA693
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(136003)(39860400002)(366004)(376002)(396003)(189003)(199004)(71200400001)(476003)(6512007)(6506007)(102836004)(186003)(229853002)(86362001)(7416002)(26005)(7736002)(53936002)(8676002)(8936002)(68736007)(6486002)(6436002)(66066001)(36756003)(81166006)(76176011)(105586002)(305945005)(446003)(106356001)(2906002)(478600001)(97736004)(99286004)(256004)(81156014)(6116002)(3846002)(1411001)(39060400002)(93886005)(11346002)(6916009)(33656002)(44832011)(316002)(5660300001)(2616005)(14454004)(6246003)(54906003)(82746002)(83716004)(25786009)(71190400001)(4326008)(486006);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3914;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: J9bnSEW47xLQwWbEazrnWyrUQQ10NyRzQZZNMib57H+gniB+JOzRACNzG2tkRapJtJPveAN/OH9wJAR/O8QB11++FeNX0H4lsNnZXpdwrmhjyVXe5MlncDwPtJvNzwNqgqrwkA646kxYDb55NUI7Tqjsq+ptIDxuvW7uy20++e5qZf0md72JAI5LgRd4K7YczslVyOScsuBqXVkfe8d98T7vkbhg5VrZt6kl+aMcCpuMkmz0sLSbGWYnRp3nmakfpvbvsX8qTsQmb1xb348n6ZcGtcI5KU0mpuaq+MGzZi82k2vQmpy2NZxHfykCv9Dh
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 70589ef9-1775-4c8d-8907-08d6603036d4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Dec 2018 12:49:11.2297
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3914
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 11/12/2018 7.35, Tony Lindgren wrote:
-> * Kuninori Morimoto <kuninori.morimoto.gx@renesas.com> [181211 05:16]:
->>
->> Hi Tony
->>
->>>> This looks a little bit strange for me.
->>>> Can you show me your DT for it ?
->>>
->>> Sure, adding also Sebastian to Cc. Here's what I currently have for droid 4
->>> dts with two codecs on I2S. Please just ignore the GNSS parts there..
->>>
->>> The TDM configuration is all done in the cpcap_audio_codec via set_tdm_slot().
->>> The modem voice call codec is a serdev driver :) I'll need some more time to
->>> be able to post patches but it's basically working for voice calls.
->>
->> Hmm... it seems strange...
->> I guess you are using "ti,omap4-mcbsp" driver (= linux/sound/soc/omap/omap-mcbsp.c)
->> Is this correct ?
-> 
-> Yes.
-> 
->> If so, your driver is registering component as
->>
->> 	ret = devm_snd_soc_register_component(&pdev->dev,
->> 					      &omap_mcbsp_component,
->> 					      &omap_mcbsp_dai, 1);
->>
->> Your driver has only 1 DAI.
-> 
-> Yes I have a patch for omap-mcbsp.c too :)
-> 
->>>  	mcbsp3_port: port {
->>> -		cpu_dai3: endpoint {
->>> +		cpu_dai3: endpoint@0 {
->>>  			dai-format = "dsp_a";
->>>  			frame-master = <&cpcap_audio_codec1>;
->>>  			bitclock-master = <&cpcap_audio_codec1>;
->>>  			remote-endpoint = <&cpcap_audio_codec1>;
->>>  		};
->>> +		cpu_dai_mdm: endpoint@1 {
->>> +			dai-format = "dsp_a";
->>> +			frame-master = <&cpcap_audio_codec1>;
->>> +			bitclock-master = <&cpcap_audio_codec1>;
->>> +			remote-endpoint = <&mot_mdm6600_audio_codec0>;
->>> +		};
->>
->> And here, you have 1 port, 2 endpoint.
->> Then, asoc_simple_card_get_dai_id() should return 1.
->>
->> And, your [2/2] patch,
->> I guess you are misunderstanding about "port" vs "endpoint",
->> or omap-mcbsp driver side need to update ?
-> 
-> Yes omap-mcbsp driver needs to be updated for multiple endpoints.
-> 
-> Adding Jarkko and Peter also to Cc, below is the WIP patch that I'm
-> currently using for omap-mcbsp to add more DAIs.
-
-Hrm.
-McBSP have single DX and single DR pin. Iow each McBSP have single DAI.
-
-> 
-> So far nothing else to do in the omap-mcbsp as it's the cpcap hardware
-> that configures the TDM timeslots. And I'm currently assuming the
-> first instance is the master, I guess that should be parsed from the
-> the frame-master dts property instead.
-> 
-> Regards,
-> 
-> Tony
-> 
-> 8< ----------------------
-> diff --git a/sound/soc/omap/omap-mcbsp-priv.h b/sound/soc/omap/omap-mcbsp-priv.h
-> --- a/sound/soc/omap/omap-mcbsp-priv.h
-> +++ b/sound/soc/omap/omap-mcbsp-priv.h
-> @@ -262,6 +262,8 @@ struct omap_mcbsp {
->  	struct omap_mcbsp_platform_data *pdata;
->  	struct omap_mcbsp_st_data *st_data;
->  	struct omap_mcbsp_reg_cfg cfg_regs;
-> +	struct snd_soc_dai_driver *dais;
-> +	int dai_count;
->  	struct snd_dmaengine_dai_dma_data dma_data[2];
->  	unsigned int dma_req[2];
->  	int dma_op_mode;
-> diff --git a/sound/soc/omap/omap-mcbsp.c b/sound/soc/omap/omap-mcbsp.c
-> --- a/sound/soc/omap/omap-mcbsp.c
-> +++ b/sound/soc/omap/omap-mcbsp.c
-> @@ -28,6 +28,7 @@
->  #include <linux/pm_runtime.h>
->  #include <linux/of.h>
->  #include <linux/of_device.h>
-> +#include <linux/of_graph.h>
->  #include <sound/core.h>
->  #include <sound/pcm.h>
->  #include <sound/pcm_params.h>
-> @@ -1318,23 +1319,53 @@ static int omap_mcbsp_remove(struct snd_soc_dai *dai)
->  	return 0;
->  }
->  
-> -static struct snd_soc_dai_driver omap_mcbsp_dai = {
-> -	.probe = omap_mcbsp_probe,
-> -	.remove = omap_mcbsp_remove,
-> -	.playback = {
-> -		.channels_min = 1,
-> -		.channels_max = 16,
-> -		.rates = OMAP_MCBSP_RATES,
-> -		.formats = SNDRV_PCM_FMTBIT_S16_LE | SNDRV_PCM_FMTBIT_S32_LE,
-> -	},
-> -	.capture = {
-> -		.channels_min = 1,
-> -		.channels_max = 16,
-> -		.rates = OMAP_MCBSP_RATES,
-> -		.formats = SNDRV_PCM_FMTBIT_S16_LE | SNDRV_PCM_FMTBIT_S32_LE,
-> -	},
-> -	.ops = &mcbsp_dai_ops,
-> -};
-> +static int omap_mcbsp_init_dais(struct omap_mcbsp *mcbsp)
-> +{
-> +	struct device_node *np = mcbsp->dev->of_node;
-> +	int i;
-> +
-> +	if (np)
-> +		mcbsp->dai_count = of_graph_get_endpoint_count(np);
-> +
-> +	if (!mcbsp->dai_count)
-> +		mcbsp->dai_count = 1;
-> +
-> +	mcbsp->dais = devm_kcalloc(mcbsp->dev, mcbsp->dai_count,
-> +				   sizeof(*mcbsp->dais), GFP_KERNEL);
-> +	if (!mcbsp->dais)
-> +		return -ENOMEM;
-> +
-> +	for (i = 0; i < mcbsp->dai_count; i++) {
-> +		struct snd_soc_dai_driver *dai = &mcbsp->dais[i];
-> +
-> +		dai->name = devm_kasprintf(mcbsp->dev, GFP_KERNEL, "%s-dai%i",
-> +					   dev_name(mcbsp->dev), i);
-> +
-> +		if (i == 0) {
-> +			dai->probe = omap_mcbsp_probe;
-> +			dai->remove = omap_mcbsp_remove;
-> +			dai->ops = &mcbsp_dai_ops;
-> +		}
-> +		dai->playback.channels_min = 1;
-> +		dai->playback.channels_max = 16;
-> +		dai->playback.rates = OMAP_MCBSP_RATES;
-> +		if (mcbsp->pdata->reg_size == 2)
-> +			dai->playback.formats = SNDRV_PCM_FMTBIT_S16_LE;
-> +		else
-> +			dai->playback.formats = SNDRV_PCM_FMTBIT_S16_LE |
-> +						SNDRV_PCM_FMTBIT_S32_LE;
-> +		dai->capture.channels_min = 1;
-> +		dai->capture.channels_max = 16;
-> +		dai->capture.rates = OMAP_MCBSP_RATES;
-> +		if (mcbsp->pdata->reg_size == 2)
-> +			dai->capture.formats = SNDRV_PCM_FMTBIT_S16_LE;
-> +		else
-> +			dai->capture.formats = SNDRV_PCM_FMTBIT_S16_LE |
-> +					       SNDRV_PCM_FMTBIT_S32_LE;
-
-I prefer to have the 'if (mcbsp->pdata->reg_size == 2)' grouped for
-playback and capture in one place.
-
-> +	}
-> +
-> +	return 0;
-> +}
->  
->  static const struct snd_soc_component_driver omap_mcbsp_component = {
->  	.name		= "omap-mcbsp",
-> @@ -1423,18 +1454,17 @@ static int asoc_mcbsp_probe(struct platform_device *pdev)
->  	mcbsp->dev = &pdev->dev;
->  	platform_set_drvdata(pdev, mcbsp);
->  
-> -	ret = omap_mcbsp_init(pdev);
-> +	ret = omap_mcbsp_init_dais(mcbsp);
->  	if (ret)
->  		return ret;
->  
-> -	if (mcbsp->pdata->reg_size == 2) {
-> -		omap_mcbsp_dai.playback.formats = SNDRV_PCM_FMTBIT_S16_LE;
-> -		omap_mcbsp_dai.capture.formats = SNDRV_PCM_FMTBIT_S16_LE;
-> -	}
-> +	ret = omap_mcbsp_init(pdev);
-> +	if (ret)
-> +		return ret;
->  
->  	ret = devm_snd_soc_register_component(&pdev->dev,
->  					      &omap_mcbsp_component,
-> -					      &omap_mcbsp_dai, 1);
-> +					      mcbsp->dais, mcbsp->dai_count);
->  	if (ret)
->  		return ret;
->  
-> 
-
-- Péter
-
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+SGksIEZhYmlvDQoNCkZyb20gQW5zb24ncyBpUGhvbmUgNg0KDQo+IA0KPiBXZSBzaG91bGQgbm90
+IGJyZWFrIGV4aXN0aW5nIGR0YnMsIHNvIGluIHRoaXMgY2FzZSBqdXN0IGtlZXAgdGhlDQo+IGV4
+aXN0aW5nIHN1cHBseSBuYW1lIGFuZCB5b3UgY291bGQgYWRkIHRoZSBuZXcgb3B0aW9uYWwgdmRk
+YSBzdXBwbHkgYXMNCj4gcGVyIHRoZSBkYXRhc2hlZXQuDQoNCiAgICAgICAgU2luY2UgdGhlIGRh
+dGFzaGVldCBvZiBpc2wyOTAxOCBzdGF0ZXMgdGhlIHZkZGEgYW5kIHZkZGQgTVVTVCBiZSBzaG9y
+dGVkIGV4dGVybmFsbHksIGFuZCB0aGUgbGF0ZXIgY2hpcHMgZXZlbiByZW1vdmUgdmRkYSwgT05M
+WSBoYXMgdmRkIG9uZSBzdXBwbHksIHNvIEkgdGhpbmsgYWRkaW5nIHZkZGEgZG9lcyBOT1QgbWFr
+ZSBlbm91Z2ggc2Vuc2UuIExvb2tzIGxpa2UgdGhlIHZjYyB0aGV5IGFkZGVkIGlzIGp1c3QgZm9y
+IHByZXBhcmUsIHRoZSBkcml2ZXIgZGlkIE5PVCBzdXBwb3J0IHJlZ3VsYXRvciBvcGVyYXRpb24g
+YXQgdGhhdCB0aW1lLiBTbyBjYW4gd2UganVzdCB1c2UgdmNjIGluIGRyaXZlciBhY2NvcmRpbmds
+eT8gRG8gd2UgaGF2ZSB0byB1c2UgdGhlIG5hbWUg4oCcVkRE4oCdIGluIGRhdGFzaGVldCBmb3Ig
+cmVndWxhdG9yIG5hbWU/DQoNCkFuc29uLg==
