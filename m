@@ -2,138 +2,102 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BDBAC65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 14:06:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7078DC04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 14:10:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DA732084E
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 14:06:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D0rhKgBP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DA732084E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 3B2D92133F
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 14:10:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B2D92133F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727667AbeLLOGL (ORCPT
+        id S1726315AbeLLOKk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 09:06:11 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:56076 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726249AbeLLOGL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 09:06:11 -0500
-Received: by mail-wm1-f65.google.com with SMTP id y139so5858582wmc.5;
-        Wed, 12 Dec 2018 06:06:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=/Ngl/3sNByFGecTFbcd0qMUD9GCJOsTEKEVK5WoQ7HA=;
-        b=D0rhKgBPNm/tJ3WEMiXzUk7Q3RmRCgwPRrIbFyHPV6ii1/fvYVYcunxqw1vTAgJHGM
-         ALAHoJ7LVubhXwWvYj5ZF8iqvjiFeDo+nvtf+YdzaJt9ACaiATjhG3+Vnbx2SUGqQ81I
-         Njxl+lPxfJ3u0X2cF7QIuOsybUJ6OwGAuutmB550bAB2jdVyOskfwxgipMH/VUtGkvTS
-         rjOEPqzpXQ/d5ErXAEIXqRv0X20XEJUM8l1UWQyse9vUQKPhbW2jBCak3I1Au7ODHWcZ
-         hLhalUb7E70hRXUosPumWn5t0a9+hNBy0bAJiZnauolwMkKWozFo6uC8bmvlZ9okofaL
-         B6Vw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=/Ngl/3sNByFGecTFbcd0qMUD9GCJOsTEKEVK5WoQ7HA=;
-        b=WW3n6TvdV9D2ZGsW8d3zQ1FUJFmtBcikINZmSzdxRpGiNaqQEFmXi0LfuYriJzNaFY
-         RjfJHwr6O/WcxSMaLwdA4UvYo88ZIZ+p1ociTqgSaMmRjb80BanOaC3G2flnYGnMgpae
-         ZCwfsKseECYZMih2+xZuItBWG25NOtUF6LH7D8MuZkw556Cb8MkJ5aG6hBtWoO6LNdSh
-         BSaynqAj5yZTvsOq8QFAP20MFDSTBGaAxFRfm9s5qs90uhBsQrld/OcyvYmmHGRUXD5A
-         PgIO7A8lIp0VSHaZl3E7NRqP+xH0VTKWTxXZfZQypP8D0BgyyXDm+vsnvX7pskk6qsim
-         WKdw==
-X-Gm-Message-State: AA+aEWbUiC2indIp1TDZuioLTw8MvuuhNwyppBKTwLcprsgQLXVzs1MP
-        0APaTQahEqlPB0oI33ldi0A=
-X-Google-Smtp-Source: AFSGD/U2NpjmiH6orVmUEkGFDRN8BgNxpBJ3A9Ubtin1Ng5fKQZdEUgtIGMJn8Er/B+fP5+C4+z84A==
-X-Received: by 2002:a1c:2314:: with SMTP id j20mr6407376wmj.142.1544623569312;
-        Wed, 12 Dec 2018 06:06:09 -0800 (PST)
-Received: from pali ([2a02:2b88:2:1::5cc6:2f])
-        by smtp.gmail.com with ESMTPSA id a12sm16682229wro.18.2018.12.12.06.06.08
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 12 Dec 2018 06:06:08 -0800 (PST)
-Date:   Wed, 12 Dec 2018 15:06:07 +0100
-From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
-To:     Kai-Heng Feng <kai.heng.feng@canonical.com>
-Cc:     mjg59@srcf.ucam.org, dvhart@infradead.org, andy@infradead.org,
-        mario.limonciello@dell.com, platform-driver-x86@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] platform/x86: dell-wmi: Ignore new keyboard backlight
- change event
-Message-ID: <20181212140607.nrawhff2rgn5ykja@pali>
-References: <20181212064125.25137-1-kai.heng.feng@canonical.com>
+        Wed, 12 Dec 2018 09:10:40 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41960 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726223AbeLLOKj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 09:10:39 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4D74080D;
+        Wed, 12 Dec 2018 06:10:39 -0800 (PST)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 1C87F3F614;
+        Wed, 12 Dec 2018 06:10:39 -0800 (PST)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id 873571AE0A0D; Wed, 12 Dec 2018 14:11:02 +0000 (GMT)
+Date:   Wed, 12 Dec 2018 14:11:02 +0000
+From:   Will Deacon <will.deacon@arm.com>
+To:     Vivek Gautam <vivek.gautam@codeaurora.org>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Doug Anderson <dianders@chromium.org>,
+        David Brown <david.brown@linaro.org>,
+        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
+        Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>,
+        robh+dt <robh+dt@kernel.org>, Andy Gross <andy.gross@linaro.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v4 1/2] dt-bindings: arm-smmu: Add binding doc for Qcom
+ smmu-500
+Message-ID: <20181212141101.GD23641@edgewater-inn.cambridge.arm.com>
+References: <20181011094930.17010-1-vivek.gautam@codeaurora.org>
+ <20181011094930.17010-2-vivek.gautam@codeaurora.org>
+ <20181011221630.GA5841@bogus>
+ <9ca4bb4f-3e6e-21cc-819e-80b979b934d0@codeaurora.org>
+ <CAFp+6iF80P-o=Z-aNOMQwWMTcO4jcgSR0wOzd4GvmB3zTvWZLw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="ajpibhwdb3gdqfhi"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181212064125.25137-1-kai.heng.feng@canonical.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <CAFp+6iF80P-o=Z-aNOMQwWMTcO4jcgSR0wOzd4GvmB3zTvWZLw@mail.gmail.com>
+User-Agent: Mutt/1.11.1+30 (d10eec459b35) ()
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Dec 12, 2018 at 03:18:06PM +0530, Vivek Gautam wrote:
+> On Fri, Oct 12, 2018 at 11:37 AM Vivek Gautam
+> <vivek.gautam@codeaurora.org> wrote:
+> > On 10/12/2018 3:46 AM, Rob Herring wrote:
+> > > On Thu, 11 Oct 2018 15:19:29 +0530, Vivek Gautam wrote:
+> > >> Qcom's implementation of arm,mmu-500 works well with current
+> > >> arm-smmu driver implementation. Adding a soc specific compatible
+> > >> along with arm,mmu-500 makes the bindings future safe.
+> > >>
+> > >> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+> > >> ---
+> > >>
+> > >> Changes since v3:
+> > >>   - Refined language more to state things directly for the bindings
+> > >>     description.
+> > >>
+> > >>   Documentation/devicetree/bindings/iommu/arm,smmu.txt | 4 ++++
+> > >>   1 file changed, 4 insertions(+)
+> > >>
+> > > Reviewed-by: Rob Herring <robh@kernel.org>
+> >
+> > Thank you Rob.
+> >
+> 
+> Can you please pick this one as well to your tree? This goes on top of the
+> bindings patch for "qcom,smmu-v2". So, it can't go through Andy's tree.
+> Will ask Andy to pick the second patch of the series, that adds the dt node.
+> 
+> I guess as I sent this one along with the dt patch, I would have
+> mistakenly added
+> you to 'cc' list rather than 'to' list.
+> Let me know if you would like me to resend it.
 
---ajpibhwdb3gdqfhi
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I've already sent my stuff to Joerg, so it's too late for 4.21.
+Perhaps resend this patch standalone to Joerg with me on CC so that I can
+ack it.
 
-On Wednesday 12 December 2018 14:41:25 Kai-Heng Feng wrote:
-> There's a new wmi event generated by dell-wmi when pressing keyboard
-> backlight hotkey:
-> [ 3285.474172] dell_wmi: Unknown key with type 0x0010 and code 0x003f pre=
-ssed
->=20
-> This event is for notification purpose, let's ignore it. The keyboard
-> backlight hotkey uses another event so it still works without event
-> 0x3f.
->=20
-> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-> ---
->  drivers/platform/x86/dell-wmi.c | 3 +++
->  1 file changed, 3 insertions(+)
->=20
-> diff --git a/drivers/platform/x86/dell-wmi.c b/drivers/platform/x86/dell-=
-wmi.c
-> index 16c7f3d9a335..c3166ba73e9a 100644
-> --- a/drivers/platform/x86/dell-wmi.c
-> +++ b/drivers/platform/x86/dell-wmi.c
-> @@ -267,6 +267,9 @@ static const struct key_entry dell_wmi_keymap_type_00=
-10[] =3D {
->  	/* Fn-lock switched to multimedia keys */
->  	{ KE_IGNORE, 0x1, { KEY_RESERVED } },
-> =20
-> +	/* Keyboard backlight change notification */
-> +	{ KE_IGNORE, 0x3f, { KEY_RESERVED } },
-> +
->  	/* Mic mute */
->  	{ KE_KEY, 0x150, { KEY_MICMUTE } },
-> =20
-
-Looks good.
-
-Reviewed-by: Pali Roh=C3=A1r <pali.rohar@gmail.com>
-
---=20
-Pali Roh=C3=A1r
-pali.rohar@gmail.com
-
---ajpibhwdb3gdqfhi
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQS4VrIQdKium2krgIWL8Mk9A+RDUgUCXBEVzQAKCRCL8Mk9A+RD
-UrR8AJwKr+779pt0Pd3lwX78ReYcUFcVxwCfSvLj8abvqOYllNgNY+KgjdjPaS4=
-=TZxd
------END PGP SIGNATURE-----
-
---ajpibhwdb3gdqfhi--
+Will
