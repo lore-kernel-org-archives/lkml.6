@@ -2,119 +2,125 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E20BC67839
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 23:54:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97222C6786C
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 23:54:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 649E220835
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 23:54:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="JX1k8/Sx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 649E220835
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 6212E20835
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 23:54:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6212E20835
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728539AbeLLXyj (ORCPT
+        id S1728559AbeLLXy4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 18:54:39 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:40914 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727003AbeLLXyi (ORCPT
+        Wed, 12 Dec 2018 18:54:56 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:39946 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726337AbeLLXyz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 18:54:38 -0500
-Received: by mail-oi1-f194.google.com with SMTP id t204so181591oie.7
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 15:54:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=E7mdoMuLEW5kIzmk2Ogie0ESsqgQeSFFGnaWUn73X3g=;
-        b=JX1k8/SxOV8BTY3/m5T31tYgCrZHhX6a03J8tdt1G+5VkrRdSkL0PNtmbjPxd7VFGx
-         alzEU/BHPWk785sT65M9yCqJht00/uFb7l5+xac3/VE+tF3RGHiwrSTFN2W9E9oFPzvp
-         5v76FOVbvtC/TTXWzrygTVBGsSZhWolmWVOZ3DkzF1JfzGbOFeYkhlVrfb5i9fSsikZC
-         WCpGaJbJnwdv5x4pm122v1RKW8liAy2KxWWEu0FDAcCnYBsqNfQbXGHhk7NFoyfFHvqN
-         Aor1h3nMXwpo3lh5SAAOe/b32Wbts7dmspyNa338KfFi3zocz08h3JT0HJ7Ro2yBcaBk
-         RQQA==
+        Wed, 12 Dec 2018 18:54:55 -0500
+Received: by mail-pf1-f194.google.com with SMTP id i12so107569pfo.7;
+        Wed, 12 Dec 2018 15:54:55 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=E7mdoMuLEW5kIzmk2Ogie0ESsqgQeSFFGnaWUn73X3g=;
-        b=BIz23fQ69VCchSQBCT1hy7lTvTdQ+MHfEGmOk7Qx0zth1yO+n5oU3Z3aYScqPEgw2h
-         By50IJ3tsGY5g+srco4UUR/pq3E/ZkTZYFUmSKfBWMUtxRJ1udd0sRKAi0YGEsRJxgo3
-         FhdAALsyXbJOKGriyV4afWmdjg/LJb10bisQSWSX+5eXe2uPiIkL9epoWV6NTPD9akKR
-         hFjVuy5FuVvjFv0dIjJqS8W4JWpPojzgrq/przPtbW1DzDUfD0Ke5kBvsJP8bNU7DJx0
-         kEjMZeSPSZNZZiORN0/GKe8Xoln15Px1X5DvlYg/TwuKYJPLr5BjJDl4s0REjjW1vmCt
-         Jb/A==
-X-Gm-Message-State: AA+aEWYTxaA/PlQ5pULH1lKoZGmZHPyyMnG6jh6h+px7b5a/HQ9CdwQv
-        4+bMRTxAf2TQQ/TXeqJOGahH8LCzQSqZTgKcUxLQZg==
-X-Google-Smtp-Source: AFSGD/XTDDdEb39yq92IsxYN8Uy1esXTJMdIzMAYjw8HX9yxp6ZONGK7jfxBZIN4RohxNX5NjqwarDnQEcSeYpK3byM=
-X-Received: by 2002:aca:d78b:: with SMTP id o133mr1551320oig.232.1544658877677;
- Wed, 12 Dec 2018 15:54:37 -0800 (PST)
-MIME-Version: 1.0
-References: <7b4733be-13d3-c790-ff1b-ac51b505e9a6@nvidia.com>
- <20181207191620.GD3293@redhat.com> <3c4d46c0-aced-f96f-1bf3-725d02f11b60@nvidia.com>
- <20181208022445.GA7024@redhat.com> <20181210102846.GC29289@quack2.suse.cz>
- <20181212150319.GA3432@redhat.com> <CAPcyv4go0Xzhz8rXdfscWuXDu83BO9v8WD4upDUJWb7gKzX5OQ@mail.gmail.com>
- <20181212213005.GE5037@redhat.com> <CAPcyv4gJHeFjEgna1S-2uE4KxkSUgkc=e=2E5oqfoirec84C-w@mail.gmail.com>
- <20181212215348.GF5037@redhat.com> <20181212233703.GB2947@ziepe.ca>
-In-Reply-To: <20181212233703.GB2947@ziepe.ca>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Wed, 12 Dec 2018 15:54:26 -0800
-Message-ID: <CAPcyv4irkynLsEz=HRwLZacnRX6ifNRFX7ibAN_R+9yqR143bQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Jan Kara <jack@suse.cz>, John Hubbard <jhubbard@nvidia.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        John Hubbard <john.hubbard@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>, tom@talpey.com,
-        Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
-        Christoph Hellwig <hch@infradead.org>,
-        Christopher Lameter <cl@linux.com>,
-        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        rcampbell@nvidia.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "Weiny, Ira" <ira.weiny@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=+61rvmzfSdAZe1Oh34hSvbDO8st4DilaDi6ymfCQzS0=;
+        b=T6zoVOGfL/hozmuYjhYzlthO2AbD8tkaQUUyDrKYRVXIgP2xSsOTlzhFPAo2HOHCdM
+         zSDYRZ87kBhtAxUodJooi13gBKpJm+qb8thFlOIjdbsKbvld3CWkm+gDC4o7atcaEL77
+         mf1yIT9k1ddPEtimQqFHDZAExijXnGOqq/QfKFGZkDE/h28KgNWX0w2QCr/5liIDjax/
+         H1/pRmzplWUZcUpVclBqi7CRS1NKNxPAg6Th+t6Mpu7kWnmu04WYp779MWzFhZoIwkOR
+         evUY+U2mHLH62Mn/dVtaMDoG+F8pj22LTBBtBoX9Yy7jVLPU0uODqBz9v1m2RcvsBnt7
+         Z/xQ==
+X-Gm-Message-State: AA+aEWa9e1DRpv5bjVdGdfd1zaiHEatUbNaTX8Cp86LDZue07n3intyx
+        PbKyzt/ALYFWmfikODfP/YM=
+X-Google-Smtp-Source: AFSGD/VHEyDrhJOi3V8vqOyVGsUwEV/p+cqiYhQnmuuCyAUBFLEs47Bd4jJgTFbvliP1IodZIVXYBA==
+X-Received: by 2002:a62:6303:: with SMTP id x3mr22789351pfb.110.1544658894730;
+        Wed, 12 Dec 2018 15:54:54 -0800 (PST)
+Received: from ?IPv6:2620:15c:2cd:203:5cdc:422c:7b28:ebb5? ([2620:15c:2cd:203:5cdc:422c:7b28:ebb5])
+        by smtp.gmail.com with ESMTPSA id r12sm118677pgv.83.2018.12.12.15.54.53
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 12 Dec 2018 15:54:54 -0800 (PST)
+Message-ID: <1544658892.185366.412.camel@acm.org>
+Subject: Re: [PATCH] blkcg: handle dying request_queue when associating a
+ blkg
+From:   Bart Van Assche <bvanassche@acm.org>
+To:     Dennis Zhou <dennis@kernel.org>
+Cc:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
+        Josef Bacik <josef@toxicpanda.com>, kernel-team@fb.com,
+        linux-block@vger.kernel.org, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Ming Lei <ming.lei@redhat.com>
+Date:   Wed, 12 Dec 2018 15:54:52 -0800
+In-Reply-To: <20181212040643.GA73727@dennisz-mbp.dhcp.thefacebook.com>
+References: <20181211230308.66276-1-dennis@kernel.org>
+         <1544570173.185366.397.camel@acm.org>
+         <20181212040643.GA73727@dennisz-mbp.dhcp.thefacebook.com>
+Content-Type: text/plain; charset="UTF-7"
+X-Mailer: Evolution 3.26.2-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 12, 2018 at 3:37 PM Jason Gunthorpe <jgg@ziepe.ca> wrote:
->
-> On Wed, Dec 12, 2018 at 04:53:49PM -0500, Jerome Glisse wrote:
-> > > Almost, we need some safety around assuming that DMA is complete the
-> > > page, so the notification would need to go all to way to userspace
-> > > with something like a file lease notification. It would also need to
-> > > be backstopped by an IOMMU in the case where the hardware does not /
-> > > can not stop in-flight DMA.
-> >
-> > You can always reprogram the hardware right away it will redirect
-> > any dma to the crappy page.
->
-> That causes silent data corruption for RDMA users - we can't do that.
->
-> The only way out for current hardware is to forcibly terminate the
-> RDMA activity somehow (and I'm not even sure this is possible, at
-> least it would be driver specific)
->
-> Even the IOMMU idea probably doesn't work, I doubt all current
-> hardware can handle a PCI-E error TLP properly.
+On Tue, 2018-12-11 at 23:06 -0500, Dennis Zhou wrote:
++AD4 Hi Bart,
++AD4 
++AD4 On Tue, Dec 11, 2018 at 03:16:13PM -0800, Bart Van Assche wrote:
++AD4 +AD4 On Tue, 2018-12-11 at 18:03 -0500, Dennis Zhou wrote:
++AD4 +AD4 +AD4 diff --git a/block/blk-cgroup.c b/block/blk-cgroup.c
++AD4 +AD4 +AD4 index 6bd0619a7d6e..c30661ddc873 100644
++AD4 +AD4 +AD4 --- a/block/blk-cgroup.c
++AD4 +AD4 +AD4 +-+-+- b/block/blk-cgroup.c
++AD4 +AD4 +AD4 +AEAAQA -202,6 +-202,12 +AEAAQA static struct blkcg+AF8-gq +ACo-blkg+AF8-create(struct blkcg +ACo-blkcg,
++AD4 +AD4 +AD4  	WARN+AF8-ON+AF8-ONCE(+ACE-rcu+AF8-read+AF8-lock+AF8-held())+ADs
++AD4 +AD4 +AD4  	lockdep+AF8-assert+AF8-held(+ACY-q-+AD4-queue+AF8-lock)+ADs
++AD4 +AD4 +AD4  
++AD4 +AD4 +AD4 +-	/+ACo request+AF8-queue is dying, do not create/recreate a blkg +ACo-/
++AD4 +AD4 +AD4 +-	if (blk+AF8-queue+AF8-dying(q)) +AHs
++AD4 +AD4 +AD4 +-		ret +AD0 -ENODEV+ADs
++AD4 +AD4 +AD4 +-		goto err+AF8-free+AF8-blkg+ADs
++AD4 +AD4 +AD4 +-	+AH0
++AD4 +AD4 +AD4 +-
++AD4 +AD4 +AD4  	/+ACo blkg holds a reference to blkcg +ACo-/
++AD4 +AD4 +AD4  	if (+ACE-css+AF8-tryget+AF8-online(+ACY-blkcg-+AD4-css)) +AHs
++AD4 +AD4 +AD4  		ret +AD0 -ENODEV+ADs
++AD4 +AD4 
++AD4 +AD4 What prevents that the queue state changes after blk+AF8-queue+AF8-dying() has returned
++AD4 +AD4 and before blkg+AF8-create() returns? Are you sure you don't need to protect this
++AD4 +AD4 code with a blk+AF8-queue+AF8-enter() / blk+AF8-queue+AF8-exit() pair?
++AD4 +AD4 
++AD4 
++AD4 Hmmm. So I think the idea is that we rely on normal shutdown as I don't
++AD4 think there is anything wrong with creating a blkg on a dying
++AD4 request+AF8-queue. When we are doing association, the request+AF8-queue should
++AD4 be pinned by the open call. What we are racing against is when the
++AD4 request+AF8-queue is shutting down, it goes around and destroys the blkgs.
++AD4 For clarity, QUEUE+AF8-FLAG+AF8-DYING is set in blk+AF8-cleanup+AF8-queue() before
++AD4 calling blk+AF8-exit+AF8-queue() which eventually calls blkcg+AF8-exit+AF8-queue().
++AD4 
++AD4 The use of blk+AF8-queue+AF8-dying() is to determine whether blkg shutdown has
++AD4 already started as if we create one after it has started, we may
++AD4 incorrectly orphan a blkg and leak it. Both blkg creation and
++AD4 destruction require holding the queue+AF8-lock, so if the QUEUE+AF8-FLAG+AF8-DYING
++AD4 flag is set after we've checked it, it means blkg destruction hasn't
++AD4 started because it has to wait on the queue+AF8-lock. If QUEUE+AF8-FLAG+AF8-DYING is
++AD4 set, then we have no guarantee of knowing what phase blkg destruction is
++AD4 in leading to a potential leak.
 
-My thinking here is that we would at least have the infrastructure for
-userspace to opt-in to getting the callback, the threat of an IOMMU
-forcibly tearing down mappings, and likely some identification for
-pages that are revocable. With "long term" pins I would hope to move
-any detection of incompatibility to the memory registration phase
-rather than something unacceptable like injecting random truncate
-failures.
+Hi Dennis,
+
+To answer my own question: since all queue flag manipulations are protected
+by the queue lock and since blkg+AF8-create() is called with the queue lock held
+the above code does not need any further protection. Hence feel free to add
+the following:
+
+Reviewed-by: Bart Van Assche +ADw-bvanassche+AEA-acm.org+AD4
+
+
+
