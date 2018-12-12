@@ -2,164 +2,158 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D56EC04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 12:13:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2488BC04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 12:14:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0F4520873
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 12:13:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0F4520873
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id C7D1220879
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 12:14:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544616843;
+	bh=jkZR7YEyru1X/GbvK2OaRZvvMtqNlU3SPvDekzqIJBo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=w4rVOQ8OUEtwm8k8iz2+EwFMzshGVsaFfkzH3TvWaWW2YrOEWAZJyoRkWeNbrT8/T
+	 y+5+Dvn40VvXnoPe2Lupyt+g+MQXAvmEedoynf9hr0mjwO37uF+cbvIo3ekOf7ktH1
+	 G0Cci3rSp6ILnVpS6v07alfF9feavVBvk9rdjnB4=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7D1220879
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727348AbeLLMNE (ORCPT
+        id S1727386AbeLLMOC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 07:13:04 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:46121 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727091AbeLLMNE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 07:13:04 -0500
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gX3Np-0002Oi-OR; Wed, 12 Dec 2018 13:12:57 +0100
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gX3Nn-000436-QP; Wed, 12 Dec 2018 13:12:55 +0100
-Date:   Wed, 12 Dec 2018 13:12:55 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     =?utf-8?B?Vm9rw6HEjQ==?= Michal <Michal.Vokac@ysoft.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Lukasz Majewski <l.majewski@majess.pl>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Lothar =?iso-8859-1?Q?Wa=DFmann?= <LW@karo-electronics.de>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFC PATCH v3 2/2] pwm: imx: Configure output to GPIO in
- disabled state
-Message-ID: <20181212121255.yg6b4pw7qord7ebi@pengutronix.de>
-References: <1544103655-104466-1-git-send-email-michal.vokac@ysoft.com>
- <1544103655-104466-3-git-send-email-michal.vokac@ysoft.com>
- <20181212080154.kcfh57mulypwuscu@pengutronix.de>
- <52ed0614-d1f5-81cb-3b17-8eb137967872@ysoft.com>
+        Wed, 12 Dec 2018 07:14:02 -0500
+Received: from mx2.suse.de ([195.135.220.15]:58594 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727067AbeLLMOC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 07:14:02 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id E5A9DAC39;
+        Wed, 12 Dec 2018 12:13:59 +0000 (UTC)
+Date:   Wed, 12 Dec 2018 13:13:58 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Liu Bo <bo.liu@linux.alibaba.com>, Jan Kara <jack@suse.cz>,
+        Dave Chinner <david@fromorbit.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] mm, memcg: fix reclaim deadlock with writeback
+Message-ID: <20181212121358.GR1286@dhcp22.suse.cz>
+References: <20181211132645.31053-1-mhocko@kernel.org>
+ <20181212115837.zragenml27av3fqm@kshutemo-mobl1>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <52ed0614-d1f5-81cb-3b17-8eb137967872@ysoft.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <20181212115837.zragenml27av3fqm@kshutemo-mobl1>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 12, 2018 at 11:42:17AM +0000, Vokáč Michal wrote:
-> On 12.12.2018 09:01, Uwe Kleine-König wrote:
-> > On Thu, Dec 06, 2018 at 01:41:31PM +0000, Vokáč Michal wrote:
-> >> Normally the PWM output is held LOW when PWM is disabled. This can cause
-> >> problems when inverted PWM signal polarity is needed. With this behavior
-> >> the connected circuit is fed by 100% duty cycle instead of being shut-off.
-> >>
-> >> Allow users to define a "pwm" and a "gpio" pinctrl states. The pwm pinctrl
-> >> state is selected when PWM is enabled and the gpio pinctrl state is
-> >> selected when PWM is disabled. In the gpio state the new pwm-gpios GPIO is
-> >> configured as input and the internal pull-up resistor is used to pull the
-> >> output level high.
-> >>
-> >> If all the pinctrl states and the pwm-gpios GPIO are not correctly
-> >> specified in DT the PWM work as usual.
-> >>
-> >> As an example, with this patch a PWM controlled backlight with inversed
-> >> signal polarity can be used in full brightness range. Without this patch
-> >> the backlight can not be turned off as brightness = 0 disables the PWM
-> >> and that in turn set PWM output LOW, that is full brightness.
-> >>
-> >> Inverted output of the PWM with "default" and with "pwm"+"gpio" pinctrl:
-> >>
-> >> +--------------+------------+---------------+----------- +-------------+
-> >> | After reset  | Bootloader |   PWM probe   |     PWM    |     PWM     |
-> >> | 100k pull-up |            |               | enable 30% |   disable   |
-> >> +--------------+------------+---------------+------------+-------------+
-> >> | pinctrl      |    none    |    default    |   default  |   default   |
-> >> | out H   __________________                   __   __                 |
-> >> | out L                     \_________________/  \_/  \_/\____________ |
-> >> |                                           ^    ^    ^                |
-> >> +--------------+------------+---------------+------------+-------------+
-> >> | pinctrl      |    none    |      gpio     |     pwm    |     gpio    |
-> >> | out H   __________________________________   __   __   _____________ |
-> >> | out L                                     \_/  \_/  \_/              |
-> >> |                                           ^    ^    ^                |
-> >> +----------------------------------------------------------------------+
-> >>
-> >> Signed-off-by: Michal Vokáč <michal.vokac@ysoft.com>
-> >> ---
-> >> Changes in v3:
-> >>   - Commit message update.
-> >>   - Minor fix in code comment (Uwe)
-> >>   - Align function arguments to the opening parentheses. (Uwe)
-> >>   - Do not test devm_pinctrl_get for NULL. (Thierry)
-> >>   - Convert all messages to dev_dbg() (Thierry)
-> >>   - Do not actively drive the pin in gpio state. Configure it as input
-> >>     and rely solely on the internal pull-up. (Thierry)
-> >>
-> >> Changes in v2:
-> >>   - Utilize the "pwm" and "gpio" pinctrl states.
-> >>   - Use the pwm-gpios signal to drive the output in "gpio" pinctrl state.
-> >>   - Select the right pinctrl state in probe.
-> >>
-> >>   drivers/pwm/pwm-imx.c | 77 +++++++++++++++++++++++++++++++++++++++++++++++++++
-> >>   1 file changed, 77 insertions(+)
-> >>
+On Wed 12-12-18 14:58:37, Kirill A. Shutemov wrote:
+> On Tue, Dec 11, 2018 at 02:26:45PM +0100, Michal Hocko wrote:
+> > From: Michal Hocko <mhocko@suse.com>
+> > 
+> > Liu Bo has experienced a deadlock between memcg (legacy) reclaim and the
+> > ext4 writeback
+> > task1:
+> > [<ffffffff811aaa52>] wait_on_page_bit+0x82/0xa0
+> > [<ffffffff811c5777>] shrink_page_list+0x907/0x960
+> > [<ffffffff811c6027>] shrink_inactive_list+0x2c7/0x680
+> > [<ffffffff811c6ba4>] shrink_node_memcg+0x404/0x830
+> > [<ffffffff811c70a8>] shrink_node+0xd8/0x300
+> > [<ffffffff811c73dd>] do_try_to_free_pages+0x10d/0x330
+> > [<ffffffff811c7865>] try_to_free_mem_cgroup_pages+0xd5/0x1b0
+> > [<ffffffff8122df2d>] try_charge+0x14d/0x720
+> > [<ffffffff812320cc>] memcg_kmem_charge_memcg+0x3c/0xa0
+> > [<ffffffff812321ae>] memcg_kmem_charge+0x7e/0xd0
+> > [<ffffffff811b68a8>] __alloc_pages_nodemask+0x178/0x260
+> > [<ffffffff8120bff5>] alloc_pages_current+0x95/0x140
+> > [<ffffffff81074247>] pte_alloc_one+0x17/0x40
+> > [<ffffffff811e34de>] __pte_alloc+0x1e/0x110
+> > [<ffffffffa06739de>] alloc_set_pte+0x5fe/0xc20
+> > [<ffffffff811e5d93>] do_fault+0x103/0x970
+> > [<ffffffff811e6e5e>] handle_mm_fault+0x61e/0xd10
+> > [<ffffffff8106ea02>] __do_page_fault+0x252/0x4d0
+> > [<ffffffff8106ecb0>] do_page_fault+0x30/0x80
+> > [<ffffffff8171bce8>] page_fault+0x28/0x30
+> > [<ffffffffffffffff>] 0xffffffffffffffff
+> > 
+> > task2:
+> > [<ffffffff811aadc6>] __lock_page+0x86/0xa0
+> > [<ffffffffa02f1e47>] mpage_prepare_extent_to_map+0x2e7/0x310 [ext4]
+> > [<ffffffffa08a2689>] ext4_writepages+0x479/0xd60
+> > [<ffffffff811bbede>] do_writepages+0x1e/0x30
+> > [<ffffffff812725e5>] __writeback_single_inode+0x45/0x320
+> > [<ffffffff81272de2>] writeback_sb_inodes+0x272/0x600
+> > [<ffffffff81273202>] __writeback_inodes_wb+0x92/0xc0
+> > [<ffffffff81273568>] wb_writeback+0x268/0x300
+> > [<ffffffff81273d24>] wb_workfn+0xb4/0x390
+> > [<ffffffff810a2f19>] process_one_work+0x189/0x420
+> > [<ffffffff810a31fe>] worker_thread+0x4e/0x4b0
+> > [<ffffffff810a9786>] kthread+0xe6/0x100
+> > [<ffffffff8171a9a1>] ret_from_fork+0x41/0x50
+> > [<ffffffffffffffff>] 0xffffffffffffffff
+> > 
+> > He adds
+> > : task1 is waiting for the PageWriteback bit of the page that task2 has
+> > : collected in mpd->io_submit->io_bio, and tasks2 is waiting for the LOCKED
+> > : bit the page which tasks1 has locked.
+> > 
+> > More precisely task1 is handling a page fault and it has a page locked
+> > while it charges a new page table to a memcg. That in turn hits a memory
+> > limit reclaim and the memcg reclaim for legacy controller is waiting on
+> > the writeback but that is never going to finish because the writeback
+> > itself is waiting for the page locked in the #PF path. So this is
+> > essentially ABBA deadlock.
+> > 
+> > Waiting for the writeback in legacy memcg controller is a workaround
+> > for pre-mature OOM killer invocations because there is no dirty IO
+> > throttling available for the controller. There is no easy way around
+> > that unfortunately. Therefore fix this specific issue by pre-allocating
+> > the page table outside of the page lock. We have that handy
+> > infrastructure for that already so simply reuse the fault-around pattern
+> > which already does this.
+> > 
+> > Reported-and-Debugged-by: Liu Bo <bo.liu@linux.alibaba.com>
+> > Signed-off-by: Michal Hocko <mhocko@suse.com>
+> > ---
+> > Hi,
+> > this has been originally reported here [1]. While it could get worked
+> > around in the fs, catching the allocation early sounds like a preferable
+> > approach. Liu Bo has noted that he is not able to reproduce this anymore
+> > because kmem accounting has been disabled in their workload but this
+> > should be quite straightforward to review.
+> > 
+> > There are probably other hidden __GFP_ACCOUNT | GFP_KERNEL allocations
+> > from under a fs page locked but they should be really rare. I am not
+> > aware of a better solution unfortunately.
 > 
-> [ snip ]
-> 
-> > On thing I noticed while looking at the rcar driver is: This doesn't
-> > wait for the current period to end. Is this supposed to happen? Also for
-> > the enable case the hardware is configured for the desired duty cycle
-> > and only then the pinctrl is switched to pwm. Both might result in a
-> > spike that is not desired.
-> 
-> The behavior should not change from how imx-pwm was working before.
-> When PWM is disabled the output is immediately gated off (put into
-> the idle state) independently on the period. I measured this.
+> Okay, I have spent some time on the issue and was not able to find a
+> better solution too. But I cannot say I like it.
 
-Oh really, I wasn't aware of that. This is another bug in the imx pwm
-then (I think).
+Ohh, I do not like it either. I can make it more targeted by abstracting
+sane_reclaim() and using it for the check but I am not sure this is
+really more helpful.
  
-> For the enable case you would certainly not get any additional spikes.
+> I think we need to spend more time on making ->prealloc_pte useful: looks
+> like it would help to convert vmf_insert_* helpers to take struct vm_fault
+> * as input and propagate it down to pmd population point. Otherwise DAX
+> and drivers would alloacate the page table for nothing.
 
-Yes, there is a possibility for a spike: If you configure for say 40%:
-                   _    _
-pwm output   : ___/ \__/ \__
-muxing       : GPIO| PWM_
-actual output: ____/\__/ \__
+Yes this would be an obvious enahancement.
 
-> The worst thing that may happen is that the first period will be
-> slightly shorter depending on how long it takes to test the pinctrl
-> and switch the muxing. And this is unavoidable, it would happen even
-> if you wait for the start of a period. The test + muxing still takes
-> some time.
+> Have you considered if we need anything similar for anon path? Is it
+> possible to have similar deadlock with swaping rather than writeback?
 
-You could first configure for duty_cycle 0 and a short period, then mux
-to PWM and then configure the correct duty cycle. Ditto for disable.
-
-Best regards
-Uwe
-
+No, I do not see anon path to allocated under page lock.
 -- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Michal Hocko
+SUSE Labs
