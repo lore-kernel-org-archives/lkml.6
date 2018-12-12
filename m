@@ -2,139 +2,125 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5E70C65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 15:54:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DC1AC65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 15:55:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 774A82084E
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 15:54:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F8232084E
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 15:55:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544630053;
-	bh=VlvrLspD8k/Ifs2EcMmBg1tiuP/synGvJZLeW5KsMws=;
-	h=Date:From:To:Cc:Subject:List-ID:From;
-	b=ODJdf1SaiCtLD8jr7quEMOMkFWnIpqO0Rv/5C1SpO5n11KWhzstYYnv+QC0pRWZgJ
-	 C79TnG2RGcYED1gejqj8Gk4N4eKRk0c1gopEjX79xNMOctrfmLiod3nwUtTU2foG+K
-	 /XiQkxh2YyAhsH+f76E2NFTNGf+kJby22pBkEq+A=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 774A82084E
+	s=default; t=1544630119;
+	bh=yW3bwXui1z9Fx9nGBQ2a7tFhlIF0Tn9oGxEotH1mOOY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=Li1BcZWBJ476aQMI7TI7cCyXwZGz+NA8mptw29nChKxppfwKUiIIsuH5T0Ny9Av8k
+	 COSJu5r73E585ttq7NqmqquTD0dNF7BOGNbtpwOFjeHlySK5L24m0Z4kzIDqbaT1k4
+	 E6qyD9Z0L8hu3fXliHT8zlu6a8NNIBFY/7S2IE3Q=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F8232084E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727860AbeLLPyM (ORCPT
+        id S1727862AbeLLPzS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 10:54:12 -0500
-Received: from casper.infradead.org ([85.118.1.10]:36234 "EHLO
-        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726358AbeLLPyL (ORCPT
+        Wed, 12 Dec 2018 10:55:18 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:45846 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726358AbeLLPzS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 10:54:11 -0500
+        Wed, 12 Dec 2018 10:55:18 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-        MIME-Version:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=WbfwLgK7xlauiTjRYJNb2JutczK1M1HeK6JBTckc+kY=; b=kzEaSTbL17KCoEBHVUnwHQX46g
-        27WxCDueSIsoCJ0DbvZ84fKSfzir6V2dXBRaL3MNWy0WUbGqQf91f1RfXa6OY5slveJn3djrGqPtS
-        ZwtHBtv1b6XFMNGSKwG+IRE20vtnYAqTro84VCHpzc1XhnAuAK6K9bRA1rMKva76moDBPZyFcG2yC
-        mHssNbUK6xETrTMeqwME2rHSTgLSwphjWhALaSFqVwd4yISokms381Y+2luQHkv2d8bjtuyrHv3Ah
-        fC/6Ph4lg2J8jjFYLa9AvdVwtNcEB2Q7toZDTt5FkJizJ0+PToyhNEddVsczDkmBbBv0jm2Aywp7Y
-        lIVFaURw==;
-Received: from [177.159.254.7] (helo=coco.lan)
-        by casper.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gX6pt-0005iC-K9; Wed, 12 Dec 2018 15:54:10 +0000
-Date:   Wed, 12 Dec 2018 13:54:03 -0200
-From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL for v4.20-rc7] media fixes
-Message-ID: <20181212135403.3ce9132a@coco.lan>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=MxRJpaEmCq7pl5aHRVnXXQnL4V8VTjtBmPWkYK1fRgw=; b=wT77kI/qD1QiWQ7BKsScLBWuL
+        sA9XlEuKO84+09F1Wu62349eHWDmTqcDHNaJr8dW/Nk+PtplDJenc4zzHmhGEl/Og3/WgL0ghpMjP
+        rsfiGGpLXcmVyiHiaBiNaROT2y/IYyRADgsJibAsxJWnBpwiet+7lU5EIL/bafhvmm4L8=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gX6qk-0004Fd-T2; Wed, 12 Dec 2018 15:55:02 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 465C21125535; Wed, 12 Dec 2018 15:55:02 +0000 (GMT)
+Date:   Wed, 12 Dec 2018 15:55:02 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Andrei.Stefanescu@microchip.com
+Cc:     robh+dt@kernel.org, lgirdwood@gmail.com, mark.rutland@arm.com,
+        gregkh@linuxfoundation.org, Cristian.Birsan@microchip.com,
+        Nicolas.Ferre@microchip.com, Claudiu.Beznea@microchip.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [RESEND PATCH v3 3/3] regulator: mcp16502: add regulator driver
+ for MCP16502
+Message-ID: <20181212155502.GD6920@sirena.org.uk>
+References: <1544522876-15967-1-git-send-email-andrei.stefanescu@microchip.com>
+ <1544522876-15967-4-git-send-email-andrei.stefanescu@microchip.com>
+ <20181211164706.GL6686@sirena.org.uk>
+ <6a35df06-1309-f069-9b22-8c2cc5cca56e@microchip.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="yudcn1FV7Hsu/q59"
+Content-Disposition: inline
+In-Reply-To: <6a35df06-1309-f069-9b22-8c2cc5cca56e@microchip.com>
+X-Cookie: The greatest remedy for anger is delay.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
 
-Please pull from:
-  git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-media tags/media/v4.20-5
+--yudcn1FV7Hsu/q59
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Dec 12, 2018 at 08:01:07AM +0000, Andrei.Stefanescu@microchip.com w=
+rote:
 
-For 
-  - one regression at vsp1 driver;
-  - some last time changes for the upcoming request API logic and for
-    stateless codec support. As the stateless codec "cedrus" driver
-    is at staging, don't apply the MPEG controls as part of the main
-    V4L2 API, as those may not be ready for production yet.
+> > This puts the device into low power mode when the suspend function gets
+> > called but this might not be safe - devices using the regulator may not
+> > be suspended yet so could still need full regulation.  Normally a GPIO
+> > triggered transition like this would be being done by hardware as part
+> > of the process of suspending the SoC.  Is there some reason to do this
+> > manually?
 
-Regards,
-Mauro
+> There is a line from the MPU (SHDN) which goes low only when the MPU
+> turns off. That line is already connected to the PMIC and it differentiat=
+es
+> between suspend-to-mem and standby. To switch to low-power, the PMIC must
+> be controlled by the GPIO pin LPM.
 
+> The suspend sequence is:
+> - LPM pin goes high (PMIC enters Low-Power <-> Linux standby)
+> - SHDN goes low (if target suspend state is mem) and then PMIC enters=20
+> HIBERNATE
 
-The following changes since commit a7c3a0d5f8d8cd5cdb32c06d4d68f5b4e4d2104b:
+This feels like it should be being controlled somewhere else, if it's
+actually causing a change in the PMIC state it seems like it wants to be
+done as late as possible in suspend to minimize the risks.  At the very
+least suspend_late() for the driver seems appropriate.
 
-  media: mediactl docs: Fix licensing message (2018-11-27 13:52:46 -0500)
+Could you submit a version with this feature at least split out into a
+separate patch please so we can apply the rest of the code while this is
+discussed?
 
-are available in the Git repository at:
+--yudcn1FV7Hsu/q59
+Content-Type: application/pgp-signature; name="signature.asc"
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-media tags/media/v4.20-5
+-----BEGIN PGP SIGNATURE-----
 
-for you to fetch changes up to 078ab3ea2c3bb69cb989d52346fefa1246055e5b:
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlwRL1UACgkQJNaLcl1U
+h9AOAwf+K8t0YPz/fYY45FbWktz2aoX3ECrcgy5r25ACJVOjG7tBhTelZLbGkitB
+314uampogG8tT6s8WObZbEJjQL+VUbyt7bgcpTI7YamUdPSwkXSJDsfjpPOVVLoa
+2iAHn+GBi7O63sKNUb9s+D4q7K1xbMs1vxcpQoV+I/SZx33z6GaoJPBUI8CcDes3
+UmC9aaIMUMva/RuKtPSEomI/+qAhiuMdZ1e4SQyZ/AZLxThOPyXJvh1hs8fa2IQg
+qC4heudi00SNdZj0dGl6GlyYLetqaYKamlZ8aYf++xJPwI6hH/bsSP/Tiq2iaWTE
+wnP4HNcX1dCaLvgGy84OxUTV9fmiOQ==
+=8c4e
+-----END PGP SIGNATURE-----
 
-  media: Add a Kconfig option for the Request API (2018-12-05 13:07:43 -0500)
-
-----------------------------------------------------------------
-media fixes for v4.20-rc7
-
-----------------------------------------------------------------
-Dan Carpenter (1):
-      media: cedrus: Fix a NULL vs IS_ERR() check
-
-Hans Verkuil (8):
-      media: vb2: don't call __vb2_queue_cancel if vb2_start_streaming failed
-      media: vb2: skip request checks for VIDIOC_PREPARE_BUF
-      media: vb2: keep a reference to the request until dqbuf
-      media: vb2: don't unbind/put the object when going to state QUEUED
-      media: vivid: drop v4l2_ctrl_request_complete() from start_streaming
-      media: vicodec: set state resolution from raw format
-      media: mpeg2-ctrls.h: move MPEG2 state controls to non-public header
-      media: extended-controls.rst: add note to the MPEG2 state controls
-
-Laurent Pinchart (1):
-      media: vsp1: Fix LIF buffer thresholds
-
-Sakari Ailus (1):
-      media: Add a Kconfig option for the Request API
-
- Documentation/media/uapi/v4l/extended-controls.rst | 10 +++
- drivers/media/Kconfig                              | 13 ++++
- drivers/media/common/videobuf2/videobuf2-core.c    | 44 ++++++++---
- drivers/media/common/videobuf2/videobuf2-v4l2.c    | 13 +++-
- drivers/media/media-device.c                       |  4 +
- drivers/media/platform/vicodec/vicodec-core.c      | 13 +++-
- drivers/media/platform/vivid/vivid-sdr-cap.c       |  2 -
- drivers/media/platform/vivid/vivid-vbi-cap.c       |  2 -
- drivers/media/platform/vivid/vivid-vbi-out.c       |  2 -
- drivers/media/platform/vivid/vivid-vid-cap.c       |  2 -
- drivers/media/platform/vivid/vivid-vid-out.c       |  2 -
- drivers/media/platform/vsp1/vsp1_lif.c             |  2 +-
- drivers/media/v4l2-core/v4l2-ctrls.c               |  4 +-
- drivers/staging/media/sunxi/cedrus/Kconfig         |  1 +
- drivers/staging/media/sunxi/cedrus/cedrus_hw.c     |  4 +-
- include/media/mpeg2-ctrls.h                        | 86 ++++++++++++++++++++++
- include/media/v4l2-ctrls.h                         |  6 ++
- include/media/videobuf2-core.h                     |  2 +
- include/uapi/linux/v4l2-controls.h                 | 68 -----------------
- include/uapi/linux/videodev2.h                     |  4 -
- 20 files changed, 181 insertions(+), 103 deletions(-)
- create mode 100644 include/media/mpeg2-ctrls.h
-
+--yudcn1FV7Hsu/q59--
