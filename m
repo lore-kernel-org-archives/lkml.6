@@ -2,132 +2,153 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F5BAC65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 23:45:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 544D9C65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 23:46:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0285E20849
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 23:45:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0285E20849
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
+	by mail.kernel.org (Postfix) with ESMTP id 1895D20851
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 23:46:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="VnEPQtpC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1895D20851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728501AbeLLXp0 (ORCPT
+        id S1728534AbeLLXqS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 18:45:26 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:46655 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726355AbeLLXpX (ORCPT
+        Wed, 12 Dec 2018 18:46:18 -0500
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:9013 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726278AbeLLXqR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 18:45:23 -0500
-Received: by mail-pf1-f194.google.com with SMTP id c73so84528pfe.13;
-        Wed, 12 Dec 2018 15:45:23 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Fu/UTOUx8M++eI/2XeJerQyVxhQt4SjyIcrXQcGC8TU=;
-        b=PzBTUdgbcGLfKoOxZSPU6gDtAbdQUMZ7uKMM4XoUH0jyOliOQr2E0ZBG2rtiGc5uMX
-         14jBT72VvOdaSeKpyqwCU5qeThoEtEEwmpDXMHw6arf1UOfuMD4RB73v4SjnJEU55dRC
-         z2p+JfCiLBxyFuN9yDMV8l3+P0lc8YCkb9qiJAzHQ0X94G/1d6PKbUMQcmClgn5haKPy
-         onO1RXlelfrycGbukDXCq15Key1slkooh4CGbXnrv9koXlWiJd1EmOQgaIGL/0Pf5MkV
-         Jh7wuY/MIpvoy/5BwJZtsY/JcW0oUqNxM9fax8+s0ft6aOSkg6pCMDEoPfUXc3ACRmuf
-         IADw==
-X-Gm-Message-State: AA+aEWZA5oKK3GKcHhD1MjkwIgw4fGbvFkDHvCEmYNwbz0BbIXvPxrQn
-        TUiyParGD/ex0bVksguHajc=
-X-Google-Smtp-Source: AFSGD/XyToAgswKzKgw8lYJyw2P0qSyXWvO5XIAvFvhXqXm2Y+L1E2QBUc+DgenMvOeq804+BTYn+A==
-X-Received: by 2002:a63:e80e:: with SMTP id s14mr19932914pgh.30.1544658322409;
-        Wed, 12 Dec 2018 15:45:22 -0800 (PST)
-Received: from ?IPv6:2620:15c:2cd:203:5cdc:422c:7b28:ebb5? ([2620:15c:2cd:203:5cdc:422c:7b28:ebb5])
-        by smtp.gmail.com with ESMTPSA id m19sm21375pgn.35.2018.12.12.15.45.21
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 12 Dec 2018 15:45:21 -0800 (PST)
-Message-ID: <1544658320.185366.407.camel@acm.org>
-Subject: Re: linux-next: Signed-off-by missing for commits in the bpf-next
- tree
-From:   Bart Van Assche <bvanassche@acm.org>
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Networking <netdev@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date:   Wed, 12 Dec 2018 15:45:20 -0800
-In-Reply-To: <20181212233909.hhf5q4vpi3mmi37u@ast-mbp.dhcp.thefacebook.com>
-References: <20181213073245.5b2d2536@canb.auug.org.au>
-         <20181212205253.d3reuxcyjhnwh3ul@ast-mbp.dhcp.thefacebook.com>
-         <20181213094820.62d26354@canb.auug.org.au>
-         <20181212233909.hhf5q4vpi3mmi37u@ast-mbp.dhcp.thefacebook.com>
-Content-Type: text/plain; charset="UTF-7"
-X-Mailer: Evolution 3.26.2-1 
-Mime-Version: 1.0
+        Wed, 12 Dec 2018 18:46:17 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c119dc40000>; Wed, 12 Dec 2018 15:46:12 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Wed, 12 Dec 2018 15:46:15 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Wed, 12 Dec 2018 15:46:15 -0800
+Received: from [10.110.48.28] (10.124.1.5) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 12 Dec
+ 2018 23:46:15 +0000
+Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
+To:     Jason Gunthorpe <jgg@ziepe.ca>, Jerome Glisse <jglisse@redhat.com>
+CC:     Dan Williams <dan.j.williams@intel.com>, Jan Kara <jack@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>,
+        John Hubbard <john.hubbard@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>, <tom@talpey.com>,
+        Al Viro <viro@zeniv.linux.org.uk>, <benve@cisco.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Christopher Lameter <cl@linux.com>,
+        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        <rcampbell@nvidia.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        "Weiny, Ira" <ira.weiny@intel.com>
+References: <7b4733be-13d3-c790-ff1b-ac51b505e9a6@nvidia.com>
+ <20181207191620.GD3293@redhat.com>
+ <3c4d46c0-aced-f96f-1bf3-725d02f11b60@nvidia.com>
+ <20181208022445.GA7024@redhat.com> <20181210102846.GC29289@quack2.suse.cz>
+ <20181212150319.GA3432@redhat.com>
+ <CAPcyv4go0Xzhz8rXdfscWuXDu83BO9v8WD4upDUJWb7gKzX5OQ@mail.gmail.com>
+ <20181212213005.GE5037@redhat.com>
+ <CAPcyv4gJHeFjEgna1S-2uE4KxkSUgkc=e=2E5oqfoirec84C-w@mail.gmail.com>
+ <20181212215348.GF5037@redhat.com> <20181212233703.GB2947@ziepe.ca>
+X-Nvconfidentiality: public
+From:   John Hubbard <jhubbard@nvidia.com>
+Message-ID: <63a551ce-c314-db75-f6d3-c92e39655f79@nvidia.com>
+Date:   Wed, 12 Dec 2018 15:46:14 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
+MIME-Version: 1.0
+In-Reply-To: <20181212233703.GB2947@ziepe.ca>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL108.nvidia.com (172.18.146.13) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US-large
 Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1544658372; bh=uX8Gpj8vVhSuC8ABhWrngWoL/y4B3pb0WpnakWUJ464=;
+        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=VnEPQtpCXrSakkMWU86ldsqjhUzaytvRAep1ilR7O7c0YhaTwH+QfBv6Ze/XyPO+F
+         SEVMBPN2fZ9YmgX3LVdvS6DSyoNmPfOWWlTxJnP6bgXAq7thk2AvbZj4MZJgLjejSr
+         rNVY1TSrHAmBNhJVPlSfFYywkXzZNejV/BkfSj6dhr6H71ckJrxtn+t9CDkr5qb2Iv
+         LoYs+koN5a7tNTi4OZZCWcoFXKcl8YzTRx88WOB0fTqtsTcNzcSUKdMk6nvCifQOy5
+         /A3qt78ZfY0E6o0SgnnBPi3QPlsDBXgYr0XS6jl34nqzWPWH3u6OHXpCb2/46NNaDl
+         +xpMYLbTKNycQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-12-12 at 15:39 -0800, Alexei Starovoitov wrote:
-+AD4 On Thu, Dec 13, 2018 at 09:48:20AM +-1100, Stephen Rothwell wrote:
-+AD4 +AD4 Hi Alexei,
-+AD4 +AD4 
-+AD4 +AD4 On Wed, 12 Dec 2018 12:53:11 -0800 Alexei Starovoitov +ADw-alexei.starovoitov+AEA-gmail.com+AD4 wrote:
-+AD4 +AD4 +AD4 
-+AD4 +AD4 +AD4 On Thu, Dec 13, 2018 at 07:32:45AM +-1100, Stephen Rothwell wrote:
-+AD4 +AD4 +AD4 +AD4 Hi all,
-+AD4 +AD4 +AD4 +AD4 
-+AD4 +AD4 +AD4 +AD4 Commits
-+AD4 +AD4 +AD4 +AD4 
-+AD4 +AD4 +AD4 +AD4   3bdc28aa2340 (+ACI-selftests/bpf: add btf annotations for cgroup+AF8-local+AF8-storage maps+ACI)
-+AD4 +AD4 +AD4 +AD4   1dfd1959fed4 (+ACI-bpf: add bpffs pretty print for cgroup local storage maps+ACI)
-+AD4 +AD4 +AD4 +AD4   3adc62d9a5be (+ACI-bpf: pass struct btf pointer to the map+AF8-check+AF8-btf() callback+ACI)
-+AD4 +AD4 +AD4 +AD4   9cf3a785dc4c (+ACI-selftests/bpf: use +AF8AXw-bpf+AF8-constant+AF8-htons in test+AF8-prog.c+ACI)
-+AD4 +AD4 +AD4 +AD4 
-+AD4 +AD4 +AD4 +AD4 are missing a Signed-off-by from their committers.  
-+AD4 +AD4 +AD4 
-+AD4 +AD4 +AD4 the must be a script mistake?
-+AD4 +AD4 +AD4 
-+AD4 +AD4 +AD4 I clearly see SOBs for all of them.
-+AD4 +AD4 
-+AD4 +AD4 For example:
-+AD4 +AD4 
-+AD4 +AD4 commit 3bdc28aa2340bf1e5af753287b373522bd1c02a9 (bpf-next/master)
-+AD4 +AD4 Author: Roman Gushchin +ADw-guroan+AEA-gmail.com+AD4
-+AD4 +AD4 Date:   Mon Dec 10 15:43:02 2018 -0800
-+AD4 +AD4 
-+AD4 +AD4     selftests/bpf: add btf annotations for cgroup+AF8-local+AF8-storage maps
-+AD4 +AD4     
-+AD4 +AD4     Add btf annotations to cgroup local storage maps (per-cpu and shared)
-+AD4 +AD4     in the network packet counting example.
-+AD4 +AD4     
-+AD4 +AD4     Signed-off-by: Roman Gushchin +ADw-guro+AEA-fb.com+AD4
-+AD4 +AD4     Cc: Alexei Starovoitov +ADw-ast+AEA-kernel.org+AD4
-+AD4 +AD4     Cc: Daniel Borkmann +ADw-daniel+AEA-iogearbox.net+AD4
-+AD4 +AD4     Acked-by: Martin KaFai Lau +ADw-kafai+AEA-fb.com+AD4
-+AD4 +AD4     Signed-off-by: Daniel Borkmann +ADw-daniel+AEA-iogearbox.net+AD4
-+AD4 +AD4 
-+AD4 +AD4 But it was committed by you, not Daniel.
-+AD4 
-+AD4 since there were only 4 commits I fixed them up manually.
-+AD4 But this approach doesn't scale.
-+AD4 We do rebase our trees when we need to fixup or drop patches and
-+AD4 at any given point a number of commits will be committed by me
-+AD4 and another set by Daniel. When we rebase we cannot keep adding
-+AD4 our SOBs to the other person SOBs.
-+AD4 Then comes the next rebase and we get to the point of
-+AD4 double and triple SOBs ?
-+AD4 
-+AD4 I think you need to adjust the script to something like:
-+AD4 SOBs by Daniel +AHw Alexei +AD0APQ commit by Daniel +AHw Alexei
-+AD4 in bpf and bpf-next trees.
+On 12/12/18 3:37 PM, Jason Gunthorpe wrote:
+> On Wed, Dec 12, 2018 at 04:53:49PM -0500, Jerome Glisse wrote:
+>>> Almost, we need some safety around assuming that DMA is complete the
+>>> page, so the notification would need to go all to way to userspace
+>>> with something like a file lease notification. It would also need to
+>>> be backstopped by an IOMMU in the case where the hardware does not /
+>>> can not stop in-flight DMA.
+>>
+>> You can always reprogram the hardware right away it will redirect
+>> any dma to the crappy page.
+> 
+> That causes silent data corruption for RDMA users - we can't do that.
+> 
+> The only way out for current hardware is to forcibly terminate the
+> RDMA activity somehow (and I'm not even sure this is possible, at
+> least it would be driver specific)
+> 
+> Even the IOMMU idea probably doesn't work, I doubt all current
+> hardware can handle a PCI-E error TLP properly. 
 
-Are you aware of Linus' opinion about rebasing? If not, please have a look
-at https://lkml.org/lkml/2016/3/26/71 or https://lwn.net/Articles/328436/.
+Very true.
 
-Thanks,
+> 
+> On some hardware it probably just protects DAX by causing data
+> corruption for RDMA - I fail to see how that is a win for system
+> stability if the user obviously wants to use DAX and RDMA together...
+> 
+> I think your approach with ODP only is the only one that meets your
+> requirements, the only other data-integrity-preserving approach is to
+> block/fail ftruncate/etc.
+> 
+>> From my point of view driver should listen to ftruncate before the
+>> mmu notifier kicks in and send event to userspace and maybe wait
+>> and block ftruncate (or move it to a worker thread).
+> 
+> We can do this, but we can't guarantee forward progress in userspace
+> and the best way we have to cancel that is portable to all RDMA
+> hardware is to kill the process(es)..
+> 
+> So if that is acceptable then we could use user notifiers and allow
+> non-ODP users...
+> 
 
-Bart.
+That is exactly the conclusion that some of us in the GPU world reached as
+well, when chatting about how this would have to work, even on modern GPU 
+hardware that can replay page faults, in many cases. 
+
+I think as long as we specify that the acceptable consequence of doing, say,
+umount on a filesystem that has active DMA happening is that the associated
+processes get killed, then we're going to be OK.
+
+What would worry me is if there was an expectation that processes could
+continue working properly after such a scenario.
+
+
+thanks,
+-- 
+John Hubbard
+NVIDIA
