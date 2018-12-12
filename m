@@ -5,61 +5,61 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,T_MIXED_ES,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01B0BC65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 20:52:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EEA9C67839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 20:52:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA2972080F
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 20:52:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F357920851
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 20:52:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KegQ2IEt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA2972080F
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rOy0lhNj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F357920851
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728356AbeLLUwi (ORCPT
+        id S1728381AbeLLUwo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 15:52:38 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:42508 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726294AbeLLUwh (ORCPT
+        Wed, 12 Dec 2018 15:52:44 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:37507 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728341AbeLLUwn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 15:52:37 -0500
-Received: by mail-pf1-f194.google.com with SMTP id 64so9434071pfr.9;
-        Wed, 12 Dec 2018 12:52:36 -0800 (PST)
+        Wed, 12 Dec 2018 15:52:43 -0500
+Received: by mail-pg1-f195.google.com with SMTP id 80so8891285pge.4;
+        Wed, 12 Dec 2018 12:52:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=4FKM4LRemwvTIhAkZE8YXR98dvGdEFBr7fGQqgFFRso=;
-        b=KegQ2IEtO59NJQ4kpE2qSbYdTLx/95cFRSEy61bIa4LNn/1kbe+ZUZXKEgRwYzQju4
-         G4NQ658VzQcd+sfD6bKqralBesX/m8r4QjtTSNlp7wJpiC3yfCuMFKchjUn4GT85o2lA
-         XYN9O7Yg/+8pxV4OPN2QV0oQEG9W9GCaIJxCIjYyR7mR6H6YORHa8jMWKnf1w2KBAssU
-         r0095D/9XPYG/kmGHKC6gY49ucBMEGWW42mlUVciLFHZ2fLpQ5bYCLw1kYC8B5V78goV
-         d8CCzQ/QVTUtml4qKK00oTXm7i06tQSsIyunUXw3DcSNAmPA6aAS4YW/pB+QOsCjlBGB
-         5abw==
+        bh=v69aHLFvfy/7W5kF/1wqVBEZr3a+tgiAo+VuWb8wLUA=;
+        b=rOy0lhNj6rwoN1virV5gfDokfzJeAs9cCawWNTXoJwpyHcsKGR1RmZAtJRkEV8ceU8
+         zeZWVevjvg8dQz7VLwt6wW2XJ6ab9QlLFDWxXS1L4E/YpAm7VXajBTP5nVbarmMN9fMO
+         Mfc6+BoXnJgUHIofA9koTAnse5owp5k2wLPumNBMYOvKZMJIx9E1SarOW5HUJ8jt0w1A
+         K8+UAqhUtVjwkOWQVTn5N5/5NKCFMAFT1JNk0rTGDgVFhz64dm0Ca/nxVzu8iTO3DjtP
+         M8CCstr0EQvGTpp4CBAY3JNJRzbsM32hqlhIXsXTfDBCIrQmIkWnX7FR6Vd7dDDVwnKd
+         mU3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=4FKM4LRemwvTIhAkZE8YXR98dvGdEFBr7fGQqgFFRso=;
-        b=Jw+scD3Ny1vDhCp9ucm0LZyq/m3h0lU/VEzseo4DNC4rLsfVKJxre4yy1z5OVFp9Di
-         ZZpyKRhNXhG5JnQeby1ViMwXatEa7xETEjsKKSHRJPvNaRBwsTetZXAmnv+oAaHHd8pc
-         Da2DRNwF3WsqRv3BOusyVVVQifNGD6iqcj8youG4mV5L486T8F6r3ueURD0fVGF3ZOoO
-         HUI/6KyRpUw9mwnW1inavVvTKqq3LG6q75lNjs0QiN1oKCIZC88ZI+F82W7qzx0pKllv
-         L8ufnGpScrSxSSb+jiO+OowlXvFcMFMpBPylu3YzMX9+C11giAvh0EQTepfDfw/OYtLS
-         VkSw==
-X-Gm-Message-State: AA+aEWarHmK9vyIon8FnSZIuSV9l/Bcu9NBhAyU00S3nfWL/4wTzV1AK
-        zpe6T4qdovtFJ/Nsoib5fno=
-X-Google-Smtp-Source: AFSGD/VUKnoUXfA1kAw+mJ2ozF6tG3ol8GBldP/nqzyrdqXEwVXAk/5nvclaaX+5fNWylhKMFaE/Lg==
-X-Received: by 2002:aa7:81d0:: with SMTP id c16mr21355962pfn.153.1544647956261;
-        Wed, 12 Dec 2018 12:52:36 -0800 (PST)
+        bh=v69aHLFvfy/7W5kF/1wqVBEZr3a+tgiAo+VuWb8wLUA=;
+        b=eWnnHom6TvTZsyCJOgOv1wBDD/gvolb/dwpBIZzhEmk4WAhJzOMlXk3wj8Yl/CI+4L
+         qzeGkQyY+YbBV4QyMy1Jsx8ffh9tokM/SCPr02WryaLAwT8mkW7X1uH/qUumw8817aos
+         UWzoDSDxnJc04XY7BbMWNDjyBb3A63WGUSr9qJgaQMpa7Rc+A5jebguyj0qiFnK1R07Z
+         /c9AaHcZP1zdDaJ4sDIVXeTu+qasUxAq1R9EIRBzE9CjguDylQXt/rygagUzjy8EaEgq
+         +xu7z6jNzpEKj7K9n0X76i6Hz9kwwUiJs9xluuwlc/hmT4bi/mKh1Vv0mNPLOqSvyXls
+         KZnA==
+X-Gm-Message-State: AA+aEWbU4U7E2LzPfU2hqXpmRroTkuxqkt2akcnl+cY3L8bIBXL341yc
+        KFCPOZww5KcjiRnCQZDdiz4hqa8p
+X-Google-Smtp-Source: AFSGD/VqpfBJCw/lEZF+t09E8CwDFGM5rxK6B6oYmWwUuK2ls4gcfzIIfBm+JPEG80lwG5+GFJfing==
+X-Received: by 2002:a62:46d0:: with SMTP id o77mr21794456pfi.172.1544647962541;
+        Wed, 12 Dec 2018 12:52:42 -0800 (PST)
 Received: from localhost.localdomain ([94.29.36.169])
-        by smtp.gmail.com with ESMTPSA id p2sm34753860pgc.94.2018.12.12.12.52.30
+        by smtp.gmail.com with ESMTPSA id p2sm34753860pgc.94.2018.12.12.12.52.36
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 12 Dec 2018 12:52:35 -0800 (PST)
+        Wed, 12 Dec 2018 12:52:42 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -67,9 +67,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
 Cc:     Robin Murphy <robin.murphy@arm.com>,
         iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v7 06/24] dt-bindings: memory: tegra: Squash tegra20-gart into tegra20-mc
-Date:   Wed, 12 Dec 2018 23:38:49 +0300
-Message-Id: <20181212203907.23461-7-digetx@gmail.com>
+Subject: [PATCH v7 07/24] ARM: dts: tegra20: Update Memory Controller node to the new binding
+Date:   Wed, 12 Dec 2018 23:38:50 +0300
+Message-Id: <20181212203907.23461-8-digetx@gmail.com>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181212203907.23461-1-digetx@gmail.com>
 References: <20181212203907.23461-1-digetx@gmail.com>
@@ -80,96 +80,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Splitting GART and Memory Controller wasn't a good decision that was made
-back in the day. Given that the GART driver wasn't ever been used by
-anything in the kernel, we decided that it will be better to correct the
-mistakes of the past and merge two bindings into a single one. As a result
-there is a DT ABI change for the Memory Controller that allows not to
-break newer kernels using older DT and not to break older kernels using
-newer DT, that is done by changing the 'compatible' of the node to
-'tegra20-mc-gart' and adding a new-required clock property. The new clock
-property also puts the tegra20-mc binding in line with the bindings of the
-later Tegra generations.
+Device tree binding of Memory Controller has been changed: GART has been
+squashed into the MC, there are a new mandatory clock and #iommu-cells
+properties, the compatible has been changed to 'tegra20-mc-gart'.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
 Acked-by: Thierry Reding <treding@nvidia.com>
 ---
- .../bindings/iommu/nvidia,tegra20-gart.txt    | 14 ----------
- .../memory-controllers/nvidia,tegra20-mc.txt  | 27 +++++++++++++------
- 2 files changed, 19 insertions(+), 22 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/iommu/nvidia,tegra20-gart.txt
+ arch/arm/boot/dts/tegra20.dtsi | 15 ++++++---------
+ 1 file changed, 6 insertions(+), 9 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/iommu/nvidia,tegra20-gart.txt b/Documentation/devicetree/bindings/iommu/nvidia,tegra20-gart.txt
-deleted file mode 100644
-index 099d9362ebc1..000000000000
---- a/Documentation/devicetree/bindings/iommu/nvidia,tegra20-gart.txt
-+++ /dev/null
-@@ -1,14 +0,0 @@
--NVIDIA Tegra 20 GART
--
--Required properties:
--- compatible: "nvidia,tegra20-gart"
--- reg: Two pairs of cells specifying the physical address and size of
--  the memory controller registers and the GART aperture respectively.
--
--Example:
--
--	gart {
--		compatible = "nvidia,tegra20-gart";
--		reg = <0x7000f024 0x00000018	/* controller registers */
--		       0x58000000 0x02000000>;	/* GART aperture */
--	};
-diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-mc.txt b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-mc.txt
-index 7d60a50a4fa1..e55328237df4 100644
---- a/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-mc.txt
-+++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra20-mc.txt
-@@ -1,26 +1,37 @@
- NVIDIA Tegra20 MC(Memory Controller)
+diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+index dcad6d6128cf..8c942e60703e 100644
+--- a/arch/arm/boot/dts/tegra20.dtsi
++++ b/arch/arm/boot/dts/tegra20.dtsi
+@@ -616,17 +616,14 @@
+ 	};
  
- Required properties:
--- compatible : "nvidia,tegra20-mc"
--- reg : Should contain 2 register ranges(address and length); see the
--  example below. Note that the MC registers are interleaved with the
--  GART registers, and hence must be represented as multiple ranges.
-+- compatible : "nvidia,tegra20-mc-gart"
-+- reg : Should contain 2 register ranges: physical base address and length of
-+  the controller's registers and the GART aperture respectively.
-+- clocks: Must contain an entry for each entry in clock-names.
-+  See ../clocks/clock-bindings.txt for details.
-+- clock-names: Must include the following entries:
-+  - mc: the module's clock input
- - interrupts : Should contain MC General interrupt.
- - #reset-cells : Should be 1. This cell represents memory client module ID.
-   The assignments may be found in header file <dt-bindings/memory/tegra20-mc.h>
-   or in the TRM documentation.
-+- #iommu-cells: Should be 0. This cell represents the number of cells in an
-+  IOMMU specifier needed to encode an address. GART supports only a single
-+  address space that is shared by all devices, therefore no additional
-+  information needed for the address encoding.
- 
- Example:
  	mc: memory-controller@7000f000 {
 -		compatible = "nvidia,tegra20-mc";
 -		reg = <0x7000f000 0x024
 -		       0x7000f03c 0x3c4>;
--		interrupts = <0 77 0x04>;
 +		compatible = "nvidia,tegra20-mc-gart";
 +		reg = <0x7000f000 0x400		/* controller registers */
 +		       0x58000000 0x02000000>;	/* GART aperture */
 +		clocks = <&tegra_car TEGRA20_CLK_MC>;
 +		clock-names = "mc";
-+		interrupts = <GIC_SPI 77 0x04>;
+ 		interrupts = <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>;
  		#reset-cells = <1>;
+-	};
+-
+-	iommu@7000f024 {
+-		compatible = "nvidia,tegra20-gart";
+-		reg = <0x7000f024 0x00000018	/* controller registers */
+-		       0x58000000 0x02000000>;	/* GART aperture */
 +		#iommu-cells = <0>;
  	};
  
- 	video-codec@6001a000 {
- 		compatible = "nvidia,tegra20-vde";
- 		...
- 		resets = <&mc TEGRA20_MC_RESET_VDE>;
-+		iommus = <&mc>;
- 	};
+ 	memory-controller@7000f400 {
 -- 
 2.20.0
 
