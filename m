@@ -1,90 +1,67 @@
-Return-Path: <SRS0=TRGe=OU=vger.kernel.org=linux-kernel-owner@kernel.org>
+Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58051C67839
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 23:59:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15CB6C67839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 00:00:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14ECC2084C
-	for <linux-kernel@archiver.kernel.org>; Tue, 11 Dec 2018 23:59:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544572789;
-	bh=biexezPFAG3JWFN3gdRyX45J87Daq5jvrjknjPD85MM=;
-	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
-	b=Kcx9icYO7AeoQCLhYYhl0T00WP02BwAquxU0kGJw22ll1hZeIZvQywSH2uzn/JU/M
-	 5cbBDXSrasZR0NsC9PlfC9nVTJZaRJmszRpEwY+Qwuosm5C5rfcTWr/Ap3UlocLRPF
-	 5msY+FmOlrbfk3e3SKk3Yo0L11ZfFX5GDy+ZSQVU=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14ECC2084C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id B1F1B20851
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 00:00:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1F1B20851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-mips.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726247AbeLKX7s (ORCPT
+        id S1726259AbeLLAAN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 18:59:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47290 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726183AbeLKX7r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 18:59:47 -0500
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AB7BC20839;
-        Tue, 11 Dec 2018 23:59:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544572787;
-        bh=biexezPFAG3JWFN3gdRyX45J87Daq5jvrjknjPD85MM=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=j7s+Mwk3VgEsQfz3RrHKfZa/ao2yX2vdMI+TdCclXnu+DiR6g6kjSvpz9NrOdgJlo
-         eJ8VTFb+JqoFeR6htXPjxVjOnnSX7bIGUfL2Qk9tDT+JLxJWqcjzFl3QOWXm9MbviT
-         k+zjQo1JJRptQbHoy/vit3EcfIDAq4+U1hU1Imrk=
-Subject: Re: [PATCH 4.14 00/67] 4.14.88-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org, shuah <shuah@kernel.org>
-References: <20181211151630.378216233@linuxfoundation.org>
-From:   shuah <shuah@kernel.org>
-Message-ID: <63e06109-a83d-3ae1-b25d-fd71a2807a60@kernel.org>
-Date:   Tue, 11 Dec 2018 16:59:46 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 11 Dec 2018 19:00:13 -0500
+Received: from eddie.linux-mips.org ([148.251.95.138]:48146 "EHLO
+        cvs.linux-mips.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726183AbeLLAAN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 19:00:13 -0500
+Received: (from localhost user: 'macro', uid#1010) by eddie.linux-mips.org
+        with ESMTP id S23992965AbeLLAAK4WVit (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 01:00:10 +0100
+Date:   Wed, 12 Dec 2018 00:00:10 +0000 (GMT)
+From:   "Maciej W. Rozycki" <macro@linux-mips.org>
+To:     Shawn Rutledge <s@ecloud.org>
+cc:     linux-kernel@vger.kernel.org
+Subject: Re: Can we drop upstream Linux x32 support?
+In-Reply-To: <20181211203812.GA14983@i7.vpn>
+Message-ID: <alpine.LFD.2.21.1812112343580.11202@eddie.linux-mips.org>
+References: <20181211203812.GA14983@i7.vpn>
+User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20181211151630.378216233@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/11/18 8:41 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.14.88 release.
-> There are 67 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu Dec 13 15:16:01 UTC 2018.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.88-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
+On Tue, 11 Dec 2018, Shawn Rutledge wrote:
 
-Compiled and booted on my test system. No dmesg regressions.
+> I like the idea of x32 in theory: any machine with 4GB or less of memory
+> for sure does not really need to waste any precious space storing 64-bit
+> pointers; and even if more memory is available, software that needs to
+> access more than 4GB per process is somewhat rare (as it should be).
 
-thanks,
--- Shuah
+ You can't mmap(2) files the size of which exceeds the size of the 32-bit 
+user address space with an ILP32 ABI though, regardless of how much 
+physical memory a given system supports or has actually installed.
+
+ Also you can have a process's VM size exceed the 32-bit user address 
+space where swap files are used, e.g. I have a system with 3GiB of DRAM 
+installed and as much swap space available, where the amount of memory 
+consumed by a process sometimes exceeds 4GiB -- it's enough to open a 
+couple of web pages at once in a browser these days to get there (don't 
+ask me what it uses all that memory for).
+
+ So there are still use cases for an LP64 ABI even for systems the whole
+physical memory of which can be handled with 32-bit addressing.
+
+  Maciej
