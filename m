@@ -2,115 +2,145 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9E78C65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:09:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C56B2C65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:09:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A4C120870
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:09:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A4C120870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 88FF420849
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:09:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ssi.gouv.fr header.i=@ssi.gouv.fr header.b="u3tODT7l"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88FF420849
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ssi.gouv.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727955AbeLLRJD (ORCPT
+        id S1728010AbeLLRJT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 12:09:03 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:46930 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726358AbeLLRJD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 12:09:03 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7BF0930832D2;
-        Wed, 12 Dec 2018 17:09:02 +0000 (UTC)
-Received: from sky.random (ovpn-122-218.rdu2.redhat.com [10.10.122.218])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id B41965ED3C;
-        Wed, 12 Dec 2018 17:08:58 +0000 (UTC)
-Date:   Wed, 12 Dec 2018 12:00:16 -0500
-From:   Andrea Arcangeli <aarcange@redhat.com>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     David Rientjes <rientjes@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        mgorman@techsingularity.net, Vlastimil Babka <vbabka@suse.cz>,
-        ying.huang@intel.com, s.priebe@profihost.ag,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        alex.williamson@redhat.com, lkp@01.org, kirill@shutemov.name,
-        Andrew Morton <akpm@linux-foundation.org>,
-        zi.yan@cs.rutgers.edu
-Subject: Re: [LKP] [mm] ac5b2c1891: vm-scalability.throughput -61.3%
- regression
-Message-ID: <20181212170016.GG1130@redhat.com>
-References: <CAHk-=whi8Ju-cTDL4cYtwuLA7BYgGJYyy6HVMoknZaLHnRc83g@mail.gmail.com>
- <20181205233632.GE11899@redhat.com>
- <CAHk-=wguXjkbK8BUU998s7HD7AXJgBkuc9JmuNxiN7uGQyfSfQ@mail.gmail.com>
- <CAHk-=wjm9V843eg0uesMrxKnCCq7UfWn8VJ+z-cNztb_0fVW6A@mail.gmail.com>
- <alpine.DEB.2.21.1812061505010.162675@chino.kir.corp.google.com>
- <CAHk-=wjVuLjZ1Wr52W=hNqh=_8gbzuKA+YpsVb4NBHCJsE6cyA@mail.gmail.com>
- <alpine.DEB.2.21.1812091538310.215735@chino.kir.corp.google.com>
- <20181210044916.GC24097@redhat.com>
- <alpine.DEB.2.21.1812111609060.255489@chino.kir.corp.google.com>
- <20181212095051.GO1286@dhcp22.suse.cz>
+        Wed, 12 Dec 2018 12:09:19 -0500
+Received: from smtp-out.ssi.gouv.fr ([86.65.182.90]:50046 "EHLO
+        smtp-out.ssi.gouv.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726358AbeLLRJT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 12:09:19 -0500
+Received: from smtp-out.ssi.gouv.fr (localhost [127.0.0.1])
+        by smtp-out.ssi.gouv.fr (Postfix) with ESMTP id 4DB36D00069;
+        Wed, 12 Dec 2018 18:09:25 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ssi.gouv.fr;
+        s=20160407; t=1544634565;
+        bh=/2EdBYDF1x4Bv+s1m1OiAsJzbKSCXU6nFgHX81HEsvE=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To:From:Subject;
+        b=u3tODT7lMVoVpR9s4XePWkv24U9Xeg2KkcCHWRvx3fAMym+9eS7wEVqkAjjygMuIW
+         jKqNW2Vx0rPnN+B0c14uCwnPXXm/VeYprdX0pk9jzHcfvqjEX+6DXozOyfUezfXsmD
+         HN9Hwfb5lGsEy6oYB1zV+XTR8+XdUD4t5CP+gNynieGxDPQzcXIZi4rVPZRXBObqcB
+         2TVJ2BcuI/5xEoFwCDUY8naVX6jW5HDmdXPS4tHok1Uiiz79Aa++unzEU3Zw3liZgT
+         hSC275Lg5GQbHgMvb/geUUl7wujwX+MwEg7CoZPuYora9LfSW+RLAMMUzm+u5lfztv
+         f4zQ1y8ds5xQw==
+Subject: Re: [RFC PATCH v1 1/5] fs: Add support for an O_MAYEXEC flag on
+ sys_open()
+To:     Jan Kara <jack@suse.cz>,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+CC:     <linux-kernel@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
+        James Morris <jmorris@namei.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Garrett <mjg59@google.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>, Shuah Khan <shuah@kernel.org>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        Yves-Alexis Perez <yves-alexis.perez@ssi.gouv.fr>,
+        <kernel-hardening@lists.openwall.com>, <linux-api@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <sgrubb@redhat.com>,
+        Matthew Bobrowski <mbobrowski@mbobrowski.org>
+References: <20181212081712.32347-1-mic@digikod.net>
+ <20181212081712.32347-2-mic@digikod.net>
+ <20181212144306.GA19945@quack2.suse.cz>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>
+Message-ID: <ac3ae274-6a71-2f8c-9ad6-8392eed3d13b@ssi.gouv.fr>
+Date:   Wed, 12 Dec 2018 18:09:23 +0100
+User-Agent: Mozilla/5.0 (X11; Linux i686; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181212095051.GO1286@dhcp22.suse.cz>
-User-Agent: Mutt/1.11.1 (2018-12-01)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Wed, 12 Dec 2018 17:09:02 +0000 (UTC)
+In-Reply-To: <20181212144306.GA19945@quack2.suse.cz>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 12, 2018 at 10:50:51AM +0100, Michal Hocko wrote:
-> I can be convinced that larger pages really require a different behavior
-> than base pages but you should better show _real_ numbers on a wider
-> variety workloads to back your claims. I have only heard hand waving and
 
-I agree with your point about node_reclaim and I think David complaint
-of "I got remote THP instead of local 4k" with our proposed fix, is
-going to morph into "I got remote 4k instead of local 4k" with his
-favorite fix.
+Le 12/12/2018 à 15:43, Jan Kara a écrit :
+> On Wed 12-12-18 09:17:08, Mickaël Salaün wrote:
+>> When the O_MAYEXEC flag is passed, sys_open() may be subject to
+>> additional restrictions depending on a security policy implemented by an
+>> LSM through the inode_permission hook.
+>>
+>> The underlying idea is to be able to restrict scripts interpretation
+>> according to a policy defined by the system administrator.  For this to
+>> be possible, script interpreters must use the O_MAYEXEC flag
+>> appropriately.  To be fully effective, these interpreters also need to
+>> handle the other ways to execute code (for which the kernel can't help):
+>> command line parameters (e.g., option -e for Perl), module loading
+>> (e.g., option -m for Python), stdin, file sourcing, environment
+>> variables, configuration files...  According to the threat model, it may
+>> be acceptable to allow some script interpreters (e.g. Bash) to interpret
+>> commands from stdin, may it be a TTY or a pipe, because it may not be
+>> enough to (directly) perform syscalls.
+>>
+>> A simple security policy implementation is available in a following
+>> patch for Yama.
+>>
+>> This is an updated subset of the patch initially written by Vincent
+>> Strubel for CLIP OS:
+>> https://github.com/clipos-archive/src_platform_clip-patches/blob/f5cb330d6b684752e403b4e41b39f7004d88e561/1901_open_mayexec.patch
+>> This patch has been used for more than 10 years with customized script
+>> interpreters.  Some examples can be found here:
+>> https://github.com/clipos-archive/clipos4_portage-overlay/search?q=O_MAYEXEC
+>>
+>> Signed-off-by: Mickaël Salaün <mic@digikod.net>
+>> Signed-off-by: Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
+>> Signed-off-by: Vincent Strubel <vincent.strubel@ssi.gouv.fr>
+>> Reviewed-by: Philippe Trébuchet <philippe.trebuchet@ssi.gouv.fr>
+>> Cc: Al Viro <viro@zeniv.linux.org.uk>
+>> Cc: Kees Cook <keescook@chromium.org>
+>> Cc: Mickaël Salaün <mickael.salaun@ssi.gouv.fr>
+> 
+> ...
+> 
+>> diff --git a/fs/open.c b/fs/open.c
+>> index 0285ce7dbd51..75479b79a58f 100644
+>> --- a/fs/open.c
+>> +++ b/fs/open.c
+>> @@ -974,6 +974,10 @@ static inline int build_open_flags(int flags, umode_t mode, struct open_flags *o
+>>  	if (flags & O_APPEND)
+>>  		acc_mode |= MAY_APPEND;
+>>  
+>> +	/* Check execution permissions on open. */
+>> +	if (flags & O_MAYEXEC)
+>> +		acc_mode |= MAY_OPENEXEC;
+>> +
+>>  	op->acc_mode = acc_mode;
+>>  
+>>  	op->intent = flags & O_PATH ? 0 : LOOKUP_OPEN;
+> 
+> I don't feel experienced enough in security to tell whether we want this
+> functionality or not. But if we do this, shouldn't we also set FMODE_EXEC
+> on the resulting struct file? That way also security_file_open() can be
+> used to arbitrate such executable opens and in particular
+> fanotify permission event FAN_OPEN_EXEC will get properly generated which I
+> guess is desirable (support for it is sitting in my tree waiting for the
+> merge window) - adding some audit people involved in FAN_OPEN_EXEC to
+> CC. Just an idea...
 
-Because David stopped calling reclaim with __GFP_THISNODE, the moment
-the node is full of pagecache, node_reclaim behavior will go away and
-even 4k pages will start to be allocated remote (and because of
-__GFP_THISNODE set in the THP allocation, all readily available or
-trivial to compact remote THP will be ignored too).
+Indeed, it may be useful for other LSM.
 
-What David needs I think is a way to set __GFP_THISNODE for THP *and
-4k* allocations and if both fails in a row with __GFP_THISNODE set, we
-need to repeat the whole thing without __GFP_THISNODE set (ideally
-with a mask to skip the node that we already scraped down to the
-bottom during the initial __GFP_THISNODE pass). This way his
-proprietary software binary will work even better than before when the
-local node is fragmented and he'll finally be able to get the speedup
-from remote THP too in case the local node is truly OOM, but all other
-nodes are full of readily available THP.
-
-To achieve this without a new MADV_THISNODE/MADV_NODE_RECLAIM, we'd
-need a way to start with __GFP_THISNODE and then draw the line in
-reclaim and decide to drop __GFP_THISNODE when too much pressure
-mounts in the local node, but like you said it becomes like
-node_reclaim and it would be better if it can be done with an opt-in,
-like MADV_HUGEPAGE because not all workloads would benefit from such
-extra pagecache reclaim cost (like not all workload benefits from
-synchronous compaction).
-
-I think some NUMA reclaim mode semantics ended up being embedded and
-hidden in the THP MADV_HUGEPAGE, but they imposed massive slowdown to
-all workloads that can't cope with the node_reclaim mode behavior
-because they don't fit in a node.
-
-Adding MADV_THISNODE/MADV_NODE_RECLAIM, will guarantee his proprietary
-software binary will run at maximum performance without cache
-interference, and he's happy to accept the risk of massive slowdown in
-case the local node is truly OOM. The fallback, despite very
-inefficient, will still happen without OOM killer triggering.
-
-Thanks,
-Andrea
+ Mickaël
