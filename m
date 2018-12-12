@@ -2,100 +2,334 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BFC8C65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 08:20:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0969DC04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 08:21:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4919420849
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 08:20:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="db/t3fwe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4919420849
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id BC4A920849
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 08:21:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC4A920849
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726758AbeLLIUa (ORCPT
+        id S1726738AbeLLIV5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 03:20:30 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:57764 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726242AbeLLIUa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 03:20:30 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wBC8Iiss028445;
-        Wed, 12 Dec 2018 08:20:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=pVDYWPUm65mF3QytVhHn7Mx78umiZ+uIF6ELc6pKKQU=;
- b=db/t3fwel3nHlBECaBYbDQt6aGdCr2r2LMR272K3Gazuz1afsIDPS3hrSDM5V76ADSLh
- DGLcQQ10dCqIhwsZeJjV7eWvdXRIQipzeEgeAo4IUV13w4sEHfGLcvjR7xAUosQm5aTU
- lmm9wfARyzQI0UHTw09zrpDYiEomU8b+HAJW6sTfu9znbgWBij/Jz4FfPcIB1IPWQHth
- 7FquvdrALAFxu8fe8Ab9I7P5iO51VKV12frs6NNdaHVjtkLK9hrnCiFhdDOE4xgLGOY1
- ihgpBj6sX9mg+4u0rtvHW/goCfiGkmvKbAPmb0gK/47vwtt/666mpJLuIKsMUAqhwReD iw== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2120.oracle.com with ESMTP id 2p86kr0acm-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 12 Dec 2018 08:20:01 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wBC8Jx7J025727
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 12 Dec 2018 08:20:00 GMT
-Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wBC8JwQV007858;
-        Wed, 12 Dec 2018 08:19:58 GMT
-Received: from kadam (/197.157.0.38)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 12 Dec 2018 00:19:58 -0800
-Date:   Wed, 12 Dec 2018 11:19:49 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Jeremy Fertic <jeremyfertic@gmail.com>
-Cc:     Jonathan Cameron <jic23@kernel.org>, devel@driverdev.osuosl.org,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        linux-iio@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Hartmut Knaack <knaack.h@gmx.de>
-Subject: Re: [PATCH 02/11] staging: iio: adt7316: invert the logic of the
- check for an ldac pin
-Message-ID: <20181212081949.GH3116@kadam>
-References: <20181212005503.28054-1-jeremyfertic@gmail.com>
- <20181212005503.28054-3-jeremyfertic@gmail.com>
+        Wed, 12 Dec 2018 03:21:57 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:40518 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726242AbeLLIV5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 03:21:57 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1BA1488302;
+        Wed, 12 Dec 2018 08:21:56 +0000 (UTC)
+Received: from [10.36.116.44] (ovpn-116-44.ams2.redhat.com [10.36.116.44])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7ACF7608C6;
+        Wed, 12 Dec 2018 08:21:45 +0000 (UTC)
+Subject: Re: [RFC v2 14/20] iommu: introduce device fault data
+To:     Jacob Pan <jacob.jun.pan@linux.intel.com>
+Cc:     eric.auger.pro@gmail.com, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, joro@8bytes.org,
+        alex.williamson@redhat.com, yi.l.liu@linux.intel.com,
+        jean-philippe.brucker@arm.com, will.deacon@arm.com,
+        robin.murphy@arm.com, tianyu.lan@intel.com, ashok.raj@intel.com,
+        marc.zyngier@arm.com, christoffer.dall@arm.com,
+        peter.maydell@linaro.org
+References: <20180918142457.3325-1-eric.auger@redhat.com>
+ <20180918142457.3325-15-eric.auger@redhat.com>
+ <20180920150653.567287c5@jacob-builder>
+From:   Auger Eric <eric.auger@redhat.com>
+Message-ID: <09404da4-98c6-7afc-4510-caeaeaf6e4c4@redhat.com>
+Date:   Wed, 12 Dec 2018 09:21:43 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181212005503.28054-3-jeremyfertic@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9104 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=651
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1812120074
+In-Reply-To: <20180920150653.567287c5@jacob-builder>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Wed, 12 Dec 2018 08:21:56 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 11, 2018 at 05:54:54PM -0700, Jeremy Fertic wrote:
-> ADT7316_DA_EN_VIA_DAC_LDCA is set when the dac and ldac registers are being
-> used to update the dacs instead of the ldac pin. ADT7516_SEL_AIN3 is an adc
-> input that shares the ldac pin. Only set these bits if an ldac pin is not
-> being used.
+Hi Jacob,
+
+On 9/21/18 12:06 AM, Jacob Pan wrote:
+> On Tue, 18 Sep 2018 16:24:51 +0200
+> Eric Auger <eric.auger@redhat.com> wrote:
 > 
-> Signed-off-by: Jeremy Fertic <jeremyfertic@gmail.com>
+>> From: Jacob Pan <jacob.jun.pan@linux.intel.com>
+>>
+>> Device faults detected by IOMMU can be reported outside IOMMU
+>> subsystem for further processing. This patch intends to provide
+>> a generic device fault data such that device drivers can be
+>> communicated with IOMMU faults without model specific knowledge.
+>>
+>> The proposed format is the result of discussion at:
+>> https://lkml.org/lkml/2017/11/10/291
+>> Part of the code is based on Jean-Philippe Brucker's patchset
+>> (https://patchwork.kernel.org/patch/9989315/).
+>>
+>> The assumption is that model specific IOMMU driver can filter and
+>> handle most of the internal faults if the cause is within IOMMU driver
+>> control. Therefore, the fault reasons can be reported are grouped
+>> and generalized based common specifications such as PCI ATS.
+>>
+>> Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
+>> Signed-off-by: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+>> Signed-off-by: Liu, Yi L <yi.l.liu@linux.intel.com>
+>> Signed-off-by: Ashok Raj <ashok.raj@intel.com>
+>> Signed-off-by: Eric Auger <eric.auger@redhat.com>
+>> [moved part of the iommu_fault_event struct in the uapi, enriched
+>>  the fault reasons to be able to map unrecoverable SMMUv3 errors]
+> Sounds good to me.
+> There are also other "enrichment" we need to do to support mdev or
+> finer granularity fault reporting below physical device. e.g. PASID
+> level.
+> 
+> The current scheme works for PCIe physical device level, where each
+> device registers a single handler only once. When device fault is
+> detected by the IOMMU, it will find the matching handler and private
+> data to report back. However, for devices partitioned by PASID and
+> represented by mdev this may not work. Since IOMMU is not mdev aware
+> and only works at physical device level.
+> So I am thinking we should allow multiple registration of fault handler
+> with different data and ID. i.e.
+> 
+> int iommu_register_device_fault_handler(struct device *dev,
+> 					iommu_dev_fault_handler_t handler,
+> 					int id,
+> 					void *data)
+> 
+> where the new "id field" is
+>  * @id: Identification of the handler private data, will be used by fault
+>  *      reporting code to match the handler data to be returned. For page
+>  *      request, this can be the PASID. ID must be unique per device, i.e.
+>  *      each ID can only be registered once per device.
+>  *      - IOMMU_DEV_FAULT_ID_UNRECOVERY (~0U) is reserved for fault reporting
+>  *      w/o ID. e.g. unrecoverable faults.
+> 
+> I am still testing, but just wanted to have feedback on this idea.
 
-Huh...  This bug has always been there...
+I am currently respinning this series. Do you have a respin for this
+patch including iommu_register_device_fault_handler with the @id param
+as you suggested above? Otherwise 2 solutions: I keep the code as is or
+I do the modification myself implementing a list of fault_params?
 
-Fixes: 35f6b6b86ede ("staging: iio: new ADT7316/7/8 and ADT7516/7/9 driver")
+Besides do you plans for "[PATCH v5 00/23] IOMMU and VT-d driver support
+for Shared Virtual Address (SVA)" respin - hope I didn't miss anything? - ?
 
-regards,
-dan carpenter
+Thanks
 
-
+Eric
+> 
+> Thanks,
+> 
+> Jacob
+> 
+> 
+>> ---
+>>  include/linux/iommu.h      | 55 ++++++++++++++++++++++++-
+>>  include/uapi/linux/iommu.h | 83
+>> ++++++++++++++++++++++++++++++++++++++ 2 files changed, 136
+>> insertions(+), 2 deletions(-)
+>>
+>> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+>> index 9bd3e63d562b..7529c14ff506 100644
+>> --- a/include/linux/iommu.h
+>> +++ b/include/linux/iommu.h
+>> @@ -49,13 +49,17 @@ struct bus_type;
+>>  struct device;
+>>  struct iommu_domain;
+>>  struct notifier_block;
+>> +struct iommu_fault_event;
+>>  
+>>  /* iommu fault flags */
+>> -#define IOMMU_FAULT_READ	0x0
+>> -#define IOMMU_FAULT_WRITE	0x1
+>> +#define IOMMU_FAULT_READ		(1 << 0)
+>> +#define IOMMU_FAULT_WRITE		(1 << 1)
+>> +#define IOMMU_FAULT_EXEC		(1 << 2)
+>> +#define IOMMU_FAULT_PRIV		(1 << 3)
+>>  
+>>  typedef int (*iommu_fault_handler_t)(struct iommu_domain *,
+>>  			struct device *, unsigned long, int, void *);
+>> +typedef int (*iommu_dev_fault_handler_t)(struct iommu_fault_event *,
+>> void *); 
+>>  struct iommu_domain_geometry {
+>>  	dma_addr_t aperture_start; /* First address that can be
+>> mapped    */ @@ -262,6 +266,52 @@ struct iommu_device {
+>>  	struct device *dev;
+>>  };
+>>  
+>> +/**
+>> + * struct iommu_fault_event - Generic per device fault data
+>> + *
+>> + * - PCI and non-PCI devices
+>> + * - Recoverable faults (e.g. page request), information based on
+>> PCI ATS
+>> + * and PASID spec.
+>> + * - Un-recoverable faults of device interest
+>> + * - DMA remapping and IRQ remapping faults
+>> + *
+>> + * @fault: fault descriptor
+>> + * @device_private: if present, uniquely identify device-specific
+>> + *                  private data for an individual page request.
+>> + * @iommu_private: used by the IOMMU driver for storing
+>> fault-specific
+>> + *                 data. Users should not modify this field before
+>> + *                 sending the fault response.
+>> + */
+>> +struct iommu_fault_event {
+>> +	struct iommu_fault fault;
+>> +	u64 device_private;
+>> +	u64 iommu_private;
+>> +};
+>> +
+>> +/**
+>> + * struct iommu_fault_param - per-device IOMMU fault data
+>> + * @dev_fault_handler: Callback function to handle IOMMU faults at
+>> device level
+>> + * @data: handler private data
+>> + *
+>> + */
+>> +struct iommu_fault_param {
+>> +	iommu_dev_fault_handler_t handler;
+>> +	void *data;
+>> +};
+>> +
+>> +/**
+>> + * struct iommu_param - collection of per-device IOMMU data
+>> + *
+>> + * @fault_param: IOMMU detected device fault reporting data
+>> + *
+>> + * TODO: migrate other per device data pointers under
+>> iommu_dev_data, e.g.
+>> + *	struct iommu_group	*iommu_group;
+>> + *	struct iommu_fwspec	*iommu_fwspec;
+>> + */
+>> +struct iommu_param {
+>> +	struct iommu_fault_param *fault_param;
+>> +};
+>> +
+>>  int  iommu_device_register(struct iommu_device *iommu);
+>>  void iommu_device_unregister(struct iommu_device *iommu);
+>>  int  iommu_device_sysfs_add(struct iommu_device *iommu,
+>> @@ -429,6 +479,7 @@ struct iommu_ops {};
+>>  struct iommu_group {};
+>>  struct iommu_fwspec {};
+>>  struct iommu_device {};
+>> +struct iommu_fault_param {};
+>>  
+>>  static inline bool iommu_present(struct bus_type *bus)
+>>  {
+>> diff --git a/include/uapi/linux/iommu.h b/include/uapi/linux/iommu.h
+>> index 21adb2a964e5..a0fe5c2fb236 100644
+>> --- a/include/uapi/linux/iommu.h
+>> +++ b/include/uapi/linux/iommu.h
+>> @@ -150,5 +150,88 @@ struct iommu_guest_msi_binding {
+>>  	__u64		gpa;
+>>  	__u32		granule;
+>>  };
+>> +
+>> +/*  Generic fault types, can be expanded IRQ remapping fault */
+>> +enum iommu_fault_type {
+>> +	IOMMU_FAULT_DMA_UNRECOV = 1,	/* unrecoverable fault */
+>> +	IOMMU_FAULT_PAGE_REQ,		/* page request fault */
+>> +};
+>> +
+>> +enum iommu_fault_reason {
+>> +	IOMMU_FAULT_REASON_UNKNOWN = 0,
+>> +
+>> +	/* IOMMU internal error, no specific reason to report out */
+>> +	IOMMU_FAULT_REASON_INTERNAL,
+>> +
+>> +	/* Could not access the PASID table (fetch caused external
+>> abort) */
+>> +	IOMMU_FAULT_REASON_PASID_FETCH,
+>> +
+>> +	/* could not access the device context (fetch caused
+>> external abort) */
+>> +	IOMMU_FAULT_REASON_DEVICE_CONTEXT_FETCH,
+>> +
+>> +	/* pasid entry is invalid or has configuration errors */
+>> +	IOMMU_FAULT_REASON_BAD_PASID_ENTRY,
+>> +
+>> +	/* device context entry is invalid or has configuration
+>> errors */
+>> +	IOMMU_FAULT_REASON_BAD_DEVICE_CONTEXT_ENTRY,
+>> +	/*
+>> +	 * PASID is out of range (e.g. exceeds the maximum PASID
+>> +	 * supported by the IOMMU) or disabled.
+>> +	 */
+>> +	IOMMU_FAULT_REASON_PASID_INVALID,
+>> +
+>> +	/* source id is out of range */
+>> +	IOMMU_FAULT_REASON_SOURCEID_INVALID,
+>> +
+>> +	/*
+>> +	 * An external abort occurred fetching (or updating) a
+>> translation
+>> +	 * table descriptor
+>> +	 */
+>> +	IOMMU_FAULT_REASON_WALK_EABT,
+>> +
+>> +	/*
+>> +	 * Could not access the page table entry (Bad address),
+>> +	 * actual translation fault
+>> +	 */
+>> +	IOMMU_FAULT_REASON_PTE_FETCH,
+>> +
+>> +	/* Protection flag check failed */
+>> +	IOMMU_FAULT_REASON_PERMISSION,
+>> +
+>> +	/* access flag check failed */
+>> +	IOMMU_FAULT_REASON_ACCESS,
+>> +
+>> +	/* Output address of a translation stage caused Address Size
+>> fault */
+>> +	IOMMU_FAULT_REASON_OOR_ADDRESS
+>> +};
+>> +
+>> +/**
+>> + * struct iommu_fault - Generic fault data
+>> + *
+>> + * @type contains fault type
+>> + * @reason fault reasons if relevant outside IOMMU driver.
+>> + * IOMMU driver internal faults are not reported.
+>> + * @addr: tells the offending page address
+>> + * @fetch_addr: tells the address that caused an abort, if any
+>> + * @pasid: contains process address space ID, used in shared virtual
+>> memory
+>> + * @page_req_group_id: page request group index
+>> + * @last_req: last request in a page request group
+>> + * @pasid_valid: indicates if the PRQ has a valid PASID
+>> + * @prot: page access protection flag:
+>> + *	IOMMU_FAULT_READ, IOMMU_FAULT_WRITE
+>> + */
+>> +
+>> +struct iommu_fault {
+>> +	__u32	type;   /* enum iommu_fault_type */
+>> +	__u32	reason; /* enum iommu_fault_reason */
+>> +	__u64	addr;
+>> +	__u64	fetch_addr;
+>> +	__u32	pasid;
+>> +	__u32	page_req_group_id;
+>> +	__u32	last_req;
+>> +	__u32	pasid_valid;
+>> +	__u32	prot;
+>> +	__u32	access;
+>> +};
+>>  #endif /* _UAPI_IOMMU_H */
+>>  
+> 
+> [Jacob Pan]
+> 
