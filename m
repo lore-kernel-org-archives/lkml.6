@@ -2,203 +2,125 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D77FC04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 10:20:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6DFCC04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 10:21:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41B9C2084E
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 10:20:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41B9C2084E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 9E4A62084E
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 10:21:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PKiADyxq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E4A62084E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727029AbeLLKUs (ORCPT
+        id S1727083AbeLLKVD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 05:20:48 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:43420 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726727AbeLLKUr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 05:20:47 -0500
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 75629B52D322D;
-        Wed, 12 Dec 2018 18:20:45 +0800 (CST)
-Received: from szvp000201624.huawei.com (10.120.216.130) by
- DGGEMS409-HUB.china.huawei.com (10.3.19.209) with Microsoft SMTP Server id
- 14.3.408.0; Wed, 12 Dec 2018 18:20:36 +0800
-From:   Chao Yu <yuchao0@huawei.com>
-To:     <jaegeuk@kernel.org>
-CC:     <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH] f2fs: rebuild nat_bits during umount
-Date:   Wed, 12 Dec 2018 18:20:10 +0800
-Message-ID: <20181212102010.109055-1-yuchao0@huawei.com>
-X-Mailer: git-send-email 2.18.0.rc1
+        Wed, 12 Dec 2018 05:21:03 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:33253 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726973AbeLLKVC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 05:21:02 -0500
+Received: by mail-ed1-f67.google.com with SMTP id p6so15110015eds.0;
+        Wed, 12 Dec 2018 02:21:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=idkYqevhfJf8tSEovtaPYx/iMzyoFO/qaqk6IG8i/kU=;
+        b=PKiADyxqnbW82w93hAmRKCiu+l7r1kZOZ30jhn1JqCTgUpVLYe2y/75h4P0LATXAeu
+         9sDN2eWtan/UVgdukxmCaPNoqjA0mz24JlZgrX624P8a/kbQ77IDbLGScmAGezK/s4Mc
+         vYNekhfd01u6vZ9xVNgjT62wAF9R9cWvo3OAdssp3Wd5e57GBpxwLeXupjcdVDRXPawv
+         t3OkUPg/VD4foOI3o649pFA0deYprMlCXGPXW/ffGBTTrrpqgFAt4um3O/v5ppNrFdzW
+         tPGM9f88AmjHGKueNXVZCC0g8gS9v0Sm1t02nFOeCs6pIa5fAWCKUdMC8t+THmTKOubn
+         eAGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=idkYqevhfJf8tSEovtaPYx/iMzyoFO/qaqk6IG8i/kU=;
+        b=nLaqwbZve7qDA0OTOsWvd1/f0QKBE0JHtWwcMI0sryVw+m3Xer1vxtgatmf7eUohnj
+         OEcsgYWiavPJ2ns6NOGp1xmnX6rFAkTgI/53i5MkmaNskIWSiSrnFQFYy3cOPkK/evQ8
+         Zdo5eCBm41mZxisYZox4rT6yfyeLsj9xeP8ubrajWT7mPUC2Bhcaxsz8nC4P2J6dwg85
+         Z+8Y4G5eyRc1bq8PzhQejP+VcOj7wC64jUfWEU20uC4B/Tk0zaO1K47s1Hpyt/zKHEyU
+         90r4DCpYJmH3My747hRGcJgKPxCn4GRr9GDGJj2uwtrvFRO0wUaUAmQdUSTFozzZySgI
+         SZJQ==
+X-Gm-Message-State: AA+aEWZtD72gZ5k9e1tgdNu7V/G5xYo9fOPvFHFVQofjbKE2vaQba4+m
+        /9ILCU4sz9qPaYKJ6bkuV55hWBbu
+X-Google-Smtp-Source: AFSGD/VmDHTWtbplqeboAArYynjg0xU2yyaoZ0EKd7Nm+LAhMmmzVTEDNgHc1bnQRPGet4b5N2D1ag==
+X-Received: by 2002:a50:8163:: with SMTP id 90mr18391185edc.174.1544610060472;
+        Wed, 12 Dec 2018 02:21:00 -0800 (PST)
+Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
+        by smtp.gmail.com with ESMTPSA id l18sm4588878edq.87.2018.12.12.02.20.59
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 12 Dec 2018 02:20:59 -0800 (PST)
+Date:   Wed, 12 Dec 2018 11:20:58 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 18/21] iommu/tegra: gart: Prepend error/debug messages
+ with "gart:"
+Message-ID: <20181212102058.GL15092@ulmo>
+References: <20181209202950.31486-1-digetx@gmail.com>
+ <20181209202950.31486-19-digetx@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.120.216.130]
-X-CFilter-Loop: Reflected
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="/jkxxxtAhYIHVDuh"
+Content-Disposition: inline
+In-Reply-To: <20181209202950.31486-19-digetx@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If all free_nat_bitmap are available, we can rebuild nat_bits from
-free_nat_bitmap entirely during umount, let's make another chance
-to reenable nat_bits for image.
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/checkpoint.c | 10 +++++---
- fs/f2fs/f2fs.h       |  4 +--
- fs/f2fs/node.c       | 60 +++++++++++++++++++++++++++++++++++++++++---
- 3 files changed, 66 insertions(+), 8 deletions(-)
+--/jkxxxtAhYIHVDuh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 623536b8e0c0..b9a95b9dd573 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -1227,10 +1227,14 @@ static void update_ckpt_flags(struct f2fs_sb_info *sbi, struct cp_control *cpc)
- 
- 	spin_lock_irqsave(&sbi->cp_lock, flags);
- 
--	if ((cpc->reason & CP_UMOUNT) &&
--			le32_to_cpu(ckpt->cp_pack_total_block_count) >
-+	if (cpc->reason & CP_UMOUNT) {
-+		if (le32_to_cpu(ckpt->cp_pack_total_block_count) >
- 			sbi->blocks_per_seg - NM_I(sbi)->nat_bits_blocks)
--		disable_nat_bits(sbi, false);
-+			disable_nat_bits(sbi, false);
-+		else if (!is_set_ckpt_flags(sbi, CP_NAT_BITS_FLAG) &&
-+						f2fs_nat_bitmap_enabled(sbi))
-+			f2fs_enable_nat_bits(sbi);
-+	}
- 
- 	if (cpc->reason & CP_TRIMMED)
- 		__set_ckpt_flags(ckpt, CP_TRIMMED_FLAG);
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 7cec897146a3..d00473f917a7 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1631,8 +1631,6 @@ static inline void disable_nat_bits(struct f2fs_sb_info *sbi, bool lock)
- 	if (lock)
- 		spin_lock_irqsave(&sbi->cp_lock, flags);
- 	__clear_ckpt_flags(F2FS_CKPT(sbi), CP_NAT_BITS_FLAG);
--	kfree(NM_I(sbi)->nat_bits);
--	NM_I(sbi)->nat_bits = NULL;
- 	if (lock)
- 		spin_unlock_irqrestore(&sbi->cp_lock, flags);
- }
-@@ -2952,6 +2950,7 @@ int f2fs_truncate_inode_blocks(struct inode *inode, pgoff_t from);
- int f2fs_truncate_xattr_node(struct inode *inode);
- int f2fs_wait_on_node_pages_writeback(struct f2fs_sb_info *sbi,
- 					unsigned int seq_id);
-+bool f2fs_nat_bitmap_enabled(struct f2fs_sb_info *sbi);
- int f2fs_remove_inode_page(struct inode *inode);
- struct page *f2fs_new_inode_page(struct inode *inode);
- struct page *f2fs_new_node_page(struct dnode_of_data *dn, unsigned int ofs);
-@@ -2975,6 +2974,7 @@ int f2fs_recover_xattr_data(struct inode *inode, struct page *page);
- int f2fs_recover_inode_page(struct f2fs_sb_info *sbi, struct page *page);
- int f2fs_restore_node_summary(struct f2fs_sb_info *sbi,
- 			unsigned int segno, struct f2fs_summary_block *sum);
-+void f2fs_enable_nat_bits(struct f2fs_sb_info *sbi);
- int f2fs_flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc);
- int f2fs_build_node_manager(struct f2fs_sb_info *sbi);
- void f2fs_destroy_node_manager(struct f2fs_sb_info *sbi);
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 30a4427aaa94..5a4db4d6bf2e 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -2036,6 +2036,24 @@ static void __move_free_nid(struct f2fs_sb_info *sbi, struct free_nid *i,
- 	}
- }
- 
-+bool f2fs_nat_bitmap_enabled(struct f2fs_sb_info *sbi)
-+{
-+	struct f2fs_nm_info *nm_i = NM_I(sbi);
-+	unsigned int i;
-+	bool ret = true;
-+
-+	down_read(&nm_i->nat_tree_lock);
-+	for (i = 0; i < nm_i->nat_blocks; i++) {
-+		if (!test_bit_le(i, nm_i->nat_block_bitmap)) {
-+			ret = false;
-+			break;
-+		}
-+	}
-+	up_read(&nm_i->nat_tree_lock);
-+
-+	return ret;
-+}
-+
- static void update_free_nid_bitmap(struct f2fs_sb_info *sbi, nid_t nid,
- 							bool set, bool build)
- {
-@@ -2720,6 +2738,42 @@ static void __update_nat_bits(struct f2fs_sb_info *sbi, nid_t start_nid,
- 		__clear_bit_le(nat_index, nm_i->full_nat_bits);
- }
- 
-+void f2fs_enable_nat_bits(struct f2fs_sb_info *sbi)
-+{
-+	struct f2fs_nm_info *nm_i = NM_I(sbi);
-+	int valid = 0;
-+	int nat_ofs, nid_ofs = 0;
-+
-+	down_read(&nm_i->nat_tree_lock);
-+
-+	for (nat_ofs = 0, nid_ofs = 0; nat_ofs < nm_i->nat_blocks; nat_ofs++) {
-+		if (nat_ofs == 0) {
-+			valid = 1;
-+			nid_ofs = 1;
-+		}
-+
-+		for (; nid_ofs < NAT_ENTRY_PER_BLOCK; nid_ofs++) {
-+			if (!test_bit_le(nid_ofs,
-+					nm_i->free_nid_bitmap[nat_ofs]))
-+				valid++;
-+		}
-+
-+		if (valid == 0) {
-+			__set_bit_le(nat_ofs, nm_i->empty_nat_bits);
-+			__clear_bit_le(nat_ofs, nm_i->full_nat_bits);
-+			continue;
-+		}
-+
-+		__clear_bit_le(nat_ofs, nm_i->empty_nat_bits);
-+		if (valid == NAT_ENTRY_PER_BLOCK)
-+			__set_bit_le(nat_ofs, nm_i->full_nat_bits);
-+		else
-+			__clear_bit_le(nat_ofs, nm_i->full_nat_bits);
-+	}
-+
-+	up_read(&nm_i->nat_tree_lock);
-+}
-+
- static int __flush_nat_entry_set(struct f2fs_sb_info *sbi,
- 		struct nat_entry_set *set, struct cp_control *cpc)
- {
-@@ -2862,15 +2916,15 @@ static int __get_nat_bitmaps(struct f2fs_sb_info *sbi)
- 	__u64 cp_ver = cur_cp_version(ckpt);
- 	block_t nat_bits_addr;
- 
--	if (!enabled_nat_bits(sbi, NULL))
--		return 0;
--
- 	nm_i->nat_bits_blocks = F2FS_BLK_ALIGN((nat_bits_bytes << 1) + 8);
- 	nm_i->nat_bits = f2fs_kzalloc(sbi,
- 			nm_i->nat_bits_blocks << F2FS_BLKSIZE_BITS, GFP_KERNEL);
- 	if (!nm_i->nat_bits)
- 		return -ENOMEM;
- 
-+	if (!enabled_nat_bits(sbi, NULL))
-+		return 0;
-+
- 	nat_bits_addr = __start_cp_addr(sbi) + sbi->blocks_per_seg -
- 						nm_i->nat_bits_blocks;
- 	for (i = 0; i < nm_i->nat_bits_blocks; i++) {
--- 
-2.18.0.rc1
+On Sun, Dec 09, 2018 at 11:29:47PM +0300, Dmitry Osipenko wrote:
+> GART became a part of Memory Controller, hence now the drivers device
+> is Memory Controller and not GART. As a result all printed messages are
+> prepended with the "tegra-mc 7000f000.memory-controller:", so let's
+> prepend GART's messages with "gart:" in order to differentiate them
+> from the MC.
+>=20
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/iommu/tegra-gart.c | 2 ++
+>  1 file changed, 2 insertions(+)
 
+Acked-by: Thierry Reding <treding@nvidia.com>
+
+--/jkxxxtAhYIHVDuh
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlwQ4QoACgkQ3SOs138+
+s6FaAA//W+T5CGeUZoovs6Ol4TC4GKo1Ig1hAN32fYi6MLJecFSOJJQhh1klmk8b
+8pCoOOEkbr5tOTKgReveh8RRIXL4V68aNpQ0iuGgrutH9kNJSHiEdWS0/cq8yyei
+kobNf8pgjUiu8ZL/HKyN3PjQSXFeAeCmK+tYsJTMPxT+XxYZvNEntMqSKobH+Aa9
+9q1LeyJz6y7ALgHBluAAuds0eSNRY10oUcG+feIe9TOM89Znt+KbQirChbRerst0
+4cScjW0zr8RIYV1oYY9y784UAtRFp97264AMevYtzAffhMqDC9ycsg6DafAUC2ed
+8quEH8VTH+7VdoVSy0m2AikAMZZ0hVoLb3Ub7B2Q8TC+XFAcoQjgW4J376DIZDW8
+jL6HQoriN/9URyQo8fNjs0Toa9/pCnJtS4SXwMFL5CgGJs2+ToyNGYlduLjVcKT/
+fdLdydRmNpImRvNUuYcKwDrtIPCL52AswBwu0WNzZpZmAl2cEmvmzOc5sJ+3sEwW
+nHtotQHjmd69BqxkdLd4K4cVxptT/XPhW+FSlMf9BoKra/mMWvfNbxddDJxdB3VX
+a1oYtCI11P8LvaVn7K2yDtCSf5BWaCk2Gs9R28QBjdSVcLPFaHVDW3oobat/dwRx
+3EXh0r4DeQdtSs23JQDfXCJi1LAmyvTbi6USoxm18hcx9oscMnI=
+=ZNdi
+-----END PGP SIGNATURE-----
+
+--/jkxxxtAhYIHVDuh--
