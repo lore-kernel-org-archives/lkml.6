@@ -2,158 +2,255 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64D0DC67839
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 01:41:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EBB3C67839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 01:45:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B5EF20870
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 01:41:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="k7is+4a2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B5EF20870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+	by mail.kernel.org (Postfix) with ESMTP id 35D9020811
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 01:45:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35D9020811
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hxt-semitech.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726312AbeLLBlU (ORCPT
+        id S1726255AbeLLBp2 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 20:41:20 -0500
-Received: from mailout4.samsung.com ([203.254.224.34]:57809 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726201AbeLLBlT (ORCPT
+        Tue, 11 Dec 2018 20:45:28 -0500
+Received: from mx01.hxt-semitech.com ([223.203.96.7]:51316 "EHLO
+        barracuda.hxt-semitech.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726201AbeLLBp1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 20:41:19 -0500
-Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20181212014117epoutp040cd42e5277df9e581bc56d37ecb8689b~vck44c77D1411314113epoutp04Y;
-        Wed, 12 Dec 2018 01:41:17 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20181212014117epoutp040cd42e5277df9e581bc56d37ecb8689b~vck44c77D1411314113epoutp04Y
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1544578877;
-        bh=b2cW/XGVs7AqGU1EB3o4t6BQbzq39uGva1KWg2HQQrU=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=k7is+4a2QH8whNCA0P1ZCaY7dPqsawLwQ5KSS/orqV1punyAx5NoPKZWAuxDq5Y2b
-         o/iQwL7nWn3i8A34WBAWGNjN/4uLwExG9mOAmUcjxpvi3m0ouKkSzPW5vPCfJxzJZd
-         Yc36hnPB85FCquwJTZaPf+4fpgKPGsHcRrjFBOMY=
-Received: from epsmges2p2.samsung.com (unknown [182.195.40.158]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-        20181212014114epcas1p3a7470295732ca4dcfa83986dfd7cec5e~vck2Toord1357713577epcas1p3l;
-        Wed, 12 Dec 2018 01:41:14 +0000 (GMT)
-Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
-        epsmges2p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        DE.72.04060.A37601C5; Wed, 12 Dec 2018 10:41:14 +0900 (KST)
-Received: from epsmgms2p2new.samsung.com (unknown [182.195.42.143]) by
-        epcas2p3.samsung.com (KnoxPortal) with ESMTP id
-        20181212014113epcas2p3e8f44ef2a016a896110df8fe85d0118f~vck05qP4B0256302563epcas2p3i;
-        Wed, 12 Dec 2018 01:41:13 +0000 (GMT)
-X-AuditID: b6c32a46-b45ff70000000fdc-45-5c10673a1308
-Received: from epmmp2 ( [203.254.227.17]) by epsmgms2p2new.samsung.com
-        (Symantec Messaging Gateway) with SMTP id 05.80.03627.837601C5; Wed, 12 Dec
-        2018 10:41:13 +0900 (KST)
-Received: from localhost.localdomain ([10.113.63.77]) by mmp2.samsung.com
-        (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5
-        2014)) with ESMTPA id <0PJL008GYOOO3DA0@mmp2.samsung.com>; Wed, 12 Dec 2018
-        10:41:12 +0900 (KST)
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     gregkh@linuxfoundation.org, mchehab+samsung@kernel.org,
-        davem@davemloft.net, akpm@linux-foundation.org,
-        nicolas.ferre@microchip.com, arnd@arndb.de, krzk@kernel.org,
-        Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH] MAINTAINERS: Change entry name of samsung exynos bus
- frequency driver
-Date:   Wed, 12 Dec 2018 10:41:11 +0900
-Message-id: <1544578871-5278-1-git-send-email-cw00.choi@samsung.com>
-X-Mailer: git-send-email 1.8.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrAKsWRmVeSWpSXmKPExsWy7bCmqa5VukCMwYSd6hZz1q9hs/g76Ri7
-        xfUvz1kt5pxvYbFoXryezeL8+Q3sFpd3zWGzeP+pk8li++aFzA6cHr9/TWL02LLyJpPHplWd
-        bB4nZvxm8dg/dw27x50fSxk9+rasYvT4vEkugCMq2yYjNTEltUghNS85PyUzL91WyTs43jne
-        1MzAUNfQ0sJcSSEvMTfVVsnFJ0DXLTMH6D4lhbLEnFKgUEBicbGSvp1NUX5pSapCRn5xia1S
-        akFKToFlgV5xYm5xaV66XnJ+rpWhgYGRKVBhQnbGiYmL2Qve8lbc6nzH1sD4lruLkZNDQsBE
-        4nLbWrYuRi4OIYEdjBKzF+5nhnC+AzmHn7F3MXKAVb1ukoKIb2CUuNJzgh2u6PDBXlaQUWwC
-        WhL7X9xgA7FFBBQkNvc+YwUpYha4yCix+9NyRpBJwgIREns/m4DUsAioSmxdew+sl1fARWL3
-        xxlsECfJSXzY8whsgYTAHDaJRxvvMEMkXCSW7DsJVSQs8er4FnYIW1ri2aqNjBAN7YwSX140
-        s0I4ExglPpzazARRZSzxbGEXmM0swCfRcfgv1G+8Eh1tQhAlHhL7j+4EGyokECux9PcuRqAJ
-        CxgZVjGKpRYU56anFhsVGCGH7yZGcGrRctvBuOSczyFGAQ5GJR7eHa/4Y4RYE8uKK3MPMUpw
-        MCuJ8MoYCcQI8aYkVlalFuXHF5XmpBYfYjQFBsJEZinR5Hxg2ssriTc0NTI2NrYwNbc0NrBU
-        Eud9KD03WkggPbEkNTs1tSC1CKaPiYNTqoHR847qazM2a6vJJn93XH9TsCdz60WVWplnSc6i
-        BnfF2j8HOWXLHo8RObB6jTn/O4ue/24M01wSwvRknhwWzrkYn11bxLc9aOe95HMJQjJzWKSv
-        Fn6Qjvi2wqam68nK2FO2i9g8ynaEF25U4BPZyXxq/+z6Jdfzi7gnfAkMs5Jdr9zi9mBBSqQS
-        S3FGoqEWc1FxIgD0L4WOQwMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuplluLIzCtJLcpLzFFi42I5/e+xoK5lukCMwdxbrBZz1q9hs/g76Ri7
-        xfUvz4Hc8y0sFs2L17NZnD+/gd3i8q45bBbvP3UyWWzfvJDZgdPj969JjB5bVt5k8ti0qpPN
-        48SM3ywe++euYfe482Mpo0ffllWMHp83yQVwRHHZpKTmZJalFunbJXBlnJi4mL3gLW/Frc53
-        bA2Mb7m7GDk4JARMJF43SXUxcnEICaxjlOheepAJwvnOKLF83S7GLkZODjYBLYn9L26wgdgi
-        AgoSm3ufsYIUMQtcZJQ4duMIE0hCWCBCYvf+PrAiFgFVia1r77GC2LwCLhK7P84Ai0sIyEl8
-        2POIfQIj1wJGhlWMkqkFxbnpucVGBUZ5qeV6xYm5xaV56XrJ+bmbGIGBtO2wVv8OxsdL4g8x
-        CnAwKvHw7njFHyPEmlhWXJl7iFGCg1lJhFfGSCBGiDclsbIqtSg/vqg0J7X4EKM0B4uSOC9/
-        /rFIIYH0xJLU7NTUgtQimCwTB6dUA6NNyuw0DvV16bVsvGtu5L4u36PzimMLp6P4kiBRnw/u
-        QaLbuzYJBc1anCFvWTPP/YzP61MhCRafDF+9PeV5btOV2bPnFmUf/dZpdvjM/gdZqx4W+4fM
-        v2Tet/6dz1ZPRqscZX6fPVumzrol8WHi/hXm2+YXJU0LFHki2anfqGrx6/3+zl0LPlYosRRn
-        JBpqMRcVJwIA9XlwHiACAAA=
-X-CMS-MailID: 20181212014113epcas2p3e8f44ef2a016a896110df8fe85d0118f
-X-Msg-Generator: CA
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20181212014113epcas2p3e8f44ef2a016a896110df8fe85d0118f
-References: <CGME20181212014113epcas2p3e8f44ef2a016a896110df8fe85d0118f@epcas2p3.samsung.com>
+        Tue, 11 Dec 2018 20:45:27 -0500
+X-ASG-Debug-ID: 1544579110-093b7e7c620e9e0001-xx1T2L
+Received: from HXTBJIDCEMVIW01.hxtcorp.net ([10.128.0.14]) by barracuda.hxt-semitech.com with ESMTP id bgasBRbR4NlufTtF (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NO); Wed, 12 Dec 2018 09:45:11 +0800 (CST)
+X-Barracuda-Envelope-From: dongsheng.wang@hxt-semitech.com
+Received: from HXTBJIDCEMVIW02.hxtcorp.net (10.128.0.15) by
+ HXTBJIDCEMVIW01.hxtcorp.net (10.128.0.14) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 12 Dec 2018 09:44:18 +0800
+Received: from HXTBJIDCEMVIW02.hxtcorp.net ([fe80::3e:f4ff:7927:a6f6]) by
+ HXTBJIDCEMVIW02.hxtcorp.net ([fe80::3e:f4ff:7927:a6f6%12]) with mapi id
+ 15.00.1395.000; Wed, 12 Dec 2018 09:44:18 +0800
+From:   "Wang, Dongsheng" <dongsheng.wang@hxt-semitech.com>
+To:     Kees Cook <keescook@chromium.org>
+CC:     David Howells <dhowells@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        "Zheng, Joey" <yu.zheng@hxt-semitech.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Yang, Shunyong" <shunyong.yang@hxt-semitech.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        "# 3.4.x" <stable@vger.kernel.org>
+Subject: Re: [PATCH 1/1] sched/headers: fix thread_info.<first> is overwritten
+ by STACK_END_MAGIC
+Thread-Topic: [PATCH 1/1] sched/headers: fix thread_info.<first> is
+ overwritten by STACK_END_MAGIC
+X-ASG-Orig-Subj: Re: [PATCH 1/1] sched/headers: fix thread_info.<first> is overwritten
+ by STACK_END_MAGIC
+Thread-Index: AQHUgwHXQvH51CSg9UWtTixRCjaq8A==
+Date:   Wed, 12 Dec 2018 01:44:17 +0000
+Message-ID: <1ff3b0c160a342b0a27852db60e95a2e@HXTBJIDCEMVIW02.hxtcorp.net>
+References: <e7952089a66db4e5d59d2af230a324155bb018a0.1542955914.git.dongsheng.wang@hxt-semitech.com>
+ <CAGXu5jKTQK2BGYefNXkW=-=svzhnqP4Pho3jK+mORAjDxgnsRA@mail.gmail.com>
+ <19391812db6444f3bd260546acded9b7@HXTBJIDCEMVIW02.hxtcorp.net>
+ <CAGXu5jJg+rfDi1VuiaevPSkaZidjmEC2au9yJR6n6rWJR-qcsg@mail.gmail.com>
+ <810b0ad91d5547c5bbbec1b61c119bdc@HXTBJIDCEMVIW02.hxtcorp.net>
+ <24e0c18ed41c44828c753ce9ed3016a5@HXTBJIDCEMVIW02.hxtcorp.net>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [192.168.50.13]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
+X-Barracuda-Connect: UNKNOWN[10.128.0.14]
+X-Barracuda-Start-Time: 1544579111
+X-Barracuda-Encrypted: ECDHE-RSA-AES256-SHA384
+X-Barracuda-URL: https://192.168.50.101:443/cgi-mod/mark.cgi
+X-Virus-Scanned: by bsmtpd at hxt-semitech.com
+X-Barracuda-BRTS-Status: 1
+X-Barracuda-Bayes: INNOCENT GLOBAL 0.5000 1.0000 0.0000
+X-Barracuda-Spam-Score: 0.00
+X-Barracuda-Spam-Status: No, SCORE=0.00 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
+X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.63625
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------------------------
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Samsung Exynos's device drivers have the 'SASMUNG EXYNOS' prefix
-in front of the specific device driver name. In order to keep the
-consistent naming format, change the entry name of bus frequency driver
-for Samsung Exynos and then reorder it alpabetically.
-- old : BUS FREQUENCY DRIVER FOR SAMSUNG EXYNOS
-- new : SAMSUNG EXYNOS BUS FREQUENCY DRIVER
+Hello all,
 
-Also, remove the unneeded git repository information.
+Any comments about this patch?
 
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
----
- MAINTAINERS | 17 ++++++++---------
- 1 file changed, 8 insertions(+), 9 deletions(-)
+Cheers,
+Dongsheng
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 8119141a926f..f180b8499036 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -3248,15 +3248,6 @@ S:	Odd fixes
- F:	Documentation/media/v4l-drivers/bttv*
- F:	drivers/media/pci/bt8xx/bttv*
- 
--BUS FREQUENCY DRIVER FOR SAMSUNG EXYNOS
--M:	Chanwoo Choi <cw00.choi@samsung.com>
--L:	linux-pm@vger.kernel.org
--L:	linux-samsung-soc@vger.kernel.org
--T:	git git://git.kernel.org/pub/scm/linux/kernel/git/mzx/devfreq.git
--S:	Maintained
--F:	drivers/devfreq/exynos-bus.c
--F:	Documentation/devicetree/bindings/devfreq/exynos-bus.txt
--
- BUSLOGIC SCSI DRIVER
- M:	Khalid Aziz <khalid@gonehiking.org>
- L:	linux-scsi@vger.kernel.org
-@@ -13102,6 +13093,14 @@ S:	Supported
- F:	sound/soc/samsung/
- F:	Documentation/devicetree/bindings/sound/samsung*
- 
-+SAMSUNG EXYNOS BUS FREQUENCY DRIVER
-+M:	Chanwoo Choi <cw00.choi@samsung.com>
-+L:	linux-pm@vger.kernel.org
-+L:	linux-samsung-soc@vger.kernel.org
-+S:	Maintained
-+F:	drivers/devfreq/exynos-bus.c
-+F:	Documentation/devicetree/bindings/devfreq/exynos-bus.txt
-+
- SAMSUNG EXYNOS PSEUDO RANDOM NUMBER GENERATOR (RNG) DRIVER
- M:	Krzysztof Kozlowski <krzk@kernel.org>
- L:	linux-crypto@vger.kernel.org
--- 
-1.9.1
+On 2018/11/30 10:19, Wang, Dongsheng wrote:
+> On 2018/11/30 10:04, Wang, Dongsheng wrote:
+>> On 2018/11/30 5:22, Kees Cook wrote:
+>>> On Tue, Nov 27, 2018 at 8:38 PM Wang, Dongsheng
+>>> <dongsheng.wang@hxt-semitech.com> wrote:
+>>>> Hello Kees,
+>>>>
+>>>> On 2018/11/28 6:38, Kees Cook wrote:
+>>>>> On Thu, Nov 22, 2018 at 11:54 PM, Wang Dongsheng
+>>>>> <dongsheng.wang@hxt-semitech.com> wrote:
+>>>>>> When select ARCH_TASK_STRUCT_ON_STACK the first of thread_info variable
+>>>>>> is overwritten by STACK_END_MAGIC. In fact, the ARCH_TASK_STRUCT_ON_STACK
+>>>>>> is not a real task on stack, it's only init_task on init_stack.
+>>>>>>
+>>>>>> Commit 0500871f21b2 ("Construct init thread stack in the linker script
+>>>>>> rather than by union") added this macro and put task_strcut into
+>>>>>> thread_union. This brings us the following possibilities:
+>>>>>>     TASK_ON_STACK    THREAD_INFO_IN_TASK    STACK
+>>>>>>                                             ----- <-- thread_info & stack
+>>>>>>         N                    N             |     |     --- <-- task
+>>>>>>                                            |     |    |   |
+>>>>>>                                             -----      ---
+>>>>>>
+>>>>>>                                             ----- <-- stack
+>>>>>>         N                    Y             |     |     --- <-- task(Including thread_info)
+>>>>>>                                            |     |    |   |
+>>>>>>                                             -----      ---
+>>>>>>
+>>>>>>                                             ----- <-- stack & task & thread_info
+>>>>>>         Y                    N             |     |
+>>>>>>                                            |     |
+>>>>>>                                             -----
+>>>>>>
+>>>>>>                                             ----- <-- stack & task(Including thread_info)
+>>>>>>         Y                    Y             |     |
+>>>>>>                                            |     |
+>>>>>>                                             -----
+>>>>>> The kernel has handled the first two cases correctly.
+>>>>>>
+>>>>>> For the third case:
+>>>>>> TASK_ON_STACK: Y. THREAD_INFO_IN_TASK: N. this case
+>>>>>> should never happen, because the task and thread_info will overlap. So
+>>>>>> when TASK_ON_STACK is selected, THREAD_INFO_IN_TASK must be selected too.
+>>>>>>
+>>>>>> For the fourth case:
+>>>>>> When task on stack, the end of stack should add a sizeof(task_struct) offset.
+>>>>>>
+>>>>>> This patch handled with the third and fourth case.
+>>>>>>
+>>>>>> Fixes: 0500871f21b2 ("Construct init thread stack in the linker ...")
+>>>>>>
+>>>>>> Signed-off-by: Wang Dongsheng <dongsheng.wang@hxt-semitech.com>
+>>>>>> Signed-off-by: Shunyong Yang <shunyong.yang@hxt-semitech.com>
+>>>>>> ---
+>>>>>>  arch/Kconfig                     | 1 +
+>>>>>>  include/linux/sched/task_stack.h | 5 ++++-
+>>>>>>  2 files changed, 5 insertions(+), 1 deletion(-)
+>>>>>>
+>>>>>> diff --git a/arch/Kconfig b/arch/Kconfig
+>>>>>> index e1e540ffa979..0a2c73e73195 100644
+>>>>>> --- a/arch/Kconfig
+>>>>>> +++ b/arch/Kconfig
+>>>>>> @@ -251,6 +251,7 @@ config ARCH_HAS_SET_MEMORY
+>>>>>>  # Select if arch init_task must go in the __init_task_data section
+>>>>>>  config ARCH_TASK_STRUCT_ON_STACK
+>>>>>>         bool
+>>>>>> +       depends on THREAD_INFO_IN_TASK || IA64
+>>>>> The "IA64" part shouldn't be needed since IA64 already selects it.
+>>>>>
+>>>>> Since it's selected, it also can't have a depends, IIUC.
+>>>> Since the IA64 thread_info including task_struct, it doesn't need to
+>>>> select THREAD_INFO_IN_TASK.
+>>>> So we need to allow IA64 select ARCH_TASK_STRUCT_ON_STACK without
+>>>> THREAD_INFO.
+>>> Okay.
+>>>
+>>>>>>  # Select if arch has its private alloc_task_struct() function
+>>>>>>  config ARCH_TASK_STRUCT_ALLOCATOR
+>>>>>> diff --git a/include/linux/sched/task_stack.h b/include/linux/sched/task_stack.h
+>>>>>> index 6a841929073f..624c48defb9e 100644
+>>>>>> --- a/include/linux/sched/task_stack.h
+>>>>>> +++ b/include/linux/sched/task_stack.h
+>>>>>> @@ -7,6 +7,7 @@
+>>>>>>   */
+>>>>>>
+>>>>>>  #include <linux/sched.h>
+>>>>>> +#include <linux/sched/task.h>
+>>>>>>  #include <linux/magic.h>
+>>>>>>
+>>>>>>  #ifdef CONFIG_THREAD_INFO_IN_TASK
+>>>>>> @@ -25,7 +26,9 @@ static inline void *task_stack_page(const struct task_struct *task)
+>>>>>>
+>>>>>>  static inline unsigned long *end_of_stack(const struct task_struct *task)
+>>>>>>  {
+>>>>>> -       return task->stack;
+>>>>>> +       if (!IS_ENABLED(CONFIG_ARCH_TASK_STRUCT_ON_STACK) || task != &init_task)
+>>>>>> +               return task->stack;
+>>>>>> +       return (unsigned long *)(task + 1);
+>>>>>>  }
+>>>>> This seems like a strange place for the change. It feels more like
+>>>>> init_task has been defined incorrectly.
+>>>> The init_task will put into init_stack when ARCH_TASK_STRUCT_ON_STACK is
+>>>> selected.
+>>>> include/asm-generic/vmlinux.lds.h:
+>>>> #define INIT_TASK_DATA(align)                        \
+>>>>     . = ALIGN(align);                        \
+>>>>     __start_init_task = .;                        \
+>>>>     init_thread_union = .;                        \
+>>>>     init_stack = .;                            \
+>>>>     KEEP(*(.data..init_task))                    \
+>>>>     KEEP(*(.data..init_thread_info))                \
+>>>>     . = __start_init_task + THREAD_SIZE;                \
+>>>>     __end_init_task = .;
+>>>>
+>>>> So we need end_of_stack to offset sizeof(task_struct).
+>>> Well, I guess I mean I'd rather the end_of_stack() code not be
+>>> special-cased in the if. The default should be how it was. Perhaps:
+>>>
+>>> if (IS_ENABLED(CONFIG_ARCH_TASK_STRUCT_ON_STACK) && task == &init_task)
+> About this special case:
+> As I mentioned in the description of patch, The
+> ARCH_TASK_STRUCT_ON_STACK is not a real task on stack, it's only
+> init_task on init_stack.
+> The alloc task is not in alloc stack, So if condition including "task ==
+> &init_task".
+>
+> Cheers,
+> Dongsheng
+>
+>>>     return (unsigned long *)(task + 1);
+>>> return task->stack;
+>>>
+>>> But it still feels strange: why can't task->stack point to the correct
+>>> place in this special case?
+>> Normally, task->stack is the bottom of the stack, the end_of_stack just
+>> need to return task->stack.
+>> The task->stack always represents the bottom of the stack, and it cannot
+>> be changed, so what
+>> happens here is we have some data(task or thread info)that we want to
+>> put at the bottom of the
+>> stack. The end_of_stack just refers to the size of the stack available
+>> to us.
+>> In ARCH_TASK_STRUCT_ON_STACK case, the init_task has been placed in a
+>> fixed location, the task
+>> is placed at the bottom of the stack. Current end_of_stack doesn't
+>> handle this situation, so we need
+>> add a if condition to handle it. And this is just like
+>> !THREAD_INFO_IN_TASK(the thead_info on stack),
+>> the thread_info is placed at the bottom of the stack, the end_of_stack =
+>> the bottom of stack + sizeof(*thread_info).
+>>
+>>
+>> Cheers,
+>> Dongsheng
+>>
+>>
+>
 
