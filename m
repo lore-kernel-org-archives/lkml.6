@@ -2,189 +2,152 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31579C04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 10:15:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46789C04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 10:17:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C54702086D
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 10:15:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C54702086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=diasemi.com
+	by mail.kernel.org (Postfix) with ESMTP id 0A5E920839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 10:17:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A5E920839
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727055AbeLLKPq (ORCPT
+        id S1726964AbeLLKRG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 05:15:46 -0500
-Received: from mail1.bemta25.messagelabs.com ([195.245.230.3]:14705 "EHLO
-        mail1.bemta25.messagelabs.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726681AbeLLKPp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 05:15:45 -0500
-Received: from [46.226.52.98] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
-        by server-3.bemta.az-a.eu-west-1.aws.symcld.net id 0D/E4-12385-8CFD01C5; Wed, 12 Dec 2018 10:15:36 +0000
-X-Brightmail-Tracker: H4sIAAAAAAAAA1VSWUwTURTlzUzbARnzKBquFUxsYgjGFiofjPu
-  WmPphosagERIcYOw0aUvtTEPxR1BJBCKgFoJIQRQB0QAhuFVx4UMtqRqRKIgLSo1r4h6XGOO0
-  g6gfLznvnHPPve/l0qR2WK2jeY/EuxycTa+OoYRUKsNw4wnOTut4pWNHawIEu/tYl5otP3meY
-  i996CTYu/4GNXu0tZRkQ81BYrnGfKTHbW4MrDdf9p3SmM9/LdaYP/XMWqfaorI6cgs8W1VC18
-  gzlXMg2VPXvB8Vo73J5SiGpnAXCZ1DLWT4osU1BPiGPyLlEkLwre+5phxF02rMwsEbY+ownoY
-  z4VftGBU2kfgeAc8eV5NhIR5vguN3GzWKaTOc/tFPKHg1VP70RngKz4ETI8cifgZz0B1sUind
-  2gloaNsXMUXjDXDxsJcKY4ST4HPJyUgBiRPgQagpEgoYQ8vF26SCp8Or8V8qxc9DYNcwUvh5c
-  PN+SMa0jGdD5fgihU6CwaaKyCsBj6iht2psInMt1A5Uk4rwEEFw1xtqMqjh8kQoCy0VpRO8E0
-  53fJoongUd+55SSvEjEl7UNVJK50So6ixU+K8quPXhXeQftTgP3vtuaqrRvPp/Hlcvl5A4Bbr
-  8qQo9G7wVTzX1kQ+Lg8ChEHUEUR2IzXVZLYJk56w2gyktzWAyzTeYFsiHzTByOwyckXcbCnlR
-  MpiMXKFoFIvsebZ8o4OXepC8X/nOKxfOoXflln40gyb005mh4zhbOzW3IL9I4EQhx+W28WI/S
-  qRpPTAp8h5q41y8hfdss9rkJf0jAx2rn8b4H8syIzo5u2i1KNIASqeHgmV1JH297EsDqaUcBQ
-  5el8A8CVtx2Cq4HZNBfxZ+ECXp4hkUFRWljXXyLrtV+l9/jRJopI9nSkbllFirQ5rs91oehZB
-  HsfUS4VEk7q+kK0Y93jZLfuhlTV1t8iphbjc2Txlc0b9xaXDJ7WuJZSvde4pLv7NFu9OvnlnW
-  LIzuKMkY/5J+b3zmWW/W/BUe3Zlh3u572VYifmuP92SdSpnJGPu8MaRpTfalvAM776gXR/t9C
-  xf27WznDEcbA6mZeTlTLYtz3rRulw687R31J3ZHSXpKFDjTXNIlcr8BpIeXO+sDAAA=
-X-Env-Sender: Adam.Thomson.Opensource@diasemi.com
-X-Msg-Ref: server-26.tower-262.messagelabs.com!1544609736!42793!1
-X-Originating-IP: [104.47.4.55]
-X-SYMC-ESS-Client-Auth: mailfrom-relay-check=pass
-X-StarScan-Received: 
-X-StarScan-Version: 9.31.5; banners=-,-,-
-X-VirusChecked: Checked
-Received: (qmail 20129 invoked from network); 12 Dec 2018 10:15:36 -0000
-Received: from mail-am5eur02lp2055.outbound.protection.outlook.com (HELO EUR02-AM5-obe.outbound.protection.outlook.com) (104.47.4.55)
-  by server-26.tower-262.messagelabs.com with AES256-SHA256 encrypted SMTP; 12 Dec 2018 10:15:36 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=dialogsemiconductor.onmicrosoft.com; s=selector1-diasemi-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ieuFSNiqLmmti6hINTEM2b2e0a8+X5WCFNDPfsBCZn8=;
- b=CDFY97RPulhA79T7GRpBorpgpXh1HVfWtob9UT3fml4iehgp0ITEpr1fnBTADHtMf/KY88xMtEHyajOELeTcPjvH08XCDyRuMidvhEBv6RddLUXkrGp0Ir3n/mL560b4h6aZbrROuzbnHlnODdv3rtEkZhMQXGAXeTXQ1pYp/BQ=
-Received: from AM5PR1001MB0994.EURPRD10.PROD.OUTLOOK.COM (10.169.154.17) by
- AM5PR1001MB1187.EURPRD10.PROD.OUTLOOK.COM (10.169.155.143) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1404.19; Wed, 12 Dec 2018 10:15:33 +0000
-Received: from AM5PR1001MB0994.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::915f:2c34:17a1:da64]) by AM5PR1001MB0994.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::915f:2c34:17a1:da64%10]) with mapi id 15.20.1425.016; Wed, 12 Dec
- 2018 10:15:33 +0000
-From:   Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
-To:     Kyle Tso <kyletso@google.com>,
-        Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
-CC:     "linux@roeck-us.net" <linux@roeck-us.net>,
-        "heikki.krogerus@linux.intel.com" <heikki.krogerus@linux.intel.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        Badhri Jagan Sridharan <badhri@google.com>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] usb: typec: tcpm: Extend the matching rules on PPS APDO
- selection
-Thread-Topic: [PATCH] usb: typec: tcpm: Extend the matching rules on PPS APDO
- selection
-Thread-Index: AQHUjRA9iR+V8w1vUkO6AmQvwyOQdaV3soBQgAAnBDCAApY3gIAAcAxQ
-Date:   Wed, 12 Dec 2018 10:15:32 +0000
-Message-ID: <AM5PR1001MB099418665806CE9FF06D138780A70@AM5PR1001MB0994.EURPRD10.PROD.OUTLOOK.COM>
-References: <20181206030227.9507-1-kyletso@google.com>
- <AM5PR1001MB0994F844103F31DBD373AAB880A50@AM5PR1001MB0994.EURPRD10.PROD.OUTLOOK.COM>
- <AM5PR1001MB099433159E3519D8F534E38F80A50@AM5PR1001MB0994.EURPRD10.PROD.OUTLOOK.COM>
- <CAGZ6i=3+8OOafaY8B5qRkDg1pzpTu0XRw-GAenubY74DM=85Pw@mail.gmail.com>
-In-Reply-To: <CAGZ6i=3+8OOafaY8B5qRkDg1pzpTu0XRw-GAenubY74DM=85Pw@mail.gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [165.225.80.56]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM5PR1001MB1187;6:7OregDOeqX2AAJELWFaF7GAqhkfYng1BwssB9EYVbE5zta6BUxXWrOHezKHyCvyWc/wPmjdWTfa4XZTeNPKowa1M85tLKcqB9pDxcEWXWTZQIAQS4ghJhmZl/7YdHVykKwp/JYYjRz2HaQOZ1V5wVLAc2ZaHUq4NRih81NzNyPD7VjpJGVyQo++u65JbA9BNlNynkzMiCU0qT3g2X647FIdRZKCDUn0w0m4eKUjXfKFHiCGHXFie0AS0OvSx3w/tfu+bBZnxJUu5aBO9r7BchxI0bqaMdhkfL+5im9JScBwk5UmwMhpf9NMBb88FMkw2u1OqLyHLZgkvczgyqM6Mcndc7I3zsh3B4CvW95LlVtDK1zecy+XZRoCUSiI15G24wI0J9Wno02IifAd9de/zk3ooKoPVPwTu9z0wd1iNFIFjGtQNRf00zFp+wD1/P6ogP51dP3CGMhXDXip0K+70nQ==;5:+BNKEYICNc6BFKCiMG9t0tKtxeQQNbp8n12TTJ4TOoDFPDmOd/zuY9q4kDm++6jG9dMpDew8fz8/JBe0iiyCjhWILGv2v09TGKzTs4yoKJOvn5/RpSv/hnfAAjVEG8mjbZ9iuIFsHnqLyzxcaCSdi0lxlAZAzqn/cECWFLCJgtw=;7:uH9Hk5ihizxkO9ik4dsKfjcVRXjIOiAx3Jvwlai7le807p0ofDKZR3z1uJlb9CUEGTjLpUuWtDWx/9w5WVzrjNTbrsFlwD7QvT8tbZEKZYF9yrNLbDvVZUfNKB+7SisFojHofsUI/vxHd/pUma6Isw==
-x-ms-office365-filtering-correlation-id: fa723000-9304-48bc-c5b5-08d6601ac059
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:AM5PR1001MB1187;
-x-ms-traffictypediagnostic: AM5PR1001MB1187:
-x-ms-exchange-sharedmailbox-routingagent-processed: True
-x-microsoft-antispam-prvs: <AM5PR1001MB118725261605F0DEAFFC187BA7A70@AM5PR1001MB1187.EURPRD10.PROD.OUTLOOK.COM>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230017)(999002)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3002001)(10201501046)(3231472)(944501520)(52105112)(148016)(149066)(150057)(6041310)(20161123564045)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:AM5PR1001MB1187;BCL:0;PCL:0;RULEID:;SRVR:AM5PR1001MB1187;
-x-forefront-prvs: 0884AAA693
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(39860400002)(346002)(136003)(376002)(396003)(199004)(189003)(316002)(26005)(8936002)(476003)(217873002)(6246003)(14444005)(71200400001)(14454004)(486006)(7736002)(53936002)(71190400001)(5660300001)(186003)(74316002)(72206003)(99286004)(3846002)(97736004)(305945005)(2906002)(81166006)(106356001)(11346002)(256004)(6116002)(66066001)(55016002)(8676002)(81156014)(9686003)(446003)(110136005)(25786009)(93886005)(55236004)(53546011)(7696005)(102836004)(86362001)(6436002)(6506007)(54906003)(478600001)(68736007)(105586002)(33656002)(4326008)(76176011)(229853002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM5PR1001MB1187;H:AM5PR1001MB0994.EURPRD10.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:0;MX:1;
-received-spf: None (protection.outlook.com: diasemi.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: EBf/lYuM8dG0CeOyAFbnbLwlf8JmTU0JNWDLO2c3ZGw2qwSyf6w5FPxbjv8WyFWD893VPWz5zcgJwL0QN7zPEXT4gI4JfZy3JumB5G+DWZN1rN8BYWvav0DOHuTliry9SaZLT51zWX+ztX3D7H7eWsqaSsksF8RUtRNvfGcNlRao/WeBWASajALZa4wOOUZ8lA9Gv7ECNahdtyb+TxysT8vlWpDiwKT2ScUE8oXB81f1GUy6QSMMqfVHBONd3fShvYQRv9rE9etClCYuwVO6AN3VSa7/YnkodiOWDUdPL/TCh+Ai4V9LVOVJDcbC+3Fd
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Wed, 12 Dec 2018 05:17:06 -0500
+Received: from mx2.suse.de ([195.135.220.15]:38482 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726680AbeLLKRG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 05:17:06 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 51CC3AC85;
+        Wed, 12 Dec 2018 10:17:03 +0000 (UTC)
+Subject: Re: [LKP] [mm] ac5b2c1891: vm-scalability.throughput -61.3%
+ regression
+To:     David Rientjes <rientjes@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        mgorman@techsingularity.net, Michal Hocko <mhocko@kernel.org>,
+        ying.huang@intel.com, s.priebe@profihost.ag,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        alex.williamson@redhat.com, lkp@01.org, kirill@shutemov.name,
+        Andrew Morton <akpm@linux-foundation.org>,
+        zi.yan@cs.rutgers.edu
+References: <64a4aec6-3275-a716-8345-f021f6186d9b@suse.cz>
+ <20181204104558.GV23260@techsingularity.net>
+ <20181205204034.GB11899@redhat.com>
+ <CAHk-=whi8Ju-cTDL4cYtwuLA7BYgGJYyy6HVMoknZaLHnRc83g@mail.gmail.com>
+ <20181205233632.GE11899@redhat.com>
+ <CAHk-=wguXjkbK8BUU998s7HD7AXJgBkuc9JmuNxiN7uGQyfSfQ@mail.gmail.com>
+ <CAHk-=wjm9V843eg0uesMrxKnCCq7UfWn8VJ+z-cNztb_0fVW6A@mail.gmail.com>
+ <alpine.DEB.2.21.1812061505010.162675@chino.kir.corp.google.com>
+ <CAHk-=wjVuLjZ1Wr52W=hNqh=_8gbzuKA+YpsVb4NBHCJsE6cyA@mail.gmail.com>
+ <alpine.DEB.2.21.1812091538310.215735@chino.kir.corp.google.com>
+ <20181210044916.GC24097@redhat.com>
+ <alpine.DEB.2.21.1812111609060.255489@chino.kir.corp.google.com>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Openpgp: preference=signencrypt
+Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+ cqmP8roqufIAj+Ohhzs=
+Message-ID: <0bbf4202-6187-28fb-37b7-da6885b89cce@suse.cz>
+Date:   Wed, 12 Dec 2018 11:14:05 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.2
 MIME-Version: 1.0
-X-OriginatorOrg: diasemi.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fa723000-9304-48bc-c5b5-08d6601ac059
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Dec 2018 10:15:33.0317
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 511e3c0e-ee96-486e-a2ec-e272ffa37b7c
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM5PR1001MB1187
+In-Reply-To: <alpine.DEB.2.21.1812111609060.255489@chino.kir.corp.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gMTIgRGVjZW1iZXIgMjAxOCAwMjo0NywgS3lsZSBUc28gd3JvdGU6DQoNCj4gT24gTW9uLCBE
-ZWMgMTAsIDIwMTggYXQgNzozNiBQTSBBZGFtIFRob21zb24NCj4gPEFkYW0uVGhvbXNvbi5PcGVu
-c291cmNlQGRpYXNlbWkuY29tPiB3cm90ZToNCj4gPg0KPiA+IE9uIDEwIERlY2VtYmVyIDIwMTgg
-MDk6MDEsIEFkYW0gVGhvbXNvbiB3cm90ZToNCj4gPg0KPiA+ID4gT24gMDYgRGVjZW1iZXIgMjAx
-OCAwMzowMiwgS3lsZSBUc28gd3JvdGU6DQo+ID4gPg0KPiA+ID4gPiBDdXJyZW50IG1hdGNoaW5n
-IHJ1bGVzIGVuc3VyZSB0aGF0IHRoZSB2b2x0YWdlIHJhbmdlIG9mIHNlbGVjdGVkDQo+ID4gPiA+
-IFNvdXJjZSBDYXBhYmlsaXR5IGlzIGVudGlyZWx5IHdpdGhpbiB0aGUgcmFuZ2UgZGVmaW5lZCBp
-biBvbmUgb2YNCj4gPiA+ID4gdGhlIFNpbmsgQ2FwYWJpbGl0aWVzLiBUaGlzIGlzIHJlYXNvbmFi
-bGUgYnV0IG5vdCBwcmFjdGljYWwNCj4gPiA+ID4gYmVjYXVzZSBTaW5rIG1heSBub3Qgc3VwcG9y
-dCB3aWRlIHJhbmdlIG9mIHZvbHRhZ2Ugd2hlbiBzaW5raW5nDQo+ID4gPiA+IHBvd2VyIHdoaWxl
-IFNvdXJjZSBjb3VsZCBhZHZlcnRpc2UgaXRzIGNhcGFiaWxpdGllcyBpbiByYWxldGl2ZWx5DQo+
-ID4gPiA+IHdpZGVyIHJhbmdlLiBGb3IgZXhhbXBsZSwgYSBTb3VyY2UgUERPIGFkdmVydGlzaW5n
-IDMuM1YtMTFWQDNBICg5Vg0KPiA+ID4gPiBQcm9nIG9mIEZpeGVkIE5vbWluYWwgVm9sdGFnZSkg
-d2lsbCBub3QgYmUgc2VsZWN0ZWQgaWYgdGhlIFNpbmsNCj4gPiA+ID4gcmVxdWlyZXMgNVYtIDEy
-VkAzQSBQUFMgcG93ZXIuIEhvd2V2ZXIsIHRoZSBTaW5rIGNvdWxkIHdvcmsgd2VsbA0KPiA+ID4g
-PiBpZiB0aGUgcmVxdWVzdGVkIHZvbHRhZ2UgcmFuZ2UgaW4NCj4gPiA+IFJET3MgaXMgNVYtMTFW
-QDNBLg0KPiA+ID4NCj4gPiA+IElzIHRoZXJlIGEgcmVhbCB3b3JsZCBleGFtcGxlIG9mIGEgc2lu
-ayByZXF1aXJpbmcgdGhlIDVWIC0gMTJWDQo+ID4gPiByYW5nZT8gSW4gdGhhdCBzY2VuYXJpbyBj
-b3VsZCB3ZSBub3QgYWRkIGFuIGFkZGl0aW9uYWwgc2luaw0KPiA+ID4gY2FwYWJpbGl0eSB3aGlj
-aCBhbGxvd3MgZm9yIHRoaXMgcmFuZ2UgdG8gYmUgc3VwcG9ydGVkLCBhbmQgdGhlIGN1cnJlbnQN
-Cj4gaW1wbGVtZW50YXRpb24gc2hvdWxkIHdvcmsganVzdCBmaW5lPw0KPiA+DQo+ID4gT2ssIEkg
-bWF5YmUgc2hvdWxkIGhhdmUgd2FpdGVkIHVudGlsIGFmdGVyIG15IG1vcm5pbmcgY29mZmVlIHRv
-DQo+ID4gcmVzcG9uZC4gU28gYmVjYXVzZSB0aGUgbG93ZXIgbGltaXQgb24gdGhlIHNpbmsgc2lk
-ZSwgaXMgaGlnaGVyIHRoYW4NCj4gPiB0aGUgYWR2ZXJ0aXNlZCBzb3VyY2UncyBQUFMgbWluaW11
-bSB2b2x0YWdlIGl0IG5ldmVyIGdldHMgc2VsZWN0ZWQ/DQo+ID4gUGVyc29uYWxseSBJJ2QgcHJl
-ZmVyIHRvIGtlZXAgdGhlIHVwcGVyIGxpbWl0IGNoZWNraW5nIGFzIGlzIGFzIEkNCj4gPiB0aGlu
-ayB0aGF0J3MgYW4gYWRkaXRpb25hbCBzYWZldHkgYmVuZWZpdCBoZWxwaW5nIHRvIHByZXZlbnQN
-Cj4gPiBvdmVyLXZvbHRhZ2Ugc2NlbmFyaW9zLiBJIHRoaW5rIGlmIGEgUFBTIEFQRE8gY2FuIHN1
-cHBseSB1cCB0byAxMVYNCj4gPiB0aGVuIHRoZSBzeXN0ZW0gc2hvdWxkIGJlIGNhcGFibGUgb2Yg
-aGFuZGxpbmcgdGhhdCB2b2x0YWdlLCBvdGhlcndpc2UNCj4gPiBpdCBzaG91bGRuJ3QgYmUgY29u
-c2lkZXJlZCBhdCBhbGwuIFRoZSBTb3VyY2UgcHJvdmlkZXMgbGltaXRzIGNoZWNraW5nDQo+ID4g
-YXMgd2VsbCB0byBtYWtlIHN1cmUgdGhlIFNpbmsgZG9lc24ndCByZXF1ZXN0IGEgdmFsdWUgYWJv
-dmUgdGhlIG1heGltdW0NCj4gdm9sdGFnZSBsaW1pdCBmb3IgdGhhdCBzZWxlY3RlZCBBUERPLg0K
-PiA+DQo+IA0KPiBJZiB0aGUgb3Zlci12b2x0YWdlIG9jY3VycywgaXQgbWVhbnM6DQo+IDEuIHRo
-ZSBhZGFwdGVyIG1hbGZ1bmN0aW9uZWQuIG9yDQo+IDIuIHRoZSBjb2RlIG9uIHRoZSBTaW5rIGFj
-Y2lkZW50YWxseSByZXF1ZXN0cyBhIHZvbHRhZ2UgbGV2ZWwgd2hpY2ggaXMgb3ZlciB0aGUgbGlt
-aXQNCj4gb2YgdGhlIFNpbmsuDQo+IA0KPiBGb3IgMS4sIGl0IGlzIGRpZmZpY3VsdCB0byBwcmVk
-aWN0IHRoZSBiZWhhdmlvcnMgb2YgYSBtYWxmdW5jdGlvbmVkIGFkYXB0ZXIuIFRoZSBvdmVyLQ0K
-PiB2b2x0YWdlIGV2ZW50IG1heSBoYXBwZW4gZXZlbiBpZiB0aGUgU2luayBkb2Vzbid0IHNlbGVj
-dCB0aGUgQVBETyBmcm9tIHRoaXMNCj4gYnJva2VuIGFkYXB0ZXIuDQoNClllcywgSSBhZ3JlZSBp
-dCdzIGFsbW9zdCBpbXBvc3NpYmxlIHRvIGRvIGFueXRoaW5nIGZyb20gc29mdHdhcmUgdG8gbWl0
-aWdhdGUNCnRoaXMgd2hpY2ggaXMgd2h5IHRoZSBIVyBkZXNpZ24gaGFzIHRvIGhhdmUgcHJvdGVj
-dGlvbiBmb3IgdGhpcy4NCg0KPiBGb3IgMi4sIGl0IGlzIGRpZmZpY3VsdCB0byBwcmVkaWN0IHRo
-ZSBiZWhhdmlvcnMgZnJvbSB0aGUgY2FyZWxlc3MgY29kZSBhcyB3ZWxsLg0KDQpZZXMsIHRoYXQn
-cyBhbHNvIHRydWUsIGJ1dCBpZiBpdCdzIGNvZGVkIHdpdGggdGhlIGludGVudGlvbiBub3QgdG8g
-c2VsZWN0IGFuDQpvcHRpb24gdGhhdCdzIHBvdGVudGlhbGx5IGhpZ2hlciB0aGFuIHRoZSBzeXN0
-ZW0gY2FuIGhhbmRsZSB0aGVuIHdlJ3JlIGxlc3MNCmxpa2VseSB0byBmYWxsIGZvdWwgb2Ygb3Zl
-ci12b2x0YWdlIHNjZW5hcmlvcyBpbiBteSBvcGluaW9uLiBCeSBzZWxlY3RpbmcgYQ0KUFBTIEFQ
-RE8gd2l0aCBhbiB1cHBlciB0aHJlc2hvbGQgd2hpY2ggZmFsbHMgd2l0aGluIHRoZSBib2FyZCBs
-aW1pdHMsIGFzc3VtaW5nDQp0aGUgY29kZSB3ZXJlIHRvIGFjY2lkZW50YWxseSByZXF1ZXN0IHNv
-bWV0aGluZyBoaWdoZXIgdGhhbiB0aGUgUFBTIEFQRE8gbWF4aW11bQ0KdGhlbiB0aGUgU291cmNl
-IHNob3VsZCByZWplY3QgdGhpcy4gSnVzdCBmZWVscyBhIGxpdHRsZSBzYWZlciBhcyB3ZSdyZSB0
-YWxraW5nDQphYm91dCBjb250cm9sbGluZyBhbiBleHRlcm5hbCBwb3dlciBzb3VyY2UuIEF0IHRo
-ZSBlbmQgb2YgdGhlIGRheSB0aG91Z2ggdGhlDQpkZWNpc2lvbiBsaWVzIHdpdGggdGhlIG1haW50
-YWluZXJzIG9uIHRoaXMuDQoNCj4gPiBGb3IgdGhlIGxvd2VyIGxpbWl0IEknbSBtb3JlIGluY2xp
-bmVkIHRvIGFncmVlIHdpdGggYWxsb3dpbmcgYSBoaWdoZXINCj4gPiBtaW5pbXVtIG9uIHRoZSBz
-aW5rIHNpZGUgYXMgdGhhdCdzIGxlc3Mgb2YgYSBzYWZldHkvZGFtYWdlIGlzc3VlIGFzIEkNCj4g
-dW5kZXJzdGFuZCBpdC4NCj4gPiBGV0lXLCB3aGF0IGlzIHRoZSByZWFsIHdvcmxkIHNjZW5hcmlv
-PyBXaGF0IGhhcHBlbnMgaWYgdm9sdGFnZSBkcm9wcyBiZWxvdw0KPiA1Vj8NCj4gPg0KPiANCj4g
-U29tZSBwcm9kdWN0cyAoaW4gU2luayBtb2RlKSBoYXZlIHVuZGVyLXZvbHRhZ2UgcHJvdGVjdGlv
-biAodGhlIGxvd2VyIGJvdW5kDQo+IG1pZ2h0IGJlIGFyb3VuZCAzLjhWIC0gNFYgYmVmb3JlIHRo
-ZSBjYWxjdWxhdGlvbiBvZiBJUi1kcm9wKSB0aGF0IHdpbGwgY2F1c2UgdGhlDQo+IGRpc2Nvbm5l
-Y3Rpb24uDQoNCk9rLCBzbyB0aGUgc3lzdGVtIHdvdWxkIGp1c3Qgc3RvcCBjaGFyZ2luZywgY29y
-cmVjdD8gSSBndWVzcyB0aGUgY2FsbGluZyBjb2RlDQp0byBjb250cm9sIHRoZSBTb3VyY2UvYWRh
-cHRlciwgdmlhIFRDUE0sIHdvdWxkbid0IHNlbGVjdCBhIHZhbHVlIGJlbG93IDRWIGluIHRoYXQN
-CnNjZW5hcmlvIGFueXdheT8NCg0KPiANCj4gdGhhbmtzLA0KPiBLeWxlDQo=
+On 12/12/18 1:37 AM, David Rientjes wrote:
+> 
+> Regarding the role of direct reclaim in the allocator, I think we need 
+> work on the feedback from compaction to determine whether it's worthwhile.  
+> That's difficult because of the point I continue to bring up: 
+> isolate_freepages() is not necessarily always able to access this freed 
+> memory.
+
+That's one of the *many* reasons why having free base pages doesn't
+guarantee compaction success. We can and will improve on that. But I
+don't think it would be e.g. practical to check the pfns of free pages
+wrt compaction scanner positions and decide based on that. Also when you
+invoke reclaim, you can't tell in advance those pfns, so I'm not sure
+how the better feedback from compaction to reclaim for this specific
+aspect would be supposed to work?
+
+> But for cases where we get COMPACT_SKIPPED because the order-0 
+> watermarks are failing, reclaim *is* likely to have an impact in the 
+> success of compaction,
+
+Yes that's the heuristic we rely on.
+
+> otherwise we fail and defer because it wasn't able 
+> to make a hugepage available.
+
+Note that THP fault compaction doesn't actually defer itself, which I
+think is a weakness of the current implementation and hope that patch 3
+in my series from yesterday [1] can address that. Because defering is
+the general feedback mechanism that we have for suppressing compaction
+(and thus associated reclaim) in cases it fails for any reason, not just
+the one you mention. Instead of inspecting failure conditions in detail,
+which would be costly, it's a simple statistical approach. And when
+compaction is improved to fail less, defering automatically also happens
+less.
+
+>  [ If we run compaction regardless of the order-0 watermark check and find
+>    a pageblock where we can likely free a hugepage because it is 
+>    fragmented movable pages, this is a pretty good indication that reclaim
+>    is worthwhile iff the reclaimed memory is beyond the migration scanner. ]
+
+I don't think that would be a good direction to pursue, to let scanning
+happen even without having the free pages. Also as I've mentioned above,
+LRU-based reclaim cannot satisfy your 'iff' condition, unless it
+inspected the pfn's it freed, and continued reclaiming until enough of
+those beyond migration scanner were freed. Instead IMHO we should look
+again into replacing the free scanner with direct allocation from freelists.
+
+[1] https://lkml.kernel.org/r/20181211142941.20500-1-vbabka@suse.cz
