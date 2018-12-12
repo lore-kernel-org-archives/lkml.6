@@ -2,117 +2,295 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FE06C6783B
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 00:39:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C80DC6783B
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 00:43:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50DBE20849
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 00:39:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50DBE20849
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 3943320851
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 00:43:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3943320851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726264AbeLLAju (ORCPT
+        id S1726255AbeLLAn0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 19:39:50 -0500
-Received: from mga11.intel.com ([192.55.52.93]:46061 "EHLO mga11.intel.com"
+        Tue, 11 Dec 2018 19:43:26 -0500
+Received: from muru.com ([72.249.23.125]:57564 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726211AbeLLAjt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 19:39:49 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Dec 2018 16:39:49 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,343,1539673200"; 
-   d="scan'208";a="118029691"
-Received: from hgleung-mobl.amr.corp.intel.com (HELO [10.251.18.147]) ([10.251.18.147])
-  by orsmga001.jf.intel.com with ESMTP; 11 Dec 2018 16:39:49 -0800
-Subject: Re: [PATCH v4 1/2] x86/fpu: track AVX-512 usage of tasks
-To:     "Li, Aubrey" <aubrey.li@linux.intel.com>,
-        Aubrey Li <aubrey.li@intel.com>, tglx@linutronix.de,
-        mingo@redhat.com, peterz@infradead.org, hpa@zytor.com
-Cc:     ak@linux.intel.com, tim.c.chen@linux.intel.com,
-        arjan@linux.intel.com, linux-kernel@vger.kernel.org
-References: <20181211002448.3520-1-aubrey.li@intel.com>
- <e51c6513-3b5d-972c-5d26-d20283057bb8@intel.com>
- <f142bab7-5ede-b17c-f0e0-f1ab0acb44cd@linux.intel.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-Message-ID: <152d1ac3-21ed-2d59-1939-6448a854c34e@intel.com>
-Date:   Tue, 11 Dec 2018 16:39:48 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        id S1726201AbeLLAnZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 19:43:25 -0500
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 8CFDB8027;
+        Wed, 12 Dec 2018 00:43:26 +0000 (UTC)
+Date:   Tue, 11 Dec 2018 16:43:20 -0800
+From:   Tony Lindgren <tony@atomide.com>
+To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Jarkko Nikula <jarkko.nikula@bitmer.com>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>
+Subject: Re: [PATCH 0/2] Graph fixes for using multiple endpoints per port
+Message-ID: <20181212004320.GY6707@atomide.com>
+References: <20181211020557.61783-1-tony@atomide.com>
+ <8736r4bvf3.wl-kuninori.morimoto.gx@renesas.com>
+ <20181211045220.GI6707@atomide.com>
+ <871s6obqkb.wl-kuninori.morimoto.gx@renesas.com>
+ <20181211053536.GJ6707@atomide.com>
+ <87wooga9an.wl-kuninori.morimoto.gx@renesas.com>
+ <20181211141649.GL6707@atomide.com>
+ <87ftv33bpg.wl-kuninori.morimoto.gx@renesas.com>
+ <87efan393s.wl-kuninori.morimoto.gx@renesas.com>
 MIME-Version: 1.0
-In-Reply-To: <f142bab7-5ede-b17c-f0e0-f1ab0acb44cd@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87efan393s.wl-kuninori.morimoto.gx@renesas.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/11/18 4:34 PM, Li, Aubrey wrote:
->> Is there a reason we shouldn't do:
->>
->> 	if (!cpu_feature_enabled(X86_FEATURE_AVX512F))
->> 		update_avx512_state(fpu);
->>
->> ?
->>
-> Why _!_ ?
+* Kuninori Morimoto <kuninori.morimoto.gx@renesas.com> [181212 00:12]:
+> 
+> Hi Tony, again
+> 
+> > > The issue I have with that it does not then follow the binding doc :)
+> > > 
+> > > See this part in Documentation/devicetree/bindings/graph.txt:
+> > > 
+> > >  "If a single port is connected to more than one remote device, an
+> > >  'endpoint' child node must be provided for each link."
+> 
+> My understanding is that 1 "port" is for 1 "physical interface".
 
-Sorry, got it backwards.  I think I was considering having you do a
+Yes I agree.
 
-	if (!cpu_feature_enabled(X86_FEATURE_AVX512F))
-		return;
+> In sound case, it is 1 "DAI".
+> And, 1 "endpoint" is for 1 "connection".
 
-inside of update_avx512_state(), but I got the state mixed up in my head.
+Yes. So I have 1 physical port (mcbsp) TDM split between
+two codecs (cpcap and mdm).
 
-You don't need the '!'.
+> 	"If a single port is connected to more than one remote device, an
+> 	'endpoint' child node must be provided for each link."
+> 
+> This meanns, "If 1 DAI (*1) is connected to multiple remote DAIs(*2),
+> this connection is indicated by multiple "endpoint"" or something like that.
+> 
+> (*2)
+> DAIA-endpoint---endpoint--\
+> DAIB-endpoint---endpoint-----DAI (*1)
+> DAIC-endpoint---endpoint--/
+
+Yeah. So the only thing missing is parsing multiple endpoints
+at the DAI end :) And that's why the two patches I posted.
+
+> > > Isn't the I2C TDM case the same as "single port connecected to
+> > > more than one remote device" rather than multiple ports?
+> 
+> I re-checked https://lkml.org/lkml/2018/3/28/405.
+> Are MDM6600 / OMAP4 CPU portion, and are CPCAP / WL1285 Codec portion ?
+
+MDM6600 is a Qualcomm modem running Motorola custom firmware
+CPCAP is a Motorola custom PMIC for omap4430 SoC
+WL128 is a WLAN and Bluetooth chip
+
+So following your drawing above:
+
+There are two separate McBSP instances, here's the one
+in question:
+
+MDM6600 modem-----endpoint--\
+CPCAP PMIC codec2-endpoint----McBSP3 on SoC
+WL1285 Bluetooth--endpoint--/
+
+The other McBSP instance is dedicated for SoC audio:
+
+CPCAP PMIC codec1-endpoint---McBSP3 on SoC
+
+> Then, it is not yet supported (on ALSA SoC level?).
+
+Only the cpcap codec is in the mainline currently, the mdm
+codec driver has not yet been posted as it depends on some
+ts 27.010 serdev patches.
+
+> If my memory was correct, Lars-Peter had some idea for Mux,
+> But, not yet implemented I think.
+
+Hmm well I don't think much else is needed currently, we
+already have everything needed at the ASoC level. See yet
+another WIP patch configuring the TDM for mdm codec voice
+call by the existing cpcap codec driver below just by
+implementing .set_tdm_slot function.
+
+> audio-graph[-scu] / simple-card[-scu] are supporting DPCM,
+> but it is for multiple CPU - single Codec.
+
+Well with my patches I certainly have the above configuration
+working just fine with two audio-graph-card instances connected
+to a single physical McBSP port.
+
+Regards,
+
+Tony
+
+8< --------------------
+diff --git a/sound/soc/codecs/cpcap.c b/sound/soc/codecs/cpcap.c
+--- a/sound/soc/codecs/cpcap.c
++++ b/sound/soc/codecs/cpcap.c
+@@ -16,6 +16,14 @@
+ #include <sound/soc.h>
+ #include <sound/tlv.h>
+ 
++/* Register 512 CPCAP_REG_VAUDIOC --- Audio Regulator and Bias Voltage */
++#define CPCAP_BIT_AUDIO_LOW_PWR           6
++#define CPCAP_BIT_AUD_LOWPWR_SPEED        5
++#define CPCAP_BIT_VAUDIOPRISTBY           4
++#define CPCAP_BIT_VAUDIO_MODE1            2
++#define CPCAP_BIT_VAUDIO_MODE0            1
++#define CPCAP_BIT_V_AUDIO_EN              0
++
+ /* Register 513 CPCAP_REG_CC     --- CODEC */
+ #define CPCAP_BIT_CDC_CLK2                15
+ #define CPCAP_BIT_CDC_CLK1                14
+@@ -251,6 +259,8 @@ struct cpcap_audio {
+ 	int codec_clk_id;
+ 	int codec_freq;
+ 	int codec_format;
++
++	unsigned int voice_call:1;
+ };
+ 
+ static int cpcap_st_workaround(struct snd_soc_dapm_widget *w,
+@@ -1370,6 +1380,114 @@ static int cpcap_voice_set_dai_fmt(struct snd_soc_dai *codec_dai,
+ 	return 0;
+ }
+ 
++/*
++ * Configure voice call if cpcap->voice_call is set.
++ *
++ * We can configure most with snd_soc_dai_set_sysclk(), snd_soc_dai_set_fmt()
++ * and snd_soc_dai_set_tdm_slot(). This function configures the rest of the
++ * cpcap related hardware piceses as CPU is not involved in the voice call.
++ */
++static int cpcap_voice_call(struct snd_soc_dai *dai)
++{
++	struct snd_soc_component *component = dai->component;
++	struct cpcap_audio *cpcap = snd_soc_component_get_drvdata(component);
++	int mask, err;
++
++	/* Maybe enable modem to codec VAUDIO_MODE1? */
++	mask = BIT(CPCAP_BIT_VAUDIO_MODE1);
++	err = regmap_update_bits(cpcap->regmap, CPCAP_REG_VAUDIOC,
++				 mask, cpcap->voice_call ? mask : 0);
++	if (err)
++		return err;
++
++	/* Maybe clear MIC1_MUX? */
++	mask = BIT(CPCAP_BIT_MIC1_MUX);
++	err = regmap_update_bits(cpcap->regmap, CPCAP_REG_TXI,
++				 mask, cpcap->voice_call ? 0 : mask);
++	if (err)
++		return err;
++
++	/* Maybe set MIC2_MUX? */
++	mask = BIT(CPCAP_BIT_MB_ON1L) | BIT(CPCAP_BIT_MB_ON1R) |
++		BIT(CPCAP_BIT_MIC2_MUX) | BIT(CPCAP_BIT_MIC2_PGA_EN);
++	err = regmap_update_bits(cpcap->regmap, CPCAP_REG_TXI,
++				 mask, cpcap->voice_call ? mask : 0);
++	if (err)
++		return err;
++
++	/* Maybe enable LDSP? */
++	mask = BIT(CPCAP_BIT_A2_LDSP_L_EN) | BIT(CPCAP_BIT_A2_LDSP_R_EN);
++	err = regmap_update_bits(cpcap->regmap, CPCAP_REG_RXOA,
++				 mask, cpcap->voice_call ? mask : 0);
++	if (err)
++		return err;
++
++	/* Maybe enable CPCAP_BIT_PGA_CDC_EN for call? */
++	mask = BIT(CPCAP_BIT_PGA_CDC_EN);
++	err = regmap_update_bits(cpcap->regmap, CPCAP_REG_RXCOA,
++				 mask, cpcap->voice_call ? mask : 0);
++	if (err)
++		return err;
++
++	/* Maybe unmute voice? */
++	err = snd_soc_dai_digital_mute(dai, !cpcap->voice_call,
++				       SNDRV_PCM_STREAM_PLAYBACK);
++	if (err)
++		return err;
++
++	/* Maybe enable modem to codec mic CDC and HPF? */
++	mask = BIT(CPCAP_BIT_MIC2_CDC_EN) | BIT(CPCAP_BIT_CDC_EN_RX) |
++	       BIT(CPCAP_BIT_AUDOHPF_1) | BIT(CPCAP_BIT_AUDOHPF_0) |
++	       BIT(CPCAP_BIT_AUDIHPF_1) | BIT(CPCAP_BIT_AUDIHPF_0);
++	err = regmap_update_bits(cpcap->regmap, CPCAP_REG_CC,
++				 mask, cpcap->voice_call ? mask : 0);
++	if (err)
++		return err;
++
++	/* Maybe enable modem to codec CDC? */
++	mask = BIT(CPCAP_BIT_CDC_CLK_EN);
++	err = regmap_update_bits(cpcap->regmap, CPCAP_REG_CDI,
++				 mask, cpcap->voice_call ? mask : 0);
++
++	return err;
++}
++
++static int cpcap_voice_set_tdm_slot(struct snd_soc_dai *dai,
++				    unsigned int tx_mask, unsigned int rx_mask,
++				    int slots, int slot_width)
++{
++	struct snd_soc_component *component = dai->component;
++	struct cpcap_audio *cpcap = snd_soc_component_get_drvdata(component);
++	int err, ts_mask, mask;
++
++	/* Modem to codec audio with no CPU involved? */
++	if (tx_mask == 0 && rx_mask == 1 && slot_width == 8)
++		cpcap->voice_call = true;
++	else
++		cpcap->voice_call = false;
++
++	ts_mask = 0x7 << CPCAP_BIT_MIC2_TIMESLOT0;
++	ts_mask |= 0x7 << CPCAP_BIT_MIC1_RX_TIMESLOT0;
++
++	mask = (tx_mask & 0x7) << CPCAP_BIT_MIC2_TIMESLOT0;
++	mask |= (rx_mask & 0x7) << CPCAP_BIT_MIC1_RX_TIMESLOT0;
++
++	err = regmap_update_bits(cpcap->regmap, CPCAP_REG_CDI,
++				 ts_mask, mask);
++	if (err)
++		return err;
++
++	err = cpcap_set_samprate(cpcap, CPCAP_DAI_VOICE, slot_width * 1000);
++	if (err)
++		return err;
++
++	err = cpcap_voice_call(dai);
++	if (err)
++		return err;
++
++	return 0;
++}
++
+ static int cpcap_voice_set_mute(struct snd_soc_dai *dai, int mute)
+ {
+ 	struct snd_soc_component *component = dai->component;
+@@ -1391,6 +1509,7 @@ static const struct snd_soc_dai_ops cpcap_dai_voice_ops = {
+ 	.hw_params	= cpcap_voice_hw_params,
+ 	.set_sysclk	= cpcap_voice_set_dai_sysclk,
+ 	.set_fmt	= cpcap_voice_set_dai_fmt,
++	.set_tdm_slot	= cpcap_voice_set_tdm_slot,
+ 	.digital_mute	= cpcap_voice_set_mute,
+ };
+ 
