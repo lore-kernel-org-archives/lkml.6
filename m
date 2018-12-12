@@ -2,133 +2,122 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27C0BC04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 09:26:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E22BAC04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 09:26:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD41420839
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 09:26:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="H+cLIXMs";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="aBNfapN1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD41420839
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id A8D1620839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 09:26:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544606804;
+	bh=m/0uvsrQFaOa+xxkHx5aGLqidCs5ibxIHWbVYCshamY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=ucfaHKyPiN6pe/rQjJO+k+rz3jB/D9/UuPTm21grhDuPdwp95fM6+ZPhHI8eE7BPA
+	 W5iSqMod/ZUQX1VKGsyK3qQesbTUCk8yNInzcXcLlKO4sGWwPIJNGVeAVOLWG3Q/9/
+	 oocNeBuDBCVb693wzivkqb0/t64ZxpvoLMxvXZdk=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8D1620839
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727052AbeLLJ01 (ORCPT
+        id S1727078AbeLLJ0n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 04:26:27 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:58348 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726992AbeLLJ0Y (ORCPT
+        Wed, 12 Dec 2018 04:26:43 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:36356 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726983AbeLLJ0F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 04:26:24 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 99CC160596; Wed, 12 Dec 2018 09:26:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1544606783;
-        bh=Uy9tqb+EYOmUN39bgtsFj667c1sw4EyGnk2BaZsdbZY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=H+cLIXMsQxHrAUr4hAqXME/E9w/Qrh+8Lfsbhl3E79F/XFOdSn0BnT99LjciZTnud
-         Yhi64lQ4zOCBaYT3H7CzN6eUhYxpSlAwRpMaFanB+WE0obnz6t090wQEK2Fq8YVdhl
-         bSc3zmtzGXXhz0QTMuIIlT5h9Py6sVDpJXK8PuA8=
-Received: from blr-ubuntu-173.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: rnayak@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id D0BD6608EA;
-        Wed, 12 Dec 2018 09:26:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1544606770;
-        bh=Uy9tqb+EYOmUN39bgtsFj667c1sw4EyGnk2BaZsdbZY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aBNfapN1F4He+CdUvRkQaviosRHDxsCiUwOPOwll4ruhSP1UpRetrc10BCen3qoK8
-         EtYRby5scVSwdZKIBypXcf41/ANOGlSI8ZVTLRcfPMX0N5ocHA8ju07rrg7p73cJAR
-         +8QgBgZR1kagTGn4n6aEnObXW51cftVYZyGNy//E=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D0BD6608EA
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
-From:   Rajendra Nayak <rnayak@codeaurora.org>
-To:     andy.gross@linaro.org, robh@kernel.org, viresh.kumar@linaro.org,
-        sboyd@kernel.org, ulf.hansson@linaro.org, collinsd@codeaurora.org,
-        mka@chromium.org
-Cc:     devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Rajendra Nayak <rnayak@codeaurora.org>
-Subject: [PATCH v7 10/10] soc: qcom: rpmhpd: Mark mx as a parent for cx
-Date:   Wed, 12 Dec 2018 14:51:31 +0530
-Message-Id: <20181212092131.13046-11-rnayak@codeaurora.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181212092131.13046-1-rnayak@codeaurora.org>
-References: <20181212092131.13046-1-rnayak@codeaurora.org>
+        Wed, 12 Dec 2018 04:26:05 -0500
+Received: by mail-ot1-f68.google.com with SMTP id k98so16991056otk.3;
+        Wed, 12 Dec 2018 01:26:05 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=FEyNPwStV0LW9aLA+/9ZQzRS9ejoSlGTNLErw2YCl28=;
+        b=qOTlo9H65dzE+sO0CX/CrwOWDZRPfM18q2LsVsq+HiM3JDh0S6+nbQ5i6eV0RG3YIi
+         NkGwAiqU2oE9fPBJTzSJahV7R4dyXVjF8cvFssT+r9Rb+IBdCjHg9FvbIGe/W7Vo15oS
+         JI4XR30g8mHDDD2QGGgsgwUBQaRhYYKYw2aHwpWk07LfNyRVUMEUgbMr3GRgpmpKg12d
+         ZbHLi1pceEWrdRkxO/a1w/V5SCL2xWmnqi8Q7az+U7WHUJKCRP3BnTv04bu6qr4zdFv2
+         7SCVfvJYbnNut3CmqDqlE972hLvrtXByHpm19KtLUT2F1rFMHfM0+X+sgQw1wqSC7QbO
+         HWDQ==
+X-Gm-Message-State: AA+aEWZWjCxirH1N7/vK4TWlKnwdNwquzlmYNLbW6minpTdowvSplwbO
+        WdrmSd4LjY1l5BjhSw/03jdqHW4d+iCYRj1HdYg=
+X-Google-Smtp-Source: AFSGD/XFjgR346YD8z9af+5mSCL5nLsCa+8+xiQQ9UkL/QJHr32ODA8ZdiM27VXjZh0X9kUOrUJQwDyZegNziVRntBw=
+X-Received: by 2002:a9d:5e8c:: with SMTP id f12mr14579064otl.343.1544606764909;
+ Wed, 12 Dec 2018 01:26:04 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20181212052846.32370-1-okaya@kernel.org> <20181212052846.32370-6-okaya@kernel.org>
+In-Reply-To: <20181212052846.32370-6-okaya@kernel.org>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Wed, 12 Dec 2018 10:25:53 +0100
+Message-ID: <CAJZ5v0gOH--BDa-ShCSJbeOicLe+QWOnUj=Rz4Tcv-aaGuyRAQ@mail.gmail.com>
+Subject: Re: [PATCH v5 5/5] ACPI / OSL: Remove PCI bits from ACPICA when
+ CONFIG_PCI is unset
+To:     okaya@kernel.org
+Cc:     ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Robert Moore <robert.moore@intel.com>,
+        "Schmauss, Erik" <erik.schmauss@intel.com>,
+        Rafael Wysocki <rafael.j.wysocki@intel.com>,
+        Len Brown <lenb@kernel.org>, devel@acpica.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Specify the active + sleep and active-only MX power domains as
-the parents of the corresponding CX power domains. This will ensure that
-performance state requests on CX automatically generate equivalent requests
-on MX power domains.
+On Wed, Dec 12, 2018 at 6:29 AM Sinan Kaya <okaya@kernel.org> wrote:
+>
+> Now that we allow CONFIG_PCI to be unset, remove useless code from ACPICA
+> too.
+>
+> Signed-off-by: Sinan Kaya <okaya@kernel.org>
+> ---
+>  drivers/acpi/acpica/Makefile | 2 +-
+>  drivers/acpi/osl.c           | 9 +++++++++
+>  2 files changed, 10 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/acpi/acpica/Makefile b/drivers/acpi/acpica/Makefile
+> index b14621da5413..59700433a96e 100644
+> --- a/drivers/acpi/acpica/Makefile
+> +++ b/drivers/acpi/acpica/Makefile
+> @@ -77,13 +77,13 @@ acpi-y +=           \
+>         hwacpi.o        \
+>         hwesleep.o      \
+>         hwgpe.o         \
+> -       hwpci.o         \
+>         hwregs.o        \
+>         hwsleep.o       \
+>         hwvalid.o       \
+>         hwxface.o       \
+>         hwxfsleep.o
+>
+> +acpi-$(CONFIG_PCI) += hwpci.o
+>  acpi-$(ACPI_FUTURE_USAGE) += hwtimer.o
+>
+>  acpi-y +=              \
+> diff --git a/drivers/acpi/osl.c b/drivers/acpi/osl.c
+> index 7b1e58f93f37..8b8eb17df3f2 100644
+> --- a/drivers/acpi/osl.c
+> +++ b/drivers/acpi/osl.c
+> @@ -1837,3 +1837,12 @@ acpi_status acpi_os_enter_sleep(u8 sleep_state,
+>                                                reg_a_value, reg_b_value);
+>         return status;
+>  }
+> +
+> +#ifndef CONFIG_PCI
+> +acpi_status acpi_hw_derive_pci_id(struct acpi_pci_id *pci_id,
+> +                     acpi_handle root_pci_device, acpi_handle pci_region)
+> +{
+> +       return AE_SUPPORT;
+> +}
+> +#endif
+> +
+> --
 
-This is used to enforce a requirement that exists for various
-hardware blocks on SDM845 that MX performance state >= CX performance
-state for a given operating frequency.
-
-Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
----
-This patch is dependent on the series from
-Viresh [1] which adds support to propogate performance states across the
-power domain hierarchy which is still being reviewed.
-
-[1] https://lkml.org/lkml/2018/11/26/333
-
- drivers/soc/qcom/rpmhpd.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
-
-diff --git a/drivers/soc/qcom/rpmhpd.c b/drivers/soc/qcom/rpmhpd.c
-index f7fbe57f31ae..71d693c31e3b 100644
---- a/drivers/soc/qcom/rpmhpd.c
-+++ b/drivers/soc/qcom/rpmhpd.c
-@@ -97,12 +97,14 @@ static struct rpmhpd sdm845_cx_ao;
- static struct rpmhpd sdm845_cx = {
- 	.pd = { .name = "cx", },
- 	.peer = &sdm845_cx_ao,
-+	.parent = &sdm845_mx.pd,
- 	.res_name = "cx.lvl",
- };
- 
- static struct rpmhpd sdm845_cx_ao = {
- 	.pd = { .name = "cx_ao", },
- 	.peer = &sdm845_cx,
-+	.parent = &sdm845_mx_ao.pd,
- 	.res_name = "cx.lvl",
- };
- 
-@@ -372,6 +374,15 @@ static int rpmhpd_probe(struct platform_device *pdev)
- 		data->domains[i] = &rpmhpds[i]->pd;
- 	}
- 
-+	/* Add subdomains */
-+	for (i = 0; i < num_pds; i++) {
-+		if (!rpmhpds[i])
-+			continue;
-+		if (rpmhpds[i]->parent)
-+			pm_genpd_add_subdomain(rpmhpds[i]->parent,
-+					       &rpmhpds[i]->pd);
-+	}
-+
- 	return of_genpd_add_provider_onecell(pdev->dev.of_node, data);
- }
- 
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
-
+I would prefer the header to be modified instead.  Yes, it is an
+ACPICA header, but then the change would complement the Makefile one
+in a rather straightforward way.
