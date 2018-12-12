@@ -2,104 +2,108 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40A5AC65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 22:18:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33B2CC65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 22:18:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 021C02084E
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 22:18:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EDAB92084E
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 22:18:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="Cp2SQtA5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 021C02084E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lixom.net
+	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="U+0ao6au"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDAB92084E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=crapouillou.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728824AbeLLWSH (ORCPT
+        id S1728840AbeLLWSQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 17:18:07 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:35117 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728520AbeLLWQ5 (ORCPT
+        Wed, 12 Dec 2018 17:18:16 -0500
+Received: from outils.crapouillou.net ([89.234.176.41]:40742 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728589AbeLLWQw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 17:16:57 -0500
-Received: by mail-lj1-f193.google.com with SMTP id x85-v6so19932ljb.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 14:16:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=hY3w+zeFS5PopVQkS3rMiZg3FrfXLFppwOIOWZ3z/sA=;
-        b=Cp2SQtA5AmKnLCr14GgkRYJMZZDLRdIQqfmvLhrlyftI8cBVOG8DZ1H9n1tZdEa7aG
-         vDO92gjMtkmzJfTpmCu413NgkWP6UukkvLMdOx4Tfr0K1c9Ys85uKxfmq14k3Td8JAGH
-         pp31qGDtZNzR0JvFBAakIXnSplR0772q4BUn1yNulfblbc68ed9FvthTbUZBaiKFCBTE
-         e79DGVHJ1bmA6QsU/Y8SjPj6clz0XvLoJCJSwlYWvV25yelmf66e4oVeoEz+n8vQ8XLm
-         5KprPPaBCH2ixRnbyfXd2X2grRi249KUXVydK2O/w4aDxFUUqis4gQ6kx7rmn9HOAKKe
-         zu4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=hY3w+zeFS5PopVQkS3rMiZg3FrfXLFppwOIOWZ3z/sA=;
-        b=rV9GMpSGUiwS0nAqCecxBITj0wkjIQi03dLmZqdfwd3rBud9P0nYMxQIGe0nUMSfHz
-         FgPzx2rSaHCk075IWL9NFvB99VrF28VxJU6LRt3ONNA+wZ+QYtKMGqL28BySCOxGp9VP
-         FO4vt9TkokGfJM3WECOa3WAunrfuHGY/VpqSuaVhXLa749k+5TnGa0amSRziXZI9gbpp
-         dtSvzyTRtJZ+3u+nm5IUOhJa5Wqy3o/bWeFi6lSM8YXpbDD/nWeTia423pWFBTcQa2uC
-         iN60V2s67cRtMmuYjWTlvYi/f+z2p7asXLjDEGk8WbNh6u41R5WwUydxHkKFj8uTym3X
-         oCQA==
-X-Gm-Message-State: AA+aEWYyRo7o1zFo/84EAMzxK65hxe8y9XDQp4OcRg5ko04LXLhailr5
-        7d3vxb4QMtMznKewwufs7+IJlg==
-X-Google-Smtp-Source: AFSGD/VTyXzkeN/3f4is+SKZQr7L93PQj9FWMssgLruF3XyK2SJ4IuO9iftrHHYtHIIIqlvVhHkYxg==
-X-Received: by 2002:a2e:4601:: with SMTP id t1-v6mr14478280lja.111.1544653014877;
-        Wed, 12 Dec 2018 14:16:54 -0800 (PST)
-Received: from localhost (h85-30-9-151.cust.a3fiber.se. [85.30.9.151])
-        by smtp.gmail.com with ESMTPSA id x204sm6284lfa.5.2018.12.12.14.16.53
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 12 Dec 2018 14:16:53 -0800 (PST)
-Date:   Wed, 12 Dec 2018 13:55:35 -0800
-From:   Olof Johansson <olof@lixom.net>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     arm@kernel.org, Lubomir Rintel <lkundrak@v3.sk>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] ARM: mmp: fix pxa168_device_usb_phy use on aspenite
-Message-ID: <20181212215535.5evv7fk7ed57gw7s@localhost>
-References: <20181210204340.2269622-1-arnd@arndb.de>
- <20181210204340.2269622-2-arnd@arndb.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181210204340.2269622-2-arnd@arndb.de>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Wed, 12 Dec 2018 17:16:52 -0500
+From:   Paul Cercueil <paul@crapouillou.net>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>
+Cc:     Mathieu Malaterre <malat@debian.org>,
+        Ezequiel Garcia <ezequiel@collabora.co.uk>,
+        PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>,
+        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-clk@vger.kernel.org, od@zcrc.me,
+        Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v8 16/26] clk: jz4740: Add TCU clock
+Date:   Wed, 12 Dec 2018 23:09:11 +0100
+Message-Id: <20181212220922.18759-17-paul@crapouillou.net>
+In-Reply-To: <20181212220922.18759-1-paul@crapouillou.net>
+References: <20181212220922.18759-1-paul@crapouillou.net>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net; s=mail; t=1544652602; bh=Fiz3MZxmOJxJC5lEAonv4esf/BmrXGJylwcSlpbxKt4=; h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=U+0ao6aum0yq7lzsFMl8Yti66d5IAgi86frwWF0OKjGDcXnz4+U6FapIqwcMPudWuODGy4r7O8jrOEq33ShE+QLyCI+mi+Rn5H/1jF2gNeTYc+36INVR7KL3Awhu6YvjygHtMOE/r+mPX/9hOu9Jay9NJH+weSDIBph5+u+h7F4=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 10, 2018 at 09:43:02PM +0100, Arnd Bergmann wrote:
-> This one ended up in the wrong header file, causing a build failure
-> on at least one platform:
-> 
-> arch/arm/mach-mmp/aspenite.c: In function 'common_init':
-> arch/arm/mach-mmp/aspenite.c:260:28: error: 'pxa168_device_usb_phy' undeclared (first use in this function); did you mean 'pxa168_device_ssp5'?
-> 
-> We can just include both the pxa168.h and pxa910.h headers to make
-> that work, which gets us to the next failure:
-> 
-> arch/arm/mach-mmp/aspenite.o: In function `common_init':
-> aspenite.c:(.init.text+0x1c0): undefined reference to `pxa168_device_usb_phy'
-> 
-> This is solved by using the matching ifdef check around the
-> USB device registration, enabling them only when either USB
-> host or gadget mode are enabled.
-> 
-> Fixes: a225daf72ee7 ("ARM: mmp: add a pxa-usb-phy device")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Add the missing TCU clock to the list of clocks supplied by the CGU for
+the JZ4740 SoC.
 
-Applied to next/soc. Thanks!
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Acked-by: Stephen Boyd <sboyd@kernel.org>
+Acked-by: Rob Herring <robh@kernel.org>
+---
 
+Notes:
+     v5: New patch
+    
+     v6: No change
+    
+     v7: No change
 
--Olof
+     v8: No change
+
+ drivers/clk/ingenic/jz4740-cgu.c       | 6 ++++++
+ include/dt-bindings/clock/jz4740-cgu.h | 1 +
+ 2 files changed, 7 insertions(+)
+
+diff --git a/drivers/clk/ingenic/jz4740-cgu.c b/drivers/clk/ingenic/jz4740-cgu.c
+index 4479c102e899..d8ac7f2e183a 100644
+--- a/drivers/clk/ingenic/jz4740-cgu.c
++++ b/drivers/clk/ingenic/jz4740-cgu.c
+@@ -211,6 +211,12 @@ static const struct ingenic_cgu_clk_info jz4740_cgu_clocks[] = {
+ 		.parents = { JZ4740_CLK_EXT, -1, -1, -1 },
+ 		.gate = { CGU_REG_CLKGR, 5 },
+ 	},
++
++	[JZ4740_CLK_TCU] = {
++		"tcu", CGU_CLK_GATE,
++		.parents = { JZ4740_CLK_EXT, -1, -1, -1 },
++		.gate = { CGU_REG_CLKGR, 1 },
++	},
+ };
+ 
+ static void __init jz4740_cgu_init(struct device_node *np)
+diff --git a/include/dt-bindings/clock/jz4740-cgu.h b/include/dt-bindings/clock/jz4740-cgu.h
+index 6ed83f926ae7..e82d77028581 100644
+--- a/include/dt-bindings/clock/jz4740-cgu.h
++++ b/include/dt-bindings/clock/jz4740-cgu.h
+@@ -34,5 +34,6 @@
+ #define JZ4740_CLK_ADC		19
+ #define JZ4740_CLK_I2C		20
+ #define JZ4740_CLK_AIC		21
++#define JZ4740_CLK_TCU		22
+ 
+ #endif /* __DT_BINDINGS_CLOCK_JZ4740_CGU_H__ */
+-- 
+2.11.0
 
