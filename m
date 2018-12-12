@@ -2,71 +2,196 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEBE9C65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 08:07:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5082C04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 08:07:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 68B342084E
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 08:07:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hvmi0O4o"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68B342084E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 88D812084E
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 08:07:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88D812084E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726653AbeLLIHA (ORCPT
+        id S1726700AbeLLIHp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 03:07:00 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:50812 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726317AbeLLIHA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 03:07:00 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=qKZxiBHt9/UyuAa9T6eWhnIoKvg61vLUHkfyQ47khK0=; b=hvmi0O4o0rMocCb5KtIR7Cn1Q
-        CnbKnPWZUsa4Y0KhJqTu2ipyUD6hbtW3XZ0Z5ROxM4xS+6uOOxMH4IxbWyN4UScHEnUCd29c2EC07
-        AY0Pyrktifn/BTpEqV0QyC71KdsctqlnUmZryRFz87xyfTIqcxyVRzWYmCglH+FFD9f9mHAwvAcXd
-        tGPa09YvBKwH1olNIQJvJ6s3+dmpnB9zMXQk8qwcmI6CNePXAHshLL4WXjE+jaiqrsurjAKM6PoxG
-        fdRd8uju5M5IcGYK85pt5g+nFNrhIm8cJdEhAVA95u7jQttG4BlnCVEthY7DhHSRszFbsJHR6rure
-        gdhwbJUVg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gWzXh-0005b4-2j; Wed, 12 Dec 2018 08:06:53 +0000
-Date:   Wed, 12 Dec 2018 00:06:52 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Ashish Mhetre <amhetre@nvidia.com>
-Cc:     herbert@gondor.apana.org.au, davem@davemloft.net, axboe@kernel.dk,
-        adrian.hunter@intel.com, ulf.hansson@linaro.org,
-        linux-crypto@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-kernel@vger.kernel.org, vdumpa@nvidia.com,
-        mmaddireddy@nvidia.com, linux-tegra@vger.kernel.org,
-        Snikam@nvidia.com
-Subject: Re: [PATCH] scatterlist: Update size type to support greater then
- 4GB size.
-Message-ID: <20181212080652.GA14877@infradead.org>
-References: <1544595853-18492-1-git-send-email-amhetre@nvidia.com>
+        Wed, 12 Dec 2018 03:07:45 -0500
+Received: from foss.arm.com ([217.140.101.70]:35342 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726007AbeLLIHp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 03:07:45 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3DFED80D;
+        Wed, 12 Dec 2018 00:07:44 -0800 (PST)
+Received: from localhost (e113682-lin.copenhagen.arm.com [10.32.144.41])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CAE0F3F614;
+        Wed, 12 Dec 2018 00:07:43 -0800 (PST)
+Date:   Wed, 12 Dec 2018 09:07:42 +0100
+From:   Christoffer Dall <christoffer.dall@arm.com>
+To:     Andrew Murray <andrew.murray@arm.com>
+Cc:     Michael Ellerman <mpe@ellerman.id.au>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>, x86@kernel.org,
+        linux-alpha@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Joerg Roedel <joro@8bytes.org>,
+        "paulus@samba.org" <paulus@samba.org>
+Subject: Re: [PATCH 10/10] perf/doc: update design.txt for
+ exclude_{host|guest} flags
+Message-ID: <20181212080742.GA30263@e113682-lin.lund.arm.com>
+References: <1542363853-13849-1-git-send-email-andrew.murray@arm.com>
+ <1542363853-13849-11-git-send-email-andrew.murray@arm.com>
+ <87pnv00yuf.fsf@concordia.ellerman.id.au>
+ <20181120133202.GH35798@e119886-lin.cambridge.arm.com>
+ <87bm5sxqya.fsf@concordia.ellerman.id.au>
+ <20181211135903.GG13393@e119886-lin.cambridge.arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1544595853-18492-1-git-send-email-amhetre@nvidia.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20181211135903.GG13393@e119886-lin.cambridge.arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-scatterlist elements longer than 4GB sound odd.  Please submit it
-in a series with your actual user so that we can help figuring out
-if it really makes sense or if there is a better way to solve your
-problem.
+On Tue, Dec 11, 2018 at 01:59:03PM +0000, Andrew Murray wrote:
+> On Tue, Dec 11, 2018 at 10:06:53PM +1100, Michael Ellerman wrote:
+> > [ Reviving old thread. ]
+> > 
+> > Andrew Murray <andrew.murray@arm.com> writes:
+> > > On Tue, Nov 20, 2018 at 10:31:36PM +1100, Michael Ellerman wrote:
+> > >> Andrew Murray <andrew.murray@arm.com> writes:
+> > >> 
+> > >> > Update design.txt to reflect the presence of the exclude_host
+> > >> > and exclude_guest perf flags.
+> > >> >
+> > >> > Signed-off-by: Andrew Murray <andrew.murray@arm.com>
+> > >> > ---
+> > >> >  tools/perf/design.txt | 4 ++++
+> > >> >  1 file changed, 4 insertions(+)
+> > >> >
+> > >> > diff --git a/tools/perf/design.txt b/tools/perf/design.txt
+> > >> > index a28dca2..7de7d83 100644
+> > >> > --- a/tools/perf/design.txt
+> > >> > +++ b/tools/perf/design.txt
+> > >> > @@ -222,6 +222,10 @@ The 'exclude_user', 'exclude_kernel' and 'exclude_hv' bits provide a
+> > >> >  way to request that counting of events be restricted to times when the
+> > >> >  CPU is in user, kernel and/or hypervisor mode.
+> > >> >  
+> > >> > +Furthermore the 'exclude_host' and 'exclude_guest' bits provide a way
+> > >> > +to request counting of events restricted to guest and host contexts when
+> > >> > +using virtualisation.
+> > >> 
+> > >> How does exclude_host differ from exclude_hv ?
+> > >
+> > > I believe exclude_host / exclude_guest are intented to distinguish
+> > > between host and guest in the hosted hypervisor context (KVM).
+> > 
+> > OK yeah, from the perf-list man page:
+> > 
+> >            u - user-space counting
+> >            k - kernel counting
+> >            h - hypervisor counting
+> >            I - non idle counting
+> >            G - guest counting (in KVM guests)
+> >            H - host counting (not in KVM guests)
+> > 
+> > > Whereas exclude_hv allows to distinguish between guest and
+> > > hypervisor in the bare-metal type hypervisors.
+> > 
+> > Except that's exactly not how we use them on powerpc :)
+> > 
+> > We use exclude_hv to exclude "the hypervisor", regardless of whether
+> > it's KVM or PowerVM (which is a bare-metal hypervisor).
+> > 
+> > We don't use exclude_host / exclude_guest at all, which I guess is a
+> > bug, except I didn't know they existed until this thread.
+> > 
+> > eg, in a KVM guest:
+> > 
+> >   $ perf record -e cycles:G /bin/bash -c "for i in {0..100000}; do :;done"
+> >   $ perf report -D | grep -Fc "dso: [hypervisor]"
+> >   16
+> > 
+> > 
+> > > In the case of arm64 - if VHE extensions are present then the host
+> > > kernel will run at a higher privilege to the guest kernel, in which
+> > > case there is no distinction between hypervisor and host so we ignore
+> > > exclude_hv. But where VHE extensions are not present then the host
+> > > kernel runs at the same privilege level as the guest and we use a
+> > > higher privilege level to switch between them - in this case we can
+> > > use exclude_hv to discount that hypervisor role of switching between
+> > > guests.
+> > 
+> > I couldn't find any arm64 perf code using exclude_host/guest at all?
+> 
+> Correct - but this is in flight as I am currently adding support for this
+> see [1].
+> 
+> > 
+> > And I don't see any x86 code using exclude_hv.
+> 
+> I can't find any either.
+> 
+> > 
+> > But maybe that's OK, I just worry this is confusing for users.
+> 
+> There is some extra context regarding this where exclude_guest/exclude_host
+> was added, see [2] and where exclude_hv was added, see [3]
+> 
+> Generally it seems that exclude_guest/exclude_host relies upon switching
+> counters off/on on guest/host switch code (which works well in the nested
+> virt case). Whereas exclude_hv tends to rely solely on hardware capability
+> based on privilege level (which works well in the bare metal case where
+> the guest doesn't run at same privilege as the host).
+> 
+> I think from the user perspective exclude_hv allows you to see your overhead
+> if you are a guest (i.e. work done by bare metal hypervisor associated with
+> you as the guest). Whereas exclude_guest/exclude_host doesn't allow you to
+> see events above you (i.e. the kernel hypervisor) if you are the guest...
+> 
+> At least that's how I read this, I've copied in others that may provide
+> more authoritative feedback.
+> 
+> [1] https://lists.cs.columbia.edu/pipermail/kvmarm/2018-December/033698.html
+> [2] https://www.spinics.net/lists/kvm/msg53996.html
+> [3] https://lore.kernel.org/patchwork/patch/143918/
+> 
 
-As is this patch will massively increase the memory usage for all users
-of struct scatterlist, so you better have a really good reason.
+I'll try to answer this in a different way, based on previous
+discussions with Joerg et al. who introduced these flags.  Assume no
+support for nested virtualization as a first approximation:
+
+  If you are running as a guest:
+    - exclude_hv: stop counting events when the hypervisor runs
+    - exclude_host: has no effect
+    - exclude_guest: has no effect
+  
+  If you are running as a host/hypervisor:
+   - exclude_hv: has no effect
+   - exclude_host: only count events when the guest is running
+   - exclude_guest: only count events when the host is running
+
+With nested virtualization, you get the natural union of the above.
+
+**This has nothing to do with the design of the hypervisor such as the
+ARM non-VHE KVM which splits its execution across EL1 and EL2 -- those
+are both considered host from the point of view of Linux as a hypervisor
+using KVM, and both considered hypervisor from the point of view of a
+guest.**
+
+
+Thanks,
+
+    Christoffer
