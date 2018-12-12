@@ -6,92 +6,92 @@ X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B39CC65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 18:49:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 333A3C65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 18:50:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CE172086D
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 18:49:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC9FA20811
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 18:50:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fxB+HeuS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CE172086D
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oVSd0d60"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC9FA20811
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728222AbeLLSti (ORCPT
+        id S1728282AbeLLSuN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 13:49:38 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:37117 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727897AbeLLSti (ORCPT
+        Wed, 12 Dec 2018 13:50:13 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:40886 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727897AbeLLSuM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 13:49:38 -0500
-Received: by mail-pl1-f193.google.com with SMTP id b5so9008666plr.4;
-        Wed, 12 Dec 2018 10:49:38 -0800 (PST)
+        Wed, 12 Dec 2018 13:50:12 -0500
+Received: by mail-pg1-f194.google.com with SMTP id z10so8738311pgp.7;
+        Wed, 12 Dec 2018 10:50:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=+IzO5o21z10YQePFBfpW9ZrgbW0cs8jzNnbvDKrUWd8=;
-        b=fxB+HeuSSgyw20acN+YrCkI06oEZRA7eksH4NEwDJPXHDmCaYMDUe7MywLAAixGLT4
-         lAzyklSR3VWYEc6iRw8JI0PYWL3A9ERGx+wDdWJ3qYLAT0qq24rIqMbSOiIbQbb2rCMq
-         Ko69GIwwfQSDZyEKdt4cPu9dCICtAOi/q7kwKXg0ngx6Si/7vGQ43/R8y7f/Uex54jNt
-         PXk6PURkvXWDAlr9VI+2j0PwRHN/5JX6Z82WLgldU5Uxn4hcK3hObzVZPq+rR4QpkoFR
-         2zCw3UiffOauGrdUtI8OwRQ3S6UTROmy5CA9yF7XHwqwpsegMm9wae6ZZtiChD5vY+fA
-         FbdQ==
+        bh=cjld7bIpVhWU1r2JRRnfV8a20GikQ57WXmz1iUXVang=;
+        b=oVSd0d6093yeTJCIQYX3cORlrkWX14lROsno15xpMHsbd2bwN1D1llyCE+f4RASTci
+         JsQ70eX+qiDEypqbx6UT6IsrMNrGuMIKPfBIaJflUOu4Z8N2Zh28kT2Nrg/hsb8VL2NK
+         UqXOs+r4pc3sJtyhQRXBlIoTN2z9VNdPD4GSPI9EWqrZSWa5lHNWgBUEht4ibALCpuPa
+         YPT8zADafYolBBkbcevdAPIDxRnYo6QH0tPbA9++CDLknxO/dYI2tWIj2N5P5ITQMtqr
+         aCirHfraQMQwjkXlblxbmUebabOOsQCYkTYXMOmg5xUZdNftjrGPrjNhJZBAQvQZDfyj
+         3kVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
          :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=+IzO5o21z10YQePFBfpW9ZrgbW0cs8jzNnbvDKrUWd8=;
-        b=Lm1XUEbPdNC3HXqFBCrD0SCFPzGr9Zihoxu1EHEYsMsBIOHrMMpfIA7CGNg0S7EGny
-         viZnQ/5odpCxxjhOZTwRTR9xNVroiAkt2XSdofR0K5tmfMb5hXWBtoFTzQn93u3fa5Da
-         l71otovTe2RmEy2M2UPIdc3WpEJYLHSsPB0nlLPXK/BCdFZ65YUwHmVe3UKa7bH6aS2R
-         3y8Lvhqq+JyjE2jnOkD15srBQWNPfkWzxUIHsiwZD4Nj5vg+zx3MLt+Hs/hydE3cjIV4
-         E4NJKbeURvf0swBf8OFMI1ILMcPYU+FXpX47gYk+4O8RlRF3wNd7kyps1UasJMa+026x
-         rFuw==
-X-Gm-Message-State: AA+aEWa7Nn4h96fqwH3YYnkhtDVzQYMBbbHbxLj6geGjVpx0MwxeKM/q
-        WQxJRXODcJ7g4TATdDor0IE=
-X-Google-Smtp-Source: AFSGD/Un+WyqdwKpbW2FuaESfcuCx3V2+ZCJhK+5DbGovS4c0YOKXWoDpXsk1sEZkuXMe0h7Y97Alw==
-X-Received: by 2002:a17:902:2006:: with SMTP id n6mr21205825pla.66.1544640577916;
-        Wed, 12 Dec 2018 10:49:37 -0800 (PST)
+        bh=cjld7bIpVhWU1r2JRRnfV8a20GikQ57WXmz1iUXVang=;
+        b=p5Yu1QqnJaksA938vQohhwQLQ3Wgdl3jJujYRxugxhpZ0u7E2/t8KBZvOa3bgiWIjo
+         2vdpc2LN9g55KYuc/NWBagwm4jkRF+4B2jlJNrSOuSWvpOaPZ1Ak+oLM6tc86JTKESI5
+         Fzl0sZY4p/I5L0vBvhmZHB5leNy/P7VC7p0UyiN+7o4eAGVtY2r+85XIkVnN5rcAmocp
+         qeIB6I/FbaJxowJrH4e/p8BhFcqGpx/lgIjVy9n9YU+fI4vC9ushHGJkRWFYt2GawFFC
+         d0+kt3aFe7AeW/ZSc9oNzbmPaE5vCh0IymxflbJOJ+d66g+/1p8URUXYvKOm9OyQeeQc
+         FKog==
+X-Gm-Message-State: AA+aEWb/RBSfi5EEg1RMH5uhzvSJa1YVHc0npTgUjJEYaoTk71GBz6rB
+        qcafM768cxLtAGsaQ1FoMKDtWCAa
+X-Google-Smtp-Source: AFSGD/Un1uLj4qh1Yd2v9KQyf7vyrrcj1jvMmaEWl4cNAyds+Tt5/BRQ+W8fwK04+yYwnTmbP/g4mg==
+X-Received: by 2002:a63:6506:: with SMTP id z6mr733401pgb.334.1544640612221;
+        Wed, 12 Dec 2018 10:50:12 -0800 (PST)
 Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id h69sm24011403pge.4.2018.12.12.10.49.36
+        by smtp.gmail.com with ESMTPSA id m65sm34443420pfg.180.2018.12.12.10.50.11
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 12 Dec 2018 10:49:36 -0800 (PST)
-Date:   Wed, 12 Dec 2018 10:49:35 -0800
+        Wed, 12 Dec 2018 10:50:11 -0800 (PST)
+Date:   Wed, 12 Dec 2018 10:50:10 -0800
 From:   Guenter Roeck <linux@roeck-us.net>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
         akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
         ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
         stable@vger.kernel.org
-Subject: Re: [PATCH 4.9 00/51] 4.9.145-stable review
-Message-ID: <20181212184935.GA21649@roeck-us.net>
-References: <20181211151612.328911565@linuxfoundation.org>
+Subject: Re: [PATCH 4.14 00/67] 4.14.88-stable review
+Message-ID: <20181212185010.GB21649@roeck-us.net>
+References: <20181211151630.378216233@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181211151612.328911565@linuxfoundation.org>
+In-Reply-To: <20181211151630.378216233@linuxfoundation.org>
 User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 11, 2018 at 04:41:08PM +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.9.145 release.
-> There are 51 patches in this series, all will be posted as a response
+On Tue, Dec 11, 2018 at 04:41:00PM +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.14.88 release.
+> There are 67 patches in this series, all will be posted as a response
 > to this one.  If anyone has any issues with these being applied, please
 > let me know.
 > 
-> Responses should be made by Thu Dec 13 15:15:52 UTC 2018.
+> Responses should be made by Thu Dec 13 15:16:01 UTC 2018.
 > Anything received after that time might be too late.
 > 
 
 Build results:
 	total: 171 pass: 171 fail: 0
 Qemu test results:
-	total: 311 pass: 311 fail: 0
+	total: 322 pass: 322 fail: 0
 
 Details are available at https://kerneltests.org/builders/.
 
