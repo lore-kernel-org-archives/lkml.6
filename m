@@ -2,92 +2,157 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-8.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22367C04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 12:18:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CFC3C04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 12:22:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DBA362086D
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 12:18:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBA362086D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 0A50F20839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 12:22:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A50F20839
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727370AbeLLMSU (ORCPT
+        id S1727356AbeLLMWa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 07:18:20 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:15678 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727091AbeLLMSU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 07:18:20 -0500
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 9E6A5619BA044;
-        Wed, 12 Dec 2018 20:18:17 +0800 (CST)
-Received: from [10.151.23.176] (10.151.23.176) by smtp.huawei.com
- (10.3.19.208) with Microsoft SMTP Server (TLS) id 14.3.408.0; Wed, 12 Dec
- 2018 20:18:08 +0800
-Subject: Re: [PATCH v2] staging:erofs: Remove __EROFS_BIT macro
-To:     Aaron Strahlberger <aaron.strahlberger@posteo.de>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Chao Yu <yuchao0@huawei.com>, <linux-erofs@lists.ozlabs.org>,
-        <devel@driverdev.osuosl.org>, <linux-kernel@vger.kernel.org>,
-        <linux-kernel@i4.cs.fau.de>,
-        Julius Wiedmann <julius.wiedmann@fau.de>,
-        Dominik Huber <domi250@gmx.de>
-References: <9d324f50-e632-c020-04b9-57269ff7bdca@aol.com>
- <20181212120209.16304-1-aaron.strahlberger@posteo.de>
-From:   Gao Xiang <gaoxiang25@huawei.com>
-Message-ID: <6db43c9b-f668-167c-cc08-b19689329a27@huawei.com>
-Date:   Wed, 12 Dec 2018 20:18:05 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        Wed, 12 Dec 2018 07:22:30 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:48836 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727067AbeLLMW3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 07:22:29 -0500
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 3993B808A8; Wed, 12 Dec 2018 13:22:24 +0100 (CET)
+Date:   Wed, 12 Dec 2018 13:22:27 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/5] leds: Add helper for getting default pattern from
+ Device Tree
+Message-ID: <20181212122227.GB11088@amd>
+References: <1544613406-27026-1-git-send-email-krzk@kernel.org>
+ <1544613406-27026-3-git-send-email-krzk@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20181212120209.16304-1-aaron.strahlberger@posteo.de>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.151.23.176]
-X-CFilter-Loop: Reflected
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="QKdGvSO+nmPlgiQ/"
+Content-Disposition: inline
+In-Reply-To: <1544613406-27026-3-git-send-email-krzk@kernel.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Aaron,
 
-On 2018/12/12 20:02, Aaron Strahlberger wrote:
-> The `__EROFS_BIT` macro is used only once, do define the
-> `EROFS_I_DATA_MAPPING_BIT` constant. This Patch removes this
-> macro and expands it in the place it is used.
-> 
-> Signed-off-by: Aaron Strahlberger <aaron.strahlberger@posteo.de>
-> Signed-off-by: Julius Wiedmann <julius.wiedmann@fau.de>
-> Signed-off-by: Dominik Huber <domi250@gmx.de>
+--QKdGvSO+nmPlgiQ/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed 2018-12-12 12:16:43, Krzysztof Kozlowski wrote:
+> Multiple LED triggers might need to access default pattern so add a
+> helper for that.
+>=20
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+
+Acked-by: Pavel Machek <pavel@ucw.cz>
+
+>=20
+> New patch in the series
+>=20
 > ---
->  drivers/staging/erofs/erofs_fs.h | 9 ++++-----
->  1 file changed, 4 insertions(+), 5 deletions(-)
+>  drivers/leds/led-class.c | 25 +++++++++++++++++++++++++
+>  include/linux/leds.h     |  3 +++
+>  2 files changed, 28 insertions(+)
+>=20
+> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+> index 3c7e3487b373..44b95e6480f6 100644
+> --- a/drivers/leds/led-class.c
+> +++ b/drivers/leds/led-class.c
+> @@ -17,6 +17,7 @@
+>  #include <linux/leds.h>
+>  #include <linux/list.h>
+>  #include <linux/module.h>
+> +#include <linux/of.h>
+>  #include <linux/slab.h>
+>  #include <linux/spinlock.h>
+>  #include <linux/timer.h>
+> @@ -244,6 +245,30 @@ static int led_classdev_next_name(const char *init_n=
+ame, char *name,
+>  }
+> =20
+>  /**
+> + * led_classdev_get_default_pattern - return default pattern
+> + *
+> + * @led_cdev: the led_classdev structure for this device
+> + *
+> + * Return: Null terminated string with default pattern from DeviceTree o=
+r NULL
+> + */
 
+Is it valid kerneldoc? Note that core still owns the string so that
+caller is not expected to free it?
+
+> +const char *led_classdev_get_default_pattern(struct led_classdev *led_cd=
+ev)
+> +{
+> +	struct device_node *np =3D dev_of_node(led_cdev->dev);
+> +	const char *pattern;
 > +
->  #define EROFS_I_VERSION_BITS            1
->  #define EROFS_I_DATA_MAPPING_BITS       3
->  
->  #define EROFS_I_VERSION_BIT             0
-> -__EROFS_BIT(EROFS_I_, DATA_MAPPING, VERSION);
-> +enum {
-> +	EROFS_I_DATA_MAPPING_BIT = EROFS_I_VERSION_BIT + EROFS_I_VERSION_BITS
+> +	if (!np)
+> +		return NULL;
+> +
+> +	if (of_property_read_string(np, "led-pattern", &pattern))
+> +		return NULL;
+> +
+> +	if (!strlen(pattern))
+> +		return NULL;
+> +
+> +	return pattern;
 > +}
+> +
+> +/**
+>   * of_led_classdev_register - register a new object of led_classdev clas=
+s.
+>   *
+>   * @parent: parent of LED device
+> diff --git a/include/linux/leds.h b/include/linux/leds.h
+> index 5263f87e1d2c..9da2bfa183ea 100644
+> --- a/include/linux/leds.h
+> +++ b/include/linux/leds.h
+> @@ -129,6 +129,9 @@ struct led_classdev {
+>  	struct mutex		led_access;
+>  };
+> =20
+> +extern const char *
+> +led_classdev_get_default_pattern(struct led_classdev *led_cdev);
+> +
+>  extern int of_led_classdev_register(struct device *parent,
+>  				    struct device_node *np,
+>  				    struct led_classdev *led_cdev);
 
-Thanks for your patch. I have fixed it yesterday,
-https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git/commit/drivers/staging/erofs?h=staging-testing&id=ccd9c19c7ae165c70221b0a4927c31a56e395658
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
-EROFS_I_DATA_MAPPING_BIT = EROFS_I_VERSION_BIT + EROFS_I_VERSION_BITS is not straight-forward as well for erofs on-disk format definition,
-fix it to a plain number.
+--QKdGvSO+nmPlgiQ/
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-Thanks,
-Gao Xiang
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
->  
->  struct erofs_inode_v1 {
->  /*  0 */__le16 i_advise;
-> 
+iEYEARECAAYFAlwQ/YMACgkQMOfwapXb+vLbXQCeOrSfPUqCFsd0ECVrOCUM3f+G
+WmEAnRjThNENbuJyDkq3HyF/myVYs3V5
+=djrX
+-----END PGP SIGNATURE-----
+
+--QKdGvSO+nmPlgiQ/--
