@@ -2,187 +2,89 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B30B1C6783B
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 00:57:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 375F1C6783B
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 00:59:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 759AD20811
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 00:57:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SSAYT0rk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 759AD20811
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id F1D6321104
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 00:59:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1D6321104
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726339AbeLLA5P (ORCPT
+        id S1726259AbeLLA7U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 19:57:15 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:39874 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726201AbeLLA5O (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 19:57:14 -0500
-Received: by mail-ed1-f66.google.com with SMTP id b14so14127318edt.6
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 16:57:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:reply-to:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ExxebZN2RIFYcD98z1I48vzd9kiHJ7sShLcUlTBlmAk=;
-        b=SSAYT0rkrcsOMRC/AOBitNo0hPlxk7b1HRC93gQpVf3rjIT1ZYDyGNI4vR38TFH3ic
-         3R4MeB3wWbFp69G1N1eDlhFy5BQmNRNrKOnh9V6xOqiJdl5/zksNTqTqJZ25v+YXZjfN
-         XcxMiSJlDKj2N5qP3WZsaCgKT7V5APa6bY1cFj2aIXl2VjlK2miT9hcmLJA+N8zVkB7a
-         U29yl7P8iDqYVWyrJ4bNGAPGioqCNNCrC3v3yazZ9JEuuHN91zgMyuS5tYqn9/ASMzX8
-         JJmbxoaYEphEQK8D7HsC9tkG5xKgtMS1PFN+teUHbuL/bGgnewEhGF9lcTcaub/TV9Ev
-         C62g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ExxebZN2RIFYcD98z1I48vzd9kiHJ7sShLcUlTBlmAk=;
-        b=Ne5jGFiegPtnWxVwQUNiZ+fKw3U/6gN1P/cTMO3MdwFOO2Q/COiXJCdWZTxr+BZEMi
-         FXOoKYQSBqVOInXGoF9jue1qQZ6VcRfKHI67Cy2Ji4PiYw1MUS29X/jmPsuEIucVC2FT
-         ZNHg1e2SbWbpizebIjrK5sOLiO8lebmN7F4gM17GyAJuqQ8vhSbteKAnTuyjy2VXGptq
-         yhuAEIIt+/IbDIbxhocIXVTh9Psi1pdEKEjw6CExIU5gvXNTTpQq6w5qiymfVM85S4oU
-         lQBQAGLp2kB4MzlWNzT53tbGlJQwNG7ODg/6g9fRATGZ2MfAyNY+VgTN3a/Vwu4POxRg
-         9dWg==
-X-Gm-Message-State: AA+aEWaOj6Et31PG/Rwfg1gkw6/6kenKUMRyTTzsts7/ogGztuteA9bU
-        OuwW7MVrMAjH52v2+wSW4zM=
-X-Google-Smtp-Source: AFSGD/Xfjgu04xgxu9Aa0EeveGQNJeYiOxmNomX2ALcnZWvXiFGmCqtl2XYDf1wNfYsKTeAp1FOsYg==
-X-Received: by 2002:a17:906:b297:: with SMTP id q23-v6mr13781354ejz.147.1544576232766;
-        Tue, 11 Dec 2018 16:57:12 -0800 (PST)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id v14sm4388926edq.74.2018.12.11.16.57.11
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 11 Dec 2018 16:57:12 -0800 (PST)
-Date:   Wed, 12 Dec 2018 00:57:11 +0000
-From:   Wei Yang <richard.weiyang@gmail.com>
-To:     Oscar Salvador <osalvador@suse.de>
-Cc:     akpm@linux-foundation.org, mhocko@suse.com, david@redhat.com,
-        pasha.tatashin@soleen.com, dan.j.williams@gmail.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v2] mm, memory_hotplug: Don't bail out in
- do_migrate_range prematurely
-Message-ID: <20181212005711.smbujty5nviw6tvd@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20181211135312.27034-1-osalvador@suse.de>
+        Tue, 11 Dec 2018 19:59:20 -0500
+Received: from mga06.intel.com ([134.134.136.31]:58427 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726201AbeLLA7U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 19:59:20 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Dec 2018 16:59:19 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,343,1539673200"; 
+   d="scan'208";a="117594788"
+Received: from cli6-desk1.ccr.corp.intel.com (HELO [10.239.161.118]) ([10.239.161.118])
+  by orsmga002.jf.intel.com with ESMTP; 11 Dec 2018 16:59:17 -0800
+Subject: Re: [PATCH v4 1/2] x86/fpu: track AVX-512 usage of tasks
+To:     Arjan van de Ven <arjan@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Aubrey Li <aubrey.li@intel.com>, tglx@linutronix.de,
+        mingo@redhat.com, peterz@infradead.org, hpa@zytor.com
+Cc:     ak@linux.intel.com, tim.c.chen@linux.intel.com,
+        linux-kernel@vger.kernel.org
+References: <20181211002448.3520-1-aubrey.li@intel.com>
+ <df1a1b5b-3e8b-5d96-12df-25be30c391af@intel.com>
+ <143a5451-c7cf-16a5-a7ef-8c4b0633b689@linux.intel.com>
+ <6a549986-f01a-a3c6-10c8-c116667bf7e4@linux.intel.com>
+From:   "Li, Aubrey" <aubrey.li@linux.intel.com>
+Message-ID: <0fd64322-9c90-8e9c-d65a-e8216b0da1a5@linux.intel.com>
+Date:   Wed, 12 Dec 2018 08:59:16 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.1.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181211135312.27034-1-osalvador@suse.de>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <6a549986-f01a-a3c6-10c8-c116667bf7e4@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 11, 2018 at 02:53:12PM +0100, Oscar Salvador wrote:
->v1 -> v2:
->        - Keep branch to decrease refcount and print out
->          the failed pfn/page
->        - Modified changelog per Michal's feedback
->        - move put_page() out of the if/else branch
->
->---
->>From f81da873be9a5b7845249d1e62a423f054c487d5 Mon Sep 17 00:00:00 2001
->From: Oscar Salvador <osalvador@suse.com>
->Date: Tue, 11 Dec 2018 11:45:19 +0100
->Subject: [PATCH] mm, memory_hotplug: Don't bail out in do_migrate_range
-> prematurely
->
->do_migrate_ranges() takes a memory range and tries to isolate the
-
-I think it is do_migrate_range().
-
->pages to put them into a list.
->This list will be later on used in migrate_pages() to know
->the pages we need to migrate.
->
->Currently, if we fail to isolate a single page, we put all already
->isolated pages back to their LRU and we bail out from the function.
->This is quite suboptimal, as this will force us to start over again
->because scan_movable_pages will give us the same range.
->If there is no chance that we can isolate that page, we will loop here
->forever.
->
->Issue debugged in [1] has proved that.
->During the debugging of that issue, it was noticed that if
->do_migrate_ranges() fails to isolate a single page, we will
->just discard the work we have done so far and bail out, which means
->that scan_movable_pages() will find again the same set of pages.
->
->Instead, we can just skip the error, keep isolating as much pages
->as possible and then proceed with the call to migrate_pages().
->
->This will allow us to do as much work as possible at once.
->
->[1] https://lkml.org/lkml/2018/12/6/324
->
->Signed-off-by: Oscar Salvador <osalvador@suse.de>
->---
-> mm/memory_hotplug.c | 18 ++----------------
-> 1 file changed, 2 insertions(+), 16 deletions(-)
->
->diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
->index 86ab673fc4e3..68e740b1768e 100644
->--- a/mm/memory_hotplug.c
->+++ b/mm/memory_hotplug.c
->@@ -1339,7 +1339,6 @@ do_migrate_range(unsigned long start_pfn, unsigned long end_pfn)
-> 	unsigned long pfn;
-> 	struct page *page;
-> 	int move_pages = NR_OFFLINE_AT_ONCE_PAGES;
->-	int not_managed = 0;
-> 	int ret = 0;
-> 	LIST_HEAD(source);
+On 2018/12/12 8:14, Arjan van de Ven wrote:
+> On 12/11/2018 3:46 PM, Li, Aubrey wrote:
+>> On 2018/12/12 1:18, Dave Hansen wrote:
+>>> On 12/10/18 4:24 PM, Aubrey Li wrote:
+>>>> The tracking turns on the usage flag at the next context switch of
+>>>> the task, but requires 3 consecutive context switches with no usage
+>>>> to clear it. This decay is required because well-written AVX-512
+>>>> applications are expected to clear this state when not actively using
+>>>> AVX-512 registers.
+>>>
+>>> One concern about this:  Given a HZ=1000 system, this means that the
+>>> flag needs to get scanned every ~3ms.  That's a pretty good amount of
+>>> scanning on a system with hundreds or thousands of tasks running around.
+>>>
+>>> How many tasks does this scale to until you're eating up an entire CPU
+>>> or two just scanning /proc?
+>>>
+>>
+>> Do we have a real requirement to do this in practical environment?
+>> AFAIK, 1s or even 5s is good enough in some customers environment.
 > 
->@@ -1388,7 +1387,6 @@ do_migrate_range(unsigned long start_pfn, unsigned long end_pfn)
-> 		else
-> 			ret = isolate_movable_page(page, ISOLATE_UNEVICTABLE);
-> 		if (!ret) { /* Success */
->-			put_page(page);
-> 			list_add_tail(&page->lru, &source);
-> 			move_pages--;
-> 			if (!__PageMovable(page))
->@@ -1398,22 +1396,10 @@ do_migrate_range(unsigned long start_pfn, unsigned long end_pfn)
-> 		} else {
-> 			pr_warn("failed to isolate pfn %lx\n", pfn);
-> 			dump_page(page, "isolation failed");
->-			put_page(page);
->-			/* Because we don't have big zone->lock. we should
->-			   check this again here. */
->-			if (page_count(page)) {
->-				not_managed++;
->-				ret = -EBUSY;
->-				break;
->-			}
-> 		}
->+		put_page(page);
-> 	}
-> 	if (!list_empty(&source)) {
->-		if (not_managed) {
->-			putback_movable_pages(&source);
->-			goto out;
->-		}
->-
-> 		/* Allocate a new page from the nearest neighbor node */
-> 		ret = migrate_pages(&source, new_node_page, NULL, 0,
-> 					MIGRATE_SYNC, MR_MEMORY_HOTPLUG);
->@@ -1426,7 +1412,7 @@ do_migrate_range(unsigned long start_pfn, unsigned long end_pfn)
-> 			putback_movable_pages(&source);
-> 		}
-> 	}
->-out:
->+
-> 	return ret;
-> }
+> maybe instead of a 1/0 bit, it's useful to store the timestamp of the last
+> time we found the task to use avx? (need to find a good time unit)
 > 
->-- 
->2.13.7
+> 
+Are you suggesting kernel does not do any translation, just provide a fact
+to the user space tool and let user space tool to decide how to use this info?
 
--- 
-Wei Yang
-Help you, Help me
+So how does user space tool use this timestamp in your mind?
+
+Thanks,
+-Aubrey
