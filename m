@@ -2,57 +2,54 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,T_MIXED_ES,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.5 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_MIXED_ES,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5750AC65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:16:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15C1AC65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:17:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CCE120851
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:16:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CCE120851
+	by mail.kernel.org (Postfix) with ESMTP id D4F2720851
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:17:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4F2720851
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727970AbeLLRQE (ORCPT
+        id S1727998AbeLLRRE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 12:16:04 -0500
-Received: from mail-it1-f200.google.com ([209.85.166.200]:58458 "EHLO
-        mail-it1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726922AbeLLRQE (ORCPT
+        Wed, 12 Dec 2018 12:17:04 -0500
+Received: from mail-io1-f72.google.com ([209.85.166.72]:39548 "EHLO
+        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727845AbeLLRRE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 12:16:04 -0500
-Received: by mail-it1-f200.google.com with SMTP id p21so6095681itb.8
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 09:16:03 -0800 (PST)
+        Wed, 12 Dec 2018 12:17:04 -0500
+Received: by mail-io1-f72.google.com with SMTP id q23so17763903ior.6
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 09:17:03 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=9tFpsMPo5D6fu0h7QOIt/nC6ARjvacuvom0qkJuK3KU=;
-        b=SzlF2DRYMn7QW7B2nqh7mv9oNsitKPHvbYaF6p/xyb+t02ey7BWvZ9AXjOozuMI2pj
-         bV7cp5kQCr551blPjMsGo5N2HC9hnNpQFaKojMxiu0Abq9X6N03HNBi9NswckR2fmGLQ
-         QDzG5BHS44u1xa27i/vYAP9pMLEXiaxoP5WdoeVEDgwiQaVdxGelQXQ2wLghRVMUDUMV
-         qz1T9gEGIfPYQghDj291DUuIlltV2FWmieSxY1Tx1OXKX07nkd8IOt2epuMZXEJ9ohQv
-         +uQubMh0hqRzD9u+nxnNw8K6Y6IjGkYlEXjKO7NykpNLL+uaLWiJcChSdm1WTGsx0HJx
-         ZQ8w==
-X-Gm-Message-State: AA+aEWbjatiHi2WrvNONT/wOGP1pBaa2FwaVSUUwOCgrIHYtrf4t7A/+
-        pDZq90yhfC5EZMXAPZ+LsYSCLflXL+ZptZp5o+f8VW2cA7uk
-X-Google-Smtp-Source: AFSGD/WthGatngY33ByZbBW9r87A7b2+FhQD8HCQVCrnPx7Q56tp+YJKudZwpT4ZrkwNr5+yBExx+NUqGwDBugzw8W79JK7fRngy
+        bh=NlG8O8yeToplRwJP8Bs7ZvjXEAr4RlUUvC3xZmpF5TI=;
+        b=szM9DxbgIeFRxC1uUVKlRH06bmUKONfc2rpjE0O2OmIYkeYAxkzSpXLqQSi4MFfxzJ
+         zo331wFvt92Vtm50UToersHpENNsLUX67NEi+0h24WLM8tM8svC6YmHDnlY9dzWt7uQJ
+         EvQO7SEn+d3dTS8T3IgxJdl7lZVNxDlb0ZL5D9IrpgoyM29deP1WD6NUde9DHEbyKofZ
+         yb9PGzuSBP5p0pNRZmc02OGkHipKBNPpzLJdAOv/pPLWFBXE82CKzx2/zql9W3DZia09
+         kJ8a5waQm9EYClOu3tQs2Dnt5pAHCLa92tPHP/YnW7z41KoDv5ciZoiHPE56UPrbiqvX
+         bfQA==
+X-Gm-Message-State: AA+aEWbL6S+rhCH3OjRNkSEG9JoxuNC83faZsv8ZL8BIiCvj0nUctkJ6
+        Luf1swVMna6wOR+076EOB62yUhAsVGwfvew0rXPs2JRoQndm
+X-Google-Smtp-Source: AFSGD/Ut6QbJMYt8ydHd9E62/99OIikeje1iN1q6ynXoO9PTG1wZMb1b2UD+hchJQcI6yEIf2N4Yhpz6IkWmQeUWEHtlRVYZXpOU
 MIME-Version: 1.0
-X-Received: by 2002:a6b:ce18:: with SMTP id p24mr9390659iob.33.1544634963205;
- Wed, 12 Dec 2018 09:16:03 -0800 (PST)
-Date:   Wed, 12 Dec 2018 09:16:03 -0800
+X-Received: by 2002:a24:3a14:: with SMTP id m20mr5674383itm.1.1544635023088;
+ Wed, 12 Dec 2018 09:17:03 -0800 (PST)
+Date:   Wed, 12 Dec 2018 09:17:03 -0800
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000004a25cc057cd65aad@google.com>
-Subject: INFO: rcu detected stall in sys_mount (2)
-From:   syzbot <syzbot+5751b57c82cd229ffbee@syzkaller.appspotmail.com>
-To:     akpm@linux-foundation.org, amir73il@gmail.com,
-        darrick.wong@oracle.com, david@fromorbit.com, hannes@cmpxchg.org,
-        jrdr.linux@gmail.com, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, syzkaller-bugs@googlegroups.com,
-        willy@infradead.org
+Message-ID: <000000000000dbe73a057cd65da2@google.com>
+Subject: general protection fault in fib6_purge_rt
+From:   syzbot <syzbot+a25307ad099309f1c2b9@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, kuznet@ms2.inr.ac.ru,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, yoshfuji@linux-ipv6.org
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -63,108 +60,90 @@ Hello,
 
 syzbot found the following crash on:
 
-HEAD commit:    f5d582777bcb Merge branch 'for-linus' of git://git.kernel...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=149f8ba3400000
+HEAD commit:    ee28b30cbbe0 r8169: fix crash if CONFIG_DEBUG_SHIRQ is ena..
+git tree:       net
+console output: https://syzkaller.appspot.com/x/log.txt?x=10c76ba3400000
 kernel config:  https://syzkaller.appspot.com/x/.config?x=c8970c89a0efbb23
-dashboard link: https://syzkaller.appspot.com/bug?extid=5751b57c82cd229ffbee
+dashboard link: https://syzkaller.appspot.com/bug?extid=a25307ad099309f1c2b9
 compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 
 Unfortunately, I don't have any reproducer for this crash yet.
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+5751b57c82cd229ffbee@syzkaller.appspotmail.com
+Reported-by: syzbot+a25307ad099309f1c2b9@syzkaller.appspotmail.com
 
-audit: type=1800 audit(2000000150.760:153): pid=30410 uid=0 auid=4294967295  
-ses=4294967295 subj=_ op=collect_data cause=failed comm="syz-executor1"  
-name="bus" dev="sda1" ino=16548 res=0
-ip6_tunnel: ip6tnl1 xmit: Local address not yet configured!
-ip6_tunnel: 6tnl0 xmit: Local address not yet configured!
-rcu: INFO: rcu_preempt self-detected stall on CPU
-rcu: 	0-....: (1 GPs behind) idle=512/1/0x4000000000000002  
-softirq=146256/146258 fqs=5248
-rcu: 	 (t=10501 jiffies g=205577 q=1497)
-NMI backtrace for cpu 0
-CPU: 0 PID: 30404 Comm: syz-executor0 Not tainted 4.20.0-rc6+ #150
+IPv6: ADDRCONF(NETDEV_UP): veth0_to_bridge: link is not ready
+device bridge_slave_1 left promiscuous mode
+bridge0: port 2(bridge_slave_1) entered disabled state
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] PREEMPT SMP KASAN
+CPU: 1 PID: 195 Comm: kworker/u4:3 Not tainted 4.20.0-rc6+ #227
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
+Workqueue: netns cleanup_net
+RIP: 0010:fib6_drop_pcpu_from net/ipv6/ip6_fib.c:920 [inline]
+RIP: 0010:fib6_purge_rt+0x5ce/0x7e0 net/ipv6/ip6_fib.c:956
+Code: 0f b6 35 99 f1 33 03 31 ff 44 89 f6 e8 bb b7 a0 fa 45 84 f6 0f 84 ec  
+00 00 00 e8 dd b6 a0 fa 49 8d 47 70 48 89 c2 48 c1 ea 03 <42> 80 3c 22 00  
+0f 85 b5 01 00 00 48 8b 8d e0 fe ff ff 48 89 c2 48
+RSP: 0018:ffff8881d8cadf18 EFLAGS: 00010202
+RAX: 0000000000003400 RBX: 0000000000000001 RCX: ffffffff86decea0
+RDX: 0000000000000680 RSI: ffffffff86decd93 RDI: 0000000000000005
+RBP: ffff8881d8cae048 R08: ffff8881d8ca05c0 R09: ffffed1036ea6e1d
+R10: ffffed1036ea6e1d R11: ffff8881b75370ef R12: dffffc0000000000
+R13: ffff8881b75370c0 R14: 0000000000000001 R15: 0000000000003390
+FS:  0000000000000000(0000) GS:ffff8881daf00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000619570 CR3: 00000001c28ac000 CR4: 00000000001406e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 Call Trace:
-  <IRQ>
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x244/0x39d lib/dump_stack.c:113
-  nmi_cpu_backtrace.cold.2+0x5c/0xa1 lib/nmi_backtrace.c:101
-  nmi_trigger_cpumask_backtrace+0x1e8/0x22a lib/nmi_backtrace.c:62
-  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
-  trigger_single_cpu_backtrace include/linux/nmi.h:164 [inline]
-  rcu_dump_cpu_stacks+0x16f/0x1bc kernel/rcu/tree.c:1195
-  print_cpu_stall.cold.67+0x1f3/0x3c7 kernel/rcu/tree.c:1334
-  check_cpu_stall kernel/rcu/tree.c:1408 [inline]
-  rcu_pending kernel/rcu/tree.c:2961 [inline]
-  rcu_check_callbacks+0xf3b/0x13f0 kernel/rcu/tree.c:2506
-  update_process_times+0x2d/0x70 kernel/time/timer.c:1636
-  tick_sched_handle+0x9f/0x180 kernel/time/tick-sched.c:164
-  tick_sched_timer+0x45/0x130 kernel/time/tick-sched.c:1274
-  __run_hrtimer kernel/time/hrtimer.c:1398 [inline]
-  __hrtimer_run_queues+0x41c/0x10d0 kernel/time/hrtimer.c:1460
-  hrtimer_interrupt+0x313/0x780 kernel/time/hrtimer.c:1518
-  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1034 [inline]
-  smp_apic_timer_interrupt+0x1a1/0x760 arch/x86/kernel/apic/apic.c:1059
-  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:807
-  </IRQ>
-RIP: 0010:preempt_count arch/x86/include/asm/preempt.h:23 [inline]
-RIP: 0010:preempt_count_sub+0x49/0x150 kernel/sched/core.c:3217
-Code: 0f b6 14 02 48 89 f8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 f9 00  
-00 00 8b 0d 92 eb b9 09 85 c9 75 18 65 8b 05 77 41 ac 7e <25> ff ff ff 7f  
-39 c3 7f 1b 81 fb fe 00 00 00 76 6e 65 8b 05 5f 41
-RSP: 0018:ffff88817b0b6a58 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff13
-RAX: 0000000080000001 RBX: 0000000000000001 RCX: 0000000000000000
-RDX: 0000000000000004 RSI: ffffffff83933488 RDI: ffffffff8b0f97e0
-RBP: ffff88817b0b6a60 R08: ffff88817d73e4c0 R09: ffffed103b5c5b5f
-R10: ffffed103b5c5b5f R11: ffff8881dae2dafb R12: 1ffff1102f616d01
-R13: 0000000000000003 R14: ffff88817b0b6ad8 R15: 0000000000000001
-  rcu_lockdep_current_cpu_online+0x1a4/0x210 kernel/rcu/tree.c:958
-  rcu_read_lock_held+0x90/0xc0 kernel/rcu/update.c:279
-  xa_entry include/linux/xarray.h:848 [inline]
-  xas_reload include/linux/xarray.h:1196 [inline]
-  find_get_entry+0xc9d/0x1120 mm/filemap.c:1440
-  pagecache_get_page+0x12f/0xf00 mm/filemap.c:1518
-  find_or_create_page include/linux/pagemap.h:322 [inline]
-  grow_dev_page fs/buffer.c:947 [inline]
-  grow_buffers fs/buffer.c:1016 [inline]
-  __getblk_slow fs/buffer.c:1043 [inline]
-  __getblk_gfp+0x3aa/0xd50 fs/buffer.c:1320
-  __bread_gfp+0x2d/0x310 fs/buffer.c:1354
-  sb_bread include/linux/buffer_head.h:307 [inline]
-  fat__get_entry+0x5a6/0xa40 fs/fat/dir.c:101
-  fat_get_entry fs/fat/dir.c:129 [inline]
-  fat_get_short_entry+0x13c/0x2c0 fs/fat/dir.c:878
-  fat_subdirs+0x142/0x290 fs/fat/dir.c:944
-  fat_read_root fs/fat/inode.c:1416 [inline]
-  fat_fill_super+0x2a9f/0x4310 fs/fat/inode.c:1851
-  vfat_fill_super+0x31/0x40 fs/fat/namei_vfat.c:1049
-  mount_bdev+0x30c/0x3e0 fs/super.c:1158
-  vfat_mount+0x34/0x40 fs/fat/namei_vfat.c:1056
-  mount_fs+0xae/0x31d fs/super.c:1261
-  vfs_kern_mount.part.35+0xdc/0x4f0 fs/namespace.c:961
-  vfs_kern_mount fs/namespace.c:951 [inline]
-  do_new_mount fs/namespace.c:2469 [inline]
-  do_mount+0x581/0x31f0 fs/namespace.c:2801
-  ksys_mount+0x12d/0x140 fs/namespace.c:3017
-  __do_sys_mount fs/namespace.c:3031 [inline]
-  __se_sys_mount fs/namespace.c:3028 [inline]
-  __x64_sys_mount+0xbe/0x150 fs/namespace.c:3028
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x45a0ea
-Code: b8 a6 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 7d 89 fb ff c3 66 2e 0f  
-1f 84 00 00 00 00 00 66 90 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 5a 89 fb ff c3 66 0f 1f 84 00 00 00 00 00
-RSP: 002b:00007f9204806a88 EFLAGS: 00000206 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007f9204806b30 RCX: 000000000045a0ea
-RDX: 00007f9204806ad0 RSI: 00000000200004c0 RDI: 00007f9204806af0
-RBP: 00000000200004c0 R08: 00007f9204806b30 R09: 00007f9204806ad0
-R10: 0000000000000000 R11: 0000000000000206 R12: 0000000000000007
-R13: 0000000000000000 R14: 00000000004d9c28 R15: 00000000ffffffff
+  fib6_del_route net/ipv6/ip6_fib.c:1809 [inline]
+  fib6_del+0xbe0/0x12e0 net/ipv6/ip6_fib.c:1840
+  fib6_clean_node+0x44c/0x650 net/ipv6/ip6_fib.c:2002
+  fib6_walk_continue+0x4b1/0x8e0 net/ipv6/ip6_fib.c:1924
+  fib6_walk+0x95/0xf0 net/ipv6/ip6_fib.c:1972
+  fib6_clean_tree+0x21c/0x420 net/ipv6/ip6_fib.c:2051
+  __fib6_clean_all+0x235/0x440 net/ipv6/ip6_fib.c:2067
+  fib6_clean_all+0x2a/0x40 net/ipv6/ip6_fib.c:2078
+  rt6_sync_down_dev+0x17a/0x1b0 net/ipv6/route.c:4038
+  rt6_disable_ip+0x87/0x720 net/ipv6/route.c:4043
+  addrconf_ifdown+0x168/0x1650 net/ipv6/addrconf.c:3669
+  addrconf_notify+0x6de/0x2770 net/ipv6/addrconf.c:3594
+  notifier_call_chain+0x17e/0x380 kernel/notifier.c:93
+  __raw_notifier_call_chain kernel/notifier.c:394 [inline]
+  raw_notifier_call_chain+0x2d/0x40 kernel/notifier.c:401
+  call_netdevice_notifiers_info+0x3f/0x90 net/core/dev.c:1733
+  call_netdevice_notifiers net/core/dev.c:1751 [inline]
+  dev_close_many+0x40e/0x860 net/core/dev.c:1503
+  rollback_registered_many+0x543/0x1250 net/core/dev.c:7991
+  unregister_netdevice_many+0xfa/0x4c0 net/core/dev.c:9119
+  default_device_exit_batch+0x43a/0x540 net/core/dev.c:9588
+  ops_exit_list.isra.5+0x105/0x160 net/core/net_namespace.c:156
+  cleanup_net+0x555/0xb10 net/core/net_namespace.c:551
+  process_one_work+0xc90/0x1c40 kernel/workqueue.c:2153
+  worker_thread+0x17f/0x1390 kernel/workqueue.c:2296
+  kthread+0x35a/0x440 kernel/kthread.c:246
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
+Modules linked in:
+---[ end trace 42ffb82098483a68 ]---
+RIP: 0010:fib6_drop_pcpu_from net/ipv6/ip6_fib.c:920 [inline]
+RIP: 0010:fib6_purge_rt+0x5ce/0x7e0 net/ipv6/ip6_fib.c:956
+Code: 0f b6 35 99 f1 33 03 31 ff 44 89 f6 e8 bb b7 a0 fa 45 84 f6 0f 84 ec  
+00 00 00 e8 dd b6 a0 fa 49 8d 47 70 48 89 c2 48 c1 ea 03 <42> 80 3c 22 00  
+0f 85 b5 01 00 00 48 8b 8d e0 fe ff ff 48 89 c2 48
+RSP: 0018:ffff8881d8cadf18 EFLAGS: 00010202
+RAX: 0000000000003400 RBX: 0000000000000001 RCX: ffffffff86decea0
+RDX: 0000000000000680 RSI: ffffffff86decd93 RDI: 0000000000000005
+RBP: ffff8881d8cae048 R08: ffff8881d8ca05c0 R09: ffffed1036ea6e1d
+R10: ffffed1036ea6e1d R11: ffff8881b75370ef R12: dffffc0000000000
+R13: ffff8881b75370c0 R14: 0000000000000001 R15: 0000000000003390
+FS:  0000000000000000(0000) GS:ffff8881daf00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000619570 CR3: 00000001c28ac000 CR4: 00000000001406e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
 
 ---
