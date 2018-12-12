@@ -2,113 +2,126 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC903C65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 21:36:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6F7FC65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 21:40:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9268B20839
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 21:36:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9268B20839
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id 82E9620839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 21:40:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82E9620839
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728344AbeLLVgd (ORCPT
+        id S1727622AbeLLVkZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 16:36:33 -0500
-Received: from gateway21.websitewelcome.com ([192.185.45.133]:16981 "EHLO
-        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726297AbeLLVgc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 16:36:32 -0500
-Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
-        by gateway21.websitewelcome.com (Postfix) with ESMTP id 670D3400C745D
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 15:36:31 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id XCBDgL67Jp9J8XCBDgzaLp; Wed, 12 Dec 2018 15:36:31 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.70.203] (port=58926 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gXCBC-00447J-MA; Wed, 12 Dec 2018 15:36:30 -0600
-Date:   Wed, 12 Dec 2018 15:36:28 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] ALSA: pcm: Fix potential Spectre v1 vulnerability
-Message-ID: <20181212213628.GA29911@embeddedor>
+        Wed, 12 Dec 2018 16:40:25 -0500
+Received: from mx3.molgen.mpg.de ([141.14.17.11]:50931 "EHLO mx1.molgen.mpg.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726263AbeLLVkZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 16:40:25 -0500
+Received: from [192.168.0.3] (ip5f5bd26f.dynamic.kabel-deutschland.de [95.91.210.111])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: pmenzel)
+        by mx.molgen.mpg.de (Postfix) with ESMTPSA id DA1D9201353427;
+        Wed, 12 Dec 2018 22:40:22 +0100 (CET)
+To:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Len Brown <lenb@kernel.org>
+Cc:     linux-pm@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+From:   Paul Menzel <pmenzel@molgen.mpg.de>
+Subject: intel_pstate: Lowest frequency not reached with Intel i7-6700
+Message-ID: <ac4d2bed-be16-71ee-8c3b-dc4fa0cb87f9@molgen.mpg.de>
+Date:   Wed, 12 Dec 2018 22:40:22 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.70.203
-X-Source-L: No
-X-Exim-ID: 1gXCBC-00447J-MA
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.70.203]:58926
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 4
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: de-DE
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-stream is indirectly controlled by user-space, hence leading to
-a potential exploitation of the Spectre variant 1 vulnerability.
+Dear Linux folks,
 
-This issue was detected with the help of Smatch:
 
-sound/core/pcm.c:140 snd_pcm_control_ioctl() warn: potential spectre issue 'pcm->streams' [r] (local cap)
+Using *powersave* as P-state selection algorithm, on an idle system
+with an Intel i7-6700 (Sandy Bridge), the frequency only goes down to
+900 MHz instead of the minimum frequency of 800 MHz.
 
-Fix this by sanitizing stream before using it to index pcm->streams
+> $ uname -a
+> Linux keineahnung.molgen.mpg.de 4.20.0-rc5.mx64.234 #1 SMP Mon Dec 3 16:58:29 CET 2018 x86_64 GNU/Linux
+> $ dmesg | grep state
+> [    0.000000] x86/fpu: xstate_offset[2]:  576, xstate_sizes[2]:  256
+> [    0.000000] x86/fpu: xstate_offset[3]:  832, xstate_sizes[3]:   64
+> [    0.000000] x86/fpu: xstate_offset[4]:  896, xstate_sizes[4]:   64
+> [    0.000000] x86/fpu: Enabled xstate features 0x1f, context size is 960 bytes, using 'compacted' format.
+> [    0.686027] acpi PNP0C0B:00: Failed to change power state to D0
+> [    0.694017] acpi PNP0C0B:00: Failed to set initial power state
+> [    0.703020] acpi PNP0C0B:01: Failed to change power state to D0
+> [    0.712012] acpi PNP0C0B:01: Failed to set initial power state
+> [    0.722010] acpi PNP0C0B:02: Failed to change power state to D0
+> [    0.730013] acpi PNP0C0B:02: Failed to set initial power state
+> [    0.739010] acpi PNP0C0B:03: Failed to change power state to D0
+> [    0.748012] acpi PNP0C0B:03: Failed to set initial power state
+> [    0.758009] acpi PNP0C0B:04: Failed to change power state to D0
+> [    0.766012] acpi PNP0C0B:04: Failed to set initial power state
+> [    0.767127] Monitor-Mwait will be used to enter C-1 state
+> [    0.767131] Monitor-Mwait will be used to enter C-2 state
+> [    0.767134] Monitor-Mwait will be used to enter C-3 state
+> [    2.092456] intel_pstate: Intel P-state driver initializing
+> [    2.094820] intel_pstate: HWP enabled
+> $ lscpu
+> Architecture:        x86_64
+> CPU op-mode(s):      32-bit, 64-bit
+> Byte Order:          Little Endian
+> CPU(s):              8
+> On-line CPU(s) list: 0-7
+> Thread(s) per core:  2
+> Core(s) per socket:  4
+> Socket(s):           1
+> NUMA node(s):        1
+> Vendor ID:           GenuineIntel
+> CPU family:          6
+> Model:               94
+> Model name:          Intel(R) Core(TM) i7-6700 CPU @ 3.40GHz
+> Stepping:            3
+> CPU MHz:             900.392
+> CPU max MHz:         4000.0000
+> CPU min MHz:         800.0000
+> BogoMIPS:            6816.00
+> Virtualization:      VT-x
+> L1d cache:           32K
+> L1i cache:           32K
+> L2 cache:            256K
+> L3 cache:            8192K
+> NUMA node0 CPU(s):   0-7
+> Flags:               fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf tsc_known_freq pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb invpcid_single pti tpr_shadow vnmi flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 hle avx2 smep bmi2 erms invpcid rtm mpx rdseed adx smap clflushopt intel_pt xsaveopt xsavec xgetbv1 xsaves dtherm ida arat pln pts hwp hwp_notify hwp_act_window hwp_epp
+> $ cat /sys/devices/system/cpu/cpufreq/policy*/scaling_governor
+> powersave
+> powersave
+> powersave
+> powersave
+> powersave
+> powersave
+> powersave
+> powersave
+> $ cat /sys/devices/system/cpu/cpufreq/policy*/scaling_cur_freq
+> 900335
+> 900285
+> 900179
+> 900314
+> 900510
+> 900226
+> 900376
+> 900375
 
-Notice that given that speculation windows are large, the policy is
-to kill the speculation on the first load and not worry if it can be
-completed with a dependent load/store [1].
+Shouldn’t it go down until 800 MHz?
 
-[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- sound/core/pcm.c | 3 +++
- 1 file changed, 3 insertions(+)
+Kind regards,
 
-diff --git a/sound/core/pcm.c b/sound/core/pcm.c
-index fdb9b92fc8d6..23141003a90d 100644
---- a/sound/core/pcm.c
-+++ b/sound/core/pcm.c
-@@ -32,6 +32,8 @@
- #include <sound/control.h>
- #include <sound/info.h>
- 
-+#include <linux/nospec.h>
-+
- #include "pcm_local.h"
- 
- MODULE_AUTHOR("Jaroslav Kysela <perex@perex.cz>, Abramo Bagnara <abramo@alsa-project.org>");
-@@ -129,6 +131,7 @@ static int snd_pcm_control_ioctl(struct snd_card *card,
- 				return -EFAULT;
- 			if (stream < 0 || stream > 1)
- 				return -EINVAL;
-+			stream = array_index_nospec(stream, 2);
- 			if (get_user(subdevice, &info->subdevice))
- 				return -EFAULT;
- 			mutex_lock(&register_mutex);
--- 
-2.17.1
-
+Paul
