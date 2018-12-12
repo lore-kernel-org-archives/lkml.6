@@ -2,127 +2,130 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D433C65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 18:43:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D079AC65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 18:45:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B1DA20851
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 18:43:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 86F3D2086D
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 18:45:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PsZ1/yNw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B1DA20851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="eyBJsRCq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86F3D2086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728163AbeLLSnk (ORCPT
+        id S1728247AbeLLSpJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 13:43:40 -0500
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:43050 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727910AbeLLSnj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 13:43:39 -0500
-Received: by mail-yw1-f66.google.com with SMTP id l200so7389209ywe.10
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 10:43:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qhFR6QMOcbaR8IAQTw+MkJki/pA7I5Lieqkhr1OqAb0=;
-        b=PsZ1/yNwacfmENYF+OoNvj3N2B9yxHElPTcGTqqTlWORV0Hvi2E0iYqSF0mLgAdmqw
-         /unzKg3x+/R+R3hztVo6zE40WEM1jlwTuX0pp7yqZmj85o78ZnZd/0rXowx0xo9RmPor
-         Ex9PaN6FeJhCddJ8R5ACiJfPxoiHHVImiLdIk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qhFR6QMOcbaR8IAQTw+MkJki/pA7I5Lieqkhr1OqAb0=;
-        b=HMGtTIMgNaUG2ZSH1oydQr3IR4dGK6Nh9YxUtw1bPRwrxaOfHi6toRfuSL6h7DugYn
-         khbfiLnTIecAR16JVmdbIH/UR8buhY8xVXNvgX9nPKDl9tHSMv2r2hCUDNYXvJE6wUVH
-         DDYnmGfGZT2bHybdVnOYufyjZ7jeULrzb9r7liek3lB7bJZR2z5J5y0pnr8o2yzXzqzr
-         ItiuGs7Yu+kaKRp3dFyOzl2GizK4j0lsHCbE3OH/HDSeBmwz/Wlxww5JyZ3DKoF7Sr+l
-         cTzmp4jqFH8tKcmDsFzWPDYbDQciyhVP3KAZkv/ZtoJBJDE0MkEDogKQu+EfL03q2ivL
-         WyOw==
-X-Gm-Message-State: AA+aEWZohIlPxVHTRHGfjdLf2l/5UnZIAtbDQ3gSvABmJMyzNmdrPgHV
-        W1PedOCYovdOZMvG5gEbp4mI72VeKdA=
-X-Google-Smtp-Source: AFSGD/X3X32OIJ7F+2hS/kTA6M67KPS57j5mwyG9UK4HCu4YR6F+oHvsP+YXaxn+b0jCFbtTZecSsA==
-X-Received: by 2002:a81:5c86:: with SMTP id q128mr20842894ywb.431.1544640218268;
-        Wed, 12 Dec 2018 10:43:38 -0800 (PST)
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com. [209.85.219.176])
-        by smtp.gmail.com with ESMTPSA id a71sm6163520ywe.66.2018.12.12.10.43.36
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 12 Dec 2018 10:43:37 -0800 (PST)
-Received: by mail-yb1-f176.google.com with SMTP id f9so5101441ybm.13
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 10:43:36 -0800 (PST)
-X-Received: by 2002:a25:3502:: with SMTP id c2-v6mr21482570yba.410.1544640216461;
- Wed, 12 Dec 2018 10:43:36 -0800 (PST)
+        Wed, 12 Dec 2018 13:45:09 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:50000 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727910AbeLLSpI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 13:45:08 -0500
+Received: from zn.tnic (p200300EC2BCDD8007CFD4A6887308591.dip0.t-ipconnect.de [IPv6:2003:ec:2bcd:d800:7cfd:4a68:8730:8591])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 09D3C1EC0AC4;
+        Wed, 12 Dec 2018 19:45:06 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1544640307;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=8EEzVwbJSnq5zQmBptdnyW9u44R7hAzK9i+qfnnKTGw=;
+        b=eyBJsRCqvI3mxrz1tUxS6JQiaugEEY/B3d6WkEpZIFdZfYcwY0R5FZMXqiZ0PhWPsl+Ois
+        VYR6Gx8+OJ2cQMpZmWx/uHwIn57Nez0Knk6BAAFhzEdYAO3KCOpT6KHlnSgFO1gxBXE8ku
+        FxpKuRHeeuX60C7X2pL/Tw2bC8+Fm1E=
+Date:   Wed, 12 Dec 2018 19:44:59 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Tom Lendacky <Thomas.Lendacky@amd.com>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        John Stultz <john.stultz@linaro.org>
+Subject: Re: [RFC PATCH 4/4] x86/TSC: Use RDTSCP
+Message-ID: <20181212184459.GE6653@zn.tnic>
+References: <20181211222326.14581-1-bp@alien8.de>
+ <20181211222326.14581-5-bp@alien8.de>
+ <CALCETrVArfAAbQKJ-g_5pOy6dMVgx-FC_mjdC9xzL1jU9T07jw@mail.gmail.com>
+ <59aad362-4a5b-dd8b-642f-0dc3f83cf7ee@amd.com>
+ <20181211233901.GV27375@zn.tnic>
+ <CALCETrXvZ4avdUh2bTLVTTz3Jxogo3zK5akWTsJ=rkJpf1XiDg@mail.gmail.com>
+ <20181212100814.GB6653@zn.tnic>
+ <CALCETrWSG5825HrxwEJGqbSoRz=A_2O-GSBD+K_q9YPHu2TB6A@mail.gmail.com>
 MIME-Version: 1.0
-References: <1544603038-9373-1-git-send-email-liaoweixiong@allwinnertech.com>
-In-Reply-To: <1544603038-9373-1-git-send-email-liaoweixiong@allwinnertech.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Wed, 12 Dec 2018 10:43:24 -0800
-X-Gmail-Original-Message-ID: <CAGXu5j+nTVoD=AMvOcn2bvA4C0mw=LKDbVnDWhUkL3c6mJye_g@mail.gmail.com>
-Message-ID: <CAGXu5j+nTVoD=AMvOcn2bvA4C0mw=LKDbVnDWhUkL3c6mJye_g@mail.gmail.com>
-Subject: Re: [PATCH] pstore: fix crypto dependencies of 842/zstd compression
-To:     liaoweixiong@allwinnertech.com
-Cc:     Anton Vorontsov <anton@enomsg.org>,
-        Colin Cross <ccross@android.com>,
-        Tony Luck <tony.luck@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CALCETrWSG5825HrxwEJGqbSoRz=A_2O-GSBD+K_q9YPHu2TB6A@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 12, 2018 at 12:24 AM liaoweixiong
-<liaoweixiong@allwinnertech.com> wrote:
->
-> Reference to commit 58eb5b670747 ("pstore: fix crypto dependencies"),
-> which fixed crypto dependencies of deflate, lzo, lz4 and lz4hc
-> compression, but omitted 842 and newer compression zstd from
-> commit 1021bcf44d0e ("pstore: add zstd compression support")
->
-> Signed-off-by: liaoweixiong <liaoweixiong@allwinnertech.com>
+On Wed, Dec 12, 2018 at 10:07:03AM -0800, Andy Lutomirski wrote:
+> You're proving my point, I think.  CPUID, IRET, MOV to CR, etc are
+> "serializing".  LFENCE, on many CPUd and depending on MSRs, is a
+> different kind of serializing.  MFENCE is something else.  All LOCK
+> instructions are some kind of barrier, but I don't think anyone calls
+> them "serializing".
 
-Were you seeing build or config failures without this patch?
+Yeah, peterz and I hashed it out a bit today on IRC about the different
+meanings of serializing. I see your point now.
 
--Kees
+> The uaccess users of barrier_nospec() are presumably looking for a
+> speculation barrier in the sense of "CPU, please don't execute the
+> code after this until you're sure that this code should be executed
+> for real and until all inputs are known, not guessed."
 
-> ---
->  fs/pstore/Kconfig | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/fs/pstore/Kconfig b/fs/pstore/Kconfig
-> index 0d19d19..7068f45 100644
-> --- a/fs/pstore/Kconfig
-> +++ b/fs/pstore/Kconfig
-> @@ -44,14 +44,14 @@ config PSTORE_LZ4HC_COMPRESS
->           This option enables LZ4HC (high compression) mode algorithm.
->
->  config PSTORE_842_COMPRESS
-> -       bool "842 compression"
-> +       tristate "842 compression"
->         depends on PSTORE
->         select CRYPTO_842
->         help
->           This option enables 842 compression algorithm support.
->
->  config PSTORE_ZSTD_COMPRESS
-> -       bool "zstd compression"
-> +       tristate "zstd compression"
->         depends on PSTORE
->         select CRYPTO_ZSTD
->         help
-> --
-> 1.9.1
->
+Yeah, I believe AMD's paper has this nicely written:
 
+"MITIGATION G-2
+
+Description: Set an MSR in the processor so that LFENCE is a dispatch
+serializing instruction and then use LFENCE in code streams to
+serialize dispatch (LFENCE is faster than RDTSCP which is also dispatch
+serializing). This mode of LFENCE may be enabled by setting MSR
+C001_1029[1]=1.
+
+Effect: Upon encountering an LFENCE when the MSR bit is set, dispatch
+will stop until the LFENCE instruction becomes the oldest instruction in
+the machine."
+
+https://developer.amd.com/wp-content/resources/90343-B_SoftwareTechniquesforManagingSpeculation_WP_7-18Update_FNL.pdf
+
+which is basically what you want for the whole mitigation crap if you
+want to kill speculation - you simply hold dispatch until the LFENCE
+retires.
+
+> The property I want for RDTSC ordering is much weaker: I want it to be
+> ordered like a load.  Imagine that, instead of an on-chip TSC, the TSC
+> is literally a location in main memory that gets incremented by an
+> extra dedicated CPU every nanosecond or so.  I want users of RDTSC to
+> work as if they were reading such a location in memory using an
+> ordinary load.  I believe this gives the real desired property that it
+> should be impossible to observe the TSC going backwards.  This is a
+> much weaker form of serialization.
+
+Well, in that case you need something new.
+
+Because, the moment you have a RDTSC in flight and a second RDTSC comes
+in and that second RDTSC must *not* bypass the first one and execute
+earlier due to OoO, you need to impose some ordering. And that's pretty
+much uarch-dependent, I'd say.
+
+And I guess on AMD the way to do that is to stop dispatch until the
+first RDTSC retires.
+
+Can it be done faster? Sure. And I'm pretty sure there's a lot of pesky
+little hw details we're not even hearing of, which get in the way.
 
 -- 
-Kees Cook
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
