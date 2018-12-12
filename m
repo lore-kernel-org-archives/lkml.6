@@ -2,539 +2,219 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-11.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F61DC67839
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 00:50:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15319C67839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 00:53:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F30D620811
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 00:50:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B61FF20811
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 00:53:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="HG76hrxn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F30D620811
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DrOgO8hn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B61FF20811
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726273AbeLLAut (ORCPT
+        id S1726249AbeLLAxg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 19:50:49 -0500
-Received: from mail-yw1-f65.google.com ([209.85.161.65]:45297 "EHLO
-        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726238AbeLLAut (ORCPT
+        Tue, 11 Dec 2018 19:53:36 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:35381 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726201AbeLLAxg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 19:50:49 -0500
-Received: by mail-yw1-f65.google.com with SMTP id d190so6274485ywd.12
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 16:50:48 -0800 (PST)
+        Tue, 11 Dec 2018 19:53:36 -0500
+Received: by mail-it1-f194.google.com with SMTP id p197so7201400itp.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 16:53:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=xI4+euhpqjLmL2DHyTrs9ERXxJGkl+3bv2laz6Jd+eU=;
-        b=HG76hrxn4WFy1Dj86ppOb0EjvMeJnH1Zdd6zeL2QaREwP8AiB5FQIyxt9Ci0t9zPgA
-         VHwKIViBs6Xq780cScTrnQPJuqqc0VrXO3YRZCBr7+4V9PYOHY7XkuGP55Wq3lNwYXgX
-         aCCIRBoPfXPp57NkR0/UBOxglaooBXTbTR6gU=
+         :cc;
+        bh=6/RsfP7vXkPcHE8sOFoMjSieEQuAbOaM86O/XnPxfAs=;
+        b=DrOgO8hnL4yMpbkOBwfVJ6FGhYYDAjzBl9vaqjSQw26zMr5czxk7bvSmwU4V+OEqCo
+         BDjrSfJxsmftp7Da+7N17MdVgNfmNCAzJwx0ie3aZq8PkgBZTwwqxj2mhumBboSbbr1q
+         Nz2ymuJ38WPkXXOCmPPm3fVgKy8ed/ySUTz0y+gvBoXX0mZXLHeDFV9vkj1Ekv+4B2i/
+         0r5VLp02z9dZwcjtqmaj8JgbT9Ld+KxhIkQ1Q0eJs/jz/0bGwFwOCmA5R2TIQmpU8r2l
+         Iw12ZPEqXcyxCzWmY/lk1Xk/Hy4KA/9wn6ba2jnTngCd8aLJhLi+47lHip4jcopAkYyN
+         oy3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=xI4+euhpqjLmL2DHyTrs9ERXxJGkl+3bv2laz6Jd+eU=;
-        b=LUiC+uhKejKJggW4WY/G4IaIoLDJH822hcjHp7faxOo5CLyBo5PtteXYQeNbeiXjjb
-         NlTW68PG35d3mml3o15qhzcXf7TGppfYaLKGhcMH8j0iB5pV+RI3RZD5cw2D9N3Q3TR4
-         qUfAnft1aaAnyPrQJGF0uUl4jMJtUmDA70RlUo8ZJPXTZpPW224r8e7ABYd6ib5rwhGs
-         oJXdRDoJsWO6K7mDCLYGNeuv7NhWIcnG/F0cCB3eT8ffDWw+9OC/+A1G5iVq0hh2kLSj
-         Hm1/+GqNXTIofYlH7aNLI2TF3yDFrr/mX4T4SocPBUD1W423AXLCDtzeKcg2/8N5Rfbu
-         VQJQ==
-X-Gm-Message-State: AA+aEWY5xEp039IDZCn9AsvLrMzN2XfamH028QFO64m10NuYJQSbQI4T
-        zqhGYEovoTiam0UFWC7dTrzRQeMdb04=
-X-Google-Smtp-Source: AFSGD/Vw8wpcFTHIm+VMnJBxUXnjCzdKHChLPUhZd8vNuI/k/5u4IVt3e4b5R0rtqasjzzfitDWZxw==
-X-Received: by 2002:a81:2891:: with SMTP id o139mr18476585ywo.100.1544575847415;
-        Tue, 11 Dec 2018 16:50:47 -0800 (PST)
-Received: from mail-yw1-f48.google.com (mail-yw1-f48.google.com. [209.85.161.48])
-        by smtp.gmail.com with ESMTPSA id r20sm6427045ywa.13.2018.12.11.16.50.46
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Dec 2018 16:50:46 -0800 (PST)
-Received: by mail-yw1-f48.google.com with SMTP id i20so6270434ywc.5
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 16:50:46 -0800 (PST)
-X-Received: by 2002:a81:29cc:: with SMTP id p195mr19368000ywp.407.1544575845490;
- Tue, 11 Dec 2018 16:50:45 -0800 (PST)
+         :message-id:subject:to:cc;
+        bh=6/RsfP7vXkPcHE8sOFoMjSieEQuAbOaM86O/XnPxfAs=;
+        b=aji1GhVe1C4nmxE2e1msgu1LotQ2Z47ec3G9pbyr1npU9sUvdrELYByT2TA/TEErjG
+         /MBVDSQxkyQaRAC/YgN83mxvmkwzw0VkHXCdB0YBtWJie8kW3wWliLUF6zIFutz3RTMm
+         VjuJSR7PEUOnYAUKBbR2jQ7+q64DsoeF+QkR3cie3XH1JJXIQliel5dBmy9U8d9SFUMR
+         s7Te4A2GsUVUDQtsA7YgDF36KZSiqoUYRB0ijICjAGW98KyliQ5agCV+yIhwsocJKE7P
+         eDP7z5R4V1d1a87Nvd+g8r9jL4uo73b11H84H91gUcMkmdZnnmatdYD1ptHC3LmzWgvF
+         Iu9Q==
+X-Gm-Message-State: AA+aEWbNw2wQpdzJBLIHEm5k1sgyoRLmHu+Nh0aEDEE0uQfXjZ8xV+qY
+        i9xoZ82+AWjF7N/rCubR0SYWCbIiYcRGH5YhvH+3Xw==
+X-Google-Smtp-Source: AFSGD/WVW1yF/DLEaKVtcZREFjRX9sCfW6sm170ynU/Wqk3lGPXKDKTfaw4YZMulOwnie18ca2mBmpH2fptYqMJNfxQ=
+X-Received: by 2002:a24:fd09:: with SMTP id m9mr4289190ith.81.1544576014522;
+ Tue, 11 Dec 2018 16:53:34 -0800 (PST)
 MIME-Version: 1.0
-References: <20181211034032.32338-1-yuleixzhang@tencent.com>
-In-Reply-To: <20181211034032.32338-1-yuleixzhang@tencent.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Tue, 11 Dec 2018 16:50:34 -0800
-X-Gmail-Original-Message-ID: <CAGXu5jKkqf-9ksvNTCS5xgB_JtfvCc=Eot2uWYYP8rpoKLw=mg@mail.gmail.com>
-Message-ID: <CAGXu5jKkqf-9ksvNTCS5xgB_JtfvCc=Eot2uWYYP8rpoKLw=mg@mail.gmail.com>
-Subject: Re: [PATCH] kfifo: add memory barrier in kfifo to prevent data loss
-To:     yulei.kernel@gmail.com, Stefani Seibold <stefani@seibold.net>,
+References: <20181016050428.17966-2-sergey.senozhatsky@gmail.com>
+ <20181025101036.6823-1-sergey.senozhatsky@gmail.com> <20181031122736.epbxu424l3xagge5@pathway.suse.cz>
+ <20181101014821.GB502@jagdpanzerIV> <20181101080808.n73lrlnjd65nk4qf@pathway.suse.cz>
+ <20181122131202.nkcurdt5k6jrhowa@pathway.suse.cz>
+In-Reply-To: <20181122131202.nkcurdt5k6jrhowa@pathway.suse.cz>
+From:   Daniel Wang <wonderfly@google.com>
+Date:   Tue, 11 Dec 2018 16:53:22 -0800
+Message-ID: <CAJmjG2-_8T6uJP54-+gUG7Aq7kNqkAKAEXbzzV9JVKyZFRh4GQ@mail.gmail.com>
+Subject: Re: [PATCHv3] panic: avoid deadlocks in re-entrant console drivers
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
         Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc:     mkelly@xevo.com, Jiri Kosina <jkosina@suse.cz>,
-        LKML <linux-kernel@vger.kernel.org>, yuleixzhang@tencent.com,
-        xiaoguangrong@tencent.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
+        Jiri Slaby <jslaby@suse.com>,
+        Peter Feiner <pfeiner@google.com>,
+        linux-serial@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+        boundary="000000000000b19631057cc8a048"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 10, 2018 at 7:41 PM <yulei.kernel@gmail.com> wrote:
->
-> From: Yulei Zhang <yuleixzhang@tencent.com>
->
-> Early this year we spot there may be two issues in kernel
-> kfifo.
->
-> One is reported by Xiao Guangrong to linux kernel.
-> https://lkml.org/lkml/2018/5/11/58
-> In current kfifo implementation there are missing memory
-> barrier in the read side, so that without proper barrier
-> between reading the kfifo->in and fetching the data there
-> is potential ordering issue.
->
-> Beside that, there is another potential issue in kfifo,
-> please consider the following case:
-> at the beginning
-> ring->size =3D 4
-> ring->out =3D 0
-> ring->in =3D 4
->
->     Consumer                        Producer
-> ---------------                  --------------
-> index =3D ring->out; /* index =3D=3D 0 */
-> ring->out++; /* ring->out =3D=3D 1 */
-> < Re-Order >
->                                  out =3D ring->out;
->                                  if (ring->in - out >=3D ring->mask)
->                                      return -EFULL;
->                                  /* see the ring is not full */
->                                  index =3D ring->in & ring->mask;
->                                  /* index =3D=3D 0 */
->                                  ring->data[index] =3D new_data;
-> =E3=80=80=E3=80=80=E3=80=80=E3=80=80=E3=80=80=E3=80=80=E3=80=80=E3=80=80=
-=E3=80=80=E3=80=80=E3=80=80=E3=80=80=E3=80=80=E3=80=80=E3=80=80=E3=80=80 ri=
-ng->in++;
->
-> data =3D ring->data[index];
-> /* you will find the old data is overwritten by the new_data */
->
-> In order to avoid the issue:
-> 1) for the consumer, we should read the ring->data[] out before
-> updating ring->out
-> 2) for the producer, we should read ring->out before updating
-> ring->data[]
->
-> So in this patch we introduce the following four functions which
-> are wrapped with proper memory barrier and keep in pairs to make
-> sure the in and out index are fetched and updated in order to avoid
-> data loss.
->
-> kfifo_read_index_in()
-> kfifo_write_index_in()
-> kfifo_read_index_out()
-> kfifo_write_index_out()
->
-> Signed-off-by: Yulei Zhang <yuleixzhang@tencent.com>
-> Signed-off-by: Guangrong Xiao <xiaoguangrong@tencent.com>
+--000000000000b19631057cc8a048
+Content-Type: text/plain; charset="UTF-8"
 
-I've added some more people to CC that might want to see this. Thanks
-for sending this!
+Is it okay to tag this commit with `Cc: stable@vger.kernel.org` so
+that it'll get applied to the stable trees once merged into Linux's
+tree, if it's not too late? Otherwise I'll follow up on the stable
+merges separately. Thanks for making the changes anyway.
 
--Kees
-
-> ---
->  include/linux/kfifo.h |  70 ++++++++++++++++++++++++++-
->  lib/kfifo.c           | 107 +++++++++++++++++++++++++++---------------
->  2 files changed, 136 insertions(+), 41 deletions(-)
+On Thu, Nov 22, 2018 at 5:12 AM Petr Mladek <pmladek@suse.com> wrote:
 >
-> diff --git a/include/linux/kfifo.h b/include/linux/kfifo.h
-> index 89fc8dc7bf38..3bd2a869ca7e 100644
-> --- a/include/linux/kfifo.h
-> +++ b/include/linux/kfifo.h
-> @@ -286,6 +286,71 @@ __kfifo_uint_must_check_helper( \
->  }) \
->  )
+> On Thu 2018-11-01 09:08:08, Petr Mladek wrote:
+> > On Thu 2018-11-01 10:48:21, Sergey Senozhatsky wrote:
+> > > On (10/31/18 13:27), Petr Mladek wrote:
+> > > > >
+> > > > > Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+> > > >
+> > > > The patch makes sense to me. The locks should stay busted also for
+> > > > console_flush_on_panic().
+> > > >
+> > > > With the added #include <linux/vt_kern.h>:
+> > > >
+> > > > Reviewed-by: Petr Mladek <pmladek@suse.com>
+> > >
+> > > Thanks!
+> > >
+> > > Since there are no objections - how shall we route it? Via printk tree?
+> >
+> > Good question. OK, I am going to put it into printk.git unless I hear
+> > complains withing next couple of days.
 >
-> +/**
-> + * kfifo_read_index_in - returns the in index of the fifo
-> + * @fifo: address of the kfifo to be used
-> + *
-> + * add memory read barrier to make sure the fifo->in index
-> + * is fetched first before write data to the fifo, which
-> + * is paired with the write barrier in kfifo_write_index_in
-> + */
-> +#define kfifo_read_index_in(kfifo) \
-> +({ \
-> +       typeof((kfifo) + 1) __tmp =3D (kfifo); \
-> +       struct __kfifo *__kfifo =3D __tmp; \
-> +       unsigned int __val =3D READ_ONCE(__kfifo->in); \
-> +       smp_rmb(); \
-> +       __val; \
-> +})
-> +
-> +/**
-> + * kfifo_write_index_in - updates the in index of the fifo
-> + * @fifo: address of the kfifo to be used
-> + *
-> + * add memory write barrier to make sure the data entry is
-> + * updated before increase the fifo->in
-> + */
-> +#define kfifo_write_index_in(kfifo, val) \
-> +({ \
-> +       typeof((kfifo) + 1) __tmp =3D (kfifo); \
-> +       struct __kfifo *__kfifo =3D __tmp; \
-> +       unsigned int __val =3D (val); \
-> +       smp_wmb(); \
-> +       WRITE_ONCE(__kfifo->in, __val); \
-> +})
-> +
-> +/**
-> + * kfifo_read_index_out - returns the out index of the fifo
-> + * @fifo: address of the kfifo to be used
-> + *
-> + * add memory barrier to make sure the fifo->out index is
-> + * fetched before read data from the fifo, which is paired
-> + * with the memory barrier in kfifo_write_index_out
-> + */
-> +#define kfifo_read_index_out(kfifo) \
-> +({ \
-> +       typeof((kfifo) + 1) __tmp =3D (kfifo); \
-> +       struct __kfifo *__kfifo =3D __tmp; \
-> +       unsigned int __val =3D smp_load_acquire(&__kfifo->out); \
-> +       __val; \
-> +})
-> +
-> +/**
-> + * kfifo_write_index_out - updates the out index of the fifo
-> + * @fifo: address of the kfifo to be used
-> + *
-> + * add memory barrier to make sure reading out the entry before
-> + * update the fifo->out index to avoid overwitten the entry by
-> + * the producer
-> + */
-> +#define kfifo_write_index_out(kfifo, val) \
-> +({ \
-> +       typeof((kfifo) + 1) __tmp =3D (kfifo); \
-> +       struct __kfifo *__kfifo =3D __tmp; \
-> +       unsigned int __val =3D (val); \
-> +       smp_store_release(&__kfifo->out, __val); \
-> +})
-> +
->  /**
->   * kfifo_skip - skip output data
->   * @fifo: address of the fifo to be used
-> @@ -298,7 +363,7 @@ __kfifo_uint_must_check_helper( \
->         if (__recsize) \
->                 __kfifo_skip_r(__kfifo, __recsize); \
->         else \
-> -               __kfifo->out++; \
-> +               kfifo_write_index_out(__kfifo, __kfifo->out++); \
->  })
+> I have pushed this into printk.git, branch for-4.21.
 >
->  /**
-> @@ -740,7 +805,8 @@ __kfifo_uint_must_check_helper( \
->         if (__recsize) \
->                 __kfifo_dma_out_finish_r(__kfifo, __recsize); \
->         else \
-> -               __kfifo->out +=3D __len / sizeof(*__tmp->type); \
-> +               kfifo_write_index_out(__kfifo, __kfifo->out \
-> +                               + (__len / sizeof(*__tmp->type))); \
->  })
->
->  /**
-> diff --git a/lib/kfifo.c b/lib/kfifo.c
-> index 015656aa8182..189590d9d614 100644
-> --- a/lib/kfifo.c
-> +++ b/lib/kfifo.c
-> @@ -32,7 +32,12 @@
->   */
->  static inline unsigned int kfifo_unused(struct __kfifo *fifo)
->  {
-> -       return (fifo->mask + 1) - (fifo->in - fifo->out);
-> +       /*
-> +        * add memory barrier to make sure the index is fetched
-> +        * before write to the buffer
-> +        */
-> +       return (fifo->mask + 1) -
-> +               (fifo->in - kfifo_read_index_out(fifo));
->  }
->
->  int __kfifo_alloc(struct __kfifo *fifo, unsigned int size,
-> @@ -116,11 +121,6 @@ static void kfifo_copy_in(struct __kfifo *fifo, cons=
-t void *src,
->
->         memcpy(fifo->data + off, src, l);
->         memcpy(fifo->data, src + l, len - l);
-> -       /*
-> -        * make sure that the data in the fifo is up to date before
-> -        * incrementing the fifo->in index counter
-> -        */
-> -       smp_wmb();
->  }
->
->  unsigned int __kfifo_in(struct __kfifo *fifo,
-> @@ -133,7 +133,11 @@ unsigned int __kfifo_in(struct __kfifo *fifo,
->                 len =3D l;
->
->         kfifo_copy_in(fifo, buf, len, fifo->in);
-> -       fifo->in +=3D len;
-> +       /*
-> +        * make sure that the data in the fifo is up to date before
-> +        * incrementing the fifo->in index counter
-> +        */
-> +       kfifo_write_index_in(fifo, fifo->in + len);
->         return len;
->  }
->  EXPORT_SYMBOL(__kfifo_in);
-> @@ -155,11 +159,6 @@ static void kfifo_copy_out(struct __kfifo *fifo, voi=
-d *dst,
->
->         memcpy(dst, fifo->data + off, l);
->         memcpy(dst + l, fifo->data, len - l);
-> -       /*
-> -        * make sure that the data is copied before
-> -        * incrementing the fifo->out index counter
-> -        */
-> -       smp_wmb();
->  }
->
->  unsigned int __kfifo_out_peek(struct __kfifo *fifo,
-> @@ -167,7 +166,7 @@ unsigned int __kfifo_out_peek(struct __kfifo *fifo,
->  {
->         unsigned int l;
->
-> -       l =3D fifo->in - fifo->out;
-> +       l =3D kfifo_read_index_in(fifo) - fifo->out;
->         if (len > l)
->                 len =3D l;
->
-> @@ -180,7 +179,11 @@ unsigned int __kfifo_out(struct __kfifo *fifo,
->                 void *buf, unsigned int len)
->  {
->         len =3D __kfifo_out_peek(fifo, buf, len);
-> -       fifo->out +=3D len;
-> +       /*
-> +        * make sure that the data in the fifo is fetched before
-> +        * incrementing the fifo->out index counter
-> +        */
-> +       kfifo_write_index_out(fifo, fifo->out + len);
->         return len;
->  }
->  EXPORT_SYMBOL(__kfifo_out);
-> @@ -210,11 +213,6 @@ static unsigned long kfifo_copy_from_user(struct __k=
-fifo *fifo,
->                 if (unlikely(ret))
->                         ret =3D DIV_ROUND_UP(ret, esize);
->         }
-> -       /*
-> -        * make sure that the data in the fifo is up to date before
-> -        * incrementing the fifo->in index counter
-> -        */
-> -       smp_wmb();
->         *copied =3D len - ret * esize;
->         /* return the number of elements which are not copied */
->         return ret;
-> @@ -241,7 +239,11 @@ int __kfifo_from_user(struct __kfifo *fifo, const vo=
-id __user *from,
->                 err =3D -EFAULT;
->         } else
->                 err =3D 0;
-> -       fifo->in +=3D len;
-> +       /*
-> +        * make sure that the data in the fifo is up to date before
-> +        * incrementing the fifo->in index counter
-> +        */
-> +       kfifo_write_index_in(fifo, fifo->in + len);
->         return err;
->  }
->  EXPORT_SYMBOL(__kfifo_from_user);
-> @@ -270,11 +272,6 @@ static unsigned long kfifo_copy_to_user(struct __kfi=
-fo *fifo, void __user *to,
->                 if (unlikely(ret))
->                         ret =3D DIV_ROUND_UP(ret, esize);
->         }
-> -       /*
-> -        * make sure that the data is copied before
-> -        * incrementing the fifo->out index counter
-> -        */
-> -       smp_wmb();
->         *copied =3D len - ret * esize;
->         /* return the number of elements which are not copied */
->         return ret;
-> @@ -291,7 +288,7 @@ int __kfifo_to_user(struct __kfifo *fifo, void __user=
- *to,
->         if (esize !=3D 1)
->                 len /=3D esize;
->
-> -       l =3D fifo->in - fifo->out;
-> +       l =3D kfifo_read_index_in(fifo) - fifo->out;
->         if (len > l)
->                 len =3D l;
->         ret =3D kfifo_copy_to_user(fifo, to, len, fifo->out, copied);
-> @@ -300,7 +297,11 @@ int __kfifo_to_user(struct __kfifo *fifo, void __use=
-r *to,
->                 err =3D -EFAULT;
->         } else
->                 err =3D 0;
-> -       fifo->out +=3D len;
-> +       /*
-> +        * make sure that the data is copied before
-> +        * incrementing the fifo->out index counter
-> +        */
-> +       kfifo_write_index_out(fifo, fifo->out + len);
->         return err;
->  }
->  EXPORT_SYMBOL(__kfifo_to_user);
-> @@ -384,7 +385,7 @@ unsigned int __kfifo_dma_out_prepare(struct __kfifo *=
-fifo,
->  {
->         unsigned int l;
->
-> -       l =3D fifo->in - fifo->out;
-> +       l =3D kfifo_read_index_in(fifo) - fifo->out;
->         if (len > l)
->                 len =3D l;
->
-> @@ -457,7 +458,11 @@ unsigned int __kfifo_in_r(struct __kfifo *fifo, cons=
-t void *buf,
->         __kfifo_poke_n(fifo, len, recsize);
->
->         kfifo_copy_in(fifo, buf, len, fifo->in + recsize);
-> -       fifo->in +=3D len + recsize;
-> +       /*
-> +        * make sure that the data in the fifo is up to date before
-> +        * incrementing the fifo->in index counter
-> +        */
-> +       kfifo_write_index_in(fifo, fifo->in + len + recsize);
->         return len;
->  }
->  EXPORT_SYMBOL(__kfifo_in_r);
-> @@ -479,7 +484,7 @@ unsigned int __kfifo_out_peek_r(struct __kfifo *fifo,=
- void *buf,
->  {
->         unsigned int n;
->
-> -       if (fifo->in =3D=3D fifo->out)
-> +       if (kfifo_read_index_in(fifo) =3D=3D fifo->out)
->                 return 0;
->
->         return kfifo_out_copy_r(fifo, buf, len, recsize, &n);
-> @@ -491,11 +496,15 @@ unsigned int __kfifo_out_r(struct __kfifo *fifo, vo=
-id *buf,
->  {
->         unsigned int n;
->
-> -       if (fifo->in =3D=3D fifo->out)
-> +       if (kfifo_read_index_in(fifo) =3D=3D fifo->out)
->                 return 0;
->
->         len =3D kfifo_out_copy_r(fifo, buf, len, recsize, &n);
-> -       fifo->out +=3D n + recsize;
-> +       /*
-> +        * make sure that the fifo data is fetched before
-> +        * incrementing the fifo->out index counter
-> +        */
-> +       kfifo_write_index_out(fifo, fifo->out + n + recsize);
->         return len;
->  }
->  EXPORT_SYMBOL(__kfifo_out_r);
-> @@ -505,7 +514,11 @@ void __kfifo_skip_r(struct __kfifo *fifo, size_t rec=
-size)
->         unsigned int n;
->
->         n =3D __kfifo_peek_n(fifo, recsize);
-> -       fifo->out +=3D n + recsize;
-> +       /*
-> +        * make sure that the fifo data is fetched before
-> +        * incrementing the fifo->out index counter
-> +        */
-> +       kfifo_write_index_out(fifo, fifo->out + n + recsize);
->  }
->  EXPORT_SYMBOL(__kfifo_skip_r);
->
-> @@ -528,7 +541,11 @@ int __kfifo_from_user_r(struct __kfifo *fifo, const =
-void __user *from,
->                 *copied =3D 0;
->                 return -EFAULT;
->         }
-> -       fifo->in +=3D len + recsize;
-> +       /*
-> +        * make sure that the data in the fifo is up to date before
-> +        * incrementing the fifo->in index counter
-> +        */
-> +       kfifo_write_index_in(fifo, fifo->in + len + recsize);
->         return 0;
->  }
->  EXPORT_SYMBOL(__kfifo_from_user_r);
-> @@ -539,7 +556,7 @@ int __kfifo_to_user_r(struct __kfifo *fifo, void __us=
-er *to,
->         unsigned long ret;
->         unsigned int n;
->
-> -       if (fifo->in =3D=3D fifo->out) {
-> +       if (kfifo_read_index_in(fifo) =3D=3D fifo->out) {
->                 *copied =3D 0;
->                 return 0;
->         }
-> @@ -553,7 +570,11 @@ int __kfifo_to_user_r(struct __kfifo *fifo, void __u=
-ser *to,
->                 *copied =3D 0;
->                 return -EFAULT;
->         }
-> -       fifo->out +=3D n + recsize;
-> +       /*
-> +        * make sure that the data is copied before
-> +        * incrementing the fifo->out index counter
-> +        */
-> +       kfifo_write_index_out(fifo, fifo->out + n + recsize);
->         return 0;
->  }
->  EXPORT_SYMBOL(__kfifo_to_user_r);
-> @@ -577,7 +598,11 @@ void __kfifo_dma_in_finish_r(struct __kfifo *fifo,
->  {
->         len =3D __kfifo_max_r(len, recsize);
->         __kfifo_poke_n(fifo, len, recsize);
-> -       fifo->in +=3D len + recsize;
-> +       /*
-> +        * make sure that the data in the fifo is updated before
-> +        * incrementing the fifo->in index counter
-> +        */
-> +       kfifo_write_index_in(fifo, fifo->in + len + recsize);
->  }
->  EXPORT_SYMBOL(__kfifo_dma_in_finish_r);
->
-> @@ -588,7 +613,7 @@ unsigned int __kfifo_dma_out_prepare_r(struct __kfifo=
- *fifo,
->
->         len =3D __kfifo_max_r(len, recsize);
->
-> -       if (len + recsize > fifo->in - fifo->out)
-> +       if (len + recsize > kfifo_read_index_in(fifo) - fifo->out)
->                 return 0;
->
->         return setup_sgl(fifo, sgl, nents, len, fifo->out + recsize);
-> @@ -600,6 +625,10 @@ void __kfifo_dma_out_finish_r(struct __kfifo *fifo, =
-size_t recsize)
->         unsigned int len;
->
->         len =3D __kfifo_peek_n(fifo, recsize);
-> -       fifo->out +=3D len + recsize;
-> +       /*
-> +        * make sure that the data is copied before
-> +        * incrementing the fifo->out index counter
-> +        */
-> +       kfifo_write_index_out(fifo, fifo->out + len + recsize);
->  }
->  EXPORT_SYMBOL(__kfifo_dma_out_finish_r);
-> --
-> 2.17.1
->
+> Best Regards,
+> Petr
 
 
---=20
-Kees Cook
+
+-- 
+Best,
+Daniel
+
+--000000000000b19631057cc8a048
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+MIIS7QYJKoZIhvcNAQcCoIIS3jCCEtoCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
+ghBTMIIEXDCCA0SgAwIBAgIOSBtqDm4P/739RPqw/wcwDQYJKoZIhvcNAQELBQAwZDELMAkGA1UE
+BhMCQkUxGTAXBgNVBAoTEEdsb2JhbFNpZ24gbnYtc2ExOjA4BgNVBAMTMUdsb2JhbFNpZ24gUGVy
+c29uYWxTaWduIFBhcnRuZXJzIENBIC0gU0hBMjU2IC0gRzIwHhcNMTYwNjE1MDAwMDAwWhcNMjEw
+NjE1MDAwMDAwWjBMMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTEiMCAG
+A1UEAxMZR2xvYmFsU2lnbiBIViBTL01JTUUgQ0EgMTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCC
+AQoCggEBALR23lKtjlZW/17kthzYcMHHKFgywfc4vLIjfq42NmMWbXkNUabIgS8KX4PnIFsTlD6F
+GO2fqnsTygvYPFBSMX4OCFtJXoikP2CQlEvO7WooyE94tqmqD+w0YtyP2IB5j4KvOIeNv1Gbnnes
+BIUWLFxs1ERvYDhmk+OrvW7Vd8ZfpRJj71Rb+QQsUpkyTySaqALXnyztTDp1L5d1bABJN/bJbEU3
+Hf5FLrANmognIu+Npty6GrA6p3yKELzTsilOFmYNWg7L838NS2JbFOndl+ce89gM36CW7vyhszi6
+6LqqzJL8MsmkP53GGhf11YMP9EkmawYouMDP/PwQYhIiUO0CAwEAAaOCASIwggEeMA4GA1UdDwEB
+/wQEAwIBBjAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwQwEgYDVR0TAQH/BAgwBgEB/wIB
+ADAdBgNVHQ4EFgQUyzgSsMeZwHiSjLMhleb0JmLA4D8wHwYDVR0jBBgwFoAUJiSSix/TRK+xsBtt
+r+500ox4AAMwSwYDVR0fBEQwQjBAoD6gPIY6aHR0cDovL2NybC5nbG9iYWxzaWduLmNvbS9ncy9n
+c3BlcnNvbmFsc2lnbnB0bnJzc2hhMmcyLmNybDBMBgNVHSAERTBDMEEGCSsGAQQBoDIBKDA0MDIG
+CCsGAQUFBwIBFiZodHRwczovL3d3dy5nbG9iYWxzaWduLmNvbS9yZXBvc2l0b3J5LzANBgkqhkiG
+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
+QAYIKwYBBQUHMAKGNGh0dHA6Ly9zZWN1cmUuZ2xvYmFsc2lnbi5jb20vY2FjZXJ0L2dzaHZzbWlt
+ZWNhMS5jcnQwHQYDVR0OBBYEFHC1FT3LO6BpGtdIXSM5FWFPgFO+MB8GA1UdIwQYMBaAFMs4ErDH
+mcB4koyzIZXm9CZiwOA/MEwGA1UdIARFMEMwQQYJKwYBBAGgMgEoMDQwMgYIKwYBBQUHAgEWJmh0
+dHBzOi8vd3d3Lmdsb2JhbHNpZ24uY29tL3JlcG9zaXRvcnkvMDsGA1UdHwQ0MDIwMKAuoCyGKmh0
+dHA6Ly9jcmwuZ2xvYmFsc2lnbi5jb20vZ3NodnNtaW1lY2ExLmNybDAOBgNVHQ8BAf8EBAMCBaAw
+HQYDVR0lBBYwFAYIKwYBBQUHAwIGCCsGAQUFBwMEMA0GCSqGSIb3DQEBCwUAA4IBAQAp7ulGi+yb
+H6Go2/IGeuxY5v6bGG9OgxOivBTos3k5ZBoWJt7BxDTYOLkA5gNLvh2tqsJVUJI5hQXwB4FFK0bI
+/YuPUDxQxj9F2DBF6Mrgnclj5XLK3y9N5khy5/Ullth3jbDQ1dmyHQISh4olPbqtnHnWiUb6Mhf6
+I3UgrUAhzwFXOlZSk57FgvAZ9472grnkSI8aW1mZp1gf5BNYEVb6y/e1hxlNeZbtIa0vvWDm+tK1
+ENfcc+LgRCL4gqiu3v3MEyXXeq/eH/iibrGhissORpiy+nMuWzsTGYOkRRn9RtyEmJAh48WUKCt3
+SR4lOce76r8Fd1Dg0XA0lCCwrFRzMYICXjCCAloCAQEwXDBMMQswCQYDVQQGEwJCRTEZMBcGA1UE
+ChMQR2xvYmFsU2lnbiBudi1zYTEiMCAGA1UEAxMZR2xvYmFsU2lnbiBIViBTL01JTUUgQ0EgMQIM
+IxVzVdM/KCmBJokVMA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCDHLD5WDh2PnVq2
+c+Mv9TXJtLkHGXkUfBbFsTPuNcXqXDAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3
+DQEJBTEPFw0xODEyMTIwMDUzMzRaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUDBAEqMAsGCWCG
+SAFlAwQBFjALBglghkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEKMAsGCSqGSIb3DQEB
+BzALBglghkgBZQMEAgEwDQYJKoZIhvcNAQEBBQAEggEAEKoq5IGhph/fd/Y+SlDttaK0WWXgLngX
+xIhFX4hN/txdO/RrawPrpK9xPBARx/eHK/AhA/Kk14UGeUQylxnfQUQkZgiMf3TMujvF+WRGA5Fi
+CQ7g6/90iO6WMIU4asPYknrvg/lbn4SD6mcjGlPSym9L36sf9DDrF6qdpwwEm21npgKem6jdzMI+
+vp4vHbgTKX7EJxy1If1opDAPY8CoXSWbBYZOdKVI8ko0X3ocBEEEzZrXx+AhHWuMJzOSHgoiVpAA
+O2cPvy3QE8LDMW0PM1dAwFk/7Kw9srTCklClYDAXtnwM2cR5mpqZMV4Mqpq1075zBCdOc1Dmio/B
+8PEr6Q==
+--000000000000b19631057cc8a048--
