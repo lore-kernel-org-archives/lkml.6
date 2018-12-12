@@ -6,208 +6,146 @@ X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FA95C04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 07:54:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBAB6C04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 07:57:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF5B520811
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 07:54:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF5B520811
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 82D172086D
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 07:57:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82D172086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726642AbeLLHyW (ORCPT
+        id S1726678AbeLLH50 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 02:54:22 -0500
-Received: from mga02.intel.com ([134.134.136.20]:43443 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726242AbeLLHyW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 02:54:22 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Dec 2018 23:54:21 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,343,1539673200"; 
-   d="scan'208";a="106790869"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga007.fm.intel.com with ESMTP; 11 Dec 2018 23:54:21 -0800
-Received: from [10.125.251.226] (abudanko-mobl.ccr.corp.intel.com [10.125.251.226])
-        by linux.intel.com (Postfix) with ESMTP id E27EE58079D;
-        Tue, 11 Dec 2018 23:54:18 -0800 (PST)
-Subject: [PATCH v1 1/3] perf record: allocate affinity masks
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <42c2dcb4-7e6f-fcdb-7c87-e55ccb9884b0@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <b00e18af-4e77-ddcc-c0d7-cde6e54c0f9b@linux.intel.com>
-Date:   Wed, 12 Dec 2018 10:54:17 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <42c2dcb4-7e6f-fcdb-7c87-e55ccb9884b0@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        Wed, 12 Dec 2018 02:57:26 -0500
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33972 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726251AbeLLH5Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 02:57:24 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id BF88940216E5;
+        Wed, 12 Dec 2018 07:57:22 +0000 (UTC)
+Received: from localhost (unknown [10.64.242.21])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id AFB2C170E4;
+        Wed, 12 Dec 2018 07:57:21 +0000 (UTC)
+Date:   Wed, 12 Dec 2018 16:57:20 +0900 (JST)
+Message-Id: <20181212.165720.1203400724538830403.yamato@redhat.com>
+To:     serge@hallyn.com
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH resend] eventfd: make eventfd files distinguishable in
+ /proc/$PID/fd
+From:   Masatake YAMATO <yamato@redhat.com>
+In-Reply-To: <20181211230914.GA2677@mail.hallyn.com>
+References: <20181209183546.5550-1-yamato@redhat.com>
+        <20181211230914.GA2677@mail.hallyn.com>
+Organization: Red Hat Japan, Inc.
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 12 Dec 2018 07:57:22 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Wed, 12 Dec 2018 07:57:22 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'yamato@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, 11 Dec 2018 17:09:14 -0600, "Serge E. Hallyn" <serge@hallyn.com> wrote:
+> On Mon, Dec 10, 2018 at 03:35:46AM +0900, Masatake YAMATO wrote:
+>> Finding endpoints of an IPC channel is one of essential task to
+>> understand how a user program works. Procfs and netlink socket provide
+>> enough hints to find endpoints for IPC channels like pipes, unix
+>> sockets, and pseudo terminals. However, there is no simple way to find
+>> endpoints for an eventfd file from userland. An inode number doesn't
+>> hint. Unlike pipe, all eventfd files shares one inode object.
+>> 
+>> To provide the way to find endpoints of an eventfd file, this patch
+>> adds eventfd identifiers to the output of 'ls -l /proc/$pid/fd' like:
+>> 
+>>   ...
+>>   lrwx------. 1 qemu qemu 64 May 20 04:49 93 -> 'anon_inode:[eventfd:130]'
+>>   lrwx------. 1 qemu qemu 64 May 20 04:49 94 -> 'anon_inode:[eventfd:131]'
+>>   ...
+>> 
+>> Here "130" and "131" are added as identifiers newly added.
+>> In the case that ida_simple_get returns an error, this change doesn't add
+>> an identifier; just use "[eventfd]" as before.
+>> 
+>> Signed-off-by: Masatake YAMATO <yamato@redhat.com>
+> 
+> I'm going to love this when I need it :)  Thanks.
+> 
+> Acked-by: Serge Hallyn <serge@hallyn.com>
+>
 
-Allocate affinity option and masks for mmap data buffers and
-record thread as well as initialize allocated objects.
+Thank you for replying.
+This is the first time getting replying since my first post,
+Mon, 21 May 2018 05:18:23 +0900.
 
-Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
----
- tools/perf/builtin-record.c | 11 ++++++++++-
- tools/perf/perf.h           |  5 +++++
- tools/perf/util/evlist.c    |  6 +++---
- tools/perf/util/evlist.h    |  2 +-
- tools/perf/util/mmap.c      |  2 ++
- tools/perf/util/mmap.h      |  3 ++-
- 6 files changed, 23 insertions(+), 6 deletions(-)
+Can I expect my patch is merged to the mainline?
+Or should I do something more?
 
-diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-index 882285fb9f64..4979719e54ae 100644
---- a/tools/perf/builtin-record.c
-+++ b/tools/perf/builtin-record.c
-@@ -81,6 +81,7 @@ struct record {
- 	bool			timestamp_boundary;
- 	struct switch_output	switch_output;
- 	unsigned long long	samples;
-+	cpu_set_t		affinity_mask;
- };
- 
- static volatile int auxtrace_record__snapshot_started;
-@@ -533,7 +534,8 @@ static int record__mmap_evlist(struct record *rec,
- 
- 	if (perf_evlist__mmap_ex(evlist, opts->mmap_pages,
- 				 opts->auxtrace_mmap_pages,
--				 opts->auxtrace_snapshot_mode, opts->nr_cblocks) < 0) {
-+				 opts->auxtrace_snapshot_mode,
-+				 opts->nr_cblocks, opts->affinity) < 0) {
- 		if (errno == EPERM) {
- 			pr_err("Permission error mapping pages.\n"
- 			       "Consider increasing "
-@@ -1980,6 +1982,9 @@ int cmd_record(int argc, const char **argv)
- # undef REASON
- #endif
- 
-+	CPU_ZERO(&rec->affinity_mask);
-+	rec->opts.affinity = PERF_AFFINITY_SYS;
-+
- 	rec->evlist = perf_evlist__new();
- 	if (rec->evlist == NULL)
- 		return -ENOMEM;
-@@ -2143,6 +2148,10 @@ int cmd_record(int argc, const char **argv)
- 	if (verbose > 0)
- 		pr_info("nr_cblocks: %d\n", rec->opts.nr_cblocks);
- 
-+	pr_debug("affinity (UNSET:%d, NODE:%d, CPU:%d) = %d\n",
-+		 PERF_AFFINITY_SYS, PERF_AFFINITY_NODE,
-+		 PERF_AFFINITY_CPU, rec->opts.affinity);
-+
- 	err = __cmd_record(&record, argc, argv);
- out:
- 	perf_evlist__delete(rec->evlist);
-diff --git a/tools/perf/perf.h b/tools/perf/perf.h
-index 388c6dd128b8..08e75815de2f 100644
---- a/tools/perf/perf.h
-+++ b/tools/perf/perf.h
-@@ -83,8 +83,13 @@ struct record_opts {
- 	clockid_t    clockid;
- 	u64          clockid_res_ns;
- 	int	     nr_cblocks;
-+	int	     affinity;
- };
- 
-+#define PERF_AFFINITY_SYS  0
-+#define PERF_AFFINITY_NODE 1
-+#define PERF_AFFINITY_CPU  2
-+
- struct option;
- extern const char * const *record_usage;
- extern struct option *record_options;
-diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
-index e90575192209..60e825be944a 100644
---- a/tools/perf/util/evlist.c
-+++ b/tools/perf/util/evlist.c
-@@ -1018,7 +1018,7 @@ int perf_evlist__parse_mmap_pages(const struct option *opt, const char *str,
-  */
- int perf_evlist__mmap_ex(struct perf_evlist *evlist, unsigned int pages,
- 			 unsigned int auxtrace_pages,
--			 bool auxtrace_overwrite, int nr_cblocks)
-+			 bool auxtrace_overwrite, int nr_cblocks, int affinity)
- {
- 	struct perf_evsel *evsel;
- 	const struct cpu_map *cpus = evlist->cpus;
-@@ -1028,7 +1028,7 @@ int perf_evlist__mmap_ex(struct perf_evlist *evlist, unsigned int pages,
- 	 * Its value is decided by evsel's write_backward.
- 	 * So &mp should not be passed through const pointer.
- 	 */
--	struct mmap_params mp = { .nr_cblocks = nr_cblocks };
-+	struct mmap_params mp = { .nr_cblocks = nr_cblocks, .affinity = affinity };
- 
- 	if (!evlist->mmap)
- 		evlist->mmap = perf_evlist__alloc_mmap(evlist, false);
-@@ -1060,7 +1060,7 @@ int perf_evlist__mmap_ex(struct perf_evlist *evlist, unsigned int pages,
- 
- int perf_evlist__mmap(struct perf_evlist *evlist, unsigned int pages)
- {
--	return perf_evlist__mmap_ex(evlist, pages, 0, false, 0);
-+	return perf_evlist__mmap_ex(evlist, pages, 0, false, 0, PERF_AFFINITY_SYS);
- }
- 
- int perf_evlist__create_maps(struct perf_evlist *evlist, struct target *target)
-diff --git a/tools/perf/util/evlist.h b/tools/perf/util/evlist.h
-index 868294491194..72728d7f4432 100644
---- a/tools/perf/util/evlist.h
-+++ b/tools/perf/util/evlist.h
-@@ -162,7 +162,7 @@ unsigned long perf_event_mlock_kb_in_pages(void);
- 
- int perf_evlist__mmap_ex(struct perf_evlist *evlist, unsigned int pages,
- 			 unsigned int auxtrace_pages,
--			 bool auxtrace_overwrite, int nr_cblocks);
-+			 bool auxtrace_overwrite, int nr_cblocks, int affinity);
- int perf_evlist__mmap(struct perf_evlist *evlist, unsigned int pages);
- void perf_evlist__munmap(struct perf_evlist *evlist);
- 
-diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
-index 8fc39311a30d..e68ba754a8e2 100644
---- a/tools/perf/util/mmap.c
-+++ b/tools/perf/util/mmap.c
-@@ -343,6 +343,8 @@ int perf_mmap__mmap(struct perf_mmap *map, struct mmap_params *mp, int fd, int c
- 	map->fd = fd;
- 	map->cpu = cpu;
- 
-+	CPU_ZERO(&map->affinity_mask);
-+
- 	if (auxtrace_mmap__mmap(&map->auxtrace_mmap,
- 				&mp->auxtrace_mp, map->base, fd))
- 		return -1;
-diff --git a/tools/perf/util/mmap.h b/tools/perf/util/mmap.h
-index aeb6942fdb00..e566c19b242b 100644
---- a/tools/perf/util/mmap.h
-+++ b/tools/perf/util/mmap.h
-@@ -38,6 +38,7 @@ struct perf_mmap {
- 		int		 nr_cblocks;
- 	} aio;
- #endif
-+	cpu_set_t	affinity_mask;
- };
- 
- /*
-@@ -69,7 +70,7 @@ enum bkw_mmap_state {
- };
- 
- struct mmap_params {
--	int			    prot, mask, nr_cblocks;
-+	int			    prot, mask, nr_cblocks, affinity;
- 	struct auxtrace_mmap_params auxtrace_mp;
- };
+Masatake YAMATO
+
+>> ---
+>>  fs/eventfd.c | 14 +++++++++++++-
+>>  1 file changed, 13 insertions(+), 1 deletion(-)
+>> 
+>> diff --git a/fs/eventfd.c b/fs/eventfd.c
+>> index 08d3bd602f73..c18952948110 100644
+>> --- a/fs/eventfd.c
+>> +++ b/fs/eventfd.c
+>> @@ -21,6 +21,11 @@
+>>  #include <linux/eventfd.h>
+>>  #include <linux/proc_fs.h>
+>>  #include <linux/seq_file.h>
+>> +#include <linux/idr.h>
+>> +
+>> +/* Worst case buffer size needed for holding an integer. */
+>> +#define ITOA_MAX_LEN 12
+>> +DEFINE_IDA(eventfd_ida);
+>>  
+>>  struct eventfd_ctx {
+>>  	struct kref kref;
+>> @@ -35,6 +40,7 @@ struct eventfd_ctx {
+>>  	 */
+>>  	__u64 count;
+>>  	unsigned int flags;
+>> +	int id;
+>>  };
+>>  
+>>  /**
+>> @@ -69,6 +75,8 @@ EXPORT_SYMBOL_GPL(eventfd_signal);
+>>  
+>>  static void eventfd_free_ctx(struct eventfd_ctx *ctx)
+>>  {
+>> +	if (ctx->id >= 0)
+>> +		ida_simple_remove(&eventfd_ida, ctx->id);
+>>  	kfree(ctx);
+>>  }
+>>  
+>> @@ -384,6 +392,7 @@ static int do_eventfd(unsigned int count, int flags)
+>>  {
+>>  	struct eventfd_ctx *ctx;
+>>  	int fd;
+>> +	char name[1 + 8 + ITOA_MAX_LEN + 1 + 1] = "[eventfd]";
+>>  
+>>  	/* Check the EFD_* constants for consistency.  */
+>>  	BUILD_BUG_ON(EFD_CLOEXEC != O_CLOEXEC);
+>> @@ -400,8 +409,11 @@ static int do_eventfd(unsigned int count, int flags)
+>>  	init_waitqueue_head(&ctx->wqh);
+>>  	ctx->count = count;
+>>  	ctx->flags = flags;
+>> +	ctx->id = ida_simple_get(&eventfd_ida, 0, 0, GFP_KERNEL);
+>>  
+>> -	fd = anon_inode_getfd("[eventfd]", &eventfd_fops, ctx,
+>> +	if (ctx->id >= 0)
+>> +		snprintf(name, sizeof(name), "[eventfd:%d]", ctx->id);
+>> +	fd = anon_inode_getfd(name, &eventfd_fops, ctx,
+>>  			      O_RDWR | (flags & EFD_SHARED_FCNTL_FLAGS));
+>>  	if (fd < 0)
+>>  		eventfd_free_ctx(ctx);
+>> -- 
+>> 2.17.0
