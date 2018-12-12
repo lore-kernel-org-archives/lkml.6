@@ -2,116 +2,89 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E189AC65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:26:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A85E2C65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:27:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A404620870
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:26:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544635572;
-	bh=taLdMqD8uGpTPXnoETTA3FKlb2OmR9x/D/srdsOy7jE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=k8vtIvilg4W/UnWcwtXMaqid9voDg+hyZvH7p0okdoVHGp9g/Ap2tqGPrSurFVcly
-	 X+Fi8FB9e8z5pGhhEN4+vFUP09mOfMhSPHtyTYYcuXtXoCidjbEDRO2UHODj+Eicy+
-	 lPha1GVJA0I7jmoMDQeXs/mZqnA27/rSMHwMRFxc=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A404620870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 6907520879
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:27:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="DInlvK+c"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6907520879
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728043AbeLLR0M (ORCPT
+        id S1728048AbeLLR1N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 12:26:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39380 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726922AbeLLR0L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 12:26:11 -0500
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D5BCC2084E;
-        Wed, 12 Dec 2018 17:26:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544635570;
-        bh=taLdMqD8uGpTPXnoETTA3FKlb2OmR9x/D/srdsOy7jE=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=OQo+w0E2bfvk3XmlNAXG7GpnOJa8Vcl7oKXuJABsiIe8bnn0l8NXh6988aIqAcAhq
-         98a9JrxoaB4AAdtyAmNwnNQueYIUFGUD0w2aCFFJtLrYG0aqvRd3bfxrzRy0IDMUJV
-         UWs5kedJBLjWW4hVq+IqLG/E8iZmMDe86VvXqwps=
-Date:   Wed, 12 Dec 2018 17:26:04 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     =?UTF-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>
-Cc:     knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
-        kgene@kernel.org, krzk@kernel.org, xc-racer2@live.ca,
-        broonie@kernel.org, arnaud.pouliquen@st.com,
-        baolin.wang@linaro.org, smohanad@codeaurora.org,
-        eugen.hristev@microchip.com, rdunlap@infradead.org,
-        vilhelm.gray@gmail.com, freeman.liu@spreadtrum.com,
-        marcus.folkesson@gmail.com, geert@linux-m68k.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] dt-bindings: iio: adc: exynos-adc: Add S5PV210
- variant
-Message-ID: <20181212172604.6336779e@archlinux>
-In-Reply-To: <20181207191136.5464-4-pawel.mikolaj.chmiel@gmail.com>
-References: <20181207191136.5464-1-pawel.mikolaj.chmiel@gmail.com>
-        <20181207191136.5464-4-pawel.mikolaj.chmiel@gmail.com>
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Wed, 12 Dec 2018 12:27:13 -0500
+Received: from mail-yb1-f195.google.com ([209.85.219.195]:43839 "EHLO
+        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727799AbeLLR1L (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 12:27:11 -0500
+Received: by mail-yb1-f195.google.com with SMTP id d136so4242880ybh.10
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 09:27:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=wAWlHiL43Px9YEPlV+wmCzS/Y7fU4PLr+lm0IQ3PNdM=;
+        b=DInlvK+cQ8T8Ku++qLEv+3WnvycG+L7SBwIzP82cmOxP6JzTzlwLKxaUT9c1WymiUN
+         MbnTcvf3gkOiH6cRgHD7OJsgj3fwg5O4UzW0dFbVUP+6jclaEehzwIM3UwPEjseU6m6I
+         767j0zvj2wrT6O38gByz6QbnXvd4yB36y5FaU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wAWlHiL43Px9YEPlV+wmCzS/Y7fU4PLr+lm0IQ3PNdM=;
+        b=IfKfbNLi/qyEHKI03tTeGr8BlqOslNbdOwDhp5S0eEZfUy2PNBH21GK5XFDuFrNYBu
+         xfiy4kOQcGR44wru0YgV+bRqVRf6QsvICZF4qyJ9+3z1lyBTr1WJpCIsEtlTBzTwpbRC
+         smscnvy/8GeHtyOtAOc5uWodQQ9MYY+3n00z1IiRafEDBTzdsCX18InG2LqEkZdEMwBO
+         /64ciDmvsyDAd+IIJPw+WyCSyis1vfc3L3wucPq3LFfDNNy4CdMxRgnKxPK76NRWiVo2
+         jYh4jzKoL+nGUFt5xpP59Yzp6jrHeWveuf4fFW16/SyqW8gi3N/MlL1/TprKWudNtgSw
+         VVDA==
+X-Gm-Message-State: AA+aEWZlFt3JJ1xTF/hlpAwlZNMJ9psdznv77vUMda/3uQS5yQ4YbtFD
+        WUrwgEUS2qNf0Ht6sak+RGP+8zvMp65aNF3n17w4pw==
+X-Google-Smtp-Source: AFSGD/WrxW5MRtySGeSJ+1KDQuPjLEyJRKw2yT20aL6NMo4NMVTiSc0IZRzIKgarNqp92v4p1cyOX50uNP61bQJS8S4=
+X-Received: by 2002:a25:42c4:: with SMTP id p187mr22133586yba.46.1544635629448;
+ Wed, 12 Dec 2018 09:27:09 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+References: <CACKFLi=bOMKnmucRTNUyG=xWYWADJ61COFy2U-7rph0WRWR4Yg@mail.gmail.com>
+ <a183bfa67a3c3ca6c62676f01434eb921c9dc008.1544633931.git.jtoppins@redhat.com>
+In-Reply-To: <a183bfa67a3c3ca6c62676f01434eb921c9dc008.1544633931.git.jtoppins@redhat.com>
+From:   Michael Chan <michael.chan@broadcom.com>
+Date:   Wed, 12 Dec 2018 09:26:58 -0800
+Message-ID: <CACKFLimhji4BU9UjeQRsA18j+hPHYL_g8q__hpAr0WwEAM9m-Q@mail.gmail.com>
+Subject: Re: [PATCH net-next] bnxt: remove printing of hwrm message
+To:     Jonathan Toppins <jtoppins@redhat.com>
+Cc:     Netdev <netdev@vger.kernel.org>,
+        David Miller <davem@davemloft.net>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri,  7 Dec 2018 20:11:36 +0100
-Pawe=C5=82 Chmiel <pawel.mikolaj.chmiel@gmail.com> wrote:
-
-> From: Jonathan Bakker <xc-racer2@live.ca>
->=20
-> Add information about new compatible for S5PV210
->=20
-> Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
-> Signed-off-by: Pawe=C5=82 Chmiel <pawel.mikolaj.chmiel@gmail.com>
-
-Applied to the togreg branch of iio.git and pushed out as
-testing for the autobuilders to play with it.
-
-Thanks,
-
-Jonathan
-
+On Wed, Dec 12, 2018 at 8:59 AM Jonathan Toppins <jtoppins@redhat.com> wrote:
+>
+>   bnxt_en 0000:19:00.0 (unregistered net_device) (uninitialized): hwrm
+> req_type 0x190 seq id 0x6 error 0xffff
+>
+> The message above is commonly seen when a newer driver is used on
+> hardware with older firmware. The issue is this message means nothing to
+> anyone except Broadcom. Remove the message to not confuse users as this
+> message is really not very informative.
+>
+> Signed-off-by: Jonathan Toppins <jtoppins@redhat.com>
 > ---
->  .../devicetree/bindings/iio/adc/samsung,exynos-adc.txt        | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc=
-.txt b/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.txt
-> index 6c49db7f8ad2..a10c1f89037d 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.txt
-> +++ b/Documentation/devicetree/bindings/iio/adc/samsung,exynos-adc.txt
-> @@ -11,7 +11,7 @@ New driver handles the following
-> =20
->  Required properties:
->  - compatible:		Must be "samsung,exynos-adc-v1"
-> -				for exynos4412/5250 and s5pv210 controllers.
-> +				for exynos4412/5250 controllers.
->  			Must be "samsung,exynos-adc-v2" for
->  				future controllers.
->  			Must be "samsung,exynos3250-adc" for
-> @@ -28,6 +28,8 @@ Required properties:
->  				the ADC in s3c2443 and compatibles
->  			Must be "samsung,s3c6410-adc" for
->  				the ADC in s3c6410 and compatibles
-> +			Must be "samsung,s5pv210-adc" for
-> +				the ADC in s5pv210 and compatibles
->  - reg:			List of ADC register address range
->  			- The base address and range of ADC register
->  			- The base address and range of ADC_PHY register (every
+>
+> Notes:
+>     v2:
+>       include changes recommended by Michael Chan
+>
 
+Acked-by: Michael Chan <michael.chan@broadcom.com>
