@@ -2,287 +2,97 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E983C65BAE
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 03:36:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 247B5C65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 03:37:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC27320839
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 03:36:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC27320839
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id E183E20839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 03:37:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E183E20839
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726365AbeLLDgP (ORCPT
+        id S1726377AbeLLDhr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 22:36:15 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:16115 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726218AbeLLDgP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 22:36:15 -0500
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id B0116A38FA54C;
-        Wed, 12 Dec 2018 11:36:11 +0800 (CST)
-Received: from [127.0.0.1] (10.134.22.195) by DGGEMS408-HUB.china.huawei.com
- (10.3.19.208) with Microsoft SMTP Server id 14.3.408.0; Wed, 12 Dec 2018
- 11:36:08 +0800
-Subject: Re: [PATCH v2] f2fs: fix sbi->extent_list corruption issue
-To:     Sahitya Tummala <stummala@codeaurora.org>
-CC:     Jaegeuk Kim <jaegeuk@kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>
-References: <1543207640-31033-1-git-send-email-stummala@codeaurora.org>
- <20181127003050.GG55960@jaegeuk-macbookpro.roam.corp.google.com>
- <fc8c38f6-a039-7b63-d25c-966b0d4396d8@huawei.com>
- <20181129033239.GE9838@codeaurora.org>
- <20181130203339.GB71781@jaegeuk-macbookpro.roam.corp.google.com>
- <49285288-cf99-5f5a-0d1a-c2e0accd8d3d@huawei.com>
- <20181212031749.GF9838@codeaurora.org>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <0167a499-8479-6be4-946d-4446bd02ff63@huawei.com>
-Date:   Wed, 12 Dec 2018 11:36:08 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 11 Dec 2018 22:37:47 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:40962 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726211AbeLLDhr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 22:37:47 -0500
+Received: from [67.139.178.66] (helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1gWvL9-0000II-QL; Wed, 12 Dec 2018 04:37:40 +0100
+Date:   Tue, 11 Dec 2018 19:37:26 -0800 (PST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Borislav Petkov <bp@alien8.de>
+cc:     "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Jiri Kosina <jkosina@suse.cz>, Ingo Molnar <mingo@redhat.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        David Woodhouse <dwmw@amazon.co.uk>
+Subject: Re: [PATCH v2] x86/speculation: Add support for STIBP always-on
+ preferred mode
+In-Reply-To: <20181212000518.GX27375@zn.tnic>
+Message-ID: <alpine.DEB.2.21.1812111910520.22893@nanos.tec.linutronix.de>
+References: <20181211224615.5373.65736.stgit@tlendack-t1.amdoffice.net> <20181212000518.GX27375@zn.tnic>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20181212031749.GF9838@codeaurora.org>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/12/12 11:17, Sahitya Tummala wrote:
-> On Fri, Dec 07, 2018 at 05:47:31PM +0800, Chao Yu wrote:
->> On 2018/12/1 4:33, Jaegeuk Kim wrote:
->>> On 11/29, Sahitya Tummala wrote:
->>>>
->>>> On Tue, Nov 27, 2018 at 09:42:39AM +0800, Chao Yu wrote:
->>>>> On 2018/11/27 8:30, Jaegeuk Kim wrote:
->>>>>> On 11/26, Sahitya Tummala wrote:
->>>>>>> When there is a failure in f2fs_fill_super() after/during
->>>>>>> the recovery of fsync'd nodes, it frees the current sbi and
->>>>>>> retries again. This time the mount is successful, but the files
->>>>>>> that got recovered before retry, still holds the extent tree,
->>>>>>> whose extent nodes list is corrupted since sbi and sbi->extent_list
->>>>>>> is freed up. The list_del corruption issue is observed when the
->>>>>>> file system is getting unmounted and when those recoverd files extent
->>>>>>> node is being freed up in the below context.
->>>>>>>
->>>>>>> list_del corruption. prev->next should be fffffff1e1ef5480, but was (null)
->>>>>>> <...>
->>>>>>> kernel BUG at kernel/msm-4.14/lib/list_debug.c:53!
->>>>>>> task: fffffff1f46f2280 task.stack: ffffff8008068000
->>>>>>> lr : __list_del_entry_valid+0x94/0xb4
->>>>>>> pc : __list_del_entry_valid+0x94/0xb4
->>>>>>> <...>
->>>>>>> Call trace:
->>>>>>> __list_del_entry_valid+0x94/0xb4
->>>>>>> __release_extent_node+0xb0/0x114
->>>>>>> __free_extent_tree+0x58/0x7c
->>>>>>> f2fs_shrink_extent_tree+0xdc/0x3b0
->>>>>>> f2fs_leave_shrinker+0x28/0x7c
->>>>>>> f2fs_put_super+0xfc/0x1e0
->>>>>>> generic_shutdown_super+0x70/0xf4
->>>>>>> kill_block_super+0x2c/0x5c
->>>>>>> kill_f2fs_super+0x44/0x50
->>>>>>> deactivate_locked_super+0x60/0x8c
->>>>>>> deactivate_super+0x68/0x74
->>>>>>> cleanup_mnt+0x40/0x78
->>>>>>> __cleanup_mnt+0x1c/0x28
->>>>>>> task_work_run+0x48/0xd0
->>>>>>> do_notify_resume+0x678/0xe98
->>>>>>> work_pending+0x8/0x14
->>>>>>>
->>>>>>> Fix this by cleaning up inodes, extent tree and nodes of those
->>>>>>> recovered files before freeing up sbi and before next retry.
->>>>>>>
->>>>>>> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
->>>>>>> ---
->>>>>>> v2:
->>>>>>> -call evict_inodes() and f2fs_shrink_extent_tree() to cleanup inodes
->>>>>>>
->>>>>>>  fs/f2fs/f2fs.h     |  1 +
->>>>>>>  fs/f2fs/shrinker.c |  2 +-
->>>>>>>  fs/f2fs/super.c    | 13 ++++++++++++-
->>>>>>>  3 files changed, 14 insertions(+), 2 deletions(-)
->>>>>>>
->>>>>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->>>>>>> index 1e03197..aaee63b 100644
->>>>>>> --- a/fs/f2fs/f2fs.h
->>>>>>> +++ b/fs/f2fs/f2fs.h
->>>>>>> @@ -3407,6 +3407,7 @@ struct rb_entry *f2fs_lookup_rb_tree_ret(struct rb_root_cached *root,
->>>>>>>  bool f2fs_check_rb_tree_consistence(struct f2fs_sb_info *sbi,
->>>>>>>  						struct rb_root_cached *root);
->>>>>>>  unsigned int f2fs_shrink_extent_tree(struct f2fs_sb_info *sbi, int nr_shrink);
->>>>>>> +unsigned long __count_extent_cache(struct f2fs_sb_info *sbi);
->>>>>>>  bool f2fs_init_extent_tree(struct inode *inode, struct f2fs_extent *i_ext);
->>>>>>>  void f2fs_drop_extent_tree(struct inode *inode);
->>>>>>>  unsigned int f2fs_destroy_extent_node(struct inode *inode);
->>>>>>> diff --git a/fs/f2fs/shrinker.c b/fs/f2fs/shrinker.c
->>>>>>> index 9e13db9..7e3c13b 100644
->>>>>>> --- a/fs/f2fs/shrinker.c
->>>>>>> +++ b/fs/f2fs/shrinker.c
->>>>>>> @@ -30,7 +30,7 @@ static unsigned long __count_free_nids(struct f2fs_sb_info *sbi)
->>>>>>>  	return count > 0 ? count : 0;
->>>>>>>  }
->>>>>>>  
->>>>>>> -static unsigned long __count_extent_cache(struct f2fs_sb_info *sbi)
->>>>>>> +unsigned long __count_extent_cache(struct f2fs_sb_info *sbi)
->>>>>>>  {
->>>>>>>  	return atomic_read(&sbi->total_zombie_tree) +
->>>>>>>  				atomic_read(&sbi->total_ext_node);
->>>>>>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
->>>>>>> index af58b2c..769e7b1 100644
->>>>>>> --- a/fs/f2fs/super.c
->>>>>>> +++ b/fs/f2fs/super.c
->>>>>>> @@ -3016,6 +3016,16 @@ static void f2fs_tuning_parameters(struct f2fs_sb_info *sbi)
->>>>>>>  	sbi->readdir_ra = 1;
->>>>>>>  }
->>>>>>>  
->>>>>>> +static void f2fs_cleanup_inodes(struct f2fs_sb_info *sbi)
->>>>>>> +{
->>>>>>> +	struct super_block *sb = sbi->sb;
->>>>>>> +
->>>>>>> +	sync_filesystem(sb);
->>>>>>
->>>>>> This writes another checkpoint, which would not be what this retrial intended.
->>>>>
->>>>> Actually, checkpoint will not be triggered due to SBI_POR_DOING flag check
->>>>> as below:
->>>>>
->>>>> int f2fs_sync_fs(struct super_block *sb, int sync)
->>>>> {
->>>>> ...
->>>>> 	if (unlikely(is_sbi_flag_set(sbi, SBI_POR_DOING)))
->>>>> 		return -EAGAIN;
->>>>> ...
->>>>> }
->>>>>
->>>>> And also all dirty data/node won't be persisted due to SBI_POR_DOING flag,
->>>>> IIUC.
->>>>>
->>>>
->>>> Thanks Chao for the clarification.
->>>>
->>>> Hi Jaegeuk,
->>>>
->>>> Do you still have any further concerns or comments on this patch?
->>>
->>> Could you try the below first?
->>>
->>> --  How about adding a condition in f2fs_may_extent_tree() when adding extents?
->>> -- Likewise, if (shrinker is not registered) return false;
->>>
->>> If we can fix what you described directly, I don't want to rely on such the
->>> assumptions saying we won't do checkpoint. This flow literally says syncing
->>> and evicting cached objects, which opposed to what we'd like to drop all caches
->>> and restart fill_super again.
->>>
->>> Let me consider this as a final resolution.
->>
->> Jaegeuk,
->>
->> Still I want to ask, what kind of scenario we have to add retry logic in
->> fill_super for? As in android scenario, it must be extreme rare case that
->> system runs out-of-memory in boot time...at least, I didn't get any kind of
->> report like that.
->>
-> Hi Chao,
-
-Hi Sahitya,
-
-Thanks for letting me know that, I git-blamed the code, and found the
-original intention is like what you described:
-
-commit ed2e621a95d704e6a4e904cc00524e8cbddda0c2
-Author: Jaegeuk Kim <jaegeuk@kernel.org>
-Date:   Fri Aug 8 15:37:41 2014 -0700
-
-    f2fs: give a chance to mount again when encountering errors
-
-    This patch gives another chance to try mount process when we encounter
-an error.
-    This makes an effect on the roll-forward recovery failures as well.
-
-But I doubt that if we failed in recovery, maybe there is corruption in
-this image, would it be better to fail the mount, and let user fsck it and
-retry the mount? otherwise, the corruption may be expanded...
-
-Thanks,
-
+On Wed, 12 Dec 2018, Borislav Petkov wrote:
+> On Tue, Dec 11, 2018 at 10:46:16PM +0000, Lendacky, Thomas wrote:
+> > +	/*
+> > +	 * At this point, an STIBP mode other than "off" has been set.
+> > +	 * If STIBP support is not being forced, check if STIBP always-on
+> > +	 * is preferred.
+> > +	 */
+> > +	if (mode != SPECTRE_V2_USER_STRICT &&
+> > +	    boot_cpu_has(X86_FEATURE_AMD_STIBP_ALWAYS_ON)) {
+> > +		stibp_always_on = true;
+> > +		mode = SPECTRE_V2_USER_STRICT;
+> > +		pr_info("mitigation: STIBP always-on is preferred\n");
+> > +	}
+> > +
+> >  	/* Initialize Indirect Branch Prediction Barrier */
+> >  	if (boot_cpu_has(X86_FEATURE_IBPB)) {
+> >  		setup_force_cpu_cap(X86_FEATURE_USE_IBPB);
+> > @@ -1088,7 +1102,8 @@ static char *stibp_state(void)
+> >  	case SPECTRE_V2_USER_NONE:
+> >  		return ", STIBP: disabled";
+> >  	case SPECTRE_V2_USER_STRICT:
+> > -		return ", STIBP: forced";
+> > +		return stibp_always_on ? ", STIBP: always-on"
+> > +				       : ", STIBP: forced";
 > 
-> In my case, the first boot up has a failure in recovery as below -
-> 
-> F2FS-fs (mmcblk0p75): find_fsync_dnodes: detect looped node chain, blkaddr:1979471, next:1979472
-> F2FS-fs (mmcblk0p75): Cannot recover all fsync data errno=-22
-> 
-> But in the second attempt, retry will be set to false and because of that
-> recover_fsync_data() is skipped. This helped mount to be successful in
-> the second attempt. 
-> 
-> Thanks,
-> 
->> Thanks,
->>
->>>
->>> Thanks,
->>>
->>>>
->>>> Thanks,
->>>> Sahitya.
->>>>
->>>>> Thanks,
->>>>>
->>>>>> How about adding a condition in f2fs_may_extent_tree() when adding extents?
->>>>>> Likewise, if (shrinker is not registered) return false;
->>>>>>
->>>>>>
->>>>>>> +	shrink_dcache_sb(sb);
->>>>>>> +	evict_inodes(sb);
->>>>>>> +	f2fs_shrink_extent_tree(sbi, __count_extent_cache(sbi));
->>>>>>> +}
->>>>>>> +
->>>>>>>  static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
->>>>>>>  {
->>>>>>>  	struct f2fs_sb_info *sbi;
->>>>>>> @@ -3402,6 +3412,8 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
->>>>>>>  	 * falls into an infinite loop in f2fs_sync_meta_pages().
->>>>>>>  	 */
->>>>>>>  	truncate_inode_pages_final(META_MAPPING(sbi));
->>>>>>> +	/* cleanup recovery and quota inodes */
->>>>>>> +	f2fs_cleanup_inodes(sbi);
->>>>>>>  	f2fs_unregister_sysfs(sbi);
->>>>>>>  free_root_inode:
->>>>>>>  	dput(sb->s_root);
->>>>>>> @@ -3445,7 +3457,6 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
->>>>>>>  	/* give only one another chance */
->>>>>>>  	if (retry) {
->>>>>>>  		retry = false;
->>>>>>> -		shrink_dcache_sb(sb);
->>>>>>>  		goto try_onemore;
->>>>>>>  	}
->>>>>>>  	return err;
->>>>>>> -- 
->>>>>>> Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.
->>>>>>> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
->>>>>>
->>>>>> .
->>>>>>
->>>>>
->>>>
->>>> -- 
->>>> --
->>>> Sent by a consultant of the Qualcomm Innovation Center, Inc.
->>>> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
->>>
->>> .
->>>
->>
-> 
+> I still don't like that separate stibp_always_on variable when we can do
+> all the querying just by using mode and X86_FEATURE_AMD_STIBP_ALWAYS_ON.
 
+Hmmm. I've not seen the V1 of this (it's not in my inbox) but the v1->v2
+changes contain:
+
+> > - Removed explicit SPECTRE_V2_USER_STRICT_PREFERRED mode
+
+Now I really have to ask why?
+
+Neither the extra variable nor the cpu feature check are pretty. An
+explicit mode is way better in terms of code clarity and you get the proper
+printout via spectre_v2_user_strings.
+
+Hmm?
+
+	tglx
