@@ -2,258 +2,254 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91B72C67839
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:35:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2FF1C67839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:35:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41D6A20839
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:35:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="OE6ypCDj";
-	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="kADGQHUo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41D6A20839
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
+	by mail.kernel.org (Postfix) with ESMTP id 878F92080F
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:35:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 878F92080F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728200AbeLLRfE (ORCPT
+        id S1727691AbeLLRfI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 12:35:04 -0500
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:44956 "EHLO
-        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727845AbeLLRfD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 12:35:03 -0500
-Received: from pps.filterd (m0148460.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wBCHYGip023452;
-        Wed, 12 Dec 2018 09:34:25 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=facebook;
- bh=Bw9qNjBLMZikZoPo6otWiJpeM3H6Ae9EgFjG7cJ+gC0=;
- b=OE6ypCDjNPYObr1EZtccYaA6K67WaNU6EQY81MOBBiismWTRFMGeXFI6zMYgyrPjt69R
- J4XrvNR8qLxB74xJHook9xa4juKlCXaZYo22AKaliiR46bHu0mrtTFhWxsIe6rqmptfe
- anpCidZx4KxJCKcBZcnOSFJfuq/ga82/qKE= 
-Received: from maileast.thefacebook.com ([199.201.65.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2pb41c0pea-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Wed, 12 Dec 2018 09:34:24 -0800
-Received: from frc-mbx02.TheFacebook.com (2620:10d:c0a1:f82::26) by
- frc-hub04.TheFacebook.com (2620:10d:c021:18::174) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.1.1531.3; Wed, 12 Dec 2018 09:33:31 -0800
-Received: from frc-hub03.TheFacebook.com (2620:10d:c021:18::173) by
- frc-mbx02.TheFacebook.com (2620:10d:c0a1:f82::26) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.1.1531.3; Wed, 12 Dec 2018 09:33:31 -0800
-Received: from NAM05-DM3-obe.outbound.protection.outlook.com (192.168.183.28)
- by o365-in.thefacebook.com (192.168.177.73) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1531.3
- via Frontend Transport; Wed, 12 Dec 2018 09:33:30 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector1-fb-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Bw9qNjBLMZikZoPo6otWiJpeM3H6Ae9EgFjG7cJ+gC0=;
- b=kADGQHUoCqv/w8GPpj9IQjEv5hEbqt52Jgplbtm4gbXzITlux4f4Z/C7+Xw3oLyK9RJcV8XY6dzjf6mcd/19Ivrx1chWopqOv3X11RGOnJa4Ry83QA+3UBtiEqYzW3ep9p2iK5Ve7ZZeZCi1Q68zXyC08AUVKr9cbbk/Qm9SSIo=
-Received: from MWHPR15MB1165.namprd15.prod.outlook.com (10.175.2.19) by
- MWHPR15MB1549.namprd15.prod.outlook.com (10.173.235.22) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1404.22; Wed, 12 Dec 2018 17:33:28 +0000
-Received: from MWHPR15MB1165.namprd15.prod.outlook.com
- ([fe80::a165:7ace:d8a:de65]) by MWHPR15MB1165.namprd15.prod.outlook.com
- ([fe80::a165:7ace:d8a:de65%8]) with mapi id 15.20.1404.026; Wed, 12 Dec 2018
- 17:33:28 +0000
-From:   Song Liu <songliubraving@fb.com>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-CC:     Peter Zijlstra <peterz@infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "ast@kernel.org" <ast@kernel.org>,
-        "daniel@iogearbox.net" <daniel@iogearbox.net>,
-        Kernel Team <Kernel-team@fb.com>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCH v3 perf, bpf-next 1/4] perf, bpf: Introduce
- PERF_RECORD_BPF_EVENT
-Thread-Topic: [PATCH v3 perf, bpf-next 1/4] perf, bpf: Introduce
- PERF_RECORD_BPF_EVENT
-Thread-Index: AQHUkan/BrxKv3p0HEGwaC6e4kWgY6V7FkWAgAADU4CAAESogA==
-Date:   Wed, 12 Dec 2018 17:33:28 +0000
-Message-ID: <349F1EC9-107B-4A52-9721-69396B5E99A1@fb.com>
-References: <20181211233351.4036381-1-songliubraving@fb.com>
- <20181211233351.4036381-2-songliubraving@fb.com>
- <20181212131549.GZ5289@hirez.programming.kicks-ass.net>
- <20181212132742.GB21027@kernel.org>
-In-Reply-To: <20181212132742.GB21027@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: Apple Mail (2.3445.101.1)
-x-originating-ip: [2620:10d:c090:200::5:37be]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHPR15MB1549;20:LBx1RHCHDCYJw7YNjnYgb28TIustYYMEzFD+iXJ5XBSDTE92x+S+FwfHZwjJyxa/hhm39oBiRBscVM3Y6vi4TzzkzbksU9QvWRByoTa2ypGEmZMeGiticK9raTfijzfoib+NEBk9PXlisAzLEQj7/tLJj7JbNYjcCgZVEYKfmn0=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: df9af030-a0bb-455d-2ba8-08d66057ed8f
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:MWHPR15MB1549;
-x-ms-traffictypediagnostic: MWHPR15MB1549:
-x-microsoft-antispam-prvs: <MWHPR15MB1549D24AB348BBCCC62E744FB3A70@MWHPR15MB1549.namprd15.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(823302103)(10201501046)(3231455)(999002)(11241501185)(944501520)(52105112)(3002001)(93006095)(93001095)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(20161123564045)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:MWHPR15MB1549;BCL:0;PCL:0;RULEID:;SRVR:MWHPR15MB1549;
-x-forefront-prvs: 0884AAA693
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(136003)(376002)(39860400002)(366004)(346002)(199004)(189003)(7736002)(106356001)(305945005)(476003)(478600001)(71200400001)(8936002)(36756003)(486006)(83716004)(25786009)(8676002)(68736007)(33656002)(2616005)(446003)(6486002)(256004)(50226002)(81166006)(14444005)(82746002)(46003)(229853002)(11346002)(81156014)(6436002)(14454004)(6916009)(2906002)(6246003)(76176011)(71190400001)(6512007)(53936002)(99286004)(4326008)(57306001)(105586002)(575784001)(316002)(97736004)(6506007)(5660300001)(54906003)(86362001)(93886005)(6116002)(186003)(53546011)(102836004);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR15MB1549;H:MWHPR15MB1165.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: QdsHMXrA3/tDcUseW4ZpiQuSdS8jcWuch8YeJG0vwZa0U+69F/8kx40T5kB9oS2yM32Jt6yrWRADn9p6Gbr+MGBk2bnALufTqSTVMLwnVPz6T7F7Uy8bpNvqCfl9TLFcsw2GKinBAvufQpEH+83CJVvr2nnGAfTbUzwvIt3b0qIK1I0BQHq/kIVDxaWHYQtJlbTep25MO5alfl1fj7SEuL2LtscOCAqIJf69odKze3c57xX4C5zxOgxqk09UVL8YAlGrUji17yQa8Lf3JTK5J0Le4Qjckd2/FrNb+3DH6E+JOUtGGLoaokaVeund5ctZ
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <191117BFE399C74CAA395E8625FF4076@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Wed, 12 Dec 2018 12:35:08 -0500
+Received: from foss.arm.com ([217.140.101.70]:46150 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727845AbeLLRfF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 12:35:05 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DF1B480D;
+        Wed, 12 Dec 2018 09:35:04 -0800 (PST)
+Received: from e103592.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 580663F575;
+        Wed, 12 Dec 2018 09:35:00 -0800 (PST)
+Date:   Wed, 12 Dec 2018 17:34:57 +0000
+From:   Dave Martin <Dave.Martin@arm.com>
+To:     Vincenzo Frascino <vincenzo.frascino@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+        linux-mm@kvack.org, linux-arch@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Kostya Serebryany <kcc@google.com>,
+        Chintan Pandya <cpandya@codeaurora.org>,
+        Shuah Khan <shuah@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Evgeniy Stepanov <eugenis@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+Subject: Re: [RFC][PATCH 2/3] arm64: Define
+ Documentation/arm64/elf_at_flags.txt
+Message-ID: <20181212173457.GA3505@e103592.cambridge.arm.com>
+References: <cover.1544445454.git.andreyknvl@google.com>
+ <20181210143044.12714-1-vincenzo.frascino@arm.com>
+ <20181210143044.12714-3-vincenzo.frascino@arm.com>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: df9af030-a0bb-455d-2ba8-08d66057ed8f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Dec 2018 17:33:28.1646
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR15MB1549
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-12_04:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181210143044.12714-3-vincenzo.frascino@arm.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Dec 10, 2018 at 02:30:43PM +0000, Vincenzo Frascino wrote:
+> On arm64 the TCR_EL1.TBI0 bit has been set since Linux 3.x hence
+> the userspace (EL0) is allowed to set a non-zero value in the
+> top byte but the resulting pointers are not allowed at the
+> user-kernel syscall ABI boundary.
+> 
+> With the relaxed ABI proposed through this document, it is now possible
+> to pass tagged pointers to the syscalls, when these pointers are in
+> memory ranges obtained by an anonymous (MAP_ANONYMOUS) mmap() or brk().
+
+What about other anonymous memory such as the process stack?
+
+What about MAP_PRIVATE mappings of /dev/zero (i.e., oldskool "anonymous"
+mappings)?
+
+I wonder whether this should really say MAP_PRIVATE rather than
+MAP_ANONYMOUS.  There are two requirements here:
+
+ * the memory must be the exclusive property of a single process,
+   otherwise tagging it on-the-fly could break some other process;
+
+ * the memory should be regular memory, i.e., not something like a
+   mapped device.  Since copy-on-write mappings of devices make little
+   sense, and we want writes to devices to propagate to the hardware
+   directly, MAP_PRIVATE doesn't make a lot of sense for such mappings.
+
+MAP_ANONYMOUS | MAP_SHARED is theoretically possible, and we should
+make sure that it does the expected thing.  Tagging such memory is
+probably a bad idea, just like any other MAP_SHARED memory.
+
+I'm assuming here that tagging some currently shared copy-on-write pages
+would throw a page fault and trigger a copy, so that we end up tagging
+the calling process's private copy of the page.
+
+I also don't see how the above requirements conflict with regular file-
+backed mappings (which would need to work if you want to be able to
+tag objects in .bss or .data etc.)
+
+> This change in the ABI requires a mechanism to inform the userspace
+> that such an option is available.
+> 
+> This patch specifies and documents the way on which AT_FLAGS can be
+> used to advertise this feature to the userspace.
+> 
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will.deacon@arm.com>
+> CC: Andrey Konovalov <andreyknvl@google.com>
+> Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
+> ---
+>  Documentation/arm64/elf_at_flags.txt | 111 +++++++++++++++++++++++++++
+>  1 file changed, 111 insertions(+)
+>  create mode 100644 Documentation/arm64/elf_at_flags.txt
+> 
+> diff --git a/Documentation/arm64/elf_at_flags.txt b/Documentation/arm64/elf_at_flags.txt
+> new file mode 100644
+> index 000000000000..153e657c058a
+> --- /dev/null
+> +++ b/Documentation/arm64/elf_at_flags.txt
+> @@ -0,0 +1,111 @@
+> +ARM64 ELF AT_FLAGS
+> +==================
+> +
+> +This document describes the usage and semantics of AT_FLAGS on arm64.
+> +
+> +1. Introduction
+> +---------------
+> +
+> +AT_FLAGS is part of the Auxiliary Vector, contains the flags and it
+> +is currently set to zero by the kernel on arm64.
+> +
+> +The auxiliary vector can be accessed by the userspace using the
+> +getauxval() API provided by the C library.
+> +getauxval() returns an unsigned long and when a flag is present in
+> +the AT_FLAGS, the corresponding bit in the returned value is set to 1.
+> +
+> +The AT_FLAGS with a "defined semantic" on arm64 are exposed to the
+> +userspace via user API (uapi/asm/atflags.h).
+> +The AT_FLAGS bits with "undefined semantics" are set to zero by default.
+> +This means that the AT_FLAGS bits to which this document does not assign
+> +an explicit meaning are to be intended reserved for future use.
+> +The kernel will populate all such bits with zero until meanings are
+> +assigned to them. If and when meanings are assigned, it is guaranteed
+> +that they will not impact the functional operation of existing userspace
+> +software. Userspace software should ignore any AT_FLAGS bit whose meaning
+> +is not defined when the software is written.
+> +
+> +The userspace software can test for features by acquiring the AT_FLAGS
+> +entry of the auxiliary vector, and testing whether a relevant flag
+> +is set.
+> +
+> +Example of a userspace test function:
+> +
+> +bool feature_x_is_present(void)
+> +{
+> +	unsigned long at_flags = getauxval(AT_FLAGS);
+> +	if (at_flags & FEATURE_X)
+> +		return true;
+> +
+> +	return false;
+> +}
+> +
+> +Where the software relies on a feature advertised by AT_FLAGS, it
+> +should check that the feature is present before attempting to
+> +use it.
+> +
+> +2. Features exposed via AT_FLAGS
+> +--------------------------------
+> +
+> +bit[0]: ARM64_AT_FLAGS_SYSCALL_TBI
+> +
+> +    On arm64 the TCR_EL1.TBI0 bit has been set since Linux 3.x hence
+> +    the userspace (EL0) is allowed to set a non-zero value in the top
+> +    byte but the resulting pointers are not allowed at the user-kernel
+> +    syscall ABI boundary.
+> +    When bit[0] is set to 1 the kernel is advertising to the userspace
+> +    that a relaxed ABI is supported hence this type of pointers are now
+> +    allowed to be passed to the syscalls, when these pointers are in
+> +    memory ranges obtained by anonymous (MAP_ANONYMOUS) mmap() or brk().
+
+"TBI" is a slightly odd name.
+
+The kernel seems not to be ignoring the top byte, otherwise how could
+it make a difference whehter the memory is anonymous or something else?
+
+(With memory tagging enabled, the top byte is also not architecturally
+ignored.)
+
+> +    In these cases the tag is preserved as the pointer goes through the
+> +    kernel. Only when the kernel needs to check if a pointer is coming
+> +    from userspace (i.e. access_ok()) an untag operation is required.
+
+Does the last sentence belong here?  That's about kernel internals,
+whereas the rest all seems user-facing.
+
+> +
+> +3. ARM64_AT_FLAGS_SYSCALL_TBI
+> +-----------------------------
+> +
+> +When ARM64_AT_FLAGS_SYSCALL_TBI is enabled every syscalls can accept tagged
+> +pointers, when these pointers are in memory ranges obtained by an anonymous
+> +(MAP_ANONYMOUS) mmap() or brk().
+> +
+> +A definition of the meaning of tagged pointers on arm64 can be found in:
+> +Documentation/arm64/tagged-pointers.txt.
+> +
+> +When a pointer does not are in a memory range obtained by an anonymous mmap()
+> +or brk(), this can not be passed to a syscall if it is tagged.
+> +
+> +To be more explicit: a syscall can accept pointers whose memory range is
+> +obtained by a non-anonymous mmap() or brk() if and only if the tag encoded in
+> +the top-byte is 0x00.
+> +
+> +When a new syscall is added, this can accept tagged pointers if and only if
+> +these pointers are in memory ranges obtained by an anonymous (MAP_ANONYMOUS)
+> +mmap() or brk(). In all the other cases, the tag encoded in the top-byte is
+> +expected to be 0x00.
+
+Does this apply to kernel interfaces that are not syscalls?
+
+And does it apply to ioctls in general (I think from discussions
+elsewhere that it can't).
+
+What about things that flow through the kernel, like an
+si_value.sival_ptr that propagates from sigqueue(2) to the signal frame
+of the signalled thread, or registered with the kernel via aio_read(2)?
+
+This kind of thing is why I would like to define a set of rules for
+making an educated guess about how the kernel should interpret
+arbitrary arguments (in an ideal world).
 
 
-> On Dec 12, 2018, at 5:27 AM, Arnaldo Carvalho de Melo <acme@kernel.org> w=
-rote:
->=20
-> Em Wed, Dec 12, 2018 at 02:15:49PM +0100, Peter Zijlstra escreveu:
->> On Tue, Dec 11, 2018 at 03:33:47PM -0800, Song Liu wrote:
->>> For better performance analysis of BPF programs, this patch introduces
->>> PERF_RECORD_BPF_EVENT, a new perf_event_type that exposes BPF program
->>> load/unload information to user space.
->>>=20
->>> Each BPF program may contain up to BPF_MAX_SUBPROGS (256) sub programs.
->>> The following example shows kernel symbols for a BPF program with 7
->>> sub programs:
->>>=20
->>>    ffffffffa0257cf9 t bpf_prog_b07ccb89267cf242_F
->>>    ffffffffa02592e1 t bpf_prog_2dcecc18072623fc_F
->>>    ffffffffa025b0e9 t bpf_prog_bb7a405ebaec5d5c_F
->>>    ffffffffa025dd2c t bpf_prog_a7540d4a39ec1fc7_F
->>>    ffffffffa025fcca t bpf_prog_05762d4ade0e3737_F
->>>    ffffffffa026108f t bpf_prog_db4bd11e35df90d4_F
->>>    ffffffffa0263f00 t bpf_prog_89d64e4abf0f0126_F
->>>    ffffffffa0257cf9 t bpf_prog_ae31629322c4b018__dummy_tracepoi
->>=20
->> Doesn't BPF have enough information to generate 'saner' names? Going by
->> the thing below, these sub-progs are actually functions, right?
->=20
-> Yeah, this looks just like a symbol table, albeit just with functions,
-> so far.
->>>        /*
->>>         * Record different types of bpf events:
->>>         *  enum perf_bpf_event_type {
->>>         *     PERF_BPF_EVENT_UNKNOWN           =3D 0,
->>>         *     PERF_BPF_EVENT_PROG_LOAD         =3D 1,
->>>         *     PERF_BPF_EVENT_PROG_UNLOAD       =3D 2,
->>>         *  };
->>>         *
->>>         * struct {
->>>         *      struct perf_event_header header;
->>>         *      u32                             type;
->>>         *      u32                             flags;
->>>         *      u32                             id; // prog_id or other =
-id
->>>         *      u32                             sub_id; // subprog id
->>>         *
->>>         *      // for bpf_prog types, bpf prog or subprog
->>>         *      u8                              tag[BPF_TAG_SIZE];
->>>         *      u64                             addr;
->>>         *      u64                             len;
->>>         *      char                            name[];
->>>         *      struct sample_id                sample_id;
->>>         * };
->>>         */
->>=20
->> Isn't this mixing two different things (poorly)? The kallsym update and
->> the BPF load/unload ?
->>=20
->> And while this tracks the bpf kallsyms, it does not do all kallsyms.
->>=20
->> .... Oooh, I see the problem, everybody is doing their own custom
->> kallsym_{add,del}() thing, instead of having that in generic code :-(
->=20
->> This, for example, doesn't track module load/unload nor ftrace
->> trampolines, even though both affect kallsyms.
->=20
-> So you think the best would have to be a PERF_RECORD_ that just states
-> that code has been loaded at range (addr, len). I.e. much like
-> PERF_RECORD_MMAP does, just for userspace? Then it could be used by BPF
-> and any other kernel facility like the ones you described?
->=20
-> There would be an area that would be used by each of these facilities to
-> figure out further info, like we use the mmap->name to go and get the
-> symbol table from ELF files, etc, but BPF could use for their specific
-> stuff?
->=20
-> The above is almost like PERF_RECORD_MMAP (PERF_BPF_EVENT_PROG_LOAD) +
-> PERF_RECORD_MUNMAP(PERF_BPF_EVENT_PROG_UNLOAD) in one event, with this
-> 'type' thing allowing for more stuff to be put in later, I guess.
->=20
-> - Arnaldo
+With issues like this in the mix, it seems difficult to extract general
+guarantees from ARM64_AT_FLAGS_SYSCALL_TBI.  If it means that just
+certain specific uses of a few specific syscalls work with tagged
+pointers, that may not be very useful by ifself?  It sounds like if
+you are tagging memory at all, you suddenly need to port every random
+library you're using.
 
-PERF_RECORD_MMAP and PERF_RECORD_BPF_EVENT are issued at different=20
-granularities:=20
+[...]
 
-   One PERF_RECORD_MMAP is issued for each mmap, which may contain=20
-   many symbols;
-   PERF_RECORD_BPF_EVENT is issued for each symbol (sub program).=20
-
-Unlike mmap to ELF file, where all symbols have static offsets within=20
-the file, different sub programs of a BPF program have their own=20
-page(s) and random starting addresses within the page(s). Therefore, we=20
-cannot have one PERF_RECORD_BPF_EVENT to cover multiple sub programs.=20
-
-Current version has these mmap-like PERF_RECORD_BPF_EVENT in perf.data,=20
-which is sufficient for basic profiling cases. For annotation and source
-line matching, use space need to process PERF_RECORD_BPF_EVENT (from=20
-kernel and synthesized).=20
-
-Thanks,
-Song
-
-
->>> +void perf_event_bpf_event_prog(enum perf_bpf_event_type type,
->>> +			       struct bpf_prog *prog)
->>> +{
->>> +	if (!atomic_read(&nr_bpf_events))
->>> +		return;
->>> +
->>> +	if (type !=3D PERF_BPF_EVENT_PROG_LOAD &&
->>> +	    type !=3D PERF_BPF_EVENT_PROG_UNLOAD)
->>> +		return;
->>> +
->>> +	if (prog->aux->func_cnt =3D=3D 0) {
->>> +		perf_event_bpf_event_subprog(type, prog,
->>> +					     prog->aux->id, 0);
->>> +	} else {
->>> +		int i;
->>> +
->>> +		for (i =3D 0; i < prog->aux->func_cnt; i++)
->>> +			perf_event_bpf_event_subprog(type, prog->aux->func[i],
->>> +						     prog->aux->id, i);
->>> +	}
->>> +}
->>=20
->=20
-> --=20
->=20
-> - Arnaldo
-
+Cheers
+---Dave
