@@ -2,312 +2,143 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES,
-	UNWANTED_LANGUAGE_BODY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F4F2C65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 22:28:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 626C3C65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 22:28:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D31520989
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 22:28:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D31520989
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 2090B20672
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 22:28:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2090B20672
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mips.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728467AbeLLW2c (ORCPT
+        id S1728495AbeLLW2j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 17:28:32 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:37329 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727131AbeLLW2b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 17:28:31 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7724830C57CD;
-        Wed, 12 Dec 2018 22:28:30 +0000 (UTC)
-Received: from llong.com (dhcp-17-223.bos.redhat.com [10.18.17.223])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E80FC6314C;
-        Wed, 12 Dec 2018 22:28:28 +0000 (UTC)
-From:   Waiman Long <longman@redhat.com>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Yang Shi <yang.shi@linux.alibaba.com>,
+        Wed, 12 Dec 2018 17:28:39 -0500
+Received: from mail-eopbgr730111.outbound.protection.outlook.com ([40.107.73.111]:46208
+        "EHLO NAM05-DM3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726983AbeLLW2j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 17:28:39 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=wavesemi.onmicrosoft.com; s=selector1-wavecomp-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+TepAXeOfcMJiJ4xmHWm+2RZby95nAxT7mYQlU05dcI=;
+ b=Qx5m5HttBg60VIguyJi0Irh9UCcjlSKQaDY6+NC5A0W3Ctn8bS7dDa4ZQWm+M/4vWxcOXCs1Nd1G86RmPKc/1dZK+5WdXoNJoR+aarL4FfbehXrHH5e2tQRqpRt9bPETVgdHK1yGhCiPxUNBm7olj2Naf06qcpXNyZpDUlS6948=
+Received: from CY4PR2201MB1272.namprd22.prod.outlook.com (10.171.216.146) by
+ CY4PR2201MB1272.namprd22.prod.outlook.com (10.171.216.146) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1404.19; Wed, 12 Dec 2018 22:28:35 +0000
+Received: from CY4PR2201MB1272.namprd22.prod.outlook.com
+ ([fe80::e8df:d0e6:2ff4:3936]) by CY4PR2201MB1272.namprd22.prod.outlook.com
+ ([fe80::e8df:d0e6:2ff4:3936%4]) with mapi id 15.20.1404.026; Wed, 12 Dec 2018
+ 22:28:35 +0000
+From:   Paul Burton <paul.burton@mips.com>
+To:     Firoz Khan <firoz.khan@linaro.org>
+CC:     "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-Arch <linux-arch@vger.kernel.org>,
         Arnd Bergmann <arnd@arndb.de>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Dmitry Safonov <dima@arista.com>,
-        Waiman Long <longman@redhat.com>
-Subject: [PATCH] debugobjects: Move printk out of db lock critical sections
-Date:   Wed, 12 Dec 2018 17:28:14 -0500
-Message-Id: <1544653694-27873-1-git-send-email-longman@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Wed, 12 Dec 2018 22:28:31 +0000 (UTC)
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
+Subject: Re: [PATCH v4 3/7] mips: rename macros and files from '64' to 'n64'
+Thread-Topic: [PATCH v4 3/7] mips: rename macros and files from '64' to 'n64'
+Thread-Index: AQHUjSNJ15+cZub/wUiwPpyZjNjVYqV4aUcAgADYI4CAAKuugIAAoKeAgAEsAwA=
+Date:   Wed, 12 Dec 2018 22:28:35 +0000
+Message-ID: <20181212222834.2zf3rb67fxfcmwuw@pburton-laptop>
+References: <1544073508-13720-1-git-send-email-firoz.khan@linaro.org>
+ <1544073508-13720-4-git-send-email-firoz.khan@linaro.org>
+ <20181210195144.dvprpyxyddusyb5c@pburton-laptop>
+ <CALxhOng7EzAd2zHKAOj3ipEd6y=DpS2JGo34s4V_cWVgmLjPwg@mail.gmail.com>
+ <20181211185947.gnaachztyh3ils7o@pburton-laptop>
+ <CALxhOngErLD7+CEhgSPwQUnGg7YEFTcH-v6dhR0j55SvEg1FoA@mail.gmail.com>
+In-Reply-To: <CALxhOngErLD7+CEhgSPwQUnGg7YEFTcH-v6dhR0j55SvEg1FoA@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: MWHPR15CA0046.namprd15.prod.outlook.com
+ (2603:10b6:300:ad::32) To CY4PR2201MB1272.namprd22.prod.outlook.com
+ (2603:10b6:910:61::18)
+user-agent: NeoMutt/20180716
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=pburton@wavecomp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [4.16.204.77]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;CY4PR2201MB1272;6:wJM3jE8tRY3knfLh1jP9Mmne2X8xh/3MtR/t/vwStsF9O4gOZWwI8Y4/NMeVntVTOtE9v7GQAvY0l1VVu0epZlK5XrhdZ3bgKgAHlwjZuXtQROsqaf3WKYw939fjs6JU8RKpy4gQ4eZrUruc7Cz3pbkE7kIwMCu33kmLTDsEVY0H6XrHjFUOboP8MsfN4mlXXJ++yokkJNE8UcZhpC25c3ML0n0o+jm1v4csGMgigk00LR5hHhq6hXuimuCxrzz/GK1sH59wkliJmejI82yp+uXsOZj9GjG/ycKa/pWYWYKhWt3gycoo3zHH2kKs8C9BV3XTK7egUJaard9FqVMXuJREZIOGF+4cX4HOrjCrxbGbzF7uLRHDPO5OsU6ZiuAlGRnXEecHHKjDn6XuM1tfiKJbRGDU+mR2IkgkOANuddE3sTk8P1CpBwSEeAidVqY4zLNHMrvACXsWEod/wKDOhw==;5:gGNf0PMfJq6dr696DJtALlGtm4bNuBj68etvRxfnybctEYrBXDr6xO2zqGQ5nDzPqXLPjnp0ugNcL9XZLwvp5JQ0TpngSRL+NieVHHz3z4MOiyWMOm0FkAAxyCStpRjKp2lWs0e+fzZjG226AYFS/UR2Pcg2AWWaTVs5AFM7Jr8=;7:kb/XMVYyL6uopgNsTH8hlTUOVMRWBW2oOTxOMsrLm/VSYv0/gR7tF6F4YliwOIhX7Dqoa5NTMLkwoq8P2OImoymiQsgSTdmHjeeL1ntWRGlEOEZEF875gfvHHsP3hQOwbO96Q4BhT6LaHs1n7lpK7A==
+x-ms-office365-filtering-correlation-id: 1c88e2b2-a690-4c73-0cb3-08d6608127bf
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(7021145)(8989299)(4534185)(7022145)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:CY4PR2201MB1272;
+x-ms-traffictypediagnostic: CY4PR2201MB1272:
+x-microsoft-antispam-prvs: <CY4PR2201MB1272E245142C72F577CDDD61C1A70@CY4PR2201MB1272.namprd22.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(3230020)(999002)(6040522)(2401047)(5005006)(8121501046)(93006095)(3002001)(3231475)(944501520)(52105112)(10201501046)(148016)(149066)(150057)(6041310)(20161123564045)(2016111802025)(20161123560045)(20161123562045)(20161123558120)(6043046)(201708071742011)(7699051)(76991095);SRVR:CY4PR2201MB1272;BCL:0;PCL:0;RULEID:;SRVR:CY4PR2201MB1272;
+x-forefront-prvs: 0884AAA693
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(7916004)(136003)(346002)(376002)(396003)(39850400004)(366004)(199004)(189003)(69234005)(7416002)(71190400001)(6916009)(6246003)(14444005)(81166006)(186003)(8936002)(486006)(105586002)(44832011)(26005)(256004)(6116002)(102836004)(53936002)(476003)(68736007)(3846002)(229853002)(1076002)(39060400002)(81156014)(6512007)(8676002)(99286004)(5660300001)(33716001)(71200400001)(25786009)(76176011)(4326008)(7736002)(106356001)(305945005)(97736004)(446003)(2906002)(9686003)(66066001)(33896004)(6436002)(42882007)(14454004)(58126008)(386003)(11346002)(6506007)(508600001)(6486002)(93886005)(316002)(52116002)(54906003);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR2201MB1272;H:CY4PR2201MB1272.namprd22.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: wavecomp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: X9CJqHmaN/Evb3EHxxNc3vj7HgKLbybdImbQhG8Az40b/tVCT9x95I3n/xFnto138GLE+Fix3WunaaeBh8ute8f67H3uTqS79z7cOrUFKvEd3IJtDD0Y71SvCa+SDN0vq/V48yO1D4K4Ift/YCTp09w7cVw9w+tfJpzWS4on58q7WYlSR9b8qausJZtfJUsxil63KGwpleQtj8u5alN1vUm1q1HeaKnRgQaWqUOU1Q15JPNWAFyziiUw1YPXhtfShAtQKI48Zg8tY9AsIYZ3s/HJCufIz8oZSGnq6YE0Nj4luDjGIEi9RnUWDWrQo8y1
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <0EE10DEB37FD5141B5FE9B65B9446384@namprd22.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: mips.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1c88e2b2-a690-4c73-0cb3-08d6608127bf
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Dec 2018 22:28:35.7446
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 463607d3-1db3-40a0-8a29-970c56230104
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR2201MB1272
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The db->lock is a raw spinlock and so the lock hold time is supposed
-to be short. This will not be the case when printk() is being involved
-in some of the critical sections. In order to avoid the long hold time,
-in case some messages need to be printed, the debug_object_is_on_stack()
-and debug_print_object() calls are now moved out of those critical
-sections.
+Hi Firoz,
 
-Holding the db->lock while calling printk() may lead to deadlock if
-printk() somehow requires the allocation/freeing of debug object that
-happens to be in the same hash bucket or a circular lock dependency
-warning from lockdep as reported in https://lkml.org/lkml/2018/12/11/143.
+On Wed, Dec 12, 2018 at 10:04:47AM +0530, Firoz Khan wrote:
+> > > Will this below change will help?
+> > >
+> > >  #define _MIPS_SIM_ABI32              1
+> > >  #define _MIPS_SIM_NABI32            2
+> > >  #define _MIPS_SIM_ABI64              3
+> > > +#define _MIPS_SIM_ABIN64           _MIPS_SIM_ABI64
+> >
+> > Hmm, I think I'd prefer that we just keep using _MIPS_SIM_ABI64.
+>=20
+> Sure, I think '64' to 'n64' conversion must be remove it from this patch
+> series.I can send v5 without '64' to 'n64' conversion.
+>=20
+> If we rename '64' to 'n64' in half of the place and this _MIPS_SIM_ABI64
+> if we half to keep it in same looks not good (according to me).
+>=20
+> (FYI, This macro name - _MIPS_SIM_ABIN64 must be _MIPS_SIM_NABI64
+> and defintion will be:
+> +#define _MIPS_SIM_NABI64           _MIPS_SIM_ABI64)
+>=20
+> So If you confirm I can send v5 without '64' to 'n64' conversion (not jus=
+t above
+> one, completely from this patch series). Or uou can take a call just
+> keep this macro -
+> _MIPS_SIM_ABI64 as it is and change it rest of the place.
 
-[   87.209665] WARNING: possible circular locking dependency detected
-[   87.210547] 4.20.0-rc4-00057-gc96cf92 #1 Tainted: G        W
-[   87.211449] ------------------------------------------------------
-[   87.212405] getty/519 is trying to acquire lock:
-[   87.213074] (____ptrval____) (&obj_hash[i].lock){-.-.}, at: debug_check_no_obj_freed+0xb4/0x302
-[   87.214343]
-[   87.214343] but task is already holding lock:
-[   87.215174] (____ptrval____) (&port_lock_key){-.-.}, at: uart_shutdown+0x3a3/0x4e2
-[   87.216260]
-[   87.216260] which lock already depends on the new lock.
+Let's just go ahead & leave everything as 64, and I'll do the 64 -> n64
+rename later. I hoped whilst you were adding n64-specific code this
+would be an easy change, but at this point let's just prioritize getting
+the series applied without the naming change so it can sit in -next for
+a while before the merge window.
 
-This patch was also found to be able to fix a boot hanging problem
-when the initramfs image was switched on after a debugobjects splat
-from the EFI code.
-
-Signed-off-by: Waiman Long <longman@redhat.com>
----
- lib/debugobjects.c | 61 +++++++++++++++++++++++++++++++++++++-----------------
- 1 file changed, 42 insertions(+), 19 deletions(-)
-
-diff --git a/lib/debugobjects.c b/lib/debugobjects.c
-index 14afeeb..c30e786 100644
---- a/lib/debugobjects.c
-+++ b/lib/debugobjects.c
-@@ -375,6 +375,8 @@ static void debug_object_is_on_stack(void *addr, int onstack)
- 	struct debug_bucket *db;
- 	struct debug_obj *obj;
- 	unsigned long flags;
-+	bool debug_printobj = false;
-+	bool debug_chkstack = false;
- 
- 	fill_pool();
- 
-@@ -391,7 +393,7 @@ static void debug_object_is_on_stack(void *addr, int onstack)
- 			debug_objects_oom();
- 			return;
- 		}
--		debug_object_is_on_stack(addr, onstack);
-+		debug_chkstack = true;
- 	}
- 
- 	switch (obj->state) {
-@@ -402,20 +404,25 @@ static void debug_object_is_on_stack(void *addr, int onstack)
- 		break;
- 
- 	case ODEBUG_STATE_ACTIVE:
--		debug_print_object(obj, "init");
- 		state = obj->state;
- 		raw_spin_unlock_irqrestore(&db->lock, flags);
-+		debug_print_object(obj, "init");
- 		debug_object_fixup(descr->fixup_init, addr, state);
- 		return;
- 
- 	case ODEBUG_STATE_DESTROYED:
--		debug_print_object(obj, "init");
-+		debug_printobj = true;
- 		break;
- 	default:
- 		break;
- 	}
- 
- 	raw_spin_unlock_irqrestore(&db->lock, flags);
-+	if (debug_chkstack)
-+		debug_object_is_on_stack(addr, onstack);
-+	if (debug_printobj)
-+		debug_print_object(obj, "init");
-+
- }
- 
- /**
-@@ -473,6 +480,8 @@ int debug_object_activate(void *addr, struct debug_obj_descr *descr)
- 
- 	obj = lookup_object(addr, db);
- 	if (obj) {
-+		bool debug_printobj = false;
-+
- 		switch (obj->state) {
- 		case ODEBUG_STATE_INIT:
- 		case ODEBUG_STATE_INACTIVE:
-@@ -481,14 +490,14 @@ int debug_object_activate(void *addr, struct debug_obj_descr *descr)
- 			break;
- 
- 		case ODEBUG_STATE_ACTIVE:
--			debug_print_object(obj, "activate");
- 			state = obj->state;
- 			raw_spin_unlock_irqrestore(&db->lock, flags);
-+			debug_print_object(obj, "activate");
- 			ret = debug_object_fixup(descr->fixup_activate, addr, state);
- 			return ret ? 0 : -EINVAL;
- 
- 		case ODEBUG_STATE_DESTROYED:
--			debug_print_object(obj, "activate");
-+			debug_printobj = true;
- 			ret = -EINVAL;
- 			break;
- 		default:
-@@ -496,10 +505,13 @@ int debug_object_activate(void *addr, struct debug_obj_descr *descr)
- 			break;
- 		}
- 		raw_spin_unlock_irqrestore(&db->lock, flags);
-+		if (debug_printobj)
-+			debug_print_object(obj, "activate");
- 		return ret;
- 	}
- 
- 	raw_spin_unlock_irqrestore(&db->lock, flags);
-+
- 	/*
- 	 * We are here when a static object is activated. We
- 	 * let the type specific code confirm whether this is
-@@ -531,6 +543,7 @@ void debug_object_deactivate(void *addr, struct debug_obj_descr *descr)
- 	struct debug_bucket *db;
- 	struct debug_obj *obj;
- 	unsigned long flags;
-+	bool debug_printobj = false;
- 
- 	if (!debug_objects_enabled)
- 		return;
-@@ -548,24 +561,27 @@ void debug_object_deactivate(void *addr, struct debug_obj_descr *descr)
- 			if (!obj->astate)
- 				obj->state = ODEBUG_STATE_INACTIVE;
- 			else
--				debug_print_object(obj, "deactivate");
-+				debug_printobj = true;
- 			break;
- 
- 		case ODEBUG_STATE_DESTROYED:
--			debug_print_object(obj, "deactivate");
-+			debug_printobj = true;
- 			break;
- 		default:
- 			break;
- 		}
--	} else {
-+	}
-+
-+	raw_spin_unlock_irqrestore(&db->lock, flags);
-+	if (!obj) {
- 		struct debug_obj o = { .object = addr,
- 				       .state = ODEBUG_STATE_NOTAVAILABLE,
- 				       .descr = descr };
- 
- 		debug_print_object(&o, "deactivate");
-+	} else if (debug_printobj) {
-+		debug_print_object(obj, "deactivate");
- 	}
--
--	raw_spin_unlock_irqrestore(&db->lock, flags);
- }
- EXPORT_SYMBOL_GPL(debug_object_deactivate);
- 
-@@ -580,6 +596,7 @@ void debug_object_destroy(void *addr, struct debug_obj_descr *descr)
- 	struct debug_bucket *db;
- 	struct debug_obj *obj;
- 	unsigned long flags;
-+	bool debug_printobj = false;
- 
- 	if (!debug_objects_enabled)
- 		return;
-@@ -599,20 +616,22 @@ void debug_object_destroy(void *addr, struct debug_obj_descr *descr)
- 		obj->state = ODEBUG_STATE_DESTROYED;
- 		break;
- 	case ODEBUG_STATE_ACTIVE:
--		debug_print_object(obj, "destroy");
- 		state = obj->state;
- 		raw_spin_unlock_irqrestore(&db->lock, flags);
-+		debug_print_object(obj, "destroy");
- 		debug_object_fixup(descr->fixup_destroy, addr, state);
- 		return;
- 
- 	case ODEBUG_STATE_DESTROYED:
--		debug_print_object(obj, "destroy");
-+		debug_printobj = true;
- 		break;
- 	default:
- 		break;
- 	}
- out_unlock:
- 	raw_spin_unlock_irqrestore(&db->lock, flags);
-+	if (debug_printobj)
-+		debug_print_object(obj, "destroy");
- }
- EXPORT_SYMBOL_GPL(debug_object_destroy);
- 
-@@ -641,9 +660,9 @@ void debug_object_free(void *addr, struct debug_obj_descr *descr)
- 
- 	switch (obj->state) {
- 	case ODEBUG_STATE_ACTIVE:
--		debug_print_object(obj, "free");
- 		state = obj->state;
- 		raw_spin_unlock_irqrestore(&db->lock, flags);
-+		debug_print_object(obj, "free");
- 		debug_object_fixup(descr->fixup_free, addr, state);
- 		return;
- 	default:
-@@ -716,6 +735,7 @@ void debug_object_assert_init(void *addr, struct debug_obj_descr *descr)
- 	struct debug_bucket *db;
- 	struct debug_obj *obj;
- 	unsigned long flags;
-+	bool debug_printobj = false;
- 
- 	if (!debug_objects_enabled)
- 		return;
-@@ -731,22 +751,25 @@ void debug_object_assert_init(void *addr, struct debug_obj_descr *descr)
- 			if (obj->astate == expect)
- 				obj->astate = next;
- 			else
--				debug_print_object(obj, "active_state");
-+				debug_printobj = true;
- 			break;
- 
- 		default:
--			debug_print_object(obj, "active_state");
-+			debug_printobj = true;
- 			break;
- 		}
--	} else {
-+	}
-+
-+	raw_spin_unlock_irqrestore(&db->lock, flags);
-+	if (!obj) {
- 		struct debug_obj o = { .object = addr,
- 				       .state = ODEBUG_STATE_NOTAVAILABLE,
- 				       .descr = descr };
- 
- 		debug_print_object(&o, "active_state");
-+	} else if (debug_printobj) {
-+		debug_print_object(obj, "active_state");
- 	}
--
--	raw_spin_unlock_irqrestore(&db->lock, flags);
- }
- EXPORT_SYMBOL_GPL(debug_object_active_state);
- 
-@@ -782,10 +805,10 @@ static void __debug_check_no_obj_freed(const void *address, unsigned long size)
- 
- 			switch (obj->state) {
- 			case ODEBUG_STATE_ACTIVE:
--				debug_print_object(obj, "free");
- 				descr = obj->descr;
- 				state = obj->state;
- 				raw_spin_unlock_irqrestore(&db->lock, flags);
-+				debug_print_object(obj, "free");
- 				debug_object_fixup(descr->fixup_free,
- 						   (void *) oaddr, state);
- 				goto repeat;
--- 
-1.8.3.1
-
+Thanks,
+    Paul
