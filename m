@@ -2,106 +2,80 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6706C04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 10:08:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8647FC65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 10:08:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C66120839
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 10:08:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="kEOXUyK1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C66120839
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 5316F2086D
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 10:08:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5316F2086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726956AbeLLKIS (ORCPT
+        id S1727027AbeLLKI3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 05:08:18 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:60342 "EHLO mail.skyhub.de"
+        Wed, 12 Dec 2018 05:08:29 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:42176 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726796AbeLLKIS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 05:08:18 -0500
-Received: from zn.tnic (p200300EC2BCDD8002DC08A63FFF8C6E5.dip0.t-ipconnect.de [IPv6:2003:ec:2bcd:d800:2dc0:8a63:fff8:c6e5])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726727AbeLLKI2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 05:08:28 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 019891EC0BFC;
-        Wed, 12 Dec 2018 11:08:16 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1544609297;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=GrLCOdT8HY4i4jpK3TF15BC8SA0WXnvSAbaQiVANtt8=;
-        b=kEOXUyK11mXOuyxZ/n2Lf3vl4ubdxKhviV8iZlzPaHi18O8nGhBcfwrWUsMKYPbDiXcxJd
-        c5Viabsuyb3w8+RPiduYNDkbpOynPAz+BJjRY6aBJf9xhLcbSjY4EMedtPTPbCQkTH2yYc
-        YCYKzw7fhIO7Y9QCQ0X9aTGjtdXsf8E=
-Date:   Wed, 12 Dec 2018 11:08:14 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Tom Lendacky <Thomas.Lendacky@amd.com>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        John Stultz <john.stultz@linaro.org>
-Subject: Re: [RFC PATCH 4/4] x86/TSC: Use RDTSCP
-Message-ID: <20181212100814.GB6653@zn.tnic>
-References: <20181211222326.14581-1-bp@alien8.de>
- <20181211222326.14581-5-bp@alien8.de>
- <CALCETrVArfAAbQKJ-g_5pOy6dMVgx-FC_mjdC9xzL1jU9T07jw@mail.gmail.com>
- <59aad362-4a5b-dd8b-642f-0dc3f83cf7ee@amd.com>
- <20181211233901.GV27375@zn.tnic>
- <CALCETrXvZ4avdUh2bTLVTTz3Jxogo3zK5akWTsJ=rkJpf1XiDg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CALCETrXvZ4avdUh2bTLVTTz3Jxogo3zK5akWTsJ=rkJpf1XiDg@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6AE9B307D857;
+        Wed, 12 Dec 2018 10:08:28 +0000 (UTC)
+Received: from jason-ThinkPad-T450s.redhat.com (ovpn-12-55.pek2.redhat.com [10.72.12.55])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0D5615C3FA;
+        Wed, 12 Dec 2018 10:08:22 +0000 (UTC)
+From:   Jason Wang <jasowang@redhat.com>
+To:     mst@redhat.com, jasowang@redhat.com, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH net V2 0/4] Fix various issue of vhost
+Date:   Wed, 12 Dec 2018 18:08:15 +0800
+Message-Id: <20181212100819.21295-1-jasowang@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Wed, 12 Dec 2018 10:08:28 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 11, 2018 at 06:24:44PM -0800, Andy Lutomirski wrote:
-> This makes me nervous, since no one knows what “serializing” means.
+Hi:
 
-Why no one? If you wanna say that X86_FEATURE_LFENCE_SERIALIZING is not
-really telling, so is X86_FEATURE_LFENCE_RDTSC, TBH. :)
+This series tries to fix various issues of vhost:
 
-> IIRC AMD specifically documents that MFENCE is required before RDTSC
-> to get sensible ordering.  So it’s entirely plausible to me that
-> LFENCE is okay for Spectre mitigation but MFENCE is needed for RDTSC
-> on some CPU.
+- Patch 1 adds a missing write barrier between used idx updating and
+  logging.
+- Patch 2-3 brings back the protection of device IOTLB through vq
+  mutex, this fixes possible use after free in device IOTLB entries.
+- Patch 4-7 fixes the diry page logging when device IOTLB is
+  enabled. We should done through GPA instead of GIOVA, this was done
+  through intorudce HVA->GPA reverse mapping and convert HVA to GPA
+  during logging dirty pages.
 
-Look at init_amd(), the if (cpu_has(c, X86_FEATURE_XMM2)) branch where
-we make LFENCE serializing. The logic with the new names would be:
+Please consider them for -stable.
 
+Thanks
 
-        asm volatile(ALTERNATIVE_3("rdtsc",
-                                   "mfence; rdtsc", X86_FEATURE_MFENCE,
-                                   "lfence; rdtsc", X86_FEATURE_LFENCE_SERIALIZING,
-                                   "rdtscp", X86_FEATURE_RDTSCP)
+Changes from V1:
+- silent compiler warning for 32bit.
+- use mutex_trylock() on slowpath instead of mutex_lock() even on fast
+  path.
 
-RDTSC is put there during build. At boot time:
+Jason Wang (4):
+  vhost: make sure used idx is seen before log in vhost_add_used_n()
+  vhost_net: switch to use mutex_trylock() in vhost_net_busy_poll()
+  Revert "net: vhost: lock the vqs one by one"
+  vhost: log dirty page correctly
 
-	if CPU has MFENCE
-		use MFENCE to stop RDTSC speculation
-	if LFENCE is serializing
-		use LFENCE...
-	if CPU has RDTSCP
-		even better, use that as it is the fastest or on par.
-
-Of course the order of those is important.
-
-Ok?
+ drivers/vhost/net.c   |  11 ++++-
+ drivers/vhost/vhost.c | 102 ++++++++++++++++++++++++++++++++++--------
+ drivers/vhost/vhost.h |   3 +-
+ 3 files changed, 95 insertions(+), 21 deletions(-)
 
 -- 
-Regards/Gruss,
-    Boris.
+2.17.1
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
