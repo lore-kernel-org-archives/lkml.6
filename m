@@ -2,124 +2,126 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22827C65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 12:22:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC679C04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 12:26:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C1FD20839
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 12:22:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 79F4120839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 12:26:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="E7F/Ukvi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C1FD20839
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="fzFwecR2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79F4120839
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727421AbeLLMWk (ORCPT
+        id S1727326AbeLLM0c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 07:22:40 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:39391 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727067AbeLLMWj (ORCPT
+        Wed, 12 Dec 2018 07:26:32 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:54959 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727155AbeLLM0b (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 07:22:39 -0500
-Received: by mail-wm1-f67.google.com with SMTP id f81so5703867wmd.4
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 04:22:38 -0800 (PST)
+        Wed, 12 Dec 2018 07:26:31 -0500
+Received: by mail-wm1-f66.google.com with SMTP id a62so5568537wmh.4
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 04:26:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6n1b3W6v8On8RcT3Da+D1SKbLIuuvBwoV0lCsE4MWJk=;
-        b=E7F/Ukvi9OOBDC0WfO7R7wfKvbGURkJQ6f0fYKFe6OA67WpT59NToDDBZFv2CiqxMq
-         DZtUSaPDrRiBr48QIK4C8X4HR/UdGAoSVOxOJLL3eVthB73RY86+Eyp0R5YOe5P7cI9/
-         r5f22WOC88Vn3OH4HX4/SXW7RRGRRfkio2rWrwvKSbl99qbeHs2JKAQdiW5b2SzONfNK
-         gikKA4AHxpvCKXQrwiXMq/fotXYTQXgrmOodQUj1iAZYsVI0Ddly5TKoxsfRONz+eS2k
-         HJI8kYyrWIW4MWyV6ajh99zfgaqSDdvug8T34QTfAsD7QqPA1Ys/puowS3wITRCMWfKD
-         vyXA==
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=TIuAEWKGYfnEAmKBppn2ZJzu1SPSqVplPfalT8CBgyc=;
+        b=fzFwecR2Yu/IxpH/QVunJB092HtFccU1EnxfSww7598ePIMCHKD7x3hV6t1dAXIR/h
+         4h7sG+ImO710Mvf6tXkj9Pxok5X+8Nd2NQkJWhnR6VJ8MV5qaWer4MoKiCslgKcV+D33
+         VSKYQEOUq/B6Aq4HBDsxaF0uEt6r8klqXNHSg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6n1b3W6v8On8RcT3Da+D1SKbLIuuvBwoV0lCsE4MWJk=;
-        b=cG4BDbW5tEVLhK7KTxwVOD1OMb6df4whz71Rnd4Mwp15jEgwdRC54FdPJCFIcYayCz
-         4BH5gXQadxgMA0qd+6RfyeAE4mr9Zc4cTa07nAVoQ+Ls/P+ElzDR4kM6jM1g59ZZD+Rc
-         leC4m3u8SAvpOjFTMEw8TIO+o8FFYXautO/hAsLTPIt8EEshhZ8b7g/K4UjzZyoAGamh
-         GYJ/G5uUySpPKeDMOOnrhgMaRqierDonHdbPAmrDjJwtOoo1QkuO3DRJ15Y+sdVoVtV3
-         TNjkXiR4JlGgkDn4AERb0ydoJW0Fub+uVffVXZPBIoERQ7doBHK15s45gUcF0QGyq2W1
-         XFiQ==
-X-Gm-Message-State: AA+aEWZdLuXBlVGOkToUZPF8gPiOlLunZHmVufHaHtSnkEs21iKSYCkN
-        TdZ0fQtecgjl67CaSQ813JvQKiC1qjeQr/5fgpcN2UJ6f9oSZQ==
-X-Google-Smtp-Source: AFSGD/WKZ9FXS3qZbzeoM87Jax+StOCXWTGTL0mE5wYAVVaoKI+z4Twgf2mXnj02Vbc7Bp5cXoLsWBOiTwIQqQwt9nY=
-X-Received: by 2002:a1c:9e4a:: with SMTP id h71mr6437867wme.82.1544617358147;
- Wed, 12 Dec 2018 04:22:38 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=TIuAEWKGYfnEAmKBppn2ZJzu1SPSqVplPfalT8CBgyc=;
+        b=Tn5aRATvwXdO1G6qo9spKFZqEPvn6uSn26HGPhHLb7Nry0yzYw3C2H9ZFczzcx5IIv
+         v3r0paOSyD70WPw/HqkqOqEE5ZKCfnX2ZUEnWzWed30+ixo3k+pYDzozLeKSPCRQ4XC5
+         xty46UgBWjr+YXBQehzGUB5neyczMTTbCVs6tmah68BEPXVHaWdjNkidqrNCO3kX7AMt
+         UhthAu8TX8K59gy8YWRw6gF9BRRX79H/yT86kWOSZPkIJBBiC818eZotEc18Jyffcodb
+         CGCSnauzNCP06zRA7IipnpfgmkgBblS4/R3G4Dvnw29X2Ivq6Jf1V2wxwAA2a50QTBQd
+         7svg==
+X-Gm-Message-State: AA+aEWYADiEDABAXs9ilUWv4PWWTU2acooVsIGaMm8U4H3SGEcoCHAVJ
+        EhAaR2WPevpPtuZn0bBXJi1CZw==
+X-Google-Smtp-Source: AFSGD/XxwiGS40FsOSYxZVMTVXTZ6nPQ5mW7FCyfyjt7oO4R2gIRgd7cyLjJJvhA0Uad2cZ+9h9Q2g==
+X-Received: by 2002:a1c:58ce:: with SMTP id m197mr6467980wmb.31.1544617588190;
+        Wed, 12 Dec 2018 04:26:28 -0800 (PST)
+Received: from [192.168.86.29] (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
+        by smtp.googlemail.com with ESMTPSA id f130sm2678433wme.41.2018.12.12.04.26.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 12 Dec 2018 04:26:27 -0800 (PST)
+Subject: Re: [PATCH v2 6/6] misc: fastrpc: Add support for compat ioctls
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     robh+dt@kernel.org, arnd@arndb.de, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        bjorn.andersson@linaro.org, linux-arm-msm@vger.kernel.org,
+        bkumar@qti.qualcomm.com, thierry.escande@linaro.org
+References: <20181207163513.16412-1-srinivas.kandagatla@linaro.org>
+ <20181207163513.16412-7-srinivas.kandagatla@linaro.org>
+ <20181212105932.GA1990@kroah.com>
+ <864aaef3-8d60-3beb-ce20-a9f41f78a32f@linaro.org>
+ <20181212115037.GA31075@kroah.com>
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Message-ID: <9867e420-de78-abc3-ab9d-deea3cf2491e@linaro.org>
+Date:   Wed, 12 Dec 2018 12:26:26 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-References: <20181210092853.13050-1-mjourdan@baylibre.com> <c5138091-d801-8b2a-85ab-d815f0508933@baylibre.com>
-In-Reply-To: <c5138091-d801-8b2a-85ab-d815f0508933@baylibre.com>
-From:   Maxime Jourdan <mjourdan@baylibre.com>
-Date:   Wed, 12 Dec 2018 13:22:27 +0100
-Message-ID: <CAMO6nay4+8Y_O2iTWJ041Bt0+3VUuOQj0WEN3Pyf6L80vuxHTA@mail.gmail.com>
-Subject: Re: [PATCH RESEND] drm/meson: remove firmware framebuffers
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, dri-devel@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181212115037.GA31075@kroah.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Neil,
-On Wed, Dec 12, 2018 at 10:55 AM Neil Armstrong <narmstrong@baylibre.com> wrote:
->
-> Hi Maxime,
->
-> On 10/12/2018 10:28, Maxime Jourdan wrote:
-> > In case we are using simplefb or another conflicting framebuffer, make
-> > the call to drm_fb_helper_remove_conflicting_framebuffers()
-> >
-> > Signed-off-by: Maxime Jourdan <mjourdan@baylibre.com>
-> > ---
-> >  drivers/gpu/drm/meson/meson_drv.c | 20 ++++++++++++++++++++
-> >  1 file changed, 20 insertions(+)
-> >
-> > diff --git a/drivers/gpu/drm/meson/meson_drv.c b/drivers/gpu/drm/meson/meson_drv.c
-> > index d3443125e661..afbb3d707d15 100644
-> > --- a/drivers/gpu/drm/meson/meson_drv.c
-> > +++ b/drivers/gpu/drm/meson/meson_drv.c
-> > @@ -159,6 +159,23 @@ static void meson_vpu_init(struct meson_drm *priv)
-> >       writel_relaxed(0x20000, priv->io_base + _REG(VPU_WRARB_MODE_L2C1));
-> >  }
-> >
-> > +static void meson_remove_framebuffers(void)
-> > +{
-> > +     struct apertures_struct *ap;
-> > +
-> > +     ap = alloc_apertures(1);
-> > +     if (!ap)
-> > +             return;
-> > +
-> > +     /* The framebuffer can be located anywhere in RAM */
-> > +     ap->ranges[0].base = 0;
-> > +     ap->ranges[0].size = ~0;
-> > +
-> > +     drm_fb_helper_remove_conflicting_framebuffers(ap, "meson-drm-fb",
-> > +                                                   false);
->
-> I always wondered, where does the "meson-drm-fb" comes from ???
->
-> Neil
->
 
-This name ultimately ends up in a printk and has no functional impact.
-See drivers/video/fbdev/core/fbmem.c:1613 :
 
-printk(KERN_INFO "fb%d: switching to %s from %s\n", i, name,
-registered_fb[i]->fix.id);
+>>>
+>>> What prevents you from doing that and requiring compat support?
+>>>
+>> I removed most of the compat IOCTLS except this one.
+>> The reason is that this ioctl takes arguments which can vary in number for
+>> each call.
+> 
+> Then do not do that :)
+> 
+> Remember, you get to design the api, fix the structure size to work
+> properly everywhere.
+> 
+>> So args are passed as pointer to structure, rather than fixed
+>> size. I could not find better way to rearrange this to give a fixed size
+>> data structure. In theory number of arguments can vary from 0-255 for both
+>> in & out.
+>>
+>> current data structure looks like this:
+>>
+>> struct fastrpc_invoke_args {
+>> 	__s32 fd;
+>> 	size_t length;
+>> 	void *ptr;
+>> };
+> 
+> Make length and ptr both __u64 and you should be fine, right?  If you do
+> that, might as well make fd __u64 as well to align things better.
+> 
 
-I just picked one that was similar to the names of other drm drivers
-calling drm_fb_helper_remove_conflicting_framebuffers().
+That is fine for the args structure, but below "args" pointer in "struct 
+fastrpc_invoke" is still not fixed size, unless we change that to __u64 
+pointing to array of struct fastrpc_invoke_args. I have seen such usages 
+in i915_drm.h.
+Is that the preferred?
 
-Maxime
+>> struct fastrpc_invoke {
+>> 	__u32 handle;
+>> 	__u32 sc;
+>> 	struct fastrpc_invoke_args *args;
+>> };
+>>--srini
