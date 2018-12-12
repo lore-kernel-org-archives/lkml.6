@@ -2,133 +2,108 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4AE3C65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 18:15:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 690FAC65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 18:16:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6500F2084E
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 18:15:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FQHFkOAp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6500F2084E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 2FD6220811
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 18:16:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544638588;
+	bh=2ATXMLzbj5ZX9j8kW3YotW8ib6/OqKq1Zot9nIQNS/s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=nzY0g5jJ53gnkoA7RC+DfrHgOI1aBWWbT4s3zTSGhigf7RolWfUh8se693/+9pyC9
+	 yz6/aNLqQkx3f7PivKumrPNDyCPM/qFp9ECUChTpP6FoGnThY9Ldn911rZ2Pn6zjkI
+	 yYCgsXq6xoyaSflmFCWRIc7D+1PVzLctxIOcQOp4=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FD6220811
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728129AbeLLSPt (ORCPT
+        id S1728251AbeLLSQ1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 13:15:49 -0500
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:35344 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727748AbeLLSPs (ORCPT
+        Wed, 12 Dec 2018 13:16:27 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56838 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728171AbeLLSQ0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 13:15:48 -0500
-Received: by mail-yw1-f66.google.com with SMTP id h32so7355622ywk.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 10:15:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Ngkr6G/hl19Sj13Zj9QNMWN2EVzwYXvhHfOeT6gw8Z4=;
-        b=FQHFkOApPoRn1IVfb5rBQg3yZZCTcDX2Gx0DiU1nJPYNGK47eYma7KbHAsBnIA6Eti
-         rn0i4inpeZRHpsYYULgcH5gxVKZzpo4OODYcnttcrSXR8jAFK6W+iHfK15DMR4UeDiG0
-         V/o8LBiODS84lnnQFdCCs1QgRvKPXovvWGcYY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Ngkr6G/hl19Sj13Zj9QNMWN2EVzwYXvhHfOeT6gw8Z4=;
-        b=MDjeX0bHgJX0Do/NTv5UBdhUvlMrFs4qSXzd69czhkSTc9fFWoDONyej6BaN7ppk54
-         Soyx0iqB4pHKjjWNmU/zxQ46BEuVZgSBsnTFMZqr6YWaNFbip5G4vk2WiB9Tx86a3ius
-         4BXePZxcJXpfmTQR/oI9d61eo4mVSQeXvK0RXOtka1Q64bY37Let1L17J5qWOskQnRQo
-         9RDZpd1SagXjEgl29Gd5FgxKc3DxrhFK4N7h+j5+Q03mgsNafe9qMqkV4BcueKSj02W4
-         3Ln2YZS5nFLu9B31BsdM4Bd123PsW48/lNjuNU8h5RLTEpVZB/Ghv1sJOdr4Hmfw8r6C
-         uflQ==
-X-Gm-Message-State: AA+aEWZFt3jjoTWL6+29xlljBMdkyNeKfb/rPpG4fmAuZw1ylPK3Phzd
-        if0rfdWIjV09kxqG8ztkWO9AhaCzQrDUtcNAXfSy9Q==
-X-Google-Smtp-Source: AFSGD/UZk5PLoR/l+THvMA/BuoeqZomjNcBPboMFjLPJBADC8U1x1nPtoN1AmDGqBhgXaUrT8Lo+gXOOdUkmD3yrpn0=
-X-Received: by 2002:a81:2bc2:: with SMTP id r185mr13475141ywr.425.1544638547427;
- Wed, 12 Dec 2018 10:15:47 -0800 (PST)
+        Wed, 12 Dec 2018 13:16:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=k9Cika/KlSH+AHWtLDzw6b/US8Aq1qYz/v8eH/B9e8M=; b=NC4BgWShKAgpj+huqjzZZEGGc
+        3FCTRoEeX6hQwJEM4tOHgaDwfP8phhHoo2utUJNTlSAVqO1HGRKiCNcvBLCSFBDnSVfsBAIrk9aaC
+        sXl884sxbXYCTIpWn9ejuLdc/3GFdHGbqMSMpWkLf7wqa6p4lDUBeTTFZXpIfRd7uq/eo=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gX93Y-0004UV-B3; Wed, 12 Dec 2018 18:16:24 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 028451125535; Wed, 12 Dec 2018 18:16:23 +0000 (GMT)
+Date:   Wed, 12 Dec 2018 18:16:23 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Clark Wang <xiaoning.wang@nxp.com>
+Cc:     "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] spi: lpspi: Fix CLK pin becomes low before one transfer
+Message-ID: <20181212181623.GF6920@sirena.org.uk>
+References: <20181204062224.28844-1-xiaoning.wang@nxp.com>
+ <20181211143005.GJ6686@sirena.org.uk>
+ <AM6PR04MB5016E6D2220CDD266B2C6C01F3A70@AM6PR04MB5016.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
-References: <20181211103616.22137-1-anders.roxell@linaro.org> <613667c4-f850-d88c-7a2e-76dda5d966f5@arm.com>
-In-Reply-To: <613667c4-f850-d88c-7a2e-76dda5d966f5@arm.com>
-From:   Anders Roxell <anders.roxell@linaro.org>
-Date:   Wed, 12 Dec 2018 19:15:36 +0100
-Message-ID: <CADYN=9+FpcMUqtLgkvWQnf2uQOgS3VhwCLHmcriD_5LSVBZFKQ@mail.gmail.com>
-Subject: Re: [PATCH] dma-debug: fix soft lockup when a lot of debug are enabled
-To:     robin.murphy@arm.com
-Cc:     hch@lst.de, Marek Szyprowski <m.szyprowski@samsung.com>,
-        iommu@lists.linux-foundation.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        rostedt@goodmis.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="kR3zbvD4cgoYnS/6"
+Content-Disposition: inline
+In-Reply-To: <AM6PR04MB5016E6D2220CDD266B2C6C01F3A70@AM6PR04MB5016.eurprd04.prod.outlook.com>
+X-Cookie: The greatest remedy for anger is delay.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 11 Dec 2018 at 12:51, Robin Murphy <robin.murphy@arm.com> wrote:
->
-> Hi Anders,
 
-Hi Robin,
+--kR3zbvD4cgoYnS/6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
->
-> On 11/12/2018 10:36, Anders Roxell wrote:
-> > When running a kernel in qemu with enough debugging options (slub-debug,
-> > ftrace, kcov, kasan, ubsan, ...) enabled together, that results in a
-> > slow initcall. So a 'watchdog: BUG: soft lockup' happens:
-> >
-> > [   44.105619] Call trace:
-> > [   44.106709]  __slab_alloc+0x70/0x88
-> > [   44.107757]  kmem_cache_alloc_trace+0x13c/0x590
-> > [   44.108764]  prealloc_memory+0xb8/0x240
-> > [   44.109768]  dma_debug_init+0x174/0x1f0
-> > [   44.110725]  do_one_initcall+0x430/0x8b0
-> > [   44.111719]  do_initcall_level+0x548/0x5b4
-> > [   44.112672]  do_initcalls+0x28/0x4c
-> > [   44.113628]  do_basic_setup+0x34/0x3c
-> > [   44.114559]  kernel_init_freeable+0x194/0x24c
-> > [   44.115570]  kernel_init+0x24/0x18c
-> > [   44.116498]  ret_from_fork+0x10/0x18
-> >
-> > Rework to call cond_resched(), in the function prealloc_memory()'s
-> > for-loop.
->
-> Funnily enough I've just done a bit of work in this area which should
-> make allocation a lot more efficient - would you mind giving this series
-> a spin on the same setup to see how much it helps the performance?
->
-> https://lore.kernel.org/lkml/cover.1544447601.git.robin.murphy@arm.com/
+On Wed, Dec 12, 2018 at 02:10:46AM +0000, Clark Wang wrote:
 
-I tried it on todays next tag and couldn't reproduce the soft lockup.
+> These five patches are based on patch series spi: lpspi: Add Slave Mode support for LPSPI. For the patch series make a big change, should I hold these five patches until the patch series are applied in your git branch?
 
-Cheers,
-Anders
+OK, if you're sending patches that depend on other things that are still
+in review it's important to call that out in the cover letter for the
+series or after the --- for single patches, that way it's clear what's
+going on.  Please resend these as a series with a note pointing at the
+other series.
 
->
-> Thanks,
-> Robin.
->
-> >
-> > Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
-> > ---
-> >   kernel/dma/debug.c | 1 +
-> >   1 file changed, 1 insertion(+)
-> >
-> > diff --git a/kernel/dma/debug.c b/kernel/dma/debug.c
-> > index 231ca4628062..2abdc265aec4 100644
-> > --- a/kernel/dma/debug.c
-> > +++ b/kernel/dma/debug.c
-> > @@ -767,6 +767,7 @@ static int prealloc_memory(u32 num_entries)
-> >       int i;
-> >
-> >       for (i = 0; i < num_entries; ++i) {
-> > +             cond_resched();
-> >               entry = kzalloc(sizeof(*entry), GFP_KERNEL);
-> >               if (!entry)
-> >                       goto out_err;
-> >
+Please don't top post, reply in line with needed context.  This allows
+readers to readily follow the flow of conversation and understand what
+you are talking about and also helps ensure that everything in the
+discussion is being addressed.
+
+Please fix your mail client to word wrap within paragraphs at something
+substantially less than 80 columns.  Doing this makes your messages much
+easier to read and reply to.
+
+--kR3zbvD4cgoYnS/6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlwRUHcACgkQJNaLcl1U
+h9DWQwf/eSs6W0no3bCwdBsHEh6RjMVq16uNECwN7o3UEJ3f5Aq5J/74kFUB2N8E
+keaeg9YYszDCrdbjJen+3TPk+k843CnNFVbo7X7WRGHCTjtkjM9Epfdol4eUbEjn
+1aGwp+D33j13gAeVoTy7SBLbMTke5VC+9X4mdaRpbg/vT6R2NEmgFin/JDWnR35J
+5m85rQgS78Rw8R5WZpEZsN8Qi+7nQ3aRLsRggRDgEZPcibWwzSVKfg+RRcaxab4N
+XWpZYakgbnkzoKbtFgjV9D0YqbPYIuBiMgzXlkLA9bviKU5nRENC1AYGmpQzpkqN
+lVTQWOBUNwpIT/jc9oaIL40vbrqi4Q==
+=/8Ft
+-----END PGP SIGNATURE-----
+
+--kR3zbvD4cgoYnS/6--
