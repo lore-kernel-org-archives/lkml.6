@@ -3,135 +3,188 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	MAILING_LIST_MULTI,SPF_PASS,T_MIXED_ES,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82098C65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 15:02:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11F79C65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 15:03:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5175E20839
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 15:02:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5175E20839
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id C984320839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 15:03:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C984320839
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727755AbeLLPCj (ORCPT
+        id S1727753AbeLLPD1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 10:02:39 -0500
-Received: from foss.arm.com ([217.140.101.70]:42614 "EHLO foss.arm.com"
+        Wed, 12 Dec 2018 10:03:27 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:38786 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726228AbeLLPCi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 10:02:38 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BCC2E80D;
-        Wed, 12 Dec 2018 07:02:37 -0800 (PST)
-Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.196.113])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5ADD73F59C;
-        Wed, 12 Dec 2018 07:02:33 -0800 (PST)
-Date:   Wed, 12 Dec 2018 15:02:30 +0000
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Andrey Konovalov <andreyknvl@google.com>
-Cc:     Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Kostya Serebryany <kcc@google.com>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        Chintan Pandya <cpandya@codeaurora.org>,
-        Shuah Khan <shuah@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Evgenii Stepanov <eugenis@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Lee Smith <Lee.Smith@arm.com>,
+        id S1726269AbeLLPD1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 10:03:27 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id B7FF3811D9;
+        Wed, 12 Dec 2018 15:03:25 +0000 (UTC)
+Received: from redhat.com (ovpn-124-14.rdu2.redhat.com [10.10.124.14])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 45B68101962E;
+        Wed, 12 Dec 2018 15:03:22 +0000 (UTC)
+Date:   Wed, 12 Dec 2018 10:03:20 -0500
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     John Hubbard <jhubbard@nvidia.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        John Hubbard <john.hubbard@gmail.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: Re: [RFC][PATCH 0/3] arm64 relaxed ABI
-Message-ID: <20181212150230.GH65138@arrakis.emea.arm.com>
-References: <cover.1544445454.git.andreyknvl@google.com>
- <20181210143044.12714-1-vincenzo.frascino@arm.com>
- <CAAeHK+xPZ-Z9YUAq=3+hbjj4uyJk32qVaxZkhcSAHYC4mHAkvQ@mail.gmail.com>
+        Linux MM <linux-mm@kvack.org>, tom@talpey.com,
+        Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
+        Christoph Hellwig <hch@infradead.org>,
+        Christopher Lameter <cl@linux.com>,
+        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Michal Hocko <mhocko@kernel.org>, mike.marciniszyn@intel.com,
+        rcampbell@nvidia.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
+Message-ID: <20181212150319.GA3432@redhat.com>
+References: <CAPcyv4iNtamDAY9raab=iXhSZByecedBpnGybjLM+PuDMwq7SQ@mail.gmail.com>
+ <3c91d335-921c-4704-d159-2975ff3a5f20@nvidia.com>
+ <20181205011519.GV10377@bombadil.infradead.org>
+ <20181205014441.GA3045@redhat.com>
+ <59ca5c4b-fd5b-1fc6-f891-c7986d91908e@nvidia.com>
+ <7b4733be-13d3-c790-ff1b-ac51b505e9a6@nvidia.com>
+ <20181207191620.GD3293@redhat.com>
+ <3c4d46c0-aced-f96f-1bf3-725d02f11b60@nvidia.com>
+ <20181208022445.GA7024@redhat.com>
+ <20181210102846.GC29289@quack2.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <CAAeHK+xPZ-Z9YUAq=3+hbjj4uyJk32qVaxZkhcSAHYC4mHAkvQ@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181210102846.GC29289@quack2.suse.cz>
 User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Wed, 12 Dec 2018 15:03:26 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andrey,
-
-On Wed, Dec 12, 2018 at 03:23:25PM +0100, Andrey Konovalov wrote:
-> On Mon, Dec 10, 2018 at 3:31 PM Vincenzo Frascino
-> <vincenzo.frascino@arm.com> wrote:
-> > On arm64 the TCR_EL1.TBI0 bit has been set since Linux 3.x hence
-> > the userspace (EL0) is allowed to set a non-zero value in the top
-> > byte but the resulting pointers are not allowed at the user-kernel
-> > syscall ABI boundary.
+On Mon, Dec 10, 2018 at 11:28:46AM +0100, Jan Kara wrote:
+> On Fri 07-12-18 21:24:46, Jerome Glisse wrote:
+> > Another crazy idea, why not treating GUP as another mapping of the page
+> > and caller of GUP would have to provide either a fake anon_vma struct or
+> > a fake vma struct (or both for PRIVATE mapping of a file where you can
+> > have a mix of both private and file page thus only if it is a read only
+> > GUP) that would get added to the list of existing mapping.
 > >
-> > This patchset proposes a relaxation of the ABI and a mechanism to
-> > advertise it to the userspace via an AT_FLAGS.
-> >
-> > The rationale behind the choice of AT_FLAGS is that the Unix System V
-> > ABI defines AT_FLAGS as "flags", leaving some degree of freedom in
-> > interpretation.
-> > There are two previous attempts of using AT_FLAGS in the Linux Kernel
-> > for different reasons: the first was more generic and was used to expose
-> > the support for the GNU STACK NX feature [1] and the second was done for
-> > the MIPS architecture and was used to expose the support of "MIPS ABI
-> > Extension for IEEE Std 754 Non-Compliant Interlinking" [2].
-> > Both the changes are currently _not_ merged in mainline.
-> > The only architecture that reserves some of the bits in AT_FLAGS is
-> > currently MIPS, which introduced the concept of platform specific ABI
-> > (psABI) reserving the top-byte [3].
-> >
-> > When ARM64_AT_FLAGS_SYSCALL_TBI is set the kernel is advertising
-> > to the userspace that a relaxed ABI is supported hence this type
-> > of pointers are now allowed to be passed to the syscalls when they are
-> > in memory ranges obtained by anonymous mmap() or brk().
-> >
-> > The userspace _must_ verify that the flag is set before passing tagged
-> > pointers to the syscalls allowed by this relaxation.
-> >
-> > More in general, exposing the ARM64_AT_FLAGS_SYSCALL_TBI flag and mandating
-> > to the software to check that the feature is present, before using the
-> > associated functionality, it provides a degree of control on the decision
-> > of disabling such a feature in future without consequently breaking the
-> > userspace.
-[...]
-> Acked-by: Andrey Konovalov <andreyknvl@google.com>
+> > So the flow would be:
+> >     somefunction_thatuse_gup()
+> >     {
+> >         ...
+> >         GUP(_fast)(vma, ..., fake_anon, fake_vma);
+> >         ...
+> >     }
+> > 
+> >     GUP(vma, ..., fake_anon, fake_vma)
+> >     {
+> >         if (vma->flags == ANON) {
+> >             // Add the fake anon vma to the anon vma chain as a child
+> >             // of current vma
+> >         } else {
+> >             // Add the fake vma to the mapping tree
+> >         }
+> > 
+> >         // The existing GUP except that now it inc mapcount and not
+> >         // refcount
+> >         GUP_old(..., &nanonymous, &nfiles);
+> > 
+> >         atomic_add(&fake_anon->refcount, nanonymous);
+> >         atomic_add(&fake_vma->refcount, nfiles);
+> > 
+> >         return nanonymous + nfiles;
+> >     }
+> 
+> Thanks for your idea! This is actually something like I was suggesting back
+> at LSF/MM in Deer Valley. There were two downsides to this I remember
+> people pointing out:
+> 
+> 1) This cannot really work with __get_user_pages_fast(). You're not allowed
+> to get necessary locks to insert new entry into the VMA tree in that
+> context. So essentially we'd loose get_user_pages_fast() functionality.
+> 
+> 2) The overhead e.g. for direct IO may be noticeable. You need to allocate
+> the fake tracking VMA, get VMA interval tree lock, insert into the tree.
+> Then on IO completion you need to queue work to unpin the pages again as you
+> cannot remove the fake VMA directly from interrupt context where the IO is
+> completed.
+> 
+> You are right that the cost could be amortized if gup() is called for
+> multiple consecutive pages however for small IOs there's no help...
+> 
+> So this approach doesn't look like a win to me over using counter in struct
+> page and I'd rather try looking into squeezing HMM public page usage of
+> struct page so that we can fit that gup counter there as well. I know that
+> it may be easier said than done...
 
-Thanks for the ack. However, if we go ahead with this ABI proposal it
-means that your patches need to be reworked to allow a non-zero top byte
-in all syscalls, including mmap() and friends, ioctl(). There are ABI
-concerns in either case but I'd rather have this discussion in the open.
-It doesn't necessarily mean that I endorse this proposal, I would like
-feedback and not just from kernel developers but user space ones.
+So i want back to the drawing board and first i would like to ascertain
+that we all agree on what the objectives are:
 
-The summary of our internal discussions (mostly between kernel
-developers) is that we can't properly describe a user ABI that covers
-future syscalls or syscall extensions while not all syscalls accept
-tagged pointers. So we tweaked the requirements slightly to only allow
-tagged pointers back into the kernel *if* the originating address is
-from an anonymous mmap() or below sbrk(0). This should cover some of the
-ioctls or getsockopt(TCP_ZEROCOPY_RECEIVE) where the user passes a
-pointer to a buffer obtained via mmap() on the device operations.
+    [O1] Avoid write back from a page still being written by either a
+         device or some direct I/O or any other existing user of GUP.
+         This would avoid possible file system corruption.
 
-(sorry for not being clear on what Vincenzo's proposal implies)
+    [O2] Avoid crash when set_page_dirty() is call on a page that is
+         considered clean by core mm (buffer head have been remove and
+         with some file system this turns into an ugly mess).
 
--- 
-Catalin
+    [O3] DAX and the device block problems, ie with DAX the page map in
+         userspace is the same as the block (persistent memory) and no
+         filesystem nor block device understand page as block or pinned
+         block.
+
+For [O3] i don't think any pin count would help in anyway. I believe
+that the current long term GUP API that does not allow GUP of DAX is
+the only sane solution for now. The real fix would be to teach file-
+system about DAX/pinned block so that a pinned block is not reuse
+by filesystem.
+
+
+For [O1] and [O2] i believe a solution with mapcount would work. So
+no new struct, no fake vma, nothing like that. In GUP for file back
+pages we increment both refcount and mapcount (we also need a special
+put_user_page to decrement mapcount when GUP user are done with the
+page).
+
+Now for [O1] the write back have to call page_mkclean() to go through
+all reverse mapping of the page and map read only. This means that
+we can count the number of real mapping and see if the mapcount is
+bigger than that. If mapcount is bigger than page is pin and we need
+to use a bounce page to do the writeback.
+
+Note that their can be no concurrent new real mapping added as the
+page is lock thus we are protected on that front. So only race is
+with a GUP running before page_mkclean() had remove all pte with
+write permission. To close that race we should check for the page
+write back flags in GUP and returns either ERR_PTR(EBUSY) for the
+page or return the page and set some flag in the lower bit of the
+page struct pointer so that user of GUP can wait on write back to
+finish before doing anything else.
+
+
+For [O2] i believe we can handle that case in the put_user_page()
+function to properly dirty the page without causing filesystem
+freak out.
+
+Impact of that approach seems pretty small, direct IO would only
+be affected for page under active write back which is one of the
+thing we are trying to fix anyway.
+
+Did i miss anything ?
+
+Cheers,
+Jérôme
