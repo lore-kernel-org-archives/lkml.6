@@ -2,138 +2,96 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1B8EC65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 09:59:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E67BC65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 09:59:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D69320849
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 09:59:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D69320849
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id 1017420870
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 09:59:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="jm9jiu+M"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1017420870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727026AbeLLJ7e (ORCPT
+        id S1727039AbeLLJ7s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 04:59:34 -0500
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:44827 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726598AbeLLJ7d (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 04:59:33 -0500
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 62335808B8; Wed, 12 Dec 2018 10:59:26 +0100 (CET)
-Date:   Wed, 12 Dec 2018 10:59:29 +0100
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        devicetree@vger.kernel.org,
+        Wed, 12 Dec 2018 04:59:48 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:59110 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726598AbeLLJ7s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 04:59:48 -0500
+Received: from zn.tnic (p200300EC2BCDD8002DC08A63FFF8C6E5.dip0.t-ipconnect.de [IPv6:2003:ec:2bcd:d800:2dc0:8a63:fff8:c6e5])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 64C851EC0432;
+        Wed, 12 Dec 2018 10:59:46 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1544608786;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=kCMnAg6KQ41PrBTldao0PLns3z+P7Bxi84CxeA2ECM4=;
+        b=jm9jiu+MdBNL//yrYUnXeuRRPQ28V2KZYsmTwGIDCOmfhaW7SOT45knHgX/LhN/PyP7uHZ
+        yJsjqe0zTx41zUmR6ut08XILQmkVCVAXd9AsDi+JwlABmt+asumonPHB0maB0ARdc6D3Y5
+        dzDxQmAsjZsce0rcFVD+ASSc7TXNSjA=
+Date:   Wed, 12 Dec 2018 10:59:38 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
+        "x86@kernel.org" <x86@kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Daniel Mack <daniel@zonque.org>, Dan Murphy <dmurphy@ti.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Oleh Kravchenko <oleg@kaa.org.ua>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Simon Shields <simon@lineageos.org>
-Subject: Re: [PATCH 04/24] dt-bindings: leds: Add function and color
- properties
-Message-ID: <20181212095929.GA13437@amd>
-References: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com>
- <1541542052-10081-5-git-send-email-jacek.anaszewski@gmail.com>
- <5bea0eb8.1c69fb81.6b921.80e6@mx.google.com>
- <dfb5bd23-bcb9-7501-a608-969cb0464168@gmail.com>
- <0a0b176c-4eb4-4b0e-6c3c-b3c6c8f5fff5@gmail.com>
- <CAL_JsqKEpbJjExkQKSXwYma9wPPO+8E0QMTyWTPs1nkGSd49_g@mail.gmail.com>
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Jiri Kosina <jkosina@suse.cz>, Ingo Molnar <mingo@redhat.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        David Woodhouse <dwmw@amazon.co.uk>
+Subject: Re: [PATCH v2] x86/speculation: Add support for STIBP always-on
+ preferred mode
+Message-ID: <20181212095938.GA6653@zn.tnic>
+References: <20181211224615.5373.65736.stgit@tlendack-t1.amdoffice.net>
+ <20181212000518.GX27375@zn.tnic>
+ <alpine.DEB.2.21.1812111910520.22893@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="XsQoSWH+UP9D9v3l"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAL_JsqKEpbJjExkQKSXwYma9wPPO+8E0QMTyWTPs1nkGSd49_g@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <alpine.DEB.2.21.1812111910520.22893@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Dec 11, 2018 at 07:37:26PM -0800, Thomas Gleixner wrote:
+> Hmmm. I've not seen the V1 of this (it's not in my inbox) but the v1->v2
+> changes contain:
 
---XsQoSWH+UP9D9v3l
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+You're on CC:
 
-Hi!
+https://lkml.kernel.org/r/20181211190959.28321.56433.stgit@tlendack-t1.amdoffice.net
 
-> > We would also probably need different DT properties for different
-> > types of devices, since e.g. for network case the network interface
-> > name would fit better for the LED name, than the phy name,
-> > and we would need to know what type of device name we're going
-> > to look for.
-> >
-> > Pavel gave following examples:
-> >
-> > eth0:green:link
-> > adsl0:green:link
-> > adsl0:red:error
-> >
-> > So we would have e.g.:
-> >
-> > associated-vl42-device =3D <&camera1>;
-> > associated-network-device =3D <&phy1>;
-> > associated-block-device =3D <&phy1>;
->=20
-> Variable property names are kind of a pain to parse.
->=20
-> Perhaps when LEDs are associated with a device, we shouldn't care
-> within the context of the LED subsystem what the name is. The
-> association is more important and if you have that exposed, then you
-> don't really need to care what the name is. You still have to deal
-> with a device with more than 1 LED, but that becomes a problem local
-> to that device.
->=20
-> What I'm getting at is following a more standard binding pattern of
-> providers and consumers like we have for gpios, clocks, etc. So we'd
-> have something like this:
->=20
-> ethernet {
->   ...
->   leds =3D <&green_led>, <&red_led>;
->   led-names =3D "link", "err";
-> };
->=20
-> We can still support defining LED names as we've done, but we don't
-> have to come up with some elaborate naming convention that covers
-> every single case.
+> 
+> > > - Removed explicit SPECTRE_V2_USER_STRICT_PREFERRED mode
+> 
+> Now I really have to ask why?
+> 
+> Neither the extra variable nor the cpu feature check are pretty. An
+> explicit mode is way better in terms of code clarity and you get the proper
+> printout via spectre_v2_user_strings.
 
-I see that it would be more consistent with how gpios work, but I'm
-afraid this does not fit LEDs properly.
+Actually, now that I've slept on it, I think we should do this just
+like X86_FEATURE_IBRS_ENHANCED - as a modifier for SPECTRE_V2_CMD_AUTO
+or _FORCE options.
 
-With power LED, you want to be able to say "this is just on". Some
-poeple like heartbeat, and have LED for that. There may be LED for
-"disk activity", meaning activity on any harddrive. And there may be
-activity LED for specific disk.
+And that has its own mode SPECTRE_V2_IBRS_ENHANCED.
 
-Only in the last case it would be suitable to have LED reference as a
-child of an device...
+Makes sense?
 
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+-- 
+Regards/Gruss,
+    Boris.
 
---XsQoSWH+UP9D9v3l
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlwQ3AEACgkQMOfwapXb+vLW1wCdFi1UWGwFwbU0j+ZGao50rC9A
-lZ0AoJakjBzMr4Cnacqy7Zw3QTF0pKES
-=LuwX
------END PGP SIGNATURE-----
-
---XsQoSWH+UP9D9v3l--
+Good mailing practices for 400: avoid top-posting and trim the reply.
