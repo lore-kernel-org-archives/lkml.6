@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7246EC67839
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 20:53:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4D54C67839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 20:53:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E99B2080F
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 20:53:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 876902080F
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 20:53:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V8UlK5qP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E99B2080F
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lWvYH8K+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 876902080F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728503AbeLLUx3 (ORCPT
+        id S1728518AbeLLUxf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 15:53:29 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:38403 "EHLO
+        Wed, 12 Dec 2018 15:53:35 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:36440 "EHLO
         mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728442AbeLLUx1 (ORCPT
+        with ESMTP id S1728442AbeLLUxd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 15:53:27 -0500
-Received: by mail-pg1-f195.google.com with SMTP id g189so8894209pgc.5;
-        Wed, 12 Dec 2018 12:53:27 -0800 (PST)
+        Wed, 12 Dec 2018 15:53:33 -0500
+Received: by mail-pg1-f195.google.com with SMTP id n2so8885712pgm.3;
+        Wed, 12 Dec 2018 12:53:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=BswpiJIyXYCwIJYSExUCFoa3NjAwWquTTA/r0TBkUb8=;
-        b=V8UlK5qPGIR9B1+BVZ2tdP1Q1DKqmRhq7y8yzoINTF83u9MqgyAUEO9T5KzNArzxW7
-         0gYOYjC0Ek8wUIoSuxI9f/H2eXR+elh0WvUjSwyq7toHHYRD2+umGUMMfcX1mZBbkD0x
-         wFOr3jFGtDlKPhqMKGzqEWNppcW0Cd4OsWyXdbqJHeY+UNwv3mo7+mcpOLN3MgnpoKjJ
-         7wPDF1N39YkI0WoZaTkfP4Z7TtAD5EYtF3/cjYpsPbxWgk7Ucgl6MX8AtT5eTNeoFr7H
-         mJM/6htgcyWdlVO3BGjGwAjl5hH7cnLt9VQiQzhc9mC32eYLOeRYIPNARM/H4vImNBdn
-         aEKQ==
+        bh=iVwmO7SZrAhknWmyPu5SI5ep1kjQEGZC07hnwWCuuv4=;
+        b=lWvYH8K+7wCWACvoPEET68iOMpRIJpbyCErsnsNg3QAm/R4PRrwxisc4xT42VmMNUd
+         D/OP6zxKXcWiHA1Gt6rWWaCMR4gk+GYs1iBU7rMklnLvcwXvFyF3/B6MnCxIrdhylthT
+         OBCk8NIV+fdAdIn9EzrhtQXgO2PrN8DPK3zg2/r8nJSVo4YacJ3Vj67yYHumkOmBmt33
+         HhnbIGB0MLe4l2H2Pc72Zz9oW+FoMCEvapWVz/pss+FAAnkldFqY4vFcwYkoWnGegZ5D
+         JmSESP7uqu6uS2EIymwkvRRgSZkFAmOtHViavJ/O/sT43Otu4MSv+4rv/b2JjgJArOet
+         lctQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=BswpiJIyXYCwIJYSExUCFoa3NjAwWquTTA/r0TBkUb8=;
-        b=NnKBDTuJk2Cg7xbHgoTBeImc2ZVkultPt0fbceUkEz8ECVCQHUfwhRhj+Pb1uzdpal
-         qO1yMGlb+2YqTUMsVB5PWRnXHcZ05tXAGe8+fPc/Ehh7FGq1fOkrytzf6+Auvwhi4Wsd
-         z/aSTUUK4SZxK11RJXCLCvBoRGJg6rriCWgbpmcQts7wKO1wFr8Jirj639UrqiDD30ms
-         vHMKAoyov7grpLoPVTIa0krbKzXY1p4uy9TphX6Ev/Q3O6ksfKb7tAe3fvNe3kIAuTfh
-         GPnJAz2FFQzOg47PLazY7w2zMIxCyprhXu6YMRv5jsTet0xirlFVP6xmzop2ylijLoAy
-         buWg==
-X-Gm-Message-State: AA+aEWbkZBKe5EohjHDuDTdHt80bnwOKCLVHDuUhA6I5sx5m0TgVbpyP
-        M6gm1ZwxBVEWOifY9BdZ/jOU31Hm
-X-Google-Smtp-Source: AFSGD/V380Pkd448YVbrBCv3pPw7+vpOrVKBaj/cNNSqiAYckPEYC+iA7HPXQfT/e0MuzJIVpPs5Ng==
-X-Received: by 2002:a63:6b05:: with SMTP id g5mr18989426pgc.15.1544648006717;
-        Wed, 12 Dec 2018 12:53:26 -0800 (PST)
+        bh=iVwmO7SZrAhknWmyPu5SI5ep1kjQEGZC07hnwWCuuv4=;
+        b=iRSH9QSgDuF9TXrcLg6aM8ptQqOBPLu5u9PlF4NVzzM7U44JxWTy9DyLcyD1yZd/Jq
+         1QirCGjELYG+NNfE7kgPLJeeCJy39GdSnrUR3lbeFbk6yPiQgib8OXmy5WT6zPOFovmG
+         SduYOs3hHWdB7W/o37Sa5fI7BPijx2KS3RR3l6kqav2qZYZNQrEAiMr9JFGLzejGQYur
+         bCblZciusJbFM7JJ/PhBH4kY0lv5j81UrZWA/amzgTnRsSki08M4jWcOJkniElWZSE39
+         hjtpq2dC3zyB5AAek017dgkIQ/jtkQ7rCY6i747eZJY0rNEOlnOToJIU7sJgdYD+kbSG
+         mLRA==
+X-Gm-Message-State: AA+aEWbvnj24o/E3T2EklWi5Uyr8i7dn9Y4w6jyoffwEsV/L+nrDv9/E
+        uJlxwSNZuYVIGxMgVP0diG8=
+X-Google-Smtp-Source: AFSGD/VfRKcHD2+uU5g37UpRBlVIIVhi9bpTJbCRAYd7HtVaGU3qlN9PCSx+0sFEnUdkVJWw9wyPdg==
+X-Received: by 2002:a63:9b11:: with SMTP id r17mr19769127pgd.416.1544648012949;
+        Wed, 12 Dec 2018 12:53:32 -0800 (PST)
 Received: from localhost.localdomain ([94.29.36.169])
-        by smtp.gmail.com with ESMTPSA id p2sm34753860pgc.94.2018.12.12.12.53.20
+        by smtp.gmail.com with ESMTPSA id p2sm34753860pgc.94.2018.12.12.12.53.27
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 12 Dec 2018 12:53:26 -0800 (PST)
+        Wed, 12 Dec 2018 12:53:32 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -66,9 +66,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
 Cc:     Robin Murphy <robin.murphy@arm.com>,
         iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v7 14/24] memory: tegra: Do not try to probe SMMU on Tegra20
-Date:   Wed, 12 Dec 2018 23:38:57 +0300
-Message-Id: <20181212203907.23461-15-digetx@gmail.com>
+Subject: [PATCH v7 15/24] memory: tegra: Do not ask for IRQ sharing
+Date:   Wed, 12 Dec 2018 23:38:58 +0300
+Message-Id: <20181212203907.23461-16-digetx@gmail.com>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181212203907.23461-1-digetx@gmail.com>
 References: <20181212203907.23461-1-digetx@gmail.com>
@@ -79,51 +79,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tegra20 doesn't have SMMU. Move out checking of the SMMU presence from
-the SMMU driver into the Memory Controller driver. This change makes code
-consistent in regards to how GART/SMMU presence checking is performed.
+Memory Controller driver never shared IRQ with any other driver and very
+unlikely that it will. Hence there is no need to request IRQ sharing and
+the corresponding flag can be dropped safely.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- drivers/iommu/tegra-smmu.c | 4 ----
- drivers/memory/tegra/mc.c  | 6 ++++--
- 2 files changed, 4 insertions(+), 6 deletions(-)
+ drivers/memory/tegra/mc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
-index 97b3c0461831..32ea81e9f012 100644
---- a/drivers/iommu/tegra-smmu.c
-+++ b/drivers/iommu/tegra-smmu.c
-@@ -982,10 +982,6 @@ struct tegra_smmu *tegra_smmu_probe(struct device *dev,
- 	u32 value;
- 	int err;
- 
--	/* This can happen on Tegra20 which doesn't have an SMMU */
--	if (!soc)
--		return NULL;
--
- 	smmu = devm_kzalloc(dev, sizeof(*smmu), GFP_KERNEL);
- 	if (!smmu)
- 		return ERR_PTR(-ENOMEM);
 diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
-index e684e234361a..3545868c51c0 100644
+index 3545868c51c0..570da2129fa6 100644
 --- a/drivers/memory/tegra/mc.c
 +++ b/drivers/memory/tegra/mc.c
-@@ -695,11 +695,13 @@ static int tegra_mc_probe(struct platform_device *pdev)
- 		dev_err(&pdev->dev, "failed to register reset controller: %d\n",
- 			err);
+@@ -682,7 +682,7 @@ static int tegra_mc_probe(struct platform_device *pdev)
  
--	if (IS_ENABLED(CONFIG_TEGRA_IOMMU_SMMU)) {
-+	if (IS_ENABLED(CONFIG_TEGRA_IOMMU_SMMU) && mc->soc->smmu) {
- 		mc->smmu = tegra_smmu_probe(&pdev->dev, mc->soc->smmu, mc);
--		if (IS_ERR(mc->smmu))
-+		if (IS_ERR(mc->smmu)) {
- 			dev_err(&pdev->dev, "failed to probe SMMU: %ld\n",
- 				PTR_ERR(mc->smmu));
-+			mc->smmu = NULL;
-+		}
- 	}
+ 	mc_writel(mc, mc->soc->intmask, MC_INTMASK);
  
- 	if (IS_ENABLED(CONFIG_TEGRA_IOMMU_GART) && !mc->soc->smmu) {
+-	err = devm_request_irq(&pdev->dev, mc->irq, isr, IRQF_SHARED,
++	err = devm_request_irq(&pdev->dev, mc->irq, isr, 0,
+ 			       dev_name(&pdev->dev), mc);
+ 	if (err < 0) {
+ 		dev_err(&pdev->dev, "failed to request IRQ#%u: %d\n", mc->irq,
 -- 
 2.20.0
 
