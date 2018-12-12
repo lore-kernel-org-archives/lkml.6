@@ -2,227 +2,142 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0D1BC04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 10:08:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A85CEC04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 10:09:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 776C920839
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 10:08:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 776C920839
+	by mail.kernel.org (Postfix) with ESMTP id 7553F20839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 10:09:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7553F20839
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727141AbeLLKIo (ORCPT
+        id S1727143AbeLLKJp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 05:08:44 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:33482 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727097AbeLLKIm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 05:08:42 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5AC4FA404B;
-        Wed, 12 Dec 2018 10:08:42 +0000 (UTC)
-Received: from jason-ThinkPad-T450s.redhat.com (ovpn-12-55.pek2.redhat.com [10.72.12.55])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8D0885C3FA;
-        Wed, 12 Dec 2018 10:08:39 +0000 (UTC)
-From:   Jason Wang <jasowang@redhat.com>
-To:     mst@redhat.com, jasowang@redhat.com, kvm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Jintack Lim <jintack@cs.columbia.edu>
-Subject: [PATCH net V2 4/4] vhost: log dirty page correctly
-Date:   Wed, 12 Dec 2018 18:08:19 +0800
-Message-Id: <20181212100819.21295-5-jasowang@redhat.com>
-In-Reply-To: <20181212100819.21295-1-jasowang@redhat.com>
-References: <20181212100819.21295-1-jasowang@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Wed, 12 Dec 2018 10:08:42 +0000 (UTC)
+        Wed, 12 Dec 2018 05:09:45 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:40018 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726842AbeLLKJo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 05:09:44 -0500
+Received: by mail-ed1-f67.google.com with SMTP id d3so15043816edx.7
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 02:09:43 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=O14oezGn0qmRYfjDZ3lSh1IXfhWpIwxTsdg3rzwioVg=;
+        b=CHTJSN9WB+ZTnjpWdnlXc2XxaBC+N3YsfJI+oaDfsgRqIk6tagyhHqyAIah/n8rVhS
+         SDi0C6xVEwqCyUmHSidyjgl9q17R7Qd4oQ7PqwBgirXulz6dW5UOYpmSym27J1XNc7sr
+         fmwzMdxC1KG4mOtqwtUVi6NiTw78h206Bxvl1QAVPhlfk9qhW8dyc5YcGQe0RasHfNFo
+         Q7+tQK/ooFWrRkSfljSN4p3stxGBsJQm1LuOB/fZVc3ugKMyOajoP/eKTWwcpLgnkiU6
+         xuEzIK1mY18jgiUIi+DgGh6WWaIl5qShWm/pdG211Ukbd6edRkFZESthX9QfKt1mR/iu
+         HF3Q==
+X-Gm-Message-State: AA+aEWavq7se/M9WNOLlxkjubIwBJtEGSxfPnG83/5ZnH2cvmYuHDMLO
+        C63QUl/vtFwG4QJELAwhCEjMhA==
+X-Google-Smtp-Source: AFSGD/UfKIBZQqEiOopL3J2t3uDzi2bvRA6YwY3VE6/QcTaXEOTr+/9JHG6GSQq2hhNEF7C0IfT8rQ==
+X-Received: by 2002:a50:b744:: with SMTP id g62mr18629208ede.14.1544609382820;
+        Wed, 12 Dec 2018 02:09:42 -0800 (PST)
+Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
+        by smtp.gmail.com with ESMTPSA id l51sm4960061edb.36.2018.12.12.02.09.41
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 12 Dec 2018 02:09:41 -0800 (PST)
+Subject: Re: [RFC/RFT 00/10] i2c: move handling of suspended adapters to the
+ core
+To:     Wolfram Sang <wsa@the-dreams.de>
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+References: <20181210210310.12677-1-wsa+renesas@sang-engineering.com>
+ <2094a0d4-733f-7f74-abd2-bdb28edd0f80@redhat.com>
+ <20181211234102.GA6701@kunai>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <e8c68ef5-5085-e304-4959-82c4959f4511@redhat.com>
+Date:   Wed, 12 Dec 2018 11:09:41 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
+MIME-Version: 1.0
+In-Reply-To: <20181211234102.GA6701@kunai>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Vhost dirty page logging API is designed to sync through GPA. But we
-try to log GIOVA when device IOTLB is enabled. This is wrong and may
-lead to missing data after migration.
+Hi,
 
-To solve this issue, when logging with device IOTLB enabled, we will:
+On 12-12-18 00:41, Wolfram Sang wrote:
+> Hi Hans,
+> 
+> thanks for testing this series!
+> 
+>> Note that the i2c-sprd driver changes in your patchset also get close
+>> to triggering this problem, but they dodge the bullet because there
+>> are separate system-wide and runtime suspend handlers and only the
+>> system-wide handlers call the new i2c_mark_adapter_suspended() function.
+> 
+> Yes, this what I assumed to be all around - seperate handlers for RPM
+> and PM. And I also assumed that they could be seperated if they aren't
+> already. Until I read...
+> 
+>> As I explain in the commit message of the first attached patch
+>> simply always using split handlers is not really an option because
+>> of adapter drivers using DPM_FLAG_SMART_PREPARE or
+>> DPM_FLAG_SMART_SUSPEND.
+> 
+> ... this. I don't know what these flags do (and reading SMART in there
+> gives me more a 'uh-oh' feeling)
 
-1) reuse the device IOTLB translation result of GIOVA->HVA mapping to
-   get HVA, for writable descriptor, get HVA through iovec. For used
-   ring update, translate its GIOVA to HVA
-2) traverse the GPA->HVA mapping to get the possible GPA and log
-   through GPA. Pay attention this reverse mapping is not guaranteed
-   to be unique, so we should log each possible GPA in this case.
+On x86 the lines between runtime suspend and system-suspend are blurring
+with technologies like "connected standby" and in general devices moving
+to suspend2idle as system-suspend state, I guess this also applies to
+modern smartphone platforms but I'm not following those closely.
 
-This fix the failure of scp to guest during migration. In -next, we
-will probably support passing GIOVA->GPA instead of GIOVA->HVA.
+What this means on x86 is that the firmware is not doing any suspend
+handling anymore and the OS / device-drivers get to do all the suspend.
+For many devices this means that if they are runtime-suspended, and there
+is no difference between the runtime and system suspend handling at the
+driver level, they can be left as is, so during a system suspend they are
+not touched at all (and left runtime suspended during system resume).
 
-Fixes: 6b1e6cc7855b ("vhost: new device IOTLB API")
-Reported-by: Jintack Lim <jintack@cs.columbia.edu>
-Cc: Jintack Lim <jintack@cs.columbia.edu>
-Signed-off-by: Jason Wang <jasowang@redhat.com>
----
- drivers/vhost/net.c   |  3 +-
- drivers/vhost/vhost.c | 79 +++++++++++++++++++++++++++++++++++--------
- drivers/vhost/vhost.h |  3 +-
- 3 files changed, 69 insertions(+), 16 deletions(-)
+The "SMART" bit is really not all that smart, SMART_PREPARE means that
+the drivers pm prepare callback will return positive non 0 (e.g. 1) to
+indicate that the device may not be kept in its runtime suspended
+state when transitioning to system-suspend, otoh when the prepare
+callback returns 0 and the SMART_PREPARE flag is set then *all* suspend/
+resume handling can be skipped during a system suspend.
 
-diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
-index ad7a6f475a44..784df2b49628 100644
---- a/drivers/vhost/net.c
-+++ b/drivers/vhost/net.c
-@@ -1192,7 +1192,8 @@ static void handle_rx(struct vhost_net *net)
- 		if (nvq->done_idx > VHOST_NET_BATCH)
- 			vhost_net_signal_used(nvq);
- 		if (unlikely(vq_log))
--			vhost_log_write(vq, vq_log, log, vhost_len);
-+			vhost_log_write(vq, vq_log, log, vhost_len,
-+					vq->iov, in);
- 		total_len += vhost_len;
- 		if (unlikely(vhost_exceeds_weight(++recv_pkts, total_len))) {
- 			vhost_poll_queue(&vq->poll);
-diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-index 55e5aa662ad5..3660310604fd 100644
---- a/drivers/vhost/vhost.c
-+++ b/drivers/vhost/vhost.c
-@@ -1733,11 +1733,67 @@ static int log_write(void __user *log_base,
- 	return r;
- }
- 
-+static int log_write_hva(struct vhost_virtqueue *vq, u64 hva, u64 len)
-+{
-+	struct vhost_umem *umem = vq->umem;
-+	struct vhost_umem_node *u;
-+	u64 gpa;
-+	int r;
-+	bool hit = false;
-+
-+	list_for_each_entry(u, &umem->umem_list, link) {
-+		if (u->userspace_addr < hva &&
-+		    u->userspace_addr + u->size >=
-+		    hva + len) {
-+			gpa = u->start + hva - u->userspace_addr;
-+			r = log_write(vq->log_base, gpa, len);
-+			if (r < 0)
-+				return r;
-+			hit = true;
-+		}
-+	}
-+
-+	/* No reverse mapping, should be a bug */
-+	WARN_ON(!hit);
-+	return 0;
-+}
-+
-+static void log_used(struct vhost_virtqueue *vq, u64 used_offset, u64 len)
-+{
-+	struct iovec iov[64];
-+	int i, ret;
-+
-+	if (!vq->iotlb) {
-+		log_write(vq->log_base, vq->log_addr + used_offset, len);
-+		return;
-+	}
-+
-+	ret = translate_desc(vq, (u64)(uintptr_t)vq->used + used_offset,
-+			     len, iov, 64, VHOST_ACCESS_WO);
-+	WARN_ON(ret < 0);
-+
-+	for (i = 0; i < ret; i++) {
-+		ret = log_write_hva(vq,	(u64)(uintptr_t)iov[i].iov_base,
-+				    iov[i].iov_len);
-+		WARN_ON(ret);
-+	}
-+}
-+
- int vhost_log_write(struct vhost_virtqueue *vq, struct vhost_log *log,
--		    unsigned int log_num, u64 len)
-+		    unsigned int log_num, u64 len, struct iovec *iov, int count)
- {
- 	int i, r;
- 
-+	if (vq->iotlb) {
-+		for (i = 0; i < count; i++) {
-+			r = log_write_hva(vq, (u64)(uintptr_t)iov[i].iov_base,
-+					  iov[i].iov_len);
-+			if (r < 0)
-+				return r;
-+		}
-+		return 0;
-+	}
-+
- 	/* Make sure data written is seen before log. */
- 	smp_wmb();
- 	for (i = 0; i < log_num; ++i) {
-@@ -1769,9 +1825,8 @@ static int vhost_update_used_flags(struct vhost_virtqueue *vq)
- 		smp_wmb();
- 		/* Log used flag write. */
- 		used = &vq->used->flags;
--		log_write(vq->log_base, vq->log_addr +
--			  (used - (void __user *)vq->used),
--			  sizeof vq->used->flags);
-+		log_used(vq, (used - (void __user *)vq->used),
-+			 sizeof vq->used->flags);
- 		if (vq->log_ctx)
- 			eventfd_signal(vq->log_ctx, 1);
- 	}
-@@ -1789,9 +1844,8 @@ static int vhost_update_avail_event(struct vhost_virtqueue *vq, u16 avail_event)
- 		smp_wmb();
- 		/* Log avail event write */
- 		used = vhost_avail_event(vq);
--		log_write(vq->log_base, vq->log_addr +
--			  (used - (void __user *)vq->used),
--			  sizeof *vhost_avail_event(vq));
-+		log_used(vq, (used - (void __user *)vq->used),
-+			 sizeof *vhost_avail_event(vq));
- 		if (vq->log_ctx)
- 			eventfd_signal(vq->log_ctx, 1);
- 	}
-@@ -2191,10 +2245,8 @@ static int __vhost_add_used_n(struct vhost_virtqueue *vq,
- 		/* Make sure data is seen before log. */
- 		smp_wmb();
- 		/* Log used ring entry write. */
--		log_write(vq->log_base,
--			  vq->log_addr +
--			   ((void __user *)used - (void __user *)vq->used),
--			  count * sizeof *used);
-+		log_used(vq, ((void __user *)used - (void __user *)vq->used),
-+			 count * sizeof *used);
- 	}
- 	old = vq->last_used_idx;
- 	new = (vq->last_used_idx += count);
-@@ -2236,9 +2288,8 @@ int vhost_add_used_n(struct vhost_virtqueue *vq, struct vring_used_elem *heads,
- 		/* Make sure used idx is seen before log. */
- 		smp_wmb();
- 		/* Log used index update. */
--		log_write(vq->log_base,
--			  vq->log_addr + offsetof(struct vring_used, idx),
--			  sizeof vq->used->idx);
-+		log_used(vq, offsetof(struct vring_used, idx),
-+			 sizeof vq->used->idx);
- 		if (vq->log_ctx)
- 			eventfd_signal(vq->log_ctx, 1);
- 	}
-diff --git a/drivers/vhost/vhost.h b/drivers/vhost/vhost.h
-index 466ef7542291..1b675dad5e05 100644
---- a/drivers/vhost/vhost.h
-+++ b/drivers/vhost/vhost.h
-@@ -205,7 +205,8 @@ bool vhost_vq_avail_empty(struct vhost_dev *, struct vhost_virtqueue *);
- bool vhost_enable_notify(struct vhost_dev *, struct vhost_virtqueue *);
- 
- int vhost_log_write(struct vhost_virtqueue *vq, struct vhost_log *log,
--		    unsigned int log_num, u64 len);
-+		    unsigned int log_num, u64 len,
-+		    struct iovec *iov, int count);
- int vq_iotlb_prefetch(struct vhost_virtqueue *vq);
- 
- struct vhost_msg_node *vhost_new_msg(struct vhost_virtqueue *vq, int type);
--- 
-2.17.1
+SMART_SUSPEND means that if the device is runtime-suspended it may be left
+as such, this only gets checked if the driver either does not have the
+SMART_PREPARE flag, or the prepare callback indicated that skipping the
+entire suspend/resume handling is not ok.
 
+So this is not that scary, but it does require driver authors to know
+what they are doing...
+
+> but if the handlers can't be split, the
+> issues you were seeing are a consequence, yes.
+> 
+> For me, this sadly spoils the whole concept. The patches you add make
+> things even more complicated. Not happy about that.
+
+Agreed, they don't fill me with happiness either.
+
+> Looking at the open coded version you did for the designware driver, I
+> wonder now if it is better to just leave it at driver level? Need to
+> sleep over it, though.
+
+I myself was thinking in the same direction (leave the entire suspended
+check at the driver level).
+
+Regards,
+
+Hans
