@@ -2,137 +2,160 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.4 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21F2AC67839
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 22:30:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 887DBC65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 22:37:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4FD120672
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 22:30:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4FD120672
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 48FB32084E
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 22:37:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="VwcrKzr+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48FB32084E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728434AbeLLWaZ (ORCPT
+        id S1728393AbeLLWhW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 17:30:25 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:52881 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726297AbeLLWaY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 17:30:24 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 3E8ED20797; Wed, 12 Dec 2018 23:30:21 +0100 (CET)
-Received: from localhost (unknown [88.191.26.124])
-        by mail.bootlin.com (Postfix) with ESMTPSA id DC9DE20E37;
-        Wed, 12 Dec 2018 23:29:36 +0100 (CET)
-Date:   Wed, 12 Dec 2018 23:29:37 +0100
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        linux-pwm@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-i2c@vger.kernel.org, groeck@chromium.org,
-        kernel@collabora.com, linux-rtc@vger.kernel.org,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Benson Leung <bleung@chromium.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        linux-input@vger.kernel.org,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        devicetree@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-pm@vger.kernel.org, MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH v2] MAINTAINERS: add maintainers for ChromeOS EC
- sub-drivers
-Message-ID: <20181212222937.GL19816@piout.net>
-References: <20181211190953.13626-1-enric.balletbo@collabora.com>
+        Wed, 12 Dec 2018 17:37:22 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:38375 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726294AbeLLWhV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 17:37:21 -0500
+Received: by mail-pg1-f193.google.com with SMTP id g189so27842pgc.5
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 14:37:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=UFd3YwLBcxp6yAJtaHUNNfNu3+WWgtg3kk2/4oOmH+A=;
+        b=VwcrKzr+NN1op4Hpo0jqWBNkVB/J747Aftu0QtxghTC3DHZcYIP+PWd+aOGxkdlb6M
+         isX82CLttb7zTTlRuC9PIDyVvF177pQZVPwT3RZDeaqhxxalKJCJCFjhtEUsrm9Rcfsu
+         tJ0ihbpNh44b90EqWBGkFwBPz7YV/fzhDZP14=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=UFd3YwLBcxp6yAJtaHUNNfNu3+WWgtg3kk2/4oOmH+A=;
+        b=NSnMyk0iJkoO6bfzCbcNNWqACRfFQj0mSbGp0pV/OIEe7IDN4zqNKO1D2CDnLXnomX
+         /Wfj4NNTW1Ai7/wIZ2qoRmR43jadKNr+MnB0AIi7dRyKovjWrwJLMCsEMJdg5IxoGv4w
+         ovsBh55bS9uL9yeBMm6VJayeY8n1RN2LsSloMjp9DlXMsz8kV3Z+F8Qa9Qhkcfng5pMu
+         7/yh24x2s+heAlNEeixRG3MPEO4LBO7zoqqbiP7vIcM92OF+3JMB/GvNe3Uz2KdYcEHs
+         rdMQpbp53rlbRogqJlgZP0kR5rgV/Uw2f+pW1wlQCAnsXPTjRUhrm+ZC6XLNl55CHF+6
+         5SUg==
+X-Gm-Message-State: AA+aEWaPCFIQdzRgcrW/b37c5qmflK0es6iE+GkVfq0EMLgaLiFuyzC1
+        1huVmNJXm9YttBwc225DDYaLimPerbk=
+X-Google-Smtp-Source: AFSGD/WwURh0hcAiQhwxElH0uTn1OtPDmZiHDK6e2iX3KEAdS2hVgd8uUBw8dZFDKYmMInsDANslSg==
+X-Received: by 2002:aa7:8045:: with SMTP id y5mr21730423pfm.62.1544654240212;
+        Wed, 12 Dec 2018 14:37:20 -0800 (PST)
+Received: from joelaf.mtv.corp.google.com ([2620:0:1000:1601:3aef:314f:b9ea:889f])
+        by smtp.gmail.com with ESMTPSA id g15sm45153pfj.131.2018.12.12.14.37.18
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 12 Dec 2018 14:37:19 -0800 (PST)
+From:   "Joel Fernandes (Google)" <joel@joelfernandes.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: [PATCH RFC] rcu: add sparse check to rcu_assign_pointer
+Date:   Wed, 12 Dec 2018 14:37:10 -0800
+Message-Id: <20181212223710.215094-1-joel@joelfernandes.org>
+X-Mailer: git-send-email 2.20.0.rc1.387.gf8505762e3-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181211190953.13626-1-enric.balletbo@collabora.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/12/2018 20:09:52+0100, Enric Balletbo i Serra wrote:
-> There are multiple ChromeOS EC sub-drivers spread in different
-> subsystems, as all of them are related to the Chrome stuff add
-> Benson and myself as a maintainers for all these sub-drivers.
-> 
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+rcu_assign_pointer currently doesn't do any sparse checking on a pointer
+assigned. So its possible that a pointer that is not __rcu annotated is
+assigned with rcu_assign_pointer without sparse complainting.
+rcu_dereference already does such checking so lets also make
+rcu_assign_pointer to do the same. The extra error could be helpful in
+cases where an RCU pointer is assigned with rcu_assign_pointer but not
+annotated with __rcu.
 
-You definitively don't need my ack to get that applied but anyway:
+This doesn't generate any code in the normal case because __CHECKER__ is
+defined only in the context of sparse.
 
-Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Also we rename rcu_dereference_sparse to rcu_check_parse since the
+checking now happens not only during derereferencing but also during
+assignment.
 
-However, you should probably indicate which tree do you expect that to
-go through ;)
+Test: Introduced an rcu_assign_pointer in code and checked the output of
+sparse with and without this change. The change correctly causes sparse
+to throw an error.
 
-> ---
-> 
-> Changes in v2:
-> - Fix typo in Benson email address.
-> 
->  MAINTAINERS | 24 ++++++++++++++++++++++++
->  1 file changed, 24 insertions(+)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index a24129b0b043..bbe7180e2851 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -3625,6 +3625,30 @@ S:	Maintained
->  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/bleung/chrome-platform.git
->  F:	drivers/platform/chrome/
->  
-> +CHROMEOS EC SUBDRIVERS
-> +M:	Benson Leung <bleung@chromium.org>
-> +M:	Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> +S:	Maintained
-> +F:	Documentation/devicetree/bindings/extcon/extcon-usbc-cros-ec.txt
-> +F:	Documentation/devicetree/bindings/input/cros-ec-keyb.txt
-> +F:	Documentation/devicetree/bindings/pwm/google,cros-ec-pwm.txt
-> +F:	Documentation/devicetree/bindings/i2c/i2c-cros-ec-tunnel.txt
-> +F:	Documentation/devicetree/bindings/mfd/cros-ec.txt
-> +F:	Documentation/ABI/testing/sysfs-bus-iio-cros-ec
-> +F:	drivers/extcon/extcon-usbc-cros-ec.c
-> +F:	drivers/i2c/busses/i2c-cros-ec-tunnel.c
-> +F:	drivers/iio/accel/cros_ec*
-> +F:	drivers/iio/common/cros_ec_sensors/
-> +F:	drivers/iio/light/cros_ec*
-> +F:	drivers/iio/pressure/cros_ec*
-> +F:	drivers/input/keyboard/cros_ec*
-> +F:	drivers/mfd/cros_ec*
-> +F:	drivers/power/supply/cros_usbpd-charger.c
-> +F:	drivers/pwm/pwm-cros-ec.c
-> +F:	drivers/rtc/rtc-cros-ec.c
-> +F:	include/linux/iio/common/cros_ec_sensors_core.h
-> +F:	include/linux/mfd/cros_ec*
-> +
->  CIRRUS LOGIC AUDIO CODEC DRIVERS
->  M:	Brian Austin <brian.austin@cirrus.com>
->  M:	Paul Handrigan <Paul.Handrigan@cirrus.com>
-> -- 
-> 2.19.2
-> 
+Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+---
+ include/linux/rcupdate.h | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
+diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
+index 4db8bcacc51a..9e6f10da7f26 100644
+--- a/include/linux/rcupdate.h
++++ b/include/linux/rcupdate.h
+@@ -309,16 +309,16 @@ static inline void rcu_preempt_sleep_check(void) { }
+  */
+ 
+ #ifdef __CHECKER__
+-#define rcu_dereference_sparse(p, space) \
++#define rcu_check_sparse(p, space) \
+ 	((void)(((typeof(*p) space *)p) == p))
+ #else /* #ifdef __CHECKER__ */
+-#define rcu_dereference_sparse(p, space)
++#define rcu_check_sparse(p, space)
+ #endif /* #else #ifdef __CHECKER__ */
+ 
+ #define __rcu_access_pointer(p, space) \
+ ({ \
+ 	typeof(*p) *_________p1 = (typeof(*p) *__force)READ_ONCE(p); \
+-	rcu_dereference_sparse(p, space); \
++	rcu_check_sparse(p, space); \
+ 	((typeof(*p) __force __kernel *)(_________p1)); \
+ })
+ #define __rcu_dereference_check(p, c, space) \
+@@ -326,13 +326,13 @@ static inline void rcu_preempt_sleep_check(void) { }
+ 	/* Dependency order vs. p above. */ \
+ 	typeof(*p) *________p1 = (typeof(*p) *__force)READ_ONCE(p); \
+ 	RCU_LOCKDEP_WARN(!(c), "suspicious rcu_dereference_check() usage"); \
+-	rcu_dereference_sparse(p, space); \
++	rcu_check_sparse(p, space); \
+ 	((typeof(*p) __force __kernel *)(________p1)); \
+ })
+ #define __rcu_dereference_protected(p, c, space) \
+ ({ \
+ 	RCU_LOCKDEP_WARN(!(c), "suspicious rcu_dereference_protected() usage"); \
+-	rcu_dereference_sparse(p, space); \
++	rcu_check_sparse(p, space); \
+ 	((typeof(*p) __force __kernel *)(p)); \
+ })
+ #define rcu_dereference_raw(p) \
+@@ -382,6 +382,7 @@ static inline void rcu_preempt_sleep_check(void) { }
+ #define rcu_assign_pointer(p, v)					      \
+ ({									      \
+ 	uintptr_t _r_a_p__v = (uintptr_t)(v);				      \
++	rcu_check_sparse(p, __rcu);				      \
+ 									      \
+ 	if (__builtin_constant_p(v) && (_r_a_p__v) == (uintptr_t)NULL)	      \
+ 		WRITE_ONCE((p), (typeof(p))(_r_a_p__v));		      \
+@@ -785,7 +786,7 @@ static inline notrace void rcu_read_unlock_sched_notrace(void)
+  */
+ #define RCU_INIT_POINTER(p, v) \
+ 	do { \
+-		rcu_dereference_sparse(p, __rcu); \
++		rcu_check_sparse(p, __rcu); \
+ 		WRITE_ONCE(p, RCU_INITIALIZER(v)); \
+ 	} while (0)
+ 
 -- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.20.0.rc1.387.gf8505762e3-goog
+
