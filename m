@@ -2,254 +2,86 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.9 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2FF1C67839
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:35:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3429BC65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:36:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 878F92080F
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:35:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 878F92080F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 018BD2080F
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:36:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 018BD2080F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727691AbeLLRfI (ORCPT
+        id S1728057AbeLLRgv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 12:35:08 -0500
-Received: from foss.arm.com ([217.140.101.70]:46150 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727845AbeLLRfF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 12:35:05 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DF1B480D;
-        Wed, 12 Dec 2018 09:35:04 -0800 (PST)
-Received: from e103592.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 580663F575;
-        Wed, 12 Dec 2018 09:35:00 -0800 (PST)
-Date:   Wed, 12 Dec 2018 17:34:57 +0000
-From:   Dave Martin <Dave.Martin@arm.com>
-To:     Vincenzo Frascino <vincenzo.frascino@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-        linux-mm@kvack.org, linux-arch@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Chintan Pandya <cpandya@codeaurora.org>,
-        Shuah Khan <shuah@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Evgeniy Stepanov <eugenis@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-Subject: Re: [RFC][PATCH 2/3] arm64: Define
- Documentation/arm64/elf_at_flags.txt
-Message-ID: <20181212173457.GA3505@e103592.cambridge.arm.com>
-References: <cover.1544445454.git.andreyknvl@google.com>
- <20181210143044.12714-1-vincenzo.frascino@arm.com>
- <20181210143044.12714-3-vincenzo.frascino@arm.com>
+        Wed, 12 Dec 2018 12:36:51 -0500
+Received: from lb3-smtp-cloud8.xs4all.net ([194.109.24.29]:50458 "EHLO
+        lb3-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727799AbeLLRgv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 12:36:51 -0500
+Received: from [IPv6:2001:983:e9a7:1:d5c3:7636:7173:44a0] ([IPv6:2001:983:e9a7:1:d5c3:7636:7173:44a0])
+        by smtp-cloud8.xs4all.net with ESMTPA
+        id X8R9gktT0uDWoX8RAgJATS; Wed, 12 Dec 2018 18:36:49 +0100
+Subject: [PATCH v6 3/2] MAINTAINERS: added include/trace/events/pwc.h
+To:     "Matwey V. Kornilov" <matwey@sai.msu.ru>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     matwey.kornilov@gmail.com, tfiga@chromium.org,
+        laurent.pinchart@ideasonboard.com, stern@rowland.harvard.edu,
+        ezequiel@collabora.com, hdegoede@redhat.com, mchehab@kernel.org,
+        rostedt@goodmis.org, mingo@redhat.com, isely@pobox.com,
+        bhumirks@gmail.com, colin.king@canonical.com,
+        kieran.bingham@ideasonboard.com, keiichiw@chromium.org
+References: <20181109190327.23606-1-matwey@sai.msu.ru>
+ <20181109190327.23606-2-matwey@sai.msu.ru>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <339893a9-d5a9-00b1-86ad-2c9c8b4fb10f@xs4all.nl>
+Date:   Wed, 12 Dec 2018 18:36:43 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181210143044.12714-3-vincenzo.frascino@arm.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20181109190327.23606-2-matwey@sai.msu.ru>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfIxvWTe85HkBpdBHlM+iRT4Snl9J+61nTN7Bwb5U8VfsMFjY3VHmaFoCpw/DPwEUkL5rESfJCoZggWbdMhAow4KZ9fn16i71qgGpS7p9egAGoyaodYMG
+ C0lkA+hMQzdwP7HYrAbVlfM/1NTsRI7c1FuKc23p1g0TSEuXGiWPcvbuOD0BUitktH90sfDiP6jQbW5rPmUb7DEL3LCqW6e4jEwCJJK7+K5LoEwsi/8tT+lt
+ zULLDHZw+WdR3YVD4wdOJTNAWXokPXbArDdFiDv2RjHdV+BkDgqmgjJMFMbJ3e8pHOfNw9POmyLWkBDCjI43G33SVTxLYFZUnP/lnQF8HwnsZV4Uwo6sxJrj
+ PqfMQoPsVTlaWWKM7s8aT1uygUr6ySNw1UB3WTHArC9rmGfCv+xf0GRr719qP+Nh4ueqAzL0BmP9BeQw6WicaHzaiMeTnb5eHyM9s1MTCmb8I+b4Hc0z5Aig
+ pDthadW/tGdZFS+rkc5Bj53b8TPMINd9eq5vIxLzuoHNnFAFFsq7Lz2OA/O89U0N7ZUS03jAg9Ua/o1WF9sb4rHz4ftXaCTvsxuyQ7ncy+fTnAEPBiO42/2C
+ 1CeoKiSGNf5FqBIQUsUI+PKSuxRmNHEJOsbEuG9RV8CzAzdFdvHvxKCbub8XFsD03UI0NfdrLi7XJLb/2AF7Zw4Yl9ntixQELxfLVAvp3UefisxyPbUuK4IQ
+ 7HC8RsulrNXUOZFhOVSEvFAAf8yMpFasottMzy+Qz56+fv2HmpiA2qZYahoXo0IH7PVs1hETutYJUqJXS9wKiwXLLuqZzkThJHCmhlUIBiJ7DSksk6cW3w==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 10, 2018 at 02:30:43PM +0000, Vincenzo Frascino wrote:
-> On arm64 the TCR_EL1.TBI0 bit has been set since Linux 3.x hence
-> the userspace (EL0) is allowed to set a non-zero value in the
-> top byte but the resulting pointers are not allowed at the
-> user-kernel syscall ABI boundary.
-> 
-> With the relaxed ABI proposed through this document, it is now possible
-> to pass tagged pointers to the syscalls, when these pointers are in
-> memory ranges obtained by an anonymous (MAP_ANONYMOUS) mmap() or brk().
+Added include/trace/events/pwc.h to the list of files.
 
-What about other anonymous memory such as the process stack?
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+---
+Will include this patch as part of the pull request.
+---
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
 
-What about MAP_PRIVATE mappings of /dev/zero (i.e., oldskool "anonymous"
-mappings)?
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 3e9f1710ed13..3ce9533bca26 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -12191,6 +12191,7 @@ L:	linux-media@vger.kernel.org
+ T:	git git://linuxtv.org/media_tree.git
+ S:	Odd Fixes
+ F:	drivers/media/usb/pwc/*
++F:	include/trace/events/pwc.h
 
-I wonder whether this should really say MAP_PRIVATE rather than
-MAP_ANONYMOUS.  There are two requirements here:
-
- * the memory must be the exclusive property of a single process,
-   otherwise tagging it on-the-fly could break some other process;
-
- * the memory should be regular memory, i.e., not something like a
-   mapped device.  Since copy-on-write mappings of devices make little
-   sense, and we want writes to devices to propagate to the hardware
-   directly, MAP_PRIVATE doesn't make a lot of sense for such mappings.
-
-MAP_ANONYMOUS | MAP_SHARED is theoretically possible, and we should
-make sure that it does the expected thing.  Tagging such memory is
-probably a bad idea, just like any other MAP_SHARED memory.
-
-I'm assuming here that tagging some currently shared copy-on-write pages
-would throw a page fault and trigger a copy, so that we end up tagging
-the calling process's private copy of the page.
-
-I also don't see how the above requirements conflict with regular file-
-backed mappings (which would need to work if you want to be able to
-tag objects in .bss or .data etc.)
-
-> This change in the ABI requires a mechanism to inform the userspace
-> that such an option is available.
-> 
-> This patch specifies and documents the way on which AT_FLAGS can be
-> used to advertise this feature to the userspace.
-> 
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> CC: Andrey Konovalov <andreyknvl@google.com>
-> Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
-> ---
->  Documentation/arm64/elf_at_flags.txt | 111 +++++++++++++++++++++++++++
->  1 file changed, 111 insertions(+)
->  create mode 100644 Documentation/arm64/elf_at_flags.txt
-> 
-> diff --git a/Documentation/arm64/elf_at_flags.txt b/Documentation/arm64/elf_at_flags.txt
-> new file mode 100644
-> index 000000000000..153e657c058a
-> --- /dev/null
-> +++ b/Documentation/arm64/elf_at_flags.txt
-> @@ -0,0 +1,111 @@
-> +ARM64 ELF AT_FLAGS
-> +==================
-> +
-> +This document describes the usage and semantics of AT_FLAGS on arm64.
-> +
-> +1. Introduction
-> +---------------
-> +
-> +AT_FLAGS is part of the Auxiliary Vector, contains the flags and it
-> +is currently set to zero by the kernel on arm64.
-> +
-> +The auxiliary vector can be accessed by the userspace using the
-> +getauxval() API provided by the C library.
-> +getauxval() returns an unsigned long and when a flag is present in
-> +the AT_FLAGS, the corresponding bit in the returned value is set to 1.
-> +
-> +The AT_FLAGS with a "defined semantic" on arm64 are exposed to the
-> +userspace via user API (uapi/asm/atflags.h).
-> +The AT_FLAGS bits with "undefined semantics" are set to zero by default.
-> +This means that the AT_FLAGS bits to which this document does not assign
-> +an explicit meaning are to be intended reserved for future use.
-> +The kernel will populate all such bits with zero until meanings are
-> +assigned to them. If and when meanings are assigned, it is guaranteed
-> +that they will not impact the functional operation of existing userspace
-> +software. Userspace software should ignore any AT_FLAGS bit whose meaning
-> +is not defined when the software is written.
-> +
-> +The userspace software can test for features by acquiring the AT_FLAGS
-> +entry of the auxiliary vector, and testing whether a relevant flag
-> +is set.
-> +
-> +Example of a userspace test function:
-> +
-> +bool feature_x_is_present(void)
-> +{
-> +	unsigned long at_flags = getauxval(AT_FLAGS);
-> +	if (at_flags & FEATURE_X)
-> +		return true;
-> +
-> +	return false;
-> +}
-> +
-> +Where the software relies on a feature advertised by AT_FLAGS, it
-> +should check that the feature is present before attempting to
-> +use it.
-> +
-> +2. Features exposed via AT_FLAGS
-> +--------------------------------
-> +
-> +bit[0]: ARM64_AT_FLAGS_SYSCALL_TBI
-> +
-> +    On arm64 the TCR_EL1.TBI0 bit has been set since Linux 3.x hence
-> +    the userspace (EL0) is allowed to set a non-zero value in the top
-> +    byte but the resulting pointers are not allowed at the user-kernel
-> +    syscall ABI boundary.
-> +    When bit[0] is set to 1 the kernel is advertising to the userspace
-> +    that a relaxed ABI is supported hence this type of pointers are now
-> +    allowed to be passed to the syscalls, when these pointers are in
-> +    memory ranges obtained by anonymous (MAP_ANONYMOUS) mmap() or brk().
-
-"TBI" is a slightly odd name.
-
-The kernel seems not to be ignoring the top byte, otherwise how could
-it make a difference whehter the memory is anonymous or something else?
-
-(With memory tagging enabled, the top byte is also not architecturally
-ignored.)
-
-> +    In these cases the tag is preserved as the pointer goes through the
-> +    kernel. Only when the kernel needs to check if a pointer is coming
-> +    from userspace (i.e. access_ok()) an untag operation is required.
-
-Does the last sentence belong here?  That's about kernel internals,
-whereas the rest all seems user-facing.
-
-> +
-> +3. ARM64_AT_FLAGS_SYSCALL_TBI
-> +-----------------------------
-> +
-> +When ARM64_AT_FLAGS_SYSCALL_TBI is enabled every syscalls can accept tagged
-> +pointers, when these pointers are in memory ranges obtained by an anonymous
-> +(MAP_ANONYMOUS) mmap() or brk().
-> +
-> +A definition of the meaning of tagged pointers on arm64 can be found in:
-> +Documentation/arm64/tagged-pointers.txt.
-> +
-> +When a pointer does not are in a memory range obtained by an anonymous mmap()
-> +or brk(), this can not be passed to a syscall if it is tagged.
-> +
-> +To be more explicit: a syscall can accept pointers whose memory range is
-> +obtained by a non-anonymous mmap() or brk() if and only if the tag encoded in
-> +the top-byte is 0x00.
-> +
-> +When a new syscall is added, this can accept tagged pointers if and only if
-> +these pointers are in memory ranges obtained by an anonymous (MAP_ANONYMOUS)
-> +mmap() or brk(). In all the other cases, the tag encoded in the top-byte is
-> +expected to be 0x00.
-
-Does this apply to kernel interfaces that are not syscalls?
-
-And does it apply to ioctls in general (I think from discussions
-elsewhere that it can't).
-
-What about things that flow through the kernel, like an
-si_value.sival_ptr that propagates from sigqueue(2) to the signal frame
-of the signalled thread, or registered with the kernel via aio_read(2)?
-
-This kind of thing is why I would like to define a set of rules for
-making an educated guess about how the kernel should interpret
-arbitrary arguments (in an ideal world).
+ PWM FAN DRIVER
+ M:	Kamil Debski <kamil@wypas.org>
+-- 
+2.19.2
 
 
-With issues like this in the mix, it seems difficult to extract general
-guarantees from ARM64_AT_FLAGS_SYSCALL_TBI.  If it means that just
-certain specific uses of a few specific syscalls work with tagged
-pointers, that may not be very useful by ifself?  It sounds like if
-you are tagging memory at all, you suddenly need to port every random
-library you're using.
-
-[...]
-
-Cheers
----Dave
