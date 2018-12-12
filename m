@@ -2,253 +2,243 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB3A8C65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 15:23:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7BB5C65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 15:25:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FFD4204FD
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 15:23:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FFD4204FD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 69E2B2080F
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 15:25:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mx4nfOLH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69E2B2080F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727820AbeLLPXx (ORCPT
+        id S1727790AbeLLPZp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 10:23:53 -0500
-Received: from foss.arm.com ([217.140.101.70]:43296 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726300AbeLLPXx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 10:23:53 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5E7E480D;
-        Wed, 12 Dec 2018 07:23:52 -0800 (PST)
-Received: from e103592.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D47A03F575;
-        Wed, 12 Dec 2018 07:23:49 -0800 (PST)
-Date:   Wed, 12 Dec 2018 15:23:47 +0000
-From:   Dave Martin <Dave.Martin@arm.com>
-To:     Kristina Martsenko <kristina.martsenko@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        Jacob Bramley <jacob.bramley@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Adam Wallis <awallis@codeaurora.org>,
-        Richard Henderson <richard.henderson@linaro.org>,
-        Will Deacon <will.deacon@arm.com>,
-        kvmarm@lists.cs.columbia.edu, Cyrill Gorcunov <gorcunov@gmail.com>,
-        Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>,
-        Amit Kachhap <amit.kachhap@arm.com>,
-        linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH v6 11/13] arm64: add ptrace regsets for ptrauth key
- management
-Message-ID: <20181212152347.GY3505@e103592.cambridge.arm.com>
-References: <20181207183931.4285-1-kristina.martsenko@arm.com>
- <20181207183931.4285-12-kristina.martsenko@arm.com>
+        Wed, 12 Dec 2018 10:25:45 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:46756 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726246AbeLLPZo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 10:25:44 -0500
+Received: by mail-ed1-f66.google.com with SMTP id o10so15839684edt.13;
+        Wed, 12 Dec 2018 07:25:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=DZOA9Q/EwFVBGA2nbJQH+VK3C5raT+In9SRFaanRHI4=;
+        b=mx4nfOLH8FWy4SC4UCnDHvBoFEeIcYW6Tf/D3LiTwu7pMOWduE0mc5nyxyL4cCP6R3
+         H8ThKR3zCxis8vn+J2/vtuIPbimxprb7VNm2U8s9lluPWvlWcpmrrB+avza9WcKI0pLm
+         pip88D0hCXEM5oCIPMmTtOSxxgeNiaZCfPfHQUXWPm9hpmqBEA8yLOvTjsHPcHPt3xli
+         3t5CXWOE4VMmyG2GBDFxNF02ZuV98++ZA7PFIKRMSyAsIu4C45WX2xcEPkrYrE/95iKz
+         fwnJEIJK4zPJRrh2e223p20i6FIVxMiks3jkfCOFqVKMo9chmt5b+V4UbWNXqEbx1iNO
+         muXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=DZOA9Q/EwFVBGA2nbJQH+VK3C5raT+In9SRFaanRHI4=;
+        b=oBCuKXCDgt/fI2ZgD16L/CnMX8NLIZx2Q3/oNikUaxro5Fyy2i5fvHbf2P6He1d5we
+         KFJKugfdrF8duA3GsI+kQQdh4OLZylDxrgV5hh2bcqahc1kbYjvu4gc7n6sU5kfYPP37
+         rbPRwVSWGOmIX1Rr9qfbkPhWwEx6xrgPu+Uv8tbMUKMtEWVI7Z4rfjBpeLZaqp4hEC2Y
+         2Ol/+1YmdEQl8CX7KIP5olhdteUtLXavdwm0zYWir44AUVOEsPmxQAN5+MaOPzFDvbt0
+         bMANK5Gq0DaYwQSFglSBQJMVR+x0XqlRjt18TNqIxOistGKc7Wi/+jTKNJFNbcckgtZw
+         IHXg==
+X-Gm-Message-State: AA+aEWY1CGbk01Ou2VEFhmK3J2FSp6T7mp2EQl3gOC3HKbt3ncJb7yzG
+        DrAMr6Ec/239wtQwArhiZYuljYKH1CoDUkzbwaE=
+X-Google-Smtp-Source: AFSGD/Vm2cUUzH0BbUxBjzSpyY7eFPjmWHyThnl0rmBMrX6CZWFypItevgGCjNWa5X/g6hnXS0pcxmpBwotPVXhtPgU=
+X-Received: by 2002:a17:906:2313:: with SMTP id l19-v6mr15318188eja.204.1544628341340;
+ Wed, 12 Dec 2018 07:25:41 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181207183931.4285-12-kristina.martsenko@arm.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <20181211202520.16799-1-deepa.kernel@gmail.com> <20181211202520.16799-8-deepa.kernel@gmail.com>
+In-Reply-To: <20181211202520.16799-8-deepa.kernel@gmail.com>
+From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Date:   Wed, 12 Dec 2018 10:25:04 -0500
+Message-ID: <CAF=yD-+mrKfq35g+EVkP-pNbBL=6BvYDdduks=yAxiADSRWvzg@mail.gmail.com>
+Subject: Re: [PATCH v2 7/8] socket: Add SO_TIMESTAMPING_NEW
+To:     Deepa Dinamani <deepa.kernel@gmail.com>
+Cc:     David Miller <davem@davemloft.net>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Network Development <netdev@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Chris Zankel <chris@zankel.net>, fenghua.yu@intel.com,
+        rth@twiddle.net, Thomas Gleixner <tglx@linutronix.de>,
+        ubraun@linux.ibm.com, linux-alpha@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-mips@linux-mips.org, linux-s390 <linux-s390@vger.kernel.org>,
+        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 07, 2018 at 06:39:29PM +0000, Kristina Martsenko wrote:
-> Add two new ptrace regsets, which can be used to request and change the
-> pointer authentication keys of a thread. NT_ARM_PACA_KEYS gives access
-> to the instruction/data address keys, and NT_ARM_PACG_KEYS to the
-> generic authentication key.
-> 
-> The regsets are only exposed if the kernel is compiled with
-> CONFIG_CHECKPOINT_RESTORE=y, as the intended use case is checkpointing
-> and restoring processes that are using pointer authentication. Normally
-> applications or debuggers should not need to know the keys (and exposing
-> the keys is a security risk), so the regsets are not exposed by default.
-
-If CONFIG_CHECKPOINT_RESTORE is a useful feature, it will be =y on a
-wide variety of systems.  So I think making the ptrace interface depend
-on it may just add potentially untested config variations with little
-real security benefit.
-
-If there is perceived to be a security issue here, we would need some
-mechanism therefore to control ptrace visibiliy of the keys on a finer
-grained basis, and then #ifdeffing the regsets out becomes pointless.
-
-
-There are alreads mechanisms to restrict ptrace at runtime though --
-are those not sufficient for us?
-
-(For example, without CAP_PTRACE_ATTACH, other users' or setuid
-processes are not accessible via ptrace.  Some security modules, Yama
-for example, add additional, runtime controllable restrictions, such
-as forbidding a process from tracing a task that it not one of its
-children.)
-
-In my opinion if a process is ptraceable at all then the tracer can
-compromise it trivially in a wide variety of ways, even in the presence
-of ptrauth.
-
-So we should keep things simple and expose the keys unconditionally.
-
-(Others' views might differ of course, but I can't see a convincing
-counterargument right now.  I haven't looked at historical posts, so
-maybe there was discussion already...)
-
-> 
-> Signed-off-by: Kristina Martsenko <kristina.martsenko@arm.com>
+On Tue, Dec 11, 2018 at 3:30 PM Deepa Dinamani <deepa.kernel@gmail.com> wrote:
+>
+> Add SO_TIMESTAMPING_NEW variant of socket timestamp options.
+> This is the y2038 safe versions of the SO_TIMESTAMPING_OLD
+> for all architectures.
+>
+> Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
+> Cc: chris@zankel.net
+> Cc: fenghua.yu@intel.com
+> Cc: rth@twiddle.net
+> Cc: tglx@linutronix.de
+> Cc: ubraun@linux.ibm.com
+> Cc: linux-alpha@vger.kernel.org
+> Cc: linux-arch@vger.kernel.org
+> Cc: linux-ia64@vger.kernel.org
+> Cc: linux-mips@linux-mips.org
+> Cc: linux-s390@vger.kernel.org
+> Cc: linux-xtensa@linux-xtensa.org
+> Cc: sparclinux@vger.kernel.org
 > ---
->  arch/arm64/include/uapi/asm/ptrace.h | 18 +++++++++
->  arch/arm64/kernel/ptrace.c           | 72 ++++++++++++++++++++++++++++++++++++
->  include/uapi/linux/elf.h             |  2 +
->  3 files changed, 92 insertions(+)
-> 
-> diff --git a/arch/arm64/include/uapi/asm/ptrace.h b/arch/arm64/include/uapi/asm/ptrace.h
-> index c2f249bcd829..fafa7f6decf9 100644
-> --- a/arch/arm64/include/uapi/asm/ptrace.h
-> +++ b/arch/arm64/include/uapi/asm/ptrace.h
-> @@ -236,6 +236,24 @@ struct user_pac_mask {
->  	__u64		insn_mask;
->  };
->  
-> +/* pointer authentication keys (NT_ARM_PACA_KEYS, NT_ARM_PACG_KEYS) */
-> +
-> +struct user_pac_address_keys {
-> +	__u64		apiakey_lo;
-> +	__u64		apiakey_hi;
-> +	__u64		apibkey_lo;
-> +	__u64		apibkey_hi;
-> +	__u64		apdakey_lo;
-> +	__u64		apdakey_hi;
-> +	__u64		apdbkey_lo;
-> +	__u64		apdbkey_hi;
-> +};
-> +
-> +struct user_pac_generic_keys {
-> +	__u64		apgakey_lo;
-> +	__u64		apgakey_hi;
-> +};
-> +
+>  arch/alpha/include/uapi/asm/socket.h  |  5 +-
+>  arch/mips/include/uapi/asm/socket.h   |  5 +-
+>  arch/parisc/include/uapi/asm/socket.h |  5 +-
+>  arch/sparc/include/uapi/asm/socket.h  |  8 +--
+>  include/linux/socket.h                |  7 +++
+>  include/uapi/asm-generic/socket.h     |  5 +-
+>  include/uapi/linux/errqueue.h         |  4 ++
+>  net/core/scm.c                        | 27 ++++++++++
+>  net/core/sock.c                       | 73 +++++++++++++++------------
+>  net/ipv4/tcp.c                        | 29 ++++++-----
+>  net/smc/af_smc.c                      |  3 +-
+>  net/socket.c                          | 15 ++++--
+>  12 files changed, 122 insertions(+), 64 deletions(-)
+>
+> diff --git a/arch/alpha/include/uapi/asm/socket.h b/arch/alpha/include/uapi/asm/socket.h
+> index 352e3dc0b3d9..8b9f6f7f8087 100644
+> --- a/arch/alpha/include/uapi/asm/socket.h
+> +++ b/arch/alpha/include/uapi/asm/socket.h
+> @@ -116,19 +116,20 @@
+>
+>  #define SO_TIMESTAMP_NEW         62
+>  #define SO_TIMESTAMPNS_NEW       63
+> +#define SO_TIMESTAMPING_NEW      64
+>
+>  #if !defined(__KERNEL__)
+>
+>  #if __BITS_PER_LONG == 64
+>  #define SO_TIMESTAMP           SO_TIMESTAMP_OLD
+>  #define SO_TIMESTAMPNS         SO_TIMESTAMPNS_OLD
+> +#define SO_TIMESTAMPING                SO_TIMESTAMPING_OLD
+>  #else
+>  #define SO_TIMESTAMP (sizeof(time_t) == sizeof(__kernel_long_t) ? SO_TIMESTAMP_OLD : SO_TIMESTAMP_NEW)
+>  #define SO_TIMESTAMPNS (sizeof(time_t) == sizeof(__kernel_long_t) ? SO_TIMESTAMPNS_OLD : SO_TIMESTAMPNS_NEW)
+> +#define SO_TIMESTAMPING (sizeof(time_t) == sizeof(__kernel_long_t) ? SO_TIMESTAMPING_OLD : SO_TIMESTAMPING_NEW)
+>  #endif
 
-Are these intentionally different from the kernel's struct ptrauth_keys?
+If the previous patch moves this block to a platform-independent
+header, that allows this patch to shrink considerably, too.
 
->  #endif /* __ASSEMBLY__ */
->  
->  #endif /* _UAPI__ASM_PTRACE_H */
-> diff --git a/arch/arm64/kernel/ptrace.c b/arch/arm64/kernel/ptrace.c
-> index 6c1f63cb6c4e..f18f14c64d1e 100644
-> --- a/arch/arm64/kernel/ptrace.c
-> +++ b/arch/arm64/kernel/ptrace.c
-> @@ -979,6 +979,56 @@ static int pac_mask_get(struct task_struct *target,
->  
->  	return user_regset_copyout(&pos, &count, &kbuf, &ubuf, &uregs, 0, -1);
->  }
-> +
-> +#ifdef CONFIG_CHECKPOINT_RESTORE
-> +static int pac_address_keys_get(struct task_struct *target,
-> +				const struct user_regset *regset,
-> +				unsigned int pos, unsigned int count,
-> +				void *kbuf, void __user *ubuf)
+> +static int setsockopt_timestamping(struct sock *sk, int type, int val)
 > +{
-> +	if (!system_supports_address_auth())
-> +		return -EINVAL;
+> +       if (type == SO_TIMESTAMPING_NEW)
+> +               sock_set_flag(sk, SOCK_TSTAMP_NEW);
 > +
-> +	return user_regset_copyout(&pos, &count, &kbuf, &ubuf,
-> +			&target->thread_info.keys_user, 0, -1);
-
-How does this interact with CONFIG_HARDENED_USERCOPY?
-(I haven't really played with this myself, but the issue was reported
-by someone else when I was working on the SVE regset implementation.)
-
-Because thread_info is in task_struct for arm64, I think it will be
-subject to the arch_thread_struct_whitelist() (see <asm/processor.h>.)
-This may cause failures reading/writing the ptrauth regsets when this
-option is enabled.  (It seems =n in our defconfig today.)
-
-The usercopy hardening code seems to cope with a contiguous whitelisted
-region only, so it probably couldn't easily include the ptrauth keys.
-
-(Possibly this is a non-issue for reasone I'm not seeing -- I haven't
-tried this configuration recently.)
-
-
-If we cannot avoid the use of incompatible types for the user and kernel
-views of the ptrauth keys, then it may be more straightforward to simply
-declare a local struct user_pac_address_keys here and populate it field
-by field from thread_info, then do the _copyout on that.
-
-I'm not too keen on the type mismatch and the "-1" here.  That means we
-rely on regset->n and regset->size being set correctly elsewhere in
-order to guard against buffer overruns in thread_info, but in this
-case the regset size and the sizeof keys_user are not even the same.
-
-This is a potential pitfall for future maintenance that it would be
-preferable to avoid: if the regset definition and kernel structures
-go out of sync in some way in the future, we could be vulnerable to
-kernel buffer overruns, rather than just userspace seeing wrong
-behaviour.
-
+> +       if (val & ~SOF_TIMESTAMPING_MASK)
+> +               return -EINVAL;
+> +
+> +       if (val & SOF_TIMESTAMPING_OPT_ID &&
+> +           !(sk->sk_tsflags & SOF_TIMESTAMPING_OPT_ID)) {
+> +               if (sk->sk_protocol == IPPROTO_TCP &&
+> +                   sk->sk_type == SOCK_STREAM) {
+> +                       if ((1 << sk->sk_state) &
+> +                           (TCPF_CLOSE | TCPF_LISTEN))
+> +                               return -EINVAL;
+> +                       sk->sk_tskey = tcp_sk(sk)->snd_una;
+> +               } else {
+> +                       sk->sk_tskey = 0;
+> +               }
+> +       }
+> +
+> +       if (val & SOF_TIMESTAMPING_OPT_STATS &&
+> +           !(val & SOF_TIMESTAMPING_OPT_TSONLY))
+> +               return -EINVAL;
+> +
+> +       sk->sk_tsflags = val;
+> +       if (val & SOF_TIMESTAMPING_RX_SOFTWARE) {
+> +               sock_enable_timestamp(sk,
+> +                                     SOCK_TIMESTAMPING_RX_SOFTWARE);
+> +       } else {
+> +               if (type == SO_TIMESTAMPING_NEW)
+> +                       sock_reset_flag(sk, SOCK_TSTAMP_NEW);
+> +               sock_disable_timestamp(sk,
+> +                                      (1UL << SOCK_TIMESTAMPING_RX_SOFTWARE));
+> +       }
+> +
+> +       return 0;
 > +}
 > +
-> +static int pac_address_keys_set(struct task_struct *target,
-> +				const struct user_regset *regset,
-> +				unsigned int pos, unsigned int count,
-> +				const void *kbuf, const void __user *ubuf)
-> +{
-> +	if (!system_supports_address_auth())
-> +		return -EINVAL;
+>  /*
+>   *     This is meant for all protocols to use and covers goings on
+>   *     at the socket level. Everything here is generic.
+> @@ -851,39 +890,7 @@ int sock_setsockopt(struct socket *sock, int level, int optname,
+>                 break;
+>
+>         case SO_TIMESTAMPING_OLD:
+> -               if (val & ~SOF_TIMESTAMPING_MASK) {
+> -                       ret = -EINVAL;
+> -                       break;
+> -               }
+> -
+> -               if (val & SOF_TIMESTAMPING_OPT_ID &&
+> -                   !(sk->sk_tsflags & SOF_TIMESTAMPING_OPT_ID)) {
+> -                       if (sk->sk_protocol == IPPROTO_TCP &&
+> -                           sk->sk_type == SOCK_STREAM) {
+> -                               if ((1 << sk->sk_state) &
+> -                                   (TCPF_CLOSE | TCPF_LISTEN)) {
+> -                                       ret = -EINVAL;
+> -                                       break;
+> -                               }
+> -                               sk->sk_tskey = tcp_sk(sk)->snd_una;
+> -                       } else {
+> -                               sk->sk_tskey = 0;
+> -                       }
+> -               }
+> -
+> -               if (val & SOF_TIMESTAMPING_OPT_STATS &&
+> -                   !(val & SOF_TIMESTAMPING_OPT_TSONLY)) {
+> -                       ret = -EINVAL;
+> -                       break;
+> -               }
+> -
+> -               sk->sk_tsflags = val;
+> -               if (val & SOF_TIMESTAMPING_RX_SOFTWARE)
+> -                       sock_enable_timestamp(sk,
+> -                                             SOCK_TIMESTAMPING_RX_SOFTWARE);
+> -               else
+> -                       sock_disable_timestamp(sk,
+> -                                              (1UL << SOCK_TIMESTAMPING_RX_SOFTWARE));
+> +               ret = setsockopt_timestamping(sk, optname, val);
+
+Once again a lot of needless code churn. The only functional change is adding
+
+   +       if (type == SO_TIMESTAMPING_NEW)
+   +               sock_set_flag(sk, SOCK_TSTAMP_NEW);
+
+
+>  void __sock_recv_timestamp(struct msghdr *msg, struct sock *sk,
+>         struct sk_buff *skb)
+>  {
 > +
-> +	return user_regset_copyin(&pos, &count, &kbuf, &ubuf,
-> +			&target->thread_info.keys_user, 0, -1);
-
-The same comments apply here.
-
-Note, if using a local struct, you need to be careful to avoid leaking
-uninitialised kernel stack into the regset, so the struct must be fully
-initialised and must not have any implicit tail-padding or padding
-between fields.  (user_pac_address_keys and user_pac_generic_keys look
-OK on this point.)
-
-The most straightforward way to do this is to populate your struct from
-thread_info, do the _copyin(), then transfer the fields of the modified
-local struct back to thread_info.
-
-You'll have to do these copies in a couple of places, so if you go
-down this route it may be worth wrapping them in helpers.
-
-> +}
+>         int need_software_tstamp = sock_flag(sk, SOCK_RCVTSTAMP);
+> -       struct scm_timestamping tss;
+> +       struct scm_timestamping_internal tss;
 > +
-> +static int pac_generic_keys_get(struct task_struct *target,
-> +				const struct user_regset *regset,
-> +				unsigned int pos, unsigned int count,
-> +				void *kbuf, void __user *ubuf)
-> +{
-> +	if (!system_supports_generic_auth())
-> +		return -EINVAL;
-> +
-> +	return user_regset_copyout(&pos, &count, &kbuf, &ubuf,
-> +			&target->thread_info.keys_user.apga, 0, -1);
-> +}
-> +
-> +static int pac_generic_keys_set(struct task_struct *target,
-> +				const struct user_regset *regset,
-> +				unsigned int pos, unsigned int count,
-> +				const void *kbuf, const void __user *ubuf)
-> +{
-> +	if (!system_supports_generic_auth())
-> +		return -EINVAL;
-> +
-> +	return user_regset_copyin(&pos, &count, &kbuf, &ubuf,
-> +			&target->thread_info.keys_user.apga, 0, -1);
-> +}
-> +#endif /* CONFIG_CHECKPOINT_RESTORE */
->  #endif /* CONFIG_ARM64_PTR_AUTH */
 
-[...]
+Unnecessary whitespace line
 
-Cheers
----Dave
+>         int empty = 1, false_tstamp = 0;
+>         struct skb_shared_hwtstamps *shhwtstamps =
+>                 skb_hwtstamps(skb);
+> @@ -755,20 +758,22 @@ void __sock_recv_timestamp(struct msghdr *msg, struct sock *sk,
+>
