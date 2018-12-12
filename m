@@ -2,259 +2,81 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIM_ADSP_ALL,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42CCCC6783B
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 02:53:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 072C6C6783B
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 02:55:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F325D20870
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 02:53:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B54A220873
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 02:55:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=aussec.com header.i=@aussec.com header.b="hkpOpVxz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F325D20870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=aussec.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="grNj/e7Y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B54A220873
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726395AbeLLCxY (ORCPT
+        id S1726318AbeLLCzd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 21:53:24 -0500
-Received: from csm1.csm-office.com.au ([165.228.118.109]:55196 "EHLO
-        sleepy.aussec.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726211AbeLLCxY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 21:53:24 -0500
-X-Virus-Scanned: amavisd-new at aussec.com
-Received: from localhost.localdomain ([1.128.224.233])
-        (authenticated bits=0)
-        by sleepy.aussec.com (8.15.2/8.15.2) with ESMTPSA id wBC2qbuZ002983
-        (version=TLSv1.2 cipher=DHE-RSA-AES128-SHA bits=128 verify=NO);
-        Wed, 12 Dec 2018 13:53:10 +1100
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=aussec.com; s=2016;
-        t=1544583191; bh=vlqXIxxwLTH77D93HQG3sPOxtpN2R8BaYvqnwtHn6/M=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=hkpOpVxz/W8USu5+MHg3VXw74UEFLJNO6JzxvpQgbprgN2wQ+79AFJu4ZrtuffEVd
-         UPhsdDVtHFsjVyPoFtbs4VAxZSVDHNpiaE+IR+0EH4Yowg9bVcCo6Xiexn9NuaBCgC
-         NIRiGnI4jvBttMN1ukpVWEoYvABj7800qMK9fmAZnca7lGiWSvqVJG/ruICW+6csoi
-         le65ArlmWnbOIvoukQW8lU1RqnUXvHCVSfhEk1CdHABE5/75PqdIw8v0nJGsgrorr+
-         ZVt/Td4MMmkNeO+0yH5IMWwWKHRrA4NUK/e04FeYckCvjuSvq1qbIYUKAHNKEwNTVd
-         SmOqL49F/j6IQ==
-From:   Tom Burkart <tom@aussec.com>
-To:     Linux kernel mailing list <linux-kernel@vger.kernel.org>
-Cc:     Tom Burkart <tom@aussec.com>, Lukas Senger <lukas@fridolin.com>
-Subject: [PATCH v12 3/3] pps: pps-gpio pps-echo implementation
-Date:   Wed, 12 Dec 2018 13:52:14 +1100
-Message-Id: <20181212025214.29911-4-tom@aussec.com>
-X-Mailer: git-send-email 2.12.3
-In-Reply-To: <20181212025214.29911-3-tom@aussec.com>
-References: <20181212025214.29911-1-tom@aussec.com>
- <20181212025214.29911-2-tom@aussec.com>
- <20181212025214.29911-3-tom@aussec.com>
+        Tue, 11 Dec 2018 21:55:33 -0500
+Received: from imap.thunk.org ([74.207.234.97]:52332 "EHLO imap.thunk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726211AbeLLCzd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 21:55:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
+         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:To:From:Date:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=TsJY2X3YR7EgdoKDA0pT8tc8p/o+PMSbsHUCb0RQJDs=; b=grNj/e7YVs1lK3vjJC5kSlnpFK
+        JA2g+8wA4ykQLWzJmClC4l+QVca2Nh0Zgd7hU6VmwaRRqDz7eNNE00Lo09D2jLm5Fe5uvuppVT2uj
+        mM0928ThA5hqz2xy0u733E9j/6fzeZDOwF3nhSe5dW3i1//el0JyoTIWe1KB+ZI404t0=;
+Received: from root (helo=callcc.thunk.org)
+        by imap.thunk.org with local-esmtp (Exim 4.89)
+        (envelope-from <tytso@thunk.org>)
+        id 1gWugH-0000J3-Qg; Wed, 12 Dec 2018 02:55:25 +0000
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 221177A4FD5; Tue, 11 Dec 2018 21:55:25 -0500 (EST)
+Date:   Tue, 11 Dec 2018 21:55:25 -0500
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Chandan Rajendra <chandan@linux.vnet.ibm.com>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
+        Eric Biggers <ebiggers@kernel.org>, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-fscrypt@vger.kernel.org
+Subject: Re: [BUG BISECT next] Files cannot be opened after "fsverity: Move
+ verity status check to fsverity_file_open"
+Message-ID: <20181212025525.GF4464@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Chandan Rajendra <chandan@linux.vnet.ibm.com>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
+        Eric Biggers <ebiggers@kernel.org>, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-fscrypt@vger.kernel.org
+References: <CAJKOXPdNS+Qs6t1GwrgYhWT5EbtORJwYMzSrDPf8oAxv7ndNBg@mail.gmail.com>
+ <20181211222721.GC4464@thunk.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181211222721.GC4464@thunk.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch implements the pps echo functionality for pps-gpio, that
-sysfs claims is available already.
+The fscrypt.git tree has been updated with for the problem.  Apologies
+for not testing the !CONFIG_FS_VERITY case.
 
-Configuration is done via device tree bindings.
-
-This patch was originally written by Lukas Senger as part of a masters
-thesis project and modified for inclusion into the linux kernel by Tom
-Burkart.
-
-Signed-off-by: Lukas Senger <lukas@fridolin.com>
-Signed-off-by: Tom Burkart <tom@aussec.com>
----
- drivers/pps/clients/pps-gpio.c | 94 ++++++++++++++++++++++++++++++++++++++++--
- include/linux/pps-gpio.h       |  2 +
- 2 files changed, 93 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/pps/clients/pps-gpio.c b/drivers/pps/clients/pps-gpio.c
-index 5d764dceabc5..b239c4b9ff51 100644
---- a/drivers/pps/clients/pps-gpio.c
-+++ b/drivers/pps/clients/pps-gpio.c
-@@ -35,6 +35,8 @@
- #include <linux/list.h>
- #include <linux/of_device.h>
- #include <linux/of_gpio.h>
-+#include <linux/timer.h>
-+#include <linux/jiffies.h>
- 
- /* Info for each registered platform device */
- struct pps_gpio_device_data {
-@@ -42,8 +44,13 @@ struct pps_gpio_device_data {
- 	struct pps_device *pps;		/* PPS source device */
- 	struct pps_source_info info;	/* PPS source information */
- 	struct gpio_desc *gpio_pin;	/* GPIO port descriptors */
-+	struct gpio_desc *echo_pin;
-+	struct timer_list echo_timer;	/* timer to reset echo active state */
- 	bool assert_falling_edge;
- 	bool capture_clear;
-+	bool enable_pps_echo;
-+	unsigned int echo_active_ms;	/* PPS echo active duration */
-+	unsigned long echo_timeout;	/* timer timeout value in jiffies */
- };
- 
- /*
-@@ -64,19 +71,57 @@ static irqreturn_t pps_gpio_irq_handler(int irq, void *data)
- 	rising_edge = gpiod_get_value(info->gpio_pin);
- 	if ((rising_edge && !info->assert_falling_edge) ||
- 			(!rising_edge && info->assert_falling_edge))
--		pps_event(info->pps, &ts, PPS_CAPTUREASSERT, NULL);
-+		pps_event(info->pps, &ts, PPS_CAPTUREASSERT, data);
- 	else if (info->capture_clear &&
- 			((rising_edge && info->assert_falling_edge) ||
- 			(!rising_edge && !info->assert_falling_edge)))
--		pps_event(info->pps, &ts, PPS_CAPTURECLEAR, NULL);
-+		pps_event(info->pps, &ts, PPS_CAPTURECLEAR, data);
- 
- 	return IRQ_HANDLED;
- }
- 
-+static void pps_gpio_echo(struct pps_device *pps, int event, void *data)
-+{
-+	/* add_timer() needs to write into info->echo_timer */
-+	struct pps_gpio_device_data *info;
-+
-+	info = data;
-+
-+	switch (event) {
-+	case PPS_CAPTUREASSERT:
-+		if (pps->params.mode & PPS_ECHOASSERT)
-+			gpiod_set_value(info->echo_pin, 1);
-+		break;
-+
-+	case PPS_CAPTURECLEAR:
-+		if (pps->params.mode & PPS_ECHOCLEAR)
-+			gpiod_set_value(info->echo_pin, 1);
-+		break;
-+	}
-+
-+	/* fire the timer */
-+	if (info->pps->params.mode & (PPS_ECHOASSERT | PPS_ECHOCLEAR)) {
-+		info->echo_timer.expires = jiffies + info->echo_timeout;
-+		add_timer(&info->echo_timer);
-+	}
-+}
-+
-+/* Timer callback to reset the echo pin to the inactive state */
-+static void pps_gpio_echo_timer_callback(struct timer_list *t)
-+{
-+	const struct pps_gpio_device_data *info;
-+
-+	info = from_timer(info, t, echo_timer);
-+
-+	gpiod_set_value(info->echo_pin, 0);
-+}
-+
- static int pps_gpio_setup(struct platform_device *pdev)
- {
- 	struct pps_gpio_device_data *data = platform_get_drvdata(pdev);
- 	struct device_node *np = pdev->dev.of_node;
-+	int ret;
-+	u32 value;
- 
- 	data->gpio_pin = devm_gpiod_get(&pdev->dev,
- 		NULL,	/* request "gpios" */
-@@ -87,6 +132,35 @@ static int pps_gpio_setup(struct platform_device *pdev)
- 		return PTR_ERR(data->gpio_pin);
- 	}
- 
-+	if (of_property_read_bool(np, "echo-gpios")) {
-+		data->enable_pps_echo = true;
-+
-+		data->echo_pin = devm_gpiod_get(&pdev->dev,
-+			"echo",
-+			GPIOD_OUT_LOW);
-+		if (IS_ERR(data->echo_pin)) {
-+			dev_err(&pdev->dev, "failed to request ECHO GPIO\n");
-+			return PTR_ERR(data->echo_pin);
-+		}
-+
-+		ret = of_property_read_u32(np,
-+			"echo-active-ms",
-+			&value);
-+		if (ret) {
-+			dev_err(&pdev->dev,
-+				"failed to get echo-active-ms from OF\n");
-+			return ret;
-+		}
-+		data->echo_active_ms = value;
-+		/* sanity check on echo_active_ms */
-+		if (!data->echo_active_ms || data->echo_active_ms > 999) {
-+			dev_err(&pdev->dev,
-+				"echo-active-ms: %u - bad value from OF\n",
-+				data->echo_active_ms);
-+			return -EINVAL;
-+		}
-+	}
-+
- 	if (of_property_read_bool(np, "assert-falling-edge"))
- 		data->assert_falling_edge = true;
- 	return 0;
-@@ -122,9 +196,13 @@ static int pps_gpio_probe(struct platform_device *pdev)
- 	/* GPIO setup */
- 	if (pdata) {
- 		data->gpio_pin = pdata->gpio_pin;
-+		data->echo_pin = pdata->echo_pin;
-+		if (pdata->echo_pin != NULL)
-+			data->enable_pps_echo = true;
- 
- 		data->assert_falling_edge = pdata->assert_falling_edge;
- 		data->capture_clear = pdata->capture_clear;
-+		data->echo_active_ms = pdata->echo_active_ms;
- 	} else {
- 		ret = pps_gpio_setup(pdev);
- 		if (ret)
-@@ -148,6 +226,11 @@ static int pps_gpio_probe(struct platform_device *pdev)
- 	data->info.owner = THIS_MODULE;
- 	snprintf(data->info.name, PPS_MAX_NAME_LEN - 1, "%s.%d",
- 		 pdev->name, pdev->id);
-+	if (data->enable_pps_echo) {
-+		data->info.echo = pps_gpio_echo;
-+		data->echo_timeout = msecs_to_jiffies(data->echo_active_ms);
-+		timer_setup(&data->echo_timer, pps_gpio_echo_timer_callback, 0);
-+	}
- 
- 	/* register PPS source */
- 	pps_default_params = PPS_CAPTUREASSERT | PPS_OFFSETASSERT;
-@@ -180,6 +263,11 @@ static int pps_gpio_remove(struct platform_device *pdev)
- 	struct pps_gpio_device_data *data = platform_get_drvdata(pdev);
- 
- 	pps_unregister_source(data->pps);
-+	if (data->enable_pps_echo) {
-+		del_timer_sync(&data->echo_timer);
-+		/* reset echo pin in any case */
-+		gpiod_set_value(data->echo_pin, 0);
-+	}
- 	dev_info(&pdev->dev, "removed IRQ %d as PPS source\n", data->irq);
- 	return 0;
- }
-@@ -204,4 +292,4 @@ MODULE_AUTHOR("Ricardo Martins <rasm@fe.up.pt>");
- MODULE_AUTHOR("James Nuss <jamesnuss@nanometrics.ca>");
- MODULE_DESCRIPTION("Use GPIO pin as PPS source");
- MODULE_LICENSE("GPL");
--MODULE_VERSION("1.1.0");
-+MODULE_VERSION("1.2.0");
-diff --git a/include/linux/pps-gpio.h b/include/linux/pps-gpio.h
-index f028d2cda6f5..44171e6b7197 100644
---- a/include/linux/pps-gpio.h
-+++ b/include/linux/pps-gpio.h
-@@ -24,8 +24,10 @@
- 
- struct pps_gpio_platform_data {
- 	struct gpio_desc *gpio_pin;
-+	struct gpio_desc *echo_pin;
- 	bool assert_falling_edge;
- 	bool capture_clear;
-+	unsigned int echo_active_ms;
- };
- 
- #endif /* _PPS_GPIO_H */
--- 
-2.12.3
-
+							- Ted
