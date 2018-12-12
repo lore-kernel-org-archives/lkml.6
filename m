@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADECAC6783B
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 00:56:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9382EC6783B
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 00:56:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6EB0120855
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 00:56:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 530B420811
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 00:56:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YTgUhfA3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EB0120855
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aIwD8A2K"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 530B420811
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726394AbeLLAz4 (ORCPT
+        id S1726440AbeLLA4O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 19:55:56 -0500
-Received: from mail-io1-f68.google.com ([209.85.166.68]:34181 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726362AbeLLAzv (ORCPT
+        Tue, 11 Dec 2018 19:56:14 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:50655 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726378AbeLLAzx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 19:55:51 -0500
-Received: by mail-io1-f68.google.com with SMTP id r9so13509003ioa.1;
-        Tue, 11 Dec 2018 16:55:50 -0800 (PST)
+        Tue, 11 Dec 2018 19:55:53 -0500
+Received: by mail-it1-f195.google.com with SMTP id z7so6616520iti.0;
+        Tue, 11 Dec 2018 16:55:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=L/atx7BGCxztBzsTRzroAA6bFNlexZMNZDiBGowfY84=;
-        b=YTgUhfA3XhydP/im3xH6xglj1N2s9OHvGOGTkriBOvGGU150UMBz5iqAjyQ0daUPIu
-         kEUan9F49Owy953ty7gDVs6CY4sx7XrN3LXoG4g/P2Wqd3FWEYhe2Z2SPXpFqR+4aK+K
-         t+gP598UpePVn1DDRNNM7+BeV0iKY6BTTguGCr12/StVEcZspDRkMo7/vXKA9t+aplAk
-         A7ZRUBQSrBJXgoOS8Y4MI262kqKQAgy5GnwVU2C3CTLBQD0us/MLMReUwLUE5hYDffFf
-         RinoZaOtG60QcgOqwY8kU/m8xEQEQHqBvliORX0cfI5nPW9o5ot41afUYEfzPno6XQ04
-         55XA==
+        bh=R4U3PNF7JZZPKLCYh0Oave/Y3+d9jjju4/OWSW4r6jQ=;
+        b=aIwD8A2Kcld+gp/b1xdxZy0FZTjXcslHyF694uIJTlbT1P229Bu50T2bSZdHcNMErF
+         40uRUYksS7Rts3ar07s0MWKjBHP8fruipwTOb/mBJu/oy6LYc4GhJgtToKerFTNexbQp
+         kdMEBbqVkezlX1Q8JoGS9ov9EXp3OYeve9zm7arlwVjwVhoQ8NL0yqrpMuFbQFMHtnE/
+         fSVt6eXVVQubH1oTTfgioWfUvTQSI4NHLY441d4jJyKWXm/owPT6U2W4BWFqM1GyLImU
+         mGVrGpejKGkCKaVX3anWqZkqGeDpdttmKG/Kv1RWFXjRwIpg+Sv9pqAwXbkeYMrZZ3SM
+         oqIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=L/atx7BGCxztBzsTRzroAA6bFNlexZMNZDiBGowfY84=;
-        b=an3bFm5/1RBzhVkMjbjDq4CuPpvXmSvdRXQnk91bUgotcu1cD5rswLxDp1/v/ZV8KL
-         UaEGRfipHXVV4p97p5qxSmNBdVOtMFTQI++h++tLQzxBRcwhJFNwObUKzodFt0sMyJHY
-         uh7o/omu0oxdpF3pDuzmeOrxmFJV0sdEtbEb90/f+Ttusc87LY1IGm7VWhQpKxSAnOcL
-         TOhvU/OPfrM0WovrFW43aUpHCe+aZWchiZJppquyZa1csuuDvr/POeo0uWLXHtWqOcxR
-         /+pWu30h2mIHyUrfiSlc9B+ithLwDb6EhQ8MvrfVKH/GOpLA0sAEGJKqTKjZyedw6DNW
-         RYiw==
-X-Gm-Message-State: AA+aEWbVJiIGGk2/yhT1YccLjeMBw2qxuMU/kpj5S3wgKkbg3iYDCgIG
-        Mr9IU4eCqgvVeIER8m++4Pw=
-X-Google-Smtp-Source: AFSGD/Ws5mxQcEZcvO9LhJ5V3G9Wl/Uzf4T/qPMB2FqbhVfV9YU9cXn9Tff/hWyg2hQa7CNhI90HtQ==
-X-Received: by 2002:a5d:9b9a:: with SMTP id r26mr15497659iom.232.1544576149999;
-        Tue, 11 Dec 2018 16:55:49 -0800 (PST)
+        bh=R4U3PNF7JZZPKLCYh0Oave/Y3+d9jjju4/OWSW4r6jQ=;
+        b=hXATk9QP1IWkt+D9O+t04VW6pDYaGz+V+wTd7GUo+0lgYTPaccH1AD9NruM83iNmXk
+         JQGzTVf/EJZl3sc6syrHByf+ja8pJmMvt0tE2+sWlpziBCVk+I3gZN7OCdC6W4dPG5RN
+         SGBo9ThjyuEcjhwvmVQTm+Em4/PPEiDqmIMO4rqe0i/COaoZSuKaCRDBcYAk5BZGHiB2
+         PhakmGEdtjZJgQ818fEj0fT8tr8EJkiymAnTHlrQ3YYIv36t0VFU39iT9BhyYhTexvnv
+         J/rhxnyoUkIomXk4DD+ZFWuKZxNmW7PDpsd7HPjBp0AlWShaOZalZBkyC3mUnG1xyJAj
+         aryw==
+X-Gm-Message-State: AA+aEWbIHPFitpA3VhCbt8WEB319h736BonMfPa/rsd+h8bzZPHmGSbf
+        7/AocIR5yy3rcscyldrYb3E=
+X-Google-Smtp-Source: AFSGD/W2Gxx6S/m6J0d6dJgKQge+oX6kcvwOsjxxwwp8E32NXGM15q51WVH+b041wG5NMi/JUxIa1A==
+X-Received: by 2002:a24:4709:: with SMTP id t9mr4551515itb.47.1544576152796;
+        Tue, 11 Dec 2018 16:55:52 -0800 (PST)
 Received: from r2700x.localdomain (c-75-70-96-103.hsd1.co.comcast.net. [75.70.96.103])
-        by smtp.gmail.com with ESMTPSA id l186sm1952445itl.22.2018.12.11.16.55.49
+        by smtp.gmail.com with ESMTPSA id l186sm1952445itl.22.2018.12.11.16.55.51
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Dec 2018 16:55:49 -0800 (PST)
+        Tue, 11 Dec 2018 16:55:52 -0800 (PST)
 From:   Jeremy Fertic <jeremyfertic@gmail.com>
 To:     Jonathan Cameron <jic23@kernel.org>
 Cc:     Lars-Peter Clausen <lars@metafoo.de>,
@@ -69,9 +69,9 @@ Cc:     Lars-Peter Clausen <lars@metafoo.de>,
         linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
         linux-kernel@vger.kernel.org,
         Jeremy Fertic <jeremyfertic@gmail.com>
-Subject: [PATCH 07/11] staging: iio: adt7316: use correct variable in DAC_internal_Vref read
-Date:   Tue, 11 Dec 2018 17:54:59 -0700
-Message-Id: <20181212005503.28054-8-jeremyfertic@gmail.com>
+Subject: [PATCH 10/11] staging: iio: adt7316: change interpretation of write to dac update mode
+Date:   Tue, 11 Dec 2018 17:55:02 -0700
+Message-Id: <20181212005503.28054-11-jeremyfertic@gmail.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181212005503.28054-1-jeremyfertic@gmail.com>
 References: <20181212005503.28054-1-jeremyfertic@gmail.com>
@@ -82,32 +82,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The dac internal vref settings are part of the ldac config register rather
-than the dac config register. Change the variable being used so the read
-returns the correct result.
+Based on the output of adt7316_show_all_DAC_update_modes() and
+adt7316_show_DAC_update_mode(), adt7316_store_DAC_update_mode() should
+expect the user to enter an integer input from 0 to 3. The user input is
+currently expected to account for the actual bit positions in the register.
+For example, choosing option 3 would require a write of 0x30 (actually 48
+since it expects base 10). To address this inconsistency, create a shift
+macro to be used in the valid input check as well as the calculation for
+the register write.
 
 Signed-off-by: Jeremy Fertic <jeremyfertic@gmail.com>
 ---
- drivers/staging/iio/addac/adt7316.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+I'm not sure if this patch is appropriate since it's making a user visible
+change. I've included it since the driver is still in staging.
+
+ drivers/staging/iio/addac/adt7316.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/staging/iio/addac/adt7316.c b/drivers/staging/iio/addac/adt7316.c
-index 77ef3c209b67..98101a7157d2 100644
+index bca599d8c51c..58b462ad0c83 100644
 --- a/drivers/staging/iio/addac/adt7316.c
 +++ b/drivers/staging/iio/addac/adt7316.c
-@@ -1056,10 +1056,10 @@ static ssize_t adt7316_show_DAC_internal_Vref(struct device *dev,
+@@ -129,6 +129,7 @@
+  */
+ #define ADT7316_DA_2VREF_CH_MASK	0xF
+ #define ADT7316_DA_EN_MODE_MASK		0x30
++#define ADT7316_DA_EN_MODE_SHIFT	4
+ #define ADT7316_DA_EN_MODE_SINGLE	0x00
+ #define ADT7316_DA_EN_MODE_AB_CD	0x10
+ #define ADT7316_DA_EN_MODE_ABCD		0x20
+@@ -879,11 +880,11 @@ static ssize_t adt7316_store_DAC_update_mode(struct device *dev,
+ 		return -EPERM;
  
- 	if ((chip->id & ID_FAMILY_MASK) == ID_ADT75XX)
- 		return sprintf(buf, "0x%x\n",
--			(chip->dac_config & ADT7516_DAC_IN_VREF_MASK) >>
-+			(chip->ldac_config & ADT7516_DAC_IN_VREF_MASK) >>
- 			ADT7516_DAC_IN_VREF_OFFSET);
- 	return sprintf(buf, "%d\n",
--		       !!(chip->dac_config & ADT7316_DAC_IN_VREF));
-+		       !!(chip->ldac_config & ADT7316_DAC_IN_VREF));
- }
+ 	ret = kstrtou8(buf, 10, &data);
+-	if (ret || data > ADT7316_DA_EN_MODE_MASK)
++	if (ret || data > (ADT7316_DA_EN_MODE_MASK >> ADT7316_DA_EN_MODE_SHIFT))
+ 		return -EINVAL;
  
- static ssize_t adt7316_store_DAC_internal_Vref(struct device *dev,
+ 	dac_config = chip->dac_config & (~ADT7316_DA_EN_MODE_MASK);
+-	dac_config |= data;
++	dac_config |= data << ADT7316_DA_EN_MODE_SHIFT;
+ 
+ 	ret = chip->bus.write(chip->bus.client, ADT7316_DAC_CONFIG, dac_config);
+ 	if (ret)
 -- 
 2.19.1
 
