@@ -2,113 +2,213 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,T_MIXED_ES,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02A74C65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 21:26:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D43C7C65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 21:30:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B89A92084E
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 21:26:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QPUotTRV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B89A92084E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 92E192084E
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 21:30:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92E192084E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728328AbeLLV0o (ORCPT
+        id S1727594AbeLLVaN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 16:26:44 -0500
-Received: from mail-yb1-f196.google.com ([209.85.219.196]:33684 "EHLO
-        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726263AbeLLV0n (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 16:26:43 -0500
-Received: by mail-yb1-f196.google.com with SMTP id c67so918729ybf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 13:26:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=5+BEnt5TG3QOBL/f8mAJzw3vK7N3jl5vCJSfFl08wQY=;
-        b=QPUotTRVuRp9KxDZx+5x+wBVFbeT04GHuk4L3BknKaVJKmddGfZqdq/rTjvIWER3OJ
-         3PCnXgXdxeDcAI664xzlmEf8wPfLtGiXdciZgtuHqFIB+39SSWll0r7bhFlJmJINTEV6
-         0vlpX33NvjWOeMmRFXp1Q9vGPqFa/9kgbYWTE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5+BEnt5TG3QOBL/f8mAJzw3vK7N3jl5vCJSfFl08wQY=;
-        b=cigSrNPqmt0uLbSs3lzPRIEcCw61bZzU6s23o0+Nw/tnxBQSkDNVBTTiDxi4dpQrZQ
-         kB66f6UrMLBY60dRwKDlVLLQZW4kkkec99X4wlPacAe5bH9MC1sNIK1/uSQczErF6Jyb
-         SXyxw6MDVAkVmQ7MmUv8bq9zC7ss/E1II2W3PPYR5ij0EXERFeVeQW9XwZPjJ5Wxln2g
-         Fsfc7cN+nbRJq1Sjc1OBCR1nCu8jBwEam26zi7x5TaqifgZFMwuqacmTZ7b7J55Bc28t
-         XS2l5vWGbgRrwdRNSG8bWtELHJLjiBo/Y35yLYKp8QulrOAhv8zrBM6BwFSuoBVBZbh6
-         Z0Fg==
-X-Gm-Message-State: AA+aEWbt03aedke9wmVtu33t8DTT6uVisPToRwonH2EJ+rnL/Q2LScOR
-        OHndmgol2cOYU6HvzPFZlEoYXY3v7nU=
-X-Google-Smtp-Source: AFSGD/Vz8FQlBoW+LsDNdgkYv0i2OsmHuU12ZufJGmbod6bh+9gIWmB2JIqVnUSH2EGiWTnRTMaYiw==
-X-Received: by 2002:a25:ad1d:: with SMTP id y29mr3656010ybi.80.1544650002314;
-        Wed, 12 Dec 2018 13:26:42 -0800 (PST)
-Received: from mail-yw1-f47.google.com (mail-yw1-f47.google.com. [209.85.161.47])
-        by smtp.gmail.com with ESMTPSA id j6sm6297201ywi.110.2018.12.12.13.26.40
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 12 Dec 2018 13:26:40 -0800 (PST)
-Received: by mail-yw1-f47.google.com with SMTP id f65so7607104ywc.8
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 13:26:40 -0800 (PST)
-X-Received: by 2002:a81:98e:: with SMTP id 136mr22076490ywj.47.1544650000024;
- Wed, 12 Dec 2018 13:26:40 -0800 (PST)
+        Wed, 12 Dec 2018 16:30:13 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:46648 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726248AbeLLVaM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 16:30:12 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9FC527F6C8;
+        Wed, 12 Dec 2018 21:30:11 +0000 (UTC)
+Received: from redhat.com (ovpn-124-14.rdu2.redhat.com [10.10.124.14])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 894C66146E;
+        Wed, 12 Dec 2018 21:30:08 +0000 (UTC)
+Date:   Wed, 12 Dec 2018 16:30:06 -0500
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Jan Kara <jack@suse.cz>, John Hubbard <jhubbard@nvidia.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        John Hubbard <john.hubbard@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>, tom@talpey.com,
+        Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
+        Christoph Hellwig <hch@infradead.org>,
+        Christopher Lameter <cl@linux.com>,
+        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Michal Hocko <mhocko@kernel.org>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        rcampbell@nvidia.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
+Message-ID: <20181212213005.GE5037@redhat.com>
+References: <20181205011519.GV10377@bombadil.infradead.org>
+ <20181205014441.GA3045@redhat.com>
+ <59ca5c4b-fd5b-1fc6-f891-c7986d91908e@nvidia.com>
+ <7b4733be-13d3-c790-ff1b-ac51b505e9a6@nvidia.com>
+ <20181207191620.GD3293@redhat.com>
+ <3c4d46c0-aced-f96f-1bf3-725d02f11b60@nvidia.com>
+ <20181208022445.GA7024@redhat.com>
+ <20181210102846.GC29289@quack2.suse.cz>
+ <20181212150319.GA3432@redhat.com>
+ <CAPcyv4go0Xzhz8rXdfscWuXDu83BO9v8WD4upDUJWb7gKzX5OQ@mail.gmail.com>
 MIME-Version: 1.0
-References: <20181206083257.9596-1-ard.biesheuvel@linaro.org>
- <201812091807.4emRkZ7L%fengguang.wu@intel.com> <20181209103740.GB30658@n2100.armlinux.org.uk>
- <CAGXu5j+WLpjNq0p41eu+VeZxV3yeTB19uNYxCQevbcDYkv7gJw@mail.gmail.com>
-In-Reply-To: <CAGXu5j+WLpjNq0p41eu+VeZxV3yeTB19uNYxCQevbcDYkv7gJw@mail.gmail.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Wed, 12 Dec 2018 13:26:26 -0800
-X-Gmail-Original-Message-ID: <CAGXu5j+FzZ7FuhLvfR6Lm_d7dN2Pc3qn7xaqV6HLp6xtGy+kGg@mail.gmail.com>
-Message-ID: <CAGXu5j+FzZ7FuhLvfR6Lm_d7dN2Pc3qn7xaqV6HLp6xtGy+kGg@mail.gmail.com>
-Subject: Re: [PATCH v3] ARM: smp: add support for per-task stack canaries
-To:     Russell King <linux@armlinux.org.uk>
-Cc:     kbuild test robot <lkp@intel.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>, kbuild-all@01.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Emese Revfy <re.emese@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Laura Abbott <labbott@redhat.com>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAPcyv4go0Xzhz8rXdfscWuXDu83BO9v8WD4upDUJWb7gKzX5OQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Wed, 12 Dec 2018 21:30:12 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 10, 2018 at 2:34 PM Kees Cook <keescook@chromium.org> wrote:
->
-> On Sun, Dec 9, 2018 at 2:38 AM Russell King - ARM Linux
-> <linux@armlinux.org.uk> wrote:
+On Wed, Dec 12, 2018 at 08:27:35AM -0800, Dan Williams wrote:
+> On Wed, Dec 12, 2018 at 7:03 AM Jerome Glisse <jglisse@redhat.com> wrote:
 > >
-> > On Sun, Dec 09, 2018 at 06:28:11PM +0800, kbuild test robot wrote:
-> > > Hi Ard,
+> > On Mon, Dec 10, 2018 at 11:28:46AM +0100, Jan Kara wrote:
+> > > On Fri 07-12-18 21:24:46, Jerome Glisse wrote:
+> > > > Another crazy idea, why not treating GUP as another mapping of the page
+> > > > and caller of GUP would have to provide either a fake anon_vma struct or
+> > > > a fake vma struct (or both for PRIVATE mapping of a file where you can
+> > > > have a mix of both private and file page thus only if it is a read only
+> > > > GUP) that would get added to the list of existing mapping.
+> > > >
+> > > > So the flow would be:
+> > > >     somefunction_thatuse_gup()
+> > > >     {
+> > > >         ...
+> > > >         GUP(_fast)(vma, ..., fake_anon, fake_vma);
+> > > >         ...
+> > > >     }
+> > > >
+> > > >     GUP(vma, ..., fake_anon, fake_vma)
+> > > >     {
+> > > >         if (vma->flags == ANON) {
+> > > >             // Add the fake anon vma to the anon vma chain as a child
+> > > >             // of current vma
+> > > >         } else {
+> > > >             // Add the fake vma to the mapping tree
+> > > >         }
+> > > >
+> > > >         // The existing GUP except that now it inc mapcount and not
+> > > >         // refcount
+> > > >         GUP_old(..., &nanonymous, &nfiles);
+> > > >
+> > > >         atomic_add(&fake_anon->refcount, nanonymous);
+> > > >         atomic_add(&fake_vma->refcount, nfiles);
+> > > >
+> > > >         return nanonymous + nfiles;
+> > > >     }
 > > >
-> > > I love your patch! Perhaps something to improve:
+> > > Thanks for your idea! This is actually something like I was suggesting back
+> > > at LSF/MM in Deer Valley. There were two downsides to this I remember
+> > > people pointing out:
+> > >
+> > > 1) This cannot really work with __get_user_pages_fast(). You're not allowed
+> > > to get necessary locks to insert new entry into the VMA tree in that
+> > > context. So essentially we'd loose get_user_pages_fast() functionality.
+> > >
+> > > 2) The overhead e.g. for direct IO may be noticeable. You need to allocate
+> > > the fake tracking VMA, get VMA interval tree lock, insert into the tree.
+> > > Then on IO completion you need to queue work to unpin the pages again as you
+> > > cannot remove the fake VMA directly from interrupt context where the IO is
+> > > completed.
+> > >
+> > > You are right that the cost could be amortized if gup() is called for
+> > > multiple consecutive pages however for small IOs there's no help...
+> > >
+> > > So this approach doesn't look like a win to me over using counter in struct
+> > > page and I'd rather try looking into squeezing HMM public page usage of
+> > > struct page so that we can fit that gup counter there as well. I know that
+> > > it may be easier said than done...
 > >
-> > Hi,
+> > So i want back to the drawing board and first i would like to ascertain
+> > that we all agree on what the objectives are:
 > >
-> > This looks to me like a false warning - how can a patch touching arch
-> > code affect the result of lib/test_ubsan.c?  Please can you double-
-> > check this result?
->
-> Yeah, no idea. Do you want me to toss this into the ARM patch queue?
-> If not, I can this through the gcc-plugin tree.
+> >     [O1] Avoid write back from a page still being written by either a
+> >          device or some direct I/O or any other existing user of GUP.
+> >          This would avoid possible file system corruption.
+> >
+> >     [O2] Avoid crash when set_page_dirty() is call on a page that is
+> >          considered clean by core mm (buffer head have been remove and
+> >          with some file system this turns into an ugly mess).
+> >
+> >     [O3] DAX and the device block problems, ie with DAX the page map in
+> >          userspace is the same as the block (persistent memory) and no
+> >          filesystem nor block device understand page as block or pinned
+> >          block.
+> >
+> > For [O3] i don't think any pin count would help in anyway. I believe
+> > that the current long term GUP API that does not allow GUP of DAX is
+> > the only sane solution for now.
+> 
+> No, that's not a sane solution, it's an emergency hack.
+> 
+> > The real fix would be to teach file-
+> > system about DAX/pinned block so that a pinned block is not reuse
+> > by filesystem.
+> 
+> We already have taught filesystems about pinned dax pages, see
+> dax_layout_busy_page(). As much as possible I want to eliminate the
+> concept of "dax pages" as a special case that gets sprinkled
+> throughout the mm.
 
-Since the ARM changes are relatively small, and it adds a new plugin,
-I'll take this via the gcc-plugins tree for -next now. Please yell if
-this should be done differently.
+So thinking on O3 issues what about leveraging the recent change i
+did to mmu notifier. Add a event for truncate or any other file
+event that need to invalidate the file->page for a range of offset.
 
-Thanks!
+Add mmu notifier listener to GUP user (except direct I/O) so that
+they invalidate they hardware mapping or switch the hardware mapping
+to use a crappy page. When such event happens what ever user do to
+the page through that driver is broken anyway. So it is better to
+be loud about it then trying to make it pass under the radar.
 
--- 
-Kees Cook
+This will put the burden on broken user and allow you to properly
+recycle your DAX page.
+
+Think of it as revoke through mmu notifier.
+
+So patchset would be:
+    enum mmu_notifier_event {
++       MMU_NOTIFY_TRUNCATE,
+    };
+
++   Change truncate code path to emit MMU_NOTIFY_TRUNCATE
+
+Then for each user of GUP (except direct I/O or other very short
+term GUP):
+
+    Patch 1: register mmu notifier
+    Patch 2: listen to MMU_NOTIFY_TRUNCATE and MMU_NOTIFY_UNMAP
+             when that happens update the device page table or
+             usage to point to a crappy page and do put_user_page
+             on all previously held page
+
+So this would solve the revoke side of thing without adding a burden
+on GUP user like direct I/O. Many existing user of GUP already do
+listen to mmu notifier and already behave properly. It is just about
+making every body list to that. Then we can even add the mmu notifier
+pointer as argument to GUP just to make sure no new user of GUP forget
+about registering a notifier (argument as a teaching guide not as a
+something actively use).
+
+
+So does that sounds like a plan to solve your concern with long term
+GUP user ? This does not depend on DAX or anything it would apply to
+any file back pages.
+
+
+Cheers,
+Jérôme
