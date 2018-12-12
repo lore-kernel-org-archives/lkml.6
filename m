@@ -2,86 +2,125 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.9 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3429BC65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:36:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 371FBC67839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:39:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 018BD2080F
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:36:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 018BD2080F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
+	by mail.kernel.org (Postfix) with ESMTP id ECB0B20879
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:39:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECB0B20879
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728057AbeLLRgv (ORCPT
+        id S1728032AbeLLRjT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 12:36:51 -0500
-Received: from lb3-smtp-cloud8.xs4all.net ([194.109.24.29]:50458 "EHLO
-        lb3-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727799AbeLLRgv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 12:36:51 -0500
-Received: from [IPv6:2001:983:e9a7:1:d5c3:7636:7173:44a0] ([IPv6:2001:983:e9a7:1:d5c3:7636:7173:44a0])
-        by smtp-cloud8.xs4all.net with ESMTPA
-        id X8R9gktT0uDWoX8RAgJATS; Wed, 12 Dec 2018 18:36:49 +0100
-Subject: [PATCH v6 3/2] MAINTAINERS: added include/trace/events/pwc.h
-To:     "Matwey V. Kornilov" <matwey@sai.msu.ru>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     matwey.kornilov@gmail.com, tfiga@chromium.org,
-        laurent.pinchart@ideasonboard.com, stern@rowland.harvard.edu,
-        ezequiel@collabora.com, hdegoede@redhat.com, mchehab@kernel.org,
-        rostedt@goodmis.org, mingo@redhat.com, isely@pobox.com,
-        bhumirks@gmail.com, colin.king@canonical.com,
-        kieran.bingham@ideasonboard.com, keiichiw@chromium.org
-References: <20181109190327.23606-1-matwey@sai.msu.ru>
- <20181109190327.23606-2-matwey@sai.msu.ru>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <339893a9-d5a9-00b1-86ad-2c9c8b4fb10f@xs4all.nl>
-Date:   Wed, 12 Dec 2018 18:36:43 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Wed, 12 Dec 2018 12:39:19 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:46232 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727681AbeLLRjR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 12:39:17 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 71C2E80D;
+        Wed, 12 Dec 2018 09:39:17 -0800 (PST)
+Received: from [10.37.8.254] (unknown [10.37.8.254])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9F94F3F575;
+        Wed, 12 Dec 2018 09:39:15 -0800 (PST)
+Subject: Re: [PATCH v2 2/2] arm64: uaccess: Implement unsafe accessors
+To:     Catalin Marinas <catalin.marinas@arm.com>,
+        Julien Thierry <julien.thierry@arm.com>
+Cc:     peterz@infradead.org, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, mingo@redhat.com,
+        james.morse@arm.com, hpa@zytor.com,
+        linux-arm-kernel@lists.infradead.org
+References: <1543845318-24543-1-git-send-email-julien.thierry@arm.com>
+ <1543845318-24543-3-git-send-email-julien.thierry@arm.com>
+ <20181206182551.GB37411@arrakis.emea.arm.com>
+ <6424e0f6-7755-c19a-5bc4-a70be5839644@arm.com>
+ <20181210145931.GE4048@arrakis.emea.arm.com>
+From:   Suzuki K Poulose <suzuki.poulose@arm.com>
+Message-ID: <3e9a5867-c33a-7e6e-90f2-723488de094d@arm.com>
+Date:   Wed, 12 Dec 2018 17:40:51 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-In-Reply-To: <20181109190327.23606-2-matwey@sai.msu.ru>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20181210145931.GE4048@arrakis.emea.arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfIxvWTe85HkBpdBHlM+iRT4Snl9J+61nTN7Bwb5U8VfsMFjY3VHmaFoCpw/DPwEUkL5rESfJCoZggWbdMhAow4KZ9fn16i71qgGpS7p9egAGoyaodYMG
- C0lkA+hMQzdwP7HYrAbVlfM/1NTsRI7c1FuKc23p1g0TSEuXGiWPcvbuOD0BUitktH90sfDiP6jQbW5rPmUb7DEL3LCqW6e4jEwCJJK7+K5LoEwsi/8tT+lt
- zULLDHZw+WdR3YVD4wdOJTNAWXokPXbArDdFiDv2RjHdV+BkDgqmgjJMFMbJ3e8pHOfNw9POmyLWkBDCjI43G33SVTxLYFZUnP/lnQF8HwnsZV4Uwo6sxJrj
- PqfMQoPsVTlaWWKM7s8aT1uygUr6ySNw1UB3WTHArC9rmGfCv+xf0GRr719qP+Nh4ueqAzL0BmP9BeQw6WicaHzaiMeTnb5eHyM9s1MTCmb8I+b4Hc0z5Aig
- pDthadW/tGdZFS+rkc5Bj53b8TPMINd9eq5vIxLzuoHNnFAFFsq7Lz2OA/O89U0N7ZUS03jAg9Ua/o1WF9sb4rHz4ftXaCTvsxuyQ7ncy+fTnAEPBiO42/2C
- 1CeoKiSGNf5FqBIQUsUI+PKSuxRmNHEJOsbEuG9RV8CzAzdFdvHvxKCbub8XFsD03UI0NfdrLi7XJLb/2AF7Zw4Yl9ntixQELxfLVAvp3UefisxyPbUuK4IQ
- 7HC8RsulrNXUOZFhOVSEvFAAf8yMpFasottMzy+Qz56+fv2HmpiA2qZYahoXo0IH7PVs1hETutYJUqJXS9wKiwXLLuqZzkThJHCmhlUIBiJ7DSksk6cW3w==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Added include/trace/events/pwc.h to the list of files.
+On 12/10/2018 02:59 PM, Catalin Marinas wrote:
+> On Fri, Dec 07, 2018 at 08:38:11AM +0000, Julien Thierry wrote:
+>>
+>>
+>> On 12/06/2018 06:25 PM, Catalin Marinas wrote:
+>>> On Mon, Dec 03, 2018 at 01:55:18PM +0000, Julien Thierry wrote:
+>>>> diff --git a/arch/arm64/include/asm/uaccess.h b/arch/arm64/include/asm/uaccess.h
+>>>> index 07c3408..cabfcae 100644
+>>>> --- a/arch/arm64/include/asm/uaccess.h
+>>>> +++ b/arch/arm64/include/asm/uaccess.h
+>>>> @@ -233,6 +233,23 @@ static inline void uaccess_enable_not_uao(void)
+>>>>    	__uaccess_enable(ARM64_ALT_PAN_NOT_UAO);
+>>>>    }
+>>>> +#define unsafe_user_region_active	uaccess_region_active
+>>>> +static inline bool uaccess_region_active(void)
+>>>> +{
+>>>> +	if (system_uses_ttbr0_pan()) {
+>>>> +		u64 ttbr;
+>>>> +
+>>>> +		ttbr = read_sysreg(ttbr1_el1);
+>>>> +		return ttbr & TTBR_ASID_MASK;
+>>>
+>>> Nitpick: could write this in 1-2 lines.
+>>
+>> True, I can do that in 1 line.
+>>
+>>>> +	} else if (cpus_have_const_cap(ARM64_ALT_PAN_NOT_UAO)) {
+>>>> +		return (read_sysreg(sctlr_el1) & SCTLR_EL1_SPAN) ?
+>>>> +				false :
+>>>> +				!read_sysreg_s(SYS_PSTATE_PAN);
+>>>> +	}
+>>>
+>>> ARM64_ALT_PAN_NOT_UAO implies ARM64_HAS_PAN which implies SCTLR_EL1.SPAN
+>>> is 0 at run-time. Is this to cope with the case of being called prior to
+>>> cpu_enable_pan()?
+>>>
+>>
+>> Yes, the issue I can into is that for cpufeatures, .cpu_enable() callbacks
+>> are called inside stop_machine() which obviously might_sleep and so attempts
+>> to check whether user_access is on. But for features that get enabled before
+>> PAN, the PAN bit will be set.
+> 
+> OK, so the PSTATE.PAN bit only makes sense when SCTLR_EL1.SPAN is 0, IOW
+> the PAN hardware feature has been enabled. Maybe you could write it
+> (together with some comment):
+> 
+> 	} else if (cpus_have_const_cap(ARM64_ALT_PAN_NOT_UAO) &&
+> 		 !(read_sysreg(sctlr_el1) & SCTLR_EL1_SPAN)) {
+> 		 /* only if PAN is present and enabled */
+> 		return !read_sysreg_s(SYS_PSTATE_PAN)
+> 	}
+> 
+> On the cpufeature.c side of things, it seems that we enable the
+> static_branch before calling the cpu_enable. I wonder whether changing
+> the order here would help with avoid the SCTLR_EL1 read (not sure what
+> else it would break; cc'ing Suzuki).
+> 
 
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
----
-Will include this patch as part of the pull request.
----
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 3e9f1710ed13..3ce9533bca26 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12191,6 +12191,7 @@ L:	linux-media@vger.kernel.org
- T:	git git://linuxtv.org/media_tree.git
- S:	Odd Fixes
- F:	drivers/media/usb/pwc/*
-+F:	include/trace/events/pwc.h
+I doubt if we would gain anything by moving it around. 
+cpus_have_const_cap() would fall back to test_bit() until we mark that
+the static_branches have been updated explicitly, which happens after
+we have issued the stop_machine(). So, even if we move the static branch
+per capability, we don't gain much.
 
- PWM FAN DRIVER
- M:	Kamil Debski <kamil@wypas.org>
--- 
-2.19.2
+Is that what you were looking for ?
 
-
+Cheers
+Suzuki
