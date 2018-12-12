@@ -2,200 +2,141 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CD6BC04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 05:15:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D8C7C04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 05:17:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1AA5B2084E
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 05:15:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AA5B2084E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 18AE02084E
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 05:17:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="lUygrBnY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18AE02084E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726414AbeLLFPt (ORCPT
+        id S1726432AbeLLFRf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 00:15:49 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:43858 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726218AbeLLFPt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 00:15:49 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 522CF307D857;
-        Wed, 12 Dec 2018 05:15:48 +0000 (UTC)
-Received: from xz-x1 (dhcp-14-128.nay.redhat.com [10.66.14.128])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 14F305FCA0;
-        Wed, 12 Dec 2018 05:15:42 +0000 (UTC)
-Date:   Wed, 12 Dec 2018 13:15:40 +0800
-From:   Peter Xu <peterx@redhat.com>
-To:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Cc:     linux-kernel@vger.kernel.org,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
-        Souptick Joarder <jrdr.linux@gmail.com>, linux-mm@kvack.org
-Subject: Re: [PATCH v2] mm: thp: fix flags for pmd migration when split
-Message-ID: <20181212051540.GA8970@xz-x1>
-References: <20181211051254.16633-1-peterx@redhat.com>
- <1fc103f7-3164-007d-bcfd-7ad7c60bb6ec@yandex-team.ru>
+        Wed, 12 Dec 2018 00:17:35 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:57118 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726218AbeLLFRf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 00:17:35 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id wBC5HFvb058057;
+        Tue, 11 Dec 2018 23:17:16 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1544591836;
+        bh=nif3Z+6rwyCOad4evYCBPM1IQZ4r3vcTdSSFumT9Sx0=;
+        h=From:To:CC:Subject:Date;
+        b=lUygrBnY07WDh9lsQvR5i3UbN/3MatBFObMri5iR3W9guPU6nfKLwTU1XGQHJpEaL
+         1xG8IavR1e8LHftH/+giV0fxi5P3fbW4VRrtZZk7A0w9MY2oZnckvTFO6CKwczZK8P
+         gLPeFjqkMK4oGkRzWvMPxGr+2s0+rfpcmRDJVRxM=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wBC5HF7f056235
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 11 Dec 2018 23:17:15 -0600
+Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Tue, 11
+ Dec 2018 23:17:15 -0600
+Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Tue, 11 Dec 2018 23:17:15 -0600
+Received: from a0132425.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wBC5HDv1026449;
+        Tue, 11 Dec 2018 23:17:13 -0600
+From:   Vignesh R <vigneshr@ti.com>
+To:     Tero Kristo <t-kristo@ti.com>, Nishanth Menon <nm@ti.com>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Vignesh R <vigneshr@ti.com>
+Subject: [PATCH] arm64: dts: ti: k3-am654: Populate power-domain property for UART nodes
+Date:   Wed, 12 Dec 2018 10:48:06 +0530
+Message-ID: <20181212051806.21879-1-vigneshr@ti.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1fc103f7-3164-007d-bcfd-7ad7c60bb6ec@yandex-team.ru>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Wed, 12 Dec 2018 05:15:48 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 11, 2018 at 11:21:44AM +0300, Konstantin Khlebnikov wrote:
-> On 11.12.2018 8:12, Peter Xu wrote:
-> > When splitting a huge migrating PMD, we'll transfer all the existing
-> > PMD bits and apply them again onto the small PTEs.  However we are
-> > fetching the bits unconditionally via pmd_soft_dirty(), pmd_write()
-> > or pmd_yound() while actually they don't make sense at all when it's
-> > a migration entry.  Fix them up by make it conditional.
-> > 
-> > Note that if my understanding is correct about the problem then if
-> > without the patch there is chance to lose some of the dirty bits in
-> > the migrating pmd pages (on x86_64 we're fetching bit 11 which is part
-> > of swap offset instead of bit 2) and it could potentially corrupt the
-> > memory of an userspace program which depends on the dirty bit.
-> > 
-> > CC: Andrea Arcangeli <aarcange@redhat.com>
-> > CC: Andrew Morton <akpm@linux-foundation.org>
-> > CC: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-> > CC: Matthew Wilcox <willy@infradead.org>
-> > CC: Michal Hocko <mhocko@suse.com>
-> > CC: Dave Jiang <dave.jiang@intel.com>
-> > CC: "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>
-> > CC: Souptick Joarder <jrdr.linux@gmail.com>
-> > CC: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-> > CC: linux-mm@kvack.org
-> > CC: linux-kernel@vger.kernel.org
-> > Signed-off-by: Peter Xu <peterx@redhat.com>
-> > ---
-> > v2:
-> > - fix it up for young/write/dirty bits too [Konstantin]
-> > ---
-> >   mm/huge_memory.c | 15 ++++++++++-----
-> >   1 file changed, 10 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> > index f2d19e4fe854..b00941b3d342 100644
-> > --- a/mm/huge_memory.c
-> > +++ b/mm/huge_memory.c
-> > @@ -2157,11 +2157,16 @@ static void __split_huge_pmd_locked(struct vm_area_struct *vma, pmd_t *pmd,
-> >   		page = pmd_page(old_pmd);
-> >   	VM_BUG_ON_PAGE(!page_count(page), page);
-> >   	page_ref_add(page, HPAGE_PMD_NR - 1);
-> > -	if (pmd_dirty(old_pmd))
-> > -		SetPageDirty(page);
-> > -	write = pmd_write(old_pmd);
-> > -	young = pmd_young(old_pmd);
-> > -	soft_dirty = pmd_soft_dirty(old_pmd);
-> > +	if (unlikely(pmd_migration)) {
-> > +		soft_dirty = pmd_swp_soft_dirty(old_pmd);
-> > +		young = write = false;
-> > +	} else {
-> > +		if (pmd_dirty(old_pmd))
-> > +			SetPageDirty(page);
-> > +		write = pmd_write(old_pmd);
-> > +		young = pmd_young(old_pmd);
-> > +		soft_dirty = pmd_soft_dirty(old_pmd);
-> > +	}
-> 
-> Write/read-only is encoded into migration entry.
-> I suppose there should be something like this:
-> 
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -2151,16 +2151,21 @@ static void __split_huge_pmd_locked(struct vm_area_struct *vma, pmd_t *pmd,
-> 
->                 entry = pmd_to_swp_entry(old_pmd);
->                 page = pfn_to_page(swp_offset(entry));
-> +               write = is_write_migration_entry(entry);
-> +               young = false;
-> +               soft_dirty = pmd_swp_soft_dirty(old_pmd);
->         } else
->  #endif
-> +       {
->                 page = pmd_page(old_pmd);
-> +               if (pmd_dirty(old_pmd))
-> +                       SetPageDirty(page);
-> +               write = pmd_write(old_pmd);
-> +               young = pmd_young(old_pmd);
-> +               soft_dirty = pmd_soft_dirty(old_pmd);
-> +       }
->         VM_BUG_ON_PAGE(!page_count(page), page);
->         page_ref_add(page, HPAGE_PMD_NR - 1);
-> -       if (pmd_dirty(old_pmd))
-> -               SetPageDirty(page);
-> -       write = pmd_write(old_pmd);
-> -       young = pmd_young(old_pmd);
-> -       soft_dirty = pmd_soft_dirty(old_pmd);
-> 
->         /*
->          * Withdraw the table only after we mark the pmd entry invalid.
-> 
+Populate power-domain property for UART nodes, this is required for
+Linux to enable UART clocks via PM calls. Without this UART instances
+not initialized by bootloader (like main_uart1) fails to work in Linux.
+Also, drop current-speed property from main_uart1 and main_uart2 nodes
+as these UARTs are not initialized before Linux boots up and current
+speed is unknown.
 
-Oops yes, I missed the write bit.  Thanks for pointing it out.
+Signed-off-by: Vignesh R <vigneshr@ti.com>
+---
+ arch/arm64/boot/dts/ti/k3-am65-main.dtsi   | 5 +++--
+ arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi    | 1 +
+ arch/arm64/boot/dts/ti/k3-am65-wakeup.dtsi | 1 +
+ 3 files changed, 5 insertions(+), 2 deletions(-)
 
-Should I repost with your authorship and your sign-off?  Or even I'll
-consider to directly drop the CONFIG_ARCH_ENABLE_THP_MIGRATION if with
-that since I don't see much gain to keep it:
-
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index f2d19e4fe854..aebade83cec9 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -2145,23 +2145,25 @@ static void __split_huge_pmd_locked(struct vm_area_struct *vma, pmd_t *pmd,                                                                                          
-         */
-        old_pmd = pmdp_invalidate(vma, haddr, pmd);
-
--#ifdef CONFIG_ARCH_ENABLE_THP_MIGRATION
-        pmd_migration = is_pmd_migration_entry(old_pmd);
--       if (pmd_migration) {
-+       if (unlikely(pmd_migration)) {
-                swp_entry_t entry;
-
-                entry = pmd_to_swp_entry(old_pmd);
-                page = pfn_to_page(swp_offset(entry));
--       } else
--#endif
-+               write = is_write_migration_entry(entry);
-+               young = false;
-+               soft_dirty = pmd_swp_soft_dirty(old_pmd);
-+       } else {
-                page = pmd_page(old_pmd);
-+               if (pmd_dirty(old_pmd))
-+                       SetPageDirty(page);
-+               write = pmd_write(old_pmd);
-+               young = pmd_young(old_pmd);
-+               soft_dirty = pmd_soft_dirty(old_pmd);
-+       }
-        VM_BUG_ON_PAGE(!page_count(page), page);
-        page_ref_add(page, HPAGE_PMD_NR - 1);
--       if (pmd_dirty(old_pmd))
--               SetPageDirty(page);
--       write = pmd_write(old_pmd);
--       young = pmd_young(old_pmd);
--       soft_dirty = pmd_soft_dirty(old_pmd);
-
-        /*
-         * Withdraw the table only after we mark the pmd entry invalid.
-
-Thanks,
-
+diff --git a/arch/arm64/boot/dts/ti/k3-am65-main.dtsi b/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
+index 6c71e67b8988..272cf8fc8d30 100644
+--- a/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
+@@ -48,6 +48,7 @@
+ 		interrupts = <GIC_SPI 192 IRQ_TYPE_LEVEL_HIGH>;
+ 		clock-frequency = <48000000>;
+ 		current-speed = <115200>;
++		power-domains = <&k3_pds 146>;
+ 	};
+ 
+ 	main_uart1: serial@2810000 {
+@@ -57,7 +58,7 @@
+ 		reg-io-width = <4>;
+ 		interrupts = <GIC_SPI 193 IRQ_TYPE_LEVEL_HIGH>;
+ 		clock-frequency = <48000000>;
+-		current-speed = <115200>;
++		power-domains = <&k3_pds 147>;
+ 	};
+ 
+ 	main_uart2: serial@2820000 {
+@@ -67,7 +68,7 @@
+ 		reg-io-width = <4>;
+ 		interrupts = <GIC_SPI 194 IRQ_TYPE_LEVEL_HIGH>;
+ 		clock-frequency = <48000000>;
+-		current-speed = <115200>;
++		power-domains = <&k3_pds 148>;
+ 	};
+ 
+ 	main_pmx0: pinmux@11c000 {
+diff --git a/arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi b/arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi
+index 1aeae52fb239..593f718e8fb5 100644
+--- a/arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi
+@@ -14,6 +14,7 @@
+ 			interrupts = <GIC_SPI 565 IRQ_TYPE_LEVEL_HIGH>;
+ 			clock-frequency = <96000000>;
+ 			current-speed = <115200>;
++			power-domains = <&k3_pds 149>;
+ 	};
+ 
+ 	mcu_i2c0: i2c@40b00000 {
+diff --git a/arch/arm64/boot/dts/ti/k3-am65-wakeup.dtsi b/arch/arm64/boot/dts/ti/k3-am65-wakeup.dtsi
+index 9e8467ce7ad8..7cbdc0912ab7 100644
+--- a/arch/arm64/boot/dts/ti/k3-am65-wakeup.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-am65-wakeup.dtsi
+@@ -50,6 +50,7 @@
+ 		interrupts = <GIC_SPI 697 IRQ_TYPE_LEVEL_HIGH>;
+ 		clock-frequency = <48000000>;
+ 		current-speed = <115200>;
++		power-domains = <&k3_pds 150>;
+ 	};
+ 
+ 	wkup_i2c0: i2c@42120000 {
 -- 
-Peter Xu
+2.19.2
+
