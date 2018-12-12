@@ -2,80 +2,70 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 377ECC67839
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 00:48:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 810C9C6783B
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 00:50:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F177F20851
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 00:48:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F177F20851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
+	by mail.kernel.org (Postfix) with ESMTP id 43DE420672
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 00:50:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43DE420672
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726287AbeLLAsF (ORCPT
+        id S1726260AbeLLAuP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 19:48:05 -0500
-Received: from gate.crashing.org ([63.228.1.57]:60066 "EHLO gate.crashing.org"
+        Tue, 11 Dec 2018 19:50:15 -0500
+Received: from muru.com ([72.249.23.125]:57592 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726201AbeLLAsE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 19:48:04 -0500
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id wBC0lGgF022066;
-        Tue, 11 Dec 2018 18:47:17 -0600
-Message-ID: <d447ac4e18bddd030aa2f56a0547c0132b3f8dcd.camel@kernel.crashing.org>
-Subject: Re: use generic DMA mapping code in powerpc V4
-From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
-To:     Christian Zigotzky <chzigotzky@xenosoft.de>,
-        Christoph Hellwig <hch@lst.de>
-Cc:     linux-arch@vger.kernel.org,
-        Darren Stevens <darren@stevens-zone.net>,
-        linux-kernel@vger.kernel.org, Julian Margetson <runaway@candw.ms>,
-        linux-mm@kvack.org, iommu@lists.linux-foundation.org,
-        Paul Mackerras <paulus@samba.org>,
-        Olof Johansson <olof@lixom.net>, linuxppc-dev@lists.ozlabs.org
-Date:   Wed, 12 Dec 2018 11:47:16 +1100
-In-Reply-To: <82879d3f-83de-6438-c1d6-49c571dcb671@xenosoft.de>
-References: <20181129170351.GC27951@lst.de>
-         <d0e04a85-f17d-414e-6fea-971414417430@xenosoft.de>
-         <20181130105346.GB26765@lst.de>
-         <8694431d-c669-b7b9-99fa-e99db5d45a7d@xenosoft.de>
-         <20181130131056.GA5211@lst.de>
-         <25999587-2d91-a63c-ed38-c3fb0075d9f1@xenosoft.de>
-         <c5202d29-863d-1377-0e2d-762203b317e2@xenosoft.de>
-         <58c61afb-290f-6196-c72c-ac7b61b84718@xenosoft.de>
-         <20181204142426.GA2743@lst.de>
-         <ef56d279-f75d-008e-71ba-7068c1b37c48@xenosoft.de>
-         <20181205140550.GA27549@lst.de>
-         <1948cf84-49ab-543c-472c-d18e27751903@xenosoft.de>
-         <5a2ea855-b4b0-e48a-5c3e-c859a8451ca2@xenosoft.de>
-         <7B6DDB28-8BF6-4589-84ED-F1D4D13BFED6@xenosoft.de>
-         <8a2c4581-0c85-8065-f37e-984755eb31ab@xenosoft.de>
-         <424bb228-c9e5-6593-1ab7-5950d9b2bd4e@xenosoft.de>
-         <c86d76b4-b199-557e-bc64-4235729c1e72@xenosoft.de>
-         <1ecb7692-f3fb-a246-91f9-2db1b9496305@xenosoft.de>
-         <6c997c03-e072-97a9-8ae0-38a4363df919@xenosoft.de>
-         <4cfb3f26-74e1-db01-b014-759f188bb5a6@xenosoft.de>
-         <82879d3f-83de-6438-c1d6-49c571dcb671@xenosoft.de>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.2 (3.30.2-2.fc29) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1726211AbeLLAuO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 19:50:14 -0500
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id E74DA8027;
+        Wed, 12 Dec 2018 00:50:16 +0000 (UTC)
+Date:   Tue, 11 Dec 2018 16:50:10 -0800
+From:   Tony Lindgren <tony@atomide.com>
+To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Jarkko Nikula <jarkko.nikula@bitmer.com>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>
+Subject: Re: [PATCH 0/2] Graph fixes for using multiple endpoints per port
+Message-ID: <20181212005010.GZ6707@atomide.com>
+References: <20181211020557.61783-1-tony@atomide.com>
+ <8736r4bvf3.wl-kuninori.morimoto.gx@renesas.com>
+ <20181211045220.GI6707@atomide.com>
+ <871s6obqkb.wl-kuninori.morimoto.gx@renesas.com>
+ <20181211053536.GJ6707@atomide.com>
+ <87wooga9an.wl-kuninori.morimoto.gx@renesas.com>
+ <20181211141649.GL6707@atomide.com>
+ <87ftv33bpg.wl-kuninori.morimoto.gx@renesas.com>
+ <87efan393s.wl-kuninori.morimoto.gx@renesas.com>
+ <20181212004320.GY6707@atomide.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181212004320.GY6707@atomide.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-12-11 at 19:17 +0100, Christian Zigotzky wrote:
-> X5000 (P5020 board): U-Boot loads the kernel and the dtb file. Then the 
-> kernel starts but it doesn't find any hard disks (partitions). That 
-> means this is also the bad commit for the P5020 board.
+* Tony Lindgren <tony@atomide.com> [181212 00:43]:
+> The other McBSP instance is dedicated for SoC audio:
+> 
+> CPCAP PMIC codec1-endpoint---McBSP3 on SoC
 
-What are the disks hanging off ? A PCIe device of some sort ?
+Sorry this should be McBSP2, not McBSP3 above for
+the SoC dedicated audio port.
 
-Can you send good & bad dmesg logs ?
-
-Ben.
-
-
+Tony
