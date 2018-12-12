@@ -6,175 +6,98 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79D5AC04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 09:20:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC874C04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 09:20:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C5792080F
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 09:20:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A2AF22080F
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 09:20:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="LnPJDe65"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C5792080F
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jBN5Z/Nk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2AF22080F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726825AbeLLJUa (ORCPT
+        id S1726850AbeLLJUj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 04:20:30 -0500
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:44439 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726478AbeLLJU3 (ORCPT
+        Wed, 12 Dec 2018 04:20:39 -0500
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:36725 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726643AbeLLJUj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 04:20:29 -0500
-Received: by mail-ua1-f66.google.com with SMTP id d19so6177246uaq.11
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 01:20:28 -0800 (PST)
+        Wed, 12 Dec 2018 04:20:39 -0500
+Received: by mail-ua1-f68.google.com with SMTP id j3so6194674uap.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 01:20:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=zeol+VVDzQN8dM9GNSfdZ9JwQqbZHozQ9KgJBWv1TzM=;
-        b=LnPJDe65wWrMf0VC6R8YXMU6Kb9shYYFUtKl8UvwGBo40fEbVS33i0Pz0+MgYlMxjp
-         uYcglJSbt3tonO13vvmiWyqme40Hj4fKk4JTUw8fRr41d6kWsjJ9qhn7z9VKzN6Qea2j
-         CkFPkkzw4EH/yEFhFUdmvncZ944TAHiI5AP1E=
+        bh=xbhUWUR0Lk1xAJA9xAZ4ddDCxqiVB7n8gsJXRfNL7Uo=;
+        b=jBN5Z/NkoihPpL3zQNvtY+RHGxa4cJzX2OJxY19o0sj+oTrjgnX/N//eLQ+snL/j2x
+         mtUGJsJQKKjYSzaBzmjPy3a1ukv3WMFbCdSM5bXXRJoLz5/7J4a5s99NWjthjmQeHaTo
+         ZpwcGm/cN4ndB7pMQD9r2cemhNmCnoRH37n7s=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=zeol+VVDzQN8dM9GNSfdZ9JwQqbZHozQ9KgJBWv1TzM=;
-        b=NrRKmWZ3KPNSGy8VvvpFTLMtulMz7X8k0fk77U4x9g5fCFFmwHp0G3aIJfwFpmmL9F
-         G2DzJNOedYQ1L9KMH12vdJOKutq+bnt6UYD4gt0ttbCxJDxa+PoRrHiu6Cc5jy3r5p5E
-         sBcMBzqsW6IdML8ehmnz3JQ3juG0kouu4KBst5w6c0M/P/4IKufSLiMgoDvS63PUa14N
-         SLEanKMsuikmTMG1ojHbhh0qq5OzXnKcxn3CiuCjA6Q/iqONMDXvOqP80FPxbt3wkSuE
-         GMQxP7e41bk9FyiHO9mzz5V+5GJyhgUXdj49+49DIIWV71xcK5Qvhe1Vwt27xCKZTOni
-         ZLPA==
-X-Gm-Message-State: AA+aEWY/sjcsIKKxGK2am5ZJyoos30+jY+awxMRcS+oaOEPKXGlJHGfs
-        2u/bSbBa3M/AnaUEDVL5nyR60T7NGLXdMaVq4TrJ0A==
-X-Google-Smtp-Source: AFSGD/UQ34ygIbWFn6gZTHLUcZ94EDWYS2PLb+gF7xQDWWJIg6nlmq3ExYYAMUtTGtlRwxbWEa9VZt8yG+z/8fPn3bU=
-X-Received: by 2002:a9f:2244:: with SMTP id 62mr8603104uad.119.1544606428271;
- Wed, 12 Dec 2018 01:20:28 -0800 (PST)
+        bh=xbhUWUR0Lk1xAJA9xAZ4ddDCxqiVB7n8gsJXRfNL7Uo=;
+        b=JwIBrXG9xozGHNinIbNRqQHlMCM41lXuyIVgt/Wmf9BtouIfY1RBP0trs85ej7rlKK
+         HfQJgktrHSJjDRY4+jZlr5x5MRobbTXavevcjUs90ihDAlx+htkjEEqxPt1ZCYP3fprJ
+         gv5J88ZDyuJoZTJBRe+UP8AZxwhSaRMYefT3inKNB9Xqf/xVkA8xB/lIpujbyPqD6ZRt
+         eqpiC7puCpSZKrw0PwLNKIBSgvPKTCeLJnFrXszfrpPrGe2PDG2xpZx0FS/jmSJHea6+
+         KNz80KfykzXrV1mZAxOUPwvmwK1IYeeiEISHxeznB57PSoQXOhEVz7WJLuqcrXgaOroh
+         S2ZA==
+X-Gm-Message-State: AA+aEWaZev0xMI85J+eA9K12eazRiJtfyfa9BUmMphzHjYEP4Bve67lU
+        Ph4BxAp5Sk7WX1xMpUda7i1kyxNvHEmZevQWZw+K0A==
+X-Google-Smtp-Source: AFSGD/XIhVSLKjQ8u8S3AjiDtAGkmea2p73VqKHc+CitlLOSCvxvspbQ6pKA45Du8RGy03MjkSKDZv2H5davFLH1aSA=
+X-Received: by 2002:ab0:3484:: with SMTP id c4mr1512175uar.39.1544606438066;
+ Wed, 12 Dec 2018 01:20:38 -0800 (PST)
 MIME-Version: 1.0
-References: <20181211142253.23747-1-faiz_abbas@ti.com> <20181211142253.23747-3-faiz_abbas@ti.com>
-In-Reply-To: <20181211142253.23747-3-faiz_abbas@ti.com>
+References: <20181211142253.23747-1-faiz_abbas@ti.com> <20181211142253.23747-2-faiz_abbas@ti.com>
+In-Reply-To: <20181211142253.23747-2-faiz_abbas@ti.com>
 From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Wed, 12 Dec 2018 10:19:51 +0100
-Message-ID: <CAPDyKFoi+NzS-d8E8oz-h_ab70jY7owwqPXsEoJWnRg6J2zcNA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] mmc: sdhci-omap: Workaround errata regarding
- SDR104/HS200 tuning failures (i929)
+Date:   Wed, 12 Dec 2018 10:20:01 +0100
+Message-ID: <CAPDyKFokQZ2402zvZ3_gO36B-zWUxzSTh2o=5QikXyQLW1sbVg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: sdhci-omap: Add note for cpu_thermal
 To:     Faiz Abbas <faiz_abbas@ti.com>
 Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
         Adrian Hunter <adrian.hunter@intel.com>,
-        Kishon <kishon@ti.com>, Keerthy <j-keerthy@ti.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>
+        Kishon <kishon@ti.com>, Keerthy <j-keerthy@ti.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+ Thermal maintainers
-
 On Tue, 11 Dec 2018 at 15:20, Faiz Abbas <faiz_abbas@ti.com> wrote:
 >
-> Errata i929 in certain OMAP5/DRA7XX/AM57XX silicon revisions
-> (SPRZ426D - November 2014 - Revised February 2018 [1]) mentions
-> unexpected tuning pattern errors. A small failure band may be present
-> in the tuning range which may be missed by the current algorithm.
-> Furthermore, the failure bands vary with temperature leading to
-> different optimum tuning values for different temperatures.
->
-> As suggested in the related Application Report (SPRACA9B - October 2017
-> - Revised July 2018 [2]), tuning should be done in two stages.
-> In stage 1, assign the optimum ratio in the maximum pass window for the
-> current temperature. In stage 2, if the chosen value is close to the
-> small failure band, move away from it in the appropriate direction.
->
-> References:
-> [1] http://www.ti.com/lit/pdf/sprz426
-> [2] http://www.ti.com/lit/pdf/SPRACA9
+> The driver fetches a thermal zone using the string "cpu_thermal" for
+> tuning operation. Add a note for the same.
 >
 > Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
-> Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-> ---
->  drivers/mmc/host/Kconfig      |  2 +
->  drivers/mmc/host/sdhci-omap.c | 90 ++++++++++++++++++++++++++++++++++-
->  2 files changed, 91 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-> index 5fa580cec831..d8f984483ab0 100644
-> --- a/drivers/mmc/host/Kconfig
-> +++ b/drivers/mmc/host/Kconfig
-> @@ -977,6 +977,8 @@ config MMC_SDHCI_XENON
->  config MMC_SDHCI_OMAP
->         tristate "TI SDHCI Controller Support"
->         depends on MMC_SDHCI_PLTFM && OF
-> +       select THERMAL
-> +       select TI_SOC_THERMAL
->         help
->           This selects the Secure Digital Host Controller Interface (SDHCI)
->           support present in TI's DRA7 SOCs. The controller supports
-> diff --git a/drivers/mmc/host/sdhci-omap.c b/drivers/mmc/host/sdhci-omap.c
-> index f588ab679cb0..b75c55011fcb 100644
-> --- a/drivers/mmc/host/sdhci-omap.c
-> +++ b/drivers/mmc/host/sdhci-omap.c
-> @@ -27,6 +27,7 @@
->  #include <linux/regulator/consumer.h>
->  #include <linux/pinctrl/consumer.h>
->  #include <linux/sys_soc.h>
-> +#include <linux/thermal.h>
->
->  #include "sdhci-pltfm.h"
->
-> @@ -286,15 +287,19 @@ static int sdhci_omap_execute_tuning(struct mmc_host *mmc, u32 opcode)
->         struct sdhci_host *host = mmc_priv(mmc);
->         struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
->         struct sdhci_omap_host *omap_host = sdhci_pltfm_priv(pltfm_host);
-> +       struct thermal_zone_device *thermal_dev;
->         struct device *dev = omap_host->dev;
->         struct mmc_ios *ios = &mmc->ios;
->         u32 start_window = 0, max_window = 0;
-> +       bool single_point_failure = false;
->         bool dcrc_was_enabled = false;
->         u8 cur_match, prev_match = 0;
->         u32 length = 0, max_len = 0;
->         u32 phase_delay = 0;
-> +       int temperature;
->         int ret = 0;
->         u32 reg;
-> +       int i;
->
->         /* clock tuning is not needed for upto 52MHz */
->         if (ios->clock <= 52000000)
-> @@ -304,6 +309,16 @@ static int sdhci_omap_execute_tuning(struct mmc_host *mmc, u32 opcode)
->         if (ios->timing == MMC_TIMING_UHS_SDR50 && !(reg & CAPA2_TSDR50))
->                 return 0;
->
-> +       thermal_dev = thermal_zone_get_zone_by_name("cpu_thermal");
 
-I couldn't find a corresponding call to a put function, like
-"thermal_zone_put()" or whatever, which made me realize that the
-thermal zone API is incomplete. Or depending on how you put it, it
-lacks object reference counting, unless I am missing something.
-
-For example, what happens if the thermal zone becomes unregistered
-between this point and when you call thermal_zone_get_temp() a couple
-of line below. I assume it's a known problem, but just wanted to point
-it out.
-
-> +       if (IS_ERR(thermal_dev)) {
-> +               dev_err(dev, "Unable to get thermal zone for tuning\n");
-> +               return PTR_ERR(thermal_dev);
-> +       }
-> +
-> +       ret = thermal_zone_get_temp(thermal_dev, &temperature);
-> +       if (ret)
-> +               return ret;
-> +
-
-[...]
-
-Anyway, I have applied this for next, thanks!
+Applied for next, thanks!
 
 Kind regards
 Uffe
+
+> ---
+>  Documentation/devicetree/bindings/mmc/sdhci-omap.txt | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/mmc/sdhci-omap.txt b/Documentation/devicetree/bindings/mmc/sdhci-omap.txt
+> index 393848c2138e..72c4dec7e1db 100644
+> --- a/Documentation/devicetree/bindings/mmc/sdhci-omap.txt
+> +++ b/Documentation/devicetree/bindings/mmc/sdhci-omap.txt
+> @@ -2,6 +2,8 @@
+>
+>  Refer to mmc.txt for standard MMC bindings.
+>
+> +For UHS devices which require tuning, the device tree should have a "cpu_thermal" node which maps to the appropriate thermal zone. This is used to get the temperature of the zone during tuning.
+> +
+>  Required properties:
+>  - compatible: Should be "ti,dra7-sdhci" for DRA7 and DRA72 controllers
+>               Should be "ti,k2g-sdhci" for K2G
+> --
+> 2.19.2
+>
