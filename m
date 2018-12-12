@@ -2,89 +2,130 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 375F1C6783B
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 00:59:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AE4EC6783B
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 01:02:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1D6321104
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 00:59:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1D6321104
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 4AD9520811
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 01:02:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="iqGm6d/+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AD9520811
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726259AbeLLA7U (ORCPT
+        id S1726266AbeLLBC4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 19:59:20 -0500
-Received: from mga06.intel.com ([134.134.136.31]:58427 "EHLO mga06.intel.com"
+        Tue, 11 Dec 2018 20:02:56 -0500
+Received: from ozlabs.org ([203.11.71.1]:39105 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726201AbeLLA7U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 19:59:20 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Dec 2018 16:59:19 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,343,1539673200"; 
-   d="scan'208";a="117594788"
-Received: from cli6-desk1.ccr.corp.intel.com (HELO [10.239.161.118]) ([10.239.161.118])
-  by orsmga002.jf.intel.com with ESMTP; 11 Dec 2018 16:59:17 -0800
-Subject: Re: [PATCH v4 1/2] x86/fpu: track AVX-512 usage of tasks
-To:     Arjan van de Ven <arjan@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Aubrey Li <aubrey.li@intel.com>, tglx@linutronix.de,
-        mingo@redhat.com, peterz@infradead.org, hpa@zytor.com
-Cc:     ak@linux.intel.com, tim.c.chen@linux.intel.com,
-        linux-kernel@vger.kernel.org
-References: <20181211002448.3520-1-aubrey.li@intel.com>
- <df1a1b5b-3e8b-5d96-12df-25be30c391af@intel.com>
- <143a5451-c7cf-16a5-a7ef-8c4b0633b689@linux.intel.com>
- <6a549986-f01a-a3c6-10c8-c116667bf7e4@linux.intel.com>
-From:   "Li, Aubrey" <aubrey.li@linux.intel.com>
-Message-ID: <0fd64322-9c90-8e9c-d65a-e8216b0da1a5@linux.intel.com>
-Date:   Wed, 12 Dec 2018 08:59:16 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.1.1
+        id S1726220AbeLLBC4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 20:02:56 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43Dz7d2W5Bz9s2P;
+        Wed, 12 Dec 2018 12:02:53 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1544576573;
+        bh=6WIWnyrMEjg5gMRCO9DY1z/J1XA/tE7xrq+Jo1qg8bQ=;
+        h=Date:From:To:Cc:Subject:From;
+        b=iqGm6d/+pkSR6o1qIFl9Db11cidLLak+Ehn8o6eKQzUA0dHvBXd2iH8s0xQWCRvtf
+         Ppo7mShSbiBj4XbsO0YxwK7SPWvzYoOC8Al//ri2qenJRSLXi7TdWf6dLP61idhZKp
+         nu2aJ9aLyV8Tp2Nc1gHhLAcwJIY/hjWlXjmzDMqAziWXxKmzCNKUftDNGO7HoFijBS
+         6fb+ucqMzvtYJYuepYlTImjdQahvRMwqFbiEKaF2HrzI9lDO99vpozlTdbmcMK6Pl8
+         vku0nPXbFZHdXFopaTmDubvRTbfYPXIdLp2gJ/9u9D1DrEYG9TbNgoJYzUHJ52isQm
+         t/eycpRCpL2Eg==
+Date:   Wed, 12 Dec 2018 12:02:52 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>, Greg KH <greg@kroah.com>,
+        Arnd Bergmann <arnd@arndb.de>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: linux-next: manual merge of the net-next tree with the
+ char-misc.current tree
+Message-ID: <20181212120252.5260cb22@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <6a549986-f01a-a3c6-10c8-c116667bf7e4@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/va0C.Q=hZe4pk/E4Ct33LSf"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/12/12 8:14, Arjan van de Ven wrote:
-> On 12/11/2018 3:46 PM, Li, Aubrey wrote:
->> On 2018/12/12 1:18, Dave Hansen wrote:
->>> On 12/10/18 4:24 PM, Aubrey Li wrote:
->>>> The tracking turns on the usage flag at the next context switch of
->>>> the task, but requires 3 consecutive context switches with no usage
->>>> to clear it. This decay is required because well-written AVX-512
->>>> applications are expected to clear this state when not actively using
->>>> AVX-512 registers.
->>>
->>> One concern about this:  Given a HZ=1000 system, this means that the
->>> flag needs to get scanned every ~3ms.  That's a pretty good amount of
->>> scanning on a system with hundreds or thousands of tasks running around.
->>>
->>> How many tasks does this scale to until you're eating up an entire CPU
->>> or two just scanning /proc?
->>>
->>
->> Do we have a real requirement to do this in practical environment?
->> AFAIK, 1s or even 5s is good enough in some customers environment.
-> 
-> maybe instead of a 1/0 bit, it's useful to store the timestamp of the last
-> time we found the task to use avx? (need to find a good time unit)
-> 
-> 
-Are you suggesting kernel does not do any translation, just provide a fact
-to the user space tool and let user space tool to decide how to use this info?
+--Sig_/va0C.Q=hZe4pk/E4Ct33LSf
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-So how does user space tool use this timestamp in your mind?
+Hi all,
 
-Thanks,
--Aubrey
+Today's linux-next merge of the net-next tree got a conflict in:
+
+  MAINTAINERS
+
+between commit:
+
+  cb4f131e1f2c ("MAINTAINERS: Patch monkey for the Hyper-V code")
+
+from the char-misc.current tree and commit:
+
+  b255e500c8dc ("net: documentation: build a directory structure for driver=
+s")
+
+from the net-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc MAINTAINERS
+index 4a2a30380bed,a676b40ac1d6..000000000000
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@@ -6930,11 -6902,9 +6931,11 @@@ Hyper-V CORE AND DRIVER
+  M:	"K. Y. Srinivasan" <kys@microsoft.com>
+  M:	Haiyang Zhang <haiyangz@microsoft.com>
+  M:	Stephen Hemminger <sthemmin@microsoft.com>
+ +M:	Sasha Levin <sashal@kernel.org>
+ +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/hyperv/linux.git
+  L:	devel@linuxdriverproject.org
+ -S:	Maintained
+ +S:	Supported
+- F:	Documentation/networking/netvsc.txt
++ F:	Documentation/networking/device_drivers/microsoft/netvsc.txt
+  F:	arch/x86/include/asm/mshyperv.h
+  F:	arch/x86/include/asm/trace/hyperv.h
+  F:	arch/x86/include/asm/hyperv-tlfs.h
+
+--Sig_/va0C.Q=hZe4pk/E4Ct33LSf
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwQXjwACgkQAVBC80lX
+0GyyqAf/buHMJXRweis7vXd4hKdzKVzjOsKdtDodaZ6F5lpZ4KfRrhW/1BlkChDq
+z7me3ZEvMw3ubOdgVhAEFHLbbs4e5J4E1c7PdkCNMr9fMiS+GeIbpcGgpC/IYs9b
+SJdL7AAjtmu097IjRFUr+6yn+/aG/UcZb89UyUMiZm9i+aMGd+yEFhZLPePsf64c
+5Q/cp2tK8HvDbFfqHZbQNODwjR/9GgIwnaHo1DVPq/rKzTfzQRDBS1g9NvBhfAYD
+FSmuSUAN9zWjJGwdq+YvtpMkc+89I4Fqn9a0B4Bb5Bl+GwDzX8TjP1GGZ7WNR61k
+Q5kjYO7quouRr7nzkgu4h+3FjhF5ag==
+=8Sf8
+-----END PGP SIGNATURE-----
+
+--Sig_/va0C.Q=hZe4pk/E4Ct33LSf--
