@@ -2,102 +2,190 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 618D5C65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 03:04:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2094C65BAE
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 03:05:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17CCE20851
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 03:04:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9572920839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 03:05:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pSBgd6YA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17CCE20851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="rrZEkiWL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9572920839
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726390AbeLLDE5 (ORCPT
+        id S1726404AbeLLDFf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 22:04:57 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:33560 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726241AbeLLDEz (ORCPT
+        Tue, 11 Dec 2018 22:05:35 -0500
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:60473 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726333AbeLLDFf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 22:04:55 -0500
-Received: by mail-wm1-f67.google.com with SMTP id r24so10365189wmh.0
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 19:04:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Xa6KCEdb9vp66HZWrqn/Rv4w1V6eaK3nMdHX+gjSeX4=;
-        b=pSBgd6YALlonWcS42xIY6xbTPL7zgiyvKhGlxMKklGeFSWS3KGhCrtmZTYBuJyYCRb
-         ObIcWMMPXLQauzj9tNFmZl8oMAxDubuQuuodJh8UcDcUPlcIG4Qm/zVtO3TPlEsUz5Os
-         16eT/w5arG3MIKDhhxELp2vyhXzkz8ARPAjgQ2NvaFNPLmfmrHSqjOA8JMyGDJ2w68pn
-         73s7ke/IUVrFGoOwj5mBsYo4sQgxkWRwLI7zyT4o4vz+IDPDycgskuBm5i5ZT1KdpN5k
-         Ebkd6lWak/scXbremeMiF1vKi3VaYSP0UlPjftzpVneRpjR3ubQwr2n+Qb3izZPKShBQ
-         b4hA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Xa6KCEdb9vp66HZWrqn/Rv4w1V6eaK3nMdHX+gjSeX4=;
-        b=XJ31FzfNrAWicyJFvU7pddakR1tt0+bTErNfzjPR7mKmKM/z6AjVu9pHa3HXskOgR2
-         xx8yDAFU5vgKdqvjRqjj4ofyWn+caJOw4NIT+EMfFRUFlB+7Hu2kxfqhIOkDYzNfjxGb
-         nk0RRYaggcc6HBmXDbWANLnphxN2HlYVqGfSyLzaf5bYqzJ5j5FXa/o+Mnmpku+Imf05
-         fVJh9vj2ZX1T91OJHhsGiwSw7m+PiqHNJom+LwKV3OicLSZ1DIkqJdTSbhf1x6+Kr5m8
-         os3vwz9wVaNFmzWtYb6lpbp2YxhfZ/wf5hT6fPERpYxNldEzi7d2LSModq4XpjFAE6if
-         nARA==
-X-Gm-Message-State: AA+aEWaF/7MuBS/lTARyyG45xIAjoYubBqrydEe26OivI2H5OZg3hAMo
-        0TzI8N13D9DskfRvLXQfsVdLkMnRaILKmr7TNCwB
-X-Google-Smtp-Source: AFSGD/U9bFlRuiLKLpj2pNZhoDkyTHfdjBiYD3R1XrAPDfbe+wRg861ZU4V8hkZdcibbHmHAgtH3DbCsFttdtx/dn0g=
-X-Received: by 2002:a1c:8d49:: with SMTP id p70mr4884817wmd.68.1544583893038;
- Tue, 11 Dec 2018 19:04:53 -0800 (PST)
+        Tue, 11 Dec 2018 22:05:35 -0500
+Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com [209.85.217.50]) (authenticated)
+        by conssluserg-02.nifty.com with ESMTP id wBC35EPA018382;
+        Wed, 12 Dec 2018 12:05:14 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com wBC35EPA018382
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1544583915;
+        bh=Q2hmRZl90aPYiF4Q9UYxbYXSoERzoA2WKbz9GO9ViWg=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=rrZEkiWLe3SyDQ0a3JU4sA3vMEcaApYgeMIDDrpwd3WbPYNJdzlyY7WbnOdZ2RTLU
+         LV8kIvbHsAQgH06bnj8FtNh3dNRNnc0YkVuQXgSG45EAM/5UXtAiFcCfo8mPGgeels
+         RC+c3M2h6Ykd/FR+cQDey6DZczPqvTn37biFKxngMs1gpxeLhABDcFMpa3ZauNWjk+
+         qlDYUIvqEuDJWskyR3leEfGbA1TfledOPziJo0GallqnsngKkga5PpmQj/8ou9wYuX
+         gdC+gRj+/8Z25a28de5olMbwZX1Fha9howQwfxZdMW/qCHOxM9Tj0NsOUBptfZJg6h
+         bkJTTPegKlCcQ==
+X-Nifty-SrcIP: [209.85.217.50]
+Received: by mail-vs1-f50.google.com with SMTP id h18so10221504vsj.4;
+        Tue, 11 Dec 2018 19:05:14 -0800 (PST)
+X-Gm-Message-State: AA+aEWaynY6GXDW5GyFwV+3lPhYrOsE6La1In4Q8f8N0DuKhMcsRRtwB
+        g1JDtPE8admQ+TMvIGya+xuzH7pwQnXW9Haw2/Y=
+X-Google-Smtp-Source: AFSGD/X92BItPEGCv/jum1eQf4TCDq9cq7u2jgsAdvQygIenmBjtQIr8af8u7udRK/j0Fa+M93J0cvjZAwIHUz5Rpbc=
+X-Received: by 2002:a67:485:: with SMTP id 127mr8851099vse.54.1544583913510;
+ Tue, 11 Dec 2018 19:05:13 -0800 (PST)
 MIME-Version: 1.0
-References: <20181206041951.22413-1-david@gibson.dropbear.id.au>
- <20181211140143.GD99796@google.com> <20181212002234.GC2719@umbus.fritz.box>
-In-Reply-To: <20181212002234.GC2719@umbus.fritz.box>
-From:   Bjorn Helgaas <bhelgaas@google.com>
-Date:   Tue, 11 Dec 2018 21:04:41 -0600
-Message-ID: <CAErSpo5skJK0vkQp3t+-YJ-Fw_vpo2f9GUsU9DnnhtO6X+v0mw@mail.gmail.com>
-Subject: Re: [PATCH] PCI: Add no-D3 quirk for Mellanox ConnectX-[45]
-To:     David Gibson <david@gibson.dropbear.id.au>
-Cc:     Bjorn Helgaas <helgaas@kernel.org>,
-        David Miller <davem@davemloft.net>, saeedm@mellanox.com,
-        Or Gerlitz <ogerlitz@mellanox.com>, tariqt@mellanox.com,
-        leon@kernel.org,
+References: <20181210203225.11179-1-robh@kernel.org> <CAK7LNAThtAOy4PQiYZ2X0oWrHdcLi7on8ctSXJ=bfT0HNh7NFQ@mail.gmail.com>
+ <CAL_JsqL7n2sjLbJVieVDQ4YtKMi2COCaijO9ZNu7ggzmXXxLEg@mail.gmail.com>
+ <CAK7LNARkr-g9ae+74QE6GMuxLM0JPgEqYOkwb0njXcb9-=nBdQ@mail.gmail.com> <CAL_JsqJ_1RukAZx5tCpp+X8mdNuOT6LTAdYOzN5UyhRK6SAo2Q@mail.gmail.com>
+In-Reply-To: <CAL_JsqJ_1RukAZx5tCpp+X8mdNuOT6LTAdYOzN5UyhRK6SAo2Q@mail.gmail.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Wed, 12 Dec 2018 12:04:37 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATn+oTpHUj-BkMrmEYKTyL1yez1DYUhVib=t5NG3OejhQ@mail.gmail.com>
+Message-ID: <CAK7LNATn+oTpHUj-BkMrmEYKTyL1yez1DYUhVib=t5NG3OejhQ@mail.gmail.com>
+Subject: Re: [PATCH v3] kbuild: Add support for DT binding schema checks
+To:     Rob Herring <robh@kernel.org>
+Cc:     DTML <devicetree@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        darknighte@darknighte.com, Frank Rowand <frowand.list@gmail.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
         linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        netdev <netdev@vger.kernel.org>,
-        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
-        linux-pci@vger.kernel.org, linux-rdma@vger.kernel.org,
-        sbest@redhat.com, paulus@samba.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>
+        grant.likely@arm.com, Kumar Gala <kumar.gala@linaro.org>,
+        arm-soc <arm@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 11, 2018 at 6:38 PM David Gibson
-<david@gibson.dropbear.id.au> wrote:
+On Wed, Dec 12, 2018 at 3:36 AM Rob Herring <robh@kernel.org> wrote:
 >
-> On Tue, Dec 11, 2018 at 08:01:43AM -0600, Bjorn Helgaas wrote:
-> > Hi David,
+> On Tue, Dec 11, 2018 at 10:03 AM Masahiro Yamada
+> <yamada.masahiro@socionext.com> wrote:
 > >
-> > I see you're still working on this, but if you do end up going this
-> > direction eventually, would you mind splitting this into two patches:
-> > 1) rename the quirk to make it more generic (but not changing any
-> > behavior), and 2) add the ConnectX devices to the quirk.  That way
-> > the ConnectX change is smaller and more easily
-> > understood/reverted/etc.
+> > On Wed, Dec 12, 2018 at 12:13 AM Rob Herring <robh@kernel.org> wrote:
+> >
+> > >
+> > > > > +$(obj)/%.example.dts: $(src)/%.yaml FORCE
+> > > > > +       $(call if_changed,chk_binding)
+> > > > > +
+> > > > > +DT_TMP_SCHEMA := .schema.yaml.tmp
+> > > >
+> > > >
+> > > > BTW, why does this file start with a period?
+> > > > What is the meaning of '.tmp' extension?
+> > >
+> > > Nothing really. Just named it something so it gets cleaned and ignored by git.
+> >
+> >
+> > It is cleaned whatever file name you use.
+> >
+> >
+> > See scripts/Makefile.clean
+> >
+> > __clean-files   := $(extra-y) $(extra-m) $(extra-)       \
+> >                    $(always) $(targets) $(clean-files)   \
+> >                    $(hostprogs-y) $(hostprogs-m) $(hostprogs-) \
+> >                    $(hostlibs-y) $(hostlibs-m) $(hostlibs-) \
+> >                    $(hostcxxlibs-y) $(hostcxxlibs-m)
+> >
+> >
+> > $(extra-y) is cleaned.
 >
-> Sure.  Would it make sense to send (1) as an independent cleanup,
-> while I'm still working out exactly what (if anything) we need for
-> (2)?
+> True.
+>
+> >
+> >
+> > You are adding *.example.dts to .gitignore
+> >
+> > Why not "schema.yaml" ?
+>
+> Okay. I'll do "processed-schema.yaml" to give a bit better name of
+> what it contains.
+>
+> >
+> > > > > +extra-y += $(DT_TMP_SCHEMA)
+> > > > > +
+> > > > > +quiet_cmd_mk_schema = SCHEMA  $@
+> > > > > +      cmd_mk_schema = mkdir -p $(obj); \
+> > > > > +                      rm -f $@; \
+> > > > > +                      $(DT_MK_SCHEMA) $(DT_MK_SCHEMA_FLAGS) -o $@ $(filter-out FORCE, $^)
+> > > >
+> > > >
+> > > > "mkdir -p $(obj)" is redundant.
+> > > >
+> > > >
+> > > > Why is 'rm -f $@' necessary ?
+> > > > Can't dt-mk-schema overwrite the output file?
+> > >
+> > > It is for error case when the output file is not generated. I can
+> > > handle this within dt-mk-schema instead.
+> > > > > +DT_DOCS = $(shell cd $(srctree)/$(src) && find * -name '*.yaml')
+> > > > > +DT_SCHEMA_FILES ?= $(addprefix $(src)/,$(DT_DOCS))
+> > > > > +
+> > > > > +extra-y += $(patsubst $(src)/%.yaml,%.example.dts, $(DT_SCHEMA_FILES))
+> > > > > +extra-y += $(patsubst $(src)/%.yaml,%.example.dtb, $(DT_SCHEMA_FILES))
+> > > >
+> > > >
+> > > >
+> > > > I assume you intentionally did not do like this:
+> > > >
+> > > > extra-y += $(patsubst %.yaml,%.example.dtb, $(DT_DOCS))
+> > > >
+> > > > From the commit description, DT_SCHEMA_FILES might be overridden by a user.
+> > > > So, I think this is OK.
+> > > >
+> > > >
+> > > >
+> > > >
+> > > > > +$(obj)/$(DT_TMP_SCHEMA): | $(addprefix $(obj)/,$(patsubst $(src)/%.yaml,%.example.dtb, $(DT_SCHEMA_FILES)))
+> > > >
+> > > > I do not understand this line.
+> > > > Why is it necessary?
+> > > >
+> > > > *.example.dtb files are generated anyway
+> > > > since they are listed in extra-y.
+> > >
+> > > It is enforcing the ordering. Without it, the binding checks and
+> > > building .schema.yaml.tmp happen in parallel because both only have
+> > > the source files as dependencies. The '|' keeps the dependencies out
+> > > of the dependency list($^).
+> >
+> >
+> > What kind problem would you see if
+> > the binding checks and building .schema.yaml.tmp
+> > happen in parallel?
+>
+> In case of no errors in the binding docs, it doesn't matter. If there
+> are errors, I don't want the dtbs validation to run if any schema
+> doesn't validate. However, I played around with this a bit more and it
+> seems like having the examples' dts/dtb in extra-y prevents that from
+> happening. Does that match your expections?
 
-You could, but I don't think there's really much benefit in doing the
-first without the second, and I think there is some value in handling
-both patches at the same time.
+Exactly.
+
+If any error occurs in Documentation/devicetree/bindings/Makefile,
+Make terminates before proceeding to the dtbs_check stage.
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
