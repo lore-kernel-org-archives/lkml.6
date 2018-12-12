@@ -2,109 +2,89 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A17EEC6783B
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:04:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A723C67839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:05:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65D3620851
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:04:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544634272;
-	bh=RGd5sItPu2V2cSmpAXaNI9TfO6umVQl4F6hBOZfXOsg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=Wt5gAuSIVBrHgqZvoE52/427UlgZSQjJPhrTwBY1s4COgfotsomgB8CoDVU58YKrR
-	 f3ENJvOZIJP9YUe2ZLST6POrDj9G3rLdyt9qKcWWWld8IuS2/cXhtZnijzCebhkQx5
-	 ksLmnOmMZBJeEyegMA8eHf5SBO7KoUHXxE8BE6gY=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65D3620851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 191E520851
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:05:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 191E520851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727923AbeLLREb (ORCPT
+        id S1727936AbeLLRFa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 12:04:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56580 "EHLO mail.kernel.org"
+        Wed, 12 Dec 2018 12:05:30 -0500
+Received: from foss.arm.com ([217.140.101.70]:45520 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726358AbeLLREb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 12:04:31 -0500
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 83EB62080F;
-        Wed, 12 Dec 2018 17:04:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544634270;
-        bh=RGd5sItPu2V2cSmpAXaNI9TfO6umVQl4F6hBOZfXOsg=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Mk31a5lMTvTNZ/OFSFAovnUYulKiHQd/kjpYPyyn0JTh89vr0gCXDcLlkVSBlGzME
-         bbEQRKq07KsSBZmqO9U+cQnUpumtFNNLCIUtTZsliOAqd9jAh2NZqKW5rLa9RQsEtm
-         ClBWmnYf0v5Ic4dPGs9hd2gs4eHHttJsD5hZzAaQ=
-Date:   Wed, 12 Dec 2018 17:04:25 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Anson Huang <anson.huang@nxp.com>
-Cc:     "knaack.h@gmx.de" <knaack.h@gmx.de>,
-        "lars@metafoo.de" <lars@metafoo.de>,
-        "pmeerw@pmeerw.net" <pmeerw@pmeerw.net>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "preid@electromag.com.au" <preid@electromag.com.au>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH V5 1/2] dt-bindings: iio: light: isl29018: update power
- supply name
-Message-ID: <20181212170425.49658e0c@archlinux>
-In-Reply-To: <1544504196-30277-1-git-send-email-Anson.Huang@nxp.com>
-References: <1544504196-30277-1-git-send-email-Anson.Huang@nxp.com>
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1726358AbeLLRF3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 12:05:29 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5DF9180D;
+        Wed, 12 Dec 2018 09:05:29 -0800 (PST)
+Received: from [10.1.25.174] (p8cg001049571a15.cambridge.arm.com [10.1.25.174])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6F3CA3F575;
+        Wed, 12 Dec 2018 09:05:28 -0800 (PST)
+Subject: Re: linux-next: build failure after merge of the akpm tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20181203180037.0a54279b@canb.auug.org.au>
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+Message-ID: <8e677bb9-22c3-83c5-ff41-765d20fc0047@arm.com>
+Date:   Wed, 12 Dec 2018 22:35:38 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20181203180037.0a54279b@canb.auug.org.au>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 11 Dec 2018 05:02:39 +0000
-Anson Huang <anson.huang@nxp.com> wrote:
 
-> According to datasheet, the isl29018 has "vddd/vdda" power
-> supply, the "vdda" and "vddd" MUST be shorted externally,
-> and isl29023/isl29035 ONLY has "vdd" power supply, so just
-> one regulator is needed for the driver, update the power
-> supply name with "vdd" according to datasheet to avoid
-> confusion.
+
+On 12/03/2018 12:30 PM, Stephen Rothwell wrote:
+> Hi Andrew,
 > 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-Given the discussion on v4 I am assuming this should be dropped.
-Shout if I'm missing something.
-
-Jonathan
-
-> ---
-> ChangeLog since V4:
-> 	Since ONLY isl29018 has two power supplies and they are MUST shorted externally, so they can be
-> 	treated as one power supply as well, remove "vdda" power supply and ONLY update the "vcc" with
-> 	"vdd" according to datasheet.
-> ---
->  Documentation/devicetree/bindings/iio/light/isl29018.txt | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> After merging the akpm tree, today's linux-next build (powerpc_le perf)
+> failed like this:
 > 
-> diff --git a/Documentation/devicetree/bindings/iio/light/isl29018.txt b/Documentation/devicetree/bindings/iio/light/isl29018.txt
-> index b9bbde3..c4c4e9e 100644
-> --- a/Documentation/devicetree/bindings/iio/light/isl29018.txt
-> +++ b/Documentation/devicetree/bindings/iio/light/isl29018.txt
-> @@ -15,7 +15,7 @@ Optional properties:
->    Refer to interrupt-controller/interrupts.txt for generic interrupt client
->    node bindings.
->  
-> -  - vcc-supply: phandle to the regulator that provides power to the sensor.
-> +  - vdd-supply: phandle to the regulator that provides power to the sensor.
->  
->  Example:
->  
+> bench/numa.c:37:10: fatal error: linux/numa.h: No such file or directory
+>  #include <linux/numa.h>
+>           ^~~~~~~~~~~~~~
+> 
+> Caused by patches
+> 
+>   "mm: replace all open encodings for NUMA_NO_NODE"
+>   "mm-replace-all-open-encodings-for-numa_no_node-fix"
+> 
+> For linux/numa.h to be generally availble to the tools builds, it must
+> be copied into tools/include/linux ...
+> 
+> I have done that copy for today:
+> 
+> From 6dabc11d5513510d0ec0a6b0a4aa8b9051b71516 Mon Sep 17 00:00:00 2001
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Mon, 3 Dec 2018 17:57:27 +1100
+> Subject: [PATCH] linux/numa.h is now needed for the perf build
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 
+Hello Stephen,
+
+I will respin the original patch (https://patchwork.kernel.org/patch/10698089/)
+once more to accommodate new feedbacks from Lubomir Rintel. This patch fixes the
+build problem related to tools/perf. As Lubomir suggested, it might be better to
+split the tools/perf changes ("tools: Replace open encodings for NUMA_NO_NODE")
+from the original patch and then fold this fix onto it with both signed-off-by.
+Does it sound good. Are you okay with it ?
+
+- Anshuman
