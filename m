@@ -2,157 +2,139 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.9 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA2BBC6783B
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 01:57:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45417C6783C
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 01:57:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B30F82084E
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 01:57:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B30F82084E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hxt-semitech.com
+	by mail.kernel.org (Postfix) with ESMTP id 0292620870
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 01:57:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="U2YCQU8V"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0292620870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726327AbeLLB5R convert rfc822-to-8bit (ORCPT
+        id S1726345AbeLLB51 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 20:57:17 -0500
-Received: from mx01.hxt-semitech.com ([223.203.96.7]:52068 "EHLO
-        barracuda.hxt-semitech.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726218AbeLLB5R (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 20:57:17 -0500
-X-ASG-Debug-ID: 1544579829-093b7e7c620ed80001-xx1T2L
-Received: from HXTBJIDCEMVIW02.hxtcorp.net ([10.128.0.15]) by barracuda.hxt-semitech.com with ESMTP id sAxWFrXJVVLomn2Z (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NO); Wed, 12 Dec 2018 09:57:09 +0800 (CST)
-X-Barracuda-Envelope-From: dongsheng.wang@hxt-semitech.com
-Received: from HXTBJIDCEMVIW02.hxtcorp.net (10.128.0.15) by
- HXTBJIDCEMVIW02.hxtcorp.net (10.128.0.15) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 12 Dec 2018 09:56:16 +0800
-Received: from HXTBJIDCEMVIW02.hxtcorp.net ([fe80::3e:f4ff:7927:a6f6]) by
- HXTBJIDCEMVIW02.hxtcorp.net ([fe80::3e:f4ff:7927:a6f6%12]) with mapi id
- 15.00.1395.000; Wed, 12 Dec 2018 09:56:16 +0800
-From:   "Wang, Dongsheng" <dongsheng.wang@hxt-semitech.com>
-To:     "robert.moore@intel.com" <robert.moore@intel.com>,
-        "rjw@rjwysocki.net" <rjw@rjwysocki.net>
-CC:     "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+        Tue, 11 Dec 2018 20:57:27 -0500
+Received: from mail-eopbgr140059.outbound.protection.outlook.com ([40.107.14.59]:2947
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726201AbeLLB51 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 20:57:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2aHcde6Dqp6C4aoF2aNJcofINbNxA2vzAxyQzq5NEw8=;
+ b=U2YCQU8V+GMETZZeZ9rpCE/oSyl4n7EfzMscAKCDlk6YmGGqzsaUFmSqdRC1HwyrqiZoPC2CPOy/xSJ8BohkShp/XGUCRX5zo9MM0+i7CpvcrFYIbWUKlTVe49ABUeilG+NjVGONNfMNhI9Lz57dBiyGHi4cQg/9EpyUrdOLjWI=
+Received: from VI1PR04MB4333.eurprd04.prod.outlook.com (52.134.122.155) by
+ VI1PR04MB1600.eurprd04.prod.outlook.com (10.164.84.146) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1404.20; Wed, 12 Dec 2018 01:57:10 +0000
+Received: from VI1PR04MB4333.eurprd04.prod.outlook.com
+ ([fe80::f474:8a44:efb6:769c]) by VI1PR04MB4333.eurprd04.prod.outlook.com
+ ([fe80::f474:8a44:efb6:769c%5]) with mapi id 15.20.1404.026; Wed, 12 Dec 2018
+ 01:57:10 +0000
+From:   Andy Tang <andy.tang@nxp.com>
+To:     Scott Wood <oss@buserror.net>
+CC:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
+        "paulus@samba.org" <paulus@samba.org>,
+        "mpe@ellerman.id.au" <mpe@ellerman.id.au>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Zheng, Joey" <yu.zheng@hxt-semitech.com>
-Subject: Re: [PATCH 1/1] ACPI / tables: add DSDT AmlCode new declaration name
- support
-Thread-Topic: [PATCH 1/1] ACPI / tables: add DSDT AmlCode new declaration name
- support
-X-ASG-Orig-Subj: Re: [PATCH 1/1] ACPI / tables: add DSDT AmlCode new declaration name
- support
-Thread-Index: AQHUez4zTADh8jmnV0K3KPJRZ7/oPA==
-Date:   Wed, 12 Dec 2018 01:56:15 +0000
-Message-ID: <af65cc4b4b404f15b063429215eb7b68@HXTBJIDCEMVIW02.hxtcorp.net>
-References: <254f789dee7773b938db7a204ca8800db10e4588.1542105349.git.dongsheng.wang@hxt-semitech.com>
- <f5908f1f727c41dfa90038d27734f67f@HXTBJIDCEMVIW02.hxtcorp.net>
-Accept-Language: zh-CN, en-US
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
+Subject: RE: [PATCH 1/2 v3] powerpc/fsl: Use new clockgen binding
+Thread-Topic: [PATCH 1/2 v3] powerpc/fsl: Use new clockgen binding
+Thread-Index: AQHUcOeYAoWjO7RvzU6Dyo+EEyCbvqVhajYAgBkuOxA=
+Date:   Wed, 12 Dec 2018 01:57:10 +0000
+Message-ID: <VI1PR04MB43332FE4914896FCBE8E997FF3A70@VI1PR04MB4333.eurprd04.prod.outlook.com>
+References: <20181031065736.32719-1-andy.tang@nxp.com>
+ <09ee2f91765add47e628e0ab03776d468cec0914.camel@buserror.net>
+In-Reply-To: <09ee2f91765add47e628e0ab03776d468cec0914.camel@buserror.net>
+Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [192.168.50.13]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=andy.tang@nxp.com; 
+x-originating-ip: [119.31.174.73]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1PR04MB1600;6:WJDcO33Rp04e3iMNHh252AoOa+x3Q9p/NLcmj5ysMfThe9o/5MZYj8vsstd6d2OrIJs/A4/fuv9b5IhnfnIIqP/iJWhr2oUyKOF+kfA/F/1YmPqWVLm0VbNOqTAQf8qtrnyfKBLhC21I7i9GYyyRpW2lulVvuCuHkpBUuyaFcIKNFjEM2HN+3keQ7U/tkfcVkmgvOiLp68drUPyDlCBtnz8/tYiB4bj+aYfdwkggc/qa+e4mybSFM11t04CrFVpS+zlosDyPCkU2QuHpUtxONQGA72UrwHHS9Vu1JsjLIYqFRgm8pS/Pdj3C+l+rI95jZ2cCHjJljS+NfczTFXikV44an+6HhjpRLt+ECnPGxBMzGhHFYEA/bthIwZMz6tpQ6k754iPwhyoivMXDX70Va2Xum34gia8XU5pKWgKMTeZQRgNNhPPoQCUi1r7ZQRLkv+xhwqlsXglLyVRqAPo8jw==;5:Cr5gGZ86iPssa42cibRuaz6bcN1YxI83AET3OrSZ/OekdgAAp1o+2Bwfp8ewxeS3E0XD3R0JVI30Y26/ASdXvGB/sGFw+V/okhHNscufJ4q6HqCdAXp01635J6h4BnG3qFf1QLPgGWZDyNEM/5nlzwTf07bLoWrpEwP1xyohTWs=;7:L2zF6ovf1+PsnlBuGpvFS6A/PGW7uU4yCuxwy6uF/frOe9aR6S3BPZYiTl8x2unq/NFHAcdwqjBI5Lh0i94mWrgQDB0gDnWaBN5UUKghtMhs6vjzUheG+zQzYki+4F45/NL2Z4HIVBaxi5Rga3hx/w==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 2076d2ea-42c5-4b0a-087b-08d65fd520cc
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB1600;
+x-ms-traffictypediagnostic: VI1PR04MB1600:
+x-microsoft-antispam-prvs: <VI1PR04MB1600CB7A0E5F2E93172D12E7F3A70@VI1PR04MB1600.eurprd04.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231455)(999002)(944501520)(52105112)(93006095)(93001095)(3002001)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123558120)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:VI1PR04MB1600;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB1600;
+x-forefront-prvs: 0884AAA693
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(366004)(39860400002)(136003)(376002)(396003)(13464003)(189003)(199004)(55016002)(74316002)(4326008)(9686003)(76176011)(2906002)(6916009)(99286004)(14454004)(6246003)(6116002)(53936002)(186003)(6306002)(316002)(105586002)(86362001)(6506007)(97736004)(54906003)(53546011)(5660300001)(7696005)(4001150100001)(102836004)(26005)(8676002)(305945005)(71200400001)(25786009)(3846002)(66066001)(8936002)(478600001)(7416002)(71190400001)(68736007)(486006)(106356001)(81166006)(81156014)(229853002)(11346002)(6436002)(446003)(44832011)(33656002)(476003)(14444005)(256004)(7736002)(966005);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB1600;H:VI1PR04MB4333.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: 1RxdtrY2jhMQjL4SPblJXQqmfo/yAKO4ZeKg+/1X+4i9CFoGWXTiEuWaF3gwngzNkgIyPfXQRZ6oNoO5iZTCklnsSeEel1pEOCCDY+slLw0Ck1mYUKNC8nL9Do2eOJQECPDniYK59E7NX5t4bCySozflc27grRwyhvJBl01gf5ufXos5i+AYziC6qLwzVD/AlqjLP4d4xwZNVF0SoZ742MODoedgJphK54eBSmPedE1pvBbLCTHwBR7tJwBsCCFvSicJUF0/Kdjxy3r/+NOIl4Eqmm0oQNPa7UFliBZ1UW6G+sDFc7cVKWgXmc+Rlf9k
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-X-Barracuda-Connect: UNKNOWN[10.128.0.15]
-X-Barracuda-Start-Time: 1544579829
-X-Barracuda-Encrypted: ECDHE-RSA-AES256-SHA384
-X-Barracuda-URL: https://192.168.50.101:443/cgi-mod/mark.cgi
-X-Virus-Scanned: by bsmtpd at hxt-semitech.com
-X-Barracuda-BRTS-Status: 1
-X-Barracuda-Bayes: INNOCENT GLOBAL 0.3756 1.0000 -0.0681
-X-Barracuda-Spam-Score: -0.07
-X-Barracuda-Spam-Status: No, SCORE=-0.07 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
-X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.63625
-        Rule breakdown below
-         pts rule name              description
-        ---- ---------------------- --------------------------------------------------
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2076d2ea-42c5-4b0a-087b-08d65fd520cc
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Dec 2018 01:57:10.1068
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB1600
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello all,
-
-Any comments about this patch?
-
-Cheers
-Dongsheng
-
-On 2018/11/23 16:12, Wang, Dongsheng wrote:
-> Hello Robert,
->
-> Do you have any comments about this patch?
-> Thanks.
->
->
-> Cheers
-> Dongsheng
->
-> On 2018/11/13 18:46, Wang, Dongsheng wrote:
->> The new naming rule is added in acpica version 20180427.
->> So the dsdt aml code name changes from "AmlCode" to "dsdt_aml_code".
->>
->> The patch that introduces naming rules is:
->> https://github.com/acpica/acpica/commit/f9a88a4c1cd020b6a5475d63b29626852a0b5f37
->>
->> Tested:
->> ACPICA release version 20180427+.
->> ARM64: QCOM QDF2400
->> GCC: 4.8.5 20150623
->>
->> Signed-off-by: Wang Dongsheng <dongsheng.wang@hxt-semitech.com>
->> ---
->>  drivers/acpi/Kconfig  |  2 +-
->>  drivers/acpi/tables.c | 10 ++++++++--
->>  2 files changed, 9 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/acpi/Kconfig b/drivers/acpi/Kconfig
->> index 9705fc986da9..15ab53a52fdc 100644
->> --- a/drivers/acpi/Kconfig
->> +++ b/drivers/acpi/Kconfig
->> @@ -336,7 +336,7 @@ config ACPI_CUSTOM_DSDT_FILE
->>  	  See Documentation/acpi/dsdt-override.txt
->>  
->>  	  Enter the full path name to the file which includes the AmlCode
->> -	  declaration.
->> +	  or dsdt_aml_code declaration.
->>  
->>  	  If unsure, don't enter a file name.
->>  
->> diff --git a/drivers/acpi/tables.c b/drivers/acpi/tables.c
->> index a3d012b08fc5..297020bbaade 100644
->> --- a/drivers/acpi/tables.c
->> +++ b/drivers/acpi/tables.c
->> @@ -713,6 +713,9 @@ acpi_os_physical_table_override(struct acpi_table_header *existing_table,
->>  					  table_length);
->>  }
->>  
->> +static void *amlcode __attribute__ ((weakref("AmlCode")));
->> +static void *dsdt_amlcode __attribute__ ((weakref("dsdt_aml_code")));
->> +
->>  acpi_status
->>  acpi_os_table_override(struct acpi_table_header *existing_table,
->>  		       struct acpi_table_header **new_table)
->> @@ -723,8 +726,11 @@ acpi_os_table_override(struct acpi_table_header *existing_table,
->>  	*new_table = NULL;
->>  
->>  #ifdef CONFIG_ACPI_CUSTOM_DSDT
->> -	if (strncmp(existing_table->signature, "DSDT", 4) == 0)
->> -		*new_table = (struct acpi_table_header *)AmlCode;
->> +	if (!strncmp(existing_table->signature, "DSDT", 4)) {
->> +		*new_table = (struct acpi_table_header *)&amlcode;
->> +		if (!(*new_table))
->> +			*new_table = (struct acpi_table_header *)&dsdt_amlcode;
->> +	}
->>  #endif
->>  	if (*new_table != NULL)
->>  		acpi_table_taint(existing_table);
->
->
-
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogU2NvdHQgV29vZCA8b3Nz
+QGJ1c2Vycm9yLm5ldD4NCj4gU2VudDogMjAxOOW5tDEx5pyIMjbml6UgOToxOQ0KPiBUbzogQW5k
+eSBUYW5nIDxhbmR5LnRhbmdAbnhwLmNvbT4NCj4gQ2M6IG10dXJxdWV0dGVAYmF5bGlicmUuY29t
+OyBzYm95ZEBrZXJuZWwub3JnOyByb2JoK2R0QGtlcm5lbC5vcmc7DQo+IG1hcmsucnV0bGFuZEBh
+cm0uY29tOyBiZW5oQGtlcm5lbC5jcmFzaGluZy5vcmc7IHBhdWx1c0BzYW1iYS5vcmc7DQo+IG1w
+ZUBlbGxlcm1hbi5pZC5hdTsgbGludXgtY2xrQHZnZXIua2VybmVsLm9yZzsNCj4gZGV2aWNldHJl
+ZUB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7DQo+IGxpbnV4
+cHBjLWRldkBsaXN0cy5vemxhYnMub3JnDQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggMS8yIHYzXSBw
+b3dlcnBjL2ZzbDogVXNlIG5ldyBjbG9ja2dlbiBiaW5kaW5nDQo+IA0KPiBPbiBXZWQsIDIwMTgt
+MTAtMzEgYXQgMTQ6NTcgKzA4MDAsIFl1YW50aWFuIFRhbmcgd3JvdGU6DQo+ID4gRnJvbTogU2Nv
+dHQgV29vZCA8b3NzQGJ1c2Vycm9yLm5ldD4NCj4gPg0KPiA+IFRoZSBkcml2ZXIgcmV0YWlucyBj
+b21wYXRpYmlsaXR5IHdpdGggb2xkIGRldmljZSB0cmVlcywgYnV0IHdlIGRvbid0DQo+ID4gd2Fu
+dCB0aGUgb2xkIG5vZGVzIGx5aW5nIGFyb3VuZCB0byBiZSBjb3BpZWQsIG9yIHVzZWQgYXMgYSBy
+ZWZlcmVuY2UNCj4gPiAoc29tZSBvZiB0aGUgbXV4IG9wdGlvbnMgYXJlIGluY29ycmVjdCksIG9y
+IGV2ZW4ganVzdCBiZWluZyBjbHV0dGVyLg0KPiA+DQo+ID4NCj4gPiArc3lzY2xrOiBzeXNjbGsg
+ew0KPiA+ICsJY29tcGF0aWJsZSA9ICJmaXhlZC1jbG9jayI7DQo+ID4gKwkjY2xvY2stY2VsbHMg
+PSA8MD47DQo+ID4gKwljbG9jay1mcmVxdWVuY3kgPSA8MTAwMDAwMDAwPjsNCj4gPiArCWNsb2Nr
+LW91dHB1dC1uYW1lcyA9ICJzeXNjbGsiOw0KPiA+ICt9Ow0KPiA+ICsNCj4gPiAgY2xvY2tnZW46
+IGdsb2JhbC11dGlsaXRpZXNAZTEwMDAgew0KPiANCj4gVGhlIFUtQm9vdCBmaXh1cCB3b24ndCB3
+b3JrIHdpdGggdGhpcy4gIFUtQm9vdCBwYXRjaGVzIHRoZSBmcmVxdWVuY3kNCj4gZGlyZWN0bHkg
+aW50byB0aGUgY2xvY2tnZW4gbm9kZSAoQlRXLCB0aGlzIGlzIGFub3RoZXIgcmVhc29uIHRvIHBy
+ZXNlcnZlDQo+IHRoZSBnZW5lcmljDQo+IDEuMC8yLjAgY29tcGF0aWJsZSBzdHJpbmcpLiAgVGhl
+IG5ldyBiaW5kaW5nIGRvZXMgbm90IHJlcXVpcmUgYW4gaW5wdXQNCj4gY2xvY2sgbm9kZSB3aGVu
+IGl0IGlzIHByb3ZpZGVkIGFzIGNsb2NrLWZyZXF1ZW5jeSBkaXJlY3RseSBpbiB0aGUgY2xvY2tn
+ZW4NCj4gbm9kZSAtLSBhbmQgdGhlIHN5c2NsayBub2RlIHdhcyBub3QgaW4gbXkgb3JpZ2luYWwg
+cGF0Y2ggKG5vciBkaWQgeW91IG5vdGUNCj4gdGhhdCB5b3UgbWFkZSBjaGFuZ2VzIGZyb20gdGhh
+dCBvcmlnaW5hbCkuICBXaHkgZGlkIHlvdSBhZGQgaXQ/DQo+IA0KPiBJIHdvdWxkIGp1c3QgcmVt
+b3ZlIGl0IHdoZW4gYXBwbHlpbmcsIGJ1dCBJJ20gY29uY2VybmVkIHRoYXQgdGhpcyBpbmRpY2F0
+ZXMNCj4gYSBsYWNrIG9mIHRlc3RpbmcgKGFuZCBJIGRvbid0IGhhdmUgdGhlIGhhcmR3YXJlIGFj
+Y2VzcyB0byB0ZXN0IGl0IG15c2VsZiwNCj4gZXhjZXB0IG9uIHQ0MjQwKSAtLSB1bmxlc3MgdGhl
+IDEwMCBNSHogc3lzY2xrIGp1c3QgaGFwcGVuZWQgdG8gYmUgY29ycmVjdA0KPiBvbiB0aGUgbWFj
+aGluZXMgeW91IHRlc3RlZCAod2hpY2ggd291bGQgYWxzbyBiZSBhIHRlc3QgY292ZXJhZ2UNCj4g
+cHJvYmxlbSk/DQpbQW5keV0gWW91IGFyZSByaWdodC4gU3lzY2xrIG1heSBub3QgYmUgdXNlZnVs
+IGFueW1vcmUuIA0KVWJvb3Qgd2lsbCBmaXh1cCB0aGUgY2xvY2tnZW4gbm9kZSBjb3JyZWN0bHku
+IFBsZWFzZSBhcHBseSB0aGlzIHBhdGNoIHdpdGhvdXQgc3lzY2xrLiBXZSB3aWxsDQp0ZXN0IGl0
+IGFuZCBjYXRjaCB0aGUgZXJyb3IgaWYgdGhlIGNsb2NrIGlzIG5vdCBmaXhlZCBjb3JyZWN0bHku
+DQoNCkJUVywgd2hpY2ggZ2l0IHRyZWUgYXJlIHlvdSBnb2luZyB0byBhcHBseSBpdCBvbj8gVGhp
+cyBvbmU/DQpodHRwczovL2dpdC5rZXJuZWwub3JnL3B1Yi9zY20vbGludXgva2VybmVsL2dpdC9z
+Y290dHdvb2QvbGludXguZ2l0L2xvZy8/aD1uZXh0DQoNCkJSLA0KQW5keQ0KPiANCj4gLVNjb3R0
+DQo+IA0KDQo=
