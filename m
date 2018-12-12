@@ -2,140 +2,128 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,T_HK_NAME_DR,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CD48C6783C
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 02:45:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07378C67839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 02:47:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 440682086D
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 02:45:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 440682086D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
+	by mail.kernel.org (Postfix) with ESMTP id BE1042086D
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 02:47:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="c0YhQLm9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE1042086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726371AbeLLCpt (ORCPT
+        id S1726374AbeLLCrD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 21:45:49 -0500
-Received: from wind.enjellic.com ([76.10.64.91]:56906 "EHLO wind.enjellic.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726211AbeLLCps (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 21:45:48 -0500
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-        by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id wBC2gkBM028859;
-        Tue, 11 Dec 2018 20:42:46 -0600
-Received: (from greg@localhost)
-        by wind.enjellic.com (8.15.2/8.15.2/Submit) id wBC2gk8w028858;
-        Tue, 11 Dec 2018 20:42:46 -0600
-Date:   Tue, 11 Dec 2018 20:42:46 -0600
-From:   "Dr. Greg" <greg@enjellic.com>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        X86 ML <x86@kernel.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-sgx@vger.kernel.org,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        Jethro Beekman <jethro@fortanix.com>
-Subject: Re: [RFC PATCH v3 0/4] x86: Add exception fixup for SGX ENCLU
-Message-ID: <20181212024246.GA28530@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
-References: <20181210232141.5425-1-sean.j.christopherson@intel.com> <20181210232449.GA11843@localhost> <EEE078E7-7F37-4F74-8874-46E16C1E0A77@amacapital.net> <20181211165253.GB14731@linux.intel.com> <CALCETrXOXh8Gb_d7NYLakx4w+JVEe79t11wFPLpy+5MEq9kq=A@mail.gmail.com> <20181211222312.GI14731@linux.intel.com> <CALCETrW5Z_4+Yo+D1KgahHHqGdb+tgyWMRvB8eozbW82jZqK3w@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALCETrW5Z_4+Yo+D1KgahHHqGdb+tgyWMRvB8eozbW82jZqK3w@mail.gmail.com>
-User-Agent: Mutt/1.4i
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Tue, 11 Dec 2018 20:42:46 -0600 (CST)
+        Tue, 11 Dec 2018 21:47:03 -0500
+Received: from mail-qt1-f171.google.com ([209.85.160.171]:43646 "EHLO
+        mail-qt1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726239AbeLLCrD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 21:47:03 -0500
+Received: by mail-qt1-f171.google.com with SMTP id i7so18917376qtj.10
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 18:47:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=WgEp1E5C6Qu8djtqrwabIex9jJmfchIPo+nfg3wWEGI=;
+        b=c0YhQLm9sMVeFuGWYuCYYnzSsPxkbEtrOqjrJdeIytA44LPcWs4KXlgxpjxhhGrQ/m
+         XqTMTZu288obYrKK4p/9nyodeoAyELrUgDzs+yVbFEfN4T/1yoxe3hqA1mRcAZi4bsvo
+         yYnIqn9QFiekwudhEZWH9F1Ep2vEEzi+nzoMBKizEoyav+EUx48XVaK5TUKEAi1sw62Q
+         gdWT47C9/OLpzrLl7a2ZSjdfmoUBJww0akIXvE/WweeTWCFq3TWSGcXUMEh4GnZMzeRi
+         urn1ALV7BDaYzr4Sqx3ttzhDglIPbKV2GAp78TCgPZGmFVL7E8M9AWXAsBwRBRG77faT
+         OEXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=WgEp1E5C6Qu8djtqrwabIex9jJmfchIPo+nfg3wWEGI=;
+        b=gbQqMFHT+vhQByfT+Q/+6OLxBgJspyevkwfK/P4iJg+ua8+Oy9dpE5KcuWbVFw51bd
+         dpyD8bqXqFQgcVaQoiwNSH9DwlluIG4oNgf4zpwKOJEjltrmjHt3cjcrCVZvf/GI2zpx
+         rxSM/PQ1lAi4ROszZBnOqYZHCXL2/rMP0dPc9Oz32fBpH6AG2wns3tqVpFAJWrf0jQYF
+         xgbNoXtzYiyJA51UqMULrdkBxClGnKqf3nKbqleveuLrBw2fRvqnVGJ+6lksLfM1NYln
+         m/u3uaJS11tONcJ8kkOin6cSDUmF+veTR9BOt7qJMoSletOnasZdskO8GDursUK11CPw
+         CXhw==
+X-Gm-Message-State: AA+aEWYpD0/Cx1iLYwA1JrAddVpjZ3crdMj5sVav7mNnvZdk4KoFhVny
+        uI1jeU+f6QWXvNx7+OeWcPsPWMRXlJteMxw+u+Hh9Q==
+X-Google-Smtp-Source: AFSGD/XlcoMrTwzfoSjT2hdsVcNgPvjzK18zgeI7biwWqOnnt5aAGPQYAsTSv+PoxkOvsQek4OYCZ+h8Y4h4aixUBkw=
+X-Received: by 2002:a0c:8665:: with SMTP id p92mr16732660qva.182.1544582821451;
+ Tue, 11 Dec 2018 18:47:01 -0800 (PST)
+MIME-Version: 1.0
+References: <20181206030227.9507-1-kyletso@google.com> <AM5PR1001MB0994F844103F31DBD373AAB880A50@AM5PR1001MB0994.EURPRD10.PROD.OUTLOOK.COM>
+ <AM5PR1001MB099433159E3519D8F534E38F80A50@AM5PR1001MB0994.EURPRD10.PROD.OUTLOOK.COM>
+In-Reply-To: <AM5PR1001MB099433159E3519D8F534E38F80A50@AM5PR1001MB0994.EURPRD10.PROD.OUTLOOK.COM>
+From:   Kyle Tso <kyletso@google.com>
+Date:   Wed, 12 Dec 2018 10:46:49 +0800
+Message-ID: <CAGZ6i=3+8OOafaY8B5qRkDg1pzpTu0XRw-GAenubY74DM=85Pw@mail.gmail.com>
+Subject: Re: [PATCH] usb: typec: tcpm: Extend the matching rules on PPS APDO selection
+To:     Adam.Thomson.Opensource@diasemi.com
+Cc:     linux@roeck-us.net, heikki.krogerus@linux.intel.com,
+        gregkh@linuxfoundation.org,
+        Badhri Jagan Sridharan <badhri@google.com>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 11, 2018 at 03:10:52PM -0800, Andy Lutomirski wrote:
-
-Good evening, I hope the day has gone well for everyone.
-
-> > > > On Dec 11, 2018, at 8:52 AM, Sean Christopherson <sean.j.christopherson@intel.com> wrote:
-> > > >
-> > > > This isn't fundamentally different than forcing all EENTER
-> > > > calls through the vDSO, which is also per-process.
-> > > > Technically this is more flexible in that regard since
-> > > > userspace gets to choose where their one ENCLU gets to reside.
-> > > > Userspace can have per-enclave entry flows so long as the
-> > > > actual ENLU[EENTER] is common, same as vDSO.
-
-> > > Right. The problem is that user libraries have a remarkably hard
-> > > time agreeing on where their one copy of anything lives.
-
-> > Are you concerned about userspace shooting themselves in the foot,
-> > e.g.  unknowingly overwriting their handler?  Requiring
-> > unregister->register to change the handler would mitigate that
-> > issue for the most part.  Or we could even say it's a write-once
-> > property.
+On Mon, Dec 10, 2018 at 7:36 PM Adam Thomson
+<Adam.Thomson.Opensource@diasemi.com> wrote:
+>
+> On 10 December 2018 09:01, Adam Thomson wrote:
+>
+> > On 06 December 2018 03:02, Kyle Tso wrote:
 > >
-> > That obviously doesn't solve the issue of a userspace application
-> > deliberately using two different libraries to run enclaves in a
-> > single process, but I have a hard time envisioning a scenario
-> > where someone would want to use two different *SGX* libraries in a
-> > single process.  Don't most of the signal issue arise due to
-> > loading multiple libraries that provide *different* services
-> > needing to handle signals?
+> > > Current matching rules ensure that the voltage range of selected
+> > > Source Capability is entirely within the range defined in one of the
+> > > Sink Capabilities. This is reasonable but not practical because Sink
+> > > may not support wide range of voltage when sinking power while Source
+> > > could advertise its capabilities in raletively wider range. For
+> > > example, a Source PDO advertising 3.3V-11V@3A (9V Prog of Fixed
+> > > Nominal Voltage) will not be selected if the Sink requires 5V- 12V@3A
+> > > PPS power. However, the Sink could work well if the requested voltage range in
+> > RDOs is 5V-11V@3A.
+> >
+> > Is there a real world example of a sink requiring the 5V - 12V range? In that
+> > scenario could we not add an additional sink capability which allows for this range
+> > to be supported, and the current implementation should work just fine?
+>
+> Ok, I maybe should have waited until after my morning coffee to respond. So
+> because the lower limit on the sink side, is higher than the advertised source's
+> PPS minimum voltage it never gets selected? Personally I'd prefer to keep the
+> upper limit checking as is as I think that's an additional safety benefit
+> helping to prevent over-voltage scenarios. I think if a PPS APDO can supply up
+> to 11V then the system should be capable of handling that voltage, otherwise
+> it shouldn't be considered at all. The Source provides limits checking as well
+> to make sure the Sink doesn't request a value above the maximum voltage limit
+> for that selected APDO.
+>
 
-> I can easily imagine two SGX libraries that know nothing about each
-> other running in the same process.  One or both could be PKCS#11
-> modules, for example.
+If the over-voltage occurs, it means:
+1. the adapter malfunctioned. or
+2. the code on the Sink accidentally requests a voltage level which is
+over the limit of the Sink.
 
-Very good, I see that Sean agreed with this down thread.  I was
-concerned that our discussion was lacking precision and we were
-talking past one another.
+For 1., it is difficult to predict the behaviors of a malfunctioned
+adapter. The over-voltage event may happen even if the Sink doesn't
+select the APDO from this broken adapter.
+For 2., it is difficult to predict the behaviors from the careless code as well.
 
-> I suspect that Linux will eventually want the ability for libraries
-> to register exception handlers, but that's not going to get designed
-> and implemented quickly enough for SGX's initial Linux rollout.  A
-> vDSO helper like in your earlier series should solve most of the
-> problem without any contention issues.
+> For the lower limit I'm more inclined to agree with allowing a higher minimum
+> on the sink side as that's less of a safety/damage issue as I understand it.
+> FWIW, what is the real world scenario? What happens if voltage drops below 5V?
+>
 
-Let me see if I can impart some framework for additional clarity as
-discussions proceed forward.
+Some products (in Sink mode) have under-voltage protection (the lower
+bound might be around 3.8V - 4V before
+the calculation of IR-drop) that will cause the disconnection.
 
-I believe it would be helpful if we could agree to refer to a body of
-code, possibly in library form, that loads, initializes and executes
-an enclave as an 'SGX runtime'.  In this framework, the term 'library'
-refers to code that an application links to for domain specific
-functionality, ie. libpkcs11, libkrb5, libsasl.  These 'libraries' may
-implement enclaves, using 'SGX runtimes' of their choice, to improve
-their security guarantees.
-
-In this model it is the 'SGX runtime' that is responsible for
-registering SGX exception handlers under their management.
-
-In order for mainline Linux SGX support to be relevant, it must admit
-mutually distrusting 'SGX runtimes' in the same process context.  The
-SGX exception handler architecture must also support the notion of
-'nested enclave' invocation where an enclave may execute an OCALL and
-then go on to execute an enclave, possibly based on a different 'SGX
-runtime', before returning into its previous enclave.
-
-Hopefully the above will help assist further discussions.
-
-Have a good evening.
-
-Dr. Greg
-
-As always,
-Dr. G.W. Wettstein, Ph.D.   Enjellic Systems Development, LLC.
-4206 N. 19th Ave.           Specializing in information infra-structure
-Fargo, ND  58102            development.
-PH: 701-281-1686
-FAX: 701-281-3949           EMAIL: greg@enjellic.com
-------------------------------------------------------------------------------
-"If you think nobody cares if you're alive, try missing a couple of car
- payments."
-                                -- Earl Wilson
+thanks,
+Kyle
