@@ -2,63 +2,64 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_MIXED_ES,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0E57C65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 20:52:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BCFAC67839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 20:52:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 617C02080F
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 20:52:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C25462080F
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 20:52:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EVie0Buf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 617C02080F
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RCM4sHVD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C25462080F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727107AbeLLUwA (ORCPT
+        id S1727825AbeLLUwG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 15:52:00 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:35595 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726294AbeLLUwA (ORCPT
+        Wed, 12 Dec 2018 15:52:06 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:38064 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726294AbeLLUwF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 15:52:00 -0500
-Received: by mail-pf1-f194.google.com with SMTP id z9so9447577pfi.2;
-        Wed, 12 Dec 2018 12:51:59 -0800 (PST)
+        Wed, 12 Dec 2018 15:52:05 -0500
+Received: by mail-pl1-f194.google.com with SMTP id e5so9156143plb.5;
+        Wed, 12 Dec 2018 12:52:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=9QL/fH6yYMula8jLl5mVxMOT2iB/Q14YZLve/5K/uPA=;
-        b=EVie0BufpDMJK68/nW+z6XIs0mNSUuKUS1OCctFyKh20QNM/i/0bUnx2cIK/OeVnbd
-         FBZ0t/VwGZnoBa0WSSsEoc6YDv1sI36mXMlnHX4QBtPpcoOfBQwqsE4qvfzJSFsf8rjL
-         K+KT4v91SZPSb6UMC2Gnd1BPZq5F9sTvOcMIeDkVzEaRPM/SpnFMttXpw+A7wTnjl5st
-         PD49j9CkvD9aFQMJIGxNqGNTq0Febx51KmdqCy6IIMQUAI1FDgAaAskU1O9gdRk8TFRi
-         dB8icsYbcs9QpmqLerg0Jv6a90Ah+h+81jRvXZdEq99/W3CimdxD8fmlhHWIeR9KFDK9
-         4hoQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=m4Qv/57YSOuii7c1Tuz+KC/jZPl9gkkiFtIGT0hxDTM=;
+        b=RCM4sHVDxxwA1NCrJP56E2CynuY78JvUNZO8MeiZkQt9qx+HBEC2XDOwP8QoTOdk2F
+         jsOjFFuvJJuLeHnnkgrCEBvmymkl98FfFg1+wFRh8dlT1COwCZeQezVsSRMs9NWSg4KT
+         QzNFWGMxw5oAzow2Yas69/N0EvzF27iLaFruWPVaEu9DJs+4bXCG67NyIrM5GG+EenYz
+         lwDNMvvZiXReDBnJZfDNGJ11h377gyOZIaXZodzFE6quJpoBmEsAagrfoKZrqfGynkwu
+         l4z8GU5qeRrarlyRxOYk/fnSg1HpzHcOPHzJoBEnJT3FYkVR7yHT5CEToNlmenuJ+aVn
+         bYvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=9QL/fH6yYMula8jLl5mVxMOT2iB/Q14YZLve/5K/uPA=;
-        b=GfdE5kUxzdDqjw2oNJWsLrJjgCBdJ22VLgKHfrr7rW6m45Bv4MwIZDM1BegEsc3Ow6
-         n7amLwuAa80095LSf/OExid3UgsX3/gaMJ/riJhDCnFXVqgB+lrGMRmwvurKmHN6McyN
-         YCQ3zZWMm+aR9ebAg4rp+M9E2zRKjbyEEtRLygBiQiCvfcJKRGTSKrgZdwqX2bVyTN4f
-         /KSGngGmOmaiVPDfpkg4jeXFb5ZylHZbOQ3PeQdAD7JTyMpM28b+X0NONNDiAeIR7cq8
-         QW3PTGcmonb4pO65EOaXwMQCJ1YI+hvoz1bJ/oSEusHek1qkCinzzWvnOPc+6pPdWG92
-         /nsA==
-X-Gm-Message-State: AA+aEWbbSFtak4XkFAr3pWAxAjtXcUAwRSziSnobpiwT6Ob6k+WvzjCo
-        pBq0HMd3rs7Uw39hE7PgPBNS+7Oa
-X-Google-Smtp-Source: AFSGD/USlGCi2khfP+qmShIH90OWlkWTWJjqPhbdjWo3MnBy7PPPtlF1Iy6c9jIYY6O+KqCXVyzG4w==
-X-Received: by 2002:a65:6542:: with SMTP id a2mr19352743pgw.389.1544647918822;
-        Wed, 12 Dec 2018 12:51:58 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=m4Qv/57YSOuii7c1Tuz+KC/jZPl9gkkiFtIGT0hxDTM=;
+        b=PA8tP9nVpX70IN/49C8b22uKZEzhO/C5sM77RKrPvgbnXYbVuSYERcpTjwU1zSB8Sz
+         oB6UwxsIH5pucVwUUtVuT3Z7Z14+EnjOiWPVYPN4O5gaWTWOSNCMRxnnEjdQt9unw96P
+         x0nrTaE8vJcVqXEPNqHlQBSAAzPCdhso0WcG0xVwBuuZk+aDbuJYBFkY/WqmZ2xx8WYP
+         +gf6smQZOhks6TLb8kD6BMFAO58lRI9EiJ+bHza//8Xo9qsbYXZSFL+AoLrbVfdjSZX7
+         kUF1SeTIMmXaAPbn9mFnVZGNucckRBZGlsRtZ9kPCIJFM20zG0O47wPOCNMb2XFRRPLh
+         +Qjw==
+X-Gm-Message-State: AA+aEWb+WTUMhVMfzSplUUt1mO6dtI/JuQKCKPSE5CZ5sG7HLPMIu01l
+        9HWGCaOytlVnFJISamxO8ss=
+X-Google-Smtp-Source: AFSGD/UK79UJzdtSvpz00LmCrGtLELv75uTlKdO+AXwRWWEdRNTbv/Is7TJ12yK+WRdicL/qCT9YvQ==
+X-Received: by 2002:a17:902:7044:: with SMTP id h4mr20947759plt.35.1544647925047;
+        Wed, 12 Dec 2018 12:52:05 -0800 (PST)
 Received: from localhost.localdomain ([94.29.36.169])
-        by smtp.gmail.com with ESMTPSA id p2sm34753860pgc.94.2018.12.12.12.51.52
+        by smtp.gmail.com with ESMTPSA id p2sm34753860pgc.94.2018.12.12.12.51.59
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 12 Dec 2018 12:51:58 -0800 (PST)
+        Wed, 12 Dec 2018 12:52:04 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -66,10 +67,12 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
 Cc:     Robin Murphy <robin.murphy@arm.com>,
         iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v7 00/24] Tegra GART driver clean up and optimization
-Date:   Wed, 12 Dec 2018 23:38:43 +0300
-Message-Id: <20181212203907.23461-1-digetx@gmail.com>
+Subject: [PATCH v7 01/24] iommu/tegra: gart: Remove pr_fmt and clean up includes
+Date:   Wed, 12 Dec 2018 23:38:44 +0300
+Message-Id: <20181212203907.23461-2-digetx@gmail.com>
 X-Mailer: git-send-email 2.20.0
+In-Reply-To: <20181212203907.23461-1-digetx@gmail.com>
+References: <20181212203907.23461-1-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -77,113 +80,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Remove unneeded headers inclusion and sort the headers in alphabet order.
+Remove pr_fmt macro since there is no pr_*() in the code and it doesn't
+affect dev_*() functions.
 
-This patch-series integrates the GART (IOMMU) driver with the Memory
-Controller driver, that allows to report the name of a faulty memory
-client on GART page fault. A major code clean up and performance
-optimization is performed in this series as well.
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Acked-by: Thierry Reding <treding@nvidia.com>
+---
+ drivers/iommu/tegra-gart.c | 17 +++++------------
+ 1 file changed, 5 insertions(+), 12 deletions(-)
 
-Changelog:
-
-v7: Addressed review comments to v6 from Thierry Reding.
-
-    Added three new (minor) patches that further prettifying the drivers
-    code.
-
-    New patches in v7:
-        1) "memory: tegra: Do not try to probe SMMU on Tegra20"
-        2) "memory: tegra: Do not ask for IRQ sharing"
-        3) "memory: tegra: Clean up error messages"
-
-    Incorporated another "one-line" change into the "perform code refactoring"
-    patch: now GART translation is kept disabled in HW while GART is suspended.
-
-v6: v5 that is re-based on the recent linux-next.
-
-v5: Addressed review comments from Thierry Reding to v4. Added WARN_ON() to
-    make sure that active domain isn't getting released, kept include headers
-    where necessary, etc.. All changes are quite minor.
-
-    Added new patch "memory: tegra: Use relaxed versions of readl/writel".
-
-v4: In the v3 Rob Herring requested to make device-tree binding changes
-    backwards-compatible with the older kernels, that is achieved by
-    changing the 'compatible' value of the DT node.
-
-    The code-refactoring patches got some more (minor) polish.
-
-    Added new patch "memory: tegra: Use of_device_get_match_data()".
-
-v3: Memory Controller integration part has been reworked and now GART's
-    device-tree binding is changed. Adding Rob Herring for the device-tree
-    changes reviewing.
-
-    GART now disallows more than one active domain at a time.
-
-    Fixed "spinlock recursion", "NULL pointer dereference" and "detaching
-    of all devices from inactive domains".
-
-    New code-refactoring patches.
-
-    The previously standalone patch "memory: tegra: Don't invoke Tegra30+
-    specific memory timing setup on Tegra20" is now included into this
-    series because there is a dependency on that patch and it wasn't applied
-    yet.
-
-v2: Addressed review comments from Robin Murphy to v1 by moving devices
-    iommu_fwspec check to gart_iommu_add_device().
-
-    Dropped the "Provide single domain and group for all devices" patch from
-    the series for now because after some more considering it became not
-    exactly apparent whether that is what we need, that was also suggested
-    by Robin Murphy in the review comment. Maybe something like a runtime
-    IOMMU usage for devices would be a better solution, allowing to implement
-    transparent context switching of virtual IOMMU domains.
-
-    Some very minor code cleanups, reworded commit messages.
-
-Dmitry Osipenko (24):
-  iommu/tegra: gart: Remove pr_fmt and clean up includes
-  iommu/tegra: gart: Clean up driver probe errors handling
-  iommu/tegra: gart: Ignore devices without IOMMU phandle in DT
-  iommu: Introduce iotlb_sync_map callback
-  iommu/tegra: gart: Optimize mapping / unmapping performance
-  dt-bindings: memory: tegra: Squash tegra20-gart into tegra20-mc
-  ARM: dts: tegra20: Update Memory Controller node to the new binding
-  memory: tegra: Don't invoke Tegra30+ specific memory timing setup on
-    Tegra20
-  memory: tegra: Adapt to Tegra20 device-tree binding changes
-  memory: tegra: Read client ID on GART page fault
-  memory: tegra: Use of_device_get_match_data()
-  memory: tegra: Use relaxed versions of readl/writel
-  iommu/tegra: gart: Integrate with Memory Controller driver
-  memory: tegra: Do not try to probe SMMU on Tegra20
-  memory: tegra: Do not ask for IRQ sharing
-  memory: tegra: Clean up error messages
-  iommu/tegra: gart: Fix spinlock recursion
-  iommu/tegra: gart: Fix NULL pointer dereference
-  iommu/tegra: gart: Allow only one active domain at a time
-  iommu/tegra: gart: Don't use managed resources
-  iommu/tegra: gart: Prepend error/debug messages with "gart:"
-  iommu/tegra: gart: Don't detach devices from inactive domains
-  iommu/tegra: gart: Simplify clients-tracking code
-  iommu/tegra: gart: Perform code refactoring
-
- .../bindings/iommu/nvidia,tegra20-gart.txt    |  14 -
- .../memory-controllers/nvidia,tegra20-mc.txt  |  27 +-
- arch/arm/boot/dts/tegra20.dtsi                |  15 +-
- drivers/iommu/Kconfig                         |   1 +
- drivers/iommu/iommu.c                         |   8 +-
- drivers/iommu/tegra-gart.c                    | 473 +++++++-----------
- drivers/iommu/tegra-smmu.c                    |   4 -
- drivers/memory/tegra/mc.c                     | 118 +++--
- drivers/memory/tegra/mc.h                     |  10 +-
- include/linux/iommu.h                         |   1 +
- include/soc/tegra/mc.h                        |  27 +-
- 11 files changed, 323 insertions(+), 375 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/iommu/nvidia,tegra20-gart.txt
-
+diff --git a/drivers/iommu/tegra-gart.c b/drivers/iommu/tegra-gart.c
+index da6a4e357b2b..ff75cf60117b 100644
+--- a/drivers/iommu/tegra-gart.c
++++ b/drivers/iommu/tegra-gart.c
+@@ -19,22 +19,15 @@
+  * 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA.
+  */
+ 
+-#define pr_fmt(fmt)	"%s(): " fmt, __func__
+-
+ #include <linux/init.h>
++#include <linux/io.h>
++#include <linux/iommu.h>
++#include <linux/list.h>
+ #include <linux/moduleparam.h>
+-#include <linux/platform_device.h>
+-#include <linux/spinlock.h>
++#include <linux/of_device.h>
+ #include <linux/slab.h>
++#include <linux/spinlock.h>
+ #include <linux/vmalloc.h>
+-#include <linux/mm.h>
+-#include <linux/list.h>
+-#include <linux/device.h>
+-#include <linux/io.h>
+-#include <linux/iommu.h>
+-#include <linux/of.h>
+-
+-#include <asm/cacheflush.h>
+ 
+ /* bitmap of the page sizes currently supported */
+ #define GART_IOMMU_PGSIZES	(SZ_4K)
 -- 
 2.20.0
 
