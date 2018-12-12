@@ -2,91 +2,134 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBDDBC65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:32:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07992C65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:34:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 791F62084E
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:32:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544635932;
-	bh=4ULccZHnBtvqKObOJ8nbpWBfjS+DcNKY1ryB2SzmVoY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=N50+K9G/fP/L/miizkA0uKRcQnB6pFnV9+oQoscuKwAD7kAXbRbnpMVaw2oCu4s1k
-	 y7DW/gISe/a4hZNiY0FR310+s7rjt5HQRuLtMnzNW2OrUY9SF0H+SZc42eHQlGe1Yv
-	 50TklUWaGp3u8+r2wcJZ1HYysHhxgzLY0iuFw4X0=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 791F62084E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id C618020839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:34:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C618020839
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728025AbeLLRcL (ORCPT
+        id S1728046AbeLLReN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 12:32:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43686 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727799AbeLLRcL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 12:32:11 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 61D1D20839;
-        Wed, 12 Dec 2018 17:32:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544635930;
-        bh=4ULccZHnBtvqKObOJ8nbpWBfjS+DcNKY1ryB2SzmVoY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=G5fLaSZFNEBBy8Q25l4BX61crLQD06VCeYV6c+t5PQL8Me1WFrL+7AXNZTyeBVaUo
-         dsu0/NrhZ8ari43ha6uS6KmEYW6zjseZWhMIMdZcy/BopSfe3ovQtOqUc/cDlTtpUk
-         AnDi08PS9FYs9cmti69kDQoQC3YZxJvAXeIrYZNA=
-Date:   Wed, 12 Dec 2018 18:29:31 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 4.4 00/91] 4.4.167-stable review
-Message-ID: <20181212172931.GB8269@kroah.com>
-References: <20181211151606.026852373@linuxfoundation.org>
- <533608e5-526b-0e65-643a-4ca539882e89@roeck-us.net>
+        Wed, 12 Dec 2018 12:34:13 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:54274 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727691AbeLLReM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 12:34:12 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: eballetbo)
+        with ESMTPSA id EC115260A1E
+From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To:     lee.jones@linaro.org
+Cc:     gwendal@chromium.org, drinkcat@chromium.org,
+        linux-kernel@vger.kernel.org, groeck@chromium.org,
+        kernel@collabora.com, bleung@chromium.org
+Subject: [PATCH v5 0/7] mfd / platform: cros_ec: move cros_ec sysfs attributes to its own drivers.
+Date:   Wed, 12 Dec 2018 18:33:55 +0100
+Message-Id: <20181212173402.27086-1-enric.balletbo@collabora.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <533608e5-526b-0e65-643a-4ca539882e89@roeck-us.net>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 12, 2018 at 06:24:28AM -0800, Guenter Roeck wrote:
-> On 12/11/18 7:40 AM, Greg Kroah-Hartman wrote:
-> > This is the start of the stable review cycle for the 4.4.167 release.
-> > There are 91 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> > 
-> > Responses should be made by Thu Dec 13 15:15:44 UTC 2018.
-> > Anything received after that time might be too late.
-> > 
-> 
-> [ preliminary ]
-> 
-> arm:allmodconfig, arm:omap2plus_defconfig:
-> 
-> drivers/dma/cppi41.c: In function 'cppi41_stop_chan':
-> include/linux/kernel.h:815:27: error: 'struct cppi41_channel' has no member named 'node'
-> 
-> [and various other similar errors]
-> 
-> The same problem also affects v3.18.y.
+Hi,
 
-Patch now dropped and a -rc2 pushed out for 3.18.y and 4.4.y with that
-removed.
+This is another patchset to try to cleanup a bit more the crossed
+references for cros-ec driver between the MFD and the platform/chrome
+subsystems.
 
-thanks,
+The purpose of these patches is get rid of the different cros-ec attributes
+from mfd/cros_ec_dev to its own sub-driver in platform/chrome. cros_ec_dev
+continues instantiating the sub-devices but the sysfs attributes are owned
+by the platform driver.E.g. The lightbar driver should own his sysfs
+attributes and be instantiated only if the Embedded Controller has a
+lightbar.
 
-greg k-h
+The patchset also adds the documentation of the sysfs attributes.
+
+Most of the patches touches mfd subsystem and platform/chrome so I'd
+suggest go all using and inmutable branch.
+
+Best regards,
+ Enric
+
+Changes in v5:
+- Add static at cros_ec_attr_group.
+
+Changes in v4:
+- Added Reviewed-by tags.
+- Moved mfd_remove_devices to another patch, it's already queued in Lee's tree.
+- Removed patch 8 from the series, was a fix and it's already applied in current mainline.
+- Use <ec-device-name> instead of <cros-ec> in documentation.
+- Use default MFD_CROS_EC_CHARDEV in Kconfig.
+- Changed the subject to specify the cros_ec_vbc driver.
+- Fix typo s/th/the
+- Get rid of the cros_ec_has_lightbar function.
+
+Changes in v3:
+- Removed cros_ec_remove from include file.
+- Removed unneded check for ec_dev.
+- Fixed build error as reported by the kbuild test robot.
+- Do not print ec_platform name as is with dev_err is enough.
+
+Changes in v2:
+- Use devm only for the cros-ec core.
+- Removed the two exported functions to attach/detach to the cros_class.
+- Use dev_warn instead of dev_err when adding the lightbar.
+- Removed unneeded check of ec_dev.
+- Add a "default MFD_CROS_EC_CHARDEV" in Kconfig for this.
+- Remove the checks for missing debug_info, are not needed now.
+- Remove a comment that no longer applies.
+- Create the attributes directly instead of use the attach/detach callbacks.
+- Remove unnecessary IS_ENABLED.
+- Remove dev_err message telling that VBC is found.
+- Use dev_warn instead of dev_err as the error is ignored.
+- Removed ec_with_lightbar variable.
+
+Enric Balletbo i Serra (7):
+  mfd / platform: cros_ec: use devm_mfd_add_devices
+  mfd / platform: cros_ec: move lightbar attributes to its own driver
+  mfd / platform: cros_ec: move vbc attributes to its own driver
+  mfd / platform: cros_ec: move debugfs attributes to its own driver
+  mfd / platform: cros_ec: move device sysfs attributes to its own
+    driver
+  mfd / platform: cros_ec_vbc: instantiate only if the EC has a VBC
+    NVRAM
+  platform/chrome: cros_ec_lightbar: instantiate only if the EC has a
+    lightbar
+
+ .../ABI/testing/sysfs-class-chromeos          |  32 +++++
+ ...sfs-class-chromeos-driver-cros-ec-lightbar |  74 ++++++++++
+ .../sysfs-class-chromeos-driver-cros-ec-vbc   |   6 +
+ drivers/mfd/Kconfig                           |   1 -
+ drivers/mfd/cros_ec.c                         |  14 +-
+ drivers/mfd/cros_ec_dev.c                     |  89 +++++--------
+ drivers/mfd/cros_ec_dev.h                     |   6 -
+ drivers/platform/chrome/Kconfig               |  47 ++++++-
+ drivers/platform/chrome/Makefile              |   7 +-
+ drivers/platform/chrome/cros_ec_debugfs.c     |  62 ++++++---
+ drivers/platform/chrome/cros_ec_i2c.c         |  10 --
+ drivers/platform/chrome/cros_ec_lightbar.c    | 126 +++++++++++-------
+ drivers/platform/chrome/cros_ec_lpc.c         |   4 -
+ drivers/platform/chrome/cros_ec_spi.c         |  11 --
+ drivers/platform/chrome/cros_ec_sysfs.c       |  36 ++++-
+ drivers/platform/chrome/cros_ec_vbc.c         |  59 +++++---
+ include/linux/mfd/cros_ec.h                   |  21 ---
+ 17 files changed, 394 insertions(+), 211 deletions(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-class-chromeos
+ create mode 100644 Documentation/ABI/testing/sysfs-class-chromeos-driver-cros-ec-lightbar
+ create mode 100644 Documentation/ABI/testing/sysfs-class-chromeos-driver-cros-ec-vbc
+
+-- 
+2.19.2
+
