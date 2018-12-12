@@ -2,105 +2,98 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F87EC65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:41:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9363CC65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:43:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB9F92080F
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:41:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=vanguardiasur-com-ar.20150623.gappssmtp.com header.i=@vanguardiasur-com-ar.20150623.gappssmtp.com header.b="fzOeiimQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB9F92080F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=vanguardiasur.com.ar
+	by mail.kernel.org (Postfix) with ESMTP id 4FBC32080F
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:43:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FBC32080F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728006AbeLLRlU (ORCPT
+        id S1728013AbeLLRn1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 12:41:20 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:39115 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726922AbeLLRlT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 12:41:19 -0500
-Received: by mail-pl1-f193.google.com with SMTP id 101so8924500pld.6
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 09:41:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=vanguardiasur-com-ar.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=mAssrmJlu9H/RT/IUtyjggNaKpKcJJfSlRCSThI1Ktk=;
-        b=fzOeiimQF1371cjmO961aiiHnTmNN7pqiJgAQFLMWpdtPKbZNo/NHXnJFgh9lmfQv1
-         zBHEaufddQKZU8Y4f1k+6E/0upAmbUdP/OKKl81Vku/9e5yGZxVPBLh/s/11/N763V5e
-         LffDcOoA0cIThN730JRIgZSSU1ZDq7TeCUpIQk6tpZw7arvVnr8VqXDI8yfZs6XZtH4B
-         rYVLC4htUdLVeOb15JCVG0ca1Fe0JjQ7ITC+99AzVQ1Jm36tuKZMlgMJL2ge2G1FPDbw
-         +SunAQPCOAZm9uhCbZGn2JSLuBgZdNdQQHV7zGS/R9J4jX1U00m2MhkZtj6+CzLoKc9p
-         7OXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=mAssrmJlu9H/RT/IUtyjggNaKpKcJJfSlRCSThI1Ktk=;
-        b=gzzvIZmpDntiYFkCQxY4Rg3ostxHzIfQaw3M5O+o6NhKNskAvNbf7NBv3N3UYwjfDe
-         shcSSyOSx3iaZyEIquqzr/9cbihzuPL+Wozw0wAkUFzOQVS6LD5atex80RkQYHKxPvWd
-         aS1hwleG3k5uX58qxUjiK1bfYyF6Co5jEKl+BvgsCSm+oHQy78Zyn6pUnn6hvPDv12Ft
-         hFNWWFWVA+icn80vIcAXuOXIeFOC3K9LsWEzWpty/eYOSv4pfme5FgyDOE0kXknN29T1
-         4aGvPIaOxsWMwdvM2ypYQDnndZ4LQBQbbYKmButrBFDAKvREwuQkYzHO4sm6yU7fDpzw
-         L+cw==
-X-Gm-Message-State: AA+aEWZ4NYK7rdYI2VmeYFXBakVatVMtTdzlWapWQ8h/jtLfDraLxjBR
-        1ZBeCS1zcyRxkswyjUKTrpQQ7PDhztP/cWSMiLsemA==
-X-Google-Smtp-Source: AFSGD/XmGHsM9r+xZBgY4tRwegCRzPqaKSP7XvE6RSWec29QRJwogD32vSPAHNUBnUtG0m1n24zpw+su/vhIvmHKe/g=
-X-Received: by 2002:a17:902:4a0c:: with SMTP id w12mr20898646pld.8.1544636479189;
- Wed, 12 Dec 2018 09:41:19 -0800 (PST)
+        Wed, 12 Dec 2018 12:43:27 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:16168 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726922AbeLLRn0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 12:43:26 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4C24CC070477;
+        Wed, 12 Dec 2018 17:43:26 +0000 (UTC)
+Received: from vitty.brq.redhat.com.redhat.com (unknown [10.43.2.155])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0128B600CC;
+        Wed, 12 Dec 2018 17:43:23 +0000 (UTC)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     kvm@vger.kernel.org
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        linux-kernel@vger.kernel.org, Roman Kagan <rkagan@virtuozzo.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>, x86@kernel.org,
+        "Michael Kelley \(EOSG\)" <Michael.H.Kelley@microsoft.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v3] x86/hyper-v: Mark TLFS structures packed
+In-Reply-To: <20181203140636.21912-1-vkuznets@redhat.com>
+References: <20181203140636.21912-1-vkuznets@redhat.com>
+Date:   Wed, 12 Dec 2018 18:43:23 +0100
+Message-ID: <87mupa4p50.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
-References: <20181109190327.23606-1-matwey@sai.msu.ru> <3390244.qRE0ngbmrs@avalon>
-In-Reply-To: <3390244.qRE0ngbmrs@avalon>
-From:   Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
-Date:   Wed, 12 Dec 2018 14:41:07 -0300
-Message-ID: <CAAEAJfDaO+2gvmuXwYD_-g9Q_dtQiP1SO6HX8u7cNS8LU4b8Zw@mail.gmail.com>
-Subject: Re: [PATCH v6 0/2] media: usb: pwc: Don't use coherent DMA buffers
- for ISO transfer
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     matwey@sai.msu.ru, linux-media <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        matwey.kornilov@gmail.com, Tomasz Figa <tfiga@chromium.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        rostedt@goodmis.org, mingo@redhat.com, isely@pobox.com,
-        bhumirks@gmail.com, colin.king@canonical.com,
-        kieran.bingham@ideasonboard.com,
-        Keiichi Watanabe <keiichiw@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Wed, 12 Dec 2018 17:43:26 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 12 Dec 2018 at 14:27, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
->
-> Hi Matwey,
->
-> Thank you for the patches.
->
-> For the whole series,
->
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
->
+Vitaly Kuznetsov <vkuznets@redhat.com> writes:
 
-Thanks Laurent.
+>  /* Define virtual processor assist page structure. */
+>  struct hv_vp_assist_page {
+> @@ -519,7 +519,7 @@ struct hv_vp_assist_page {
+>  	__u64 nested_enlightenments_control[2];
+>  	__u32 enlighten_vmentry;
+>  	__u64 current_nested_vmcs;
+> -};
+> +} __packed;
+>  
 
-Matwey, given your detailed analysis of this issue,
-and given you have pwc hardware to test, I think
-you should consider co-maintaining this driver.
+This particular structure wasn't properly padded: u32 padding is missing
+between 'enlighten_vmentry' and 'current_nested_vmcs'.
 
-Thanks,
---=20
-Ezequiel Garc=C3=ADa, VanguardiaSur
-www.vanguardiasur.com.ar
+>  struct hv_enlightened_vmcs {
+>  	u32 revision_id;
+> @@ -693,7 +693,7 @@ struct hv_enlightened_vmcs {
+>  		u32 nested_flush_hypercall:1;
+>  		u32 msr_bitmap:1;
+>  		u32 reserved:30;
+> -	} hv_enlightenments_control;
+> +	}  __packed hv_enlightenments_control;
+>  	u32 hv_vp_id;
+>  
+>  	u64 hv_vm_id;
+> @@ -703,7 +703,7 @@ struct hv_enlightened_vmcs {
+>  	u64 padding64_5[7];
+>  	u64 xss_exit_bitmap;
+>  	u64 padding64_6[7];
+> -};
+> +} __packed;
+
+struct hv_enlightened_vmcs also has a hole: we need an u16 padding after
+'u16 host_tr_selector'.
+
+Both these problems led to Enlightened VMCS for Hyper-V on KVM being
+completely broken.
+
+As this is not yet merged, v4 is coming to rescue!
+
+-- 
+Vitaly
