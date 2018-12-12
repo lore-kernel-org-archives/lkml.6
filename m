@@ -2,144 +2,221 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E91EDC04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 08:01:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF05DC04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 08:02:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3C6720811
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 08:01:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="uS5P818M"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3C6720811
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	by mail.kernel.org (Postfix) with ESMTP id 7171320811
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 08:02:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7171320811
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726703AbeLLIBM (ORCPT
+        id S1726715AbeLLICC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 03:01:12 -0500
-Received: from esa6.microchip.iphmx.com ([216.71.154.253]:44392 "EHLO
-        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726317AbeLLIBM (ORCPT
+        Wed, 12 Dec 2018 03:02:02 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:44145 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726251AbeLLICB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 03:01:12 -0500
-X-IronPort-AV: E=Sophos;i="5.56,343,1539673200"; 
-   d="scan'208";a="21408302"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 12 Dec 2018 01:01:11 -0700
-Received: from NAM05-CO1-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.76.108) with Microsoft SMTP Server (TLS) id
- 14.3.352.0; Wed, 12 Dec 2018 01:01:10 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector1-microchiptechnology-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gp3TN2FM2N/jzUjImueFMw1gazVj9UDXBFw8liAKvYA=;
- b=uS5P818MZRsMpfwhN77RqLLqRvTSKrg1png8+0JmbeblzILiV02oEHUuEhnw6yfER7h7o21g2xN4HW7FETDOpqvWOjRcDaEz1qH+vkKYHd4TvkHgIoJburJaKA85CrrN1Yr78ccq/z5qIyZ0No2EQnE3gkPTNkPvgPQdaQpM1JM=
-Received: from BN6PR1101MB2243.namprd11.prod.outlook.com (10.174.113.19) by
- BN6PR1101MB2274.namprd11.prod.outlook.com (10.174.113.137) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1425.19; Wed, 12 Dec 2018 08:01:08 +0000
-Received: from BN6PR1101MB2243.namprd11.prod.outlook.com
- ([fe80::1dae:74d9:ffd2:7838]) by BN6PR1101MB2243.namprd11.prod.outlook.com
- ([fe80::1dae:74d9:ffd2:7838%3]) with mapi id 15.20.1425.016; Wed, 12 Dec 2018
- 08:01:08 +0000
-From:   <Andrei.Stefanescu@microchip.com>
-To:     <broonie@kernel.org>
-CC:     <robh+dt@kernel.org>, <lgirdwood@gmail.com>,
-        <mark.rutland@arm.com>, <gregkh@linuxfoundation.org>,
-        <Cristian.Birsan@microchip.com>, <Nicolas.Ferre@microchip.com>,
-        <Claudiu.Beznea@microchip.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: Re: [RESEND PATCH v3 3/3] regulator: mcp16502: add regulator driver
- for MCP16502
-Thread-Topic: [RESEND PATCH v3 3/3] regulator: mcp16502: add regulator driver
- for MCP16502
-Thread-Index: AQHUkTmSRQO8vdR2CEWafmmGWx4+QaV5v9kAgAD/PoA=
-Date:   Wed, 12 Dec 2018 08:01:07 +0000
-Message-ID: <6a35df06-1309-f069-9b22-8c2cc5cca56e@microchip.com>
-References: <1544522876-15967-1-git-send-email-andrei.stefanescu@microchip.com>
- <1544522876-15967-4-git-send-email-andrei.stefanescu@microchip.com>
- <20181211164706.GL6686@sirena.org.uk>
-In-Reply-To: <20181211164706.GL6686@sirena.org.uk>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: VI1PR10CA0095.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:803:28::24) To BN6PR1101MB2243.namprd11.prod.outlook.com
- (2603:10b6:405:52::19)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [94.177.32.154]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BN6PR1101MB2274;6:Mafc3gjPG7KuqbsnWfaY3Yod83DzCEYgiTtQ1JIhPt6zsp4kTGRalrsGs9lY7W7Gdxa39OcE0uS3f0MtX1oGUIVYHSHSBbNPjW8ynCI0HR1ZBpzHYrwck9t0Ma39aex3l7kkLCZ2RjqrDEnS8/1wXFYmgKElc6wh1aYeWzNjaLLZJ6KiFxF/z0GXn+HNVUp6LL4N2jLOdbtIc6tl0Tt3+6sn84ehUHLV7X5GqmPy+0J4XpFo4e1+RhY5ekAFDSPbuvhf8SpK0PDv5NaEJ5DkBNhm5rjQ9/gBQk0Xugk569qOEXl4N6UY/dRkJfAX9McsbAWLJ+vn8t/G3rwVA3gmTFr2hLU15V0NNn7eWjUXxtfsn5+UtFZxshwxkYfc5HqqF1kHqM1q8EvQIElvy4Mc4ZlwllX9rX9hWrYKb05799ccJQ/k112kE5CmKmZ+kuAzyrqVY5guhKrQuDY76h44Fg==;5:4zZNSqmn/3lP0F+Ouu9xdb9yPd7oGh2Z7hL/2rvo2yv9EqbfxahNF3/w/rbYPiYga14ioRnOcyJ+ndMaV5+L9/xyawewsVwyDjbSOHXcWFm1JzKfivbM5dslvH2nnFzFwq5xjbsFhwQAN6Vd9/dxlV4JaVleA3SE49zzuod1PRg=;7:epKtnGHB13Rr/4l9uDmMbSGJx35VCux2W4AhLnmvg8t2qivCkL7wz4K6UcxOrS14Hurtx+fsccK/VHH6lBiGb5io/EEbahLe7RlKDAeQkkPNajveGwBACkoR41M+Z2975feUH1gn0SxBP4+mDeqn0A==
-x-ms-office365-filtering-correlation-id: 538334d8-e2d1-4c46-98b1-08d66007f8d9
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BN6PR1101MB2274;
-x-ms-traffictypediagnostic: BN6PR1101MB2274:
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Andrei.Stefanescu@microchip.com; 
-x-microsoft-antispam-prvs: <BN6PR1101MB2274534B30741C0B848A19D4EDA70@BN6PR1101MB2274.namprd11.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(3230017)(999002)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231472)(944501520)(52105112)(148016)(149066)(150057)(6041310)(20161123562045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:BN6PR1101MB2274;BCL:0;PCL:0;RULEID:;SRVR:BN6PR1101MB2274;
-x-forefront-prvs: 0884AAA693
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(39860400002)(376002)(346002)(136003)(366004)(189003)(199004)(71190400001)(31696002)(52116002)(39060400002)(86362001)(4326008)(14454004)(217873002)(8936002)(71200400001)(6436002)(81156014)(2906002)(72206003)(66066001)(81166006)(229853002)(5660300001)(478600001)(36756003)(6916009)(68736007)(76176011)(316002)(6486002)(305945005)(26005)(8676002)(386003)(6506007)(7736002)(6512007)(6116002)(3846002)(106356001)(102836004)(345774005)(54906003)(25786009)(99286004)(53936002)(105586002)(14444005)(446003)(6246003)(486006)(31686004)(476003)(2616005)(11346002)(186003)(256004)(97736004);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR1101MB2274;H:BN6PR1101MB2243.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microchip.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: RG+W+eY78E4ec4WN2yv2yMZyDsggjhtQ9zUgpqJyxn/VBloFO6qjixnJUWbcl5GgX4lc8v67ZChCvr9IYAjjZ5M0OQv/ZdlDcvGE7EDjMlNAnMcugRXfnZAz3Q8VyYSwe4H8KICtnSFZPg0dhJ2j91KPTLmtx5piCbPyA/UjW1ILwtL4wqBGPMjmc16pFauhhRjeInKynQubl10N5ebHUjfroLJLLkg2pC4SbqFIzJqTRRliFJUUuSLO1WkEMt+Yp6p/vreMNJqc/4B8eRdzpeYLCeWPug5Ekvpi7Ly1XGoQCyRe1cWrGkGJAua39wg1
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="Windows-1252"
-Content-ID: <140B56071DCEC6418A084D1F57E0E1C3@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Wed, 12 Dec 2018 03:02:01 -0500
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1gWzSu-00059w-R7; Wed, 12 Dec 2018 09:01:56 +0100
+Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1gWzSs-00075W-R1; Wed, 12 Dec 2018 09:01:54 +0100
+Date:   Wed, 12 Dec 2018 09:01:54 +0100
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     =?utf-8?B?Vm9rw6HEjQ==?= Michal <Michal.Vokac@ysoft.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Lukasz Majewski <l.majewski@majess.pl>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Lothar =?iso-8859-1?Q?Wa=DFmann?= <LW@karo-electronics.de>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [RFC PATCH v3 2/2] pwm: imx: Configure output to GPIO in
+ disabled state
+Message-ID: <20181212080154.kcfh57mulypwuscu@pengutronix.de>
+References: <1544103655-104466-1-git-send-email-michal.vokac@ysoft.com>
+ <1544103655-104466-3-git-send-email-michal.vokac@ysoft.com>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 538334d8-e2d1-4c46-98b1-08d66007f8d9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Dec 2018 08:01:07.9301
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR1101MB2274
-X-OriginatorOrg: microchip.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1544103655-104466-3-git-send-email-michal.vokac@ysoft.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mark,
+Hello,
 
-Thank you for the review.
+On Thu, Dec 06, 2018 at 01:41:31PM +0000, Vokáč Michal wrote:
+> Normally the PWM output is held LOW when PWM is disabled. This can cause
+> problems when inverted PWM signal polarity is needed. With this behavior
+> the connected circuit is fed by 100% duty cycle instead of being shut-off.
+> 
+> Allow users to define a "pwm" and a "gpio" pinctrl states. The pwm pinctrl
+> state is selected when PWM is enabled and the gpio pinctrl state is
+> selected when PWM is disabled. In the gpio state the new pwm-gpios GPIO is
+> configured as input and the internal pull-up resistor is used to pull the
+> output level high.
+> 
+> If all the pinctrl states and the pwm-gpios GPIO are not correctly
+> specified in DT the PWM work as usual.
+> 
+> As an example, with this patch a PWM controlled backlight with inversed
+> signal polarity can be used in full brightness range. Without this patch
+> the backlight can not be turned off as brightness = 0 disables the PWM
+> and that in turn set PWM output LOW, that is full brightness.
+> 
+> Inverted output of the PWM with "default" and with "pwm"+"gpio" pinctrl:
+> 
+> +--------------+------------+---------------+----------- +-------------+
+> | After reset  | Bootloader |   PWM probe   |     PWM    |     PWM     |
+> | 100k pull-up |            |               | enable 30% |   disable   |
+> +--------------+------------+---------------+------------+-------------+
+> | pinctrl      |    none    |    default    |   default  |   default   |
+> | out H   __________________                   __   __                 |
+> | out L                     \_________________/  \_/  \_/\____________ |
+> |                                           ^    ^    ^                |
+> +--------------+------------+---------------+------------+-------------+
+> | pinctrl      |    none    |      gpio     |     pwm    |     gpio    |
+> | out H   __________________________________   __   __   _____________ |
+> | out L                                     \_/  \_/  \_/              |
+> |                                           ^    ^    ^                |
+> +----------------------------------------------------------------------+
+> 
+> Signed-off-by: Michal Vokáč <michal.vokac@ysoft.com>
+> ---
+> Changes in v3:
+>  - Commit message update.
+>  - Minor fix in code comment (Uwe)
+>  - Align function arguments to the opening parentheses. (Uwe)
+>  - Do not test devm_pinctrl_get for NULL. (Thierry)
+>  - Convert all messages to dev_dbg() (Thierry)
+>  - Do not actively drive the pin in gpio state. Configure it as input
+>    and rely solely on the internal pull-up. (Thierry)
+> 
+> Changes in v2:
+>  - Utilize the "pwm" and "gpio" pinctrl states.
+>  - Use the pwm-gpios signal to drive the output in "gpio" pinctrl state.
+>  - Select the right pinctrl state in probe.
+> 
+>  drivers/pwm/pwm-imx.c | 77 +++++++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 77 insertions(+)
+> 
+> diff --git a/drivers/pwm/pwm-imx.c b/drivers/pwm/pwm-imx.c
+> index 1d5242c..84eaec8 100644
+> --- a/drivers/pwm/pwm-imx.c
+> +++ b/drivers/pwm/pwm-imx.c
+> @@ -12,10 +12,12 @@
+>  #include <linux/err.h>
+>  #include <linux/clk.h>
+>  #include <linux/delay.h>
+> +#include <linux/gpio/consumer.h>
+>  #include <linux/io.h>
+>  #include <linux/pwm.h>
+>  #include <linux/of.h>
+>  #include <linux/of_device.h>
+> +#include <linux/pinctrl/consumer.h>
+>  
+>  /* i.MX1 and i.MX21 share the same PWM function block: */
+>  
+> @@ -52,10 +54,44 @@ struct imx_chip {
+>  	void __iomem	*mmio_base;
+>  
+>  	struct pwm_chip	chip;
+> +
+> +	struct pinctrl *pinctrl;
+> +	struct pinctrl_state *pinctrl_pins_gpio;
+> +	struct pinctrl_state *pinctrl_pins_pwm;
+> +	struct gpio_desc *pwm_gpiod;
+>  };
+>  
+>  #define to_imx_chip(chip)	container_of(chip, struct imx_chip, chip)
+>  
+> +static int imx_pwm_init_pinctrl_info(struct imx_chip *imx_chip,
+> +		struct platform_device *pdev)
+> +{
+> +	imx_chip->pinctrl = devm_pinctrl_get(&pdev->dev);
+> +	if (IS_ERR(imx_chip->pinctrl)) {
+> +		dev_dbg(&pdev->dev, "can not get pinctrl\n");
+> +		return PTR_ERR(imx_chip->pinctrl);
+> +	}
+> +
+> +	imx_chip->pinctrl_pins_pwm = pinctrl_lookup_state(imx_chip->pinctrl,
+> +							  "pwm");
+> +	imx_chip->pinctrl_pins_gpio = pinctrl_lookup_state(imx_chip->pinctrl,
+> +							   "gpio");
+> +	imx_chip->pwm_gpiod = devm_gpiod_get_optional(&pdev->dev, "pwm",
+> +						      GPIOD_IN);
+> +
+> +	if (PTR_ERR(imx_chip->pwm_gpiod) == -EPROBE_DEFER) {
+> +		return -EPROBE_DEFER;
+> +	} else if (IS_ERR(imx_chip->pwm_gpiod) ||
+> +		   IS_ERR(imx_chip->pinctrl_pins_pwm) ||
+> +		   IS_ERR(imx_chip->pinctrl_pins_gpio)) {
+> +		dev_dbg(&pdev->dev, "PWM pinctrl information incomplete\n");
+> +		devm_pinctrl_put(imx_chip->pinctrl);
+> +		imx_chip->pinctrl = NULL;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  static int imx_pwm_config_v1(struct pwm_chip *chip,
+>  		struct pwm_device *pwm, int duty_ns, int period_ns)
+>  {
+> @@ -216,7 +252,25 @@ static int imx_pwm_apply_v2(struct pwm_chip *chip, struct pwm_device *pwm,
+>  			cr |= MX3_PWMCR_POUTC;
+>  
+>  		writel(cr, imx->mmio_base + MX3_PWMCR);
+> +
+> +		/*
+> +		 * If we are in charge of pinctrl then switch output to
+> +		 * the PWM signal.
+> +		 */
+> +		if (imx->pinctrl)
+> +			pinctrl_select_state(imx->pinctrl,
+> +					     imx->pinctrl_pins_pwm);
+>  	} else if (cstate.enabled) {
+> +		/*
+> +		 * PWM block will be disabled. Normally its output will be set
+> +		 * low no matter what output polarity is configured. Let's use
+> +		 * pinctrl to switch the output pin to GPIO functon and keep
+> +		 * the output at the same level as for duty-cycle = 0.
+> +		 */
+> +		if (imx->pinctrl)
+> +			pinctrl_select_state(imx->pinctrl,
+> +					     imx->pinctrl_pins_gpio);
+> +
 
-> SPDX headers need to be C++ comments - please make the entire comment
-> block a C++ one so it looks more intentional.
-I sent a new patch (v4) with the modified comment.
->> +#ifdef CONFIG_SUSPEND
->> +static int mcp16502_suspend(struct device *dev)
->> +{
->> +	struct i2c_client *client =3D to_i2c_client(dev);
->> +	struct mcp16502 *mcp =3D i2c_get_clientdata(client);
->> +
->> +	mcp16502_gpio_set_mode(mcp, MCP16502_OPMODE_LPM);
->> +
->> +	return 0;
->> +}
-> This puts the device into low power mode when the suspend function gets
-> called but this might not be safe - devices using the regulator may not
-> be suspended yet so could still need full regulation.  Normally a GPIO
-> triggered transition like this would be being done by hardware as part
-> of the process of suspending the SoC.  Is there some reason to do this
-> manually?
-There is a line from the MPU (SHDN) which goes low only when the MPU
-turns off. That line is already connected to the PMIC and it differentiates
-between suspend-to-mem and standby. To switch to low-power, the PMIC must
-be controlled by the GPIO pin LPM.
+On thing I noticed while looking at the rcar driver is: This doesn't
+wait for the current period to end. Is this supposed to happen? Also for
+the enable case the hardware is configured for the desired duty cycle
+and only then the pinctrl is switched to pwm. Both might result in a
+spike that is not desired.
 
-The suspend sequence is:
-- LPM pin goes high (PMIC enters Low-Power <-> Linux standby)
-- SHDN goes low (if target suspend state is mem) and then PMIC enters=20
-HIBERNATE
+Best regards
+Uwe
 
-
-Best regards,
-Andrei
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
