@@ -2,123 +2,139 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B678AC65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 15:53:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5E70C65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 15:54:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 757382084E
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 15:53:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="GYOAd30v"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 757382084E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id 774A82084E
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 15:54:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544630053;
+	bh=VlvrLspD8k/Ifs2EcMmBg1tiuP/synGvJZLeW5KsMws=;
+	h=Date:From:To:Cc:Subject:List-ID:From;
+	b=ODJdf1SaiCtLD8jr7quEMOMkFWnIpqO0Rv/5C1SpO5n11KWhzstYYnv+QC0pRWZgJ
+	 C79TnG2RGcYED1gejqj8Gk4N4eKRk0c1gopEjX79xNMOctrfmLiod3nwUtTU2foG+K
+	 /XiQkxh2YyAhsH+f76E2NFTNGf+kJby22pBkEq+A=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 774A82084E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727847AbeLLPxg (ORCPT
+        id S1727860AbeLLPyM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 10:53:36 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:40758 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726358AbeLLPxg (ORCPT
+        Wed, 12 Dec 2018 10:54:12 -0500
+Received: from casper.infradead.org ([85.118.1.10]:36234 "EHLO
+        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726358AbeLLPyL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 10:53:36 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id wBCFrEvd128567;
-        Wed, 12 Dec 2018 09:53:14 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1544629994;
-        bh=IRkFaSyvsOf5vf2b5eQr89QFmegthVjV9uUCXEA+Xjg=;
-        h=Date:From:To:CC:Subject:References:In-Reply-To;
-        b=GYOAd30vU8iOqki+2sgJMJ09Hg+Mu1ffTPETbehi14Xy75dzJB1WGqfYE3vMc67e+
-         oxfxSVw0zFvTOkQ9JC3/R5FyY+g6Xpl5WEfQALr36dmYPMig3tUrIwaV81MwdsdpWA
-         BpGActErhYKyOFsR+se4YPbndS3bIE2j/+E1jbjg=
-Received: from DLEE101.ent.ti.com (dlee101.ent.ti.com [157.170.170.31])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wBCFrDkP051833
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 12 Dec 2018 09:53:13 -0600
-Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Wed, 12
- Dec 2018 09:53:13 -0600
-Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Wed, 12 Dec 2018 09:53:13 -0600
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wBCFrDBg032099;
-        Wed, 12 Dec 2018 09:53:13 -0600
-Date:   Wed, 12 Dec 2018 09:53:13 -0600
-From:   Bin Liu <b-liu@ti.com>
-To:     Peter Chen <hzpeterchen@gmail.com>
-CC:     <pawell@cadence.com>, <balbi@kernel.org>,
-        <devicetree@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <linux-usb@vger.kernel.org>, <rogerq@ti.com>,
-        lkml <linux-kernel@vger.kernel.org>, <adouglas@cadence.com>,
-        <jbergsagel@ti.com>, <nsekhar@ti.com>, <nm@ti.com>,
-        <sureshp@cadence.com>, <peter.chen@nxp.com>, <pjez@cadence.com>,
-        <kurahul@cadence.com>
-Subject: Re: [PATCH v1 2/2] usb:cdns3 Add Cadence USB3 DRD Driver
-Message-ID: <20181212155313.GA6502@uda0271908>
-Mail-Followup-To: Bin Liu <b-liu@ti.com>,
-        Peter Chen <hzpeterchen@gmail.com>, pawell@cadence.com,
-        balbi@kernel.org, devicetree@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, rogerq@ti.com,
-        lkml <linux-kernel@vger.kernel.org>, adouglas@cadence.com,
-        jbergsagel@ti.com, nsekhar@ti.com, nm@ti.com, sureshp@cadence.com,
-        peter.chen@nxp.com, pjez@cadence.com, kurahul@cadence.com
-References: <1544445555-17325-1-git-send-email-pawell@cadence.com>
- <1544445555-17325-3-git-send-email-pawell@cadence.com>
- <87h8fkmfar.fsf@linux.intel.com>
- <BYAPR07MB47095110AF28CC11B4C9E144DDA60@BYAPR07MB4709.namprd07.prod.outlook.com>
- <CAL411-ryK2LLZVg5_sLkCYOuhwdHLVm5XavSyC9nbEXZah_43w@mail.gmail.com>
+        Wed, 12 Dec 2018 10:54:11 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
+        MIME-Version:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=WbfwLgK7xlauiTjRYJNb2JutczK1M1HeK6JBTckc+kY=; b=kzEaSTbL17KCoEBHVUnwHQX46g
+        27WxCDueSIsoCJ0DbvZ84fKSfzir6V2dXBRaL3MNWy0WUbGqQf91f1RfXa6OY5slveJn3djrGqPtS
+        ZwtHBtv1b6XFMNGSKwG+IRE20vtnYAqTro84VCHpzc1XhnAuAK6K9bRA1rMKva76moDBPZyFcG2yC
+        mHssNbUK6xETrTMeqwME2rHSTgLSwphjWhALaSFqVwd4yISokms381Y+2luQHkv2d8bjtuyrHv3Ah
+        fC/6Ph4lg2J8jjFYLa9AvdVwtNcEB2Q7toZDTt5FkJizJ0+PToyhNEddVsczDkmBbBv0jm2Aywp7Y
+        lIVFaURw==;
+Received: from [177.159.254.7] (helo=coco.lan)
+        by casper.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gX6pt-0005iC-K9; Wed, 12 Dec 2018 15:54:10 +0000
+Date:   Wed, 12 Dec 2018 13:54:03 -0200
+From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL for v4.20-rc7] media fixes
+Message-ID: <20181212135403.3ce9132a@coco.lan>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <CAL411-ryK2LLZVg5_sLkCYOuhwdHLVm5XavSyC9nbEXZah_43w@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Peter,
+Hi Linus,
 
-On Wed, Dec 12, 2018 at 10:04:25AM +0800, Peter Chen wrote:
+Please pull from:
+  git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-media tags/media/v4.20-5
 
-[snip]
 
-> > >I strongly advise against using dev_dbg() for debugging. Even more so
-> > >inside your IRQ handler.
-> 
-> Felipe, I use Dynamic Debug for debugging, and show debug messages with
-> "dmesg" after testing/debugging. I see dwc3 using trace,  any benefits
-> for switching
-> to trace?
-
-The benefits I see are
-
-- *by default*, the debug log doesn't have to go through uart console,
-  which is slow.
-
-  I typically 'cat trace_pipe' from a telnet which is much faster then
-  uart. But Dynamic Debug log by default got printed on uart, I have to
-  set printk level to not print them, which is an extra step.
-
-- tracepoint uses one place to decode the message vs DD has to repeat
-  the similar print statement in the code; and tracepoint decodes it
-  offline which reduce the kernel runtime overhead too.
-
-- with tracepoint, it is easier to turn on debug for a specific group of
-  messages.
-
-- you can adjust the ftrace buffer size at runtime. can we do that for
-  printk? I don't remember.
+For 
+  - one regression at vsp1 driver;
+  - some last time changes for the upcoming request API logic and for
+    stateless codec support. As the stateless codec "cedrus" driver
+    is at staging, don't apply the MPEG controls as part of the main
+    V4L2 API, as those may not be ready for production yet.
 
 Regards,
--Bin.
+Mauro
+
+
+The following changes since commit a7c3a0d5f8d8cd5cdb32c06d4d68f5b4e4d2104b:
+
+  media: mediactl docs: Fix licensing message (2018-11-27 13:52:46 -0500)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-media tags/media/v4.20-5
+
+for you to fetch changes up to 078ab3ea2c3bb69cb989d52346fefa1246055e5b:
+
+  media: Add a Kconfig option for the Request API (2018-12-05 13:07:43 -0500)
+
+----------------------------------------------------------------
+media fixes for v4.20-rc7
+
+----------------------------------------------------------------
+Dan Carpenter (1):
+      media: cedrus: Fix a NULL vs IS_ERR() check
+
+Hans Verkuil (8):
+      media: vb2: don't call __vb2_queue_cancel if vb2_start_streaming failed
+      media: vb2: skip request checks for VIDIOC_PREPARE_BUF
+      media: vb2: keep a reference to the request until dqbuf
+      media: vb2: don't unbind/put the object when going to state QUEUED
+      media: vivid: drop v4l2_ctrl_request_complete() from start_streaming
+      media: vicodec: set state resolution from raw format
+      media: mpeg2-ctrls.h: move MPEG2 state controls to non-public header
+      media: extended-controls.rst: add note to the MPEG2 state controls
+
+Laurent Pinchart (1):
+      media: vsp1: Fix LIF buffer thresholds
+
+Sakari Ailus (1):
+      media: Add a Kconfig option for the Request API
+
+ Documentation/media/uapi/v4l/extended-controls.rst | 10 +++
+ drivers/media/Kconfig                              | 13 ++++
+ drivers/media/common/videobuf2/videobuf2-core.c    | 44 ++++++++---
+ drivers/media/common/videobuf2/videobuf2-v4l2.c    | 13 +++-
+ drivers/media/media-device.c                       |  4 +
+ drivers/media/platform/vicodec/vicodec-core.c      | 13 +++-
+ drivers/media/platform/vivid/vivid-sdr-cap.c       |  2 -
+ drivers/media/platform/vivid/vivid-vbi-cap.c       |  2 -
+ drivers/media/platform/vivid/vivid-vbi-out.c       |  2 -
+ drivers/media/platform/vivid/vivid-vid-cap.c       |  2 -
+ drivers/media/platform/vivid/vivid-vid-out.c       |  2 -
+ drivers/media/platform/vsp1/vsp1_lif.c             |  2 +-
+ drivers/media/v4l2-core/v4l2-ctrls.c               |  4 +-
+ drivers/staging/media/sunxi/cedrus/Kconfig         |  1 +
+ drivers/staging/media/sunxi/cedrus/cedrus_hw.c     |  4 +-
+ include/media/mpeg2-ctrls.h                        | 86 ++++++++++++++++++++++
+ include/media/v4l2-ctrls.h                         |  6 ++
+ include/media/videobuf2-core.h                     |  2 +
+ include/uapi/linux/v4l2-controls.h                 | 68 -----------------
+ include/uapi/linux/videodev2.h                     |  4 -
+ 20 files changed, 181 insertions(+), 103 deletions(-)
+ create mode 100644 include/media/mpeg2-ctrls.h
+
