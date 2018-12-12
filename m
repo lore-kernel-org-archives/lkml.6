@@ -8,58 +8,58 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61DF5C67839
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 20:52:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABCFEC65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 20:52:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2476A2080F
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 20:52:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6EAD72080F
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 20:52:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ga163BcJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2476A2080F
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I5RmiOiW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EAD72080F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728167AbeLLUwN (ORCPT
+        id S1728268AbeLLUwT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 15:52:13 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:37345 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726294AbeLLUwM (ORCPT
+        Wed, 12 Dec 2018 15:52:19 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:40733 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726294AbeLLUwS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 15:52:12 -0500
-Received: by mail-pf1-f193.google.com with SMTP id y126so9443798pfb.4;
-        Wed, 12 Dec 2018 12:52:11 -0800 (PST)
+        Wed, 12 Dec 2018 15:52:18 -0500
+Received: by mail-pg1-f196.google.com with SMTP id z10so8886036pgp.7;
+        Wed, 12 Dec 2018 12:52:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=QmJLG8/4S02Vk83xdfor+8cYOiPQL97wonxSbJV1350=;
-        b=ga163BcJXr9u5EjngUdZ3pUTdUQaCvKYDpE+BjMRc8Yxx46MBsD+ixAA9mlgWXQXYy
-         E3w87DOJR06/9F8/ObIkY6fi1adWgKHlpL+Pzy0isF5d5GwySWp4CcQqH0UB/JZmcCP4
-         Xkq50sjqd8Y7qh4xi12yEAcFWGczhPSQDMnDvYzgFMM/1Ti2XbWe7bewkmicYo384jvu
-         qb4UQ+9RsvP2BGCiDZtQg6aIRI358Pk9ysJAfN7Cvwjn8bnQ5UNOgs3xjpYELIoGMKzG
-         ZDBI17n90PtUJh/imCU9JPPYvKdLTOyxFtazQ2yPOIMh2YVeacH+qu3oTZHrhPQFXRhw
-         T2pg==
+        bh=EvZF4Cwn2c8hVYMCApGqp+umeo8NNVKrUr+shTKYQ9M=;
+        b=I5RmiOiWnSD5upJYiAC2be5GBtZc5iXSf5nXQsyuAhHYiVERF0xPHAeFVH0TZzJ3SH
+         /D11Shu2344PAZYMRmhIoXIc51GWr3waKj/XJ346J55A5Z/7eyh6pEdT2bNKSqbgLEpP
+         WtlynAkGsowXyRnpHQT3d5fRFUv6Cj1gegH0+O7RRUuO5F5OWzt5GjaybLeqYbiDPX2I
+         uS0LyzrJlYTHwYdqWDjCxkEzZ/4b5CstMatKf8PyFYR7P6UKCmiVZrQB8ZizMGF4K8Vd
+         eotM6x+Y7DYL/wEDbZWGplryusfn3IaNOCEM6lO0V8x9sOkaMcdbDaxd9bMqS7SigFn9
+         xdzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=QmJLG8/4S02Vk83xdfor+8cYOiPQL97wonxSbJV1350=;
-        b=hLYVwFSv2QdhXW66RqU++F1YsSqT722Q8Y+P5YJxf1DQSATp5hIVG0NYYZhXKuKQrY
-         BZs7KEYlqw7aYpBW0Qh+q6U5MvFKsLPYtWOmQ5rimr8uga3YgQe4lwc20gbWI7PT45Lu
-         5tcPFefp+lfEg7xLkCxVbVJ7Cx6GbtTg/G6wuloTUlNQw6ei56EBoM93Rn7o/V086MkM
-         V5cFkh99+m+HbSZSJ175kohQUVl6dW8j6RjYyJoGJODU5BiLFsUQfR00nSN7xQfPvXz9
-         Vukrgi46znOODSzE3DhgvRrg8KTuzw/ROuwvUzA4xGPb5urWcv5LUs+yyOpUZcMfKrbF
-         Nm6w==
-X-Gm-Message-State: AA+aEWYEMY1RL640aPBmSfoD0GX8m7n4qP/45khue1s0BJaQPzoe1FpR
-        0HiadHRbdTxjaPGPHSc5md3qSNfS
-X-Google-Smtp-Source: AFSGD/W/WnkPT7eW9459QalIVJd1X9QiI8krsRWpu3VrJNSVsU1bQIwPhfHzrKd/Bg6wh2t11FxTtw==
-X-Received: by 2002:a63:5e43:: with SMTP id s64mr19728980pgb.101.1544647931326;
-        Wed, 12 Dec 2018 12:52:11 -0800 (PST)
+        bh=EvZF4Cwn2c8hVYMCApGqp+umeo8NNVKrUr+shTKYQ9M=;
+        b=oIGjRosdqWo6jhnke0rYY3H9/LBMh0b3BMVQkalWreOjoE+de6TBOdzoM8vigTIQlI
+         cBBx826a4IPvu6+JcYNo8GMC2+/GDIyo871zP1wNuMXX6JnPkUPrh+6s6WT1mbVgqcE8
+         Rvn6AeA3TlWajpBm3GfN14qWEmh2UCL8rMAgGdZwdm7UWCxl8FnkFvlFPwBWSP2cSVNI
+         WUdDvc6plf+wcUznMSavWBdb0AwzIJHSj+PaDIhz3+8/rhzYbRF5qEE7ps8ugNP65dLr
+         wgmnLl7PQVkuj/WupEqCCRBt1TiF10jIGukxzqfxbx5MgZbOsX7134HDEgGjbac8y494
+         U8rw==
+X-Gm-Message-State: AA+aEWZW5AtEG6u5/FzVfE/AAjKXJd21in2BNMqdIWs9CGjziDz+JRdP
+        XpI2LkMnFmegYqsklpgxr2s=
+X-Google-Smtp-Source: AFSGD/WCE9yLC+qPf556+bKf9N9jMpoJhTj3d/W9VPuiP6v3tNTaSB0YjaLvuT6HJ1C4LphPrGv05Q==
+X-Received: by 2002:a63:1d59:: with SMTP id d25mr5696761pgm.180.1544647937635;
+        Wed, 12 Dec 2018 12:52:17 -0800 (PST)
 Received: from localhost.localdomain ([94.29.36.169])
-        by smtp.gmail.com with ESMTPSA id p2sm34753860pgc.94.2018.12.12.12.52.05
+        by smtp.gmail.com with ESMTPSA id p2sm34753860pgc.94.2018.12.12.12.52.11
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 12 Dec 2018 12:52:10 -0800 (PST)
+        Wed, 12 Dec 2018 12:52:17 -0800 (PST)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -67,9 +67,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
 Cc:     Robin Murphy <robin.murphy@arm.com>,
         iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v7 02/24] iommu/tegra: gart: Clean up driver probe errors handling
-Date:   Wed, 12 Dec 2018 23:38:45 +0300
-Message-Id: <20181212203907.23461-3-digetx@gmail.com>
+Subject: [PATCH v7 03/24] iommu/tegra: gart: Ignore devices without IOMMU phandle in DT
+Date:   Wed, 12 Dec 2018 23:38:46 +0300
+Message-Id: <20181212203907.23461-4-digetx@gmail.com>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181212203907.23461-1-digetx@gmail.com>
 References: <20181212203907.23461-1-digetx@gmail.com>
@@ -80,63 +80,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Properly clean up allocated resources on the drivers probe failure and
-remove unneeded checks.
+GART can't handle all devices, hence ignore devices that aren't related
+to GART. IOMMU phandle must be explicitly assign to devices in the device
+tree.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 Acked-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/iommu/tegra-gart.c | 16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
+ drivers/iommu/tegra-gart.c | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/iommu/tegra-gart.c b/drivers/iommu/tegra-gart.c
-index ff75cf60117b..1cd470b2beea 100644
+index 1cd470b2beea..37a76388ff7e 100644
 --- a/drivers/iommu/tegra-gart.c
 +++ b/drivers/iommu/tegra-gart.c
-@@ -411,9 +411,6 @@ static int tegra_gart_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	int ret;
+@@ -345,8 +345,12 @@ static bool gart_iommu_capable(enum iommu_cap cap)
  
--	if (gart_handle)
--		return -EIO;
--
- 	BUILD_BUG_ON(PAGE_SHIFT != GART_PAGE_SHIFT);
+ static int gart_iommu_add_device(struct device *dev)
+ {
+-	struct iommu_group *group = iommu_group_get_for_dev(dev);
++	struct iommu_group *group;
  
- 	/* the GART memory aperture is required */
-@@ -448,8 +445,7 @@ static int tegra_gart_probe(struct platform_device *pdev)
- 	ret = iommu_device_register(&gart->iommu);
- 	if (ret) {
- 		dev_err(dev, "Failed to register IOMMU\n");
--		iommu_device_sysfs_remove(&gart->iommu);
--		return ret;
-+		goto remove_sysfs;
- 	}
- 
- 	gart->dev = &pdev->dev;
-@@ -463,7 +459,8 @@ static int tegra_gart_probe(struct platform_device *pdev)
- 	gart->savedata = vmalloc(array_size(sizeof(u32), gart->page_count));
- 	if (!gart->savedata) {
- 		dev_err(dev, "failed to allocate context save area\n");
--		return -ENOMEM;
-+		ret = -ENOMEM;
-+		goto unregister_iommu;
- 	}
- 
- 	platform_set_drvdata(pdev, gart);
-@@ -472,6 +469,13 @@ static int tegra_gart_probe(struct platform_device *pdev)
- 	gart_handle = gart;
- 
- 	return 0;
++	if (!dev->iommu_fwspec)
++		return -ENODEV;
 +
-+unregister_iommu:
-+	iommu_device_unregister(&gart->iommu);
-+remove_sysfs:
-+	iommu_device_sysfs_remove(&gart->iommu);
-+
-+	return ret;
++	group = iommu_group_get_for_dev(dev);
+ 	if (IS_ERR(group))
+ 		return PTR_ERR(group);
+ 
+@@ -363,6 +367,12 @@ static void gart_iommu_remove_device(struct device *dev)
+ 	iommu_device_unlink(&gart_handle->iommu, dev);
  }
  
- static const struct dev_pm_ops tegra_gart_pm_ops = {
++static int gart_iommu_of_xlate(struct device *dev,
++			       struct of_phandle_args *args)
++{
++	return 0;
++}
++
+ static const struct iommu_ops gart_iommu_ops = {
+ 	.capable	= gart_iommu_capable,
+ 	.domain_alloc	= gart_iommu_domain_alloc,
+@@ -376,6 +386,7 @@ static const struct iommu_ops gart_iommu_ops = {
+ 	.unmap		= gart_iommu_unmap,
+ 	.iova_to_phys	= gart_iommu_iova_to_phys,
+ 	.pgsize_bitmap	= GART_IOMMU_PGSIZES,
++	.of_xlate	= gart_iommu_of_xlate,
+ };
+ 
+ static int tegra_gart_suspend(struct device *dev)
+@@ -441,6 +452,7 @@ static int tegra_gart_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	iommu_device_set_ops(&gart->iommu, &gart_iommu_ops);
++	iommu_device_set_fwnode(&gart->iommu, dev->fwnode);
+ 
+ 	ret = iommu_device_register(&gart->iommu);
+ 	if (ret) {
 -- 
 2.20.0
 
