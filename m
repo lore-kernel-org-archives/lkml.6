@@ -2,308 +2,170 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,T_MIXED_ES autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67C48C65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 13:07:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFADDC65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 13:08:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17A7A20870
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 13:07:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D5EF20839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 13:08:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h7eZjBfa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17A7A20870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="aEoy1vnz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D5EF20839
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727631AbeLLNHy (ORCPT
+        id S1727641AbeLLNIB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 08:07:54 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:35670 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726235AbeLLNHv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 08:07:51 -0500
-Received: by mail-oi1-f193.google.com with SMTP id v6so14959789oif.2;
-        Wed, 12 Dec 2018 05:07:50 -0800 (PST)
+        Wed, 12 Dec 2018 08:08:01 -0500
+Received: from mail-eopbgr750087.outbound.protection.outlook.com ([40.107.75.87]:39168
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726245AbeLLNIA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 08:08:00 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=+uiLBk4noeZtPZW+Y7JJbmN8TvyfyDY3zLWhFnh6duw=;
-        b=h7eZjBfaywc3itUqDMyPMGLhPeSGqurG5RA8jYnmG3hBo5je13C5o3m8NC+IB/6Weg
-         DTw4mkgTX9dCmWYHcIw0uln4ETQZrnQYbHEWonOh3ULdiKFSKkV49aXXa8PK4vdUcvOp
-         IFDY5lDKXBtcQx0zsc5DiWs1hQ53PI2CcgO4BHXfIUvK4mYi2sz0ss1ZWo0t7W5Lnq4F
-         33XoGDREhAWjOi/OI2x2/HaO4BzWcbvY/KTgAScCQd+iNKgYdKl05jGq5xEeXCI9yywZ
-         T5+Vkv5LaXvHPHUAkjsVddUAeP38ifblgQNxrmhh9Hj/qFVBeBTwTmrtr6jiUyIkto5I
-         pStw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=+uiLBk4noeZtPZW+Y7JJbmN8TvyfyDY3zLWhFnh6duw=;
-        b=UuLwW7kqQP7jswhUwRxiUROtslYMbFv5pXskRqV7k6+TnVLX4cUQO2ZZrdx/NjMNiY
-         mD1E3JKdsSXbTD9jTKsV2EbXJvaLtoMcMaU2JTnub+ENULGQzGwNPsUVKbe+m9VGYXnx
-         mvqBbHrOdQcx6peMMW/S/72svqZc+El1lEvUv2HLNozSzI5j4p+EVbJEcwpjtLxzU2Aw
-         s9eUsFwrbSihCMP1w8l5MmJBTDJSHN+qmISHbnr+Hf7x03/52gUn5JpG4NFRSihhdMwk
-         BoHpTvmY9qUtsDcGWKMonvC/elaRnZaCMqwjezAgx10d78hP4wQm/CiErq5FhfWVso1k
-         Q8Jg==
-X-Gm-Message-State: AA+aEWaQssV/bVPr6tG1GthnfnyH/964+osWdtlxwfITbxmur/IGGbLC
-        8lxUCtVwwFQ1N1FqJE4vIX2MD5bNIvVIQ2WUlcOvhw==
-X-Google-Smtp-Source: AFSGD/WJFGtXR+yXwbRV/brwjx6Kbxz5IkcioPUsn+m89M8HsIF4TWH3bJQYUi673eYSCxRvYcvQVT7RvNBL5PkZRSQ=
-X-Received: by 2002:aca:6545:: with SMTP id j5mr366836oiw.70.1544620069931;
- Wed, 12 Dec 2018 05:07:49 -0800 (PST)
+ d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/SQMjsQw4KOxcNrbUt0oLh+NemzjXoKBvgGW9Rw8zlY=;
+ b=aEoy1vnz+bZVJvv9wgW5r9FIrGWmm3SZnnURlecY6uET42dvvpCau2UJ9/SoiRwfaeg1u9pokLCPAXQX819DjLLXOo4eK3PGHjoXO7M7j27TNZnVqUtvLzJchQYr3zroR87RIEuAJivgAK12SOKNd1wiBZ5q932ujzzw3ctT/Vk=
+Received: from MWHPR02MB2623.namprd02.prod.outlook.com (10.168.206.9) by
+ MWHPR02MB2848.namprd02.prod.outlook.com (10.175.50.135) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1425.19; Wed, 12 Dec 2018 13:07:43 +0000
+Received: from MWHPR02MB2623.namprd02.prod.outlook.com
+ ([fe80::a8e5:2cda:352a:6e61]) by MWHPR02MB2623.namprd02.prod.outlook.com
+ ([fe80::a8e5:2cda:352a:6e61%10]) with mapi id 15.20.1425.016; Wed, 12 Dec
+ 2018 13:07:42 +0000
+From:   Naga Sureshkumar Relli <nagasure@xilinx.com>
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
+CC:     Boris Brezillon <boris.brezillon@bootlin.com>,
+        "robh@kernel.org" <robh@kernel.org>,
+        "richard@nod.at" <richard@nod.at>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "nagasuresh12@gmail.com" <nagasuresh12@gmail.com>,
+        Michal Simek <michals@xilinx.com>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>
+Subject: RE: [LINUX PATCH v12 3/3] mtd: rawnand: arasan: Add support for
+ Arasan NAND Flash Controller
+Thread-Topic: [LINUX PATCH v12 3/3] mtd: rawnand: arasan: Add support for
+ Arasan NAND Flash Controller
+Thread-Index: AQHUd+lSRlJXewM/lk6msOyQbhKEh6VQmgMggAVkGQCAAK7ewIAAH7YAgAFcNKCAAGhpAIAAGiwAgATHTPCAHUh8EIAAOYWAgAAN+ACAAAI3gIAAQgWw
+Date:   Wed, 12 Dec 2018 13:07:42 +0000
+Message-ID: <MWHPR02MB2623EDA15BE59304795F3034AFA70@MWHPR02MB2623.namprd02.prod.outlook.com>
+References: <1541739641-17789-1-git-send-email-naga.sureshkumar.relli@xilinx.com>
+        <1541739641-17789-4-git-send-email-naga.sureshkumar.relli@xilinx.com>
+        <MWHPR02MB26234433484426F333E9B60EAFDC0@MWHPR02MB2623.namprd02.prod.outlook.com>
+        <20181118204324.373ca9cc@bbrezillon>
+        <MWHPR02MB2623AAEC160F40F061E23194AFD80@MWHPR02MB2623.namprd02.prod.outlook.com>
+        <20181119090246.49060019@bbrezillon>
+        <BN6PR02MB2610C7D048E4A192E041BE14AFD90@BN6PR02MB2610.namprd02.prod.outlook.com>
+        <20181120120244.7d2442b5@bbrezillon>    <20181120133624.3fa4742d@xps13>
+        <MWHPR02MB26238A2271B33470ABFA1023AFD40@MWHPR02MB2623.namprd02.prod.outlook.com>
+        <MWHPR02MB26239C2B2A7050310BEF1E9CAFA70@MWHPR02MB2623.namprd02.prod.outlook.com>
+        <20181212091135.1d0cc9a6@xps13>
+        <MWHPR02MB26236CEF8A2110B20C825198AFA70@MWHPR02MB2623.namprd02.prod.outlook.com>
+ <20181212100931.149b0cac@xps13>
+In-Reply-To: <20181212100931.149b0cac@xps13>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=nagasure@xilinx.com; 
+x-originating-ip: [149.199.50.133]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR02MB2848;6:E6R2lSJbpCJ7r1jrtu/5LrR8R57i/x0H6d//OaUfeLjkSm14otc+nd7lCnyy5XD8DFIa9iIK3VLd4dNgmUEhAvKhTqnh7TS9WUu2a0h9nYkbtQX0zW0g4QDOch8i2dsl/VVVU4r42u9At6CcHWiGtmh1nDPmeHnqsh6oQpg5nq1Ss/LeUFNJI4lp+/+jVcMTf+0pmSPHqW1ySceYnLmD1BQzpuLHw7uk93U/yql3v5GXNcS0wC7G4Jdj6uHtcqnhA7Uy112kqX6g6RmLPzug0WhnMuFoCjTmQNFuorRfGlEHUbrz9RiY0hF6oUnYMp2U/6MgqEwcdnL+BPZP63ZyrUyyQi4HYiTFDbvV06wcKHGcq+He+41q818F7Xj6em41Tdol2dLZ0asiX+FrSZf1fEMglsLFFbuSK0eoL2JnpLEzvUu8zkI8B9tmrR5CvPrKQBptMo8wur37V+Xwj3kMIQ==;5:w13lRTmIMo8Bn/GbqBD7hzB6RUuod+9nCbAN7kfiA180wvSLQ8/EszP/fDMSV7hUWf7XzVH25RvbVUMj720Uh9q3c5b0DWz3bQ2Ecc7MyGtyuRI7qt3t7MvJHbzLr9zoz5X87FdZEvMCK4Unw3+AAz38482/Q6IP9wLTDUZDbd4=;7:OJ4OYupky/vTUK+WZ+Gj1D7oDd1PisCxFu9iNyulI5wnj134fv2B7raW8hAwkuDfMuMh4hyFiJuQSO2s0vRU89ijka78/fcoZwdBjS/f/V/CC+ruaoPhAWM5VN9MChnjG6RDNzesQuLAcYjEnhqxXQ==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(136003)(366004)(39860400002)(396003)(346002)(376002)(189003)(199004)(13464003)(8936002)(5660300001)(6436002)(68736007)(7696005)(305945005)(26005)(7736002)(74316002)(102836004)(7416002)(446003)(217873002)(54906003)(6306002)(6506007)(66574011)(76176011)(53936002)(9686003)(2906002)(99286004)(66066001)(55016002)(3846002)(86362001)(6116002)(97736004)(478600001)(8676002)(81166006)(81156014)(4326008)(316002)(106356001)(476003)(105586002)(14454004)(53546011)(93886005)(14444005)(5024004)(6246003)(33656002)(71200400001)(71190400001)(39060400002)(25786009)(11346002)(229853002)(6916009)(186003)(486006)(966005)(256004);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR02MB2848;H:MWHPR02MB2623.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-ms-office365-filtering-correlation-id: 68f15a77-e3d6-4a5b-49d4-08d66032cd12
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:MWHPR02MB2848;
+x-ms-traffictypediagnostic: MWHPR02MB2848:
+x-microsoft-antispam-prvs: <MWHPR02MB2848445FAC530A4393423E23AFA70@MWHPR02MB2848.namprd02.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3231455)(999002)(944501520)(52105112)(93006095)(93001095)(3002001)(6055026)(148016)(149066)(150057)(6041310)(20161123558120)(20161123560045)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:MWHPR02MB2848;BCL:0;PCL:0;RULEID:;SRVR:MWHPR02MB2848;
+x-forefront-prvs: 0884AAA693
+received-spf: None (protection.outlook.com: xilinx.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: aTIG6mb4BCxZc8atSBeUoCKF+jLFi9PJlUyxcBDcv/Vg708nXQCIHCLQZGgJEXeYuHNL1T9fYDGMyvUrRNKTRFQGkpqSDK43rULLmMZbEyA7XGDTjWH5riXxaOpCAX5PDTy4L6ygBkAwFdZgI77CYWzld3JjSGEOwyF0F/pGtlrzoqGfma7fwruKvE/y/MZegYWNEOMsAqUbl+6q+J/Y1yIbzvAf00MJTxVGgHecStabBCBS89/vUHEnNQRQdM2aUWIVNHOQp+olY5EW1D0uEm5JuD04QkVbLqNCVONJaIOjQsvs4WfoiSsPATo7ROuX
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <20181109190327.23606-1-matwey@sai.msu.ru> <20181109190327.23606-3-matwey@sai.msu.ru>
- <CAJs94Eb6Ev5O+Q_THYruxozSW2sTjWCrHhU8wciFNgYx7oCRuQ@mail.gmail.com> <CAJs94EYmRpUSnxzyt-8bdSwp3WgvOuqpt4b55wKQ41jDynFceg@mail.gmail.com>
-In-Reply-To: <CAJs94EYmRpUSnxzyt-8bdSwp3WgvOuqpt4b55wKQ41jDynFceg@mail.gmail.com>
-From:   "Matwey V. Kornilov" <matwey.kornilov@gmail.com>
-Date:   Wed, 12 Dec 2018 16:07:38 +0300
-Message-ID: <CAJs94EbrOqdn5=xEnyQEC6aqYh=Wojh3-wGxT325f5Q7wnc36w@mail.gmail.com>
-Subject: Re: [PATCH v6 2/2] media: usb: pwc: Don't use coherent DMA buffers
- for ISO transfer
-To:     Linux Media Mailing List <linux-media@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Cc:     Tomasz Figa <tfiga@chromium.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>, mingo@redhat.com,
-        Mike Isely <isely@pobox.com>,
-        Bhumika Goyal <bhumirks@gmail.com>,
-        Colin King <colin.king@canonical.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        keiichiw@chromium.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 68f15a77-e3d6-4a5b-49d4-08d66032cd12
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Dec 2018 13:07:42.4194
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR02MB2848
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-=D0=BF=D1=82, 30 =D0=BD=D0=BE=D1=8F=D0=B1. 2018 =D0=B3. =D0=B2 15:20, Matwe=
-y V. Kornilov <matwey.kornilov@gmail.com>:
->
-> =D1=81=D1=80, 21 =D0=BD=D0=BE=D1=8F=D0=B1. 2018 =D0=B3. =D0=B2 21:15, Mat=
-wey V. Kornilov <matwey.kornilov@gmail.com>:
-> >
-> > =D0=BF=D1=82, 9 =D0=BD=D0=BE=D1=8F=D0=B1. 2018 =D0=B3. =D0=B2 22:03, Ma=
-twey V. Kornilov <matwey@sai.msu.ru>:
-> > >
-> > > DMA cocherency slows the transfer down on systems without hardware
-> > > coherent DMA.
-> > > Instead we use noncocherent DMA memory and explicit sync at data rece=
-ive
-> > > handler.
-> > >
-> > > Based on previous commit the following performance benchmarks have be=
-en
-> > > carried out. Average memcpy() data transfer rate (rate) and handler
-> > > completion time (time) have been measured when running video stream a=
-t
-> > > 640x480 resolution at 10fps.
-> > >
-> > > x86_64 based system (Intel Core i5-3470). This platform has hardware
-> > > coherent DMA support and proposed change doesn't make big difference =
-here.
-> > >
-> > >  * kmalloc:            rate =3D (2.0 +- 0.4) GBps
-> > >                        time =3D (5.0 +- 3.0) usec
-> > >  * usb_alloc_coherent: rate =3D (3.4 +- 1.2) GBps
-> > >                        time =3D (3.5 +- 3.0) usec
-> > >
-> > > We see that the measurements agree within error ranges in this case.
-> > > So theoretically predicted performance downgrade cannot be reliably
-> > > measured here.
-> > >
-> > > armv7l based system (TI AM335x BeagleBone Black @ 300MHz). This platf=
-orm
-> > > has no hardware coherent DMA support. DMA coherence is implemented vi=
-a
-> > > disabled page caching that slows down memcpy() due to memory controll=
-er
-> > > behaviour.
-> > >
-> > >  * kmalloc:            rate =3D  ( 94 +- 4) MBps
-> > >                        time =3D  (101 +- 4) usec
-> > >  * usb_alloc_coherent: rate =3D (28.1 +- 0.1) MBps
-> > >                        time =3D  (341 +- 2) usec
-> > >
-> > > Note, that quantative difference leads (this commit leads to 3.3 time=
-s
-> > > acceleration) to qualitative behavior change in this case. As it was
-> > > stated before, the video stream cannot be successfully received at AM=
-335x
-> > > platforms with MUSB based USB host controller due to performance issu=
-es
-> > > [1].
-> > >
-> > > [1] https://www.spinics.net/lists/linux-usb/msg165735.html
-> > >
-> > > Signed-off-by: Matwey V. Kornilov <matwey@sai.msu.ru>
-> >
-> > Ping
->
-> Ping
-
-Ping
-
->
-> >
-> > > ---
-> > >  drivers/media/usb/pwc/pwc-if.c | 62 ++++++++++++++++++++++++++++++++=
-+---------
-> > >  1 file changed, 49 insertions(+), 13 deletions(-)
-> > >
-> > > diff --git a/drivers/media/usb/pwc/pwc-if.c b/drivers/media/usb/pwc/p=
-wc-if.c
-> > > index 53c111bd5a22..a81fb319b339 100644
-> > > --- a/drivers/media/usb/pwc/pwc-if.c
-> > > +++ b/drivers/media/usb/pwc/pwc-if.c
-> > > @@ -159,6 +159,32 @@ static const struct video_device pwc_template =
-=3D {
-> > >  /*******************************************************************=
-********/
-> > >  /* Private functions */
-> > >
-> > > +static void *pwc_alloc_urb_buffer(struct device *dev,
-> > > +                                 size_t size, dma_addr_t *dma_handle=
-)
-> > > +{
-> > > +       void *buffer =3D kmalloc(size, GFP_KERNEL);
-> > > +
-> > > +       if (!buffer)
-> > > +               return NULL;
-> > > +
-> > > +       *dma_handle =3D dma_map_single(dev, buffer, size, DMA_FROM_DE=
-VICE);
-> > > +       if (dma_mapping_error(dev, *dma_handle)) {
-> > > +               kfree(buffer);
-> > > +               return NULL;
-> > > +       }
-> > > +
-> > > +       return buffer;
-> > > +}
-> > > +
-> > > +static void pwc_free_urb_buffer(struct device *dev,
-> > > +                               size_t size,
-> > > +                               void *buffer,
-> > > +                               dma_addr_t dma_handle)
-> > > +{
-> > > +       dma_unmap_single(dev, dma_handle, size, DMA_FROM_DEVICE);
-> > > +       kfree(buffer);
-> > > +}
-> > > +
-> > >  static struct pwc_frame_buf *pwc_get_next_fill_buf(struct pwc_device=
- *pdev)
-> > >  {
-> > >         unsigned long flags =3D 0;
-> > > @@ -306,6 +332,11 @@ static void pwc_isoc_handler(struct urb *urb)
-> > >         /* Reset ISOC error counter. We did get here, after all. */
-> > >         pdev->visoc_errors =3D 0;
-> > >
-> > > +       dma_sync_single_for_cpu(&urb->dev->dev,
-> > > +                               urb->transfer_dma,
-> > > +                               urb->transfer_buffer_length,
-> > > +                               DMA_FROM_DEVICE);
-> > > +
-> > >         /* vsync: 0 =3D don't copy data
-> > >                   1 =3D sync-hunt
-> > >                   2 =3D synched
-> > > @@ -352,6 +383,11 @@ static void pwc_isoc_handler(struct urb *urb)
-> > >                 pdev->vlast_packet_size =3D flen;
-> > >         }
-> > >
-> > > +       dma_sync_single_for_device(&urb->dev->dev,
-> > > +                                  urb->transfer_dma,
-> > > +                                  urb->transfer_buffer_length,
-> > > +                                  DMA_FROM_DEVICE);
-> > > +
-> > >  handler_end:
-> > >         trace_pwc_handler_exit(urb, pdev);
-> > >
-> > > @@ -428,16 +464,15 @@ static int pwc_isoc_init(struct pwc_device *pde=
-v)
-> > >                 urb->dev =3D udev;
-> > >                 urb->pipe =3D usb_rcvisocpipe(udev, pdev->vendpoint);
-> > >                 urb->transfer_flags =3D URB_ISO_ASAP | URB_NO_TRANSFE=
-R_DMA_MAP;
-> > > -               urb->transfer_buffer =3D usb_alloc_coherent(udev,
-> > > -                                                         ISO_BUFFER_=
-SIZE,
-> > > -                                                         GFP_KERNEL,
-> > > -                                                         &urb->trans=
-fer_dma);
-> > > +               urb->transfer_buffer_length =3D ISO_BUFFER_SIZE;
-> > > +               urb->transfer_buffer =3D pwc_alloc_urb_buffer(&udev->=
-dev,
-> > > +                                                           urb->tran=
-sfer_buffer_length,
-> > > +                                                           &urb->tra=
-nsfer_dma);
-> > >                 if (urb->transfer_buffer =3D=3D NULL) {
-> > >                         PWC_ERROR("Failed to allocate urb buffer %d\n=
-", i);
-> > >                         pwc_isoc_cleanup(pdev);
-> > >                         return -ENOMEM;
-> > >                 }
-> > > -               urb->transfer_buffer_length =3D ISO_BUFFER_SIZE;
-> > >                 urb->complete =3D pwc_isoc_handler;
-> > >                 urb->context =3D pdev;
-> > >                 urb->start_frame =3D 0;
-> > > @@ -488,15 +523,16 @@ static void pwc_iso_free(struct pwc_device *pde=
-v)
-> > >
-> > >         /* Freeing ISOC buffers one by one */
-> > >         for (i =3D 0; i < MAX_ISO_BUFS; i++) {
-> > > -               if (pdev->urbs[i]) {
-> > > +               struct urb *urb =3D pdev->urbs[i];
-> > > +
-> > > +               if (urb) {
-> > >                         PWC_DEBUG_MEMORY("Freeing URB\n");
-> > > -                       if (pdev->urbs[i]->transfer_buffer) {
-> > > -                               usb_free_coherent(pdev->udev,
-> > > -                                       pdev->urbs[i]->transfer_buffe=
-r_length,
-> > > -                                       pdev->urbs[i]->transfer_buffe=
-r,
-> > > -                                       pdev->urbs[i]->transfer_dma);
-> > > -                       }
-> > > -                       usb_free_urb(pdev->urbs[i]);
-> > > +                       if (urb->transfer_buffer)
-> > > +                               pwc_free_urb_buffer(&urb->dev->dev,
-> > > +                                                   urb->transfer_buf=
-fer_length,
-> > > +                                                   urb->transfer_buf=
-fer,
-> > > +                                                   urb->transfer_dma=
-);
-> > > +                       usb_free_urb(urb);
-> > >                         pdev->urbs[i] =3D NULL;
-> > >                 }
-> > >         }
-> > > --
-> > > 2.16.4
-> > >
-> >
-> >
-> > --
-> > With best regards,
-> > Matwey V. Kornilov
->
->
->
-> --
-> With best regards,
-> Matwey V. Kornilov
-
-
-
---=20
-With best regards,
-Matwey V. Kornilov
+SGkgTWlxdWVsLA0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IE1pcXVl
+bCBSYXluYWwgW21haWx0bzptaXF1ZWwucmF5bmFsQGJvb3RsaW4uY29tXQ0KPiBTZW50OiBXZWRu
+ZXNkYXksIERlY2VtYmVyIDEyLCAyMDE4IDI6NDAgUE0NCj4gVG86IE5hZ2EgU3VyZXNoa3VtYXIg
+UmVsbGkgPG5hZ2FzdXJlQHhpbGlueC5jb20+DQo+IENjOiBCb3JpcyBCcmV6aWxsb24gPGJvcmlz
+LmJyZXppbGxvbkBib290bGluLmNvbT47IHJvYmhAa2VybmVsLm9yZzsgcmljaGFyZEBub2QuYXQ7
+IGxpbnV4LQ0KPiBrZXJuZWxAdmdlci5rZXJuZWwub3JnOyBtYXJlay52YXN1dEBnbWFpbC5jb207
+IGxpbnV4LW10ZEBsaXN0cy5pbmZyYWRlYWQub3JnOw0KPiBuYWdhc3VyZXNoMTJAZ21haWwuY29t
+OyBNaWNoYWwgU2ltZWsgPG1pY2hhbHNAeGlsaW54LmNvbT47DQo+IGNvbXB1dGVyc2ZvcnBlYWNl
+QGdtYWlsLmNvbTsgZHdtdzJAaW5mcmFkZWFkLm9yZw0KPiBTdWJqZWN0OiBSZTogW0xJTlVYIFBB
+VENIIHYxMiAzLzNdIG10ZDogcmF3bmFuZDogYXJhc2FuOiBBZGQgc3VwcG9ydCBmb3IgQXJhc2Fu
+DQo+IE5BTkQgRmxhc2ggQ29udHJvbGxlcg0KPiANCj4gSGkgTmFnYSwNCj4gDQo+IE5hZ2EgU3Vy
+ZXNoa3VtYXIgUmVsbGkgPG5hZ2FzdXJlQHhpbGlueC5jb20+IHdyb3RlIG9uIFdlZCwgMTIgRGVj
+IDIwMTgNCj4gMDk6MDQ6MTYgKzAwMDA6DQo+IA0KPiA+IEhpIE1pcXVlbCwNCj4gPg0KPiA+ID4g
+LS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gPiA+IEZyb206IE1pcXVlbCBSYXluYWwgW21h
+aWx0bzptaXF1ZWwucmF5bmFsQGJvb3RsaW4uY29tXQ0KPiA+ID4gU2VudDogV2VkbmVzZGF5LCBE
+ZWNlbWJlciAxMiwgMjAxOCAxOjQyIFBNDQo+ID4gPiBUbzogTmFnYSBTdXJlc2hrdW1hciBSZWxs
+aSA8bmFnYXN1cmVAeGlsaW54LmNvbT4NCj4gPiA+IENjOiBCb3JpcyBCcmV6aWxsb24gPGJvcmlz
+LmJyZXppbGxvbkBib290bGluLmNvbT47IHJvYmhAa2VybmVsLm9yZzsNCj4gPiA+IHJpY2hhcmRA
+bm9kLmF0OyBsaW51eC0ga2VybmVsQHZnZXIua2VybmVsLm9yZzsNCj4gPiA+IG1hcmVrLnZhc3V0
+QGdtYWlsLmNvbTsgbGludXgtbXRkQGxpc3RzLmluZnJhZGVhZC5vcmc7DQo+ID4gPiBuYWdhc3Vy
+ZXNoMTJAZ21haWwuY29tOyBNaWNoYWwgU2ltZWsgPG1pY2hhbHNAeGlsaW54LmNvbT47DQo+ID4g
+PiBjb21wdXRlcnNmb3JwZWFjZUBnbWFpbC5jb207IGR3bXcyQGluZnJhZGVhZC5vcmcNCj4gPiA+
+IFN1YmplY3Q6IFJlOiBbTElOVVggUEFUQ0ggdjEyIDMvM10gbXRkOiByYXduYW5kOiBhcmFzYW46
+IEFkZCBzdXBwb3J0DQo+ID4gPiBmb3IgQXJhc2FuIE5BTkQgRmxhc2ggQ29udHJvbGxlcg0KPiA+
+ID4NCj4gPiA+IEhpIE5hZ2EsDQo+ID4gPg0KPiA+ID4gTmFnYSBTdXJlc2hrdW1hciBSZWxsaSA8
+bmFnYXN1cmVAeGlsaW54LmNvbT4gd3JvdGUgb24gV2VkLCAxMiBEZWMNCj4gPiA+IDIwMTgNCj4g
+PiA+IDA1OjI3OjAzICswMDAwOg0KPiA+ID4NCj4gPiA+ID4gSGkgQm9yaXMgJiBNaXF1ZWwsDQo+
+ID4gPiA+DQo+ID4gPiA+IEFuIHVwZGF0ZSB0byBteSBjb21tZW50cyBvbiB0aHJlYWQgaHR0cHM6
+Ly9sa21sLm9yZy9sa21sLzIwMTgvMTEvMTUvNjU2Lg0KPiA+ID4gPiBJbiB0aGlzIEkgc2FpZCwg
+d2lsbCB0YWtlIGEgZGVmYXVsdCBlcnJvciBjb3VudCB2YWx1ZSBhcyAxNiBhbmQNCj4gPiA+ID4g
+ZHVyaW5nIHBhZ2UgcmVhZCwgd2lsbCBjaGVjayB0aGUgZXJyb3IgY291bnQgUmVnaXN0ZXIgdmFs
+dWUgd2l0aA0KPiA+ID4gPiB0aGlzIGFuZCBpZiBpdCBpcyBlcXVhbCB0byBvciBncmVhdGVyIHRo
+YW4gdGhlIGRlZmF1bHQgY291bnQoMTYpIHRoZW4gSSBhbSBjaGVja2luZyBmb3INCj4gRXJhc2Vk
+IHBhZ2VzLg0KPiA+ID4gPiBCdXQgYml0Wzc6MF0gaW4gRUNDX0Vycm9yX0NvdW50X1JlZ2lzdGVy
+KDB4MzgpIHdpbGwgdXBkYXRlIGZvciBlYWNoIGVycm9yIG9jY3VycmVkLg0KPiA+ID4gPiBMaW5r
+Og0KPiA+ID4gPiBodHRwczovL3d3dy54aWxpbnguY29tL2h0bWxfZG9jcy9yZWdpc3RlcnMvdWcx
+MDg3L3VnMTA4Ny16eW5xLXVsdHINCj4gPiA+ID4gYXNjYWxlLQ0KPiA+ID4gcmVnaXN0ZXJzLmh0
+bWwgYW5kIGNoZWNrIGZvciBOQU5EIG1vZHVsZSwgRUNDX0Vycm9yX0NvdW50X1JlZ2lzdGVyLg0K
+PiA+ID4gPg0KPiA+ID4gPiBJIG1lYW4gcHJldmlvdXNseSBJIGRlcGVuZGVudCBvbiBUb3RhbCBl
+cnJvciBjb3VudCB2YWx1ZQ0KPiA+ID4gPiAoYml0WzE2OjhdKSwgYnV0IHdlIGNhbiBzaW1wbHkg
+Y2hlY2sgZm9yIGJpdFs3OjBdIFRvIHNlZSB0aGUgZXJyb3Igb2NjdXJyZWQgb3Igbm90Lg0KPiA+
+ID4gPiBJIHRyaWVkIHdpdGggdGhpcyBhcHByb2FjaCBhbmQgSSBkb24ndCBzZWUgYW55IGlzc3Vl
+cyB3aXRoIHRoYXQuDQo+ID4gPiA+IEkgcmFuIHViaWZzIHdpdGggdGhpcyBhbmQgSSBhbSBhYmxl
+IHRvIHNlZSB0aGUgYml0Wzc6MF0gY291bnQgaXMNCj4gPiA+ID4gdXBkYXRlZCBmb3IgZXJhc2Vk
+IHBhZ2UgcmVhZCBhbmQgdGhlbiB3aWxsIFVzZQ0KPiA+ID4gPiBuYW5kX2NoZWNoX2VyYXNlZF9l
+Y2NfY2h1bmsoKSB0byBzZWUgdGhlDQo+ID4gPiBiaXRmbGlwcy4NCj4gPiA+ID4NCj4gPiA+ID4g
+SWYgaXQgaXMgb2ssIEkgd2lsbCB1cGRhdGUgdGhlIGRyaXZlciBhbmQgd2lsbCBzZW5kIG5ldyBw
+YXRjaCwgYnV0DQo+ID4gPiA+IGRvIHlvdSBoYXZlIGFueSBvdGhlcg0KPiA+ID4gY29tbWVudHMg
+b24gdjEyPw0KPiA+ID4NCj4gPiA+IElzICduYW5kYml0ZXJycyAtaScgcnVubmluZyBjb3JyZWN0
+bHkgbm93Pw0KPiA+IFllcywgYnV0IHdpdGggc29tZSBjaGFuZ2VzIGluIGRyaXZlci4NCj4gPiBJ
+IGhhdmUgYWRkZWQgdGhlIGxvZyBhbmQgY2hhbmdlcyBkb25lIGluIGh0dHBzOi8vbGttbC5vcmcv
+bGttbC8yMDE4LzExLzIzLzcwNS4NCj4gDQo+IE5vLCBJIGRvbid0IHNlZSBhIHdvcmtpbmcgbmFu
+ZGJpdGVycnMgdGhlcmUsIHNvcnJ5Lg0KVGhlIGxvZyB0aGF0IEkgaGF2ZSBhdHRhY2hlZCBpcyBm
+cm9tIG10ZF9uYW5kYml0ZXJycyB0ZXN0DQpTbyBhcyBwZXIgQVJBU0FOIGNvbnRyb2xsZXIgRUND
+IG1lY2hhbmlzbSwgaXQgd2lsbCBjb3JyZWN0IHVwdG8gMjQtYml0LiBBZnRlciB0aGF0IHRoZSB0
+ZXN0IHdpbGwgZmFpbC4NCg0KSSBhbSBydW5uaW5nIG10ZC11dGlscyBuYW5kYml0ZXJyIHRlc3Qg
+bm93LiBXaWxsIGxldCB5b3Uga25vdyBvbmNlIEkgY29tcGxldGVkIHRoYXQuDQoNClRoYW5rcywN
+Ck5hZ2EgU3VyZXNoa3VtYXIgUmVsbGkNCj4gDQo+IA0KPiBUaGFua3MsDQo+IE1pcXXDqGwNCg==
