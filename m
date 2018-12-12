@@ -2,89 +2,103 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59781C65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 18:06:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A2CFC65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 18:07:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 128B32084E
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 18:06:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="a9XS/cbK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 128B32084E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id E04CB2084E
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 18:07:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544638039;
+	bh=HVI/enzlKFrr9FI9luIG0NKhuCYbRDq9evDkRIAm+iI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=UvCqnBkozV7bjLj+HyJoBsYTdpuBFCxpFvOo95ao8Ssirft36OkSg1FwQ8CZJSmKj
+	 FdAgDs2DX85v6OViLn+teMa3YBzgMQpjkyXAC/gQOGlqUDWbAIqKBHMFgKbCFZ375x
+	 94SC8IbEe2ozH3sgiIXFkTjIjS8bLLO+Zu3dKHj8=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E04CB2084E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728147AbeLLSGB (ORCPT
+        id S1728160AbeLLSHR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 13:06:01 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:50418 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727880AbeLLSGA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 13:06:00 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=3fQI/6AQd+D3CBYXnBJryEqNUq+UuHjPUoutHgfzl98=; b=a9XS/cbKAyMLqWH1H29u5/CJ8
-        o7d4ACP/WIMy5bOCJjMHNP4ROi4s5Qm0BXRpkT0lyIsfmHvG5at2YB4z8jkPKvnd3qOXUYOFud5LK
-        N4Src0qef5ZJXmYrhI3rA7cgE+yqJWvvilIxRjDOjBKWmluTlT5jU22f/IItSNTExlRjw9cz4uhoD
-        OmO+vV6oY9JSm0gXs2LoWfGc7Tl4AbBGV2rpNlm5gxaASPRhpTyflgp7XpsQSyRBRs1Unw66AGYaS
-        2yVQG9y/0Dwc9xKctXWOmq7GcUoV1YTwCWOKSgypbmy0/bnZqN8j5yWSZdUaczX8acKudVOFzGMSD
-        FP7Ekvzeg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gX8tP-00079S-7j; Wed, 12 Dec 2018 18:05:55 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 90B332075BF47; Wed, 12 Dec 2018 19:05:53 +0100 (CET)
-Date:   Wed, 12 Dec 2018 19:05:53 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Song Liu <songliubraving@fb.com>
-Cc:     lkml <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "ast@kernel.org" <ast@kernel.org>,
-        "daniel@iogearbox.net" <daniel@iogearbox.net>,
-        Kernel Team <Kernel-team@fb.com>,
-        "acme@kernel.org" <acme@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCH v3 perf, bpf-next 1/4] perf, bpf: Introduce
- PERF_RECORD_BPF_EVENT
-Message-ID: <20181212180553.GC5289@hirez.programming.kicks-ass.net>
-References: <20181211233351.4036381-1-songliubraving@fb.com>
- <20181211233351.4036381-2-songliubraving@fb.com>
- <20181212131549.GZ5289@hirez.programming.kicks-ass.net>
- <C6E2C200-4C86-4EE0-97FA-228C0E0629B1@fb.com>
+        Wed, 12 Dec 2018 13:07:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58590 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727900AbeLLSHR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 13:07:17 -0500
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7A4352084E
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 18:07:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544638036;
+        bh=HVI/enzlKFrr9FI9luIG0NKhuCYbRDq9evDkRIAm+iI=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=KRej3QLgKqrySi8OV3BiO7kUOfmWP99bh4axSdyq+JnvkLPWU6caGgLPrcuYh5h/V
+         nrs8eLgNB9IiBvVc9/Spr08CyxxBo0FCJob7GxiGRuouOQVpL4RFDalQmFWql1X3U8
+         /VA8LaGs4zEAIovE84sh2hqDPUCit1+nxf85xkTg=
+Received: by mail-wr1-f53.google.com with SMTP id t27so18630046wra.6
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 10:07:16 -0800 (PST)
+X-Gm-Message-State: AA+aEWasZ25sSvg7l1SSjmwVvDnyWNt6VJjzBbANYmPPsTlDfF0+qW+S
+        YtsNr4wVeV5KMJhuqS078d6mNEoTXOuHpzlixiWcQw==
+X-Google-Smtp-Source: AFSGD/WYkLTyJZErKI5xug2q4TBPiAcgz8RAcBQog7dzTHWeFXUeTF4xFjlHanjGgULbdIn17rCuGaSsb2W6yNJ0w24=
+X-Received: by 2002:adf:f0c5:: with SMTP id x5mr17399870wro.77.1544638035005;
+ Wed, 12 Dec 2018 10:07:15 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <C6E2C200-4C86-4EE0-97FA-228C0E0629B1@fb.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20181211222326.14581-1-bp@alien8.de> <20181211222326.14581-5-bp@alien8.de>
+ <CALCETrVArfAAbQKJ-g_5pOy6dMVgx-FC_mjdC9xzL1jU9T07jw@mail.gmail.com>
+ <59aad362-4a5b-dd8b-642f-0dc3f83cf7ee@amd.com> <20181211233901.GV27375@zn.tnic>
+ <CALCETrXvZ4avdUh2bTLVTTz3Jxogo3zK5akWTsJ=rkJpf1XiDg@mail.gmail.com> <20181212100814.GB6653@zn.tnic>
+In-Reply-To: <20181212100814.GB6653@zn.tnic>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Wed, 12 Dec 2018 10:07:03 -0800
+X-Gmail-Original-Message-ID: <CALCETrWSG5825HrxwEJGqbSoRz=A_2O-GSBD+K_q9YPHu2TB6A@mail.gmail.com>
+Message-ID: <CALCETrWSG5825HrxwEJGqbSoRz=A_2O-GSBD+K_q9YPHu2TB6A@mail.gmail.com>
+Subject: Re: [RFC PATCH 4/4] x86/TSC: Use RDTSCP
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Andrew Lutomirski <luto@kernel.org>,
+        Tom Lendacky <Thomas.Lendacky@amd.com>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        John Stultz <john.stultz@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 12, 2018 at 05:09:17PM +0000, Song Liu wrote:
-> > And while this tracks the bpf kallsyms, it does not do all kallsyms.
-> > 
-> > .... Oooh, I see the problem, everybody is doing their own custom
-> > kallsym_{add,del}() thing, instead of having that in generic code :-(
-> > 
-> > This, for example, doesn't track module load/unload nor ftrace
-> > trampolines, even though both affect kallsyms.
-> 
-> I think we can use PERF_RECORD_MMAP(or MMAP2) for module load/unload. 
-> That could be separate sets of patches. 
+On Wed, Dec 12, 2018 at 2:08 AM Borislav Petkov <bp@alien8.de> wrote:
+>
+> On Tue, Dec 11, 2018 at 06:24:44PM -0800, Andy Lutomirski wrote:
+> > This makes me nervous, since no one knows what =E2=80=9Cserializing=E2=
+=80=9D means.
+>
+> Why no one? If you wanna say that X86_FEATURE_LFENCE_SERIALIZING is not
+> really telling, so is X86_FEATURE_LFENCE_RDTSC, TBH. :)
 
-So I would actually like to move bpf_lock/bpf_kallsyms/bpf_tree +
-bpf_prog_kallsyms_*() + __bpf_address_lookup() into kernel/kallsyms.c
-and also have ftrace use that.
+You're proving my point, I think.  CPUID, IRET, MOV to CR, etc are
+"serializing".  LFENCE, on many CPUd and depending on MSRs, is a
+different kind of serializing.  MFENCE is something else.  All LOCK
+instructions are some kind of barrier, but I don't think anyone calls
+them "serializing".
 
-Because currently the ftrace stuff is otherwise invisible.
+The uaccess users of barrier_nospec() are presumably looking for a
+speculation barrier in the sense of "CPU, please don't execute the
+code after this until you're sure that this code should be executed
+for real and until all inputs are known, not guessed."
 
-A generic kallsym register/unregister for any JIT.
+The property I want for RDTSC ordering is much weaker: I want it to be
+ordered like a load.  Imagine that, instead of an on-chip TSC, the TSC
+is literally a location in main memory that gets incremented by an
+extra dedicated CPU every nanosecond or so.  I want users of RDTSC to
+work as if they were reading such a location in memory using an
+ordinary load.  I believe this gives the real desired property that it
+should be impossible to observe the TSC going backwards.  This is a
+much weaker form of serialization.
