@@ -2,110 +2,146 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_ADSP_ALL,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E409C67839
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 02:25:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B8C3C6783B
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 02:26:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40C0920839
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 02:25:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N3tJOaew"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40C0920839
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 53B2020839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 02:26:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53B2020839
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=aussec.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726427AbeLLCZc (ORCPT
+        id S1726338AbeLLC0R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 21:25:32 -0500
-Received: from mail-pg1-f169.google.com ([209.85.215.169]:46065 "EHLO
-        mail-pg1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726218AbeLLCZb (ORCPT
+        Tue, 11 Dec 2018 21:26:17 -0500
+Received: from csm1.csm-office.com.au ([165.228.118.109]:55004 "EHLO
+        sleepy.aussec.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726218AbeLLC0Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 21:25:31 -0500
-Received: by mail-pg1-f169.google.com with SMTP id y4so7551941pgc.12
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 18:25:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=bUz6wWuxCJSAPrI7GICxXnzvKXDpyEJRXR7b9EcsiW4=;
-        b=N3tJOaewpi6eaWQQmsTrtV69JdcjmapMl5hZEdiDreAP1+QMQB+V60DlVHt2VqCv1g
-         zLJmPh/0R7x9B2LNmzIsx7JBy/b3AN8fjsg5qINx6M+1gf84Arbn0MYQXFPfy4Tq6lB9
-         YF9jEL6kGnisYtfLcSdTDKlJAJrV5kQ5EIJGTveUo0AC20S4YWxBBS97+J4p7Z4hHY1H
-         xQgs8w4DVNDbJO6rq8vj/t+KJzOW1qFBeVY0vTw9UA7ZNRy0x5w0VvaBQJVd2uys4vgM
-         MlQmM7qasUK9dlJLMjH5L+4dPjbvNArB4rvNpVt6t5LY1f4/ObSzRmiWJDlfdhGAW2+a
-         TkVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=bUz6wWuxCJSAPrI7GICxXnzvKXDpyEJRXR7b9EcsiW4=;
-        b=fakgZ6lK8hq9qBTCjnn8RvmD9ccIYDm8nu+uGoajpuNTYY5DWDDctjKqw0eQjiCt8O
-         YY6g09MudXSXgDx/csYeq+n9NfkmdhWtWE9Fr9kXZCUKp5R0xap8oQqCh7cAdbTr4W6K
-         SFvk654LoiLop419SnNWn3Ehzo+WoUaDOuX9JrhQ/3KEymMVtmexsWXIq1idkVmS/ku2
-         K42Y+07QXg1tQkKaXZ9jc92fZPVdPFuhqX8gUiLG6fioZpIcfuuZQ1XxJb8seIBnXya+
-         JKCC8J2UCZBh4cFn0pADOQ9c3jCbDUHvomnZ2rBbePosMAQnvvkgZu8Hj/WWASeLRIUv
-         1x4Q==
-X-Gm-Message-State: AA+aEWYXASSITbje5a65CZE31dT6TkiAOj39W4SKJGuXDs75eYRd0ihM
-        ctWgy9NNQoi8qZ94f2pK+5g=
-X-Google-Smtp-Source: AFSGD/WSSuKbo1blePI2JvnBEmHUjG+IeKhlEd9RSdUo69Odsm95ULsKF/QUGYYyNSQWcQZA7CgWOA==
-X-Received: by 2002:a62:2b8b:: with SMTP id r133mr18606573pfr.246.1544581531057;
-        Tue, 11 Dec 2018 18:25:31 -0800 (PST)
-Received: from localhost ([211.246.69.141])
-        by smtp.gmail.com with ESMTPSA id u29sm20338582pgn.23.2018.12.11.18.25.29
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 11 Dec 2018 18:25:29 -0800 (PST)
-Date:   Wed, 12 Dec 2018 11:25:26 +0900
-From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     Petr Mladek <pmladek@suse.com>, Dmitry Vyukov <dvyukov@google.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller <syzkaller@googlegroups.com>
-Subject: Re: [PATCH] printk: Add caller information to printk() output.
-Message-ID: <20181212022526.GB431@jagdpanzerIV>
-References: <1543045075-3008-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
- <20181130154024.ls3mntfdr4zvluub@pathway.suse.cz>
- <f224bd68-7394-ff70-cad6-d3fbbb3b5f7d@i-love.sakura.ne.jp>
- <20181203150603.cdqii263e4kmmibo@pathway.suse.cz>
- <b38c6957-c3c1-54fc-781e-06d7eed6a9b1@i-love.sakura.ne.jp>
- <20181204152724.ypk44mi4a56nrud4@pathway.suse.cz>
- <459018db-763b-9520-ead2-2c0d5975fbf3@i-love.sakura.ne.jp>
- <20181210130930.bas4fozjhe3dc5nu@pathway.suse.cz>
- <c5b5d660-d217-35f0-c4f1-7252367934d1@i-love.sakura.ne.jp>
- <e3f69846-ef08-c8f5-368f-4dada13c9970@i-love.sakura.ne.jp>
+        Tue, 11 Dec 2018 21:26:16 -0500
+X-Virus-Scanned: amavisd-new at aussec.com
+Received: from sneezy.aussec.com (sneezy.aussec.com [172.16.0.4])
+        by sleepy.aussec.com (8.15.2/8.15.2) with ESMTP id wBC2PuQ4002680;
+        Wed, 12 Dec 2018 13:26:01 +1100
+Received: from 1.128.110.99 ([1.128.110.99]) by www.aussec.com (Horde
+ Framework) with HTTP; Wed, 12 Dec 2018 13:25:51 +1100
+Message-ID: <20181212132551.48881ybb96b2pay7@www.aussec.com>
+Date:   Wed, 12 Dec 2018 13:25:51 +1100
+From:   tom burkart <tom@aussec.com>
+To:     Rob Herring <robh@kernel.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org, lukas@fridolin.com
+Subject: Re: [PATCH v9 3/4] dt-bindings: pps: pps-gpio PPS ECHO
+ implementation
+References: <20181122094602.5156-1-tom@aussec.com>
+ <20181122094602.5156-2-tom@aussec.com>
+ <20181122094602.5156-3-tom@aussec.com>
+ <20181122094602.5156-4-tom@aussec.com>
+ <CAL_JsqJ6fM3+pcC3b-eXEex=j_ft6Z=vukhLK9wULfWJqOTN-A@mail.gmail.com>
+ <20181127150629.10795h1esqtc53ut@aussec.com>
+ <CAL_JsqJmuDbPgc3WYRU8y3hbDL5A4_Luj0FfAiSvJ2+J-TM9_g@mail.gmail.com>
+ <20181211131716.931947v9gya4ajos@www.aussec.com>
+ <CAL_JsqK877WtcFDEVc-fqRu0nSJwpgGBNjuxH0yiN7uy1BBRbw@mail.gmail.com>
+In-Reply-To:  <CAL_JsqK877WtcFDEVc-fqRu0nSJwpgGBNjuxH0yiN7uy1BBRbw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain;
+ charset=UTF-8;
+ DelSp="Yes";
+ format="flowed"
 Content-Disposition: inline
-In-Reply-To: <e3f69846-ef08-c8f5-368f-4dada13c9970@i-love.sakura.ne.jp>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+Content-Transfer-Encoding: 7bit
+User-Agent: Internet Messaging Program (IMP) H3 (4.3.9)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (12/11/18 19:26), Tetsuo Handa wrote:
-> @@ -688,12 +701,21 @@ static ssize_t msg_print_ext_header(char *buf, size_t size,
->  				    struct printk_log *msg, u64 seq)
->  {
->  	u64 ts_usec = msg->ts_nsec;
-> +	char from[18];
+Quoting Rob Herring <robh@kernel.org>:
 
-[..]
+> On Mon, Dec 10, 2018 at 8:17 PM tom burkart <tom@aussec.com> wrote:
+>>
+>> Quoting Rob Herring <robh@kernel.org>:
+>>
+>> > On Mon, Nov 26, 2018 at 10:06 PM tom burkart <tom@aussec.com> wrote:
+>> >>
+>> >> Quoting Rob Herring <robh@kernel.org>:
+>> >>
+>> >> > On Thu, Nov 22, 2018 at 3:49 AM Tom Burkart <tom@aussec.com> wrote:
+>> >> >>
+>> >> >> This patch implements the device tree changes required for the pps
+>> >> >> echo functionality for pps-gpio, that sysfs claims is available
+>> >> >> already.
+>> >> >>
+>> >> >> This patch was originally written by Lukas Senger as part of a masters
+>> >> >> thesis project and modified for inclusion into the linux kernel by Tom
+>> >> >> Burkart.
+>> >> >>
+>> >> >> Signed-off-by: Lukas Senger <lukas@fridolin.com>
+>> >> >> Signed-off-by: Tom Burkart <tom@aussec.com>
+>> >> >> ---
+>> >> >>  Documentation/devicetree/bindings/pps/pps-gpio.txt | 9 +++++++++
+>> >> >>  1 file changed, 9 insertions(+)
+>> >> >>
+>> >> >> diff --git a/Documentation/devicetree/bindings/pps/pps-gpio.txt
+>> >> >> b/Documentation/devicetree/bindings/pps/pps-gpio.txt
+>> >> >> index 1155d49c2699..e09f6f2405c5 100644
+>> >> >> --- a/Documentation/devicetree/bindings/pps/pps-gpio.txt
+>> >> >> +++ b/Documentation/devicetree/bindings/pps/pps-gpio.txt
+>> >> >> @@ -7,10 +7,15 @@ Required properties:
+>> >> >>  - compatible: should be "pps-gpio"
+>> >> >>  - gpios: one PPS GPIO in the format described by ../gpio/gpio.txt
+>> >> >>
+>> >> >> +Additional required properties for the PPS ECHO functionality:
+>> >> >> +- echo-gpios: one PPS ECHO GPIO in the format described by
+>> >> ../gpio/gpio.txt
+>> >> >> +- echo-active-ms: duration in ms of the active portion of  
+>> the echo pulse
+>> >> >> +
+>> >> >>  Optional properties:
+>> >> >>  - assert-falling-edge: when present, assert is indicated by a
+>> >> falling edge
+>> >> >>                         (instead of by a rising edge)
+>> >> >>  - capture-clear: when present, also capture the PPS clear event
+>> >> >> +- invert-pps-echo: when present, invert the PPS ECHO pulse
+>> >> >
+>> >> > Why do you need this? Can't you just make the echo gpio  
+>> GPIO_ACTIVE_LOW?
+>> >> >
+>> >> > BTW, using the flag probably should have been done for
+>> >> > 'assert-falling-edge' as well.
+>> >>
+>> >> The hardware I use expects a positive-going echo pulse, however, it
+>> >> was really easy to give users the option to have it inverted in case
+>> >> they use different hardware that expects a negative-going edge.
+>> >
+>> > It will be even easier to implement if you use GPIO_ACTIVE_LOW or
+>> > GPIO_ACTIVE_HIGH as appropriate. If the flag is set appropriately,
+>> > then gpiod_set_value(gpio, 1) asserts the pulse and
+>> > gpiod_set_value(gpio, 0) deasserts it no matter which way the h/w is
+>> > wired. You can then get rid of invert_pps_echo in the driver.
+>>
+>> Hi Rob,
+>> I have looked at the appropriate changes to my code to implement the
+>> above.  However, there is no GPIO_ACTIVE_* as part of the gpiod_flags
+>> enum (include/linux/gpio/consumer.h).
+>>
+>> What am I missing?
+>
+> You don't need to know in the driver. You set the gpio state to 1 for
+> active, 0 for inactive and that does the right thing based on the flag
+> in the DT. IOW, if the DT defines the GPIO as active low, then setting
+> the gpio state to 1 will result in the GPIO being 0V. It's a bit
+> annoying and confusing at first until you realize the driver can just
+> handle either polarity transparently.
 
-> +#ifdef CONFIG_PRINTK_FROM
-> +static size_t print_from(u32 id, char *buf)
-> +{
-> +	char from[12];
+Hi Rob,
+thanks a lot!  The penny finally dropped.
 
-Are those supposed to be of different sizes: 18 and 12?
+My patch v12 will have the changes implemented (no invert-pps-echo).
 
-	-ss
+Tom
+
