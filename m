@@ -2,127 +2,111 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9F5FC04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 13:33:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB23BC04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 13:36:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C4352084E
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 13:33:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544621587;
-	bh=5ChCtH3Tc+O6CY4zHCh78LRvo9uIS0nX7aBcIemIIio=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=q8EQI9h0fniCBLTdJzKPoao6A/lMv8Ud/bAlbL9JcURiU8qxh5s13YT09ZZ0z67Z5
-	 vNxTsmLIT+3cJNC0fysHJVn+/NySeSJHXiP4YlFZ0+q+Olu2LKeQnLyzhVTpArsqsL
-	 haWeTRkTscFGLvI0quVhkFoSXsENJfql6FkM0tBM=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C4352084E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id A1BED20873
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 13:36:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1BED20873
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727550AbeLLNdG (ORCPT
+        id S1727521AbeLLNgI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 08:33:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58032 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726232AbeLLNdG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 08:33:06 -0500
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 73C3620879;
-        Wed, 12 Dec 2018 13:33:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544621584;
-        bh=5ChCtH3Tc+O6CY4zHCh78LRvo9uIS0nX7aBcIemIIio=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=IDQ2RJFbU/lMBsN0UCXLyu8ClKDJhpEFNcqYrHkIsEhToc+y9pRHJcFcUyLvaE8mx
-         WAPE7q1OVQ5zU14pJzw1TC2Vf9bCCBgDjp60EsMdYIYhtXe3JL+9+f5U76YDW7ICoN
-         cjBpLQyPMrOYgZZlJYiR2vz/NvpnQiYxwrsTRdJY=
-Received: by mail-qk1-f179.google.com with SMTP id y78so10686130qka.12;
-        Wed, 12 Dec 2018 05:33:04 -0800 (PST)
-X-Gm-Message-State: AA+aEWZfyvIRWBiMcPWS/CxTxjUuAbTPVW6vxrrRKlDvmfTo+dddAeiE
-        4tgOkzY6A0+C4X6tSYavZ0j8FZWp9zAMxKP81Q==
-X-Google-Smtp-Source: AFSGD/VWPmfMJsZnvIrZRTIrLzNJoeSuct9pEZVkSFdyZBMCcJICWHsQ+1bNMnqVlVogBRZUC7SPyYiw1pEFluN9JUI=
-X-Received: by 2002:ae9:ef14:: with SMTP id d20mr18472219qkg.147.1544621583631;
- Wed, 12 Dec 2018 05:33:03 -0800 (PST)
+        Wed, 12 Dec 2018 08:36:08 -0500
+Received: from mx2.suse.de ([195.135.220.15]:45868 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726245AbeLLNgI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 08:36:08 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 140EAAD0C;
+        Wed, 12 Dec 2018 13:36:06 +0000 (UTC)
+Date:   Wed, 12 Dec 2018 14:36:03 +0100
+From:   Petr Mladek <pmladek@suse.com>
+To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc:     Sasha Levin <sashal@kernel.org>,
+        Daniel Wang <wonderfly@google.com>,
+        Steven Rostedt <rostedt@goodmis.org>, stable@vger.kernel.org,
+        Alexander.Levin@microsoft.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        byungchul.park@lge.com, dave.hansen@intel.com, hannes@cmpxchg.org,
+        jack@suse.cz, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Mel Gorman <mgorman@suse.de>, mhocko@kernel.org, pavel@ucw.cz,
+        penguin-kernel@i-love.sakura.ne.jp,
+        Peter Zijlstra <peterz@infradead.org>, tj@kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>, vbabka@suse.cz,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        Peter Feiner <pfeiner@google.com>
+Subject: Re: 4.14 backport request for dbdda842fe96f: "printk: Add console
+ owner and waiter logic to load balance console writes"
+Message-ID: <20181212133603.yyu2zvw7g454zdqd@pathway.suse.cz>
+References: <CAJmjG2-e6f6p=pE5uDECMc=W=81SYyGCmoabrC1ePXwL5DFdSw@mail.gmail.com>
+ <20181022100952.GA1147@jagdpanzerIV>
+ <CAJmjG2-c4e_1999n0OV5B9ABG9rF6n=myThjgX+Ms1R-vc3z+A@mail.gmail.com>
+ <20181109064740.GE599@jagdpanzerIV>
+ <CAJmjG28Q8pEpr67LC+Un8m+Qii58FTd1esp6Zc47TnMsw50QEw@mail.gmail.com>
+ <20181212052126.GF431@jagdpanzerIV>
+ <CAJmjG29a7Fax5ZW5Q+W+-1xPEXVUqdrMYwoUpSwL1Msiso6gtw@mail.gmail.com>
+ <20181212062841.GI431@jagdpanzerIV>
+ <20181212064841.GB2746@sasha-vm>
+ <20181212081034.GA32687@jagdpanzerIV>
 MIME-Version: 1.0
-References: <1543319801-19100-1-git-send-email-claudiu.beznea@microchip.com>
- <1543319801-19100-6-git-send-email-claudiu.beznea@microchip.com>
- <20181211221324.GA14658@bogus> <442be9e4-621f-c668-c627-264084ef975a@microchip.com>
-In-Reply-To: <442be9e4-621f-c668-c627-264084ef975a@microchip.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Wed, 12 Dec 2018 07:32:52 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqKk99GrQaqVyXSr_ZwQd_nnuMOWnz_0ehS1dHZoEmxDCw@mail.gmail.com>
-Message-ID: <CAL_JsqKk99GrQaqVyXSr_ZwQd_nnuMOWnz_0ehS1dHZoEmxDCw@mail.gmail.com>
-Subject: Re: [PATCH v2 5/5] regulator: add documentation for regulator modes
- and suspend states
-To:     Claudiu Beznea <Claudiu.Beznea@microchip.com>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Nicolas Ferre <Nicolas.Ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <Ludovic.Desroches@microchip.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181212081034.GA32687@jagdpanzerIV>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 12, 2018 at 3:13 AM <Claudiu.Beznea@microchip.com> wrote:
->
->
->
-> On 12.12.2018 00:13, Rob Herring wrote:
-> > On Tue, Nov 27, 2018 at 11:57:25AM +0000, Claudiu.Beznea@microchip.com wrote:
-> >> From: Claudiu Beznea <claudiu.beznea@microchip.com>
-> >>
-> >> Add documentation for regulator modes and suspend states.
-> >>
-> >> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
-> >> ---
-> >>  .../bindings/regulator/act8945a-regulator.txt      | 34 ++++++++++++++++++++++
-> >>  1 file changed, 34 insertions(+)
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/regulator/act8945a-regulator.txt b/Documentation/devicetree/bindings/regulator/act8945a-regulator.txt
-> >> index ac955dea00d1..4017527619ab 100644
-> >> --- a/Documentation/devicetree/bindings/regulator/act8945a-regulator.txt
-> >> +++ b/Documentation/devicetree/bindings/regulator/act8945a-regulator.txt
-> >> @@ -15,11 +15,17 @@ Optional input supply properties:
-> >>    - inl67-supply: The input supply for REG_LDO3 and REG_LDO4
-> >>
-> >>  Any standard regulator properties can be used to configure the single regulator.
-> >> +regulator-initial-mode, regulator-allowed-modes and regulator-mode could be
-> >> +specified using mode values from dt-bindings/regulator/active-semi,8945a-regulator.h
-> >> +file.
-> >>
-> >>  The valid names for regulators are:
-> >>      REG_DCDC1, REG_DCDC2, REG_DCDC3, REG_LDO1, REG_LDO2, REG_LDO3, REG_LDO4.
-> >>
-> >>  Example:
-> >> +
-> >> +#include <dt-bindings/regulator/active-semi,8945a-regulator.h>
-> >
-> > This file belongs in this patch.
->
-> I'm using the defines in this file also in driver. I was thinking that if I
-> would include this file in this patch the driver compilation would fail if
-> the patches would be accepted via different trees.
+On Wed 2018-12-12 17:10:34, Sergey Senozhatsky wrote:
+> On (12/12/18 01:48), Sasha Levin wrote:
+> > > > > I guess we still don't have a really clear understanding of what exactly
+> > > > is going in your system
+> > > > 
+> > > > I would also like to get to the bottom of it. Unfortunately I haven't
+> > > > got the expertise in this area nor the time to do it yet. Hence the
+> > > > intent to take a step back and backport Steven's patch to fix the
+> > > > issue that has resurfaced in our production recently.
+> > > 
+> > > No problem.
+> > > I just meant that -stable people can be a bit "unconvinced".
+> > 
+> > The -stable people tried adding this patch back in April, but ended up
+> > getting complaints up the wazoo (https://lkml.org/lkml/2018/4/9/154)
+> > about how this is not -stable material.
+> 
+> OK, really didn't know that! I wasn't Cc-ed on that AUTOSEL email,
+> and I wasn't Cc-ed on this whole discussion and found it purely
+> accidentally while browsing linux-mm list.
 
-They won't be.
+I am sorry that I did not CC you. There were so many people in CC.
+I expected that all people mentioned in the related commit message
+were included by default.
 
-> Would you like me to have different defines in driver and this new header
-> or could happen that these patches to be included in the main tree via the
-> same tree (e.g. regulator tree)?
 
-No need for different defines. The subsystem maintainer will take
-everything in this case.
+> So if you are willing to backport this set to -stable, then I wouldn't
+> mind, probably would be more correct if we don't advertise this as a
+> "panic() deadlock fix"
 
-Rob
+This should not be a problem. I guess that stable does not modify
+the original commit messages unless there is a change.
+
+
+> In the meantime, I can add my Acked-by to this backport if it helps.
+
+I am fine with back-porting the patches now. They have got much more
+testing in the meantime and nobody reported any regression. They
+seems to help in more situations than we expected. Finally, there is
+someone requesting the backport who spent non-trivial time
+on tracking the problem and testing.
+
+Best Regards,
+Petr
