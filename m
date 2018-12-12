@@ -3,184 +3,303 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4F84C04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 04:48:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EF73C04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 04:56:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96D3D20851
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 04:48:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96D3D20851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+	by mail.kernel.org (Postfix) with ESMTP id E0AD920811
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 04:56:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0AD920811
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726420AbeLLEsi convert rfc822-to-8bit (ORCPT
+        id S1726323AbeLLE4e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 23:48:38 -0500
-Received: from ozlabs.org ([203.11.71.1]:38011 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726220AbeLLEsh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 23:48:37 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43F4812KnBz9s0n;
-        Wed, 12 Dec 2018 15:48:33 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Andrew Murray <andrew.murray@arm.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>, x86@kernel.org,
-        linux-alpha@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Joerg Roedel <joro@8bytes.org>,
-        "paulus\@samba.org" <paulus@samba.org>, Christoffer.Dall@arm.com
-Subject: Re: [PATCH 10/10] perf/doc: update design.txt for exclude_{host|guest} flags
-In-Reply-To: <20181211135903.GG13393@e119886-lin.cambridge.arm.com>
-References: <1542363853-13849-1-git-send-email-andrew.murray@arm.com> <1542363853-13849-11-git-send-email-andrew.murray@arm.com> <87pnv00yuf.fsf@concordia.ellerman.id.au> <20181120133202.GH35798@e119886-lin.cambridge.arm.com> <87bm5sxqya.fsf@concordia.ellerman.id.au> <20181211135903.GG13393@e119886-lin.cambridge.arm.com>
-Date:   Wed, 12 Dec 2018 15:48:32 +1100
-Message-ID: <87sgz3wdsv.fsf@concordia.ellerman.id.au>
+        Tue, 11 Dec 2018 23:56:34 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:51054 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726218AbeLLE4e (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 23:56:34 -0500
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBC4uToI051409
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 23:56:33 -0500
+Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2par2q7xg2-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 23:56:31 -0500
+Received: from localhost
+        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <aneesh.kumar@linux.ibm.com>;
+        Wed, 12 Dec 2018 04:53:32 -0000
+Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
+        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 12 Dec 2018 04:53:29 -0000
+Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBC4rSTp23658522
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 12 Dec 2018 04:53:28 GMT
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1FB63AE05C;
+        Wed, 12 Dec 2018 04:53:28 +0000 (GMT)
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id ED725AE05F;
+        Wed, 12 Dec 2018 04:53:25 +0000 (GMT)
+Received: from [9.85.73.10] (unknown [9.85.73.10])
+        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed, 12 Dec 2018 04:53:25 +0000 (GMT)
+Subject: Re: [PATCHv2 12/12] doc/mm: New documentation for memory performance
+To:     Keith Busch <keith.busch@intel.com>, linux-kernel@vger.kernel.org,
+        linux-acpi@vger.kernel.org, linux-mm@kvack.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rafael Wysocki <rafael@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>
+References: <20181211010310.8551-1-keith.busch@intel.com>
+ <20181211010310.8551-13-keith.busch@intel.com>
+From:   "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+Date:   Wed, 12 Dec 2018 10:23:24 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20181211010310.8551-13-keith.busch@intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18121204-0060-0000-0000-000002E2AE1A
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010214; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000270; SDB=6.01130525; UDB=6.00587459; IPR=6.00910658;
+ MB=3.00024660; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-12 04:53:31
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18121204-0061-0000-0000-00004781D05C
+Message-Id: <681f14eb-def4-bf40-fdfd-b5fb89045132@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-12_01:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812120041
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Andrew Murray <andrew.murray@arm.com> writes:
-> On Tue, Dec 11, 2018 at 10:06:53PM +1100, Michael Ellerman wrote:
->> [ Reviving old thread. ]
->> 
->> Andrew Murray <andrew.murray@arm.com> writes:
->> > On Tue, Nov 20, 2018 at 10:31:36PM +1100, Michael Ellerman wrote:
->> >> Andrew Murray <andrew.murray@arm.com> writes:
->> >> 
->> >> > Update design.txt to reflect the presence of the exclude_host
->> >> > and exclude_guest perf flags.
->> >> >
->> >> > Signed-off-by: Andrew Murray <andrew.murray@arm.com>
->> >> > ---
->> >> >  tools/perf/design.txt | 4 ++++
->> >> >  1 file changed, 4 insertions(+)
->> >> >
->> >> > diff --git a/tools/perf/design.txt b/tools/perf/design.txt
->> >> > index a28dca2..7de7d83 100644
->> >> > --- a/tools/perf/design.txt
->> >> > +++ b/tools/perf/design.txt
->> >> > @@ -222,6 +222,10 @@ The 'exclude_user', 'exclude_kernel' and 'exclude_hv' bits provide a
->> >> >  way to request that counting of events be restricted to times when the
->> >> >  CPU is in user, kernel and/or hypervisor mode.
->> >> >  
->> >> > +Furthermore the 'exclude_host' and 'exclude_guest' bits provide a way
->> >> > +to request counting of events restricted to guest and host contexts when
->> >> > +using virtualisation.
->> >> 
->> >> How does exclude_host differ from exclude_hv ?
->> >
->> > I believe exclude_host / exclude_guest are intented to distinguish
->> > between host and guest in the hosted hypervisor context (KVM).
->> 
->> OK yeah, from the perf-list man page:
->> 
->>            u - user-space counting
->>            k - kernel counting
->>            h - hypervisor counting
->>            I - non idle counting
->>            G - guest counting (in KVM guests)
->>            H - host counting (not in KVM guests)
->> 
->> > Whereas exclude_hv allows to distinguish between guest and
->> > hypervisor in the bare-metal type hypervisors.
->> 
->> Except that's exactly not how we use them on powerpc :)
->> 
->> We use exclude_hv to exclude "the hypervisor", regardless of whether
->> it's KVM or PowerVM (which is a bare-metal hypervisor).
->> 
->> We don't use exclude_host / exclude_guest at all, which I guess is a
->> bug, except I didn't know they existed until this thread.
->> 
->> eg, in a KVM guest:
->> 
->>   $ perf record -e cycles:G /bin/bash -c "for i in {0..100000}; do :;done"
->>   $ perf report -D | grep -Fc "dso: [hypervisor]"
->>   16
->> 
->> 
->> > In the case of arm64 - if VHE extensions are present then the host
->> > kernel will run at a higher privilege to the guest kernel, in which
->> > case there is no distinction between hypervisor and host so we ignore
->> > exclude_hv. But where VHE extensions are not present then the host
->> > kernel runs at the same privilege level as the guest and we use a
->> > higher privilege level to switch between them - in this case we can
->> > use exclude_hv to discount that hypervisor role of switching between
->> > guests.
->> 
->> I couldn't find any arm64 perf code using exclude_host/guest at all?
->
-> Correct - but this is in flight as I am currently adding support for this
-> see [1].
+On 12/11/18 6:33 AM, Keith Busch wrote:
+> Platforms may provide system memory where some physical address ranges
+> perform differently than others, or is side cached by the system.
+> 
+> Add documentation describing a high level overview of such systems and the
+> performance and caching attributes the kernel provides for applications
+> wishing to query this information.
+> 
 
-OK, so at least that will be consistent across arm64 & x86.
+The series looks good with the examples in the commit messages
 
->> And I don't see any x86 code using exclude_hv.
->
-> I can't find any either.
+> Signed-off-by: Keith Busch <keith.busch@intel.com>
+> ---
+>   Documentation/admin-guide/mm/numaperf.rst | 171 ++++++++++++++++++++++++++++++
+>   1 file changed, 171 insertions(+)
+>   create mode 100644 Documentation/admin-guide/mm/numaperf.rst
+> 
+> diff --git a/Documentation/admin-guide/mm/numaperf.rst b/Documentation/admin-guide/mm/numaperf.rst
+> new file mode 100644
+> index 000000000000..846b3f991e7f
+> --- /dev/null
+> +++ b/Documentation/admin-guide/mm/numaperf.rst
+> @@ -0,0 +1,171 @@
+> +.. _numaperf:
+> +
+> +=============
+> +NUMA Locality
+> +=============
+> +
+> +Some platforms may have multiple types of memory attached to a single
+> +CPU. These disparate memory ranges share some characteristics, such as
+> +CPU cache coherence, but may have different performance. For example,
+> +different media types and buses affect bandwidth and latency.
+> +
+> +A system supporting such heterogeneous memory by grouping each memory
+> +type under different "nodes" based on similar CPU locality and performance
+> +characteristics.  Some memory may share the same node as a CPU, and others
+> +are provided as memory only nodes. While memory only nodes do not provide
+> +CPUs, they may still be directly accessible, or local, to one or more
+> +compute nodes. The following diagram shows one such example of two compute
+> +noes with local memory and a memory only node for each of compute node:
+> +
+> + +------------------+     +------------------+
+> + | Compute Node 0   +-----+ Compute Node 1   |
+> + | Local Node0 Mem  |     | Local Node1 Mem  |
+> + +--------+---------+     +--------+---------+
+> +          |                        |
+> + +--------+---------+     +--------+---------+
+> + | Slower Node2 Mem |     | Slower Node3 Mem |
+> + +------------------+     +--------+---------+
+> +
+> +A "memory initiator" is a node containing one or more devices such as
+> +CPUs or separate memory I/O devices that can initiate memory requests. A
+> +"memory target" is a node containing one or more accessible physical
+> +address ranges from one or more memory initiators.
+> +
+> +When multiple memory initiators exist, they may not all have the same
+> +performance when accessing a given memory target. The highest performing
+> +initiator to a given target is considered to be one of that target's
+> +local initiators. Any given target may have one or more local initiators,
+> +and any given initiator may have multiple local memory targets.
+> +
 
-I think that's because they don't need it, because they don't let guests
-program the PMU directly. It's all handled by the host and the host
-doesn't let the guest count host cycles anyway. But I could be wrong I'm
-no x86 expert.
+Can you also add summary here suggesting node X is compute and Node y is 
+memory target
 
->> But maybe that's OK, I just worry this is confusing for users.
->
-> There is some extra context regarding this where exclude_guest/exclude_host
-> was added, see [2]
+> +To aid applications matching memory targets with their initiators,
+> +the kernel provide symlinks to each other like the following example::
+> +
+> +	# ls -l /sys/devices/system/node/nodeX/local_target*
+> +	/sys/devices/system/node/nodeX/local_targetY -> ../nodeY
+> +
+> +	# ls -l /sys/devices/system/node/nodeY/local_initiator*
+> +	/sys/devices/system/node/nodeY/local_initiatorX -> ../nodeX
+> +
 
-Good find. I had looked at that commit, but the thread on the list is
-more informative.
+the patch series had primary_target and primary_initiator
 
-In fact there was even a man page update! Never occurred to me look
-there :P
-
-http://man7.org/linux/man-pages/man2/perf_event_open.2.html
-
-       exclude_host (since Linux 3.2)
-              When conducting measurements that include processes running VM
-              instances (i.e., have executed a KVM_RUN ioctl(2)), only mea‐
-              sure events happening inside a guest instance.  This is only
-              meaningful outside the guests; this setting does not change
-              counts gathered inside of a guest.  Currently, this function‐
-              ality is x86 only.
-
-       exclude_guest (since Linux 3.2)
-              When conducting measurements that include processes running VM
-              instances (i.e., have executed a KVM_RUN ioctl(2)), do not
-              measure events happening inside guest instances.  This is only
-              meaningful outside the guests; this setting does not change
-              counts gathered inside of a guest.  Currently, this function‐
-              ality is x86 only.
+> +The linked nodes will also have their node number set in the local_mem
+> +and local_cpu node list and maps.
+> +
+> +An example showing how this may be used to run a particular task on CPUs
+> +and memory that are both local to a particular PCI device can be done
+> +using existing 'numactl' as follows::
+> +
+> +  # NODE=$(cat /sys/devices/pci:0000:00/.../numa_node)
+> +  # numactl --membind=$(cat /sys/devices/node/node${NODE}/local_mem_nodelist) \
+> +      --cpunodebind=$(cat /sys/devices/node/node${NODE}/local_cpu_nodelist) \
+> +      -- <some-program-to-execute>
+> +
+> +================
+> +NUMA Performance
+> +================
+> +
+> +Applications may wish to consider which node they want their memory to
+> +be allocated from based on the node's performance characteristics. If the
+> +system provides these attributes, the kernel exports them under the node
+> +sysfs hierarchy by appending the local_initiator_access directory under
+> +the memory node as follows::
+> +
+> +	/sys/devices/system/node/nodeY/local_initiator_access/
+> +
 
 
-Which makes things much clearer.
+Same here s/local/primary?
 
-Perhaps you want to add a reference to the man page in your text,
-something like?
+> +The kernel does not provide performance attributes for non-local memory
+> +initiators. These attributes apply only to the memory initiator nodes that
+> +have a local_initiatorX link, or are set in the local_cpu_nodelist. A
+> +memory initiator node is considered local to itself if it also is
+> +a memory target and will be set it its node list and map, but won't
+> +contain a symlink to itself.
+> +
+> +The performance characteristics the kernel provides for the local initiators
+> +are exported are as follows::
+> +
+> +	# tree /sys/devices/system/node/nodeY/local_initiator_access
+> +	/sys/devices/system/node/nodeY/local_initiator_access
+> +	|-- read_bandwidth
+> +	|-- read_latency
+> +	|-- write_bandwidth
+> +	`-- write_latency
+> +
+> +The bandwidth attributes are provided in MiB/second.
+> +
+> +The latency attributes are provided in nanoseconds.
+> +
+> +==========
+> +NUMA Cache
+> +==========
+> +
+> +System memory may be constructed in a hierarchy of elements with various
+> +performance characteristics in order to provide large address space
+> +of slower performing memory side-cached by a smaller higher performing
+> +memory. The system physical addresses that initiators are aware of is
+> +provided by the last memory level in the hierarchy, while the system uses
+> +higher performing memory to transparently cache access to progressively
+> +slower levels.
+> +
+> +The term "far memory" is used to denote the last level memory in the
+> +hierarchy. Each increasing cache level provides higher performing
+> +initiator access, and the term "near memory" represents the fastest
+> +cache provided by the system.
+> +
+> +This numbering is different than CPU caches where the cache level (ex:
+> +L1, L2, L3) uses a CPU centric view with each increased level is lower
+> +performing. In contrast, the memory cache level is centric to the last
+> +level memory, so the higher numbered cache level denotes memory nearer
+> +to the CPU, and further from far memory.
+> +
+> +The memory side caches are not directly addressable by software. When
+> +software accesses a system address, the system will return it from the
+> +near memory cache if it is present. If it is not present, the system
+> +accesses the next level of memory until there is either a hit in that
+> +cache level, or it reaches far memory.
+> +
+> +An application does not need to know about caching attributes in order
+> +to use the system, software may optionally query the memory cache
+> +attributes in order to maximize the performance out of such a setup.
+> +If the system provides a way for the kernel to discover this information,
+> +for example with ACPI HMAT (Heterogeneous Memory Attribute Table),
+> +the kernel will append these attributes to the NUMA node memory target.
+> +
+> +When the kernel first registers a memory cache with a node, the kernel
+> +will create the following directory::
+> +
+> +	/sys/devices/system/node/nodeX/side_cache/
+> +
 
-  Furthermore the 'exclude_host' and 'exclude_guest' bits provide a way
-  to request counting of events restricted to guest and host contexts when
-  using virtualisation. See the perf_event_open(2) man page for more
-  detail.
+This is something even the patch commit message didn't explain we create 
+side_cache directory in memory target nodes or initiator nodes? I assume 
+it is part of memory target nodes. If so to be consistent can you use nodeY?
 
 
-cheers
+> +If that directory is not present, the system either does not not provide
+> +a memory side cache, or that information is not accessible to the kernel.
+> +
+> +The attributes for each level of cache is provided under its cache
+> +level index::
+> +
+> +	/sys/devices/system/node/nodeX/side_cache/indexA/
+> +	/sys/devices/system/node/nodeX/side_cache/indexB/
+> +	/sys/devices/system/node/nodeX/side_cache/indexC/
+> +
+> +Each cache level's directory provides its attributes. For example,
+> +the following is a single cache level and the attributes available for
+> +software to query::
+> +
+> +	# tree sys/devices/system/node/node0/side_cache/
+> +	/sys/devices/system/node/node0/side_cache/
+> +	|-- index1
+> +	|   |-- associativity
+> +	|   |-- level
+> +	|   |-- line_size
+> +	|   |-- size
+> +	|   `-- write_policy
+> +
+> +The "associativity" will be 0 if it is a direct-mapped cache, and non-zero
+> +for any other indexed based, multi-way associativity.
+> +
+> +The "level" is the distance from the far memory, and matches the number
+> +appended to its "index" directory.
+> +
+> +The "line_size" is the number of bytes accessed on a cache miss.
+> +
+> +The "size" is the number of bytes provided by this cache level.
+> +
+> +The "write_policy" will be 0 for write-back, and non-zero for
+> +write-through caching.
+> +
+> +See also: https://www.uefi.org/sites/default/files/resources/ACPI_6_2.pdf
+> 
+
