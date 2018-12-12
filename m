@@ -2,179 +2,95 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59837C65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:10:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2120BC65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:11:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15AF32087F
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:10:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fqiNAn3J"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15AF32087F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id C499C20870
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:11:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C499C20870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=solarflare.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728034AbeLLRKF (ORCPT
+        id S1727987AbeLLRLH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 12:10:05 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:40836 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727691AbeLLRKD (ORCPT
+        Wed, 12 Dec 2018 12:11:07 -0500
+Received: from dispatch1-us1.ppe-hosted.com ([67.231.154.164]:34034 "EHLO
+        dispatch1-us1.ppe-hosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726922AbeLLRLH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 12:10:03 -0500
-Received: by mail-ot1-f68.google.com with SMTP id s5so18304533oth.7
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 09:10:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=VMCm0kqjIp/CdDjFajGYlbP/Rx8IRlay7yUUK5VXwrg=;
-        b=fqiNAn3JqiJZVWwZxVO9YNkjhOypy8hU4aB7tWKM6uJVjTEdzxx6l3WhOn2rT24hNn
-         Rt39V54EufpFlqEGmpbDm7vUkIh9aZcWOWw7jJTv/UvIL20Y1UfyiD4eqyJ+fWxGmdCg
-         8P3/Zvyxgcz2GfnI5f+d1rPcCKzhAR3/Q/Tog5sq0mJyx1qLINC3g05WRjKA32hIe2Mh
-         e+/uIECyHH0SNLG4uMET88UFQKsf6kbrlkG9f3AUdgOUOhTuiXr5EI5EL7aSoTdEdaHH
-         ZirL9F65QVR9vCR6LRDI5iywrh+5pddsyFbeux4tzDrm4xaXYksW4d2jgPBIrUU0ivC7
-         Y7ug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=VMCm0kqjIp/CdDjFajGYlbP/Rx8IRlay7yUUK5VXwrg=;
-        b=Z76qDi1GeUxFMNcGiTlUr6VKoQ3mhgDqFQ10jLjyFu62vgF2cHuaqEhjzOyWOiMGl1
-         7lE872AzH9JW8IlPkp1awVhUkDohZJ+nEw4zG4xjYMU5PAEEtU4V/CvgdyM6JfqJ2o1X
-         W1nAZ4gM5N3QN/gnjFV9NjNA2kHnpZlOaxdp9WRHMqqxkDjnvwXR+Et1MBWcal+J08OJ
-         xomskV0Afc28UXhE4W5vvPp4xWepl3b6iaFhCyWB7FYJIIm3cecBwsqKi2QIq1LUMMiP
-         06EGCuPgAJP+unK+GVxvKun2KJ5uLK8fhIwquB6oUvjw2mGTQ7yKFrtVhd81c7l90LwI
-         AsYA==
-X-Gm-Message-State: AA+aEWac2FPVI6QGQsHs5WqEdWHutQ2zIDK82pRedXH4i1HgLMZ4hFYK
-        ekcGAzHz4BkB9IMbK7xxHYI4jACMzJ+ZztLJ6gkysA==
-X-Google-Smtp-Source: AFSGD/UHI/u1T4lraEKfm817NGZLDmde8aZXSyM2lIfkiqE2VOLe6WGkHns8ow0GPNYpJ2HMBFo9iM+v0IHhBrOWT4A=
-X-Received: by 2002:a9d:460e:: with SMTP id y14mr15481648ote.198.1544634602121;
- Wed, 12 Dec 2018 09:10:02 -0800 (PST)
+        Wed, 12 Dec 2018 12:11:07 -0500
+X-Virus-Scanned: Proofpoint Essentials engine
+Received: from webmail.solarflare.com (webmail.solarflare.com [12.187.104.26])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mx1-us3.ppe-hosted.com (Proofpoint Essentials ESMTP Server) with ESMTPS id 7D2719C00EA;
+        Wed, 12 Dec 2018 17:11:05 +0000 (UTC)
+Received: from ec-desktop.uk.solarflarecom.com (10.17.20.45) by
+ ocex03.SolarFlarecom.com (10.20.40.36) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 12 Dec 2018 09:11:01 -0800
+Subject: Re: [PATCH v2 0/4] Static calls
+To:     Nadav Amit <namit@vmware.com>, Josh Poimboeuf <jpoimboe@redhat.com>
+CC:     LKML <linux-kernel@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+References: <cover.1543200841.git.jpoimboe@redhat.com>
+ <0e96ac37-d5c5-86b6-833c-0de01ba18f0d@solarflare.com>
+ <20181211180521.ljdvnnztjnvoijge@treble>
+ <86D72260-838C-4CE0-ACE3-BE92A3E9CFD8@vmware.com>
+From:   Edward Cree <ecree@solarflare.com>
+Message-ID: <899194d1-9777-71ed-70db-212d2983a400@solarflare.com>
+Date:   Wed, 12 Dec 2018 17:11:00 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-References: <20181212081712.32347-1-mic@digikod.net> <20181212081712.32347-4-mic@digikod.net>
-In-Reply-To: <20181212081712.32347-4-mic@digikod.net>
-From:   Jann Horn <jannh@google.com>
-Date:   Wed, 12 Dec 2018 18:09:35 +0100
-Message-ID: <CAG48ez3SAW8EyaJ9T1U3qPoRhYwe4CCyL9bAxuc3GxjrXipi-A@mail.gmail.com>
-Subject: Re: [RFC PATCH v1 3/5] Yama: Enforces noexec mounts or file
- executability through O_MAYEXEC
-To:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc:     kernel list <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        James Morris <jmorris@namei.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Matthew Garrett <mjg59@google.com>,
-        Michael Kerrisk-manpages <mtk.manpages@gmail.com>,
-        mickael.salaun@ssi.gouv.fr, zohar@linux.ibm.com,
-        philippe.trebuchet@ssi.gouv.fr, shuah@kernel.org,
-        thibaut.sautereau@ssi.gouv.fr, vincent.strubel@ssi.gouv.fr,
-        yves-alexis.perez@ssi.gouv.fr,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <86D72260-838C-4CE0-ACE3-BE92A3E9CFD8@vmware.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Content-Language: en-GB
+X-Originating-IP: [10.17.20.45]
+X-TM-AS-Product-Ver: SMEX-12.5.0.1300-8.5.1010-24280.005
+X-TM-AS-Result: No-6.570200-4.000000-10
+X-TMASE-MatchedRID: scwq2vQP8OEOwH4pD14DsPHkpkyUphL9EtdrY/Wb3fNtw+n+iKWyyE7d
+        KmAMKi3ayBGYSGbi6KF6NFxU6UzhW8uY+x+wpWIHz5rIW0RbS5gVATEbq/G3PMzx6z1tcKfOYz3
+        gRzJw0jBSVviQICSjpMt3+x4RStaZZfoccan3KT5PtFVFuufzC+imxgRHwEwm9VvJjT/N2QZrQn
+        EsHq4OJm6J2zhTMQBN6zOSo1h3c0DoQeawBxNOVh47EGkpGeA9fS0Ip2eEHnzWRN8STJpl3PoLR
+        4+zsDTtFAQvQYa7pINDddl/4iE1w6CscJepy2nYf/j3Wkumya0O4NLXne7mHg==
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--6.570200-4.000000
+X-TMASE-Version: SMEX-12.5.0.1300-8.5.1010-24280.005
+X-MDID: 1544634665-DQ6y6pfxDdmd
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 12, 2018 at 9:18 AM Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> =
-wrote:
-> Enable to either propagate the mount options from the underlying VFS
-> mount to prevent execution, or to propagate the file execute permission.
-> This may allow a script interpreter to check execution permissions
-> before reading commands from a file.
->
-> The main goal is to be able to protect the kernel by restricting
-> arbitrary syscalls that an attacker could perform with a crafted binary
-> or certain script languages.  It also improves multilevel isolation
-> by reducing the ability of an attacker to use side channels with
-> specific code.  These restrictions can natively be enforced for ELF
-> binaries (with the noexec mount option) but require this kernel
-> extension to properly handle scripts (e.g., Python, Perl).
->
-> Add a new sysctl kernel.yama.open_mayexec_enforce to control this
-> behavior.  A following patch adds documentation.
->
-> Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
-> Reviewed-by: Philippe Tr=C3=A9buchet <philippe.trebuchet@ssi.gouv.fr>
-> Reviewed-by: Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Micka=C3=ABl Sala=C3=BCn <mickael.salaun@ssi.gouv.fr>
-> ---
-[...]
-> +/**
-> + * yama_inode_permission - check O_MAYEXEC permission before accessing a=
-n inode
-> + * @inode: inode structure to check
-> + * @mask: permission mask
-> + *
-> + * Return 0 if access is permitted, -EACCES otherwise.
-> + */
-> +int yama_inode_permission(struct inode *inode, int mask)
+On 12/12/18 05:59, Nadav Amit wrote:
+> Thanks for cc’ing me. (I didn’t know about the other patch-sets.)
+Well in my case, that's because I haven't posted any yet.  (Will follow up
+ shortly with what I currently have, though it's not pretty.)
 
-This should be static, no?
+Looking at your patches, it seems you've got a much more developed learning
+ mechanism.  Mine on the other hand is brutally simple but runs continuously
+ (i.e. after we patch we immediately enter the next 'relearning' phase);
+ since it never does anything but prod a handful of percpu variables, this
+ shouldn't be too costly.
 
-> +{
-> +       if (!(mask & MAY_OPENEXEC))
-> +               return 0;
-> +       /*
-> +        * Match regular files and directories to make it easier to
-> +        * modify script interpreters.
-> +        */
-> +       if (!S_ISREG(inode->i_mode) && !S_ISDIR(inode->i_mode))
-> +               return 0;
+Also, you've got the macrology for making all indirect calls use this,
+ whereas at present I just have an open-coded instance on a single call site
+ (I went with deliver_skb in the networking stack).
 
-So files are subject to checks, but loading code from things like
-sockets is always fine?
+So I think where we probably want to go from here is:
+ 1) get Josh's static_calls in.  AIUI Linus seems to prefer the out-of-line
+    approach; I'd say ditch the inline version (at least for now).
+ 2) build a relpolines patch series that uses
+   i) static_calls for the text-patching part
+  ii) as much of Nadav's macrology as is applicable
+ iii) either my or Nadav's learning mechanism; we can experiment with both,
+      bikeshed it incessantly etc.
 
-> +       if ((open_mayexec_enforce & YAMA_OMAYEXEC_ENFORCE_MOUNT) &&
-> +                       !(mask & MAY_EXECMOUNT))
-> +               return -EACCES;
-> +
-> +       /*
-> +        * May prefer acl_permission_check() instead of generic_permissio=
-n(),
-> +        * to not be bypassable with CAP_DAC_READ_SEARCH.
-> +        */
-> +       if (open_mayexec_enforce & YAMA_OMAYEXEC_ENFORCE_FILE)
-> +               return generic_permission(inode, MAY_EXEC);
-> +
-> +       return 0;
-> +}
-> +
->  static struct security_hook_list yama_hooks[] __lsm_ro_after_init =3D {
-> +       LSM_HOOK_INIT(inode_permission, yama_inode_permission),
->         LSM_HOOK_INIT(ptrace_access_check, yama_ptrace_access_check),
->         LSM_HOOK_INIT(ptrace_traceme, yama_ptrace_traceme),
->         LSM_HOOK_INIT(task_prctl, yama_task_prctl),
-> @@ -447,6 +489,37 @@ static int yama_dointvec_minmax(struct ctl_table *ta=
-ble, int write,
->         return proc_dointvec_minmax(&table_copy, write, buffer, lenp, ppo=
-s);
->  }
->
-> +static int yama_dointvec_bitmask_macadmin(struct ctl_table *table, int w=
-rite,
-> +                                         void __user *buffer, size_t *le=
-np,
-> +                                         loff_t *ppos)
-> +{
-> +       int error;
-> +
-> +       if (write) {
-> +               struct ctl_table table_copy;
-> +               int tmp_mayexec_enforce;
-> +
-> +               if (!capable(CAP_MAC_ADMIN))
-> +                       return -EPERM;
+Seem reasonable?
 
-Don't put capable() checks in sysctls, it doesn't work.
+-Ed
