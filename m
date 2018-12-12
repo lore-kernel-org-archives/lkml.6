@@ -2,295 +2,142 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C80DC6783B
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 00:43:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA878C6783B
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 00:43:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3943320851
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 00:43:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3943320851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
+	by mail.kernel.org (Postfix) with ESMTP id AF6BF20851
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 00:43:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jAZGVVdX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF6BF20851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726255AbeLLAn0 (ORCPT
+        id S1726285AbeLLAnq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 19:43:26 -0500
-Received: from muru.com ([72.249.23.125]:57564 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726201AbeLLAnZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 19:43:25 -0500
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 8CFDB8027;
-        Wed, 12 Dec 2018 00:43:26 +0000 (UTC)
-Date:   Tue, 11 Dec 2018 16:43:20 -0800
-From:   Tony Lindgren <tony@atomide.com>
-To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc:     Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Jarkko Nikula <jarkko.nikula@bitmer.com>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>
-Subject: Re: [PATCH 0/2] Graph fixes for using multiple endpoints per port
-Message-ID: <20181212004320.GY6707@atomide.com>
-References: <20181211020557.61783-1-tony@atomide.com>
- <8736r4bvf3.wl-kuninori.morimoto.gx@renesas.com>
- <20181211045220.GI6707@atomide.com>
- <871s6obqkb.wl-kuninori.morimoto.gx@renesas.com>
- <20181211053536.GJ6707@atomide.com>
- <87wooga9an.wl-kuninori.morimoto.gx@renesas.com>
- <20181211141649.GL6707@atomide.com>
- <87ftv33bpg.wl-kuninori.morimoto.gx@renesas.com>
- <87efan393s.wl-kuninori.morimoto.gx@renesas.com>
+        Tue, 11 Dec 2018 19:43:46 -0500
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:45968 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726201AbeLLAnq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 19:43:46 -0500
+Received: by mail-yb1-f196.google.com with SMTP id r11so2604671ybp.12
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 16:43:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=d3xtEvXqceq0DWNNuQWIHebgEuqqjFWJeyB4z6u7I0w=;
+        b=jAZGVVdXh+CMm1g4gkxz0pwI2W1lVXEYVHesinO0tIgfC7s223mQx1MTXVyOtOcsLo
+         u8EYM2Am3U2dhoPVh74+AwyzzVfj8xDrquU4jmdliKIYN6QiVasgjXTApeg9hROHU8pt
+         FRbZ8PVyojdLEtLU9r1ZXu8+V7NjOMnFbZouo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=d3xtEvXqceq0DWNNuQWIHebgEuqqjFWJeyB4z6u7I0w=;
+        b=hXZ28bYL/4PIA6bKnc2DDsHmGe5t+Cjft4FVYTNDyokb0J2SM7CkoY/lLEAw9nxRlK
+         +r5V0uaCRdEmZ6/zWrV7BeIDorsaFCveHqHrWu/lOEQZ+hl/ce0hc97Qj8Jgcbb33WRd
+         MQKhR7ozXyd6BN5sR7n8rGCWnk+aMAp0Myw3fIScqoUwJ8Eh4rJGwEeNG8Qoho2gpaxN
+         yTn3808U/YmbnHDQkrBwjOiM6QSudztCRhnEqQgNMyidOuWV2PLd70J0wgUcNcELO943
+         SvnTnWfMLSptG8bUpTixnQO5Pq4L6gGJTOIBBoXsEuepVggL9OsNuHPkr9d4m2VRj4MW
+         sxuw==
+X-Gm-Message-State: AA+aEWa7TwoPxiXvqgqzo3/LAFAKeRzUdrdpmrFI1BwXSGqOYeXz7+FE
+        YVkQCGcPELiZDReEgHv1dygSCs+OnRw=
+X-Google-Smtp-Source: AFSGD/XVfoX2e+bLAfRcqZ80zSNevczMSa/paYz21nf2aWbAme0p6x7RJKlK5crKVuBDb67/Cry/GA==
+X-Received: by 2002:a25:6f86:: with SMTP id k128-v6mr18107381ybc.235.1544575424945;
+        Tue, 11 Dec 2018 16:43:44 -0800 (PST)
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com. [209.85.219.179])
+        by smtp.gmail.com with ESMTPSA id q185sm4902591ywe.87.2018.12.11.16.43.43
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 11 Dec 2018 16:43:43 -0800 (PST)
+Received: by mail-yb1-f179.google.com with SMTP id m129so821278ybf.9
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 16:43:43 -0800 (PST)
+X-Received: by 2002:a25:a445:: with SMTP id f63-v6mr17723349ybi.171.1544575423429;
+ Tue, 11 Dec 2018 16:43:43 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87efan393s.wl-kuninori.morimoto.gx@renesas.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20181206235038.GA18273@beast>
+In-Reply-To: <20181206235038.GA18273@beast>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Tue, 11 Dec 2018 16:43:31 -0800
+X-Gmail-Original-Message-ID: <CAGXu5jJ-OZho9Ft7imNuayNjr0Rnz3p4sKg-yZp2_d4go=G9fA@mail.gmail.com>
+Message-ID: <CAGXu5jJ-OZho9Ft7imNuayNjr0Rnz3p4sKg-yZp2_d4go=G9fA@mail.gmail.com>
+Subject: Re: [PATCH] selftests/seccomp: Remove SIGSTOP si_pid check
+To:     Shuah Khan <shuah@kernel.org>
+Cc:     Tycho Andersen <tycho@tycho.ws>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Kuninori Morimoto <kuninori.morimoto.gx@renesas.com> [181212 00:12]:
-> 
-> Hi Tony, again
-> 
-> > > The issue I have with that it does not then follow the binding doc :)
-> > > 
-> > > See this part in Documentation/devicetree/bindings/graph.txt:
-> > > 
-> > >  "If a single port is connected to more than one remote device, an
-> > >  'endpoint' child node must be provided for each link."
-> 
-> My understanding is that 1 "port" is for 1 "physical interface".
+On Thu, Dec 6, 2018 at 3:50 PM Kees Cook <keescook@chromium.org> wrote:
+>
+> Commit f149b3155744 ("signal: Never allocate siginfo for SIGKILL or SIGSTOP")
+> means that the seccomp selftest cannot check si_pid under SIGSTOP anymore.
+> Since it's believed[1] there are no other userspace things depending on the
+> old behavior, this removes the behavioral check in the selftest, since it's
+> more a "extra" sanity check (which turns out, maybe, not to have been
+> useful to test).
+>
+> [1] https://lkml.kernel.org/r/CAGXu5jJaZAOzP1qFz66tYrtbuywqb+UN2SOA1VLHpCCOiYvYeg@mail.gmail.com
+>
+> Reported-by: Tycho Andersen <tycho@tycho.ws>
+> Suggested-by: Eric W. Biederman <ebiederm@xmission.com>
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> ---
+> Shuah, can you make sure that Linus gets this before v4.20 is released? Thanks!
 
-Yes I agree.
+Ping. Shuah, can you get this to Linus (or should I send it directly?)
 
-> In sound case, it is 1 "DAI".
-> And, 1 "endpoint" is for 1 "connection".
+Thanks!
 
-Yes. So I have 1 physical port (mcbsp) TDM split between
-two codecs (cpcap and mdm).
+-Kees
 
-> 	"If a single port is connected to more than one remote device, an
-> 	'endpoint' child node must be provided for each link."
-> 
-> This meanns, "If 1 DAI (*1) is connected to multiple remote DAIs(*2),
-> this connection is indicated by multiple "endpoint"" or something like that.
-> 
-> (*2)
-> DAIA-endpoint---endpoint--\
-> DAIB-endpoint---endpoint-----DAI (*1)
-> DAIC-endpoint---endpoint--/
 
-Yeah. So the only thing missing is parsing multiple endpoints
-at the DAI end :) And that's why the two patches I posted.
+> ---
+>  tools/testing/selftests/seccomp/seccomp_bpf.c | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
+>
+> diff --git a/tools/testing/selftests/seccomp/seccomp_bpf.c b/tools/testing/selftests/seccomp/seccomp_bpf.c
+> index e1473234968d..c9a2abf8be1b 100644
+> --- a/tools/testing/selftests/seccomp/seccomp_bpf.c
+> +++ b/tools/testing/selftests/seccomp/seccomp_bpf.c
+> @@ -2731,9 +2731,14 @@ TEST(syscall_restart)
+>         ASSERT_EQ(child_pid, waitpid(child_pid, &status, 0));
+>         ASSERT_EQ(true, WIFSTOPPED(status));
+>         ASSERT_EQ(SIGSTOP, WSTOPSIG(status));
+> -       /* Verify signal delivery came from parent now. */
+>         ASSERT_EQ(0, ptrace(PTRACE_GETSIGINFO, child_pid, NULL, &info));
+> -       EXPECT_EQ(getpid(), info.si_pid);
+> +       /*
+> +        * There is no siginfo on SIGSTOP any more, so we can't verify
+> +        * signal delivery came from parent now (getpid() == info.si_pid).
+> +        * https://lkml.kernel.org/r/CAGXu5jJaZAOzP1qFz66tYrtbuywqb+UN2SOA1VLHpCCOiYvYeg@mail.gmail.com
+> +        * At least verify the SIGSTOP via PTRACE_GETSIGINFO.
+> +        */
+> +       EXPECT_EQ(SIGSTOP, info.si_signo);
+>
+>         /* Restart nanosleep with SIGCONT, which triggers restart_syscall. */
+>         ASSERT_EQ(0, kill(child_pid, SIGCONT));
+> --
+> 2.17.1
+>
+>
+> --
+> Kees Cook
 
-> > > Isn't the I2C TDM case the same as "single port connecected to
-> > > more than one remote device" rather than multiple ports?
-> 
-> I re-checked https://lkml.org/lkml/2018/3/28/405.
-> Are MDM6600 / OMAP4 CPU portion, and are CPCAP / WL1285 Codec portion ?
 
-MDM6600 is a Qualcomm modem running Motorola custom firmware
-CPCAP is a Motorola custom PMIC for omap4430 SoC
-WL128 is a WLAN and Bluetooth chip
 
-So following your drawing above:
-
-There are two separate McBSP instances, here's the one
-in question:
-
-MDM6600 modem-----endpoint--\
-CPCAP PMIC codec2-endpoint----McBSP3 on SoC
-WL1285 Bluetooth--endpoint--/
-
-The other McBSP instance is dedicated for SoC audio:
-
-CPCAP PMIC codec1-endpoint---McBSP3 on SoC
-
-> Then, it is not yet supported (on ALSA SoC level?).
-
-Only the cpcap codec is in the mainline currently, the mdm
-codec driver has not yet been posted as it depends on some
-ts 27.010 serdev patches.
-
-> If my memory was correct, Lars-Peter had some idea for Mux,
-> But, not yet implemented I think.
-
-Hmm well I don't think much else is needed currently, we
-already have everything needed at the ASoC level. See yet
-another WIP patch configuring the TDM for mdm codec voice
-call by the existing cpcap codec driver below just by
-implementing .set_tdm_slot function.
-
-> audio-graph[-scu] / simple-card[-scu] are supporting DPCM,
-> but it is for multiple CPU - single Codec.
-
-Well with my patches I certainly have the above configuration
-working just fine with two audio-graph-card instances connected
-to a single physical McBSP port.
-
-Regards,
-
-Tony
-
-8< --------------------
-diff --git a/sound/soc/codecs/cpcap.c b/sound/soc/codecs/cpcap.c
---- a/sound/soc/codecs/cpcap.c
-+++ b/sound/soc/codecs/cpcap.c
-@@ -16,6 +16,14 @@
- #include <sound/soc.h>
- #include <sound/tlv.h>
- 
-+/* Register 512 CPCAP_REG_VAUDIOC --- Audio Regulator and Bias Voltage */
-+#define CPCAP_BIT_AUDIO_LOW_PWR           6
-+#define CPCAP_BIT_AUD_LOWPWR_SPEED        5
-+#define CPCAP_BIT_VAUDIOPRISTBY           4
-+#define CPCAP_BIT_VAUDIO_MODE1            2
-+#define CPCAP_BIT_VAUDIO_MODE0            1
-+#define CPCAP_BIT_V_AUDIO_EN              0
-+
- /* Register 513 CPCAP_REG_CC     --- CODEC */
- #define CPCAP_BIT_CDC_CLK2                15
- #define CPCAP_BIT_CDC_CLK1                14
-@@ -251,6 +259,8 @@ struct cpcap_audio {
- 	int codec_clk_id;
- 	int codec_freq;
- 	int codec_format;
-+
-+	unsigned int voice_call:1;
- };
- 
- static int cpcap_st_workaround(struct snd_soc_dapm_widget *w,
-@@ -1370,6 +1380,114 @@ static int cpcap_voice_set_dai_fmt(struct snd_soc_dai *codec_dai,
- 	return 0;
- }
- 
-+/*
-+ * Configure voice call if cpcap->voice_call is set.
-+ *
-+ * We can configure most with snd_soc_dai_set_sysclk(), snd_soc_dai_set_fmt()
-+ * and snd_soc_dai_set_tdm_slot(). This function configures the rest of the
-+ * cpcap related hardware piceses as CPU is not involved in the voice call.
-+ */
-+static int cpcap_voice_call(struct snd_soc_dai *dai)
-+{
-+	struct snd_soc_component *component = dai->component;
-+	struct cpcap_audio *cpcap = snd_soc_component_get_drvdata(component);
-+	int mask, err;
-+
-+	/* Maybe enable modem to codec VAUDIO_MODE1? */
-+	mask = BIT(CPCAP_BIT_VAUDIO_MODE1);
-+	err = regmap_update_bits(cpcap->regmap, CPCAP_REG_VAUDIOC,
-+				 mask, cpcap->voice_call ? mask : 0);
-+	if (err)
-+		return err;
-+
-+	/* Maybe clear MIC1_MUX? */
-+	mask = BIT(CPCAP_BIT_MIC1_MUX);
-+	err = regmap_update_bits(cpcap->regmap, CPCAP_REG_TXI,
-+				 mask, cpcap->voice_call ? 0 : mask);
-+	if (err)
-+		return err;
-+
-+	/* Maybe set MIC2_MUX? */
-+	mask = BIT(CPCAP_BIT_MB_ON1L) | BIT(CPCAP_BIT_MB_ON1R) |
-+		BIT(CPCAP_BIT_MIC2_MUX) | BIT(CPCAP_BIT_MIC2_PGA_EN);
-+	err = regmap_update_bits(cpcap->regmap, CPCAP_REG_TXI,
-+				 mask, cpcap->voice_call ? mask : 0);
-+	if (err)
-+		return err;
-+
-+	/* Maybe enable LDSP? */
-+	mask = BIT(CPCAP_BIT_A2_LDSP_L_EN) | BIT(CPCAP_BIT_A2_LDSP_R_EN);
-+	err = regmap_update_bits(cpcap->regmap, CPCAP_REG_RXOA,
-+				 mask, cpcap->voice_call ? mask : 0);
-+	if (err)
-+		return err;
-+
-+	/* Maybe enable CPCAP_BIT_PGA_CDC_EN for call? */
-+	mask = BIT(CPCAP_BIT_PGA_CDC_EN);
-+	err = regmap_update_bits(cpcap->regmap, CPCAP_REG_RXCOA,
-+				 mask, cpcap->voice_call ? mask : 0);
-+	if (err)
-+		return err;
-+
-+	/* Maybe unmute voice? */
-+	err = snd_soc_dai_digital_mute(dai, !cpcap->voice_call,
-+				       SNDRV_PCM_STREAM_PLAYBACK);
-+	if (err)
-+		return err;
-+
-+	/* Maybe enable modem to codec mic CDC and HPF? */
-+	mask = BIT(CPCAP_BIT_MIC2_CDC_EN) | BIT(CPCAP_BIT_CDC_EN_RX) |
-+	       BIT(CPCAP_BIT_AUDOHPF_1) | BIT(CPCAP_BIT_AUDOHPF_0) |
-+	       BIT(CPCAP_BIT_AUDIHPF_1) | BIT(CPCAP_BIT_AUDIHPF_0);
-+	err = regmap_update_bits(cpcap->regmap, CPCAP_REG_CC,
-+				 mask, cpcap->voice_call ? mask : 0);
-+	if (err)
-+		return err;
-+
-+	/* Maybe enable modem to codec CDC? */
-+	mask = BIT(CPCAP_BIT_CDC_CLK_EN);
-+	err = regmap_update_bits(cpcap->regmap, CPCAP_REG_CDI,
-+				 mask, cpcap->voice_call ? mask : 0);
-+
-+	return err;
-+}
-+
-+static int cpcap_voice_set_tdm_slot(struct snd_soc_dai *dai,
-+				    unsigned int tx_mask, unsigned int rx_mask,
-+				    int slots, int slot_width)
-+{
-+	struct snd_soc_component *component = dai->component;
-+	struct cpcap_audio *cpcap = snd_soc_component_get_drvdata(component);
-+	int err, ts_mask, mask;
-+
-+	/* Modem to codec audio with no CPU involved? */
-+	if (tx_mask == 0 && rx_mask == 1 && slot_width == 8)
-+		cpcap->voice_call = true;
-+	else
-+		cpcap->voice_call = false;
-+
-+	ts_mask = 0x7 << CPCAP_BIT_MIC2_TIMESLOT0;
-+	ts_mask |= 0x7 << CPCAP_BIT_MIC1_RX_TIMESLOT0;
-+
-+	mask = (tx_mask & 0x7) << CPCAP_BIT_MIC2_TIMESLOT0;
-+	mask |= (rx_mask & 0x7) << CPCAP_BIT_MIC1_RX_TIMESLOT0;
-+
-+	err = regmap_update_bits(cpcap->regmap, CPCAP_REG_CDI,
-+				 ts_mask, mask);
-+	if (err)
-+		return err;
-+
-+	err = cpcap_set_samprate(cpcap, CPCAP_DAI_VOICE, slot_width * 1000);
-+	if (err)
-+		return err;
-+
-+	err = cpcap_voice_call(dai);
-+	if (err)
-+		return err;
-+
-+	return 0;
-+}
-+
- static int cpcap_voice_set_mute(struct snd_soc_dai *dai, int mute)
- {
- 	struct snd_soc_component *component = dai->component;
-@@ -1391,6 +1509,7 @@ static const struct snd_soc_dai_ops cpcap_dai_voice_ops = {
- 	.hw_params	= cpcap_voice_hw_params,
- 	.set_sysclk	= cpcap_voice_set_dai_sysclk,
- 	.set_fmt	= cpcap_voice_set_dai_fmt,
-+	.set_tdm_slot	= cpcap_voice_set_tdm_slot,
- 	.digital_mute	= cpcap_voice_set_mute,
- };
- 
+-- 
+Kees Cook
