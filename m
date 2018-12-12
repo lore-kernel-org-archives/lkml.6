@@ -2,106 +2,204 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4286C65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 12:32:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0E60C04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 12:35:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95B1520849
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 12:32:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95B1520849
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lip6.fr
+	by mail.kernel.org (Postfix) with ESMTP id 2EC1E20870
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 12:35:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=oberhumer.com header.i=@oberhumer.com header.b="jq0ueuUt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EC1E20870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=oberhumer.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727496AbeLLMci (ORCPT
+        id S1727423AbeLLMfU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 07:32:38 -0500
-Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:21783 "EHLO
-        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727155AbeLLMcZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 07:32:25 -0500
-X-IronPort-AV: E=Sophos;i="5.56,344,1539640800"; 
-   d="scan'208";a="359976181"
-Received: from palace.rsr.lip6.fr (HELO palace.lip6.fr) ([132.227.105.202])
-  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/AES128-SHA256; 12 Dec 2018 13:32:22 +0100
-From:   Julia Lawall <Julia.Lawall@lip6.fr>
-To:     Julia Lawall <Julia.Lawall@lip6.fr>
-Cc:     Gilles Muller <Gilles.Muller@lip6.fr>,
-        Nicolas Palix <nicolas.palix@imag.fr>,
-        Michal Marek <michal.lkml@markovi.net>, cocci@systeme.lip6.fr,
-        linux-kernel@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E . McKenney" <paulmck@linux.ibm.com>
-Subject: [PATCH 2/2] scripts: coccinelle: Correct warning message
-Date:   Wed, 12 Dec 2018 12:55:57 +0100
-Message-Id: <1544615757-19356-3-git-send-email-Julia.Lawall@lip6.fr>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1544615757-19356-1-git-send-email-Julia.Lawall@lip6.fr>
-References: <1544615757-19356-1-git-send-email-Julia.Lawall@lip6.fr>
+        Wed, 12 Dec 2018 07:35:20 -0500
+Received: from mail.servus.at ([193.170.194.20]:60630 "EHLO mail.servus.at"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727155AbeLLMfT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 07:35:19 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by mail.servus.at (Postfix) with ESMTP id 91DEB301A5C8;
+        Wed, 12 Dec 2018 13:35:17 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=oberhumer.com; h=
+        content-transfer-encoding:content-type:content-type:in-reply-to
+        :mime-version:user-agent:date:date:message-id:organization:from
+        :from:references:subject:subject:received:received; s=main; t=
+        1544618115; x=1546432516; bh=qb2Chckqtmc3bQ4jj67gsclV812xFuSP6lI
+        9wl5f670=; b=jq0ueuUtHOZmEgDh5T9Ooa3sS/y3cnvNOmo7Nhp3FPw2mHQPslK
+        8MwQUIdp/GgI7/12Ge0TnejPCGM0Nh04MURGYZp5q36/RGL4eevA6OyuYRVdxmQk
+        2b06ukVGOoN505jM1Gnuxdgerxv/SFlXjXUoIKXMdiPdImz5Da1RFXG4=
+X-Virus-Scanned: amavisd-new at servus.at
+Received: from mail.servus.at ([127.0.0.1])
+        by localhost (mail.servus.at [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id WCRBeIks3PeO; Wed, 12 Dec 2018 13:35:15 +0100 (CET)
+Received: from [192.168.216.53] (unknown [81.10.228.128])
+        (Authenticated sender: oh_markus)
+        by mail.servus.at (Postfix) with ESMTPSA id 5018A301A5C0;
+        Wed, 12 Dec 2018 13:35:15 +0100 (CET)
+Subject: Re: [PATCH v2] lzo: fix ip overrun during compress.
+To:     Yueyi Li <liyueyi@live.com>, "dsterba@suse.cz" <dsterba@suse.cz>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "w@1wt.eu" <w@1wt.eu>,
+        "donb@securitymouse.com" <donb@securitymouse.com>,
+        Jiri Kosina <jikos@kernel.org>
+References: <BLUPR13MB0289EFEB79833470EE62F48EDFD10@BLUPR13MB0289.namprd13.prod.outlook.com>
+ <20181128135242.gy3avmbp2pdmjaka@twin.jikos.cz>
+ <5C0654EE.5040001@oberhumer.com>
+ <SN1PR13MB030484F09EE8A00DB094CDFADFA80@SN1PR13MB0304.namprd13.prod.outlook.com>
+ <5C093A30.4020705@oberhumer.com>
+ <BLUPR13MB0289EC81589A10E95912675FDFA70@BLUPR13MB0289.namprd13.prod.outlook.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From:   "Markus F.X.J. Oberhumer" <markus@oberhumer.com>
+Organization: oberhumer.com
+Message-ID: <5C110083.8060502@oberhumer.com>
+Date:   Wed, 12 Dec 2018 13:35:15 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.3.0
+MIME-Version: 1.0
+In-Reply-To: <BLUPR13MB0289EC81589A10E95912675FDFA70@BLUPR13MB0289.namprd13.prod.outlook.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-"Assignment" requires the assigned value before the place that
-value is stored into.
+I still claim that (0xfffffffffffff000, 4096) is not a valid C "pointer
+to an object" according to the C standard - please see my reply below.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
----
- scripts/coccinelle/misc/boolinit.cocci | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+And I thought ASLR was introduced to improve security and not to create
+new security problems - someone from the ASLR team has to comment on this.
 
-diff --git a/scripts/coccinelle/misc/boolinit.cocci b/scripts/coccinelle/misc/boolinit.cocci
-index 1b44feb..b0584a3 100644
---- a/scripts/coccinelle/misc/boolinit.cocci
-+++ b/scripts/coccinelle/misc/boolinit.cocci
-@@ -150,19 +150,19 @@ cocci.print_main("WARNING: Comparison to bool",p)
- p << r2.p;
- @@
- 
--cocci.print_main("WARNING: Comparison of bool to 0/1",p)
-+cocci.print_main("WARNING: Comparison of 0/1 to bool variable",p)
- 
- @script:python depends on org@
- p1 << r3.p1;
- @@
- 
--cocci.print_main("WARNING: Assignment of bool to 0/1",p1)
-+cocci.print_main("WARNING: Assignment of 0/1 to bool variable",p1)
- 
- @script:python depends on org@
- p2 << r4.p2;
- @@
- 
--cocci.print_main("ERROR: Assignment of bool to non-0/1 constant",p2)
-+cocci.print_main("ERROR: Assignment of non-0/1 constant to bool variable",p2)
- 
- @script:python depends on report@
- p << r1.p;
-@@ -174,16 +174,16 @@ coccilib.report.print_report(p[0],"WARNING: Comparison to bool")
- p << r2.p;
- @@
- 
--coccilib.report.print_report(p[0],"WARNING: Comparison of bool to 0/1")
-+coccilib.report.print_report(p[0],"WARNING: Comparison of 0/1 to bool variable")
- 
- @script:python depends on report@
- p1 << r3.p1;
- @@
- 
--coccilib.report.print_report(p1[0],"WARNING: Assignment of bool to 0/1")
-+coccilib.report.print_report(p1[0],"WARNING: Assignment of 0/1 to bool variable")
- 
- @script:python depends on report@
- p2 << r4.p2;
- @@
- 
--coccilib.report.print_report(p2[0],"ERROR: Assignment of bool to non-0/1 constant")
-+coccilib.report.print_report(p2[0],"ERROR: Assignment of non-0/1 constant to bool variable")
+Cheers,
+Markus
+
+
+On 2018-12-12 06:21, Yueyi Li wrote:
+> Hi Markus,
+> 
+> OK, thanks. I`ll change it in v3.
+> 
+> Thanks,
+> Yueyi
+> 
+> On 2018/12/6 23:03, Markus F.X.J. Oberhumer wrote:
+>> Hi Yueyi,
+>>
+>> yes, my LZO patch works for all cases.
+>>
+>> The reason behind the issue in the first place is that if KASLR
+>> includes the very last page 0xfffffffffffff000 then we do not have a
+>> valid C "pointer to an object" anymore because of address wraparound.
+>>
+>> Unrelated to my patch I'd argue that KASLR should *NOT* include the
+>> very last page - indeed that might cause similar wraparound problems
+>> in lots of code.
+>>
+>> Eg, look at this simple clear_memory() implementation:
+>>
+>> void clear_memory(char *p, size_t len) {
+>>          char *end = p + len;
+>>          while (p < end)
+>>                  *p++= 0;
+>> }
+>>
+>> Valid code like this will fail horribly when (p, len) is the very
+>> last virtual page (because end will be the NULL pointer in this case).
+>>
+>> Cheers,
+>> Markus
+>>
+>>
+>>
+>> On 2018-12-05 04:07, Yueyi Li wrote:
+>>> Hi Markus,
+>>>
+>>> Thanks for your review.
+>>>
+>>> On 2018/12/4 18:20, Markus F.X.J. Oberhumer wrote:
+>>>> Hi,
+>>>>
+>>>> I don't think that address space wraparound is legal in C, but I
+>>>> understand that we are in kernel land and if you really want to
+>>>> compress the last virtual page 0xfffffffffffff000 the following
+>>>> small patch should fix that dubious case.
+>>> I guess the VA 0xfffffffffffff000 is available because KASLR be
+>>> enabled. For this case we can see:
+>>>
+>>> crash> kmem 0xfffffffffffff000
+>>>         PAGE               PHYSICAL      MAPPING       INDEX CNT FLAGS
+>>> ffffffbfffffffc0        1fffff000 ffffffff1655ecb9  7181fd5  2
+>>> 8000000000064209 locked,uptodate,owner_priv_1,writeback,reclaim,swapbacked
+>>>
+>>>> This also avoids slowing down the the hot path of the compression
+>>>> core function.
+>>>>
+>>>> Cheers,
+>>>> Markus
+>>>>
+>>>>
+>>>>
+>>>> diff --git a/lib/lzo/lzo1x_compress.c b/lib/lzo/lzo1x_compress.c
+>>>> index 236eb21167b5..959dec45f6fe 100644
+>>>> --- a/lib/lzo/lzo1x_compress.c
+>>>> +++ b/lib/lzo/lzo1x_compress.c
+>>>> @@ -224,8 +224,8 @@ int lzo1x_1_compress(const unsigned char *in, size_t in_len,
+>>>>    
+>>>>           while (l > 20) {
+>>>>                   size_t ll = l <= (M4_MAX_OFFSET + 1) ? l : (M4_MAX_OFFSET + 1);
+>>>> -               uintptr_t ll_end = (uintptr_t) ip + ll;
+>>>> -               if ((ll_end + ((t + ll) >> 5)) <= ll_end)
+>>>> +               // check for address space wraparound
+>>>> +               if (((uintptr_t) ip + ll + ((t + ll) >> 5)) <= (uintptr_t) ip)
+>>>>                           break;
+>>>>                   BUILD_BUG_ON(D_SIZE * sizeof(lzo_dict_t) > LZO1X_1_MEM_COMPRESS);
+>>>>                   memset(wrkmem, 0, D_SIZE * sizeof(lzo_dict_t));
+>>> I parsed panic ramdump and loaded CPU register values,  can see:
+>>>
+>>> -000|lzo1x_1_do_compress(
+>>>       |    in = 0xFFFFFFFFFFFFF000,
+>>>       |  ?,
+>>>       |    out = 0xFFFFFFFF2E2EE000,
+>>>       |    out_len = 0xFFFFFF801CAA3510,
+>>>       |  ?,
+>>>       |    wrkmem = 0xFFFFFFFF4EBC0000)
+>>>       |  dict = 0xFFFFFFFF4EBC0000
+>>>       |  op = 0x1
+>>>       |  ip = 0x9
+>>>       |  ii = 0x9
+>>>       |  in_end = 0x0
+>>>       |  ip_end = 0xFFFFFFFFFFFFFFEC
+>>>       |  m_len = 0
+>>>       |  m_off = 1922
+>>> -001|lzo1x_1_compress(
+>>>       |    in = 0xFFFFFFFFFFFFF000,
+>>>       |    in_len = 0,
+>>>       |    out = 0xFFFFFFFF2E2EE000,
+>>>       |    out_len = 0x00000001616FB7D0,
+>>>       |    wrkmem = 0xFFFFFFFF4EBC0000)
+>>>       |  ip = 0xFFFFFFFFFFFFF000
+>>>       |  op = 0xFFFFFFFF2E2EE000
+>>>       |  l = 4096
+>>>       |  t = 0
+>>>       |  ll = 4096
+>>>
+>>> ll = l = in_len = 4096 in lzo1x_1_compress,  so your patch is working
+>>> for this panic case, but, I`m
+>>> not sure, is it possible that in = 0xFFFFFFFFFFFFF000 and  in_len < 4096?
+>>>
+>>>
+>>> Thanks,
+>>> Yueyi
+>>>
+> 
+> 
+
 -- 
-1.9.1
-
+Markus Oberhumer, <markus@oberhumer.com>, http://www.oberhumer.com/
