@@ -7,120 +7,99 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B963DC65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 19:18:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD9ADC67839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 19:18:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C3B420880
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 19:18:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 68A192084E
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 19:18:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QMily8xc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C3B420880
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZRvqOzHn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68A192084E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726682AbeLLTSd (ORCPT
+        id S1726943AbeLLTSh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 14:18:33 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:38718 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726249AbeLLTSd (ORCPT
+        Wed, 12 Dec 2018 14:18:37 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:36739 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726293AbeLLTSe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 14:18:33 -0500
-Received: by mail-lj1-f196.google.com with SMTP id c19-v6so17314445lja.5;
-        Wed, 12 Dec 2018 11:18:31 -0800 (PST)
+        Wed, 12 Dec 2018 14:18:34 -0500
+Received: by mail-lj1-f194.google.com with SMTP id g11-v6so17303060ljk.3;
+        Wed, 12 Dec 2018 11:18:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ZKkgAqMmSW7ZmZFAm8anKGPl18ZRtYWp6FzTqi1hIjM=;
-        b=QMily8xcMmm6dNFE+fD+6u5aZYY/dQ8rG1biOefqmdDdSpdgN6k6QrEb0Z/k+RZ9I3
-         8kHnstRh3OGIYSiToIbxEBXn8YwOAm+qrVAROuzMqlH+Tx9mN4qhgTBvZs8hDzOlRtPq
-         p9OCqU/nFF2mElU+HWwHGvFz82rkKUo275DjuWxbkFCIDZQrIGp2F5mx2z9CGKNm8zjq
-         oAdJoPAOrG3i9PTFr+CNHaOFUiqtq9kLrJUGDyWUTqWU3rOlStKS8OraWJbbewJsJkuV
-         3ZUtEgN64oVqPUGvO1WdaCNDZG7UTDKYvJ8Mm0gQct+BpcPuHEXe4hpnxTY4XuiLqF8u
-         tNEg==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=ohMys6KHIPtUWunAD3pr18fITApz1/IHsTt+cu0pFrU=;
+        b=ZRvqOzHnPzPNpJhVp1SU6NqYygcKSx/VOQwbCH7F2j2QMuYIgwaeP+6iPM8trkcZEF
+         nWPRmV5SGzGZSfyZiPw4w1LGCynOyJLFY4AQkgbqQ87vthkwZ91eQkfbWzcsT7HJ++Oi
+         SgMx2ZvCpWHRE0NhJs+5V4xXkWfif2U3GKr0Ql2aM3lqaVbCp4Cz3s07ptCJbG5GGhkG
+         BI3uWTSrzsTTvdcOUXJae3q8I4SNbgzaKiJ6ZNwjen14CjxYcHMCs6rST48q1T0LzFUp
+         +w2nP2K981qzv+RfYqa/uvS7HJppkZ+wa67NO6UUTr7a/+97DsWDWguJUHXC9CWU6xZH
+         SY2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ZKkgAqMmSW7ZmZFAm8anKGPl18ZRtYWp6FzTqi1hIjM=;
-        b=kNBpYluYKTsfQhTO9TwJ94p1sP94KJu2hRA75LrpSVz5pSorO6b4MqcDfizoMf3MUS
-         eLVqxrtZRhKb4TdzHiemlQiB6NXMZvHUn/NC4l3+flSXAAiuU2ASbWL92HnCjghOfjg5
-         J0BVQ9PkdRsKayat4iJtw/hycr9KNNWkuFkiyWa4Q/BwwW30erLygh7EUDihGMgpk3BG
-         TI7BXLPat3DPI6k3zmUeTJ/zrwfqD9ZNlHBDveKDMHbemCnHSv2YWhbkWDHugT83dLgA
-         b4Jenppq/EQMwYTPnfPn3sJvL6jq0muQ83ckNMlMyCMPWNYkYOyLHwpFkWyDoJRWGM72
-         tlmg==
-X-Gm-Message-State: AA+aEWajQjDAKy7t+RdG37ucuCvOiMfbTeF+T1NZwbgWfMs5kb+rGFEa
-        NS6IctZtx7DGrJ774WC0InZfEkOH
-X-Google-Smtp-Source: AFSGD/XicdJois2T+f/Tab9OBao1Zyc8PEhuVGnXGssAzPm1z0Rz4U4QQkx+m9yl2PiGqFG7siEj7A==
-X-Received: by 2002:a2e:5356:: with SMTP id t22-v6mr12620400ljd.26.1544642310397;
-        Wed, 12 Dec 2018 11:18:30 -0800 (PST)
-Received: from [192.168.1.18] (bfz8.neoplus.adsl.tpnet.pl. [83.28.63.8])
-        by smtp.gmail.com with ESMTPSA id i75sm3434532lfb.58.2018.12.12.11.18.28
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 12 Dec 2018 11:18:29 -0800 (PST)
-Subject: Re: [PATCH v2 0/5] leds: trigger: Add pattern initialization from
- Device Tree
-To:     Pavel Machek <pavel@ucw.cz>, Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1544434201-14190-1-git-send-email-krzk@kernel.org>
- <be526095-5af9-38bb-7c72-629a82d318e0@gmail.com> <20181212121604.GA11088@amd>
-From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Message-ID: <da3780eb-c4b4-5a1b-8f6d-eff1c0e98d7f@gmail.com>
-Date:   Wed, 12 Dec 2018 20:18:27 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=ohMys6KHIPtUWunAD3pr18fITApz1/IHsTt+cu0pFrU=;
+        b=a7JLloNT1v811qUqqSR1+sHDZOFjM+dzGktTGkA1RlCCmloHXA1UMq5VopyLHYqLwb
+         +G4NfgLGwRx1aHZKqHodCa8bdUIXkZ+BDmO8pdSIgerEZCsp58JeLJz67U+a9N9+OG1m
+         G0jQ/BiwZ7cuzRWyRPeSAE9Mylds+GKJUXT+VINH6j9GCWtS/lqBCyAjkjbXEyiOO8Qp
+         ZmHdmiklCsn81GaBqOWq8OOQ41GbMCYxrQP0XvOn1h/0LBACyVkZpg3QAemmAB03ssXO
+         OlUdjFejRjwi4tDN5cFo3myUAd9b+J/k+z4x7BBJqBzGceiWoFf+slRgr7/eAjBnGPGi
+         IR8w==
+X-Gm-Message-State: AA+aEWZtT/oIAaWO+W+LAer9LpRvxwLt0z0Cd6qVisEVTHVug0ySxqcC
+        RnqwTjdcAShHQ17gH1MT4mLiHhuWHm6iAKQc2ug=
+X-Google-Smtp-Source: AFSGD/WJuFT4gBF5g37NlwA010DSCJPMrhaKcnfwSaR23KuN2/hMlugc+/FpRvSqcjRCa89Myr+D3rtbSvfuG2qFRiU=
+X-Received: by 2002:a2e:841:: with SMTP id g1-v6mr14039568ljd.21.1544642311647;
+ Wed, 12 Dec 2018 11:18:31 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181212121604.GA11088@amd>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <CALCETrXoRAibsbWa9nfbDrt0iEuebMnCMhSFg-d9W-J2g8mDjw@mail.gmail.com>
+ <CAHk-=wi_Kp=3XmGDdzmadzFSPFvuL+aAJ6ZPAR=o4z=KwYT2vw@mail.gmail.com>
+ <Pine.BSM.4.64L.1812112150480.21176@herc.mirbsd.org> <CALCETrWgpAX7FV23zHmid83SsgnwFMKD4a_-xSEgB6v0kJR5sA@mail.gmail.com>
+ <Pine.BSM.4.64L.1812112327500.21176@herc.mirbsd.org> <CALCETrXf0rmadycxmpGxd41qP9X+PAjyGHTwbGhKyp6oMKMRrA@mail.gmail.com>
+ <Pine.BSM.4.64L.1812120231410.21176@herc.mirbsd.org> <CAK8P3a3yurujkdic98H02j0YfctSBf9NeXQreLZVhTzsttoc9g@mail.gmail.com>
+ <alpine.DEB.2.21.1812121811080.21643@digraph.polyomino.org.uk>
+ <CAAaskFA5cssU+fGAOUJO4u5XYBP6XYtSeWRhaSAr3BqOBTYjmw@mail.gmail.com> <CALCETrUzyEENFc8rgDnbx9U-tALR4sjKsORjAwTY5ko1zzAVsQ@mail.gmail.com>
+In-Reply-To: <CALCETrUzyEENFc8rgDnbx9U-tALR4sjKsORjAwTY5ko1zzAVsQ@mail.gmail.com>
+From:   Ivan Ivanov <qmastery16@gmail.com>
+Date:   Wed, 12 Dec 2018 22:18:18 +0300
+Message-ID: <CAAaskFD3R1ha0TvrxZydW3NWAbg01rMAMmd400if4=nHVRhYkw@mail.gmail.com>
+Subject: Re: Can we drop upstream Linux x32 support?
+To:     luto@kernel.org
+Cc:     joseph@codesourcery.com, arnd@arndb.de, tg@mirbsd.de,
+        Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-api@vger.kernel.org, hpa@zytor.com, peterz@infradead.org,
+        bp@alien8.de, fweimer@redhat.com, vapier@gentoo.org,
+        hjl.tools@gmail.com, dalias@libc.org, x32@buildd.debian.org,
+        will.deacon@arm.com, catalin.marinas@arm.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/12/18 1:16 PM, Pavel Machek wrote:
-> On Mon 2018-12-10 22:03:18, Jacek Anaszewski wrote:
->> Hi Krzysztof,
->>
->> Thank you for the update.
->>
->> On 12/10/18 10:29 AM, Krzysztof Kozlowski wrote:
->>> Hi,
->>>
->>> I rebased on top of Jacek's patches and, as I could not find them on git kernel
->>> tree, I included them here. Also with small fixup.
->>>
->>> Changes since v1:
->>> 1. Rebase on Jacek's patches.
->>
->> Made following amendments to 2/5:
->>
->> - removed extra empty line
->> - fixed language in the commit message as proposed by Pavel
->>
->>> 2. Add patch 3/5 for fixup of Jacek's solution.
->>> 3. Drop first two patches from the series (applied).
->>> 4. Patch 5/5: Use LED_INIT_DEFAULT_TRIGGER (suggested by Jacek Anaszewski).
->>> 5. Patch 5/5: Return-on-error and log warning (suggested by Pavel Machek)
->> Applied to the for-next branch of linux-leds.git, thanks.
->>
->> Pavel - I'm still awaiting your acks, just wanted to have
->> the patch set in linux-next quicker, taking into account that
->> merge window is imminent.
-> 
-> Ok, let me take a look. But this really should have Rob's acknowledge,
-> so...
-
-Dropped 4/5 and 5/5 as they are now superseded by v3, that appears
-not to be the final too.
-
--- 
-Best regards,
-Jacek Anaszewski
+My main reason on staying at Pentium 4 is that it does not contain
+Intel ME backdoor (it came starting with Core 2 Duo)
+=D1=81=D1=80, 12 =D0=B4=D0=B5=D0=BA. 2018 =D0=B3. =D0=B2 22:12, Andy Lutomi=
+rski <luto@kernel.org>:
+>
+> On Wed, Dec 12, 2018 at 10:50 AM Ivan Ivanov <qmastery16@gmail.com> wrote=
+:
+> >
+> > Please don't drop x86 support from the Linux kernel ! You may not
+> > realize it, but there are plenty of people who care about x86 systems.
+> > I have a good old Pentium 4 based computer which is 32-bit, using it
+> > for some weird Linux experiments + retro gaming, and if I can't run
+> > new Linux kernels there - it would be SAD
+>
+> Just to clarify: no one is proposing to drop 32-bit hardware support
+> or normal x86 compatibility support from new kernels.
+>
+> That being said, you should seriously consider replacing that P4.
+> Unless you live somewhere with *very* cheap power or you barely use
+> it, replacing it will pay for itself quite quickly.
