@@ -2,141 +2,136 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D8C7C04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 05:17:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAF4EC04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 05:21:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18AE02084E
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 05:17:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 89BE520870
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 05:21:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="lUygrBnY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18AE02084E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F8occyx0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89BE520870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726432AbeLLFRf (ORCPT
+        id S1726403AbeLLFVb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 00:17:35 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:57118 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726218AbeLLFRf (ORCPT
+        Wed, 12 Dec 2018 00:21:31 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:42444 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726218AbeLLFVa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 00:17:35 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id wBC5HFvb058057;
-        Tue, 11 Dec 2018 23:17:16 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1544591836;
-        bh=nif3Z+6rwyCOad4evYCBPM1IQZ4r3vcTdSSFumT9Sx0=;
-        h=From:To:CC:Subject:Date;
-        b=lUygrBnY07WDh9lsQvR5i3UbN/3MatBFObMri5iR3W9guPU6nfKLwTU1XGQHJpEaL
-         1xG8IavR1e8LHftH/+giV0fxi5P3fbW4VRrtZZk7A0w9MY2oZnckvTFO6CKwczZK8P
-         gLPeFjqkMK4oGkRzWvMPxGr+2s0+rfpcmRDJVRxM=
-Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wBC5HF7f056235
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 11 Dec 2018 23:17:15 -0600
-Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Tue, 11
- Dec 2018 23:17:15 -0600
-Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Tue, 11 Dec 2018 23:17:15 -0600
-Received: from a0132425.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wBC5HDv1026449;
-        Tue, 11 Dec 2018 23:17:13 -0600
-From:   Vignesh R <vigneshr@ti.com>
-To:     Tero Kristo <t-kristo@ti.com>, Nishanth Menon <nm@ti.com>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Vignesh R <vigneshr@ti.com>
-Subject: [PATCH] arm64: dts: ti: k3-am654: Populate power-domain property for UART nodes
-Date:   Wed, 12 Dec 2018 10:48:06 +0530
-Message-ID: <20181212051806.21879-1-vigneshr@ti.com>
-X-Mailer: git-send-email 2.19.2
+        Wed, 12 Dec 2018 00:21:30 -0500
+Received: by mail-pl1-f195.google.com with SMTP id y1so8037265plp.9;
+        Tue, 11 Dec 2018 21:21:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=UqwenLJYzHR12uK17VPjmYMN4YNmNum/2v6HQWNppBI=;
+        b=F8occyx0CO39MOeBWvy1Qo0s964WdOwSp1Bh8AH77tJV7Jfv0J5hrooJ0H73eEsVLG
+         T/IWJV/bBHyn9p4zVOsPBwvOi9pWKfFzIG12liCpc6U8w1P6+XkIGpvOtZvFXCbplY6V
+         LrR9r1VXY17txS+CSO8UD5ojBgPG1RMu7u5RdLo3QxroHXjdlzH3CCN945vnTO28RBqG
+         lU0pktmChOn5+gXv82oDK5SAQRnjyOfOTQUAi4slWncC02Te1TpNanpGKQUpx3bLcA1t
+         HAME194G/rF0TfEgvC7ba/ceuZUngxkhU8lyBATlY2C4R75lG/iJyc/oSjEtscPcZMjI
+         GJuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=UqwenLJYzHR12uK17VPjmYMN4YNmNum/2v6HQWNppBI=;
+        b=l221ZqEDXgw79MaetKQyLKYqoXsa+vxGC76FI7z3DOwC2aRmSc2UUHqXmHLM1H4ZTd
+         +b6U938RwzCyoH1V40uVrrhLUVYnxcq89/TVOXSgVD5pyY2xf9my7/CjKh0DoDsLVlsP
+         kQIqOyPrUJQB7LK4DmVGiVnQSGMqOHRi/VzvI7ZyWCUiNukgMQjwwdmcEM7v/bFlDhCA
+         4gd+1Z2Y9+KRaJ259TFMtYpEjCpqm+p4xGtxCdIIPnSxcI7DQ/XDyqsqn5neAypRT6v6
+         QxLA/g8/YDR/V0GiQDzVwYdsIXsdulQdnucs+k3CET7UWHTTKzteDCvJWpz4/eqrLEW/
+         hGsQ==
+X-Gm-Message-State: AA+aEWavGubhUAR+x1CRU9FOsbp0HXnH6NGTQ8P0lLOkub4Adw5HSVAY
+        nRRBhNauO8kvmQ8MXAAZfyg=
+X-Google-Smtp-Source: AFSGD/U9PTBbHSGDQxPrqtqDzAOpba2JFIIPAfuFGTgy2Vf+lwSVZ9jrr9mn+L5Hssqdj66TBa4SIw==
+X-Received: by 2002:a17:902:1127:: with SMTP id d36mr5551908pla.299.1544592090302;
+        Tue, 11 Dec 2018 21:21:30 -0800 (PST)
+Received: from localhost ([211.246.69.141])
+        by smtp.gmail.com with ESMTPSA id h19sm19781344pfn.114.2018.12.11.21.21.28
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 11 Dec 2018 21:21:29 -0800 (PST)
+Date:   Wed, 12 Dec 2018 14:21:26 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Daniel Wang <wonderfly@google.com>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Steven Rostedt <rostedt@goodmis.org>, stable@vger.kernel.org,
+        Alexander.Levin@microsoft.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        byungchul.park@lge.com, dave.hansen@intel.com, hannes@cmpxchg.org,
+        jack@suse.cz, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Mel Gorman <mgorman@suse.de>, mhocko@kernel.org, pavel@ucw.cz,
+        penguin-kernel@i-love.sakura.ne.jp,
+        Peter Zijlstra <peterz@infradead.org>, tj@kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>, vbabka@suse.cz,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        Peter Feiner <pfeiner@google.com>
+Subject: Re: 4.14 backport request for dbdda842fe96f: "printk: Add console
+ owner and waiter logic to load balance console writes"
+Message-ID: <20181212052126.GF431@jagdpanzerIV>
+References: <20181003133704.43a58cf5@gandalf.local.home>
+ <CAJmjG291w2ZPRiAevSzxGNcuR6vTuqyk6z4SG3xRsbaQh5U3zQ@mail.gmail.com>
+ <20181004074442.GA12879@jagdpanzerIV>
+ <20181004083609.kcziz2ynwi2w7lcm@pathway.suse.cz>
+ <20181004085515.GC12879@jagdpanzerIV>
+ <CAJmjG2-e6f6p=pE5uDECMc=W=81SYyGCmoabrC1ePXwL5DFdSw@mail.gmail.com>
+ <20181022100952.GA1147@jagdpanzerIV>
+ <CAJmjG2-c4e_1999n0OV5B9ABG9rF6n=myThjgX+Ms1R-vc3z+A@mail.gmail.com>
+ <20181109064740.GE599@jagdpanzerIV>
+ <CAJmjG28Q8pEpr67LC+Un8m+Qii58FTd1esp6Zc47TnMsw50QEw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJmjG28Q8pEpr67LC+Un8m+Qii58FTd1esp6Zc47TnMsw50QEw@mail.gmail.com>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Populate power-domain property for UART nodes, this is required for
-Linux to enable UART clocks via PM calls. Without this UART instances
-not initialized by bootloader (like main_uart1) fails to work in Linux.
-Also, drop current-speed property from main_uart1 and main_uart2 nodes
-as these UARTs are not initialized before Linux boots up and current
-speed is unknown.
+On (12/11/18 17:16), Daniel Wang wrote:
+> > Let's first figure out if it works.
+> 
+> I would still like to try applying your patches that went into
+> printk.git, but for now I wonder if we can get Steven's patch into
+> 4.14 first, for at least we know it mitigated the issue if not
+> fundamentally addressed it, and we've agreed it's an innocuous change
+> that doesn't risk breaking stable.
 
-Signed-off-by: Vignesh R <vigneshr@ti.com>
+So... did my patch address the deadlock you are seeing or it didn't?
+
+> I haven't done this before so I'll need your help. What's the next
+> step to actually get Steven's patch *in* linux-4.14.y? According to
+> https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html
+> I am supposed to send an email with the patch ID and subject, which
+> are both mentioned in this email. Should I send another one? What's
+> the process like? Thanks!
+
+I'm not doing any -stable releases, so can't really answer, sorry.
+Probably would be better to re-address this question to 4.14 -stable
+maintainers.
+
+
 ---
- arch/arm64/boot/dts/ti/k3-am65-main.dtsi   | 5 +++--
- arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi    | 1 +
- arch/arm64/boot/dts/ti/k3-am65-wakeup.dtsi | 1 +
- 3 files changed, 5 insertions(+), 2 deletions(-)
+I guess we still don't have a really clear understanding of what exactly
+is going in your system. We don't even know for sure which one of the locks
+is deadlocking the system. And why exactly Steven's patch helps. If it
+is uart_port->lock, then it's one thing; if it's console_sem ->lock then
+it's another thing. But those two are just theories, not supported by any
+logs/backtraces from your systems.
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am65-main.dtsi b/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
-index 6c71e67b8988..272cf8fc8d30 100644
---- a/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
-@@ -48,6 +48,7 @@
- 		interrupts = <GIC_SPI 192 IRQ_TYPE_LEVEL_HIGH>;
- 		clock-frequency = <48000000>;
- 		current-speed = <115200>;
-+		power-domains = <&k3_pds 146>;
- 	};
- 
- 	main_uart1: serial@2810000 {
-@@ -57,7 +58,7 @@
- 		reg-io-width = <4>;
- 		interrupts = <GIC_SPI 193 IRQ_TYPE_LEVEL_HIGH>;
- 		clock-frequency = <48000000>;
--		current-speed = <115200>;
-+		power-domains = <&k3_pds 147>;
- 	};
- 
- 	main_uart2: serial@2820000 {
-@@ -67,7 +68,7 @@
- 		reg-io-width = <4>;
- 		interrupts = <GIC_SPI 194 IRQ_TYPE_LEVEL_HIGH>;
- 		clock-frequency = <48000000>;
--		current-speed = <115200>;
-+		power-domains = <&k3_pds 148>;
- 	};
- 
- 	main_pmx0: pinmux@11c000 {
-diff --git a/arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi b/arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi
-index 1aeae52fb239..593f718e8fb5 100644
---- a/arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi
-@@ -14,6 +14,7 @@
- 			interrupts = <GIC_SPI 565 IRQ_TYPE_LEVEL_HIGH>;
- 			clock-frequency = <96000000>;
- 			current-speed = <115200>;
-+			power-domains = <&k3_pds 149>;
- 	};
- 
- 	mcu_i2c0: i2c@40b00000 {
-diff --git a/arch/arm64/boot/dts/ti/k3-am65-wakeup.dtsi b/arch/arm64/boot/dts/ti/k3-am65-wakeup.dtsi
-index 9e8467ce7ad8..7cbdc0912ab7 100644
---- a/arch/arm64/boot/dts/ti/k3-am65-wakeup.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am65-wakeup.dtsi
-@@ -50,6 +50,7 @@
- 		interrupts = <GIC_SPI 697 IRQ_TYPE_LEVEL_HIGH>;
- 		clock-frequency = <48000000>;
- 		current-speed = <115200>;
-+		power-domains = <&k3_pds 150>;
- 	};
- 
- 	wkup_i2c0: i2c@42120000 {
--- 
-2.19.2
+If it's uart_port->lock and there will be 2 patch sets to choose from
+for -stable, then -stable guys can pick up the one that requires less
+effort: 1 two-liner patch vs. 3 or 4 bigger patches.
 
+	-ss
