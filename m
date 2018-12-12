@@ -2,79 +2,102 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D113EC6783B
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 00:14:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCC1FC6783B
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 00:19:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8551620672
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 00:14:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8551620672
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 8E43920672
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 00:19:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E43920672
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726252AbeLLAOU (ORCPT
+        id S1726237AbeLLATz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 19:14:20 -0500
-Received: from mga05.intel.com ([192.55.52.43]:34408 "EHLO mga05.intel.com"
+        Tue, 11 Dec 2018 19:19:55 -0500
+Received: from muru.com ([72.249.23.125]:57540 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726183AbeLLAOT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 19:14:19 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Dec 2018 16:14:19 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,343,1539673200"; 
-   d="scan'208";a="258722185"
-Received: from avandeve-mobl.amr.corp.intel.com (HELO [10.24.10.25]) ([10.24.10.25])
-  by orsmga004.jf.intel.com with ESMTP; 11 Dec 2018 16:14:19 -0800
-Subject: Re: [PATCH v4 1/2] x86/fpu: track AVX-512 usage of tasks
-To:     "Li, Aubrey" <aubrey.li@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Aubrey Li <aubrey.li@intel.com>, tglx@linutronix.de,
-        mingo@redhat.com, peterz@infradead.org, hpa@zytor.com
-Cc:     ak@linux.intel.com, tim.c.chen@linux.intel.com,
-        linux-kernel@vger.kernel.org
-References: <20181211002448.3520-1-aubrey.li@intel.com>
- <df1a1b5b-3e8b-5d96-12df-25be30c391af@intel.com>
- <143a5451-c7cf-16a5-a7ef-8c4b0633b689@linux.intel.com>
-From:   Arjan van de Ven <arjan@linux.intel.com>
-Message-ID: <6a549986-f01a-a3c6-10c8-c116667bf7e4@linux.intel.com>
-Date:   Tue, 11 Dec 2018 16:14:19 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1726183AbeLLATz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 19:19:55 -0500
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 1FB0B8027;
+        Wed, 12 Dec 2018 00:19:57 +0000 (UTC)
+Date:   Tue, 11 Dec 2018 16:19:50 -0800
+From:   Tony Lindgren <tony@atomide.com>
+To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Jarkko Nikula <jarkko.nikula@bitmer.com>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>
+Subject: Re: [PATCH 0/2] Graph fixes for using multiple endpoints per port
+Message-ID: <20181212001950.GX6707@atomide.com>
+References: <20181211020557.61783-1-tony@atomide.com>
+ <8736r4bvf3.wl-kuninori.morimoto.gx@renesas.com>
+ <20181211045220.GI6707@atomide.com>
+ <871s6obqkb.wl-kuninori.morimoto.gx@renesas.com>
+ <20181211053536.GJ6707@atomide.com>
+ <87wooga9an.wl-kuninori.morimoto.gx@renesas.com>
+ <20181211141649.GL6707@atomide.com>
+ <87ftv33bpg.wl-kuninori.morimoto.gx@renesas.com>
 MIME-Version: 1.0
-In-Reply-To: <143a5451-c7cf-16a5-a7ef-8c4b0633b689@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87ftv33bpg.wl-kuninori.morimoto.gx@renesas.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/11/2018 3:46 PM, Li, Aubrey wrote:
-> On 2018/12/12 1:18, Dave Hansen wrote:
->> On 12/10/18 4:24 PM, Aubrey Li wrote:
->>> The tracking turns on the usage flag at the next context switch of
->>> the task, but requires 3 consecutive context switches with no usage
->>> to clear it. This decay is required because well-written AVX-512
->>> applications are expected to clear this state when not actively using
->>> AVX-512 registers.
->>
->> One concern about this:  Given a HZ=1000 system, this means that the
->> flag needs to get scanned every ~3ms.  That's a pretty good amount of
->> scanning on a system with hundreds or thousands of tasks running around.
->>
->> How many tasks does this scale to until you're eating up an entire CPU
->> or two just scanning /proc?
->>
+* Kuninori Morimoto <kuninori.morimoto.gx@renesas.com> [181211 23:16]:
 > 
-> Do we have a real requirement to do this in practical environment?
-> AFAIK, 1s or even 5s is good enough in some customers environment.
+> Hi Tony
+> 
+> > The issue I have with that it does not then follow the binding doc :)
+> > 
+> > See this part in Documentation/devicetree/bindings/graph.txt:
+> > 
+> >  "If a single port is connected to more than one remote device, an
+> >  'endpoint' child node must be provided for each link."
+> > 
+> > Isn't the I2C TDM case the same as "single port connecected to
+> > more than one remote device" rather than multiple ports?
+> > 
+> > To me it seems we're currently only handling the multiple ports
+> > case, and not multiple endpoints for a port. Other than fixing
+> > that, things should work just as earlier with my two patches.
+> > That is unless I accidentally broke something.
+> > 
+> > So just trying to correct the binding usage. Or am I missing
+> > something?
+> 
+> I'm not 100% sure your "I2C TDM case", but you can check
+> multi-endpoint sample on "Example: Multi DAI with DPCM" below.
+> "pcm3168a" is using multi-endpoint.
+> Does this help you ?
+> 
+> 	https://patchwork.kernel.org/patch/10712877/
 
-maybe instead of a 1/0 bit, it's useful to store the timestamp of the last
-time we found the task to use avx? (need to find a good time unit)
+Hmm, so do you have multiple separate ports at the "&sound" node
+hardware? If so then yeah multiple ports make sense.
 
+But if you only a single physical (I2S?) port at the
+"&sound" node hardware, then IMO you should only have one
+port and multiple endpoints there according to the graph.txt
+binding doc.
+
+In my McBSP case there is only a single physical I2S port
+that can be TDM split into timeslots.
+
+Regards,
+
+Tony
