@@ -2,169 +2,101 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B25DC04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 13:27:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7AEFC04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 13:28:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D92652086D
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 13:27:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544621271;
-	bh=2B7aXskNbZLsphD3sXN6L27hv55L23wXj1YGlo6GkB0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=d/q3qJo/Ly3wlvULaNcgXaJzL0lp7uHbkV81h4d45kNxoPZOUcfp6hcRgE69MdwCk
-	 6Tq7SSqNnHSAWLwcJmzgD9ZE6BRim3PqI8RC1FybN2ml4I/LtUxLZHfvYurYqxGjXP
-	 HgmEf55b9qpA5B0Exu1L+iAfMfec9peGr7mEmk2g=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D92652086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 88F9C2084E
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 13:28:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88F9C2084E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727542AbeLLN1t (ORCPT
+        id S1727549AbeLLN20 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 08:27:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56304 "EHLO mail.kernel.org"
+        Wed, 12 Dec 2018 08:28:26 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:53374 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726232AbeLLN1t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 08:27:49 -0500
-Received: from quaco.ghostprotocols.net (unknown [189.40.101.168])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726232AbeLLN2Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 08:28:25 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D806B2084E;
-        Wed, 12 Dec 2018 13:27:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544621268;
-        bh=2B7aXskNbZLsphD3sXN6L27hv55L23wXj1YGlo6GkB0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=H9Lmu/yMgaj5UOIh7qu7lI0+dCn6LKv7uIdSYW8Qn5a/W4xBvxWxI1p/BHGa1Rq9k
-         5y00vAZCbmvfG0kd+OyLu5s+KKIDHYrpPQCsSoUk4MHxAMfxzpLkZjlIwl6P1euQaU
-         q9RjAOmG0fvUdPknMw6/sF2foPyw3jI9l8a7D1kE=
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 182854042C; Wed, 12 Dec 2018 10:27:43 -0300 (-03)
-Date:   Wed, 12 Dec 2018 10:27:43 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Song Liu <songliubraving@fb.com>, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, ast@kernel.org, daniel@iogearbox.net,
-        kernel-team@fb.com, Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCH v3 perf, bpf-next 1/4] perf, bpf: Introduce
- PERF_RECORD_BPF_EVENT
-Message-ID: <20181212132742.GB21027@kernel.org>
-References: <20181211233351.4036381-1-songliubraving@fb.com>
- <20181211233351.4036381-2-songliubraving@fb.com>
- <20181212131549.GZ5289@hirez.programming.kicks-ass.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181212131549.GZ5289@hirez.programming.kicks-ass.net>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        by mx1.redhat.com (Postfix) with ESMTPS id 8B546356F6;
+        Wed, 12 Dec 2018 13:28:25 +0000 (UTC)
+Received: from sirius.home.kraxel.org (ovpn-117-174.ams2.redhat.com [10.36.117.174])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id ED74B1054FCC;
+        Wed, 12 Dec 2018 13:28:21 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id 2559E5E50C; Wed, 12 Dec 2018 14:21:12 +0100 (CET)
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     spice-devel@redhat.com, Gerd Hoffmann <kraxel@redhat.com>,
+        Dave Airlie <airlied@redhat.com>,
+        David Airlie <airlied@linux.ie>,
+        virtualization@lists.linux-foundation.org (open list:DRM DRIVER FOR QXL
+        VIRTUAL GPU),
+        spice-devel@lists.freedesktop.org (open list:DRM DRIVER FOR QXL VIRTUAL
+        GPU), linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2 17/18] drm/qxl: use generic fbdev emulation
+Date:   Wed, 12 Dec 2018 14:21:08 +0100
+Message-Id: <20181212132109.8126-18-kraxel@redhat.com>
+In-Reply-To: <20181212132109.8126-1-kraxel@redhat.com>
+References: <20181212132109.8126-1-kraxel@redhat.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Wed, 12 Dec 2018 13:28:25 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Wed, Dec 12, 2018 at 02:15:49PM +0100, Peter Zijlstra escreveu:
-> On Tue, Dec 11, 2018 at 03:33:47PM -0800, Song Liu wrote:
-> > For better performance analysis of BPF programs, this patch introduces
-> > PERF_RECORD_BPF_EVENT, a new perf_event_type that exposes BPF program
-> > load/unload information to user space.
-> > 
-> > Each BPF program may contain up to BPF_MAX_SUBPROGS (256) sub programs.
-> > The following example shows kernel symbols for a BPF program with 7
-> > sub programs:
-> > 
-> >     ffffffffa0257cf9 t bpf_prog_b07ccb89267cf242_F
-> >     ffffffffa02592e1 t bpf_prog_2dcecc18072623fc_F
-> >     ffffffffa025b0e9 t bpf_prog_bb7a405ebaec5d5c_F
-> >     ffffffffa025dd2c t bpf_prog_a7540d4a39ec1fc7_F
-> >     ffffffffa025fcca t bpf_prog_05762d4ade0e3737_F
-> >     ffffffffa026108f t bpf_prog_db4bd11e35df90d4_F
-> >     ffffffffa0263f00 t bpf_prog_89d64e4abf0f0126_F
-> >     ffffffffa0257cf9 t bpf_prog_ae31629322c4b018__dummy_tracepoi
-> 
-> Doesn't BPF have enough information to generate 'saner' names? Going by
-> the thing below, these sub-progs are actually functions, right?
+Switch qxl over to the new generic fbdev emulation.
 
-Yeah, this looks just like a symbol table, albeit just with functions,
-so far.
+Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+---
+ drivers/gpu/drm/qxl/qxl_display.c | 7 -------
+ drivers/gpu/drm/qxl/qxl_drv.c     | 2 ++
+ 2 files changed, 2 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/gpu/drm/qxl/qxl_display.c b/drivers/gpu/drm/qxl/qxl_display.c
+index 6ea5d031d0..36614005bd 100644
+--- a/drivers/gpu/drm/qxl/qxl_display.c
++++ b/drivers/gpu/drm/qxl/qxl_display.c
+@@ -1223,18 +1223,11 @@ int qxl_modeset_init(struct qxl_device *qdev)
+ 	qxl_display_read_client_monitors_config(qdev);
  
-> >         /*
-> >          * Record different types of bpf events:
-> >          *  enum perf_bpf_event_type {
-> >          *     PERF_BPF_EVENT_UNKNOWN           = 0,
-> >          *     PERF_BPF_EVENT_PROG_LOAD         = 1,
-> >          *     PERF_BPF_EVENT_PROG_UNLOAD       = 2,
-> >          *  };
-> >          *
-> >          * struct {
-> >          *      struct perf_event_header header;
-> >          *      u32                             type;
-> >          *      u32                             flags;
-> >          *      u32                             id; // prog_id or other id
-> >          *      u32                             sub_id; // subprog id
-> >          *
-> >          *      // for bpf_prog types, bpf prog or subprog
-> >          *      u8                              tag[BPF_TAG_SIZE];
-> >          *      u64                             addr;
-> >          *      u64                             len;
-> >          *      char                            name[];
-> >          *      struct sample_id                sample_id;
-> >          * };
-> >          */
-> 
-> Isn't this mixing two different things (poorly)? The kallsym update and
-> the BPF load/unload ?
-> 
-> And while this tracks the bpf kallsyms, it does not do all kallsyms.
-> 
-> .... Oooh, I see the problem, everybody is doing their own custom
-> kallsym_{add,del}() thing, instead of having that in generic code :-(
+ 	drm_mode_config_reset(&qdev->ddev);
+-
+-	/* primary surface must be created by this point, to allow
+-	 * issuing command queue commands and having them read by
+-	 * spice server. */
+-	qxl_fbdev_init(qdev);
+ 	return 0;
+ }
  
-> This, for example, doesn't track module load/unload nor ftrace
-> trampolines, even though both affect kallsyms.
-
-So you think the best would have to be a PERF_RECORD_ that just states
-that code has been loaded at range (addr, len). I.e. much like
-PERF_RECORD_MMAP does, just for userspace? Then it could be used by BPF
-and any other kernel facility like the ones you described?
-
-There would be an area that would be used by each of these facilities to
-figure out further info, like we use the mmap->name to go and get the
-symbol table from ELF files, etc, but BPF could use for their specific
-stuff?
-
-The above is almost like PERF_RECORD_MMAP (PERF_BPF_EVENT_PROG_LOAD) +
-PERF_RECORD_MUNMAP(PERF_BPF_EVENT_PROG_UNLOAD) in one event, with this
-'type' thing allowing for more stuff to be put in later, I guess.
-
-- Arnaldo
+ void qxl_modeset_fini(struct qxl_device *qdev)
+ {
+-	qxl_fbdev_fini(qdev);
+-
+ 	qxl_destroy_monitors_object(qdev);
+ 	drm_mode_config_cleanup(&qdev->ddev);
+ }
+diff --git a/drivers/gpu/drm/qxl/qxl_drv.c b/drivers/gpu/drm/qxl/qxl_drv.c
+index 13c8a662f9..3fce7d16df 100644
+--- a/drivers/gpu/drm/qxl/qxl_drv.c
++++ b/drivers/gpu/drm/qxl/qxl_drv.c
+@@ -93,6 +93,8 @@ qxl_pci_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	if (ret)
+ 		goto modeset_cleanup;
  
-> > +void perf_event_bpf_event_prog(enum perf_bpf_event_type type,
-> > +			       struct bpf_prog *prog)
-> > +{
-> > +	if (!atomic_read(&nr_bpf_events))
-> > +		return;
-> > +
-> > +	if (type != PERF_BPF_EVENT_PROG_LOAD &&
-> > +	    type != PERF_BPF_EVENT_PROG_UNLOAD)
-> > +		return;
-> > +
-> > +	if (prog->aux->func_cnt == 0) {
-> > +		perf_event_bpf_event_subprog(type, prog,
-> > +					     prog->aux->id, 0);
-> > +	} else {
-> > +		int i;
-> > +
-> > +		for (i = 0; i < prog->aux->func_cnt; i++)
-> > +			perf_event_bpf_event_subprog(type, prog->aux->func[i],
-> > +						     prog->aux->id, i);
-> > +	}
-> > +}
-> 
-
++	drm_fb_helper_remove_conflicting_pci_framebuffers(pdev, 0, "qxl");
++	drm_fbdev_generic_setup(&qdev->ddev, 32);
+ 	return 0;
+ 
+ modeset_cleanup:
 -- 
+2.9.3
 
-- Arnaldo
