@@ -2,238 +2,307 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0157C67839
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 02:24:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36DD5C6783B
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 02:24:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A33A320870
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 02:24:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544581462;
-	bh=N9oti+uKGIZDIJxpvvhW9aydZJByc8/zLtw8FZdg18g=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=qaGz++XhdZMihsvOtv/Ub9TGbFW4PKjAVhdYU5t2iAV383t3Ij13z95FC6ue5kn4f
-	 c/iVYl43qngFjgwxCA+qNuOVpXKZmOWHdUCFNCP77aSl132jSj4qnTfaFLbh/gYwzp
-	 X3oDDGQg2OxD4Pe71HhHMuzR8tCc9aDaBdiHz5Cc=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A33A320870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id E59612086D
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 02:24:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E59612086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726301AbeLLCYV (ORCPT
+        id S1726346AbeLLCYz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 21:24:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57792 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726211AbeLLCYV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 21:24:21 -0500
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7AD8421104
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 02:24:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544581459;
-        bh=N9oti+uKGIZDIJxpvvhW9aydZJByc8/zLtw8FZdg18g=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=hOKLRXrGGLhIm0B349gftRbv9mv20nSxSZ9rSkrjzwDJSZTjMsMEX1N7tjW9rK3Dr
-         GjymvlAUJnoeg0xYw/4mLr15oav5YXqHoff1YKrc41XosW9PA4I9obx1dwoCHzXH37
-         t/MSCkAbmUrveYXiI1QcKZaGvF70MceO9SZeTPU4=
-Received: by mail-wm1-f46.google.com with SMTP id f81so4244913wmd.4
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 18:24:19 -0800 (PST)
-X-Gm-Message-State: AA+aEWY4U+RSW8yYANA8VJvZOjjinjuU8oHTLJ7abYnlfPvTakQGpV7c
-        wiMQEYS49WYRNhuSmBKq2fm5kdmTkVEsMNtDqLv25Q==
-X-Google-Smtp-Source: AFSGD/VTe2xqMFtGmZFEVKyo4bTNRGRbakHEJnTG+TUF+PDwxqWt/T/MFZ2/yNU9RYXWzJcMnBVIPCmoS/eIpVq0vyY=
-X-Received: by 2002:a7b:ce17:: with SMTP id m23mr4838081wmc.74.1544581457888;
- Tue, 11 Dec 2018 18:24:17 -0800 (PST)
+        Tue, 11 Dec 2018 21:24:55 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44238 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726218AbeLLCYz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 21:24:55 -0500
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBC2OMQO033417
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 21:24:54 -0500
+Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2paqh43w6r-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 21:24:54 -0500
+Received: from localhost
+        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Wed, 12 Dec 2018 02:24:52 -0000
+Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
+        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 12 Dec 2018 02:24:48 -0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBC2OlrA24444996
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 12 Dec 2018 02:24:47 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1A8CAB205F;
+        Wed, 12 Dec 2018 02:24:47 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D80BDB2064;
+        Wed, 12 Dec 2018 02:24:46 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.85.166.18])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed, 12 Dec 2018 02:24:46 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 5DF3A16C5FCC; Tue, 11 Dec 2018 18:24:46 -0800 (PST)
+Date:   Tue, 11 Dec 2018 18:24:46 -0800
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     "He, Bo" <bo.he@intel.com>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "josh@joshtriplett.org" <josh@joshtriplett.org>,
+        "mathieu.desnoyers@efficios.com" <mathieu.desnoyers@efficios.com>,
+        "jiangshanlai@gmail.com" <jiangshanlai@gmail.com>,
+        "Zhang, Jun" <jun.zhang@intel.com>,
+        "Xiao, Jin" <jin.xiao@intel.com>,
+        "Zhang, Yanmin" <yanmin.zhang@intel.com>,
+        "Bai, Jie A" <jie.a.bai@intel.com>
+Subject: Re: rcu_preempt caused oom
+Reply-To: paulmck@linux.ibm.com
+References: <20181205174435.GU4170@linux.ibm.com>
+ <CD6925E8781EFD4D8E11882D20FC406D52A16C46@SHSMSX104.ccr.corp.intel.com>
+ <20181206173808.GI4170@linux.ibm.com>
+ <CD6925E8781EFD4D8E11882D20FC406D52A180C5@SHSMSX104.ccr.corp.intel.com>
+ <20181207141131.GP4170@linux.ibm.com>
+ <20181209195601.GA7854@linux.ibm.com>
+ <CD6925E8781EFD4D8E11882D20FC406D52A186D0@SHSMSX104.ccr.corp.intel.com>
+ <20181211003838.GD4170@linux.ibm.com>
+ <20181211044631.GA19942@linux.ibm.com>
+ <CD6925E8781EFD4D8E11882D20FC406D52A18E53@SHSMSX104.ccr.corp.intel.com>
 MIME-Version: 1.0
-References: <20181212000354.31955-1-rick.p.edgecombe@intel.com> <20181212000354.31955-5-rick.p.edgecombe@intel.com>
-In-Reply-To: <20181212000354.31955-5-rick.p.edgecombe@intel.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Tue, 11 Dec 2018 18:24:05 -0800
-X-Gmail-Original-Message-ID: <CALCETrWunJbO=SmPGCPaZRmbvPeaqm3Cx0Ygm0EOKo-zVyrHZQ@mail.gmail.com>
-Message-ID: <CALCETrWunJbO=SmPGCPaZRmbvPeaqm3Cx0Ygm0EOKo-zVyrHZQ@mail.gmail.com>
-Subject: Re: [PATCH v2 4/4] x86/vmalloc: Add TLB efficient x86 arch_vunmap
-To:     Rick Edgecombe <rick.p.edgecombe@intel.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Linux-MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        "Naveen N . Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jessica Yu <jeyu@kernel.org>, Nadav Amit <namit@vmware.com>,
-        Network Development <netdev@vger.kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Jann Horn <jannh@google.com>,
-        Kristen Carlson Accardi <kristen@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        "Dock, Deneen T" <deneen.t.dock@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CD6925E8781EFD4D8E11882D20FC406D52A18E53@SHSMSX104.ccr.corp.intel.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18121202-0064-0000-0000-00000384DF36
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010214; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000270; SDB=6.01130475; UDB=6.00587430; IPR=6.00910609;
+ MB=3.00024658; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-12 02:24:51
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18121202-0065-0000-0000-00003BA57812
+Message-Id: <20181212022446.GV4170@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-11_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812120017
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 11, 2018 at 4:12 PM Rick Edgecombe
-<rick.p.edgecombe@intel.com> wrote:
->
-> This adds a more efficient x86 architecture specific implementation of
-> arch_vunmap, that can free any type of special permission memory with only 1 TLB
-> flush.
->
-> In order to enable this, _set_pages_p and _set_pages_np are made non-static and
-> renamed set_pages_p_noflush and set_pages_np_noflush to better communicate
-> their different (non-flushing) behavior from the rest of the set_pages_*
-> functions.
->
-> The method for doing this with only 1 TLB flush was suggested by Andy
-> Lutomirski.
->
-> Suggested-by: Andy Lutomirski <luto@kernel.org>
-> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-> ---
->  arch/x86/include/asm/set_memory.h |  2 +
->  arch/x86/mm/Makefile              |  3 +-
->  arch/x86/mm/pageattr.c            | 11 +++--
->  arch/x86/mm/vmalloc.c             | 71 +++++++++++++++++++++++++++++++
->  4 files changed, 80 insertions(+), 7 deletions(-)
->  create mode 100644 arch/x86/mm/vmalloc.c
->
-> diff --git a/arch/x86/include/asm/set_memory.h b/arch/x86/include/asm/set_memory.h
-> index 07a25753e85c..70ee81e8914b 100644
-> --- a/arch/x86/include/asm/set_memory.h
-> +++ b/arch/x86/include/asm/set_memory.h
-> @@ -84,6 +84,8 @@ int set_pages_x(struct page *page, int numpages);
->  int set_pages_nx(struct page *page, int numpages);
->  int set_pages_ro(struct page *page, int numpages);
->  int set_pages_rw(struct page *page, int numpages);
-> +int set_pages_np_noflush(struct page *page, int numpages);
-> +int set_pages_p_noflush(struct page *page, int numpages);
->
->  extern int kernel_set_to_readonly;
->  void set_kernel_text_rw(void);
-> diff --git a/arch/x86/mm/Makefile b/arch/x86/mm/Makefile
-> index 4b101dd6e52f..189681f863a6 100644
-> --- a/arch/x86/mm/Makefile
-> +++ b/arch/x86/mm/Makefile
-> @@ -13,7 +13,8 @@ CFLAGS_REMOVE_mem_encrypt_identity.o  = -pg
->  endif
->
->  obj-y  :=  init.o init_$(BITS).o fault.o ioremap.o extable.o pageattr.o mmap.o \
-> -           pat.o pgtable.o physaddr.o setup_nx.o tlb.o cpu_entry_area.o
-> +           pat.o pgtable.o physaddr.o setup_nx.o tlb.o cpu_entry_area.o \
-> +           vmalloc.o
->
->  # Make sure __phys_addr has no stackprotector
->  nostackp := $(call cc-option, -fno-stack-protector)
-> diff --git a/arch/x86/mm/pageattr.c b/arch/x86/mm/pageattr.c
-> index db7a10082238..db0a4dfb5a7f 100644
-> --- a/arch/x86/mm/pageattr.c
-> +++ b/arch/x86/mm/pageattr.c
-> @@ -2248,9 +2248,7 @@ int set_pages_rw(struct page *page, int numpages)
->         return set_memory_rw(addr, numpages);
+On Wed, Dec 12, 2018 at 01:37:40AM +0000, He, Bo wrote:
+> We reproduced the issue panic in hung_task with the patch "Improve diagnostics for failed RCU grace-period start", but unfortunately maybe it's due to the loglevel, the show_rcu_gp_kthreads doesn't print any logs, we will improve the build and run the test to double check.
+
+Well, at least the diagnostics didn't prevent the problem from happening.  ;-)
+
+							Thanx, Paul
+
+> -----Original Message-----
+> From: Paul E. McKenney <paulmck@linux.ibm.com> 
+> Sent: Tuesday, December 11, 2018 12:47 PM
+> To: He, Bo <bo.he@intel.com>
+> Cc: Steven Rostedt <rostedt@goodmis.org>; linux-kernel@vger.kernel.org; josh@joshtriplett.org; mathieu.desnoyers@efficios.com; jiangshanlai@gmail.com; Zhang, Jun <jun.zhang@intel.com>; Xiao, Jin <jin.xiao@intel.com>; Zhang, Yanmin <yanmin.zhang@intel.com>; Bai, Jie A <jie.a.bai@intel.com>
+> Subject: Re: rcu_preempt caused oom
+> 
+> On Mon, Dec 10, 2018 at 04:38:38PM -0800, Paul E. McKenney wrote:
+> > On Mon, Dec 10, 2018 at 06:56:18AM +0000, He, Bo wrote:
+> > > Hi, 
+> > >    We have start the test with the CONFIG_PROVE_RCU=y, and also add one 2s to detect the preempt rcu hang, hope we can get more useful logs tomorrow.
+> > >    I also enclosed the config and the debug patches for you review.
+> > 
+> > I instead suggest the (lightly tested) debug patch shown below, which 
+> > tracks wakeups of RCU's grace-period kthreads and dumps them out if a 
+> > given requested grace period fails to start.  Again, it is necessary 
+> > to build with CONFIG_PROVE_RCU=y, that is, with CONFIG_PROVE_LOCKING=y.
+> 
+> Right.  This time without commenting out the wakeup as a test of the diagnostic.  :-/
+> 
+> Please use the patch below instead of the one that I sent in my previous email.
+> 
+> 							Thanx, Paul
+> 
+> ------------------------------------------------------------------------
+> 
+> commit adfc7dff659495a3433d5084256be59eee0ac6df
+> Author: Paul E. McKenney <paulmck@linux.ibm.com>
+> Date:   Mon Dec 10 16:33:59 2018 -0800
+> 
+>     rcu: Improve diagnostics for failed RCU grace-period start
+>     
+>     Backported from v4.21/v5.0
+>     
+>     If a grace period fails to start (for example, because you commented
+>     out the last two lines of rcu_accelerate_cbs_unlocked()), rcu_core()
+>     will invoke rcu_check_gp_start_stall(), which will notice and complain.
+>     However, this complaint is lacking crucial debugging information such
+>     as when the last wakeup executed and what the value of ->gp_seq was at
+>     that time.  This commit therefore removes the current pr_alert() from
+>     rcu_check_gp_start_stall(), instead invoking show_rcu_gp_kthreads(),
+>     which has been updated to print the needed information, which is collected
+>     by rcu_gp_kthread_wake().
+>     
+>     Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
+> 
+> diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c index 0b760c1369f7..4bcd8753e293 100644
+> --- a/kernel/rcu/tree.c
+> +++ b/kernel/rcu/tree.c
+> @@ -626,25 +626,57 @@ void rcu_sched_force_quiescent_state(void)
 >  }
->
-> -#ifdef CONFIG_DEBUG_PAGEALLOC
-> -
-> -static int __set_pages_p(struct page *page, int numpages)
-> +int set_pages_p_noflush(struct page *page, int numpages)
-
-Maybe set_pages_rwp_noflush()?
-
-> diff --git a/arch/x86/mm/vmalloc.c b/arch/x86/mm/vmalloc.c
-> new file mode 100644
-> index 000000000000..be9ea42c3dfe
-> --- /dev/null
-> +++ b/arch/x86/mm/vmalloc.c
-> @@ -0,0 +1,71 @@
-> +// SPDX-License-Identifier: GPL-2.0
+>  EXPORT_SYMBOL_GPL(rcu_sched_force_quiescent_state);
+>  
 > +/*
-> + * vmalloc.c: x86 arch version of vmalloc.c
-> + *
-> + * (C) Copyright 2018 Intel Corporation
-> + *
-> + * This program is free software; you can redistribute it and/or
-> + * modify it under the terms of the GNU General Public License
-> + * as published by the Free Software Foundation; version 2
-> + * of the License.
-
-This paragraph may be redundant with the SPDX line.
-
+> + * Convert a ->gp_state value to a character string.
 > + */
-> +
-> +#include <linux/mm.h>
-> +#include <linux/set_memory.h>
-> +#include <linux/vmalloc.h>
-> +
-> +static void set_area_direct_np(struct vm_struct *area)
-> +{
-> +       int i;
-> +
-> +       for (i = 0; i < area->nr_pages; i++)
-> +               set_pages_np_noflush(area->pages[i], 1);
+> +static const char *gp_state_getname(short gs) {
+> +	if (gs < 0 || gs >= ARRAY_SIZE(gp_state_names))
+> +		return "???";
+> +	return gp_state_names[gs];
 > +}
 > +
-> +static void set_area_direct_prw(struct vm_struct *area)
-> +{
-> +       int i;
-> +
-> +       for (i = 0; i < area->nr_pages; i++)
-> +               set_pages_p_noflush(area->pages[i], 1);
+> +/*
+> + * Return the root node of the specified rcu_state structure.
+> + */
+> +static struct rcu_node *rcu_get_root(struct rcu_state *rsp) {
+> +	return &rsp->node[0];
 > +}
 > +
-> +void arch_vunmap(struct vm_struct *area, int deallocate_pages)
-> +{
-> +       int immediate = area->flags & VM_IMMEDIATE_UNMAP;
-> +       int special = area->flags & VM_HAS_SPECIAL_PERMS;
-> +
-> +       /* Unmap from vmalloc area */
-> +       remove_vm_area(area->addr);
-> +
-> +       /* If no need to reset directmap perms, just check if need to flush */
-> +       if (!(deallocate_pages || special)) {
-> +               if (immediate)
-> +                       vm_unmap_aliases();
-> +               return;
-> +       }
-> +
-> +       /* From here we need to make sure to reset the direct map perms */
-> +
-> +       /*
-> +        * If the area being freed does not have any extra capabilities, we can
-> +        * just reset the directmap to RW before freeing.
-> +        */
-> +       if (!immediate) {
-> +               set_area_direct_prw(area);
-> +               vm_unmap_aliases();
-> +               return;
-> +       }
-> +
-> +       /*
-> +        * If the vm being freed has security sensitive capabilities such as
-> +        * executable we need to make sure there is no W window on the directmap
-> +        * before removing the X in the TLB. So we set not present first so we
-> +        * can flush without any other CPU picking up the mapping. Then we reset
-> +        * RW+P without a flush, since NP prevented it from being cached by
-> +        * other cpus.
-> +        */
-> +       set_area_direct_np(area);
-> +       vm_unmap_aliases();
-> +       set_area_direct_prw(area);
+>  /*
+>   * Show the state of the grace-period kthreads.
+>   */
+>  void show_rcu_gp_kthreads(void)
+>  {
+>  	int cpu;
+> +	unsigned long j;
+> +	unsigned long ja;
+> +	unsigned long jr;
+> +	unsigned long jw;
+>  	struct rcu_data *rdp;
+>  	struct rcu_node *rnp;
+>  	struct rcu_state *rsp;
+>  
+> +	j = jiffies;
+>  	for_each_rcu_flavor(rsp) {
+> -		pr_info("%s: wait state: %d ->state: %#lx\n",
+> -			rsp->name, rsp->gp_state, rsp->gp_kthread->state);
+> +		ja = j - READ_ONCE(rsp->gp_activity);
+> +		jr = j - READ_ONCE(rsp->gp_req_activity);
+> +		jw = j - READ_ONCE(rsp->gp_wake_time);
+> +		pr_info("%s: wait state: %s(%d) ->state: %#lx delta ->gp_activity %lu ->gp_req_activity %lu ->gp_wake_time %lu ->gp_wake_seq %ld ->gp_seq %ld ->gp_seq_needed %ld ->gp_flags %#x\n",
+> +			rsp->name, gp_state_getname(rsp->gp_state),
+> +			rsp->gp_state,
+> +			rsp->gp_kthread ? rsp->gp_kthread->state : 0x1ffffL,
+> +			ja, jr, jw, (long)READ_ONCE(rsp->gp_wake_seq),
+> +			(long)READ_ONCE(rsp->gp_seq),
+> +			(long)READ_ONCE(rcu_get_root(rsp)->gp_seq_needed),
+> +			READ_ONCE(rsp->gp_flags));
+>  		rcu_for_each_node_breadth_first(rsp, rnp) {
+>  			if (ULONG_CMP_GE(rsp->gp_seq, rnp->gp_seq_needed))
+>  				continue;
+> -			pr_info("\trcu_node %d:%d ->gp_seq %lu ->gp_seq_needed %lu\n",
+> -				rnp->grplo, rnp->grphi, rnp->gp_seq,
+> -				rnp->gp_seq_needed);
+> +			pr_info("\trcu_node %d:%d ->gp_seq %ld ->gp_seq_needed %ld\n",
+> +				rnp->grplo, rnp->grphi, (long)rnp->gp_seq,
+> +				(long)rnp->gp_seq_needed);
+>  			if (!rcu_is_leaf_node(rnp))
+>  				continue;
+>  			for_each_leaf_node_possible_cpu(rnp, cpu) { @@ -653,8 +685,8 @@ void show_rcu_gp_kthreads(void)
+>  				    ULONG_CMP_GE(rsp->gp_seq,
+>  						 rdp->gp_seq_needed))
+>  					continue;
+> -				pr_info("\tcpu %d ->gp_seq_needed %lu\n",
+> -					cpu, rdp->gp_seq_needed);
+> +				pr_info("\tcpu %d ->gp_seq_needed %ld\n",
+> +					cpu, (long)rdp->gp_seq_needed);
+>  			}
+>  		}
+>  		/* sched_show_task(rsp->gp_kthread); */ @@ -690,14 +722,6 @@ void rcutorture_get_gp_data(enum rcutorture_type test_type, int *flags,  }  EXPORT_SYMBOL_GPL(rcutorture_get_gp_data);
+>  
+> -/*
+> - * Return the root node of the specified rcu_state structure.
+> - */
+> -static struct rcu_node *rcu_get_root(struct rcu_state *rsp) -{
+> -	return &rsp->node[0];
+> -}
+> -
+>  /*
+>   * Enter an RCU extended quiescent state, which can be either the
+>   * idle loop or adaptive-tickless usermode execution.
+> @@ -1285,16 +1309,6 @@ static void record_gp_stall_check_time(struct rcu_state *rsp)
+>  	rsp->n_force_qs_gpstart = READ_ONCE(rsp->n_force_qs);  }
+>  
+> -/*
+> - * Convert a ->gp_state value to a character string.
+> - */
+> -static const char *gp_state_getname(short gs) -{
+> -	if (gs < 0 || gs >= ARRAY_SIZE(gp_state_names))
+> -		return "???";
+> -	return gp_state_names[gs];
+> -}
+> -
+>  /*
+>   * Complain about starvation of grace-period kthread.
+>   */
+> @@ -1693,7 +1707,8 @@ static bool rcu_future_gp_cleanup(struct rcu_state *rsp, struct rcu_node *rnp)
+>   * Don't do a self-awaken, and don't bother awakening when there is
+>   * nothing for the grace-period kthread to do (as in several CPUs
+>   * raced to awaken, and we lost), and finally don't try to awaken
+> - * a kthread that has not yet been created.
+> + * a kthread that has not yet been created.  If all those checks are
+> + * passed, track some debug information and awaken.
+>   */
+>  static void rcu_gp_kthread_wake(struct rcu_state *rsp)  { @@ -1701,6 +1716,8 @@ static void rcu_gp_kthread_wake(struct rcu_state *rsp)
+>  	    !READ_ONCE(rsp->gp_flags) ||
+>  	    !rsp->gp_kthread)
+>  		return;
+> +	WRITE_ONCE(rsp->gp_wake_time, jiffies);
+> +	WRITE_ONCE(rsp->gp_wake_seq, READ_ONCE(rsp->gp_seq));
+>  	swake_up_one(&rsp->gp_wq);
+>  }
+>  
+> @@ -2802,16 +2819,11 @@ rcu_check_gp_start_stall(struct rcu_state *rsp, struct rcu_node *rnp,
+>  		raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
+>  		return;
+>  	}
+> -	pr_alert("%s: g%ld->%ld gar:%lu ga:%lu f%#x gs:%d %s->state:%#lx\n",
+> -		 __func__, (long)READ_ONCE(rsp->gp_seq),
+> -		 (long)READ_ONCE(rnp_root->gp_seq_needed),
+> -		 j - rsp->gp_req_activity, j - rsp->gp_activity,
+> -		 rsp->gp_flags, rsp->gp_state, rsp->name,
+> -		 rsp->gp_kthread ? rsp->gp_kthread->state : 0x1ffffL);
+>  	WARN_ON(1);
+>  	if (rnp_root != rnp)
+>  		raw_spin_unlock_rcu_node(rnp_root);
+>  	raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
+> +	show_rcu_gp_kthreads();
+>  }
+>  
+>  /*
+> diff --git a/kernel/rcu/tree.h b/kernel/rcu/tree.h index 4e74df768c57..0e051d9b5f1a 100644
+> --- a/kernel/rcu/tree.h
+> +++ b/kernel/rcu/tree.h
+> @@ -327,6 +327,8 @@ struct rcu_state {
+>  	struct swait_queue_head gp_wq;		/* Where GP task waits. */
+>  	short gp_flags;				/* Commands for GP task. */
+>  	short gp_state;				/* GP kthread sleep state. */
+> +	unsigned long gp_wake_time;		/* Last GP kthread wake. */
+> +	unsigned long gp_wake_seq;		/* ->gp_seq at ^^^. */
+>  
+>  	/* End of fields guarded by root rcu_node's lock. */
+>  
+> 
 
-Here you're using "immediate" as a proxy for "was executable".  And
-it's barely faster to omit immediate -- it's the same number of
-flushes, and all you save is one pass over the direct map.
 
-Do we really need to support all these combinations?  Even if we do
-support them, I think that "immediate" needs a better name.
