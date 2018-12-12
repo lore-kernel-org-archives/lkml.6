@@ -2,125 +2,105 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 371FBC67839
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:39:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F87EC65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:41:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECB0B20879
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:39:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECB0B20879
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id BB9F92080F
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:41:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=vanguardiasur-com-ar.20150623.gappssmtp.com header.i=@vanguardiasur-com-ar.20150623.gappssmtp.com header.b="fzOeiimQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB9F92080F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=vanguardiasur.com.ar
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728032AbeLLRjT (ORCPT
+        id S1728006AbeLLRlU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 12:39:19 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:46232 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727681AbeLLRjR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 12:39:17 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 71C2E80D;
-        Wed, 12 Dec 2018 09:39:17 -0800 (PST)
-Received: from [10.37.8.254] (unknown [10.37.8.254])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9F94F3F575;
-        Wed, 12 Dec 2018 09:39:15 -0800 (PST)
-Subject: Re: [PATCH v2 2/2] arm64: uaccess: Implement unsafe accessors
-To:     Catalin Marinas <catalin.marinas@arm.com>,
-        Julien Thierry <julien.thierry@arm.com>
-Cc:     peterz@infradead.org, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, mingo@redhat.com,
-        james.morse@arm.com, hpa@zytor.com,
-        linux-arm-kernel@lists.infradead.org
-References: <1543845318-24543-1-git-send-email-julien.thierry@arm.com>
- <1543845318-24543-3-git-send-email-julien.thierry@arm.com>
- <20181206182551.GB37411@arrakis.emea.arm.com>
- <6424e0f6-7755-c19a-5bc4-a70be5839644@arm.com>
- <20181210145931.GE4048@arrakis.emea.arm.com>
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-Message-ID: <3e9a5867-c33a-7e6e-90f2-723488de094d@arm.com>
-Date:   Wed, 12 Dec 2018 17:40:51 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Wed, 12 Dec 2018 12:41:20 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:39115 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726922AbeLLRlT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 12:41:19 -0500
+Received: by mail-pl1-f193.google.com with SMTP id 101so8924500pld.6
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 09:41:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=vanguardiasur-com-ar.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=mAssrmJlu9H/RT/IUtyjggNaKpKcJJfSlRCSThI1Ktk=;
+        b=fzOeiimQF1371cjmO961aiiHnTmNN7pqiJgAQFLMWpdtPKbZNo/NHXnJFgh9lmfQv1
+         zBHEaufddQKZU8Y4f1k+6E/0upAmbUdP/OKKl81Vku/9e5yGZxVPBLh/s/11/N763V5e
+         LffDcOoA0cIThN730JRIgZSSU1ZDq7TeCUpIQk6tpZw7arvVnr8VqXDI8yfZs6XZtH4B
+         rYVLC4htUdLVeOb15JCVG0ca1Fe0JjQ7ITC+99AzVQ1Jm36tuKZMlgMJL2ge2G1FPDbw
+         +SunAQPCOAZm9uhCbZGn2JSLuBgZdNdQQHV7zGS/R9J4jX1U00m2MhkZtj6+CzLoKc9p
+         7OXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=mAssrmJlu9H/RT/IUtyjggNaKpKcJJfSlRCSThI1Ktk=;
+        b=gzzvIZmpDntiYFkCQxY4Rg3ostxHzIfQaw3M5O+o6NhKNskAvNbf7NBv3N3UYwjfDe
+         shcSSyOSx3iaZyEIquqzr/9cbihzuPL+Wozw0wAkUFzOQVS6LD5atex80RkQYHKxPvWd
+         aS1hwleG3k5uX58qxUjiK1bfYyF6Co5jEKl+BvgsCSm+oHQy78Zyn6pUnn6hvPDv12Ft
+         hFNWWFWVA+icn80vIcAXuOXIeFOC3K9LsWEzWpty/eYOSv4pfme5FgyDOE0kXknN29T1
+         4aGvPIaOxsWMwdvM2ypYQDnndZ4LQBQbbYKmButrBFDAKvREwuQkYzHO4sm6yU7fDpzw
+         L+cw==
+X-Gm-Message-State: AA+aEWZ4NYK7rdYI2VmeYFXBakVatVMtTdzlWapWQ8h/jtLfDraLxjBR
+        1ZBeCS1zcyRxkswyjUKTrpQQ7PDhztP/cWSMiLsemA==
+X-Google-Smtp-Source: AFSGD/XmGHsM9r+xZBgY4tRwegCRzPqaKSP7XvE6RSWec29QRJwogD32vSPAHNUBnUtG0m1n24zpw+su/vhIvmHKe/g=
+X-Received: by 2002:a17:902:4a0c:: with SMTP id w12mr20898646pld.8.1544636479189;
+ Wed, 12 Dec 2018 09:41:19 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181210145931.GE4048@arrakis.emea.arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20181109190327.23606-1-matwey@sai.msu.ru> <3390244.qRE0ngbmrs@avalon>
+In-Reply-To: <3390244.qRE0ngbmrs@avalon>
+From:   Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
+Date:   Wed, 12 Dec 2018 14:41:07 -0300
+Message-ID: <CAAEAJfDaO+2gvmuXwYD_-g9Q_dtQiP1SO6HX8u7cNS8LU4b8Zw@mail.gmail.com>
+Subject: Re: [PATCH v6 0/2] media: usb: pwc: Don't use coherent DMA buffers
+ for ISO transfer
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     matwey@sai.msu.ru, linux-media <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        matwey.kornilov@gmail.com, Tomasz Figa <tfiga@chromium.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        rostedt@goodmis.org, mingo@redhat.com, isely@pobox.com,
+        bhumirks@gmail.com, colin.king@canonical.com,
+        kieran.bingham@ideasonboard.com,
+        Keiichi Watanabe <keiichiw@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/10/2018 02:59 PM, Catalin Marinas wrote:
-> On Fri, Dec 07, 2018 at 08:38:11AM +0000, Julien Thierry wrote:
->>
->>
->> On 12/06/2018 06:25 PM, Catalin Marinas wrote:
->>> On Mon, Dec 03, 2018 at 01:55:18PM +0000, Julien Thierry wrote:
->>>> diff --git a/arch/arm64/include/asm/uaccess.h b/arch/arm64/include/asm/uaccess.h
->>>> index 07c3408..cabfcae 100644
->>>> --- a/arch/arm64/include/asm/uaccess.h
->>>> +++ b/arch/arm64/include/asm/uaccess.h
->>>> @@ -233,6 +233,23 @@ static inline void uaccess_enable_not_uao(void)
->>>>    	__uaccess_enable(ARM64_ALT_PAN_NOT_UAO);
->>>>    }
->>>> +#define unsafe_user_region_active	uaccess_region_active
->>>> +static inline bool uaccess_region_active(void)
->>>> +{
->>>> +	if (system_uses_ttbr0_pan()) {
->>>> +		u64 ttbr;
->>>> +
->>>> +		ttbr = read_sysreg(ttbr1_el1);
->>>> +		return ttbr & TTBR_ASID_MASK;
->>>
->>> Nitpick: could write this in 1-2 lines.
->>
->> True, I can do that in 1 line.
->>
->>>> +	} else if (cpus_have_const_cap(ARM64_ALT_PAN_NOT_UAO)) {
->>>> +		return (read_sysreg(sctlr_el1) & SCTLR_EL1_SPAN) ?
->>>> +				false :
->>>> +				!read_sysreg_s(SYS_PSTATE_PAN);
->>>> +	}
->>>
->>> ARM64_ALT_PAN_NOT_UAO implies ARM64_HAS_PAN which implies SCTLR_EL1.SPAN
->>> is 0 at run-time. Is this to cope with the case of being called prior to
->>> cpu_enable_pan()?
->>>
->>
->> Yes, the issue I can into is that for cpufeatures, .cpu_enable() callbacks
->> are called inside stop_machine() which obviously might_sleep and so attempts
->> to check whether user_access is on. But for features that get enabled before
->> PAN, the PAN bit will be set.
-> 
-> OK, so the PSTATE.PAN bit only makes sense when SCTLR_EL1.SPAN is 0, IOW
-> the PAN hardware feature has been enabled. Maybe you could write it
-> (together with some comment):
-> 
-> 	} else if (cpus_have_const_cap(ARM64_ALT_PAN_NOT_UAO) &&
-> 		 !(read_sysreg(sctlr_el1) & SCTLR_EL1_SPAN)) {
-> 		 /* only if PAN is present and enabled */
-> 		return !read_sysreg_s(SYS_PSTATE_PAN)
-> 	}
-> 
-> On the cpufeature.c side of things, it seems that we enable the
-> static_branch before calling the cpu_enable. I wonder whether changing
-> the order here would help with avoid the SCTLR_EL1 read (not sure what
-> else it would break; cc'ing Suzuki).
-> 
+On Wed, 12 Dec 2018 at 14:27, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+>
+> Hi Matwey,
+>
+> Thank you for the patches.
+>
+> For the whole series,
+>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+>
 
+Thanks Laurent.
 
-I doubt if we would gain anything by moving it around. 
-cpus_have_const_cap() would fall back to test_bit() until we mark that
-the static_branches have been updated explicitly, which happens after
-we have issued the stop_machine(). So, even if we move the static branch
-per capability, we don't gain much.
+Matwey, given your detailed analysis of this issue,
+and given you have pwc hardware to test, I think
+you should consider co-maintaining this driver.
 
-Is that what you were looking for ?
-
-Cheers
-Suzuki
+Thanks,
+--=20
+Ezequiel Garc=C3=ADa, VanguardiaSur
+www.vanguardiasur.com.ar
