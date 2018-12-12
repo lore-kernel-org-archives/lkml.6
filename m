@@ -2,195 +2,151 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_MIXED_ES autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F22F8C04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 14:45:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60EF4C04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 14:47:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5F1420879
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 14:45:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2413720870
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 14:47:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=snewbury.org.uk header.i=@snewbury.org.uk header.b="XM7jsIYZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5F1420879
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=snewbury.org.uk
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="K+TpKqvL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2413720870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726667AbeLLOpf (ORCPT
+        id S1727536AbeLLOq7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 09:45:35 -0500
-Received: from know-smtprelay-omc-11.server.virginmedia.net ([80.0.253.75]:56763
-        "EHLO know-smtprelay-omc-11.server.virginmedia.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726228AbeLLOpf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 09:45:35 -0500
-Received: from mail.snewbury.org.uk ([77.243.189.247])
-        by cmsmtp with ESMTPA
-        id X5lUgQkxAhtC0X5lUgNU6T; Wed, 12 Dec 2018 14:45:32 +0000
-X-Originating-IP: [77.243.189.247]
-X-Authenticated-User: sjnewbury@virginmedia.com
-X-Spam: 0
-X-Authority: v=2.3 cv=KJXu82No c=1 sm=1 tr=0 a=7eWGW6afXjFjJVQJLTi0Pg==:117
- a=7eWGW6afXjFjJVQJLTi0Pg==:17 a=IkcTkHD0fZMA:10 a=2ur7OfE09M0A:10
- a=4KbsWil0Dqb4rt546ZAA:9 a=P7_C82-sqWY_hZRs:21 a=1MS2vNhKCJGKZQS5:21
- a=QEXdDO2ut3YA:10
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=snewbury.org.uk;
-         h=content-transfer-encoding:mime-version:x-mailer:content-type
-        :content-type:references:in-reply-to:date:date:from:from:subject
-        :subject:message-id; s=eater; t=1544625930; x=1546440331; bh=VIX
-        GhhuMptuRgLiLGn5B4vXHEkFze8nFYg8g4h+O810=; b=XM7jsIYZiGCBCqnRL6E
-        3QvxhppTqOz65Ra3t3nnGs86zLju4kWy6PW/ldyDakZmhPxdyrZ3BhbCgo6ZaP+R
-        7IMkY1Q22OIChyrH03pxhlnrEiJfdQsGri4PBNyHevsf7y1/roVDgxQJcliF4p33
-        T+YbB04Kien68YwIFclOw3yA=
-X-Virus-Scanned: amavisd-new at snewbury.org.uk
-Received: from android-a9f8fd57ba190b44.media.snewbury.org.uk (android-a9f8fd57ba190b44.media.snewbury.org.uk [192.168.75.105] (may be forged))
-        (authenticated bits=0)
-        by mail.snewbury.org.uk (8.14.9/8.14.9) with ESMTP id wBCEjTUs012285
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 12 Dec 2018 14:45:29 GMT
-Message-ID: <1544625960.117529.58.camel@snewbury.org.uk>
-Subject: Re: Can we drop upstream Linux x32 support?
-From:   Steven Newbury <steve@snewbury.org.uk>
-To:     Rich Felker <dalias@libc.org>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        macro@linux-mips.org, tg@mirbsd.de, luto@kernel.org, arnd@arndb.de,
-        s@ecloud.org, catalin.marinas@arm.com, fweimer@redhat.com,
-        glaubitz@physik.fu-berlin.de, christian.brauner@canonical.com,
-        hjl.tools@gmail.com, hpa@zytor.com
-Date:   Wed, 12 Dec 2018 14:46:00 +0000
-In-Reply-To: <20181212140147.GR23599@brightrain.aerifal.cx>
-References: <1544605954.117529.27.camel@snewbury.org.uk>
-         <20181212140147.GR23599@brightrain.aerifal.cx>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfMIgZwkAVNsB0/sRf5tOZHOUMtF/0bXWrJrLjJGySSPB5oHFCa5X9pvq4T+3ZYdSvucTiIcoUsnPZB8f4ureiWifhOkzuM9uiKMGgELamgOWnzi+i7dM
- qX5HOFnrV+pKVi6aVY9+HoqO5FlnQNKq3yRcCru31AlQr/D6d5zZng1ikA0AiH/iCsuh/Zid+fT76x5kIkY1qClvO2023++a6bAxOIQPQPTQ9ZR/GK7AwgOR
- g2rrXCNPqxWbv04zPHBPW0u9Um/6Wkx182ldlAl8Iha1okTzNl70FQS84PKpEfWw9Ua2ammxcmxuwjf8lBH1TIv3o3t1gD12ubl2ajHRN3UfhyUnNKtYcDRm
- AEtX+YLV0A6Am1Ta2ip+36RVVnfoiP5loPRvGJoiCWJ23Lyp/S543H02YOEpJHxH6slenp9Nk1h2+0k/sQ8XgzX1Fv1ENAf8H5e/XS8uMs2YcZlVyebiO+a1
- VT9v9XCkBExTvl74nwFigKjUNRaJK2kn2qMZIA==
+        Wed, 12 Dec 2018 09:46:59 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:35998 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726228AbeLLOq6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 09:46:58 -0500
+Received: by mail-pf1-f194.google.com with SMTP id b85so8987743pfc.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 06:46:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=sN19sOJAgXqIh/Xw5W4LqYIsDRDpzgbdAarXMCE4msw=;
+        b=K+TpKqvLaN7TYP48ABWktdYCk8yn0z/C4SpzNCtNMXAE21zhQliZ+OTANIExTaEKEa
+         OxJUrGFfKlYtQQ/vuqgUoadd/8UhrlyGmIsjBmm35iIoUR5/MHKSVJiRujn9rge8hkA+
+         OCNXuEa6S1H6CrC38hXN/+vQRi7oxMfakxLik=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=sN19sOJAgXqIh/Xw5W4LqYIsDRDpzgbdAarXMCE4msw=;
+        b=JRhmA2LKTgKqjwogKYbvWiwkH0YeupCyK5M89Z7tGav2AQa7RNQCAz1Wys4xywyVvn
+         kgSHWuP8TwvrT0Eyq//2KUaKoUcS7LLViMdDqdFeuTT3JPegqxBGLC7YsHyF0yXj3/GZ
+         ex8RcvbSAp8uRhe2Uk1tMSDhDZNeORJ/+e1tbacfWU82Ulp/AgE0rg/n0FQSG0H6hIyj
+         VPGHVYu5usI2fuMuU4qHYnS1dwyydtWilTBTR8wOdw6z+L1+aQE3VGWoiZRNl8uC0caG
+         1cmiydBczLAe3UBY1/tGkwqMEeW/NfRA8Ow0V2WDDiJoNAZ4JiNTZI2U6/E8f+AcsvL7
+         zbsA==
+X-Gm-Message-State: AA+aEWZtGpPkbCakIogDbF73/VAMfraATFLIkhNvn14inl4efg2An57q
+        GNIhNOhbBFUQVemCIvcscYXA
+X-Google-Smtp-Source: AFSGD/UoCrTMWYmn6BeOk5sdZCPFueZVQZuDIRjIVmrBXFQYy1NL7aZA5Pj4W5OByRjgc+Ug0h2zNQ==
+X-Received: by 2002:a65:448a:: with SMTP id l10mr18485589pgq.387.1544626017185;
+        Wed, 12 Dec 2018 06:46:57 -0800 (PST)
+Received: from Mani-XPS-13-9360 ([2409:4072:6190:e546:e5b2:257b:c83b:98e4])
+        by smtp.gmail.com with ESMTPSA id x27sm41958565pfe.178.2018.12.12.06.46.49
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 12 Dec 2018 06:46:56 -0800 (PST)
+Date:   Wed, 12 Dec 2018 20:16:46 +0530
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>
+Cc:     olof@lixom.net, arnd@arndb.de, robh+dt@kernel.org,
+        tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com,
+        daniel.lezcano@linaro.org, gregkh@linuxfoundation.org,
+        jslaby@suse.com, devicetree@vger.kernel.org,
+        linus.walleij@linaro.org, linux-kernel@vger.kernel.org,
+        amit.kucheria@linaro.org, linux-unisoc@lists.infradead.org,
+        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v4 15/15] MAINTAINERS: Add entry for RDA Micro SoC
+ architecture
+Message-ID: <20181212144646.GA27625@Mani-XPS-13-9360>
+References: <20181210173550.29643-1-manivannan.sadhasivam@linaro.org>
+ <20181210173550.29643-16-manivannan.sadhasivam@linaro.org>
+ <3e4b7143-6ed8-6006-cb07-d72bca40ce5f@suse.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <3e4b7143-6ed8-6006-cb07-d72bca40ce5f@suse.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA256
+Hi Andreas,
 
-On Wed, 2018-12-12 at 09:01 -0500, Rich Felker wrote:
-> On Wed, Dec 12, 2018 at 09:12:34AM +0000, Steven Newbury wrote:
-> > -----BEGIN PGP SIGNED MESSAGE-----
-> > Hash: SHA256
-> > 
-> > First off I'd like to request: Please don't break my userspace!
-> > 
-> > I have a number of systems running with x32-abi as native.  They
-> > work
-> > well, I've no want or desire to upgrade their memory or CPUs to
-> > make
-> > keep them working as well as they do now.  Let alone the hassle of
-> > having to redeploy with a completely different ABI.
-> > 
-> > 
-> > I've been working on getting as much userspace as I can working
-> > with
-> > x32 since it first became somewhat usable, I've sent patches
-> > upstream
-> > and pushed to encourage projects to write portable code.  Sometimes
-> > that has meant just little tweaks to build systems, or sometimes
-> > disabling asm where I consider it isn't worth the effort of making
-> > it
-> > work.  For other projects I've converted the asm or even in some
-> > cases
-> > got the JIT working, mozjs17 for example.
-> > 
-> > So I'm both a user and a developer.
-> > 
-> > Breaking support for x32 would be really bad for me, but if I'm the
-> > only one using it I suppose I can't really justify it being kept on
-> > that basis.  I know CERN has sucessfully experimented with it over
-> > the
-> > years though, so I wouldn't be surprised if there are other users
-> > hiding out there.
-> > 
-> > I can't help but wonder if it wouldn't make more sense to drop x86
-> > support from long mode than x32.  AMD64 x86 support was always
-> > intended
-> >  as a compatibility feature, I very much doubt there are more
-> > people
-> > out there using an x86 native userspace on a 64 bit kernel than
-> > there
+On Wed, Dec 12, 2018 at 02:53:42PM +0100, Andreas Färber wrote:
+> Hi Mani,
 > 
-> I am. The only reason I'm using a 64-bit kernel with it is to get the
-> full 4GB address space for userspace rather than just 3GB. I suspect
-> there are more users like me than like you.
+> Am 10.12.18 um 18:35 schrieb Manivannan Sadhasivam:
+> > Add MAINTAINERS entry for RDA Micro SoC architecture with myself
+> > and Andreas Färber as the maintainers.
+> > 
+> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > ---
+> >  MAINTAINERS | 15 +++++++++++++++
+> >  1 file changed, 15 insertions(+)
+> > 
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index 6c3fbbb361f8..6411fb222590 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -1945,6 +1945,21 @@ M:	Lennert Buytenhek <kernel@wantstofly.org>
+> >  L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+> >  S:	Maintained
+> >  
+> > +ARM/RDA MICRO ARCHITECTURE
+> > +M:	Andreas Färber <afaerber@suse.de>
+> > +M:	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 > 
-You may well be right, I lack any data either way.  I just find it hard
-to believe I'm, what, one of two users of x32?
-
-> Unlike x32, i386 is actually widely supported and works, and achieves
-> most of the benefits of x32, but with marginally worse performance
-> due
-x32 works, and is widely supported by the fact that the vast majority
-of free software is just a compile away.  Now, there are holes, I've
-been trying to get Chromium/qtwebengine ported for the last couple of
-weeks.
-
-The performance isn't marginally worse, it's much worse, unless the
-code in question is hand optimized SIMD or is otherwise not really
-standard "IA32 ISA" anyway.
-
-> to register scarcity, lack of native 64-bit arithmetic, bad function
-> call ABI, and bad PC-relative addressing. For applications that
-> aren't
-Exactly, much worse.
-
-> performance sensitive it's the right choice for shipping static
-> binaries, especially if they may be memory-hungry, since it works on
-> pretty much any box.
+> I'd suggest you swap the two of us here, making you the primary
+> maintainer. Or drop me, as I should be copied via linux-unisoc anyway.
 > 
-When it comes to power usage and latency any code that runs often is
-peformance senstitive.  I can't argue about shipping i386 static
-binaries, they'll work on pretty much any *x86* box, I agree.
-
-> > are native x32 users.  x86 support could be implemented via KVM
-> > and/or
-> > qemu-user.  There is no reason to keep the extra complexity in the
-> > kernel for what is effectively an emulation layer anyway.
+> I won't realistically have the bandwidth to drive review and more pull
+> requests at the moment, with Realtek already stuck in irqchip regression
+> for too long and LoRa making only slow progress.
 > 
-> qemu-user is a non-solution. Not only does it result in being much
-> slower and using more resources than just running a 64-bit userspace
-> (defeating the purpose); it's also incapable of correctly emulating
-> lots of corner cases. I've never been able to get it to work with
-> thread cancellation, and doing so is fundamentally hard because it
-> would require heavy emulation of signals rather than passing them
-> through.
+
+Okay, no issues. Will drop you from the MAINTAINERS entry so that you
+won't get bugged.
+
+Thanks,
+Mani
+
+> Regards,
+> Andreas
 > 
-What's the purpose?  Running IA32 binaries is for legacy.  You don't
-run i386/IA32 binaries for the performance.  You use i386 as x32 was
-intended, that's succifient for you.  Great.  I get the benefits I want
-from an x32 userspace with amd64 binaries and libraries where it makes
-sense as I understand does Thorsten.  Are you saying this wrong,
-broken(?), and should be removed?
-
-My point about qemu-user is that there is an alternative (non-)solution 
-to legacy support in long mode, in addition to simply running an i386
-kernel with or without virtualisattion.  If that's insufficient for
-your use case of running an i386 userspace on an amd64 kernel that's
-fair enough, and from your point of view is a *really* good reason for
-not dropping i386 binary support... I feel the same way about x32! ;-)
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEWa1B4K0Hk12RDstE+lAa6BzrmeAFAlwRHykACgkQ+lAa6Bzr
-meAZegf/WnQN8rOekchuSDbohDlsnW114/E2cEpnyfMAR4T6pNbzjoPronTfYO+Y
-yOWlQVgkImuJyjkupqKNa4FfQgCqEVav+p79G5SEeS+42kL5GyNlIgnYEjEjU2/i
-hKZxpk9YNSgTVX2rMZiRJ9UoLmk8cVz7DhaRhlSvH0ZYeJD8vZYzBLaZvs9Z9Qps
-xlh8S8sJA5v2vXHGg/iRMxmYT3nKfaH63cY9hCcpvxrcoIGV7UH5a4IDJ6ISCPzO
-U8KEfllu7a6slHMLOzw52TVH4jk1XtmzfjNKQdAHP0lArbvNRI+JNLOz2syyx12P
-P50Bh6ZBQ/OrEvf8z7Mdidz7Oqr04Q==
-=6TKC
------END PGP SIGNATURE-----
-
+> > +L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+> > +L:	linux-unisoc@lists.infradead.org (moderated for non-subscribers)
+> > +S:	Maintained
+> > +F:	arch/arm/boot/dts/rda8810pl-*
+> > +F:	drivers/clocksource/timer-rda.c
+> > +F:	drivers/irqchip/irq-rda-intc.c
+> > +F:	drivers/tty/serial/rda-uart.c
+> > +F:	Documentation/devicetree/bindings/arm/rda.txt
+> > +F:	Documentation/devicetree/bindings/interrupt-controller/rda,8810pl-intc.txt
+> > +F:	Documentation/devicetree/bindings/serial/rda,8810pl-uart.txt
+> > +F:	Documentation/devicetree/bindings/timer/rda,8810pl-timer.txt
+> > +
+> >  ARM/REALTEK ARCHITECTURE
+> >  M:	Andreas Färber <afaerber@suse.de>
+> >  L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+> > 
+> 
+> 
+> -- 
+> SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
+> GF: Felix Imendörffer, Jane Smithard, Graham Norton
+> HRB 21284 (AG Nürnberg)
