@@ -2,91 +2,94 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E365C04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 14:39:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07F9CC65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 14:41:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4AF120839
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 14:39:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b="pneSKodZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4AF120839
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xenosoft.de
+	by mail.kernel.org (Postfix) with ESMTP id C3C9D20839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 14:41:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3C9D20839
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726434AbeLLOju (ORCPT
+        id S1726628AbeLLOle (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 09:39:50 -0500
-Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.80]:19498 "EHLO
-        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726223AbeLLOju (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 09:39:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1544625586;
-        s=strato-dkim-0002; d=xenosoft.de;
-        h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=UrXCJqBmcOaqJnTd5v/gj1AlYONWMF2EpPrI5UHxtdE=;
-        b=pneSKodZUKiv5Jqq2o4B9qfZDnaBi1PvKd9AfnSXR+5t9OgxTDMC5mUxUiK6yOEu71
-        1WynVCf3QFfUVs7tSpgFTcZAKg5h+7S7IFFCtl+7K7tzgOeJNAqpZzxbxfgt7MHQhsMv
-        i7V8fiTMo9JXxOGVhVcyBx/fOJ1pvTlqKuOLCNFgKF9HRF2rjAUFrRuEiBlfLo2TbKOJ
-        vRUKkB+Zm18Au8Q4t6d1dj5kKeJWkVKCwrKJL7WR5jHtySrCP6E77lwJ06UJWm60qT69
-        0NofTRUttZ2Qqqf4TnW+qMTVsK8fcd5H2GvLLRDtRNC8x8T8z9DQNMLQqsxinmnnRrA7
-        Fgmg==
-X-RZG-AUTH: ":L2QefEenb+UdBJSdRCXu93KJ1bmSGnhMdmOod1DhGN0rBVhd9dFr6KxrfO5Oh7R7NWZ5ibo2kX7YcEyrDrI2aqXbiLXCWgdJGi+B78AE"
-X-RZG-CLASS-ID: mo00
-Received: from [IPv6:2a01:598:8182:ce86:95bf:4292:9e3e:af3b]
-        by smtp.strato.de (RZmta 44.7 AUTH)
-        with ESMTPSA id j074b8uBCEdfCtK
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Wed, 12 Dec 2018 15:39:41 +0100 (CET)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
-Subject: Re: use generic DMA mapping code in powerpc V4
-From:   Christian Zigotzky <chzigotzky@xenosoft.de>
-X-Mailer: iPhone Mail (15G77)
-In-Reply-To: <20181212141556.GA4801@lst.de>
-Date:   Wed, 12 Dec 2018 15:39:40 +0100
-Cc:     linux-arch@vger.kernel.org,
-        Darren Stevens <darren@stevens-zone.net>,
-        linux-kernel@vger.kernel.org, Julian Margetson <runaway@candw.ms>,
-        linux-mm@kvack.org, iommu@lists.linux-foundation.org,
-        Paul Mackerras <paulus@samba.org>,
-        Olof Johansson <olof@lixom.net>, linuxppc-dev@lists.ozlabs.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <2242B4B2-6311-492E-BFF9-6740E36EC6D4@xenosoft.de>
-References: <1948cf84-49ab-543c-472c-d18e27751903@xenosoft.de> <5a2ea855-b4b0-e48a-5c3e-c859a8451ca2@xenosoft.de> <7B6DDB28-8BF6-4589-84ED-F1D4D13BFED6@xenosoft.de> <8a2c4581-0c85-8065-f37e-984755eb31ab@xenosoft.de> <424bb228-c9e5-6593-1ab7-5950d9b2bd4e@xenosoft.de> <c86d76b4-b199-557e-bc64-4235729c1e72@xenosoft.de> <1ecb7692-f3fb-a246-91f9-2db1b9496305@xenosoft.de> <6c997c03-e072-97a9-8ae0-38a4363df919@xenosoft.de> <4cfb3f26-74e1-db01-b014-759f188bb5a6@xenosoft.de> <82879d3f-83de-6438-c1d6-49c571dcb671@xenosoft.de> <20181212141556.GA4801@lst.de>
-To:     Christoph Hellwig <hch@lst.de>
+        Wed, 12 Dec 2018 09:41:34 -0500
+Received: from mx2.suse.de ([195.135.220.15]:58160 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726223AbeLLOle (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 09:41:34 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 5511BAFB6;
+        Wed, 12 Dec 2018 14:41:33 +0000 (UTC)
+Date:   Wed, 12 Dec 2018 08:41:30 -0600
+From:   Goldwyn Rodrigues <rgoldwyn@suse.de>
+To:     Avi Kivity <avi@scylladb.com>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>, linux-aio@kvack.org
+Subject: Re: Spurious EIO on AIO+DIO+RWF_NOWAIT
+Message-ID: <20181212144130.pifm7w7eznw6jtwn@merlin>
+References: <9bab0f40-5748-f147-efeb-5aac4fd44533@scylladb.com>
+ <20181210124823.iw4mxmdqpsdfeap4@merlin>
+ <8fb27ba4-c100-5d08-71b6-ef393d7bcae1@scylladb.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <8fb27ba4-c100-5d08-71b6-ef393d7bcae1@scylladb.com>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Christoph,
+On 14:05 12/12, Avi Kivity wrote:
+> On 12/10/18 2:48 PM, Goldwyn Rodrigues wrote:
+> > On 13:19 09/12, Avi Kivity wrote:
+> > > I have an application that receives spurious EIO when running with
+> > > RWF_NOWAIT enabled. Removing RWF_NOWAIT causes those EIOs to disappear. The
+> > > application uses AIO+DIO, and errors were seen on both xfs and ext4.
+> > > 
+> > > 
+> > > I suspect the following code:
+> > > 
+> > > 
+> > > /*
+> > >   * Process one completed BIO.  No locks are held.
+> > >   */
+> > > static blk_status_t dio_bio_complete(struct dio *dio, struct bio *bio)
+> > > {
+> > >          struct bio_vec *bvec;
+> > >          unsigned i;
+> > >          blk_status_t err = bio->bi_status;
+> > > 
+> > >          if (err) {
+> > >                  if (err == BLK_STS_AGAIN && (bio->bi_opf & REQ_NOWAIT))
+> > >                          dio->io_error = -EAGAIN;
+> > >                  else
+> > >                          dio->io_error = -EIO;
+> > >          }
+> > > 
+> > > Could it be that REQ_NOWAIT was dropped from bio->bi_opf? or that
+> > > bio->bi_status got changed along the way?
+> > > 
+> > I don't think REQ_NOWAIT is dropped. I am assuming bio->bi_status error
+> > is set differently. Is the blk queue being stopped? Is it possible to
+> > instrument the kernel in your testcase?
+> > 
+> 
+> I traced the function, and I see bio->bi_status == BLK_STS_NOTSUPP and
+> bio->bi_opf == REQ_OP_WRITE|REQ_SYNC|REQ_NOMERGE|REQ_FUA|REQ_NOWAIT.
+> Presumably the NOTSUPP is the result of NOWAIT not being supported down the
+> stack, but shouldn't it be detected earlier? And not converted to EIO?
+> 
 
-Thanks a lot for your reply. I will test your patches tomorrow.
+I don't think there is a way to detect it earlier. However, I think we should
+return -EOPNOTSUPP if the lower layers do not support REQ_NOWAIT. I will write
+a patch to modify this.
 
-Cheers,
-Christian
-
-Sent from my iPhone
-
-> On 12. Dec 2018, at 15:15, Christoph Hellwig <hch@lst.de> wrote:
->=20
-> Thanks for bisecting.  I've spent some time going over the conversion
-> but can't really pinpoint it.  I have three little patches that switch
-> parts of the code to the generic version.  This is on top of the
-> last good commmit (977706f9755d2d697aa6f45b4f9f0e07516efeda).
->=20
-> Can you check with wh=D1=96ch one things stop working?
->=20
->=20
-> <0001-get_required_mask.patch>
-> <0002-swiotlb-dma_supported.patch>
-> <0003-nommu-dma_supported.patch>
-> <0004-alloc-free.patch>
+-- 
+Goldwyn
