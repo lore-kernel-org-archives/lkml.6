@@ -2,335 +2,130 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,T_MIXED_ES,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC1C6C65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:07:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 557E9C65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:07:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 622E620849
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:07:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 622E620849
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 173ED20851
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:07:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sjDoTDJX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 173ED20851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727982AbeLLRHP (ORCPT
+        id S1727989AbeLLRHp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 12:07:15 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60316 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726879AbeLLRHO (ORCPT
+        Wed, 12 Dec 2018 12:07:45 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:40889 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726922AbeLLRHo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 12:07:14 -0500
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBCH44YJ025419
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 12:07:13 -0500
-Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2pb4wvcptr-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 12:07:13 -0500
-Received: from localhost
-        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Wed, 12 Dec 2018 17:07:12 -0000
-Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
-        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 12 Dec 2018 17:07:07 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBCH76SL18874434
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 12 Dec 2018 17:07:06 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 526ABB2066;
-        Wed, 12 Dec 2018 17:07:06 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1EF3AB205F;
-        Wed, 12 Dec 2018 17:07:05 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.38])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Wed, 12 Dec 2018 17:07:05 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id E8C3116C2E08; Wed, 12 Dec 2018 09:07:06 -0800 (PST)
-Date:   Wed, 12 Dec 2018 09:07:06 -0800
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Alan Stern <stern@rowland.harvard.edu>
-Cc:     David Goldblatt <davidtgoldblatt@gmail.com>,
-        mathieu.desnoyers@efficios.com,
-        Florian Weimer <fweimer@redhat.com>, triegel@redhat.com,
-        libc-alpha@sourceware.org, andrea.parri@amarulasolutions.com,
-        will.deacon@arm.com, peterz@infradead.org, boqun.feng@gmail.com,
-        npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
-        luc.maranget@inria.fr, akiyks@gmail.com, dlustig@nvidia.com,
-        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Linux: Implement membarrier function
-Reply-To: paulmck@linux.ibm.com
-References: <20181211190801.GO4170@linux.ibm.com>
- <Pine.LNX.4.44L0.1812111446150.1538-100000@iolanthe.rowland.org>
- <20181211212204.GR4170@linux.ibm.com>
+        Wed, 12 Dec 2018 12:07:44 -0500
+Received: by mail-lj1-f195.google.com with SMTP id n18-v6so16940414lji.7;
+        Wed, 12 Dec 2018 09:07:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=to:references:from:subject:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=dh9qOi2gOchLt7Tz6Maz2KC2vgfIol/GoPb1igeBc1A=;
+        b=sjDoTDJXxxR1ybcmz1ccs9HVVPfu+yihkJfkvKRCxlpEnaMgfPM7DGZzKomAfqdTRt
+         EwqKVzDaf9bKol2ed7dLjN2FUBd8zwQvtp1ENgjw7OS1a/fuOAtKfchGPUkqaaJUQBkf
+         a2id6onOVtmXF2QiwSoAWp5wDHGknEmUpgvwIEIZ7bukmaN69TgP1Kiv2x+C1F3tee53
+         8In8n0i4hd49wCBwwB618kO1kacTWPLipo7/BoeS5WC20QbDd1z6qSOAcO6R4uDu6Vzh
+         rn7s3MjAauS94Xrb+mD8EUUyweR/h7846XdmJcjx0thDHDPru9Dpr0Ks8B2LpVja+yDi
+         +B7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:to:references:from:subject:message-id:date
+         :user-agent:mime-version:content-language:content-transfer-encoding;
+        bh=dh9qOi2gOchLt7Tz6Maz2KC2vgfIol/GoPb1igeBc1A=;
+        b=DEHDzi2AI31GXEdjC07r3ezquG6mc2WA7eCfsupFcK+Nv0UUEwUv2Pmh3POWFAbxps
+         2WXscDRf2w/2B9ylA+HZPeMOB02eKHk2hMysudM5YJpmn49542O5tcMoUIRJzJpIGrau
+         L1504rSwJ6fpqG8tQRK5eMoaloxMkmo5wjupPTt8wRMBC3XTcoTW/fNszICkKikRIjVo
+         NqdPm0p8CWcQkycJHLE/zczds3LW0+Mw76t6D5t8NYTBikN9zku6RnSAgmMp/1EHsa0l
+         CVLK55hQMypkjEixLhYFIKdEJMenPWU5oRMQsKkhrU4STw9ISqTaAJqEhNcQYyBjhV9A
+         ZRhw==
+X-Gm-Message-State: AA+aEWaxrGpov0Nf4L8XPds9PlxZ+scykouuBNajuiNc1VBwkTm6Hs0t
+        mca7AyFwpgOPEuQxj4KACZo=
+X-Google-Smtp-Source: AFSGD/XJYhl2tdMHjMphFDLvnmUe0dSz8d3ayh6FvcCgVrEEcHZ7E831H5R8xAkHOJu9Hs+jObNCLA==
+X-Received: by 2002:a2e:1bc5:: with SMTP id c66-v6mr12543405ljf.96.1544634462234;
+        Wed, 12 Dec 2018 09:07:42 -0800 (PST)
+Received: from [192.168.55.63] (nat.ds19.agh.edu.pl. [149.156.124.19])
+        by smtp.gmail.com with ESMTPSA id b69sm3378967lfl.28.2018.12.12.09.07.40
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 12 Dec 2018 09:07:41 -0800 (PST)
+To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        kvm@vger.kernel.org, vgoyal@redhat.com, miklos@szeredi.hu,
+        stefanha@redhat.com, dgilbert@redhat.com, sweil@redhat.com,
+        swhiteho@redhat.com
+References: 
+From:   Piotr Jurkiewicz <piotr.jerzy.jurkiewicz@gmail.com>
+Subject: Re: [PATCH 00/52] [RFC] virtio-fs: shared file system for virtual
+ machines
+Message-ID: <dc2e6e0f-ab00-a114-0fc1-e787293a73cf@gmail.com>
+Date:   Wed, 12 Dec 2018 18:07:40 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181211212204.GR4170@linux.ibm.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18121217-0068-0000-0000-000003709148
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010214; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01130770; UDB=6.00587605; IPR=6.00910903;
- MB=3.00024670; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-12 17:07:12
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18121217-0069-0000-0000-000046BDFF4E
-Message-Id: <20181212170706.GA17397@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-12_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812120147
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 11, 2018 at 01:22:04PM -0800, Paul E. McKenney wrote:
-> On Tue, Dec 11, 2018 at 03:09:33PM -0500, Alan Stern wrote:
-> > On Tue, 11 Dec 2018, Paul E. McKenney wrote:
-> > 
-> > > > Rewriting the litmus test in these terms gives:
-> > > > 
-> > > >         P0      P1      P2      P3      P4      P5
-> > > >         Wa=2    Wb=2    Wc=2    [mb23]  [mb14]  [mb05]
-> > > >         mb0s    mb1s    mb2s    Wd=2    We=2    Wf=2
-> > > >         mb0e    mb1e    mb2e    Re=0    Rf=0    Ra=0
-> > > >         Rb=0    Rc=0    Rd=0
-> > > > 
-> > > > Here the brackets in "[mb23]", "[mb14]", and "[mb05]" mean that the
-> > > > positions of these barriers in their respective threads' program
-> > > > orderings is undetermined; they need not come at the top as shown.
-> > > > 
-> > > > (Also, in case David is unfamiliar with it, the "Wa=2" notation is
-> > > > shorthand for "Write 2 to a" and "Rb=0" is short for "Read 0 from b".)
-> > > > 
-> > > > Finally, here are a few facts which may be well known and obvious, but
-> > > > I'll state them anyway:
-> > > > 
-> > > > 	A CPU cannot reorder instructions across a memory barrier.
-> > > > 	If x is po-after a barrier then x executes after the barrier
-> > > > 	is finished.
-> > > > 
-> > > > 	If a store is po-before a barrier then the store propagates
-> > > > 	to every CPU before the barrier finishes.
-> > > > 
-> > > > 	If a store propagates to some CPU before a load on that CPU
-> > > > 	reads from the same location, then the load will obtain the
-> > > > 	value from that store or a co-later store.  This implies that
-> > > > 	if a load obtains a value co-earlier than some store then the
-> > > > 	load must have executed before the store propagated to the
-> > > > 	load's CPU.
-> > > > 
-> > > > The proof consists of three main stages, each requiring three steps.
-> > > > Using the facts that b - f are all read as 0, I'll show that P1
-> > > > executes Rc before P3 executes Re, then that P0 executes Rb before P4
-> > > > executes Rf, and lastly that P5's Ra must obtain 2, not 0.  This will
-> > > > demonstrate that the litmus test is not allowed.
-> > > > 
-> > > > 1.	Suppose that mb23 ends up coming po-later than Wd in P3.
-> > > > 	Then we would have:
-> > > > 
-> > > > 		Wd propagates to P2 < mb23 < mb2e < Rd,
-> > > > 
-> > > > 	and so Rd would obtain 2, not 0.  Hence mb23 must come
-> > > > 	po-before Wd (as shown in the listing):  mb23 < Wd.
-> > > > 
-> > > > 2.	Since mb23 therefore occurs po-before Re and instructions
-> > > > 	cannot be reordered across barriers,  mb23 < Re.
-> > > > 
-> > > > 3.	Since Rc obtains 0, we must have:
-> > > > 
-> > > > 		Rc < Wc propagates to P1 < mb2s < mb23 < Re.
-> > > > 
-> > > > 	Thus Rc < Re.
-> > > > 
-> > > > 4.	Suppose that mb14 ends up coming po-later than We in P4.
-> > > > 	Then we would have:
-> > > > 
-> > > > 		We propagates to P3 < mb14 < mb1e < Rc < Re,
-> > > > 
-> > > > 	and so Re would obtain 2, not 0.  Hence mb14 must come
-> > > > 	po-before We (as shown in the listing):  mb14 < We.
-> > > > 
-> > > > 5.	Since mb14 therefore occurs po-before Rf and instructions
-> > > > 	cannot be reordered across barriers,  mb14 < Rf.
-> > > > 
-> > > > 6.	Since Rb obtains 0, we must have:
-> > > > 
-> > > > 		Rb < Wb propagates to P0 < mb1s < mb14 < Rf.
-> > > > 
-> > > > 	Thus Rb < Rf.
-> > > > 
-> > > > 7.	Suppose that mb05 ends up coming po-later than Wf in P5.
-> > > > 	Then we would have:
-> > > > 
-> > > > 		Wf propagates to P4 < mb05 < mb0e < Rb < Rf,
-> > > > 
-> > > > 	and so Rf would obtain 2, not 0.  Hence mb05 must come
-> > > > 	po-before Wf (as shown in the listing):  mb05 < Wf.
-> > > > 
-> > > > 8.	Since mb05 therefore occurs po-before Ra and instructions
-> > > > 	cannot be reordered across barriers,  mb05 < Ra.
-> > > > 
-> > > > 9.	Now we have:
-> > > > 
-> > > > 		Wa propagates to P5 < mb0s < mb05 < Ra,
-> > > > 
-> > > > 	and so Ra must obtain 2, not 0.  QED.
-> > > 
-> > > Like this, then, with maximal reordering of P3-P5's reads?
-> > > 
-> > >          P0      P1      P2      P3      P4      P5
-> > >          Wa=2
-> > >          mb0s
-> > >                                                  [mb05]
-> > >          mb0e                                    Ra=0
-> > >          Rb=0    Wb=2
-> > >                  mb1s
-> > >                                          [mb14]
-> > >                  mb1e                    Rf=0
-> > >                  Rc=0    Wc=2                    Wf=2
-> > >                          mb2s
-> > >                                  [mb23]
-> > >                          mb2e    Re=0
-> > >                          Rd=0            We=2
-> > >                                  Wd=2
-> > 
-> > Yes, that's right.  This shows how P5's Ra must obtain 2 instead of 0.
-> > 
-> > > But don't the sys_membarrier() calls affect everyone, especially given
-> > > the shared-variable communication?
-> > 
-> > They do, but the other effects are irrelevant for this proof.
-> 
-> If I understand correctly, the shared-variable communication within
-> sys_membarrier() is included in your proof in the form of ordering
-> between memory barriers in the mainline sys_membarrier() code and
-> in the IPI handlers.
-> 
-> > >  If so, why wouldn't this more strict
-> > > variant hold?
-> > > 
-> > >          P0      P1      P2      P3      P4      P5
-> > >          Wa=2
-> > >          mb0s
-> > >                                  [mb05]  [mb05]  [mb05]
-> > 
-> > You have misunderstood the naming scheme.  mb05 is the barrier injected 
-> > by P0's sys_membarrier call into P5.  So the three barriers above 
-> > should be named "mb03", "mb04", and "mb05".  And you left out mb01 and 
-> > mb02.
-> 
-> The former is a copy-and-paste error on my part, the latter was
-> intentional because the IPIs among P0, P1, and P2 don't seem to
-> strengthen the ordering.
-> 
-> > >          mb0e
-> > >          Rb=0    Wb=2
-> > >                  mb1s
-> > >                                  [mb14]  [mb14]  [mb14]
-> > >                  mb1e
-> > >                  Rc=0    Wc=2
-> > >                          mb2s
-> > >                                  [mb23]  [mb23]  [mb23]
-> > >                          mb2e    Re=0    Rf=0    Ra=0
-> > >                          Rd=0            We=2    Wf=2
-> > >                                  Wd=2
-> > 
-> > Yes, this does hold.  But since it doesn't affect the end result, 
-> > there's no point in mentioning all those other barriers.
-> > 
-> > > In which case, wouldn't this cycle be forbidden even if it had only one
-> > > sys_membarrier() call?
-> > 
-> > No, it wouldn't.  I don't understand why you might think it would.  
-> 
-> Because I hadn't yet thought of the scenario I showed below.
-> 
-> > This is just like RCU, if you imagine a tiny critical section between 
-> > each adjacent pair of instructions.  You wouldn't expect RCU to enforce 
-> > ordering among six CPUs with only one synchronize_rcu call.
-> 
-> Yes, I do now agree in light of the scenario shown below.
-> 
-> > > Ah, but the IPIs are not necessarily synchronized across the CPUs,
-> > > so that the following could happen:
-> > > 
-> > >          P0      P1      P2      P3      P4      P5
-> > >          Wa=2
-> > >          mb0s
-> > >                                  [mb05]  [mb05]  [mb05]
-> > >          mb0e                                    Ra=0
-> > >          Rb=0    Wb=2
-> > >                  mb1s
-> > >                                  [mb14]  [mb14]
-> > >                                          Rf=0
-> > >                                                  Wf=2
-> > >                                                  [mb14]
-> > >                  mb1e
-> > >                  Rc=0    Wc=2
-> > >                          mb2s
-> > >                                  [mb23]
-> > >                                  Re=0
-> > >                                          We=2
-> > >                                          [mb23]  [mb23]
-> > >                          mb2e
-> > >                          Rd=0
-> > >                                  Wd=2
-> > 
-> > Yes it could.  But even in this execution you would end up with Ra=2 
-> > instead of Ra=0.
-> 
-> Agreed.  Or I should have said that the above execution is forbidden,
-> either way.
-> 
-> > > I guess in light of this post in 2001, I really don't have an excuse,
-> > > do I?  ;-)
-> > > 
-> > > 	https://lists.gt.net/linux/kernel/223555
-> > > 
-> > > Or am I still missing something here?
-> > 
-> > You tell me...
-> 
-> I think I am on board.  ;-)
+Currently, virtio-9p cannot be used with overlayfs in order to obtain 
+Docker-like experience (but with separate kernel) because of file 
+attributes problems. I wrote an email about that to qemu-devel almost 
+year ago, but it received no attention (I attach its contents below.).
 
-And more to the point, here is a three-process variant showing a cycle
-that is permitted:
+Will virtio-fs avoid these problems? I assume it will be transparent 
+from the point of view of file attributes, and not enforce any kind of 
+security filtering?
 
+Piotr Jurkiewicz
 
-         P0      P1      P2
-         Wa=2    Wb=2    Wc=2
-         mb0s
-                 [mb01]  [mb02]
-         mb0e
-         Rb=0    Rc=0    Ra=0
+----
 
-As can be seen by reordering it as follows:
+1. Upper filesystem must support the creation of trusted.* extended 
+attributes.
 
-         P0      P1      P2
-                         Ra=0
-         Wa=2
-         mb0s
-                 [mb01]
-                 Rc=0
-                         Wc=2
-                         [mb02]
-         mb0e
-         Rb=0
-                 Wb=2
+9pfs has support for getting/setting xattrs, but calls operating on 
+attributes other than user.* and system.posix_acl_* are dropped.
 
-Make sense?
+2. Upper filesystem must provide valid d_type in readdir responses.
 
-							Thanx, Paul
+This works, but only in case of 'passtrough' and 'none' security models. 
+In the case of 'mapped-xattr' and 'mapped-file' models, d_type is being 
+zeroed to DT_UNKNOWN during readdir() call.
 
+All these limitations can be resolved pretty easily, but requires some 
+design decisions. I can prepare appropriate patches.
+
+Ad. 1.
+
+Why are operations on attributes other than than user.* and 
+system.posix_acl_* forbidden? Is this due to security reasons?
+
+If so, can we map all of them to user.virtfs namespace, similarly as 
+system.posix_acl_* are being mapped to user.virtfs.system.posix_acl_* in 
+'mapping' mode already? This way any trusted/security/system attributes 
+will be effective only when mounted via virtfs inside VM.
+
+Ad. 2.
+
+local_readdir() can fill entry->d_type with the right DT_* value by 
+obtaining file type from mapping and translating it with IFTODT() macro. 
+This would, however, require reading 'user.virtfs.mode' for each 
+direntry during readdir() call, what can affect performance. If so, this 
+behavior would probably need to be controlled with some runtime option.
+
+'mapped-xattr' and 'mapped-file' models are essential for running qemu 
+with overlayfs as non-root, because overlayfs creates device nodes, what 
+is possible for unprivileged user only with these models.
