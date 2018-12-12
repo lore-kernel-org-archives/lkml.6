@@ -2,99 +2,136 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 963EDC65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 23:06:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EB70C65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 23:08:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5542B20672
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 23:06:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C2E5C20870
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 23:08:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=telus.net header.i=@telus.net header.b="3lpwXmDA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5542B20672
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=telus.net
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NkxhFGDt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2E5C20870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728470AbeLLXGh (ORCPT
+        id S1728471AbeLLXII (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 18:06:37 -0500
-Received: from cmta18.telus.net ([209.171.16.91]:60097 "EHLO cmta18.telus.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726214AbeLLXGg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 18:06:36 -0500
-Received: from dougxps ([173.180.45.4])
-        by cmsmtp with SMTP
-        id XDaKgx6kKiBO5XDaLgWVjh; Wed, 12 Dec 2018 16:06:35 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=telus.net; s=neo;
-        t=1544655995; bh=A6sRBMfO3IwSBN/EOo27nCYnJ4SE/L+u593WIJNBa4Y=;
-        h=From:To:Cc:References:In-Reply-To:Subject:Date;
-        b=3lpwXmDAtTEQFKQW5qJRaOElfLvxawHAAeRApN2+5mNrXaOY++I2anI5sAcMxZpC+
-         31JzN0/5WJA/NDX8p4GZtRsuhlNNGsn6KqnhRQKXhvQDxhlNWJi7G8aj+M5ZkimM4J
-         p5IgiDBp0NoHX0d/m3vhDJ8nX8uAgvov4SnjGy8oYkny5Eo7flUI/o+4MaOZDegYd3
-         TrtjUmykcb1v3c9Z9whM0egyKv7MlHvdw8Gxvcrdzp+2csOYkKCydfPcFEs9pazNIH
-         QzBCAiHGPDPf/Wa/4TkU1zJb2Aga6TiZSyud8CvxoA+Ho0ZyogS3FLeFXSUcO/t3iI
-         LZPnpRt71bj7Q==
-X-Authority-Analysis: v=2.3 cv=d5AkNirE c=1 sm=1 tr=0
- a=zJWegnE7BH9C0Gl4FFgQyA==:117 a=zJWegnE7BH9C0Gl4FFgQyA==:17
- a=Pyq9K9CWowscuQLKlpiwfMBGOR0=:19 a=IkcTkHD0fZMA:10 a=O_trBvZXBQXvV-bKK-cA:9
- a=7Zwj6sZBwVKJAoWSPKxL6X1jA+E=:19 a=QEXdDO2ut3YA:10
-From:   "Doug Smythies" <dsmythies@telus.net>
-To:     "'Paul Menzel'" <pmenzel@molgen.mpg.de>
-Cc:     <linux-pm@vger.kernel.org>,
-        "'LKML'" <linux-kernel@vger.kernel.org>,
-        "'Srinivas Pandruvada'" <srinivas.pandruvada@linux.intel.com>,
-        "'Len Brown'" <lenb@kernel.org>,
-        "Doug Smythies" <dsmythies@telus.net>
-References: XCF0g8mvUQvFWXCF1gj1RM
-In-Reply-To: XCF0g8mvUQvFWXCF1gj1RM
-Subject: RE: intel_pstate: Lowest frequency not reached with Intel i7-6700
-Date:   Wed, 12 Dec 2018 15:06:30 -0800
-Message-ID: <000701d4926f$533eb270$f9bc1750$@net>
+        Wed, 12 Dec 2018 18:08:08 -0500
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:40245 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726214AbeLLXII (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 18:08:08 -0500
+Received: by mail-vs1-f68.google.com with SMTP id z3so71706vsf.7;
+        Wed, 12 Dec 2018 15:08:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=imi6XQagD7h0xSaZmNzgPAYDGjcHJSTylP/Kj4iCe3U=;
+        b=NkxhFGDtqj00GSXzONIpIhLoDIXJ1xpACYd+xNJU8OaCDRLxU45UsnICjA1SWM5L88
+         OAr54Boc24Djsz6laG375V/YMKHP4k5omDOsW+vunL0ZNUNNzD6//RmKO78U7HfYyxPA
+         UB41D9L6Ti6qxPO05a+0pQQzgCvIKQsMKdnNIkSWcOiDHM0ippj4M7dw+kEBigWb9MJf
+         Q6RQSJfAQEy84pmdkjIAyEkE3KfjE9qlJcm4efh+yCGQ1DvB6msDwZWdYbkFUD0tZfjH
+         Bf1FtGGO09iONVGYc30lWtCPWfmz/lXyryOItS38dK/7PIV7sDrE3Aff7HKp2cC6etpj
+         sJ9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=imi6XQagD7h0xSaZmNzgPAYDGjcHJSTylP/Kj4iCe3U=;
+        b=rcdNMRuI8YElMdFgvOaor+gFsk/KYJ9diFBbOgEGr6G+VqExjnO1DJ7hHA8BTMhr3I
+         mjoMP+YqX+0OJwWHazOOOx+hWY5VI11gtcQhFFpxCDyYgbVUmB2URMkxSuev6T/+wEJI
+         R6VRJMr6xd/V3tszK1AKRH+vnfSlCiA02y9NnmT8zhutb13SaPBE+chjAPJII7f9oSIq
+         pDccqm93szXBOBLWI/UuFjwFxiV0mhBtdkHPePvx2UdyFxcNiTvtn2dJ7qyY3lTh/Qa5
+         quMGIFX7DwRgrzGtsAyhEk15a064076OgsQIGN6Mtm3AnNnqEnaGs7xoL9CBJCY0/6jQ
+         tcqw==
+X-Gm-Message-State: AA+aEWbqMozARS80e5LShpXdQKN8A/xmZPV+WSRXiKbUjy/MTk2cQTWI
+        rD6Xrf0d/f4fEa276XXhxw==
+X-Google-Smtp-Source: AFSGD/VyWX3hzvuS7OOZvy35fe9txElaFTCqPfach4UnYwh7BwSWUHvQRJUHAJ8J6UgmCQSw7nJQZQ==
+X-Received: by 2002:a67:358b:: with SMTP id x11mr10079213vsh.145.1544656086382;
+        Wed, 12 Dec 2018 15:08:06 -0800 (PST)
+Received: from localhost.localdomain ([2601:902:c200:6512:a50b:fc5d:3604:d966])
+        by smtp.gmail.com with ESMTPSA id f68sm36630uaf.9.2018.12.12.15.08.04
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 12 Dec 2018 15:08:05 -0800 (PST)
+From:   Ayman Bagabas <ayman.bagabas@gmail.com>
+To:     Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Kailang Yang <kailang@realtek.com>,
+        Hui Wang <hui.wang@canonical.com>,
+        linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        alsa-devel@alsa-project.org
+Cc:     ayman.bagabas@gmail.com
+Subject: [PATCH v11 0/3] Huawei laptops
+Date:   Wed, 12 Dec 2018 18:07:56 -0500
+Message-Id: <20181212230802.21140-1-ayman.bagabas@gmail.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Office Outlook 12.0
-Content-Language: en-ca
-Thread-Index: AdSSY0xL7OYJgTiHSHOhB+La+iB2zgACm1CA
-X-CMAE-Envelope: MS4wfJnJSdnrzAYRUeUdQxe7QVFZQ/9B4Bmz4ASRloJKD1zAFMnvJ0D9YheWJx2e5W9NwJ2MCPpSFvpyGTqBlaYlnOie50pLOpuadOudYvfCci7E5uAnejmL
- jTeoqGsNTqndtDbREiFu8aiTRVYpxiv7ztRtmF6EBT546J5tGchAz0IOn5eCJRlVBKaEYe6V6efZTju0U0cpmE9mSQv8OBhyTDj36ExQBqeb4OfnG0J2Ozj0
- 4mUpyBJdKRiD1VpGysn4EUvGaXJ362WvsQ3rxzPF4HQO6iguAOO/4dgd4IabzRp1eYLSAVwk1HSGIWMiNF6y6EVPrDGaz8iNRtUvfcTZpFxynzs4cxOOFdhP
- dsisO0qw
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018.12.12 13:40 Paul Menzel wrote:
+This patch set is based on the new audio LED triggers in topic/leds-trigger branch from
+        git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git
 
-> Using *powersave* as P-state selection algorithm, on an idle system
+Changes in v11:
+* Minor code changes
 
-Define "idle system".
-If your computer is running a GUI, or is even a server without a GUI
-but with many services running, then "idle" really isn't.
-Below is from my test server, with many services disabled, so
-"idle" really is quite "idle"
+Changes in v10:
+* Use ec_get_handle instead of acpi_get_handle since we are using the ec device
+* Switch to WMI0_EXPENSIVE_GUID and wmi_query_block to fetch keycode when WMI0 is used
 
-doug@s15:~/temp$ sudo turbostat --Summary --quiet --show =
-Busy%,Bzy_MHz,PkgTmp,PkgWatt --interval 15
-Busy%   Bzy_MHz PkgTmp  PkgWatt
-0.01    1608    27      3.71
-0.01    1619    27      3.71
-0.01    1600    28      3.71
-0.01    1600    28      3.70
+Changes in v9:
+* Explicitly use NULL in acpi_get_handle
+* Drop __initconst from huawei_wmi_keymap
 
-Note that p state 16 (1600 MHz) is the minimum for my older i7-2600k =
-processor.
+Changes in v8:
+* Switch to wmi_driver
+* Use devm to allocate and manage devices
+* Skip registering LED subsystem if a ACPI controller method was not found
 
-> Shouldn=E2=80=99t it go down until 800 MHz?
+Changes in v7:
+* Use audio LED triggers patch set
+* Use KEY_CONFIG (XF86Tools) instead of KEY_PROG1.
+ In Windows, the key is used to launch Huawei PC manager. XF86Tools is
+ used by default on most desktop environments i.e. Gnome.
 
-We would need some actual busy information, turbostat is the recommended =
-tool,
-to know for sure.
+Changes in v6:
+* Review tags
 
-... Doug
+Changes in v5:
+* Consistency in file names
+* How module would be enabled (Kconfig)
+* Match license in SPDX and MODULE_LICENSE 
 
+Changes in v4:
+* Code formatting
+
+Changes in v3:
+* Support for Huawei MBX
+* Style and formatting issues
+
+Ayman Bagabas (3):
+  ALSA: hda: fix front speakers on Huawei MBXP.
+  x86: add support for Huawei WMI hotkeys.
+  ALSA: hda: add support for Huawei WMI micmute LED
+
+ drivers/platform/x86/Kconfig      |  17 +++
+ drivers/platform/x86/Makefile     |   1 +
+ drivers/platform/x86/huawei-wmi.c | 208 ++++++++++++++++++++++++++++++
+ sound/pci/hda/patch_realtek.c     |  22 ++++
+ 4 files changed, 248 insertions(+)
+ create mode 100644 drivers/platform/x86/huawei-wmi.c
+
+-- 
+2.19.2
 
