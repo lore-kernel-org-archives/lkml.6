@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 117C0C65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 16:49:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 697B9C67839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 16:49:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B18CC20851
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 16:49:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B18CC20851
+	by mail.kernel.org (Postfix) with ESMTP id 3562320870
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 16:49:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3562320870
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728241AbeLLQtf (ORCPT
+        id S1728245AbeLLQts (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 11:49:35 -0500
-Received: from foss.arm.com ([217.140.101.70]:44572 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728037AbeLLQsL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 11:48:11 -0500
+        Wed, 12 Dec 2018 11:49:48 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:44528 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727999AbeLLQsE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 11:48:04 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 41FE31684;
-        Wed, 12 Dec 2018 08:48:11 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 50D4280D;
+        Wed, 12 Dec 2018 08:48:04 -0800 (PST)
 Received: from e112298-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 25F2E3F575;
-        Wed, 12 Dec 2018 08:48:09 -0800 (PST)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 3DA7D3F575;
+        Wed, 12 Dec 2018 08:48:02 -0800 (PST)
 From:   Julien Thierry <julien.thierry@arm.com>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     linux-kernel@vger.kernel.org, daniel.thompson@linaro.org,
@@ -35,10 +35,10 @@ Cc:     linux-kernel@vger.kernel.org, daniel.thompson@linaro.org,
         christoffer.dall@arm.com, james.morse@arm.com,
         catalin.marinas@arm.com, will.deacon@arm.com, mark.rutland@arm.com,
         Julien Thierry <julien.thierry@arm.com>,
-        kvmarm@lists.cs.columbia.edu
-Subject: [PATCH v7 10/25] arm64: kvm: Unmask PMR before entering guest
-Date:   Wed, 12 Dec 2018 16:47:10 +0000
-Message-Id: <1544633245-6036-11-git-send-email-julien.thierry@arm.com>
+        Oleg Nesterov <oleg@redhat.com>
+Subject: [PATCH v7 07/25] arm64: ptrace: Provide definitions for PMR values
+Date:   Wed, 12 Dec 2018 16:47:07 +0000
+Message-Id: <1544633245-6036-8-git-send-email-julien.thierry@arm.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1544633245-6036-1-git-send-email-julien.thierry@arm.com>
 References: <1544633245-6036-1-git-send-email-julien.thierry@arm.com>
@@ -47,93 +47,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Interrupts masked by ICC_PMR_EL1 will not be signaled to the CPU. This
-means that hypervisor will not receive masked interrupts while running a
-guest.
+Introduce fixed values for PMR that are going to be used to mask and
+unmask interrupts by priority.
 
-Avoid this by making sure ICC_PMR_EL1 is unmasked when we enter a guest.
+The current priority given to GIC interrupts is 0xa0, so clearing PMR's
+most significant bit is enough to mask interrupts.
 
 Signed-off-by: Julien Thierry <julien.thierry@arm.com>
-Cc: Christoffer Dall <christoffer.dall@arm.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
+Suggested-by: Daniel Thompson <daniel.thompson@linaro.org>
+Cc: Oleg Nesterov <oleg@redhat.com>
 Cc: Catalin Marinas <catalin.marinas@arm.com>
 Cc: Will Deacon <will.deacon@arm.com>
-Cc: kvmarm@lists.cs.columbia.edu
 ---
- arch/arm64/include/asm/kvm_host.h | 12 ++++++++++++
- arch/arm64/kvm/hyp/switch.c       | 16 ++++++++++++++++
- 2 files changed, 28 insertions(+)
+ arch/arm64/include/asm/ptrace.h | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
-index 52fbc82..5c2fe50 100644
---- a/arch/arm64/include/asm/kvm_host.h
-+++ b/arch/arm64/include/asm/kvm_host.h
-@@ -24,6 +24,7 @@
+diff --git a/arch/arm64/include/asm/ptrace.h b/arch/arm64/include/asm/ptrace.h
+index fce22c4..05cf913 100644
+--- a/arch/arm64/include/asm/ptrace.h
++++ b/arch/arm64/include/asm/ptrace.h
+@@ -25,6 +25,18 @@
+ #define CurrentEL_EL1		(1 << 2)
+ #define CurrentEL_EL2		(2 << 2)
  
- #include <linux/types.h>
- #include <linux/kvm_types.h>
-+#include <asm/arch_gicv3.h>
- #include <asm/cpufeature.h>
- #include <asm/daifflags.h>
- #include <asm/fpsimd.h>
-@@ -471,6 +472,17 @@ static inline int kvm_arch_vcpu_run_pid_change(struct kvm_vcpu *vcpu)
- static inline void kvm_arm_vhe_guest_enter(void)
- {
- 	local_daif_mask();
++/*
++ * PMR values used to mask/unmask interrupts.
++ *
++ * GIC priority masking works as follows: if an IRQ's priority is a higher value
++ * than the value held in PMR, that interrupt is masked. A lower value of PMR
++ * means more IRQ priorities are masked.
++ *
++ * To mask priorities, we clear the most significant bit of PMR.
++ */
++#define GIC_PRIO_IRQON		0xf0
++#define GIC_PRIO_IRQOFF		(GIC_PRIO_IRQON & ~0x80)
 +
-+	/*
-+	 * Having IRQs masked via PMR when entering the guest means the GIC
-+	 * will not signal the CPU of interrupts of lower priority, and the
-+	 * only way to get out will be via guest exceptions.
-+	 * Naturally, we want to avoid this.
-+	 */
-+	if (system_uses_irq_prio_masking()) {
-+		gic_write_pmr(GIC_PRIO_IRQON);
-+		dsb(sy);
-+	}
- }
- 
- static inline void kvm_arm_vhe_guest_exit(void)
-diff --git a/arch/arm64/kvm/hyp/switch.c b/arch/arm64/kvm/hyp/switch.c
-index 7cc175c..88ed590 100644
---- a/arch/arm64/kvm/hyp/switch.c
-+++ b/arch/arm64/kvm/hyp/switch.c
-@@ -22,6 +22,7 @@
- 
- #include <kvm/arm_psci.h>
- 
-+#include <asm/arch_gicv3.h>
- #include <asm/cpufeature.h>
- #include <asm/kvm_asm.h>
- #include <asm/kvm_emulate.h>
-@@ -537,6 +538,17 @@ int __hyp_text __kvm_vcpu_run_nvhe(struct kvm_vcpu *vcpu)
- 	struct kvm_cpu_context *guest_ctxt;
- 	u64 exit_code;
- 
-+	/*
-+	 * Having IRQs masked via PMR when entering the guest means the GIC
-+	 * will not signal the CPU of interrupts of lower priority, and the
-+	 * only way to get out will be via guest exceptions.
-+	 * Naturally, we want to avoid this.
-+	 */
-+	if (system_uses_irq_prio_masking()) {
-+		gic_write_pmr(GIC_PRIO_IRQON);
-+		dsb(sy);
-+	}
-+
- 	vcpu = kern_hyp_va(vcpu);
- 
- 	host_ctxt = kern_hyp_va(vcpu->arch.host_cpu_context);
-@@ -589,6 +601,10 @@ int __hyp_text __kvm_vcpu_run_nvhe(struct kvm_vcpu *vcpu)
- 	 */
- 	__debug_switch_to_host(vcpu);
- 
-+	/* Returning to host will clear PSR.I, remask PMR if needed */
-+	if (system_uses_irq_prio_masking())
-+		gic_write_pmr(GIC_PRIO_IRQOFF);
-+
- 	return exit_code;
- }
+ /* Additional SPSR bits not exposed in the UABI */
+ #define PSR_IL_BIT		(1 << 20)
  
 -- 
 1.9.1
