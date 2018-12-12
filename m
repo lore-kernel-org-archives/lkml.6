@@ -2,148 +2,100 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65BB5C65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 19:02:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6314EC65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 19:04:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D97220811
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 19:02:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D97220811
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 1978020811
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 19:04:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=netronome-com.20150623.gappssmtp.com header.i=@netronome-com.20150623.gappssmtp.com header.b="AgoLzZSb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1978020811
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=netronome.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726727AbeLLTCk convert rfc822-to-8bit (ORCPT
+        id S1726873AbeLLTEJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 14:02:40 -0500
-Received: from mga03.intel.com ([134.134.136.65]:51538 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726235AbeLLTCj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 14:02:39 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Dec 2018 11:02:39 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,345,1539673200"; 
-   d="scan'208";a="283075187"
-Received: from orsmsx109.amr.corp.intel.com ([10.22.240.7])
-  by orsmga005.jf.intel.com with ESMTP; 12 Dec 2018 11:02:39 -0800
-Received: from orsmsx159.amr.corp.intel.com (10.22.240.24) by
- ORSMSX109.amr.corp.intel.com (10.22.240.7) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Wed, 12 Dec 2018 11:02:39 -0800
-Received: from orsmsx122.amr.corp.intel.com ([169.254.11.103]) by
- ORSMSX159.amr.corp.intel.com ([169.254.11.100]) with mapi id 14.03.0415.000;
- Wed, 12 Dec 2018 11:02:38 -0800
-From:   "Schmauss, Erik" <erik.schmauss@intel.com>
-To:     Sinan Kaya <okaya@kernel.org>,
-        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>
-CC:     "Moore, Robert" <robert.moore@intel.com>,
-        "Wysocki, Rafael J" <rafael.j.wysocki@intel.com>,
-        Len Brown <lenb@kernel.org>,
-        "open list:ACPI COMPONENT ARCHITECTURE (ACPICA)" <devel@acpica.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v6 5/5] ACPICA: Remove PCI bits from ACPICA when
- CONFIG_PCI is unset
-Thread-Topic: [PATCH v6 5/5] ACPICA: Remove PCI bits from ACPICA when
- CONFIG_PCI is unset
-Thread-Index: AQHUkj7xabqLvJKsV0WIbkZeNQOeIqV7dNjw
-Date:   Wed, 12 Dec 2018 19:02:38 +0000
-Message-ID: <CF6A88132359CE47947DB4C6E1709ED53C556B2C@ORSMSX122.amr.corp.intel.com>
-References: <20181212171941.7437-1-okaya@kernel.org>
- <20181212171941.7437-6-okaya@kernel.org>
-In-Reply-To: <20181212171941.7437-6-okaya@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiODY5OTZlOGUtNGNlMS00M2JmLTgwOTUtZmFjY2EzMGEwNzFiIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoicUlSTEVQNTV5cXphYjRBM1FpXC94WEJcL2hPNE92NVFjVmVzTnFiOG5XMHViUkFuOHd1MkQ3QXhNQ3JXQk94WmRhIn0=
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.22.254.138]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Wed, 12 Dec 2018 14:04:09 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:40835 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726235AbeLLTEI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 14:04:08 -0500
+Received: by mail-qt1-f193.google.com with SMTP id k12so21722246qtf.7
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 11:04:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=netronome-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :organization:mime-version:content-transfer-encoding;
+        bh=6W5yTdyAwVMfku+FcLlPD2DPto1M6P4yLf16sK5e4sg=;
+        b=AgoLzZSbk25K4PvijSOCzLdia6op741JwqMT6mRO2jSrWakI8F+aVlNtH6i3AvZKzn
+         hgdI5ZpV7tbxnu1fi/JODsdO6wECdzegVRJrHcStPpHXVCjztrTL+AVlHyiRtrQGz5QU
+         BCxhU80OvhVq0Lp0K69NRcW5jj+FwkSlwjPay67lSKbYEIkWQX0OT1uZhQjo02M/+Hf6
+         pNaePNkP86BNL01L+gvQlnNVnTgSdS2oDGiLReU9029gjEmXl1uQudhmewdVp2fkVXkD
+         Jb7OcHgxUB4v2XfPHERlrpUoTA79usvs5TCtfDfAhU7mJ/iCrlR1LTPjC7y+w/WQdPL5
+         ViLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:organization:mime-version:content-transfer-encoding;
+        bh=6W5yTdyAwVMfku+FcLlPD2DPto1M6P4yLf16sK5e4sg=;
+        b=oBx+KD41vENkkihponYMPol9s7jqVJVeAfu2idjKx1IIfy8UHnJ7oh8W2nuYIXhHdb
+         iiAWmgeUKqQJuD78m1QySBtEx2+XKefp7Su85D71xlhIkc83tVFBzatGYpQ9EYjPM7kU
+         q3+bypyk2IF2CdOpulfsidRZSfj9JE86zCvjJTjTdmftV1ieQOLmNgTOo9sDUcULL0BS
+         2M/nQhAL81F7L2nb8Qf9LpO7iAP8RJV95X/w+AyR8on3QLoGdQT5k/wQOmK7r6QN1CuR
+         VJiMXEZ/XTgaKCZ7Sckvr76Fmxd8UZv2aHt6VinPvZf7oKRbqICI+PrVya0vqWOI/KJu
+         rFCQ==
+X-Gm-Message-State: AA+aEWboOSQ/3Igkp2chnUlobt7edQviUa+Uk3CpzeKWEeT5iJMb7Evk
+        /njamJ7dRFvsWCt0hGGft5aT5A==
+X-Google-Smtp-Source: AFSGD/U5uCYAxf1/cRrLEZY2d4czMoxmhEPwNeG5hTZnL/WF7+IH9Gw6LQnt2czEspk+VlMAxhBRGw==
+X-Received: by 2002:aed:2cc4:: with SMTP id g62mr12964672qtd.192.1544641447624;
+        Wed, 12 Dec 2018 11:04:07 -0800 (PST)
+Received: from cakuba.netronome.com ([66.60.152.14])
+        by smtp.gmail.com with ESMTPSA id e26sm11659241qtg.69.2018.12.12.11.04.06
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 12 Dec 2018 11:04:07 -0800 (PST)
+Date:   Wed, 12 Dec 2018 11:04:04 -0800
+From:   Jakub Kicinski <jakub.kicinski@netronome.com>
+To:     Alice Ferrazzi <alice.ferrazzi@gmail.com>
+Cc:     ast@kernel.org, daniel@iogearbox.net, shuah@kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 6/7] selftest/bpf: remove redundant parenthesis
+Message-ID: <20181212110404.2e211ef1@cakuba.netronome.com>
+In-Reply-To: <20181211115607.13774-7-alice.ferrazzi@gmail.com>
+References: <20181211115607.13774-1-alice.ferrazzi@gmail.com>
+        <20181211115607.13774-7-alice.ferrazzi@gmail.com>
+Organization: Netronome Systems, Ltd.
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-> -----Original Message-----
-> From: Sinan Kaya [mailto:okaya@kernel.org]
-> Sent: Wednesday, December 12, 2018 9:20 AM
-> To: linux-acpi@vger.kernel.org
-> Cc: Sinan Kaya <okaya@kernel.org>; Moore, Robert
-> <robert.moore@intel.com>; Schmauss, Erik <erik.schmauss@intel.com>;
-> Wysocki, Rafael J <rafael.j.wysocki@intel.com>; Len Brown
-> <lenb@kernel.org>; open list:ACPI COMPONENT ARCHITECTURE (ACPICA)
-> <devel@acpica.org>; open list <linux-kernel@vger.kernel.org>
-> Subject: [PATCH v6 5/5] ACPICA: Remove PCI bits from ACPICA when
-> CONFIG_PCI is unset
-> 
-> Now that we allow CONFIG_PCI to be unset, remove useless code from
-> ACPICA too.
-> 
-> Signed-off-by: Sinan Kaya <okaya@kernel.org>
+On Tue, 11 Dec 2018 20:56:06 +0900, Alice Ferrazzi wrote:
+> Signed-off-by: Alice Ferrazzi <alice.ferrazzi@gmail.com>
 > ---
->  drivers/acpi/acpica/Makefile  | 2 +-
->  drivers/acpi/acpica/achware.h | 9 +++++++++
->  2 files changed, 10 insertions(+), 1 deletion(-)
+>  tools/testing/selftests/bpf/test_offload.py | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/acpi/acpica/Makefile b/drivers/acpi/acpica/Makefile index
-> b14621da5413..59700433a96e 100644
-> --- a/drivers/acpi/acpica/Makefile
-> +++ b/drivers/acpi/acpica/Makefile
-> @@ -77,13 +77,13 @@ acpi-y +=		\
->  	hwacpi.o	\
->  	hwesleep.o	\
->  	hwgpe.o		\
-> -	hwpci.o		\
->  	hwregs.o	\
->  	hwsleep.o	\
->  	hwvalid.o	\
->  	hwxface.o	\
->  	hwxfsleep.o
-> 
-> +acpi-$(CONFIG_PCI) += hwpci.o
->  acpi-$(ACPI_FUTURE_USAGE) += hwtimer.o
-> 
->  acpi-y +=		\
-> diff --git a/drivers/acpi/acpica/achware.h b/drivers/acpi/acpica/achware.h
-> index 43ce67a9da1f..1c827184fe64 100644
-> --- a/drivers/acpi/acpica/achware.h
-> +++ b/drivers/acpi/acpica/achware.h
-> @@ -109,8 +109,17 @@ acpi_hw_enable_runtime_gpe_block(struct
-> acpi_gpe_xrupt_info *gpe_xrupt_info,
+> diff --git a/tools/testing/selftests/bpf/test_offload.py b/tools/testing/selftests/bpf/test_offload.py
+> index 0f9130ebfd2c..b06cc0eea0eb 100755
+> --- a/tools/testing/selftests/bpf/test_offload.py
+> +++ b/tools/testing/selftests/bpf/test_offload.py
+> @@ -140,7 +140,7 @@ def cmd_result(proc, include_stderr=False, fail=False):
+>  
+>  
+>  def rm(f):
+> -    cmd("rm -f %s" % (f))
+> +    cmd("rm -f %s" % f)
+>      if f in files:
+>          files.remove(f)
+>  
 
-CONFIG_PCI is a Linux-ism. We should stay with the OS-independent nature of
-ACPICA. Please use ACPI_PCI_CONFIGURED and put it above the comment like so:
-
-#ifdef ACPI_PCI_CONFIGURED
->  /*
->   * hwpci - PCI configuration support
->   */
-> +#ifdef CONFIG_PCI
->  acpi_status
->  acpi_hw_derive_pci_id(struct acpi_pci_id *pci_id,
->  		      acpi_handle root_pci_device, acpi_handle pci_region);
-> +#else
-> +static inline acpi_status
-> +acpi_hw_derive_pci_id(struct acpi_pci_id *pci_id, acpi_handle
-> root_pci_device,
-> +		      acpi_handle pci_region)
-> +{
-> +	return AE_SUPPORT;
-> +}
-> +#endif
-> 
->  #endif				/* __ACHWARE_H__ */
-> --
-> 2.19.0
-
+Is this in PEP8, too?
