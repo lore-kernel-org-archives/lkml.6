@@ -2,204 +2,102 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6609C65BAE
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 03:04:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 618D5C65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 03:04:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C34720851
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 03:04:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C34720851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 17CCE20851
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 03:04:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pSBgd6YA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17CCE20851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726354AbeLLDEG (ORCPT
+        id S1726390AbeLLDE5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 22:04:06 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:60544 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726218AbeLLDEG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 22:04:06 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 43FD0307CDC2;
-        Wed, 12 Dec 2018 03:04:05 +0000 (UTC)
-Received: from [10.72.12.76] (ovpn-12-76.pek2.redhat.com [10.72.12.76])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 07938600C9;
-        Wed, 12 Dec 2018 03:03:59 +0000 (UTC)
-Subject: Re: [PATCH net 2/4] vhost_net: rework on the lock ordering for busy
- polling
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Tonghao Zhang <xiangxia.m.yue@gmail.com>
-References: <20181210094454.21144-1-jasowang@redhat.com>
- <20181210094454.21144-3-jasowang@redhat.com>
- <20181210203119-mutt-send-email-mst@kernel.org>
- <f2a98f3a-a5c5-b762-8ec3-119a7708795d@redhat.com>
- <20181210230106-mutt-send-email-mst@kernel.org>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <aa8f36da-1489-a094-35ce-286bb3f25243@redhat.com>
-Date:   Wed, 12 Dec 2018 11:03:57 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 11 Dec 2018 22:04:57 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:33560 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726241AbeLLDEz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 22:04:55 -0500
+Received: by mail-wm1-f67.google.com with SMTP id r24so10365189wmh.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 19:04:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Xa6KCEdb9vp66HZWrqn/Rv4w1V6eaK3nMdHX+gjSeX4=;
+        b=pSBgd6YALlonWcS42xIY6xbTPL7zgiyvKhGlxMKklGeFSWS3KGhCrtmZTYBuJyYCRb
+         ObIcWMMPXLQauzj9tNFmZl8oMAxDubuQuuodJh8UcDcUPlcIG4Qm/zVtO3TPlEsUz5Os
+         16eT/w5arG3MIKDhhxELp2vyhXzkz8ARPAjgQ2NvaFNPLmfmrHSqjOA8JMyGDJ2w68pn
+         73s7ke/IUVrFGoOwj5mBsYo4sQgxkWRwLI7zyT4o4vz+IDPDycgskuBm5i5ZT1KdpN5k
+         Ebkd6lWak/scXbremeMiF1vKi3VaYSP0UlPjftzpVneRpjR3ubQwr2n+Qb3izZPKShBQ
+         b4hA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Xa6KCEdb9vp66HZWrqn/Rv4w1V6eaK3nMdHX+gjSeX4=;
+        b=XJ31FzfNrAWicyJFvU7pddakR1tt0+bTErNfzjPR7mKmKM/z6AjVu9pHa3HXskOgR2
+         xx8yDAFU5vgKdqvjRqjj4ofyWn+caJOw4NIT+EMfFRUFlB+7Hu2kxfqhIOkDYzNfjxGb
+         nk0RRYaggcc6HBmXDbWANLnphxN2HlYVqGfSyLzaf5bYqzJ5j5FXa/o+Mnmpku+Imf05
+         fVJh9vj2ZX1T91OJHhsGiwSw7m+PiqHNJom+LwKV3OicLSZ1DIkqJdTSbhf1x6+Kr5m8
+         os3vwz9wVaNFmzWtYb6lpbp2YxhfZ/wf5hT6fPERpYxNldEzi7d2LSModq4XpjFAE6if
+         nARA==
+X-Gm-Message-State: AA+aEWaF/7MuBS/lTARyyG45xIAjoYubBqrydEe26OivI2H5OZg3hAMo
+        0TzI8N13D9DskfRvLXQfsVdLkMnRaILKmr7TNCwB
+X-Google-Smtp-Source: AFSGD/U9bFlRuiLKLpj2pNZhoDkyTHfdjBiYD3R1XrAPDfbe+wRg861ZU4V8hkZdcibbHmHAgtH3DbCsFttdtx/dn0g=
+X-Received: by 2002:a1c:8d49:: with SMTP id p70mr4884817wmd.68.1544583893038;
+ Tue, 11 Dec 2018 19:04:53 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181210230106-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Wed, 12 Dec 2018 03:04:05 +0000 (UTC)
+References: <20181206041951.22413-1-david@gibson.dropbear.id.au>
+ <20181211140143.GD99796@google.com> <20181212002234.GC2719@umbus.fritz.box>
+In-Reply-To: <20181212002234.GC2719@umbus.fritz.box>
+From:   Bjorn Helgaas <bhelgaas@google.com>
+Date:   Tue, 11 Dec 2018 21:04:41 -0600
+Message-ID: <CAErSpo5skJK0vkQp3t+-YJ-Fw_vpo2f9GUsU9DnnhtO6X+v0mw@mail.gmail.com>
+Subject: Re: [PATCH] PCI: Add no-D3 quirk for Mellanox ConnectX-[45]
+To:     David Gibson <david@gibson.dropbear.id.au>
+Cc:     Bjorn Helgaas <helgaas@kernel.org>,
+        David Miller <davem@davemloft.net>, saeedm@mellanox.com,
+        Or Gerlitz <ogerlitz@mellanox.com>, tariqt@mellanox.com,
+        leon@kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        netdev <netdev@vger.kernel.org>,
+        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
+        linux-pci@vger.kernel.org, linux-rdma@vger.kernel.org,
+        sbest@redhat.com, paulus@samba.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 2018/12/11 下午12:04, Michael S. Tsirkin wrote:
-> On Tue, Dec 11, 2018 at 11:06:43AM +0800, Jason Wang wrote:
->> On 2018/12/11 上午9:34, Michael S. Tsirkin wrote:
->>> On Mon, Dec 10, 2018 at 05:44:52PM +0800, Jason Wang wrote:
->>>> When we try to do rx busy polling in tx path in commit 441abde4cd84
->>>> ("net: vhost: add rx busy polling in tx path"), we lock rx vq mutex
->>>> after tx vq mutex is held. This may lead deadlock so we try to lock vq
->>>> one by one in commit 78139c94dc8c ("net: vhost: lock the vqs one by
->>>> one"). With this commit, we avoid the deadlock with the assumption
->>>> that handle_rx() and handle_tx() run in a same process. But this
->>>> commit remove the protection for IOTLB updating which requires the
->>>> mutex of each vq to be held.
->>>>
->>>> To solve this issue, the first step is to have a exact same lock
->>>> ordering for vhost_net. This is done through:
->>>>
->>>> - For handle_rx(), if busy polling is enabled, lock tx vq immediately.
->>>> - For handle_tx(), always lock rx vq before tx vq, and unlock it if
->>>>     busy polling is not enabled.
->>>> - Remove the tricky locking codes in busy polling.
->>>>
->>>> With this, we can have a exact same lock ordering for vhost_net, this
->>>> allows us to safely revert commit 78139c94dc8c ("net: vhost: lock the
->>>> vqs one by one") in next patch.
->>>>
->>>> The patch will add two more atomic operations on the tx path during
->>>> each round of handle_tx(). 1 byte TCP_RR does not notice such
->>>> overhead.
->>>>
->>>> Fixes: commit 78139c94dc8c ("net: vhost: lock the vqs one by one")
->>>> Cc: Tonghao Zhang<xiangxia.m.yue@gmail.com>
->>>> Signed-off-by: Jason Wang<jasowang@redhat.com>
->>>> ---
->>>>    drivers/vhost/net.c | 18 +++++++++++++++---
->>>>    1 file changed, 15 insertions(+), 3 deletions(-)
->>>>
->>>> diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
->>>> index ab11b2bee273..5f272ab4d5b4 100644
->>>> --- a/drivers/vhost/net.c
->>>> +++ b/drivers/vhost/net.c
->>>> @@ -513,7 +513,6 @@ static void vhost_net_busy_poll(struct vhost_net *net,
->>>>    	struct socket *sock;
->>>>    	struct vhost_virtqueue *vq = poll_rx ? tvq : rvq;
->>>> -	mutex_lock_nested(&vq->mutex, poll_rx ? VHOST_NET_VQ_TX: VHOST_NET_VQ_RX);
->>>>    	vhost_disable_notify(&net->dev, vq);
->>>>    	sock = rvq->private_data;
->>>> @@ -543,8 +542,6 @@ static void vhost_net_busy_poll(struct vhost_net *net,
->>>>    		vhost_net_busy_poll_try_queue(net, vq);
->>>>    	else if (!poll_rx) /* On tx here, sock has no rx data. */
->>>>    		vhost_enable_notify(&net->dev, rvq);
->>>> -
->>>> -	mutex_unlock(&vq->mutex);
->>>>    }
->>>>    static int vhost_net_tx_get_vq_desc(struct vhost_net *net,
->>>> @@ -913,10 +910,16 @@ static void handle_tx_zerocopy(struct vhost_net *net, struct socket *sock)
->>>>    static void handle_tx(struct vhost_net *net)
->>>>    {
->>>>    	struct vhost_net_virtqueue *nvq = &net->vqs[VHOST_NET_VQ_TX];
->>>> +	struct vhost_net_virtqueue *nvq_rx = &net->vqs[VHOST_NET_VQ_RX];
->>>>    	struct vhost_virtqueue *vq = &nvq->vq;
->>>> +	struct vhost_virtqueue *vq_rx = &nvq_rx->vq;
->>>>    	struct socket *sock;
->>>> +	mutex_lock_nested(&vq_rx->mutex, VHOST_NET_VQ_RX);
->>>>    	mutex_lock_nested(&vq->mutex, VHOST_NET_VQ_TX);
->>>> +	if (!vq->busyloop_timeout)
->>>> +		mutex_unlock(&vq_rx->mutex);
->>>> +
->>>>    	sock = vq->private_data;
->>>>    	if (!sock)
->>>>    		goto out;
->>>> @@ -933,6 +936,8 @@ static void handle_tx(struct vhost_net *net)
->>>>    		handle_tx_copy(net, sock);
->>>>    out:
->>>> +	if (vq->busyloop_timeout)
->>>> +		mutex_unlock(&vq_rx->mutex);
->>>>    	mutex_unlock(&vq->mutex);
->>>>    }
->>> So rx mutex taken on tx path now.  And tx mutex is on rc path ...  This
->>> is just messed up. Why can't tx polling drop rx lock before
->>> getting the tx lock and vice versa?
->>
->> Because we want to poll both tx and rx virtqueue at the same time
->> (vhost_net_busy_poll()).
->>
->>      while (vhost_can_busy_poll(endtime)) {
->>          if (vhost_has_work(&net->dev)) {
->>              *busyloop_intr = true;
->>              break;
->>          }
->>
->>          if ((sock_has_rx_data(sock) &&
->>               !vhost_vq_avail_empty(&net->dev, rvq)) ||
->>              !vhost_vq_avail_empty(&net->dev, tvq))
->>              break;
->>
->>          cpu_relax();
->>
->>      }
->>
->>
->> And we disable kicks and notification for better performance.
-> Right but it's all slow path - it happens when queue is
-> otherwise empty. So this is what I am saying: let's drop the locks
-> we hold around this.
-
-
-Is this really safe? I looks to me it can race with SET_VRING_ADDR. And 
-the codes did more:
-
-- access sock object
-
-- access device IOTLB
-
-- enable and disable notification
-
-None of above is safe without the protection of vq mutex.
-
-
+On Tue, Dec 11, 2018 at 6:38 PM David Gibson
+<david@gibson.dropbear.id.au> wrote:
 >
+> On Tue, Dec 11, 2018 at 08:01:43AM -0600, Bjorn Helgaas wrote:
+> > Hi David,
+> >
+> > I see you're still working on this, but if you do end up going this
+> > direction eventually, would you mind splitting this into two patches:
+> > 1) rename the quirk to make it more generic (but not changing any
+> > behavior), and 2) add the ConnectX devices to the quirk.  That way
+> > the ConnectX change is smaller and more easily
+> > understood/reverted/etc.
 >
->>> Or if we really wanted to force everything to be locked at
->>> all times, let's just use a single mutex.
->>>
->>>
->>>
->> We could, but it might requires more changes which could be done for -next I
->> believe.
->>
->>
->> Thanks
-> I'd rather we kept the fine grained locking. E.g. people are
-> looking at splitting the tx and rx threads. But if not possible
-> let's fix it cleanly with a coarse-grained one. A mess here will
-> just create more trouble later.
->
+> Sure.  Would it make sense to send (1) as an independent cleanup,
+> while I'm still working out exactly what (if anything) we need for
+> (2)?
 
-I believe we won't go back to coarse one. Looks like we can solve this 
-by using mutex_trylock() for rxq during TX. And don't do polling for rxq 
-is a IOTLB updating is pending.
-
-Let me post V2.
-
-Thanks
-
+You could, but I don't think there's really much benefit in doing the
+first without the second, and I think there is some value in handling
+both patches at the same time.
