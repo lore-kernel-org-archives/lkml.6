@@ -2,111 +2,106 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.9 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C765DC04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 12:30:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18E23C04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 12:31:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C8A420839
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 12:30:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C8A420839
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id CD7132084E
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 12:31:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="VYAasLbd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD7132084E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727378AbeLLM37 (ORCPT
+        id S1727439AbeLLMb0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 07:29:59 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:16560 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727091AbeLLM36 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 07:29:58 -0500
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 57170C5FA85ED;
-        Wed, 12 Dec 2018 20:29:55 +0800 (CST)
-Received: from [10.151.23.176] (10.151.23.176) by smtp.huawei.com
- (10.3.19.204) with Microsoft SMTP Server (TLS) id 14.3.408.0; Wed, 12 Dec
- 2018 20:29:49 +0800
-Subject: Re: [PATCH v2] staging:erofs: Fix alignment issues
-From:   Gao Xiang <gaoxiang25@huawei.com>
-To:     Aaron Strahlberger <aaron.strahlberger@posteo.de>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Chao Yu <yuchao0@huawei.com>, <linux-erofs@lists.ozlabs.org>,
-        <devel@driverdev.osuosl.org>, <linux-kernel@vger.kernel.org>,
-        <linux-kernel@i4.cs.fau.de>,
-        Julius Wiedmann <julius.wiedmann@fau.de>,
-        Dominik Huber <domi250@gmx.de>, Miao Xie <miaoxie@huawei.com>
-References: <0ed9f3e7-9081-4a8a-06b0-e5ad14e2c872@huawei.com>
- <20181212120053.16002-1-aaron.strahlberger@posteo.de>
- <16a019d6-ccf0-b7a8-8d28-e2af9d0a76ef@huawei.com>
-Message-ID: <0213a94b-a0a4-e25d-434a-0f728d02ff20@huawei.com>
-Date:   Wed, 12 Dec 2018 20:29:47 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        Wed, 12 Dec 2018 07:31:26 -0500
+Received: from mail-lj1-f171.google.com ([209.85.208.171]:38931 "EHLO
+        mail-lj1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727091AbeLLMb0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 07:31:26 -0500
+Received: by mail-lj1-f171.google.com with SMTP id t9-v6so16112031ljh.6
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 04:31:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=oM7AeCHhjJOAyr8ADYL7ecfUVGQgyXPwClZKi4GtDW8=;
+        b=VYAasLbdR1Umx0nfjWCo5OFRQFOcBq0mXFaR/2u29geb44g3Kfz6mM3GZ6gfiK1Nr0
+         y+j1E/zwbrPoL9+wuJm5zU2R6JRi4D7k7z2U+XWLNAc9CHko1RP/JAjHmyRgju/FsBI7
+         ytEl1J5Qb6amIGub3aw6myGAo9T7cWVZuxOzg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=oM7AeCHhjJOAyr8ADYL7ecfUVGQgyXPwClZKi4GtDW8=;
+        b=VxBc+4FrTL6N9wQHzpRK0yG++rHEoXmpYRdW9mXOlh7rEA4sk8SKPrU50JOZkMzXyr
+         s6obk3dsnxxmb/c9vMgwtakgcfsNxKEQink283F+K4CA4TD9XgqYSm2uHpErVmo0iQTu
+         VzT8/7thxT2NsPTMRIZoS3KDGfTIiSVB1uf69T/QMdWGUGfmM14fTKxtcBUQ46ToD4qr
+         GJr6HPZsU+vqvJtvt1eMEPgoMTdI/PSj/XG7gAB4IBw9OkwqJM3cHrZU/IAM6fbI2u8d
+         EdFz+qjzSHjyBz+lAuk/+V4x4M2BvmdOrmtEERszGPgrKePsFqNlBTUMBcNleAjPD/cA
+         rPwg==
+X-Gm-Message-State: AA+aEWaBgm3Bz/VxoX9PQ7P7cHdtl3CBE+CdLQm02Lw5UXsRCH7z+Mxk
+        sdP3E7b1jJgMnjF6hPeEh3InGA==
+X-Google-Smtp-Source: AFSGD/U13KJTbQxjOoRnRRkThFeeVYy1ZFk2VlxuDAH+1wCk29DXz2pMsTF584un44Cyb7GR4GXUPA==
+X-Received: by 2002:a2e:744:: with SMTP id i4-v6mr8517354ljd.140.1544617883987;
+        Wed, 12 Dec 2018 04:31:23 -0800 (PST)
+Received: from jax.ideon.se ([85.235.10.227])
+        by smtp.gmail.com with ESMTPSA id n8-v6sm3511302lji.90.2018.12.12.04.31.22
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 12 Dec 2018 04:31:23 -0800 (PST)
+Date:   Wed, 12 Dec 2018 13:31:21 +0100
+From:   Jens Wiklander <jens.wiklander@linaro.org>
+To:     arm-soc <arm@kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Subject: [GIT PULL] tee subsys for v4.21
+Message-ID: <20181212123121.GB29450@jax.ideon.se>
 MIME-Version: 1.0
-In-Reply-To: <16a019d6-ccf0-b7a8-8d28-e2af9d0a76ef@huawei.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.151.23.176]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello arm-soc maintainers,
 
-On 2018/12/12 20:11, Gao Xiang wrote:
-> Hi Aaron,
-> 
-> On 2018/12/12 20:00, Aaron Strahlberger wrote:
->> Fix of `CHECK: Alignment should match open parenthesis` issues, reported by
->> checkpatch.pl
->>
->> Signed-off-by: Aaron Strahlberger <aaron.strahlberger@posteo.de>
->> Signed-off-by: Julius Wiedmann <julius.wiedmann@fau.de>
->> Signed-off-by: Dominik Huber <domi250@gmx.de>
->> ---
->>  drivers/staging/erofs/dir.c | 12 ++++++------
->>  1 file changed, 6 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/staging/erofs/dir.c b/drivers/staging/erofs/dir.c
->> index e44ca93dcdc6..e1955703ab8f 100644
->> --- a/drivers/staging/erofs/dir.c
->> +++ b/drivers/staging/erofs/dir.c
->> @@ -24,8 +24,8 @@ static const unsigned char erofs_filetype_table[EROFS_FT_MAX] = {
->>  };
->>  
->>  static int erofs_fill_dentries(struct dir_context *ctx,
->> -	void *dentry_blk, unsigned int *ofs,
->> -	unsigned int nameoff, unsigned int maxsize)
->> +			       void *dentry_blk, unsigned int *ofs,
->> +			       unsigned int nameoff, unsigned int maxsize)
->>  {
->>  	struct erofs_dirent *de = dentry_blk;
->>  	const struct erofs_dirent *end = dentry_blk + nameoff;
->> @@ -69,8 +69,8 @@ static int erofs_fill_dentries(struct dir_context *ctx,
->>  #endif
->>  
->>  		if (!dir_emit(ctx, de_name, de_namelen,
->> -					le64_to_cpu(de->nid), d_type))
->> -			/* stoped by some reason */
->> +			      le64_to_cpu(de->nid), d_type))
->> +			/* stopped by some reason */
-> It seems Greg has merged part of your previous patch,
-> https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git/commit/drivers/staging/erofs?h=staging-testing&id=019ec6c14fbdfaeb361c84f68158fb9097f41004
-> 
-> Anyway, I can locally apply it by 3-way merge, and it looks good to me apart from that
-> 
-> Reviewed-by: Gao Xiang <gaoxiang25@huawei.com>
-> 
-
-By the way, the subject line could be better as "staging: erofs: Fix alignment issues" rather than "staging:erofs: Fix alignment issues"
+Please pull this small OP-TEE driver enhancement. A friendly log message
+is added to inform that dynamic shared memory is used when initiazing
+the OP-TEE driver.
 
 Thanks,
-Gao Xiang
+Jens
 
-> Thanks,
-> Gao Xiang
-> 
+The following changes since commit 40e020c129cfc991e8ab4736d2665351ffd1468d:
+
+  Linux 4.20-rc6 (2018-12-09 15:31:00 -0800)
+
+are available in the Git repository at:
+
+  https://git.linaro.org/people/jens.wiklander/linux-tee.git tags/tee-subsys-optee-for-4.21
+
+for you to fetch changes up to 3c15ddb97c77f34ba009910becd5921f169770a2:
+
+  tee: optee: log message if dynamic shm is enabled (2018-12-11 14:38:40 +0100)
+
+----------------------------------------------------------------
+OP-TEE dynamic shm log message
+
+Adds a log message in the OP-TEE driver to inform that dynamic shared
+memory is enabled.
+
+----------------------------------------------------------------
+Victor Chong (1):
+      tee: optee: log message if dynamic shm is enabled
+
+ drivers/tee/optee/core.c | 3 +++
+ 1 file changed, 3 insertions(+)
