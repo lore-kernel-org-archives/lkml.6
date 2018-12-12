@@ -2,130 +2,153 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52005C04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 13:53:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62328C04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 13:53:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 140E720839
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 13:53:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="PrlbzN+Y";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="PrlbzN+Y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 140E720839
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 2718120839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 13:53:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2718120839
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727615AbeLLNx3 (ORCPT
+        id S1727656AbeLLNxs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 08:53:29 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:58830 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726232AbeLLNx2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 08:53:28 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id C3B1560208; Wed, 12 Dec 2018 13:53:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1544622807;
-        bh=4Ljmm43+EIbj0PFzXA1VtUmyW7AyAprFpeVOkY/z+O4=;
-        h=From:To:Cc:Subject:Date:From;
-        b=PrlbzN+YWUU22Mgz7TrltaqpoZObrjZOMjKyG/DWoAENnSoByeBdWGAu2Mt5Wa0/M
-         BSonkP7CGFd3hLFccz89RxXezBCLCHHAWTWzawLenNzHpKU4A/knlwXi/oC2fgrpU9
-         RxJHnTZaD76mxeoylPANVmhP/Z/MIkJVeOTsPPL0=
-Received: from blr-ubuntu-87.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: sibis@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id C45E6601D7;
-        Wed, 12 Dec 2018 13:53:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1544622807;
-        bh=4Ljmm43+EIbj0PFzXA1VtUmyW7AyAprFpeVOkY/z+O4=;
-        h=From:To:Cc:Subject:Date:From;
-        b=PrlbzN+YWUU22Mgz7TrltaqpoZObrjZOMjKyG/DWoAENnSoByeBdWGAu2Mt5Wa0/M
-         BSonkP7CGFd3hLFccz89RxXezBCLCHHAWTWzawLenNzHpKU4A/knlwXi/oC2fgrpU9
-         RxJHnTZaD76mxeoylPANVmhP/Z/MIkJVeOTsPPL0=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C45E6601D7
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sibis@codeaurora.org
-From:   Sibi Sankar <sibis@codeaurora.org>
-To:     myungjoo.ham@samsung.com, kyungmin.park@samsung.com
-Cc:     cw00.choi@samsung.com, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm-owner@vger.kernel.org,
-        skannan@codeaurora.org, Sibi Sankar <sibis@codeaurora.org>
-Subject: [PATCH v4] PM / devfreq: Restart previous governor if new governor fails to start
-Date:   Wed, 12 Dec 2018 19:23:13 +0530
-Message-Id: <20181212135313.30268-1-sibis@codeaurora.org>
-X-Mailer: git-send-email 2.19.1
+        Wed, 12 Dec 2018 08:53:48 -0500
+Received: from mx2.suse.de ([195.135.220.15]:49038 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726232AbeLLNxr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 08:53:47 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D4440AC52;
+        Wed, 12 Dec 2018 13:53:44 +0000 (UTC)
+Subject: Re: [PATCH v4 15/15] MAINTAINERS: Add entry for RDA Micro SoC
+ architecture
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc:     olof@lixom.net, arnd@arndb.de, robh+dt@kernel.org,
+        tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com,
+        daniel.lezcano@linaro.org, gregkh@linuxfoundation.org,
+        jslaby@suse.com, devicetree@vger.kernel.org,
+        linus.walleij@linaro.org, linux-kernel@vger.kernel.org,
+        amit.kucheria@linaro.org, linux-unisoc@lists.infradead.org,
+        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20181210173550.29643-1-manivannan.sadhasivam@linaro.org>
+ <20181210173550.29643-16-manivannan.sadhasivam@linaro.org>
+From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=afaerber@suse.de; prefer-encrypt=mutual; keydata=
+ xsFNBE6W6ZQBEAC/BIukDnkVenIkK9O14UucicBIVvRB5WSMHC23msS+R2h915mW7/vXfn+V
+ 0nrr5ECmEg/5OjujKf0x/uhJYrsxcp45nDyYCk+RYoOJmGzzUFya1GvT/c04coZ8VmgFUWGE
+ vCfhHJro85dZUL99IoLP21VXEVlCPyIngSstikeuf14SY17LPTN1aIpGQDI2Qt8HHY1zOVWv
+ iz53aiFLFeIVhQlBmOABH2Ifr2M9loRC9yOyGcE2GhlzgyHGlQxEVGFn/QptX6iYbtaTBTU0
+ c72rpmbe1Nec6hWuzSwu2uE8lF+HYcYi+22ml1XBHNMBeAdSEbSfDbwc///8QKtckUzbDvME
+ S8j4KuqQhwvYkSg7dV9rs53WmjO2Wd4eygkC3tBhPM5s38/6CVGl3ABiWJs3kB08asUNy8Wk
+ juusU/nRJbXDzxu1d+hv0d+s5NOBy/5+7Pa6HeyBnh1tUmCs5/f1D/cJnuzzYwAmZTHFUsfQ
+ ygGBRRKpAVu0VxCFNPSYKW0ULi5eZV6bcj+NAhtafGsWcv8WPFXgVE8s2YU38D1VtlBvCo5/
+ 0MPtQORqAQ/Itag1EHHtnfuK3MBtA0fNxQbb2jha+/oMAi5hKpmB/zAlFoRtYHwjFPFldHfv
+ Iljpe1S0rDASaF9NsQPfUBEm7dA5UUkyvvi00HZ3e7/uyBGb0QARAQABzSJBbmRyZWFzIEbD
+ pHJiZXIgPGFmYWVyYmVyQHN1c2UuZGU+wsF7BBMBAgAlAhsDBgsJCAcDAgYVCAIJCgsEFgID
+ AQIeAQIXgAUCTqGJnQIZAQAKCRD6LtEtPn4BPzetD/4rF6k/HF+9U9KqykfJaWdUHJvXpI85
+ Roab12rQbiIrL4hVEYKrYwPEKpCf+FthXpgOq+JdTGJ831DMlTx7Ed5/QJ9KAAQuhZlSNjSc
+ +FNobJm7EbFv9jWFjQC0JcOl17Ji1ikgRcIRDCul1nQh9jCdfh1b848GerZmzteNdT9afRJm
+ 7rrvMqXs1Y52/dTlfIW0ygMA2n5Vv3EwykXJOPF6fRimkErKO84sFMNg0eJV9mXs+Zyionfi
+ g2sZJfVeKjkDqjxy7sDDBZZR68I9HWq5VJQrXqQkCZUvtr6TBLI+uiDLbGRUDNxA3wgjVdS2
+ v9bhjYceSOHpKU+h3H2S8ju9rjhOADT2F5lUQMTSpjlzglh8IatV5rXLGkXEyum4MzMo2sCE
+ Cr+GD6i2M3pHCtaIVV3xV0nRGALa6DdF7jBWqM54KHaKsE883kFH2+6ARcPCPrnPm7LX98h2
+ 4VpG984ysoq6fpzHHG/KCaYCEOe1bpr3Plmmp3sqj0utA6lwzJy0hj5dqug+lqmg7QKAnxl+
+ porgluoY56U0X0PIVBc0yO0dWqRxtylJa9kDX/TKwFYNVddMn2NQNjOJXzx2H9hf0We7rG7+
+ F/vgwALVVYbiTzvp2L0XATTv/oX4BHagAa/Qc3dIsBYJH+KVhBp+ZX4uguxk4xlc2hm75b1s
+ cqeAD87BTQROlumUARAAzd7eu+tw/52FB7xQZWDv5aF+6CAkoz7AuY4s1fo0AQQDqjLOdpQF
+ bifdH7B8SnsA4eo0syfs+1tZW6nn9hdy1GHEMbeuvdhNwkhEfYGDYpSue7oVxB4jajKvRHAP
+ VcewKZIxvIiZ5aSp5n1Bd7B0c0C443DHiWE/0XWSpvbU7fTzTNvdz+2OZmGtqCn610gBqScv
+ 1BOiP3OfLly8ghxcJsos23c0mkB/1iWlzh3UMFIGrzsK3sZJ/3uRaLYFimmqqPlSwFqx3b0M
+ 1gFdHWKfOpvQ4wwP5P10xwvqNXLWC30wB1QmJGD/X8aAoVNnGsmEL7GcWF4cLoOSRidSoccz
+ znShE+Ap+FVDD6MRyesNT4D67l792//B38CGJRdELtNacdwazaFgxH9O85Vnd70ZC7fIcwzG
+ yg/4ZEf96DlAvrSOnu/kgklofEYdzpZmW+Fqas6cnk6ZaHa35uHuBPesdE13MVz5TeiHGQTW
+ xP1jbgWQJGPvJZ+htERT8SZGBQRb1paoRd1KWQ1mlr3CQvXtfA/daq8p/wL48sXrKNwedrLV
+ iZOeJOFwfpJgsFU4xLoO/8N0RNFsnelBgWgZE3ZEctEd4BsWFUw+czYCPYfqOcJ556QUGA9y
+ DeDcxSitpYrNIvpk4C5CHbvskVLKPIUVXxTNl8hAGo1Ahm1VbNkYlocAEQEAAcLBXwQYAQIA
+ CQUCTpbplAIbDAAKCRD6LtEtPn4BPzA6D/9TbSBOPM99SHPX9JiEQAw4ITCBF2oTWeZQ6RJg
+ RKpB15lzyPfyFbNSceJp9dCiwDWe+pzKaX6KYOFZ5+YTS0Ph2eCR+uT2l6Mt6esAun8dvER/
+ xlPDW7p88dwGUcV8mHEukWdurSEDTj8V3K29vpgvIgRq2lHCn2wqRQBGpiJAt72Vg0HxUlwN
+ GAJNvhpeW8Yb43Ek7lWExkUgOfNsDCTvDInF8JTFtEXMnUcPxC0d/GdAuvBilL9SlmzvoDIZ
+ 5k2k456bkY3+3/ydDvKU5WIgThydyCEQUHlmE6RdA3C1ccIrIvKjVEwSH27Pzy5jKQ78qnhv
+ dtLLAavOXyBJnOGlNDOpOyBXfv02x91RoRiyrSIM7dKmMEINKQlAMgB/UU/6B+mvzosbs5d3
+ 4FPzBLuuRz9WYzXmnC460m2gaEVk1GjpidBWw0yY6kgnAM3KhwCFSecqUQCvwKFDGSXDDbCr
+ w08b3GDk40UoCoUq9xrGfhlf05TUSFTg2NlSrK7+wAEsTUgs2ZYLpHyEeftoDDnKpM4ghs/O
+ ceCeyZUP1zSgRSjgITQp691Uli5Nd1mIzaaM8RjOE/Rw67FwgblKR6HAhSy/LYw1HVOu+Ees
+ RAEdbtRt37A8brlb/ENxbLd9SGC8/j20FQjit7oPNMkTJDs7Uo2eb7WxOt5pSTVVqZkv7Q==
+Organization: SUSE Linux GmbH
+Message-ID: <3e4b7143-6ed8-6006-cb07-d72bca40ce5f@suse.de>
+Date:   Wed, 12 Dec 2018 14:53:42 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
+In-Reply-To: <20181210173550.29643-16-manivannan.sadhasivam@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Saravana Kannan <skannan@codeaurora.org>
+Hi Mani,
 
-If the new governor fails to start, switch back to old governor so that the
-devfreq state is not left in some weird limbo.
+Am 10.12.18 um 18:35 schrieb Manivannan Sadhasivam:
+> Add MAINTAINERS entry for RDA Micro SoC architecture with myself
+> and Andreas Färber as the maintainers.
+> 
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> ---
+>  MAINTAINERS | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 6c3fbbb361f8..6411fb222590 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -1945,6 +1945,21 @@ M:	Lennert Buytenhek <kernel@wantstofly.org>
+>  L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+>  S:	Maintained
+>  
+> +ARM/RDA MICRO ARCHITECTURE
+> +M:	Andreas Färber <afaerber@suse.de>
+> +M:	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
-Signed-off-by: Saravana Kannan <skannan@codeaurora.org>
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
----
+I'd suggest you swap the two of us here, making you the primary
+maintainer. Or drop me, as I should be copied via linux-unisoc anyway.
 
-V4:
-* Removed prev_governor check.
+I won't realistically have the bandwidth to drive review and more pull
+requests at the moment, with Realtek already stuck in irqchip regression
+for too long and LoRa making only slow progress.
 
-V3:
-* Fix NULL deref for real this time.
-* Addressed some style preferences.
+Regards,
+Andreas
 
-V2:
-* Fixed typo in commit text
-* Fixed potential NULL deref
+> +L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+> +L:	linux-unisoc@lists.infradead.org (moderated for non-subscribers)
+> +S:	Maintained
+> +F:	arch/arm/boot/dts/rda8810pl-*
+> +F:	drivers/clocksource/timer-rda.c
+> +F:	drivers/irqchip/irq-rda-intc.c
+> +F:	drivers/tty/serial/rda-uart.c
+> +F:	Documentation/devicetree/bindings/arm/rda.txt
+> +F:	Documentation/devicetree/bindings/interrupt-controller/rda,8810pl-intc.txt
+> +F:	Documentation/devicetree/bindings/serial/rda,8810pl-uart.txt
+> +F:	Documentation/devicetree/bindings/timer/rda,8810pl-timer.txt
+> +
+>  ARM/REALTEK ARCHITECTURE
+>  M:	Andreas Färber <afaerber@suse.de>
+>  L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+> 
 
- drivers/devfreq/devfreq.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
-index 141413067b5c..ba2875a0b90e 100644
---- a/drivers/devfreq/devfreq.c
-+++ b/drivers/devfreq/devfreq.c
-@@ -1024,7 +1024,7 @@ static ssize_t governor_store(struct device *dev, struct device_attribute *attr,
- 	struct devfreq *df = to_devfreq(dev);
- 	int ret;
- 	char str_governor[DEVFREQ_NAME_LEN + 1];
--	struct devfreq_governor *governor;
-+	const struct devfreq_governor *governor, *prev_governor;
- 
- 	ret = sscanf(buf, "%" __stringify(DEVFREQ_NAME_LEN) "s", str_governor);
- 	if (ret != 1)
-@@ -1053,12 +1053,19 @@ static ssize_t governor_store(struct device *dev, struct device_attribute *attr,
- 			goto out;
- 		}
- 	}
-+	prev_governor = df->governor;
- 	df->governor = governor;
- 	strncpy(df->governor_name, governor->name, DEVFREQ_NAME_LEN);
- 	ret = df->governor->event_handler(df, DEVFREQ_GOV_START, NULL);
--	if (ret)
-+	if (ret) {
- 		dev_warn(dev, "%s: Governor %s not started(%d)\n",
- 			 __func__, df->governor->name, ret);
-+		df->governor = prev_governor;
-+		strncpy(df->governor_name, prev_governor->name,
-+			DEVFREQ_NAME_LEN);
-+		df->governor->event_handler(df, DEVFREQ_GOV_START,
-+					    NULL);
-+	}
- out:
- 	mutex_unlock(&devfreq_list_lock);
- 
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
+SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
