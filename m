@@ -2,231 +2,119 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,T_MIXED_ES,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 004F5C65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 22:04:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B504AC65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 22:05:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2C1F20849
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 22:04:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2C1F20849
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 761252084E
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 22:05:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="Vf41e4Yx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 761252084E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728358AbeLLWEY (ORCPT
+        id S1728401AbeLLWF0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 17:04:24 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:37886 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726263AbeLLWEY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 17:04:24 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 58478307DAAF;
-        Wed, 12 Dec 2018 22:04:23 +0000 (UTC)
-Received: from redhat.com (ovpn-124-14.rdu2.redhat.com [10.10.124.14])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 093A05D9C7;
-        Wed, 12 Dec 2018 22:04:20 +0000 (UTC)
-Date:   Wed, 12 Dec 2018 17:04:19 -0500
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     Dan Williams <dan.j.williams@intel.com>, Jan Kara <jack@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>,
-        John Hubbard <john.hubbard@gmail.com>,
+        Wed, 12 Dec 2018 17:05:26 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:36944 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726263AbeLLWFZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 17:05:25 -0500
+Received: by mail-pg1-f196.google.com with SMTP id 80so8974671pge.4
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 14:05:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=hazJnQDZsZo3kVuPkNhwMYMauryGhG8I6tzG46lyL1E=;
+        b=Vf41e4Yx1yFJ/qMtwPCXfH5U9sPY8Qa5MpupPB4LH9Rv3EsBZ4dHInvMbAiw2IO3u2
+         IvJGs2J/vGZkOBAiu6eezLzuhKhSq01APD4NdKLJv+i+J8EpJv9chqwu7RiG8xoAj6za
+         mlgfCbpUY6EZwf/59Y9FM1BXMB6rWfJMjwtCE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=hazJnQDZsZo3kVuPkNhwMYMauryGhG8I6tzG46lyL1E=;
+        b=iC8QkH0ZslLW+SAMfWqSIhfLxacKgge//fSmLiyFi/HRbNDq40QCGEmxTGxl/7+gXc
+         lUqxIsDQ/ZWZdMjZwHz2UF2unoZ7ofLTdfLONIkwrqizEpuzXmKbmycT2shw2vWJXpX+
+         ebeeXD73HSxh8uIaapAsE/LYGnpmhFth+EFodJuW4iWKGf8xtgtbC/tVrMrbaTGv53LF
+         nLZO6L8CfdW2jKkQubsIUxRPldJ962r2FHl36N55DZCyVNPjcvauAYFIW0BQTIIFt3oe
+         IsiFAPgiNVzSl3cohu22fEVtInzFbYm4uANDm6BXmKGrGs1Cl8K4/msrUzHq4Na+c/VS
+         +O4w==
+X-Gm-Message-State: AA+aEWZVTtDPGTbk88k6qmkzn5tm72xd4pxMEhNkr9yEzOodtod/dsa0
+        ULhpW5ViGh0QkS7d5wk3TyTapQ==
+X-Google-Smtp-Source: AFSGD/UR0Mwu86+321x5T7dF9/t4NyB49dG3jQFLqx5naDqVEJMTq2cBzgRG7HOnsM2H72Hg5sH1ng==
+X-Received: by 2002:a63:cc12:: with SMTP id x18mr19610673pgf.33.1544652324034;
+        Wed, 12 Dec 2018 14:05:24 -0800 (PST)
+Received: from joelaf.mtv.corp.google.com ([2620:0:1000:1601:3aef:314f:b9ea:889f])
+        by smtp.gmail.com with ESMTPSA id o1sm29340869pgn.63.2018.12.12.14.05.22
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 12 Dec 2018 14:05:22 -0800 (PST)
+From:   "Joel Fernandes (Google)" <joel@joelfernandes.org>
+To:     linux-man@vger.kernel.org
+Cc:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>, tom@talpey.com,
-        Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
-        Christoph Hellwig <hch@infradead.org>,
-        Christopher Lameter <cl@linux.com>,
-        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Michal Hocko <mhocko@kernel.org>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        rcampbell@nvidia.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
-Message-ID: <20181212220418.GH5037@redhat.com>
-References: <59ca5c4b-fd5b-1fc6-f891-c7986d91908e@nvidia.com>
- <7b4733be-13d3-c790-ff1b-ac51b505e9a6@nvidia.com>
- <20181207191620.GD3293@redhat.com>
- <3c4d46c0-aced-f96f-1bf3-725d02f11b60@nvidia.com>
- <20181208022445.GA7024@redhat.com>
- <20181210102846.GC29289@quack2.suse.cz>
- <20181212150319.GA3432@redhat.com>
- <CAPcyv4go0Xzhz8rXdfscWuXDu83BO9v8WD4upDUJWb7gKzX5OQ@mail.gmail.com>
- <20181212213005.GE5037@redhat.com>
- <514cc9e1-dc4d-b979-c6bc-88ac503c098d@nvidia.com>
+        Andy Lutomirski <luto@kernel.org>, dancol@google.com,
+        Hugh Dickins <hughd@google.com>, Jann Horn <jannh@google.com>,
+        John Stultz <john.stultz@linaro.org>,
+        linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org,
+        =?UTF-8?q?Marc-Andr=C3=A9=20Lureau?= <marcandre.lureau@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: [PATCH -manpage 1/2] fcntl.2: Update manpage with new memfd F_SEAL_FUTURE_WRITE seal
+Date:   Wed, 12 Dec 2018 14:05:13 -0800
+Message-Id: <20181212220514.205269-1-joel@joelfernandes.org>
+X-Mailer: git-send-email 2.20.0.rc1.387.gf8505762e3-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <514cc9e1-dc4d-b979-c6bc-88ac503c098d@nvidia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Wed, 12 Dec 2018 22:04:23 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 12, 2018 at 01:56:00PM -0800, John Hubbard wrote:
-> On 12/12/18 1:30 PM, Jerome Glisse wrote:
-> > On Wed, Dec 12, 2018 at 08:27:35AM -0800, Dan Williams wrote:
-> >> On Wed, Dec 12, 2018 at 7:03 AM Jerome Glisse <jglisse@redhat.com> wrote:
-> >>>
-> >>> On Mon, Dec 10, 2018 at 11:28:46AM +0100, Jan Kara wrote:
-> >>>> On Fri 07-12-18 21:24:46, Jerome Glisse wrote:
-> >>>>> Another crazy idea, why not treating GUP as another mapping of the page
-> >>>>> and caller of GUP would have to provide either a fake anon_vma struct or
-> >>>>> a fake vma struct (or both for PRIVATE mapping of a file where you can
-> >>>>> have a mix of both private and file page thus only if it is a read only
-> >>>>> GUP) that would get added to the list of existing mapping.
-> >>>>>
-> >>>>> So the flow would be:
-> >>>>>     somefunction_thatuse_gup()
-> >>>>>     {
-> >>>>>         ...
-> >>>>>         GUP(_fast)(vma, ..., fake_anon, fake_vma);
-> >>>>>         ...
-> >>>>>     }
-> >>>>>
-> >>>>>     GUP(vma, ..., fake_anon, fake_vma)
-> >>>>>     {
-> >>>>>         if (vma->flags == ANON) {
-> >>>>>             // Add the fake anon vma to the anon vma chain as a child
-> >>>>>             // of current vma
-> >>>>>         } else {
-> >>>>>             // Add the fake vma to the mapping tree
-> >>>>>         }
-> >>>>>
-> >>>>>         // The existing GUP except that now it inc mapcount and not
-> >>>>>         // refcount
-> >>>>>         GUP_old(..., &nanonymous, &nfiles);
-> >>>>>
-> >>>>>         atomic_add(&fake_anon->refcount, nanonymous);
-> >>>>>         atomic_add(&fake_vma->refcount, nfiles);
-> >>>>>
-> >>>>>         return nanonymous + nfiles;
-> >>>>>     }
-> >>>>
-> >>>> Thanks for your idea! This is actually something like I was suggesting back
-> >>>> at LSF/MM in Deer Valley. There were two downsides to this I remember
-> >>>> people pointing out:
-> >>>>
-> >>>> 1) This cannot really work with __get_user_pages_fast(). You're not allowed
-> >>>> to get necessary locks to insert new entry into the VMA tree in that
-> >>>> context. So essentially we'd loose get_user_pages_fast() functionality.
-> >>>>
-> >>>> 2) The overhead e.g. for direct IO may be noticeable. You need to allocate
-> >>>> the fake tracking VMA, get VMA interval tree lock, insert into the tree.
-> >>>> Then on IO completion you need to queue work to unpin the pages again as you
-> >>>> cannot remove the fake VMA directly from interrupt context where the IO is
-> >>>> completed.
-> >>>>
-> >>>> You are right that the cost could be amortized if gup() is called for
-> >>>> multiple consecutive pages however for small IOs there's no help...
-> >>>>
-> >>>> So this approach doesn't look like a win to me over using counter in struct
-> >>>> page and I'd rather try looking into squeezing HMM public page usage of
-> >>>> struct page so that we can fit that gup counter there as well. I know that
-> >>>> it may be easier said than done...
-> >>>
-> >>> So i want back to the drawing board and first i would like to ascertain
-> >>> that we all agree on what the objectives are:
-> >>>
-> >>>     [O1] Avoid write back from a page still being written by either a
-> >>>          device or some direct I/O or any other existing user of GUP.
-> >>>          This would avoid possible file system corruption.
-> >>>
-> >>>     [O2] Avoid crash when set_page_dirty() is call on a page that is
-> >>>          considered clean by core mm (buffer head have been remove and
-> >>>          with some file system this turns into an ugly mess).
-> >>>
-> >>>     [O3] DAX and the device block problems, ie with DAX the page map in
-> >>>          userspace is the same as the block (persistent memory) and no
-> >>>          filesystem nor block device understand page as block or pinned
-> >>>          block.
-> >>>
-> >>> For [O3] i don't think any pin count would help in anyway. I believe
-> >>> that the current long term GUP API that does not allow GUP of DAX is
-> >>> the only sane solution for now.
-> >>
-> >> No, that's not a sane solution, it's an emergency hack.
-> >>
-> >>> The real fix would be to teach file-
-> >>> system about DAX/pinned block so that a pinned block is not reuse
-> >>> by filesystem.
-> >>
-> >> We already have taught filesystems about pinned dax pages, see
-> >> dax_layout_busy_page(). As much as possible I want to eliminate the
-> >> concept of "dax pages" as a special case that gets sprinkled
-> >> throughout the mm.
-> > 
-> > So thinking on O3 issues what about leveraging the recent change i
-> > did to mmu notifier. Add a event for truncate or any other file
-> > event that need to invalidate the file->page for a range of offset.
-> > 
-> > Add mmu notifier listener to GUP user (except direct I/O) so that
-> > they invalidate they hardware mapping or switch the hardware mapping
-> > to use a crappy page. When such event happens what ever user do to
-> > the page through that driver is broken anyway. So it is better to
-> > be loud about it then trying to make it pass under the radar.
-> > 
-> > This will put the burden on broken user and allow you to properly
-> > recycle your DAX page.
-> > 
-> > Think of it as revoke through mmu notifier.
-> > 
-> > So patchset would be:
-> >     enum mmu_notifier_event {
-> > +       MMU_NOTIFY_TRUNCATE,
-> >     };
-> > 
-> > +   Change truncate code path to emit MMU_NOTIFY_TRUNCATE
-> > 
-> 
-> That part looks good.
-> 
-> > Then for each user of GUP (except direct I/O or other very short
-> > term GUP):
-> 
-> but, why is there a difference between how we handle long- and
-> short-term callers? Aren't we just leaving a harder-to-reproduce race
-> condition, if we ignore the short-term gup callers?
-> 
-> So, how does activity (including direct IO and other short-term callers)
-> get quiesced (stopped, and guaranteed not to restart or continue), so 
-> that truncate or umount can continue on?
+More details of the seal can be found in the LKML patch:
+https://lore.kernel.org/lkml/20181120052137.74317-1-joel@joelfernandes.org/T/#t
 
-The fs would delay block reuse to after refcount is gone so it would
-wait for that. It is ok to do that only for short term user in case of
-direct I/O this should really not happen as it means that the application
-is doing something really stupid. So the waiting on short term user
-would be a rare event.
+Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+---
+ man2/fcntl.2 | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
+diff --git a/man2/fcntl.2 b/man2/fcntl.2
+index 03533d65b49d..54772f94964c 100644
+--- a/man2/fcntl.2
++++ b/man2/fcntl.2
+@@ -1525,6 +1525,21 @@ Furthermore, if there are any asynchronous I/O operations
+ .RB ( io_submit (2))
+ pending on the file,
+ all outstanding writes will be discarded.
++.TP
++.BR F_SEAL_FUTURE_WRITE
++If this seal is set, the contents of the file can be modified only from
++existing writeable mappings that were created prior to the seal being set.
++Any attempt to create a new writeable mapping on the memfd via
++.BR mmap (2)
++will fail with
++.BR EPERM.
++Also any attempts to write to the memfd via
++.BR write (2)
++will fail with
++.BR EPERM.
++This is useful in situations where existing writable mapped regions need to be
++kept intact while preventing any future writes. For example, to share a
++read-only memory buffer to other processes that only the sender can write to.
+ .\"
+ .SS File read/write hints
+ Write lifetime hints can be used to inform the kernel about the relative
+-- 
+2.20.0.rc1.387.gf8505762e3-goog
 
-> >     Patch 1: register mmu notifier
-> >     Patch 2: listen to MMU_NOTIFY_TRUNCATE and MMU_NOTIFY_UNMAP
-> >              when that happens update the device page table or
-> >              usage to point to a crappy page and do put_user_page
-> >              on all previously held page
-> 
-> Minor point, this sequence should be done within a wrapper around existing 
-> get_user_pages(), such as get_user_pages_revokable() or something.
-
-No we want to teach everyone to abide by the rules, if we add yet another
-GUP function prototype people will use the one where they don;t have to
-say they abide by the rules. It is time we advertise the fact that GUP
-should not be use willy nilly for anything without worrying about the
-implication it has :)
-
-So i would rather see a consolidation in the number of GUP prototype we
-have than yet another one.
-
-Cheers,
-Jérôme
