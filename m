@@ -5,61 +5,61 @@ X-Spam-Level:
 X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DE7EC65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 10:02:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 588FAC04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 10:02:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11BE820849
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 10:02:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F07F2086D
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 10:02:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NSehxJe4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11BE820849
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JQvMpOVc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F07F2086D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726987AbeLLKCe (ORCPT
+        id S1727010AbeLLKCo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 05:02:34 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:43347 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726519AbeLLKCd (ORCPT
+        Wed, 12 Dec 2018 05:02:44 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:40364 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726519AbeLLKCo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 05:02:33 -0500
-Received: by mail-ed1-f68.google.com with SMTP id f9so15024307eds.10;
-        Wed, 12 Dec 2018 02:02:32 -0800 (PST)
+        Wed, 12 Dec 2018 05:02:44 -0500
+Received: by mail-ed1-f67.google.com with SMTP id d3so15026607edx.7;
+        Wed, 12 Dec 2018 02:02:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=pd1Ysl0zWBzlPnQhPSvSK5mcjhEFUhnLoOpf43s4V/A=;
-        b=NSehxJe4qr3N2Tcu9VQVP2sUe5j6dQEFylY5RjhtNKzRi+CmSgbXGNHtmSC9WrQgUN
-         uNBwpRGTXIHtiO7721Di587KrT5qDztGrY/pM4BxmjrycIww9R3UFLfprjYu65EUd2Tf
-         pZ+SdLlQkJIFw1e+/mtw0JP686CnHR1n5Ho6IRdILOeSo53j8zwQqnazM1NPOaJv510g
-         Pe6GMtgYzV/opy51E7r7wAT3Im+XlUh+HgK9QcKdi0Qs1fP2GClc4tWnCap9GrEFAxX9
-         ws7oQj7oBPQz0riErDLNhwvElUBEP7HkmIVvY3AclcSVpKz32lBmbAXFAxnDLcTlXl5y
-         9qCQ==
+        bh=6aofmVUkFfPtmf1M+JegKRPmHjWic3GIPwQ7heN2KBo=;
+        b=JQvMpOVcp4359H0uSDkvl2TiOGrKjY0m8G78/JZ3X6nQzzpNEh2jP6YAz7+MG0HP87
+         3h/yGDJ7FyL6Jx0vPCh2CeMFpFVwZDsNVTiBqDLOkj1B/PYXUHZ04B8IJ39MJSvDpdIo
+         fx1NFpOduGR/NA8Ku8UePKHDEmSxmals4VY94dwSZsPgYMnH10YTQqgfj4CRMytvooDl
+         9T2pnH/etMxAD6mybeIWIfoGVPNMbJ6vNAHZLC4EnF/RLeOVOUmUpBkJ+NJyBFE1pI3d
+         hNAyeqQ5zq/HatYf6teFPRHLNbuEbhrAwyCcRaIhRMDO2vmV2s7tmRYkE00DUBFMlnfq
+         /OvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=pd1Ysl0zWBzlPnQhPSvSK5mcjhEFUhnLoOpf43s4V/A=;
-        b=Onr/YIc6yBKXekkFx12UobGNe4xRQMpSu7EqFXDzK2+5lRZmKKQj2feHk1TrTfEPZW
-         l9fNww+u2M9vz3tK5/MZv5KXzIf0M/iq7hAoDTJ4BLb35/Eu52eVQJwa5yZu/ypN8OeX
-         WZXBDbRd95f3VDBuZHt05hbtg7B4bcm30yW+YlGCtdjbD9MLPTLm4h76NdmYrfjIU8i1
-         SeD6FvgSS5oFDfanrD1U+v68leeSxtekl7oRK7O92Se6uMMOKSQEbyJ8x2HaZg/VvYKj
-         aNm4jMiMUqD0AJRM15hSNVVeJGQNwlOOgjdgXS15wWY0x7tekqYq/rp3DmXTEHYpJj6l
-         qUJw==
-X-Gm-Message-State: AA+aEWae1mtjauDyo/rPNOItb9AnErQct3qLAJMWfKb7Sq3lEokvwx/+
-        gfJnQhStRksAY3zYS9Ykd+Q=
-X-Google-Smtp-Source: AFSGD/XhE0huauIAa7AyDP/UaxgoDPDW5i8YCpyOBllM5qkOS2iKfhYoJfjwjCQHbDpmOEgkCE3zRA==
-X-Received: by 2002:a17:906:2452:: with SMTP id a18-v6mr14406138ejb.17.1544608951337;
-        Wed, 12 Dec 2018 02:02:31 -0800 (PST)
+        bh=6aofmVUkFfPtmf1M+JegKRPmHjWic3GIPwQ7heN2KBo=;
+        b=XJ+sgzwUuohrIyuRKOrsbIDTtprqLlX4FXwbiHJRqe0SC8VJfZOdDUG2nNxwo8CVaS
+         IjCMv590pV9adssME12sfrtZD7oQEbP1WHpiAAvnRcWPCs7WhWri+28AKJpcsra+vjdY
+         E8igz8H1GRVr8+oqMeGKG01Cg4o/IhofmkV9MLlNfAI6atgQh1rq63dnSY2gaFG8sLPZ
+         mNMs6tq6zF4Hgq9wm0JRApgEijUT4VcIQ7kBWGVHcp7fN+QLQHaP17OBU6T1y0BEJXnt
+         TeLnBg7HBxWLqmJS6BHFTTE4mJjTI8p8srzm2G11NsfBMEhxmSB/9wxQRvp06lpvXGwo
+         wETQ==
+X-Gm-Message-State: AA+aEWaDpo9EmN/CaYHhyx8Bgv3cnhT9/N+KhrudH7Il7lwruO/bbfwL
+        JF5X19N/WR9cBZNxqUR0Dv8a0uO8
+X-Google-Smtp-Source: AFSGD/XY+3vwg6+PSYos7gIf9dQhe6B+dptkpv/if1LnF/6Lk0CNnU8e83MPhoCSpKZ21seOEycCJA==
+X-Received: by 2002:a50:8fe4:: with SMTP id y91mr17964446edy.231.1544608962092;
+        Wed, 12 Dec 2018 02:02:42 -0800 (PST)
 Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
-        by smtp.gmail.com with ESMTPSA id b46sm4736830edd.94.2018.12.12.02.02.30
+        by smtp.gmail.com with ESMTPSA id a13sm4525908edt.83.2018.12.12.02.02.41
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 12 Dec 2018 02:02:30 -0800 (PST)
-Date:   Wed, 12 Dec 2018 11:02:29 +0100
+        Wed, 12 Dec 2018 02:02:41 -0800 (PST)
+Date:   Wed, 12 Dec 2018 11:02:40 +0100
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Dmitry Osipenko <digetx@gmail.com>
 Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
@@ -67,16 +67,16 @@ Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
         Robin Murphy <robin.murphy@arm.com>,
         iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 07/21] ARM: dts: tegra20: Update Memory Controller
- node to the new binding
-Message-ID: <20181212100229.GD15092@ulmo>
+Subject: Re: [PATCH v6 08/21] memory: tegra: Don't invoke Tegra30+ specific
+ memory timing setup on Tegra20
+Message-ID: <20181212100240.GE15092@ulmo>
 References: <20181209202950.31486-1-digetx@gmail.com>
- <20181209202950.31486-8-digetx@gmail.com>
+ <20181209202950.31486-9-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="JwB53PgKC5A7+0Ej"
+        protocol="application/pgp-signature"; boundary="Yb+qhiCg54lqZFXW"
 Content-Disposition: inline
-In-Reply-To: <20181209202950.31486-8-digetx@gmail.com>
+In-Reply-To: <20181209202950.31486-9-digetx@gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -84,41 +84,44 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---JwB53PgKC5A7+0Ej
+--Yb+qhiCg54lqZFXW
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Dec 09, 2018 at 11:29:36PM +0300, Dmitry Osipenko wrote:
-> Device tree binding of Memory Controller has been changed: GART has been
-> squashed into the MC, there are a new mandatory clock and #iommu-cells
-> properties, the compatible has been changed to 'tegra20-mc-gart'.
+On Sun, Dec 09, 2018 at 11:29:37PM +0300, Dmitry Osipenko wrote:
+> This fixes irrelevant "tegra-mc 7000f000.memory-controller: no memory
+> timings for RAM code 0 registered" warning message during of kernels
+> boot-up on Tegra20.
 >=20
+> Fixes: a8d502fd3348 ("memory: tegra: Squash tegra20-mc into common tegra-=
+mc driver")
 > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> Acked-by: Jon Hunter <jonathanh@nvidia.com>
 > ---
->  arch/arm/boot/dts/tegra20.dtsi | 15 ++++++---------
->  1 file changed, 6 insertions(+), 9 deletions(-)
+>  drivers/memory/tegra/mc.c | 11 ++++++-----
+>  1 file changed, 6 insertions(+), 5 deletions(-)
 
 Acked-by: Thierry Reding <treding@nvidia.com>
 
---JwB53PgKC5A7+0Ej
+--Yb+qhiCg54lqZFXW
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlwQ3LUACgkQ3SOs138+
-s6GEFBAAuSSc+1QIBQ8l6lCc7s4lS7wgI3s3yQNLwQKke9yteMQyJh86aqFr4P6m
-OzmzqFI1HuCE7BhBkxZPjn0lWvsQzEbdjmjqrbbBEw/Iany8fwERcAEY4EY6kHLy
-mWWl/k7DnX2n1zO8KXzp+pRzAOvo191jx8TxO0DhWXibFi2N08rET2jZjZE7NHuq
-ykkV1etDZiF9qWeXRF5Lg5HjI5jDCyROjviokWveaa7eSUzUvGmD57c0JelGoz2i
-VIQJSHCaMpc/d/P1tzorvIqi972VOURzREy6tuopN8b1zZyRe+KwwbcngwfQ+xDV
-tFrNZRVa6/QZMh9v5vlXhGPpDr1fR/RaGq/S1CtJX0hg+uqyjckJDK6pYZkz8UI1
-5DpD2bfoasYvpDG8ShLkGXdKhra6vll+e0R1TrjBv1HcLzcLMg3T1VPCBvIF0Ix3
-8Wp9BU52LhykSdlQwalnmnl+THFaU+fSUv+stvqgVkVlQhCOW3kPINkYbbqrHUye
-lEhvCTrhV3+whFiUVVPCHC5/PoNqDM3R1k1QOIFCwADzVUKDMar+89wo6s4rKYqE
-EytYAl3XLGBdqtSfIMuak4uc1H2hPOgTt5w+tGgyHZ4UYAwV1YAw80NopFlQZuC3
-Muk4wHCaapWKgyyIhIr9IkKEdDUMz9wYyEtihZDEyCtAp074c5Y=
-=8FTX
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlwQ3MAACgkQ3SOs138+
+s6G2aQ/+KD5RdCGYz1SWzQhTm7DVXypS7nOngN1v/CDf5Zt8ZavPn2kSksNkC8Ub
+Bj3MVBMOnmmyrcjHbz1lbio75ULX4igdx5BjKVWBq/nYyq0W9tSKfCydNu0wURX6
+Zffuk8TT3GHUHB45eekxWIRQFZiy68MO3XtNvBfd6gpCoTahAYQP14pN7RVYLGXt
+/W0MZoV+swTBAms56x11rZ+gZiq7kfErXjDYkslTnPYLzKyM5NjTuML20dr/O4Tl
+Grfw0AAwdtzrPKfC9ogiuvzZSKUT/GxXzIiUixuogJO+/y0701m9Nva1BOYqFJFK
+iurUym4MFe8y/sMmRoCg5/mlVHiUJk7HSHV+ifQorzEKk2yT0ZbPqY1dJMz4b0df
+ytmfW0OiaWNIzCrrYPTWWBa0G409XapFaqmYX4uYrXimZWEnt5ybjzQYt3labnrm
+VgzOcRhq0nQmAdxWL5fWZuButOgWrYiIkxDJ/PBOvdTZ1dsr1pUoa4yM7VMGleyx
+PvLwZ1xZP3CNbdrI+BQpGxUFFo+Gvhlw3a/Tmr7JUjITtWtvwPNyGC/dZ+saUeff
+u2zL55tW7bxeAOEbChNQEEDX67jSmf1qbisIdqw8seFpaa09sdqhGiApmrcGnGo9
+uCcTn7u6m82mjNEEdbdVddrwAcoFEw9+Xj8/Qu1JSmxRiCZ4Jw0=
+=nQFn
 -----END PGP SIGNATURE-----
 
---JwB53PgKC5A7+0Ej--
+--Yb+qhiCg54lqZFXW--
