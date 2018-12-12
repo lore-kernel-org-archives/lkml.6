@@ -2,172 +2,115 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6946C65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 18:36:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F211C65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 18:36:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A22C620839
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 18:36:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 46B7820839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 18:36:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="Gz7YefQZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A22C620839
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bDOlfENP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46B7820839
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728242AbeLLSgF (ORCPT
+        id S1728270AbeLLSgs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 13:36:05 -0500
-Received: from esa2.microchip.iphmx.com ([68.232.149.84]:18122 "EHLO
-        esa2.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727888AbeLLSgD (ORCPT
+        Wed, 12 Dec 2018 13:36:48 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:35467 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727888AbeLLSgr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 13:36:03 -0500
-X-IronPort-AV: E=Sophos;i="5.56,345,1539673200"; 
-   d="scan'208";a="24135875"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 12 Dec 2018 11:36:02 -0700
-Received: from NAM01-BN3-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.76.38) with Microsoft SMTP Server (TLS) id
- 14.3.352.0; Wed, 12 Dec 2018 11:36:02 -0700
+        Wed, 12 Dec 2018 13:36:47 -0500
+Received: by mail-lj1-f196.google.com with SMTP id x85-v6so17211345ljb.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 10:36:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector1-microchiptechnology-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gNZLeQCCgEO22plAQ5Vi0TAAgHpdxlcxc+MfbwIBqVw=;
- b=Gz7YefQZoU9cNBlnX60pBVfHzaR1eSSH4O2t9IEWspD5iqok/bkgFw2eZjZzi1BDTvmGzTLS9lWXSyJqGCel1WW1nAFML3LzEEgNsZiX65uwOP32AzICNbFFsJ5OSxoN/O9lQZxC96smP0DJT9ZH3RvPoYXAF28NAzcU4MQEvA4=
-Received: from BN6PR1101MB2243.namprd11.prod.outlook.com (10.174.113.19) by
- BN6PR1101MB2211.namprd11.prod.outlook.com (10.174.113.11) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1425.18; Wed, 12 Dec 2018 18:35:59 +0000
-Received: from BN6PR1101MB2243.namprd11.prod.outlook.com
- ([fe80::1dae:74d9:ffd2:7838]) by BN6PR1101MB2243.namprd11.prod.outlook.com
- ([fe80::1dae:74d9:ffd2:7838%3]) with mapi id 15.20.1425.016; Wed, 12 Dec 2018
- 18:35:59 +0000
-From:   <Andrei.Stefanescu@microchip.com>
-To:     <broonie@kernel.org>, <robh+dt@kernel.org>, <lgirdwood@gmail.com>,
-        <mark.rutland@arm.com>, <gregkh@linuxfoundation.org>
-CC:     <Cristian.Birsan@microchip.com>, <Nicolas.Ferre@microchip.com>,
-        <Claudiu.Beznea@microchip.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <andr3i.stefanescu@gmail.com>, <Andrei.Stefanescu@microchip.com>
-Subject: [PATCH] regulator: mcp16502: add support for suspend
-Thread-Topic: [PATCH] regulator: mcp16502: add support for suspend
-Thread-Index: AQHUkkmG6Jm26DdxjUue/RBWj6X37g==
-Date:   Wed, 12 Dec 2018 18:35:59 +0000
-Message-ID: <1544639735-17654-1-git-send-email-andrei.stefanescu@microchip.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: LO2P123CA0013.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:a6::25) To BN6PR1101MB2243.namprd11.prod.outlook.com
- (2603:10b6:405:52::19)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Andrei.Stefanescu@microchip.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [213.233.110.155]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BN6PR1101MB2211;6:fjpN5HKHnvWGWHUFjohDoGxWPpaAf68Z/3p1PSDxyV9L9a4LqNIlQRk8I8fcWfIdlmh+tahMhAVojJLfHar8A7vqXnshQQJd6hr98iWuq8nH/k4pT9DNmLkrDhYG+uX3BRuQjerbTd2H4pzH2ZY93Ux3j22p4N010rasnFXTsq/V4RJYKq0LE72NuU2w288TE4f/5W120ZDYqX+l2JYDm+56jo/y/QSEmmsYCI4HnA0AlYpklVjVj5DsRFSg9s1hOR5eIc68dfaMvGEa4NvMj1DQu5kNPXONmCsclkpRvFBhD8hcbgiVheBOvo4D6mMUtO4sls7+f5BIRstgz4DTSuqgn6ZxwqnX9wBknJJfB2OauCpk1nMcTq1Ex+6B60PZqBa9Imr+WzSQ3JEGg20gq7tqnNbIccikp98Ow28Vrjq0vz72fGAeMO7qrZzUI54Po8EiIWMN8YigSbsxbGficA==;5:sV30nbIvOMBXuqI3fCw8qW8YbvmkiSQGspCmhbiANblJQ50YERmu6awiosuPwAJM7e29ggENJMz20JxwOrU32Pfs/Twk5LmAHkdnxzFusVl1MMm/f7bdF2rxlATFzFg8aC2k0ydIeaHaIaoEhLYzjSTffRAbpyWomQA3Fqan3LU=;7:fGBIipwjZilW+ATLZnb1+3DeJSOnCfdzSocB+NnD/JNsUFVRzgMRbQrXihxGJunVsTmdSHBY2+Na9sGIxzrchrvGxOzRDUHqII6SAW3kuA3ox8UTggTUHVT//InfcOcI8SHcUsdLqZ7S25UcApRkrg==
-x-ms-office365-filtering-correlation-id: 66c0af9d-b104-4bc6-bad0-08d66060a8e5
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BN6PR1101MB2211;
-x-ms-traffictypediagnostic: BN6PR1101MB2211:
-x-microsoft-antispam-prvs: <BN6PR1101MB221185A526F8C6BC06ED1CAFEDA70@BN6PR1101MB2211.namprd11.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(10201501046)(3231455)(999002)(944501520)(52105112)(93006095)(93001095)(3002001)(148016)(149066)(150057)(6041310)(20161123558120)(20161123560045)(20161123562045)(20161123564045)(201703131423095)(201703061421075)(201703161042150)(6042181)(201708071742011)(7699051)(76991095);SRVR:BN6PR1101MB2211;BCL:0;PCL:0;RULEID:;SRVR:BN6PR1101MB2211;
-x-forefront-prvs: 0884AAA693
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(199004)(189003)(14444005)(106356001)(256004)(54906003)(476003)(2616005)(7736002)(102836004)(486006)(68736007)(8936002)(26005)(25786009)(2501003)(39060400002)(4326008)(6116002)(3846002)(97736004)(110136005)(107886003)(81156014)(186003)(53936002)(86362001)(15650500001)(72206003)(81166006)(105586002)(6506007)(8676002)(6486002)(2201001)(6512007)(498600001)(5660300001)(386003)(99286004)(2906002)(14454004)(305945005)(6436002)(36756003)(52116002)(71190400001)(71200400001)(66066001);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR1101MB2211;H:BN6PR1101MB2243.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: microchip.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: uH60lIDuSzCbt7fi4gYFqc7rZjcAwJkVkuOTGel7eYSAqf257LeZandk6Jf6fBiYYPHOIVrwicTJpI8KxZixMY/Wwvoth0R7KZBIMgPLWVavQGi2iUQKTtjFQtmijpYcwZs3uzfTbr3D1ihG5TOuWd7C8psFoC/TDlTnC0THwITcKXOM78gUbI+K19FDdbD1g2seabxe2mwUBNPNQkj84qhUpO7Pj9K3m4hLezsz60KBf9/mEwl3dFD/zeesBHVN19x2bCYtLOt6gSM9RUAtXygPXdA+Fk4AmRmi9VR/SCqMp5VkWAq5IA9jX9/g+mPX
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=w4dZfQj97m6orxImud5MEJdclSGLyzwnb1g9Ebn+haA=;
+        b=bDOlfENPPw/TLc4DlZr3C10SP5/ex7BM1Al+74hV7+AuPzIqcxmJqS3P5weqws+sjM
+         JOU0gTvS3z3hjAOkCd33s3ywj6z/K3DJ52Bv0+QGVdIR0iTCMQGGuiYlM2U9pBsjTeP4
+         R00Blc9T5Xbkc4kfgbl0Pwe+UUdw1ykrXei14=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=w4dZfQj97m6orxImud5MEJdclSGLyzwnb1g9Ebn+haA=;
+        b=sElkt6ew9ba2z8e2fg/Z733UhC87kR6hZQV7INnnH9Qe8a5sWLkCJWfCcdz9x1Vdjx
+         iB35Vi00wzAwdO5K3fqssi+hKeDis48YUQfkjJY8QDvW8K9sEQXwU0M3I4rwZOLhsbbz
+         dP+OLktkJZjrQY8Ku6UzanqRALBUJePllkXiW5X93CiVK+/LQyEa+Dof8lE0uF7t3Tva
+         vunAXkoZkg/LW9SCHB/ZSDfpAq9qZuLlq/UEDzO2G9iqTfh2w90bMarx3oLCjTkJniFO
+         RSPdHCzg5rNWOlK9vzJndNipfCMbeTD68U2RYhcT1bQP45tL8pLIxr0L+RvXRAKGO47p
+         s4Ew==
+X-Gm-Message-State: AA+aEWaoktFkzSB4pX2WH7Tb0E9FrW63RoY67r5fwqlxz34tvE9WBpS+
+        ag9ovHjP6M/biDwwjC/NVAAj8w==
+X-Google-Smtp-Source: AFSGD/UERtjzgGHEKDpTMesz7cIhv6Ctej//vqi4XZC013pIvGU7O0i9hxMcasgR4upJVtFYkKj3Vg==
+X-Received: by 2002:a2e:9f56:: with SMTP id v22-v6mr12650009ljk.114.1544639805366;
+        Wed, 12 Dec 2018 10:36:45 -0800 (PST)
+Received: from localhost (c-732171d5.07-21-73746f28.bbcust.telenor.se. [213.113.33.115])
+        by smtp.gmail.com with ESMTPSA id e13-v6sm3365322ljk.53.2018.12.12.10.36.44
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 12 Dec 2018 10:36:44 -0800 (PST)
+From:   Anders Roxell <anders.roxell@linaro.org>
+To:     aryabinin@virtuozzo.com, dvyukov@google.com
+Cc:     kasan-dev@googlegroups.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, rostedt@goodmis.org,
+        Anders Roxell <anders.roxell@linaro.org>
+Subject: [PATCH v2] kasan: mark file common so ftrace doesn't trace it
+Date:   Wed, 12 Dec 2018 19:34:47 +0100
+Message-Id: <20181212183447.15890-1-anders.roxell@linaro.org>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 66c0af9d-b104-4bc6-bad0-08d66060a8e5
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Dec 2018 18:35:59.2821
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR1101MB2211
-X-OriginatorOrg: microchip.com
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds support for entering/resuming suspend states.
-It does this by setting the LPM pin of the PMIC.
+When option CONFIG_KASAN is enabled toghether with ftrace, function
+ftrace_graph_caller() gets in to a recursion, via functions
+kasan_check_read() and kasan_check_write().
 
-When suspending the PMIC will enter the Low-power mode
-when the LPM pin will be set to high. If the suspend target state
-is suspend-to-mem, the PMIC will transition to Hibernate mode,
-otherwise, if it is standby, it will remain in Low-power mode.
+ Breakpoint 2, ftrace_graph_caller () at ../arch/arm64/kernel/entry-ftrace.S:179
+ 179             mcount_get_pc             x0    //     function's pc
+ (gdb) bt
+ #0  ftrace_graph_caller () at ../arch/arm64/kernel/entry-ftrace.S:179
+ #1  0xffffff90101406c8 in ftrace_caller () at ../arch/arm64/kernel/entry-ftrace.S:151
+ #2  0xffffff90106fd084 in kasan_check_write (p=0xffffffc06c170878, size=4) at ../mm/kasan/common.c:105
+ #3  0xffffff90104a2464 in atomic_add_return (v=<optimized out>, i=<optimized out>) at ./include/generated/atomic-instrumented.h:71
+ #4  atomic_inc_return (v=<optimized out>) at ./include/generated/atomic-fallback.h:284
+ #5  trace_graph_entry (trace=0xffffffc03f5ff380) at ../kernel/trace/trace_functions_graph.c:441
+ #6  0xffffff9010481774 in trace_graph_entry_watchdog (trace=<optimized out>) at ../kernel/trace/trace_selftest.c:741
+ #7  0xffffff90104a185c in function_graph_enter (ret=<optimized out>, func=<optimized out>, frame_pointer=18446743799894897728, retp=<optimized out>) at ../kernel/trace/trace_functions_graph.c:196
+ #8  0xffffff9010140628 in prepare_ftrace_return (self_addr=18446743592948977792, parent=0xffffffc03f5ff418, frame_pointer=18446743799894897728) at ../arch/arm64/kernel/ftrace.c:231
+ #9  0xffffff90101406f4 in ftrace_graph_caller () at ../arch/arm64/kernel/entry-ftrace.S:182
+ Backtrace stopped: previous frame identical to this frame (corrupt stack?)
+ (gdb)
 
-This patch depends on
-0b60c4deca1d regulator: mcp16502: add regulator driver for MCP16502
+Rework so that the kasan implementation isn't traced.
 
-
-Signed-off-by: Andrei Stefanescu <andrei.stefanescu@microchip.com>
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
 ---
- drivers/regulator/mcp16502.c | 33 +++++++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+ mm/kasan/Makefile | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/regulator/mcp16502.c b/drivers/regulator/mcp16502.c
-index 7cbc96f..bde3172 100644
---- a/drivers/regulator/mcp16502.c
-+++ b/drivers/regulator/mcp16502.c
-@@ -497,6 +497,36 @@ static int mcp16502_probe(struct i2c_client *client,
- 	return 0;
- }
-=20
-+#ifdef CONFIG_SUSPEND
-+static int mcp16502_suspend(struct device *dev)
-+{
-+	struct i2c_client *client =3D to_i2c_client(dev);
-+	struct mcp16502 *mcp =3D i2c_get_clientdata(client);
-+
-+	mcp16502_gpio_set_mode(mcp, MCP16502_OPMODE_LPM);
-+
-+	return 0;
-+}
-+
-+static int mcp16502_resume(struct device *dev)
-+{
-+	struct i2c_client *client =3D to_i2c_client(dev);
-+	struct mcp16502 *mcp =3D i2c_get_clientdata(client);
-+
-+	mcp16502_gpio_set_mode(mcp, MCP16502_OPMODE_ACTIVE);
-+
-+	return 0;
-+}
-+#else /* !CONFIG_SUSPEND */
-+#define mcp16502_suspend NULL
-+#define mcp16502_resume NULL
-+#endif /* !CONFIG_SUSPEND */
-+
-+#ifdef CONFIG_PM
-+static const struct dev_pm_ops mcp16502_pm_ops =3D {
-+	SET_SYSTEM_SLEEP_PM_OPS(mcp16502_suspend, mcp16502_resume)
-+};
-+#endif
- static const struct i2c_device_id mcp16502_i2c_id[] =3D {
- 	{ "mcp16502", 0 },
- 	{ }
-@@ -508,6 +538,9 @@ static struct i2c_driver mcp16502_drv =3D {
- 	.driver		=3D {
- 		.name	=3D "mcp16502-regulator",
- 		.of_match_table	=3D of_match_ptr(mcp16502_ids),
-+#ifdef CONFIG_PM
-+		.pm =3D &mcp16502_pm_ops,
-+#endif
- 	},
- 	.id_table	=3D mcp16502_i2c_id,
- };
---=20
-2.7.4
+diff --git a/mm/kasan/Makefile b/mm/kasan/Makefile
+index 0a14fcff70ed..e2bb06c1b45e 100644
+--- a/mm/kasan/Makefile
++++ b/mm/kasan/Makefile
+@@ -5,6 +5,7 @@ UBSAN_SANITIZE_generic.o := n
+ UBSAN_SANITIZE_tags.o := n
+ KCOV_INSTRUMENT := n
+ 
++CFLAGS_REMOVE_common.o = -pg
+ CFLAGS_REMOVE_generic.o = -pg
+ # Function splitter causes unnecessary splits in __asan_load1/__asan_store1
+ # see: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=63533
+-- 
+2.19.2
 
