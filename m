@@ -2,128 +2,171 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D3F7C67839
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 15:04:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0272C67839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 15:04:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5CCE20839
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 15:04:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A70220839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 15:04:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="OZPlyuZu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5CCE20839
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nBiB1TTF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A70220839
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727729AbeLLPEM (ORCPT
+        id S1727770AbeLLPEd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 10:04:12 -0500
-Received: from mail-eopbgr720048.outbound.protection.outlook.com ([40.107.72.48]:42182
-        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726228AbeLLPEM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 10:04:12 -0500
+        Wed, 12 Dec 2018 10:04:33 -0500
+Received: from mail-it1-f171.google.com ([209.85.166.171]:51123 "EHLO
+        mail-it1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727738AbeLLPEc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 10:04:32 -0500
+Received: by mail-it1-f171.google.com with SMTP id z7so9475453iti.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 07:04:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xU4bh0oYDUq/rV0bbZiH422TrJOOaLtNsrn6LNenOW8=;
- b=OZPlyuZu3TqKxguETFmQBOG+yqX0hDMJEoVj6eSc+qKFmvm2AtF79TZn51c0QJaXVqlLsYTJBDhLT3+Yr7u2ktyPHHNJJO/6s7HGtEG5puVIjpy92gTeEzeDNkGLr7updcPqySOMAZ+jYVNkZ8P0wthPd5L13bdm46rnjHWxEfw=
-Received: from SN1PR12MB0175.namprd12.prod.outlook.com (10.162.3.15) by
- SN1PR12MB0750.namprd12.prod.outlook.com (10.164.26.24) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1425.18; Wed, 12 Dec 2018 15:04:07 +0000
-Received: from SN1PR12MB0175.namprd12.prod.outlook.com
- ([fe80::bc0e:7f7f:ee65:e2d5]) by SN1PR12MB0175.namprd12.prod.outlook.com
- ([fe80::bc0e:7f7f:ee65:e2d5%6]) with mapi id 15.20.1425.016; Wed, 12 Dec 2018
- 15:04:07 +0000
-From:   "Lendacky, Thomas" <Thomas.Lendacky@amd.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-CC:     Borislav Petkov <bp@alien8.de>, "x86@kernel.org" <x86@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Jiri Kosina <jkosina@suse.cz>, Ingo Molnar <mingo@redhat.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        David Woodhouse <dwmw@amazon.co.uk>
-Subject: Re: [PATCH v2] x86/speculation: Add support for STIBP always-on
- preferred mode
-Thread-Topic: [PATCH v2] x86/speculation: Add support for STIBP always-on
- preferred mode
-Thread-Index: AQHUkaNTNctPywnCTEqVxIZjhKo+laV6OXQAgAA7RQCAAEpzAIAAagmAgAALXYA=
-Date:   Wed, 12 Dec 2018 15:04:07 +0000
-Message-ID: <86576138-e65b-aa33-32ef-1b48d7a61f51@amd.com>
-References: <20181211224615.5373.65736.stgit@tlendack-t1.amdoffice.net>
- <20181212000518.GX27375@zn.tnic>
- <alpine.DEB.2.21.1812111910520.22893@nanos.tec.linutronix.de>
- <38aca18b-4312-5e03-fdd9-86e47c332e44@amd.com>
- <alpine.DEB.2.21.1812120621130.30793@nanos.tec.linutronix.de>
-In-Reply-To: <alpine.DEB.2.21.1812120621130.30793@nanos.tec.linutronix.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: SN2PR01CA0036.prod.exchangelabs.com (2603:10b6:804:2::46)
- To SN1PR12MB0175.namprd12.prod.outlook.com (2a01:111:e400:5143::15)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Thomas.Lendacky@amd.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [165.204.77.1]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;SN1PR12MB0750;20:48tM297Njn/hHYHy7uWKIqQIQDNPT+3NorhSXn14k3nmp0VgUZankSKvFqvKwpAYMZhIAyQYoKjxxmEcANQARD8Mg0WQLOSBsW1W8ciQW5ODzd2iTnspM/T1R2Qhfif9pWVeIXh0K45bJbS5tY0HQzMeuYiFJaj6gzCgeVpUkZQerSHoiCEmRr5nHlAcWnr6F/P+L4W/Z/fPyCI/ucp4gBuxnoe0Y0hI4kVENXVKpteBiJFYJlFDjEilUEFqxsK3
-x-ms-office365-filtering-correlation-id: 09b5135b-80ab-4a7d-a4d4-08d660431043
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:SN1PR12MB0750;
-x-ms-traffictypediagnostic: SN1PR12MB0750:
-x-microsoft-antispam-prvs: <SN1PR12MB0750DE4B63528AD6A7A822EDECA70@SN1PR12MB0750.namprd12.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231455)(999002)(944501520)(52105112)(3002001)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123558120)(20161123560045)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:SN1PR12MB0750;BCL:0;PCL:0;RULEID:;SRVR:SN1PR12MB0750;
-x-forefront-prvs: 0884AAA693
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(39860400002)(396003)(376002)(366004)(136003)(199004)(52314003)(189003)(31686004)(106356001)(256004)(11346002)(476003)(2616005)(54906003)(446003)(486006)(102836004)(316002)(93886005)(7736002)(68736007)(8936002)(26005)(4326008)(6116002)(25786009)(3846002)(97736004)(478600001)(86362001)(7416002)(53936002)(81156014)(81166006)(105586002)(186003)(76176011)(6246003)(6486002)(2906002)(6506007)(8676002)(31696002)(6306002)(229853002)(72206003)(386003)(6512007)(53546011)(99286004)(66066001)(71190400001)(14454004)(6916009)(5660300001)(966005)(52116002)(6436002)(305945005)(71200400001)(36756003);DIR:OUT;SFP:1101;SCL:1;SRVR:SN1PR12MB0750;H:SN1PR12MB0175.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:3;
-received-spf: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: G9EimPL8fQv3ts7ZG2eoKFquV//BFP29AlXfOfKUt2buSsSmt3+FyvIQGEy5XQVTHPdxFt7fiFXnzr4Li3GVqHg1uWO5k+MmjpdhsbQ+JFfWXGodotgRlIZn6RkFtFUYhZVbi0S7MkElS0KqedPNmhLQWBMnnW3FFYv4NhTm6KVZdW0GJDiVhi81YpisolSXwhUj88THzhWTcJ0WHJKk05LUwCB6SH0AsuYtjosFyirYiKRHceHBIDbTKfD1nKxbhiI1GstMq2m0IhODy6iOdy4vDVT6PfXh+xjFvJsrj8AfZt3TSCpOjiNV+A8xo6X/
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <2641E65763F899459B906B28117F2F3C@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=PpoxLeEWdCe6ZUeKoHp9WMUaj9WSDS7J7D+6g3Uf7k4=;
+        b=nBiB1TTFievXIyFZJ1GjOf7BR/ieJpcwr36DtE6EMtni+BLGACt3LH3GWi+q1azY5H
+         6ztQpGuF4Z1Ers5PB54/G1UVBEQOxjPYdD+Xl+0yrtTzxJ9X9qH9yFzuyQZExbq22Jj0
+         zyp6z+cPo5Td2P3g9Ie2aItdJm+qdepJejDvr1kM3CA26NsXWCZb2F8nVHV8LrKLDlKx
+         18+QNZKNBv95T/cjciFi8SHnxO9lereVW+tRg45xAEC5yC4RuYmybEGf4uRNJ+/ma360
+         nNHfTc8eQwM6p/MUReWygmFhEYH5Zvl0u85p3Gtr334RfpAyOPk5u1YJjehrpZC4O5EI
+         CvLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PpoxLeEWdCe6ZUeKoHp9WMUaj9WSDS7J7D+6g3Uf7k4=;
+        b=LA7yDQALTumUWwCIM6OemBv+Skuez7M6K//WgAasrACyNn8kkRLYEcCwQgyv6I4WuO
+         olJM6kvuCeF565sYHnHQ1AgPVg/nJKYNhTrTfR7KuZjYls60fvRJwDaUII1PodEWFJ8A
+         8ve5Zbmk6T3BZF1I1jj3XXjck63t3CrsgXa29wmg8999vTySzHJejcg7RFsJyrvbDiat
+         meVXcqLFJIwHoA04EorjjrxmbsPSXfFqJwMt49sK/73snR4H2GLh80ASF1Q1Q2GPVw/+
+         p5H21szEEgRI8LEoPGkp33n/3O9alTSq0yJnxBg8C/LXaNZefhG/0bHTeabFBCpf/2M5
+         rXiw==
+X-Gm-Message-State: AA+aEWZ+istPrUBEQtYXItctR7Y69QES5E4XG7q2NF9wK8OGR4neuB5I
+        ffkyTWtdmbOldHs6X+j5k2WgvvdCQ5h1/zolsiAX8A==
+X-Google-Smtp-Source: AFSGD/VRxxoyIT9Ze9skeIakHn7TDDpkVWcZCqMd8qAXsBEINZB5VGKJRFzWOZ5YA/BSKpSsG8Dbk0jI8ykdYQy6fg8=
+X-Received: by 2002:a02:88cf:: with SMTP id b15mr19921762jak.10.1544627071413;
+ Wed, 12 Dec 2018 07:04:31 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 09b5135b-80ab-4a7d-a4d4-08d660431043
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Dec 2018 15:04:07.5450
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN1PR12MB0750
+References: <cover.1544099024.git.andreyknvl@google.com> <bda78069e3b8422039794050ddcb2d53d053ed41.1544099024.git.andreyknvl@google.com>
+ <2bf7415e-2724-b3c3-9571-20c8b6d43b92@arm.com>
+In-Reply-To: <2bf7415e-2724-b3c3-9571-20c8b6d43b92@arm.com>
+From:   Andrey Konovalov <andreyknvl@google.com>
+Date:   Wed, 12 Dec 2018 16:04:20 +0100
+Message-ID: <CAAeHK+xc6R_p26-tu--9W1L1PvUAFb70J23ByiEukKz3uVC3EQ@mail.gmail.com>
+Subject: Re: [PATCH v13 19/25] kasan: add hooks implementation for tag-based mode
+To:     Vincenzo Frascino <vincenzo.frascino@arm.com>
+Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Christoph Lameter <cl@linux.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Dave Martin <dave.martin@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Paul Lawrence <paullawrence@google.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-sparse@vger.kernel.org,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Vishwath Mohan <vishwath@google.com>,
+        Chintan Pandya <cpandya@codeaurora.org>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Jann Horn <jannh@google.com>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Kostya Serebryany <kcc@google.com>,
+        Mark Brand <markbrand@google.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Evgenii Stepanov <eugenis@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gMTIvMTIvMjAxOCAwODoyMyBBTSwgVGhvbWFzIEdsZWl4bmVyIHdyb3RlOg0KPiBPbiBXZWQs
-IDEyIERlYyAyMDE4LCBMZW5kYWNreSwgVGhvbWFzIHdyb3RlOg0KPj4gT24gMTIvMTEvMjAxOCAw
-OTozNyBQTSwgVGhvbWFzIEdsZWl4bmVyIHdyb3RlOg0KPj4+IE9uIFdlZCwgMTIgRGVjIDIwMTgs
-IEJvcmlzbGF2IFBldGtvdiB3cm90ZToNCj4+Pj4gSSBzdGlsbCBkb24ndCBsaWtlIHRoYXQgc2Vw
-YXJhdGUgc3RpYnBfYWx3YXlzX29uIHZhcmlhYmxlIHdoZW4gd2UgY2FuIGRvDQo+Pj4+IGFsbCB0
-aGUgcXVlcnlpbmcganVzdCBieSB1c2luZyBtb2RlIGFuZCBYODZfRkVBVFVSRV9BTURfU1RJQlBf
-QUxXQVlTX09OLg0KPj4+DQo+Pj4gSG1tbS4gSSd2ZSBub3Qgc2VlbiB0aGUgVjEgb2YgdGhpcyAo
-aXQncyBub3QgaW4gbXkgaW5ib3gpIGJ1dCB0aGUgdjEtPnYyDQo+Pj4gY2hhbmdlcyBjb250YWlu
-Og0KPj4NCj4+IFRoYXQncyBzdHJhbmdlLCB5b3Ugd2VyZSBvbiB0aGUgY2M6IGxpc3QuIEFueXdh
-eSwgaGVyZSdzIGEgbGluayB0byB0aGUNCj4+IGZpcnN0IHZlcnNpb246IGh0dHBzOi8vbGttbC5v
-cmcvbGttbC8yMDE4LzEyLzExLzEyNDgNCj4gDQo+IE11c3QgaGF2ZSBiZWVuIG15IHNsZWVwIGRl
-cHJpdmVkIGJyYWluLiBGb3VuZCBpdCBub3cgOikgU29ycnkgZm9yIG5vdA0KPiBwYXlpbmcgYXR0
-ZW50aW9uIGJhY2sgdGhlbi4NCj4gDQo+Pj4+PiAtIFJlbW92ZWQgZXhwbGljaXQgU1BFQ1RSRV9W
-Ml9VU0VSX1NUUklDVF9QUkVGRVJSRUQgbW9kZQ0KPj4+DQo+Pj4gTm93IEkgcmVhbGx5IGhhdmUg
-dG8gYXNrIHdoeT8NCj4+Pg0KPj4+IE5laXRoZXIgdGhlIGV4dHJhIHZhcmlhYmxlIG5vciB0aGUg
-Y3B1IGZlYXR1cmUgY2hlY2sgYXJlIHByZXR0eS4gQW4NCj4+PiBleHBsaWNpdCBtb2RlIGlzIHdh
-eSBiZXR0ZXIgaW4gdGVybXMgb2YgY29kZSBjbGFyaXR5IGFuZCB5b3UgZ2V0IHRoZSBwcm9wZXIN
-Cj4+PiBwcmludG91dCB2aWEgc3BlY3RyZV92Ml91c2VyX3N0cmluZ3MuDQo+Pj4NCj4+PiBIbW0/
-DQo+Pg0KPj4gVGhhdCBpcyB3aGF0IHRoZSBmaXJzdCB2ZXJzaW9uIGRpZC4gU2VlIGlmIHRoYXQn
-cyBpbi1saW5lIHdpdGggd2hhdA0KPj4geW91J3JlIHRoaW5raW5nLg0KPiANCj4gWWVzLCB0aG91
-Z2ggSSdtIG5vdCB0b28gZm9uZCBhYm91dCB0aGUgcHJlZmVycmVkIHdvcmRpbmcsIGJ1dCBjYW4n
-dCBjb21lIHVwDQo+IHdpdGggYW55dGhpbmcgYmV0dGVyLg0KDQpJJ20gbm90IGNyYXp5IGFib3V0
-IHRoYXQgZWl0aGVyLiBNYXliZSBnZXR0aW5nIHJpZCBvZiAicHJlZmVycmVkIiBhbmQganVzdA0K
-aGF2aW5nICJhbHdheXMtb24iIGZvciB0aGUgd29yZGluZyBpcyBlbm91Z2g/DQoNClRoYW5rcywN
-ClRvbQ0KDQo+IA0KPiBUaGFua3MsDQo+IA0KPiAJdGdseA0KPiANCg==
+On Tue, Dec 11, 2018 at 5:22 PM Vincenzo Frascino
+<vincenzo.frascino@arm.com> wrote:
+>
+> Hi Andrey,
+>
+> On 06/12/2018 12:24, Andrey Konovalov wrote:
+> > This commit adds tag-based KASAN specific hooks implementation and
+> > adjusts common generic and tag-based KASAN ones.
+> >
+> > 1. When a new slab cache is created, tag-based KASAN rounds up the size of
+> >    the objects in this cache to KASAN_SHADOW_SCALE_SIZE (== 16).
+> >
+> > 2. On each kmalloc tag-based KASAN generates a random tag, sets the shadow
+> >    memory, that corresponds to this object to this tag, and embeds this
+> >    tag value into the top byte of the returned pointer.
+> >
+> > 3. On each kfree tag-based KASAN poisons the shadow memory with a random
+> >    tag to allow detection of use-after-free bugs.
+> >
+> > The rest of the logic of the hook implementation is very much similar to
+> > the one provided by generic KASAN. Tag-based KASAN saves allocation and
+> > free stack metadata to the slab object the same way generic KASAN does.
+> >
+> > Reviewed-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+> > Reviewed-by: Dmitry Vyukov <dvyukov@google.com>
+> > Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
+> > ---
+> >  mm/kasan/common.c | 116 ++++++++++++++++++++++++++++++++++++++--------
+> >  mm/kasan/kasan.h  |   8 ++++
+> >  mm/kasan/tags.c   |  48 +++++++++++++++++++
+> >  3 files changed, 153 insertions(+), 19 deletions(-)
+> >
+>
+>
+> [...]
+>
+> > @@ -265,6 +290,8 @@ void kasan_cache_create(struct kmem_cache *cache, unsigned int *size,
+> >               return;
+> >       }
+> >
+> > +     cache->align = round_up(cache->align, KASAN_SHADOW_SCALE_SIZE);
+> > +
+>
+> Did you consider to set ARCH_SLAB_MINALIGN instead of this round up?
+
+I didn't know about this macro. Looks like we can use it to do the
+same thing. Do you think it's a better solution to redefine
+ARCH_SLAB_MINALIGN to KASAN_SHADOW_SCALE_SIZE for arm64 when tag-based
+KASAN is enabled instead of adjusting cache->align in
+kasan_cache_create?
+
+>
+> --
+> Regards,
+> Vincenzo
+>
+> --
+> You received this message because you are subscribed to the Google Groups "kasan-dev" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to kasan-dev+unsubscribe@googlegroups.com.
+> To post to this group, send email to kasan-dev@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgid/kasan-dev/2bf7415e-2724-b3c3-9571-20c8b6d43b92%40arm.com.
+> For more options, visit https://groups.google.com/d/optout.
