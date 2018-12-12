@@ -2,118 +2,120 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B67E4C65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 15:01:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A8F6C67839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 15:01:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FADF20839
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 15:01:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FADF20839
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 0A0CC20839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 15:01:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="UFfXdqyT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A0CC20839
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727279AbeLLPBu (ORCPT
+        id S1727734AbeLLPBz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 10:01:50 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60466 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726246AbeLLPBt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 10:01:49 -0500
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBCErniL074984
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 10:01:47 -0500
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2pb2hr5v7m-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 10:01:46 -0500
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <pasic@linux.ibm.com>;
-        Wed, 12 Dec 2018 15:01:43 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 12 Dec 2018 15:01:41 -0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBCF1dhI60489734
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 12 Dec 2018 15:01:39 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B463D11C05E;
-        Wed, 12 Dec 2018 15:01:39 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 771C611C058;
-        Wed, 12 Dec 2018 15:01:39 +0000 (GMT)
-Received: from oc2783563651 (unknown [9.152.96.142])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 12 Dec 2018 15:01:39 +0000 (GMT)
-Date:   Wed, 12 Dec 2018 16:01:38 +0100
-From:   Halil Pasic <pasic@linux.ibm.com>
-To:     Christian Borntraeger <borntraeger@de.ibm.com>
-Cc:     Cornelia Huck <cohuck@redhat.com>, kvm@vger.kernel.org,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Farhan Ali <alifm@linux.ibm.com>,
-        Eric Farman <farman@linux.ibm.com>
-Subject: Re: [PATCH] MAINTAINERS/vfio-ccw: add Farhan and Eric, make Halil
- Reviewer
-In-Reply-To: <20181212145929.136522-1-borntraeger@de.ibm.com>
-References: <20181212145929.136522-1-borntraeger@de.ibm.com>
-Organization: IBM
-X-Mailer: Claws Mail 3.11.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+        Wed, 12 Dec 2018 10:01:55 -0500
+Received: from mail-eopbgr740042.outbound.protection.outlook.com ([40.107.74.42]:37152
+        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727636AbeLLPBy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 10:01:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vwgLYwYMOD120XWZcSCSItD5OLblTBtWUxuaAnH5lGE=;
+ b=UFfXdqyTCTLgpSrfxhQBzV2sPf0M3aodvWAuaFRcooVyILur+V+RH3pIe67ZdWUA/8B9UuitbTjpFtyRDrDq11i2BwgaRphtu5whP8wt7hlht8KbCrJ++wSD4SkmU8lPjDlo7v0YQS/vYyjglu5x3P4H8ox561mFR5jSsfbHC6o=
+Received: from SN1PR12MB0175.namprd12.prod.outlook.com (10.162.3.15) by
+ SN1PR12MB2415.namprd12.prod.outlook.com (52.132.195.23) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1425.19; Wed, 12 Dec 2018 15:01:51 +0000
+Received: from SN1PR12MB0175.namprd12.prod.outlook.com
+ ([fe80::bc0e:7f7f:ee65:e2d5]) by SN1PR12MB0175.namprd12.prod.outlook.com
+ ([fe80::bc0e:7f7f:ee65:e2d5%6]) with mapi id 15.20.1425.016; Wed, 12 Dec 2018
+ 15:01:51 +0000
+From:   "Lendacky, Thomas" <Thomas.Lendacky@amd.com>
+To:     Boris Petkov <bp@alien8.de>, Thomas Gleixner <tglx@linutronix.de>
+CC:     "x86@kernel.org" <x86@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Jiri Kosina <jkosina@suse.cz>, Ingo Molnar <mingo@redhat.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        David Woodhouse <dwmw@amazon.co.uk>
+Subject: Re: [PATCH v2] x86/speculation: Add support for STIBP always-on
+ preferred mode
+Thread-Topic: [PATCH v2] x86/speculation: Add support for STIBP always-on
+ preferred mode
+Thread-Index: AQHUkaNTNctPywnCTEqVxIZjhKo+laV6OXQAgAA7RQCAAGrJAP//39mAgABsbICAAAgoAA==
+Date:   Wed, 12 Dec 2018 15:01:50 +0000
+Message-ID: <5b183bfd-8ef7-2e83-3b2e-c2d889f56b38@amd.com>
+References: <20181211224615.5373.65736.stgit@tlendack-t1.amdoffice.net>
+ <20181212000518.GX27375@zn.tnic>
+ <alpine.DEB.2.21.1812111910520.22893@nanos.tec.linutronix.de>
+ <20181212095938.GA6653@zn.tnic>
+ <be031a74-44d0-1fea-893a-bfdf3ba1655f@amd.com>
+ <8B17355F-0AE0-4E3A-BFF5-120AB739DB8C@alien8.de>
+In-Reply-To: <8B17355F-0AE0-4E3A-BFF5-120AB739DB8C@alien8.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: SN2PR01CA0048.prod.exchangelabs.com (2603:10b6:800::16) To
+ SN1PR12MB0175.namprd12.prod.outlook.com (2a01:111:e400:5143::15)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Thomas.Lendacky@amd.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [165.204.77.1]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;SN1PR12MB2415;20:2Jz1AB3X0Xq2yO/N8cAocJvrdeJKrNN/GPdhJW+zKn2bz7CEaIG6po1x8ta6yJZxkk+4NS/DTFprQq4cUHWoLt87AsvERMQuLjCOS0z5g9VtspYBp9LZAyGsbGudKDSW407Cq6wqkeGKBD854HYfmA5Z7TRPS4PKL/jIYBxqNfl4w+H4J7rJFe7MuNgt7sqUZukGXJiYBheIajY4kjQHWePpPOFDRlww1Eoa6l1evODfV+zQ0h52Ze55rIOO4G2j
+x-ms-office365-filtering-correlation-id: 98a3c880-e70f-47f6-a390-08d66042bec1
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:SN1PR12MB2415;
+x-ms-traffictypediagnostic: SN1PR12MB2415:
+x-microsoft-antispam-prvs: <SN1PR12MB2415EAE518D2EA7241048222ECA70@SN1PR12MB2415.namprd12.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230017)(999002)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231472)(944501520)(52105112)(3002001)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(20161123564045)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:SN1PR12MB2415;BCL:0;PCL:0;RULEID:;SRVR:SN1PR12MB2415;
+x-forefront-prvs: 0884AAA693
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(39860400002)(396003)(346002)(136003)(366004)(189003)(199004)(53546011)(305945005)(36756003)(3846002)(6246003)(8936002)(6512007)(7416002)(4326008)(5660300001)(53936002)(14454004)(81166006)(8676002)(81156014)(256004)(14444005)(486006)(93886005)(316002)(476003)(25786009)(11346002)(2616005)(97736004)(6436002)(71190400001)(105586002)(66066001)(71200400001)(54906003)(106356001)(68736007)(6486002)(110136005)(7736002)(31686004)(478600001)(72206003)(229853002)(99286004)(31696002)(86362001)(186003)(386003)(102836004)(2906002)(76176011)(446003)(6506007)(52116002)(26005)(6116002);DIR:OUT;SFP:1101;SCL:1;SRVR:SN1PR12MB2415;H:SN1PR12MB0175.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: kDqSTBzGdFlqkuY4ZngpmjVaARrl4JqVeCS3+OFGUO52nHgRWXDddwDD5g4b2aIXwSXtql8yHuyCSvezXF0itsMh9BkHPlALSn4fMlC3AOxRBAfcJ1mpGncJOVp9/x1Ak0j7P7lQq4pwWjkj99wm5BiLCG9YShUo7iJoy5LSvFEZCZtcwIoifuiMsQaNAmIQSy/+K196oTpW35FxBaXvVJnrvO3URicb2lIeEUwXLvKtEs6dYS8JvaEvQBTsCPoimjoGwprmbb35a0hfgFoaehhFCisF+G/kYz6fi8LU6Xhuv57XgCEWwvzcreEebhEi
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <A017C04B02AA9348AAEE353B7AE829E3@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18121215-0008-0000-0000-000002A057E9
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18121215-0009-0000-0000-0000220AD515
-Message-Id: <20181212160138.367aad84@oc2783563651>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-12_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=889 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812120131
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 98a3c880-e70f-47f6-a390-08d66042bec1
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Dec 2018 15:01:50.8286
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN1PR12MB2415
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 12 Dec 2018 15:59:29 +0100
-Christian Borntraeger <borntraeger@de.ibm.com> wrote:
-
-> Eric and Farhan will help with maintaining vfio-ccw.
-> 
-> Cc: Cornelia Huck <cohuck@redhat.com>
-> Cc: Halil Pasic <pasic@linux.ibm.com>
-> Cc: Farhan Ali <alifm@linux.ibm.com>
-> Cc: Eric Farman <farman@linux.ibm.com>
-> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
-
-Acked-by: Halil Pasic <pasic@linux.ibm.com>
-
-> ---
->  MAINTAINERS | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 8119141a926f..879594b93385 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -13026,7 +13026,9 @@ F:	drivers/pci/hotplug/s390_pci_hpc.c
->  
->  S390 VFIO-CCW DRIVER
->  M:	Cornelia Huck <cohuck@redhat.com>
-> -M:	Halil Pasic <pasic@linux.ibm.com>
-> +M:	Farhan Ali <alifm@linux.ibm.com>
-> +M:	Eric Farman <farman@linux.ibm.com>
-> +R:	Halil Pasic <pasic@linux.ibm.com>
->  L:	linux-s390@vger.kernel.org
->  L:	kvm@vger.kernel.org
->  S:	Supported
-
+T24gMTIvMTIvMjAxOCAwODozMiBBTSwgQm9yaXMgUGV0a292IHdyb3RlOg0KPiBPbiBEZWNlbWJl
+ciAxMiwgMjAxOCAzOjA0OjM1IFBNIEdNVCswMTowMCwgIkxlbmRhY2t5LCBUaG9tYXMiIDxUaG9t
+YXMuTGVuZGFja3lAYW1kLmNvbT4gd3JvdGU6DQo+PiBOb3Qgc3VyZSBJIGNvbXBsZXRlbHkgZm9s
+bG93LiBBcmUgeW91IHNheWluZyB0byBkbyB3aGF0IEkgZGlkIGluIG15DQo+PiBmaXJzdCBwYXRj
+aCBvciBzb21ldGhpbmcgZGlmZmVyZW50IGZyb20gdGhhdCB5ZXQ/DQo+IA0KPiBJJ20gc2F5aW5n
+IHRoYXQgU1RJQlBfQUxXQVlTX09OIHNob3VsZCBiZSBpbXBsZW1lbnRlZCB0aGUgc2FtZSB3YXkg
+bGlrZSBJQlJTX0VOSEFOQ0VEIGlzIGFuZCB0aGVyZSdzIG5vIG5lZWQgZm9yIGEgc3RhdGljIGJv
+b2wuIEFGQUlDVC4NCj4gDQo+IE9yIGFtIEkgbWlzc2luZyBzb21ldGhpbmc/IA0KDQpPaywgSSB0
+aGluayB5b3UncmUgc2F5aW5nIHRvIGRvIHdoYXQgbXkgZmlyc3QgcGF0Y2ggZGlkIG9yIHNvbWV0
+aGluZyB2ZXJ5DQpjbG9zZSB0byB0aGF0LiBXaGljaCBpcyB0byBqdXN0IHNldCBhbHdheXMtb24g
+bW9kZSBpZiBTVElCUCBwcm90ZWN0aW9uIGlzDQpyZXF1ZXN0ZWQgYW5kIHRoZSBTVElCUF9BTFdB
+WVNfT04gQ1BVSUQgYml0IGlzIHNldCAoZXZlbiBpZiB0aGUgZXF1aXZhbGVudA0KIj1vbiIgaXMg
+c3VwcGxpZWQgb24gdGhlIGNvbW1hbmQgbGluZT8pLiBUaGF0IHdvdWxkIG1lYW4gaGF2aW5nIHRo
+ZSBuZXcNCm1vZGUgYW5kIG5ldyBzdHJpbmcocykuDQoNCklmIHRoYXQncyBub3Qgd2hhdCB5b3Un
+cmUgc2F5aW5nLCB0aGVuIG1heWJlIEkganVzdCBuZWVkIG1vcmUgY29mZmVlIHRoaXMNCm1vcm5p
+bmcgOikNCg0KVGhhbmtzLA0KVG9tDQoNCj4gDQo=
