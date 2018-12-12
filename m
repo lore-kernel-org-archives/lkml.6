@@ -2,137 +2,118 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DB20C65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 08:33:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C590C65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 08:33:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 645202086D
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 08:33:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eON7OqkO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 645202086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id D368C20849
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 08:33:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D368C20849
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726808AbeLLIdk (ORCPT
+        id S1726823AbeLLIdr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 03:33:40 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:43458 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726242AbeLLIdj (ORCPT
+        Wed, 12 Dec 2018 03:33:47 -0500
+Received: from smtp-sh2.infomaniak.ch ([128.65.195.6]:55862 "EHLO
+        smtp-sh2.infomaniak.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726242AbeLLIdq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 03:33:39 -0500
-Received: by mail-ed1-f67.google.com with SMTP id f9so14815481eds.10
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 00:33:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=F8dHeNFud+oTAfucUN6P3uYFVdEaTbx1RNrOc/domP0=;
-        b=eON7OqkOwFUAJ9+jTGof+/hpfQQpIVhA5tTdGjI7BW2GUw8k0JLcFirkLbnsq/WQ+a
-         aiKS25qPOEENVNzJbX/EYfM4dugcSqBK/63oQ3ob/QJcQ1RObn8jo0ndBKlD/KO9qD/k
-         s1JtVwXkoa8A43xWa+HKoOx0SGHo11mN5UiEM67gNE4TRPqxpMtZo7DHkJ2imsLw3Ag1
-         7pQI8NXiFYI/Y6XUXWR0wbpz4aPDrg87P2ABGSaDR92o03AvQDMusu21aK4vkYR4/Ra9
-         Z67QMfw4iU2g+pH1QF5HIr7x+PZEoJhWrWJkFbh4b84A7C3Gb8RRg55PapKJC5vJxRX5
-         IsrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=F8dHeNFud+oTAfucUN6P3uYFVdEaTbx1RNrOc/domP0=;
-        b=lhj5TPLyUzl3QZkaDJ6kYLxXjEgx5TdR2jqryYnsJdYkThem47lNlFQTmJCBgsas3U
-         8ue22CYFQX5nKWqnkmSiFH/KOsvB1Gl1HpnuvtbUkTFua8q0OXQBVh4RaO1XBGWLGDE4
-         odv7acc3xAA03RUAiIlYK2kEsy4pPMssM+rfoa1GC05dq0dnqRdt4HCT7w5YsgQdS3oj
-         kFfxzVq4m/7ya7mXZoFaEFyThWUC1Id4+owzDkmKS0u58F6aXjMP3TtcSlRjhQK5f7Un
-         OWhRX7wTaYvV7StgZ47UL0PZ/KDMOMAdR0ybAyQ59aHqgnKfeOxlBsuEwJYvPrKajxNA
-         DjHQ==
-X-Gm-Message-State: AA+aEWY1v2Xz/Q3nxIO8LGgMyoblmYflyVoTIaZiF3yPnOH/p5GMQUiT
-        b1a8CrSBz692PwyLoUlguq6YnV9hy1LCYOBGM+9SUJU=
-X-Google-Smtp-Source: AFSGD/Wru6LcpT5O2LyCrMySpBXc/+pIRYl9K5xImGSEGelvTdzWoGcE0HSLTr9yHo2/Ssl4mGzG6Yf2cP2GSUGyCDI=
-X-Received: by 2002:aa7:d487:: with SMTP id b7mr17332973edr.256.1544603617929;
- Wed, 12 Dec 2018 00:33:37 -0800 (PST)
+        Wed, 12 Dec 2018 03:33:46 -0500
+X-Greylist: delayed 942 seconds by postgrey-1.27 at vger.kernel.org; Wed, 12 Dec 2018 03:33:45 EST
+Received: from smtp7.infomaniak.ch (smtp7.infomaniak.ch [83.166.132.30])
+        by smtp-sh.infomaniak.ch (8.14.5/8.14.5) with ESMTP id wBC8Hjjk022496
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 12 Dec 2018 09:17:45 +0100
+Received: from localhost (ns3096276.ip-94-23-54.eu [94.23.54.103])
+        (authenticated bits=0)
+        by smtp7.infomaniak.ch (8.14.5/8.14.5) with ESMTP id wBC8HgY8061207;
+        Wed, 12 Dec 2018 09:17:43 +0100
+From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To:     linux-kernel@vger.kernel.org
+Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        James Morris <jmorris@namei.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Garrett <mjg59@google.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mickael.salaun@ssi.gouv.fr>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        =?UTF-8?q?Philippe=20Tr=C3=A9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>, Shuah Khan <shuah@kernel.org>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        Yves-Alexis Perez <yves-alexis.perez@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: [RFC PATCH v1 2/5] fs: Add a MAY_EXECMOUNT flag to infer the noexec mount propertie
+Date:   Wed, 12 Dec 2018 09:17:09 +0100
+Message-Id: <20181212081712.32347-3-mic@digikod.net>
+X-Mailer: git-send-email 2.20.0.rc2
+In-Reply-To: <20181212081712.32347-1-mic@digikod.net>
+References: <20181212081712.32347-1-mic@digikod.net>
 MIME-Version: 1.0
-References: <CAFgQCTuqn32_pZrLBDNvC_0Aepv2F7KF7rk2nAbxmYF45KfT2w@mail.gmail.com>
- <20181207075322.GS1286@dhcp22.suse.cz> <CAFgQCTsFBUcOE9UKQ2vz=hg2FWp_QurZMQmJZ2wYLBqXkFHKHQ@mail.gmail.com>
- <20181207113044.GB1286@dhcp22.suse.cz> <CAFgQCTuf95pJSWDc1BNQ=gN76aJ_dtxMRbAV9a28X6w8vapdMQ@mail.gmail.com>
- <20181207142240.GC1286@dhcp22.suse.cz> <CAFgQCTuu54oZWKq_ppEvZFb4Mz31gVmsa37gTap+e9KbE=T0aQ@mail.gmail.com>
- <20181207155627.GG1286@dhcp22.suse.cz> <20181210123738.GN1286@dhcp22.suse.cz>
- <CAFgQCTsb-G6=o=kyh845RHDTB2WYXywfLiYRddPmoiQVGpqzLA@mail.gmail.com> <20181211094436.GC1286@dhcp22.suse.cz>
-In-Reply-To: <20181211094436.GC1286@dhcp22.suse.cz>
-From:   Pingfan Liu <kernelfans@gmail.com>
-Date:   Wed, 12 Dec 2018 16:33:25 +0800
-Message-ID: <CAFgQCTsbuX8MROsFpQrjd0OAfp6oVRtq7VKYi2VGNyrQvxVF-w@mail.gmail.com>
-Subject: Re: [PATCH] mm/alloc: fallback to first node if the wanted node offline
-To:     mhocko@kernel.org
-Cc:     Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
+X-Antivirus-Code: 0x100000
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 11, 2018 at 5:44 PM Michal Hocko <mhocko@kernel.org> wrote:
->
-> On Tue 11-12-18 16:05:58, Pingfan Liu wrote:
-> > On Mon, Dec 10, 2018 at 8:37 PM Michal Hocko <mhocko@kernel.org> wrote:
-> > >
-> > > On Fri 07-12-18 16:56:27, Michal Hocko wrote:
-> > > > On Fri 07-12-18 22:27:13, Pingfan Liu wrote:
-> > > > [...]
-> > > > > diff --git a/arch/x86/mm/numa.c b/arch/x86/mm/numa.c
-> > > > > index 1308f54..4dc497d 100644
-> > > > > --- a/arch/x86/mm/numa.c
-> > > > > +++ b/arch/x86/mm/numa.c
-> > > > > @@ -754,18 +754,23 @@ void __init init_cpu_to_node(void)
-> > > > >  {
-> > > > >         int cpu;
-> > > > >         u16 *cpu_to_apicid = early_per_cpu_ptr(x86_cpu_to_apicid);
-> > > > > +       int node, nr;
-> > > > >
-> > > > >         BUG_ON(cpu_to_apicid == NULL);
-> > > > > +       nr = cpumask_weight(cpu_possible_mask);
-> > > > > +
-> > > > > +       /* bring up all possible node, since dev->numa_node */
-> > > > > +       //should check acpi works for node possible,
-> > > > > +       for_each_node(node)
-> > > > > +               if (!node_online(node))
-> > > > > +                       init_memory_less_node(node);
-> > > >
-> > > > I suspect there is no change if you replace for_each_node by
-> > > >       for_each_node_mask(nid, node_possible_map)
-> > > >
-> > > > here. If that is the case then we are probably calling
-> > > > free_area_init_node too early. I do not see it yet though.
-> > >
-> > > OK, so it is not about calling it late or soon. It is just that
-> > > node_possible_map is a misnomer and it has a different semantic than
-> > > I've expected. numa_nodemask_from_meminfo simply considers only nodes
-> > > with some memory. So my patch didn't really make any difference and the
-> > > node stayed uninialized.
-> > >
-> > > In other words. Does the following work? I am sorry to wildguess this
-> > > way but I am not able to recreate your setups to play with this myself.
-> > >
-> > No problem. Yeah, in order to debug the patch, you need a numa machine
-> > with a memory-less node. And unlucky, the patch can not work either by
-> > grub bootup or kexec -l boot. There is nothing, just silent.  I will
-> > dig into numa_register_memblks() to figure out the problem.
->
-> I do not have such a machine handy. Anyway, can you post the full serial
-> console log. Maybe I can infer something. It is quite weird that this
-> patch would make an existing situation any worse.
+An LSM doesn't get path information related to an access request to open
+an inode.  This new (internal) MAY_EXECMOUNT flag enables an LSM to
+check if the underlying mount point of an inode is marked as executable.
+This is useful to implement a security policy taking advantage of the
+noexec mount option.
 
-After passing extra param to earlyprintk, finally I got something. I
-replied it in another mail, and some notes to your code.
+This flag is set according to path_noexec(), which checks if a mount
+point is mounted with MNT_NOEXEC or if the underlying superblock is
+SB_I_NOEXEC.
 
-Thanks,
-Pingfan
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
+Reviewed-by: Philippe Trébuchet <philippe.trebuchet@ssi.gouv.fr>
+Reviewed-by: Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Mickaël Salaün <mickael.salaun@ssi.gouv.fr>
+---
+ fs/namei.c         | 2 ++
+ include/linux/fs.h | 2 ++
+ 2 files changed, 4 insertions(+)
+
+diff --git a/fs/namei.c b/fs/namei.c
+index 0cab6494978c..de4f33b3f464 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -2970,6 +2970,8 @@ static int may_open(const struct path *path, int acc_mode, int flag)
+ 		break;
+ 	}
+ 
++	/* Pass the mount point executability. */
++	acc_mode |= path_noexec(path) ? 0 : MAY_EXECMOUNT;
+ 	error = inode_permission(inode, MAY_OPEN | acc_mode);
+ 	if (error)
+ 		return error;
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 584c9329ad78..083a31b8068e 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -96,6 +96,8 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff_t offset,
+ #define MAY_NOT_BLOCK		0x00000080
+ /* the inode is opened with O_MAYEXEC */
+ #define MAY_OPENEXEC		0x00000100
++/* the mount point is marked as executable */
++#define MAY_EXECMOUNT		0x00000200
+ 
+ /*
+  * flags in file.f_mode.  Note that FMODE_READ and FMODE_WRITE must correspond
+-- 
+2.20.0.rc2
+
