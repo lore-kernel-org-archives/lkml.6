@@ -2,160 +2,116 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 887DBC65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 22:37:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 088DAC67839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 22:43:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48FB32084E
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 22:37:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="VwcrKzr+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48FB32084E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
+	by mail.kernel.org (Postfix) with ESMTP id C070120851
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 22:43:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544654602;
+	bh=VIxtIFtRQmk7t6qIoKqlNdbuLv+MybgedcnEsrBnh1k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=APRUp/rVIUkWMtOAZ/h/QE7gMBeeQDdfMeYBhD01/mkoIIi/zJftW0+DL7gskO8B0
+	 vXUKPEHYLb0LqdkPcLoD85MMpB5Tj70aP9JLLaQI1KNjCkT2vaW9BCiZcLn7XB/JgH
+	 Ja9uKgJkj6S+/ULqn55bo1MvaGU9olZqfACZfNXM=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C070120851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728393AbeLLWhW (ORCPT
+        id S1728394AbeLLWnV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 17:37:22 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:38375 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726294AbeLLWhV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 17:37:21 -0500
-Received: by mail-pg1-f193.google.com with SMTP id g189so27842pgc.5
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 14:37:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=UFd3YwLBcxp6yAJtaHUNNfNu3+WWgtg3kk2/4oOmH+A=;
-        b=VwcrKzr+NN1op4Hpo0jqWBNkVB/J747Aftu0QtxghTC3DHZcYIP+PWd+aOGxkdlb6M
-         isX82CLttb7zTTlRuC9PIDyVvF177pQZVPwT3RZDeaqhxxalKJCJCFjhtEUsrm9Rcfsu
-         tJ0ihbpNh44b90EqWBGkFwBPz7YV/fzhDZP14=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=UFd3YwLBcxp6yAJtaHUNNfNu3+WWgtg3kk2/4oOmH+A=;
-        b=NSnMyk0iJkoO6bfzCbcNNWqACRfFQj0mSbGp0pV/OIEe7IDN4zqNKO1D2CDnLXnomX
-         /Wfj4NNTW1Ai7/wIZ2qoRmR43jadKNr+MnB0AIi7dRyKovjWrwJLMCsEMJdg5IxoGv4w
-         ovsBh55bS9uL9yeBMm6VJayeY8n1RN2LsSloMjp9DlXMsz8kV3Z+F8Qa9Qhkcfng5pMu
-         7/yh24x2s+heAlNEeixRG3MPEO4LBO7zoqqbiP7vIcM92OF+3JMB/GvNe3Uz2KdYcEHs
-         rdMQpbp53rlbRogqJlgZP0kR5rgV/Uw2f+pW1wlQCAnsXPTjRUhrm+ZC6XLNl55CHF+6
-         5SUg==
-X-Gm-Message-State: AA+aEWaPCFIQdzRgcrW/b37c5qmflK0es6iE+GkVfq0EMLgaLiFuyzC1
-        1huVmNJXm9YttBwc225DDYaLimPerbk=
-X-Google-Smtp-Source: AFSGD/WwURh0hcAiQhwxElH0uTn1OtPDmZiHDK6e2iX3KEAdS2hVgd8uUBw8dZFDKYmMInsDANslSg==
-X-Received: by 2002:aa7:8045:: with SMTP id y5mr21730423pfm.62.1544654240212;
-        Wed, 12 Dec 2018 14:37:20 -0800 (PST)
-Received: from joelaf.mtv.corp.google.com ([2620:0:1000:1601:3aef:314f:b9ea:889f])
-        by smtp.gmail.com with ESMTPSA id g15sm45153pfj.131.2018.12.12.14.37.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 12 Dec 2018 14:37:19 -0800 (PST)
-From:   "Joel Fernandes (Google)" <joel@joelfernandes.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: [PATCH RFC] rcu: add sparse check to rcu_assign_pointer
-Date:   Wed, 12 Dec 2018 14:37:10 -0800
-Message-Id: <20181212223710.215094-1-joel@joelfernandes.org>
-X-Mailer: git-send-email 2.20.0.rc1.387.gf8505762e3-goog
+        Wed, 12 Dec 2018 17:43:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58398 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726440AbeLLWnV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 17:43:21 -0500
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2D24020645;
+        Wed, 12 Dec 2018 22:43:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544654600;
+        bh=VIxtIFtRQmk7t6qIoKqlNdbuLv+MybgedcnEsrBnh1k=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=WRr55J7RRdEkA4xOIZ96FTOjpLNlTKSgLl+zrq6HIq411D/z63SFF3NRaR2HN+ibG
+         Wl0LED/50mMb/xHriQ+E1mCk76fXc2gLQWD6X0ry7tHuul41SKgTvdYIxRX6l7ICDm
+         KBXBIh6Myz6W/PALXb/hpX1DaDvWWUm1XxmUMvOs=
+Date:   Wed, 12 Dec 2018 16:43:15 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Wesley Sheng <wesley.sheng@microchip.com>
+Cc:     kurt.schwemmer@microsemi.com, logang@deltatee.com,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        wesleyshenggit@sina.com
+Subject: Re: [PATCH 3/5] switchtec: A temporary variable should be used for
+ the flags of switchtec_ioctl_event_ctl
+Message-ID: <20181212224315.GK99796@google.com>
+References: <1544433144-7563-1-git-send-email-wesley.sheng@microchip.com>
+ <1544433144-7563-4-git-send-email-wesley.sheng@microchip.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1544433144-7563-4-git-send-email-wesley.sheng@microchip.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-rcu_assign_pointer currently doesn't do any sparse checking on a pointer
-assigned. So its possible that a pointer that is not __rcu annotated is
-assigned with rcu_assign_pointer without sparse complainting.
-rcu_dereference already does such checking so lets also make
-rcu_assign_pointer to do the same. The extra error could be helpful in
-cases where an RCU pointer is assigned with rcu_assign_pointer but not
-annotated with __rcu.
+On Mon, Dec 10, 2018 at 05:12:22PM +0800, Wesley Sheng wrote:
+> From: Joey Zhang <joey.zhang@microchip.com>
+> 
+> For nr_idxs is larger than 1 switchtec_ioctl_event_ctl event flags will be
+> used by each event indexes. In current implementation the event flags are
+> overwritten by first call of the function event_ctl().
+> 
+> Preserve the event flag value with a temporary variable.
+> 
+> Fixes: 52eabba5bcdb ("switchtec: Add IOCTLs to the Switchtec driver")
+> Signed-off-by: Joey Zhang <joey.zhang@microchip.com>
+> Signed-off-by: Wesley Sheng <wesley.sheng@microchip.com>
+> Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
+> ---
+>  drivers/pci/switch/switchtec.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/pci/switch/switchtec.c b/drivers/pci/switch/switchtec.c
+> index 480107e..a908670 100644
+> --- a/drivers/pci/switch/switchtec.c
+> +++ b/drivers/pci/switch/switchtec.c
+> @@ -796,6 +796,7 @@ static int ioctl_event_ctl(struct switchtec_dev *stdev,
+>  {
+>  	int ret;
+>  	int nr_idxs;
+> +	unsigned int event_flags;
+>  	struct switchtec_ioctl_event_ctl ctl;
+>  
+>  	if (copy_from_user(&ctl, uctl, sizeof(ctl)))
+> @@ -817,7 +818,9 @@ static int ioctl_event_ctl(struct switchtec_dev *stdev,
+>  		else
+>  			return -EINVAL;
+>  
+> +		event_flags = ctl.flags;
+>  		for (ctl.index = 0; ctl.index < nr_idxs; ctl.index++) {
+> +			ctl.flags = event_flags;
+>  			ret = event_ctl(stdev, &ctl);
 
-This doesn't generate any code in the normal case because __CHECKER__ is
-defined only in the context of sparse.
+event_ctl() overwrites several other things, in addition to ctl.flags:
 
-Also we rename rcu_dereference_sparse to rcu_check_parse since the
-checking now happens not only during derereferencing but also during
-assignment.
+  ctl.data[]
+  ctl.occurred
+  ctl.count
 
-Test: Introduced an rcu_assign_pointer in code and checked the output of
-sparse with and without this change. The change correctly causes sparse
-to throw an error.
+Is that what you intend?  It looks like only the values from the *last*
+call of event_ctl() will be copied back to the user buffer.
 
-Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
----
- include/linux/rcupdate.h | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
-
-diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
-index 4db8bcacc51a..9e6f10da7f26 100644
---- a/include/linux/rcupdate.h
-+++ b/include/linux/rcupdate.h
-@@ -309,16 +309,16 @@ static inline void rcu_preempt_sleep_check(void) { }
-  */
- 
- #ifdef __CHECKER__
--#define rcu_dereference_sparse(p, space) \
-+#define rcu_check_sparse(p, space) \
- 	((void)(((typeof(*p) space *)p) == p))
- #else /* #ifdef __CHECKER__ */
--#define rcu_dereference_sparse(p, space)
-+#define rcu_check_sparse(p, space)
- #endif /* #else #ifdef __CHECKER__ */
- 
- #define __rcu_access_pointer(p, space) \
- ({ \
- 	typeof(*p) *_________p1 = (typeof(*p) *__force)READ_ONCE(p); \
--	rcu_dereference_sparse(p, space); \
-+	rcu_check_sparse(p, space); \
- 	((typeof(*p) __force __kernel *)(_________p1)); \
- })
- #define __rcu_dereference_check(p, c, space) \
-@@ -326,13 +326,13 @@ static inline void rcu_preempt_sleep_check(void) { }
- 	/* Dependency order vs. p above. */ \
- 	typeof(*p) *________p1 = (typeof(*p) *__force)READ_ONCE(p); \
- 	RCU_LOCKDEP_WARN(!(c), "suspicious rcu_dereference_check() usage"); \
--	rcu_dereference_sparse(p, space); \
-+	rcu_check_sparse(p, space); \
- 	((typeof(*p) __force __kernel *)(________p1)); \
- })
- #define __rcu_dereference_protected(p, c, space) \
- ({ \
- 	RCU_LOCKDEP_WARN(!(c), "suspicious rcu_dereference_protected() usage"); \
--	rcu_dereference_sparse(p, space); \
-+	rcu_check_sparse(p, space); \
- 	((typeof(*p) __force __kernel *)(p)); \
- })
- #define rcu_dereference_raw(p) \
-@@ -382,6 +382,7 @@ static inline void rcu_preempt_sleep_check(void) { }
- #define rcu_assign_pointer(p, v)					      \
- ({									      \
- 	uintptr_t _r_a_p__v = (uintptr_t)(v);				      \
-+	rcu_check_sparse(p, __rcu);				      \
- 									      \
- 	if (__builtin_constant_p(v) && (_r_a_p__v) == (uintptr_t)NULL)	      \
- 		WRITE_ONCE((p), (typeof(p))(_r_a_p__v));		      \
-@@ -785,7 +786,7 @@ static inline notrace void rcu_read_unlock_sched_notrace(void)
-  */
- #define RCU_INIT_POINTER(p, v) \
- 	do { \
--		rcu_dereference_sparse(p, __rcu); \
-+		rcu_check_sparse(p, __rcu); \
- 		WRITE_ONCE(p, RCU_INITIALIZER(v)); \
- 	} while (0)
- 
--- 
-2.20.0.rc1.387.gf8505762e3-goog
-
+>  			if (ret < 0)
+>  				return ret;
+> -- 
+> 2.7.4
+> 
