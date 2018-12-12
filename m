@@ -2,167 +2,85 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4671C04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 11:42:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57A6FC04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 11:43:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 706592084E
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 11:42:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 706592084E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 1DD762084E
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 11:43:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="avLREWX9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DD762084E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727319AbeLLLmv (ORCPT
+        id S1727329AbeLLLnG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 06:42:51 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:15676 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726869AbeLLLmu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 06:42:50 -0500
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 0269BC0B3CA71;
-        Wed, 12 Dec 2018 19:42:47 +0800 (CST)
-Received: from localhost (10.202.226.46) by DGGEMS407-HUB.china.huawei.com
- (10.3.19.207) with Microsoft SMTP Server id 14.3.408.0; Wed, 12 Dec 2018
- 19:42:46 +0800
-Date:   Wed, 12 Dec 2018 11:42:36 +0000
-From:   Jonathan Cameron <jonathan.cameron@huawei.com>
-To:     Robin Murphy <robin.murphy@arm.com>
-CC:     <will.deacon@arm.com>, <catalin.marinas@arm.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <cyrilc@xilinx.com>,
-        <james.morse@arm.com>, <anshuman.khandual@arm.com>,
-        <linux-mm@kvack.org>
-Subject: Re: [PATCH v2] arm64: Add memory hotplug support
-Message-ID: <20181212114236.000030c9@huawei.com>
-In-Reply-To: <331db1485b4c8c3466217e16a1e1f05618e9bae8.1544553902.git.robin.murphy@arm.com>
-References: <331db1485b4c8c3466217e16a1e1f05618e9bae8.1544553902.git.robin.murphy@arm.com>
-Organization: Huawei
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; i686-w64-mingw32)
+        Wed, 12 Dec 2018 06:43:06 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:55848 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726869AbeLLLnG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 06:43:06 -0500
+Received: by mail-it1-f194.google.com with SMTP id o19so8541527itg.5
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 03:43:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=cO9SEBmTeSjG5hJV2GYmUGZPU+/TZz/y527TWGrbuJs=;
+        b=avLREWX9OVBvOxYB32E5uEnBLtkgLuwZwLPzvvDDCh2BIVk9ZkPIHj0YSx0Ds5lJ4W
+         dgIiMFlHjk2Y5+vP+bh9DGlD2xI1a5bzw0S6adkLBIwuMV7Qtz2f4TCQB8eUZ4Yu9L1B
+         8EBKoL86e7NNMThIyhkaEsq/vVhEsUbW9mBRg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=cO9SEBmTeSjG5hJV2GYmUGZPU+/TZz/y527TWGrbuJs=;
+        b=Nw1HktzEBYxdWtGRkfODWWP8Zd/RMbB2GcjvqO1chOcVPMeeSzknRn34FTaLTax0IW
+         JyZLJzX8wHn5/akfSV/igvfz4s6tVrN19XNndJqRDm15UDZqq48/61+TN9Fb156VvpKX
+         4gPHUpGSgBoqB6JH38UNWQXwtXotHw+ZO8Mgg8AuHtxTJIjJDZ920v2Qk5EFtzQuvBeU
+         AGqfUP8a5EDeNbkBAGa7oSPNtwF8I96rDRwVMi1/kOyqLeTLVPHJaCTXk2SyuKsX7vLO
+         wygh3pVqYVPCGachBxmbU+rVoKZhoGMj2CCXfUK5bo4NRm/gpDvKOjGec0qUPRYr+rpv
+         +Zlw==
+X-Gm-Message-State: AA+aEWbRwYDEj5GOlrpimWMaUvvz0Q2LJkQA4O/F37vsAfXeXxrhNk0a
+        F6j14jXxSgXIxP+w6F+Tg3ayPjcuQZj82y5uF/XDEg==
+X-Google-Smtp-Source: AFSGD/XYiQbP+XYpTCR8NH22SOKWH5uMHtfJtqaccMkoIiqjOt1pjLpSqNEdXdVPBTQaNwMLwEkwoFo++N2FIOoxrps=
+X-Received: by 2002:a24:9b87:: with SMTP id o129mr5730709itd.128.1544614985390;
+ Wed, 12 Dec 2018 03:43:05 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.46]
-X-CFilter-Loop: Reflected
+References: <20181212022506.171936-1-dbasehore@chromium.org>
+ <20181212022506.171936-2-dbasehore@chromium.org> <20181212090901.GV5289@hirez.programming.kicks-ass.net>
+In-Reply-To: <20181212090901.GV5289@hirez.programming.kicks-ass.net>
+From:   "dbasehore ." <dbasehore@chromium.org>
+Date:   Wed, 12 Dec 2018 03:42:54 -0800
+Message-ID: <CAGAzgsrj91jyp96XPiww=32NUhbcwH9q_t0OxzotRF-3Zga_=Q@mail.gmail.com>
+Subject: Re: RFC [PATCH 1/1] locking/lockdep: Fix nest lock warning on unlock
+To:     Peter Zijlstra <peterz@infradead.org>, sboyd@kernel.org
+Cc:     Ingo Molnar <mingo@redhat.com>, will.deacon@arm.com,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 11 Dec 2018 18:48:48 +0000
-Robin Murphy <robin.murphy@arm.com> wrote:
+On Wed, Dec 12, 2018 at 1:09 AM Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> On Tue, Dec 11, 2018 at 06:25:06PM -0800, Derek Basehore wrote:
+> > The function __lock_acquire checks that the nest lock is held passed
+> > in as an argument. The issue with this is that __lock_acquire is used
+> > for internal bookkeeping on lock_release. This produces a false
+> > positive lockdep warning on unlock. Since you explicitly don't need to
+> > hold the nest lock on unlock, this is an issue.
+>
+> Who is triggering this?
 
-> Wire up the basic support for hot-adding memory. Since memory hotplug
-> is fairly tightly coupled to sparsemem, we tweak pfn_valid() to also
-> cross-check the presence of a section in the manner of the generic
-> implementation, before falling back to memblock to check for no-map
-> regions within a present section as before. By having arch_add_memory(()
-> create the linear mapping first, this then makes everything work in the
-> way that __add_section() expects.
-> 
-> We expect hotplug to be ACPI-driven, so the swapper_pg_dir updates
-> should be safe from races by virtue of the global device hotplug lock.
-> 
-> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
-Hi Robin,
-
-What tree is this against?  
-
-rodata_full doesn't seem be exist for me on 4.20-rc6. 
-
-With v1 I did the 'new node' test and it looked good except for an
-old cgroups warning that has always been there (and has been on my list
-to track down for a long time).
-
-Jonathan
-> ---
-> 
-> v2: Handle page-mappings-only cases appropriately
-> 
->  arch/arm64/Kconfig   |  3 +++
->  arch/arm64/mm/init.c |  8 ++++++++
->  arch/arm64/mm/mmu.c  | 17 +++++++++++++++++
->  arch/arm64/mm/numa.c | 10 ++++++++++
->  4 files changed, 38 insertions(+)
-> 
-> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-> index 4dbef530cf58..be423fda5cec 100644
-> --- a/arch/arm64/Kconfig
-> +++ b/arch/arm64/Kconfig
-> @@ -261,6 +261,9 @@ config ZONE_DMA32
->  config HAVE_GENERIC_GUP
->  	def_bool y
->  
-> +config ARCH_ENABLE_MEMORY_HOTPLUG
-> +	def_bool y
-> +
->  config SMP
->  	def_bool y
->  
-> diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
-> index 6cde00554e9b..4bfe0fc9edac 100644
-> --- a/arch/arm64/mm/init.c
-> +++ b/arch/arm64/mm/init.c
-> @@ -291,6 +291,14 @@ int pfn_valid(unsigned long pfn)
->  
->  	if ((addr >> PAGE_SHIFT) != pfn)
->  		return 0;
-> +
-> +#ifdef CONFIG_SPARSEMEM
-> +	if (pfn_to_section_nr(pfn) >= NR_MEM_SECTIONS)
-> +		return 0;
-> +
-> +	if (!valid_section(__nr_to_section(pfn_to_section_nr(pfn))))
-> +		return 0;
-> +#endif
->  	return memblock_is_map_memory(addr);
->  }
->  EXPORT_SYMBOL(pfn_valid);
-> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-> index 674c409a8ce4..da513a1facf4 100644
-> --- a/arch/arm64/mm/mmu.c
-> +++ b/arch/arm64/mm/mmu.c
-> @@ -1046,3 +1046,20 @@ int pud_free_pmd_page(pud_t *pudp, unsigned long addr)
->  	pmd_free(NULL, table);
->  	return 1;
->  }
-> +
-> +#ifdef CONFIG_MEMORY_HOTPLUG
-> +int arch_add_memory(int nid, u64 start, u64 size, struct vmem_altmap *altmap,
-> +		    bool want_memblock)
-> +{
-> +	int flags = 0;
-> +
-> +	if (rodata_full || debug_pagealloc_enabled())
-> +		flags = NO_BLOCK_MAPPINGS | NO_CONT_MAPPINGS;
-> +
-> +	__create_pgd_mapping(swapper_pg_dir, start, __phys_to_virt(start),
-> +			     size, PAGE_KERNEL, pgd_pgtable_alloc, flags);
-> +
-> +	return __add_pages(nid, start >> PAGE_SHIFT, size >> PAGE_SHIFT,
-> +			   altmap, want_memblock);
-> +}
-> +#endif
-> diff --git a/arch/arm64/mm/numa.c b/arch/arm64/mm/numa.c
-> index 27a31efd9e8e..ae34e3a1cef1 100644
-> --- a/arch/arm64/mm/numa.c
-> +++ b/arch/arm64/mm/numa.c
-> @@ -466,3 +466,13 @@ void __init arm64_numa_init(void)
->  
->  	numa_init(dummy_numa_init);
->  }
-> +
-> +/*
-> + * We hope that we will be hotplugging memory on nodes we already know about,
-> + * such that acpi_get_node() succeeds and we never fall back to this...
-> + */
-> +int memory_add_physaddr_to_nid(u64 addr)
-> +{
-> +	pr_warn("Unknown node for memory at 0x%llx, assuming node 0\n", addr);
-> +	return 0;
-> +}
-
-
+I'm writing code right now that triggers this. The goal is to reduce
+lock contention in the Common Clk Framework by getting rid of its
+global lock. One of the approaches I'm considering is adding a nest
+lock with n "subtree" locks. After locking all of the needed subtree
+locks, it's important to unlock the nest lock to reduce contention.
