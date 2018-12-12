@@ -2,139 +2,335 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,T_MIXED_ES,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D742C65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:06:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC1C6C65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:07:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3140620870
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:06:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544634406;
-	bh=MA9j7yNHyEaH3NdeSr24lwe9hZhkaVM7kHj29+c33mI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=O8EZH1YMzEpZoZ3CYTQm+KnSz5SXUfbEgpFem0fJx3A7vKgXNZLnkwrsizNaQ4DcI
-	 3gWV9uZzqQCIfLDJckmUscrdvWl2jS4xl382PPGBTa1Z7NWZPOk7wbt01TWhEDy4j8
-	 C5zH4I/QH8O/EY4vrEaslES+EToKv7dWno+hJR2Q=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3140620870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 622E620849
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:07:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 622E620849
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727971AbeLLRGp (ORCPT
+        id S1727982AbeLLRHP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 12:06:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57760 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726879AbeLLRGo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 12:06:44 -0500
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0132B20849;
-        Wed, 12 Dec 2018 17:06:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544634403;
-        bh=MA9j7yNHyEaH3NdeSr24lwe9hZhkaVM7kHj29+c33mI=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=L9/q6bqau5cew3qGq/0Uw5g0755WLBmstSkh612ng7haVhCabzoE3cQS/DkdTDxuk
-         qWmcK5hG0aivELamuP4eTrz2Sr1PwSyPRE3uLsag7m0YgeIVOvK87ZqKOiI8GwmPjn
-         Pyw3kReAyvdeyVblIWf0aYwCxOHG2gYAEZJbzo8Y=
-Date:   Wed, 12 Dec 2018 17:06:35 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        linux-pwm@vger.kernel.org, linux-iio@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-i2c@vger.kernel.org, groeck@chromium.org,
-        kernel@collabora.com, linux-rtc@vger.kernel.org,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Benson Leung <bleung@chromium.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        linux-input@vger.kernel.org,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        devicetree@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-pm@vger.kernel.org, MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH v2] MAINTAINERS: add maintainers for ChromeOS EC
- sub-drivers
-Message-ID: <20181212170635.09c3363d@archlinux>
-In-Reply-To: <20181211190953.13626-1-enric.balletbo@collabora.com>
-References: <20181211190953.13626-1-enric.balletbo@collabora.com>
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Wed, 12 Dec 2018 12:07:15 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60316 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726879AbeLLRHO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 12:07:14 -0500
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBCH44YJ025419
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 12:07:13 -0500
+Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2pb4wvcptr-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 12:07:13 -0500
+Received: from localhost
+        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Wed, 12 Dec 2018 17:07:12 -0000
+Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
+        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 12 Dec 2018 17:07:07 -0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBCH76SL18874434
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 12 Dec 2018 17:07:06 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 526ABB2066;
+        Wed, 12 Dec 2018 17:07:06 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1EF3AB205F;
+        Wed, 12 Dec 2018 17:07:05 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.38])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed, 12 Dec 2018 17:07:05 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id E8C3116C2E08; Wed, 12 Dec 2018 09:07:06 -0800 (PST)
+Date:   Wed, 12 Dec 2018 09:07:06 -0800
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Alan Stern <stern@rowland.harvard.edu>
+Cc:     David Goldblatt <davidtgoldblatt@gmail.com>,
+        mathieu.desnoyers@efficios.com,
+        Florian Weimer <fweimer@redhat.com>, triegel@redhat.com,
+        libc-alpha@sourceware.org, andrea.parri@amarulasolutions.com,
+        will.deacon@arm.com, peterz@infradead.org, boqun.feng@gmail.com,
+        npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
+        luc.maranget@inria.fr, akiyks@gmail.com, dlustig@nvidia.com,
+        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Linux: Implement membarrier function
+Reply-To: paulmck@linux.ibm.com
+References: <20181211190801.GO4170@linux.ibm.com>
+ <Pine.LNX.4.44L0.1812111446150.1538-100000@iolanthe.rowland.org>
+ <20181211212204.GR4170@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181211212204.GR4170@linux.ibm.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18121217-0068-0000-0000-000003709148
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010214; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000270; SDB=6.01130770; UDB=6.00587605; IPR=6.00910903;
+ MB=3.00024670; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-12 17:07:12
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18121217-0069-0000-0000-000046BDFF4E
+Message-Id: <20181212170706.GA17397@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-12_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812120147
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 11 Dec 2018 20:09:52 +0100
-Enric Balletbo i Serra <enric.balletbo@collabora.com> wrote:
+On Tue, Dec 11, 2018 at 01:22:04PM -0800, Paul E. McKenney wrote:
+> On Tue, Dec 11, 2018 at 03:09:33PM -0500, Alan Stern wrote:
+> > On Tue, 11 Dec 2018, Paul E. McKenney wrote:
+> > 
+> > > > Rewriting the litmus test in these terms gives:
+> > > > 
+> > > >         P0      P1      P2      P3      P4      P5
+> > > >         Wa=2    Wb=2    Wc=2    [mb23]  [mb14]  [mb05]
+> > > >         mb0s    mb1s    mb2s    Wd=2    We=2    Wf=2
+> > > >         mb0e    mb1e    mb2e    Re=0    Rf=0    Ra=0
+> > > >         Rb=0    Rc=0    Rd=0
+> > > > 
+> > > > Here the brackets in "[mb23]", "[mb14]", and "[mb05]" mean that the
+> > > > positions of these barriers in their respective threads' program
+> > > > orderings is undetermined; they need not come at the top as shown.
+> > > > 
+> > > > (Also, in case David is unfamiliar with it, the "Wa=2" notation is
+> > > > shorthand for "Write 2 to a" and "Rb=0" is short for "Read 0 from b".)
+> > > > 
+> > > > Finally, here are a few facts which may be well known and obvious, but
+> > > > I'll state them anyway:
+> > > > 
+> > > > 	A CPU cannot reorder instructions across a memory barrier.
+> > > > 	If x is po-after a barrier then x executes after the barrier
+> > > > 	is finished.
+> > > > 
+> > > > 	If a store is po-before a barrier then the store propagates
+> > > > 	to every CPU before the barrier finishes.
+> > > > 
+> > > > 	If a store propagates to some CPU before a load on that CPU
+> > > > 	reads from the same location, then the load will obtain the
+> > > > 	value from that store or a co-later store.  This implies that
+> > > > 	if a load obtains a value co-earlier than some store then the
+> > > > 	load must have executed before the store propagated to the
+> > > > 	load's CPU.
+> > > > 
+> > > > The proof consists of three main stages, each requiring three steps.
+> > > > Using the facts that b - f are all read as 0, I'll show that P1
+> > > > executes Rc before P3 executes Re, then that P0 executes Rb before P4
+> > > > executes Rf, and lastly that P5's Ra must obtain 2, not 0.  This will
+> > > > demonstrate that the litmus test is not allowed.
+> > > > 
+> > > > 1.	Suppose that mb23 ends up coming po-later than Wd in P3.
+> > > > 	Then we would have:
+> > > > 
+> > > > 		Wd propagates to P2 < mb23 < mb2e < Rd,
+> > > > 
+> > > > 	and so Rd would obtain 2, not 0.  Hence mb23 must come
+> > > > 	po-before Wd (as shown in the listing):  mb23 < Wd.
+> > > > 
+> > > > 2.	Since mb23 therefore occurs po-before Re and instructions
+> > > > 	cannot be reordered across barriers,  mb23 < Re.
+> > > > 
+> > > > 3.	Since Rc obtains 0, we must have:
+> > > > 
+> > > > 		Rc < Wc propagates to P1 < mb2s < mb23 < Re.
+> > > > 
+> > > > 	Thus Rc < Re.
+> > > > 
+> > > > 4.	Suppose that mb14 ends up coming po-later than We in P4.
+> > > > 	Then we would have:
+> > > > 
+> > > > 		We propagates to P3 < mb14 < mb1e < Rc < Re,
+> > > > 
+> > > > 	and so Re would obtain 2, not 0.  Hence mb14 must come
+> > > > 	po-before We (as shown in the listing):  mb14 < We.
+> > > > 
+> > > > 5.	Since mb14 therefore occurs po-before Rf and instructions
+> > > > 	cannot be reordered across barriers,  mb14 < Rf.
+> > > > 
+> > > > 6.	Since Rb obtains 0, we must have:
+> > > > 
+> > > > 		Rb < Wb propagates to P0 < mb1s < mb14 < Rf.
+> > > > 
+> > > > 	Thus Rb < Rf.
+> > > > 
+> > > > 7.	Suppose that mb05 ends up coming po-later than Wf in P5.
+> > > > 	Then we would have:
+> > > > 
+> > > > 		Wf propagates to P4 < mb05 < mb0e < Rb < Rf,
+> > > > 
+> > > > 	and so Rf would obtain 2, not 0.  Hence mb05 must come
+> > > > 	po-before Wf (as shown in the listing):  mb05 < Wf.
+> > > > 
+> > > > 8.	Since mb05 therefore occurs po-before Ra and instructions
+> > > > 	cannot be reordered across barriers,  mb05 < Ra.
+> > > > 
+> > > > 9.	Now we have:
+> > > > 
+> > > > 		Wa propagates to P5 < mb0s < mb05 < Ra,
+> > > > 
+> > > > 	and so Ra must obtain 2, not 0.  QED.
+> > > 
+> > > Like this, then, with maximal reordering of P3-P5's reads?
+> > > 
+> > >          P0      P1      P2      P3      P4      P5
+> > >          Wa=2
+> > >          mb0s
+> > >                                                  [mb05]
+> > >          mb0e                                    Ra=0
+> > >          Rb=0    Wb=2
+> > >                  mb1s
+> > >                                          [mb14]
+> > >                  mb1e                    Rf=0
+> > >                  Rc=0    Wc=2                    Wf=2
+> > >                          mb2s
+> > >                                  [mb23]
+> > >                          mb2e    Re=0
+> > >                          Rd=0            We=2
+> > >                                  Wd=2
+> > 
+> > Yes, that's right.  This shows how P5's Ra must obtain 2 instead of 0.
+> > 
+> > > But don't the sys_membarrier() calls affect everyone, especially given
+> > > the shared-variable communication?
+> > 
+> > They do, but the other effects are irrelevant for this proof.
+> 
+> If I understand correctly, the shared-variable communication within
+> sys_membarrier() is included in your proof in the form of ordering
+> between memory barriers in the mainline sys_membarrier() code and
+> in the IPI handlers.
+> 
+> > >  If so, why wouldn't this more strict
+> > > variant hold?
+> > > 
+> > >          P0      P1      P2      P3      P4      P5
+> > >          Wa=2
+> > >          mb0s
+> > >                                  [mb05]  [mb05]  [mb05]
+> > 
+> > You have misunderstood the naming scheme.  mb05 is the barrier injected 
+> > by P0's sys_membarrier call into P5.  So the three barriers above 
+> > should be named "mb03", "mb04", and "mb05".  And you left out mb01 and 
+> > mb02.
+> 
+> The former is a copy-and-paste error on my part, the latter was
+> intentional because the IPIs among P0, P1, and P2 don't seem to
+> strengthen the ordering.
+> 
+> > >          mb0e
+> > >          Rb=0    Wb=2
+> > >                  mb1s
+> > >                                  [mb14]  [mb14]  [mb14]
+> > >                  mb1e
+> > >                  Rc=0    Wc=2
+> > >                          mb2s
+> > >                                  [mb23]  [mb23]  [mb23]
+> > >                          mb2e    Re=0    Rf=0    Ra=0
+> > >                          Rd=0            We=2    Wf=2
+> > >                                  Wd=2
+> > 
+> > Yes, this does hold.  But since it doesn't affect the end result, 
+> > there's no point in mentioning all those other barriers.
+> > 
+> > > In which case, wouldn't this cycle be forbidden even if it had only one
+> > > sys_membarrier() call?
+> > 
+> > No, it wouldn't.  I don't understand why you might think it would.  
+> 
+> Because I hadn't yet thought of the scenario I showed below.
+> 
+> > This is just like RCU, if you imagine a tiny critical section between 
+> > each adjacent pair of instructions.  You wouldn't expect RCU to enforce 
+> > ordering among six CPUs with only one synchronize_rcu call.
+> 
+> Yes, I do now agree in light of the scenario shown below.
+> 
+> > > Ah, but the IPIs are not necessarily synchronized across the CPUs,
+> > > so that the following could happen:
+> > > 
+> > >          P0      P1      P2      P3      P4      P5
+> > >          Wa=2
+> > >          mb0s
+> > >                                  [mb05]  [mb05]  [mb05]
+> > >          mb0e                                    Ra=0
+> > >          Rb=0    Wb=2
+> > >                  mb1s
+> > >                                  [mb14]  [mb14]
+> > >                                          Rf=0
+> > >                                                  Wf=2
+> > >                                                  [mb14]
+> > >                  mb1e
+> > >                  Rc=0    Wc=2
+> > >                          mb2s
+> > >                                  [mb23]
+> > >                                  Re=0
+> > >                                          We=2
+> > >                                          [mb23]  [mb23]
+> > >                          mb2e
+> > >                          Rd=0
+> > >                                  Wd=2
+> > 
+> > Yes it could.  But even in this execution you would end up with Ra=2 
+> > instead of Ra=0.
+> 
+> Agreed.  Or I should have said that the above execution is forbidden,
+> either way.
+> 
+> > > I guess in light of this post in 2001, I really don't have an excuse,
+> > > do I?  ;-)
+> > > 
+> > > 	https://lists.gt.net/linux/kernel/223555
+> > > 
+> > > Or am I still missing something here?
+> > 
+> > You tell me...
+> 
+> I think I am on board.  ;-)
 
-> There are multiple ChromeOS EC sub-drivers spread in different
-> subsystems, as all of them are related to the Chrome stuff add
-> Benson and myself as a maintainers for all these sub-drivers.
-> 
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com> for iio parts.
-> ---
-> 
-> Changes in v2:
-> - Fix typo in Benson email address.
-> 
->  MAINTAINERS | 24 ++++++++++++++++++++++++
->  1 file changed, 24 insertions(+)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index a24129b0b043..bbe7180e2851 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -3625,6 +3625,30 @@ S:	Maintained
->  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/bleung/chrome-platform.git
->  F:	drivers/platform/chrome/
->  
-> +CHROMEOS EC SUBDRIVERS
-> +M:	Benson Leung <bleung@chromium.org>
-> +M:	Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> +S:	Maintained
-> +F:	Documentation/devicetree/bindings/extcon/extcon-usbc-cros-ec.txt
-> +F:	Documentation/devicetree/bindings/input/cros-ec-keyb.txt
-> +F:	Documentation/devicetree/bindings/pwm/google,cros-ec-pwm.txt
-> +F:	Documentation/devicetree/bindings/i2c/i2c-cros-ec-tunnel.txt
-> +F:	Documentation/devicetree/bindings/mfd/cros-ec.txt
-> +F:	Documentation/ABI/testing/sysfs-bus-iio-cros-ec
-> +F:	drivers/extcon/extcon-usbc-cros-ec.c
-> +F:	drivers/i2c/busses/i2c-cros-ec-tunnel.c
-> +F:	drivers/iio/accel/cros_ec*
-> +F:	drivers/iio/common/cros_ec_sensors/
-> +F:	drivers/iio/light/cros_ec*
-> +F:	drivers/iio/pressure/cros_ec*
-> +F:	drivers/input/keyboard/cros_ec*
-> +F:	drivers/mfd/cros_ec*
-> +F:	drivers/power/supply/cros_usbpd-charger.c
-> +F:	drivers/pwm/pwm-cros-ec.c
-> +F:	drivers/rtc/rtc-cros-ec.c
-> +F:	include/linux/iio/common/cros_ec_sensors_core.h
-> +F:	include/linux/mfd/cros_ec*
-> +
->  CIRRUS LOGIC AUDIO CODEC DRIVERS
->  M:	Brian Austin <brian.austin@cirrus.com>
->  M:	Paul Handrigan <Paul.Handrigan@cirrus.com>
+And more to the point, here is a three-process variant showing a cycle
+that is permitted:
+
+
+         P0      P1      P2
+         Wa=2    Wb=2    Wc=2
+         mb0s
+                 [mb01]  [mb02]
+         mb0e
+         Rb=0    Rc=0    Ra=0
+
+As can be seen by reordering it as follows:
+
+         P0      P1      P2
+                         Ra=0
+         Wa=2
+         mb0s
+                 [mb01]
+                 Rc=0
+                         Wc=2
+                         [mb02]
+         mb0e
+         Rb=0
+                 Wb=2
+
+Make sense?
+
+							Thanx, Paul
 
