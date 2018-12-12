@@ -2,198 +2,172 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_MIXED_ES,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6E7FC04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 12:39:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B36FEC04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 12:40:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 60ACF2084E
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 12:39:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 789362084E
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 12:40:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="NfcuQqmW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60ACF2084E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="ac7Be+AJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 789362084E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727473AbeLLMjo (ORCPT
+        id S1727487AbeLLMkX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 07:39:44 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:35339 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727091AbeLLMjn (ORCPT
+        Wed, 12 Dec 2018 07:40:23 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:33692 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727091AbeLLMkW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 07:39:43 -0500
-Received: by mail-wr1-f67.google.com with SMTP id 96so17563612wrb.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 04:39:42 -0800 (PST)
+        Wed, 12 Dec 2018 07:40:22 -0500
+Received: by mail-it1-f193.google.com with SMTP id m8so13566796itk.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 04:40:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:openpgp:autocrypt:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=J0ei1kwZyhqYGIfpGeg+JUNQ8JWaYJvOQ2erDW/ftt0=;
-        b=NfcuQqmWCfRnrZ319gPr2DrCIbG3YA86Nhfku31BBeVHB1Ml1cwDJmK/8IxSlfuFi3
-         NgkpS4mvhJ+3GiuNy1T5QIxXgswjeWkFZ+XHOEqHkqCcaLg2zrXMvCP9Xer/IDEWZf2i
-         15khR8prPKYzFmmtOYQLq2awJPprfU2RzOFBX8r5DN4hBBdvZ1brUuaVqR3RprRdda3J
-         NWCsZhPM1/QqKXaRmWV8H+2zRu4Q2dKDmkrekzryLGld5e14S7w63FTOCtSl+8nlijKJ
-         ZZJWDXc/EWbVZv3LxEY3x2uEqofsECDInFD5QNV/GEou9/r4z/0g/N+nza0kQk9iNz5P
-         sf3g==
+        d=ffwll.ch; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=boR9c9u8Am9Vj/CjpWoSI+S+MS1F9PdDrkQuO529r4k=;
+        b=ac7Be+AJyyRqUqNMcUK4dviqeMqymcf54Jx3HCAhkWymdB2GbM1V/MU0tU3tPeeXb/
+         MYoDcf7Rg4DgLkYRZxuDYbkqycFhmrbST07Y3zxmiAxHfRLuhIMlwJ9Aolk9r7Ph0rkK
+         4rqvvuRlZOv/sOsstu76LhQ6dBGCIS66bBsDc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :organization:message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=J0ei1kwZyhqYGIfpGeg+JUNQ8JWaYJvOQ2erDW/ftt0=;
-        b=GhJljY61xy2vYo4PqyKZYCoTv5MY5OkkseWM/6nZxa1AF1agQO0BHABWcFDfznYAxV
-         b4eZpBc/uAdLTIq/iRUr3j/o3A5Fna6IdfkgY7+CRzBKlzTiLPZJ35pbobYAat+LMEAU
-         bcUxtIR6MvyKomiwRqINDsV862sbkMYnmGtqJFQIvST+3Ie8lQYbtUvxOEFh/v3IrQBc
-         7zt9R+I4GHj/oAia4BWjDGQlw0usfR2/itpW8+u6elI6UofHp8+1YTZZQ9/twtJ8An4F
-         Auxbkqj/197cH4CSshcY7AZW55LXErA7z89StPrI1VxP2zRJAO+6SHZCtCItzaIhlklz
-         b+Nw==
-X-Gm-Message-State: AA+aEWZ2x9IQyABrLHBo2/TkUUteEOZF6qrsj8DSOExLRF9F69zZGYrH
-        teqKQqWiwC7aI8/CQykwfrsp8A==
-X-Google-Smtp-Source: AFSGD/XCS/2Xwv5s62agkojHgttwWO1wilmiS2vYXJMHTvJ88LHf/8izGlVllHN6Lb9gRp+WOtqVeg==
-X-Received: by 2002:adf:fb4c:: with SMTP id c12mr16501960wrs.297.1544618381382;
-        Wed, 12 Dec 2018 04:39:41 -0800 (PST)
-Received: from [10.1.3.173] (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id j24sm16176525wrd.86.2018.12.12.04.39.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 12 Dec 2018 04:39:40 -0800 (PST)
-Subject: Re: [PATCH RESEND] drm/meson: remove firmware framebuffers
-To:     Maxime Jourdan <mjourdan@baylibre.com>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, dri-devel@lists.freedesktop.org
-References: <20181210092853.13050-1-mjourdan@baylibre.com>
- <c5138091-d801-8b2a-85ab-d815f0508933@baylibre.com>
- <CAMO6nay4+8Y_O2iTWJ041Bt0+3VUuOQj0WEN3Pyf6L80vuxHTA@mail.gmail.com>
-From:   Neil Armstrong <narmstrong@baylibre.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
- 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
- ZaTUOEkgIor5losDrePdPgE=
-Organization: Baylibre
-Message-ID: <19df7254-3fec-fb60-7581-54cf22e10509@baylibre.com>
-Date:   Wed, 12 Dec 2018 13:39:40 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=boR9c9u8Am9Vj/CjpWoSI+S+MS1F9PdDrkQuO529r4k=;
+        b=Rk9twP/RN9eu2xXEw7l9eWCAplAemqKxUaiCT9kH2wkR4PNqmDiomNHKsgkBsPoCu9
+         56rk1NAw8dS6ZBGb8A9x65jsdb4AXhD33GlCroSJ1qYXQWdnJlVjt2q5FO/JUwIf3kyL
+         vfv+WwEAGH1X6RSZDjYymv/8y3jrDQZ2EYW5xzQJPdBuxM3+GJInJ1wditf2FS45WqCH
+         W/4BYdUAbB5oK9PBTsAty/LWWqllsAMJLgGUVtt2jB/0CYUPcPA1EhIgaYVIy+MyqIlS
+         +02Gf51ZgyLWWfgMBgV4PYmrv6LX0im8wXpXp/Lo+aU5ni2EJcncKbJAgDTs9b579HAB
+         ahgw==
+X-Gm-Message-State: AA+aEWauWwKZzd339RSn1Sst7tqsvoez0wtAl7yX72g+DW9rVjpJX9e5
+        206v+m2rG8sn01wbfaNtVDKcgog5IjgjisComuF/MySVsrs=
+X-Google-Smtp-Source: AFSGD/VH12xZtTDza5wLZf+blIb/oCJUrhAXWaa/LDyEatIg1RDRs7DBDaCix/CZ1WLFb3o7JHl7s0IY6sATxy80vRQ=
+X-Received: by 2002:a24:94cb:: with SMTP id j194mr5670235ite.117.1544618421460;
+ Wed, 12 Dec 2018 04:40:21 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CAMO6nay4+8Y_O2iTWJ041Bt0+3VUuOQj0WEN3Pyf6L80vuxHTA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20181210084653.7268-1-daniel.vetter@ffwll.ch> <20181210100634.GA8836@kroah.com>
+ <20181210101832.GN21184@phenom.ffwll.local> <20181210102058.GO21184@phenom.ffwll.local>
+ <20181212110840.GA21184@phenom.ffwll.local> <20181212111947.GA12685@kroah.com>
+In-Reply-To: <20181212111947.GA12685@kroah.com>
+From:   Daniel Vetter <daniel@ffwll.ch>
+Date:   Wed, 12 Dec 2018 13:40:09 +0100
+Message-ID: <CAKMK7uF2wHUw8yvpXeUNvt-UTn0K-TC+O+DwsVd7eo7rJ0KBiw@mail.gmail.com>
+Subject: Re: [PATCH] drivers/base: use a worker for sysfs unbind
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Ramalingam C <ramalingam.c@intel.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Daniel Vetter <daniel.vetter@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/12/2018 13:22, Maxime Jourdan wrote:
-> Hi Neil,
-> On Wed, Dec 12, 2018 at 10:55 AM Neil Armstrong <narmstrong@baylibre.com> wrote:
->>
->> Hi Maxime,
->>
->> On 10/12/2018 10:28, Maxime Jourdan wrote:
->>> In case we are using simplefb or another conflicting framebuffer, make
->>> the call to drm_fb_helper_remove_conflicting_framebuffers()
->>>
->>> Signed-off-by: Maxime Jourdan <mjourdan@baylibre.com>
->>> ---
->>>  drivers/gpu/drm/meson/meson_drv.c | 20 ++++++++++++++++++++
->>>  1 file changed, 20 insertions(+)
->>>
->>> diff --git a/drivers/gpu/drm/meson/meson_drv.c b/drivers/gpu/drm/meson/meson_drv.c
->>> index d3443125e661..afbb3d707d15 100644
->>> --- a/drivers/gpu/drm/meson/meson_drv.c
->>> +++ b/drivers/gpu/drm/meson/meson_drv.c
->>> @@ -159,6 +159,23 @@ static void meson_vpu_init(struct meson_drm *priv)
->>>       writel_relaxed(0x20000, priv->io_base + _REG(VPU_WRARB_MODE_L2C1));
->>>  }
->>>
->>> +static void meson_remove_framebuffers(void)
->>> +{
->>> +     struct apertures_struct *ap;
->>> +
->>> +     ap = alloc_apertures(1);
->>> +     if (!ap)
->>> +             return;
->>> +
->>> +     /* The framebuffer can be located anywhere in RAM */
->>> +     ap->ranges[0].base = 0;
->>> +     ap->ranges[0].size = ~0;
->>> +
->>> +     drm_fb_helper_remove_conflicting_framebuffers(ap, "meson-drm-fb",
->>> +                                                   false);
->>
->> I always wondered, where does the "meson-drm-fb" comes from ???
->>
->> Neil
->>
-> 
-> This name ultimately ends up in a printk and has no functional impact.
-> See drivers/video/fbdev/core/fbmem.c:1613 :
-> 
-> printk(KERN_INFO "fb%d: switching to %s from %s\n", i, name,
-> registered_fb[i]->fix.id);
-> 
-> I just picked one that was similar to the names of other drm drivers
-> calling drm_fb_helper_remove_conflicting_framebuffers().
+On Wed, Dec 12, 2018 at 12:19 PM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Wed, Dec 12, 2018 at 12:08:40PM +0100, Daniel Vetter wrote:
+> > On Mon, Dec 10, 2018 at 11:20:58AM +0100, Daniel Vetter wrote:
+> > > On Mon, Dec 10, 2018 at 11:18:32AM +0100, Daniel Vetter wrote:
+> > > > On Mon, Dec 10, 2018 at 11:06:34AM +0100, Greg Kroah-Hartman wrote:
+> > > > > On Mon, Dec 10, 2018 at 09:46:53AM +0100, Daniel Vetter wrote:
+> > > > > > Drivers might want to remove some sysfs files, which needs the same
+> > > > > > locks and ends up angering lockdep. Relevant snippet of the stack
+> > > > > > trace:
+> > > > > >
+> > > > > >   kernfs_remove_by_name_ns+0x3b/0x80
+> > > > > >   bus_remove_driver+0x92/0xa0
+> > > > > >   acpi_video_unregister+0x24/0x40
+> > > > > >   i915_driver_unload+0x42/0x130 [i915]
+> > > > > >   i915_pci_remove+0x19/0x30 [i915]
+> > > > > >   pci_device_remove+0x36/0xb0
+> > > > > >   device_release_driver_internal+0x185/0x250
+> > > > > >   unbind_store+0xaf/0x180
+> > > > > >   kernfs_fop_write+0x104/0x190
+> > > > > >
+> > > > > > I've stumbled over this because some new patches by Ram connect the
+> > > > > > snd-hda-intel unload (where we do use sysfs unbind) with the locking
+> > > > > > chains in the i915 unload code (but without creating a new loop),
+> > > > > > which upset our CI. But the bug is already there and can be easily
+> > > > > > reproduced by unbind i915 directly.
+> > > > >
+> > > > > This is odd, why wouldn't any driver hit this issue?  And why now since
+> > > > > you say this is triggerable today?
+> > > >
+> > > > The above backtrace is triggered by unbinding i915 on current upstream
+> > > > kernels. Note: Will crash later on rather badly in the
+> > > > fbdev/fbcon/vtconsole hell, but that's separate issue (which can be worked
+> > > > around by first unbinding fbcon manually through sysfs).
+> > > >
+> > > > > I know scsi was doing some strange things like trying to remove the
+> > > > > device itself from a sysfs callback on the device, which requires it to
+> > > > > just call a different kobject function created just for that type of
+> > > > > thing.  Would that also make sense to do here instead of your workqueue?
+> > > >
+> > > > Note how we blow up on unregistering sw device instances supported by i915
+> > > > in entirely different subsystems. I guess most drivers just have sysfs
+> > > > files for their own stuff, where this is done as you describe. The problem
+> > > > is that there's an awful lot of unrelated stuff hanging off i915.
+> > > >
+> > > > Or maybe acpi_video is busted, and should be using a different function.
+> > > > You haven't said which one, and I have no idea which one it is ...
+> > > >
+> > > > And in case the context wasn't clear: This is unbinding the i915 pci
+> > > > driver which triggers the above lockdep splat recursion.
+> > >
+> > > btw another option for "fixing" this would be to annotate the mutex_lock
+> > > in kernfs_remove_by_name_ns as recursive. Which just shuts up lockdep (and
+> > > might hide some real bugs), but would get the job done since there's not
+> > > actually a deadlock here. Just lockdep being annoyed.
+> >
+> > So what's the pick? I can do the typing, but I don't understand all the
+> > driver core interactions to know what we should be doing here best.
+>
+> Sorry for the delay.
+>
+> Look at sdev_store_delete() in drivers/scsi/scsi_sysfs.c and see if the
+> logic there makes sense to do here instead.
 
-Ok Cool !
+This looks interesting, but it doesn't solve the problem. The issue is
+_not_ that we remove the same sysfs file as the one we're writing
+into. It's that we're removing an entirely unrelated sysfs file, which
+will not cause a deadlock per se, but triggers lockdep because it's in
+the same locking class (note how the locking recusion is within one
+callchain, this would deadlock right away if it's the same file, but
+unloading happily continues).
 
-> 
-> Maxime
-> 
+> It still seems odd that removing a sysfs file by writing to a sysfs file
+> at the same level really invokes lockdep as I would have thought that
+> this path is well-tested by now.
 
-Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+Iirc has been around forever for gpu drivers. Just never bothered to
+fix it, because there's much bigger issues in hotunplug for gpu
+drivers. Only reason we use unbind in CI is because it's the simplest
+way to get userspace off the snd-hda-intel driver (which needs to be
+unloaded before i915, if you want to unload that).
+-Daniel
 
-I'll push it when the bindings are acked and when v4.21-rc1 is tagged !
+>
+> thanks,
+>
+> greg k-h
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
 
-Neil
+
+
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
