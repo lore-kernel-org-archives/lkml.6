@@ -2,219 +2,115 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F6ADC65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:08:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9E78C65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:09:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4271C20851
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:08:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4271C20851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 8A4C120870
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:09:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A4C120870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728002AbeLLRIX (ORCPT
+        id S1727955AbeLLRJD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 12:08:23 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:45576 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726358AbeLLRIX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 12:08:23 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A68F780D;
-        Wed, 12 Dec 2018 09:08:22 -0800 (PST)
-Received: from localhost (unknown [10.37.6.11])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B3CE93F575;
-        Wed, 12 Dec 2018 09:08:21 -0800 (PST)
-Date:   Wed, 12 Dec 2018 17:08:19 +0000
-From:   Andrew Murray <andrew.murray@arm.com>
-To:     Christoffer Dall <christoffer.dall@arm.com>
-Cc:     Michael Ellerman <mpe@ellerman.id.au>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>, x86@kernel.org,
-        linux-alpha@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Joerg Roedel <joro@8bytes.org>,
-        "paulus@samba.org" <paulus@samba.org>
-Subject: Re: [PATCH 10/10] perf/doc: update design.txt for
- exclude_{host|guest} flags
-Message-ID: <20181212170819.GD48249@e119886-lin.cambridge.arm.com>
-References: <1542363853-13849-1-git-send-email-andrew.murray@arm.com>
- <1542363853-13849-11-git-send-email-andrew.murray@arm.com>
- <87pnv00yuf.fsf@concordia.ellerman.id.au>
- <20181120133202.GH35798@e119886-lin.cambridge.arm.com>
- <87bm5sxqya.fsf@concordia.ellerman.id.au>
- <20181211135903.GG13393@e119886-lin.cambridge.arm.com>
- <20181212080742.GA30263@e113682-lin.lund.arm.com>
+        Wed, 12 Dec 2018 12:09:03 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:46930 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726358AbeLLRJD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 12:09:03 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7BF0930832D2;
+        Wed, 12 Dec 2018 17:09:02 +0000 (UTC)
+Received: from sky.random (ovpn-122-218.rdu2.redhat.com [10.10.122.218])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id B41965ED3C;
+        Wed, 12 Dec 2018 17:08:58 +0000 (UTC)
+Date:   Wed, 12 Dec 2018 12:00:16 -0500
+From:   Andrea Arcangeli <aarcange@redhat.com>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     David Rientjes <rientjes@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        mgorman@techsingularity.net, Vlastimil Babka <vbabka@suse.cz>,
+        ying.huang@intel.com, s.priebe@profihost.ag,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        alex.williamson@redhat.com, lkp@01.org, kirill@shutemov.name,
+        Andrew Morton <akpm@linux-foundation.org>,
+        zi.yan@cs.rutgers.edu
+Subject: Re: [LKP] [mm] ac5b2c1891: vm-scalability.throughput -61.3%
+ regression
+Message-ID: <20181212170016.GG1130@redhat.com>
+References: <CAHk-=whi8Ju-cTDL4cYtwuLA7BYgGJYyy6HVMoknZaLHnRc83g@mail.gmail.com>
+ <20181205233632.GE11899@redhat.com>
+ <CAHk-=wguXjkbK8BUU998s7HD7AXJgBkuc9JmuNxiN7uGQyfSfQ@mail.gmail.com>
+ <CAHk-=wjm9V843eg0uesMrxKnCCq7UfWn8VJ+z-cNztb_0fVW6A@mail.gmail.com>
+ <alpine.DEB.2.21.1812061505010.162675@chino.kir.corp.google.com>
+ <CAHk-=wjVuLjZ1Wr52W=hNqh=_8gbzuKA+YpsVb4NBHCJsE6cyA@mail.gmail.com>
+ <alpine.DEB.2.21.1812091538310.215735@chino.kir.corp.google.com>
+ <20181210044916.GC24097@redhat.com>
+ <alpine.DEB.2.21.1812111609060.255489@chino.kir.corp.google.com>
+ <20181212095051.GO1286@dhcp22.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181212080742.GA30263@e113682-lin.lund.arm.com>
-User-Agent: Mutt/1.10.1+81 (426a6c1) (2018-08-26)
+In-Reply-To: <20181212095051.GO1286@dhcp22.suse.cz>
+User-Agent: Mutt/1.11.1 (2018-12-01)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Wed, 12 Dec 2018 17:09:02 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 12, 2018 at 09:07:42AM +0100, Christoffer Dall wrote:
-> On Tue, Dec 11, 2018 at 01:59:03PM +0000, Andrew Murray wrote:
-> > On Tue, Dec 11, 2018 at 10:06:53PM +1100, Michael Ellerman wrote:
-> > > [ Reviving old thread. ]
-> > > 
-> > > Andrew Murray <andrew.murray@arm.com> writes:
-> > > > On Tue, Nov 20, 2018 at 10:31:36PM +1100, Michael Ellerman wrote:
-> > > >> Andrew Murray <andrew.murray@arm.com> writes:
-> > > >> 
-> > > >> > Update design.txt to reflect the presence of the exclude_host
-> > > >> > and exclude_guest perf flags.
-> > > >> >
-> > > >> > Signed-off-by: Andrew Murray <andrew.murray@arm.com>
-> > > >> > ---
-> > > >> >  tools/perf/design.txt | 4 ++++
-> > > >> >  1 file changed, 4 insertions(+)
-> > > >> >
-> > > >> > diff --git a/tools/perf/design.txt b/tools/perf/design.txt
-> > > >> > index a28dca2..7de7d83 100644
-> > > >> > --- a/tools/perf/design.txt
-> > > >> > +++ b/tools/perf/design.txt
-> > > >> > @@ -222,6 +222,10 @@ The 'exclude_user', 'exclude_kernel' and 'exclude_hv' bits provide a
-> > > >> >  way to request that counting of events be restricted to times when the
-> > > >> >  CPU is in user, kernel and/or hypervisor mode.
-> > > >> >  
-> > > >> > +Furthermore the 'exclude_host' and 'exclude_guest' bits provide a way
-> > > >> > +to request counting of events restricted to guest and host contexts when
-> > > >> > +using virtualisation.
-> > > >> 
-> > > >> How does exclude_host differ from exclude_hv ?
-> > > >
-> > > > I believe exclude_host / exclude_guest are intented to distinguish
-> > > > between host and guest in the hosted hypervisor context (KVM).
-> > > 
-> > > OK yeah, from the perf-list man page:
-> > > 
-> > >            u - user-space counting
-> > >            k - kernel counting
-> > >            h - hypervisor counting
-> > >            I - non idle counting
-> > >            G - guest counting (in KVM guests)
-> > >            H - host counting (not in KVM guests)
-> > > 
-> > > > Whereas exclude_hv allows to distinguish between guest and
-> > > > hypervisor in the bare-metal type hypervisors.
-> > > 
-> > > Except that's exactly not how we use them on powerpc :)
-> > > 
-> > > We use exclude_hv to exclude "the hypervisor", regardless of whether
-> > > it's KVM or PowerVM (which is a bare-metal hypervisor).
-> > > 
-> > > We don't use exclude_host / exclude_guest at all, which I guess is a
-> > > bug, except I didn't know they existed until this thread.
-> > > 
-> > > eg, in a KVM guest:
-> > > 
-> > >   $ perf record -e cycles:G /bin/bash -c "for i in {0..100000}; do :;done"
-> > >   $ perf report -D | grep -Fc "dso: [hypervisor]"
-> > >   16
-> > > 
-> > > 
-> > > > In the case of arm64 - if VHE extensions are present then the host
-> > > > kernel will run at a higher privilege to the guest kernel, in which
-> > > > case there is no distinction between hypervisor and host so we ignore
-> > > > exclude_hv. But where VHE extensions are not present then the host
-> > > > kernel runs at the same privilege level as the guest and we use a
-> > > > higher privilege level to switch between them - in this case we can
-> > > > use exclude_hv to discount that hypervisor role of switching between
-> > > > guests.
-> > > 
-> > > I couldn't find any arm64 perf code using exclude_host/guest at all?
-> > 
-> > Correct - but this is in flight as I am currently adding support for this
-> > see [1].
-> > 
-> > > 
-> > > And I don't see any x86 code using exclude_hv.
-> > 
-> > I can't find any either.
-> > 
-> > > 
-> > > But maybe that's OK, I just worry this is confusing for users.
-> > 
-> > There is some extra context regarding this where exclude_guest/exclude_host
-> > was added, see [2] and where exclude_hv was added, see [3]
-> > 
-> > Generally it seems that exclude_guest/exclude_host relies upon switching
-> > counters off/on on guest/host switch code (which works well in the nested
-> > virt case). Whereas exclude_hv tends to rely solely on hardware capability
-> > based on privilege level (which works well in the bare metal case where
-> > the guest doesn't run at same privilege as the host).
-> > 
-> > I think from the user perspective exclude_hv allows you to see your overhead
-> > if you are a guest (i.e. work done by bare metal hypervisor associated with
-> > you as the guest). Whereas exclude_guest/exclude_host doesn't allow you to
-> > see events above you (i.e. the kernel hypervisor) if you are the guest...
-> > 
-> > At least that's how I read this, I've copied in others that may provide
-> > more authoritative feedback.
-> > 
-> > [1] https://lists.cs.columbia.edu/pipermail/kvmarm/2018-December/033698.html
-> > [2] https://www.spinics.net/lists/kvm/msg53996.html
-> > [3] https://lore.kernel.org/patchwork/patch/143918/
-> > 
-> 
-> I'll try to answer this in a different way, based on previous
-> discussions with Joerg et al. who introduced these flags.  Assume no
-> support for nested virtualization as a first approximation:
-> 
->   If you are running as a guest:
->     - exclude_hv: stop counting events when the hypervisor runs
->     - exclude_host: has no effect
->     - exclude_guest: has no effect
->   
->   If you are running as a host/hypervisor:
->    - exclude_hv: has no effect
->    - exclude_host: only count events when the guest is running
->    - exclude_guest: only count events when the host is running
-> 
-> With nested virtualization, you get the natural union of the above.
-> 
-> **This has nothing to do with the design of the hypervisor such as the
-> ARM non-VHE KVM which splits its execution across EL1 and EL2 -- those
-> are both considered host from the point of view of Linux as a hypervisor
-> using KVM, and both considered hypervisor from the point of view of a
-> guest.**
+On Wed, Dec 12, 2018 at 10:50:51AM +0100, Michal Hocko wrote:
+> I can be convinced that larger pages really require a different behavior
+> than base pages but you should better show _real_ numbers on a wider
+> variety workloads to back your claims. I have only heard hand waving and
 
-For clarity, this is what arm64 currently does (assuming no nesting and
-without the current version of this patchset):
+I agree with your point about node_reclaim and I think David complaint
+of "I got remote THP instead of local 4k" with our proposed fix, is
+going to morph into "I got remote 4k instead of local 4k" with his
+favorite fix.
 
-   If you are running as a guest (VHE or !VHE host):
-     - exclude_hv: has no effect for a KVM guest (filters hypervisor on !VHE
-		   bare metal hypervisor guest)
-     - exclude_host: has no effect
-     - exclude_guest: has no effect
-   
-   If you are running as a host/hypervisor:
-    - exclude_hv: has no effect for VHE (filters EL2 on !VHE)
-    - exclude_host: only count events when the guest is running
-    - exclude_guest: only count events when the host is running
- 
-Is this as expected?
+Because David stopped calling reclaim with __GFP_THISNODE, the moment
+the node is full of pagecache, node_reclaim behavior will go away and
+even 4k pages will start to be allocated remote (and because of
+__GFP_THISNODE set in the THP allocation, all readily available or
+trivial to compact remote THP will be ignored too).
+
+What David needs I think is a way to set __GFP_THISNODE for THP *and
+4k* allocations and if both fails in a row with __GFP_THISNODE set, we
+need to repeat the whole thing without __GFP_THISNODE set (ideally
+with a mask to skip the node that we already scraped down to the
+bottom during the initial __GFP_THISNODE pass). This way his
+proprietary software binary will work even better than before when the
+local node is fragmented and he'll finally be able to get the speedup
+from remote THP too in case the local node is truly OOM, but all other
+nodes are full of readily available THP.
+
+To achieve this without a new MADV_THISNODE/MADV_NODE_RECLAIM, we'd
+need a way to start with __GFP_THISNODE and then draw the line in
+reclaim and decide to drop __GFP_THISNODE when too much pressure
+mounts in the local node, but like you said it becomes like
+node_reclaim and it would be better if it can be done with an opt-in,
+like MADV_HUGEPAGE because not all workloads would benefit from such
+extra pagecache reclaim cost (like not all workload benefits from
+synchronous compaction).
+
+I think some NUMA reclaim mode semantics ended up being embedded and
+hidden in the THP MADV_HUGEPAGE, but they imposed massive slowdown to
+all workloads that can't cope with the node_reclaim mode behavior
+because they don't fit in a node.
+
+Adding MADV_THISNODE/MADV_NODE_RECLAIM, will guarantee his proprietary
+software binary will run at maximum performance without cache
+interference, and he's happy to accept the risk of massive slowdown in
+case the local node is truly OOM. The fallback, despite very
+inefficient, will still happen without OOM killer triggering.
 
 Thanks,
-
-Andrew Murray
-
-> 
-> 
-> Thanks,
-> 
->     Christoffer
+Andrea
