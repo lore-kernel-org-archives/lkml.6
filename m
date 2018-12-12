@@ -2,122 +2,124 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A40B8C65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 16:11:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17D2EC65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 16:20:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 574D02084E
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 16:11:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C349F20839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 16:20:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="cWOcfZXm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 574D02084E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pQvTQBJa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C349F20839
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727875AbeLLQL4 (ORCPT
+        id S1727850AbeLLQUS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 11:11:56 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:44616 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726358AbeLLQLz (ORCPT
+        Wed, 12 Dec 2018 11:20:18 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:45200 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726879AbeLLQUS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 11:11:55 -0500
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wBCG8fsr024383;
-        Wed, 12 Dec 2018 16:11:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id; s=corp-2018-07-02;
- bh=DW9VeCS9m7xK1iYiYvI1x1ygw0o6VPEx7tDz3mc6kYg=;
- b=cWOcfZXmQZE1LJW2nFgwlTJmBj4z5yA2xFsFxqkCGPEZDh9gFgv9zTKY03SMJQCrqHUh
- j5mrhnoMKIdXvk85bsMQ2k8ABe/ISriTtF/E2JJvI4qsp4Ng2dDB2vSNwqz+OJooCctP
- 5WxhWAmFyH8q8gVhmL7PYulVipFyoxDLqjF+H1l5fnQZEJcP7EyiVo58BKQ83TLUTCn4
- O0AwGGBzdCkkkeV5CJuoS8ZRLR0mzmhNEKGk5rVYzAJBfwYOGUdy1l/SWSGUSSKkkt0q
- KTPaY7+faV1ATBVbPWEI2sis3qxIJ2hQhfxrwX2hyOgQF0Rw0ABO8+7lX2SUfP6aynM4 oQ== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by aserp2130.oracle.com with ESMTP id 2pawwp2qdh-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 12 Dec 2018 16:11:26 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wBCGBO28032622
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 12 Dec 2018 16:11:25 GMT
-Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wBCGBNOG021089;
-        Wed, 12 Dec 2018 16:11:23 GMT
-Received: from ca-dev-arm44.us.oracle.com (/10.211.8.237)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 12 Dec 2018 08:11:23 -0800
-From:   Eric Saint-Etienne <eric.saint.etienne@oracle.com>
-To:     Linux Kernel <linux-kernel@vger.kernel.org>
-Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Darren Kenny <darren.kenny@oracle.com>,
-        Eric Saint-Etienne <eric.saintetienne@gmail.com>
-Subject: [PATCH UEK5] perf symbols: Cannot disassemble some routines when debuginfo present
-Date:   Wed, 12 Dec 2018 08:39:01 -0800
-Message-Id: <1544632741-5556-1-git-send-email-eric.saint.etienne@oracle.com>
-X-Mailer: git-send-email 1.8.3.1
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9104 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=910
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1812120140
+        Wed, 12 Dec 2018 11:20:18 -0500
+Received: by mail-pg1-f194.google.com with SMTP id y4so8527915pgc.12;
+        Wed, 12 Dec 2018 08:20:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=6Q/+2+qK3okIZ1zaF6zOX7bxQDy3cH8F5XXDZkvzn0I=;
+        b=pQvTQBJazVT5wuzAdIN01sbXVVwLqsdG3UjOUbZYtXgt9O1Q0M9LHr+wJvK7MOjxd5
+         1OPzYRQOVG7r5Ta+8W9hEnZXPDOzW3QZDVTmpeaEdQSCxxkKziNJ0WKzyeiQiujI4E/j
+         rGmybZZwMMsHUlq88CJiCB0Oa+vCNxDn4YsUijWHaWkhRZJWGFvuqRdybhCDEaTnCn3q
+         Kz9yd2alymKBrJNRF19vRpd+vVpe+emBuCYsHP01xHY+9YWrKMUzb4KI47UOLZf/+MLh
+         yCmJNeIy+4eL1DU0CMO0oMLddWGGtJXstkxzpXQcZZ9aLJ0T3jrF0c3NTEiB9WvtpXY9
+         YLNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=6Q/+2+qK3okIZ1zaF6zOX7bxQDy3cH8F5XXDZkvzn0I=;
+        b=Fg27Gh4EsbOAgRhKFVZKSfhSa0pKhbBcCl55SqC+PnkGBBSJ1I6hmNaUgQEuifOYM1
+         ctKm2NfJWFt3J2RENtFDpgj8nMmQDvG6rmsIch2D21JaDRI67Vaw6rQyxOC5YTX81D2A
+         jwf2iDTFPL+Sy76jKRPuRiU94waN7IOvPkq1ekY3D8OvtaJP/oQe5xg4y6VlgBtvGwi1
+         uxmETR+lDGZyKhbtbfUUrvz/3Dl5zIv7Avs7UAUV4mGVtxc01SHRc/pAVPkXQ2Kv1KT9
+         bultD++k3TGlLvEYX3D93v867I6aLmgpeYKlvTLuNjaGr+JZMkNEAh+CDBYn7PXFtABI
+         DYIQ==
+X-Gm-Message-State: AA+aEWYSdJBtRQ7Rzg14KG7uZFtYhPAUkXYOe4eCaZZC2YTG1KO93tE1
+        dM1fKnPHPJYHVbjMdeOMBz4=
+X-Google-Smtp-Source: AFSGD/WGb+lQDbWNpoQEbGn7/dYu9dzescV2XMisM88YcFvhFjxPijOYP3QbAmqaUvl6tOebdz2krw==
+X-Received: by 2002:a62:7086:: with SMTP id l128mr20645206pfc.68.1544631617047;
+        Wed, 12 Dec 2018 08:20:17 -0800 (PST)
+Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
+        by smtp.gmail.com with ESMTPSA id z62sm27586179pfl.33.2018.12.12.08.20.16
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 12 Dec 2018 08:20:16 -0800 (PST)
+From:   Yangtao Li <tiny.windzz@gmail.com>
+To:     kyungmin.park@samsung.com, s.nawrocki@samsung.com,
+        mchehab@kernel.org, kgene@kernel.org, krzk@kernel.org
+Cc:     linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH v3] media: exynos4-is: convert to DEFINE_SHOW_ATTRIBUTE
+Date:   Wed, 12 Dec 2018 11:20:14 -0500
+Message-Id: <20181212162014.23409-1-tiny.windzz@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When the kernel is compiled with -ffunction-sections and perf uses the kernel
-debuginfo, perf fails the very first symbol lookup and ends up with an offset
-in [kernel.vmlinux]. It's due to how perf loads the .text map first then loads
-the other maps in the kernel debuginfo image.
+Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
 
-This issue is specific to the debuginfo when using -ffunction-sections and it
-doesn't happen with kallsyms because there's not multiple stages of loading
-/proc/kallsyms.
-
-This patch makes sure that the event address we're looking up is indeed within
-the map we've found, otherwise we look another map up again. Only one extra
-lookup at most is required for the proper map to be found, if it exists.
-
-Orabug: 28543586
-
-Reviewed-by: Eric Saint-Etienne <eric.saint.etienne@oracle.com>
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 ---
- tools/perf/util/event.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ drivers/media/platform/exynos4-is/fimc-is.c | 16 +++-------------
+ 1 file changed, 3 insertions(+), 13 deletions(-)
 
-diff --git a/tools/perf/util/event.c b/tools/perf/util/event.c
-index fc690fe..1fbbaf1 100644
---- a/tools/perf/util/event.c
-+++ b/tools/perf/util/event.c
-@@ -1447,6 +1447,19 @@ void thread__find_addr_map(struct thread *thread, u8 cpumode,
- 		 */
- 		if (load_map)
- 			map__load(al->map);
-+
-+ 		/*
-+		 * Sometimes we find the wrong map: one whose end address is
-+		 * ~0ULL, in particular when map__load() set a proper end
-+		 * address for the map we're considering.
-+		 *
-+		 * So we make sure that it's actually the right map that we've
-+		 * found, and if not, we try again and within at most one
-+		 * attempt we'll get the right map, if it exists.
-+		 */
-+		if (al->addr < al->map->start || al->addr >= al->map->end)
-+			goto try_again;
-+
- 		al->addr = al->map->map_ip(al->map, al->addr);
- 	}
+diff --git a/drivers/media/platform/exynos4-is/fimc-is.c b/drivers/media/platform/exynos4-is/fimc-is.c
+index f5fc54de19da..02da0b06e56a 100644
+--- a/drivers/media/platform/exynos4-is/fimc-is.c
++++ b/drivers/media/platform/exynos4-is/fimc-is.c
+@@ -738,7 +738,7 @@ int fimc_is_hw_initialize(struct fimc_is *is)
+ 	return 0;
  }
+ 
+-static int fimc_is_log_show(struct seq_file *s, void *data)
++static int fimc_is_show(struct seq_file *s, void *data)
+ {
+ 	struct fimc_is *is = s->private;
+ 	const u8 *buf = is->memory.vaddr + FIMC_IS_DEBUG_REGION_OFFSET;
+@@ -752,17 +752,7 @@ static int fimc_is_log_show(struct seq_file *s, void *data)
+ 	return 0;
+ }
+ 
+-static int fimc_is_debugfs_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, fimc_is_log_show, inode->i_private);
+-}
+-
+-static const struct file_operations fimc_is_debugfs_fops = {
+-	.open		= fimc_is_debugfs_open,
+-	.read		= seq_read,
+-	.llseek		= seq_lseek,
+-	.release	= single_release,
+-};
++DEFINE_SHOW_ATTRIBUTE(fimc_is);
+ 
+ static void fimc_is_debugfs_remove(struct fimc_is *is)
+ {
+@@ -777,7 +767,7 @@ static int fimc_is_debugfs_create(struct fimc_is *is)
+ 	is->debugfs_entry = debugfs_create_dir("fimc_is", NULL);
+ 
+ 	dentry = debugfs_create_file("fw_log", S_IRUGO, is->debugfs_entry,
+-				     is, &fimc_is_debugfs_fops);
++				     is, &fimc_is_fops);
+ 	if (!dentry)
+ 		fimc_is_debugfs_remove(is);
+ 
 -- 
-1.8.3.1
+2.17.0
 
