@@ -2,331 +2,106 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EE5EC67839
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 00:37:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3ECDC6783B
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 00:37:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE24C20849
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 00:37:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB4E520849
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 00:37:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OFjl5wzU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE24C20849
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=gibson.dropbear.id.au header.i=@gibson.dropbear.id.au header.b="SYYS8Vfs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB4E520849
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gibson.dropbear.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726275AbeLLAh1 (ORCPT
+        id S1726303AbeLLAhy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 19:37:27 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:38551 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726211AbeLLAh1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 19:37:27 -0500
-Received: by mail-pg1-f195.google.com with SMTP id g189so7458155pgc.5
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 16:37:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=E3DvDy15AvcqmBeBWM9uCsXM9sTPY0Bhs/bZ0QrbURE=;
-        b=OFjl5wzUSCExtXCc/oOupRdHHB2mwFPIpOHLgV66VvO2DbdTQprC5Eg0xJ5gx8xEcZ
-         qJh+iaT4q5cjCZeREKTmaLYcFKV84OAUn3G45aDkVcFMnyuHJ1aMN7XHAdBGoME2flAz
-         EZxnNQCxTIKu4nHJCLVBRuwH9dXrWkrDUmyGuYLFESYuUgcqlLuDZ/uVSODLEv5HHPrd
-         xkHcFIadeb4aq98aAdA2r1u4AaU2MBtuBCE1JlQLpcOUIBJvuhJ5YJVK0pVD39TJ4JOM
-         f9FLM/E59vesPTo9D/V630Eoc4LCd6mnM5d9cVnHEnmQ6XfJLI/gYR+Ahn1oEQf27E2O
-         BYew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=E3DvDy15AvcqmBeBWM9uCsXM9sTPY0Bhs/bZ0QrbURE=;
-        b=ZBLM/QbfT7mG3G74g/h4bm5NJoRJM4/BUsxyOh5usotGAHO0gSlqht1lEw8A+GQw5X
-         FoDWZKgFVqj2MVb95uh9axc4WFnbGKB/JOXos3in3bfxwLc6IGmttotXHpoHIt91OP/H
-         jGGu2rYqUt/ywhhwqj/AGG7uymdEqMbMy6tF9o+6Hi+frjd8OpeGHuTpTNZIpR/dfCmw
-         XPKnhBuYebL1ZzxxzB8QFaIn6YGsv+e84OGD7h7kZv6BJ+53Ktlos9mI5bmNO3ZukBO7
-         Sl2aMrlaVlMp9Z0aAl4RMof4FqtAjpFUIUaxLZmCyk9jLyGt+O2LBhFCK9jLfgdbdTvm
-         WLZQ==
-X-Gm-Message-State: AA+aEWZ4z1yJ+rKQWxc2/iNmZQABq5H9AnFTxj+b8wseoVaZ8mMoxoci
-        2Q2BBLKNEqKKHkiXARQXSYw6mOak1gWOBw==
-X-Google-Smtp-Source: AFSGD/UYML01x+lwCuCFV1wPqGc3RQpR8xwdLMK1aLMWPhgumjH4z/3to5aOyyvUL2LVBGKkAZzZyQ==
-X-Received: by 2002:a63:f201:: with SMTP id v1mr15399479pgh.232.1544575045601;
-        Tue, 11 Dec 2018 16:37:25 -0800 (PST)
-Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
-        by smtp.gmail.com with ESMTPSA id c81sm32721084pfb.107.2018.12.11.16.37.23
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 11 Dec 2018 16:37:23 -0800 (PST)
-Date:   Tue, 11 Dec 2018 16:37:22 -0800 (PST)
-From:   David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To:     Andrea Arcangeli <aarcange@redhat.com>
-cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        mgorman@techsingularity.net, Vlastimil Babka <vbabka@suse.cz>,
-        Michal Hocko <mhocko@kernel.org>, ying.huang@intel.com,
-        s.priebe@profihost.ag,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        alex.williamson@redhat.com, lkp@01.org, kirill@shutemov.name,
-        Andrew Morton <akpm@linux-foundation.org>,
-        zi.yan@cs.rutgers.edu
-Subject: Re: [LKP] [mm] ac5b2c1891: vm-scalability.throughput -61.3%
- regression
-In-Reply-To: <20181210044916.GC24097@redhat.com>
-Message-ID: <alpine.DEB.2.21.1812111609060.255489@chino.kir.corp.google.com>
-References: <64a4aec6-3275-a716-8345-f021f6186d9b@suse.cz> <20181204104558.GV23260@techsingularity.net> <20181205204034.GB11899@redhat.com> <CAHk-=whi8Ju-cTDL4cYtwuLA7BYgGJYyy6HVMoknZaLHnRc83g@mail.gmail.com> <20181205233632.GE11899@redhat.com>
- <CAHk-=wguXjkbK8BUU998s7HD7AXJgBkuc9JmuNxiN7uGQyfSfQ@mail.gmail.com> <CAHk-=wjm9V843eg0uesMrxKnCCq7UfWn8VJ+z-cNztb_0fVW6A@mail.gmail.com> <alpine.DEB.2.21.1812061505010.162675@chino.kir.corp.google.com> <CAHk-=wjVuLjZ1Wr52W=hNqh=_8gbzuKA+YpsVb4NBHCJsE6cyA@mail.gmail.com>
- <alpine.DEB.2.21.1812091538310.215735@chino.kir.corp.google.com> <20181210044916.GC24097@redhat.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Tue, 11 Dec 2018 19:37:54 -0500
+Received: from ozlabs.org ([203.11.71.1]:41943 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726211AbeLLAhx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 19:37:53 -0500
+Received: by ozlabs.org (Postfix, from userid 1007)
+        id 43DyZk6qyjz9s47; Wed, 12 Dec 2018 11:37:50 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+        d=gibson.dropbear.id.au; s=201602; t=1544575070;
+        bh=vUiGKvYaVVCrNhOnq8YxGEvqhpKSI/AAuTcLp+f9B0w=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=SYYS8Vfs1DWy6xQreHsDTPuB/A9JCjiqKZ+03SHMNfMqgqCKHP7Ufiy/WdgteWINN
+         GjxhtQhl3ajiH+k4pU86AwFa0wV32Imtr6++ohLfE66CUfKGiK3DUVLxHQHUnHT72R
+         i5D3zVp8wNYV99NNnbrM2a0YSwswZx0UOalSG0No=
+Date:   Wed, 12 Dec 2018 11:22:34 +1100
+From:   David Gibson <david@gibson.dropbear.id.au>
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     davem@davemloft.net, saeedm@mellanox.com, ogerlitz@mellanox.com,
+        tariqt@mellanox.com, leon@kernel.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org,
+        alex.williamson@redhat.com, linux-pci@vger.kernel.org,
+        linux-rdma@vger.kernel.org, sbest@redhat.com, paulus@samba.org,
+        benh@kernel.crashing.org
+Subject: Re: [PATCH] PCI: Add no-D3 quirk for Mellanox ConnectX-[45]
+Message-ID: <20181212002234.GC2719@umbus.fritz.box>
+References: <20181206041951.22413-1-david@gibson.dropbear.id.au>
+ <20181211140143.GD99796@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="qtZFehHsKgwS5rPz"
+Content-Disposition: inline
+In-Reply-To: <20181211140143.GD99796@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 9 Dec 2018, Andrea Arcangeli wrote:
 
-> You didn't release the proprietary software that depends on
-> __GFP_THISNODE behavior and that you're afraid is getting a
-> regression.
-> 
-> Could you at least release with an open source license the benchmark
-> software that you must have used to do the above measurement to
-> understand why it gives such a weird result on remote THP?
-> 
+--qtZFehHsKgwS5rPz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi Andrea,
+On Tue, Dec 11, 2018 at 08:01:43AM -0600, Bjorn Helgaas wrote:
+> Hi David,
+>=20
+> I see you're still working on this, but if you do end up going this
+> direction eventually, would you mind splitting this into two patches:
+> 1) rename the quirk to make it more generic (but not changing any
+> behavior), and 2) add the ConnectX devices to the quirk.  That way
+> the ConnectX change is smaller and more easily
+> understood/reverted/etc.
 
-As I said in response to Linus, I'm in the process of writing a more 
-complete benchmarking test across all of our platforms for access and 
-allocation latency for x86 (both Intel and AMD), POWER8/9, and arm64, and 
-doing so on a kernel with minimum overhead (for the allocation latency, I 
-want to remove things like mem cgroup overhead from the result).
+Sure.  Would it make sense to send (1) as an independent cleanup,
+while I'm still working out exactly what (if anything) we need for
+(2)?
 
-> On skylake and on the threadripper I can't confirm that there isn't a
-> significant benefit from cross socket hugepage over cross socket small
-> page.
-> 
-> Skylake Xeon(R) Gold 5115:
-> 
-> # numactl --hardware
-> available: 2 nodes (0-1)
-> node 0 cpus: 0 1 2 3 4 5 6 7 8 9 20 21 22 23 24 25 26 27 28 29
-> node 0 size: 15602 MB
-> node 0 free: 14077 MB
-> node 1 cpus: 10 11 12 13 14 15 16 17 18 19 30 31 32 33 34 35 36 37 38 39
-> node 1 size: 16099 MB
-> node 1 free: 15949 MB
-> node distances:
-> node   0   1
->   0:  10  21
->   1:  21  10
-> # numactl -m 0 -C 0 ./numa-thp-bench
-> random writes MADV_HUGEPAGE 10109753 usec
-> random writes MADV_NOHUGEPAGE 13682041 usec
-> random writes MADV_NOHUGEPAGE 13704208 usec
-> random writes MADV_HUGEPAGE 10120405 usec
-> # numactl -m 0 -C 10 ./numa-thp-bench
-> random writes MADV_HUGEPAGE 15393923 usec
-> random writes MADV_NOHUGEPAGE 19644793 usec
-> random writes MADV_NOHUGEPAGE 19671287 usec
-> random writes MADV_HUGEPAGE 15495281 usec
-> # grep Xeon /proc/cpuinfo |head -1
-> model name      : Intel(R) Xeon(R) Gold 5115 CPU @ 2.40GHz
-> 
-> local 4k -> local 2m: +35%
-> local 4k -> remote 2m: -11% 
-> remote 4k -> remote 2m: +26%
-> 
-> threadripper 1950x:
-> 
-> # numactl --hardware
-> available: 2 nodes (0-1)
-> node 0 cpus: 0 1 2 3 4 5 6 7 16 17 18 19 20 21 22 23
-> node 0 size: 15982 MB
-> node 0 free: 14422 MB
-> node 1 cpus: 8 9 10 11 12 13 14 15 24 25 26 27 28 29 30 31
-> node 1 size: 16124 MB
-> node 1 free: 5357 MB
-> node distances:
-> node   0   1
->   0:  10  16
->   1:  16  10
-> # numactl -m 0 -C 0 /tmp/numa-thp-bench
-> random writes MADV_HUGEPAGE 12902667 usec
-> random writes MADV_NOHUGEPAGE 17543070 usec
-> random writes MADV_NOHUGEPAGE 17568858 usec
-> random writes MADV_HUGEPAGE 12896588 usec
-> # numactl -m 0 -C 8 /tmp/numa-thp-bench
-> random writes MADV_HUGEPAGE 19663515 usec
-> random writes MADV_NOHUGEPAGE 27819864 usec
-> random writes MADV_NOHUGEPAGE 27844066 usec
-> random writes MADV_HUGEPAGE 19662706 usec
-> # grep Threadripper /proc/cpuinfo |head -1
-> model name      : AMD Ryzen Threadripper 1950X 16-Core Processor
-> 
-> local 4k -> local 2m: +35%
-> local 4k -> remote 2m: -10% 
-> remote 4k -> remote 2m: +41%
-> 
-> Or if you prefer reversed in terms of compute time (negative
-> percentage is better in this case):
-> 
-> local 4k -> local 2m: -26%
-> local 4k -> remote 2m: +12%
-> remote 4k -> remote 2m: -29%
-> 
-> It's true that local 4k is generally a win vs remote THP when the
-> workload is memory bound also for the threadripper, the threadripper
-> seems even more favorable to remote THP than skylake Xeon is.
-> 
+--=20
+David Gibson			| I'll have my music baroque, and my code
+david AT gibson.dropbear.id.au	| minimalist, thank you.  NOT _the_ _other_
+				| _way_ _around_!
+http://www.ozlabs.org/~dgibson
 
-My results are organized slightly different since it considers local 
-hugepages as the baseline and is what we optimize for: on Broadwell, I've 
-obtained more accurate results that show local small pages at +3.8%, 
-remote hugepages at +12.8% and remote small pages at +18.8%.  I think we 
-both agree that the locality preference for workloads that fit within a 
-single node is local hugepage -> local small page -> remote hugepage -> 
-remote small page, and that has been unchanged in any of benchmarking 
-results for either of us.
+--qtZFehHsKgwS5rPz
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> The above is the host bare metal result. Now let's try guest mode on
-> the threadripper. The last two lines seems more reliable (the first
-> two lines also needs to fault in the guest RAM because the guest
-> was fresh booted).
-> 
-> guest backed by local 2M pages:
-> 
-> random writes MADV_HUGEPAGE 16025855 usec
-> random writes MADV_NOHUGEPAGE 21903002 usec
-> random writes MADV_NOHUGEPAGE 19762767 usec
-> random writes MADV_HUGEPAGE 15189231 usec
-> 
-> guest backed by remote 2M pages:
-> 
-> random writes MADV_HUGEPAGE 25434251 usec
-> random writes MADV_NOHUGEPAGE 32404119 usec
-> random writes MADV_NOHUGEPAGE 31455592 usec
-> random writes MADV_HUGEPAGE 22248304 usec
-> 
-> guest backed by local 4k pages:
-> 
-> random writes MADV_HUGEPAGE 28945251 usec
-> random writes MADV_NOHUGEPAGE 32217690 usec
-> random writes MADV_NOHUGEPAGE 30664731 usec
-> random writes MADV_HUGEPAGE 22981082 usec
-> 
-> guest backed by remote 4k pages:
-> 
-> random writes MADV_HUGEPAGE 43772939 usec
-> random writes MADV_NOHUGEPAGE 52745664 usec
-> random writes MADV_NOHUGEPAGE 51632065 usec
-> random writes MADV_HUGEPAGE 40263194 usec
-> 
-> I haven't yet tried the guest mode on the skylake nor
-> haswell/broadwell. I can do that too but I don't expect a significant
-> difference.
-> 
-> On a threadripper guest, the remote 2m is practically identical to
-> local 4k. So shutting down compaction to try to generate local 4k
-> memory looks a sure loss.
-> 
+-----BEGIN PGP SIGNATURE-----
 
-I'm assuming your results above are with a defrag setting of "madvise" or 
-"defer+madvise".
+iQIzBAEBCAAdFiEEdfRlhq5hpmzETofcbDjKyiDZs5IFAlwQVMoACgkQbDjKyiDZ
+s5L+cw/+KM764cq7FAR/lTsfb87oC6lgM+U63FC2WIKnaxcJodoYFkg4eYhjc7B9
+OfAliLU6kk4A/cowrU/TZRHtvW3LcaZU4qTlQBKuPoFq6ApOmCv8ftr4jbdcXD/U
+2R/RS4QgRInfPg1g3de5DuveWiVI8gIzfcOKPh53yAkcdbsi937ZMFICwSYfln9X
+hmONBWM0BfrVvx8AFxhyc2lczWNzXHpFTTBqcV+lZnGUlB51K/+WQOIx6BNVssQs
+UfiJqHQixhdJA9pzkMEykEiS5A9hdOLJ4XyYO6jt1S9ZdB4dp1ckPrej8zgXt2l1
+HRG11NfawSntxutiu4CLM4Ra0aykkRw6ws2n2joV0Tb7+jZMGTeCzJSACdIbZM48
+RLKIS+b5PjAziH/QzZ4rSau6vRsaB7NY80fMPuvmM4/P3o5NrqmJm6trUX6LWOFZ
+FnUjMvXlFmO/5E7pmclcUxqvG6n5alBbMg+vJRo5ljZbp2MeFAVR/BWnXA5iTARQ
+JmjIIbUMQhie1ykQuWiZ0rqpCB/rEXDWfWDSyPvdYdXyNK2R/ZLi58G/PU/DQi3D
+By4mlrRHhZCcRoxXK7RznAj/bR9nKI/NsGm+8eaqaTf5foVQ7jW+PQpz+Jiy3nrg
+O/MBa8cWSsV9VH9xCbGAFHTjC6WtICnGk9xscxqcWlwnMWIr3sk=
+=7iRq
+-----END PGP SIGNATURE-----
 
-> Even if we ignore the guest mode results completely, if we don't make
-> assumption on the workload to be able to fit in the node, if I use
-> MADV_HUGEPAGE I think I'd prefer the risk of a -10% slowdown if the
-> THP page ends up in a remote node, than not getting the +41% THP
-> speedup on remote memory if the pagetable ends up being remote or the
-> 4k page itself ends up being remote over time.
-> 
-
-I'm agreeing with you that the preference for remote hugepages over local 
-small pages depends on the configuration and the workload that you are 
-running and there are clear advantages and disadvantages to both.  This is 
-different than what the long-standing NUMA preferences have been for thp 
-allocations.
-
-I think we can optimize for *both* usecases without causing an unnecessary 
-regression for other and doing so is not extremely complex.
-
-Since it depends on the workload, specifically workloads that fit within a 
-single node, I think the reasonable approach would be to have a sane 
-default regardless of the use of MADV_HUGEPAGE or thp defrag settings and 
-then optimzie for the minority of cases where the workload does not fit in 
-a single node.  I'm assuming there is no debate about these larger 
-workloads being in the minority, although we have single machines where 
-this encompasses the totality of their workloads.
-
-Regarding the role of direct reclaim in the allocator, I think we need 
-work on the feedback from compaction to determine whether it's worthwhile.  
-That's difficult because of the point I continue to bring up: 
-isolate_freepages() is not necessarily always able to access this freed 
-memory.  But for cases where we get COMPACT_SKIPPED because the order-0 
-watermarks are failing, reclaim *is* likely to have an impact in the 
-success of compaction, otherwise we fail and defer because it wasn't able 
-to make a hugepage available.
-
- [ If we run compaction regardless of the order-0 watermark check and find
-   a pageblock where we can likely free a hugepage because it is 
-   fragmented movable pages, this is a pretty good indication that reclaim
-   is worthwhile iff the reclaimed memory is beyond the migration scanner. ]
-
-Let me try to list out what I think is a reasonable design for the various 
-configs assuming we are able to address the reclaim concern above.  Note 
-that this is for the majority of users where workloads do not span 
-multiple nodes:
-
- - defrag=always: always compact, obviously
-
- - defrag=madvise/defer+madvise:
-
-   - MADV_HUGEPAGE: always compact locally, fallback to small pages 
-     locally (small pages become eligible for khugepaged to collapse
-     locally later, no chance of additional access latency)
-
-   - neither MADV_HUGEPAGE nor MADV_NOHUGEPAGE: kick kcompactd locally, 
-     fallback to small pages locally
-
- - defrag=defer: kick kcompactd locally, fallback to small pages locally
-
- - defrag=never: fallback to small pages locally
-
-And that, AFAICT, has been the implementation for almost four years.
-
-For workloads that *can* span multiple nodes, this doesn't make much 
-sense, as you point out and have reported in your bug.  Considering the 
-reclaim problem separately where we thrash a node unnecessarily, if we 
-consider only hugepages and NUMA locality:
-
- - defrag=always: always compact for all allowed zones, zonelist ordered
-   according to NUMA locality
-
- - defrag=madvise/defer+madvise:
-
-   - MADV_HUGEPAGE: always compact for all allowed zones, try to allocate
-     hugepages in zonelist order, only fallback to small pages when
-     compaction fails
-
-   - neither MADV_HUGEPAGE nor MADV_NOHUGEPAGE: kick kcompactd for all
-     allowed zones, fallback to small pages locally
-
- - defrag=defer: kick kcompactd for all allowed zones, fallback to small 
-   pages locally
-
- - defrag=never: fallback to small pages locally
-
-For this policy to be possible, we must clear __GFP_THISNODE.  How to 
-determine when to do this?  I think we have three options: heuristics (rss 
-vs zone managed pages), per-process prctl(), or global thp setting for 
-machine-wide behavior.
-
-I've been suggesting a per-process prctl() that can be set and carried 
-across fork so that there are no changes needed to any workload and can 
-simply special-case the thp allocation policy to use __GFP_THISNODE, which 
-is the default for bare metal, and to not use it when we've said the 
-workload will span multiple nodes.  Depending on the size of the workload, 
-it may choose to use this setting on certain systems and not others.
+--qtZFehHsKgwS5rPz--
