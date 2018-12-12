@@ -2,123 +2,138 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 721EAC67839
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 22:17:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07C42C67839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 22:17:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 368AA20870
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 22:17:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BFFA820851
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 22:17:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="PV2WW8Ox"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 368AA20870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lixom.net
+	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="KOU9cIK9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFFA820851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=crapouillou.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728765AbeLLWRH (ORCPT
+        id S1728736AbeLLWRC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 17:17:07 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:46243 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728748AbeLLWRE (ORCPT
+        Wed, 12 Dec 2018 17:17:02 -0500
+Received: from outils.crapouillou.net ([89.234.176.41]:40776 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728629AbeLLWQ4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 17:17:04 -0500
-Received: by mail-lj1-f195.google.com with SMTP id v15-v6so17669189ljh.13
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 14:17:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Fu+rlcVKij1eE1U6dtMPJ8S7J2eje5tMdNABI/Ki/SE=;
-        b=PV2WW8OxjvSyx89dHcJKC0/+rAezcX28SrNzndPmQ0q4EFi7aHXOzvmRgJlokw3/wL
-         sW0T0s5P1aLbbmQZ1dVDoaJpX70o56pGqKUNukAhlLUwmnqn62u9LmXjwHCHAbhk/4a+
-         Lv2eOGJRQi57SuLQ79uwY1f3P1G8+fwYpUa0AKOU01fe4TTnqR3+KUbrJYj0TMHskyuB
-         U+gtN7o3f+XZajs7K7c4XhMhYRbVr8djND5wf4PXOQoAfi8CQiKVII08TwWjkrx4c3e6
-         7AmX2rDoLhvLlVYVvtbx8dZBxXiFDBwzECqppoNKOXhUNjg6+44NUY1vcPThN+UrWF4g
-         DLRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Fu+rlcVKij1eE1U6dtMPJ8S7J2eje5tMdNABI/Ki/SE=;
-        b=B3S7pyvd0+3YFwcUXLSOcdAYfzsSE4jwn4T3Txm9gJnKAYiKNt5vZfNIpwcCYrGSmN
-         KAJRya80IKPleNwsC+HzgrV5VGgXs8/tUTQlhvu677Cue0lwsmplskCczjonqV4Gfl64
-         fqkeBkmm6lZnyEp2qmWUA0gtBXP6JZTDjK1HPDRC6vf6Y7/z1yBXG+sIosNU3D/Wg+Ti
-         WwngxSx4HvzlPVKkzmgPytykJaZmjozplgzbo2+rnyVcDpzXuGxJ+vcahbi94y8P9ycK
-         8C3TT/f7X9mr/AG0FO57jiYqJ4guQi7WmcpD+KK+0Ll2oFWspBs88oy8RN8xorni519w
-         XGoQ==
-X-Gm-Message-State: AA+aEWaZAON3KNnAwknPVLUsJjy9L5t5lM2dMVloXxtOInarjekd94JB
-        x/y1PgsjuCHJ/nQn3qIKCrbBQg==
-X-Google-Smtp-Source: AFSGD/VBu2gIgFeI47xRpsJHXPx03lssDwEw3XewMqTeYCVwsFLdUJIPxAFY0JNjjRXiy37FTO9VBQ==
-X-Received: by 2002:a2e:4a19:: with SMTP id x25-v6mr12839540lja.19.1544653022335;
-        Wed, 12 Dec 2018 14:17:02 -0800 (PST)
-Received: from localhost (h85-30-9-151.cust.a3fiber.se. [85.30.9.151])
-        by smtp.gmail.com with ESMTPSA id d190sm6701lfe.9.2018.12.12.14.17.00
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 12 Dec 2018 14:17:01 -0800 (PST)
-Date:   Wed, 12 Dec 2018 13:57:41 -0800
-From:   Olof Johansson <olof@lixom.net>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, arm-soc <arm@kernel.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/4] ARM: tegra: avoid section mismatch warning
-Message-ID: <20181212215741.uvkbvf5cvcvvod42@localhost>
-References: <20181210215856.2238253-1-arnd@arndb.de>
- <20181210215856.2238253-2-arnd@arndb.de>
- <20181211100550.GD14426@ulmo>
- <CAK8P3a1zbmYMFZB8R+rs=vdJY=KNqgRPBCQNO91LcSSTR0O03Q@mail.gmail.com>
- <20181211102856.GI14426@ulmo>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181211102856.GI14426@ulmo>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Wed, 12 Dec 2018 17:16:56 -0500
+From:   Paul Cercueil <paul@crapouillou.net>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>
+Cc:     Mathieu Malaterre <malat@debian.org>,
+        Ezequiel Garcia <ezequiel@collabora.co.uk>,
+        PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>,
+        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-clk@vger.kernel.org, od@zcrc.me,
+        Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v8 15/26] pwm: jz4740: Add support for the JZ4725B
+Date:   Wed, 12 Dec 2018 23:09:10 +0100
+Message-Id: <20181212220922.18759-16-paul@crapouillou.net>
+In-Reply-To: <20181212220922.18759-1-paul@crapouillou.net>
+References: <20181212220922.18759-1-paul@crapouillou.net>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net; s=mail; t=1544652601; bh=ptH1zBuWIb5CX5KHiI5O9NVkaP83AWNLOKEvmZk/hc4=; h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=KOU9cIK9qCDtAPM2qQXMmBqHEfAzExSlIJ7pxm6eXnZKXTyPjhlV5xGwUJMDYDVUGU53GO3tHjZXx2kIuM8XzcuJmeqvwP8RsPzZjX6C5uXNYiVo1k+noiYg9RAbsL/iWp9iicx+RIaSrLNamqlE7sg9Jc1yVKxdXZ4XJQaPeNU=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 11, 2018 at 11:28:56AM +0100, Thierry Reding wrote:
-> On Tue, Dec 11, 2018 at 11:08:53AM +0100, Arnd Bergmann wrote:
-> > On Tue, Dec 11, 2018 at 11:05 AM Thierry Reding
-> > <thierry.reding@gmail.com> wrote:
-> > >
-> > > On Mon, Dec 10, 2018 at 10:58:37PM +0100, Arnd Bergmann wrote:
-> > > > WARNING: vmlinux.o(.text+0x39ecc): Section mismatch in reference from the function tegra114_gic_cpu_pm_registration() to the (unknown reference) .init.rodata:(unknown)
-> > > > The function tegra114_gic_cpu_pm_registration() references
-> > > > the (unknown reference) __initconst (unknown).
-> > > > This is often because tegra114_gic_cpu_pm_registration lacks a __initconst
-> > > > annotation or the annotation of (unknown) is wrong.
-> > > >
-> > > > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> > > > ---
-> > > >  arch/arm/mach-tegra/irq.c | 4 ++--
-> > > >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > >
-> > > I'm not seeing these. Do I need to enable any special options to trigger
-> > > these? Or are these just so new that I haven't run into them yet?
-> > 
-> > My guess would be that this is a result of the CONFIG_NO_AUTO_INLINE
-> > option that is now available in linux-next.
-> 
-> Okay, that would explain. It's not set in my configurations currently.
-> 
-> Do you want to apply this to ARM-SoC directly with my Acked-by, or
-> should I queue it up for v4.22?
+The PWM in the JZ4725B works the same as in the JZ4740, except that it
+only has 6 channels available instead of 8.
 
-I'm picking up a few others of these, so I'll include it in that batch.
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Acked-by: Thierry Reding <thierry.reding@gmail.com>
+---
 
-Applied to arm-soc next/soc.
+Notes:
+     v5: New patch
+    
+     v6: - Move of_device_id structure back at the bottom (less noise in
+           patch)
+         - Use device_get_match_data() instead of of_* variant
+    
+     v7: No change
 
+     v8: No change
 
-Thanks!
+ drivers/pwm/pwm-jz4740.c | 22 ++++++++++++++++++++--
+ 1 file changed, 20 insertions(+), 2 deletions(-)
 
-
--Olof
+diff --git a/drivers/pwm/pwm-jz4740.c b/drivers/pwm/pwm-jz4740.c
+index cb8d8cec353f..a3a8da8af0de 100644
+--- a/drivers/pwm/pwm-jz4740.c
++++ b/drivers/pwm/pwm-jz4740.c
+@@ -24,6 +24,10 @@
+ 
+ #define NUM_PWM 8
+ 
++struct jz4740_soc_info {
++	unsigned int num_pwms;
++};
++
+ struct jz4740_pwm_chip {
+ 	struct pwm_chip chip;
+ 	struct clk *clks[NUM_PWM];
+@@ -217,9 +221,14 @@ static const struct pwm_ops jz4740_pwm_ops = {
+ 
+ static int jz4740_pwm_probe(struct platform_device *pdev)
+ {
++	const struct jz4740_soc_info *soc_info;
+ 	struct jz4740_pwm_chip *jz4740;
+ 	struct device *dev = &pdev->dev;
+ 
++	soc_info = device_get_match_data(dev);
++	if (!soc_info)
++		return -EINVAL;
++
+ 	jz4740 = devm_kzalloc(dev, sizeof(*jz4740), GFP_KERNEL);
+ 	if (!jz4740)
+ 		return -ENOMEM;
+@@ -238,7 +247,7 @@ static int jz4740_pwm_probe(struct platform_device *pdev)
+ 
+ 	jz4740->chip.dev = dev;
+ 	jz4740->chip.ops = &jz4740_pwm_ops;
+-	jz4740->chip.npwm = NUM_PWM;
++	jz4740->chip.npwm = soc_info->num_pwms;
+ 	jz4740->chip.base = -1;
+ 	jz4740->chip.of_xlate = of_pwm_xlate_with_flags;
+ 	jz4740->chip.of_pwm_n_cells = 3;
+@@ -256,8 +265,17 @@ static int jz4740_pwm_remove(struct platform_device *pdev)
+ }
+ 
+ #ifdef CONFIG_OF
++static const struct jz4740_soc_info jz4740_soc_info = {
++	.num_pwms = 8,
++};
++
++static const struct jz4740_soc_info jz4725b_soc_info = {
++	.num_pwms = 6,
++};
++
+ static const struct of_device_id jz4740_pwm_dt_ids[] = {
+-	{ .compatible = "ingenic,jz4740-pwm", },
++	{ .compatible = "ingenic,jz4740-pwm", .data = &jz4740_soc_info },
++	{ .compatible = "ingenic,jz4725b-pwm", .data = &jz4725b_soc_info },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, jz4740_pwm_dt_ids);
+-- 
+2.11.0
 
