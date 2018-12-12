@@ -2,143 +2,122 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08E3AC65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 10:05:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B375C65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 10:06:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC7EA20839
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 10:05:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC7EA20839
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id C4A4D20839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 10:06:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ldox5XVn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4A4D20839
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727043AbeLLKFt (ORCPT
+        id S1727060AbeLLKGA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 05:05:49 -0500
-Received: from mx2.suse.de ([195.135.220.15]:36430 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726727AbeLLKFq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 05:05:46 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 8D557AE88;
-        Wed, 12 Dec 2018 10:05:43 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 9E9B61E11DB; Wed, 12 Dec 2018 11:05:42 +0100 (CET)
-Date:   Wed, 12 Dec 2018 11:05:42 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc:     Michal Hocko <mhocko@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Liu Bo <bo.liu@linux.alibaba.com>, Jan Kara <jack@suse.cz>,
-        Dave Chinner <david@fromorbit.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Michal Hocko <mhocko@suse.com>, Hugh Dickins <hughd@google.com>
-Subject: Re: [PATCH] mm, memcg: fix reclaim deadlock with writeback
-Message-ID: <20181212100542.GA10902@quack2.suse.cz>
-References: <20181211132645.31053-1-mhocko@kernel.org>
- <20181212094249.cw4xjrdchqsp2tkt@kshutemo-mobl1>
+        Wed, 12 Dec 2018 05:06:00 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:43664 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726727AbeLLKF7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 05:05:59 -0500
+Received: by mail-ed1-f67.google.com with SMTP id f9so15032772eds.10;
+        Wed, 12 Dec 2018 02:05:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=0QXqToRHDI6/IV/zawFzzKWnsR/rxTCak08k0YSBLlg=;
+        b=Ldox5XVndYd40Pu4jUTIbSsC+5g2jI9yap1rp2/AVh1R8sKiJ9vTYu4enaNhLJicCN
+         aHu5iHj07etrqJW99Gd3d/fLeVHxVQ4rDOD3Qp0wct2JDELFcOaGnjMLTYhIE3YZGSYY
+         vRwqBdI6ITM87OskZFCHLRqsQSReh3iJK9fabNT85vSV9PH1RmaGoJQCW/riw5zVt+tV
+         w89qNMQX1irEDF2Y0j5zzGKrVR/+gnaNXTqCYkPQNiYvgHvc7rZHJCCvK4u+/j6xVuKe
+         0lHbAakx4sbiS1ntEEb5xsgbJyS7z7SRC/TPJm4A6VLefM6MZqXHYC5/sHdRfBkYy8HI
+         Xa6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=0QXqToRHDI6/IV/zawFzzKWnsR/rxTCak08k0YSBLlg=;
+        b=N6o+jJFYFOf0P81r6xUYNtw4j6vi93bWumeKbkldYP7D3nSvciBcCEwi1gF3UTWpZb
+         b106d/fgoBd1osGVSx8TmeER4slUILpHDD7HeFKS5FUL+JnFtJ6x+bOvBQ+7dpfR+5dQ
+         cjiBr9XkfkVYeFzMpP/BqpHtPkhYHG0LSMVzhHD79uoJwjP0klcZHNyrECewzSGvubYS
+         UkQJPcSJzRAkuwABXBnvOhWyivUz8FpnKLL7Da0iaPdP9pazpt+7JVT105RT9sabJodx
+         M02hfqOIsCyj3WnozBCvqU6JYvIp1fk4bzF+tFHOXPOjhgZGcYYD+I3+ksA4wHvhjKfo
+         +tEQ==
+X-Gm-Message-State: AA+aEWZB9HgACv15pTg12XiMEGHY6MkdtSvbrXTQzwND4fV1RjZAGolA
+        SuwiZK/47yDaF8UWcHLe9qvRFlV7
+X-Google-Smtp-Source: AFSGD/VvO707YTcB0E/vN2gGHU5riEY99qA9UGeFxp+DFTyXkGiqDyI0QmThOjBcP8GtyyTazAqJ4g==
+X-Received: by 2002:a17:906:6011:: with SMTP id o17-v6mr4676009ejj.237.1544609157786;
+        Wed, 12 Dec 2018 02:05:57 -0800 (PST)
+Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
+        by smtp.gmail.com with ESMTPSA id i24sm4660967edq.0.2018.12.12.02.05.56
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 12 Dec 2018 02:05:57 -0800 (PST)
+Date:   Wed, 12 Dec 2018 11:05:56 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 12/21] memory: tegra: Use relaxed versions of
+ readl/writel
+Message-ID: <20181212100556.GI15092@ulmo>
+References: <20181209202950.31486-1-digetx@gmail.com>
+ <20181209202950.31486-13-digetx@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="IR1Y5IvQhrKgS4e6"
 Content-Disposition: inline
-In-Reply-To: <20181212094249.cw4xjrdchqsp2tkt@kshutemo-mobl1>
+In-Reply-To: <20181209202950.31486-13-digetx@gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 12-12-18 12:42:49, Kirill A. Shutemov wrote:
-> On Tue, Dec 11, 2018 at 02:26:45PM +0100, Michal Hocko wrote:
-> > From: Michal Hocko <mhocko@suse.com>
-> > 
-> > Liu Bo has experienced a deadlock between memcg (legacy) reclaim and the
-> > ext4 writeback
-> > task1:
-> > [<ffffffff811aaa52>] wait_on_page_bit+0x82/0xa0
-> > [<ffffffff811c5777>] shrink_page_list+0x907/0x960
-> > [<ffffffff811c6027>] shrink_inactive_list+0x2c7/0x680
-> > [<ffffffff811c6ba4>] shrink_node_memcg+0x404/0x830
-> > [<ffffffff811c70a8>] shrink_node+0xd8/0x300
-> > [<ffffffff811c73dd>] do_try_to_free_pages+0x10d/0x330
-> > [<ffffffff811c7865>] try_to_free_mem_cgroup_pages+0xd5/0x1b0
-> > [<ffffffff8122df2d>] try_charge+0x14d/0x720
-> > [<ffffffff812320cc>] memcg_kmem_charge_memcg+0x3c/0xa0
-> > [<ffffffff812321ae>] memcg_kmem_charge+0x7e/0xd0
-> > [<ffffffff811b68a8>] __alloc_pages_nodemask+0x178/0x260
-> > [<ffffffff8120bff5>] alloc_pages_current+0x95/0x140
-> > [<ffffffff81074247>] pte_alloc_one+0x17/0x40
-> > [<ffffffff811e34de>] __pte_alloc+0x1e/0x110
-> > [<ffffffffa06739de>] alloc_set_pte+0x5fe/0xc20
-> > [<ffffffff811e5d93>] do_fault+0x103/0x970
-> > [<ffffffff811e6e5e>] handle_mm_fault+0x61e/0xd10
-> > [<ffffffff8106ea02>] __do_page_fault+0x252/0x4d0
-> > [<ffffffff8106ecb0>] do_page_fault+0x30/0x80
-> > [<ffffffff8171bce8>] page_fault+0x28/0x30
-> > [<ffffffffffffffff>] 0xffffffffffffffff
-> > 
-> > task2:
-> > [<ffffffff811aadc6>] __lock_page+0x86/0xa0
-> > [<ffffffffa02f1e47>] mpage_prepare_extent_to_map+0x2e7/0x310 [ext4]
-> > [<ffffffffa08a2689>] ext4_writepages+0x479/0xd60
-> > [<ffffffff811bbede>] do_writepages+0x1e/0x30
-> > [<ffffffff812725e5>] __writeback_single_inode+0x45/0x320
-> > [<ffffffff81272de2>] writeback_sb_inodes+0x272/0x600
-> > [<ffffffff81273202>] __writeback_inodes_wb+0x92/0xc0
-> > [<ffffffff81273568>] wb_writeback+0x268/0x300
-> > [<ffffffff81273d24>] wb_workfn+0xb4/0x390
-> > [<ffffffff810a2f19>] process_one_work+0x189/0x420
-> > [<ffffffff810a31fe>] worker_thread+0x4e/0x4b0
-> > [<ffffffff810a9786>] kthread+0xe6/0x100
-> > [<ffffffff8171a9a1>] ret_from_fork+0x41/0x50
-> > [<ffffffffffffffff>] 0xffffffffffffffff
-> > 
-> > He adds
-> > : task1 is waiting for the PageWriteback bit of the page that task2 has
-> > : collected in mpd->io_submit->io_bio, and tasks2 is waiting for the LOCKED
-> > : bit the page which tasks1 has locked.
-> > 
-> > More precisely task1 is handling a page fault and it has a page locked
-> > while it charges a new page table to a memcg. That in turn hits a memory
-> > limit reclaim and the memcg reclaim for legacy controller is waiting on
-> > the writeback but that is never going to finish because the writeback
-> > itself is waiting for the page locked in the #PF path. So this is
-> > essentially ABBA deadlock.
-> 
-> Side node:
-> 
-> Do we have PG_writeback vs. PG_locked ordering documentated somewhere?
-> 
-> IIUC, the trace from task2 suggests that we must not wait for writeback
-> on the locked page.
 
-Well, waiting on writeback of page A when A is locked has always been fine.
-After all that's the only easy way to make sure you really have a page for
-which no IO is running as page lock protects you from new writeback attempt
-starting.
+--IR1Y5IvQhrKgS4e6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Waiting on writeback of page B while having page A locked *is* problematic
-and prone to deadlocks due to code paths like in task2.
+On Sun, Dec 09, 2018 at 11:29:41PM +0300, Dmitry Osipenko wrote:
+> There is no need for inserting of memory barriers to access registers of
+> Memory Controller. Hence use the relaxed versions of the accessors.
+>=20
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/memory/tegra/mc.h | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-> But that not what I see for many wait_on_page_writeback() users: it usally
-> called with the page locked. I see it for truncate, shmem, swapfile,
-> splice...
-> 
-> Maybe the problem is within task2 codepath after all?
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-So ->writepages() methods in filesystems have the property that to complete
-writeback on page with index X, they may need page lock from page X+1. I
-agree that this is a bit hairy but from fs point of view it makes a lot of
-sense and AFAIK nothing besides that memcg IO throttling can create
-deadlocks with such a locking scheme.
+--IR1Y5IvQhrKgS4e6
+Content-Type: application/pgp-signature; name="signature.asc"
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlwQ3YQACgkQ3SOs138+
+s6GGGhAAnVGGzhNNAjxLTjYdbjVxTO+bXB0nc146fW2vgphsGF+pQq6buITkXJk2
+bz1X74SxdrH2OS2WUS6kyh4wyAQWbWF3krxeOYHt4s4ylOPUk7QgYXmgUgTqCE/M
+Mnabz6tXbv4O9Rdqtkt9QbEkiohqxsSZCy55QFaPxSqkytHjDinhyFuKa4pmRUIn
+RkjOm2KaSyEIHQAyy3uZQSY1iFfsPx1OA29UVoa+xPtnSgBd/saYDWz+XkTgKgNx
+YLiPW36Dzf9HBMYN5XqDunXz4Kv3hgIxU1rbDppouVRrJrwYzIc/NWU6jHN7xsFZ
+BrRTj2fOCwCf+P/z5vkNRjK35FvYzK6PcEJ073ZS3IzvNsF923C4HUzNSRf2jVEA
+GhZKhnYN/bePEphSTBW0JF58N375gffXoMhSzdskZhBzVHtcr1vYB0akf58o7Hs+
+B2j+e/9o68dLhmuIReRlWEdf2LZXZA3rbFs/GFlUCOo7/hCngewR3OqZxdyVp4Up
+FVAHlNWKBO6O1orV1hfn0MwKhEiiE7149GjPqe+nMIrNDnyBB5/sTHrW2UveKdAC
+QUxACgCtD3fpEe5GrQzyw2cHiqf3OOx3faICD9cbHzU94bsGbuVqcayd9lK3UH31
+GzNcx4DNHFy2iuQLK+ppsPTZOlbzYxxf9RKfq6UZEy4oOBPls/s=
+=1jiE
+-----END PGP SIGNATURE-----
+
+--IR1Y5IvQhrKgS4e6--
