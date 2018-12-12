@@ -2,165 +2,154 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CE4AC67839
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 02:25:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8A8EC67839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 02:25:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 124432086D
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 02:25:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="UDDoqQC0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 124432086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 4D5982086D
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 02:25:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544581525;
+	bh=A4Qew2MhbK2hFq6EYro9b+ykpaUSW3pA8J+uIpJlvtQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=xwAYCtocCl2OkYvBKadyKeWFPVLnstcmJDnLLpsovzVYFAkNw3AHmw2hPkNuFN7Fh
+	 iRjlEzcSJN4zi4CTu/YeT/15MrHKOuevLlbxborReQJYRXJ8vLlqSwoO+2X/Ob0qFM
+	 XCeDPDpCdfZyQAnRiOAScAh7qlTAibo+ZdkbiRhc=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D5982086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726400AbeLLCZT (ORCPT
+        id S1726413AbeLLCZY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 21:25:19 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:42432 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726368AbeLLCZP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 21:25:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58340 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726218AbeLLCZP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 11 Dec 2018 21:25:15 -0500
-Received: by mail-pg1-f193.google.com with SMTP id d72so7567060pga.9
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 18:25:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=RmKCG2vjvx5pkCe9XrXlTLfU5SXj6SQnQr7mWTh5qIk=;
-        b=UDDoqQC0tKdh07XAH/wc/oczJV9lXxNYH0JUAZZy7imigLmFgOvN1YM0O6n6fidX1Y
-         qPbuz+wDscLLdXuY70JDUAUFVzEkDpx3pir/97FDEN3SDHcNZiJBLhWZjlPH2XwTFHWQ
-         5j+mVYOlLMSE5WV/5PubqOyRT4FDwv2vEe2T8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=RmKCG2vjvx5pkCe9XrXlTLfU5SXj6SQnQr7mWTh5qIk=;
-        b=EgIo+zL5xCyHEzsW8VxMhDcNEqej/Te0G4kmkvMKR6GRBxd7062X+SgWmsZAdecNEi
-         3+eVefvSuEsQs0FzGVKz147Do05iPKB1KEh2zQ2ngE6ln9kROzH2EDbQfjkejgBUpCVI
-         TX5qKLc5X9Tw2jxHR27gn/bavktAT4T/tuay0QdczP4nYUdJ/Ji2iQPrNqouESO+ad4B
-         ACyaWtdHE9o5PyHJnDN+p27z6IqdktieNeIDKi9ITUHrEmarNZty9tnb97AeoejFV30x
-         RBfGksJw7ilEZsA6Y43n8RtNmMuyUYbFIqh9B361XvFQk/FTxKhPrnb7gPG/6LUbiJN4
-         /VYA==
-X-Gm-Message-State: AA+aEWZbyaNzQhEb5n+6KcsJMX4mYCITHrni9EM689FYWwjvT4nlfL6j
-        s46FSqwCb+r+R6ugHpiJMLSSrQ==
-X-Google-Smtp-Source: AFSGD/WpyCSuFGEOyVUamaVe/Z0BcOIKbnIRI8aztIgbE8MgL5TLu7SSs2c+6AbBERBqgxQFVQlPLQ==
-X-Received: by 2002:a63:85c6:: with SMTP id u189mr16105154pgd.156.1544581515165;
-        Tue, 11 Dec 2018 18:25:15 -0800 (PST)
-Received: from exogeni.mtv.corp.google.com ([2620:15c:202:1:db8d:8e3f:2514:5db8])
-        by smtp.gmail.com with ESMTPSA id f6sm27334649pfg.188.2018.12.11.18.25.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Dec 2018 18:25:14 -0800 (PST)
-From:   Derek Basehore <dbasehore@chromium.org>
-To:     peterz@infradead.org
-Cc:     mingo@redhat.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org,
-        Derek Basehore <dbasehore@chromium.org>
-Subject: RFC [PATCH 1/1] locking/lockdep: Fix nest lock warning on unlock
-Date:   Tue, 11 Dec 2018 18:25:06 -0800
-Message-Id: <20181212022506.171936-2-dbasehore@chromium.org>
-X-Mailer: git-send-email 2.20.0.rc2.403.gdbc3b29805-goog
-In-Reply-To: <20181212022506.171936-1-dbasehore@chromium.org>
-References: <20181212022506.171936-1-dbasehore@chromium.org>
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 526FA21104
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 02:25:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544581513;
+        bh=A4Qew2MhbK2hFq6EYro9b+ykpaUSW3pA8J+uIpJlvtQ=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=TTOqJsHnrAYH3mg21s/5zt2D5UeE/M8Kxk7CWBKLfDYOpkAvRYrxKLL7JyyEoQAMw
+         FGOjxDf5u/E+h9UuWNS5ofb/bAhAROxtsqmhgSqRbtKKQquohgboJuuMPvTLt8OBmp
+         GcTG7aOc+N71ON5qVRfKbdzwDQggl70yJSEf82iA=
+Received: by mail-wm1-f41.google.com with SMTP id f81so4246126wmd.4
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 18:25:13 -0800 (PST)
+X-Gm-Message-State: AA+aEWb1RtHLMfkQT68XXU5VCjRzJaPhYYz5lFieiN55q1Mj3XPAk7RK
+        WEl1+Fn45+4YAjLLFNWQ0zx0pq1so91HK/2T6pHIpg==
+X-Google-Smtp-Source: AFSGD/WZKGg3aNRMvCuRBu4d29Ky6jpXR2dULiUyrtv/ZsDyAv9Nb8h3kdF9qrqzliDutnrSjJ2WNRLgrII1W7jagiA=
+X-Received: by 2002:a1c:864f:: with SMTP id i76mr4368027wmd.83.1544581511802;
+ Tue, 11 Dec 2018 18:25:11 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <CALCETrXoRAibsbWa9nfbDrt0iEuebMnCMhSFg-d9W-J2g8mDjw@mail.gmail.com>
+ <CAHk-=wi_Kp=3XmGDdzmadzFSPFvuL+aAJ6ZPAR=o4z=KwYT2vw@mail.gmail.com>
+ <Pine.BSM.4.64L.1812112150480.21176@herc.mirbsd.org> <CALCETrWgpAX7FV23zHmid83SsgnwFMKD4a_-xSEgB6v0kJR5sA@mail.gmail.com>
+ <Pine.BSM.4.64L.1812112327500.21176@herc.mirbsd.org>
+In-Reply-To: <Pine.BSM.4.64L.1812112327500.21176@herc.mirbsd.org>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Tue, 11 Dec 2018 18:24:59 -0800
+X-Gmail-Original-Message-ID: <CALCETrXf0rmadycxmpGxd41qP9X+PAjyGHTwbGhKyp6oMKMRrA@mail.gmail.com>
+Message-ID: <CALCETrXf0rmadycxmpGxd41qP9X+PAjyGHTwbGhKyp6oMKMRrA@mail.gmail.com>
+Subject: Re: Can we drop upstream Linux x32 support?
+To:     tg@mirbsd.de
+Cc:     Andrew Lutomirski <luto@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Florian Weimer <fweimer@redhat.com>,
+        Mike Frysinger <vapier@gentoo.org>,
+        "H. J. Lu" <hjl.tools@gmail.com>, Rich Felker <dalias@libc.org>,
+        x32@buildd.debian.org, Arnd Bergmann <arnd@arndb.de>,
+        Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The function __lock_acquire checks that the nest lock is held passed
-in as an argument. The issue with this is that __lock_acquire is used
-for internal bookkeeping on lock_release. This produces a false
-positive lockdep warning on unlock. Since you explicitly don't need to
-hold the nest lock on unlock, this is an issue.
+> On Dec 11, 2018, at 3:35 PM, Thorsten Glaser <tg@mirbsd.de> wrote:
+>
+> Andy Lutomirski dixit:
+>
+>> What happens if someone adds a struct like:
+>>
+>> struct nasty_on_x32 {
+>> __kernel_long_t a;
+>> void * __user b;
+>> };
+>>
+>> On x86_64, that's two 8-byte fields.  On x86_32, it's two four-byte
+>> fields.  On x32, it's an 8-byte field and a 4-byte field.  Now what?
+>
+> Yes, that=E2=80=99s indeed ugly. I understand. But don=E2=80=99t we alrea=
+dy have
+> this problem with architectures which support multiple ABIs at the
+> same time? An amd64 kernel with i386 userspace comes to mind, or
+> the multiple MIPS ABIs.
 
-This fixes the problem by only checking the nest lock on the actual
-lock acquire step.
+That=E2=80=99s the thing, though: the whole generic kernel compat
+infrastructure assumes there are at most two ABIs: native and, if
+enabled and relevant, compat. x32 breaks this entirely.
 
-Signed-off-by: Derek Basehore <dbasehore@chromium.org>
----
- kernel/locking/lockdep.c | 27 +++++++++++++--------------
- 1 file changed, 13 insertions(+), 14 deletions(-)
+>
+>> I'm sure we could have some magic gcc plugin or other nifty tool that
+>> gives us:
+>>
+>> copy_from_user(struct struct_name, kernel_ptr, user_ptr);
+>
+> Something like that might be useful. Generate call stubs, which
+> then call the syscall implementation with the actual user-space
+> struct contents as arguments. Hm, that might be too generic to
+> be useful. Generate macros that can read from or write specific
+> structures to userspace?
+>
+> I think something like this could solve other more general problems
+> as well, so it might be =E2=80=9Cnice to have anyway=E2=80=9D. Of course =
+it=E2=80=99s work,
+> and I=E2=80=99m not involved enough in Linux kernel programming to be abl=
+e
+> to usefully help with it (doing too much elsewhere already).
+>
+>> actually do this work.  Instead we get ad hoc fixes for each syscall,
+>> along the lines of preadv64v2(), which get done when somebody notices
+>
+> Yes, that=E2=80=99s absolutely ugly and ridiculous and all kinds of bad.
+>
+> On the other hand, from my current experience, someone (Arnd?) noticed
+> all the currently existing baddies for x32 already and fixed them.
+>
+> New syscalls are indeed an issue, but perhaps something generating
+> copyinout stubs could help. This might allow other architectures
+> that could do with a new ABI but have until now feared the overhead
+> as well. (IIRC, m68k could do with a new ABI that reserves a register
+> for TLS, but Geert would know. At the same time, time_t and off_t could
+> be bumped to 64 bit. Something like that. If changing sizes of types
+> shared between kernel and user spaces is not something feared=E2=80=A6)
 
-diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index 1efada2dd9dd..2e7297ee6596 100644
---- a/kernel/locking/lockdep.c
-+++ b/kernel/locking/lockdep.c
-@@ -3155,15 +3155,15 @@ EXPORT_SYMBOL_GPL(lockdep_init_map);
- struct lock_class_key __lockdep_no_validate__;
- EXPORT_SYMBOL_GPL(__lockdep_no_validate__);
- 
--static int
--print_lock_nested_lock_not_held(struct task_struct *curr,
--				struct held_lock *hlock,
-+static void
-+print_lock_nested_lock_not_held(struct lockdep_map *lock,
-+				struct lockdep_map *nest_lock,
- 				unsigned long ip)
- {
- 	if (!debug_locks_off())
--		return 0;
-+		return;
- 	if (debug_locks_silent)
--		return 0;
-+		return;
- 
- 	pr_warn("\n");
- 	pr_warn("==================================\n");
-@@ -3171,22 +3171,21 @@ print_lock_nested_lock_not_held(struct task_struct *curr,
- 	print_kernel_ident();
- 	pr_warn("----------------------------------\n");
- 
--	pr_warn("%s/%d is trying to lock:\n", curr->comm, task_pid_nr(curr));
--	print_lock(hlock);
-+	pr_warn("%s/%d is trying to lock:\n", current->comm,
-+			task_pid_nr(current));
-+	pr_warn("%s\n", lock->name);
- 
- 	pr_warn("\nbut this task is not holding:\n");
--	pr_warn("%s\n", hlock->nest_lock->name);
-+	pr_warn("%s\n", nest_lock->name);
- 
- 	pr_warn("\nstack backtrace:\n");
- 	dump_stack();
- 
- 	pr_warn("\nother info that might help us debug this:\n");
--	lockdep_print_held_locks(curr);
-+	lockdep_print_held_locks(current);
- 
- 	pr_warn("\nstack backtrace:\n");
- 	dump_stack();
--
--	return 0;
- }
- 
- static int __lock_is_held(const struct lockdep_map *lock, int read);
-@@ -3335,9 +3334,6 @@ static int __lock_acquire(struct lockdep_map *lock, unsigned int subclass,
- 	}
- 	chain_key = iterate_chain_key(chain_key, class_idx);
- 
--	if (nest_lock && !__lock_is_held(nest_lock, -1))
--		return print_lock_nested_lock_not_held(curr, hlock, ip);
--
- 	if (!validate_chain(curr, lock, hlock, chain_head, chain_key))
- 		return 0;
- 
-@@ -3843,6 +3839,9 @@ void lock_acquire(struct lockdep_map *lock, unsigned int subclass,
- 	trace_lock_acquire(lock, subclass, trylock, read, check, nest_lock, ip);
- 	__lock_acquire(lock, subclass, trylock, read, check,
- 		       irqs_disabled_flags(flags), nest_lock, ip, 0, 0);
-+	if (nest_lock && !__lock_is_held(nest_lock, -1))
-+		print_lock_nested_lock_not_held(lock, nest_lock, ip);
-+
- 	current->lockdep_recursion = 0;
- 	raw_local_irq_restore(flags);
- }
--- 
-2.20.0.rc2.403.gdbc3b29805-goog
+Magic autogenerated stubs would be great.  Difficult, too, given
+unions, multiplexers, cmsg, etc.
 
+I suppose I will see how bad it would be to split out the x32 syscall
+table and at least isolate the mess to some extent.
+
+IMO the real right solution would be to push the whole problem to
+userspace: get an ILP32 system working with almost or entirely LP64
+syscalls.  POSIX support might have to be a bit flexible, but still.
+How hard would it be to have __attribute__((ilp64)), with an optional
+warning if any embedded structs are not ilp64?  This plus a wrapper to
+make sure that mmap puts everything below 4GB ought to do the trick.
+Or something like what arm64 is proposing where the kernel ABI has
+32-bit long doesn=E2=80=99t seem too horrible.
