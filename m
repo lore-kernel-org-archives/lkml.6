@@ -6,83 +6,86 @@ X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D6FFC65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 18:00:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06E0BC65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 18:00:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BC3120839
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 18:00:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BC3120839
+	by mail.kernel.org (Postfix) with ESMTP id C907620839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 18:00:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C907620839
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728137AbeLLSAs (ORCPT
+        id S1728165AbeLLSAw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 13:00:48 -0500
-Received: from mga04.intel.com ([192.55.52.120]:55573 "EHLO mga04.intel.com"
+        Wed, 12 Dec 2018 13:00:52 -0500
+Received: from mga11.intel.com ([192.55.52.93]:41982 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727748AbeLLSAr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 13:00:47 -0500
+        id S1727748AbeLLSAu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 13:00:50 -0500
 X-Amp-Result: UNKNOWN
 X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Dec 2018 10:00:47 -0800
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Dec 2018 10:00:49 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,345,1539673200"; 
-   d="scan'208";a="109849189"
-Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.137])
-  by orsmga003.jf.intel.com with ESMTP; 12 Dec 2018 10:00:46 -0800
-Received: by tassilo.localdomain (Postfix, from userid 1000)
-        id E4BDA30237E; Wed, 12 Dec 2018 10:00:46 -0800 (PST)
-Date:   Wed, 12 Dec 2018 10:00:46 -0800
-From:   Andi Kleen <ak@linux.intel.com>
-To:     David Laight <David.Laight@aculab.com>
-Cc:     'Aubrey Li' <aubrey.li@intel.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "tim.c.chen@linux.intel.com" <tim.c.chen@linux.intel.com>,
-        "dave.hansen@intel.com" <dave.hansen@intel.com>,
-        "arjan@linux.intel.com" <arjan@linux.intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Aubrey Li <aubrey.li@linux.intel.com>
-Subject: Re: [PATCH v4 1/2] x86/fpu: track AVX-512 usage of tasks
-Message-ID: <20181212180046.GG25620@tassilo.jf.intel.com>
-References: <20181211002448.3520-1-aubrey.li@intel.com>
- <c87224bd48bc4296a38ae4852bf28071@AcuMS.aculab.com>
+   d="scan'208";a="303286444"
+Received: from hekner-mobl.ger.corp.intel.com (HELO localhost) ([10.249.254.170])
+  by fmsmga005.fm.intel.com with ESMTP; 12 Dec 2018 10:00:35 -0800
+Date:   Wed, 12 Dec 2018 20:00:36 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     "Dr. Greg" <greg@enjellic.com>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Andy Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        linux-sgx@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>,
+        "Christopherson, Sean J" <sean.j.christopherson@intel.com>,
+        nhorman@redhat.com, npmccallum@redhat.com,
+        "Ayoun, Serge" <serge.ayoun@intel.com>, shay.katz-zamir@intel.com,
+        haitao.huang@linux.intel.com,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Svahn, Kai" <kai.svahn@intel.com>, mark.shanahan@intel.com,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v17 18/23] platform/x86: Intel SGX driver
+Message-ID: <20181212180036.GC6333@linux.intel.com>
+References: <20181125145329.GA5777@linux.intel.com>
+ <0669C300-02CB-4EA6-BF88-5C4B4DDAD4C7@amacapital.net>
+ <20181126215145.GC868@linux.intel.com>
+ <20181126230436.GA6737@linux.intel.com>
+ <20181127085533.GA12247@wind.enjellic.com>
+ <20181127164129.GB4170@linux.intel.com>
+ <C11C9312-65BC-460A-8F9F-608E101AE5C1@amacapital.net>
+ <20181128104941.GA23077@wind.enjellic.com>
+ <20181128192228.GC9023@linux.intel.com>
+ <20181210104908.GA23132@wind.enjellic.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c87224bd48bc4296a38ae4852bf28071@AcuMS.aculab.com>
+In-Reply-To: <20181210104908.GA23132@wind.enjellic.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Isn't a thread likely to clear the AVX registers at the end of a function
-> that uses them.
-> In particular this removes the massive overhead on certain cpus of
-> switching between two AVX modes.
-> So it is actually unlikely that XSAVE will need to save them at all?
+On Mon, Dec 10, 2018 at 04:49:08AM -0600, Dr. Greg wrote:
+> In the meantime, I wanted to confirm that your jarkko-sgx/master
+> branch contains the proposed driver that is headed upstream.  Before
+> adding the SFLC patches we thought it best to run the driver through
+> some testing in order to verify that any problems we generated where
+> attributable to our work and not the base driver.
 
-Only if context switches only happened on function boundaries, which
-is obviously not the case.
+The master branch is by definition unstable at the moment i.e. it can
+sometimes (not often) contain unfinished changes. Use next for testing.
+I update next when I consider the master contents "stable enough".
 
-Yes the detection mechanism is not 100% accurate, but if AVX
-is used significantly it should eventually detect it. 
-Think of it as a statistical sampling heuristic.
+Thanks.
 
-> 
-> As I've also said before the registers are caller saved and since
-> systems calls are normal function calls the application code
-> would have to save them across a system call.
-> This allows the kernel to zero the registers on system call entry
-> again meaning that XSAVE won't normally have to save them.
-
-While I agree this would be nice, the Linux system call ABI 
-wasn't defined like this, so it cannot be done at this point.
-
--Andi
-
+/Jarkko
