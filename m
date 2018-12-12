@@ -2,43 +2,75 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A434EC04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 10:51:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA711C04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 10:52:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C83720839
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 10:51:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C83720839
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kleine-koenig.org
+	by mail.kernel.org (Postfix) with ESMTP id 9B9BA20839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 10:52:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KtPQd7NG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B9BA20839
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727087AbeLLKv3 (ORCPT
+        id S1727130AbeLLKwJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 05:51:29 -0500
-Received: from antares.kleine-koenig.org ([94.130.110.236]:45650 "EHLO
-        antares.kleine-koenig.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726842AbeLLKv3 (ORCPT
+        Wed, 12 Dec 2018 05:52:09 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:41690 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726791AbeLLKwJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 05:51:29 -0500
-Received: by antares.kleine-koenig.org (Postfix, from userid 1000)
-        id 5683B4DA80C; Wed, 12 Dec 2018 11:51:26 +0100 (CET)
-Date:   Wed, 12 Dec 2018 11:51:24 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <uwe@kleine-koenig.org>
+        Wed, 12 Dec 2018 05:52:09 -0500
+Received: by mail-ed1-f65.google.com with SMTP id z28so15146916edi.8;
+        Wed, 12 Dec 2018 02:52:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=IzAnvxxHAXEAR0bdfpTkQaTIm7Ghs8YMA4IRbwqkJB4=;
+        b=KtPQd7NGr4fZS+uRtag/QhKzOon5Y1t9R/mxRSiPJw3bOz+5N2xC8rRVgv+O4NPsZb
+         J4xFZzCRXY2UQ1xITZ5ZynfkVNBBZHQtofMXXUPR/j7+8nwfbEQR1eeuJGGqR1guSvE1
+         XaKfKr5b2J0dottPCzUvsofZ5VDHf28PWiclzPWux7JJhsbRfkB7gm3fG/uLajZ6zinA
+         FeSXC4y2c0tehfarpc572Ce+Gqv3CvL59Z2yWFoMkftjg/9FGeWT5NRUjrsNf6TK+soi
+         ogxWEqz6YimOWVn6HhZwwzLErjIe8dDGoeqSilVc2RS9MSKdx+ghyO3aeMtca2JWGyWp
+         SEEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=IzAnvxxHAXEAR0bdfpTkQaTIm7Ghs8YMA4IRbwqkJB4=;
+        b=ucSDpD5Cfwhm8nYSISO+vgF0WYskSmpvVsQ8w7+uQAe1eOCBR2cdnhw4ebHR5ceDK4
+         /QCFQwrm6u8rHVWquIpfKrItZ8roIyEy8l/Kjs2HYpIUkDcksPhIdIzqH5RTOYdQ/Ye7
+         4sn3Bi46ETPWSnUVljuMOXVCzb6is5UWXr4TclLMNhvE3BBs20t8a1uBhXzdBx+WyxlN
+         UawC2Oq5xg7h50gOz3P8Qg3+j0LFl0fMaesiOAnkEnUZ2q3Aa0RpIjm6Za6JSSIXOsqu
+         WTZnqMlCaAZvipnbejGuxgfhMcNiqv/4Jd1UhTaXNjMI55kNTBteJzap/0vHhuTg4f3Y
+         9ScA==
+X-Gm-Message-State: AA+aEWZObpgkkUGz2RKaskk9BcCIEPs6UsO1jVIunOVX4uKbcTYgFylA
+        GLwKVb62Ywy6cs6g5ZwbGvwMBaWO
+X-Google-Smtp-Source: AFSGD/Vu/Z/rFrT505Jxee1rVF+JnODVT4geNMHDvWKg8GS/m6Q/OdJiKauDlY98kjAMwhC1ZAnkFw==
+X-Received: by 2002:a05:6402:3d1:: with SMTP id t17mr18935046edw.21.1544611926970;
+        Wed, 12 Dec 2018 02:52:06 -0800 (PST)
+Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
+        by smtp.gmail.com with ESMTPSA id s46sm4991814edd.9.2018.12.12.02.52.06
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 12 Dec 2018 02:52:06 -0800 (PST)
+Date:   Wed, 12 Dec 2018 11:52:05 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Michal =?utf-8?B?Vm9rw6HEjQ==?= <michal.vokac@ysoft.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [3/3] pwm: imx: Implement get_state() function for hardware
- readout
-Message-ID: <20181212105118.GA9268@taurus.defre.kleine-koenig.org>
-References: <1538403588-68850-3-git-send-email-michal.vokac@ysoft.com>
+Cc:     linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] pwm: imx: Sort include files
+Message-ID: <20181212105205.GB17654@ulmo>
+References: <1538403588-68850-1-git-send-email-michal.vokac@ysoft.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="liOOAslEiF7prFVr"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="qlTNgmc+xy1dBmNv"
 Content-Disposition: inline
-In-Reply-To: <1538403588-68850-3-git-send-email-michal.vokac@ysoft.com>
+In-Reply-To: <1538403588-68850-1-git-send-email-michal.vokac@ysoft.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -46,142 +78,41 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---liOOAslEiF7prFVr
+--qlTNgmc+xy1dBmNv
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hello,
-
-On Mon, Oct 01, 2018 at 04:19:48PM +0200, Michal Vok=C3=A1=C4=8D wrote:
-> Implement the get_state() function and set the initial state to reflect
-> real state of the hardware. This allows to keep the PWM running if it was
-> enabled in bootloader. It is very similar to the GPIO behavior. GPIO pin
-> set as output in bootloader keep the same setting in Linux unless it is
-> reconfigured.
+On Mon, Oct 01, 2018 at 04:19:46PM +0200, Michal Vok=C3=A1=C4=8D wrote:
+> Sort included header files alphabetically.
 >=20
-> If we find the PWM block enabled we need to prepare and enable its source
-> clock otherwise the clock will be disabled late in the boot as unused.
-> That will leave the PWM in enabled state but with disabled clock. That has
-> a side effect that the PWM output is left at its current level at which
-> the clock was disabled. It is totally non-deterministic and it may be LOW
-> or HIGH.
-
-Does this problem still exist if the pwm-imx driver is a module?
-
 > Signed-off-by: Michal Vok=C3=A1=C4=8D <michal.vokac@ysoft.com>
 > ---
->  drivers/pwm/pwm-imx.c | 53 +++++++++++++++++++++++++++++++++++++++++++++=
-++++++
->  1 file changed, 53 insertions(+)
->=20
-> diff --git a/drivers/pwm/pwm-imx.c b/drivers/pwm/pwm-imx.c
-> index 7a4907b..6cd3b72 100644
-> --- a/drivers/pwm/pwm-imx.c
-> +++ b/drivers/pwm/pwm-imx.c
-> @@ -83,6 +83,9 @@
-> =20
->  #define MX3_PWM_SWR_LOOP		5
-> =20
-> +/* PWMPR register value of 0xffff has the same effect as 0xfffe */
-> +#define MX3_PWMPR_MAX			0xfffe
-> +
->  struct imx_chip {
->  	struct clk	*clk_per;
-> =20
-> @@ -93,6 +96,55 @@ struct imx_chip {
-> =20
->  #define to_imx_chip(chip)	container_of(chip, struct imx_chip, chip)
-> =20
-> +static void imx_pwm_get_state(struct pwm_chip *chip,
-> +		struct pwm_device *pwm, struct pwm_state *state)
+>  drivers/pwm/pwm-imx.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
 
-broken alignment.
+Applied, thanks.
 
-> +{
-> +	struct imx_chip *imx =3D to_imx_chip(chip);
-> +	u32 period, prescaler, pwm_clk, ret, val;
-> +	u64 tmp;
-> +
-> +	val =3D readl(imx->mmio_base + MX3_PWMCR);
-> +
-> +	if (val & MX3_PWMCR_EN) {
-> +		state->enabled =3D true;
-> +		ret =3D clk_prepare_enable(imx->clk_per);
-> +		if (ret)
-> +			return;
-> +	} else {
-> +		state->enabled =3D false;
-> +	}
-> +
-> +	switch (FIELD_GET(MX3_PWMCR_POUTC, val)) {
-> +	case MX3_PWMCR_POUTC_NORMAL:
-> +		state->polarity =3D PWM_POLARITY_NORMAL;
-> +		break;
-> +	case MX3_PWMCR_POUTC_INVERTED:
-> +		state->polarity =3D PWM_POLARITY_INVERSED;
-> +		break;
-> +	default:
-> +		dev_warn(chip->dev, "can't set polarity, output disconnected");
+Thierry
 
-Should we return an error here?
-
-> +	}
-> +
-> +	prescaler =3D MX3_PWMCR_PRESCALER_GET(val);
-> +	pwm_clk =3D clk_get_rate(imx->clk_per);
-> +	pwm_clk =3D DIV_ROUND_CLOSEST_ULL(pwm_clk, prescaler);
-> +	val =3D readl(imx->mmio_base + MX3_PWMPR);
-
-It would be more cautionous to not rely on the reserved bits to read as
-zero. So I suggest to mask the value with 0xffff.
-
-> +	period =3D val >=3D MX3_PWMPR_MAX ? MX3_PWMPR_MAX : val;
-> +
-> +	/* PWMOUT (Hz) =3D PWMCLK / (PWMPR + 2) */
-> +	tmp =3D NSEC_PER_SEC * (u64)(period + 2);
-> +	state->period =3D DIV_ROUND_CLOSEST_ULL(tmp, pwm_clk);
-
-Would it make sense to introduce a policy about how to round in this
-case? (Similarily for .apply?) This is of course out of scope for this
-patch.
-
-> +
-> +	/* PWMSAR can be read only if PWM is enabled */
-> +	if (state->enabled) {
-> +		val =3D readl(imx->mmio_base + MX3_PWMSAR);
-> +		tmp =3D NSEC_PER_SEC * (u64)(val);
-> +		state->duty_cycle =3D DIV_ROUND_CLOSEST_ULL(tmp, pwm_clk);
-> +	} else {
-> +		state->duty_cycle =3D 0;
-> +	}
-> +}
-> +
->  static int imx_pwm_config_v1(struct pwm_chip *chip,
->  		struct pwm_device *pwm, int duty_ns, int period_ns)
->  {
-> @@ -272,6 +324,7 @@ static const struct pwm_ops imx_pwm_ops_v1 =3D {
-> =20
->  static const struct pwm_ops imx_pwm_ops_v2 =3D {
->  	.apply =3D imx_pwm_apply_v2,
-> +	.get_state =3D imx_pwm_get_state,
->  	.owner =3D THIS_MODULE,
->  };
-> =20
-
---liOOAslEiF7prFVr
+--qlTNgmc+xy1dBmNv
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAlwQ6CIACgkQwfwUeK3K
-7AlMWgf9Gj9lIoShtg2SzUGV34HsRZ0VXDzyUeASF86bsQechN8iN5SsR+PQNmgC
-LtStIJnVKknQz2FhdgcRfXo2wUVBpMIvmsyJSH4IhmYVd51u1TX8sigjIMZarofi
-pN2Hy2jua0pwxQeOWicEgXO3ukl9yoOlQc6C716Gaf4fjxXCYddEUz3EyXEXumQM
-XijO9J1bx22fr4hEmxCve95rV6xP2mpjhyvRLhVGFwR8RWlTj+ToOJQZ4Kv7j9hU
-uc+S1G+WcV+Z8bvufh3Vko/C1pWwNfI6mD73X9sOapJVfQ7Wscx9Q4U6EoJBfmx/
-PTxjDqSQvSuVUg+T4Hk7C5of+trTGw==
-=+grv
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlwQ6FUACgkQ3SOs138+
+s6FFsQ//btDu0pz+GTZtr4KqoQPIKacHrD7MbWlyLFERBtFikwDK13mZv5q9Sl2c
+jZmFCNXtGC6aD43mTQjno+4UCRw9WOCacnKLGPu3wbF4hnD/sJ8hKT3HFASfcX+P
+v4mINeTfY62Z9A0sLGcrVlJ10clRBBZiIhKmI2uVwtVHi22LCOLyXGNtgn/EPGv4
+t6cXi8DS++kd7BGukRMM09Q3dHcCAV2Cp/7HaBfZBZYed7+p930+7V9cqvcgh11+
+HzlUDmcQ7w1rybU32N61d631zepFuHeln2zAbf93M1xMItNiAu3mwXZNWS/tdufw
+FlQcZA01eqVcwdDNcyfYMaUyp9O4F438Ym4Sp7pJ+1z1CX1lKDLhNVmRONM3u7+4
+gZXoveMPIF1OlVudYIsGpef1hIgPmVzOznvMRTqChKs8T0ScgNXNX2OMGrMhRSDt
+VEoQWQUOMWiRrZk75l9J8SiG7BdTImKxomLehS1zBPR/OVfJoJOPhljEMoOpW1Ar
+q+zf+DoOM0sCM6Nzuv3iPHS6dXqc2FcP/Yl2m7p01wXDr8Fom9kI72aMOSCw998R
+FPYbIiQQrM4EBQy45nvS4FGWNF7WmuGTcuMvQJm4r2o1STFMKkHzBd1wG51tFIsH
+10RoHvNcLbkxLqx7q+8CE+MdNe8jH44csi8gx9WHaWDBEwOURFg=
+=ux8v
 -----END PGP SIGNATURE-----
 
---liOOAslEiF7prFVr--
+--qlTNgmc+xy1dBmNv--
