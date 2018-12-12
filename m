@@ -2,97 +2,167 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,T_MIXED_ES,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB8E4C6783B
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 16:06:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F0FCC65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 16:08:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6EC992080F
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 16:06:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="Bx2K1QWc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EC992080F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+	by mail.kernel.org (Postfix) with ESMTP id 4429E2084E
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 16:08:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4429E2084E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=libc.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727866AbeLLQGL (ORCPT
+        id S1727814AbeLLQIG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 11:06:11 -0500
-Received: from sonic307-9.consmr.mail.bf2.yahoo.com ([74.6.134.48]:45046 "EHLO
-        sonic307-9.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727634AbeLLQGK (ORCPT
+        Wed, 12 Dec 2018 11:08:06 -0500
+Received: from 216-12-86-13.cv.mvl.ntelos.net ([216.12.86.13]:58842 "EHLO
+        brightrain.aerifal.cx" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726358AbeLLQIG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 11:06:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1544630769; bh=AAyDaqBwEWrHzXrCEtlpl306HHAwsgI0AAHJccOhSfc=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=Bx2K1QWc0JV1Ji+5i52w22o0H1dZA9g8VnvfUTjBDvwIoY1sNELSH06P9aPFs6xHLekdqwpSKtT95UZ2c33kbzFQMjmBbJlSzWQxKqdBI6eZdgnfGAa71tzz7YvkjQSnU18IiVSTHIxi1Qef6+/GLvini9+Ag1Yf3lvU1tV9q8+gaT8N6BIylBZFz0RXaODVkgsVAaMWoNrColh/DYpXMeb5rxdNSkejixJzmp3pG2HvLXGFXxT1v0e/TgmQrNzOu2XXSEFJK8njMmXMqqHvkbsPoV1updg51Q32O36LiIVgSC2QXhtGM3SxiOsb0sreL6RXR4+XkUjaU4RaO7EPXg==
-X-YMail-OSG: IbcGqDIVM1kijcQXooZJ0yH02tUHUPsz2kYwHQ7cPD3k9xvzETfaR06USKMfUwr
- OgcpJGMjVc.UPi5zLc_mF2_NEZ5lYfzjaC31MDc8tsCaI6GaXOfTn_jE7RfxjPBKUS6nbWyXRrIJ
- uUmCVUtUQuI.mnGyMX5RhmN2Vd6By_576QkN.PQo.qlLYIvfkykQ9uHSPl9qeIURefqKWdyE142y
- u4kjHhyXoWt8P4_2.nALhZvdETPH8jB0CJCbuQrwvTjZUMla0A9GxRAlXI3Z8mx9JDJ8UsXQwzVV
- 3AMaZVNb5p8Oc3vLYLeFfUxj4.h_vE1Uj8klJZAQqQPVA9KYGzwWUxbxxqmgndyN4yUFQjMudf7C
- JesLSQrsDfTFKX5EI9dZ2qWqbghYur8AHkZ9eqr7d_0DmsjJXKXcv3O8.zsKJSYr52SmF1rV1_c1
- YlE328iZOfMMDzs5ybmSbDd.N33vNOlQ9DfbILuAbafGwc_H.pbX9Iorzj5oIf5kDPqPRkLx2XQB
- qWYETZGX5YP.Y0kVYqEPU.01LAv32.meHh8v.FzlGHyhKFZbU6b868GUODyKAgMKbzyNvOkM5B1E
- BAeM4TTFzjNGfzhhHb_4FCmcIPhW0eO3Vo4R6FxTx69N8H8hJIE5x_JQgqvlIvpwRmwm8D_gLO3q
- HN2URR1T2iRoXRxOrfXammZJxKUHB5XV1B.C5zUONbdTDgYqCTv8MTCq0l3mm8zWQzDPSXsN7izt
- 1bqoLGiaBjo0kjEmnnJgOFnO56BEAYrHKbhXMO7rdjRxU1S_xiul74R9So3rL5aPKlXPahYBueoI
- aPB5UZ4jJt9moueIGJ3F2wsr9k.RTk__gedMJM.WgN570Cg1fju2brdsMKgYC0U8Vz2j.DdgEBLH
- RnPYtvsyVqTA0xCZ3U.twGq21roux56tRySrg80TXHsYTWrPwQd52Byo7qv0TfjmGn4W48JCDQ1U
- ei3XsMjnA04aI5KwuiCn5P45fDhZ8ASLGhb6buFqe3rxrseq.1WzdOVbtplFYLnYquiHBjhqIQge
- v61esofMkdsiM3UMoHLnoqNpaCqHH50NnKJVtLyBvGhic8AM8kgq5iY35OZwUytNbn.pEYy1LHk9
- b7HY_nwtJpBjefylHekSey7JuHVgWcUyVz.5R
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic307.consmr.mail.bf2.yahoo.com with HTTP; Wed, 12 Dec 2018 16:06:09 +0000
-Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.105]) ([67.169.65.224])
-          by smtp410.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID fe2a1506230eb1105a50167d41a8a69f;
-          Wed, 12 Dec 2018 16:06:07 +0000 (UTC)
-Subject: [PATCH v5 38/38] TOMOYO: Update LSM flags to no longer be exclusive
-To:     jmorris@namei.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, selinux@vger.kernel.org
-Cc:     john.johansen@canonical.com, keescook@chromium.org,
-        penguin-kernel@i-love.sakura.ne.jp, paul@paul-moore.com,
-        linux-fsdevel@vger.kernel.org, sds@tycho.nsa.gov,
-        adobriyan@gmail.com, mic@digikod.net, s.mesoraca16@gmail.com
-References: <20181211224314.22412-1-casey@schaufler-ca.com>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <68432944-ad46-5b8f-09ba-cb956a479d49@schaufler-ca.com>
-Date:   Wed, 12 Dec 2018 08:05:56 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 12 Dec 2018 11:08:06 -0500
+Received: from dalias by brightrain.aerifal.cx with local (Exim 3.15 #2)
+        id 1gX70x-0002QR-00; Wed, 12 Dec 2018 16:05:35 +0000
+Date:   Wed, 12 Dec 2018 11:05:35 -0500
+From:   Rich Felker <dalias@libc.org>
+To:     Steven Newbury <steve@snewbury.org.uk>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        macro@linux-mips.org, tg@mirbsd.de, luto@kernel.org, arnd@arndb.de,
+        s@ecloud.org, catalin.marinas@arm.com, fweimer@redhat.com,
+        glaubitz@physik.fu-berlin.de, christian.brauner@canonical.com,
+        hjl.tools@gmail.com, hpa@zytor.com
+Subject: Re: Can we drop upstream Linux x32 support?
+Message-ID: <20181212160535.GS23599@brightrain.aerifal.cx>
+References: <1544605954.117529.27.camel@snewbury.org.uk>
+ <20181212140147.GR23599@brightrain.aerifal.cx>
+ <1544625960.117529.58.camel@snewbury.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <20181211224314.22412-1-casey@schaufler-ca.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1544625960.117529.58.camel@snewbury.org.uk>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kees Cook <keescook@chromium.org>
+On Wed, Dec 12, 2018 at 02:46:00PM +0000, Steven Newbury wrote:
+> -----BEGIN PGP SIGNED MESSAGE-----
+> Hash: SHA256
+> 
+> On Wed, 2018-12-12 at 09:01 -0500, Rich Felker wrote:
+> > On Wed, Dec 12, 2018 at 09:12:34AM +0000, Steven Newbury wrote:
+> > > -----BEGIN PGP SIGNED MESSAGE-----
+> > > Hash: SHA256
+> > > 
+> > > First off I'd like to request: Please don't break my userspace!
+> > > 
+> > > I have a number of systems running with x32-abi as native.  They
+> > > work
+> > > well, I've no want or desire to upgrade their memory or CPUs to
+> > > make
+> > > keep them working as well as they do now.  Let alone the hassle of
+> > > having to redeploy with a completely different ABI.
+> > > 
+> > > 
+> > > I've been working on getting as much userspace as I can working
+> > > with
+> > > x32 since it first became somewhat usable, I've sent patches
+> > > upstream
+> > > and pushed to encourage projects to write portable code.  Sometimes
+> > > that has meant just little tweaks to build systems, or sometimes
+> > > disabling asm where I consider it isn't worth the effort of making
+> > > it
+> > > work.  For other projects I've converted the asm or even in some
+> > > cases
+> > > got the JIT working, mozjs17 for example.
+> > > 
+> > > So I'm both a user and a developer.
+> > > 
+> > > Breaking support for x32 would be really bad for me, but if I'm the
+> > > only one using it I suppose I can't really justify it being kept on
+> > > that basis.  I know CERN has sucessfully experimented with it over
+> > > the
+> > > years though, so I wouldn't be surprised if there are other users
+> > > hiding out there.
+> > > 
+> > > I can't help but wonder if it wouldn't make more sense to drop x86
+> > > support from long mode than x32.  AMD64 x86 support was always
+> > > intended
+> > >  as a compatibility feature, I very much doubt there are more
+> > > people
+> > > out there using an x86 native userspace on a 64 bit kernel than
+> > > there
+> > 
+> > I am. The only reason I'm using a 64-bit kernel with it is to get the
+> > full 4GB address space for userspace rather than just 3GB. I suspect
+> > there are more users like me than like you.
+> > 
+> You may well be right, I lack any data either way.  I just find it hard
+> to believe I'm, what, one of two users of x32?
+> 
+> > Unlike x32, i386 is actually widely supported and works, and achieves
+> > most of the benefits of x32, but with marginally worse performance
+> > due
+> x32 works, and is widely supported by the fact that the vast majority
+> of free software is just a compile away.  Now, there are holes, I've
+> been trying to get Chromium/qtwebengine ported for the last couple of
+> weeks.
+> 
+> The performance isn't marginally worse, it's much worse, unless the
+> code in question is hand optimized SIMD or is otherwise not really
+> standard "IA32 ISA" anyway.
 
-With blob sharing in place, TOMOYO is no longer an exclusive LSM, so it
-can operate separately now. Mark it as such.
+When the baseline improvement is roughly 2x (because you can double N
+in make -jN), I consider 10-20% "marginal". Obviously there's a
+perspective where 10-20% is huge. Have you actually observed x32 gcc
+(since gcc is the example I'm using here, where it makes a big
+difference) running that much faster than i386 gcc, though?
 
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
- security/tomoyo/tomoyo.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+What I meant by "widely supported" is that pretty much any kernel
+that's shipped can run i386 binaries. On the other hand, at least as I
+understand it,lots of distros have x32 disabled because it's "not
+used" or because there were a couple historic vulns exposed by having
+it enabled and they just decided it wasn't worth it.
 
-diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
-index 9094cf41a247..066c0daf0efc 100644
---- a/security/tomoyo/tomoyo.c
-+++ b/security/tomoyo/tomoyo.c
-@@ -577,7 +577,7 @@ static int __init tomoyo_init(void)
- DEFINE_LSM(tomoyo) = {
- 	.name = "tomoyo",
- 	.enabled = &tomoyo_enabled,
--	.flags = LSM_FLAG_LEGACY_MAJOR | LSM_FLAG_EXCLUSIVE,
-+	.flags = LSM_FLAG_LEGACY_MAJOR,
- 	.blobs = &tomoyo_blob_sizes,
- 	.init = tomoyo_init,
- };
--- 
-2.14.5
+> > performance sensitive it's the right choice for shipping static
+> > binaries, especially if they may be memory-hungry, since it works on
+> > pretty much any box.
+> > 
+> When it comes to power usage and latency any code that runs often is
+> peformance senstitive.  I can't argue about shipping i386 static
+> binaries, they'll work on pretty much any *x86* box, I agree.
 
+OK, so we're on the same page there.
 
+> > > are native x32 users.  x86 support could be implemented via KVM
+> > > and/or
+> > > qemu-user.  There is no reason to keep the extra complexity in the
+> > > kernel for what is effectively an emulation layer anyway.
+> > 
+> > qemu-user is a non-solution. Not only does it result in being much
+> > slower and using more resources than just running a 64-bit userspace
+> > (defeating the purpose); it's also incapable of correctly emulating
+> > lots of corner cases. I've never been able to get it to work with
+> > thread cancellation, and doing so is fundamentally hard because it
+> > would require heavy emulation of signals rather than passing them
+> > through.
+> > 
+> What's the purpose?  Running IA32 binaries is for legacy.  You don't
+> run i386/IA32 binaries for the performance.  You use i386 as x32 was
+> intended, that's succifient for you.  Great.  I get the benefits I want
+> from an x32 userspace with amd64 binaries and libraries where it makes
+> sense as I understand does Thorsten.  Are you saying this wrong,
+> broken(?), and should be removed?
+
+No, I'm not really taking a position here except that i386 (IA32)
+should not be removed. I agree that x32 is useful (which a lot of
+people are wrongly dismissing), but I also agree that the kernel code
+for it is a mess and a maintenance burden, and I'm not sure if the
+usefulness justifies that burden. I think it's really helpful to hear
+from people like you who are using it why you care that it's there.
+
+Rich
