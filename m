@@ -3,45 +3,45 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80F9DC65BAF
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACC40C67839
 	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 03:11:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50A8220989
+	by mail.kernel.org (Postfix) with ESMTP id 7CFCE20873
 	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 03:11:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50A8220989
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CFCE20873
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726410AbeLLDLf (ORCPT
+        id S1726458AbeLLDLn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 22:11:35 -0500
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:51216 "EHLO
+        Tue, 11 Dec 2018 22:11:43 -0500
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:51248 "EHLO
         heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726211AbeLLDLd (ORCPT
+        with ESMTP id S1726418AbeLLDLi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 22:11:33 -0500
+        Tue, 11 Dec 2018 22:11:38 -0500
 X-IronPort-AV: E=Sophos;i="5.56,343,1539619200"; 
-   d="scan'208";a="49566318"
+   d="scan'208";a="49566325"
 Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 12 Dec 2018 11:11:28 +0800
+  by heian.cn.fujitsu.com with ESMTP; 12 Dec 2018 11:11:34 +0800
 Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
-        by cn.fujitsu.com (Postfix) with ESMTP id CB8BA4B75BD3;
-        Wed, 12 Dec 2018 11:11:28 +0800 (CST)
+        by cn.fujitsu.com (Postfix) with ESMTP id 6A8184B734D7;
+        Wed, 12 Dec 2018 11:11:34 +0800 (CST)
 Received: from localhost.local (10.167.225.56) by
  G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Wed, 12 Dec 2018 11:11:33 +0800
+ (TLS) id 14.3.408.0; Wed, 12 Dec 2018 11:11:39 +0800
 From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
 To:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>, <bp@alien8.de>,
         <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>,
         <keescook@chromium.org>, <bhe@redhat.com>, <msys.mizuma@gmail.com>
 CC:     <indou.takao@jp.fujitsu.com>, <caoj.fnst@cn.fujitsu.com>,
         <fanc.fnst@cn.fujitsu.com>
-Subject: [PATCH v13 3/6] x86/boot: Introduce efi_get_rsdp_addr() to find RSDP from EFI table
-Date:   Wed, 12 Dec 2018 11:10:50 +0800
-Message-ID: <20181212031053.1815-4-fanc.fnst@cn.fujitsu.com>
+Subject: [PATCH v13 6/6] x86/boot/KASLR: Limit KASLR to extracting kernel in immovable memory
+Date:   Wed, 12 Dec 2018 11:10:53 +0800
+Message-ID: <20181212031053.1815-7-fanc.fnst@cn.fujitsu.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181212031053.1815-1-fanc.fnst@cn.fujitsu.com>
 References: <20181212031053.1815-1-fanc.fnst@cn.fujitsu.com>
@@ -49,7 +49,7 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 7BIT
 Content-Type:   text/plain; charset=US-ASCII
 X-Originating-IP: [10.167.225.56]
-X-yoursite-MailScanner-ID: CB8BA4B75BD3.AB884
+X-yoursite-MailScanner-ID: 6A8184B734D7.A8BA8
 X-yoursite-MailScanner: Found to be clean
 X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
@@ -57,105 +57,147 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Memory information in SRAT is necessary to fix the conflict between
-KASLR and memory-hotremove. So RSDP and SRAT should be parsed.
+KASLR randomly chooses some positions which may locate in movable
+memory regions. It will break memory hotplug feature and make the
+movable memory chosen by KASLR practically immovable.
 
-When booting form KEXEC/EFI/BIOS, the methods to compute RSDP
-are different. When booting from EFI, EFI table points to RSDP.
-So parse the EFI table and find the RSDP.
+The solution is to limit KASLR to choose memory regions in immovable
+node according to SRAT tables.
+When CONFIG_EARLY_PARSE_RSDP is enabled, walk through SRAT to get the
+information of immovable memory so that KASLR knows where should be
+chosen for randomization.
+
+Rename process_mem_region() as __process_mem_region() and name new
+function as process_mem_region().
 
 Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
 ---
- arch/x86/boot/compressed/acpi.c | 79 +++++++++++++++++++++++++++++++++
- 1 file changed, 79 insertions(+)
+ arch/x86/boot/compressed/kaslr.c | 75 +++++++++++++++++++++++++++-----
+ 1 file changed, 64 insertions(+), 11 deletions(-)
 
-diff --git a/arch/x86/boot/compressed/acpi.c b/arch/x86/boot/compressed/acpi.c
-index cad15686f82c..c96008712ec9 100644
---- a/arch/x86/boot/compressed/acpi.c
-+++ b/arch/x86/boot/compressed/acpi.c
-@@ -28,3 +28,82 @@ static acpi_physical_address get_acpi_rsdp(void)
- 	return 0;
- #endif
- }
-+
-+/* Search EFI table for RSDP. */
-+static acpi_physical_address efi_get_rsdp_addr(void)
-+{
-+#ifdef CONFIG_EFI
-+	acpi_physical_address rsdp_addr = 0;
-+	efi_system_table_t *systab;
-+	struct efi_info *e;
-+	bool efi_64;
-+	char *sig;
-+	int size;
-+	int i;
-+
-+	e = &boot_params->efi_info;
-+	sig = (char *)&e->efi_loader_signature;
-+
-+	if (!strncmp(sig, EFI64_LOADER_SIGNATURE, 4))
-+		efi_64 = true;
-+	else if (!strncmp(sig, EFI32_LOADER_SIGNATURE, 4))
-+		efi_64 = false;
-+	else {
-+		debug_putstr("Wrong EFI loader signature.\n");
-+		return 0;
-+	}
-+
-+	/* Get systab from boot params. Based on efi_init(). */
-+#ifdef CONFIG_X86_64
-+	systab = (efi_system_table_t *)(e->efi_systab | ((__u64)e->efi_systab_hi<<32));
-+#else
-+	if (e->efi_systab_hi || e->efi_memmap_hi) {
-+		debug_putstr("Error getting RSDP address: EFI system table located above 4GB.\n");
-+		return 0;
-+	}
-+	systab = (efi_system_table_t *)e->efi_systab;
+diff --git a/arch/x86/boot/compressed/kaslr.c b/arch/x86/boot/compressed/kaslr.c
+index b251572e77af..fb2cdddaa81a 100644
+--- a/arch/x86/boot/compressed/kaslr.c
++++ b/arch/x86/boot/compressed/kaslr.c
+@@ -97,6 +97,11 @@ static bool memmap_too_large;
+ /* Store memory limit specified by "mem=nn[KMG]" or "memmap=nn[KMG]" */
+ static unsigned long long mem_limit = ULLONG_MAX;
+ 
++#ifdef CONFIG_EARLY_PARSE_RSDP
++/* The immovable memory regions */
++extern struct mem_vector immovable_mem[MAX_NUMNODES*2];
 +#endif
 +
-+	if (!systab)
-+		return 0;
+ 
+ enum mem_avoid_index {
+ 	MEM_AVOID_ZO_RANGE = 0,
+@@ -413,6 +418,9 @@ static void mem_avoid_init(unsigned long input, unsigned long input_size,
+ 	/* Mark the memmap regions we need to avoid */
+ 	handle_mem_options();
+ 
++	/* Mark the immovable regions we need to choose */
++	get_immovable_mem();
 +
+ #ifdef CONFIG_X86_VERBOSE_BOOTUP
+ 	/* Make sure video RAM can be used. */
+ 	add_identity_map(0, PMD_SIZE);
+@@ -568,9 +576,9 @@ static unsigned long slots_fetch_random(void)
+ 	return 0;
+ }
+ 
+-static void process_mem_region(struct mem_vector *entry,
+-			       unsigned long minimum,
+-			       unsigned long image_size)
++static void __process_mem_region(struct mem_vector *entry,
++				 unsigned long minimum,
++				 unsigned long image_size)
+ {
+ 	struct mem_vector region, overlap;
+ 	unsigned long start_orig, end;
+@@ -646,6 +654,57 @@ static void process_mem_region(struct mem_vector *entry,
+ 	}
+ }
+ 
++static bool process_mem_region(struct mem_vector *region,
++			       unsigned long long minimum,
++			       unsigned long long image_size)
++{
++	int i;
 +	/*
-+	 * Get EFI tables from systab. Based on efi_config_init() and
-+	 * efi_config_parse_tables().
++	 * If no immovable memory found, or MEMORY_HOTREMOVE disabled,
++	 * walk all the regions, so use region directly.
 +	 */
-+	size = efi_64 ? sizeof(efi_config_table_64_t) :
-+			sizeof(efi_config_table_32_t);
++	if (!num_immovable_mem) {
++		__process_mem_region(region, minimum, image_size);
 +
-+	for (i = 0; i < systab->nr_tables; i++) {
-+		void *config_tables;
-+		unsigned long table;
-+		efi_guid_t guid;
-+
-+		config_tables = (void *)(systab->tables + size * i);
-+		if (efi_64) {
-+			efi_config_table_64_t *tmp_table;
-+
-+			tmp_table = (efi_config_table_64_t *)config_tables;
-+			guid = tmp_table->guid;
-+			table = tmp_table->table;
-+
-+			if (!IS_ENABLED(CONFIG_X86_64) && table >> 32) {
-+				debug_putstr("Error getting RSDP address: EFI system table located above 4GB.\n");
-+				return 0;
-+			}
-+		} else {
-+			efi_config_table_32_t *tmp_table;
-+
-+			tmp_table = (efi_config_table_32_t *)config_tables;
-+			guid = tmp_table->guid;
-+			table = tmp_table->table;
++		if (slot_area_index == MAX_SLOT_AREA) {
++			debug_putstr("Aborted e820/efi memmap scan (slot_areas full)!\n");
++			return 1;
 +		}
-+
-+		if (!(efi_guidcmp(guid, ACPI_TABLE_GUID)))
-+			rsdp_addr = (acpi_physical_address)table;
-+		else if (!(efi_guidcmp(guid, ACPI_20_TABLE_GUID)))
-+			return (acpi_physical_address)table;
++		return 0;
 +	}
-+	return rsdp_addr;
++
++#ifdef CONFIG_EARLY_PARSE_RSDP
++	/*
++	 * If immovable memory found, filter the intersection between
++	 * immovable memory and region to __process_mem_region().
++	 * Otherwise, go on old code.
++	 */
++	for (i = 0; i < num_immovable_mem; i++) {
++		struct mem_vector entry;
++		unsigned long long start, end, entry_end, region_end;
++
++		if (!mem_overlaps(region, &immovable_mem[i]))
++			continue;
++
++		start = immovable_mem[i].start;
++		end = start + immovable_mem[i].size;
++		region_end = region->start + region->size;
++
++		entry.start = clamp(region->start, start, end);
++		entry_end = clamp(region_end, start, end);
++		entry.size = entry_end - entry.start;
++
++		__process_mem_region(&entry, minimum, image_size);
++
++		if (slot_area_index == MAX_SLOT_AREA) {
++			debug_putstr("Aborted e820/efi memmap scan (slot_areas full)!\n");
++			return 1;
++		}
++	}
++	return 0;
 +#endif
 +}
++
+ #ifdef CONFIG_EFI
+ /*
+  * Returns true if mirror region found (and must have been processed
+@@ -711,11 +770,8 @@ process_efi_entries(unsigned long minimum, unsigned long image_size)
+ 
+ 		region.start = md->phys_addr;
+ 		region.size = md->num_pages << EFI_PAGE_SHIFT;
+-		process_mem_region(&region, minimum, image_size);
+-		if (slot_area_index == MAX_SLOT_AREA) {
+-			debug_putstr("Aborted EFI scan (slot_areas full)!\n");
++		if (process_mem_region(&region, minimum, image_size))
+ 			break;
+-		}
+ 	}
+ 	return true;
+ }
+@@ -742,11 +798,8 @@ static void process_e820_entries(unsigned long minimum,
+ 			continue;
+ 		region.start = entry->addr;
+ 		region.size = entry->size;
+-		process_mem_region(&region, minimum, image_size);
+-		if (slot_area_index == MAX_SLOT_AREA) {
+-			debug_putstr("Aborted e820 scan (slot_areas full)!\n");
++		if (process_mem_region(&region, minimum, image_size))
+ 			break;
+-		}
+ 	}
+ }
+ 
 -- 
 2.19.2
 
