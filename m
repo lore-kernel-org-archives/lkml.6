@@ -2,142 +2,141 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A85CEC04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 10:09:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3B4DC04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 10:10:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7553F20839
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 10:09:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7553F20839
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 9F8AB20839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 10:10:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F8AB20839
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727143AbeLLKJp (ORCPT
+        id S1727004AbeLLKK4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 05:09:45 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:40018 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726842AbeLLKJo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 05:09:44 -0500
-Received: by mail-ed1-f67.google.com with SMTP id d3so15043816edx.7
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 02:09:43 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=O14oezGn0qmRYfjDZ3lSh1IXfhWpIwxTsdg3rzwioVg=;
-        b=CHTJSN9WB+ZTnjpWdnlXc2XxaBC+N3YsfJI+oaDfsgRqIk6tagyhHqyAIah/n8rVhS
-         SDi0C6xVEwqCyUmHSidyjgl9q17R7Qd4oQ7PqwBgirXulz6dW5UOYpmSym27J1XNc7sr
-         fmwzMdxC1KG4mOtqwtUVi6NiTw78h206Bxvl1QAVPhlfk9qhW8dyc5YcGQe0RasHfNFo
-         Q7+tQK/ooFWrRkSfljSN4p3stxGBsJQm1LuOB/fZVc3ugKMyOajoP/eKTWwcpLgnkiU6
-         xuEzIK1mY18jgiUIi+DgGh6WWaIl5qShWm/pdG211Ukbd6edRkFZESthX9QfKt1mR/iu
-         HF3Q==
-X-Gm-Message-State: AA+aEWavq7se/M9WNOLlxkjubIwBJtEGSxfPnG83/5ZnH2cvmYuHDMLO
-        C63QUl/vtFwG4QJELAwhCEjMhA==
-X-Google-Smtp-Source: AFSGD/UfKIBZQqEiOopL3J2t3uDzi2bvRA6YwY3VE6/QcTaXEOTr+/9JHG6GSQq2hhNEF7C0IfT8rQ==
-X-Received: by 2002:a50:b744:: with SMTP id g62mr18629208ede.14.1544609382820;
-        Wed, 12 Dec 2018 02:09:42 -0800 (PST)
-Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id l51sm4960061edb.36.2018.12.12.02.09.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 12 Dec 2018 02:09:41 -0800 (PST)
-Subject: Re: [RFC/RFT 00/10] i2c: move handling of suspended adapters to the
- core
-To:     Wolfram Sang <wsa@the-dreams.de>
-Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-References: <20181210210310.12677-1-wsa+renesas@sang-engineering.com>
- <2094a0d4-733f-7f74-abd2-bdb28edd0f80@redhat.com>
- <20181211234102.GA6701@kunai>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <e8c68ef5-5085-e304-4959-82c4959f4511@redhat.com>
-Date:   Wed, 12 Dec 2018 11:09:41 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Wed, 12 Dec 2018 05:10:56 -0500
+Received: from mx2.suse.de ([195.135.220.15]:37480 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726727AbeLLKK4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 05:10:56 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 586C8AE88;
+        Wed, 12 Dec 2018 10:10:53 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 0B2191E11DB; Wed, 12 Dec 2018 11:10:51 +0100 (CET)
+Date:   Wed, 12 Dec 2018 11:10:51 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Josef Bacik <josef@toxicpanda.com>
+Cc:     kernel-team@fb.com, hannes@cmpxchg.org,
+        linux-kernel@vger.kernel.org, tj@kernel.org, david@fromorbit.com,
+        akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, riel@redhat.com, jack@suse.cz
+Subject: Re: [PATCH 2/3] filemap: pass vm_fault to the mmap ra helpers
+Message-ID: <20181212101051.GB10902@quack2.suse.cz>
+References: <20181211173801.29535-1-josef@toxicpanda.com>
+ <20181211173801.29535-3-josef@toxicpanda.com>
 MIME-Version: 1.0
-In-Reply-To: <20181211234102.GA6701@kunai>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181211173801.29535-3-josef@toxicpanda.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 12-12-18 00:41, Wolfram Sang wrote:
-> Hi Hans,
+On Tue 11-12-18 12:38:00, Josef Bacik wrote:
+> All of the arguments to these functions come from the vmf, and the
+> following patches are going to add more arguments.  Cut down on the
+> amount of arguments passed by simply passing in the vmf to these two
+> helpers.
 > 
-> thanks for testing this series!
+> Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+
+The patch looks good. You can add:
+
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
+> ---
+>  mm/filemap.c | 28 ++++++++++++++--------------
+>  1 file changed, 14 insertions(+), 14 deletions(-)
 > 
->> Note that the i2c-sprd driver changes in your patchset also get close
->> to triggering this problem, but they dodge the bullet because there
->> are separate system-wide and runtime suspend handlers and only the
->> system-wide handlers call the new i2c_mark_adapter_suspended() function.
+> diff --git a/mm/filemap.c b/mm/filemap.c
+> index 03bce38d8f2b..8fc45f24b201 100644
+> --- a/mm/filemap.c
+> +++ b/mm/filemap.c
+> @@ -2309,20 +2309,20 @@ EXPORT_SYMBOL(generic_file_read_iter);
+>   * Synchronous readahead happens when we don't even find
+>   * a page in the page cache at all.
+>   */
+> -static void do_sync_mmap_readahead(struct vm_area_struct *vma,
+> -				   struct file_ra_state *ra,
+> -				   struct file *file,
+> -				   pgoff_t offset)
+> +static void do_sync_mmap_readahead(struct vm_fault *vmf)
+>  {
+> +	struct file *file = vmf->vma->vm_file;
+> +	struct file_ra_state *ra = &file->f_ra;
+>  	struct address_space *mapping = file->f_mapping;
+> +	pgoff_t offset = vmf->pgoff;
+>  
+>  	/* If we don't want any read-ahead, don't bother */
+> -	if (vma->vm_flags & VM_RAND_READ)
+> +	if (vmf->vma->vm_flags & VM_RAND_READ)
+>  		return;
+>  	if (!ra->ra_pages)
+>  		return;
+>  
+> -	if (vma->vm_flags & VM_SEQ_READ) {
+> +	if (vmf->vma->vm_flags & VM_SEQ_READ) {
+>  		page_cache_sync_readahead(mapping, ra, file, offset,
+>  					  ra->ra_pages);
+>  		return;
+> @@ -2352,16 +2352,16 @@ static void do_sync_mmap_readahead(struct vm_area_struct *vma,
+>   * Asynchronous readahead happens when we find the page and PG_readahead,
+>   * so we want to possibly extend the readahead further..
+>   */
+> -static void do_async_mmap_readahead(struct vm_area_struct *vma,
+> -				    struct file_ra_state *ra,
+> -				    struct file *file,
+> -				    struct page *page,
+> -				    pgoff_t offset)
+> +static void do_async_mmap_readahead(struct vm_fault *vmf,
+> +				    struct page *page)
+>  {
+> +	struct file *file = vmf->vma->vm_file;
+> +	struct file_ra_state *ra = &file->f_ra;
+>  	struct address_space *mapping = file->f_mapping;
+> +	pgoff_t offset = vmf->pgoff;
+>  
+>  	/* If we don't want any read-ahead, don't bother */
+> -	if (vma->vm_flags & VM_RAND_READ)
+> +	if (vmf->vma->vm_flags & VM_RAND_READ)
+>  		return;
+>  	if (ra->mmap_miss > 0)
+>  		ra->mmap_miss--;
+> @@ -2418,10 +2418,10 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
+>  		 * We found the page, so try async readahead before
+>  		 * waiting for the lock.
+>  		 */
+> -		do_async_mmap_readahead(vmf->vma, ra, file, page, offset);
+> +		do_async_mmap_readahead(vmf, page);
+>  	} else if (!page) {
+>  		/* No page in the page cache at all */
+> -		do_sync_mmap_readahead(vmf->vma, ra, file, offset);
+> +		do_sync_mmap_readahead(vmf);
+>  		count_vm_event(PGMAJFAULT);
+>  		count_memcg_event_mm(vmf->vma->vm_mm, PGMAJFAULT);
+>  		ret = VM_FAULT_MAJOR;
+> -- 
+> 2.14.3
 > 
-> Yes, this what I assumed to be all around - seperate handlers for RPM
-> and PM. And I also assumed that they could be seperated if they aren't
-> already. Until I read...
-> 
->> As I explain in the commit message of the first attached patch
->> simply always using split handlers is not really an option because
->> of adapter drivers using DPM_FLAG_SMART_PREPARE or
->> DPM_FLAG_SMART_SUSPEND.
-> 
-> ... this. I don't know what these flags do (and reading SMART in there
-> gives me more a 'uh-oh' feeling)
-
-On x86 the lines between runtime suspend and system-suspend are blurring
-with technologies like "connected standby" and in general devices moving
-to suspend2idle as system-suspend state, I guess this also applies to
-modern smartphone platforms but I'm not following those closely.
-
-What this means on x86 is that the firmware is not doing any suspend
-handling anymore and the OS / device-drivers get to do all the suspend.
-For many devices this means that if they are runtime-suspended, and there
-is no difference between the runtime and system suspend handling at the
-driver level, they can be left as is, so during a system suspend they are
-not touched at all (and left runtime suspended during system resume).
-
-The "SMART" bit is really not all that smart, SMART_PREPARE means that
-the drivers pm prepare callback will return positive non 0 (e.g. 1) to
-indicate that the device may not be kept in its runtime suspended
-state when transitioning to system-suspend, otoh when the prepare
-callback returns 0 and the SMART_PREPARE flag is set then *all* suspend/
-resume handling can be skipped during a system suspend.
-
-SMART_SUSPEND means that if the device is runtime-suspended it may be left
-as such, this only gets checked if the driver either does not have the
-SMART_PREPARE flag, or the prepare callback indicated that skipping the
-entire suspend/resume handling is not ok.
-
-So this is not that scary, but it does require driver authors to know
-what they are doing...
-
-> but if the handlers can't be split, the
-> issues you were seeing are a consequence, yes.
-> 
-> For me, this sadly spoils the whole concept. The patches you add make
-> things even more complicated. Not happy about that.
-
-Agreed, they don't fill me with happiness either.
-
-> Looking at the open coded version you did for the designware driver, I
-> wonder now if it is better to just leave it at driver level? Need to
-> sleep over it, though.
-
-I myself was thinking in the same direction (leave the entire suspended
-check at the driver level).
-
-Regards,
-
-Hans
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
