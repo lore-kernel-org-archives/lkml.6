@@ -2,255 +2,107 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-5.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EBB3C67839
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 01:45:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3E9AC67839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 01:49:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35D9020811
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 01:45:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35D9020811
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hxt-semitech.com
+	by mail.kernel.org (Postfix) with ESMTP id B4BA120811
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 01:49:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4BA120811
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726255AbeLLBp2 convert rfc822-to-8bit (ORCPT
+        id S1726260AbeLLBtY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 20:45:28 -0500
-Received: from mx01.hxt-semitech.com ([223.203.96.7]:51316 "EHLO
-        barracuda.hxt-semitech.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726201AbeLLBp1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 20:45:27 -0500
-X-ASG-Debug-ID: 1544579110-093b7e7c620e9e0001-xx1T2L
-Received: from HXTBJIDCEMVIW01.hxtcorp.net ([10.128.0.14]) by barracuda.hxt-semitech.com with ESMTP id bgasBRbR4NlufTtF (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NO); Wed, 12 Dec 2018 09:45:11 +0800 (CST)
-X-Barracuda-Envelope-From: dongsheng.wang@hxt-semitech.com
-Received: from HXTBJIDCEMVIW02.hxtcorp.net (10.128.0.15) by
- HXTBJIDCEMVIW01.hxtcorp.net (10.128.0.14) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 12 Dec 2018 09:44:18 +0800
-Received: from HXTBJIDCEMVIW02.hxtcorp.net ([fe80::3e:f4ff:7927:a6f6]) by
- HXTBJIDCEMVIW02.hxtcorp.net ([fe80::3e:f4ff:7927:a6f6%12]) with mapi id
- 15.00.1395.000; Wed, 12 Dec 2018 09:44:18 +0800
-From:   "Wang, Dongsheng" <dongsheng.wang@hxt-semitech.com>
-To:     Kees Cook <keescook@chromium.org>
-CC:     David Howells <dhowells@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        "Zheng, Joey" <yu.zheng@hxt-semitech.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Yang, Shunyong" <shunyong.yang@hxt-semitech.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        "# 3.4.x" <stable@vger.kernel.org>
-Subject: Re: [PATCH 1/1] sched/headers: fix thread_info.<first> is overwritten
- by STACK_END_MAGIC
-Thread-Topic: [PATCH 1/1] sched/headers: fix thread_info.<first> is
- overwritten by STACK_END_MAGIC
-X-ASG-Orig-Subj: Re: [PATCH 1/1] sched/headers: fix thread_info.<first> is overwritten
- by STACK_END_MAGIC
-Thread-Index: AQHUgwHXQvH51CSg9UWtTixRCjaq8A==
-Date:   Wed, 12 Dec 2018 01:44:17 +0000
-Message-ID: <1ff3b0c160a342b0a27852db60e95a2e@HXTBJIDCEMVIW02.hxtcorp.net>
-References: <e7952089a66db4e5d59d2af230a324155bb018a0.1542955914.git.dongsheng.wang@hxt-semitech.com>
- <CAGXu5jKTQK2BGYefNXkW=-=svzhnqP4Pho3jK+mORAjDxgnsRA@mail.gmail.com>
- <19391812db6444f3bd260546acded9b7@HXTBJIDCEMVIW02.hxtcorp.net>
- <CAGXu5jJg+rfDi1VuiaevPSkaZidjmEC2au9yJR6n6rWJR-qcsg@mail.gmail.com>
- <810b0ad91d5547c5bbbec1b61c119bdc@HXTBJIDCEMVIW02.hxtcorp.net>
- <24e0c18ed41c44828c753ce9ed3016a5@HXTBJIDCEMVIW02.hxtcorp.net>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [192.168.50.13]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Tue, 11 Dec 2018 20:49:24 -0500
+Received: from mga09.intel.com ([134.134.136.24]:37150 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726201AbeLLBtY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 20:49:24 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Dec 2018 17:49:23 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,343,1539673200"; 
+   d="scan'208";a="117869477"
+Received: from chenyu-desktop.sh.intel.com (HELO chenyu-desktop) ([10.239.160.132])
+  by FMSMGA003.fm.intel.com with ESMTP; 11 Dec 2018 17:49:22 -0800
+Date:   Wed, 12 Dec 2018 09:56:57 +0800
+From:   Yu Chen <yu.c.chen@intel.com>
+To:     joeyli <jlee@suse.com>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>, linux-kernel@vger.kernel.org,
+        Lenny Szubowicz <lszubowi@redhat.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        Rui Zhang <rui.zhang@intel.com>, linux-acpi@vger.kernel.org
+Subject: Re: [PATCH][RFC v2] ACPI: acpi_pad: Do not launch acpi_pad threads
+ on idle cpus
+Message-ID: <20181212015656.GA25427@chenyu-desktop>
+References: <1525521202-32519-1-git-send-email-yu.c.chen@intel.com>
+ <20181210063153.GO5327@linux-l9pv.suse>
+ <20181211031220.GA23975@chenyu-desktop>
+ <20181211083754.GE28555@linux-l9pv.suse>
 MIME-Version: 1.0
-X-Barracuda-Connect: UNKNOWN[10.128.0.14]
-X-Barracuda-Start-Time: 1544579111
-X-Barracuda-Encrypted: ECDHE-RSA-AES256-SHA384
-X-Barracuda-URL: https://192.168.50.101:443/cgi-mod/mark.cgi
-X-Virus-Scanned: by bsmtpd at hxt-semitech.com
-X-Barracuda-BRTS-Status: 1
-X-Barracuda-Bayes: INNOCENT GLOBAL 0.5000 1.0000 0.0000
-X-Barracuda-Spam-Score: 0.00
-X-Barracuda-Spam-Status: No, SCORE=0.00 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
-X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.63625
-        Rule breakdown below
-         pts rule name              description
-        ---- ---------------------- --------------------------------------------------
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181211083754.GE28555@linux-l9pv.suse>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello all,
-
-Any comments about this patch?
-
-Cheers,
-Dongsheng
-
-On 2018/11/30 10:19, Wang, Dongsheng wrote:
-> On 2018/11/30 10:04, Wang, Dongsheng wrote:
->> On 2018/11/30 5:22, Kees Cook wrote:
->>> On Tue, Nov 27, 2018 at 8:38 PM Wang, Dongsheng
->>> <dongsheng.wang@hxt-semitech.com> wrote:
->>>> Hello Kees,
->>>>
->>>> On 2018/11/28 6:38, Kees Cook wrote:
->>>>> On Thu, Nov 22, 2018 at 11:54 PM, Wang Dongsheng
->>>>> <dongsheng.wang@hxt-semitech.com> wrote:
->>>>>> When select ARCH_TASK_STRUCT_ON_STACK the first of thread_info variable
->>>>>> is overwritten by STACK_END_MAGIC. In fact, the ARCH_TASK_STRUCT_ON_STACK
->>>>>> is not a real task on stack, it's only init_task on init_stack.
->>>>>>
->>>>>> Commit 0500871f21b2 ("Construct init thread stack in the linker script
->>>>>> rather than by union") added this macro and put task_strcut into
->>>>>> thread_union. This brings us the following possibilities:
->>>>>>     TASK_ON_STACK    THREAD_INFO_IN_TASK    STACK
->>>>>>                                             ----- <-- thread_info & stack
->>>>>>         N                    N             |     |     --- <-- task
->>>>>>                                            |     |    |   |
->>>>>>                                             -----      ---
->>>>>>
->>>>>>                                             ----- <-- stack
->>>>>>         N                    Y             |     |     --- <-- task(Including thread_info)
->>>>>>                                            |     |    |   |
->>>>>>                                             -----      ---
->>>>>>
->>>>>>                                             ----- <-- stack & task & thread_info
->>>>>>         Y                    N             |     |
->>>>>>                                            |     |
->>>>>>                                             -----
->>>>>>
->>>>>>                                             ----- <-- stack & task(Including thread_info)
->>>>>>         Y                    Y             |     |
->>>>>>                                            |     |
->>>>>>                                             -----
->>>>>> The kernel has handled the first two cases correctly.
->>>>>>
->>>>>> For the third case:
->>>>>> TASK_ON_STACK: Y. THREAD_INFO_IN_TASK: N. this case
->>>>>> should never happen, because the task and thread_info will overlap. So
->>>>>> when TASK_ON_STACK is selected, THREAD_INFO_IN_TASK must be selected too.
->>>>>>
->>>>>> For the fourth case:
->>>>>> When task on stack, the end of stack should add a sizeof(task_struct) offset.
->>>>>>
->>>>>> This patch handled with the third and fourth case.
->>>>>>
->>>>>> Fixes: 0500871f21b2 ("Construct init thread stack in the linker ...")
->>>>>>
->>>>>> Signed-off-by: Wang Dongsheng <dongsheng.wang@hxt-semitech.com>
->>>>>> Signed-off-by: Shunyong Yang <shunyong.yang@hxt-semitech.com>
->>>>>> ---
->>>>>>  arch/Kconfig                     | 1 +
->>>>>>  include/linux/sched/task_stack.h | 5 ++++-
->>>>>>  2 files changed, 5 insertions(+), 1 deletion(-)
->>>>>>
->>>>>> diff --git a/arch/Kconfig b/arch/Kconfig
->>>>>> index e1e540ffa979..0a2c73e73195 100644
->>>>>> --- a/arch/Kconfig
->>>>>> +++ b/arch/Kconfig
->>>>>> @@ -251,6 +251,7 @@ config ARCH_HAS_SET_MEMORY
->>>>>>  # Select if arch init_task must go in the __init_task_data section
->>>>>>  config ARCH_TASK_STRUCT_ON_STACK
->>>>>>         bool
->>>>>> +       depends on THREAD_INFO_IN_TASK || IA64
->>>>> The "IA64" part shouldn't be needed since IA64 already selects it.
->>>>>
->>>>> Since it's selected, it also can't have a depends, IIUC.
->>>> Since the IA64 thread_info including task_struct, it doesn't need to
->>>> select THREAD_INFO_IN_TASK.
->>>> So we need to allow IA64 select ARCH_TASK_STRUCT_ON_STACK without
->>>> THREAD_INFO.
->>> Okay.
->>>
->>>>>>  # Select if arch has its private alloc_task_struct() function
->>>>>>  config ARCH_TASK_STRUCT_ALLOCATOR
->>>>>> diff --git a/include/linux/sched/task_stack.h b/include/linux/sched/task_stack.h
->>>>>> index 6a841929073f..624c48defb9e 100644
->>>>>> --- a/include/linux/sched/task_stack.h
->>>>>> +++ b/include/linux/sched/task_stack.h
->>>>>> @@ -7,6 +7,7 @@
->>>>>>   */
->>>>>>
->>>>>>  #include <linux/sched.h>
->>>>>> +#include <linux/sched/task.h>
->>>>>>  #include <linux/magic.h>
->>>>>>
->>>>>>  #ifdef CONFIG_THREAD_INFO_IN_TASK
->>>>>> @@ -25,7 +26,9 @@ static inline void *task_stack_page(const struct task_struct *task)
->>>>>>
->>>>>>  static inline unsigned long *end_of_stack(const struct task_struct *task)
->>>>>>  {
->>>>>> -       return task->stack;
->>>>>> +       if (!IS_ENABLED(CONFIG_ARCH_TASK_STRUCT_ON_STACK) || task != &init_task)
->>>>>> +               return task->stack;
->>>>>> +       return (unsigned long *)(task + 1);
->>>>>>  }
->>>>> This seems like a strange place for the change. It feels more like
->>>>> init_task has been defined incorrectly.
->>>> The init_task will put into init_stack when ARCH_TASK_STRUCT_ON_STACK is
->>>> selected.
->>>> include/asm-generic/vmlinux.lds.h:
->>>> #define INIT_TASK_DATA(align)                        \
->>>>     . = ALIGN(align);                        \
->>>>     __start_init_task = .;                        \
->>>>     init_thread_union = .;                        \
->>>>     init_stack = .;                            \
->>>>     KEEP(*(.data..init_task))                    \
->>>>     KEEP(*(.data..init_thread_info))                \
->>>>     . = __start_init_task + THREAD_SIZE;                \
->>>>     __end_init_task = .;
->>>>
->>>> So we need end_of_stack to offset sizeof(task_struct).
->>> Well, I guess I mean I'd rather the end_of_stack() code not be
->>> special-cased in the if. The default should be how it was. Perhaps:
->>>
->>> if (IS_ENABLED(CONFIG_ARCH_TASK_STRUCT_ON_STACK) && task == &init_task)
-> About this special case:
-> As I mentioned in the description of patch, The
-> ARCH_TASK_STRUCT_ON_STACK is not a real task on stack, it's only
-> init_task on init_stack.
-> The alloc task is not in alloc stack, So if condition including "task ==
-> &init_task".
+Hi,
+On Tue, Dec 11, 2018 at 04:37:54PM +0800, joeyli wrote:
+> Hi Yu Chen,
+> 
+> Thanks for your response!
+> 
+> On Tue, Dec 11, 2018 at 11:12:21AM +0800, Yu Chen wrote:
+> > Hi Joey,
+> > On Mon, Dec 10, 2018 at 02:31:53PM +0800, joeyli wrote:
+> > > Hi Chen Yu and ACPI experts,
+> > > 
+> > > On Sat, May 05, 2018 at 07:53:22PM +0800, Chen Yu wrote:
+> > > > According to current implementation of acpi_pad driver,
+> > > > it does not make sense to spawn any power saving threads
+> > > > on the cpus which are already idle - it might bring
+> > > > unnecessary overhead on these idle cpus and causes power
+> > > > waste. So verify the condition that if the number of 'busy'
+> > > > cpus exceeds the amount of the 'forced idle' cpus is met.
+> > > > This is applicable due to round-robin attribute of the
+> > > > power saving threads, otherwise ignore the setting/ACPI
+> > > > notification.
+> > > > 
+> > > > Suggested-by: Lenny Szubowicz <lszubowi@redhat.com>
+> > > > Suggested-by: Len Brown <lenb@kernel.org>
+> > > > Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+> > > > Cc: Lenny Szubowicz <lszubowi@redhat.com>
+> > > > Cc: Len Brown <lenb@kernel.org>
+> > > > Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> > > > Cc: Rui Zhang <rui.zhang@intel.com>
+> > > > Cc: linux-acpi@vger.kernel.org
+> > > > Signed-off-by: Chen Yu <yu.c.chen@intel.com>
+> > > 
+> > > Do you have any news for this patch? Why it did not merged by kernel
+> > > maineline?
+> > > 
+> > We are evaluating if this could be integrated into idle injection framework.
+> > May I know if there's any requirement/background from SUSE on this?
+> > 
+> 
+> I am also looking at your patch and idle injection framework. Currently I do not
+> have good suggestion for your patches yet. But I will try to ready my knowledge when
+> you send out new version.
 >
-> Cheers,
-> Dongsheng
->
->>>     return (unsigned long *)(task + 1);
->>> return task->stack;
->>>
->>> But it still feels strange: why can't task->stack point to the correct
->>> place in this special case?
->> Normally, task->stack is the bottom of the stack, the end_of_stack just
->> need to return task->stack.
->> The task->stack always represents the bottom of the stack, and it cannot
->> be changed, so what
->> happens here is we have some data(task or thread info)that we want to
->> put at the bottom of the
->> stack. The end_of_stack just refers to the size of the stack available
->> to us.
->> In ARCH_TASK_STRUCT_ON_STACK case, the init_task has been placed in a
->> fixed location, the task
->> is placed at the bottom of the stack. Current end_of_stack doesn't
->> handle this situation, so we need
->> add a if condition to handle it. And this is just like
->> !THREAD_INFO_IN_TASK(the thead_info on stack),
->> the thread_info is placed at the bottom of the stack, the end_of_stack =
->> the bottom of stack + sizeof(*thread_info).
->>
->>
->> Cheers,
->> Dongsheng
->>
->>
->
+Thanks. I mean, does SUSE get report from customers who encountered this issue?
+BTW, may I know the status of the encryption hibernation please?(Usin the TPM?)
 
+Best,
+Yu(Ryan)
+> Thanks a lot!
+> Joey Lee 
