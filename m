@@ -2,772 +2,204 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F8F6C67839
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 05:52:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15BB7C04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 05:59:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E76220870
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 05:52:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B3E0D2084E
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 05:59:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cadence.com header.i=@cadence.com header.b="qrw5D4rn";
-	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="NO94lYGK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E76220870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cadence.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vdGXP9ge"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3E0D2084E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726467AbeLLFwC (ORCPT
+        id S1726447AbeLLF70 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 00:52:02 -0500
-Received: from mx0b-0014ca01.pphosted.com ([208.86.201.193]:53554 "EHLO
-        mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726237AbeLLFwB (ORCPT
+        Wed, 12 Dec 2018 00:59:26 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:39389 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726241AbeLLF7Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 00:52:01 -0500
-Received: from pps.filterd (m0042333.ppops.net [127.0.0.1])
-        by mx0b-0014ca01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wBC5n7Zv027501;
-        Tue, 11 Dec 2018 21:51:36 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=proofpoint;
- bh=TyaEj0fvJg3tvYeftiItzhrACN24klMHweivisKXC3o=;
- b=qrw5D4rnaFsBZYDndHJLupwrJ6gmYYV0SYpDqv5O9hB/5CCmd5ePQxwhnOAmFCkSeYjN
- IN3iWAi/cUP1IWREEAveu+Xydvb3+IVhQp8vd38FNewoWI09uEjcYKNWzm38Ki8osy0R
- cVdqERNex2NVesH9+Nn7r7pRqNFFRQF/DTuuFEm3SJRvnaCbUoX44f1ualdQV251YMIT
- imPjwhQSPMJ3AbdiNUxBSJveUfyFMWy7CspS9Ttmow7GEvWIawe7blpJqUUlPHIxBXTN
- JyidEg77qF1mYupvTNjdVSVNXg31Gbf6x2iWR1PnUHZ7/snat4ItmmrRWMGdpXoNzeAM kQ== 
-Authentication-Results: cadence.com;
-        spf=pass smtp.mailfrom=pthombar@cadence.com
-Received: from nam03-dm3-obe.outbound.protection.outlook.com (mail-dm3nam03lp2052.outbound.protection.outlook.com [104.47.41.52])
-        by mx0b-0014ca01.pphosted.com with ESMTP id 2p9wg8gr8d-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Tue, 11 Dec 2018 21:51:36 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TyaEj0fvJg3tvYeftiItzhrACN24klMHweivisKXC3o=;
- b=NO94lYGKtvNX/mm2ZfRku9PGakkd77k3jjtxgkTZyHmBX3dR8D3x1PR6zjDYCw0km16sUPP8ale0CggumwOuzC0BAS/HDyFlK2MG8GbwNj7TOpUy/tkWE0J0zTLbZajknOJj1n/XuFsZbvd+9OoXx1Xdo2r8l5jt3a4+2GB9f+8=
-Received: from CO2PR07MB2469.namprd07.prod.outlook.com (10.166.200.139) by
- CO2PR07MB553.namprd07.prod.outlook.com (10.141.199.149) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1404.19; Wed, 12 Dec 2018 05:51:30 +0000
-Received: from CO2PR07MB2469.namprd07.prod.outlook.com
- ([fe80::406a:f22b:dc72:d2e1]) by CO2PR07MB2469.namprd07.prod.outlook.com
- ([fe80::406a:f22b:dc72:d2e1%9]) with mapi id 15.20.1404.026; Wed, 12 Dec 2018
- 05:51:30 +0000
-From:   Parshuram Raju Thombare <pthombar@cadence.com>
-To:     Eric Biggers <ebiggers@kernel.org>
-CC:     "axboe@kernel.dk" <axboe@kernel.dk>,
-        "vinholikatti@gmail.com" <vinholikatti@gmail.com>,
-        "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
-        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        Alan Douglas <adouglas@cadence.com>,
-        Janek Kotas <jank@cadence.com>,
-        Rafal Ciepiela <rafalc@cadence.com>,
-        AnilKumar Chimata <anilc@codeaurora.org>,
-        Ladvine D Almeida <ladvine@synopsys.com>,
-        Satya Tangirala <satyat@google.com>,
-        Paul Crowley <paulcrowley@google.com>
-Subject: RE: [PATCH 2/2] scsi: ufs: add inline crypto support to UFS HCD
-Thread-Topic: [PATCH 2/2] scsi: ufs: add inline crypto support to UFS HCD
-Thread-Index: AQHUkTcFn2oUaDSRF0KQyi683pox5qV52O4AgAC91rA=
-Date:   Wed, 12 Dec 2018 05:51:30 +0000
-Message-ID: <CO2PR07MB2469AD9C0A121EBF94129A11C1A70@CO2PR07MB2469.namprd07.prod.outlook.com>
-References: <20181211095027.GA3316@lvlogina.cadence.com>
- <20181211181647.GC221175@gmail.com>
-In-Reply-To: <20181211181647.GC221175@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-dg-ref: PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNccHRob21iYXJcYXBwZGF0YVxyb2FtaW5nXDA5ZDg0OWI2LTMyZDMtNGE0MC04NWVlLTZiODRiYTI5ZTM1Ylxtc2dzXG1zZy1mODZiNGRiYi1mZGQxLTExZTgtODRkZi0wNGQzYjAyNzc0NGFcYW1lLXRlc3RcZjg2YjRkYmMtZmRkMS0xMWU4LTg0ZGYtMDRkM2IwMjc3NDRhYm9keS50eHQiIHN6PSIxMjYzMSIgdD0iMTMxODkwNjc0OTAzMDQyOTIzIiBoPSI0b05VRzM5T1hFdDZzenkxMlMzdXdJZG9tK009IiBpZD0iIiBibD0iMCIgYm89IjEiLz48L21ldGE+
-x-dg-rorf: 
-x-originating-ip: [14.143.9.161]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CO2PR07MB553;20:EoZzjjF7ykfhSuqB2UnPLtZxBzmySAdun0vu7teILIJZ4tLNkbXOf2xuwiJfe15xxhwmXpFo3LbAiSbWsBvOS2ITrh8f+yqkotryg2Ya8DZKoee9qhjB59MYH9VPux7ZPDnRc85TIFnMwd9raGapWx3RPkHGEH7pM12l73MCdK3brzgiqa2yyQ3KVGNhAb08AitKlncys0sjJzAshFuIyThSknaY2kWo2na60ggMDGv5drIoJTBHp4w/0iPYPlJ1
-x-ms-office365-filtering-correlation-id: df00db8c-d340-436c-05a2-08d65ff5dd8d
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:CO2PR07MB553;
-x-ms-traffictypediagnostic: CO2PR07MB553:
-x-microsoft-antispam-prvs: <CO2PR07MB553592E730D8AFD72CE5EC9C1A70@CO2PR07MB553.namprd07.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230017)(999002)(6040522)(2401047)(8121501046)(5005006)(3231472)(944501520)(4982022)(52105112)(93006095)(93001095)(3002001)(10201501046)(148016)(149066)(150057)(6041310)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:CO2PR07MB553;BCL:0;PCL:0;RULEID:;SRVR:CO2PR07MB553;
-x-forefront-prvs: 0884AAA693
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(346002)(366004)(136003)(396003)(39860400002)(13464003)(199004)(36092001)(189003)(9686003)(54906003)(316002)(39060400002)(575784001)(86362001)(6306002)(33656002)(6916009)(106356001)(3846002)(6116002)(345774005)(97736004)(55016002)(4326008)(105586002)(2906002)(99286004)(81156014)(7736002)(66066001)(81166006)(305945005)(478600001)(74316002)(4744004)(7696005)(71190400001)(6436002)(25786009)(229853002)(78486014)(26005)(186003)(55236004)(102836004)(6506007)(76176011)(14454004)(6246003)(476003)(446003)(8936002)(7416002)(68736007)(8676002)(5660300001)(256004)(14444005)(11346002)(53936002)(71200400001)(486006);DIR:OUT;SFP:1101;SCL:1;SRVR:CO2PR07MB553;H:CO2PR07MB2469.namprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: cadence.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: ipX5IDymfBPxUXHirSBPr8HlxQGorFL7DY+96gmGdjJ1Vf6VRFvjkm9LKdMhYJmx70HOc1/jmP4aurITY7FOgSUztC3G4FCPZumFxHz8pdmWmmjOfBL/pzDeKU1s/dFt06Egr4P6O2eA485HIBONakA6wHICuu8Dxv46Na4vl3HfhAkg7q578t1KJMteJRRMIlSmINjlGOTvGMbozUifdmuZsJFYy3SsU21zVlQOzkEZ96NyAzOHjDKSKhwfgyPnyeZxZuH0PAFFHaWwosEJCTRzfHKu6X6avq21NARNMJNeeYQZrZMLB18TeCdhGmv6
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Wed, 12 Dec 2018 00:59:25 -0500
+Received: by mail-it1-f194.google.com with SMTP id a6so8005052itl.4
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 21:59:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=o7NGdHKfc3tQ8Q3vJtrnZ/H2ezqCb7IqsAvZGYFLmqg=;
+        b=vdGXP9gejCvmRP9QxXZUfh4Pqg8feVssBvTVoOavwwyKtFCHeFIWCgCX+dymmBXKVk
+         CdXgvXq8t4H8ffjMm1u+SXvSmHRjuWP6zwDKkj5X4fEdxl0fegiY9cPZLjhirg6DgEg2
+         1j4Bd/cU3uOKw0Om+mNNJB8ujuXho63v2m+AYchV0RYHwxVAoMKAZUjSbkUuw9GniSpZ
+         2CThF8pe+uoy23ZJabtzZxzuVkNlRsPl/wMT/na70gsSnQTfakTP0NSPZRrZ/kZSo7oR
+         uV/mskb/uCbLXAI4viqx19tZL8NpvuQ4KbDUK4KeLnxqNfOhsKgRQh/f7naamPj7edKP
+         iVBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=o7NGdHKfc3tQ8Q3vJtrnZ/H2ezqCb7IqsAvZGYFLmqg=;
+        b=o5R1TZJhqQT171p5l5ylWNihAaj1LojqBFeQSUFwsbTrhrqes400Tt9Cjfc0MaLY2s
+         CrLSBZ6qIUE1ECR8fvo6EV+QZUb4JUULd3Pfodrty5/ejzC13BHpU/oIHNLk/N4M2Vuk
+         WyvI8HxzmIT/iMc63xHOPz4CoXQ3w0fJ7N88ZFo/mlbRFaSQipTPD/s2dPEJCvPSTFbO
+         U1aE86uVFLYlh1Gw3W7CVitAoJ4vXskbHPkEtBNze/Ah21TgNL3EBybWQ6vfYdUewVJg
+         y80PEA/q7drO7glkHwSbRIRbSJxCg97R+vfj8UBF2quorxUSBDtB0bTk8bwW8Ip54hs6
+         4dUg==
+X-Gm-Message-State: AA+aEWZsBjBj4ks6mXdrYjFiCsaZe4ERPk7BFvU50urtBuHodle6OrLT
+        03aH68BWuXkCbgFXI6ueRmTOHEYD6/8VzB7hYfOGig==
+X-Google-Smtp-Source: AFSGD/W3UcOsBIIzpVyCrAWl6ep0uhhSozi7c+30DMKkTgw1nNexg+teMuMPPzB5zp67h7bAMACR1ugVSh77pvTNh5o=
+X-Received: by 2002:a24:26c4:: with SMTP id v187mr5080324itv.54.1544594364297;
+ Tue, 11 Dec 2018 21:59:24 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: cadence.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: df00db8c-d340-436c-05a2-08d65ff5dd8d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Dec 2018 05:51:30.6215
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO2PR07MB553
-X-Proofpoint-SPF-Result: pass
-X-Proofpoint-SPF-Record: v=spf1 include:_spf.salesforce.com include:mktomail.com
- include:spf-0014ca01.pphosted.com include:spf.protection.outlook.com
- include:auth.msgapp.com include:spf.mandrillapp.com ~all
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-12_01:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_check_notspam policy=outbound_check score=0
- priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0
- spamscore=0 clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812120050
+References: <20181016050428.17966-2-sergey.senozhatsky@gmail.com>
+ <20181025101036.6823-1-sergey.senozhatsky@gmail.com> <20181031122736.epbxu424l3xagge5@pathway.suse.cz>
+ <20181101014821.GB502@jagdpanzerIV> <20181101080808.n73lrlnjd65nk4qf@pathway.suse.cz>
+ <20181122131202.nkcurdt5k6jrhowa@pathway.suse.cz> <CAJmjG2-_8T6uJP54-+gUG7Aq7kNqkAKAEXbzzV9JVKyZFRh4GQ@mail.gmail.com>
+ <20181212052308.GG431@jagdpanzerIV>
+In-Reply-To: <20181212052308.GG431@jagdpanzerIV>
+From:   Daniel Wang <wonderfly@google.com>
+Date:   Tue, 11 Dec 2018 21:59:11 -0800
+Message-ID: <CAJmjG28oiU0unnfx_KO18F3oeMvsKHsJCuKbLiC-_ib7cDjG0g@mail.gmail.com>
+Subject: Re: [PATCHv3] panic: avoid deadlocks in re-entrant console drivers
+To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc:     Petr Mladek <pmladek@suse.com>, linux-kernel@vger.kernel.org,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
+        Jiri Slaby <jslaby@suse.com>,
+        Peter Feiner <pfeiner@google.com>,
+        linux-serial@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+        boundary="0000000000006e9307057ccce695"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Eric,
+--0000000000006e9307057ccce695
+Content-Type: text/plain; charset="UTF-8"
 
-Thank you for a comment.
+No worries. I will follow up. You would recommend that all four
+patches in this set to be backported though, right?
 
->-----Original Message-----
->From: Eric Biggers <ebiggers@kernel.org>
->Sent: Tuesday, December 11, 2018 11:47 PM
->To: Parshuram Raju Thombare <pthombar@cadence.com>
->Cc: axboe@kernel.dk; vinholikatti@gmail.com; jejb@linux.vnet.ibm.com;
->martin.petersen@oracle.com; mchehab+samsung@kernel.org;
->gregkh@linuxfoundation.org; davem@davemloft.net; akpm@linux-
->foundation.org; nicolas.ferre@microchip.com; arnd@arndb.de; linux-
->kernel@vger.kernel.org; linux-block@vger.kernel.org; linux-
->scsi@vger.kernel.org; Alan Douglas <adouglas@cadence.com>; Janek Kotas
-><jank@cadence.com>; Rafal Ciepiela <rafalc@cadence.com>; AnilKumar
->Chimata <anilc@codeaurora.org>; Ladvine D Almeida <ladvine@synopsys.com>;
->Satya Tangirala <satyat@google.com>; Paul Crowley
-><paulcrowley@google.com>
->Subject: Re: [PATCH 2/2] scsi: ufs: add inline crypto support to UFS HCD
->
->EXTERNAL MAIL
->
->
->[+Cc other people who have been working on this]
->
->
->
->Hi Parshuram,
->
->
->
->On Tue, Dec 11, 2018 at 09:50:27AM +0000, Parshuram Thombare wrote:
->
->> Add real time crypto support to UFS HCD using new device
->
->> mapper 'crypto-ufs'. dmsetup tool can be used to enable
->
->> real time / inline crypto support using device mapper
->
->> 'crypt-ufs'.
->
->>
->
->> Signed-off-by: Parshuram Thombare <pthombar@cadence.com>
->
->> ---
->
->>  MAINTAINERS                      |    7 +
->
->>  block/Kconfig                    |    5 +
->
->>  drivers/scsi/ufs/Kconfig         |   12 +
->
->>  drivers/scsi/ufs/Makefile        |    1 +
->
->>  drivers/scsi/ufs/ufshcd-crypto.c |  453
->++++++++++++++++++++++++++++++++++++++
->
->>  drivers/scsi/ufs/ufshcd-crypto.h |  102 +++++++++
->
->>  drivers/scsi/ufs/ufshcd.c        |   27 +++-
->
->>  drivers/scsi/ufs/ufshcd.h        |    6 +
->
->>  drivers/scsi/ufs/ufshci.h        |    1 +
->
->>  9 files changed, 613 insertions(+), 1 deletions(-)
->
->>  create mode 100644 drivers/scsi/ufs/ufshcd-crypto.c
->
->>  create mode 100644 drivers/scsi/ufs/ufshcd-crypto.h
->
->>
->
->> diff --git a/MAINTAINERS b/MAINTAINERS
->
->> index f485597..3a68126 100644
->
->> --- a/MAINTAINERS
->
->> +++ b/MAINTAINERS
->
->> @@ -15340,6 +15340,13 @@ S:	Supported
->
->>  F:	Documentation/scsi/ufs.txt
->
->>  F:	drivers/scsi/ufs/
->
->>
->
->> +UNIVERSAL FLASH STORAGE HOST CONTROLLER CRYPTO DRIVER
->
->> +M:	Parshuram Thombare <pthombar@cadence.com>
->
->> +L:	linux-scsi@vger.kernel.org
->
->> +S:	Supported
->
->> +F:	drivers/scsi/ufs/ufshcd-crypto.c
->
->> +F:	drivers/scsi/ufs/ufshcd-crypto.h
->
->> +
->
->>  UNIVERSAL FLASH STORAGE HOST CONTROLLER DRIVER DWC HOOKS
->
->>  M:	Joao Pinto <jpinto@synopsys.com>
->
->>  L:	linux-scsi@vger.kernel.org
->
->> diff --git a/block/Kconfig b/block/Kconfig
->
->> index f7045aa..6afe131 100644
->
->> --- a/block/Kconfig
->
->> +++ b/block/Kconfig
->
->> @@ -224,4 +224,9 @@ config BLK_MQ_RDMA
->
->>  config BLK_PM
->
->>  	def_bool BLOCK && PM
->
->>
->
->> +config BLK_DEV_HW_RT_ENCRYPTION
->
->> +	bool
->
->> +	depends on SCSI_UFSHCD_RT_ENCRYPTION
->
->> +	default n
->
->> +
->
->>  source block/Kconfig.iosched
->
->> diff --git a/drivers/scsi/ufs/Kconfig b/drivers/scsi/ufs/Kconfig
->
->> index 2ddbb26..09a3ec0 100644
->
->> --- a/drivers/scsi/ufs/Kconfig
->
->> +++ b/drivers/scsi/ufs/Kconfig
->
->> @@ -136,3 +136,15 @@ config SCSI_UFS_BSG
->
->>
->
->>  	  Select this if you need a bsg device node for your UFS controller.
->
->>  	  If unsure, say N.
->
->> +
->
->> +config SCSI_UFSHCD_RT_ENCRYPTION
->
->> +	bool "Universal Flash Storage Controller RT encryption support"
->
->> +	depends on SCSI_UFSHCD
->
->> +	default n
->
->> +	select BLK_DEV_HW_RT_ENCRYPTION if SCSI_UFSHCD_RT_ENCRYPTION
->
->> +	select BLK_DEV_DM if SCSI_UFSHCD_RT_ENCRYPTION
->
->> +	help
->
->> +	Universal Flash Storage Controller RT encryption support
->
->> +
->
->> +	Select this if you want to enable real time encryption on UFS controll=
-er
->
->> +	If unsure, say N.
->
->> diff --git a/drivers/scsi/ufs/Makefile b/drivers/scsi/ufs/Makefile
->
->> index a3bd70c..6169096 100644
->
->> --- a/drivers/scsi/ufs/Makefile
->
->> +++ b/drivers/scsi/ufs/Makefile
->
->> @@ -7,6 +7,7 @@ obj-$(CONFIG_SCSI_UFS_QCOM) +=3D ufs-qcom.o
->
->>  obj-$(CONFIG_SCSI_UFSHCD) +=3D ufshcd-core.o
->
->>  ufshcd-core-y				+=3D ufshcd.o ufs-sysfs.o
->
->>  ufshcd-core-$(CONFIG_SCSI_UFS_BSG)	+=3D ufs_bsg.o
->
->> +ufshcd-core-$(CONFIG_SCSI_UFSHCD_RT_ENCRYPTION) +=3D ufshcd-crypto.o
->
->>  obj-$(CONFIG_SCSI_UFSHCD_PCI) +=3D ufshcd-pci.o
->
->>  obj-$(CONFIG_SCSI_UFSHCD_PLATFORM) +=3D ufshcd-pltfrm.o
->
->>  obj-$(CONFIG_SCSI_UFS_HISI) +=3D ufs-hisi.o
->
->> diff --git a/drivers/scsi/ufs/ufshcd-crypto.c b/drivers/scsi/ufs/ufshcd-=
-crypto.c
->
->> new file mode 100644
->
->> index 0000000..9c95ff3
->
->> --- /dev/null
->
->> +++ b/drivers/scsi/ufs/ufshcd-crypto.c
->
->> @@ -0,0 +1,453 @@
->
->> +// SPDX-License-Identifier: GPL-2.0
->
->> +/*
->
->> + * UFS Host controller crypto driver
->
->> + *
->
->> + * Copyright (C) 2018 Cadence Design Systems, Inc.
->
->> + *
->
->> + * Authors:
->
->> + *	Parshuram Thombare <pthombar@cadence.com>
->
->> + *
->
->> + */
->
->> +
->
->> +#include <linux/module.h>
->
->> +#include <linux/kernel.h>
->
->> +#include <crypto/aes.h>
->
->> +#include <linux/device-mapper.h>
->
->> +#include "ufshcd.h"
->
->> +#include "ufshcd-crypto.h"
->
->> +#include "scsi/scsi_device.h"
->
->> +#include "scsi/scsi_host.h"
->
->> +
->
->> +struct ufshcd_dm_ctx {
->
->> +	struct dm_dev *dev;
->
->> +	sector_t start;
->
->> +	unsigned short int sector_size;
->
->> +	unsigned char sector_shift;
->
->> +	int cci;
->
->> +	int cap_idx;
->
->> +	char key[AES_MAX_KEY_SIZE];
->
->> +	struct ufs_hba *hba;
->
->> +};
->
->> +
->
->> +static int dm_registered;
->
->> +
->
->> +static inline int
->
->> +ufshcd_key_id_to_len(int key_id)
->
->> +{
->
->> +	int key_len =3D -1;
->
->> +
->
->> +	switch (key_id) {
->
->> +	case UFS_CRYPTO_KEY_ID_128BITS:
->
->> +		key_len =3D AES_KEYSIZE_128;
->
->> +		break;
->
->> +	case UFS_CRYPTO_KEY_ID_192BITS:
->
->> +		key_len =3D AES_KEYSIZE_192;
->
->> +		break;
->
->> +	case UFS_CRYPTO_KEY_ID_256BITS:
->
->> +		key_len =3D AES_KEYSIZE_256;
->
->> +		break;
->
->> +	default:
->
->> +		break;
->
->> +	}
->
->> +	return key_len;
->
->> +}
->
->> +
->
->> +static inline int
->
->> +ufshcd_key_len_to_id(int key_len)
->
->> +{
->
->> +	int key_id =3D -1;
->
->> +
->
->> +	switch (key_len) {
->
->> +	case AES_KEYSIZE_128:
->
->> +		key_id =3D UFS_CRYPTO_KEY_ID_128BITS;
->
->> +		break;
->
->> +	case AES_KEYSIZE_192:
->
->> +		key_id =3D UFS_CRYPTO_KEY_ID_192BITS;
->
->> +		break;
->
->> +	case AES_KEYSIZE_256:
->
->> +		key_id =3D UFS_CRYPTO_KEY_ID_256BITS;
->
->> +		break;
->
->> +	default:
->
->> +		break;
->
->> +	}
->
->> +	return key_id;
->
->> +}
->
->> +
->
->> +static void
->
->> +ufshcd_read_crypto_capabilities(struct ufs_hba *hba)
->
->> +{
->
->> +	u32 tmp, i;
->
->> +	struct ufshcd_crypto_ctx *cctx =3D hba->cctx;
->
->> +
->
->> +	for (i =3D 0; i < cctx->cap_cnt; i++) {
->
->> +		tmp =3D ufshcd_readl(hba, REG_UFS_CRYPTOCAP + i);
->
->> +		cctx->ccaps[i].key_id =3D (tmp & CRYPTO_CAPS_KS_MASK) >>
->
->> +						CRYPTO_CAPS_KS_SHIFT;
->
->> +		cctx->ccaps[i].sdusb =3D (tmp & CRYPTO_CAPS_SDUSB_MASK) >>
->
->> +						CRYPTO_CAPS_SDUSB_SHIFT;
->
->> +		cctx->ccaps[i].alg_id =3D (tmp & CRYPTO_CAPS_ALG_ID_MASK) >>
->
->> +						CRYPTO_CAPS_ALG_ID_SHIFT;
->
->> +	}
->
->> +}
->
->> +
->
->> +static inline int
->
->> +ufshcd_get_cap_idx(struct ufshcd_crypto_ctx *cctx, int alg_id,
->
->> +	int key_id)
->
->> +{
->
->> +	int cap_idx;
->
->> +
->
->> +	for (cap_idx =3D 0; cap_idx < cctx->cap_cnt; cap_idx++) {
->
->> +		if (((cctx->ccaps[cap_idx].alg_id =3D=3D alg_id) &&
->
->> +			cctx->ccaps[cap_idx].key_id =3D=3D key_id))
->
->> +			break;
->
->> +	}
->
->> +	return ((cap_idx < cctx->cap_cnt) ? cap_idx : -1);
->
->> +}
->
->> +
->
->> +static inline int
->
->> +ufshcd_get_cci_slot(struct ufshcd_crypto_ctx *cctx)
->
->> +{
->
->> +	int  cci;
->
->> +
->
->> +	for (cci =3D 0; cci < cctx->config_cnt; cci++) {
->
->> +		if (!cctx->cconfigs[cci].cfge) {
->
->> +			cctx->cconfigs[cci].cfge =3D 1;
->
->> +			break;
->
->> +		}
->
->> +	}
->
->> +	return ((cci < cctx->config_cnt) ? cci : -1);
->
->> +}
->
->> +
->
->> +static void
->
->> +ufshcd_aes_ecb_set_key(struct ufshcd_dm_ctx *ctx)
->
->> +{
->
->> +	int i, key_size;
->
->> +	u32 val, cconfig16, crypto_config_addr;
->
->> +	struct ufshcd_crypto_ctx *cctx;
->
->> +	struct ufshcd_crypto_config *cconfig;
->
->> +	struct ufshcd_crypto_cap ccap;
->
->> +
->
->> +	cctx =3D ctx->hba->cctx;
->
->> +	if (ctx->cci <=3D 0)
->
->> +		ctx->cci =3D ufshcd_get_cci_slot(cctx);
->
->> +	/* If no slot is available, slot 0 is shared */
->
->> +	ctx->cci =3D ctx->cci < 0 ? 0 : ctx->cci;
->
->> +	cconfig =3D &(cctx->cconfigs[ctx->cci]);
->
->> +	ccap =3D cctx->ccaps[ctx->cap_idx];
->
->> +	key_size =3D ufshcd_key_id_to_len(ccap.key_id);
->
->> +
->
->> +	if ((cconfig->cap_idx !=3D ctx->cap_idx) ||
->
->> +		((key_size > 0) &&
->
->> +		memcmp(cconfig->key, ctx->key, key_size))) {
->
->> +		cconfig->cap_idx =3D ctx->cap_idx;
->
->> +		memcpy(cconfig->key, ctx->key, key_size);
->
->> +		crypto_config_addr =3D cctx->crypto_config_base_addr +
->
->> +				ctx->cci * CRYPTO_CONFIG_SIZE;
->
->> +		cconfig16 =3D ccap.sdusb | (1 <<
->CRYPTO_CCONFIG16_CFGE_SHIFT);
->
->> +		cconfig16 |=3D ((ctx->cap_idx <<
->CRYPTO_CCONFIG16_CAP_IDX_SHIFT) &
->
->> +				CRYPTO_CCONFIG16_CAP_IDX_MASK);
->
->> +		spin_lock(&cctx->crypto_lock);
->
->> +		for (i =3D 0; i < key_size; i +=3D 4) {
->
->> +			val =3D (ctx->key[i] | (ctx->key[i + 1] << 8) |
->
->> +				(ctx->key[i + 2] << 16) |
->
->> +				(ctx->key[i + 3] << 24));
->
->> +			ufshcd_writel(ctx->hba, val, crypto_config_addr + i);
->
->> +		}
->
->> +		ufshcd_writel(ctx->hba, cpu_to_le32(cconfig16),
->
->> +				crypto_config_addr + (4 * 16));
->
->> +		spin_unlock(&cctx->crypto_lock);
->
->> +		/* Make sure keys are programmed */
->
->> +		mb();
->
->> +	}
->
->> +}
->
->
->
->First of all, thanks for working on this.  A lot of Android device vendors=
- would
->
->like to have upstream support for inline encryption.  However, are you awa=
-re of
->
->previous (unsuccessful) patchsets by other people working on this?  Have y=
-ou
->
->addressed the concerns and improved on their work, or is this just yet ano=
-ther
->
->new effort starting from scratch?
->
->
->
->AnilKumar Chimata <anilc@codeaurora.org> (Qualcomm) in October 2018:
->
->
->
->	https://urldefense.proofpoint.com/v2/url?u=3Dhttps-
->3A__patchwork.kernel.org_cover_10645739_&d=3DDwIBAg&c=3DaUq983L2pue2FqKF
->oP6PGHMJQyoJ7kl3s3GZ-_haXqY&r=3DGTefrem3hiBCnsjCOqAuapQHRN8-
->rKC1FRbk0it-
->LDs&m=3DL9VLjsZ31dZ4TP4LdveuvcjPFzdZWGlZaZnzqGZH3zc&s=3DZzYaAaVic5TB4RUS
->cR5kzcM_8gvLYdlNAzuY80_ASzI&e=3D
->
->
->
->Ladvine D Almeida <ladvine@synopsys.com> in May 2018:
->
->
->
->	https://urldefense.proofpoint.com/v2/url?u=3Dhttp-3A__lists-
->2Darchives.com_linux-2Dkernel_29135393-2Dscsi-2Dufs-2Dufs-2Dhost-
->2Dcontroller-2Dcrypto-
->2Dchanges.html&d=3DDwIBAg&c=3DaUq983L2pue2FqKFoP6PGHMJQyoJ7kl3s3GZ-
->_haXqY&r=3DGTefrem3hiBCnsjCOqAuapQHRN8-rKC1FRbk0it-
->LDs&m=3DL9VLjsZ31dZ4TP4LdveuvcjPFzdZWGlZaZnzqGZH3zc&s=3D3pxSBZrt_DpDSz-
->ZXrM7_bj0QXmRzcbasPl_wB259Us&e=3D
->
->
->
->Satya Tangirala <satyat@google.com> is also working on it but I don't beli=
-eve
->
->he's sent out a patchset yet.
->
->
->
->It would be nice to coordinate to get a proper solution upstream that work=
-s for
->
->everyone, rather than having everyone try independently and fail repeatedl=
-y :-)
-I had look at Ladvine's submission and think the approach of using Linux cr=
-ypto API and
-adding algorithm which is supposed to work inline (and with UFS devices onl=
-y) in global
-pool of algorithms (which is supposed to be generic) makes it risky, if sel=
-ected/used for
-other type of device not supporting inline encryption. Also apparently it i=
-s not possible to
-support multiple UFS controllers in the system with that approach.
-There was suggestion from Milan to use separate device mapper which seems c=
-leaner way
-of enabling inline encryption. Hence new device mapper is used.
-I think this is better idea to coordinate and come up with a generic soluti=
-on.
->
->
->
->Also, note that ECB mode is not appropriate for disk encryption.  So this =
-patch
->
->(and the hardware you tested it on, if that's all it supports) is effectiv=
-ely
->
->useless as-is.  You need to support XTS mode.
-For now only AES-ECB is supported, we are working on adding other modes.
->
->
->
->Thanks!
->
->
->
->- Eric
+On Tue, Dec 11, 2018 at 9:23 PM Sergey Senozhatsky
+<sergey.senozhatsky.work@gmail.com> wrote:
+>
+> On (12/11/18 16:53), Daniel Wang wrote:
+> > Is it okay to tag this commit with `Cc: stable@vger.kernel.org` so
+> > that it'll get applied to the stable trees once merged into Linux's
+> > tree, if it's not too late? Otherwise I'll follow up on the stable
+> > merges separately. Thanks for making the changes anyway.
+>
+> My bad! I should have Cc-ed stable on that one, sorry. I guess now it
+> would be easier to wait and follow up once it gets merged.
+>
+>         -ss
 
-Regards,
-Parshuram Thombare
+
+
+-- 
+Best,
+Daniel
+
+--0000000000006e9307057ccce695
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+MIIS7QYJKoZIhvcNAQcCoIIS3jCCEtoCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
+ghBTMIIEXDCCA0SgAwIBAgIOSBtqDm4P/739RPqw/wcwDQYJKoZIhvcNAQELBQAwZDELMAkGA1UE
+BhMCQkUxGTAXBgNVBAoTEEdsb2JhbFNpZ24gbnYtc2ExOjA4BgNVBAMTMUdsb2JhbFNpZ24gUGVy
+c29uYWxTaWduIFBhcnRuZXJzIENBIC0gU0hBMjU2IC0gRzIwHhcNMTYwNjE1MDAwMDAwWhcNMjEw
+NjE1MDAwMDAwWjBMMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTEiMCAG
+A1UEAxMZR2xvYmFsU2lnbiBIViBTL01JTUUgQ0EgMTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCC
+AQoCggEBALR23lKtjlZW/17kthzYcMHHKFgywfc4vLIjfq42NmMWbXkNUabIgS8KX4PnIFsTlD6F
+GO2fqnsTygvYPFBSMX4OCFtJXoikP2CQlEvO7WooyE94tqmqD+w0YtyP2IB5j4KvOIeNv1Gbnnes
+BIUWLFxs1ERvYDhmk+OrvW7Vd8ZfpRJj71Rb+QQsUpkyTySaqALXnyztTDp1L5d1bABJN/bJbEU3
+Hf5FLrANmognIu+Npty6GrA6p3yKELzTsilOFmYNWg7L838NS2JbFOndl+ce89gM36CW7vyhszi6
+6LqqzJL8MsmkP53GGhf11YMP9EkmawYouMDP/PwQYhIiUO0CAwEAAaOCASIwggEeMA4GA1UdDwEB
+/wQEAwIBBjAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwQwEgYDVR0TAQH/BAgwBgEB/wIB
+ADAdBgNVHQ4EFgQUyzgSsMeZwHiSjLMhleb0JmLA4D8wHwYDVR0jBBgwFoAUJiSSix/TRK+xsBtt
+r+500ox4AAMwSwYDVR0fBEQwQjBAoD6gPIY6aHR0cDovL2NybC5nbG9iYWxzaWduLmNvbS9ncy9n
+c3BlcnNvbmFsc2lnbnB0bnJzc2hhMmcyLmNybDBMBgNVHSAERTBDMEEGCSsGAQQBoDIBKDA0MDIG
+CCsGAQUFBwIBFiZodHRwczovL3d3dy5nbG9iYWxzaWduLmNvbS9yZXBvc2l0b3J5LzANBgkqhkiG
+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
+QAYIKwYBBQUHMAKGNGh0dHA6Ly9zZWN1cmUuZ2xvYmFsc2lnbi5jb20vY2FjZXJ0L2dzaHZzbWlt
+ZWNhMS5jcnQwHQYDVR0OBBYEFHC1FT3LO6BpGtdIXSM5FWFPgFO+MB8GA1UdIwQYMBaAFMs4ErDH
+mcB4koyzIZXm9CZiwOA/MEwGA1UdIARFMEMwQQYJKwYBBAGgMgEoMDQwMgYIKwYBBQUHAgEWJmh0
+dHBzOi8vd3d3Lmdsb2JhbHNpZ24uY29tL3JlcG9zaXRvcnkvMDsGA1UdHwQ0MDIwMKAuoCyGKmh0
+dHA6Ly9jcmwuZ2xvYmFsc2lnbi5jb20vZ3NodnNtaW1lY2ExLmNybDAOBgNVHQ8BAf8EBAMCBaAw
+HQYDVR0lBBYwFAYIKwYBBQUHAwIGCCsGAQUFBwMEMA0GCSqGSIb3DQEBCwUAA4IBAQAp7ulGi+yb
+H6Go2/IGeuxY5v6bGG9OgxOivBTos3k5ZBoWJt7BxDTYOLkA5gNLvh2tqsJVUJI5hQXwB4FFK0bI
+/YuPUDxQxj9F2DBF6Mrgnclj5XLK3y9N5khy5/Ullth3jbDQ1dmyHQISh4olPbqtnHnWiUb6Mhf6
+I3UgrUAhzwFXOlZSk57FgvAZ9472grnkSI8aW1mZp1gf5BNYEVb6y/e1hxlNeZbtIa0vvWDm+tK1
+ENfcc+LgRCL4gqiu3v3MEyXXeq/eH/iibrGhissORpiy+nMuWzsTGYOkRRn9RtyEmJAh48WUKCt3
+SR4lOce76r8Fd1Dg0XA0lCCwrFRzMYICXjCCAloCAQEwXDBMMQswCQYDVQQGEwJCRTEZMBcGA1UE
+ChMQR2xvYmFsU2lnbiBudi1zYTEiMCAGA1UEAxMZR2xvYmFsU2lnbiBIViBTL01JTUUgQ0EgMQIM
+IxVzVdM/KCmBJokVMA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCDxVoDSYBqh/Dl+
+J08BFz7WotZrCRXnEgcfT6QVwvUucTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3
+DQEJBTEPFw0xODEyMTIwNTU5MjRaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUDBAEqMAsGCWCG
+SAFlAwQBFjALBglghkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEKMAsGCSqGSIb3DQEB
+BzALBglghkgBZQMEAgEwDQYJKoZIhvcNAQEBBQAEggEAWMy/FH3ite0ut9EttasmMD/aNblhhhYn
+ZxNWFbuGvOyAZ0O1cskwj4KnNXouL0O6X5YuSyRb77PeqvvYN6jMmdilDh21pXJKKTIVQp2pJZsa
+e9b6aASX4o7yF0Uo9vl04bSmi9FFg3ZCIb7eoBcyDKwUP6K3yuZ6StFnOaxbLP2bJmle4igSYa0y
+O1abID5dqKnoX6Y1zAwdBn7PKb+w5crySDLvAi/3Ncq8++Yi3qHK7uOSmGI4Y/65EW7qjdeZmFwE
+Su5QF39DHPrfghlDtCMdEsi9Q+Y+Eftnx9RaAWP/QoVvN1wvdBoAMUNU/FMsYC5a42u4Q1a06lEw
+Bb7FRg==
+--0000000000006e9307057ccce695--
