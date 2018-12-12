@@ -2,137 +2,270 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72750C04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 04:11:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3293C04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 04:12:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22F5920811
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 04:11:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22F5920811
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 9F62820811
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 04:12:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F62820811
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726393AbeLLELT (ORCPT
+        id S1726373AbeLLEMv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 23:11:19 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:41638 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726220AbeLLELS (ORCPT
+        Tue, 11 Dec 2018 23:12:51 -0500
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:19517 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726220AbeLLEMv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 23:11:18 -0500
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBC49bJX147408
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 23:11:17 -0500
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2par3qp0uy-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 23:11:17 -0500
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <chandan@linux.vnet.ibm.com>;
-        Wed, 12 Dec 2018 04:11:15 -0000
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 12 Dec 2018 04:11:11 -0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBC4BAOt49741926
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 12 Dec 2018 04:11:10 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6461EAE051;
-        Wed, 12 Dec 2018 04:11:10 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 54BC1AE053;
-        Wed, 12 Dec 2018 04:11:08 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.199.35.96])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 12 Dec 2018 04:11:08 +0000 (GMT)
-From:   Chandan Rajendra <chandan@linux.vnet.ibm.com>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
-        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-fscrypt@vger.kernel.org
-Subject: Re: [BUG BISECT next] Files cannot be opened after "fsverity: Move verity status check to fsverity_file_open"
-Date:   Wed, 12 Dec 2018 09:41:18 +0530
-Organization: IBM
-In-Reply-To: <20181211174116.GB221175@gmail.com>
-References: <CAJKOXPdNS+Qs6t1GwrgYhWT5EbtORJwYMzSrDPf8oAxv7ndNBg@mail.gmail.com> <20181211174116.GB221175@gmail.com>
+        Tue, 11 Dec 2018 23:12:51 -0500
+X-IronPort-AV: E=Sophos;i="5.56,343,1539619200"; 
+   d="scan'208";a="49570300"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 12 Dec 2018 12:12:48 +0800
+Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
+        by cn.fujitsu.com (Postfix) with ESMTP id CCB864B734CA;
+        Wed, 12 Dec 2018 12:12:43 +0800 (CST)
+Received: from localhost.localdomain (10.167.225.56) by
+ G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Wed, 12 Dec 2018 12:12:48 +0800
+Date:   Wed, 12 Dec 2018 12:12:18 +0800
+From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
+To:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>, <bp@alien8.de>,
+        <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>,
+        <keescook@chromium.org>, <bhe@redhat.com>, <msys.mizuma@gmail.com>
+CC:     <indou.takao@jp.fujitsu.com>, <caoj.fnst@cn.fujitsu.com>
+Subject: Re: [PATCH v13 1/6] x86/boot: Introduce kstrtoull() to boot
+ directory instead of simple_strtoull()
+Message-ID: <20181212041218.GA28286@localhost.localdomain>
+References: <20181212031053.1815-1-fanc.fnst@cn.fujitsu.com>
+ <20181212031053.1815-2-fanc.fnst@cn.fujitsu.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
-X-TM-AS-GCONF: 00
-x-cbid: 18121204-4275-0000-0000-000002EF46FD
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18121204-4276-0000-0000-000037FC672B
-Message-Id: <3791832.MWVI2j2YUV@localhost.localdomain>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-12_01:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812120033
+Content-Disposition: inline
+In-Reply-To: <20181212031053.1815-2-fanc.fnst@cn.fujitsu.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Originating-IP: [10.167.225.56]
+X-yoursite-MailScanner-ID: CCB864B734CA.AF82F
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tuesday, December 11, 2018 11:11:17 PM IST Eric Biggers wrote:
-> On Tue, Dec 11, 2018 at 03:15:53PM +0100, Krzysztof Kozlowski wrote:
-> > Hi,
-> > 
-> > Bisect from today's next pointed me to:
-> > commit 4de97efb578a094e8fbf279522d41eb9ece1e3e0
-> > Author: Chandan Rajendra <chandan@linux.vnet.ibm.com>
-> > Date:   Sat Dec 8 12:21:43 2018 +0530
-> >     fsverity: Move verity status check to fsverity_file_open
-> > 
-> > as a reason of "Operation not supported" when reading any file from
-> > mounted ext4fs (from SD card). Rootfs from nfsroot works but reading
-> > from /home with ext4fs fails.
-> > 
-> > Mounts:
-> > 192.168.1.10:/srv/nfs/odroidhc1 on / type nfs4
-> > (rw,relatime,vers=4.0,rsize=131072,wsize=131072,namlen=255,hard,proto=tcp,timeo=600,retrans=2,sec=sys,clientaddr=192.168.1.12,local_lock=none,addr=192.168.1.10)
-> > /dev/mmcblk0p2 on /home type ext4 (rw,relatime)
-> > 
-> > Configuration:
-> > 1. Arch ARM Linux
-> > 2. exynos_defconfig
-> >   - All my Odroid boards (ARMv7, Exynos)
-> >     Systemd: v239, v238
-> > 3. All boards boot from TFTP with NFS root (NFSv4)
-> > No specific errors in boot log:
-> > https://krzk.eu/#/builders/21/builds/1034/steps/12/logs/serial0
-> > 
-> > Let me know if you need any more data.
-> > 
-> > Best regards,
-> > Krzysztof
+On Wed, Dec 12, 2018 at 11:10:48AM +0800, Chao Fan wrote:
+>Introduce kstrtoull() from lib/kstrtox.c to boot directory so that code
+>in boot/ can use kstrtoull() and the old simple_strtoull() can be
+>replaced.
+>
+
+Hi all,
+
+Thanks for Boris, Baoquan and Masa's help, this PATCHSET has proceeded to
+this step. With the talking in community, the key problem has been turned
+from ACPI issue to kstrtoull() issue.
+In this version, following the suggestion of Boris, I copy the kstrtoull()
+to boot/string.c
+But from last week, I was working on kstrtoull() issue in different methods
+and try many times, there are several methods:
+1. Copy kstrtoull() to boot/string.c
+2. Include kstrtoull() to boot/string.c.
+3. Use existing simple_strtoull() for now, and proceed to include kstrtoull()
+   as a next work.
+
+For method 1, PATCH is here, it's easy and clear.
+For method 2, I tried and met many ifdeffery problems:
+	First, the conflict of ctype.h header file.
+	Second, redefine of isdigit() and memcpy() and other functions.
+	Third, 'CONFIG_MODVERSIONS=y' causes ld error
+	Forth, div_u64 causes make error.
+Thanks to Baoquan and Masa, these problems have been fixed.
+I success to make, but more warning issues is waiting to be fixed.
+And I think several weeks are needed to handle the warning issue
+since I am not so familiar to fix these problems.
+But it blocked the main job for a long time, so if people think
+the method 1 is not so good, I think method 3 is a choice.
+
+Thanks,
+Chao Fan
+
+>Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
+>---
+> arch/x86/boot/string.c | 137 +++++++++++++++++++++++++++++++++++++++++
+> arch/x86/boot/string.h |   2 +
+> 2 files changed, 139 insertions(+)
+>
+>diff --git a/arch/x86/boot/string.c b/arch/x86/boot/string.c
+>index c4428a176973..e02405f20f98 100644
+>--- a/arch/x86/boot/string.c
+>+++ b/arch/x86/boot/string.c
+>@@ -12,7 +12,10 @@
+>  * Very basic string functions
+>  */
 > 
-> Thanks Krzysztof.  Ted, this is the same bug I pointed out in my review of this
-> patch yesterday (https://patchwork.kernel.org/patch/10719197/#22371523).  Can
-> you fix or revert the two broken patches?  Thanks,
+>+#define _LINUX_CTYPE_H
+> #include <linux/types.h>
+>+#include <linux/kernel.h>
+>+#include <linux/errno.h>
+> #include <asm/asm.h>
+> #include "ctype.h"
+> #include "string.h"
+>@@ -187,3 +190,137 @@ char *strchr(const char *s, int c)
+> 			return NULL;
+> 	return (char *)s;
+> }
+>+
+>+static inline u64 div_u64_rem(u64 dividend, u32 divisor, u32 *remainder)
+>+{
+>+	union {
+>+		u64 v64;
+>+		u32 v32[2];
+>+	} d = { dividend };
+>+	u32 upper;
+>+
+>+	upper = d.v32[1];
+>+	d.v32[1] = 0;
+>+	if (upper >= divisor) {
+>+		d.v32[1] = upper / divisor;
+>+		upper %= divisor;
+>+	}
+>+	asm ("divl %2" : "=a" (d.v32[0]), "=d" (*remainder) :
+>+		"rm" (divisor), "0" (d.v32[0]), "1" (upper));
+>+	return d.v64;
+>+}
+>+
+>+static inline u64 div_u64(u64 dividend, u32 divisor)
+>+{
+>+	u32 remainder;
+>+	return div_u64_rem(dividend, divisor, &remainder);
+>+}
+>+
+>+static inline char _tolower(const char c)
+>+{
+>+	return c | 0x20;
+>+}
+>+
+>+const char *_parse_integer_fixup_radix(const char *s, unsigned int *base)
+>+{
+>+	if (*base == 0) {
+>+		if (s[0] == '0') {
+>+			if (_tolower(s[1]) == 'x' && isxdigit(s[2]))
+>+				*base = 16;
+>+			else
+>+				*base = 8;
+>+		} else
+>+			*base = 10;
+>+	}
+>+	if (*base == 16 && s[0] == '0' && _tolower(s[1]) == 'x')
+>+		s += 2;
+>+	return s;
+>+}
+>+
+>+/*
+>+ * Convert non-negative integer string representation in explicitly given radix
+>+ * to an integer.
+>+ * Return number of characters consumed maybe or-ed with overflow bit.
+>+ * If overflow occurs, result integer (incorrect) is still returned.
+>+ *
+>+ * Don't you dare use this function.
+>+ */
+>+unsigned int _parse_integer(const char *s, unsigned int base, unsigned long long *p)
+>+{
+>+	unsigned long long res;
+>+	unsigned int rv;
+>+
+>+	res = 0;
+>+	rv = 0;
+>+	while (1) {
+>+		unsigned int c = *s;
+>+		unsigned int lc = c | 0x20; /* don't tolower() this line */
+>+		unsigned int val;
+>+
+>+		if ('0' <= c && c <= '9')
+>+			val = c - '0';
+>+		else if ('a' <= lc && lc <= 'f')
+>+			val = lc - 'a' + 10;
+>+		else
+>+			break;
+>+
+>+		if (val >= base)
+>+			break;
+>+		/*
+>+		 * Check for overflow only if we are within range of
+>+		 * it in the max base we support (16)
+>+		 */
+>+		if (unlikely(res & (~0ull << 60))) {
+>+			if (res > div_u64(ULLONG_MAX - val, base))
+>+				rv |= KSTRTOX_OVERFLOW;
+>+		}
+>+		res = res * base + val;
+>+		rv++;
+>+		s++;
+>+	}
+>+	*p = res;
+>+	return rv;
+>+}
+>+
+>+static int _kstrtoull(const char *s, unsigned int base, unsigned long long *res)
+>+{
+>+	unsigned long long _res;
+>+	unsigned int rv;
+>+
+>+	s = _parse_integer_fixup_radix(s, &base);
+>+	rv = _parse_integer(s, base, &_res);
+>+	if (rv & KSTRTOX_OVERFLOW)
+>+		return -ERANGE;
+>+	if (rv == 0)
+>+		return -EINVAL;
+>+	s += rv;
+>+	if (*s == '\n')
+>+		s++;
+>+	if (*s)
+>+		return -EINVAL;
+>+	*res = _res;
+>+	return 0;
+>+}
+>+
+>+/**
+>+ * kstrtoull - convert a string to an unsigned long long
+>+ * @s: The start of the string. The string must be null-terminated, and may also
+>+ *  include a single newline before its terminating null. The first character
+>+ *  may also be a plus sign, but not a minus sign.
+>+ * @base: The number base to use. The maximum supported base is 16. If base is
+>+ *  given as 0, then the base of the string is automatically detected with the
+>+ *  conventional semantics - If it begins with 0x the number will be parsed as a
+>+ *  hexadecimal (case insensitive), if it otherwise begins with 0, it will be
+>+ *  parsed as an octal number. Otherwise it will be parsed as a decimal.
+>+ * @res: Where to write the result of the conversion on success.
+>+ *
+>+ * Returns 0 on success, -ERANGE on overflow and -EINVAL on parsing error.
+>+ * Used as a replacement for the obsolete simple_strtoull. Return code must
+>+ * be checked.
+>+ */
+>+int kstrtoull(const char *s, unsigned int base, unsigned long long *res)
+>+{
+>+	if (s[0] == '+')
+>+		s++;
+>+	return _kstrtoull(s, base, res);
+>+}
+>diff --git a/arch/x86/boot/string.h b/arch/x86/boot/string.h
+>index 3d78e27077f4..171007c99acc 100644
+>--- a/arch/x86/boot/string.h
+>+++ b/arch/x86/boot/string.h
+>@@ -29,4 +29,6 @@ extern unsigned int atou(const char *s);
+> extern unsigned long long simple_strtoull(const char *cp, char **endp,
+> 					  unsigned int base);
 > 
-
-Hi,
-
-I have sent version V4 of the patchset now. My plan was to include the fix for
-"Kconfig recursive dependency" issue reported for IA64 architecture. But I
-would need some more time to understand the problem and provide a correct
-fix. Hence the V4 patchset was sent with a fix to only address the problem
-reported in this mail.
-
--- 
-chandan
-
+>+int kstrtoull(const char *s, unsigned int base, unsigned long long *res);
+>+#define KSTRTOX_OVERFLOW       (1U << 31)
+> #endif /* BOOT_STRING_H */
+>-- 
+>2.19.2
+>
 
 
