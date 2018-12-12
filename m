@@ -2,89 +2,95 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A85E2C65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:27:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 693CAC67839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:27:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6907520879
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:27:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="DInlvK+c"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6907520879
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
+	by mail.kernel.org (Postfix) with ESMTP id 350F620873
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:27:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 350F620873
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728048AbeLLR1N (ORCPT
+        id S1728066AbeLLR1V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 12:27:13 -0500
-Received: from mail-yb1-f195.google.com ([209.85.219.195]:43839 "EHLO
-        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727799AbeLLR1L (ORCPT
+        Wed, 12 Dec 2018 12:27:21 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:50930 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727799AbeLLR1U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 12:27:11 -0500
-Received: by mail-yb1-f195.google.com with SMTP id d136so4242880ybh.10
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 09:27:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wAWlHiL43Px9YEPlV+wmCzS/Y7fU4PLr+lm0IQ3PNdM=;
-        b=DInlvK+cQ8T8Ku++qLEv+3WnvycG+L7SBwIzP82cmOxP6JzTzlwLKxaUT9c1WymiUN
-         MbnTcvf3gkOiH6cRgHD7OJsgj3fwg5O4UzW0dFbVUP+6jclaEehzwIM3UwPEjseU6m6I
-         767j0zvj2wrT6O38gByz6QbnXvd4yB36y5FaU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wAWlHiL43Px9YEPlV+wmCzS/Y7fU4PLr+lm0IQ3PNdM=;
-        b=IfKfbNLi/qyEHKI03tTeGr8BlqOslNbdOwDhp5S0eEZfUy2PNBH21GK5XFDuFrNYBu
-         xfiy4kOQcGR44wru0YgV+bRqVRf6QsvICZF4qyJ9+3z1lyBTr1WJpCIsEtlTBzTwpbRC
-         smscnvy/8GeHtyOtAOc5uWodQQ9MYY+3n00z1IiRafEDBTzdsCX18InG2LqEkZdEMwBO
-         /64ciDmvsyDAd+IIJPw+WyCSyis1vfc3L3wucPq3LFfDNNy4CdMxRgnKxPK76NRWiVo2
-         jYh4jzKoL+nGUFt5xpP59Yzp6jrHeWveuf4fFW16/SyqW8gi3N/MlL1/TprKWudNtgSw
-         VVDA==
-X-Gm-Message-State: AA+aEWZlFt3JJ1xTF/hlpAwlZNMJ9psdznv77vUMda/3uQS5yQ4YbtFD
-        WUrwgEUS2qNf0Ht6sak+RGP+8zvMp65aNF3n17w4pw==
-X-Google-Smtp-Source: AFSGD/WrxW5MRtySGeSJ+1KDQuPjLEyJRKw2yT20aL6NMo4NMVTiSc0IZRzIKgarNqp92v4p1cyOX50uNP61bQJS8S4=
-X-Received: by 2002:a25:42c4:: with SMTP id p187mr22133586yba.46.1544635629448;
- Wed, 12 Dec 2018 09:27:09 -0800 (PST)
-MIME-Version: 1.0
-References: <CACKFLi=bOMKnmucRTNUyG=xWYWADJ61COFy2U-7rph0WRWR4Yg@mail.gmail.com>
- <a183bfa67a3c3ca6c62676f01434eb921c9dc008.1544633931.git.jtoppins@redhat.com>
-In-Reply-To: <a183bfa67a3c3ca6c62676f01434eb921c9dc008.1544633931.git.jtoppins@redhat.com>
-From:   Michael Chan <michael.chan@broadcom.com>
-Date:   Wed, 12 Dec 2018 09:26:58 -0800
-Message-ID: <CACKFLimhji4BU9UjeQRsA18j+hPHYL_g8q__hpAr0WwEAM9m-Q@mail.gmail.com>
-Subject: Re: [PATCH net-next] bnxt: remove printing of hwrm message
-To:     Jonathan Toppins <jtoppins@redhat.com>
-Cc:     Netdev <netdev@vger.kernel.org>,
-        David Miller <davem@davemloft.net>,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 12 Dec 2018 12:27:20 -0500
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBCHJeOF037109
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 12:27:19 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2pb4mmefsg-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 12:27:19 -0500
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zaslonko@linux.ibm.com>;
+        Wed, 12 Dec 2018 17:27:16 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 12 Dec 2018 17:27:13 -0000
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBCHRCiA8061294
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 12 Dec 2018 17:27:12 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 96FD742047;
+        Wed, 12 Dec 2018 17:27:12 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4E02742045;
+        Wed, 12 Dec 2018 17:27:12 +0000 (GMT)
+Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Wed, 12 Dec 2018 17:27:12 +0000 (GMT)
+From:   Mikhail Zaslonko <zaslonko@linux.ibm.com>
+To:     akpm@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        mhocko@kernel.org, Pavel.Tatashin@microsoft.com,
+        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        gerald.schaefer@de.ibm.com, zaslonko@linux.ibm.com
+Subject: [PATCH v2 0/1] Initialize struct pages for the full section
+Date:   Wed, 12 Dec 2018 18:27:11 +0100
+X-Mailer: git-send-email 2.16.4
+X-TM-AS-GCONF: 00
+x-cbid: 18121217-0008-0000-0000-000002A0670A
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18121217-0009-0000-0000-0000220AE4DA
+Message-Id: <20181212172712.34019-1-zaslonko@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-12_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=644 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812120149
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 12, 2018 at 8:59 AM Jonathan Toppins <jtoppins@redhat.com> wrote:
->
->   bnxt_en 0000:19:00.0 (unregistered net_device) (uninitialized): hwrm
-> req_type 0x190 seq id 0x6 error 0xffff
->
-> The message above is commonly seen when a newer driver is used on
-> hardware with older firmware. The issue is this message means nothing to
-> anyone except Broadcom. Remove the message to not confuse users as this
-> message is really not very informative.
->
-> Signed-off-by: Jonathan Toppins <jtoppins@redhat.com>
-> ---
->
-> Notes:
->     v2:
->       include changes recommended by Michael Chan
->
+This patch refers to the older thread:
+https://marc.info/?t=153658306400001&r=1&w=2
 
-Acked-by: Michael Chan <michael.chan@broadcom.com>
+As suggested by Michal Hocko, instead of adjusting memory_hotplug paths,
+I have changed memmap_init_zone() to initialize struct pages beyond the
+zone end (if zone end is not aligned with the section boundary).
+
+Mikhail Zaslonko (1):
+  mm, memory_hotplug: Initialize struct pages for the full memory
+    section
+
+ mm/page_alloc.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+-- 
+2.16.4
+
