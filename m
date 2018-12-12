@@ -2,180 +2,124 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.9 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA6DCC04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 08:34:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD97DC65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 08:34:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7373D2086D
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 08:34:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7373D2086D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+	by mail.kernel.org (Postfix) with ESMTP id 93FB520849
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 08:34:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544603676;
+	bh=+zYlX5hybM4j6WZXWXc+7E9TCzG+0cw0hnkpwAcj7Bs=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:List-ID:From;
+	b=ms6ka+6TA7IjFTA2EGzB+zv3cUX5i+MoiohvS6Au9ZqSS1Ah/U44zntNIIQ0VnHFQ
+	 TmCbZsN2z08z4Drbf7maE8WOUFTLmpOSBF60yfmGYwQ7j3AQWP/QCXQHTiCD+vrWT0
+	 4IBaQI1y9aX2o19vmJmraM/wSFrCo42D6CMQjAzw=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93FB520849
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726859AbeLLIeX (ORCPT
+        id S1726885AbeLLIef (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 03:34:23 -0500
-Received: from smtp-sh2.infomaniak.ch ([128.65.195.6]:33456 "EHLO
-        smtp-sh2.infomaniak.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726242AbeLLIeW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 03:34:22 -0500
-Received: from smtp8.infomaniak.ch (smtp8.infomaniak.ch [83.166.132.38])
-        by smtp-sh.infomaniak.ch (8.14.5/8.14.5) with ESMTP id wBC8HfHl022346
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 12 Dec 2018 09:17:42 +0100
-Received: from localhost (ns3096276.ip-94-23-54.eu [94.23.54.103])
-        (authenticated bits=0)
-        by smtp8.infomaniak.ch (8.14.5/8.14.5) with ESMTP id wBC8Hdkr032831;
-        Wed, 12 Dec 2018 09:17:39 +0100
-From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To:     linux-kernel@vger.kernel.org
-Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        James Morris <jmorris@namei.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Matthew Garrett <mjg59@google.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mickael.salaun@ssi.gouv.fr>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        =?UTF-8?q?Philippe=20Tr=C3=A9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>, Shuah Khan <shuah@kernel.org>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        Yves-Alexis Perez <yves-alexis.perez@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: [RFC PATCH v1 1/5] fs: Add support for an O_MAYEXEC flag on sys_open()
-Date:   Wed, 12 Dec 2018 09:17:08 +0100
-Message-Id: <20181212081712.32347-2-mic@digikod.net>
-X-Mailer: git-send-email 2.20.0.rc2
-In-Reply-To: <20181212081712.32347-1-mic@digikod.net>
-References: <20181212081712.32347-1-mic@digikod.net>
+        Wed, 12 Dec 2018 03:34:35 -0500
+Received: from mga11.intel.com ([192.55.52.93]:32155 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726525AbeLLIee (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 03:34:34 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Dec 2018 00:34:33 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,343,1539673200"; 
+   d="asc'?scan'208";a="282933478"
+Received: from pipin.fi.intel.com (HELO localhost) ([10.237.72.175])
+  by orsmga005.jf.intel.com with ESMTP; 12 Dec 2018 00:34:28 -0800
+From:   Felipe Balbi <balbi@kernel.org>
+To:     Peter Chen <peter.chen@nxp.com>,
+        Peter Chen <hzpeterchen@gmail.com>,
+        "pawell\@cadence.com" <pawell@cadence.com>
+Cc:     "devicetree\@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "linux-usb\@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "rogerq\@ti.com" <rogerq@ti.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        "adouglas\@cadence.com" <adouglas@cadence.com>,
+        "jbergsagel\@ti.com" <jbergsagel@ti.com>,
+        "nsekhar\@ti.com" <nsekhar@ti.com>, "nm\@ti.com" <nm@ti.com>,
+        "sureshp\@cadence.com" <sureshp@cadence.com>,
+        "pjez\@cadence.com" <pjez@cadence.com>,
+        "kurahul\@cadence.com" <kurahul@cadence.com>
+Subject: RE: [PATCH v1 2/2] usb:cdns3 Add Cadence USB3 DRD Driver
+In-Reply-To: <VI1PR04MB5327B1CB6C6BC7D293701F1D8BA70@VI1PR04MB5327.eurprd04.prod.outlook.com>
+References: <1544445555-17325-1-git-send-email-pawell@cadence.com> <1544445555-17325-3-git-send-email-pawell@cadence.com> <87h8fkmfar.fsf@linux.intel.com> <BYAPR07MB47095110AF28CC11B4C9E144DDA60@BYAPR07MB4709.namprd07.prod.outlook.com> <CAL411-ryK2LLZVg5_sLkCYOuhwdHLVm5XavSyC9nbEXZah_43w@mail.gmail.com> <877egfmdxk.fsf@linux.intel.com> <VI1PR04MB5327B1CB6C6BC7D293701F1D8BA70@VI1PR04MB5327.eurprd04.prod.outlook.com>
+Date:   Wed, 12 Dec 2018 10:34:24 +0200
+Message-ID: <871s6nm9db.fsf@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
-X-Antivirus-Code: 0x100000
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When the O_MAYEXEC flag is passed, sys_open() may be subject to
-additional restrictions depending on a security policy implemented by an
-LSM through the inode_permission hook.
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-The underlying idea is to be able to restrict scripts interpretation
-according to a policy defined by the system administrator.  For this to
-be possible, script interpreters must use the O_MAYEXEC flag
-appropriately.  To be fully effective, these interpreters also need to
-handle the other ways to execute code (for which the kernel can't help):
-command line parameters (e.g., option -e for Perl), module loading
-(e.g., option -m for Python), stdin, file sourcing, environment
-variables, configuration files...  According to the threat model, it may
-be acceptable to allow some script interpreters (e.g. Bash) to interpret
-commands from stdin, may it be a TTY or a pipe, because it may not be
-enough to (directly) perform syscalls.
+Peter Chen <peter.chen@nxp.com> writes:
+>> >> >> +    irqreturn_t ret =3D IRQ_NONE;
+>> >> >> +    unsigned long flags;
+>> >> >> +    u32 reg;
+>> >> >> +
+>> >> >> +    priv_dev =3D cdns->gadget_dev;
+>> >> >> +    spin_lock_irqsave(&priv_dev->lock, flags);
+>> >> >
+>> >> >you're already running in hardirq context. Why do you need this lock
+>> >> >at all? I would be better to use the hardirq handler to mask your
+>> >> >interrupts, so they don't fire again, then used the top-half
+>> >> >(softirq) handler to actually handle the interrupts.
+>> >>
+>> >
+>> > This controller may be ran at SMP environment, register and flag
+>> > access needs to be protected among CPUs running.
+>>=20
+>> in hardirq context? When interrupts are already disabled?
+>
+> Interrupt handler (hardirq context) at CPU0, and process at CPU1, eg
+> role switch, unload module, etc.
 
-A simple security policy implementation is available in a following
-patch for Yama.
+the process at CPU1 would need to disable interrupts (spin_lock_irq() or
+spin_lock_irqsave()), not the hardirq on CPU0 as that already runs with
+interrrupts disabled.
 
-This is an updated subset of the patch initially written by Vincent
-Strubel for CLIP OS:
-https://github.com/clipos-archive/src_platform_clip-patches/blob/f5cb330d6b684752e403b4e41b39f7004d88e561/1901_open_mayexec.patch
-This patch has been used for more than 10 years with customized script
-interpreters.  Some examples can be found here:
-https://github.com/clipos-archive/clipos4_portage-overlay/search?q=O_MAYEXEC
+https://www.kernel.org/doc/html/latest/kernel-hacking/locking.html#table-of=
+-minimum-requirements
 
-Signed-off-by: Mickaël Salaün <mic@digikod.net>
-Signed-off-by: Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
-Signed-off-by: Vincent Strubel <vincent.strubel@ssi.gouv.fr>
-Reviewed-by: Philippe Trébuchet <philippe.trebuchet@ssi.gouv.fr>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Mickaël Salaün <mickael.salaun@ssi.gouv.fr>
----
- fs/fcntl.c                       | 2 +-
- fs/open.c                        | 4 ++++
- include/linux/fcntl.h            | 2 +-
- include/linux/fs.h               | 2 ++
- include/uapi/asm-generic/fcntl.h | 3 +++
- 5 files changed, 11 insertions(+), 2 deletions(-)
+=2D-=20
+balbi
 
-diff --git a/fs/fcntl.c b/fs/fcntl.c
-index 083185174c6d..6c85c4d0c006 100644
---- a/fs/fcntl.c
-+++ b/fs/fcntl.c
-@@ -1031,7 +1031,7 @@ static int __init fcntl_init(void)
- 	 * Exceptions: O_NONBLOCK is a two bit define on parisc; O_NDELAY
- 	 * is defined as O_NONBLOCK on some platforms and not on others.
- 	 */
--	BUILD_BUG_ON(21 - 1 /* for O_RDONLY being 0 */ !=
-+	BUILD_BUG_ON(22 - 1 /* for O_RDONLY being 0 */ !=
- 		HWEIGHT32(
- 			(VALID_OPEN_FLAGS & ~(O_NONBLOCK | O_NDELAY)) |
- 			__FMODE_EXEC | __FMODE_NONOTIFY));
-diff --git a/fs/open.c b/fs/open.c
-index 0285ce7dbd51..75479b79a58f 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -974,6 +974,10 @@ static inline int build_open_flags(int flags, umode_t mode, struct open_flags *o
- 	if (flags & O_APPEND)
- 		acc_mode |= MAY_APPEND;
- 
-+	/* Check execution permissions on open. */
-+	if (flags & O_MAYEXEC)
-+		acc_mode |= MAY_OPENEXEC;
-+
- 	op->acc_mode = acc_mode;
- 
- 	op->intent = flags & O_PATH ? 0 : LOOKUP_OPEN;
-diff --git a/include/linux/fcntl.h b/include/linux/fcntl.h
-index 27dc7a60693e..1fc00cabe9ab 100644
---- a/include/linux/fcntl.h
-+++ b/include/linux/fcntl.h
-@@ -9,7 +9,7 @@
- 	(O_RDONLY | O_WRONLY | O_RDWR | O_CREAT | O_EXCL | O_NOCTTY | O_TRUNC | \
- 	 O_APPEND | O_NDELAY | O_NONBLOCK | O_NDELAY | __O_SYNC | O_DSYNC | \
- 	 FASYNC	| O_DIRECT | O_LARGEFILE | O_DIRECTORY | O_NOFOLLOW | \
--	 O_NOATIME | O_CLOEXEC | O_PATH | __O_TMPFILE)
-+	 O_NOATIME | O_CLOEXEC | O_PATH | __O_TMPFILE | O_MAYEXEC)
- 
- #ifndef force_o_largefile
- #define force_o_largefile() (BITS_PER_LONG != 32)
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index c95c0807471f..584c9329ad78 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -94,6 +94,8 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff_t offset,
- #define MAY_CHDIR		0x00000040
- /* called from RCU mode, don't block */
- #define MAY_NOT_BLOCK		0x00000080
-+/* the inode is opened with O_MAYEXEC */
-+#define MAY_OPENEXEC		0x00000100
- 
- /*
-  * flags in file.f_mode.  Note that FMODE_READ and FMODE_WRITE must correspond
-diff --git a/include/uapi/asm-generic/fcntl.h b/include/uapi/asm-generic/fcntl.h
-index 9dc0bf0c5a6e..cbb9425d6e7c 100644
---- a/include/uapi/asm-generic/fcntl.h
-+++ b/include/uapi/asm-generic/fcntl.h
-@@ -97,6 +97,9 @@
- #define O_NDELAY	O_NONBLOCK
- #endif
- 
-+/* command execution from file is intended, check exec permissions */
-+#define O_MAYEXEC	040000000
-+
- #define F_DUPFD		0	/* dup */
- #define F_GETFD		1	/* get close_on_exec */
- #define F_SETFD		2	/* set/clear close_on_exec */
--- 
-2.20.0.rc2
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAlwQyBAACgkQzL64meEa
+mQZ8CxAAvjH18/fOPM8pCR/Wu8JM3pC2RH0ACJcypp+6QdyCQrRBCrDHetCXgIBH
+INpwQzkJGW8+d4zkFAUgVtuWkKCkNyoMFw9jR1cQSVGyem+S9HN6AR78ufEeXJ61
+pCna4GCRwEFdzHLUnEaPEh+q3TUSO1n0zE/afibTkpW+Jh6u7wgtLdOL1m8HaG7R
+l5taWIvb/RL+pH2Gbbv/7SebacbpK/cf6gSGBbR6LgAvweCDUWdeJJluzY+m9uDp
+uhwZ3mXvgV0MiQbTRk9j1QclyGNBJrXOOzBW84v8Tnu4P9kCbXVJpwuPAsJZQS7T
+H8q9s3NUwDKHcAjExzuUdtOwmbdBgbd0IPkwSstuIsKvav3TwtNae0o39eAE5y8S
+Bx1ulfD9XRaQiWSHo6UTH7wOJNtkQCvcAIirEMnlomKSwwAQTQ6Tmrdh5/hd/OI/
+qY7LsmZfN8yZ+1KhKWlJyZJgabw9WIEaesmPwwFfS1dskDMAwoEegrK4azDprALC
+6IxDj6oQ05irTwEu8ICFvYkzuBZ5tGEwmNKtnVJxzvbmUQBgoGGlPppVLexBSXdP
+fRDLzuI4hX0g4vifRo4qcJS4U3yOuJpoIybY4ZSsOPefwA4DqHxG0M8Iqi1Qe84y
++e20v5AQnLxxUrC+XnwcW37JoGA6uukzyYijQrvPfngpllTr+fc=
+=spIR
+-----END PGP SIGNATURE-----
+--=-=-=--
