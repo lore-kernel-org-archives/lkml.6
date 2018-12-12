@@ -2,117 +2,92 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEA8AC65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 21:25:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B9FCC65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 21:26:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D37C208E7
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 21:25:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D37C208E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 1724A2084E
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 21:26:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1724A2084E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728053AbeLLVZ5 (ORCPT
+        id S1728305AbeLLV0O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 16:25:57 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:37978 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726263AbeLLVZ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 16:25:57 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Wed, 12 Dec 2018 16:26:14 -0500
+Received: from mx3.molgen.mpg.de ([141.14.17.11]:38981 "EHLO mx1.molgen.mpg.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727131AbeLLV0N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 16:26:13 -0500
+Received: from [192.168.0.3] (ip5f5bd26f.dynamic.kabel-deutschland.de [95.91.210.111])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 68C3230BFA3D;
-        Wed, 12 Dec 2018 21:25:56 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.18.25.234])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id BEA6D608D9;
-        Wed, 12 Dec 2018 21:25:53 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 5A34B2208FC; Wed, 12 Dec 2018 16:25:53 -0500 (EST)
-Date:   Wed, 12 Dec 2018 16:25:53 -0500
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Piotr Jurkiewicz <piotr.jerzy.jurkiewicz@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        kvm@vger.kernel.org, miklos@szeredi.hu, stefanha@redhat.com,
-        dgilbert@redhat.com, sweil@redhat.com, swhiteho@redhat.com
-Subject: Re: [PATCH 00/52] [RFC] virtio-fs: shared file system for virtual
- machines
-Message-ID: <20181212212553.GB23229@redhat.com>
-References: <dc2e6e0f-ab00-a114-0fc1-e787293a73cf@gmail.com>
+        (Authenticated sender: pmenzel)
+        by mx.molgen.mpg.de (Postfix) with ESMTPSA id 36230201353427;
+        Wed, 12 Dec 2018 22:26:11 +0100 (CET)
+Subject: Re: [solved] *powersave* governor shown despite disabled in
+ configuration
+To:     Dominik Brodowski <linux@dominikbrodowski.net>
+Cc:     linux-pm@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <8786b234-eb4d-fb79-d6e0-e71f45ed3120@molgen.mpg.de>
+ <20181211065152.t2anuhy6t4n2zjrd@isilmar-4.linta.de>
+From:   Paul Menzel <pmenzel@molgen.mpg.de>
+Message-ID: <f6bbee19-d5fd-4deb-03a7-488f40be5103@molgen.mpg.de>
+Date:   Wed, 12 Dec 2018 22:26:11 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <dc2e6e0f-ab00-a114-0fc1-e787293a73cf@gmail.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Wed, 12 Dec 2018 21:25:56 +0000 (UTC)
+In-Reply-To: <20181211065152.t2anuhy6t4n2zjrd@isilmar-4.linta.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 12, 2018 at 06:07:40PM +0100, Piotr Jurkiewicz wrote:
-> Currently, virtio-9p cannot be used with overlayfs in order to obtain
-> Docker-like experience (but with separate kernel) because of file attributes
-> problems. I wrote an email about that to qemu-devel almost year ago, but it
-> received no attention (I attach its contents below.).
-> 
-> Will virtio-fs avoid these problems? I assume it will be transparent from
-> the point of view of file attributes, and not enforce any kind of security
-> filtering?
 
-Hi Piotr,
+Dear Dominik,
 
-So you want to use virtio-fs as upper/ layer of a overlay filesystem
-inside guest? Interesting. I have not tried that.
 
-As of now I think we are not doing any filtering of file attributes
-and it might just work. Give it a try. Having said that, I suspect
-that security model of virtio-fs most likely will evolve.
+Thank you for your quick response.
 
-Thanks
-Vivek
+
+Am 11.12.18 um 07:51 schrieb Dominik Brodowski:
+> On Mon, Dec 10, 2018 at 04:30:05PM +0100, Paul Menzel wrote:
+
+>> With Linux 4.14.76, the scaling governor *powersave* is shown as
+>> being available despite being disabled in the configuration.
 > 
-> Piotr Jurkiewicz
+> Which cpufreq driver do you use? Presumably intel_pstate?
+
+Yes, intel_pstate.
+
+> That driver exposes internal policies / "governors" named 
+> "performance" and "powersave", which are unrelated to
+> CONFIG_CPU_FREQ_GOV_POWERSAVE.
+Indeed, that confused me, and I didn’t read the documentation
+carefully enough.
+
+> They are not generic scaling governors, but their names are the same as the
+> names of some of those governors.  Moreover, confusingly enough, they generally
+> do not work in the same way as the generic governors they share the names with.
+> For example, the ``powersave`` P-state selection algorithm provided by
+> ``intel_pstate`` is not a counterpart of the generic ``powersave`` governor
+> (roughly, it corresponds to the ``schedutil`` and ``ondemand`` governors).
 > 
-> ----
-> 
-> 1. Upper filesystem must support the creation of trusted.* extended
-> attributes.
-> 
-> 9pfs has support for getting/setting xattrs, but calls operating on
-> attributes other than user.* and system.posix_acl_* are dropped.
-> 
-> 2. Upper filesystem must provide valid d_type in readdir responses.
-> 
-> This works, but only in case of 'passtrough' and 'none' security models. In
-> the case of 'mapped-xattr' and 'mapped-file' models, d_type is being zeroed
-> to DT_UNKNOWN during readdir() call.
-> 
-> All these limitations can be resolved pretty easily, but requires some
-> design decisions. I can prepare appropriate patches.
-> 
-> Ad. 1.
-> 
-> Why are operations on attributes other than than user.* and
-> system.posix_acl_* forbidden? Is this due to security reasons?
-> 
-> If so, can we map all of them to user.virtfs namespace, similarly as
-> system.posix_acl_* are being mapped to user.virtfs.system.posix_acl_* in
-> 'mapping' mode already? This way any trusted/security/system attributes will
-> be effective only when mounted via virtfs inside VM.
-> 
-> Ad. 2.
-> 
-> local_readdir() can fill entry->d_type with the right DT_* value by
-> obtaining file type from mapping and translating it with IFTODT() macro.
-> This would, however, require reading 'user.virtfs.mode' for each direntry
-> during readdir() call, what can affect performance. If so, this behavior
-> would probably need to be controlled with some runtime option.
-> 
-> 'mapped-xattr' and 'mapped-file' models are essential for running qemu with
-> overlayfs as non-root, because overlayfs creates device nodes, what is
-> possible for unprivileged user only with these models.
+> There are two P-state selection algorithms provided by ``intel_pstate`` in the
+> active mode: ``powersave`` and ``performance``.  The way they both operate
+> depends on whether or not the hardware-managed P-states (HWP) feature has been
+> enabled in the processor and possibly on the processor model.
+
+
+Kind regards,
+
+Paul
+
+
+[1]: https://www.kernel.org/doc/html/latest/admin-guide/pm/intel_pstate.html
