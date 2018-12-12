@@ -2,185 +2,374 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37697C65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 15:27:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B614BC65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 15:28:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 007432080F
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 15:27:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 007432080F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
+	by mail.kernel.org (Postfix) with ESMTP id 66C872080F
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 15:28:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20150623.gappssmtp.com header.i=@toxicpanda-com.20150623.gappssmtp.com header.b="Bbq2wBNX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66C872080F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727760AbeLLP1a (ORCPT
+        id S1727792AbeLLP2B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 10:27:30 -0500
-Received: from muru.com ([72.249.23.125]:57734 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726246AbeLLP13 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 10:27:29 -0500
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id A9649809F;
-        Wed, 12 Dec 2018 15:27:31 +0000 (UTC)
-Date:   Wed, 12 Dec 2018 07:27:25 -0800
-From:   Tony Lindgren <tony@atomide.com>
-To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc:     "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Takashi Iwai <tiwai@suse.com>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Mark Brown <broonie@kernel.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Jarkko Nikula <jarkko.nikula@bitmer.com>
-Subject: Re: [alsa-devel] [PATCH 0/2] Graph fixes for using multiple
-        endpoints per port
-Message-ID: <20181212152725.GE6707@atomide.com>
-References: <8736r4bvf3.wl-kuninori.morimoto.gx@renesas.com>
- <20181211045220.GI6707@atomide.com>
- <871s6obqkb.wl-kuninori.morimoto.gx@renesas.com>
- <20181211053536.GJ6707@atomide.com>
- <87wooga9an.wl-kuninori.morimoto.gx@renesas.com>
- <20181211141649.GL6707@atomide.com>
- <87ftv33bpg.wl-kuninori.morimoto.gx@renesas.com>
- <20181212001950.GX6707@atomide.com>
- <877egf33m9.wl-kuninori.morimoto.gx@renesas.com>
- <87k1kfs0u5.wl-kuninori.morimoto.gx@renesas.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87k1kfs0u5.wl-kuninori.morimoto.gx@renesas.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 12 Dec 2018 10:28:01 -0500
+Received: from mail-yb1-f194.google.com ([209.85.219.194]:43059 "EHLO
+        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726358AbeLLP2B (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 10:28:01 -0500
+Received: by mail-yb1-f194.google.com with SMTP id d136so4070595ybh.10
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 07:28:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:subject:date:message-id:in-reply-to:references;
+        bh=0DK79C1WGRYuEE806kntOGH6IvjqZXYhSvBExPW3/tk=;
+        b=Bbq2wBNXOoBBXyzLprjdQwjzd/+HapmPSVsKaWYlHqzmF7kMSiX0+HyhHftX+Gyp6o
+         LjL05otAB04cUI2sRMwDBbv+9IMQC5iI4WAR0jYcKJuXejNGqL84zCWN1GoINQ89yGas
+         BEik9eaG5clOnKAk7qM9OkD4TKPLBpslsWFdqdiQvcKWjlnR1gvKiBwpUYy62cYgZw0B
+         OcizXuJK6hX1twjJhgKvsMjSFDzVXeyfsujfIa1OC8InhjOHAGQSER6GIARMB+DedhTy
+         nAI56l5Tvc0UkoUYQD94/xIzJzS9QAhQKhGqnZM1lDLKM81P0pJ3UPvM69nVfJQ3qhbs
+         AKMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
+         :references;
+        bh=0DK79C1WGRYuEE806kntOGH6IvjqZXYhSvBExPW3/tk=;
+        b=h/qeNe2ODxUZrnORuwD0A8GO4trCqXq/sjFDvwXYws/yRasegte5VoWo/gJCjcFnni
+         ovHoy7ExvgiEbVkaoSqZtM4R9gqT6KGVluBVi7COwm/cc5AfHOJszzjGBu+uzG/0NcW4
+         hgy4HzzAjiWlHjyf+W29kyelIskkZSaYk9T0365PjvwoIQYlrJhe3nHjtnPpWe5GB5FE
+         e+PPQ++UuT4IUFx6SGznzwT/osYQzmUhagis4Ycz9rG0Xs/LIT2UA80YON21yySAq9p7
+         6+zAHBZCrHkiGf/GTsxvmUzFYH+c2onY3fdoRrEi6i2ZKId+v/GT9iptLrdQXNk17Fk1
+         eXfQ==
+X-Gm-Message-State: AA+aEWY6KD36k9ZBcDaw6g+jdVVhY+aHeVttO1QgH3MpBwtiAjMYMvt8
+        SM7Hi5As2sTiAWudIhuDeoKFrQ==
+X-Google-Smtp-Source: AFSGD/VhULReGLpm5Llkz1eBzfij7+iStjhu7q2WxFI4OjI7/H2M5x6z8eitZgrmBOkb11p5b7SA1A==
+X-Received: by 2002:a25:9907:: with SMTP id z7mr11082731ybn.114.1544628479598;
+        Wed, 12 Dec 2018 07:27:59 -0800 (PST)
+Received: from localhost ([107.15.81.208])
+        by smtp.gmail.com with ESMTPSA id f10sm8624606ywb.26.2018.12.12.07.27.58
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 12 Dec 2018 07:27:58 -0800 (PST)
+From:   Josef Bacik <josef@toxicpanda.com>
+To:     kernel-team@fb.com, hannes@cmpxchg.org,
+        linux-kernel@vger.kernel.org, tj@kernel.org, david@fromorbit.com,
+        akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, riel@redhat.com, jack@suse.cz
+Subject: [PATCH][v6] filemap: drop the mmap_sem for all blocking operations
+Date:   Wed, 12 Dec 2018 10:27:57 -0500
+Message-Id: <20181212152757.10017-1-josef@toxicpanda.com>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20181211173801.29535-4-josef@toxicpanda.com>
+References: <20181211173801.29535-4-josef@toxicpanda.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Kuninori Morimoto <kuninori.morimoto.gx@renesas.com> [181212 06:52]:
-> 
-> Hi Tony, again
-> 
-> > > > 	https://patchwork.kernel.org/patch/10712877/
-> > > 
-> > > Hmm, so do you have multiple separate ports at the "&sound" node
-> > > hardware? If so then yeah multiple ports make sense.
-> > >
-> > > But if you only a single physical (I2S?) port at the
-> > > "&sound" node hardware, then IMO you should only have one
-> > > port and multiple endpoints there according to the graph.txt
-> > > binding doc.
-> > > 
-> > > In my McBSP case there is only a single physical I2S port
-> > > that can be TDM split into timeslots.
-> > 
-> > Mine has 4 DAIs. Each DAI can output 2ch.
-> > These will be merged and wil be 8ch TDM and goes to Codec.
-> > But hmm.. it is 4 DAIs, but 1 "physical" interface...
-> > 
-> > So, your patch seems correct, but will breaks DPCM...
-> > I will confirm it.
-> 
-> I thought "port" = "DAI", but yeah, "port" = "physical interface".
+Currently we only drop the mmap_sem if there is contention on the page
+lock.  The idea is that we issue readahead and then go to lock the page
+while it is under IO and we want to not hold the mmap_sem during the IO.
 
-OK good to hear :)
+The problem with this is the assumption that the readahead does
+anything.  In the case that the box is under extreme memory or IO
+pressure we may end up not reading anything at all for readahead, which
+means we will end up reading in the page under the mmap_sem.
 
-> Then, my issue is that we can't judge DAI size from DT.
-> For example, MIXer case, 2 CPU DAIs are connected to 1 Codec.
-> 
-> 	DAI0 --- CPU --- Codec
-> 	DAI1 /
-> 
-> In this case, CPU side needs 2 DAIs,
-> Codec side needs 1 DAI only.
+Even if the readahead does something, it could get throttled because of
+io pressure on the system and the process is in a lower priority cgroup.
 
-Oh so the other way around compared to my use case. Hmm.
+Holding the mmap_sem while doing IO is problematic because it can cause
+system-wide priority inversions.  Consider some large company that does
+a lot of web traffic.  This large company has load balancing logic in
+it's core web server, cause some engineer thought this was a brilliant
+plan.  This load balancing logic gets statistics from /proc about the
+system, which trip over processes mmap_sem for various reasons.  Now the
+web server application is in a protected cgroup, but these other
+processes may not be, and if they are being throttled while their
+mmap_sem is held we'll stall, and cause this nice death spiral.
 
-> For both CPU/Codec case, OF graph will be like below,
-> and we can't judge DAIs size from this.
-> 
-> 	port {
-> 		ep0: endpint@0 {
-> 			remote-endpoint = <xxx>;
-> 		};
-> 		ep1: endpint@1 {
-> 			remote-endpoint = <xxx>;
-> 		};
-> 	}
+Instead rework filemap fault path to drop the mmap sem at any point that
+we may do IO or block for an extended period of time.  This includes
+while issuing readahead, locking the page, or needing to call ->readpage
+because readahead did not occur.  Then once we have a fully uptodate
+page we can return with VM_FAULT_RETRY and come back again to find our
+nicely in-cache page that was gotten outside of the mmap_sem.
 
-Hmm I too need to add secondary DAIs for McBSP in addition to the
-primary DAI controlling the McBSP hardware resources.
+This patch also adds a new helper for locking the page with the mmap_sem
+dropped.  This doesn't make sense currently as generally speaking if the
+page is already locked it'll have been read in (unless there was an
+error) before it was unlocked.  However a forthcoming patchset will
+change this with the ability to abort read-ahead bio's if necessary,
+making it more likely that we could contend for a page lock and still
+have a not uptodate page.  This allows us to deal with this case by
+grabbing the lock and issuing the IO without the mmap_sem held, and then
+returning VM_FAULT_RETRY to come back around.
 
-> To solve this issue, we need to use "reg" for it.
-> Then, we can get correct DAI ID.
+Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+---
+v5->v6:
+- added more comments as per Andrew's suggestion.
+- fixed the fpin leaks in the two error paths that were pointed out.
 
-Hmm yeah maybe. Just to think of other options, maybe also the
-#size-cells could be used?
+ mm/filemap.c | 135 ++++++++++++++++++++++++++++++++++++++++++++++++++---------
+ 1 file changed, 116 insertions(+), 19 deletions(-)
 
-As the binding allows adding #address-cells and #size-cells to
-the port node.. Usually if you refer a subnode of a device you
-just use #address=cells = <2> where the second field would be for
-the offset. So maybe this could be used for 1 DAI this way:
-
- 	/* Codec has 1 DAI */
- 	Codec {
- 		port {
-			#address-cells = <2>;
-			#size-cells = <1>;
-
- 			ep: endpoint {
- 				remote-endpoint = <xxx>;
- 			};
- 		};
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 8fc45f24b201..42e03decf20f 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -2304,28 +2304,91 @@ EXPORT_SYMBOL(generic_file_read_iter);
+ 
+ #ifdef CONFIG_MMU
+ #define MMAP_LOTSAMISS  (100)
++static struct file *maybe_unlock_mmap_for_io(struct vm_fault *vmf,
++					     struct file *fpin)
++{
++	int flags = vmf->flags;
++	if (fpin)
++		return fpin;
++
++	/*
++	 * FAULT_FLAG_RETRY_NOWAIT means we don't want to wait on page locks or
++	 * anything, so we only pin the file and drop the mmap_sem if only
++	 * FAULT_FLAG_ALLOW_RETRY is set.
++	 */
++	if ((flags & (FAULT_FLAG_ALLOW_RETRY | FAULT_FLAG_RETRY_NOWAIT)) ==
++	    FAULT_FLAG_ALLOW_RETRY) {
++		fpin = get_file(vmf->vma->vm_file);
++		up_read(&vmf->vma->vm_mm->mmap_sem);
++	}
++	return fpin;
++}
+ 
+ /*
+- * Synchronous readahead happens when we don't even find
+- * a page in the page cache at all.
++ * lock_page_maybe_drop_mmap - lock the page, possibly dropping the mmap_sem
++ * @vmf - the vm_fault for this fault.
++ * @page - the page to lock.
++ * @fpin - the pointer to the file we may pin (or is already pinned).
++ *
++ * This works similar to lock_page_or_retry in that it can drop the mmap_sem.
++ * It differs in that it actually returns the page locked if it returns 1 and 0
++ * if it couldn't lock the page.  If we did have to drop the mmap_sem then fpin
++ * will point to the pinned file and needs to be fput()'ed at a later point.
+  */
+-static void do_sync_mmap_readahead(struct vm_fault *vmf)
++static int lock_page_maybe_drop_mmap(struct vm_fault *vmf, struct page *page,
++				     struct file **fpin)
++{
++	if (trylock_page(page))
++		return 1;
++
++	if (vmf->flags & FAULT_FLAG_RETRY_NOWAIT)
++		return 0;
++
++	*fpin = maybe_unlock_mmap_for_io(vmf, *fpin);
++	if (vmf->flags & FAULT_FLAG_KILLABLE) {
++		if (__lock_page_killable(page)) {
++			/*
++			 * We didn't have the right flags to drop the mmap_sem,
++			 * but all fault_handlers only check for fatal signals
++			 * if we return VM_FAULT_RETRY, so we need to drop the
++			 * mmap_sem here and return 0 if we don't have a fpin.
++			 */
++			if (*fpin == NULL)
++				up_read(&vmf->vma->vm_mm->mmap_sem);
++			return 0;
++		}
++	} else
++		__lock_page(page);
++	return 1;
++}
++
++
++/*
++ * Synchronous readahead happens when we don't even find a page in the page
++ * cache at all.  We don't want to perform IO under the mmap sem, so if we have
++ * to drop the mmap sem we return the file that was pinned in order for us to do
++ * that.  If we didn't pin a file then we return NULL.  The file that is
++ * returned needs to be fput()'ed when we're done with it.
++ */
++static struct file *do_sync_mmap_readahead(struct vm_fault *vmf)
+ {
+ 	struct file *file = vmf->vma->vm_file;
+ 	struct file_ra_state *ra = &file->f_ra;
+ 	struct address_space *mapping = file->f_mapping;
++	struct file *fpin = NULL;
+ 	pgoff_t offset = vmf->pgoff;
+ 
+ 	/* If we don't want any read-ahead, don't bother */
+ 	if (vmf->vma->vm_flags & VM_RAND_READ)
+-		return;
++		return fpin;
+ 	if (!ra->ra_pages)
+-		return;
++		return fpin;
+ 
+ 	if (vmf->vma->vm_flags & VM_SEQ_READ) {
++		fpin = maybe_unlock_mmap_for_io(vmf, fpin);
+ 		page_cache_sync_readahead(mapping, ra, file, offset,
+ 					  ra->ra_pages);
+-		return;
++		return fpin;
  	}
-
-Where this codec would then need to be referenced with just an
-additional instance number:
-
-foo = <&ep 0>;
-bar = <&ep 1>;
-...
-
-And then for a codec with 2 DAIs the usual #size-cells = <1>
-would be used with numbered endpoints for each DAI the way
-you already described:
-
- 	port {
- 		ep0: endpint@0 {
- 			remote-endpoint = <xxx>;
- 		};
- 		ep1: endpint@1 {
- 			remote-endpoint = <xxx>;
- 		};
+ 
+ 	/* Avoid banging the cache line if not needed */
+@@ -2337,37 +2400,44 @@ static void do_sync_mmap_readahead(struct vm_fault *vmf)
+ 	 * stop bothering with read-ahead. It will only hurt.
+ 	 */
+ 	if (ra->mmap_miss > MMAP_LOTSAMISS)
+-		return;
++		return fpin;
+ 
+ 	/*
+ 	 * mmap read-around
+ 	 */
++	fpin = maybe_unlock_mmap_for_io(vmf, fpin);
+ 	ra->start = max_t(long, 0, offset - ra->ra_pages / 2);
+ 	ra->size = ra->ra_pages;
+ 	ra->async_size = ra->ra_pages / 4;
+ 	ra_submit(ra, mapping, file);
++	return fpin;
+ }
+ 
+ /*
+  * Asynchronous readahead happens when we find the page and PG_readahead,
+- * so we want to possibly extend the readahead further..
++ * so we want to possibly extend the readahead further.  We return the file that
++ * was pinned if we have to drop the mmap_sem in order to do IO.
+  */
+-static void do_async_mmap_readahead(struct vm_fault *vmf,
+-				    struct page *page)
++static struct file *do_async_mmap_readahead(struct vm_fault *vmf,
++					    struct page *page)
+ {
+ 	struct file *file = vmf->vma->vm_file;
+ 	struct file_ra_state *ra = &file->f_ra;
+ 	struct address_space *mapping = file->f_mapping;
++	struct file *fpin = NULL;
+ 	pgoff_t offset = vmf->pgoff;
+ 
+ 	/* If we don't want any read-ahead, don't bother */
+ 	if (vmf->vma->vm_flags & VM_RAND_READ)
+-		return;
++		return fpin;
+ 	if (ra->mmap_miss > 0)
+ 		ra->mmap_miss--;
+-	if (PageReadahead(page))
++	if (PageReadahead(page)) {
++		fpin = maybe_unlock_mmap_for_io(vmf, fpin);
+ 		page_cache_async_readahead(mapping, ra, file,
+ 					   page, offset, ra->ra_pages);
++	}
++	return fpin;
+ }
+ 
+ /**
+@@ -2397,6 +2467,7 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
+ {
+ 	int error;
+ 	struct file *file = vmf->vma->vm_file;
++	struct file *fpin = NULL;
+ 	struct address_space *mapping = file->f_mapping;
+ 	struct file_ra_state *ra = &file->f_ra;
+ 	struct inode *inode = mapping->host;
+@@ -2418,10 +2489,10 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
+ 		 * We found the page, so try async readahead before
+ 		 * waiting for the lock.
+ 		 */
+-		do_async_mmap_readahead(vmf, page);
++		fpin = do_async_mmap_readahead(vmf, page);
+ 	} else if (!page) {
+ 		/* No page in the page cache at all */
+-		do_sync_mmap_readahead(vmf);
++		fpin = do_sync_mmap_readahead(vmf);
+ 		count_vm_event(PGMAJFAULT);
+ 		count_memcg_event_mm(vmf->vma->vm_mm, PGMAJFAULT);
+ 		ret = VM_FAULT_MAJOR;
+@@ -2429,14 +2500,15 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
+ 		page = pagecache_get_page(mapping, offset,
+ 					  FGP_CREAT|FGP_FOR_MMAP,
+ 					  vmf->gfp_mask);
+-		if (!page)
++		if (!page) {
++			if (fpin)
++				goto out_retry;
+ 			return vmf_error(-ENOMEM);
++		}
  	}
+ 
+-	if (!lock_page_or_retry(page, vmf->vma->vm_mm, vmf->flags)) {
+-		put_page(page);
+-		return ret | VM_FAULT_RETRY;
+-	}
++	if (!lock_page_maybe_drop_mmap(vmf, page, &fpin))
++		goto out_retry;
+ 
+ 	/* Did it get truncated? */
+ 	if (unlikely(page->mapping != mapping)) {
+@@ -2453,6 +2525,16 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
+ 	if (unlikely(!PageUptodate(page)))
+ 		goto page_not_uptodate;
+ 
++	/*
++	 * We've made it this far and we had to drop our mmap_sem, now is the
++	 * time to return to the upper layer and have it re-find the vma and
++	 * redo the fault.
++	 */
++	if (fpin) {
++		unlock_page(page);
++		goto out_retry;
++	}
++
+ 	/*
+ 	 * Found the page and have a reference on it.
+ 	 * We must recheck i_size under page lock.
+@@ -2475,12 +2557,15 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
+ 	 * and we need to check for errors.
+ 	 */
+ 	ClearPageError(page);
++	fpin = maybe_unlock_mmap_for_io(vmf, fpin);
+ 	error = mapping->a_ops->readpage(file, page);
+ 	if (!error) {
+ 		wait_on_page_locked(page);
+ 		if (!PageUptodate(page))
+ 			error = -EIO;
+ 	}
++	if (fpin)
++		goto out_retry;
+ 	put_page(page);
+ 
+ 	if (!error || error == AOP_TRUNCATED_PAGE)
+@@ -2489,6 +2574,18 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
+ 	/* Things didn't work out. Return zero to tell the mm layer so. */
+ 	shrink_readahead_size_eio(file, ra);
+ 	return VM_FAULT_SIGBUS;
++
++out_retry:
++	/*
++	 * We dropped the mmap_sem, we need to return to the fault handler to
++	 * re-find the vma and come back and find our hopefully still populated
++	 * page.
++	 */
++	if (page)
++		put_page(page);
++	if (fpin)
++		fput(fpin);
++	return ret | VM_FAULT_RETRY;
+ }
+ EXPORT_SYMBOL(filemap_fault);
+ 
+-- 
+2.14.3
 
-Do you think that would work?
-
-> Can you agree this ? we need extra patch,
-> but it can solve your / my problem.
-
-Yes it's starting to make sense :)
-
-> Now I'm posting patches to merging
-> "audio-graph-card" and "DPCM ver audio-graph-card".
-> If you are OK, I will include above solution patch
-> to this patch-set.
-
-Sure, maybe please first check if the #size-cells = <2>
-option would work though?
-
-> Current audio-graph doesn't expect your use-case,
-> and I want to avoid conflict.
-> 
-> So, "merged" audio-graph should solve your use-case.
-> If you can agree about this, I will post patch-set.
-
-Yeah I agree, just still wondering what might be the best
-way to represent 1 DAI vs 2 DAIs.
-
-Regards,
-
-Tony
