@@ -2,78 +2,77 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 552B8C6783B
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 16:37:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F796C67839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 16:37:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22FF220870
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 16:37:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22FF220870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 663512084E
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 16:37:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="paQGspkF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 663512084E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727919AbeLLQhI (ORCPT
+        id S1727931AbeLLQhN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 11:37:08 -0500
-Received: from mga02.intel.com ([134.134.136.20]:26211 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727880AbeLLQhI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 11:37:08 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Dec 2018 08:37:07 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,344,1539673200"; 
-   d="scan'208";a="301599756"
-Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by fmsmga006.fm.intel.com with ESMTP; 12 Dec 2018 08:37:05 -0800
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1gX7VQ-0000t6-TA; Thu, 13 Dec 2018 00:37:04 +0800
-Date:   Thu, 13 Dec 2018 00:36:36 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     kbuild-all@01.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        vgoyal@redhat.com, miklos@szeredi.hu, stefanha@redhat.com,
-        dgilbert@redhat.com, sweil@redhat.com, swhiteho@redhat.com
-Subject: Re: [PATCH 16/52] virtio-fs: Add VIRTIO_PCI_CAP_SHARED_MEMORY_CFG
- and utility to find them
-Message-ID: <201812130029.8AuxkoRj%fengguang.wu@intel.com>
-References: <20181210171318.16998-17-vgoyal@redhat.com>
+        Wed, 12 Dec 2018 11:37:13 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:54982 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727920AbeLLQhM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 11:37:12 -0500
+Received: by mail-it1-f193.google.com with SMTP id i145so9943107ita.4;
+        Wed, 12 Dec 2018 08:37:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=UsETcQtcyB+yXrCfIfD9AyjqMIdW2/VBalk+yDZfGF4=;
+        b=paQGspkFXuwEE+z8FYPWEAponixarJB6Bas3l7M4UAJA+ajcZ5MMVCRmJvwqy7kBqt
+         5v8JxA29gXacrcANB1DRS8POQLCfna9rYcqPR+mboLG8KTEaDWdYXNc5E30Py6CXjka/
+         POKQ6T+XmuXjRy/p7hWCkToKO+1FeyuuCAtnP0xI8/1K7evcH0IaYqdIltq11Fh+YLOO
+         rZ4mvb1QaQlVK9Ylf8hxjqDiLLWxx9eUvVM0bnJi7aM4XOkdI9p4QzHZ/2AubaukUEuF
+         /3mronZjjgFF6mEmE4YLAi2Dx/dMwbt+MKTshATWj1Kmgx+OtOH6tUDfgvc3CbUr/CHD
+         ysyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=UsETcQtcyB+yXrCfIfD9AyjqMIdW2/VBalk+yDZfGF4=;
+        b=GEPrYZlW7NQhbdDyW5/EmYks9Od9vDpmJTXGStiU7+f+VLZyPpqGSYCEWaWcSZAc0V
+         djrVpcUnAmsZJ4LuVuc/xGYm/RXeqra5Wll58ROM9ckPK0sVw9NKzpgwPu9C9LMzDgaa
+         DGbCbuoG1VVnSKQQlOpUfPscxzuJCMsnsiw/0g7RY5kvy4Nu2lG0AGmSdy/cLgucpQRg
+         ikxTa+PsIuCjuGgoCfyagtPLvVG6ZzcXUUoe5CGzp89CRJBewjiN1w8t8+TTrkkg7+qZ
+         wT7QWrmj0ZpMVnSZo9Eel+KCUMXmEFPSRcnS4nLSgWyTF/IKW1JuuuY6HBzdyhYmqT6w
+         iUlA==
+X-Gm-Message-State: AA+aEWbCe1bQgLlqArd08ys+RDBjXSGwAryezi/27LbmV2Bra7QcfsHS
+        P4SjJkB3fd0lY4LOB8y88Yxuw9Lh/+bxwLf70Ls=
+X-Google-Smtp-Source: AFSGD/UwjJTqEWyc7+tUEBUK/lp/OuZPUKLIQJekDDi4Vca/BMio43VfWKPS+TFWdZA3+hiaIozHhtreFAqYoyTX3js=
+X-Received: by 2002:a05:660c:250:: with SMTP id t16mr3519278itk.78.1544632630705;
+ Wed, 12 Dec 2018 08:37:10 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181210171318.16998-17-vgoyal@redhat.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <20181209061428.19205-1-tiny.windzz@gmail.com> <201812110132.w5WK8nap%fengguang.wu@intel.com>
+In-Reply-To: <201812110132.w5WK8nap%fengguang.wu@intel.com>
+From:   Frank Lee <tiny.windzz@gmail.com>
+Date:   Thu, 13 Dec 2018 00:37:00 +0800
+Message-ID: <CAEExFWtDh7yMx_+q2mhtHmMx_m8p+Xx8kfNkZf7wr1upvf=pNw@mail.gmail.com>
+Subject: Re: [PATCH v3] Input: i8042 add i8042_is_mr_coffee() helper to avoid
+ refconut leak
+To:     lkp@intel.com
+Cc:     kbuild-all@01.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi David,
+The newer has been sent.
 
-Thank you for the patch! Perhaps something to improve:
-
-[auto build test WARNING on fuse/for-next]
-[also build test WARNING on v4.20-rc6]
-[cannot apply to next-20181212]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-
-url:    https://github.com/0day-ci/linux/commits/Vivek-Goyal/virtio-fs-shared-file-system-for-virtual-machines/20181211-103034
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git for-next
-
-
-coccinelle warnings: (new ones prefixed by >>)
-
->> fs/fuse/virtio_fs.c:88:17-18: Unneeded semicolon
-
-Please review and possibly fold the followup patch.
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+Thanks,
+Yangtao
