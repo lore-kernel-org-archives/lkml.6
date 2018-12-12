@@ -2,108 +2,141 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E8A9C67839
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 18:50:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 454CEC67839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 18:50:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E6F162086D
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 18:50:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VtzNQ55y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6F162086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 0DEDC20870
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 18:50:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544640647;
+	bh=tLTZL75cjM73TG58rvf9vbqeJpQNMAZEGvUCBpbzC2A=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=ol6Hoe4uXNogKwMFz6ejksm2sALf1DfODfwz3vUItNLHsaTPx8NDxRAjBkVT1eKie
+	 GBIGZOtwVmO+XhyPrrDF63RJ/X2cvquCtXdDTRQO3Xzsw1hwKZpiPfrsg46FLGUDfV
+	 pIvNIneEH/3t5E/qeaclh8pqqC9WtRL11G3JjD9M=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DEDC20870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728319AbeLLSuk (ORCPT
+        id S1728335AbeLLSuq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 13:50:40 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:42648 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727897AbeLLSuj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 13:50:39 -0500
-Received: by mail-lf1-f66.google.com with SMTP id l10so14335448lfh.9;
-        Wed, 12 Dec 2018 10:50:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=YLwgMJD+1tBrr8wRp0pWBAexh0G8k6R3jdDuuvTpqA8=;
-        b=VtzNQ55yzqOfKxjdMQ6R9g6PunkSPmMrDfI3v+tEGVwYEakTvffYRYtw1imEuXjAe+
-         s3sCPjh80UhUyTgGCdHeIuI/u10CTtI58uCxCwHPP57lkfv42QkPXV/jwxgvrz6MtBDJ
-         HX+U/OVHmoQNvDs99RBm95/HqNulfakvlBC1/8Qs7lLjnDVsKSMg7L3THbZDTqGYdP32
-         iVBUReZCTbKCfCBqFUoH2nULAcoGEHUmaPOAtuRd/wuIgkolYG5CEIZ1dbyK+QrfRT3V
-         AyfK9xaqb5UcU9ThUg14+ZHSBkHYCOa9SrXnQD2Jiu/1aWKgVP9e0ij8QeDnd3rnpe6q
-         PDag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=YLwgMJD+1tBrr8wRp0pWBAexh0G8k6R3jdDuuvTpqA8=;
-        b=qfcYFdQYQYhuALabHJbKGQcAvWG4MBVmPEHqtapVJgp0YW9qKw5OkXedsEY+3GIdnD
-         XebTYPbu9hc/fT+6Qi2mQ8GOTYqWm7M/yxjaPvsqY+cIlQS7Rxs1c9OCVmshBzvnkAz7
-         VcUO5UJQA8APcT4ZhW2K1Lt8nAhNbVb0cS1y5ip+/DL1/YJ32Ll/+rMqabOJy8xORnHz
-         MY7qmaW6CyXD9fkArgHNJwj8RrtlV1xLb1IoTnVAQWDwvhUT2y0062PsEXVJVmM5UEb3
-         +i1bjZovf5V7bG9ttglUwGLGYmg+L7/Mm2SpLVco/fuWzlSAyUp6JlMfUXVHfArjpMdo
-         TVDw==
-X-Gm-Message-State: AA+aEWY/W9H70nCOjTBwloU9cSXyoYLwwQvARQpxbkso3hq4wepGxV2x
-        uRzOd8eV5w/vudOdmhPEWyMFAJOLVUFFcVnoo38=
-X-Google-Smtp-Source: AFSGD/VwtquAZB/9wHPEdqtosTPDgeTVP9hmbB3CAbJfBoGlC/B7ocK9VeNH9puc4MvaAj0w8aqsztit1RwwHqiFlmc=
-X-Received: by 2002:a19:945b:: with SMTP id w88mr11659238lfd.15.1544640637371;
- Wed, 12 Dec 2018 10:50:37 -0800 (PST)
+        Wed, 12 Dec 2018 13:50:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45388 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727897AbeLLSup (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 13:50:45 -0500
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2591F20870
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 18:50:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544640644;
+        bh=tLTZL75cjM73TG58rvf9vbqeJpQNMAZEGvUCBpbzC2A=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=qxUDi6HjcC5qz5OeKqU36Q/2jW7T7aLOf7WvVBLCtH7YufXrVCmMK5roOTOlCER8s
+         2XXt5nbYJKtjnvHMzU0uOckdKWqmxNFDoK08ucyCdE6bdYP/F4ptlYdiBQT1Pl8CAJ
+         /QQm66N77C9P1JPOo/VOvlYR1fnIMBcBsy7PMh7s=
+Received: by mail-wr1-f46.google.com with SMTP id p4so18743520wrt.7
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 10:50:44 -0800 (PST)
+X-Gm-Message-State: AA+aEWZxJpJYLAyOQQ1avumIRibQnqNEiabY/Olks8sLRlQ64m4Ab2Vk
+        hG3SHRorzViawOq89MMMQtILp73iCSM2+1ZG9qBajg==
+X-Google-Smtp-Source: AFSGD/WACc2ZXTcHFjOVKQE0LocvTuOH2wnKQ42vQNGItMlE8k9w2ObFYU8H0z2tb3uSMwfdwGr9IeI+jNNRcJziv48=
+X-Received: by 2002:adf:f0c5:: with SMTP id x5mr17518695wro.77.1544640642617;
+ Wed, 12 Dec 2018 10:50:42 -0800 (PST)
 MIME-Version: 1.0
-References: <CALCETrXoRAibsbWa9nfbDrt0iEuebMnCMhSFg-d9W-J2g8mDjw@mail.gmail.com>
- <CAHk-=wi_Kp=3XmGDdzmadzFSPFvuL+aAJ6ZPAR=o4z=KwYT2vw@mail.gmail.com>
- <Pine.BSM.4.64L.1812112150480.21176@herc.mirbsd.org> <CALCETrWgpAX7FV23zHmid83SsgnwFMKD4a_-xSEgB6v0kJR5sA@mail.gmail.com>
- <Pine.BSM.4.64L.1812112327500.21176@herc.mirbsd.org> <CALCETrXf0rmadycxmpGxd41qP9X+PAjyGHTwbGhKyp6oMKMRrA@mail.gmail.com>
- <Pine.BSM.4.64L.1812120231410.21176@herc.mirbsd.org> <CAK8P3a3yurujkdic98H02j0YfctSBf9NeXQreLZVhTzsttoc9g@mail.gmail.com>
- <alpine.DEB.2.21.1812121811080.21643@digraph.polyomino.org.uk>
-In-Reply-To: <alpine.DEB.2.21.1812121811080.21643@digraph.polyomino.org.uk>
-From:   Ivan Ivanov <qmastery16@gmail.com>
-Date:   Wed, 12 Dec 2018 21:50:23 +0300
-Message-ID: <CAAaskFA5cssU+fGAOUJO4u5XYBP6XYtSeWRhaSAr3BqOBTYjmw@mail.gmail.com>
-Subject: Re: Can we drop upstream Linux x32 support?
-To:     joseph@codesourcery.com
-Cc:     arnd@arndb.de, tg@mirbsd.de, luto@kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-api@vger.kernel.org, hpa@zytor.com, peterz@infradead.org,
-        bp@alien8.de, fweimer@redhat.com, vapier@gentoo.org,
-        hjl.tools@gmail.com, dalias@libc.org, x32@buildd.debian.org,
-        will.deacon@arm.com, catalin.marinas@arm.com
+References: <20181211222326.14581-1-bp@alien8.de> <20181211222326.14581-5-bp@alien8.de>
+ <CALCETrVArfAAbQKJ-g_5pOy6dMVgx-FC_mjdC9xzL1jU9T07jw@mail.gmail.com>
+ <59aad362-4a5b-dd8b-642f-0dc3f83cf7ee@amd.com> <20181211233901.GV27375@zn.tnic>
+ <CALCETrXvZ4avdUh2bTLVTTz3Jxogo3zK5akWTsJ=rkJpf1XiDg@mail.gmail.com>
+ <20181212100814.GB6653@zn.tnic> <CALCETrWSG5825HrxwEJGqbSoRz=A_2O-GSBD+K_q9YPHu2TB6A@mail.gmail.com>
+ <20181212184459.GE6653@zn.tnic>
+In-Reply-To: <20181212184459.GE6653@zn.tnic>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Wed, 12 Dec 2018 10:50:30 -0800
+X-Gmail-Original-Message-ID: <CALCETrXcBa3eUN2okedig+sECnQ8zuSWojahqWLR4vWqD8mEhg@mail.gmail.com>
+Message-ID: <CALCETrXcBa3eUN2okedig+sECnQ8zuSWojahqWLR4vWqD8mEhg@mail.gmail.com>
+Subject: Re: [RFC PATCH 4/4] x86/TSC: Use RDTSCP
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Andrew Lutomirski <luto@kernel.org>,
+        Tom Lendacky <Thomas.Lendacky@amd.com>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        John Stultz <john.stultz@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Please don't drop x86 support from the Linux kernel ! You may not
-realize it, but there are plenty of people who care about x86 systems.
-I have a good old Pentium 4 based computer which is 32-bit, using it
-for some weird Linux experiments + retro gaming, and if I can't run
-new Linux kernels there - it would be SAD
-=D1=81=D1=80, 12 =D0=B4=D0=B5=D0=BA. 2018 =D0=B3. =D0=B2 21:15, Joseph Myer=
-s <joseph@codesourcery.com>:
+On Wed, Dec 12, 2018 at 10:45 AM Borislav Petkov <bp@alien8.de> wrote:
 >
-> On Wed, 12 Dec 2018, Arnd Bergmann wrote:
+> On Wed, Dec 12, 2018 at 10:07:03AM -0800, Andy Lutomirski wrote:
+> > You're proving my point, I think.  CPUID, IRET, MOV to CR, etc are
+> > "serializing".  LFENCE, on many CPUd and depending on MSRs, is a
+> > different kind of serializing.  MFENCE is something else.  All LOCK
+> > instructions are some kind of barrier, but I don't think anyone calls
+> > them "serializing".
 >
-> > > MIPS had o32, n32, n64 since like forever.
-> >
-> > o32 and n32 are practically the same, the only difference on the
-> > syscall ABI that I can see are the actual syscall numbers, and
-> > the 'struct sigcontext' definition.
+> Yeah, peterz and I hashed it out a bit today on IRC about the different
+> meanings of serializing. I see your point now.
 >
-> And for syscalls that have 64-bit arguments, n32 generally passes those i=
-n
-> a single register (like n64), not pairs of registers (like o32).  But,
-> yes, userspace structure layout for n32 is generally much closer to o32
-> than to n64.
+> > The uaccess users of barrier_nospec() are presumably looking for a
+> > speculation barrier in the sense of "CPU, please don't execute the
+> > code after this until you're sure that this code should be executed
+> > for real and until all inputs are known, not guessed."
 >
-> --
-> Joseph S. Myers
-> joseph@codesourcery.com
+> Yeah, I believe AMD's paper has this nicely written:
+>
+> "MITIGATION G-2
+>
+> Description: Set an MSR in the processor so that LFENCE is a dispatch
+> serializing instruction and then use LFENCE in code streams to
+> serialize dispatch (LFENCE is faster than RDTSCP which is also dispatch
+> serializing). This mode of LFENCE may be enabled by setting MSR
+> C001_1029[1]=1.
+>
+> Effect: Upon encountering an LFENCE when the MSR bit is set, dispatch
+> will stop until the LFENCE instruction becomes the oldest instruction in
+> the machine."
+>
+> https://developer.amd.com/wp-content/resources/90343-B_SoftwareTechniquesforManagingSpeculation_WP_7-18Update_FNL.pdf
+>
+> which is basically what you want for the whole mitigation crap if you
+> want to kill speculation - you simply hold dispatch until the LFENCE
+> retires.
+>
+> > The property I want for RDTSC ordering is much weaker: I want it to be
+> > ordered like a load.  Imagine that, instead of an on-chip TSC, the TSC
+> > is literally a location in main memory that gets incremented by an
+> > extra dedicated CPU every nanosecond or so.  I want users of RDTSC to
+> > work as if they were reading such a location in memory using an
+> > ordinary load.  I believe this gives the real desired property that it
+> > should be impossible to observe the TSC going backwards.  This is a
+> > much weaker form of serialization.
+>
+> Well, in that case you need something new.
+>
+> Because, the moment you have a RDTSC in flight and a second RDTSC comes
+> in and that second RDTSC must *not* bypass the first one and execute
+> earlier due to OoO, you need to impose some ordering. And that's pretty
+> much uarch-dependent, I'd say.
+>
+> And I guess on AMD the way to do that is to stop dispatch until the
+> first RDTSC retires.
+>
+> Can it be done faster? Sure. And I'm pretty sure there's a lot of pesky
+> little hw details we're not even hearing of, which get in the way.
+>
+
+As far as I know, RDTSCP gets the job done, as does LFENCE, RDTSC on
+Intel.  There was a big discussion a few years ago where we changed it
+from LFENCE;RDTSC;LFENCE to just LFENCE;RDTSC after everyone was
+reasonably convinced that the uarch would not dispatch two RDTSCs
+backwards if the first one was immediately preceeded by LFENCE.
