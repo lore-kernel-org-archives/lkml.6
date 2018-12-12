@@ -2,96 +2,104 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F669C65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 22:16:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DFA9C65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 22:16:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F047D20851
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 22:16:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F047D20851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id C408C20851
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 22:16:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="olILnwti"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C408C20851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lixom.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728506AbeLLWQP (ORCPT
+        id S1728519AbeLLWQa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 17:16:15 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:53178 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728468AbeLLWQN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 17:16:13 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A3A8331256B0;
-        Wed, 12 Dec 2018 22:16:12 +0000 (UTC)
-Received: from redhat.com (ovpn-124-14.rdu2.redhat.com [10.10.124.14])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id F28FD5D9C7;
-        Wed, 12 Dec 2018 22:16:09 +0000 (UTC)
-Date:   Wed, 12 Dec 2018 17:16:07 -0500
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Dan Williams <dan.j.williams@intel.com>, Jan Kara <jack@suse.cz>,
-        John Hubbard <jhubbard@nvidia.com>,
-        John Hubbard <john.hubbard@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>, tom@talpey.com,
-        Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
-        Christoph Hellwig <hch@infradead.org>,
-        Christopher Lameter <cl@linux.com>,
-        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Michal Hocko <mhocko@kernel.org>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        rcampbell@nvidia.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "Weiny, Ira" <ira.weiny@intel.com>
-Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
-Message-ID: <20181212221607.GJ5037@redhat.com>
-References: <20181207191620.GD3293@redhat.com>
- <3c4d46c0-aced-f96f-1bf3-725d02f11b60@nvidia.com>
- <20181208022445.GA7024@redhat.com>
- <20181210102846.GC29289@quack2.suse.cz>
- <20181212150319.GA3432@redhat.com>
- <CAPcyv4go0Xzhz8rXdfscWuXDu83BO9v8WD4upDUJWb7gKzX5OQ@mail.gmail.com>
- <20181212213005.GE5037@redhat.com>
- <CAPcyv4gJHeFjEgna1S-2uE4KxkSUgkc=e=2E5oqfoirec84C-w@mail.gmail.com>
- <20181212215348.GF5037@redhat.com>
- <20181212221157.GL6830@bombadil.infradead.org>
+        Wed, 12 Dec 2018 17:16:30 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:33706 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727061AbeLLWQ3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 17:16:29 -0500
+Received: by mail-lj1-f196.google.com with SMTP id v1-v6so28957ljd.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 14:16:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lixom-net.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=bwP1nicwuZKsjMYpzwflT/kUMeqSpqvcgoPpmj5aZ78=;
+        b=olILnwti3VlSInWp2LcxTQkC9p8I2iCDcArkbcE3ZO0LVP8uUPDhm81OGhsYpVAipR
+         b7d9ZvN6R0JnKbVWxtbGXSIZbTBEsxGisKfmxJGd6NSUBZSN861c2IeRASDl7y7CuemT
+         Bbv0hgRtMIqjKta2VKsVdRKok2Fo0KtT6tKaTjA9XLoW+PPx13iVZto3zVZ5HGYUGyK9
+         Bi0Fo97r80FSXe1wnZzcA/1pkH/VTKKgVmkqXN5tl+AYLF2AvtIcq1e8vwvCbyLWmrZN
+         JkTV24NVOEWuzp2PWVghL32fsgbqHAvHfH2qiLG8VSgh8MMJZ9pSTWG49xXecuJWUzzu
+         TNEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=bwP1nicwuZKsjMYpzwflT/kUMeqSpqvcgoPpmj5aZ78=;
+        b=Hdd75tkb/gtLzMgJlfmckLG49NyiVbmlWu4Pn+hV/fHrgCv8tLfrZk84ed/8sM2CI3
+         wLs2paYd50owmpUudOwWC6h0MXEAHn/YH2EES1roFM9+HjHT8r8rQ9W1qG/ramG3S4iN
+         9PnU+4lNlY5/J+Qh8Pc/HghdaMViuRYbQTKRWHBJ8Cz5ptUcdx9dmwIcjTUs7p6BpjEu
+         oRzHWCJ/IY5lXboyZpGQVN5zg4C7nrXGXxQ/CqLvvq/m2dskhY7at+FXEk0vHzJKBLDs
+         hljxf2PgNCiJ9LcovIVdGsN2zWVGhfswFl7w0lCTGzfuorSk7MSD+I0iGgUouDAzBExm
+         WXZA==
+X-Gm-Message-State: AA+aEWYtQWYKgWoCCEtSmCt5VgAxpruET13kRjl/MOpo2tLfUk3oLZ5c
+        mPESRyChX0sUjbyC86w11vGrIw==
+X-Google-Smtp-Source: AFSGD/XFG4dRRVSi8NBvVOuxo9F3Y1Uax2xs1cngKBf8tWA57PnnS/492AsyWhkAZa/1tFz1ustJ8w==
+X-Received: by 2002:a2e:5054:: with SMTP id v20-v6mr13171829ljd.45.1544652986859;
+        Wed, 12 Dec 2018 14:16:26 -0800 (PST)
+Received: from localhost (h85-30-9-151.cust.a3fiber.se. [85.30.9.151])
+        by smtp.gmail.com with ESMTPSA id p19-v6sm1913ljb.47.2018.12.12.14.16.23
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 12 Dec 2018 14:16:25 -0800 (PST)
+Date:   Wed, 12 Dec 2018 13:47:06 -0800
+From:   Olof Johansson <olof@lixom.net>
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>, arm@kernel.org,
+        Kukjin Kim <kgene@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL 1/4] ARM: defconfig: Exynos for v4.21
+Message-ID: <20181212214706.tvxl7iojz5fvlemv@localhost>
+References: <20181209114911.25194-1-krzk@kernel.org>
+ <20181209114911.25194-2-krzk@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181212221157.GL6830@bombadil.infradead.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Wed, 12 Dec 2018 22:16:12 +0000 (UTC)
+In-Reply-To: <20181209114911.25194-2-krzk@kernel.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 12, 2018 at 02:11:57PM -0800, Matthew Wilcox wrote:
-> On Wed, Dec 12, 2018 at 04:53:49PM -0500, Jerome Glisse wrote:
-> > The mmu notifier i put forward is the emergency revoke ie last
-> > resort after driver have done everything it could to inform user-
-> > space and release the pages. So doing thing brutaly in it like
-> > reprogramming driver page table (which AFAIK is something you
-> > can do on any hardware wether the hardware will like it or not
-> > is a different question).
+On Sun, Dec 09, 2018 at 12:49:08PM +0100, Krzysztof Kozlowski wrote:
+> The following changes since commit 651022382c7f8da46cb4872a545ee1da6d097d2a:
 > 
-> You can't do it to an NVMe device.  You submit the DMA addresses in
-> the command, and the device reads the command at submission time.
-> There's no way to change the DMA addresses for an in-flight command.
+>   Linux 4.20-rc1 (2018-11-04 15:37:52 -0800)
+> 
+> are available in the Git repository at:
+> 
+>   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-defconfig-4.21
+> 
+> for you to fetch changes up to 24c8e4b85399b00f4ae96e7957b0eeaa374e9380:
+> 
+>   ARM: multi_v7_defconfig: Add TOSHIBA TC358764 bridge driver (2018-12-07 20:18:47 +0100)
+> 
+> ----------------------------------------------------------------
+> Samsung defconfig changes for v4.21
+> 
+> Enable drivers in exynos and multi_v7 defconfigs for MAX8952, MAX8998
+> (Samsung UniversalC210 board) and TC358764 (Arndale board).
 
-But like for GPU you can wait for in flight commands right ? ie
-you can wait for the queue to be done. This is how GPU do GUP ie
-GUP submit commands to queue and wait in mmu notifier for queue
-to be done.
+Merged, thanks!
 
-CHeers,
-Jérôme
+
+-Olof
