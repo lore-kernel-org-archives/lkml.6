@@ -2,278 +2,136 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.4 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,T_MIXED_ES,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F4127C04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 14:02:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E65DBC04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 14:04:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACB7F20839
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 14:02:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACB7F20839
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 9CA9C20870
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 14:04:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="D5wi52AE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CA9C20870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727680AbeLLOCa (ORCPT
+        id S1727683AbeLLOEH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 09:02:30 -0500
-Received: from mga12.intel.com ([192.55.52.136]:24389 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726232AbeLLOCa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 09:02:30 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Dec 2018 06:02:27 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,344,1539673200"; 
-   d="scan'208";a="108966982"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
-  by fmsmga008.fm.intel.com with ESMTP; 12 Dec 2018 06:02:26 -0800
-Received: from andy by smile with local (Exim 4.91)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1gX55l-0000pL-Cd; Wed, 12 Dec 2018 16:02:25 +0200
-Date:   Wed, 12 Dec 2018 16:02:25 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>
-Subject: [GIT PULL] platform-drivers-x86 for 4.21-1
-Message-ID: <20181212140225.GA3138@smile.fi.intel.com>
+        Wed, 12 Dec 2018 09:04:07 -0500
+Received: from mail-eopbgr800083.outbound.protection.outlook.com ([40.107.80.83]:39280
+        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726232AbeLLOEH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 09:04:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=FAgLHqRi5vhWQMVcknnGIFV5yzsegTEN+Ar9MHyH82c=;
+ b=D5wi52AEPbXlviTQ+FAcAibZwt1UvllYxkeg1E21X2rzR5OhKZ+8Cd5/Q6PnpSABdkppOSK9YtpNGGEJRhIMz+KzbgbcQBMZe/BT7yOLsfkrjL5FMAhlui0QukY+tP008bzM4mU/RK0zcEiwcrl0absbp8LTAqwrB7GlW0ySiRE=
+Received: from SN1PR12MB0175.namprd12.prod.outlook.com (10.162.3.15) by
+ SN1PR12MB0189.namprd12.prod.outlook.com (10.162.3.151) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1404.23; Wed, 12 Dec 2018 14:03:57 +0000
+Received: from SN1PR12MB0175.namprd12.prod.outlook.com
+ ([fe80::bc0e:7f7f:ee65:e2d5]) by SN1PR12MB0175.namprd12.prod.outlook.com
+ ([fe80::bc0e:7f7f:ee65:e2d5%6]) with mapi id 15.20.1425.016; Wed, 12 Dec 2018
+ 14:03:57 +0000
+From:   "Lendacky, Thomas" <Thomas.Lendacky@amd.com>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>
+CC:     "x86@kernel.org" <x86@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Jiri Kosina <jkosina@suse.cz>, Ingo Molnar <mingo@redhat.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        David Woodhouse <dwmw@amazon.co.uk>
+Subject: Re: [PATCH v2] x86/speculation: Add support for STIBP always-on
+ preferred mode
+Thread-Topic: [PATCH v2] x86/speculation: Add support for STIBP always-on
+ preferred mode
+Thread-Index: AQHUkaNTNctPywnCTEqVxIZjhKo+laV6OXQAgAA7RQCAAK8IAA==
+Date:   Wed, 12 Dec 2018 14:03:56 +0000
+Message-ID: <38aca18b-4312-5e03-fdd9-86e47c332e44@amd.com>
+References: <20181211224615.5373.65736.stgit@tlendack-t1.amdoffice.net>
+ <20181212000518.GX27375@zn.tnic>
+ <alpine.DEB.2.21.1812111910520.22893@nanos.tec.linutronix.de>
+In-Reply-To: <alpine.DEB.2.21.1812111910520.22893@nanos.tec.linutronix.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: SN6PR08CA0013.namprd08.prod.outlook.com
+ (2603:10b6:805:66::26) To SN1PR12MB0175.namprd12.prod.outlook.com
+ (2a01:111:e400:5143::15)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Thomas.Lendacky@amd.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [165.204.77.1]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;SN1PR12MB0189;20:HIXwjmVpD6OJjpeIhrTDq0esAcw+FGJCIPcHx3ImdB9p6uXsuX7GJTG0MVUh6lQXaJuR1lJsP3AUOUzl9ugcQRDQEWu4BrRrWq6bXjfOkcG632mXAUEmFdEukOXmfnXg4JGOsz5OwOF8DPNrutIlDEij0BVH96YvojOFdSZVFAD44pwFwDdFd/oHTah0KxO1GPVH5ptZ7VQwJPwL18TYINDVbZZ/iKxefbCm4kkaN6bvOWVD8v5yAxcyF6KSrok/
+x-ms-office365-filtering-correlation-id: 5b79965c-7e8e-47b7-4966-08d6603aa82d
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:SN1PR12MB0189;
+x-ms-traffictypediagnostic: SN1PR12MB0189:
+x-microsoft-antispam-prvs: <SN1PR12MB0189448B6B676F7141CE6315ECA70@SN1PR12MB0189.namprd12.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230017)(999002)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3002001)(3231472)(944501520)(52105112)(6055026)(148016)(149066)(150057)(6041310)(20161123562045)(20161123558120)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:SN1PR12MB0189;BCL:0;PCL:0;RULEID:;SRVR:SN1PR12MB0189;
+x-forefront-prvs: 0884AAA693
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(366004)(39860400002)(346002)(136003)(396003)(199004)(189003)(52314003)(71190400001)(99286004)(71200400001)(6306002)(86362001)(66066001)(36756003)(68736007)(3846002)(6116002)(4326008)(53936002)(6512007)(31696002)(6246003)(229853002)(256004)(8936002)(81166006)(8676002)(81156014)(6436002)(486006)(476003)(2616005)(11346002)(446003)(97736004)(14444005)(6486002)(105586002)(106356001)(186003)(31686004)(72206003)(386003)(2906002)(53546011)(6506007)(26005)(102836004)(76176011)(52116002)(5660300001)(54906003)(25786009)(110136005)(966005)(7736002)(305945005)(7416002)(478600001)(316002)(14454004);DIR:OUT;SFP:1101;SCL:1;SRVR:SN1PR12MB0189;H:SN1PR12MB0175.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: JsU0Lf/PfAWwZzbUBznCu9e1lsD+Ix3XHESlDFV2IKiyZUPN0g6umyX428CUUewMPRioDx4rM1gpagWiudrxBHJkXG4b8p6xla8082h/dXxwsPae76wgMLEsSZHCvmGXFCZyFqmAQpxYNvOX+DhP06eYY/VhUipYdL18obvfVI9OewExhdUNzsKYCZsvQ/7JhBxiXWwQOHWh5oiIN86DEqjzL/at5MPdnoU1pvDj+Ud2+nrxEYNg7kHZSACCjCUHZR0Ynlwz9zLaW6a8mSnis8SDgIhyLxhnunmATw5H3S27Jiso7HIIFmXNSaj+VhAy
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <854E731FFC90754682CA6A451684C867@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5b79965c-7e8e-47b7-4966-08d6603aa82d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Dec 2018 14:03:57.1278
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN1PR12MB0189
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
-
-This is PR for _v4.21_ (next cycle) to collect and pull when it would be
-suitable time for you.
-
-No conflicts found for testing merge I tried locally.
-
-Thanks,
-
-With Best Regards,
-Andy Shevchenko
-
-The following changes since commit 651022382c7f8da46cb4872a545ee1da6d097d2a:
-
-  Linux 4.20-rc1 (2018-11-04 15:37:52 -0800)
-
-are available in the Git repository at:
-
-  git://git.infradead.org/linux-platform-drivers-x86.git tags/platform-drivers-x86-v4.21-1
-
-for you to fetch changes up to fb7255a923115188ac134bb562d1c44f4f3a413b:
-
-  platform/x86: mlx-platform: Convert to use SPDX identifier (2018-12-10 17:54:42 -0800)
-
-----------------------------------------------------------------
-platform-drivers-x86 for v4.21-1
-
-The USB Power Delivery discrete components now can be enumerated by
-i2c-multi-instantiate driver via several resources under single ACPI
-device node (ACPI ID is INT3515).
-
-Touchscreen support is added for the Mediacom Flexbook Edge 11.
-
-Mellanox driver got fixed due to updates in their firmware.
-
-The power management stub driver for AtomISP v2 is fixed in order to support
-Intel Baytrail SoCs where same quirk is needed for S0ix to work.
-
-Special key handling has been fixed for Favorites hotkey on Thinkpad, and
-Screen LOCK on ASUS.
-
-Ideapad Yoga 2 13 has no HW rfkill switch, thus, driver has been updated
-to support this.
-
-Few cleanups related to debugfs have been made in Intel IPS and
-Intel PMC drivers. Besides that Intel PMC has been extended
-to show more detailed information about Latency Tolerance.
-
-The following is an automated git shortlog grouped by driver:
-
-ACPI / scan:
- -  Create platform device for INT3515 ACPI nodes
-
-Add the VLV ISP PCI ID to atomisp2_pm:
- - Add the VLV ISP PCI ID to atomisp2_pm
-
-asus-nb-wmi:
- -  Drop mapping of 0x33 and 0x34 scan codes
- -  Map 0x35 to KEY_SCREENLOCK
-
-asus-wmi:
- -  Tell the EC the OS will handle the display off hotkey
-
-dell-laptop:
- -  Mark expected switch fall-throughs
-
-Documentation/ABI:
- -  Add new attribute for mlxreg-io sysfs interfaces
-
-Fix config space access for intel_atomisp2_pm:
- - Fix config space access for intel_atomisp2_pm
-
-i2c:
- -  acpi: Introduce i2c_acpi_get_i2c_resource() helper
- -  acpi: Use ACPI_FAILURE instead of !ACPI_SUCCESS
- -  acpi: Return error pointers from i2c_acpi_new_device()
-
-i2c-multi-instantiate:
- -  Allow to have same slaves
- -  Introduce IOAPIC IRQ support
- -  Distinguish IRQ resource type
- -  Count I2cSerialBus() resources
- -  Get rid of obsolete conditional
- -  Defer probe when no adapter found
- -  Accept errors of i2c_acpi_new_device()
-
-ideapad-laptop:
- -  Add Yoga 2 13 to no_hw_rfkill list
-
-iio:
- -  inv_mpu6050: Use i2c_acpi_get_i2c_resource() helper
-
-intel_cht_int33fe:
- -  Get rid of obsolete conditional
- -  Accept errors of i2c_acpi_new_device()
- -  Remove duplicate NULL check
-
-intel_ips:
- -  Convert to use DEFINE_SHOW_ATTRIBUTE macro
- -  Remove never happen condition
- -  NULL check before some freeing functions is not needed
- -  remove unnecessary checks in ips_debugfs_init
-
-intel_pmc_core:
- -  convert to DEFINE_SHOW_ATTRIBUTE
- -  Decode Snoop / Non Snoop LTR
- -  Fix LTR IGNORE Max offset
- -  Show Latency Tolerance info
-
-intel_telemetry:
- -  convert to DEFINE_SHOW_ATTRIBUTE
-
-mlx-platform:
- -  Convert to use SPDX identifier
- -  Allow mlxreg-io driver activation for new systems
- -  Fix LED configuration
- -  Fix tachometer registers
- -  Rename new systems product names
- -  Add definitions for new registers
-
-thinkpad_acpi:
- -  Cleanup quirks macros
- -  Change the keymap for Favorites hotkey
-
-touchscreen_dmi:
- -  Add info for the Mediacom Flexbook Edge 11
-
-----------------------------------------------------------------
-Andy Shevchenko (17):
-      platform/x86: intel_cht_int33fe: Remove duplicate NULL check
-      platform/x86: intel_cht_int33fe: Accept errors of i2c_acpi_new_device()
-      platform/x86: i2c-multi-instantiate: Accept errors of i2c_acpi_new_device()
-      platform/x86: i2c-multi-instantiate: Defer probe when no adapter found
-      i2c: acpi: Return error pointers from i2c_acpi_new_device()
-      platform/x86: intel_cht_int33fe: Get rid of obsolete conditional
-      platform/x86: i2c-multi-instantiate: Get rid of obsolete conditional
-      i2c: acpi: Use ACPI_FAILURE instead of !ACPI_SUCCESS
-      i2c: acpi: Introduce i2c_acpi_get_i2c_resource() helper
-      platform/x86: i2c-multi-instantiate: Count I2cSerialBus() resources
-      platform/x86: i2c-multi-instantiate: Distinguish IRQ resource type
-      platform/x86: i2c-multi-instantiate: Introduce IOAPIC IRQ support
-      platform/x86: i2c-multi-instantiate: Allow to have same slaves
-      ACPI / scan: Create platform device for INT3515 ACPI nodes
-      iio: inv_mpu6050: Use i2c_acpi_get_i2c_resource() helper
-      platform/x86: intel_ips: Remove never happen condition
-      platform/x86: intel_ips: Convert to use DEFINE_SHOW_ATTRIBUTE macro
-
-Gustavo A. R. Silva (1):
-      platform/x86: dell-laptop: Mark expected switch fall-throughs
-
-Hans de Goede (1):
-      platform/x86: touchscreen_dmi: Add info for the Mediacom Flexbook Edge 11
-
-Jouke Witteveen (1):
-      platform/x86: thinkpad_acpi: Cleanup quirks macros
-
-João Paulo Rechi Vita (3):
-      platform/x86: asus-wmi: Tell the EC the OS will handle the display off hotkey
-      platform/x86: asus-nb-wmi: Map 0x35 to KEY_SCREENLOCK
-      platform/x86: asus-nb-wmi: Drop mapping of 0x33 and 0x34 scan codes
-
-Loic WEI YU NENG (1):
-      platform/x86: ideapad-laptop: Add Yoga 2 13 to no_hw_rfkill list
-
-Rajneesh Bhardwaj (3):
-      platform/x86: intel_pmc_core: Show Latency Tolerance info
-      platform/x86: intel_pmc_core: Fix LTR IGNORE Max offset
-      platform/x86: intel_pmc_core: Decode Snoop / Non Snoop LTR
-
-Thomas Meyer (1):
-      platform/x86: intel_ips: NULL check before some freeing functions is not needed
-
-Vadim Pasternak (7):
-      platform/x86: mlx-platform: Add definitions for new registers
-      platform/x86: mlx-platform: Rename new systems product names
-      platform/x86: mlx-platform: Fix tachometer registers
-      platform/x86: mlx-platform: Fix LED configuration
-      platform/x86: mlx-platform: Allow mlxreg-io driver activation for new systems
-      Documentation/ABI: Add new attribute for mlxreg-io sysfs interfaces
-      platform/x86: mlx-platform: Convert to use SPDX identifier
-
-Ville Syrjälä (2):
-      platform/x86: Add the VLV ISP PCI ID to atomisp2_pm
-      platform/x86: Fix config space access for intel_atomisp2_pm
-
-Yangtao Li (2):
-      platform/x86: intel_pmc_core: convert to DEFINE_SHOW_ATTRIBUTE
-      platform/x86: intel_telemetry: convert to DEFINE_SHOW_ATTRIBUTE
-
-YueHaibing (1):
-      platform/x86: intel_ips: remove unnecessary checks in ips_debugfs_init
-
-Zhang Xianwei (1):
-      platform/x86: thinkpad_acpi: Change the keymap for Favorites hotkey
-
- Documentation/ABI/stable/sysfs-driver-mlxreg-io |  41 +++++-
- drivers/acpi/scan.c                             |   1 +
- drivers/i2c/i2c-core-acpi.c                     |  64 ++++++---
- drivers/iio/imu/inv_mpu6050/inv_mpu_acpi.c      |  16 +--
- drivers/platform/x86/asus-nb-wmi.c              |   3 +-
- drivers/platform/x86/asus-wmi.c                 |   3 +-
- drivers/platform/x86/dell-laptop.c              |   2 +
- drivers/platform/x86/i2c-multi-instantiate.c    |  97 ++++++++++---
- drivers/platform/x86/ideapad-laptop.c           |   7 +
- drivers/platform/x86/intel_atomisp2_pm.c        |  69 ++++++---
- drivers/platform/x86/intel_cht_int33fe.c        |  20 +--
- drivers/platform/x86/intel_ips.c                |  83 +++--------
- drivers/platform/x86/intel_pmc_core.c           | 180 ++++++++++++++++++------
- drivers/platform/x86/intel_pmc_core.h           |  68 +++++++--
- drivers/platform/x86/intel_telemetry_debugfs.c  |  42 +-----
- drivers/platform/x86/mlx-platform.c             | 177 +++++++++++++++++------
- drivers/platform/x86/thinkpad_acpi.c            |  47 ++-----
- drivers/platform/x86/touchscreen_dmi.c          |   8 ++
- drivers/usb/typec/tps6598x.c                    |   8 +-
- include/linux/acpi.h                            |  11 ++
- 20 files changed, 637 insertions(+), 310 deletions(-)
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+T24gMTIvMTEvMjAxOCAwOTozNyBQTSwgVGhvbWFzIEdsZWl4bmVyIHdyb3RlOg0KPiBPbiBXZWQs
+IDEyIERlYyAyMDE4LCBCb3Jpc2xhdiBQZXRrb3Ygd3JvdGU6DQo+PiBPbiBUdWUsIERlYyAxMSwg
+MjAxOCBhdCAxMDo0NjoxNlBNICswMDAwLCBMZW5kYWNreSwgVGhvbWFzIHdyb3RlOg0KPj4+ICsJ
+LyoNCj4+PiArCSAqIEF0IHRoaXMgcG9pbnQsIGFuIFNUSUJQIG1vZGUgb3RoZXIgdGhhbiAib2Zm
+IiBoYXMgYmVlbiBzZXQuDQo+Pj4gKwkgKiBJZiBTVElCUCBzdXBwb3J0IGlzIG5vdCBiZWluZyBm
+b3JjZWQsIGNoZWNrIGlmIFNUSUJQIGFsd2F5cy1vbg0KPj4+ICsJICogaXMgcHJlZmVycmVkLg0K
+Pj4+ICsJICovDQo+Pj4gKwlpZiAobW9kZSAhPSBTUEVDVFJFX1YyX1VTRVJfU1RSSUNUICYmDQo+
+Pj4gKwkgICAgYm9vdF9jcHVfaGFzKFg4Nl9GRUFUVVJFX0FNRF9TVElCUF9BTFdBWVNfT04pKSB7
+DQo+Pj4gKwkJc3RpYnBfYWx3YXlzX29uID0gdHJ1ZTsNCj4+PiArCQltb2RlID0gU1BFQ1RSRV9W
+Ml9VU0VSX1NUUklDVDsNCj4+PiArCQlwcl9pbmZvKCJtaXRpZ2F0aW9uOiBTVElCUCBhbHdheXMt
+b24gaXMgcHJlZmVycmVkXG4iKTsNCj4+PiArCX0NCj4+PiArDQo+Pj4gIAkvKiBJbml0aWFsaXpl
+IEluZGlyZWN0IEJyYW5jaCBQcmVkaWN0aW9uIEJhcnJpZXIgKi8NCj4+PiAgCWlmIChib290X2Nw
+dV9oYXMoWDg2X0ZFQVRVUkVfSUJQQikpIHsNCj4+PiAgCQlzZXR1cF9mb3JjZV9jcHVfY2FwKFg4
+Nl9GRUFUVVJFX1VTRV9JQlBCKTsNCj4+PiBAQCAtMTA4OCw3ICsxMTAyLDggQEAgc3RhdGljIGNo
+YXIgKnN0aWJwX3N0YXRlKHZvaWQpDQo+Pj4gIAljYXNlIFNQRUNUUkVfVjJfVVNFUl9OT05FOg0K
+Pj4+ICAJCXJldHVybiAiLCBTVElCUDogZGlzYWJsZWQiOw0KPj4+ICAJY2FzZSBTUEVDVFJFX1Yy
+X1VTRVJfU1RSSUNUOg0KPj4+IC0JCXJldHVybiAiLCBTVElCUDogZm9yY2VkIjsNCj4+PiArCQly
+ZXR1cm4gc3RpYnBfYWx3YXlzX29uID8gIiwgU1RJQlA6IGFsd2F5cy1vbiINCj4+PiArCQkJCSAg
+ICAgICA6ICIsIFNUSUJQOiBmb3JjZWQiOw0KPj4NCj4+IEkgc3RpbGwgZG9uJ3QgbGlrZSB0aGF0
+IHNlcGFyYXRlIHN0aWJwX2Fsd2F5c19vbiB2YXJpYWJsZSB3aGVuIHdlIGNhbiBkbw0KPj4gYWxs
+IHRoZSBxdWVyeWluZyBqdXN0IGJ5IHVzaW5nIG1vZGUgYW5kIFg4Nl9GRUFUVVJFX0FNRF9TVElC
+UF9BTFdBWVNfT04uDQo+IA0KPiBIbW1tLiBJJ3ZlIG5vdCBzZWVuIHRoZSBWMSBvZiB0aGlzIChp
+dCdzIG5vdCBpbiBteSBpbmJveCkgYnV0IHRoZSB2MS0+djINCj4gY2hhbmdlcyBjb250YWluOg0K
+DQpUaGF0J3Mgc3RyYW5nZSwgeW91IHdlcmUgb24gdGhlIGNjOiBsaXN0LiBBbnl3YXksIGhlcmUn
+cyBhIGxpbmsgdG8gdGhlDQpmaXJzdCB2ZXJzaW9uOiBodHRwczovL2xrbWwub3JnL2xrbWwvMjAx
+OC8xMi8xMS8xMjQ4DQoNCj4gDQo+Pj4gLSBSZW1vdmVkIGV4cGxpY2l0IFNQRUNUUkVfVjJfVVNF
+Ul9TVFJJQ1RfUFJFRkVSUkVEIG1vZGUNCj4gDQo+IE5vdyBJIHJlYWxseSBoYXZlIHRvIGFzayB3
+aHk/DQo+IA0KPiBOZWl0aGVyIHRoZSBleHRyYSB2YXJpYWJsZSBub3IgdGhlIGNwdSBmZWF0dXJl
+IGNoZWNrIGFyZSBwcmV0dHkuIEFuDQo+IGV4cGxpY2l0IG1vZGUgaXMgd2F5IGJldHRlciBpbiB0
+ZXJtcyBvZiBjb2RlIGNsYXJpdHkgYW5kIHlvdSBnZXQgdGhlIHByb3Blcg0KPiBwcmludG91dCB2
+aWEgc3BlY3RyZV92Ml91c2VyX3N0cmluZ3MuDQo+IA0KPiBIbW0/DQoNClRoYXQgaXMgd2hhdCB0
+aGUgZmlyc3QgdmVyc2lvbiBkaWQuIFNlZSBpZiB0aGF0J3MgaW4tbGluZSB3aXRoIHdoYXQNCnlv
+dSdyZSB0aGlua2luZy4NCg0KVGhhbmtzLA0KVG9tDQoNCj4gDQo+IAl0Z2x4DQo+IA0K
