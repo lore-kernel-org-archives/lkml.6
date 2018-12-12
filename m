@@ -2,120 +2,100 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02B94C65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 06:41:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2221DC67839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 06:44:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C541B2084E
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 06:41:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C541B2084E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id D065720873
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 06:44:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="JTsJFMRh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D065720873
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726562AbeLLGll (ORCPT
+        id S1726513AbeLLGoq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 01:41:41 -0500
-Received: from mx2.suse.de ([195.135.220.15]:33902 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726242AbeLLGll (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 01:41:41 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 25E0BAFDC;
-        Wed, 12 Dec 2018 06:41:38 +0000 (UTC)
-From:   NeilBrown <neilb@suse.com>
-To:     Herbert Xu <herbert@gondor.apana.org.au>
-Date:   Wed, 12 Dec 2018 17:41:29 +1100
-Cc:     Thomas Graf <tgraf@suug.ch>, Tom Herbert <tom@quantonium.net>,
-        David Miller <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] rhashtable: further improve stability of rhashtable_walk
-In-Reply-To: <20181212054601.wbzpxjunnsfi62mz@gondor.apana.org.au>
-References: <153086101070.2825.6850140624411927465.stgit@noble> <153086109256.2825.15329014177598382684.stgit@noble> <87zhtkeimx.fsf@notabene.neil.brown.name> <20181207053943.7zacyn5uvqkfnfoi@gondor.apana.org.au> <87k1kico1o.fsf@notabene.neil.brown.name> <20181211051755.modgomqzszkbiihe@gondor.apana.org.au> <87mupbvch0.fsf@notabene.neil.brown.name> <20181212054601.wbzpxjunnsfi62mz@gondor.apana.org.au>
-Message-ID: <87efanuu06.fsf@notabene.neil.brown.name>
+        Wed, 12 Dec 2018 01:44:46 -0500
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:19697 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726242AbeLLGop (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 01:44:45 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c10ae590000>; Tue, 11 Dec 2018 22:44:41 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Tue, 11 Dec 2018 22:44:44 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Tue, 11 Dec 2018 22:44:44 -0800
+Received: from [10.24.242.30] (172.20.13.39) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 12 Dec
+ 2018 06:44:41 +0000
+Subject: Re: [PATCH V2] kmemleak: Add config to select auto scan
+To:     Catalin Marinas <catalin.marinas@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+CC:     <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+        <linux-tegra@vger.kernel.org>, <snikam@nvidia.com>,
+        <vdumpa@nvidia.com>, <talho@nvidia.com>, <swarren@nvidia.com>,
+        <treding@nvidia.com>
+References: <1540231723-7087-1-git-send-email-prpatel@nvidia.com>
+ <20181029104320.GC168424@arrakis.emea.arm.com>
+From:   Prateek Patel <prpatel@nvidia.com>
+Message-ID: <a51a7d4b-6366-ea10-f220-992525ec1d42@nvidia.com>
+Date:   Wed, 12 Dec 2018 12:14:29 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+In-Reply-To: <20181029104320.GC168424@arrakis.emea.arm.com>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL103.nvidia.com (172.20.187.11) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-GB
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1544597081; bh=9Ky/oj/z+AJ7tF2esDKmqv4eVtaSRuQsAjwXILNKMSM=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
+         Content-Language;
+        b=JTsJFMRhFZad8vHtnruHKCEjsLr/KP0tePagcGilfQpMF/02E2S3CB+rgBXnT0DrT
+         6fbIJ9KrS3BVyDLkFqcyPbMKuTphbOxWPIgKPthYleErB/EyBaT3dNrizTROgI5rt4
+         5V2FBaGHxDkyPvuGJPpAK5lT6Slhbo30BuretBEgq22153LFHRvmudHS+H65eMI8Ck
+         YC745EVgCTH4MkPDfvMgUaRk1Yl4lrUaUvw1610gbO4mRASdtMfEhmfssMqeVY4sOc
+         EKCoYT7+6d5w53jeMQTOV6C4dZ81DvGL0nFtvlQFxC95/sk3uZ0WPz1dydtDxhnLeS
+         ADoR7wIRh16yQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Hi Catalin,
 
-On Wed, Dec 12 2018, Herbert Xu wrote:
+Can you mark this patch as acknowledged so that it can be picked up by 
+the maintainer.
 
-> On Wed, Dec 12, 2018 at 11:02:35AM +1100, NeilBrown wrote:
->>=20
->> So I think this is a real bug - it is quite unlikely to hit, but
->> possibly.
->> You need a chain with at least 2 objects, you need
->> rhashtable_walk_stop() to be called after visiting an object other than
->> the last object, and you need some thread (this or some other) to remove
->> that object from the table.
->>=20
->> The patch that I posted aims to fix that bug, and only that bug.
->> The only alternative that I can think of is to document that this can
->> happen and advise that a reference should be held to the last visited
->> object when stop/start is called, or in some other way ensure that it
->> doesn't get removed.
->
-> Thanks for reminding me of the issue you were trying to fix.
->
-> So going back into the email archives, I suggested at the very
-> start that we could just insert the walker objects into the actual
-> hash table.  That would solve the issue for both rhashtable and
-> rhlist.
->
-> Could we do that rather than using this ordered list that only
-> works for rhashtable?
-
-No. that doesn't work.
-When you remove the walker object from the hash chain, you need to wait
-for the RCU grace period to expire before you can safely insert back
-into the chain. Inserting into a different chain isn't quite so bad now
-that the nulls-marker stuff is working, a lookup thread will notice the
-move and retry the lookup.
-
-So you would substantially slow down the rhashtable_walk_start() step.
-I've tried to think of various ways to over come this problem, such as
-walking backwards through each chain - it is fairly safe to move and
-object earlier in the chain - but all the approaches I have tried make
-the code much more complex.
+Adding Andrew.
 
 Thanks,
-NeilBrown
 
-
+On 10/29/2018 4:13 PM, Catalin Marinas wrote:
+> On Mon, Oct 22, 2018 at 11:38:43PM +0530, Prateek Patel wrote:
+>> From: Sri Krishna chowdary <schowdary@nvidia.com>
+>>
+>> Kmemleak scan can be cpu intensive and can stall user tasks at times.
+>> To prevent this, add config DEBUG_KMEMLEAK_AUTO_SCAN to enable/disable
+>> auto scan on boot up.
+>> Also protect first_run with DEBUG_KMEMLEAK_AUTO_SCAN as this is meant
+>> for only first automatic scan.
+>>
+>> Signed-off-by: Sri Krishna chowdary <schowdary@nvidia.com>
+>> Signed-off-by: Sachin Nikam <snikam@nvidia.com>
+>> Signed-off-by: Prateek <prpatel@nvidia.com>
+> Looks fine to me.
 >
-> Cheers,
-> --=20
-> Email: Herbert Xu <herbert@gondor.apana.org.au>
-> Home Page: http://gondor.apana.org.au/~herbert/
-> PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlwQrZoACgkQOeye3VZi
-gbmV5g//bkJtiWIR+EH/pwBVgpR0vLOZAc19P0GXhARLjEuS1oI1eiLekpjHmxqc
-0BIqWba2YJEg4G3+igBHrk6fviNf3flPJ2xMyo8ixuN0/YwgJLmx+Jc7t1Va++G9
-zaYDnYCzLDjsqF8A/ncj8vhuA1sn9hn3gHJxb2/EXlbMuCwHVJRx912d5bzllMxh
-2a3IX+deB+2MNGg5Rp/yos9a2vH689k7Tjt5k1spILclCj8usLRQACZfMHqxpXBR
-qYOtRbgCfnDPRjS/tQSbeA+kGEivRlKGMZ07hFgqUdkf9cza+lPeNSB9mOpCA6Wv
-iXo8rU2+Yju3ob229rToC9O6fMDVzSsHe+gM0TNNGEW7dyYX254tBuOHSXjMyOAA
-7kabmicOODsQ361wROgr7xx7b3Ahzt6LiCs94msTW+C/efXDx0by7Uum1NjfFPC9
-pCEYK3KoDME4/gOWa2kppLbTuKqidhZfKr2o8cxbl92volMHZJD1VI8YTDrE2F1Y
-8F9Dt4buZWzMJMTm6808J2PAvsfHJ9CVnKpXf40me3P57RUQLGthWf3Oj37w87Qy
-ReOXe87XVn87k8hbO9JLChmSxt0lQkVtA7JoCgi7nrq4C4WNkM+H3LK7Ahwst3l3
-D+NTSo+Gf9J9Si0qCMm5QGrnmB+YL3f6UwQefYAcfwTYaeg6sao=
-=MLM/
------END PGP SIGNATURE-----
---=-=-=--
+> Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
