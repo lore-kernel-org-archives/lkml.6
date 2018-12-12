@@ -6,109 +6,83 @@ X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCF99C65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 18:00:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D6FFC65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 18:00:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C99520839
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 18:00:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C99520839
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 4BC3120839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 18:00:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BC3120839
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728112AbeLLSAZ (ORCPT
+        id S1728137AbeLLSAs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 13:00:25 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:50100 "EHLO mx1.redhat.com"
+        Wed, 12 Dec 2018 13:00:48 -0500
+Received: from mga04.intel.com ([192.55.52.120]:55573 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727748AbeLLSAZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 13:00:25 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id BCA78C058CB3;
-        Wed, 12 Dec 2018 18:00:24 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.131])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 626CF61478;
-        Wed, 12 Dec 2018 18:00:18 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Wed, 12 Dec 2018 19:00:24 +0100 (CET)
-Date:   Wed, 12 Dec 2018 19:00:17 +0100
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     "Dmitry V. Levin" <ldv@altlinux.org>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Elvira Khabirova <lineprinter@altlinux.org>,
-        Eugene Syromyatnikov <esyr@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>, linux-api@vger.kernel.org,
-        strace-devel@lists.strace.io, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 24/25] ptrace: add PTRACE_GET_SYSCALL_INFO request
-Message-ID: <20181212180017.GB30309@redhat.com>
-References: <20181210042352.GA6092@altlinux.org>
- <20181210043126.GX6131@altlinux.org>
- <20181210141107.GB4177@redhat.com>
- <20181210162131.GG14149@altlinux.org>
- <20181211152953.GA8504@redhat.com>
- <20181211162305.GA480@altlinux.org>
- <20181211202709.GA3839@altlinux.org>
+        id S1727748AbeLLSAr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 13:00:47 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Dec 2018 10:00:47 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,345,1539673200"; 
+   d="scan'208";a="109849189"
+Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.137])
+  by orsmga003.jf.intel.com with ESMTP; 12 Dec 2018 10:00:46 -0800
+Received: by tassilo.localdomain (Postfix, from userid 1000)
+        id E4BDA30237E; Wed, 12 Dec 2018 10:00:46 -0800 (PST)
+Date:   Wed, 12 Dec 2018 10:00:46 -0800
+From:   Andi Kleen <ak@linux.intel.com>
+To:     David Laight <David.Laight@aculab.com>
+Cc:     'Aubrey Li' <aubrey.li@intel.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "tim.c.chen@linux.intel.com" <tim.c.chen@linux.intel.com>,
+        "dave.hansen@intel.com" <dave.hansen@intel.com>,
+        "arjan@linux.intel.com" <arjan@linux.intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Aubrey Li <aubrey.li@linux.intel.com>
+Subject: Re: [PATCH v4 1/2] x86/fpu: track AVX-512 usage of tasks
+Message-ID: <20181212180046.GG25620@tassilo.jf.intel.com>
+References: <20181211002448.3520-1-aubrey.li@intel.com>
+ <c87224bd48bc4296a38ae4852bf28071@AcuMS.aculab.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181211202709.GA3839@altlinux.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Wed, 12 Dec 2018 18:00:25 +0000 (UTC)
+In-Reply-To: <c87224bd48bc4296a38ae4852bf28071@AcuMS.aculab.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/11, Dmitry V. Levin wrote:
->
-> > > Still can't understand... are you saying that without (say) __pad2[4]
-> > > sizeof(ptrace_syscall_info) or offsetofend(ptrace_syscall_info, seccomp)
-> > > will depend on arch? Or what? I am just curious.
-> >
-> > Yes, without padding these sizes will depend on architecture:
->
-> > $ cat t.c
-> > #include <linux/types.h>
-> > int main() {
-> > 	struct s {
-> > 		__u64 nr;
-> > 		__u64 args[6];
-> > 		__u32 ret_data;
-> > 	};
-> > 	return sizeof(struct s);
-> > }
-> >
-> > $ gcc -m64 -Wall -O2 t.c && ./a.out; echo $?
-> > 64
-> > $ gcc -m32 -Wall -O2 t.c && ./a.out; echo $?
-> > 60
-> >
-> > This happens because __u64 has 32-bit alignment on some 32-bit
-> > architectures like x86.
-> >
-> > There is also m68k where __u32 has 16-bit alignment.
+> Isn't a thread likely to clear the AVX registers at the end of a function
+> that uses them.
+> In particular this removes the massive overhead on certain cpus of
+> switching between two AVX modes.
+> So it is actually unlikely that XSAVE will need to save them at all?
 
-OK, thanks,
+Only if context switches only happened on function boundaries, which
+is obviously not the case.
 
-> Said that, I think it would be better if PTRACE_GET_SYSCALL_INFO
-> did not take these trailing pads into account, e.g.
->
-> -       return offsetofend(struct ptrace_syscall_info, seccomp);
-> +       return offsetofend(struct ptrace_syscall_info, seccomp.ret_data);
-> ...
-> -       return offsetofend(struct ptrace_syscall_info, exit);
-> +       return offsetofend(struct ptrace_syscall_info, exit.is_error);
->
-> The reason is that it would allow to fill these trailing pads with
-> something useful in the future.
+Yes the detection mechanism is not 100% accurate, but if AVX
+is used significantly it should eventually detect it. 
+Think of it as a statistical sampling heuristic.
 
-Agreed.
+> 
+> As I've also said before the registers are caller saved and since
+> systems calls are normal function calls the application code
+> would have to save them across a system call.
+> This allows the kernel to zero the registers on system call entry
+> again meaning that XSAVE won't normally have to save them.
 
-But this way everything looks even more confusing. To me it would be
-better to simply remove these pads, but I won't insist.
+While I agree this would be nice, the Linux system call ABI 
+wasn't defined like this, so it cannot be done at this point.
 
-Oleg.
+-Andi
 
