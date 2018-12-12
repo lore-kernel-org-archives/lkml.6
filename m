@@ -2,107 +2,185 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 867F4C04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 04:47:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4F84C04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 04:48:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BAD220851
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 04:47:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="hTZlo6l/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BAD220851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 96D3D20851
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 04:48:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96D3D20851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726406AbeLLErj (ORCPT
+        id S1726420AbeLLEsi convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 23:47:39 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:34895 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726220AbeLLEri (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 23:47:38 -0500
-Received: by mail-pl1-f194.google.com with SMTP id p8so8009147plo.2
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 20:47:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=dJtdsd23pE4g56G8u/5DoOJLWhUru0LSOGIwvhiYqLI=;
-        b=hTZlo6l/gDIKS4ZDf3RW6VdkjkMmn4Qh/yeejALvNEBBmybWlBktFEJU9SVKikYNVu
-         02sNZ4g5RgNW+yvHbzZXC0ionTDl/WDchpC5iyrSnty1KAhNJVj51Uuhcw7QkPIDcCcM
-         Ffi+3Pvd0wjcuWet5x7z42MLl7BdL3cPlgUW4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=dJtdsd23pE4g56G8u/5DoOJLWhUru0LSOGIwvhiYqLI=;
-        b=Xb5nwr955GanWo3Si3dOUgKNLvpw8IujIG8jhj4wcRBw0vEqu2U6CTHteotV4DyxnJ
-         Wu9gPEoBYE8ge+I3P5afhva/MfQqoAFrUaOs33z6cu/PBvqZuKG55/ytDvb1AQZEbbwv
-         ICBrqnH9fk6eZ6GW0h4bDJa1qCQothEovAVTOXDXdgTW6Eva3E5mOiZdjJGZf6VyvvJM
-         KhpSzMXXS7rggJxFh3qp50dbyUhWeZwRgO/9lEfedxq3ZaiEPgoxHwDGWJ/YoUwSZsBV
-         TNfqRFJkNYVrrxB5jby1vnmpiN8SaXWWhzF/xxFatgR73Sue50zzz3F4wTFuEMalYrvz
-         7IKw==
-X-Gm-Message-State: AA+aEWbO3HjRQZCshrPVzuGJ59FF3koGfQaB2TqPhqh8oQaJ6HQLW5H5
-        N5UupAwRncKtJdULhZrHdpKCPw==
-X-Google-Smtp-Source: AFSGD/XjkMEOIayiIpsxrOvR+L9XeVnq9Wp3Ldq/L56PXQaSQ7tNCgIO8q48WaQ+Kz7yydgfGkaHaQ==
-X-Received: by 2002:a17:902:f81:: with SMTP id 1mr17961344plz.174.1544590057787;
-        Tue, 11 Dec 2018 20:47:37 -0800 (PST)
-Received: from localhost ([122.172.23.29])
-        by smtp.gmail.com with ESMTPSA id t67sm28600396pfd.90.2018.12.11.20.47.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Dec 2018 20:47:37 -0800 (PST)
-Date:   Wed, 12 Dec 2018 10:17:32 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Quentin Perret <quentin.perret@arm.com>
-Cc:     Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-pm@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Rafael Wysocki <rjw@rjwysocki.net>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] OPP: Fix missing debugfs supply directory for OPPs
-Message-ID: <20181212044732.ile3icfr5g4tvezi@vireshk-i7>
-References: <90e3577b5feb42bac1269e16bb3d2bdd8f6df40f.1544527580.git.viresh.kumar@linaro.org>
- <46f48aca2e5aef3f430e95d1a5fb68227ec8ec85.1544527580.git.viresh.kumar@linaro.org>
- <20181211134829.nct4uqvofn332yxp@queper01-lin>
+        Tue, 11 Dec 2018 23:48:38 -0500
+Received: from ozlabs.org ([203.11.71.1]:38011 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726220AbeLLEsh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 23:48:37 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43F4812KnBz9s0n;
+        Wed, 12 Dec 2018 15:48:33 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Andrew Murray <andrew.murray@arm.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>, x86@kernel.org,
+        linux-alpha@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Joerg Roedel <joro@8bytes.org>,
+        "paulus\@samba.org" <paulus@samba.org>, Christoffer.Dall@arm.com
+Subject: Re: [PATCH 10/10] perf/doc: update design.txt for exclude_{host|guest} flags
+In-Reply-To: <20181211135903.GG13393@e119886-lin.cambridge.arm.com>
+References: <1542363853-13849-1-git-send-email-andrew.murray@arm.com> <1542363853-13849-11-git-send-email-andrew.murray@arm.com> <87pnv00yuf.fsf@concordia.ellerman.id.au> <20181120133202.GH35798@e119886-lin.cambridge.arm.com> <87bm5sxqya.fsf@concordia.ellerman.id.au> <20181211135903.GG13393@e119886-lin.cambridge.arm.com>
+Date:   Wed, 12 Dec 2018 15:48:32 +1100
+Message-ID: <87sgz3wdsv.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181211134829.nct4uqvofn332yxp@queper01-lin>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11-12-18, 13:48, Quentin Perret wrote:
-> On Tuesday 11 Dec 2018 at 16:56:29 (+0530), Viresh Kumar wrote:
-> > There is one case where we may end up with no "supply" directory for the
-> > OPPs in debugfs. That happens when the OPP core isn't managing the
-> > regulators for the device and the device's OPP do have microvolt
-> > property. It happens because the opp_table->regulator_count remains set
-> > to 0 and the debugfs routines don't add any supply directory in such a
-> > case.
-> > 
-> > This commit fixes that by setting opp_table->regulator_count to 1 in
-> > that particular case. But to make everything work nicely and not break
-> > other parts of the core, regulator_count is defined as "int" now instead
-> > of "unsigned int" and it can have different special values now. It is
-> > set to -1 initially to mark it "uninitialized" and later only we set it
-> > to 0 or positive values after checking how many supplies are there.
-> > 
-> > This also helps in finding the bugs where only few of the OPPs have the
-> > "opp-microvolt" property set and not all.
-> 
-> Tested on Juno r0 and Hikey960 successfully. The 'supply' directory is
-> now correctly exposed.
-> 
-> Feel free to add Tested-by: Quentin Perret <quentin.perret@arm.com>
+Andrew Murray <andrew.murray@arm.com> writes:
+> On Tue, Dec 11, 2018 at 10:06:53PM +1100, Michael Ellerman wrote:
+>> [ Reviving old thread. ]
+>> 
+>> Andrew Murray <andrew.murray@arm.com> writes:
+>> > On Tue, Nov 20, 2018 at 10:31:36PM +1100, Michael Ellerman wrote:
+>> >> Andrew Murray <andrew.murray@arm.com> writes:
+>> >> 
+>> >> > Update design.txt to reflect the presence of the exclude_host
+>> >> > and exclude_guest perf flags.
+>> >> >
+>> >> > Signed-off-by: Andrew Murray <andrew.murray@arm.com>
+>> >> > ---
+>> >> >  tools/perf/design.txt | 4 ++++
+>> >> >  1 file changed, 4 insertions(+)
+>> >> >
+>> >> > diff --git a/tools/perf/design.txt b/tools/perf/design.txt
+>> >> > index a28dca2..7de7d83 100644
+>> >> > --- a/tools/perf/design.txt
+>> >> > +++ b/tools/perf/design.txt
+>> >> > @@ -222,6 +222,10 @@ The 'exclude_user', 'exclude_kernel' and 'exclude_hv' bits provide a
+>> >> >  way to request that counting of events be restricted to times when the
+>> >> >  CPU is in user, kernel and/or hypervisor mode.
+>> >> >  
+>> >> > +Furthermore the 'exclude_host' and 'exclude_guest' bits provide a way
+>> >> > +to request counting of events restricted to guest and host contexts when
+>> >> > +using virtualisation.
+>> >> 
+>> >> How does exclude_host differ from exclude_hv ?
+>> >
+>> > I believe exclude_host / exclude_guest are intented to distinguish
+>> > between host and guest in the hosted hypervisor context (KVM).
+>> 
+>> OK yeah, from the perf-list man page:
+>> 
+>>            u - user-space counting
+>>            k - kernel counting
+>>            h - hypervisor counting
+>>            I - non idle counting
+>>            G - guest counting (in KVM guests)
+>>            H - host counting (not in KVM guests)
+>> 
+>> > Whereas exclude_hv allows to distinguish between guest and
+>> > hypervisor in the bare-metal type hypervisors.
+>> 
+>> Except that's exactly not how we use them on powerpc :)
+>> 
+>> We use exclude_hv to exclude "the hypervisor", regardless of whether
+>> it's KVM or PowerVM (which is a bare-metal hypervisor).
+>> 
+>> We don't use exclude_host / exclude_guest at all, which I guess is a
+>> bug, except I didn't know they existed until this thread.
+>> 
+>> eg, in a KVM guest:
+>> 
+>>   $ perf record -e cycles:G /bin/bash -c "for i in {0..100000}; do :;done"
+>>   $ perf report -D | grep -Fc "dso: [hypervisor]"
+>>   16
+>> 
+>> 
+>> > In the case of arm64 - if VHE extensions are present then the host
+>> > kernel will run at a higher privilege to the guest kernel, in which
+>> > case there is no distinction between hypervisor and host so we ignore
+>> > exclude_hv. But where VHE extensions are not present then the host
+>> > kernel runs at the same privilege level as the guest and we use a
+>> > higher privilege level to switch between them - in this case we can
+>> > use exclude_hv to discount that hypervisor role of switching between
+>> > guests.
+>> 
+>> I couldn't find any arm64 perf code using exclude_host/guest at all?
+>
+> Correct - but this is in flight as I am currently adding support for this
+> see [1].
 
-Thanks.
+OK, so at least that will be consistent across arm64 & x86.
 
--- 
-viresh
+>> And I don't see any x86 code using exclude_hv.
+>
+> I can't find any either.
+
+I think that's because they don't need it, because they don't let guests
+program the PMU directly. It's all handled by the host and the host
+doesn't let the guest count host cycles anyway. But I could be wrong I'm
+no x86 expert.
+
+>> But maybe that's OK, I just worry this is confusing for users.
+>
+> There is some extra context regarding this where exclude_guest/exclude_host
+> was added, see [2]
+
+Good find. I had looked at that commit, but the thread on the list is
+more informative.
+
+In fact there was even a man page update! Never occurred to me look
+there :P
+
+http://man7.org/linux/man-pages/man2/perf_event_open.2.html
+
+       exclude_host (since Linux 3.2)
+              When conducting measurements that include processes running VM
+              instances (i.e., have executed a KVM_RUN ioctl(2)), only mea‐
+              sure events happening inside a guest instance.  This is only
+              meaningful outside the guests; this setting does not change
+              counts gathered inside of a guest.  Currently, this function‐
+              ality is x86 only.
+
+       exclude_guest (since Linux 3.2)
+              When conducting measurements that include processes running VM
+              instances (i.e., have executed a KVM_RUN ioctl(2)), do not
+              measure events happening inside guest instances.  This is only
+              meaningful outside the guests; this setting does not change
+              counts gathered inside of a guest.  Currently, this function‐
+              ality is x86 only.
+
+
+Which makes things much clearer.
+
+Perhaps you want to add a reference to the man page in your text,
+something like?
+
+  Furthermore the 'exclude_host' and 'exclude_guest' bits provide a way
+  to request counting of events restricted to guest and host contexts when
+  using virtualisation. See the perf_event_open(2) man page for more
+  detail.
+
+
+cheers
