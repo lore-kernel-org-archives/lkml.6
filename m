@@ -2,96 +2,88 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C1E0C65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 20:33:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04EC5C65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 20:39:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB05620811
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 20:33:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC37F2084E
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 20:39:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="oY6eyS+u"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB05620811
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="fZMeqYlv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC37F2084E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727277AbeLLUdB (ORCPT
+        id S1727321AbeLLUjH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 15:33:01 -0500
-Received: from ozlabs.org ([203.11.71.1]:34417 "EHLO ozlabs.org"
+        Wed, 12 Dec 2018 15:39:07 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:40088 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726247AbeLLUdA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 15:33:00 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        id S1726297AbeLLUjH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 15:39:07 -0500
+Received: from zn.tnic (p200300EC2BCDD800543C0EB17EF60A9B.dip0.t-ipconnect.de [IPv6:2003:ec:2bcd:d800:543c:eb1:7ef6:a9b])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43FT5j40FHz9s6w;
-        Thu, 13 Dec 2018 07:32:57 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1544646777;
-        bh=yjA+7VlepqO1en/t6TITwuJvYqt6DVsfmtSEUvC6tBU=;
-        h=Date:From:To:Cc:Subject:From;
-        b=oY6eyS+u7HnIgVW1mbEJYr0g1DT0qccYRsbHiziqpCcp5nMYvoK4hM0Y+MpnP9vhT
-         D5x3w5RvG1xJws7/YzyBzg18NiYAPVPhiwgANN6Uk5KahYFOkOFhSAn7Zuy343I29h
-         4cS6LqYwNpXkK7g0dUSAOIFIASltnZXPluUjGy7ThDQRDDErg8kFrKihLN9xID8MZQ
-         zqjOEZQtyfwGkq4y5vMy+ZqSoJhxMkWRuxmrF1Oaeq+e3UFPYJVY92PMgreWBzwxXv
-         IljxpcB2Qdr/gRr6mPDfv10bd4RU16ubgja9kNQikYTTG161KjTstD5XOVAUy7KAdZ
-         verEZOnueOdDA==
-Date:   Thu, 13 Dec 2018 07:32:45 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Networking <netdev@vger.kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commits in the bpf-next tree
-Message-ID: <20181213073245.5b2d2536@canb.auug.org.au>
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C49221EC096B;
+        Wed, 12 Dec 2018 21:39:04 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1544647145;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=N8/nML7J9YWCZEPLBvyw7ybzW2xCelTfc1p83+z5wH8=;
+        b=fZMeqYlvI7wOvbLRtEV7JbpZXkX9TJNL3ApioocLpZ5ruMhu0vP5brLntavoXUIJE9qamE
+        P4U96MLaOkWdlFN4C3TG9Z7+AvXmX+EPRHnYUKTVRAL6Pf/5fijaxf97UAx9t6FjIOqBSw
+        BqZfMFkFQXP3ZIyxGqJpebH4Vxi2eJs=
+Date:   Wed, 12 Dec 2018 21:39:02 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Maran Wilson <maran.wilson@oracle.com>
+Cc:     x86@kernel.org, xen-devel@lists.xenproject.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        pbonzini@redhat.com, jgross@suse.com, boris.ostrovsky@oracle.com,
+        bp@suse.de, dave.hansen@linux.intel.com, davem@davemloft.net,
+        gregkh@linuxfoundation.org, hpa@zytor.com, jpoimboe@redhat.com,
+        kirill.shutemov@linux.intel.com, luto@kernel.org,
+        mchehab@kernel.org, mingo@redhat.com, rdunlap@infradead.org,
+        tglx@linutronix.de, thomas.lendacky@amd.com, hch@infradead.org,
+        roger.pau@citrix.com, rkrcmar@redhat.com
+Subject: Re: [PATCH v9 0/7] KVM: x86: Allow Qemu/KVM to use PVH entry point
+Message-ID: <20181212203901.GI6653@zn.tnic>
+References: <1544468734-32763-1-git-send-email-maran.wilson@oracle.com>
+ <20181211131825.GD27375@zn.tnic>
+ <5fc083d4-1dbd-f2f9-3059-0e3e8dda9b25@oracle.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/JF2wAiMkZ1gy6srZ9wd20.V"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <5fc083d4-1dbd-f2f9-3059-0e3e8dda9b25@oracle.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/JF2wAiMkZ1gy6srZ9wd20.V
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, Dec 11, 2018 at 11:29:21AM -0800, Maran Wilson wrote:
+> Is your question about what options you need to provide to Qemu? Or is your
+> question about the SW implementation choices?
+> 
+> Assuming the former...
 
-Hi all,
+Yeah, that's what I wanted to know. But looking at it, I'm booting
+bzImage here just as quickly and as flexible so I don't see the
+advantage of this new method for my use case here of booting kernels
+in qemu.
 
-Commits
+But maybe there's a good use case where firmware is slow and one doesn't
+really wanna noodle through it or when one does start a gazillion VMs
+per second or whatever...
 
-  3bdc28aa2340 ("selftests/bpf: add btf annotations for cgroup_local_storag=
-e maps")
-  1dfd1959fed4 ("bpf: add bpffs pretty print for cgroup local storage maps")
-  3adc62d9a5be ("bpf: pass struct btf pointer to the map_check_btf() callba=
-ck")
-  9cf3a785dc4c ("selftests/bpf: use __bpf_constant_htons in test_prog.c")
+Thx.
 
-are missing a Signed-off-by from their committers.
+-- 
+Regards/Gruss,
+    Boris.
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/JF2wAiMkZ1gy6srZ9wd20.V
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwRcG0ACgkQAVBC80lX
-0Gzmugf/c3PQiufxOJr8T1wO62M8NbddLU0l3CHBWa4LzGt6+K042ZqBUzPfDXJT
-jLj8wABpjn7w8SiEsYahmN0hq19tVVtjGft7nQVgsUstlkzzYn+oNZwqoq5v9X6q
-A/anE530ejRmHAehZEbIsxRkseZi23yDF3aSEvaVcx/nOnsTBggv4M0cxiBf8/4l
-omkNDBg4pvSCb9mPmtbYxWB4N4W8jHK+hQ6zKM4teu6K2a+KZCa3QRDxyNzSzF15
-I1R8Wr5K9M4yvrh5Styvqns3VqQc6WF/upks4yiWPN58XjWtdHWq3VAdtbKOLcuR
-+mJ8eYD7piR+ce0cB5zjjlFvEMXtQw==
-=H2iu
------END PGP SIGNATURE-----
-
---Sig_/JF2wAiMkZ1gy6srZ9wd20.V--
+Good mailing practices for 400: avoid top-posting and trim the reply.
