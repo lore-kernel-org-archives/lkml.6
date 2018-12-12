@@ -2,132 +2,142 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,T_MIXED_ES,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5BA4C65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 10:36:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4A09C04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 10:36:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7273220873
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 10:36:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7273220873
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+	by mail.kernel.org (Postfix) with ESMTP id 9448E20849
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 10:36:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9448E20849
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727085AbeLLKgC convert rfc822-to-8bit (ORCPT
+        id S1727144AbeLLKgX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 05:36:02 -0500
-Received: from ozlabs.org ([203.11.71.1]:55295 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726960AbeLLKgC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 05:36:02 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43FCrv1VVKz9s47;
-        Wed, 12 Dec 2018 21:35:59 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH v3] powerpc: implement CONFIG_DEBUG_VIRTUAL
-In-Reply-To: <32b00148-214c-44db-e9cf-fa4caa2547e8@c-s.fr>
-References: <a42260e77d609a10667872c2e7bf14ceabcce050.1544562518.git.christophe.leroy@c-s.fr> <87va3zwq1t.fsf@concordia.ellerman.id.au> <32b00148-214c-44db-e9cf-fa4caa2547e8@c-s.fr>
-Date:   Wed, 12 Dec 2018 21:35:59 +1100
-Message-ID: <87o99rvxps.fsf@concordia.ellerman.id.au>
+        Wed, 12 Dec 2018 05:36:23 -0500
+Received: from mx2.suse.de ([195.135.220.15]:41678 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726960AbeLLKgX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 05:36:23 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 9B18FAE72;
+        Wed, 12 Dec 2018 10:36:20 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 0C38A1E11DB; Wed, 12 Dec 2018 11:36:11 +0100 (CET)
+Date:   Wed, 12 Dec 2018 11:36:11 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Josef Bacik <josef@toxicpanda.com>, kernel-team@fb.com,
+        hannes@cmpxchg.org, linux-kernel@vger.kernel.org, tj@kernel.org,
+        david@fromorbit.com, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, riel@redhat.com, jack@suse.cz
+Subject: Re: [PATCH 3/3] filemap: drop the mmap_sem for all blocking
+ operations
+Message-ID: <20181212103611.GC10902@quack2.suse.cz>
+References: <20181211173801.29535-1-josef@toxicpanda.com>
+ <20181211173801.29535-4-josef@toxicpanda.com>
+ <20181211131519.8d9e91eac049f16dad7c2d1f@linux-foundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181211131519.8d9e91eac049f16dad7c2d1f@linux-foundation.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Christophe Leroy <christophe.leroy@c-s.fr> writes:
-> Le 12/12/2018 à 01:23, Michael Ellerman a écrit :
->> Christophe Leroy <christophe.leroy@c-s.fr> writes:
->> 
->>> This patch implements CONFIG_DEBUG_VIRTUAL to warn about
->>> incorrect use of virt_to_phys() and page_to_phys()
->>>
->>> Below is the result of test_debug_virtual:
->>>
->>> [    1.438746] WARNING: CPU: 0 PID: 1 at ./arch/powerpc/include/asm/io.h:808 test_debug_virtual_init+0x3c/0xd4
->>> [    1.448156] CPU: 0 PID: 1 Comm: swapper Not tainted 4.20.0-rc5-00560-g6bfb52e23a00-dirty #532
->>> [    1.457259] NIP:  c066c550 LR: c0650ccc CTR: c066c514
->>> [    1.462257] REGS: c900bdb0 TRAP: 0700   Not tainted  (4.20.0-rc5-00560-g6bfb52e23a00-dirty)
->>> [    1.471184] MSR:  00029032 <EE,ME,IR,DR,RI>  CR: 48000422  XER: 20000000
->>> [    1.477811]
->>> [    1.477811] GPR00: c0650ccc c900be60 c60d0000 00000000 006000c0 c9000000 00009032 c7fa0020
->>> [    1.477811] GPR08: 00002400 00000001 09000000 00000000 c07b5d04 00000000 c00037d8 00000000
->>> [    1.477811] GPR16: 00000000 00000000 00000000 00000000 c0760000 c0740000 00000092 c0685bb0
->>> [    1.477811] GPR24: c065042c c068a734 c0685b8c 00000006 00000000 c0760000 c075c3c0 ffffffff
->>> [    1.512711] NIP [c066c550] test_debug_virtual_init+0x3c/0xd4
->>> [    1.518315] LR [c0650ccc] do_one_initcall+0x8c/0x1cc
->>> [    1.523163] Call Trace:
->>> [    1.525595] [c900be60] [c0567340] 0xc0567340 (unreliable)
->>> [    1.530954] [c900be90] [c0650ccc] do_one_initcall+0x8c/0x1cc
->>> [    1.536551] [c900bef0] [c0651000] kernel_init_freeable+0x1f4/0x2cc
->>> [    1.542658] [c900bf30] [c00037ec] kernel_init+0x14/0x110
->>> [    1.547913] [c900bf40] [c000e1d0] ret_from_kernel_thread+0x14/0x1c
->>> [    1.553971] Instruction dump:
->>> [    1.556909] 3ca50100 bfa10024 54a5000e 3fa0c076 7c0802a6 3d454000 813dc204 554893be
->>> [    1.564566] 7d294010 7d294910 90010034 39290001 <0f090000> 7c3e0b78 955e0008 3fe0c062
->>> [    1.572425] ---[ end trace 6f6984225b280ad6 ]---
->>> [    1.577467] PA: 0x09000000 for VA: 0xc9000000
->>> [    1.581799] PA: 0x061e8f50 for VA: 0xc61e8f50
->>>
->>> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
->>> ---
->>>   v3: Added missing linux/mm.h
->>>       I realised that a driver may use DMA on stack after checking with virt_addr_valid(), so the new
->>>       verification might induce false positives. I remove it for now, will add it again later in a more
->>>       controled way.
->> 
->> What is this comment referring to?
->> 
->> I can't see any difference to v2 except the linux/mm.h include.
->
-> v2 was:
->
->
-> @@ -804,6 +806,11 @@ extern void __iounmap_at(void *ea, unsigned long size);
->    */
->   static inline unsigned long virt_to_phys(volatile void * address)
->   {
-> +	if (IS_ENABLED(CONFIG_DEBUG_VIRTUAL) &&
-> +	    !WARN_ON(IS_ENABLED(CONFIG_HAVE_ARCH_VMAP_STACK) && current->pid &&
-> +		     object_is_on_stack((const void*)address)))
-> +			WARN_ON(!virt_addr_valid(address));
-> +
->   	return __pa((unsigned long)address);
->   }
->
->
-> v3 is: (same as v1)
->
->
-> @@ -804,6 +806,8 @@ extern void __iounmap_at(void *ea, unsigned long size);
->    */
->   static inline unsigned long virt_to_phys(volatile void * address)
->   {
-> +	WARN_ON(IS_ENABLED(CONFIG_DEBUG_VIRTUAL) && !virt_addr_valid(address));
-> +
->   	return __pa((unsigned long)address);
->   }
+On Tue 11-12-18 13:15:19, Andrew Morton wrote:
+> On Tue, 11 Dec 2018 12:38:01 -0500 Josef Bacik <josef@toxicpanda.com> wrote:
+> 
+> > Currently we only drop the mmap_sem if there is contention on the page
+> > lock.  The idea is that we issue readahead and then go to lock the page
+> > while it is under IO and we want to not hold the mmap_sem during the IO.
+> > 
+> > The problem with this is the assumption that the readahead does
+> > anything.  In the case that the box is under extreme memory or IO
+> > pressure we may end up not reading anything at all for readahead, which
+> > means we will end up reading in the page under the mmap_sem.
+> > 
+> > Even if the readahead does something, it could get throttled because of
+> > io pressure on the system and the process is in a lower priority cgroup.
+> > 
+> > Holding the mmap_sem while doing IO is problematic because it can cause
+> > system-wide priority inversions.  Consider some large company that does
+> > a lot of web traffic.  This large company has load balancing logic in
+> > it's core web server, cause some engineer thought this was a brilliant
+> > plan.  This load balancing logic gets statistics from /proc about the
+> > system, which trip over processes mmap_sem for various reasons.  Now the
+> > web server application is in a protected cgroup, but these other
+> > processes may not be, and if they are being throttled while their
+> > mmap_sem is held we'll stall, and cause this nice death spiral.
+> > 
+> > Instead rework filemap fault path to drop the mmap sem at any point that
+> > we may do IO or block for an extended period of time.  This includes
+> > while issuing readahead, locking the page, or needing to call ->readpage
+> > because readahead did not occur.  Then once we have a fully uptodate
+> > page we can return with VM_FAULT_RETRY and come back again to find our
+> > nicely in-cache page that was gotten outside of the mmap_sem.
+> > 
+> > This patch also adds a new helper for locking the page with the mmap_sem
+> > dropped.  This doesn't make sense currently as generally speaking if the
+> > page is already locked it'll have been read in (unless there was an
+> > error) before it was unlocked.  However a forthcoming patchset will
+> > change this with the ability to abort read-ahead bio's if necessary,
+> > making it more likely that we could contend for a page lock and still
+> > have a not uptodate page.  This allows us to deal with this case by
+> > grabbing the lock and issuing the IO without the mmap_sem held, and then
+> > returning VM_FAULT_RETRY to come back around.
+> > 
+> > ...
+...
+> > @@ -2397,6 +2451,7 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
+> >  {
+> >  	int error;
+> >  	struct file *file = vmf->vma->vm_file;
+> > +	struct file *fpin = NULL;
+> >  	struct address_space *mapping = file->f_mapping;
+> >  	struct file_ra_state *ra = &file->f_ra;
+> >  	struct inode *inode = mapping->host;
+> > @@ -2418,10 +2473,10 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
+> >  		 * We found the page, so try async readahead before
+> >  		 * waiting for the lock.
+> >  		 */
+> > -		do_async_mmap_readahead(vmf, page);
+> > +		fpin = do_async_mmap_readahead(vmf, page);
+> >  	} else if (!page) {
+> >  		/* No page in the page cache at all */
+> > -		do_sync_mmap_readahead(vmf);
+> > +		fpin = do_sync_mmap_readahead(vmf);
+> >  		count_vm_event(PGMAJFAULT);
+> >  		count_memcg_event_mm(vmf->vma->vm_mm, PGMAJFAULT);
+> >  		ret = VM_FAULT_MAJOR;
+> > @@ -2433,7 +2488,7 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
+> >  			return vmf_error(-ENOMEM);
+> 
+> hm, how does this work.  We might have taken a ref on the file and that
+> ref is recorded in fpin but an error here causes us to lose track of
+> that elevated refcount?
 
-Right, sorry I must have been looking at v1 (which was already applied
-in my tree).
+Yeah, that looks like a bug to me as well.
 
-> The idea in v2 was to detect objects on stack used for DMA before 
-> activating CONFIG_VMAP_STACK, but if the driver uses virt_addr_valid() 
-> to decide if it can DMA map it, then we'll get false positives.
-> So I think this should be added with a dedicated DEBUG CONFIG option, 
-> not implicitely.
+> >  	}
+> >  
+> > -	if (!lock_page_or_retry(page, vmf->vma->vm_mm, vmf->flags)) {
+> > +	if (!lock_page_maybe_drop_mmap(vmf, page, &fpin)) {
+> >  		put_page(page);
+> >  		return ret | VM_FAULT_RETRY;
+> >  	}
 
-Sounds good. I'll take v3.
+And here can be the same problem. Generally if we went through 'goto
+retry_find', we may have file ref already taken but some exit paths don't
+drop that ref properly...
 
-cheers
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
