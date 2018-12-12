@@ -2,270 +2,137 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3293C04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 04:12:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 957B4C04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 04:13:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F62820811
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 04:12:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F62820811
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
+	by mail.kernel.org (Postfix) with ESMTP id 518542086D
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 04:13:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="kOApeP8h";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="TXb8Ow1A"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 518542086D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726373AbeLLEMv (ORCPT
+        id S1726409AbeLLENU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 23:12:51 -0500
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:19517 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726220AbeLLEMv (ORCPT
+        Tue, 11 Dec 2018 23:13:20 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:40986 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726220AbeLLENT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 23:12:51 -0500
-X-IronPort-AV: E=Sophos;i="5.56,343,1539619200"; 
-   d="scan'208";a="49570300"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 12 Dec 2018 12:12:48 +0800
-Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
-        by cn.fujitsu.com (Postfix) with ESMTP id CCB864B734CA;
-        Wed, 12 Dec 2018 12:12:43 +0800 (CST)
-Received: from localhost.localdomain (10.167.225.56) by
- G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Wed, 12 Dec 2018 12:12:48 +0800
-Date:   Wed, 12 Dec 2018 12:12:18 +0800
-From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
-To:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>, <bp@alien8.de>,
-        <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>,
-        <keescook@chromium.org>, <bhe@redhat.com>, <msys.mizuma@gmail.com>
-CC:     <indou.takao@jp.fujitsu.com>, <caoj.fnst@cn.fujitsu.com>
-Subject: Re: [PATCH v13 1/6] x86/boot: Introduce kstrtoull() to boot
- directory instead of simple_strtoull()
-Message-ID: <20181212041218.GA28286@localhost.localdomain>
-References: <20181212031053.1815-1-fanc.fnst@cn.fujitsu.com>
- <20181212031053.1815-2-fanc.fnst@cn.fujitsu.com>
+        Tue, 11 Dec 2018 23:13:19 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 2F40D601B4; Wed, 12 Dec 2018 04:13:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1544587999;
+        bh=3JChE5rlrE69Xvlf6KtpYK2hfbuYpgOwksNlB4tnBTY=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=kOApeP8hXu6OO8Jd21bfFl/KC4aAXF9C+3E7NT4z6dWO3SBZxtZl4+68ubiqa6W47
+         i2AyBwvFU0Gnad6KPd4jSkOtzPL0HipU9j2fbhUxJOXeSctm23H47eKgbR1yNnQUe0
+         zCLfN50Y7terFV/QKBmNx5cra9O9NMHDIhs6DM2c=
+Received: from [10.79.128.154] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: rnayak@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id D97CA601B4;
+        Wed, 12 Dec 2018 04:13:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1544587998;
+        bh=3JChE5rlrE69Xvlf6KtpYK2hfbuYpgOwksNlB4tnBTY=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=TXb8Ow1AyA2mMfpC5HVLGCQty3zfv5CUnlDDNHpuJ3uoDnZQp69gNtbS3Vd1lSEbS
+         i5mf/XAK3e8NcSCoglTjfLLbn3WMig6LZJHqyrk539aoiwCeL2PkxsHjlGFVIp/nOb
+         mWQCjxKdbJUz2hbpaY1ROqLsmp/cVTPCbgwQ8ujs=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D97CA601B4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
+Subject: Re: [PATCH v6 10/10] soc: qcom: rpmhpd: Mark mx as a parent for cx
+To:     Stephen Boyd <swboyd@chromium.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Andy Gross <andy.gross@linaro.org>, Rob Herring <robh@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        David Collins <collinsd@codeaurora.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        DTML <devicetree@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20181211094938.25086-1-rnayak@codeaurora.org>
+ <20181211094938.25086-11-rnayak@codeaurora.org>
+ <CAPDyKFof-rkzmzibWOrAhDFysU=y+C8Bp0cK=_iht4=vmv-0vw@mail.gmail.com>
+ <00d91f90-ccf1-3486-0d42-0c4105058e61@codeaurora.org>
+ <154456502486.17204.11345601448030201032@swboyd.mtv.corp.google.com>
+From:   Rajendra Nayak <rnayak@codeaurora.org>
+Message-ID: <1c493bce-af67-2a4b-f903-8d39c39f7367@codeaurora.org>
+Date:   Wed, 12 Dec 2018 09:43:13 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20181212031053.1815-2-fanc.fnst@cn.fujitsu.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Originating-IP: [10.167.225.56]
-X-yoursite-MailScanner-ID: CCB864B734CA.AF82F
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
+In-Reply-To: <154456502486.17204.11345601448030201032@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 12, 2018 at 11:10:48AM +0800, Chao Fan wrote:
->Introduce kstrtoull() from lib/kstrtox.c to boot directory so that code
->in boot/ can use kstrtoull() and the old simple_strtoull() can be
->replaced.
->
 
-Hi all,
+[]...
 
-Thanks for Boris, Baoquan and Masa's help, this PATCHSET has proceeded to
-this step. With the talking in community, the key problem has been turned
-from ACPI issue to kstrtoull() issue.
-In this version, following the suggestion of Boris, I copy the kstrtoull()
-to boot/string.c
-But from last week, I was working on kstrtoull() issue in different methods
-and try many times, there are several methods:
-1. Copy kstrtoull() to boot/string.c
-2. Include kstrtoull() to boot/string.c.
-3. Use existing simple_strtoull() for now, and proceed to include kstrtoull()
-   as a next work.
-
-For method 1, PATCH is here, it's easy and clear.
-For method 2, I tried and met many ifdeffery problems:
-	First, the conflict of ctype.h header file.
-	Second, redefine of isdigit() and memcpy() and other functions.
-	Third, 'CONFIG_MODVERSIONS=y' causes ld error
-	Forth, div_u64 causes make error.
-Thanks to Baoquan and Masa, these problems have been fixed.
-I success to make, but more warning issues is waiting to be fixed.
-And I think several weeks are needed to handle the warning issue
-since I am not so familiar to fix these problems.
-But it blocked the main job for a long time, so if people think
-the method 1 is not so good, I think method 3 is a choice.
-
-Thanks,
-Chao Fan
-
->Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
->---
-> arch/x86/boot/string.c | 137 +++++++++++++++++++++++++++++++++++++++++
-> arch/x86/boot/string.h |   2 +
-> 2 files changed, 139 insertions(+)
->
->diff --git a/arch/x86/boot/string.c b/arch/x86/boot/string.c
->index c4428a176973..e02405f20f98 100644
->--- a/arch/x86/boot/string.c
->+++ b/arch/x86/boot/string.c
->@@ -12,7 +12,10 @@
->  * Very basic string functions
->  */
+>>>> This is used to enforce a requirement that exists for various
+>>>> hardware blocks on SDM845 that MX performance state >= CX performance
+>>>> state for a given operating frequency.
+>>>
+>>> I assume that also means the MX power domain must not be power off as
+>>> long as the CX power domain is powered on?
+>>
+>> So with rpmh, there's really no separate on/off control, we just put
+>> it in the lowest perf state at off.
 > 
->+#define _LINUX_CTYPE_H
-> #include <linux/types.h>
->+#include <linux/kernel.h>
->+#include <linux/errno.h>
-> #include <asm/asm.h>
-> #include "ctype.h"
-> #include "string.h"
->@@ -187,3 +190,137 @@ char *strchr(const char *s, int c)
-> 			return NULL;
-> 	return (char *)s;
-> }
->+
->+static inline u64 div_u64_rem(u64 dividend, u32 divisor, u32 *remainder)
->+{
->+	union {
->+		u64 v64;
->+		u32 v32[2];
->+	} d = { dividend };
->+	u32 upper;
->+
->+	upper = d.v32[1];
->+	d.v32[1] = 0;
->+	if (upper >= divisor) {
->+		d.v32[1] = upper / divisor;
->+		upper %= divisor;
->+	}
->+	asm ("divl %2" : "=a" (d.v32[0]), "=d" (*remainder) :
->+		"rm" (divisor), "0" (d.v32[0]), "1" (upper));
->+	return d.v64;
->+}
->+
->+static inline u64 div_u64(u64 dividend, u32 divisor)
->+{
->+	u32 remainder;
->+	return div_u64_rem(dividend, divisor, &remainder);
->+}
->+
->+static inline char _tolower(const char c)
->+{
->+	return c | 0x20;
->+}
->+
->+const char *_parse_integer_fixup_radix(const char *s, unsigned int *base)
->+{
->+	if (*base == 0) {
->+		if (s[0] == '0') {
->+			if (_tolower(s[1]) == 'x' && isxdigit(s[2]))
->+				*base = 16;
->+			else
->+				*base = 8;
->+		} else
->+			*base = 10;
->+	}
->+	if (*base == 16 && s[0] == '0' && _tolower(s[1]) == 'x')
->+		s += 2;
->+	return s;
->+}
->+
->+/*
->+ * Convert non-negative integer string representation in explicitly given radix
->+ * to an integer.
->+ * Return number of characters consumed maybe or-ed with overflow bit.
->+ * If overflow occurs, result integer (incorrect) is still returned.
->+ *
->+ * Don't you dare use this function.
->+ */
->+unsigned int _parse_integer(const char *s, unsigned int base, unsigned long long *p)
->+{
->+	unsigned long long res;
->+	unsigned int rv;
->+
->+	res = 0;
->+	rv = 0;
->+	while (1) {
->+		unsigned int c = *s;
->+		unsigned int lc = c | 0x20; /* don't tolower() this line */
->+		unsigned int val;
->+
->+		if ('0' <= c && c <= '9')
->+			val = c - '0';
->+		else if ('a' <= lc && lc <= 'f')
->+			val = lc - 'a' + 10;
->+		else
->+			break;
->+
->+		if (val >= base)
->+			break;
->+		/*
->+		 * Check for overflow only if we are within range of
->+		 * it in the max base we support (16)
->+		 */
->+		if (unlikely(res & (~0ull << 60))) {
->+			if (res > div_u64(ULLONG_MAX - val, base))
->+				rv |= KSTRTOX_OVERFLOW;
->+		}
->+		res = res * base + val;
->+		rv++;
->+		s++;
->+	}
->+	*p = res;
->+	return rv;
->+}
->+
->+static int _kstrtoull(const char *s, unsigned int base, unsigned long long *res)
->+{
->+	unsigned long long _res;
->+	unsigned int rv;
->+
->+	s = _parse_integer_fixup_radix(s, &base);
->+	rv = _parse_integer(s, base, &_res);
->+	if (rv & KSTRTOX_OVERFLOW)
->+		return -ERANGE;
->+	if (rv == 0)
->+		return -EINVAL;
->+	s += rv;
->+	if (*s == '\n')
->+		s++;
->+	if (*s)
->+		return -EINVAL;
->+	*res = _res;
->+	return 0;
->+}
->+
->+/**
->+ * kstrtoull - convert a string to an unsigned long long
->+ * @s: The start of the string. The string must be null-terminated, and may also
->+ *  include a single newline before its terminating null. The first character
->+ *  may also be a plus sign, but not a minus sign.
->+ * @base: The number base to use. The maximum supported base is 16. If base is
->+ *  given as 0, then the base of the string is automatically detected with the
->+ *  conventional semantics - If it begins with 0x the number will be parsed as a
->+ *  hexadecimal (case insensitive), if it otherwise begins with 0, it will be
->+ *  parsed as an octal number. Otherwise it will be parsed as a decimal.
->+ * @res: Where to write the result of the conversion on success.
->+ *
->+ * Returns 0 on success, -ERANGE on overflow and -EINVAL on parsing error.
->+ * Used as a replacement for the obsolete simple_strtoull. Return code must
->+ * be checked.
->+ */
->+int kstrtoull(const char *s, unsigned int base, unsigned long long *res)
->+{
->+	if (s[0] == '+')
->+		s++;
->+	return _kstrtoull(s, base, res);
->+}
->diff --git a/arch/x86/boot/string.h b/arch/x86/boot/string.h
->index 3d78e27077f4..171007c99acc 100644
->--- a/arch/x86/boot/string.h
->+++ b/arch/x86/boot/string.h
->@@ -29,4 +29,6 @@ extern unsigned int atou(const char *s);
-> extern unsigned long long simple_strtoull(const char *cp, char **endp,
-> 					  unsigned int base);
+> I think in theory the answer is MX can't be off if CX is on, but in
+> reality, MX and CX are never turned off, just set to something really
+> low and even then the constraint applies for MX >= CX. Is that right?
+
+to some extent, let me clarify this a bit more. rpmh is the central entity
+controlling these rails and takes a final call on when it can or cannot
+be 'really' off and when its turned on, at what level it should be set to.
+
+CPU is just one of the entities 'voting' on them. Now legacy platforms which
+had rpm (like msm8996) did have separate control to send a
+on/off vote and a performance level vote. With rpmh, its just that there
+is no separate message that you send to rpmh for OFF, its just mapped to
+the lowest perf level. So think of it as the lowest perf level is mapped to
+a '0' which is same as OFF.
+
+So when you say 'MX can't be off if CX is on', yes MX can't be at the lowest
+level '0', while CX is at something higher.
+
+>>> Just to make sure there are no conflicting hierarchical constraints
+>>> between idle management and performance state management!?
+>>>
 > 
->+int kstrtoull(const char *s, unsigned int base, unsigned long long *res);
->+#define KSTRTOX_OVERFLOW       (1U << 31)
-> #endif /* BOOT_STRING_H */
->-- 
->2.19.2
->
+> I'm not sure what idle states mean to the CX and MX domains. Would it be
+> some sort of idle state governor attached at genpd creation time that
+> would adjust the main SoC power rails when all devices attached are
+> idle? Maybe I don't understand how idle states are different from
+> performance states.
+> My understanding is that devices using these domains would almost always
+> expect their clk frequency and clk on/off state to decide what the
+> performance state is, unless they need to ignore clk state because they
+> aren't managing clks and bump up the voltage directly when the device is
+> active. Either way, devices are actively managing the voltage they need
+> these voltage domains to operate at by using the genpd performance
+> states APIs.
 
-
+I am not quite sure whats the point that you are trying to make here,
+but this is what I would expect the users of these genpds to do,
+regardless of if they have a clk dependency or not.
+When the device is active, vote for a performance state they need
+then request for the genpd to be on. When they are idle, request for the
+genpd to be turned off.
+  
