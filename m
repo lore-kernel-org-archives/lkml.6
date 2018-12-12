@@ -5,60 +5,61 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,T_MIXED_ES,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F584C65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 23:08:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98B3AC67839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 23:08:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F8CC20672
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 23:08:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4791B20672
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 23:08:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kM5r4FIk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F8CC20672
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SA4EE91G"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4791B20672
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728525AbeLLXIR (ORCPT
+        id S1728544AbeLLXIT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 18:08:17 -0500
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:46055 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728472AbeLLXIM (ORCPT
+        Wed, 12 Dec 2018 18:08:19 -0500
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:45131 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726214AbeLLXIQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 18:08:12 -0500
-Received: by mail-ua1-f68.google.com with SMTP id e16so33949uam.12;
-        Wed, 12 Dec 2018 15:08:11 -0800 (PST)
+        Wed, 12 Dec 2018 18:08:16 -0500
+Received: by mail-vs1-f67.google.com with SMTP id v10so56672vsv.12;
+        Wed, 12 Dec 2018 15:08:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=yNCYqL/hoAR7H28Iw4fgzL1YPORaFMzZpsZOD9Bkcfg=;
-        b=kM5r4FIkw6lK1WHkNrEBjzIgu79BwnVhyliEqrHrFmj53ftPy3z8/DZfzZIOji4V3L
-         KBlziA4oeiXpalMSJD/Sp266uVdZ9AiztBbXuFaIucREmYdQ8tgpnHBh1ElrFwWLydQ0
-         gMhOmeYmJn2FxIjstA1tqVyAmWjQCmyo5swMCwKygjnMBEUFotZNKENz+MWZ98xbvP1s
-         wRNIWhu5np0bYEX8xbf7yePD5Tj+1vEdrIfdCCH/jPLb/uZTWGNiYwjtWsEIlOEPCGnB
-         sK9xn3uCBAGXZQz9eWZKPI8xe+7CWg8FgQZSabz5pY3A2LQnIytwt7dRePnz6/VZfzXO
-         6LwQ==
+        bh=Jm6Nl4C+10Z6mLAxjDzoOgqz94ccGPGmCa7Vfusa0Os=;
+        b=SA4EE91Gra3MVlYhasbeU10uGxQdJkA1ErpgUUPHXYjIBBC9G+xhF0GdmzxZwuV9mo
+         z3IFasx1Q+LMnp7rpNXL5hxwIIB2F1n5Wxt9XrBA4UQ+751T4p1Qeul0eHS6KCHU2t7W
+         Ku3HSPt2p/IYUi0P/2k8hx2jpEscTZNwTX/wzAdqqgDLSNL0aIHzSh3/W2sH8ef1IFuY
+         c/HZENmiu0xT1koA5h4GxBYxGweiuCNhz15CQqePyiGHbt3ATJDeVxJEOOjJi6iP7jkd
+         rBNkG+mMZjfvMwNnFQwyhWHcAAR1Gp/6AVnGFopARlnDmlUGwFwi12OOjcomLsM3gNdw
+         JGnA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=yNCYqL/hoAR7H28Iw4fgzL1YPORaFMzZpsZOD9Bkcfg=;
-        b=TQKbqUY2bX5rcxhCLGCcbUYXS9Y27ZAH6JI2QMn3LB4feXTFvUwPgjhiY+mFi1EkGj
-         zuqpwD86ICeemNDdr6JIfT0zEVLnt1e+Y0idM9o/C6IxWZ+MlvKVYrVgzQa6p53aQKuS
-         bK2M2k01/6RrZR+Ooq7JPVgVqifB8FCjCBRf4j02Jhm2iDzpc7Dvlxe4LLc4pJAkZEVB
-         BFHX8kZkt9YsSwrjMDDNHz/FRwExjGLZQdychM36pNQ1ho3JTNdB1pxOoBeliOIqEvyz
-         V+I+Z05OgjdKHaFEHkhNboYE6/VQiong+6htK6XJ4EpPdxoftBWL3QE27Dr7b7bLxEoD
-         JQgg==
-X-Gm-Message-State: AA+aEWY+h+TPrDPJFZcIQYrJkjVgE6tppiumOw9fKhwHHda/rJYYfTnn
-        hoRCGqYvRyGR8dHyZBDWCg==
-X-Google-Smtp-Source: AFSGD/VNeTwGBSF7v0msejtyDC54s7iykPkvRVXHlcrbZHtpWDXYpO5P3eCF6EIbH65nwxe5VfyvOA==
-X-Received: by 2002:ab0:3259:: with SMTP id r25mr9928215uan.108.1544656090393;
-        Wed, 12 Dec 2018 15:08:10 -0800 (PST)
+        bh=Jm6Nl4C+10Z6mLAxjDzoOgqz94ccGPGmCa7Vfusa0Os=;
+        b=payOGFN9bYR9ShgX9KJdnAtuKtw9cnG85nWDe9JtuUXrTqcl+RVPmH45Nbk7RY3m3f
+         AzWTmyFMR0rmNAKLaDEMQuD79kpSrFA7aKHXxZ33mtCtXGftIKQYv43k90IljxqlysUh
+         E56UWbpqVhsFTSgoNOoBaXPP7M0uCPUwWgbi9bc82mDBiS4l7wQaZudKNmXgpsMv4zXI
+         dRs052OT6895ZN9W400bGIwx5UQH/YwXOOLWfTDQaZDF3wPmBAm4CVQKoBYmxrbpRkWJ
+         GXkn/10qKCINTnX+IUJFtpld/ODUmJQalCTK51/5B1sCsU1n/6LTC+4CmKYsGMyfGo+6
+         DiDg==
+X-Gm-Message-State: AA+aEWaK0zsiXmR16mKho19SEUgqLyOtB2bPRUq3qrERans/ldzlDRbi
+        ubqYNGZuTktUny26hTva9w==
+X-Google-Smtp-Source: AFSGD/VFrBVRw3dCcimcwqFKEuaGBGFGTzSlK7Q867zq6BrbWaWUvdLijYID0YXYwA9DzrHzHwcryg==
+X-Received: by 2002:a67:c584:: with SMTP id h4mr10032498vsk.142.1544656094007;
+        Wed, 12 Dec 2018 15:08:14 -0800 (PST)
 Received: from localhost.localdomain ([2601:902:c200:6512:a50b:fc5d:3604:d966])
-        by smtp.gmail.com with ESMTPSA id f68sm36630uaf.9.2018.12.12.15.08.09
+        by smtp.gmail.com with ESMTPSA id f68sm36630uaf.9.2018.12.12.15.08.12
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 12 Dec 2018 15:08:09 -0800 (PST)
+        Wed, 12 Dec 2018 15:08:13 -0800 (PST)
 From:   Ayman Bagabas <ayman.bagabas@gmail.com>
 To:     Darren Hart <dvhart@infradead.org>,
         Andy Shevchenko <andy@infradead.org>,
@@ -69,9 +70,9 @@ To:     Darren Hart <dvhart@infradead.org>,
         linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
         alsa-devel@alsa-project.org
 Cc:     ayman.bagabas@gmail.com
-Subject: [PATCH v11 1/3] ALSA: hda: fix front speakers on Huawei MBXP.
-Date:   Wed, 12 Dec 2018 18:07:57 -0500
-Message-Id: <20181212230802.21140-2-ayman.bagabas@gmail.com>
+Subject: [PATCH v11 2/3] x86: add support for Huawei WMI hotkeys.
+Date:   Wed, 12 Dec 2018 18:07:58 -0500
+Message-Id: <20181212230802.21140-3-ayman.bagabas@gmail.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181212230802.21140-1-ayman.bagabas@gmail.com>
 References: <20181212230802.21140-1-ayman.bagabas@gmail.com>
@@ -82,62 +83,292 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch solves bug 200501 'Only 2 of 4 speakers playing sound.'
-https://bugzilla.kernel.org/show_bug.cgi?id=200501
-It enables the front speakers on Huawei Matebook X Pro laptops.
-These laptops come with Dolby Atmos sound system and these pins
-configuration enables the front speakers.
+This driver adds support for missing hotkeys on some Huawei laptops.
+Laptops such as the Matebook X have non functioning hotkeys. Whereas
+newer laptops such as the Matebook X Pro come with working hotkeys out
+of the box.
 
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Old laptops, such as the Matebook X, report hotkey events through ACPI
+device "\WMI0". However, new laptops, such as the Matebook X Pro,
+does not have this WMI device.
+
+All the hotkeys on the Matebook X Pro work fine
+without this patch except (micmute, wlan, and huawei key). These keys
+and the brightness keys report events to "\AMW0" ACPI device. One
+problem is that brightness keys on the Matebook X Pro work without this
+patch. This results in reporting two brightness key press
+events one is captured by ACPI and another by this driver.
+
+A solution would be to check if such event came from the "\AMW0" WMI driver
+then skip reporting event. Another solution would be to leave this to
+user-space to handle. Which can be achieved by using "hwdb" tables and
+remap those keys to "unknown". This solution seems more natural to me
+because it leaves the decision to user-space.
+
+Acked-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 Reviewed-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Ayman Bagabas <ayman.bagabas@gmail.com>
 ---
- sound/pci/hda/patch_realtek.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ drivers/platform/x86/Kconfig      |  17 +++
+ drivers/platform/x86/Makefile     |   1 +
+ drivers/platform/x86/huawei-wmi.c | 208 ++++++++++++++++++++++++++++++
+ 3 files changed, 226 insertions(+)
+ create mode 100644 drivers/platform/x86/huawei-wmi.c
 
-diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
-index 993d34c141c2..77ee471a67e5 100644
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -5490,6 +5490,7 @@ enum {
- 	ALC298_FIXUP_TPT470_DOCK,
- 	ALC255_FIXUP_DUMMY_LINEOUT_VERB,
- 	ALC255_FIXUP_DELL_HEADSET_MIC,
-+	ALC256_FIXUP_HUAWEI_MBXP_PINS,
- 	ALC295_FIXUP_HP_X360,
- 	ALC221_FIXUP_HP_HEADSET_MIC,
- };
-@@ -5761,6 +5762,22 @@ static const struct hda_fixup alc269_fixups[] = {
- 		.chained = true,
- 		.chain_id = ALC269_FIXUP_HEADSET_MIC
- 	},
-+	[ALC256_FIXUP_HUAWEI_MBXP_PINS] = {
-+		.type = HDA_FIXUP_PINS,
-+		.v.pins = (const struct hda_pintbl[]) {
-+			{0x12, 0x90a60130},
-+			{0x13, 0x40000000},
-+			{0x14, 0x90170110},
-+			{0x18, 0x411111f0},
-+			{0x19, 0x04a11040},
-+			{0x1a, 0x411111f0},
-+			{0x1b, 0x90170112},
-+			{0x1d, 0x40759a05},
-+			{0x1e, 0x411111f0},
-+			{0x21, 0x04211020},
-+			{ }
-+		},
-+	},
- 	[ALC269_FIXUP_ASUS_X101_FUNC] = {
- 		.type = HDA_FIXUP_FUNC,
- 		.v.func = alc269_fixup_x101_headset_mic,
-@@ -6591,6 +6608,7 @@ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
- 	SND_PCI_QUIRK(0x17aa, 0x511f, "Thinkpad", ALC298_FIXUP_TPT470_DOCK),
- 	SND_PCI_QUIRK(0x17aa, 0x3bf8, "Quanta FL1", ALC269_FIXUP_PCM_44K),
- 	SND_PCI_QUIRK(0x17aa, 0x9e54, "LENOVO NB", ALC269_FIXUP_LENOVO_EAPD),
-+	SND_PCI_QUIRK(0x19e5, 0x3204, "Huawei MBXP", ALC256_FIXUP_HUAWEI_MBXP_PINS),
- 	SND_PCI_QUIRK(0x1b7d, 0xa831, "Ordissimo EVE2 ", ALC269VB_FIXUP_ORDISSIMO_EVE2), /* Also known as Malata PC-B1303 */
+diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
+index 87f70e8f4dd0..45ef4d22f14c 100644
+--- a/drivers/platform/x86/Kconfig
++++ b/drivers/platform/x86/Kconfig
+@@ -1292,6 +1292,23 @@ config INTEL_ATOMISP2_PM
+ 	  To compile this driver as a module, choose M here: the module
+ 	  will be called intel_atomisp2_pm.
  
- #if 0
++config HUAWEI_WMI
++	tristate "Huawei WMI hotkeys driver"
++	depends on ACPI_WMI
++	depends on INPUT
++	select INPUT_SPARSEKMAP
++	select LEDS_CLASS
++	select LEDS_TRIGGERS
++	select LEDS_TRIGGER_AUDIO
++	select NEW_LEDS
++	help
++	  This driver provides support for Huawei WMI hotkeys.
++	  It enables the missing keys and adds support to the micmute
++	  LED found on some of these laptops.
++
++	  To compile this driver as a module, choose M here: the module
++	  will be called huawei-wmi.
++
+ endif # X86_PLATFORM_DEVICES
+ 
+ config PMC_ATOM
+diff --git a/drivers/platform/x86/Makefile b/drivers/platform/x86/Makefile
+index 39ae94135406..d841c550e3cc 100644
+--- a/drivers/platform/x86/Makefile
++++ b/drivers/platform/x86/Makefile
+@@ -32,6 +32,7 @@ obj-$(CONFIG_ACERHDF)		+= acerhdf.o
+ obj-$(CONFIG_HP_ACCEL)		+= hp_accel.o
+ obj-$(CONFIG_HP_WIRELESS)	+= hp-wireless.o
+ obj-$(CONFIG_HP_WMI)		+= hp-wmi.o
++obj-$(CONFIG_HUAWEI_WMI)		+= huawei-wmi.o
+ obj-$(CONFIG_AMILO_RFKILL)	+= amilo-rfkill.o
+ obj-$(CONFIG_GPD_POCKET_FAN)	+= gpd-pocket-fan.o
+ obj-$(CONFIG_TC1100_WMI)	+= tc1100-wmi.o
+diff --git a/drivers/platform/x86/huawei-wmi.c b/drivers/platform/x86/huawei-wmi.c
+new file mode 100644
+index 000000000000..59872f87b741
+--- /dev/null
++++ b/drivers/platform/x86/huawei-wmi.c
+@@ -0,0 +1,208 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ *  Huawei WMI hotkeys
++ *
++ *  Copyright (C) 2018	      Ayman Bagabas <ayman.bagabas@gmail.com>
++ */
++
++#include <linux/acpi.h>
++#include <linux/input.h>
++#include <linux/input/sparse-keymap.h>
++#include <linux/leds.h>
++#include <linux/module.h>
++#include <linux/wmi.h>
++
++/*
++ * Huawei WMI GUIDs
++ */
++#define WMI0_EVENT_GUID "59142400-C6A3-40fa-BADB-8A2652834100"
++#define AMW0_EVENT_GUID "ABBC0F5C-8EA1-11D1-A000-C90629100000"
++
++#define WMI0_EXPENSIVE_GUID "39142400-C6A3-40fa-BADB-8A2652834100"
++
++struct huawei_wmi_priv {
++	struct input_dev *idev;
++	struct led_classdev cdev;
++	acpi_handle handle;
++	char *acpi_method;
++};
++
++static const struct key_entry huawei_wmi_keymap[] = {
++	{ KE_KEY,    0x281, { KEY_BRIGHTNESSDOWN } },
++	{ KE_KEY,    0x282, { KEY_BRIGHTNESSUP } },
++	{ KE_KEY,    0x284, { KEY_MUTE } },
++	{ KE_KEY,    0x285, { KEY_VOLUMEDOWN } },
++	{ KE_KEY,    0x286, { KEY_VOLUMEUP } },
++	{ KE_KEY,    0x287, { KEY_MICMUTE } },
++	{ KE_KEY,    0x289, { KEY_WLAN } },
++	// Huawei |M| key
++	{ KE_KEY,    0x28a, { KEY_CONFIG } },
++	// Keyboard backlight
++	{ KE_IGNORE, 0x293, { KEY_KBDILLUMTOGGLE } },
++	{ KE_IGNORE, 0x294, { KEY_KBDILLUMUP } },
++	{ KE_IGNORE, 0x295, { KEY_KBDILLUMUP } },
++	{ KE_END,	 0 }
++};
++
++static int huawei_wmi_micmute_led_set(struct led_classdev *led_cdev,
++		enum led_brightness brightness)
++{
++	struct huawei_wmi_priv *priv = dev_get_drvdata(led_cdev->dev->parent);
++	acpi_status status;
++	union acpi_object args[3];
++	struct acpi_object_list arg_list = {
++		.pointer = args,
++		.count = ARRAY_SIZE(args),
++	};
++
++	args[0].type = args[1].type = args[2].type = ACPI_TYPE_INTEGER;
++	args[1].integer.value = 0x04;
++
++	if (strcmp(priv->acpi_method, "SPIN") == 0) {
++		args[0].integer.value = 0;
++		args[2].integer.value = brightness ? 1 : 0;
++	} else if (strcmp(priv->acpi_method, "WPIN") == 0) {
++		args[0].integer.value = 1;
++		args[2].integer.value = brightness ? 0 : 1;
++	} else {
++		return -EINVAL;
++	}
++
++	status = acpi_evaluate_object(priv->handle, priv->acpi_method, &arg_list, NULL);
++	if (ACPI_FAILURE(status))
++		return -ENXIO;
++
++	return 0;
++}
++
++static int huawei_wmi_leds_setup(struct wmi_device *wdev)
++{
++	struct huawei_wmi_priv *priv = dev_get_drvdata(&wdev->dev);
++
++	priv->handle = ec_get_handle();
++	if (!priv->handle)
++		return 0;
++
++	if (acpi_has_method(priv->handle, "SPIN"))
++		priv->acpi_method = "SPIN";
++	else if (acpi_has_method(priv->handle, "WPIN"))
++		priv->acpi_method = "WPIN";
++	else
++		return 0;
++
++	priv->cdev.name = "platform::micmute";
++	priv->cdev.max_brightness = 1;
++	priv->cdev.brightness_set_blocking = huawei_wmi_micmute_led_set;
++	priv->cdev.default_trigger = "audio-micmute";
++	priv->cdev.brightness = ledtrig_audio_get(LED_AUDIO_MICMUTE);
++	priv->cdev.dev = &wdev->dev;
++	priv->cdev.flags = LED_CORE_SUSPENDRESUME;
++
++	return devm_led_classdev_register(&wdev->dev, &priv->cdev);
++}
++
++static void huawei_wmi_process_key(struct wmi_device *wdev, int code)
++{
++	struct huawei_wmi_priv *priv = dev_get_drvdata(&wdev->dev);
++	const struct key_entry *key;
++
++	/*
++	 * WMI0 uses code 0x80 to indicate a hotkey event.
++	 * The actual key is fetched from the method WQ00
++	 * using WMI0_EXPENSIVE_GUID.
++	 */
++	if (code == 0x80) {
++		struct acpi_buffer response = { ACPI_ALLOCATE_BUFFER, NULL };
++		union acpi_object *obj;
++		acpi_status status;
++
++		status = wmi_query_block(WMI0_EXPENSIVE_GUID, 0, &response);
++		if (ACPI_FAILURE(status))
++			return;
++
++		obj = (union acpi_object *)response.pointer;
++		if (obj && obj->type == ACPI_TYPE_INTEGER)
++			code = obj->integer.value;
++
++		kfree(response.pointer);
++	}
++
++	key = sparse_keymap_entry_from_scancode(priv->idev, code);
++	if (!key) {
++		dev_info(&wdev->dev, "Unknown key pressed, code: 0x%04x\n", code);
++		return;
++	}
++
++	sparse_keymap_report_entry(priv->idev, key, 1, true);
++}
++
++static void huawei_wmi_notify(struct wmi_device *wdev,
++		union acpi_object *obj)
++{
++	if (obj->type == ACPI_TYPE_INTEGER)
++		huawei_wmi_process_key(wdev, obj->integer.value);
++	else
++		dev_info(&wdev->dev, "Bad response type %d\n", obj->type);
++}
++
++static int huawei_wmi_input_setup(struct wmi_device *wdev)
++{
++	struct huawei_wmi_priv *priv = dev_get_drvdata(&wdev->dev);
++	int err;
++
++	priv->idev = devm_input_allocate_device(&wdev->dev);
++	if (!priv->idev)
++		return -ENOMEM;
++
++	priv->idev->name = "Huawei WMI hotkeys";
++	priv->idev->phys = "wmi/input0";
++	priv->idev->id.bustype = BUS_HOST;
++	priv->idev->dev.parent = &wdev->dev;
++
++	err = sparse_keymap_setup(priv->idev, huawei_wmi_keymap, NULL);
++	if (err)
++		return err;
++
++	return input_register_device(priv->idev);
++}
++
++static int huawei_wmi_probe(struct wmi_device *wdev)
++{
++	struct huawei_wmi_priv *priv;
++	int err;
++
++	priv = devm_kzalloc(&wdev->dev, sizeof(struct huawei_wmi_priv), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++
++	dev_set_drvdata(&wdev->dev, priv);
++
++	err = huawei_wmi_input_setup(wdev);
++	if (err)
++		return err;
++
++	return huawei_wmi_leds_setup(wdev);
++}
++
++static const struct wmi_device_id huawei_wmi_id_table[] = {
++	{ .guid_string = WMI0_EVENT_GUID },
++	{ .guid_string = AMW0_EVENT_GUID },
++	{  }
++};
++
++static struct wmi_driver huawei_wmi_driver = {
++	.driver = {
++		.name = "huawei-wmi",
++	},
++	.id_table = huawei_wmi_id_table,
++	.probe = huawei_wmi_probe,
++	.notify = huawei_wmi_notify,
++};
++
++module_wmi_driver(huawei_wmi_driver);
++
++MODULE_ALIAS("wmi:"WMI0_EVENT_GUID);
++MODULE_ALIAS("wmi:"AMW0_EVENT_GUID);
++MODULE_AUTHOR("Ayman Bagabas <ayman.bagabas@gmail.com>");
++MODULE_DESCRIPTION("Huawei WMI hotkeys");
++MODULE_LICENSE("GPL v2");
 -- 
 2.19.2
 
