@@ -2,78 +2,121 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E1BAC04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 09:14:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B4F6C65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 09:17:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB6AE20849
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 09:14:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C653420849
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 09:17:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="nlC+p7qh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB6AE20849
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=snewbury.org.uk header.i=@snewbury.org.uk header.b="rIXL9+53"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C653420849
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=snewbury.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726838AbeLLJOJ (ORCPT
+        id S1726755AbeLLJRq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 04:14:09 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:35734 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726242AbeLLJOH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 04:14:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=cyvfG977++0v85COWokyHPWFctjF9dnRReeN8YCr/Eg=; b=nlC+p7qhDd/wgENLWKBV/YFLj
-        BRmgoZVWt9IGQkh70JwuWH9RplN1P5OTGFBn8sM6t7vnFdQmYmeCSCuZ26nJeoQ7aQUD7LTtPUs0x
-        JSpn7b1LzgJczXb4foNgN19OXisDB6z1vObwsUdlbSAULegj7d5T/5Iqwv7sftHUpxuQZeQA65/RU
-        pAbdjuTgzbcJlxPyMN483T83qxS7dm2OUTfo6njYmMozUhiLCh+tlSLVQfz2iQE6HjebWVZ2lG+5z
-        9YxFY5yHMMp+MLMZ2jUl7jbV0BSzLp5mgIhHV+Uz9G1Y93QhJzL1x1ajscMsymgaAb7a+dJedyxG9
-        9uf3IsPrA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gX0ak-00020g-NQ; Wed, 12 Dec 2018 09:14:06 +0000
-Date:   Wed, 12 Dec 2018 01:14:06 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Theodore Y . Ts'o" <tytso@mit.edu>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Victor Hsieh <victorhsieh@google.com>,
-        Chandan Rajendra <chandan@linux.vnet.ibm.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH v2 01/12] fs-verity: add a documentation file
-Message-ID: <20181212091406.GA31723@infradead.org>
-References: <20181101225230.88058-1-ebiggers@kernel.org>
- <20181101225230.88058-2-ebiggers@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181101225230.88058-2-ebiggers@kernel.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+        Wed, 12 Dec 2018 04:17:46 -0500
+Received: from know-smtprelay-omc-11.server.virginmedia.net ([80.0.253.75]:38038
+        "EHLO know-smtprelay-omc-11.server.virginmedia.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726514AbeLLJRq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 04:17:46 -0500
+X-Greylist: delayed 334 seconds by postgrey-1.27 at vger.kernel.org; Wed, 12 Dec 2018 04:17:44 EST
+Received: from mail.snewbury.org.uk ([77.243.189.247])
+        by cmsmtp with ESMTPA
+        id X0YqgPbgchtC0X0YqgN8Ay; Wed, 12 Dec 2018 09:12:09 +0000
+X-Originating-IP: [77.243.189.247]
+X-Authenticated-User: sjnewbury@virginmedia.com
+X-Spam: 0
+X-Authority: v=2.3 cv=KJXu82No c=1 sm=1 tr=0 a=7eWGW6afXjFjJVQJLTi0Pg==:117
+ a=7eWGW6afXjFjJVQJLTi0Pg==:17 a=IkcTkHD0fZMA:10 a=2ur7OfE09M0A:10
+ a=_vhMSwdQLMa2vP6iUl0A:9 a=QEXdDO2ut3YA:10 a=pHzHmUro8NiASowvMSCR:22
+ a=Ew2E2A-JSTLzCXPT_086:22
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=snewbury.org.uk;
+         h=content-transfer-encoding:mime-version:x-mailer:content-type
+        :content-type:date:date:from:from:subject:subject:message-id; s=
+        eater; t=1544605926; x=1546420327; bh=yNqG4mwTiFCcJNVzw0aQBId8D6
+        wZ5Xk7YlJODlS2FQE=; b=rIXL9+535+f/tPTkrAQkWdZG0oNzve+iBJp32/awp3
+        naTHCFkeyxjmNOl9mlK/PglAqd1RcwPyJ3kEqMKmIqMkkd3zHFdqtlTY8pHtbRpm
+        E2SXRQ3RaV3xPlWcZMM8lC6rpVMw0RIKSk0YScsVX+MREznjoUgiHOdBvxf52TM7
+        A=
+X-Virus-Scanned: amavisd-new at snewbury.org.uk
+Received: from android-a9f8fd57ba190b44.media.snewbury.org.uk (android-a9f8fd57ba190b44.media.snewbury.org.uk [192.168.75.105] (may be forged))
+        (authenticated bits=0)
+        by mail.snewbury.org.uk (8.14.9/8.14.9) with ESMTP id wBC9C43k012282
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+        Wed, 12 Dec 2018 09:12:05 GMT
+Message-ID: <1544605954.117529.27.camel@snewbury.org.uk>
+Subject: Re: Can we drop upstream Linux x32 support?
+From:   Steven Newbury <steve@snewbury.org.uk>
+To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        macro@linux-mips.org, tg@mirbsd.de, luto@kernel.org, arnd@arndb.de,
+        dalias@libc.org, s@ecloud.org, catalin.marinas@arm.com,
+        fweimer@redhat.com, glaubitz@physik.fu-berlin.de,
+        christian.brauner@canonical.com, hjl.tools@gmail.com, hpa@zytor.com
+Date:   Wed, 12 Dec 2018 09:12:34 +0000
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfPBfW+NSX8Q9egM+3b0va2ByrGxc4xUt+HhNtrjuoFEc3mt/0vYt8I2gMGIu7n66l8f23lwCxfijR9r2F0w45VYjPRE2JE0wjPZfrPxETCqJ5Dqdexpf
+ g3ifV5+pbqwGPOPfx8jQLV72t51WMFFiniTE9MhZ31kaBtcZRi4Hb3c8LEEJH++MSpzxdovzIaLfPJT80E6FEsduQQgpaynH0IheXP0mM5hd5MIOHvRMD6gf
+ u3bTTmpovEN9tLZg/Wgf8vfAlRCxJR6uNz/NaX9MV8bJUfnwUqllQDgG3HYGWp7xeTmywbE5tBUgXaUaQvQpHvhN+5xtMfBZikKkeb104Ej7e/V3P0SK0PHE
+ 3ZjrgXp7MCPtqepICQiZl3qY2jtdtbDHBs+DnjTRv+NdQdEIJL2bydOstVKO6N2gFNuxjjI9wmNc0Vt14/5VDg+l9qn5wo51K7+J7x47eySwjYZATxOo86p6
+ Ok72sOl0ovWHKfgQXXe7XRV3OTH5pl8UB9NBXQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As this apparently got merged despite no proper reviews from VFS
-level persons:
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA256
 
-NAK - the ioctl format that expects the verifycation hash in the file
-data data with padding after the real data is simply not acceptable,
-we can't just transform the data in the file itself based on a magic
-calls like this.
+First off I'd like to request: Please don't break my userspace!
 
-Also the core code should not depend on this as a storage format,
-which is a rather bad idea.  In any modern file system you can
-store data like this out of line in something like the attr fork
-in XFS, or the attr items in btrfs.
+I have a number of systems running with x32-abi as native.  They work
+well, I've no want or desire to upgrade their memory or CPUs to make
+keep them working as well as they do now.  Let alone the hassle of
+having to redeploy with a completely different ABI.
+
+
+I've been working on getting as much userspace as I can working with
+x32 since it first became somewhat usable, I've sent patches upstream
+and pushed to encourage projects to write portable code.  Sometimes
+that has meant just little tweaks to build systems, or sometimes
+disabling asm where I consider it isn't worth the effort of making it
+work.  For other projects I've converted the asm or even in some cases
+got the JIT working, mozjs17 for example.
+
+So I'm both a user and a developer.
+
+Breaking support for x32 would be really bad for me, but if I'm the
+only one using it I suppose I can't really justify it being kept on
+that basis.  I know CERN has sucessfully experimented with it over the
+years though, so I wouldn't be surprised if there are other users
+hiding out there.
+
+I can't help but wonder if it wouldn't make more sense to drop x86
+support from long mode than x32.  AMD64 x86 support was always intended
+ as a compatibility feature, I very much doubt there are more people
+out there using an x86 native userspace on a 64 bit kernel than there
+are native x32 users.  x86 support could be implemented via KVM and/or
+qemu-user.  There is no reason to keep the extra complexity in the
+kernel for what is effectively an emulation layer anyway.
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEWa1B4K0Hk12RDstE+lAa6BzrmeAFAlwQ0QQACgkQ+lAa6Bzr
+meBILQf9EF1GqHKfnRC7AOFnNCm0235OmH1dJJd4+6zzLWTKGAAvFF6T1F1IG3fu
+QTZTEok5s238BapjrvgZ5bxtMP0TGNK++vGZ8ESb6Hi+Q975duemWD8ZsSVPw7SH
+YcqEgmxKn28iHq/W//SUPo1kqz7D0jFCDU9dIA1wQY+AwTIzjfMPltWGrKbMbOBQ
+LsW+VlL7PfoEzx9sXvaMpjgINEouCvLcuTvhTRclCOO5MWqTQLdIdL9urrBGukUN
+7dvKiWWAk6c/Af1W5jnLtYIijaztu3hrZ7lykFmOnwyDoeOhqzIhUkcDaLJcy7Vo
+Rsrb1CjzFngpbgTJeOkyC9ZGZ2CZ0g==
+=TCpw
+-----END PGP SIGNATURE-----
+
