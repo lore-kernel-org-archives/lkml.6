@@ -2,89 +2,139 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-12.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A723C67839
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:05:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D742C65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:06:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 191E520851
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:05:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 191E520851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 3140620870
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:06:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544634406;
+	bh=MA9j7yNHyEaH3NdeSr24lwe9hZhkaVM7kHj29+c33mI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=O8EZH1YMzEpZoZ3CYTQm+KnSz5SXUfbEgpFem0fJx3A7vKgXNZLnkwrsizNaQ4DcI
+	 3gWV9uZzqQCIfLDJckmUscrdvWl2jS4xl382PPGBTa1Z7NWZPOk7wbt01TWhEDy4j8
+	 C5zH4I/QH8O/EY4vrEaslES+EToKv7dWno+hJR2Q=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3140620870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727936AbeLLRFa (ORCPT
+        id S1727971AbeLLRGp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 12:05:30 -0500
-Received: from foss.arm.com ([217.140.101.70]:45520 "EHLO foss.arm.com"
+        Wed, 12 Dec 2018 12:06:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57760 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726358AbeLLRF3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 12:05:29 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5DF9180D;
-        Wed, 12 Dec 2018 09:05:29 -0800 (PST)
-Received: from [10.1.25.174] (p8cg001049571a15.cambridge.arm.com [10.1.25.174])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6F3CA3F575;
-        Wed, 12 Dec 2018 09:05:28 -0800 (PST)
-Subject: Re: linux-next: build failure after merge of the akpm tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        id S1726879AbeLLRGo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 12:06:44 -0500
+Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0132B20849;
+        Wed, 12 Dec 2018 17:06:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544634403;
+        bh=MA9j7yNHyEaH3NdeSr24lwe9hZhkaVM7kHj29+c33mI=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=L9/q6bqau5cew3qGq/0Uw5g0755WLBmstSkh612ng7haVhCabzoE3cQS/DkdTDxuk
+         qWmcK5hG0aivELamuP4eTrz2Sr1PwSyPRE3uLsag7m0YgeIVOvK87ZqKOiI8GwmPjn
+         Pyw3kReAyvdeyVblIWf0aYwCxOHG2gYAEZJbzo8Y=
+Date:   Wed, 12 Dec 2018 17:06:35 +0000
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        linux-pwm@vger.kernel.org, linux-iio@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-i2c@vger.kernel.org, groeck@chromium.org,
+        kernel@collabora.com, linux-rtc@vger.kernel.org,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Benson Leung <bleung@chromium.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        linux-input@vger.kernel.org,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        devicetree@vger.kernel.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-pm@vger.kernel.org, MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Andrew Morton <akpm@linux-foundation.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20181203180037.0a54279b@canb.auug.org.au>
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-Message-ID: <8e677bb9-22c3-83c5-ff41-765d20fc0047@arm.com>
-Date:   Wed, 12 Dec 2018 22:35:38 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+Subject: Re: [PATCH v2] MAINTAINERS: add maintainers for ChromeOS EC
+ sub-drivers
+Message-ID: <20181212170635.09c3363d@archlinux>
+In-Reply-To: <20181211190953.13626-1-enric.balletbo@collabora.com>
+References: <20181211190953.13626-1-enric.balletbo@collabora.com>
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20181203180037.0a54279b@canb.auug.org.au>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, 11 Dec 2018 20:09:52 +0100
+Enric Balletbo i Serra <enric.balletbo@collabora.com> wrote:
 
+> There are multiple ChromeOS EC sub-drivers spread in different
+> subsystems, as all of them are related to the Chrome stuff add
+> Benson and myself as a maintainers for all these sub-drivers.
+> 
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com> for iio parts.
+> ---
+> 
+> Changes in v2:
+> - Fix typo in Benson email address.
+> 
+>  MAINTAINERS | 24 ++++++++++++++++++++++++
+>  1 file changed, 24 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index a24129b0b043..bbe7180e2851 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -3625,6 +3625,30 @@ S:	Maintained
+>  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/bleung/chrome-platform.git
+>  F:	drivers/platform/chrome/
+>  
+> +CHROMEOS EC SUBDRIVERS
+> +M:	Benson Leung <bleung@chromium.org>
+> +M:	Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> +S:	Maintained
+> +F:	Documentation/devicetree/bindings/extcon/extcon-usbc-cros-ec.txt
+> +F:	Documentation/devicetree/bindings/input/cros-ec-keyb.txt
+> +F:	Documentation/devicetree/bindings/pwm/google,cros-ec-pwm.txt
+> +F:	Documentation/devicetree/bindings/i2c/i2c-cros-ec-tunnel.txt
+> +F:	Documentation/devicetree/bindings/mfd/cros-ec.txt
+> +F:	Documentation/ABI/testing/sysfs-bus-iio-cros-ec
+> +F:	drivers/extcon/extcon-usbc-cros-ec.c
+> +F:	drivers/i2c/busses/i2c-cros-ec-tunnel.c
+> +F:	drivers/iio/accel/cros_ec*
+> +F:	drivers/iio/common/cros_ec_sensors/
+> +F:	drivers/iio/light/cros_ec*
+> +F:	drivers/iio/pressure/cros_ec*
+> +F:	drivers/input/keyboard/cros_ec*
+> +F:	drivers/mfd/cros_ec*
+> +F:	drivers/power/supply/cros_usbpd-charger.c
+> +F:	drivers/pwm/pwm-cros-ec.c
+> +F:	drivers/rtc/rtc-cros-ec.c
+> +F:	include/linux/iio/common/cros_ec_sensors_core.h
+> +F:	include/linux/mfd/cros_ec*
+> +
+>  CIRRUS LOGIC AUDIO CODEC DRIVERS
+>  M:	Brian Austin <brian.austin@cirrus.com>
+>  M:	Paul Handrigan <Paul.Handrigan@cirrus.com>
 
-On 12/03/2018 12:30 PM, Stephen Rothwell wrote:
-> Hi Andrew,
-> 
-> After merging the akpm tree, today's linux-next build (powerpc_le perf)
-> failed like this:
-> 
-> bench/numa.c:37:10: fatal error: linux/numa.h: No such file or directory
->  #include <linux/numa.h>
->           ^~~~~~~~~~~~~~
-> 
-> Caused by patches
-> 
->   "mm: replace all open encodings for NUMA_NO_NODE"
->   "mm-replace-all-open-encodings-for-numa_no_node-fix"
-> 
-> For linux/numa.h to be generally availble to the tools builds, it must
-> be copied into tools/include/linux ...
-> 
-> I have done that copy for today:
-> 
-> From 6dabc11d5513510d0ec0a6b0a4aa8b9051b71516 Mon Sep 17 00:00:00 2001
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Mon, 3 Dec 2018 17:57:27 +1100
-> Subject: [PATCH] linux/numa.h is now needed for the perf build
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-
-Hello Stephen,
-
-I will respin the original patch (https://patchwork.kernel.org/patch/10698089/)
-once more to accommodate new feedbacks from Lubomir Rintel. This patch fixes the
-build problem related to tools/perf. As Lubomir suggested, it might be better to
-split the tools/perf changes ("tools: Replace open encodings for NUMA_NO_NODE")
-from the original patch and then fold this fix onto it with both signed-off-by.
-Does it sound good. Are you okay with it ?
-
-- Anshuman
