@@ -2,93 +2,124 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72BE8C04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 13:11:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23B4DC04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 13:12:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30E082086D
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 13:11:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D75C320839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 13:12:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="bFHiet2s"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30E082086D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="REYR/oLa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D75C320839
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727504AbeLLNLH (ORCPT
+        id S1727512AbeLLNMO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 08:11:07 -0500
-Received: from conssluserg-06.nifty.com ([210.131.2.91]:30073 "EHLO
-        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726232AbeLLNLH (ORCPT
+        Wed, 12 Dec 2018 08:12:14 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:36460 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726229AbeLLNMO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 08:11:07 -0500
-Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48]) (authenticated)
-        by conssluserg-06.nifty.com with ESMTP id wBCDAmkV003541;
-        Wed, 12 Dec 2018 22:10:49 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com wBCDAmkV003541
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1544620249;
-        bh=r24wrdaiuHeXrRPjDih1A9mHAIjWu5bO2qeWaSowhdQ=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=bFHiet2sa+pHIuqLv99zCP3RfOojgYMpMdsnZZWYG0wOUeS8ayOuOC67rdZL4ZN53
-         ZQs6+vdn0PJK9RMZMEPDCN0UqsPfdSlnS1XMTP9Cz5dhjdxv/YzNI9Crc0n5TSq0na
-         82ZbjG7b+TZlllqXQ14aQ/+OpJ9SK+M64MoESnVIFZ6h2lRy2+6YuCfILHXUqoarg1
-         0FLJo3C4UV3AMokVQwwY+XwHcGNhf/2ebrUs0cgg/QOPiQK1Ks94/JzrdJE8RuwqcF
-         LePS241LVgpOXcl2iKTjS2RVTAbvi0QrrYkNMD+AV/671lCPQuogbvlqHW6kondnvz
-         LTg/1CR7D4kAg==
-X-Nifty-SrcIP: [209.85.217.48]
-Received: by mail-vs1-f48.google.com with SMTP id h18so11006242vsj.4;
-        Wed, 12 Dec 2018 05:10:48 -0800 (PST)
-X-Gm-Message-State: AA+aEWbdydqJXrBtB81C1gc9sMNtZAQJoUbi/rC5F3/Z8426J/eMzg6r
-        wP55A9BmvQsQO3dkPqMW/DtItWqd0rh71bCrp9c=
-X-Google-Smtp-Source: AFSGD/WAui6Rb6TJ/VxBOQLX4CzlYS06+OnuCGiIwe6BkESuBXPGpOBxWU01LtpdZbb2pVQhzuUKvkDDR05KMGn6Lh8=
-X-Received: by 2002:a67:5f03:: with SMTP id t3mr9379327vsb.155.1544620247691;
- Wed, 12 Dec 2018 05:10:47 -0800 (PST)
+        Wed, 12 Dec 2018 08:12:14 -0500
+Received: by mail-ed1-f67.google.com with SMTP id f23so15517253edb.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 05:12:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=i6qt46qUfRiiduNIF9Ae1L7GqcRy2C24+/4DIYnGDNg=;
+        b=REYR/oLaVVsfbiWS0j6SwDgVRBSwy/daPGUHhyaKyldlIWv/VM2jmqg2HKTRK0oYPj
+         7I1qcoZ6/2g3LZqjYAGziw5i9mfyqOpIqDXFSWe0wGyY9s+1BZzkC+RibtCOF2LD+WIS
+         170/cZo7jcm00J4Wd/VynoWb/qmEsOFss4v4s+49xkMtSuX3xXkuyPZc/VxlndghyTsH
+         YO4tOY9NqFodlJ4qQq8/OUTKa8ZOiotK6gjLcUesbywjdo7SHFB8NI3aMl+bxOEXf0kG
+         UtvpVmlUdtiIEaxZmybHAkKebKKnXhCcyANqR8MdNbjPpQMgh+yYNsUF+Y+NEQsmGuLG
+         vuQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=i6qt46qUfRiiduNIF9Ae1L7GqcRy2C24+/4DIYnGDNg=;
+        b=tEZ7tUedR2oM3gptXG8zvW3gdhZLUFDcQZ1Qb9HBLydNon+J0zZd2yq/IQLzKdp8nE
+         WR9pGIPf2/BfS39agb4d7Uon3DapCoxuB1oBaX1iYDbQRMpJh87zX30Kt1UF75p4AgDm
+         cR6mcvfbV5Rz7ubzXNzPjR5h9uDrHrxrMMhdd0dt9Mc3LBAcPThOc+cvoywPaRY9p7eo
+         De+DSS2no0Vx/uknd7kvsXOg2aok5EC7S6HgfotAPpINLA3lEDVdq1hi/eww8xCQD4K+
+         1Q2fMW1or6k97zc0ectLbRiDD2vgowvMECTTxOyRK8HbKyCaYF7IhfVR51b/781fS/Co
+         F2HA==
+X-Gm-Message-State: AA+aEWYVVQYUwOh+Qz8asFcc8Xr6dxoNpolL7Gm56m8HX2gddHywebjz
+        iQj3JVejq6wKd+MsfD8Y//Y=
+X-Google-Smtp-Source: AFSGD/WY3CCtFyRvcsu9YUZYieAhglmrUtULM3DtFvu/lP6IFYSLD+zTztqc8PdV+FkN7Fcnb1nRxQ==
+X-Received: by 2002:a17:906:2496:: with SMTP id e22-v6mr15141789ejb.84.1544620332178;
+        Wed, 12 Dec 2018 05:12:12 -0800 (PST)
+Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
+        by smtp.gmail.com with ESMTPSA id f20sm4810225edf.19.2018.12.12.05.12.11
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 12 Dec 2018 05:12:11 -0800 (PST)
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     Jonathan Corbet <corbet@lwn.net>, Joe Perches <joe@perches.com>,
+        Jeremy Cline <jcline@redhat.com>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] scripts/spdxcheck.py: Always open files in binary mode
+Date:   Wed, 12 Dec 2018 14:12:09 +0100
+Message-Id: <20181212131210.28024-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-References: <20181210163725.95977-1-chao.wang@ucloud.cn>
-In-Reply-To: <20181210163725.95977-1-chao.wang@ucloud.cn>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Wed, 12 Dec 2018 22:10:11 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARcgRUzd+yvKjadaAx2JTyP=3nZ8g5LOfvZ0n6uAecg2g@mail.gmail.com>
-Message-ID: <CAK7LNARcgRUzd+yvKjadaAx2JTyP=3nZ8g5LOfvZ0n6uAecg2g@mail.gmail.com>
-Subject: Re: [PATCH] treewide: replace RETPOLINE with CONFIG_RETPOLINE
-To:     chao.wang@ucloud.cn
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        stable <stable@vger.kernel.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        zhenzhong.duan@oracle.com, Thomas Gleixner <tglx@linutronix.de>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Borislav Petkov <bp@suse.de>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        "H. Peter Anvin" <hpa@zytor.com>, konrad.wilk@oracle.com,
-        Andy Lutomirski <luto@kernel.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        srinivas.eeda@oracle.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 11, 2018 at 2:17 AM WANG Chao <chao.wang@ucloud.cn> wrote:
->
-> Since commit 4cd24de3a098 ("x86/retpoline: Make CONFIG_RETPOLINE depend
-> on compiler support"), RETPOLINE has been replaced by CONFIG_RETPOLINE.
->
-> Fixes: 4cd24de3a098 ("x86/retpoline: Make CONFIG_RETPOLINE depend on compiler support")
-> Signed-off-by: WANG Chao <chao.wang@ucloud.cn>
-> ---
+From: Thierry Reding <treding@nvidia.com>
 
+The spdxcheck script currently falls over when confronted with a binary
+file (such as Documentation/logo.gif). To avoid that, always open files
+in binary mode and decode line-by-line, ignoring encoding errors.
 
+One tricky case is when piping data into the script and reading it from
+standard input. By default, standard input will be opened in text mode,
+so we need to reopen it in binary mode.
 
-Reviewed-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ scripts/spdxcheck.py | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-
-
-
+diff --git a/scripts/spdxcheck.py b/scripts/spdxcheck.py
+index 5056fb3b897d..e559c6294c39 100755
+--- a/scripts/spdxcheck.py
++++ b/scripts/spdxcheck.py
+@@ -168,6 +168,7 @@ class id_parser(object):
+         self.curline = 0
+         try:
+             for line in fd:
++                line = line.decode(locale.getpreferredencoding(False), errors='ignore')
+                 self.curline += 1
+                 if self.curline > maxlines:
+                     break
+@@ -249,12 +250,13 @@ if __name__ == '__main__':
+ 
+     try:
+         if len(args.path) and args.path[0] == '-':
+-            parser.parse_lines(sys.stdin, args.maxlines, '-')
++            stdin = os.fdopen(sys.stdin.fileno(), 'rb')
++            parser.parse_lines(stdin, args.maxlines, '-')
+         else:
+             if args.path:
+                 for p in args.path:
+                     if os.path.isfile(p):
+-                        parser.parse_lines(open(p), args.maxlines, p)
++                        parser.parse_lines(open(p, 'rb'), args.maxlines, p)
+                     elif os.path.isdir(p):
+                         scan_git_subtree(repo.head.reference.commit.tree, p)
+                     else:
 -- 
-Best Regards
-Masahiro Yamada
+2.19.1
+
