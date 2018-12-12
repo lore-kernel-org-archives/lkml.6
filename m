@@ -4,69 +4,69 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F390AC65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 19:48:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5D70C65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 19:49:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A58EC20873
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 19:48:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B67620870
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 19:49:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="Rg3SVE+R"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A58EC20873
+	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="oNXSAPEg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B67620870
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=android.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727102AbeLLTsT (ORCPT
+        id S1727471AbeLLTtE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 14:48:19 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:41368 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726247AbeLLTsS (ORCPT
+        Wed, 12 Dec 2018 14:49:04 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:36632 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726247AbeLLTtE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 14:48:18 -0500
-Received: by mail-ot1-f66.google.com with SMTP id u16so18819388otk.8
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 11:48:18 -0800 (PST)
+        Wed, 12 Dec 2018 14:49:04 -0500
+Received: by mail-ot1-f67.google.com with SMTP id k98so18854261otk.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 11:49:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=android.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=OwbPwjU+jEUyBj8dwC4Zj3N+2ldazEu4kINBGiJ6+xE=;
-        b=Rg3SVE+RlCrBdxEm+iN7SC1Narhs06iry7eRVWkv035lEp4hrSJeICPBCIM/JaApOC
-         HZSq4g77yKsRqMC6EzzBgK4P91C8sGt3sQJbNpdBwQckMHu2AXYfHA0GEnbDtI1MADIB
-         bv34YeosSqmxj7HL355kkWtsJfY26+nxrB40hMvBaEvVBJojkqN83fNjciLBSpWQZhb5
-         dH+p6X1hIZ9uprVUHOXruqad7RQMNBHIpXi1hsxqjP1x0iomyQpfWdD93iD4rYfm4Tgl
-         kDTCSshxYaqxl9noS+tEWg9iA5rkMGpHvUvWrzuEXCZlxVkefNKJhnRHFxFvyP43IMbu
-         YPRQ==
+        bh=cLMq55J2CWN4XXAKy3D74O5Gl2Sszmh4ie5QklnSFnk=;
+        b=oNXSAPEgdilUWtQ+xvDyB/MWYmhhbu4JWZHVSJ9sO4HePhCQ232hNMP1tbWx6fqcaz
+         7ErPLVi/z3eqmt/tLClmioz2vG/Tr/1GbDSjPj+Pt5HuCv8Ikf0+AVe7B4FDfyzjC7qU
+         vKkCjnjz/I1x2ETtr62Xp4DPe/7xG744QQtpZwXIQR5FH4Kq7uObB4G6ofM7qeZg5bUB
+         yi06WqYkkWBaAf0jtPCE/4rVBeNUhRpy1GSQjauPx6f/Cy8/NqNf61MwE/0SDBT9thpm
+         DpbS8Jsrbww9B1Iitf5sCpGAAiLNgkRPDSgq4jTjsV4zQ1h5mNYrtztmbfzaxJKmkmdo
+         FpAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=OwbPwjU+jEUyBj8dwC4Zj3N+2ldazEu4kINBGiJ6+xE=;
-        b=OCfR/OXMvh226lUBVJRZWPhCL0hDl/Skd4ymaqDBlkNs1mcFFWcxgwTfgOSAVMQ/mc
-         2W9NNZ+XxMhO/P1eTE0FEGizP5MS7O8yZfC7NOBGziqL0aYPQPiOhM9x5wWyhwE/3rKi
-         nMXEEbiiVLpa1D/xKfT4Ak/bdrUW5GwzvXUZZPol11Z3mgwEC2yv05VP+WBa1K8qRS4+
-         lX8EPRYoZR3+Afa0nP2ZVy7vqNnD9upSbWXHHST+BiRh6QTYxtlH5D3aF7+GqtpwmSuE
-         FIve0IB7DXewBbh9pqunVJtDUsDKhnQ+y7hi4obbU0gRV85Fas+wGk/CWCL83LYlRjmZ
-         ESHA==
-X-Gm-Message-State: AA+aEWZa0QpGaYfmJIK9EOJj0ySNIaWo/uzzvfRZwlQ9Nan0JjTQTUtU
-        gcVu0XaYSGUcSlmAa29cXFXElgNvW0pJ3xxuDkYNvQ==
-X-Google-Smtp-Source: AFSGD/Vbf0f6HS7IqRB3hp1t+aW0xbEpgDtUzmfi91OqGwx8HyPuIuns0tuyo80aki6X6H2oYh5HGJ63BbLfGoYmMsw=
-X-Received: by 2002:a9d:3ac:: with SMTP id f41mr14331906otf.98.1544644097660;
- Wed, 12 Dec 2018 11:48:17 -0800 (PST)
+        bh=cLMq55J2CWN4XXAKy3D74O5Gl2Sszmh4ie5QklnSFnk=;
+        b=amFaE1VVUa8+gAY4tg1JmLlU749dwAC0Wg9wpzDiKbuJ/3OevHkoelMnTMOJBNz7AN
+         OgkcgRVQ/fGFwbuuT63P/CAmQcb25VNpCFZ0DDqVIfaCqHNawI3uMZ9mhvbzYMwcVOle
+         ToCRVP8Ej8lMYsQ5zxg1WbL1lqbtw2MN10Sty4VFWC68asBxpXifKS9531uMCJUSZWZ7
+         hyHOh7JMVpezsS6G4vkdvohgWgoA3jrEhEK1Cs1bALLiU+gcCUwhFy8Rlm/fEQfS4EOv
+         nHLW8KKq1feQDc7QSmVxKm6dbureSYbtWq8psWRKTvYgz2oh4hs3m9CgY787yUHv0s/w
+         9Y+Q==
+X-Gm-Message-State: AA+aEWZVJ//h+pCFOsLbCJM9WpqZl5E5Fv1lHqpsrzJQE+POP144rKr4
+        AfoDRZlc7RQKND13vKlXkjnwVL892HKPYAdd8f/LvQ==
+X-Google-Smtp-Source: AFSGD/Vrb2io0oyCO0t0Ly1QhBJgHLU0qvvAJPrwjquLqLG+JaSIz0tTVITqRWLno3rv2vcUE2WQAyV+4ufuYv7BsqI=
+X-Received: by 2002:a9d:477:: with SMTP id 110mr15914421otc.346.1544644142840;
+ Wed, 12 Dec 2018 11:49:02 -0800 (PST)
 MIME-Version: 1.0
-References: <20181211005647.104927-1-trong@android.com> <CAKwvOdmSp8PHj+iK5KT1XLC89gzu4vD8tN2eRYMdD9Zw24a_ww@mail.gmail.com>
-In-Reply-To: <CAKwvOdmSp8PHj+iK5KT1XLC89gzu4vD8tN2eRYMdD9Zw24a_ww@mail.gmail.com>
+References: <20181210222635.80886-1-trong@android.com> <CAKwvOdkb0_hxwnO2T_F34i-MYN_MJksg973Yu1hfb8HeRCXMMQ@mail.gmail.com>
+ <CAKwvOd=0=r7oNVZW6VHNjB8PvMF0Etn6fgRbrFdaQKeKHXyexQ@mail.gmail.com>
+In-Reply-To: <CAKwvOd=0=r7oNVZW6VHNjB8PvMF0Etn6fgRbrFdaQKeKHXyexQ@mail.gmail.com>
 From:   Tri Vo <trong@android.com>
-Date:   Wed, 12 Dec 2018 11:48:06 -0800
-Message-ID: <CANA+-vC_5W1CZCe99nvM+3wXm=3riw980+3TyHMytP=7sZPEXA@mail.gmail.com>
-Subject: Re: [PATCH] x86_64: Mark per-cpu symbols as absolute.
+Date:   Wed, 12 Dec 2018 11:48:51 -0800
+Message-ID: <CANA+-vBcxF7P1C+zddnqshKwMGuCSb97JC-=3==TwFeEGZP05w@mail.gmail.com>
+Subject: Re: [RFC PATCH] x86_64: Add "-m elf_i386" when linking i386 object files.
 To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     x86@kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        Bill Wendling <morbo@google.com>,
-        Rafael Avila de Espindola <rafael.espindola@gmail.com>,
-        Dmitry Golovin <dima@golovin.in>, hpa@zytor.com,
+Cc:     bp@alien8.de, x86@kernel.org, tglx@linutronix.de, mingo@redhat.com,
+        grimar@accesssoftek.com, Dmitry Golovin <dima@golovin.in>,
+        Bill Wendling <morbo@google.com>, hpa@zytor.com,
         linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
@@ -75,89 +75,120 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 Adding appropriate people, lists.
-On Tue, Dec 11, 2018 at 11:39 AM Nick Desaulniers
+On Tue, Dec 11, 2018 at 1:07 PM Nick Desaulniers
 <ndesaulniers@google.com> wrote:
 >
-> On Mon, Dec 10, 2018 at 4:57 PM Tri Vo <trong@android.com> wrote:
+> On Mon, Dec 10, 2018 at 2:50 PM Nick Desaulniers
+> <ndesaulniers@google.com> wrote:
 > >
-> > From: Rafael Avila de Espindola <rafael.espindola@gmail.com>
+> > On Mon, Dec 10, 2018 at 2:26 PM Tri Vo <trong@android.com> wrote:
+> > >
+> > > From: George Rimar <grimar@accesssoftek.com>
+> > >
+> > > Linux kernel uses OUTPUT_FORMAT in it's linker scripts. Most of the time
+> > > -m option is passed to the linker with correct architecture, but
+> > > sometimes (at least for x86_64) the -m option contradicts OUTPUT_FORMAT
+> > > directive. Specifically, arch/x86/boot and arch/x86/realmode/rm modules
+> > > have i386 object files, but are linked with -m elf_x86_64 linker flag
+> > > when building for x86_64.
+> > >
+> > > BFD and Gold linkers are OK with this, but lld fails:
+> > > ld.lld: error: arch/x86/realmode/rm/header.o is incompatible with elf_x86_64
+> > >
+> > > Suggested fix: just add correct -m after incorrect one (it overrides
+> > > it), so the linker invocation looks like this: ld -m elf_x86_64 -z
+> > > max-page-size=0x200000 -m elf_i386 --emit-relocs -T realmode.lds
+> > > header.o trampoline_64.o stack.o reboot.o -o realmode.elf (it will also
+> > > work with GNU ld, because it supports OUTPUT_FORMAT and just ignores -m
+> > > options if this directive is in the linker script).
+> > >
+> > > Tested by building x86_64 kernel with GNU gcc/ld toolchain and booting
+> > > it in QEMU.
+> > >
+> > > Suggested-by: Dmitry Golovin <dima@golovin.in>
+> > > Signed-off-by: Tri Vo <trong@android.com>
+> > > Tested-by: Tri Vo <trong@android.com>
 > >
-> > The kernel has many variables that it wants to have a copy for each
-> > cpu. It is similar to how each thread wants a copy of a thread local
-> > variable.
+> > This fixes the following linkage error I observe when linking an x86
+> > kernel with LLD:
 > >
-> > To access such variable, the code has to find the offset of that
-> > variable in the per cpu block and add it to the address of the current
-> > brock for that cpu.
-> >
-> > Finding the offset is a problem. There are no relocations (at least on
-> > X86_64) that compute the offset of a symbol in a section. To solve this
-> > problem, the kernel linker script puts the .data..percpu section at
-> > address 0. By doing this, the fake address is actually the offset.
-> >
-> > This means that symbols defined in that section are effectively
-> > absolute. There is no way for the linker to guess that. So LLD complains
-> > when linking the kernel:
 > > ```
-> > ld.lld: error: ./arch/x86/kernel/vmlinux.lds:153: at least one side of the expression must be absolute
-> > ld.lld: error: ./arch/x86/kernel/vmlinux.lds:154: at least one side of the expression must be absolute
-> > Makefile:1040: recipe for target 'vmlinux' failed
+> >   LD      arch/x86/realmode/rm/realmode.elf
+> > ld.lld: error: arch/x86/realmode/rm/header.o is incompatible with elf_x86_64
+> > ld.lld: error: arch/x86/realmode/rm/trampoline_64.o is incompatible
+> > with elf_x86_64
+> > ld.lld: error: arch/x86/realmode/rm/stack.o is incompatible with elf_x86_64
+> > ld.lld: error: arch/x86/realmode/rm/reboot.o is incompatible with elf_x86_64
+> > ld.lld: error: arch/x86/realmode/rm/wakeup_asm.o is incompatible with elf_x86_64
+> > ld.lld: error: arch/x86/realmode/rm/wakemain.o is incompatible with elf_x86_64
+> > ld.lld: error: arch/x86/realmode/rm/video-mode.o is incompatible with elf_x86_64
+> > ld.lld: error: arch/x86/realmode/rm/copy.o is incompatible with elf_x86_64
+> > ld.lld: error: arch/x86/realmode/rm/bioscall.o is incompatible with elf_x86_64
+> > ld.lld: error: arch/x86/realmode/rm/regs.o is incompatible with elf_x86_64
+> > ld.lld: error: arch/x86/realmode/rm/video-vga.o is incompatible with elf_x86_64
+> > ld.lld: error: arch/x86/realmode/rm/video-vesa.o is incompatible with elf_x86_64
+> > ld.lld: error: arch/x86/realmode/rm/video-bios.o is incompatible with elf_x86_64
+> > arch/x86/realmode/rm/Makefile:55: recipe for target
+> > 'arch/x86/realmode/rm/realmode.elf' failed
 > > ```
+> > Tested-by: Nick Desaulniers <ndesaulniers@google.com>
+> >
+> > Looks like we still have a few other (unrelated) issues to track down
+> > with LLD, but this gets us one step closer.
+> >
+> > Thanks for sending this, Tri!
 >
-> This fixes the above error for me when linking with LLD with the
-> previous patch you sent applied (I'm having trouble finding a public
-> mailing list link though; 'x86_64: Add "-m elf_i386" when linking i386
-> object files.').  Still looks like there's maybe 2 more unrelated
-> issues to track down with LLD, but this gets us closer.
+> Just some additional thoughts on this:
 >
-> To make sure this doesn't regress anything for ld.bfd, I triple
-> checked a more standard build without LLD.
->
-> ld.bfd (clang) + this patch:
-> -rwxr-xr-x 1 ndesaulniers primarygroup 56931688 Dec 11 11:32 vmlinux
->
-> ld.bfd (clang) w/o this patch:
-> -rwxr-xr-x 1 ndesaulniers primarygroup 56931688 Dec 11 11:33 vmlinux
->
-> ld.bfd (gcc) w/o this patch:
-> -rwxr-xr-x 1 ndesaulniers primarygroup 54047232 Dec 11 11:34 vmlinux
->
-> ld.bfd (gcc) w/ this patch:
-> -rwxr-xr-x 1 ndesaulniers primarygroup 54047232 Dec 11 11:35 vmlinux
->
-> so looks like no change in binary size w/ vs w/o this patch.
->
-> Further, I did a boot test of ld.bfd (gcc) w/ this patch in QEMU. No
-> issue there.  Thanks for sending.
->
-> Tested-by: Nick Desaulniers <ndesaulniers@google.com>
+> The kernel is adding -m elf_x86_64 to the linker command line
+> parameters, but then relying on binutils tie-breaking-behavior by
+> specifying a different architecture via linker script. So it's
+> ambiguous which arch the kernel is trying to link for, and the kernel
+> gets lucky/relies on the way ld.bfd happens to resolve this ambiguity
+> without warning. An alternative fix may be to just filter out/remove
+> the -m elf_x86_64 for this target's linker flags.
 >
 > >
-> > Tell the linker that per-cpu symbols are absolute.
+> > > ---
+> > >  arch/x86/boot/Makefile        | 2 +-
+> > >  arch/x86/realmode/rm/Makefile | 2 +-
+> > >  2 files changed, 2 insertions(+), 2 deletions(-)
+> > >
+> > > diff --git a/arch/x86/boot/Makefile b/arch/x86/boot/Makefile
+> > > index 9b5adae9cc40..e2839b5c246c 100644
+> > > --- a/arch/x86/boot/Makefile
+> > > +++ b/arch/x86/boot/Makefile
+> > > @@ -100,7 +100,7 @@ $(obj)/zoffset.h: $(obj)/compressed/vmlinux FORCE
+> > >  AFLAGS_header.o += -I$(objtree)/$(obj)
+> > >  $(obj)/header.o: $(obj)/zoffset.h
+> > >
+> > > -LDFLAGS_setup.elf      := -T
+> > > +LDFLAGS_setup.elf      := -m elf_i386 -T
+> > >  $(obj)/setup.elf: $(src)/setup.ld $(SETUP_OBJS) FORCE
+> > >         $(call if_changed,ld)
+> > >
+> > > diff --git a/arch/x86/realmode/rm/Makefile b/arch/x86/realmode/rm/Makefile
+> > > index 4463fa72db94..96cb20de08af 100644
+> > > --- a/arch/x86/realmode/rm/Makefile
+> > > +++ b/arch/x86/realmode/rm/Makefile
+> > > @@ -47,7 +47,7 @@ $(obj)/pasyms.h: $(REALMODE_OBJS) FORCE
+> > >  targets += realmode.lds
+> > >  $(obj)/realmode.lds: $(obj)/pasyms.h
+> > >
+> > > -LDFLAGS_realmode.elf := --emit-relocs -T
+> > > +LDFLAGS_realmode.elf := -m elf_i386 --emit-relocs -T
+> > >  CPPFLAGS_realmode.lds += -P -C -I$(objtree)/$(obj)
+> > >
+> > >  targets += realmode.elf
+> > > --
+> > > 2.20.0.rc2.403.gdbc3b29805-goog
+> > >
 > >
-> > Reported-by: Dmitry Golovin <dima@golovin.in>
-> > Tested-by: Dmitry Golovin <dima@golovin.in>
-> > Signed-off-by: Tri Vo <trong@android.com>
-> > ---
-> >  arch/x86/kernel/vmlinux.lds.S | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
-> > index 0d618ee634ac..ee3b5c7d662e 100644
-> > --- a/arch/x86/kernel/vmlinux.lds.S
-> > +++ b/arch/x86/kernel/vmlinux.lds.S
-> > @@ -401,7 +401,7 @@ SECTIONS
-> >   * Per-cpu symbols which need to be offset from __per_cpu_load
-> >   * for the boot processor.
-> >   */
-> > -#define INIT_PER_CPU(x) init_per_cpu__##x = x + __per_cpu_load
-> > +#define INIT_PER_CPU(x) init_per_cpu__##x = ABSOLUTE(x) + __per_cpu_load
-> >  INIT_PER_CPU(gdt_page);
-> >  INIT_PER_CPU(irq_stack_union);
 > >
 > > --
-> > 2.20.0.rc2.403.gdbc3b29805-goog
-> >
+> > Thanks,
+> > ~Nick Desaulniers
+>
 >
 >
 > --
