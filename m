@@ -2,130 +2,174 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	T_MIXED_ES,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D079AC65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 18:45:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0414CC65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 18:45:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86F3D2086D
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 18:45:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B51CE20851
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 18:45:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="eyBJsRCq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86F3D2086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=alien8.de
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="J7WRkS09"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B51CE20851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728247AbeLLSpJ (ORCPT
+        id S1728275AbeLLSp5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 13:45:09 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:50000 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727910AbeLLSpI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 13:45:08 -0500
-Received: from zn.tnic (p200300EC2BCDD8007CFD4A6887308591.dip0.t-ipconnect.de [IPv6:2003:ec:2bcd:d800:7cfd:4a68:8730:8591])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 09D3C1EC0AC4;
-        Wed, 12 Dec 2018 19:45:06 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1544640307;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=8EEzVwbJSnq5zQmBptdnyW9u44R7hAzK9i+qfnnKTGw=;
-        b=eyBJsRCqvI3mxrz1tUxS6JQiaugEEY/B3d6WkEpZIFdZfYcwY0R5FZMXqiZ0PhWPsl+Ois
-        VYR6Gx8+OJ2cQMpZmWx/uHwIn57Nez0Knk6BAAFhzEdYAO3KCOpT6KHlnSgFO1gxBXE8ku
-        FxpKuRHeeuX60C7X2pL/Tw2bC8+Fm1E=
-Date:   Wed, 12 Dec 2018 19:44:59 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Tom Lendacky <Thomas.Lendacky@amd.com>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        John Stultz <john.stultz@linaro.org>
-Subject: Re: [RFC PATCH 4/4] x86/TSC: Use RDTSCP
-Message-ID: <20181212184459.GE6653@zn.tnic>
-References: <20181211222326.14581-1-bp@alien8.de>
- <20181211222326.14581-5-bp@alien8.de>
- <CALCETrVArfAAbQKJ-g_5pOy6dMVgx-FC_mjdC9xzL1jU9T07jw@mail.gmail.com>
- <59aad362-4a5b-dd8b-642f-0dc3f83cf7ee@amd.com>
- <20181211233901.GV27375@zn.tnic>
- <CALCETrXvZ4avdUh2bTLVTTz3Jxogo3zK5akWTsJ=rkJpf1XiDg@mail.gmail.com>
- <20181212100814.GB6653@zn.tnic>
- <CALCETrWSG5825HrxwEJGqbSoRz=A_2O-GSBD+K_q9YPHu2TB6A@mail.gmail.com>
+        Wed, 12 Dec 2018 13:45:57 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:50296 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727910AbeLLSp5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 13:45:57 -0500
+Received: by mail-it1-f196.google.com with SMTP id z7so10647889iti.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 10:45:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4w6cnngQONcEaZHQonIAO2XA4e1xiIW1455RBSKyJcE=;
+        b=J7WRkS09oZNB+d4IyMaq4Qou01ZZX4URlAAGzAEDNhnNtMP93BRafpxN7hWcAQB161
+         G4cs+UhUa6UIdFX+8kwNT04A+2eS+X4h6agFPqR5bQE7Sl8N9Dom78xhZFslfxbo2jnm
+         XIgyk/oc5XAHNEMW/9oQe8nvg13DhofbCB/Vk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4w6cnngQONcEaZHQonIAO2XA4e1xiIW1455RBSKyJcE=;
+        b=kZOaaay4QyQdz77NBxvPsKIg+stpg5dEZsc+LMPJ0Vq95a6zotduYJ+BYbSIpy8NVV
+         9yN6PKe2rTFPamU3RL9j5a3asAKYzsiuSlPvGTxyV/E5WxMEQHuK2vUkhqL4AxmxEF3y
+         lLWXgXiUuOxngUt9B38YvuFFwtVHh8PDt/sQjB+APYS7N7uhvzGwkti4FrPzNX5Hwfjn
+         NNINsuSQca9w4JpQZLA7bGYM1pDmdNUUdVizddXhSJA25NO1zuddbYt0bJfUsE81IPIK
+         Ko0tqij7msO2jMK0e8+h1pHy+vxI3cYY74rzWyTcmrIJfHqNI5NIBrLvcFCqb4YSGFlP
+         Sj4A==
+X-Gm-Message-State: AA+aEWY3KQPZ93hNBYD5NXJ8Qn7EpGD1Nb8NeLSdqKLhAkmp9GbNYTkH
+        7igdytIujwtllDg5ya1uCJ33J5OVVlDh9IZAUcPS+w==
+X-Google-Smtp-Source: AFSGD/X8rJE4ZgFQiaR8ze20bK2wBuLiuYIfCz9IO+oVXyUfiRLeeBA2/vemQeGax0qqddvlGSLEiaDo90PzbetlcuQ=
+X-Received: by 2002:a05:660c:34f:: with SMTP id b15mr7137137itl.146.1544640355933;
+ Wed, 12 Dec 2018 10:45:55 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CALCETrWSG5825HrxwEJGqbSoRz=A_2O-GSBD+K_q9YPHu2TB6A@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1544513908-16805-1-git-send-email-leo.yan@linaro.org>
+In-Reply-To: <1544513908-16805-1-git-send-email-leo.yan@linaro.org>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Wed, 12 Dec 2018 11:45:44 -0700
+Message-ID: <CANLsYkyFZqUYghGmSS-j50EaOvce57CP+Y737xRF3HjPrHDVqw@mail.gmail.com>
+Subject: Re: [PATCH v3 0/8] perf cs-etm: Correct packets handling
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Leo Yan <leo.yan@linaro.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Coresight ML <coresight@lists.linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 12, 2018 at 10:07:03AM -0800, Andy Lutomirski wrote:
-> You're proving my point, I think.  CPUID, IRET, MOV to CR, etc are
-> "serializing".  LFENCE, on many CPUd and depending on MSRs, is a
-> different kind of serializing.  MFENCE is something else.  All LOCK
-> instructions are some kind of barrier, but I don't think anyone calls
-> them "serializing".
+On Tue, 11 Dec 2018 at 00:40, Leo Yan <leo.yan@linaro.org> wrote:
+>
+> perf cs-etm module converts decoder elements to packets and then we have
+> more context crossing packets to generate synthenize samples, finally
+> perf tool can faciliate samples for statistics and report the results.
+>
+> This patch series is to address several issues found related with
+> packets handling and samples generation when worked firstly on branch
+> sample flags support for Arm CoreSight trace data, so this patch series
+> is dependency for sample flags setting, will send another dedicated
+> patch series for sample flags later.
+>
+> In this patch series, the first two patches are mainly to fix issues in
+> cs_etm__flush(): patch 0001 corrects packets swapping in cs_etm__flush()
+> and this can fix the wrong branch sample caused by the missed packets
+> swapping; patch 0002 is to fix the wrong samples generation with stale
+> packets at the end of trace block.
+>
+> Patch 0003 and 0004 are for minor fixing; patch 0003 removes unused field
+> 'cs_etm_decoder::trace_on', this can simplize the switch-case code for all
+> discontinuity packet generation by using one code block; patch 0004 is to
+> refactor enumeration cs_etm_sample_type.
+>
+> Patch 0005 is to rename CS_ETM_TRACE_ON to CS_ETM_DISCONTINUITY, we use
+> a more general packet type to present trace discontinuity, so it can be
+> used by TRACE_ON event, and also can be used by NO_SYNC and EO_TRACE
+> elements.
+>
+> Patch 0006 is used to support NO_SYNC packet, otherwise the trace
+> decoding cannot reflect the tracing discontinuity caused by NO_SYNC
+> packet.
+>
+> Patch 0007 is used to support EO_TRACE packet, which also introduces
+> the tracing discontinuity at the end of trace and we should save last
+> trace data for it.
+>
+> Patch 0008 is used to generate branch sample for exception packets.
+>
+> Credit to Mike Leach and Robert Walker who made me clear for underlying
+> mechanism for NO_SYNC/EO_TRACE elements, Mike also shared the detailed
+> explanation for why we can treat NO_SYNC and TRACE_ON elements as the
+> same, so except following Mike & Rob suggestion for trace discontinuity
+> consolidation, most commit log of patches 0006/0007 also come from
+> Mike's explanation.
+>
+> This patch series is applied directly on the acme's perf/core branch [1]
+> with latest commit aaab25f03e9e ("perf trace: Allow selecting use the
+> use of the ordered_events code").
+>
+> With applying the dependency patch, this patch series has been tested
+> for branch samples dumping with below command on Juno board:
+>
+>   # perf script -F,-time,+ip,+sym,+dso,+addr,+symoff -k vmlinux
 
-Yeah, peterz and I hashed it out a bit today on IRC about the different
-meanings of serializing. I see your point now.
+Good day Arnaldo,
 
-> The uaccess users of barrier_nospec() are presumably looking for a
-> speculation barrier in the sense of "CPU, please don't execute the
-> code after this until you're sure that this code should be executed
-> for real and until all inputs are known, not guessed."
+I have reviewed all the changes in this set - please consider adding
+to your next branch.  Let me know if you want a pull request.
 
-Yeah, I believe AMD's paper has this nicely written:
+Regards,
+Mathieu
 
-"MITIGATION G-2
-
-Description: Set an MSR in the processor so that LFENCE is a dispatch
-serializing instruction and then use LFENCE in code streams to
-serialize dispatch (LFENCE is faster than RDTSCP which is also dispatch
-serializing). This mode of LFENCE may be enabled by setting MSR
-C001_1029[1]=1.
-
-Effect: Upon encountering an LFENCE when the MSR bit is set, dispatch
-will stop until the LFENCE instruction becomes the oldest instruction in
-the machine."
-
-https://developer.amd.com/wp-content/resources/90343-B_SoftwareTechniquesforManagingSpeculation_WP_7-18Update_FNL.pdf
-
-which is basically what you want for the whole mitigation crap if you
-want to kill speculation - you simply hold dispatch until the LFENCE
-retires.
-
-> The property I want for RDTSC ordering is much weaker: I want it to be
-> ordered like a load.  Imagine that, instead of an on-chip TSC, the TSC
-> is literally a location in main memory that gets incremented by an
-> extra dedicated CPU every nanosecond or so.  I want users of RDTSC to
-> work as if they were reading such a location in memory using an
-> ordinary load.  I believe this gives the real desired property that it
-> should be impossible to observe the TSC going backwards.  This is a
-> much weaker form of serialization.
-
-Well, in that case you need something new.
-
-Because, the moment you have a RDTSC in flight and a second RDTSC comes
-in and that second RDTSC must *not* bypass the first one and execute
-earlier due to OoO, you need to impose some ordering. And that's pretty
-much uarch-dependent, I'd say.
-
-And I guess on AMD the way to do that is to stop dispatch until the
-first RDTSC retires.
-
-Can it be done faster? Sure. And I'm pretty sure there's a lot of pesky
-little hw details we're not even hearing of, which get in the way.
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+>
+> Changes from v2:
+> * Addressed Mathieu's comments and suggestions for minor refactoring
+>   for removing unused field 'cs_etm_decoder::trace_on' and added one
+>   dedicated patch to refactor enumeration cs_etm_sample_type.
+> * Added Mathieu's 'reviewed' tags;  Very appreciate Mathieu's many
+>   suggestion for crossing several patch series.
+>
+> Changes from v1:
+> * Synced the consistent code in patch 0001 for condition checking.
+> * Introduced new function cs_etm__end_block() for flushing packet
+>   at the end of trace block.
+> * Added new patch 0003 to rename CS_ETM_TRACE_ON to
+>   CS_ETM_DISCONTINUITY.
+> * Used the same one packet type CS_ETM_DISCONTINUITY for all
+>   trace discontinuity (include support TRACE_ON/EO_TRACE/NO_SYNC
+>   packets).
+> * Removed tracking exception number patch, which will be added in
+>   sample flag patch series.
+>
+>
+> Leo Yan (8):
+>   perf cs-etm: Correct packets swapping in cs_etm__flush()
+>   perf cs-etm: Avoid stale branch samples when flush packet
+>   perf cs-etm: Remove unused 'trace_on' in cs_etm_decoder
+>   perf cs-etm: Refactor enumeration cs_etm_sample_type
+>   perf cs-etm: Rename CS_ETM_TRACE_ON to CS_ETM_DISCONTINUITY
+>   perf cs-etm: Treat NO_SYNC element as trace discontinuity
+>   perf cs-etm: Treat EO_TRACE element as trace discontinuity
+>   perf cs-etm: Generate branch sample for exception packet
+>
+>  tools/perf/util/cs-etm-decoder/cs-etm-decoder.c | 42 +++++++++-----
+>  tools/perf/util/cs-etm-decoder/cs-etm-decoder.h | 10 ++--
+>  tools/perf/util/cs-etm.c                        | 77 ++++++++++++++++++++++---
+>  3 files changed, 100 insertions(+), 29 deletions(-)
+>
+> --
+> 2.7.4
+>
