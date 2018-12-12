@@ -2,115 +2,118 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88414C04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 14:36:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E8AAC04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 14:37:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DADD20839
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 14:36:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DADD20839
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+	by mail.kernel.org (Postfix) with ESMTP id 360F42086D
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 14:37:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 360F42086D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tkos.co.il
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727582AbeLLOgG (ORCPT
+        id S1727686AbeLLOhC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 09:36:06 -0500
-Received: from verein.lst.de ([213.95.11.211]:34364 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726232AbeLLOgG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 09:36:06 -0500
-Received: by newverein.lst.de (Postfix, from userid 2407)
-        id E5EB668D8D; Wed, 12 Dec 2018 15:36:04 +0100 (CET)
-Date:   Wed, 12 Dec 2018 15:36:04 +0100
-From:   Christoph Hellwig <hch@lst.de>
-To:     Michael Ellerman <mpe@ellerman.id.au>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        linuxppc-dev@lists.ozlabs.org, iommu@lists.linux-foundation.org,
-        linux-mm@kvack.org, linux-arch@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 12/34] powerpc/cell: move dma direct window setup out
- of dma_configure
-Message-ID: <20181212143604.GA5137@lst.de>
-References: <20181114082314.8965-1-hch@lst.de> <20181114082314.8965-13-hch@lst.de> <871s6r3sno.fsf@concordia.ellerman.id.au>
+        Wed, 12 Dec 2018 09:37:02 -0500
+Received: from guitar.tcltek.co.il ([192.115.133.116]:50329 "EHLO
+        mx.tkos.co.il" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726228AbeLLOhB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 09:37:01 -0500
+Received: from sapphire.tkos.co.il (unknown [10.0.4.3])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mx.tkos.co.il (Postfix) with ESMTPS id 702214400D0;
+        Wed, 12 Dec 2018 16:36:58 +0200 (IST)
+Date:   Wed, 12 Dec 2018 16:36:57 +0200
+From:   Baruch Siach <baruch@tkos.co.il>
+To:     Antoine Tenart <antoine.tenart@bootlin.com>
+Cc:     Russell King - ARM Linux <linux@armlinux.org.uk>,
+        davem@davemloft.net, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
+        maxime.chevallier@bootlin.com, gregory.clement@bootlin.com,
+        miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
+        ymarkman@marvell.com, mw@semihalf.com
+Subject: Re: [PATCH net] net: mvpp2: 10G modes aren't supported on all ports
+Message-ID: <20181212143657.irf7tt27mpshfhpz@sapphire.tkos.co.il>
+References: <20181211163228.26130-1-antoine.tenart@bootlin.com>
+ <20181211163635.GG30658@n2100.armlinux.org.uk>
+ <877egg6jbt.fsf@tkos.co.il>
+ <20181211185156.GH30658@n2100.armlinux.org.uk>
+ <20181212093033.GA3219@kwain>
+ <20181212141451.GC3219@kwain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <871s6r3sno.fsf@concordia.ellerman.id.au>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20181212141451.GC3219@kwain>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Dec 09, 2018 at 09:23:39PM +1100, Michael Ellerman wrote:
-> Christoph Hellwig <hch@lst.de> writes:
+Hi Antoine,
+
+On Wed, Dec 12, 2018 at 03:14:51PM +0100, Antoine Tenart wrote:
+> On Wed, Dec 12, 2018 at 10:30:33AM +0100, Antoine Tenart wrote:
+> > On Tue, Dec 11, 2018 at 06:51:56PM +0000, Russell King - ARM Linux wrote:
+> > > On Tue, Dec 11, 2018 at 07:53:42PM +0200, Baruch Siach wrote:
+> > > > That is, something like this, right?
+> > > > 
+> > > > diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+> > > > index 125ea99418df..04cb0241ca2b 100644
+> > > > --- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+> > > > +++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+> > > > @@ -4404,13 +4404,18 @@ static void mvpp2_phylink_validate(struct net_device *dev,
+> > > >  	switch (state->interface) {
+> > > >  	case PHY_INTERFACE_MODE_10GKR:
+> > > >  	case PHY_INTERFACE_MODE_XAUI:
+> > > > +		if (port->gop_id != 0)
+> > > > +			goto empty_set;
+> > > > +		/* Fall-through */
+> > > >  	case PHY_INTERFACE_MODE_NA:
+> > > > -		phylink_set(mask, 10000baseCR_Full);
+> > > > -		phylink_set(mask, 10000baseSR_Full);
+> > > > -		phylink_set(mask, 10000baseLR_Full);
+> > > > -		phylink_set(mask, 10000baseLRM_Full);
+> > > > -		phylink_set(mask, 10000baseER_Full);
+> > > > -		phylink_set(mask, 10000baseKR_Full);
+> > > > +		if (port->gop_id == 0) {
+> > > > +			phylink_set(mask, 10000baseCR_Full);
+> > > > +			phylink_set(mask, 10000baseSR_Full);
+> > > > +			phylink_set(mask, 10000baseLR_Full);
+> > > > +			phylink_set(mask, 10000baseLRM_Full);
+> > > > +			phylink_set(mask, 10000baseER_Full);
+> > > > +			phylink_set(mask, 10000baseKR_Full);
+> > > > +		}
+> > > >  		/* Fall-through */
+> > > >  	case PHY_INTERFACE_MODE_RGMII:
+> > > >  	case PHY_INTERFACE_MODE_RGMII_ID:
+> > > > 
+> > > 
+> > > Yep, looks fine to me, thanks.
+> > 
+> > This looks good, thanks! I'll send a v2.
 > 
-> > Configure the dma settings at device setup time, and stop playing games
-> > with get_pci_dma_ops.  This prepares for using the common dma_configure
-> > code later on.
-> >
-> > Signed-off-by: Christoph Hellwig <hch@lst.de>
-> > ---
-> >  arch/powerpc/platforms/cell/iommu.c | 20 +++++++++++---------
-> >  1 file changed, 11 insertions(+), 9 deletions(-)
+> Well, I just got back to this, and looking at the beginning of the
+> validate function invalid modes are already checked. So we do already
+> have:
 > 
-> This one's crashing, haven't dug into why yet:
+>         case PHY_INTERFACE_MODE_10GKR:
+>         case PHY_INTERFACE_MODE_XAUI:
+>                 if (port->gop_id != 0)
+>                         goto empty_set;
+>                 break;
+> 
+> So it turns out the fix can be applied as-is.
 
-Can you provide a gdb assembly of the exact crash site?  This looks
-like for some odd reason the DT structures aren't fully setup by the
-time we are probing the device, which seems odd.
+Right. I should have known that. Thanks for the fix.
 
-Either way, something like the patch below would ensure we call
-cell_iommu_get_fixed_address from a similar context as before, can you
-check if that fixes the issue?
+baruch
 
-diff --git a/arch/powerpc/platforms/cell/iommu.c b/arch/powerpc/platforms/cell/iommu.c
-index 93c7e4aef571..4891b338bf9f 100644
---- a/arch/powerpc/platforms/cell/iommu.c
-+++ b/arch/powerpc/platforms/cell/iommu.c
-@@ -569,19 +569,12 @@ static struct iommu_table *cell_get_iommu_table(struct device *dev)
- 	return &window->table;
- }
- 
--static u64 cell_iommu_get_fixed_address(struct device *dev);
--
- static void cell_dma_dev_setup(struct device *dev)
- {
--	if (cell_iommu_enabled) {
--		u64 addr = cell_iommu_get_fixed_address(dev);
--
--		if (addr != OF_BAD_ADDR)
--			set_dma_offset(dev, addr + dma_iommu_fixed_base);
-+	if (cell_iommu_enabled)
- 		set_iommu_table_base(dev, cell_get_iommu_table(dev));
--	} else {
-+	else
- 		set_dma_offset(dev, cell_dma_nommu_offset);
--	}
- }
- 
- static void cell_pci_dma_dev_setup(struct pci_dev *dev)
-@@ -865,8 +858,16 @@ static u64 cell_iommu_get_fixed_address(struct device *dev)
- 
- static bool cell_pci_iommu_bypass_supported(struct pci_dev *pdev, u64 mask)
- {
--	return mask == DMA_BIT_MASK(64) &&
--		cell_iommu_get_fixed_address(&pdev->dev) != OF_BAD_ADDR;
-+	if (mask == DMA_BIT_MASK(64)) {
-+		u64 addr = cell_iommu_get_fixed_address(&pdev->dev);
-+
-+		if (addr != OF_BAD_ADDR) {
-+			set_dma_offset(&pdev->dev, dma_iommu_fixed_base + addr);
-+			return true;
-+		}
-+	}
-+
-+	return true;
- }
- 
- static void insert_16M_pte(unsigned long addr, unsigned long *ptab,
+-- 
+     http://baruch.siach.name/blog/                  ~. .~   Tk Open Systems
+=}------------------------------------------------ooO--U--Ooo------------{=
+   - baruch@tkos.co.il - tel: +972.2.679.5364, http://www.tkos.co.il -
