@@ -2,103 +2,167 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES,
+	UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BBBDC04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 09:33:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BECE9C04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 09:36:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 640522086D
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 09:33:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="lYKcg8x+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 640522086D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=szeredi.hu
+	by mail.kernel.org (Postfix) with ESMTP id 8A4B62084E
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 09:36:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A4B62084E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726932AbeLLJd1 (ORCPT
+        id S1726929AbeLLJgP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 04:33:27 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:34873 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726525AbeLLJd0 (ORCPT
+        Wed, 12 Dec 2018 04:36:15 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:37391 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726478AbeLLJgP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 04:33:26 -0500
-Received: by mail-wm1-f66.google.com with SMTP id c126so5127787wmh.0
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 01:33:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=DsA1X0BCVJHLl0FybRu5giBzN/j0zxTMES8TOIFwAmM=;
-        b=lYKcg8x+s00DaL6AyzkW1xjrYhV27jIHimvu/fmcQt4skGpO4myE8P87Zp6j7pkis0
-         Iq75TC0zqQxkJRZ12K15g54/u7Namq5XRshw7rlUKJgnZkiZO045/diLcSLbZnXhBhbM
-         6g+gGhGlVyJ9Aj+xjlp53b1OhaJ1LBtPQxR68=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=DsA1X0BCVJHLl0FybRu5giBzN/j0zxTMES8TOIFwAmM=;
-        b=VKDRj7hmxqniW8Gn+lM7mfx/EaDECE0IFOD3QQ7yfuExbVLJWObXKn5Cwhj1rjJp3o
-         ln5SHOYJ0El7ZM4gKeZZIYA3DStih+51MX+19UrqHDQkoOv9cEKUXGXW07hiUxiQrVgx
-         lg8mBjoklp+clVOoSRhLCsb7lHjDxjAkSDkNwq5TVcW5qDoRBHquol1MF7WJxtydkdNJ
-         cKIs5anzkYe/YNy/9QQvTYoZzuf+uRHQqQgmxvIC1HzAlP76EjMPnzdsddbA8fn8nuEz
-         CZ8hAUtBGsT8RbrIQKwlLN9EDGVQbpA0O/V7HsMrvzekEj65WyZbyWY0Do9ufapf9ZxM
-         GjPA==
-X-Gm-Message-State: AA+aEWYbe24a/GAf3msQ3CXhUTmEXxUCRo/MH2R3aqHZEXLbPZpKUY7I
-        T9Upit/1RTJ26JyfAzgbgj/mtQ==
-X-Google-Smtp-Source: AFSGD/WuZPCtf0rYLDu/vww20kED8UIduYqdBVnmBPYRKSKkYx4h3dk/t2QTpCmUfogshuiUwGVddg==
-X-Received: by 2002:a1c:2902:: with SMTP id p2mr5509420wmp.19.1544607204915;
-        Wed, 12 Dec 2018 01:33:24 -0800 (PST)
-Received: from veci.piliscsaba.redhat.com (catv-212-96-48-140.catv.broadband.hu. [212.96.48.140])
-        by smtp.gmail.com with ESMTPSA id x12sm15136578wrt.20.2018.12.12.01.33.23
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 12 Dec 2018 01:33:24 -0800 (PST)
-Date:   Wed, 12 Dec 2018 10:33:17 +0100
-From:   Miklos Szeredi <miklos@szeredi.hu>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [GIT PULL] fuse fixes for 4.20-rc7
-Message-ID: <20181212093317.GA15517@veci.piliscsaba.redhat.com>
+        Wed, 12 Dec 2018 04:36:15 -0500
+X-UUID: 780e029c11cb4672a3f9e9add7f2d997-20181212
+X-UUID: 780e029c11cb4672a3f9e9add7f2d997-20181212
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
+        (envelope-from <biao.huang@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1576569177; Wed, 12 Dec 2018 17:35:58 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 12 Dec 2018 17:35:56 +0800
+Received: from localhost.localdomain (10.17.3.153) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Wed, 12 Dec 2018 17:35:56 +0800
+From:   Biao Huang <biao.huang@mediatek.com>
+To:     <davem@davemloft.net>, <robh+dt@kernel.org>
+CC:     <honghui.zhang@mediatek.com>, <yt.shen@mediatek.com>,
+        <liguo.zhang@mediatek.com>, <mark.rutland@arm.com>,
+        <nelson.chang@mediatek.com>, <matthias.bgg@gmail.com>,
+        <biao.huang@mediatek.com>, <netdev@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <joabreu@synopsys.com>,
+        <andrew@lunn.ch>
+Subject: [v6, PATCH 2/2] dt-binding: mediatek-dwmac: add binding document for MediaTek MT2712 DWMAC
+Date:   Wed, 12 Dec 2018 17:35:32 +0800
+Message-ID: <1544607332-29921-3-git-send-email-biao.huang@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
+In-Reply-To: <1544607332-29921-1-git-send-email-biao.huang@mediatek.com>
+References: <1544607332-29921-1-git-send-email-biao.huang@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-TM-SNTS-SMTP: FF29847724BBA35024139E83490DA5BACFD118F4162303D80C074BA84B94E2A92000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+The commit adds the device tree binding documentation for the MediaTek DWMAC
+found on MediaTek MT2712.
 
-Please pull from:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git tags/fuse-fixes-4.20-rc7
-
-There's one patch fixing a minor but long lived bug, the others are fixing
-regressions introduced in this cycle.
-
-Thanks,
-Miklos
-
-----------------------------------------------------------------
-Chad Austin (1):
-      fuse: continue to send FUSE_RELEASEDIR when FUSE_OPEN returns ENOSYS
-
-Miklos Szeredi (2):
-      fuse: fix fsync on directory
-      fuse: fix revalidation of attributes for permission check
-
-Myungho Jung (1):
-      fuse: Add bad inode check in fuse_destroy_inode()
-
-Takeshi Misawa (1):
-      fuse: Fix memory leak in fuse_dev_free()
-
+Signed-off-by: Biao Huang <biao.huang@mediatek.com>
 ---
- fs/fuse/dir.c    | 26 ++++++++++++++++++++---
- fs/fuse/file.c   | 64 +++++++++++++++++++++++++++++---------------------------
- fs/fuse/fuse_i.h |  4 ++--
- fs/fuse/inode.c  |  3 ++-
- 4 files changed, 60 insertions(+), 37 deletions(-)
+ .../devicetree/bindings/net/mediatek-dwmac.txt     |   87 ++++++++++++++++++++
+ 1 file changed, 87 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/net/mediatek-dwmac.txt
+
+diff --git a/Documentation/devicetree/bindings/net/mediatek-dwmac.txt b/Documentation/devicetree/bindings/net/mediatek-dwmac.txt
+new file mode 100644
+index 0000000..4de479b
+--- /dev/null
++++ b/Documentation/devicetree/bindings/net/mediatek-dwmac.txt
+@@ -0,0 +1,87 @@
++MediaTek DWMAC glue layer controller
++
++This file documents platform glue layer for stmmac.
++Please see stmmac.txt for the other unchanged properties.
++
++The device node has following properties.
++
++Required properties:
++- compatible:  Should be "mediatek,mt2712-gmac" for MT2712 SoC
++- reg:  Address and length of the register set for the device
++- interrupts:  Should contain the MAC interrupts
++- interrupt-names: Should contain a list of interrupt names corresponding to
++	the interrupts in the interrupts property, if available.
++	Should be "macirq" for the main MAC IRQ
++- clocks: Must contain a phandle for each entry in clock-names.
++- clock-names: The name of the clock listed in the clocks property. These are
++	"axi", "apb", "mac_main", "ptp_ref" for MT2712 SoC
++- mac-address: See ethernet.txt in the same directory
++- phy-mode: See ethernet.txt in the same directory
++- mediatek,pericfg: A phandle to the syscon node that control ethernet
++	interface and timing delay.
++
++Optional properties:
++- mediatek,tx-delay-ps: TX clock delay macro value. Default is 0.
++	It should be defined for rgmii/rgmii-rxid/mii interface.
++- mediatek,rx-delay-ps: RX clock delay macro value. Default is 0.
++	It should be defined for rgmii/rgmii-txid/mii/rmii interface.
++Both delay properties need to be a multiple of 170 for fine-tune rgmii,
++range 0~31*170.
++Both delay properties need to be a multiple of 550 for coarse-tune rgmii,
++range 0~31*550.
++Both delay properties need to be a multiple of 550 for mii/rmii,
++range 0~31*550.
++
++- mediatek,fine-tune: boolean property, if present indicates that fine delay
++	is selected for rgmii interface.
++	If present, tx-delay-ps/rx-delay-ps is 170+/-50ps per stage.
++	Else tx-delay-ps/rx-delay-ps of coarse delay macro is 0.55+/-0.2ns per stage.
++	This property do not apply to non-rgmii PHYs.
++	Only coarse-tune delay is supported for mii/rmii PHYs.
++- mediatek,rmii-rxc: boolean property, if present indicates that the rmii
++	reference clock, which is from external PHYs, is connected to RXC pin
++	on MT2712 SoC.
++	Otherwise, is connected to TXC pin.
++- mediatek,txc-inverse: boolean property, if present indicates that
++	1. tx clock will be inversed in mii/rgmii case,
++	2. tx clock inside MAC will be inversed relative to reference clock
++	   which is from external PHYs in rmii case, and it rarely happen.
++- mediatek,rxc-inverse: boolean property, if present indicates that
++	1. rx clock will be inversed in mii/rgmii case.
++	2. reference clock will be inversed when arrived at MAC in rmii case.
++- assigned-clocks: mac_main and ptp_ref clocks
++- assigned-clock-parents: parent clocks of the assigned clocks
++
++Example:
++	eth: ethernet@1101c000 {
++		compatible = "mediatek,mt2712-gmac";
++		reg = <0 0x1101c000 0 0x1300>;
++		interrupts = <GIC_SPI 237 IRQ_TYPE_LEVEL_LOW>;
++		interrupt-names = "macirq";
++		phy-mode ="rgmii";
++		mac-address = [00 55 7b b5 7d f7];
++		clock-names = "axi",
++			      "apb",
++			      "mac_main",
++			      "ptp_ref",
++			      "ptp_top";
++		clocks = <&pericfg CLK_PERI_GMAC>,
++			 <&pericfg CLK_PERI_GMAC_PCLK>,
++			 <&topckgen CLK_TOP_ETHER_125M_SEL>,
++			 <&topckgen CLK_TOP_ETHER_50M_SEL>;
++		assigned-clocks = <&topckgen CLK_TOP_ETHER_125M_SEL>,
++				  <&topckgen CLK_TOP_ETHER_50M_SEL>;
++		assigned-clock-parents = <&topckgen CLK_TOP_ETHERPLL_125M>,
++					 <&topckgen CLK_TOP_APLL1_D3>;
++		mediatek,pericfg = <&pericfg>;
++		mediatek,tx-delay-ps = <1530>;
++		mediatek,rx-delay-ps = <1530>;
++		mediatek,fine-tune;
++		mediatek,rmii-rxc;
++		mediatek,txc-inverse;
++		mediatek,rxc-inverse;
++		snps,txpbl = <32>;
++		snps,rxpbl = <32>;
++		snps,reset-gpio = <&pio 87 GPIO_ACTIVE_LOW>;
++		snps,reset-active-low;
++	};
+-- 
+1.7.9.5
+
