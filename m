@@ -3,65 +3,161 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15CB6C67839
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 00:00:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9214DC6783B
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 00:02:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1F1B20851
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 00:00:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1F1B20851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-mips.org
+	by mail.kernel.org (Postfix) with ESMTP id 4F99220849
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 00:02:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F99220849
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726259AbeLLAAN (ORCPT
+        id S1726249AbeLLACr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 19:00:13 -0500
-Received: from eddie.linux-mips.org ([148.251.95.138]:48146 "EHLO
-        cvs.linux-mips.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726183AbeLLAAN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 19:00:13 -0500
-Received: (from localhost user: 'macro', uid#1010) by eddie.linux-mips.org
-        with ESMTP id S23992965AbeLLAAK4WVit (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 01:00:10 +0100
-Date:   Wed, 12 Dec 2018 00:00:10 +0000 (GMT)
-From:   "Maciej W. Rozycki" <macro@linux-mips.org>
-To:     Shawn Rutledge <s@ecloud.org>
-cc:     linux-kernel@vger.kernel.org
-Subject: Re: Can we drop upstream Linux x32 support?
-In-Reply-To: <20181211203812.GA14983@i7.vpn>
-Message-ID: <alpine.LFD.2.21.1812112343580.11202@eddie.linux-mips.org>
-References: <20181211203812.GA14983@i7.vpn>
-User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
+        Tue, 11 Dec 2018 19:02:47 -0500
+Received: from mx2.suse.de ([195.135.220.15]:53868 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726183AbeLLACq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 19:02:46 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 06675AD02;
+        Wed, 12 Dec 2018 00:02:43 +0000 (UTC)
+From:   NeilBrown <neilb@suse.com>
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+Date:   Wed, 12 Dec 2018 11:02:35 +1100
+Cc:     Thomas Graf <tgraf@suug.ch>, Tom Herbert <tom@quantonium.net>,
+        David Miller <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] rhashtable: further improve stability of rhashtable_walk
+In-Reply-To: <20181211051755.modgomqzszkbiihe@gondor.apana.org.au>
+References: <153086101070.2825.6850140624411927465.stgit@noble> <153086109256.2825.15329014177598382684.stgit@noble> <87zhtkeimx.fsf@notabene.neil.brown.name> <20181207053943.7zacyn5uvqkfnfoi@gondor.apana.org.au> <87k1kico1o.fsf@notabene.neil.brown.name> <20181211051755.modgomqzszkbiihe@gondor.apana.org.au>
+Message-ID: <87mupbvch0.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 11 Dec 2018, Shawn Rutledge wrote:
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-> I like the idea of x32 in theory: any machine with 4GB or less of memory
-> for sure does not really need to waste any precious space storing 64-bit
-> pointers; and even if more memory is available, software that needs to
-> access more than 4GB per process is somewhat rare (as it should be).
+On Tue, Dec 11 2018, Herbert Xu wrote:
 
- You can't mmap(2) files the size of which exceeds the size of the 32-bit 
-user address space with an ILP32 ABI though, regardless of how much 
-physical memory a given system supports or has actually installed.
+> Hi Neil:
+>
+> On Mon, Dec 10, 2018 at 09:50:43AM +1100, NeilBrown wrote:
+>>  I think it was agreed that I would not pursue features that were only
+>>  of use to out-of-tree code, but I don't think that applies here.  This
+>>  is not a feature, this is a quality-of-implementation improvement.
+>>  There are users in the kernel today which use
+>>    rhashtable_walk_stop()/rhashtable_walk_start()
+>>  to drop out of RCU protection for periods during the walk.
+>>  Any such user might miss seeing an object that has been in the table
+>>  for a while - sure that is less than optimal, and should be fixed if
+>>  the cost is small.
+>>=20
+>>  There are currently no rhlist users which use stop/start to drop out
+>>  of RCU, so there is no clear value in fixing that case, or cost in not
+>>  fixing it.
+>
+> I think the complexities of this patch outweighs any benefit.
+>
+> Walking an rhashtable is inherently unreliable, due to rehashing.
+> If you need an 100% reliable walking mechanism, then add your own
+> linked list alongside the hash table like xfrm does.
+>
+> Having said that, if the current code is missing items that existed
+> prior to the start of the walk (in the absence of a rehash) then
+> that would be a bug that we should fix.  Anything else like
+> duplicates just needs to be accepted by the caller.
+>
+> So please explain how can an object be missed then we can work on
+> fixing that and that only.
 
- Also you can have a process's VM size exceed the 32-bit user address 
-space where swap files are used, e.g. I have a system with 3GiB of DRAM 
-installed and as much swap space available, where the amount of memory 
-consumed by a process sometimes exceeds 4GiB -- it's enough to open a 
-couple of web pages at once in a browser these days to get there (don't 
-ask me what it uses all that memory for).
+The commit comment gives the context:
 
- So there are still use cases for an LP64 ABI even for systems the whole
-physical memory of which can be handled with 32-bit addressing.
+  If the sequence:
+     obj =3D rhashtable_walk_next(iter);
+     rhashtable_walk_stop(iter);
+     rhashtable_remove_fast(ht, &obj->head, params);
+     rhashtable_walk_start(iter);
 
-  Maciej
+   races with another thread inserting or removing
+   an object on the same hash chain, a subsequent
+   rhashtable_walk_next() is not guaranteed to get the "next"
+   object. It is possible that an object could be
+   repeated, or missed.
+
+The rhashtable_walk_start() at the end of this sequence will find that
+iter->p is not null (it will be precisely &obj->head) and will look for
+it in the chain, but will not find it (because of the remove_fast).  So
+it sets iter->p to NULL.  This causes rhashtable_walk_next() to fall
+through to __rhashtable_walk_find_next() which looks for the entry
+number item->skip in the chain for item->slot.
+=2D>skip will be the index for the entry just beyond obj->head.  Since
+that has been removed, it is actually the index for the object one
+further on.  So if obj->head was not the last entry in the chain, the
+object after it will be missed.
+
+The code in tipc_nl_sk_walk() is fairly similar to this pattern in that
+the sock_put() call could potentially result in a call to
+rhashtable_remove_fast().
+It avoids the problem by ensuring that the rhashtable_remove_fast() is
+*after* the rhashtable_walk_start().
+
+If the rhashtable_remove_fast() happened from some other thread due to a
+race, the walk could still miss an object.
+Currently, the only way to protect against this is to hold a reference
+to an object across rhashtable_walk_stop()/rhashtable_walk_start().
+Sometimes that is easy to do, other times - not so much.
+
+So I think this is a real bug - it is quite unlikely to hit, but
+possibly.
+You need a chain with at least 2 objects, you need
+rhashtable_walk_stop() to be called after visiting an object other than
+the last object, and you need some thread (this or some other) to remove
+that object from the table.
+
+The patch that I posted aims to fix that bug, and only that bug.
+The only alternative that I can think of is to document that this can
+happen and advise that a reference should be held to the last visited
+object when stop/start is called, or in some other way ensure that it
+doesn't get removed.
+
+Thanks,
+NeilBrown
+
+
+>
+> Thanks,
+> --=20
+> Email: Herbert Xu <herbert@gondor.apana.org.au>
+> Home Page: http://gondor.apana.org.au/~herbert/
+> PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlwQUBsACgkQOeye3VZi
+gblkuw//fFhBWw2ElI6v+ciQwAEeW6ValZ9PZCnTjuHjdC3LKAdJxtj0m9xDnsad
+WxitiWaOzpnZINWhAki/HglnuIJGAPROxmjeGzvH7MbAZDVqkp3HlSGgaYdqSYK5
+QoNQPBBFw/wrtO93gjnaaLyvKwIJUr3zkzLUACFepY40iG2fN1Ofwj9N/GS8q3HI
+2sTxrhvNNe0xB6HmuwlwTchw+kXOL7cJiqThofhFg6QoFlXwCSmMPIsCY86CCHHf
+1cYjJM2g7pwRwSUCd9zlMNU4hbmy5uZ3DlyjyCK0/oKO2hFptzPADGk60NA5qYFR
+XP1UC7cVENBDVWa6psXj8yIAgz3xE1eEJbgMVwg6t4Om04y80IjWNBNva0kIxjJm
+8HZjNHa7QH91nQ/ku+Iq2ZU7qFemq2Ft9Q8IjK4AjipsjOYhopm3/royzMcDF+vr
+2sDLIInyP5yd+CuW7P8+ohR4qDLMIzbnbcD3+KJzUYjaabGGIO+RcEDDgpqTDU8w
+xJY5yIRtvagHhc2vWVlhLpSoE0uLQ7x8qmhK08SkpbwZFWaCQVTyV7JwvkWwn3jr
+Aai7yHqmRGqxMzEn+yK6qVmXPFZ4Yq6BzBDt9tc7URBFlXTpEDwAPir71xB0xmRI
+9CnIYOX7p+SNFt6MEgpPM5YReQzM092FrTZlDd75eAulgHHcVsE=
+=Pi0N
+-----END PGP SIGNATURE-----
+--=-=-=--
