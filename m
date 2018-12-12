@@ -2,168 +2,309 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9622FC65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 06:17:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A89DEC04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 06:25:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5ADFE2086D
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 06:17:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 62FC120873
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 06:25:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="hodiRD8Z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5ADFE2086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="QUv0lsk8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62FC120873
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726574AbeLLGR4 (ORCPT
+        id S1726504AbeLLGZC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 01:17:56 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:42036 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726237AbeLLGRz (ORCPT
+        Wed, 12 Dec 2018 01:25:02 -0500
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:5226 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726237AbeLLGZC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 01:17:55 -0500
-Received: by mail-lf1-f67.google.com with SMTP id l10so12618602lfh.9
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 22:17:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=dnptEfIGZQNcEKnuGQQGrfxJLcTRt4F0e7CHdnM3RaI=;
-        b=hodiRD8ZXlHAM2Mkok0wKmtvKJI/rweTgqf/dTzfkzki5VydjBj8rjrJm4+6Ldjli9
-         4UfLvoSE3ajdE3UF9i70oZQYXCPPNbzmpxPgtKHIkmT2Kl4Zz2o3d107PRIzMTlsJ47W
-         B+3swVLDVDs+VUrBg8HJ3DMnYLSvKr+iqj41I=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=dnptEfIGZQNcEKnuGQQGrfxJLcTRt4F0e7CHdnM3RaI=;
-        b=oB7iLLds5av9Ubg3DfwZmTP+HipdH67/wRirRjC+QTmRvlUkHgAhQZ8sbveOUZJ7V4
-         U9T0ahxnynRklyFei55ZJoJBu1rz6WclG1qD4wbu2zNsqPm046RmTzDI33ncSioFq4Hw
-         /i3nCja8J+TkjaKljqcLG5OQEKAxcvfp9o2LjKooxi9ZeI3rO9f+JVmrHDq5zVkFqeKR
-         PSu0elGxD+F1nZICTEIWuSbHyyJcGBmejFiM5rKxIa4ufO2yMm4atDFxVpN97ewGhxtY
-         wlnWSBPWD+fAe9Fxc9WkyuHDS/IJR0FWNR6J+8hJHwXQhIYyCsIvcovzv2T9BFcNIxlw
-         QpTQ==
-X-Gm-Message-State: AA+aEWa9Fus+xEufvK33F9hqsBMZhmU/zOr7TPg7+lH74DMHtN14gFvO
-        S3bUzO3Q8kZpQ6AYoyY2EPMGD8IyW9tpXHUZlVOAgA==
-X-Google-Smtp-Source: AFSGD/XA+ramrXl5xUiF0ehG6ag+AW6TaPGSVVLzfhQyFeAxjqcOj3KrW/UKqC8DMsli4P3MekW4HBmHWAOZFlbH2LI=
-X-Received: by 2002:a19:ca51:: with SMTP id h17mr10262659lfj.126.1544595473431;
- Tue, 11 Dec 2018 22:17:53 -0800 (PST)
+        Wed, 12 Dec 2018 01:25:02 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c10a9b80000>; Tue, 11 Dec 2018 22:24:56 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Tue, 11 Dec 2018 22:24:59 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Tue, 11 Dec 2018 22:24:59 -0800
+Received: from HQMAIL112.nvidia.com (172.18.146.18) by HQMAIL103.nvidia.com
+ (172.20.187.11) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 12 Dec
+ 2018 06:24:59 +0000
+Received: from HQMAIL104.nvidia.com (172.18.146.11) by HQMAIL112.nvidia.com
+ (172.18.146.18) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 12 Dec
+ 2018 06:24:58 +0000
+Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL104.nvidia.com
+ (172.18.146.11) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
+ Transport; Wed, 12 Dec 2018 06:24:58 +0000
+Received: from amhetre.nvidia.com (Not Verified[10.24.229.42]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5c10a9b60001>; Tue, 11 Dec 2018 22:24:58 -0800
+From:   Ashish Mhetre <amhetre@nvidia.com>
+To:     <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
+        <axboe@kernel.dk>, <adrian.hunter@intel.com>,
+        <ulf.hansson@linaro.org>, <linux-crypto@vger.kernel.org>,
+        <linux-nvme@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <vdumpa@nvidia.com>, <mmaddireddy@nvidia.com>
+CC:     <Snikam@nvidia.com>, <linux-tegra@vger.kernel.org>,
+        Ashish Mhetre <amhetre@nvidia.com>
+Subject: [PATCH] scatterlist: Update size type to support greater then 4GB size.
+Date:   Wed, 12 Dec 2018 11:54:13 +0530
+Message-ID: <1544595853-18492-1-git-send-email-amhetre@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+X-NVConfidentiality: public
 MIME-Version: 1.0
-References: <20181211151644.216668863@linuxfoundation.org>
-In-Reply-To: <20181211151644.216668863@linuxfoundation.org>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Wed, 12 Dec 2018 11:47:42 +0530
-Message-ID: <CA+G9fYsBUq54chCgdW2ByczJXB2zq7hL1+EGo0xZM5yE=jU2LA@mail.gmail.com>
-Subject: Re: [PATCH 4.19 000/118] 4.19.9-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1544595896; bh=vhjJbD6OmAKiXHI0SNL6GmN+1jzGNJgpAVsMaqjQFXE=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         X-NVConfidentiality:MIME-Version:Content-Type;
+        b=QUv0lsk8ltUbes1XnsulnBGs9FVEQoyPRcoRx3XnRiSQsemg21btLPeUlFHP7nRHo
+         T5ZPAR1mlCkB66fswKdCP53VLiUWbRMPOOCz4CwUqJw33tGIH6owL37hw67GxbdQQP
+         X6yQaWqp6HEgTDIzDLRPwjpujhyDlah2ucfYcDL9A9vZi9vzT5wTufLNBH8MAPtJs3
+         U6hHRBV3UYwBV8Xnm/Payj51iRjkin7rYU205lED9ESDGKWAaWn2Zaw8EKLvn/Fr8T
+         vGgfIUktak7l6jwkVHtvWlQx4jXMcSLz6+wn/Yv//0M4oN4f1JsuxJAQCpVAy3qQM8
+         vGGQmUAeilgHw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 11 Dec 2018 at 21:25, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 4.19.9 release.
-> There are 118 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Thu Dec 13 15:16:10 UTC 2018.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
-4.19.9-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-4.19.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+From: Krishna Reddy <vdumpa@nvidia.com>
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+In the cases where greater than 4GB allocations are required, current
+definition of scatterlist doesn't support it. For example, Tegra devices
+have more than 4GB of system memory available. So they are expected to
+support larger allocation requests.
+This patch updates the type of scatterlist members to support creating
+scatterlist for allocations of size greater than 4GB size.
+Updated the files that are necessary to fix compilation issues with updated
+type of variables.
 
-Summary
-------------------------------------------------------------------------
+With definition of scatterlist changed in this patch, size of sg has
+increased from 28 bytes to 40 bytes because of which allocations in nvme
+driver are crossing order-0( as sizeof(struct scatterlist) is used in nvme
+driver allocations ) i.e. they are not able to fit into single page.
 
-kernel: 4.19.9-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git
-git branch: linux-4.19.y
-git commit: 6a09e212b52e5edf398ca6296a183187d7343863
-git describe: v4.19.8-119-g6a09e212b52e
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.19-oe/bu=
-ild/v4.19.8-119-g6a09e212b52e
+Recently a patch to limit the nvme allocations to order-0 is mergerd.
+'commit 943e942e6266f22babee5efeb00f8f672fbff5bd ("nvme-pci: limit
+max IO size and segments to avoid high order allocations")'
+Because of that patch, WARN log is getting printed in our case as
+definition of scatterlist has changed. Alloc size of nvme is calculated as
+NVME_MAX_SEGS * sizeof(struct scatterlist). As sizeof(struct scatterlist)
+has changed from 28 bytes to 40 bytes, so updating NVME_MAX_SEGS from 127
+to 88 to correspond to original nvme alloc size value.
 
+Signed-off-by: Krishna Reddy <vdumpa@nvidia.com>
+Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
+---
+ crypto/shash.c                |  2 +-
+ drivers/ata/libata-sff.c      |  2 +-
+ drivers/mmc/host/sdhci.c      |  2 +-
+ drivers/mmc/host/toshsd.c     |  2 +-
+ drivers/mmc/host/usdhi6rol0.c | 14 +++++++-------
+ drivers/nvme/host/pci.c       |  8 ++++----
+ include/linux/nvme.h          |  2 +-
+ include/linux/scatterlist.h   |  8 ++++----
+ 8 files changed, 20 insertions(+), 20 deletions(-)
 
-No regressions (compared to build v4.19.8)
+diff --git a/crypto/shash.c b/crypto/shash.c
+index d21f04d..434970e 100644
+--- a/crypto/shash.c
++++ b/crypto/shash.c
+@@ -298,7 +298,7 @@ int shash_ahash_digest(struct ahash_request *req, struct shash_desc *desc)
+ 
+ 	if (nbytes &&
+ 	    (sg = req->src, offset = sg->offset,
+-	     nbytes < min(sg->length, ((unsigned int)(PAGE_SIZE)) - offset))) {
++	     nbytes < min(sg->length, ((size_t)(PAGE_SIZE)) - offset))) {
+ 		void *data;
+ 
+ 		data = kmap_atomic(sg_page(sg));
+diff --git a/drivers/ata/libata-sff.c b/drivers/ata/libata-sff.c
+index c5ea0fc..675def6 100644
+--- a/drivers/ata/libata-sff.c
++++ b/drivers/ata/libata-sff.c
+@@ -810,7 +810,7 @@ static int __atapi_pio_bytes(struct ata_queued_cmd *qc, unsigned int bytes)
+ 	offset %= PAGE_SIZE;
+ 
+ 	/* don't overrun current sg */
+-	count = min(sg->length - qc->cursg_ofs, bytes);
++	count = min(sg->length - qc->cursg_ofs, (size_t)bytes);
+ 
+ 	/* don't cross page boundaries */
+ 	count = min(count, (unsigned int)PAGE_SIZE - offset);
+diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+index 99bdae5..bd84c0c 100644
+--- a/drivers/mmc/host/sdhci.c
++++ b/drivers/mmc/host/sdhci.c
+@@ -1025,7 +1025,7 @@ static void sdhci_prepare_data(struct sdhci_host *host, struct mmc_command *cmd)
+ 		if (unlikely(length_mask | offset_mask)) {
+ 			for_each_sg(data->sg, sg, data->sg_len, i) {
+ 				if (sg->length & length_mask) {
+-					DBG("Reverting to PIO because of transfer size (%d)\n",
++					DBG("Reverting to PIO because of transfer size (%zd)\n",
+ 					    sg->length);
+ 					host->flags &= ~SDHCI_REQ_USE_DMA;
+ 					break;
+diff --git a/drivers/mmc/host/toshsd.c b/drivers/mmc/host/toshsd.c
+index dd961c5..af00936 100644
+--- a/drivers/mmc/host/toshsd.c
++++ b/drivers/mmc/host/toshsd.c
+@@ -479,7 +479,7 @@ static void toshsd_start_data(struct toshsd_host *host, struct mmc_data *data)
+ {
+ 	unsigned int flags = SG_MITER_ATOMIC;
+ 
+-	dev_dbg(&host->pdev->dev, "setup data transfer: blocksize %08x  nr_blocks %d, offset: %08x\n",
++	dev_dbg(&host->pdev->dev, "setup data transfer: blocksize %08x  nr_blocks %d, offset: %08lx\n",
+ 		data->blksz, data->blocks, data->sg->offset);
+ 
+ 	host->data = data;
+diff --git a/drivers/mmc/host/usdhi6rol0.c b/drivers/mmc/host/usdhi6rol0.c
+index cd8b1b9..5fce5ff 100644
+--- a/drivers/mmc/host/usdhi6rol0.c
++++ b/drivers/mmc/host/usdhi6rol0.c
+@@ -316,7 +316,7 @@ static void usdhi6_blk_bounce(struct usdhi6_host *host,
+ 	struct mmc_data *data = host->mrq->data;
+ 	size_t blk_head = host->head_len;
+ 
+-	dev_dbg(mmc_dev(host->mmc), "%s(): CMD%u of %u SG: %ux%u @ 0x%x\n",
++	dev_dbg(mmc_dev(host->mmc), "%s(): CMD%u of %u SG: %ux%u @ 0x%lx\n",
+ 		__func__, host->mrq->cmd->opcode, data->sg_len,
+ 		data->blksz, data->blocks, sg->offset);
+ 
+@@ -360,7 +360,7 @@ static void *usdhi6_sg_map(struct usdhi6_host *host)
+ 
+ 	WARN(host->pg.page, "%p not properly unmapped!\n", host->pg.page);
+ 	if (WARN(sg_dma_len(sg) % data->blksz,
+-		 "SG size %u isn't a multiple of block size %u\n",
++		 "SG size %zu isn't a multiple of block size %u\n",
+ 		 sg_dma_len(sg), data->blksz))
+ 		return NULL;
+ 
+@@ -383,7 +383,7 @@ static void *usdhi6_sg_map(struct usdhi6_host *host)
+ 	else
+ 		host->blk_page = host->pg.mapped;
+ 
+-	dev_dbg(mmc_dev(host->mmc), "Mapped %p (%lx) at %p + %u for CMD%u @ 0x%p\n",
++	dev_dbg(mmc_dev(host->mmc), "Mapped %p (%lx) at %p + %lu for CMD%u @ 0x%p\n",
+ 		host->pg.page, page_to_pfn(host->pg.page), host->pg.mapped,
+ 		sg->offset, host->mrq->cmd->opcode, host->mrq);
+ 
+@@ -492,7 +492,7 @@ static void usdhi6_sg_advance(struct usdhi6_host *host)
+ 		host->sg = next;
+ 
+ 		if (WARN(next && sg_dma_len(next) % data->blksz,
+-			 "SG size %u isn't a multiple of block size %u\n",
++			 "SG size %zu isn't a multiple of block size %u\n",
+ 			 sg_dma_len(next), data->blksz))
+ 			data->error = -EINVAL;
+ 
+@@ -1044,7 +1044,7 @@ static int usdhi6_rq_start(struct usdhi6_host *host)
+ 		    (data->blksz % 4 ||
+ 		     data->sg->offset % 4))
+ 			dev_dbg(mmc_dev(host->mmc),
+-				"Bad SG of %u: %ux%u @ %u\n", data->sg_len,
++				"Bad SG of %u: %ux%u @ %lu\n", data->sg_len,
+ 				data->blksz, data->blocks, data->sg->offset);
+ 
+ 		/* Enable DMA for USDHI6_MIN_DMA bytes or more */
+@@ -1056,7 +1056,7 @@ static int usdhi6_rq_start(struct usdhi6_host *host)
+ 			usdhi6_write(host, USDHI6_CC_EXT_MODE, USDHI6_CC_EXT_MODE_SDRW);
+ 
+ 		dev_dbg(mmc_dev(host->mmc),
+-			"%s(): request opcode %u, %u blocks of %u bytes in %u segments, %s %s @+0x%x%s\n",
++			"%s(): request opcode %u, %u blocks of %u bytes in %u segments, %s %s @+0x%lx%s\n",
+ 			__func__, cmd->opcode, data->blocks, data->blksz,
+ 			data->sg_len, use_dma ? "DMA" : "PIO",
+ 			data->flags & MMC_DATA_READ ? "read" : "write",
+@@ -1704,7 +1704,7 @@ static void usdhi6_timeout_work(struct work_struct *work)
+ 	case USDHI6_WAIT_FOR_WRITE:
+ 		sg = host->sg ?: data->sg;
+ 		dev_dbg(mmc_dev(host->mmc),
+-			"%c: page #%u @ +0x%zx %ux%u in SG%u. Current SG %u bytes @ %u\n",
++			"%c: page #%u @ +0x%zx %ux%u in SG%u. Current SG %zu bytes @ %lu\n",
+ 			data->flags & MMC_DATA_READ ? 'R' : 'W', host->page_idx,
+ 			host->offset, data->blocks, data->blksz, data->sg_len,
+ 			sg_dma_len(sg), sg->offset);
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index d668682..57ef89d 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -43,7 +43,7 @@
+  * require an sg allocation that needs more than a page of data.
+  */
+ #define NVME_MAX_KB_SZ	4096
+-#define NVME_MAX_SEGS	127
++#define NVME_MAX_SEGS	88
+ 
+ static int use_threaded_interrupts;
+ module_param(use_threaded_interrupts, int, 0);
+@@ -552,8 +552,8 @@ static void nvme_print_sgl(struct scatterlist *sgl, int nents)
+ 
+ 	for_each_sg(sgl, sg, nents, i) {
+ 		dma_addr_t phys = sg_phys(sg);
+-		pr_warn("sg[%d] phys_addr:%pad offset:%d length:%d "
+-			"dma_address:%pad dma_length:%d\n",
++		pr_warn("sg[%d] phys_addr:%pad offset:%lu length:%zu "
++			"dma_address:%pad dma_length:%zu\n",
+ 			i, &phys, sg->offset, sg->length, &sg_dma_address(sg),
+ 			sg_dma_len(sg));
+ 	}
+@@ -566,7 +566,7 @@ static blk_status_t nvme_pci_setup_prps(struct nvme_dev *dev,
+ 	struct dma_pool *pool;
+ 	int length = blk_rq_payload_bytes(req);
+ 	struct scatterlist *sg = iod->sg;
+-	int dma_len = sg_dma_len(sg);
++	u64 dma_len = sg_dma_len(sg);
+ 	u64 dma_addr = sg_dma_address(sg);
+ 	u32 page_size = dev->ctrl.page_size;
+ 	int offset = dma_addr & (page_size - 1);
+diff --git a/include/linux/nvme.h b/include/linux/nvme.h
+index 68e91ef..0a07a29 100644
+--- a/include/linux/nvme.h
++++ b/include/linux/nvme.h
+@@ -587,7 +587,7 @@ enum {
+ 
+ struct nvme_sgl_desc {
+ 	__le64	addr;
+-	__le32	length;
++	__le64	length;
+ 	__u8	rsvd[3];
+ 	__u8	type;
+ };
+diff --git a/include/linux/scatterlist.h b/include/linux/scatterlist.h
+index 093aa57..f6d3482 100644
+--- a/include/linux/scatterlist.h
++++ b/include/linux/scatterlist.h
+@@ -10,11 +10,11 @@
+ 
+ struct scatterlist {
+ 	unsigned long	page_link;
+-	unsigned int	offset;
+-	unsigned int	length;
++	unsigned long	offset;
++	size_t		length;
+ 	dma_addr_t	dma_address;
+ #ifdef CONFIG_NEED_SG_DMA_LENGTH
+-	unsigned int	dma_length;
++	size_t		dma_length;
+ #endif
+ };
+ 
+@@ -114,7 +114,7 @@ static inline void sg_assign_page(struct scatterlist *sg, struct page *page)
+  *
+  **/
+ static inline void sg_set_page(struct scatterlist *sg, struct page *page,
+-			       unsigned int len, unsigned int offset)
++			       size_t len, unsigned long offset)
+ {
+ 	sg_assign_page(sg, page);
+ 	sg->offset = offset;
+-- 
+2.7.4
 
-No fixes (compared to build v4.19.8)
-
-
-Ran 20670 total tests in the following environments and test suites.
-
-Environments
---------------
-- dragonboard-410c - arm64
-- hi6220-hikey - arm64
-- i386
-- juno-r2 - arm64
-- qemu_arm
-- qemu_arm64
-- qemu_i386
-- qemu_x86_64
-- x15 - arm
-- x86_64
-
-Test Suites
------------
-* boot
-* install-android-platform-tools-r2600
-* kselftest
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-containers-tests
-* ltp-cve-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* spectre-meltdown-checker-test
-* ltp-open-posix-tests
-* kselftest-vsyscall-mode-native
-* kselftest-vsyscall-mode-none
-
---=20
-Linaro LKFT
-https://lkft.linaro.org
