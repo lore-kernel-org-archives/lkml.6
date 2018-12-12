@@ -2,130 +2,100 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A72B8C04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 08:19:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BFC8C65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 08:20:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BA1F2084E
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 08:19:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4919420849
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 08:20:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ajlcF2ns"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BA1F2084E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="db/t3fwe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4919420849
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726743AbeLLITm (ORCPT
+        id S1726758AbeLLIUa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 03:19:42 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:36183 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726242AbeLLITl (ORCPT
+        Wed, 12 Dec 2018 03:20:30 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:57764 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726242AbeLLIUa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 03:19:41 -0500
-Received: by mail-pl1-f193.google.com with SMTP id g9so8254103plo.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 00:19:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=yyfJFfTmgFxnz1jy34qHKpCpkDKEu+Kg4fc3GoUK//I=;
-        b=ajlcF2ns5Dy783TXLqBOopdYf70FP0Z8VtlJ70asxMcKyti8lTVPH6lndSRtIMQ3Dy
-         WQQZ8WSVO/+vYkFMHR2iASBPAHnZgO9YYcCwb0vz0K/d7YWDsjhJ5HdTp294bBw+wrf1
-         BSsmLFuZCd+oOUH++3Ss7cLAY6Ry2XJHzrVxZxt54qsiMjmeXurkQ0+a0X6cyfCBy5FY
-         kfZqFQ4iTuc63oNlsSHWVQJHtAR7XUoKarw5wStC0xFHVKLWwWEmVCig7HFcvGLOqlDb
-         jlJny9Ttg98790nDmUywX396KL2L97ZgezdULSMJKvfq0WPB4EKfKo9OTyaKFi9Negki
-         HmYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=yyfJFfTmgFxnz1jy34qHKpCpkDKEu+Kg4fc3GoUK//I=;
-        b=A+cSm7l2oCX+gmSMogSGL95JLQGvbpAgfSUut8q88x+oriGKqDL4/6UzWOCAfu4zuN
-         pFpWJzRklhzk2Ir/fpQGJ6gqJoZcNeNUIrMacKvH4tDfGzZqOZ9gI6cY12LrtskXqDG/
-         2UDvdslU7XdjRwsi+zv37pykJDKimsBZc041XY3cKm9cB2Gcvo4WQPWcOOBa68N1pfYV
-         4alcxjeVWFrUJEQoRiPz5DNGgtWapmzFfuh0ekg8f3fmAuQPC0gsdqOdQWnv8pvq0FLy
-         AzwBW+yeFH70Ql6GMvrcqCNIIu46KVeI1EAYjbCYP2cWcP2F8F6W6oXVEV2zdgfkz8Sx
-         MrBA==
-X-Gm-Message-State: AA+aEWasqJ4Dt1nD+s1LCSkrdc1qnhW5slwObjsp+NICai9FsJoV0rlD
-        NHBze53FWMTcJKbA9CMd9qXt1uVuyw==
-X-Google-Smtp-Source: AFSGD/XfNB1mXLugutSLbatMX5KXf7xvdSaYNUGtRuj6x/Yilbd8zKDagDvEky7qNkmF2lJOke+/EQ==
-X-Received: by 2002:a17:902:42e4:: with SMTP id h91mr19366424pld.18.1544602780977;
-        Wed, 12 Dec 2018 00:19:40 -0800 (PST)
-Received: from mylaptop.nay.redhat.com ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id t12sm25721039pfi.45.2018.12.12.00.19.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 12 Dec 2018 00:19:40 -0800 (PST)
-From:   Pingfan Liu <kernelfans@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Pingfan Liu <kernelfans@gmail.com>, Dave Young <dyoung@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Baoquan He <bhe@redhat.com>, yinghai@kernel.org,
-        vgoyal@redhat.com, kexec@lists.infradead.org
-Subject: [PATCH] x86/kdump: directly find a candidate region when crashkernel=X
-Date:   Wed, 12 Dec 2018 16:19:16 +0800
-Message-Id: <1544602756-17449-1-git-send-email-kernelfans@gmail.com>
-X-Mailer: git-send-email 2.7.4
+        Wed, 12 Dec 2018 03:20:30 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wBC8Iiss028445;
+        Wed, 12 Dec 2018 08:20:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=pVDYWPUm65mF3QytVhHn7Mx78umiZ+uIF6ELc6pKKQU=;
+ b=db/t3fwel3nHlBECaBYbDQt6aGdCr2r2LMR272K3Gazuz1afsIDPS3hrSDM5V76ADSLh
+ DGLcQQ10dCqIhwsZeJjV7eWvdXRIQipzeEgeAo4IUV13w4sEHfGLcvjR7xAUosQm5aTU
+ lmm9wfARyzQI0UHTw09zrpDYiEomU8b+HAJW6sTfu9znbgWBij/Jz4FfPcIB1IPWQHth
+ 7FquvdrALAFxu8fe8Ab9I7P5iO51VKV12frs6NNdaHVjtkLK9hrnCiFhdDOE4xgLGOY1
+ ihgpBj6sX9mg+4u0rtvHW/goCfiGkmvKbAPmb0gK/47vwtt/666mpJLuIKsMUAqhwReD iw== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2120.oracle.com with ESMTP id 2p86kr0acm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 12 Dec 2018 08:20:01 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wBC8Jx7J025727
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 12 Dec 2018 08:20:00 GMT
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wBC8JwQV007858;
+        Wed, 12 Dec 2018 08:19:58 GMT
+Received: from kadam (/197.157.0.38)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 12 Dec 2018 00:19:58 -0800
+Date:   Wed, 12 Dec 2018 11:19:49 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Jeremy Fertic <jeremyfertic@gmail.com>
+Cc:     Jonathan Cameron <jic23@kernel.org>, devel@driverdev.osuosl.org,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        linux-iio@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Hartmut Knaack <knaack.h@gmx.de>
+Subject: Re: [PATCH 02/11] staging: iio: adt7316: invert the logic of the
+ check for an ldac pin
+Message-ID: <20181212081949.GH3116@kadam>
+References: <20181212005503.28054-1-jeremyfertic@gmail.com>
+ <20181212005503.28054-3-jeremyfertic@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181212005503.28054-3-jeremyfertic@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9104 signatures=668679
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=651
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1812120074
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I encounter a case where crashkernel=384M, and kaslr is enabled. During the
-test, sometimes, the system may fail to reserve region for crash kernel,
-although there is much free space above 896MB. It is caused by the
-truncation of the candidate region by kaslr kernel. It raises confusion to
-the end user that sometimes crashkernel=X works while sometimes fails.
-Since on x86, kaslr is a default option, and this corner case is
-unavoidable.
-This patch simplifies the method suggested in the mail [1]. It just goes
-bottom-up to find a candidate region for crashkernel.
-There is one trivial thing about the compatibility with old kexec-tools:
-if the reserved region is above 896M, then old tool will fail to load
-bzImage. But without this patch, the old tool also fail since there is no
-memory below 896M can be reserved for crashkernel.
+On Tue, Dec 11, 2018 at 05:54:54PM -0700, Jeremy Fertic wrote:
+> ADT7316_DA_EN_VIA_DAC_LDCA is set when the dac and ldac registers are being
+> used to update the dacs instead of the ldac pin. ADT7516_SEL_AIN3 is an adc
+> input that shares the ldac pin. Only set these bits if an ldac pin is not
+> being used.
+> 
+> Signed-off-by: Jeremy Fertic <jeremyfertic@gmail.com>
 
-[1]: http://lists.infradead.org/pipermail/kexec/2017-October/019571.html
-Signed-off-by: Pingfan Liu <kernelfans@gmail.com>
-Cc: Dave Young <dyoung@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Baoquan He <bhe@redhat.com>
-Cc: yinghai@kernel.org,
-Cc: vgoyal@redhat.com
-Cc: kexec@lists.infradead.org
+Huh...  This bug has always been there...
 
----
- arch/x86/kernel/setup.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+Fixes: 35f6b6b86ede ("staging: iio: new ADT7316/7/8 and ADT7516/7/9 driver")
 
-diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-index d494b9b..60f12c4 100644
---- a/arch/x86/kernel/setup.c
-+++ b/arch/x86/kernel/setup.c
-@@ -541,15 +541,18 @@ static void __init reserve_crashkernel(void)
- 
- 	/* 0 means: find the address automatically */
- 	if (crash_base <= 0) {
-+		if (!memblock_bottom_up())
-+			memblock_set_bottom_up(true);
- 		/*
- 		 * Set CRASH_ADDR_LOW_MAX upper bound for crash memory,
- 		 * as old kexec-tools loads bzImage below that, unless
- 		 * "crashkernel=size[KMG],high" is specified.
- 		 */
- 		crash_base = memblock_find_in_range(CRASH_ALIGN,
--						    high ? CRASH_ADDR_HIGH_MAX
--							 : CRASH_ADDR_LOW_MAX,
--						    crash_size, CRASH_ALIGN);
-+			(max_pfn * PAGE_SIZE), crash_size, CRASH_ALIGN);
-+		if (!memblock_bottom_up())
-+			memblock_set_bottom_up(false);
-+
- 		if (!crash_base) {
- 			pr_info("crashkernel reservation failed - No suitable area found.\n");
- 			return;
--- 
-2.7.4
+regards,
+dan carpenter
+
 
