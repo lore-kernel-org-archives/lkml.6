@@ -2,105 +2,61 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F33FC04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 10:13:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95ED2C65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 10:13:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3EBE02086D
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 10:13:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EBE02086D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 6355020839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 10:13:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6355020839
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726996AbeLLKNM (ORCPT
+        id S1727070AbeLLKNe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 05:13:12 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:40376 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726680AbeLLKNM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 05:13:12 -0500
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 76687ED22AA6B;
-        Wed, 12 Dec 2018 18:13:09 +0800 (CST)
-Received: from szvp000201624.huawei.com (10.120.216.130) by
- DGGEMS405-HUB.china.huawei.com (10.3.19.205) with Microsoft SMTP Server id
- 14.3.408.0; Wed, 12 Dec 2018 18:13:01 +0800
-From:   Chao Yu <yuchao0@huawei.com>
-To:     <jaegeuk@kernel.org>
-CC:     <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
-        Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH 3/3] f2fs: clean up checkpoint flow
-Date:   Wed, 12 Dec 2018 18:12:32 +0800
-Message-ID: <20181212101232.54289-3-yuchao0@huawei.com>
-X-Mailer: git-send-email 2.18.0.rc1
-In-Reply-To: <20181212101232.54289-1-yuchao0@huawei.com>
-References: <20181212101232.54289-1-yuchao0@huawei.com>
+        Wed, 12 Dec 2018 05:13:34 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:57294 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726727AbeLLKNd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 05:13:33 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id C73F720733; Wed, 12 Dec 2018 11:13:31 +0100 (CET)
+Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 9931320729;
+        Wed, 12 Dec 2018 11:13:21 +0100 (CET)
+Date:   Wed, 12 Dec 2018 11:13:22 +0100
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Nicolas Ferre <nicolas.ferre@microchip.com>
+Cc:     Ludovic Desroches <ludovic.desroches@microchip.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ARM: at91: add support in soc driver for LPDDR2 SiP
+Message-ID: <20181212101322.GW8952@piout.net>
+References: <20181128110035.10407-1-nicolas.ferre@microchip.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.120.216.130]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181128110035.10407-1-nicolas.ferre@microchip.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch cleans up checkpoint flow a bit:
-- remove unneeded circulation of flushing meta pages.
-- don't flush nat_bits pages in prior to other checkpoint pages.
-- add bug_on to check remained meta pages after flushing.
+On 28/11/2018 12:00:35+0100, Nicolas Ferre wrote:
+> Add some more SiP components to be detected by this soc.c driver.
+> 
+> Signed-off-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+> ---
+>  drivers/soc/atmel/soc.c | 8 ++++++++
+>  drivers/soc/atmel/soc.h | 4 ++++
+>  2 files changed, 12 insertions(+)
+> 
+Applied, thanks.
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
- fs/f2fs/checkpoint.c | 18 +++++-------------
- 1 file changed, 5 insertions(+), 13 deletions(-)
-
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 0a6b5dc0d717..623536b8e0c0 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -1328,11 +1328,9 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
- 	int err;
- 
- 	/* Flush all the NAT/SIT pages */
--	while (get_pages(sbi, F2FS_DIRTY_META)) {
--		f2fs_sync_meta_pages(sbi, META, LONG_MAX, FS_CP_META_IO);
--		if (unlikely(f2fs_cp_error(sbi)))
--			break;
--	}
-+	f2fs_sync_meta_pages(sbi, META, LONG_MAX, FS_CP_META_IO);
-+	f2fs_bug_on(sbi, get_pages(sbi, F2FS_DIRTY_META) &&
-+					!f2fs_cp_error(sbi));
- 
- 	/*
- 	 * modify checkpoint
-@@ -1405,14 +1403,6 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
- 		for (i = 0; i < nm_i->nat_bits_blocks; i++)
- 			f2fs_update_meta_page(sbi, nm_i->nat_bits +
- 					(i << F2FS_BLKSIZE_BITS), blk + i);
--
--		/* Flush all the NAT BITS pages */
--		while (get_pages(sbi, F2FS_DIRTY_META)) {
--			f2fs_sync_meta_pages(sbi, META, LONG_MAX,
--							FS_CP_META_IO);
--			if (unlikely(f2fs_cp_error(sbi)))
--				break;
--		}
- 	}
- 
- 	/* write out checkpoint buffer at block 0 */
-@@ -1448,6 +1438,8 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
- 
- 	/* Here, we have one bio having CP pack except cp pack 2 page */
- 	f2fs_sync_meta_pages(sbi, META, LONG_MAX, FS_CP_META_IO);
-+	f2fs_bug_on(sbi, get_pages(sbi, F2FS_DIRTY_META) &&
-+					!f2fs_cp_error(sbi));
- 
- 	/* wait for previous submitted meta pages writeback */
- 	f2fs_wait_on_all_pages_writeback(sbi);
 -- 
-2.18.0.rc1
-
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
