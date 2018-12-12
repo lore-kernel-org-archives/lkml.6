@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16FDAC67839
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 22:16:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27D2FC65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 22:16:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C08E220870
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 22:16:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D52C52084E
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 22:16:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="aohN+sU2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C08E220870
+	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="AATn46gh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D52C52084E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=crapouillou.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728635AbeLLWQu (ORCPT
+        id S1728666AbeLLWQx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 17:16:50 -0500
-Received: from outils.crapouillou.net ([89.234.176.41]:40704 "EHLO
+        Wed, 12 Dec 2018 17:16:53 -0500
+Received: from outils.crapouillou.net ([89.234.176.41]:40710 "EHLO
         crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728545AbeLLWQs (ORCPT
+        with ESMTP id S1728520AbeLLWQu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 17:16:48 -0500
+        Wed, 12 Dec 2018 17:16:50 -0500
 From:   Paul Cercueil <paul@crapouillou.net>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
@@ -44,290 +44,147 @@ Cc:     Mathieu Malaterre <malat@debian.org>,
         linux-mips@vger.kernel.org, linux-doc@vger.kernel.org,
         linux-clk@vger.kernel.org, od@zcrc.me,
         Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v8 11/26] pwm: jz4740: Use regmap and clocks from TCU driver
-Date:   Wed, 12 Dec 2018 23:09:06 +0100
-Message-Id: <20181212220922.18759-12-paul@crapouillou.net>
+Subject: [PATCH v8 02/26] doc: Add doc for the Ingenic TCU hardware
+Date:   Wed, 12 Dec 2018 23:08:57 +0100
+Message-Id: <20181212220922.18759-3-paul@crapouillou.net>
 In-Reply-To: <20181212220922.18759-1-paul@crapouillou.net>
 References: <20181212220922.18759-1-paul@crapouillou.net>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net; s=mail; t=1544652593; bh=71KvNkMzayWKE/u9/uzSyCRTjkxun5i32t5V003+US8=; h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=aohN+sU2z/XBrSkLfRn7A+g3m8yCX3Vy2ma0iIjzw5Uf3NfKIqJCRfEvr4U5v+udwehy52b+RDqHnwAtQJnCWub5dpPIVh/E8brFpsk0CST1GdGvZVdAE+dorSDBKaqTzOPJnY4bQzG1usx2lzdWjvKCf1B66TWGULCOpXGjlKI=
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net; s=mail; t=1544652576; bh=hE24jDXobuv4NYtnUFddYqltMyTqMk1Kuy+rwuBR66Q=; h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=AATn46gho76POgJAQI+VvJv+F41/a0zV0PusfHV9tKs4vKU+r2J6CiwPpqgViRkVNvICMcwYSL5n2z7Aa/1yyY5MhFijX+xK0f1eC+7c69kAqhZqXhayBfdcDHMBNeaSYqrsVjYAcy0+6uMCM8ctVlxOCocaUY5ptoe2WTzD/Kc=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The ingenic-timer "TCU" driver provides us with a regmap, that we can
-use to safely access the TCU registers.
+Add a documentation file about the Timer/Counter Unit (TCU) present in
+the Ingenic JZ47xx SoCs.
 
-It also provides us with clocks, that can be (un)gated, reparented or
-reclocked from devicetree, instead of having these settings hardcoded in
-this driver.
+The Timer/Counter Unit (TCU) in Ingenic JZ47xx SoCs is a multi-function
+hardware block. It features up to to eight channels, that can be used as
+counters, timers, or PWM.
 
-While this driver is devicetree-compatible, it is never (as of now)
-probed from devicetree, so this change does not introduce a ABI problem
-with current devicetree files.
+- JZ4725B, JZ4750, JZ4755 only have six TCU channels. The other SoCs all
+  have eight channels.
+
+- JZ4725B introduced a separate channel, called Operating System Timer
+  (OST). It is a 32-bit programmable timer. On JZ4770 and above, it is
+  64-bit.
+
+- Each one of the TCU channels has its own clock, which can be reparented
+  to three different clocks (pclk, ext, rtc), gated, and reclocked, through
+  their TCSR register.
+  * The watchdog and OST hardware blocks also feature a TCSR register with
+    the same format in their register space.
+  * The TCU registers used to gate/ungate can also gate/ungate the watchdog
+    and OST clocks.
+
+- Each TCU channel works in one of two modes:
+  * mode TCU1: channels cannot work in sleep mode, but are easier to
+    operate.
+  * mode TCU2: channels can work in sleep mode, but the operation is a bit
+    more complicated than with TCU1 channels.
+
+- The mode of each TCU channel depends on the SoC used:
+  * On the oldest SoCs (up to JZ4740), all of the eight channels operate in
+    TCU1 mode.
+  * On JZ4725B, channel 5 operates as TCU2, the others operate as TCU1.
+  * On newest SoCs (JZ4750 and above), channels 1-2 operate as TCU2, the
+    others operate as TCU1.
+
+- Each channel can generate an interrupt. Some channels share an interrupt
+  line, some don't, and this changes between SoC versions:
+  * on older SoCs (JZ4740 and below), channel 0 and channel 1 have their
+    own interrupt line; channels 2-7 share the last interrupt line.
+  * On JZ4725B, channel 0 has its own interrupt; channels 1-5 share one
+    interrupt line; the OST uses the last interrupt line.
+  * on newer SoCs (JZ4750 and above), channel 5 has its own interrupt;
+    channels 0-4 and (if eight channels) 6-7 all share one interrupt line;
+    the OST uses the last interrupt line.
 
 Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 ---
 
 Notes:
-     v5: New patch
+     v4: New patch in this series
     
-     v6: Drop requirement of probing from devicetree
+     v5: Added information about number of channels, and improved
+         documentation about channel modes
+    
+     v6: Add info about OST (can be 32-bit on older SoCs)
     
      v7: No change
+    
+     v8: No change
 
-     v8: Drop useless <linux/clk-provider.h> include
+ Documentation/mips/ingenic-tcu.txt | 60 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 60 insertions(+)
+ create mode 100644 Documentation/mips/ingenic-tcu.txt
 
- drivers/pwm/Kconfig      |   2 +
- drivers/pwm/pwm-jz4740.c | 123 ++++++++++++++++++++++++++++++-----------------
- 2 files changed, 82 insertions(+), 43 deletions(-)
-
-diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
-index 27e5dd47a01f..0343f0c1238e 100644
---- a/drivers/pwm/Kconfig
-+++ b/drivers/pwm/Kconfig
-@@ -202,6 +202,8 @@ config PWM_IMX
- config PWM_JZ4740
- 	tristate "Ingenic JZ47xx PWM support"
- 	depends on MACH_INGENIC
-+	depends on COMMON_CLK
-+	select INGENIC_TIMER
- 	help
- 	  Generic PWM framework driver for Ingenic JZ47xx based
- 	  machines.
-diff --git a/drivers/pwm/pwm-jz4740.c b/drivers/pwm/pwm-jz4740.c
-index a7b134af5e04..6b865c14f789 100644
---- a/drivers/pwm/pwm-jz4740.c
-+++ b/drivers/pwm/pwm-jz4740.c
-@@ -15,20 +15,19 @@
- 
- #include <linux/clk.h>
- #include <linux/err.h>
--#include <linux/gpio.h>
- #include <linux/kernel.h>
-+#include <linux/mfd/ingenic-tcu.h>
- #include <linux/module.h>
--#include <linux/of_device.h>
- #include <linux/platform_device.h>
- #include <linux/pwm.h>
--
--#include <asm/mach-jz4740/timer.h>
-+#include <linux/regmap.h>
- 
- #define NUM_PWM 8
- 
- struct jz4740_pwm_chip {
- 	struct pwm_chip chip;
--	struct clk *clk;
-+	struct clk *clks[NUM_PWM];
-+	struct regmap *map;
- };
- 
- static inline struct jz4740_pwm_chip *to_jz4740(struct pwm_chip *chip)
-@@ -38,6 +37,11 @@ static inline struct jz4740_pwm_chip *to_jz4740(struct pwm_chip *chip)
- 
- static int jz4740_pwm_request(struct pwm_chip *chip, struct pwm_device *pwm)
- {
-+	struct jz4740_pwm_chip *jz = to_jz4740(chip);
-+	struct clk *clk;
-+	char clk_name[16];
-+	int ret;
+diff --git a/Documentation/mips/ingenic-tcu.txt b/Documentation/mips/ingenic-tcu.txt
+new file mode 100644
+index 000000000000..0ea35b2a46da
+--- /dev/null
++++ b/Documentation/mips/ingenic-tcu.txt
+@@ -0,0 +1,60 @@
++Ingenic JZ47xx SoCs Timer/Counter Unit hardware
++-----------------------------------------------
 +
- 	/*
- 	 * Timers 0 and 1 are used for system tasks, so they are unavailable
- 	 * for use as PWMs.
-@@ -45,65 +49,89 @@ static int jz4740_pwm_request(struct pwm_chip *chip, struct pwm_device *pwm)
- 	if (pwm->hwpwm < 2)
- 		return -EBUSY;
- 
--	jz4740_timer_start(pwm->hwpwm);
-+	snprintf(clk_name, sizeof(clk_name), "timer%u", pwm->hwpwm);
++The Timer/Counter Unit (TCU) in Ingenic JZ47xx SoCs is a multi-function
++hardware block. It features up to to eight channels, that can be used as
++counters, timers, or PWM.
 +
-+	clk = clk_get(chip->dev, clk_name);
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk);
- 
-+	ret = clk_prepare_enable(clk);
-+	if (ret) {
-+		clk_put(clk);
-+		return ret;
-+	}
++- JZ4725B, JZ4750, JZ4755 only have six TCU channels. The other SoCs all
++  have eight channels.
 +
-+	jz->clks[pwm->hwpwm] = clk;
- 	return 0;
- }
- 
- static void jz4740_pwm_free(struct pwm_chip *chip, struct pwm_device *pwm)
- {
--	jz4740_timer_set_ctrl(pwm->hwpwm, 0);
-+	struct jz4740_pwm_chip *jz = to_jz4740(chip);
-+	struct clk *clk = jz->clks[pwm->hwpwm];
- 
--	jz4740_timer_stop(pwm->hwpwm);
-+	clk_disable_unprepare(clk);
-+	clk_put(clk);
- }
- 
- static int jz4740_pwm_enable(struct pwm_chip *chip, struct pwm_device *pwm)
- {
--	uint32_t ctrl = jz4740_timer_get_ctrl(pwm->pwm);
-+	struct jz4740_pwm_chip *jz = to_jz4740(chip);
- 
--	ctrl |= JZ_TIMER_CTRL_PWM_ENABLE;
--	jz4740_timer_set_ctrl(pwm->hwpwm, ctrl);
--	jz4740_timer_enable(pwm->hwpwm);
-+	/* Enable PWM output */
-+	regmap_update_bits(jz->map, TCU_REG_TCSRc(pwm->hwpwm),
-+				TCU_TCSR_PWM_EN, TCU_TCSR_PWM_EN);
- 
-+	/* Start counter */
-+	regmap_write(jz->map, TCU_REG_TESR, BIT(pwm->hwpwm));
- 	return 0;
- }
- 
- static void jz4740_pwm_disable(struct pwm_chip *chip, struct pwm_device *pwm)
- {
--	uint32_t ctrl = jz4740_timer_get_ctrl(pwm->hwpwm);
-+	struct jz4740_pwm_chip *jz = to_jz4740(chip);
- 
- 	/* Disable PWM output.
- 	 * In TCU2 mode (channel 1/2 on JZ4750+), this must be done before the
- 	 * counter is stopped, while in TCU1 mode the order does not matter.
- 	 */
--	ctrl &= ~JZ_TIMER_CTRL_PWM_ENABLE;
--	jz4740_timer_set_ctrl(pwm->hwpwm, ctrl);
-+	regmap_update_bits(jz->map, TCU_REG_TCSRc(pwm->hwpwm),
-+				TCU_TCSR_PWM_EN, 0);
- 
- 	/* Stop counter */
--	jz4740_timer_disable(pwm->hwpwm);
-+	regmap_write(jz->map, TCU_REG_TECR, BIT(pwm->hwpwm));
- }
- 
- static int jz4740_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
- 			     int duty_ns, int period_ns)
- {
- 	struct jz4740_pwm_chip *jz4740 = to_jz4740(pwm->chip);
-+	struct clk *clk = jz4740->clks[pwm->hwpwm];
-+	unsigned long rate, new_rate, period, duty;
- 	unsigned long long tmp;
--	unsigned long period, duty;
--	unsigned int prescaler = 0;
--	uint16_t ctrl;
-+	unsigned int tcsr;
- 	bool is_enabled;
- 
--	tmp = (unsigned long long)clk_get_rate(jz4740->clk) * period_ns;
--	do_div(tmp, 1000000000);
--	period = tmp;
-+	rate = clk_get_rate(clk);
++- JZ4725B introduced a separate channel, called Operating System Timer
++  (OST). It is a 32-bit programmable timer. On JZ4770 and above, it is
++  64-bit.
 +
-+	for (;;) {
-+		tmp = (unsigned long long) rate * period_ns;
-+		do_div(tmp, 1000000000);
- 
--	while (period > 0xffff && prescaler < 6) {
--		period >>= 2;
--		++prescaler;
-+		if (tmp <= 0xffff)
-+			break;
++- Each one of the TCU channels has its own clock, which can be reparented
++  to three different clocks (pclk, ext, rtc), gated, and reclocked, through
++  their TCSR register.
++  * The watchdog and OST hardware blocks also feature a TCSR register with
++    the same format in their register space.
++  * The TCU registers used to gate/ungate can also gate/ungate the watchdog
++    and OST clocks.
 +
-+		new_rate = clk_round_rate(clk, rate / 2);
++- Each TCU channel works in one of two modes:
++  * mode TCU1: channels cannot work in sleep mode, but are easier to
++    operate.
++  * mode TCU2: channels can work in sleep mode, but the operation is a bit
++    more complicated than with TCU1 channels.
 +
-+		if (new_rate < rate)
-+			rate = new_rate;
-+		else
-+			return -EINVAL;
- 	}
- 
--	if (prescaler == 6)
--		return -EINVAL;
-+	clk_set_rate(clk, rate);
++- The mode of each TCU channel depends on the SoC used:
++  * On the oldest SoCs (up to JZ4740), all of the eight channels operate in
++    TCU1 mode.
++  * On JZ4725B, channel 5 operates as TCU2, the others operate as TCU1.
++  * On newest SoCs (JZ4750 and above), channels 1-2 operate as TCU2, the
++    others operate as TCU1.
 +
-+	period = tmp;
- 
- 	tmp = (unsigned long long)period * duty_ns;
- 	do_div(tmp, period_ns);
-@@ -112,18 +140,23 @@ static int jz4740_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
- 	if (duty >= period)
- 		duty = period - 1;
- 
--	is_enabled = jz4740_timer_is_enabled(pwm->hwpwm);
-+	regmap_read(jz4740->map, TCU_REG_TER, &tcsr);
-+	is_enabled = tcsr & BIT(pwm->hwpwm);
- 	if (is_enabled)
- 		jz4740_pwm_disable(chip, pwm);
- 
--	jz4740_timer_set_count(pwm->hwpwm, 0);
--	jz4740_timer_set_duty(pwm->hwpwm, duty);
--	jz4740_timer_set_period(pwm->hwpwm, period);
-+	/* Set abrupt shutdown */
-+	regmap_update_bits(jz4740->map, TCU_REG_TCSRc(pwm->hwpwm),
-+				TCU_TCSR_PWM_SD, TCU_TCSR_PWM_SD);
++- Each channel can generate an interrupt. Some channels share an interrupt
++  line, some don't, and this changes between SoC versions:
++  * on older SoCs (JZ4740 and below), channel 0 and channel 1 have their
++    own interrupt line; channels 2-7 share the last interrupt line.
++  * On JZ4725B, channel 0 has its own interrupt; channels 1-5 share one
++    interrupt line; the OST uses the last interrupt line.
++  * on newer SoCs (JZ4750 and above), channel 5 has its own interrupt;
++    channels 0-4 and (if eight channels) 6-7 all share one interrupt line;
++    the OST uses the last interrupt line.
 +
-+	/* Reset counter to 0 */
-+	regmap_write(jz4740->map, TCU_REG_TCNTc(pwm->hwpwm), 0);
- 
--	ctrl = JZ_TIMER_CTRL_PRESCALER(prescaler) | JZ_TIMER_CTRL_SRC_EXT |
--		JZ_TIMER_CTRL_PWM_ABBRUPT_SHUTDOWN;
-+	/* Set duty */
-+	regmap_write(jz4740->map, TCU_REG_TDHRc(pwm->hwpwm), duty);
- 
--	jz4740_timer_set_ctrl(pwm->hwpwm, ctrl);
-+	/* Set period */
-+	regmap_write(jz4740->map, TCU_REG_TDFRc(pwm->hwpwm), period);
- 
- 	if (is_enabled)
- 		jz4740_pwm_enable(chip, pwm);
-@@ -134,18 +167,19 @@ static int jz4740_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
- static int jz4740_pwm_set_polarity(struct pwm_chip *chip,
- 		struct pwm_device *pwm, enum pwm_polarity polarity)
- {
--	uint32_t ctrl = jz4740_timer_get_ctrl(pwm->pwm);
-+	struct jz4740_pwm_chip *jz = to_jz4740(chip);
- 
- 	switch (polarity) {
- 	case PWM_POLARITY_NORMAL:
--		ctrl &= ~JZ_TIMER_CTRL_PWM_ACTIVE_LOW;
-+		regmap_update_bits(jz->map, TCU_REG_TCSRc(pwm->hwpwm),
-+				TCU_TCSR_PWM_INITL_HIGH, 0);
- 		break;
- 	case PWM_POLARITY_INVERSED:
--		ctrl |= JZ_TIMER_CTRL_PWM_ACTIVE_LOW;
-+		regmap_update_bits(jz->map, TCU_REG_TCSRc(pwm->hwpwm),
-+			TCU_TCSR_PWM_INITL_HIGH, TCU_TCSR_PWM_INITL_HIGH);
- 		break;
- 	}
- 
--	jz4740_timer_set_ctrl(pwm->hwpwm, ctrl);
- 	return 0;
- }
- 
-@@ -162,16 +196,19 @@ static const struct pwm_ops jz4740_pwm_ops = {
- static int jz4740_pwm_probe(struct platform_device *pdev)
- {
- 	struct jz4740_pwm_chip *jz4740;
-+	struct device *dev = &pdev->dev;
- 
--	jz4740 = devm_kzalloc(&pdev->dev, sizeof(*jz4740), GFP_KERNEL);
-+	jz4740 = devm_kzalloc(dev, sizeof(*jz4740), GFP_KERNEL);
- 	if (!jz4740)
- 		return -ENOMEM;
- 
--	jz4740->clk = devm_clk_get(&pdev->dev, "ext");
--	if (IS_ERR(jz4740->clk))
--		return PTR_ERR(jz4740->clk);
-+	jz4740->map = dev_get_regmap(dev->parent, NULL);
-+	if (!jz4740->map) {
-+		dev_err(dev, "regmap not found\n");
-+		return -EINVAL;
-+	}
- 
--	jz4740->chip.dev = &pdev->dev;
-+	jz4740->chip.dev = dev;
- 	jz4740->chip.ops = &jz4740_pwm_ops;
- 	jz4740->chip.npwm = NUM_PWM;
- 	jz4740->chip.base = -1;
++Implementation
++--------------
++
++The functionalities of the TCU hardware are spread across multiple drivers:
++- clocks/irq/timer: drivers/clocksource/ingenic-timer.c
++- PWM:              drivers/pwm/pwm-jz4740.c
++- watchdog:         drivers/watchdog/jz4740_wdt.c
++- OST:              drivers/clocksource/ingenic-ost.c
++
++Because various functionalities of the TCU that belong to different drivers
++and frameworks can be controlled from the same registers, all of these
++drivers access their registers through the same regmap.
++
++For more information regarding the devicetree bindings of the TCU drivers,
++have a look at Documentation/devicetree/bindings/mfd/ingenic,tcu.txt.
 -- 
 2.11.0
 
