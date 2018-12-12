@@ -2,112 +2,169 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C86D2C04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 13:26:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B25DC04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 13:27:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 824FA2084E
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 13:26:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=snewbury.org.uk header.i=@snewbury.org.uk header.b="AWRkn/gE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 824FA2084E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=snewbury.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id D92652086D
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 13:27:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544621271;
+	bh=2B7aXskNbZLsphD3sXN6L27hv55L23wXj1YGlo6GkB0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=d/q3qJo/Ly3wlvULaNcgXaJzL0lp7uHbkV81h4d45kNxoPZOUcfp6hcRgE69MdwCk
+	 6Tq7SSqNnHSAWLwcJmzgD9ZE6BRim3PqI8RC1FybN2ml4I/LtUxLZHfvYurYqxGjXP
+	 HgmEf55b9qpA5B0Exu1L+iAfMfec9peGr7mEmk2g=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D92652086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727490AbeLLN0s (ORCPT
+        id S1727542AbeLLN1t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 08:26:48 -0500
-Received: from know-smtprelay-omc-11.server.virginmedia.net ([80.0.253.75]:42513
-        "EHLO know-smtprelay-omc-11.server.virginmedia.net"
+        Wed, 12 Dec 2018 08:27:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56304 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726232AbeLLN0s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 08:26:48 -0500
-Received: from mail.snewbury.org.uk ([77.243.189.247])
-        by cmsmtp with ESMTPA
-        id X4XEgQUF7htC0X4XEgNQ7w; Wed, 12 Dec 2018 13:26:45 +0000
-X-Originating-IP: [77.243.189.247]
-X-Authenticated-User: sjnewbury@virginmedia.com
-X-Spam: 0
-X-Authority: v=2.3 cv=KJXu82No c=1 sm=1 tr=0 a=7eWGW6afXjFjJVQJLTi0Pg==:117
- a=7eWGW6afXjFjJVQJLTi0Pg==:17 a=IkcTkHD0fZMA:10 a=2ur7OfE09M0A:10
- a=q4uHb2JfoHBGn-mcJ-AA:9 a=QEXdDO2ut3YA:10
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=snewbury.org.uk;
-         h=content-transfer-encoding:mime-version:x-mailer:content-type
-        :content-type:references:in-reply-to:date:date:from:from:subject
-        :subject:message-id; s=eater; t=1544621203; x=1546435604; bh=kWj
-        mIltsq6B/tjEvq+fx2ux6POJfkYpJ2n2A55mvA1U=; b=AWRkn/gEoFLk/aI5XmA
-        6vGmyfnOITwlEtmcfmaF1125xDgrkNNCBTvQrly2Gxtqv8AuJd4pZ2HrF+nFBHe3
-        qHvcG5BkEFhHpDU1ogHN/ebVd7KfISJ6nlziZgjUkKrW3u02YXlHNygChKMP3iXv
-        PZb32SDzSo1kwtIoQs24fzyo=
-X-Virus-Scanned: amavisd-new at snewbury.org.uk
-Received: from android-a9f8fd57ba190b44.media.snewbury.org.uk (android-a9f8fd57ba190b44.media.snewbury.org.uk [192.168.75.105] (may be forged))
-        (authenticated bits=0)
-        by mail.snewbury.org.uk (8.14.9/8.14.9) with ESMTP id wBCDQfTJ019409
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 12 Dec 2018 13:26:42 GMT
-Message-ID: <1544621233.117529.33.camel@snewbury.org.uk>
-Subject: Re: Can we drop upstream Linux x32 support?
-From:   Steven Newbury <steve@snewbury.org.uk>
-To:     Thorsten Glaser <tg@mirbsd.de>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        macro@linux-mips.org, luto@kernel.org, arnd@arndb.de,
-        dalias@libc.org, s@ecloud.org, catalin.marinas@arm.com,
-        fweimer@redhat.com, glaubitz@physik.fu-berlin.de,
-        christian.brauner@canonical.com, hjl.tools@gmail.com, hpa@zytor.com
-Date:   Wed, 12 Dec 2018 13:27:13 +0000
-In-Reply-To: <Pine.BSM.4.64L.1812121047070.21176@herc.mirbsd.org>
-References: <1544605954.117529.27.camel@snewbury.org.uk>
-         <Pine.BSM.4.64L.1812121047070.21176@herc.mirbsd.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMAE-Envelope: MS4wfJaXkC1sApP7rfLdV/Ed/puU08beWbbcBzwBd2/kmrK/MpN7DuyOB2lfItvQs/AWPxNLDc0zZAimfFgt0s27GhEExWlfH8zN88Hm5C8DVahxCU80zdqt
- 42eELp/sBkG6SdTlET1J5YCQAX8KdRqkbpwhDg0079l2DAcr/Bh30gTzPDmsz0ef7XfQXZkc+qTFDwzwHYwTMoaENvdq9by6eD8oYgnVUPIKJWZqsabwoUlh
- xuikYtxFmdCs3fgwB/abrS9ub7JkFYUeqry8fKMV+FUZ3CN63Ri/ZAjbranCrnFeAPju5nJFKEsFImHtncUFxT4OynnJLHmky5nH2Xz6tVukToJAwx+8Yn3E
- vKDO8HZ02jR1Y1w6X7s4GTvI/09PXCJ76X9IXKMjbZMDIPEep4WV7P88DhJuEmLTeOdCCYKyYsa4VqLemCotCtmou4d4idC+yswFiw7fEqkLjDVE9P6dpawK
- AjeRxENXjzK0HIhf2kS5VO3lHBHwvpsM68NTEw==
+        id S1726232AbeLLN1t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 08:27:49 -0500
+Received: from quaco.ghostprotocols.net (unknown [189.40.101.168])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D806B2084E;
+        Wed, 12 Dec 2018 13:27:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544621268;
+        bh=2B7aXskNbZLsphD3sXN6L27hv55L23wXj1YGlo6GkB0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=H9Lmu/yMgaj5UOIh7qu7lI0+dCn6LKv7uIdSYW8Qn5a/W4xBvxWxI1p/BHGa1Rq9k
+         5y00vAZCbmvfG0kd+OyLu5s+KKIDHYrpPQCsSoUk4MHxAMfxzpLkZjlIwl6P1euQaU
+         q9RjAOmG0fvUdPknMw6/sF2foPyw3jI9l8a7D1kE=
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id 182854042C; Wed, 12 Dec 2018 10:27:43 -0300 (-03)
+Date:   Wed, 12 Dec 2018 10:27:43 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Song Liu <songliubraving@fb.com>, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, ast@kernel.org, daniel@iogearbox.net,
+        kernel-team@fb.com, Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCH v3 perf, bpf-next 1/4] perf, bpf: Introduce
+ PERF_RECORD_BPF_EVENT
+Message-ID: <20181212132742.GB21027@kernel.org>
+References: <20181211233351.4036381-1-songliubraving@fb.com>
+ <20181211233351.4036381-2-songliubraving@fb.com>
+ <20181212131549.GZ5289@hirez.programming.kicks-ass.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181212131549.GZ5289@hirez.programming.kicks-ass.net>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA256
+Em Wed, Dec 12, 2018 at 02:15:49PM +0100, Peter Zijlstra escreveu:
+> On Tue, Dec 11, 2018 at 03:33:47PM -0800, Song Liu wrote:
+> > For better performance analysis of BPF programs, this patch introduces
+> > PERF_RECORD_BPF_EVENT, a new perf_event_type that exposes BPF program
+> > load/unload information to user space.
+> > 
+> > Each BPF program may contain up to BPF_MAX_SUBPROGS (256) sub programs.
+> > The following example shows kernel symbols for a BPF program with 7
+> > sub programs:
+> > 
+> >     ffffffffa0257cf9 t bpf_prog_b07ccb89267cf242_F
+> >     ffffffffa02592e1 t bpf_prog_2dcecc18072623fc_F
+> >     ffffffffa025b0e9 t bpf_prog_bb7a405ebaec5d5c_F
+> >     ffffffffa025dd2c t bpf_prog_a7540d4a39ec1fc7_F
+> >     ffffffffa025fcca t bpf_prog_05762d4ade0e3737_F
+> >     ffffffffa026108f t bpf_prog_db4bd11e35df90d4_F
+> >     ffffffffa0263f00 t bpf_prog_89d64e4abf0f0126_F
+> >     ffffffffa0257cf9 t bpf_prog_ae31629322c4b018__dummy_tracepoi
+> 
+> Doesn't BPF have enough information to generate 'saner' names? Going by
+> the thing below, these sub-progs are actually functions, right?
 
-On Wed, 2018-12-12 at 10:48 +0000, Thorsten Glaser wrote:
-> Steven Newbury dixit:
+Yeah, this looks just like a symbol table, albeit just with functions,
+so far.
+ 
+> >         /*
+> >          * Record different types of bpf events:
+> >          *  enum perf_bpf_event_type {
+> >          *     PERF_BPF_EVENT_UNKNOWN           = 0,
+> >          *     PERF_BPF_EVENT_PROG_LOAD         = 1,
+> >          *     PERF_BPF_EVENT_PROG_UNLOAD       = 2,
+> >          *  };
+> >          *
+> >          * struct {
+> >          *      struct perf_event_header header;
+> >          *      u32                             type;
+> >          *      u32                             flags;
+> >          *      u32                             id; // prog_id or other id
+> >          *      u32                             sub_id; // subprog id
+> >          *
+> >          *      // for bpf_prog types, bpf prog or subprog
+> >          *      u8                              tag[BPF_TAG_SIZE];
+> >          *      u64                             addr;
+> >          *      u64                             len;
+> >          *      char                            name[];
+> >          *      struct sample_id                sample_id;
+> >          * };
+> >          */
 > 
-> >I can't help but wonder if it wouldn't make more sense to drop x86
-> >support from long mode than x32.  AMD64 x86 support was always
-> intended
+> Isn't this mixing two different things (poorly)? The kallsym update and
+> the BPF load/unload ?
 > 
-> Do you mean i386?
+> And while this tracks the bpf kallsyms, it does not do all kallsyms.
 > 
-> x86 = { i386, x32, amd64 }
-> 
-Yes, sorry to be unclear.  I mean the "IA32 ISA".
+> .... Oooh, I see the problem, everybody is doing their own custom
+> kallsym_{add,del}() thing, instead of having that in generic code :-(
+ 
+> This, for example, doesn't track module load/unload nor ftrace
+> trampolines, even though both affect kallsyms.
 
-> No, please don’t. I use i386 as “companion architecture” to x32,
-> only the kernel and actually memory-hungry things (qemu) are
-> amd64 binaries on my system, and this works very well.
+So you think the best would have to be a PERF_RECORD_ that just states
+that code has been loaded at range (addr, len). I.e. much like
+PERF_RECORD_MMAP does, just for userspace? Then it could be used by BPF
+and any other kernel facility like the ones you described?
+
+There would be an area that would be used by each of these facilities to
+figure out further info, like we use the mmap->name to go and get the
+symbol table from ELF files, etc, but BPF could use for their specific
+stuff?
+
+The above is almost like PERF_RECORD_MMAP (PERF_BPF_EVENT_PROG_LOAD) +
+PERF_RECORD_MUNMAP(PERF_BPF_EVENT_PROG_UNLOAD) in one event, with this
+'type' thing allowing for more stuff to be put in later, I guess.
+
+- Arnaldo
+ 
+> > +void perf_event_bpf_event_prog(enum perf_bpf_event_type type,
+> > +			       struct bpf_prog *prog)
+> > +{
+> > +	if (!atomic_read(&nr_bpf_events))
+> > +		return;
+> > +
+> > +	if (type != PERF_BPF_EVENT_PROG_LOAD &&
+> > +	    type != PERF_BPF_EVENT_PROG_UNLOAD)
+> > +		return;
+> > +
+> > +	if (prog->aux->func_cnt == 0) {
+> > +		perf_event_bpf_event_subprog(type, prog,
+> > +					     prog->aux->id, 0);
+> > +	} else {
+> > +		int i;
+> > +
+> > +		for (i = 0; i < prog->aux->func_cnt; i++)
+> > +			perf_event_bpf_event_subprog(type, prog->aux->func[i],
+> > +						     prog->aux->id, i);
+> > +	}
+> > +}
 > 
-Well, if you have amd64 qemu anyway, why can't you use binfmt_misc with
-qemu-user to simulate i386?  I'm just saying that makes more sense to
-me than dropping x32.
------BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEEWa1B4K0Hk12RDstE+lAa6BzrmeAFAlwRDLIACgkQ+lAa6Bzr
-meB2FQgAxF85pmFK90op1tY/lPKFqnQZdbx1zq1gPQVS1N30Kqt+FTJYSi0HNfPd
-Q0l1TVx7BCF2VFzqQkLWPwtjeK8OP8SY9D8ShbYo2/Ul0e0tfc2L9+YJpa3QCzvE
-p3G6SE92+wZZZlPoT+bVGj4heRUrCzUi77/bTIRO4JkSelJFDSZEVoZqTabYuveh
-lBtbDZ6WvFxAGZg3fSjpZwq31C0cV/W7S0FJhutb+rAhIpoL4jHmddnhUSq+mM0+
-lHNQ3O8WmbzR8FY6lezhhmBir29iW/2gJ/+Z5kSSdBV3buk6O8LB2WbFORhpGSYb
-pWb2drFGVZeQhuOrboG95ZQ1d+4YnQ==
-=skLP
------END PGP SIGNATURE-----
+-- 
 
+- Arnaldo
