@@ -2,159 +2,205 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71D82C04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 08:15:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8FA6C04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 08:15:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B6FC2084E
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 08:15:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A18412084E
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 08:15:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="hIO7DCyq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B6FC2084E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="Cv8OCing"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A18412084E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726692AbeLLIPR (ORCPT
+        id S1726730AbeLLIPq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 03:15:17 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:37352 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726317AbeLLIPR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 03:15:17 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wBC8E7m8062503;
-        Wed, 12 Dec 2018 08:14:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=HnvVZRmb5+psxw23jqLmMfTyU8SDp2eubhdeSVglLAw=;
- b=hIO7DCyqw+Ju5Y4vzt8Yxssm1uHVMPtKqBdX8LZn97mvjYE81AJJ0OUoBDLnLjjMdJBM
- W5pPLNHcs2Li8HNxRyCRjh/m6QRfBs+Hqdmj18vsWkOyx9r4h3AeJtXfLnurWqin7faU
- mZybh2gXrc1FntZtNH2+J78TWz6xUXbL0FC3oMn+o5VZhcy0YCUPJ7FZm9JeVFdepixu
- dz5JrnyuZBI321iDUh073PUHrkjbk6C8Coc6YvH29NoXcmXMGJG7bI07McQDN7xsvEe5
- x9vPVLKtUrlN91rssqeiHWkRuKWPm+w8Wj3qhMJho8tKqPX6y3QgwFxhcPnMggG7JPpV Pg== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2130.oracle.com with ESMTP id 2p85cu8cs4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 12 Dec 2018 08:14:13 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wBC8EBjh000621
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 12 Dec 2018 08:14:11 GMT
-Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wBC8EAco004482;
-        Wed, 12 Dec 2018 08:14:10 GMT
-Received: from [10.191.13.139] (/10.191.13.139)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 12 Dec 2018 00:14:10 -0800
-Subject: Re: [PATCH] treewide: replace RETPOLINE with CONFIG_RETPOLINE
-To:     WANG Chao <chao.wang@ucloud.cn>, linux-kernel@vger.kernel.org
-Cc:     stable@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Borislav Petkov <bp@suse.de>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        srinivas.eeda@oracle.com
-References: <20181210163725.95977-1-chao.wang@ucloud.cn>
-From:   Zhenzhong Duan <zhenzhong.duan@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <aaa4267a-c113-222e-157e-309ca9aa7be5@oracle.com>
-Date:   Wed, 12 Dec 2018 16:14:05 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
-MIME-Version: 1.0
-In-Reply-To: <20181210163725.95977-1-chao.wang@ucloud.cn>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+        Wed, 12 Dec 2018 03:15:46 -0500
+Received: from mail-eopbgr30074.outbound.protection.outlook.com ([40.107.3.74]:46912
+        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726317AbeLLIPq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 03:15:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3j577UFQm6tUkBFG7pknwb2vjdGtSlVoBDgIFZORg1A=;
+ b=Cv8OCinglZrgY8X6e44EZ+35/1O972qsZpDbXgz9ttbiUwsDLNYCW/xGPKbqNonPbZd5Yvdt1hIyNcN8q+IiDTio/3ehjkdZlVEC7A5mdjEnXV8OtYmWFpDVfEio6ucxnOUlT1uD58lKBZfhjS/6UfpKI2k8akIHsqexFQzVZvg=
+Received: from HE1PR0402MB3323.eurprd04.prod.outlook.com (10.167.125.20) by
+ HE1PR0402MB2731.eurprd04.prod.outlook.com (10.175.35.17) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1404.20; Wed, 12 Dec 2018 08:15:41 +0000
+Received: from HE1PR0402MB3323.eurprd04.prod.outlook.com
+ ([fe80::f95d:89f3:77e0:b668]) by HE1PR0402MB3323.eurprd04.prod.outlook.com
+ ([fe80::f95d:89f3:77e0:b668%5]) with mapi id 15.20.1425.016; Wed, 12 Dec 2018
+ 08:15:40 +0000
+From:   Pankaj Bansal <pankaj.bansal@nxp.com>
+To:     Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "boris.brezillon@bootlin.com" <boris.brezillon@bootlin.com>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+CC:     "robh@kernel.org" <robh@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "frieder.schrempf@kontron.de" <frieder.schrempf@kontron.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
+Subject: RE: [PATCH v5 3/5] arm64: dts: lx2160a: add FlexSPI node property
+Thread-Topic: [PATCH v5 3/5] arm64: dts: lx2160a: add FlexSPI node property
+Thread-Index: AQHUfZ2C+fi/K12gmEKCWnU9UR10jKV66icQ
+Date:   Wed, 12 Dec 2018 08:15:40 +0000
+Message-ID: <HE1PR0402MB332315D53C681D842865B6B5F1A70@HE1PR0402MB3323.eurprd04.prod.outlook.com>
+References: <1542366701-16065-1-git-send-email-yogeshnarayan.gaur@nxp.com>
+ <1542366701-16065-4-git-send-email-yogeshnarayan.gaur@nxp.com>
+In-Reply-To: <1542366701-16065-4-git-send-email-yogeshnarayan.gaur@nxp.com>
+Accept-Language: en-US
 Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9104 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=18 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1812120073
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=pankaj.bansal@nxp.com; 
+x-originating-ip: [92.121.36.197]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;HE1PR0402MB2731;6:pUNqSCbMf1R69UjYQ3NyPk0uxYDaTQLezW890B0p0DyNf5yNrHU/EuC/wEw6mM583v+gfZw8V3IaViuDLx8e+DO2tStbD8U0rKBke0AmhAg1wAl6Px5mugfTQG2QUNBxjVDH7wAwknk85ub92QKz37eDfSDJM8Nrx8TkDDolGCVv5AtkLWxzAaw2Fd79OyQi5R3HvC1s7Kaapn+rXwPwkVCgTVoPkdoR2i8D7Q6lI1fjtTI5qeS4OmCKbHmv8lweWbblKzz2P4C+EUW+2P4tKN5QgOQoJaBUnET5+Vxpub9z7XS7L+6XK4u1ipAbQLc43FU3qT/9x+5oZXHbfiPYECGIs9hPmAdZ6AE1/pLfVHGg/28in4vFdpgK+6kGZxVLdOdL8z/lTcpT+2KI0XGYEaUvjYTmwovtNi0/7dET9wqTDEZtnsWduChkpTP0ElpbFGSKkYMM6XG7gOBIOwLCiw==;5:xuhDJlE8zIowYiKOxcPP94hPq2pCCx0KKBojWVPemahjpyIx2xbfm+lAVq5kpm68xAB8d4qazPzb3OjSTSoG5mkm/7uC63dXlOoPYQQXO2qz4U4xSWQvC2V3d/F35h/AMZDUcF8cLDYFVGNBIShplHmZ/i5Pb1wlq/HmeHL3JRM=;7:4ctazt+uQU8hsM3inNNm0pRnnpsbLQyuOoWSbJzg+hGhAhcgFHQjvU7rxTb6NE0u37x9gK0yD+k4+1tghXWtZnSyioiYSmS80EaSLapTfvtoAFyC+VpDyVB04Ug06P9lnrbqJ1bkfShrq1dJxBvAJQ==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 8dfd9127-5f36-4b35-ef2a-08d6600a0168
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:HE1PR0402MB2731;
+x-ms-traffictypediagnostic: HE1PR0402MB2731:
+x-microsoft-antispam-prvs: <HE1PR0402MB2731832475A1303D736C114BF1A70@HE1PR0402MB2731.eurprd04.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230017)(999002)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3231472)(944501520)(52105112)(3002001)(6055026)(148016)(149066)(150057)(6041310)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:HE1PR0402MB2731;BCL:0;PCL:0;RULEID:;SRVR:HE1PR0402MB2731;
+x-forefront-prvs: 0884AAA693
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(396003)(366004)(346002)(376002)(136003)(13464003)(189003)(199004)(256004)(44832011)(8676002)(71190400001)(33656002)(2501003)(486006)(66066001)(97736004)(14444005)(305945005)(106356001)(6506007)(99286004)(53546011)(7736002)(102836004)(81156014)(81166006)(26005)(74316002)(7696005)(8936002)(110136005)(316002)(68736007)(54906003)(476003)(186003)(11346002)(446003)(5660300001)(14454004)(9686003)(2906002)(478600001)(25786009)(39060400002)(7416002)(76176011)(6246003)(6436002)(55016002)(105586002)(4326008)(86362001)(2201001)(3846002)(6116002)(229853002)(71200400001)(53936002);DIR:OUT;SFP:1101;SCL:1;SRVR:HE1PR0402MB2731;H:HE1PR0402MB3323.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: WFRs7y80SS6ykAzJXyIpFLP0lH6Eu+rvzx0XM32Pfe5q2JdU54WrLFUkIez7ZhS95SP9//POGCsZXJvLxMj1ZLgduDGHVRBCiQ4JhQu2Cr0W60i1o6czYYL/4o5wLHNg3GjRtz0GU3Wxh8U83kO/r4JIJd+HGfZwVmbDgjxjvBMWCm+v3c6/bVzUxA1mRt4v+I/n7R1RamMQ/TkeJsES7d7tLIgAqOEATqtn5EQYL1foq3EHrBKh4g2dYGxtEFhflOFkj/B/5NvlorwLYlqxVFHvrtB7py7QR50g9QdpHOuFYhSaOD1wthEHPZKNLQJ6
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8dfd9127-5f36-4b35-ef2a-08d6600a0168
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Dec 2018 08:15:40.7516
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR0402MB2731
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-On 2018/12/11 0:37, WANG Chao wrote:
-> Since commit 4cd24de3a098 ("x86/retpoline: Make CONFIG_RETPOLINE depend
-> on compiler support"), RETPOLINE has been replaced by CONFIG_RETPOLINE.
->
-> Fixes: 4cd24de3a098 ("x86/retpoline: Make CONFIG_RETPOLINE depend on compiler support")
-> Signed-off-by: WANG Chao <chao.wang@ucloud.cn>
+
+> -----Original Message-----
+> From: devicetree-owner@vger.kernel.org [mailto:devicetree-
+> owner@vger.kernel.org] On Behalf Of Yogesh Narayan Gaur
+> Sent: Friday, November 16, 2018 4:44 PM
+> To: linux-mtd@lists.infradead.org; boris.brezillon@bootlin.com;
+> marek.vasut@gmail.com; broonie@kernel.org; linux-spi@vger.kernel.org;
+> devicetree@vger.kernel.org
+> Cc: robh@kernel.org; mark.rutland@arm.com; shawnguo@kernel.org; linux-
+> arm-kernel@lists.infradead.org; computersforpeace@gmail.com;
+> frieder.schrempf@kontron.de; linux-kernel@vger.kernel.org; Yogesh Narayan
+> Gaur <yogeshnarayan.gaur@nxp.com>
+> Subject: [PATCH v5 3/5] arm64: dts: lx2160a: add FlexSPI node property
+>=20
+> Add fspi node property for LX2160A SoC for FlexSPI driver.
+> Property added for the FlexSPI controller and for the connected slave dev=
+ice for
+> the LX2160ARDB target.
+> This is having two SPI-NOR flash device, mt35xu512aba, connected at CS0 a=
+nd
+> CS1.
+>=20
+> Signed-off-by: Yogesh Gaur <yogeshnarayan.gaur@nxp.com>
 > ---
->   arch/x86/kernel/cpu/bugs.c   | 2 +-
->   include/linux/compiler-gcc.h | 2 +-
->   include/linux/module.h       | 2 +-
->   scripts/mod/modpost.c        | 2 +-
->   4 files changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-> index 500278f5308e..e8abe3f6c10e 100644
-> --- a/arch/x86/kernel/cpu/bugs.c
-> +++ b/arch/x86/kernel/cpu/bugs.c
-> @@ -213,7 +213,7 @@ static enum spectre_v2_mitigation spectre_v2_enabled __ro_after_init =
->   static enum spectre_v2_user_mitigation spectre_v2_user __ro_after_init =
->   	SPECTRE_V2_USER_NONE;
->   
-> -#ifdef RETPOLINE
-> +#ifdef CONFIG_RETPOLINE
->   static bool spectre_v2_bad_module;
->   
->   bool retpoline_module_ok(bool has_retpoline)
-> diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
-> index 2010493e1040..977ddf2774f9 100644
-> --- a/include/linux/compiler-gcc.h
-> +++ b/include/linux/compiler-gcc.h
-> @@ -68,7 +68,7 @@
->    */
->   #define uninitialized_var(x) x = x
->   
-> -#ifdef RETPOLINE
-> +#ifdef CONFIG_RETPOLINE
->   #define __noretpoline __attribute__((__indirect_branch__("keep")))
->   #endif
->   
-> diff --git a/include/linux/module.h b/include/linux/module.h
-> index fce6b4335e36..0c575f51fe57 100644
-> --- a/include/linux/module.h
-> +++ b/include/linux/module.h
-> @@ -817,7 +817,7 @@ static inline void module_bug_finalize(const Elf_Ehdr *hdr,
->   static inline void module_bug_cleanup(struct module *mod) {}
->   #endif	/* CONFIG_GENERIC_BUG */
->   
-> -#ifdef RETPOLINE
-> +#ifdef CONFIG_RETPOLINE
->   extern bool retpoline_module_ok(bool has_retpoline);
->   #else
->   static inline bool retpoline_module_ok(bool has_retpoline)
-> diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
-> index 0d998c54564d..5a5b3780456f 100644
-> --- a/scripts/mod/modpost.c
-> +++ b/scripts/mod/modpost.c
-> @@ -2157,7 +2157,7 @@ static void add_intree_flag(struct buffer *b, int is_intree)
->   /* Cannot check for assembler */
->   static void add_retpoline(struct buffer *b)
->   {
-> -	buf_printf(b, "\n#ifdef RETPOLINE\n");
-> +	buf_printf(b, "\n#ifdef CONFIG_RETPOLINE\n");
->   	buf_printf(b, "MODULE_INFO(retpoline, \"Y\");\n");
->   	buf_printf(b, "#endif\n");
->   }
+> Changes for v5:
+> - None
+> Changes for v4:
+> - Incorporated Rob review comments.
+> Changes for v3:
+> - None.
+> Changes for v2:
+> - - Incorporated Shawn review comments.
+> ---
+>  arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts | 22
+> ++++++++++++++++++++++
+>  arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi    | 13 +++++++++++++
+>  2 files changed, 35 insertions(+)
+>=20
+> diff --git a/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
+> b/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
+> index 1483071..3b20c97 100644
+> --- a/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
+> +++ b/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
+> @@ -35,6 +35,28 @@
+>  	status =3D "okay";
+>  };
+>=20
+> +&fspi {
+> +	status =3D "okay";
+> +
+> +	mt35xu512aba0: flash@0 {
+> +		#address-cells =3D <1>;
+> +		#size-cells =3D <1>;
+> +		compatible =3D "spansion,m25p80";
+> +		m25p,fast-read;
+> +		spi-max-frequency =3D <20000000>;
 
-I have no idea why I have missed these chunks. Thank you for fixing.
+The SPI flash supports 50MHz frequency. Please update to 50Mhz
 
-Reviewed-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
+> +		reg =3D <0>;
+> +	};
+> +
+> +	mt35xu512aba1: flash@1 {
+> +		#address-cells =3D <1>;
+> +		#size-cells =3D <1>;
+> +		compatible =3D "spansion,m25p80";
+> +		m25p,fast-read;
+> +		spi-max-frequency =3D <20000000>;
+> +		reg =3D <1>;
+> +	};
+> +};
+> +
+>  &i2c0 {
+>  	status =3D "okay";
+>  	i2c-mux@77 {
+> diff --git a/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
+> b/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
+> index c758268..5d0025a 100644
+> --- a/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
+> @@ -698,5 +698,18 @@
+>  			interrupts =3D <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>;
+>  			timeout-sec =3D <30>;
+>  		};
+> +
+> +		fspi: spi@20c0000 {
+> +			compatible =3D "nxp,lx2160a-fspi";
+> +			#address-cells =3D <1>;
+> +			#size-cells =3D <0>;
+> +			reg =3D <0x0 0x20c0000 0x0 0x10000>,
+> +				<0x0 0x20000000 0x0 0x10000000>;
+> +			reg-names =3D "fspi_base", "fspi_mmap";
+> +			interrupts =3D <0 25 0x4>; /* Level high type */
+> +			clocks =3D <&clockgen 4 3>, <&clockgen 4 3>;
+> +			clock-names =3D "fspi_en", "fspi";
+> +			status =3D "disabled";
+> +		};
+>  	};
+>  };
+> --
+> 2.7.4
 
