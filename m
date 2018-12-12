@@ -3,45 +3,45 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C85FC65BAE
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80F9DC65BAF
 	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 03:11:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CDA420873
+	by mail.kernel.org (Postfix) with ESMTP id 50A8220989
 	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 03:11:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CDA420873
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50A8220989
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726387AbeLLDLe (ORCPT
+        id S1726410AbeLLDLf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 22:11:34 -0500
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:52699 "EHLO
+        Tue, 11 Dec 2018 22:11:35 -0500
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:51216 "EHLO
         heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726330AbeLLDLd (ORCPT
+        with ESMTP id S1726211AbeLLDLd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 11 Dec 2018 22:11:33 -0500
 X-IronPort-AV: E=Sophos;i="5.56,343,1539619200"; 
-   d="scan'208";a="49566319"
+   d="scan'208";a="49566318"
 Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
   by heian.cn.fujitsu.com with ESMTP; 12 Dec 2018 11:11:28 +0800
 Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
-        by cn.fujitsu.com (Postfix) with ESMTP id 5A50F4B734DF;
-        Wed, 12 Dec 2018 11:11:25 +0800 (CST)
+        by cn.fujitsu.com (Postfix) with ESMTP id CB8BA4B75BD3;
+        Wed, 12 Dec 2018 11:11:28 +0800 (CST)
 Received: from localhost.local (10.167.225.56) by
  G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Wed, 12 Dec 2018 11:11:30 +0800
+ (TLS) id 14.3.408.0; Wed, 12 Dec 2018 11:11:33 +0800
 From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
 To:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>, <bp@alien8.de>,
         <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>,
         <keescook@chromium.org>, <bhe@redhat.com>, <msys.mizuma@gmail.com>
 CC:     <indou.takao@jp.fujitsu.com>, <caoj.fnst@cn.fujitsu.com>,
         <fanc.fnst@cn.fujitsu.com>
-Subject: [PATCH v13 1/6] x86/boot: Introduce kstrtoull() to boot directory instead of simple_strtoull()
-Date:   Wed, 12 Dec 2018 11:10:48 +0800
-Message-ID: <20181212031053.1815-2-fanc.fnst@cn.fujitsu.com>
+Subject: [PATCH v13 3/6] x86/boot: Introduce efi_get_rsdp_addr() to find RSDP from EFI table
+Date:   Wed, 12 Dec 2018 11:10:50 +0800
+Message-ID: <20181212031053.1815-4-fanc.fnst@cn.fujitsu.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181212031053.1815-1-fanc.fnst@cn.fujitsu.com>
 References: <20181212031053.1815-1-fanc.fnst@cn.fujitsu.com>
@@ -49,7 +49,7 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 7BIT
 Content-Type:   text/plain; charset=US-ASCII
 X-Originating-IP: [10.167.225.56]
-X-yoursite-MailScanner-ID: 5A50F4B734DF.A9E38
+X-yoursite-MailScanner-ID: CB8BA4B75BD3.AB884
 X-yoursite-MailScanner: Found to be clean
 X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
@@ -57,180 +57,105 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Introduce kstrtoull() from lib/kstrtox.c to boot directory so that code
-in boot/ can use kstrtoull() and the old simple_strtoull() can be
-replaced.
+Memory information in SRAT is necessary to fix the conflict between
+KASLR and memory-hotremove. So RSDP and SRAT should be parsed.
+
+When booting form KEXEC/EFI/BIOS, the methods to compute RSDP
+are different. When booting from EFI, EFI table points to RSDP.
+So parse the EFI table and find the RSDP.
 
 Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
 ---
- arch/x86/boot/string.c | 137 +++++++++++++++++++++++++++++++++++++++++
- arch/x86/boot/string.h |   2 +
- 2 files changed, 139 insertions(+)
+ arch/x86/boot/compressed/acpi.c | 79 +++++++++++++++++++++++++++++++++
+ 1 file changed, 79 insertions(+)
 
-diff --git a/arch/x86/boot/string.c b/arch/x86/boot/string.c
-index c4428a176973..e02405f20f98 100644
---- a/arch/x86/boot/string.c
-+++ b/arch/x86/boot/string.c
-@@ -12,7 +12,10 @@
-  * Very basic string functions
-  */
- 
-+#define _LINUX_CTYPE_H
- #include <linux/types.h>
-+#include <linux/kernel.h>
-+#include <linux/errno.h>
- #include <asm/asm.h>
- #include "ctype.h"
- #include "string.h"
-@@ -187,3 +190,137 @@ char *strchr(const char *s, int c)
- 			return NULL;
- 	return (char *)s;
+diff --git a/arch/x86/boot/compressed/acpi.c b/arch/x86/boot/compressed/acpi.c
+index cad15686f82c..c96008712ec9 100644
+--- a/arch/x86/boot/compressed/acpi.c
++++ b/arch/x86/boot/compressed/acpi.c
+@@ -28,3 +28,82 @@ static acpi_physical_address get_acpi_rsdp(void)
+ 	return 0;
+ #endif
  }
 +
-+static inline u64 div_u64_rem(u64 dividend, u32 divisor, u32 *remainder)
++/* Search EFI table for RSDP. */
++static acpi_physical_address efi_get_rsdp_addr(void)
 +{
-+	union {
-+		u64 v64;
-+		u32 v32[2];
-+	} d = { dividend };
-+	u32 upper;
++#ifdef CONFIG_EFI
++	acpi_physical_address rsdp_addr = 0;
++	efi_system_table_t *systab;
++	struct efi_info *e;
++	bool efi_64;
++	char *sig;
++	int size;
++	int i;
 +
-+	upper = d.v32[1];
-+	d.v32[1] = 0;
-+	if (upper >= divisor) {
-+		d.v32[1] = upper / divisor;
-+		upper %= divisor;
++	e = &boot_params->efi_info;
++	sig = (char *)&e->efi_loader_signature;
++
++	if (!strncmp(sig, EFI64_LOADER_SIGNATURE, 4))
++		efi_64 = true;
++	else if (!strncmp(sig, EFI32_LOADER_SIGNATURE, 4))
++		efi_64 = false;
++	else {
++		debug_putstr("Wrong EFI loader signature.\n");
++		return 0;
 +	}
-+	asm ("divl %2" : "=a" (d.v32[0]), "=d" (*remainder) :
-+		"rm" (divisor), "0" (d.v32[0]), "1" (upper));
-+	return d.v64;
-+}
 +
-+static inline u64 div_u64(u64 dividend, u32 divisor)
-+{
-+	u32 remainder;
-+	return div_u64_rem(dividend, divisor, &remainder);
-+}
-+
-+static inline char _tolower(const char c)
-+{
-+	return c | 0x20;
-+}
-+
-+const char *_parse_integer_fixup_radix(const char *s, unsigned int *base)
-+{
-+	if (*base == 0) {
-+		if (s[0] == '0') {
-+			if (_tolower(s[1]) == 'x' && isxdigit(s[2]))
-+				*base = 16;
-+			else
-+				*base = 8;
-+		} else
-+			*base = 10;
++	/* Get systab from boot params. Based on efi_init(). */
++#ifdef CONFIG_X86_64
++	systab = (efi_system_table_t *)(e->efi_systab | ((__u64)e->efi_systab_hi<<32));
++#else
++	if (e->efi_systab_hi || e->efi_memmap_hi) {
++		debug_putstr("Error getting RSDP address: EFI system table located above 4GB.\n");
++		return 0;
 +	}
-+	if (*base == 16 && s[0] == '0' && _tolower(s[1]) == 'x')
-+		s += 2;
-+	return s;
-+}
++	systab = (efi_system_table_t *)e->efi_systab;
++#endif
 +
-+/*
-+ * Convert non-negative integer string representation in explicitly given radix
-+ * to an integer.
-+ * Return number of characters consumed maybe or-ed with overflow bit.
-+ * If overflow occurs, result integer (incorrect) is still returned.
-+ *
-+ * Don't you dare use this function.
-+ */
-+unsigned int _parse_integer(const char *s, unsigned int base, unsigned long long *p)
-+{
-+	unsigned long long res;
-+	unsigned int rv;
++	if (!systab)
++		return 0;
 +
-+	res = 0;
-+	rv = 0;
-+	while (1) {
-+		unsigned int c = *s;
-+		unsigned int lc = c | 0x20; /* don't tolower() this line */
-+		unsigned int val;
++	/*
++	 * Get EFI tables from systab. Based on efi_config_init() and
++	 * efi_config_parse_tables().
++	 */
++	size = efi_64 ? sizeof(efi_config_table_64_t) :
++			sizeof(efi_config_table_32_t);
 +
-+		if ('0' <= c && c <= '9')
-+			val = c - '0';
-+		else if ('a' <= lc && lc <= 'f')
-+			val = lc - 'a' + 10;
-+		else
-+			break;
++	for (i = 0; i < systab->nr_tables; i++) {
++		void *config_tables;
++		unsigned long table;
++		efi_guid_t guid;
 +
-+		if (val >= base)
-+			break;
-+		/*
-+		 * Check for overflow only if we are within range of
-+		 * it in the max base we support (16)
-+		 */
-+		if (unlikely(res & (~0ull << 60))) {
-+			if (res > div_u64(ULLONG_MAX - val, base))
-+				rv |= KSTRTOX_OVERFLOW;
++		config_tables = (void *)(systab->tables + size * i);
++		if (efi_64) {
++			efi_config_table_64_t *tmp_table;
++
++			tmp_table = (efi_config_table_64_t *)config_tables;
++			guid = tmp_table->guid;
++			table = tmp_table->table;
++
++			if (!IS_ENABLED(CONFIG_X86_64) && table >> 32) {
++				debug_putstr("Error getting RSDP address: EFI system table located above 4GB.\n");
++				return 0;
++			}
++		} else {
++			efi_config_table_32_t *tmp_table;
++
++			tmp_table = (efi_config_table_32_t *)config_tables;
++			guid = tmp_table->guid;
++			table = tmp_table->table;
 +		}
-+		res = res * base + val;
-+		rv++;
-+		s++;
++
++		if (!(efi_guidcmp(guid, ACPI_TABLE_GUID)))
++			rsdp_addr = (acpi_physical_address)table;
++		else if (!(efi_guidcmp(guid, ACPI_20_TABLE_GUID)))
++			return (acpi_physical_address)table;
 +	}
-+	*p = res;
-+	return rv;
++	return rsdp_addr;
++#endif
 +}
-+
-+static int _kstrtoull(const char *s, unsigned int base, unsigned long long *res)
-+{
-+	unsigned long long _res;
-+	unsigned int rv;
-+
-+	s = _parse_integer_fixup_radix(s, &base);
-+	rv = _parse_integer(s, base, &_res);
-+	if (rv & KSTRTOX_OVERFLOW)
-+		return -ERANGE;
-+	if (rv == 0)
-+		return -EINVAL;
-+	s += rv;
-+	if (*s == '\n')
-+		s++;
-+	if (*s)
-+		return -EINVAL;
-+	*res = _res;
-+	return 0;
-+}
-+
-+/**
-+ * kstrtoull - convert a string to an unsigned long long
-+ * @s: The start of the string. The string must be null-terminated, and may also
-+ *  include a single newline before its terminating null. The first character
-+ *  may also be a plus sign, but not a minus sign.
-+ * @base: The number base to use. The maximum supported base is 16. If base is
-+ *  given as 0, then the base of the string is automatically detected with the
-+ *  conventional semantics - If it begins with 0x the number will be parsed as a
-+ *  hexadecimal (case insensitive), if it otherwise begins with 0, it will be
-+ *  parsed as an octal number. Otherwise it will be parsed as a decimal.
-+ * @res: Where to write the result of the conversion on success.
-+ *
-+ * Returns 0 on success, -ERANGE on overflow and -EINVAL on parsing error.
-+ * Used as a replacement for the obsolete simple_strtoull. Return code must
-+ * be checked.
-+ */
-+int kstrtoull(const char *s, unsigned int base, unsigned long long *res)
-+{
-+	if (s[0] == '+')
-+		s++;
-+	return _kstrtoull(s, base, res);
-+}
-diff --git a/arch/x86/boot/string.h b/arch/x86/boot/string.h
-index 3d78e27077f4..171007c99acc 100644
---- a/arch/x86/boot/string.h
-+++ b/arch/x86/boot/string.h
-@@ -29,4 +29,6 @@ extern unsigned int atou(const char *s);
- extern unsigned long long simple_strtoull(const char *cp, char **endp,
- 					  unsigned int base);
- 
-+int kstrtoull(const char *s, unsigned int base, unsigned long long *res);
-+#define KSTRTOX_OVERFLOW       (1U << 31)
- #endif /* BOOT_STRING_H */
 -- 
 2.19.2
 
