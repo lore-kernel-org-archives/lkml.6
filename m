@@ -2,131 +2,169 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD6E6C65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 22:48:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A7B9C65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 22:49:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7431620645
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 22:48:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="qu85rfIS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7431620645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 3202A20851
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 22:49:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3202A20851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728456AbeLLWsk (ORCPT
+        id S1728479AbeLLWtk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 17:48:40 -0500
-Received: from ozlabs.org ([203.11.71.1]:45681 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727131AbeLLWsk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 17:48:40 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43FX6D6Ybwz9s3Z;
-        Thu, 13 Dec 2018 09:48:36 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1544654917;
-        bh=NBY2y1Hxw7IpLEk/ATahfgOfGql+hQD79vcfsc7jPFs=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=qu85rfISqcUx+lOARfAH4wCPdcYkJVbl21YNZckHno/B8IS8BXgOIwhQaOzKpvPIG
-         PGFEqYxHv2DoC/CE54qyYBiUZo/3bWXS4MLxu+lp4FnSq/gH2kA5HQ4JwqME799IzY
-         ZsNXFnfIQ09JMkHkzz5Mp2jRLARJYX8Lvrw7mFmSBq/HY9GWoApsFCfH/6O2rLIl4N
-         VmNkmdROZx5trUKV39Xp0gtMrDCaI83iXwqqNdjPUAP5GntdFkcqAb323c6ebum1a1
-         M/coFE4VG1+zBJbX8SXzSMVbVf/pZX3QcBGlhiOxsqjnkMHB/DbJWnPjz8AoWPOFl3
-         hCtKVf6kOgz+g==
-Date:   Thu, 13 Dec 2018 09:48:20 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc:     Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Networking <netdev@vger.kernel.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: Signed-off-by missing for commits in the bpf-next
- tree
-Message-ID: <20181213094820.62d26354@canb.auug.org.au>
-In-Reply-To: <20181212205253.d3reuxcyjhnwh3ul@ast-mbp.dhcp.thefacebook.com>
-References: <20181213073245.5b2d2536@canb.auug.org.au>
-        <20181212205253.d3reuxcyjhnwh3ul@ast-mbp.dhcp.thefacebook.com>
+        Wed, 12 Dec 2018 17:49:40 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58204 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726983AbeLLWtj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 17:49:39 -0500
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBCMeG5n019972
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 17:49:38 -0500
+Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2pb9syvmj3-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 17:49:38 -0500
+Received: from localhost
+        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Wed, 12 Dec 2018 22:49:36 -0000
+Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
+        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 12 Dec 2018 22:49:31 -0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBCMnU8m18088182
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 12 Dec 2018 22:49:30 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 58CD1B2064;
+        Wed, 12 Dec 2018 22:49:30 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 27243B205F;
+        Wed, 12 Dec 2018 22:49:29 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.38])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed, 12 Dec 2018 22:49:29 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 3044416C14E4; Wed, 12 Dec 2018 14:49:31 -0800 (PST)
+Date:   Wed, 12 Dec 2018 14:49:31 -0800
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Alan Stern <stern@rowland.harvard.edu>
+Cc:     David Goldblatt <davidtgoldblatt@gmail.com>,
+        mathieu.desnoyers@efficios.com,
+        Florian Weimer <fweimer@redhat.com>, triegel@redhat.com,
+        libc-alpha@sourceware.org, andrea.parri@amarulasolutions.com,
+        will.deacon@arm.com, peterz@infradead.org, boqun.feng@gmail.com,
+        npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
+        luc.maranget@inria.fr, akiyks@gmail.com, dlustig@nvidia.com,
+        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Linux: Implement membarrier function
+Reply-To: paulmck@linux.ibm.com
+References: <20181212215245.GC4170@linux.ibm.com>
+ <Pine.LNX.4.44L0.1812121710350.1543-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/YhAEp84TgXfVWmN.9ptqAqn"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Pine.LNX.4.44L0.1812121710350.1543-100000@iolanthe.rowland.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18121222-0040-0000-0000-000004A1AEDE
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010216; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000270; SDB=6.01130884; UDB=6.00577119; IPR=6.00911017;
+ MB=3.00024673; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-12 22:49:36
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18121222-0041-0000-0000-000008AAD0F7
+Message-Id: <20181212224931.GD4170@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-12_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=765 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812120191
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/YhAEp84TgXfVWmN.9ptqAqn
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, Dec 12, 2018 at 05:12:18PM -0500, Alan Stern wrote:
+> On Wed, 12 Dec 2018, Paul E. McKenney wrote:
+> 
+> > > > I believe that this ordering forbids the cycle:
+> > > > 
+> > > > 	Wa=1 > membs -> [m01] -> Rc=0 -> Wc=2 -> rcu_read_unlock() ->
+> > > > 		return from synchronize_rcu() -> Ra
+> > > > 
+> > > > Does this make sense, or am I missing something?
+> > > 
+> > > It's hard to tell.  What you have written here isn't justified by the
+> > > litmus test source code, since the position of m01 in P1's program
+> > > order is undetermined.  How do you justify m01 -> Rc, for example?
+> > 
+> > ... justifies Rc=0 following [m01].
+> > 
+> > > Write it this way instead, using the relations defined in the 
+> > > sys_membarrier patch for linux-kernel.cat:
+> > > 
+> > > 	memb ->memb-gp memb ->rcu-link Rc ->memb-rscsi Rc ->rcu-link
+> > > 		
+> > > 		rcu_read_unlock ->rcu-rscsi rcu_read_lock ->rcu-link 
+> > > 
+> > > 		synchronize_rcu ->rcu-gp synchronize_rcu ->rcu-link memb
+> > > 
+> > > Recall that:
+> > > 
+> > > 	memb-gp is the identity relation on sys_membarrier events,
+> > > 
+> > > 	rcu-link includes (po? ; fre ; po),
+> > > 
+> > > 	memb-rscsi is the identity relation on all events,
+> > > 
+> > > 	rcu-rscsi links unlocks to their corresponding locks, and
+> > > 
+> > > 	rcu-gp is the identity relation on synchronize_rcu events.
+> > > 
+> > > These facts justify the cycle above.
+> > > 
+> > > Leaving off the final rcu-link step, the sequence matches the
+> > > definition of rcu-fence (the relations are memb-gp, memb-rscsi, 
+> > > rcu-rscsi, rcu-gp with rcu-links in between).  Therefore the cycle is 
+> > > forbidden.
+> > 
+> > Understood, but that would be using the model to check the model.  ;-)
+> 
+> Well, what are you trying to accomplish?  Do you want to find an 
+> argument similar to the one I posted for the 6-CPU test to show that 
+> this test should be forbidden?
 
-Hi Alexei,
+I am trying to check odd corner cases.  Your sys_membarrier() model
+is quite nice and certainly fits nicely with the rest of the model,
+but where I come from, that is actually reason for suspicion.  ;-)
 
-On Wed, 12 Dec 2018 12:53:11 -0800 Alexei Starovoitov <alexei.starovoitov@g=
-mail.com> wrote:
->
-> On Thu, Dec 13, 2018 at 07:32:45AM +1100, Stephen Rothwell wrote:
-> > Hi all,
-> >=20
-> > Commits
-> >=20
-> >   3bdc28aa2340 ("selftests/bpf: add btf annotations for cgroup_local_st=
-orage maps")
-> >   1dfd1959fed4 ("bpf: add bpffs pretty print for cgroup local storage m=
-aps")
-> >   3adc62d9a5be ("bpf: pass struct btf pointer to the map_check_btf() ca=
-llback")
-> >   9cf3a785dc4c ("selftests/bpf: use __bpf_constant_htons in test_prog.c=
-")
-> >=20
-> > are missing a Signed-off-by from their committers. =20
->=20
-> the must be a script mistake?
->=20
-> I clearly see SOBs for all of them.
+All kidding aside, your argument for the 6-CPU test was extremely
+valuable, as it showed me a way to think of that test from an
+implementation viewpoint.  Then the question is whether or not that
+viewpoint actually matches the model, which seems to be the case thus far.
 
-For example:
+A good next step would be to automatically generate random tests along
+with an automatically generated prediction, like I did for RCU a few
+years back.  I should be able to generalize my time-based cheat for RCU to
+also cover SRCU, though sys_membarrier() will require a bit more thought.
+(The time-based cheat was to have fixed duration RCU grace periods and
+RCU read-side critical sections, with the grace period duration being
+slightly longer than that of the critical sections.  The number of
+processes is of course limited by the chosen durations, but that limit
+can easily be made insanely large.)
 
-commit 3bdc28aa2340bf1e5af753287b373522bd1c02a9 (bpf-next/master)
-Author: Roman Gushchin <guroan@gmail.com>
-Date:   Mon Dec 10 15:43:02 2018 -0800
+I guess that I still haven't gotten over being a bit surprised that the
+RCU counting rule also applies to sys_membarrier().  ;-)
 
-    selftests/bpf: add btf annotations for cgroup_local_storage maps
-   =20
-    Add btf annotations to cgroup local storage maps (per-cpu and shared)
-    in the network packet counting example.
-   =20
-    Signed-off-by: Roman Gushchin <guro@fb.com>
-    Cc: Alexei Starovoitov <ast@kernel.org>
-    Cc: Daniel Borkmann <daniel@iogearbox.net>
-    Acked-by: Martin KaFai Lau <kafai@fb.com>
-    Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+							Thanx, Paul
 
-But it was committed by you, not Daniel.
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/YhAEp84TgXfVWmN.9ptqAqn
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwRkDQACgkQAVBC80lX
-0GwcYQgApSY5aSjv4ynkNhg44iRlgOrfrE1WyMkGkVM23flsOeb4wSl0ucjM+QRu
-bQtclpftjdkz0KY2ZwE7/4Mw6GNcITc5Z56MjzDXRgl/h82sz2nS0V+lVr1e6tKk
-Up22X3Ixlf4/cPoIR17L3jJTSoiGBgmamF4QhMQoj9agSdB4PVN/c7dgwk8qvITZ
-PTrFVnac+uVsEaPIiMPSBDDJuk78gGcixWZNzmu++kOFkHiLqa54rtEZYkrJvgVw
-8ca4SRHL4DezJrUWw3KQnP1Mzcx1GZvzPkEHwCRZEI7xJ5LokcyuyljzY9Yf/Nts
-OsHSr90wDmQVpBs8uYZ+FRt2xJwSNg==
-=bCpM
------END PGP SIGNATURE-----
-
---Sig_/YhAEp84TgXfVWmN.9ptqAqn--
