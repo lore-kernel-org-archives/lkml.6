@@ -2,152 +2,523 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C5C6C04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 09:48:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2D5DC65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 09:49:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 422622084E
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 09:48:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544608118;
-	bh=dMu1gQ5yM9jNrnFnLsmDuhJV1cAZXkFHQ8/MG/1MN7w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=yKHqoya4N+929bD3+xPYU/ldjebSJwTixltPzpgYN2OROI8qx7yGhAkPaseIxervR
-	 kdRFvGHr4mqAH+6aBO2JJWgcqNfsl7P2vRrJhADuwbD6vrDxq1M7W1FjMv6ICFc3zA
-	 xAw1oXHdQDkp2q9kdNfkY+GmaPYpf9vgf3H/NuHs=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 422622084E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id A1ED32084E
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 09:49:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1ED32084E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726969AbeLLJsh (ORCPT
+        id S1726982AbeLLJtN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 04:48:37 -0500
-Received: from mx2.suse.de ([195.135.220.15]:33350 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726869AbeLLJsg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 04:48:36 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 6076CAFF4;
-        Wed, 12 Dec 2018 09:48:33 +0000 (UTC)
-Date:   Wed, 12 Dec 2018 10:48:32 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Liu Bo <bo.liu@linux.alibaba.com>, Jan Kara <jack@suse.cz>,
-        Dave Chinner <david@fromorbit.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Hugh Dickins <hughd@google.com>
-Subject: Re: [PATCH] mm, memcg: fix reclaim deadlock with writeback
-Message-ID: <20181212094832.GN1286@dhcp22.suse.cz>
-References: <20181211132645.31053-1-mhocko@kernel.org>
- <20181212094249.cw4xjrdchqsp2tkt@kshutemo-mobl1>
+        Wed, 12 Dec 2018 04:49:13 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:47760 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726869AbeLLJtM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 04:49:12 -0500
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBC9lODP042295
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 04:49:11 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2pax824yrp-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 04:49:10 -0500
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <schwidefsky@de.ibm.com>;
+        Wed, 12 Dec 2018 09:49:07 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 12 Dec 2018 09:49:02 -0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBC9n1eq2883888
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 12 Dec 2018 09:49:02 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D5BA0A4059;
+        Wed, 12 Dec 2018 09:49:01 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 60C30A4040;
+        Wed, 12 Dec 2018 09:49:01 +0000 (GMT)
+Received: from mschwideX1 (unknown [9.152.212.164])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 12 Dec 2018 09:49:01 +0000 (GMT)
+Date:   Wed, 12 Dec 2018 10:49:00 +0100
+From:   Martin Schwidefsky <schwidefsky@de.ibm.com>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Igor Stoppa <igor.stoppa@gmail.com>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Igor Stoppa <igor.stoppa@huawei.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux-MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/6] __wr_after_init: write rare for static allocation
+In-Reply-To: <CALCETrVvoui0vksdt0Y9rdGL5ipEn_FtSXVVUFdH03ZC93cy_A@mail.gmail.com>
+References: <20181204121805.4621-1-igor.stoppa@huawei.com>
+        <20181204121805.4621-3-igor.stoppa@huawei.com>
+        <CALCETrVvoui0vksdt0Y9rdGL5ipEn_FtSXVVUFdH03ZC93cy_A@mail.gmail.com>
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181212094249.cw4xjrdchqsp2tkt@kshutemo-mobl1>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-TM-AS-GCONF: 00
+x-cbid: 18121209-0008-0000-0000-000002A03472
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18121209-0009-0000-0000-0000220AB01B
+Message-Id: <20181212104900.0af52c34@mschwideX1>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-12_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812120086
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 12-12-18 12:42:49, Kirill A. Shutemov wrote:
-> On Tue, Dec 11, 2018 at 02:26:45PM +0100, Michal Hocko wrote:
-> > From: Michal Hocko <mhocko@suse.com>
-> > 
-> > Liu Bo has experienced a deadlock between memcg (legacy) reclaim and the
-> > ext4 writeback
-> > task1:
-> > [<ffffffff811aaa52>] wait_on_page_bit+0x82/0xa0
-> > [<ffffffff811c5777>] shrink_page_list+0x907/0x960
-> > [<ffffffff811c6027>] shrink_inactive_list+0x2c7/0x680
-> > [<ffffffff811c6ba4>] shrink_node_memcg+0x404/0x830
-> > [<ffffffff811c70a8>] shrink_node+0xd8/0x300
-> > [<ffffffff811c73dd>] do_try_to_free_pages+0x10d/0x330
-> > [<ffffffff811c7865>] try_to_free_mem_cgroup_pages+0xd5/0x1b0
-> > [<ffffffff8122df2d>] try_charge+0x14d/0x720
-> > [<ffffffff812320cc>] memcg_kmem_charge_memcg+0x3c/0xa0
-> > [<ffffffff812321ae>] memcg_kmem_charge+0x7e/0xd0
-> > [<ffffffff811b68a8>] __alloc_pages_nodemask+0x178/0x260
-> > [<ffffffff8120bff5>] alloc_pages_current+0x95/0x140
-> > [<ffffffff81074247>] pte_alloc_one+0x17/0x40
-> > [<ffffffff811e34de>] __pte_alloc+0x1e/0x110
-> > [<ffffffffa06739de>] alloc_set_pte+0x5fe/0xc20
-> > [<ffffffff811e5d93>] do_fault+0x103/0x970
-> > [<ffffffff811e6e5e>] handle_mm_fault+0x61e/0xd10
-> > [<ffffffff8106ea02>] __do_page_fault+0x252/0x4d0
-> > [<ffffffff8106ecb0>] do_page_fault+0x30/0x80
-> > [<ffffffff8171bce8>] page_fault+0x28/0x30
-> > [<ffffffffffffffff>] 0xffffffffffffffff
-> > 
-> > task2:
-> > [<ffffffff811aadc6>] __lock_page+0x86/0xa0
-> > [<ffffffffa02f1e47>] mpage_prepare_extent_to_map+0x2e7/0x310 [ext4]
-> > [<ffffffffa08a2689>] ext4_writepages+0x479/0xd60
-> > [<ffffffff811bbede>] do_writepages+0x1e/0x30
-> > [<ffffffff812725e5>] __writeback_single_inode+0x45/0x320
-> > [<ffffffff81272de2>] writeback_sb_inodes+0x272/0x600
-> > [<ffffffff81273202>] __writeback_inodes_wb+0x92/0xc0
-> > [<ffffffff81273568>] wb_writeback+0x268/0x300
-> > [<ffffffff81273d24>] wb_workfn+0xb4/0x390
-> > [<ffffffff810a2f19>] process_one_work+0x189/0x420
-> > [<ffffffff810a31fe>] worker_thread+0x4e/0x4b0
-> > [<ffffffff810a9786>] kthread+0xe6/0x100
-> > [<ffffffff8171a9a1>] ret_from_fork+0x41/0x50
-> > [<ffffffffffffffff>] 0xffffffffffffffff
-> > 
-> > He adds
-> > : task1 is waiting for the PageWriteback bit of the page that task2 has
-> > : collected in mpd->io_submit->io_bio, and tasks2 is waiting for the LOCKED
-> > : bit the page which tasks1 has locked.
-> > 
-> > More precisely task1 is handling a page fault and it has a page locked
-> > while it charges a new page table to a memcg. That in turn hits a memory
-> > limit reclaim and the memcg reclaim for legacy controller is waiting on
-> > the writeback but that is never going to finish because the writeback
-> > itself is waiting for the page locked in the #PF path. So this is
-> > essentially ABBA deadlock.
+On Wed, 5 Dec 2018 15:13:56 -0800
+Andy Lutomirski <luto@kernel.org> wrote:
+
+> I added some s390 and powerpc people.
 > 
-> Side node:
+> On Tue, Dec 4, 2018 at 4:18 AM Igor Stoppa <igor.stoppa@gmail.com> wrote:
+> >
+> > Implementation of write rare for statically allocated data, located in a
+> > specific memory section through the use of the __write_rare label.
+> >
+> > The basic functions are:
+> > - wr_memset(): write rare counterpart of memset()
+> > - wr_memcpy(): write rare counterpart of memcpy()
+> > - wr_assign(): write rare counterpart of the assignment ('=') operator
+> > - wr_rcu_assign_pointer(): write rare counterpart of rcu_assign_pointer()
+> >
+> > The implementation is based on code from Andy Lutomirski and Nadav Amit
+> > for patching the text on x86 [here goes reference to commits, once merged]
+> >
+> > The modification of write protected data is done through an alternate
+> > mapping of the same pages, as writable.
+> > This mapping is local to each core and is active only for the duration
+> > of each write operation.
+> > Local interrupts are disabled, while the alternate mapping is active.
+> >
+> > In theory, it could introduce a non-predictable delay, in a preemptible
+> > system, however the amount of data to be altered is likely to be far
+> > smaller than a page.
+> >
+> > Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
+> >
+> > CC: Andy Lutomirski <luto@amacapital.net>
+> > CC: Nadav Amit <nadav.amit@gmail.com>
+> > CC: Matthew Wilcox <willy@infradead.org>
+> > CC: Peter Zijlstra <peterz@infradead.org>
+> > CC: Kees Cook <keescook@chromium.org>
+> > CC: Dave Hansen <dave.hansen@linux.intel.com>
+> > CC: linux-integrity@vger.kernel.org
+> > CC: kernel-hardening@lists.openwall.com
+> > CC: linux-mm@kvack.org
+> > CC: linux-kernel@vger.kernel.org
+> > ---
+> >  include/linux/prmem.h | 133 ++++++++++++++++++++++++++++++++++++++++++
+> >  init/main.c           |   2 +
+> >  mm/Kconfig            |   4 ++
+> >  mm/Makefile           |   1 +
+> >  mm/prmem.c            | 124 +++++++++++++++++++++++++++++++++++++++
+> >  5 files changed, 264 insertions(+)
+> >  create mode 100644 include/linux/prmem.h
+> >  create mode 100644 mm/prmem.c
+> >
+> > diff --git a/include/linux/prmem.h b/include/linux/prmem.h
+> > new file mode 100644
+> > index 000000000000..b0131c1f5dc0
+> > --- /dev/null
+> > +++ b/include/linux/prmem.h
+> > @@ -0,0 +1,133 @@
+> > +/* SPDX-License-Identifier: GPL-2.0 */
+> > +/*
+> > + * prmem.h: Header for memory protection library
+> > + *
+> > + * (C) Copyright 2018 Huawei Technologies Co. Ltd.
+> > + * Author: Igor Stoppa <igor.stoppa@huawei.com>
+> > + *
+> > + * Support for:
+> > + * - statically allocated write rare data
+> > + */
+> > +
+> > +#ifndef _LINUX_PRMEM_H
+> > +#define _LINUX_PRMEM_H
+> > +
+> > +#include <linux/set_memory.h>
+> > +#include <linux/mm.h>
+> > +#include <linux/vmalloc.h>
+> > +#include <linux/string.h>
+> > +#include <linux/slab.h>
+> > +#include <linux/mutex.h>
+> > +#include <linux/compiler.h>
+> > +#include <linux/irqflags.h>
+> > +
+> > +/**
+> > + * memtst() - test n bytes of the source to match the c value
+> > + * @p: beginning of the memory to test
+> > + * @c: byte to compare against
+> > + * @len: amount of bytes to test
+> > + *
+> > + * Returns 0 on success, non-zero otherwise.
+> > + */
+> > +static inline int memtst(void *p, int c, __kernel_size_t len)
+> > +{
+> > +       __kernel_size_t i;
+> > +
+> > +       for (i = 0; i < len; i++) {
+> > +               u8 d =  *(i + (u8 *)p) - (u8)c;
+> > +
+> > +               if (unlikely(d))
+> > +                       return d;
+> > +       }
+> > +       return 0;
+> > +}
+> > +
+> > +
+> > +#ifndef CONFIG_PRMEM
+> > +
+> > +static inline void *wr_memset(void *p, int c, __kernel_size_t len)
+> > +{
+> > +       return memset(p, c, len);
+> > +}
+> > +
+> > +static inline void *wr_memcpy(void *p, const void *q, __kernel_size_t size)
+> > +{
+> > +       return memcpy(p, q, size);
+> > +}
+> > +
+> > +#define wr_assign(var, val)    ((var) = (val))
+> > +
+> > +#define wr_rcu_assign_pointer(p, v)    \
+> > +       rcu_assign_pointer(p, v)
+> > +
+> > +#else
+> > +
+> > +enum wr_op_type {
+> > +       WR_MEMCPY,
+> > +       WR_MEMSET,
+> > +       WR_RCU_ASSIGN_PTR,
+> > +       WR_OPS_NUMBER,
+> > +};
+> > +
+> > +void *__wr_op(unsigned long dst, unsigned long src, __kernel_size_t len,
+> > +             enum wr_op_type op);
+> > +
+> > +/**
+> > + * wr_memset() - sets n bytes of the destination to the c value
+> > + * @p: beginning of the memory to write to
+> > + * @c: byte to replicate
+> > + * @len: amount of bytes to copy
+> > + *
+> > + * Returns true on success, false otherwise.
+> > + */
+> > +static inline void *wr_memset(void *p, int c, __kernel_size_t len)
+> > +{
+> > +       return __wr_op((unsigned long)p, (unsigned long)c, len, WR_MEMSET);
+> > +}
+> > +
+> > +/**
+> > + * wr_memcpy() - copyes n bytes from source to destination
+> > + * @dst: beginning of the memory to write to
+> > + * @src: beginning of the memory to read from
+> > + * @n_bytes: amount of bytes to copy
+> > + *
+> > + * Returns pointer to the destination
+> > + */
+> > +static inline void *wr_memcpy(void *p, const void *q, __kernel_size_t size)
+> > +{
+> > +       return __wr_op((unsigned long)p, (unsigned long)q, size, WR_MEMCPY);
+> > +}
+> > +
+> > +/**
+> > + * wr_assign() - sets a write-rare variable to a specified value
+> > + * @var: the variable to set
+> > + * @val: the new value
+> > + *
+> > + * Returns: the variable
+> > + *
+> > + * Note: it might be possible to optimize this, to use wr_memset in some
+> > + * cases (maybe with NULL?).
+> > + */
+> > +
+> > +#define wr_assign(var, val) ({                 \
+> > +       typeof(var) tmp = (typeof(var))val;     \
+> > +                                               \
+> > +       wr_memcpy(&var, &tmp, sizeof(var));     \
+> > +       var;                                    \
+> > +})
+> > +
+> > +/**
+> > + * wr_rcu_assign_pointer() - initialize a pointer in rcu mode
+> > + * @p: the rcu pointer
+> > + * @v: the new value
+> > + *
+> > + * Returns the value assigned to the rcu pointer.
+> > + *
+> > + * It is provided as macro, to match rcu_assign_pointer()
+> > + */
+> > +#define wr_rcu_assign_pointer(p, v) ({                                 \
+> > +       __wr_op((unsigned long)&p, v, sizeof(p), WR_RCU_ASSIGN_PTR);    \
+> > +       p;                                                              \
+> > +})
+> > +#endif
+> > +#endif
+> > diff --git a/init/main.c b/init/main.c
+> > index a461150adfb1..a36f2e54f937 100644
+> > --- a/init/main.c
+> > +++ b/init/main.c
+> > @@ -498,6 +498,7 @@ void __init __weak thread_stack_cache_init(void)
+> >  void __init __weak mem_encrypt_init(void) { }
+> >
+> >  void __init __weak poking_init(void) { }
+> > +void __init __weak wr_poking_init(void) { }
+> >
+> >  bool initcall_debug;
+> >  core_param(initcall_debug, initcall_debug, bool, 0644);
+> > @@ -734,6 +735,7 @@ asmlinkage __visible void __init start_kernel(void)
+> >         delayacct_init();
+> >
+> >         poking_init();
+> > +       wr_poking_init();
+> >         check_bugs();
+> >
+> >         acpi_subsystem_init();
+> > diff --git a/mm/Kconfig b/mm/Kconfig
+> > index d85e39da47ae..9b09339c027f 100644
+> > --- a/mm/Kconfig
+> > +++ b/mm/Kconfig
+> > @@ -142,6 +142,10 @@ config ARCH_DISCARD_MEMBLOCK
+> >  config MEMORY_ISOLATION
+> >         bool
+> >
+> > +config PRMEM
+> > +       def_bool n
+> > +       depends on STRICT_KERNEL_RWX && X86_64
+> > +
+> >  #
+> >  # Only be set on architectures that have completely implemented memory hotplug
+> >  # feature. If you are not sure, don't touch it.
+> > diff --git a/mm/Makefile b/mm/Makefile
+> > index d210cc9d6f80..ef3867c16ce0 100644
+> > --- a/mm/Makefile
+> > +++ b/mm/Makefile
+> > @@ -58,6 +58,7 @@ obj-$(CONFIG_SPARSEMEM)       += sparse.o
+> >  obj-$(CONFIG_SPARSEMEM_VMEMMAP) += sparse-vmemmap.o
+> >  obj-$(CONFIG_SLOB) += slob.o
+> >  obj-$(CONFIG_MMU_NOTIFIER) += mmu_notifier.o
+> > +obj-$(CONFIG_PRMEM) += prmem.o
+> >  obj-$(CONFIG_KSM) += ksm.o
+> >  obj-$(CONFIG_PAGE_POISONING) += page_poison.o
+> >  obj-$(CONFIG_SLAB) += slab.o
+> > diff --git a/mm/prmem.c b/mm/prmem.c
+> > new file mode 100644
+> > index 000000000000..e8ab76701831
+> > --- /dev/null
+> > +++ b/mm/prmem.c
+> > @@ -0,0 +1,124 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * prmem.c: Memory Protection Library
+> > + *
+> > + * (C) Copyright 2017-2018 Huawei Technologies Co. Ltd.
+> > + * Author: Igor Stoppa <igor.stoppa@huawei.com>
+> > + */
+> > +
+> > +#include <linux/mm.h>
+> > +#include <linux/string.h>
+> > +#include <linux/compiler.h>
+> > +#include <linux/slab.h>
+> > +#include <linux/mmu_context.h>
+> > +#include <linux/rcupdate.h>
+> > +#include <linux/prmem.h>
+> > +
+> > +static __ro_after_init bool wr_ready;
+> > +static __ro_after_init struct mm_struct *wr_poking_mm;
+> > +static __ro_after_init unsigned long wr_poking_base;
+> > +
+> > +/*
+> > + * The following two variables are statically allocated by the linker
+> > + * script at the the boundaries of the memory region (rounded up to
+> > + * multiples of PAGE_SIZE) reserved for __wr_after_init.
+> > + */
+> > +extern long __start_wr_after_init;
+> > +extern long __end_wr_after_init;
+> > +
+> > +static inline bool is_wr_after_init(unsigned long ptr, __kernel_size_t size)
+> > +{
+> > +       unsigned long start = (unsigned long)&__start_wr_after_init;
+> > +       unsigned long end = (unsigned long)&__end_wr_after_init;
+> > +       unsigned long low = ptr;
+> > +       unsigned long high = ptr + size;
+> > +
+> > +       return likely(start <= low && low <= high && high <= end);
+> > +}
+> > +
+> > +
+> > +void *__wr_op(unsigned long dst, unsigned long src, __kernel_size_t len,
+> > +             enum wr_op_type op)
+> > +{  
 > 
-> Do we have PG_writeback vs. PG_locked ordering documentated somewhere?
-
-I am not aware of any
-
-> IIUC, the trace from task2 suggests that we must not wait for writeback
-> on the locked page.
+> You might end up wanting something like:
 > 
-> But that not what I see for many wait_on_page_writeback() users: it usally
-> called with the page locked. I see it for truncate, shmem, swapfile,
-> splice...
+> #ifdef __arch_wr_op
+> return __arch_wr_op(...);
+> #endif
 > 
-> Maybe the problem is within task2 codepath after all?
+> if an arch (s390? powerpc?) decides to have a totally different
+> implementation of this.
+> 
+> Hi s390 and powerpc people: it would be nice if this generic
+> implementation *worked* on your architectures and that it will allow
+> you to add some straightforward way to add a better arch-specific
+> implementation if you think that would be better.
 
-Jack and David have explained that this is due to an optimization
-multiple filesystems do. They lock and set wribeback on multiple pages
-and then send a largeer IO at once. So in this case we have the
-following pattern
+As the code is right now I can guarantee that it will not work on s390.
 
-                                        lock_page(B)
-                                        SetPageWriteback(B)
-                                        unlock_page(B)
-lock_page(A)
-                                        lock_page(A)
-pte_alloc_pne
-  shrink_page_list
-    wait_on_page_writeback(B)
-                                        SetPageWriteback(A)
-                                        unlock_page(A)
+> > +       temporary_mm_state_t prev;
+> > +       unsigned long flags;
+> > +       unsigned long offset;
+> > +       unsigned long wr_poking_addr;
+> > +
+> > +       /* Confirm that the writable mapping exists. */
+> > +       BUG_ON(!wr_ready);
+> > +
+> > +       if (WARN_ONCE(op >= WR_OPS_NUMBER, "Invalid WR operation.") ||
+> > +           WARN_ONCE(!is_wr_after_init(dst, len), "Invalid WR range."))
+> > +               return (void *)dst;
+> > +
+> > +       offset = dst - (unsigned long)&__start_wr_after_init;
+> > +       wr_poking_addr = wr_poking_base + offset;
+> > +       local_irq_save(flags);
+> > +       prev = use_temporary_mm(wr_poking_mm);
+> > +
+> > +       kasan_disable_current();
+> > +       if (op == WR_MEMCPY)
+> > +               memcpy((void *)wr_poking_addr, (void *)src, len);
+> > +       else if (op == WR_MEMSET)
+> > +               memset((u8 *)wr_poking_addr, (u8)src, len);
+> > +       else if (op == WR_RCU_ASSIGN_PTR)
+> > +               /* generic version of rcu_assign_pointer */
+> > +               smp_store_release((void **)wr_poking_addr,
+> > +                                 RCU_INITIALIZER((void **)src));
+> > +       kasan_enable_current();  
+> 
+> Hmm.  I suspect this will explode quite badly on sane architectures
+> like s390.  (In my book, despite how weird s390 is, it has a vastly
+> nicer model of "user" memory than any other architecture I know
+> of...).  I think you should use copy_to_user(), etc, instead.  I'm not
+> entirely sure what the best smp_store_release() replacement is.
+> Making this change may also mean you can get rid of the
+> kasan_disable_current().
 
-                                        # flush A, B to clear the writeback
+use_temporary_mm() replaces the *user* mm, for s390 this is completely
+independent from the kernel mm (different control register cr1 vs cr7).
+The wr_poking_addr is not available when running in the kernel address
+space.
+
+> > +
+> > +       barrier(); /* XXX redundant? */  
+> 
+> I think it's redundant.  If unuse_temporary_mm() allows earlier stores
+> to hit the wrong address space, then something is very very wrong, and
+> something is also very very wrong if the optimizer starts moving
+> stores across a function call that is most definitely a barrier.
+> 
+> > +
+> > +       unuse_temporary_mm(prev);
+> > +       /* XXX make the verification optional? */
+> > +       if (op == WR_MEMCPY)
+> > +               BUG_ON(memcmp((void *)dst, (void *)src, len));
+> > +       else if (op == WR_MEMSET)
+> > +               BUG_ON(memtst((void *)dst, (u8)src, len));
+> > +       else if (op == WR_RCU_ASSIGN_PTR)
+> > +               BUG_ON(*(unsigned long *)dst != src);  
+> 
+> Hmm.  If you allowed cmpxchg or even plain xchg, then these bug_ons
+> would be thoroughly buggy, but maybe they're okay.  But they should,
+> at most, be WARN_ON_ONCE(), given that you can trigger them by writing
+> the same addresses from two threads at once, and this isn't even
+> entirely obviously bogus given the presence of smp_store_release().
+> 
+> > +       local_irq_restore(flags);
+> > +       return (void *)dst;
+> > +}
+> > +
+> > +struct mm_struct *copy_init_mm(void);
+> > +void __init wr_poking_init(void)
+> > +{
+> > +       unsigned long start = (unsigned long)&__start_wr_after_init;
+> > +       unsigned long end = (unsigned long)&__end_wr_after_init;
+> > +       unsigned long i;
+> > +       unsigned long wr_range;
+> > +
+> > +       wr_poking_mm = copy_init_mm();
+> > +       BUG_ON(!wr_poking_mm);
+> > +
+> > +       /* XXX What if it's too large to fit in the task unmapped mem? */
+> > +       wr_range = round_up(end - start, PAGE_SIZE);
+> > +
+> > +       /* Randomize the poking address base*/
+> > +       wr_poking_base = TASK_UNMAPPED_BASE +
+> > +               (kaslr_get_random_long("Write Rare Poking") & PAGE_MASK) %
+> > +               (TASK_SIZE - (TASK_UNMAPPED_BASE + wr_range));
+
+The wr_poking_base address is a user space address, no? This will be usable
+only with the uaccess primitives on s390.
+
+> > +
+> > +       /* Create alternate mapping for the entire wr_after_init range. */
+> > +       for (i = start; i < end; i += PAGE_SIZE) {
+> > +               struct page *page;
+> > +               spinlock_t *ptl;
+> > +               pte_t pte;
+> > +               pte_t *ptep;
+> > +               unsigned long wr_poking_addr;
+> > +
+> > +               BUG_ON(!(page = virt_to_page(i)));
+> > +               wr_poking_addr = i - start + wr_poking_base;
+> > +
+> > +               /* The lock is not needed, but avoids open-coding. */
+> > +               ptep = get_locked_pte(wr_poking_mm, wr_poking_addr, &ptl);
+> > +               VM_BUG_ON(!ptep);
+> > +
+> > +               pte = mk_pte(page, PAGE_KERNEL);
+> > +               set_pte_at(wr_poking_mm, wr_poking_addr, ptep, pte);
+> > +               spin_unlock(ptl);
+> > +       }
+> > +       wr_ready = true;
+> > +}
+> > --
+> > 2.19.1
+> >  
+> 
+
 
 -- 
-Michal Hocko
-SUSE Labs
+blue skies,
+   Martin.
+
+"Reality continues to ruin my life." - Calvin.
+
