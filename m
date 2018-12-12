@@ -2,132 +2,252 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1707C67839
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 01:54:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54616C67839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 01:56:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 965CC2084E
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 01:54:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RbbAB/tJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 965CC2084E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 104722086D
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 01:56:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 104722086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726295AbeLLBy1 (ORCPT
+        id S1726296AbeLLB4K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 20:54:27 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:38830 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726201AbeLLBy1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 20:54:27 -0500
-Received: by mail-pg1-f194.google.com with SMTP id g189so7543623pgc.5;
-        Tue, 11 Dec 2018 17:54:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=wMiU8m4FxK5Mmyx9m3CouY8SU7XPJqd6xuSRWNHMlC0=;
-        b=RbbAB/tJGzIvFWL6BzgPv49EKviGxgOa5dyIiHKU0Ff/aqpFBFQEL3VKNvpF+wQUvZ
-         09yNTwnO21L0j2dTe6/xS87TsS5USWWxr82FFSyQYN6UwPgD0FIxz+MvYIecL0S6mwFn
-         yTo5oHWouy0mjkhOFktBMtzYo7pInKuqdMw1jCvYQ3GunaUqtEYhCm4AiiNTDkVGXmas
-         5OlNMPOzR5Yrx05BX6gganBGscMUAdBqgnCUyOEnEeWmj6wPxxDYRwj6iIu3YnsV3gqJ
-         GURMWmtGvFSbN3651UDuQ/wrwIRaIuX1IMOFk2dFLvApH4lj2W0bCT+nOGRFfdlXVb3z
-         4NbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=wMiU8m4FxK5Mmyx9m3CouY8SU7XPJqd6xuSRWNHMlC0=;
-        b=GAiWVKz/o0TPW2rX20M3RAV2neXBZVTdCyqM+VlRQY9tEKXgtcRR/tiExRcmyfxeXl
-         0U5ycYG1NK0YrH+DhVHC8JwQ0iqYSvzxPzcOoOjqMIn7oHGg1VodioaTpuiFwgdn4BzB
-         8YOnSltd52WwtmvD7HZTgYKA2KK4ngfDqFaQhkfKZrf4kNh0BiWZrTVpqIXI1bh7iicX
-         I+dY7rmwd7hLYKrHcRPehectI9priiTZvxSTcCby/9Si3VqPsE7ShUjrNY36EXwG8276
-         iy9Ja3orEttDIaPT497Um8vaBKKve8dqJe6K2idnhfYjaaLk9lHfo9podnscBjPfVKh4
-         P+7A==
-X-Gm-Message-State: AA+aEWaEPmu4wLbVGFXfJG3rhCCYAqfyx/i84N//+DkC5bA9tHUqim9+
-        M2cV/fdC0joFfJ6y2E8RbZM=
-X-Google-Smtp-Source: AFSGD/WkkVhDjGPIxDxaxnO+6+qESCBRXgjdab7i8B6Uu1lWvSVNFS4nqSooGwbXU0YRW5rbOGHEqw==
-X-Received: by 2002:a62:3948:: with SMTP id g69mr18795627pfa.114.1544579666117;
-        Tue, 11 Dec 2018 17:54:26 -0800 (PST)
-Received: from VM_15_152_centos.localdomain ([193.112.178.48])
-        by smtp.gmail.com with ESMTPSA id r130sm30478813pfr.48.2018.12.11.17.54.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Dec 2018 17:54:25 -0800 (PST)
-From:   gchen.guomin@gmail.com
-To:     <guominchen@tencent.com>, "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>
-Cc:     guomin chen <gchen.guomin@gmail.com>, <kvm@vger.kernel.org>,
-        <virtualization@lists.linux-foundation.org>,
-        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH]  Fix mm->owner point to a task that does not exists.
-Date:   Wed, 12 Dec 2018 09:54:02 +0800
-Message-Id: <1544579642-29626-1-git-send-email-gchen.guomin@gmail.com>
-X-Mailer: git-send-email 1.8.3.1
+        Tue, 11 Dec 2018 20:56:10 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:54472 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726201AbeLLB4J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 20:56:09 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7976389AC5;
+        Wed, 12 Dec 2018 01:56:08 +0000 (UTC)
+Received: from localhost.localdomain (ovpn-12-111.pek2.redhat.com [10.72.12.111])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id ECDD6600C9;
+        Wed, 12 Dec 2018 01:55:56 +0000 (UTC)
+Subject: Re: [PATCH 1/2 v8] resource: add the new I/O resource descriptor
+ 'IORES_DESC_RESERVED'
+To:     "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
+        Dave Young <dyoung@redhat.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kexec@lists.infradead.org" <kexec@lists.infradead.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "linux-ia64@vger.kernel.org" <linux-ia64@vger.kernel.org>,
+        "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "bp@alien8.de" <bp@alien8.de>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
+        "tony.luck@intel.com" <tony.luck@intel.com>,
+        "fenghua.yu@intel.com" <fenghua.yu@intel.com>,
+        "bhe@redhat.com" <bhe@redhat.com>, Toshi Kani <toshi.kani@hp.com>,
+        Dan Williams <dan.j.williams@intel.com>
+References: <20181129080956.20776-1-lijiang@redhat.com>
+ <20181129080956.20776-2-lijiang@redhat.com>
+ <20181130033703.GA23624@dhcp-128-65.nay.redhat.com>
+ <b8936194-01ef-8b8f-254e-039fc951855d@amd.com>
+From:   lijiang <lijiang@redhat.com>
+Message-ID: <ddc4aae4-72ee-8ceb-d52d-db9f7b9fcab6@redhat.com>
+Date:   Wed, 12 Dec 2018 09:55:52 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <b8936194-01ef-8b8f-254e-039fc951855d@amd.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Wed, 12 Dec 2018 01:56:08 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: guomin chen <gchen.guomin@gmail.com>
+在 2018年12月05日 05:33, Lendacky, Thomas 写道:
+> On 11/29/2018 09:37 PM, Dave Young wrote:
+>> + more people
+>>
+>> On 11/29/18 at 04:09pm, Lianbo Jiang wrote:
+>>> When doing kexec_file_load, the first kernel needs to pass the e820
+>>> reserved ranges to the second kernel. But kernel can not exactly
+>>> match the e820 reserved ranges when walking through the iomem resources
+>>> with the descriptor 'IORES_DESC_NONE', because several e820 types(
+>>> e.g. E820_TYPE_RESERVED_KERN/E820_TYPE_RAM/E820_TYPE_UNUSABLE/E820
+>>> _TYPE_RESERVED) are converted to the descriptor 'IORES_DESC_NONE'. It
+>>> may pass these four types to the kdump kernel, that is not desired result.
+>>>
+>>> So, this patch adds a new I/O resource descriptor 'IORES_DESC_RESERVED'
+>>> for the iomem resources search interfaces. It is helpful to exactly
+>>> match the reserved resource ranges when walking through iomem resources.
+>>>
+>>> In addition, since the new descriptor 'IORES_DESC_RESERVED' is introduced,
+>>> these code originally related to the descriptor 'IORES_DESC_NONE' need to
+>>> be updated. Otherwise, it will be easily confused and also cause some
+>>> errors. Because the 'E820_TYPE_RESERVED' type is converted to the new
+>>> descriptor 'IORES_DESC_RESERVED' instead of 'IORES_DESC_NONE', it has been
+>>> changed.
+>>>
+>>> Suggested-by: Dave Young <dyoung@redhat.com>
+>>> Signed-off-by: Lianbo Jiang <lijiang@redhat.com>
+>>> ---
+>>>  arch/ia64/kernel/efi.c |  4 ++++
+>>>  arch/x86/kernel/e820.c |  2 +-
+>>>  arch/x86/mm/ioremap.c  | 13 ++++++++++++-
+>>>  include/linux/ioport.h |  1 +
+>>>  kernel/resource.c      |  6 +++---
+>>>  5 files changed, 21 insertions(+), 5 deletions(-)
+>>>
+>>> diff --git a/arch/ia64/kernel/efi.c b/arch/ia64/kernel/efi.c
+>>> index 8f106638913c..1841e9b4db30 100644
+>>> --- a/arch/ia64/kernel/efi.c
+>>> +++ b/arch/ia64/kernel/efi.c
+>>> @@ -1231,6 +1231,10 @@ efi_initialize_iomem_resources(struct resource *code_resource,
+>>>  				break;
+>>>  
+>>>  			case EFI_RESERVED_TYPE:
+>>> +				name = "reserved";
+>>
+>> Ingo updated X86 code to use "Reserved",  I think it would be good to do
+>> same for this case as well
+>>
+>>> +				desc = IORES_DESC_RESERVED;
+>>> +				break;
+>>> +
+>>>  			case EFI_RUNTIME_SERVICES_CODE:
+>>>  			case EFI_RUNTIME_SERVICES_DATA:
+>>>  			case EFI_ACPI_RECLAIM_MEMORY:
+>>
+>> Originally, above 3 are all "reserved", so probably they all should be
+>> IORES_DESC_RESERVED.
+>>
+>> Can any IA64 people to review this?
+>>
+>>> diff --git a/arch/x86/kernel/e820.c b/arch/x86/kernel/e820.c
+>>> index 50895c2f937d..57fafdafb860 100644
+>>> --- a/arch/x86/kernel/e820.c
+>>> +++ b/arch/x86/kernel/e820.c
+>>> @@ -1048,10 +1048,10 @@ static unsigned long __init e820_type_to_iores_desc(struct e820_entry *entry)
+>>>  	case E820_TYPE_NVS:		return IORES_DESC_ACPI_NV_STORAGE;
+>>>  	case E820_TYPE_PMEM:		return IORES_DESC_PERSISTENT_MEMORY;
+>>>  	case E820_TYPE_PRAM:		return IORES_DESC_PERSISTENT_MEMORY_LEGACY;
+>>> +	case E820_TYPE_RESERVED:	return IORES_DESC_RESERVED;
+>>>  	case E820_TYPE_RESERVED_KERN:	/* Fall-through: */
+>>>  	case E820_TYPE_RAM:		/* Fall-through: */
+>>>  	case E820_TYPE_UNUSABLE:	/* Fall-through: */
+>>> -	case E820_TYPE_RESERVED:	/* Fall-through: */
+>>>  	default:			return IORES_DESC_NONE;
+>>>  	}
+>>>  }
+>>> diff --git a/arch/x86/mm/ioremap.c b/arch/x86/mm/ioremap.c
+>>> index 5378d10f1d31..fea2ef99415d 100644
+>>> --- a/arch/x86/mm/ioremap.c
+>>> +++ b/arch/x86/mm/ioremap.c
+>>> @@ -83,7 +83,18 @@ static bool __ioremap_check_ram(struct resource *res)
+>>>  
+>>>  static int __ioremap_check_desc_other(struct resource *res)
+>>>  {
+>>> -	return (res->desc != IORES_DESC_NONE);
+>>> +	/*
+>>> +	 * But now, the 'E820_TYPE_RESERVED' type is converted to the new
+>>> +	 * descriptor 'IORES_DESC_RESERVED' instead of 'IORES_DESC_NONE',
+>>> +	 * it has been changed. And the value of 'mem_flags.desc_other'
+>>> +	 * is equal to 'true' if we don't strengthen the condition in this
+>>> +	 * function, that is wrong. Because originally it is equal to
+>>> +	 * 'false' for the same reserved type.
+>>> +	 *
+>>> +	 * So, that would be nice to keep it the same as before.
+>>> +	 */
+>>> +	return ((res->desc != IORES_DESC_NONE) &&
+>>> +		(res->desc != IORES_DESC_RESERVED));
+>>>  }
+>>
+>> Added Tom since he added the check function.  Is it possible to only
+>> check explict valid desc types instead of exclude IORES_DESC_NONE?
+> 
+> Sorry for the delay...
+> 
+> The original intent of the check was to map most memory as encrypted under
+> SEV if it was marked with a specific descriptor, since it was likely to
+> not be MMIO. I tried converting most things that mapped memory to memremap
+> vs ioremap, but ACPI was one area that I left alone and this check catches
+> the mapping of the ACPI tables. I suppose it's possible to change this to
+> check just for IORES_DESC_ACPI_* values, but I would have to do some
+> testing.
+> 
+ 
+I'm looking forward to the result of your test about this change.
+Once changed, this patch also needs to be changed accordingly.
 
- Under normal circumstances,When do_exit exits, mm->owner will
- be updated on exit_mm(). but when the kernel process calls
- unuse_mm() and then exits,mm->owner cannot be updated. And it
- will point to a task that has been released.
+Thank you, Tom.
 
- Below is my issue on vhost_net:
-    A, B are two kernel processes(such as vhost_worker),
-    C is a user space process(such as qemu), and all
-    three use the mm of the user process C.
-    Now, because user process C exits abnormally, the owner of this
-    mm becomes A. When A calls unuse_mm and exits, this mm->ower
-    still points to the A that has been released.
-    When B accesses this mm->owner again, A has been released.
-
- Process A             Process B
- vhost_worker()        vhost_worker()
-  ---------             ---------
-  use_mm()              use_mm()
-   ...
-  unuse_mm()
-     tsk->mm=NULL
-   do_exit()            page fault
-    exit_mm()           access mm->owner
-   can't update owner   kernel Oops
-
-                        unuse_mm()
-
-Cc: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Jason Wang <jasowang@redhat.com>
-Cc: <kvm@vger.kernel.org>
-Cc: <virtualization@lists.linux-foundation.org>
-Cc: <netdev@vger.kernel.org>
-Cc: <linux-kernel@vger.kernel.org>
-Signed-off-by: guomin chen <gchen.guomin@gmail.com>
----
- drivers/vhost/vhost.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-index 6b98d8e..7f8586a 100644
---- a/drivers/vhost/vhost.c
-+++ b/drivers/vhost/vhost.c
-@@ -368,6 +368,10 @@ static int vhost_worker(void *data)
- 		}
- 	}
- 	unuse_mm(dev->mm);
-+	/* current->mm needs to be processed by the later exit_mm() */
-+	task_lock(current);
-+	current->mm = dev->mm;
-+	task_unlock(current);
- 	set_fs(oldfs);
- 	return 0;
- }
--- 
-1.8.3.1
-
+Lianbo
+> Thanks,
+> Tom
+> 
+>>
+>>>  
+>>>  static int __ioremap_res_check(struct resource *res, void *arg)
+>>> diff --git a/include/linux/ioport.h b/include/linux/ioport.h
+>>> index da0ebaec25f0..6ed59de48bd5 100644
+>>> --- a/include/linux/ioport.h
+>>> +++ b/include/linux/ioport.h
+>>> @@ -133,6 +133,7 @@ enum {
+>>>  	IORES_DESC_PERSISTENT_MEMORY_LEGACY	= 5,
+>>>  	IORES_DESC_DEVICE_PRIVATE_MEMORY	= 6,
+>>>  	IORES_DESC_DEVICE_PUBLIC_MEMORY		= 7,
+>>> +	IORES_DESC_RESERVED			= 8,
+>>>  };
+>>>  
+>>>  /* helpers to define resources */
+>>> diff --git a/kernel/resource.c b/kernel/resource.c
+>>> index b0fbf685c77a..f34a632c4169 100644
+>>> --- a/kernel/resource.c
+>>> +++ b/kernel/resource.c
+>>> @@ -994,7 +994,7 @@ __reserve_region_with_split(struct resource *root, resource_size_t start,
+>>>  	res->start = start;
+>>>  	res->end = end;
+>>>  	res->flags = type | IORESOURCE_BUSY;
+>>> -	res->desc = IORES_DESC_NONE;
+>>> +	res->desc = IORES_DESC_RESERVED;
+>>>  
+>>>  	while (1) {
+>>>  
+>>> @@ -1029,7 +1029,7 @@ __reserve_region_with_split(struct resource *root, resource_size_t start,
+>>>  				next_res->start = conflict->end + 1;
+>>>  				next_res->end = end;
+>>>  				next_res->flags = type | IORESOURCE_BUSY;
+>>> -				next_res->desc = IORES_DESC_NONE;
+>>> +				next_res->desc = IORES_DESC_RESERVED;
+>>>  			}
+>>>  		} else {
+>>>  			res->start = conflict->end + 1;
+>>> @@ -1477,7 +1477,7 @@ static int __init reserve_setup(char *str)
+>>>  			res->start = io_start;
+>>>  			res->end = io_start + io_num - 1;
+>>>  			res->flags |= IORESOURCE_BUSY;
+>>> -			res->desc = IORES_DESC_NONE;
+>>> +			res->desc = IORES_DESC_RESERVED;
+>>>  			res->child = NULL;
+>>>  			if (request_resource(parent, res) == 0)
+>>>  				reserved = x+1;
+>>> -- 
+>>> 2.17.1
+>>>
+>>
+>>
+>> There are a lot of places call region_intersects which use DESC_NONE,
+>> I'm not sure if needed changes accordingly.  Cced Dan and Toshi.
+>>
+>>
+>> Thanks
+>> Dave
+>>
