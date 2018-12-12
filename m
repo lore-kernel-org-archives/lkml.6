@@ -2,273 +2,209 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_MIXED_ES autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B5C1C65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 21:56:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A1DEC65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 21:56:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3121020849
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 21:56:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 08ADB20849
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 21:56:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="f16ofs0O"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3121020849
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qtmOTdD4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08ADB20849
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728295AbeLLV4E (ORCPT
+        id S1728400AbeLLV4q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 16:56:04 -0500
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:18887 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726263AbeLLV4D (ORCPT
+        Wed, 12 Dec 2018 16:56:46 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:35084 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727061AbeLLV4p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 16:56:03 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c1183ed0000>; Wed, 12 Dec 2018 13:55:57 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 12 Dec 2018 13:56:01 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 12 Dec 2018 13:56:01 -0800
-Received: from [10.110.48.28] (172.20.13.39) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 12 Dec
- 2018 21:56:00 +0000
-Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
-To:     Jerome Glisse <jglisse@redhat.com>,
-        Dan Williams <dan.j.williams@intel.com>
-CC:     Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>,
-        John Hubbard <john.hubbard@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>, <tom@talpey.com>,
-        Al Viro <viro@zeniv.linux.org.uk>, <benve@cisco.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Christopher Lameter <cl@linux.com>,
-        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Michal Hocko <mhocko@kernel.org>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        <rcampbell@nvidia.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-References: <20181205011519.GV10377@bombadil.infradead.org>
- <20181205014441.GA3045@redhat.com>
- <59ca5c4b-fd5b-1fc6-f891-c7986d91908e@nvidia.com>
- <7b4733be-13d3-c790-ff1b-ac51b505e9a6@nvidia.com>
- <20181207191620.GD3293@redhat.com>
- <3c4d46c0-aced-f96f-1bf3-725d02f11b60@nvidia.com>
- <20181208022445.GA7024@redhat.com> <20181210102846.GC29289@quack2.suse.cz>
- <20181212150319.GA3432@redhat.com>
- <CAPcyv4go0Xzhz8rXdfscWuXDu83BO9v8WD4upDUJWb7gKzX5OQ@mail.gmail.com>
- <20181212213005.GE5037@redhat.com>
-X-Nvconfidentiality: public
-From:   John Hubbard <jhubbard@nvidia.com>
-Message-ID: <514cc9e1-dc4d-b979-c6bc-88ac503c098d@nvidia.com>
-Date:   Wed, 12 Dec 2018 13:56:00 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
+        Wed, 12 Dec 2018 16:56:45 -0500
+Received: by mail-it1-f194.google.com with SMTP id p197so743990itp.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 13:56:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=JdTHyIYSl0AqTClGa0AQ1pduNV/L2Lsnnf5ZE/AOcyU=;
+        b=qtmOTdD4vS8ifaFY0Hqi14Q9fRzOxRcxmxY7KNYw4nSdM/9nSBGlhCTAcPkGl+iWjF
+         jIX1rPWp2Kcay4yaV2MdkWcruxAQauu7d4pNZoDAQlMu35LptRb2hrWViylJZJ/2VWc6
+         QWQeh8W4kTO8Wc7GdeU/9ooDSxRAEqpt4qPUlXP2HQeiYkSrBYBq8l3c4YKSZt2rdSzf
+         HhuQnDdm4sDMIhCUIN8olPfxkpgSG0ae921R+flXCxqs/K3Wnv726L5JjvHZAQwwPh9U
+         Uo4317KVZT0GC4wBz2wFnvwpCo2MvY1ilEXunKwhhxa3h7n7mgkSopfJMMcUOCTy7S3Y
+         5IIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=JdTHyIYSl0AqTClGa0AQ1pduNV/L2Lsnnf5ZE/AOcyU=;
+        b=USdBuZ/79jmSLxFwLG3fXXfBNc9wi60piyGPAScf0rB3neCJDCeREHMg1qE8xXioI4
+         9VDS0Cg1+klCB6ihNplKJsYpUzfNSm1cLbu7/MWQusLDh7Cxu3VCtiFPpO0tv74lCjaW
+         DKds1aBTdJh87enEGk0gEsJVSW5fmsQWX0eGQZ9S3tHg9Un5y1ectEam791xSqtHU5yC
+         dm+8PmJX8F61R9lzloSICOJjX/zPEIjw8PYPgiKSQ8f1kWp05O/37HXx+iB+zcOAk0fI
+         btmeOCq3NncBZNPxMkSAEbSbEk8GM8E6oB2sCYyZEk8VqSPPzTIBY7cjkt1wtq2lNuzz
+         2bWg==
+X-Gm-Message-State: AA+aEWaLBEuqF3cWQSY/8GgmQrSVbA+lXjQQgxDnca1p4UKrDm2sDnjh
+        rhofNVL8Pd75Aa6mPnpBrhAi1l2hin9aypMVrzqFBA==
+X-Google-Smtp-Source: AFSGD/VWudi1GFWyiYKnoHCUf9+MyOB11lXFzI06AdiH4mvBix5tGdI6+25MALsBt/3UbOn31ywpArBENwyZ8t2s9s4=
+X-Received: by 2002:a24:97c3:: with SMTP id k186mr2865861ite.125.1544651803911;
+ Wed, 12 Dec 2018 13:56:43 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181212213005.GE5037@redhat.com>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL106.nvidia.com (172.18.146.12) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US-large
-Content-Transfer-Encoding: quoted-printable
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1544651757; bh=aN9Y1eINpKEqQrzNBDvGyCYVeG8PZnQxiAd03WymsWA=;
-        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=f16ofs0O9q8OFFonUi2DMhrW5QQ2NmE1gui8DFWb1alNBSvzJy43MT2DHFKHCSlJx
-         SODcLH/y3Uf5LJuh3QAP+SCnNHFUNl2TfynhQqYg+386DFF2cNL8sb1oKQFu4QQsfb
-         u+bMwexW5ka2x3nCND7kzO7CME7ai1TGvz6wXj9HGRpdv896HgCvsOcACA5P5uj2Kz
-         nNu7/dQZI7M41At62paY0qGTlSxqqIJTZ73eQZ9B5DSSqbWOT0qLG8cm2ZdslOJE2c
-         3dAVIuXbUdMFmlSJzDD9dBoiX/WzPVz3/w5Bb+kGqAAQjE5D0gFvnbWB4wabxp6j5n
-         fiOeF3mGxD3Tw==
+References: <CAJmjG29a7Fax5ZW5Q+W+-1xPEXVUqdrMYwoUpSwL1Msiso6gtw@mail.gmail.com>
+ <20181212062841.GI431@jagdpanzerIV> <20181212064841.GB2746@sasha-vm>
+ <20181212081034.GA32687@jagdpanzerIV> <20181212133603.yyu2zvw7g454zdqd@pathway.suse.cz>
+ <20181212135939.GA10170@tigerII.localdomain> <20181212174333.GC2746@sasha-vm>
+ <CAJmjG2_zey77QxMzq997ALkD56d0UtHmGjF4dhq=TbEc2gox5A@mail.gmail.com>
+ <20181212214337.GD2746@sasha-vm> <CAJmjG2_C0YRtVmNh2sg4JqhJJ11LMmbRHqwADxyO9CGh9ixQbA@mail.gmail.com>
+ <20181212215225.GE2746@sasha-vm>
+In-Reply-To: <20181212215225.GE2746@sasha-vm>
+From:   Daniel Wang <wonderfly@google.com>
+Date:   Wed, 12 Dec 2018 13:56:31 -0800
+Message-ID: <CAJmjG28s9bz51k=5i8eoKH2crj8e7-qM_EYWMqtUKZ_nGREQOg@mail.gmail.com>
+Subject: Re: 4.14 backport request for dbdda842fe96f: "printk: Add console
+ owner and waiter logic to load balance console writes"
+To:     Sasha Levin <sashal@kernel.org>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>, stable@vger.kernel.org,
+        Alexander.Levin@microsoft.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        byungchul.park@lge.com, dave.hansen@intel.com, hannes@cmpxchg.org,
+        jack@suse.cz, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Mel Gorman <mgorman@suse.de>, mhocko@kernel.org, pavel@ucw.cz,
+        penguin-kernel@i-love.sakura.ne.jp,
+        Peter Zijlstra <peterz@infradead.org>, tj@kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>, vbabka@suse.cz,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        Peter Feiner <pfeiner@google.com>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+        boundary="00000000000017b838057cda4690"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/12/18 1:30 PM, Jerome Glisse wrote:
-> On Wed, Dec 12, 2018 at 08:27:35AM -0800, Dan Williams wrote:
->> On Wed, Dec 12, 2018 at 7:03 AM Jerome Glisse <jglisse@redhat.com> wrote=
-:
->>>
->>> On Mon, Dec 10, 2018 at 11:28:46AM +0100, Jan Kara wrote:
->>>> On Fri 07-12-18 21:24:46, Jerome Glisse wrote:
->>>>> Another crazy idea, why not treating GUP as another mapping of the pa=
-ge
->>>>> and caller of GUP would have to provide either a fake anon_vma struct=
- or
->>>>> a fake vma struct (or both for PRIVATE mapping of a file where you ca=
-n
->>>>> have a mix of both private and file page thus only if it is a read on=
-ly
->>>>> GUP) that would get added to the list of existing mapping.
->>>>>
->>>>> So the flow would be:
->>>>>     somefunction_thatuse_gup()
->>>>>     {
->>>>>         ...
->>>>>         GUP(_fast)(vma, ..., fake_anon, fake_vma);
->>>>>         ...
->>>>>     }
->>>>>
->>>>>     GUP(vma, ..., fake_anon, fake_vma)
->>>>>     {
->>>>>         if (vma->flags =3D=3D ANON) {
->>>>>             // Add the fake anon vma to the anon vma chain as a child
->>>>>             // of current vma
->>>>>         } else {
->>>>>             // Add the fake vma to the mapping tree
->>>>>         }
->>>>>
->>>>>         // The existing GUP except that now it inc mapcount and not
->>>>>         // refcount
->>>>>         GUP_old(..., &nanonymous, &nfiles);
->>>>>
->>>>>         atomic_add(&fake_anon->refcount, nanonymous);
->>>>>         atomic_add(&fake_vma->refcount, nfiles);
->>>>>
->>>>>         return nanonymous + nfiles;
->>>>>     }
->>>>
->>>> Thanks for your idea! This is actually something like I was suggesting=
- back
->>>> at LSF/MM in Deer Valley. There were two downsides to this I remember
->>>> people pointing out:
->>>>
->>>> 1) This cannot really work with __get_user_pages_fast(). You're not al=
-lowed
->>>> to get necessary locks to insert new entry into the VMA tree in that
->>>> context. So essentially we'd loose get_user_pages_fast() functionality=
-.
->>>>
->>>> 2) The overhead e.g. for direct IO may be noticeable. You need to allo=
-cate
->>>> the fake tracking VMA, get VMA interval tree lock, insert into the tre=
-e.
->>>> Then on IO completion you need to queue work to unpin the pages again =
-as you
->>>> cannot remove the fake VMA directly from interrupt context where the I=
-O is
->>>> completed.
->>>>
->>>> You are right that the cost could be amortized if gup() is called for
->>>> multiple consecutive pages however for small IOs there's no help...
->>>>
->>>> So this approach doesn't look like a win to me over using counter in s=
-truct
->>>> page and I'd rather try looking into squeezing HMM public page usage o=
-f
->>>> struct page so that we can fit that gup counter there as well. I know =
-that
->>>> it may be easier said than done...
->>>
->>> So i want back to the drawing board and first i would like to ascertain
->>> that we all agree on what the objectives are:
->>>
->>>     [O1] Avoid write back from a page still being written by either a
->>>          device or some direct I/O or any other existing user of GUP.
->>>          This would avoid possible file system corruption.
->>>
->>>     [O2] Avoid crash when set_page_dirty() is call on a page that is
->>>          considered clean by core mm (buffer head have been remove and
->>>          with some file system this turns into an ugly mess).
->>>
->>>     [O3] DAX and the device block problems, ie with DAX the page map in
->>>          userspace is the same as the block (persistent memory) and no
->>>          filesystem nor block device understand page as block or pinned
->>>          block.
->>>
->>> For [O3] i don't think any pin count would help in anyway. I believe
->>> that the current long term GUP API that does not allow GUP of DAX is
->>> the only sane solution for now.
->>
->> No, that's not a sane solution, it's an emergency hack.
->>
->>> The real fix would be to teach file-
->>> system about DAX/pinned block so that a pinned block is not reuse
->>> by filesystem.
->>
->> We already have taught filesystems about pinned dax pages, see
->> dax_layout_busy_page(). As much as possible I want to eliminate the
->> concept of "dax pages" as a special case that gets sprinkled
->> throughout the mm.
->=20
-> So thinking on O3 issues what about leveraging the recent change i
-> did to mmu notifier. Add a event for truncate or any other file
-> event that need to invalidate the file->page for a range of offset.
->=20
-> Add mmu notifier listener to GUP user (except direct I/O) so that
-> they invalidate they hardware mapping or switch the hardware mapping
-> to use a crappy page. When such event happens what ever user do to
-> the page through that driver is broken anyway. So it is better to
-> be loud about it then trying to make it pass under the radar.
->=20
-> This will put the burden on broken user and allow you to properly
-> recycle your DAX page.
->=20
-> Think of it as revoke through mmu notifier.
->=20
-> So patchset would be:
->     enum mmu_notifier_event {
-> +       MMU_NOTIFY_TRUNCATE,
->     };
->=20
-> +   Change truncate code path to emit MMU_NOTIFY_TRUNCATE
->=20
+--00000000000017b838057cda4690
+Content-Type: text/plain; charset="UTF-8"
 
-That part looks good.
+Thank you!
 
-> Then for each user of GUP (except direct I/O or other very short
-> term GUP):
-
-but, why is there a difference between how we handle long- and
-short-term callers? Aren't we just leaving a harder-to-reproduce race
-condition, if we ignore the short-term gup callers?
-
-So, how does activity (including direct IO and other short-term callers)
-get quiesced (stopped, and guaranteed not to restart or continue), so=20
-that truncate or umount can continue on?
+On Wed, Dec 12, 2018 at 1:52 PM Sasha Levin <sashal@kernel.org> wrote:
+>
+> On Wed, Dec 12, 2018 at 01:49:25PM -0800, Daniel Wang wrote:
+> >Thanks for the clarification. So I guess I don't need to start another
+> >thread for it? What are the next steps?
+>
+> Nothing here, I'll queue it once Sergey or Petr clarify if they wanted
+> additional information in the -stable commit message.
+>
+> --
+> Thanks,
+> Sasha
+>
 
 
->=20
->     Patch 1: register mmu notifier
->     Patch 2: listen to MMU_NOTIFY_TRUNCATE and MMU_NOTIFY_UNMAP
->              when that happens update the device page table or
->              usage to point to a crappy page and do put_user_page
->              on all previously held page
+-- 
+Best,
+Daniel
 
-Minor point, this sequence should be done within a wrapper around existing=
-=20
-get_user_pages(), such as get_user_pages_revokable() or something.
+--00000000000017b838057cda4690
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
 
-thanks,
---=20
-John Hubbard
-NVIDIA
-
->=20
-> So this would solve the revoke side of thing without adding a burden
-> on GUP user like direct I/O. Many existing user of GUP already do
-> listen to mmu notifier and already behave properly. It is just about
-> making every body list to that. Then we can even add the mmu notifier
-> pointer as argument to GUP just to make sure no new user of GUP forget
-> about registering a notifier (argument as a teaching guide not as a
-> something actively use).
->=20
->=20
-> So does that sounds like a plan to solve your concern with long term
-> GUP user ? This does not depend on DAX or anything it would apply to
-> any file back pages.
->=20
->=20
-> Cheers,
-> J=C3=A9r=C3=B4me
->=20
+MIIS7QYJKoZIhvcNAQcCoIIS3jCCEtoCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
+ghBTMIIEXDCCA0SgAwIBAgIOSBtqDm4P/739RPqw/wcwDQYJKoZIhvcNAQELBQAwZDELMAkGA1UE
+BhMCQkUxGTAXBgNVBAoTEEdsb2JhbFNpZ24gbnYtc2ExOjA4BgNVBAMTMUdsb2JhbFNpZ24gUGVy
+c29uYWxTaWduIFBhcnRuZXJzIENBIC0gU0hBMjU2IC0gRzIwHhcNMTYwNjE1MDAwMDAwWhcNMjEw
+NjE1MDAwMDAwWjBMMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTEiMCAG
+A1UEAxMZR2xvYmFsU2lnbiBIViBTL01JTUUgQ0EgMTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCC
+AQoCggEBALR23lKtjlZW/17kthzYcMHHKFgywfc4vLIjfq42NmMWbXkNUabIgS8KX4PnIFsTlD6F
+GO2fqnsTygvYPFBSMX4OCFtJXoikP2CQlEvO7WooyE94tqmqD+w0YtyP2IB5j4KvOIeNv1Gbnnes
+BIUWLFxs1ERvYDhmk+OrvW7Vd8ZfpRJj71Rb+QQsUpkyTySaqALXnyztTDp1L5d1bABJN/bJbEU3
+Hf5FLrANmognIu+Npty6GrA6p3yKELzTsilOFmYNWg7L838NS2JbFOndl+ce89gM36CW7vyhszi6
+6LqqzJL8MsmkP53GGhf11YMP9EkmawYouMDP/PwQYhIiUO0CAwEAAaOCASIwggEeMA4GA1UdDwEB
+/wQEAwIBBjAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwQwEgYDVR0TAQH/BAgwBgEB/wIB
+ADAdBgNVHQ4EFgQUyzgSsMeZwHiSjLMhleb0JmLA4D8wHwYDVR0jBBgwFoAUJiSSix/TRK+xsBtt
+r+500ox4AAMwSwYDVR0fBEQwQjBAoD6gPIY6aHR0cDovL2NybC5nbG9iYWxzaWduLmNvbS9ncy9n
+c3BlcnNvbmFsc2lnbnB0bnJzc2hhMmcyLmNybDBMBgNVHSAERTBDMEEGCSsGAQQBoDIBKDA0MDIG
+CCsGAQUFBwIBFiZodHRwczovL3d3dy5nbG9iYWxzaWduLmNvbS9yZXBvc2l0b3J5LzANBgkqhkiG
+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
+QAYIKwYBBQUHMAKGNGh0dHA6Ly9zZWN1cmUuZ2xvYmFsc2lnbi5jb20vY2FjZXJ0L2dzaHZzbWlt
+ZWNhMS5jcnQwHQYDVR0OBBYEFHC1FT3LO6BpGtdIXSM5FWFPgFO+MB8GA1UdIwQYMBaAFMs4ErDH
+mcB4koyzIZXm9CZiwOA/MEwGA1UdIARFMEMwQQYJKwYBBAGgMgEoMDQwMgYIKwYBBQUHAgEWJmh0
+dHBzOi8vd3d3Lmdsb2JhbHNpZ24uY29tL3JlcG9zaXRvcnkvMDsGA1UdHwQ0MDIwMKAuoCyGKmh0
+dHA6Ly9jcmwuZ2xvYmFsc2lnbi5jb20vZ3NodnNtaW1lY2ExLmNybDAOBgNVHQ8BAf8EBAMCBaAw
+HQYDVR0lBBYwFAYIKwYBBQUHAwIGCCsGAQUFBwMEMA0GCSqGSIb3DQEBCwUAA4IBAQAp7ulGi+yb
+H6Go2/IGeuxY5v6bGG9OgxOivBTos3k5ZBoWJt7BxDTYOLkA5gNLvh2tqsJVUJI5hQXwB4FFK0bI
+/YuPUDxQxj9F2DBF6Mrgnclj5XLK3y9N5khy5/Ullth3jbDQ1dmyHQISh4olPbqtnHnWiUb6Mhf6
+I3UgrUAhzwFXOlZSk57FgvAZ9472grnkSI8aW1mZp1gf5BNYEVb6y/e1hxlNeZbtIa0vvWDm+tK1
+ENfcc+LgRCL4gqiu3v3MEyXXeq/eH/iibrGhissORpiy+nMuWzsTGYOkRRn9RtyEmJAh48WUKCt3
+SR4lOce76r8Fd1Dg0XA0lCCwrFRzMYICXjCCAloCAQEwXDBMMQswCQYDVQQGEwJCRTEZMBcGA1UE
+ChMQR2xvYmFsU2lnbiBudi1zYTEiMCAGA1UEAxMZR2xvYmFsU2lnbiBIViBTL01JTUUgQ0EgMQIM
+IxVzVdM/KCmBJokVMA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCC5FMDO01vcPQJK
+Icc6JoJ0pFNemtMt09XURgdJ5zhnfDAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3
+DQEJBTEPFw0xODEyMTIyMTU2NDRaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUDBAEqMAsGCWCG
+SAFlAwQBFjALBglghkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEKMAsGCSqGSIb3DQEB
+BzALBglghkgBZQMEAgEwDQYJKoZIhvcNAQEBBQAEggEAbpQXMPQp4UjcntC5laF4L6XaEhATZrIb
+JyS2v5KTWZKmnTsJETPKImAVm2kB1hJPTqDSKOu2VYx/VOOA9c+3IhlLS7as5rWjq1M3047oY4K6
+UiICEiWfYFo2FLqZjykml65/z0VItmn5cwb0oLybspXmAG+Ln4O9UTb0bHMCvwembne5xg57xBqY
+1xRaWqqiv9XX9Lr3YnVNnj2+5IsOSYNSODEbNJjebuW9qmBpe0ecz5ctqfkTDiNms6lhUnVMBEI+
+87ZR6kG/DfWojR/vElsLHZ6Y0Em+hdquAR0X3tPt/eyxXKU+iCq7rP4jtvzUGKIsy8rBxhB/oJmL
+I95U7g==
+--00000000000017b838057cda4690--
