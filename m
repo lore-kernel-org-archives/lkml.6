@@ -2,134 +2,138 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CD88C67839
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 22:58:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9957C65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 23:00:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46F1A20851
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 22:58:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46F1A20851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
+	by mail.kernel.org (Postfix) with ESMTP id 853B520870
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 23:00:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kudzu-us.20150623.gappssmtp.com header.i=@kudzu-us.20150623.gappssmtp.com header.b="gzY/SQct"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 853B520870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kudzu.us
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728345AbeLLW60 (ORCPT
+        id S1728420AbeLLXAs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 17:58:26 -0500
-Received: from ale.deltatee.com ([207.54.116.67]:51268 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726214AbeLLW6Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 17:58:25 -0500
-Received: from guinness.priv.deltatee.com ([172.16.1.162])
-        by ale.deltatee.com with esmtp (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1gXDSS-0001Bc-2q; Wed, 12 Dec 2018 15:58:25 -0700
-To:     Bjorn Helgaas <helgaas@kernel.org>,
-        Wesley Sheng <wesley.sheng@microchip.com>
-Cc:     kurt.schwemmer@microsemi.com, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, wesleyshenggit@sina.com
-References: <1544433144-7563-1-git-send-email-wesley.sheng@microchip.com>
- <1544433144-7563-6-git-send-email-wesley.sheng@microchip.com>
- <20181212225201.GL99796@google.com>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <b96a3667-de25-9e51-bbdb-406cc4b879f3@deltatee.com>
-Date:   Wed, 12 Dec 2018 15:58:22 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Wed, 12 Dec 2018 18:00:48 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:51057 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726214AbeLLXAs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 18:00:48 -0500
+Received: by mail-it1-f193.google.com with SMTP id z7so970650iti.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 15:00:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kudzu-us.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=8CJffH8rv1hIUja93jURiqdXIsLgd17b2S6AMZrqtXY=;
+        b=gzY/SQctzRG+PpcE1lbMDxItjRpUZUUJ/CgenmjZY2qgnyt4x2nwzoh/3t/EXvI2G7
+         2bPLiEZd4Sbfyrypjezlb67uFP/zQd93nahOrxzIx6qwLRXUqNPUV0V+l4edDFaM94Kb
+         VxIhzqnFeticnPmPvQXFzA03Op6311HJqReGgoVC3/YMCL81nQk9YNmLR+BgGCVV4cWn
+         lA4pSQfTNlXo7CWTYEE6MdUpyAG4/1tz2FhpUd4I0C49taqvS9L91wcINe1eQs5T2PMC
+         HIxhryPJcF+hcuoZidkUMNWNbJwMckqY96oY9gO7Vd8moArucKBDsoyuZ2VS1DrMBfdf
+         FG1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8CJffH8rv1hIUja93jURiqdXIsLgd17b2S6AMZrqtXY=;
+        b=UKhbMKlt8w/RUV4R+lwGClQfbw4VyUGJQNCJPENzU6CWPe8rLEezNuLybA4vZfMDj3
+         OJXRVJy3Xy4g4rVg9WTXzG5C+TE5tpK2Wo9VxMnW0c+tk+hKKb49bEUG8aXFfNGI0Xox
+         MGW6Q1Rpkft/U+3i9ogWPEZ2AAPClUjQMw1OUEhwXR6BeEuZoIwsTaFs9XecDqI7NP0g
+         3W/npl9qmLbteRp6uI3aGZlOstD9yisz+MDMkDuzho3tHpXfRae3uVPJnl5p2KmJAcQA
+         bX1D0lV9uAHT/ycN5/p0Xgu7nm6CG+h7CiXpgzL/fXaPPcjoOxtoX27vv8jvvXhWWM7u
+         ywGQ==
+X-Gm-Message-State: AA+aEWYexXKBL62832AxUWSc6GRJJciwi1mSj3mvK2FiSEqQkjf1+IVe
+        lTw7pMZnA4/u4rYqIPYBmP4GPPdDy+ku5cciw/Rw8A==
+X-Google-Smtp-Source: AFSGD/VLjcIs7T27DfkddnKElJUp18co0Ey6qKWlvabngIHdKotsX02s1Dkp35eAGuvQfffSBXb3TTHLWRxjkUYeo5Q=
+X-Received: by 2002:a24:f542:: with SMTP id k63mr8389489ith.162.1544655647097;
+ Wed, 12 Dec 2018 15:00:47 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181212225201.GL99796@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-CA
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: wesleyshenggit@sina.com, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, kurt.schwemmer@microsemi.com, wesley.sheng@microchip.com, helgaas@kernel.org
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH 5/5] switchtec: MRPC DMA mode implementation
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+References: <1544103052-28191-1-git-send-email-wesley.sheng@microchip.com>
+In-Reply-To: <1544103052-28191-1-git-send-email-wesley.sheng@microchip.com>
+From:   Jon Mason <jdmason@kudzu.us>
+Date:   Wed, 12 Dec 2018 18:00:35 -0500
+Message-ID: <CAPoiz9yN9zHXxyuwmopfSwBLGr39bQ1SJjGq_ku-w_b9V13OFQ@mail.gmail.com>
+Subject: Re: [PATCH v2 0/3] ntb_hw_switchtec: Added support of >=4G memory windows
+To:     wesley.sheng@microchip.com
+Cc:     Kurt Schwemmer <kurt.schwemmer@microsemi.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Allen Hubbe <allenbh@gmail.com>, linux-pci@vger.kernel.org,
+        linux-ntb@googlegroups.com,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        wesleyshenggit@sina.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Dec 6, 2018 at 1:47 AM Wesley Sheng <wesley.sheng@microchip.com> wrote:
+>
+> Hi, Everyone,
+>
+> This patch series adds support of >=4G memory windows.
+>
+> Current Switchtec's BAR setup registers are limited to 32bits,
+> corresponding to the maximum MW (memory window) size is <4G.
+> Increase the MW sizes with the addition of the BAR Setup Extension
+> Register for the upper 32bits of a 64bits MW size. This increases the MW
+> range to between 4K and 2^63.
+>
+> Additionally, we've made the following changes:
+>
+> * debug print 64bit aligned crosslink BAR numbers
+> * Fix the array size of NT req id mapping table
+>
+> Tested with ntb_test.sh successfully based on NTB fixes series from
+> Logan Gunthorpe <logang@deltatee.com> at
+> https://github.com/sbates130272/linux-p2pmem on branch of
+> ntb_multiport_fixes
 
+So, you based your patches on a series of patches not in the
+ntb/ntb-next branch?  Please don't do this.  I see nothing in these
+patches which requires that series, which makes this even more
+unnecessary.  Since these are fairly trivial, I'm taking them and
+pushing to the ntb-next branch to give these more time to be tested
+(due to not being tested on the proper branch).  I would really
+appreciate you testing the ntb-next branch as a sanity check.
 
-On 2018-12-12 3:52 p.m., Bjorn Helgaas wrote:
-> On Mon, Dec 10, 2018 at 05:12:24PM +0800, Wesley Sheng wrote:
->> MRPC normal mode requires the host to read the MRPC command status and
->> output data from BAR. This results in high latency responses from the
->> Memory Read TLP and potential Completion Timeout (CTO).
->>
->> MRPC DMA mode implementation includes:
->> Macro definitions for registers and data structures corresponding to
->> MRPC DMA mode.
->>
->> Add module parameter use_dma_mrpc to select between MRPC DMA mode and
->> MRPC normal mode.
->>
->> Add MRPC mode functionality to:
->> * Retrieve MRPC DMA mode version
->> * Allocate DMA buffer, ISR registration, and enable DMA function during
->>   initialization
->> * Check MRPC execution status and collect execution results from DMA buffer
->> * Release DMA buffer and disable DMA function when unloading module
->>
->> MRPC DMA mode is a new feature of firmware and the driver will fall back
->> to MRPC normal mode if there is no support in the legacy firmware.
->>
->> Include <linux/io-64-nonatomic-lo-hi.h> so that readq/writeq is replaced
->> by two readl/writel on systems that do not support it.
->>
->> Signed-off-by: Wesley Sheng <wesley.sheng@microchip.com>
->> Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
->> ---
->>  drivers/pci/switch/switchtec.c | 108 +++++++++++++++++++++++++++++++++++++----
->>  include/linux/switchtec.h      |  16 ++++++
->>  2 files changed, 114 insertions(+), 10 deletions(-)
->>
->> diff --git a/drivers/pci/switch/switchtec.c b/drivers/pci/switch/switchtec.c
->> index 0b8862b..6b726cb 100644
->> --- a/drivers/pci/switch/switchtec.c
->> +++ b/drivers/pci/switch/switchtec.c
->> @@ -13,7 +13,7 @@
->>  #include <linux/uaccess.h>
->>  #include <linux/poll.h>
->>  #include <linux/wait.h>
->> -
->> +#include <linux/io-64-nonatomic-lo-hi.h>
->>  #include <linux/nospec.h>
->>  
->>  MODULE_DESCRIPTION("Microsemi Switchtec(tm) PCIe Management Driver");
->> @@ -25,6 +25,11 @@ static int max_devices = 16;
->>  module_param(max_devices, int, 0644);
->>  MODULE_PARM_DESC(max_devices, "max number of switchtec device instances");
->>  
->> +static bool use_dma_mrpc = 1;
->> +module_param(use_dma_mrpc, bool, 0644);
->> +MODULE_PARM_DESC(use_dma_mrpc,
->> +		 "Enable the use of the DMA MRPC feature");
-> 
-> What's the purpose of the module parameter?  Can't you automatically
-> figure out whether the firmware supports DMA mode?
-> 
-> Module parameters make life difficult for users and lead to code
-> that's rarely used and poorly tested, so I think we should avoid them
-> whenever we can.
-> 
-> If you *can't* automatically figure out when to use DMA, please make
-> it clear in the changelog that the "use_dma_mrpc" parameter is
-> required with legacy firmware.  And in that case, it seems like it
-> should be named "disable_dma" or similar, since it defaults to being
-> enabled.
+Thanks,
+Jon
 
-The code should already automatically determine whether the firmware
-supports DMA or not. This parameter is just to aid debugging/testing so
-we can run the module without DMA even if the firmware indicates it has
-support.
-
-It's not that critical so I'm sure we can remove it at this point if you
-don't think that's a good enough justification.
-
-Logan
+>
+> Regards,
+> Wesley
+>
+> --
+>
+> Changed since v1:
+>   - Using upper_32_bits() and lower_32_bits() marcos makes it easier
+>     to read and avoids compiler warning on 32-bit arch
+>   - Reorder the patches to make the bug fixes first and add a "Fixes"
+>     line to the commit messages
+>
+> --
+> Paul Selles (2):
+>   ntb_hw_switchtec: debug print 64bit aligned crosslink BAR Numbers
+>   ntb_hw_switchtec: Added support of >=4G memory windows
+>
+> Wesley Sheng (1):
+>   ntb_hw_switchtec: NT req id mapping table register entry number should
+>     be 512
+>
+>  drivers/ntb/hw/mscc/ntb_hw_switchtec.c | 11 ++++++++---
+>  include/linux/switchtec.h              | 10 +++++++---
+>  2 files changed, 15 insertions(+), 6 deletions(-)
+>
+> --
+> 2.7.4
+>
