@@ -2,124 +2,126 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79BB1C65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 16:40:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 813BFC65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 16:41:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D9042084E
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 16:40:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4193C20672
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 16:41:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Y728RWkN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D9042084E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qF9xcejg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4193C20672
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727932AbeLLQkt (ORCPT
+        id S1727945AbeLLQl0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 11:40:49 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:52392 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726358AbeLLQkt (ORCPT
+        Wed, 12 Dec 2018 11:41:26 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:53820 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726358AbeLLQlZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 11:40:49 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id wBCGelEd034003;
-        Wed, 12 Dec 2018 10:40:47 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1544632847;
-        bh=PEUIKOM5yNF/zaWdsp5iT8qdaevq7r5XBOEcPESK+9w=;
-        h=Date:From:To:CC:Subject:References:In-Reply-To;
-        b=Y728RWkNeh1DD/8f2bVi6+sunwLstRNeVCn4FJTRrS49Mcucj55wTczksLTnxPfc/
-         0LVmdHFsB1itQAeUxlfmoeoyb/EsxRie6QfaWZPihKNHaKrItjUlpxIJ1l7Bjvb+ZO
-         BrRByXFeFqr+brNR4eWXXZgIaHnoh1baaFuSWqm0=
-Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wBCGelbX118697
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 12 Dec 2018 10:40:47 -0600
-Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Wed, 12
- Dec 2018 10:40:47 -0600
-Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Wed, 12 Dec 2018 10:40:47 -0600
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wBCGel3C002065;
-        Wed, 12 Dec 2018 10:40:47 -0600
-Date:   Wed, 12 Dec 2018 10:40:47 -0600
-From:   Bin Liu <b-liu@ti.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Vinod Koul <vkoul@kernel.org>
-Subject: Re: [PATCH 4.4 81/91] dmaengine: cppi41: delete channel from pending
- list when stop channel
-Message-ID: <20181212164047.GB30432@uda0271908>
-Mail-Followup-To: Bin Liu <b-liu@ti.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Vinod Koul <vkoul@kernel.org>
-References: <20181211151606.026852373@linuxfoundation.org>
- <20181211151613.281713570@linuxfoundation.org>
+        Wed, 12 Dec 2018 11:41:25 -0500
+Received: by mail-it1-f196.google.com with SMTP id g85so9980126ita.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 08:41:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=gR98btrArpXgzNlFBMpM5+u+hymqUmJwdF9GWqwhALE=;
+        b=qF9xcejgGz+zDTbCzD8jlk1x1cy6fCMFt8RLIRM+l3JtR0mQOlFxvDVZtnjjOxpaza
+         7oxqezBH7Bzoa5mINDEi/bcWs4g6ljZD0d6K5hQWEh5cuqskg8uRAuWfEsEsJi28zww5
+         YEJBHEvaGlVksDG7a3PgelIP/Etk0qwZY31++UnxiieQz8tP+mK0xcMn4sn01UgFJFd6
+         R2t+VvNJnHtdCBKoq70HAglSw2h6Y2ecA0JIgcLFbThAS5WDAg79fgRA/8eShuJk92be
+         MLZKi70Ps9byAXky4JpIuz6nY4A4LX9OF2KJWuDhJUcIzy4xvY0U24ExC9Y5SS6Qe8Vi
+         g1UA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gR98btrArpXgzNlFBMpM5+u+hymqUmJwdF9GWqwhALE=;
+        b=iAA9T8S1uNxz0DXAlhwn45qIkcbq5+cGyREDrB+69jlM2iCsfhxtL3DNnUWuwlMEsP
+         Q6cEDwWJc0LdO0yopjIXYSFxe0a6SM5w0xjoa7PgNbRku6V9cy+/EfulD22A79LUrYfG
+         Ry4xVvOEJMi4GBo6nD74shtHTkmfLPlh2MKKUhqfxJUC6A+fWi8YaLVdgr3sH219Q53K
+         flvLy7sPdF7Du3qEKcto+Hj4op2aK4giMRPwW+3iBavA7AMelK5GooA8CgLH6lJPTnKg
+         nfHMTw0KSomnRUp1IyTa9BWgN+o+XGIWi18q/SwMLHaWjI3M9SMd3GE0j6vzKEHO+aVZ
+         WJfw==
+X-Gm-Message-State: AA+aEWbnv5/oaA9B/zHjLRbZOSbt6FujnLXR5Yy1gUWS/2ZF0s4PqC+a
+        QX+/7tStbm6+Bl6mH45577nXhtnrzhxar/hMZBnsnY7M
+X-Google-Smtp-Source: AFSGD/UnYbnYuqN4UVLMQ5x9Ehncb0M6h1s/LRdOrPqqfZ6J4u8mFvZgFliBb/MtMweNzEFTyOjoQ00Z5ftHFtGh7Wo=
+X-Received: by 2002:a05:660c:250:: with SMTP id t16mr3532082itk.78.1544632884446;
+ Wed, 12 Dec 2018 08:41:24 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20181211151613.281713570@linuxfoundation.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20181210160327.20811-1-tiny.windzz@gmail.com> <20181210102157.6fa8fd8b@cakuba.netronome.com>
+In-Reply-To: <20181210102157.6fa8fd8b@cakuba.netronome.com>
+From:   Frank Lee <tiny.windzz@gmail.com>
+Date:   Thu, 13 Dec 2018 00:41:13 +0800
+Message-ID: <CAEExFWtOmSAZfqq5kr5dorzZugs0CJv9NE76Z1W9vuqPfzZjrg@mail.gmail.com>
+Subject: Re: [PATCH] bpf: convert to DEFINE_SHOW_ATTRIBUTE
+To:     jakub.kicinski@netronome.com
+Cc:     davem@davemloft.net, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Greg,
+On Tue, Dec 11, 2018 at 2:22 AM Jakub Kicinski
+<jakub.kicinski@netronome.com> wrote:
+>
+> On Mon, 10 Dec 2018 11:03:27 -0500, Yangtao Li wrote:
+> > Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
+> >
+> > Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+>
+> Acked-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+>
+> Please post v2 with the subject prefix set to "netdevsim:" rather than
+> "bpf:".
+The newer has been sent.
 
-On Tue, Dec 11, 2018 at 04:41:40PM +0100, Greg Kroah-Hartman wrote:
-> 4.4-stable review patch.  If anyone has any objections, please let me know.
-
-Please drop this patch. It really should go back to v4.9 but not older.
-
-The Fixes should instead be
-
-	fdea2d09b997 ("dmaengine: cppi41: Add basic PM runtime support")
-
-I am sorry for the noise.
-
-> 
-> ------------------
-> 
-> From: Bin Liu <b-liu@ti.com>
-> 
-> commit 59861547ec9a9736e7882f6fb0c096a720ff811a upstream.
-> 
-> The driver defines three states for a cppi channel.
-> - idle: .chan_busy == 0 && not in .pending list
-> - pending: .chan_busy == 0 && in .pending list
-> - busy: .chan_busy == 1 && not in .pending list
-> 
-> There are cases in which the cppi channel could be in the pending state
-> when cppi41_dma_issue_pending() is called after cppi41_runtime_suspend()
-> is called.
-> 
-> cppi41_stop_chan() has a bug for these cases to set channels to idle state.
-> It only checks the .chan_busy flag, but not the .pending list, then later
-> when cppi41_runtime_resume() is called the channels in .pending list will
-> be transitioned to busy state.
-> 
-> Removing channels from the .pending list solves the problem.
-> 
-> Fixes: 975faaeb9985 ("dma: cppi41: start tear down only if channel is busy")
-> Cc: stable@vger.kernel.org # v3.15+
-> Signed-off-by: Bin Liu <b-liu@ti.com>
-> Reviewed-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-> Signed-off-by: Vinod Koul <vkoul@kernel.org>
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
-Regards,
--Bin.
+Thanks,
+Yangtao
+>
+> >  drivers/net/netdevsim/bpf.c | 16 ++--------------
+> >  1 file changed, 2 insertions(+), 14 deletions(-)
+> >
+> > diff --git a/drivers/net/netdevsim/bpf.c b/drivers/net/netdevsim/bpf.c
+> > index cb3518474f0e..14b4d9774708 100644
+> > --- a/drivers/net/netdevsim/bpf.c
+> > +++ b/drivers/net/netdevsim/bpf.c
+> > @@ -48,7 +48,7 @@ struct nsim_bpf_bound_map {
+> >       struct list_head l;
+> >  };
+> >
+> > -static int nsim_debugfs_bpf_string_read(struct seq_file *file, void *data)
+> > +static int nsim_bpf_string_show(struct seq_file *file, void *data)
+> >  {
+> >       const char **str = file->private;
+> >
+> > @@ -57,19 +57,7 @@ static int nsim_debugfs_bpf_string_read(struct seq_file *file, void *data)
+> >
+> >       return 0;
+> >  }
+> > -
+> > -static int nsim_debugfs_bpf_string_open(struct inode *inode, struct file *f)
+> > -{
+> > -     return single_open(f, nsim_debugfs_bpf_string_read, inode->i_private);
+> > -}
+> > -
+> > -static const struct file_operations nsim_bpf_string_fops = {
+> > -     .owner = THIS_MODULE,
+> > -     .open = nsim_debugfs_bpf_string_open,
+> > -     .release = single_release,
+> > -     .read = seq_read,
+> > -     .llseek = seq_lseek
+> > -};
+> > +DEFINE_SHOW_ATTRIBUTE(nsim_bpf_string);
+> >
+> >  static int
+> >  nsim_bpf_verify_insn(struct bpf_verifier_env *env, int insn_idx, int prev_insn)
+>
