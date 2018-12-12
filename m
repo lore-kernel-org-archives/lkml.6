@@ -2,259 +2,198 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D3B2C04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 12:37:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6E7FC04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 12:39:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18A6F2084E
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 12:37:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18A6F2084E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
+	by mail.kernel.org (Postfix) with ESMTP id 60ACF2084E
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 12:39:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="NfcuQqmW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60ACF2084E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727383AbeLLMhf (ORCPT
+        id S1727473AbeLLMjo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 07:37:35 -0500
-Received: from vmicros1.altlinux.org ([194.107.17.57]:55170 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727091AbeLLMhe (ORCPT
+        Wed, 12 Dec 2018 07:39:44 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:35339 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727091AbeLLMjn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 07:37:34 -0500
-Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id ED6A872CA65;
-        Wed, 12 Dec 2018 15:37:30 +0300 (MSK)
-Received: by mua.local.altlinux.org (Postfix, from userid 508)
-        id B9ED37CFF70; Wed, 12 Dec 2018 15:37:30 +0300 (MSK)
-Date:   Wed, 12 Dec 2018 15:37:30 +0300
-From:   "Dmitry V. Levin" <ldv@altlinux.org>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Oleg Nesterov <oleg@redhat.com>, Andy Lutomirski <luto@kernel.org>,
-        lineprinter@altlinux.org, Eugene Syromiatnikov <esyr@redhat.com>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 13/25] m68k: add asm/syscall.h
-Message-ID: <20181212123730.GA16479@altlinux.org>
-References: <CAMuHMdVYq_2P=gb_zbSGFkPWASTds6uSPTyyhyNAgp2Qm5+feQ@mail.gmail.com>
- <20181210124059.GA11942@altlinux.org>
- <CAMuHMdW8ejp4gm2Xh-8inSQngQ5zRQ9bfsg1SG+BAD8RFV8xcA@mail.gmail.com>
- <20181210133025.GG11942@altlinux.org>
- <20181212085516.GA13288@altlinux.org>
- <CAMuHMdXwX57AZuVPdcEt_HZw1LT7tFpczJsqjW6C0VgHkhJ7dw@mail.gmail.com>
- <20181212092712.GD13288@altlinux.org>
- <CAMuHMdVvw3_3rm3v8J8u6ic6Wy3o70mOP1qaWQ=Ltf1XU=nnVQ@mail.gmail.com>
- <20181212120417.GC15561@altlinux.org>
- <CAMuHMdXqJeH0C8FHy=G=ycArdkvjYPy48+3LmACnyS9RuqV30g@mail.gmail.com>
+        Wed, 12 Dec 2018 07:39:43 -0500
+Received: by mail-wr1-f67.google.com with SMTP id 96so17563612wrb.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 04:39:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:openpgp:autocrypt:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=J0ei1kwZyhqYGIfpGeg+JUNQ8JWaYJvOQ2erDW/ftt0=;
+        b=NfcuQqmWCfRnrZ319gPr2DrCIbG3YA86Nhfku31BBeVHB1Ml1cwDJmK/8IxSlfuFi3
+         NgkpS4mvhJ+3GiuNy1T5QIxXgswjeWkFZ+XHOEqHkqCcaLg2zrXMvCP9Xer/IDEWZf2i
+         15khR8prPKYzFmmtOYQLq2awJPprfU2RzOFBX8r5DN4hBBdvZ1brUuaVqR3RprRdda3J
+         NWCsZhPM1/QqKXaRmWV8H+2zRu4Q2dKDmkrekzryLGld5e14S7w63FTOCtSl+8nlijKJ
+         ZZJWDXc/EWbVZv3LxEY3x2uEqofsECDInFD5QNV/GEou9/r4z/0g/N+nza0kQk9iNz5P
+         sf3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :organization:message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=J0ei1kwZyhqYGIfpGeg+JUNQ8JWaYJvOQ2erDW/ftt0=;
+        b=GhJljY61xy2vYo4PqyKZYCoTv5MY5OkkseWM/6nZxa1AF1agQO0BHABWcFDfznYAxV
+         b4eZpBc/uAdLTIq/iRUr3j/o3A5Fna6IdfkgY7+CRzBKlzTiLPZJ35pbobYAat+LMEAU
+         bcUxtIR6MvyKomiwRqINDsV862sbkMYnmGtqJFQIvST+3Ie8lQYbtUvxOEFh/v3IrQBc
+         7zt9R+I4GHj/oAia4BWjDGQlw0usfR2/itpW8+u6elI6UofHp8+1YTZZQ9/twtJ8An4F
+         Auxbkqj/197cH4CSshcY7AZW55LXErA7z89StPrI1VxP2zRJAO+6SHZCtCItzaIhlklz
+         b+Nw==
+X-Gm-Message-State: AA+aEWZ2x9IQyABrLHBo2/TkUUteEOZF6qrsj8DSOExLRF9F69zZGYrH
+        teqKQqWiwC7aI8/CQykwfrsp8A==
+X-Google-Smtp-Source: AFSGD/XCS/2Xwv5s62agkojHgttwWO1wilmiS2vYXJMHTvJ88LHf/8izGlVllHN6Lb9gRp+WOtqVeg==
+X-Received: by 2002:adf:fb4c:: with SMTP id c12mr16501960wrs.297.1544618381382;
+        Wed, 12 Dec 2018 04:39:41 -0800 (PST)
+Received: from [10.1.3.173] (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id j24sm16176525wrd.86.2018.12.12.04.39.40
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 12 Dec 2018 04:39:40 -0800 (PST)
+Subject: Re: [PATCH RESEND] drm/meson: remove firmware framebuffers
+To:     Maxime Jourdan <mjourdan@baylibre.com>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, dri-devel@lists.freedesktop.org
+References: <20181210092853.13050-1-mjourdan@baylibre.com>
+ <c5138091-d801-8b2a-85ab-d815f0508933@baylibre.com>
+ <CAMO6nay4+8Y_O2iTWJ041Bt0+3VUuOQj0WEN3Pyf6L80vuxHTA@mail.gmail.com>
+From:   Neil Armstrong <narmstrong@baylibre.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
+ mQENBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAG0KE5laWwgQXJtc3Ryb25nIDxuYXJtc3Ryb25nQGJheWxpYnJlLmNvbT6JATsEEwEKACUC
+ GyMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheABQJXDO2CAhkBAAoJEBaat7Gkz/iubGIH/iyk
+ RqvgB62oKOFlgOTYCMkYpm2aAOZZLf6VKHKc7DoVwuUkjHfIRXdslbrxi4pk5VKU6ZP9AKsN
+ NtMZntB8WrBTtkAZfZbTF7850uwd3eU5cN/7N1Q6g0JQihE7w4GlIkEpQ8vwSg5W7hkx3yQ6
+ 2YzrUZh/b7QThXbNZ7xOeSEms014QXazx8+txR7jrGF3dYxBsCkotO/8DNtZ1R+aUvRfpKg5
+ ZgABTC0LmAQnuUUf2PHcKFAHZo5KrdO+tyfL+LgTUXIXkK+tenkLsAJ0cagz1EZ5gntuheLD
+ YJuzS4zN+1Asmb9kVKxhjSQOcIh6g2tw7vaYJgL/OzJtZi6JlIW5AQ0ETVkGzwEIALyKDN/O
+ GURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYpQTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXM
+ coJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hi
+ SvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY4yG6xI99NIPEVE9lNBXBKIlewIyVlkOa
+ YvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoMMtsyw18YoX9BqMFInxqYQQ3j/HpVgTSv
+ mo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUXoUk33HEAEQEAAYkBHwQYAQIACQUCTVkG
+ zwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfnM7IbRuiSZS1unlySUVYu3SD6YBYnNi3G
+ 5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa33eDIHu/zr1HMKErm+2SD6PO9umRef8V8
+ 2o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCSKmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+
+ RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJ
+ C3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTTQbM0WUIBIcGmq38+OgUsMYu4NzLu7uZF
+ Acmp6h8guQINBFYnf6QBEADQ+wBYa+X2n/xIQz/RUoGHf84Jm+yTqRT43t7sO48/cBW9vAn9
+ GNwnJ3HRJWKATW0ZXrCr40ES/JqM1fUTfiFDB3VMdWpEfwOAT1zXS+0rX8yljgsWR1UvqyEP
+ 3xN0M/40Zk+rdmZKaZS8VQaXbveaiWMEmY7sBV3QvgOzB7UF2It1HwoCon5Y+PvyE3CguhBd
+ 9iq5iEampkMIkbA3FFCpQFI5Ai3BywkLzbA3ZtnMXR8Qt9gFZtyXvFQrB+/6hDzEPnBGZOOx
+ zkd/iIX59SxBuS38LMlhPPycbFNmtauOC0DNpXCv9ACgC9tFw3exER/xQgSpDVc4vrL2Cacr
+ wmQp1k9E0W+9pk/l8S1jcHx03hgCxPtQLOIyEu9iIJb27TjcXNjiInd7Uea195NldIrndD+x
+ 58/yU3X70qVY+eWbqzpdlwF1KRm6uV0ZOQhEhbi0FfKKgsYFgBIBchGqSOBsCbL35f9hK/JC
+ 6LnGDtSHeJs+jd9/qJj4WqF3x8i0sncQ/gszSajdhnWrxraG3b7/9ldMLpKo/OoihfLaCxtv
+ xYmtw8TGhlMaiOxjDrohmY1z7f3rf6njskoIXUO0nabun1nPAiV1dpjleg60s3OmVQeEpr3a
+ K7gR1ljkemJzM9NUoRROPaT7nMlNYQL+IwuthJd6XQqwzp1jRTGG26J97wARAQABiQM+BBgB
+ AgAJBQJWJ3+kAhsCAikJEBaat7Gkz/iuwV0gBBkBAgAGBQJWJ3+kAAoJEHfc29rIyEnRk6MQ
+ AJDo0nxsadLpYB26FALZsWlN74rnFXth5dQVQ7SkipmyFWZhFL8fQ9OiIoxWhM6rSg9+C1w+
+ n45eByMg2b8H3mmQmyWztdI95OxSREKwbaXVapCcZnv52JRjlc3DoiiHqTZML5x1Z7lQ1T3F
+ 8o9sKrbFO1WQw1+Nc91+MU0MGN0jtfZ0Tvn/ouEZrSXCE4K3oDGtj3AdC764yZVq6CPigCgs
+ 6Ex80k6QlzCdVP3RKsnPO2xQXXPgyJPJlpD8bHHHW7OLfoR9DaBNympfcbQJeekQrTvyoASw
+ EOTPKE6CVWrcQIztUp0WFTdRGgMK0cZB3Xfe6sOp24PQTHAKGtjTHNP/THomkH24Fum9K3iM
+ /4Wh4V2eqGEgpdeSp5K+LdaNyNgaqzMOtt4HYk86LYLSHfFXywdlbGrY9+TqiJ+ZVW4trmui
+ NIJCOku8SYansq34QzYM0x3UFRwff+45zNBEVzctSnremg1mVgrzOfXU8rt+4N1b2MxorPF8
+ 619aCwVP7U16qNSBaqiAJr4e5SNEnoAq18+1Gp8QsFG0ARY8xp+qaKBByWES7lRi3QbqAKZf
+ yOHS6gmYo9gBmuAhc65/VtHMJtxwjpUeN4Bcs9HUpDMDVHdfeRa73wM+wY5potfQ5zkSp0Jp
+ bxnv/cRBH6+c43stTffprd//4Hgz+nJcCgZKtCYIAPkUxABC85ID2CidzbraErVACmRoizhT
+ KR2OiqSLW2x4xdmSiFNcIWkWJB6Qdri0Fzs2dHe8etD1HYaht1ZhZ810s7QOL7JwypO8dscN
+ KTEkyoTGn6cWj0CX+PeP4xp8AR8ot4d0BhtUY34UPzjE1/xyrQFAdnLd0PP4wXxdIUuRs0+n
+ WLY9Aou/vC1LAdlaGsoTVzJ2gX4fkKQIWhX0WVk41BSFeDKQ3RQ2pnuzwedLO94Bf6X0G48O
+ VsbXrP9BZ6snXyHfebPnno/te5XRqZTL9aJOytB/1iUna+1MAwBxGFPvqeEUUyT+gx1l3Acl
+ ZaTUOEkgIor5losDrePdPgE=
+Organization: Baylibre
+Message-ID: <19df7254-3fec-fb60-7581-54cf22e10509@baylibre.com>
+Date:   Wed, 12 Dec 2018 13:39:40 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="gKMricLos+KVdGMg"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdXqJeH0C8FHy=G=ycArdkvjYPy48+3LmACnyS9RuqV30g@mail.gmail.com>
+In-Reply-To: <CAMO6nay4+8Y_O2iTWJ041Bt0+3VUuOQj0WEN3Pyf6L80vuxHTA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 12/12/2018 13:22, Maxime Jourdan wrote:
+> Hi Neil,
+> On Wed, Dec 12, 2018 at 10:55 AM Neil Armstrong <narmstrong@baylibre.com> wrote:
+>>
+>> Hi Maxime,
+>>
+>> On 10/12/2018 10:28, Maxime Jourdan wrote:
+>>> In case we are using simplefb or another conflicting framebuffer, make
+>>> the call to drm_fb_helper_remove_conflicting_framebuffers()
+>>>
+>>> Signed-off-by: Maxime Jourdan <mjourdan@baylibre.com>
+>>> ---
+>>>  drivers/gpu/drm/meson/meson_drv.c | 20 ++++++++++++++++++++
+>>>  1 file changed, 20 insertions(+)
+>>>
+>>> diff --git a/drivers/gpu/drm/meson/meson_drv.c b/drivers/gpu/drm/meson/meson_drv.c
+>>> index d3443125e661..afbb3d707d15 100644
+>>> --- a/drivers/gpu/drm/meson/meson_drv.c
+>>> +++ b/drivers/gpu/drm/meson/meson_drv.c
+>>> @@ -159,6 +159,23 @@ static void meson_vpu_init(struct meson_drm *priv)
+>>>       writel_relaxed(0x20000, priv->io_base + _REG(VPU_WRARB_MODE_L2C1));
+>>>  }
+>>>
+>>> +static void meson_remove_framebuffers(void)
+>>> +{
+>>> +     struct apertures_struct *ap;
+>>> +
+>>> +     ap = alloc_apertures(1);
+>>> +     if (!ap)
+>>> +             return;
+>>> +
+>>> +     /* The framebuffer can be located anywhere in RAM */
+>>> +     ap->ranges[0].base = 0;
+>>> +     ap->ranges[0].size = ~0;
+>>> +
+>>> +     drm_fb_helper_remove_conflicting_framebuffers(ap, "meson-drm-fb",
+>>> +                                                   false);
+>>
+>> I always wondered, where does the "meson-drm-fb" comes from ???
+>>
+>> Neil
+>>
+> 
+> This name ultimately ends up in a printk and has no functional impact.
+> See drivers/video/fbdev/core/fbmem.c:1613 :
+> 
+> printk(KERN_INFO "fb%d: switching to %s from %s\n", i, name,
+> registered_fb[i]->fix.id);
+> 
+> I just picked one that was similar to the names of other drm drivers
+> calling drm_fb_helper_remove_conflicting_framebuffers().
 
---gKMricLos+KVdGMg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Ok Cool !
 
-Hi Geert,
+> 
+> Maxime
+> 
 
-On Wed, Dec 12, 2018 at 01:27:14PM +0100, Geert Uytterhoeven wrote:
-> On Wed, Dec 12, 2018 at 1:04 PM Dmitry V. Levin <ldv@altlinux.org> wrote:
-> > On Wed, Dec 12, 2018 at 10:43:33AM +0100, Geert Uytterhoeven wrote:
-> > > On Wed, Dec 12, 2018 at 10:27 AM Dmitry V. Levin <ldv@altlinux.org> w=
-rote:
-> > > > On Wed, Dec 12, 2018 at 10:01:29AM +0100, Geert Uytterhoeven wrote:
-> > > > > On Wed, Dec 12, 2018 at 9:55 AM Dmitry V. Levin <ldv@altlinux.org=
-> wrote:
-> > > > > > On Mon, Dec 10, 2018 at 04:30:25PM +0300, Dmitry V. Levin wrote:
-> > > > > > > On Mon, Dec 10, 2018 at 02:06:28PM +0100, Geert Uytterhoeven =
-wrote:
-> > > > > > > > On Mon, Dec 10, 2018 at 1:41 PM Dmitry V. Levin <ldv@altlin=
-ux.org> wrote:
-> > > > > > > > > On Mon, Dec 10, 2018 at 09:45:42AM +0100, Geert Uytterhoe=
-ven wrote:
-> > > > > > > > > > On Mon, Dec 10, 2018 at 5:30 AM Dmitry V. Levin <ldv@al=
-tlinux.org> wrote:
-> > > > > > > > > > > syscall_get_* functions are required to be implemente=
-d on all
-> > > > > > > > > > > architectures in order to extend the generic ptrace A=
-PI with
-> > > > > > > > > > > PTRACE_GET_SYSCALL_INFO request.
-> > > > > > > > > > >
-> > > > > > > > > > > This introduces asm/syscall.h on m68k implementing al=
-l 5 syscall_get_*
-> > > > > > > > > > > functions as documented in asm-generic/syscall.h: sys=
-call_get_nr,
-> > > > > > > > > > > syscall_get_arguments, syscall_get_error, syscall_get=
-_return_value,
-> > > > > > > > > > > and syscall_get_arch.
-> > > > > > > > > > >
-> > > > > > > > > > > Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-> > > > > > > > > > > Cc: Oleg Nesterov <oleg@redhat.com>
-> > > > > > > > > > > Cc: Andy Lutomirski <luto@kernel.org>
-> > > > > > > > > > > Cc: Elvira Khabirova <lineprinter@altlinux.org>
-> > > > > > > > > > > Cc: Eugene Syromyatnikov <esyr@redhat.com>
-> > > > > > > > > > > Cc: linux-m68k@lists.linux-m68k.org
-> > > > > > > > > > > Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
-> > > > > > > > > > > ---
-> > > > > > > > > > >
-> > > > > > > > > > > Notes:
-> > > > > > > > > > >     v5: added syscall_get_nr, syscall_get_arguments, =
-syscall_get_error,
-> > > > > > > > > > >         and syscall_get_return_value
-> > > > > > > > > > >     v1: added syscall_get_arch
-> > > > > > > > > >
-> > > > > > > > > > > --- /dev/null
-> > > > > > > > > > > +++ b/arch/m68k/include/asm/syscall.h
-> > > > > > > > > > > @@ -0,0 +1,39 @@
-> > > > > > > > > >
-> > > > > > > > > > > +static inline void
-> > > > > > > > > > > +syscall_get_arguments(struct task_struct *task, stru=
-ct pt_regs *regs,
-> > > > > > > > > > > +                     unsigned int i, unsigned int n,=
- unsigned long *args)
-> > > > > > > > > > > +{
-> > > > > > > > > > > +       BUG_ON(i + n > 6);
-> > > > > > > > > >
-> > > > > > > > > > Does this have to crash the kernel?
-> > > > > > > > >
-> > > > > > > > > This is what most of other architectures do, but we could=
- choose
-> > > > > > > > > a softer approach, e.g. use WARN_ON_ONCE instead.
-> > > > > > > > >
-> > > > > > > > > > Perhaps you can return an error code instead?
-> > > > > > > > >
-> > > > > > > > > That would be problematic given the signature of this fun=
-ction
-> > > > > > > > > and the nature of the potential bug which would most like=
-ly be a usage error.
-> > > > > > > >
-> > > > > > > > Of course to handle that, the function's signature need to =
-be changed.
-> > > > > > > > Changing it has the advantage that the error handling can b=
-e done at the
-> > > > > > > > caller, in common code, instead of duplicating it for all
-> > > > > > > > architectures, possibly
-> > > > > > > > leading to different semantics.
-> > > > > > >
-> > > > > > > Given that *all* current users of syscall_get_arguments speci=
-fy i =3D=3D 0
-> > > > > > > (and there is an architecture that has BUG_ON(i)),
-> > > > > > > it should be really a usage error to get into situation where=
- i + n > 6,
-> > > > > > > I wish a BUILD_BUG_ON could be used here instead.
-> > > > > > >
-> > > > > > > I don't think it worths pushing the change of API just to con=
-vert
-> > > > > > > a "cannot happen" assertion into an error that would have to =
-be dealt with
-> > > > > > > on the caller side.
-> > > > > >
-> > > > > > I suggest the following BUG_ON replacement for syscall_get_argu=
-ments:
-> > > > > >
-> > > > > > #define SYSCALL_MAX_ARGS 6
-> > > > > >
-> > > > > > static inline void
-> > > > > > syscall_get_arguments(struct task_struct *task, struct pt_regs =
-*regs,
-> > > > > >                       unsigned int i, unsigned int n, unsigned =
-long *args)
-> > > > > > {
-> > > > > >         /*
-> > > > > >          * Ideally there should have been
-> > > > > >          * BUILD_BUG_ON(i + n > SYSCALL_MAX_ARGS);
-> > > > > >          * instead of these checks.
-> > > > > >          */
-> > > > > >         if (unlikely(i > SYSCALL_MAX_ARGS)) {
-> > > > > >                 WARN_ONCE(1, "i > SYSCALL_MAX_ARGS");
-> > > > > >                 return;
-> > > > >
-> > > > > Does this have security implications, as args is an output parame=
-ter?
-> > > > > I.e. if you don't fill the array, the caller will use whatever is=
- on the stack.
-> > > > > Can this ever be passed to userspace, leaking data?
-> > > >
-> > > > In the current kernel code n is always less or equal to 6,
-> > > > but in theory future changes can potentially break the assertion
-> > > > and this could lead to leaking data to userspace.
-> > >
-> > > OK.
-> > >
-> > > > Do you think we should rather be defensive and add some memsets, e.=
-g.
-> > > >
-> > > >         if (unlikely(i > SYSCALL_MAX_ARGS)) {
-> > > >                 WARN_ONCE(1, "i > SYSCALL_MAX_ARGS");
-> > > >                 memset(args, 0, n * sizeof(args[0]));
-> > > >                 return;
-> > > >         }
-> > > >         if (unlikely(n > SYSCALL_MAX_ARGS - i)) {
-> > > >                 unsigned int extra =3D n - (SYSCALL_MAX_ARGS - i);
-> > > >
-> > > >                 WARN_ONCE(1, "i + n > SYSCALL_MAX_ARGS");
-> > > >                 n =3D SYSCALL_MAX_ARGS - i;
-> > > >                 memset(&args[n], 0, extra * sizeof(args[0]));
-> > > >         }
-> > > > ?
-> > >
-> > > Yes please.
-> > >
-> > > But please handle all of that in the generic code, so it doesn't have=
- to be
-> > > replicated across all architectures.
-> > >
-> > > E.g. make syscall_get_arguments() a wrapper in generic code, calling
-> > > __syscall_get_arguments() in architecture-specific code.
-> > >
-> > > And make the latter return int, so it can indicate other failures.
-> >
-> > Other failures?  What syscall_get_arguments is expected to do
-> > if __syscall_get_arguments returned, say, -1?
->=20
-> Fail. Just like in case of other generic ill conditions it can detect its=
-elf.
+Acked-by: Neil Armstrong <narmstrong@baylibre.com>
 
-Sorry, I don't quite follow.  syscall_get_arguments() has no return code,
-so all it can possibly do is to zero out args[], e.g.
+I'll push it when the bindings are acked and when v4.21-rc1 is tagged !
 
-        if (unlikely(__syscall_get_arguments(task, regs, i, n, args) < 0)) {
-                memset(args, 0, n * sizeof(args[0]));
-                return;
-        }
-
-Do you mean this?
-
-
---=20
-ldv
-
---gKMricLos+KVdGMg
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJcEQEKAAoJEAVFT+BVnCUIKKEP/1ZzlaZ6us8HpKCmygx7UeML
-2F31jyNrZgHC8P1y90krvSsmf3MTnDydnIbXd66HMoD90/gilmCETCz1Ssi+65M8
-FDd8S2y+sVWVKS2OR9YN64fBGlegJZkRaSgE6X5gz54Q27j43RqUmLz4814nIP06
-NrZZzCp7T/lSlb+lTia6LXEyNhlvu8LMfHtJH0NdiZwJhIqbI/g9b+Y2oC56mKQZ
-9NcuiGsoAAZUgm5ZBbvxrV0DJTlc3UBbaXz0THk0JhHL3oP3sRrCI9tlV45LvnvD
-LA1YBxKHIx1/3ccNq+KutkVwhG4mpnhxWdiz1dyFwFLP4HoJO8fZSxYfK5rG0i1r
-KCRYJKscQRC44LNp1H0BHzODii4YiO9bZGdWJK3nnBiww3Xr9k/tXeQNniFgGERQ
-p63jv7Lg8vRsFWL0fg+qL6lvvWyMPIoeuKWpR3bGg80JDVyp0DQCdXPK6RBREF8D
-FS4B1+OIAKuqWL94Gbl9rcKD94DmM0i50K10TpTYc0iRAcI9qVctdayOeXQU2blW
-bvXn7vmprULMoctQIUKgCMivROTuGuqgBBVGpKug9TEIivWjLnY+YAvXzKzcMe8w
-4cQ7Rb1qq26cRfzIz+H+FZFuZ+jt6/Xpx/pBZwIWUb78EGyBouNItkDCZSXlpKoh
-yE6PT1Lo9/CMjrYKsZ44
-=Ictp
------END PGP SIGNATURE-----
-
---gKMricLos+KVdGMg--
+Neil
