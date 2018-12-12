@@ -2,136 +2,138 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24573C65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 09:59:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1B8EC65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 09:59:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB0822086D
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 09:59:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="uioW8YZj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB0822086D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 6D69320849
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 09:59:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D69320849
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727012AbeLLJ7V (ORCPT
+        id S1727026AbeLLJ7e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 04:59:21 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:56864 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726598AbeLLJ7V (ORCPT
+        Wed, 12 Dec 2018 04:59:34 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:44827 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726598AbeLLJ7d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 04:59:21 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=pnDuDZnfGwmCzOV6ZdJiUaMvrXVP1vK8421th7bqroQ=; b=uioW8YZjoJGbNf0pHUj/+cU2DE
-        uFW7dCeXD8qsvTYmQ2e9z3iAmdWdrF7NI6pSAE4Utf9fUIHJWa6PxK5ncBoPAO7Zyq3Hs5x6/0bK9
-        eVeJs6rM0tQHO67RrQSjDlxoXhag/lvxMiZsuKemlzj1SkLKtnipYUCIoKok0TRYtQk6K2dz+1D/d
-        5qDaalfvoXZujmgqzbbVqWqy2VrotMoj+kKCacHSGjomUaLSQJq6uMiBFHLnWy/eoTJzB2uOoZZzQ
-        wwZPjz2oVNKJkOrOjwb1wr3wHHgiAQ1+cPgv26Lx6u/bhpftItVCuXcCh7JgRDcgn9YoGhDShn872
-        ySl1SXGg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gX1IP-0006tG-CY; Wed, 12 Dec 2018 09:59:13 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 286EE2075BF3B; Wed, 12 Dec 2018 10:59:12 +0100 (CET)
-Date:   Wed, 12 Dec 2018 10:59:12 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Borislav Petkov <bp@alien8.de>,
-        Tom Lendacky <Thomas.Lendacky@amd.com>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        John Stultz <john.stultz@linaro.org>
-Subject: Re: [RFC PATCH 4/4] x86/TSC: Use RDTSCP
-Message-ID: <20181212095912.GX5289@hirez.programming.kicks-ass.net>
-References: <20181211222326.14581-1-bp@alien8.de>
- <20181211222326.14581-5-bp@alien8.de>
- <CALCETrVArfAAbQKJ-g_5pOy6dMVgx-FC_mjdC9xzL1jU9T07jw@mail.gmail.com>
- <59aad362-4a5b-dd8b-642f-0dc3f83cf7ee@amd.com>
- <20181211233901.GV27375@zn.tnic>
- <CALCETrXvZ4avdUh2bTLVTTz3Jxogo3zK5akWTsJ=rkJpf1XiDg@mail.gmail.com>
+        Wed, 12 Dec 2018 04:59:33 -0500
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 62335808B8; Wed, 12 Dec 2018 10:59:26 +0100 (CET)
+Date:   Wed, 12 Dec 2018 10:59:29 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Linux LED Subsystem <linux-leds@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        Daniel Mack <daniel@zonque.org>, Dan Murphy <dmurphy@ti.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Oleh Kravchenko <oleg@kaa.org.ua>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Simon Shields <simon@lineageos.org>
+Subject: Re: [PATCH 04/24] dt-bindings: leds: Add function and color
+ properties
+Message-ID: <20181212095929.GA13437@amd>
+References: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com>
+ <1541542052-10081-5-git-send-email-jacek.anaszewski@gmail.com>
+ <5bea0eb8.1c69fb81.6b921.80e6@mx.google.com>
+ <dfb5bd23-bcb9-7501-a608-969cb0464168@gmail.com>
+ <0a0b176c-4eb4-4b0e-6c3c-b3c6c8f5fff5@gmail.com>
+ <CAL_JsqKEpbJjExkQKSXwYma9wPPO+8E0QMTyWTPs1nkGSd49_g@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="XsQoSWH+UP9D9v3l"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CALCETrXvZ4avdUh2bTLVTTz3Jxogo3zK5akWTsJ=rkJpf1XiDg@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAL_JsqKEpbJjExkQKSXwYma9wPPO+8E0QMTyWTPs1nkGSd49_g@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 11, 2018 at 06:24:44PM -0800, Andy Lutomirski wrote:
-> > On Dec 11, 2018, at 3:39 PM, Borislav Petkov <bp@alien8.de> wrote:
-> >
-> >> On Tue, Dec 11, 2018 at 11:12:41PM +0000, Lendacky, Thomas wrote:
-> >> It does seem overloaded in that sense, but the feature means that LFENCE
-> >> is serializing and so can be used in rdtsc_ordered. In the same sense,
-> >> barrier_nospec is looking for whether LFENCE is serializing and preferring
-> >> that over MFENCE since it is lighter weight.
-> >>
-> >> In light of how they're being used now, they could probably stand to be
-> >> renamed in some way.
-> >
-> > Actually, come to think of it, what really matters here is whether
-> > LFENCE is serializing or not. Because if so, you wanna replace with LFENCE
-> > as it is lighter. And in that case a single alternative() - not _2() -
-> > should suffice.
-> >
-> > BUT(!), that still is not good enough if you do some qemu CPU models
-> > like pentium or so which don't even have MFENCE and cause stuff like
-> > this:
-> >
-> > https://lkml.kernel.org/r/20181123200307.GA6223@roeck-us.net
-> >
-> > Which means, that you *do* have to alternate between
-> >
-> > * no insn at all
-> > * MFENCE
-> > * LFENCE, if it is serializing
-> >
-> > so barrier_nospec() does the right thing, AFAICS. And this is why we
-> > need an ALTERNATIVE_3() to add RDTSCP into the mix too.
-> >
-> > WRT renaming, I guess we can do something like:
-> >
-> > * X86_FEATURE_MFENCE_RDTSC -> X86_FEATURE_MFENCE - to mean that CPU has
-> > MFENCE support.
-> >
-> > and
-> >
-> > * X86_FEATURE_LFENCE_RDTSC -> X86_FEATURE_LFENCE_SERIALIZING
-> >
-> > Or something to that effect.
-> 
-> This makes me nervous, since no one knows what “serializing” means.
-> IIRC AMD specifically documents that MFENCE is required before RDTSC
-> to get sensible ordering.  So it’s entirely plausible to me that
-> LFENCE is okay for Spectre mitigation but MFENCE is needed for RDTSC
-> on some CPU.
 
-What we want is IFENCE, an instruction that flushes the complete
-pipeline. Or alternatively put: holds completion until all prior issued
-instructions complete.
+--XsQoSWH+UP9D9v3l
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-MFENCE always did that (and a ton more), LFENCE seems to have always
-done that on Intel, but AMD at some point actually implemented LFENCE as
-it was specified (only hold completion until all preceding loads are
-complete) and they (now) have this MSR bit to 'fix' that.
+Hi!
 
-At some point in the past (when all this spectre LFENCE muck was
-relatively fresh) I suggested we call the thing: instruction_fence() or
-something like that, maybe we ought to still do that now.
+> > We would also probably need different DT properties for different
+> > types of devices, since e.g. for network case the network interface
+> > name would fit better for the LED name, than the phy name,
+> > and we would need to know what type of device name we're going
+> > to look for.
+> >
+> > Pavel gave following examples:
+> >
+> > eth0:green:link
+> > adsl0:green:link
+> > adsl0:red:error
+> >
+> > So we would have e.g.:
+> >
+> > associated-vl42-device =3D <&camera1>;
+> > associated-network-device =3D <&phy1>;
+> > associated-block-device =3D <&phy1>;
+>=20
+> Variable property names are kind of a pain to parse.
+>=20
+> Perhaps when LEDs are associated with a device, we shouldn't care
+> within the context of the LED subsystem what the name is. The
+> association is more important and if you have that exposed, then you
+> don't really need to care what the name is. You still have to deal
+> with a device with more than 1 LED, but that becomes a problem local
+> to that device.
+>=20
+> What I'm getting at is following a more standard binding pattern of
+> providers and consumers like we have for gpios, clocks, etc. So we'd
+> have something like this:
+>=20
+> ethernet {
+>   ...
+>   leds =3D <&green_led>, <&red_led>;
+>   led-names =3D "link", "err";
+> };
+>=20
+> We can still support defining LED names as we've done, but we don't
+> have to come up with some elaborate naming convention that covers
+> every single case.
 
-Re RDTSC, waiting for all preceding instructions to complete is
-'obviously' sufficient for two RDTSC instructions not to get re-ordered
-either.
+I see that it would be more consistent with how gpios work, but I'm
+afraid this does not fit LEDs properly.
+
+With power LED, you want to be able to say "this is just on". Some
+poeple like heartbeat, and have LED for that. There may be LED for
+"disk activity", meaning activity on any harddrive. And there may be
+activity LED for specific disk.
+
+Only in the last case it would be suitable to have LED reference as a
+child of an device...
+
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--XsQoSWH+UP9D9v3l
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlwQ3AEACgkQMOfwapXb+vLW1wCdFi1UWGwFwbU0j+ZGao50rC9A
+lZ0AoJakjBzMr4Cnacqy7Zw3QTF0pKES
+=LuwX
+-----END PGP SIGNATURE-----
+
+--XsQoSWH+UP9D9v3l--
