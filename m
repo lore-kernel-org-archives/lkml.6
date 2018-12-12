@@ -2,111 +2,88 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB23BC04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 13:36:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5F09C04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 13:36:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1BED20873
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 13:36:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1BED20873
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 9D38620870
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 13:36:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="MNJd4e17";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Qtbwh91E"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D38620870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727521AbeLLNgI (ORCPT
+        id S1727560AbeLLNg6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 08:36:08 -0500
-Received: from mx2.suse.de ([195.135.220.15]:45868 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726245AbeLLNgI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 08:36:08 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 140EAAD0C;
-        Wed, 12 Dec 2018 13:36:06 +0000 (UTC)
-Date:   Wed, 12 Dec 2018 14:36:03 +0100
-From:   Petr Mladek <pmladek@suse.com>
-To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc:     Sasha Levin <sashal@kernel.org>,
-        Daniel Wang <wonderfly@google.com>,
-        Steven Rostedt <rostedt@goodmis.org>, stable@vger.kernel.org,
-        Alexander.Levin@microsoft.com,
-        Andrew Morton <akpm@linux-foundation.org>,
-        byungchul.park@lge.com, dave.hansen@intel.com, hannes@cmpxchg.org,
-        jack@suse.cz, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Mel Gorman <mgorman@suse.de>, mhocko@kernel.org, pavel@ucw.cz,
-        penguin-kernel@i-love.sakura.ne.jp,
-        Peter Zijlstra <peterz@infradead.org>, tj@kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>, vbabka@suse.cz,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        Peter Feiner <pfeiner@google.com>
-Subject: Re: 4.14 backport request for dbdda842fe96f: "printk: Add console
- owner and waiter logic to load balance console writes"
-Message-ID: <20181212133603.yyu2zvw7g454zdqd@pathway.suse.cz>
-References: <CAJmjG2-e6f6p=pE5uDECMc=W=81SYyGCmoabrC1ePXwL5DFdSw@mail.gmail.com>
- <20181022100952.GA1147@jagdpanzerIV>
- <CAJmjG2-c4e_1999n0OV5B9ABG9rF6n=myThjgX+Ms1R-vc3z+A@mail.gmail.com>
- <20181109064740.GE599@jagdpanzerIV>
- <CAJmjG28Q8pEpr67LC+Un8m+Qii58FTd1esp6Zc47TnMsw50QEw@mail.gmail.com>
- <20181212052126.GF431@jagdpanzerIV>
- <CAJmjG29a7Fax5ZW5Q+W+-1xPEXVUqdrMYwoUpSwL1Msiso6gtw@mail.gmail.com>
- <20181212062841.GI431@jagdpanzerIV>
- <20181212064841.GB2746@sasha-vm>
- <20181212081034.GA32687@jagdpanzerIV>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181212081034.GA32687@jagdpanzerIV>
-User-Agent: NeoMutt/20170421 (1.8.2)
+        Wed, 12 Dec 2018 08:36:58 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:45752 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726245AbeLLNg6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 08:36:58 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 66F5360128; Wed, 12 Dec 2018 13:36:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1544621817;
+        bh=BheGTW0b+DEHEo/IUu+MaKVW3Ho9iWeXNXFZQQghZmU=;
+        h=From:To:Cc:Subject:Date:From;
+        b=MNJd4e17xRRm9BX5DAIa0rtORW6g0tNDWZd+j4nM/R3GN0QFCPKioPnsfcRYsEw+k
+         qWwiIFiuxWEQh8Qr8UqKCU/1bexdcWW80GuVk/c+DGWEQZGrhCi9b6DfLXaPcb+/fZ
+         k87Tt5GbmALqaCtadYvBwzbwr/xurw2eUThI8Zvc=
+Received: from blr-ubuntu-41.ap.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 6CA3760128;
+        Wed, 12 Dec 2018 13:36:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1544621816;
+        bh=BheGTW0b+DEHEo/IUu+MaKVW3Ho9iWeXNXFZQQghZmU=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Qtbwh91E6DBOcEw6H3w7IUt2m0yx+OCXuMlFBsSnXRjhDPrxj1P1TMsNaL+ULMdk3
+         eM9k93tgc1QPkXv5ZqFArDxQiQhHwSUuunLU8C39LUxFT6R359DGV8NZ1bzikz+syM
+         Lr2Rn5rIjywPx4tb+Vm94Q0HehaOw9jc11BPA5ho=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6CA3760128
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
+From:   Vivek Gautam <vivek.gautam@codeaurora.org>
+To:     andy.gross@linaro.org, david.brown@linaro.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Vivek Gautam <vivek.gautam@codeaurora.org>
+Subject: [PATCH 0/2] arm64: dts: msm8996: Add display and graphics smmu
+Date:   Wed, 12 Dec 2018 19:06:45 +0530
+Message-Id: <20181212133647.9692-1-vivek.gautam@codeaurora.org>
+X-Mailer: git-send-email 2.16.1.72.g5be1f00a9a70
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 2018-12-12 17:10:34, Sergey Senozhatsky wrote:
-> On (12/12/18 01:48), Sasha Levin wrote:
-> > > > > I guess we still don't have a really clear understanding of what exactly
-> > > > is going in your system
-> > > > 
-> > > > I would also like to get to the bottom of it. Unfortunately I haven't
-> > > > got the expertise in this area nor the time to do it yet. Hence the
-> > > > intent to take a step back and backport Steven's patch to fix the
-> > > > issue that has resurfaced in our production recently.
-> > > 
-> > > No problem.
-> > > I just meant that -stable people can be a bit "unconvinced".
-> > 
-> > The -stable people tried adding this patch back in April, but ended up
-> > getting complaints up the wazoo (https://lkml.org/lkml/2018/4/9/154)
-> > about how this is not -stable material.
-> 
-> OK, really didn't know that! I wasn't Cc-ed on that AUTOSEL email,
-> and I wasn't Cc-ed on this whole discussion and found it purely
-> accidentally while browsing linux-mm list.
+The driver side patches are now pulled in [1]. So, we can now enable
+these smmu's used by display and graphics.
+This has been lying in my test trees [2] for a while, and work well with
+display and gpu enabled on msm8996.
 
-I am sorry that I did not CC you. There were so many people in CC.
-I expected that all people mentioned in the related commit message
-were included by default.
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/will/linux.git/log/?h=for-joerg/arm-smmu/updates
+[2] https://github.com/vivekgautam1/linux/tree/origin/v4.20-rc5/db820c
 
+Archit Taneja (1):
+  arm64: dts: msm8996: Add display smmu node
 
-> So if you are willing to backport this set to -stable, then I wouldn't
-> mind, probably would be more correct if we don't advertise this as a
-> "panic() deadlock fix"
+Jordan Crouse (1):
+  arm64: dts: msm8996: Add graphics smmu node
 
-This should not be a problem. I guess that stable does not modify
-the original commit messages unless there is a change.
+ arch/arm64/boot/dts/qcom/msm8996.dtsi | 34 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
 
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
 
-> In the meantime, I can add my Acked-by to this backport if it helps.
-
-I am fine with back-porting the patches now. They have got much more
-testing in the meantime and nobody reported any regression. They
-seems to help in more situations than we expected. Finally, there is
-someone requesting the backport who spent non-trivial time
-on tracking the problem and testing.
-
-Best Regards,
-Petr
