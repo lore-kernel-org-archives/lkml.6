@@ -2,124 +2,236 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD97DC65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 08:34:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0133C65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 08:34:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93FB520849
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 08:34:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544603676;
-	bh=+zYlX5hybM4j6WZXWXc+7E9TCzG+0cw0hnkpwAcj7Bs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:List-ID:From;
-	b=ms6ka+6TA7IjFTA2EGzB+zv3cUX5i+MoiohvS6Au9ZqSS1Ah/U44zntNIIQ0VnHFQ
-	 TmCbZsN2z08z4Drbf7maE8WOUFTLmpOSBF60yfmGYwQ7j3AQWP/QCXQHTiCD+vrWT0
-	 4IBaQI1y9aX2o19vmJmraM/wSFrCo42D6CMQjAzw=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93FB520849
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 6F76220849
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 08:34:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F76220849
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726885AbeLLIef (ORCPT
+        id S1726898AbeLLIem (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 03:34:35 -0500
-Received: from mga11.intel.com ([192.55.52.93]:32155 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726525AbeLLIee (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 03:34:42 -0500
+Received: from smtp-sh2.infomaniak.ch ([128.65.195.6]:44079 "EHLO
+        smtp-sh2.infomaniak.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726242AbeLLIee (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 12 Dec 2018 03:34:34 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Dec 2018 00:34:33 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,343,1539673200"; 
-   d="asc'?scan'208";a="282933478"
-Received: from pipin.fi.intel.com (HELO localhost) ([10.237.72.175])
-  by orsmga005.jf.intel.com with ESMTP; 12 Dec 2018 00:34:28 -0800
-From:   Felipe Balbi <balbi@kernel.org>
-To:     Peter Chen <peter.chen@nxp.com>,
-        Peter Chen <hzpeterchen@gmail.com>,
-        "pawell\@cadence.com" <pawell@cadence.com>
-Cc:     "devicetree\@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-usb\@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "rogerq\@ti.com" <rogerq@ti.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        "adouglas\@cadence.com" <adouglas@cadence.com>,
-        "jbergsagel\@ti.com" <jbergsagel@ti.com>,
-        "nsekhar\@ti.com" <nsekhar@ti.com>, "nm\@ti.com" <nm@ti.com>,
-        "sureshp\@cadence.com" <sureshp@cadence.com>,
-        "pjez\@cadence.com" <pjez@cadence.com>,
-        "kurahul\@cadence.com" <kurahul@cadence.com>
-Subject: RE: [PATCH v1 2/2] usb:cdns3 Add Cadence USB3 DRD Driver
-In-Reply-To: <VI1PR04MB5327B1CB6C6BC7D293701F1D8BA70@VI1PR04MB5327.eurprd04.prod.outlook.com>
-References: <1544445555-17325-1-git-send-email-pawell@cadence.com> <1544445555-17325-3-git-send-email-pawell@cadence.com> <87h8fkmfar.fsf@linux.intel.com> <BYAPR07MB47095110AF28CC11B4C9E144DDA60@BYAPR07MB4709.namprd07.prod.outlook.com> <CAL411-ryK2LLZVg5_sLkCYOuhwdHLVm5XavSyC9nbEXZah_43w@mail.gmail.com> <877egfmdxk.fsf@linux.intel.com> <VI1PR04MB5327B1CB6C6BC7D293701F1D8BA70@VI1PR04MB5327.eurprd04.prod.outlook.com>
-Date:   Wed, 12 Dec 2018 10:34:24 +0200
-Message-ID: <871s6nm9db.fsf@linux.intel.com>
+Received: from smtp7.infomaniak.ch (smtp7.infomaniak.ch [83.166.132.30])
+        by smtp-sh.infomaniak.ch (8.14.5/8.14.5) with ESMTP id wBC8HkJd022559
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 12 Dec 2018 09:17:46 +0100
+Received: from localhost (ns3096276.ip-94-23-54.eu [94.23.54.103])
+        (authenticated bits=0)
+        by smtp7.infomaniak.ch (8.14.5/8.14.5) with ESMTP id wBC8HkTd061382;
+        Wed, 12 Dec 2018 09:17:46 +0100
+From:   =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To:     linux-kernel@vger.kernel.org
+Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        James Morris <jmorris@namei.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Garrett <mjg59@google.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mickael.salaun@ssi.gouv.fr>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        =?UTF-8?q?Philippe=20Tr=C3=A9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>, Shuah Khan <shuah@kernel.org>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        Yves-Alexis Perez <yves-alexis.perez@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: [RFC PATCH v1 3/5] Yama: Enforces noexec mounts or file executability through O_MAYEXEC
+Date:   Wed, 12 Dec 2018 09:17:10 +0100
+Message-Id: <20181212081712.32347-4-mic@digikod.net>
+X-Mailer: git-send-email 2.20.0.rc2
+In-Reply-To: <20181212081712.32347-1-mic@digikod.net>
+References: <20181212081712.32347-1-mic@digikod.net>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Antivirus: Dr.Web (R) for Unix mail servers drweb plugin ver.6.0.2.8
+X-Antivirus-Code: 0x100000
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Enable to either propagate the mount options from the underlying VFS
+mount to prevent execution, or to propagate the file execute permission.
+This may allow a script interpreter to check execution permissions
+before reading commands from a file.
 
-Peter Chen <peter.chen@nxp.com> writes:
->> >> >> +    irqreturn_t ret =3D IRQ_NONE;
->> >> >> +    unsigned long flags;
->> >> >> +    u32 reg;
->> >> >> +
->> >> >> +    priv_dev =3D cdns->gadget_dev;
->> >> >> +    spin_lock_irqsave(&priv_dev->lock, flags);
->> >> >
->> >> >you're already running in hardirq context. Why do you need this lock
->> >> >at all? I would be better to use the hardirq handler to mask your
->> >> >interrupts, so they don't fire again, then used the top-half
->> >> >(softirq) handler to actually handle the interrupts.
->> >>
->> >
->> > This controller may be ran at SMP environment, register and flag
->> > access needs to be protected among CPUs running.
->>=20
->> in hardirq context? When interrupts are already disabled?
->
-> Interrupt handler (hardirq context) at CPU0, and process at CPU1, eg
-> role switch, unload module, etc.
+The main goal is to be able to protect the kernel by restricting
+arbitrary syscalls that an attacker could perform with a crafted binary
+or certain script languages.  It also improves multilevel isolation
+by reducing the ability of an attacker to use side channels with
+specific code.  These restrictions can natively be enforced for ELF
+binaries (with the noexec mount option) but require this kernel
+extension to properly handle scripts (e.g., Python, Perl).
 
-the process at CPU1 would need to disable interrupts (spin_lock_irq() or
-spin_lock_irqsave()), not the hardirq on CPU0 as that already runs with
-interrrupts disabled.
+Add a new sysctl kernel.yama.open_mayexec_enforce to control this
+behavior.  A following patch adds documentation.
 
-https://www.kernel.org/doc/html/latest/kernel-hacking/locking.html#table-of=
--minimum-requirements
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
+Reviewed-by: Philippe Trébuchet <philippe.trebuchet@ssi.gouv.fr>
+Reviewed-by: Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Mickaël Salaün <mickael.salaun@ssi.gouv.fr>
+---
+ security/yama/Kconfig    |  3 +-
+ security/yama/yama_lsm.c | 82 +++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 83 insertions(+), 2 deletions(-)
 
-=2D-=20
-balbi
+diff --git a/security/yama/Kconfig b/security/yama/Kconfig
+index 96b27405558a..9457619fabd5 100644
+--- a/security/yama/Kconfig
++++ b/security/yama/Kconfig
+@@ -5,7 +5,8 @@ config SECURITY_YAMA
+ 	help
+ 	  This selects Yama, which extends DAC support with additional
+ 	  system-wide security settings beyond regular Linux discretionary
+-	  access controls. Currently available is ptrace scope restriction.
++	  access controls. Currently available are ptrace scope restriction and
++	  enforcement of the O_MAYEXEC open flag.
+ 	  Like capabilities, this security module stacks with other LSMs.
+ 	  Further information can be found in
+ 	  Documentation/admin-guide/LSM/Yama.rst.
+diff --git a/security/yama/yama_lsm.c b/security/yama/yama_lsm.c
+index ffda91a4a1aa..120664e94ee5 100644
+--- a/security/yama/yama_lsm.c
++++ b/security/yama/yama_lsm.c
+@@ -1,10 +1,12 @@
+ /*
+  * Yama Linux Security Module
+  *
+- * Author: Kees Cook <keescook@chromium.org>
++ * Authors: Kees Cook <keescook@chromium.org>
++ *          Mickaël Salaün <mickael.salaun@ssi.gouv.fr>
+  *
+  * Copyright (C) 2010 Canonical, Ltd.
+  * Copyright (C) 2011 The Chromium OS Authors.
++ * Copyright (C) 2018 ANSSI
+  *
+  * This program is free software; you can redistribute it and/or modify
+  * it under the terms of the GNU General Public License version 2, as
+@@ -28,7 +30,14 @@
+ #define YAMA_SCOPE_CAPABILITY	2
+ #define YAMA_SCOPE_NO_ATTACH	3
+ 
++#define YAMA_OMAYEXEC_ENFORCE_NONE	0
++#define YAMA_OMAYEXEC_ENFORCE_MOUNT	(1 << 0)
++#define YAMA_OMAYEXEC_ENFORCE_FILE	(1 << 1)
++#define _YAMA_OMAYEXEC_LAST		YAMA_OMAYEXEC_ENFORCE_FILE
++#define _YAMA_OMAYEXEC_MASK		((_YAMA_OMAYEXEC_LAST << 1) - 1)
++
+ static int ptrace_scope = YAMA_SCOPE_RELATIONAL;
++static int open_mayexec_enforce = YAMA_OMAYEXEC_ENFORCE_NONE;
+ 
+ /* describe a ptrace relationship for potential exception */
+ struct ptrace_relation {
+@@ -423,7 +432,40 @@ int yama_ptrace_traceme(struct task_struct *parent)
+ 	return rc;
+ }
+ 
++/**
++ * yama_inode_permission - check O_MAYEXEC permission before accessing an inode
++ * @inode: inode structure to check
++ * @mask: permission mask
++ *
++ * Return 0 if access is permitted, -EACCES otherwise.
++ */
++int yama_inode_permission(struct inode *inode, int mask)
++{
++	if (!(mask & MAY_OPENEXEC))
++		return 0;
++	/*
++	 * Match regular files and directories to make it easier to
++	 * modify script interpreters.
++	 */
++	if (!S_ISREG(inode->i_mode) && !S_ISDIR(inode->i_mode))
++		return 0;
++
++	if ((open_mayexec_enforce & YAMA_OMAYEXEC_ENFORCE_MOUNT) &&
++			!(mask & MAY_EXECMOUNT))
++		return -EACCES;
++
++	/*
++	 * May prefer acl_permission_check() instead of generic_permission(),
++	 * to not be bypassable with CAP_DAC_READ_SEARCH.
++	 */
++	if (open_mayexec_enforce & YAMA_OMAYEXEC_ENFORCE_FILE)
++		return generic_permission(inode, MAY_EXEC);
++
++	return 0;
++}
++
+ static struct security_hook_list yama_hooks[] __lsm_ro_after_init = {
++	LSM_HOOK_INIT(inode_permission, yama_inode_permission),
+ 	LSM_HOOK_INIT(ptrace_access_check, yama_ptrace_access_check),
+ 	LSM_HOOK_INIT(ptrace_traceme, yama_ptrace_traceme),
+ 	LSM_HOOK_INIT(task_prctl, yama_task_prctl),
+@@ -447,6 +489,37 @@ static int yama_dointvec_minmax(struct ctl_table *table, int write,
+ 	return proc_dointvec_minmax(&table_copy, write, buffer, lenp, ppos);
+ }
+ 
++static int yama_dointvec_bitmask_macadmin(struct ctl_table *table, int write,
++					  void __user *buffer, size_t *lenp,
++					  loff_t *ppos)
++{
++	int error;
++
++	if (write) {
++		struct ctl_table table_copy;
++		int tmp_mayexec_enforce;
++
++		if (!capable(CAP_MAC_ADMIN))
++			return -EPERM;
++		tmp_mayexec_enforce = *((int *)table->data);
++		table_copy = *table;
++		/* do not erase open_mayexec_enforce */
++		table_copy.data = &tmp_mayexec_enforce;
++		error = proc_dointvec(&table_copy, write, buffer, lenp, ppos);
++		if (error)
++			return error;
++		if ((tmp_mayexec_enforce | _YAMA_OMAYEXEC_MASK) !=
++				_YAMA_OMAYEXEC_MASK)
++			return -EINVAL;
++		*((int *)table->data) = tmp_mayexec_enforce;
++	} else {
++		error = proc_dointvec(table, write, buffer, lenp, ppos);
++		if (error)
++			return error;
++	}
++	return 0;
++}
++
+ static int zero;
+ static int max_scope = YAMA_SCOPE_NO_ATTACH;
+ 
+@@ -466,6 +539,13 @@ static struct ctl_table yama_sysctl_table[] = {
+ 		.extra1         = &zero,
+ 		.extra2         = &max_scope,
+ 	},
++	{
++		.procname       = "open_mayexec_enforce",
++		.data           = &open_mayexec_enforce,
++		.maxlen         = sizeof(int),
++		.mode           = 0644,
++		.proc_handler   = yama_dointvec_bitmask_macadmin,
++	},
+ 	{ }
+ };
+ static void __init yama_init_sysctl(void)
+-- 
+2.20.0.rc2
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAlwQyBAACgkQzL64meEa
-mQZ8CxAAvjH18/fOPM8pCR/Wu8JM3pC2RH0ACJcypp+6QdyCQrRBCrDHetCXgIBH
-INpwQzkJGW8+d4zkFAUgVtuWkKCkNyoMFw9jR1cQSVGyem+S9HN6AR78ufEeXJ61
-pCna4GCRwEFdzHLUnEaPEh+q3TUSO1n0zE/afibTkpW+Jh6u7wgtLdOL1m8HaG7R
-l5taWIvb/RL+pH2Gbbv/7SebacbpK/cf6gSGBbR6LgAvweCDUWdeJJluzY+m9uDp
-uhwZ3mXvgV0MiQbTRk9j1QclyGNBJrXOOzBW84v8Tnu4P9kCbXVJpwuPAsJZQS7T
-H8q9s3NUwDKHcAjExzuUdtOwmbdBgbd0IPkwSstuIsKvav3TwtNae0o39eAE5y8S
-Bx1ulfD9XRaQiWSHo6UTH7wOJNtkQCvcAIirEMnlomKSwwAQTQ6Tmrdh5/hd/OI/
-qY7LsmZfN8yZ+1KhKWlJyZJgabw9WIEaesmPwwFfS1dskDMAwoEegrK4azDprALC
-6IxDj6oQ05irTwEu8ICFvYkzuBZ5tGEwmNKtnVJxzvbmUQBgoGGlPppVLexBSXdP
-fRDLzuI4hX0g4vifRo4qcJS4U3yOuJpoIybY4ZSsOPefwA4DqHxG0M8Iqi1Qe84y
-+e20v5AQnLxxUrC+XnwcW37JoGA6uukzyYijQrvPfngpllTr+fc=
-=spIR
------END PGP SIGNATURE-----
---=-=-=--
