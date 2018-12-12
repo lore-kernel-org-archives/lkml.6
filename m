@@ -2,143 +2,105 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2749FC65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 23:37:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66C67C65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 23:39:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D319720851
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 23:37:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="P0FPn9zR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D319720851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+	by mail.kernel.org (Postfix) with ESMTP id 2C6A920851
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 23:39:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C6A920851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727131AbeLLXhH (ORCPT
+        id S1728058AbeLLXjG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 18:37:07 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:43300 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726214AbeLLXhH (ORCPT
+        Wed, 12 Dec 2018 18:39:06 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:41746 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726214AbeLLXjF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 18:37:07 -0500
-Received: by mail-oi1-f194.google.com with SMTP id u18so138810oie.10
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 15:37:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=dnYo8JoSoKhBGz6GtORbuxTE9r5YoZqJbV9uHhjW73o=;
-        b=P0FPn9zR7u4tZacMfcri7jrKoFAh4rSyyVNpKr/5fEC0scdLF+loUUXYc9Oalox8M4
-         +KByWmhGzjtmpdj5OWjJq1RFqzg9QRFkgYIsRyjrrnYy71Dt/nGX1RlHE2ufNYAq1yto
-         wGM28aepS4eOqlfE3aR6fwXVAMOVAr83pw+k/+ZmoSo+Zr3lJWpcjdCWddVi6k6vSuQ0
-         uBlhsrFJZLHVPO0gVe6T7HtSZ3uPeT0Crue2rj3FRLSGp755nEru7Srm751KB6M+ARQf
-         mWQBhZ11bVlto/MTi6n/Unc0VkLoJgOwVIp20VbWlVsZujw+JrEbq9DeJT9EGdagJlFl
-         VuCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=dnYo8JoSoKhBGz6GtORbuxTE9r5YoZqJbV9uHhjW73o=;
-        b=KW+QQTa+U9D+7Vxt5bxuzMHCPBuISMSQorJo5hMkBDQlNZpdJr6jOL/CdxqTR1WrNa
-         n7LGbfW649Mj9qE6uWMPFeh8eIT4InMwBIdWkQgonXExXbMGQeaqttcGVzP9jQVV0tN1
-         c4COJnJXMuYA7tGW6Qxs6GN9A2wN61t0yQA96HBs6Q0qXFn+Yroiv8U1xtAoCa0f2DA3
-         oHmHBTXh5gYTJcF30G4aPjnFtH++wWV6DRRxNu0QRMwAw5Eix/GCnJy3X9Iu2xc/BQRx
-         ky4B5pzmHEuNYSvmro/nJllzE2oZ86F9LEnhgZKcJxCTErBumkZKhNY8abEbwXyaNWl7
-         16pg==
-X-Gm-Message-State: AA+aEWbNGGoj8t/H5Jh6lSF0LIq16tK51d0Lr6csDZ4Mw/BAMtKVRcXN
-        /L7bKM1OKNYP6WpyPgKM1takZw==
-X-Google-Smtp-Source: AFSGD/W54SnB33++uXU6G9N7pxdQ4/skHhFphFK1LTzwHN9ATtlzT+eXKBdiyij0FgMD4YDaKBRKQw==
-X-Received: by 2002:aca:a897:: with SMTP id r145mr1661138oie.253.1544657825642;
-        Wed, 12 Dec 2018 15:37:05 -0800 (PST)
-Received: from ziepe.ca ([217.140.111.136])
-        by smtp.gmail.com with ESMTPSA id m89sm114651otc.35.2018.12.12.15.37.04
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 12 Dec 2018 15:37:04 -0800 (PST)
-Received: from jgg by jggl.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1gXE3r-0000s2-RC; Wed, 12 Dec 2018 16:37:03 -0700
-Date:   Wed, 12 Dec 2018 16:37:03 -0700
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Jerome Glisse <jglisse@redhat.com>
-Cc:     Dan Williams <dan.j.williams@intel.com>, Jan Kara <jack@suse.cz>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        John Hubbard <john.hubbard@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>, tom@talpey.com,
-        Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
-        Christoph Hellwig <hch@infradead.org>,
-        Christopher Lameter <cl@linux.com>,
-        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        rcampbell@nvidia.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "Weiny, Ira" <ira.weiny@intel.com>
-Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
-Message-ID: <20181212233703.GB2947@ziepe.ca>
-References: <7b4733be-13d3-c790-ff1b-ac51b505e9a6@nvidia.com>
- <20181207191620.GD3293@redhat.com>
- <3c4d46c0-aced-f96f-1bf3-725d02f11b60@nvidia.com>
- <20181208022445.GA7024@redhat.com>
- <20181210102846.GC29289@quack2.suse.cz>
- <20181212150319.GA3432@redhat.com>
- <CAPcyv4go0Xzhz8rXdfscWuXDu83BO9v8WD4upDUJWb7gKzX5OQ@mail.gmail.com>
- <20181212213005.GE5037@redhat.com>
- <CAPcyv4gJHeFjEgna1S-2uE4KxkSUgkc=e=2E5oqfoirec84C-w@mail.gmail.com>
- <20181212215348.GF5037@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181212215348.GF5037@redhat.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Wed, 12 Dec 2018 18:39:05 -0500
+Received: from localhost.localdomain (c-24-6-170-16.hsd1.ca.comcast.net [24.6.170.16])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A0A50F1E;
+        Wed, 12 Dec 2018 23:39:03 +0000 (UTC)
+Date:   Wed, 12 Dec 2018 15:39:01 -0800
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Waiman Long <longman@redhat.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+        Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Yang Shi <yang.shi@linux.alibaba.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Dmitry Safonov <dima@arista.com>
+Subject: Re: [PATCH] debugobjects: Move printk out of db lock critical
+ sections
+Message-Id: <20181212153901.4e9c142cf2d6a75373d28368@linux-foundation.org>
+In-Reply-To: <1544653694-27873-1-git-send-email-longman@redhat.com>
+References: <1544653694-27873-1-git-send-email-longman@redhat.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 12, 2018 at 04:53:49PM -0500, Jerome Glisse wrote:
-> > Almost, we need some safety around assuming that DMA is complete the
-> > page, so the notification would need to go all to way to userspace
-> > with something like a file lease notification. It would also need to
-> > be backstopped by an IOMMU in the case where the hardware does not /
-> > can not stop in-flight DMA.
+On Wed, 12 Dec 2018 17:28:14 -0500 Waiman Long <longman@redhat.com> wrote:
+
+> The db->lock is a raw spinlock and so the lock hold time is supposed
+> to be short. This will not be the case when printk() is being involved
+> in some of the critical sections. In order to avoid the long hold time,
+> in case some messages need to be printed, the debug_object_is_on_stack()
+> and debug_print_object() calls are now moved out of those critical
+> sections.
 > 
-> You can always reprogram the hardware right away it will redirect
-> any dma to the crappy page.
+> Holding the db->lock while calling printk() may lead to deadlock if
+> printk() somehow requires the allocation/freeing of debug object that
+> happens to be in the same hash bucket or a circular lock dependency
+> warning from lockdep as reported in https://lkml.org/lkml/2018/12/11/143.
+> 
+> [   87.209665] WARNING: possible circular locking dependency detected
+> [   87.210547] 4.20.0-rc4-00057-gc96cf92 #1 Tainted: G        W
+> [   87.211449] ------------------------------------------------------
+> [   87.212405] getty/519 is trying to acquire lock:
+> [   87.213074] (____ptrval____) (&obj_hash[i].lock){-.-.}, at: debug_check_no_obj_freed+0xb4/0x302
+> [   87.214343]
+> [   87.214343] but task is already holding lock:
+> [   87.215174] (____ptrval____) (&port_lock_key){-.-.}, at: uart_shutdown+0x3a3/0x4e2
+> [   87.216260]
+> [   87.216260] which lock already depends on the new lock.
+> 
+> This patch was also found to be able to fix a boot hanging problem
+> when the initramfs image was switched on after a debugobjects splat
+> from the EFI code.
 
-That causes silent data corruption for RDMA users - we can't do that.
+Patch looks sensible, but I have a nit about the variable names.
 
-The only way out for current hardware is to forcibly terminate the
-RDMA activity somehow (and I'm not even sure this is possible, at
-least it would be driver specific)
+> --- a/lib/debugobjects.c
+> +++ b/lib/debugobjects.c
+> @@ -375,6 +375,8 @@ static void debug_object_is_on_stack(void *addr, int onstack)
+>  	struct debug_bucket *db;
+>  	struct debug_obj *obj;
+>  	unsigned long flags;
+> +	bool debug_printobj = false;
 
-Even the IOMMU idea probably doesn't work, I doubt all current
-hardware can handle a PCI-E error TLP properly. 
+"debug_printobject" would be better, but this code already intermingles
+"obj" and "object".
 
-On some hardware it probably just protects DAX by causing data
-corruption for RDMA - I fail to see how that is a win for system
-stability if the user obviously wants to use DAX and RDMA together...
+> +	bool debug_chkstack = false;
 
-I think your approach with ODP only is the only one that meets your
-requirements, the only other data-integrity-preserving approach is to
-block/fail ftruncate/etc.
+Not so good.  Is it debug_chkstack or debug_checkstk or ...
 
-> From my point of view driver should listen to ftruncate before the
-> mmu notifier kicks in and send event to userspace and maybe wait
-> and block ftruncate (or move it to a worker thread).
+This file uses "check" consistently so let's not depart from that? 
+Linux style is to avoid these tricky little abbreviations and to use
+full words.  
 
-We can do this, but we can't guarantee forward progress in userspace
-and the best way we have to cancel that is portable to all RDMA
-hardware is to kill the process(es)..
+ie, debug_checkstack, please.  Better would be debug_check_stack.  Or
+simply check_stack: the "debug" doesn't add anything useful.
 
-So if that is acceptable then we could use user notifiers and allow
-non-ODP users...
 
-Jason
