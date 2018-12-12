@@ -2,140 +2,123 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.9 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABB4AC67839
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 21:04:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9C3CC65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 21:05:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D10A20851
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 21:04:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="Jzfh/IY4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D10A20851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
+	by mail.kernel.org (Postfix) with ESMTP id 1339220851
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 21:05:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1339220851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=manty.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728259AbeLLVEW (ORCPT
+        id S1728284AbeLLVFv convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 16:04:22 -0500
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:41946 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726248AbeLLVEV (ORCPT
+        Wed, 12 Dec 2018 16:05:51 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:40134 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726248AbeLLVFu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 16:04:21 -0500
-Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wBCKvmph001514
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 13:04:20 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-type; s=facebook;
- bh=9S7Huczn8dJSngKp1fJ/ZoCzFYxIA5gUIBVyYjRoTLU=;
- b=Jzfh/IY4YLRiIXEmMP4E0DoFc/a7wC+Tq6MlsCcXj41m0Ni1WsTm7Ph3ycZOqfiIxTwV
- TleQlEZm/yxlgVMG5FB3KOX3O0IwWUHE92kcAlRi3v74YYvMRPf9gVQTWFj9hrt4S+dX
- S4+i6OvqdRAIbilivMqAN88/tOWzTbA7E6M= 
-Received: from mail.thefacebook.com ([199.201.64.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2pb6q4rryc-7
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 13:04:20 -0800
-Received: from mx-out.facebook.com (2620:10d:c081:10::13) by
- mail.thefacebook.com (2620:10d:c081:35::125) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1531.3;
- Wed, 12 Dec 2018 13:04:09 -0800
-Received: by devvm4117.prn2.facebook.com (Postfix, from userid 167582)
-        id 8E08D4D1A36F; Wed, 12 Dec 2018 13:04:06 -0800 (PST)
-Smtp-Origin-Hostprefix: devvm
-From:   Vijay Khemka <vijaykhemka@fb.com>
-Smtp-Origin-Hostname: devvm4117.prn2.facebook.com
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-aspeed@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>
-CC:     <vijaykhemka@fb.com>,
-        "openbmc @ lists . ozlabs . org" <openbmc@lists.ozlabs.org>
-Smtp-Origin-Cluster: prn2c23
-Subject: [PATCH v4 1/2] ARM: dts: aspeed: Add KCS & lpc ctrl for Facebook
-Date:   Wed, 12 Dec 2018 13:03:51 -0800
-Message-ID: <20181212210352.1717617-1-vijaykhemka@fb.com>
-X-Mailer: git-send-email 2.17.1
-X-FB-Internal: Safe
+        Wed, 12 Dec 2018 16:05:50 -0500
+Received: by mail-io1-f66.google.com with SMTP id n9so15995706ioh.7
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 13:05:49 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=Rf41uZdMtiyXTwgRlpXC1NU6Vo5EBXiTbJNXeXuE3s4=;
+        b=XXSyCSfvZpculkFasMlDgT/DoHcSjlBTBozozLwC/uBerWc2p4k7SUSr2eIX9PTIub
+         gMQsfI+fLMsIWx/F11aooLGDEvnAH4s3nkXIMlFdOC39OLVzqbDGiBcj5jnEfgTb2JsM
+         KoEQPnCKjN0w0Zeiw3SqPtorXL4kuZblvuUnYy6qboCTnaSegbqbpaPyxv8X8ucJKoOl
+         YWl0dklsIvbzkVtEwgalLfcY0Epn3cg4y1eV7xUdQUbfgJI45HcOVTvQ96Yd7k6RxYy7
+         /Fk9BqhJRArddzeDF1to87vPTgHTMqIG0mtErUZ7trdJ41pUVUdVLTKCZH91MnjBZKjr
+         1kjA==
+X-Gm-Message-State: AA+aEWahJwJf5UyCkx/+N53Rh7tVXU1oVwfMpm+EH206h7jhnlF/uy8M
+        4vwejxgVP5OymKB9utt+1JgtShHHiHs=
+X-Google-Smtp-Source: AFSGD/UK/UAs08sM9TUZpTjccENRRVPX+37T4F1gFp1mgA2bE8vrPglZ+sR70y4N3IuwTRyXplqOAA==
+X-Received: by 2002:a6b:d20f:: with SMTP id q15mr19203327iob.100.1544648749069;
+        Wed, 12 Dec 2018 13:05:49 -0800 (PST)
+Received: from mail-it1-f175.google.com (mail-it1-f175.google.com. [209.85.166.175])
+        by smtp.gmail.com with ESMTPSA id l11sm7888145iob.24.2018.12.12.13.05.48
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 12 Dec 2018 13:05:48 -0800 (PST)
+Received: by mail-it1-f175.google.com with SMTP id z7so515867iti.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 13:05:48 -0800 (PST)
+X-Received: by 2002:a02:c943:: with SMTP id u3mr8733551jao.96.1544648748057;
+ Wed, 12 Dec 2018 13:05:48 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-12_04:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+From:   Santiago Garcia Mantinan <manty@manty.net>
+Date:   Wed, 12 Dec 2018 22:05:36 +0100
+X-Gmail-Original-Message-ID: <CAJk_L2EcMH58D44b4EogPYk=-NczwbVsbdL-HMUL9ZShKTo3YQ@mail.gmail.com>
+Message-ID: <CAJk_L2EcMH58D44b4EogPYk=-NczwbVsbdL-HMUL9ZShKTo3YQ@mail.gmail.com>
+Subject: [PATCH] arm: bcm2835-audio: Document the device tree node to enable
+ bcm2835-audio driver
+To:     linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Added kcs device and lpc ctrl device to enable LPC clock in Facebook
-Tiogapass device tree.
+This patch makes it posible to use the bcm2835-audio driver on the Raspberry.
 
-Signed-off-by: Vijay Khemka <vijaykhemka@fb.com>
+In drivers/staging/vc04_services/bcm2835-audio/TODO Michael Zoran says
+that this is to be done, in fact as we noted on
+https://bugs.debian.org/856505 without this patch the driver is not
+loaded and when loaded it doesn't do a thing.
+
+After applying the patch on both 4.19.X and 4.20-rc5 you get the
+driver autoloaded and working sound on hdmi and on the minijack
+(selection done through amixer cset).
+
+I'd like this patch to be applied so that people with a Raspberry can
+get sound out of it.
+
+Signed-off-by: Santiago García Mantiñán <manty@manty.net>
 ---
- .../dts/aspeed-bmc-facebook-tiogapass.dts     | 30 +++++++++++++++++++
- 1 file changed, 30 insertions(+)
+ arch/arm/boot/dts/bcm283x.dtsi                   | 5 +++++
+ drivers/staging/vc04_services/bcm2835-audio/TODO | 2 +-
+ 2 files changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/aspeed-bmc-facebook-tiogapass.dts b/arch/arm/boot/dts/aspeed-bmc-facebook-tiogapass.dts
-index d9d7f208788a..9544fa2c1822 100644
---- a/arch/arm/boot/dts/aspeed-bmc-facebook-tiogapass.dts
-+++ b/arch/arm/boot/dts/aspeed-bmc-facebook-tiogapass.dts
-@@ -21,6 +21,18 @@
- 	memory@80000000 {
- 		reg = <0x80000000 0x20000000>;
- 	};
+diff --git a/arch/arm/boot/dts/bcm283x.dtsi b/arch/arm/boot/dts/bcm283x.dtsi
+index 31b29646b14c..120e8f85617d 100644
+--- a/arch/arm/boot/dts/bcm283x.dtsi
++++ b/arch/arm/boot/dts/bcm283x.dtsi
+@@ -634,6 +634,11 @@
+         vc4: gpu {
+             compatible = "brcm,bcm2835-vc4";
+         };
 +
-+	reserved-memory {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+		flash_memory: region@98000000 {
-+			no-map;
-+			reg = <0x98000000 0x04000000>; /* 64M */
-+		};
-+	};
-+
- 	iio-hwmon {
- 		compatible = "iio-hwmon";
- 		oemname0 = "MB_P3V3";
-@@ -62,6 +74,12 @@
- 	};
- };
- 
-+&lpc_ctrl {
-+	status = "okay";
-+	memory-region = <&flash_memory>;
-+	flash = <&spi1>;
-+};
-+
- &uart1 {
- 	// Host Console
- 	status = "okay";
-@@ -75,6 +93,18 @@
- 	status = "okay";
- };
- 
-+&kcs2 {
-+	// BMC KCS channel 2
-+	status = "okay";
-+	kcs_addr = <0xca8>;
-+};
-+
-+&kcs3 {
-+	// BMC KCS channel 3
-+	status = "okay";
-+	kcs_addr = <0xca2>;
-+};
-+
- &mac0 {
- 	status = "okay";
- 
++        audio: audio {
++            compatible = "brcm,bcm2835-audio";
++            brcm,pwm-channels = <8>;
++        };
+     };
+
+     clocks {
+diff --git a/drivers/staging/vc04_services/bcm2835-audio/TODO
+b/drivers/staging/vc04_services/bcm2835-audio/TODO
+index 73d41fa631ac..5611c88978e2 100644
+--- a/drivers/staging/vc04_services/bcm2835-audio/TODO
++++ b/drivers/staging/vc04_services/bcm2835-audio/TODO
+@@ -5,7 +5,7 @@
+ *****************************************************************************
+
+
+-1) Document the device tree node
++1) Document the device tree node (DONE)
+
+ The downstream tree(the tree that the driver was imported from) at
+ http://www.github.com/raspberrypi/linux uses this node:
 -- 
-2.17.1
+2.19.2
 
+Regards
+--
+Manty/BestiaTester -> http://manty.net
