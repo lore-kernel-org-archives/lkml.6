@@ -2,135 +2,97 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D117C04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 11:19:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFFEEC65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 11:20:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 005512084E
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 11:19:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544613592;
-	bh=QKa5zYsHxYI1aGgEq7tsjj3bty4Nm9iYE05hv42O6e4=;
-	h=Date:From:To:Subject:References:In-Reply-To:List-ID:From;
-	b=tUS/ykvUwcrFeabgpsbZJw2T7uYKBY8LZH6pcCu9YMls9ZOMUS5MzqxCRfFfN5JQr
-	 sTTi0uEC9ZyWi70U2kcRU4gQgIIyET+Szw0Q5k0ksA9k9tucXF426z6+wAvCRshwao
-	 QssDnWJCDUWfsON6EDlRterKbPjjmhTUE2xgFEJs=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 005512084E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id AEC3C20879
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 11:20:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Eqx89OFh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEC3C20879
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727262AbeLLLTu (ORCPT
+        id S1727304AbeLLLUF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 06:19:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45866 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726856AbeLLLTu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 06:19:50 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 413B42084E;
-        Wed, 12 Dec 2018 11:19:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544613589;
-        bh=QKa5zYsHxYI1aGgEq7tsjj3bty4Nm9iYE05hv42O6e4=;
-        h=Date:From:To:Subject:References:In-Reply-To:From;
-        b=Cl2Q80dXbOcBc+Df03jR+jtq9eWnLR1q5QYzbJ2n+3zl3onRFKOMHDEgye5GJSKDU
-         YMjJQ7PShVMnAbp2wvPUoK+yO8fdkdVFbw/4k4WzlJIWwS/Dwo6x4fSxHMhKTkYK4j
-         d9xsJwUZFo5ZU1cAwqrPdfluDOrTlb43iOBHRQtY=
-Date:   Wed, 12 Dec 2018 12:19:47 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     LKML <linux-kernel@vger.kernel.org>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Ramalingam C <ramalingam.c@intel.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Daniel Vetter <daniel.vetter@intel.com>
-Subject: Re: [PATCH] drivers/base: use a worker for sysfs unbind
-Message-ID: <20181212111947.GA12685@kroah.com>
-References: <20181210084653.7268-1-daniel.vetter@ffwll.ch>
- <20181210100634.GA8836@kroah.com>
- <20181210101832.GN21184@phenom.ffwll.local>
- <20181210102058.GO21184@phenom.ffwll.local>
- <20181212110840.GA21184@phenom.ffwll.local>
+        Wed, 12 Dec 2018 06:20:05 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:44256 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726856AbeLLLUE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 06:20:04 -0500
+Received: by mail-ot1-f67.google.com with SMTP id f18so17225217otl.11;
+        Wed, 12 Dec 2018 03:20:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=tZCX6lTCcCdMhudsRwUebVQucf3Y8ZCpVdCoE+/uFog=;
+        b=Eqx89OFh3fN2gJUFqsrAyhkgXZXEc98pnFLEXTevaDxViH0IWYkH7vnLKRpBAKpEjz
+         s1h13SK9/6IflbLxlxK5wdocD9uW7JOCf4P/NqnWBBoT+gQUoCy3RghGhIcxxm+o31bC
+         JZgisyrkgvhZjXfjZJ/J+mwJplFB1NvNn8k+aYzSD/gdpNUTT3W2X4ONMY2tsfsvfvNs
+         7UYqmCoPAyhYo4L7zrUgi4vzaVJ0GWi3gpSEMp76Kgu9eIqmrP4iOBNGV/BzWDiWmEHL
+         tN3fYgGJ4aqwVmXc3x3dYNf1j8Od5lGJlZoJiVjsSVPKFXAcXOtVmho65hhcDHqUB57h
+         yg3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=tZCX6lTCcCdMhudsRwUebVQucf3Y8ZCpVdCoE+/uFog=;
+        b=dSo2n5Wc5BDQFJh+Z4GVUAz4Y8h41Xeuyr35JRoH1dUPRpRXEpy6IdMkWSxvSddY0z
+         QYhJMheB7P1RkrET+D4PuBOu6xJAX3zVmRhHmdAXQTGLmj2jf1wPdcTrPJHxKHxKx4Ob
+         teyNiXvU090b4bZmDcEGecmBuRdOJfdPSewXR/LH5zBVqgWrmZgxq2Rau/O7f/eflus2
+         io0OE6fvuj3WxJmD436NROM+IH+iZwzc5/azskTw9KANZGAb786dMUQRk2MjnCxd8XR6
+         xjwafFxazju/jOm3XfPra75zdwl0UWB8t0WLez/OFtyJTcN9hLoNUMWjlZnoHqK4AwMo
+         Yyvw==
+X-Gm-Message-State: AA+aEWawdUqdHS1pUC4366wniqmpqnHAADjFvOANEFhONRLIAVeTZy14
+        HyMROwWEt5f27yNyiWaiKuXcimacrIoZCrL3LVw=
+X-Google-Smtp-Source: AFSGD/WtpizY0Bsi7FzC9F9D3F8UoCwk7TT5Nn/GoaztmU2K1Cy6TK+/QnsXAUb1vg5BKhT0b830vzi3hJdgXN12lec=
+X-Received: by 2002:a9d:282:: with SMTP id 2mr13618652otl.287.1544613602857;
+ Wed, 12 Dec 2018 03:20:02 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181212110840.GA21184@phenom.ffwll.local>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+References: <1544425521-775-1-git-send-email-Anson.Huang@nxp.com>
+ <20181210232358.GA11621@bogus> <DB3PR0402MB3916E1651ABC07F6F788B265F5A60@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+ <CAL_Jsq+sP_fsQaoT6FpZNRxjhPAhCcE8e-0xffUUxShcC2LuHw@mail.gmail.com> <DB3PR0402MB39164538D3969FE51C649B65F5A70@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+In-Reply-To: <DB3PR0402MB39164538D3969FE51C649B65F5A70@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+From:   Fabio Estevam <festevam@gmail.com>
+Date:   Wed, 12 Dec 2018 09:19:57 -0200
+Message-ID: <CAOMZO5DXNpn18pzngmAt+hyiWNtfwckafxCzbJ17EgndjABwWg@mail.gmail.com>
+Subject: Re: [PATCH V3 1/2] dt-bindings: iio: light: isl29018: update power
+ supply name
+To:     Yongcai Huang <anson.huang@nxp.com>
+Cc:     Rob Herring <robh@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald <pmeerw@pmeerw.net>,
+        Mark Rutland <mark.rutland@arm.com>, linux-iio@vger.kernel.org,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 12, 2018 at 12:08:40PM +0100, Daniel Vetter wrote:
-> On Mon, Dec 10, 2018 at 11:20:58AM +0100, Daniel Vetter wrote:
-> > On Mon, Dec 10, 2018 at 11:18:32AM +0100, Daniel Vetter wrote:
-> > > On Mon, Dec 10, 2018 at 11:06:34AM +0100, Greg Kroah-Hartman wrote:
-> > > > On Mon, Dec 10, 2018 at 09:46:53AM +0100, Daniel Vetter wrote:
-> > > > > Drivers might want to remove some sysfs files, which needs the same
-> > > > > locks and ends up angering lockdep. Relevant snippet of the stack
-> > > > > trace:
-> > > > > 
-> > > > >   kernfs_remove_by_name_ns+0x3b/0x80
-> > > > >   bus_remove_driver+0x92/0xa0
-> > > > >   acpi_video_unregister+0x24/0x40
-> > > > >   i915_driver_unload+0x42/0x130 [i915]
-> > > > >   i915_pci_remove+0x19/0x30 [i915]
-> > > > >   pci_device_remove+0x36/0xb0
-> > > > >   device_release_driver_internal+0x185/0x250
-> > > > >   unbind_store+0xaf/0x180
-> > > > >   kernfs_fop_write+0x104/0x190
-> > > > > 
-> > > > > I've stumbled over this because some new patches by Ram connect the
-> > > > > snd-hda-intel unload (where we do use sysfs unbind) with the locking
-> > > > > chains in the i915 unload code (but without creating a new loop),
-> > > > > which upset our CI. But the bug is already there and can be easily
-> > > > > reproduced by unbind i915 directly.
-> > > > 
-> > > > This is odd, why wouldn't any driver hit this issue?  And why now since
-> > > > you say this is triggerable today?
-> > > 
-> > > The above backtrace is triggered by unbinding i915 on current upstream
-> > > kernels. Note: Will crash later on rather badly in the
-> > > fbdev/fbcon/vtconsole hell, but that's separate issue (which can be worked
-> > > around by first unbinding fbcon manually through sysfs).
-> > > 
-> > > > I know scsi was doing some strange things like trying to remove the
-> > > > device itself from a sysfs callback on the device, which requires it to
-> > > > just call a different kobject function created just for that type of
-> > > > thing.  Would that also make sense to do here instead of your workqueue?
-> > > 
-> > > Note how we blow up on unregistering sw device instances supported by i915
-> > > in entirely different subsystems. I guess most drivers just have sysfs
-> > > files for their own stuff, where this is done as you describe. The problem
-> > > is that there's an awful lot of unrelated stuff hanging off i915.
-> > > 
-> > > Or maybe acpi_video is busted, and should be using a different function.
-> > > You haven't said which one, and I have no idea which one it is ...
-> > > 
-> > > And in case the context wasn't clear: This is unbinding the i915 pci
-> > > driver which triggers the above lockdep splat recursion.
-> > 
-> > btw another option for "fixing" this would be to annotate the mutex_lock
-> > in kernfs_remove_by_name_ns as recursive. Which just shuts up lockdep (and
-> > might hide some real bugs), but would get the job done since there's not
-> > actually a deadlock here. Just lockdep being annoyed.
-> 
-> So what's the pick? I can do the typing, but I don't understand all the
-> driver core interactions to know what we should be doing here best.
+Hi Anson,
 
-Sorry for the delay.
+On Wed, Dec 12, 2018 at 4:17 AM Anson Huang <anson.huang@nxp.com> wrote:
+>
+> Hi, Fabio
+>         Obviously, some of the dts files (such as arch/arm/boot/dts/exyno=
+s5420-peach-pit.dts) using "vcc" as isl29018's power supply name, they are =
+NOT matched with datasheet, so should we update those dts files with "vdd" =
+as well or just using the "vcc" in isl29018 driver? Which solution is bette=
+r?
 
-Look at sdev_store_delete() in drivers/scsi/scsi_sysfs.c and see if the
-logic there makes sense to do here instead.
-
-It still seems odd that removing a sysfs file by writing to a sysfs file
-at the same level really invokes lockdep as I would have thought that
-this path is well-tested by now.
-
-thanks,
-
-greg k-h
+We should not break existing dtbs, so in this case just keep the
+existing supply name and you could add the new optional vdda supply as
+per the datasheet.
