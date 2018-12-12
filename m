@@ -2,104 +2,128 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7BABC65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 15:14:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7303C65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 15:15:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 951E720870
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 15:14:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 951E720870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hazent.com
+	by mail.kernel.org (Postfix) with ESMTP id 68B1320870
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 15:15:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qTSqbC6d"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68B1320870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727817AbeLLPOt (ORCPT
+        id S1727823AbeLLPPT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 10:14:49 -0500
-Received: from salem.gmr.ssr.upm.es ([138.4.36.7]:44106 "EHLO
-        salem.gmr.ssr.upm.es" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726294AbeLLPOr (ORCPT
+        Wed, 12 Dec 2018 10:15:19 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:38196 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726294AbeLLPPS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 10:14:47 -0500
-X-Greylist: delayed 509 seconds by postgrey-1.27 at vger.kernel.org; Wed, 12 Dec 2018 10:14:45 EST
-Received: by salem.gmr.ssr.upm.es (Postfix, from userid 1000)
-        id 5AC86AC1057; Wed, 12 Dec 2018 16:06:12 +0100 (CET)
-Date:   Wed, 12 Dec 2018 16:06:12 +0100
-From:   Alvaro Gamez Machado <alvaro.gamez@hazent.com>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-pwm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [RFC v2] pwm: Add Xilinx AXI Timer in PWM mode support
-Message-ID: <20181212150610.GA17818@salem.gmr.ssr.upm.es>
-References: <20180322135316.19685-1-alvaro.gamez@hazent.com>
- <20181212104241.GA17654@ulmo>
+        Wed, 12 Dec 2018 10:15:18 -0500
+Received: by mail-ot1-f66.google.com with SMTP id e12so17922822otl.5;
+        Wed, 12 Dec 2018 07:15:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=Jt4OPLC3HMDSuL2FQ7hksnCbfZMLUf1/RFOr3LQh2eo=;
+        b=qTSqbC6dcFl+iwxCpQ+kXl0eX8ZbbGW9vxXTPhbhI8wM+k7j2fV4K7E4pbus0GFBQa
+         +0DHqWcckI22bnHjfjCB6kNZm23cKNESIQj6du5/SZctqnyZQWxF9hx/8EXIPAh0XtUR
+         B9EQkIYh21+R7SJFikNJa+Adn9Hc4FUMi/m+xeaCCIQooI3hjP7XN3gm+WsRtQOrlcq6
+         0cMUmme8rWXNi/7mnuoQVu2mwOcqcKZPAp9MVd935ql5ujasVzxo1hBMMzvx7n+UVGvc
+         SeSS0fyngjy3Bsj2xYs+2P1pe+4fSXpTwDruLJzYs4KkK515AZT/hMQFZOUrLdYzT1MM
+         XetQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=Jt4OPLC3HMDSuL2FQ7hksnCbfZMLUf1/RFOr3LQh2eo=;
+        b=CYoR5Z4RKTAHIuYIODRXhrsP8OS5RebvV+e29QGdfghx9heEjQcTNo8RE6gvCHQLjs
+         EQEBNWYGYAwPgs8lWEa42CptYhjDoziHxzq0+Qm8jaTd6Md8FSjYHehVXuy27O7KrYJp
+         DWan2zL3KF7zGh0DBJkJbGfea+HWuBZQcHJZMU31xY4NRS1ClNBooPq9mlhkVI6cJnzY
+         422fSxcILUkTo1bEqw5QDaADlTrc2CTNFGPAHWEbL2H6Ra3YpmJIFGAxQflsMTnYC6w3
+         1VVNGV6SRC99GOUjLN/zAO1V0kG4RdCs3Bv1LZoXaH7wb6soMQe7gF0zLu4rMDH3iDRp
+         trLA==
+X-Gm-Message-State: AA+aEWb+dl0ejBO9TnZGK1wiCynofRo+qIX9oUFEl49DE9c3ryFj2KVs
+        mVwNEEt3XygrqF9+bUkFicEe2v5DDGs17JrhNCM=
+X-Google-Smtp-Source: AFSGD/Vkho3+iyNX0CprvX8I+6BN0PXDfiefeh/grDyYuxiX1eTaIzPDavtrJ+/cUeiCvN5Gcf+qxg2TX1k6TwbteiE=
+X-Received: by 2002:a9d:77d4:: with SMTP id w20mr14053318otl.196.1544627717831;
+ Wed, 12 Dec 2018 07:15:17 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181212104241.GA17654@ulmo>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20181109190327.23606-1-matwey@sai.msu.ru> <20181109190327.23606-3-matwey@sai.msu.ru>
+ <CAJs94Eb6Ev5O+Q_THYruxozSW2sTjWCrHhU8wciFNgYx7oCRuQ@mail.gmail.com>
+ <CAJs94EYmRpUSnxzyt-8bdSwp3WgvOuqpt4b55wKQ41jDynFceg@mail.gmail.com>
+ <CAJs94EbrOqdn5=xEnyQEC6aqYh=Wojh3-wGxT325f5Q7wnc36w@mail.gmail.com>
+ <20181212085622.6b590540@gandalf.local.home> <20181212090123.046ced92@gandalf.local.home>
+In-Reply-To: <20181212090123.046ced92@gandalf.local.home>
+From:   "Matwey V. Kornilov" <matwey.kornilov@gmail.com>
+Date:   Wed, 12 Dec 2018 18:15:06 +0300
+Message-ID: <CAJs94EZmzdSBc9xdGmDnga6a9AKERqQprFGwO1tDcvz3q8sLow@mail.gmail.com>
+Subject: Re: [PATCH v6 2/2] media: usb: pwc: Don't use coherent DMA buffers
+ for ISO transfer
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>, mingo@redhat.com,
+        Mike Isely <isely@pobox.com>,
+        Bhumika Goyal <bhumirks@gmail.com>,
+        Colin King <colin.king@canonical.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        keiichiw@chromium.org, akpm@linux-foundation.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 12, 2018 at 11:42:41AM +0100, Thierry Reding wrote:
-> Did any discussion regarding the above-mentioned issues ever ensue? How
-> do you want to proceed? At the very least we'll need some sort of device
-> tree binding for this driver, so perhaps start with a DT binding
-> proposal and take it from there?
+=D1=81=D1=80, 12 =D0=B4=D0=B5=D0=BA. 2018 =D0=B3. =D0=B2 17:01, Steven Rost=
+edt <rostedt@goodmis.org>:
+>
+> On Wed, 12 Dec 2018 08:56:22 -0500
+> Steven Rostedt <rostedt@goodmis.org> wrote:
+>
+> > Can someone please take this patch or at least say what's wrong with it
+> > if you have a problem?
+> >
+> > Matwey has been patiently pinging us once every other week for over a
+> > month asking for a reply. I've already given my Reviewed-by from a
+> > tracing perspective.
+> >
+> > Ignoring patches is not a friendly gesture.
+> >
+>
+> Nevermind, it appears that v5 is still under discussion.
+>
+> Matwey, does v6 address the comments made in v5?
 
-No, nothing ever came up about this.
+Hi,
 
-When I sent v1 of this RFC patch I started using it on the application I
-needed it for, so what I did was to copy standard DT binding for
-xlnx,xps-timer-1.00.a (the one that arch/microblaze/kernel.c looks for) and
-replace the compatible string with one I just came up with in the moment,
-xlnx,axi-timer-2.0, but now I don't think this was a good name, and it'd
-look better as xlnx,axi-pwm
+v6 addresses the comments made by Laurent Pinchart on Oct, 31:
 
-This would be my preferred approach, choosing the driver to use for each
-instance of the same IP core by changing the compatible string. I think it's
-cleaner and less error prone, but I don't know if this is acceptable (two
-identical hardware devices with different compatible strings).
+https://www.spinics.net/lists/linux-media/msg142216.html
 
-For Xilinx IP cores there's an utility from Xilinx that generates DTS
-entries, so leaving the rest of settings as they are could be acceptable,
-meaning that DT binding for an AXI timer being used as a PWM driver would be
-like this, where the only change is the compatible string:
+namely, dma_sync_single_for_device() is introduced in the proper place
 
-pwm_0: timer@timer@41c10000 {
-	clock-frequency = <83250000>; // Redundant given clocks property
-	clocks = <&clk_bus_0>;
-	compatible = "xlnx,axi-pwm";
-	reg = <0x41c10000 0x10000>;
-	xlnx,count-width = <0x20>; // Could be used as limiting factor
-	xlnx,gen0-assert = <0x1>; // Not used
-	xlnx,gen1-assert = <0x1>; // Not used
-	xlnx,one-timer-only = <0x0>; // If 1, IP can't do PWM
-	xlnx,trig0-assert = <0x1>; // Not used
-	xlnx,trig1-assert = <0x1>; // Not used
-}
 
-Required properties:
-- compatible: should be "xlnx,axi-pwm" or whatever we agree on
-- reg: physical base address and length of the controller's registers
-- clocks: This clock defines the base clock frequency of the PWM hardware
-  system, the period and the duty_cycle of the PWM signal is a multiple of
-  the base period.
-- xlnx,one-timer-only: Should be 1.
 
-Correct me if I'm mistaken, but clock-frequency is redundant both here and
-in the timer definitions, right?
+>
+> -- Steve
 
-Property 'xlnx,one-timer-only' is also used by kernel.c to check that the IP
-core was synthesized with two timers, needed also for PWM operation, so I'd
-leave too with the same intent.
 
-Thanks for your interest!
 
--- 
-Alvaro G. M.
+--=20
+With best regards,
+Matwey V. Kornilov
