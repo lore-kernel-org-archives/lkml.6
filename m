@@ -2,154 +2,97 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,T_MIXED_ES,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08BBEC67839
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 16:52:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 840B2C65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 16:55:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE7D220879
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 16:52:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE7D220879
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=libc.org
+	by mail.kernel.org (Postfix) with ESMTP id 4ED972084E
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 16:55:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4ED972084E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727958AbeLLQwp (ORCPT
+        id S1727896AbeLLQzK convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 11:52:45 -0500
-Received: from 216-12-86-13.cv.mvl.ntelos.net ([216.12.86.13]:58876 "EHLO
-        brightrain.aerifal.cx" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727848AbeLLQwo (ORCPT
+        Wed, 12 Dec 2018 11:55:10 -0500
+Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:27171 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727691AbeLLQzJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 11:52:44 -0500
-Received: from dalias by brightrain.aerifal.cx with local (Exim 3.15 #2)
-        id 1gX7kT-0002ZH-00; Wed, 12 Dec 2018 16:52:37 +0000
-Date:   Wed, 12 Dec 2018 11:52:37 -0500
-From:   Rich Felker <dalias@libc.org>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     tg@mirbsd.de, Linus Torvalds <torvalds@linux-foundation.org>,
-        X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Florian Weimer <fweimer@redhat.com>,
-        Mike Frysinger <vapier@gentoo.org>,
-        "H. J. Lu" <hjl.tools@gmail.com>, x32@buildd.debian.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Subject: Re: Can we drop upstream Linux x32 support?
-Message-ID: <20181212165237.GT23599@brightrain.aerifal.cx>
-References: <CALCETrXoRAibsbWa9nfbDrt0iEuebMnCMhSFg-d9W-J2g8mDjw@mail.gmail.com>
- <CAHk-=wi_Kp=3XmGDdzmadzFSPFvuL+aAJ6ZPAR=o4z=KwYT2vw@mail.gmail.com>
- <Pine.BSM.4.64L.1812112150480.21176@herc.mirbsd.org>
- <CALCETrWgpAX7FV23zHmid83SsgnwFMKD4a_-xSEgB6v0kJR5sA@mail.gmail.com>
- <Pine.BSM.4.64L.1812112327500.21176@herc.mirbsd.org>
- <CALCETrXf0rmadycxmpGxd41qP9X+PAjyGHTwbGhKyp6oMKMRrA@mail.gmail.com>
- <Pine.BSM.4.64L.1812120231410.21176@herc.mirbsd.org>
- <CALCETrUYn=S=hmJ0tKdm2LoSgkWchY2_65sH7hJZp7wfS30giw@mail.gmail.com>
+        Wed, 12 Dec 2018 11:55:09 -0500
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-163-4NpIjPwqOC6IG_9isv_0zg-1; Wed, 12 Dec 2018 16:55:06 +0000
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Wed, 12 Dec 2018 16:55:17 +0000
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Wed, 12 Dec 2018 16:55:17 +0000
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Aubrey Li' <aubrey.li@intel.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "hpa@zytor.com" <hpa@zytor.com>
+CC:     "ak@linux.intel.com" <ak@linux.intel.com>,
+        "tim.c.chen@linux.intel.com" <tim.c.chen@linux.intel.com>,
+        "dave.hansen@intel.com" <dave.hansen@intel.com>,
+        "arjan@linux.intel.com" <arjan@linux.intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Aubrey Li <aubrey.li@linux.intel.com>
+Subject: RE: [PATCH v4 1/2] x86/fpu: track AVX-512 usage of tasks
+Thread-Topic: [PATCH v4 1/2] x86/fpu: track AVX-512 usage of tasks
+Thread-Index: AQHUkSUo7xJBKZwc2k62yoB0IvRxl6V7UyiQ
+Date:   Wed, 12 Dec 2018 16:55:17 +0000
+Message-ID: <c87224bd48bc4296a38ae4852bf28071@AcuMS.aculab.com>
+References: <20181211002448.3520-1-aubrey.li@intel.com>
+In-Reply-To: <20181211002448.3520-1-aubrey.li@intel.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALCETrUYn=S=hmJ0tKdm2LoSgkWchY2_65sH7hJZp7wfS30giw@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+X-MC-Unique: 4NpIjPwqOC6IG_9isv_0zg-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 12, 2018 at 08:39:53AM -0800, Andy Lutomirski wrote:
-> > On Dec 11, 2018, at 6:33 PM, Thorsten Glaser <tg@mirbsd.de> wrote:
-> >
-> > Andy Lutomirski dixit:
-> >
+From: Aubrey Li
+> Sent: 11 December 2018 00:25
 > 
-> >
-> >> IMO the real right solution would be to push the whole problem to
-> >> userspace: get an ILP32 system working with almost or entirely LP64
-> >
-> > Is this a reflex of Linux kernel developers? ;-)
-> >
-> > I doubt that userspace is the right place for this, remember
-> > the recent glibc vs. syscalls debate. It would also need to
-> > multiply across various libcs.
-> >
-> >> How hard would it be to have __attribute__((ilp64)), with an optional
-> >> warning if any embedded structs are not ilp64?  This plus a wrapper to
-> >
-> > You mean LP64. Impossible, because LP64 vs. ILP32 is not the only
-> > difference between amd64 and x32.
+> User space tools which do automated task placement need information
+> about AVX-512 usage of tasks, because AVX-512 usage could cause core
+> turbo frequency drop and impact the running task on the sibling CPU.
 > 
-> I mean LP64.  And I'm not suggesting that ILP32 is the only difference
-> between x32 and x86_64, nor am I suggesting that a technique like this
-> would implement x32 -- I'm suggesting it would implement something
-> better than x32.
-> 
-> The kernel, as a practical matter, supports two ABIs on 64-bit builds:
-> LP64 and ILP32.  ILP32 is what the kernel calls "compat".  ("compat"
-> comes with other baggage -- it generally has a 32-bit signal frame,
-> syscall arguments are mostly limited to 32 bits, etc.)  Allowing a
-> user program that runs in 64-bit mode to issue compat syscalls is not
-> really a big deal.  x86_64 has allowed this forever using int $0x80 --
-> it's just slow.  Adding a faster mechanism would be straightforward.
-> As I understand it, the arm64 ilp32 proposal involves using a genuine
-> ILP32 model for user code, so the syscalls will all (except for signal
-> handling) go through the compat path.
-> 
-> x32 is not this at all.  The kernel ABI part of x32 isn't ILP32.  It's
-> IP32, 32-bit size_t, and *64-bit* long.  The core kernel doesn't
-> really support this.  The only good things I can think of about it are
-> that (a) it proves that somewhat odd ABIs are possible, at least in
-> principle, and (b) three users have come out of the woodwork to say
-> that they use it.
-> 
-> I'm proposing another alternative.  Given that x32 already proves that
-> the user bitness model doesn't have to match the kernel model (in x32,
-> user "long" is 32-bit but the kernel ABI "long" is 64-bit), I'm
-> proposing extending this to just make the kernel ABI be LP64.  So
-> __kernel_size_t would be 64-bit and pointers in kernel data structures
-> would be 64-bit.  In other words, most or all of the kernel ABI would
-> just match x86_64.
-> 
-> As far as I can tell, the only thing that really needs unusual
-> toolchain features here is that C doesn't have an extra-wide pointer
-> type.  The kernel headers would need a way to say "this pointer is
-> still logically a pointer, and user code may assume that it's 32 bits,
-> but it has 8-byte alignment."
+> The XSAVE hardware structure has bits that indicate when valid state
+> is present in registers unique to AVX-512 use.  Use these bits to
+> indicate when AVX-512 has been in use and add per-task AVX-512 state
+> tracking to context switch.
 
-None of this works on the userspace/C side, nor should any attempt be
-made to make it work. Types fundamentally cannot have alignments
-larger than their size. If you want to make the alignment of some
-pointers 8, you have to make their size 8, and then you just have LP64
-again if you did it for all pointers.
+Isn't a thread likely to clear the AVX registers at the end of a function
+that uses them.
+In particular this removes the massive overhead on certain cpus of
+switching between two AVX modes.
+So it is actually unlikely that XSAVE will need to save them at all?
 
-If on the other hand you tried to make just some pointers "wide
-pointers", you'd also be completely breaking the specified API
-contracts of standard interfaces. For example in struct iovec's
-iov_base, &foo->iov_base is no longer a valid pointer to an object of
-type void* that you can pass to interfaces expecting void**. Sloppy
-misunderstandings like what you're making now are exactly why x32 is
-already broken and buggy (&foo->tv_nsec already has wrong type for
-struct timespec foo).
+As I've also said before the registers are caller saved and since
+systems calls are normal function calls the application code
+would have to save them across a system call.
+This allows the kernel to zero the registers on system call entry
+again meaning that XSAVE won't normally have to save them.
 
-If you wanted to do this and have it work, libc would have to
-completely wrap and convert all the types from userspace structures
-with the right types matching the specified API contracts to
-kernel-interface structures that can be passed to the LP64 syscalls.
-This could be done, but it's a big task, and I don't think anyone
-wants to do it, especially if it would be yet another new thing that
-doesn't exactly match the already-existing x32. The cost-benefit ratio
-is just too high.
+	David
 
-> There's an added benefit to my proposal over x32.  With my proposal,
-> an ILP32 program could plausibly call into a true 64-bit C library
-> using a straightforward FFI translation.
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
 
-Unless it's a thin, "pure" library that doesn't need anything from
-libc, or needs sufficiently little that it could be satisfied by some
-shims, this would necessarily require having two libcs in the same
-process, which is not going to work.
-
-Rich
