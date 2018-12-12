@@ -2,307 +2,124 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36DD5C6783B
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 02:24:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 905F2C67839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 02:25:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E59612086D
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 02:24:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E59612086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 50EE720839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 02:25:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544581501;
+	bh=aAyTLf6iYS04ZLetdR4VG1d3QjxY2OLu/T7oHBULPmU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=emNdsI65DP/DwJOpj11UEpIKuqusrd7YFZXRdxqSLPfwZUz88dIH5gnK3lztXLX6X
+	 AhpSH5NFP512IE8GMkV/6KzkRbyt6N6hNvEhNeKr+t98kTRZyACrML+aMbvK9WdvL3
+	 cWGQC9RWGmYTy1ncgIi8LmsFSM3In8EMxLH3L4SE=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50EE720839
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726346AbeLLCYz (ORCPT
+        id S1726367AbeLLCZA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 21:24:55 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44238 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726218AbeLLCYz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 21:24:55 -0500
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBC2OMQO033417
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 21:24:54 -0500
-Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2paqh43w6r-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 21:24:54 -0500
-Received: from localhost
-        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Wed, 12 Dec 2018 02:24:52 -0000
-Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
-        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 12 Dec 2018 02:24:48 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBC2OlrA24444996
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 12 Dec 2018 02:24:47 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1A8CAB205F;
-        Wed, 12 Dec 2018 02:24:47 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D80BDB2064;
-        Wed, 12 Dec 2018 02:24:46 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.85.166.18])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Wed, 12 Dec 2018 02:24:46 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 5DF3A16C5FCC; Tue, 11 Dec 2018 18:24:46 -0800 (PST)
-Date:   Tue, 11 Dec 2018 18:24:46 -0800
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     "He, Bo" <bo.he@intel.com>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "josh@joshtriplett.org" <josh@joshtriplett.org>,
-        "mathieu.desnoyers@efficios.com" <mathieu.desnoyers@efficios.com>,
-        "jiangshanlai@gmail.com" <jiangshanlai@gmail.com>,
-        "Zhang, Jun" <jun.zhang@intel.com>,
-        "Xiao, Jin" <jin.xiao@intel.com>,
-        "Zhang, Yanmin" <yanmin.zhang@intel.com>,
-        "Bai, Jie A" <jie.a.bai@intel.com>
-Subject: Re: rcu_preempt caused oom
-Reply-To: paulmck@linux.ibm.com
-References: <20181205174435.GU4170@linux.ibm.com>
- <CD6925E8781EFD4D8E11882D20FC406D52A16C46@SHSMSX104.ccr.corp.intel.com>
- <20181206173808.GI4170@linux.ibm.com>
- <CD6925E8781EFD4D8E11882D20FC406D52A180C5@SHSMSX104.ccr.corp.intel.com>
- <20181207141131.GP4170@linux.ibm.com>
- <20181209195601.GA7854@linux.ibm.com>
- <CD6925E8781EFD4D8E11882D20FC406D52A186D0@SHSMSX104.ccr.corp.intel.com>
- <20181211003838.GD4170@linux.ibm.com>
- <20181211044631.GA19942@linux.ibm.com>
- <CD6925E8781EFD4D8E11882D20FC406D52A18E53@SHSMSX104.ccr.corp.intel.com>
+        Tue, 11 Dec 2018 21:25:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58068 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726218AbeLLCY7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 21:24:59 -0500
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2096A2086D
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 02:24:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544581498;
+        bh=aAyTLf6iYS04ZLetdR4VG1d3QjxY2OLu/T7oHBULPmU=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=W6RjubWUCq6GohnybrEHhxFQqpkEbfIZJEDOxzfwuUjgzd4PD/U+xAx48M7lr6EEc
+         GWCkXqdf1Kx12B27H6tqWt4iFNgLZ+c3JAM525n8PXzNGVY+I56xiR5DQDnHixdS/u
+         BJVyES7Je3/V+bXmisWEkWFFU67G497F2yx+5g9o=
+Received: by mail-wm1-f52.google.com with SMTP id r24so10319750wmh.0
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 18:24:58 -0800 (PST)
+X-Gm-Message-State: AA+aEWZM5VHdTzQvu5x6RFYmS81fyEoMyEXofcdKx/0QxAT8dEBzHe0s
+        2pU8UxtSyG+8m/e+alW8l2jxQAJGmKcQZG+v6F2InQ==
+X-Google-Smtp-Source: AFSGD/WpjM42HJG1K3JeUjk7vjgUcrj2qX5f4uu8TdojxErS8gK/635FfTH0iAz24wLoxGi5Yh26PcekPMQC1fbcRjA=
+X-Received: by 2002:a1c:aa0f:: with SMTP id t15mr4396702wme.108.1544581496632;
+ Tue, 11 Dec 2018 18:24:56 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CD6925E8781EFD4D8E11882D20FC406D52A18E53@SHSMSX104.ccr.corp.intel.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18121202-0064-0000-0000-00000384DF36
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010214; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01130475; UDB=6.00587430; IPR=6.00910609;
- MB=3.00024658; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-12 02:24:51
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18121202-0065-0000-0000-00003BA57812
-Message-Id: <20181212022446.GV4170@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-11_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812120017
+References: <20181211222326.14581-1-bp@alien8.de> <20181211222326.14581-5-bp@alien8.de>
+ <CALCETrVArfAAbQKJ-g_5pOy6dMVgx-FC_mjdC9xzL1jU9T07jw@mail.gmail.com>
+ <59aad362-4a5b-dd8b-642f-0dc3f83cf7ee@amd.com> <20181211233901.GV27375@zn.tnic>
+In-Reply-To: <20181211233901.GV27375@zn.tnic>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Tue, 11 Dec 2018 18:24:44 -0800
+X-Gmail-Original-Message-ID: <CALCETrXvZ4avdUh2bTLVTTz3Jxogo3zK5akWTsJ=rkJpf1XiDg@mail.gmail.com>
+Message-ID: <CALCETrXvZ4avdUh2bTLVTTz3Jxogo3zK5akWTsJ=rkJpf1XiDg@mail.gmail.com>
+Subject: Re: [RFC PATCH 4/4] x86/TSC: Use RDTSCP
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Tom Lendacky <Thomas.Lendacky@amd.com>,
+        Andrew Lutomirski <luto@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        John Stultz <john.stultz@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 12, 2018 at 01:37:40AM +0000, He, Bo wrote:
-> We reproduced the issue panic in hung_task with the patch "Improve diagnostics for failed RCU grace-period start", but unfortunately maybe it's due to the loglevel, the show_rcu_gp_kthreads doesn't print any logs, we will improve the build and run the test to double check.
+> On Dec 11, 2018, at 3:39 PM, Borislav Petkov <bp@alien8.de> wrote:
+>
+>> On Tue, Dec 11, 2018 at 11:12:41PM +0000, Lendacky, Thomas wrote:
+>> It does seem overloaded in that sense, but the feature means that LFENCE
+>> is serializing and so can be used in rdtsc_ordered. In the same sense,
+>> barrier_nospec is looking for whether LFENCE is serializing and preferri=
+ng
+>> that over MFENCE since it is lighter weight.
+>>
+>> In light of how they're being used now, they could probably stand to be
+>> renamed in some way.
+>
+> Actually, come to think of it, what really matters here is whether
+> LFENCE is serializing or not. Because if so, you wanna replace with LFENC=
+E
+> as it is lighter. And in that case a single alternative() - not _2() -
+> should suffice.
+>
+> BUT(!), that still is not good enough if you do some qemu CPU models
+> like pentium or so which don't even have MFENCE and cause stuff like
+> this:
+>
+> https://lkml.kernel.org/r/20181123200307.GA6223@roeck-us.net
+>
+> Which means, that you *do* have to alternate between
+>
+> * no insn at all
+> * MFENCE
+> * LFENCE, if it is serializing
+>
+> so barrier_nospec() does the right thing, AFAICS. And this is why we
+> need an ALTERNATIVE_3() to add RDTSCP into the mix too.
+>
+> WRT renaming, I guess we can do something like:
+>
+> * X86_FEATURE_MFENCE_RDTSC -> X86_FEATURE_MFENCE - to mean that CPU has
+> MFENCE support.
+>
+> and
+>
+> * X86_FEATURE_LFENCE_RDTSC -> X86_FEATURE_LFENCE_SERIALIZING
+>
+> Or something to that effect.
 
-Well, at least the diagnostics didn't prevent the problem from happening.  ;-)
-
-							Thanx, Paul
-
-> -----Original Message-----
-> From: Paul E. McKenney <paulmck@linux.ibm.com> 
-> Sent: Tuesday, December 11, 2018 12:47 PM
-> To: He, Bo <bo.he@intel.com>
-> Cc: Steven Rostedt <rostedt@goodmis.org>; linux-kernel@vger.kernel.org; josh@joshtriplett.org; mathieu.desnoyers@efficios.com; jiangshanlai@gmail.com; Zhang, Jun <jun.zhang@intel.com>; Xiao, Jin <jin.xiao@intel.com>; Zhang, Yanmin <yanmin.zhang@intel.com>; Bai, Jie A <jie.a.bai@intel.com>
-> Subject: Re: rcu_preempt caused oom
-> 
-> On Mon, Dec 10, 2018 at 04:38:38PM -0800, Paul E. McKenney wrote:
-> > On Mon, Dec 10, 2018 at 06:56:18AM +0000, He, Bo wrote:
-> > > Hi, 
-> > >    We have start the test with the CONFIG_PROVE_RCU=y, and also add one 2s to detect the preempt rcu hang, hope we can get more useful logs tomorrow.
-> > >    I also enclosed the config and the debug patches for you review.
-> > 
-> > I instead suggest the (lightly tested) debug patch shown below, which 
-> > tracks wakeups of RCU's grace-period kthreads and dumps them out if a 
-> > given requested grace period fails to start.  Again, it is necessary 
-> > to build with CONFIG_PROVE_RCU=y, that is, with CONFIG_PROVE_LOCKING=y.
-> 
-> Right.  This time without commenting out the wakeup as a test of the diagnostic.  :-/
-> 
-> Please use the patch below instead of the one that I sent in my previous email.
-> 
-> 							Thanx, Paul
-> 
-> ------------------------------------------------------------------------
-> 
-> commit adfc7dff659495a3433d5084256be59eee0ac6df
-> Author: Paul E. McKenney <paulmck@linux.ibm.com>
-> Date:   Mon Dec 10 16:33:59 2018 -0800
-> 
->     rcu: Improve diagnostics for failed RCU grace-period start
->     
->     Backported from v4.21/v5.0
->     
->     If a grace period fails to start (for example, because you commented
->     out the last two lines of rcu_accelerate_cbs_unlocked()), rcu_core()
->     will invoke rcu_check_gp_start_stall(), which will notice and complain.
->     However, this complaint is lacking crucial debugging information such
->     as when the last wakeup executed and what the value of ->gp_seq was at
->     that time.  This commit therefore removes the current pr_alert() from
->     rcu_check_gp_start_stall(), instead invoking show_rcu_gp_kthreads(),
->     which has been updated to print the needed information, which is collected
->     by rcu_gp_kthread_wake().
->     
->     Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
-> 
-> diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c index 0b760c1369f7..4bcd8753e293 100644
-> --- a/kernel/rcu/tree.c
-> +++ b/kernel/rcu/tree.c
-> @@ -626,25 +626,57 @@ void rcu_sched_force_quiescent_state(void)
->  }
->  EXPORT_SYMBOL_GPL(rcu_sched_force_quiescent_state);
->  
-> +/*
-> + * Convert a ->gp_state value to a character string.
-> + */
-> +static const char *gp_state_getname(short gs) {
-> +	if (gs < 0 || gs >= ARRAY_SIZE(gp_state_names))
-> +		return "???";
-> +	return gp_state_names[gs];
-> +}
-> +
-> +/*
-> + * Return the root node of the specified rcu_state structure.
-> + */
-> +static struct rcu_node *rcu_get_root(struct rcu_state *rsp) {
-> +	return &rsp->node[0];
-> +}
-> +
->  /*
->   * Show the state of the grace-period kthreads.
->   */
->  void show_rcu_gp_kthreads(void)
->  {
->  	int cpu;
-> +	unsigned long j;
-> +	unsigned long ja;
-> +	unsigned long jr;
-> +	unsigned long jw;
->  	struct rcu_data *rdp;
->  	struct rcu_node *rnp;
->  	struct rcu_state *rsp;
->  
-> +	j = jiffies;
->  	for_each_rcu_flavor(rsp) {
-> -		pr_info("%s: wait state: %d ->state: %#lx\n",
-> -			rsp->name, rsp->gp_state, rsp->gp_kthread->state);
-> +		ja = j - READ_ONCE(rsp->gp_activity);
-> +		jr = j - READ_ONCE(rsp->gp_req_activity);
-> +		jw = j - READ_ONCE(rsp->gp_wake_time);
-> +		pr_info("%s: wait state: %s(%d) ->state: %#lx delta ->gp_activity %lu ->gp_req_activity %lu ->gp_wake_time %lu ->gp_wake_seq %ld ->gp_seq %ld ->gp_seq_needed %ld ->gp_flags %#x\n",
-> +			rsp->name, gp_state_getname(rsp->gp_state),
-> +			rsp->gp_state,
-> +			rsp->gp_kthread ? rsp->gp_kthread->state : 0x1ffffL,
-> +			ja, jr, jw, (long)READ_ONCE(rsp->gp_wake_seq),
-> +			(long)READ_ONCE(rsp->gp_seq),
-> +			(long)READ_ONCE(rcu_get_root(rsp)->gp_seq_needed),
-> +			READ_ONCE(rsp->gp_flags));
->  		rcu_for_each_node_breadth_first(rsp, rnp) {
->  			if (ULONG_CMP_GE(rsp->gp_seq, rnp->gp_seq_needed))
->  				continue;
-> -			pr_info("\trcu_node %d:%d ->gp_seq %lu ->gp_seq_needed %lu\n",
-> -				rnp->grplo, rnp->grphi, rnp->gp_seq,
-> -				rnp->gp_seq_needed);
-> +			pr_info("\trcu_node %d:%d ->gp_seq %ld ->gp_seq_needed %ld\n",
-> +				rnp->grplo, rnp->grphi, (long)rnp->gp_seq,
-> +				(long)rnp->gp_seq_needed);
->  			if (!rcu_is_leaf_node(rnp))
->  				continue;
->  			for_each_leaf_node_possible_cpu(rnp, cpu) { @@ -653,8 +685,8 @@ void show_rcu_gp_kthreads(void)
->  				    ULONG_CMP_GE(rsp->gp_seq,
->  						 rdp->gp_seq_needed))
->  					continue;
-> -				pr_info("\tcpu %d ->gp_seq_needed %lu\n",
-> -					cpu, rdp->gp_seq_needed);
-> +				pr_info("\tcpu %d ->gp_seq_needed %ld\n",
-> +					cpu, (long)rdp->gp_seq_needed);
->  			}
->  		}
->  		/* sched_show_task(rsp->gp_kthread); */ @@ -690,14 +722,6 @@ void rcutorture_get_gp_data(enum rcutorture_type test_type, int *flags,  }  EXPORT_SYMBOL_GPL(rcutorture_get_gp_data);
->  
-> -/*
-> - * Return the root node of the specified rcu_state structure.
-> - */
-> -static struct rcu_node *rcu_get_root(struct rcu_state *rsp) -{
-> -	return &rsp->node[0];
-> -}
-> -
->  /*
->   * Enter an RCU extended quiescent state, which can be either the
->   * idle loop or adaptive-tickless usermode execution.
-> @@ -1285,16 +1309,6 @@ static void record_gp_stall_check_time(struct rcu_state *rsp)
->  	rsp->n_force_qs_gpstart = READ_ONCE(rsp->n_force_qs);  }
->  
-> -/*
-> - * Convert a ->gp_state value to a character string.
-> - */
-> -static const char *gp_state_getname(short gs) -{
-> -	if (gs < 0 || gs >= ARRAY_SIZE(gp_state_names))
-> -		return "???";
-> -	return gp_state_names[gs];
-> -}
-> -
->  /*
->   * Complain about starvation of grace-period kthread.
->   */
-> @@ -1693,7 +1707,8 @@ static bool rcu_future_gp_cleanup(struct rcu_state *rsp, struct rcu_node *rnp)
->   * Don't do a self-awaken, and don't bother awakening when there is
->   * nothing for the grace-period kthread to do (as in several CPUs
->   * raced to awaken, and we lost), and finally don't try to awaken
-> - * a kthread that has not yet been created.
-> + * a kthread that has not yet been created.  If all those checks are
-> + * passed, track some debug information and awaken.
->   */
->  static void rcu_gp_kthread_wake(struct rcu_state *rsp)  { @@ -1701,6 +1716,8 @@ static void rcu_gp_kthread_wake(struct rcu_state *rsp)
->  	    !READ_ONCE(rsp->gp_flags) ||
->  	    !rsp->gp_kthread)
->  		return;
-> +	WRITE_ONCE(rsp->gp_wake_time, jiffies);
-> +	WRITE_ONCE(rsp->gp_wake_seq, READ_ONCE(rsp->gp_seq));
->  	swake_up_one(&rsp->gp_wq);
->  }
->  
-> @@ -2802,16 +2819,11 @@ rcu_check_gp_start_stall(struct rcu_state *rsp, struct rcu_node *rnp,
->  		raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
->  		return;
->  	}
-> -	pr_alert("%s: g%ld->%ld gar:%lu ga:%lu f%#x gs:%d %s->state:%#lx\n",
-> -		 __func__, (long)READ_ONCE(rsp->gp_seq),
-> -		 (long)READ_ONCE(rnp_root->gp_seq_needed),
-> -		 j - rsp->gp_req_activity, j - rsp->gp_activity,
-> -		 rsp->gp_flags, rsp->gp_state, rsp->name,
-> -		 rsp->gp_kthread ? rsp->gp_kthread->state : 0x1ffffL);
->  	WARN_ON(1);
->  	if (rnp_root != rnp)
->  		raw_spin_unlock_rcu_node(rnp_root);
->  	raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
-> +	show_rcu_gp_kthreads();
->  }
->  
->  /*
-> diff --git a/kernel/rcu/tree.h b/kernel/rcu/tree.h index 4e74df768c57..0e051d9b5f1a 100644
-> --- a/kernel/rcu/tree.h
-> +++ b/kernel/rcu/tree.h
-> @@ -327,6 +327,8 @@ struct rcu_state {
->  	struct swait_queue_head gp_wq;		/* Where GP task waits. */
->  	short gp_flags;				/* Commands for GP task. */
->  	short gp_state;				/* GP kthread sleep state. */
-> +	unsigned long gp_wake_time;		/* Last GP kthread wake. */
-> +	unsigned long gp_wake_seq;		/* ->gp_seq at ^^^. */
->  
->  	/* End of fields guarded by root rcu_node's lock. */
->  
-> 
-
-
+This makes me nervous, since no one knows what =E2=80=9Cserializing=E2=80=
+=9D means.
+IIRC AMD specifically documents that MFENCE is required before RDTSC
+to get sensible ordering.  So it=E2=80=99s entirely plausible to me that
+LFENCE is okay for Spectre mitigation but MFENCE is needed for RDTSC
+on some CPU.
