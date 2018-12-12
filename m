@@ -2,126 +2,93 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 813BFC65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 16:41:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71C26C65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 16:41:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4193C20672
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 16:41:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 36A1C20672
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 16:41:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qF9xcejg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4193C20672
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="Rwm3uFgA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36A1C20672
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727945AbeLLQl0 (ORCPT
+        id S1727953AbeLLQla (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 11:41:26 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:53820 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726358AbeLLQlZ (ORCPT
+        Wed, 12 Dec 2018 11:41:30 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:33561 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727691AbeLLQl0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 11:41:25 -0500
-Received: by mail-it1-f196.google.com with SMTP id g85so9980126ita.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 08:41:24 -0800 (PST)
+        Wed, 12 Dec 2018 11:41:26 -0500
+Received: by mail-lf1-f65.google.com with SMTP id i26so14054078lfc.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 08:41:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=gR98btrArpXgzNlFBMpM5+u+hymqUmJwdF9GWqwhALE=;
-        b=qF9xcejgGz+zDTbCzD8jlk1x1cy6fCMFt8RLIRM+l3JtR0mQOlFxvDVZtnjjOxpaza
-         7oxqezBH7Bzoa5mINDEi/bcWs4g6ljZD0d6K5hQWEh5cuqskg8uRAuWfEsEsJi28zww5
-         YEJBHEvaGlVksDG7a3PgelIP/Etk0qwZY31++UnxiieQz8tP+mK0xcMn4sn01UgFJFd6
-         R2t+VvNJnHtdCBKoq70HAglSw2h6Y2ecA0JIgcLFbThAS5WDAg79fgRA/8eShuJk92be
-         MLZKi70Ps9byAXky4JpIuz6nY4A4LX9OF2KJWuDhJUcIzy4xvY0U24ExC9Y5SS6Qe8Vi
-         g1UA==
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:organization:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=CvGD0GTq9G5XxY4JwRepFdT8HYK5EqjNd5yit2zalY4=;
+        b=Rwm3uFgARf+lbWSU0+qY/N1bwUdEDFTW5fdzF70POm4XyXyPbiPgiFC7Xu1t8mJPxC
+         3+LiUUUfFzYhNe+vUUaofLcgvk9SuMOeq6H3gFyKQF6cm8Jdnj06E4TZtnkfveEd+kMW
+         X9Fys29SEXZnNPu6JldRL+ny+ImR7pOLJ5vNobVjp9ueIIAoNHbLJ9sMrB2quG604ZIJ
+         7rMJalARDRN0IvYUFXa96D5tnbWPgSHzxgf1HgcSSFgukkOXmH7t4HEYJ8aeEh1IRKC0
+         6iZzOS7VLVEL61cwhwdSp36k/VoByFXYujKBFE1bH2kst/zSKtgDiRa+y3IAo7tuY1QP
+         O9ZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=gR98btrArpXgzNlFBMpM5+u+hymqUmJwdF9GWqwhALE=;
-        b=iAA9T8S1uNxz0DXAlhwn45qIkcbq5+cGyREDrB+69jlM2iCsfhxtL3DNnUWuwlMEsP
-         Q6cEDwWJc0LdO0yopjIXYSFxe0a6SM5w0xjoa7PgNbRku6V9cy+/EfulD22A79LUrYfG
-         Ry4xVvOEJMi4GBo6nD74shtHTkmfLPlh2MKKUhqfxJUC6A+fWi8YaLVdgr3sH219Q53K
-         flvLy7sPdF7Du3qEKcto+Hj4op2aK4giMRPwW+3iBavA7AMelK5GooA8CgLH6lJPTnKg
-         nfHMTw0KSomnRUp1IyTa9BWgN+o+XGIWi18q/SwMLHaWjI3M9SMd3GE0j6vzKEHO+aVZ
-         WJfw==
-X-Gm-Message-State: AA+aEWbnv5/oaA9B/zHjLRbZOSbt6FujnLXR5Yy1gUWS/2ZF0s4PqC+a
-        QX+/7tStbm6+Bl6mH45577nXhtnrzhxar/hMZBnsnY7M
-X-Google-Smtp-Source: AFSGD/UnYbnYuqN4UVLMQ5x9Ehncb0M6h1s/LRdOrPqqfZ6J4u8mFvZgFliBb/MtMweNzEFTyOjoQ00Z5ftHFtGh7Wo=
-X-Received: by 2002:a05:660c:250:: with SMTP id t16mr3532082itk.78.1544632884446;
- Wed, 12 Dec 2018 08:41:24 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=CvGD0GTq9G5XxY4JwRepFdT8HYK5EqjNd5yit2zalY4=;
+        b=J+H6/reV56RMrPTiE57EkvP1KIu0AtVFooVZTsViRwQal1VNCtdclJFgH0akq+XB+p
+         KAg1KuYy7ks6flFiFBlUNrW2kCnKgu/Y0vHWkIm0vQksU1oKxaqbx/0mvIeax28lu6mt
+         D+f8xmumUpUhFRE/v2nWF8jVeGUZW7qwf5zSNwIct5tGA4Aa/WNvQ8CwQRF38jvhJv7D
+         UY4QYVa1587aOFhMiehxLHm9o3ZxfJIFkXriiK5OAZAeQYH9KIbHKRjZetXrh390Ei/N
+         niN2VdG3kQS39EgVqnuJnTlrgZfQOod5hEyueKVhAW1tgDplMrhNNspbsvpW2wm4SrZ0
+         0MeA==
+X-Gm-Message-State: AA+aEWZPvyIJD4IakybtimNpsYOuSjrXq4GEasIWdlMZ93Z97YgYDD0e
+        82EdBEIrYqNfm470/GdceKEeeg==
+X-Google-Smtp-Source: AFSGD/Wxh+WgqOLugKtkza5Wj/r0VftUvoFJXs9nOLwecbApfmJ/YUP1zm3jZATUKCLBs5DNkMJWRg==
+X-Received: by 2002:a19:fc09:: with SMTP id a9mr12866360lfi.21.1544632884425;
+        Wed, 12 Dec 2018 08:41:24 -0800 (PST)
+Received: from wasted.cogentembedded.com ([31.173.85.181])
+        by smtp.gmail.com with ESMTPSA id u12-v6sm3340898ljk.79.2018.12.12.08.41.22
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 12 Dec 2018 08:41:23 -0800 (PST)
+Subject: Re: [PATCH v3 2/2] dt-binding: spi: Document Renesas R-Car Gen3 RPC
+ controller bindings
+To:     Mason Yang <masonccyang@mxic.com.tw>, broonie@kernel.org,
+        marek.vasut@gmail.com, linux-kernel@vger.kernel.org,
+        linux-spi@vger.kernel.org, boris.brezillon@bootlin.com,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     juliensu@mxic.com.tw, Simon Horman <horms@verge.net.au>,
+        zhengxunli@mxic.com.tw
+References: <1544181199-3373-1-git-send-email-masonccyang@mxic.com.tw>
+ <1544181199-3373-3-git-send-email-masonccyang@mxic.com.tw>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Organization: Cogent Embedded
+Message-ID: <89a88758-dc9f-d805-c123-d46bf9c9bda7@cogentembedded.com>
+Date:   Wed, 12 Dec 2018 19:41:22 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-References: <20181210160327.20811-1-tiny.windzz@gmail.com> <20181210102157.6fa8fd8b@cakuba.netronome.com>
-In-Reply-To: <20181210102157.6fa8fd8b@cakuba.netronome.com>
-From:   Frank Lee <tiny.windzz@gmail.com>
-Date:   Thu, 13 Dec 2018 00:41:13 +0800
-Message-ID: <CAEExFWtOmSAZfqq5kr5dorzZugs0CJv9NE76Z1W9vuqPfzZjrg@mail.gmail.com>
-Subject: Re: [PATCH] bpf: convert to DEFINE_SHOW_ATTRIBUTE
-To:     jakub.kicinski@netronome.com
-Cc:     davem@davemloft.net, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1544181199-3373-3-git-send-email-masonccyang@mxic.com.tw>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 11, 2018 at 2:22 AM Jakub Kicinski
-<jakub.kicinski@netronome.com> wrote:
->
-> On Mon, 10 Dec 2018 11:03:27 -0500, Yangtao Li wrote:
-> > Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
-> >
-> > Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
->
-> Acked-by: Jakub Kicinski <jakub.kicinski@netronome.com>
->
-> Please post v2 with the subject prefix set to "netdevsim:" rather than
-> "bpf:".
-The newer has been sent.
+Hello!
 
-Thanks,
-Yangtao
->
-> >  drivers/net/netdevsim/bpf.c | 16 ++--------------
-> >  1 file changed, 2 insertions(+), 14 deletions(-)
-> >
-> > diff --git a/drivers/net/netdevsim/bpf.c b/drivers/net/netdevsim/bpf.c
-> > index cb3518474f0e..14b4d9774708 100644
-> > --- a/drivers/net/netdevsim/bpf.c
-> > +++ b/drivers/net/netdevsim/bpf.c
-> > @@ -48,7 +48,7 @@ struct nsim_bpf_bound_map {
-> >       struct list_head l;
-> >  };
-> >
-> > -static int nsim_debugfs_bpf_string_read(struct seq_file *file, void *data)
-> > +static int nsim_bpf_string_show(struct seq_file *file, void *data)
-> >  {
-> >       const char **str = file->private;
-> >
-> > @@ -57,19 +57,7 @@ static int nsim_debugfs_bpf_string_read(struct seq_file *file, void *data)
-> >
-> >       return 0;
-> >  }
-> > -
-> > -static int nsim_debugfs_bpf_string_open(struct inode *inode, struct file *f)
-> > -{
-> > -     return single_open(f, nsim_debugfs_bpf_string_read, inode->i_private);
-> > -}
-> > -
-> > -static const struct file_operations nsim_bpf_string_fops = {
-> > -     .owner = THIS_MODULE,
-> > -     .open = nsim_debugfs_bpf_string_open,
-> > -     .release = single_release,
-> > -     .read = seq_read,
-> > -     .llseek = seq_lseek
-> > -};
-> > +DEFINE_SHOW_ATTRIBUTE(nsim_bpf_string);
-> >
-> >  static int
-> >  nsim_bpf_verify_insn(struct bpf_verifier_env *env, int insn_idx, int prev_insn)
->
+Should be "dt-bindings: " in the subject...
+
+MBR, Sergei
