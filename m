@@ -2,98 +2,109 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9363CC65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:43:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B070C65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:43:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FBC32080F
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:43:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FBC32080F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 5FC8F20989
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:43:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544636617;
+	bh=52O48gEOnrB1lIP08qeejaSzlFY+t34zCzgnG9ZJknY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=vX3F9SRH9aWknOrQ0yZBAGfXKGdtQXdPb4pH3tIZf5usjwia2Cmc4mKxKkYzjfE8f
+	 1UgSv5hw900DMH09QDjW0I+wSl+hxqukeJrvGjgzLDN6Ks5YOS/pIXwlII9/pK+2/g
+	 b8x6W1OEJlws6o6BWOjba5LzfnUQwoYrZ79GGdhE=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FC8F20989
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728013AbeLLRn1 (ORCPT
+        id S1728070AbeLLRng (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 12:43:27 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:16168 "EHLO mx1.redhat.com"
+        Wed, 12 Dec 2018 12:43:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48484 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726922AbeLLRn0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 12:43:26 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1728017AbeLLRnf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 12:43:35 -0500
+Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 4C24CC070477;
-        Wed, 12 Dec 2018 17:43:26 +0000 (UTC)
-Received: from vitty.brq.redhat.com.redhat.com (unknown [10.43.2.155])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0128B600CC;
-        Wed, 12 Dec 2018 17:43:23 +0000 (UTC)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     kvm@vger.kernel.org
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        linux-kernel@vger.kernel.org, Roman Kagan <rkagan@virtuozzo.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>, x86@kernel.org,
-        "Michael Kelley \(EOSG\)" <Michael.H.Kelley@microsoft.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v3] x86/hyper-v: Mark TLFS structures packed
-In-Reply-To: <20181203140636.21912-1-vkuznets@redhat.com>
-References: <20181203140636.21912-1-vkuznets@redhat.com>
-Date:   Wed, 12 Dec 2018 18:43:23 +0100
-Message-ID: <87mupa4p50.fsf@vitty.brq.redhat.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id BD9D62080F;
+        Wed, 12 Dec 2018 17:43:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544636615;
+        bh=52O48gEOnrB1lIP08qeejaSzlFY+t34zCzgnG9ZJknY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=AtfnjVmxMccVNB1InbF16AU6lZwskYBRF/RqsyvI7lKh719SgKr46g06LEnP4Jp3B
+         gTpvObhb0KXxSG3MCtY583fwbwaWjFIzJE5atvNmwxR7cn/Z9j/1lqdI82A0zeYeXY
+         FNNEHFkN22fsjvMDPMoWju3pT1ojmGy5RYGMaRqY=
+Date:   Wed, 12 Dec 2018 12:43:33 -0500
+From:   Sasha Levin <sashal@kernel.org>
+To:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Cc:     Petr Mladek <pmladek@suse.com>, Daniel Wang <wonderfly@google.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>, stable@vger.kernel.org,
+        Alexander.Levin@microsoft.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        byungchul.park@lge.com, dave.hansen@intel.com, hannes@cmpxchg.org,
+        jack@suse.cz, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Mel Gorman <mgorman@suse.de>, mhocko@kernel.org, pavel@ucw.cz,
+        penguin-kernel@i-love.sakura.ne.jp,
+        Peter Zijlstra <peterz@infradead.org>, tj@kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>, vbabka@suse.cz,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        Peter Feiner <pfeiner@google.com>
+Subject: Re: 4.14 backport request for dbdda842fe96f: "printk: Add console
+ owner and waiter logic to load balance console writes"
+Message-ID: <20181212174333.GC2746@sasha-vm>
+References: <CAJmjG2-c4e_1999n0OV5B9ABG9rF6n=myThjgX+Ms1R-vc3z+A@mail.gmail.com>
+ <20181109064740.GE599@jagdpanzerIV>
+ <CAJmjG28Q8pEpr67LC+Un8m+Qii58FTd1esp6Zc47TnMsw50QEw@mail.gmail.com>
+ <20181212052126.GF431@jagdpanzerIV>
+ <CAJmjG29a7Fax5ZW5Q+W+-1xPEXVUqdrMYwoUpSwL1Msiso6gtw@mail.gmail.com>
+ <20181212062841.GI431@jagdpanzerIV>
+ <20181212064841.GB2746@sasha-vm>
+ <20181212081034.GA32687@jagdpanzerIV>
+ <20181212133603.yyu2zvw7g454zdqd@pathway.suse.cz>
+ <20181212135939.GA10170@tigerII.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Wed, 12 Dec 2018 17:43:26 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20181212135939.GA10170@tigerII.localdomain>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Vitaly Kuznetsov <vkuznets@redhat.com> writes:
+On Wed, Dec 12, 2018 at 10:59:39PM +0900, Sergey Senozhatsky wrote:
+>On (12/12/18 14:36), Petr Mladek wrote:
+>> > OK, really didn't know that! I wasn't Cc-ed on that AUTOSEL email,
+>> > and I wasn't Cc-ed on this whole discussion and found it purely
+>> > accidentally while browsing linux-mm list.
+>>
+>> I am sorry that I did not CC you. There were so many people in CC.
+>> I expected that all people mentioned in the related commit message
+>> were included by default.
+>
+>No worries! I'm not blaming anyone.
+>
+>> > So if you are willing to backport this set to -stable, then I wouldn't
+>> > mind, probably would be more correct if we don't advertise this as a
+>> > "panic() deadlock fix"
+>>
+>> This should not be a problem. I guess that stable does not modify
+>> the original commit messages unless there is a change.
+>
+>Agreed.
 
->  /* Define virtual processor assist page structure. */
->  struct hv_vp_assist_page {
-> @@ -519,7 +519,7 @@ struct hv_vp_assist_page {
->  	__u64 nested_enlightenments_control[2];
->  	__u32 enlighten_vmentry;
->  	__u64 current_nested_vmcs;
-> -};
-> +} __packed;
->  
+I'll be happy to add anything you want to the commit message. Do you
+have a blurb you want to use?
 
-This particular structure wasn't properly padded: u32 padding is missing
-between 'enlighten_vmentry' and 'current_nested_vmcs'.
-
->  struct hv_enlightened_vmcs {
->  	u32 revision_id;
-> @@ -693,7 +693,7 @@ struct hv_enlightened_vmcs {
->  		u32 nested_flush_hypercall:1;
->  		u32 msr_bitmap:1;
->  		u32 reserved:30;
-> -	} hv_enlightenments_control;
-> +	}  __packed hv_enlightenments_control;
->  	u32 hv_vp_id;
->  
->  	u64 hv_vm_id;
-> @@ -703,7 +703,7 @@ struct hv_enlightened_vmcs {
->  	u64 padding64_5[7];
->  	u64 xss_exit_bitmap;
->  	u64 padding64_6[7];
-> -};
-> +} __packed;
-
-struct hv_enlightened_vmcs also has a hole: we need an u16 padding after
-'u16 host_tr_selector'.
-
-Both these problems led to Enlightened VMCS for Hyper-V on KVM being
-completely broken.
-
-As this is not yet merged, v4 is coming to rescue!
-
--- 
-Vitaly
+--
+Thanks,
+Sasha
