@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8763EC65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 10:22:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD0F2C65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 10:22:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48E172084E
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 10:22:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48E172084E
+	by mail.kernel.org (Postfix) with ESMTP id ACC252084E
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 10:22:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACC252084E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727178AbeLLKWH (ORCPT
+        id S1727295AbeLLKWt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 05:22:07 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:57465 "EHLO mail.bootlin.com"
+        Wed, 12 Dec 2018 05:22:49 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:57508 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726869AbeLLKWG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 05:22:06 -0500
+        id S1727155AbeLLKWH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 05:22:07 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id B659220DC3; Wed, 12 Dec 2018 11:22:03 +0100 (CET)
+        id 1DED320C4D; Wed, 12 Dec 2018 11:22:05 +0100 (CET)
 Received: from localhost.localdomain (aaubervilliers-681-1-89-7.w90-88.abo.wanadoo.fr [90.88.30.7])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 5298B2082C;
-        Wed, 12 Dec 2018 11:21:45 +0100 (CET)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 6A47120C94;
+        Wed, 12 Dec 2018 11:21:46 +0100 (CET)
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
 To:     Gregory Clement <gregory.clement@bootlin.com>,
         Jason Cooper <jason@lakedaemon.net>,
@@ -43,9 +43,9 @@ Cc:     <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
         Maxime Chevallier <maxime.chevallier@bootlin.com>,
         Nadav Haklai <nadavh@marvell.com>,
         Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: [PATCH v2 04/12] PCI: aardvark: Add clock support
-Date:   Wed, 12 Dec 2018 11:21:34 +0100
-Message-Id: <20181212102142.16053-5-miquel.raynal@bootlin.com>
+Subject: [PATCH v2 07/12] dt-bindings: PCI: aardvark: Describe the clocks property
+Date:   Wed, 12 Dec 2018 11:21:37 +0100
+Message-Id: <20181212102142.16053-8-miquel.raynal@bootlin.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181212102142.16053-1-miquel.raynal@bootlin.com>
 References: <20181212102142.16053-1-miquel.raynal@bootlin.com>
@@ -56,76 +56,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The IP relies on a gated clock. When we will add S2RAM support, this
-clock will need to be resumed before any PCIe registers are
-accessed. Add support for this clock.
+Describe the missing gated clock feeding the PCIe IP.
 
 Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- drivers/pci/controller/pci-aardvark.c | 29 +++++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
+ Documentation/devicetree/bindings/pci/aardvark-pci.txt | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/pci/controller/pci-aardvark.c b/drivers/pci/controller/pci-aardvark.c
-index da695572a2ed..108b3f15c410 100644
---- a/drivers/pci/controller/pci-aardvark.c
-+++ b/drivers/pci/controller/pci-aardvark.c
-@@ -8,6 +8,7 @@
-  * Author: Hezi Shahmoon <hezi.shahmoon@marvell.com>
-  */
- 
-+#include <linux/clk.h>
- #include <linux/delay.h>
- #include <linux/gpio.h>
- #include <linux/interrupt.h>
-@@ -190,6 +191,7 @@
- 
- struct advk_pcie {
- 	struct platform_device *pdev;
-+	struct clk *clk;
- 	void __iomem *base;
- 	struct list_head resources;
- 	struct irq_domain *irq_domain;
-@@ -1083,6 +1085,29 @@ static int advk_pcie_setup_phy(struct advk_pcie *pcie)
- 	return ret;
- }
- 
-+static int advk_pcie_setup_clk(struct advk_pcie *pcie)
-+{
-+	struct device *dev = &pcie->pdev->dev;
-+	int ret;
-+
-+	pcie->clk = devm_clk_get(dev, NULL);
-+	if (IS_ERR(pcie->clk) && (PTR_ERR(pcie->clk) == -EPROBE_DEFER))
-+		return PTR_ERR(pcie->clk);
-+
-+	/* Old bindings miss the clock handle */
-+	if (IS_ERR(pcie->clk)) {
-+		dev_warn(dev, "Clock unavailable (%ld)\n", PTR_ERR(pcie->clk));
-+		pcie->clk = NULL;
-+		return 0;
-+	}
-+
-+	ret = clk_prepare_enable(pcie->clk);
-+	if (ret)
-+		dev_err(dev, "Clock initialization failed (%d)\n", ret);
-+
-+	return ret;
-+}
-+
- static int advk_pcie_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -1118,6 +1143,10 @@ static int advk_pcie_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
-+	ret = advk_pcie_setup_clk(pcie);
-+	if (ret)
-+		return ret;
-+
- 	ret = advk_pcie_setup_phy(pcie);
- 	if (ret)
- 		return ret;
+diff --git a/Documentation/devicetree/bindings/pci/aardvark-pci.txt b/Documentation/devicetree/bindings/pci/aardvark-pci.txt
+index 252934237138..c275c3e39cde 100644
+--- a/Documentation/devicetree/bindings/pci/aardvark-pci.txt
++++ b/Documentation/devicetree/bindings/pci/aardvark-pci.txt
+@@ -12,6 +12,7 @@ contain the following properties:
+  - #size-cells: set to <2>
+  - device_type: set to "pci"
+  - ranges: ranges for the PCI memory and I/O regions
++ - clocks: the clock feeding the IP
+  - #interrupt-cells: set to <1>
+  - msi-controller: indicates that the PCIe controller can itself
+    handle MSI interrupts
+@@ -41,6 +42,7 @@ Example:
+ 		#address-cells = <3>;
+ 		#size-cells = <2>;
+ 		bus-range = <0x00 0xff>;
++		clocks = <&sb_periph_clk 13>;
+ 		interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>;
+ 		#interrupt-cells = <1>;
+ 		msi-controller;
 -- 
 2.19.1
 
