@@ -2,459 +2,147 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES,
-	UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D829C65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 07:18:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CEBCC67839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 07:19:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9E4F20879
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 07:18:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9E4F20879
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id B96DF20811
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 07:19:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B96DF20811
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726575AbeLLHSt (ORCPT
+        id S1726611AbeLLHT0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 02:18:49 -0500
-Received: from Mailgw01.mediatek.com ([1.203.163.78]:56688 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726242AbeLLHSt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 02:18:49 -0500
-X-UUID: 2891aadb149f4aceb784e24f85f22ae2-20181212
-X-UUID: 2891aadb149f4aceb784e24f85f22ae2-20181212
-Received: from mtkcas32.mediatek.inc [(172.27.4.250)] by mailgw01.mediatek.com
-        (envelope-from <qii.wang@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 372185536; Wed, 12 Dec 2018 15:18:20 +0800
-Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS31N1.mediatek.inc
- (172.27.4.69) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 12 Dec
- 2018 15:18:19 +0800
-Received: from [10.17.3.153] (10.17.3.153) by MTKCAS36.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 12 Dec 2018 15:18:18 +0800
-Message-ID: <1544599098.11699.24.camel@mhfsdcap03>
-Subject: Re: [PATCH 5/5] i2c: mediatek: Add i2c compatible for MediaTek
- MT8183
-From:   Qii Wang <qii.wang@mediatek.com>
-To:     Sean Wang <sean.wang@kernel.org>
-CC:     <wsa@the-dreams.de>, <devicetree@vger.kernel.org>,
-        <ryder.lee@mediatek.com>, <srv_heupstream@mediatek.com>,
-        <leilk.liu@mediatek.com>, <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-i2c@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Date:   Wed, 12 Dec 2018 15:18:18 +0800
-In-Reply-To: <CAGp9LzqsnF-mvyggw3XMxcNnjvTVgAbiK29413cS0-fF8n57og@mail.gmail.com>
-References: <1543843974-4054-1-git-send-email-qii.wang@mediatek.com>
-         <1543843974-4054-6-git-send-email-qii.wang@mediatek.com>
-         <CAGp9LzqsnF-mvyggw3XMxcNnjvTVgAbiK29413cS0-fF8n57og@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 8bit
+        Wed, 12 Dec 2018 02:19:26 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:15508 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726242AbeLLHT0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 02:19:26 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 43F7V31tlnz9v0fb;
+        Wed, 12 Dec 2018 08:19:23 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id AiQMlPEefn9W; Wed, 12 Dec 2018 08:19:23 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 43F7V317xXz9v0fZ;
+        Wed, 12 Dec 2018 08:19:23 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 125CF8B82A;
+        Wed, 12 Dec 2018 08:19:24 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id r5jEYM3B3tVG; Wed, 12 Dec 2018 08:19:23 +0100 (CET)
+Received: from PO15451 (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id A2BCE8B825;
+        Wed, 12 Dec 2018 08:19:23 +0100 (CET)
+Subject: Re: [PATCH v3] powerpc: implement CONFIG_DEBUG_VIRTUAL
+To:     Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+References: <a42260e77d609a10667872c2e7bf14ceabcce050.1544562518.git.christophe.leroy@c-s.fr>
+ <87va3zwq1t.fsf@concordia.ellerman.id.au>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Message-ID: <32b00148-214c-44db-e9cf-fa4caa2547e8@c-s.fr>
+Date:   Wed, 12 Dec 2018 08:19:22 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-X-MTK:  N
+In-Reply-To: <87va3zwq1t.fsf@concordia.ellerman.id.au>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-12-03 at 21:49 -0800, Sean Wang wrote:
-> <qii.wang@mediatek.com> 於 2018年12月3日 週一 上午5:34寫道：
-> >
-> > From: qii wang <qii.wang@mediatek.com>
-> >
-> > Add i2c compatible for MT8183. Compare to 2712 i2c controller, MT8183 has
-> > different registers, offsets, clock, and multi-user function.
-> >
-> > Signed-off-by: qii wang <qii.wang@mediatek.com>
-> > ---
-> >  drivers/i2c/busses/i2c-mt65xx.c |  136 +++++++++++++++++++++++++++++++++++++--
-> >  1 file changed, 130 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/drivers/i2c/busses/i2c-mt65xx.c b/drivers/i2c/busses/i2c-mt65xx.c
-> > index 428ac99..6b979ab 100644
-> > --- a/drivers/i2c/busses/i2c-mt65xx.c
-> > +++ b/drivers/i2c/busses/i2c-mt65xx.c
-> > @@ -35,17 +35,23 @@
-> >  #include <linux/slab.h>
-> >
-> >  #define I2C_RS_TRANSFER                        (1 << 4)
-> > +#define I2C_ARB_LOST                   (1 << 3)
-> 
-> it seems no one refers to the macro in the patch so it should be
-> better to be removed
-> 
-
-ok, I miss it, I will use it in the next patch.
-
-> >  #define I2C_HS_NACKERR                 (1 << 2)
-> >  #define I2C_ACKERR                     (1 << 1)
-> >  #define I2C_TRANSAC_COMP               (1 << 0)
-> >  #define I2C_TRANSAC_START              (1 << 0)
-> > +#define I2C_RESUME_ARBIT               (1 << 1)
-> >  #define I2C_RS_MUL_CNFG                        (1 << 15)
-> >  #define I2C_RS_MUL_TRIG                        (1 << 14)
-> > +#define I2C_HS_TIME_EN                 (1 << 7)
-> >  #define I2C_DCM_DISABLE                        0x0000
-> >  #define I2C_IO_CONFIG_OPEN_DRAIN       0x0003
-> >  #define I2C_IO_CONFIG_PUSH_PULL                0x0000
-> >  #define I2C_SOFT_RST                   0x0001
-> >  #define I2C_FIFO_ADDR_CLR              0x0001
-> > +#define I2C_FIFO_ADDR_CLRH             0x0002
-> > +#define I2C_FIFO_ADDR_CLR_MCH          0x0004
-> > +#define I2C_HFIFO_DATA                 0x8208
-> >  #define I2C_DELAY_LEN                  0x0002
-> >  #define I2C_ST_START_CON               0x8001
-> >  #define I2C_FS_START_CON               0x1800
-> > @@ -76,6 +82,8 @@
-> >  #define I2C_CONTROL_DIR_CHANGE          (0x1 << 4)
-> >  #define I2C_CONTROL_ACKERR_DET_EN       (0x1 << 5)
-> >  #define I2C_CONTROL_TRANSFER_LEN_CHANGE (0x1 << 6)
-> > +#define I2C_CONTROL_DMAACK_EN           (0x1 << 8)
-> > +#define I2C_CONTROL_ASYNC_MODE          (0x1 << 9)
-> >  #define I2C_CONTROL_WRAPPER             (0x1 << 0)
-> >
-> >  #define I2C_DRV_NAME           "i2c-mt65xx"
-> > @@ -130,6 +138,15 @@ enum I2C_REGS_OFFSET {
-> >         OFFSET_DEBUGCTRL,
-> >         OFFSET_TRANSFER_LEN_AUX,
-> >         OFFSET_CLOCK_DIV,
-> > +       /* MT8183 only regs */
-> > +       OFFSET_LTIMING,
-> > +       OFFSET_DATA_TIMING,
-> > +       OFFSET_MCU_INTR,
-> > +       OFFSET_HW_TIMEOUT,
-> > +       OFFSET_HFIFO_DATA,
-> > +       OFFSET_HFIFO_STAT,
-> > +       OFFSET_MULTI_DMA,
-> > +       OFFSET_ROLLBACK,
-> >  };
-> >
-> >  static const u16 mt_i2c_regs_v1[] = {
-> > @@ -159,6 +176,39 @@ enum I2C_REGS_OFFSET {
-> >         [OFFSET_CLOCK_DIV] = 0x70,
-> >  };
-> >
-> > +static const u16 mt_i2c_regs_v2[] = {
-> > +       [OFFSET_DATA_PORT] = 0x0,
-> > +       [OFFSET_SLAVE_ADDR] = 0x4,
-> > +       [OFFSET_INTR_MASK] = 0x8,
-> > +       [OFFSET_INTR_STAT] = 0xc,
-> > +       [OFFSET_CONTROL] = 0x10,
-> > +       [OFFSET_TRANSFER_LEN] = 0x14,
-> > +       [OFFSET_TRANSAC_LEN] = 0x18,
-> > +       [OFFSET_DELAY_LEN] = 0x1c,
-> > +       [OFFSET_TIMING] = 0x20,
-> > +       [OFFSET_START] = 0x24,
-> > +       [OFFSET_EXT_CONF] = 0x28,
-> > +       [OFFSET_LTIMING] = 0x2c,
-> > +       [OFFSET_HS] = 0x30,
-> > +       [OFFSET_IO_CONFIG] = 0x34,
-> > +       [OFFSET_FIFO_ADDR_CLR] = 0x38,
-> > +       [OFFSET_DATA_TIMING] = 0x3c,
-> > +       [OFFSET_MCU_INTR] = 0x40,
-> > +       [OFFSET_TRANSFER_LEN_AUX] = 0x44,
-> > +       [OFFSET_CLOCK_DIV] = 0x48,
-> > +       [OFFSET_HW_TIMEOUT] = 0x4c,
-> > +       [OFFSET_SOFTRESET] = 0x50,
-> > +       [OFFSET_HFIFO_DATA] = 0x70,
-> > +       [OFFSET_DEBUGSTAT] = 0xe0,
-> > +       [OFFSET_DEBUGCTRL] = 0xe8,
-> > +       [OFFSET_FIFO_STAT] = 0xf4,
-> > +       [OFFSET_FIFO_THRESH] = 0xf8,
-> > +       [OFFSET_HFIFO_STAT] = 0xfc,
-> > +       [OFFSET_DCM_EN] = 0xf88,
-> > +       [OFFSET_MULTI_DMA] = 0xf8c,
-> > +       [OFFSET_ROLLBACK] = 0xf98,
-> > +};
-> > +
-> >  struct mtk_i2c_compatible {
-> >         const struct i2c_adapter_quirks *quirks;
-> >         const u16 *regs;
-> > @@ -168,6 +218,7 @@ struct mtk_i2c_compatible {
-> >         unsigned char aux_len_reg: 1;
-> >         unsigned char support_33bits: 1;
-> >         unsigned char timing_adjust: 1;
-> > +       unsigned char dma_sync: 1;
-> >  };
-> >
-> >  struct mtk_i2c {
-> > @@ -181,8 +232,11 @@ struct mtk_i2c {
-> >         struct clk *clk_main;           /* main clock for i2c bus */
-> >         struct clk *clk_dma;            /* DMA clock for i2c via DMA */
-> >         struct clk *clk_pmic;           /* PMIC clock for i2c from PMIC */
-> > +       struct clk *clk_arb;            /* Arbitrator clock for i2c */
-> >         bool have_pmic;                 /* can use i2c pins from PMIC */
-> >         bool use_push_pull;             /* IO config push-pull mode */
-> > +       bool share_i3c;                 /* share i3c IP*/
-> > +       u32 ch_offset;                  /* i2c multi-user channel offset */
-> >
-> >         u16 irq_stat;                   /* interrupt status */
-> >         unsigned int clk_src_div;
-> > @@ -190,6 +244,7 @@ struct mtk_i2c {
-> >         enum mtk_trans_op op;
-> >         u16 timing_reg;
-> >         u16 high_speed_reg;
-> > +       u16 ltiming_reg;
-> >         unsigned char auto_restart;
-> >         bool ignore_restart_irq;
-> >         const struct mtk_i2c_compatible *dev_comp;
-> > @@ -216,6 +271,7 @@ struct mtk_i2c {
-> >         .aux_len_reg = 1,
-> >         .support_33bits = 1,
-> >         .timing_adjust = 1,
-> > +       .dma_sync = 0,
-> >  };
-> >
-> >  static const struct mtk_i2c_compatible mt6577_compat = {
-> > @@ -227,6 +283,7 @@ struct mtk_i2c {
-> >         .aux_len_reg = 0,
-> >         .support_33bits = 0,
-> >         .timing_adjust = 0,
-> > +       .dma_sync = 0,
-> >  };
-> >
-> >  static const struct mtk_i2c_compatible mt6589_compat = {
-> > @@ -238,6 +295,7 @@ struct mtk_i2c {
-> >         .aux_len_reg = 0,
-> >         .support_33bits = 0,
-> >         .timing_adjust = 0,
-> > +       .dma_sync = 0,
-> >  };
-> >
-> >  static const struct mtk_i2c_compatible mt7622_compat = {
-> > @@ -249,6 +307,7 @@ struct mtk_i2c {
-> >         .aux_len_reg = 1,
-> >         .support_33bits = 0,
-> >         .timing_adjust = 0,
-> > +       .dma_sync = 0,
-> >  };
-> >
-> >  static const struct mtk_i2c_compatible mt8173_compat = {
-> > @@ -259,6 +318,18 @@ struct mtk_i2c {
-> >         .aux_len_reg = 1,
-> >         .support_33bits = 1,
-> >         .timing_adjust = 0,
-> > +       .dma_sync = 0,
-> > +};
-> > +
-> > +static const struct mtk_i2c_compatible mt8183_compat = {
-> > +       .regs = mt_i2c_regs_v2,
-> > +       .pmic_i2c = 0,
-> > +       .dcm = 0,
-> > +       .auto_restart = 1,
-> > +       .aux_len_reg = 1,
-> > +       .support_33bits = 1,
-> > +       .timing_adjust = 1,
-> > +       .dma_sync = 1,
-> >  };
-> >
-> >  static const struct of_device_id mtk_i2c_of_match[] = {
-> > @@ -267,19 +338,20 @@ struct mtk_i2c {
-> >         { .compatible = "mediatek,mt6589-i2c", .data = &mt6589_compat },
-> >         { .compatible = "mediatek,mt7622-i2c", .data = &mt7622_compat },
-> >         { .compatible = "mediatek,mt8173-i2c", .data = &mt8173_compat },
-> > +       { .compatible = "mediatek,mt8183-i2c", .data = &mt8183_compat },
-> >         {}
-> >  };
-> >  MODULE_DEVICE_TABLE(of, mtk_i2c_of_match);
-> >
-> >  static u16 mtk_i2c_readw(struct mtk_i2c *i2c, enum I2C_REGS_OFFSET reg)
-> >  {
-> > -       return readw(i2c->base + i2c->dev_comp->regs[reg]);
-> > +       return readw(i2c->base + i2c->ch_offset + i2c->dev_comp->regs[reg]);
-> >  }
-> >
-> >  static void mtk_i2c_writew(struct mtk_i2c *i2c, u16 val,
-> >                            enum I2C_REGS_OFFSET reg)
-> >  {
-> > -       writew(val, i2c->base + i2c->dev_comp->regs[reg]);
-> > +       writew(val, i2c->base + i2c->ch_offset + i2c->dev_comp->regs[reg]);
-> >  }
-> >
-> >  static int mtk_i2c_clock_enable(struct mtk_i2c *i2c)
-> > @@ -299,8 +371,18 @@ static int mtk_i2c_clock_enable(struct mtk_i2c *i2c)
-> >                 if (ret)
-> >                         goto err_pmic;
-> >         }
-> > +
-> > +       if (i2c->clk_arb) {
-> > +               ret = clk_prepare_enable(i2c->clk_arb);
-> > +               if (ret)
-> > +                       goto err_arb;
-> > +       }
-> > +
-> >         return 0;
-> >
-> > +err_arb:
-> > +       if (i2c->have_pmic)
-> > +               clk_disable_unprepare(i2c->clk_pmic);
-> >  err_pmic:
-> >         clk_disable_unprepare(i2c->clk_main);
-> >  err_main:
-> > @@ -311,6 +393,9 @@ static int mtk_i2c_clock_enable(struct mtk_i2c *i2c)
-> >
-> >  static void mtk_i2c_clock_disable(struct mtk_i2c *i2c)
-> >  {
-> > +       if (i2c->clk_arb)
-> > +               clk_disable_unprepare(i2c->clk_arb);
-> > +
-> >         if (i2c->have_pmic)
-> >                 clk_disable_unprepare(i2c->clk_pmic);
-> >
-> > @@ -333,11 +418,23 @@ static void mtk_i2c_init_hw(struct mtk_i2c *i2c)
-> >         if (i2c->dev_comp->dcm)
-> >                 mtk_i2c_writew(i2c, I2C_DCM_DISABLE, OFFSET_DCM_EN);
-> >
-> > -       if (i2c->dev_comp->timing_adjust)
-> > +       if (i2c->ch_offset)
-> > +               writew(I2C_RESUME_ARBIT, i2c->base +
-> > +                                        i2c->dev_comp->regs[OFFSET_START]);
-> > +
-> > +       if (i2c->dev_comp->timing_adjust && i2c->share_i3c) {
-> > +               mtk_i2c_writew(i2c, (I2C_DEFAULT_CLK_DIV - 1) |
-> > +                                   (I2C_DEFAULT_CLK_DIV - 1) << 8,
-> > +                                   OFFSET_CLOCK_DIV);
-> > +               i2c->high_speed_reg |= I2C_HS_TIME_EN;
-> > +       } else {
-> >                 mtk_i2c_writew(i2c, I2C_DEFAULT_CLK_DIV - 1, OFFSET_CLOCK_DIV);
-> > +       }
-> >
-> >         mtk_i2c_writew(i2c, i2c->timing_reg, OFFSET_TIMING);
-> >         mtk_i2c_writew(i2c, i2c->high_speed_reg, OFFSET_HS);
-> > +       if (i2c->dev_comp->regs == mt_i2c_regs_v2)
-> > +               mtk_i2c_writew(i2c, i2c->ltiming_reg, OFFSET_LTIMING);
-> >
-> >         /* If use i2c pin from PMIC mt6397 side, need set PATH_DIR first */
-> >         if (i2c->have_pmic)
-> > @@ -345,6 +442,9 @@ static void mtk_i2c_init_hw(struct mtk_i2c *i2c)
-> >
-> >         control_reg = I2C_CONTROL_ACKERR_DET_EN |
-> >                       I2C_CONTROL_CLK_EXT_EN | I2C_CONTROL_DMA_EN;
-> > +       if (i2c->dev_comp->dma_sync)
-> > +               control_reg |= I2C_CONTROL_DMAACK_EN | I2C_CONTROL_ASYNC_MODE;
-> > +
-> >         mtk_i2c_writew(i2c, control_reg, OFFSET_CONTROL);
-> >         mtk_i2c_writew(i2c, I2C_DELAY_LEN, OFFSET_DELAY_LEN);
-> >
-> > @@ -434,6 +534,8 @@ static int mtk_i2c_set_speed(struct mtk_i2c *i2c, unsigned int parent_clk)
-> >         unsigned int clk_src;
-> >         unsigned int step_cnt;
-> >         unsigned int sample_cnt;
-> > +       unsigned int l_step_cnt;
-> > +       unsigned int l_sample_cnt;
-> >         unsigned int target_speed;
-> >         int ret;
-> >
-> > @@ -443,11 +545,11 @@ static int mtk_i2c_set_speed(struct mtk_i2c *i2c, unsigned int parent_clk)
-> >         if (target_speed > MAX_FS_MODE_SPEED) {
-> >                 /* Set master code speed register */
-> >                 ret = mtk_i2c_calculate_speed(i2c, clk_src, MAX_FS_MODE_SPEED,
-> > -                                             &step_cnt, &sample_cnt);
-> > +                                             &l_step_cnt, &l_sample_cnt);
-> >                 if (ret < 0)
-> >                         return ret;
-> >
-> > -               i2c->timing_reg = (sample_cnt << 8) | step_cnt;
-> > +               i2c->timing_reg = (l_sample_cnt << 8) | l_step_cnt;
-> >
-> >                 /* Set the high speed mode register */
-> >                 ret = mtk_i2c_calculate_speed(i2c, clk_src, target_speed,
-> > @@ -457,6 +559,8 @@ static int mtk_i2c_set_speed(struct mtk_i2c *i2c, unsigned int parent_clk)
-> >
-> >                 i2c->high_speed_reg = I2C_TIME_DEFAULT_VALUE |
-> >                         (sample_cnt << 12) | (step_cnt << 8);
-> > +               i2c->ltiming_reg = (l_sample_cnt << 6) | l_step_cnt |
-> > +                                  (sample_cnt << 12) | (step_cnt << 9);
-> >         } else {
-> >                 ret = mtk_i2c_calculate_speed(i2c, clk_src, target_speed,
-> >                                               &step_cnt, &sample_cnt);
-> > @@ -467,6 +571,8 @@ static int mtk_i2c_set_speed(struct mtk_i2c *i2c, unsigned int parent_clk)
-> >
-> >                 /* Disable the high speed transaction */
-> >                 i2c->high_speed_reg = I2C_TIME_CLR_VALUE;
-> > +
-> > +               i2c->ltiming_reg = (sample_cnt << 6) | step_cnt;
-> >         }
-> >
-> >         return 0;
-> > @@ -483,6 +589,7 @@ static int mtk_i2c_do_transfer(struct mtk_i2c *i2c, struct i2c_msg *msgs,
-> >         u16 addr_reg;
-> >         u16 start_reg;
-> >         u16 control_reg;
-> > +       u16 fifo_clr_reg;
-> >         u16 restart_flag = 0;
-> >         u32 reg_4g_mode;
-> >         u8 *dma_rd_buf = NULL;
-> > @@ -521,7 +628,15 @@ static int mtk_i2c_do_transfer(struct mtk_i2c *i2c, struct i2c_msg *msgs,
-> >         mtk_i2c_writew(i2c, restart_flag | I2C_HS_NACKERR | I2C_ACKERR |
-> >                I2C_TRANSAC_COMP, OFFSET_INTR_STAT);
-> >
-> > -       mtk_i2c_writew(i2c, I2C_FIFO_ADDR_CLR, OFFSET_FIFO_ADDR_CLR);
-> 
-> There's a missing initialization to fifo_clr_reg here, I guess
-> fifo_clr_reg = I2C_FIFO_ADDR_CLR should be necessarily made here;
-> 
-> > +       if (i2c->share_i3c)
-> > +               fifo_clr_reg = I2C_FIFO_ADDR_CLR | I2C_FIFO_ADDR_CLRH;
-> 
-> fifo_clr_reg |= I2C_FIFO_ADDR_CLRH baed on initialized value
-> 
-> > +       if (i2c->ch_offset)
-> > +               fifo_clr_reg = I2C_FIFO_ADDR_CLR | I2C_FIFO_ADDR_CLR_MCH;
-> 
-> and then fifo_clr_reg |= I2C_FIFO_ADDR_CLR_MCH;
-> 
-
-ok, I will modify it. Thanks for your patient review.
-
-> > +
-> > +       mtk_i2c_writew(i2c, fifo_clr_reg, OFFSET_FIFO_ADDR_CLR);
-> > +
-> > +       if ((i2c->speed_hz > MAX_FS_MODE_SPEED) && i2c->share_i3c)
-> > +               mtk_i2c_writew(i2c, I2C_HFIFO_DATA, OFFSET_HFIFO_DATA);
-> >
-> >         /* Enable interrupt */
-> >         mtk_i2c_writew(i2c, restart_flag | I2C_HS_NACKERR | I2C_ACKERR |
-> > @@ -817,6 +932,11 @@ static int mtk_i2c_parse_dt(struct device_node *np, struct mtk_i2c *i2c)
-> >         if (i2c->clk_src_div == 0)
-> >                 return -EINVAL;
-> >
-> > +       ret = of_property_read_u32(np, "ch-offset", &i2c->ch_offset);
-> 
-> if ch-offset is a vendor-specific property, it should be better to add
-> a vendor prefix
-> 
-
-ok, I will add a vendor-specific property if we need the ch-offset.
-
-> > +       if (ret < 0)
-> > +               i2c->ch_offset = 0;
-> > +
-> > +       i2c->share_i3c = of_property_read_bool(np, "mediatek,share-i3c");
-> >         i2c->have_pmic = of_property_read_bool(np, "mediatek,have-pmic");
-> >         i2c->use_push_pull =
-> >                 of_property_read_bool(np, "mediatek,use-push-pull");
-> > @@ -884,6 +1004,10 @@ static int mtk_i2c_probe(struct platform_device *pdev)
-> >                 return PTR_ERR(i2c->clk_dma);
-> >         }
-> >
-> > +       i2c->clk_arb = devm_clk_get(&pdev->dev, "arb");
-> > +       if (IS_ERR(i2c->clk_arb))
-> > +               i2c->clk_arb = NULL;
-> > +
-> >         clk = i2c->clk_main;
-> >         if (i2c->have_pmic) {
-> >                 i2c->clk_pmic = devm_clk_get(&pdev->dev, "pmic");
-> > --
-> > 1.7.9.5
-> >
-> >
-> > _______________________________________________
-> > Linux-mediatek mailing list
-> > Linux-mediatek@lists.infradead.org
-> > http://lists.infradead.org/mailman/listinfo/linux-mediatek
 
 
+Le 12/12/2018 à 01:23, Michael Ellerman a écrit :
+> Christophe Leroy <christophe.leroy@c-s.fr> writes:
+> 
+>> This patch implements CONFIG_DEBUG_VIRTUAL to warn about
+>> incorrect use of virt_to_phys() and page_to_phys()
+>>
+>> Below is the result of test_debug_virtual:
+>>
+>> [    1.438746] WARNING: CPU: 0 PID: 1 at ./arch/powerpc/include/asm/io.h:808 test_debug_virtual_init+0x3c/0xd4
+>> [    1.448156] CPU: 0 PID: 1 Comm: swapper Not tainted 4.20.0-rc5-00560-g6bfb52e23a00-dirty #532
+>> [    1.457259] NIP:  c066c550 LR: c0650ccc CTR: c066c514
+>> [    1.462257] REGS: c900bdb0 TRAP: 0700   Not tainted  (4.20.0-rc5-00560-g6bfb52e23a00-dirty)
+>> [    1.471184] MSR:  00029032 <EE,ME,IR,DR,RI>  CR: 48000422  XER: 20000000
+>> [    1.477811]
+>> [    1.477811] GPR00: c0650ccc c900be60 c60d0000 00000000 006000c0 c9000000 00009032 c7fa0020
+>> [    1.477811] GPR08: 00002400 00000001 09000000 00000000 c07b5d04 00000000 c00037d8 00000000
+>> [    1.477811] GPR16: 00000000 00000000 00000000 00000000 c0760000 c0740000 00000092 c0685bb0
+>> [    1.477811] GPR24: c065042c c068a734 c0685b8c 00000006 00000000 c0760000 c075c3c0 ffffffff
+>> [    1.512711] NIP [c066c550] test_debug_virtual_init+0x3c/0xd4
+>> [    1.518315] LR [c0650ccc] do_one_initcall+0x8c/0x1cc
+>> [    1.523163] Call Trace:
+>> [    1.525595] [c900be60] [c0567340] 0xc0567340 (unreliable)
+>> [    1.530954] [c900be90] [c0650ccc] do_one_initcall+0x8c/0x1cc
+>> [    1.536551] [c900bef0] [c0651000] kernel_init_freeable+0x1f4/0x2cc
+>> [    1.542658] [c900bf30] [c00037ec] kernel_init+0x14/0x110
+>> [    1.547913] [c900bf40] [c000e1d0] ret_from_kernel_thread+0x14/0x1c
+>> [    1.553971] Instruction dump:
+>> [    1.556909] 3ca50100 bfa10024 54a5000e 3fa0c076 7c0802a6 3d454000 813dc204 554893be
+>> [    1.564566] 7d294010 7d294910 90010034 39290001 <0f090000> 7c3e0b78 955e0008 3fe0c062
+>> [    1.572425] ---[ end trace 6f6984225b280ad6 ]---
+>> [    1.577467] PA: 0x09000000 for VA: 0xc9000000
+>> [    1.581799] PA: 0x061e8f50 for VA: 0xc61e8f50
+>>
+>> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+>> ---
+>>   v3: Added missing linux/mm.h
+>>       I realised that a driver may use DMA on stack after checking with virt_addr_valid(), so the new
+>>       verification might induce false positives. I remove it for now, will add it again later in a more
+>>       controled way.
+> 
+> What is this comment referring to?
+> 
+> I can't see any difference to v2 except the linux/mm.h include.
+
+v2 was:
+
+
+@@ -804,6 +806,11 @@ extern void __iounmap_at(void *ea, unsigned long size);
+   */
+  static inline unsigned long virt_to_phys(volatile void * address)
+  {
++	if (IS_ENABLED(CONFIG_DEBUG_VIRTUAL) &&
++	    !WARN_ON(IS_ENABLED(CONFIG_HAVE_ARCH_VMAP_STACK) && current->pid &&
++		     object_is_on_stack((const void*)address)))
++			WARN_ON(!virt_addr_valid(address));
++
+  	return __pa((unsigned long)address);
+  }
+
+
+v3 is: (same as v1)
+
+
+@@ -804,6 +806,8 @@ extern void __iounmap_at(void *ea, unsigned long size);
+   */
+  static inline unsigned long virt_to_phys(volatile void * address)
+  {
++	WARN_ON(IS_ENABLED(CONFIG_DEBUG_VIRTUAL) && !virt_addr_valid(address));
++
+  	return __pa((unsigned long)address);
+  }
+
+
+The idea in v2 was to detect objects on stack used for DMA before 
+activating CONFIG_VMAP_STACK, but if the driver uses virt_addr_valid() 
+to decide if it can DMA map it, then we'll get false positives.
+So I think this should be added with a dedicated DEBUG CONFIG option, 
+not implicitely.
+
+Christophe
