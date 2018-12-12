@@ -2,105 +2,130 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8642C67839
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 08:19:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A72B8C04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 08:19:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85FD52084E
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 08:19:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85FD52084E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
+	by mail.kernel.org (Postfix) with ESMTP id 6BA1F2084E
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 08:19:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ajlcF2ns"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BA1F2084E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726723AbeLLIT1 (ORCPT
+        id S1726743AbeLLITm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 03:19:27 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:54104 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726478AbeLLIT1 (ORCPT
+        Wed, 12 Dec 2018 03:19:42 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:36183 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726242AbeLLITl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 03:19:27 -0500
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wBC8BjLs004383;
-        Wed, 12 Dec 2018 09:18:59 +0100
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2p85qk5hqq-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Wed, 12 Dec 2018 09:18:59 +0100
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 305BD38;
-        Wed, 12 Dec 2018 08:18:58 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag5node3.st.com [10.75.127.15])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id E0E192624;
-        Wed, 12 Dec 2018 08:18:57 +0000 (GMT)
-Received: from [10.48.0.167] (10.75.127.48) by SFHDAG5NODE3.st.com
- (10.75.127.15) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed, 12 Dec
- 2018 09:18:57 +0100
-Subject: Re: [PATCH 1/3] dt-bindings: mfd: syscon: Add optional clock support
-To:     Rob Herring <robh@kernel.org>
-CC:     <lee.jones@linaro.org>, <alexandre.torgue@st.com>,
-        <mcoquelin.stm32@gmail.com>, <arnd@arndb.de>,
-        <mark.rutland@arm.com>, <gabriel.fernandez@st.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <1543337297-21873-1-git-send-email-fabrice.gasnier@st.com>
- <1543337297-21873-2-git-send-email-fabrice.gasnier@st.com>
- <20181211221653.GA18104@bogus>
-From:   Fabrice Gasnier <fabrice.gasnier@st.com>
-Message-ID: <79817f52-0430-acd9-857e-c53f358c87c2@st.com>
-Date:   Wed, 12 Dec 2018 09:18:56 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20181211221653.GA18104@bogus>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.48]
-X-ClientProxiedBy: SFHDAG1NODE2.st.com (10.75.127.2) To SFHDAG5NODE3.st.com
- (10.75.127.15)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-12_02:,,
- signatures=0
+        Wed, 12 Dec 2018 03:19:41 -0500
+Received: by mail-pl1-f193.google.com with SMTP id g9so8254103plo.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 00:19:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=yyfJFfTmgFxnz1jy34qHKpCpkDKEu+Kg4fc3GoUK//I=;
+        b=ajlcF2ns5Dy783TXLqBOopdYf70FP0Z8VtlJ70asxMcKyti8lTVPH6lndSRtIMQ3Dy
+         WQQZ8WSVO/+vYkFMHR2iASBPAHnZgO9YYcCwb0vz0K/d7YWDsjhJ5HdTp294bBw+wrf1
+         BSsmLFuZCd+oOUH++3Ss7cLAY6Ry2XJHzrVxZxt54qsiMjmeXurkQ0+a0X6cyfCBy5FY
+         kfZqFQ4iTuc63oNlsSHWVQJHtAR7XUoKarw5wStC0xFHVKLWwWEmVCig7HFcvGLOqlDb
+         jlJny9Ttg98790nDmUywX396KL2L97ZgezdULSMJKvfq0WPB4EKfKo9OTyaKFi9Negki
+         HmYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=yyfJFfTmgFxnz1jy34qHKpCpkDKEu+Kg4fc3GoUK//I=;
+        b=A+cSm7l2oCX+gmSMogSGL95JLQGvbpAgfSUut8q88x+oriGKqDL4/6UzWOCAfu4zuN
+         pFpWJzRklhzk2Ir/fpQGJ6gqJoZcNeNUIrMacKvH4tDfGzZqOZ9gI6cY12LrtskXqDG/
+         2UDvdslU7XdjRwsi+zv37pykJDKimsBZc041XY3cKm9cB2Gcvo4WQPWcOOBa68N1pfYV
+         4alcxjeVWFrUJEQoRiPz5DNGgtWapmzFfuh0ekg8f3fmAuQPC0gsdqOdQWnv8pvq0FLy
+         AzwBW+yeFH70Ql6GMvrcqCNIIu46KVeI1EAYjbCYP2cWcP2F8F6W6oXVEV2zdgfkz8Sx
+         MrBA==
+X-Gm-Message-State: AA+aEWasqJ4Dt1nD+s1LCSkrdc1qnhW5slwObjsp+NICai9FsJoV0rlD
+        NHBze53FWMTcJKbA9CMd9qXt1uVuyw==
+X-Google-Smtp-Source: AFSGD/XfNB1mXLugutSLbatMX5KXf7xvdSaYNUGtRuj6x/Yilbd8zKDagDvEky7qNkmF2lJOke+/EQ==
+X-Received: by 2002:a17:902:42e4:: with SMTP id h91mr19366424pld.18.1544602780977;
+        Wed, 12 Dec 2018 00:19:40 -0800 (PST)
+Received: from mylaptop.nay.redhat.com ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id t12sm25721039pfi.45.2018.12.12.00.19.37
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 12 Dec 2018 00:19:40 -0800 (PST)
+From:   Pingfan Liu <kernelfans@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Pingfan Liu <kernelfans@gmail.com>, Dave Young <dyoung@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Baoquan He <bhe@redhat.com>, yinghai@kernel.org,
+        vgoyal@redhat.com, kexec@lists.infradead.org
+Subject: [PATCH] x86/kdump: directly find a candidate region when crashkernel=X
+Date:   Wed, 12 Dec 2018 16:19:16 +0800
+Message-Id: <1544602756-17449-1-git-send-email-kernelfans@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/11/18 11:16 PM, Rob Herring wrote:
-> On Tue, Nov 27, 2018 at 05:48:15PM +0100, Fabrice Gasnier wrote:
->> Some system control registers need to be clocked, so the registers can
->> be accessed. Add an optional clock.
->>
->> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
->> ---
->>  Documentation/devicetree/bindings/mfd/syscon.txt | 1 +
->>  1 file changed, 1 insertion(+)
->>
->> diff --git a/Documentation/devicetree/bindings/mfd/syscon.txt b/Documentation/devicetree/bindings/mfd/syscon.txt
->> index 25d9e9c..a9aaa51 100644
->> --- a/Documentation/devicetree/bindings/mfd/syscon.txt
->> +++ b/Documentation/devicetree/bindings/mfd/syscon.txt
->> @@ -17,6 +17,7 @@ Optional property:
->>  - reg-io-width: the size (in bytes) of the IO accesses that should be
->>    performed on the device.
->>  - hwlocks: reference to a phandle of a hardware spinlock provider node.
->> +- clocks: phandle to the syscon clock
-> 
-> No. Add clocks to specific bindings using syscon. If you have a node 
-> with only 'syscon', then that should be fixed.
+I encounter a case where crashkernel=384M, and kaslr is enabled. During the
+test, sometimes, the system may fail to reserve region for crash kernel,
+although there is much free space above 896MB. It is caused by the
+truncation of the candidate region by kaslr kernel. It raises confusion to
+the end user that sometimes crashkernel=X works while sometimes fails.
+Since on x86, kaslr is a default option, and this corner case is
+unavoidable.
+This patch simplifies the method suggested in the mail [1]. It just goes
+bottom-up to find a candidate region for crashkernel.
+There is one trivial thing about the compatibility with old kexec-tools:
+if the reserved region is above 896M, then old tool will fail to load
+bzImage. But without this patch, the old tool also fail since there is no
+memory below 896M can be reserved for crashkernel.
 
-Hi Rob,
+[1]: http://lists.infradead.org/pipermail/kexec/2017-October/019571.html
+Signed-off-by: Pingfan Liu <kernelfans@gmail.com>
+Cc: Dave Young <dyoung@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Baoquan He <bhe@redhat.com>
+Cc: yinghai@kernel.org,
+Cc: vgoyal@redhat.com
+Cc: kexec@lists.infradead.org
 
-Thanks for reviewing, so I'll
-- add it to Documentation/devicetree/bindings/arm/stm32/stm32-syscon.txt
-- send a v2 with this change.
+---
+ arch/x86/kernel/setup.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-Best regards,
-Fabrice
-> 
-> Rob
-> 
+diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
+index d494b9b..60f12c4 100644
+--- a/arch/x86/kernel/setup.c
++++ b/arch/x86/kernel/setup.c
+@@ -541,15 +541,18 @@ static void __init reserve_crashkernel(void)
+ 
+ 	/* 0 means: find the address automatically */
+ 	if (crash_base <= 0) {
++		if (!memblock_bottom_up())
++			memblock_set_bottom_up(true);
+ 		/*
+ 		 * Set CRASH_ADDR_LOW_MAX upper bound for crash memory,
+ 		 * as old kexec-tools loads bzImage below that, unless
+ 		 * "crashkernel=size[KMG],high" is specified.
+ 		 */
+ 		crash_base = memblock_find_in_range(CRASH_ALIGN,
+-						    high ? CRASH_ADDR_HIGH_MAX
+-							 : CRASH_ADDR_LOW_MAX,
+-						    crash_size, CRASH_ALIGN);
++			(max_pfn * PAGE_SIZE), crash_size, CRASH_ALIGN);
++		if (!memblock_bottom_up())
++			memblock_set_bottom_up(false);
++
+ 		if (!crash_base) {
+ 			pr_info("crashkernel reservation failed - No suitable area found.\n");
+ 			return;
+-- 
+2.7.4
+
