@@ -2,168 +2,117 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74903C67839
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 22:18:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EC92C67839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 22:18:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32DBF2086D
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 22:18:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E73C52084E
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 22:18:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="uhnZLXn9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32DBF2086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=crapouillou.net
+	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="R9wK0CXf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E73C52084E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lixom.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728653AbeLLWQv (ORCPT
+        id S1728740AbeLLWSv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 17:16:51 -0500
-Received: from outils.crapouillou.net ([89.234.176.41]:40702 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728544AbeLLWQt (ORCPT
+        Wed, 12 Dec 2018 17:18:51 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:33731 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728618AbeLLWQv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 17:16:49 -0500
-From:   Paul Cercueil <paul@crapouillou.net>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>
-Cc:     Mathieu Malaterre <malat@debian.org>,
-        Ezequiel Garcia <ezequiel@collabora.co.uk>,
-        PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>,
-        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-clk@vger.kernel.org, od@zcrc.me,
-        Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v8 08/26] watchdog: jz4740: Use regmap provided by TCU driver
-Date:   Wed, 12 Dec 2018 23:09:03 +0100
-Message-Id: <20181212220922.18759-9-paul@crapouillou.net>
-In-Reply-To: <20181212220922.18759-1-paul@crapouillou.net>
-References: <20181212220922.18759-1-paul@crapouillou.net>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net; s=mail; t=1544652588; bh=H4qA9cDxe/Ufo9FrWis+Z/7T9dlzOpAFd453C5di8Wg=; h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=uhnZLXn9rySE3zUZ8SV78go0RtaSqDRYwxpjdBmgm9VAljjE6UlMoxBRa5YYfO/NQ2bHN+rGPDXuZ8nHZkhKz9KSObBrMDGHreRiYbdcboKVfcek7xZfWOQsE/2+oEXIAIZ0zVCebFsrSaRmik30lQ9c8y5PJm6QFzvLP1qchko=
+        Wed, 12 Dec 2018 17:16:51 -0500
+Received: by mail-lj1-f194.google.com with SMTP id v1-v6so29529ljd.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 14:16:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lixom-net.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=kccThfX5CLSTWdYtZnbv5QYn/EnfwbjiIG9EWgyHhOc=;
+        b=R9wK0CXfIOMeMdj5eEUf05BsUNdL0feIGFCcyCrl+rCusYjr8+48FXxBbxSgiOrLhS
+         cGvYd3zBUyEmHQbKaNWD9HSgQy95zsVK7hkbe9dnq90xgWo84sVtthyzOUdVoaIZpEBl
+         HBiUI+9R4r7qUcbXS1rigtyhoxjV6BVy08f1o1V959RIPMIykLfx8odWwxjvzznstXRk
+         x8FN2OLR31P+Qd0z6VFbns1uHfR63kF3Z02Hc4H6515kHJ8CznGHVPF1Vp375KKClUw/
+         XNVKJFr7u68Jjav1PJogw4OCehUATf6n+EX6JMvhe/Os2PN01v+4k9zOpttRLPrqL41I
+         idOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=kccThfX5CLSTWdYtZnbv5QYn/EnfwbjiIG9EWgyHhOc=;
+        b=QwHidRlglP0Wm+GG/CPVCxNR+9lGn+61WsV6V2SaXZMC6ptdbeCN95SXiBxouDNN5P
+         6Vki1J7RCM+H6D7F2Mn96IzXbQ6iFZO7TJBJRCDxSqK4bym1yryVa1ncmc+/QQ3MDGqz
+         xNoPXsOY/y66wOAdBUF8knIR/hncFC7XZJybrsGdUVVd9hZUisd+ungHaSsGzSfDVCu6
+         yT/SG6gRInsD1G+l+fkSQU+Aoc8nkjxQY9mQQxv0kzY8cs7GXcw68GO5sQDF5QzqOzJ0
+         BYrvoL1q22o8OLLoan2JHEq2CI6UyqtD7Ir/yqzFToAnhEENhAwdqIEQ1LgHFnmwqquw
+         s5Uw==
+X-Gm-Message-State: AA+aEWYYTenENuKKv+qmZUdDvGak9fU5dZIhzpm9zOP+CIgNuYQ+AlbZ
+        aRVLBuI7yxMt8fWCywjlWJw3WA==
+X-Google-Smtp-Source: AFSGD/U3xivvWD8mzw3FAzb4A2hF+KZp9Z6MXVMeAyc0KHK6ChfBYjcaVtK/+mPOt4mfmPTgHtk2Jw==
+X-Received: by 2002:a2e:20c3:: with SMTP id g64-v6mr14623938lji.101.1544653008634;
+        Wed, 12 Dec 2018 14:16:48 -0800 (PST)
+Received: from localhost (h85-30-9-151.cust.a3fiber.se. [85.30.9.151])
+        by smtp.gmail.com with ESMTPSA id a62sm3431lfa.37.2018.12.12.14.16.45
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 12 Dec 2018 14:16:47 -0800 (PST)
+Date:   Wed, 12 Dec 2018 13:52:29 -0800
+From:   Olof Johansson <olof@lixom.net>
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>, arm@kernel.org,
+        Kukjin Kim <kgene@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL 4/4] ARM: samsung: SoC/mach for 4.21
+Message-ID: <20181212215229.6x5bpkdfhbtzafgp@localhost>
+References: <20181209114911.25194-1-krzk@kernel.org>
+ <20181209114911.25194-5-krzk@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181209114911.25194-5-krzk@kernel.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since we broke the ABI by changing the clock, the driver was also
-updated to use the regmap provided by the TCU driver.
+On Sun, Dec 09, 2018 at 12:49:11PM +0100, Krzysztof Kozlowski wrote:
+> The following changes since commit 651022382c7f8da46cb4872a545ee1da6d097d2a:
+> 
+>   Linux 4.20-rc1 (2018-11-04 15:37:52 -0800)
+> 
+> are available in the Git repository at:
+> 
+>   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-soc-4.21
+> 
+> for you to fetch changes up to cafbc79e327f44411b8bd8bdc101b9e6c65ab42a:
+> 
+>   ARM: exynos: Remove secondary startup initialization from smp_prepare_cpus (2018-11-18 15:12:50 +0100)
+> 
+> ----------------------------------------------------------------
+> Samsung mach/soc changes for v4.21
+> 
+> Just cleanups of: legacy way of setting external wakeup interrupts, old
+> power management debugging functions and duplicated secondary startup
+> initialization.
+> 
+> ----------------------------------------------------------------
+> Bartlomiej Zolnierkiewicz (2):
+>       ARM: exynos: Remove no longer needed s3c_pm_check_*() calls
+>       ARM: samsung: Limit SAMSUNG_PM_DEBUG config option to non-Exynos platforms
+> 
+> Krzysztof Kozlowski (2):
+>       ARM: s5pv210: Remove legacy setting of external wakeup interrupts
+>       ARM: exynos: Remove legacy setting of external wakeup interrupts
+> 
+> Pankaj Dubey (1):
+>       ARM: exynos: Remove secondary startup initialization from smp_prepare_cpus
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
----
+Merged, thanks!
 
-Notes:
-     v6: New patch
-    
-     v7: No change
 
-     v8: No change
-
- drivers/watchdog/jz4740_wdt.c | 30 ++++++++++++++----------------
- 1 file changed, 14 insertions(+), 16 deletions(-)
-
-diff --git a/drivers/watchdog/jz4740_wdt.c b/drivers/watchdog/jz4740_wdt.c
-index 1d504ecf45e1..0f54306aee25 100644
---- a/drivers/watchdog/jz4740_wdt.c
-+++ b/drivers/watchdog/jz4740_wdt.c
-@@ -13,6 +13,7 @@
-  *
-  */
- 
-+#include <linux/mfd/ingenic-tcu.h>
- #include <linux/module.h>
- #include <linux/moduleparam.h>
- #include <linux/types.h>
-@@ -25,10 +26,7 @@
- #include <linux/slab.h>
- #include <linux/err.h>
- #include <linux/of.h>
--
--#define JZ_REG_WDT_TIMER_DATA     0x0
--#define JZ_REG_WDT_COUNTER_ENABLE 0x4
--#define JZ_REG_WDT_TIMER_COUNTER  0x8
-+#include <linux/regmap.h>
- 
- #define DEFAULT_HEARTBEAT 5
- #define MAX_HEARTBEAT     2048
-@@ -48,7 +46,7 @@ MODULE_PARM_DESC(heartbeat,
- 
- struct jz4740_wdt_drvdata {
- 	struct watchdog_device wdt;
--	void __iomem *base;
-+	struct regmap *map;
- 	struct clk *clk;
- 	unsigned long clk_rate;
- };
-@@ -57,7 +55,7 @@ static int jz4740_wdt_ping(struct watchdog_device *wdt_dev)
- {
- 	struct jz4740_wdt_drvdata *drvdata = watchdog_get_drvdata(wdt_dev);
- 
--	writew(0x0, drvdata->base + JZ_REG_WDT_TIMER_COUNTER);
-+	regmap_write(drvdata->map, TCU_REG_WDT_TCNT, 0);
- 	return 0;
- }
- 
-@@ -67,12 +65,12 @@ static int jz4740_wdt_set_timeout(struct watchdog_device *wdt_dev,
- 	struct jz4740_wdt_drvdata *drvdata = watchdog_get_drvdata(wdt_dev);
- 	u16 timeout_value = (u16)(drvdata->clk_rate * new_timeout);
- 
--	writeb(0x0, drvdata->base + JZ_REG_WDT_COUNTER_ENABLE);
-+	regmap_write(drvdata->map, TCU_REG_WDT_TCER, 0);
- 
--	writew((u16)timeout_value, drvdata->base + JZ_REG_WDT_TIMER_DATA);
--	writew(0x0, drvdata->base + JZ_REG_WDT_TIMER_COUNTER);
-+	regmap_write(drvdata->map, TCU_REG_WDT_TDR, timeout_value);
-+	regmap_write(drvdata->map, TCU_REG_WDT_TCNT, 0);
- 
--	writeb(0x1, drvdata->base + JZ_REG_WDT_COUNTER_ENABLE);
-+	regmap_write(drvdata->map, TCU_REG_WDT_TCER, TCU_WDT_TCER_TCEN);
- 
- 	wdt_dev->timeout = new_timeout;
- 	return 0;
-@@ -96,7 +94,7 @@ static int jz4740_wdt_stop(struct watchdog_device *wdt_dev)
- {
- 	struct jz4740_wdt_drvdata *drvdata = watchdog_get_drvdata(wdt_dev);
- 
--	writeb(0x0, drvdata->base + JZ_REG_WDT_COUNTER_ENABLE);
-+	regmap_write(drvdata->map, TCU_REG_WDT_TCER, 0);
- 	clk_disable_unprepare(drvdata->clk);
- 
- 	return 0;
-@@ -138,7 +136,6 @@ static int jz4740_wdt_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	struct jz4740_wdt_drvdata *drvdata;
- 	struct watchdog_device *jz4740_wdt;
--	struct resource	*res;
- 	long rate;
- 	int ret;
- 
-@@ -174,10 +171,11 @@ static int jz4740_wdt_probe(struct platform_device *pdev)
- 	watchdog_set_nowayout(jz4740_wdt, nowayout);
- 	watchdog_set_drvdata(jz4740_wdt, drvdata);
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	drvdata->base = devm_ioremap_resource(&pdev->dev, res);
--	if (IS_ERR(drvdata->base))
--		return PTR_ERR(drvdata->base);
-+	drvdata->map = dev_get_regmap(dev->parent, NULL);
-+	if (!drvdata->map) {
-+		dev_err(dev, "regmap not found\n");
-+		return -EINVAL;
-+	}
- 
- 	ret = devm_watchdog_register_device(&pdev->dev, &drvdata->wdt);
- 	if (ret < 0)
--- 
-2.11.0
-
+-Olof
