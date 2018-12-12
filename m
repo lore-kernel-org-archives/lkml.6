@@ -2,243 +2,185 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7BB5C65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 15:25:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37697C65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 15:27:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69E2B2080F
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 15:25:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mx4nfOLH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69E2B2080F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 007432080F
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 15:27:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 007432080F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727790AbeLLPZp (ORCPT
+        id S1727760AbeLLP1a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 10:25:45 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:46756 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726246AbeLLPZo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 10:25:44 -0500
-Received: by mail-ed1-f66.google.com with SMTP id o10so15839684edt.13;
-        Wed, 12 Dec 2018 07:25:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=DZOA9Q/EwFVBGA2nbJQH+VK3C5raT+In9SRFaanRHI4=;
-        b=mx4nfOLH8FWy4SC4UCnDHvBoFEeIcYW6Tf/D3LiTwu7pMOWduE0mc5nyxyL4cCP6R3
-         H8ThKR3zCxis8vn+J2/vtuIPbimxprb7VNm2U8s9lluPWvlWcpmrrB+avza9WcKI0pLm
-         pip88D0hCXEM5oCIPMmTtOSxxgeNiaZCfPfHQUXWPm9hpmqBEA8yLOvTjsHPcHPt3xli
-         3t5CXWOE4VMmyG2GBDFxNF02ZuV98++ZA7PFIKRMSyAsIu4C45WX2xcEPkrYrE/95iKz
-         fwnJEIJK4zPJRrh2e223p20i6FIVxMiks3jkfCOFqVKMo9chmt5b+V4UbWNXqEbx1iNO
-         muXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=DZOA9Q/EwFVBGA2nbJQH+VK3C5raT+In9SRFaanRHI4=;
-        b=oBCuKXCDgt/fI2ZgD16L/CnMX8NLIZx2Q3/oNikUaxro5Fyy2i5fvHbf2P6He1d5we
-         KFJKugfdrF8duA3GsI+kQQdh4OLZylDxrgV5hh2bcqahc1kbYjvu4gc7n6sU5kfYPP37
-         rbPRwVSWGOmIX1Rr9qfbkPhWwEx6xrgPu+Uv8tbMUKMtEWVI7Z4rfjBpeLZaqp4hEC2Y
-         2Ol/+1YmdEQl8CX7KIP5olhdteUtLXavdwm0zYWir44AUVOEsPmxQAN5+MaOPzFDvbt0
-         bMANK5Gq0DaYwQSFglSBQJMVR+x0XqlRjt18TNqIxOistGKc7Wi/+jTKNJFNbcckgtZw
-         IHXg==
-X-Gm-Message-State: AA+aEWY1CGbk01Ou2VEFhmK3J2FSp6T7mp2EQl3gOC3HKbt3ncJb7yzG
-        DrAMr6Ec/239wtQwArhiZYuljYKH1CoDUkzbwaE=
-X-Google-Smtp-Source: AFSGD/Vm2cUUzH0BbUxBjzSpyY7eFPjmWHyThnl0rmBMrX6CZWFypItevgGCjNWa5X/g6hnXS0pcxmpBwotPVXhtPgU=
-X-Received: by 2002:a17:906:2313:: with SMTP id l19-v6mr15318188eja.204.1544628341340;
- Wed, 12 Dec 2018 07:25:41 -0800 (PST)
+        Wed, 12 Dec 2018 10:27:30 -0500
+Received: from muru.com ([72.249.23.125]:57734 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726246AbeLLP13 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 10:27:29 -0500
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id A9649809F;
+        Wed, 12 Dec 2018 15:27:31 +0000 (UTC)
+Date:   Wed, 12 Dec 2018 07:27:25 -0800
+From:   Tony Lindgren <tony@atomide.com>
+To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc:     "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Takashi Iwai <tiwai@suse.com>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Mark Brown <broonie@kernel.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Jarkko Nikula <jarkko.nikula@bitmer.com>
+Subject: Re: [alsa-devel] [PATCH 0/2] Graph fixes for using multiple
+        endpoints per port
+Message-ID: <20181212152725.GE6707@atomide.com>
+References: <8736r4bvf3.wl-kuninori.morimoto.gx@renesas.com>
+ <20181211045220.GI6707@atomide.com>
+ <871s6obqkb.wl-kuninori.morimoto.gx@renesas.com>
+ <20181211053536.GJ6707@atomide.com>
+ <87wooga9an.wl-kuninori.morimoto.gx@renesas.com>
+ <20181211141649.GL6707@atomide.com>
+ <87ftv33bpg.wl-kuninori.morimoto.gx@renesas.com>
+ <20181212001950.GX6707@atomide.com>
+ <877egf33m9.wl-kuninori.morimoto.gx@renesas.com>
+ <87k1kfs0u5.wl-kuninori.morimoto.gx@renesas.com>
 MIME-Version: 1.0
-References: <20181211202520.16799-1-deepa.kernel@gmail.com> <20181211202520.16799-8-deepa.kernel@gmail.com>
-In-Reply-To: <20181211202520.16799-8-deepa.kernel@gmail.com>
-From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Date:   Wed, 12 Dec 2018 10:25:04 -0500
-Message-ID: <CAF=yD-+mrKfq35g+EVkP-pNbBL=6BvYDdduks=yAxiADSRWvzg@mail.gmail.com>
-Subject: Re: [PATCH v2 7/8] socket: Add SO_TIMESTAMPING_NEW
-To:     Deepa Dinamani <deepa.kernel@gmail.com>
-Cc:     David Miller <davem@davemloft.net>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Chris Zankel <chris@zankel.net>, fenghua.yu@intel.com,
-        rth@twiddle.net, Thomas Gleixner <tglx@linutronix.de>,
-        ubraun@linux.ibm.com, linux-alpha@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linux-mips@linux-mips.org, linux-s390 <linux-s390@vger.kernel.org>,
-        linux-xtensa@linux-xtensa.org, sparclinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87k1kfs0u5.wl-kuninori.morimoto.gx@renesas.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 11, 2018 at 3:30 PM Deepa Dinamani <deepa.kernel@gmail.com> wrote:
->
-> Add SO_TIMESTAMPING_NEW variant of socket timestamp options.
-> This is the y2038 safe versions of the SO_TIMESTAMPING_OLD
-> for all architectures.
->
-> Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
-> Cc: chris@zankel.net
-> Cc: fenghua.yu@intel.com
-> Cc: rth@twiddle.net
-> Cc: tglx@linutronix.de
-> Cc: ubraun@linux.ibm.com
-> Cc: linux-alpha@vger.kernel.org
-> Cc: linux-arch@vger.kernel.org
-> Cc: linux-ia64@vger.kernel.org
-> Cc: linux-mips@linux-mips.org
-> Cc: linux-s390@vger.kernel.org
-> Cc: linux-xtensa@linux-xtensa.org
-> Cc: sparclinux@vger.kernel.org
-> ---
->  arch/alpha/include/uapi/asm/socket.h  |  5 +-
->  arch/mips/include/uapi/asm/socket.h   |  5 +-
->  arch/parisc/include/uapi/asm/socket.h |  5 +-
->  arch/sparc/include/uapi/asm/socket.h  |  8 +--
->  include/linux/socket.h                |  7 +++
->  include/uapi/asm-generic/socket.h     |  5 +-
->  include/uapi/linux/errqueue.h         |  4 ++
->  net/core/scm.c                        | 27 ++++++++++
->  net/core/sock.c                       | 73 +++++++++++++++------------
->  net/ipv4/tcp.c                        | 29 ++++++-----
->  net/smc/af_smc.c                      |  3 +-
->  net/socket.c                          | 15 ++++--
->  12 files changed, 122 insertions(+), 64 deletions(-)
->
-> diff --git a/arch/alpha/include/uapi/asm/socket.h b/arch/alpha/include/uapi/asm/socket.h
-> index 352e3dc0b3d9..8b9f6f7f8087 100644
-> --- a/arch/alpha/include/uapi/asm/socket.h
-> +++ b/arch/alpha/include/uapi/asm/socket.h
-> @@ -116,19 +116,20 @@
->
->  #define SO_TIMESTAMP_NEW         62
->  #define SO_TIMESTAMPNS_NEW       63
-> +#define SO_TIMESTAMPING_NEW      64
->
->  #if !defined(__KERNEL__)
->
->  #if __BITS_PER_LONG == 64
->  #define SO_TIMESTAMP           SO_TIMESTAMP_OLD
->  #define SO_TIMESTAMPNS         SO_TIMESTAMPNS_OLD
-> +#define SO_TIMESTAMPING                SO_TIMESTAMPING_OLD
->  #else
->  #define SO_TIMESTAMP (sizeof(time_t) == sizeof(__kernel_long_t) ? SO_TIMESTAMP_OLD : SO_TIMESTAMP_NEW)
->  #define SO_TIMESTAMPNS (sizeof(time_t) == sizeof(__kernel_long_t) ? SO_TIMESTAMPNS_OLD : SO_TIMESTAMPNS_NEW)
-> +#define SO_TIMESTAMPING (sizeof(time_t) == sizeof(__kernel_long_t) ? SO_TIMESTAMPING_OLD : SO_TIMESTAMPING_NEW)
->  #endif
+* Kuninori Morimoto <kuninori.morimoto.gx@renesas.com> [181212 06:52]:
+> 
+> Hi Tony, again
+> 
+> > > > 	https://patchwork.kernel.org/patch/10712877/
+> > > 
+> > > Hmm, so do you have multiple separate ports at the "&sound" node
+> > > hardware? If so then yeah multiple ports make sense.
+> > >
+> > > But if you only a single physical (I2S?) port at the
+> > > "&sound" node hardware, then IMO you should only have one
+> > > port and multiple endpoints there according to the graph.txt
+> > > binding doc.
+> > > 
+> > > In my McBSP case there is only a single physical I2S port
+> > > that can be TDM split into timeslots.
+> > 
+> > Mine has 4 DAIs. Each DAI can output 2ch.
+> > These will be merged and wil be 8ch TDM and goes to Codec.
+> > But hmm.. it is 4 DAIs, but 1 "physical" interface...
+> > 
+> > So, your patch seems correct, but will breaks DPCM...
+> > I will confirm it.
+> 
+> I thought "port" = "DAI", but yeah, "port" = "physical interface".
 
-If the previous patch moves this block to a platform-independent
-header, that allows this patch to shrink considerably, too.
+OK good to hear :)
 
-> +static int setsockopt_timestamping(struct sock *sk, int type, int val)
-> +{
-> +       if (type == SO_TIMESTAMPING_NEW)
-> +               sock_set_flag(sk, SOCK_TSTAMP_NEW);
-> +
-> +       if (val & ~SOF_TIMESTAMPING_MASK)
-> +               return -EINVAL;
-> +
-> +       if (val & SOF_TIMESTAMPING_OPT_ID &&
-> +           !(sk->sk_tsflags & SOF_TIMESTAMPING_OPT_ID)) {
-> +               if (sk->sk_protocol == IPPROTO_TCP &&
-> +                   sk->sk_type == SOCK_STREAM) {
-> +                       if ((1 << sk->sk_state) &
-> +                           (TCPF_CLOSE | TCPF_LISTEN))
-> +                               return -EINVAL;
-> +                       sk->sk_tskey = tcp_sk(sk)->snd_una;
-> +               } else {
-> +                       sk->sk_tskey = 0;
-> +               }
-> +       }
-> +
-> +       if (val & SOF_TIMESTAMPING_OPT_STATS &&
-> +           !(val & SOF_TIMESTAMPING_OPT_TSONLY))
-> +               return -EINVAL;
-> +
-> +       sk->sk_tsflags = val;
-> +       if (val & SOF_TIMESTAMPING_RX_SOFTWARE) {
-> +               sock_enable_timestamp(sk,
-> +                                     SOCK_TIMESTAMPING_RX_SOFTWARE);
-> +       } else {
-> +               if (type == SO_TIMESTAMPING_NEW)
-> +                       sock_reset_flag(sk, SOCK_TSTAMP_NEW);
-> +               sock_disable_timestamp(sk,
-> +                                      (1UL << SOCK_TIMESTAMPING_RX_SOFTWARE));
-> +       }
-> +
-> +       return 0;
-> +}
-> +
->  /*
->   *     This is meant for all protocols to use and covers goings on
->   *     at the socket level. Everything here is generic.
-> @@ -851,39 +890,7 @@ int sock_setsockopt(struct socket *sock, int level, int optname,
->                 break;
->
->         case SO_TIMESTAMPING_OLD:
-> -               if (val & ~SOF_TIMESTAMPING_MASK) {
-> -                       ret = -EINVAL;
-> -                       break;
-> -               }
-> -
-> -               if (val & SOF_TIMESTAMPING_OPT_ID &&
-> -                   !(sk->sk_tsflags & SOF_TIMESTAMPING_OPT_ID)) {
-> -                       if (sk->sk_protocol == IPPROTO_TCP &&
-> -                           sk->sk_type == SOCK_STREAM) {
-> -                               if ((1 << sk->sk_state) &
-> -                                   (TCPF_CLOSE | TCPF_LISTEN)) {
-> -                                       ret = -EINVAL;
-> -                                       break;
-> -                               }
-> -                               sk->sk_tskey = tcp_sk(sk)->snd_una;
-> -                       } else {
-> -                               sk->sk_tskey = 0;
-> -                       }
-> -               }
-> -
-> -               if (val & SOF_TIMESTAMPING_OPT_STATS &&
-> -                   !(val & SOF_TIMESTAMPING_OPT_TSONLY)) {
-> -                       ret = -EINVAL;
-> -                       break;
-> -               }
-> -
-> -               sk->sk_tsflags = val;
-> -               if (val & SOF_TIMESTAMPING_RX_SOFTWARE)
-> -                       sock_enable_timestamp(sk,
-> -                                             SOCK_TIMESTAMPING_RX_SOFTWARE);
-> -               else
-> -                       sock_disable_timestamp(sk,
-> -                                              (1UL << SOCK_TIMESTAMPING_RX_SOFTWARE));
-> +               ret = setsockopt_timestamping(sk, optname, val);
+> Then, my issue is that we can't judge DAI size from DT.
+> For example, MIXer case, 2 CPU DAIs are connected to 1 Codec.
+> 
+> 	DAI0 --- CPU --- Codec
+> 	DAI1 /
+> 
+> In this case, CPU side needs 2 DAIs,
+> Codec side needs 1 DAI only.
 
-Once again a lot of needless code churn. The only functional change is adding
+Oh so the other way around compared to my use case. Hmm.
 
-   +       if (type == SO_TIMESTAMPING_NEW)
-   +               sock_set_flag(sk, SOCK_TSTAMP_NEW);
+> For both CPU/Codec case, OF graph will be like below,
+> and we can't judge DAIs size from this.
+> 
+> 	port {
+> 		ep0: endpint@0 {
+> 			remote-endpoint = <xxx>;
+> 		};
+> 		ep1: endpint@1 {
+> 			remote-endpoint = <xxx>;
+> 		};
+> 	}
 
+Hmm I too need to add secondary DAIs for McBSP in addition to the
+primary DAI controlling the McBSP hardware resources.
 
->  void __sock_recv_timestamp(struct msghdr *msg, struct sock *sk,
->         struct sk_buff *skb)
->  {
-> +
->         int need_software_tstamp = sock_flag(sk, SOCK_RCVTSTAMP);
-> -       struct scm_timestamping tss;
-> +       struct scm_timestamping_internal tss;
-> +
+> To solve this issue, we need to use "reg" for it.
+> Then, we can get correct DAI ID.
 
-Unnecessary whitespace line
+Hmm yeah maybe. Just to think of other options, maybe also the
+#size-cells could be used?
 
->         int empty = 1, false_tstamp = 0;
->         struct skb_shared_hwtstamps *shhwtstamps =
->                 skb_hwtstamps(skb);
-> @@ -755,20 +758,22 @@ void __sock_recv_timestamp(struct msghdr *msg, struct sock *sk,
->
+As the binding allows adding #address-cells and #size-cells to
+the port node.. Usually if you refer a subnode of a device you
+just use #address=cells = <2> where the second field would be for
+the offset. So maybe this could be used for 1 DAI this way:
+
+ 	/* Codec has 1 DAI */
+ 	Codec {
+ 		port {
+			#address-cells = <2>;
+			#size-cells = <1>;
+
+ 			ep: endpoint {
+ 				remote-endpoint = <xxx>;
+ 			};
+ 		};
+ 	}
+
+Where this codec would then need to be referenced with just an
+additional instance number:
+
+foo = <&ep 0>;
+bar = <&ep 1>;
+...
+
+And then for a codec with 2 DAIs the usual #size-cells = <1>
+would be used with numbered endpoints for each DAI the way
+you already described:
+
+ 	port {
+ 		ep0: endpint@0 {
+ 			remote-endpoint = <xxx>;
+ 		};
+ 		ep1: endpint@1 {
+ 			remote-endpoint = <xxx>;
+ 		};
+ 	}
+
+Do you think that would work?
+
+> Can you agree this ? we need extra patch,
+> but it can solve your / my problem.
+
+Yes it's starting to make sense :)
+
+> Now I'm posting patches to merging
+> "audio-graph-card" and "DPCM ver audio-graph-card".
+> If you are OK, I will include above solution patch
+> to this patch-set.
+
+Sure, maybe please first check if the #size-cells = <2>
+option would work though?
+
+> Current audio-graph doesn't expect your use-case,
+> and I want to avoid conflict.
+> 
+> So, "merged" audio-graph should solve your use-case.
+> If you can agree about this, I will post patch-set.
+
+Yeah I agree, just still wondering what might be the best
+way to represent 1 DAI vs 2 DAIs.
+
+Regards,
+
+Tony
