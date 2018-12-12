@@ -2,323 +2,212 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5679FC65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 07:52:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FA95C04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 07:54:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 104EB20811
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 07:52:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KrmfcVJ5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 104EB20811
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id CF5B520811
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 07:54:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF5B520811
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726664AbeLLHwM (ORCPT
+        id S1726642AbeLLHyW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 02:52:12 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:43721 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726317AbeLLHwL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 02:52:11 -0500
-Received: by mail-io1-f65.google.com with SMTP id l3so2850479ioc.10
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 23:52:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qc44WKY6KYP3WcFORjBBfpRaiwYvWPwG+qV8iumEUqI=;
-        b=KrmfcVJ51WbWInjPWOvMD1yj5973ivYd5DvQzwKDJFHZjffZ42ckjvCDDYkP1bfKzR
-         3CHQ8wyKCAS5AI7JXq36wqQu/GYxnm64vNon0xK6gvg70F26J83zQjcq2ADUSxEa0vwD
-         vrLBRZkHqFVqnvqT3Xl5iIIS8pVGn7/RaORbk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qc44WKY6KYP3WcFORjBBfpRaiwYvWPwG+qV8iumEUqI=;
-        b=EheX9mhNmcHh3oEDlcyTOyWLej5QxjUMq+5Mo9hIx7/bP6Ruy745bsKvvypATTB3PN
-         cthbT7qL1M/jYPoTHjhqlEx0p+ZrCak5iL55B1Ol7HDpbNWXFD0GIOLk79QHXHolzOaY
-         l6ON1fymwKVxgbXiMrq2zuQ2vDHSTYwq+UYPtV6fozSNKwJ5j7LtCB5hnKAt3HXIg8bp
-         weR5iFvQdiv4bahFPqODzEw3f12IT2mJ6Jc8iMV1vnwJoij1Mf5VifhvIKm93qelRuvC
-         CT2Y3+CPuAKH9+OQMkUQRYOX6tBqy5C456XvlVWxnBkdQXz1eC6MhpsotlM0ecuONusO
-         PrAQ==
-X-Gm-Message-State: AA+aEWYLc7etlQv0Ulh/JbFJlSJu4oxpLLGd3NTz5GRK+pVT/eVRFb4r
-        r0liADEAAgn4KMXopTKkAEvhgjw6b7z2nYm5mTv1Tg==
-X-Google-Smtp-Source: AFSGD/UWpB+zq6Ou/+S70RbyPPIIaTP6mkUzv+U7SDwD2PU9rnLmQAvJoA5unyLIQfPCwxYp4tNe5RhcS4ueZ5bRC5I=
-X-Received: by 2002:a5e:c202:: with SMTP id v2mr239833iop.60.1544601129225;
- Tue, 11 Dec 2018 23:52:09 -0800 (PST)
+        Wed, 12 Dec 2018 02:54:22 -0500
+Received: from mga02.intel.com ([134.134.136.20]:43443 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726242AbeLLHyW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 02:54:22 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Dec 2018 23:54:21 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,343,1539673200"; 
+   d="scan'208";a="106790869"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga007.fm.intel.com with ESMTP; 11 Dec 2018 23:54:21 -0800
+Received: from [10.125.251.226] (abudanko-mobl.ccr.corp.intel.com [10.125.251.226])
+        by linux.intel.com (Postfix) with ESMTP id E27EE58079D;
+        Tue, 11 Dec 2018 23:54:18 -0800 (PST)
+Subject: [PATCH v1 1/3] perf record: allocate affinity masks
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <42c2dcb4-7e6f-fcdb-7c87-e55ccb9884b0@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <b00e18af-4e77-ddcc-c0d7-cde6e54c0f9b@linux.intel.com>
+Date:   Wed, 12 Dec 2018 10:54:17 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <1544595853-18492-1-git-send-email-amhetre@nvidia.com>
-In-Reply-To: <1544595853-18492-1-git-send-email-amhetre@nvidia.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Wed, 12 Dec 2018 08:51:57 +0100
-Message-ID: <CAKv+Gu9pMz2TdbY6B1eErxzGvcduuYqeQ=+oKUV6Z-7bC311Tw@mail.gmail.com>
-Subject: Re: [PATCH] scatterlist: Update size type to support greater then 4GB size.
-To:     amhetre@nvidia.com
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jens Axboe <axboe@kernel.dk>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>, linux-nvme@lists.infradead.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        vdumpa@nvidia.com, mmaddireddy@nvidia.com, Snikam@nvidia.com,
-        linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <42c2dcb4-7e6f-fcdb-7c87-e55ccb9884b0@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 12 Dec 2018 at 07:25, Ashish Mhetre <amhetre@nvidia.com> wrote:
->
-> From: Krishna Reddy <vdumpa@nvidia.com>
->
-> In the cases where greater than 4GB allocations are required, current
-> definition of scatterlist doesn't support it. For example, Tegra devices
-> have more than 4GB of system memory available. So they are expected to
-> support larger allocation requests.
-> This patch updates the type of scatterlist members to support creating
-> scatterlist for allocations of size greater than 4GB size.
 
-Can you explain what the use case is? We have had systems with more
-than 4 GB for a while now, so where does this new requirement come
-from?
+Allocate affinity option and masks for mmap data buffers and
+record thread as well as initialize allocated objects.
 
-Also, you are changing 'length' to size_t and 'offset' to unsigned
-long. What is the rationale behind that? Did you consider 32-bit
-architectures with PAE at all?
+Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
+---
+ tools/perf/builtin-record.c | 11 ++++++++++-
+ tools/perf/perf.h           |  5 +++++
+ tools/perf/util/evlist.c    |  6 +++---
+ tools/perf/util/evlist.h    |  2 +-
+ tools/perf/util/mmap.c      |  2 ++
+ tools/perf/util/mmap.h      |  3 ++-
+ 6 files changed, 23 insertions(+), 6 deletions(-)
 
-
-> Updated the files that are necessary to fix compilation issues with updated
-> type of variables.
->
-> With definition of scatterlist changed in this patch, size of sg has
-> increased from 28 bytes to 40 bytes because of which allocations in nvme
-> driver are crossing order-0( as sizeof(struct scatterlist) is used in nvme
-> driver allocations ) i.e. they are not able to fit into single page.
->
-> Recently a patch to limit the nvme allocations to order-0 is mergerd.
-> 'commit 943e942e6266f22babee5efeb00f8f672fbff5bd ("nvme-pci: limit
-> max IO size and segments to avoid high order allocations")'
-> Because of that patch, WARN log is getting printed in our case as
-> definition of scatterlist has changed. Alloc size of nvme is calculated as
-> NVME_MAX_SEGS * sizeof(struct scatterlist). As sizeof(struct scatterlist)
-> has changed from 28 bytes to 40 bytes, so updating NVME_MAX_SEGS from 127
-> to 88 to correspond to original nvme alloc size value.
->
-> Signed-off-by: Krishna Reddy <vdumpa@nvidia.com>
-> Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
-> ---
->  crypto/shash.c                |  2 +-
->  drivers/ata/libata-sff.c      |  2 +-
->  drivers/mmc/host/sdhci.c      |  2 +-
->  drivers/mmc/host/toshsd.c     |  2 +-
->  drivers/mmc/host/usdhi6rol0.c | 14 +++++++-------
->  drivers/nvme/host/pci.c       |  8 ++++----
->  include/linux/nvme.h          |  2 +-
->  include/linux/scatterlist.h   |  8 ++++----
->  8 files changed, 20 insertions(+), 20 deletions(-)
->
-> diff --git a/crypto/shash.c b/crypto/shash.c
-> index d21f04d..434970e 100644
-> --- a/crypto/shash.c
-> +++ b/crypto/shash.c
-> @@ -298,7 +298,7 @@ int shash_ahash_digest(struct ahash_request *req, struct shash_desc *desc)
->
->         if (nbytes &&
->             (sg = req->src, offset = sg->offset,
-> -            nbytes < min(sg->length, ((unsigned int)(PAGE_SIZE)) - offset))) {
-> +            nbytes < min(sg->length, ((size_t)(PAGE_SIZE)) - offset))) {
->                 void *data;
->
->                 data = kmap_atomic(sg_page(sg));
-> diff --git a/drivers/ata/libata-sff.c b/drivers/ata/libata-sff.c
-> index c5ea0fc..675def6 100644
-> --- a/drivers/ata/libata-sff.c
-> +++ b/drivers/ata/libata-sff.c
-> @@ -810,7 +810,7 @@ static int __atapi_pio_bytes(struct ata_queued_cmd *qc, unsigned int bytes)
->         offset %= PAGE_SIZE;
->
->         /* don't overrun current sg */
-> -       count = min(sg->length - qc->cursg_ofs, bytes);
-> +       count = min(sg->length - qc->cursg_ofs, (size_t)bytes);
->
->         /* don't cross page boundaries */
->         count = min(count, (unsigned int)PAGE_SIZE - offset);
-> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-> index 99bdae5..bd84c0c 100644
-> --- a/drivers/mmc/host/sdhci.c
-> +++ b/drivers/mmc/host/sdhci.c
-> @@ -1025,7 +1025,7 @@ static void sdhci_prepare_data(struct sdhci_host *host, struct mmc_command *cmd)
->                 if (unlikely(length_mask | offset_mask)) {
->                         for_each_sg(data->sg, sg, data->sg_len, i) {
->                                 if (sg->length & length_mask) {
-> -                                       DBG("Reverting to PIO because of transfer size (%d)\n",
-> +                                       DBG("Reverting to PIO because of transfer size (%zd)\n",
->                                             sg->length);
->                                         host->flags &= ~SDHCI_REQ_USE_DMA;
->                                         break;
-> diff --git a/drivers/mmc/host/toshsd.c b/drivers/mmc/host/toshsd.c
-> index dd961c5..af00936 100644
-> --- a/drivers/mmc/host/toshsd.c
-> +++ b/drivers/mmc/host/toshsd.c
-> @@ -479,7 +479,7 @@ static void toshsd_start_data(struct toshsd_host *host, struct mmc_data *data)
->  {
->         unsigned int flags = SG_MITER_ATOMIC;
->
-> -       dev_dbg(&host->pdev->dev, "setup data transfer: blocksize %08x  nr_blocks %d, offset: %08x\n",
-> +       dev_dbg(&host->pdev->dev, "setup data transfer: blocksize %08x  nr_blocks %d, offset: %08lx\n",
->                 data->blksz, data->blocks, data->sg->offset);
->
->         host->data = data;
-> diff --git a/drivers/mmc/host/usdhi6rol0.c b/drivers/mmc/host/usdhi6rol0.c
-> index cd8b1b9..5fce5ff 100644
-> --- a/drivers/mmc/host/usdhi6rol0.c
-> +++ b/drivers/mmc/host/usdhi6rol0.c
-> @@ -316,7 +316,7 @@ static void usdhi6_blk_bounce(struct usdhi6_host *host,
->         struct mmc_data *data = host->mrq->data;
->         size_t blk_head = host->head_len;
->
-> -       dev_dbg(mmc_dev(host->mmc), "%s(): CMD%u of %u SG: %ux%u @ 0x%x\n",
-> +       dev_dbg(mmc_dev(host->mmc), "%s(): CMD%u of %u SG: %ux%u @ 0x%lx\n",
->                 __func__, host->mrq->cmd->opcode, data->sg_len,
->                 data->blksz, data->blocks, sg->offset);
->
-> @@ -360,7 +360,7 @@ static void *usdhi6_sg_map(struct usdhi6_host *host)
->
->         WARN(host->pg.page, "%p not properly unmapped!\n", host->pg.page);
->         if (WARN(sg_dma_len(sg) % data->blksz,
-> -                "SG size %u isn't a multiple of block size %u\n",
-> +                "SG size %zu isn't a multiple of block size %u\n",
->                  sg_dma_len(sg), data->blksz))
->                 return NULL;
->
-> @@ -383,7 +383,7 @@ static void *usdhi6_sg_map(struct usdhi6_host *host)
->         else
->                 host->blk_page = host->pg.mapped;
->
-> -       dev_dbg(mmc_dev(host->mmc), "Mapped %p (%lx) at %p + %u for CMD%u @ 0x%p\n",
-> +       dev_dbg(mmc_dev(host->mmc), "Mapped %p (%lx) at %p + %lu for CMD%u @ 0x%p\n",
->                 host->pg.page, page_to_pfn(host->pg.page), host->pg.mapped,
->                 sg->offset, host->mrq->cmd->opcode, host->mrq);
->
-> @@ -492,7 +492,7 @@ static void usdhi6_sg_advance(struct usdhi6_host *host)
->                 host->sg = next;
->
->                 if (WARN(next && sg_dma_len(next) % data->blksz,
-> -                        "SG size %u isn't a multiple of block size %u\n",
-> +                        "SG size %zu isn't a multiple of block size %u\n",
->                          sg_dma_len(next), data->blksz))
->                         data->error = -EINVAL;
->
-> @@ -1044,7 +1044,7 @@ static int usdhi6_rq_start(struct usdhi6_host *host)
->                     (data->blksz % 4 ||
->                      data->sg->offset % 4))
->                         dev_dbg(mmc_dev(host->mmc),
-> -                               "Bad SG of %u: %ux%u @ %u\n", data->sg_len,
-> +                               "Bad SG of %u: %ux%u @ %lu\n", data->sg_len,
->                                 data->blksz, data->blocks, data->sg->offset);
->
->                 /* Enable DMA for USDHI6_MIN_DMA bytes or more */
-> @@ -1056,7 +1056,7 @@ static int usdhi6_rq_start(struct usdhi6_host *host)
->                         usdhi6_write(host, USDHI6_CC_EXT_MODE, USDHI6_CC_EXT_MODE_SDRW);
->
->                 dev_dbg(mmc_dev(host->mmc),
-> -                       "%s(): request opcode %u, %u blocks of %u bytes in %u segments, %s %s @+0x%x%s\n",
-> +                       "%s(): request opcode %u, %u blocks of %u bytes in %u segments, %s %s @+0x%lx%s\n",
->                         __func__, cmd->opcode, data->blocks, data->blksz,
->                         data->sg_len, use_dma ? "DMA" : "PIO",
->                         data->flags & MMC_DATA_READ ? "read" : "write",
-> @@ -1704,7 +1704,7 @@ static void usdhi6_timeout_work(struct work_struct *work)
->         case USDHI6_WAIT_FOR_WRITE:
->                 sg = host->sg ?: data->sg;
->                 dev_dbg(mmc_dev(host->mmc),
-> -                       "%c: page #%u @ +0x%zx %ux%u in SG%u. Current SG %u bytes @ %u\n",
-> +                       "%c: page #%u @ +0x%zx %ux%u in SG%u. Current SG %zu bytes @ %lu\n",
->                         data->flags & MMC_DATA_READ ? 'R' : 'W', host->page_idx,
->                         host->offset, data->blocks, data->blksz, data->sg_len,
->                         sg_dma_len(sg), sg->offset);
-> diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-> index d668682..57ef89d 100644
-> --- a/drivers/nvme/host/pci.c
-> +++ b/drivers/nvme/host/pci.c
-> @@ -43,7 +43,7 @@
->   * require an sg allocation that needs more than a page of data.
->   */
->  #define NVME_MAX_KB_SZ 4096
-> -#define NVME_MAX_SEGS  127
-> +#define NVME_MAX_SEGS  88
->
->  static int use_threaded_interrupts;
->  module_param(use_threaded_interrupts, int, 0);
-> @@ -552,8 +552,8 @@ static void nvme_print_sgl(struct scatterlist *sgl, int nents)
->
->         for_each_sg(sgl, sg, nents, i) {
->                 dma_addr_t phys = sg_phys(sg);
-> -               pr_warn("sg[%d] phys_addr:%pad offset:%d length:%d "
-> -                       "dma_address:%pad dma_length:%d\n",
-> +               pr_warn("sg[%d] phys_addr:%pad offset:%lu length:%zu "
-> +                       "dma_address:%pad dma_length:%zu\n",
->                         i, &phys, sg->offset, sg->length, &sg_dma_address(sg),
->                         sg_dma_len(sg));
->         }
-> @@ -566,7 +566,7 @@ static blk_status_t nvme_pci_setup_prps(struct nvme_dev *dev,
->         struct dma_pool *pool;
->         int length = blk_rq_payload_bytes(req);
->         struct scatterlist *sg = iod->sg;
-> -       int dma_len = sg_dma_len(sg);
-> +       u64 dma_len = sg_dma_len(sg);
->         u64 dma_addr = sg_dma_address(sg);
->         u32 page_size = dev->ctrl.page_size;
->         int offset = dma_addr & (page_size - 1);
-> diff --git a/include/linux/nvme.h b/include/linux/nvme.h
-> index 68e91ef..0a07a29 100644
-> --- a/include/linux/nvme.h
-> +++ b/include/linux/nvme.h
-> @@ -587,7 +587,7 @@ enum {
->
->  struct nvme_sgl_desc {
->         __le64  addr;
-> -       __le32  length;
-> +       __le64  length;
->         __u8    rsvd[3];
->         __u8    type;
->  };
-> diff --git a/include/linux/scatterlist.h b/include/linux/scatterlist.h
-> index 093aa57..f6d3482 100644
-> --- a/include/linux/scatterlist.h
-> +++ b/include/linux/scatterlist.h
-> @@ -10,11 +10,11 @@
->
->  struct scatterlist {
->         unsigned long   page_link;
-> -       unsigned int    offset;
-> -       unsigned int    length;
-> +       unsigned long   offset;
-> +       size_t          length;
->         dma_addr_t      dma_address;
->  #ifdef CONFIG_NEED_SG_DMA_LENGTH
-> -       unsigned int    dma_length;
-> +       size_t          dma_length;
->  #endif
->  };
->
-> @@ -114,7 +114,7 @@ static inline void sg_assign_page(struct scatterlist *sg, struct page *page)
->   *
->   **/
->  static inline void sg_set_page(struct scatterlist *sg, struct page *page,
-> -                              unsigned int len, unsigned int offset)
-> +                              size_t len, unsigned long offset)
->  {
->         sg_assign_page(sg, page);
->         sg->offset = offset;
-> --
-> 2.7.4
->
+diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
+index 882285fb9f64..4979719e54ae 100644
+--- a/tools/perf/builtin-record.c
++++ b/tools/perf/builtin-record.c
+@@ -81,6 +81,7 @@ struct record {
+ 	bool			timestamp_boundary;
+ 	struct switch_output	switch_output;
+ 	unsigned long long	samples;
++	cpu_set_t		affinity_mask;
+ };
+ 
+ static volatile int auxtrace_record__snapshot_started;
+@@ -533,7 +534,8 @@ static int record__mmap_evlist(struct record *rec,
+ 
+ 	if (perf_evlist__mmap_ex(evlist, opts->mmap_pages,
+ 				 opts->auxtrace_mmap_pages,
+-				 opts->auxtrace_snapshot_mode, opts->nr_cblocks) < 0) {
++				 opts->auxtrace_snapshot_mode,
++				 opts->nr_cblocks, opts->affinity) < 0) {
+ 		if (errno == EPERM) {
+ 			pr_err("Permission error mapping pages.\n"
+ 			       "Consider increasing "
+@@ -1980,6 +1982,9 @@ int cmd_record(int argc, const char **argv)
+ # undef REASON
+ #endif
+ 
++	CPU_ZERO(&rec->affinity_mask);
++	rec->opts.affinity = PERF_AFFINITY_SYS;
++
+ 	rec->evlist = perf_evlist__new();
+ 	if (rec->evlist == NULL)
+ 		return -ENOMEM;
+@@ -2143,6 +2148,10 @@ int cmd_record(int argc, const char **argv)
+ 	if (verbose > 0)
+ 		pr_info("nr_cblocks: %d\n", rec->opts.nr_cblocks);
+ 
++	pr_debug("affinity (UNSET:%d, NODE:%d, CPU:%d) = %d\n",
++		 PERF_AFFINITY_SYS, PERF_AFFINITY_NODE,
++		 PERF_AFFINITY_CPU, rec->opts.affinity);
++
+ 	err = __cmd_record(&record, argc, argv);
+ out:
+ 	perf_evlist__delete(rec->evlist);
+diff --git a/tools/perf/perf.h b/tools/perf/perf.h
+index 388c6dd128b8..08e75815de2f 100644
+--- a/tools/perf/perf.h
++++ b/tools/perf/perf.h
+@@ -83,8 +83,13 @@ struct record_opts {
+ 	clockid_t    clockid;
+ 	u64          clockid_res_ns;
+ 	int	     nr_cblocks;
++	int	     affinity;
+ };
+ 
++#define PERF_AFFINITY_SYS  0
++#define PERF_AFFINITY_NODE 1
++#define PERF_AFFINITY_CPU  2
++
+ struct option;
+ extern const char * const *record_usage;
+ extern struct option *record_options;
+diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
+index e90575192209..60e825be944a 100644
+--- a/tools/perf/util/evlist.c
++++ b/tools/perf/util/evlist.c
+@@ -1018,7 +1018,7 @@ int perf_evlist__parse_mmap_pages(const struct option *opt, const char *str,
+  */
+ int perf_evlist__mmap_ex(struct perf_evlist *evlist, unsigned int pages,
+ 			 unsigned int auxtrace_pages,
+-			 bool auxtrace_overwrite, int nr_cblocks)
++			 bool auxtrace_overwrite, int nr_cblocks, int affinity)
+ {
+ 	struct perf_evsel *evsel;
+ 	const struct cpu_map *cpus = evlist->cpus;
+@@ -1028,7 +1028,7 @@ int perf_evlist__mmap_ex(struct perf_evlist *evlist, unsigned int pages,
+ 	 * Its value is decided by evsel's write_backward.
+ 	 * So &mp should not be passed through const pointer.
+ 	 */
+-	struct mmap_params mp = { .nr_cblocks = nr_cblocks };
++	struct mmap_params mp = { .nr_cblocks = nr_cblocks, .affinity = affinity };
+ 
+ 	if (!evlist->mmap)
+ 		evlist->mmap = perf_evlist__alloc_mmap(evlist, false);
+@@ -1060,7 +1060,7 @@ int perf_evlist__mmap_ex(struct perf_evlist *evlist, unsigned int pages,
+ 
+ int perf_evlist__mmap(struct perf_evlist *evlist, unsigned int pages)
+ {
+-	return perf_evlist__mmap_ex(evlist, pages, 0, false, 0);
++	return perf_evlist__mmap_ex(evlist, pages, 0, false, 0, PERF_AFFINITY_SYS);
+ }
+ 
+ int perf_evlist__create_maps(struct perf_evlist *evlist, struct target *target)
+diff --git a/tools/perf/util/evlist.h b/tools/perf/util/evlist.h
+index 868294491194..72728d7f4432 100644
+--- a/tools/perf/util/evlist.h
++++ b/tools/perf/util/evlist.h
+@@ -162,7 +162,7 @@ unsigned long perf_event_mlock_kb_in_pages(void);
+ 
+ int perf_evlist__mmap_ex(struct perf_evlist *evlist, unsigned int pages,
+ 			 unsigned int auxtrace_pages,
+-			 bool auxtrace_overwrite, int nr_cblocks);
++			 bool auxtrace_overwrite, int nr_cblocks, int affinity);
+ int perf_evlist__mmap(struct perf_evlist *evlist, unsigned int pages);
+ void perf_evlist__munmap(struct perf_evlist *evlist);
+ 
+diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
+index 8fc39311a30d..e68ba754a8e2 100644
+--- a/tools/perf/util/mmap.c
++++ b/tools/perf/util/mmap.c
+@@ -343,6 +343,8 @@ int perf_mmap__mmap(struct perf_mmap *map, struct mmap_params *mp, int fd, int c
+ 	map->fd = fd;
+ 	map->cpu = cpu;
+ 
++	CPU_ZERO(&map->affinity_mask);
++
+ 	if (auxtrace_mmap__mmap(&map->auxtrace_mmap,
+ 				&mp->auxtrace_mp, map->base, fd))
+ 		return -1;
+diff --git a/tools/perf/util/mmap.h b/tools/perf/util/mmap.h
+index aeb6942fdb00..e566c19b242b 100644
+--- a/tools/perf/util/mmap.h
++++ b/tools/perf/util/mmap.h
+@@ -38,6 +38,7 @@ struct perf_mmap {
+ 		int		 nr_cblocks;
+ 	} aio;
+ #endif
++	cpu_set_t	affinity_mask;
+ };
+ 
+ /*
+@@ -69,7 +70,7 @@ enum bkw_mmap_state {
+ };
+ 
+ struct mmap_params {
+-	int			    prot, mask, nr_cblocks;
++	int			    prot, mask, nr_cblocks, affinity;
+ 	struct auxtrace_mmap_params auxtrace_mp;
+ };
