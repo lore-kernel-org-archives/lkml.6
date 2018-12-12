@@ -2,174 +2,101 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B98D8C65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:50:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FC9DC67839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:50:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EFE120851
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:50:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EFE120851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
+	by mail.kernel.org (Postfix) with ESMTP id F25C720851
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:50:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F25C720851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=solarflare.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728117AbeLLRuG (ORCPT
+        id S1728136AbeLLRuJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 12:50:06 -0500
-Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:32776 "EHLO
-        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727880AbeLLRuF (ORCPT
+        Wed, 12 Dec 2018 12:50:09 -0500
+Received: from dispatch1-us1.ppe-hosted.com ([67.231.154.164]:50420 "EHLO
+        dispatch1-us1.ppe-hosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727880AbeLLRuI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 12:50:05 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01429;MF=bo.liu@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0TFShJ-u_1544636944;
-Received: from US-160370MP2.local(mailfrom:bo.liu@linux.alibaba.com fp:SMTPD_---0TFShJ-u_1544636944)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 13 Dec 2018 01:49:06 +0800
-Date:   Wed, 12 Dec 2018 09:49:03 -0800
-From:   Liu Bo <bo.liu@linux.alibaba.com>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Jan Kara <jack@suse.cz>, Dave Chinner <david@fromorbit.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Michal Hocko <mhocko@suse.com>
-Subject: Re: [PATCH v2] mm, memcg: fix reclaim deadlock with writeback
-Message-ID: <20181212174902.zaxfbebwmd7hjqh7@US-160370MP2.local>
-Reply-To: bo.liu@linux.alibaba.com
-References: <20181211132645.31053-1-mhocko@kernel.org>
- <20181212155055.1269-1-mhocko@kernel.org>
+        Wed, 12 Dec 2018 12:50:08 -0500
+X-Virus-Scanned: Proofpoint Essentials engine
+Received: from webmail.solarflare.com (webmail.solarflare.com [12.187.104.26])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mx1-us1.ppe-hosted.com (Proofpoint Essentials ESMTP Server) with ESMTPS id A5A4578006E;
+        Wed, 12 Dec 2018 17:50:06 +0000 (UTC)
+Received: from ec-desktop.uk.solarflarecom.com (10.17.20.45) by
+ ocex03.SolarFlarecom.com (10.20.40.36) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 12 Dec 2018 09:50:03 -0800
+From:   Edward Cree <ecree@solarflare.com>
+Subject: [RFC PATCH 1/2] static_call: fix out-of-line static call
+ implementation
+To:     Nadav Amit <namit@vmware.com>, Josh Poimboeuf <jpoimboe@redhat.com>
+CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>
+References: <cf6e9449-f3f6-e0fc-8096-eaba6b5a3b97@solarflare.com>
+Message-ID: <51f7404c-9be7-fed5-7815-cefaab2d3c62@solarflare.com>
+Date:   Wed, 12 Dec 2018 17:50:02 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181212155055.1269-1-mhocko@kernel.org>
-User-Agent: NeoMutt/20180323
+In-Reply-To: <cf6e9449-f3f6-e0fc-8096-eaba6b5a3b97@solarflare.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.17.20.45]
+X-TM-AS-Product-Ver: SMEX-12.5.0.1300-8.5.1010-24280.005
+X-TM-AS-Result: No-0.030800-4.000000-10
+X-TMASE-MatchedRID: wSnU1g9RkP0B/868Hoi7sxes/RxhysDb7f6JAS2hKPidCqKtxM6bh57O
+        325kkkmtTuVVQiM3Qc28xfjW6NxdqGk5Fql3Faa7i/b+LxU2p47ljSRvSGpq3EUNHQAoZf5cY6D
+        RAC+UVNzi8zVgXoAltkWL4rBlm20vjaPj0W1qn0SujVRFkkVsm6vMe5vj/nSa1u9/O4Nmu2aUlv
+        W0bIEckphiaAu9Wc8y++2OoV5KCD47/3vKX+sU9iRzxHal78GdtaLrlsGhV35I9NsuqKLpJpBEc
+        rkRxYJ4UjKnO1KVKKwSkbDwum07zqq0MV8nSMBvkLxsYTGf9c0=
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--0.030800-4.000000
+X-TMASE-Version: SMEX-12.5.0.1300-8.5.1010-24280.005
+X-MDID: 1544637007-Ltkx4ErK2NE2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 12, 2018 at 04:50:55PM +0100, Michal Hocko wrote:
-> From: Michal Hocko <mhocko@suse.com>
-> 
-> Liu Bo has experienced a deadlock between memcg (legacy) reclaim and the
-> ext4 writeback
-> task1:
-> [<ffffffff811aaa52>] wait_on_page_bit+0x82/0xa0
-> [<ffffffff811c5777>] shrink_page_list+0x907/0x960
-> [<ffffffff811c6027>] shrink_inactive_list+0x2c7/0x680
-> [<ffffffff811c6ba4>] shrink_node_memcg+0x404/0x830
-> [<ffffffff811c70a8>] shrink_node+0xd8/0x300
-> [<ffffffff811c73dd>] do_try_to_free_pages+0x10d/0x330
-> [<ffffffff811c7865>] try_to_free_mem_cgroup_pages+0xd5/0x1b0
-> [<ffffffff8122df2d>] try_charge+0x14d/0x720
-> [<ffffffff812320cc>] memcg_kmem_charge_memcg+0x3c/0xa0
-> [<ffffffff812321ae>] memcg_kmem_charge+0x7e/0xd0
-> [<ffffffff811b68a8>] __alloc_pages_nodemask+0x178/0x260
-> [<ffffffff8120bff5>] alloc_pages_current+0x95/0x140
-> [<ffffffff81074247>] pte_alloc_one+0x17/0x40
-> [<ffffffff811e34de>] __pte_alloc+0x1e/0x110
-> [<ffffffffa06739de>] alloc_set_pte+0x5fe/0xc20
-> [<ffffffff811e5d93>] do_fault+0x103/0x970
-> [<ffffffff811e6e5e>] handle_mm_fault+0x61e/0xd10
-> [<ffffffff8106ea02>] __do_page_fault+0x252/0x4d0
-> [<ffffffff8106ecb0>] do_page_fault+0x30/0x80
-> [<ffffffff8171bce8>] page_fault+0x28/0x30
-> [<ffffffffffffffff>] 0xffffffffffffffff
-> 
-> task2:
-> [<ffffffff811aadc6>] __lock_page+0x86/0xa0
-> [<ffffffffa02f1e47>] mpage_prepare_extent_to_map+0x2e7/0x310 [ext4]
-> [<ffffffffa08a2689>] ext4_writepages+0x479/0xd60
-> [<ffffffff811bbede>] do_writepages+0x1e/0x30
-> [<ffffffff812725e5>] __writeback_single_inode+0x45/0x320
-> [<ffffffff81272de2>] writeback_sb_inodes+0x272/0x600
-> [<ffffffff81273202>] __writeback_inodes_wb+0x92/0xc0
-> [<ffffffff81273568>] wb_writeback+0x268/0x300
-> [<ffffffff81273d24>] wb_workfn+0xb4/0x390
-> [<ffffffff810a2f19>] process_one_work+0x189/0x420
-> [<ffffffff810a31fe>] worker_thread+0x4e/0x4b0
-> [<ffffffff810a9786>] kthread+0xe6/0x100
-> [<ffffffff8171a9a1>] ret_from_fork+0x41/0x50
-> [<ffffffffffffffff>] 0xffffffffffffffff
-> 
-> He adds
-> : task1 is waiting for the PageWriteback bit of the page that task2 has
-> : collected in mpd->io_submit->io_bio, and tasks2 is waiting for the LOCKED
-> : bit the page which tasks1 has locked.
-> 
-> More precisely task1 is handling a page fault and it has a page locked
-> while it charges a new page table to a memcg. That in turn hits a memory
-> limit reclaim and the memcg reclaim for legacy controller is waiting on
-> the writeback but that is never going to finish because the writeback
-> itself is waiting for the page locked in the #PF path. So this is
-> essentially ABBA deadlock.
+Actually call __static_call_update() from static_call_update(), and fix the
+ former so it can actually compile.  Also make it update key.func.
 
-Thanks for the patch, Michal.
+Signed-off-by: Edward Cree <ecree@solarflare.com>
+---
+ include/linux/static_call.h | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-Could you please append the followings (quoted from your reply in
-other thread)?  It'd be much easier for reviewers to pick up what was
-happening.
+diff --git a/include/linux/static_call.h b/include/linux/static_call.h
+index 6daff586c97d..38d6c1e4c85d 100644
+--- a/include/linux/static_call.h
++++ b/include/linux/static_call.h
+@@ -153,16 +153,18 @@ struct static_call_key {
+ 
+ #define static_call(key, args...) STATIC_CALL_TRAMP(key)(args)
+ 
+-#define __static_call_update(key, func)					\
++#define __static_call_update(key, _func)				\
+ ({									\
+ 	cpus_read_lock();						\
+-	arch_static_call_transform(NULL, key->tramp, func);		\
++	arch_static_call_transform(NULL, key.tramp, _func);		\
++	WRITE_ONCE(key.func, _func);					\
+ 	cpus_read_unlock();						\
+ })
+ 
+ #define static_call_update(key, func)					\
+ ({									\
+ 	BUILD_BUG_ON(!__same_type(func, STATIC_CALL_TRAMP(key)));	\
++	__static_call_update(key, func);				\
+ })
+ 
+ #define EXPORT_STATIC_CALL(key)						\
 
------------------------------------------------------------------
-                                        lock_page(B)
-                                        SetPageWriteback(B)
-                                        unlock_page(B)
-lock_page(A)
-                                        lock_page(A)
-pte_alloc_pne
-  shrink_page_list
-    wait_on_page_writeback(B)
-                                        SetPageWriteback(A)
-                                        unlock_page(A)
-
-                                        # flush A, B to clear the writeback 
------------------------------------------------------------------
-
-thanks,
--liubo
-
-> 
-> Waiting for the writeback in legacy memcg controller is a workaround
-> for pre-mature OOM killer invocations because there is no dirty IO
-> throttling available for the controller. There is no easy way around
-> that unfortunately. Therefore fix this specific issue by pre-allocating
-> the page table outside of the page lock. We have that handy
-> infrastructure for that already so simply reuse the fault-around pattern
-> which already does this.
-> 
-> Reported-and-Debugged-by: Liu Bo <bo.liu@linux.alibaba.com>
-> Signed-off-by: Michal Hocko <mhocko@suse.com>
-> ---
->  mm/memory.c | 11 +++++++++++
->  1 file changed, 11 insertions(+)
-> 
-> diff --git a/mm/memory.c b/mm/memory.c
-> index 4ad2d293ddc2..bb78e90a9b70 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -2993,6 +2993,17 @@ static vm_fault_t __do_fault(struct vm_fault *vmf)
->  	struct vm_area_struct *vma = vmf->vma;
->  	vm_fault_t ret;
->  
-> +	/*
-> +	 * Preallocate pte before we take page_lock because this might lead to
-> +	 * deadlocks for memcg reclaim which waits for pages under writeback.
-> +	 */
-> +	if (pmd_none(*vmf->pmd) && !vmf->prealloc_pte) {
-> +		vmf->prealloc_pte = pte_alloc_one(vmf->vma->vm_mm, vmf->address);
-> +		if (!vmf->prealloc_pte)
-> +			return VM_FAULT_OOM;
-> +		smp_wmb(); /* See comment in __pte_alloc() */
-> +	}
-> +
->  	ret = vma->vm_ops->fault(vmf);
->  	if (unlikely(ret & (VM_FAULT_ERROR | VM_FAULT_NOPAGE | VM_FAULT_RETRY |
->  			    VM_FAULT_DONE_COW)))
-> -- 
-> 2.19.2
