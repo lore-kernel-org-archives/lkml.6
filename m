@@ -2,148 +2,154 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31534C65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 11:08:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19650C04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 11:11:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD4F320879
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 11:08:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="K9qZ2lFD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD4F320879
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	by mail.kernel.org (Postfix) with ESMTP id BCDCF20870
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 11:11:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCDCF20870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727303AbeLLLIq (ORCPT
+        id S1727315AbeLLLLG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 06:08:46 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:46496 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726856AbeLLLIo (ORCPT
+        Wed, 12 Dec 2018 06:11:06 -0500
+Received: from mail-it1-f199.google.com ([209.85.166.199]:34862 "EHLO
+        mail-it1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727001AbeLLLLF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 06:08:44 -0500
-Received: by mail-ed1-f67.google.com with SMTP id o10so15159385edt.13
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 03:08:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:subject:message-id:mail-followup-to:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=NBYG3dt8oCcJhuzZ/ytmAIKIqhgaPKq+Vtgqx15x1NE=;
-        b=K9qZ2lFDi55edB+wKp0bhgT1qGjYlHspyJOw1xaol6RZwjfl2VA4VoNy9pAnBG0yrN
-         FwEEOjJOnVlW1HP5WIXddviOT3Tm2Cn26cPuJuQF0tmY593W4O7ZMVfL7Veg811PG4ep
-         pDJ4/XSni2TEXj/KhT/xBwcw0vtk+fzIY6k78=
+        Wed, 12 Dec 2018 06:11:05 -0500
+Received: by mail-it1-f199.google.com with SMTP id c128so5522361itc.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 03:11:04 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=NBYG3dt8oCcJhuzZ/ytmAIKIqhgaPKq+Vtgqx15x1NE=;
-        b=ANHCMkL0nr6rL1Y9zbVJh/m5vplTHa8KRQaDYzAEQahh1leE8A3VaBbb+uwYJYGXy7
-         qngyt40iSQM0XBVE4a1X9waeDQNQrNe91ptP3Ngaf1IY/kf0hMy/tSvVacniwptogVjz
-         OhpBD5K3CnUGmpRxEANyS95BG9UAkeHDWvdQlGmIEKOxfsHLfipmwYf+BEA8yQV5kyLp
-         y8KDsyGixN6CapPMV65vZq2VTGCBRv2LlXywnI8eYz7ZnKDkW9ZSZ3JlxI9jTZ4T8VVB
-         SO7oq6gKz1VSSLGmez7o906ydArb6RAagN17Br9ELLCkj+GyeakBzkNwDCNoWcN9lfbD
-         4Tjw==
-X-Gm-Message-State: AA+aEWZwXEuadkMCdRt76QJjg3R0RddlikIy6rJS4n4t9N9bN3RLG3+5
-        mN2HQJke//i+5OQz4empQmhjPQ==
-X-Google-Smtp-Source: AFSGD/U86Go3+3ybhFBMH05jAnslT80NIroiYFSXEaGgmTHmpsLbzoiaglbV2yKITD4g6992FWeFvg==
-X-Received: by 2002:a17:906:2989:: with SMTP id x9-v6mr15372950eje.156.1544612923013;
-        Wed, 12 Dec 2018 03:08:43 -0800 (PST)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id j23sm4670364edr.89.2018.12.12.03.08.41
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 12 Dec 2018 03:08:41 -0800 (PST)
-Date:   Wed, 12 Dec 2018 12:08:40 +0100
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Ramalingam C <ramalingam.c@intel.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Daniel Vetter <daniel.vetter@intel.com>
-Subject: Re: [PATCH] drivers/base: use a worker for sysfs unbind
-Message-ID: <20181212110840.GA21184@phenom.ffwll.local>
-Mail-Followup-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Ramalingam C <ramalingam.c@intel.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Daniel Vetter <daniel.vetter@intel.com>
-References: <20181210084653.7268-1-daniel.vetter@ffwll.ch>
- <20181210100634.GA8836@kroah.com>
- <20181210101832.GN21184@phenom.ffwll.local>
- <20181210102058.GO21184@phenom.ffwll.local>
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=XufK6quOoWzwFJwLdozniholK6OQtdOnUksa+3LB5HM=;
+        b=IT5mHnwXUsj8CljkgmJ4c0fBD6i38mkHIJ6CZhKt/ddSMRFp9XqhARAK/AJU04DmwP
+         bzdXs5rWryF3P4AKfhEij5g8kRka1Nan27pmJ7p5m7iD2400M190J1HVFb/8D2mPEy8t
+         9OTwNzUmOGengnJX2OOuWNwif1A+skWhQn3PDhIVRO3FxXQArKK0+ETW9kniJEgJLecN
+         amKElWKZseUjtrj5oVIo7SZrMYHHI2DLdK9OKqqh6pSla2ytWjS4ZjH0iqIdWfeGFnyd
+         +3CW41fYBZMMTShd7FxcgE9u780DFhJ4tBR2vG8eh4O8w/eXQpyStqz4GG+zF/RmSJSX
+         DJJQ==
+X-Gm-Message-State: AA+aEWaTpViwikyq8CFJciayVeFY8ODkKs2zN92WfBlxAinLAiWp18lD
+        n2J2bdhTqnntTp5dNZkVgMSbCLcXM8FB2oKvLGaKeclEHfgY
+X-Google-Smtp-Source: AFSGD/Wit8rXwmxKf/2Kh99AMF+2N/GdGTbsQZauzIbaysX4O/bw4B6fPSjh/PZXlx/uirjMCPJs5MyAIjHQTQgDQc789pni8bVC
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181210102058.GO21184@phenom.ffwll.local>
-X-Operating-System: Linux phenom 4.18.0-2-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Received: by 2002:a24:244:: with SMTP id 65mr4705504itu.3.1544613064494;
+ Wed, 12 Dec 2018 03:11:04 -0800 (PST)
+Date:   Wed, 12 Dec 2018 03:11:04 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000000655c0057cd141f1@google.com>
+Subject: WARNING: locking bug in __queue_work
+From:   syzbot <syzbot+6174a6c5eba4b3cdd606@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, kuznet@ms2.inr.ac.ru,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, yoshfuji@linux-ipv6.org
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 10, 2018 at 11:20:58AM +0100, Daniel Vetter wrote:
-> On Mon, Dec 10, 2018 at 11:18:32AM +0100, Daniel Vetter wrote:
-> > On Mon, Dec 10, 2018 at 11:06:34AM +0100, Greg Kroah-Hartman wrote:
-> > > On Mon, Dec 10, 2018 at 09:46:53AM +0100, Daniel Vetter wrote:
-> > > > Drivers might want to remove some sysfs files, which needs the same
-> > > > locks and ends up angering lockdep. Relevant snippet of the stack
-> > > > trace:
-> > > > 
-> > > >   kernfs_remove_by_name_ns+0x3b/0x80
-> > > >   bus_remove_driver+0x92/0xa0
-> > > >   acpi_video_unregister+0x24/0x40
-> > > >   i915_driver_unload+0x42/0x130 [i915]
-> > > >   i915_pci_remove+0x19/0x30 [i915]
-> > > >   pci_device_remove+0x36/0xb0
-> > > >   device_release_driver_internal+0x185/0x250
-> > > >   unbind_store+0xaf/0x180
-> > > >   kernfs_fop_write+0x104/0x190
-> > > > 
-> > > > I've stumbled over this because some new patches by Ram connect the
-> > > > snd-hda-intel unload (where we do use sysfs unbind) with the locking
-> > > > chains in the i915 unload code (but without creating a new loop),
-> > > > which upset our CI. But the bug is already there and can be easily
-> > > > reproduced by unbind i915 directly.
-> > > 
-> > > This is odd, why wouldn't any driver hit this issue?  And why now since
-> > > you say this is triggerable today?
-> > 
-> > The above backtrace is triggered by unbinding i915 on current upstream
-> > kernels. Note: Will crash later on rather badly in the
-> > fbdev/fbcon/vtconsole hell, but that's separate issue (which can be worked
-> > around by first unbinding fbcon manually through sysfs).
-> > 
-> > > I know scsi was doing some strange things like trying to remove the
-> > > device itself from a sysfs callback on the device, which requires it to
-> > > just call a different kobject function created just for that type of
-> > > thing.  Would that also make sense to do here instead of your workqueue?
-> > 
-> > Note how we blow up on unregistering sw device instances supported by i915
-> > in entirely different subsystems. I guess most drivers just have sysfs
-> > files for their own stuff, where this is done as you describe. The problem
-> > is that there's an awful lot of unrelated stuff hanging off i915.
-> > 
-> > Or maybe acpi_video is busted, and should be using a different function.
-> > You haven't said which one, and I have no idea which one it is ...
-> > 
-> > And in case the context wasn't clear: This is unbinding the i915 pci
-> > driver which triggers the above lockdep splat recursion.
-> 
-> btw another option for "fixing" this would be to annotate the mutex_lock
-> in kernfs_remove_by_name_ns as recursive. Which just shuts up lockdep (and
-> might hide some real bugs), but would get the job done since there's not
-> actually a deadlock here. Just lockdep being annoyed.
+Hello,
 
-So what's the pick? I can do the typing, but I don't understand all the
-driver core interactions to know what we should be doing here best.
--Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+syzbot found the following crash on:
+
+HEAD commit:    f5d582777bcb Merge branch 'for-linus' of git://git.kernel...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12b32705400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c8970c89a0efbb23
+dashboard link: https://syzkaller.appspot.com/bug?extid=6174a6c5eba4b3cdd606
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11cff7d5400000
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+6174a6c5eba4b3cdd606@syzkaller.appspotmail.com
+
+Enabled bearer <udp:syz1>, priority 10
+Enabling of bearer <udp:syz1> rejected, already enabled
+Enabling of bearer <udp:syz1> rejected, already enabled
+------------[ cut here ]------------
+DEBUG_LOCKS_WARN_ON(class_idx > MAX_LOCKDEP_KEYS)
+WARNING: CPU: 0 PID: 7613 at kernel/locking/lockdep.c:3318  
+__lock_acquire+0x1615/0x4c20 kernel/locking/lockdep.c:3318
+Kernel panic - not syncing: panic_on_warn set ...
+CPU: 0 PID: 7613 Comm: ip Not tainted 4.20.0-rc6+ #371
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x244/0x39d lib/dump_stack.c:113
+  panic+0x2ad/0x55c kernel/panic.c:188
+  __warn.cold.8+0x20/0x45 kernel/panic.c:540
+  report_bug+0x254/0x2d0 lib/bug.c:186
+  fixup_bug arch/x86/kernel/traps.c:178 [inline]
+  do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:271
+  do_invalid_op+0x36/0x40 arch/x86/kernel/traps.c:290
+  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:973
+RIP: 0010:__lock_acquire+0x1615/0x4c20 kernel/locking/lockdep.c:3318
+Code: 00 00 8b 05 9d f2 b4 08 85 c0 89 84 24 98 00 00 00 0f 85 90 f3 ff ff  
+48 c7 c6 40 67 2b 88 48 c7 c7 a0 3c 2b 88 e8 cb 66 e7 ff <0f> 0b e9 81 f3  
+ff ff 48 c7 c2 e0 97 0f 8b 48 b8 00 00 00 00 00 fc
+RSP: 0018:ffff8881d220eaf0 EFLAGS: 00010082
+RAX: 0000000000000000 RBX: 0000000066c3d2bf RCX: 0000000000000000
+RDX: 0000000000000000 RSI: ffffffff8165e495 RDI: 0000000000000006
+RBP: ffff8881d220ee78 R08: ffff8881afa064c0 R09: fffffbfff12b2314
+R10: fffffbfff12b2314 R11: ffffffff895918a3 R12: 0000000000000001
+R13: 0000000066c3d2bf R14: ffff8881afa06d8a R15: ffff8881afa06d68
+  lock_acquire+0x1ed/0x520 kernel/locking/lockdep.c:3844
+  __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
+  _raw_spin_lock+0x2d/0x40 kernel/locking/spinlock.c:144
+  spin_lock include/linux/spinlock.h:329 [inline]
+  __queue_work+0x2ff/0x1440 kernel/workqueue.c:1417
+  __queue_delayed_work+0x29f/0x380 kernel/workqueue.c:1522
+  mod_delayed_work_on+0xe3/0x260 kernel/workqueue.c:1596
+  mod_delayed_work include/linux/workqueue.h:542 [inline]
+  addrconf_mod_dad_work+0x3b/0x90 net/ipv6/addrconf.c:328
+  addrconf_dad_start+0x73/0xa0 net/ipv6/addrconf.c:3976
+  inet6_addr_add+0x5c2/0x980 net/ipv6/addrconf.c:2930
+  inet6_rtm_newaddr+0x1201/0x1b90 net/ipv6/addrconf.c:4757
+  rtnetlink_rcv_msg+0x46a/0xc20 net/core/rtnetlink.c:4950
+  netlink_rcv_skb+0x172/0x440 net/netlink/af_netlink.c:2477
+  rtnetlink_rcv+0x1c/0x20 net/core/rtnetlink.c:4968
+  netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
+  netlink_unicast+0x5a5/0x760 net/netlink/af_netlink.c:1336
+  netlink_sendmsg+0xa18/0xfc0 net/netlink/af_netlink.c:1917
+  sock_sendmsg_nosec net/socket.c:621 [inline]
+  sock_sendmsg+0xd5/0x120 net/socket.c:631
+  ___sys_sendmsg+0x7fd/0x930 net/socket.c:2116
+  __sys_sendmsg+0x11d/0x280 net/socket.c:2154
+  __do_sys_sendmsg net/socket.c:2163 [inline]
+  __se_sys_sendmsg net/socket.c:2161 [inline]
+  __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2161
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x7f22c194e320
+Code: 02 48 83 c8 ff eb 8d 48 8b 05 14 7b 2a 00 f7 da 64 89 10 48 83 c8 ff  
+eb c9 90 83 3d d5 d2 2a 00 00 75 10 b8 2e 00 00 00 0f 05 <48> 3d 01 f0 ff  
+ff 73 31 c3 48 83 ec 08 e8 5e ba 00 00 48 89 04 24
+RSP: 002b:00007fffc0b2be98 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00007fffc0b30301 RCX: 00007f22c194e320
+RDX: 0000000000000000 RSI: 00007fffc0b2bed0 RDI: 0000000000000003
+RBP: 00007fffc0b2bed0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 000000005c102fb3
+R13: 0000000000000000 R14: 00000000006395c0 R15: 0000000000000000
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
