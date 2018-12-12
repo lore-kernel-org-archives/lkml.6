@@ -2,91 +2,107 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2A5CC65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 21:07:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15914C65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 21:14:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FAE020811
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 21:07:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544648833;
-	bh=lhuelJyiJO3gOK+X9u7cHU9gKBJk+gsGEuvxIHGR8mA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=0pS6d6uKOrZ5xzQE9TabyUQ+VvGgMItumywk+MwTSvodhYtfP4MrWMJSB/K2UHIHl
-	 nZFTQoOvQAFsSiNii0BkfvNCvCtAZPARnyzqsYj1J25mDNJmq/BuPCVQ8Vic6gMIVW
-	 8kRgqqSIdC3qN8lpkrB7NlEIi7w7Gw/TBay/Eoy8=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FAE020811
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id C51D920873
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 21:14:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="09ynGEqh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C51D920873
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lixom.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728185AbeLLVHM (ORCPT
+        id S1727121AbeLLVOx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 16:07:12 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:39603 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726248AbeLLVHM (ORCPT
+        Wed, 12 Dec 2018 16:14:53 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:35274 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726294AbeLLVOw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 16:07:12 -0500
-Received: by mail-oi1-f194.google.com with SMTP id i6so16252308oia.6;
-        Wed, 12 Dec 2018 13:07:11 -0800 (PST)
+        Wed, 12 Dec 2018 16:14:52 -0500
+Received: by mail-lj1-f196.google.com with SMTP id x85-v6so17613625ljb.2
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 13:14:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lixom-net.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=uBU0ZtbX+J8Oz0EhyXuCXoVaGe3O8alSybyV+RtW7io=;
+        b=09ynGEqh4NrTAb9cyVM/T2cdq0VTebI0os3rid0agB21XHaYJvpe//1xdeNWy0ELPP
+         Any+ioZYGOt4ymLHhAgFjB9GgRZI24inS+WyZC9s8oH9PHHFHeEdAEZNuWNE0ELa/3XR
+         AtKZ9cHzdfXsuRjjEv7kVFkQqR7/vkAQMwbqlxoPaqNBSkA53W9wkt4QPtzLRqKbSxHK
+         22n2zTD6CUbGAmxth0KujHZPEggUPy+hrFApKK8eaQMATq3f0xmnEWr4BgZS/DR8DF9x
+         sU6U27y6xHLNeFctlVi43QFpLEuNG3QM66NmXj/Jx70JuGKed/GjU8erI6cXku0EV1Ni
+         9Z+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PIBF0E3FLHFvGHXC432wzO9boZ5X9jAQg8VhfrHE0JI=;
-        b=s1Qjo6KqSe+MuORHFFAPM9rx/fiCn9cp/8OSrWspVK3l5UNKMivhD896paoEvbZrV9
-         dh12Yzn2+2XZmp19GuXZcXWUXQMPtTuVcPRnpiRir/+j8+lnIb4C6ka02qswp2b/GCE/
-         wHkFttz/9qm+VkqdhEljca5dQrgK4L8Zr2X4XkX6X7z8m4utTsut8F6qvmFaKRWyjhBb
-         nRFJuLEFV75TGOvEEsKSJP2/LULrNQLdilQy1tyN5bP8/x7IQHgq0lcuENNEI2n9OooW
-         kipivuJOEKqanpNAok4jv+oiZlxXmv1ZFDU657AkiwRrri99uUaTcXYFtDeAiSfPgkBu
-         KNXQ==
-X-Gm-Message-State: AA+aEWa+KnTnDQ82JUnjRSrZvBA+Om0lZMQarjhiRZWqfbjoRPXvPywR
-        hwSIpGBlDmbhPS25msSmUYb9WrRc9PNcwLc7Zok=
-X-Google-Smtp-Source: AFSGD/WP+VdeTj9DDVleTsNV2EPOLcfU38/m1awZqN+z55yoHHuQWkXVeX9DAqGS2llk+89QmWxZGPpOHrv/VipCM/M=
-X-Received: by 2002:aca:a698:: with SMTP id t24mr333067oij.76.1544648830940;
- Wed, 12 Dec 2018 13:07:10 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=uBU0ZtbX+J8Oz0EhyXuCXoVaGe3O8alSybyV+RtW7io=;
+        b=PVkXyTYh+gdsF8Na+CUTIf4Ltw0ytZS6XpLmK1jzkZoKkjg3nGH43zdOM6QsoLMQgZ
+         ERjBKPAALUATs5IrDg8vhGtyUNuTjQrJwX7fZv9JaFzLNa4lDH8C/jZDW2j0/oR51htX
+         j6uJdFImEUIbhMjVuYp1SsskT3jCNSxcOTVY7DIZT5z7VN912qU80b+5yIUUQXxR4UZF
+         yhXOB9z7C49Ydb2gpSTWBJmu0drOOMBCijE8qOf6zZneC2PuZIOiL+2/1Ygn2yKJzbRd
+         35JlMGXr0Fi4kxvX8kqczkHjV8UjpNHK34kXhuFGTXNFXLJ4SugIemVqFNcL4BKCJmbc
+         jqOA==
+X-Gm-Message-State: AA+aEWYqm6R4oEx1+v/EihcrwTFbyNkUFsgljMDbH2gbw8hnZbrlv1sE
+        n1WilbJeCeCB6yZYFKSWPX9tBw==
+X-Google-Smtp-Source: AFSGD/VCn8YCZjXpoP+vYeusq/p/5yr9z3Y9848D3XWqLk6f43NaKS4YbpwfnomiH1WIF9k8zWogfA==
+X-Received: by 2002:a05:651c:14e:: with SMTP id c14mr6742766ljd.20.1544649289290;
+        Wed, 12 Dec 2018 13:14:49 -0800 (PST)
+Received: from localhost (h85-30-9-151.cust.a3fiber.se. [85.30.9.151])
+        by smtp.gmail.com with ESMTPSA id b69sm3474519lfl.28.2018.12.12.13.14.47
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 12 Dec 2018 13:14:48 -0800 (PST)
+Date:   Wed, 12 Dec 2018 12:51:06 -0800
+From:   Olof Johansson <olof@lixom.net>
+To:     Andy Gross <andy.gross@linaro.org>
+Cc:     arm@kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Kevin Hilman <khilman@baylibre.com>
+Subject: Re: [GIT PULL] Qualcomm ARM64 DT updates for 4.21 - Part 2
+Message-ID: <20181212205106.op7elifexbn4llpt@localhost>
+References: <1544245994-4228-1-git-send-email-andy.gross@linaro.org>
 MIME-Version: 1.0
-References: <20181212171941.7437-1-okaya@kernel.org> <20181212171941.7437-6-okaya@kernel.org>
- <CF6A88132359CE47947DB4C6E1709ED53C556B2C@ORSMSX122.amr.corp.intel.com> <39dc076f-1b3d-ad0c-c4bb-056ac589f361@kernel.org>
-In-Reply-To: <39dc076f-1b3d-ad0c-c4bb-056ac589f361@kernel.org>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Wed, 12 Dec 2018 22:06:58 +0100
-Message-ID: <CAJZ5v0iN+OkN0+wy=jGA33Uz+wQT7=zxF-TX3e-TrHDnr4=YRA@mail.gmail.com>
-Subject: Re: [PATCH v6 5/5] ACPICA: Remove PCI bits from ACPICA when
- CONFIG_PCI is unset
-To:     okaya@kernel.org, "Schmauss, Erik" <erik.schmauss@intel.com>
-Cc:     ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Robert Moore <robert.moore@intel.com>,
-        Rafael Wysocki <rafael.j.wysocki@intel.com>,
-        Len Brown <lenb@kernel.org>, devel@acpica.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1544245994-4228-1-git-send-email-andy.gross@linaro.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 12, 2018 at 8:34 PM Sinan Kaya <okaya@kernel.org> wrote:
->
-> On 12/12/2018 2:02 PM, Schmauss, Erik wrote:
-> >> ++ b/drivers/acpi/acpica/achware.h
-> >> @@ -109,8 +109,17 @@ acpi_hw_enable_runtime_gpe_block(struct
-> >> acpi_gpe_xrupt_info *gpe_xrupt_info,
-> > CONFIG_PCI is a Linux-ism. We should stay with the OS-independent nature of
-> > ACPICA. Please use ACPI_PCI_CONFIGURED and put it above the comment like so:
-> >
-> > #ifdef ACPI_PCI_CONFIGURED
->
-> Thanks for the feedback. My search for ACPI_PCI_CONFIGURED returned nothing.
->
-> git grep ACPI_PCI_CONFIGURED
->
-> @Rafael,
->
-> How do you want to handle this?
+On Fri, Dec 07, 2018 at 11:13:13PM -0600, Andy Gross wrote:
+> The following changes since commit 70827d9f6bc4f481fafe790dd6654ba568526768:
+> 
+>   arm64: dts: qcom: msm8998: Fix compatible of scm node (2018-11-30 07:59:02 -0600)
+> 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/agross/linux.git tags/qcom-arm64-for-4.21-2
+> 
+> for you to fetch changes up to 1504b91c819359b574b55c269c850352260b8d19:
+> 
+>   arm64: dts: msm8996: Use dwc3-qcom glue driver for USB (2018-12-07 14:10:56 -0600)
+> 
+> ----------------------------------------------------------------
+> Qualcomm ARM64 Updates for v4.21 Part 2
+> 
+> * Switch to use dwc3-qcom glue driver on MSM8996
+> * Fix issue with xo clk name on MSM8998
+> * Add cooling maps on MSM8916
+> * Add UART nodes on SDM845
+> * Add camera subsystem support on MSM8996 and MSM8916
 
-I think what Eric suggested is effectively to introduce a new ACPICA
-symbol.  Erik?
+Merged, thanks.
+
+
+-Olof
