@@ -2,115 +2,135 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 594A8C6783B
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 02:10:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77192C67839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 02:11:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03DBF20851
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 02:10:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3127E20851
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 02:11:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="pWX5KNgY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03DBF20851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="dSwPgtaN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3127E20851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726267AbeLLCKv (ORCPT
+        id S1726314AbeLLCLP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 21:10:51 -0500
-Received: from mail-eopbgr130058.outbound.protection.outlook.com ([40.107.13.58]:3440
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        Tue, 11 Dec 2018 21:11:15 -0500
+Received: from mail-eopbgr1400115.outbound.protection.outlook.com ([40.107.140.115]:7680
+        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726201AbeLLCKv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 21:10:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+        id S1726201AbeLLCLO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 11 Dec 2018 21:11:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MJNLcvjAmPK52HYHxh8V/8yT6e6AQJctpHhBws3lQeg=;
- b=pWX5KNgYQAE5EqXZ7k0ZjgAdjiNIUobo7GAuaHKR1NqAxiHmc0RUartfUZGRktFP5cRRhOlZoesNHG3iG7bwGXFmDzMjfQjlNFhz26geIXmvUfagGVLI6TJF3L4gsRoFA1VSmNvt2NyYeNTBNPbqsazP3iLJpZflyOT7CheELQc=
-Received: from AM6PR04MB5016.eurprd04.prod.outlook.com (20.177.34.88) by
- AM6PR04MB4008.eurprd04.prod.outlook.com (52.135.160.153) with Microsoft SMTP
+ bh=84WAXCSKZVjeQjZ9BZ2dhFxqEx34wyobX2YP9gpFh2I=;
+ b=dSwPgtaNaWtrJkxZ+hznXBXHvkb951gNI3m/mh/Od9xyX190b7Dlbbq9qYvzIjamN+E0HAKu5iIQ4tQRIqKf2YbbNnso3URVJUn1MgSEauYhW0g0ORp2QZYcjBfuOUid55JXXvoycjTkpYCmnX/36beL7C9Li1c/PiA0xHBs5/c=
+Received: from TYAPR01MB3661.jpnprd01.prod.outlook.com (20.178.137.210) by
+ TYAPR01MB2685.jpnprd01.prod.outlook.com (20.177.102.208) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1404.21; Wed, 12 Dec 2018 02:10:46 +0000
-Received: from AM6PR04MB5016.eurprd04.prod.outlook.com
- ([fe80::c518:be51:28b2:24c3]) by AM6PR04MB5016.eurprd04.prod.outlook.com
- ([fe80::c518:be51:28b2:24c3%5]) with mapi id 15.20.1425.016; Wed, 12 Dec 2018
- 02:10:46 +0000
-From:   Clark Wang <xiaoning.wang@nxp.com>
-To:     Mark Brown <broonie@kernel.org>
-CC:     "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] spi: lpspi: Fix CLK pin becomes low before one transfer
-Thread-Topic: [PATCH] spi: lpspi: Fix CLK pin becomes low before one transfer
-Thread-Index: AQHUi5nZC//vtxGbN0eH4Ul4gq7Xk6V5pNCAgAC8eAA=
-Date:   Wed, 12 Dec 2018 02:10:46 +0000
-Message-ID: <AM6PR04MB5016E6D2220CDD266B2C6C01F3A70@AM6PR04MB5016.eurprd04.prod.outlook.com>
-References: <20181204062224.28844-1-xiaoning.wang@nxp.com>
- <20181211143005.GJ6686@sirena.org.uk>
-In-Reply-To: <20181211143005.GJ6686@sirena.org.uk>
-Accept-Language: zh-CN, en-US
+ 15.20.1425.18; Wed, 12 Dec 2018 02:11:10 +0000
+Received: from TYAPR01MB3661.jpnprd01.prod.outlook.com
+ ([fe80::939:87f0:3329:af2f]) by TYAPR01MB3661.jpnprd01.prod.outlook.com
+ ([fe80::939:87f0:3329:af2f%4]) with mapi id 15.20.1404.026; Wed, 12 Dec 2018
+ 02:11:10 +0000
+From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To:     Tony Lindgren <tony@atomide.com>
+CC:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Jarkko Nikula <jarkko.nikula@bitmer.com>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>
+Subject: Re: [PATCH 0/2] Graph fixes for using multiple endpoints per port
+Thread-Topic: [PATCH 0/2] Graph fixes for using multiple endpoints per port
+Thread-Index: AQHUkQH1op9va60uk066RGBQjI/oFw==
+Date:   Wed, 12 Dec 2018 02:11:10 +0000
+Message-ID: <877egf33m9.wl-kuninori.morimoto.gx@renesas.com>
+References: <20181211020557.61783-1-tony@atomide.com>
+        <8736r4bvf3.wl-kuninori.morimoto.gx@renesas.com>
+        <20181211045220.GI6707@atomide.com>
+        <871s6obqkb.wl-kuninori.morimoto.gx@renesas.com>
+        <20181211053536.GJ6707@atomide.com>
+        <87wooga9an.wl-kuninori.morimoto.gx@renesas.com>
+        <20181211141649.GL6707@atomide.com>
+        <87ftv33bpg.wl-kuninori.morimoto.gx@renesas.com>
+        <20181212001950.GX6707@atomide.com>
+In-Reply-To: <20181212001950.GX6707@atomide.com>
+Accept-Language: ja-JP, en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
+x-clientproxiedby: TY2PR01CA0063.jpnprd01.prod.outlook.com
+ (2603:1096:404:10a::27) To TYAPR01MB3661.jpnprd01.prod.outlook.com
+ (2603:1096:404:c1::18)
 authentication-results: spf=none (sender IP is )
- smtp.mailfrom=xiaoning.wang@nxp.com; 
-x-originating-ip: [92.121.36.198]
+ smtp.mailfrom=kuninori.morimoto.gx@renesas.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [211.11.155.130]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM6PR04MB4008;6:Z+S25jHDbwWRe3EIDopybVjayTv7MyZSHxhHpUNy5EBpHa+IV2nYkvzkYez+Se3fY5HuMLlCTYWvAJ2vuyqHTddMpAFkMFh6dMCvxtEG7DPfzyXDNSVNbT4trwrlN4QkMYs07qDnEApxW2deEra1c/TamjnHFTusjxl+SAfg1mLI+x7kUzHxSQQxmEbHiyG+5KvImXCp0ne955YjxIZm7tg4wfPGY0+Dtj6o6xQV3jTuFAXxx568NA2Zut517ip2QAzlelup3qY0c7BWSjiIUZv4hC8lEIOL9hkj+BN1tJPhGGIr/XtHuiUgkSrUZ1MfDnqswVjcoiXpiOgWbe56+LkltHRiraxyqF63p1nZWowe3Qgf2tu5SuLSRUwg0b8yT2pzEbswRnIKrk8/zt4sAP2BLdRMYvzn7/cb+Tq3EpA7AyzbzwUyGkPuxfzpl/CfnpO4q3dk5aKDY22hj9Tr6A==;5:zBxFhkUtklJY0SMfdRaiNqJ4ld8zZLIt942FeI1h5O47eaSRUCcYWhgLne7A9txle9ET/XwUqGMgIu0zvc2+iXe6xMOA/R4Obof7iTseQArWgLK3QRSNjFjR07TbhozJWtwt4zMLZ91BrVCSbgDuIG5gMlpIQ6k4akJlek1zlyk=;7:IaklOKvu+RmoxsGYJSEfw/iJPOqWt62hC0yM/+/TB+pkgtiXUvIoHR8M9hJEDxhWjgzDY42H6R0YWyGX5AUtHZ5zmGaN9TeEjM7A9UR64T3GIg8mJbk5mdWi0steo3hRcoC//DF5T/EJ/SRYCnj8aA==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 9f5a27e3-5174-4d17-aee1-08d65fd70784
+x-microsoft-exchange-diagnostics: 1;TYAPR01MB2685;20:KWQ1I7rWlNVcNSU6oSVllWnEsN0PIHCcXwG9N+f4VMHSXk1CH9LlP0yqO1stFT4I5f5aHCyR+NrAQSmXTvoI1f99IpniVHEOeM9RFMLR4cHdYJ21Kmw8q7KVt+yDI2edpjzsVeZoGmmciCLf/hKOSuhwJIrC68OvIQGSVq0PbPY=
+x-ms-office365-filtering-correlation-id: 425fb644-8c20-42a0-8270-08d65fd71513
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM6PR04MB4008;
-x-ms-traffictypediagnostic: AM6PR04MB4008:
-x-microsoft-antispam-prvs: <AM6PR04MB4008E05087F81D56BAC77AD6F3A70@AM6PR04MB4008.eurprd04.prod.outlook.com>
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:TYAPR01MB2685;
+x-ms-traffictypediagnostic: TYAPR01MB2685:
+x-microsoft-antispam-prvs: <TYAPR01MB2685D815E26C68C992C33ADBD4A70@TYAPR01MB2685.jpnprd01.prod.outlook.com>
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230017)(999002)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231472)(944501520)(52105112)(10201501046)(3002001)(6055026)(148016)(149066)(150057)(6041310)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123564045)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:AM6PR04MB4008;BCL:0;PCL:0;RULEID:;SRVR:AM6PR04MB4008;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(10201501046)(3231455)(999002)(944501520)(52105112)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123558120)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:TYAPR01MB2685;BCL:0;PCL:0;RULEID:;SRVR:TYAPR01MB2685;
 x-forefront-prvs: 0884AAA693
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(346002)(396003)(366004)(39860400002)(376002)(189003)(199004)(13464003)(76176011)(7736002)(4326008)(256004)(229853002)(305945005)(476003)(6116002)(8936002)(14454004)(71200400001)(105586002)(86362001)(71190400001)(74316002)(99286004)(6506007)(106356001)(478600001)(316002)(53546011)(8676002)(68736007)(81166006)(102836004)(54906003)(81156014)(6916009)(186003)(7696005)(6436002)(9686003)(11346002)(446003)(33656002)(55016002)(53936002)(3846002)(26005)(2906002)(6246003)(486006)(25786009)(5660300001)(66066001)(97736004);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR04MB4008;H:AM6PR04MB5016.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(396003)(39860400002)(136003)(346002)(376002)(199004)(189003)(229853002)(6436002)(446003)(36756003)(86362001)(6486002)(2616005)(476003)(99286004)(11346002)(486006)(105586002)(966005)(14444005)(256004)(14454004)(68736007)(97736004)(478600001)(71200400001)(66066001)(71190400001)(6506007)(93886005)(76176011)(39060400002)(2906002)(6916009)(3846002)(316002)(386003)(25786009)(6116002)(54906003)(81166006)(81156014)(53936002)(52116002)(106356001)(5660300001)(8676002)(186003)(6246003)(26005)(102836004)(305945005)(6512007)(8936002)(6306002)(7736002)(7416002)(4326008);DIR:OUT;SFP:1102;SCL:1;SRVR:TYAPR01MB2685;H:TYAPR01MB3661.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: renesas.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: JcLY84TP/m5S5vOiq+2a8NW+MhJrSMpzn8VRNPpsz0be1AAsXdGbgShIxEJwWV0QOWM3jDGBWaG2T+869gyj2OwCscuNalpo/ozhWk4IC5w/1uAkjCWfvRCPqvivo3PfJg5vcOUzRJl8OwOnUmVPSOAznXL2HWI3w9Z1sKM3MiwAf8spLlKF0jInFA1G4+1pxIvePj0F3Rjf3YuiyNY3bQnqT10I71vn/Uz9mcb5Y0GLGPoGI1dX9t23s9ws08/W6OMLeWYbdh/xthqy0jN5gro5U6h7H4DwkTdgfHsGzejLAJ8qkqdwQtphTAvlHe1x
+x-microsoft-antispam-message-info: 8036LYIroW8bqS9gDcBUmmFKkrNWfW/bnVs67Ebhs/O4AvH+g2LglAiHPrEZRlMD8OGyLLRtdLdE6wjTK3Cr37bZtbzBwtsrMzA+vrveUrYmHnh19OvgIhRudjqH0GFoEU3CjFsfaqVo8EByi0I5e67AGk0s6pHU/2FqUsutmxnti53J5p/OYlCoaVOLEDZW91qQ/E2K7EWgt5DsPX1wbzVUmpaqZpj13S2evhD5LbYktKBCYdTvAdKWH5WKyW2FF4WqF2JZcgkIMvrxjoanOOLbzU0ST0Wx5/QwVA7TeizNX2wp5tsCufPZoeueaXuc
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1BF58D36F053954BB8A90ABD68999A1D@jpnprd01.prod.outlook.com>
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9f5a27e3-5174-4d17-aee1-08d65fd70784
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Dec 2018 02:10:46.7476
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 425fb644-8c20-42a0-8270-08d65fd71513
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Dec 2018 02:11:10.3211
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR04MB4008
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYAPR01MB2685
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mark,
 
-These five patches are based on patch series spi: lpspi: Add Slave Mode sup=
-port for LPSPI. For the patch series make a big change, should I hold these=
- five patches until the patch series are applied in your git branch?
+Hi Tony
 
-Thanks for your patience.
-
-Regards,
-Clark Wang
-
-> -----Original Message-----
-> From: Mark Brown <broonie@kernel.org>
-> Sent: Tuesday, December 11, 2018 22:30
-> To: Clark Wang <xiaoning.wang@nxp.com>
-> Cc: linux-spi@vger.kernel.org; linux-kernel@vger.kernel.org
-> Subject: Re: [PATCH] spi: lpspi: Fix CLK pin becomes low before one trans=
-fer
+> > 	https://patchwork.kernel.org/patch/10712877/
 >=20
-> On Tue, Dec 04, 2018 at 06:23:19AM +0000, Clark Wang wrote:
-> > Remove Reset operation in fsl_lpspi_config(). This RST may cause both
-> > CLK and CS pins go from high to low level under cs-gpio mode.
-> > Add fsl_lpspi_reset() function after one message transfer to clear all
-> > flags in use.
+> Hmm, so do you have multiple separate ports at the "&sound" node
+> hardware? If so then yeah multiple ports make sense.
+>
+> But if you only a single physical (I2S?) port at the
+> "&sound" node hardware, then IMO you should only have one
+> port and multiple endpoints there according to the graph.txt
+> binding doc.
 >=20
-> This doesn't apply against current code, please check and resend.
+> In my McBSP case there is only a single physical I2S port
+> that can be TDM split into timeslots.
+
+Mine has 4 DAIs. Each DAI can output 2ch.
+These will be merged and wil be 8ch TDM and goes to Codec.
+But hmm.. it is 4 DAIs, but 1 "physical" interface...
+
+So, your patch seems correct, but will breaks DPCM...
+I will confirm it.
+
+Best regards
+---
+Kuninori Morimoto
