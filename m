@@ -2,303 +2,279 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES,URIBL_BLOCKED
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FD05C65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 23:12:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 898DBC65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 23:13:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F1C82084E
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 23:12:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F1C82084E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
+	by mail.kernel.org (Postfix) with ESMTP id 3ED922084E
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 23:13:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3ED922084E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728428AbeLLXMf (ORCPT
+        id S1728480AbeLLXN1 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 18:12:35 -0500
-Received: from vmicros1.altlinux.org ([194.107.17.57]:53136 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726253AbeLLXMe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 18:12:34 -0500
-Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id 5E40972CC70;
-        Thu, 13 Dec 2018 02:12:28 +0300 (MSK)
-Received: by mua.local.altlinux.org (Postfix, from userid 508)
-        id 3A32895D253; Thu, 13 Dec 2018 02:12:28 +0300 (MSK)
-Date:   Thu, 13 Dec 2018 02:12:28 +0300
-From:   "Dmitry V. Levin" <ldv@altlinux.org>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Oleg Nesterov <oleg@redhat.com>, Andy Lutomirski <luto@kernel.org>,
-        lineprinter@altlinux.org, Eugene Syromiatnikov <esyr@redhat.com>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 13/25] m68k: add asm/syscall.h
-Message-ID: <20181212231228.GA24195@altlinux.org>
-References: <20181210133025.GG11942@altlinux.org>
- <20181212085516.GA13288@altlinux.org>
- <CAMuHMdXwX57AZuVPdcEt_HZw1LT7tFpczJsqjW6C0VgHkhJ7dw@mail.gmail.com>
- <20181212092712.GD13288@altlinux.org>
- <CAMuHMdVvw3_3rm3v8J8u6ic6Wy3o70mOP1qaWQ=Ltf1XU=nnVQ@mail.gmail.com>
- <20181212120417.GC15561@altlinux.org>
- <CAMuHMdXqJeH0C8FHy=G=ycArdkvjYPy48+3LmACnyS9RuqV30g@mail.gmail.com>
- <20181212123730.GA16479@altlinux.org>
- <CAMuHMdVJGpLYJp7CfvOYOmboRjFauWh1joqk=-kpLw212Oj7aA@mail.gmail.com>
- <20181212130711.GB16479@altlinux.org>
+        Wed, 12 Dec 2018 18:13:27 -0500
+Received: from mga14.intel.com ([192.55.52.115]:6236 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726253AbeLLXN0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 18:13:26 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Dec 2018 15:13:25 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,346,1539673200"; 
+   d="scan'208";a="129455958"
+Received: from fmsmsx105.amr.corp.intel.com ([10.18.124.203])
+  by fmsmga001.fm.intel.com with ESMTP; 12 Dec 2018 15:13:25 -0800
+Received: from fmsmsx123.amr.corp.intel.com (10.18.125.38) by
+ FMSMSX105.amr.corp.intel.com (10.18.124.203) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Wed, 12 Dec 2018 15:13:25 -0800
+Received: from shsmsx102.ccr.corp.intel.com (10.239.4.154) by
+ fmsmsx123.amr.corp.intel.com (10.18.125.38) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Wed, 12 Dec 2018 15:13:24 -0800
+Received: from shsmsx104.ccr.corp.intel.com ([169.254.5.203]) by
+ shsmsx102.ccr.corp.intel.com ([169.254.2.182]) with mapi id 14.03.0415.000;
+ Thu, 13 Dec 2018 07:13:22 +0800
+From:   "He, Bo" <bo.he@intel.com>
+To:     "paulmck@linux.ibm.com" <paulmck@linux.ibm.com>
+CC:     Steven Rostedt <rostedt@goodmis.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "josh@joshtriplett.org" <josh@joshtriplett.org>,
+        "mathieu.desnoyers@efficios.com" <mathieu.desnoyers@efficios.com>,
+        "jiangshanlai@gmail.com" <jiangshanlai@gmail.com>,
+        "Zhang, Jun" <jun.zhang@intel.com>,
+        "Xiao, Jin" <jin.xiao@intel.com>,
+        "Zhang, Yanmin" <yanmin.zhang@intel.com>,
+        "Bai, Jie A" <jie.a.bai@intel.com>,
+        "Sun, Yi J" <yi.j.sun@intel.com>
+Subject: RE: rcu_preempt caused oom
+Thread-Topic: rcu_preempt caused oom
+Thread-Index: AdSHvQIr70OYynHSTxKgLAvVXX+0Zv//yKOAgAAWeAD//li4UIADPhuAgAAJSYD//3lRYIAAoJ4A//tcRfABJU8zAP/+T9Nw//xa4AD/91m7QP/uoBSA/9vB3nD/t3F+AP9tcGAw/tr6woD9snCZgPtjpC6Q9sakFQDtjQLogNsYI6iwtjC+vgDsYEklwNjA58YAsYF15gDjAkI/QA==
+Date:   Wed, 12 Dec 2018 23:13:22 +0000
+Message-ID: <CD6925E8781EFD4D8E11882D20FC406D52A193C3@SHSMSX104.ccr.corp.intel.com>
+References: <CD6925E8781EFD4D8E11882D20FC406D52A180C5@SHSMSX104.ccr.corp.intel.com>
+ <20181207141131.GP4170@linux.ibm.com> <20181209195601.GA7854@linux.ibm.com>
+ <CD6925E8781EFD4D8E11882D20FC406D52A186D0@SHSMSX104.ccr.corp.intel.com>
+ <20181211003838.GD4170@linux.ibm.com> <20181211044631.GA19942@linux.ibm.com>
+ <CD6925E8781EFD4D8E11882D20FC406D52A18E53@SHSMSX104.ccr.corp.intel.com>
+ <20181212022446.GV4170@linux.ibm.com>
+ <CD6925E8781EFD4D8E11882D20FC406D52A192C3@SHSMSX104.ccr.corp.intel.com>
+ <20181212154224.GX4170@linux.ibm.com> <20181212210316.GA14777@linux.ibm.com>
+In-Reply-To: <20181212210316.GA14777@linux.ibm.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNDljZWMzYzYtYjljOS00ZTkxLTk0ZDItNzM4N2Q4NTA2MDMwIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiT2Q4azJTMktDNEMwSzNUNW5oeDR4SEhrczhiMXEySWhoeWlvUEtVNGVUbktQZmprelFCVHNtb1A3MFd4Tm5iMSJ9
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="2fHTh5uZTiUOsy+g"
-Content-Disposition: inline
-In-Reply-To: <20181212130711.GB16479@altlinux.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+I don't see the rcutree.sysrq_rcu parameter in v4.19 kernel, I also checked the latest kernel and the latest tag v4.20-rc6, not see the sysrq_rcu.
+Please correct me if I have something wrong.
 
---2fHTh5uZTiUOsy+g
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+-----Original Message-----
+From: Paul E. McKenney <paulmck@linux.ibm.com> 
+Sent: Thursday, December 13, 2018 5:03 AM
+To: He, Bo <bo.he@intel.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>; linux-kernel@vger.kernel.org; josh@joshtriplett.org; mathieu.desnoyers@efficios.com; jiangshanlai@gmail.com; Zhang, Jun <jun.zhang@intel.com>; Xiao, Jin <jin.xiao@intel.com>; Zhang, Yanmin <yanmin.zhang@intel.com>; Bai, Jie A <jie.a.bai@intel.com>
+Subject: Re: rcu_preempt caused oom
 
-Hi Geert,
+On Wed, Dec 12, 2018 at 07:42:24AM -0800, Paul E. McKenney wrote:
+> On Wed, Dec 12, 2018 at 01:21:33PM +0000, He, Bo wrote:
+> > we reproduce on two boards, but I still not see the show_rcu_gp_kthreads() dump logs, it seems the patch can't catch the scenario.
+> > I double confirmed the CONFIG_PROVE_RCU=y is enabled in the config as it's extracted from the /proc/config.gz.
+> 
+> Strange.
+> 
+> Are the systems responsive to sysrq keys once failure occurs?  If so, 
+> I will provide you a sysrq-R or some such to dump out the RCU state.
 
-On Wed, Dec 12, 2018 at 04:07:11PM +0300, Dmitry V. Levin wrote:
-> On Wed, Dec 12, 2018 at 01:54:05PM +0100, Geert Uytterhoeven wrote:
-> > On Wed, Dec 12, 2018 at 1:37 PM Dmitry V. Levin <ldv@altlinux.org> wrot=
-e:
-> > > On Wed, Dec 12, 2018 at 01:27:14PM +0100, Geert Uytterhoeven wrote:
-> > > > On Wed, Dec 12, 2018 at 1:04 PM Dmitry V. Levin <ldv@altlinux.org> =
-wrote:
-> > > > > On Wed, Dec 12, 2018 at 10:43:33AM +0100, Geert Uytterhoeven wrot=
-e:
-> > > > > > On Wed, Dec 12, 2018 at 10:27 AM Dmitry V. Levin <ldv@altlinux.=
-org> wrote:
-> > > > > > > On Wed, Dec 12, 2018 at 10:01:29AM +0100, Geert Uytterhoeven =
-wrote:
-> > > > > > > > On Wed, Dec 12, 2018 at 9:55 AM Dmitry V. Levin <ldv@altlin=
-ux.org> wrote:
-> > > > > > > > > On Mon, Dec 10, 2018 at 04:30:25PM +0300, Dmitry V. Levin=
- wrote:
-> > > > > > > > > > On Mon, Dec 10, 2018 at 02:06:28PM +0100, Geert Uytterh=
-oeven wrote:
-> > > > > > > > > > > On Mon, Dec 10, 2018 at 1:41 PM Dmitry V. Levin <ldv@=
-altlinux.org> wrote:
-> > > > > > > > > > > > On Mon, Dec 10, 2018 at 09:45:42AM +0100, Geert Uyt=
-terhoeven wrote:
-> > > > > > > > > > > > > On Mon, Dec 10, 2018 at 5:30 AM Dmitry V. Levin <=
-ldv@altlinux.org> wrote:
-> > > > > > > > > > > > > > syscall_get_* functions are required to be impl=
-emented on all
-> > > > > > > > > > > > > > architectures in order to extend the generic pt=
-race API with
-> > > > > > > > > > > > > > PTRACE_GET_SYSCALL_INFO request.
-> > > > > > > > > > > > > >
-> > > > > > > > > > > > > > This introduces asm/syscall.h on m68k implement=
-ing all 5 syscall_get_*
-> > > > > > > > > > > > > > functions as documented in asm-generic/syscall.=
-h: syscall_get_nr,
-> > > > > > > > > > > > > > syscall_get_arguments, syscall_get_error, sysca=
-ll_get_return_value,
-> > > > > > > > > > > > > > and syscall_get_arch.
-> > > > > > > > > > > > > >
-> > > > > > > > > > > > > > Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-> > > > > > > > > > > > > > Cc: Oleg Nesterov <oleg@redhat.com>
-> > > > > > > > > > > > > > Cc: Andy Lutomirski <luto@kernel.org>
-> > > > > > > > > > > > > > Cc: Elvira Khabirova <lineprinter@altlinux.org>
-> > > > > > > > > > > > > > Cc: Eugene Syromyatnikov <esyr@redhat.com>
-> > > > > > > > > > > > > > Cc: linux-m68k@lists.linux-m68k.org
-> > > > > > > > > > > > > > Signed-off-by: Dmitry V. Levin <ldv@altlinux.or=
-g>
-> > > > > > > > > > > > > > ---
-> > > > > > > > > > > > > >
-> > > > > > > > > > > > > > Notes:
-> > > > > > > > > > > > > >     v5: added syscall_get_nr, syscall_get_argum=
-ents, syscall_get_error,
-> > > > > > > > > > > > > >         and syscall_get_return_value
-> > > > > > > > > > > > > >     v1: added syscall_get_arch
-> > > > > > > > > > > > >
-> > > > > > > > > > > > > > --- /dev/null
-> > > > > > > > > > > > > > +++ b/arch/m68k/include/asm/syscall.h
-> > > > > > > > > > > > > > @@ -0,0 +1,39 @@
-> > > > > > > > > > > > >
-> > > > > > > > > > > > > > +static inline void
-> > > > > > > > > > > > > > +syscall_get_arguments(struct task_struct *task=
-, struct pt_regs *regs,
-> > > > > > > > > > > > > > +                     unsigned int i, unsigned =
-int n, unsigned long *args)
-> > > > > > > > > > > > > > +{
-> > > > > > > > > > > > > > +       BUG_ON(i + n > 6);
-> > > > > > > > > > > > >
-> > > > > > > > > > > > > Does this have to crash the kernel?
-> > > > > > > > > > > >
-> > > > > > > > > > > > This is what most of other architectures do, but we=
- could choose
-> > > > > > > > > > > > a softer approach, e.g. use WARN_ON_ONCE instead.
-> > > > > > > > > > > >
-> > > > > > > > > > > > > Perhaps you can return an error code instead?
-> > > > > > > > > > > >
-> > > > > > > > > > > > That would be problematic given the signature of th=
-is function
-> > > > > > > > > > > > and the nature of the potential bug which would mos=
-t likely be a usage error.
-> > > > > > > > > > >
-> > > > > > > > > > > Of course to handle that, the function's signature ne=
-ed to be changed.
-> > > > > > > > > > > Changing it has the advantage that the error handling=
- can be done at the
-> > > > > > > > > > > caller, in common code, instead of duplicating it for=
- all
-> > > > > > > > > > > architectures, possibly
-> > > > > > > > > > > leading to different semantics.
-> > > > > > > > > >
-> > > > > > > > > > Given that *all* current users of syscall_get_arguments=
- specify i =3D=3D 0
-> > > > > > > > > > (and there is an architecture that has BUG_ON(i)),
-> > > > > > > > > > it should be really a usage error to get into situation=
- where i + n > 6,
-> > > > > > > > > > I wish a BUILD_BUG_ON could be used here instead.
-> > > > > > > > > >
-> > > > > > > > > > I don't think it worths pushing the change of API just =
-to convert
-> > > > > > > > > > a "cannot happen" assertion into an error that would ha=
-ve to be dealt with
-> > > > > > > > > > on the caller side.
-> > > > > > > > >
-> > > > > > > > > I suggest the following BUG_ON replacement for syscall_ge=
-t_arguments:
-> > > > > > > > >
-> > > > > > > > > #define SYSCALL_MAX_ARGS 6
-> > > > > > > > >
-> > > > > > > > > static inline void
-> > > > > > > > > syscall_get_arguments(struct task_struct *task, struct pt=
-_regs *regs,
-> > > > > > > > >                       unsigned int i, unsigned int n, uns=
-igned long *args)
-> > > > > > > > > {
-> > > > > > > > >         /*
-> > > > > > > > >          * Ideally there should have been
-> > > > > > > > >          * BUILD_BUG_ON(i + n > SYSCALL_MAX_ARGS);
-> > > > > > > > >          * instead of these checks.
-> > > > > > > > >          */
-> > > > > > > > >         if (unlikely(i > SYSCALL_MAX_ARGS)) {
-> > > > > > > > >                 WARN_ONCE(1, "i > SYSCALL_MAX_ARGS");
-> > > > > > > > >                 return;
-> > > > > > > >
-> > > > > > > > Does this have security implications, as args is an output =
-parameter?
-> > > > > > > > I.e. if you don't fill the array, the caller will use whate=
-ver is on the stack.
-> > > > > > > > Can this ever be passed to userspace, leaking data?
-> > > > > > >
-> > > > > > > In the current kernel code n is always less or equal to 6,
-> > > > > > > but in theory future changes can potentially break the assert=
-ion
-> > > > > > > and this could lead to leaking data to userspace.
-> > > > > >
-> > > > > > OK.
-> > > > > >
-> > > > > > > Do you think we should rather be defensive and add some memse=
-ts, e.g.
-> > > > > > >
-> > > > > > >         if (unlikely(i > SYSCALL_MAX_ARGS)) {
-> > > > > > >                 WARN_ONCE(1, "i > SYSCALL_MAX_ARGS");
-> > > > > > >                 memset(args, 0, n * sizeof(args[0]));
-> > > > > > >                 return;
-> > > > > > >         }
-> > > > > > >         if (unlikely(n > SYSCALL_MAX_ARGS - i)) {
-> > > > > > >                 unsigned int extra =3D n - (SYSCALL_MAX_ARGS =
-- i);
-> > > > > > >
-> > > > > > >                 WARN_ONCE(1, "i + n > SYSCALL_MAX_ARGS");
-> > > > > > >                 n =3D SYSCALL_MAX_ARGS - i;
-> > > > > > >                 memset(&args[n], 0, extra * sizeof(args[0]));
-> > > > > > >         }
-> > > > > > > ?
-> > > > > >
-> > > > > > Yes please.
-> > > > > >
-> > > > > > But please handle all of that in the generic code, so it doesn'=
-t have to be
-> > > > > > replicated across all architectures.
-> > > > > >
-> > > > > > E.g. make syscall_get_arguments() a wrapper in generic code, ca=
-lling
-> > > > > > __syscall_get_arguments() in architecture-specific code.
-> > > > > >
-> > > > > > And make the latter return int, so it can indicate other failur=
-es.
-> > > > >
-> > > > > Other failures?  What syscall_get_arguments is expected to do
-> > > > > if __syscall_get_arguments returned, say, -1?
-> > > >
-> > > > Fail. Just like in case of other generic ill conditions it can dete=
-ct itself.
-> > >
-> > > Sorry, I don't quite follow.  syscall_get_arguments() has no return c=
-ode,
-> >=20
-> > Which may be an indicator for a different problem.
-> > What is e.g. populate_seccomp_data() supposed to do if
-> > syscall_get_arguments() fails?
->=20
-> Well, syscall_get_arguments() is not supposed to fail if invoked properly.
->=20
-> Currently populate_seccomp_data() does this:
-> 	struct task_struct *task =3D current;
-> 	struct pt_regs *regs =3D task_pt_regs(task);
-> 	unsigned long args[6];
-> 	...
-> 	syscall_get_arguments(task, regs, 0, 6, args);
->=20
-> I don't see how this could fail.
->=20
-> > > so all it can possibly do is to zero out args[], e.g.
-> > >
-> > >         if (unlikely(__syscall_get_arguments(task, regs, i, n, args) =
-< 0)) {
-> > >                 memset(args, 0, n * sizeof(args[0]));
-> > >                 return;
-> > >         }
-> > >
-> > > Do you mean this?
-> >=20
-> > Exactly.
->=20
-> OK, I'll prepare the change, thanks.
+Or, as it turns out, sysrq-y if booting with rcutree.sysrq_rcu=1 using the patch below.  Only lightly tested.
 
-I have the change ready, but I don't like it.  The only architecture
-that could benefit from being able of signalling an error condition to
-syscall_get_arguments is MIPS, and even in that case the return code is
-not suitable because it wouldn't help to distinguish between the first 4
-syscall arguments that cannot cause an error and remaining arguments that
-can.  It looks like there is no need to make __syscall_get_arguments()
-to return int after all.
+							Thanx, Paul
 
+------------------------------------------------------------------------
 
---=20
-ldv
+commit adfc7dff659495a3433d5084256be59eee0ac6df
+Author: Paul E. McKenney <paulmck@linux.ibm.com>
+Date:   Mon Dec 10 16:33:59 2018 -0800
 
---2fHTh5uZTiUOsy+g
-Content-Type: application/pgp-signature; name="signature.asc"
+    rcu: Improve diagnostics for failed RCU grace-period start
+    
+    Backported from v4.21/v5.0
+    
+    If a grace period fails to start (for example, because you commented
+    out the last two lines of rcu_accelerate_cbs_unlocked()), rcu_core()
+    will invoke rcu_check_gp_start_stall(), which will notice and complain.
+    However, this complaint is lacking crucial debugging information such
+    as when the last wakeup executed and what the value of ->gp_seq was at
+    that time.  This commit therefore removes the current pr_alert() from
+    rcu_check_gp_start_stall(), instead invoking show_rcu_gp_kthreads(),
+    which has been updated to print the needed information, which is collected
+    by rcu_gp_kthread_wake().
+    
+    Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
 
------BEGIN PGP SIGNATURE-----
+diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c index 0b760c1369f7..4bcd8753e293 100644
+--- a/kernel/rcu/tree.c
++++ b/kernel/rcu/tree.c
+@@ -626,25 +626,57 @@ void rcu_sched_force_quiescent_state(void)
+ }
+ EXPORT_SYMBOL_GPL(rcu_sched_force_quiescent_state);
+ 
++/*
++ * Convert a ->gp_state value to a character string.
++ */
++static const char *gp_state_getname(short gs) {
++	if (gs < 0 || gs >= ARRAY_SIZE(gp_state_names))
++		return "???";
++	return gp_state_names[gs];
++}
++
++/*
++ * Return the root node of the specified rcu_state structure.
++ */
++static struct rcu_node *rcu_get_root(struct rcu_state *rsp) {
++	return &rsp->node[0];
++}
++
+ /*
+  * Show the state of the grace-period kthreads.
+  */
+ void show_rcu_gp_kthreads(void)
+ {
+ 	int cpu;
++	unsigned long j;
++	unsigned long ja;
++	unsigned long jr;
++	unsigned long jw;
+ 	struct rcu_data *rdp;
+ 	struct rcu_node *rnp;
+ 	struct rcu_state *rsp;
+ 
++	j = jiffies;
+ 	for_each_rcu_flavor(rsp) {
+-		pr_info("%s: wait state: %d ->state: %#lx\n",
+-			rsp->name, rsp->gp_state, rsp->gp_kthread->state);
++		ja = j - READ_ONCE(rsp->gp_activity);
++		jr = j - READ_ONCE(rsp->gp_req_activity);
++		jw = j - READ_ONCE(rsp->gp_wake_time);
++		pr_info("%s: wait state: %s(%d) ->state: %#lx delta ->gp_activity %lu ->gp_req_activity %lu ->gp_wake_time %lu ->gp_wake_seq %ld ->gp_seq %ld ->gp_seq_needed %ld ->gp_flags %#x\n",
++			rsp->name, gp_state_getname(rsp->gp_state),
++			rsp->gp_state,
++			rsp->gp_kthread ? rsp->gp_kthread->state : 0x1ffffL,
++			ja, jr, jw, (long)READ_ONCE(rsp->gp_wake_seq),
++			(long)READ_ONCE(rsp->gp_seq),
++			(long)READ_ONCE(rcu_get_root(rsp)->gp_seq_needed),
++			READ_ONCE(rsp->gp_flags));
+ 		rcu_for_each_node_breadth_first(rsp, rnp) {
+ 			if (ULONG_CMP_GE(rsp->gp_seq, rnp->gp_seq_needed))
+ 				continue;
+-			pr_info("\trcu_node %d:%d ->gp_seq %lu ->gp_seq_needed %lu\n",
+-				rnp->grplo, rnp->grphi, rnp->gp_seq,
+-				rnp->gp_seq_needed);
++			pr_info("\trcu_node %d:%d ->gp_seq %ld ->gp_seq_needed %ld\n",
++				rnp->grplo, rnp->grphi, (long)rnp->gp_seq,
++				(long)rnp->gp_seq_needed);
+ 			if (!rcu_is_leaf_node(rnp))
+ 				continue;
+ 			for_each_leaf_node_possible_cpu(rnp, cpu) { @@ -653,8 +685,8 @@ void show_rcu_gp_kthreads(void)
+ 				    ULONG_CMP_GE(rsp->gp_seq,
+ 						 rdp->gp_seq_needed))
+ 					continue;
+-				pr_info("\tcpu %d ->gp_seq_needed %lu\n",
+-					cpu, rdp->gp_seq_needed);
++				pr_info("\tcpu %d ->gp_seq_needed %ld\n",
++					cpu, (long)rdp->gp_seq_needed);
+ 			}
+ 		}
+ 		/* sched_show_task(rsp->gp_kthread); */ @@ -690,14 +722,6 @@ void rcutorture_get_gp_data(enum rcutorture_type test_type, int *flags,  }  EXPORT_SYMBOL_GPL(rcutorture_get_gp_data);
+ 
+-/*
+- * Return the root node of the specified rcu_state structure.
+- */
+-static struct rcu_node *rcu_get_root(struct rcu_state *rsp) -{
+-	return &rsp->node[0];
+-}
+-
+ /*
+  * Enter an RCU extended quiescent state, which can be either the
+  * idle loop or adaptive-tickless usermode execution.
+@@ -1285,16 +1309,6 @@ static void record_gp_stall_check_time(struct rcu_state *rsp)
+ 	rsp->n_force_qs_gpstart = READ_ONCE(rsp->n_force_qs);  }
+ 
+-/*
+- * Convert a ->gp_state value to a character string.
+- */
+-static const char *gp_state_getname(short gs) -{
+-	if (gs < 0 || gs >= ARRAY_SIZE(gp_state_names))
+-		return "???";
+-	return gp_state_names[gs];
+-}
+-
+ /*
+  * Complain about starvation of grace-period kthread.
+  */
+@@ -1693,7 +1707,8 @@ static bool rcu_future_gp_cleanup(struct rcu_state *rsp, struct rcu_node *rnp)
+  * Don't do a self-awaken, and don't bother awakening when there is
+  * nothing for the grace-period kthread to do (as in several CPUs
+  * raced to awaken, and we lost), and finally don't try to awaken
+- * a kthread that has not yet been created.
++ * a kthread that has not yet been created.  If all those checks are
++ * passed, track some debug information and awaken.
+  */
+ static void rcu_gp_kthread_wake(struct rcu_state *rsp)  { @@ -1701,6 +1716,8 @@ static void rcu_gp_kthread_wake(struct rcu_state *rsp)
+ 	    !READ_ONCE(rsp->gp_flags) ||
+ 	    !rsp->gp_kthread)
+ 		return;
++	WRITE_ONCE(rsp->gp_wake_time, jiffies);
++	WRITE_ONCE(rsp->gp_wake_seq, READ_ONCE(rsp->gp_seq));
+ 	swake_up_one(&rsp->gp_wq);
+ }
+ 
+@@ -2802,16 +2819,11 @@ rcu_check_gp_start_stall(struct rcu_state *rsp, struct rcu_node *rnp,
+ 		raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
+ 		return;
+ 	}
+-	pr_alert("%s: g%ld->%ld gar:%lu ga:%lu f%#x gs:%d %s->state:%#lx\n",
+-		 __func__, (long)READ_ONCE(rsp->gp_seq),
+-		 (long)READ_ONCE(rnp_root->gp_seq_needed),
+-		 j - rsp->gp_req_activity, j - rsp->gp_activity,
+-		 rsp->gp_flags, rsp->gp_state, rsp->name,
+-		 rsp->gp_kthread ? rsp->gp_kthread->state : 0x1ffffL);
+ 	WARN_ON(1);
+ 	if (rnp_root != rnp)
+ 		raw_spin_unlock_rcu_node(rnp_root);
+ 	raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
++	show_rcu_gp_kthreads();
+ }
+ 
+ /*
+diff --git a/kernel/rcu/tree.h b/kernel/rcu/tree.h index 4e74df768c57..0e051d9b5f1a 100644
+--- a/kernel/rcu/tree.h
++++ b/kernel/rcu/tree.h
+@@ -327,6 +327,8 @@ struct rcu_state {
+ 	struct swait_queue_head gp_wq;		/* Where GP task waits. */
+ 	short gp_flags;				/* Commands for GP task. */
+ 	short gp_state;				/* GP kthread sleep state. */
++	unsigned long gp_wake_time;		/* Last GP kthread wake. */
++	unsigned long gp_wake_seq;		/* ->gp_seq at ^^^. */
+ 
+ 	/* End of fields guarded by root rcu_node's lock. */
+ 
 
-iQIcBAEBCAAGBQJcEZXbAAoJEAVFT+BVnCUIZ6MQAI484glw6id/flu/J6HanrXH
-YXyZ0SktJchbsonGJqf5X1yCXfRcEpqqYcTsiibcEoPgvcTtB9643qZj+H7HloC8
-BgxbgUxpNRt7t/xUKf/ezRk7qPw/XvuJo7mTjj1uAOCWR6Br5Cza5U9CnOglOh0q
-LTlZ1G1/+5O20KbCZfihON1dHdsOAUaplWEPz3fzpKXKsreI46p0LIQfgOF414J4
-npHEOJl/317DecKtsjVHwMaP3mGeFzmuYkHvv2iVPArjXVUi1amJhEHMTs6UKgGZ
-gknWIj9y4f1x2me30ayd7YMDRdA4+3+aoJh/xLQDWdBVwOPRGbUkaUq0bW5u6Iit
-Bmk7tLufiPEnDmoTqpbVTjdXghifK5V9YbyUuY4zJKbi7g6HKv6ldW6BvNgg6Wpc
-U5MKZN6cUIR8dadJXurifEF95V0oSbP1J0RlWF8a/JtVHcfNazKwra0XKwWXqjhZ
-OucdBsZuZ1m+3dZZLRUzEqOQySQhppOPYhtc461ksZTRY2EIo1w4v+W/ggBzcNjO
-p/OTdn0Ptck+6gjuUGKm/SuMOKS9rQGLCvcyLxk4DiyJDLCsgOmpvBw7Ybc47exF
-dQBfCpptXeUDKvLuKyLxC9xVQy/Hn8SEf/PXC0DQMIvFVB03+d28zZ5kBK//rWu4
-QVRdxvUH11qU0lE9iVj1
-=Ja5k
------END PGP SIGNATURE-----
-
---2fHTh5uZTiUOsy+g--
