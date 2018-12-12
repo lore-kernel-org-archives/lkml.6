@@ -2,204 +2,259 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0E60C04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 12:35:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D3B2C04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 12:37:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2EC1E20870
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 12:35:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=oberhumer.com header.i=@oberhumer.com header.b="jq0ueuUt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EC1E20870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=oberhumer.com
+	by mail.kernel.org (Postfix) with ESMTP id 18A6F2084E
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 12:37:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18A6F2084E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727423AbeLLMfU (ORCPT
+        id S1727383AbeLLMhf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 07:35:20 -0500
-Received: from mail.servus.at ([193.170.194.20]:60630 "EHLO mail.servus.at"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727155AbeLLMfT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 07:35:19 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by mail.servus.at (Postfix) with ESMTP id 91DEB301A5C8;
-        Wed, 12 Dec 2018 13:35:17 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=oberhumer.com; h=
-        content-transfer-encoding:content-type:content-type:in-reply-to
-        :mime-version:user-agent:date:date:message-id:organization:from
-        :from:references:subject:subject:received:received; s=main; t=
-        1544618115; x=1546432516; bh=qb2Chckqtmc3bQ4jj67gsclV812xFuSP6lI
-        9wl5f670=; b=jq0ueuUtHOZmEgDh5T9Ooa3sS/y3cnvNOmo7Nhp3FPw2mHQPslK
-        8MwQUIdp/GgI7/12Ge0TnejPCGM0Nh04MURGYZp5q36/RGL4eevA6OyuYRVdxmQk
-        2b06ukVGOoN505jM1Gnuxdgerxv/SFlXjXUoIKXMdiPdImz5Da1RFXG4=
-X-Virus-Scanned: amavisd-new at servus.at
-Received: from mail.servus.at ([127.0.0.1])
-        by localhost (mail.servus.at [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id WCRBeIks3PeO; Wed, 12 Dec 2018 13:35:15 +0100 (CET)
-Received: from [192.168.216.53] (unknown [81.10.228.128])
-        (Authenticated sender: oh_markus)
-        by mail.servus.at (Postfix) with ESMTPSA id 5018A301A5C0;
-        Wed, 12 Dec 2018 13:35:15 +0100 (CET)
-Subject: Re: [PATCH v2] lzo: fix ip overrun during compress.
-To:     Yueyi Li <liyueyi@live.com>, "dsterba@suse.cz" <dsterba@suse.cz>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "w@1wt.eu" <w@1wt.eu>,
-        "donb@securitymouse.com" <donb@securitymouse.com>,
-        Jiri Kosina <jikos@kernel.org>
-References: <BLUPR13MB0289EFEB79833470EE62F48EDFD10@BLUPR13MB0289.namprd13.prod.outlook.com>
- <20181128135242.gy3avmbp2pdmjaka@twin.jikos.cz>
- <5C0654EE.5040001@oberhumer.com>
- <SN1PR13MB030484F09EE8A00DB094CDFADFA80@SN1PR13MB0304.namprd13.prod.outlook.com>
- <5C093A30.4020705@oberhumer.com>
- <BLUPR13MB0289EC81589A10E95912675FDFA70@BLUPR13MB0289.namprd13.prod.outlook.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-From:   "Markus F.X.J. Oberhumer" <markus@oberhumer.com>
-Organization: oberhumer.com
-Message-ID: <5C110083.8060502@oberhumer.com>
-Date:   Wed, 12 Dec 2018 13:35:15 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
- Thunderbird/38.3.0
+        Wed, 12 Dec 2018 07:37:35 -0500
+Received: from vmicros1.altlinux.org ([194.107.17.57]:55170 "EHLO
+        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727091AbeLLMhe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 07:37:34 -0500
+Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
+        by vmicros1.altlinux.org (Postfix) with ESMTP id ED6A872CA65;
+        Wed, 12 Dec 2018 15:37:30 +0300 (MSK)
+Received: by mua.local.altlinux.org (Postfix, from userid 508)
+        id B9ED37CFF70; Wed, 12 Dec 2018 15:37:30 +0300 (MSK)
+Date:   Wed, 12 Dec 2018 15:37:30 +0300
+From:   "Dmitry V. Levin" <ldv@altlinux.org>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Oleg Nesterov <oleg@redhat.com>, Andy Lutomirski <luto@kernel.org>,
+        lineprinter@altlinux.org, Eugene Syromiatnikov <esyr@redhat.com>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 13/25] m68k: add asm/syscall.h
+Message-ID: <20181212123730.GA16479@altlinux.org>
+References: <CAMuHMdVYq_2P=gb_zbSGFkPWASTds6uSPTyyhyNAgp2Qm5+feQ@mail.gmail.com>
+ <20181210124059.GA11942@altlinux.org>
+ <CAMuHMdW8ejp4gm2Xh-8inSQngQ5zRQ9bfsg1SG+BAD8RFV8xcA@mail.gmail.com>
+ <20181210133025.GG11942@altlinux.org>
+ <20181212085516.GA13288@altlinux.org>
+ <CAMuHMdXwX57AZuVPdcEt_HZw1LT7tFpczJsqjW6C0VgHkhJ7dw@mail.gmail.com>
+ <20181212092712.GD13288@altlinux.org>
+ <CAMuHMdVvw3_3rm3v8J8u6ic6Wy3o70mOP1qaWQ=Ltf1XU=nnVQ@mail.gmail.com>
+ <20181212120417.GC15561@altlinux.org>
+ <CAMuHMdXqJeH0C8FHy=G=ycArdkvjYPy48+3LmACnyS9RuqV30g@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <BLUPR13MB0289EC81589A10E95912675FDFA70@BLUPR13MB0289.namprd13.prod.outlook.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="gKMricLos+KVdGMg"
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXqJeH0C8FHy=G=ycArdkvjYPy48+3LmACnyS9RuqV30g@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I still claim that (0xfffffffffffff000, 4096) is not a valid C "pointer
-to an object" according to the C standard - please see my reply below.
 
-And I thought ASLR was introduced to improve security and not to create
-new security problems - someone from the ASLR team has to comment on this.
+--gKMricLos+KVdGMg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Cheers,
-Markus
+Hi Geert,
+
+On Wed, Dec 12, 2018 at 01:27:14PM +0100, Geert Uytterhoeven wrote:
+> On Wed, Dec 12, 2018 at 1:04 PM Dmitry V. Levin <ldv@altlinux.org> wrote:
+> > On Wed, Dec 12, 2018 at 10:43:33AM +0100, Geert Uytterhoeven wrote:
+> > > On Wed, Dec 12, 2018 at 10:27 AM Dmitry V. Levin <ldv@altlinux.org> w=
+rote:
+> > > > On Wed, Dec 12, 2018 at 10:01:29AM +0100, Geert Uytterhoeven wrote:
+> > > > > On Wed, Dec 12, 2018 at 9:55 AM Dmitry V. Levin <ldv@altlinux.org=
+> wrote:
+> > > > > > On Mon, Dec 10, 2018 at 04:30:25PM +0300, Dmitry V. Levin wrote:
+> > > > > > > On Mon, Dec 10, 2018 at 02:06:28PM +0100, Geert Uytterhoeven =
+wrote:
+> > > > > > > > On Mon, Dec 10, 2018 at 1:41 PM Dmitry V. Levin <ldv@altlin=
+ux.org> wrote:
+> > > > > > > > > On Mon, Dec 10, 2018 at 09:45:42AM +0100, Geert Uytterhoe=
+ven wrote:
+> > > > > > > > > > On Mon, Dec 10, 2018 at 5:30 AM Dmitry V. Levin <ldv@al=
+tlinux.org> wrote:
+> > > > > > > > > > > syscall_get_* functions are required to be implemente=
+d on all
+> > > > > > > > > > > architectures in order to extend the generic ptrace A=
+PI with
+> > > > > > > > > > > PTRACE_GET_SYSCALL_INFO request.
+> > > > > > > > > > >
+> > > > > > > > > > > This introduces asm/syscall.h on m68k implementing al=
+l 5 syscall_get_*
+> > > > > > > > > > > functions as documented in asm-generic/syscall.h: sys=
+call_get_nr,
+> > > > > > > > > > > syscall_get_arguments, syscall_get_error, syscall_get=
+_return_value,
+> > > > > > > > > > > and syscall_get_arch.
+> > > > > > > > > > >
+> > > > > > > > > > > Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+> > > > > > > > > > > Cc: Oleg Nesterov <oleg@redhat.com>
+> > > > > > > > > > > Cc: Andy Lutomirski <luto@kernel.org>
+> > > > > > > > > > > Cc: Elvira Khabirova <lineprinter@altlinux.org>
+> > > > > > > > > > > Cc: Eugene Syromyatnikov <esyr@redhat.com>
+> > > > > > > > > > > Cc: linux-m68k@lists.linux-m68k.org
+> > > > > > > > > > > Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
+> > > > > > > > > > > ---
+> > > > > > > > > > >
+> > > > > > > > > > > Notes:
+> > > > > > > > > > >     v5: added syscall_get_nr, syscall_get_arguments, =
+syscall_get_error,
+> > > > > > > > > > >         and syscall_get_return_value
+> > > > > > > > > > >     v1: added syscall_get_arch
+> > > > > > > > > >
+> > > > > > > > > > > --- /dev/null
+> > > > > > > > > > > +++ b/arch/m68k/include/asm/syscall.h
+> > > > > > > > > > > @@ -0,0 +1,39 @@
+> > > > > > > > > >
+> > > > > > > > > > > +static inline void
+> > > > > > > > > > > +syscall_get_arguments(struct task_struct *task, stru=
+ct pt_regs *regs,
+> > > > > > > > > > > +                     unsigned int i, unsigned int n,=
+ unsigned long *args)
+> > > > > > > > > > > +{
+> > > > > > > > > > > +       BUG_ON(i + n > 6);
+> > > > > > > > > >
+> > > > > > > > > > Does this have to crash the kernel?
+> > > > > > > > >
+> > > > > > > > > This is what most of other architectures do, but we could=
+ choose
+> > > > > > > > > a softer approach, e.g. use WARN_ON_ONCE instead.
+> > > > > > > > >
+> > > > > > > > > > Perhaps you can return an error code instead?
+> > > > > > > > >
+> > > > > > > > > That would be problematic given the signature of this fun=
+ction
+> > > > > > > > > and the nature of the potential bug which would most like=
+ly be a usage error.
+> > > > > > > >
+> > > > > > > > Of course to handle that, the function's signature need to =
+be changed.
+> > > > > > > > Changing it has the advantage that the error handling can b=
+e done at the
+> > > > > > > > caller, in common code, instead of duplicating it for all
+> > > > > > > > architectures, possibly
+> > > > > > > > leading to different semantics.
+> > > > > > >
+> > > > > > > Given that *all* current users of syscall_get_arguments speci=
+fy i =3D=3D 0
+> > > > > > > (and there is an architecture that has BUG_ON(i)),
+> > > > > > > it should be really a usage error to get into situation where=
+ i + n > 6,
+> > > > > > > I wish a BUILD_BUG_ON could be used here instead.
+> > > > > > >
+> > > > > > > I don't think it worths pushing the change of API just to con=
+vert
+> > > > > > > a "cannot happen" assertion into an error that would have to =
+be dealt with
+> > > > > > > on the caller side.
+> > > > > >
+> > > > > > I suggest the following BUG_ON replacement for syscall_get_argu=
+ments:
+> > > > > >
+> > > > > > #define SYSCALL_MAX_ARGS 6
+> > > > > >
+> > > > > > static inline void
+> > > > > > syscall_get_arguments(struct task_struct *task, struct pt_regs =
+*regs,
+> > > > > >                       unsigned int i, unsigned int n, unsigned =
+long *args)
+> > > > > > {
+> > > > > >         /*
+> > > > > >          * Ideally there should have been
+> > > > > >          * BUILD_BUG_ON(i + n > SYSCALL_MAX_ARGS);
+> > > > > >          * instead of these checks.
+> > > > > >          */
+> > > > > >         if (unlikely(i > SYSCALL_MAX_ARGS)) {
+> > > > > >                 WARN_ONCE(1, "i > SYSCALL_MAX_ARGS");
+> > > > > >                 return;
+> > > > >
+> > > > > Does this have security implications, as args is an output parame=
+ter?
+> > > > > I.e. if you don't fill the array, the caller will use whatever is=
+ on the stack.
+> > > > > Can this ever be passed to userspace, leaking data?
+> > > >
+> > > > In the current kernel code n is always less or equal to 6,
+> > > > but in theory future changes can potentially break the assertion
+> > > > and this could lead to leaking data to userspace.
+> > >
+> > > OK.
+> > >
+> > > > Do you think we should rather be defensive and add some memsets, e.=
+g.
+> > > >
+> > > >         if (unlikely(i > SYSCALL_MAX_ARGS)) {
+> > > >                 WARN_ONCE(1, "i > SYSCALL_MAX_ARGS");
+> > > >                 memset(args, 0, n * sizeof(args[0]));
+> > > >                 return;
+> > > >         }
+> > > >         if (unlikely(n > SYSCALL_MAX_ARGS - i)) {
+> > > >                 unsigned int extra =3D n - (SYSCALL_MAX_ARGS - i);
+> > > >
+> > > >                 WARN_ONCE(1, "i + n > SYSCALL_MAX_ARGS");
+> > > >                 n =3D SYSCALL_MAX_ARGS - i;
+> > > >                 memset(&args[n], 0, extra * sizeof(args[0]));
+> > > >         }
+> > > > ?
+> > >
+> > > Yes please.
+> > >
+> > > But please handle all of that in the generic code, so it doesn't have=
+ to be
+> > > replicated across all architectures.
+> > >
+> > > E.g. make syscall_get_arguments() a wrapper in generic code, calling
+> > > __syscall_get_arguments() in architecture-specific code.
+> > >
+> > > And make the latter return int, so it can indicate other failures.
+> >
+> > Other failures?  What syscall_get_arguments is expected to do
+> > if __syscall_get_arguments returned, say, -1?
+>=20
+> Fail. Just like in case of other generic ill conditions it can detect its=
+elf.
+
+Sorry, I don't quite follow.  syscall_get_arguments() has no return code,
+so all it can possibly do is to zero out args[], e.g.
+
+        if (unlikely(__syscall_get_arguments(task, regs, i, n, args) < 0)) {
+                memset(args, 0, n * sizeof(args[0]));
+                return;
+        }
+
+Do you mean this?
 
 
-On 2018-12-12 06:21, Yueyi Li wrote:
-> Hi Markus,
-> 
-> OK, thanks. I`ll change it in v3.
-> 
-> Thanks,
-> Yueyi
-> 
-> On 2018/12/6 23:03, Markus F.X.J. Oberhumer wrote:
->> Hi Yueyi,
->>
->> yes, my LZO patch works for all cases.
->>
->> The reason behind the issue in the first place is that if KASLR
->> includes the very last page 0xfffffffffffff000 then we do not have a
->> valid C "pointer to an object" anymore because of address wraparound.
->>
->> Unrelated to my patch I'd argue that KASLR should *NOT* include the
->> very last page - indeed that might cause similar wraparound problems
->> in lots of code.
->>
->> Eg, look at this simple clear_memory() implementation:
->>
->> void clear_memory(char *p, size_t len) {
->>          char *end = p + len;
->>          while (p < end)
->>                  *p++= 0;
->> }
->>
->> Valid code like this will fail horribly when (p, len) is the very
->> last virtual page (because end will be the NULL pointer in this case).
->>
->> Cheers,
->> Markus
->>
->>
->>
->> On 2018-12-05 04:07, Yueyi Li wrote:
->>> Hi Markus,
->>>
->>> Thanks for your review.
->>>
->>> On 2018/12/4 18:20, Markus F.X.J. Oberhumer wrote:
->>>> Hi,
->>>>
->>>> I don't think that address space wraparound is legal in C, but I
->>>> understand that we are in kernel land and if you really want to
->>>> compress the last virtual page 0xfffffffffffff000 the following
->>>> small patch should fix that dubious case.
->>> I guess the VA 0xfffffffffffff000 is available because KASLR be
->>> enabled. For this case we can see:
->>>
->>> crash> kmem 0xfffffffffffff000
->>>         PAGE               PHYSICAL      MAPPING       INDEX CNT FLAGS
->>> ffffffbfffffffc0        1fffff000 ffffffff1655ecb9  7181fd5  2
->>> 8000000000064209 locked,uptodate,owner_priv_1,writeback,reclaim,swapbacked
->>>
->>>> This also avoids slowing down the the hot path of the compression
->>>> core function.
->>>>
->>>> Cheers,
->>>> Markus
->>>>
->>>>
->>>>
->>>> diff --git a/lib/lzo/lzo1x_compress.c b/lib/lzo/lzo1x_compress.c
->>>> index 236eb21167b5..959dec45f6fe 100644
->>>> --- a/lib/lzo/lzo1x_compress.c
->>>> +++ b/lib/lzo/lzo1x_compress.c
->>>> @@ -224,8 +224,8 @@ int lzo1x_1_compress(const unsigned char *in, size_t in_len,
->>>>    
->>>>           while (l > 20) {
->>>>                   size_t ll = l <= (M4_MAX_OFFSET + 1) ? l : (M4_MAX_OFFSET + 1);
->>>> -               uintptr_t ll_end = (uintptr_t) ip + ll;
->>>> -               if ((ll_end + ((t + ll) >> 5)) <= ll_end)
->>>> +               // check for address space wraparound
->>>> +               if (((uintptr_t) ip + ll + ((t + ll) >> 5)) <= (uintptr_t) ip)
->>>>                           break;
->>>>                   BUILD_BUG_ON(D_SIZE * sizeof(lzo_dict_t) > LZO1X_1_MEM_COMPRESS);
->>>>                   memset(wrkmem, 0, D_SIZE * sizeof(lzo_dict_t));
->>> I parsed panic ramdump and loaded CPU register values,  can see:
->>>
->>> -000|lzo1x_1_do_compress(
->>>       |    in = 0xFFFFFFFFFFFFF000,
->>>       |  ?,
->>>       |    out = 0xFFFFFFFF2E2EE000,
->>>       |    out_len = 0xFFFFFF801CAA3510,
->>>       |  ?,
->>>       |    wrkmem = 0xFFFFFFFF4EBC0000)
->>>       |  dict = 0xFFFFFFFF4EBC0000
->>>       |  op = 0x1
->>>       |  ip = 0x9
->>>       |  ii = 0x9
->>>       |  in_end = 0x0
->>>       |  ip_end = 0xFFFFFFFFFFFFFFEC
->>>       |  m_len = 0
->>>       |  m_off = 1922
->>> -001|lzo1x_1_compress(
->>>       |    in = 0xFFFFFFFFFFFFF000,
->>>       |    in_len = 0,
->>>       |    out = 0xFFFFFFFF2E2EE000,
->>>       |    out_len = 0x00000001616FB7D0,
->>>       |    wrkmem = 0xFFFFFFFF4EBC0000)
->>>       |  ip = 0xFFFFFFFFFFFFF000
->>>       |  op = 0xFFFFFFFF2E2EE000
->>>       |  l = 4096
->>>       |  t = 0
->>>       |  ll = 4096
->>>
->>> ll = l = in_len = 4096 in lzo1x_1_compress,  so your patch is working
->>> for this panic case, but, I`m
->>> not sure, is it possible that in = 0xFFFFFFFFFFFFF000 and  in_len < 4096?
->>>
->>>
->>> Thanks,
->>> Yueyi
->>>
-> 
-> 
+--=20
+ldv
 
--- 
-Markus Oberhumer, <markus@oberhumer.com>, http://www.oberhumer.com/
+--gKMricLos+KVdGMg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJcEQEKAAoJEAVFT+BVnCUIKKEP/1ZzlaZ6us8HpKCmygx7UeML
+2F31jyNrZgHC8P1y90krvSsmf3MTnDydnIbXd66HMoD90/gilmCETCz1Ssi+65M8
+FDd8S2y+sVWVKS2OR9YN64fBGlegJZkRaSgE6X5gz54Q27j43RqUmLz4814nIP06
+NrZZzCp7T/lSlb+lTia6LXEyNhlvu8LMfHtJH0NdiZwJhIqbI/g9b+Y2oC56mKQZ
+9NcuiGsoAAZUgm5ZBbvxrV0DJTlc3UBbaXz0THk0JhHL3oP3sRrCI9tlV45LvnvD
+LA1YBxKHIx1/3ccNq+KutkVwhG4mpnhxWdiz1dyFwFLP4HoJO8fZSxYfK5rG0i1r
+KCRYJKscQRC44LNp1H0BHzODii4YiO9bZGdWJK3nnBiww3Xr9k/tXeQNniFgGERQ
+p63jv7Lg8vRsFWL0fg+qL6lvvWyMPIoeuKWpR3bGg80JDVyp0DQCdXPK6RBREF8D
+FS4B1+OIAKuqWL94Gbl9rcKD94DmM0i50K10TpTYc0iRAcI9qVctdayOeXQU2blW
+bvXn7vmprULMoctQIUKgCMivROTuGuqgBBVGpKug9TEIivWjLnY+YAvXzKzcMe8w
+4cQ7Rb1qq26cRfzIz+H+FZFuZ+jt6/Xpx/pBZwIWUb78EGyBouNItkDCZSXlpKoh
+yE6PT1Lo9/CMjrYKsZ44
+=Ictp
+-----END PGP SIGNATURE-----
+
+--gKMricLos+KVdGMg--
