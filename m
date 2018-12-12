@@ -2,164 +2,226 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	T_MIXED_ES,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCFC4C65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 21:59:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89717C65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 22:00:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F40320849
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 21:59:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F40320849
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 01E7420849
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 22:00:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VH4eolPt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01E7420849
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728306AbeLLV7h (ORCPT
+        id S1728373AbeLLWAb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 16:59:37 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:33768 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726294AbeLLV7h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 16:59:37 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E03F6C057F81;
-        Wed, 12 Dec 2018 21:59:35 +0000 (UTC)
-Received: from redhat.com (ovpn-124-14.rdu2.redhat.com [10.10.124.14])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6E066103BAB6;
-        Wed, 12 Dec 2018 21:59:33 +0000 (UTC)
-Date:   Wed, 12 Dec 2018 16:59:31 -0500
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Jan Kara <jack@suse.cz>, John Hubbard <jhubbard@nvidia.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        John Hubbard <john.hubbard@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>, tom@talpey.com,
-        Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
-        Christoph Hellwig <hch@infradead.org>,
-        Christopher Lameter <cl@linux.com>,
-        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Michal Hocko <mhocko@kernel.org>, mike.marciniszyn@intel.com,
-        rcampbell@nvidia.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
-Message-ID: <20181212215931.GG5037@redhat.com>
-References: <20181205011519.GV10377@bombadil.infradead.org>
- <20181205014441.GA3045@redhat.com>
- <59ca5c4b-fd5b-1fc6-f891-c7986d91908e@nvidia.com>
- <7b4733be-13d3-c790-ff1b-ac51b505e9a6@nvidia.com>
- <20181207191620.GD3293@redhat.com>
- <3c4d46c0-aced-f96f-1bf3-725d02f11b60@nvidia.com>
- <20181208022445.GA7024@redhat.com>
- <20181210102846.GC29289@quack2.suse.cz>
- <20181212150319.GA3432@redhat.com>
- <20181212214641.GB29416@dastard>
+        Wed, 12 Dec 2018 17:00:31 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:37565 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726263AbeLLWAa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 17:00:30 -0500
+Received: by mail-pg1-f196.google.com with SMTP id 80so8968717pge.4;
+        Wed, 12 Dec 2018 14:00:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=kH2NrjB5vcSca6qFFYtJujxGB4LhmIsrnFoTdHgon5M=;
+        b=VH4eolPt04dVsVDV6BpqC0rdpE2bfn3G7MMdUYUIp0T7ZsyySM9SPJnkmF0sq86gvm
+         MqqoErFrsrg8BH4+4EuCA8vOR8woekBaVzMPtDVQkcsLY2V0Wkg8396uD8qE9vLY688N
+         Ty/9W5cbFHwyyio5O/HuxPwWYgNOeHpYJUNHS0l2f0pQydZqtIKx3b2Cj/Vnke8x/9Ry
+         08Oc4Tn38xrsM2z9EFQq7+rIpg3E2VoEJwl2Ti6500JpZ28gKAzc2obSvnVGVI02xpPn
+         S0WRJYPVeaOSx1hTH382AYO806ScowFifCoiicZy3eujQHH7GOoSW4Tgv4J7kfLF7Ugl
+         j3Ug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=kH2NrjB5vcSca6qFFYtJujxGB4LhmIsrnFoTdHgon5M=;
+        b=URm+RN6uSIkjXlVCkfSAJHCfmTHjW3JzIParSo1IqttyKqR1lL5XblZQBuiHYSUoz6
+         +xJvOGoxXmQcl1QMvkZM7f1/IXrgXS4WWZ+TTPYuc5DAkyWWZTppHm/OkfW2dSQ3mgfm
+         p8MXA5LIaEZvx2uuvD2oTvKwBrWbC2uI47KZQSuqdfV/OBArHSkesK+XOB3N3wrj1g1o
+         f4mEkRXsDSa3BSDOVNnGThsq9XjhY/mqHi4iLyTVMBPNysWOFPHiprVGW3r0AM3mGyUX
+         fBvS7zXDl+xcw6qNDHN0dBCD1zS/QRbun4w/rr3MtidGZllExhOiRk/wPjJ1M+qHqBkm
+         3Mig==
+X-Gm-Message-State: AA+aEWZ4XJZ47WfVdBsqKdln10fHfFhO2f45ESiwSjKJkehNhEYvKoHZ
+        X+QlY2+CDzEd9JUfbzW6ACM=
+X-Google-Smtp-Source: AFSGD/WlPIwm9wZ9L+sKgMNLwRVXtb9+cXuTsJgVWqvzrQf83De+U9OMf67GDCSGbjaI1vviCLkaRA==
+X-Received: by 2002:a65:4ccb:: with SMTP id n11mr20179898pgt.257.1544652029523;
+        Wed, 12 Dec 2018 14:00:29 -0800 (PST)
+Received: from [192.168.1.70] (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
+        by smtp.gmail.com with ESMTPSA id i184sm26778885pfc.41.2018.12.12.14.00.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 12 Dec 2018 14:00:28 -0800 (PST)
+Subject: Re: [PATCH v03] powerpc/mobility: Fix node detach/rename problem
+To:     Rob Herring <robh+dt@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     mwb@linux.vnet.ibm.com,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
+        tlfalcon@linux.vnet.ibm.com, minkim@us.ibm.com,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <a2d46622-a957-dffe-04d1-8087bbf0f8b5@linux.vnet.ibm.com>
+ <871s6oxkdf.fsf@concordia.ellerman.id.au>
+ <CAL_Jsq+t--486MiSsHnKcVy=q2wVvJgUmtAV6Vy2WwSNKymELA@mail.gmail.com>
+From:   Frank Rowand <frowand.list@gmail.com>
+Message-ID: <48aa028d-b786-7704-70ff-75a6d2321474@gmail.com>
+Date:   Wed, 12 Dec 2018 14:00:27 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181212214641.GB29416@dastard>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Wed, 12 Dec 2018 21:59:36 +0000 (UTC)
+In-Reply-To: <CAL_Jsq+t--486MiSsHnKcVy=q2wVvJgUmtAV6Vy2WwSNKymELA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 13, 2018 at 08:46:41AM +1100, Dave Chinner wrote:
-> On Wed, Dec 12, 2018 at 10:03:20AM -0500, Jerome Glisse wrote:
-> > On Mon, Dec 10, 2018 at 11:28:46AM +0100, Jan Kara wrote:
-> > > On Fri 07-12-18 21:24:46, Jerome Glisse wrote:
-> > > So this approach doesn't look like a win to me over using counter in struct
-> > > page and I'd rather try looking into squeezing HMM public page usage of
-> > > struct page so that we can fit that gup counter there as well. I know that
-> > > it may be easier said than done...
-> > 
-> > So i want back to the drawing board and first i would like to ascertain
-> > that we all agree on what the objectives are:
-> > 
-> >     [O1] Avoid write back from a page still being written by either a
-> >          device or some direct I/O or any other existing user of GUP.
-> >          This would avoid possible file system corruption.
-> > 
-> >     [O2] Avoid crash when set_page_dirty() is call on a page that is
-> >          considered clean by core mm (buffer head have been remove and
-> >          with some file system this turns into an ugly mess).
+Hi Michael Bringmann,
+
+On 12/11/18 8:07 AM, Rob Herring wrote:
+> On Tue, Dec 11, 2018 at 7:29 AM Michael Ellerman <mpe@ellerman.id.au> wrote:
+>>
+>> Hi Michael,
+>>
+>> Please Cc the device tree folks on device tree patches, and also the
+>> original author of the patch that added the code you're modifying.
+>>
+>> So I've added:
+>>   robh+dt@kernel.org
+>>   frowand.list@gmail.com
+>>   devicetree@vger.kernel.org
+>>   linux-kernel@vger.kernel.org
+>>
+>> Michael Bringmann <mwb@linux.vnet.ibm.com> writes:
+>>> The PPC mobility code receives RTAS requests to delete nodes with
+>>> platform-/hardware-specific attributes when restarting the kernel
+>>> after a migration.  My example is for migration between a P8 Alpine
+>>> and a P8 Brazos.   Nodes to be deleted include 'ibm,random-v1',
+>>> 'ibm,platform-facilities', 'ibm,sym-encryption-v1', and,
+>>> 'ibm,compression-v1'.
+>>>
+>>> The mobility.c code calls 'of_detach_node' for the nodes and their
+>>> children.  This makes calls to detach the properties and to remove
+>>> the associated sysfs/kernfs files.
+>>>
+>>> Then new copies of the same nodes are next provided by the PHYP,
+>>> local copies are built, and a pointer to the 'struct device_node'
+>>> is passed to of_attach_node.  Before the call to of_attach_node,
+>>> the phandle is initialized to 0 when the data structure is alloced.
+>>> During the call to of_attach_node, it calls __of_attach_node which
+>>> pulls the actual name and phandle from just created sub-properties
+>>> named something like 'name' and 'ibm,phandle'.
+>>>
+>>> This is all fine for the first migration.  The problem occurs with
+>>> the second and subsequent migrations when the PHYP on the new system
+>>> wants to replace the same set of nodes again, referenced with the
+>>> same names and phandle values.
+>>>
+>>> On the second and subsequent migrations, the PHYP tells the system
+>>> to again delete the nodes 'ibm,platform-facilities', 'ibm,random-v1',
+>>> 'ibm,compression-v1', 'ibm,sym-encryption-v1'.  It specifies these
+>>> nodes by its known set of phandle values -- the same handles used
+>>> by the PHYP on the source system are known on the target system.
+>>> The mobility.c code calls of_find_node_by_phandle() with these values
+>>> and ends up locating the first instance of each node that was added
+>>> during the original boot, instead of the second instance of each node
+>>> created after the first migration.  The detach during the second
+>>> migration fails with errors like,
+>>>
+>>> [ 4565.030704] WARNING: CPU: 3 PID: 4787 at drivers/of/dynamic.c:252 __of_detach_node+0x8/0xa0
+>>> [ 4565.030708] Modules linked in: nfsv3 nfs_acl nfs tcp_diag udp_diag inet_diag unix_diag af_packet_diag netlink_diag lockd grace fscache sunrpc xts vmx_crypto sg pseries_rng binfmt_misc ip_tables xfs libcrc32c sd_mod ibmveth ibmvscsi scsi_transport_srp dm_mirror dm_region_hash dm_log dm_mod
+>>> [ 4565.030733] CPU: 3 PID: 4787 Comm: drmgr Tainted: G        W         4.18.0-rc1-wi107836-v05-120+ #201
+>>> [ 4565.030737] NIP:  c0000000007c1ea8 LR: c0000000007c1fb4 CTR: 0000000000655170
+>>> [ 4565.030741] REGS: c0000003f302b690 TRAP: 0700   Tainted: G        W          (4.18.0-rc1-wi107836-v05-120+)
+>>> [ 4565.030745] MSR:  800000010282b033 <SF,VEC,VSX,EE,FP,ME,IR,DR,RI,LE,TM[E]>  CR: 22288822  XER: 0000000a
+>>> [ 4565.030757] CFAR: c0000000007c1fb0 IRQMASK: 1
+>>> [ 4565.030757] GPR00: c0000000007c1fa4 c0000003f302b910 c00000000114bf00 c0000003ffff8e68
+>>> [ 4565.030757] GPR04: 0000000000000001 ffffffffffffffff 800000c008e0b4b8 ffffffffffffffff
+>>> [ 4565.030757] GPR08: 0000000000000000 0000000000000001 0000000080000003 0000000000002843
+>>> [ 4565.030757] GPR12: 0000000000008800 c00000001ec9ae00 0000000040000000 0000000000000000
+>>> [ 4565.030757] GPR16: 0000000000000000 0000000000000008 0000000000000000 00000000f6ffffff
+>>> [ 4565.030757] GPR20: 0000000000000007 0000000000000000 c0000003e9f1f034 0000000000000001
+>>> [ 4565.030757] GPR24: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+>>> [ 4565.030757] GPR28: c000000001549d28 c000000001134828 c0000003ffff8e68 c0000003f302b930
+>>> [ 4565.030804] NIP [c0000000007c1ea8] __of_detach_node+0x8/0xa0
+>>> [ 4565.030808] LR [c0000000007c1fb4] of_detach_node+0x74/0xd0
+>>> [ 4565.030811] Call Trace:
+>>> [ 4565.030815] [c0000003f302b910] [c0000000007c1fa4] of_detach_node+0x64/0xd0 (unreliable)
+>>> [ 4565.030821] [c0000003f302b980] [c0000000000c33c4] dlpar_detach_node+0xb4/0x150
+>>> [ 4565.030826] [c0000003f302ba10] [c0000000000c3ffc] delete_dt_node+0x3c/0x80
+>>> [ 4565.030831] [c0000003f302ba40] [c0000000000c4380] pseries_devicetree_update+0x150/0x4f0
+>>> [ 4565.030836] [c0000003f302bb70] [c0000000000c479c] post_mobility_fixup+0x7c/0xf0
+>>> [ 4565.030841] [c0000003f302bbe0] [c0000000000c4908] migration_store+0xf8/0x130
+>>> [ 4565.030847] [c0000003f302bc70] [c000000000998160] kobj_attr_store+0x30/0x60
+>>> [ 4565.030852] [c0000003f302bc90] [c000000000412f14] sysfs_kf_write+0x64/0xa0
+>>> [ 4565.030857] [c0000003f302bcb0] [c000000000411cac] kernfs_fop_write+0x16c/0x240
+>>> [ 4565.030862] [c0000003f302bd00] [c000000000355f20] __vfs_write+0x40/0x220
+>>> [ 4565.030867] [c0000003f302bd90] [c000000000356358] vfs_write+0xc8/0x240
+>>> [ 4565.030872] [c0000003f302bde0] [c0000000003566cc] ksys_write+0x5c/0x100
+>>> [ 4565.030880] [c0000003f302be30] [c00000000000b288] system_call+0x5c/0x70
+>>> [ 4565.030884] Instruction dump:
+>>> [ 4565.030887] 38210070 38600000 e8010010 eb61ffd8 eb81ffe0 eba1ffe8 ebc1fff0 ebe1fff8
+>>> [ 4565.030895] 7c0803a6 4e800020 e9230098 7929f7e2 <0b090000> 2f890000 4cde0020 e9030040
+>>> [ 4565.030903] ---[ end trace 5bd54cb1df9d2976 ]---
+>>>
+>>> The mobility.c code continues on during the second migration, accepts
+>>> the definitions of the new nodes from the PHYP and ends up renaming
+>>> the new properties e.g.
+>>>
+>>> [ 4565.827296] Duplicate name in base, renamed to "ibm,platform-facilities#1"
+>>>
+>>> There is no check like 'of_node_check_flag(np, OF_DETACHED)' within
+>>> of_find_node_by_phandle to skip nodes that are detached, but still
+>>> present due to caching or use count considerations.  Also, note that
+>>> of_find_node_by_phandle also uses a 'phandle_cache' which does not
+>>> appear to be updated when of_detach_node() is invoked.
+>>
+>> This seems like the real bug. Since the phandle cache was added we can
+>> now find detached nodes when we shouldn't be able to.
+>>
+>> Does the patch below work?
+>>
+>> cheers
+>>
+>> diff --git a/drivers/of/base.c b/drivers/of/base.c
+>> index 09692c9b32a7..d8e4534c0686 100644
+>> --- a/drivers/of/base.c
+>> +++ b/drivers/of/base.c
+>> @@ -1190,6 +1190,10 @@ struct device_node *of_find_node_by_phandle(phandle handle)
+>>                 if (phandle_cache[masked_handle] &&
+>>                     handle == phandle_cache[masked_handle]->phandle)
+>>                         np = phandle_cache[masked_handle];
+>> +
+>> +               /* If we find a detached node, remove it */
+>> +               if (of_node_check_flag(np, OF_DETACHED))
+>> +                       np = phandle_cache[masked_handle] = NULL;
+
+The bug you found exposes a couple of different issues, a little bit
+deeper than the proposed fix.  I'll work on a fuller fix tonight or
+tomorrow.
+
+
+> I'm wondering if we should explicitly remove the node from the cache
+> when we set OF_DETACHED. Otherwise, it could be possible that the node
+> pointer has been freed already. Or maybe we need both?
+
+Yes, it should be explicitly removed.  I may also add in a paranoia check in
+of_find_node_by_phandle().
+
+-Frank
+
 > 
-> I think that's wrong. This isn't an "avoid a crash" case, this is a
-> "prevent data and/or filesystem corruption" case. The primary goal
-> we have here is removing our exposure to potential corruption, which
-> has the secondary effect of avoiding the crash/panics that currently
-> occur as a result of inconsistent page/filesystem state.
-
-This is O1 avoid corruption is O1
-
+> Rob
 > 
-> i.e. The goal is to have ->page_mkwrite() called on the clean page
-> /before/ the file-backed page is marked dirty, and hence we don't
-> expose ourselves to potential corruption or crashes that are a
-> result of inappropriately calling set_page_dirty() on clean
-> file-backed pages.
 
-Yes and this would be handle by put_user_page ie:
-
-put_user_page(struct page *page, bool dirty)
-{
-    if (!PageAnon(page)) {
-        if (dirty) {
-            // Do the whole dance ie page_mkwrite and all before
-            // calling set_page_dirty()
-        }
-        ...
-    }
-    ...
-}
-
-> 
-> > For [O1] and [O2] i believe a solution with mapcount would work. So
-> > no new struct, no fake vma, nothing like that. In GUP for file back
-> > pages we increment both refcount and mapcount (we also need a special
-> > put_user_page to decrement mapcount when GUP user are done with the
-> > page).
-> 
-> I don't see how a mapcount can prevent anyone from calling
-> set_page_dirty() inappropriately.
-
-See above.
-
-> 
-> > Now for [O1] the write back have to call page_mkclean() to go through
-> > all reverse mapping of the page and map read only. This means that
-> > we can count the number of real mapping and see if the mapcount is
-> > bigger than that. If mapcount is bigger than page is pin and we need
-> > to use a bounce page to do the writeback.
-> 
-> Doesn't work. Generally filesystems have already mapped the page
-> into bios before they call clear_page_dirty_for_io(), so it's too
-> late for the filesystem to bounce the page at that point.
-> 
-> > For [O2] i believe we can handle that case in the put_user_page()
-> > function to properly dirty the page without causing filesystem
-> > freak out.
-> 
-> I'm pretty sure you can't call ->page_mkwrite() from
-> put_user_page(), so I don't think this is workable at all.
-
-Hu why ? i can not think of any reason whike you could not. User of
-GUP have their put_user_page in tearing down code and i do not see
-why it would be an issue there. Even for direct I/O i can not think
-of anything that would block us from doing that. So this put_user_page
-is not call while holding any other mm of fs locks.
-
-Do you have some rough idea of what the issue would be ?
-
-Cheers,
-Jérôme
