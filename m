@@ -2,96 +2,115 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96119C67839
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 23:55:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C497C67872
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 23:57:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61BF120835
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 23:55:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61BF120835
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 5569620835
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 23:57:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kudzu-us.20150623.gappssmtp.com header.i=@kudzu-us.20150623.gappssmtp.com header.b="XWJry75D"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5569620835
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kudzu.us
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728572AbeLLXzk (ORCPT
+        id S1728403AbeLLX5f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 18:55:40 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:43322 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726790AbeLLXzj (ORCPT
+        Wed, 12 Dec 2018 18:57:35 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:41397 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726355AbeLLX5e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 18:55:39 -0500
-Received: from localhost.localdomain (c-24-6-170-16.hsd1.ca.comcast.net [24.6.170.16])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E4E0DB55;
-        Wed, 12 Dec 2018 23:55:37 +0000 (UTC)
-Date:   Wed, 12 Dec 2018 15:55:36 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Josef Bacik <josef@toxicpanda.com>
-Cc:     kernel-team@fb.com, hannes@cmpxchg.org,
-        linux-kernel@vger.kernel.org, tj@kernel.org, david@fromorbit.com,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, riel@redhat.com,
-        jack@suse.cz
-Subject: Re: [PATCH][v6] filemap: drop the mmap_sem for all blocking
- operations
-Message-Id: <20181212155536.5fb770a0c9b4f2399d4794e4@linux-foundation.org>
-In-Reply-To: <20181212152757.10017-1-josef@toxicpanda.com>
-References: <20181211173801.29535-4-josef@toxicpanda.com>
-        <20181212152757.10017-1-josef@toxicpanda.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Wed, 12 Dec 2018 18:57:34 -0500
+Received: by mail-io1-f65.google.com with SMTP id s22so170096ioc.8
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 15:57:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kudzu-us.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=DSObcjHaK4sHxqigYcCt9BycM8y1WzOo4LLf84PPirw=;
+        b=XWJry75DcdVgls8MHcOr54pbpvRqX2LmkjqqDy3GEmpRoM7utd+msU3Gj+OuozMzxG
+         6oxDlgDhP/J9IAAZsrG5XHAh+BWlUgYBAUIb2dzcTthszirnLohighZHM15v2xrQLavH
+         MX+YIl0e0LiSNzWB21TmNcq9ik83sQUiv1upa0Pyi3zEVVtRC20umwWGjbchgfOYr76h
+         G/obelxW+Qx6ivxy56dbLDqIZRMeRtqi1ONkgeYTkMpyp5pv6id7IxaTFoCQjqSjWS8Y
+         cjpBEpj39b5y9+pI7PtFsfQz7y/mx+rs4GArBDNk/aTye21avGgF9/ZxzVoCo8C4qeqm
+         eQRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=DSObcjHaK4sHxqigYcCt9BycM8y1WzOo4LLf84PPirw=;
+        b=XcVQI+6200VlcDX+b99PDPh/Vbn779Kw0UBlHnLk+Iozh/eEGk3tbuotD7iTGcWmhX
+         uOUBaWqu5nRlvqGHFoFoAfaDqndSV2/iovKcq8CDDxUkJyAiB9/faAV5U4xC9BFA7cMR
+         YZZvgKDlVrq6mbgkVDyVlKoTue2XsxRULA01oNOPwrooXnjTPpJQHRn6+GcfbZ0biChw
+         pfG81h8WGbcoIn/xAr8dGElXd4MLCMCiqh1BS54pDd6zMHMfPRL1zMSm2vHcx5K34Rtz
+         MgdCzLfwAY41ymra/aFx3YD6qlS1GubVgw95RjxBiULqmMGFY5eAtHY0fR08uBDcjFtg
+         eUBg==
+X-Gm-Message-State: AA+aEWbER5iA9lOaEFMdTvee6gXFkQPWZ0jEX3No5xeCuqQR0Dg9bzki
+        U5vJHzle7qKOp89BMfCOHcTXipDZP/xljhIr1/8m6Q==
+X-Google-Smtp-Source: AFSGD/XFcP01DdFPAuB+wWxf9u3vlLm18jVbluTVrciyM0o0GbCMP/0lTPSVdGHYsmx9wRXIoGNqnP0ftM/uj5lEmuo=
+X-Received: by 2002:a5e:d501:: with SMTP id e1mr20856742iom.291.1544659052843;
+ Wed, 12 Dec 2018 15:57:32 -0800 (PST)
+MIME-Version: 1.0
+References: <1544103052-28191-1-git-send-email-wesley.sheng@microchip.com>
+ <CAPoiz9yN9zHXxyuwmopfSwBLGr39bQ1SJjGq_ku-w_b9V13OFQ@mail.gmail.com> <f22b6112-920b-37f1-68fe-f43164a18f05@deltatee.com>
+In-Reply-To: <f22b6112-920b-37f1-68fe-f43164a18f05@deltatee.com>
+From:   Jon Mason <jdmason@kudzu.us>
+Date:   Wed, 12 Dec 2018 18:57:21 -0500
+Message-ID: <CAPoiz9xesBdtgVg1UGF8LuD28tjMp6VpVuHVjdwcWJq93Phi3w@mail.gmail.com>
+Subject: Re: [PATCH v2 0/3] ntb_hw_switchtec: Added support of >=4G memory windows
+To:     Logan Gunthorpe <logang@deltatee.com>
+Cc:     wesley.sheng@microchip.com,
+        Kurt Schwemmer <kurt.schwemmer@microsemi.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Allen Hubbe <allenbh@gmail.com>, linux-pci@vger.kernel.org,
+        linux-ntb@googlegroups.com,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        wesleyshenggit@sina.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 12 Dec 2018 10:27:57 -0500 Josef Bacik <josef@toxicpanda.com> wrote:
+On Wed, Dec 12, 2018 at 6:42 PM Logan Gunthorpe <logang@deltatee.com> wrote:
+>
+>
+>
+> On 2018-12-12 4:00 p.m., Jon Mason wrote:
+> > So, you based your patches on a series of patches not in the
+> > ntb/ntb-next branch?  Please don't do this.  I see nothing in these
+> > patches which requires that series, which makes this even more
+> > unnecessary.  Since these are fairly trivial, I'm taking them and
+> > pushing to the ntb-next branch to give these more time to be tested
+> > (due to not being tested on the proper branch).  I would really
+> > appreciate you testing the ntb-next branch as a sanity check.
+>
+> The NTB test tools don't work with switchtec hardware without that patch
+> set, so there's no way to test the changes without that branch.
 
-> v5->v6:
-> - added more comments as per Andrew's suggestion.
-> - fixed the fpin leaks in the two error paths that were pointed out.
-> 
+Then let's get those patches in.  IIRC, I asked you to split up the
+patch series to be bugfixes and features (or at least reorder the
+series so I can split it up that way in my branches).  Also, I think
+Serge had some comments that may/may not need to be addressed.  Could
+you please reorder and resend (and Serge can comment as needed on the
+resend)?
 
-hm,
+Thanks,
+Jon
 
-> --- a/mm/filemap.c~filemap-drop-the-mmap_sem-for-all-blocking-operations-v6
-> +++ a/mm/filemap.c
-> @@ -2461,7 +2476,8 @@ static struct file *do_sync_mmap_readahe
->  
->  /*
->   * Asynchronous readahead happens when we find the page and PG_readahead,
-> - * so we want to possibly extend the readahead further..
-> + * so we want to possibly extend the readahead further.  We return the file that
-> + * was pinned if we have to drop the mmap_sem in order to do IO.
->   */
->  static struct file *do_async_mmap_readahead(struct vm_fault *vmf,
->  					    struct page *page)
-> @@ -2545,14 +2561,15 @@ retry_find:
->  		page = pagecache_get_page(mapping, offset,
->  					  FGP_CREAT|FGP_FOR_MMAP,
->  					  vmf->gfp_mask);
-> -		if (!page)
-> +		if (!page) {
-> +			if (fpin)
-> +				goto out_retry;
 
-Is this right?  If pagecache_get_page() returns NULL we can now return
-VM_FAULT_MAJOR|VM_FAULT_RETRY whereas we used to return ENOMEM.
-
->  			return vmf_error(-ENOMEM);
-> +		}
->  	}
->  
-> -	if (!lock_page_maybe_drop_mmap(vmf, page, &fpin)) {
-> -		put_page(page);
-> -		return ret | VM_FAULT_RETRY;
-> -	}
-> +	if (!lock_page_maybe_drop_mmap(vmf, page, &fpin))
-> +		goto out_retry;
->  
->  	/* Did it get truncated? */
->  	if (unlikely(page->mapping != mapping)) {
-
+>
+> You're right that there is no compile-time dependency.
+>
+> Logan
+>
+> --
+> You received this message because you are subscribed to the Google Groups "linux-ntb" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to linux-ntb+unsubscribe@googlegroups.com.
+> To post to this group, send email to linux-ntb@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgid/linux-ntb/f22b6112-920b-37f1-68fe-f43164a18f05%40deltatee.com.
+> For more options, visit https://groups.google.com/d/optout.
