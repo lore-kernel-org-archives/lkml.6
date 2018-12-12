@@ -6,50 +6,50 @@ X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E56ACC04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 05:28:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89EECC65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 05:28:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB2A92086D
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 05:28:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F4B42086D
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 05:28:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544592530;
-	bh=p9qvVHV9nKGHqNLq+91oTrAC9ljetBkDKMlNDrEsRaE=;
+	s=default; t=1544592534;
+	bh=x3yt7cDSFI/vvKew8gCptbNdrB7mS16lpcqtXDBJ/Hg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=vCv9C2g8OBgzPQ2SnEPMJvJ9UkA3DehjO/y+tfMUClySCY+LECXvBQcbzCy3vISJN
-	 grXJ/qf/JV5HLvsYUn67PZu5goEQM+lDSXaeCBM8iSSnxRSK/UkCEhfkgzG9x6FetR
-	 dTrm47L6OlEv0GgA/szmRaDdvJ50f6OqHlCkkKbQ=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB2A92086D
+	b=VzTV+qxyBQEWzqbLAiHqp+5s05bKAizT8eMMYi5aiVyM0Gf1JFIO66TE3DyQuwFoe
+	 uuAq+0usW0VNIVTL1gqysZVlI03uxH7e/01va38Ti5m4C44zJ5A/WBrvVMhW6hFwVQ
+	 mmJlBUwCjby39DWCsbDzAg9ruZTfgyjcE5srR9vw=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F4B42086D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726486AbeLLF2t (ORCPT
+        id S1726509AbeLLF2x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 00:28:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48262 "EHLO mail.kernel.org"
+        Wed, 12 Dec 2018 00:28:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48280 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726242AbeLLF2t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 00:28:49 -0500
+        id S1726242AbeLLF2u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 00:28:50 -0500
 Received: from sinanubuntu1604.mkjiurmyylmellclgttazegk5f.bx.internal.cloudapp.net (unknown [40.117.78.127])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 78FE92086D;
-        Wed, 12 Dec 2018 05:28:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5D8A220870;
+        Wed, 12 Dec 2018 05:28:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1544592529;
-        bh=p9qvVHV9nKGHqNLq+91oTrAC9ljetBkDKMlNDrEsRaE=;
+        bh=x3yt7cDSFI/vvKew8gCptbNdrB7mS16lpcqtXDBJ/Hg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MMZvTERJH9HSROi6ViKtXpCRB/gyhsTwWvWdMikC5RA0klXFNU6ty3zmHUuw/uAzS
-         uurcERiFsHT2+brzTMCUGM5WGbVwLshbjcxe/eoWINTA97FgndyLyXkkyN7gsOW6um
-         5nJ3LPCCeD1+kPrNzBGSjsPfE6h17eGHT12YZusI=
+        b=0UgH6b+X1g22/1jknrBhlXieb4b0iY8UTGmN4ct1TVnbZ4Zrf397cJQdEA0CCR7OK
+         F2SnDnIs97TnNTV4dxp2yCDPzbah2j1Sk1nxJgmlOYVvrBkNPMfwqnnQ0E2RAumlpW
+         MJrtmQ1e6gOHHbAnOCVypkv+9K0WWPHCOXJRUN40=
 From:   Sinan Kaya <okaya@kernel.org>
 To:     linux-acpi@vger.kernel.org
 Cc:     Sinan Kaya <okaya@kernel.org>,
         "Rafael J. Wysocki" <rjw@rjwysocki.net>,
         Len Brown <lenb@kernel.org>,
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v5 1/5] ACPI: Allow CONFIG_PCI to be unset for reboot
-Date:   Wed, 12 Dec 2018 05:28:41 +0000
-Message-Id: <20181212052846.32370-2-okaya@kernel.org>
+Subject: [PATCH v5 2/5] ACPI / OSL: Stub out acpi_os_read_pci_configuration when CONFIG_PCI is unset
+Date:   Wed, 12 Dec 2018 05:28:42 +0000
+Message-Id: <20181212052846.32370-3-okaya@kernel.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181212052846.32370-1-okaya@kernel.org>
 References: <20181212052846.32370-1-okaya@kernel.org>
@@ -60,50 +60,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make PCI reboot conditional on PCI support being present on the kernel
-configuration.
+Getting ready to allow PCI to be disabled with ACPI enabled. Stub out
+acpi_os_read_pci_configuration function that depend on PCI.
 
 Signed-off-by: Sinan Kaya <okaya@kernel.org>
 ---
- drivers/acpi/reboot.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ drivers/acpi/osl.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/acpi/reboot.c b/drivers/acpi/reboot.c
-index 6fa9c2a4cfe9..d75e637ee36a 100644
---- a/drivers/acpi/reboot.c
-+++ b/drivers/acpi/reboot.c
-@@ -7,8 +7,6 @@
- void acpi_reboot(void)
+diff --git a/drivers/acpi/osl.c b/drivers/acpi/osl.c
+index b48874b8e1ea..3e82b50ba811 100644
+--- a/drivers/acpi/osl.c
++++ b/drivers/acpi/osl.c
+@@ -773,6 +773,7 @@ acpi_status
+ acpi_os_read_pci_configuration(struct acpi_pci_id * pci_id, u32 reg,
+ 			       u64 *value, u32 width)
  {
- 	struct acpi_generic_address *rr;
--	struct pci_bus *bus0;
--	unsigned int devfn;
- 	u8 reset_value;
- 
- 	if (acpi_disabled)
-@@ -33,6 +31,11 @@ void acpi_reboot(void)
- 	 * on a device on bus 0. */
- 	switch (rr->space_id) {
- 	case ACPI_ADR_SPACE_PCI_CONFIG:
-+	{
 +#ifdef CONFIG_PCI
-+		unsigned int devfn;
-+		struct pci_bus *bus0;
-+
- 		/* The reset register can only live on bus 0. */
- 		bus0 = pci_find_bus(0, 0);
- 		if (!bus0)
-@@ -44,8 +47,9 @@ void acpi_reboot(void)
- 		/* Write the value that resets us. */
- 		pci_bus_write_config_byte(bus0, devfn,
- 				(rr->address & 0xffff), reset_value);
+ 	int result, size;
+ 	u32 value32;
+ 
+@@ -799,6 +800,9 @@ acpi_os_read_pci_configuration(struct acpi_pci_id * pci_id, u32 reg,
+ 	*value = value32;
+ 
+ 	return (result ? AE_ERROR : AE_OK);
++#else
++	return pr_warn_once("CONFIG_PCI is disabled\n") ? AE_SUPPORT : AE_OK;
 +#endif
- 		break;
--
-+	}
- 	case ACPI_ADR_SPACE_SYSTEM_MEMORY:
- 	case ACPI_ADR_SPACE_SYSTEM_IO:
- 		printk(KERN_DEBUG "ACPI MEMORY or I/O RESET_REG.\n");
+ }
+ 
+ acpi_status
 -- 
 2.19.0
 
