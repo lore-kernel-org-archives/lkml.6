@@ -2,80 +2,276 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,T_MIXED_ES,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88BBEC65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 16:50:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF632C65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 16:52:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51F832080F
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 16:50:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51F832080F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 9C3EF2080F
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 16:52:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C3EF2080F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728277AbeLLQu0 (ORCPT
+        id S1727946AbeLLQwO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 11:50:26 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:46702 "EHLO mx1.redhat.com"
+        Wed, 12 Dec 2018 11:52:14 -0500
+Received: from foss.arm.com ([217.140.101.70]:45094 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728261AbeLLQuX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 11:50:23 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B73FA3004E78;
-        Wed, 12 Dec 2018 16:50:23 +0000 (UTC)
-Received: from vitty.brq.redhat.com (unknown [10.43.2.155])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 13A4C61B6E;
-        Wed, 12 Dec 2018 16:50:21 +0000 (UTC)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     kvm@vger.kernel.org
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        linux-kernel@vger.kernel.org, Roman Kagan <rkagan@virtuozzo.com>
-Subject: [PATCH v2 2/2] x86/kvm/hyper-v: disallow setting illegal vectors for direct mode stimers
-Date:   Wed, 12 Dec 2018 17:50:17 +0100
-Message-Id: <20181212165017.13278-3-vkuznets@redhat.com>
-In-Reply-To: <20181212165017.13278-1-vkuznets@redhat.com>
-References: <20181212165017.13278-1-vkuznets@redhat.com>
+        id S1727756AbeLLQwN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 11:52:13 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9FF1180D;
+        Wed, 12 Dec 2018 08:52:12 -0800 (PST)
+Received: from [10.1.197.36] (e112298-lin.cambridge.arm.com [10.1.197.36])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EC8DC3F575;
+        Wed, 12 Dec 2018 08:52:10 -0800 (PST)
+Subject: Re: [PATCH v7 00/25] arm64: provide pseudo NMI with GICv3
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org, daniel.thompson@linaro.org,
+        joel@joelfernandes.org, marc.zyngier@arm.com,
+        christoffer.dall@arm.com, james.morse@arm.com,
+        catalin.marinas@arm.com, will.deacon@arm.com, mark.rutland@arm.com
+References: <1544633245-6036-1-git-send-email-julien.thierry@arm.com>
+From:   Julien Thierry <julien.thierry@arm.com>
+Message-ID: <5543a23c-e314-439f-7cf1-e77855399742@arm.com>
+Date:   Wed, 12 Dec 2018 16:52:09 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Wed, 12 Dec 2018 16:50:23 +0000 (UTC)
+In-Reply-To: <1544633245-6036-1-git-send-email-julien.thierry@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-APIC vectors used for direct mode stimers should be valid for lAPIC and
-just like genuine Hyper-V we should #GP when an illegal one is specified.
+Hi,
 
-Add the appropriate check to stimer_set_config()
+This series + the core NMI patches can be fetched from:
 
-Suggested-by: Roman Kagan <rkagan@virtuozzo.com>
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
----
- arch/x86/kvm/hyperv.c | 5 +++++
- 1 file changed, 5 insertions(+)
+git clone http://linux-arm.org/linux-jt.git -b v4.20-pseudo-nmi
 
-diff --git a/arch/x86/kvm/hyperv.c b/arch/x86/kvm/hyperv.c
-index 0a16a77e6ac3..8723a802e9b7 100644
---- a/arch/x86/kvm/hyperv.c
-+++ b/arch/x86/kvm/hyperv.c
-@@ -549,6 +549,11 @@ static int stimer_set_config(struct kvm_vcpu_hv_stimer *stimer, u64 config,
- 	trace_kvm_hv_stimer_set_config(stimer_to_vcpu(stimer)->vcpu_id,
- 				       stimer->index, config, host);
- 
-+	/* Valid vectors for Direct Mode are 16..255. */
-+	if (new_config.enable && new_config.direct_mode &&
-+	    new_config.apic_vector < HV_SYNIC_FIRST_VALID_VECTOR)
-+		return 1;
-+
- 	stimer_cleanup(stimer);
- 	if (old_config.enable &&
- 	    !new_config.direct_mode && new_config.sintx == 0)
+Thanks,
+
+Julien
+
+On 12/12/2018 16:47, Julien Thierry wrote:
+> Hi,
+> 
+> This series is a continuation of the work started by Daniel [1]. The goal
+> is to use GICv3 interrupt priorities to simulate an NMI.
+> 
+> The patches depend on the core API for NMIs patches [2].
+> 
+> To achieve this, set two priorities, one for standard interrupts and
+> another, higher priority, for NMIs. Whenever we want to disable interrupts,
+> we mask the standard priority instead so NMIs can still be raised. Some
+> corner cases though still require to actually mask all interrupts
+> effectively disabling the NMI.
+> 
+> Daniel Thompson ran some benchmarks [3] on a previous version showing a
+> small (<1%) performance drop when using interrupt priorities on Cortex-A53
+> and GIC-500.
+> 
+> Currently, only PPIs and SPIs can be set as NMIs. IPIs being currently
+> hardcoded IRQ numbers, there isn't a generic interface to set SGIs as NMI
+> for now. LPIs being controlled by the ITS cannot be delivered as NMI.
+> When an NMI is active on a CPU, no other NMI can be triggered on the CPU.
+> 
+> Requirements to use this:
+> - Have GICv3
+> - SCR_EL3.FIQ is set to 1 when linux runs or have single security state
+> - Select Kernel Feature -> Use ICC system registers for IRQ masking
+> 
+> * Patch 1 fixes an existing issue with current NMI contexts in arm64
+> * Patches 2 and 3 are just a bit of cleanup
+> * Patch 4 introduces a CPU feature to check if priority masking should be
+>   used
+> * Patches 5 and 6 add the support for priority masking in GICv3 driver
+> * Patches 7 to 12 add the support for priority masking the arch/arm64
+>   code
+> * Patches 13 and 14 allow us to apply alternatives earlier in the boot
+>   process
+> * Patches 15 to 17 starts the PMR masking on cpu startup and provides
+>   primitives for arm64 GICv3 driver to perform priority masking
+> * Patches 18 to 21 Add support for pseudo-NMIs in GICv3 driver
+> * Patches 22 to 24 Add support for receiving NMIs in arch/arm64
+> * Patch 25 adds the build config and command line option to enable
+>   pseudo-NMIs
+> 
+> 
+> Changes since v6[4]:
+> * Rebased on v4.20-rc6
+> * Added Acked-by and Reviewed-by tags
+> * Added fix for NMI contexts (patch 1)
+> * Renamed system_supports_irq_prio_masking() to
+>   system_uses_irq_prio_masking()
+> * Added some comments about PMR and the fact we need dsb
+> * Use higher priority bit of PMR to disable IRQs, set NMI priority
+>   accordingly
+> * Stop mixing daif and PMR for irqflags, irqflags now only
+>   touch PMR
+> * Get rid of PMR defines for GIC_PRIO_STATUS bit as single bit encoding
+>   of PMR status is no longer relyed upon
+> * Mask priorities in a single place in GICv3 handler code, this
+>   ensures we use PMR when we receive spurious interrupts
+> * Write cpu_do_idle() in C
+> 
+> Changes since v5[5]:
+> * Rebased on v4.20-rc2
+> * Reorganized patches again
+> * Renamed compile option + PMR values defines
+> * Write PMR enablement for cpu startup in C
+> * Fix wrong array size passed to __apply_alternatives
+> * Do not touch PMR in pt_regs when not using irq masking
+> * Remove ISB between PMR and IAR -> turns out it is not needed
+> * Simplify irqflags code after introducing PMR in it
+> * Use ref count API to track PPIs set as NMI
+> * Simplify NMI exit path
+> 
+> Changes since V4[6]:
+> * Rebased to v4.19-rc1
+> * Adapted GIC driver to the core NMI API
+> * Added option to disable priority masking on command line
+> * Added Daniel's Tested-by on patches related replacing PSR.I toggling with
+>   PMR masking
+> * Fix scope matching for alternative features.
+> * Spotted some more places using PSR.I or daif and replaced with generic
+>   interrupt functions
+> 
+> Changes since V3[7]:
+> * Big refactoring. As suggested by Marc Z., some of the bigger patches
+>   needed to be split into smaller one.
+> * Try to reduce the amount of #ifdef for the new feature by introducing
+>   an individual cpufeature for priority masking
+> * Do not track which alternatives have been applied (was a bit dodgy
+>   anyway), and use an alternative for VHE cpu_enable callback
+> * Fix a build failure with arm by adding the correct RPR accessors
+> * Added Suggested-by tags for changes from coming or inspired by Daniel's
+>   series. Do let me know if you feel I missed something and am not giving
+>   you due credit.
+> 
+> Changes since V2[8]:
+> * Series rebase to v4.17-rc6
+> * Adapt pathces 1 and 2 to the rework of cpufeatures framework
+> * Use the group0 detection scheme in the GICv3 driver to identify
+>   the priority view, and drop the use of a fake interrupt
+> * Add the case for a GIC configured in a single security state
+> * Use local_daif_restore instead of local_irq_enable the first time
+>   we enable interrupts after a bp hardening in the handling of a kernel
+>   entry. Otherwise PRS.I remains set...
+> 
+> Changes since V1[9]:
+> * Series rebased to v4.15-rc8.
+> * Check for arm64_early_features in this_cpu_has_cap (spotted by Suzuki).
+> * Fix issue where debug exception were not masked when enabling debug in
+>   mdscr_el1.
+> 
+> Changes since RFC[10]:
+> * The series was rebased to v4.15-rc2 which implied some changes mainly
+>   related to the work on exception entries and daif flags by James Morse.
+>   - The first patch in the previous series was dropped because no longer
+>     applicable.
+>   - With the semantics James introduced of "inheriting" daif flags,
+>     handling of PMR on exception entry is simplified as PMR is not altered
+>     by taking an exception and already inherited from previous state.
+>   - James pointed out that taking a PseudoNMI before reading the FAR_EL1
+>     register should not be allowed as per the TRM (D10.2.29):
+>     "FAR_EL1 is made UNKNOWN on an exception return from EL1."
+>     So in this submission PSR.I bit is cleared only after FAR_EL1 is read.
+> * For KVM, only deal with PMR unmasking/restoring in common code, and VHE
+>   specific code makes sure PSR.I bit is set when necessary.
+> * When detecting the GIC priority view (patch 5), wait for an actual
+>   interrupt instead of trying only once.
+> 
+> 
+> [1] http://www.spinics.net/lists/arm-kernel/msg525077.html
+> [2] https://lkml.org/lkml/2018/11/12/2113
+> [3] https://lkml.org/lkml/2018/7/20/803
+> [4] https://www.spinics.net/lists/arm-kernel/msg686670.html
+> [5] https://lkml.org/lkml/2018/8/28/693
+> [6] https://lkml.org/lkml/2018/7/24/321
+> [7] https://lkml.org/lkml/2018/5/21/276
+> [8] https://lkml.org/lkml/2018/1/17/335
+> [9] https://www.spinics.net/lists/arm-kernel/msg620763.html
+> [10] https://www.spinics.net/lists/arm-kernel/msg610736.html
+> 
+> Cheers,
+> 
+> Julien
+> 
+> -->
+> 
+> Daniel Thompson (1):
+>   arm64: alternative: Apply alternatives early in boot process
+> 
+> Julien Thierry (24):
+>   arm64: Fix HCR.TGE status for NMI contexts
+>   arm64: Remove unused daif related functions/macros
+>   arm64: cpufeature: Set SYSREG_GIC_CPUIF as a boot system feature
+>   arm64: cpufeature: Add cpufeature for IRQ priority masking
+>   arm/arm64: gic-v3: Add PMR and RPR accessors
+>   irqchip/gic-v3: Switch to PMR masking before calling IRQ handler
+>   arm64: ptrace: Provide definitions for PMR values
+>   arm64: Make PMR part of task context
+>   arm64: Unmask PMR before going idle
+>   arm64: kvm: Unmask PMR before entering guest
+>   arm64: irqflags: Use ICC_PMR_EL1 for interrupt masking
+>   arm64: daifflags: Include PMR in daifflags restore operations
+>   arm64: alternative: Allow alternative status checking per cpufeature
+>   irqchip/gic-v3: Factor group0 detection into functions
+>   arm64: Switch to PMR masking when starting CPUs
+>   arm64: gic-v3: Implement arch support for priority masking
+>   irqchip/gic-v3: Detect if GIC can support pseudo-NMIs
+>   irqchip/gic-v3: Handle pseudo-NMIs
+>   irqchip/gic: Add functions to access irq priorities
+>   irqchip/gic-v3: Allow interrupts to be set as pseudo-NMI
+>   arm64: Handle serror in NMI context
+>   arm64: Skip preemption when exiting an NMI
+>   arm64: Skip irqflags tracing for NMI in IRQs disabled context
+>   arm64: Enable the support of pseudo-NMIs
+> 
+>  Documentation/admin-guide/kernel-parameters.txt |   6 +
+>  Documentation/arm64/booting.txt                 |   5 +
+>  arch/arm/include/asm/arch_gicv3.h               |  33 ++++
+>  arch/arm64/Kconfig                              |  14 ++
+>  arch/arm64/include/asm/alternative.h            |   4 +-
+>  arch/arm64/include/asm/arch_gicv3.h             |  32 +++
+>  arch/arm64/include/asm/assembler.h              |  10 +-
+>  arch/arm64/include/asm/cpucaps.h                |   3 +-
+>  arch/arm64/include/asm/cpufeature.h             |  10 +
+>  arch/arm64/include/asm/daifflags.h              |  41 ++--
+>  arch/arm64/include/asm/efi.h                    |   5 +-
+>  arch/arm64/include/asm/hardirq.h                |  28 +++
+>  arch/arm64/include/asm/irqflags.h               | 123 +++++++++---
+>  arch/arm64/include/asm/kvm_host.h               |  12 ++
+>  arch/arm64/include/asm/processor.h              |   3 +
+>  arch/arm64/include/asm/ptrace.h                 |  26 ++-
+>  arch/arm64/kernel/alternative.c                 |  60 +++++-
+>  arch/arm64/kernel/asm-offsets.c                 |   1 +
+>  arch/arm64/kernel/cpufeature.c                  |  42 +++-
+>  arch/arm64/kernel/entry.S                       |  43 ++++
+>  arch/arm64/kernel/irq.c                         |   3 +
+>  arch/arm64/kernel/process.c                     |  51 +++++
+>  arch/arm64/kernel/smp.c                         |  33 ++++
+>  arch/arm64/kernel/traps.c                       |   8 +-
+>  arch/arm64/kvm/hyp/switch.c                     |  16 ++
+>  arch/arm64/mm/proc.S                            |  11 --
+>  drivers/irqchip/irq-gic-common.c                |  10 +
+>  drivers/irqchip/irq-gic-common.h                |   2 +
+>  drivers/irqchip/irq-gic-v3.c                    | 252 +++++++++++++++++++++---
+>  include/asm-generic/hardirq.h                   |   3 +
+>  include/linux/hardirq.h                         |   2 +
+>  31 files changed, 780 insertions(+), 112 deletions(-)
+> 
+> --
+> 1.9.1
+> 
+
 -- 
-2.19.2
-
+Julien Thierry
