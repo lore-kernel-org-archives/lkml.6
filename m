@@ -2,113 +2,89 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF798C04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 06:48:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E33E0C04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 06:49:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89F1B2086D
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 06:48:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544597325;
-	bh=O2Uz3IU0n9VkF3JZ/PYrXWTL3dfkuqsi1wqgU+RGnzs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=KSUAuBPFVUCSizLD4v4HmULu3aW/SZhwWnfjxaOh6z1GEpcTJJD3/L681J2fmj3D/
-	 NjfdyhuvbkogVBJxBlYFQQ8C+GGIBCu2WBwKDfhgdaV20DJ1P8YJw8lAK5phmYm80i
-	 AZra0Ac7b248pf8V49BXY4kTYdNR1VuQx2BSKwTw=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89F1B2086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id B1F162084E
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 06:49:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1F162084E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726544AbeLLGso (ORCPT
+        id S1726580AbeLLGtU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 01:48:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47234 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726242AbeLLGso (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 01:48:44 -0500
-Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DE94F2084E;
-        Wed, 12 Dec 2018 06:48:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544597323;
-        bh=O2Uz3IU0n9VkF3JZ/PYrXWTL3dfkuqsi1wqgU+RGnzs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=E+KkutIN1qAa65rSNo00Kk2YjOmHOGre8B3GqX2LAz3c2844PE6H6g6Kl53dgvzj9
-         pl9qdAVx+mLONDTBKgzrMpA/rfkQDnJKYW5oX9US6JSoIccFIY5mgtO8rS69dWKIzM
-         T8mEFzVRTmbZPDsuJSYXTsvSZWNO4cUDu2y6X40Y=
-Date:   Wed, 12 Dec 2018 01:48:42 -0500
-From:   Sasha Levin <sashal@kernel.org>
-To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc:     Daniel Wang <wonderfly@google.com>, Petr Mladek <pmladek@suse.com>,
-        Steven Rostedt <rostedt@goodmis.org>, stable@vger.kernel.org,
-        Alexander.Levin@microsoft.com,
-        Andrew Morton <akpm@linux-foundation.org>,
-        byungchul.park@lge.com, dave.hansen@intel.com, hannes@cmpxchg.org,
-        jack@suse.cz, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Mel Gorman <mgorman@suse.de>, mhocko@kernel.org, pavel@ucw.cz,
-        penguin-kernel@i-love.sakura.ne.jp,
-        Peter Zijlstra <peterz@infradead.org>, tj@kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>, vbabka@suse.cz,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        Peter Feiner <pfeiner@google.com>
-Subject: Re: 4.14 backport request for dbdda842fe96f: "printk: Add console
- owner and waiter logic to load balance console writes"
-Message-ID: <20181212064841.GB2746@sasha-vm>
-References: <20181004083609.kcziz2ynwi2w7lcm@pathway.suse.cz>
- <20181004085515.GC12879@jagdpanzerIV>
- <CAJmjG2-e6f6p=pE5uDECMc=W=81SYyGCmoabrC1ePXwL5DFdSw@mail.gmail.com>
- <20181022100952.GA1147@jagdpanzerIV>
- <CAJmjG2-c4e_1999n0OV5B9ABG9rF6n=myThjgX+Ms1R-vc3z+A@mail.gmail.com>
- <20181109064740.GE599@jagdpanzerIV>
- <CAJmjG28Q8pEpr67LC+Un8m+Qii58FTd1esp6Zc47TnMsw50QEw@mail.gmail.com>
- <20181212052126.GF431@jagdpanzerIV>
- <CAJmjG29a7Fax5ZW5Q+W+-1xPEXVUqdrMYwoUpSwL1Msiso6gtw@mail.gmail.com>
- <20181212062841.GI431@jagdpanzerIV>
+        Wed, 12 Dec 2018 01:49:20 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:41120 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726242AbeLLGtU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 01:49:20 -0500
+Received: by mail-pg1-f195.google.com with SMTP id 70so7875340pgh.8;
+        Tue, 11 Dec 2018 22:49:19 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=+Aaoyp8TSXz/xL4gAZloCtKAYRkqodqOELccKZZnTGI=;
+        b=r827pElaSc3jR4n6c1NEKKFgMLsbVbxK3wQuEZ5lTEtI3yYPdymxQ8a4RgS5aW1e4H
+         Psnky9UTfg2cdG3reFiFQV6yiirNGdG50rni/x8KXewJjVnKKbvYSU1RS+GYDffQur5M
+         Aqxltcth4V2HfY51SBso3SBey+EQJw4ukm0wo8BH8PdcHx2UX32kUXWE+buHGCF/9cA3
+         vc1PDsVfOn6RchmWzTCsNGfuxBqbqT3SHRcCB5FQ86x01Bc5rrIoJGZG0Uf+MLy/fvn2
+         JgT5giUd67zvg2cEvDIAOPjNEZdmWusJ2hj0BRqA/sOK5oDfI9YUuVQ64poJ1w6kz3oa
+         7GmQ==
+X-Gm-Message-State: AA+aEWbwaWpf/9tQxWBp5/ds7a3fg75x3w8ytzOhJWnQmyAdVhsJis+6
+        H51yDvTpFT7FAir0fm0yGnn6OBD1
+X-Google-Smtp-Source: AFSGD/VaU0Mr9NpB7+WCUrJ9C3xNqnWpDDs/2MmGHGnBr4T+aghS1kEDiZZRQTMqN3dffDYKXM1Nsw==
+X-Received: by 2002:a63:b218:: with SMTP id x24mr16796574pge.223.1544597358971;
+        Tue, 11 Dec 2018 22:49:18 -0800 (PST)
+Received: from ?IPv6:2601:647:4800:973f:7888:b13c:bff:87b0? ([2601:647:4800:973f:7888:b13c:bff:87b0])
+        by smtp.gmail.com with ESMTPSA id h82sm42104847pfa.105.2018.12.11.22.49.17
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 11 Dec 2018 22:49:18 -0800 (PST)
+Subject: Re: [PATCH] scatterlist: Update size type to support greater then 4GB
+ size.
+To:     David Miller <davem@davemloft.net>, amhetre@nvidia.com
+Cc:     axboe@kernel.dk, ulf.hansson@linaro.org,
+        herbert@gondor.apana.org.au, mmaddireddy@nvidia.com,
+        Snikam@nvidia.com, adrian.hunter@intel.com,
+        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
+        vdumpa@nvidia.com, linux-crypto@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+References: <1544595853-18492-1-git-send-email-amhetre@nvidia.com>
+ <20181211.222950.1995970751331458343.davem@davemloft.net>
+From:   Sagi Grimberg <sagi@grimberg.me>
+Message-ID: <5f70fc16-e3cd-37c1-e7ed-e131ad79d387@grimberg.me>
+Date:   Tue, 11 Dec 2018 22:49:16 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20181212062841.GI431@jagdpanzerIV>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181211.222950.1995970751331458343.davem@davemloft.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 12, 2018 at 03:28:41PM +0900, Sergey Senozhatsky wrote:
->On (12/11/18 22:08), Daniel Wang wrote:
->>
->> I've been meaning to try it but kept getting distracted by other
->> things. I'll try to find some time for it this week or next. Right now
->> my intent is to get Steven's patch into 4.14 stable as it evidently
->> fixed the particular issue I was seeing, and as Steven said it has
->> been in upstream since 4.16 so it's not like backporting it will raise
->> any red flags. I will start another thread on -stable for it.
->
->OK.
->
->> > I guess we still don't have a really clear understanding of what exactly
->> is going in your system
->>
->> I would also like to get to the bottom of it. Unfortunately I haven't
->> got the expertise in this area nor the time to do it yet. Hence the
->> intent to take a step back and backport Steven's patch to fix the
->> issue that has resurfaced in our production recently.
->
->No problem.
->I just meant that -stable people can be a bit "unconvinced".
 
-The -stable people tried adding this patch back in April, but ended up
-getting complaints up the wazoo (https://lkml.org/lkml/2018/4/9/154)
-about how this is not -stable material.
+>>   struct nvme_sgl_desc {
+>>   	__le64	addr;
+>> -	__le32	length;
+>> +	__le64	length;
+>>   	__u8	rsvd[3];
+>>   	__u8	type;
+>>   };
+> 
+> Isn't this a device or protocol defined datastructure?  You can't just
+> change it like this.
 
-So yes, testing/acks welcome :)
+You're correct, we can't...
+[Replied before seeing this issue was already highlighted]
 
---
-Thanks,
-Sasha
+The positive side is that it can safely be removed without affecting the
+rest of the patch...
