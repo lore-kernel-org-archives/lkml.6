@@ -2,520 +2,289 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53290C04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 13:07:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B6E4C04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 13:07:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E5582086D
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 13:07:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E5582086D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pschenker.ch
+	by mail.kernel.org (Postfix) with ESMTP id E71B620839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 13:07:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E71B620839
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727580AbeLLNHU (ORCPT
+        id S1727591AbeLLNHa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 08:07:20 -0500
-Received: from mxout012.mail.hostpoint.ch ([217.26.49.172]:64006 "EHLO
-        mxout012.mail.hostpoint.ch" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727543AbeLLNHQ (ORCPT
+        Wed, 12 Dec 2018 08:07:30 -0500
+Received: from vmicros1.altlinux.org ([194.107.17.57]:59904 "EHLO
+        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727544AbeLLNHN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 08:07:16 -0500
-Received: from [10.0.2.45] (helo=asmtp012.mail.hostpoint.ch)
-        by mxout012.mail.hostpoint.ch with esmtp (Exim 4.91 (FreeBSD))
-        (envelope-from <dev@pschenker.ch>)
-        id 1gX4E9-000NgX-QX; Wed, 12 Dec 2018 14:07:01 +0100
-Received: from [46.140.72.82] (helo=philippe-pc.toradex.int)
-        by asmtp012.mail.hostpoint.ch with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.91 (FreeBSD))
-        (envelope-from <dev@pschenker.ch>)
-        id 1gX4E9-000IXM-Ja; Wed, 12 Dec 2018 14:07:01 +0100
-X-Authenticated-Sender-Id: dev@pschenker.ch
-From:   Philippe Schenker <dev@pschenker.ch>
-To:     jic23@kernel.org, marcel.ziswiler@toradex.com, stefan@agner.ch
-Cc:     thierry.reding@gmail.com, Philippe Schenker <dev@pschenker.ch>,
-        Max Krummenacher <max.krummenacher@toradex.com>,
-        Philippe Schenker <philippe.schenker@toradex.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Arnaud Pouliquen <arnaud.pouliquen@st.com>,
-        linux-iio@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        William Breathitt Gray <vilhelm.gray@gmail.com>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Marcus Folkesson <marcus.folkesson@gmail.com>,
-        Freeman Liu <freeman.liu@spreadtrum.com>,
-        Eugen Hristev <eugen.hristev@microchip.com>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        linux-arm-kernel@lists.infradead.org,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Siddartha Mohanadoss <smohanad@codeaurora.org>,
-        linux-kernel@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>,
-        Kent Gustavsson <kent@minoris.se>
-Subject: [PATCH v4 5/8] iio: adc: add STMPE ADC driver using IIO framework
-Date:   Wed, 12 Dec 2018 14:06:46 +0100
-Message-Id: <20181212130649.15146-5-dev@pschenker.ch>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20181212130649.15146-1-dev@pschenker.ch>
-References: <20181212130649.15146-1-dev@pschenker.ch>
+        Wed, 12 Dec 2018 08:07:13 -0500
+Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
+        by vmicros1.altlinux.org (Postfix) with ESMTP id 7D3B372CA65;
+        Wed, 12 Dec 2018 16:07:11 +0300 (MSK)
+Received: by mua.local.altlinux.org (Postfix, from userid 508)
+        id 71A907CFF89; Wed, 12 Dec 2018 16:07:11 +0300 (MSK)
+Date:   Wed, 12 Dec 2018 16:07:11 +0300
+From:   "Dmitry V. Levin" <ldv@altlinux.org>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Oleg Nesterov <oleg@redhat.com>, Andy Lutomirski <luto@kernel.org>,
+        lineprinter@altlinux.org, Eugene Syromiatnikov <esyr@redhat.com>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 13/25] m68k: add asm/syscall.h
+Message-ID: <20181212130711.GB16479@altlinux.org>
+References: <CAMuHMdW8ejp4gm2Xh-8inSQngQ5zRQ9bfsg1SG+BAD8RFV8xcA@mail.gmail.com>
+ <20181210133025.GG11942@altlinux.org>
+ <20181212085516.GA13288@altlinux.org>
+ <CAMuHMdXwX57AZuVPdcEt_HZw1LT7tFpczJsqjW6C0VgHkhJ7dw@mail.gmail.com>
+ <20181212092712.GD13288@altlinux.org>
+ <CAMuHMdVvw3_3rm3v8J8u6ic6Wy3o70mOP1qaWQ=Ltf1XU=nnVQ@mail.gmail.com>
+ <20181212120417.GC15561@altlinux.org>
+ <CAMuHMdXqJeH0C8FHy=G=ycArdkvjYPy48+3LmACnyS9RuqV30g@mail.gmail.com>
+ <20181212123730.GA16479@altlinux.org>
+ <CAMuHMdVJGpLYJp7CfvOYOmboRjFauWh1joqk=-kpLw212Oj7aA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="1LKvkjL3sHcu1TtY"
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdVJGpLYJp7CfvOYOmboRjFauWh1joqk=-kpLw212Oj7aA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds an ADC driver for the STMPE device using the industrial
-input/output interface. The driver supports raw reading of values.
-The driver depends on the MFD STMPE driver. If the touchscreen
-block is enabled too, only four of the 8 ADC channels are available.
 
-Signed-off-by: Stefan Agner <stefan@agner.ch>
-Signed-off-by: Max Krummenacher <max.krummenacher@toradex.com>
-Signed-off-by: Philippe Schenker <philippe.schenker@toradex.com>
----
+--1LKvkjL3sHcu1TtY
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Changes in v4:
- - Moved MFD changes to a precursor patch
- - Moved stmpe-ts changes to a precursor patch
- - Created stmpe_read_temp and stmpe_read_voltage functions to make
-   read_raw more readable
- - Added local lock instead of using indio_dev's mlock
- - Use be16_to_cpu() macro instead of bitshifting
- - Added stmpe_enable again to stmpe_adc_init_hw
- - Use devm_add_action_or_reset to get rid of the remove function
-   (I tested if that actually works)
+Hi Geert,
 
-Changes in v3:
- - Removed COMPILE_TEST from dependings in Kconfig
- - Removed stmpe_adc_get_platform_info() function and integrated the
-   few code lines in the other function
+On Wed, Dec 12, 2018 at 01:54:05PM +0100, Geert Uytterhoeven wrote:
+> On Wed, Dec 12, 2018 at 1:37 PM Dmitry V. Levin <ldv@altlinux.org> wrote:
+> > On Wed, Dec 12, 2018 at 01:27:14PM +0100, Geert Uytterhoeven wrote:
+> > > On Wed, Dec 12, 2018 at 1:04 PM Dmitry V. Levin <ldv@altlinux.org> wr=
+ote:
+> > > > On Wed, Dec 12, 2018 at 10:43:33AM +0100, Geert Uytterhoeven wrote:
+> > > > > On Wed, Dec 12, 2018 at 10:27 AM Dmitry V. Levin <ldv@altlinux.or=
+g> wrote:
+> > > > > > On Wed, Dec 12, 2018 at 10:01:29AM +0100, Geert Uytterhoeven wr=
+ote:
+> > > > > > > On Wed, Dec 12, 2018 at 9:55 AM Dmitry V. Levin <ldv@altlinux=
+=2Eorg> wrote:
+> > > > > > > > On Mon, Dec 10, 2018 at 04:30:25PM +0300, Dmitry V. Levin w=
+rote:
+> > > > > > > > > On Mon, Dec 10, 2018 at 02:06:28PM +0100, Geert Uytterhoe=
+ven wrote:
+> > > > > > > > > > On Mon, Dec 10, 2018 at 1:41 PM Dmitry V. Levin <ldv@al=
+tlinux.org> wrote:
+> > > > > > > > > > > On Mon, Dec 10, 2018 at 09:45:42AM +0100, Geert Uytte=
+rhoeven wrote:
+> > > > > > > > > > > > On Mon, Dec 10, 2018 at 5:30 AM Dmitry V. Levin <ld=
+v@altlinux.org> wrote:
+> > > > > > > > > > > > > syscall_get_* functions are required to be implem=
+ented on all
+> > > > > > > > > > > > > architectures in order to extend the generic ptra=
+ce API with
+> > > > > > > > > > > > > PTRACE_GET_SYSCALL_INFO request.
+> > > > > > > > > > > > >
+> > > > > > > > > > > > > This introduces asm/syscall.h on m68k implementin=
+g all 5 syscall_get_*
+> > > > > > > > > > > > > functions as documented in asm-generic/syscall.h:=
+ syscall_get_nr,
+> > > > > > > > > > > > > syscall_get_arguments, syscall_get_error, syscall=
+_get_return_value,
+> > > > > > > > > > > > > and syscall_get_arch.
+> > > > > > > > > > > > >
+> > > > > > > > > > > > > Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+> > > > > > > > > > > > > Cc: Oleg Nesterov <oleg@redhat.com>
+> > > > > > > > > > > > > Cc: Andy Lutomirski <luto@kernel.org>
+> > > > > > > > > > > > > Cc: Elvira Khabirova <lineprinter@altlinux.org>
+> > > > > > > > > > > > > Cc: Eugene Syromyatnikov <esyr@redhat.com>
+> > > > > > > > > > > > > Cc: linux-m68k@lists.linux-m68k.org
+> > > > > > > > > > > > > Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
+> > > > > > > > > > > > > ---
+> > > > > > > > > > > > >
+> > > > > > > > > > > > > Notes:
+> > > > > > > > > > > > >     v5: added syscall_get_nr, syscall_get_argumen=
+ts, syscall_get_error,
+> > > > > > > > > > > > >         and syscall_get_return_value
+> > > > > > > > > > > > >     v1: added syscall_get_arch
+> > > > > > > > > > > >
+> > > > > > > > > > > > > --- /dev/null
+> > > > > > > > > > > > > +++ b/arch/m68k/include/asm/syscall.h
+> > > > > > > > > > > > > @@ -0,0 +1,39 @@
+> > > > > > > > > > > >
+> > > > > > > > > > > > > +static inline void
+> > > > > > > > > > > > > +syscall_get_arguments(struct task_struct *task, =
+struct pt_regs *regs,
+> > > > > > > > > > > > > +                     unsigned int i, unsigned in=
+t n, unsigned long *args)
+> > > > > > > > > > > > > +{
+> > > > > > > > > > > > > +       BUG_ON(i + n > 6);
+> > > > > > > > > > > >
+> > > > > > > > > > > > Does this have to crash the kernel?
+> > > > > > > > > > >
+> > > > > > > > > > > This is what most of other architectures do, but we c=
+ould choose
+> > > > > > > > > > > a softer approach, e.g. use WARN_ON_ONCE instead.
+> > > > > > > > > > >
+> > > > > > > > > > > > Perhaps you can return an error code instead?
+> > > > > > > > > > >
+> > > > > > > > > > > That would be problematic given the signature of this=
+ function
+> > > > > > > > > > > and the nature of the potential bug which would most =
+likely be a usage error.
+> > > > > > > > > >
+> > > > > > > > > > Of course to handle that, the function's signature need=
+ to be changed.
+> > > > > > > > > > Changing it has the advantage that the error handling c=
+an be done at the
+> > > > > > > > > > caller, in common code, instead of duplicating it for a=
+ll
+> > > > > > > > > > architectures, possibly
+> > > > > > > > > > leading to different semantics.
+> > > > > > > > >
+> > > > > > > > > Given that *all* current users of syscall_get_arguments s=
+pecify i =3D=3D 0
+> > > > > > > > > (and there is an architecture that has BUG_ON(i)),
+> > > > > > > > > it should be really a usage error to get into situation w=
+here i + n > 6,
+> > > > > > > > > I wish a BUILD_BUG_ON could be used here instead.
+> > > > > > > > >
+> > > > > > > > > I don't think it worths pushing the change of API just to=
+ convert
+> > > > > > > > > a "cannot happen" assertion into an error that would have=
+ to be dealt with
+> > > > > > > > > on the caller side.
+> > > > > > > >
+> > > > > > > > I suggest the following BUG_ON replacement for syscall_get_=
+arguments:
+> > > > > > > >
+> > > > > > > > #define SYSCALL_MAX_ARGS 6
+> > > > > > > >
+> > > > > > > > static inline void
+> > > > > > > > syscall_get_arguments(struct task_struct *task, struct pt_r=
+egs *regs,
+> > > > > > > >                       unsigned int i, unsigned int n, unsig=
+ned long *args)
+> > > > > > > > {
+> > > > > > > >         /*
+> > > > > > > >          * Ideally there should have been
+> > > > > > > >          * BUILD_BUG_ON(i + n > SYSCALL_MAX_ARGS);
+> > > > > > > >          * instead of these checks.
+> > > > > > > >          */
+> > > > > > > >         if (unlikely(i > SYSCALL_MAX_ARGS)) {
+> > > > > > > >                 WARN_ONCE(1, "i > SYSCALL_MAX_ARGS");
+> > > > > > > >                 return;
+> > > > > > >
+> > > > > > > Does this have security implications, as args is an output pa=
+rameter?
+> > > > > > > I.e. if you don't fill the array, the caller will use whateve=
+r is on the stack.
+> > > > > > > Can this ever be passed to userspace, leaking data?
+> > > > > >
+> > > > > > In the current kernel code n is always less or equal to 6,
+> > > > > > but in theory future changes can potentially break the assertion
+> > > > > > and this could lead to leaking data to userspace.
+> > > > >
+> > > > > OK.
+> > > > >
+> > > > > > Do you think we should rather be defensive and add some memsets=
+, e.g.
+> > > > > >
+> > > > > >         if (unlikely(i > SYSCALL_MAX_ARGS)) {
+> > > > > >                 WARN_ONCE(1, "i > SYSCALL_MAX_ARGS");
+> > > > > >                 memset(args, 0, n * sizeof(args[0]));
+> > > > > >                 return;
+> > > > > >         }
+> > > > > >         if (unlikely(n > SYSCALL_MAX_ARGS - i)) {
+> > > > > >                 unsigned int extra =3D n - (SYSCALL_MAX_ARGS - =
+i);
+> > > > > >
+> > > > > >                 WARN_ONCE(1, "i + n > SYSCALL_MAX_ARGS");
+> > > > > >                 n =3D SYSCALL_MAX_ARGS - i;
+> > > > > >                 memset(&args[n], 0, extra * sizeof(args[0]));
+> > > > > >         }
+> > > > > > ?
+> > > > >
+> > > > > Yes please.
+> > > > >
+> > > > > But please handle all of that in the generic code, so it doesn't =
+have to be
+> > > > > replicated across all architectures.
+> > > > >
+> > > > > E.g. make syscall_get_arguments() a wrapper in generic code, call=
+ing
+> > > > > __syscall_get_arguments() in architecture-specific code.
+> > > > >
+> > > > > And make the latter return int, so it can indicate other failures.
+> > > >
+> > > > Other failures?  What syscall_get_arguments is expected to do
+> > > > if __syscall_get_arguments returned, say, -1?
+> > >
+> > > Fail. Just like in case of other generic ill conditions it can detect=
+ itself.
+> >
+> > Sorry, I don't quite follow.  syscall_get_arguments() has no return cod=
+e,
+>=20
+> Which may be an indicator for a different problem.
+> What is e.g. populate_seccomp_data() supposed to do if
+> syscall_get_arguments() fails?
 
-Changes in v2:
- - Code formatting
- - Removed unused includes
- - Defined the macro STMPE_START_ONE_TEMP_CONV with other macros.
- - Added new macro that defines the channel of the temperature sensor.
-   Took new name for STMPE_MAX_ADC->STMPE_ADC_LAST_NR and used it
-   throughout the code for better readability.
- - Added mutex_unlock where missing.
+Well, syscall_get_arguments() is not supposed to fail if invoked properly.
 
- drivers/iio/adc/Kconfig     |   7 +
- drivers/iio/adc/Makefile    |   1 +
- drivers/iio/adc/stmpe-adc.c | 368 ++++++++++++++++++++++++++++++++++++
- 3 files changed, 376 insertions(+)
- create mode 100644 drivers/iio/adc/stmpe-adc.c
+Currently populate_seccomp_data() does this:
+	struct task_struct *task =3D current;
+	struct pt_regs *regs =3D task_pt_regs(task);
+	unsigned long args[6];
+	...
+	syscall_get_arguments(task, regs, 0, 6, args);
 
-diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
-index a52fea8749a9..224f2067494d 100644
---- a/drivers/iio/adc/Kconfig
-+++ b/drivers/iio/adc/Kconfig
-@@ -734,6 +734,13 @@ config STM32_DFSDM_ADC
- 	  This driver can also be built as a module.  If so, the module
- 	  will be called stm32-dfsdm-adc.
- 
-+config STMPE_ADC
-+	tristate "STMicroelectronics STMPE ADC driver"
-+	depends on OF && MFD_STMPE
-+	help
-+	  Say yes here to build support for ST Microelectronics STMPE
-+	  built-in ADC block (stmpe811).
-+
- config STX104
- 	tristate "Apex Embedded Systems STX104 driver"
- 	depends on PC104 && X86
-diff --git a/drivers/iio/adc/Makefile b/drivers/iio/adc/Makefile
-index a6e6a0b659e2..cba889c30bf9 100644
---- a/drivers/iio/adc/Makefile
-+++ b/drivers/iio/adc/Makefile
-@@ -69,6 +69,7 @@ obj-$(CONFIG_STM32_ADC_CORE) += stm32-adc-core.o
- obj-$(CONFIG_STM32_ADC) += stm32-adc.o
- obj-$(CONFIG_STM32_DFSDM_CORE) += stm32-dfsdm-core.o
- obj-$(CONFIG_STM32_DFSDM_ADC) += stm32-dfsdm-adc.o
-+obj-$(CONFIG_STMPE_ADC) += stmpe-adc.o
- obj-$(CONFIG_TI_ADC081C) += ti-adc081c.o
- obj-$(CONFIG_TI_ADC0832) += ti-adc0832.o
- obj-$(CONFIG_TI_ADC084S021) += ti-adc084s021.o
-diff --git a/drivers/iio/adc/stmpe-adc.c b/drivers/iio/adc/stmpe-adc.c
-new file mode 100644
-index 000000000000..4333da19a097
---- /dev/null
-+++ b/drivers/iio/adc/stmpe-adc.c
-@@ -0,0 +1,368 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ *  STMicroelectronics STMPE811 IIO ADC Driver
-+ *
-+ *  4 channel, 10/12-bit ADC
-+ *
-+ *  Copyright (C) 2013-2018 Toradex AG <stefan.agner@toradex.com>
-+ */
-+
-+#include <linux/completion.h>
-+#include <linux/err.h>
-+#include <linux/iio/iio.h>
-+#include <linux/interrupt.h>
-+#include <linux/kernel.h>
-+#include <linux/mfd/stmpe.h>
-+#include <linux/module.h>
-+#include <linux/of_platform.h>
-+#include <linux/platform_device.h>
-+#include <linux/device.h>
-+
-+#define STMPE_REG_INT_STA		0x0B
-+#define STMPE_REG_ADC_INT_EN		0x0E
-+#define STMPE_REG_ADC_INT_STA		0x0F
-+
-+#define STMPE_REG_ADC_CTRL1		0x20
-+#define STMPE_REG_ADC_CTRL2		0x21
-+#define STMPE_REG_ADC_CAPT		0x22
-+#define STMPE_REG_ADC_DATA_CH(channel)	(0x30 + 2 * (channel))
-+
-+#define STMPE_REG_TEMP_CTRL		0x60
-+#define STMPE_TEMP_CTRL_ENABLE		BIT(0)
-+#define STMPE_TEMP_CTRL_ACQ		BIT(1)
-+#define STMPE_TEMP_CTRL_THRES_EN	BIT(3)
-+#define STMPE_START_ONE_TEMP_CONV	(STMPE_TEMP_CTRL_ENABLE | \
-+					STMPE_TEMP_CTRL_ACQ | \
-+					STMPE_TEMP_CTRL_THRES_EN)
-+#define STMPE_REG_TEMP_DATA		0x61
-+#define STMPE_REG_TEMP_TH		0x63
-+#define STMPE_ADC_LAST_NR		7
-+#define STMPE_TEMP_CHANNEL		(STMPE_ADC_LAST_NR + 1)
-+
-+#define STMPE_ADC_CH(channel)		((1 << (channel)) & 0xff)
-+
-+#define STMPE_ADC_TIMEOUT		msecs_to_jiffies(1000)
-+
-+struct stmpe_adc {
-+	struct stmpe *stmpe;
-+	struct clk *clk;
-+	struct device *dev;
-+	struct mutex lock;
-+
-+	/* We are allocating plus one for the temperature channel */
-+	struct iio_chan_spec stmpe_adc_iio_channels[STMPE_ADC_LAST_NR + 2];
-+
-+	struct completion completion;
-+
-+	u8 channel;
-+	u32 value;
-+};
-+
-+static int stmpe_read_voltage(struct stmpe_adc *info,
-+		struct iio_chan_spec const *chan, int *val)
-+{
-+	long ret;
-+
-+	mutex_lock(&info->lock);
-+
-+	info->channel = (u8)chan->channel;
-+
-+	if (info->channel > STMPE_ADC_LAST_NR) {
-+		mutex_unlock(&info->lock);
-+		return -EINVAL;
-+	}
-+
-+	stmpe_reg_write(info->stmpe, STMPE_REG_ADC_INT_EN,
-+			STMPE_ADC_CH(info->channel));
-+
-+	stmpe_reg_write(info->stmpe, STMPE_REG_ADC_CAPT,
-+			STMPE_ADC_CH(info->channel));
-+
-+	*val = info->value;
-+
-+	ret = wait_for_completion_interruptible_timeout
-+		(&info->completion, STMPE_ADC_TIMEOUT);
-+
-+	if (ret <= 0) {
-+		mutex_unlock(&info->lock);
-+		if (ret == 0)
-+			return -ETIMEDOUT;
-+		else
-+			return ret;
-+	}
-+
-+	*val = info->value;
-+
-+	mutex_unlock(&info->lock);
-+
-+	return 0;
-+}
-+
-+static int stmpe_read_temp(struct stmpe_adc *info,
-+		struct iio_chan_spec const *chan, int *val)
-+{
-+	long ret;
-+
-+	mutex_lock(&info->lock);
-+
-+	info->channel = (u8)chan->channel;
-+
-+	if (info->channel != STMPE_TEMP_CHANNEL) {
-+		mutex_unlock(&info->lock);
-+		return -EINVAL;
-+	}
-+
-+	stmpe_reg_write(info->stmpe, STMPE_REG_TEMP_CTRL,
-+			STMPE_START_ONE_TEMP_CONV);
-+
-+	ret = wait_for_completion_interruptible_timeout
-+		(&info->completion, STMPE_ADC_TIMEOUT);
-+
-+	if (ret <= 0) {
-+		mutex_unlock(&info->lock);
-+		if (ret == 0)
-+			return -ETIMEDOUT;
-+		else
-+			return ret;
-+	}
-+
-+	/*
-+	 * absolute temp = +V3.3 * value /7.51 [K]
-+	 * scale to [milli °C]
-+	 */
-+	*val = ((449960l * info->value) / 1024l) - 273150;
-+
-+	mutex_unlock(&info->lock);
-+
-+	return 0;
-+}
-+
-+static int stmpe_read_raw(struct iio_dev *indio_dev,
-+			  struct iio_chan_spec const *chan,
-+			  int *val,
-+			  int *val2,
-+			  long mask)
-+{
-+	struct stmpe_adc *info = iio_priv(indio_dev);
-+	long ret;
-+
-+	switch (mask) {
-+	case IIO_CHAN_INFO_RAW:
-+	case IIO_CHAN_INFO_PROCESSED:
-+
-+		switch (chan->type) {
-+		case IIO_VOLTAGE:
-+			ret = stmpe_read_voltage(info, chan, val);
-+			break;
-+
-+		case IIO_TEMP:
-+			ret = stmpe_read_temp(info, chan, val);
-+			break;
-+		default:
-+			return -EINVAL;
-+		}
-+
-+		if (ret < 0)
-+			return ret;
-+
-+		return IIO_VAL_INT;
-+
-+	case IIO_CHAN_INFO_SCALE:
-+		*val = 3300;
-+		*val2 = info->stmpe->mod_12b ? 12 : 10;
-+		return IIO_VAL_FRACTIONAL_LOG2;
-+
-+	default:
-+		break;
-+	}
-+
-+	return -EINVAL;
-+}
-+
-+static irqreturn_t stmpe_adc_isr(int irq, void *dev_id)
-+{
-+	struct stmpe_adc *info = (struct stmpe_adc *)dev_id;
-+	u16 data;
-+
-+	if (info->channel > STMPE_TEMP_CHANNEL)
-+		return IRQ_NONE;
-+
-+	if (info->channel <= STMPE_ADC_LAST_NR) {
-+		int int_sta;
-+
-+		int_sta = stmpe_reg_read(info->stmpe, STMPE_REG_ADC_INT_STA);
-+
-+		/* Is the interrupt relevant */
-+		if (!(int_sta & STMPE_ADC_CH(info->channel)))
-+			return IRQ_NONE;
-+
-+		/* Read value */
-+		stmpe_block_read(info->stmpe,
-+			STMPE_REG_ADC_DATA_CH(info->channel), 2, (u8 *) &data);
-+
-+		stmpe_reg_write(info->stmpe, STMPE_REG_ADC_INT_STA, int_sta);
-+	} else if (info->channel == STMPE_TEMP_CHANNEL) {
-+		/* Read value */
-+		stmpe_block_read(info->stmpe, STMPE_REG_TEMP_DATA, 2,
-+				(u8 *) &data);
-+	}
-+
-+	info->value = (u32) be16_to_cpu(data);
-+	complete(&info->completion);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static const struct iio_info stmpe_adc_iio_info = {
-+	.read_raw = &stmpe_read_raw,
-+};
-+
-+static void stmpe_adc_voltage_chan(struct iio_chan_spec *ics, int chan)
-+{
-+	ics->type = IIO_VOLTAGE;
-+	ics->info_mask_separate = BIT(IIO_CHAN_INFO_RAW);
-+	ics->info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE);
-+	ics->indexed = 1;
-+	ics->channel = chan;
-+}
-+
-+static void stmpe_adc_temp_chan(struct iio_chan_spec *ics, int chan)
-+{
-+	ics->type = IIO_TEMP;
-+	ics->info_mask_separate = BIT(IIO_CHAN_INFO_PROCESSED);
-+	ics->indexed = 1;
-+	ics->channel = chan;
-+}
-+
-+static int stmpe_adc_init_hw(struct stmpe_adc *adc)
-+{
-+	int ret;
-+	struct stmpe *stmpe = adc->stmpe;
-+
-+	ret = stmpe_enable(stmpe, STMPE_BLOCK_ADC);
-+	if (ret) {
-+		dev_err(stmpe->dev, "Could not enable clock for ADC\n");
-+		return ret;
-+	}
-+
-+	ret = stmpe811_adc_common_init(stmpe);
-+	if (ret) {
-+		stmpe_disable(stmpe, STMPE_BLOCK_ADC);
-+		return ret;
-+	}
-+
-+	/* use temp irq for each conversion completion */
-+	stmpe_reg_write(stmpe, STMPE_REG_TEMP_TH, 0);
-+	stmpe_reg_write(stmpe, STMPE_REG_TEMP_TH + 1, 0);
-+
-+	return 0;
-+}
-+
-+static int stmpe_adc_probe(struct platform_device *pdev)
-+{
-+	struct iio_dev *indio_dev = NULL;
-+	struct stmpe_adc *info = NULL;
-+	struct device_node *np;
-+	u32 norequest_mask = 0;
-+	int irq_temp, irq_adc;
-+	int num_chan = 0;
-+	int i = 0;
-+	int ret;
-+
-+	irq_adc = platform_get_irq_byname(pdev, "STMPE_ADC");
-+	if (irq_adc < 0)
-+		return irq_adc;
-+
-+	indio_dev = devm_iio_device_alloc(&pdev->dev, sizeof(struct stmpe_adc));
-+	if (!indio_dev) {
-+		dev_err(&pdev->dev, "failed allocating iio device\n");
-+		return -ENOMEM;
-+	}
-+
-+	info = iio_priv(indio_dev);
-+	mutex_init(&info->lock);
-+
-+	init_completion(&info->completion);
-+	ret = devm_request_threaded_irq(&pdev->dev, irq_adc, NULL,
-+					stmpe_adc_isr, IRQF_ONESHOT,
-+					"stmpe-adc", info);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "failed requesting irq, irq = %d\n",
-+				irq_adc);
-+		return ret;
-+	}
-+
-+	irq_temp = platform_get_irq_byname(pdev, "STMPE_TEMP_SENS");
-+	if (irq_temp >= 0) {
-+		ret = devm_request_threaded_irq(&pdev->dev, irq_temp, NULL,
-+						stmpe_adc_isr, IRQF_ONESHOT,
-+						"stmpe-adc", info);
-+		if (ret < 0)
-+			dev_warn(&pdev->dev, "failed requesting irq for"
-+				 " temp sensor, irq = %d\n", irq_temp);
-+	}
-+
-+	platform_set_drvdata(pdev, indio_dev);
-+
-+	indio_dev->name		= dev_name(&pdev->dev);
-+	indio_dev->dev.parent	= &pdev->dev;
-+	indio_dev->info		= &stmpe_adc_iio_info;
-+	indio_dev->modes	= INDIO_DIRECT_MODE;
-+
-+	info->stmpe = dev_get_drvdata(pdev->dev.parent);
-+
-+	np = pdev->dev.of_node;
-+
-+	if (!np)
-+		dev_err(&pdev->dev, "no device tree node found\n");
-+
-+	of_property_read_u32(np, "st,norequest-mask", &norequest_mask);
-+
-+	for_each_clear_bit(i, (unsigned long *) &norequest_mask,
-+			   (STMPE_ADC_LAST_NR + 1)) {
-+		stmpe_adc_voltage_chan(&info->stmpe_adc_iio_channels[num_chan], i);
-+		num_chan++;
-+	}
-+	stmpe_adc_temp_chan(&info->stmpe_adc_iio_channels[num_chan], i);
-+	num_chan++;
-+	indio_dev->channels = info->stmpe_adc_iio_channels;
-+	indio_dev->num_channels = num_chan;
-+
-+	ret = stmpe_adc_init_hw(info);
-+	if (ret)
-+		return ret;
-+
-+	ret = iio_device_register(indio_dev);
-+	if (ret)
-+		return ret;
-+
-+	return devm_add_action_or_reset(&pdev->dev,
-+			(void (*)(void *))iio_device_unregister, indio_dev);
-+}
-+
-+static int __maybe_unused stmpe_adc_resume(struct device *dev)
-+{
-+	struct iio_dev *indio_dev = dev_get_drvdata(dev);
-+	struct stmpe_adc *info = iio_priv(indio_dev);
-+
-+	stmpe_adc_init_hw(info);
-+
-+	return 0;
-+}
-+
-+static SIMPLE_DEV_PM_OPS(stmpe_adc_pm_ops, NULL, stmpe_adc_resume);
-+
-+static struct platform_driver stmpe_adc_driver = {
-+	.probe		= stmpe_adc_probe,
-+	.driver		= {
-+		.name	= "stmpe-adc",
-+		.pm	= &stmpe_adc_pm_ops,
-+	},
-+};
-+
-+module_platform_driver(stmpe_adc_driver);
-+
-+MODULE_AUTHOR("Stefan Agner <stefan.agner@toradex.com>");
-+MODULE_DESCRIPTION("STMPEXXX ADC driver");
-+MODULE_LICENSE("GPL v2");
-+MODULE_ALIAS("platform:stmpe-adc");
--- 
-2.19.2
+I don't see how this could fail.
 
+> > so all it can possibly do is to zero out args[], e.g.
+> >
+> >         if (unlikely(__syscall_get_arguments(task, regs, i, n, args) < =
+0)) {
+> >                 memset(args, 0, n * sizeof(args[0]));
+> >                 return;
+> >         }
+> >
+> > Do you mean this?
+>=20
+> Exactly.
+
+OK, I'll prepare the change, thanks.
+
+
+--=20
+ldv
+
+--1LKvkjL3sHcu1TtY
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJcEQf/AAoJEAVFT+BVnCUIlPgQAMGAtI7/42vOKKr/xEQt9okf
+3l3K2+wmWCycpBuf1ikUE3qUtCNP2wZoY5AlvCI4MYOQ0AojM46Ijrvm/Uyflkyt
+HY9W13ojdKnGnZ6Sj04YIhrmoDr0EIl5t4LqM8+C7ZXRw4nCKuUCPZTaAcWNTGF1
+iSlgPuuBs+8wJkyaZX0flZV4RGQsXasVuxsKx+/hqW+cRBny9Jb5EmcDhf7vwmUR
+O8r8SEve2ml3lXW6/1QKyt4VzpeXVALleMp9e+uyIz41cU+oD1YB8U6hrICopo/V
+StDqgBgCSMyobyDXj6OXerv03swM5xV/rl5XT+p/C6uxjNqSOvnPv9N1Fy+YcYSj
+65wIz9LXD3Z6mIZeQtoNLCXP1oSCr8Xz7RpbkECU5ecDv/C0ybqJ57wYTav0o6re
+T3SFYQ/uJVG8Y17jmZVlp5ri7xX0BSdhaT7xdvOv2HGz/TIrcOh1T3YTlPiZtrie
+qqWmw6AEVg4XgTXZ6GuZ9SHI41+8TohMUnZb/P4SX77WWkmX2zl6txyIH2E4tvRM
+re7WOGFdTza7aqBDVSbXgfub7pI3xA1No75wYjvR494/HaBeX3ntceqYQqwNiOW2
+Sm0w2RlD3qHfcmj0zINjeNCSX3VsPPFgUuIeAcekbt8LctEgRfWTKTl9k1X7B1lQ
+cAedCEzz+vjkM62Zt5hO
+=5oRj
+-----END PGP SIGNATURE-----
+
+--1LKvkjL3sHcu1TtY--
