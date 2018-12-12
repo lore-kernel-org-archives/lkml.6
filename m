@@ -2,83 +2,176 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,T_MIXED_ES,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E5D8C65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:15:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5750AC65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:16:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8A4D20851
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:15:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HIs/tdYI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8A4D20851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 1CCE120851
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 17:16:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CCE120851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727938AbeLLRPK (ORCPT
+        id S1727970AbeLLRQE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 12:15:10 -0500
-Received: from mail-io1-f46.google.com ([209.85.166.46]:34777 "EHLO
-        mail-io1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726922AbeLLRPK (ORCPT
+        Wed, 12 Dec 2018 12:16:04 -0500
+Received: from mail-it1-f200.google.com ([209.85.166.200]:58458 "EHLO
+        mail-it1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726922AbeLLRQE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 12:15:10 -0500
-Received: by mail-io1-f46.google.com with SMTP id w21so1731415ioc.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 09:15:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=/2Y+CQiA5KF8LF48fNAOnHc0IejZfP6EYOf7EA62Ii0=;
-        b=HIs/tdYIhydw5CDGtSirV0EJbyMsFvwRLD4WK0VZghmdBczH1Ad0zZr/nn1Q/tfrXb
-         ZWl/LhdggMn+PZ8vsCDRrpviNb66jyEMTF9MXqMUOILfzXMKhirZwRTdu5Hl8Dh4NY6x
-         xO/alt0iO5K5bxcC2/3lx7yev0u0GACj5JJ4FEGwQIF5hvUaunEBvHSA+X87CjzUW23s
-         /kja3O40+CN4TWHQc8gpyfvpNd4yfpLpZek5Zua380bDn0nJJYx0eFNhjhtTyaIP3IVA
-         pwoIqUzCU2zESrTgFv2YRa5dT6dagTfWcCzc+v9t2tjAR4BxziYn1QGNcLP6bU2rvo44
-         7Mug==
+        Wed, 12 Dec 2018 12:16:04 -0500
+Received: by mail-it1-f200.google.com with SMTP id p21so6095681itb.8
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 09:16:03 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=/2Y+CQiA5KF8LF48fNAOnHc0IejZfP6EYOf7EA62Ii0=;
-        b=lopKKUzq1v0MKvBsWzOmZbJF3gnvzijIFxaMpmRHgk0JxrXOJZQF1pDUSGveeOWDO1
-         +kikkFdSfAVSTU+Ao0svPbc/xCA5FTkj/uHDBwMtUAnnNWsNP2SL+sY3UDNbDZTTVw7/
-         pUtVBAPSy5KDfwWXJbv8tnm3/Mx4U+axeKbMfv6hAl8ufIhHU4zkr24uSUg2Fw9ipkbu
-         65fSrR0dgKchQHjaE5aUFmVFoTM2+dxg5E7gHYo3Xxrw83mzpB/mO4h+6fZFzIy/4jeP
-         NFzpZODuuCmy4NNpvcTE6bis9QywpvW0sZs+9pgKpBudAKQqDp97Tmq6Jl+YnnHh3J+j
-         ILhQ==
-X-Gm-Message-State: AA+aEWZHlKsLYYtmX1l8X2u03hXt1xiNGuh1P2RSMJQmcP57SpTP4+wr
-        26CZuxPPqP+yoVK4d2PYRwjs+in9l9xjAimq1Jw=
-X-Google-Smtp-Source: AFSGD/XWkojWXboFmMDTVUmYK21YNtnQjIORmAhmqa2EvEU5AWIy1OZzK87uvDFlzqUe0r5gVUAxFPmeLJA9GSzvzb4=
-X-Received: by 2002:a6b:8e43:: with SMTP id q64mr16741070iod.197.1544634909714;
- Wed, 12 Dec 2018 09:15:09 -0800 (PST)
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=9tFpsMPo5D6fu0h7QOIt/nC6ARjvacuvom0qkJuK3KU=;
+        b=SzlF2DRYMn7QW7B2nqh7mv9oNsitKPHvbYaF6p/xyb+t02ey7BWvZ9AXjOozuMI2pj
+         bV7cp5kQCr551blPjMsGo5N2HC9hnNpQFaKojMxiu0Abq9X6N03HNBi9NswckR2fmGLQ
+         QDzG5BHS44u1xa27i/vYAP9pMLEXiaxoP5WdoeVEDgwiQaVdxGelQXQ2wLghRVMUDUMV
+         qz1T9gEGIfPYQghDj291DUuIlltV2FWmieSxY1Tx1OXKX07nkd8IOt2epuMZXEJ9ohQv
+         +uQubMh0hqRzD9u+nxnNw8K6Y6IjGkYlEXjKO7NykpNLL+uaLWiJcChSdm1WTGsx0HJx
+         ZQ8w==
+X-Gm-Message-State: AA+aEWbjatiHi2WrvNONT/wOGP1pBaa2FwaVSUUwOCgrIHYtrf4t7A/+
+        pDZq90yhfC5EZMXAPZ+LsYSCLflXL+ZptZp5o+f8VW2cA7uk
+X-Google-Smtp-Source: AFSGD/WthGatngY33ByZbBW9r87A7b2+FhQD8HCQVCrnPx7Q56tp+YJKudZwpT4ZrkwNr5+yBExx+NUqGwDBugzw8W79JK7fRngy
 MIME-Version: 1.0
-From:   raymond pang <raymondpangxd@gmail.com>
-Date:   Thu, 13 Dec 2018 01:14:56 +0800
-Message-ID: <CAHG4imOadbc2QNckBPj0dT3=SJ3nR_0JsWOCTUbBesKrEw_Kcg@mail.gmail.com>
-Subject: vt-d/iommu: RMRR-declared ACPI device handling in current VT-d Driver
-To:     joro@8bytes.org, dwmw2@infradead.org
-Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-Received: by 2002:a6b:ce18:: with SMTP id p24mr9390659iob.33.1544634963205;
+ Wed, 12 Dec 2018 09:16:03 -0800 (PST)
+Date:   Wed, 12 Dec 2018 09:16:03 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000004a25cc057cd65aad@google.com>
+Subject: INFO: rcu detected stall in sys_mount (2)
+From:   syzbot <syzbot+5751b57c82cd229ffbee@syzkaller.appspotmail.com>
+To:     akpm@linux-foundation.org, amir73il@gmail.com,
+        darrick.wong@oracle.com, david@fromorbit.com, hannes@cmpxchg.org,
+        jrdr.linux@gmail.com, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, syzkaller-bugs@googlegroups.com,
+        willy@infradead.org
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Joerg & David,
-I have a question about current VT-d driver. I found it can not handle
-following case:
-An RMRR-declared ACPI device (it's also declared by ANDD) cannot
-work using current VT-d driver. its DMAs will be blocked by VT-d.
-The reason is that current VT-d driver only tries to setup identity map
-for devices in dmar_rmrr_unit->device[]. But it doesn't add
-RMRR-declared ACPI device into dmar_rmrr_unit->device[]. It just
-allocates memory space for this ACPI device in dmar_parse_one_rmrr().
-Let's see RMRR-declared PCI device. VT-d driver allocates memory
-space for it and then adds it into dmar_rmrr_unit->device[] via
-dmar_iommu_notify_scope_dev().
-If there is any mistake, please correct me. Thanks
+Hello,
 
-BRs,
-Raymond
+syzbot found the following crash on:
+
+HEAD commit:    f5d582777bcb Merge branch 'for-linus' of git://git.kernel...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=149f8ba3400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c8970c89a0efbb23
+dashboard link: https://syzkaller.appspot.com/bug?extid=5751b57c82cd229ffbee
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+
+Unfortunately, I don't have any reproducer for this crash yet.
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+5751b57c82cd229ffbee@syzkaller.appspotmail.com
+
+audit: type=1800 audit(2000000150.760:153): pid=30410 uid=0 auid=4294967295  
+ses=4294967295 subj=_ op=collect_data cause=failed comm="syz-executor1"  
+name="bus" dev="sda1" ino=16548 res=0
+ip6_tunnel: ip6tnl1 xmit: Local address not yet configured!
+ip6_tunnel: 6tnl0 xmit: Local address not yet configured!
+rcu: INFO: rcu_preempt self-detected stall on CPU
+rcu: 	0-....: (1 GPs behind) idle=512/1/0x4000000000000002  
+softirq=146256/146258 fqs=5248
+rcu: 	 (t=10501 jiffies g=205577 q=1497)
+NMI backtrace for cpu 0
+CPU: 0 PID: 30404 Comm: syz-executor0 Not tainted 4.20.0-rc6+ #150
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  <IRQ>
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x244/0x39d lib/dump_stack.c:113
+  nmi_cpu_backtrace.cold.2+0x5c/0xa1 lib/nmi_backtrace.c:101
+  nmi_trigger_cpumask_backtrace+0x1e8/0x22a lib/nmi_backtrace.c:62
+  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
+  trigger_single_cpu_backtrace include/linux/nmi.h:164 [inline]
+  rcu_dump_cpu_stacks+0x16f/0x1bc kernel/rcu/tree.c:1195
+  print_cpu_stall.cold.67+0x1f3/0x3c7 kernel/rcu/tree.c:1334
+  check_cpu_stall kernel/rcu/tree.c:1408 [inline]
+  rcu_pending kernel/rcu/tree.c:2961 [inline]
+  rcu_check_callbacks+0xf3b/0x13f0 kernel/rcu/tree.c:2506
+  update_process_times+0x2d/0x70 kernel/time/timer.c:1636
+  tick_sched_handle+0x9f/0x180 kernel/time/tick-sched.c:164
+  tick_sched_timer+0x45/0x130 kernel/time/tick-sched.c:1274
+  __run_hrtimer kernel/time/hrtimer.c:1398 [inline]
+  __hrtimer_run_queues+0x41c/0x10d0 kernel/time/hrtimer.c:1460
+  hrtimer_interrupt+0x313/0x780 kernel/time/hrtimer.c:1518
+  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1034 [inline]
+  smp_apic_timer_interrupt+0x1a1/0x760 arch/x86/kernel/apic/apic.c:1059
+  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:807
+  </IRQ>
+RIP: 0010:preempt_count arch/x86/include/asm/preempt.h:23 [inline]
+RIP: 0010:preempt_count_sub+0x49/0x150 kernel/sched/core.c:3217
+Code: 0f b6 14 02 48 89 f8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 f9 00  
+00 00 8b 0d 92 eb b9 09 85 c9 75 18 65 8b 05 77 41 ac 7e <25> ff ff ff 7f  
+39 c3 7f 1b 81 fb fe 00 00 00 76 6e 65 8b 05 5f 41
+RSP: 0018:ffff88817b0b6a58 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff13
+RAX: 0000000080000001 RBX: 0000000000000001 RCX: 0000000000000000
+RDX: 0000000000000004 RSI: ffffffff83933488 RDI: ffffffff8b0f97e0
+RBP: ffff88817b0b6a60 R08: ffff88817d73e4c0 R09: ffffed103b5c5b5f
+R10: ffffed103b5c5b5f R11: ffff8881dae2dafb R12: 1ffff1102f616d01
+R13: 0000000000000003 R14: ffff88817b0b6ad8 R15: 0000000000000001
+  rcu_lockdep_current_cpu_online+0x1a4/0x210 kernel/rcu/tree.c:958
+  rcu_read_lock_held+0x90/0xc0 kernel/rcu/update.c:279
+  xa_entry include/linux/xarray.h:848 [inline]
+  xas_reload include/linux/xarray.h:1196 [inline]
+  find_get_entry+0xc9d/0x1120 mm/filemap.c:1440
+  pagecache_get_page+0x12f/0xf00 mm/filemap.c:1518
+  find_or_create_page include/linux/pagemap.h:322 [inline]
+  grow_dev_page fs/buffer.c:947 [inline]
+  grow_buffers fs/buffer.c:1016 [inline]
+  __getblk_slow fs/buffer.c:1043 [inline]
+  __getblk_gfp+0x3aa/0xd50 fs/buffer.c:1320
+  __bread_gfp+0x2d/0x310 fs/buffer.c:1354
+  sb_bread include/linux/buffer_head.h:307 [inline]
+  fat__get_entry+0x5a6/0xa40 fs/fat/dir.c:101
+  fat_get_entry fs/fat/dir.c:129 [inline]
+  fat_get_short_entry+0x13c/0x2c0 fs/fat/dir.c:878
+  fat_subdirs+0x142/0x290 fs/fat/dir.c:944
+  fat_read_root fs/fat/inode.c:1416 [inline]
+  fat_fill_super+0x2a9f/0x4310 fs/fat/inode.c:1851
+  vfat_fill_super+0x31/0x40 fs/fat/namei_vfat.c:1049
+  mount_bdev+0x30c/0x3e0 fs/super.c:1158
+  vfat_mount+0x34/0x40 fs/fat/namei_vfat.c:1056
+  mount_fs+0xae/0x31d fs/super.c:1261
+  vfs_kern_mount.part.35+0xdc/0x4f0 fs/namespace.c:961
+  vfs_kern_mount fs/namespace.c:951 [inline]
+  do_new_mount fs/namespace.c:2469 [inline]
+  do_mount+0x581/0x31f0 fs/namespace.c:2801
+  ksys_mount+0x12d/0x140 fs/namespace.c:3017
+  __do_sys_mount fs/namespace.c:3031 [inline]
+  __se_sys_mount fs/namespace.c:3028 [inline]
+  __x64_sys_mount+0xbe/0x150 fs/namespace.c:3028
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x45a0ea
+Code: b8 a6 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 7d 89 fb ff c3 66 2e 0f  
+1f 84 00 00 00 00 00 66 90 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 5a 89 fb ff c3 66 0f 1f 84 00 00 00 00 00
+RSP: 002b:00007f9204806a88 EFLAGS: 00000206 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007f9204806b30 RCX: 000000000045a0ea
+RDX: 00007f9204806ad0 RSI: 00000000200004c0 RDI: 00007f9204806af0
+RBP: 00000000200004c0 R08: 00007f9204806b30 R09: 00007f9204806ad0
+R10: 0000000000000000 R11: 0000000000000206 R12: 0000000000000007
+R13: 0000000000000000 R14: 00000000004d9c28 R15: 00000000ffffffff
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
