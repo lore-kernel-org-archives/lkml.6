@@ -2,99 +2,119 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BB1BC65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 14:48:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CB8DC67839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 14:48:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F78620870
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 14:48:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F78620870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 4B60320870
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 14:48:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B60320870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727627AbeLLOsX (ORCPT
+        id S1727705AbeLLOs1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 09:48:23 -0500
-Received: from mga18.intel.com ([134.134.136.126]:22652 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726223AbeLLOsW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 09:48:22 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Dec 2018 06:48:22 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,344,1539673200"; 
-   d="scan'208";a="117766522"
-Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
-  by orsmga002.jf.intel.com with ESMTP; 12 Dec 2018 06:48:21 -0800
-Date:   Wed, 12 Dec 2018 07:45:53 -0700
-From:   Keith Busch <keith.busch@intel.com>
-To:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
-        linux-mm@kvack.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rafael Wysocki <rafael@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>
-Subject: Re: [PATCHv2 12/12] doc/mm: New documentation for memory performance
-Message-ID: <20181212144553.GB10780@localhost.localdomain>
-References: <20181211010310.8551-1-keith.busch@intel.com>
- <20181211010310.8551-13-keith.busch@intel.com>
- <681f14eb-def4-bf40-fdfd-b5fb89045132@linux.ibm.com>
+        Wed, 12 Dec 2018 09:48:27 -0500
+Received: from mx2.suse.de ([195.135.220.15]:59740 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726240AbeLLOsY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 09:48:24 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 1E4A2AFC3;
+        Wed, 12 Dec 2018 14:48:22 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id D06BA1E0DB5; Wed, 12 Dec 2018 15:48:20 +0100 (CET)
+Date:   Wed, 12 Dec 2018 15:48:20 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Anatoly Trosinenko <anatoly.trosinenko@gmail.com>
+Cc:     Jan Kara <jack@suse.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: Unlinking a file on a broken UDF image causes kernel BUG
+Message-ID: <20181212144820.GA2393@quack2.suse.cz>
+References: <CAE5jQCddXGKTYV3WuCn7GUU2upvjhONVv2QojbHdp3ej200bTw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/mixed; boundary="oyUTqETQ0mS9luUI"
 Content-Disposition: inline
-In-Reply-To: <681f14eb-def4-bf40-fdfd-b5fb89045132@linux.ibm.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <CAE5jQCddXGKTYV3WuCn7GUU2upvjhONVv2QojbHdp3ej200bTw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 12, 2018 at 10:23:24AM +0530, Aneesh Kumar K.V wrote:
-> On 12/11/18 6:33 AM, Keith Busch wrote:
-> > +When multiple memory initiators exist, they may not all have the same
-> > +performance when accessing a given memory target. The highest performing
-> > +initiator to a given target is considered to be one of that target's
-> > +local initiators. Any given target may have one or more local initiators,
-> > +and any given initiator may have multiple local memory targets.
-> > +
-> 
-> Can you also add summary here suggesting node X is compute and Node y is
-> memory target
 
-Sure thing.
+--oyUTqETQ0mS9luUI
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+Hi,
+
+On Sun 14-10-18 18:27:25, Anatoly Trosinenko wrote:
+> When unlinking a file on a fuzzed UDF image, the kernel BUG is triggered.
+> 
+> How to reproduce (with kvm-xfstests):
+> 
+> 1) Checkout udf/for_next (commit 3df77b04f)
+> 2) Copy x86_64-config-4.14 to .config, execute `make olddefconfig`,
+> then enable UDF support and compile the kernel
+> 3) Copy the attached reproducer to
+> /tmp/kvm-xfstests-$USER/dump_udf.img (1 Mb uncompressed)
+> 4) Run `kvm-xfstests shell`
+> 5) Inside the shell:
+
+Thanks for report and sorry it took so long for me to get to this. Attached
+patch fixes the issue for me.
+
+Unless someone objects, I'm going to merge the patch to my tree and push it
+to Linus in the coming merge window.
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
+
+--oyUTqETQ0mS9luUI
+Content-Type: text/x-patch; charset=us-ascii
+Content-Disposition: attachment; filename="0001-udf-Fix-BUG-on-corrupted-inode.patch"
+
+From d524d42ca22801418c3f2c1cb1bf6e79c1ee217c Mon Sep 17 00:00:00 2001
+From: Jan Kara <jack@suse.cz>
+Date: Wed, 12 Dec 2018 14:29:20 +0100
+Subject: [PATCH] udf: Fix BUG on corrupted inode
+
+When inode is corrupted so that extent type is invalid, some functions
+(such as udf_truncate_extents()) will just BUG. Check that extent type
+is valid when loading the inode to memory.
+
+Reported-by: Anatoly Trosinenko <anatoly.trosinenko@gmail.com>
+Signed-off-by: Jan Kara <jack@suse.cz>
+---
+ fs/udf/inode.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/fs/udf/inode.c b/fs/udf/inode.c
+index 5df554a9f9c9..ae796e10f68b 100644
+--- a/fs/udf/inode.c
++++ b/fs/udf/inode.c
+@@ -1357,6 +1357,12 @@ static int udf_read_inode(struct inode *inode, bool hidden_inode)
  
-> > +To aid applications matching memory targets with their initiators,
-> > +the kernel provide symlinks to each other like the following example::
-> > +
-> > +	# ls -l /sys/devices/system/node/nodeX/local_target*
-> > +	/sys/devices/system/node/nodeX/local_targetY -> ../nodeY
-> > +
-> > +	# ls -l /sys/devices/system/node/nodeY/local_initiator*
-> > +	/sys/devices/system/node/nodeY/local_initiatorX -> ../nodeX
-> > +
-> 
-> the patch series had primary_target and primary_initiator
+ 	iinfo->i_alloc_type = le16_to_cpu(fe->icbTag.flags) &
+ 							ICBTAG_FLAG_AD_MASK;
++	if (iinfo->i_alloc_type != ICBTAG_FLAG_AD_SHORT &&
++	    iinfo->i_alloc_type != ICBTAG_FLAG_AD_LONG &&
++	    iinfo->i_alloc_type != ICBTAG_FLAG_AD_IN_ICB) {
++		ret = -EIO;
++		goto out;
++	}
+ 	iinfo->i_unique = 0;
+ 	iinfo->i_lenEAttr = 0;
+ 	iinfo->i_lenExtents = 0;
+-- 
+2.16.4
 
-Yeah, I noticed that mistake too. I went through several iterations of
-naming this, and I think it will yet be named something else in the
-final revision to accomodate different access levels since it sounds
-like some people may wish to show more than just the best.
 
-> > +When the kernel first registers a memory cache with a node, the kernel
-> > +will create the following directory::
-> > +
-> > +	/sys/devices/system/node/nodeX/side_cache/
-> > +
-> 
-> This is something even the patch commit message didn't explain we create
-> side_cache directory in memory target nodes or initiator nodes? I assume it
-> is part of memory target nodes. If so to be consistent can you use nodeY?
-
-Right, only memory targets may have memory side caches. Will use more
-consistent symbols.
+--oyUTqETQ0mS9luUI--
