@@ -2,106 +2,104 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0438C6783B
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 08:32:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85B72C65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 08:33:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3E7D20849
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 08:32:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="UDvGCFel"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3E7D20849
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 5643620849
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 08:33:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5643620849
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hxt-semitech.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726775AbeLLIcS (ORCPT
+        id S1726785AbeLLIdR convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 03:32:18 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:34846 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726437AbeLLIcS (ORCPT
+        Wed, 12 Dec 2018 03:33:17 -0500
+Received: from mx01.hxt-semitech.com ([223.203.96.7]:34854 "EHLO
+        barracuda.hxt-semitech.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726440AbeLLIdQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 03:32:18 -0500
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wBC8O6qN026774;
-        Wed, 12 Dec 2018 08:31:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=jXK4V4XHXfEhwO+EvcGsnsmgMdReutd+SbHs7eW8u64=;
- b=UDvGCFelMSJC8+mzu1FKXeoTrlz8WjTFlVybLSeFhgQaIkdSANnIFKbEKJVcWwiYc4fz
- ohEll3ImKbvukj4zLhMh46ETAVCOYTjF0G1G4xhLrM5giZSjXZOqxF5eYt0UHvJg1Mji
- oxCrrBFYpITkVatIszUYtqZwN1gmiVSGCIk8295j0u4hCCJGlSef6UNsK1vCiaukquw3
- ChkdFJcSRF7nj2T/V5lsXq2Xx7itdFpzV/zFi/sKiCPhZAkGs8wTNHCf2BwryjBdO7A6
- WFDNgT/wrqDyO1rSBxLh3B8vpXYNTsgnGJipDSfMEdQAFtoGDWq+Nq0mjo+gH3yLO2Cw Og== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by aserp2130.oracle.com with ESMTP id 2pawwp08h3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 12 Dec 2018 08:31:49 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wBC8ViF4021085
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 12 Dec 2018 08:31:44 GMT
-Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wBC8ViaF015434;
-        Wed, 12 Dec 2018 08:31:44 GMT
-Received: from kadam (/197.157.0.38)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 12 Dec 2018 00:31:43 -0800
-Date:   Wed, 12 Dec 2018 11:31:32 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Jeremy Fertic <jeremyfertic@gmail.com>
-Cc:     Jonathan Cameron <jic23@kernel.org>, devel@driverdev.osuosl.org,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        linux-iio@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Hartmut Knaack <knaack.h@gmx.de>
-Subject: Re: [PATCH 10/11] staging: iio: adt7316: change interpretation of
- write to dac update mode
-Message-ID: <20181212083132.GJ3116@kadam>
-References: <20181212005503.28054-1-jeremyfertic@gmail.com>
- <20181212005503.28054-11-jeremyfertic@gmail.com>
+        Wed, 12 Dec 2018 03:33:16 -0500
+X-ASG-Debug-ID: 1544603579-093b7e7c6213d20002-xx1T2L
+Received: from HXTBJIDCEMVIW02.hxtcorp.net ([10.128.0.15]) by barracuda.hxt-semitech.com with ESMTP id 1Q6f355qG8b5diUP (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NO); Wed, 12 Dec 2018 16:33:00 +0800 (CST)
+X-Barracuda-Envelope-From: yanjiang.jin@hxt-semitech.com
+Received: from controller.hxtcorp.net (10.5.21.105) by
+ HXTBJIDCEMVIW02.hxtcorp.net (10.128.0.15) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 12 Dec 2018 16:32:07 +0800
+From:   Yanjiang Jin <yanjiang.jin@hxt-semitech.com>
+To:     <bhelgaas@google.com>, <keith.busch@intel.com>
+CC:     <yu.zheng@hxt-semitech.com>, <ruscur@russell.cc>,
+        <sbobroff@linux.ibm.com>, <oohall@gmail.com>,
+        <jinyanjiang@gmail.com>, <yanjiang.jin@hxt-semitech.com>,
+        <linuxppc-dev@lists.ozlabs.org>, <linux-pci@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH] PCI/AER: only insert one element into kfifo
+Date:   Wed, 12 Dec 2018 16:32:30 +0800
+X-ASG-Orig-Subj: [PATCH] PCI/AER: only insert one element into kfifo
+Message-ID: <1544603550-14208-2-git-send-email-yanjiang.jin@hxt-semitech.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1544603550-14208-1-git-send-email-yanjiang.jin@hxt-semitech.com>
+References: <1544603550-14208-1-git-send-email-yanjiang.jin@hxt-semitech.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181212005503.28054-11-jeremyfertic@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9104 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1812120075
+Content-Type: text/plain
+X-Originating-IP: [10.5.21.105]
+X-ClientProxiedBy: HXTBJIDCEMVIW01.hxtcorp.net (10.128.0.14) To
+ HXTBJIDCEMVIW02.hxtcorp.net (10.128.0.15)
+Content-Transfer-Encoding: 8BIT
+X-Barracuda-Connect: UNKNOWN[10.128.0.15]
+X-Barracuda-Start-Time: 1544603580
+X-Barracuda-Encrypted: ECDHE-RSA-AES256-SHA384
+X-Barracuda-URL: https://192.168.50.101:443/cgi-mod/mark.cgi
+X-Virus-Scanned: by bsmtpd at hxt-semitech.com
+X-Barracuda-BRTS-Status: 1
+X-Barracuda-Bayes: INNOCENT GLOBAL 0.5000 1.0000 0.0000
+X-Barracuda-Spam-Score: 0.00
+X-Barracuda-Spam-Status: No, SCORE=0.00 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
+X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.63648
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------------------------
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 11, 2018 at 05:55:02PM -0700, Jeremy Fertic wrote:
-> Based on the output of adt7316_show_all_DAC_update_modes() and
-> adt7316_show_DAC_update_mode(), adt7316_store_DAC_update_mode() should
-> expect the user to enter an integer input from 0 to 3. The user input is
-> currently expected to account for the actual bit positions in the register.
-> For example, choosing option 3 would require a write of 0x30 (actually 48
-> since it expects base 10). To address this inconsistency, create a shift
-> macro to be used in the valid input check as well as the calculation for
-> the register write.
-> 
-> Signed-off-by: Jeremy Fertic <jeremyfertic@gmail.com>
-> ---
-> I'm not sure if this patch is appropriate since it's making a user visible
-> change. I've included it since the driver is still in staging.
+'commit ecae65e133f2 ("PCI/AER: Use kfifo_in_spinlocked() to
+insert locked elements")' replace kfifo_put() with kfifo_in_spinlocked().
 
-We don't want to break user space, but I agree with you that applying
-this patch is probably the right thing.
+But as "kfifo_in(fifo, buf, n)" describes:
+" * @n: number of elements to be added".
 
-regards,
-dan carpenter
+We want to insert only one element into kfifo, not "sizeof(entry) = 16".
+Without this patch, we would get 15 uninitialized elements.
+
+Signed-off-by: Yanjiang Jin <yanjiang.jin@hxt-semitech.com>
+---
+ drivers/pci/pcie/aer.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
+index a90a919..fed29de 100644
+--- a/drivers/pci/pcie/aer.c
++++ b/drivers/pci/pcie/aer.c
+@@ -1064,7 +1064,7 @@ void aer_recover_queue(int domain, unsigned int bus, unsigned int devfn,
+                .regs           = aer_regs,
+        };
+
+-       if (kfifo_in_spinlocked(&aer_recover_ring, &entry, sizeof(entry),
++       if (kfifo_in_spinlocked(&aer_recover_ring, &entry, 1,
+                                 &aer_recover_ring_lock))
+                schedule_work(&aer_recover_work);
+        else
+--
+1.8.3.1
+
+
+
+
+This email is intended only for the named addressee. It may contain information that is confidential/private, legally privileged, or copyright-protected, and you should handle it accordingly. If you are not the intended recipient, you do not have legal rights to retain, copy, or distribute this email or its contents, and should promptly delete the email and all electronic copies in your system; do not retain copies in any media. If you have received this email in error, please notify the sender promptly. Thank you.
 
 
