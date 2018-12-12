@@ -2,199 +2,107 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,T_MIXED_ES autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9921C04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 06:00:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D395BC04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 06:06:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 799C42084E
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 06:00:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 91DAC20851
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 06:06:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=vmware.com header.i=@vmware.com header.b="OHfUh1kP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 799C42084E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CDaAZhxO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91DAC20851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726487AbeLLF77 (ORCPT
+        id S1726459AbeLLGGW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 00:59:59 -0500
-Received: from mail-eopbgr720051.outbound.protection.outlook.com ([40.107.72.51]:34720
-        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726241AbeLLF77 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 00:59:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5xedmJVNC5yeseCzQxJVsiiITo2tm/3xAoKFOOvx154=;
- b=OHfUh1kP0S3H6NgqIwoNI6oZHJQhkLZkBzau3Num7fA3cqGFGQ4FiLjdoYNjytpPTvchy3FAELHVDuY13MBU00LBTPVkB2DLx5VZDOUrJqfHBwZDhZMom4TzooL/45eKBCJfMIaecmB7kwA07EdKwryqBEOLLNGv7bKJ4Vz+UmY=
-Received: from BYAPR05MB4776.namprd05.prod.outlook.com (52.135.233.146) by
- BYAPR05MB4806.namprd05.prod.outlook.com (52.135.235.92) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1425.9; Wed, 12 Dec 2018 05:59:55 +0000
-Received: from BYAPR05MB4776.namprd05.prod.outlook.com
- ([fe80::9155:fea7:9c0c:68c7]) by BYAPR05MB4776.namprd05.prod.outlook.com
- ([fe80::9155:fea7:9c0c:68c7%4]) with mapi id 15.20.1446.006; Wed, 12 Dec 2018
- 05:59:55 +0000
-From:   Nadav Amit <namit@vmware.com>
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-CC:     Edward Cree <ecree@solarflare.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Subject: Re: [PATCH v2 0/4] Static calls
-Thread-Topic: [PATCH v2 0/4] Static calls
-Thread-Index: AQHUkXwZUa+u7sLIDUq4r+bCTWcEL6V6nNUA
-Date:   Wed, 12 Dec 2018 05:59:55 +0000
-Message-ID: <86D72260-838C-4CE0-ACE3-BE92A3E9CFD8@vmware.com>
-References: <cover.1543200841.git.jpoimboe@redhat.com>
- <0e96ac37-d5c5-86b6-833c-0de01ba18f0d@solarflare.com>
- <20181211180521.ljdvnnztjnvoijge@treble>
-In-Reply-To: <20181211180521.ljdvnnztjnvoijge@treble>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=namit@vmware.com; 
-x-originating-ip: [2601:647:4580:b719:556e:cbaa:858b:f6f3]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BYAPR05MB4806;20:J9bP5hPu9EFujWYxwqpsD6vSL3J4CJgs8yw3qiyL9z+aN5ha0MjXiQ25uOlt0mt+Jl5aJpN/DSHcf4ND00b6myDT5dAgmbOMgcoqDJESGM6ITiV8eCesDRBRB47v3muLeeFR0Xka61nEr3zp98ek3WJlG0RRiUBkouRx/QGlZLw=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 0c490bf9-a565-4214-1bf2-08d65ff70a65
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BYAPR05MB4806;
-x-ms-traffictypediagnostic: BYAPR05MB4806:
-x-microsoft-antispam-prvs: <BYAPR05MB4806620E56D2A0B6DEC63F31D0A70@BYAPR05MB4806.namprd05.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(93006095)(93001095)(3231455)(999002)(944501520)(52105112)(10201501046)(148016)(149066)(150057)(6041310)(20161123564045)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:BYAPR05MB4806;BCL:0;PCL:0;RULEID:;SRVR:BYAPR05MB4806;
-x-forefront-prvs: 0884AAA693
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(346002)(39860400002)(376002)(136003)(366004)(189003)(199004)(51444003)(6916009)(82746002)(229853002)(8676002)(81166006)(81156014)(102836004)(966005)(7736002)(5660300001)(53546011)(186003)(2906002)(6436002)(8936002)(97736004)(46003)(6116002)(83716004)(71190400001)(106356001)(53936002)(575784001)(105586002)(71200400001)(45080400002)(36756003)(14454004)(6486002)(86362001)(305945005)(316002)(76176011)(478600001)(6512007)(33656002)(99286004)(446003)(2616005)(11346002)(256004)(14444005)(6506007)(6246003)(25786009)(486006)(54906003)(476003)(6306002)(68736007)(4326008);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR05MB4806;H:BYAPR05MB4776.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: vmware.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: xWFqA2Gl1WJz3hLIIXxx3zVVMKELTe+opFKGJLBZC++OzgUB7AzYZ2qd7sqYJ3oOEaQu9qFkujes2GptD+er868bIgJtuXIAgl3yfEAyhZ1DMHRAVJVGoQljjG5cwwv5yey02iAlycJFxgqeBh111Cv9YoMwhTSyZ8yrmzQOrfFnG4iAWaEmwK4KasX+Haf+ZO+4Y64jWbclrJhvtKDD8/NezLgfSWbJj3j9K94KYiBoNwjomaTQ2H3J8N88/UtJicMxD5cor77w/NFdV34lgXiPtxJRfQma7HnM5EKtXhaHXtJ9FWZ+z1vk7s8H0htf
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <18BCE9EFFB8F604B83FA241D732A1A1C@namprd05.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Wed, 12 Dec 2018 01:06:22 -0500
+Received: from mail-pg1-f171.google.com ([209.85.215.171]:42590 "EHLO
+        mail-pg1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726237AbeLLGGW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 01:06:22 -0500
+Received: by mail-pg1-f171.google.com with SMTP id d72so7821461pga.9;
+        Tue, 11 Dec 2018 22:06:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=x6tN0yT304LL38AhQvcgGoUROWlm9Cb4VIxs4JaTZs8=;
+        b=CDaAZhxOShwynVkJF2fI1tw0s+ZvArVrBUJCzNTsFWFBM7//PwCE/g2vCgKOt660h3
+         ase66W6M5dZhtZligIrm0QsQIm/0KAVWERFSbKG3EhPG8SyoNsxJkKnzFO/v83laoz7k
+         b+4pl/s/hmx4z74l2G8kFpWyikpW4fHWs5i6xoVxQGW94lMJ+StcjzX3ZWC3WwV7XzP/
+         yU12h6Y2v5GljBQ3v/TI92WkynXho+sUmHHBNFGWeEUnOkllsAxA54ihgog7kWKPx7hL
+         szmJzOhZxNcbNHp1oTHkgQGSKkM0GoAcBfzXhHVqF656pWpcAE8w5kStldqhjysAxI8p
+         5AZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=x6tN0yT304LL38AhQvcgGoUROWlm9Cb4VIxs4JaTZs8=;
+        b=KGZkIoii3P8ZA/FXnT952PJTDN62hk7q9DYWUV4pvNCyqZ/PZ8Y3wd5rAzEovQEhCN
+         dkianCNbjK+xQhHg2rdBy8vLna7kPFatKFnwkz8xQjeF6xKJjem5k1iaVOnkOlfWxnY9
+         9XNObMjI9ah93t9pmSgWaOobkmpEwkw6DkM1XSGENFX3BlfYwYbZ7i+5mj39MjpFbjKM
+         bncQls8Pu7ylbU2ffGxis32HFFW3cGBwNkCgz72HPRy0Z3NKDHWuqeFGfxy0e58W/oqn
+         8WAfbtHCSeAASlGWbjJeADyMINUjrsYcazyrc1TcXHhXDCabKSTWKu5ghQlxIUWh+HgX
+         zMnw==
+X-Gm-Message-State: AA+aEWZl24JxaqrbF0sQt7XTVqPA2OrzbteBena2MOBGCuzIRCMmkSpI
+        Qy0JTck1Red+lt+c/2fWg6Y=
+X-Google-Smtp-Source: AFSGD/WkEbxeep96PPY87C4h7M5wRqqWaNnG+n2mXG4WCxMQTnOgiFK2HSpkwV8xwXVyxumYR6zeTw==
+X-Received: by 2002:a63:fb46:: with SMTP id w6mr17390683pgj.321.1544594781313;
+        Tue, 11 Dec 2018 22:06:21 -0800 (PST)
+Received: from localhost ([211.246.69.141])
+        by smtp.gmail.com with ESMTPSA id a18sm21406287pgj.30.2018.12.11.22.06.19
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 11 Dec 2018 22:06:19 -0800 (PST)
+Date:   Wed, 12 Dec 2018 15:06:16 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Daniel Wang <wonderfly@google.com>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Petr Mladek <pmladek@suse.com>, linux-kernel@vger.kernel.org,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
+        Jiri Slaby <jslaby@suse.com>,
+        Peter Feiner <pfeiner@google.com>,
+        linux-serial@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: Re: [PATCHv3] panic: avoid deadlocks in re-entrant console drivers
+Message-ID: <20181212060616.GH431@jagdpanzerIV>
+References: <20181016050428.17966-2-sergey.senozhatsky@gmail.com>
+ <20181025101036.6823-1-sergey.senozhatsky@gmail.com>
+ <20181031122736.epbxu424l3xagge5@pathway.suse.cz>
+ <20181101014821.GB502@jagdpanzerIV>
+ <20181101080808.n73lrlnjd65nk4qf@pathway.suse.cz>
+ <20181122131202.nkcurdt5k6jrhowa@pathway.suse.cz>
+ <CAJmjG2-_8T6uJP54-+gUG7Aq7kNqkAKAEXbzzV9JVKyZFRh4GQ@mail.gmail.com>
+ <20181212052308.GG431@jagdpanzerIV>
+ <CAJmjG28oiU0unnfx_KO18F3oeMvsKHsJCuKbLiC-_ib7cDjG0g@mail.gmail.com>
 MIME-Version: 1.0
-X-OriginatorOrg: vmware.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0c490bf9-a565-4214-1bf2-08d65ff70a65
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Dec 2018 05:59:55.3571
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR05MB4806
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJmjG28oiU0unnfx_KO18F3oeMvsKHsJCuKbLiC-_ib7cDjG0g@mail.gmail.com>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiBPbiBEZWMgMTEsIDIwMTgsIGF0IDEwOjA1IEFNLCBKb3NoIFBvaW1ib2V1ZiA8anBvaW1ib2VA
-cmVkaGF0LmNvbT4gd3JvdGU6DQo+IA0KPiBPbiBGcmksIERlYyAwNywgMjAxOCBhdCAwNDowNjoz
-MlBNICswMDAwLCBFZHdhcmQgQ3JlZSB3cm90ZToNCj4+IFNvcnJ5IGlmIHRoaXMgaGFzIGJlZW4g
-cG9pbnRlZCBvdXQgYmVmb3JlIChpdCdzIGEgdmVyeSBsb25nIHRocmVhZCksIGJ1dA0KPj4gaW4g
-dGhlIG91dC1vZi1saW5lIGltcGxlbWVudGF0aW9uLCBpdCBhcHBlYXJzIHRoYXQgc3RhdGljX2Nh
-bGxfdXBkYXRlKCkNCj4+IG5ldmVyIGFsdGVycyBrZXktPmZ1bmMuICBBbSBJIHJpZ2h0IGluIHRo
-aW5raW5nIHRoYXQgdGhpcyBzaG91bGQgYmUNCj4+IGZpeGVkIGJ5IGFkZGluZyAnV1JJVEVfT05D
-RShrZXktPmZ1bmMsIGZ1bmMpOycganVzdCBhZnRlciB0aGUgY2FsbCB0bw0KPj4gYXJjaF9zdGF0
-aWNfY2FsbF90cmFuc2Zvcm0oKSBvbiBsaW5lIDE1OSBvZiBpbmNsdWRlL2xpbnV4L3N0YXRpY19j
-YWxsLmg/DQo+IA0KPiBZZXMsIHlvdSdyZSByaWdodCBhYm91dCBib3RoIGJ1Z3MgaW4gdGhlIG91
-dC1vZi1saW5lIGNhc2U6IGtleS0+ZnVuYw0KPiBuZWVkcyB0byBiZSB3cml0dGVuLCBhbmQgX19z
-dGF0aWNfY2FsbF91cGRhdGUoKSBuZWVkcyB0byBiZSBjYWxsZWQgYnkNCj4gc3RhdGljX2NhbGxf
-dXBkYXRlLiAgSSB3YXMgc28gZm9jdXNlZCBvbiBnZXR0aW5nIHRoZSBpbmxpbmUgY2FzZSB3b3Jr
-aW5nDQo+IHRoYXQgSSBvdmVybG9va2VkIHRob3NlLg0KPiANCj4+IFNvbWUgYmFja2dyb3VuZCAo
-d2h5IGRvZXMga2V5LT5mdW5jIG1hdHRlciBmb3IgdGhlDQo+PiBDT05GSUdfSEFWRV9TVEFUSUNf
-Q0FMTF9PVVRMSU5FIGNhc2U/KTogSSBhbSBleHBlcmltZW50aW5nIHdpdGgNCj4+IGNvbWJpbmlu
-ZyB0aGVzZSBzdGF0aWMgY2FsbHMgd2l0aCB0aGUgJ2luZGlyZWN0IGNhbGwgd3JhcHBlcnMnIG5v
-dGlvbg0KPj4gdGhhdCBQYW9sbyBBYmVuaSBoYXMgYmVlbiB3b3JraW5nIG9uIFsxXSwgdXNpbmcg
-cnVudGltZSBpbnN0cnVtZW50YXRpb24NCj4+IHRvIGRldGVybWluZSBhIGxpc3Qgb2YgcG90ZW50
-aWFsIGNhbGxlZXMuICAoVGhpcyBhbGxvd3MgdXMgdG8gY29wZSB3aXRoDQo+PiBjYXNlcyB3aGVy
-ZSB0aGUgY2FsbGVlcyBhcmUgaW4gbW9kdWxlcywgb3Igd2hlcmUgZGlmZmVyZW50IHdvcmtsb2Fk
-cyBtYXkNCj4+IHVzZSBkaWZmZXJlbnQgc2V0cyBvZiBjYWxsZWVzIGZvciBhIGdpdmVuIGNhbGwg
-c2l0ZSwgbmVpdGhlciBvZiB3aGljaCBpcw0KPj4gaGFuZGxlZCBieSBQYW9sbydzIGFwcHJvYWNo
-KS4NCj4+IFRoZSBjb3JlIG9mIG15IGRlc2lnbiBsb29rcyBzb21ldGhpbmcgbGlrZToNCj4+IA0K
-Pj4gc3RhdGljIGludCBkeW5hbWljX2NhbGxfeHl6KGludCAoKmZ1bmMpKHNvbWVfYXJncyksIHNv
-bWVfYXJncykNCj4+IHsNCj4+IAlpZiAoZnVuYyA9PSBkeW5hbWljX2NhbGxfeHl6XzEuZnVuYykN
-Cj4+IAkJcmV0dXJuIHN0YXRpY19jYWxsKGR5bmFtaWNfY2FsbF94eXpfMSwgc29tZV9hcmdzKTsN
-Cj4+IAlpZiAoZnVuYyA9PSBkeW5hbWljX2NhbGxfeHl6XzIuZnVuYykNCj4+IAkJcmV0dXJuIHN0
-YXRpY19jYWxsKGR5bmFtaWNfY2FsbF94eXpfMiwgc29tZV9hcmdzKTsNCj4+IAlyZXR1cm4gKCpm
-dW5jKShzb21lX2FyZ3MpOw0KPj4gfQ0KPj4gDQo+PiBhbGJlaXQgd2l0aCBhIGJ1bmNoIG9mIGV4
-dHJhIChhbmQgY3VycmVudGx5IHJhdGhlciB1Z2x5KSBzdHVmZiB0byBjb2xsZWN0DQo+PiB0aGUg
-c3RhdGlzdGljcyBuZWVkZWQgdG8gZGVjaWRlIHdoYXQgdG8gcHV0IGluIHRoZSBzdGF0aWMgY2Fs
-bCBrZXlzLCBhbmQNCj4+IG1lY2hhbmlzbXMgKFJDVSBpbiBteSBjdXJyZW50IGNhc2UpIHRvIGVu
-c3VyZSB0aGF0IHRoZSBzdGF0aWMgY2FsbCBpc24ndA0KPj4gY2hhbmdlZCBiZXR3ZWVuIGNoZWNr
-aW5nIGl0cyAuZnVuYyBhbmQgYWN0dWFsbHkgY2FsbGluZyBpdC4NCj4+IA0KPj4gLUVkDQo+PiAN
-Cj4+IFBTOiBub3Qgb24gbGlzdCwgcGxlYXNlIGtlZXAgbWUgaW4gQ0MuDQo+PiANCj4+IFsxXSBo
-dHRwczovL25hMDEuc2FmZWxpbmtzLnByb3RlY3Rpb24ub3V0bG9vay5jb20vP3VybD1odHRwcyUz
-QSUyRiUyRmx3bi5uZXQlMkZBcnRpY2xlcyUyRjc3Mzk4NSUyRiZhbXA7ZGF0YT0wMiU3QzAxJTdD
-bmFtaXQlNDB2bXdhcmUuY29tJTdDMTQ3ODk0ZDZjNTZkNGNlNmMxZmMwOGQ2NWY5MzNhZGYlN0Ni
-MzkxMzhjYTNjZWU0YjRhYTRkNmNkODNkOWRkNjJmMCU3QzAlN0MwJTdDNjM2ODAxNDgzMjg2Njg4
-NDkwJmFtcDtzZGF0YT1RT1pjZldYanZQcW9SMG91anRmMVFUUUxlbnYlMkJpRXU2alVBNWZpYXY2
-TW8lM0QmYW1wO3Jlc2VydmVkPTANCj4gDQo+IFRoYW5rcywgdGhpcyBzb3VuZHMgdmVyeSBpbnRl
-cmVzdGluZy4gIEFkZGluZyBOYWRhdiB0byBDQywgYXMgaGUgaGFzDQo+IGJlZW4gbG9va2luZyBh
-dCBhIGRpZmZlcmVudCBhcHByb2FjaCB0byBzb2x2aW5nIHRoZSBzYW1lIHByb2JsZW06DQo+IA0K
-PiAgaHR0cHM6Ly9uYTAxLnNhZmVsaW5rcy5wcm90ZWN0aW9uLm91dGxvb2suY29tLz91cmw9aHR0
-cHMlM0ElMkYlMkZsa21sLmtlcm5lbC5vcmclMkZyJTJGMjAxODEwMTgwMDU0MjAuODI5OTMtMS1u
-YW1pdCU0MHZtd2FyZS5jb20mYW1wO2RhdGE9MDIlN0MwMSU3Q25hbWl0JTQwdm13YXJlLmNvbSU3
-QzE0Nzg5NGQ2YzU2ZDRjZTZjMWZjMDhkNjVmOTMzYWRmJTdDYjM5MTM4Y2EzY2VlNGI0YWE0ZDZj
-ZDgzZDlkZDYyZjAlN0MwJTdDMCU3QzYzNjgwMTQ4MzI4NjY4ODQ5MCZhbXA7c2RhdGE9YkNJMk4y
-eEtVVnl5eVBBbldESDNtQzNEc1NrJTJCenk1bm1JMERWJTJGJTJGYVlZdyUzRCZhbXA7cmVzZXJ2
-ZWQ9MA0KDQpUaGFua3MgZm9yIGNj4oCZaW5nIG1lLiAoSSBkaWRu4oCZdCBrbm93IGFib3V0IHRo
-ZSBvdGhlciBwYXRjaC1zZXRzLikNCg0KQWxsb3cgbWUgdG8gc2hhcmUgbXkgZXhwZXJpZW5jZSwg
-YmVjYXVzZSBJIHdhcyBzdHVkeWluZyB0aGlzIGlzc3VlIGZvciBzb21lDQp0aW1lIGFuZCBoYXZl
-IGltcGxlbWVudGVkIG1vcmUgdGhhbiBJIHNoYXJlZCwgc2luY2UgdGhlIGNvZGUgbmVlZCBtb3Jl
-DQpjbGVhbnVwLiBTb21lIG9mIHRoZSBwcm9wb3NlZCBhcHByb2FjaGVzIGFyZSB0aGluZ3Mgd2Ug
-ZWl0aGVyIGNvbnNpZGVyZWQgb3INCmFjdHVhbGx5IGltcGxlbWVudGVkIChhbmQgbGF0ZXIgZHJv
-cHBlZCkuIEV2ZW50dWFsbHksIG91ciBkZXNpZ24gd2FzIGd1aWRlZA0KYnkgcGVyZm9ybWFuY2Ug
-cHJvZmlsaW5nIGFuZCBhIGdyYWluIG9mIOKAnHdoYXTigJlzIGFjYWRlbWlj4oCdIGNvbnNpZGVy
-YXRpb24uDQoNCkkgdGhpbmsgdGhhdCBldmVudHVhbGx5IHlvdSB3b3VsZCB3YW50IHRvIGdvIHdp
-dGggb25lIGNlbnRyYWwgbWVjaGFuaXNtIGZvcg0KdGhlIHZhcmlvdXMgc2l0dWF0aW9uczoNCg0K
-MS4gUmVnaXN0ZXJlZCB0YXJnZXRzIChzdGF0aWMpIGFuZCBhdXRvbWF0aWNhbGx5IGxlYXJudCB0
-YXJnZXRzIChkeW5hbWljKS4NClJlZ2lzdHJhdGlvbiBkb2VzIG5vdCB3b3JrIGluIHNvbWUgY2Fz
-ZXMgKGUuZy4sIGZpbGUtc3lzdGVtIGZ1bmN0aW9uDQpwb2ludGVycywgdGhlcmUgYXJlIHRvbyBt
-YW55IG9mIHRob3NlKS4gT24gdGhlIG90aGVyIGhhbmQsIGlmIHlvdSBrbm93IHlvdXINCnRhcmdl
-dCBpdCBpcyBvYnZpb3VzbHkgc2ltcGxlci9iZXR0ZXIuDQoNCjIuIFdpdGgvd2l0aG91dCByZXRw
-b2xpbmUgZmFsbGJhY2suIFdl4oCZdmUgaGF2ZSBhbHdheXMgaGFkIHRoZSByZXRwb2xpbmUgYXMN
-CmZhbGxiYWNrLCBidXQgaWYgeW91IHVzZSBhIHJlZ2lzdHJhdGlvbiBtZWNoYW5pc20sIGl04oCZ
-cyBub3QgbmVjZXNzYXJ5Lg0KDQozLiBTaW5nbGUgYW5kIG11bHRpcGxlIHRhcmdldHMuIEZvciBt
-dWx0aXBsZSB0YXJnZXRzIHdlIGRlY2lkZWQgdG8gdXNlDQpvdXRsaW5lIGJsb2NrIGluIG9yZGVy
-IG5vdCB0byBpbmZsYXRlIHRoZSBjb2RlIGZvciBubyByZWFzb24uIFRoZXJlIHdlcmUNCm92ZXIg
-MTAwMDAgaW5kaXJlY3QgYnJhbmNoZXMgaW4gb3VyIGtlcm5lbCBidWlsZCwgYnV0IGluIG91ciB3
-b3JrbG9hZHMgb25seQ0KfjUwMCB3ZXJlIGFjdHVhbGx5IHJ1bi4NCg0KSWYgeW91IGdvdCB3aXRo
-IHRoZSBhcHByb2FjaCB0aGF0IEVkd2FyZCBtZW50aW9uZWQsIHlvdSBtYXkgd2FudCB0bw0KYXNz
-b2NpYXRlIGVhY2gg4oCcZnVuY3Rpb24iIHdpdGggaWRlbnRpZmllciAodGhpbmsgYWJvdXQgZmls
-ZV9vcGVyYXRpb25zDQpoYXZpbmcgYW4gYWRkaXRpb25hbCBmaWVsZCB0aGF0IGhvbGRzIGEgdW5p
-cXVlIElELCBvciB1c2luZyB0aGUgc3RydWN0DQphZGRyZXNzKS4gVGhpcyB3b3VsZCBhbGxvdyB5
-b3UgdG8gdXNlIGEg4oCcYmluYXJ5IHNlYXJjaOKAnSB0byBmaW5kIHRoZSByaWdodA0KdGFyZ2V0
-LCB3aGljaCB3b3VsZCBiZSBzbGlnaHRseSBtb3JlIGVmZmljaWVudC4gV2UgYWN0dWFsbHkgdXNl
-ZCBhDQpiaW5hcnktc2VhcmNoIGZvciBhIGRpZmZlcmVudCByZWFzb24gLSBsZWFybmluZyB0aGUg
-bW9zdCBmcmVxdWVudCBzeXNjYWxscw0KcGVyIHByb2Nlc3MgYW5kIGNhbGxpbmcgdGhlbSBpbiB0
-aGlzIG1hbm5lciAod2UgYWN0dWFsbHkgaGFkIGFuIGluZGlyZWN0aW9uDQp0YWJsZSB0byBjaG9v
-c2UgdGhlIHJpZ2h0IG9uZSkuDQoNCjMuIENhbGwtY2hhaW5zIHdoaWNoIGFyZSBtb3N0bHkgZml4
-ZWQgKG5leHQpLiBZb3Ugd2FudCB0byB1bnJvbGwgdGhvc2UuDQoNCjQuIFBlci1wcm9jZXNzIGNh
-bGxzLiBUaGUgY2FzZSB0aGF0IGJvdGhlcmVkIHVzIHRoZSBtb3N0IGlzIHNlY2NvbXAuIE9uIG91
-cg0Kc2V0dXAsIHN5c3RlbWQgaW5zdGFsbGVkIDE3KCEpIEJQRiBzZWNjb21wIHByb2dyYW1zIG9u
-IFJlZGlzIHNlcnZlciwgY2F1c2luZw0KZXZlcnkgc3lzY2FsbCB0byBnbyB0aHJvdWdoIDE3IGlu
-ZGlyZWN0IGJyYW5jaGVzIHRvIGludm9rZSB0aGVtLiBCdXQNCnNpbWlsYXJseSB5b3UgaGF2ZSBt
-bXUtbm90aWZpZXJzIGFuZCBvdGhlcnMuIFdlIHVzZWQgYSBwZXItcHJvY2Vzcw0KdHJhbXBvbGlu
-ZSBwYWdlIGZvciB0aGlzIG1hdHRlci4NCg0KTm93IHRoZXJlIGlzIG9mIGNvdXJzZSB0aGUgcXVl
-c3Rpb24gb2Ygd2hldGhlciB0byBnbyB0aHJvdWdoIGF1dG9tYXRpYw0KaW5mZXJlbmNlIG9mIHRo
-ZSBpbmRpcmVjdCBjYWxsIHNpdGVzICh1c2luZyBhc20gbWFjcm9zL0dDQyBwbHVnaW4pIG9yDQpt
-YW51YWxseSBtYXJraW5nIHRoZW0gKHVzaW5nIEMgbWFjcm9zKS4gSW5pdGlhbGx5IHdlIHVzZWQg
-QyBtYWNyb3MsIHdoaWNoIHdlDQpjcmVhdGVkIHVzaW5nIHNlbWktYXV0b21hdGljYWxseSBnZW5l
-cmF0ZWQgQ29jY2luZWxsZSBzY3JpcHRzLiBBcyBJDQpyZW1lbWJlcmVkIGhvdyBJIHdhcyBjcnVj
-aWZpZWQgaW4gdGhlIHBhc3Qgb3ZlciDigJx1Z2xpZmljYXRpb27igJ0gb2YgdGhlIGNvZGUsDQpJ
-IHRob3VnaHQgYSB0cmFuc3BhcmVudCBtb2RpZmljYXRpb24gb2YgdGhlIGNvZGUgd291bGQgYmUg
-YmV0dGVyLCBzbyB3ZSB3ZW50DQp3aXRoIGFzbSBtYWNyb3MgZm9yIG91ciBwcm90b3R5cGUuDQoN
-CkZpbmFsbHksIEkgc2hvdWxkIG1lbnRpb24gdGhhdCB0aGUgaW1wYWN0IG9mIG1vc3Qgb2YgdGhl
-c2UgbWVjaGFuaXNtcyBzaG91bGQNCm5vdCBiZSBzaWduaWZpY2FudCAob3IgZXZlbiBwb3NpdGl2
-ZSkgaWYgcmV0cG9saW5lcyB3ZXJlIG5vdCB1c2VkLiBIYXZpbmcNCnNhaWQgdGhhdCwgdGhlIGF1
-dG9tYXRpY2FsbHktbGVhcm50IGluZGlyZWN0IGJyYW5jaCBwcm9tb3Rpb24gKHdpdGggYSBzaW5n
-bGUNCnRhcmdldCkgc2hvd2VkIHVwIHRvIHJvdWdobHkgMiUgcGVyZm9ybWFuY2UgaW1wcm92ZW1l
-bnQuDQoNClBsZWFzZSBsZXQgbWUga25vdyBob3cgeW91IHdhbnQgdG8gcHJvY2VlZC4gSSBkaWRu
-4oCZdCBrbm93IGFib3V0IHlvdXINCnBhdGNoLXNldCwgYnV0IEkgdGhpbmsgdGhhdCBoYXZpbmcg
-dHdvIHNpbWlsYXIgKHlldCBkaWZmZXJlbnQpIHNlcGFyYXRlDQptZWNoYW5pc21zIGlzIG5vdCBn
-cmVhdC4gSWYgeW91IHdhbnQsIEnigJlsbCBmaW5pc2ggYWRkcmVzc2luZyB0aGUgaXNzdWVzDQp5
-b3XigJl2ZSByYWlzZWQgYW5kIHNlbmQgYW5vdGhlciBSRkMuDQoNClJlZ2FyZHMsDQpOYWRhdg==
+On (12/11/18 21:59), Daniel Wang wrote:
+> No worries. I will follow up. You would recommend that all four
+> patches in this set to be backported though, right?
+
+Just the last one, which makes consoles re-entrant
+
+	panic: avoid deadlocks in re-entrant console drivers
+
+Because only this one was applied so far. The reset got stuck.
+
+	-ss
