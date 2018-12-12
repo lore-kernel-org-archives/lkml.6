@@ -6,140 +6,105 @@ X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71AE3C65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 10:24:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2379AC65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 10:24:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41EA72084E
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 10:24:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41EA72084E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
+	by mail.kernel.org (Postfix) with ESMTP id E63072084E
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 10:24:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E63072084E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iogearbox.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727112AbeLLKX7 (ORCPT
+        id S1727181AbeLLKYG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 05:23:59 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:13428 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726791AbeLLKX6 (ORCPT
+        Wed, 12 Dec 2018 05:24:06 -0500
+Received: from www62.your-server.de ([213.133.104.62]:39944 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726680AbeLLKYG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 05:23:58 -0500
-Received: from fsav104.sakura.ne.jp (fsav104.sakura.ne.jp [27.133.134.231])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id wBCANfdM020393;
-        Wed, 12 Dec 2018 19:23:41 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav104.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav104.sakura.ne.jp);
- Wed, 12 Dec 2018 19:23:41 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav104.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126126163036.bbtec.net [126.126.163.36])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id wBCANaHE020370
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Wed, 12 Dec 2018 19:23:41 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [RFC PATCH 2/2] memcg: do not report racy no-eligible OOM tasks
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-To:     Michal Hocko <mhocko@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>, linux-mm@kvack.org,
-        David Rientjes <rientjes@google.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>
-References: <20181022071323.9550-1-mhocko@kernel.org>
- <20181022071323.9550-3-mhocko@kernel.org>
- <20181026142531.GA27370@cmpxchg.org> <20181026192551.GC18839@dhcp22.suse.cz>
- <20181026193304.GD18839@dhcp22.suse.cz>
- <dfafc626-2233-db9b-49fa-9d4bae16d4aa@i-love.sakura.ne.jp>
- <c38e352a-dd23-a5e4-ac50-75b557506479@i-love.sakura.ne.jp>
- <20181106124224.GM27423@dhcp22.suse.cz>
- <8725e3b3-3752-fa7f-a88f-5ff4f5b6eace@i-love.sakura.ne.jp>
- <20181107100810.GA27423@dhcp22.suse.cz>
- <8a71ecd8-e7bc-25de-184f-dfda511ee0d1@i-love.sakura.ne.jp>
-Message-ID: <38568dbe-f45b-8c55-84e4-d4dcbdbef545@i-love.sakura.ne.jp>
-Date:   Wed, 12 Dec 2018 19:23:35 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
+        Wed, 12 Dec 2018 05:24:06 -0500
+Received: from [78.46.172.2] (helo=sslproxy05.your-server.de)
+        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89_1)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1gX1gR-0000Gy-EA; Wed, 12 Dec 2018 11:24:03 +0100
+Received: from [2a02:1203:ecb1:b710:c81f:d2d6:50a9:c2d] (helo=linux.home)
+        by sslproxy05.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1gX1gR-000HU3-6o; Wed, 12 Dec 2018 11:24:03 +0100
+Subject: Re: [PATCH 7/7] selftest/bpf: fix E501 line too long
+To:     Alice Ferrazzi <alice.ferrazzi@gmail.com>
+Cc:     jakub.kicinski@netronome.com, ast@kernel.org, shuah@kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20181211115607.13774-1-alice.ferrazzi@gmail.com>
+ <20181211115607.13774-8-alice.ferrazzi@gmail.com>
+From:   Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <62f6127d-edf6-2d41-cd7d-1c1c20607b38@iogearbox.net>
+Date:   Wed, 12 Dec 2018 11:24:02 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-In-Reply-To: <8a71ecd8-e7bc-25de-184f-dfda511ee0d1@i-love.sakura.ne.jp>
+In-Reply-To: <20181211115607.13774-8-alice.ferrazzi@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.100.2/25199/Wed Dec 12 03:21:46 2018)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/12/07 21:43, Tetsuo Handa wrote:
-> No response for one month. When can we get to an RCU stall problem syzbot reported?
+[ +Jakub ]
 
-Why not to apply this patch and then think how to address
-https://lore.kernel.org/lkml/201810100012.w9A0Cjtn047782@www262.sakura.ne.jp/ ?
+On 12/11/2018 12:56 PM, Alice Ferrazzi wrote:
+> fix PEP8 style issues
+> 
+> Signed-off-by: Alice Ferrazzi <alice.ferrazzi@gmail.com>
+> ---
+>  tools/testing/selftests/bpf/test_offload.py | 35 +++++++++++++--------
+>  1 file changed, 22 insertions(+), 13 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/bpf/test_offload.py b/tools/testing/selftests/bpf/test_offload.py
+> index b06cc0eea0eb..3f78da0f87d5 100755
+> --- a/tools/testing/selftests/bpf/test_offload.py
+> +++ b/tools/testing/selftests/bpf/test_offload.py
+> @@ -208,7 +208,8 @@ def bpftool_prog_list_wait(expected=0, n_retry=20):
+>          if nprogs == expected:
+>              return
+>          time.sleep(0.05)
+> -    raise Exception("Time out waiting for program counts to stabilize want %d, have %d" % (expected, nprogs))
+> +    raise Exception("Time out waiting for program counts \
+> +to stabilize want %d, have %d" % (expected, nprogs))
+>  
+>  
+>  def bpftool_map_list_wait(expected=0, n_retry=20):
+> @@ -217,7 +218,8 @@ def bpftool_map_list_wait(expected=0, n_retry=20):
+>          if nmaps == expected:
+>              return
+>          time.sleep(0.05)
+> -    raise Exception("Time out waiting for map counts to stabilize want %d, have %d" % (expected, nmaps))
+> +    raise Exception("Time out waiting for map counts to \
+> +stabilize want %d, have %d" % (expected, nmaps))
+>  
+>  
+>  def bpftool_prog_load(sample, file_name, maps=[], prog_type="xdp", dev=None,
+> @@ -413,7 +415,8 @@ class NetdevSim:
+>              if nbound == bound and nprogs == total:
+>                  return
+>              time.sleep(0.05)
+> -        raise Exception("Time out waiting for program counts to stabilize want %d/%d, have %d bound, %d loaded" % (
+> +        raise Exception("Time out waiting for program counts to \
+> +stabilize want %d/%d, have %d bound, %d loaded" % (
+>              bound, total, nbound, nprogs))
 
-From 0fb58415770a83d6c40d471e1840f8bc4a35ca83 Mon Sep 17 00:00:00 2001
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Date: Wed, 12 Dec 2018 19:15:51 +0900
-Subject: [PATCH] memcg: killed threads should not invoke memcg OOM killer
+I'll leave the test_offload.py ones up to Jakub, but to me it seems this particular
+change here would actually make the code look worse and harder to grep for error
+messages, so my preference would be to at least leave the error messages as-is. Also
+seems it's not a 'must' in pep8 [0].
 
-It is possible that a single process group memcg easily swamps the log
-with no-eligible OOM victim messages after current thread was OOM-killed,
-due to race between the memcg charge and the OOM reaper [1].
+  [0] https://www.python.org/dev/peps/pep-0008/#maximum-line-length
 
-Thread-1                 Thread-2                       OOM reaper
-try_charge()
-  mem_cgroup_out_of_memory()
-    mutex_lock(oom_lock)
-                        try_charge()
-                          mem_cgroup_out_of_memory()
-                            mutex_lock(oom_lock)
-    out_of_memory()
-      select_bad_process()
-      oom_kill_process(current)
-      wake_oom_reaper()
-                                                        oom_reap_task()
-                                                        # sets MMF_OOM_SKIP
-    mutex_unlock(oom_lock)
-                            out_of_memory()
-                              select_bad_process() # no task
-                            mutex_unlock(oom_lock)
-
-We don't need to invoke the memcg OOM killer if current thread was killed
-when waiting for oom_lock, for mem_cgroup_oom_synchronize(true) and
-memory_max_write() can bail out upon SIGKILL, and try_charge() allows
-already killed/exiting threads to make forward progress.
-
-Michal has a plan to use tsk_is_oom_victim() by calling mark_oom_victim()
-on all thread groups sharing victim's mm. But fatal_signal_pending() in
-this patch helps regardless of Michal's plan because it will avoid
-needlessly calling out_of_memory() when current thread is already
-terminating (e.g. got SIGINT after passing fatal_signal_pending() check
-in try_charge() and mutex_lock_killable() did not block).
-
-[1] https://lkml.kernel.org/r/ea637f9a-5dd0-f927-d26d-d0b4fd8ccb6f@i-love.sakura.ne.jp
-
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
----
- mm/memcontrol.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
-
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index b860dd4f7..b0d3bf3 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -1389,8 +1389,13 @@ static bool mem_cgroup_out_of_memory(struct mem_cgroup *memcg, gfp_t gfp_mask,
- 	};
- 	bool ret;
- 
--	mutex_lock(&oom_lock);
--	ret = out_of_memory(&oc);
-+	if (mutex_lock_killable(&oom_lock))
-+		return true;
-+	/*
-+	 * A few threads which were not waiting at mutex_lock_killable() can
-+	 * fail to bail out. Therefore, check again after holding oom_lock.
-+	 */
-+	ret = fatal_signal_pending(current) || out_of_memory(&oc);
- 	mutex_unlock(&oom_lock);
- 	return ret;
- }
--- 
-1.8.3.1
+Thanks,
+Daniel
