@@ -2,92 +2,116 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE3E2C67839
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 01:31:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 137AEC6783B
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 01:35:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4EE5E20851
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 01:31:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BFB6B20870
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 01:35:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="ITYIE18J"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EE5E20851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=purestorage.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SSVrndYy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFB6B20870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726271AbeLLBbg (ORCPT
+        id S1726266AbeLLBfa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 11 Dec 2018 20:31:36 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:40786 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726201AbeLLBbf (ORCPT
+        Tue, 11 Dec 2018 20:35:30 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:38015 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726201AbeLLBfa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 11 Dec 2018 20:31:35 -0500
-Received: by mail-qt1-f193.google.com with SMTP id k12so18780596qtf.7
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 17:31:35 -0800 (PST)
+        Tue, 11 Dec 2018 20:35:30 -0500
+Received: by mail-wm1-f66.google.com with SMTP id m22so4223563wml.3;
+        Tue, 11 Dec 2018 17:35:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=J6fFGJHnjceq1r5h/KuGidS1/t2IUyPSho208krEb6M=;
-        b=ITYIE18JbXHVspKL/CUngrw7avgWXI6uoR+Fi3iNyYSW4olj33rA64fBJuBTt5BkLE
-         wcfblW5f44jUEM9FgP3xLmTZK0KLNBZyhThCff6uH+djYbpneZz8l0ktXPTVH+XYKL4F
-         4FCkIMoqTqVemDgrZkfGfpjRQul1GSEdNwdzY=
+        bh=H5H2li2R33XJbbHxFVIsAyEewkATsOICi72EGgRBsYQ=;
+        b=SSVrndYywnMGlAXVieSYSU+A8j8iZ3hz5hHMOj+B/TGgrBg0vKFNfkjvCmu30aZd9m
+         qkmcDOmqETvbMkDrz0WcRBOwfQKUkMnNA+V2ZXuKLhUUgkktkM7JmbHHyidadJcQQh4L
+         qNjzOTJTmFa6k0AGVnBeAyyynKgISeGhxxi0hg6uJ209Lw7oL45FcQW4vVQSoN6aLYQb
+         HULLPfkSG0KEv5fidCxDAW8EqAGsOoDjYvF6wtlz4hB+eUaEdKB3obzdCdd0wMvDnS/6
+         eIE7dcrc1Z7kUSEnYS4/WbrKdVxY/4xh0o7SQiHrmx/M/0o4fPXNIHlUPfC/CT4jDoy0
+         6E1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=J6fFGJHnjceq1r5h/KuGidS1/t2IUyPSho208krEb6M=;
-        b=mgYh6kawv/cTtm4WWCOJaoitmO4zxSIBR/1vTp+o4wxdHY5MYGbb6/RUmg9fa2Wgb3
-         5mDKJ4R8IQsycrl0nzcOTsCTHT/gRTb6iXoO5+mE21XLK9FkqtJMLlocOWNhbUzczuxJ
-         dSIBNt6xCcn0XxHJbPwO5Oi09y+kF59eLCb2OgGlMtbnqSyRKtge8ZH9HgOwQIFXj1qy
-         SpnlZc7filY9VvsUIsnXqoeq+xsKRtZBO087idiDs+0qW2SzLtMumPteHs1wXgj3+OFj
-         vqu9Yi7GqrDOlhGMoxMRIXfrkLveclLIY4t4+g4Q17kI8tn65iQhxsY3gH2FY8P97TXl
-         1oXQ==
-X-Gm-Message-State: AA+aEWYDvmb6nxst5oGVlztfjve6aBSVDxmuvHF3W5jxqIftMgV3o26J
-        cpOX9g44dLLOFznM8wBh5bXFpWszpHPqlG5Iu5mNQZ/wOhs40w==
-X-Google-Smtp-Source: AFSGD/UGSGSnAuw21onh38FGLD7LI2wxZ8+QP2yIYQ8xluKcFlfo/KGW6S9oR6vLvS76Gj37Dl/KBJ5If2Ax5hAem7w=
-X-Received: by 2002:ac8:18fa:: with SMTP id o55mr18605544qtk.256.1544578294605;
- Tue, 11 Dec 2018 17:31:34 -0800 (PST)
+        bh=H5H2li2R33XJbbHxFVIsAyEewkATsOICi72EGgRBsYQ=;
+        b=UkkLmoPRdrmTEXrZzNdR9FHtLGPD0l9Vs45jRxDGjLLw2aOZqwkliWGvCF1yKH6gXG
+         Bu30w9nkOKb4mxS0cEiV8vPIjZkOXXjs4XPAj6k/3oVOfH034oDyACGDPRAsaLLzrcdc
+         np+2vwe/jcF5cQZyzEcAWBgL9BJ4uAjcaEYi8n3zvdS/swoxhYCXKfCQdyO8xWFV5Fj8
+         Q/Scl0px6ji/hAe6qC+pA7U2Y7HZJsk2zYVnvgQ/VIy64jaAr5GK4VyneE6vTE/264wE
+         QK8Kuujbz5xXkedHxd8o69aSp3aP99BF3JBu2zuX7+OmuvT0ftnmDQasnB9z+IwTfh99
+         YDlg==
+X-Gm-Message-State: AA+aEWYTh53NIsIeId7JBhwbEF/XbgmeDzIFDO/n/30vHCY2DXtsbPdN
+        jbf0YNII9P2UhlxBqtCwHLdwBNPNZ8J1rbFGKQ0=
+X-Google-Smtp-Source: AFSGD/W74rsJvZY1ubJdvL4SrrI/hfGyehCLgnE/Flyr9XpWUQn93AieMwHbY+HrIth4afV7U64VTLySqYzpGPMOGXA=
+X-Received: by 2002:a1c:ba0b:: with SMTP id k11mr86449wmf.127.1544578527719;
+ Tue, 11 Dec 2018 17:35:27 -0800 (PST)
 MIME-Version: 1.0
-References: <1543535954-28073-1-git-send-email-jalee@purestorage.com>
- <cc7cbad6-0e7d-8328-c602-61d659c3a7de@grimberg.me> <b7b26a7a-70be-d805-ee64-67fba0b4efa8@mellanox.com>
- <CAJX3Cti_ZJF5E+NRuRzSeEUgaXsbA2U9C+Rh5OdYd4EMwXC1gw@mail.gmail.com>
- <773bb91f-40a4-a525-f7b8-db821b402821@mellanox.com> <CAJX3Ctjtt2zebuLfzKM30PV1x3fm8HaJJFJw3zZSOShWnQnu=Q@mail.gmail.com>
- <c645f196-3fbb-c9b9-5686-730ceed102fa@grimberg.me>
-In-Reply-To: <c645f196-3fbb-c9b9-5686-730ceed102fa@grimberg.me>
-From:   Jaesoo Lee <jalee@purestorage.com>
-Date:   Tue, 11 Dec 2018 17:31:23 -0800
-Message-ID: <CAJX3Ctg9rn2JyTL1xfb2htWjPaB3qj9t4gV=QZ+3yjGbCNz8UA@mail.gmail.com>
-Subject: Re: [PATCH] nvme-rdma: complete requests from ->timeout
-To:     sagi@grimberg.me
-Cc:     nitzanc@mellanox.com, keith.busch@intel.com, axboe@fb.com,
-        hch@lst.de, Roland Dreier <roland@purestorage.com>,
-        Prabhath Sajeepa <psajeepa@purestorage.com>,
-        Ashish Karkare <ashishk@purestorage.com>,
-        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org
+References: <20181128043738.12714-1-andrew.smirnov@gmail.com>
+ <20181128043738.12714-3-andrew.smirnov@gmail.com> <20181211224349.GA30397@bogus>
+In-Reply-To: <20181211224349.GA30397@bogus>
+From:   Andrey Smirnov <andrew.smirnov@gmail.com>
+Date:   Tue, 11 Dec 2018 17:35:15 -0800
+Message-ID: <CAHQ1cqHH5Vef1e7bXBXWQdSzmAOpwj1vdyG-t83PkRyLifVFuw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] reset: imx7: Add support for i.MX8MQ IP block variant
+To:     Rob Herring <robh@kernel.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, linux-imx@nxp.com,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Please drop this patch. However, it would be happy if this bug can be
-fixed as soon as possible.
-
-Nitzan, do you mind if you send your patch for review?
-On Tue, Dec 11, 2018 at 3:39 PM Sagi Grimberg <sagi@grimberg.me> wrote:
+On Tue, Dec 11, 2018 at 2:43 PM Rob Herring <robh@kernel.org> wrote:
 >
-> > I cannot reproduce the bug with the patch; in my failure scenarios, it
-> > seems that completing the request on errors in nvme_rdma_send_done
-> > makes __nvme_submit_sync_cmd to be unblocked. Also, I think this is
-> > safe from the double completions.
+> On Tue, Nov 27, 2018 at 08:37:37PM -0800, Andrey Smirnov wrote:
+> > Add bits and pieces needed to support IP block variant found on
+> > i.MX8MQ SoCs.
 > >
-> > However, it seems that nvme_rdma_timeout code is still not free from
-> > the double completion problem. So, it looks promising to me if you
-> > could separate out the nvme_rdma_wr_error handling code as a new
-> > patch.
+> > Cc: p.zabel@pengutronix.de
+> > Cc: Fabio Estevam <fabio.estevam@nxp.com>
+> > Cc: cphealy@gmail.com
+> > Cc: l.stach@pengutronix.de
+> > Cc: Leonard Crestez <leonard.crestez@nxp.com>
+> > Cc: "A.s. Dong" <aisheng.dong@nxp.com>
+> > Cc: Richard Zhu <hongxing.zhu@nxp.com>
+> > Cc: Rob Herring <robh@kernel.org>
+> > Cc: devicetree@vger.kernel.org
+> > Cc: linux-imx@nxp.com
+> > Cc: linux-arm-kernel@lists.infradead.org
+> > Cc: linux-kernel@vger.kernel.org
+> > Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+> > ---
+> >  drivers/reset/Kconfig                    |   2 +-
+> >  drivers/reset/reset-imx7.c               | 106 +++++++++++++++++++++++
+> >  include/dt-bindings/reset/imx8mq-reset.h |  64 ++++++++++++++
 >
-> Guys, can you please send proper patches so we can review properly?
+> This goes in the binding patch.
+
+OK, I was following the precedent of the original submission:
+
+https://lore.kernel.org/linux-arm-kernel/20170227205408.ajeu3stjpl45dnqf@rob-hp-laptop/
+
+Will split and submit v3.
+
+Thanks,
+Andrey Smirnov
