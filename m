@@ -3,31 +3,31 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 697B9C67839
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 16:49:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0A8CC6783B
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 16:49:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3562320870
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 16:49:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3562320870
+	by mail.kernel.org (Postfix) with ESMTP id 93E7A2084E
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 16:49:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93E7A2084E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728245AbeLLQts (ORCPT
+        id S1727997AbeLLQsD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 11:49:48 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:44528 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727999AbeLLQsE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 11:48:04 -0500
+        Wed, 12 Dec 2018 11:48:03 -0500
+Received: from foss.arm.com ([217.140.101.70]:44514 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727963AbeLLQsC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 11:48:02 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 50D4280D;
-        Wed, 12 Dec 2018 08:48:04 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F2EA615BF;
+        Wed, 12 Dec 2018 08:48:01 -0800 (PST)
 Received: from e112298-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 3DA7D3F575;
-        Wed, 12 Dec 2018 08:48:02 -0800 (PST)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id B2E543F575;
+        Wed, 12 Dec 2018 08:47:59 -0800 (PST)
 From:   Julien Thierry <julien.thierry@arm.com>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     linux-kernel@vger.kernel.org, daniel.thompson@linaro.org,
@@ -35,10 +35,11 @@ Cc:     linux-kernel@vger.kernel.org, daniel.thompson@linaro.org,
         christoffer.dall@arm.com, james.morse@arm.com,
         catalin.marinas@arm.com, will.deacon@arm.com, mark.rutland@arm.com,
         Julien Thierry <julien.thierry@arm.com>,
-        Oleg Nesterov <oleg@redhat.com>
-Subject: [PATCH v7 07/25] arm64: ptrace: Provide definitions for PMR values
-Date:   Wed, 12 Dec 2018 16:47:07 +0000
-Message-Id: <1544633245-6036-8-git-send-email-julien.thierry@arm.com>
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>
+Subject: [PATCH v7 06/25] irqchip/gic-v3: Switch to PMR masking before calling IRQ handler
+Date:   Wed, 12 Dec 2018 16:47:06 +0000
+Message-Id: <1544633245-6036-7-git-send-email-julien.thierry@arm.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1544633245-6036-1-git-send-email-julien.thierry@arm.com>
 References: <1544633245-6036-1-git-send-email-julien.thierry@arm.com>
@@ -47,43 +48,92 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Introduce fixed values for PMR that are going to be used to mask and
-unmask interrupts by priority.
-
-The current priority given to GIC interrupts is 0xa0, so clearing PMR's
-most significant bit is enough to mask interrupts.
+Mask the IRQ priority through PMR and re-enable IRQs at CPU level,
+allowing only higher priority interrupts to be received during interrupt
+handling.
 
 Signed-off-by: Julien Thierry <julien.thierry@arm.com>
-Suggested-by: Daniel Thompson <daniel.thompson@linaro.org>
-Cc: Oleg Nesterov <oleg@redhat.com>
+Acked-by: Catalin Marinas <catalin.marinas@arm.com>
 Cc: Catalin Marinas <catalin.marinas@arm.com>
 Cc: Will Deacon <will.deacon@arm.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Jason Cooper <jason@lakedaemon.net>
+Cc: Marc Zyngier <marc.zyngier@arm.com>
 ---
- arch/arm64/include/asm/ptrace.h | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ arch/arm/include/asm/arch_gicv3.h   | 17 +++++++++++++++++
+ arch/arm64/include/asm/arch_gicv3.h | 17 +++++++++++++++++
+ drivers/irqchip/irq-gic-v3.c        |  5 +++++
+ 3 files changed, 39 insertions(+)
 
-diff --git a/arch/arm64/include/asm/ptrace.h b/arch/arm64/include/asm/ptrace.h
-index fce22c4..05cf913 100644
---- a/arch/arm64/include/asm/ptrace.h
-+++ b/arch/arm64/include/asm/ptrace.h
-@@ -25,6 +25,18 @@
- #define CurrentEL_EL1		(1 << 2)
- #define CurrentEL_EL2		(2 << 2)
+diff --git a/arch/arm/include/asm/arch_gicv3.h b/arch/arm/include/asm/arch_gicv3.h
+index bef0b5d..f6f485f 100644
+--- a/arch/arm/include/asm/arch_gicv3.h
++++ b/arch/arm/include/asm/arch_gicv3.h
+@@ -363,5 +363,22 @@ static inline void gits_write_vpendbaser(u64 val, void * __iomem addr)
  
-+/*
-+ * PMR values used to mask/unmask interrupts.
-+ *
-+ * GIC priority masking works as follows: if an IRQ's priority is a higher value
-+ * than the value held in PMR, that interrupt is masked. A lower value of PMR
-+ * means more IRQ priorities are masked.
-+ *
-+ * To mask priorities, we clear the most significant bit of PMR.
-+ */
-+#define GIC_PRIO_IRQON		0xf0
-+#define GIC_PRIO_IRQOFF		(GIC_PRIO_IRQON & ~0x80)
+ #define gits_read_vpendbaser(c)		__gic_readq_nonatomic(c)
+ 
++static inline bool gic_prio_masking_enabled(void)
++{
++	return false;
++}
 +
- /* Additional SPSR bits not exposed in the UABI */
- #define PSR_IL_BIT		(1 << 20)
++static inline void gic_pmr_mask_irqs(void)
++{
++	/* Should not get called. */
++	WARN_ON_ONCE(true);
++}
++
++static inline void gic_arch_enable_irqs(void)
++{
++	/* Should not get called. */
++	WARN_ON_ONCE(true);
++}
++
+ #endif /* !__ASSEMBLY__ */
+ #endif /* !__ASM_ARCH_GICV3_H */
+diff --git a/arch/arm64/include/asm/arch_gicv3.h b/arch/arm64/include/asm/arch_gicv3.h
+index 37193e2..b5f8142 100644
+--- a/arch/arm64/include/asm/arch_gicv3.h
++++ b/arch/arm64/include/asm/arch_gicv3.h
+@@ -155,5 +155,22 @@ static inline u32 gic_read_rpr(void)
+ #define gits_write_vpendbaser(v, c)	writeq_relaxed(v, c)
+ #define gits_read_vpendbaser(c)		readq_relaxed(c)
+ 
++static inline bool gic_prio_masking_enabled(void)
++{
++	return system_uses_irq_prio_masking();
++}
++
++static inline void gic_pmr_mask_irqs(void)
++{
++	/* Should not get called yet. */
++	WARN_ON_ONCE(true);
++}
++
++static inline void gic_arch_enable_irqs(void)
++{
++	/* Should not get called yet. */
++	WARN_ON_ONCE(true);
++}
++
+ #endif /* __ASSEMBLY__ */
+ #endif /* __ASM_ARCH_GICV3_H */
+diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
+index 8f87f40..9760b26 100644
+--- a/drivers/irqchip/irq-gic-v3.c
++++ b/drivers/irqchip/irq-gic-v3.c
+@@ -350,6 +350,11 @@ static asmlinkage void __exception_irq_entry gic_handle_irq(struct pt_regs *regs
+ 
+ 	irqnr = gic_read_iar();
+ 
++	if (gic_prio_masking_enabled()) {
++		gic_pmr_mask_irqs();
++		gic_arch_enable_irqs();
++	}
++
+ 	if (likely(irqnr > 15 && irqnr < 1020) || irqnr >= 8192) {
+ 		int err;
  
 -- 
 1.9.1
