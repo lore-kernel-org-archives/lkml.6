@@ -2,134 +2,135 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06DB8C04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 11:17:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D117C04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 11:19:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C168A20870
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 11:17:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 005512084E
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 11:19:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544613442;
-	bh=7xHCYizesvYnu/KL2SjvuSvfNjnDIK5ROI9TpnBylj4=;
-	h=From:To:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=TaYOPzwGa+/X5Ijs1pWmNBIqgQPFslKv/N+EBN9rzExD7duCHQaCW2AdGlne4QLXS
-	 gZL5PU3E6PtQZjKHdROHxM/OrzfxoTOi/rAJRVZJ1D+Bi0nnj+IAevnCTsAGuPHVmJ
-	 r6ED6XXfSQd41h2kGeGpyh8k6FJ7nXosWSUNNrJw=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C168A20870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	s=default; t=1544613592;
+	bh=QKa5zYsHxYI1aGgEq7tsjj3bty4Nm9iYE05hv42O6e4=;
+	h=Date:From:To:Subject:References:In-Reply-To:List-ID:From;
+	b=tUS/ykvUwcrFeabgpsbZJw2T7uYKBY8LZH6pcCu9YMls9ZOMUS5MzqxCRfFfN5JQr
+	 sTTi0uEC9ZyWi70U2kcRU4gQgIIyET+Szw0Q5k0ksA9k9tucXF426z6+wAvCRshwao
+	 QssDnWJCDUWfsON6EDlRterKbPjjmhTUE2xgFEJs=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 005512084E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727418AbeLLLRV (ORCPT
+        id S1727262AbeLLLTu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 06:17:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44764 "EHLO mail.kernel.org"
+        Wed, 12 Dec 2018 06:19:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45866 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727276AbeLLLQ6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 06:16:58 -0500
-Received: from PC-kkoz.proceq.com (unknown [213.160.61.66])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        id S1726856AbeLLLTu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 06:19:50 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 74C4620870;
-        Wed, 12 Dec 2018 11:16:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 413B42084E;
+        Wed, 12 Dec 2018 11:19:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544613418;
-        bh=7xHCYizesvYnu/KL2SjvuSvfNjnDIK5ROI9TpnBylj4=;
-        h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=ZzaxuoQuOgLg82tHGmXVegKS+AIMPDM2LJi6X5sNuc8m/JW/gmAScsJlbroZ2jBdZ
-         jAjgIN5HgEIxFQ+uwJvBaYvJBB60Rv7uc0/Ya7sxDVIEvQO4xcZWaXGFmCXrzNUrSg
-         WkTwMGe0H6pECYl7Ghigp4uVV6M7GeyKvZj1dRvE=
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3 2/5] leds: Add helper for getting default pattern from Device Tree
-Date:   Wed, 12 Dec 2018 12:16:43 +0100
-Message-Id: <1544613406-27026-3-git-send-email-krzk@kernel.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1544613406-27026-1-git-send-email-krzk@kernel.org>
-References: <1544613406-27026-1-git-send-email-krzk@kernel.org>
+        s=default; t=1544613589;
+        bh=QKa5zYsHxYI1aGgEq7tsjj3bty4Nm9iYE05hv42O6e4=;
+        h=Date:From:To:Subject:References:In-Reply-To:From;
+        b=Cl2Q80dXbOcBc+Df03jR+jtq9eWnLR1q5QYzbJ2n+3zl3onRFKOMHDEgye5GJSKDU
+         YMjJQ7PShVMnAbp2wvPUoK+yO8fdkdVFbw/4k4WzlJIWwS/Dwo6x4fSxHMhKTkYK4j
+         d9xsJwUZFo5ZU1cAwqrPdfluDOrTlb43iOBHRQtY=
+Date:   Wed, 12 Dec 2018 12:19:47 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     LKML <linux-kernel@vger.kernel.org>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Ramalingam C <ramalingam.c@intel.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Daniel Vetter <daniel.vetter@intel.com>
+Subject: Re: [PATCH] drivers/base: use a worker for sysfs unbind
+Message-ID: <20181212111947.GA12685@kroah.com>
+References: <20181210084653.7268-1-daniel.vetter@ffwll.ch>
+ <20181210100634.GA8836@kroah.com>
+ <20181210101832.GN21184@phenom.ffwll.local>
+ <20181210102058.GO21184@phenom.ffwll.local>
+ <20181212110840.GA21184@phenom.ffwll.local>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181212110840.GA21184@phenom.ffwll.local>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Multiple LED triggers might need to access default pattern so add a
-helper for that.
+On Wed, Dec 12, 2018 at 12:08:40PM +0100, Daniel Vetter wrote:
+> On Mon, Dec 10, 2018 at 11:20:58AM +0100, Daniel Vetter wrote:
+> > On Mon, Dec 10, 2018 at 11:18:32AM +0100, Daniel Vetter wrote:
+> > > On Mon, Dec 10, 2018 at 11:06:34AM +0100, Greg Kroah-Hartman wrote:
+> > > > On Mon, Dec 10, 2018 at 09:46:53AM +0100, Daniel Vetter wrote:
+> > > > > Drivers might want to remove some sysfs files, which needs the same
+> > > > > locks and ends up angering lockdep. Relevant snippet of the stack
+> > > > > trace:
+> > > > > 
+> > > > >   kernfs_remove_by_name_ns+0x3b/0x80
+> > > > >   bus_remove_driver+0x92/0xa0
+> > > > >   acpi_video_unregister+0x24/0x40
+> > > > >   i915_driver_unload+0x42/0x130 [i915]
+> > > > >   i915_pci_remove+0x19/0x30 [i915]
+> > > > >   pci_device_remove+0x36/0xb0
+> > > > >   device_release_driver_internal+0x185/0x250
+> > > > >   unbind_store+0xaf/0x180
+> > > > >   kernfs_fop_write+0x104/0x190
+> > > > > 
+> > > > > I've stumbled over this because some new patches by Ram connect the
+> > > > > snd-hda-intel unload (where we do use sysfs unbind) with the locking
+> > > > > chains in the i915 unload code (but without creating a new loop),
+> > > > > which upset our CI. But the bug is already there and can be easily
+> > > > > reproduced by unbind i915 directly.
+> > > > 
+> > > > This is odd, why wouldn't any driver hit this issue?  And why now since
+> > > > you say this is triggerable today?
+> > > 
+> > > The above backtrace is triggered by unbinding i915 on current upstream
+> > > kernels. Note: Will crash later on rather badly in the
+> > > fbdev/fbcon/vtconsole hell, but that's separate issue (which can be worked
+> > > around by first unbinding fbcon manually through sysfs).
+> > > 
+> > > > I know scsi was doing some strange things like trying to remove the
+> > > > device itself from a sysfs callback on the device, which requires it to
+> > > > just call a different kobject function created just for that type of
+> > > > thing.  Would that also make sense to do here instead of your workqueue?
+> > > 
+> > > Note how we blow up on unregistering sw device instances supported by i915
+> > > in entirely different subsystems. I guess most drivers just have sysfs
+> > > files for their own stuff, where this is done as you describe. The problem
+> > > is that there's an awful lot of unrelated stuff hanging off i915.
+> > > 
+> > > Or maybe acpi_video is busted, and should be using a different function.
+> > > You haven't said which one, and I have no idea which one it is ...
+> > > 
+> > > And in case the context wasn't clear: This is unbinding the i915 pci
+> > > driver which triggers the above lockdep splat recursion.
+> > 
+> > btw another option for "fixing" this would be to annotate the mutex_lock
+> > in kernfs_remove_by_name_ns as recursive. Which just shuts up lockdep (and
+> > might hide some real bugs), but would get the job done since there's not
+> > actually a deadlock here. Just lockdep being annoyed.
+> 
+> So what's the pick? I can do the typing, but I don't understand all the
+> driver core interactions to know what we should be doing here best.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
+Sorry for the delay.
 
-New patch in the series
+Look at sdev_store_delete() in drivers/scsi/scsi_sysfs.c and see if the
+logic there makes sense to do here instead.
 
----
- drivers/leds/led-class.c | 25 +++++++++++++++++++++++++
- include/linux/leds.h     |  3 +++
- 2 files changed, 28 insertions(+)
+It still seems odd that removing a sysfs file by writing to a sysfs file
+at the same level really invokes lockdep as I would have thought that
+this path is well-tested by now.
 
-diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-index 3c7e3487b373..44b95e6480f6 100644
---- a/drivers/leds/led-class.c
-+++ b/drivers/leds/led-class.c
-@@ -17,6 +17,7 @@
- #include <linux/leds.h>
- #include <linux/list.h>
- #include <linux/module.h>
-+#include <linux/of.h>
- #include <linux/slab.h>
- #include <linux/spinlock.h>
- #include <linux/timer.h>
-@@ -244,6 +245,30 @@ static int led_classdev_next_name(const char *init_name, char *name,
- }
- 
- /**
-+ * led_classdev_get_default_pattern - return default pattern
-+ *
-+ * @led_cdev: the led_classdev structure for this device
-+ *
-+ * Return: Null terminated string with default pattern from DeviceTree or NULL
-+ */
-+const char *led_classdev_get_default_pattern(struct led_classdev *led_cdev)
-+{
-+	struct device_node *np = dev_of_node(led_cdev->dev);
-+	const char *pattern;
-+
-+	if (!np)
-+		return NULL;
-+
-+	if (of_property_read_string(np, "led-pattern", &pattern))
-+		return NULL;
-+
-+	if (!strlen(pattern))
-+		return NULL;
-+
-+	return pattern;
-+}
-+
-+/**
-  * of_led_classdev_register - register a new object of led_classdev class.
-  *
-  * @parent: parent of LED device
-diff --git a/include/linux/leds.h b/include/linux/leds.h
-index 5263f87e1d2c..9da2bfa183ea 100644
---- a/include/linux/leds.h
-+++ b/include/linux/leds.h
-@@ -129,6 +129,9 @@ struct led_classdev {
- 	struct mutex		led_access;
- };
- 
-+extern const char *
-+led_classdev_get_default_pattern(struct led_classdev *led_cdev);
-+
- extern int of_led_classdev_register(struct device *parent,
- 				    struct device_node *np,
- 				    struct led_classdev *led_cdev);
--- 
-2.7.4
+thanks,
 
+greg k-h
