@@ -2,122 +2,164 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 839A6C65BAF
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 21:57:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCFC4C65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 21:59:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 449F720849
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 21:57:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="mp3eZF66"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 449F720849
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 9F40320849
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 21:59:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F40320849
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728418AbeLLV5N (ORCPT
+        id S1728306AbeLLV7h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 16:57:13 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:55634 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727061AbeLLV5M (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 16:57:12 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wBCLiQYP144801;
-        Wed, 12 Dec 2018 21:56:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=C1QrmM9rjpbcIlr0tfynvCZk8GesgDAjP/FXPlFuDPQ=;
- b=mp3eZF66Idx3cNH5d5tcD/E4ktXRWL2U7VTNbQiQOyNfavenbDdj5e083zr8YxfXEVtJ
- VNFX3Tg0QqYlOfx/Un6mubL3kL8DaJC17cOL6GZ72sRPZ5cMED3iA9yGS2X+AHxkNIpy
- qL8rTq1lnAbxbWTCbQ+BGLKeDjqouvcITWqMJLUN64kA2hHXG1okecgEe1606E3K1n3/
- eWrIEjQmeCSEMag4PniF5mEW/yr2NH7d26zvNtr0DJRzfShqm7dj1m3F0TAC/dw5Y7Ez
- RoTc0uy45nb09Gyx4bNF0wf3czR2uRxamcoKQFjNa9caaD27TKv1w87P+5nlBqzncVGV zg== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2130.oracle.com with ESMTP id 2pb3n72fmj-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 12 Dec 2018 21:56:22 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wBCLuK4r024450
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 12 Dec 2018 21:56:21 GMT
-Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wBCLuJIQ007230;
-        Wed, 12 Dec 2018 21:56:19 GMT
-Received: from [10.141.199.39] (/10.141.199.39)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 12 Dec 2018 13:56:19 -0800
-Subject: Re: [PATCH v9 0/7] KVM: x86: Allow Qemu/KVM to use PVH entry point
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     x86@kernel.org, xen-devel@lists.xenproject.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        pbonzini@redhat.com, jgross@suse.com, boris.ostrovsky@oracle.com,
-        bp@suse.de, dave.hansen@linux.intel.com, davem@davemloft.net,
-        gregkh@linuxfoundation.org, hpa@zytor.com, jpoimboe@redhat.com,
-        kirill.shutemov@linux.intel.com, luto@kernel.org,
-        mchehab@kernel.org, mingo@redhat.com, rdunlap@infradead.org,
-        tglx@linutronix.de, thomas.lendacky@amd.com, hch@infradead.org,
-        roger.pau@citrix.com, rkrcmar@redhat.com
-References: <1544468734-32763-1-git-send-email-maran.wilson@oracle.com>
- <20181211131825.GD27375@zn.tnic>
- <5fc083d4-1dbd-f2f9-3059-0e3e8dda9b25@oracle.com>
- <20181212203901.GI6653@zn.tnic>
-From:   Maran Wilson <maran.wilson@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <8483ef47-cd95-8d73-0a2f-2a65d262e2d9@oracle.com>
-Date:   Wed, 12 Dec 2018 13:56:17 -0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.2
+        Wed, 12 Dec 2018 16:59:37 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:33768 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726294AbeLLV7h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 16:59:37 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E03F6C057F81;
+        Wed, 12 Dec 2018 21:59:35 +0000 (UTC)
+Received: from redhat.com (ovpn-124-14.rdu2.redhat.com [10.10.124.14])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6E066103BAB6;
+        Wed, 12 Dec 2018 21:59:33 +0000 (UTC)
+Date:   Wed, 12 Dec 2018 16:59:31 -0500
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Jan Kara <jack@suse.cz>, John Hubbard <jhubbard@nvidia.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        John Hubbard <john.hubbard@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>, tom@talpey.com,
+        Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
+        Christoph Hellwig <hch@infradead.org>,
+        Christopher Lameter <cl@linux.com>,
+        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Michal Hocko <mhocko@kernel.org>, mike.marciniszyn@intel.com,
+        rcampbell@nvidia.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
+Message-ID: <20181212215931.GG5037@redhat.com>
+References: <20181205011519.GV10377@bombadil.infradead.org>
+ <20181205014441.GA3045@redhat.com>
+ <59ca5c4b-fd5b-1fc6-f891-c7986d91908e@nvidia.com>
+ <7b4733be-13d3-c790-ff1b-ac51b505e9a6@nvidia.com>
+ <20181207191620.GD3293@redhat.com>
+ <3c4d46c0-aced-f96f-1bf3-725d02f11b60@nvidia.com>
+ <20181208022445.GA7024@redhat.com>
+ <20181210102846.GC29289@quack2.suse.cz>
+ <20181212150319.GA3432@redhat.com>
+ <20181212214641.GB29416@dastard>
 MIME-Version: 1.0
-In-Reply-To: <20181212203901.GI6653@zn.tnic>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9105 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=909
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1812120185
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181212214641.GB29416@dastard>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Wed, 12 Dec 2018 21:59:36 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Dec 13, 2018 at 08:46:41AM +1100, Dave Chinner wrote:
+> On Wed, Dec 12, 2018 at 10:03:20AM -0500, Jerome Glisse wrote:
+> > On Mon, Dec 10, 2018 at 11:28:46AM +0100, Jan Kara wrote:
+> > > On Fri 07-12-18 21:24:46, Jerome Glisse wrote:
+> > > So this approach doesn't look like a win to me over using counter in struct
+> > > page and I'd rather try looking into squeezing HMM public page usage of
+> > > struct page so that we can fit that gup counter there as well. I know that
+> > > it may be easier said than done...
+> > 
+> > So i want back to the drawing board and first i would like to ascertain
+> > that we all agree on what the objectives are:
+> > 
+> >     [O1] Avoid write back from a page still being written by either a
+> >          device or some direct I/O or any other existing user of GUP.
+> >          This would avoid possible file system corruption.
+> > 
+> >     [O2] Avoid crash when set_page_dirty() is call on a page that is
+> >          considered clean by core mm (buffer head have been remove and
+> >          with some file system this turns into an ugly mess).
+> 
+> I think that's wrong. This isn't an "avoid a crash" case, this is a
+> "prevent data and/or filesystem corruption" case. The primary goal
+> we have here is removing our exposure to potential corruption, which
+> has the secondary effect of avoiding the crash/panics that currently
+> occur as a result of inconsistent page/filesystem state.
 
+This is O1 avoid corruption is O1
 
-On 12/12/2018 12:39 PM, Borislav Petkov wrote:
-> On Tue, Dec 11, 2018 at 11:29:21AM -0800, Maran Wilson wrote:
->> Is your question about what options you need to provide to Qemu? Or is your
->> question about the SW implementation choices?
->>
->> Assuming the former...
-> Yeah, that's what I wanted to know. But looking at it, I'm booting
-> bzImage here just as quickly and as flexible so I don't see the
-> advantage of this new method for my use case here of booting kernels
-> in qemu.
->
-> But maybe there's a good use case where firmware is slow and one doesn't
-> really wanna noodle through it or when one does start a gazillion VMs
-> per second or whatever...
+> 
+> i.e. The goal is to have ->page_mkwrite() called on the clean page
+> /before/ the file-backed page is marked dirty, and hence we don't
+> expose ourselves to potential corruption or crashes that are a
+> result of inappropriately calling set_page_dirty() on clean
+> file-backed pages.
 
-Right, the time saved is not something you would notice while starting a 
-VM manually. But it does reduce the time to reach startup_64() in Linux 
-by about 50% (going from around 94ms to around 47ms) when booting a VM 
-using Qemu+qboot (for example). That time savings becomes pretty 
-important when you are trying to use VMs as containers (for instance, as 
-is the case with Kata containers) and trying to get the latency for 
-launching such a container really low -- to come as close as possible to 
-match the latency for launching more traditional containers that don't 
-have the additional security/isolation of running within a separate VM.
+Yes and this would be handle by put_user_page ie:
 
-Thanks,
--Maran
+put_user_page(struct page *page, bool dirty)
+{
+    if (!PageAnon(page)) {
+        if (dirty) {
+            // Do the whole dance ie page_mkwrite and all before
+            // calling set_page_dirty()
+        }
+        ...
+    }
+    ...
+}
 
->
-> Thx.
->
+> 
+> > For [O1] and [O2] i believe a solution with mapcount would work. So
+> > no new struct, no fake vma, nothing like that. In GUP for file back
+> > pages we increment both refcount and mapcount (we also need a special
+> > put_user_page to decrement mapcount when GUP user are done with the
+> > page).
+> 
+> I don't see how a mapcount can prevent anyone from calling
+> set_page_dirty() inappropriately.
 
+See above.
+
+> 
+> > Now for [O1] the write back have to call page_mkclean() to go through
+> > all reverse mapping of the page and map read only. This means that
+> > we can count the number of real mapping and see if the mapcount is
+> > bigger than that. If mapcount is bigger than page is pin and we need
+> > to use a bounce page to do the writeback.
+> 
+> Doesn't work. Generally filesystems have already mapped the page
+> into bios before they call clear_page_dirty_for_io(), so it's too
+> late for the filesystem to bounce the page at that point.
+> 
+> > For [O2] i believe we can handle that case in the put_user_page()
+> > function to properly dirty the page without causing filesystem
+> > freak out.
+> 
+> I'm pretty sure you can't call ->page_mkwrite() from
+> put_user_page(), so I don't think this is workable at all.
+
+Hu why ? i can not think of any reason whike you could not. User of
+GUP have their put_user_page in tearing down code and i do not see
+why it would be an issue there. Even for direct I/O i can not think
+of anything that would block us from doing that. So this put_user_page
+is not call while holding any other mm of fs locks.
+
+Do you have some rough idea of what the issue would be ?
+
+Cheers,
+Jérôme
