@@ -2,118 +2,205 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E8AAC04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 14:37:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53A06C65BAF
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 14:37:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 360F42086D
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 14:37:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 360F42086D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tkos.co.il
+	by mail.kernel.org (Postfix) with ESMTP id 17D6D20839
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 14:37:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17D6D20839
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727686AbeLLOhC (ORCPT
+        id S1727714AbeLLOhF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 09:37:02 -0500
-Received: from guitar.tcltek.co.il ([192.115.133.116]:50329 "EHLO
-        mx.tkos.co.il" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726228AbeLLOhB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 09:37:01 -0500
-Received: from sapphire.tkos.co.il (unknown [10.0.4.3])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mx.tkos.co.il (Postfix) with ESMTPS id 702214400D0;
-        Wed, 12 Dec 2018 16:36:58 +0200 (IST)
-Date:   Wed, 12 Dec 2018 16:36:57 +0200
-From:   Baruch Siach <baruch@tkos.co.il>
-To:     Antoine Tenart <antoine.tenart@bootlin.com>
-Cc:     Russell King - ARM Linux <linux@armlinux.org.uk>,
-        davem@davemloft.net, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
-        maxime.chevallier@bootlin.com, gregory.clement@bootlin.com,
-        miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
-        ymarkman@marvell.com, mw@semihalf.com
-Subject: Re: [PATCH net] net: mvpp2: 10G modes aren't supported on all ports
-Message-ID: <20181212143657.irf7tt27mpshfhpz@sapphire.tkos.co.il>
-References: <20181211163228.26130-1-antoine.tenart@bootlin.com>
- <20181211163635.GG30658@n2100.armlinux.org.uk>
- <877egg6jbt.fsf@tkos.co.il>
- <20181211185156.GH30658@n2100.armlinux.org.uk>
- <20181212093033.GA3219@kwain>
- <20181212141451.GC3219@kwain>
+        Wed, 12 Dec 2018 09:37:05 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58402 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726228AbeLLOhE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 09:37:04 -0500
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBCEYRmP080477
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 09:37:03 -0500
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2pb2d7wtwf-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 09:37:03 -0500
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <borntraeger@de.ibm.com>;
+        Wed, 12 Dec 2018 14:37:01 -0000
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 12 Dec 2018 14:36:58 -0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBCEavfd54132810
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 12 Dec 2018 14:36:57 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C26B5A4053;
+        Wed, 12 Dec 2018 14:36:57 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 93460A4055;
+        Wed, 12 Dec 2018 14:36:57 +0000 (GMT)
+Received: from oc7455500831.ibm.com (unknown [9.152.224.55])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 12 Dec 2018 14:36:57 +0000 (GMT)
+Subject: Re: [PATCH] genwqe: Fix size check
+To:     haver <haver@linux.vnet.ibm.com>
+Cc:     "Guilherme G . Piccoli" <gpiccoli@linux.vnet.ibm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+References: <20181212134518.4587-1-borntraeger@de.ibm.com>
+ <64f068a535ab7bfe15f04ba86fb067b0@linux.vnet.ibm.com>
+From:   Christian Borntraeger <borntraeger@de.ibm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=borntraeger@de.ibm.com; prefer-encrypt=mutual; keydata=
+ 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
+ syiRa+UVlsKmx1hsEg==
+Date:   Wed, 12 Dec 2018 15:36:57 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181212141451.GC3219@kwain>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <64f068a535ab7bfe15f04ba86fb067b0@linux.vnet.ibm.com>
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18121214-0016-0000-0000-000002357BDD
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18121214-0017-0000-0000-0000328DB002
+Message-Id: <cdcfbeed-9e33-0d50-02e4-5b5b6d61660e@de.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-12_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812120128
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Antoine,
-
-On Wed, Dec 12, 2018 at 03:14:51PM +0100, Antoine Tenart wrote:
-> On Wed, Dec 12, 2018 at 10:30:33AM +0100, Antoine Tenart wrote:
-> > On Tue, Dec 11, 2018 at 06:51:56PM +0000, Russell King - ARM Linux wrote:
-> > > On Tue, Dec 11, 2018 at 07:53:42PM +0200, Baruch Siach wrote:
-> > > > That is, something like this, right?
-> > > > 
-> > > > diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-> > > > index 125ea99418df..04cb0241ca2b 100644
-> > > > --- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-> > > > +++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-> > > > @@ -4404,13 +4404,18 @@ static void mvpp2_phylink_validate(struct net_device *dev,
-> > > >  	switch (state->interface) {
-> > > >  	case PHY_INTERFACE_MODE_10GKR:
-> > > >  	case PHY_INTERFACE_MODE_XAUI:
-> > > > +		if (port->gop_id != 0)
-> > > > +			goto empty_set;
-> > > > +		/* Fall-through */
-> > > >  	case PHY_INTERFACE_MODE_NA:
-> > > > -		phylink_set(mask, 10000baseCR_Full);
-> > > > -		phylink_set(mask, 10000baseSR_Full);
-> > > > -		phylink_set(mask, 10000baseLR_Full);
-> > > > -		phylink_set(mask, 10000baseLRM_Full);
-> > > > -		phylink_set(mask, 10000baseER_Full);
-> > > > -		phylink_set(mask, 10000baseKR_Full);
-> > > > +		if (port->gop_id == 0) {
-> > > > +			phylink_set(mask, 10000baseCR_Full);
-> > > > +			phylink_set(mask, 10000baseSR_Full);
-> > > > +			phylink_set(mask, 10000baseLR_Full);
-> > > > +			phylink_set(mask, 10000baseLRM_Full);
-> > > > +			phylink_set(mask, 10000baseER_Full);
-> > > > +			phylink_set(mask, 10000baseKR_Full);
-> > > > +		}
-> > > >  		/* Fall-through */
-> > > >  	case PHY_INTERFACE_MODE_RGMII:
-> > > >  	case PHY_INTERFACE_MODE_RGMII_ID:
-> > > > 
-> > > 
-> > > Yep, looks fine to me, thanks.
-> > 
-> > This looks good, thanks! I'll send a v2.
+On 12.12.2018 15:18, haver wrote:
+> Hi Christian,
 > 
-> Well, I just got back to this, and looking at the beginning of the
-> validate function invalid modes are already checked. So we do already
-> have:
+> On 2018-12-12 14:45, Christian Borntraeger wrote:
+>> Calling the test program genwqe_cksum with the default buffer size of
+>> 2MB triggers the following kernel warning on s390:
+>>
+>> WARNING: CPU: 30 PID: 9311 at mm/page_alloc.c:3189
+>> __alloc_pages_nodemask+0x45c/0xbe0
+>> CPU: 30 PID: 9311 Comm: genwqe_cksum Kdump: loaded Not tainted
+>> 3.10.0-957.el7.s390x #1
+>> task: 00000005e5d13980 ti: 00000005e7c6c000 task.ti: 00000005e7c6c000
+>> Krnl PSW : 0704c00180000000 00000000002780ac
+>> (__alloc_pages_nodemask+0x45c/0xbe0)
+>>            R:0 T:1 IO:1 EX:1 Key:0 M:1 W:0 P:0 AS:3 CC:0 PM:0 EA:3
+>> Krnl GPRS: 00000000002932b8 0000000000b73d7c 0000000000000010 0000000000000009
+>>            0000000000000041 00000005e7c6f9b8 0000000000000001 00000000000080d0
+>>            0000000000000000 0000000000b70500 0000000000000001 0000000000000000
+>>            0000000000b70528 00000000007682c0 0000000000277df2 00000005e7c6f9a0
+>> Krnl Code: 000000000027809e: de7195001000    ed    1280(114,%r9),0(%r1)
+>>        00000000002780a4: a774fead        brc    7,277dfe
+>>       #00000000002780a8: a7f40001        brc    15,2780aa
+>>       >00000000002780ac: 92011000        mvi    0(%r1),1
+>>        00000000002780b0: a7f4fea7        brc    15,277dfe
+>>        00000000002780b4: 9101c6b6        tm    1718(%r12),1
+>>        00000000002780b8: a784ff3a        brc    8,277f2c
+>>        00000000002780bc: a7f4fe2e        brc    15,277d18
+>> Call Trace:
+>> ([<0000000000277df2>] __alloc_pages_nodemask+0x1a2/0xbe0)
+>>  [<000000000013afae>] s390_dma_alloc+0xfe/0x310
+>>  [<000003ff8065f362>] __genwqe_alloc_consistent+0xfa/0x148 [genwqe_card]
+>>  [<000003ff80658f7a>] genwqe_mmap+0xca/0x248 [genwqe_card]
+>>  [<00000000002b2712>] mmap_region+0x4e2/0x778
+>>  [<00000000002b2c54>] do_mmap+0x2ac/0x3e0
+>>  [<0000000000292d7e>] vm_mmap_pgoff+0xd6/0x118
+>>  [<00000000002b081c>] SyS_mmap_pgoff+0xdc/0x268
+>>  [<00000000002b0a34>] SyS_old_mmap+0x8c/0xb0
+>>  [<000000000074e518>] sysc_tracego+0x14/0x1e
+>>  [<000003ffacf87dc6>] 0x3ffacf87dc6
+>>
+>> turns out the check in __genwqe_alloc_consistent uses "> MAX_ORDER"
+>> while the mm code uses ">= MAX_ORDER". Fix genwqe.
+>>
+>> Cc: stable@vger.kernel.org
+>> Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
+>> ---
+>>  drivers/misc/genwqe/card_utils.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/misc/genwqe/card_utils.c b/drivers/misc/genwqe/card_utils.c
+>> index 3fcb9a2fe1c9..efe2fb72d54b 100644
+>> --- a/drivers/misc/genwqe/card_utils.c
+>> +++ b/drivers/misc/genwqe/card_utils.c
+>> @@ -215,7 +215,7 @@ u32 genwqe_crc32(u8 *buff, size_t len, u32 init)
+>>  void *__genwqe_alloc_consistent(struct genwqe_dev *cd, size_t size,
+>>                     dma_addr_t *dma_handle)
+>>  {
+>> -    if (get_order(size) > MAX_ORDER)
+>> +    if (get_order(size) >= MAX_ORDER)
+>>          return NULL;
+>>
+>>      return dma_zalloc_coherent(&cd->pci_dev->dev, size, dma_handle,
 > 
->         case PHY_INTERFACE_MODE_10GKR:
->         case PHY_INTERFACE_MODE_XAUI:
->                 if (port->gop_id != 0)
->                         goto empty_set;
->                 break;
+> Thanks for sending a fix for this ugly message.
+> Regards
 > 
-> So it turns out the fix can be applied as-is.
+> Frank
+> 
+> Signed-off-by: Frank Haverkamp <haver@linux.vnet.ibm.com>
 
-Right. I should have known that. Thanks for the fix.
+This should have been an Acked-by, I guess.
+Will this go via Gregs misc driver tree?
 
-baruch
+Christian
 
--- 
-     http://baruch.siach.name/blog/                  ~. .~   Tk Open Systems
-=}------------------------------------------------ooO--U--Ooo------------{=
-   - baruch@tkos.co.il - tel: +972.2.679.5364, http://www.tkos.co.il -
