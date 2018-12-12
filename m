@@ -6,151 +6,102 @@ X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
 	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCCF0C04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 06:08:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2703FC04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 06:09:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A99720851
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 06:08:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C091F20851
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 06:09:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="X3XA1obP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A99720851
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZAN6fFF/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C091F20851
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726481AbeLLGIP (ORCPT
+        id S1726502AbeLLGJk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 01:08:15 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:55898 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726237AbeLLGIP (ORCPT
+        Wed, 12 Dec 2018 01:09:40 -0500
+Received: from mail-it1-f177.google.com ([209.85.166.177]:52908 "EHLO
+        mail-it1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726298AbeLLGJi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 01:08:15 -0500
-Received: by mail-it1-f196.google.com with SMTP id o19so7394125itg.5
-        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 22:08:14 -0800 (PST)
+        Wed, 12 Dec 2018 01:09:38 -0500
+Received: by mail-it1-f177.google.com with SMTP id g76so7424744itg.2
+        for <linux-kernel@vger.kernel.org>; Tue, 11 Dec 2018 22:09:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=H9U5v6H99xJPel7jvltbBcAZ5eW4H11W24NDD5EZT+Q=;
-        b=X3XA1obPmkKhNtutH+CgBoPpzVPvfPk//JKKtBox80QnbkJhv0/QD0v67DuWQ9Ko1a
-         JHBrTEEGM36oH6Go6xVtLteBZQ8SLip8YqrcyZ5JwE7N8Qcr1zACa3dnYejHOWJuaiCa
-         S0SesH+/tx6jir515P4PhkFaOGRcOqMyS5xj1S1N4OCUspZ36Z+jcPGEiWjklQyXhUle
-         0t1w1OA4S2uRtjk1GUo5oyBVg56nk6M6BPxV+zk1QIk0KlrQqFmpO1l8WG4D4i+KUhXE
-         aCOXl4jArvtmbM5NPZzgPdGmX/lF7Jx+RuZLhvSthY7wp/nKnvXQV+JGANIRgn8elYlH
-         DPHg==
+        bh=u3uXWDVrOfKgiYz7zcRBdeG5sE+7EtebPSkPoLiSCA4=;
+        b=ZAN6fFF/Lq9dP4phMZ3VETYwcNijoIDVH5EXFwDoxleq5YF0odKTLaZAZxIokoXY9e
+         9UPD84q1DKGMoF0NPVMZJv5bYzbMOLasodcSEHxlhhTyT9tpFyOpVX2xbDCTNPEJFwE9
+         RfQvTZ9cEsD1XFk/Ik1/X06Ehf9sfSTflIOOUtEhkw8vAK1wAlUsR9/PCOhx9S3DMIeC
+         fXF5+u9f5GFMY5AUM+cEQ+A/uGSeh+R5R8gg+MIVzZrn0jO4TP9DWw9IWNO2Op7WnWgs
+         fXD8jCrhIZMQRYKcDHpnYXY4tVfsiP2g11sDsqXVGlEnPkVPcfIWPihVVhJEasYRy/lM
+         RbKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=H9U5v6H99xJPel7jvltbBcAZ5eW4H11W24NDD5EZT+Q=;
-        b=eL3xf/exogSUz1Pubg3JVoCKbQ3qn1YonmrqKPa1QdSTF2qbQbbhuQRbw36RTQyTED
-         JJSoL5UjrBwJJZfI6UpW0DzpKV8AzKX2YOst1Vtc1O1OBwfJoUIu4sY8CTHxhUlCMhcs
-         uHH8znoxrSHBHFmTTMSRjPHn2NxDpkt+PNqKvfBXkUgo6bF6iMz0ckYi/5fmIlwt3l5j
-         Zfu3s7voBdDJWGrtc5vdnXQZOOKJuQDzrAbqy0Gg6e8XuoDoHoNUXOPBeIEf+9R3tYcc
-         VNG6J5mIHvkborzMvAYdu1hLYS/C/FjxcHo2UU/uAzp1zIvnyLB58PxpWqwT84P6fCN5
-         EChA==
-X-Gm-Message-State: AA+aEWZvOJBkSl25tBRT7+c4MDqYq+KvaNY26F0TTh4pniglqzahCyC8
-        1Pgnk/CwiH0EPYcEW/jmJwnRuc6NfB0RyG+M71h/3Q==
-X-Google-Smtp-Source: AFSGD/UX2qXKKQu7UwG+m9p5nMoxtbRQ9C1tzi/zgbp1UMAT24DlmxEXPh4b1HOiOSaE1zk5cLmrXN0WLBl4ulH7H4Y=
-X-Received: by 2002:a02:284:: with SMTP id 126mr18564010jau.47.1544594893772;
- Tue, 11 Dec 2018 22:08:13 -0800 (PST)
+        bh=u3uXWDVrOfKgiYz7zcRBdeG5sE+7EtebPSkPoLiSCA4=;
+        b=nSWcNl0G0N7gAAjGKb4Jjk4xhxvh6EEVUgiiIVr0C7v9S7+jqC7D/tH+yURObHvFQm
+         N+JBfbz8haoD79lq7ayfZFAt2ga8jHxdBdMkrbTKSWPRWQmRFFBQc3DNP1u+NuXTdi9T
+         8bEmnyvBdaWGuA9rbakFCSa+VX+hqm+4nJSC8kCroEG2XHpPCGLRNTTO8LSD8L5FBWAw
+         j8WmpyVP8D7n6lwh4fUme4fKD3T2U7gHRCznlbBXJX4YHBynA8/Ep9/ykkQtzLwKn71O
+         +3yddEiyhBy6WEsFsXB1c0vnsVngchEVvJQviSI05A0bV2Fo43VD/Nc6Gr0PJ/hH8RgO
+         PHsg==
+X-Gm-Message-State: AA+aEWaDmgu8b4diUJhgbjPSwaoABjmqiNmuPVJ2rlfBoAc/T+mD9Irv
+        F6cxwYWlcal124dikeqT0q9F+qGRs0xNZnYJfOvZ+Q==
+X-Google-Smtp-Source: AFSGD/WiBee83C2Akz7P9h3UbSqHyxFBjdGgULL2hgRZlc4zuNkD7vQKA9yNWn2H8o/Q2D08tWd7tU+aAiGI9Lu6oRY=
+X-Received: by 2002:a24:fd09:: with SMTP id m9mr4874259ith.81.1544594977360;
+ Tue, 11 Dec 2018 22:09:37 -0800 (PST)
 MIME-Version: 1.0
-References: <20181003133704.43a58cf5@gandalf.local.home> <CAJmjG291w2ZPRiAevSzxGNcuR6vTuqyk6z4SG3xRsbaQh5U3zQ@mail.gmail.com>
- <20181004074442.GA12879@jagdpanzerIV> <20181004083609.kcziz2ynwi2w7lcm@pathway.suse.cz>
- <20181004085515.GC12879@jagdpanzerIV> <CAJmjG2-e6f6p=pE5uDECMc=W=81SYyGCmoabrC1ePXwL5DFdSw@mail.gmail.com>
- <20181022100952.GA1147@jagdpanzerIV> <CAJmjG2-c4e_1999n0OV5B9ABG9rF6n=myThjgX+Ms1R-vc3z+A@mail.gmail.com>
- <20181109064740.GE599@jagdpanzerIV> <CAJmjG28Q8pEpr67LC+Un8m+Qii58FTd1esp6Zc47TnMsw50QEw@mail.gmail.com>
- <20181212052126.GF431@jagdpanzerIV>
-In-Reply-To: <20181212052126.GF431@jagdpanzerIV>
+References: <20181016050428.17966-2-sergey.senozhatsky@gmail.com>
+ <20181025101036.6823-1-sergey.senozhatsky@gmail.com> <20181031122736.epbxu424l3xagge5@pathway.suse.cz>
+ <20181101014821.GB502@jagdpanzerIV> <20181101080808.n73lrlnjd65nk4qf@pathway.suse.cz>
+ <20181122131202.nkcurdt5k6jrhowa@pathway.suse.cz> <CAJmjG2-_8T6uJP54-+gUG7Aq7kNqkAKAEXbzzV9JVKyZFRh4GQ@mail.gmail.com>
+ <20181212052308.GG431@jagdpanzerIV> <CAJmjG28oiU0unnfx_KO18F3oeMvsKHsJCuKbLiC-_ib7cDjG0g@mail.gmail.com>
+ <20181212060616.GH431@jagdpanzerIV>
+In-Reply-To: <20181212060616.GH431@jagdpanzerIV>
 From:   Daniel Wang <wonderfly@google.com>
-Date:   Tue, 11 Dec 2018 22:08:00 -0800
-Message-ID: <CAJmjG29a7Fax5ZW5Q+W+-1xPEXVUqdrMYwoUpSwL1Msiso6gtw@mail.gmail.com>
-Subject: Re: 4.14 backport request for dbdda842fe96f: "printk: Add console
- owner and waiter logic to load balance console writes"
+Date:   Tue, 11 Dec 2018 22:09:24 -0800
+Message-ID: <CAJmjG2_DdNLz8TjT+mT9GFUa+odFGTQJGAgJcaKPV6KCSM3dyQ@mail.gmail.com>
+Subject: Re: [PATCHv3] panic: avoid deadlocks in re-entrant console drivers
 To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc:     Petr Mladek <pmladek@suse.com>,
-        Steven Rostedt <rostedt@goodmis.org>, stable@vger.kernel.org,
-        Alexander.Levin@microsoft.com,
+Cc:     Petr Mladek <pmladek@suse.com>, linux-kernel@vger.kernel.org,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Peter Zijlstra <peterz@infradead.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        byungchul.park@lge.com, dave.hansen@intel.com, hannes@cmpxchg.org,
-        jack@suse.cz, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Mel Gorman <mgorman@suse.de>, mhocko@kernel.org, pavel@ucw.cz,
-        penguin-kernel@i-love.sakura.ne.jp,
-        Peter Zijlstra <peterz@infradead.org>, tj@kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>, vbabka@suse.cz,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        Peter Feiner <pfeiner@google.com>
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
+        Jiri Slaby <jslaby@suse.com>,
+        Peter Feiner <pfeiner@google.com>,
+        linux-serial@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
 Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-        boundary="000000000000fce766057ccd05ff"
+        boundary="000000000000f6b8e1057ccd0aee"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---000000000000fce766057ccd05ff
+--000000000000f6b8e1057ccd0aee
 Content-Type: text/plain; charset="UTF-8"
 
-> So... did my patch address the deadlock you are seeing or it didn't?
+Got it. Thank you.
 
-I've been meaning to try it but kept getting distracted by other
-things. I'll try to find some time for it this week or next. Right now
-my intent is to get Steven's patch into 4.14 stable as it evidently
-fixed the particular issue I was seeing, and as Steven said it has
-been in upstream since 4.16 so it's not like backporting it will raise
-any red flags. I will start another thread on -stable for it.
-
-> I guess we still don't have a really clear understanding of what exactly
-is going in your system
-
-I would also like to get to the bottom of it. Unfortunately I haven't
-got the expertise in this area nor the time to do it yet. Hence the
-intent to take a step back and backport Steven's patch to fix the
-issue that has resurfaced in our production recently.
-
-> If it's uart_port->lock and there will be 2 patch sets to choose from
-for -stable, then -stable guys can pick up the one that requires less
-effort: 1 two-liner patch vs. 3 or 4 bigger patches.
-
-Which two sets are you referring to specifically?
-
-On Tue, Dec 11, 2018 at 9:21 PM Sergey Senozhatsky
+On Tue, Dec 11, 2018 at 10:06 PM Sergey Senozhatsky
 <sergey.senozhatsky.work@gmail.com> wrote:
 >
-> On (12/11/18 17:16), Daniel Wang wrote:
-> > > Let's first figure out if it works.
-> >
-> > I would still like to try applying your patches that went into
-> > printk.git, but for now I wonder if we can get Steven's patch into
-> > 4.14 first, for at least we know it mitigated the issue if not
-> > fundamentally addressed it, and we've agreed it's an innocuous change
-> > that doesn't risk breaking stable.
+> On (12/11/18 21:59), Daniel Wang wrote:
+> > No worries. I will follow up. You would recommend that all four
+> > patches in this set to be backported though, right?
 >
-> So... did my patch address the deadlock you are seeing or it didn't?
+> Just the last one, which makes consoles re-entrant
 >
-> > I haven't done this before so I'll need your help. What's the next
-> > step to actually get Steven's patch *in* linux-4.14.y? According to
-> > https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html
-> > I am supposed to send an email with the patch ID and subject, which
-> > are both mentioned in this email. Should I send another one? What's
-> > the process like? Thanks!
+>         panic: avoid deadlocks in re-entrant console drivers
 >
-> I'm not doing any -stable releases, so can't really answer, sorry.
-> Probably would be better to re-address this question to 4.14 -stable
-> maintainers.
->
->
-> ---
-> I guess we still don't have a really clear understanding of what exactly
-> is going in your system. We don't even know for sure which one of the locks
-> is deadlocking the system. And why exactly Steven's patch helps. If it
-> is uart_port->lock, then it's one thing; if it's console_sem ->lock then
-> it's another thing. But those two are just theories, not supported by any
-> logs/backtraces from your systems.
->
-> If it's uart_port->lock and there will be 2 patch sets to choose from
-> for -stable, then -stable guys can pick up the one that requires less
-> effort: 1 two-liner patch vs. 3 or 4 bigger patches.
+> Because only this one was applied so far. The reset got stuck.
 >
 >         -ss
 
@@ -160,7 +111,7 @@ On Tue, Dec 11, 2018 at 9:21 PM Sergey Senozhatsky
 Best,
 Daniel
 
---000000000000fce766057ccd05ff
+--000000000000f6b8e1057ccd0aee
 Content-Type: application/pkcs7-signature; name="smime.p7s"
 Content-Transfer-Encoding: base64
 Content-Disposition: attachment; filename="smime.p7s"
@@ -242,14 +193,14 @@ I3UgrUAhzwFXOlZSk57FgvAZ9472grnkSI8aW1mZp1gf5BNYEVb6y/e1hxlNeZbtIa0vvWDm+tK1
 ENfcc+LgRCL4gqiu3v3MEyXXeq/eH/iibrGhissORpiy+nMuWzsTGYOkRRn9RtyEmJAh48WUKCt3
 SR4lOce76r8Fd1Dg0XA0lCCwrFRzMYICXjCCAloCAQEwXDBMMQswCQYDVQQGEwJCRTEZMBcGA1UE
 ChMQR2xvYmFsU2lnbiBudi1zYTEiMCAGA1UEAxMZR2xvYmFsU2lnbiBIViBTL01JTUUgQ0EgMQIM
-IxVzVdM/KCmBJokVMA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCD9pAAB9pnZFHj7
-V9cKU8RT90OZpihBdRegmX+45sjLxTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3
-DQEJBTEPFw0xODEyMTIwNjA4MTRaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUDBAEqMAsGCWCG
+IxVzVdM/KCmBJokVMA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCC2eDZZAWfSKD4u
+0cr9L/IJWJe4hLnbJ/uMrhK+Q08XITAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3
+DQEJBTEPFw0xODEyMTIwNjA5MzdaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUDBAEqMAsGCWCG
 SAFlAwQBFjALBglghkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEKMAsGCSqGSIb3DQEB
-BzALBglghkgBZQMEAgEwDQYJKoZIhvcNAQEBBQAEggEAIKvwxb5nbpxoDc2A4rBaZl9M7vB6/Eny
-VM3X7tga/CU31rkdc2dGpb8enhdDkP+hzarCEG/Q2ZBJUZQhgGtE3bJOxEBTWslWaMLnCWFrLiTY
-FJ56FsbzRKH5whTxQ9vg2rCWLNs/TsycvjYF8l5ji0ild6BODMOaZE6JJOoV5eF6rYU1TRpF+O0+
-TuykuKEQ0nt4Lb7ZoGo1H9mvL2BHUcRGZxAwJ9M1cicW1PQuqKtUJ3L++KSLRrV9L+lSdn/3EFuN
-WoNNr+C7tUVbNs2re9ky3D8PS3jwQF2uKYE0HI6O7gzzqsWNGfbhu+byCATZlSLGc2ZxGpISsgrH
-cVC1Eg==
---000000000000fce766057ccd05ff--
+BzALBglghkgBZQMEAgEwDQYJKoZIhvcNAQEBBQAEggEAhEFhC/cZCHvbT3hdCO5pN0q88zISsCPP
+xhdOqtJG8YZ72nSpND4Yq1aN2i3p14NrtuBV6I2Dm7tnBnaYIkiYVQ4kSpqY4c87IYMCM/uhC8Pc
+Nipff0n0H3brD+7w4a/eI/t1fvC/8T5poAoYNRDw3J55CwhSJOdhqWNB0F+x9YHd1IkyZBR0F8eq
+VFnCwSzBUbx/MH5Ti00ROBijek8l1iYrpG71gUCREs1bO75Af8IqkQbwonbX3wQJt3jZiLIelPlx
+gge8NogLpSOlljki+icXstIW4X1AIEiwQx1d0BF3d4K4TDO/IVMW7JPWynvQWncyBYaU3/ObWSF9
+FTnlOg==
+--000000000000f6b8e1057ccd0aee--
