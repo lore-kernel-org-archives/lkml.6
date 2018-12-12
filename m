@@ -2,334 +2,182 @@ Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0969DC04EB8
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 08:21:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CF59C04EB8
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 08:23:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC4A920849
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 08:21:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC4A920849
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id D45172086D
+	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 08:23:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=semihalf-com.20150623.gappssmtp.com header.i=@semihalf-com.20150623.gappssmtp.com header.b="mOfWqmr6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D45172086D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=semihalf.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726738AbeLLIV5 (ORCPT
+        id S1726766AbeLLIXL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 03:21:57 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:40518 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726242AbeLLIV5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 03:21:57 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1BA1488302;
-        Wed, 12 Dec 2018 08:21:56 +0000 (UTC)
-Received: from [10.36.116.44] (ovpn-116-44.ams2.redhat.com [10.36.116.44])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7ACF7608C6;
-        Wed, 12 Dec 2018 08:21:45 +0000 (UTC)
-Subject: Re: [RFC v2 14/20] iommu: introduce device fault data
-To:     Jacob Pan <jacob.jun.pan@linux.intel.com>
-Cc:     eric.auger.pro@gmail.com, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu, joro@8bytes.org,
-        alex.williamson@redhat.com, yi.l.liu@linux.intel.com,
-        jean-philippe.brucker@arm.com, will.deacon@arm.com,
-        robin.murphy@arm.com, tianyu.lan@intel.com, ashok.raj@intel.com,
-        marc.zyngier@arm.com, christoffer.dall@arm.com,
-        peter.maydell@linaro.org
-References: <20180918142457.3325-1-eric.auger@redhat.com>
- <20180918142457.3325-15-eric.auger@redhat.com>
- <20180920150653.567287c5@jacob-builder>
-From:   Auger Eric <eric.auger@redhat.com>
-Message-ID: <09404da4-98c6-7afc-4510-caeaeaf6e4c4@redhat.com>
-Date:   Wed, 12 Dec 2018 09:21:43 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Wed, 12 Dec 2018 03:23:11 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:33621 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726478AbeLLIXL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 03:23:11 -0500
+Received: by mail-io1-f66.google.com with SMTP id t24so14192550ioi.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 00:23:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=semihalf-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=LI0Wl6BulX634HdsyTE9b5nHW86RHBJZvD2/gndbgVA=;
+        b=mOfWqmr6h73vOycopbg1xDJoCT1ncnUKj3mKk8pbBrNMHw58kUhN0eCpe8nAi3XDXD
+         5cP0iYjUyVWj4UzFYRctea0oKOvVdKYTcOqHV3K5yE2p9m1F36OlRxZPJKB4T9OXlQY1
+         lmnLy0Lbd6B4ByVNoqkKd+/Ab2ERkzg4hjazTl17JoWEPla3ZFvEB5cI9nyxVfcv9IM0
+         aYJNbohqVKyct5Kt/f94XgjLUEuV6a9Z/z7GYoOuqFPWrqyjfFVOYYRUyTBynWzoXDNe
+         yUyNBJum4wo8Ap+E7IezPxxO2tEbNLfR7g+XjtVnsuhBg5L7fW6a7FcUn2JnKeifngaS
+         szFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=LI0Wl6BulX634HdsyTE9b5nHW86RHBJZvD2/gndbgVA=;
+        b=X0bjAkSRWU85dtT9NxoticIFvCJ05ELE1zgsJyOIUV7iM5L9dhDTYDcPaWCSev/E6V
+         1j6c5DFC4nUyA0pFWG4+EfPxFUvZTGsWhB0JeJ0+2/2P+Ad3afQS2l+k0kqMVuu9R9jm
+         kz070210GXxCxJB6RP/b3rv9CEKu0xMXU0ILTe/1x7pJMz5rijOOh5w4Jnj3626TKdkY
+         PSRa67ntOfZj/y5Xs+r73NlwZo9n29ZavEYY+q70oDUo9o0GbNvHt6g8Ap3+8a8fUVJb
+         dMBcu9j3ly4/lbs0KQHrTWqIzBGebdvS7cMuhBjCt92jvNl9o1fLY08u/cGALnuJhl6u
+         l5bQ==
+X-Gm-Message-State: AA+aEWYEA4JIwA5RwXfHoEGeT5+hmkmRy23w9Shm/aK8tfCH0UFte7/o
+        664E5QVvn7K5rprZt5qeT82XmVFVoFGuEhdLq0cbiA==
+X-Google-Smtp-Source: AFSGD/V9wfJKlmKfzQtBMT01aGxF3Mwngb6JddBNct2ado2ztHeoMhQhjEizEB4x5nereQzCuJSJhmQDYN9CBst5c+o=
+X-Received: by 2002:a5d:8049:: with SMTP id b9mr7591130ior.108.1544602990068;
+ Wed, 12 Dec 2018 00:23:10 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20180920150653.567287c5@jacob-builder>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Wed, 12 Dec 2018 08:21:56 +0000 (UTC)
+References: <1544533009-12425-1-git-send-email-mw@semihalf.com> <20181212104304.49026ed2@xhacker.debian>
+In-Reply-To: <20181212104304.49026ed2@xhacker.debian>
+From:   Marcin Wojtas <mw@semihalf.com>
+Date:   Wed, 12 Dec 2018 09:22:57 +0100
+Message-ID: <CAPv3WKctDNJVq7SgHBZLO_TU50ponCLu7h5oMKLTndBiDadhaA@mail.gmail.com>
+Subject: Re: [PATCH net] net: mvneta: fix operation for 64K PAGE_SIZE
+To:     Jisheng.Zhang@synaptics.com
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        netdev <netdev@vger.kernel.org>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        Grzegorz Jaszczyk <jaz@semihalf.com>,
+        =?UTF-8?Q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        nadavh@marvell.com,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Stefan Chulski <stefanc@marvell.com>,
+        "David S. Miller" <davem@davemloft.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jacob,
+Hi Jisheng,
 
-On 9/21/18 12:06 AM, Jacob Pan wrote:
-> On Tue, 18 Sep 2018 16:24:51 +0200
-> Eric Auger <eric.auger@redhat.com> wrote:
-> 
->> From: Jacob Pan <jacob.jun.pan@linux.intel.com>
->>
->> Device faults detected by IOMMU can be reported outside IOMMU
->> subsystem for further processing. This patch intends to provide
->> a generic device fault data such that device drivers can be
->> communicated with IOMMU faults without model specific knowledge.
->>
->> The proposed format is the result of discussion at:
->> https://lkml.org/lkml/2017/11/10/291
->> Part of the code is based on Jean-Philippe Brucker's patchset
->> (https://patchwork.kernel.org/patch/9989315/).
->>
->> The assumption is that model specific IOMMU driver can filter and
->> handle most of the internal faults if the cause is within IOMMU driver
->> control. Therefore, the fault reasons can be reported are grouped
->> and generalized based common specifications such as PCI ATS.
->>
->> Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
->> Signed-off-by: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
->> Signed-off-by: Liu, Yi L <yi.l.liu@linux.intel.com>
->> Signed-off-by: Ashok Raj <ashok.raj@intel.com>
->> Signed-off-by: Eric Auger <eric.auger@redhat.com>
->> [moved part of the iommu_fault_event struct in the uapi, enriched
->>  the fault reasons to be able to map unrecoverable SMMUv3 errors]
-> Sounds good to me.
-> There are also other "enrichment" we need to do to support mdev or
-> finer granularity fault reporting below physical device. e.g. PASID
-> level.
-> 
-> The current scheme works for PCIe physical device level, where each
-> device registers a single handler only once. When device fault is
-> detected by the IOMMU, it will find the matching handler and private
-> data to report back. However, for devices partitioned by PASID and
-> represented by mdev this may not work. Since IOMMU is not mdev aware
-> and only works at physical device level.
-> So I am thinking we should allow multiple registration of fault handler
-> with different data and ID. i.e.
-> 
-> int iommu_register_device_fault_handler(struct device *dev,
-> 					iommu_dev_fault_handler_t handler,
-> 					int id,
-> 					void *data)
-> 
-> where the new "id field" is
->  * @id: Identification of the handler private data, will be used by fault
->  *      reporting code to match the handler data to be returned. For page
->  *      request, this can be the PASID. ID must be unique per device, i.e.
->  *      each ID can only be registered once per device.
->  *      - IOMMU_DEV_FAULT_ID_UNRECOVERY (~0U) is reserved for fault reporting
->  *      w/o ID. e.g. unrecoverable faults.
-> 
-> I am still testing, but just wanted to have feedback on this idea.
+=C5=9Br., 12 gru 2018 o 03:48 Jisheng Zhang <Jisheng.Zhang@synaptics.com> n=
+apisa=C5=82(a):
+>
+> Hi,
+>
+> On Tue, 11 Dec 2018 13:56:49 +0100 Marcin Wojtas wrote:
+>
+> > Recent changes in the mvneta driver reworked allocation
+> > and handling of the ingress buffers to use entire pages.
+> > Apart from that in SW BM scenario the HW must be informed
+> > via PRXDQS about the biggest possible incoming buffer
+> > that can be propagated by RX descriptors.
+> >
+> > The BufferSize field was filled according to the MTU-dependent
+> > pkt_size value. Later change to PAGE_SIZE broke RX operation
+> > when usin 64K pages, as the field is simply too small.
+> >
+> > This patch conditionally limits the value passed to the BufferSize
+> > of the PRXDQS register, depending on the PAGE_SIZE used.
+> > On the occasion remove now unused frag_size field of the mvneta_port
+> > structure.
+> >
+> > Fixes: 562e2f467e71 ("net: mvneta: Improve the buffer allocation
+> > method for SWBM")
+>
+> IMHO, we'd better revert 562e2f467e71 and 7e47fd84b56bb
+>
+> The issue commit 562e2f467e71 wants to solve is due to commit 7e47fd84b56=
+bb
+> It looks a bit wired, to introduce regression then submit another commit(=
+in
+> the same patch set) solve it
+>
+> Per my test, after reverting 562e2f467e71 and 7e47fd84b56bb, I can't repr=
+oduce
+> what's claimed in commit 562e2f467e71 -- "With system having a small memo=
+ry
+> (around 256MB), the state "cannot allocate memory to refill with new buff=
+er"
+> is reach pretty quickly."
 
-I am currently respinning this series. Do you have a respin for this
-patch including iommu_register_device_fault_handler with the @id param
-as you suggested above? Otherwise 2 solutions: I keep the code as is or
-I do the modification myself implementing a list of fault_params?
+I am not the one to decide about patch reverting. From what I
+understand, commit 7e47fd84b56bb was intorduced in order to increase
+performance thanks to replacing mvneta_frag_alloc/free with using
+entire pages for RX buffers. I have 2 questions:
+- without reverting anything, do you observe memory allocation
+problems during refill?
+- are you able to check L2 forwarding numbers on top of the pure
+mainline branch and after reverting the mentioned patches? I'm
+wondering what would be the performance penalty (if any).
 
-Besides do you plans for "[PATCH v5 00/23] IOMMU and VT-d driver support
-for Shared Virtual Address (SVA)" respin - hope I didn't miss anything? - ?
+Best regards,
+Marcin
 
-Thanks
-
-Eric
-> 
-> Thanks,
-> 
-> Jacob
-> 
-> 
->> ---
->>  include/linux/iommu.h      | 55 ++++++++++++++++++++++++-
->>  include/uapi/linux/iommu.h | 83
->> ++++++++++++++++++++++++++++++++++++++ 2 files changed, 136
->> insertions(+), 2 deletions(-)
->>
->> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
->> index 9bd3e63d562b..7529c14ff506 100644
->> --- a/include/linux/iommu.h
->> +++ b/include/linux/iommu.h
->> @@ -49,13 +49,17 @@ struct bus_type;
->>  struct device;
->>  struct iommu_domain;
->>  struct notifier_block;
->> +struct iommu_fault_event;
->>  
->>  /* iommu fault flags */
->> -#define IOMMU_FAULT_READ	0x0
->> -#define IOMMU_FAULT_WRITE	0x1
->> +#define IOMMU_FAULT_READ		(1 << 0)
->> +#define IOMMU_FAULT_WRITE		(1 << 1)
->> +#define IOMMU_FAULT_EXEC		(1 << 2)
->> +#define IOMMU_FAULT_PRIV		(1 << 3)
->>  
->>  typedef int (*iommu_fault_handler_t)(struct iommu_domain *,
->>  			struct device *, unsigned long, int, void *);
->> +typedef int (*iommu_dev_fault_handler_t)(struct iommu_fault_event *,
->> void *); 
->>  struct iommu_domain_geometry {
->>  	dma_addr_t aperture_start; /* First address that can be
->> mapped    */ @@ -262,6 +266,52 @@ struct iommu_device {
->>  	struct device *dev;
->>  };
->>  
->> +/**
->> + * struct iommu_fault_event - Generic per device fault data
->> + *
->> + * - PCI and non-PCI devices
->> + * - Recoverable faults (e.g. page request), information based on
->> PCI ATS
->> + * and PASID spec.
->> + * - Un-recoverable faults of device interest
->> + * - DMA remapping and IRQ remapping faults
->> + *
->> + * @fault: fault descriptor
->> + * @device_private: if present, uniquely identify device-specific
->> + *                  private data for an individual page request.
->> + * @iommu_private: used by the IOMMU driver for storing
->> fault-specific
->> + *                 data. Users should not modify this field before
->> + *                 sending the fault response.
->> + */
->> +struct iommu_fault_event {
->> +	struct iommu_fault fault;
->> +	u64 device_private;
->> +	u64 iommu_private;
->> +};
->> +
->> +/**
->> + * struct iommu_fault_param - per-device IOMMU fault data
->> + * @dev_fault_handler: Callback function to handle IOMMU faults at
->> device level
->> + * @data: handler private data
->> + *
->> + */
->> +struct iommu_fault_param {
->> +	iommu_dev_fault_handler_t handler;
->> +	void *data;
->> +};
->> +
->> +/**
->> + * struct iommu_param - collection of per-device IOMMU data
->> + *
->> + * @fault_param: IOMMU detected device fault reporting data
->> + *
->> + * TODO: migrate other per device data pointers under
->> iommu_dev_data, e.g.
->> + *	struct iommu_group	*iommu_group;
->> + *	struct iommu_fwspec	*iommu_fwspec;
->> + */
->> +struct iommu_param {
->> +	struct iommu_fault_param *fault_param;
->> +};
->> +
->>  int  iommu_device_register(struct iommu_device *iommu);
->>  void iommu_device_unregister(struct iommu_device *iommu);
->>  int  iommu_device_sysfs_add(struct iommu_device *iommu,
->> @@ -429,6 +479,7 @@ struct iommu_ops {};
->>  struct iommu_group {};
->>  struct iommu_fwspec {};
->>  struct iommu_device {};
->> +struct iommu_fault_param {};
->>  
->>  static inline bool iommu_present(struct bus_type *bus)
->>  {
->> diff --git a/include/uapi/linux/iommu.h b/include/uapi/linux/iommu.h
->> index 21adb2a964e5..a0fe5c2fb236 100644
->> --- a/include/uapi/linux/iommu.h
->> +++ b/include/uapi/linux/iommu.h
->> @@ -150,5 +150,88 @@ struct iommu_guest_msi_binding {
->>  	__u64		gpa;
->>  	__u32		granule;
->>  };
->> +
->> +/*  Generic fault types, can be expanded IRQ remapping fault */
->> +enum iommu_fault_type {
->> +	IOMMU_FAULT_DMA_UNRECOV = 1,	/* unrecoverable fault */
->> +	IOMMU_FAULT_PAGE_REQ,		/* page request fault */
->> +};
->> +
->> +enum iommu_fault_reason {
->> +	IOMMU_FAULT_REASON_UNKNOWN = 0,
->> +
->> +	/* IOMMU internal error, no specific reason to report out */
->> +	IOMMU_FAULT_REASON_INTERNAL,
->> +
->> +	/* Could not access the PASID table (fetch caused external
->> abort) */
->> +	IOMMU_FAULT_REASON_PASID_FETCH,
->> +
->> +	/* could not access the device context (fetch caused
->> external abort) */
->> +	IOMMU_FAULT_REASON_DEVICE_CONTEXT_FETCH,
->> +
->> +	/* pasid entry is invalid or has configuration errors */
->> +	IOMMU_FAULT_REASON_BAD_PASID_ENTRY,
->> +
->> +	/* device context entry is invalid or has configuration
->> errors */
->> +	IOMMU_FAULT_REASON_BAD_DEVICE_CONTEXT_ENTRY,
->> +	/*
->> +	 * PASID is out of range (e.g. exceeds the maximum PASID
->> +	 * supported by the IOMMU) or disabled.
->> +	 */
->> +	IOMMU_FAULT_REASON_PASID_INVALID,
->> +
->> +	/* source id is out of range */
->> +	IOMMU_FAULT_REASON_SOURCEID_INVALID,
->> +
->> +	/*
->> +	 * An external abort occurred fetching (or updating) a
->> translation
->> +	 * table descriptor
->> +	 */
->> +	IOMMU_FAULT_REASON_WALK_EABT,
->> +
->> +	/*
->> +	 * Could not access the page table entry (Bad address),
->> +	 * actual translation fault
->> +	 */
->> +	IOMMU_FAULT_REASON_PTE_FETCH,
->> +
->> +	/* Protection flag check failed */
->> +	IOMMU_FAULT_REASON_PERMISSION,
->> +
->> +	/* access flag check failed */
->> +	IOMMU_FAULT_REASON_ACCESS,
->> +
->> +	/* Output address of a translation stage caused Address Size
->> fault */
->> +	IOMMU_FAULT_REASON_OOR_ADDRESS
->> +};
->> +
->> +/**
->> + * struct iommu_fault - Generic fault data
->> + *
->> + * @type contains fault type
->> + * @reason fault reasons if relevant outside IOMMU driver.
->> + * IOMMU driver internal faults are not reported.
->> + * @addr: tells the offending page address
->> + * @fetch_addr: tells the address that caused an abort, if any
->> + * @pasid: contains process address space ID, used in shared virtual
->> memory
->> + * @page_req_group_id: page request group index
->> + * @last_req: last request in a page request group
->> + * @pasid_valid: indicates if the PRQ has a valid PASID
->> + * @prot: page access protection flag:
->> + *	IOMMU_FAULT_READ, IOMMU_FAULT_WRITE
->> + */
->> +
->> +struct iommu_fault {
->> +	__u32	type;   /* enum iommu_fault_type */
->> +	__u32	reason; /* enum iommu_fault_reason */
->> +	__u64	addr;
->> +	__u64	fetch_addr;
->> +	__u32	pasid;
->> +	__u32	page_req_group_id;
->> +	__u32	last_req;
->> +	__u32	pasid_valid;
->> +	__u32	prot;
->> +	__u32	access;
->> +};
->>  #endif /* _UAPI_IOMMU_H */
->>  
-> 
-> [Jacob Pan]
-> 
+>
+>
+> >
+> > Signed-off-by: Marcin Wojtas <mw@semihalf.com>
+> > ---
+> >  drivers/net/ethernet/marvell/mvneta.c | 6 +++---
+> >  1 file changed, 3 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/drivers/net/ethernet/marvell/mvneta.c b/drivers/net/ethern=
+et/marvell/mvneta.c
+> > index e5397c8..61b2349 100644
+> > --- a/drivers/net/ethernet/marvell/mvneta.c
+> > +++ b/drivers/net/ethernet/marvell/mvneta.c
+> > @@ -408,7 +408,6 @@ struct mvneta_port {
+> >       struct mvneta_pcpu_stats __percpu       *stats;
+> >
+> >       int pkt_size;
+> > -     unsigned int frag_size;
+> >       void __iomem *base;
+> >       struct mvneta_rx_queue *rxqs;
+> >       struct mvneta_tx_queue *txqs;
+> > @@ -2905,7 +2904,9 @@ static void mvneta_rxq_hw_init(struct mvneta_port=
+ *pp,
+> >       if (!pp->bm_priv) {
+> >               /* Set Offset */
+> >               mvneta_rxq_offset_set(pp, rxq, 0);
+> > -             mvneta_rxq_buf_size_set(pp, rxq, pp->frag_size);
+> > +             mvneta_rxq_buf_size_set(pp, rxq, PAGE_SIZE < SZ_64K ?
+> > +                                     PAGE_SIZE :
+> > +                                     MVNETA_RX_BUF_SIZE(pp->pkt_size))=
+;
+> >               mvneta_rxq_bm_disable(pp, rxq);
+> >               mvneta_rxq_fill(pp, rxq, rxq->size);
+> >       } else {
+> > @@ -3760,7 +3761,6 @@ static int mvneta_open(struct net_device *dev)
+> >       int ret;
+> >
+> >       pp->pkt_size =3D MVNETA_RX_PKT_SIZE(pp->dev->mtu);
+> > -     pp->frag_size =3D PAGE_SIZE;
+> >
+> >       ret =3D mvneta_setup_rxqs(pp);
+> >       if (ret)
+>
