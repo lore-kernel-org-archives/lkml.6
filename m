@@ -2,142 +2,115 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_HK_NAME_DR,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79D65C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 10:01:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74062C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 10:01:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B218208E7
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 10:01:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B218208E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 4427C208E7
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 10:01:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4427C208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kaod.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728132AbeLMKBL (ORCPT
+        id S1728134AbeLMKBr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 05:01:11 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:42174 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727461AbeLMKBK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 05:01:10 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1D49A30C6DF0;
-        Thu, 13 Dec 2018 10:01:10 +0000 (UTC)
-Received: from work-vm (ovpn-117-213.ams2.redhat.com [10.36.117.213])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1AAE218E5F;
-        Thu, 13 Dec 2018 10:01:01 +0000 (UTC)
-Date:   Thu, 13 Dec 2018 10:00:59 +0000
-From:   "Dr. David Alan Gilbert" <dgilbert@redhat.com>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     Vivek Goyal <vgoyal@redhat.com>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        miklos@szeredi.hu, stefanha@redhat.com, sweil@redhat.com,
-        swhiteho@redhat.com
-Subject: Re: [PATCH 18/52] virtio-fs: Map cache using the values from the
- capabilities
-Message-ID: <20181213100058.GC2313@work-vm>
-References: <20181210171318.16998-1-vgoyal@redhat.com>
- <20181210171318.16998-19-vgoyal@redhat.com>
- <de46a955-813b-355d-49f2-4d866603a8fa@redhat.com>
- <20181213091320.GA2313@work-vm>
- <d8c093db-9dda-1342-41c2-d08083cc150b@redhat.com>
+        Thu, 13 Dec 2018 05:01:47 -0500
+Received: from 9.mo178.mail-out.ovh.net ([46.105.75.45]:49245 "EHLO
+        9.mo178.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727461AbeLMKBq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 05:01:46 -0500
+X-Greylist: delayed 1104 seconds by postgrey-1.27 at vger.kernel.org; Thu, 13 Dec 2018 05:01:45 EST
+Received: from player732.ha.ovh.net (unknown [10.109.146.132])
+        by mo178.mail-out.ovh.net (Postfix) with ESMTP id DDC7B43290
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 10:43:19 +0100 (CET)
+Received: from kaod.org (lns-bzn-46-82-253-208-248.adsl.proxad.net [82.253.208.248])
+        (Authenticated sender: groug@kaod.org)
+        by player732.ha.ovh.net (Postfix) with ESMTPSA id 46C37AE027D;
+        Thu, 13 Dec 2018 09:43:15 +0000 (UTC)
+Date:   Thu, 13 Dec 2018 10:43:14 +0100
+From:   Greg Kurz <groug@kaod.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, Josef Bacik <jbacik@fb.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Frederic Barrat <fbarrat@linux.vnet.ibm.com>
+Subject: Re: [PATCH] radix tree: Don't return internal entries on lookup
+Message-ID: <20181213104314.71fd74eb@bahia.lab.toulouse-stg.fr.ibm.com>
+In-Reply-To: <20181206172102.0538b2a9@bahia.lab.toulouse-stg.fr.ibm.com>
+References: <154408284374.405977.5950625525821388567.stgit@bahia.lan>
+        <20181206133620.GC24603@bombadil.infradead.org>
+        <20181206172102.0538b2a9@bahia.lab.toulouse-stg.fr.ibm.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d8c093db-9dda-1342-41c2-d08083cc150b@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Thu, 13 Dec 2018 10:01:10 +0000 (UTC)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Ovh-Tracer-Id: 3005871279397312837
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedtkedrudehvddgtdegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddm
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* David Hildenbrand (david@redhat.com) wrote:
-> On 13.12.18 10:13, Dr. David Alan Gilbert wrote:
-> > * David Hildenbrand (david@redhat.com) wrote:
-> >> On 10.12.18 18:12, Vivek Goyal wrote:
-> >>> Instead of assuming we had the fixed bar for the cache, use the
-> >>> value from the capabilities.
-> >>>
-> >>> Signed-off-by: Dr. David Alan Gilbert <dgilbert@redhat.com>
-> >>> ---
-> >>>  fs/fuse/virtio_fs.c | 32 +++++++++++++++++---------------
-> >>>  1 file changed, 17 insertions(+), 15 deletions(-)
-> >>>
-> >>> diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
-> >>> index 60d496c16841..55bac1465536 100644
-> >>> --- a/fs/fuse/virtio_fs.c
-> >>> +++ b/fs/fuse/virtio_fs.c
-> >>> @@ -14,11 +14,6 @@
-> >>>  #include <uapi/linux/virtio_pci.h>
-> >>>  #include "fuse_i.h"
-> >>>  
-> >>> -enum {
-> >>> -	/* PCI BAR number of the virtio-fs DAX window */
-> >>> -	VIRTIO_FS_WINDOW_BAR = 2,
-> >>> -};
-> >>> -
-> >>>  /* List of virtio-fs device instances and a lock for the list */
-> >>>  static DEFINE_MUTEX(virtio_fs_mutex);
-> >>>  static LIST_HEAD(virtio_fs_instances);
-> >>> @@ -518,7 +513,7 @@ static int virtio_fs_setup_dax(struct virtio_device *vdev, struct virtio_fs *fs)
-> >>>  	struct dev_pagemap *pgmap;
-> >>>  	struct pci_dev *pci_dev;
-> >>>  	phys_addr_t phys_addr;
-> >>> -	size_t len;
-> >>> +	size_t bar_len;
-> >>>  	int ret;
-> >>>  	u8 have_cache, cache_bar;
-> >>>  	u64 cache_offset, cache_len;
-> >>> @@ -551,17 +546,13 @@ static int virtio_fs_setup_dax(struct virtio_device *vdev, struct virtio_fs *fs)
-> >>>          }
-> >>>  
-> >>>  	/* TODO handle case where device doesn't expose BAR? */
-> >>
-> >> For virtio-pmem we decided to not go via BARs as this would effectively
-> >> make it only usable for virtio-pci implementers. Instead, we are going
-> >> to export the applicable physical device region directly (e.g.
-> >> phys_start, phys_size in virtio config), so it is decoupled from PCI
-> >> details. Doing the same for virtio-fs would allow e.g. also virtio-ccw
-> >> to make eventually use of this.
+On Thu, 6 Dec 2018 17:21:02 +0100
+Greg Kurz <groug@kaod.org> wrote:
+
+> On Thu, 6 Dec 2018 05:36:20 -0800
+> Matthew Wilcox <willy@infradead.org> wrote:
+> 
+> > On Thu, Dec 06, 2018 at 08:54:03AM +0100, Greg Kurz wrote:  
+> > > Commit 66ee620f06f9 ("idr: Permit any valid kernel pointer to
+> > > be stored") changed the radix tree lookup so that it stops when
+> > > reaching the bottom of the tree. But radix_tree_descend() may have
+> > > changed the node variable to point to an internal entry which then
+> > > gets returned to the caller and bad things may happen.    
+> >   
+> > > pe_data is equal to R3 which is the return value of radix_tree_lookup(),
+> > > ie, 0x406 == RADIX_TREE_RETRY.    
 > > 
-> > That makes it a very odd looking PCI device;  I can see that with
-> > virtio-pmem it makes some sense, given that it's job is to expose
-> > arbitrary chunks of memory.
+> > Thank you for the report and the debugging!  I've decided to fix the
+> > problem slightly differently, and I've also added a test to the test-suite  
+> 
+> Heh this is the fix I came up with initially, but then I wasn't sure
+> if other kind of internal entries could possibly be returned by
+> radix_tree_descend() so I tried to be smarter... I should have sticked
+> to my initial intuition :)
+> 
+> > that reproduces the problem in only a few iterations (the largest I've
+> > seen is a few hundred; and often it'll reproduce in under twenty).
 > > 
-> > Dave
+> > You can see it here:
+> > http://git.infradead.org/users/willy/linux-dax.git/commitdiff/eff3860bbfedbac6edac57fb0d7f3a60e860c1c3
+> >   
 > 
-> Well, the fact that your are
+> You can add:
 > 
-> - including <uapi/linux/virtio_pci.h>
-> - adding pci related code
+> Reviewed-by: Greg Kurz <groug@kaod.org>
+> Tested-by: Greg Kurz <groug@kaod.org>
 > 
-> in/to fs/fuse/virtio_fs.c
+> > I'll give the build bots a couple of days to chew on it and then ask
+> > Linus to pull it.  
 > 
-> tells me that these properties might be better communicated on the
-> virtio layer, not on the PCI layer.
-> 
-> Or do you really want to glue virtio-fs to virtio-pci for all eternity?
 
-No, these need cleaning up; and the split within the bar
-is probably going to change to be communicated via virtio layer
-rather than pci capabilities.  However, I don't want to make our PCI
-device look odd, just to make portability to non-PCI devices - so it's
-right to make the split appropriately, but still to use PCI bars
-for what they were designed for.
+Hi Matthew and Andrew,
 
-Dave
+I see this fix is in linux-next. I just want to make sure it will
+land in 4.20 in order to avoid kernel panics in the OCXL driver.
 
-> 
-> -- 
-> 
-> Thanks,
-> 
-> David / dhildenb
+Cheers,
+
 --
-Dr. David Alan Gilbert / dgilbert@redhat.com / Manchester, UK
+Greg
+
+
+> Great !
+> 
+> Cheers,
+> 
+> --
+> Greg
+
