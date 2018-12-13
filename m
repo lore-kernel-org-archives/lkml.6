@@ -2,138 +2,255 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B809CC67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 10:33:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB8F8C67872
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 10:33:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 860C220811
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 10:33:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 860C220811
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 8512020849
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 10:33:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8512020849
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728553AbeLMKdA (ORCPT
+        id S1728585AbeLMKdK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 05:33:00 -0500
-Received: from orcrist.hmeau.com ([104.223.48.154]:50518 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727396AbeLMKdA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 05:33:00 -0500
-Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
-        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1gXOIV-0003QJ-K2; Thu, 13 Dec 2018 18:32:51 +0800
-Received: from herbert by gondobar with local (Exim 4.89)
-        (envelope-from <herbert@gondor.apana.org.au>)
-        id 1gXOIV-0007Rw-G6; Thu, 13 Dec 2018 18:32:51 +0800
-Date:   Thu, 13 Dec 2018 18:32:51 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     linux-crypto@vger.kernel.org, paulcrowley@google.com,
-        martin@strongswan.org, gmazyland@gmail.com, Jason@zx2c4.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/6] crypto: x86_64 optimized XChaCha and NHPoly1305
- (for Adiantum)
-Message-ID: <20181213103251.laob3i3jejwfolyj@gondor.apana.org.au>
+        Thu, 13 Dec 2018 05:33:10 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32811 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727396AbeLMKdJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 05:33:09 -0500
+Received: from lhreml707-cah.china.huawei.com (unknown [172.18.7.108])
+        by Forcepoint Email with ESMTP id 21F905858A00;
+        Thu, 13 Dec 2018 10:33:06 +0000 (GMT)
+Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.153)
+ by smtpsuk.huawei.com (10.201.108.48) with Microsoft SMTP Server (TLS) id
+ 14.3.408.0; Thu, 13 Dec 2018 10:33:01 +0000
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     <jarkko.sakkinen@linux.intel.com>, <zohar@linux.ibm.com>,
+        <david.safford@ge.com>, <monty.wiseman@ge.com>
+CC:     <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH v7 1/5] tpm: dynamically allocate the allocated_banks array
+Date:   Thu, 13 Dec 2018 11:29:41 +0100
+Message-ID: <20181213102945.30946-2-roberto.sassu@huawei.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181213102945.30946-1-roberto.sassu@huawei.com>
+References: <20181213102945.30946-1-roberto.sassu@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181205062005.27727-1-ebiggers@kernel.org>
-X-Newsgroups: apana.lists.os.linux.cryptoapi,apana.lists.os.linux.kernel
-Organization: Core
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain
+X-Originating-IP: [10.204.65.153]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Eric Biggers <ebiggers@kernel.org> wrote:
-> Hello,
-> 
-> This series optimizes the Adiantum encryption mode for x86_64 by adding
-> SSE2 and AVX2 accelerated implementations of NHPoly1305, specifically
-> the NH part; and by modifying the existing x86_64 SSSE3/AVX2/AVX-512VL
-> implementation of ChaCha20 to support XChaCha20 and XChaCha12.
-> 
-> This greatly improves Adiantum performance on x86_64.  
-> 
-> For example, encrypting 4096-byte messages (single-threaded) on a
-> Skylake-based processor (Intel Xeon, supports AVX-512VL and AVX2):
-> 
->                           Before                After
->                           --------              ---------
-> adiantum(xchacha12,aes)    348 MB/s              1493 MB/s
-> adiantum(xchacha20,aes)    266 MB/s              1261 MB/s
-> 
-> And on a Zen-based processor (Threadripper 1950X, supports AVX2):
-> 
->                           Before                After
->                           --------              ---------
-> adiantum(xchacha12,aes)    505 MB/s              1292 MB/s
-> adiantum(xchacha20,aes)    387 MB/s              1037 MB/s
-> 
-> Decryption is almost exactly the same speed as encryption.
-> 
-> The biggest benefit comes from accelerating XChaCha.  Accelerating NH
-> gives a somewhat smaller, but still significant benefit.
-> 
-> Performance on 512-byte inputs is also improved, though that is much
-> slower in the first place.  When Adiantium is used with dm-crypt (or
-> cryptsetup), we recommend using a 4096-byte sector size.
-> 
-> For comparison, AES-256-XTS is 2710 MB/s on the Skylake CPU and
-> 4140 MB/s on the Zen CPU.  However, AES has the benefit of direct AES-NI
-> hardware support whereas Adiantum is implemented entirely with
-> general-purpose instructions (scalar and SIMD).  Adiantum is also a
-> super-pseudorandom permutation over the entire sector, unlike XTS.
-> 
-> Note that XChaCha20 and XChaCha12 can be used for other purposes too.
-> 
-> Changed since v2:
->  - Yield the FPU once per 4096 bytes rather than once per skcipher_walk
->    step.
->  - Create full stack frame in hchacha_block_ssse3() and
->    chacha_block_xor_ssse3().
-> 
-> Changed since v1:
->  - Rebase on top of latest cryptodev with the AVX-512VL accelerated
->    ChaCha20 from Martin Willi.
-> 
-> Eric Biggers (6):
->  crypto: x86/nhpoly1305 - add SSE2 accelerated NHPoly1305
->  crypto: x86/nhpoly1305 - add AVX2 accelerated NHPoly1305
->  crypto: x86/chacha20 - add XChaCha20 support
->  crypto: x86/chacha20 - refactor to allow varying number of rounds
->  crypto: x86/chacha - add XChaCha12 support
->  crypto: x86/chacha - yield the FPU occasionally
-> 
-> arch/x86/crypto/Makefile                      |  15 +-
-> ...a20-avx2-x86_64.S => chacha-avx2-x86_64.S} |  33 +-
-> ...12vl-x86_64.S => chacha-avx512vl-x86_64.S} |  35 +--
-> ...0-ssse3-x86_64.S => chacha-ssse3-x86_64.S} | 104 +++---
-> arch/x86/crypto/chacha20_glue.c               | 208 ------------
-> arch/x86/crypto/chacha_glue.c                 | 297 ++++++++++++++++++
-> arch/x86/crypto/nh-avx2-x86_64.S              | 157 +++++++++
-> arch/x86/crypto/nh-sse2-x86_64.S              | 123 ++++++++
-> arch/x86/crypto/nhpoly1305-avx2-glue.c        |  77 +++++
-> arch/x86/crypto/nhpoly1305-sse2-glue.c        |  76 +++++
-> crypto/Kconfig                                |  28 +-
-> 11 files changed, 861 insertions(+), 292 deletions(-)
-> rename arch/x86/crypto/{chacha20-avx2-x86_64.S => chacha-avx2-x86_64.S} (97%)
-> rename arch/x86/crypto/{chacha20-avx512vl-x86_64.S => chacha-avx512vl-x86_64.S} (97%)
-> rename arch/x86/crypto/{chacha20-ssse3-x86_64.S => chacha-ssse3-x86_64.S} (92%)
-> delete mode 100644 arch/x86/crypto/chacha20_glue.c
-> create mode 100644 arch/x86/crypto/chacha_glue.c
-> create mode 100644 arch/x86/crypto/nh-avx2-x86_64.S
-> create mode 100644 arch/x86/crypto/nh-sse2-x86_64.S
-> create mode 100644 arch/x86/crypto/nhpoly1305-avx2-glue.c
-> create mode 100644 arch/x86/crypto/nhpoly1305-sse2-glue.c
+This patch renames active_banks (member of tpm_chip) to allocated_banks,
+stores the number of allocated PCR banks in nr_allocated_banks (new member
+of tpm_chip), and replaces the static array with a pointer to a dynamically
+allocated array.
 
-All applied.  Thanks.
+tpm2_get_pcr_allocation() determines if a PCR bank is allocated by checking
+the mask in the TPML_PCR_SELECTION structure returned by the TPM for
+TPM2_Get_Capability(). If a bank is not allocated, the TPM returns that
+bank in TPML_PCR_SELECTION, with all bits in the mask set to zero. In this
+case, the bank is not included in chip->allocated_banks, to avoid that TPM
+driver users unnecessarily calculate a digest for that bank.
+
+One PCR bank with algorithm set to SHA1 is always allocated for TPM 1.x.
+
+As a consequence of the introduction of nr_allocated_banks,
+tpm_pcr_extend() does not check anymore if the algorithm stored in tpm_chip
+is equal to zero.
+
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+---
+ drivers/char/tpm/tpm-chip.c      |  1 +
+ drivers/char/tpm/tpm-interface.c | 18 +++++++++--------
+ drivers/char/tpm/tpm.h           |  3 ++-
+ drivers/char/tpm/tpm1-cmd.c      | 10 ++++++++++
+ drivers/char/tpm/tpm2-cmd.c      | 34 ++++++++++++++++++++++----------
+ 5 files changed, 47 insertions(+), 19 deletions(-)
+
+diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
+index 32db84683c40..ce851c62bb68 100644
+--- a/drivers/char/tpm/tpm-chip.c
++++ b/drivers/char/tpm/tpm-chip.c
+@@ -160,6 +160,7 @@ static void tpm_dev_release(struct device *dev)
+ 	kfree(chip->log.bios_event_log);
+ 	kfree(chip->work_space.context_buf);
+ 	kfree(chip->work_space.session_buf);
++	kfree(chip->allocated_banks);
+ 	kfree(chip);
+ }
+ 
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index d9439f9abe78..7b80919228be 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -488,8 +488,7 @@ EXPORT_SYMBOL_GPL(tpm_pcr_read);
+ int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash)
+ {
+ 	int rc;
+-	struct tpm2_digest digest_list[ARRAY_SIZE(chip->active_banks)];
+-	u32 count = 0;
++	struct tpm2_digest *digest_list;
+ 	int i;
+ 
+ 	chip = tpm_find_get_ops(chip);
+@@ -497,16 +496,19 @@ int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash)
+ 		return -ENODEV;
+ 
+ 	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
+-		memset(digest_list, 0, sizeof(digest_list));
++		digest_list = kcalloc(chip->nr_allocated_banks,
++				      sizeof(*digest_list), GFP_KERNEL);
++		if (!digest_list)
++			return -ENOMEM;
+ 
+-		for (i = 0; i < ARRAY_SIZE(chip->active_banks) &&
+-			    chip->active_banks[i] != TPM2_ALG_ERROR; i++) {
+-			digest_list[i].alg_id = chip->active_banks[i];
++		for (i = 0; i < chip->nr_allocated_banks; i++) {
++			digest_list[i].alg_id = chip->allocated_banks[i];
+ 			memcpy(digest_list[i].digest, hash, TPM_DIGEST_SIZE);
+-			count++;
+ 		}
+ 
+-		rc = tpm2_pcr_extend(chip, pcr_idx, count, digest_list);
++		rc = tpm2_pcr_extend(chip, pcr_idx, chip->nr_allocated_banks,
++				     digest_list);
++		kfree(digest_list);
+ 		tpm_put_ops(chip);
+ 		return rc;
+ 	}
+diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+index f27d1f38a93d..6b94306ab7c5 100644
+--- a/drivers/char/tpm/tpm.h
++++ b/drivers/char/tpm/tpm.h
+@@ -257,7 +257,8 @@ struct tpm_chip {
+ 	const struct attribute_group *groups[3];
+ 	unsigned int groups_cnt;
+ 
+-	u16 active_banks[7];
++	u32 nr_allocated_banks;
++	u16 *allocated_banks;
+ #ifdef CONFIG_ACPI
+ 	acpi_handle acpi_dev_handle;
+ 	char ppi_version[TPM_PPI_VERSION_LEN + 1];
+diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
+index 6f306338953b..0874743ca96d 100644
+--- a/drivers/char/tpm/tpm1-cmd.c
++++ b/drivers/char/tpm/tpm1-cmd.c
+@@ -709,6 +709,16 @@ int tpm1_auto_startup(struct tpm_chip *chip)
+ 		goto out;
+ 	}
+ 
++	chip->allocated_banks = kcalloc(1, sizeof(*chip->allocated_banks),
++					GFP_KERNEL);
++	if (!chip->allocated_banks) {
++		rc = -ENOMEM;
++		goto out;
++	}
++
++	chip->allocated_banks[0] = TPM2_ALG_SHA1;
++	chip->nr_allocated_banks = 1;
++
+ 	return rc;
+ out:
+ 	if (rc > 0)
+diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+index a6bec13afa69..245669a7aba5 100644
+--- a/drivers/char/tpm/tpm2-cmd.c
++++ b/drivers/char/tpm/tpm2-cmd.c
+@@ -234,7 +234,7 @@ int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
+ 	int i;
+ 	int j;
+ 
+-	if (count > ARRAY_SIZE(chip->active_banks))
++	if (count > chip->nr_allocated_banks)
+ 		return -EINVAL;
+ 
+ 	rc = tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_PCR_EXTEND);
+@@ -825,11 +825,14 @@ static ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
+ 	void *marker;
+ 	void *end;
+ 	void *pcr_select_offset;
+-	unsigned int count;
+ 	u32 sizeof_pcr_selection;
++	u32 nr_possible_banks;
++	u32 nr_alloc_banks = 0;
++	u16 hash_alg;
+ 	u32 rsp_len;
+ 	int rc;
+ 	int i = 0;
++	int j;
+ 
+ 	rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_GET_CAPABILITY);
+ 	if (rc)
+@@ -844,11 +847,14 @@ static ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
+ 	if (rc)
+ 		goto out;
+ 
+-	count = be32_to_cpup(
++	nr_possible_banks = be32_to_cpup(
+ 		(__be32 *)&buf.data[TPM_HEADER_SIZE + 5]);
+ 
+-	if (count > ARRAY_SIZE(chip->active_banks)) {
+-		rc = -ENODEV;
++	chip->allocated_banks = kcalloc(nr_possible_banks,
++					sizeof(*chip->allocated_banks),
++					GFP_KERNEL);
++	if (!chip->allocated_banks) {
++		rc = -ENOMEM;
+ 		goto out;
+ 	}
+ 
+@@ -857,7 +863,7 @@ static ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
+ 	rsp_len = be32_to_cpup((__be32 *)&buf.data[2]);
+ 	end = &buf.data[rsp_len];
+ 
+-	for (i = 0; i < count; i++) {
++	for (i = 0; i < nr_possible_banks; i++) {
+ 		pcr_select_offset = marker +
+ 			offsetof(struct tpm2_pcr_selection, size_of_select);
+ 		if (pcr_select_offset >= end) {
+@@ -866,17 +872,25 @@ static ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
+ 		}
+ 
+ 		memcpy(&pcr_selection, marker, sizeof(pcr_selection));
+-		chip->active_banks[i] = be16_to_cpu(pcr_selection.hash_alg);
++		hash_alg = be16_to_cpu(pcr_selection.hash_alg);
++
++		for (j = 0; j < pcr_selection.size_of_select; j++)
++			if (pcr_selection.pcr_select[j])
++				break;
++
++		if (j < pcr_selection.size_of_select) {
++			chip->allocated_banks[nr_alloc_banks] = hash_alg;
++			nr_alloc_banks++;
++		}
++
+ 		sizeof_pcr_selection = sizeof(pcr_selection.hash_alg) +
+ 			sizeof(pcr_selection.size_of_select) +
+ 			pcr_selection.size_of_select;
+ 		marker = marker + sizeof_pcr_selection;
+ 	}
+ 
++	chip->nr_allocated_banks = nr_alloc_banks;
+ out:
+-	if (i < ARRAY_SIZE(chip->active_banks))
+-		chip->active_banks[i] = TPM2_ALG_ERROR;
+-
+ 	tpm_buf_destroy(&buf);
+ 
+ 	return rc;
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.17.1
+
