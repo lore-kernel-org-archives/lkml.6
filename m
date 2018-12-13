@@ -2,109 +2,295 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,T_MIXED_ES,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99252C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 15:18:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3358C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 15:18:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5482620851
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 15:18:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544714312;
-	bh=sF4o+u51i8Rg4YKTIoOKYYylhyrjcyakPc/9GbSa/ko=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=tZW+jI2QWyswP7yQQcQhnYR4lIuOwp9FPKlb78RVL5rQ3nRrZOeXxCXPpPIf2vuLo
-	 O2m3fDWNvuqdc/o1E1JMcwPKBjP80Y0Yc3s8ZZeBEZxamMRgd3qrbCXv8uhdQm8KoV
-	 j+il94dKTERt3xPbHDOi5kOr+IBzIy0K+zVYOFac=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5482620851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 6FE9F2087F
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 15:18:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FE9F2087F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729568AbeLMPSb (ORCPT
+        id S1729588AbeLMPSr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 10:18:31 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:57526 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728620AbeLMPSa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 10:18:30 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=sTfDHF/9ixLpuR51/hHbP7ddj5Ec+5LnO2f9lOVW7oE=; b=N4xy7i2kN5GEHfpj8k4AIhKnd
-        D5Gxd1yOdZm3PrPClG8Dn54mPtwacPGLL3lKFIsJtLkzJe3GzLLJunXG6U9jblK8vXkCXWRCDXGNR
-        1UHWE6cMdpSHAUTBNU74n25VKWQeceh0ZEyIJ5TCwxbbyttm8R5tKMyhtJ/GCW4zCv3Y8=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gXSkq-0001ev-AW; Thu, 13 Dec 2018 15:18:24 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id C8EDF11254D1; Thu, 13 Dec 2018 15:18:23 +0000 (GMT)
-Date:   Thu, 13 Dec 2018 15:18:23 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Anders Roxell <anders.roxell@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, catalin.marinas@arm.com,
-        will.deacon@arm.com, arnd@arndb.de, mingo@redhat.com,
-        rostedt@goodmis.org, akpm@linux-foundation.org
-Subject: Re: [RFC PATCH 3/3] arm64: add a new config option KTEST_RUNNABLE
-Message-ID: <20181213151823.GK10669@sirena.org.uk>
-References: <20181213122910.24193-1-anders.roxell@linaro.org>
- <20181213122910.24193-4-anders.roxell@linaro.org>
+        Thu, 13 Dec 2018 10:18:47 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:47906 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728612AbeLMPSq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 10:18:46 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id BA4B383F46;
+        Thu, 13 Dec 2018 15:18:44 +0000 (UTC)
+Received: from redhat.com (ovpn-121-185.rdu2.redhat.com [10.10.121.185])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 9FE8260139;
+        Thu, 13 Dec 2018 15:18:41 +0000 (UTC)
+Date:   Thu, 13 Dec 2018 10:18:39 -0500
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Tom Talpey <tom@talpey.com>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Jan Kara <jack@suse.cz>, John Hubbard <jhubbard@nvidia.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        John Hubbard <john.hubbard@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
+        Christoph Hellwig <hch@infradead.org>,
+        Christopher Lameter <cl@linux.com>,
+        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        rcampbell@nvidia.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        "Weiny, Ira" <ira.weiny@intel.com>
+Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
+Message-ID: <20181213151839.GC3186@redhat.com>
+References: <20181212213005.GE5037@redhat.com>
+ <CAPcyv4gJHeFjEgna1S-2uE4KxkSUgkc=e=2E5oqfoirec84C-w@mail.gmail.com>
+ <20181212215348.GF5037@redhat.com>
+ <20181212233703.GB2947@ziepe.ca>
+ <20181213000109.GK5037@redhat.com>
+ <20181213032043.GA3204@ziepe.ca>
+ <20181213124325.GA3186@redhat.com>
+ <81a731bb-6a8a-a554-cf99-5d0588b0a21f@talpey.com>
+ <20181213141838.GB3186@redhat.com>
+ <0b75a9a6-3907-ea88-6352-256bc2954f4a@talpey.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="1y1tiN5hVw5cPBDe"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20181213122910.24193-4-anders.roxell@linaro.org>
-X-Cookie: Some optional equipment shown.
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <0b75a9a6-3907-ea88-6352-256bc2954f4a@talpey.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Thu, 13 Dec 2018 15:18:45 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Dec 13, 2018 at 09:51:18AM -0500, Tom Talpey wrote:
+> On 12/13/2018 9:18 AM, Jerome Glisse wrote:
+> > On Thu, Dec 13, 2018 at 08:40:49AM -0500, Tom Talpey wrote:
+> > > On 12/13/2018 7:43 AM, Jerome Glisse wrote:
+> > > > On Wed, Dec 12, 2018 at 08:20:43PM -0700, Jason Gunthorpe wrote:
+> > > > > On Wed, Dec 12, 2018 at 07:01:09PM -0500, Jerome Glisse wrote:
+> > > > > > On Wed, Dec 12, 2018 at 04:37:03PM -0700, Jason Gunthorpe wrote:
+> > > > > > > On Wed, Dec 12, 2018 at 04:53:49PM -0500, Jerome Glisse wrote:
+> > > > > > > > > Almost, we need some safety around assuming that DMA is complete the
+> > > > > > > > > page, so the notification would need to go all to way to userspace
+> > > > > > > > > with something like a file lease notification. It would also need to
+> > > > > > > > > be backstopped by an IOMMU in the case where the hardware does not /
+> > > > > > > > > can not stop in-flight DMA.
+> > > > > > > > 
+> > > > > > > > You can always reprogram the hardware right away it will redirect
+> > > > > > > > any dma to the crappy page.
+> > > > > > > 
+> > > > > > > That causes silent data corruption for RDMA users - we can't do that.
+> > > > > > > 
+> > > > > > > The only way out for current hardware is to forcibly terminate the
+> > > > > > > RDMA activity somehow (and I'm not even sure this is possible, at
+> > > > > > > least it would be driver specific)
+> > > > > > > 
+> > > > > > > Even the IOMMU idea probably doesn't work, I doubt all current
+> > > > > > > hardware can handle a PCI-E error TLP properly.
+> > > > > > 
+> > > > > > What i saying is reprogram hardware to crappy page ie valid page
+> > > > > > dma map but that just has random content as a last resort to allow
+> > > > > > filesystem to reuse block. So their should be no PCIE error unless
+> > > > > > hardware freak out to see its page table reprogram randomly.
+> > > > > 
+> > > > > No, that isn't an option. You can't silently provide corrupted data
+> > > > > for RDMA to transfer out onto the network, or silently discard data
+> > > > > coming in!!
+> > > > > 
+> > > > > Think of the consequences of that - I have a fileserver process and
+> > > > > someone does ftruncate and now my clients receive corrupted data??
+> > > > 
+> > > > This is what happens _today_ ie today someone do GUP on page file
+> > > > and then someone else do truncate the first GUP is effectively
+> > > > streaming _random_ data to network as the page does not correspond
+> > > > to anything anymore and once the RDMA MR goes aways and release
+> > > > the page the page content will be lost. So i am not changing anything
+> > > > here, what i proposed was to make it explicit to device driver at
+> > > > least that they were streaming random data. Right now this is all
+> > > > silent but this is what is happening wether you like it or not :)
+> > > > 
+> > > > Note that  i am saying do that only for truncate to allow to be
+> > > > nice to fs. But again i am fine with whatever solution but you can
+> > > > not please everyone here. Either block truncate and fs folks will
+> > > > hate you or make it clear to device driver that you are streaming
+> > > > random things and RDMA people hates you.
+> > > > 
+> > > > 
+> > > > > The only option is to prevent the RDMA transfer from ever happening,
+> > > > > and we just don't have hardware support (beyond destroy everything) to
+> > > > > do that.
+> > > > > 
+> > > > > > The question is who do you want to punish ? RDMA user that pin stuff
+> > > > > > and expect thing to work forever without worrying for other fs
+> > > > > > activities ? Or filesystem to pin block forever :)
+> > > > > 
+> > > > > I don't want to punish everyone, I want both sides to have complete
+> > > > > data integrity as the USER has deliberately decided to combine DAX and
+> > > > > RDMA. So either stop it at the front end (ie get_user_pages_longterm)
+> > > > > or make it work in a way that guarantees integrity for both.
+> > > > > 
+> > > > > >       S2: notify userspace program through device/sub-system
+> > > > > >           specific API and delay ftruncate. After a while if there
+> > > > > >           is no answer just be mean and force hardware to use
+> > > > > >           crappy page as anyway this is what happens today
+> > > > > 
+> > > > > I don't think this happens today (outside of DAX).. Does it?
+> > > > 
+> > > > It does it is just silent, i don't remember anything in the code
+> > > > that would stop a truncate to happen because of elevated refcount.
+> > > > This does not happen with ODP mlx5 as it does abide by _all_ mmu
+> > > > notifier. This is for anything that does ODP without support for
+> > > > mmu notifier.
+> > > 
+> > > Wait - is it expected that the MMU notifier upcall is handled
+> > > synchronously? That is, the page DMA mapping must be torn down
+> > > immediately, and before returning?
+> > 
+> > Yes you must torn down mapping before returning from mmu notifier
+> > call back. Any time after is too late. You obviously need hardware
+> > that can support that. In the infiniband sub-system AFAIK only the
+> > mlx5 hardware can do that. In the GPU sub-system everyone is fine.
+> 
+> I'm skeptical that MLX5 can actually make this guarantee. But we
+> can take that offline in linux-rdma.
 
---1y1tiN5hVw5cPBDe
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+It does unless the code lies about what the hardware do :) See umem_odp.c
+in core and odp.c in mlx5 directories.
 
-On Thu, Dec 13, 2018 at 01:29:10PM +0100, Anders Roxell wrote:
 
-> With this new config option, we can boot a allmodconfig kernel in qemu.
-> Config options SERIAL_AMBA_PL011, SERIAL_AMBA_PL011_CONSOLE, UNIX needs
-> to be enabled in order to get a console. Options like CPU_BIG_ENDIAN,
-> CMDLINE_FORCE, CMDLINE_OVERRIDE and HVC_DCC needs to be disabled.
+> I'm also skeptical that NVMe can do this.
+> 
+> > Dunno about other sub-systems.
+> > 
+> > 
+> > > That's simply not possible, since the hardware needs to get control
+> > > to do this. Even if there were an IOMMU that could intercept the
+> > > DMA, reprogramming it will require a flush, which cannot be guaranteed
+> > > to occur "inline".
+> > 
+> > If hardware can not do that then hardware should not use GUP, at
+> > least not on file back page. I advocated in favor of forbiding GUP
+> > for device that can not do that as right now this silently breaks
+> > in few cases (truncate, mremap, splice, reflink, ...). So the device
+> > in those cases can end up with GUPed pages that do not correspond
+> > to anything anymore ie they do not correspond to the memory backing
+> > the virtual address they were GUP against, nor they correspond to
+> > the file content at the given offset anymore. It is just random
+> > data as far as the kernel or filesystem is concern.
+> > 
+> > Of course for this to happen you need an application that do stupid
+> > thing like create an MR in one thread on the mmap of a file and
+> > truncate that same file in another thread (or from the same thread).
+> > 
+> > So this is unlikely to happen in sane program. It does not mean it
+> > will not happen.
+> 
+> Completely agree. In other words, this is the responsibility of the
+> DAX (or g-u-p) consumer, which is nt necessarily the program itself,
+> it could be an upper layer.
+> 
+> In SMB3 and NFSv4, which I've been focused on, we envision using the
+> existing protocol leases to protect this. When requesting a DAX mapping,
+> the server may requires an exclusive lease. If this mapping needs to
+> change, because of another conflicting mapping, the lease would be
+> recalled and the mapping dropped. This is a normal and well-established
+> filesystem requirement.
+> 
+> The twist here is that the platform itself can initiate such an event.
+> It's my belief that this plumbing must flow to the *top* of the stack,
+> i.e. the entity that took the mapping (e.g. filesystem), and not
+> depend on the MMU notifier at the very bottom.
 
-Does ktest really not run with BIG_ENDIAN? =20
+So this patchset is about mm plumbings, what fs does before mm code
+gets call is a fs discussion. Note also that GUP is always against
+a virtual address of a process. GUP is use by few driver to allow
+the device direct access to some portion of process address space.
 
-> +config KTEST_RUNNABLE
-> +	bool "Test build kernels that run in qemu for ktest"
-> +	select SERIAL_AMBA_PL011
-> +	select SERIAL_AMBA_PL011_CONSOLE
-> +	select UNIX
+The issues is that some of those device have designed an API that
+fully ignore things like munmap, splice, truncate, ... and as such
+they open the door for undefined behavior. I believe the original
+intention in all the cases was that the user would not do stupid
+thing like setup the device mapping through device specific API and
+then munmap or truncate or anything that would affect the range of
+virtual address.
 
-The opposite angle for my question on patch 1 I guess but is this really
-a generic thing for running ktest?  It seems like it's specific to qemu
-(and other systems which have the PL011 as the console serial port).
+Thing is from kernel point of view we should not and can not assume
+that userspace will behave properly. So we have to brace for the
+worst. Which is what this patchset is trying to do ie fix some of
+issues and make the rest of them explicit to device driver so that
+they can decide what to do about it.
 
---1y1tiN5hVw5cPBDe
-Content-Type: application/pgp-signature; name="signature.asc"
+My advice is for each of those sub-system/device to fail loudly
+when such thing happens so that the user knows he is doing something
+stupid or illegal.
 
------BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlwSeD8ACgkQJNaLcl1U
-h9CipQf/Y8dJuYSGQjtX5OQAgxZF7FzE0W1efuwUFyGZF8KV2655u+b4km8llPbt
-1KSbpc8n+7HIsZRzy8y9IP3/A5vs907N4A1RqGX+7Z+79ORvdlXsGUEDa0QfNN6p
-WgYZFV3Pik4pZYdX1iTcy9YK1N1sF/cHb4ADjMft8drH+m/eB3BylwhgxV0w5CY+
-b4AvD8dACOfRexo3OkMN4GW6kng5nri5weUsPzw3rDgQDMi7jVrUO0jbzPvxpdCH
-BUBUi+A3L+3CUIm9W39veDPBPPpqGM2Zm9cXNDljOkRF9xTlJr8pltK38H00okGy
-Xdph8XjYMS3Z24VADmRMfYvB7HTPDg==
-=AHiJ
------END PGP SIGNATURE-----
+> > The second set of issue at to deals with set_page_dirty happening
+> > long time after page_release did happens and thus the fs dirty
+> > page callback will see page in bad state and will BUG() and you
+> > will have an oops and loose any data your device might have written
+> > to the page. This is highly filesystem dependend and also timing
+> > dependend and link to thing like memory pressure so it might not
+> > happen that often but again it can happen.
+> > 
+> > 
+> > > > > .. and the remedy here is to kill the process, not provide corrupt
+> > > > > data. Kill the process is likely to not go over well with any real
+> > > > > users that want this combination.
+> > > > > 
+> > > > > Think Samba serving files over RDMA - you can't have random unpriv
+> > > > > users calling ftruncate and causing smbd to be killed or serve corrupt
+> > > > > data.
+> > > > 
+> > > > So what i am saying is there is a choice and it would be better to
+> > > > decide something than let the existing status quo where we just keep
+> > > > streaming random data after truncate to a GUPed page.
+> > > 
+> > > Let's also remember that any torn-down DMA mapping can't be recycled
+> > > until all uses of the old DMA addresses are destroyed. The whole
+> > > thing screams for reference counting all the way down, to me.
+> > 
+> > I am not saying reuse the DMA address in the emergency_mean_callback
+> > the idea was:
+> > 
+> >      gup_page_emergency_revoke(device, page)
+> >      {
+> >          crapy_page = alloc_page();
+> >          dma_addr = dma_map(crappy_page, device, ...);
+> >          mydevice_page_table_update(device, crappy_page, dma_addr);
+> >          mydevice_tlb_flush(device);
+> >          mydevice_wait_pending_dma(device)
+> > 
+> >          // at this point the original GUPed page is not access by hw
+> > 
+> >          dma_unmap(page);
+> >          put_user_page(page);
+> >      }
+> 
+> Ok, but my concern was also that the old DMA address then becomes
+> unused and may be grabbed by a new i/o. If the hardware still has
+> reads or writes in flight, and they arrive after the old address
+> becomes valid, well, oops.
 
---1y1tiN5hVw5cPBDe--
+In above code at the comment point the driver garanty the hardware
+will never use the old dma address any more ie that all in flight
+dma are done. I know this can be done for some devices. It might
+very well not work for all and this is why this need to be a sub-
+system/device discussion.
+
+Cheers,
+Jérôme
