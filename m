@@ -2,447 +2,133 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4274EC67872
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 19:43:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E94C3C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 19:44:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9F6E2086D
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 19:43:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A6D092086D
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 19:44:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Yxd75NwC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9F6E2086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="Rmrlr7uS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6D092086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728984AbeLMTnz (ORCPT
+        id S1729098AbeLMToR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 14:43:55 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:32913 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728587AbeLMTnl (ORCPT
+        Thu, 13 Dec 2018 14:44:17 -0500
+Received: from smtprelay2.synopsys.com ([198.182.60.111]:45088 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728102AbeLMToP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 14:43:41 -0500
-Received: by mail-pl1-f193.google.com with SMTP id z23so1544905plo.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 11:43:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=CNPqfP2Ropf39t1ySi3wysEvWTJ0F5IhIK/sddGsJK4=;
-        b=Yxd75NwCS0IygKvHK3NaQnfMNITGEzCbstq0IX7Y2VxTLSH1eTCLfPajh/IscK+ZR0
-         ePiDpwdlDplZajbFwF5u7WmzyecCjAOJl4ahx86aKBdxzamqmALULY03WMKChFKiJD2i
-         +/Ebl7Krfro++KSNz4BgdJc/RmmAC/Yn/B+5g=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=CNPqfP2Ropf39t1ySi3wysEvWTJ0F5IhIK/sddGsJK4=;
-        b=poty9BsjsOB6xJk6fNIVP+sbmWq6faoZbFDhGZHKMRZJfp7bjLeV7JLKyJQ4KfKwwa
-         9CT3IPSgIqjP8tM7GpgiPyIumMpUce8+cAcebi5aqvv+sff0flpt6kXkk/v4vPnXQBPb
-         hStIm1W0T3vJ3CiSjh+vtyuKbLW+8ug4Cutp2J9klKlfQoFby9cb//w5OTZZM1wcoutr
-         DbmIfklVIBnbqXclt2+rjRNd5Iq8U65p7NbimSaSRZTjHEIuglfDq348+aBf8flSLJmd
-         yJ6laFofAlC7hOTGyifHd8m4/XBtXvBDreFBfMEVcBY5Y0qRZPNfIKqtxyP7szV8CLD9
-         WMXQ==
-X-Gm-Message-State: AA+aEWaCqW5H7ZJj3aytC2QVZJdJj67XURC6xFxLoaL/YjHeDr8ea4vP
-        u7AWAcCWuX2JRE56yplsvSb4NQ==
-X-Google-Smtp-Source: AFSGD/Vv3VM3taZfJLHFfZ5UtJ2n8Nd2FVLIFNM4NW/5H+Vy0fwCBes3Uc84bUPPE4qHhnAJAEZQ2A==
-X-Received: by 2002:a17:902:ab92:: with SMTP id f18mr78324plr.221.1544730220004;
-        Thu, 13 Dec 2018 11:43:40 -0800 (PST)
-Received: from localhost ([2620:15c:202:1:b6af:f85:ed6c:ac6a])
-        by smtp.gmail.com with ESMTPSA id y1sm3600209pfe.9.2018.12.13.11.43.39
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 13 Dec 2018 11:43:39 -0800 (PST)
-Date:   Thu, 13 Dec 2018 11:43:38 -0800
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Taniya Das <tdas@codeaurora.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        devicetree@vger.kernel.org, robh@kernel.org,
-        skannan@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        evgreen@google.com, Stephen Boyd <swboyd@chromium.org>
-Subject: Re: [PATCH v12 2/2] cpufreq: qcom-hw: Add support for QCOM cpufreq
- HW driver
-Message-ID: <20181213194338.GF14307@google.com>
-References: <1544687394-331-1-git-send-email-tdas@codeaurora.org>
- <1544687394-331-3-git-send-email-tdas@codeaurora.org>
+        Thu, 13 Dec 2018 14:44:15 -0500
+Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id 5EDBB10C0C47;
+        Thu, 13 Dec 2018 11:44:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1544730255; bh=SAvDP2Fe1Ah+Upr+8Pfm/hMT0I99jcPSnK3mlk0GUsQ=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To:From;
+        b=Rmrlr7uSrxzxUn6X3GXMCq+HAuX5kGbb8eAo9mM66nu2eFXuOSkYKPKm+85bLI9Li
+         Ij9J/NKq4AnVu3cStQYKshfguhmkwWrcm/q/SmEmVFtU4WMAKJbwoJtWEeO/kJRmxe
+         FkWSBm+Z+fcCob9YpVGfChzJFOco5PqRs874ehBBLdbnDocE2083agx8NyHJ4WwAPq
+         pq/vMDFcM+w/VAWKpRSM16a2dC65G1eEadtLKaLYyaY0gn/auA2PYcUHLDrHlSgBgw
+         emNH0auP6VHw2QH7D5HeriTih70nFQTh7pmCabUQ5lGgqNVZuX1g2BPkWJYiX2RmKP
+         CPuidJo80nR3g==
+Received: from US01WXQAHTC1.internal.synopsys.com (us01wxqahtc1.internal.synopsys.com [10.12.238.230])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 0DCAF34BC;
+        Thu, 13 Dec 2018 11:44:15 -0800 (PST)
+Received: from IN01WEHTCA.internal.synopsys.com (10.144.199.104) by
+ US01WXQAHTC1.internal.synopsys.com (10.12.238.230) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Thu, 13 Dec 2018 11:44:14 -0800
+Received: from IN01WEHTCB.internal.synopsys.com (10.144.199.105) by
+ IN01WEHTCA.internal.synopsys.com (10.144.199.103) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Fri, 14 Dec 2018 01:14:11 +0530
+Received: from [10.10.161.70] (10.10.161.70) by
+ IN01WEHTCB.internal.synopsys.com (10.144.199.243) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Fri, 14 Dec 2018 01:14:10 +0530
+Subject: Re: [PATCH v2 3/4] ARC: perf: move HW events mapping to separate
+ function
+To:     Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        <linux-snps-arc@lists.infradead.org>
+CC:     <linux-kernel@vger.kernel.org>,
+        Alexey Brodkin <alexey.brodkin@synopsys.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Ingo Molnar" <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>
+Newsgroups: gmane.linux.kernel,gmane.linux.kernel.arc
+References: <20181213165621.20817-1-Eugeniy.Paltsev@synopsys.com>
+ <20181213165621.20817-4-Eugeniy.Paltsev@synopsys.com>
+From:   Vineet Gupta <vineet.gupta1@synopsys.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=vgupta@synopsys.com; keydata=
+ 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
+ hhqBJlyU6MVUa6vZNv8E
+Message-ID: <93363087-7372-fec4-088c-a8186f84b186@synopsys.com>
+Date:   Thu, 13 Dec 2018 11:44:04 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1544687394-331-3-git-send-email-tdas@codeaurora.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181213165621.20817-4-Eugeniy.Paltsev@synopsys.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.10.161.70]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 13, 2018 at 01:19:54PM +0530, Taniya Das wrote:
-> The CPUfreq HW present in some QCOM chipsets offloads the steps necessary
-> for changing the frequency of CPUs. The driver implements the cpufreq
-> driver interface for this hardware engine.
+On 12/13/18 8:56 AM, Eugeniy Paltsev wrote:
+> Move HW events mapping to separate function to make code more readable.
 > 
-> Signed-off-by: Saravana Kannan <skannan@codeaurora.org>
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> ---
->  drivers/cpufreq/Kconfig.arm       |  11 ++
->  drivers/cpufreq/Makefile          |   1 +
->  drivers/cpufreq/qcom-cpufreq-hw.c | 305 ++++++++++++++++++++++++++++++++++++++
->  3 files changed, 317 insertions(+)
->  create mode 100644 drivers/cpufreq/qcom-cpufreq-hw.c
-> 
-> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
-> index 4e1131e..688f102 100644
-> --- a/drivers/cpufreq/Kconfig.arm
-> +++ b/drivers/cpufreq/Kconfig.arm
-> @@ -114,6 +114,17 @@ config ARM_QCOM_CPUFREQ_KRYO
-> 
->  	  If in doubt, say N.
-> 
-> +config ARM_QCOM_CPUFREQ_HW
-> +	tristate "QCOM CPUFreq HW driver"
-> +	depends on ARCH_QCOM || COMPILE_TEST
-> +	help
-> +	  Support for the CPUFreq HW driver.
-> +	  Some QCOM chipsets have a HW engine to offload the steps
-> +	  necessary for changing the frequency of the CPUs. Firmware loaded
-> +	  in this engine exposes a programming interface to the OS.
-> +	  The driver implements the cpufreq interface for this HW engine.
-> +	  Say Y if you want to support CPUFreq HW.
-> +
->  config ARM_S3C_CPUFREQ
->  	bool
->  	help
-> diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
-> index d5ee456..08c071b 100644
-> --- a/drivers/cpufreq/Makefile
-> +++ b/drivers/cpufreq/Makefile
-> @@ -61,6 +61,7 @@ obj-$(CONFIG_MACH_MVEBU_V7)		+= mvebu-cpufreq.o
->  obj-$(CONFIG_ARM_OMAP2PLUS_CPUFREQ)	+= omap-cpufreq.o
->  obj-$(CONFIG_ARM_PXA2xx_CPUFREQ)	+= pxa2xx-cpufreq.o
->  obj-$(CONFIG_PXA3xx)			+= pxa3xx-cpufreq.o
-> +obj-$(CONFIG_ARM_QCOM_CPUFREQ_HW)	+= qcom-cpufreq-hw.o
->  obj-$(CONFIG_ARM_QCOM_CPUFREQ_KRYO)	+= qcom-cpufreq-kryo.o
->  obj-$(CONFIG_ARM_S3C2410_CPUFREQ)	+= s3c2410-cpufreq.o
->  obj-$(CONFIG_ARM_S3C2412_CPUFREQ)	+= s3c2412-cpufreq.o
-> diff --git a/drivers/cpufreq/qcom-cpufreq-hw.c b/drivers/cpufreq/qcom-cpufreq-hw.c
-> new file mode 100644
-> index 0000000..a65d0ae
-> --- /dev/null
-> +++ b/drivers/cpufreq/qcom-cpufreq-hw.c
-> @@ -0,0 +1,305 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-> + */
-> +
-> +#include <linux/bitfield.h>
-> +#include <linux/cpufreq.h>
-> +#include <linux/init.h>
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/of_address.h>
-> +#include <linux/of_platform.h>
-> +#include <linux/slab.h>
-> +
-> +#define LUT_MAX_ENTRIES			40U
-> +#define LUT_SRC				GENMASK(31, 30)
-> +#define LUT_L_VAL			GENMASK(7, 0)
-> +#define LUT_CORE_COUNT			GENMASK(18, 16)
-> +#define LUT_ROW_SIZE			32
-> +#define CLK_HW_DIV			2
-> +
-> +/* Register offsets */
-> +#define REG_ENABLE			0x0
-> +#define REG_LUT_TABLE			0x110
-> +#define REG_PERF_STATE			0x920
-> +
-> +static unsigned long cpu_hw_rate, xo_rate;
-> +static struct platform_device *global_pdev;
-> +
-> +static int qcom_cpufreq_hw_target_index(struct cpufreq_policy *policy,
-> +					unsigned int index)
-> +{
-> +	void __iomem *perf_state_reg = policy->driver_data;
-> +
-> +	writel_relaxed(index, perf_state_reg);
-> +
-> +	return 0;
-> +}
-> +
-> +static unsigned int qcom_cpufreq_hw_get(unsigned int cpu)
-> +{
-> +	void __iomem *perf_state_reg;
-> +	struct cpufreq_policy *policy;
-> +	unsigned int index;
-> +
-> +	policy = cpufreq_cpu_get_raw(cpu);
-> +	if (!policy)
-> +		return 0;
-> +
-> +	perf_state_reg = policy->driver_data;
-> +
-> +	index = readl_relaxed(perf_state_reg);
-> +	index = min(index, LUT_MAX_ENTRIES - 1);
-> +
-> +	return policy->freq_table[index].frequency;
-> +}
-> +
-> +static unsigned int qcom_cpufreq_hw_fast_switch(struct cpufreq_policy *policy,
-> +						unsigned int target_freq)
-> +{
-> +	void __iomem *perf_state_reg = policy->driver_data;
-> +	int index;
-> +
-> +	index = policy->cached_resolved_idx;
-> +	if (index < 0)
-> +		return 0;
-> +
-> +	writel_relaxed(index, perf_state_reg);
-> +
-> +	return policy->freq_table[index].frequency;
-> +}
-> +
-> +static int qcom_cpufreq_hw_read_lut(struct device *dev,
-> +				    struct cpufreq_policy *policy,
-> +				    void __iomem *base)
-> +{
-> +	u32 data, src, lval, i, core_count, prev_cc = 0, prev_freq = 0, freq;
-> +	unsigned int max_cores = cpumask_weight(policy->cpus);
-> +	struct cpufreq_frequency_table	*table;
-> +
-> +	table = kcalloc(LUT_MAX_ENTRIES + 1, sizeof(*table), GFP_KERNEL);
-> +	if (!table)
-> +		return -ENOMEM;
-> +
-> +	for (i = 0; i < LUT_MAX_ENTRIES; i++) {
-> +		data = readl_relaxed(base + REG_LUT_TABLE + i * LUT_ROW_SIZE);
-> +		src = FIELD_GET(LUT_SRC, data);
-> +		lval = FIELD_GET(LUT_L_VAL, data);
-> +		core_count = FIELD_GET(LUT_CORE_COUNT, data);
-> +
-> +		if (src)
-> +			freq = xo_rate * lval / 1000;
-> +		else
-> +			freq = cpu_hw_rate / 1000;
-> +
-> +		/* Ignore boosts in the middle of the table */
-> +		if (core_count != max_cores) {
-> +			table[i].frequency = CPUFREQ_ENTRY_INVALID;
-> +		} else {
-> +			table[i].frequency = freq;
-> +			dev_dbg(dev, "index=%d freq=%d, core_count %d\n", i,
-> +				freq, core_count);
-> +		}
-> +
-> +		/*
-> +		 * Two of the same frequencies with the same core counts means
-> +		 * end of table
-> +		 */
-> +		if (i > 0 && prev_freq == freq && prev_cc == core_count) {
-> +			struct cpufreq_frequency_table *prev = &table[i - 1];
-> +
-> +			/*
-> +			 * Only treat the last frequency that might be a boost
-> +			 * as the boost frequency
-> +			 */
-> +			if (prev_cc != max_cores) {
-> +				prev->frequency = prev_freq;
-> +				prev->flags = CPUFREQ_BOOST_FREQ;
-> +			}
-> +
-> +			break;
-> +		}
-> +
-> +		prev_cc = core_count;
-> +		prev_freq = freq;
-> +	}
-> +
-> +	table[i].frequency = CPUFREQ_TABLE_END;
-> +	policy->freq_table = table;
-> +
-> +	return 0;
-> +}
-> +
-> +static void qcom_get_related_cpus(int index, struct cpumask *m)
-> +{
-> +	struct device_node *cpu_np;
-> +	struct of_phandle_args args;
-> +	int cpu, ret;
-> +
-> +	for_each_possible_cpu(cpu) {
-> +		cpu_np = of_cpu_device_node_get(cpu);
-> +		if (!cpu_np)
-> +			continue;
-> +
-> +		ret = of_parse_phandle_with_args(cpu_np, "qcom,freq-domain",
-> +						 "#freq-domain-cells", 0,
-> +						 &args);
-> +		of_node_put(cpu_np);
-> +		if (ret < 0)
-> +			continue;
-> +
-> +		if (index == args.args[0])
-> +			cpumask_set_cpu(cpu, m);
-> +	}
-> +}
-> +
-> +static int qcom_cpufreq_hw_cpu_init(struct cpufreq_policy *policy)
-> +{
-> +	struct device *dev = &global_pdev->dev;
-> +	struct of_phandle_args args;
-> +	struct device_node *cpu_np;
-> +	struct resource *res;
-> +	void __iomem *base;
-> +	int ret, index;
-> +
-> +	cpu_np = of_cpu_device_node_get(policy->cpu);
-> +	if (!cpu_np)
-> +		return -EINVAL;
-> +
-> +	ret = of_parse_phandle_with_args(cpu_np, "qcom,freq-domain",
-> +					 "#freq-domain-cells", 0, &args);
-> +	of_node_put(cpu_np);
-> +	if (ret)
-> +		return ret;
-> +
-> +	index = args.args[0];
-> +
-> +	res = platform_get_resource(global_pdev, IORESOURCE_MEM, index);
-> +	base = devm_ioremap_resource(dev, res);
-> +	if (IS_ERR(base))
-> +		return PTR_ERR(base);
-> +
-> +	/* HW should be in enabled state to proceed */
-> +	if (!(readl_relaxed(base + REG_ENABLE) & 0x1)) {
-> +		dev_err(dev, "Domain-%d cpufreq hardware not enabled\n", index);
-> +		ret = -ENODEV;
-> +		goto error;
-> +	}
-> +
-> +	qcom_get_related_cpus(index, policy->cpus);
-> +	if (!cpumask_weight(policy->cpus)) {
-> +		dev_err(dev, "Domain-%d failed to get related CPUs\n", index);
-> +		ret = -ENOENT;
-> +		goto error;
-> +	}
-> +
-> +	policy->driver_data = base + REG_PERF_STATE;
-> +
-> +	ret = qcom_cpufreq_hw_read_lut(dev, policy, base);
-> +	if (ret) {
-> +		dev_err(dev, "Domain-%d failed to read LUT\n", index);
-> +		goto error;
-> +	}
-> +
-> +	policy->fast_switch_possible = true;
-> +
-> +	return 0;
-> +error:
-> +	devm_iounmap(dev, base);
-> +	return ret;
-> +}
-> +
-> +static int qcom_cpufreq_hw_cpu_exit(struct cpufreq_policy *policy)
-> +{
-> +	void __iomem *base = policy->driver_data - REG_PERF_STATE;
-> +
-> +	kfree(policy->freq_table);
-> +	devm_iounmap(&global_pdev->dev, base);
-> +
-> +	return 0;
-> +}
-> +
-> +static struct freq_attr *qcom_cpufreq_hw_attr[] = {
-> +	&cpufreq_freq_attr_scaling_available_freqs,
-> +	&cpufreq_freq_attr_scaling_boost_freqs,
-> +	NULL
-> +};
-> +
-> +static struct cpufreq_driver cpufreq_qcom_hw_driver = {
-> +	.flags		= CPUFREQ_STICKY | CPUFREQ_NEED_INITIAL_FREQ_CHECK |
-> +			  CPUFREQ_HAVE_GOVERNOR_PER_POLICY,
-> +	.verify		= cpufreq_generic_frequency_table_verify,
-> +	.target_index	= qcom_cpufreq_hw_target_index,
-> +	.get		= qcom_cpufreq_hw_get,
-> +	.init		= qcom_cpufreq_hw_cpu_init,
-> +	.exit		= qcom_cpufreq_hw_cpu_exit,
-> +	.fast_switch    = qcom_cpufreq_hw_fast_switch,
-> +	.name		= "qcom-cpufreq-hw",
-> +	.attr		= qcom_cpufreq_hw_attr,
-> +};
-> +
-> +static int qcom_cpufreq_hw_driver_probe(struct platform_device *pdev)
-> +{
-> +	struct clk *clk;
-> +	int ret;
-> +
-> +	clk = clk_get(&pdev->dev, "xo");
-> +	if (IS_ERR(clk))
-> +		return PTR_ERR(clk);
-> +
-> +	xo_rate = clk_get_rate(clk);
-> +	clk_put(clk);
-> +
-> +	clk = clk_get(&pdev->dev, "alternate");
-> +	if (IS_ERR(clk))
-> +		return PTR_ERR(clk);
-> +
-> +	cpu_hw_rate = clk_get_rate(clk) / CLK_HW_DIV;
-> +	clk_put(clk);
-> +
-> +	global_pdev = pdev;
-> +
-> +	ret = cpufreq_register_driver(&cpufreq_qcom_hw_driver);
-> +	if (ret)
-> +		dev_err(&pdev->dev, "CPUFreq HW driver failed to register\n");
-> +	else
-> +		dev_dbg(&pdev->dev, "QCOM CPUFreq HW driver initialized\n");
-> +
-> +	return ret;
-> +}
-> +
-> +static int qcom_cpufreq_hw_driver_remove(struct platform_device *pdev)
-> +{
-> +	return cpufreq_unregister_driver(&cpufreq_qcom_hw_driver);
-> +}
-> +
-> +static const struct of_device_id qcom_cpufreq_hw_match[] = {
-> +	{ .compatible = "qcom,cpufreq-hw" },
-> +	{}
-> +};
-> +MODULE_DEVICE_TABLE(of, qcom_cpufreq_hw_match);
-> +
-> +static struct platform_driver qcom_cpufreq_hw_driver = {
-> +	.probe = qcom_cpufreq_hw_driver_probe,
-> +	.remove = qcom_cpufreq_hw_driver_remove,
-> +	.driver = {
-> +		.name = "qcom-cpufreq-hw",
-> +		.of_match_table = qcom_cpufreq_hw_match,
-> +	},
-> +};
-> +
-> +static int __init qcom_cpufreq_hw_init(void)
-> +{
-> +	return platform_driver_register(&qcom_cpufreq_hw_driver);
-> +}
-> +subsys_initcall(qcom_cpufreq_hw_init);
-> +
-> +static void __exit qcom_cpufreq_hw_exit(void)
-> +{
-> +	platform_driver_unregister(&qcom_cpufreq_hw_driver);
-> +}
-> +module_exit(qcom_cpufreq_hw_exit);
-> +
-> +MODULE_DESCRIPTION("QCOM CPUFREQ HW Driver");
-> +MODULE_LICENSE("GPL v2");
+> Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
 
-FWIW:
+Applied this as well - although out of order so needed some manual adj !
 
-Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
+-Vineet
