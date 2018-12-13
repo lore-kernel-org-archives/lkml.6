@@ -2,117 +2,146 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EBA0C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 08:53:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D306C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 08:54:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 324E820849
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 08:53:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="cvAbLtVv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 324E820849
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id CAEFD20849
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 08:54:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CAEFD20849
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727545AbeLMIxf (ORCPT
+        id S1727427AbeLMIyc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 03:53:35 -0500
-Received: from mail-io1-f68.google.com ([209.85.166.68]:35845 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727075AbeLMIxe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 03:53:34 -0500
-Received: by mail-io1-f68.google.com with SMTP id m19so999917ioh.3
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 00:53:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=NY4SdspIVeBMtVOy/sBm91MDgxjtRGG8eTigdfoxIPs=;
-        b=cvAbLtVvf5i1nPhBT7AwL4/XH0FiTxb+ILZ5MdgANCtUWcyLxmQcAPvYpLxLOBsBm1
-         ChroAkW0oYygHCzE6umEJoDe6cAZzknK2dExwMPaQq6IQWy7YNEoZm32vs+bT6NRIAp8
-         i+kGpotGM0SG1FLY3RLAzmG0LwmQjba+XonRw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NY4SdspIVeBMtVOy/sBm91MDgxjtRGG8eTigdfoxIPs=;
-        b=Ldnm7TAlITxnGt4MYY6wfUlrzQ0LiSS11HNyZu7KcXGfXIYdwN2Uk99TCOdenTOMu9
-         RZHBcAauBNsjcHPq8D9kj6CxsIsX7r2M2Wng/VyPtdjad/NkJAfBcy25RUXv5oqagaV2
-         ksYqZtwB9Ut0JfyxMIrFZjm4Xnlc9UDE4hfI0F9djd79wgm3BETUnT/On1vTWi7ke46e
-         gq4SSmxMuBORzh9BHyu+NN969NG09s4hrlfX1xCNN/EoozVlSBzxnFfH323kUDcJfr0+
-         e5ySYjCAMGBBXwwGRpVTcVekXrx+eFcgvDJVSEbQPGassb8Iq0Fas7zRvvzeb2rjPO0K
-         f2nQ==
-X-Gm-Message-State: AA+aEWaoueGqtEHnyG3zuFV8not4xkz4A0FCtWQrw+6ciDYA483RjDZj
-        6FuKe1bsUP2g/j0xcpe6s5pOLljvJVno/CdKiFVdIA==
-X-Google-Smtp-Source: AFSGD/XpsbXbm0GZkoNd4YP1r6hHY6S/YfSixuDiEn0r2ZyIhUmTvp5Ou9Dt9KV3WWp9hMPbPN0Q9Fu062XsQJdVrgs=
-X-Received: by 2002:a6b:8f8d:: with SMTP id r135mr19471984iod.5.1544691213151;
- Thu, 13 Dec 2018 00:53:33 -0800 (PST)
-MIME-Version: 1.0
-References: <1544073508-13720-1-git-send-email-firoz.khan@linaro.org>
- <1544073508-13720-4-git-send-email-firoz.khan@linaro.org> <20181210195144.dvprpyxyddusyb5c@pburton-laptop>
- <CALxhOng7EzAd2zHKAOj3ipEd6y=DpS2JGo34s4V_cWVgmLjPwg@mail.gmail.com>
- <20181211185947.gnaachztyh3ils7o@pburton-laptop> <CALxhOngErLD7+CEhgSPwQUnGg7YEFTcH-v6dhR0j55SvEg1FoA@mail.gmail.com>
- <20181212222834.2zf3rb67fxfcmwuw@pburton-laptop>
-In-Reply-To: <20181212222834.2zf3rb67fxfcmwuw@pburton-laptop>
-From:   Firoz Khan <firoz.khan@linaro.org>
-Date:   Thu, 13 Dec 2018 14:23:21 +0530
-Message-ID: <CALxhOnht8H6r38bwm7xqbHuJs6dvLB03GCKyws2cif1mEE+sKA@mail.gmail.com>
-Subject: Re: [PATCH v4 3/7] mips: rename macros and files from '64' to 'n64'
-To:     Paul Burton <paul.burton@mips.com>
-Cc:     linux-mips@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
+        Thu, 13 Dec 2018 03:54:32 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:56562 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726578AbeLMIyc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 03:54:32 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9671880D;
+        Thu, 13 Dec 2018 00:54:31 -0800 (PST)
+Received: from [10.1.197.36] (e112298-lin.cambridge.arm.com [10.1.197.36])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A41E53F6A8;
+        Thu, 13 Dec 2018 00:54:29 -0800 (PST)
+Subject: Re: [PATCH v7 11/25] arm64: irqflags: Use ICC_PMR_EL1 for interrupt
+ masking
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        joel@joelfernandes.org, Marc Zyngier <marc.zyngier@arm.com>,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        James Morse <james.morse@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>, oleg@redhat.com
+References: <1544633245-6036-1-git-send-email-julien.thierry@arm.com>
+ <1544633245-6036-12-git-send-email-julien.thierry@arm.com>
+ <CAKv+Gu8E9g=J78a-2HAdcijaHyVFL1KA3civwfoVHQ=mp7yJJA@mail.gmail.com>
+ <19500d6b-62a3-21cb-9ac0-a4e5d4714a63@arm.com>
+ <CAKv+Gu8+1JNzM4AUujiEfkYujpgakLXcUwTDG4eHwvQ7pKAzFA@mail.gmail.com>
+From:   Julien Thierry <julien.thierry@arm.com>
+Message-ID: <31e41461-763f-aa7d-91ea-b493ede81eed@arm.com>
+Date:   Thu, 13 Dec 2018 08:54:27 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <CAKv+Gu8+1JNzM4AUujiEfkYujpgakLXcUwTDG4eHwvQ7pKAzFA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Paul,
 
-On Thu, 13 Dec 2018 at 03:58, Paul Burton <paul.burton@mips.com> wrote:
->
-> Hi Firoz,
->
-> On Wed, Dec 12, 2018 at 10:04:47AM +0530, Firoz Khan wrote:
-> >
-> > Sure, I think '64' to 'n64' conversion must be remove it from this patch
-> > series.I can send v5 without '64' to 'n64' conversion.
-> >
-> > If we rename '64' to 'n64' in half of the place and this _MIPS_SIM_ABI64
-> > if we half to keep it in same looks not good (according to me).
-> >
-> > (FYI, This macro name - _MIPS_SIM_ABIN64 must be _MIPS_SIM_NABI64
-> > and defintion will be:
-> > +#define _MIPS_SIM_NABI64           _MIPS_SIM_ABI64)
-> >
-> > So If you confirm I can send v5 without '64' to 'n64' conversion (not just above
-> > one, completely from this patch series). Or uou can take a call just
-> > keep this macro -
-> > _MIPS_SIM_ABI64 as it is and change it rest of the place.
->
-> Let's just go ahead & leave everything as 64, and I'll do the 64 -> n64
-> rename later. I hoped whilst you were adding n64-specific code this
-> would be an easy change, but at this point let's just prioritize getting
-> the series applied without the naming change so it can sit in -next for
-> a while before the merge window.
 
-I'll keep the macro - _MIPS_SIM_ABI64 same and will not change the rest
-of the patch series. Unfortunately, reverting back to 64 from n64 has lots of
-work.
+On 12/12/2018 18:10, Ard Biesheuvel wrote:
+> On Wed, 12 Dec 2018 at 18:59, Julien Thierry <julien.thierry@arm.com> wrote:
+>>
+>>
+>>
+>> On 12/12/2018 17:27, Ard Biesheuvel wrote:
+>>> On Wed, 12 Dec 2018 at 17:48, Julien Thierry <julien.thierry@arm.com> wrote:
+>>>>
+>>>> Instead disabling interrupts by setting the PSR.I bit, use a priority
+>>>> higher than the one used for interrupts to mask them via PMR.
+>>>>
+>>>> When using PMR to disable interrupts, the value of PMR will be used
+>>>> instead of PSR.[DAIF] for the irqflags.
+>>>>
+>>>> Signed-off-by: Julien Thierry <julien.thierry@arm.com>
+>>>> Suggested-by: Daniel Thompson <daniel.thompson@linaro.org>
+>>>> Cc: Catalin Marinas <catalin.marinas@arm.com>
+>>>> Cc: Will Deacon <will.deacon@arm.com>
+>>>> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+>>>> Cc: Oleg Nesterov <oleg@redhat.com>
+>>>> ---
+>>>>  arch/arm64/include/asm/efi.h      |   5 +-
+>>>>  arch/arm64/include/asm/irqflags.h | 123 +++++++++++++++++++++++++++++---------
+>>>>  2 files changed, 99 insertions(+), 29 deletions(-)
+>>>>
+>>>> diff --git a/arch/arm64/include/asm/efi.h b/arch/arm64/include/asm/efi.h
+>>>> index 7ed3208..a9d3ebc 100644
+>>>> --- a/arch/arm64/include/asm/efi.h
+>>>> +++ b/arch/arm64/include/asm/efi.h
+>>>> @@ -42,7 +42,10 @@
+>>>>
+>>>>  efi_status_t __efi_rt_asm_wrapper(void *, const char *, ...);
+>>>>
+>>>> -#define ARCH_EFI_IRQ_FLAGS_MASK (PSR_D_BIT | PSR_A_BIT | PSR_I_BIT | PSR_F_BIT)
+>>>> +#define ARCH_EFI_IRQ_FLAGS_MASK                                                \
+>>>> +       (system_uses_irq_prio_masking() ?                               \
+>>>> +               GIC_PRIO_IRQON :                                        \
+>>>> +               (PSR_D_BIT | PSR_A_BIT | PSR_I_BIT | PSR_F_BIT))
+>>>>
+>>>
+>>> This mask is used to determine whether we return from a firmware call
+>>> with a different value for the I flag than we entered it with. So
+>>> instead of changing the mask, we should change the way we record DAIF,
+>>> given that the firmware is still going to poke the I bit if it
+>>> misbehaves, regardless of whether the OS happens to use priorities for
+>>> interrupt masking.
+>>>
+>>
+>> Thanks for pointing that out, so this change makes little sense...
+>>
+>> The annoying part is that the flag checking takes place in the arch
+>> agnostic code.
+>>
+>> Would introducing some overriddable efi_get_flags() or efi_save_flags()
+>> that default to local_save_flags() seem like an acceptable solution?
+>>
+>> This way I could override it for arm64 and still return the DAIF bits.
+>>
+> 
+> I don't follow the reasoning below about irqflags exactly, but is
+> there any way we could simply but both PMR and DAIF in flags? We could
+> even update the mask here to ensure that the firmware doesn't corrupt
+> the PMR.
+> 
 
-Thanks
-Firoz
+So, that was the case in my previous versions of the series, and as you
+said, that covered checking both DAIF bits and PMR on return from EFI
+services. But Catalin suggested that irqflags could just use PMR when we
+enable the priority masking feature. Catalin's suggestion does simplify
+things, except for this part.
+
+However, it doesn't seem to far-fetched to me that the architecture
+could have a more generic way to tell the EFI driver "this is the set of
+stuff that I care about and you should return from runtime services with
+this stuff in the same state as before" without the "set of stuff" being
+limited to irqflags.
+
+But maybe this would be over-engineering just to deal with my use-case...
+
+Thanks,
+
+-- 
+Julien Thierry
