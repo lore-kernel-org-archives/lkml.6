@@ -2,180 +2,305 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,T_MIXED_ES autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 423E8C67872
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 14:49:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC4F8C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 14:51:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06B8920849
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 14:49:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ssi.gouv.fr header.i=@ssi.gouv.fr header.b="BjZH5dC6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06B8920849
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ssi.gouv.fr
+	by mail.kernel.org (Postfix) with ESMTP id 8ACBA20870
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 14:51:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8ACBA20870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=talpey.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728949AbeLMOtM (ORCPT
+        id S1728891AbeLMOvY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 09:49:12 -0500
-Received: from smtp-out.ssi.gouv.fr ([86.65.182.90]:52230 "EHLO
-        smtp-out.ssi.gouv.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727551AbeLMOtL (ORCPT
+        Thu, 13 Dec 2018 09:51:24 -0500
+Received: from p3plsmtpa11-02.prod.phx3.secureserver.net ([68.178.252.103]:51995
+        "EHLO p3plsmtpa11-02.prod.phx3.secureserver.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728696AbeLMOvX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 09:49:11 -0500
-Received: from smtp-out.ssi.gouv.fr (localhost [127.0.0.1])
-        by smtp-out.ssi.gouv.fr (Postfix) with ESMTP id B4794D0006B;
-        Thu, 13 Dec 2018 15:49:17 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ssi.gouv.fr;
-        s=20160407; t=1544712557;
-        bh=t4ZkM2bb49k43HJTH04W2MsitYuRiCp32PthRZd/wpM=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To:From:Subject;
-        b=BjZH5dC6RomNffMo1aRB2qd7ETRmVRwb3O80beKZyGLeTYzynVNIu78HxbLsIb1/a
-         65XnS4vZ1T1e4Trm9SoeEGdmpQbN6bvAcDzw9UZcMPfS4cg/w3l2lG8XN7a2TNk6V8
-         bDAYaWjIfxlQcWzpTmk14kfe8ShUC/RmeOT13jewBLe3SrEIzFALjkOC/NXob3ps98
-         8yUpoA1170ifJvyDyenIERxzc710yHHqkiRw7Y0k6zoBDTkw8gY0ds0pb9pYMRDHsx
-         xowu/c8l5kchULtz4G8cgS8wI32+bsQNKJS6z6ctuOWsbtL0HQOL/jWG5FavYwrPFn
-         OvyGtxO3O7GiA==
-Subject: Re: [RFC PATCH v1 3/5] Yama: Enforces noexec mounts or file
- executability through O_MAYEXEC
-To:     Jann Horn <jannh@google.com>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-CC:     kernel list <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        James Morris <jmorris@namei.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Matthew Garrett <mjg59@google.com>,
-        Michael Kerrisk-manpages <mtk.manpages@gmail.com>,
-        <zohar@linux.ibm.com>, <philippe.trebuchet@ssi.gouv.fr>,
-        <shuah@kernel.org>, <thibaut.sautereau@ssi.gouv.fr>,
-        <vincent.strubel@ssi.gouv.fr>, <yves-alexis.perez@ssi.gouv.fr>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>
-References: <20181212081712.32347-1-mic@digikod.net>
- <20181212081712.32347-4-mic@digikod.net>
- <CAG48ez3SAW8EyaJ9T1U3qPoRhYwe4CCyL9bAxuc3GxjrXipi-A@mail.gmail.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>
-Message-ID: <f13bf750-f418-343c-baa6-9eee6e0f5e19@ssi.gouv.fr>
-Date:   Thu, 13 Dec 2018 15:49:16 +0100
-User-Agent: Mozilla/5.0 (X11; Linux i686; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Thu, 13 Dec 2018 09:51:23 -0500
+Received: from [192.168.0.55] ([24.218.182.144])
+        by :SMTPAUTH: with ESMTPSA
+        id XSKdgYtdytQEFXSKegY1AZ; Thu, 13 Dec 2018 07:51:21 -0700
+Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
+To:     Jerome Glisse <jglisse@redhat.com>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Jan Kara <jack@suse.cz>, John Hubbard <jhubbard@nvidia.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        John Hubbard <john.hubbard@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
+        Christoph Hellwig <hch@infradead.org>,
+        Christopher Lameter <cl@linux.com>,
+        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        rcampbell@nvidia.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        "Weiny, Ira" <ira.weiny@intel.com>
+References: <20181212150319.GA3432@redhat.com>
+ <CAPcyv4go0Xzhz8rXdfscWuXDu83BO9v8WD4upDUJWb7gKzX5OQ@mail.gmail.com>
+ <20181212213005.GE5037@redhat.com>
+ <CAPcyv4gJHeFjEgna1S-2uE4KxkSUgkc=e=2E5oqfoirec84C-w@mail.gmail.com>
+ <20181212215348.GF5037@redhat.com> <20181212233703.GB2947@ziepe.ca>
+ <20181213000109.GK5037@redhat.com> <20181213032043.GA3204@ziepe.ca>
+ <20181213124325.GA3186@redhat.com>
+ <81a731bb-6a8a-a554-cf99-5d0588b0a21f@talpey.com>
+ <20181213141838.GB3186@redhat.com>
+From:   Tom Talpey <tom@talpey.com>
+Message-ID: <0b75a9a6-3907-ea88-6352-256bc2954f4a@talpey.com>
+Date:   Thu, 13 Dec 2018 09:51:18 -0500
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-In-Reply-To: <CAG48ez3SAW8EyaJ9T1U3qPoRhYwe4CCyL9bAxuc3GxjrXipi-A@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20181213141838.GB3186@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-CMAE-Envelope: MS4wfIMQemUHUcdBBmXIQqWPuVviTzddRIhQqNg0ijWT3rTh45XhSsjG0yqmDBFV0kHTGJgijO646rC4MnKytZ8Cr98WuQsUZE0C4cz2M6sqYgWylHxR+zPF
+ iSfW0wv0DS2vnyh03iElMUgSaXBPuiSI3nOe8CW+arlAHf/vpdr0Ty+EQDJfg+yHP8NzgCGChdOj2hp/LHij4f10GYoeeCFob48bmVur07eaSDvwWLloDPhO
+ aDrt7y9X5K4KUUA4wqTuftSlZdkzMGb7gSXgBBFHMsjHwXoWU1FGUfJnXmS+eGyQu40QCJY9QagX7iFDLsTBOfCgd0gBpBxO6HQ+lVjqVrYUS2HaAFMr7PzZ
+ sxR8zgDXOTs02VFOXIhybUuroVrWxVpNtzdmiGcllfCQSp3io4+jFRV9WgB1W4QYyX8Xml+QTLfu7s3e62sqwn5t7Ft4eGfb9P2O1CJiVjdWkKxeYvomXJh9
+ ek30eIxE7z+bD4RQ/90zSuI0X/R4cZcw3FbhgUmwJiuzPwxXOuRL+DwOaxCk3V9G4+XE9QnBfHnVdP6KElT2scFOAjwui/24e3n27Y9jWiWpGu/eaOfQUqI3
+ 3TlBh793QcGcEI3lpatupjPaVLrpoUOdsziLOgywR9y8D4xLf9sMsFT27q249b0AEAxkK7eHtZuFad7diAf6xavI6tnVfYx4NhSTzwa5AdDX858va762X8iT
+ afZGbj53t+T1scoADift1fPdK5Cr+QqIWchlPIBr1/REnrSIQhBBRFQ3pQXOPvayQnMSNriWl4QUPcbhp721U14y8WzeJrci
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 12/12/2018 18:09, Jann Horn wrote:
-> On Wed, Dec 12, 2018 at 9:18 AM Mickaël Salaün <mic@digikod.net> wrote:
->> Enable to either propagate the mount options from the underlying VFS
->> mount to prevent execution, or to propagate the file execute permission.
->> This may allow a script interpreter to check execution permissions
->> before reading commands from a file.
+On 12/13/2018 9:18 AM, Jerome Glisse wrote:
+> On Thu, Dec 13, 2018 at 08:40:49AM -0500, Tom Talpey wrote:
+>> On 12/13/2018 7:43 AM, Jerome Glisse wrote:
+>>> On Wed, Dec 12, 2018 at 08:20:43PM -0700, Jason Gunthorpe wrote:
+>>>> On Wed, Dec 12, 2018 at 07:01:09PM -0500, Jerome Glisse wrote:
+>>>>> On Wed, Dec 12, 2018 at 04:37:03PM -0700, Jason Gunthorpe wrote:
+>>>>>> On Wed, Dec 12, 2018 at 04:53:49PM -0500, Jerome Glisse wrote:
+>>>>>>>> Almost, we need some safety around assuming that DMA is complete the
+>>>>>>>> page, so the notification would need to go all to way to userspace
+>>>>>>>> with something like a file lease notification. It would also need to
+>>>>>>>> be backstopped by an IOMMU in the case where the hardware does not /
+>>>>>>>> can not stop in-flight DMA.
+>>>>>>>
+>>>>>>> You can always reprogram the hardware right away it will redirect
+>>>>>>> any dma to the crappy page.
+>>>>>>
+>>>>>> That causes silent data corruption for RDMA users - we can't do that.
+>>>>>>
+>>>>>> The only way out for current hardware is to forcibly terminate the
+>>>>>> RDMA activity somehow (and I'm not even sure this is possible, at
+>>>>>> least it would be driver specific)
+>>>>>>
+>>>>>> Even the IOMMU idea probably doesn't work, I doubt all current
+>>>>>> hardware can handle a PCI-E error TLP properly.
+>>>>>
+>>>>> What i saying is reprogram hardware to crappy page ie valid page
+>>>>> dma map but that just has random content as a last resort to allow
+>>>>> filesystem to reuse block. So their should be no PCIE error unless
+>>>>> hardware freak out to see its page table reprogram randomly.
+>>>>
+>>>> No, that isn't an option. You can't silently provide corrupted data
+>>>> for RDMA to transfer out onto the network, or silently discard data
+>>>> coming in!!
+>>>>
+>>>> Think of the consequences of that - I have a fileserver process and
+>>>> someone does ftruncate and now my clients receive corrupted data??
+>>>
+>>> This is what happens _today_ ie today someone do GUP on page file
+>>> and then someone else do truncate the first GUP is effectively
+>>> streaming _random_ data to network as the page does not correspond
+>>> to anything anymore and once the RDMA MR goes aways and release
+>>> the page the page content will be lost. So i am not changing anything
+>>> here, what i proposed was to make it explicit to device driver at
+>>> least that they were streaming random data. Right now this is all
+>>> silent but this is what is happening wether you like it or not :)
+>>>
+>>> Note that  i am saying do that only for truncate to allow to be
+>>> nice to fs. But again i am fine with whatever solution but you can
+>>> not please everyone here. Either block truncate and fs folks will
+>>> hate you or make it clear to device driver that you are streaming
+>>> random things and RDMA people hates you.
+>>>
+>>>
+>>>> The only option is to prevent the RDMA transfer from ever happening,
+>>>> and we just don't have hardware support (beyond destroy everything) to
+>>>> do that.
+>>>>
+>>>>> The question is who do you want to punish ? RDMA user that pin stuff
+>>>>> and expect thing to work forever without worrying for other fs
+>>>>> activities ? Or filesystem to pin block forever :)
+>>>>
+>>>> I don't want to punish everyone, I want both sides to have complete
+>>>> data integrity as the USER has deliberately decided to combine DAX and
+>>>> RDMA. So either stop it at the front end (ie get_user_pages_longterm)
+>>>> or make it work in a way that guarantees integrity for both.
+>>>>
+>>>>>       S2: notify userspace program through device/sub-system
+>>>>>           specific API and delay ftruncate. After a while if there
+>>>>>           is no answer just be mean and force hardware to use
+>>>>>           crappy page as anyway this is what happens today
+>>>>
+>>>> I don't think this happens today (outside of DAX).. Does it?
+>>>
+>>> It does it is just silent, i don't remember anything in the code
+>>> that would stop a truncate to happen because of elevated refcount.
+>>> This does not happen with ODP mlx5 as it does abide by _all_ mmu
+>>> notifier. This is for anything that does ODP without support for
+>>> mmu notifier.
 >>
->> The main goal is to be able to protect the kernel by restricting
->> arbitrary syscalls that an attacker could perform with a crafted binary
->> or certain script languages.  It also improves multilevel isolation
->> by reducing the ability of an attacker to use side channels with
->> specific code.  These restrictions can natively be enforced for ELF
->> binaries (with the noexec mount option) but require this kernel
->> extension to properly handle scripts (e.g., Python, Perl).
+>> Wait - is it expected that the MMU notifier upcall is handled
+>> synchronously? That is, the page DMA mapping must be torn down
+>> immediately, and before returning?
+> 
+> Yes you must torn down mapping before returning from mmu notifier
+> call back. Any time after is too late. You obviously need hardware
+> that can support that. In the infiniband sub-system AFAIK only the
+> mlx5 hardware can do that. In the GPU sub-system everyone is fine.
+
+I'm skeptical that MLX5 can actually make this guarantee. But we
+can take that offline in linux-rdma.
+
+I'm also skeptical that NVMe can do this.
+
+> Dunno about other sub-systems.
+> 
+> 
+>> That's simply not possible, since the hardware needs to get control
+>> to do this. Even if there were an IOMMU that could intercept the
+>> DMA, reprogramming it will require a flush, which cannot be guaranteed
+>> to occur "inline".
+> 
+> If hardware can not do that then hardware should not use GUP, at
+> least not on file back page. I advocated in favor of forbiding GUP
+> for device that can not do that as right now this silently breaks
+> in few cases (truncate, mremap, splice, reflink, ...). So the device
+> in those cases can end up with GUPed pages that do not correspond
+> to anything anymore ie they do not correspond to the memory backing
+> the virtual address they were GUP against, nor they correspond to
+> the file content at the given offset anymore. It is just random
+> data as far as the kernel or filesystem is concern.
+> 
+> Of course for this to happen you need an application that do stupid
+> thing like create an MR in one thread on the mmap of a file and
+> truncate that same file in another thread (or from the same thread).
+> 
+> So this is unlikely to happen in sane program. It does not mean it
+> will not happen.
+
+Completely agree. In other words, this is the responsibility of the
+DAX (or g-u-p) consumer, which is nt necessarily the program itself,
+it could be an upper layer.
+
+In SMB3 and NFSv4, which I've been focused on, we envision using the
+existing protocol leases to protect this. When requesting a DAX mapping,
+the server may requires an exclusive lease. If this mapping needs to
+change, because of another conflicting mapping, the lease would be
+recalled and the mapping dropped. This is a normal and well-established
+filesystem requirement.
+
+The twist here is that the platform itself can initiate such an event.
+It's my belief that this plumbing must flow to the *top* of the stack,
+i.e. the entity that took the mapping (e.g. filesystem), and not
+depend on the MMU notifier at the very bottom.
+
+> The second set of issue at to deals with set_page_dirty happening
+> long time after page_release did happens and thus the fs dirty
+> page callback will see page in bad state and will BUG() and you
+> will have an oops and loose any data your device might have written
+> to the page. This is highly filesystem dependend and also timing
+> dependend and link to thing like memory pressure so it might not
+> happen that often but again it can happen.
+> 
+> 
+>>>> .. and the remedy here is to kill the process, not provide corrupt
+>>>> data. Kill the process is likely to not go over well with any real
+>>>> users that want this combination.
+>>>>
+>>>> Think Samba serving files over RDMA - you can't have random unpriv
+>>>> users calling ftruncate and causing smbd to be killed or serve corrupt
+>>>> data.
+>>>
+>>> So what i am saying is there is a choice and it would be better to
+>>> decide something than let the existing status quo where we just keep
+>>> streaming random data after truncate to a GUPed page.
 >>
->> Add a new sysctl kernel.yama.open_mayexec_enforce to control this
->> behavior.  A following patch adds documentation.
->>
->> Signed-off-by: Mickaël Salaün <mic@digikod.net>
->> Reviewed-by: Philippe Trébuchet <philippe.trebuchet@ssi.gouv.fr>
->> Reviewed-by: Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
->> Cc: Kees Cook <keescook@chromium.org>
->> Cc: Mickaël Salaün <mickael.salaun@ssi.gouv.fr>
->> ---
-> [...]
->> +/**
->> + * yama_inode_permission - check O_MAYEXEC permission before accessing an inode
->> + * @inode: inode structure to check
->> + * @mask: permission mask
->> + *
->> + * Return 0 if access is permitted, -EACCES otherwise.
->> + */
->> +int yama_inode_permission(struct inode *inode, int mask)
+>> Let's also remember that any torn-down DMA mapping can't be recycled
+>> until all uses of the old DMA addresses are destroyed. The whole
+>> thing screams for reference counting all the way down, to me.
 > 
-> This should be static, no?
-
-Right, it will be in the next series. The previous function
-(yama_ptrace_traceme) is not static though.
-
+> I am not saying reuse the DMA address in the emergency_mean_callback
+> the idea was:
 > 
->> +{
->> +       if (!(mask & MAY_OPENEXEC))
->> +               return 0;
->> +       /*
->> +        * Match regular files and directories to make it easier to
->> +        * modify script interpreters.
->> +        */
->> +       if (!S_ISREG(inode->i_mode) && !S_ISDIR(inode->i_mode))
->> +               return 0;
+>      gup_page_emergency_revoke(device, page)
+>      {
+>          crapy_page = alloc_page();
+>          dma_addr = dma_map(crappy_page, device, ...);
+>          mydevice_page_table_update(device, crappy_page, dma_addr);
+>          mydevice_tlb_flush(device);
+>          mydevice_wait_pending_dma(device)
 > 
-> So files are subject to checks, but loading code from things like
-> sockets is always fine?
-
-As I said in a previous email, these checks do not handle fifo either.
-This is relevant in a threat model targeting persistent attacks (and
-with additional protections/restrictions). We may want to only whitelist
-fifo, but I don't get how a socket is relevant here. Can you please clarify?
-
+>          // at this point the original GUPed page is not access by hw
 > 
->> +       if ((open_mayexec_enforce & YAMA_OMAYEXEC_ENFORCE_MOUNT) &&
->> +                       !(mask & MAY_EXECMOUNT))
->> +               return -EACCES;
->> +
->> +       /*
->> +        * May prefer acl_permission_check() instead of generic_permission(),
->> +        * to not be bypassable with CAP_DAC_READ_SEARCH.
->> +        */
->> +       if (open_mayexec_enforce & YAMA_OMAYEXEC_ENFORCE_FILE)
->> +               return generic_permission(inode, MAY_EXEC);
->> +
->> +       return 0;
->> +}
->> +
->>  static struct security_hook_list yama_hooks[] __lsm_ro_after_init = {
->> +       LSM_HOOK_INIT(inode_permission, yama_inode_permission),
->>         LSM_HOOK_INIT(ptrace_access_check, yama_ptrace_access_check),
->>         LSM_HOOK_INIT(ptrace_traceme, yama_ptrace_traceme),
->>         LSM_HOOK_INIT(task_prctl, yama_task_prctl),
->> @@ -447,6 +489,37 @@ static int yama_dointvec_minmax(struct ctl_table *table, int write,
->>         return proc_dointvec_minmax(&table_copy, write, buffer, lenp, ppos);
->>  }
->>
->> +static int yama_dointvec_bitmask_macadmin(struct ctl_table *table, int write,
->> +                                         void __user *buffer, size_t *lenp,
->> +                                         loff_t *ppos)
->> +{
->> +       int error;
->> +
->> +       if (write) {
->> +               struct ctl_table table_copy;
->> +               int tmp_mayexec_enforce;
->> +
->> +               if (!capable(CAP_MAC_ADMIN))
->> +                       return -EPERM;
-> 
-> Don't put capable() checks in sysctls, it doesn't work.
-> 
+>          dma_unmap(page);
+>          put_user_page(page);
+>      }
 
-I tested it and the root user can indeed open the file even if the
-process doesn't have CAP_MAC_ADMIN, however writing in the sysctl file
-is denied. Btw there is a similar check in the previous function
-(yama_dointvec_minmax).
+Ok, but my concern was also that the old DMA address then becomes
+unused and may be grabbed by a new i/o. If the hardware still has
+reads or writes in flight, and they arrive after the old address
+becomes valid, well, oops.
 
-Thanks
+Tom.
+
+> I know that it is something we can do with GPU devices. So i assumed
+> that other devices can do that to. But i understand this is highly
+> device dependent. Not that if you have a command queue it is more like:
+> 
+>      gup_page_emergency_revoke(device, page)
+>      {
+>          crapy_page = alloc_page();
+>          dma_addr = dma_map(crappy_page, device, ...);
+> 
+>          // below function update kernel side data structure that stores
+>          // the pointer to the GUPed page and that are use to build cmds
+>          // send to the hardware. It does not update the hardware, just
+>          // the device driver internal data structure.
+>          mydevice_replace_page_in_object(device, page, crappy_page, dma_addr);
+> 
+>          mydevice_queue_wait_pending_job(device);
+> 
+>          // at this point the original GUPed page is not access by hw and
+>          // any new command will be using the crappy page not the GUPed
+>          // page
+> 
+>          dma_unmap(page);
+>          put_user_page(page);
+>      }
+> 
+> Again if device can not do any of the above then it should really not
+> be using GUP because they are corner case that are simply not solvable.
+> We can avoid kernel OOPS but we can not pin the page as GUP user believe
+> ie the virtual address the GUP happened against can point to a different
+> page (true for both anonymous memory and file back memory).
+> 
+> 
+> The put_user_page() patchset is about solving the OOPS and BUG() and
+> also fixing the tiny race that exist for direct I/O. Fixing other user
+> of GUP should happen sub-system by sub-system and each sub-system or
+> device driver maintainer must choose their poison. This is what i am
+> advocating for. If the emergency_revoke above is something that would
+> work for device is something i can't say for certain, only for devices
+> i know (which are GPU mostly).
+> 
+> Cheers,
+> Jérôme
+> 
+> 
