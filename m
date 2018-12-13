@@ -2,109 +2,146 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.9 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A9DBC65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 06:26:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74D67C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 06:30:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1718B20870
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 06:26:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1718B20870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 43D7420873
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 06:30:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43D7420873
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727044AbeLMG0v (ORCPT
+        id S1726857AbeLMGaS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 01:26:51 -0500
-Received: from mga03.intel.com ([134.134.136.65]:4667 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726542AbeLMG0v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 01:26:51 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Dec 2018 22:26:50 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,347,1539673200"; 
-   d="scan'208";a="301779111"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga006.fm.intel.com with ESMTP; 12 Dec 2018 22:26:50 -0800
-Received: from [10.125.251.221] (abudanko-mobl.ccr.corp.intel.com [10.125.251.221])
-        by linux.intel.com (Postfix) with ESMTP id 4D74058079C;
-        Wed, 12 Dec 2018 22:26:48 -0800 (PST)
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Subject: Re: [PATCH v1 2/3] perf record: apply affinity masks when reading
- mmap buffers
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <42c2dcb4-7e6f-fcdb-7c87-e55ccb9884b0@linux.intel.com>
- <6e5df6f0-5dfa-265e-73cd-803de96ac9b2@linux.intel.com>
- <20181212121538.GE25240@krava>
-Organization: Intel Corp.
-Message-ID: <42d1f52c-e140-5d8b-9c18-41b5b9e12292@linux.intel.com>
-Date:   Thu, 13 Dec 2018 09:26:47 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+        Thu, 13 Dec 2018 01:30:18 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:15686 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726542AbeLMGaR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 01:30:17 -0500
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id A17887EA5AD87;
+        Thu, 13 Dec 2018 14:30:13 +0800 (CST)
+Received: from [127.0.0.1] (10.134.22.195) by DGGEMS405-HUB.china.huawei.com
+ (10.3.19.205) with Microsoft SMTP Server id 14.3.408.0; Thu, 13 Dec 2018
+ 14:30:11 +0800
+Subject: Re: [f2fs-dev] [PATCH] f2fs: add an ioctl() to explicitly trigger
+ fsck later
+To:     Jaegeuk Kim <jaegeuk@kernel.org>
+CC:     <linux-kernel@vger.kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>
+References: <20181129015257.95036-1-jaegeuk@kernel.org>
+ <16b92898-0d8b-8edf-17f4-36b112b25add@huawei.com>
+ <20181130203611.GC71781@jaegeuk-macbookpro.roam.corp.google.com>
+ <a50a7612-7429-4cc7-c9bb-56a054826a03@huawei.com>
+ <20181213035631.GB33959@jaegeuk-macbookpro.roam.corp.google.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <4dbbef1b-037c-0129-8485-a9f908835ec2@huawei.com>
+Date:   Thu, 13 Dec 2018 14:30:11 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20181212121538.GE25240@krava>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20181213035631.GB33959@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Type: text/plain; charset="windows-1252"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-On 12.12.2018 15:15, Jiri Olsa wrote:
-> On Wed, Dec 12, 2018 at 10:40:22AM +0300, Alexey Budankov wrote:
+On 2018/12/13 11:56, Jaegeuk Kim wrote:
+> On 12/07, Chao Yu wrote:
+>> On 2018/12/1 4:36, Jaegeuk Kim wrote:
+>>> On 11/30, Chao Yu wrote:
+>>>> On 2018/11/29 9:52, Jaegeuk Kim wrote:
+>>>>> This adds an option in ioctl(F2FS_IOC_SHUTDOWN) in order to trigger fsck by
+>>>>> setting a NEED_FSCK flag.
+>>>>>
+>>>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+>>>>> ---
+>>>>>  fs/f2fs/f2fs.h | 1 +
+>>>>>  fs/f2fs/file.c | 7 +++++++
+>>>>>  2 files changed, 8 insertions(+)
+>>>>>
+>>>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>>>>> index aa500239baf2..7cec897146a3 100644
+>>>>> --- a/fs/f2fs/f2fs.h
+>>>>> +++ b/fs/f2fs/f2fs.h
+>>>>> @@ -417,6 +417,7 @@ static inline bool __has_cursum_space(struct f2fs_journal *journal,
+>>>>>  #define F2FS_GOING_DOWN_METASYNC	0x1	/* going down with metadata */
+>>>>>  #define F2FS_GOING_DOWN_NOSYNC		0x2	/* going down */
+>>>>>  #define F2FS_GOING_DOWN_METAFLUSH	0x3	/* going down with meta flush */
+>>>>> +#define F2FS_GOING_DOWN_NEED_FSCK	0x4	/* going down to trigger fsck */
+>>>>
+>>>> Why not add a new ioctl interface for this? F2FS_GOING_DOWN_ prefix implies
+>>>> filesystem will shutdown, IMO, we'd better to keep all sub-interfaces being
+>>>> consistent in f2fs_ioc_shutdown().
+>>>
+>>> I'm thinking to use this for QA as device shutdown tests.
+>>>
+>>>>
+>>>>>  
+>>>>>  #if defined(__KERNEL__) && defined(CONFIG_COMPAT)
+>>>>>  /*
+>>>>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+>>>>> index ff82350a2c55..ca9bdbb8651b 100644
+>>>>> --- a/fs/f2fs/file.c
+>>>>> +++ b/fs/f2fs/file.c
+>>>>> @@ -1966,6 +1966,13 @@ static int f2fs_ioc_shutdown(struct file *filp, unsigned long arg)
+>>>>>  		f2fs_stop_checkpoint(sbi, false);
+>>>>>  		set_sbi_flag(sbi, SBI_IS_SHUTDOWN);
+>>>>>  		break;
+>>>>> +	case F2FS_GOING_DOWN_NEED_FSCK:
+>>>>> +		set_sbi_flag(sbi, SBI_NEED_FSCK);
+>>>>> +		/* do checkpoint only */
+>>>>> +		ret = f2fs_sync_fs(sb, 1);
+>>>>> +		if (ret)
+>>>>> +			goto out;
+>>>>
+>>>> In large-sized image, it may take long time to trigger full scan during
+>>>> boot, so I'd like to ask how often we set this flag?
+>>>
+>>> Based on the use of shutdown ioctl, I'll use this for testing purpose, so it
+>>> won't be used for regular cases.
+>>
+>> How about adding some commit messages or comments on
+>> F2FS_GOING_DOWN_NEED_FSCK marco definition to give a bit hint for f2fs
+>> developers to know the usage of the interface?
 > 
-> SNIP
+> Done. :P
 > 
->>  int perf_mmap__mmap(struct perf_mmap *map, struct mmap_params *mp, int fd, int cpu)
->>  {
->> +	int c, nr_cpus, node;
->>  	/*
->>  	 * The last one will be done at perf_mmap__consume(), so that we
->>  	 * make sure we don't prevent tools from consuming every last event in
->> @@ -344,6 +369,17 @@ int perf_mmap__mmap(struct perf_mmap *map, struct mmap_params *mp, int fd, int c
->>  	map->cpu = cpu;
->>  
->>  	CPU_ZERO(&map->affinity_mask);
->> +	if (mp->affinity == PERF_AFFINITY_NODE && cpu__max_node() > 1) {
->> +		nr_cpus = cpu_map__nr(mp->cpu_map);
->> +		node = cpu__get_node(map->cpu);
->> +		for (c = 0; c < nr_cpus; c++) {
->> +			if (cpu__get_node(c) == node) {
->> +				CPU_SET(c, &map->affinity_mask);
->> +			}
->> +		}
->> +	} else if (mp->affinity == PERF_AFFINITY_CPU) {
->> +		CPU_SET(map->cpu, &map->affinity_mask);
->> +	}
-> 
-> won't both of this end up in same mask?
+> https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git/commit/?h=dev
 
-For tested dual socket 44 core broadwell:
+Looks good to me now. ;)
 
-		node 0		node 1
-cpu mask	0-21,44-65  	22-43,66-87
-
-For affinity=node map->affinity_mask is either [0-21,44-65] or [22-43,66-87].
-For affinity=cpu  map->affinity_mask is [0] or [1] or [2] and so on.
-
-Without affinity option set map->affinity_mask and record->affinity_mask are [].
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
 Thanks,
-Alexey
 
 > 
-> jirka
+>>
+>> Thanks,
+>>
+>>>
+>>>>
+>>>> Thanks,
+>>>>
+>>>>> +		break;
+>>>>>  	default:
+>>>>>  		ret = -EINVAL;
+>>>>>  		goto out;
+>>>>>
+>>>
+>>> .
+>>>
 > 
+> .
+> 
+
