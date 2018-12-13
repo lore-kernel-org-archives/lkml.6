@@ -2,76 +2,105 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1F27C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 11:09:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 833DAC65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 11:09:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4562420849
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 11:09:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4562420849
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 4E8EE20849
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 11:09:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E8EE20849
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728408AbeLMLJN (ORCPT
+        id S1728610AbeLMLJa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 06:09:13 -0500
-Received: from [195.159.176.226] ([195.159.176.226]:35015 "EHLO
-        blaine.gmane.org" rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org
-        with ESMTP id S1726178AbeLMLJN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 06:09:13 -0500
-Received: from list by blaine.gmane.org with local (Exim 4.84_2)
-        (envelope-from <glk-linux-kernel-4@m.gmane.org>)
-        id 1gXOpX-0002I8-Vj
-        for linux-kernel@vger.kernel.org; Thu, 13 Dec 2018 12:06:59 +0100
-X-Injected-Via-Gmane: http://gmane.org/
-To:     linux-kernel@vger.kernel.org
-From:   "Andrey Jr. Melnikov" <temnota.am@gmail.com>
-Subject: Re: ext4 file system corruption with v4.19.3 / v4.19.4
-Date:   Thu, 13 Dec 2018 13:38:36 +0300
-Message-ID: <aep9ef-6rt.ln1@banana.localnet>
-References: <065643a0-f9aa-a361-715a-03ca978d9228@roeck-us.net> <20181128041555.GE31885@thunk.org> <en52df-5dh.ln1@banana.localnet> <2547416.7Vy7A2kRpU@siriux> <CA+PODjo-da79FKQCmpcH9Z9CBq35HbWu2m+nB3si7WgD9w-kGA@mail.gmail.com> <cbdb2e6b-31a2-1e19-f51f-067dcbdcf183@mailbox.org> <CA+PODjpLRuc1u4SNSRqfWtx+Z+C8NGi6fs7yFuyKK0DwHggEdg@mail.gmail.com> <de67b507-ca54-e827-867e-76d57e531cb9@mailbox.org> <CA+PODjrT=pXg-jbhk=q=M6j6-v0x+c05s4Lmi3+MLm0P4iirqg@mail.gmail.com> <20181211001158.GA20388@amd>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=KOI8-R
-Content-Transfer-Encoding: 8bit
-X-Complaints-To: usenet@blaine.gmane.org
-User-Agent: tin/2.2.1-20140504 ("Tober an Righ") (UNIX) (Linux/4.3.3-bananian (armv7l))
-Cc:     linux-ext4@vger.kernel.org
+        Thu, 13 Dec 2018 06:09:30 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59314 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726178AbeLMLJ3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 06:09:29 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 23A8CA78;
+        Thu, 13 Dec 2018 03:09:29 -0800 (PST)
+Received: from [10.1.197.36] (e112298-lin.cambridge.arm.com [10.1.197.36])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 544B23F59C;
+        Thu, 13 Dec 2018 03:09:27 -0800 (PST)
+Subject: Re: [PATCH 4/6] arm64: add sysfs vulnerability show for spectre v2
+To:     Jeremy Linton <jeremy.linton@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     catalin.marinas@arm.com, will.deacon@arm.com, marc.zyngier@arm.com,
+        suzuki.poulose@arm.com, dave.martin@arm.com,
+        shankerd@codeaurora.org, mark.rutland@arm.com,
+        linux-kernel@vger.kernel.org, ykaukab@suse.de
+References: <20181206234408.1287689-1-jeremy.linton@arm.com>
+ <20181206234408.1287689-5-jeremy.linton@arm.com>
+From:   Julien Thierry <julien.thierry@arm.com>
+Message-ID: <6c572de0-da38-c273-82ed-bafb86bbfa7a@arm.com>
+Date:   Thu, 13 Dec 2018 11:09:25 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <20181206234408.1287689-5-jeremy.linton@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In gmane.comp.file-systems.ext4 Pavel Machek <pavel@ucw.cz> wrote:
-> [-- text/plain, кодировка quoted-printable, кодировка: us-ascii, 32 строк --]
 
-> Hi!
 
-> > > >> OK, - and now we are looking forward to *your* ideas how to solve this.
-> > > >
-> > > > After four days playing games around git bisect - real winner is
-> > > > debian gcc-8.2.0-9. Upgrade it to 8.2.0-10 or use 7.3.0-30 version for
-> > > > same kernel + config - does not exhibit ext4 corruption.
-> > > >
-> > > > I think I hit this https://gcc.gnu.org/bugzilla/show_bug.cgi?id=87859
-> > > > with 8.2.0-9 version.
-> > > >
-> > > Good that it works for you. But others used gcc 5.4.0 or 6.3.0 and were
-> > > hit anyway: https://bugzilla.kernel.org/show_bug.cgi?id=201685#c165
-> > 
-> > Depends on workload pattern. 4.19.5 built with 8.2.0-10 and 7.3.0-30 -
-> > crashed after 4 hours of usage (previous build crash in 5 min).
-> > So my assumption about broken gcc is wrong.
+On 06/12/2018 23:44, Jeremy Linton wrote:
+> Add code to track whether all the cores in the machine are
+> vulnerable, and whether all the vulnerable cores have been
+> mitigated.
+> 
+> Once we have that information we can add the sysfs stub and
+> provide an accurate view of what is known about the machine.
+> 
+> Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
+> ---
+>  arch/arm64/kernel/cpu_errata.c | 72 +++++++++++++++++++++++++++++++---
+>  1 file changed, 67 insertions(+), 5 deletions(-)
+> 
+> diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
+> index 559ecdee6fd2..6505c93d507e 100644
+> --- a/arch/arm64/kernel/cpu_errata.c
+> +++ b/arch/arm64/kernel/cpu_errata.c
 
-> Would it be possible to try vanilla 4.19? (Not stable?)
+[...]
 
-> I test vanilla and -next kernels every week or two, and did not have
-> ext4 problems recently. I guess many kernel developers test mainline
-> but not stable...
+> @@ -766,4 +812,20 @@ ssize_t cpu_show_spectre_v1(struct device *dev, struct device_attribute *attr,
+>  	return sprintf(buf, "Mitigation: __user pointer sanitization\n");
+>  }
+>  
+> +ssize_t cpu_show_spectre_v2(struct device *dev, struct device_attribute *attr,
+> +		char *buf)
+> +{
+> +	switch (__spectrev2_safe) {
+> +	case A64_SV2_SAFE:
+> +		return sprintf(buf, "Not affected\n");
+> +	case A64_SV2_UNSAFE:
+> +		if (__hardenbp_enab == A64_HBP_MIT)
+> +			return sprintf(buf,
+> +				"Mitigation: Branch predictor hardening\n");
+> +		return sprintf(buf, "Vulnerable\n");
+> +	default:
+> +		return sprintf(buf, "Unknown\n");
+> +	}
 
-Fix already commited to stable/vanilla brances:
-https://bugzilla.kernel.org/show_bug.cgi?id=201685#c314
+Again I see that we are going to display "Unknown" when the mitigation
+is not built in.
 
+Couldn't we make that CONFIG_GENERIC_CPU_VULNERABILITIES check whether a
+CPU is vulnerable or not even if the mitigation is not implemented? It's
+just checking the list of MIDRs.
+
+Thanks,
+
+-- 
+Julien Thierry
