@@ -2,140 +2,122 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E9AAC67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 13:16:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20B8FC67872
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 13:17:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6EB8B20879
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 13:16:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EB8B20879
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id CD44B20870
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 13:17:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="m3u5XPIs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD44B20870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729357AbeLMNQF (ORCPT
+        id S1729387AbeLMNRp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 08:16:05 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:56492 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729212AbeLMNQF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 08:16:05 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3B67BC0495BB;
-        Thu, 13 Dec 2018 13:16:04 +0000 (UTC)
-Received: from [10.36.112.30] (ovpn-112-30.ams2.redhat.com [10.36.112.30])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 026E960C67;
-        Thu, 13 Dec 2018 13:15:55 +0000 (UTC)
-Subject: Re: [PATCH v9 0/7] KVM: x86: Allow Qemu/KVM to use PVH entry point
-To:     Borislav Petkov <bp@alien8.de>,
-        Maran Wilson <maran.wilson@oracle.com>
-Cc:     x86@kernel.org, xen-devel@lists.xenproject.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org, jgross@suse.com,
-        boris.ostrovsky@oracle.com, bp@suse.de,
-        dave.hansen@linux.intel.com, davem@davemloft.net,
-        gregkh@linuxfoundation.org, hpa@zytor.com, jpoimboe@redhat.com,
-        kirill.shutemov@linux.intel.com, luto@kernel.org,
-        mchehab@kernel.org, mingo@redhat.com, rdunlap@infradead.org,
-        tglx@linutronix.de, thomas.lendacky@amd.com, hch@infradead.org,
-        roger.pau@citrix.com, rkrcmar@redhat.com
-References: <1544468734-32763-1-git-send-email-maran.wilson@oracle.com>
- <20181211131825.GD27375@zn.tnic>
- <5fc083d4-1dbd-f2f9-3059-0e3e8dda9b25@oracle.com>
- <20181212203901.GI6653@zn.tnic>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- uUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
-Message-ID: <ec55cffa-e98b-a758-e615-8fe0688f31bb@redhat.com>
-Date:   Thu, 13 Dec 2018 14:15:54 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
-MIME-Version: 1.0
-In-Reply-To: <20181212203901.GI6653@zn.tnic>
-Content-Type: text/plain; charset=utf-8
+        Thu, 13 Dec 2018 08:17:45 -0500
+Received: from mail-eopbgr30086.outbound.protection.outlook.com ([40.107.3.86]:44700
+        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729285AbeLMNRp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 08:17:45 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=IttkqedxI7/eKcmWVjuNP4AGS1Eow4wq+J6L9CzuYm0=;
+ b=m3u5XPIsDnHQVpOCr8aw/kkei+U2c1Eq7nojeLxBaP3ydeRbaxtOEOUYg9o/27r8ssxNAsk3x0+9MSGuzMqRTEmv9IhQKVxEvwtcafBBd1mTa7i3WAPsE214+nKIDtEpvHQl2niKcXVbtSyNC0ZMQTeoVz8GLuoMd65WuJUBH8Q=
+Received: from DB3PR0402MB3658.eurprd04.prod.outlook.com (52.134.65.28) by
+ DB3PR0402MB3692.eurprd04.prod.outlook.com (52.134.65.15) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1425.19; Thu, 13 Dec 2018 13:17:40 +0000
+Received: from DB3PR0402MB3658.eurprd04.prod.outlook.com
+ ([fe80::ce5:fddb:6290:c5eb]) by DB3PR0402MB3658.eurprd04.prod.outlook.com
+ ([fe80::ce5:fddb:6290:c5eb%5]) with mapi id 15.20.1425.016; Thu, 13 Dec 2018
+ 13:17:40 +0000
+From:   Abel Vesa <abel.vesa@nxp.com>
+To:     Shawn Guo <shawnguo@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Aisheng Dong <aisheng.dong@nxp.com>
+CC:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Olof Johansson <olof@lixom.net>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>, Rob Herring <robh@kernel.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Abel Vesa <abel.vesa@nxp.com>
+Subject: [PATCH 0/3] i.MX8MQ build dependency fixes
+Thread-Topic: [PATCH 0/3] i.MX8MQ build dependency fixes
+Thread-Index: AQHUkuY53d/oCm2ngUK7tf7BE0j/Pw==
+Date:   Thu, 13 Dec 2018 13:17:40 +0000
+Message-ID: <1544707047-4417-1-git-send-email-abel.vesa@nxp.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Thu, 13 Dec 2018 13:16:04 +0000 (UTC)
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: AM6P192CA0103.EURP192.PROD.OUTLOOK.COM
+ (2603:10a6:209:8d::44) To DB3PR0402MB3658.eurprd04.prod.outlook.com
+ (2603:10a6:8:2::28)
+x-originating-ip: [95.76.156.53]
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=abel.vesa@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DB3PR0402MB3692;6:sSoL9sSDXE+NtyHzavtOcPL7ehVOBNobph6Gf4ZtdVshrebJHyp5cw8+NduZMf9AZp9BWXt8uMJpe0B3KFzsIZ882bSD2+EZlfQ/dI+DdipP7yULulNwlrzvKTvHcYNUSae2chKy4pSSPE9gaZUNbteLTmylpU+8/uDaFlWC3MJyWYgMU4uf8IV7zj51dQj59jPpJb6UI3Ui0E4UXKsWvCrxdr53tzxZlLxCGtqANaIkW/o5Ji+4X8to0bxqQF2vitHewUzdoMeVEymwtgQ9u89khSDW0O8HmBdHII2hJdh4/jxopsQ9ZKRfCGNHmSPg4qEHSyEW/O2zDUrJVP7YDuaFBN1Tcc47VCfe4imbLAWPUF12vHRJsecnWSiWJJAzgPJivJvR93L7OiXTezoSz7dMs2Mi2L7mwt4rqCdysB7LIxTsSKtDXEYmnI6xuV9RrOshT5HH7qyZxo41TtCFRw==;5:WHwAibX17l9xQwwOLKK8OCrnGT7AVJI+wPxvutak3Kpa6mA41y9br+7KlvUjDqLGiFiMf4bgV8xzgq46xj91sAoZ0gnM3wSG41ZK82aVS6wHNv7gKZ7RerHMomoeKoXgP73HMk6XO51NMo99yoFyZM3jPGCJl9zvrArOs2MY5wk=;7:NMGfMacHLhUmWf2cdiM6fgBFMZyRd1tOuyagzx5M2Zpse/oZf3AHTBexr2BZ0z8PdQqzmMW8dNnfWqbnMshrmrT0Y9Ew6O1OqcxygJUOFPywu6KHXbIs6ud1SrVEslWBbiyxe2nKNTLiQ7BQA4ACTg==
+x-ms-office365-filtering-correlation-id: 42726cc9-5244-4b25-e65c-08d660fd5bf0
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DB3PR0402MB3692;
+x-ms-traffictypediagnostic: DB3PR0402MB3692:
+x-microsoft-antispam-prvs: <DB3PR0402MB3692DB5F2303EE85121DFF8FF6A00@DB3PR0402MB3692.eurprd04.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(6040522)(2401047)(5005006)(8121501046)(3002001)(3231475)(944501520)(52105112)(10201501046)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(20161123562045)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:DB3PR0402MB3692;BCL:0;PCL:0;RULEID:;SRVR:DB3PR0402MB3692;
+x-forefront-prvs: 088552DE73
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(366004)(376002)(136003)(39860400002)(396003)(199004)(189003)(81166006)(36756003)(8936002)(486006)(186003)(25786009)(305945005)(2616005)(476003)(26005)(2906002)(68736007)(8676002)(81156014)(6486002)(14454004)(386003)(7416002)(478600001)(6436002)(6636002)(5660300001)(6506007)(256004)(6512007)(86362001)(66066001)(106356001)(105586002)(7736002)(54906003)(110136005)(14444005)(102836004)(316002)(71190400001)(71200400001)(44832011)(52116002)(3846002)(6116002)(53936002)(97736004)(99286004)(4326008);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3692;H:DB3PR0402MB3658.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: W1lkyMcUT0SLpUzqd0io/oHF2GjKV5UqfkaGLvnyr7i0CaSK/r6zj6fOSq0xzQVFp5x9WTzruemRWNr2yciejdvEvrt7/gMBOFqId6a9guCJt80FyM2g+xVkdUH9846nJ5CUCChzo/YQh2pc0+OkJm8/RU4sdBWvWuOqmPSPK31cOoSH8mXtiR9j5YU3Sf4h2/1gHot+HymKnuDqG18LlNyIKV08nQc8WfJjUneW1JwMdFuKTi1YB3w471omvhBRAR9hAdGbHruLbSG1HemFPo+tRXrjmEkY9Q98c8Sexn7QpM82gucInK94Jww9qHqk
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 42726cc9-5244-4b25-e65c-08d660fd5bf0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Dec 2018 13:17:40.8362
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3692
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/12/18 21:39, Borislav Petkov wrote:
-> On Tue, Dec 11, 2018 at 11:29:21AM -0800, Maran Wilson wrote:
->> Is your question about what options you need to provide to Qemu? Or is your
->> question about the SW implementation choices?
->>
->> Assuming the former...
-> Yeah, that's what I wanted to know. But looking at it, I'm booting
-> bzImage here just as quickly and as flexible so I don't see the
-> advantage of this new method for my use case here of booting kernels
-> in qemu.
+These patches will probably have to be take through different
+trees, but the order has to be kept otherwise this won't work.
 
-It's not firmware that is slow, decompression is.  Unlike Xen, which is
-using PVH with a regular bzImage and decompression in the host, KVM is
-using PVH to boot a vmlinux with no decompression at all.
+I can resend as separate patches (if necessary) as long as we can
+get them in together.
 
-Paolo
+Abel Vesa (3):
+  arm64: Remove CONFIG_SOC_IMX8MQ and use ARCH_MXC instead
+  clk: imx: Build imx8mq clocks on arm64 only
+  arm64: Add i.MX8 boot necesarry configs to defconfig
 
-> But maybe there's a good use case where firmware is slow and one doesn't
-> really wanna noodle through it or when one does start a gazillion VMs
-> per second or whatever...
+ arch/arm64/Kconfig.platforms           |  8 --------
+ arch/arm64/boot/dts/freescale/Makefile |  2 +-
+ arch/arm64/configs/defconfig           |  5 +++++
+ drivers/clk/imx/Makefile               | 11 ++++++-----
+ drivers/phy/freescale/Kconfig          |  2 +-
+ drivers/pinctrl/freescale/Kconfig      |  2 +-
+ drivers/soc/imx/Kconfig                |  2 +-
+ 7 files changed, 15 insertions(+), 17 deletions(-)
+
+--=20
+2.7.4
 
