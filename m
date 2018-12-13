@@ -7,48 +7,49 @@ X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7634C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:46:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4999C67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:46:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FFC620849
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:46:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A2E3B20849
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:46:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544676362;
-	bh=66bIVOUhszalWq34bmkerV14UFkvSHRPxHOyFzoG0Rw=;
+	s=default; t=1544676364;
+	bh=rWjbv/kELvTnQuZbKpHk7E6oAydcG+Vq5gly8l/b34Q=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=PcIvX5OwdP1OVbsUZUxSGyMuwuft8BaDXq9e8T6UWlr08Z8eYyAPxLLnAKHdz21q2
-	 rt+qoW5aT7yYj13scBgAb8qB6/U+CJoxbmVsHIEHk1oTL593cZ4RF1X6KzaWo22gsz
-	 S3TvZ1o9H7LG7d5xN8nCIZsXaA3jOQI3TiGSJYDk=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FFC620849
+	b=Jyd+3Fwg9/aR95jxKd8izIcuRVET21RuR3F9TwckWTJaW//enFM2kkSisMxY05ZhV
+	 bHrpOLDMaUIGG3tQt9Cl+zNNVZt/+CbPxU9t5/7ApOyB0rgaIlp48hf2YJHMIU0qqB
+	 9M1gX8flyv4z7PH66OtSztchKJ+w1yPIme2YtBO4=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2E3B20849
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728876AbeLMEqB (ORCPT
+        id S1729041AbeLMEqD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 23:46:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43672 "EHLO mail.kernel.org"
+        Wed, 12 Dec 2018 23:46:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43614 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727406AbeLMEat (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 23:30:49 -0500
+        id S1728421AbeLMEaq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 23:30:46 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2ED0820989;
-        Thu, 13 Dec 2018 04:30:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ED55E20672;
+        Thu, 13 Dec 2018 04:30:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544675448;
-        bh=66bIVOUhszalWq34bmkerV14UFkvSHRPxHOyFzoG0Rw=;
+        s=default; t=1544675445;
+        bh=rWjbv/kELvTnQuZbKpHk7E6oAydcG+Vq5gly8l/b34Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IawTy8P1U1l3pVoDP6OOqVGQSKDds8Ps9RLc85Ung+5YvCv30LKTSbQJRQB0wYrZa
-         7IGSo6Va3yzTn5swkiN6U+DR0czBYmTI9x/U8Buzs+cB1U02/+7atln9LbAkO86jYy
-         XZT/ynDdvm+igAGORxlNfC4rxugLowXFqeAy+7lo=
+        b=x7KgZ4jzv20L+NoiQ0XfW6Rt33ZZajtWXMQ+Y1C4u7P7H0Ysske+c1ObkQCHyTr4h
+         2+edqLl/FuskeV9nwg5STq9456e9WWoXDd+AIrwGggvYWp78wpT9e/4MicKOmkYnDh
+         LZYOwhigwrK2LWpuXcFhX1V5ZKA4TVr5wXP/g2dw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     James Smart <jsmart2021@gmail.com>, Christoph Hellwig <hch@lst.de>,
-        Sasha Levin <sashal@kernel.org>, linux-nvme@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.19 70/73] nvme: validate controller state before rescheduling keep alive
-Date:   Wed, 12 Dec 2018 23:28:35 -0500
-Message-Id: <20181213042838.75160-70-sashal@kernel.org>
+Cc:     Hans de Goede <hdegoede@redhat.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Sasha Levin <sashal@kernel.org>, linux-i2c@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 67/73] i2c: scmi: Fix probe error on devices with an empty SMB0001 ACPI device node
+Date:   Wed, 12 Dec 2018 23:28:32 -0500
+Message-Id: <20181213042838.75160-67-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181213042838.75160-1-sashal@kernel.org>
 References: <20181213042838.75160-1-sashal@kernel.org>
@@ -60,66 +61,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: James Smart <jsmart2021@gmail.com>
+From: Hans de Goede <hdegoede@redhat.com>
 
-[ Upstream commit 86880d646122240596d6719b642fee3213239994 ]
+[ Upstream commit 0544ee4b1ad574aec3b6379af5f5cdee42840971 ]
 
-Delete operations are seeing NULL pointer references in call_timer_fn.
-Tracking these back, the timer appears to be the keep alive timer.
+Some AMD based HP laptops have a SMB0001 ACPI device node which does not
+define any methods.
 
-nvme_keep_alive_work() which is tied to the timer that is cancelled
-by nvme_stop_keep_alive(), simply starts the keep alive io but doesn't
-wait for it's completion. So nvme_stop_keep_alive() only stops a timer
-when it's pending. When a keep alive is in flight, there is no timer
-running and the nvme_stop_keep_alive() will have no affect on the keep
-alive io. Thus, if the io completes successfully, the keep alive timer
-will be rescheduled.   In the failure case, delete is called, the
-controller state is changed, the nvme_stop_keep_alive() is called while
-the io is outstanding, and the delete path continues on. The keep
-alive happens to successfully complete before the delete paths mark it
-as aborted as part of the queue termination, so the timer is restarted.
-The delete paths then tear down the controller, and later on the timer
-code fires and the timer entry is now corrupt.
+This leads to the following error in dmesg:
 
-Fix by validating the controller state before rescheduling the keep
-alive. Testing with the fix has confirmed the condition above was hit.
+[    5.222731] cmi: probe of SMB0001:00 failed with error -5
 
-Signed-off-by: James Smart <jsmart2021@gmail.com>
-Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
+This commit makes acpi_smbus_cmi_add() return -ENODEV instead in this case
+silencing the error. In case of a failure of the i2c_add_adapter() call
+this commit now propagates the error from that call instead of -EIO.
+
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/nvme/host/core.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ drivers/i2c/busses/i2c-scmi.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index 0ba301f7e8b4..05bd7f49d6e0 100644
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@ -831,6 +831,8 @@ static int nvme_submit_user_cmd(struct request_queue *q,
- static void nvme_keep_alive_end_io(struct request *rq, blk_status_t status)
+diff --git a/drivers/i2c/busses/i2c-scmi.c b/drivers/i2c/busses/i2c-scmi.c
+index 7e9a2bbf5ddc..ff3f4553648f 100644
+--- a/drivers/i2c/busses/i2c-scmi.c
++++ b/drivers/i2c/busses/i2c-scmi.c
+@@ -367,6 +367,7 @@ static int acpi_smbus_cmi_add(struct acpi_device *device)
  {
- 	struct nvme_ctrl *ctrl = rq->end_io_data;
-+	unsigned long flags;
-+	bool startka = false;
+ 	struct acpi_smbus_cmi *smbus_cmi;
+ 	const struct acpi_device_id *id;
++	int ret;
  
- 	blk_mq_free_request(rq);
+ 	smbus_cmi = kzalloc(sizeof(struct acpi_smbus_cmi), GFP_KERNEL);
+ 	if (!smbus_cmi)
+@@ -388,8 +389,10 @@ static int acpi_smbus_cmi_add(struct acpi_device *device)
+ 	acpi_walk_namespace(ACPI_TYPE_METHOD, smbus_cmi->handle, 1,
+ 			    acpi_smbus_cmi_query_methods, NULL, smbus_cmi, NULL);
  
-@@ -841,7 +843,13 @@ static void nvme_keep_alive_end_io(struct request *rq, blk_status_t status)
- 		return;
+-	if (smbus_cmi->cap_info == 0)
++	if (smbus_cmi->cap_info == 0) {
++		ret = -ENODEV;
+ 		goto err;
++	}
+ 
+ 	snprintf(smbus_cmi->adapter.name, sizeof(smbus_cmi->adapter.name),
+ 		"SMBus CMI adapter %s",
+@@ -400,7 +403,8 @@ static int acpi_smbus_cmi_add(struct acpi_device *device)
+ 	smbus_cmi->adapter.class = I2C_CLASS_HWMON | I2C_CLASS_SPD;
+ 	smbus_cmi->adapter.dev.parent = &device->dev;
+ 
+-	if (i2c_add_adapter(&smbus_cmi->adapter)) {
++	ret = i2c_add_adapter(&smbus_cmi->adapter);
++	if (ret) {
+ 		dev_err(&device->dev, "Couldn't register adapter!\n");
+ 		goto err;
  	}
- 
--	schedule_delayed_work(&ctrl->ka_work, ctrl->kato * HZ);
-+	spin_lock_irqsave(&ctrl->lock, flags);
-+	if (ctrl->state == NVME_CTRL_LIVE ||
-+	    ctrl->state == NVME_CTRL_CONNECTING)
-+		startka = true;
-+	spin_unlock_irqrestore(&ctrl->lock, flags);
-+	if (startka)
-+		schedule_delayed_work(&ctrl->ka_work, ctrl->kato * HZ);
+@@ -410,7 +414,7 @@ static int acpi_smbus_cmi_add(struct acpi_device *device)
+ err:
+ 	kfree(smbus_cmi);
+ 	device->driver_data = NULL;
+-	return -EIO;
++	return ret;
  }
  
- static int nvme_keep_alive(struct nvme_ctrl *ctrl)
+ static int acpi_smbus_cmi_remove(struct acpi_device *device)
 -- 
 2.19.1
 
