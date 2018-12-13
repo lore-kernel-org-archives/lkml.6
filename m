@@ -2,90 +2,120 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 722C7C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 16:05:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DFBAC65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 16:07:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FB8920870
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 16:05:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FB8920870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 21DED2054F
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 16:07:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544717250;
+	bh=SfrhN3Qw6iyn7jcqfFmWLU6iEtp+I2b/T1VauRpxsoI=;
+	h=Date:From:To:Subject:References:In-Reply-To:List-ID:From;
+	b=OR34saSR1InZRALWxdKvLjxRe0lJ0KmHrHHWO4H63YThj8SJl4TUb5LJfkSv2bxmk
+	 8xN819ZSQ7+wgEdVFGlw/iOXoBbZBKslhu/2Denjh70eFwJrmO7a+rCj3hlatlF3K5
+	 JSsnzAXdAbG4+6AURXhRmSS/8NFOUGm5vQvfo4sQ=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21DED2054F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729516AbeLMQFJ (ORCPT
+        id S1729205AbeLMQH3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 11:05:09 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:57552 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728682AbeLMQFJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 11:05:09 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 23C1081DFA;
-        Thu, 13 Dec 2018 16:05:08 +0000 (UTC)
-Received: from oldenburg2.str.redhat.com (ovpn-116-82.ams2.redhat.com [10.36.116.82])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 211536012B;
-        Thu, 13 Dec 2018 16:05:01 +0000 (UTC)
-From:   Florian Weimer <fweimer@redhat.com>
-To:     Rich Felker <dalias@libc.org>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Andy Lutomirski <luto@kernel.org>, tg@mirbsd.de,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Mike Frysinger <vapier@gentoo.org>,
-        "H. J. Lu" <hjl.tools@gmail.com>, x32@buildd.debian.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Will Deacon <will.deacon@arm.com>
-Subject: Re: Can we drop upstream Linux x32 support?
-References: <CAHk-=wi_Kp=3XmGDdzmadzFSPFvuL+aAJ6ZPAR=o4z=KwYT2vw@mail.gmail.com>
-        <Pine.BSM.4.64L.1812112150480.21176@herc.mirbsd.org>
-        <CALCETrWgpAX7FV23zHmid83SsgnwFMKD4a_-xSEgB6v0kJR5sA@mail.gmail.com>
-        <Pine.BSM.4.64L.1812112327500.21176@herc.mirbsd.org>
-        <CALCETrXf0rmadycxmpGxd41qP9X+PAjyGHTwbGhKyp6oMKMRrA@mail.gmail.com>
-        <Pine.BSM.4.64L.1812120231410.21176@herc.mirbsd.org>
-        <CALCETrUYn=S=hmJ0tKdm2LoSgkWchY2_65sH7hJZp7wfS30giw@mail.gmail.com>
-        <20181212165237.GT23599@brightrain.aerifal.cx>
-        <CALCETrV6+YAazq7vY_aR=4kXc4ykXb1Se7hgvHeEVJtbZ91=Qg@mail.gmail.com>
-        <20181213124025.bczxzj6ez34joo6v@localhost>
-        <20181213155744.GU23599@brightrain.aerifal.cx>
-Date:   Thu, 13 Dec 2018 17:04:59 +0100
-In-Reply-To: <20181213155744.GU23599@brightrain.aerifal.cx> (Rich Felker's
-        message of "Thu, 13 Dec 2018 10:57:44 -0500")
-Message-ID: <87o99pl8es.fsf@oldenburg2.str.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Thu, 13 Dec 2018 11:07:29 -0500
+Received: from mail-yb1-f194.google.com ([209.85.219.194]:43287 "EHLO
+        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728111AbeLMQH2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 11:07:28 -0500
+Received: by mail-yb1-f194.google.com with SMTP id d136so991759ybh.10;
+        Thu, 13 Dec 2018 08:07:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=VMIvv9oJ+d07z3QLhR1Tb2CkKzGyeqd0I0xBtqS1Vdo=;
+        b=DJCdmOKH4EV3o9DYzEMgupaZtPGPMc3U7+H6RJbn/9fNmfWytE01k2XQA9rg1L1wmt
+         653dRwOtcYmSO9QX51AbyrqfpbfB1Za+5ibAPxqeMixThQ4Og21n5RvUu7oaRA+w3uz+
+         Bzs/bgXVdeeLyPjNSY8AY1mnl5dJqSbOQqI2SSxJyLwknRrI+klu7CLG7sdLGOya/u1W
+         W/+aVtAc63k6ks+NMgeGTMLwECt7g3deILYkEbJoicYAIPrHhqU3IJHZnFgUIQvpTLdo
+         b1grkuYz+1nwQpEHm6iRwihqcbe73hhzS7eN7i4A6tU8dG9jBnPXGXMJjtlNx3lScPZQ
+         ZiOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=VMIvv9oJ+d07z3QLhR1Tb2CkKzGyeqd0I0xBtqS1Vdo=;
+        b=U/ax9G0e3FDChzH/h5iEqo+OQBvkFxwPOvk50RFesolF+Yp2rG/pqr7A5+11Xnq+rm
+         WeRKAN14DXYvUB/yRDxLuC3qmwNhfJFude842tI5J9Fpbicz02Ju3EciBsPuCsVmGQzF
+         ZG9IB/OeqRyiTAHgG6MTFSxqAGZxrBf+AaQnurUk8myk6xL9ikHQE1Di0rE9w3OG5IMf
+         oxdHYhne78XjMnvQKdDfedBkckDgVLZ/yTJF5yFsJNaF2tz426CLi8Tiz+JTl3QmxNqx
+         Mnnwd79zPkc2ffROdI5IXvJF/IO0XZvNzc23N5mgelsN6SGnsYvDla1ux7cqtnsk4MAv
+         hIaA==
+X-Gm-Message-State: AA+aEWZtiKk2Ci3AvPhmoozFzE7RlsY5mtXv67OnFbPI+V7buVVdkJzW
+        bFHBVPkbclClu8DpEpWO7awyUMVq
+X-Google-Smtp-Source: AFSGD/XaHnhA8puaqhQL5SyS3/Oa1AVoVClV3l3jcTQNkawebs0DXuDFa4XWwAH40gQyD7Ig8p/rlA==
+X-Received: by 2002:a25:8446:: with SMTP id r6mr24548364ybm.474.1544717246882;
+        Thu, 13 Dec 2018 08:07:26 -0800 (PST)
+Received: from localhost ([2620:10d:c091:200::4:b482])
+        by smtp.gmail.com with ESMTPSA id l9sm770910ywc.81.2018.12.13.08.07.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 13 Dec 2018 08:07:25 -0800 (PST)
+Date:   Thu, 13 Dec 2018 08:07:24 -0800
+From:   Tejun Heo <tj@kernel.org>
+To:     Michael Cree <mcree@orcon.net.nz>, linux-alpha@vger.kernel.org,
+        linux-kernel@vger.kernel.org, debian-alpha@lists.debian.org
+Subject: Re: Generic kernel fails to boot on Alpha bisected to b38d08f3181c
+Message-ID: <20181213160724.GU2509588@devbig004.ftw2.facebook.com>
+References: <20181213082612.bi2dcd6uhzp3t6iq@tower>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Thu, 13 Dec 2018 16:05:08 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181213082612.bi2dcd6uhzp3t6iq@tower>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Rich Felker:
+Hello, Michael.
 
->> If the compiler can handle the zeroing, that would be great, though not
->> sure how (some __attribute__((zero)) which generates a type constructor
->> for such structure; it kind of departs from what the C language offers).
->
-> The compiler fundamentally can't. At the very least it would require
-> effective type tracking, which requires shadow memory and is even more
-> controversial than -fstrict-aliasing (because in a sense it's a
-> stronger version thereof).
+On Thu, Dec 13, 2018 at 09:26:12PM +1300, Michael Cree wrote:
+> A kernel built for generic UP Alpha had been noted to fail to boot
+> for quite some time (since the release of 3.18).  The kernel either
+> locks up before printing any messages to the console or just falls
+> back into the SRM with a HALT instruction again before any messages
+> are printed to the console.  A work around is to either use a kernel
+> built for generic SMP or to build a machine specific kernel as these
+> boot correctly.
+> 
+> Because there were other compile errors at the time it proved
+> difficult to bisect, but we are continuing to get complaints about
+> it as it renders the Debian Alpha installer somewhat useless, so I
+> returned to trying to find the problem and managed to bisect it to:
+> 
+> commit b38d08f3181c5025a7ce84646494cc4748492a3b
+> Author: Tejun Heo <tj@kernel.org>
+> Date:   Tue Sep 2 14:46:02 2014 -0400
+> 
+>     percpu: restructure locking
+> 
+> Any suggestions as to what might be the problem and a fix?
 
-It's possible to do it with the right types.  See _Bool on 32-bit Darwin
-PowerPC for an example, which is four bytes instead of the usual one.
+So, the only thing I can think of is that it's calling
+spin_unlock_irq() while irq handling isn't set up yet.  Can you please
+try the followings?
 
-Similarly, we could have integer types with trap representations.
-Whether it is a good idea is a different matter, but the amount of
-compiler magic required is actually limited.
+1. Convert all spin_[un]lock_irq() to
+   spin_lock_irqsave/unlock_irqrestore().
 
-Thanks,
-Florian
+2. If that still doesn't work, just convert all of them to
+   spin_lock/unlock(), which is obviously broken but still is useful
+   for debugging.
+
+Thanks.
+
+-- 
+tejun
