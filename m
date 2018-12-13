@@ -7,53 +7,71 @@ X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9D9BC67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:41:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17E52C67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:41:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 81FA020849
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:41:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D2E1820849
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:41:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544676073;
-	bh=GOlZfrGOXJvQfR+Uh9Tr0ORZk0bNMmNmIWOjF1SBbxg=;
+	s=default; t=1544676077;
+	bh=zkAUfal45l9g3LqBJLr0ZfwiMqnzAmugf+weQIly7OE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=bTVQnhp/8rr+eixIkNgp/hNsy1Kc+HVcwwfpg7xDDgHJYiiJWvbMtAwldSjTfZgbU
-	 tH5ANKj7/RAl0QBaxda4isyC86fafZZVhcSCGgSQFeO6Lt4fwBQpOKFhMXz0Eq3H22
-	 KmivErCvJTUrqzLD7cyTMeLis7UvAIkU3QSKH6ic=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81FA020849
+	b=o6w36Sec+53038oV4J8XkhI90t50eTaLCopeyw0wTUtMsuz+F7H8BFZNQMAx7PVY5
+	 WNUOsjYdOCHbXvyGKoNy14mFjCM1CdcwQ99s/jeruZcfpQiAQdHUKSKRSyYufE8FZF
+	 UDAV33bONTKlhhIu7GPCvRLv4N4q2Ors1RifOuZY=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2E1820849
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728979AbeLMEcI (ORCPT
+        id S1728969AbeLMElQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 23:32:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44920 "EHLO mail.kernel.org"
+        Wed, 12 Dec 2018 23:41:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45030 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728940AbeLMEcA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 23:32:00 -0500
+        id S1728983AbeLMEcI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 23:32:08 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9E33F20873;
-        Thu, 13 Dec 2018 04:31:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C2FD720882;
+        Thu, 13 Dec 2018 04:32:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544675519;
-        bh=GOlZfrGOXJvQfR+Uh9Tr0ORZk0bNMmNmIWOjF1SBbxg=;
+        s=default; t=1544675527;
+        bh=zkAUfal45l9g3LqBJLr0ZfwiMqnzAmugf+weQIly7OE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=y9YlahKqFcdHD0Ex2pbAMNojfLG+xBtG1Xihk15h/IeasmbR/OjHvfH4wUEwHl2g0
-         NZkjt2e3aoZcYSGVLFJP78yleDbENlvH0CAOOqTShO+01n/Ifu7TjWkXTogM+jPYiQ
-         el/585meEIye6fCBnm/SxqPIAJrl2idnNtlyitXg=
+        b=klPzG+mUHpwSkmHjf5Ampgv2McdJAEYRAeC4hjNq3oL/ek6SqgDWiNyhXQjnVHYG3
+         Ws1726x1pMhnc4mPNYkfnuyZNHMx4OuWNJKBksUGwBzbuKdE2P4i0Ewy9A/IRtmQ+U
+         TkHPXHSG3cenn8WM5gRpdrBietS4X0CurG/urUc0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Tarick Bedeir <tarick@google.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 41/41] net/mlx4_core: Correctly set PFC param if global pause is turned off.
-Date:   Wed, 12 Dec 2018 23:30:54 -0500
-Message-Id: <20181213043054.75891-41-sashal@kernel.org>
+Cc:     YiFei Zhu <zhuyifei1999@gmail.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arend van Spriel <arend.vanspriel@broadcom.com>,
+        Bhupesh Sharma <bhsharma@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Eric Snowberg <eric.snowberg@oracle.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Joe Perches <joe@perches.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Julien Thierry <julien.thierry@arm.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
+        Sedat Dilek <sedat.dilek@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 04/34] x86/earlyprintk/efi: Fix infinite loop on some screen widths
+Date:   Wed, 12 Dec 2018 23:31:30 -0500
+Message-Id: <20181213043200.76295-4-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181213043054.75891-1-sashal@kernel.org>
-References: <20181213043054.75891-1-sashal@kernel.org>
+In-Reply-To: <20181213043200.76295-1-sashal@kernel.org>
+References: <20181213043200.76295-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -62,36 +80,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tarick Bedeir <tarick@google.com>
+From: YiFei Zhu <zhuyifei1999@gmail.com>
 
-[ Upstream commit bd5122cd1e0644d8bd8dd84517c932773e999766 ]
+[ Upstream commit 79c2206d369b87b19ac29cb47601059b6bf5c291 ]
 
-rx_ppp and tx_ppp can be set between 0 and 255, so don't clamp to 1.
+An affected screen resolution is 1366 x 768, which width is not
+divisible by 8, the default font width. On such screens, when longer
+lines are earlyprintk'ed, overflow-to-next-line can never trigger,
+due to the left-most x-coordinate of the next character always less
+than the screen width. Earlyprintk will infinite loop in trying to
+print the rest of the string but unable to, due to the line being
+full.
 
-Fixes: 6e8814ceb7e8 ("net/mlx4_en: Fix mixed PFC and Global pause user control requests")
-Signed-off-by: Tarick Bedeir <tarick@google.com>
-Reviewed-by: Eran Ben Elisha <eranbe@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+This patch makes the trigger consider the right-most x-coordinate,
+instead of left-most, as the value to compare against the screen
+width threshold.
+
+Signed-off-by: YiFei Zhu <zhuyifei1999@gmail.com>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Arend van Spriel <arend.vanspriel@broadcom.com>
+Cc: Bhupesh Sharma <bhsharma@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Eric Snowberg <eric.snowberg@oracle.com>
+Cc: Hans de Goede <hdegoede@redhat.com>
+Cc: Joe Perches <joe@perches.com>
+Cc: Jon Hunter <jonathanh@nvidia.com>
+Cc: Julien Thierry <julien.thierry@arm.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Matt Fleming <matt@codeblueprint.co.uk>
+Cc: Nathan Chancellor <natechancellor@gmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+Cc: Sedat Dilek <sedat.dilek@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-efi@vger.kernel.org
+Link: http://lkml.kernel.org/r/20181129171230.18699-12-ard.biesheuvel@linaro.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/mellanox/mlx4/en_ethtool.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/x86/platform/efi/early_printk.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/mellanox/mlx4/en_ethtool.c b/drivers/net/ethernet/mellanox/mlx4/en_ethtool.c
-index 5fe56dc4cfae..5363cee88a0a 100644
---- a/drivers/net/ethernet/mellanox/mlx4/en_ethtool.c
-+++ b/drivers/net/ethernet/mellanox/mlx4/en_ethtool.c
-@@ -1070,8 +1070,8 @@ static int mlx4_en_set_pauseparam(struct net_device *dev,
+diff --git a/arch/x86/platform/efi/early_printk.c b/arch/x86/platform/efi/early_printk.c
+index 5fdacb322ceb..c3e6be110b7d 100644
+--- a/arch/x86/platform/efi/early_printk.c
++++ b/arch/x86/platform/efi/early_printk.c
+@@ -179,7 +179,7 @@ early_efi_write(struct console *con, const char *str, unsigned int num)
+ 			num--;
+ 		}
  
- 	tx_pause = !!(pause->tx_pause);
- 	rx_pause = !!(pause->rx_pause);
--	rx_ppp = priv->prof->rx_ppp && !(tx_pause || rx_pause);
--	tx_ppp = priv->prof->tx_ppp && !(tx_pause || rx_pause);
-+	rx_ppp = (tx_pause || rx_pause) ? 0 : priv->prof->rx_ppp;
-+	tx_ppp = (tx_pause || rx_pause) ? 0 : priv->prof->tx_ppp;
- 
- 	err = mlx4_SET_PORT_general(mdev->dev, priv->port,
- 				    priv->rx_skb_size + ETH_FCS_LEN,
+-		if (efi_x >= si->lfb_width) {
++		if (efi_x + font->width > si->lfb_width) {
+ 			efi_x = 0;
+ 			efi_y += font->height;
+ 		}
 -- 
 2.19.1
 
