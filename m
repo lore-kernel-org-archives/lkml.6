@@ -2,67 +2,121 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C0D2C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 17:34:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14170C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 17:36:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0715B20870
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 17:34:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0715B20870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
+	by mail.kernel.org (Postfix) with ESMTP id CF4AD2086D
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 17:36:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ssi.gouv.fr header.i=@ssi.gouv.fr header.b="Tgbunuj5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF4AD2086D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ssi.gouv.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729599AbeLMRek (ORCPT
+        id S1729664AbeLMRgL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 12:34:40 -0500
-Received: from muru.com ([72.249.23.125]:58206 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728069AbeLMRek (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 12:34:40 -0500
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id CC6538081;
-        Thu, 13 Dec 2018 17:34:41 +0000 (UTC)
-Date:   Thu, 13 Dec 2018 09:34:35 -0800
-From:   Tony Lindgren <tony@atomide.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Alexander Shiyan <shc_work@mail.ru>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Philipp Zabel <philipp.zabel@gmail.com>,
-        Petr Cvek <petr.cvek@tul.cz>,
-        Paul Parsons <lost.distance@yahoo.com>,
-        Daniel Mack <zonque@gmail.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Russell King <rmk+kernel@armlinux.org.uk>
-Subject: Re: [PATCH 2/5 v8] regulator: fixed/gpio: Pull inversion/OD into
- gpiolib
-Message-ID: <20181213173435.GR6707@atomide.com>
-References: <20181211212428.28327-1-linus.walleij@linaro.org>
- <20181211212428.28327-3-linus.walleij@linaro.org>
+        Thu, 13 Dec 2018 12:36:11 -0500
+Received: from smtp-out.ssi.gouv.fr ([86.65.182.90]:64364 "EHLO
+        smtp-out.ssi.gouv.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727775AbeLMRgL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 12:36:11 -0500
+Received: from smtp-out.ssi.gouv.fr (localhost [127.0.0.1])
+        by smtp-out.ssi.gouv.fr (Postfix) with ESMTP id 3FFEDD0006C;
+        Thu, 13 Dec 2018 18:36:17 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ssi.gouv.fr;
+        s=20160407; t=1544722577;
+        bh=RdcVnpRHEidguIx7S5N3aX3ilD93YH7Gi1nPVJMOx9Y=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To:From:Subject;
+        b=Tgbunuj5yfFhYD6pVNhfwWvKI5Xzo8scOQi5hyA3Cwd3TyM3Qauo9DbpO+Qd6pZDx
+         EVz2xNJaVUVrOZ4vlj6d5sorEDl+y6q2VVPybjc6TmdTKTCatpvzale5FLlGnLhMnY
+         H30yHkoraj8ZDeVcG6RZsZpOf0JoQeujdcGNruBNyzOkLXjXmNKEw1kzmLRgbQwqKb
+         cbNmbA1VBVjMURloPxzUhxdlrHaWm8/KE+WJffhhs8r8nduZeJUOI0JrXwglm4pwpX
+         L2zc3NB6Y4X/GrUyebQ5ArMDo72TZgED5K8++XrHy4NAKowNy9EnDBVl+DTLQFUh3T
+         DnnhdaY4xxnPg==
+Subject: Re: [RFC PATCH v1 0/5] Add support for O_MAYEXEC
+To:     Matthew Wilcox <willy@infradead.org>
+CC:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
+        <linux-kernel@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
+        James Morris <jmorris@namei.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Garrett <mjg59@google.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>, Shuah Khan <shuah@kernel.org>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        Yves-Alexis Perez <yves-alexis.perez@ssi.gouv.fr>,
+        <kernel-hardening@lists.openwall.com>, <linux-api@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>
+References: <20181212081712.32347-1-mic@digikod.net>
+ <20181213030228.GM6830@bombadil.infradead.org>
+ <374ea88c-edc5-f1a6-3637-748635e1e7df@ssi.gouv.fr>
+ <20181213171310.GR6830@bombadil.infradead.org>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>
+Message-ID: <ba523381-1b98-a8bf-ee5b-94a71caee48c@ssi.gouv.fr>
+Date:   Thu, 13 Dec 2018 18:36:15 +0100
+User-Agent: Mozilla/5.0 (X11; Linux i686; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181211212428.28327-3-linus.walleij@linaro.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181213171310.GR6830@bombadil.infradead.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Linus Walleij <linus.walleij@linaro.org> [181211 21:26]:
-> Tested-by: Janusz Krzysztofik <jmkrzyszt@gmail.com> #OMAP1 Amstrad Delta
 
-Good to hear this was tested :) Please feel free to add:
+On 13/12/2018 18:13, Matthew Wilcox wrote:
+> On Thu, Dec 13, 2018 at 04:17:29PM +0100, Mickaël Salaün wrote:
+>> On 13/12/2018 04:02, Matthew Wilcox wrote:
+>>> On Wed, Dec 12, 2018 at 09:17:07AM +0100, Mickaël Salaün wrote:
+>>>> The goal of this patch series is to control script interpretation.  A
+>>>> new O_MAYEXEC flag used by sys_open() is added to enable userland script
+>>>> interpreter to delegate to the kernel (and thus the system security
+>>>> policy) the permission to interpret scripts or other files containing
+>>>> what can be seen as commands.
+>>>
+>>> I don't have a problem with the concept, but we're running low on O_ bits.
+>>> Does this have to be done before the process gets a file descriptor,
+>>> or could we have a new syscall?  Since we're going to be changing the
+>>> interpreters anyway, it doesn't seem like too much of an imposition to
+>>> ask them to use:
+>>>
+>>> 	int verify_for_exec(int fd)
+>>>
+>>> instead of adding an O_MAYEXEC.
+>>
+>> Adding a new syscall for this simple use case seems excessive. I think
+> 
+> We have somewhat less than 400 syscalls today.  We have 20 O_ bits defined.
+> Obviously there's a lower practical limit on syscalls, but in principle
+> we could have up to 2^32 syscalls, and there are only 12 O_ bits remaining.
+> 
+>> that the open/openat syscall familly are the right place to do an atomic
+>> open and permission check, the same way the kernel does for other file
+>> access. Moreover, it will be easier to patch upstream interpreters
+>> without the burden of handling a (new) syscall that may not exist on the
+>> running system, whereas unknown open flags are ignored.
+> 
+> Ah, but that's the problem.  The interpreter can see an -ENOSYS response
+> and handle it appropriately.  If the flag is silently ignored, the
+> interpreter has no idea whether it can do a racy check or whether to
+> skip even trying to do the check.
 
-Acked-by: Tony Lindgren <tony@atomide.com>
+Right, but the interpreter should interpret the script if the open with
+O_MAYEXEC succeed (but not otherwise): it may be because the flag is
+known by the kernel and the system policy allow this call, or because
+the (old) kernel doesn't known about this flag (which is fine and needed
+for backward compatibility). The script interpretation must not failed
+if the kernel doesn't support O_MAYEXEC, it is then useless for the
+interpreter to do any additional check.
