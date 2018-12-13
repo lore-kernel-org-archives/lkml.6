@@ -7,58 +7,54 @@ X-Spam-Status: No, score=-12.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08D0DC67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:09:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1633C67873
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:09:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C10EC20989
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:09:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 829512133F
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:09:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544702944;
-	bh=c/tMroSw4dioCY0t+lvEB1yCU78hOl+es1crMDbR6NQ=;
+	s=default; t=1544702948;
+	bh=5LVaoW4OFOctX3qyXcgyU9rUEqeH/vvYZcEH53V20sM=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=ekDCxDQmnDEDIUtQbBBAxIYEZbDafknpmo5U8a0yHjR8XmRyJeOvZKOq4Tfo8dHU0
-	 Mwc1j/fFjhxpCU5WaKm7rduYnGURZg4d+FNdiNVH87R85lHxOzrHHKuU4HXeXf0eay
-	 FjxuHpPcTpw1GKuArEKj4HwUsYyWLJNleoVa7Ey8=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C10EC20989
+	b=TvSQc/Phjx6UIOdr/jAMhp/oOGVKIuqC6FPYsEEmN0uDnZbhiYEetBQHkgKUNtith
+	 PeCFkv81/a3P6zMhO3eLAFPz4O8c3z7yWl0YzXhuTlON2S0n0gvHYR5ERo+Q2Rrh4d
+	 U8SWU9MWn9KtwQdDNDL6oJHC7z/mH7ei6th5cn9U=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 829512133F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728918AbeLMMJD (ORCPT
+        id S1728960AbeLMMJH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 07:09:03 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49962 "EHLO
+        Thu, 13 Dec 2018 07:09:07 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50088 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728897AbeLMMJD (ORCPT
+        with ESMTP id S1728925AbeLMMJG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 07:09:03 -0500
+        Thu, 13 Dec 2018 07:09:06 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=qSnOTg8j+VEvEt+D1/RqJc0fjRRAZFyN/0tnQ6fL8wY=; b=UNDSohCc4+cH
-        eOPPy7Rno0/A5q0Z1KeB3JZ9p17YD1GV56FRTTyxD06N61OS+daaY0bG55wztQFGNJyaIX92o6cfb
-        LQSSnj+EWNOFLXfZeeeaLiHr+G96HVnIq89gAjHuw/H73bc2K0YB7oyT3ILzr+wNLYXbsXVUURFva
-        tPFcI=;
+        List-Archive; bh=9+//NrgY/VYRJlS+r5DzZFLiYM1QU9/FQBbhQGYV4KA=; b=H7oeCh1ZCAfb
+        +oijhBVEQ94kxAeaWRTzy3UsZmT5jMHHmeIdByrz3C9X4JmbHn55j4ZcQi5IzElPYyrsy4snTFyEu
+        3NGcIvrOrl+jgOXFr+xPFIOaTY87DqrRkS7Yv8hmaEyC8h7iYM6IGNAvXuWHHbze1F65Sv3mmHm3b
+        cNrpA=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gXPnE-0000xs-9E; Thu, 13 Dec 2018 12:08:40 +0000
+        id 1gXPnb-0000z4-74; Thu, 13 Dec 2018 12:09:03 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id D576C11254D1; Thu, 13 Dec 2018 12:08:39 +0000 (GMT)
+        id E38FE11254D1; Thu, 13 Dec 2018 12:09:02 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
-To:     Jerome Brunet <jbrunet@baylibre.com>
-Cc:     Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>, devicetree@vger.kernel.org,
-        alsa-devel@alsa-project.org, linux-amlogic@lists.infradead.org,
-        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
-Subject: Applied "MAINTAINERS: Add Amlogic sound drivers entry" to the asoc tree
-In-Reply-To:  <20181211134713.4908-5-jbrunet@baylibre.com>
+To:     Claudiu Beznea <claudiu.beznea@microchip.com>
+Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Applied "regulator: act8945a-regulator: fix line over 80 chars warning" to the regulator tree
+In-Reply-To: 
 X-Patchwork-Hint: ignore
-Message-Id: <20181213120839.D576C11254D1@debutante.sirena.org.uk>
-Date:   Thu, 13 Dec 2018 12:08:39 +0000 (GMT)
+Message-Id: <20181213120902.E38FE11254D1@debutante.sirena.org.uk>
+Date:   Thu, 13 Dec 2018 12:09:02 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -66,11 +62,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   MAINTAINERS: Add Amlogic sound drivers entry
+   regulator: act8945a-regulator: fix line over 80 chars warning
 
-has been applied to the asoc tree at
+has been applied to the regulator tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -91,37 +87,33 @@ to this mail.
 Thanks,
 Mark
 
-From 1b46ed96961db1a826b3e5cadac18c7c4857f054 Mon Sep 17 00:00:00 2001
-From: Jerome Brunet <jbrunet@baylibre.com>
-Date: Tue, 11 Dec 2018 14:47:13 +0100
-Subject: [PATCH] MAINTAINERS: Add Amlogic sound drivers entry
+From 03ffbf9c0891caf8723c81967ceea5faf5d099d5 Mon Sep 17 00:00:00 2001
+From: Claudiu Beznea <claudiu.beznea@microchip.com>
+Date: Tue, 11 Dec 2018 15:56:45 +0000
+Subject: [PATCH] regulator: act8945a-regulator: fix line over 80 chars warning
 
-Add sound/soc/meson drivers entry for Amlogic audio drivers.
+Fix line over 80 chars checkpatch.pl warning.
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- MAINTAINERS | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/regulator/act8945a-regulator.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index f4855974f325..637f6ce22626 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1309,6 +1309,13 @@ F:	drivers/pinctrl/meson/
- F:	drivers/mmc/host/meson*
- N:	meson
- 
-+ARM/Amlogic Meson SoC Sound Drivers
-+M:	Jerome Brunet <jbrunet@baylibre.com>
-+L:	alsa-devel@alsa-project.org (moderated for non-subscribers)
-+S:	Maintained
-+F:	sound/soc/meson/
-+F:	Documentation/devicetree/bindings/sound/amlogic*
-+
- ARM/Annapurna Labs ALPINE ARCHITECTURE
- M:	Tsahee Zidenberg <tsahee@annapurnalabs.com>
- M:	Antoine Tenart <antoine.tenart@bootlin.com>
+diff --git a/drivers/regulator/act8945a-regulator.c b/drivers/regulator/act8945a-regulator.c
+index f37d1a860407..f4d60743efb3 100644
+--- a/drivers/regulator/act8945a-regulator.c
++++ b/drivers/regulator/act8945a-regulator.c
+@@ -310,7 +310,8 @@ static int act8945a_pmic_probe(struct platform_device *pdev)
+ 	config.dev->of_node = pdev->dev.parent->of_node;
+ 	config.driver_data = act8945a;
+ 	for (i = 0; i < num_regulators; i++) {
+-		rdev = devm_regulator_register(&pdev->dev, &regulators[i], &config);
++		rdev = devm_regulator_register(&pdev->dev, &regulators[i],
++					       &config);
+ 		if (IS_ERR(rdev)) {
+ 			dev_err(&pdev->dev,
+ 				"failed to register %s regulator\n",
 -- 
 2.19.0.rc2
 
