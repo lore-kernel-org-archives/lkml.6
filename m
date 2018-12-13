@@ -2,163 +2,167 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,T_MIXED_ES,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BD3FC65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 10:52:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 067B2C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 10:53:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CED532086D
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 10:52:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CED532086D
+	by mail.kernel.org (Postfix) with ESMTP id B8F2A2086D
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 10:53:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8F2A2086D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728646AbeLMKw4 (ORCPT
+        id S1728686AbeLMKxL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 05:52:56 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59008 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727455AbeLMKw4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 05:52:56 -0500
+        Thu, 13 Dec 2018 05:53:11 -0500
+Received: from foss.arm.com ([217.140.101.70]:59026 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727455AbeLMKxL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 05:53:11 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B90C2A78;
-        Thu, 13 Dec 2018 02:52:55 -0800 (PST)
-Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 84F3C3F6A8;
-        Thu, 13 Dec 2018 02:52:54 -0800 (PST)
-Subject: Re: [PATCH] KVM: arm/arm64: vgic: fix off-by-one bug in
- vgic_get_irq()
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Cc:     kvmarm@lists.cs.columbia.edu, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-References: <20181212201123.GA26674@embeddedor>
-From:   Marc Zyngier <marc.zyngier@arm.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
- 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
-Organization: ARM Ltd
-Message-ID: <d01370b0-5b80-b537-3168-88c166a17e7e@arm.com>
-Date:   Thu, 13 Dec 2018 10:52:52 +0000
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6CA4CA78;
+        Thu, 13 Dec 2018 02:53:10 -0800 (PST)
+Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 559433F6A8;
+        Thu, 13 Dec 2018 02:53:07 -0800 (PST)
+Date:   Thu, 13 Dec 2018 10:53:02 +0000
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        sudeep.holla@arm.com,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        Nadav Haklai <nadavh@marvell.com>
+Subject: Re: [PATCH 05/12] PCI: aardvark: add suspend to RAM support
+Message-ID: <20181213105302.GA5330@e107981-ln.cambridge.arm.com>
+References: <20181123141831.8214-1-miquel.raynal@bootlin.com>
+ <1999610.6DN9RK2Tt3@aspire.rjw.lan>
+ <20181204094558.GA24588@e107981-ln.cambridge.arm.com>
+ <1966692.fVZYlVgWHv@aspire.rjw.lan>
+ <20181211141627.GA526@e107981-ln.cambridge.arm.com>
+ <154469162632.19322.13092710881803732022@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
-In-Reply-To: <20181212201123.GA26674@embeddedor>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <154469162632.19322.13092710881803732022@swboyd.mtv.corp.google.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Gustavo,
+On Thu, Dec 13, 2018 at 01:00:26AM -0800, Stephen Boyd wrote:
+> Quoting Lorenzo Pieralisi (2018-12-11 06:16:27)
+> > On Tue, Dec 04, 2018 at 10:42:19PM +0100, Rafael J. Wysocki wrote:
+> > > On Tuesday, December 4, 2018 10:45:58 AM CET Lorenzo Pieralisi wrote:
+> > > > On Mon, Dec 03, 2018 at 11:00:20PM +0100, Rafael J. Wysocki wrote:
+> > > > > On Monday, December 3, 2018 4:38:46 PM CET Miquel Raynal wrote:
+> > > > 
+> > > > I did not ask my question (that may be silly) properly apologies. I know
+> > > > that the S2R context allows sleeping the question is, in case
+> > > > clk_disable_unprepare() (and resume counterparts) sleeps,
+> > > 
+> > > If it just sleeps, then this is not a problem, but if it actually *waits*
+> > > for something meaningful to happen (which I guess is what you really mean),
+> > > then things may go awry.
+> > > 
+> > > > what is going to wake it up, given that we are in the S2R NOIRQ phase and as
+> > > > you said the action handlers (that are possibly required to wake up the eg
+> > > > clk_disable_unprepare() caller) are disabled (unless, AFAIK,
+> > > > IRQF_NO_SUSPEND is passed at IRQ request time in the respective driver).
+> > > 
+> > > So if it waits for an action handler to do something and wake it up, it may
+> > > very well deadlock.  I have no idea if that really happens, though.
+> > > 
+> > > > The clk API implementations back-ends are beyond my depth, I just wanted
+> > > > to make sure I understand how the S2R flow is expected to work in this
+> > > > specific case.
+> > > 
+> > > Action handlers won't run unless the IRQs are marked as IRQF_NO_SUSPEND
+> > > (well, there are a few more complications I don't recall exactly, but
+> > > that's the basic rule).  If anything depends on them to run, it will block.
+> > 
+> > Stephen, any comments on this ?
+> 
+> Sorry I seemed to miss this email. BTW, what is an "action handler"
+> here? The IRQ action handler?
 
-On 12/12/2018 20:11, Gustavo A. R. Silva wrote:
-> When using the nospec API, it should be taken into account that:
-> 
-> "...if the CPU speculates past the bounds check then
->  * array_index_nospec() will clamp the index within the range of [0,
->  * size)."
-> 
-> The above is part of the header for macro array_index_nospec() in
-> linux/nospec.h
-> 
-> Now, in this particular case, if intid evaluates to exactly VGIC_MAX_SPI
-> or to exaclty VGIC_MAX_PRIVATE, the array_index_nospec() macro ends up
-> returning VGIC_MAX_SPI - 1 or VGIC_MAX_PRIVATE - 1 respectively, instead
-> of VGIC_MAX_SPI or VGIC_MAX_PRIVATE, which, based on the original logic:
-> 
-> 	/* SGIs and PPIs */
-> 	if (intid <= VGIC_MAX_PRIVATE)
->  		return &vcpu->arch.vgic_cpu.private_irqs[intid];
-> 
->  	/* SPIs */
-> 	if (intid <= VGIC_MAX_SPI)
->  		return &kvm->arch.vgic.spis[intid - VGIC_NR_PRIVATE_IRQS];
-> 
-> are valid values for intid.
-> 
-> Fix this by calling array_index_nospec() macro with VGIC_MAX_PRIVATE + 1
-> and VGIC_MAX_SPI + 1 as arguments for its parameter size.
-> 
-> Fixes: 41b87599c743 ("KVM: arm/arm64: vgic: fix possible spectre-v1 in vgic_get_irq()")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> ---
->  virt/kvm/arm/vgic/vgic.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/virt/kvm/arm/vgic/vgic.c b/virt/kvm/arm/vgic/vgic.c
-> index 50e25438fb3c..5db40696055a 100644
-> --- a/virt/kvm/arm/vgic/vgic.c
-> +++ b/virt/kvm/arm/vgic/vgic.c
-> @@ -103,13 +103,13 @@ struct vgic_irq *vgic_get_irq(struct kvm *kvm, struct kvm_vcpu *vcpu,
->  {
->  	/* SGIs and PPIs */
->  	if (intid <= VGIC_MAX_PRIVATE) {
-> -		intid = array_index_nospec(intid, VGIC_MAX_PRIVATE);
-> +		intid = array_index_nospec(intid, VGIC_MAX_PRIVATE + 1);
->  		return &vcpu->arch.vgic_cpu.private_irqs[intid];
->  	}
->  
->  	/* SPIs */
->  	if (intid <= VGIC_MAX_SPI) {
-> -		intid = array_index_nospec(intid, VGIC_MAX_SPI);
-> +		intid = array_index_nospec(intid, VGIC_MAX_SPI + 1);
->  		return &kvm->arch.vgic.spis[intid - VGIC_NR_PRIVATE_IRQS];
->  	}
->  
-> 
+Yes, that is.
 
-That's a good one. Out of curiosity, how did you find it?
+> > I would like to understand if it is safe
+> > to call a clk_*unprepare/prepare_* function (that may have a blocking
+> > back-end waiting on a wake-up event triggered by an IRQ action) in the
+> > suspend/resume NOIRQ phase.
+> 
+> Does this ever occur in practice? I imagine "blocking back-end waiting
+> on a wake-up event" would be some sort of i2c or SPI based "slow" clk
+> that is prepared/unprepared in the NOIRQ phase of suspend/resume? So
+> that function call into the clk API fails because the i2c or SPI
+> controller used to toggle the clk on/off state relies on the
+> controller's IRQ to manage the transaction over the bus but that IRQ is
+> disabled. I suppose this is possible but I've never heard of it
+> happening in practice. Do you have such a scenario?
+
+No (because my knowledge of clock internals is poor) but I questioned
+the code while reviewing it - I do not think it is a safe assumption
+to make (otherwise what's the purpose of having a clk API -
+*prepare/unprepare*() - that, AFAIK was implemented to allow back-ends to
+block, waiting for an event).
+
+There is clearly an implicit assumption there from clk API caller POW
+"this call won't block or an IRQ action - IRQF_NO_SUSPEND - will wake
+me up if it does. Or the call can time out, but that's an error path".
+
+This seems fragile to me.
+
+> > It is not clear how the unprepare/prepare() callers can possibly know
+> > whether it is safe to block at that stage given that IRQ actions are
+> > suspended and the wake-up may never trigger.
+> > 
+> 
+> Is this solved in other situations somehow? I don't think clk consumers
+> have any idea that things are safe or not safe to use in the NOIRQ phase
+> of suspend, but I also don't see how clks are special here. Any provider
+> consumer pattern would fall into the same trap, but maybe clks are the
+> first ones to get here.
+
+You have a good point, I do not think clk are specials, I am only saying
+this patch code can run into significant issues.
+
+> It seems like a larger problem with NOIRQ suspend in general and how it
+> is too coarse of a solution for suspend ordering of devices. It's not
+> like we need *all* device interrupts to be disabled to do something in
+> suspend with one particular device. Most likely, we just need the device
+> and all it's children to be suspended and this device to have it's IRQ
+> disabled for the NOIRQ suspend callback to work. (Maybe any devices it's
+> supplying with device links too?)
+> 
+> If that's really the case, then I can see how one device and it's
+> children are suspended and the irq for it is disabled but the providing
+> devices (clk, regulator, bus controller, etc.) are still fully active
+> and not suspended but in fact completely usable and able to service
+> interrupts. If that all makes sense, then I would answer the question
+> with a definitive "yes it's all fine" because the clk consumer could be
+> in the NOIRQ phase of its suspend but the clk provider wouldn't have
+> even started suspending yet when clk_disable_unprepare() is called.
+
+That's a very good summary and address my concern, I still question this
+patch correctness (and many others that carry out clk operations in S2R
+NOIRQ phase), they may work but do not tell me they are rock solid given
+your accurate summary above.
 
 Thanks,
-	
-	M.
--- 
-Jazz is not dead. It just smells funny...
+Lorenzo
