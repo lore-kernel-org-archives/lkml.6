@@ -6,65 +6,64 @@ X-Spam-Status: No, score=-6.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D3CDC65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 21:15:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E9FEC65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 21:15:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D605A20851
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 21:15:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 342D020851
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 21:15:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544735730;
-	bh=wTNl4iXvbnlvcU4o0iko6AXfdYk1+JFnUU7dJN76+Y8=;
+	s=default; t=1544735737;
+	bh=w2QviF4AkcHAJBXiCPyJZEXyDK9h0VMLbaMNyU3ku+4=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=hyv8ZpFVNrwgylIF8EV/D53Ngmr9YezywcuUZ1ulSWeBGGZnczFtjvq8S7k8L11lL
-	 EDZ0w8t2bBDUif4ay1aTPPeEFHTN5JI+uTUfuMQj485W9QNQwwhPWBwGpT+G7J09Ww
-	 zOcx2qyG0juJfi1sxtvLG/C3Y0tDVaichdoJh4dw=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D605A20851
+	b=EX3ciRVu+HU7lHciUBBEazcb7NcnTIq1FAyzV8MgW2F0NcSf5Pv0oOdWOoiLMRmaf
+	 fCKvsD/v9FMfRwgWvw5tC1CZp+SCYng/H/p5P4bPYeuQa+1ke6EG+uDi/Wb/ibQdvk
+	 nCYbIuC10GUHx5ErOpjzhEjyfdxlT/tmDjqxJOD8=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 342D020851
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729114AbeLMVP3 (ORCPT
+        id S1728601AbeLMVPC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 16:15:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46544 "EHLO mail.kernel.org"
+        Thu, 13 Dec 2018 16:15:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46458 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726604AbeLMVPD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 16:15:03 -0500
-Subject: Re: [PULL REQUEST] Please pull rdma.git
+        id S1726435AbeLMVPC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 16:15:02 -0500
+Subject: Re: [GIT PULL] fuse fixes for 4.20-rc7
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544735703;
-        bh=wTNl4iXvbnlvcU4o0iko6AXfdYk1+JFnUU7dJN76+Y8=;
+        s=default; t=1544735701;
+        bh=w2QviF4AkcHAJBXiCPyJZEXyDK9h0VMLbaMNyU3ku+4=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=ZwL5QuSiqSykcBtn6sqhhAEbrUspTr0y69d40xV5RQV+F8o0j7FKnV9lPn3SOWx+a
-         U17yghQh2aIKfyr9o4iOsvs772E6lN45E7BEFpGqsHIzqikY4OgNCU+rWP7bZz5+X4
-         +VXJkyjxZjUKLS/1AU4NSHCuFZLU1m/H/2EZC3Qg=
+        b=hWzBg2oUCR6YpfyQMYGWwAWGXEfJ3lStSyuwygHuLqUtm71oPGSL2brtg2l4+VtT+
+         xVYxPzHOjeLqsHvWt8epQ9xAjMwb8he1WMn8saz/Ipngqsq7qFCeH2ht92NL8Hfcas
+         5d3lKaFRxgIcThsvCAsqDcJUf4FjIJs+djMsuPE4=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <267101dbb3beb8883efe614e099e7ac4c7a84f37.camel@redhat.com>
-References: <267101dbb3beb8883efe614e099e7ac4c7a84f37.camel@redhat.com>
+In-Reply-To: <20181212093317.GA15517@veci.piliscsaba.redhat.com>
+References: <20181212093317.GA15517@veci.piliscsaba.redhat.com>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <267101dbb3beb8883efe614e099e7ac4c7a84f37.camel@redhat.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git tags/for-linus
-X-PR-Tracked-Commit-Id: 37fbd834b4e492dc41743830cbe435f35120abd8
+X-PR-Tracked-Message-Id: <20181212093317.GA15517@veci.piliscsaba.redhat.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git
+ tags/fuse-fixes-4.20-rc7
+X-PR-Tracked-Commit-Id: 2e64ff154ce6ce9a8dc0f9556463916efa6ff460
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: e10db791bf73c1973f24591897e839db2eb3c804
-Message-Id: <20181213211503.3163.36451.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
-Date:   Thu, 13 Dec 2018 21:15:03 +0000
-To:     Doug Ledford <dledford@redhat.com>
-Cc:     "Torvalds, Linus" <torvalds@linux-foundation.org>,
-        "Gunthorpe, Jason" <jgg@ziepe.ca>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
+X-PR-Merge-Commit-Id: 70f4828201e3bc9a5ac52d1f7ede06e56194268a
+Message-Id: <20181213211501.3163.28358.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
+Date:   Thu, 13 Dec 2018 21:15:01 +0000
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Thu, 13 Dec 2018 11:56:10 -0500:
+The pull request you sent on Wed, 12 Dec 2018 10:33:17 +0100:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git tags/for-linus
+> git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git tags/fuse-fixes-4.20-rc7
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/e10db791bf73c1973f24591897e839db2eb3c804
+https://git.kernel.org/torvalds/c/70f4828201e3bc9a5ac52d1f7ede06e56194268a
 
 Thank you!
 
