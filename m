@@ -2,232 +2,176 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EB3CC67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:10:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEA98C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:10:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6479B20851
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:10:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6479B20851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
+	by mail.kernel.org (Postfix) with ESMTP id 8F12F20851
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:10:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544703012;
+	bh=aXa6SIQC9lLrF1u8DLfyrbwfvFV6P3OWZ7jA21/7Hwc=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
+	b=YEDERlz7Vx1CkSpzHVpvAzicYC6aITrPwI3Z3CAoIEt0M+8Inpv3d+dzEH661ih8d
+	 JNWYlXlpTDdEVIwbQPCmg3fyoITVjFPC0SHo12fAmAzBGuF59UuC/hTdIp7anVm0B2
+	 o9p/Ozn0geSnO7duNxb+vmyZ887LP4HxskaKHNjc=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F12F20851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729139AbeLMMJ7 (ORCPT
+        id S1728939AbeLMMJG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 07:09:59 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:57504 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729106AbeLMMJ5 (ORCPT
+        Thu, 13 Dec 2018 07:09:06 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49996 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728733AbeLMMJE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 07:09:57 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: eballetbo)
-        with ESMTPSA id 73ED227F010
-From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
-To:     linux-pm@vger.kernel.org, sre@kernel.org
-Cc:     Sameer Nanda <snanda@chromium.org>, bleung@chromium.org,
-        gwendal@chromium.org, linux-kernel@vger.kernel.org,
-        groeck@chromium.org, Adam.Thomson.Opensource@diasemi.com,
-        kernel@collabora.com, Pavel Machek <pavel@ucw.cz>
-Subject: [PATCH v3 2/2] power: supply: cros: allow to set input voltage and current limit
-Date:   Thu, 13 Dec 2018 13:09:44 +0100
-Message-Id: <20181213120944.30967-2-enric.balletbo@collabora.com>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20181213120944.30967-1-enric.balletbo@collabora.com>
-References: <20181213120944.30967-1-enric.balletbo@collabora.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Thu, 13 Dec 2018 07:09:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=en0Q5W149R0hkKEZoecaHdHCLbDeTlKguyxtfIIMGFM=; b=xHUy3YjgtX8a
+        RjP2OmtHXxvId6Aft6Oh/YjtV9KALLDhMDwfy6Wl1FlKbh5RBWfMtisPQB3pl9kRVYmu4DaJC4VVO
+        /RmvoR0Ek+fQuRDFnWITZBq+hHNAnrXbennpWHqYhInH6Cje+Q2S7yTpNdfRtTha+KlC8UzLLBrdg
+        7+HVs=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gXPnY-0000yr-0e; Thu, 13 Dec 2018 12:09:00 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id AC5FD11254D1; Thu, 13 Dec 2018 12:08:59 +0000 (GMT)
+From:   Mark Brown <broonie@kernel.org>
+To:     Claudiu Beznea <claudiu.beznea@microchip.com>
+Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Applied "regulator: add documentation for regulator modes and suspend states" to the regulator tree
+In-Reply-To: 
+X-Patchwork-Hint: ignore
+Message-Id: <20181213120859.AC5FD11254D1@debutante.sirena.org.uk>
+Date:   Thu, 13 Dec 2018 12:08:59 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch allows reading and writing the input voltage and current
-limit through the POWER_SUPPLY_PROP_INPUT_VOLTAGE_LIMIT and
-POWER_SUPPLY_PROP_INPUT_CURRENT_LIMIT sysfs properties. This allows
-userspace to see current values and to re-configure these values at
-runtime based on system-level knowledge or user input.
+The patch
 
-By default there is no limit, this is reported as a -1 when reading from
-userspace. Writing a value will set the current or voltage limit in uA
-or uV, and writing any negative value will remove that limit.
+   regulator: add documentation for regulator modes and suspend states
 
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+has been applied to the regulator tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 8a582fa9429108c247ff56dfbc4e3ead08a76956 Mon Sep 17 00:00:00 2001
+From: Claudiu Beznea <claudiu.beznea@microchip.com>
+Date: Tue, 11 Dec 2018 15:56:59 +0000
+Subject: [PATCH] regulator: add documentation for regulator modes and suspend
+ states
+
+Add documentation for regulator modes and suspend states.
+
+Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
+ .../bindings/regulator/act8945a-regulator.txt | 34 +++++++++++++++++++
+ 1 file changed, 34 insertions(+)
 
-Changes in v3: None
-Changes in v2:
-- Fix the upper limit that can be set.
-- Remove unnecessary else.
-
- drivers/power/supply/cros_usbpd-charger.c | 116 ++++++++++++++++++++++
- 1 file changed, 116 insertions(+)
-
-diff --git a/drivers/power/supply/cros_usbpd-charger.c b/drivers/power/supply/cros_usbpd-charger.c
-index 7e9c3984ef6a..3a9ea94c3de3 100644
---- a/drivers/power/supply/cros_usbpd-charger.c
-+++ b/drivers/power/supply/cros_usbpd-charger.c
-@@ -53,6 +53,8 @@ struct charger_data {
- };
+diff --git a/Documentation/devicetree/bindings/regulator/act8945a-regulator.txt b/Documentation/devicetree/bindings/regulator/act8945a-regulator.txt
+index ac955dea00d1..4017527619ab 100644
+--- a/Documentation/devicetree/bindings/regulator/act8945a-regulator.txt
++++ b/Documentation/devicetree/bindings/regulator/act8945a-regulator.txt
+@@ -15,11 +15,17 @@ Optional input supply properties:
+   - inl67-supply: The input supply for REG_LDO3 and REG_LDO4
  
- static enum power_supply_property cros_usbpd_charger_props[] = {
-+	POWER_SUPPLY_PROP_INPUT_CURRENT_LIMIT,
-+	POWER_SUPPLY_PROP_INPUT_VOLTAGE_LIMIT,
- 	POWER_SUPPLY_PROP_ONLINE,
- 	POWER_SUPPLY_PROP_STATUS,
- 	POWER_SUPPLY_PROP_CURRENT_MAX,
-@@ -80,6 +82,10 @@ static enum power_supply_usb_type cros_usbpd_charger_usb_types[] = {
- 	POWER_SUPPLY_USB_TYPE_APPLE_BRICK_ID
- };
+ Any standard regulator properties can be used to configure the single regulator.
++regulator-initial-mode, regulator-allowed-modes and regulator-mode could be
++specified using mode values from dt-bindings/regulator/active-semi,8945a-regulator.h
++file.
  
-+/* Input voltage/current limit in mV/mA. Default to none. */
-+static u16 input_voltage_limit = EC_POWER_LIMIT_NONE;
-+static u16 input_current_limit = EC_POWER_LIMIT_NONE;
-+
- static bool cros_usbpd_charger_port_is_dedicated(struct port_data *port)
- {
- 	return port->port_number >= port->charger->num_usbpd_ports;
-@@ -324,6 +330,26 @@ static int cros_usbpd_charger_get_port_status(struct port_data *port,
- 	return ret;
- }
+ The valid names for regulators are:
+ 	REG_DCDC1, REG_DCDC2, REG_DCDC3, REG_LDO1, REG_LDO2, REG_LDO3, REG_LDO4.
  
-+static int cros_usbpd_charger_set_ext_power_limit(struct charger_data *charger,
-+						  u16 current_lim,
-+						  u16 voltage_lim)
-+{
-+	struct ec_params_external_power_limit_v1 req;
-+	int ret;
+ Example:
 +
-+	req.current_lim = current_lim;
-+	req.voltage_lim = voltage_lim;
++#include <dt-bindings/regulator/active-semi,8945a-regulator.h>
 +
-+	ret = cros_usbpd_charger_ec_command(charger, 0,
-+					    EC_CMD_EXTERNAL_POWER_LIMIT,
-+					    &req, sizeof(req), NULL, 0);
-+	if (ret < 0)
-+		dev_err(charger->dev,
-+			"Unable to set the 'External Power Limit': %d\n", ret);
+ 	pmic@5b {
+ 		compatible = "active-semi,act8945a";
+ 		reg = <0x5b>;
+@@ -32,6 +38,18 @@ Example:
+ 				regulator-min-microvolt = <1350000>;
+ 				regulator-max-microvolt = <1350000>;
+ 				regulator-always-on;
 +
-+	return ret;
-+}
++				regulator-allowed-modes = <ACT8945A_REGULATOR_MODE_FIXED>,
++							  <ACT8945A_REGULATOR_MODE_LOWPOWER>;
++				regulator-initial-mode = <ACT8945A_REGULATOR_MODE_FIXED>;
 +
- static void cros_usbpd_charger_power_changed(struct power_supply *psy)
- {
- 	struct port_data *port = power_supply_get_drvdata(psy);
-@@ -396,6 +422,18 @@ static int cros_usbpd_charger_get_prop(struct power_supply *psy,
- 	case POWER_SUPPLY_PROP_USB_TYPE:
- 		val->intval = port->psy_usb_type;
- 		break;
-+	case POWER_SUPPLY_PROP_INPUT_CURRENT_LIMIT:
-+		if (input_current_limit == EC_POWER_LIMIT_NONE)
-+			val->intval = -1;
-+		else
-+			val->intval = input_current_limit * 1000;
-+		break;
-+	case POWER_SUPPLY_PROP_INPUT_VOLTAGE_LIMIT:
-+		if (input_voltage_limit == EC_POWER_LIMIT_NONE)
-+			val->intval = -1;
-+		else
-+			val->intval = input_voltage_limit * 1000;
-+		break;
- 	case POWER_SUPPLY_PROP_MODEL_NAME:
- 		val->strval = port->model_name;
- 		break;
-@@ -409,6 +447,81 @@ static int cros_usbpd_charger_get_prop(struct power_supply *psy,
- 	return 0;
- }
++				regulator-state-mem {
++					regulator-on-in-suspend;
++					regulator-suspend-min-microvolt=<1400000>;
++					regulator-suspend-max-microvolt=<1400000>;
++					regulator-changeable-in-suspend;
++					regulator-mode=<ACT8945A_REGULATOR_MODE_LOWPOWER>;
++				};
+ 			};
  
-+static int cros_usbpd_charger_set_prop(struct power_supply *psy,
-+				       enum power_supply_property psp,
-+				       const union power_supply_propval *val)
-+{
-+	struct port_data *port = power_supply_get_drvdata(psy);
-+	struct charger_data *charger = port->charger;
-+	struct device *dev = charger->dev;
-+	u16 intval;
-+	int ret;
+ 			vdd_1v2_reg: REG_DCDC2 {
+@@ -39,6 +57,14 @@ Example:
+ 				regulator-min-microvolt = <1100000>;
+ 				regulator-max-microvolt = <1300000>;
+ 				regulator-always-on;
 +
-+	/* U16_MAX in mV/mA is the maximum supported value */
-+	if (val->intval >= U16_MAX * 1000)
-+		return -EINVAL;
-+	/* A negative number is used to clear the limit */
-+	if (val->intval < 0)
-+		intval = EC_POWER_LIMIT_NONE;
-+	else	/* Convert from uA/uV to mA/mV */
-+		intval = val->intval / 1000;
++				regulator-allowed-modes = <ACT8945A_REGULATOR_MODE_FIXED>,
++							  <ACT8945A_REGULATOR_MODE_LOWPOWER>;
++				regulator-initial-mode = <ACT8945A_REGULATOR_MODE_FIXED>;
 +
-+	switch (psp) {
-+	case POWER_SUPPLY_PROP_INPUT_CURRENT_LIMIT:
-+		ret = cros_usbpd_charger_set_ext_power_limit(charger, intval,
-+							input_voltage_limit);
-+		if (ret < 0)
-+			break;
-+
-+		input_current_limit = intval;
-+		if (input_current_limit == EC_POWER_LIMIT_NONE)
-+			dev_info(dev,
-+			  "External Current Limit cleared for all ports\n");
-+		else
-+			dev_info(dev,
-+			  "External Current Limit set to %dmA for all ports\n",
-+			  input_current_limit);
-+		break;
-+	case POWER_SUPPLY_PROP_INPUT_VOLTAGE_LIMIT:
-+		ret = cros_usbpd_charger_set_ext_power_limit(charger,
-+							input_current_limit,
-+							intval);
-+		if (ret < 0)
-+			break;
-+
-+		input_voltage_limit = intval;
-+		if (input_voltage_limit == EC_POWER_LIMIT_NONE)
-+			dev_info(dev,
-+			  "External Voltage Limit cleared for all ports\n");
-+		else
-+			dev_info(dev,
-+			  "External Voltage Limit set to %dmV for all ports\n",
-+			  input_voltage_limit);
-+		break;
-+	default:
-+		ret = -EINVAL;
-+	}
-+
-+	return ret;
-+}
-+
-+static int cros_usbpd_charger_property_is_writeable(struct power_supply *psy,
-+						enum power_supply_property psp)
-+{
-+	int ret;
-+
-+	switch (psp) {
-+	case POWER_SUPPLY_PROP_INPUT_CURRENT_LIMIT:
-+	case POWER_SUPPLY_PROP_INPUT_VOLTAGE_LIMIT:
-+		ret = 1;
-+		break;
-+	default:
-+		ret = 0;
-+	}
-+
-+	return ret;
-+}
-+
- static int cros_usbpd_charger_ec_event(struct notifier_block *nb,
- 				       unsigned long queued_during_suspend,
- 				       void *_notify)
-@@ -525,6 +638,9 @@ static int cros_usbpd_charger_probe(struct platform_device *pd)
++				regulator-state-mem {
++					regulator-off-in-suspend;
++				};
+ 			};
  
- 		psy_desc = &port->psy_desc;
- 		psy_desc->get_property = cros_usbpd_charger_get_prop;
-+		psy_desc->set_property = cros_usbpd_charger_set_prop;
-+		psy_desc->property_is_writeable =
-+				cros_usbpd_charger_property_is_writeable;
- 		psy_desc->external_power_changed =
- 					cros_usbpd_charger_power_changed;
- 		psy_cfg.drv_data = port;
+ 			vdd_3v3_reg: REG_DCDC3 {
+@@ -53,6 +79,14 @@ Example:
+ 				regulator-min-microvolt = <2500000>;
+ 				regulator-max-microvolt = <2500000>;
+ 				regulator-always-on;
++
++				regulator-allowed-modes = <ACT8945A_REGULATOR_MODE_NORMAL>,
++							  <ACT8945A_REGULATOR_MODE_LOWPOWER>;
++				regulator-initial-mode = <ACT8945A_REGULATOR_MODE_NORMAL>;
++
++				regulator-state-mem {
++					regulator-off-in-suspend;
++				};
+ 			};
+ 
+ 			vdd_3v3_lp_reg: REG_LDO2 {
 -- 
-2.19.2
+2.19.0.rc2
 
