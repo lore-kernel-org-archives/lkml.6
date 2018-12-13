@@ -2,67 +2,122 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C40D2C67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 00:24:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F447C67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 00:25:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CA2A2133F
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 00:24:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CA2A2133F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id E716220811
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 00:25:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=netronome-com.20150623.gappssmtp.com header.i=@netronome-com.20150623.gappssmtp.com header.b="maV3/D+K"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E716220811
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=netronome.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728631AbeLMAY4 (ORCPT
+        id S1728661AbeLMAZJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 19:24:56 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:41932 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726869AbeLMAYz (ORCPT
+        Wed, 12 Dec 2018 19:25:09 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:37073 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726869AbeLMAZJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 19:24:55 -0500
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::bf5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 15E27149AF4E2;
-        Wed, 12 Dec 2018 16:06:10 -0800 (PST)
-Date:   Wed, 12 Dec 2018 16:06:09 -0800 (PST)
-Message-Id: <20181212.160609.1564345085630799191.davem@davemloft.net>
-To:     nhorman@tuxdriver.com
-Cc:     lucien.xin@gmail.com, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, linux-sctp@vger.kernel.org,
-        marcelo.leitner@gmail.com, dave.hansen@linux.intel.com,
-        rientjes@google.com, eparis@redhat.com, khorenko@virtuozzo.com
-Subject: Re: [PATCHv2 net 0/3] net: add support for flex_array_resize in
- flex_array
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20181212120015.GA7637@hmswarspite.think-freely.org>
-References: <cover.1544163962.git.lucien.xin@gmail.com>
-        <20181211.225000.726755542677275663.davem@davemloft.net>
-        <20181212120015.GA7637@hmswarspite.think-freely.org>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 12 Dec 2018 16:06:10 -0800 (PST)
+        Wed, 12 Dec 2018 19:25:09 -0500
+Received: by mail-qk1-f194.google.com with SMTP id 131so168829qkd.4
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 16:25:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=netronome-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :organization:mime-version:content-transfer-encoding;
+        bh=A64BPClTcxiSyPtp56UdFOq8YwKHJlUGO/a9VoH1EDs=;
+        b=maV3/D+KEsMAHonoHlZrb9FrTnK8r4bWbkvygtZWv1iC44RdXERIkwc7b7v4ZrHKct
+         oa8RF28z0DEDiR6h2Ms2g8DhKs3BT+sK8jZl+1u50CMhw5x5n27PZHFwIqWO8hWyaSVy
+         tfulLWuS/LWg7+W+miWfOBbrYD0Rc+B85FN3CCLmW1RKrzy8zjlJ53g1jZOT9KogdjHu
+         z5nYhX8EtPdZIQvbNQXRSs3qSxlu3J51Y97xb3zC0KDU/Y6/FouKBcl6BcnQ6m2VKl8b
+         u0MfYHsNsBNG0FpzN5/ApsBEc1hlPMvvF9Q3EYC32BNf0Kn2O4v+hkEN82asmjSFnOUn
+         TvGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:organization:mime-version:content-transfer-encoding;
+        bh=A64BPClTcxiSyPtp56UdFOq8YwKHJlUGO/a9VoH1EDs=;
+        b=dCQJH7qHd1j+e69GwOraAP52ajEWaYTHdQp8Y6OVpYijuoj6/1UJVaUZQu41IGGDXc
+         0CuXMtBcFcNW8WYAk9Oj8677HSbnBv6xhQ3dmC9jl/P6HkM/VseGpXJY1nB6z8EpzNju
+         pBbd2k96504ct43AfUtE7wiuIhc0bogFqoS7OJI1qMUH8ZiN9JdmDL4GsKR6ee4f5mC+
+         sQCcbu040UtebU5f7CHNuqsi0sq/SveK7girAzTTDewupBvj+1XS0iRvqL8hWS5qwqjX
+         WlQ011ULrcVaKAgMa0z3yKch9PEZ6u7WDtGtiQyEc7G4ktIm5qL1cVR3X4lbXZ7elN3V
+         cLLw==
+X-Gm-Message-State: AA+aEWa8HOtNyjCZ4IGv6bPUrvFCf+kY28QoNBR72a4T/uWu94v1OCMt
+        brRu2af5xNYs6p8/dSW8q8kVsQ==
+X-Google-Smtp-Source: AFSGD/WfC7XdfKIfh0LYO4qRvAMKWUKis1+Gf/oKREB0Fy+3M0D9X0H13ES8sX1g4nXXZmgETVEAvA==
+X-Received: by 2002:ae9:f212:: with SMTP id m18mr19613776qkg.5.1544660707820;
+        Wed, 12 Dec 2018 16:25:07 -0800 (PST)
+Received: from cakuba.netronome.com ([66.60.152.14])
+        by smtp.gmail.com with ESMTPSA id c77sm248662qkh.82.2018.12.12.16.25.06
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 12 Dec 2018 16:25:07 -0800 (PST)
+Date:   Wed, 12 Dec 2018 16:25:03 -0800
+From:   Jakub Kicinski <jakub.kicinski@netronome.com>
+To:     Edward Cree <ecree@solarflare.com>
+Cc:     Alice Ferrazzi <alice.ferrazzi@gmail.com>, <ast@kernel.org>,
+        <daniel@iogearbox.net>, <shuah@kernel.org>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 6/7] selftest/bpf: remove redundant parenthesis
+Message-ID: <20181212162503.6fe270f6@cakuba.netronome.com>
+In-Reply-To: <31fc0e28-8f34-1b44-c6b1-9441c6e26c9e@solarflare.com>
+References: <20181211115607.13774-1-alice.ferrazzi@gmail.com>
+        <20181211115607.13774-7-alice.ferrazzi@gmail.com>
+        <20181212110404.2e211ef1@cakuba.netronome.com>
+        <31fc0e28-8f34-1b44-c6b1-9441c6e26c9e@solarflare.com>
+Organization: Netronome Systems, Ltd.
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Neil Horman <nhorman@tuxdriver.com>
-Date: Wed, 12 Dec 2018 07:00:15 -0500
+On Wed, 12 Dec 2018 21:15:52 +0000, Edward Cree wrote:
+> On 12/12/18 19:04, Jakub Kicinski wrote:
+> > On Tue, 11 Dec 2018 20:56:06 +0900, Alice Ferrazzi wrote: =20
+> >> Signed-off-by: Alice Ferrazzi <alice.ferrazzi@gmail.com>
+> >> ---
+> >>  tools/testing/selftests/bpf/test_offload.py | 2 +-
+> >>  1 file changed, 1 insertion(+), 1 deletion(-)
+> >>
+> >> diff --git a/tools/testing/selftests/bpf/test_offload.py b/tools/testi=
+ng/selftests/bpf/test_offload.py
+> >> index 0f9130ebfd2c..b06cc0eea0eb 100755
+> >> --- a/tools/testing/selftests/bpf/test_offload.py
+> >> +++ b/tools/testing/selftests/bpf/test_offload.py
+> >> @@ -140,7 +140,7 @@ def cmd_result(proc, include_stderr=3DFalse, fail=
+=3DFalse):
+> >> =20
+> >> =20
+> >>  def rm(f):
+> >> -    cmd("rm -f %s" % (f))
+> >> +    cmd("rm -f %s" % f)
+> >>      if f in files:
+> >>          files.remove(f)
+> >>   =20
+> > Is this in PEP8, too? =20
+> I don't know, but it shouldn't be.
+> If f is a sequence type, both the old and new code can break here,
+> =C2=A0throwing a TypeError.=C2=A0 It should be cmd("rm -f %s" % (f,)).=C2=
+=A0 The
+> =C2=A0presence of the brackets suggests to me that that's what the
+> =C2=A0original author intended.
 
-> I suggest xin respond to messageid
-> 20180523011821.12165-6-kent.overstreet@gmail.com> and send a NAK,
-> indicating that his patch seems like it will break the build, as,
-> looking through it, it never removes flex_array calls from the sctp
-> code.  If kent reposts with a conversion of the sctp code to radix
-> trees, we're done.  If not, you can move forward with this commit.
+Agreed, that was my intention, I didn't know about the comma option.
 
-Ok, Xin please do that so we can more forward.
+> Now, it's unlikely that we'd ever want to pass a list or tuple
+> =C2=A0here, since 'rm' wouldn't understand the result, but the proper
+> =C2=A0way to deal with that is an assertion with a meaningful message,
+> =C2=A0since the TypeError here will have the non-obvious message "not
+> =C2=A0all arguments converted during string formatting".
 
-Thanks Neil.
+Interesting, thanks for the analysis!
