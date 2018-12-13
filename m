@@ -4,52 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DADE4C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:49:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B79AC65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:49:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9AD0F20870
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:49:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 28FE520849
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:49:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544676568;
-	bh=3vNyvNmZGQoN/9Cz25hkAEyXM5zvPf8TRGZwFYqOOvs=;
+	s=default; t=1544676576;
+	bh=1966haSkD7Am1iqQXIyrqWOSsOF2F1QgqNW8FGvHJtI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=j7m2/ToUTSlUuvGlZU753MNfLXZsaXYIPNSAN/uaddC5jhr9WAgKRr7umlit7STkS
-	 dIc04Qs+suaNlwYh1MjL2Tw22UyBcS3ZeVSUpULnEeWmzaKYE6sdbAv9rY0qcLQv4l
-	 m1o1BDzhNz7kinffTS5y5MexZej6E3gyw1GBvILk=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9AD0F20870
+	b=Ae0sUp0gpFn6CQ8//c0Kl3/htd0BmhLMpEI8ftDH1So+rk814S027RMZ9e30aa4Mk
+	 VmTywIdAaanaXXK4hGQD0LF18x/i5N92x4G68SdDeECSSU1zxaL7Ljm1hk+VlWpINX
+	 cz5rRWjEIdBzEjGKrsTMAxXKPEvbZuqkq9W1rg8Q=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28FE520849
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728170AbeLMEt1 (ORCPT
+        id S1728991AbeLMEtf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 23:49:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42888 "EHLO mail.kernel.org"
+        Wed, 12 Dec 2018 23:49:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42814 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727916AbeLME34 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 23:29:56 -0500
+        id S1727872AbeLME3w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 23:29:52 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 60E5520873;
-        Thu, 13 Dec 2018 04:29:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F1E8A20873;
+        Thu, 13 Dec 2018 04:29:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544675396;
-        bh=3vNyvNmZGQoN/9Cz25hkAEyXM5zvPf8TRGZwFYqOOvs=;
+        s=default; t=1544675391;
+        bh=1966haSkD7Am1iqQXIyrqWOSsOF2F1QgqNW8FGvHJtI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2f83194uRdrAG6AdS2lEBp7R6EA5/3cb+9CK8Tc5uBbXq3IHhacxvJdQLz0vmIpCJ
-         Ifwon0JHuRa5XrW4sHIdzV5BtWFqhLTUbfre4sDx3g4cOCLN0PSk6QhQ3MUE+tdeX7
-         93nA8dEdWaKDZPEQ+vsfc6PnmWH+zvvxID+xW6pM=
+        b=T6x8CwLHei4T0jrGRJnMqV+lVpZT3N7rnlEqFmg6u1zdwpwGbiGD7ndjj1cniTo9o
+         AR7pLVgRYCuHkUoiEx3Z3zS5MEADTdQO4m9KzyXxYB6nIbstcMjp7byh6yJ8O4HM7Z
+         /TKbCr/bHZlFoHxAUquaeZZu1TYK3Ouh6Kkss0XE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Teika Kazura <teika@gmx.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Sasha Levin <sashal@kernel.org>, linux-input@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 39/73] Input: synaptics - enable SMBus for HP 15-ay000
-Date:   Wed, 12 Dec 2018 23:28:04 -0500
-Message-Id: <20181213042838.75160-39-sashal@kernel.org>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 37/73] clk: mvebu: Off by one bugs in cp110_of_clk_get()
+Date:   Wed, 12 Dec 2018 23:28:02 -0500
+Message-Id: <20181213042838.75160-37-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181213042838.75160-1-sashal@kernel.org>
 References: <20181213042838.75160-1-sashal@kernel.org>
@@ -61,40 +60,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Teika Kazura <teika@gmx.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 5a6dab15f7a79817cab4af612ddd99eda793fce6 ]
+[ Upstream commit d9f5b7f5dd0fa74a89de5a7ac1e26366f211ccee ]
 
-SMBus works fine for the touchpad with id SYN3221, used in the HP 15-ay000
-series,
+These > comparisons should be >= to prevent reading beyond the end of
+of the clk_data->hws[] buffer.
 
-This device has been reported in these messages in the "linux-input"
-mailing list:
-* https://marc.info/?l=linux-input&m=152016683003369&w=2
-* https://www.spinics.net/lists/linux-input/msg52525.html
+The clk_data->hws[] array is allocated in cp110_syscon_common_probe()
+when we do:
+	cp110_clk_data = devm_kzalloc(dev, sizeof(*cp110_clk_data) +
+				      sizeof(struct clk_hw *) * CP110_CLK_NUM,
+				      GFP_KERNEL);
+As you can see, it has CP110_CLK_NUM elements which is equivalent to
+CP110_MAX_CORE_CLOCKS + CP110_MAX_GATABLE_CLOCKS.
 
-Reported-by: Nitesh Debnath <niteshkd1999@gmail.com>
-Reported-by: Teika Kazura <teika@gmx.com>
-Signed-off-by: Teika Kazura <teika@gmx.com>
-Reviewed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Fixes: d3da3eaef7f4 ("clk: mvebu: new driver for Armada CP110 system controller")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/input/mouse/synaptics.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/clk/mvebu/cp110-system-controller.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/input/mouse/synaptics.c b/drivers/input/mouse/synaptics.c
-index c42813d50591..2bd5bb11c8ba 100644
---- a/drivers/input/mouse/synaptics.c
-+++ b/drivers/input/mouse/synaptics.c
-@@ -178,6 +178,7 @@ static const char * const smbus_pnp_ids[] = {
- 	"LEN0096", /* X280 */
- 	"LEN0097", /* X280 -> ALPS trackpoint */
- 	"LEN200f", /* T450s */
-+	"SYN3221", /* HP 15-ay000 */
- 	NULL
- };
+diff --git a/drivers/clk/mvebu/cp110-system-controller.c b/drivers/clk/mvebu/cp110-system-controller.c
+index 75bf7b8f282f..0153c76d4a20 100644
+--- a/drivers/clk/mvebu/cp110-system-controller.c
++++ b/drivers/clk/mvebu/cp110-system-controller.c
+@@ -202,11 +202,11 @@ static struct clk_hw *cp110_of_clk_get(struct of_phandle_args *clkspec,
+ 	unsigned int idx = clkspec->args[1];
  
+ 	if (type == CP110_CLK_TYPE_CORE) {
+-		if (idx > CP110_MAX_CORE_CLOCKS)
++		if (idx >= CP110_MAX_CORE_CLOCKS)
+ 			return ERR_PTR(-EINVAL);
+ 		return clk_data->hws[idx];
+ 	} else if (type == CP110_CLK_TYPE_GATABLE) {
+-		if (idx > CP110_MAX_GATABLE_CLOCKS)
++		if (idx >= CP110_MAX_GATABLE_CLOCKS)
+ 			return ERR_PTR(-EINVAL);
+ 		return clk_data->hws[CP110_MAX_CORE_CLOCKS + idx];
+ 	}
 -- 
 2.19.1
 
