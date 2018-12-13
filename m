@@ -7,52 +7,52 @@ X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9AA4C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:35:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 197BDC65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:35:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF47720849
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:35:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D313E20849
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:35:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544675735;
-	bh=7wXvcSc32yhSFdRlR5hv3PoybqeBUCJ6ghFoiKztSJE=;
+	s=default; t=1544675749;
+	bh=0JQlf9lnpUVeeXwAygIuD/6K6JoE6jf2iX7HY821o7k=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=RjK5TyaTi81mKmyGabAiGeQPtm2VElzajLeW8ZYuVIzZ32LUYTRYOZoQ2agji2cN9
-	 fcayOsiHNCg8wfFB6pF5q3lYJ3Uh5rWrVipsvuN4zy57Qht7C29PJ0SMdeaarjZ4P8
-	 Ui+tPLqOk167o+pD2JNegpFTzcd4DsxeI12LeImg=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF47720849
+	b=S1mXZceDOI2ZkqnU39tcI+pyp4juojR195jBqFMWe/Pw5TYflMQOdGdsvVjhtqsNO
+	 E1e4/n6QjsmqO0RmWfTJbrgnUrXA8Gxo2czApN8PVJ4abNWcbQKsDF7VhdN+hrrx9z
+	 kefrCMU0UtxG9cBm1pwyXh39/58jRI1D8h3rA02Q=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D313E20849
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729331AbeLMEfe (ORCPT
+        id S1729437AbeLMEdq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 23:35:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47064 "EHLO mail.kernel.org"
+        Wed, 12 Dec 2018 23:33:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46570 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728893AbeLMEdy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 23:33:54 -0500
+        id S1729394AbeLMEdg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 23:33:36 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3919420672;
-        Thu, 13 Dec 2018 04:33:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D254020879;
+        Thu, 13 Dec 2018 04:33:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544675633;
-        bh=7wXvcSc32yhSFdRlR5hv3PoybqeBUCJ6ghFoiKztSJE=;
+        s=default; t=1544675615;
+        bh=0JQlf9lnpUVeeXwAygIuD/6K6JoE6jf2iX7HY821o7k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QMwW+pS9teQ0NJtiG/hpwFDHWzaoDyMM9dGDKXBPpv+2tgzfTDxqo7XPYCcfznlk5
-         M1u/5QbjlVQczTOb2B3cCkb7l/RXuiILjSjSyEsQBegdCk+yArmleyhT8eBwvfHeHJ
-         WQV3b1wiFvUqxg3U90MFeqbjFSzBgJk3rJMuNDIk=
+        b=LqkYZt1t6T2ReIVEeJuEJTaX3Z7TDE9xlQtWxaef/tQuwXJp9ldwCz0BkANoXXjpn
+         IgEXFmNAg0XFR6g4ImakDT6deSyzKaOG2eYuQD8nN/f7k+glta83uB31yNhze1GDbV
+         GI5Jq88FOdkP1vD5FSLHcvQnBbt557qk114i3wUQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Sasha Levin <sashal@kernel.org>, linux-nfs@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 3.18 06/16] SUNRPC: Fix a potential race in xprt_connect()
-Date:   Wed, 12 Dec 2018 23:33:33 -0500
-Message-Id: <20181213043343.76896-6-sashal@kernel.org>
+Cc:     Chris Cole <chris@sageembedded.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 20/23] ARM: 8814/1: mm: improve/fix ARM v7_dma_inv_range() unaligned address handling
+Date:   Wed, 12 Dec 2018 23:32:56 -0500
+Message-Id: <20181213043259.76643-20-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181213043343.76896-1-sashal@kernel.org>
-References: <20181213043343.76896-1-sashal@kernel.org>
+In-Reply-To: <20181213043259.76643-1-sashal@kernel.org>
+References: <20181213043259.76643-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -61,46 +61,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Trond Myklebust <trond.myklebust@hammerspace.com>
+From: Chris Cole <chris@sageembedded.com>
 
-[ Upstream commit 0a9a4304f3614e25d9de9b63502ca633c01c0d70 ]
+[ Upstream commit a1208f6a822ac29933e772ef1f637c5d67838da9 ]
 
-If an asynchronous connection attempt completes while another task is
-in xprt_connect(), then the call to rpc_sleep_on() could end up
-racing with the call to xprt_wake_pending_tasks().
-So add a second test of the connection state after we've put the
-task to sleep and set the XPRT_CONNECTING flag, when we know that there
-can be no asynchronous connection attempts still in progress.
+This patch addresses possible memory corruption when
+v7_dma_inv_range(start_address, end_address) address parameters are not
+aligned to whole cache lines. This function issues "invalidate" cache
+management operations to all cache lines from start_address (inclusive)
+to end_address (exclusive). When start_address and/or end_address are
+not aligned, the start and/or end cache lines are first issued "clean &
+invalidate" operation. The assumption is this is done to ensure that any
+dirty data addresses outside the address range (but part of the first or
+last cache lines) are cleaned/flushed so that data is not lost, which
+could happen if just an invalidate is issued.
 
-Fixes: 0b9e79431377d ("SUNRPC: Move the test for XPRT_CONNECTING into...")
-Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+The problem is that these first/last partial cache lines are issued
+"clean & invalidate" and then "invalidate". This second "invalidate" is
+not required and worse can cause "lost" writes to addresses outside the
+address range but part of the cache line. If another component writes to
+its part of the cache line between the "clean & invalidate" and
+"invalidate" operations, the write can get lost. This fix is to remove
+the extra "invalidate" operation when unaligned addressed are used.
+
+A kernel module is available that has a stress test to reproduce the
+issue and a unit test of the updated v7_dma_inv_range(). It can be
+downloaded from
+http://ftp.sageembedded.com/outgoing/linux/cache-test-20181107.tgz.
+
+v7_dma_inv_range() is call by dmac_[un]map_area(addr, len, direction)
+when the direction is DMA_FROM_DEVICE. One can (I believe) successfully
+argue that DMA from a device to main memory should use buffers aligned
+to cache line size, because the "clean & invalidate" might overwrite
+data that the device just wrote using DMA. But if a driver does use
+unaligned buffers, at least this fix will prevent memory corruption
+outside the buffer.
+
+Signed-off-by: Chris Cole <chris@sageembedded.com>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/sunrpc/xprt.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ arch/arm/mm/cache-v7.S | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/net/sunrpc/xprt.c b/net/sunrpc/xprt.c
-index 56e4e150e80e..dca234b1f77d 100644
---- a/net/sunrpc/xprt.c
-+++ b/net/sunrpc/xprt.c
-@@ -721,8 +721,15 @@ void xprt_connect(struct rpc_task *task)
- 			return;
- 		if (xprt_test_and_set_connecting(xprt))
- 			return;
--		xprt->stat.connect_start = jiffies;
--		xprt->ops->connect(xprt, task);
-+		/* Race breaker */
-+		if (!xprt_connected(xprt)) {
-+			xprt->stat.connect_start = jiffies;
-+			xprt->ops->connect(xprt, task);
-+		} else {
-+			xprt_clear_connecting(xprt);
-+			task->tk_status = 0;
-+			rpc_wake_up_queued_task(&xprt->pending, task);
-+		}
- 	}
- }
+diff --git a/arch/arm/mm/cache-v7.S b/arch/arm/mm/cache-v7.S
+index a134d8a13d00..11d699af30ed 100644
+--- a/arch/arm/mm/cache-v7.S
++++ b/arch/arm/mm/cache-v7.S
+@@ -359,14 +359,16 @@ v7_dma_inv_range:
+ 	ALT_UP(W(nop))
+ #endif
+ 	mcrne	p15, 0, r0, c7, c14, 1		@ clean & invalidate D / U line
++	addne	r0, r0, r2
  
+ 	tst	r1, r3
+ 	bic	r1, r1, r3
+ 	mcrne	p15, 0, r1, c7, c14, 1		@ clean & invalidate D / U line
+-1:
+-	mcr	p15, 0, r0, c7, c6, 1		@ invalidate D / U line
+-	add	r0, r0, r2
+ 	cmp	r0, r1
++1:
++	mcrlo	p15, 0, r0, c7, c6, 1		@ invalidate D / U line
++	addlo	r0, r0, r2
++	cmplo	r0, r1
+ 	blo	1b
+ 	dsb	st
+ 	ret	lr
 -- 
 2.19.1
 
