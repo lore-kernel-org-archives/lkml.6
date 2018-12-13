@@ -2,137 +2,142 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2696C67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 15:46:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B9F2C67872
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 15:47:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B09432086D
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 15:46:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S/KXkiOD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B09432086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 500572087F
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 15:47:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544716040;
+	bh=uyTqY7ieijazWOMuOQ32ThMiRTihpmC1vUZ4/3kwTPE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=xrQphfZVFsac3fG1lUF1vtxc2zMzggck79GaLv7tQMWzD+vUedGj9WFwjHvFFxAWP
+	 FT8h2XaXeXdqqWwAC9/r+hE/dsRdjrATDk+HZYYnbuFHdRxGbw6rLcIklD3v8Cn5+3
+	 /+4i8FVabVRKWGcOCfMk1x89IHt7pUBo3ftIM+yw=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 500572087F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728744AbeLMPqg (ORCPT
+        id S1728981AbeLMPrT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 10:46:36 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:40912 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726150AbeLMPqf (ORCPT
+        Thu, 13 Dec 2018 10:47:19 -0500
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:37994 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726150AbeLMPrT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 10:46:35 -0500
-Received: by mail-qk1-f193.google.com with SMTP id y16so1366232qki.7;
-        Thu, 13 Dec 2018 07:46:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=E6eri7DERpU5AOSLUsbXMPV0GqnePrnLSVUgtfhWszE=;
-        b=S/KXkiODv2W7QOfSUDruPhBBdCRupdFMC8ATReRcmvWAiYrZ1VYt+iU8BFcBSs4pgD
-         D1lcXDmO7v+ZnZfLm2zqCFJ57FcpTdRzrL/eIWhlULW876EVZRsoYY8fxI0pguZKjrQR
-         LFoc7BtDNbxohgLONDOEJi17qrK8JiI7LtFjxMNLGnfpk8KbyS+QPPFonSBR/LK5zy8U
-         aUNLt7FZ4ZHL7QPiWYJQAOkiNHNzG2E7Yx51LaWf9aKXezKDUUfBkKvH6Br43WqRPzIC
-         n3VH8AbZjj6ZKA0Rlixqt9TfbeRS8gmBzwv4Gzcf8isapuPZD5WlhCjz7tM8jkaIFdgG
-         RM+g==
+        Thu, 13 Dec 2018 10:47:19 -0500
+Received: by mail-qk1-f196.google.com with SMTP id a1so1322461qkc.5;
+        Thu, 13 Dec 2018 07:47:17 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=E6eri7DERpU5AOSLUsbXMPV0GqnePrnLSVUgtfhWszE=;
-        b=bvFz2nsv1z2eqMoGsmSWGUB/QpHDbIOzKTLG52FKOI3HM4iafw31oGMyvng11lJ9ym
-         qtbh/Yu85EuGyQpkR/WjFwLcqsdHlMxHGcOik6hdQSLbakTQvjlbO/bCySlhl0ux49qT
-         ra/25K6pwo2r2L7Xsd3nMgNJqPwe4RXX49cTnUtKtieNwTdkw/bpgFiGuCKPYPl1/InM
-         KBmJ/bFkTl/BhavSqd+dDPi9XAsCVZ/JF1XVNG1CxRo4bTPztz26IEKnJ+pchZk9ECjB
-         UKX5/f0nL6C4x+46fd0UwDVLs/RVrUZJoI5+sr880jFbvpQ973t5TP04UHwlc9ae8/vE
-         yR/w==
-X-Gm-Message-State: AA+aEWZYThK3zN6ZUyeu3qSQ8Es15eE8PVyiX8GmW/SjpbzBaLFW1jkL
-        r3TvrO7w0H4ltRZqK7jcb/jWWF3v1Eh1MJkJqaU=
-X-Google-Smtp-Source: AFSGD/U8WEEbjQDSrj0cBsMmviywryuFDX8s3UjsGxtYG/CC0l9lVo4YHmokrtYyQrEzvMoHZcG2hHnXAhbL0tgpgIY=
-X-Received: by 2002:a37:99c5:: with SMTP id b188mr23381956qke.100.1544715994395;
- Thu, 13 Dec 2018 07:46:34 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=HvY3Xbu3sqpn2hBpXa+Yc47YOoO1K16g2qWpj3u3juM=;
+        b=omXSAnUOr7eWbIGf2aI8LdTl21N6IVzw1zOmtEYi329ZVznFkRF1cMIGIG+6+0eZX7
+         yFcHEGqqeHGPth5i2+1gRIVQlLGRkzxl/SibKqAaJ5/ZWIwI9eUt97LXZdXY4ciH0hfL
+         pMBRu5JYC7hPYC5dWKloQLwzXG8vvtAEQlLqgB+jnx5c+3dX4u/iW1ppEfqGKPaW3rBA
+         AAKXv45PLFanutpgKQNuXy0kgDvefBd+GbZw7VjDiSrWO3l6IfiXeyF2s7m/25BEeCnK
+         GvErbwjckiGLK3dTmRvSJNWzCiPJTPhJM0tuWZ0qBuj7P/8euVtY/bCVa+z7vP064jRe
+         Deaw==
+X-Gm-Message-State: AA+aEWYup3kelNVlkdsO9wnh6+XV2dAJSi+Dqe2P0b1OtoPvRMla4DVZ
+        r3DDUaJmzvzpUR7gOgCs/jg=
+X-Google-Smtp-Source: AFSGD/W9TPb5W7WKC0xiBuHMd/HhHaDmtgsOnbrcrSvT7JFWbq4lqKE8f4Hd2BOn5PYUKV2BZ9RNRA==
+X-Received: by 2002:a37:ba06:: with SMTP id k6mr22580676qkf.115.1544716036609;
+        Thu, 13 Dec 2018 07:47:16 -0800 (PST)
+Received: from dennisz-mbp.dhcp.thefacebook.com ([2620:10d:c091:200::7:b1cc])
+        by smtp.gmail.com with ESMTPSA id s46sm1369866qtc.63.2018.12.13.07.47.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 13 Dec 2018 07:47:15 -0800 (PST)
+Date:   Thu, 13 Dec 2018 10:47:13 -0500
+From:   Dennis Zhou <dennis@kernel.org>
+To:     Bart Van Assche <bvanassche@acm.org>
+Cc:     Dennis Zhou <dennis@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+        Tejun Heo <tj@kernel.org>, Josef Bacik <josef@toxicpanda.com>,
+        kernel-team@fb.com, linux-block@vger.kernel.org,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Ming Lei <ming.lei@redhat.com>
+Subject: Re: [PATCH] blkcg: handle dying request_queue when associating a blkg
+Message-ID: <20181213154713.GA76721@dennisz-mbp.dhcp.thefacebook.com>
+References: <20181211230308.66276-1-dennis@kernel.org>
+ <1544570173.185366.397.camel@acm.org>
+ <20181212040643.GA73727@dennisz-mbp.dhcp.thefacebook.com>
+ <1544658892.185366.412.camel@acm.org>
 MIME-Version: 1.0
-References: <CALCETrXoRAibsbWa9nfbDrt0iEuebMnCMhSFg-d9W-J2g8mDjw@mail.gmail.com>
- <CAHk-=wi_Kp=3XmGDdzmadzFSPFvuL+aAJ6ZPAR=o4z=KwYT2vw@mail.gmail.com> <CAOesGMgu1i3p7XMZuCEtj63T-ST_jh+BfaHy-K6LhgqNriKHAA@mail.gmail.com>
-In-Reply-To: <CAOesGMgu1i3p7XMZuCEtj63T-ST_jh+BfaHy-K6LhgqNriKHAA@mail.gmail.com>
-From:   Lance Richardson <lance.richardson.net@gmail.com>
-Date:   Thu, 13 Dec 2018 10:46:23 -0500
-Message-ID: <CAPmeqMrVqJm4sqVgSLqJnmaVC5iakjJ_OxGWo4eFbOCxKEx=GA@mail.gmail.com>
-Subject: Re: Can we drop upstream Linux x32 support?
-To:     olof@lixom.net
-Cc:     torvalds@linux-foundation.org, luto@kernel.org, x86@kernel.org,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        hpa@zytor.com, peterz@infradead.org, bp@alien8.de,
-        fweimer@redhat.com, vapier@gentoo.org, hjl.tools@gmail.com,
-        dalias@libc.org, x32@buildd.debian.org, arnd@arndb.de,
-        will.deacon@arm.com, catalin.marinas@arm.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1544658892.185366.412.camel@acm.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 13, 2018 at 9:39 AM Olof Johansson <olof@lixom.net> wrote:
->
-> On Tue, Dec 11, 2018 at 9:40 AM Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> >
-> > On Mon, Dec 10, 2018 at 5:23 PM Andy Lutomirski <luto@kernel.org> wrote:
-> > >
-> > > I'm seriously considering sending a patch to remove x32 support from
-> > > upstream Linux.  Here are some problems with it:
-> >
-> > I talked to Arnd (I think - we were talking about all the crazy ABI's,
-> > but maybe it was with somebody else) about exactly this in Edinburgh.
-> >
-> > Apparently the main real use case is for extreme benchmarking. It's
-> > the only use-case where the complexity of maintaining a whole
-> > development environment and distro is worth it, it seems. Apparently a
-> > number of Spec submissions have been done with the x32 model.
-> >
-> > I'm not opposed to trying to sunset the support, but let's see who complains..
->
-> I'm just a single user. I do rely on it though, FWIW.
->
-> I hadn't finished my benchmarking in Edinburgh, but for my new machine
-> that does kernel builds 24/7, I ended up going with x32 userspace (in
-> a container).
->
-> Main reason is that it's a free ~10% improvement in runtime over
-> 64-bit. I.e. GCC-as-a-workload is quite a bit faster as x32,
-> supposedly mostly due to smaller D cache footprints (I ran out of
-> cycles to tinker with back and forth perf data collection and settled
-> down on just running it).
->
-> Running classic 32-bit (i386? i686? whatever it's called) is about
-> half as good. I.e. even then I get a ~5% performance win. Less than
-> x32, but still better than 64-bit userspace.
->
->
-> -Olof
+On Wed, Dec 12, 2018 at 03:54:52PM -0800, Bart Van Assche wrote:
+> On Tue, 2018-12-11 at 23:06 -0500, Dennis Zhou wrote:
+> > Hi Bart,
+> > 
+> > On Tue, Dec 11, 2018 at 03:16:13PM -0800, Bart Van Assche wrote:
+> > > On Tue, 2018-12-11 at 18:03 -0500, Dennis Zhou wrote:
+> > > > diff --git a/block/blk-cgroup.c b/block/blk-cgroup.c
+> > > > index 6bd0619a7d6e..c30661ddc873 100644
+> > > > --- a/block/blk-cgroup.c
+> > > > +++ b/block/blk-cgroup.c
+> > > > @@ -202,6 +202,12 @@ static struct blkcg_gq *blkg_create(struct blkcg *blkcg,
+> > > >  	WARN_ON_ONCE(!rcu_read_lock_held());
+> > > >  	lockdep_assert_held(&q->queue_lock);
+> > > >  
+> > > > +	/* request_queue is dying, do not create/recreate a blkg */
+> > > > +	if (blk_queue_dying(q)) {
+> > > > +		ret = -ENODEV;
+> > > > +		goto err_free_blkg;
+> > > > +	}
+> > > > +
+> > > >  	/* blkg holds a reference to blkcg */
+> > > >  	if (!css_tryget_online(&blkcg->css)) {
+> > > >  		ret = -ENODEV;
+> > > 
+> > > What prevents that the queue state changes after blk_queue_dying() has returned
+> > > and before blkg_create() returns? Are you sure you don't need to protect this
+> > > code with a blk_queue_enter() / blk_queue_exit() pair?
+> > > 
+> > 
+> > Hmmm. So I think the idea is that we rely on normal shutdown as I don't
+> > think there is anything wrong with creating a blkg on a dying
+> > request_queue. When we are doing association, the request_queue should
+> > be pinned by the open call. What we are racing against is when the
+> > request_queue is shutting down, it goes around and destroys the blkgs.
+> > For clarity, QUEUE_FLAG_DYING is set in blk_cleanup_queue() before
+> > calling blk_exit_queue() which eventually calls blkcg_exit_queue().
+> > 
+> > The use of blk_queue_dying() is to determine whether blkg shutdown has
+> > already started as if we create one after it has started, we may
+> > incorrectly orphan a blkg and leak it. Both blkg creation and
+> > destruction require holding the queue_lock, so if the QUEUE_FLAG_DYING
+> > flag is set after we've checked it, it means blkg destruction hasn't
+> > started because it has to wait on the queue_lock. If QUEUE_FLAG_DYING is
+> > set, then we have no guarantee of knowing what phase blkg destruction is
+> > in leading to a potential leak.
+> 
+> Hi Dennis,
+> 
+> To answer my own question: since all queue flag manipulations are protected
+> by the queue lock and since blkg_create() is called with the queue lock held
+> the above code does not need any further protection. Hence feel free to add
+> the following:
+> 
+> Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+> 
 
-I'm familiar with two embedded Linux systems using x32 ABI for the
-following reasons:
-   - Significant performance benefits over i386 ABI.
-   - Smaller memory footprint than x86_64 (pointer-heavy data structures)
-   - Large legacy software base with many ILP32 assumptions, much
-     smaller effort to move to x32 than x86_64.
+It seems that Christoph in 57d74df90783 ("block: use atomic bitops for
+->queue_flags") changed it so that flag manipulations no longer are
+protected by the queue_lock in for-4.21/block. But I think my
+explanation above suffices that we will always be able to clean up a
+blkg created as long as the QUEUE_FLAG_DYING is not set.
 
-Some examples of (relatively minor) problems encountered with x32:
-   - Time-related data type mismatch in socket options (fixed)
-     https://patchwork.ozlabs.org/patch/904254/
-
-   - Userspace overrun with select() (patch proposed)
-     https://patchwork.kernel.org/patch/10245677/
-
-   - glibc get_phys_pages() doesn't work correctly with x32
-     (assumes that struct sysinfo fields are not wider than "long").
-
-So, one small vote for keeping x32 with the hope that support for it
-can continue to be improved...
-
-   - Lance
+Thanks for reviewing this!
+Dennis
