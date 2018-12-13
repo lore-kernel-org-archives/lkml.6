@@ -2,80 +2,123 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D781C67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 21:58:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60C74C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 21:59:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD64C20870
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 21:58:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD64C20870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 1DE6920811
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 21:59:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aDCRYKFw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DE6920811
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728128AbeLMV6J (ORCPT
+        id S1728123AbeLMV7Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 16:58:09 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:35080 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726435AbeLMV6H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 16:58:07 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 12464307EAA1;
-        Thu, 13 Dec 2018 21:58:07 +0000 (UTC)
-Received: from redhat.com (ovpn-121-220.rdu2.redhat.com [10.10.121.220])
-        by smtp.corp.redhat.com (Postfix) with SMTP id AB99761B77;
-        Thu, 13 Dec 2018 21:58:05 +0000 (UTC)
-Date:   Thu, 13 Dec 2018 16:58:04 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc:     Jason Wang <jasowang@redhat.com>, kvm@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 3/3] vhost: access vq metadata through kernel
- virtual address
-Message-ID: <20181213165731-mutt-send-email-mst@kernel.org>
-References: <20181213101022.12475-1-jasowang@redhat.com>
- <20181213101022.12475-4-jasowang@redhat.com>
- <20181213102713-mutt-send-email-mst@kernel.org>
- <20181213211840.GC18692@char.us.oracle.com>
+        Thu, 13 Dec 2018 16:59:24 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:35946 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726435AbeLMV7X (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 16:59:23 -0500
+Received: by mail-lf1-f67.google.com with SMTP id a16so2766222lfg.3
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 13:59:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/i3Qn5RbIp1Jj9tl455vSrzT6kqJoyyhRMnpm0rgy6M=;
+        b=aDCRYKFw4DNAg/YTIDlFZfBRTdrjnwxkDhVWmL7eqcMCSR0qTFQuxZluHZkAKL53Id
+         uEqlpBG9+byF5aRVn9qTvWoY93PKGLuBXJaYqNcASFfZH3N3XJZfuOiTCQG94uMqrW5f
+         2YO/EoMWUSQG1s6zKsjon+ttOFmbo0jo7i5OT5Bb03YQlvhLm5jdrfPV/s+CKYr5PLSm
+         HtfsBM7kKjgyL15TzgsOnqUABF7A1omVmpEi2M91H+ewCYSLfMlMJwADuh3CUH2Xdf2M
+         MjOrAH3PB5x7ewIRZMorDGdDvUwzgDnXZSFrBtyltfSWkJGkZfY6Q47Ndzzh7xzNBLKJ
+         uJBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/i3Qn5RbIp1Jj9tl455vSrzT6kqJoyyhRMnpm0rgy6M=;
+        b=NQzSbtb5hBOzBKvgh2iImeelW3G5Rg7oeqgWBSqRB3Ld7SbuctVNSXoKpPjQQWU832
+         XlDVzfVGohq3SxuVJSRUclryagGUjlB/C4ZZ+JrQbMl0N6XImJ6tEzgLBvKTVOVm7aY0
+         3pBZp+0wrHdniQSUY4M8OScI79AN06FxfEu+Oh0O1G/cDCqye2Zkw4LOhIaMeU7wEAce
+         hdpX9P06GqjL2slhLae4faFATUV9QsptOUw1KFPU1/ooUBaem+xugkDWIPD8AJl259Fw
+         oFf5FH/iAxaApk+XKDmvZNBbjPhS0p3FQyT99Hz9HPRq0oqMaQbIbGR9u/T0Yy4vAlhx
+         vSig==
+X-Gm-Message-State: AA+aEWanuoVi7M/wpdIvXiA8P0ykOd6cBRkw3+DzZC4wDoqzpnXwKye8
+        K/lwj3kpGgrYCSs8EHdg0d0KyNfl/x8i6NQOeupVVdRrTzs=
+X-Google-Smtp-Source: AFSGD/WKgTsUh/0smVGyEgvXuGsh4JAwWwdrTdvIYFPbl8OH/2hIssxfKG8DZwxEvirSCwq5ggXoF/3ssL5FB3zMs4A=
+X-Received: by 2002:a19:54d7:: with SMTP id b84mr237163lfl.131.1544738361431;
+ Thu, 13 Dec 2018 13:59:21 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181213211840.GC18692@char.us.oracle.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Thu, 13 Dec 2018 21:58:07 +0000 (UTC)
+References: <20181209032715.3466040-1-liuxiaozhou@bytedance.com>
+In-Reply-To: <20181209032715.3466040-1-liuxiaozhou@bytedance.com>
+From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date:   Thu, 13 Dec 2018 22:59:10 +0100
+Message-ID: <CANiq72nqFuJm5f69G-Pc_9QHz+anwaon-WfVsPrkZWah1OP7Fg@mail.gmail.com>
+Subject: Re: [PATCH v2] Compiler Attributes: don't pollute userspace with
+ macro definitions
+To:     liuxiaozhou@bytedance.com, Greg KH <gregkh@linuxfoundation.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 13, 2018 at 04:18:40PM -0500, Konrad Rzeszutek Wilk wrote:
-> .giant snip..
-> > > +	npinned = get_user_pages_fast(uaddr, npages, write, pages);
-> > > +	if (npinned != npages)
-> > > +		goto err;
-> > > +
-> > 
-> > As I said I have doubts about the whole approach, but this
-> > implementation in particular isn't a good idea
-> > as it keeps the page around forever.
-> > So no THP, no NUMA rebalancing, userspace-controlled
-> > amount of memory locked up and not accounted for.
-> > 
-> > Don't get me wrong it's a great patch in an ideal world.
-> > But then in an ideal world no barriers smap etc are necessary at all.
-> 
-> So .. suggestions on how this could be accepted? As in other ways
-> where we still get vmap and the issues you mentioned are not troubling you?
-> 
-> Thanks!
+Hi Xiaozhou,
 
-I'd suggest leave vmap alone and find ways to speed up accesses
-that can fault.
+Couple of comments.
 
--- 
-MST
+On Sun, Dec 9, 2018 at 4:27 AM Xiaozhou Liu <liuxiaozhou@bytedance.com> wrote:
+>
+> v2: update commit message.
+
+This line should go below the "---", since it shouldn't be part of the
+commit message.
+
+> +#ifdef __KERNEL__
+> +
+>  #ifdef CONFIG_ENABLE_MUST_CHECK
+>  #define __must_check           __attribute__((__warn_unused_result__))
+>  #else
+> @@ -215,4 +217,6 @@ struct ftrace_likely_data {
+>   */
+>  #define noinline_for_stack noinline
+>
+> +#endif /* __KERNEL */
+
+I wonder if we can/should simply move them into the __KERNEL__ &&
+!__ASSEMBLY__ block that is above, instead. It would be simpler to
+read, and there aren't apparently dependencies to those outside it
+that go after the block.
+
+I took a look at where the macros were at each "step", and, on one
+hand, compiler-gcc.h was (and is) included entirely inside it, which
+is from where most of the macros come originally from. On the other
+hand, not all do: __must_check (the generic version, not the one in
+-gcc.h) and noinline_for_stack were defined in __KERNEL__ (only)
+before commit 815f0ddb346c ("include/linux/compiler*.h: make
+compiler-*.h mutually exclusive"). But anyway using those two in
+assembly does not make sense, right?
+
+What do you think?
+
+Greg/Linus, are you going to pick this (or a v3) directly? If not, I
+can pick it up in compiler-attributes tree linux-next.
+
+PS: In addition (related to this but not for this patch), we should
+review whether other macros that are currently outside should be there
+or simply pushed back into __KERNEL__ (and possibly __ASSEMBLY__). For
+instance, __latent_entropy (the generic one) is outside, but it is
+only defined in compiler-gcc.h, so the generic one should be inside
+the __KERNEL__ && !__ASSEMBLY__ block, no?
+
+Cheers,
+Miguel
