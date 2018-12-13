@@ -2,438 +2,162 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,T_MIXED_ES,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,T_MIXED_ES,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94AB1C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 07:50:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50027C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 07:54:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44E0520870
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 07:50:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Zu44zFH9";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="k6PTWNkt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44E0520870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 01A0720870
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 07:54:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01A0720870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727352AbeLMHu0 (ORCPT
+        id S1727032AbeLMHyz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 02:50:26 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:46412 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726500AbeLMHuZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 02:50:25 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 1288C6071B; Thu, 13 Dec 2018 07:50:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1544687424;
-        bh=OSlMld2btEsj689zYb1wBA7s3ifqBnLtWM25x5itfkg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Zu44zFH9KHJc5/B0NFV90vaMYUz1QxF923Cq2wfWaJO8kCftuEjXO4qF7OIrguRIb
-         4uHmFsrHQmPMPvmODKeWhiU347MQqh6lB93X3cKCIhbc6B/6Cov6+Xfwd0ICSWlZbr
-         aP/IlilC5XUMlx/ZR+K8BI5kxTIEWRZMEap8F0j8=
-Received: from tdas-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: tdas@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 76390602F5;
-        Thu, 13 Dec 2018 07:50:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1544687421;
-        bh=OSlMld2btEsj689zYb1wBA7s3ifqBnLtWM25x5itfkg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=k6PTWNkt+q/4hH8t3cHHFXAHwdEipiZJcFn9f07MTj3pLHmsn4R7ZvL7pVrK3WRTL
-         KlV4nSce+bgafHCuX7hoYjLsLLnGhQL/sHKHIeLlaTvSfY1o4oeNws85gAhb2cbBrf
-         POfVxjq2KshzHrAsJgBI4CyCA77l5FpZnujDYEYk=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 76390602F5
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
-From:   Taniya Das <tdas@codeaurora.org>
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Rajendra Nayak <rnayak@codeaurora.org>, devicetree@vger.kernel.org,
-        robh@kernel.org, skannan@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, evgreen@google.com,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        Stephen Boyd <swboyd@chromium.org>
-Subject: [PATCH v12 2/2] cpufreq: qcom-hw: Add support for QCOM cpufreq HW driver
-Date:   Thu, 13 Dec 2018 13:19:54 +0530
-Message-Id: <1544687394-331-3-git-send-email-tdas@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1544687394-331-1-git-send-email-tdas@codeaurora.org>
-References: <1544687394-331-1-git-send-email-tdas@codeaurora.org>
+        Thu, 13 Dec 2018 02:54:55 -0500
+Received: from prv1-mh.provo.novell.com ([137.65.248.33]:49930 "EHLO
+        prv1-mh.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726609AbeLMHyz (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:8:1>);
+        Thu, 13 Dec 2018 02:54:55 -0500
+Received: from INET-PRV1-MTA by prv1-mh.provo.novell.com
+        with Novell_GroupWise; Thu, 13 Dec 2018 00:54:54 -0700
+Message-Id: <5C12104C0200007800205B4B@prv1-mh.provo.novell.com>
+X-Mailer: Novell GroupWise Internet Agent 18.1.0 
+Date:   Thu, 13 Dec 2018 00:54:52 -0700
+From:   "Jan Beulich" <JBeulich@suse.com>
+To:     "Chao Gao" <chao.gao@intel.com>
+Cc:     "Roger Pau Monne" <roger.pau@citrix.com>,
+        "Jia-Ju Bai" <baijiaju1990@gmail.com>,
+        "Stefano Stabellini" <sstabellini@kernel.org>,
+        "xen-devel" <xen-devel@lists.xenproject.org>,
+        "Boris Ostrovsky" <boris.ostrovsky@oracle.com>,
+        "Juergen Gross" <jgross@suse.com>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] xen: xen-pciback: Reset MSI-X state when exposing
+ a device
+References: <1543976357-1053-1-git-send-email-chao.gao@intel.com>
+ <20181205093223.dncg4nq4dh6xmrhk@mac>
+ <c27236d3-6125-4049-6268-3d9c93cf3ef2@oracle.com>
+ <20181212070654.GA13411@gao-cwp>
+ <5C10CBF50200007800205596@prv1-mh.provo.novell.com>
+ <20181212151824.GA17227@gao-cwp>
+ <5C112783020000780020589C@prv1-mh.provo.novell.com>
+ <20181213034657.GA26926@gao-cwp>
+In-Reply-To: <20181213034657.GA26926@gao-cwp>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The CPUfreq HW present in some QCOM chipsets offloads the steps necessary
-for changing the frequency of CPUs. The driver implements the cpufreq
-driver interface for this hardware engine.
+>>> On 13.12.18 at 04:46, <chao.gao@intel.com> wrote:
+> On Wed, Dec 12, 2018 at 08:21:39AM -0700, Jan Beulich wrote:
+>>>>> On 12.12.18 at 16:18, <chao.gao@intel.com> wrote:
+>>> On Wed, Dec 12, 2018 at 01:51:01AM -0700, Jan Beulich wrote:
+>>>>>>> On 12.12.18 at 08:06, <chao.gao@intel.com> wrote:
+>>>>> On Wed, Dec 05, 2018 at 09:01:33AM -0500, Boris Ostrovsky wrote:
+>>>>>>On 12/5/18 4:32 AM, Roger Pau Monné wrote:
+>>>>>>> On Wed, Dec 05, 2018 at 10:19:17AM +0800, Chao Gao wrote:
+>>>>>>>> I find some pass-thru devices don't work any more across guest reboot.
+>>>>>>>> Assigning it to another guest also meets the same issue. And the only
+>>>>>>>> way to make it work again is un-binding and binding it to pciback.
+>>>>>>>> Someone reported this issue one year ago [1]. More detail also can be
+>>>>>>>> found in [2].
+>>>>>>>>
+>>>>>>>> The root-cause is Xen's internal MSI-X state isn't reset properly
+>>>>>>>> during reboot or re-assignment. In the above case, Xen set maskall bit
+>>>>>>>> to mask all MSI interrupts after it detected a potential security
+>>>>>>>> issue. Even after device reset, Xen didn't reset its internal maskall
+>>>>>>>> bit. As a result, maskall bit would be set again in next write to
+>>>>>>>> MSI-X message control register.
+>>>>>>>>
+>>>>>>>> Given that PHYSDEVOPS_prepare_msix() also triggers Xen resetting MSI-X
+>>>>>>>> internal state of a device, we employ it to fix this issue rather than
+>>>>>>>> introducing another dedicated sub-hypercall.
+>>>>>>>>
+>>>>>>>> Note that PHYSDEVOPS_release_msix() will fail if the mapping between
+>>>>>>>> the device's msix and pirq has been created. This limitation prevents
+>>>>>>>> us calling this function when detaching a device from a guest during
+>>>>>>>> guest shutdown. Thus it is called right before calling
+>>>>>>>> PHYSDEVOPS_prepare_msix().
+>>>>>>> s/PHYSDEVOPS/PHYSDEVOP/ (no final S). And then I would also drop the
+>>>>>>> () at the end of the hypercall name since it's not a function.
+>>>>>>>
+>>>>>>> I'm also wondering why the release can't be done when the device is
+>>>>>>> detached from the guest (or the guest has been shut down). This makes
+>>>>>>> me worry about the raciness of the attach/detach procedure: if there's
+>>>>>>> a state where pciback assumes the device has been detached from the
+>>>>>>> guest, but there are still pirqs bound, an attempt to attach to
+>>>>>>> another guest in such state will fail.
+>>>>>>
+>>>>>>I wonder whether this additional reset functionality could be done out
+>>>>>>of xen_pcibk_xenbus_remove(). We first do a (best effort) device reset
+>>>>>>and then do the extra things that are not properly done there.
+>>>>> 
+>>>>> No. It cannot be done in xen_pcibk_xenbus_remove() without modifying
+>>>>> the handler of PHYSDEVOP_release_msix. To do a successful Xen internal
+>>>>> MSI-X state reset, PHYSDEVOP_{release, prepare}_msix should be finished
+>>>>> without error. But ATM, xen expects that no msi is bound to pirq when
+>>>>> doing PHYSDEVOP_release_msix. Otherwise it fails with error code -EBUSY.
+>>>>> However, the expectation isn't guaranteed in xen_pcibk_xenbus_remove().
+>>>>> In some cases, if qemu fails to unmap MSIs, MSIs are unmapped by Xen
+>>>>> at last minute, which happens after device reset in 
+>>>>> xen_pcibk_xenbus_remove().
+>>>>
+>>>>But that may need taking care of: I don't think it is a good idea to have
+>>>>anything left from the prior owning domain when the device gets reset.
+>>>>I.e. left over IRQ bindings should perhaps be forcibly cleared before
+>>>>invoking the reset;
+>>> 
+>>> Agree. How about pciback to track the established IRQ bindings? Then
+>>> pciback can clear irq binding before invoking the reset.
+>>
+>>How would pciback even know of those mappings, when it's qemu
+>>who establishes (and manages) them?
+> 
+> I meant to expose some interfaces from pciback. And pciback serves
+> as the proxy of IRQ (un)binding APIs.
 
-Signed-off-by: Saravana Kannan <skannan@codeaurora.org>
-Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-Signed-off-by: Taniya Das <tdas@codeaurora.org>
----
- drivers/cpufreq/Kconfig.arm       |  11 ++
- drivers/cpufreq/Makefile          |   1 +
- drivers/cpufreq/qcom-cpufreq-hw.c | 305 ++++++++++++++++++++++++++++++++++++++
- 3 files changed, 317 insertions(+)
- create mode 100644 drivers/cpufreq/qcom-cpufreq-hw.c
+If at all possible we should avoid having to change more parties (qemu,
+libxc, kernel, hypervisor) than really necessary. Remember that such
+a bug fix may want backporting, and making sure affected people have
+all relevant components updated is increasingly difficult with their
+number growing.
 
-diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
-index 4e1131e..688f102 100644
---- a/drivers/cpufreq/Kconfig.arm
-+++ b/drivers/cpufreq/Kconfig.arm
-@@ -114,6 +114,17 @@ config ARM_QCOM_CPUFREQ_KRYO
+>>>>in fact I'd expect this to happen in the course of
+>>>>domain destruction, and I'd expect the device reset to come after the
+>>>>domain was cleaned up. Perhaps simply an ordering issue in the tool
+>>>>stack?
+>>> 
+>>> I don't think reversing the sequences of device reset and domain
+>>> destruction would be simple. Furthermore, during device hot-unplug,
+>>> device reset is done when the owner is alive. So if we use domain
+>>> destruction to enforce all irq binding cleared, in theory, it won't be
+>>> applicable to hot-unplug case (if qemu's hot-unplug logic is
+>>> compromised).
+>>
+>>Even in the hot-unplug case the tool stack could issue unbind
+>>requests, behind the back of the possibly compromised qemu,
+>>once neither the guest nor qemu have access to the device
+>>anymore.
+> 
+> But currently, tool stack doesn't know the remaining IRQ bindings.
+> If tool stack can maintaine IRQ binding information of a pass-thru
+> device (stored in Xenstore?), we can come up with a clean solution
+> without modifying linux kernel and Xen.
 
- 	  If in doubt, say N.
+If there's no way for the tool stack to either find out the bindings
+or "blindly" issue unbind requests (accepting them to fail), then a
+"wildcard" unbind operation may want adding. Or, perhaps even
+better, XEN_DOMCTL_deassign_device could unbind anything left
+in place for the specified device. I actually wonder why that's not
+already the case.
 
-+config ARM_QCOM_CPUFREQ_HW
-+	tristate "QCOM CPUFreq HW driver"
-+	depends on ARCH_QCOM || COMPILE_TEST
-+	help
-+	  Support for the CPUFreq HW driver.
-+	  Some QCOM chipsets have a HW engine to offload the steps
-+	  necessary for changing the frequency of the CPUs. Firmware loaded
-+	  in this engine exposes a programming interface to the OS.
-+	  The driver implements the cpufreq interface for this HW engine.
-+	  Say Y if you want to support CPUFreq HW.
-+
- config ARM_S3C_CPUFREQ
- 	bool
- 	help
-diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
-index d5ee456..08c071b 100644
---- a/drivers/cpufreq/Makefile
-+++ b/drivers/cpufreq/Makefile
-@@ -61,6 +61,7 @@ obj-$(CONFIG_MACH_MVEBU_V7)		+= mvebu-cpufreq.o
- obj-$(CONFIG_ARM_OMAP2PLUS_CPUFREQ)	+= omap-cpufreq.o
- obj-$(CONFIG_ARM_PXA2xx_CPUFREQ)	+= pxa2xx-cpufreq.o
- obj-$(CONFIG_PXA3xx)			+= pxa3xx-cpufreq.o
-+obj-$(CONFIG_ARM_QCOM_CPUFREQ_HW)	+= qcom-cpufreq-hw.o
- obj-$(CONFIG_ARM_QCOM_CPUFREQ_KRYO)	+= qcom-cpufreq-kryo.o
- obj-$(CONFIG_ARM_S3C2410_CPUFREQ)	+= s3c2410-cpufreq.o
- obj-$(CONFIG_ARM_S3C2412_CPUFREQ)	+= s3c2412-cpufreq.o
-diff --git a/drivers/cpufreq/qcom-cpufreq-hw.c b/drivers/cpufreq/qcom-cpufreq-hw.c
-new file mode 100644
-index 0000000..a65d0ae
---- /dev/null
-+++ b/drivers/cpufreq/qcom-cpufreq-hw.c
-@@ -0,0 +1,305 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-+ */
-+
-+#include <linux/bitfield.h>
-+#include <linux/cpufreq.h>
-+#include <linux/init.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/of_address.h>
-+#include <linux/of_platform.h>
-+#include <linux/slab.h>
-+
-+#define LUT_MAX_ENTRIES			40U
-+#define LUT_SRC				GENMASK(31, 30)
-+#define LUT_L_VAL			GENMASK(7, 0)
-+#define LUT_CORE_COUNT			GENMASK(18, 16)
-+#define LUT_ROW_SIZE			32
-+#define CLK_HW_DIV			2
-+
-+/* Register offsets */
-+#define REG_ENABLE			0x0
-+#define REG_LUT_TABLE			0x110
-+#define REG_PERF_STATE			0x920
-+
-+static unsigned long cpu_hw_rate, xo_rate;
-+static struct platform_device *global_pdev;
-+
-+static int qcom_cpufreq_hw_target_index(struct cpufreq_policy *policy,
-+					unsigned int index)
-+{
-+	void __iomem *perf_state_reg = policy->driver_data;
-+
-+	writel_relaxed(index, perf_state_reg);
-+
-+	return 0;
-+}
-+
-+static unsigned int qcom_cpufreq_hw_get(unsigned int cpu)
-+{
-+	void __iomem *perf_state_reg;
-+	struct cpufreq_policy *policy;
-+	unsigned int index;
-+
-+	policy = cpufreq_cpu_get_raw(cpu);
-+	if (!policy)
-+		return 0;
-+
-+	perf_state_reg = policy->driver_data;
-+
-+	index = readl_relaxed(perf_state_reg);
-+	index = min(index, LUT_MAX_ENTRIES - 1);
-+
-+	return policy->freq_table[index].frequency;
-+}
-+
-+static unsigned int qcom_cpufreq_hw_fast_switch(struct cpufreq_policy *policy,
-+						unsigned int target_freq)
-+{
-+	void __iomem *perf_state_reg = policy->driver_data;
-+	int index;
-+
-+	index = policy->cached_resolved_idx;
-+	if (index < 0)
-+		return 0;
-+
-+	writel_relaxed(index, perf_state_reg);
-+
-+	return policy->freq_table[index].frequency;
-+}
-+
-+static int qcom_cpufreq_hw_read_lut(struct device *dev,
-+				    struct cpufreq_policy *policy,
-+				    void __iomem *base)
-+{
-+	u32 data, src, lval, i, core_count, prev_cc = 0, prev_freq = 0, freq;
-+	unsigned int max_cores = cpumask_weight(policy->cpus);
-+	struct cpufreq_frequency_table	*table;
-+
-+	table = kcalloc(LUT_MAX_ENTRIES + 1, sizeof(*table), GFP_KERNEL);
-+	if (!table)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < LUT_MAX_ENTRIES; i++) {
-+		data = readl_relaxed(base + REG_LUT_TABLE + i * LUT_ROW_SIZE);
-+		src = FIELD_GET(LUT_SRC, data);
-+		lval = FIELD_GET(LUT_L_VAL, data);
-+		core_count = FIELD_GET(LUT_CORE_COUNT, data);
-+
-+		if (src)
-+			freq = xo_rate * lval / 1000;
-+		else
-+			freq = cpu_hw_rate / 1000;
-+
-+		/* Ignore boosts in the middle of the table */
-+		if (core_count != max_cores) {
-+			table[i].frequency = CPUFREQ_ENTRY_INVALID;
-+		} else {
-+			table[i].frequency = freq;
-+			dev_dbg(dev, "index=%d freq=%d, core_count %d\n", i,
-+				freq, core_count);
-+		}
-+
-+		/*
-+		 * Two of the same frequencies with the same core counts means
-+		 * end of table
-+		 */
-+		if (i > 0 && prev_freq == freq && prev_cc == core_count) {
-+			struct cpufreq_frequency_table *prev = &table[i - 1];
-+
-+			/*
-+			 * Only treat the last frequency that might be a boost
-+			 * as the boost frequency
-+			 */
-+			if (prev_cc != max_cores) {
-+				prev->frequency = prev_freq;
-+				prev->flags = CPUFREQ_BOOST_FREQ;
-+			}
-+
-+			break;
-+		}
-+
-+		prev_cc = core_count;
-+		prev_freq = freq;
-+	}
-+
-+	table[i].frequency = CPUFREQ_TABLE_END;
-+	policy->freq_table = table;
-+
-+	return 0;
-+}
-+
-+static void qcom_get_related_cpus(int index, struct cpumask *m)
-+{
-+	struct device_node *cpu_np;
-+	struct of_phandle_args args;
-+	int cpu, ret;
-+
-+	for_each_possible_cpu(cpu) {
-+		cpu_np = of_cpu_device_node_get(cpu);
-+		if (!cpu_np)
-+			continue;
-+
-+		ret = of_parse_phandle_with_args(cpu_np, "qcom,freq-domain",
-+						 "#freq-domain-cells", 0,
-+						 &args);
-+		of_node_put(cpu_np);
-+		if (ret < 0)
-+			continue;
-+
-+		if (index == args.args[0])
-+			cpumask_set_cpu(cpu, m);
-+	}
-+}
-+
-+static int qcom_cpufreq_hw_cpu_init(struct cpufreq_policy *policy)
-+{
-+	struct device *dev = &global_pdev->dev;
-+	struct of_phandle_args args;
-+	struct device_node *cpu_np;
-+	struct resource *res;
-+	void __iomem *base;
-+	int ret, index;
-+
-+	cpu_np = of_cpu_device_node_get(policy->cpu);
-+	if (!cpu_np)
-+		return -EINVAL;
-+
-+	ret = of_parse_phandle_with_args(cpu_np, "qcom,freq-domain",
-+					 "#freq-domain-cells", 0, &args);
-+	of_node_put(cpu_np);
-+	if (ret)
-+		return ret;
-+
-+	index = args.args[0];
-+
-+	res = platform_get_resource(global_pdev, IORESOURCE_MEM, index);
-+	base = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
-+
-+	/* HW should be in enabled state to proceed */
-+	if (!(readl_relaxed(base + REG_ENABLE) & 0x1)) {
-+		dev_err(dev, "Domain-%d cpufreq hardware not enabled\n", index);
-+		ret = -ENODEV;
-+		goto error;
-+	}
-+
-+	qcom_get_related_cpus(index, policy->cpus);
-+	if (!cpumask_weight(policy->cpus)) {
-+		dev_err(dev, "Domain-%d failed to get related CPUs\n", index);
-+		ret = -ENOENT;
-+		goto error;
-+	}
-+
-+	policy->driver_data = base + REG_PERF_STATE;
-+
-+	ret = qcom_cpufreq_hw_read_lut(dev, policy, base);
-+	if (ret) {
-+		dev_err(dev, "Domain-%d failed to read LUT\n", index);
-+		goto error;
-+	}
-+
-+	policy->fast_switch_possible = true;
-+
-+	return 0;
-+error:
-+	devm_iounmap(dev, base);
-+	return ret;
-+}
-+
-+static int qcom_cpufreq_hw_cpu_exit(struct cpufreq_policy *policy)
-+{
-+	void __iomem *base = policy->driver_data - REG_PERF_STATE;
-+
-+	kfree(policy->freq_table);
-+	devm_iounmap(&global_pdev->dev, base);
-+
-+	return 0;
-+}
-+
-+static struct freq_attr *qcom_cpufreq_hw_attr[] = {
-+	&cpufreq_freq_attr_scaling_available_freqs,
-+	&cpufreq_freq_attr_scaling_boost_freqs,
-+	NULL
-+};
-+
-+static struct cpufreq_driver cpufreq_qcom_hw_driver = {
-+	.flags		= CPUFREQ_STICKY | CPUFREQ_NEED_INITIAL_FREQ_CHECK |
-+			  CPUFREQ_HAVE_GOVERNOR_PER_POLICY,
-+	.verify		= cpufreq_generic_frequency_table_verify,
-+	.target_index	= qcom_cpufreq_hw_target_index,
-+	.get		= qcom_cpufreq_hw_get,
-+	.init		= qcom_cpufreq_hw_cpu_init,
-+	.exit		= qcom_cpufreq_hw_cpu_exit,
-+	.fast_switch    = qcom_cpufreq_hw_fast_switch,
-+	.name		= "qcom-cpufreq-hw",
-+	.attr		= qcom_cpufreq_hw_attr,
-+};
-+
-+static int qcom_cpufreq_hw_driver_probe(struct platform_device *pdev)
-+{
-+	struct clk *clk;
-+	int ret;
-+
-+	clk = clk_get(&pdev->dev, "xo");
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk);
-+
-+	xo_rate = clk_get_rate(clk);
-+	clk_put(clk);
-+
-+	clk = clk_get(&pdev->dev, "alternate");
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk);
-+
-+	cpu_hw_rate = clk_get_rate(clk) / CLK_HW_DIV;
-+	clk_put(clk);
-+
-+	global_pdev = pdev;
-+
-+	ret = cpufreq_register_driver(&cpufreq_qcom_hw_driver);
-+	if (ret)
-+		dev_err(&pdev->dev, "CPUFreq HW driver failed to register\n");
-+	else
-+		dev_dbg(&pdev->dev, "QCOM CPUFreq HW driver initialized\n");
-+
-+	return ret;
-+}
-+
-+static int qcom_cpufreq_hw_driver_remove(struct platform_device *pdev)
-+{
-+	return cpufreq_unregister_driver(&cpufreq_qcom_hw_driver);
-+}
-+
-+static const struct of_device_id qcom_cpufreq_hw_match[] = {
-+	{ .compatible = "qcom,cpufreq-hw" },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, qcom_cpufreq_hw_match);
-+
-+static struct platform_driver qcom_cpufreq_hw_driver = {
-+	.probe = qcom_cpufreq_hw_driver_probe,
-+	.remove = qcom_cpufreq_hw_driver_remove,
-+	.driver = {
-+		.name = "qcom-cpufreq-hw",
-+		.of_match_table = qcom_cpufreq_hw_match,
-+	},
-+};
-+
-+static int __init qcom_cpufreq_hw_init(void)
-+{
-+	return platform_driver_register(&qcom_cpufreq_hw_driver);
-+}
-+subsys_initcall(qcom_cpufreq_hw_init);
-+
-+static void __exit qcom_cpufreq_hw_exit(void)
-+{
-+	platform_driver_unregister(&qcom_cpufreq_hw_driver);
-+}
-+module_exit(qcom_cpufreq_hw_exit);
-+
-+MODULE_DESCRIPTION("QCOM CPUFREQ HW Driver");
-+MODULE_LICENSE("GPL v2");
---
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the  Linux Foundation.
+Jan
 
