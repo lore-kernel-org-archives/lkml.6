@@ -2,92 +2,79 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EFA9C67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 10:14:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E99ACC65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 10:14:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 352B120989
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 10:14:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 352B120989
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
+	by mail.kernel.org (Postfix) with ESMTP id B048D20879
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 10:14:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="RWvdKCFL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B048D20879
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=163.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728316AbeLMKOI (ORCPT
+        id S1728362AbeLMKOR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 05:14:08 -0500
-Received: from orcrist.hmeau.com ([104.223.48.154]:50402 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727720AbeLMKOH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 05:14:07 -0500
-Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
-        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1gXO0I-0002vt-36; Thu, 13 Dec 2018 18:14:02 +0800
-Received: from herbert by gondobar with local (Exim 4.89)
-        (envelope-from <herbert@gondor.apana.org.au>)
-        id 1gXO0H-0004Xs-H3; Thu, 13 Dec 2018 18:14:01 +0800
-Date:   Thu, 13 Dec 2018 18:14:01 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Vitaly Chikunov <vt@altlinux.org>
-Cc:     dhowells@redhat.com, davem@davemloft.net, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] X.509: Parse public key parameters from x509 for
- akcipher
-Message-ID: <20181213101401.zsmpkz6okgkjmbw3@gondor.apana.org.au>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181209135548.26232-1-vt@altlinux.org>
-X-Newsgroups: apana.lists.os.linux.cryptoapi,apana.lists.os.linux.kernel
-Organization: Core
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Thu, 13 Dec 2018 05:14:17 -0500
+Received: from m50-133.163.com ([123.125.50.133]:57819 "EHLO m50-133.163.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728177AbeLMKOR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 05:14:17 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+        s=s110527; h=From:Subject:Date:Message-Id; bh=/Gi+1q/2cbJjR4NvFl
+        3kkqN2sOoyFHOo9tu433oyx+U=; b=RWvdKCFLYW9GHcpLWQwn4iAtWIx2VGYemD
+        +HEIO5Ux5jt1rkJmrXawlWA+2L+fGFXwkICBRqiST6S/Nd63jc/GFGmre77vCW9i
+        wYcGXlGEdU807ns1fQBFl+Dk8OpeYTmXg908tOnEzgqh1piOU58xrRsn1gKZI8vG
+        KHsVnJjiE=
+Received: from localhost.localdomain (unknown [221.0.93.75])
+        by smtp3 (Coremail) with SMTP id DdGowAD3P+LcMBJcePuXAA--.86S3;
+        Thu, 13 Dec 2018 18:13:55 +0800 (CST)
+From:   Dianlong Li <long17.cool@163.com>
+To:     robh@kernel.org
+Cc:     alexandre.belloni@bootlin.com, a.zummo@towertech.it,
+        mark.rutland@arm.com, linux-rtc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Dianlong Li <long17.cool@163.com>
+Subject: [PATCH 2/3] dt-bindings: rtc: sd3078: add device tree documentation
+Date:   Thu, 13 Dec 2018 18:13:49 +0800
+Message-Id: <1544696030-17159-2-git-send-email-long17.cool@163.com>
+X-Mailer: git-send-email 1.7.9.5
+In-Reply-To: <1544696030-17159-1-git-send-email-long17.cool@163.com>
+References: <1544696030-17159-1-git-send-email-long17.cool@163.com>
+X-CM-TRANSID: DdGowAD3P+LcMBJcePuXAA--.86S3
+X-Coremail-Antispam: 1Uf129KBjvdXoWruF4kWw45WFW7Ar4rArWfAFb_yoW3Zrg_Ka
+        1xAa48ua98tF1Fgan5CFyDtryUKF1xKrs7A3Z8JwsYy34IvayjqFyDXw1jyw4UurWI9w15
+        ur18JrWvyrnIgjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU8k-BtUUUUU==
+X-Originating-IP: [221.0.93.75]
+X-CM-SenderInfo: 5orqwi2xof00ro6rljoofrz/1tbi8A4cF1uoQwNCsAAAs0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Vitaly Chikunov <vt@altlinux.org> wrote:
-> Some public key algorithms (like ECDSA) keep in parameters field
-> important data such as digest and curve OIDs (possibly more for
-> different ECDSA variants). Thus, just setting a public key (as
-> for RSA) is not enough.
-> 
-> Introduce set_params() callback for akcipher which will be used to
-> pass BER encoded parameters array, with additional argument of
-> algorithm OID.
-> 
-> This is done with the intent of adding support for EC-RDSA (ISO/IEC
-> 14888-3:2018, RFC 7091, and basically ECDSA variant) public keys (which
-> will be finally used in IMA subsystem). Thus, also oid_registry.h is
-> updated.
-> 
-> Rationale:
-> 
-> - For such keys just setting public key without parameters is
->  meaningless, so it would be possible to add parameters in
->  crypto_akcipher_set_pub_key (and .set_pub_key) calls. But, this will
->  needlessly change API for RSA akcipher. Also, additional callback
->  making it possible to pass parameters after
->  crypto_akcipher_set_priv_key (and .set_priv_key) in the future.
-> 
-> - Algorithm OID is passed to be validated in .set_params callback,
->  otherwise, it could have the wrong value.
-> 
-> - Particular algorithm OIDs are checked in x509_note_params, (because
->  this is called from AlgorithmIdentifier (ASN.1) parser, which is
->  called multiple times, as it's used multiple times in X.509
->  certificate), to distinguish a public key call from a signature call.
-> 
-> Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
+The devicetree documentation for the SD3078 device tree.
 
-Please post this with a patch that actually uses the set_params
-callback.
+Signed-off-by: Dianlong Li <long17.cool@163.com>
+---
+ Documentation/devicetree/bindings/rtc/rtc.txt |    1 +
+ 1 file changed, 1 insertion(+)
 
-Thanks,
+diff --git a/Documentation/devicetree/bindings/rtc/rtc.txt b/Documentation/devicetree/bindings/rtc/rtc.txt
+index 7c8da69..e46edab 100644
+--- a/Documentation/devicetree/bindings/rtc/rtc.txt
++++ b/Documentation/devicetree/bindings/rtc/rtc.txt
+@@ -62,3 +62,4 @@ ricoh,rs5c372b		I2C bus SERIAL INTERFACE REAL-TIME CLOCK IC
+ ricoh,rv5c386		I2C bus SERIAL INTERFACE REAL-TIME CLOCK IC
+ ricoh,rv5c387a		I2C bus SERIAL INTERFACE REAL-TIME CLOCK IC
+ sii,s35390a		2-wire CMOS real-time clock
++whwave,sd3078		I2C bus SERIAL INTERFACE REAL-TIME CLOCK IC
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+1.7.9.5
+
+
