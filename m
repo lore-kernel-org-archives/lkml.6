@@ -7,51 +7,49 @@ X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EAB7C67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:31:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0CCCC67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:31:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4CBD720873
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:31:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 65BE720672
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:31:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544675503;
-	bh=6B500M820Lqe7C+CH2xLxG6Ty4WpGqC5VFv+g8BPRSM=;
+	s=default; t=1544675506;
+	bh=AVc1Wlq1EIiXhZUUzJMuRzU7aOXK7S8QrAmtDr8xZdQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=E5n1ZAOcDndpqbzUU59y/6K4kYXe9mhDK7VeCZZheNZ9J8LwHBdWpwLLVqNABCUiX
-	 fYJjhOv7gVl/G0WjuckEHnuC9W13mpSG6xklKhHIyzjDjGGH/ilkI6W6JSRtzgU3XX
-	 Q6JDyJrj6enStBbCE2fS/AjBZR+aObUtX2eGDRN0=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4CBD720873
+	b=fLFsrAWp/XQoBDPfsMFkUqk8gxoCmw9EiOzHCnpuSAXzw8Pzn0VwNwYcdrSW/mQPV
+	 g57bd20sBuaUvpmoaHDKH2LAGY+6r5Qfhdl+npQMjH91QeE23HO8TyTsDHnkoi6dKd
+	 C42sCn2CqU7rkmYf+iCx0+yVmvoxJfDt0+4UuJbE=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65BE720672
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728847AbeLMEbm (ORCPT
+        id S1728863AbeLMEbp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 23:31:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44560 "EHLO mail.kernel.org"
+        Wed, 12 Dec 2018 23:31:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44630 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727856AbeLMEbj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 23:31:39 -0500
+        id S1728844AbeLMEbm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 23:31:42 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 65C4B20672;
-        Thu, 13 Dec 2018 04:31:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EB0A020880;
+        Thu, 13 Dec 2018 04:31:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544675498;
-        bh=6B500M820Lqe7C+CH2xLxG6Ty4WpGqC5VFv+g8BPRSM=;
+        s=default; t=1544675501;
+        bh=AVc1Wlq1EIiXhZUUzJMuRzU7aOXK7S8QrAmtDr8xZdQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gqDVsuNET/RcfYCnamRwCoFfRUwNKYd7+MLaoPINv70Ho1dYrUDfGIZefL6pmGpVX
-         j6hvF5COw6t7n1vZCil7mI+KrDR0eSH19wkmd+GLy0waBhbwFPGMZvJpLQuMi0EqpK
-         H9zdnPcH4D0tFWOxVpbguywwXCKtztxa8So/jgNM=
+        b=1ytBtbOEB4/wWQbWnXYXckSOcVIw8cVsWuxCdLEvNRIDpJZbeRuqmbIwMnGgLLcQA
+         p65BZriZprEq7XqX9rFZLUtLZcPhbr6HxTNYPjwUkA3h1ZGqdedMj7CyBEYE2b5KC+
+         /043AtdVExErUFq4RfXHTGn1+sGTWGl7dIToO/Cs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Eran Ben Elisha <eranbe@mellanox.com>,
-        Tariq Toukan <tariqt@mellanox.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 27/41] net/mlx4_en: Change min MTU size to ETH_MIN_MTU
-Date:   Wed, 12 Dec 2018 23:30:40 -0500
-Message-Id: <20181213043054.75891-27-sashal@kernel.org>
+Cc:     Chris Cole <chris@sageembedded.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 29/41] ARM: 8814/1: mm: improve/fix ARM v7_dma_inv_range() unaligned address handling
+Date:   Wed, 12 Dec 2018 23:30:42 -0500
+Message-Id: <20181213043054.75891-29-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181213043054.75891-1-sashal@kernel.org>
 References: <20181213043054.75891-1-sashal@kernel.org>
@@ -63,51 +61,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eran Ben Elisha <eranbe@mellanox.com>
+From: Chris Cole <chris@sageembedded.com>
 
-[ Upstream commit 24be19e47779d604d1492c114459dca9a92acf78 ]
+[ Upstream commit a1208f6a822ac29933e772ef1f637c5d67838da9 ]
 
-NIC driver minimal MTU size shall be set to ETH_MIN_MTU, as defined in
-the RFC791 and in the network stack. Remove old mlx4_en only define for
-it, which was set to wrong value.
+This patch addresses possible memory corruption when
+v7_dma_inv_range(start_address, end_address) address parameters are not
+aligned to whole cache lines. This function issues "invalidate" cache
+management operations to all cache lines from start_address (inclusive)
+to end_address (exclusive). When start_address and/or end_address are
+not aligned, the start and/or end cache lines are first issued "clean &
+invalidate" operation. The assumption is this is done to ensure that any
+dirty data addresses outside the address range (but part of the first or
+last cache lines) are cleaned/flushed so that data is not lost, which
+could happen if just an invalidate is issued.
 
-Fixes: b80f71f5816f ("ethernet/mellanox: use core min/max MTU checking")
-Signed-off-by: Eran Ben Elisha <eranbe@mellanox.com>
-Signed-off-by: Tariq Toukan <tariqt@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+The problem is that these first/last partial cache lines are issued
+"clean & invalidate" and then "invalidate". This second "invalidate" is
+not required and worse can cause "lost" writes to addresses outside the
+address range but part of the cache line. If another component writes to
+its part of the cache line between the "clean & invalidate" and
+"invalidate" operations, the write can get lost. This fix is to remove
+the extra "invalidate" operation when unaligned addressed are used.
+
+A kernel module is available that has a stress test to reproduce the
+issue and a unit test of the updated v7_dma_inv_range(). It can be
+downloaded from
+http://ftp.sageembedded.com/outgoing/linux/cache-test-20181107.tgz.
+
+v7_dma_inv_range() is call by dmac_[un]map_area(addr, len, direction)
+when the direction is DMA_FROM_DEVICE. One can (I believe) successfully
+argue that DMA from a device to main memory should use buffers aligned
+to cache line size, because the "clean & invalidate" might overwrite
+data that the device just wrote using DMA. But if a driver does use
+unaligned buffers, at least this fix will prevent memory corruption
+outside the buffer.
+
+Signed-off-by: Chris Cole <chris@sageembedded.com>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/mellanox/mlx4/en_netdev.c | 4 ++--
- drivers/net/ethernet/mellanox/mlx4/mlx4_en.h   | 1 -
- 2 files changed, 2 insertions(+), 3 deletions(-)
+ arch/arm/mm/cache-v7.S | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/ethernet/mellanox/mlx4/en_netdev.c b/drivers/net/ethernet/mellanox/mlx4/en_netdev.c
-index faa4bd21f148..0fb85d71c11b 100644
---- a/drivers/net/ethernet/mellanox/mlx4/en_netdev.c
-+++ b/drivers/net/ethernet/mellanox/mlx4/en_netdev.c
-@@ -3505,8 +3505,8 @@ int mlx4_en_init_netdev(struct mlx4_en_dev *mdev, int port,
- 		dev->gso_partial_features = NETIF_F_GSO_UDP_TUNNEL_CSUM;
- 	}
+diff --git a/arch/arm/mm/cache-v7.S b/arch/arm/mm/cache-v7.S
+index de78109d002d..50a70edbc863 100644
+--- a/arch/arm/mm/cache-v7.S
++++ b/arch/arm/mm/cache-v7.S
+@@ -359,14 +359,16 @@ v7_dma_inv_range:
+ 	ALT_UP(W(nop))
+ #endif
+ 	mcrne	p15, 0, r0, c7, c14, 1		@ clean & invalidate D / U line
++	addne	r0, r0, r2
  
--	/* MTU range: 46 - hw-specific max */
--	dev->min_mtu = MLX4_EN_MIN_MTU;
-+	/* MTU range: 68 - hw-specific max */
-+	dev->min_mtu = ETH_MIN_MTU;
- 	dev->max_mtu = priv->max_mtu;
- 
- 	mdev->pndev[port] = dev;
-diff --git a/drivers/net/ethernet/mellanox/mlx4/mlx4_en.h b/drivers/net/ethernet/mellanox/mlx4/mlx4_en.h
-index 09f4764a3f39..bdd87438a354 100644
---- a/drivers/net/ethernet/mellanox/mlx4/mlx4_en.h
-+++ b/drivers/net/ethernet/mellanox/mlx4/mlx4_en.h
-@@ -157,7 +157,6 @@
- #define HEADER_COPY_SIZE       (128 - NET_IP_ALIGN)
- #define MLX4_LOOPBACK_TEST_PAYLOAD (HEADER_COPY_SIZE - ETH_HLEN)
- 
--#define MLX4_EN_MIN_MTU		46
- /* VLAN_HLEN is added twice,to support skb vlan tagged with multiple
-  * headers. (For example: ETH_P_8021Q and ETH_P_8021AD).
-  */
+ 	tst	r1, r3
+ 	bic	r1, r1, r3
+ 	mcrne	p15, 0, r1, c7, c14, 1		@ clean & invalidate D / U line
+-1:
+-	mcr	p15, 0, r0, c7, c6, 1		@ invalidate D / U line
+-	add	r0, r0, r2
+ 	cmp	r0, r1
++1:
++	mcrlo	p15, 0, r0, c7, c6, 1		@ invalidate D / U line
++	addlo	r0, r0, r2
++	cmplo	r0, r1
+ 	blo	1b
+ 	dsb	st
+ 	ret	lr
 -- 
 2.19.1
 
