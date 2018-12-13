@@ -2,159 +2,191 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E35D5C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:59:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F3C5C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 13:10:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A551B2086D
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:59:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544705996;
-	bh=xKkoOCOSA26D9EssDh96TQ3hG5lvU/P6r/Im4gA55uA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Jsu+bxesXQTPaRadC2gj4pDYMCygYEVaTq5b60+UrafjfIA8CrrH0t7VTpZngaDVJ
-	 /O/XutiIP8ExciZyiXeqPCu7Fiqni4jYEqdHd+xbHU05VeJLCpOx5rSEL4MQFxZ1xR
-	 XNkzRSPe/e/oKzKdH2IFax9Lbz2mu+PU+9fywf00=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A551B2086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 1B12220849
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 13:10:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="DwgYHu3D"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B12220849
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729307AbeLMM7z (ORCPT
+        id S1729311AbeLMNKL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 07:59:55 -0500
-Received: from mx2.suse.de ([195.135.220.15]:60982 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728803AbeLMM7z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 07:59:55 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 9136DAF79;
-        Thu, 13 Dec 2018 12:59:52 +0000 (UTC)
-Date:   Thu, 13 Dec 2018 13:59:52 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Mikhail Zaslonko <zaslonko@linux.ibm.com>
-Cc:     akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Pavel.Tatashin@microsoft.com,
-        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        gerald.schaefer@de.ibm.com
-Subject: Re: [PATCH v2 1/1] mm, memory_hotplug: Initialize struct pages for
- the full memory section
-Message-ID: <20181213125952.GA1286@dhcp22.suse.cz>
-References: <20181212172712.34019-1-zaslonko@linux.ibm.com>
- <20181212172712.34019-2-zaslonko@linux.ibm.com>
+        Thu, 13 Dec 2018 08:10:11 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:33303 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729171AbeLMNKK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 08:10:10 -0500
+Received: by mail-wm1-f65.google.com with SMTP id r24so13866895wmh.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 05:10:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=38mbt+BqVhFnc/CjZGS2t6U4Vp7zJP4jXDTl/C7yvYY=;
+        b=DwgYHu3D5WYQJRF4/72VhnR6oNXBOgmN/Uo1a62KHbYyC8jN6zL4KZNhUXO/c0OeCL
+         pSGIakLqb8mRF+NG6S7fq9N6IdlyD27dYvw7u+csVxpsScCu+jYlDk8dQqyxGe54z4iI
+         n+viNKVVnSNRk2DPDrVV/tdg5S4Xx0ei2a3Eg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=38mbt+BqVhFnc/CjZGS2t6U4Vp7zJP4jXDTl/C7yvYY=;
+        b=UHk/+DL1nTlTbEd79hx3qHux+sEUA3kkzprrG5BA7v60vXkiIC5mpYCCc5h2JCm00r
+         f5DJPDMqQf69wuAJhgJ/y7umVZSZy6IkJZNUDrOmuCvRFDAYAw4UlUiFNJVFy/yWtemn
+         Ud2tOtymIVFRpqx+ICGUnOIntDCdjknvf5floZxTvZBEOZDU1CNCLWbvxxCVQ9SREH2T
+         rNXiAWsgXuidLguZJujFME7KT6zfvEV6efpuA18mhxVQDV+BxDOH8L1qwGC8Wz9HSk+o
+         Dj//1WdmozGuy3TvNR8oo0NVvrAa7OXCwLiRXkkBZOJO+G4as6AMk7r9LhJ+zkerY2JY
+         8k4Q==
+X-Gm-Message-State: AA+aEWaBY9zRSDT++kzMpvzpicqpz67e5DREjcBNW6/RXNiEj1ylPmhM
+        eH9PVYvJePh2EkyXu0UlPexz0tuUrd/69JIw
+X-Google-Smtp-Source: AFSGD/WyFLVEfjsdKtOcn9yelNWlk6saP74A/ECCNprpBA7mXmBpPy2H53+CUCvHQfsVKeb/aVqOaQ==
+X-Received: by 2002:a1c:b515:: with SMTP id e21mr10258132wmf.82.1544706608515;
+        Thu, 13 Dec 2018 05:10:08 -0800 (PST)
+Received: from leoy-ThinkPad-X240s ([209.250.228.18])
+        by smtp.gmail.com with ESMTPSA id o5sm3727983wmg.25.2018.12.13.05.10.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 13 Dec 2018 05:10:07 -0800 (PST)
+Date:   Thu, 13 Dec 2018 21:09:49 +0800
+From:   leo.yan@linaro.org
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Coresight ML <coresight@lists.linaro.org>,
+        Mike Leach <mike.leach@linaro.org>,
+        Robert Walker <robert.walker@arm.com>
+Subject: Re: [PATCH v3 6/8] perf cs-etm: Treat NO_SYNC element as trace
+ discontinuity
+Message-ID: <20181213130949.GB17663@leoy-ThinkPad-X240s>
+References: <1544513908-16805-1-git-send-email-leo.yan@linaro.org>
+ <1544513908-16805-7-git-send-email-leo.yan@linaro.org>
+ <20181213123854.GE21027@kernel.org>
+ <20181213124154.GF21027@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181212172712.34019-2-zaslonko@linux.ibm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181213124154.GF21027@kernel.org>
+User-Agent: Mutt/1.10+31 (9cdd884) (2018-06-19)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 12-12-18 18:27:12, Mikhail Zaslonko wrote:
-> If memory end is not aligned with the sparse memory section boundary, the
-> mapping of such a section is only partly initialized. This may lead to
-> VM_BUG_ON due to uninitialized struct page access from
-> is_mem_section_removable() or test_pages_in_a_zone() function triggered by
-> memory_hotplug sysfs handlers:
-> 
-> Here are the the panic examples:
->  CONFIG_DEBUG_VM=y
->  CONFIG_DEBUG_VM_PGFLAGS=y
-> 
->  kernel parameter mem=2050M
->  --------------------------
->  page:000003d082008000 is uninitialized and poisoned
->  page dumped because: VM_BUG_ON_PAGE(PagePoisoned(p))
->  Call Trace:
->  ([<0000000000385b26>] test_pages_in_a_zone+0xde/0x160)
->   [<00000000008f15c4>] show_valid_zones+0x5c/0x190
->   [<00000000008cf9c4>] dev_attr_show+0x34/0x70
->   [<0000000000463ad0>] sysfs_kf_seq_show+0xc8/0x148
->   [<00000000003e4194>] seq_read+0x204/0x480
->   [<00000000003b53ea>] __vfs_read+0x32/0x178
->   [<00000000003b55b2>] vfs_read+0x82/0x138
->   [<00000000003b5be2>] ksys_read+0x5a/0xb0
->   [<0000000000b86ba0>] system_call+0xdc/0x2d8
->  Last Breaking-Event-Address:
->   [<0000000000385b26>] test_pages_in_a_zone+0xde/0x160
->  Kernel panic - not syncing: Fatal exception: panic_on_oops
-> 
->  kernel parameter mem=3075M
->  --------------------------
->  page:000003d08300c000 is uninitialized and poisoned
->  page dumped because: VM_BUG_ON_PAGE(PagePoisoned(p))
->  Call Trace:
->  ([<000000000038596c>] is_mem_section_removable+0xb4/0x190)
->   [<00000000008f12fa>] show_mem_removable+0x9a/0xd8
->   [<00000000008cf9c4>] dev_attr_show+0x34/0x70
->   [<0000000000463ad0>] sysfs_kf_seq_show+0xc8/0x148
->   [<00000000003e4194>] seq_read+0x204/0x480
->   [<00000000003b53ea>] __vfs_read+0x32/0x178
->   [<00000000003b55b2>] vfs_read+0x82/0x138
->   [<00000000003b5be2>] ksys_read+0x5a/0xb0
->   [<0000000000b86ba0>] system_call+0xdc/0x2d8
->  Last Breaking-Event-Address:
->   [<000000000038596c>] is_mem_section_removable+0xb4/0x190
->  Kernel panic - not syncing: Fatal exception: panic_on_oops
-> 
-> Fix the problem by initializing the last memory section of each zone
-> in memmap_init_zone() till the very end, even if it goes beyond the zone
-> end.
-> 
-> Signed-off-by: Mikhail Zaslonko <zaslonko@linux.ibm.com>
-> Reviewed-by: Gerald Schaefer <gerald.schaefer@de.ibm.com>
-> Cc: <stable@vger.kernel.org>
+Hi Arnaldo,
 
-This has alwways been problem AFAIU. It just went unnoticed because we
-have zeroed memmaps during allocation before f7f99100d8d9 ("mm: stop
-zeroing memory during allocation in vmemmap") and so the above test
-would simply skip these ranges as belonging to zone 0 or provided a
-garbage.
-
-So I guess we do care for post f7f99100d8d9 kernels mostly and therefore
-Fixes: f7f99100d8d9 ("mm: stop zeroing memory during allocation in vmemmap")
-
-Other than that looks good to me.
-Acked-by: Michal Hocko <mhocko@suse.com>
-
-Thanks!
-
-> ---
->  mm/page_alloc.c | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
+On Thu, Dec 13, 2018 at 09:41:54AM -0300, Arnaldo Carvalho de Melo wrote:
+> Em Thu, Dec 13, 2018 at 09:38:54AM -0300, Arnaldo Carvalho de Melo escreveu:
+> > Em Tue, Dec 11, 2018 at 03:38:26PM +0800, Leo Yan escreveu:
+> > > CoreSight tracer driver might insert barrier packet between different
+> > > buffers, thus the decoder can spot the boundaries based on the barrier
+> > > packet; the decoder is possible to hit a barrier packet and emit a
+> > > NO_SYNC element, then the decoder will find a periodic synchronisation
+> > > point inside that next trace block that starts trace again but does not
+> > > have the TRACE_ON element as indicator - usually because this block of
+> > > trace has wrapped the buffer so we have lost the original point that
+> > > trace was enabled.
+> > > 
+> > > In upper case, it results in the trace stream only inserts the
+> > > OCSD_GEN_TRC_ELEM_NO_SYNC element in the middle of tracing stream, but
+> > > we don't handle NO_SYNC element properly and at the end users miss to
+> > > see the info for trace discontinuity.
+> > 
+> > 
+> > "In upper case"? Maybe:
+> > 
+> > In the former case it causes the insertion of a OCSD_GEN_TRC_ELEM_NO_SYNC
+> > in the middle of the the tracing stream, but as we were npt handling the
+> > NO_SYNC element properly which ends up making users miss the
+> > discontinuity indication"?
 > 
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index 2ec9cc407216..e2afdb2dc2c5 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -5542,6 +5542,18 @@ void __meminit memmap_init_zone(unsigned long size, int nid, unsigned long zone,
->  			cond_resched();
->  		}
->  	}
-> +#ifdef CONFIG_SPARSEMEM
-> +	/*
-> +	 * If the zone does not span the rest of the section then
-> +	 * we should at least initialize those pages. Otherwise we
-> +	 * could blow up on a poisoned page in some paths which depend
-> +	 * on full sections being initialized (e.g. memory hotplug).
-> +	 */
-> +	while (end_pfn % PAGES_PER_SECTION) {
-> +		__init_single_page(pfn_to_page(end_pfn), end_pfn, zone, nid);
-> +		end_pfn++;
-> +	}
-> +#endif
->  }
->  
->  #ifdef CONFIG_ZONE_DEVICE
-> -- 
-> 2.16.4
+> > > Though OCSD_GEN_TRC_ELEM_NO_SYNC is different from CS_ETM_TRACE_ON when
+> > > output from the decoder, but both of them indicate the trace data is
+> > 
+> > can we remove the "but" and "of them" (redundant) above?
+> > 
+> > > discontinuous; this patch treats OCSD_GEN_TRC_ELEM_NO_SYNC as trace
+> >                                                                a
+> > > discontinuity and generates CS_ETM_DISCONTINUITY packet for it, so
+> > > cs-etm can handle discontinuity for this case, finally it saves the last
+> >                        it (way too many "discontinuity")
+> > > trace data for previous trace block and restart samples for new block.
+> 
+> I've tentatively done those changes (and a few more) in my local branch,
+> resulting in the wording below, plese let me know if you are ok with it:
 
--- 
-Michal Hocko
-SUSE Labs
+Very appreciate your helping.  Please see some minor typos in below
+commit:
+
+> commit 148068b45fe2e93b19c06cfc1140ea12ca72eb59
+> Author: Leo Yan <leo.yan@linaro.org>
+> Date:   Tue Dec 11 15:38:26 2018 +0800
+> 
+>     perf cs-etm: Treat NO_SYNC element as trace discontinuity
+>     
+>     The CoreSight tracer driver might insert a barrier packets between
+                                                         packet
+>     different buffers, thus the decoder can spot the boundaries based on the
+>     barrier packet; it is possible for the decoder to hit a barrier packet
+>     and emit a NO_SYNC element, then the decoder will find a periodic
+>     synchronisation point inside that next trace block that starts the trace
+>     again but does not have the TRACE_ON element as indicator - usually
+>     because this trace block has wrapped the buffer so we have lost the
+>     original point when the trace was enabled.
+>     
+>     In the first case it causes the insertion of a OCSD_GEN_TRC_ELEM_NO_SYNC
+             former
+>     in the middle of the the tracing stream, but as we were npt handling the
+                                                              not
+>     NO_SYNC element properly which ends up making users miss the
+>     discontinuity indication"?
+                              s/?/.
+
+Thanks a lot for helping.  If you prefer me to resend the patch set,
+also let me know.
+
+>     Though OCSD_GEN_TRC_ELEM_NO_SYNC is different from CS_ETM_TRACE_ON when
+>     output from the decoder, both indicate that the trace data is
+>     discontinuous; this patch treats OCSD_GEN_TRC_ELEM_NO_SYNC as a trace
+>     discontinuity and generates a CS_ETM_DISCONTINUITY packet for it, so
+>     cs-etm can handle the discontinuity for this case, finally it saves the
+>     last trace data for the previous trace block and restart samples for the
+>     new block.
+>     
+>     Signed-off-by: Leo Yan <leo.yan@linaro.org>
+>     Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+>     Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+>     Cc: Jiri Olsa <jolsa@redhat.com>
+>     Cc: Mike Leach <mike.leach@linaro.org>
+>     Cc: Namhyung Kim <namhyung@kernel.org>
+>     Cc: Robert Walker <robert.walker@arm.com>
+>     Cc: coresight ml <coresight@lists.linaro.org>
+>     Cc: linux-arm-kernel@lists.infradead.org
+>     Link: http://lkml.kernel.org/r/1544513908-16805-7-git-send-email-leo.yan@linaro.org
+>     Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> 
+> diff --git a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
+> index 1039f364f4cc..bee026e76a4c 100644
+> --- a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
+> +++ b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
+> @@ -410,7 +410,6 @@ static ocsd_datapath_resp_t cs_etm_decoder__gen_trace_elem_printer(
+>  	case OCSD_GEN_TRC_ELEM_UNKNOWN:
+>  		break;
+>  	case OCSD_GEN_TRC_ELEM_NO_SYNC:
+> -		break;
+>  	case OCSD_GEN_TRC_ELEM_TRACE_ON:
+>  		resp = cs_etm_decoder__buffer_discontinuity(decoder,
+>  							    trace_chan_id);
+> 
+> 
