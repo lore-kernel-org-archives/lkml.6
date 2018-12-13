@@ -2,90 +2,110 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0B88C67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 02:20:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBA85C67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 02:21:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9404A20870
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 02:20:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=endlessm-com.20150623.gappssmtp.com header.i=@endlessm-com.20150623.gappssmtp.com header.b="1eUqeyXG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9404A20870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=endlessm.com
+	by mail.kernel.org (Postfix) with ESMTP id 99C2020870
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 02:21:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99C2020870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ze-it.at
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726714AbeLMCUt (ORCPT
+        id S1726737AbeLMCVW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 21:20:49 -0500
-Received: from mail-ed1-f42.google.com ([209.85.208.42]:40894 "EHLO
-        mail-ed1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726416AbeLMCUt (ORCPT
+        Wed, 12 Dec 2018 21:21:22 -0500
+Received: from vie01a-dmta-pe06-1.mx.upcmail.net ([84.116.36.14]:30744 "EHLO
+        vie01a-dmta-pe06-1.mx.upcmail.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726423AbeLMCVV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 21:20:49 -0500
-Received: by mail-ed1-f42.google.com with SMTP id d3so721892edx.7
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 18:20:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=brQ3aNNXM95X1fysUmDFyUMMziybv6Y2I3UUhjESCKs=;
-        b=1eUqeyXGbwPnMjZzv5eJjcYIIIC9+8lfEP1nAMdMbKDybMJOWquxNsH5P2WgGDcAs/
-         CkBJji0CbGqDJiMxZO/ITGgxBqrKUik6UvfzifYfg/Wa4kM9irXDjNm6rh5RrJIvp7yP
-         zEE3OD1KDyx3rfXC6WPsVKd9ym5pvck4lMEfs84JBaGu4tj+DZPWgf/t0bcCqrT0YpTo
-         LmfrF17G4B5zXI8nqJFCip2aLEDLLoOnElMpQ3E/y2grigbtKHdZsPpDdoisjID3hbhI
-         S/lRNcLGahtGv1DGHBER3xonLrWYn5D8EMSFkA7cuVW0oRmfNuCKiDXL0ejzdyBuehHe
-         XTig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=brQ3aNNXM95X1fysUmDFyUMMziybv6Y2I3UUhjESCKs=;
-        b=Y1/Gk4Q0NAi84u3k5V7x/irs4ygzljd0IylSqXJEwUkw0ljh4BXBLoX2HMMj+1T+X/
-         5YA68pD/qzcunEL/ezWUm9P0veelXA3h2iRicj6/sK8OxUPr10rz+rhCyTQpYK52PSYr
-         4uV/qpEPavSpxBJRtGaZQPE17CRfIbcTv0N8wHLUyM3291t8GGKWHlt0Brfa0Z3bqhQI
-         Mewm7mKzD/OzBwhO3XSTn+IIrmuIFPYBu7HqsEi4HNHh0m42hQta3RMDbonPswUK1c9u
-         747Gra7zqObjNOCer6/U2HNg3WM9Ch8cnKMhz8Wqcl7FD7vip54qX2Dq8pHffys1Rttj
-         ZwCA==
-X-Gm-Message-State: AA+aEWafC9X4mR5sySTegzR7oyC5vmz+4ZcbGoh5QyVMgWCXU+WNSPW4
-        XLHVs8bv3J7sHOOJPeKB6+GjfEhewLjHbYMKj9iQ1g==
-X-Google-Smtp-Source: AFSGD/UMg7eWlF58BHmTMsvN7TgI9Nmh/e5thuVtaHZsSg7+XROHgB2OcHgVYlZMiRR5rTgv9f6bluGYbSpWEi0e1Lw=
-X-Received: by 2002:a17:906:62cb:: with SMTP id v11-v6mr16902437ejl.56.1544667647338;
- Wed, 12 Dec 2018 18:20:47 -0800 (PST)
+        Wed, 12 Dec 2018 21:21:21 -0500
+Received: from [172.31.216.234] (helo=vie01a-pemc-psmtp-pe11.mail.upcmail.net)
+        by vie01a-dmta-pe06.mx.upcmail.net with esmtp (Exim 4.88)
+        (envelope-from <thomas.zeitlhofer@ze-it.at>)
+        id 1gXGco-0002Gx-Nm
+        for linux-kernel@vger.kernel.org; Thu, 13 Dec 2018 03:21:18 +0100
+Received: from localhost.localdomain ([80.108.25.171])
+        by vie01a-pemc-psmtp-pe11.mail.upcmail.net with ESMTP
+        id XGcogU0R75WeQXGcoge5AQ; Thu, 13 Dec 2018 03:21:18 +0100
+X-Env-Mailfrom: thomas.zeitlhofer@ze-it.at
+X-Env-Rcptto: linux-kernel@vger.kernel.org
+X-SourceIP: 80.108.25.171
+X-CNFS-Analysis: v=2.3 cv=YaJsGDZf c=1 sm=1 tr=0
+ a=cw3iLm2b3cPoAt0NIr38/g==:117 a=cw3iLm2b3cPoAt0NIr38/g==:17
+ a=8nJEP1OIZ-IA:10 a=foHCeV_ZAAAA:8 a=YfNDvM6DVzzMtkwtuQYA:9 a=wPNLvfGTeEIA:10
+ a=nO2_vQ5IkrQA:10 a=h8a9FgHX5U4dIE3jaWyr:22
+Date:   Thu, 13 Dec 2018 03:21:07 +0100
+From:   Thomas Zeitlhofer <thomas.zeitlhofer@ze-it.at>
+To:     Hui Wang <hui.wang@canonical.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Kailang Yang <kailang@realtek.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: Re: [PATCH 4.19 096/139] ALSA: hda/realtek - fix the pop noise on
+ headphone for lenovo laptops
+Message-ID: <20181213022107.GA4450@x1>
+References: <20181204103649.950154335@linuxfoundation.org>
+ <20181204103654.341269777@linuxfoundation.org>
+ <20181212234517.GA15065@x1>
+ <1fe3ba5d-d77a-4592-c5c9-67d788d8b434@canonical.com>
 MIME-Version: 1.0
-From:   Chris Chiu <chiu@endlessm.com>
-Date:   Thu, 13 Dec 2018 10:20:35 +0800
-Message-ID: <CAB4CAwfH156yEd-XAkt==u+S8bO0U2=sg8nVr4o57C1q3K97Kw@mail.gmail.com>
-Subject: A weird problem of Realtek r8168 after resume from S3
-To:     nic_swsd <nic_swsd@realtek.com>, davem@davemloft.net,
-        netdev@vger.kernel.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Linux Upstreaming Team <linux@endlessm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1fe3ba5d-d77a-4592-c5c9-67d788d8b434@canonical.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-CMAE-Envelope: MS4wfM/ylFTqUsZwbQr5lIXZHMFD4jKb5V3fsUt5i2z6Gj5Wp/E59eFhvCbxrbkky2hIYb15uwkNTKbl9e2aqmmf66ZcYABF0miLGjw1V5C3se8u3GvQoXsD
+ zaYru5G2goyG3Ug1zP+Uvb9kNMa0VQvWJAYCQFiFeY/4pt3vCzNqVPvL+lb+FYSlQ+wtU9HKItaATnIuJSBcDRYz9JQpyT5fByIhLOqLckMgcjn/Vv7LD27d
+ a7pIP/LNGdV9xBs0dd+3zKGEqXiHNK0OLnpymhu06QaNUoUOFMTuhDAe5W+hLuqwwEUyu1O6fJqgRaH9VyTEEZ3+w53rm3gzev392RXXS1ViF1Tonz84I84B
+ gLGK0VkC
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-    We got an acer laptop which has a problem with ethernet networking after
-resuming from S3. The ethernet is popular realtek r8168. The lspci shows as
-follows.
-02:00.1 Ethernet controller [0200]: Realtek Semiconductor Co., Ltd.
-RTL8111/8168/8411 PCI Express Gigabit Ethernet Controller [10ec:8168] (rev 12)
+Hello Hui,
 
-    The problem is the ethernet is not accessible after resume. Pinging via
-ethernet always shows the response `Destination Host Unreachable`. However,
-the interesting part is, when I run tcpdump to monitor the problematic ethernet
-interface, the networking is back to alive. But it's dead again after
-I stop tcpdump.
-One more thing, if I ping the problematic machine from others, it achieves the
-same effect as above tcpdump. Maybe it's about the register setting for RX path?
+On Thu, Dec 13, 2018 at 08:23:40AM +0800, Hui Wang wrote:
+> Hello Thomas,
+> 
+> I have sent a new patch to fix this LED regression, after applying
+> this patch (ALSA: hda/realtek - fix the pop noise on headphone for
+> lenovo laptops) and the new patch (ALSA: hda/realtek - Fix the mute
+> LED regresion on Lenovo X1  Carbon),  the issue will be fixed.
+> 
+> This is the new patch I sent (also CCed to stable):
+> 
+> http://mailman.alsa-project.org/pipermail/alsa-devel/2018-December/142747.html
 
-    I tried the latest 4.20 rc version but the problem still there. I
-also tried some
-hw_reset or init thing in the resume path but no effect. Any
-suggestion for this?
-Thanks
+thanks, I can confirm that this fixes the LED regression.
 
-Chris
+> About the noise, if you follow the steps as below, you would hear the
+> noticeable click/pop noise:
+> 
+> 1. Hookup a set of headphones that you can separately place in/on your
+> ears.  (ie. ear buds)
+> 
+> 2. Put only the right headphone in/on your ear.
+> 
+> 3. Go to the Gnome sound settings and bring up the "Test Speakers"
+> function
+> 
+> 4. Play the left speaker test
+> 
+> You would expect to hear nothing in the right ear, but instead you
+> hear a "pop" at the start of each word spoken. ("pop" Front "pop"
+> left). You can repeat with the left headphone and see similar results.
+> I even tried shifting the balance all the way to the left/right and
+> get the same results.
+
+Thank you for elaborating on the noise problem - now I could also
+reproduce it and see that your patch (ALSA: hda/realtek - fix the pop
+noise on headphone for lenovo laptops) fixes it.
+
+Regards,
+
+Thomas
