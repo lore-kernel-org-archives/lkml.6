@@ -7,54 +7,56 @@ X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A4ECC67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:42:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B282C67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:42:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FC0D20870
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:42:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D91AE20879
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:42:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544676162;
-	bh=zQf/L+b3WFd4rJBEAlVsxd9uIGB8od/4GFq2DZ0bXPY=;
+	s=default; t=1544676172;
+	bh=yYK2EI7b97z9Splj5OZsELMtfsS1Fudsrb+0e0q6org=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=eliP+K191m6iJ+Q8iv+DQ+5UIBS+F6E12PtRPwxj63COstOd+bb8ZglJWWe6W8ZaT
-	 DlGxD71u1iRvKO8icqwZ4iuV9eRGvZUrLyGWj+xsxGs7zs9tf9dnGw/qnWFpBa+zS3
-	 YRI0CT/H+XenOvUVN79EEuKlt81V6mRqBIGvAfog=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FC0D20870
+	b=RNL/YgPZtqwW4b2EQEjaeaxFXwMISK6DlVFyXtqAW8VYuld1gePbvK1e1qoOOQ3jP
+	 F3UrVZRa2FGvMrn7CGo2+rlE6/cz/cx565/c0XTuT9avWQkHFOYUgUX6XOMx73m6Ti
+	 WRm8OxnMuzqx9IKCWL+6WCUYnMhiNS81hpbDB8B8=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D91AE20879
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729026AbeLMEml (ORCPT
+        id S1729227AbeLMEmv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 23:42:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44664 "EHLO mail.kernel.org"
+        Wed, 12 Dec 2018 23:42:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44580 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728850AbeLMEbo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 23:31:44 -0500
+        id S1728800AbeLMEbk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 23:31:40 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DEC7820672;
-        Thu, 13 Dec 2018 04:31:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A35A220873;
+        Thu, 13 Dec 2018 04:31:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544675503;
-        bh=zQf/L+b3WFd4rJBEAlVsxd9uIGB8od/4GFq2DZ0bXPY=;
+        s=default; t=1544675499;
+        bh=yYK2EI7b97z9Splj5OZsELMtfsS1Fudsrb+0e0q6org=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KKT4ER632R1m81faBt0RZTNLczRMs4rWGiCIzT07W/MIRaHv43nllqUtE7PPWYU/o
-         H+tAe8WK3zdVniCxpZ/DpjY2/9eMO8GW5Qpww6abEh5zOj3R9Kgerch+x3w2lEGRuC
-         0d1V4W8ySJNpSQpGpKoi181Cfzys7Fxn8WMqWlTs=
+        b=LBsE+RJEqAXWkD89EXPRA0GUoSFoxv2/l2mfbrC5pT38M8QV+rwzyJshUKnqPTuVL
+         qBmeSLDLF/OaTOc4k2hmaVCrVE2fyUxuJ0VeGc1OY1mGBnGKs5JNxhb+9iM5gvXrGO
+         r8GjEgPc38o4r3zLcztgEbQEBQ7rUPJaidIiOGKo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Vladimir Murzin <vladimir.murzin@arm.com>,
-        Chris Cole <chris@sageembedded.com>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 30/41] ARM: 8815/1: V7M: align v7m_dma_inv_range() with v7 counterpart
-Date:   Wed, 12 Dec 2018 23:30:43 -0500
-Message-Id: <20181213043054.75891-30-sashal@kernel.org>
+Cc:     Saeed Mahameed <saeedm@mellanox.com>,
+        Tariq Toukan <tariqt@mellanox.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
+        linux-rdma@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 28/41] net/mlx4_en: Fix build break when CONFIG_INET is off
+Date:   Wed, 12 Dec 2018 23:30:41 -0500
+Message-Id: <20181213043054.75891-28-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181213043054.75891-1-sashal@kernel.org>
 References: <20181213043054.75891-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -62,63 +64,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vladimir Murzin <vladimir.murzin@arm.com>
+From: Saeed Mahameed <saeedm@mellanox.com>
 
-[ Upstream commit 3d0358d0ba048c5afb1385787aaec8fa5ad78fcc ]
+[ Upstream commit 1b603f9e4313348608f256b564ed6e3d9e67f377 ]
 
-Chris has discovered and reported that v7_dma_inv_range() may corrupt
-memory if address range is not aligned to cache line size.
+MLX4_EN depends on NETDEVICES, ETHERNET and INET Kconfigs.
+Make sure they are listed in MLX4_EN Kconfig dependencies.
 
-Since the whole cache-v7m.S was lifted form cache-v7.S the same
-observation applies to v7m_dma_inv_range(). So the fix just mirrors
-what has been done for v7 with a little specific of M-class.
+This fixes the following build break:
 
-Cc: Chris Cole <chris@sageembedded.com>
-Signed-off-by: Vladimir Murzin <vladimir.murzin@arm.com>
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+drivers/net/ethernet/mellanox/mlx4/en_rx.c:582:18: warning: ‘struct iphdr’ declared inside parameter list [enabled by default]
+struct iphdr *iph)
+^
+drivers/net/ethernet/mellanox/mlx4/en_rx.c:582:18: warning: its scope is only this definition or declaration, which is probably not what you want [enabled by default]
+drivers/net/ethernet/mellanox/mlx4/en_rx.c: In function ‘get_fixed_ipv4_csum’:
+drivers/net/ethernet/mellanox/mlx4/en_rx.c:586:20: error: dereferencing pointer to incomplete type
+_u8 ipproto = iph->protocol;
+
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+Signed-off-by: Tariq Toukan <tariqt@mellanox.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/mm/cache-v7m.S | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+ drivers/net/ethernet/mellanox/mlx4/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/mm/cache-v7m.S b/arch/arm/mm/cache-v7m.S
-index 788486e830d3..32aa2a2aa260 100644
---- a/arch/arm/mm/cache-v7m.S
-+++ b/arch/arm/mm/cache-v7m.S
-@@ -73,9 +73,11 @@
- /*
-  * dcimvac: Invalidate data cache line by MVA to PoC
-  */
--.macro dcimvac, rt, tmp
--	v7m_cacheop \rt, \tmp, V7M_SCB_DCIMVAC
-+.irp    c,,eq,ne,cs,cc,mi,pl,vs,vc,hi,ls,ge,lt,gt,le,hs,lo
-+.macro dcimvac\c, rt, tmp
-+	v7m_cacheop \rt, \tmp, V7M_SCB_DCIMVAC, \c
- .endm
-+.endr
- 
- /*
-  * dccmvau: Clean data cache line by MVA to PoU
-@@ -369,14 +371,16 @@ v7m_dma_inv_range:
- 	tst	r0, r3
- 	bic	r0, r0, r3
- 	dccimvacne r0, r3
-+	addne	r0, r0, r2
- 	subne	r3, r2, #1	@ restore r3, corrupted by v7m's dccimvac
- 	tst	r1, r3
- 	bic	r1, r1, r3
- 	dccimvacne r1, r3
--1:
--	dcimvac r0, r3
--	add	r0, r0, r2
- 	cmp	r0, r1
-+1:
-+	dcimvaclo r0, r3
-+	addlo	r0, r0, r2
-+	cmplo	r0, r1
- 	blo	1b
- 	dsb	st
- 	ret	lr
+diff --git a/drivers/net/ethernet/mellanox/mlx4/Kconfig b/drivers/net/ethernet/mellanox/mlx4/Kconfig
+index 22b1cc012bc9..c1a39be0dbe7 100644
+--- a/drivers/net/ethernet/mellanox/mlx4/Kconfig
++++ b/drivers/net/ethernet/mellanox/mlx4/Kconfig
+@@ -5,7 +5,7 @@
+ config MLX4_EN
+ 	tristate "Mellanox Technologies 1/10/40Gbit Ethernet support"
+ 	depends on MAY_USE_DEVLINK
+-	depends on PCI
++	depends on PCI && NETDEVICES && ETHERNET && INET
+ 	select MLX4_CORE
+ 	imply PTP_1588_CLOCK
+ 	---help---
 -- 
 2.19.1
 
