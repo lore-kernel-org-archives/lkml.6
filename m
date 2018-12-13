@@ -2,111 +2,134 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35D92C67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 20:10:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD336C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 20:12:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA54620870
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 20:10:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8FC4A20851
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 20:12:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="q1u9ibXO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA54620870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.ws
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="jEjlkQGN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FC4A20851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727397AbeLMUKm (ORCPT
+        id S1727398AbeLMUMC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 15:10:42 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:43897 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726442AbeLMUKm (ORCPT
+        Thu, 13 Dec 2018 15:12:02 -0500
+Received: from mail-it1-f178.google.com ([209.85.166.178]:40206 "EHLO
+        mail-it1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726381AbeLMUMC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 15:10:42 -0500
-Received: by mail-qk1-f195.google.com with SMTP id r71so1905253qkr.10
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 12:10:41 -0800 (PST)
+        Thu, 13 Dec 2018 15:12:02 -0500
+Received: by mail-it1-f178.google.com with SMTP id h193so5831412ita.5
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 12:12:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=UGksc5dkleZautdnPF1eglxzeAr2TyOFjX0wqhtUuGE=;
-        b=q1u9ibXOid8VWVqEWh2XU+eNW07no2fku7MPyB+DdZUSos9B4yoqDSCNoTbeiD8bpM
-         ZdOYNts3pgAoPpnUP5n59pLEar6YeGENUJwuPNR55OixPw9j0N5HMCj1oskBoIrtyXqT
-         F/an88jlBpq6THNQtjMRs4rCs5gXGcvX+PQz5eZ+4NwwVuBVbd5iHVfiQdlWwYJRBf5l
-         XPDP6DpxHneX51ofRFJ67o2zyNyaVAjiyd29QsDel28FnF4DwbDVlQXw3X4LMASua8U+
-         udrDfOclTUsqE2GCa7AiiZ/aKMOsc0KsZEjgAWpCnRn4TnW+JKEocSMDcIVCMk/4/Lc9
-         yLew==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=mX2ALEwjE1rpKxMZZtMIe1LvqvpMJ3rKLrSyCou1id8=;
+        b=jEjlkQGN8givBGPjlUEXTo+FQpexfTdZ+nzzWkkJuWhddHY0A5OKm3jcz3H4XtgsMO
+         HqDWxzcaSqNnjg2N+J8W0PnlpJqR9YVJrtmf29gzwtyg69TJjZSdhRbBIHvwKi8r58lP
+         BUZPZ9bLzeRpcN+S+8SHLvQO72MR1CTPxEEOJ0RgAqyXOKn8hYIAWkUowvBrIuOAOndg
+         RCQNivzTe31s5IGNkLGFGfD1JUhBZ47lyfecT77UfE9AKgliik8istrSgwD4rfBYjBmo
+         KfIwK+mCWJQcqEj1pbsOnXbjDZg9CPKzf7jvmFxsPwPkG6TxKKNBByziPMbjUCCcw6rn
+         wRpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=UGksc5dkleZautdnPF1eglxzeAr2TyOFjX0wqhtUuGE=;
-        b=h3WvXCGmDxO5inwJT/1A7QMk3gMhKUMkE03yi6BYqZ4yvMq1T6ktalV/kS9S6FgwTa
-         uofRw0lpT01LqGUiqJIYQuUh8Hhg3/5jgVGYKH3BfjCrcnRhk1sZKRePN+WEDe5GSRu/
-         edOD5XuQGxIZWGJTKha54PvCSyfvkJHwDIK67+YJ4k/+WXRJYoLe1JIu2/NRJCOjJxvG
-         FgrSQI3kDC9B4fvY0tRG44QVVLUc12Ue6z1qyquqFLCfIbWwCjrPVavSQOzqzlTjaXF6
-         bhTzqW3AN9tMm0OGFRLP/IWlZvgkWyJssXSy0NBZ2PvGlVmAPDesK+Kr7uEtmE03PgXw
-         gTiw==
-X-Gm-Message-State: AA+aEWZ1HYpk3Bk8I2b1AtGJ3gu2qmREh8VOAzvPhVdQe18ijEfqrxuf
-        qCEgQYueXe4sS3wbyMZu+o3LQwp9byk=
-X-Google-Smtp-Source: AFSGD/V4p3lBYjjUvjJoUrkd3r7pkpq9sDp/cSoey56/on7xRDBL8EUw/XCntqNgiTHG0zyzkZvZ8w==
-X-Received: by 2002:a37:10d4:: with SMTP id 81mr170676qkq.19.1544731840879;
-        Thu, 13 Dec 2018 12:10:40 -0800 (PST)
-Received: from localhost.localdomain ([173.38.117.85])
-        by smtp.gmail.com with ESMTPSA id 190sm1609072qkh.25.2018.12.13.12.10.39
+        bh=mX2ALEwjE1rpKxMZZtMIe1LvqvpMJ3rKLrSyCou1id8=;
+        b=IFfpPZMCEMoC6FLAXVf+TH7aSiLeNKDq84KUFKew2EV0V4b4FSOJwFUkuAlcp2gEYO
+         XVc6jJdWUHrrUFwONegNHP1+5iBeUDEgOL+RbaGFMydf8A399s8aFqA8cnN50YjL3HZN
+         yr697GgIxLNAqD12089itQEBuzGaE525hwGaLdbbr+JNAbyJHaG/JeZiv6/Rlb9Qbr2t
+         OimpJ+4JzdXR1QLDZp06YPak3A5x28/Q7e/sZZ1gQqUw8FEOujJaXDjGJzMuxR0n422w
+         BBD/36qQ8FCFWRKLe23pQ0r89zZWQejqttGCbZaVlg7mFAKCBq80WgNDlUxuPjUugMri
+         SsBg==
+X-Gm-Message-State: AA+aEWbjINky2z1fykYuXYTaZpA1AqXBC3cbT4YIYp6137r8C8EUOyzh
+        JTcXorJhMMDoMgwUq5wnpTWQNA==
+X-Google-Smtp-Source: AFSGD/VWeYU9uI2KQMGoEP+rIeXreT5Nl4KRvMvUuSC+HiHdrbhXDJL0OgR3zblRXtpeYLbKDepOAg==
+X-Received: by 2002:a02:1a0a:: with SMTP id 10mr198790jai.50.1544731920696;
+        Thu, 13 Dec 2018 12:12:00 -0800 (PST)
+Received: from [192.168.1.56] ([216.160.245.98])
+        by smtp.gmail.com with ESMTPSA id h14sm1085023ior.41.2018.12.13.12.11.58
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 13 Dec 2018 12:10:40 -0800 (PST)
-From:   Tycho Andersen <tycho@tycho.ws>
-To:     Kees Cook <keescook@chromium.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Philipp Rudo <prudo@linux.vnet.ibm.com>
-Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Tycho Andersen <tycho@tycho.ws>
-Subject: [PATCH] seccomp, s390: fix build for syscall type change
-Date:   Thu, 13 Dec 2018 13:10:30 -0700
-Message-Id: <20181213201030.4072-1-tycho@tycho.ws>
-X-Mailer: git-send-email 2.19.1
+        Thu, 13 Dec 2018 12:11:59 -0800 (PST)
+Subject: Re: [PATCH 2/2] scsi: ufs: add inline crypto support to UFS HCD
+To:     Ladvine D Almeida <ladvine.dalmeida@synopsys.com>,
+        Parshuram Raju Thombare <pthombar@cadence.com>,
+        Eric Biggers <ebiggers@kernel.org>
+Cc:     "vinholikatti@gmail.com" <vinholikatti@gmail.com>,
+        "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>,
+        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        Alan Douglas <adouglas@cadence.com>,
+        Janek Kotas <jank@cadence.com>,
+        Rafal Ciepiela <rafalc@cadence.com>,
+        AnilKumar Chimata <anilc@codeaurora.org>,
+        Satya Tangirala <satyat@google.com>,
+        Paul Crowley <paulcrowley@google.com>,
+        Manjunath M Bettegowda <manjunath.mb@synopsys.com>,
+        Tejas Joglekar <tejas.joglekar@synopsys.com>,
+        Joao Pinto <Joao.Pinto@synopsys.com>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>
+References: <20181211095027.GA3316@lvlogina.cadence.com>
+ <20181211181647.GC221175@gmail.com>
+ <CO2PR07MB2469AD9C0A121EBF94129A11C1A70@CO2PR07MB2469.namprd07.prod.outlook.com>
+ <BD7FB879CC136E419544C8E2AE7B9C30227EE5@IN01WEMBXA.internal.synopsys.com>
+ <fb17d794-c682-3261-cbad-94ce4c14eea1@kernel.dk>
+ <BD7FB879CC136E419544C8E2AE7B9C30227F0B@IN01WEMBXA.internal.synopsys.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <6309baec-bb1f-4986-6872-a70047fbc469@kernel.dk>
+Date:   Thu, 13 Dec 2018 13:11:58 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <BD7FB879CC136E419544C8E2AE7B9C30227F0B@IN01WEMBXA.internal.synopsys.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A recent patch landed in the security tree [1] that changed the type of the
-seccomp syscall. Unfortunately, I didn't quite get every instance of the
-forward declarations, and thus there is a build failure. Here's the last
-one that I could find, for s390. It should go through the security tree,
-although hopefully some s390 people can check and make sure it looks
-reasonable?
+On 12/13/18 1:04 PM, Ladvine D Almeida wrote:
+> On 13/12/18 7:42 PM, Jens Axboe wrote:
+>> On 12/13/18 12:39 PM, Ladvine D Almeida wrote:
+>>> Suggest to take a look into the article https://urldefense.proofpoint.com/v2/url?u=https-3A__lwn.net_Articles_717754&d=DwICaQ&c=DPL6_X_6JkXFx7AXWqB0tg&r=z00zRD9ARrwHpe-XSl1OtUp1uNKGYoXI1G2DhOaDDBI&m=-pGzV3wdSje337vKOYoYB6NgU_DGDmQvfQ9egLDRYNQ&s=c4FXsrwD0BLAjE4UC47R2ngLnx_DP5jiOr0dtZ7tGsw&e=
+>>> My real concern is how to achieve it without any modifications to the
+>>> bio.(because key slot information has to finally reach the target block
+>>> device)
+>>
+>> Guys, you both need to edit when you reply, wading through 650 lines of
+>> text to get to this...
+> Jens, Thanks for your reply. I will take care of it next time onwards. :-)
+> 
+>>
+>> You obviously can't modify the bio if you don't own it, but you could
+>> clone it and then you have storage in ->bi_private.
+>>
+> 
+> I agree. I can clone the bio in the crypto target and use bi_private.
+> But, when i finally submit the bio and it reaches the target block
+> device, the information stored in bi_private is lost.
 
-The only oddity is the trailing semicolon; some lines around this patch
-have it, and some lines don't. I've left this one as-is.
+I don't follow, what do you mean it's lost? It's persistent from
+bio setup to end_io time.
 
-[1]: https://lore.kernel.org/lkml/20181212231630.GA31584@beast/T/#u
-
-Signed-off-by: Tycho Andersen <tycho@tycho.ws>
----
- arch/s390/kernel/compat_wrapper.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/s390/kernel/compat_wrapper.c b/arch/s390/kernel/compat_wrapper.c
-index 2ce28bf0c5ec..48c4ce668244 100644
---- a/arch/s390/kernel/compat_wrapper.c
-+++ b/arch/s390/kernel/compat_wrapper.c
-@@ -164,7 +164,7 @@ COMPAT_SYSCALL_WRAP3(finit_module, int, fd, const char __user *, uargs, int, fla
- COMPAT_SYSCALL_WRAP3(sched_setattr, pid_t, pid, struct sched_attr __user *, attr, unsigned int, flags);
- COMPAT_SYSCALL_WRAP4(sched_getattr, pid_t, pid, struct sched_attr __user *, attr, unsigned int, size, unsigned int, flags);
- COMPAT_SYSCALL_WRAP5(renameat2, int, olddfd, const char __user *, oldname, int, newdfd, const char __user *, newname, unsigned int, flags);
--COMPAT_SYSCALL_WRAP3(seccomp, unsigned int, op, unsigned int, flags, const char __user *, uargs)
-+COMPAT_SYSCALL_WRAP3(seccomp, unsigned int, op, unsigned int, flags, void __user *, uargs)
- COMPAT_SYSCALL_WRAP3(getrandom, char __user *, buf, size_t, count, unsigned int, flags)
- COMPAT_SYSCALL_WRAP2(memfd_create, const char __user *, uname, unsigned int, flags)
- COMPAT_SYSCALL_WRAP3(bpf, int, cmd, union bpf_attr *, attr, unsigned int, size);
 -- 
-2.19.1
+Jens Axboe
 
