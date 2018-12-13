@@ -3,92 +3,81 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA98AC65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 20:21:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2BAEC65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 20:21:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 831B420851
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 20:21:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 831B420851
+	by mail.kernel.org (Postfix) with ESMTP id 7754C20851
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 20:21:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7754C20851
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727846AbeLMUVs (ORCPT
+        id S1728084AbeLMUV4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 15:21:48 -0500
-Received: from relmlor1.renesas.com ([210.160.252.171]:2262 "EHLO
+        Thu, 13 Dec 2018 15:21:56 -0500
+Received: from relmlor1.renesas.com ([210.160.252.171]:53805 "EHLO
         relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726408AbeLMUVs (ORCPT
+        by vger.kernel.org with ESMTP id S1726408AbeLMUV4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 15:21:48 -0500
+        Thu, 13 Dec 2018 15:21:56 -0500
 X-IronPort-AV: E=Sophos;i="5.56,349,1539615600"; 
-   d="scan'208";a="2765902"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 14 Dec 2018 05:21:45 +0900
+   d="scan'208";a="2765909"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 14 Dec 2018 05:21:54 +0900
 Received: from fabrizio-dev.ree.adwin.renesas.com (unknown [10.226.37.69])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 4363B4072C4F;
-        Fri, 14 Dec 2018 05:21:43 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 9257240F76C4;
+        Fri, 14 Dec 2018 05:21:51 +0900 (JST)
 From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To:     Rob Herring <robh+dt@kernel.org>,
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
 Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         Simon Horman <horms@verge.net.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] dt-bindings: PCI: rcar: Add device tree support for r8a774c0
-Date:   Thu, 13 Dec 2018 20:21:40 +0000
-Message-Id: <1544732500-6866-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Biju Das <biju.das@bp.renesas.com>
+Subject: [PATCH] media: dt-bindings: rcar-csi2: Add r8a774c0
+Date:   Thu, 13 Dec 2018 20:21:49 +0000
+Message-Id: <1544732509-6911-1-git-send-email-fabrizio.castro@bp.renesas.com>
 X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add PCIe support for the RZ/G2E (a.k.a. R8A774C0).
+Add the compatible string for RZ/G2E (a.k.a. R8A774C0) to the
+list of supported SoCs.
 
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- Documentation/devicetree/bindings/pci/rcar-pci.txt | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ Documentation/devicetree/bindings/media/renesas,rcar-csi2.txt | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/pci/rcar-pci.txt b/Documentation/devicetree/bindings/pci/rcar-pci.txt
-index 976ef7b..bb89fed 100644
---- a/Documentation/devicetree/bindings/pci/rcar-pci.txt
-+++ b/Documentation/devicetree/bindings/pci/rcar-pci.txt
-@@ -3,6 +3,7 @@
- Required properties:
- compatible: "renesas,pcie-r8a7743" for the R8A7743 SoC;
- 	    "renesas,pcie-r8a7744" for the R8A7744 SoC;
-+	    "renesas,pcie-r8a774c0" for the R8A774C0 SoC;
- 	    "renesas,pcie-r8a7779" for the R8A7779 SoC;
- 	    "renesas,pcie-r8a7790" for the R8A7790 SoC;
- 	    "renesas,pcie-r8a7791" for the R8A7791 SoC;
-@@ -13,7 +14,8 @@ compatible: "renesas,pcie-r8a7743" for the R8A7743 SoC;
- 	    "renesas,pcie-r8a77990" for the R8A77990 SoC;
- 	    "renesas,pcie-rcar-gen2" for a generic R-Car Gen2 or
- 				     RZ/G1 compatible device.
--	    "renesas,pcie-rcar-gen3" for a generic R-Car Gen3 compatible device.
-+	    "renesas,pcie-rcar-gen3" for a generic R-Car Gen3 or
-+				     RZ/G2 compatible device.
+diff --git a/Documentation/devicetree/bindings/media/renesas,rcar-csi2.txt b/Documentation/devicetree/bindings/media/renesas,rcar-csi2.txt
+index 2824489..11cf38d 100644
+--- a/Documentation/devicetree/bindings/media/renesas,rcar-csi2.txt
++++ b/Documentation/devicetree/bindings/media/renesas,rcar-csi2.txt
+@@ -2,12 +2,13 @@ Renesas R-Car MIPI CSI-2
+ ------------------------
  
- 	    When compatible with the generic version, nodes must list the
- 	    SoC-specific version corresponding to the platform first
-@@ -37,7 +39,8 @@ compatible: "renesas,pcie-r8a7743" for the R8A7743 SoC;
+ The R-Car CSI-2 receiver device provides MIPI CSI-2 capabilities for the
+-Renesas R-Car family of devices. It is used in conjunction with the
++Renesas R-Car and RZ/G2 family of devices. It is used in conjunction with the
+ R-Car VIN module, which provides the video capture capabilities.
  
- Optional properties:
- - phys: from common PHY binding: PHY phandle and specifier (only make sense
--	for R-Car gen3 SoCs where the PCIe PHYs have their own register blocks).
-+	for R-Car gen3 and RZ/G2 SoCs where the PCIe PHYs have their own
-+	register blocks).
- - phy-names: from common PHY binding: should be "pcie".
- 
- Example:
+ Mandatory properties
+ --------------------
+  - compatible: Must be one or more of the following
++   - "renesas,r8a774c0-csi2" for the R8A774C0 device.
+    - "renesas,r8a7795-csi2" for the R8A7795 device.
+    - "renesas,r8a7796-csi2" for the R8A7796 device.
+    - "renesas,r8a77965-csi2" for the R8A77965 device.
 -- 
 2.7.4
 
