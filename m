@@ -2,191 +2,134 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F3C5C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 13:10:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB9A8C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 13:11:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B12220849
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 13:10:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="DwgYHu3D"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B12220849
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 5BF2620870
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 13:11:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544706680;
+	bh=vx3UfyT37qi7YNjRu6FHKzxpzFiS7e/mXCYEG0g4ggo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=DZd3UfwCLt8GIh6HEA3K4pG20JCD7UUYjhvX627xT5q9YEHWgCYUWn0WBT8x40WmZ
+	 A52KfmHpQ2ioE2GE8boV5mf060qYLuWTOS2KJ15p5TDM3hRcRyKr7WkKLLQVfAGOPP
+	 Si6UjnnY299jtvRdCy4g5yVB3G/Zy4Ys+ybZVECE=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BF2620870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729311AbeLMNKL (ORCPT
+        id S1729333AbeLMNLT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 08:10:11 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:33303 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729171AbeLMNKK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 08:10:10 -0500
-Received: by mail-wm1-f65.google.com with SMTP id r24so13866895wmh.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 05:10:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=38mbt+BqVhFnc/CjZGS2t6U4Vp7zJP4jXDTl/C7yvYY=;
-        b=DwgYHu3D5WYQJRF4/72VhnR6oNXBOgmN/Uo1a62KHbYyC8jN6zL4KZNhUXO/c0OeCL
-         pSGIakLqb8mRF+NG6S7fq9N6IdlyD27dYvw7u+csVxpsScCu+jYlDk8dQqyxGe54z4iI
-         n+viNKVVnSNRk2DPDrVV/tdg5S4Xx0ei2a3Eg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=38mbt+BqVhFnc/CjZGS2t6U4Vp7zJP4jXDTl/C7yvYY=;
-        b=UHk/+DL1nTlTbEd79hx3qHux+sEUA3kkzprrG5BA7v60vXkiIC5mpYCCc5h2JCm00r
-         f5DJPDMqQf69wuAJhgJ/y7umVZSZy6IkJZNUDrOmuCvRFDAYAw4UlUiFNJVFy/yWtemn
-         Ud2tOtymIVFRpqx+ICGUnOIntDCdjknvf5floZxTvZBEOZDU1CNCLWbvxxCVQ9SREH2T
-         rNXiAWsgXuidLguZJujFME7KT6zfvEV6efpuA18mhxVQDV+BxDOH8L1qwGC8Wz9HSk+o
-         Dj//1WdmozGuy3TvNR8oo0NVvrAa7OXCwLiRXkkBZOJO+G4as6AMk7r9LhJ+zkerY2JY
-         8k4Q==
-X-Gm-Message-State: AA+aEWaBY9zRSDT++kzMpvzpicqpz67e5DREjcBNW6/RXNiEj1ylPmhM
-        eH9PVYvJePh2EkyXu0UlPexz0tuUrd/69JIw
-X-Google-Smtp-Source: AFSGD/WyFLVEfjsdKtOcn9yelNWlk6saP74A/ECCNprpBA7mXmBpPy2H53+CUCvHQfsVKeb/aVqOaQ==
-X-Received: by 2002:a1c:b515:: with SMTP id e21mr10258132wmf.82.1544706608515;
-        Thu, 13 Dec 2018 05:10:08 -0800 (PST)
-Received: from leoy-ThinkPad-X240s ([209.250.228.18])
-        by smtp.gmail.com with ESMTPSA id o5sm3727983wmg.25.2018.12.13.05.10.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 13 Dec 2018 05:10:07 -0800 (PST)
-Date:   Thu, 13 Dec 2018 21:09:49 +0800
-From:   leo.yan@linaro.org
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Thu, 13 Dec 2018 08:11:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42364 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729212AbeLMNLS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 08:11:18 -0500
+Received: from quaco.ghostprotocols.net (unknown [190.15.121.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5B76020849;
+        Thu, 13 Dec 2018 13:11:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544706677;
+        bh=vx3UfyT37qi7YNjRu6FHKzxpzFiS7e/mXCYEG0g4ggo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=O0EvGRf7j3qprC/guCKh8qJ2x3DqCKeLCu65sohMDSc7UVFnoLeyqf6bd1d/GsLeT
+         /KF+/n15b4SDoeSJlyfnDPIEcYYB3Y7FJ/XQefQAEONmH2e4/wPKIIrnk3ByWns2cl
+         kvXCl9oZBFWPPoCkf9BE2P5V7ibLy8CXEThUGWas=
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id EE48E41B1D; Thu, 13 Dec 2018 10:11:13 -0300 (-03)
+Date:   Thu, 13 Dec 2018 10:11:13 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     Leo Yan <leo.yan@linaro.org>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Jiri Olsa <jolsa@redhat.com>,
         Namhyung Kim <namhyung@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Coresight ML <coresight@lists.linaro.org>,
-        Mike Leach <mike.leach@linaro.org>,
-        Robert Walker <robert.walker@arm.com>
-Subject: Re: [PATCH v3 6/8] perf cs-etm: Treat NO_SYNC element as trace
- discontinuity
-Message-ID: <20181213130949.GB17663@leoy-ThinkPad-X240s>
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Coresight ML <coresight@lists.linaro.org>
+Subject: Re: [PATCH v3 0/8] perf cs-etm: Correct packets handling
+Message-ID: <20181213131113.GH21027@kernel.org>
 References: <1544513908-16805-1-git-send-email-leo.yan@linaro.org>
- <1544513908-16805-7-git-send-email-leo.yan@linaro.org>
- <20181213123854.GE21027@kernel.org>
- <20181213124154.GF21027@kernel.org>
+ <CANLsYkyFZqUYghGmSS-j50EaOvce57CP+Y737xRF3HjPrHDVqw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181213124154.GF21027@kernel.org>
-User-Agent: Mutt/1.10+31 (9cdd884) (2018-06-19)
+In-Reply-To: <CANLsYkyFZqUYghGmSS-j50EaOvce57CP+Y737xRF3HjPrHDVqw@mail.gmail.com>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnaldo,
+Em Wed, Dec 12, 2018 at 11:45:44AM -0700, Mathieu Poirier escreveu:
+> On Tue, 11 Dec 2018 at 00:40, Leo Yan <leo.yan@linaro.org> wrote:
+> >
+> > perf cs-etm module converts decoder elements to packets and then we have
+> > more context crossing packets to generate synthenize samples, finally
+> > perf tool can faciliate samples for statistics and report the results.
+> >
+> > This patch series is to address several issues found related with
+> > packets handling and samples generation when worked firstly on branch
+> > sample flags support for Arm CoreSight trace data, so this patch series
+> > is dependency for sample flags setting, will send another dedicated
+> > patch series for sample flags later.
+> >
+> > In this patch series, the first two patches are mainly to fix issues in
+> > cs_etm__flush(): patch 0001 corrects packets swapping in cs_etm__flush()
+> > and this can fix the wrong branch sample caused by the missed packets
+> > swapping; patch 0002 is to fix the wrong samples generation with stale
+> > packets at the end of trace block.
+> >
+> > Patch 0003 and 0004 are for minor fixing; patch 0003 removes unused field
+> > 'cs_etm_decoder::trace_on', this can simplize the switch-case code for all
+> > discontinuity packet generation by using one code block; patch 0004 is to
+> > refactor enumeration cs_etm_sample_type.
+> >
+> > Patch 0005 is to rename CS_ETM_TRACE_ON to CS_ETM_DISCONTINUITY, we use
+> > a more general packet type to present trace discontinuity, so it can be
+> > used by TRACE_ON event, and also can be used by NO_SYNC and EO_TRACE
+> > elements.
+> >
+> > Patch 0006 is used to support NO_SYNC packet, otherwise the trace
+> > decoding cannot reflect the tracing discontinuity caused by NO_SYNC
+> > packet.
+> >
+> > Patch 0007 is used to support EO_TRACE packet, which also introduces
+> > the tracing discontinuity at the end of trace and we should save last
+> > trace data for it.
+> >
+> > Patch 0008 is used to generate branch sample for exception packets.
+> >
+> > Credit to Mike Leach and Robert Walker who made me clear for underlying
+> > mechanism for NO_SYNC/EO_TRACE elements, Mike also shared the detailed
+> > explanation for why we can treat NO_SYNC and TRACE_ON elements as the
+> > same, so except following Mike & Rob suggestion for trace discontinuity
+> > consolidation, most commit log of patches 0006/0007 also come from
+> > Mike's explanation.
+> >
+> > This patch series is applied directly on the acme's perf/core branch [1]
+> > with latest commit aaab25f03e9e ("perf trace: Allow selecting use the
+> > use of the ordered_events code").
+> >
+> > With applying the dependency patch, this patch series has been tested
+> > for branch samples dumping with below command on Juno board:
+> >
+> >   # perf script -F,-time,+ip,+sym,+dso,+addr,+symoff -k vmlinux
+> 
+> Good day Arnaldo,
+> 
+> I have reviewed all the changes in this set - please consider adding
+> to your next branch.  Let me know if you want a pull request.
 
-On Thu, Dec 13, 2018 at 09:41:54AM -0300, Arnaldo Carvalho de Melo wrote:
-> Em Thu, Dec 13, 2018 at 09:38:54AM -0300, Arnaldo Carvalho de Melo escreveu:
-> > Em Tue, Dec 11, 2018 at 03:38:26PM +0800, Leo Yan escreveu:
-> > > CoreSight tracer driver might insert barrier packet between different
-> > > buffers, thus the decoder can spot the boundaries based on the barrier
-> > > packet; the decoder is possible to hit a barrier packet and emit a
-> > > NO_SYNC element, then the decoder will find a periodic synchronisation
-> > > point inside that next trace block that starts trace again but does not
-> > > have the TRACE_ON element as indicator - usually because this block of
-> > > trace has wrapped the buffer so we have lost the original point that
-> > > trace was enabled.
-> > > 
-> > > In upper case, it results in the trace stream only inserts the
-> > > OCSD_GEN_TRC_ELEM_NO_SYNC element in the middle of tracing stream, but
-> > > we don't handle NO_SYNC element properly and at the end users miss to
-> > > see the info for trace discontinuity.
-> > 
-> > 
-> > "In upper case"? Maybe:
-> > 
-> > In the former case it causes the insertion of a OCSD_GEN_TRC_ELEM_NO_SYNC
-> > in the middle of the the tracing stream, but as we were npt handling the
-> > NO_SYNC element properly which ends up making users miss the
-> > discontinuity indication"?
-> 
-> > > Though OCSD_GEN_TRC_ELEM_NO_SYNC is different from CS_ETM_TRACE_ON when
-> > > output from the decoder, but both of them indicate the trace data is
-> > 
-> > can we remove the "but" and "of them" (redundant) above?
-> > 
-> > > discontinuous; this patch treats OCSD_GEN_TRC_ELEM_NO_SYNC as trace
-> >                                                                a
-> > > discontinuity and generates CS_ETM_DISCONTINUITY packet for it, so
-> > > cs-etm can handle discontinuity for this case, finally it saves the last
-> >                        it (way too many "discontinuity")
-> > > trace data for previous trace block and restart samples for new block.
-> 
-> I've tentatively done those changes (and a few more) in my local branch,
-> resulting in the wording below, plese let me know if you are ok with it:
+Thanks, applied manually, pushing now to my tmp.perf/core branch, please
+take a look at the commit log messages to see if I didn't messed up
+anything. :-)
 
-Very appreciate your helping.  Please see some minor typos in below
-commit:
-
-> commit 148068b45fe2e93b19c06cfc1140ea12ca72eb59
-> Author: Leo Yan <leo.yan@linaro.org>
-> Date:   Tue Dec 11 15:38:26 2018 +0800
-> 
->     perf cs-etm: Treat NO_SYNC element as trace discontinuity
->     
->     The CoreSight tracer driver might insert a barrier packets between
-                                                         packet
->     different buffers, thus the decoder can spot the boundaries based on the
->     barrier packet; it is possible for the decoder to hit a barrier packet
->     and emit a NO_SYNC element, then the decoder will find a periodic
->     synchronisation point inside that next trace block that starts the trace
->     again but does not have the TRACE_ON element as indicator - usually
->     because this trace block has wrapped the buffer so we have lost the
->     original point when the trace was enabled.
->     
->     In the first case it causes the insertion of a OCSD_GEN_TRC_ELEM_NO_SYNC
-             former
->     in the middle of the the tracing stream, but as we were npt handling the
-                                                              not
->     NO_SYNC element properly which ends up making users miss the
->     discontinuity indication"?
-                              s/?/.
-
-Thanks a lot for helping.  If you prefer me to resend the patch set,
-also let me know.
-
->     Though OCSD_GEN_TRC_ELEM_NO_SYNC is different from CS_ETM_TRACE_ON when
->     output from the decoder, both indicate that the trace data is
->     discontinuous; this patch treats OCSD_GEN_TRC_ELEM_NO_SYNC as a trace
->     discontinuity and generates a CS_ETM_DISCONTINUITY packet for it, so
->     cs-etm can handle the discontinuity for this case, finally it saves the
->     last trace data for the previous trace block and restart samples for the
->     new block.
->     
->     Signed-off-by: Leo Yan <leo.yan@linaro.org>
->     Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
->     Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
->     Cc: Jiri Olsa <jolsa@redhat.com>
->     Cc: Mike Leach <mike.leach@linaro.org>
->     Cc: Namhyung Kim <namhyung@kernel.org>
->     Cc: Robert Walker <robert.walker@arm.com>
->     Cc: coresight ml <coresight@lists.linaro.org>
->     Cc: linux-arm-kernel@lists.infradead.org
->     Link: http://lkml.kernel.org/r/1544513908-16805-7-git-send-email-leo.yan@linaro.org
->     Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-> 
-> diff --git a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
-> index 1039f364f4cc..bee026e76a4c 100644
-> --- a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
-> +++ b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
-> @@ -410,7 +410,6 @@ static ocsd_datapath_resp_t cs_etm_decoder__gen_trace_elem_printer(
->  	case OCSD_GEN_TRC_ELEM_UNKNOWN:
->  		break;
->  	case OCSD_GEN_TRC_ELEM_NO_SYNC:
-> -		break;
->  	case OCSD_GEN_TRC_ELEM_TRACE_ON:
->  		resp = cs_etm_decoder__buffer_discontinuity(decoder,
->  							    trace_chan_id);
-> 
-> 
+- Arnaldo
