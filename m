@@ -3,160 +3,112 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8320C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 08:29:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3035AC65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 08:31:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B299720811
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 08:29:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B299720811
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id EE29420811
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 08:31:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE29420811
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727391AbeLMI3i convert rfc822-to-8bit (ORCPT
+        id S1727268AbeLMIb0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 03:29:38 -0500
-Received: from mga01.intel.com ([192.55.52.88]:33680 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725949AbeLMI3i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 03:29:38 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Dec 2018 00:29:37 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,347,1539673200"; 
-   d="scan'208";a="98409523"
-Received: from jlahtine-desk.ger.corp.intel.com (HELO localhost) ([10.251.85.148])
-  by orsmga007.jf.intel.com with ESMTP; 13 Dec 2018 00:29:34 -0800
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-To:     Pavel Machek <pavel@ucw.cz>
-From:   Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-In-Reply-To: <20181212182902.GA7380@amd>
-Cc:     bp@alien8.de, hpa@zytor.com,
-        kernel list <linux-kernel@vger.kernel.org>, mingo@redhat.com,
-        tglx@linutronix.de, x86@kernel.org, jani.nikula@linux.intel.com,
-        rodrigo.vivi@intel.com, intel-gfx@lists.freedesktop.org,
-        chris@chris-wilson.co.uk
-References: <20181108175803.GA10785@amd>
- <154279919462.20217.14259089584802660420@jlahtine-desk.ger.corp.intel.com>
- <20181121115449.GA32455@amd>
- <154296105546.7930.1457928786446716358@jlahtine-desk.ger.corp.intel.com>
- <20181124152352.GA9548@amd> <20181208111346.GA5535@amd>
- <20181208112447.GA9663@amd>
- <64409c484c0601e7504ccc0cf8d211b3bb524ebe.camel@linux.intel.com>
- <20181212182902.GA7380@amd>
-Message-ID: <154468977288.4945.12937975200892746470@jlahtine-desk.ger.corp.intel.com>
-User-Agent: alot/0.6
-Subject: Re: 4.20.0-rc6-next-20181210, v4.20-rc1: list_del corruption on thinkpad x220,
- graphics related?
-Date:   Thu, 13 Dec 2018 10:29:33 +0200
+        Thu, 13 Dec 2018 03:31:26 -0500
+Received: from mx2.suse.de ([195.135.220.15]:45850 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725949AbeLMIb0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 03:31:26 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 2E113AF68;
+        Thu, 13 Dec 2018 08:31:24 +0000 (UTC)
+Date:   Thu, 13 Dec 2018 09:31:22 +0100
+Message-ID: <s5himzxu8th.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     "Ayman Bagabas" <ayman.bagabas@gmail.com>
+Cc:     <alsa-devel@alsa-project.org>, "Hui Wang" <hui.wang@canonical.com>,
+        "Andy Shevchenko" <andy@infradead.org>,
+        "Darren Hart" <dvhart@infradead.org>,
+        "Jaroslav Kysela" <perex@perex.cz>,
+        "Kailang Yang" <kailang@realtek.com>,
+        <linux-kernel@vger.kernel.org>,
+        <platform-driver-x86@vger.kernel.org>
+Subject: Re: [PATCH v11 0/3] Huawei laptops
+In-Reply-To: <20181212230802.21140-1-ayman.bagabas@gmail.com>
+References: <20181212230802.21140-1-ayman.bagabas@gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/26
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Pavel Machek (2018-12-12 20:29:02)
-> Hi!
+On Thu, 13 Dec 2018 00:07:56 +0100,
+Ayman Bagabas wrote:
 > 
-> > > > > > > > There's one similar for nouveau in Bugzilla, but it seems like a genuine
-> > > > > > > > memory corruption (1 bit flipped):
-> > > > > > > > 
-> > > > > > > > https://bugs.freedesktop.org/show_bug.cgi?id=84880
-> > > > > > > > 
-> > > > > > > > Any extra information would be of use :)
-> > > > > > > > 
-> > > > > > > > Regards, Joonas
-> > > > > > > > 
-> > > > > > > > PS. Could you open a bug to Bugzilla, it'll help to collect the
-> > > > > > > > information in one consolidated place:
-> > > > > > > > 
-> > > > > > > > https://01.org/linuxgraphics/documentation/how-report-bugs
-> > > > > > > 
-> > > > > > > I prefer email... certainly for bugs that can't be reproduced.
-> > > > > > 
-> > > > > > By adding it to the Bugzilla it may be recognized by somebody else
-> > > > > > who is experiencing a similar issue. Internet points are not deducted
-> > > > > > for submitting bugs in good faith, even if they get closed as
-> > > > > > NOTABUG.
-> > > > 
-> > > > Well, your documentation suggests you'll deduce my internet points:
-> > > > 
-> > > >   Before filing the bug, please try to reproduce your issue with the
-> > > >   latest kernel. Use the latest drm-tip branch from
-> > > >   http://cgit.freedesktop.org/drm-tip and build as instructed on our
-> > > >   Build Guide.
-> > > > 
-> > > > :-)
-> > > 
-> > > I'd prefer not to run drm-tip. I'll update to 2.6.20-rc5+ and see if
-> > > it re-appears (but it takes long time to reproduce :-().
-> > 
-> > If we can or can not reproduce the issue with drm-tip, is a very useful
-> > datapoint for us. If we can not reproduce, it'll be possible to bisect
-> > which commit fixed it, and backport that. On the other hand, if it's
-> > still reproducible, we know we're not spending time on something we
-> > already fixed, and the priority gets a bump.
+> This patch set is based on the new audio LED triggers in topic/leds-trigger branch from
+>         git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git
 > 
-> bisect ... is not practical on something that takes 2 days to reproduce.
+> Changes in v11:
+> * Minor code changes
 > 
-> > > If you think it is useful, I can try to update my machine to
-> > > linux-next.
-> > 
-> > linux-next is closer to drm-tip, so it's better. Do you have some
-> > specific reason for not wanting to run drm-tip (but linux-next is still
-> > ok)?
+> Changes in v10:
+> * Use ec_get_handle instead of acpi_get_handle since we are using the ec device
+> * Switch to WMI0_EXPENSIVE_GUID and wmi_query_block to fetch keycode when WMI0 is used
 > 
-> I already have build/update scripts for -next, and I trust -next not
-> to store screenshots of my desktop in my master boot record :-).
+> Changes in v9:
+> * Explicitly use NULL in acpi_get_handle
+> * Drop __initconst from huawei_wmi_keymap
 > 
-> Anyway, it does happen with -next. This time, chromiums were running,
-> and crash happened minute? after I exited flightgear. It can be seen
-> in the logs.
+> Changes in v8:
+> * Switch to wmi_driver
+> * Use devm to allocate and manage devices
+> * Skip registering LED subsystem if a ACPI controller method was not found
 > 
-> Oh and I might want to mention -- machine was rather deep in swap this
-> time, as in "mouse jumping when starting fgfs" and "could feel the
-> chromium being swapped back in". I might have had this situation
-> before, and just powercycled the machine "because it is so deep in
-> swap that it will not recover".
+> Changes in v7:
+> * Use audio LED triggers patch set
+> * Use KEY_CONFIG (XF86Tools) instead of KEY_PROG1.
+>  In Windows, the key is used to launch Huawei PC manager. XF86Tools is
+>  used by default on most desktop environments i.e. Gnome.
 > 
-> top says:
+> Changes in v6:
+> * Review tags
 > 
-> top - 19:18:24 up 2 days,  8:03,  2 users,  load average: 3.02, 3.45,
-> 3.21
-> Tasks: 141 total,   1 running,  86 sleeping,   0 stopped,   2 zombie
-> %Cpu(s): 18.8 us,  7.6 sy,  3.0 ni, 68.4 id,  1.3 wa,  0.0 hi,  0.9
-> si,  0.0 st
-> KiB Mem:   5967968 total,   663244 used,  5304724 free,    48876
-> buffers
-> KiB Swap:  1681428 total,   170904 used,  1510524 free.   446280
-> cached Mem
+> Changes in v5:
+> * Consistency in file names
+> * How module would be enabled (Kconfig)
+> * Match license in SPDX and MODULE_LICENSE 
 > 
-> ....but of course that memory is free once everything died.
+> Changes in v4:
+> * Code formatting
 > 
-> Any ideas? Should I go back to v4.19 to see if it happens there, too?
+> Changes in v3:
+> * Support for Huawei MBX
+> * Style and formatting issues
+> 
+> Ayman Bagabas (3):
+>   ALSA: hda: fix front speakers on Huawei MBXP.
+>   x86: add support for Huawei WMI hotkeys.
+>   ALSA: hda: add support for Huawei WMI micmute LED
 
-linux-next includes very much the same code as drm-tip. There's nobody
-magically reviewing the code more than it is reviewed for inclusion into
-drm-tip, when it is fed into linux-next. So thinking linux-next would be
-some way safer is an illusion.
+Thank you for your patient works!
 
-It sounds like having memory pressure expedites the corruption, which
-should make it easier to reproduce and thus fix.
+Now I applied all three patches to topic/huawei-leds branch of sound
+git tree (with just minor corrections of patch descriptions).  This is
+merged to for-next branch for 4.21 inclusion.
 
-So if you could please try drm-tip reproducing AND open a bug in Bugzilla.
-If you are unwilling to do that, it is very difficult to help you more.
+Andy, feel free to merge topic/huawei-leds branch into your tree if
+needed.  This one is already based on topic/leds-trigger branch, where
+both branches are immutable.
 
-Regards, Joonas
 
-> 
-> 
->                                                                         Pavel
-> -- 
-> (english) http://www.livejournal.com/~pavelmachek
-> (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+thanks,
+
+Takashi
