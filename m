@@ -2,99 +2,122 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF915C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:33:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C25F2C67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:34:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 724F420645
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:33:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="pkOwiKnl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 724F420645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
+	by mail.kernel.org (Postfix) with ESMTP id 8FF5220645
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:34:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FF5220645
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729170AbeLMMd4 (ORCPT
+        id S1729202AbeLMMeT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 07:33:56 -0500
-Received: from vps0.lunn.ch ([185.16.172.187]:46301 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728517AbeLMMdz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 07:33:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
-        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=UrmuoJqKFGKpV/RldOB6vPOUSOJxY3/IhP0qkRWMASc=;
-        b=pkOwiKnl+wQK1hdyss1GUSqWvWEohA7LOnbMBxofBEJFY3c4MK35Om2k18keCGEASgHeENVy5bgewY54tx44jng0t16v9lzdDuxHyWVFKqDsbQ4XczNlw/qvStOo54UzFoxfv/h9IN5i9hNWBgSII4e7xHwAIb8Ghdsx2359lIE=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1gXQBW-0002ps-G0; Thu, 13 Dec 2018 13:33:46 +0100
-Date:   Thu, 13 Dec 2018 13:33:46 +0100
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Biao Huang <biao.huang@mediatek.com>
-Cc:     davem@davemloft.net, robh+dt@kernel.org,
-        honghui.zhang@mediatek.com, yt.shen@mediatek.com,
-        liguo.zhang@mediatek.com, mark.rutland@arm.com,
-        nelson.chang@mediatek.com, matthias.bgg@gmail.com,
-        netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, joabreu@synopsys.com
-Subject: Re: [v7, PATCH 1/2] net:stmmac: dwmac-mediatek: add support for
- mt2712
-Message-ID: <20181213123346.GF1605@lunn.ch>
-References: <1544666173-5121-1-git-send-email-biao.huang@mediatek.com>
- <1544666173-5121-2-git-send-email-biao.huang@mediatek.com>
+        Thu, 13 Dec 2018 07:34:19 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:47211 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728981AbeLMMeT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 07:34:19 -0500
+Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7] helo=dude.pengutronix.de.)
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1gXQBv-0005iT-Hb; Thu, 13 Dec 2018 13:34:11 +0100
+From:   Philipp Zabel <p.zabel@pengutronix.de>
+To:     Dinh Nguyen <dinguyen@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 2/2] reset: socfpga: declare socfpga_reset_init in a header file
+Date:   Thu, 13 Dec 2018 13:33:58 +0100
+Message-Id: <20181213123358.24391-3-p.zabel@pengutronix.de>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181213123358.24391-1-p.zabel@pengutronix.de>
+References: <20181213123358.24391-1-p.zabel@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1544666173-5121-2-git-send-email-biao.huang@mediatek.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::7
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Biao
+Avoid declaring extern functions in c files. To make sure function
+definition and usage don't get out of sync, declare socfpga_reset_init
+in a common header.
 
-> +	case PHY_INTERFACE_MODE_RGMII:
-> +		/* the PHY is not responsible for inserting any internal
-> +		 * delay by itself in PHY_INTERFACE_MODE_RGMII case,
-> +		 * so Ethernet MAC will insert delays for both transmit
-> +		 * and receive path here.
-> +		 */
+Suggested-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+---
+ arch/arm/mach-socfpga/socfpga.c | 3 +--
+ drivers/reset/reset-socfpga.c   | 2 +-
+ include/linux/reset/socfpga.h   | 7 +++++++
+ 3 files changed, 9 insertions(+), 3 deletions(-)
+ create mode 100644 include/linux/reset/socfpga.h
 
-What if the PCB designed has decided to do a kink in the clock to add
-the delays? I don't think any of these delays should depend on the PHY
-interface mode. It is up to the device tree writer to set both the PHY
-delay and the MAC delay, based on knowledge of the board, including
-any kicks in the tracks. The driver should then do what it is told.
+diff --git a/arch/arm/mach-socfpga/socfpga.c b/arch/arm/mach-socfpga/socfpga.c
+index cc64576c102b..685272fa9eb6 100644
+--- a/arch/arm/mach-socfpga/socfpga.c
++++ b/arch/arm/mach-socfpga/socfpga.c
+@@ -19,6 +19,7 @@
+ #include <linux/of_irq.h>
+ #include <linux/of_platform.h>
+ #include <linux/reboot.h>
++#include <linux/reset/socfpga.h>
+ 
+ #include <asm/hardware/cache-l2x0.h>
+ #include <asm/mach/arch.h>
+@@ -32,8 +33,6 @@ void __iomem *rst_manager_base_addr;
+ void __iomem *sdr_ctl_base_addr;
+ unsigned long socfpga_cpu1start_addr;
+ 
+-extern void __init socfpga_reset_init(void);
+-
+ void __init socfpga_sysmgr_init(void)
+ {
+ 	struct device_node *np;
+diff --git a/drivers/reset/reset-socfpga.c b/drivers/reset/reset-socfpga.c
+index 318cfc51c441..96953992c2bb 100644
+--- a/drivers/reset/reset-socfpga.c
++++ b/drivers/reset/reset-socfpga.c
+@@ -11,6 +11,7 @@
+ #include <linux/of_address.h>
+ #include <linux/platform_device.h>
+ #include <linux/reset-controller.h>
++#include <linux/reset/socfpga.h>
+ #include <linux/slab.h>
+ #include <linux/spinlock.h>
+ #include <linux/types.h>
+@@ -18,7 +19,6 @@
+ #include "reset-simple.h"
+ 
+ #define SOCFPGA_NR_BANKS	8
+-void __init socfpga_reset_init(void);
+ 
+ static int a10_reset_init(struct device_node *np)
+ {
+diff --git a/include/linux/reset/socfpga.h b/include/linux/reset/socfpga.h
+new file mode 100644
+index 000000000000..b11a2047c342
+--- /dev/null
++++ b/include/linux/reset/socfpga.h
+@@ -0,0 +1,7 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef __LINUX_RESET_SOCFPGA_H__
++#define __LINUX_RESET_SOCFPGA_H__
++
++void __init socfpga_reset_init(void);
++
++#endif /* __LINUX_RESET_SOCFPGA_H__ */
+-- 
+2.19.1
 
-> +	if (!of_property_read_u32(plat->np, "mediatek,tx-delay-ps", &tx_delay_ps)) {
-> +		if (tx_delay_ps < plat->variant->tx_delay_max) {
-> +			mac_delay->tx_delay = tx_delay_ps;
-> +		} else {
-> +			dev_err(plat->dev, "Invalid TX clock delay: %dps\n", tx_delay_ps);
-> +			return -EINVAL;
-> +		}
-> +	}
-> +
-> +	if (!of_property_read_u32(plat->np, "mediatek,rx-delay-ps", &rx_delay_ps)) {
-> +		if (rx_delay_ps < plat->variant->rx_delay_max) {
-> +			mac_delay->rx_delay = rx_delay_ps;
-> +		} else {
-> +			dev_err(plat->dev, "Invalid RX clock delay: %dps\n", rx_delay_ps);
-> +			return -EINVAL;
-> +		}
-> +	}
-> +
-> +	mac_delay->tx_inv = of_property_read_bool(plat->np, "mediatek,txc-inverse");
-> +	mac_delay->rx_inv = of_property_read_bool(plat->np, "mediatek,rxc-inverse");
-> +	mac_delay->fine_tune = of_property_read_bool(plat->np, "mediatek,fine-tune");
-
-Why is fine tune needed? If the requested delay can be done using fine
-tune, it should use fine tune. If not, it should use rough tune. The
-driver can work this out itself.
-
-       Thanks
-	Andrew
