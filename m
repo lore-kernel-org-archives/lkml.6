@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CEAAC65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:30:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26E4EC67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:30:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BCA4A20880
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:30:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D8C5F20672
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:30:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544675423;
-	bh=3qowNoafOBMxvc9PRQqefNZVgfU7mweAPTM026GnEQA=;
+	s=default; t=1544675427;
+	bh=jx+lTGg8tQMGi/YNxffzC0BV8DzRsRJokZoCJqztydU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=LURv5+tIhvlTr3VRLvWCFzoOpesqDpynfGt5YybLACk5pQVrzjPfAw22MVo5XF4k/
-	 dbk8ce4o1bVpnbJyqDxrimPDxzWqPvejPxW0x2FvcXphwkhaXf7CP2iaoRse5pQsz1
-	 BoDiQQg9GJgKWVbEp3OhDn22JwNqmRj2tWj9JcdQ=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCA4A20880
+	b=vDZ5oCZcL2UhFctIU2jkrVb5SIPVUG+oipQYsSOJHoQDHcIr0wgcWpGjeib6ypXx+
+	 mND6wfHUrilItX3NXnWFzYRmyd62oE4ClguI9stKZRY4K/5tnX+2uY2Dphw1TNnaJY
+	 Het0QUtxcGNdZ4oL+VVu8z7ZIBwqYMOjKmgtDkSg=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8C5F20672
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728214AbeLMEaW (ORCPT
+        id S1728230AbeLMEaZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 23:30:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43220 "EHLO mail.kernel.org"
+        Wed, 12 Dec 2018 23:30:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43266 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726957AbeLMEaS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 23:30:18 -0500
+        id S1726988AbeLMEaU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 23:30:20 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 57E4420882;
-        Thu, 13 Dec 2018 04:30:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5C205208E7;
+        Thu, 13 Dec 2018 04:30:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544675417;
-        bh=3qowNoafOBMxvc9PRQqefNZVgfU7mweAPTM026GnEQA=;
+        s=default; t=1544675420;
+        bh=jx+lTGg8tQMGi/YNxffzC0BV8DzRsRJokZoCJqztydU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=be85qC+odOcbgnbLgK/2OgZTb85ZCLNJO2aFlHJKDKJLkiRkvnAU5NQlTdYoAXEBG
-         NsOS3F50ugpy5x/OSJfhp4i1jgtSmiJqnWk9ZyqKq1XYD4cxhn8slgqjLFW2CjlPIZ
-         VZCjuHez2E2MB1HV1rLTDbnYlwBAtCDT+67UlnHc=
+        b=Y+v7hhIwPzi4gSqdNAecYWGuAIJ1NHPlLwzxPOujRTNUMFPVONDc0Q6F+p+ydeIli
+         OlDk6uNyWqxzqfRN23D6vyofx0ewMKCG1i/Gj5Yj3T8slrylXHmEFDkGcyyQ/t17W6
+         AvCGLvdQmC3lsDoYaqlA69M2uuk+OD48uDfBxFa8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nathan Jones <nathanj439@gmail.com>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 53/73] ARM: 8816/1: dma-mapping: fix potential uninitialized return
-Date:   Wed, 12 Dec 2018 23:28:18 -0500
-Message-Id: <20181213042838.75160-53-sashal@kernel.org>
+Cc:     Russell King <rmk+kernel@armlinux.org.uk>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Sasha Levin <sashal@kernel.org>, linux-pm@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 55/73] thermal: armada: fix legacy validity test sense
+Date:   Wed, 12 Dec 2018 23:28:20 -0500
+Message-Id: <20181213042838.75160-55-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181213042838.75160-1-sashal@kernel.org>
 References: <20181213042838.75160-1-sashal@kernel.org>
@@ -61,40 +61,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Jones <nathanj439@gmail.com>
+From: Russell King <rmk+kernel@armlinux.org.uk>
 
-[ Upstream commit c2a3831df6dc164af66d8d86cf356a90c021b86f ]
+[ Upstream commit 70bb27b79adf63ea39e37371d09c823c7a8f93ce ]
 
-While trying to use the dma_mmap_*() interface, it was noticed that this
-interface returns strange values when passed an incorrect length.
+Commit 8c0e64ac4075 ("thermal: armada: get rid of the ->is_valid()
+pointer") removed the unnecessary indirection through a function
+pointer, but in doing so, also removed the negation operator too:
 
-If neither of the if() statements fire then the return value is
-uninitialized. In the worst case it returns 0 which means the caller
-will think the function succeeded.
+-       if (priv->data->is_valid && !priv->data->is_valid(priv)) {
++       if (armada_is_valid(priv)) {
 
-Fixes: 1655cf8829d8 ("ARM: dma-mapping: Remove traces of NOMMU code")
-Signed-off-by: Nathan Jones <nathanj439@gmail.com>
-Reviewed-by: Robin Murphy <robin.murphy@arm.com>
-Acked-by: Vladimir Murzin <vladimir.murzin@arm.com>
+which results in:
+
+armada_thermal f06f808c.thermal: Temperature sensor reading not valid
+armada_thermal f2400078.thermal: Temperature sensor reading not valid
+armada_thermal f4400078.thermal: Temperature sensor reading not valid
+
+at boot, or whenever the "temp" sysfs file is read.  Replace the
+negation operator.
+
+Fixes: 8c0e64ac4075 ("thermal: armada: get rid of the ->is_valid() pointer")
 Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/mm/dma-mapping.c | 2 +-
+ drivers/thermal/armada_thermal.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
-index 66566472c153..1cb9c0f9b5d6 100644
---- a/arch/arm/mm/dma-mapping.c
-+++ b/arch/arm/mm/dma-mapping.c
-@@ -830,7 +830,7 @@ static int __arm_dma_mmap(struct device *dev, struct vm_area_struct *vma,
- 		 void *cpu_addr, dma_addr_t dma_addr, size_t size,
- 		 unsigned long attrs)
- {
--	int ret;
-+	int ret = -ENXIO;
- 	unsigned long nr_vma_pages = vma_pages(vma);
- 	unsigned long nr_pages = PAGE_ALIGN(size) >> PAGE_SHIFT;
- 	unsigned long pfn = dma_to_pfn(dev, dma_addr);
+diff --git a/drivers/thermal/armada_thermal.c b/drivers/thermal/armada_thermal.c
+index 2c2f6d93034e..e16b3cb1808c 100644
+--- a/drivers/thermal/armada_thermal.c
++++ b/drivers/thermal/armada_thermal.c
+@@ -357,7 +357,7 @@ static int armada_get_temp_legacy(struct thermal_zone_device *thermal,
+ 	int ret;
+ 
+ 	/* Valid check */
+-	if (armada_is_valid(priv)) {
++	if (!armada_is_valid(priv)) {
+ 		dev_err(priv->dev,
+ 			"Temperature sensor reading not valid\n");
+ 		return -EIO;
 -- 
 2.19.1
 
