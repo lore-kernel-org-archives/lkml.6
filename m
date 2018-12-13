@@ -2,182 +2,129 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6626C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 22:49:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0780C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 22:50:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B49C20870
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 22:49:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B49C20870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
+	by mail.kernel.org (Postfix) with ESMTP id 8FC1120870
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 22:50:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544741406;
+	bh=KOLyTbt2eJZVTQoX46XCSKQoQ0awCa1Lgzc2sFY6Qm0=;
+	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
+	b=2awZL70R6Sgd/GwDy091wQ6utSn6/uwkInGKEp7em+ES11cAMwDwfu3u0HfketpXa
+	 /mbd7jwyxM+s83j0EQhLYnJwjPEPwCocHT/YIqXLIdzvCaY8+PYjLi/maVQI8YjiHC
+	 W+cN3gMsxVKSdPBwmgKfC8s9vC3SxMzXKzRp3+ec=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FC1120870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728376AbeLMWtA (ORCPT
+        id S1728445AbeLMWuF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 17:49:00 -0500
-Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:53682 "EHLO
-        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727160AbeLMWtA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 17:49:00 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R691e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07486;MF=bo.liu@linux.alibaba.com;NM=1;PH=DS;RN=14;SR=0;TI=SMTPD_---0TFd645V_1544740995;
-Received: from US-160370MP2.local(mailfrom:bo.liu@linux.alibaba.com fp:SMTPD_---0TFd645V_1544740995)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Fri, 14 Dec 2018 06:43:19 +0800
-Date:   Thu, 13 Dec 2018 14:43:14 -0800
-From:   Liu Bo <bo.liu@linux.alibaba.com>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Jan Kara <jack@suse.cz>, Dave Chinner <david@fromorbit.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Stable tree <stable@vger.kernel.org>
-Subject: Re: [PATCH v3] mm, memcg: fix reclaim deadlock with writeback
-Message-ID: <20181213224313.jty2h5cxlchtisez@US-160370MP2.local>
-Reply-To: bo.liu@linux.alibaba.com
-References: <20181212155055.1269-1-mhocko@kernel.org>
- <20181213092221.27270-1-mhocko@kernel.org>
+        Thu, 13 Dec 2018 17:50:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55188 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726813AbeLMWuE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 17:50:04 -0500
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4483520851;
+        Thu, 13 Dec 2018 22:50:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544741403;
+        bh=KOLyTbt2eJZVTQoX46XCSKQoQ0awCa1Lgzc2sFY6Qm0=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=HFfzGchLILxHJ9nU1SBjFriTv/fM6Lee/l4SClyy4NeCgcYcXzjuEjqk0hkptBwac
+         4uVtSG61uPWa4+4/eu2c1/RzYtz0lQ+6wCAli+IWEdAg0yXGcmzN4YQ3HALbqGk6zN
+         uKFm6f5dxXrbZ/mCw/Ajp61tsNQ1ixTQRG4dny0A=
+Subject: Re: [PATCH] selftests: Fix test errors related to lib.mk khdr target
+To:     Paolo Bonzini <pbonzini@redhat.com>, tglx@linutronix.de,
+        mingo@redhat.com, peterz@infradead.org, dvhart@infradead.org,
+        bamv2005@gmail.com, brgl@bgdev.pl, fathi.boudra@linaro.org,
+        anders.roxell@linaro.org, daniel.diaz@linaro.org,
+        pintu.ping@gmail.com, drjones@redhat.com, hofsass@google.com,
+        peterx@redhat.com, peng.hao2@zte.com.cn, wei@redhat.com,
+        davem@davemloft.net, dcaratti@redhat.com,
+        akpm@linux-foundation.org, mhocko@suse.com, khalid.aziz@oracle.com,
+        mpe@ellerman.id.au, aneesh.kumar@linux.vnet.ibm.com,
+        dima@arista.com
+Cc:     linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, stable@vger.kernel.org,
+        shuah <shuah@kernel.org>
+References: <20181213200011.10779-1-shuah@kernel.org>
+ <623cdf7b-fc3c-2a93-c61a-a043e3d7f75b@redhat.com>
+From:   shuah <shuah@kernel.org>
+Message-ID: <25593aa4-a2a7-6567-11f2-b702b6e5563c@kernel.org>
+Date:   Thu, 13 Dec 2018 15:50:01 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181213092221.27270-1-mhocko@kernel.org>
-User-Agent: NeoMutt/20180323
+In-Reply-To: <623cdf7b-fc3c-2a93-c61a-a043e3d7f75b@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 13, 2018 at 10:22:21AM +0100, Michal Hocko wrote:
-> From: Michal Hocko <mhocko@suse.com>
+On 12/13/18 3:40 PM, Paolo Bonzini wrote:
+> On 13/12/18 21:00, shuah@kernel.org wrote:
+>> From: Shuah Khan <shuah@kernel.org>
+>>
+>> Commit b2d35fa5fc80 ("selftests: add headers_install to lib.mk") added
+>> khdr target to run headers_install target from the main Makefile. The
+>> logic uses KSFT_KHDR_INSTALL and top_srcdir as controls to initialize
+>> variables and include files to run headers_install from the top level
+>> Makefile. There are a few problems with this logic.
+>>
+>> 1. Exposes top_srcdir to all tests
+>> 2. Common logic impacts all tests
+>> 3. Uses KSFT_KHDR_INSTALL, top_srcdir, and khdr in an adhoc way. Tests
+>>     add "khdr" dependency in their Makefiles to TEST_PROGS_EXTENDED in
+>>     some cases, and STATIC_LIBS in other cases. This makes this framework
+>>     confusing to use.
+>>
+>> The common logic that runs for all tests even when KSFT_KHDR_INSTALL
+>> isn't defined by the test. top_srcdir is initialized to a default value
+>> when test doesn't initialize it. It works for all tests without a sub-dir
+>> structure and tests with sub-dir structure fail to build.
+>>
+>> e.g: make -C sparc64/drivers/ or make -C drivers/dma-buf
+>>
+>> ../../lib.mk:20: ../../../../scripts/subarch.include: No such file or directory
+>> make: *** No rule to make target '../../../../scripts/subarch.include'.  Stop.
+>>
+>> There is no reason to require all tests to define top_srcdir and there is
+>> no need to require tests to add khdr dependency using adhoc changes to
+>> TEST_* and other variables.
+>>
+>> Fix it with a consistent use of KSFT_KHDR_INSTALL and top_srcdir from tests
+>> that have the dependency on headers_install.
+>>
+>> Change common logic to include khdr target define and "all" target with
+>> dependency on khdr when KSFT_KHDR_INSTALL is defined.
+>>
+>> Only tests that have dependency on headers_install have to define just
+>> the KSFT_KHDR_INSTALL, and top_srcdir variables and there is no need to
+>> specify khdr dependency in the test Makefiles.
 > 
-> Liu Bo has experienced a deadlock between memcg (legacy) reclaim and the
-> ext4 writeback
-> task1:
-> [<ffffffff811aaa52>] wait_on_page_bit+0x82/0xa0
-> [<ffffffff811c5777>] shrink_page_list+0x907/0x960
-> [<ffffffff811c6027>] shrink_inactive_list+0x2c7/0x680
-> [<ffffffff811c6ba4>] shrink_node_memcg+0x404/0x830
-> [<ffffffff811c70a8>] shrink_node+0xd8/0x300
-> [<ffffffff811c73dd>] do_try_to_free_pages+0x10d/0x330
-> [<ffffffff811c7865>] try_to_free_mem_cgroup_pages+0xd5/0x1b0
-> [<ffffffff8122df2d>] try_charge+0x14d/0x720
-> [<ffffffff812320cc>] memcg_kmem_charge_memcg+0x3c/0xa0
-> [<ffffffff812321ae>] memcg_kmem_charge+0x7e/0xd0
-> [<ffffffff811b68a8>] __alloc_pages_nodemask+0x178/0x260
-> [<ffffffff8120bff5>] alloc_pages_current+0x95/0x140
-> [<ffffffff81074247>] pte_alloc_one+0x17/0x40
-> [<ffffffff811e34de>] __pte_alloc+0x1e/0x110
-> [<ffffffffa06739de>] alloc_set_pte+0x5fe/0xc20
-> [<ffffffff811e5d93>] do_fault+0x103/0x970
-> [<ffffffff811e6e5e>] handle_mm_fault+0x61e/0xd10
-> [<ffffffff8106ea02>] __do_page_fault+0x252/0x4d0
-> [<ffffffff8106ecb0>] do_page_fault+0x30/0x80
-> [<ffffffff8171bce8>] page_fault+0x28/0x30
-> [<ffffffffffffffff>] 0xffffffffffffffff
-> 
-> task2:
-> [<ffffffff811aadc6>] __lock_page+0x86/0xa0
-> [<ffffffffa02f1e47>] mpage_prepare_extent_to_map+0x2e7/0x310 [ext4]
-> [<ffffffffa08a2689>] ext4_writepages+0x479/0xd60
-> [<ffffffff811bbede>] do_writepages+0x1e/0x30
-> [<ffffffff812725e5>] __writeback_single_inode+0x45/0x320
-> [<ffffffff81272de2>] writeback_sb_inodes+0x272/0x600
-> [<ffffffff81273202>] __writeback_inodes_wb+0x92/0xc0
-> [<ffffffff81273568>] wb_writeback+0x268/0x300
-> [<ffffffff81273d24>] wb_workfn+0xb4/0x390
-> [<ffffffff810a2f19>] process_one_work+0x189/0x420
-> [<ffffffff810a31fe>] worker_thread+0x4e/0x4b0
-> [<ffffffff810a9786>] kthread+0xe6/0x100
-> [<ffffffff8171a9a1>] ret_from_fork+0x41/0x50
-> [<ffffffffffffffff>] 0xffffffffffffffff
-> 
-> He adds
-> : task1 is waiting for the PageWriteback bit of the page that task2 has
-> : collected in mpd->io_submit->io_bio, and tasks2 is waiting for the LOCKED
-> : bit the page which tasks1 has locked.
-> 
-> More precisely task1 is handling a page fault and it has a page locked
-> while it charges a new page table to a memcg. That in turn hits a memory
-> limit reclaim and the memcg reclaim for legacy controller is waiting on
-> the writeback but that is never going to finish because the writeback
-> itself is waiting for the page locked in the #PF path. So this is
-> essentially ABBA deadlock:
->                                         lock_page(A)
->                                         SetPageWriteback(A)
->                                         unlock_page(A)
-> lock_page(B)
->                                         lock_page(B)
-> pte_alloc_pne
->   shrink_page_list
->     wait_on_page_writeback(A)
->                                         SetPageWriteback(B)
->                                         unlock_page(B)
-> 
->                                         # flush A, B to clear the writeback
-> 
-> This accumulating of more pages to flush is used by several filesystems
-> to generate a more optimal IO patterns.
-> 
-> Waiting for the writeback in legacy memcg controller is a workaround
-> for pre-mature OOM killer invocations because there is no dirty IO
-> throttling available for the controller. There is no easy way around
-> that unfortunately. Therefore fix this specific issue by pre-allocating
-> the page table outside of the page lock. We have that handy
-> infrastructure for that already so simply reuse the fault-around pattern
-> which already does this.
-> 
-> There are probably other hidden __GFP_ACCOUNT | GFP_KERNEL allocations
-> from under a fs page locked but they should be really rare. I am not
-> aware of a better solution unfortunately.
+> Looks good.  Could you please provide a topic branch so that we can
+> avoid conflicts between our trees at the next merge window.
 > 
 
-Thanks for the update.
+Thanks. The topic branch is
 
-Looks good to me.
+git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest.git next
 
-Reviewed-by: Liu Bo <bo.liu@linux.alibaba.com>
+I will apply it in a day or two to get ready for the merge window.
 
 thanks,
--liubo
+-- Shuah
 
-> Reported-and-Debugged-by: Liu Bo <bo.liu@linux.alibaba.com>
-> Cc: stable
-> Fixes: c3b94f44fcb0 ("memcg: further prevent OOM with too many dirty pages")
-> Signed-off-by: Michal Hocko <mhocko@suse.com>
-> ---
->  mm/memory.c | 11 +++++++++++
->  1 file changed, 11 insertions(+)
-> 
-> diff --git a/mm/memory.c b/mm/memory.c
-> index 4ad2d293ddc2..bb78e90a9b70 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -2993,6 +2993,17 @@ static vm_fault_t __do_fault(struct vm_fault *vmf)
->  	struct vm_area_struct *vma = vmf->vma;
->  	vm_fault_t ret;
->  
-> +	/*
-> +	 * Preallocate pte before we take page_lock because this might lead to
-> +	 * deadlocks for memcg reclaim which waits for pages under writeback.
-> +	 */
-> +	if (pmd_none(*vmf->pmd) && !vmf->prealloc_pte) {
-> +		vmf->prealloc_pte = pte_alloc_one(vmf->vma->vm_mm, vmf->address);
-> +		if (!vmf->prealloc_pte)
-> +			return VM_FAULT_OOM;
-> +		smp_wmb(); /* See comment in __pte_alloc() */
-> +	}
-> +
->  	ret = vma->vm_ops->fault(vmf);
->  	if (unlikely(ret & (VM_FAULT_ERROR | VM_FAULT_NOPAGE | VM_FAULT_RETRY |
->  			    VM_FAULT_DONE_COW)))
-> -- 
-> 2.19.2
+
+
