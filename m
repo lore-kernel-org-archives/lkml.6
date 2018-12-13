@@ -2,160 +2,115 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,T_MIXED_ES,URIBL_BLOCKED,USER_AGENT_MUTT
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27693C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 15:58:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7647C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 16:01:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE23520851
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 15:57:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE23520851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=libc.org
+	by mail.kernel.org (Postfix) with ESMTP id 6DDF420879
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 16:01:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=mena-vt-edu.20150623.gappssmtp.com header.i=@mena-vt-edu.20150623.gappssmtp.com header.b="0II1czK8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DDF420879
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=mena.vt.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728834AbeLMP56 (ORCPT
+        id S1729034AbeLMQBD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 10:57:58 -0500
-Received: from 216-12-86-13.cv.mvl.ntelos.net ([216.12.86.13]:58912 "EHLO
-        brightrain.aerifal.cx" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727618AbeLMP56 (ORCPT
+        Thu, 13 Dec 2018 11:01:03 -0500
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:45972 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728682AbeLMQBD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 10:57:58 -0500
-Received: from dalias by brightrain.aerifal.cx with local (Exim 3.15 #2)
-        id 1gXTMu-0008IE-00; Thu, 13 Dec 2018 15:57:44 +0000
-Date:   Thu, 13 Dec 2018 10:57:44 -0500
-From:   Rich Felker <dalias@libc.org>
-To:     Catalin Marinas <catalin.marinas@arm.com>
-Cc:     Andy Lutomirski <luto@kernel.org>, tg@mirbsd.de,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Florian Weimer <fweimer@redhat.com>,
-        Mike Frysinger <vapier@gentoo.org>,
-        "H. J. Lu" <hjl.tools@gmail.com>, x32@buildd.debian.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Will Deacon <will.deacon@arm.com>
-Subject: Re: Can we drop upstream Linux x32 support?
-Message-ID: <20181213155744.GU23599@brightrain.aerifal.cx>
-References: <CAHk-=wi_Kp=3XmGDdzmadzFSPFvuL+aAJ6ZPAR=o4z=KwYT2vw@mail.gmail.com>
- <Pine.BSM.4.64L.1812112150480.21176@herc.mirbsd.org>
- <CALCETrWgpAX7FV23zHmid83SsgnwFMKD4a_-xSEgB6v0kJR5sA@mail.gmail.com>
- <Pine.BSM.4.64L.1812112327500.21176@herc.mirbsd.org>
- <CALCETrXf0rmadycxmpGxd41qP9X+PAjyGHTwbGhKyp6oMKMRrA@mail.gmail.com>
- <Pine.BSM.4.64L.1812120231410.21176@herc.mirbsd.org>
- <CALCETrUYn=S=hmJ0tKdm2LoSgkWchY2_65sH7hJZp7wfS30giw@mail.gmail.com>
- <20181212165237.GT23599@brightrain.aerifal.cx>
- <CALCETrV6+YAazq7vY_aR=4kXc4ykXb1Se7hgvHeEVJtbZ91=Qg@mail.gmail.com>
- <20181213124025.bczxzj6ez34joo6v@localhost>
+        Thu, 13 Dec 2018 11:01:03 -0500
+Received: by mail-ua1-f66.google.com with SMTP id e16so871946uam.12
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 08:01:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=mena-vt-edu.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=84yR9u94FchxuM6bLlwEw8+aUqVwObavnlxKODAuoY0=;
+        b=0II1czK8gAnU/Iv1ee5SltTk87Ew1CNMUmZ/HWgMIcTwtQQBBIM5N3Mo07oPwbMkoW
+         timi8VvYZhmn/rbnPVEErCAiZNTtfwKg8FnEcaELbd8Q19qLwfZkmDDksPCTMeZa0EDV
+         YyKvgnHVlUbAMqgOPvIv/9yWb29e931WBAGiqJ5Fj+KyfQMlCnEJ3TcdunwgzjbE2rdd
+         h76wCWBE7iY85N0qJMWOWY28dpuRSXXh1HM8Q14VICKCvYrGFTB61nJRJZFXQmZk+3F/
+         75HmgGzP+n5riyuGlMU0Y614Va+EG45OB4fvKLJL75YYQtGkFBMWdDqHjzR0o65ZuAgm
+         QNTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=84yR9u94FchxuM6bLlwEw8+aUqVwObavnlxKODAuoY0=;
+        b=HLltd1LRMZKwewZAhsOR7FWHfDOMqPPT7Bt09qMLu9Z21w2mz+ZDHOZbdNbMHwu3Ge
+         XOF7zVEFG8dbvNrW4ZnICyDhD5khqJf1BzMQH7Km32CuRinB7U2q7WoZwxRxYcxrweht
+         hk2keKpSH3v7BFxARR0FUsssNh7MwEpLps7rP5w3uQfSLcaZy0v1VLqDWraJ3PcuiPOV
+         uXgqL2rxngFx807epacegnYTBNaXBoZf2N5mgKSLYBwlfib/y3KtGKiR/2j2MmdLGdQP
+         XTK6PgQJ8f81n5BOUxl9Oo0DpLK8BQWSEegKwG377q6I00lcstb4/myRjEqTN+xMZhJV
+         k3bw==
+X-Gm-Message-State: AA+aEWYtY4K9Fi2ocm7zwZRU/kbvtDPH+BnJv5tVp4WfAC0ZaGAW5SjU
+        nVJssBZZm0OWGdrgh1HlQ9IWS4EdfNNyqnBHLOmrjg==
+X-Google-Smtp-Source: AFSGD/V6vBqQelhDC9ZJ2ZRr+wZJWx/lD8vjWTlLO4o4Nn3x8qXnuzt89O7tHVPns2g7tankIjygE53bj7+x6tEMHXg=
+X-Received: by 2002:ab0:1d17:: with SMTP id j23mr11094550uak.133.1544716861667;
+ Thu, 13 Dec 2018 08:01:01 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181213124025.bczxzj6ez34joo6v@localhost>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+References: <20181207124803.10828-1-ahmedsoliman@mena.vt.edu> <1544708187.5826.1.camel@amazon.de>
+In-Reply-To: <1544708187.5826.1.camel@amazon.de>
+From:   Ahmed Soliman <ahmedsoliman@mena.vt.edu>
+Date:   Thu, 13 Dec 2018 18:00:05 +0200
+Message-ID: <CANBxJ=FP9GSfMES3e5dSct2qV0Z=uz7uPXufQNqoi5e+sWxvgQ@mail.gmail.com>
+Subject: Re: [PATCH V7 0/10] KVM: X86: Introducing ROE Protection Kernel Hardening
+To:     jsteckli@amazon.de
+Cc:     Jonathan Corbet <corbet@lwn.net>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Ahmed Soliman <ahmedsoliman0x666@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        =?UTF-8?B?6rmA7J246rK4?= <ovich00@gmail.com>, x86@kernel.org,
+        Igor Stoppa <igor.stoppa@gmail.com>, hpa@zytor.com,
+        Ingo Molnar <mingo@redhat.com>, nigel.edwards@hpe.com,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        kernel-hardening@lists.openwall.com, rkrcmar@redhat.com,
+        linux-doc@vger.kernel.org,
+        Boris Lukashev <blukashev@sempervictus.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 13, 2018 at 12:40:25PM +0000, Catalin Marinas wrote:
-> On Wed, Dec 12, 2018 at 10:03:30AM -0800, Andy Lutomirski wrote:
-> > On Wed, Dec 12, 2018 at 8:52 AM Rich Felker <dalias@libc.org> wrote:
-> > > On Wed, Dec 12, 2018 at 08:39:53AM -0800, Andy Lutomirski wrote:
-> > > > I'm proposing another alternative.  Given that x32 already proves that
-> > > > the user bitness model doesn't have to match the kernel model (in x32,
-> > > > user "long" is 32-bit but the kernel ABI "long" is 64-bit), I'm
-> > > > proposing extending this to just make the kernel ABI be LP64.  So
-> > > > __kernel_size_t would be 64-bit and pointers in kernel data structures
-> > > > would be 64-bit.  In other words, most or all of the kernel ABI would
-> > > > just match x86_64.
-> > > >
-> > > > As far as I can tell, the only thing that really needs unusual
-> > > > toolchain features here is that C doesn't have an extra-wide pointer
-> > > > type.  The kernel headers would need a way to say "this pointer is
-> > > > still logically a pointer, and user code may assume that it's 32 bits,
-> > > > but it has 8-byte alignment."
-> > >
-> > > None of this works on the userspace/C side, nor should any attempt be
-> > > made to make it work. Types fundamentally cannot have alignments
-> > > larger than their size. If you want to make the alignment of some
-> > > pointers 8, you have to make their size 8, and then you just have LP64
-> > > again if you did it for all pointers.
-> > >
-> > > If on the other hand you tried to make just some pointers "wide
-> > > pointers", you'd also be completely breaking the specified API
-> > > contracts of standard interfaces. For example in struct iovec's
-> > > iov_base, &foo->iov_base is no longer a valid pointer to an object of
-> > > type void* that you can pass to interfaces expecting void**. Sloppy
-> > > misunderstandings like what you're making now are exactly why x32 is
-> > > already broken and buggy (&foo->tv_nsec already has wrong type for
-> > > struct timespec foo).
-> > 
-> > I don't think it's quite that broken.  For the struct iovec example,
-> > we currently have:
-> > 
-> >            struct iovec {
-> >                void  *iov_base;    /* Starting address */
-> >                size_t iov_len;     /* Number of bytes to transfer */
-> >            };
-> > 
-> > we could have, instead: (pardon any whitespace damage)
-> > 
-> >            struct iovec {
-> >                void  *iov_base;    /* Starting address */
-> >                uint32_t __pad0;
-> >                size_t iov_len;     /* Number of bytes to transfer */
-> >                uint32_t __pad1;
-> >            } __attribute__((aligned(8));
-> > 
-> > or the same thing but where iov_len is uint64_t.  A pointer to
-> > iov_base still works exactly as expected.  Something would need to be
-> > done to ensure that the padding is all zeroed, which might be a real
-> > problem.
-> 
-> We looked at this approach briefly for arm64/ILP32 and zeroing the pads
-> was the biggest problem. User programs would not explicitly zero the pad
-> and I'm not sure the compiler would be any smarter. This means it's the
-> kernel's responsibility to zero the pad (around get_user,
-> copy_from_user), so it doesn't actually simplify the kernel side of the
-> syscall interface.
-> 
-> If the data flow goes the other way (kernel to user), this approach
-> works fine.
-> 
-> > No one wants to actually type all the macro gunk into the headers to
-> > make this work, but this type of transformation is what I have in mind
-> > when the compiler is asked to handle the headers.  Or there could
-> > potentially be a tool that automatically consumes the uapi headers and
-> > spits out modified headers like this.
-> 
-> If the compiler can handle the zeroing, that would be great, though not
-> sure how (some __attribute__((zero)) which generates a type constructor
-> for such structure; it kind of departs from what the C language offers).
+Hello,
 
-The compiler fundamentally can't. At the very least it would require
-effective type tracking, which requires shadow memory and is even more
-controversial than -fstrict-aliasing (because in a sense it's a
-stronger version thereof). But even effective type tracking would not
-help, since you can have things like:
+> Given that writes to these areas should be exceptional occurrences,
 
-	struct iovec *iov = malloc(sizeof *iov);
-	scanf("%p %zu", &iov->iov_base, &iov->iov_len);
+No not in the case of partially protected page.
 
-where no store to the object via the struct type ever happens and the
-only stores that do happen are invisible across translation unit
-boundaries. (Ignore that scanf here is awful; it's just a canonical
-example of a function that would store the members via pointers to
-them.)
+> I don't  understand why this path needs to be optimized. To me it seems, a straight-
+> forward userspace implementation with no additional code in the kernel achieves
+> the same feature. Can you elaborate?
 
-The kernel-side approach could work if the kernel had some markup for
-fields that need to be zero- or sign-extended when copied from user in
-a 32-bit process and applied them at copy time. That could also fix
-the existing tv_nsec issue. I'm not sure how difficult/costly it would
-be though.
+The performance hit I was talking about was when dealing with page with
+mixed content, given that page is partially read only and partially writable.
+The way this is handled is by emulating the writes from inside kvm, now if this
+was done from host's userspace, then every write operating (a size of at most
+1 cpu  word I guess ?) will require switching from guest to kvm and then to host
+userspace, which is major performance hit. I originally made it for protecting
+guest's page table part that shouldn't be remapped ever. Since the page table
+gets modified a lot, emulating the writes from host user space instead
+of the kernel
+would add an unnecessary overhead. Also it doesn't sound right to me
+to place the
+protection inside the page table when it can be placed inside the
+virtualization EPT.
 
-Rich
+But aside from that, I think I was wrong about hinting that it is
+simple when done from
+user space, handling cases like THP and huge pages (which I did not support yet)
+doesn't seam to be easy when done from user space and when doing Registers
+ROE has some arch specific details. That's why I think it is better to
+continue doing
+it from KVM kernel module.
+
+thanks,
+Ahmed
