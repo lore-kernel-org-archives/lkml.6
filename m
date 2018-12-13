@@ -2,208 +2,201 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES,
-	UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,T_MIXED_ES,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DBBAC67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 19:15:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5154C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 19:18:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCE1D20811
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 19:15:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCE1D20811
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
+	by mail.kernel.org (Postfix) with ESMTP id A406020811
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 19:18:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A406020811
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727834AbeLMTPU (ORCPT
+        id S1727852AbeLMTST (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 14:15:20 -0500
-Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:60422 "EHLO
-        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727608AbeLMTPU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 14:15:20 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07486;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0TFcJoaW_1544728510;
-Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0TFcJoaW_1544728510)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Fri, 14 Dec 2018 03:15:14 +0800
-Subject: Re: [PATCH] mm: Reuse only-pte-mapped KSM page in do_wp_page()
-To:     Kirill Tkhai <ktkhai@virtuozzo.com>, akpm@linux-foundation.org,
-        kirill@shutemov.name, hughd@google.com, aarcange@redhat.com
-Cc:     christian.koenig@amd.com, imbrenda@linux.vnet.ibm.com,
-        riel@surriel.com, ying.huang@intel.com, minchan@kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <154471491016.31352.1168978849911555609.stgit@localhost.localdomain>
-From:   Yang Shi <yang.shi@linux.alibaba.com>
-Message-ID: <5d5bfbd2-8411-e707-1628-18bde66a6793@linux.alibaba.com>
-Date:   Thu, 13 Dec 2018 11:15:04 -0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.7.0
+        Thu, 13 Dec 2018 14:18:19 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:60550 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726453AbeLMTST (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 14:18:19 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id A052630832C8;
+        Thu, 13 Dec 2018 19:18:18 +0000 (UTC)
+Received: from redhat.com (ovpn-121-185.rdu2.redhat.com [10.10.121.185])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id C92AD600C5;
+        Thu, 13 Dec 2018 19:18:15 +0000 (UTC)
+Date:   Thu, 13 Dec 2018 14:18:13 -0500
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Tom Talpey <tom@talpey.com>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Jan Kara <jack@suse.cz>, John Hubbard <jhubbard@nvidia.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        John Hubbard <john.hubbard@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
+        Christoph Hellwig <hch@infradead.org>,
+        Christopher Lameter <cl@linux.com>,
+        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        rcampbell@nvidia.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        "Weiny, Ira" <ira.weiny@intel.com>
+Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
+Message-ID: <20181213191813.GE3186@redhat.com>
+References: <20181212215348.GF5037@redhat.com>
+ <20181212233703.GB2947@ziepe.ca>
+ <20181213000109.GK5037@redhat.com>
+ <20181213032043.GA3204@ziepe.ca>
+ <20181213124325.GA3186@redhat.com>
+ <81a731bb-6a8a-a554-cf99-5d0588b0a21f@talpey.com>
+ <20181213141838.GB3186@redhat.com>
+ <0b75a9a6-3907-ea88-6352-256bc2954f4a@talpey.com>
+ <20181213151839.GC3186@redhat.com>
+ <a6c25182-9691-d9f9-b3b5-a42b2b5d6f7f@talpey.com>
 MIME-Version: 1.0
-In-Reply-To: <154471491016.31352.1168978849911555609.stgit@localhost.localdomain>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <a6c25182-9691-d9f9-b3b5-a42b2b5d6f7f@talpey.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Thu, 13 Dec 2018 19:18:19 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Dec 13, 2018 at 01:12:06PM -0500, Tom Talpey wrote:
+> On 12/13/2018 10:18 AM, Jerome Glisse wrote:
+> > On Thu, Dec 13, 2018 at 09:51:18AM -0500, Tom Talpey wrote:
+> > > On 12/13/2018 9:18 AM, Jerome Glisse wrote:
+> > > > On Thu, Dec 13, 2018 at 08:40:49AM -0500, Tom Talpey wrote:
+> > > > > On 12/13/2018 7:43 AM, Jerome Glisse wrote:
+> > > > > > On Wed, Dec 12, 2018 at 08:20:43PM -0700, Jason Gunthorpe wrote:
+> > > > > > > On Wed, Dec 12, 2018 at 07:01:09PM -0500, Jerome Glisse wrote:
+> > > > > > > > On Wed, Dec 12, 2018 at 04:37:03PM -0700, Jason Gunthorpe wrote:
+> > > > > > > > > On Wed, Dec 12, 2018 at 04:53:49PM -0500, Jerome Glisse wrote:
+> > > > > > > > > > > Almost, we need some safety around assuming that DMA is complete the
+> > > > > > > > > > > page, so the notification would need to go all to way to userspace
+> > > > > > > > > > > with something like a file lease notification. It would also need to
+> > > > > > > > > > > be backstopped by an IOMMU in the case where the hardware does not /
+> > > > > > > > > > > can not stop in-flight DMA.
+> > > > > > > > > > 
+> > > > > > > > > > You can always reprogram the hardware right away it will redirect
+> > > > > > > > > > any dma to the crappy page.
+> > > > > > > > > 
+> > > > > > > > > That causes silent data corruption for RDMA users - we can't do that.
+> > > > > > > > > 
+> > > > > > > > > The only way out for current hardware is to forcibly terminate the
+> > > > > > > > > RDMA activity somehow (and I'm not even sure this is possible, at
+> > > > > > > > > least it would be driver specific)
+> > > > > > > > > 
+> > > > > > > > > Even the IOMMU idea probably doesn't work, I doubt all current
+> > > > > > > > > hardware can handle a PCI-E error TLP properly.
+> > > > > > > > 
+> > > > > > > > What i saying is reprogram hardware to crappy page ie valid page
+> > > > > > > > dma map but that just has random content as a last resort to allow
+> > > > > > > > filesystem to reuse block. So their should be no PCIE error unless
+> > > > > > > > hardware freak out to see its page table reprogram randomly.
+> > > > > > > 
+> > > > > > > No, that isn't an option. You can't silently provide corrupted data
+> > > > > > > for RDMA to transfer out onto the network, or silently discard data
+> > > > > > > coming in!!
+> > > > > > > 
+> > > > > > > Think of the consequences of that - I have a fileserver process and
+> > > > > > > someone does ftruncate and now my clients receive corrupted data??
+> > > > > > 
+> > > > > > This is what happens _today_ ie today someone do GUP on page file
+> > > > > > and then someone else do truncate the first GUP is effectively
+> > > > > > streaming _random_ data to network as the page does not correspond
+> > > > > > to anything anymore and once the RDMA MR goes aways and release
+> > > > > > the page the page content will be lost. So i am not changing anything
+> > > > > > here, what i proposed was to make it explicit to device driver at
+> > > > > > least that they were streaming random data. Right now this is all
+> > > > > > silent but this is what is happening wether you like it or not :)
+> > > > > > 
+> > > > > > Note that  i am saying do that only for truncate to allow to be
+> > > > > > nice to fs. But again i am fine with whatever solution but you can
+> > > > > > not please everyone here. Either block truncate and fs folks will
+> > > > > > hate you or make it clear to device driver that you are streaming
+> > > > > > random things and RDMA people hates you.
+> > > > > > 
+> > > > > > 
+> > > > > > > The only option is to prevent the RDMA transfer from ever happening,
+> > > > > > > and we just don't have hardware support (beyond destroy everything) to
+> > > > > > > do that.
+> > > > > > > 
+> > > > > > > > The question is who do you want to punish ? RDMA user that pin stuff
+> > > > > > > > and expect thing to work forever without worrying for other fs
+> > > > > > > > activities ? Or filesystem to pin block forever :)
+> > > > > > > 
+> > > > > > > I don't want to punish everyone, I want both sides to have complete
+> > > > > > > data integrity as the USER has deliberately decided to combine DAX and
+> > > > > > > RDMA. So either stop it at the front end (ie get_user_pages_longterm)
+> > > > > > > or make it work in a way that guarantees integrity for both.
+> > > > > > > 
+> > > > > > > >        S2: notify userspace program through device/sub-system
+> > > > > > > >            specific API and delay ftruncate. After a while if there
+> > > > > > > >            is no answer just be mean and force hardware to use
+> > > > > > > >            crappy page as anyway this is what happens today
+> > > > > > > 
+> > > > > > > I don't think this happens today (outside of DAX).. Does it?
+> > > > > > 
+> > > > > > It does it is just silent, i don't remember anything in the code
+> > > > > > that would stop a truncate to happen because of elevated refcount.
+> > > > > > This does not happen with ODP mlx5 as it does abide by _all_ mmu
+> > > > > > notifier. This is for anything that does ODP without support for
+> > > > > > mmu notifier.
+> > > > > 
+> > > > > Wait - is it expected that the MMU notifier upcall is handled
+> > > > > synchronously? That is, the page DMA mapping must be torn down
+> > > > > immediately, and before returning?
+> > > > 
+> > > > Yes you must torn down mapping before returning from mmu notifier
+> > > > call back. Any time after is too late. You obviously need hardware
+> > > > that can support that. In the infiniband sub-system AFAIK only the
+> > > > mlx5 hardware can do that. In the GPU sub-system everyone is fine.
+> > > 
+> > > I'm skeptical that MLX5 can actually make this guarantee. But we
+> > > can take that offline in linux-rdma.
+> > 
+> > It does unless the code lies about what the hardware do :) See umem_odp.c
+> > in core and odp.c in mlx5 directories.
+> 
+> Ok, I did look and there are numerous error returns from these calls.
+> Some are related to resource shortages (including the rather ominous-
+> sounding "emergency_pages" in odp.c), others related to the generic
+> RDMA behaviors such as posting work requests and reaping their
+> completion status.
+> 
+> So I'd ask - what is the backup plan from the mmu notifier if the
+> unmap fails? Which it certainly will, in many real-world situations.
+
+No backup, it must succeed, invalidation is:
+    invalidate_range_start_trampoline
+        mlx5_ib_invalidate_range
+            mlx5_ib_update_xlt
+
+Beside sanity check on data structure fields the only failure path
+i see there is are for allocating a page to send commands to device
+and failing to map that page. What mellanox should be doing there
+is pre-allocate and pre-map couple pages for that to avoid any failure
+because of that.
 
 
-On 12/13/18 7:29 AM, Kirill Tkhai wrote:
-> This patch adds an optimization for KSM pages almost
-> in the same way, that we have for ordinary anonymous
-> pages. If there is a write fault in a page, which is
-> mapped to an only pte, and it is not related to swap
-> cache; the page may be reused without copying its
-> content.
->
-> [Note, that we do not consider PageSwapCache() pages
->   at least for now, since we don't want to complicate
->   __get_ksm_page(), which has nice optimization based
->   on this (for the migration case). Currenly it is
->   spinning on PageSwapCache() pages, waiting for when
->   they have unfreezed counters (i.e., for the migration
->   finish). But we don't want to make it also spinning
->   on swap cache pages, which we try to reuse, since
->   there is not a very high probability to reuse them.
->   So, for now we do not consider PageSwapCache() pages
->   at all.]
->
-> So, in reuse_ksm_page() we check for 1)PageSwapCache()
-> and 2)page_stable_node(), to skip a page, which KSM
-> is currently trying to link to stable tree. Then we
-> do page_ref_freeze() to prohibit KSM to merge one more
-> page into the page, we are reusing. After that, nobody
-> can refer to the reusing page: KSM skips !PageSwapCache()
-> pages with zero refcount; and the protection against
-> of all other participants is the same as for reused
-> ordinary anon pages pte lock, page lock and mmap_sem.
->
-> Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
-> ---
->   include/linux/ksm.h |    7 +++++++
->   mm/ksm.c            |   25 +++++++++++++++++++++++--
->   mm/memory.c         |   16 ++++++++++++++--
->   3 files changed, 44 insertions(+), 4 deletions(-)
->
-> diff --git a/include/linux/ksm.h b/include/linux/ksm.h
-> index 161e8164abcf..e48b1e453ff5 100644
-> --- a/include/linux/ksm.h
-> +++ b/include/linux/ksm.h
-> @@ -53,6 +53,8 @@ struct page *ksm_might_need_to_copy(struct page *page,
->   
->   void rmap_walk_ksm(struct page *page, struct rmap_walk_control *rwc);
->   void ksm_migrate_page(struct page *newpage, struct page *oldpage);
-> +bool reuse_ksm_page(struct page *page,
-> +			struct vm_area_struct *vma, unsigned long address);
->   
->   #else  /* !CONFIG_KSM */
->   
-> @@ -86,6 +88,11 @@ static inline void rmap_walk_ksm(struct page *page,
->   static inline void ksm_migrate_page(struct page *newpage, struct page *oldpage)
->   {
->   }
-> +static inline bool reuse_ksm_page(struct page *page,
-> +			struct vm_area_struct *vma, unsigned long address)
-> +{
-> +	return false;
-> +}
->   #endif /* CONFIG_MMU */
->   #endif /* !CONFIG_KSM */
->   
-> diff --git a/mm/ksm.c b/mm/ksm.c
-> index 383f961e577a..fbd14264d784 100644
-> --- a/mm/ksm.c
-> +++ b/mm/ksm.c
-> @@ -707,8 +707,9 @@ static struct page *__get_ksm_page(struct stable_node *stable_node,
->   	 * case this node is no longer referenced, and should be freed;
->   	 * however, it might mean that the page is under page_ref_freeze().
->   	 * The __remove_mapping() case is easy, again the node is now stale;
-> -	 * but if page is swapcache in migrate_page_move_mapping(), it might
-> -	 * still be our page, in which case it's essential to keep the node.
-> +	 * the same is in reuse_ksm_page() case; but if page is swapcache
-> +	 * in migrate_page_move_mapping(), it might still be our page,
-> +	 * in which case it's essential to keep the node.
->   	 */
->   	while (!get_page_unless_zero(page)) {
->   		/*
-> @@ -2666,6 +2667,26 @@ void rmap_walk_ksm(struct page *page, struct rmap_walk_control *rwc)
->   		goto again;
->   }
->   
-> +bool reuse_ksm_page(struct page *page,
-> +		    struct vm_area_struct *vma,
-> +		    unsigned long address)
-> +{
-> +	VM_BUG_ON_PAGE(is_zero_pfn(page_to_pfn(page)), page);
-> +	VM_BUG_ON_PAGE(!page_mapped(page), page);
-> +	VM_BUG_ON_PAGE(!PageLocked(page), page);
-> +
-> +	if (PageSwapCache(page) || !page_stable_node(page))
-> +		return false;
-> +	/* Prohibit parallel get_ksm_page() */
-> +	if (!page_ref_freeze(page, 1))
-> +		return false;
-> +
-> +	page_move_anon_rmap(page, vma);
+There is no way we will accept mmu notifier to fail, it would block
+tons of syscall like munmap, truncate, mremap, madvise, mprotect,...
+So it is a non starter to try to ask for mmu notifier to fail.
 
-Once the mapping is changed, it is not KSM mapping anymore. It looks 
-later get_ksm_page() would always fail on this page. Is this expected?
-
-Thanks,
-Yang
-
-
-> +	page->index = linear_page_index(vma, address);
-> +	page_ref_unfreeze(page, 1);
-> +
-> +	return true;
-> +}
->   #ifdef CONFIG_MIGRATION
->   void ksm_migrate_page(struct page *newpage, struct page *oldpage)
->   {
-> diff --git a/mm/memory.c b/mm/memory.c
-> index 532061217e03..5817527f1877 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -2509,8 +2509,11 @@ static vm_fault_t do_wp_page(struct vm_fault *vmf)
->   	 * Take out anonymous pages first, anonymous shared vmas are
->   	 * not dirty accountable.
->   	 */
-> -	if (PageAnon(vmf->page) && !PageKsm(vmf->page)) {
-> +	if (PageAnon(vmf->page)) {
->   		int total_map_swapcount;
-> +		if (PageKsm(vmf->page) && (PageSwapCache(vmf->page) ||
-> +					   page_count(vmf->page) != 1))
-> +			goto copy;
->   		if (!trylock_page(vmf->page)) {
->   			get_page(vmf->page);
->   			pte_unmap_unlock(vmf->pte, vmf->ptl);
-> @@ -2525,6 +2528,15 @@ static vm_fault_t do_wp_page(struct vm_fault *vmf)
->   			}
->   			put_page(vmf->page);
->   		}
-> +		if (PageKsm(vmf->page)) {
-> +			bool reused = reuse_ksm_page(vmf->page, vmf->vma,
-> +						     vmf->address);
-> +			unlock_page(vmf->page);
-> +			if (!reused)
-> +				goto copy;
-> +			wp_page_reuse(vmf);
-> +			return VM_FAULT_WRITE;
-> +		}
->   		if (reuse_swap_page(vmf->page, &total_map_swapcount)) {
->   			if (total_map_swapcount == 1) {
->   				/*
-> @@ -2545,7 +2557,7 @@ static vm_fault_t do_wp_page(struct vm_fault *vmf)
->   					(VM_WRITE|VM_SHARED))) {
->   		return wp_page_shared(vmf);
->   	}
-> -
-> +copy:
->   	/*
->   	 * Ok, we need to copy. Oh, well..
->   	 */
-
+Cheers,
+Jérôme
