@@ -2,157 +2,259 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,T_MIXED_ES autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,T_MIXED_ES,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DB55C67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 00:30:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26747C67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 00:31:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9F6420645
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 00:30:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B9C1620849
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 00:31:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IJeMbjtU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9F6420645
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ericsson.com header.i=@ericsson.com header.b="HGeTfzj/";
+	dkim=pass (1024-bit key) header.d=ericsson.com header.i=@ericsson.com header.b="g/tR6JIU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9C1620849
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=ericsson.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728582AbeLMAas (ORCPT
+        id S1728606AbeLMAbn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 19:30:48 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:52284 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726278AbeLMAas (ORCPT
+        Wed, 12 Dec 2018 19:31:43 -0500
+Received: from sessmg22.ericsson.net ([193.180.251.58]:42326 "EHLO
+        sessmg22.ericsson.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726960AbeLMAbn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 19:30:48 -0500
-Received: by mail-wm1-f68.google.com with SMTP id m1so625249wml.2;
-        Wed, 12 Dec 2018 16:30:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=to:cc:from:subject:message-id:date:user-agent:mime-version
-         :content-transfer-encoding:content-language;
-        bh=2tnj4UoQPo7G5FMez7GwEXOXH0HDx9ctddKI1evWVn0=;
-        b=IJeMbjtUunVuIFOnl4ODzKAL0UwIUSknvjAfa1YnCNgmFPOI5p/BmKWzo/fdMlXCMb
-         ShfYgSgeGFCT329ERIQbr1+ZXHi0OQod7Id2rmzLbe5hyjzkJCIjGm2Pb735/by2XqF6
-         HpHJWgAteRvfvF0YI97Y4jLER/7UV559TtQk1BS+fAuOaRKrf/wmEAWpwZjNwvdhoOPx
-         M/zHqXmYNfU1ddLIZ1OCUAGYA7J+hfyly8GhUSRyG7TGMcZzOIH2jM8apWIjg+bzoJQ0
-         t6opWXk7wQ4LS0BgT4BVLwHkLul56dqvsVFNJ5fFde2TvCo8eB362Xj6kHAwHYm0SAVe
-         y28A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
-         :mime-version:content-transfer-encoding:content-language;
-        bh=2tnj4UoQPo7G5FMez7GwEXOXH0HDx9ctddKI1evWVn0=;
-        b=bQymMDk0aBw/cLfjIQQS2UPb2wkXe8vIrxlsy50kYVgHT9YSvuflB1XVTOHF8/+S9S
-         9XPYRcIj67ZnCfNsaNy0ow7O6BO5mIAHcIDSM88avk3cEVO0QWCQcnAME0NdCmokFePY
-         CW84O977I+IFGDGyffbAR0Mkqty4QZa7TQHQ+B2p8wUSuRguSWU9zAKhhU/5Vu4EufzU
-         +TxMxASrmd+A8VxAAX/Nq81rWygEiX8naGg9gZRn4dLtkfWD2RkRmpBIghsuN0XTUFtv
-         bVdARR+aFkSWaWvNsdp8Feh8S0bc1YTGJUPUs9B83sNcAXoDSXGH/Buc3Rrwt7hNjRVL
-         dBBg==
-X-Gm-Message-State: AA+aEWYEjhhigWOF+tTfebRfKEsuWujEF9rt3w3Q8lHXhppxAQPPsyz5
-        3JD0y7b/si0alh6SdJXyjKEGMBgW
-X-Google-Smtp-Source: AFSGD/WCbxosHxrjTadCDVPW2icrHxHpmyj7ioL/M/jZ7k1JrMogZmmZU3g2SAfTQ0FvgQhx6EuLsw==
-X-Received: by 2002:a1c:9ed7:: with SMTP id h206mr7715300wme.28.1544659590764;
-        Wed, 12 Dec 2018 16:06:30 -0800 (PST)
-Received: from [192.168.1.34] (132.red-95-122-65.staticip.rima-tde.net. [95.122.65.132])
-        by smtp.gmail.com with ESMTPSA id k19sm370136wre.5.2018.12.12.16.06.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 12 Dec 2018 16:06:30 -0800 (PST)
-To:     Jan Kara <jack@suse.com>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-From:   Javier Barrio <javier.barrio.mart@gmail.com>
-Subject: [PATCH] quota: Lock s_umount in exclusive mode for Q_XQUOTA{ON,OFF}
- quotactls.
-Message-ID: <1ad62e88-7784-6de8-c03d-01295375e315@gmail.com>
-Date:   Thu, 13 Dec 2018 01:06:29 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+        Wed, 12 Dec 2018 19:31:43 -0500
+X-Greylist: delayed 901 seconds by postgrey-1.27 at vger.kernel.org; Wed, 12 Dec 2018 19:31:39 EST
+DKIM-Signature: v=1; a=rsa-sha256; d=ericsson.com; s=mailgw201801; c=relaxed/simple;
+        q=dns/txt; i=@ericsson.com; t=1544660197; x=1547252197;
+        h=From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=cqPS/Ca1u6cqcyqnjLGxvJ37Qk2zCZn4AvJfBteQ91M=;
+        b=HGeTfzj/rfx/bsxWCHuxahArZijB2ig2EDIYmxJbdDMgkzSFvXJ17rIr1O4uzk/0
+        a+2oCTl01ENnVbwm+sUm94GN7Z6N//j6ZOzm7lUElwbvdPNF3zzqhApWz2CpyRhf
+        PIJmePAx7O54Oydo2kq8wPMCcV7oIVLQ8vNrbgfbWqE=;
+X-AuditID: c1b4fb3a-8d8849e000002747-be-5c11a4e5f71a
+Received: from ESESSMB501.ericsson.se (Unknown_Domain [153.88.183.119])
+        by sessmg22.ericsson.net (Symantec Mail Security) with SMTP id 1C.D4.10055.5E4A11C5; Thu, 13 Dec 2018 01:16:37 +0100 (CET)
+Received: from ESESSMR505.ericsson.se (153.88.183.127) by
+ ESESSMB501.ericsson.se (153.88.183.119) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1466.3; Thu, 13 Dec 2018 01:16:32 +0100
+Received: from ESESBMB503.ericsson.se (153.88.183.170) by
+ ESESSMR505.ericsson.se (153.88.183.127) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1466.3; Thu, 13 Dec 2018 01:16:32 +0100
+Received: from NAM04-SN1-obe.outbound.protection.outlook.com (153.88.183.157)
+ by ESESBMB503.ericsson.se (153.88.183.170) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1466.3 via Frontend Transport; Thu, 13 Dec 2018 01:16:32 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ericsson.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cqPS/Ca1u6cqcyqnjLGxvJ37Qk2zCZn4AvJfBteQ91M=;
+ b=g/tR6JIUC5CXBJpZc5Nax++S8I+JeV96bg6m6TZUVEMuw4+KYaG7A5xvWFLuuD+0p2Qe+nGrvp1o9EKxKUYfCn3ZLdP7xOUOn66me9Nr95/jMJaENifkiXK2fCK7CI/baAmY59RN97dX9mnhN1NJq2kpYyt8r/7t7ZvnDWyQihs=
+Received: from DM5PR15MB1513.namprd15.prod.outlook.com (10.173.225.146) by
+ DM5PR15MB1114.namprd15.prod.outlook.com (10.173.208.136) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1404.20; Thu, 13 Dec 2018 00:16:29 +0000
+Received: from DM5PR15MB1513.namprd15.prod.outlook.com
+ ([fe80::dd9f:cb91:17d3:2bd3]) by DM5PR15MB1513.namprd15.prod.outlook.com
+ ([fe80::dd9f:cb91:17d3:2bd3%7]) with mapi id 15.20.1404.026; Thu, 13 Dec 2018
+ 00:16:29 +0000
+From:   Jon Maloy <jon.maloy@ericsson.com>
+To:     syzbot <syzbot+9845fed98688e01f431e@syzkaller.appspotmail.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "syzkaller-bugs@googlegroups.com" <syzkaller-bugs@googlegroups.com>,
+        "tipc-discussion@lists.sourceforge.net" 
+        <tipc-discussion@lists.sourceforge.net>,
+        "ying.xue@windriver.com" <ying.xue@windriver.com>
+Subject: RE: KASAN: use-after-free Read in tipc_group_cong
+Thread-Topic: KASAN: use-after-free Read in tipc_group_cong
+Thread-Index: AQHUkgtrp4SGsGuXNUyuS5BFA1CUm6V7yuTA
+Date:   Thu, 13 Dec 2018 00:16:29 +0000
+Message-ID: <DM5PR15MB1513AA1661B9F06198CB0C959AA00@DM5PR15MB1513.namprd15.prod.outlook.com>
+References: <0000000000000dbf4a057cd1418b@google.com>
+In-Reply-To: <0000000000000dbf4a057cd1418b@google.com>
+Accept-Language: en-US
 Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=jon.maloy@ericsson.com; 
+x-originating-ip: [24.225.233.31]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DM5PR15MB1114;6:ym7m2abAH8YfcuUzRwyO9VQ+XPg4AoTvKRzIfAblI3jJ5AGaqeN6Ah3by1CpR9N7V8xQofw6vkrssqVHMfCyP+G8vgmh1HLrH9Aae9KMTLD5ovzf/asKoZu1Dve+/xOXFGcs298CXqVknNHk/6Dh8atuG8wGn42Rto/Wyjej6GCmVGRptv1ISzAbcDPkhIlPuILkBdgX5No4CE9N/3rqbKoeoTRchL02vifOOck+dE5iH563+Ir1yMa0oqRHIXYVnPW6nqY+D0HIdF+QCwo0yfUtwTtlT6ddE9HFPvRb6Y3sETnmxpebyETlmkh/nfraSRn73KXk7c+OthxqObjyz/NTUgBFbAB/XkmrpXsLHRqLUXjaAhxuHdYDe/J7IAmNVUb6wPhnb1s46w7z7lwWUVuuaycAR5rpqDLowm2P4IoX+7vrdM4zNexEMNNS2cSqFT08YoJKBxh5GZmJn8iBYQ==;5:JDzjn8UZt7gP8vdkZsgk1IbwGpptOZsKoNjJdhDFJEtljcqM2axotsNjP5Q8DKhTZ9nbEX/rGHPJ2J2kNnZWQOu5uPDGRa5H1VaUADJU9Nn+MS0wPmHtdsEGVC4ApwyIZ/e0vN9SOpYCBt2iLl3LI5NSiYxlZiJJTrb/Ll3PE8Q=;7:MeisQz+L0shBhmUdz1ro+NP4yIARRlzHQEJMmbS/jNF9Ugl6CQK1q4GnnrU3OucTaSVCIA/ja0UZXI68qHJvxPCIml/o6s5VzX+/s4P0kclpVfqgcJkdbPQ9KyH88giX0yKCWJIFCnoFqv6N89ue2Q==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: ae23f262-58ab-45f4-57bf-08d660903a9a
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:DM5PR15MB1114;
+x-ms-traffictypediagnostic: DM5PR15MB1114:
+x-microsoft-antispam-prvs: <DM5PR15MB11144A4A975C77243002F99B9AA00@DM5PR15MB1114.namprd15.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230020)(999002)(6040522)(2401047)(5005006)(8121501046)(3002001)(10201501046)(93006095)(93001095)(3231475)(944501520)(52105112)(2017080701022)(148016)(149066)(150057)(6041310)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:DM5PR15MB1114;BCL:0;PCL:0;RULEID:;SRVR:DM5PR15MB1114;
+x-forefront-prvs: 088552DE73
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(376002)(136003)(39860400002)(396003)(366004)(13464003)(189003)(199004)(99286004)(446003)(6436002)(81166006)(74316002)(5660300001)(11346002)(476003)(8676002)(44832011)(316002)(33656002)(7696005)(66066001)(53546011)(76176011)(26005)(486006)(478600001)(6246003)(229853002)(8936002)(966005)(3846002)(6116002)(102836004)(2501003)(14454004)(2201001)(53936002)(105586002)(71190400001)(575784001)(55016002)(68736007)(305945005)(97736004)(14444005)(186003)(25786009)(106356001)(256004)(71200400001)(6506007)(6306002)(2906002)(9686003)(81156014)(7736002)(86362001)(110136005)(99710200001)(505234006);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR15MB1114;H:DM5PR15MB1513.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: ericsson.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: Q3YXeRzkhUGILJAdKtcp4ZJl7o9Lg7w9xjy7HN/L0bJflsmoIB43Ydc+COkxNny+EuDtGIfer9v/dhQnKy9z0cu0DrXAFR1MgWvbWcQswAbd8dPJx429hc4ZSCZr0P0wXAHckU5ADJAkHF0rpdsT9OaQXIwuJPJJbRd0p8wsNWObs0JQRBCQyTIj0Jf4KNHxJcYRnrlDo2jR+fnqTYl/M14nPM5wuadMC8HnjCOrTekKwC3Zxiy71j+DhxOD8ZwNpENnYoz9SqGehN994m5bWnwC8cIhuCUkyxl/VjsmbDJtSzSJllcqXfBF7nBpU6Jz
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-Network-Message-Id: ae23f262-58ab-45f4-57bf-08d660903a9a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Dec 2018 00:16:29.3013
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 92e84ceb-fbfd-47ab-be52-080c6b87953f
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR15MB1114
+X-OriginatorOrg: ericsson.com
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0hTYRjG+3aO8zgafM6pL0aGi8o0L62SYRcygyYmJf1RmlRTT97mlJ3l
+        JZEWRIR20WqBQ3OV4IVCs2WiIm7JSCuXmc2sCG/ZLFPQ7K5t56zov+d5n9/3fc8LH0WImtz8
+        qAyVhlarFEoJX0BWHHqQHzJR45kUPvckQlZpPUPKBtoq+TKLwUfWNSSVDRmrCJnRmikbs9mI
+        ne5yY/0rnryjvIcvbzfM8eQV02vlc83+8kbjfd5+fqJgWyqtzMij1WE7jgnSS3QTZG5lbEH1
+        wHlSi2piSpAHBXgzfH74DpUgASXC3QjK73W4zAICrf4u8c9cXtS7caaGBxf1HawhcRkBw7Wd
+        rkTHg7PtXS4ziqDzt93N+QwfB4L92jn2ZjFuIeC01YScgReOhGrda8KpxXgrWLr7EKelUGer
+        cHdqEq8By3Q9ywhxEgzpZlhGhLdAuamb1R44Al4sTrAaYR/42nub59QE9oXh8WoetyuGmg4r
+        wWlvsI8tOspRDj4BHk8kcOMAsDbddCEr4Xl1KdsZ8Es+zA4aSC4IgVmdzgXFwafWJncOeoag
+        6fp7xAVBMKvtd0FZMGrrc5Xwh4YLIyR3YJKA7yPzZBkK1/9XVu8oReD10NgWxo0D4GrpiLue
+        3d8TeirGSQMiG5A3QzNMdppUGkqrM1IYJkcVqqI1zcjxj0zGn5GtyDQZZUaYQpLlwvk0zySR
+        myKPKcw2I6AIiVg4lugYCVMVhSdpdc5R9QklzZjRCoqU+Ap/iRwRTlNo6CyazqXVf1Me5eGn
+        RZu2F0cthYR2JqQPxs1cUtb2pUVviMd9yjUFmsxi/VR29mpGYzi1VxwjHPkwnVw6Guy1Kr0o
+        snUq8lv/xyuxd5TBb/LN+4raMupabx3pUsXP2Mu1h4Vvd+15ajkYrUpZCKz64tGbzDeZ1gU+
+        mp0zowO7l3pjj8t/tISLDctsN+huCcmkKzYGEWpG8Qdp+dCFQwMAAA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 1fa5efe3622db58cb8c7b9a50665e9eb9a6c7e97 (ext4: Use generic helpers for quotaon
-and quotaoff) made possible to call quotactl(Q_XQUOTAON/OFF) on ext4 filesystems
-with sysfile quota support. This leads to calling dquot_enable/disable without s_umount
-held in excl. mode, because quotactl_cmd_onoff checks only for Q_QUOTAON/OFF.
-
-The following WARN_ON_ONCE triggers (in this case for dquot_enable, ext4, latest Linus' tree):
-
-[  117.807056] EXT4-fs (dm-0): mounted filesystem with ordered data mode. Opts: quota,prjquota
-
-[...]
-
-[  155.036847] WARNING: CPU: 0 PID: 2343 at fs/quota/dquot.c:2469 dquot_enable+0x34/0xb9
-[  155.036851] Modules linked in: quota_v2 quota_tree ipv6 af_packet joydev mousedev psmouse serio_raw pcspkr i2c_piix4 intel_agp intel_gtt e1000 ttm drm_kms_helper drm agpgart fb_sys_fops syscopyarea sysfillrect sysimgblt i2c_core input_leds kvm_intel kvm irqbypass qemu_fw_cfg floppy evdev parport_pc parport button crc32c_generic dm_mod ata_generic pata_acpi ata_piix libata loop ext4 crc16 mbcache jbd2 usb_storage usbcore sd_mod scsi_mod
-[  155.036901] CPU: 0 PID: 2343 Comm: qctl Not tainted 4.20.0-rc6-00025-gf5d582777bcb #9
-[  155.036903] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1ubuntu1 04/01/2014
-[  155.036911] RIP: 0010:dquot_enable+0x34/0xb9
-[  155.036915] Code: 41 56 41 55 41 54 55 53 4c 8b 6f 28 74 02 0f 0b 4d 8d 7d 70 49 89 fc 89 cb 41 89 d6 89 f5 4c 89 ff e8 23 09 ea ff 85 c0 74 0a <0f> 0b 4c 89 ff e8 8b 09 ea ff 85 db 74 6a 41 8b b5 f8 00 00 00 0f
-[  155.036918] RSP: 0018:ffffb09b00493e08 EFLAGS: 00010202
-[  155.036922] RAX: 0000000000000001 RBX: 0000000000000008 RCX: 0000000000000008
-[  155.036924] RDX: 0000000000000001 RSI: 0000000000000002 RDI: ffff9781b67cd870
-[  155.036926] RBP: 0000000000000002 R08: 0000000000000000 R09: 61c8864680b583eb
-[  155.036929] R10: ffffb09b00493e48 R11: ffffffffff7ce7d4 R12: ffff9781b7ee8d78
-[  155.036932] R13: ffff9781b67cd800 R14: 0000000000000004 R15: ffff9781b67cd870
-[  155.036936] FS:  00007fd813250b88(0000) GS:ffff9781ba000000(0000) knlGS:0000000000000000
-[  155.036939] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  155.036942] CR2: 00007fd812ff61d6 CR3: 000000007c882000 CR4: 00000000000006b0
-[  155.036951] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[  155.036953] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[  155.036955] Call Trace:
-[  155.037004]  dquot_quota_enable+0x8b/0xd0
-[  155.037011]  kernel_quotactl+0x628/0x74e
-[  155.037027]  ? do_mprotect_pkey+0x2a6/0x2cd
-[  155.037034]  __x64_sys_quotactl+0x1a/0x1d
-[  155.037041]  do_syscall_64+0x55/0xe4
-[  155.037078]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-[  155.037105] RIP: 0033:0x7fd812fe1198
-[  155.037109] Code: 02 77 0d 48 89 c1 48 c1 e9 3f 75 04 48 8b 04 24 48 83 c4 50 5b c3 48 83 ec 08 49 89 ca 48 63 d2 48 63 ff b8 b3 00 00 00 0f 05 <48> 89 c7 e8 c1 eb ff ff 5a c3 48 63 ff b8 bb 00 00 00 0f 05 48 89
-[  155.037112] RSP: 002b:00007ffe8cd7b050 EFLAGS: 00000206 ORIG_RAX: 00000000000000b3
-[  155.037116] RAX: ffffffffffffffda RBX: 00007ffe8cd7b148 RCX: 00007fd812fe1198
-[  155.037119] RDX: 0000000000000000 RSI: 00007ffe8cd7cea9 RDI: 0000000000580102
-[  155.037121] RBP: 00007ffe8cd7b0f0 R08: 000055fc8eba8a9d R09: 0000000000000000
-[  155.037124] R10: 00007ffe8cd7b074 R11: 0000000000000206 R12: 00007ffe8cd7b168
-[  155.037126] R13: 000055fc8eba8897 R14: 0000000000000000 R15: 0000000000000000
-[  155.037131] ---[ end trace 210f864257175c51 ]---
-
-and then the syscall proceeds without s_umount locking.
-
-This patch locks the superblock ->s_umount sem. in exclusive mode for all Q_XQUOTAON/OFF
-quotactls too in addition to Q_QUOTAON/OFF.
-
-AFAICT, other than ext4, only xfs and ocfs2 are affected by this change.
-The VFS will now call in xfs_quota_* functions with s_umount held, which wasn't the case
-before. This looks good to me but I can not say for sure. Ext4 and ocfs2 where already
-beeing called with s_umount exclusive via quota_quotaon/off which is basically the same.
-
-Signed-off-by: Javier Barrio <javier.barrio.mart@gmail.com>
----
-
-[ I'm not familiar with this code, please excuse me if this is not the right fix ]
-
- fs/quota/quota.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/fs/quota/quota.c b/fs/quota/quota.c
-index f0cbf58ad4da..fd5dd806f1b9 100644
---- a/fs/quota/quota.c
-+++ b/fs/quota/quota.c
-@@ -791,7 +791,8 @@ static int quotactl_cmd_write(int cmd)
- /* Return true if quotactl command is manipulating quota on/off state */
- static bool quotactl_cmd_onoff(int cmd)
- {
--	return (cmd == Q_QUOTAON) || (cmd == Q_QUOTAOFF);
-+	return (cmd == Q_QUOTAON) || (cmd == Q_QUOTAOFF) ||
-+		 (cmd == Q_XQUOTAON) || (cmd == Q_XQUOTAOFF);
- }
- 
- /*
--- 2.17.1
-
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogc3l6Ym90IDxzeXpib3Qr
+OTg0NWZlZDk4Njg4ZTAxZjQzMWVAc3l6a2FsbGVyLmFwcHNwb3RtYWlsLmNvbT4NCj4gU2VudDog
+MTItRGVjLTE4IDA2OjExDQo+IFRvOiBkYXZlbUBkYXZlbWxvZnQubmV0OyBKb24gTWFsb3kgPGpv
+bi5tYWxveUBlcmljc3Nvbi5jb20+OyBsaW51eC0NCj4ga2VybmVsQHZnZXIua2VybmVsLm9yZzsg
+bmV0ZGV2QHZnZXIua2VybmVsLm9yZzsgc3l6a2FsbGVyLQ0KPiBidWdzQGdvb2dsZWdyb3Vwcy5j
+b207IHRpcGMtZGlzY3Vzc2lvbkBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQ7DQo+IHlpbmcueHVlQHdp
+bmRyaXZlci5jb20NCj4gU3ViamVjdDogS0FTQU46IHVzZS1hZnRlci1mcmVlIFJlYWQgaW4gdGlw
+Y19ncm91cF9jb25nDQoNClRoaXMgc2VlbXMgdG8gYmUgYW4gZWZmZWN0IG9mIHRoZSBzYW1lIGJ1
+ZyBhcyByZXBvcnRlZCBpbg0KaHR0cHM6Ly9zeXprYWxsZXIuYXBwc3BvdC5jb20vYnVnP2V4dGlk
+PTEwYTlkYjQ3YzNhMGUxM2ViMzFjDQoNCkNvbmcgcG9zdGVkIGEgZml4IGZvciB0aGF0IG9uZS4g
+RGlkIHlvdSBzZWUgdGhlIGNyYXNoIGFmdGVyIGFwcGx5aW5nIGhpcyBwYXRjaD8NCg0KLy8vam9u
+DQoNCj4gDQo+IEhlbGxvLA0KPiANCj4gc3l6Ym90IGZvdW5kIHRoZSBmb2xsb3dpbmcgY3Jhc2gg
+b246DQo+IA0KPiBIRUFEIGNvbW1pdDogICAgZjVkNTgyNzc3YmNiIE1lcmdlIGJyYW5jaCAnZm9y
+LWxpbnVzJyBvZiBnaXQ6Ly9naXQua2VybmVsLi4uDQo+IGdpdCB0cmVlOiAgICAgICB1cHN0cmVh
+bQ0KPiBjb25zb2xlIG91dHB1dDogaHR0cHM6Ly9zeXprYWxsZXIuYXBwc3BvdC5jb20veC9sb2cu
+dHh0P3g9MTcwNWQ1MjU0MDAwMDANCj4ga2VybmVsIGNvbmZpZzogIGh0dHBzOi8vc3l6a2FsbGVy
+LmFwcHNwb3QuY29tL3gvLmNvbmZpZz94PWM4OTcwYzg5YTBlZmJiMjMNCj4gZGFzaGJvYXJkIGxp
+bms6DQo+IGh0dHBzOi8vc3l6a2FsbGVyLmFwcHNwb3QuY29tL2J1Zz9leHRpZD05ODQ1ZmVkOTg2
+ODhlMDFmNDMxZQ0KPiBjb21waWxlcjogICAgICAgZ2NjIChHQ0MpIDguMC4xIDIwMTgwNDEzIChl
+eHBlcmltZW50YWwpDQo+IHN5eiByZXBybzogICAgICBodHRwczovL3N5emthbGxlci5hcHBzcG90
+LmNvbS94L3JlcHJvLnN5ej94PTEwMWI2YmEzNDAwMDAwDQo+IA0KPiBJTVBPUlRBTlQ6IGlmIHlv
+dSBmaXggdGhlIGJ1ZywgcGxlYXNlIGFkZCB0aGUgZm9sbG93aW5nIHRhZyB0byB0aGUgY29tbWl0
+Og0KPiBSZXBvcnRlZC1ieTogc3l6Ym90Kzk4NDVmZWQ5ODY4OGUwMWY0MzFlQHN5emthbGxlci5h
+cHBzcG90bWFpbC5jb20NCj4gDQo+IDgwMjFxOiBhZGRpbmcgVkxBTiAwIHRvIEhXIGZpbHRlciBv
+biBkZXZpY2UgdGVhbTANCj4gODAyMXE6IGFkZGluZyBWTEFOIDAgdG8gSFcgZmlsdGVyIG9uIGRl
+dmljZSB0ZWFtMA0KPiBhdWRpdDogdHlwZT0xNDAwIGF1ZGl0KDE1NDQ1OTI1MDkuMjQ2OjM4KTog
+YXZjOiAgZGVuaWVkICB7IGFzc29jaWF0ZSB9IGZvcg0KPiBwaWQ9NjIwNCBjb21tPSJzeXotZXhl
+Y3V0b3I1IiBuYW1lPSJzeXo1Ig0KPiBzY29udGV4dD11bmNvbmZpbmVkX3U6b2JqZWN0X3I6dW5s
+YWJlbGVkX3Q6czANCj4gdGNvbnRleHQ9c3lzdGVtX3U6b2JqZWN0X3I6dW5sYWJlbGVkX3Q6czAg
+dGNsYXNzPWZpbGVzeXN0ZW0gcGVybWlzc2l2ZT0xDQo+ID09PT09PT09PT09PT09PT09PT09PT09
+PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0NCj4gPT09PT09PT0NCj4gQlVHOiBL
+QVNBTjogdXNlLWFmdGVyLWZyZWUgaW4gdGlwY19ncm91cF9maW5kX2Rlc3QgbmV0L3RpcGMvZ3Jv
+dXAuYzoyNTUNCj4gW2lubGluZV0NCj4gQlVHOiBLQVNBTjogdXNlLWFmdGVyLWZyZWUgaW4gdGlw
+Y19ncm91cF9jb25nKzB4NTY2LzB4NWQwDQo+IG5ldC90aXBjL2dyb3VwLmM6NDE2DQo+IFJlYWQg
+b2Ygc2l6ZSA4IGF0IGFkZHIgZmZmZjg4ODFjNTlmNTAwMCBieSB0YXNrIHN5ei1leGVjdXRvcjQv
+MTA1NjUNCj4gDQo+IENQVTogMSBQSUQ6IDEwNTY1IENvbW06IHN5ei1leGVjdXRvcjQgTm90IHRh
+aW50ZWQgNC4yMC4wLXJjNisgIzE1MQ0KPiBIYXJkd2FyZSBuYW1lOiBHb29nbGUgR29vZ2xlIENv
+bXB1dGUgRW5naW5lL0dvb2dsZSBDb21wdXRlIEVuZ2luZSwNCj4gQklPUyBHb29nbGUgMDEvMDEv
+MjAxMSBDYWxsIFRyYWNlOg0KPiAgIF9fZHVtcF9zdGFjayBsaWIvZHVtcF9zdGFjay5jOjc3IFtp
+bmxpbmVdDQo+ICAgZHVtcF9zdGFjaysweDI0NC8weDM5ZCBsaWIvZHVtcF9zdGFjay5jOjExMw0K
+PiAgIHByaW50X2FkZHJlc3NfZGVzY3JpcHRpb24uY29sZC43KzB4OS8weDFmZiBtbS9rYXNhbi9y
+ZXBvcnQuYzoyNTYNCj4gICBrYXNhbl9yZXBvcnRfZXJyb3IgbW0va2FzYW4vcmVwb3J0LmM6MzU0
+IFtpbmxpbmVdDQo+ICAga2FzYW5fcmVwb3J0LmNvbGQuOCsweDI0Mi8weDMwOSBtbS9rYXNhbi9y
+ZXBvcnQuYzo0MTINCj4gICBfX2FzYW5fcmVwb3J0X2xvYWQ4X25vYWJvcnQrMHgxNC8weDIwIG1t
+L2thc2FuL3JlcG9ydC5jOjQzMw0KPiAgIHRpcGNfZ3JvdXBfZmluZF9kZXN0IG5ldC90aXBjL2dy
+b3VwLmM6MjU1IFtpbmxpbmVdDQo+ICAgdGlwY19ncm91cF9jb25nKzB4NTY2LzB4NWQwIG5ldC90
+aXBjL2dyb3VwLmM6NDE2DQo+ICAgdGlwY19zZW5kX2dyb3VwX2FueWNhc3QrMHg5YmIvMHhjODAg
+bmV0L3RpcGMvc29ja2V0LmM6OTcyDQo+ICAgX190aXBjX3NlbmRtc2crMHgxMmIxLzB4MWQ0MCBu
+ZXQvdGlwYy9zb2NrZXQuYzoxMzA5DQo+ICAgdGlwY19zZW5kbXNnKzB4NTAvMHg3MCBuZXQvdGlw
+Yy9zb2NrZXQuYzoxMjcyDQo+ICAgc29ja19zZW5kbXNnX25vc2VjIG5ldC9zb2NrZXQuYzo2MjEg
+W2lubGluZV0NCj4gICBzb2NrX3NlbmRtc2crMHhkNS8weDEyMCBuZXQvc29ja2V0LmM6NjMxDQo+
+ICAgX19fc3lzX3NlbmRtc2crMHg3ZmQvMHg5MzAgbmV0L3NvY2tldC5jOjIxMTYNCj4gICBfX3N5
+c19zZW5kbXNnKzB4MTFkLzB4MjgwIG5ldC9zb2NrZXQuYzoyMTU0DQo+ICAgX19kb19zeXNfc2Vu
+ZG1zZyBuZXQvc29ja2V0LmM6MjE2MyBbaW5saW5lXQ0KPiAgIF9fc2Vfc3lzX3NlbmRtc2cgbmV0
+L3NvY2tldC5jOjIxNjEgW2lubGluZV0NCj4gICBfX3g2NF9zeXNfc2VuZG1zZysweDc4LzB4YjAg
+bmV0L3NvY2tldC5jOjIxNjENCj4gICBkb19zeXNjYWxsXzY0KzB4MWI5LzB4ODIwIGFyY2gveDg2
+L2VudHJ5L2NvbW1vbi5jOjI5MA0KPiAgIGVudHJ5X1NZU0NBTExfNjRfYWZ0ZXJfaHdmcmFtZSsw
+eDQ5LzB4YmUNCj4gUklQOiAwMDMzOjB4NDU3Njc5DQo+IENvZGU6IGZkIGIzIGZiIGZmIGMzIDY2
+IDJlIDBmIDFmIDg0IDAwIDAwIDAwIDAwIDAwIDY2IDkwIDQ4IDg5IGY4IDQ4IDg5IGY3DQo+IDQ4
+IDg5IGQ2IDQ4IDg5IGNhIDRkIDg5IGMyIDRkIDg5IGM4IDRjIDhiIDRjIDI0IDA4IDBmIDA1IDw0
+OD4gM2QgMDEgZjAgZmYgZmYgMGYgODMNCj4gY2IgYjMgZmIgZmYgYzMgNjYgMmUgMGYgMWYgODQg
+MDAgMDAgMDAgMDANCj4gUlNQOiAwMDJiOjAwMDA3ZjgxM2Q3NDhjNzggRUZMQUdTOiAwMDAwMDI0
+NiBPUklHX1JBWDoNCj4gMDAwMDAwMDAwMDAwMDAyZQ0KPiBSQVg6IGZmZmZmZmZmZmZmZmZmZGEg
+UkJYOiAwMDAwMDAwMDAwMDAwMDAzIFJDWDogMDAwMDAwMDAwMDQ1NzY3OQ0KPiBSRFg6IDAwMDAw
+MDAwMDAwMDAwMDAgUlNJOiAwMDAwMDAwMDIwMDAwNmMwIFJESTogMDAwMDAwMDAwMDAwMDAwNQ0K
+PiBSQlA6IDAwMDAwMDAwMDA3MmJmYTAgUjA4OiAwMDAwMDAwMDAwMDAwMDAwIFIwOTogMDAwMDAw
+MDAwMDAwMDAwMA0KPiBSMTA6IDAwMDAwMDAwMDAwMDAwMDAgUjExOiAwMDAwMDAwMDAwMDAwMjQ2
+IFIxMjogMDAwMDdmODEzZDc0OTZkNA0KPiBSMTM6IDAwMDAwMDAwMDA0YzQ0ZGQgUjE0OiAwMDAw
+MDAwMDAwNGQ3NGM4IFIxNTogMDAwMDAwMDBmZmZmZmZmZg0KPiANCj4gQWxsb2NhdGVkIGJ5IHRh
+c2sgMTA1NTE6DQo+ICAgc2F2ZV9zdGFjaysweDQzLzB4ZDAgbW0va2FzYW4va2FzYW4uYzo0NDgN
+Cj4gICBzZXRfdHJhY2sgbW0va2FzYW4va2FzYW4uYzo0NjAgW2lubGluZV0NCj4gICBrYXNhbl9r
+bWFsbG9jKzB4YzcvMHhlMCBtbS9rYXNhbi9rYXNhbi5jOjU1Mw0KPiAgIGttZW1fY2FjaGVfYWxs
+b2NfdHJhY2UrMHgxNTIvMHg3NTAgbW0vc2xhYi5jOjM2MjANCj4gICBrbWFsbG9jIGluY2x1ZGUv
+bGludXgvc2xhYi5oOjU0NiBbaW5saW5lXQ0KPiAgIGt6YWxsb2MgaW5jbHVkZS9saW51eC9zbGFi
+Lmg6NzQxIFtpbmxpbmVdDQo+ICAgdGlwY19ncm91cF9jcmVhdGUrMHgxNTIvMHhhNzAgbmV0L3Rp
+cGMvZ3JvdXAuYzoxNzENCj4gICB0aXBjX3NrX2pvaW4gbmV0L3RpcGMvc29ja2V0LmM6MjgyOSBb
+aW5saW5lXQ0KPiAgIHRpcGNfc2V0c29ja29wdCsweDJkMS8weGQ3MCBuZXQvdGlwYy9zb2NrZXQu
+YzoyOTQ0DQo+ICAgX19zeXNfc2V0c29ja29wdCsweDFiYS8weDNjMCBuZXQvc29ja2V0LmM6MTkw
+Mg0KPiAgIF9fZG9fc3lzX3NldHNvY2tvcHQgbmV0L3NvY2tldC5jOjE5MTMgW2lubGluZV0NCj4g
+ICBfX3NlX3N5c19zZXRzb2Nrb3B0IG5ldC9zb2NrZXQuYzoxOTEwIFtpbmxpbmVdDQo+ICAgX194
+NjRfc3lzX3NldHNvY2tvcHQrMHhiZS8weDE1MCBuZXQvc29ja2V0LmM6MTkxMA0KPiAgIGRvX3N5
+c2NhbGxfNjQrMHgxYjkvMHg4MjAgYXJjaC94ODYvZW50cnkvY29tbW9uLmM6MjkwDQo+ICAgZW50
+cnlfU1lTQ0FMTF82NF9hZnRlcl9od2ZyYW1lKzB4NDkvMHhiZQ0KPiANCj4gRnJlZWQgYnkgdGFz
+ayAxMDU2NzoNCj4gICBzYXZlX3N0YWNrKzB4NDMvMHhkMCBtbS9rYXNhbi9rYXNhbi5jOjQ0OA0K
+PiAgIHNldF90cmFjayBtbS9rYXNhbi9rYXNhbi5jOjQ2MCBbaW5saW5lXQ0KPiAgIF9fa2FzYW5f
+c2xhYl9mcmVlKzB4MTAyLzB4MTUwIG1tL2thc2FuL2thc2FuLmM6NTIxDQo+ICAga2FzYW5fc2xh
+Yl9mcmVlKzB4ZS8weDEwIG1tL2thc2FuL2thc2FuLmM6NTI4DQo+ICAgX19jYWNoZV9mcmVlIG1t
+L3NsYWIuYzozNDk4IFtpbmxpbmVdDQo+ICAga2ZyZWUrMHhjZi8weDIzMCBtbS9zbGFiLmM6Mzgx
+Nw0KPiAgIHRpcGNfZ3JvdXBfZGVsZXRlKzB4MmU0LzB4M2YwIG5ldC90aXBjL2dyb3VwLmM6MjI3
+DQo+ICAgdGlwY19za19sZWF2ZSsweDExMy8weDIyMCBuZXQvdGlwYy9zb2NrZXQuYzoyODYzDQo+
+ICAgdGlwY19zZXRzb2Nrb3B0KzB4OTdkLzB4ZDcwIG5ldC90aXBjL3NvY2tldC5jOjI5NDcNCj4g
+ICBfX3N5c19zZXRzb2Nrb3B0KzB4MWJhLzB4M2MwIG5ldC9zb2NrZXQuYzoxOTAyDQo+ICAgX19k
+b19zeXNfc2V0c29ja29wdCBuZXQvc29ja2V0LmM6MTkxMyBbaW5saW5lXQ0KPiAgIF9fc2Vfc3lz
+X3NldHNvY2tvcHQgbmV0L3NvY2tldC5jOjE5MTAgW2lubGluZV0NCj4gICBfX3g2NF9zeXNfc2V0
+c29ja29wdCsweGJlLzB4MTUwIG5ldC9zb2NrZXQuYzoxOTEwDQo+ICAgZG9fc3lzY2FsbF82NCsw
+eDFiOS8weDgyMCBhcmNoL3g4Ni9lbnRyeS9jb21tb24uYzoyOTANCj4gICBlbnRyeV9TWVNDQUxM
+XzY0X2FmdGVyX2h3ZnJhbWUrMHg0OS8weGJlDQo+IA0KPiBUaGUgYnVnZ3kgYWRkcmVzcyBiZWxv
+bmdzIHRvIHRoZSBvYmplY3QgYXQgZmZmZjg4ODFjNTlmNTAwMA0KPiAgIHdoaWNoIGJlbG9uZ3Mg
+dG8gdGhlIGNhY2hlIGttYWxsb2MtMTkyIG9mIHNpemUgMTkyIFRoZSBidWdneSBhZGRyZXNzIGlz
+DQo+IGxvY2F0ZWQgMCBieXRlcyBpbnNpZGUgb2YNCj4gICAxOTItYnl0ZSByZWdpb24gW2ZmZmY4
+ODgxYzU5ZjUwMDAsIGZmZmY4ODgxYzU5ZjUwYzApIFRoZSBidWdneSBhZGRyZXNzDQo+IGJlbG9u
+Z3MgdG8gdGhlIHBhZ2U6DQo+IHBhZ2U6ZmZmZmVhMDAwNzE2N2Q0MCBjb3VudDoxIG1hcGNvdW50
+OjAgbWFwcGluZzpmZmZmODg4MWRhODAwMDQwDQo+IGluZGV4OjB4MA0KPiBmbGFnczogMHgyZmZm
+YzAwMDAwMDAyMDAoc2xhYikNCj4gcmF3OiAwMmZmZmMwMDAwMDAwMjAwIGZmZmZlYTAwMDcxNjA0
+ODggZmZmZmVhMDAwNzFhZmYwOCBmZmZmODg4MWRhODAwMDQwDQo+IHJhdzogMDAwMDAwMDAwMDAw
+MDAwMCBmZmZmODg4MWM1OWY1MDAwIDAwMDAwMDAxMDAwMDAwMTANCj4gMDAwMDAwMDAwMDAwMDAw
+MCBwYWdlIGR1bXBlZCBiZWNhdXNlOiBrYXNhbjogYmFkIGFjY2VzcyBkZXRlY3RlZA0KPiANCj4g
+TWVtb3J5IHN0YXRlIGFyb3VuZCB0aGUgYnVnZ3kgYWRkcmVzczoNCj4gICBmZmZmODg4MWM1OWY0
+ZjAwOiBmYyBmYyBmYyBmYyBmYyBmYyBmYyBmYyBmYyBmYyBmYyBmYyBmYyBmYyBmYyBmYw0KPiAg
+IGZmZmY4ODgxYzU5ZjRmODA6IGZjIGZjIGZjIGZjIGZjIGZjIGZjIGZjIGZjIGZjIGZjIGZjIGZj
+IGZjIGZjIGZjDQo+ID4gZmZmZjg4ODFjNTlmNTAwMDogZmIgZmIgZmIgZmIgZmIgZmIgZmIgZmIg
+ZmIgZmIgZmIgZmIgZmIgZmIgZmIgZmINCj4gICAgICAgICAgICAgICAgICAgICBeDQo+ICAgZmZm
+Zjg4ODFjNTlmNTA4MDogZmIgZmIgZmIgZmIgZmIgZmIgZmIgZmIgZmMgZmMgZmMgZmMgZmMgZmMg
+ZmMgZmMNCj4gICBmZmZmODg4MWM1OWY1MTAwOiAwMCAwMCAwMCAwMCAwMCAwMCAwMCAwMCAwMCAw
+MCAwMCAwMCAwMCAwMCAwMCAwMA0KPiA9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
+PT09PT09PT09PT09PT09PT09PT09PT09DQo+ID09PT09PT09DQo+IA0KPiANCj4gLS0tDQo+IFRo
+aXMgYnVnIGlzIGdlbmVyYXRlZCBieSBhIGJvdC4gSXQgbWF5IGNvbnRhaW4gZXJyb3JzLg0KPiBT
+ZWUgaHR0cHM6Ly9nb28uZ2wvdHBzbUVKIGZvciBtb3JlIGluZm9ybWF0aW9uIGFib3V0IHN5emJv
+dC4NCj4gc3l6Ym90IGVuZ2luZWVycyBjYW4gYmUgcmVhY2hlZCBhdCBzeXprYWxsZXJAZ29vZ2xl
+Z3JvdXBzLmNvbS4NCj4gDQo+IHN5emJvdCB3aWxsIGtlZXAgdHJhY2sgb2YgdGhpcyBidWcgcmVw
+b3J0LiBTZWU6DQo+IGh0dHBzOi8vZ29vLmdsL3Rwc21FSiNidWctc3RhdHVzLXRyYWNraW5nIGZv
+ciBob3cgdG8gY29tbXVuaWNhdGUgd2l0aA0KPiBzeXpib3QuDQo+IHN5emJvdCBjYW4gdGVzdCBw
+YXRjaGVzIGZvciB0aGlzIGJ1ZywgZm9yIGRldGFpbHMgc2VlOg0KPiBodHRwczovL2dvby5nbC90
+cHNtRUojdGVzdGluZy1wYXRjaGVzDQo=
