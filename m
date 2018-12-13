@@ -2,114 +2,159 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_MIXED_ES
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A5DFC65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 08:56:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7273CC67872
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 09:00:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2712620672
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 08:56:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2712620672
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 392D92086D
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 09:00:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544691630;
+	bh=n60jGYTA/cKtftl3HoEEGpChDFMsL9X1Zzmy/CGdafY=;
+	h=In-Reply-To:Subject:To:References:From:Cc:Date:List-ID:From;
+	b=XQk6Yctu5P9x9vka4+iEhkrip2ceFUJ0Hp/yk4sY1NRwdWJEcd3tm4PTOdUjt9bDx
+	 COkqAh2U/y5EZDqPx377da026ifBXWtfhGGazmoBxMb2WBDanvlEDqEb87IpuEZ6YK
+	 BJDbpFwrEt+1B1DjMFM4ifRLIkgYpatjvZRj70zo=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 392D92086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727532AbeLMI4N (ORCPT
+        id S1727222AbeLMJA3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 03:56:13 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:44181 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727075AbeLMI4M (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 03:56:12 -0500
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gXMmt-0002Zj-9Y; Thu, 13 Dec 2018 09:56:07 +0100
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gXMmr-0003k6-DH; Thu, 13 Dec 2018 09:56:05 +0100
-Date:   Thu, 13 Dec 2018 09:56:05 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     =?utf-8?B?Vm9rw6HEjQ==?= Michal <Michal.Vokac@ysoft.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Lukasz Majewski <l.majewski@majess.pl>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Lothar =?iso-8859-1?Q?Wa=DFmann?= <LW@karo-electronics.de>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFC PATCH v4 2/2] pwm: imx: Configure output to GPIO in
- disabled state
-Message-ID: <20181213085605.j2e76y67srg5qfbc@pengutronix.de>
-References: <1544616263-82642-1-git-send-email-michal.vokac@ysoft.com>
- <1544616263-82642-3-git-send-email-michal.vokac@ysoft.com>
+        Thu, 13 Dec 2018 04:00:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43208 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725949AbeLMJA2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 04:00:28 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2337D20849;
+        Thu, 13 Dec 2018 09:00:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544691627;
+        bh=n60jGYTA/cKtftl3HoEEGpChDFMsL9X1Zzmy/CGdafY=;
+        h=In-Reply-To:Subject:To:References:From:Cc:Date:From;
+        b=Xulx05i19h7jFFRHMAeXFXCVrfhvV+m6PqVuIvnMWKZ+Olr5aILeaRuptg4Irz3fl
+         bxqTX8WhPe6tndc3U2APdeMKb7lat3wFpJSL4RA08KSzOuhg+Z+UkxPZg2wkGh8ZJn
+         MZrrzcPDJ+PUXd6moutluLNSFavnUTGD4xiQyMkM=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1544616263-82642-3-git-send-email-michal.vokac@ysoft.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20181211141627.GA526@e107981-ln.cambridge.arm.com>
+Subject: Re: [PATCH 05/12] PCI: aardvark: add suspend to RAM support
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+References: <20181123141831.8214-1-miquel.raynal@bootlin.com> <1999610.6DN9RK2Tt3@aspire.rjw.lan> <20181204094558.GA24588@e107981-ln.cambridge.arm.com> <1966692.fVZYlVgWHv@aspire.rjw.lan> <20181211141627.GA526@e107981-ln.cambridge.arm.com>
+Message-ID: <154469162632.19322.13092710881803732022@swboyd.mtv.corp.google.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+User-Agent: alot/0.8
+Cc:     Miquel Raynal <miquel.raynal@bootlin.com>, sudeep.holla@arm.com,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        Nadav Haklai <nadavh@marvell.com>
+Date:   Thu, 13 Dec 2018 01:00:26 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Quoting Lorenzo Pieralisi (2018-12-11 06:16:27)
+> On Tue, Dec 04, 2018 at 10:42:19PM +0100, Rafael J. Wysocki wrote:
+> > On Tuesday, December 4, 2018 10:45:58 AM CET Lorenzo Pieralisi wrote:
+> > > On Mon, Dec 03, 2018 at 11:00:20PM +0100, Rafael J. Wysocki wrote:
+> > > > On Monday, December 3, 2018 4:38:46 PM CET Miquel Raynal wrote:
+> > >=20
+> > > I did not ask my question (that may be silly) properly apologies. I k=
+now
+> > > that the S2R context allows sleeping the question is, in case
+> > > clk_disable_unprepare() (and resume counterparts) sleeps,
+> >=20
+> > If it just sleeps, then this is not a problem, but if it actually *wait=
+s*
+> > for something meaningful to happen (which I guess is what you really me=
+an),
+> > then things may go awry.
+> >=20
+> > > what is going to wake it up, given that we are in the S2R NOIRQ phase=
+ and as
+> > > you said the action handlers (that are possibly required to wake up t=
+he eg
+> > > clk_disable_unprepare() caller) are disabled (unless, AFAIK,
+> > > IRQF_NO_SUSPEND is passed at IRQ request time in the respective drive=
+r).
+> >=20
+> > So if it waits for an action handler to do something and wake it up, it=
+ may
+> > very well deadlock.  I have no idea if that really happens, though.
+> >=20
+> > > The clk API implementations back-ends are beyond my depth, I just wan=
+ted
+> > > to make sure I understand how the S2R flow is expected to work in this
+> > > specific case.
+> >=20
+> > Action handlers won't run unless the IRQs are marked as IRQF_NO_SUSPEND
+> > (well, there are a few more complications I don't recall exactly, but
+> > that's the basic rule).  If anything depends on them to run, it will bl=
+ock.
+>=20
+> Stephen, any comments on this ?
 
-On Wed, Dec 12, 2018 at 12:04:51PM +0000, Vokáč Michal wrote:
-> Normally the PWM output is held LOW when PWM is disabled. This can cause
-> problems when inverted PWM signal polarity is needed. With this behavior
-> the connected circuit is fed by 100% duty cycle instead of being shut-off.
-> 
-> Allow users to define a "pwm" and a "gpio" pinctrl states. The pwm pinctrl
-> state is selected when PWM is enabled and the gpio pinctrl state is
-> selected when PWM is disabled. In the gpio state the new pwm-gpios GPIO is
-> configured as input and the internal pull-up resistor is used to pull the
-> output level high.
-> 
-> If all the pinctrl states and the pwm-gpios GPIO are not correctly
-> specified in DT the PWM work as usual.
-> 
-> As an example, with this patch a PWM controlled backlight with inversed
-> signal polarity can be used in full brightness range. Without this patch
-> the backlight can not be turned off as brightness = 0 disables the PWM
-> and that in turn set PWM output LOW, that is full brightness.
-> 
-> Inverted output of the PWM with "default" and with "pwm"+"gpio" pinctrl:
-> 
-> +--------------+------------+---------------+----------- +-------------+
-> | After reset  | Bootloader |   PWM probe   |     PWM    |     PWM     |
-> | 100k pull-up |            |               | enable 30% |   disable   |
-> +--------------+------------+---------------+------------+-------------+
-> | pinctrl      |    none    |    default    |   default  |   default   |
-> | out H   __________________                   __   __                 |
-> | out L                     \_________________/  \_/  \_/\____________ |
-> |                                           ^    ^    ^                |
-> +--------------+------------+---------------+------------+-------------+
-> | pinctrl      |    none    |      gpio     |     pwm    |     gpio    |
-> | out H   __________________________________   __   __   _____________ |
-> | out L                                     \_/  \_/  \_/              |
-> |                                           ^    ^    ^                |
-> +----------------------------------------------------------------------+
+Sorry I seemed to miss this email. BTW, what is an "action handler"
+here? The IRQ action handler?
 
-Just for the record: My last concern against this patch set (that I sent
-for v3) and v4 of the series criss-crossed. So the problem with the
-peaks that could happen is still unaddressed.
+> I would like to understand if it is safe
+> to call a clk_*unprepare/prepare_* function (that may have a blocking
+> back-end waiting on a wake-up event triggered by an IRQ action) in the
+> suspend/resume NOIRQ phase.
 
-Best regards
-Uwe
+Does this ever occur in practice? I imagine "blocking back-end waiting
+on a wake-up event" would be some sort of i2c or SPI based "slow" clk
+that is prepared/unprepared in the NOIRQ phase of suspend/resume? So
+that function call into the clk API fails because the i2c or SPI
+controller used to toggle the clk on/off state relies on the
+controller's IRQ to manage the transaction over the bus but that IRQ is
+disabled. I suppose this is possible but I've never heard of it
+happening in practice. Do you have such a scenario?
 
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+>=20
+> It is not clear how the unprepare/prepare() callers can possibly know
+> whether it is safe to block at that stage given that IRQ actions are
+> suspended and the wake-up may never trigger.
+>=20
+
+Is this solved in other situations somehow? I don't think clk consumers
+have any idea that things are safe or not safe to use in the NOIRQ phase
+of suspend, but I also don't see how clks are special here. Any provider
+consumer pattern would fall into the same trap, but maybe clks are the
+first ones to get here.
+
+It seems like a larger problem with NOIRQ suspend in general and how it
+is too coarse of a solution for suspend ordering of devices. It's not
+like we need *all* device interrupts to be disabled to do something in
+suspend with one particular device. Most likely, we just need the device
+and all it's children to be suspended and this device to have it's IRQ
+disabled for the NOIRQ suspend callback to work. (Maybe any devices it's
+supplying with device links too?)
+
+If that's really the case, then I can see how one device and it's
+children are suspended and the irq for it is disabled but the providing
+devices (clk, regulator, bus controller, etc.) are still fully active
+and not suspended but in fact completely usable and able to service
+interrupts. If that all makes sense, then I would answer the question
+with a definitive "yes it's all fine" because the clk consumer could be
+in the NOIRQ phase of its suspend but the clk provider wouldn't have
+even started suspending yet when clk_disable_unprepare() is called.
+
