@@ -1,116 +1,133 @@
-Return-Path: <SRS0=v2je=OV=vger.kernel.org=linux-kernel-owner@kernel.org>
+Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C497C67872
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 23:57:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D90B8C67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 00:16:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5569620835
-	for <linux-kernel@archiver.kernel.org>; Wed, 12 Dec 2018 23:57:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kudzu-us.20150623.gappssmtp.com header.i=@kudzu-us.20150623.gappssmtp.com header.b="XWJry75D"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5569620835
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kudzu.us
+	by mail.kernel.org (Postfix) with ESMTP id A87EE20811
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 00:16:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A87EE20811
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728403AbeLLX5f (ORCPT
+        id S1728498AbeLMAQX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 18:57:35 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:41397 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726355AbeLLX5e (ORCPT
+        Wed, 12 Dec 2018 19:16:23 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52978 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727001AbeLMAQW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 18:57:34 -0500
-Received: by mail-io1-f65.google.com with SMTP id s22so170096ioc.8
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 15:57:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kudzu-us.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=DSObcjHaK4sHxqigYcCt9BycM8y1WzOo4LLf84PPirw=;
-        b=XWJry75DcdVgls8MHcOr54pbpvRqX2LmkjqqDy3GEmpRoM7utd+msU3Gj+OuozMzxG
-         6oxDlgDhP/J9IAAZsrG5XHAh+BWlUgYBAUIb2dzcTthszirnLohighZHM15v2xrQLavH
-         MX+YIl0e0LiSNzWB21TmNcq9ik83sQUiv1upa0Pyi3zEVVtRC20umwWGjbchgfOYr76h
-         G/obelxW+Qx6ivxy56dbLDqIZRMeRtqi1ONkgeYTkMpyp5pv6id7IxaTFoCQjqSjWS8Y
-         cjpBEpj39b5y9+pI7PtFsfQz7y/mx+rs4GArBDNk/aTye21avGgF9/ZxzVoCo8C4qeqm
-         eQRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=DSObcjHaK4sHxqigYcCt9BycM8y1WzOo4LLf84PPirw=;
-        b=XcVQI+6200VlcDX+b99PDPh/Vbn779Kw0UBlHnLk+Iozh/eEGk3tbuotD7iTGcWmhX
-         uOUBaWqu5nRlvqGHFoFoAfaDqndSV2/iovKcq8CDDxUkJyAiB9/faAV5U4xC9BFA7cMR
-         YZZvgKDlVrq6mbgkVDyVlKoTue2XsxRULA01oNOPwrooXnjTPpJQHRn6+GcfbZ0biChw
-         pfG81h8WGbcoIn/xAr8dGElXd4MLCMCiqh1BS54pDd6zMHMfPRL1zMSm2vHcx5K34Rtz
-         MgdCzLfwAY41ymra/aFx3YD6qlS1GubVgw95RjxBiULqmMGFY5eAtHY0fR08uBDcjFtg
-         eUBg==
-X-Gm-Message-State: AA+aEWbER5iA9lOaEFMdTvee6gXFkQPWZ0jEX3No5xeCuqQR0Dg9bzki
-        U5vJHzle7qKOp89BMfCOHcTXipDZP/xljhIr1/8m6Q==
-X-Google-Smtp-Source: AFSGD/XFcP01DdFPAuB+wWxf9u3vlLm18jVbluTVrciyM0o0GbCMP/0lTPSVdGHYsmx9wRXIoGNqnP0ftM/uj5lEmuo=
-X-Received: by 2002:a5e:d501:: with SMTP id e1mr20856742iom.291.1544659052843;
- Wed, 12 Dec 2018 15:57:32 -0800 (PST)
+        Wed, 12 Dec 2018 19:16:22 -0500
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBD0EnG0060824
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 19:16:21 -0500
+Received: from e35.co.us.ibm.com (e35.co.us.ibm.com [32.97.110.153])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2pb9fe8es7-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 19:16:20 -0500
+Received: from localhost
+        by e35.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <bauerman@linux.ibm.com>;
+        Thu, 13 Dec 2018 00:16:20 -0000
+Received: from b03cxnp08026.gho.boulder.ibm.com (9.17.130.18)
+        by e35.co.us.ibm.com (192.168.1.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 13 Dec 2018 00:16:16 -0000
+Received: from b03ledav006.gho.boulder.ibm.com (b03ledav006.gho.boulder.ibm.com [9.17.130.237])
+        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBD0GEYR25559180
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 13 Dec 2018 00:16:14 GMT
+Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AEF09C605F;
+        Thu, 13 Dec 2018 00:16:14 +0000 (GMT)
+Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3F9BCC6059;
+        Thu, 13 Dec 2018 00:16:01 +0000 (GMT)
+Received: from morokweng.localdomain (unknown [9.80.227.60])
+        by b03ledav006.gho.boulder.ibm.com (Postfix) with ESMTPS;
+        Thu, 13 Dec 2018 00:16:00 +0000 (GMT)
+References: <20181208202705.18673-2-nayna@linux.ibm.com> <20181209044849.825-1-nayna@linux.ibm.com>
+User-agent: mu4e 1.0; emacs 26.1
+From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
+To:     Nayna Jain <nayna@linux.ibm.com>
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-efi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, zohar@linux.ibm.com,
+        dhowells@redhat.com, jforbes@redhat.com,
+        seth.forshee@canonical.com, kexec@lists.infradead.org,
+        keyrings@vger.kernel.org, vgoyal@redhat.com, ebiederm@xmission.com,
+        mpe@ellerman.id.au
+Subject: Re: [PATCH v2 1/7] integrity: Define a trusted platform keyring
+In-reply-to: <20181209044849.825-1-nayna@linux.ibm.com>
+Date:   Wed, 12 Dec 2018 22:15:56 -0200
 MIME-Version: 1.0
-References: <1544103052-28191-1-git-send-email-wesley.sheng@microchip.com>
- <CAPoiz9yN9zHXxyuwmopfSwBLGr39bQ1SJjGq_ku-w_b9V13OFQ@mail.gmail.com> <f22b6112-920b-37f1-68fe-f43164a18f05@deltatee.com>
-In-Reply-To: <f22b6112-920b-37f1-68fe-f43164a18f05@deltatee.com>
-From:   Jon Mason <jdmason@kudzu.us>
-Date:   Wed, 12 Dec 2018 18:57:21 -0500
-Message-ID: <CAPoiz9xesBdtgVg1UGF8LuD28tjMp6VpVuHVjdwcWJq93Phi3w@mail.gmail.com>
-Subject: Re: [PATCH v2 0/3] ntb_hw_switchtec: Added support of >=4G memory windows
-To:     Logan Gunthorpe <logang@deltatee.com>
-Cc:     wesley.sheng@microchip.com,
-        Kurt Schwemmer <kurt.schwemmer@microsemi.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Allen Hubbe <allenbh@gmail.com>, linux-pci@vger.kernel.org,
-        linux-ntb@googlegroups.com,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        wesleyshenggit@sina.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+x-cbid: 18121300-0012-0000-0000-000016E9057D
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010216; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000270; SDB=6.01130913; UDB=6.00587691; IPR=6.00911046;
+ MB=3.00024673; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-13 00:16:19
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18121300-0013-0000-0000-0000556F38C5
+Message-Id: <871s6mffib.fsf@morokweng.localdomain>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-12_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812130000
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 12, 2018 at 6:42 PM Logan Gunthorpe <logang@deltatee.com> wrote:
->
->
->
-> On 2018-12-12 4:00 p.m., Jon Mason wrote:
-> > So, you based your patches on a series of patches not in the
-> > ntb/ntb-next branch?  Please don't do this.  I see nothing in these
-> > patches which requires that series, which makes this even more
-> > unnecessary.  Since these are fairly trivial, I'm taking them and
-> > pushing to the ntb-next branch to give these more time to be tested
-> > (due to not being tested on the proper branch).  I would really
-> > appreciate you testing the ntb-next branch as a sanity check.
->
-> The NTB test tools don't work with switchtec hardware without that patch
-> set, so there's no way to test the changes without that branch.
 
-Then let's get those patches in.  IIRC, I asked you to split up the
-patch series to be bugfixes and features (or at least reorder the
-series so I can split it up that way in my branches).  Also, I think
-Serge had some comments that may/may not need to be addressed.  Could
-you please reorder and resend (and Serge can comment as needed on the
-resend)?
+Nayna Jain <nayna@linux.ibm.com> writes:
 
-Thanks,
-Jon
+> On secure boot enabled systems, a verified kernel may need to kexec
+> additional kernels. For example, it may be used as a bootloader needing
+> to kexec a target kernel or it may need to kexec a crashdump kernel. In
+> such cases, it may want to verify the signature of the next kernel
+> image.
+>
+> It is further possible that the kernel image is signed with third party
+> keys which are stored as platform or firmware keys in the 'db' variable.
+> The kernel, however, can not directly verify these platform keys, and an
+> administrator may therefore not want to trust them for arbitrary usage.
+> In order to differentiate platform keys from other keys and provide the
+> necessary separation of trust, the kernel needs an additional keyring to
+> store platform keys.
+>
+> This patch creates the new keyring called ".platform" to isolate keys
+> provided by platform from keys by kernel. These keys are used to
+> facilitate signature verification during kexec. Since the scope of this
+> keyring is only the platform/firmware keys, it cannot be updated from
+> userspace.
+>
+> This keyring can be enabled by setting CONFIG_INTEGRITY_PLATFORM_KEYRING.
+>
+> Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
+> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+> Acked-by: Serge Hallyn <serge@hallyn.com>
+> ---
+>  security/integrity/Kconfig                         | 11 +++++
+>  security/integrity/Makefile                        |  1 +
+>  security/integrity/digsig.c                        | 48 +++++++++++++++-------
+>  security/integrity/integrity.h                     |  3 +-
+>  .../integrity/platform_certs/platform_keyring.c    | 35 ++++++++++++++++
+>  5 files changed, 83 insertions(+), 15 deletions(-)
+>  create mode 100644 security/integrity/platform_certs/platform_keyring.c
 
+Reviewed-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
 
->
-> You're right that there is no compile-time dependency.
->
-> Logan
->
-> --
-> You received this message because you are subscribed to the Google Groups "linux-ntb" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to linux-ntb+unsubscribe@googlegroups.com.
-> To post to this group, send email to linux-ntb@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/linux-ntb/f22b6112-920b-37f1-68fe-f43164a18f05%40deltatee.com.
-> For more options, visit https://groups.google.com/d/optout.
+-- 
+Thiago Jung Bauermann
+IBM Linux Technology Center
+
