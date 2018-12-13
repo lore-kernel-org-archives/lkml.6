@@ -2,274 +2,446 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,T_MIXED_ES,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C548C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 14:18:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51330C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 14:22:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36C5E2086D
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 14:18:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36C5E2086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 010D920851
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 14:22:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 010D920851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728663AbeLMOSp (ORCPT
+        id S1728564AbeLMOWl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 09:18:45 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:57290 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727791AbeLMOSo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 09:18:44 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2373787633;
-        Thu, 13 Dec 2018 14:18:43 +0000 (UTC)
-Received: from redhat.com (ovpn-121-185.rdu2.redhat.com [10.10.121.185])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id DA85A5C20D;
-        Thu, 13 Dec 2018 14:18:40 +0000 (UTC)
-Date:   Thu, 13 Dec 2018 09:18:39 -0500
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Tom Talpey <tom@talpey.com>
-Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Jan Kara <jack@suse.cz>, John Hubbard <jhubbard@nvidia.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        John Hubbard <john.hubbard@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
-        Christoph Hellwig <hch@infradead.org>,
-        Christopher Lameter <cl@linux.com>,
-        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        rcampbell@nvidia.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "Weiny, Ira" <ira.weiny@intel.com>
-Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
-Message-ID: <20181213141838.GB3186@redhat.com>
-References: <20181212150319.GA3432@redhat.com>
- <CAPcyv4go0Xzhz8rXdfscWuXDu83BO9v8WD4upDUJWb7gKzX5OQ@mail.gmail.com>
- <20181212213005.GE5037@redhat.com>
- <CAPcyv4gJHeFjEgna1S-2uE4KxkSUgkc=e=2E5oqfoirec84C-w@mail.gmail.com>
- <20181212215348.GF5037@redhat.com>
- <20181212233703.GB2947@ziepe.ca>
- <20181213000109.GK5037@redhat.com>
- <20181213032043.GA3204@ziepe.ca>
- <20181213124325.GA3186@redhat.com>
- <81a731bb-6a8a-a554-cf99-5d0588b0a21f@talpey.com>
+        Thu, 13 Dec 2018 09:22:41 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:34836 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727618AbeLMOWk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 09:22:40 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7391F80D;
+        Thu, 13 Dec 2018 06:22:39 -0800 (PST)
+Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3980A3F59C;
+        Thu, 13 Dec 2018 06:22:37 -0800 (PST)
+Subject: Re: [PATCH v2 01/10] irqdomain: Add interface to request an irq
+ domain
+To:     Robert Richter <rrichter@cavium.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>
+Cc:     "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Stuart Yoder <stuyoder@gmail.com>,
+        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
+        "Richter, Robert" <Robert.Richter@cavium.com>,
+        Julien Thierry <julien.thierry@arm.com>
+References: <20181128144240.28727-1-rrichter@cavium.com>
+ <20181128144240.28727-2-rrichter@cavium.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: ARM Ltd
+Message-ID: <1a98dc26-fc3f-988a-28b1-0452a465a364@arm.com>
+Date:   Thu, 13 Dec 2018 14:22:35 +0000
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+In-Reply-To: <20181128144240.28727-2-rrichter@cavium.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <81a731bb-6a8a-a554-cf99-5d0588b0a21f@talpey.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Thu, 13 Dec 2018 14:18:44 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 13, 2018 at 08:40:49AM -0500, Tom Talpey wrote:
-> On 12/13/2018 7:43 AM, Jerome Glisse wrote:
-> > On Wed, Dec 12, 2018 at 08:20:43PM -0700, Jason Gunthorpe wrote:
-> > > On Wed, Dec 12, 2018 at 07:01:09PM -0500, Jerome Glisse wrote:
-> > > > On Wed, Dec 12, 2018 at 04:37:03PM -0700, Jason Gunthorpe wrote:
-> > > > > On Wed, Dec 12, 2018 at 04:53:49PM -0500, Jerome Glisse wrote:
-> > > > > > > Almost, we need some safety around assuming that DMA is complete the
-> > > > > > > page, so the notification would need to go all to way to userspace
-> > > > > > > with something like a file lease notification. It would also need to
-> > > > > > > be backstopped by an IOMMU in the case where the hardware does not /
-> > > > > > > can not stop in-flight DMA.
-> > > > > > 
-> > > > > > You can always reprogram the hardware right away it will redirect
-> > > > > > any dma to the crappy page.
-> > > > > 
-> > > > > That causes silent data corruption for RDMA users - we can't do that.
-> > > > > 
-> > > > > The only way out for current hardware is to forcibly terminate the
-> > > > > RDMA activity somehow (and I'm not even sure this is possible, at
-> > > > > least it would be driver specific)
-> > > > > 
-> > > > > Even the IOMMU idea probably doesn't work, I doubt all current
-> > > > > hardware can handle a PCI-E error TLP properly.
-> > > > 
-> > > > What i saying is reprogram hardware to crappy page ie valid page
-> > > > dma map but that just has random content as a last resort to allow
-> > > > filesystem to reuse block. So their should be no PCIE error unless
-> > > > hardware freak out to see its page table reprogram randomly.
-> > > 
-> > > No, that isn't an option. You can't silently provide corrupted data
-> > > for RDMA to transfer out onto the network, or silently discard data
-> > > coming in!!
-> > > 
-> > > Think of the consequences of that - I have a fileserver process and
-> > > someone does ftruncate and now my clients receive corrupted data??
-> > 
-> > This is what happens _today_ ie today someone do GUP on page file
-> > and then someone else do truncate the first GUP is effectively
-> > streaming _random_ data to network as the page does not correspond
-> > to anything anymore and once the RDMA MR goes aways and release
-> > the page the page content will be lost. So i am not changing anything
-> > here, what i proposed was to make it explicit to device driver at
-> > least that they were streaming random data. Right now this is all
-> > silent but this is what is happening wether you like it or not :)
-> > 
-> > Note that  i am saying do that only for truncate to allow to be
-> > nice to fs. But again i am fine with whatever solution but you can
-> > not please everyone here. Either block truncate and fs folks will
-> > hate you or make it clear to device driver that you are streaming
-> > random things and RDMA people hates you.
-> > 
-> > 
-> > > The only option is to prevent the RDMA transfer from ever happening,
-> > > and we just don't have hardware support (beyond destroy everything) to
-> > > do that.
-> > > 
-> > > > The question is who do you want to punish ? RDMA user that pin stuff
-> > > > and expect thing to work forever without worrying for other fs
-> > > > activities ? Or filesystem to pin block forever :)
-> > > 
-> > > I don't want to punish everyone, I want both sides to have complete
-> > > data integrity as the USER has deliberately decided to combine DAX and
-> > > RDMA. So either stop it at the front end (ie get_user_pages_longterm)
-> > > or make it work in a way that guarantees integrity for both.
-> > > 
-> > > >      S2: notify userspace program through device/sub-system
-> > > >          specific API and delay ftruncate. After a while if there
-> > > >          is no answer just be mean and force hardware to use
-> > > >          crappy page as anyway this is what happens today
-> > > 
-> > > I don't think this happens today (outside of DAX).. Does it?
-> > 
-> > It does it is just silent, i don't remember anything in the code
-> > that would stop a truncate to happen because of elevated refcount.
-> > This does not happen with ODP mlx5 as it does abide by _all_ mmu
-> > notifier. This is for anything that does ODP without support for
-> > mmu notifier.
+Hi Robert,
+
+On 28/11/2018 14:43, Robert Richter wrote:
+> This patch introduces a new interface to allow irq domain
+> initialization regardless of order dependencies. This is done by
+> requesting a domain and registering a callback function that is called
+> as soon as a domain becomes available.
 > 
-> Wait - is it expected that the MMU notifier upcall is handled
-> synchronously? That is, the page DMA mapping must be torn down
-> immediately, and before returning?
-
-Yes you must torn down mapping before returning from mmu notifier
-call back. Any time after is too late. You obviously need hardware
-that can support that. In the infiniband sub-system AFAIK only the
-mlx5 hardware can do that. In the GPU sub-system everyone is fine.
-
-Dunno about other sub-systems.
-
-
-> That's simply not possible, since the hardware needs to get control
-> to do this. Even if there were an IOMMU that could intercept the
-> DMA, reprogramming it will require a flush, which cannot be guaranteed
-> to occur "inline".
-
-If hardware can not do that then hardware should not use GUP, at
-least not on file back page. I advocated in favor of forbiding GUP
-for device that can not do that as right now this silently breaks
-in few cases (truncate, mremap, splice, reflink, ...). So the device
-in those cases can end up with GUPed pages that do not correspond
-to anything anymore ie they do not correspond to the memory backing
-the virtual address they were GUP against, nor they correspond to
-the file content at the given offset anymore. It is just random
-data as far as the kernel or filesystem is concern.
-
-Of course for this to happen you need an application that do stupid
-thing like create an MR in one thread on the mmap of a file and
-truncate that same file in another thread (or from the same thread).
-
-So this is unlikely to happen in sane program. It does not mean it
-will not happen.
-
-
-The second set of issue at to deals with set_page_dirty happening
-long time after page_release did happens and thus the fs dirty
-page callback will see page in bad state and will BUG() and you
-will have an oops and loose any data your device might have written
-to the page. This is highly filesystem dependend and also timing
-dependend and link to thing like memory pressure so it might not
-happen that often but again it can happen.
-
-
-> > > .. and the remedy here is to kill the process, not provide corrupt
-> > > data. Kill the process is likely to not go over well with any real
-> > > users that want this combination.
-> > > 
-> > > Think Samba serving files over RDMA - you can't have random unpriv
-> > > users calling ftruncate and causing smbd to be killed or serve corrupt
-> > > data.
-> > 
-> > So what i am saying is there is a choice and it would be better to
-> > decide something than let the existing status quo where we just keep
-> > streaming random data after truncate to a GUPed page.
+> A typical irq domain initialization code is the following:
 > 
-> Let's also remember that any torn-down DMA mapping can't be recycled
-> until all uses of the old DMA addresses are destroyed. The whole
-> thing screams for reference counting all the way down, to me.
+> Parent initialization:
+> 
+> 	...
+> 	domain = msi_create_irq_domain(fwnode, info, parent);
+> 	if (domain)
+> 		irq_domain_update_bus_token(domain, bus_token);
+> 	...
+> 
+> Child initialization:
+> 
+> 	...
+> 	parent = irq_find_matching_fwnode(fwnode, bus_token);
+> 	if (!parent)
+> 		...
+> 	create_irq_domain(parent, ...);
+> 	...
+> 
+> In case the parent is not yet available, the child initialization
+> fails. Thus, the current implementation requires the parent domain
+> being initialized before the child domain. With a complex irq domain
+> hierarchy it becomes more and more difficult to grant that order as
+> irq domains are enabled in separate subsystems. Care must be taken
+> when initializing parent and child domains in the same initcall
+> level. E.g. Arm's gic-v3-its implementation might have the following
+> tree and dependencies:
+> 
+> 	gic-v3
+> 	├── its-node-0
+> 	│   ├── pci-host-0
+> 	│   ├── platform-bus
+> 	│   ...
+> 	├── its-node-1
+> 	│   ├── pci-host-1
+> 	...
+> 
+> All domains must be initialized in top-down order of the tree.
+> 
+> This patch introduces an interface that allows domain initialization
+> without any order requirements, e.g. to be able to initialize the irq
+> domains in the same initcall level. The following functions have been
+> introduced to allow the registration of a callback handler:
+> 
+> 	irq_domain_request_fwnode()
+> 	irq_domain_request_host()
+> 
+> Instead of using the irq_find_matching_fwnode() function and it's
+> variants the child code replaces them with the new functions and
+> looks e.g. like the following:
+> 
+> 	...
+> 	irq_domain_request_fwnode(fwnode, bus_token,
+> 				create_irq_domain, name, priv);
+> 	...
+> 
+> Here, the callback function create_irq_domain() is called as soon as
+> the parent becomes available. All registered handlers are stored in a
+> list. With each update of the bus token using irq_domain_update_bus_
+> token(), the list is checked if that domain is requested by a handler
+> and if that is the case it's callback function is called and the
+> request removed from the list.
+> 
+> With a late_initcall all requests from the list should already have
+> been handled, otherwise all remaining requests are removed with an
+> error reported.
+> 
+> Signed-off-by: Robert Richter <rrichter@cavium.com>
+> ---
+>  include/linux/irqdomain.h |  15 +++++
+>  kernel/irq/irqdomain.c    | 163 ++++++++++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 178 insertions(+)
+> 
+> diff --git a/include/linux/irqdomain.h b/include/linux/irqdomain.h
+> index 068aa46f0d55..27e83803627d 100644
+> --- a/include/linux/irqdomain.h
+> +++ b/include/linux/irqdomain.h
+> @@ -311,6 +311,21 @@ static inline struct irq_domain *irq_find_host(struct device_node *node)
+>  	return d;
+>  }
+>  
+> +typedef int (*irq_domain_callback_t)(struct irq_domain *, void *);
+> +int irq_domain_request_fwnode(struct fwnode_handle *fwnode,
+> +			enum irq_domain_bus_token bus_token,
+> +			irq_domain_callback_t callback,
+> +			const char *name, void *priv);
+> +
+> +static inline int irq_domain_request_host(struct device_node *node,
+> +					enum irq_domain_bus_token bus_token,
+> +					irq_domain_callback_t callback,
+> +					void *priv)
+> +{
+> +	return irq_domain_request_fwnode(of_node_to_fwnode(node), bus_token,
+> +					callback, node->full_name, priv);
+> +}
 
-I am not saying reuse the DMA address in the emergency_mean_callback
-the idea was:
+I don't think you need this helper. There is no backward compat to
+preserve in this case, and I believe all the potential users would be
+using the fwnode variant.
 
-    gup_page_emergency_revoke(device, page)
-    {
-        crapy_page = alloc_page();
-        dma_addr = dma_map(crappy_page, device, ...);
-        mydevice_page_table_update(device, crappy_page, dma_addr);
-        mydevice_tlb_flush(device);
-        mydevice_wait_pending_dma(device)
+I'm not keen at all on the name thing though. An OF node already has
+one, and an irqchip fwnode caries one as part of the irqchip_fwid structure.
 
-        // at this point the original GUPed page is not access by hw
+> +
+>  /**
+>   * irq_domain_add_linear() - Allocate and register a linear revmap irq_domain.
+>   * @of_node: pointer to interrupt controller's device tree node.
+> diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
+> index 3366d11c3e02..ebe628dad568 100644
+> --- a/kernel/irq/irqdomain.c
+> +++ b/kernel/irq/irqdomain.c
+> @@ -21,6 +21,7 @@
+>  #include <linux/fs.h>
+>  
+>  static LIST_HEAD(irq_domain_list);
+> +static LIST_HEAD(irq_domain_requests);
+>  static DEFINE_MUTEX(irq_domain_mutex);
+>  
+>  static struct irq_domain *irq_default_domain;
+> @@ -45,6 +46,111 @@ static inline void debugfs_remove_domain_dir(struct irq_domain *d) { }
+>  const struct fwnode_operations irqchip_fwnode_ops;
+>  EXPORT_SYMBOL_GPL(irqchip_fwnode_ops);
+>  
+> +struct irq_domain_request {
+> +	struct list_head		list;
+> +	struct fwnode_handle		*fwnode;
+> +	enum irq_domain_bus_token	bus_token;
+> +	irq_domain_callback_t		callback;
+> +	char				*name;
+> +	void				*priv;
+> +};
+> +
+> +static void irq_domain_call_handler(struct irq_domain *domain,
+> +		irq_domain_callback_t callback, const char *name, void *priv)
+> +{
+> +	int ret;
+> +
+> +	ret = callback(domain, priv);
+> +	if (ret)
+> +		pr_err("%s: Domain request handler failed: %d\n",
+> +			name, ret);
+> +
+> +	of_node_put(irq_domain_get_of_node(domain));
+> +}
+> +
+> +static void irq_domain_free_request(struct irq_domain_request *request)
+> +{
+> +	kfree(request->name);
+> +	kfree(request);
+> +}
+> +
+> +static void irq_domain_handle_requests(struct fwnode_handle *fwnode,
+> +                        enum irq_domain_bus_token bus_token)
+> +{
+> +	struct irq_domain *domain;
+> +	struct irq_domain_request *request;
+> +
+> +	if (!fwnode)
+> +		return;
+> +redo:
+> +	domain = irq_find_matching_fwnode(fwnode, bus_token);
+> +	if (!domain)
+> +		return;
+> +
+> +	mutex_lock(&irq_domain_mutex);
+> +
+> +	/*
+> +	 * For serialization of irq domain updates make sure to handle
+> +	 * (and remove) the request only if the domain still matches
+> +	 * the request.
+> +	 */
+> +	if ((domain->fwnode != fwnode) || (domain->bus_token != bus_token)) {
+> +		mutex_unlock(&irq_domain_mutex);
+> +		goto redo;
+> +	}
+> +
+> +	list_for_each_entry(request, &irq_domain_requests, list) {
+> +		if (request->fwnode != fwnode ||
+> +		    request->bus_token != bus_token)
+> +			continue;
+> +
+> +		list_del(&request->list);
+> +		mutex_unlock(&irq_domain_mutex);
+> +
+> +		irq_domain_call_handler(domain, request->callback,
+> +					request->name, request->priv);
+> +		irq_domain_free_request(request);
+> +
+> +		goto redo;
+> +	}
 
-        dma_unmap(page);
-        put_user_page(page);
-    }
+This feels a bit convoluted. Pulling the various calls out of the loop
+would be better.
 
-I know that it is something we can do with GPU devices. So i assumed
-that other devices can do that to. But i understand this is highly
-device dependent. Not that if you have a command queue it is more like:
+> +
+> +	mutex_unlock(&irq_domain_mutex);
+> +}
+> +
+> +static int __init irq_domain_drain_requests(void)
+> +{
+> +	struct irq_domain_request *request;
+> +	struct irq_domain *domain;
+> +	int ret = 0;
+> +redo:
+> +	mutex_lock(&irq_domain_mutex);
+> +
+> +	list_for_each_entry(request, &irq_domain_requests, list) {
+> +		list_del(&request->list);
+> +		mutex_unlock(&irq_domain_mutex);
+> +
+> +		domain = irq_find_matching_fwnode(request->fwnode,
+> +						request->bus_token);
+> +		if (domain) {
+> +			irq_domain_call_handler(domain, request->callback,
+> +						request->name, request->priv);
+> +		} else {
+> +			ret = -ENODEV;
+> +			pr_err("%s-%d: Unhandled domain request\n",
+> +				request->name, request->bus_token);
+> +		}
+> +
+> +		irq_domain_free_request(request);
+> +
+> +		goto redo;
+> +	}
 
-    gup_page_emergency_revoke(device, page)
-    {
-        crapy_page = alloc_page();
-        dma_addr = dma_map(crappy_page, device, ...);
+Why isn't this written in terms of irq_domain_handle_requests instead?
 
-        // below function update kernel side data structure that stores
-        // the pointer to the GUPed page and that are use to build cmds
-        // send to the hardware. It does not update the hardware, just
-        // the device driver internal data structure.
-        mydevice_replace_page_in_object(device, page, crappy_page, dma_addr);
+> +
+> +	mutex_unlock(&irq_domain_mutex);
+> +
+> +	return ret;
+> +}
+> +late_initcall(irq_domain_drain_requests);
 
-        mydevice_queue_wait_pending_job(device);
+Why do you have to do all matching in this late initcall? I'd have hoped
+for requests to be satisfied as domains get added, not as a last ditch
+effort.
 
-        // at this point the original GUPed page is not access by hw and
-        // any new command will be using the crappy page not the GUPed
-        // page
+> +
+>  /**
+>   * irq_domain_alloc_fwnode - Allocate a fwnode_handle suitable for
+>   *                           identifying an irq domain
+> @@ -293,6 +399,8 @@ void irq_domain_update_bus_token(struct irq_domain *domain,
+>  	debugfs_add_domain_dir(domain);
+>  
+>  	mutex_unlock(&irq_domain_mutex);
+> +
+> +	irq_domain_handle_requests(domain->fwnode, bus_token);
+>  }
+>  
+>  /**
+> @@ -417,6 +525,61 @@ struct irq_domain *irq_find_matching_fwspec(struct irq_fwspec *fwspec,
+>  EXPORT_SYMBOL_GPL(irq_find_matching_fwspec);
+>  
+>  /**
+> + * irq_domain_request_fwnode() - Requests a domain for a given fwspec
+> + * @fwspec: FW specifier for an interrupt
+> + * @bus_token: domain-specific data
+> + * @callback: function to be called once domain becomes available
+> + * @name: name to be used for fwnode
+> + * @priv: private data to be passed to callback
+> + *
+> + * The callback function is called as soon as the domain is available.
+> + */
+> +int irq_domain_request_fwnode(struct fwnode_handle *fwnode,
+> +			enum irq_domain_bus_token bus_token,
+> +			irq_domain_callback_t callback,
+> +			const char *name, void *priv)
+> +{
+> +	struct irq_domain *parent;
+> +	struct irq_domain_request *request;
+> +
+> +	if (!fwnode || bus_token == DOMAIN_BUS_ANY || !callback || !name)
 
-        dma_unmap(page);
-        put_user_page(page);
-    }
+Why are you refusing DOMAIN_BUS_ANY? If that's what the caller wants, we
+should satisfy it.
 
-Again if device can not do any of the above then it should really not
-be using GUP because they are corner case that are simply not solvable.
-We can avoid kernel OOPS but we can not pin the page as GUP user believe
-ie the virtual address the GUP happened against can point to a different
-page (true for both anonymous memory and file back memory).
+> +		return -EINVAL;
+> +
+> +	parent = irq_find_matching_fwnode(fwnode, bus_token);
+> +	if (parent) {
+> +		irq_domain_call_handler(parent, callback, name, priv);
+> +		return 0;
+> +	}
+> +
+> +	request = kzalloc(sizeof(*request), GFP_KERNEL);
+> +	if (!request)
+> +		return -ENOMEM;
+> +
+> +	request->fwnode = fwnode;
+> +	request->bus_token = bus_token;
+> +	request->callback = callback;
+> +	request->name = kstrdup(name, GFP_KERNEL);
+> +	request->priv = priv;
+> +	INIT_LIST_HEAD(&request->list);
+> +
+> +	if (!request->name) {
+> +		kfree(request);
+> +		return -ENOMEM;
+> +	}
+> +
+> +	of_node_get(to_of_node(fwnode));
+> +
+> +	mutex_lock(&irq_domain_mutex);
+> +	list_add_tail(&request->list, &irq_domain_requests);
+> +	mutex_unlock(&irq_domain_mutex);
+> +
+> +	/* recheck in case list changed */
+> +	irq_domain_handle_requests(fwnode, bus_token);
 
+Why do you need this? The whole thing is racy anyway, and you already
+have a catch-all as a late initcall...
 
-The put_user_page() patchset is about solving the OOPS and BUG() and
-also fixing the tiny race that exist for direct I/O. Fixing other user
-of GUP should happen sub-system by sub-system and each sub-system or
-device driver maintainer must choose their poison. This is what i am
-advocating for. If the emergency_revoke above is something that would
-work for device is something i can't say for certain, only for devices
-i know (which are GPU mostly).
+> +
+> +	return 0;
+> +}
+> +
+> +/**
+>   * irq_domain_check_msi_remap - Check whether all MSI irq domains implement
+>   * IRQ remapping
+>   *
+> 
 
-Cheers,
-J�r�me
+Overall, this is a bit hackish. Why don't you resolve the deferred
+requests as part of a domain being added instead? It would make things
+much more straightforward.
+
+Thanks,
+
+	M.
+-- 
+Jazz is not dead. It just smells funny...
