@@ -2,145 +2,274 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,T_MIXED_ES,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A0A2C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 14:17:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C548C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 14:18:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29BC72086D
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 14:17:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29BC72086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 36C5E2086D
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 14:18:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36C5E2086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728561AbeLMORr (ORCPT
+        id S1728663AbeLMOSp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 09:17:47 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:34426 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727856AbeLMORq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 09:17:46 -0500
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBDEDw3t134586
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 09:17:45 -0500
-Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2pbrxqrbh1-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 09:17:45 -0500
-Received: from localhost
-        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <anoo@linux.ibm.com>;
-        Thu, 13 Dec 2018 14:17:44 -0000
-Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
-        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 13 Dec 2018 14:17:41 -0000
-Received: from b01ledav001.gho.pok.ibm.com (b01ledav001.gho.pok.ibm.com [9.57.199.106])
-        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBDEHeXQ15728658
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 13 Dec 2018 14:17:40 GMT
-Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3A38A28058;
-        Thu, 13 Dec 2018 14:17:40 +0000 (GMT)
-Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D106B28064;
-        Thu, 13 Dec 2018 14:17:38 +0000 (GMT)
-Received: from ltc.linux.ibm.com (unknown [9.16.170.189])
-        by b01ledav001.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu, 13 Dec 2018 14:17:38 +0000 (GMT)
+        Thu, 13 Dec 2018 09:18:45 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:57290 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727791AbeLMOSo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 09:18:44 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 2373787633;
+        Thu, 13 Dec 2018 14:18:43 +0000 (UTC)
+Received: from redhat.com (ovpn-121-185.rdu2.redhat.com [10.10.121.185])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id DA85A5C20D;
+        Thu, 13 Dec 2018 14:18:40 +0000 (UTC)
+Date:   Thu, 13 Dec 2018 09:18:39 -0500
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Tom Talpey <tom@talpey.com>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Jan Kara <jack@suse.cz>, John Hubbard <jhubbard@nvidia.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        John Hubbard <john.hubbard@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
+        Christoph Hellwig <hch@infradead.org>,
+        Christopher Lameter <cl@linux.com>,
+        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        rcampbell@nvidia.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        "Weiny, Ira" <ira.weiny@intel.com>
+Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
+Message-ID: <20181213141838.GB3186@redhat.com>
+References: <20181212150319.GA3432@redhat.com>
+ <CAPcyv4go0Xzhz8rXdfscWuXDu83BO9v8WD4upDUJWb7gKzX5OQ@mail.gmail.com>
+ <20181212213005.GE5037@redhat.com>
+ <CAPcyv4gJHeFjEgna1S-2uE4KxkSUgkc=e=2E5oqfoirec84C-w@mail.gmail.com>
+ <20181212215348.GF5037@redhat.com>
+ <20181212233703.GB2947@ziepe.ca>
+ <20181213000109.GK5037@redhat.com>
+ <20181213032043.GA3204@ziepe.ca>
+ <20181213124325.GA3186@redhat.com>
+ <81a731bb-6a8a-a554-cf99-5d0588b0a21f@talpey.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Thu, 13 Dec 2018 08:21:49 -0600
-From:   Adriana Kobylak <anoo@linux.ibm.com>
-To:     medadyoung@gmail.com, joel@jms.id.au, jk@ozlabs.org
-Cc:     jbacik@fb.com, axboe@kernel.dk, linux-block@vger.kernel.org,
-        openbmc@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        nbd@other.debian.org,
-        openbmc <openbmc-bounces+anoo=linux.ibm.com@lists.ozlabs.org>
-Subject: Re: [PATCH] nbd:clear NBD_BOUND flag when NBD connection is closed
-In-Reply-To: <1544509023-18923-1-git-send-email-medadyoung@gmail.com>
-References: <1544509023-18923-1-git-send-email-medadyoung@gmail.com>
-X-Sender: anoo@linux.ibm.com
-User-Agent: Roundcube Webmail/1.0.1
-X-TM-AS-GCONF: 00
-x-cbid: 18121314-0060-0000-0000-000002E36DA7
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010219; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000271; SDB=6.01131193; UDB=6.00587859; IPR=6.00911325;
- MB=3.00024681; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-13 14:17:43
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18121314-0061-0000-0000-000047863A82
-Message-Id: <a1da3fff285fe13d04522f1a6e72bdc1@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-13_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812130124
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <81a731bb-6a8a-a554-cf99-5d0588b0a21f@talpey.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Thu, 13 Dec 2018 14:18:44 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-12-11 00:17, medadyoung@gmail.com wrote:
-> From: Medad <medadyoung@gmail.com>
+On Thu, Dec 13, 2018 at 08:40:49AM -0500, Tom Talpey wrote:
+> On 12/13/2018 7:43 AM, Jerome Glisse wrote:
+> > On Wed, Dec 12, 2018 at 08:20:43PM -0700, Jason Gunthorpe wrote:
+> > > On Wed, Dec 12, 2018 at 07:01:09PM -0500, Jerome Glisse wrote:
+> > > > On Wed, Dec 12, 2018 at 04:37:03PM -0700, Jason Gunthorpe wrote:
+> > > > > On Wed, Dec 12, 2018 at 04:53:49PM -0500, Jerome Glisse wrote:
+> > > > > > > Almost, we need some safety around assuming that DMA is complete the
+> > > > > > > page, so the notification would need to go all to way to userspace
+> > > > > > > with something like a file lease notification. It would also need to
+> > > > > > > be backstopped by an IOMMU in the case where the hardware does not /
+> > > > > > > can not stop in-flight DMA.
+> > > > > > 
+> > > > > > You can always reprogram the hardware right away it will redirect
+> > > > > > any dma to the crappy page.
+> > > > > 
+> > > > > That causes silent data corruption for RDMA users - we can't do that.
+> > > > > 
+> > > > > The only way out for current hardware is to forcibly terminate the
+> > > > > RDMA activity somehow (and I'm not even sure this is possible, at
+> > > > > least it would be driver specific)
+> > > > > 
+> > > > > Even the IOMMU idea probably doesn't work, I doubt all current
+> > > > > hardware can handle a PCI-E error TLP properly.
+> > > > 
+> > > > What i saying is reprogram hardware to crappy page ie valid page
+> > > > dma map but that just has random content as a last resort to allow
+> > > > filesystem to reuse block. So their should be no PCIE error unless
+> > > > hardware freak out to see its page table reprogram randomly.
+> > > 
+> > > No, that isn't an option. You can't silently provide corrupted data
+> > > for RDMA to transfer out onto the network, or silently discard data
+> > > coming in!!
+> > > 
+> > > Think of the consequences of that - I have a fileserver process and
+> > > someone does ftruncate and now my clients receive corrupted data??
+> > 
+> > This is what happens _today_ ie today someone do GUP on page file
+> > and then someone else do truncate the first GUP is effectively
+> > streaming _random_ data to network as the page does not correspond
+> > to anything anymore and once the RDMA MR goes aways and release
+> > the page the page content will be lost. So i am not changing anything
+> > here, what i proposed was to make it explicit to device driver at
+> > least that they were streaming random data. Right now this is all
+> > silent but this is what is happening wether you like it or not :)
+> > 
+> > Note that  i am saying do that only for truncate to allow to be
+> > nice to fs. But again i am fine with whatever solution but you can
+> > not please everyone here. Either block truncate and fs folks will
+> > hate you or make it clear to device driver that you are streaming
+> > random things and RDMA people hates you.
+> > 
+> > 
+> > > The only option is to prevent the RDMA transfer from ever happening,
+> > > and we just don't have hardware support (beyond destroy everything) to
+> > > do that.
+> > > 
+> > > > The question is who do you want to punish ? RDMA user that pin stuff
+> > > > and expect thing to work forever without worrying for other fs
+> > > > activities ? Or filesystem to pin block forever :)
+> > > 
+> > > I don't want to punish everyone, I want both sides to have complete
+> > > data integrity as the USER has deliberately decided to combine DAX and
+> > > RDMA. So either stop it at the front end (ie get_user_pages_longterm)
+> > > or make it work in a way that guarantees integrity for both.
+> > > 
+> > > >      S2: notify userspace program through device/sub-system
+> > > >          specific API and delay ftruncate. After a while if there
+> > > >          is no answer just be mean and force hardware to use
+> > > >          crappy page as anyway this is what happens today
+> > > 
+> > > I don't think this happens today (outside of DAX).. Does it?
+> > 
+> > It does it is just silent, i don't remember anything in the code
+> > that would stop a truncate to happen because of elevated refcount.
+> > This does not happen with ODP mlx5 as it does abide by _all_ mmu
+> > notifier. This is for anything that does ODP without support for
+> > mmu notifier.
 > 
->     If we do NOT clear NBD_BOUND flag when NBD connection is closed,
->     then the original NBD device could not be used again.
-> 
-> Signed-off-by: Medad <medadyoung@gmail.com>
+> Wait - is it expected that the MMU notifier upcall is handled
+> synchronously? That is, the page DMA mapping must be torn down
+> immediately, and before returning?
 
-Tested on Witherspoon (OpenPOWER P9 with AST2500) and verified with
-this patch that the NBD device could be disconnected/reconnected.
+Yes you must torn down mapping before returning from mmu notifier
+call back. Any time after is too late. You obviously need hardware
+that can support that. In the infiniband sub-system AFAIK only the
+mlx5 hardware can do that. In the GPU sub-system everyone is fine.
 
-Tested by: Adriana Kobylak <anoo@linux.ibm.com>
+Dunno about other sub-systems.
 
-> ---
->  drivers/block/nbd.c | 11 ++++++++---
->  1 file changed, 8 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
-> index 64278f4..5c88490 100644
-> --- a/drivers/block/nbd.c
-> +++ b/drivers/block/nbd.c
-> @@ -277,10 +277,14 @@ static void sock_shutdown(struct nbd_device *nbd)
->  	struct nbd_config *config = nbd->config;
->  	int i;
-> 
-> -	if (config->num_connections == 0)
-> +	if (config->num_connections == 0) {
-> +		clear_bit(NBD_BOUND, &config->runtime_flags);
->  		return;
-> -	if (test_and_set_bit(NBD_DISCONNECTED, &config->runtime_flags))
-> +	}
-> +	if (test_and_set_bit(NBD_DISCONNECTED, &config->runtime_flags)) {
-> +		clear_bit(NBD_BOUND, &config->runtime_flags);
->  		return;
-> +	}
-> 
->  	for (i = 0; i < config->num_connections; i++) {
->  		struct nbd_sock *nsock = config->socks[i];
-> @@ -944,7 +948,7 @@ static int nbd_reconnect_socket(struct nbd_device
-> *nbd, unsigned long arg)
->  		sockfd_put(old);
-> 
->  		clear_bit(NBD_DISCONNECTED, &config->runtime_flags);
-> -
-> +		clear_bit(NBD_BOUND, &config->runtime_flags);
->  		/* We take the tx_mutex in an error path in the recv_work, so we
->  		 * need to queue_work outside of the tx_mutex.
->  		 */
-> @@ -1020,6 +1024,7 @@ static int nbd_disconnect(struct nbd_device *nbd)
->  	dev_info(disk_to_dev(nbd->disk), "NBD_DISCONNECT\n");
->  	set_bit(NBD_DISCONNECT_REQUESTED, &config->runtime_flags);
->  	send_disconnects(nbd);
-> +	clear_bit(NBD_BOUND, &config->runtime_flags);
->  	return 0;
->  }
 
+> That's simply not possible, since the hardware needs to get control
+> to do this. Even if there were an IOMMU that could intercept the
+> DMA, reprogramming it will require a flush, which cannot be guaranteed
+> to occur "inline".
+
+If hardware can not do that then hardware should not use GUP, at
+least not on file back page. I advocated in favor of forbiding GUP
+for device that can not do that as right now this silently breaks
+in few cases (truncate, mremap, splice, reflink, ...). So the device
+in those cases can end up with GUPed pages that do not correspond
+to anything anymore ie they do not correspond to the memory backing
+the virtual address they were GUP against, nor they correspond to
+the file content at the given offset anymore. It is just random
+data as far as the kernel or filesystem is concern.
+
+Of course for this to happen you need an application that do stupid
+thing like create an MR in one thread on the mmap of a file and
+truncate that same file in another thread (or from the same thread).
+
+So this is unlikely to happen in sane program. It does not mean it
+will not happen.
+
+
+The second set of issue at to deals with set_page_dirty happening
+long time after page_release did happens and thus the fs dirty
+page callback will see page in bad state and will BUG() and you
+will have an oops and loose any data your device might have written
+to the page. This is highly filesystem dependend and also timing
+dependend and link to thing like memory pressure so it might not
+happen that often but again it can happen.
+
+
+> > > .. and the remedy here is to kill the process, not provide corrupt
+> > > data. Kill the process is likely to not go over well with any real
+> > > users that want this combination.
+> > > 
+> > > Think Samba serving files over RDMA - you can't have random unpriv
+> > > users calling ftruncate and causing smbd to be killed or serve corrupt
+> > > data.
+> > 
+> > So what i am saying is there is a choice and it would be better to
+> > decide something than let the existing status quo where we just keep
+> > streaming random data after truncate to a GUPed page.
+> 
+> Let's also remember that any torn-down DMA mapping can't be recycled
+> until all uses of the old DMA addresses are destroyed. The whole
+> thing screams for reference counting all the way down, to me.
+
+I am not saying reuse the DMA address in the emergency_mean_callback
+the idea was:
+
+    gup_page_emergency_revoke(device, page)
+    {
+        crapy_page = alloc_page();
+        dma_addr = dma_map(crappy_page, device, ...);
+        mydevice_page_table_update(device, crappy_page, dma_addr);
+        mydevice_tlb_flush(device);
+        mydevice_wait_pending_dma(device)
+
+        // at this point the original GUPed page is not access by hw
+
+        dma_unmap(page);
+        put_user_page(page);
+    }
+
+I know that it is something we can do with GPU devices. So i assumed
+that other devices can do that to. But i understand this is highly
+device dependent. Not that if you have a command queue it is more like:
+
+    gup_page_emergency_revoke(device, page)
+    {
+        crapy_page = alloc_page();
+        dma_addr = dma_map(crappy_page, device, ...);
+
+        // below function update kernel side data structure that stores
+        // the pointer to the GUPed page and that are use to build cmds
+        // send to the hardware. It does not update the hardware, just
+        // the device driver internal data structure.
+        mydevice_replace_page_in_object(device, page, crappy_page, dma_addr);
+
+        mydevice_queue_wait_pending_job(device);
+
+        // at this point the original GUPed page is not access by hw and
+        // any new command will be using the crappy page not the GUPed
+        // page
+
+        dma_unmap(page);
+        put_user_page(page);
+    }
+
+Again if device can not do any of the above then it should really not
+be using GUP because they are corner case that are simply not solvable.
+We can avoid kernel OOPS but we can not pin the page as GUP user believe
+ie the virtual address the GUP happened against can point to a different
+page (true for both anonymous memory and file back memory).
+
+
+The put_user_page() patchset is about solving the OOPS and BUG() and
+also fixing the tiny race that exist for direct I/O. Fixing other user
+of GUP should happen sub-system by sub-system and each sub-system or
+device driver maintainer must choose their poison. This is what i am
+advocating for. If the emergency_revoke above is something that would
+work for device is something i can't say for certain, only for devices
+i know (which are GPU mostly).
+
+Cheers,
+Jérôme
