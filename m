@@ -2,184 +2,182 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3AC1C67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 11:54:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56E03C67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 11:55:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D47220870
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 11:54:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D47220870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 241282146E
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 11:55:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 241282146E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728873AbeLMLys (ORCPT
+        id S1728932AbeLMLzE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 06:54:48 -0500
-Received: from foss.arm.com ([217.140.101.70]:60042 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728834AbeLMLyr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 06:54:47 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 54D0CA78;
-        Thu, 13 Dec 2018 03:54:46 -0800 (PST)
-Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CD2023F575;
-        Thu, 13 Dec 2018 03:54:44 -0800 (PST)
-Subject: Re: [PATCH v3] irqchip: gicv3-its: Use NUMA aware memory allocation
- for ITS tables
-To:     Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-        linux-kernel@vger.kernel.org
-Cc:     shankerd@codeaurora.org, ganapatrao.kulkarni@cavium.com,
-        Robert.Richter@cavium.com, guohanjun@huawei.com,
-        john.garry@huawei.com, linux-arm-kernel@lists.infradead.org,
-        linuxarm@huawei.com
-References: <20181213105924.30384-1-shameerali.kolothum.thodi@huawei.com>
-From:   Marc Zyngier <marc.zyngier@arm.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
- 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
-Organization: ARM Ltd
-Message-ID: <4fe81519-1ddc-1d73-8c7a-cd0865299b53@arm.com>
-Date:   Thu, 13 Dec 2018 11:54:43 +0000
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Thu, 13 Dec 2018 06:55:04 -0500
+Received: from mail-sz2.amlogic.com ([211.162.65.114]:56120 "EHLO
+        mail-sz2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728756AbeLMLzC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 06:55:02 -0500
+Received: from [10.28.18.96] (10.28.18.96) by mail-sz2.amlogic.com
+ (10.28.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Thu, 13 Dec
+ 2018 19:55:15 +0800
+Subject: Re: [PATCH v2 1/3] spi: meson-axg: support MAX 80M clock
+To:     Neil Armstrong <narmstrong@baylibre.com>,
+        Mark Brown <broonie@kernel.org>
+CC:     Yixun Lan <yixun.lan@amlogic.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        Xingyu Chen <xingyu.chen@amlogic.com>,
+        <linux-spi@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1544690354-16409-1-git-send-email-sunny.luo@amlogic.com>
+ <1544690354-16409-2-git-send-email-sunny.luo@amlogic.com>
+ <2d438907-91b5-7443-24f9-57a406aaa040@baylibre.com>
+From:   Sunny Luo <sunny.luo@amlogic.com>
+Message-ID: <13e10889-50ce-4f67-cf60-f7a4917f84f5@amlogic.com>
+Date:   Thu, 13 Dec 2018 19:55:15 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-In-Reply-To: <20181213105924.30384-1-shameerali.kolothum.thodi@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <2d438907-91b5-7443-24f9-57a406aaa040@baylibre.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.28.18.96]
+X-ClientProxiedBy: mail-sz2.amlogic.com (10.28.11.6) To mail-sz2.amlogic.com
+ (10.28.11.6)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13/12/2018 10:59, Shameer Kolothum wrote:
-> From: Shanker Donthineni <shankerd@codeaurora.org>
-> 
-> The NUMA node information is visible to ITS driver but not being used
-> other than handling hardware errata. ITS/GICR hardware accesses to the
-> local NUMA node is usually quicker than the remote NUMA node. How slow
-> the remote NUMA accesses are depends on the implementation details.
-> 
-> This patch allocates memory for ITS management tables and command
-> queue from the corresponding NUMA node using the appropriate NUMA
-> aware functions. This change improves the performance of the ITS
-> tables read latency on systems where it has more than one ITS block,
-> and with the slower inter node accesses.
-> 
-> Apache Web server benchmarking using ab tool on a HiSilicon D06
-> board with multiple numa mem nodes shows Time per request and
-> Transfer rate improvements of ~3.6% with this patch.
-> 
-> Signed-off-by: Shanker Donthineni <shankerd@codeaurora.org>
-> Signed-off-by: Hanjun Guo <guohanjun@huawei.com>
-> Signed-off-by: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
-> ---
-> 
-> This is to revive the patch originally sent by Shanker[1] and 
-> to back it up with a benchmark test. Any further testing of
-> this is most welcome.
-> 
-> v2-->v3
->  -Addressed comments to use page_address().
->  -Added Benchmark results to commit log.
->  -Removed T-by from Ganapatrao for now.
-> 
-> v1-->v2
->  -Edited commit text.
->  -Added Ganapatrao's tested-by.
-> 
-> Benchmark test details:
-> --------------------------------
-> Test Setup:
-> -D06 with dimm on node 0(Sock#0) and 3 (Sock#1).
-> -ITS belongs to numa node 0.
-> -Filesystem mounted on a PCIe NVMe based disk.
-> -Apache server installed on D06.
-> -Running ab benchmark test in concurrency mode from a remote m/c
->  connected to D06 via  hns3(PCIe) n/w port.
->  "ab -k -c 750 -n 2000000 http://10.202.225.188/"
-> 
-> Test results are avg. of 15 runs.
-> 
-> For 4.20-rc1  Kernel,
-> ----------------------------
-> Time per request(mean, concurrent)  = 0.02753[ms]  
-> Transfer Rate = 416501[Kbytes/sec]
-> 
-> For 4.20-rc1 +  this patch,
-> ----------------------------------
-> Time per request(mean, concurrent)  = 0.02653[ms]  
-> Transfer Rate = 431954[Kbytes/sec]
-> 
-> % improvement ~3.6%
-> 
-> vmstat shows around 170K-200K interrupts per second.
-> 
-> ~# vmstat 1 -w
-> procs -----------------------memory-- -  -system--
->  r  b         swpd         free            in             
->  5  0            0     30166724          102794 
->  9  0            0     30141828          171148 
->  5  0            0     30150160          207185 
-> 13  0            0     30145924          175691 
-> 15  0            0     30140792          145250 
-> 13  0            0     30135556          201879 
-> 13  0            0     30134864          192391 
-> 10  0            0     30133632          168880 
-> ....
-> 
-> [1] https://patchwork.kernel.org/patch/9833339/
+Hi Neil,
 
-The figures certainly look convincing. I'd need someone from Cavium to
-benchmark it on their hardware and come back with results so that we can
-make a decision on this.
+On 2018/12/13 16:49, Neil Armstrong wrote:
+> Hi Sunny,
+> 
+> On 13/12/2018 09:39, Sunny Luo wrote:
+>> The SPICC controller in Meson-AXG is capable of running at 80M clock.
+>> The ASIC IP is improved and the clock is actually running higher than
+>> previous old SoCs.
+>>
+>> Signed-off-by: Sunny Luo <sunny.luo@amlogic.com>
+>> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+>> ---
+>>   drivers/spi/spi-meson-spicc.c | 37 +++++++++++++++++++++++++++++--------
+>>   1 file changed, 29 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/drivers/spi/spi-meson-spicc.c b/drivers/spi/spi-meson-spicc.c
+>> index 7fe4488..b56249d 100644
+>> --- a/drivers/spi/spi-meson-spicc.c
+>> +++ b/drivers/spi/spi-meson-spicc.c
+>> @@ -9,11 +9,13 @@
+>>   
+>>   #include <linux/bitfield.h>
+>>   #include <linux/clk.h>
+>> +#include <linux/clk-provider.h>
+>>   #include <linux/device.h>
+>>   #include <linux/io.h>
+>>   #include <linux/kernel.h>
+>>   #include <linux/module.h>
+>>   #include <linux/of.h>
+>> +#include <linux/of_device.h>
+>>   #include <linux/platform_device.h>
+>>   #include <linux/spi/spi.h>
+>>   #include <linux/types.h>
+>> @@ -34,7 +36,6 @@
+>>    *   to have a CS go down over the full transfer
+>>    */
+>>   
+>> -#define SPICC_MAX_FREQ	30000000
+>>   #define SPICC_MAX_BURST	128
+>>   
+>>   /* Register Map */
+>> @@ -120,6 +121,10 @@
+>>   #define SPICC_BURST_MAX	16
+>>   #define SPICC_FIFO_HALF 10
+>>   
+>> +struct meson_spicc_data {
+>> +	unsigned int			max_speed_hz;
+>> +};
+>> +
+>>   struct meson_spicc_device {
+>>   	struct spi_master		*master;
+>>   	struct platform_device		*pdev;
+>> @@ -127,6 +132,7 @@ struct meson_spicc_device {
+>>   	struct clk			*core;
+>>   	struct spi_message		*message;
+>>   	struct spi_transfer		*xfer;
+>> +	const struct meson_spicc_data	*data;
+>>   	u8				*tx_buf;
+>>   	u8				*rx_buf;
+>>   	unsigned int			bytes_per_word;
+>> @@ -517,6 +523,9 @@ static int meson_spicc_probe(struct platform_device *pdev)
+>>   	spicc->pdev = pdev;
+>>   	platform_set_drvdata(pdev, spicc);
+>>   
+>> +	spicc->data = (const struct meson_spicc_data *)
+>> +		of_device_get_match_data(&pdev->dev);
+>> +
+>>   	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>>   	spicc->base = devm_ioremap_resource(&pdev->dev, res);
+>>   	if (IS_ERR(spicc->base)) {
+>> @@ -567,11 +576,9 @@ static int meson_spicc_probe(struct platform_device *pdev)
+>>   	master->unprepare_transfer_hardware = meson_spicc_unprepare_transfer;
+>>   	master->transfer_one = meson_spicc_transfer_one;
+>>   
+>> -	/* Setup max rate according to the Meson GX datasheet */
+>> -	if ((rate >> 2) > SPICC_MAX_FREQ)
+>> -		master->max_speed_hz = SPICC_MAX_FREQ;
+>> -	else
+>> -		master->max_speed_hz = rate >> 2;
+>> +	/* Setup max rate according to the Meson datasheet */
+>> +	master->max_speed_hz = min_t(unsigned int, rate >> 1,
+>> +				     spicc->data->max_speed_hz);
+> 
+> I think "rate >> 1" here depends on patch 3, either move patch 3 before this one
+> or keep "rate >> 2" and change it back to "rate >> 1" on patch 3.
+> 
+Yes, this change should be in patch 3.
 
-Thanks,
-
-	M.
--- 
-Jazz is not dead. It just smells funny...
+>>   
+>>   	ret = devm_spi_register_master(&pdev->dev, master);
+>>   	if (ret) {
+>> @@ -602,9 +609,23 @@ static int meson_spicc_remove(struct platform_device *pdev)
+>>   	return 0;
+>>   }
+>>   
+>> +static const struct meson_spicc_data meson_spicc_gx_data = {
+>> +	.max_speed_hz	= 30000000,
+>> +};
+>> +
+>> +static const struct meson_spicc_data meson_spicc_axg_data = {
+>> +	.max_speed_hz	= 80000000,
+>> +};
+>> +
+>>   static const struct of_device_id meson_spicc_of_match[] = {
+>> -	{ .compatible = "amlogic,meson-gx-spicc", },
+>> -	{ .compatible = "amlogic,meson-axg-spicc", },
+>> +	{
+>> +		.compatible	= "amlogic,meson-gx-spicc",
+>> +		.data		= &meson_spicc_gx_data,
+>> +	},
+>> +	{
+>> +		.compatible = "amlogic,meson-axg-spicc",
+>> +		.data		= &meson_spicc_axg_data,
+>> +	},
+>>   	{ /* sentinel */ }
+>>   };
+>>   MODULE_DEVICE_TABLE(of, meson_spicc_of_match);
+>>
+> 
+> .
+> 
