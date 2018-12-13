@@ -2,128 +2,294 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF088C6786C
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 02:28:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4217C67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 02:39:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A09F20870
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 02:28:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A09F20870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 99C2620811
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 02:39:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99C2620811
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726765AbeLMC2L (ORCPT
+        id S1726638AbeLMCjy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 21:28:11 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:37614 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726381AbeLMC2J (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 21:28:09 -0500
-X-UUID: c0a92660643d46bdae0eddd384e92c5a-20181213
-X-UUID: c0a92660643d46bdae0eddd384e92c5a-20181213
-Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
-        (envelope-from <ryder.lee@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 61952231; Thu, 13 Dec 2018 10:27:56 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Thu, 13 Dec 2018 10:27:54 +0800
-Received: from mtkslt306.mediatek.inc (10.21.14.136) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 13 Dec 2018 10:27:54 +0800
-From:   Ryder Lee <ryder.lee@mediatek.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Sean Wang <sean.wang@kernel.org>
-CC:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Weijie Gao <weijie.gao@mediatek.com>,
-        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        Ryder Lee <ryder.lee@mediatek.com>
-Subject: [PATCH v1] pinctrl: mediatek: improve Kconfig dependencies
-Date:   Thu, 13 Dec 2018 10:27:50 +0800
-Message-ID: <e4eb66dec2901016e01767932461c5d560762f66.1544666839.git.ryder.lee@mediatek.com>
-X-Mailer: git-send-email 1.9.1
+        Wed, 12 Dec 2018 21:39:54 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:39062 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726389AbeLMCjy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 21:39:54 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0884430013DF;
+        Thu, 13 Dec 2018 02:39:53 +0000 (UTC)
+Received: from [10.72.12.167] (ovpn-12-167.pek2.redhat.com [10.72.12.167])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 9AF0E105706E;
+        Thu, 13 Dec 2018 02:39:46 +0000 (UTC)
+Subject: Re: [PATCH net V2 4/4] vhost: log dirty page correctly
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jintack Lim <jintack@cs.columbia.edu>
+References: <20181212100819.21295-1-jasowang@redhat.com>
+ <20181212100819.21295-5-jasowang@redhat.com>
+ <20181212092435-mutt-send-email-mst@kernel.org>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <0239c220-e7ca-c08f-be26-eb9be63fced3@redhat.com>
+Date:   Thu, 13 Dec 2018 10:39:41 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-SNTS-SMTP: 74EC1AB088B4CA87EB1FB2653C89E3A127430D56A4982A245F8657EB419E777A2000:8
-X-MTK:  N
+In-Reply-To: <20181212092435-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Thu, 13 Dec 2018 02:39:53 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove prompts to make all pinctrl cores to non-visible symbols and
-make sure the target SoCs would be coupled with the corresponding
-cores.
 
-Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
----
-Changes since v1:
-- Revise commit message
-- Change all pinctrl cores to non-visible symbols
-- Drop EINT_MTK in PINCTRL_MTK_MOORE
----
- drivers/pinctrl/mediatek/Kconfig | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+On 2018/12/12 下午10:32, Michael S. Tsirkin wrote:
+> On Wed, Dec 12, 2018 at 06:08:19PM +0800, Jason Wang wrote:
+>> Vhost dirty page logging API is designed to sync through GPA. But we
+>> try to log GIOVA when device IOTLB is enabled. This is wrong and may
+>> lead to missing data after migration.
+>>
+>> To solve this issue, when logging with device IOTLB enabled, we will:
+>>
+>> 1) reuse the device IOTLB translation result of GIOVA->HVA mapping to
+>>     get HVA, for writable descriptor, get HVA through iovec. For used
+>>     ring update, translate its GIOVA to HVA
+>> 2) traverse the GPA->HVA mapping to get the possible GPA and log
+>>     through GPA. Pay attention this reverse mapping is not guaranteed
+>>     to be unique, so we should log each possible GPA in this case.
+>>
+>> This fix the failure of scp to guest during migration. In -next, we
+>> will probably support passing GIOVA->GPA instead of GIOVA->HVA.
+>>
+>> Fixes: 6b1e6cc7855b ("vhost: new device IOTLB API")
+>> Reported-by: Jintack Lim <jintack@cs.columbia.edu>
+>> Cc: Jintack Lim <jintack@cs.columbia.edu>
+>> Signed-off-by: Jason Wang <jasowang@redhat.com>
+> It's a nasty bug for sure but it's been like this for a long
+> time so I'm inclined to say let's put it in 4.21,
+> and queue for stable.
+>
+> So please split this out from this series.
 
-diff --git a/drivers/pinctrl/mediatek/Kconfig b/drivers/pinctrl/mediatek/Kconfig
-index d8cb584..1817786 100644
---- a/drivers/pinctrl/mediatek/Kconfig
-+++ b/drivers/pinctrl/mediatek/Kconfig
-@@ -17,7 +17,7 @@ config PINCTRL_MTK
- 	select OF_GPIO
- 
- config PINCTRL_MTK_MOORE
--	bool "MediaTek Moore Core that implements generic binding"
-+	bool
- 	depends on OF
- 	select GENERIC_PINCONF
- 	select GENERIC_PINCTRL_GROUPS
-@@ -26,7 +26,7 @@ config PINCTRL_MTK_MOORE
- 	select OF_GPIO
- 
- config PINCTRL_MTK_PARIS
--	bool "MediaTek Paris Core that implements vendor binding"
-+	bool
- 	depends on OF
- 	select PINMUX
- 	select GENERIC_PINCONF
-@@ -45,14 +45,14 @@ config PINCTRL_MT2701
- config PINCTRL_MT7623
- 	bool "Mediatek MT7623 pin control with generic binding"
- 	depends on MACH_MT7623 || COMPILE_TEST
--	depends on PINCTRL_MTK_MOORE
--	default y
-+	default MACH_MT7623
-+	select PINCTRL_MTK_MOORE
- 
- config PINCTRL_MT7629
- 	bool "Mediatek MT7629 pin control"
- 	depends on MACH_MT7629 || COMPILE_TEST
--	depends on PINCTRL_MTK_MOORE
--	default y
-+	default MACH_MT7629
-+	select PINCTRL_MTK_MOORE
- 
- config PINCTRL_MT8135
- 	bool "Mediatek MT8135 pin control"
-@@ -93,8 +93,8 @@ config PINCTRL_MT6797
- config PINCTRL_MT7622
- 	bool "MediaTek MT7622 pin control"
- 	depends on ARM64 || COMPILE_TEST
--	depends on PINCTRL_MTK_MOORE
--	default y
-+	default ARM64 && ARCH_MEDIATEK
-+	select PINCTRL_MTK_MOORE
- 
- config PINCTRL_MT8173
- 	bool "Mediatek MT8173 pin control"
--- 
-1.9.1
 
+Ok.
+
+
+>
+> Also, I'd like to see a feature bit that allows GPA in IOTLBs.
+
+
+Just to make sure I understand this. It looks to me we should:
+
+- allow passing GIOVA->GPA through UAPI
+
+- cache GIOVA->GPA somewhere but still use GIOVA->HVA in device IOTLB 
+for performance
+
+Is this what you suggest?
+
+Thanks
+
+
+>
+>> ---
+>>   drivers/vhost/net.c   |  3 +-
+>>   drivers/vhost/vhost.c | 79 +++++++++++++++++++++++++++++++++++--------
+>>   drivers/vhost/vhost.h |  3 +-
+>>   3 files changed, 69 insertions(+), 16 deletions(-)
+>>
+>> diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
+>> index ad7a6f475a44..784df2b49628 100644
+>> --- a/drivers/vhost/net.c
+>> +++ b/drivers/vhost/net.c
+>> @@ -1192,7 +1192,8 @@ static void handle_rx(struct vhost_net *net)
+>>   		if (nvq->done_idx > VHOST_NET_BATCH)
+>>   			vhost_net_signal_used(nvq);
+>>   		if (unlikely(vq_log))
+>> -			vhost_log_write(vq, vq_log, log, vhost_len);
+>> +			vhost_log_write(vq, vq_log, log, vhost_len,
+>> +					vq->iov, in);
+>>   		total_len += vhost_len;
+>>   		if (unlikely(vhost_exceeds_weight(++recv_pkts, total_len))) {
+>>   			vhost_poll_queue(&vq->poll);
+>> diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
+>> index 55e5aa662ad5..3660310604fd 100644
+>> --- a/drivers/vhost/vhost.c
+>> +++ b/drivers/vhost/vhost.c
+>> @@ -1733,11 +1733,67 @@ static int log_write(void __user *log_base,
+>>   	return r;
+>>   }
+>>   
+>> +static int log_write_hva(struct vhost_virtqueue *vq, u64 hva, u64 len)
+>> +{
+>> +	struct vhost_umem *umem = vq->umem;
+>> +	struct vhost_umem_node *u;
+>> +	u64 gpa;
+>> +	int r;
+>> +	bool hit = false;
+>> +
+>> +	list_for_each_entry(u, &umem->umem_list, link) {
+>> +		if (u->userspace_addr < hva &&
+>> +		    u->userspace_addr + u->size >=
+>> +		    hva + len) {
+>> +			gpa = u->start + hva - u->userspace_addr;
+>> +			r = log_write(vq->log_base, gpa, len);
+>> +			if (r < 0)
+>> +				return r;
+>> +			hit = true;
+>> +		}
+>> +	}
+>> +
+>> +	/* No reverse mapping, should be a bug */
+>> +	WARN_ON(!hit);
+> Maybe it should but userspace can trigger this easily I think.
+> We need to stop the device not warn in kernel log.
+>
+> Also there's an error fd: VHOST_SET_VRING_ERR, need to wake it up.
+>
+
+Ok.
+
+
+>> +	return 0;
+>> +}
+>> +
+>> +static void log_used(struct vhost_virtqueue *vq, u64 used_offset, u64 len)
+>> +{
+>> +	struct iovec iov[64];
+>> +	int i, ret;
+>> +
+>> +	if (!vq->iotlb) {
+>> +		log_write(vq->log_base, vq->log_addr + used_offset, len);
+>> +		return;
+>> +	}
+> This change seems questionable. used ring writes
+> use their own machinery it does not go through iotlb.
+> Same should apply to log I think.
+
+
+The problem is used ring may not be physically contiguous with Device 
+IOTLB enabled. So it should go through it.
+
+
+>
+>> +
+>> +	ret = translate_desc(vq, (u64)(uintptr_t)vq->used + used_offset,
+>> +			     len, iov, 64, VHOST_ACCESS_WO);
+>> +	WARN_ON(ret < 0);
+>
+> Same thing here. translation failures can be triggered from guest.
+> warn on is not a good error handling strategy ...
+
+
+Ok. Let me fix it.
+
+
+Thanks
+
+
+>> +
+>> +	for (i = 0; i < ret; i++) {
+>> +		ret = log_write_hva(vq,	(u64)(uintptr_t)iov[i].iov_base,
+>> +				    iov[i].iov_len);
+>> +		WARN_ON(ret);
+>> +	}
+>> +}
+>> +
+>>   int vhost_log_write(struct vhost_virtqueue *vq, struct vhost_log *log,
+>> -		    unsigned int log_num, u64 len)
+>> +		    unsigned int log_num, u64 len, struct iovec *iov, int count)
+>>   {
+>>   	int i, r;
+>>   
+>> +	if (vq->iotlb) {
+>> +		for (i = 0; i < count; i++) {
+>> +			r = log_write_hva(vq, (u64)(uintptr_t)iov[i].iov_base,
+>> +					  iov[i].iov_len);
+>> +			if (r < 0)
+>> +				return r;
+>> +		}
+>> +		return 0;
+>> +	}
+>> +
+>>   	/* Make sure data written is seen before log. */
+>>   	smp_wmb();
+>>   	for (i = 0; i < log_num; ++i) {
+>> @@ -1769,9 +1825,8 @@ static int vhost_update_used_flags(struct vhost_virtqueue *vq)
+>>   		smp_wmb();
+>>   		/* Log used flag write. */
+>>   		used = &vq->used->flags;
+>> -		log_write(vq->log_base, vq->log_addr +
+>> -			  (used - (void __user *)vq->used),
+>> -			  sizeof vq->used->flags);
+>> +		log_used(vq, (used - (void __user *)vq->used),
+>> +			 sizeof vq->used->flags);
+>>   		if (vq->log_ctx)
+>>   			eventfd_signal(vq->log_ctx, 1);
+>>   	}
+>> @@ -1789,9 +1844,8 @@ static int vhost_update_avail_event(struct vhost_virtqueue *vq, u16 avail_event)
+>>   		smp_wmb();
+>>   		/* Log avail event write */
+>>   		used = vhost_avail_event(vq);
+>> -		log_write(vq->log_base, vq->log_addr +
+>> -			  (used - (void __user *)vq->used),
+>> -			  sizeof *vhost_avail_event(vq));
+>> +		log_used(vq, (used - (void __user *)vq->used),
+>> +			 sizeof *vhost_avail_event(vq));
+>>   		if (vq->log_ctx)
+>>   			eventfd_signal(vq->log_ctx, 1);
+>>   	}
+>> @@ -2191,10 +2245,8 @@ static int __vhost_add_used_n(struct vhost_virtqueue *vq,
+>>   		/* Make sure data is seen before log. */
+>>   		smp_wmb();
+>>   		/* Log used ring entry write. */
+>> -		log_write(vq->log_base,
+>> -			  vq->log_addr +
+>> -			   ((void __user *)used - (void __user *)vq->used),
+>> -			  count * sizeof *used);
+>> +		log_used(vq, ((void __user *)used - (void __user *)vq->used),
+>> +			 count * sizeof *used);
+>>   	}
+>>   	old = vq->last_used_idx;
+>>   	new = (vq->last_used_idx += count);
+>> @@ -2236,9 +2288,8 @@ int vhost_add_used_n(struct vhost_virtqueue *vq, struct vring_used_elem *heads,
+>>   		/* Make sure used idx is seen before log. */
+>>   		smp_wmb();
+>>   		/* Log used index update. */
+>> -		log_write(vq->log_base,
+>> -			  vq->log_addr + offsetof(struct vring_used, idx),
+>> -			  sizeof vq->used->idx);
+>> +		log_used(vq, offsetof(struct vring_used, idx),
+>> +			 sizeof vq->used->idx);
+>>   		if (vq->log_ctx)
+>>   			eventfd_signal(vq->log_ctx, 1);
+>>   	}
+>> diff --git a/drivers/vhost/vhost.h b/drivers/vhost/vhost.h
+>> index 466ef7542291..1b675dad5e05 100644
+>> --- a/drivers/vhost/vhost.h
+>> +++ b/drivers/vhost/vhost.h
+>> @@ -205,7 +205,8 @@ bool vhost_vq_avail_empty(struct vhost_dev *, struct vhost_virtqueue *);
+>>   bool vhost_enable_notify(struct vhost_dev *, struct vhost_virtqueue *);
+>>   
+>>   int vhost_log_write(struct vhost_virtqueue *vq, struct vhost_log *log,
+>> -		    unsigned int log_num, u64 len);
+>> +		    unsigned int log_num, u64 len,
+>> +		    struct iovec *iov, int count);
+>>   int vq_iotlb_prefetch(struct vhost_virtqueue *vq);
+>>   
+>>   struct vhost_msg_node *vhost_new_msg(struct vhost_virtqueue *vq, int type);
+>> -- 
+>> 2.17.1
