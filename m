@@ -2,135 +2,150 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37D53C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 16:14:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A763C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 16:17:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBDDE20879
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 16:14:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C6F6B2087F
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 16:17:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pFyB+8cA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBDDE20879
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="mU6C0RXq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6F6B2087F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729082AbeLMQO2 (ORCPT
+        id S1729299AbeLMQRI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 11:14:28 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:34189 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727942AbeLMQO1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 11:14:27 -0500
-Received: by mail-ed1-f65.google.com with SMTP id b3so2518717ede.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 08:14:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=05dSwzXONDLgvi1VK+Y1ZyzVNyTa7YET+zO8+qnhefI=;
-        b=pFyB+8cAvb83GYjyrphTqZAjkCvP4lpcpd5uUV8ePQypxPCOl+TNcoYfSagILA/DRY
-         IOKtZ04PIkbZLj+PaC2XL4fVkOgo9QLUb2MRGObKM17Q+dqZRUL1qXaFqKZtrUDyihZn
-         xKnGXhM0w2nI7XPmNHba/y9j4C78Euf/ociUyDLxtDJXhv20b5XnH47uJPreeUVeGNJk
-         891S+hBNZ577PjY8PuMx8oxmJUB6ohvFdcHXsBT4OHVbbdS7ujlfNhO6VaUe/HoLiFLk
-         pqM5WmC16R4TjK1aASlSGBqrsg1mpWqcloiRDfylLxooZfIRJ5dBacXt0hf2v90wmDDX
-         8faw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=05dSwzXONDLgvi1VK+Y1ZyzVNyTa7YET+zO8+qnhefI=;
-        b=hWAMwVhrAMSOr0eR5TapsIlrjdY6Ecf7EJs+iuH2vj7WDi1sCF72/l3jj93GxNNuqp
-         6Sq8+PxyKJlWk2XzHc0G2bC3oXvQL8BgqzLTUryHE3qSpGeu0nDMkKRgtAiMD5VMTCcg
-         p1XcdaTCadmgdXHKk1I7jyNFgaVPLNS7NiplLfSk6NSp2CUWKZgM8yk1zQKjDtbtE2mY
-         gWHK1ahlVlgCcpoZVKjAWQEHCLdUYAXe611yZkBfo1mE0puC95E8V9F4gCd2ST6ujMRm
-         7iy99D/DDTev2oXP2nqEi3qazUBURQ8TifiZNY+4bGuW/S8i2xpYwy7v29xUY4OczID1
-         KZZw==
-X-Gm-Message-State: AA+aEWYTeuCNLQub0kDl93xPF3KlMR/zKvKzNZ9I5ay/nPpnbKtAFT/s
-        ZMt1ugwyV45U9OBm9AI2j68=
-X-Google-Smtp-Source: AFSGD/VCdP6cc0eRxY1PANKBBQQacXwzcIaY5Zj6bXtB7+I+ojzOWXMNrt3Jnt0VU3PKTlBd/zGjbQ==
-X-Received: by 2002:a50:c9c3:: with SMTP id c3mr23001416edi.56.1544717665928;
-        Thu, 13 Dec 2018 08:14:25 -0800 (PST)
-Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
-        by smtp.gmail.com with ESMTPSA id y4-v6sm399886ejc.10.2018.12.13.08.14.24
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 13 Dec 2018 08:14:24 -0800 (PST)
-Date:   Thu, 13 Dec 2018 17:14:23 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Joe Perches <joe@perches.com>
-Cc:     Jeremy Cline <jcline@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] scripts/spdxcheck.py: Always open files in binary
- mode
-Message-ID: <20181213161423.GB13531@ulmo>
-References: <20181212131210.28024-1-thierry.reding@gmail.com>
- <20181212181410.GC2352@laptop.jcline.org>
- <642dd9ea144c03041ad74b14777553fe652acd1a.camel@perches.com>
+        Thu, 13 Dec 2018 11:17:08 -0500
+Received: from mail-eopbgr140079.outbound.protection.outlook.com ([40.107.14.79]:42603
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727942AbeLMQRH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 11:17:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=UmJAN4wtHXV/dUPVh8AOAa0trKBJo4xPO46NdtfRh1U=;
+ b=mU6C0RXqRGLb+3fa0f7pjvVe/jhrODRCckJbMVoIiNNTk9ho1QyMTKhdWG1CmBt+z8rKD/Pl6TOUGFr8GGJbqL2LqA7LUQvXwO20eRx5/2f5jqnIpeOS8hd423rFvED6MKiAacNitcQ3ETWqKxxj3GES2e+sw+Wl26bgBaPXHLI=
+Received: from DB3PR0402MB3658.eurprd04.prod.outlook.com (52.134.65.28) by
+ DB3PR0402MB3659.eurprd04.prod.outlook.com (52.134.66.160) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1425.19; Thu, 13 Dec 2018 16:17:02 +0000
+Received: from DB3PR0402MB3658.eurprd04.prod.outlook.com
+ ([fe80::ce5:fddb:6290:c5eb]) by DB3PR0402MB3658.eurprd04.prod.outlook.com
+ ([fe80::ce5:fddb:6290:c5eb%5]) with mapi id 15.20.1425.016; Thu, 13 Dec 2018
+ 16:17:02 +0000
+From:   Abel Vesa <abel.vesa@nxp.com>
+To:     Shawn Guo <shawnguo@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Aisheng Dong <aisheng.dong@nxp.com>
+CC:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Olof Johansson <olof@lixom.net>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Abel Vesa <abel.vesa@nxp.com>
+Subject: [PATCH] clk: imx: Make the i.MX8MQ CCM clock driver CLK_IMX8MQ
+ dependant
+Thread-Topic: [PATCH] clk: imx: Make the i.MX8MQ CCM clock driver CLK_IMX8MQ
+ dependant
+Thread-Index: AQHUkv9IB3KEsUBSeEGaC3/cu+N6Cw==
+Date:   Thu, 13 Dec 2018 16:17:02 +0000
+Message-ID: <1544717789-27388-1-git-send-email-abel.vesa@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: AM5P190CA0019.EURP190.PROD.OUTLOOK.COM
+ (2603:10a6:206:14::32) To DB3PR0402MB3658.eurprd04.prod.outlook.com
+ (2603:10a6:8:2::28)
+x-originating-ip: [95.76.156.53]
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=abel.vesa@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DB3PR0402MB3659;6:1C/wncVESe1HewFEHUPS52r9qXDpVmEbVIACds9u8bOLSMN1jaUXevM7QQIadYNC+4eI8FiISlMxkbNwvNPtCozbz07+4waAnpJRhWSoeAJZ64I9XNM4XFKVFugwo6AxC73Pn8z4MYHWoxYzUpIiMUUgcZ1jApvzJg2VfRL2NN/WzH2GO0BUV5zMdMdMMUnfaNg4NsxzocmjKV6gieEh8Fud0QyQ8E6O5KoepwCylufx0F8pmMKX+D6LqGxL/if4oZtqNuIWH4lHZguEB3gaaN61jyKvmEe4xMASPCGb1OQGAfgxCmKFSWrzw2Brimmsuxfe/24bNn0V/QypQeQZCnKggVAQuVlqqDEnsgDSJiVwwGU/1LKgpoaHj2/azVWQjEEjjepfB+oyRBZmy1tmw1+SZ1Bdcx+LLh9feqrxWhgnbQEC2YIGES5acCz943Ezy1Eo25f6VcFsNW7zKcDJhQ==;5:/CZ9KUayzXi5C077Y7lcjeV6nZ50lm0CSgbkYg8rD7NPo9lUT2zNMcKHIbzzuSYWqc2ZlmlJdaoHk0dps31sSu+dj9fZUt+njb7DJkFbe6zgGTqrTOkCWasbYcVrJxEhQleFMYQpBhuIGi5Qe1ce4DfQatSj3NzJTJbGgDHUcuQ=;7:NkCFlwIHyWvu1rq5YLySgonRY2iMfTVFg4o9LOytt6li0ktdKa+mGOvELhYpW1pF8GoGC6E33DSCArQipqLnJVGfw8zj0CPpsEFU5jmkN2+gAiN1QiCiaYvW/TaSG6bkfs8BohSQtyW4GkA+sUsBMg==
+x-ms-office365-filtering-correlation-id: f9c98633-180f-48d6-754d-08d661166aa6
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DB3PR0402MB3659;
+x-ms-traffictypediagnostic: DB3PR0402MB3659:
+x-microsoft-antispam-prvs: <DB3PR0402MB36597B536540A7F63B3E3E42F6A00@DB3PR0402MB3659.eurprd04.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(6040522)(2401047)(8121501046)(5005006)(3231475)(944501520)(52105112)(93006095)(93001095)(3002001)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123562045)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:DB3PR0402MB3659;BCL:0;PCL:0;RULEID:;SRVR:DB3PR0402MB3659;
+x-forefront-prvs: 088552DE73
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(136003)(366004)(376002)(346002)(396003)(199004)(189003)(52116002)(102836004)(6486002)(6436002)(36756003)(186003)(6636002)(14444005)(256004)(6512007)(2616005)(486006)(99286004)(476003)(71190400001)(26005)(44832011)(71200400001)(66066001)(53936002)(8936002)(81166006)(86362001)(575784001)(81156014)(8676002)(4326008)(478600001)(7736002)(105586002)(97736004)(106356001)(14454004)(110136005)(54906003)(305945005)(2906002)(25786009)(386003)(6506007)(316002)(68736007)(5660300001)(3846002)(6116002);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3659;H:DB3PR0402MB3658.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: 1rpAgoBNNPY5vVr2M7NKIQbmGHPNooi4kRN3EFRhujJu2EIvXyCUt6KpjyAhOX9qK8LLiAh4N3Z/ZK0EqgS3EaSvK5dVbR3PTgU6pZ5YN4m36ZsqPn3YN1g+oruRxZtd0pCz+7WkhEAo/D/cm8ZomFsgc5heEj4oh/+GBLOHHp0nLRJh59u8CLvO7FJYex3HOXLhQFzvutQr08zEK9XK3Uqx1FMWCyFh4e2xDeq2R09V4w8ocvUFxxZPHb6wfEssvldeYHsdtBX2Pix5YFA2HE7dg6PpwUL2cyiQ9hu1R6jJV0MMPHYkLsOgs3JIDEGb
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="EuxKj2iCbKjpUGkD"
-Content-Disposition: inline
-In-Reply-To: <642dd9ea144c03041ad74b14777553fe652acd1a.camel@perches.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f9c98633-180f-48d6-754d-08d661166aa6
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Dec 2018 16:17:02.8684
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3659
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Remove the dependency between the i.MX8MQ CCM clock driver
+and the CONFIG_SOC_IMX8MQ and use CONFIG_CLK_IMX8MQ instead.
+CONFIG_CLK_IMX8MQ depends on ARCH_MXC && ARM64.
 
---EuxKj2iCbKjpUGkD
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+---
+ drivers/clk/Kconfig      | 1 +
+ drivers/clk/imx/Kconfig  | 5 +++++
+ drivers/clk/imx/Makefile | 3 ++-
+ 3 files changed, 8 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/imx/Kconfig
 
-On Wed, Dec 12, 2018 at 06:51:19PM -0800, Joe Perches wrote:
-> On Wed, 2018-12-12 at 13:14 -0500, Jeremy Cline wrote:
-> > It might be worth noting this fixes commit 6f4d29df66ac
-> > ("scripts/spdxcheck.py: make python3 compliant")
->=20
-> umm, how does it do that?
->=20
-> > and also Cc this for
-> > stable since 6f4d29df66ac got backported to v4.19. While that commit
-> > did indeed make the script work with Python 3 for piping data, it broke
-> > Python 2 and made its way to stable.
->=20
-> I think attempting to use spdxcheck on binary files
-> is not useful in the first place.
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 2dc12bf..833353c 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -293,6 +293,7 @@ config COMMON_CLK_BD718XX
+ source "drivers/clk/actions/Kconfig"
+ source "drivers/clk/bcm/Kconfig"
+ source "drivers/clk/hisilicon/Kconfig"
++source "drivers/clk/imx/Kconfig"
+ source "drivers/clk/imgtec/Kconfig"
+ source "drivers/clk/ingenic/Kconfig"
+ source "drivers/clk/keystone/Kconfig"
+diff --git a/drivers/clk/imx/Kconfig b/drivers/clk/imx/Kconfig
+new file mode 100644
+index 0000000..98ede6a
+--- /dev/null
++++ b/drivers/clk/imx/Kconfig
+@@ -0,0 +1,5 @@
++config CLK_IMX8MQ
++	bool "IMX8MQ CCM Clock Driver"
++	depends on ARCH_MXC && ARM64
++	help
++	    Build the driver for i.MX8MQ CCM Clock Driver
+diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
+index 5c0b11e..01e5f55 100644
+--- a/drivers/clk/imx/Makefile
++++ b/drivers/clk/imx/Makefile
+@@ -34,5 +34,6 @@ obj-$(CONFIG_SOC_IMX6SX) +=3D clk-imx6sx.o
+ obj-$(CONFIG_SOC_IMX6UL) +=3D clk-imx6ul.o
+ obj-$(CONFIG_SOC_IMX7D)  +=3D clk-imx7d.o
+ obj-$(CONFIG_SOC_IMX7ULP) +=3D clk-imx7ulp.o
+-obj-$(CONFIG_SOC_IMX8MQ) +=3D clk-imx8mq.o
+ obj-$(CONFIG_SOC_VF610)  +=3D clk-vf610.o
++
++obj-$(CONFIG_CLK_IMX8MQ) +=3D clk-imx8mq.o
+--=20
+2.7.4
 
-Agreed. However, if run without arguments the tool will walk the entire
-tree and inevitably run into binary files. I realize that this is kind
-of a lame way of dealing with binary files, but the alternatives would
-be much more complicated and involve dealing with mimetypes and such.
-
-Thierry
-
---EuxKj2iCbKjpUGkD
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlwShV8ACgkQ3SOs138+
-s6G2ihAArS30f0Z6GO/6ezyyJ7cMvAmNCSNBudE+d9bIbQ/F+T+tv15ENs8wQ3Kt
-yYZQ9DaaKZ7fCEFkw1T+hmwbnD0xmy8vKZvHA1M18SIueGcv+tUEULW80Fp1ZBS2
-QUsHfKwJmGNbVsETLtSBTNYhYhJhXqzq2d6i9uHUKrGNOtIPY5ztQRCnNEbhLQC9
-QcuKZAoks2dECk1nDy0+xcenzzdVpco+PS5aNezNhVckugvXM19NHx0c7XVkxWwL
-bmoUSMy6mrvkaONBvxX1pfgRp2V5hMgHfy2o/j7J9ddmOfj4KBXb1DWM2+sGVIRe
-fjBYx7N2PJ32ZUn5xVWALcQY71Ih4x7Pk4+XJz3l9yA/QNehe2Dom78+Fhuut4uq
-dQhGbaP+NU6gDlXJAWflzsn3i0M+jt9raXXa9Bs9rGxU7F0ru+EUkxNJBo7mjfbX
-wP+8/DIphee13MPNuzBLjOj4+qxAUmBuorsetEhpWShBac8gWjraTofA1O494p3z
-YFGMq79AvVtXKnIYkh6NwmnaNJy/H1vx4t3aBCexbXmXQ5uWCYN7BjkDRJFOtWiN
-xegxvWqy0vjKLZM+uy+xw9pJFxv/k9wvfRVCdOCkERyWRTtSWtW2Psu/H7y0d+hd
-6NUB4O+hBg7Evc2OZNb07lAVJ5/mflCCf9dcnTwp8NjJOiJxmwU=
-=0vKG
------END PGP SIGNATURE-----
-
---EuxKj2iCbKjpUGkD--
