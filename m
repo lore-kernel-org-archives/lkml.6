@@ -7,53 +7,51 @@ X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF28FC67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:45:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94084C67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:45:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7632520849
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:45:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A3E320849
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:45:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544676323;
-	bh=lN4gjZEO5fVofN1wwxwG9rt7o19SV6CrINsisFHHA38=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=TN93PSESCIsUmtckhaf00B+H0/uzwzDIh1LXHSeF+9DLiU2XWx2qtY2NKbwP3hq42
-	 HBSdgQOX11aR5DTc6SwPX0bKCv/1ebjeVRMgRxxonYJJRkayx7y90SqBOHDyccKXpc
-	 74tBsLlXEr8wn8YJt2A/9gPAnCf2KfY2NQ2Ed7R4=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7632520849
+	s=default; t=1544676327;
+	bh=qr1DGcHghYdKSIWlGFb5BECok5jhpyQ9uIl3vHU3qHE=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=aSCro6JGbLkc9MPR9+CaJXYQek476yItWWo6C+aKY+zMsvrQ0HJ2pfx7NOi1OE2Xs
+	 q46F4tdo8RJkGXI5BO1mRtXCsmqdUosiwvbnqd/Px/v16cc5zGEV1wsCgflziDt1hJ
+	 VC/tx6ah9MSichr1VxSbe6xUFhDdqJ/XyVpshhsc=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A3E320849
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728933AbeLMEpW (ORCPT
+        id S1729240AbeLMEpZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 23:45:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43804 "EHLO mail.kernel.org"
+        Wed, 12 Dec 2018 23:45:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43766 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727449AbeLMEa5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 23:30:57 -0500
+        id S1728476AbeLMEa4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 23:30:56 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7374420873;
-        Thu, 13 Dec 2018 04:30:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 48E1020880;
+        Thu, 13 Dec 2018 04:30:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544675457;
-        bh=lN4gjZEO5fVofN1wwxwG9rt7o19SV6CrINsisFHHA38=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AAc2kIbQ1HURXp22uXfg6oBebSDCOK4K1eq/crqLK+v8IXUE7Kt7Ty3wvb/ZqtJmL
-         tn8jWwJxi3H1Ss80VlhCmvEWQUIkFFE6Q5Vj28cJTWhnbM0dUy7WmlXdCwB3GAK1pF
-         LzVAmlJyXI+WP96+t/VWC/DLS44vfx/VxO9C/8e0=
+        s=default; t=1544675456;
+        bh=qr1DGcHghYdKSIWlGFb5BECok5jhpyQ9uIl3vHU3qHE=;
+        h=From:To:Cc:Subject:Date:From;
+        b=WSIhCXXNwJJ4jljvZ/9C0T6chpfcUcUp0AlS/PCYdSQtpYDTj7lxKRoIlbcllmLtT
+         1t9mWRuIus6veqTaxJ/47+vpSwMBG/jaYkwrL51uNeKLyyiH9pl8pEPCR/m7QGW0nY
+         AbQYx+wQ849rSlhgMuVbGL9LoO5W2WqTfggu+jA4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Sasha Levin <sashal@kernel.org>, devel@linuxdriverproject.org,
-        linux-input@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 02/41] Input: hyper-v - fix wakeup from suspend-to-idle
-Date:   Wed, 12 Dec 2018 23:30:15 -0500
-Message-Id: <20181213043054.75891-2-sashal@kernel.org>
+Cc:     Alexey Khoroshilov <khoroshilov@ispras.ru>,
+        Johannes Berg <johannes.berg@intel.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 01/41] mac80211_hwsim: fix module init error paths for netlink
+Date:   Wed, 12 Dec 2018 23:30:14 -0500
+Message-Id: <20181213043054.75891-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181213043054.75891-1-sashal@kernel.org>
-References: <20181213043054.75891-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -62,56 +60,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
+From: Alexey Khoroshilov <khoroshilov@ispras.ru>
 
-[ Upstream commit 10f91c73cc41ceead210a905dbd196398e99c7d2 ]
+[ Upstream commit 05cc09de4c017663a217630682041066f2f9a5cd ]
 
-It makes little sense but still possible to put Hyper-V guests into
-suspend-to-idle state. To wake them up two wakeup sources were registered
-in the past: hyperv-keyboard and hid-hyperv. However, since
-commit eed4d47efe95 ("ACPI / sleep: Ignore spurious SCI wakeups from
-suspend-to-idle") pm_wakeup_event() from these devices is ignored. Switch
-to pm_wakeup_hard_event() API as these devices are actually the only
-possible way to wakeup Hyper-V guests.
+There is no unregister netlink notifier and family on error paths
+in init_mac80211_hwsim(). Also there is an error path where
+hwsim_class is not destroyed.
 
-Fixes: eed4d47efe95 (ACPI / sleep: Ignore spurious SCI wakeups from suspend-to-idle)
-Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Acked-by: K. Y. Srinivasan <kys@microsoft.com>
-Acked-by: Jiri Kosina <jkosina@suse.cz>
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Found by Linux Driver Verification project (linuxtesting.org).
+
+Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+Fixes: 62759361eb49 ("mac80211-hwsim: Provide multicast event for HWSIM_CMD_NEW_RADIO")
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hid/hid-hyperv.c              | 2 +-
- drivers/input/serio/hyperv-keyboard.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/wireless/mac80211_hwsim.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/hid/hid-hyperv.c b/drivers/hid/hid-hyperv.c
-index 6039f071fab1..5f1de24206ab 100644
---- a/drivers/hid/hid-hyperv.c
-+++ b/drivers/hid/hid-hyperv.c
-@@ -309,7 +309,7 @@ static void mousevsc_on_receive(struct hv_device *device,
- 		hid_input_report(input_dev->hid_device, HID_INPUT_REPORT,
- 				 input_dev->input_buf, len, 1);
+diff --git a/drivers/net/wireless/mac80211_hwsim.c b/drivers/net/wireless/mac80211_hwsim.c
+index 477f9f2f6626..4886141e85ba 100644
+--- a/drivers/net/wireless/mac80211_hwsim.c
++++ b/drivers/net/wireless/mac80211_hwsim.c
+@@ -3472,16 +3472,16 @@ static int __init init_mac80211_hwsim(void)
+ 	if (err)
+ 		goto out_unregister_pernet;
  
--		pm_wakeup_event(&input_dev->device->device, 0);
-+		pm_wakeup_hard_event(&input_dev->device->device);
++	err = hwsim_init_netlink();
++	if (err)
++		goto out_unregister_driver;
++
+ 	hwsim_class = class_create(THIS_MODULE, "mac80211_hwsim");
+ 	if (IS_ERR(hwsim_class)) {
+ 		err = PTR_ERR(hwsim_class);
+-		goto out_unregister_driver;
++		goto out_exit_netlink;
+ 	}
  
- 		break;
- 	default:
-diff --git a/drivers/input/serio/hyperv-keyboard.c b/drivers/input/serio/hyperv-keyboard.c
-index 25151d9214e0..55288a026e4e 100644
---- a/drivers/input/serio/hyperv-keyboard.c
-+++ b/drivers/input/serio/hyperv-keyboard.c
-@@ -177,7 +177,7 @@ static void hv_kbd_on_receive(struct hv_device *hv_dev,
- 		 * state because the Enter-UP can trigger a wakeup at once.
- 		 */
- 		if (!(info & IS_BREAK))
--			pm_wakeup_event(&hv_dev->device, 0);
-+			pm_wakeup_hard_event(&hv_dev->device);
+-	err = hwsim_init_netlink();
+-	if (err < 0)
+-		goto out_unregister_driver;
+-
+ 	for (i = 0; i < radios; i++) {
+ 		struct hwsim_new_radio_params param = { 0 };
  
- 		break;
- 
+@@ -3587,6 +3587,8 @@ static int __init init_mac80211_hwsim(void)
+ 	free_netdev(hwsim_mon);
+ out_free_radios:
+ 	mac80211_hwsim_free();
++out_exit_netlink:
++	hwsim_exit_netlink();
+ out_unregister_driver:
+ 	platform_driver_unregister(&mac80211_hwsim_driver);
+ out_unregister_pernet:
 -- 
 2.19.1
 
