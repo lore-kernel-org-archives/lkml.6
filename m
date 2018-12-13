@@ -2,149 +2,146 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.9 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44804C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 16:56:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23C30C67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 16:56:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00936208E7
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 16:56:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00936208E7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
+	by mail.kernel.org (Postfix) with ESMTP id E406F2087F
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 16:56:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E406F2087F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729315AbeLMQ4D (ORCPT
+        id S1729531AbeLMQ4N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 11:56:03 -0500
-Received: from muru.com ([72.249.23.125]:58152 "EHLO muru.com"
+        Thu, 13 Dec 2018 11:56:13 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:16140 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727511AbeLMQ4D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 11:56:03 -0500
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 771778081;
-        Thu, 13 Dec 2018 16:56:05 +0000 (UTC)
-Date:   Thu, 13 Dec 2018 08:55:58 -0800
-From:   Tony Lindgren <tony@atomide.com>
-To:     Peter Ujfalusi <peter.ujfalusi@ti.com>
-Cc:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Jarkko Nikula <jarkko.nikula@bitmer.com>
-Subject: Re: [PATCH 0/2] Graph fixes for using multiple endpoints per port
-Message-ID: <20181213165558.GO6707@atomide.com>
-References: <20181211045220.GI6707@atomide.com>
- <871s6obqkb.wl-kuninori.morimoto.gx@renesas.com>
- <20181211053536.GJ6707@atomide.com>
- <87wooga9an.wl-kuninori.morimoto.gx@renesas.com>
- <20181211141649.GL6707@atomide.com>
- <87ftv33bpg.wl-kuninori.morimoto.gx@renesas.com>
- <20181212001950.GX6707@atomide.com>
- <01e3f547-318e-8988-b48a-e10c0a2904d6@ti.com>
- <20181212145022.GB6707@atomide.com>
- <34191403-3c56-47ac-77d9-e900d88f2ae5@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <34191403-3c56-47ac-77d9-e900d88f2ae5@ti.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1727511AbeLMQ4N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 11:56:13 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id ED9483082135;
+        Thu, 13 Dec 2018 16:56:12 +0000 (UTC)
+Received: from haswell-e.nc.xsintricity.com (ovpn-112-56.rdu2.redhat.com [10.10.112.56])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 19D0D1974F;
+        Thu, 13 Dec 2018 16:56:11 +0000 (UTC)
+Message-ID: <267101dbb3beb8883efe614e099e7ac4c7a84f37.camel@redhat.com>
+Subject: [PULL REQUEST] Please pull rdma.git
+From:   Doug Ledford <dledford@redhat.com>
+To:     "Torvalds, Linus" <torvalds@linux-foundation.org>
+Cc:     "Gunthorpe, Jason" <jgg@ziepe.ca>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Date:   Thu, 13 Dec 2018 11:56:10 -0500
+Organization: Red Hat, Inc.
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-D9i8SVO0+y+hI6fdaMxC"
+User-Agent: Evolution 3.30.2 (3.30.2-2.fc29) 
+Mime-Version: 1.0
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Thu, 13 Dec 2018 16:56:13 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Peter Ujfalusi <peter.ujfalusi@ti.com> [181213 06:52]:
-> On 12/12/2018 16.50, Tony Lindgren wrote:
-> > * Peter Ujfalusi <peter.ujfalusi@ti.com> [181212 13:03]:
-> >> On 12/12/2018 2.19, Tony Lindgren wrote:
-> >>> In my McBSP case there is only a single physical I2S port
-> >>> that can be TDM split into timeslots.
-> >>
-> >> So what is missing from the McBSP driver is to configure the TDM. We
-> >> never had a hardware which would require it so it is _not_ implemented.
-> > 
-> > Curiously.. Nothing needs to be done in the McBSP driver for the droid
-> > 4 TDM configuration AFAIK.
-> 
-> So you always have 4 timeslot and that's it?
 
-No.. "droid 4", not "4 timeslot" above :)
+--=-D9i8SVO0+y+hI6fdaMxC
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-See the McBSP3 parts of the diagram at [0]. The PMIC has
-register bits for timeslots 0 to 2:
+Hi Linus,
 
-$ git grep CPCAP | grep TIMESLOT
+We have 5 small fixes for this pull request.  One is a performance
+regression, so not necessarily strictly a fix, but it was small and
+reasonable and claimed to avoid thrashing in the scheduler, so I took
+it.  The remaining are all legitimate fixes that match the "we take
+fixes any time" criteria.
 
-> > The CPCAP PMIC is the clock master, and only the PMIC registers need to
-> > be configured in this case for the timeslot to switch between codecs
-> > connected to McBSP3.
-> 
-> The McBSP TDM configuration is not master only.
-> You basically tell McBSP on which timeslot to transmit/receive.
-> Let's say you have two codecs connected to a single McBSP.
-> codec1 is configured to listen for timeslot 0/1
-> codec2 is configured to listen for timeslot 2/3
+Here's the boilerplate:
 
-OK. Right now I'm only configuring things at the PMIC
-end as the clocking is different compared to using CPCAP
-PMIC voice codec and when routing data from the MDM voice
-call codec to the CPCAP PMIC.
+The following changes since commit 7bca603a69c0c239654a8f0bcb99e1a60b30040c=
+:
 
-> If you open a stereo stream to codec1 then you tell McBSP to
-> send/receive the data under timeslot 0/1 and ignore any other timeslots.
-> 
-> If you open a stereo stream to codec2 then you tell McBSP to
-> send/receive the data under timeslot 2/3 and ignore any other timeslots.
-> 
-> For codec1 you don't really need anything regarding to TDM configuration
-> as McBSP will send/receive right after the start condition on the FS,
-> but for codec2 you need to configure the TDM mode of McBSP to ignore
-> timeslot 0/1
+  RDMA/mlx5: Initialize return variable in case pagefault was skipped (2018=
+-11-29 15:16:45 -0700)
 
-OK. Sounds like what you're describing could be used to route the
-MDM voice codec audio for capture to a file via McBSP etc.
+are available in the Git repository at:
 
-> >> imho the 'only' thing is to implement the set_tdm_slot callback for the
-> >> McBSP DAI. In DT you would have single card with two dai_link section
-> >> and each section would set different tdm slots to use for the codecs
-> >> listening on different slots.
-> >>
-> >> There is one issue for sure with this setup: the two PCM can not be used
-> >> at the same time. But we have one DMA channel so if you would open both
-> >> the PCM stream need to be set up in a way to match with the HW or create
-> >> a asound.conf file to do some mapping.
-> > 
-> > Yes in the droid 4 TDM case only one device can be used at a time
-> > and all that configuration is done in the PMIC codec .set_tdm_slot
-> > function.
-> 
-> Hrm, do you have two DAIs on the PMIC side or different timeslots from
-> the TDM stream is routed to different outputs, similarly to twl6040
-> where timeslot 0/1 is Headset, timeslot 2/3 is Handsfree and timeslot 5
-> is to drive a vibra?
+  git://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git tags/for-linu=
+s
 
-Two DAIs on the PMIC, one at McBSP2 and one shared with MDM codec
-at McBSP3.
+for you to fetch changes up to 37fbd834b4e492dc41743830cbe435f35120abd8:
 
-> > I think it's possible to do more complex configurations where McBSP
-> > is the master and would implement a .set_tdm_slot function. But I
-> > don't know anything about that and I'm not aware of any such use
-> > cases in the mainline kernel.
-> 
-> No, the set_tdm_slot is applicable for both master and slave mode of McBSP.
+  IB/core: Fix oops in netdev_next_upper_dev_rcu() (2018-12-12 12:14:49 -05=
+00)
 
-OK sure.
+----------------------------------------------------------------
+Pull request for 4.20-rc
 
-Regards,
+- One performance regression for hfi1
+- One kasan fix for hfi1
+- A couple mlx5 fixes
+- A core oops fix
 
-Tony
+----------------------------------------------------------------
+Artemy Kovalyov (1):
+      IB/mlx5: Fix implicit ODP interrupted page fault
 
-[0] https://lkml.org/lkml/2018/3/28/405
+Mark Zhang (1):
+      IB/core: Fix oops in netdev_next_upper_dev_rcu()
+
+Michael J. Ruhl (1):
+      IB/hfi1: Fix a latency issue for small messages
+
+Piotr Stankiewicz (1):
+      IB/hfi1: Fix an out-of-bounds access in get_hw_stats
+
+Yishai Hadas (1):
+      IB/mlx5: Block DEVX umem from the non applicable cases
+
+ drivers/infiniband/core/roce_gid_mgmt.c | 3 +++
+ drivers/infiniband/hw/hfi1/chip.c       | 3 ++-
+ drivers/infiniband/hw/hfi1/hfi.h        | 2 ++
+ drivers/infiniband/hw/hfi1/qp.c         | 7 +++++++
+ drivers/infiniband/hw/hfi1/verbs.c      | 2 +-
+ drivers/infiniband/hw/mlx5/devx.c       | 4 +++-
+ drivers/infiniband/hw/mlx5/odp.c        | 9 ++++-----
+ 7 files changed, 22 insertions(+), 8 deletions(-)
+
+
+
+--=20
+Doug Ledford <dledford@redhat.com>
+    GPG KeyID: B826A3330E572FDD
+    Key fingerprint =3D AE6B 1BDA 122B 23B4 265B  1274 B826 A333 0E57 2FDD
+
+--=-D9i8SVO0+y+hI6fdaMxC
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEErmsb2hIrI7QmWxJ0uCajMw5XL90FAlwSjyoACgkQuCajMw5X
+L93AAhAArQcB28UZwypl9TI2eVIXg+zNQqnHIppGrx2TmV20yDRHyDSiWJASVgI5
+SWicp0a8wurPZoWzK9Z8zjnwI8F1PvvnyWMD5r2wZ6LJQhiFN4pVC4zQvG/lb+7G
+gPVSiSaUOgOTMqNZqgCj9uyhk20gdB9+tfn+R6yHo2EgIq2Z4Ppo6qkv2kBRS4FD
+/AUaabt7Dt1Lc4HaQbZDSq9j5hK8OwBCEdZCR4Rv5Z+rAUr69jqQ3XYgwmPQakC/
+fAnI/sLgmma11vnNKhAuSzXyoI0C0EebCUnl5extMaQqS4fXyyh3cK844XmiunR1
+1G0Edm115GQOSOhAh8kF5J/1SYBN32cLpkMtBIISrcCrZx5Ryk5qVRePmw5g8Xbs
+QWqbE0rSnSXP7x6bynbSYWUotl9y3HdmCDH689MJREmcBbP5qvR1q09sI8WO1XPb
+LDlYcF7VWrxRLX5mr2Max8DZmarkwwGU8Aq3bnDrCHeonUy7rR0YRM5wlGKQQ25b
+/ydczd+dBie34lo+Rri1b/Osdb1wPfAt8/HCVbK9GKsF7kHpzWzL5u8KHIOP0W7C
+hZmnq3OPddohsHmxM0Fkl12+xZzyJkDoEhoE0JXti/h9b00+buG8gwE3sn5b89AA
++YCTpZ8eEWvVvzs64bL0V/1LsGzz9S+iWcK46kTyj3h8mxPQF8E=
+=Rd0N
+-----END PGP SIGNATURE-----
+
+--=-D9i8SVO0+y+hI6fdaMxC--
 
