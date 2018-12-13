@@ -2,119 +2,117 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05E36C67872
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 01:42:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00D2EC67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 01:43:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8D4920870
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 01:42:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8D4920870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id A48FB20873
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 01:43:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A48FB20873
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726482AbeLMBmh (ORCPT
+        id S1726567AbeLMBnW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 20:42:37 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43612 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726380AbeLMBmg (ORCPT
+        Wed, 12 Dec 2018 20:43:22 -0500
+Received: from orcrist.hmeau.com ([104.223.48.154]:49018 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726372AbeLMBnW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 20:42:36 -0500
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBD1ctJn074904
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 20:42:35 -0500
-Received: from e34.co.us.ibm.com (e34.co.us.ibm.com [32.97.110.152])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2pbbt7d5k9-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 20:42:34 -0500
-Received: from localhost
-        by e34.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <bauerman@linux.ibm.com>;
-        Thu, 13 Dec 2018 01:42:34 -0000
-Received: from b03cxnp07029.gho.boulder.ibm.com (9.17.130.16)
-        by e34.co.us.ibm.com (192.168.1.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 13 Dec 2018 01:42:32 -0000
-Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
-        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBD1gUCI20512930
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 13 Dec 2018 01:42:30 GMT
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 836817805E;
-        Thu, 13 Dec 2018 01:42:30 +0000 (GMT)
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B82AA7805C;
-        Thu, 13 Dec 2018 01:42:28 +0000 (GMT)
-Received: from morokweng.localdomain.com (unknown [9.80.227.60])
-        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Thu, 13 Dec 2018 01:42:28 +0000 (GMT)
-From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
-To:     linux-security-module@vger.kernel.org
-Cc:     James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Mimi Zohar <zohar@linux.ibm.com>, linux-kernel@vger.kernel.org,
-        Thiago Jung Bauermann <bauerman@linux.ibm.com>
-Subject: [PATCH] integrity: Remove references to module keyring
-Date:   Wed, 12 Dec 2018 23:39:09 -0200
-X-Mailer: git-send-email 2.17.2
-X-TM-AS-GCONF: 00
-x-cbid: 18121301-0016-0000-0000-00000963A1B5
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010217; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01130942; UDB=6.00587708; IPR=6.00911075;
- MB=3.00024674; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-13 01:42:33
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18121301-0017-0000-0000-000041628DA9
-Message-Id: <20181213013909.25737-1-bauerman@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-12_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812130013
+        Wed, 12 Dec 2018 20:43:22 -0500
+Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
+        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
+        id 1gXG1y-00011o-VH; Thu, 13 Dec 2018 09:43:15 +0800
+Received: from herbert by gondobar with local (Exim 4.89)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1gXG1t-0003i6-Uy; Thu, 13 Dec 2018 09:43:09 +0800
+Date:   Thu, 13 Dec 2018 09:43:09 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     NeilBrown <neilb@suse.com>
+Cc:     Thomas Graf <tgraf@suug.ch>, Tom Herbert <tom@quantonium.net>,
+        David Miller <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] rhashtable: further improve stability of
+ rhashtable_walk
+Message-ID: <20181213014309.uufaeoijhympgxbz@gondor.apana.org.au>
+References: <153086109256.2825.15329014177598382684.stgit@noble>
+ <87zhtkeimx.fsf@notabene.neil.brown.name>
+ <20181207053943.7zacyn5uvqkfnfoi@gondor.apana.org.au>
+ <87k1kico1o.fsf@notabene.neil.brown.name>
+ <20181211051755.modgomqzszkbiihe@gondor.apana.org.au>
+ <87mupbvch0.fsf@notabene.neil.brown.name>
+ <20181212054601.wbzpxjunnsfi62mz@gondor.apana.org.au>
+ <87efanuu06.fsf@notabene.neil.brown.name>
+ <20181212080037.j2zs22t57uxdu2jr@gondor.apana.org.au>
+ <87bm5ruo3f.fsf@notabene.neil.brown.name>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87bm5ruo3f.fsf@notabene.neil.brown.name>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From what I can tell, it has never been used.
+On Wed, Dec 12, 2018 at 07:49:08PM +1100, NeilBrown wrote:
+> On Wed, Dec 12 2018, Herbert Xu wrote:
+> 
+> > On Wed, Dec 12, 2018 at 05:41:29PM +1100, NeilBrown wrote:
+> >>
+> >> So you would substantially slow down the rhashtable_walk_start() step.
+> >
+> > This whole thing is meant for uses such as /proc and netlink
+> > enumeration.  Speed is definitely not a prerogative of these
+> > iterators.
+> 
+> An RCU grace period is typically 10s of milliseconds.  It doesn't take
+> very many of those to start being noticed.
 
-Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
----
- security/integrity/digsig.c    | 1 -
- security/integrity/integrity.h | 5 ++---
- 2 files changed, 2 insertions(+), 4 deletions(-)
+Why would you even need an RCU grace period for deleting and adding
+the walker object to the bucket list? You just allocate a new one
+each time and free the old one after an RCU grace period.  I don't
+see where the latency is coming from.
 
-diff --git a/security/integrity/digsig.c b/security/integrity/digsig.c
-index c5585e75d5d9..1ff8eab7bc8c 100644
---- a/security/integrity/digsig.c
-+++ b/security/integrity/digsig.c
-@@ -34,7 +34,6 @@ static const char * const keyring_name[INTEGRITY_KEYRING_MAX] = {
- 	".evm",
- 	".ima",
- #endif
--	"_module",
- 	".platform",
- };
- 
-diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
-index aafa1266e3d5..26c415c3f879 100644
---- a/security/integrity/integrity.h
-+++ b/security/integrity/integrity.h
-@@ -152,9 +152,8 @@ int integrity_kernel_read(struct file *file, loff_t offset,
- 
- #define INTEGRITY_KEYRING_EVM		0
- #define INTEGRITY_KEYRING_IMA		1
--#define INTEGRITY_KEYRING_MODULE	2
--#define INTEGRITY_KEYRING_PLATFORM	3
--#define INTEGRITY_KEYRING_MAX		4
-+#define INTEGRITY_KEYRING_PLATFORM	2
-+#define INTEGRITY_KEYRING_MAX		3
- 
- extern struct dentry *integrity_dir;
- 
+> > For that matter, if speed was an issue then surely you would
+> > not drop out of the RCU read lock at all while iterating.
+> 
+> tipc_nl_sk_walk() drops out of RCU for every object.
+> I don't know what it is used for, but I doubt that making it thousands
+> of times slower would be a good thing.
 
+Now you're conflating two different things.  Dropping the RCU
+isn't necessarily slow.  We were talking about waiting for an
+RCU grace period which would only come into play if you were
+suspending the walk indefinitely.  Actually as I said above even
+there you don't really need to wait.
+
+> > It sounds to me like you're trying to use this interface for
+> > something that it's simply not designed to do.
+> 
+> I'm just trying to make sure we have a reliable data structure which I
+> can use without having to be worried that I might accidentally hit some
+> unsupported behaviour.
+
+Now that is something I agree with.
+
+> I don't really see why you think my patch is all that complex.
+> The only conceptual change is that hash chains are now ordered, and
+> ordered chains are easy to understand.
+> The biggest part of the code change is just moving some code from
+> rhashtable_walk_start() to rhashtable_walk_next().
+> 
+> Why don't you like it?
+
+My main beef is the fact that it doesn't work with rhlist.  So down
+the track either we'll have to add more complexity for rhlist or
+we will have to rip this out again do something completely different.
+
+Cheers,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
