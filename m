@@ -2,95 +2,119 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B5B7C67872
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:16:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2B42C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:17:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50D9620645
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:16:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="U0v7yaA5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50D9620645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 9636320645
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:17:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9636320645
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728940AbeLMMQu (ORCPT
+        id S1728990AbeLMMRQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 07:16:50 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:47792 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728806AbeLMMQu (ORCPT
+        Thu, 13 Dec 2018 07:17:16 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:49068 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728951AbeLMMRP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 07:16:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
-        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=4ZXtW55JAa/vg3hQkSbYV2kNZlrL5oduqPKvGV7TOe0=; b=U0v7yaA5V9wVYtvPRItgV/9ZUY
-        US6ZjDY/ysvQOu15Y3/azoIN4C0QCObr9ZWszHqkM1ZcF0aOW7+FA/q2SjXv4Khz3tmknei2qrrSH
-        tAltIO3mgfQeLH5UD+52ZXFMHgTQNVz24x90l7Nb+WLyjkuO+4ZY5VArrMOtvpSR2ZnPkv+Bw3Q2M
-        5cOyOg3CvX3E1Gn12ctQm63+qeCJ9jPQOSGIMpGMdUlXm/SPfBYaJUXmWOOixVN1o6eg0AZ5KUtf2
-        IbL4KjwryqD9vigGzf8sRYhwVqNtJdoN3oGcizaG76TwznbWNSyenbBGXowAUSJkX4FKXXTuO6qqt
-        PeYnujiw==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gXPv4-0002z1-75; Thu, 13 Dec 2018 12:16:46 +0000
-Date:   Thu, 13 Dec 2018 04:16:46 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+        Thu, 13 Dec 2018 07:17:15 -0500
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBDC3o52111663
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 07:17:14 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2pbku8jum4-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 07:17:14 -0500
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Thu, 13 Dec 2018 12:17:11 -0000
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 13 Dec 2018 12:17:06 -0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBDCH5uI42336490
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 13 Dec 2018 12:17:05 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1C9C0A4067;
+        Thu, 13 Dec 2018 12:17:05 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id ADF0DA405B;
+        Thu, 13 Dec 2018 12:17:02 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.105.18])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 13 Dec 2018 12:17:02 +0000 (GMT)
+Subject: Re: [RFC PATCH v1 0/5] Add support for O_MAYEXEC
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Florian Weimer <fweimer@redhat.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
         linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
         James Morris <jmorris@namei.org>,
         Jonathan Corbet <corbet@lwn.net>,
         Kees Cook <keescook@chromium.org>,
         Matthew Garrett <mjg59@google.com>,
         Michael Kerrisk <mtk.manpages@gmail.com>,
-        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mickael.salaun@ssi.gouv.fr>,
-        Philippe =?iso-8859-1?Q?Tr=E9buchet?= 
+        =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mickael.salaun@ssi.gouv.fr>,
+        Philippe =?ISO-8859-1?Q?Tr=E9buchet?= 
         <philippe.trebuchet@ssi.gouv.fr>, Shuah Khan <shuah@kernel.org>,
         Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
         Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
         Yves-Alexis Perez <yves-alexis.perez@ssi.gouv.fr>,
         kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH v1 0/5] Add support for O_MAYEXEC
-Message-ID: <20181213121645.GN6830@bombadil.infradead.org>
+        linux-fsdevel@vger.kernel.org,
+        linux-integrity <linux-integrity@vger.kernel.org>
+Date:   Thu, 13 Dec 2018 07:16:52 -0500
+In-Reply-To: <874lbhoef3.fsf@oldenburg2.str.redhat.com>
 References: <20181212081712.32347-1-mic@digikod.net>
- <20181213030228.GM6830@bombadil.infradead.org>
- <1544699060.6703.11.camel@linux.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+         <20181213030228.GM6830@bombadil.infradead.org>
+         <1544699060.6703.11.camel@linux.ibm.com>
+         <874lbhoef3.fsf@oldenburg2.str.redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <1544699060.6703.11.camel@linux.ibm.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18121312-0008-0000-0000-000002A0C48D
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18121312-0009-0000-0000-0000220B45C1
+Message-Id: <1544703412.6703.46.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-13_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=652 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812130110
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 13, 2018 at 06:04:20AM -0500, Mimi Zohar wrote:
-> > I don't have a problem with the concept, but we're running low on O_ bits.
-> > Does this have to be done before the process gets a file descriptor,
-> > or could we have a new syscall?  Since we're going to be changing the
-> > interpreters anyway, it doesn't seem like too much of an imposition to
-> > ask them to use:
-> > 
-> > 	int verify_for_exec(int fd)
-> > 
-> > instead of adding an O_MAYEXEC.
-> 
-> The indication needs to be set during file open, before the open
-> returns to the caller. �This is the point where ima_file_check()
-> verifies the file's signature. �On failure, access to the file is
-> denied.
+[Cc'ing linux-integrity]
 
-I understand that's what happens today, but do we need to do it that way?
-There's no harm in the interpreter having an fd to a file if it knows
-not to execute it.  This is different from a program opening a file and
-having the LSM deny access to it because it violates the security model.
+On Thu, 2018-12-13 at 12:26 +0100, Florian Weimer wrote:
+> * Mimi Zohar:
+> 
+> > The indication needs to be set during file open, before the open
+> > returns to the caller.  This is the point where ima_file_check()
+> > verifies the file's signature.  On failure, access to the file is
+> > denied.
+> 
+> Does this verification happen for open with O_PATH?
+
+Interesting!  According to the manpage, userspace cannot read/write to
+the file.  It looks like do_o_path() intentionally skips do_last(),
+with the call to ima_file_check().  If the file data isn't being
+accessed, does the file's integrity need to be verified?
+
+Mimi
+
