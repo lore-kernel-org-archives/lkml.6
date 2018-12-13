@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 115C8C6786C
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 00:45:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2345CC6786C
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 00:45:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9CC920870
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 00:45:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9CC920870
+	by mail.kernel.org (Postfix) with ESMTP id E90B720879
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 00:45:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E90B720879
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726570AbeLMApF (ORCPT
+        id S1726610AbeLMApY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 19:45:05 -0500
-Received: from mga11.intel.com ([192.55.52.93]:26560 "EHLO mga11.intel.com"
+        Wed, 12 Dec 2018 19:45:24 -0500
+Received: from mga07.intel.com ([134.134.136.100]:48761 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726359AbeLMApE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 19:45:04 -0500
+        id S1726359AbeLMApY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 19:45:24 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Dec 2018 16:45:04 -0800
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Dec 2018 16:45:14 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,346,1539673200"; 
-   d="scan'208";a="259037766"
+   d="scan'208";a="98328235"
 Received: from ahduyck-desk1.jf.intel.com ([10.7.198.76])
-  by orsmga004.jf.intel.com with ESMTP; 12 Dec 2018 16:45:03 -0800
-Subject: [driver-core PATCH v9 2/9] device core: Consolidate locking and
- unlocking of parent and device
+  by orsmga007.jf.intel.com with ESMTP; 12 Dec 2018 16:45:14 -0800
+Subject: [driver-core PATCH v9 4/9] workqueue: Provide queue_work_node to
+ queue work near a given NUMA node
 From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
 To:     linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org
 Cc:     mcgrof@kernel.org, linux-nvdimm@lists.01.org, tj@kernel.org,
@@ -41,8 +41,8 @@ Cc:     mcgrof@kernel.org, linux-nvdimm@lists.01.org, tj@kernel.org,
         pavel@ucw.cz, zwisler@kernel.org, dan.j.williams@intel.com,
         dave.jiang@intel.com, bvanassche@acm.org,
         alexander.h.duyck@linux.intel.com
-Date:   Wed, 12 Dec 2018 16:45:04 -0800
-Message-ID: <154466190393.9126.148371211828405339.stgit@ahduyck-desk1.jf.intel.com>
+Date:   Wed, 12 Dec 2018 16:45:14 -0800
+Message-ID: <154466191432.9126.11618204155374317833.stgit@ahduyck-desk1.jf.intel.com>
 In-Reply-To: <154466182249.9126.3905559325944768059.stgit@ahduyck-desk1.jf.intel.com>
 References: <154466182249.9126.3905559325944768059.stgit@ahduyck-desk1.jf.intel.com>
 User-Agent: StGit/unknown-version
@@ -54,229 +54,136 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Try to consolidate all of the locking and unlocking of both the parent and
-device when attaching or removing a driver from a given device.
+Provide a new function, queue_work_node, which is meant to schedule work on
+a "random" CPU of the requested NUMA node. The main motivation for this is
+to help assist asynchronous init to better improve boot times for devices
+that are local to a specific node.
 
-To do that I first consolidated the lock pattern into two functions
-__device_driver_lock and __device_driver_unlock. After doing that I then
-created functions specific to attaching and detaching the driver while
-acquiring these locks. By doing this I was able to reduce the number of
-spots where we touch need_parent_lock from 12 down to 4.
+For now we just default to the first CPU that is in the intersection of the
+cpumask of the node and the online cpumask. The only exception is if the
+CPU is local to the node we will just use the current CPU. This should work
+for our purposes as we are currently only using this for unbound work so
+the CPU will be translated to a node anyway instead of being directly used.
 
-This patch should produce no functional changes, it is meant to be a code
-clean-up/consolidation only.
+As we are only using the first CPU to represent the NUMA node for now I am
+limiting the scope of the function so that it can only be used with unbound
+workqueues.
 
-Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
+Acked-by: Tejun Heo <tj@kernel.org>
 Reviewed-by: Bart Van Assche <bvanassche@acm.org>
-Reviewed-by: Dan Williams <dan.j.williams@intel.com>
-Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Acked-by: Dan Williams <dan.j.williams@intel.com>
 Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
 ---
- drivers/base/base.h |    2 +
- drivers/base/bus.c  |   23 ++----------
- drivers/base/dd.c   |   95 ++++++++++++++++++++++++++++++++++++++++-----------
- 3 files changed, 81 insertions(+), 39 deletions(-)
+ include/linux/workqueue.h |    2 +
+ kernel/workqueue.c        |   84 +++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 86 insertions(+)
 
-diff --git a/drivers/base/base.h b/drivers/base/base.h
-index 7a419a7a6235..3f22ebd6117a 100644
---- a/drivers/base/base.h
-+++ b/drivers/base/base.h
-@@ -124,6 +124,8 @@ extern int driver_add_groups(struct device_driver *drv,
- 			     const struct attribute_group **groups);
- extern void driver_remove_groups(struct device_driver *drv,
- 				 const struct attribute_group **groups);
-+int device_driver_attach(struct device_driver *drv, struct device *dev);
-+void device_driver_detach(struct device *dev);
+diff --git a/include/linux/workqueue.h b/include/linux/workqueue.h
+index 60d673e15632..1f50c1e586e7 100644
+--- a/include/linux/workqueue.h
++++ b/include/linux/workqueue.h
+@@ -463,6 +463,8 @@ int workqueue_set_unbound_cpumask(cpumask_var_t cpumask);
  
- extern char *make_class_name(const char *name, struct kobject *kobj);
- 
-diff --git a/drivers/base/bus.c b/drivers/base/bus.c
-index b886b15cb53b..74054481007d 100644
---- a/drivers/base/bus.c
-+++ b/drivers/base/bus.c
-@@ -184,11 +184,7 @@ static ssize_t unbind_store(struct device_driver *drv, const char *buf,
- 
- 	dev = bus_find_device_by_name(bus, NULL, buf);
- 	if (dev && dev->driver == drv) {
--		if (dev->parent && dev->bus->need_parent_lock)
--			device_lock(dev->parent);
--		device_release_driver(dev);
--		if (dev->parent && dev->bus->need_parent_lock)
--			device_unlock(dev->parent);
-+		device_driver_detach(dev);
- 		err = count;
- 	}
- 	put_device(dev);
-@@ -211,13 +207,7 @@ static ssize_t bind_store(struct device_driver *drv, const char *buf,
- 
- 	dev = bus_find_device_by_name(bus, NULL, buf);
- 	if (dev && dev->driver == NULL && driver_match_device(drv, dev)) {
--		if (dev->parent && bus->need_parent_lock)
--			device_lock(dev->parent);
--		device_lock(dev);
--		err = driver_probe_device(drv, dev);
--		device_unlock(dev);
--		if (dev->parent && bus->need_parent_lock)
--			device_unlock(dev->parent);
-+		err = device_driver_attach(drv, dev);
- 
- 		if (err > 0) {
- 			/* success */
-@@ -771,13 +761,8 @@ EXPORT_SYMBOL_GPL(bus_rescan_devices);
-  */
- int device_reprobe(struct device *dev)
- {
--	if (dev->driver) {
--		if (dev->parent && dev->bus->need_parent_lock)
--			device_lock(dev->parent);
--		device_release_driver(dev);
--		if (dev->parent && dev->bus->need_parent_lock)
--			device_unlock(dev->parent);
--	}
-+	if (dev->driver)
-+		device_driver_detach(dev);
- 	return bus_rescan_devices_helper(dev, NULL);
+ extern bool queue_work_on(int cpu, struct workqueue_struct *wq,
+ 			struct work_struct *work);
++extern bool queue_work_node(int node, struct workqueue_struct *wq,
++			    struct work_struct *work);
+ extern bool queue_delayed_work_on(int cpu, struct workqueue_struct *wq,
+ 			struct delayed_work *work, unsigned long delay);
+ extern bool mod_delayed_work_on(int cpu, struct workqueue_struct *wq,
+diff --git a/kernel/workqueue.c b/kernel/workqueue.c
+index 392be4b252f6..d5a26e456f7a 100644
+--- a/kernel/workqueue.c
++++ b/kernel/workqueue.c
+@@ -1492,6 +1492,90 @@ bool queue_work_on(int cpu, struct workqueue_struct *wq,
  }
- EXPORT_SYMBOL_GPL(device_reprobe);
-diff --git a/drivers/base/dd.c b/drivers/base/dd.c
-index 74c194ac99df..f07c16277ed9 100644
---- a/drivers/base/dd.c
-+++ b/drivers/base/dd.c
-@@ -867,6 +867,64 @@ void device_initial_probe(struct device *dev)
- 	__device_attach(dev, true);
- }
+ EXPORT_SYMBOL(queue_work_on);
  
-+/*
-+ * __device_driver_lock - acquire locks needed to manipulate dev->drv
-+ * @dev: Device we will update driver info for
-+ * @parent: Parent device. Needed if the bus requires parent lock
++/**
++ * workqueue_select_cpu_near - Select a CPU based on NUMA node
++ * @node: NUMA node ID that we want to select a CPU from
 + *
-+ * This function will take the required locks for manipulating dev->drv.
-+ * Normally this will just be the @dev lock, but when called for a USB
-+ * interface, @parent lock will be held as well.
++ * This function will attempt to find a "random" cpu available on a given
++ * node. If there are no CPUs available on the given node it will return
++ * WORK_CPU_UNBOUND indicating that we should just schedule to any
++ * available CPU if we need to schedule this work.
 + */
-+static void __device_driver_lock(struct device *dev, struct device *parent)
++static int workqueue_select_cpu_near(int node)
 +{
-+	if (parent && dev->bus->need_parent_lock)
-+		device_lock(parent);
-+	device_lock(dev);
-+}
++	int cpu;
 +
-+/*
-+ * __device_driver_unlock - release locks needed to manipulate dev->drv
-+ * @dev: Device we will update driver info for
-+ * @parent: Parent device. Needed if the bus requires parent lock
-+ *
-+ * This function will release the required locks for manipulating dev->drv.
-+ * Normally this will just be the the @dev lock, but when called for a
-+ * USB interface, @parent lock will be released as well.
-+ */
-+static void __device_driver_unlock(struct device *dev, struct device *parent)
-+{
-+	device_unlock(dev);
-+	if (parent && dev->bus->need_parent_lock)
-+		device_unlock(parent);
++	/* No point in doing this if NUMA isn't enabled for workqueues */
++	if (!wq_numa_enabled)
++		return WORK_CPU_UNBOUND;
++
++	/* Delay binding to CPU if node is not valid or online */
++	if (node < 0 || node >= MAX_NUMNODES || !node_online(node))
++		return WORK_CPU_UNBOUND;
++
++	/* Use local node/cpu if we are already there */
++	cpu = raw_smp_processor_id();
++	if (node == cpu_to_node(cpu))
++		return cpu;
++
++	/* Use "random" otherwise know as "first" online CPU of node */
++	cpu = cpumask_any_and(cpumask_of_node(node), cpu_online_mask);
++
++	/* If CPU is valid return that, otherwise just defer */
++	return cpu < nr_cpu_ids ? cpu : WORK_CPU_UNBOUND;
 +}
 +
 +/**
-+ * device_driver_attach - attach a specific driver to a specific device
-+ * @drv: Driver to attach
-+ * @dev: Device to attach it to
++ * queue_work_node - queue work on a "random" cpu for a given NUMA node
++ * @node: NUMA node that we are targeting the work for
++ * @wq: workqueue to use
++ * @work: work to queue
 + *
-+ * Manually attach driver to a device. Will acquire both @dev lock and
-+ * @dev->parent lock if needed.
++ * We queue the work to a "random" CPU within a given NUMA node. The basic
++ * idea here is to provide a way to somehow associate work with a given
++ * NUMA node.
++ *
++ * This function will only make a best effort attempt at getting this onto
++ * the right NUMA node. If no node is requested or the requested node is
++ * offline then we just fall back to standard queue_work behavior.
++ *
++ * Currently the "random" CPU ends up being the first available CPU in the
++ * intersection of cpu_online_mask and the cpumask of the node, unless we
++ * are running on the node. In that case we just use the current CPU.
++ *
++ * Return: %false if @work was already on a queue, %true otherwise.
 + */
-+int device_driver_attach(struct device_driver *drv, struct device *dev)
++bool queue_work_node(int node, struct workqueue_struct *wq,
++		     struct work_struct *work)
 +{
-+	int ret = 0;
-+
-+	__device_driver_lock(dev, dev->parent);
++	unsigned long flags;
++	bool ret = false;
 +
 +	/*
-+	 * If device has been removed or someone has already successfully
-+	 * bound a driver before us just skip the driver probe call.
++	 * This current implementation is specific to unbound workqueues.
++	 * Specifically we only return the first available CPU for a given
++	 * node instead of cycling through individual CPUs within the node.
++	 *
++	 * If this is used with a per-cpu workqueue then the logic in
++	 * workqueue_select_cpu_near would need to be updated to allow for
++	 * some round robin type logic.
 +	 */
-+	if (!dev->dead && !dev->driver)
-+		ret = driver_probe_device(drv, dev);
++	WARN_ON_ONCE(!(wq->flags & WQ_UNBOUND));
 +
-+	__device_driver_unlock(dev, dev->parent);
++	local_irq_save(flags);
 +
++	if (!test_and_set_bit(WORK_STRUCT_PENDING_BIT, work_data_bits(work))) {
++		int cpu = workqueue_select_cpu_near(node);
++
++		__queue_work(cpu, wq, work);
++		ret = true;
++	}
++
++	local_irq_restore(flags);
 +	return ret;
 +}
++EXPORT_SYMBOL_GPL(queue_work_node);
 +
- static int __driver_attach(struct device *dev, void *data)
+ void delayed_work_timer_fn(struct timer_list *t)
  {
- 	struct device_driver *drv = data;
-@@ -894,14 +952,7 @@ static int __driver_attach(struct device *dev, void *data)
- 		return ret;
- 	} /* ret > 0 means positive match */
- 
--	if (dev->parent && dev->bus->need_parent_lock)
--		device_lock(dev->parent);
--	device_lock(dev);
--	if (!dev->dead && !dev->driver)
--		driver_probe_device(drv, dev);
--	device_unlock(dev);
--	if (dev->parent && dev->bus->need_parent_lock)
--		device_unlock(dev->parent);
-+	device_driver_attach(drv, dev);
- 
- 	return 0;
- }
-@@ -932,15 +983,11 @@ static void __device_release_driver(struct device *dev, struct device *parent)
- 	drv = dev->driver;
- 	if (drv) {
- 		while (device_links_busy(dev)) {
--			device_unlock(dev);
--			if (parent)
--				device_unlock(parent);
-+			__device_driver_unlock(dev, parent);
- 
- 			device_links_unbind_consumers(dev);
--			if (parent)
--				device_lock(parent);
- 
--			device_lock(dev);
-+			__device_driver_lock(dev, parent);
- 			/*
- 			 * A concurrent invocation of the same function might
- 			 * have released the driver successfully while this one
-@@ -993,16 +1040,12 @@ void device_release_driver_internal(struct device *dev,
- 				    struct device_driver *drv,
- 				    struct device *parent)
- {
--	if (parent && dev->bus->need_parent_lock)
--		device_lock(parent);
-+	__device_driver_lock(dev, parent);
- 
--	device_lock(dev);
- 	if (!drv || drv == dev->driver)
- 		__device_release_driver(dev, parent);
- 
--	device_unlock(dev);
--	if (parent && dev->bus->need_parent_lock)
--		device_unlock(parent);
-+	__device_driver_unlock(dev, parent);
- }
- 
- /**
-@@ -1027,6 +1070,18 @@ void device_release_driver(struct device *dev)
- }
- EXPORT_SYMBOL_GPL(device_release_driver);
- 
-+/**
-+ * device_driver_detach - detach driver from a specific device
-+ * @dev: device to detach driver from
-+ *
-+ * Detach driver from device. Will acquire both @dev lock and @dev->parent
-+ * lock if needed.
-+ */
-+void device_driver_detach(struct device *dev)
-+{
-+	device_release_driver_internal(dev, NULL, dev->parent);
-+}
-+
- /**
-  * driver_detach - detach driver from all devices it controls.
-  * @drv: driver.
+ 	struct delayed_work *dwork = from_timer(dwork, t, timer);
 
