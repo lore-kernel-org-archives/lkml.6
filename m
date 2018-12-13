@@ -7,50 +7,49 @@ X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 742F9C67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:34:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1682C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:34:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 326E120672
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:34:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF99E20672
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:34:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544675679;
-	bh=wdfcexcZYASQVRuDzli3ZTJ32WLBmi7IERAAHuPfl4Y=;
+	s=default; t=1544675682;
+	bh=Xupz0bRD0lo237PYnqo6F2djKsL72StW+fSECSgBlac=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=gJn3NqOR4Eev96YzwE/fvB72lx4yabXYdCNwM5RS9N58PnWkG3ZgZwrKTI99BV/65
-	 LTN1eXJuaj9fE4keS5067jfSAqVHGoHeKhfqKu8hRf7mn3nMBl1xIoMUMcgKq8XguC
-	 VRdUKv7o1rDkkFWw3LphN0BSaeiJs8NbB+Ql9mro=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 326E120672
+	b=a2oNjo9bvKaZjSUdIHIL9QM6uUI6NZPJvgwj/Y+yiIaEw8doAGlpj9TNtuN+2/FYy
+	 QatfOU+G3hZY+MW3Av0B8nj+NOrzMAoGPPFMt9pamEholtNVuEa7wiWgOhJmfbm4LD
+	 ciKiWk20RbWyg48h8OJfZrzlVPEk0uwaJnxfSVTA=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF99E20672
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729497AbeLMEeG (ORCPT
+        id S1728040AbeLMEel (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 23:34:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47256 "EHLO mail.kernel.org"
+        Wed, 12 Dec 2018 23:34:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47374 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729456AbeLMEeC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 23:34:02 -0500
+        id S1729496AbeLMEeF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 23:34:05 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BBD6C20879;
-        Thu, 13 Dec 2018 04:34:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7C7FA20873;
+        Thu, 13 Dec 2018 04:34:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544675641;
-        bh=wdfcexcZYASQVRuDzli3ZTJ32WLBmi7IERAAHuPfl4Y=;
+        s=default; t=1544675645;
+        bh=Xupz0bRD0lo237PYnqo6F2djKsL72StW+fSECSgBlac=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Daav3HrZYJa0Kge361bn28DGggjnMIP6ypbzYMYgwvkc6lh9Hz7rYdg4v2YzQy7d2
-         iWZIgRCzs4fuFlg2neW2UQ0prUe0IZhvl5BxA17YVwREpU0hUdEqIw0w5InVScSE82
-         MNy1i/0s55NsfH85rNkYkyDXO18nMbAv0HKdbEhY=
+        b=UNnSVuCc4gdH/L8DXQOcdugzy1qz++QbzFfCIz2PWnQGAxy0Zfh1trIt292tTaUmU
+         +slCMIf2x+bADyMg+YNk1bc/LKoswwH8NhYD9QIDFBR071/7vwj0OmKGH1MCadeAzk
+         7yy51Uebsvi6x8xvrd1VjYtIlgx1/NnMR/E3NAy0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Yangtao Li <tiny.windzz@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, linux-ide@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH AUTOSEL 3.18 10/16] ide: pmac: add of_node_put()
-Date:   Wed, 12 Dec 2018 23:33:37 -0500
-Message-Id: <20181213043343.76896-10-sashal@kernel.org>
+Cc:     Juha-Matti Tilli <juha-matti.tilli@iki.fi>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
+        linux-ide@vger.kernel.org
+Subject: [PATCH AUTOSEL 3.18 12/16] libata: whitelist all SAMSUNG MZ7KM* solid-state disks
+Date:   Wed, 12 Dec 2018 23:33:39 -0500
+Message-Id: <20181213043343.76896-12-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181213043343.76896-1-sashal@kernel.org>
 References: <20181213043343.76896-1-sashal@kernel.org>
@@ -62,31 +61,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yangtao Li <tiny.windzz@gmail.com>
+From: Juha-Matti Tilli <juha-matti.tilli@iki.fi>
 
-[ Upstream commit a51921c0db3fd26c4ed83dc0ec5d32988fa02aa5 ]
+[ Upstream commit fd6f32f78645db32b6b95a42e45da2ddd6de0e67 ]
 
-use of_node_put() to release the refcount.
+These devices support read zero after trim (RZAT), as they advertise to
+the OS. However, the OS doesn't believe the SSDs unless they are
+explicitly whitelisted.
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Acked-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Juha-Matti Tilli <juha-matti.tilli@iki.fi>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/ide/pmac.c | 1 +
+ drivers/ata/libata-core.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/ide/pmac.c b/drivers/ide/pmac.c
-index 2db803cd095c..57a0bd00789f 100644
---- a/drivers/ide/pmac.c
-+++ b/drivers/ide/pmac.c
-@@ -920,6 +920,7 @@ static u8 pmac_ide_cable_detect(ide_hwif_t *hwif)
- 	struct device_node *root = of_find_node_by_path("/");
- 	const char *model = of_get_property(root, "model", NULL);
+diff --git a/drivers/ata/libata-core.c b/drivers/ata/libata-core.c
+index 6629a5deccbd..e155998e4696 100644
+--- a/drivers/ata/libata-core.c
++++ b/drivers/ata/libata-core.c
+@@ -4295,6 +4295,7 @@ static const struct ata_blacklist_entry ata_device_blacklist [] = {
+ 	{ "SSD*INTEL*",			NULL,	ATA_HORKAGE_ZERO_AFTER_TRIM, },
+ 	{ "Samsung*SSD*",		NULL,	ATA_HORKAGE_ZERO_AFTER_TRIM, },
+ 	{ "SAMSUNG*SSD*",		NULL,	ATA_HORKAGE_ZERO_AFTER_TRIM, },
++	{ "SAMSUNG*MZ7KM*",		NULL,	ATA_HORKAGE_ZERO_AFTER_TRIM, },
+ 	{ "ST[1248][0248]0[FH]*",	NULL,	ATA_HORKAGE_ZERO_AFTER_TRIM, },
  
-+	of_node_put(root);
- 	/* Get cable type from device-tree. */
- 	if (cable && !strncmp(cable, "80-", 3)) {
- 		/* Some drives fail to detect 80c cable in PowerBook */
+ 	/* devices that don't properly handle TRIM commands */
 -- 
 2.19.1
 
