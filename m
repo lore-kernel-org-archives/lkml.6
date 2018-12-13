@@ -7,50 +7,49 @@ X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23F47C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:31:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 502F6C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:31:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D158C20880
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:31:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0787F20880
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:31:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544675474;
-	bh=Cl36LEeN6eZ4QFFRvBZtbBjhcClhwpstygWulRB/jw8=;
+	s=default; t=1544675479;
+	bh=FxkpqWoTuJX9diGQLF44vV72exKIZ56+MI4NWgcTSxs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=gX8eooSeyPpr6rhNhNBlCsjHImF6L3SChXzpvdg3JEqMrgHqd7qTNvuOBDNLWVvKq
-	 GzLTFx+GoGljlp5Zh1KMPl8xpVd7jsE5yHiWBGb/lp3yoc3geCXnhV6ACOqLCv91Rv
-	 AvS7KqXq2RZbfQ54Z83B7M2j5Hj4/6KuJIIPNYB4=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D158C20880
+	b=Cy0Ts+YvCDEwnqabyuZiE1SYaYihs7+ql7uakbH9zAlnghPAoHvAYUxgWoVfpF3Ho
+	 SIuxhkzx/XXxh8u5CL7crI/G2n52VUlmofZUj4KN2eGV9OmQwjqkyrpHgGRpG8a3LN
+	 PivjW5XSR2AY8Xj18x+bnGYS7d1BXWvNAhrYrXHU=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0787F20880
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728667AbeLMEbM (ORCPT
+        id S1728695AbeLMEbR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 23:31:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43958 "EHLO mail.kernel.org"
+        Wed, 12 Dec 2018 23:31:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44048 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728629AbeLMEbI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 23:31:08 -0500
+        id S1728629AbeLMEbN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 23:31:13 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3841320879;
-        Thu, 13 Dec 2018 04:31:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C474620879;
+        Thu, 13 Dec 2018 04:31:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544675468;
-        bh=Cl36LEeN6eZ4QFFRvBZtbBjhcClhwpstygWulRB/jw8=;
+        s=default; t=1544675472;
+        bh=FxkpqWoTuJX9diGQLF44vV72exKIZ56+MI4NWgcTSxs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RJ34LyPTAMfh3W/rfMkIk/2UivOmYLpZFVT35HCV0joSWruX2p8WQUyKNpkvKA5jB
-         bOQR3zHkYC+xWQ8L9HA+5lfx5E8NsjtihWshSz8HqDtl/I8kfRXTN3ArK9z/Q2f/o/
-         HeO+cy3oadaFTv80+uZHK3wByCexYkrLkeJoQyY8=
+        b=C50amsKonGYIMPTf6PpRrcCh0X9mSjlWQUtYDTlEDivauaJI5zRidYxvB8fSvK1iM
+         w+uA7z4z++vItv6h9zvFLfLUNC0hWiOjdKNJhoGjPFaeabu9e5Z9tlP3VEbH8rIti2
+         +0sO27QlBAPwg3StB73B//b5E8OljgfydREg0c4U=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     David Miller <davem@davemloft.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
-        linux-kselftest@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 09/41] bpf: Fix verifier log string check for bad alignment.
-Date:   Wed, 12 Dec 2018 23:30:22 -0500
-Message-Id: <20181213043054.75891-9-sashal@kernel.org>
+Cc:     Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Sasha Levin <sashal@kernel.org>, linux-nfs@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 12/41] SUNRPC: Fix a potential race in xprt_connect()
+Date:   Wed, 12 Dec 2018 23:30:25 -0500
+Message-Id: <20181213043054.75891-12-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181213043054.75891-1-sashal@kernel.org>
 References: <20181213043054.75891-1-sashal@kernel.org>
@@ -62,35 +61,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Miller <davem@davemloft.net>
+From: Trond Myklebust <trond.myklebust@hammerspace.com>
 
-[ Upstream commit c01ac66b38660f2b507ccd0b75d28e3002d56fbb ]
+[ Upstream commit 0a9a4304f3614e25d9de9b63502ca633c01c0d70 ]
 
-The message got changed a lot time ago.
+If an asynchronous connection attempt completes while another task is
+in xprt_connect(), then the call to rpc_sleep_on() could end up
+racing with the call to xprt_wake_pending_tasks().
+So add a second test of the connection state after we've put the
+task to sleep and set the XPRT_CONNECTING flag, when we know that there
+can be no asynchronous connection attempts still in progress.
 
-This was responsible for 36 test case failures on sparc64.
-
-Fixes: f1174f77b50c ("bpf/verifier: rework value tracking")
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Fixes: 0b9e79431377d ("SUNRPC: Move the test for XPRT_CONNECTING into...")
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/testing/selftests/bpf/test_verifier.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/sunrpc/xprt.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/tools/testing/selftests/bpf/test_verifier.c b/tools/testing/selftests/bpf/test_verifier.c
-index 041dbbb30ff0..a0591d06c61b 100644
---- a/tools/testing/selftests/bpf/test_verifier.c
-+++ b/tools/testing/selftests/bpf/test_verifier.c
-@@ -8070,7 +8070,7 @@ static void do_test_single(struct bpf_test *test, bool unpriv,
- 
- 	reject_from_alignment = fd_prog < 0 &&
- 				(test->flags & F_NEEDS_EFFICIENT_UNALIGNED_ACCESS) &&
--				strstr(bpf_vlog, "Unknown alignment.");
-+				strstr(bpf_vlog, "misaligned");
- #ifdef CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS
- 	if (reject_from_alignment) {
- 		printf("FAIL\nFailed due to alignment despite having efficient unaligned access: '%s'!\n",
+diff --git a/net/sunrpc/xprt.c b/net/sunrpc/xprt.c
+index 8eb0c4f3b3e9..d0282cc88b14 100644
+--- a/net/sunrpc/xprt.c
++++ b/net/sunrpc/xprt.c
+@@ -780,8 +780,15 @@ void xprt_connect(struct rpc_task *task)
+ 			return;
+ 		if (xprt_test_and_set_connecting(xprt))
+ 			return;
+-		xprt->stat.connect_start = jiffies;
+-		xprt->ops->connect(xprt, task);
++		/* Race breaker */
++		if (!xprt_connected(xprt)) {
++			xprt->stat.connect_start = jiffies;
++			xprt->ops->connect(xprt, task);
++		} else {
++			xprt_clear_connecting(xprt);
++			task->tk_status = 0;
++			rpc_wake_up_queued_task(&xprt->pending, task);
++		}
+ 	}
+ 	xprt_release_write(xprt, task);
+ }
 -- 
 2.19.1
 
