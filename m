@@ -2,123 +2,105 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B2D1C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 22:31:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19EB3C67872
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 22:32:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 372E32086D
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 22:31:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D37B12086D
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 22:32:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LCQGdrmy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 372E32086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="LW4mF41B";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="PdE1kqbB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D37B12086D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728310AbeLMWbC (ORCPT
+        id S1728367AbeLMWcP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 17:31:02 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:37467 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726813AbeLMWbB (ORCPT
+        Thu, 13 Dec 2018 17:32:15 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:45886 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726813AbeLMWcP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 17:31:01 -0500
-Received: by mail-pl1-f194.google.com with SMTP id b5so1729729plr.4;
-        Thu, 13 Dec 2018 14:31:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=message-id:subject:from:reply-to:to:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=wvTCZ5GcXBQDXVByr8N3kAHD6K+rCc1BpSV4CYqHkcs=;
-        b=LCQGdrmyCjsSw5KtGWt0A68ZQJHpdpRcTIjHB9Xu+LnkxChdrUWhZboglDdDWj92II
-         hXkT7iCEC+D0HwIsbbxdYoXf+I2dVQfI8q8vGq5YRrL8jKtDXhqd7j0INGaBsLDC2e/N
-         hYJrZaQDh+cZ9pmLGt3sEe4BHiIGG4GSVfBp0lfJkKMB88dSCGYjFAdZeTWHdKTG1cKm
-         J4CE8RG8BJYyf1mb3r7KfOv521NJMnJQL2EQOxSTiLeSequh5JXEkp2jaSaXrh6P7Dpl
-         ecZ4CCnSEPZOI0db8CE57Iep4EPNT8g+WQfZ9dHgjJx3zf78xq3gxZWWNhwjbGd4c9PU
-         lC4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:reply-to:to:date
-         :in-reply-to:references:user-agent:mime-version
-         :content-transfer-encoding;
-        bh=wvTCZ5GcXBQDXVByr8N3kAHD6K+rCc1BpSV4CYqHkcs=;
-        b=or/CvhsF80X/HLbzFLWj07E4Km3sRygWtLTgW74t2vuufeb06e+Wo5nipERhARpBGb
-         +T6OybFTwfQsBLlIe3yXvoDrxD2bv5w9Ibw3sDBiqilmaAwo0r/cKfQ7xLFh6lMlmwJv
-         izRatKRUQ5ufW6A9GBXWN2ou/dDLyl3+8RlETWCepBNFTjWECyYk5iVA2j7dgdDwJr/c
-         lttPvW76lmXzUTreAmBhuNQaWrt4ID0REbVmjYnfEllmLS4HMd4OXQsl8B6Oodhdt/Jh
-         h1MLCe7/YtqIPgu7ojP8iCgMydPRSPtn7FMsqkteBm3MjHzXoqU5CUjhkGTLIdZIBnEV
-         eQ+A==
-X-Gm-Message-State: AA+aEWYOIGX3Op+6dISUex5yfyTJiPuNAk8troMuoOnaBmJviMoZlSaU
-        3KtieRcrKygL1r3NobWBCUdK5InQbZk=
-X-Google-Smtp-Source: AFSGD/UxuWcy+GV1dkh/XDE9lJd7ppXWhy7QzxcPrf1hn8omePxd7fHummN/YOt18qEU8gEdH0Ghkg==
-X-Received: by 2002:a17:902:3f81:: with SMTP id a1mr573424pld.258.1544740260388;
-        Thu, 13 Dec 2018 14:31:00 -0800 (PST)
-Received: from dwesterg-mobl.amr.corp.intel.com (wsip-174-78-176-194.sd.sd.cox.net. [174.78.176.194])
-        by smtp.gmail.com with ESMTPSA id w3sm3673808pge.8.2018.12.13.14.30.59
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 13 Dec 2018 14:30:59 -0800 (PST)
-Message-ID: <cab060d31b36a6a8d2618ac8a65ddf193d338c5e.camel@gmail.com>
-Subject: Re: [PATCH] arch: arm: socfpga: arria10: Add stmmac ptp_ref clock
- to socdk devicetree
-From:   Dalon Westergreen <dwesterg@gmail.com>
-Reply-To: dwesterg@gmail.com
-To:     Dinh Nguyen <dinguyen@kernel.org>, robh+dt@kernel.org,
-        mark.rutland@arm.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, thor.thayer@intel.com
-Date:   Thu, 13 Dec 2018 14:30:58 -0800
-In-Reply-To: <c703c4d4-4442-19b1-8645-aa906b08f7e6@kernel.org>
-References: <20181213205910.26359-1-dalon.westergreen@linux.intel.com>
-         <c703c4d4-4442-19b1-8645-aa906b08f7e6@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.2 (3.30.2-2.fc29) 
-Mime-Version: 1.0
+        Thu, 13 Dec 2018 17:32:15 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 6185060722; Thu, 13 Dec 2018 22:32:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1544740334;
+        bh=BdeQTVEhx+OiI8GAjJO6EgneqyfQJOFlkV8VQCzRM9I=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=LW4mF41BojFdZbdko0Rz13XcVcF2ZsfCYVI47BTH41XLy/gB6LIa3iGp/nPe7Uytx
+         f8d1MxBspalrysqQFaCgjXuX6cQDG5KfK21kB+lnFuANmNcvfTEkzv8OMHZsW3dwUA
+         hAOmqNzbCy/43eAj/677mk9RYt1ZPuP1sTlB1C5E=
+Received: from [10.226.60.81] (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: jhugo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 09DB660237;
+        Thu, 13 Dec 2018 22:32:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1544740333;
+        bh=BdeQTVEhx+OiI8GAjJO6EgneqyfQJOFlkV8VQCzRM9I=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=PdE1kqbBiR62AveZkXMEkihW/pjooc5DnSBVtwYnHmsb2AHdd0YGBqf/L8z8uEs+e
+         4rubcRfDGF7Hdke1JbLGzHBs7PuCXBMOjTRnoIa8vFWAN8WCkhi36l1IjPzMeqzhrF
+         EAtyxdQxn1TwPqEDu6eduEFRqO0lLnjjMK/hwbpo=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 09DB660237
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
+Subject: Re: [PATCH v2] clk: qcom: Drop unused 8998 clock
+To:     Stephen Boyd <sboyd@kernel.org>, andy.gross@linaro.org,
+        david.brown@linaro.org, mturquette@baylibre.com
+Cc:     bjorn.andersson@linaro.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        marc.w.gonzalez@free.fr
+References: <1544720949-18404-1-git-send-email-jhugo@codeaurora.org>
+ <154472988944.19322.6557891989616167911@swboyd.mtv.corp.google.com>
+From:   Jeffrey Hugo <jhugo@codeaurora.org>
+Message-ID: <d7ac2e27-8e9e-7ee1-430d-ed0f61d98171@codeaurora.org>
+Date:   Thu, 13 Dec 2018 15:32:12 -0700
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
+MIME-Version: 1.0
+In-Reply-To: <154472988944.19322.6557891989616167911@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-12-13 at 15:56 -0600, Dinh Nguyen wrote:
+On 12/13/2018 12:38 PM, Stephen Boyd wrote:
+> Quoting Jeffrey Hugo (2018-12-13 09:09:09)
+>> gcc_lpass_trig_clk is not used downstream, therefore there is no reason to
+>> expect it to be needed for clients.  Let's remove it because messing with
+>> the clock has been observed to cause Linux hangs when the qdss_clk is
+>> initialized by rpmcc.
+>>
+>> Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
+>> Reviewed-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
+>> ---
+>>
+>> v2:
+>> -corrected commit text per Marc
+>> -added Marc's reviewed-by
 > 
-> On 12/13/18 2:59 PM, dwesterg@gmail.com wrote:
-> > From: Dalon Westergreen <dalon.westergreen@linux.intel.com>
-> > 
-> > Add the stmmac ptp_ref clock as it is configured in the arria10 socdk.
-> > The stmmac driver defaults the ptp_ref clock to the main stmmac clock
-> > if the ptp_ref clock is not set in the devicetree.  This is inapprotiate
+> Please slow down. There isn't any need to resend for such things.
 > 
-> s/inapprotiate/inappropriate
-> 
-> > for the arria10 socdk.
-> > 
-> > Signed-off-by: Dalon Westergreen <dalon.westergreen@linux.intel.com>
-> > ---
-> >  arch/arm/boot/dts/socfpga_arria10_socdk.dtsi | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/arch/arm/boot/dts/socfpga_arria10_socdk.dtsi
-> > b/arch/arm/boot/dts/socfpga_arria10_socdk.dtsi
-> > index 2a7466891d0e..58bfa84dcdb3 100644
-> > --- a/arch/arm/boot/dts/socfpga_arria10_socdk.dtsi
-> > +++ b/arch/arm/boot/dts/socfpga_arria10_socdk.dtsi
-> > @@ -74,7 +74,8 @@
-> >  &gmac0 {
-> >  	phy-mode = "rgmii";
-> >  	phy-addr = <0xffffffff>; /* probe for phy addr */
-> > -
-> > +	clocks = <&l4_mp_clk>, <&peri_emac_ptp_clk>;
-> > +	clock-names = "stmmaceth", "ptp_ref";
-> >  	
-> These should go into the base arria10 dtsi at socfpga_arria10.dtsi?
-> Should the other gmacs get the same updates?
 
-Agreed, I will send a new patch set that addresses cv/av, a10, and s10.
+Sorry.  Used to other maintainers.
+ From your v1 comment, would be
+Fixes: 4807c71cc688 (arm64: dts: Add msm8998 SoC and MTP board support)
+I'm assuming from the above, you'll just apply the tag when you apply 
+the change.
 
-> 
-> Also the patch header should be "ARM: dts: arria10:"
-> 
-> Dinh
-
+-- 
+Jeffrey Hugo
+Qualcomm Datacenter Technologies as an affiliate of Qualcomm 
+Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
