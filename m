@@ -2,74 +2,85 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F4D4C67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 08:39:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA278C67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 08:40:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D33AD2075B
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 08:39:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D33AD2075B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
+	by mail.kernel.org (Postfix) with ESMTP id 9960120849
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 08:40:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9960120849
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727732AbeLMIj5 (ORCPT
+        id S1727802AbeLMIkF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 03:39:57 -0500
-Received: from mail-sz2.amlogic.com ([211.162.65.114]:52845 "EHLO
-        mail-sz2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727254AbeLMIje (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 03:39:34 -0500
-Received: from localhost.localdomain (10.28.8.16) by mail-sz2.amlogic.com
- (10.28.11.6) with Microsoft SMTP Server id 15.0.1320.4; Thu, 13 Dec 2018
- 16:39:52 +0800
-From:   Sunny Luo <sunny.luo@amlogic.com>
-To:     Mark Brown <broonie@kernel.org>
-CC:     Sunny Luo <sunny.luo@amlogic.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>,
-        Jianxin Pan <jianxin.pan@amlogic.com>,
-        Xingyu Chen <xingyu.chen@amlogic.com>,
-        <linux-spi@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
+        Thu, 13 Dec 2018 03:40:05 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:38676 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727494AbeLMIjR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 03:39:17 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id B761C20C36; Thu, 13 Dec 2018 09:39:15 +0100 (CET)
+Received: from localhost.localdomain (unknown [91.224.148.103])
+        by mail.bootlin.com (Postfix) with ESMTPSA id CB365206FF;
+        Thu, 13 Dec 2018 09:39:14 +0100 (CET)
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Gregory Clement <gregory.clement@bootlin.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>
+Cc:     <devicetree@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 0/3] spi: meson-axg: add few enhanced features
-Date:   Thu, 13 Dec 2018 16:39:11 +0800
-Message-ID: <1544690354-16409-1-git-send-email-sunny.luo@amlogic.com>
-X-Mailer: git-send-email 2.7.4
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        Nadav Haklai <nadavh@marvell.com>,
+        Marcin Wojtas <mw@semihalf.com>,
+        Grzegorz Jaszczyk <jaz@semihalf.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Subject: [PATCH v4 5/7] MAINTAINERS: phy: add entry for Armada 3700 COMPHY driver
+Date:   Thu, 13 Dec 2018 09:39:06 +0100
+Message-Id: <20181213083908.14180-6-miquel.raynal@bootlin.com>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181213083908.14180-1-miquel.raynal@bootlin.com>
+References: <20181213083908.14180-1-miquel.raynal@bootlin.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.28.8.16]
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-add a few enhanced features for the SPICC controller of Meson-AXG SoC.
+Add myself as Armada 3700 COMPHY driver/bindings maintainer.
 
-These patches are actually quite independent from each other, I send them
-together in case to avoid the file conflicts.
+Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+---
+ MAINTAINERS | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Changes since v1 at [1]
-- Add OF and COMMON_CLK dependence for SPICC in Kconfig to avoid compiling
-  error.
-
-[1] https://lore.kernel.org/lkml/20180503213645.20694-1-yixun.lan@amlogic.com
-
-Sunny Luo (3):
-  spi: meson-axg: support MAX 80M clock
-  spi: meson-axg: enhance output enable feature
-  spi: meson-axg: add a linear clock divider support
-
- drivers/spi/Kconfig           |   2 +-
- drivers/spi/spi-meson-spicc.c | 270 ++++++++++++++++++++++++++++++++++--------
- 2 files changed, 223 insertions(+), 49 deletions(-)
-
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 72e930c51fd4..2ef7a60ab24b 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -8865,6 +8865,12 @@ F:	drivers/gpu/drm/armada/
+ F:	include/uapi/drm/armada_drm.h
+ F:	Documentation/devicetree/bindings/display/armada/
+ 
++MARVELL ARMADA 3700 COMPHY DRIVER
++M:	Miquel Raynal <miquel.raynal@bootlin.com>
++S:	Maintained
++F:	drivers/phy/marvell/phy-mvebu-a3700-comphy.c
++F:	Documentation/devicetree/bindings/phy/phy-mvebu-comphy.txt
++
+ MARVELL CRYPTO DRIVER
+ M:	Boris Brezillon <boris.brezillon@bootlin.com>
+ M:	Arnaud Ebalard <arno@natisbad.org>
 -- 
-2.7.4
+2.19.1
 
