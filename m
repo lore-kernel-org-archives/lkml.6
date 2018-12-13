@@ -2,142 +2,262 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,T_MIXED_ES autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BEFAC67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 00:55:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FA28C67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 00:56:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C23120870
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 00:55:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C23120870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=denx.de
+	by mail.kernel.org (Postfix) with ESMTP id B957A20870
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 00:56:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ericsson.com header.i=@ericsson.com header.b="ZRJZkKmq";
+	dkim=pass (1024-bit key) header.d=ericsson.com header.i=@ericsson.com header.b="ZQl4W12j"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B957A20870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=ericsson.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726438AbeLMAze (ORCPT
+        id S1726451AbeLMA45 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 19:55:34 -0500
-Received: from mail-out.m-online.net ([212.18.0.9]:59673 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726344AbeLMAzd (ORCPT
+        Wed, 12 Dec 2018 19:56:57 -0500
+Received: from sesbmg23.ericsson.net ([193.180.251.37]:52318 "EHLO
+        sesbmg23.ericsson.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726344AbeLMA45 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 19:55:33 -0500
-Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-        by mail-out.m-online.net (Postfix) with ESMTP id 43FZwf6xWYz1qvTn;
-        Thu, 13 Dec 2018 01:55:30 +0100 (CET)
-Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
-        by mail.m-online.net (Postfix) with ESMTP id 43FZwf6JC5z1qstg;
-        Thu, 13 Dec 2018 01:55:30 +0100 (CET)
-X-Virus-Scanned: amavisd-new at mnet-online.de
-Received: from mail.mnet-online.de ([192.168.8.182])
-        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
-        with ESMTP id fp4Bp9Jo87Vz; Thu, 13 Dec 2018 01:55:29 +0100 (CET)
-X-Auth-Info: AYmp2zLKuldguvLK+/XplJGm3BUSmbkjgN7BK5hRdO4=
-Received: from [IPv6:::1] (unknown [195.140.253.167])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.mnet-online.de (Postfix) with ESMTPSA;
-        Thu, 13 Dec 2018 01:55:29 +0100 (CET)
-Subject: Re: [PATCH] serial: 8250: Fix clearing FIFOs in RS485 mode again
-To:     Paul Burton <paul.burton@mips.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>
-References: <20181213004120.yn35mzfo4skffabv@pburton-laptop>
-From:   Marek Vasut <marex@denx.de>
-Message-ID: <cd3e2787-48e1-ce70-0fa7-94df6dc81794@denx.de>
-Date:   Thu, 13 Dec 2018 01:55:29 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20181213004120.yn35mzfo4skffabv@pburton-laptop>
-Content-Type: text/plain; charset=utf-8
+        Wed, 12 Dec 2018 19:56:57 -0500
+DKIM-Signature: v=1; a=rsa-sha256; d=ericsson.com; s=mailgw201801; c=relaxed/simple;
+        q=dns/txt; i=@ericsson.com; t=1544662611; x=1547254611;
+        h=From:Sender:Reply-To:Subject:Date:Message-ID:To:CC:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=ttf4nvyEgeBF9pHiPOKhVhqkb6F1RrGTjmqnIp6DCro=;
+        b=ZRJZkKmqASxHamtcMPXzr+P5e9jgdy4tYdSbJ3knYzk14pYzPd1EvMNMtxUE999m
+        Iw+WgHRud8Z2vf/6tb4OC30SfgIfJeP8QJGuL631VuTNblIiEZfz5WbhNHo9yMfp
+        rZjkS54UFvk2xdTIXsXnCtsRZvvmCsf30xYo55cpjFc=;
+X-AuditID: c1b4fb25-5e9ff7000000191f-0f-5c11ae531f28
+Received: from ESESSMB502.ericsson.se (Unknown_Domain [153.88.183.120])
+        by sesbmg23.ericsson.net (Symantec Mail Security) with SMTP id 02.F1.06431.35EA11C5; Thu, 13 Dec 2018 01:56:51 +0100 (CET)
+Received: from ESESSMR504.ericsson.se (153.88.183.126) by
+ ESESSMB502.ericsson.se (153.88.183.190) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1466.3; Thu, 13 Dec 2018 01:56:51 +0100
+Received: from ESESSMB501.ericsson.se (153.88.183.162) by
+ ESESSMR504.ericsson.se (153.88.183.126) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1466.3; Thu, 13 Dec 2018 01:56:51 +0100
+Received: from NAM03-CO1-obe.outbound.protection.outlook.com (153.88.183.157)
+ by ESESSMB501.ericsson.se (153.88.183.162) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1466.3 via Frontend Transport; Thu, 13 Dec 2018 01:56:50 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ericsson.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ttf4nvyEgeBF9pHiPOKhVhqkb6F1RrGTjmqnIp6DCro=;
+ b=ZQl4W12jyO9kk2T9gz0prJRZEn0CS6oYTCvkRqM8G2aUB7gZBBof1ryiLViEb9tEoYIAL7K5kI3VxTP+6pOexbDQ0kP8suIIqtaTVRmB/96DsciwMK9H2ysRpoEo+NwuKDhGB9WG6oFNqO8UIEmSasZuvBvJzFgyGRcUCp4QBM4=
+Received: from DM5PR15MB1513.namprd15.prod.outlook.com (10.173.225.146) by
+ DM5PR15MB1291.namprd15.prod.outlook.com (10.173.209.149) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1404.18; Thu, 13 Dec 2018 00:56:47 +0000
+Received: from DM5PR15MB1513.namprd15.prod.outlook.com
+ ([fe80::dd9f:cb91:17d3:2bd3]) by DM5PR15MB1513.namprd15.prod.outlook.com
+ ([fe80::dd9f:cb91:17d3:2bd3%7]) with mapi id 15.20.1404.026; Thu, 13 Dec 2018
+ 00:56:47 +0000
+From:   Jon Maloy <jon.maloy@ericsson.com>
+To:     Dmitry Vyukov <dvyukov@google.com>,
+        "syzbot+aab62b9c7b12e7c6ab0b@syzkaller.appspotmail.com" 
+        <syzbot+aab62b9c7b12e7c6ab0b@syzkaller.appspotmail.com>,
+        Ying Xue <ying.xue@windriver.com>,
+        David Miller <davem@davemloft.net>,
+        "tipc-discussion@lists.sourceforge.net" 
+        <tipc-discussion@lists.sourceforge.net>
+CC:     Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        LKML <linux-kernel@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
+Subject: RE: general protection fault in __ip_append_data
+Thread-Topic: general protection fault in __ip_append_data
+Thread-Index: AQHUkgl45nagrawiS0uI4g36MwVW96V68GmAgADoVOA=
+Date:   Thu, 13 Dec 2018 00:56:46 +0000
+Message-ID: <DM5PR15MB1513436E8A560A2325F18ACE9AA00@DM5PR15MB1513.namprd15.prod.outlook.com>
+References: <000000000000e68826057cd10e99@google.com>
+ <CACT4Y+avtWqGKCyJGL=W407GW9Z8pTZfrUnUjh2AuxR9q4fnFQ@mail.gmail.com>
+In-Reply-To: <CACT4Y+avtWqGKCyJGL=W407GW9Z8pTZfrUnUjh2AuxR9q4fnFQ@mail.gmail.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=jon.maloy@ericsson.com; 
+x-originating-ip: [24.225.233.31]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DM5PR15MB1291;6:vplCoxYdoz/h0nbx27oWJPZitZChuxYmqyQpNbVkIveIoda18GmzqWADOwVEjKgxM8OrinI/rxAX1uOACkupQiO7H2DnDcJZETGWbUmev4sEu3dZyDYxbuT66Ymzd5g1juPbQJfh3u+oh3oVgCy+vr9jj+pf6/OoDeBrFS1g4LXM1vpt6Stp/zbiuSSCD1EE3OKPmucC1R9/fmomjaDa/x+Wi7dyFAeAHiicMAzUCcCszVKI+st5jYSskGbNFOWRbQ8AAdptPpRg6uJw9J2dFLmxtjn9QJbV7FIZZ4oH66SjJmlh8P2VQdnBiNWraaKCST0U0SiRVdkx73ZsQxQUUI79SmD3c5n+BnTOP7tMkN4kxY1T7QVv4Qg5AFkdVtk+TANWKzE5jLX1qtEBz0S4GoOjXPnSz493tKSU8sIPm9dZAXi2h5fg9DduTQMccU6oBmVJo2kPQA8+xxC74ucNlg==;5:HrA0kyAI0IpKBRiT3QWjuqVB+Y+1QG64Bw6H+B/F4uS0Kt9bW8aNOxgXBlvfab2m0rfeDYKQ7f+xtMeQuXedqDxHjE9akP/Qs6ko+QpVYgW5JHntZ1wFj7v29XTmfJcIJZ5TQAWeEwEyYNql1GyctfqmTA2gx4G8nch7eokmhz4=;7:GDK/J+QAhxeGo2Vhrk4h3pAgLRL7KPWXOzFRZj2/I10BJesEc1x47VVlG5s5fuVmTTN8cWf/+HVYcOPBnB/sBHlo6ogsgAIURINzCCggPhTRpjCcyA7swe8dkB5NsMk7mY8G+37MgrXzUndAJlVKdQ==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 0102dbd8-dc64-47ea-5cb4-08d66095dba6
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:DM5PR15MB1291;
+x-ms-traffictypediagnostic: DM5PR15MB1291:
+x-microsoft-antispam-prvs: <DM5PR15MB1291F6EFF2327B75A34A04D69AA00@DM5PR15MB1291.namprd15.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(6040522)(2401047)(8121501046)(5005006)(10201501046)(93006095)(93001095)(3002001)(3231475)(944501520)(52105112)(2017080701022)(148016)(149066)(150057)(6041310)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:DM5PR15MB1291;BCL:0;PCL:0;RULEID:;SRVR:DM5PR15MB1291;
+x-forefront-prvs: 088552DE73
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(376002)(136003)(346002)(396003)(39860400002)(199004)(189003)(13464003)(446003)(33656002)(2501003)(97736004)(476003)(44832011)(486006)(105586002)(11346002)(45080400002)(14454004)(966005)(71200400001)(229853002)(66066001)(256004)(316002)(81166006)(8676002)(14444005)(6436002)(54906003)(8936002)(25786009)(99286004)(186003)(7696005)(110136005)(478600001)(81156014)(53936002)(86362001)(71190400001)(5660300001)(9686003)(6306002)(575784001)(74316002)(4326008)(106356001)(3846002)(6246003)(26005)(53546011)(6506007)(2906002)(305945005)(55016002)(7416002)(6116002)(68736007)(76176011)(102836004)(7736002)(99710200001);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR15MB1291;H:DM5PR15MB1513.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: ericsson.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: HwRq2AwM2Iq+WDLko03pBy5nn5/h4F6kok13LK8qESOJLJxhURsyKLIH9j6U2IBUxBnrTKhKVX9Uq2gq7oRSMSn1ljwlW0LBkHmayPlrEgdiT875rDqKcsJL3JAXFjRjL3rahsncvtlXsRAbinOvGLrpPgi514utYMrj2xBZERDm5U8yf7BsRzsFD5Epm0i0s2VnN18b+niA3mARfQFPVxNbpc2tYMcKCPtoA4pvdnUDV3eOWyueICyXpDTkG30zp33GOPIgfilREQVuD1xJhFSbs+gwUmZyCMBpf0Dkvpyf/HeLvE/2QkTiryPuoiHi
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0102dbd8-dc64-47ea-5cb4-08d66095dba6
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Dec 2018 00:56:46.9429
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 92e84ceb-fbfd-47ab-be52-080c6b87953f
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR15MB1291
+X-OriginatorOrg: ericsson.com
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0hTYRjG+845m2ej6ee89KY4cGU30i5GnVSi/jBOkV0hUtZl1UHNy2xH
+        LSPIyFZMrFXO8pYjK0okm66LWoRrXaxo0Wxqf6ibCmkKRU0JU9qt6L/f+zzPx/u88NGktFMQ
+        QWfm5nPqXGW2XCimKvc8Oh67616wYvn7iTimxlpCMTqHJoD5oBkVMLa2GiHz0hDOfG4tEzA9
+        plqSMVmPMIPd3STjeqql1otZ091egjU0F7BPLnUKWY29gWDbDT8I1jQ1KWQrxxewP5plbJPp
+        AbFdlCZOOsxlZxZy6mXrDogz+h7zeSWbjz/sek4VIx2rRTQNeBU4LQu1SERLsQWBY3q1Fond
+        PIHAeEVH/Bu6KpqEvuEmAdUP9KTnCYV1JEy5kn2GnoDGZy3+lBOBxW4XelJCvAhGKs4jjxGK
+        Wwlw/rJ4UyS2IxjucFKeVAheC++6Lgo8rUJxAry/dcIje9D03exfFwPthhdelmAF2K6doXzN
+        T8JMRRvhYRHeAe0X6r06wuEw+abRq5N4DnweqvMyYAw3n1hJH4fByOCMdy3CqfB2ONUnR4P1
+        /g1/JAo+1pV6+wO2C+Fi30e/EQvf9Ho/p0Dx6Wl/6AOCyukLlM9YAnZbj5+z4KvZKfCxDBrK
+        HJQOraj6r1+VuweJF0NT2zKfHA3lpY6AKu/JwdBZOUQZENWAwniOP5iTvjI+jlNnHuJ5VW5c
+        LpffjNwfrMM0FfMY2cY2mBGmkXy25GF6sEIqUBbyRTlmBDQpD5UMprklyWFl0QlOrdqvLsjm
+        eDOKpCn5HMlvqdvC6cp8Lovj8jj1X5egRRHFSFUr3ztgrH7Zu/XnxqWbNJ+i662d5UlJliK8
+        e3TpWFhifPLO5JxZWapXIuJ2YtD1wK7xbdZ9elqWn7Lp8s95x8L6J/u/yBLnJjguzRCxkRn9
+        xqqaOy3G3v0as6tluMlGnOvYOzEddNalXvxaF2jfEvV7wdXAowOKk/MPhShenVqTKqf4DOWK
+        JaSaV/4Bds/tlVwDAAA=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/13/2018 01:41 AM, Paul Burton wrote:
-> Hi Marek / Greg / all,
-> 
-> On Mon, Sep 03, 2018 at 12:44:52AM +0000, Marek Vasut wrote:
->> The 8250 FIFOs indeed need to be cleared after stopping transmission in
->> RS485 mode without SER_RS485_RX_DURING_TX flag set. But there are two
->> problems with the approach taken by the previous patch from Fixes tag.
->>
->> First, serial8250_clear_fifos() should clear fifos, but what it really
->> does is it enables the FIFOs unconditionally if present, clears them
->> and then sets the FCR register to zero, which effectively disables the
->> FIFOs. In case the FIFO is disabled, enabling it and clearing it makes
->> no sense and in fact can trigger misbehavior of the 8250 core. Moreover,
->> the FCR register may contain other FIFO configuration bits which may not
->> be writable unconditionally and writing them incorrectly can trigger
->> misbehavior of the 8250 core too. (ie. AM335x UART swallows the first
->> byte and retransmits the last byte twice because of this FCR write).
->>
->> Second, serial8250_clear_and_reinit_fifos() completely reloads the FCR,
->> but what really has to happen at the end of the RS485 transmission is
->> clearing of the FIFOs and nothing else.
->>
->> This patch repairs serial8250_clear_fifos() so that it really only
->> clears the FIFOs by operating on FCR[2:1] bits and leaves all the
->> other bits alone. It also undoes serial8250_clear_and_reinit_fifos()
->> from __do_stop_tx_rs485() as serial8250_clear_fifos() is sufficient.
->>
->> Signed-off-by: Marek Vasut <marex@denx.de>
->> Fixes: 2bed8a8e7072 ("Clearing FIFOs in RS485 emulation mode causes subsequent transmits to break")
->> Cc: Daniel Jedrychowski <avistel@gmail.com>
->> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->> ---
->> NOTE: I am not entirely certain this won't break some other hardware,
->>       esp. since there might be dependencies on the weird previous
->>       behavior of the serial8250_clear_fifos() somewhere.
-> 
-> This patch has broken the UART on my Ingenic JZ4780 based MIPS Creator
-> Ci20 board. After this patch the system seems to detect garbage input
-> that is recognized as SysRq triggers which spam the console & eventually
-> reset the system.
-> 
-> One thing of note is that both serial8250_do_startup() &
-> serial8250_do_shutdown() contain comments that explicitly state their
-> expectation that the FIFOs will be disabled by serial8250_clear_fifos(),
-> which is no longer true after this patch.
-> 
-> I found that restoring the old behaviour for serial8250_do_startup() is
-> enough to make my system work again, but this is obviously a hack:
-> 
-> diff --git a/drivers/tty/serial/8250/8250_port.c b/drivers/tty/serial/8250/8250_port.c
-> index f776b3eafb96..8def02933d19 100644
-> --- a/drivers/tty/serial/8250/8250_port.c
-> +++ b/drivers/tty/serial/8250/8250_port.c
-> @@ -2210,7 +2210,11 @@ int serial8250_do_startup(struct uart_port *port)
->  	 * Clear the FIFO buffers and disable them.
->  	 * (they will be reenabled in set_termios())
->  	 */
-> -	serial8250_clear_fifos(up);
-> +	if (up->capabilities & UART_CAP_FIFO) {
-> +		serial_port_out(port, UART_FCR, UART_FCR_ENABLE_FIFO);
-> +		serial8250_clear_fifos(up);
-> +		serial_port_out(port, UART_FCR, 0);
-> +	}
->  
->  	/*
->  	 * Clear the interrupt registers.
-> 
-> Any ideas? Given the mismatch between this patch & comments that clearly
-> expect the old behaviour I think the __do_stop_tx_rs485() case probably
-> needs something different to other callers.
-
-The problem the original patch fixed was that too many bits were cleared
-in the FCR on OMAP3/AM335x . If you have such a system (a beaglebone or
-similar), you can come up with a solution which can accommodate both the
-JZ4780 and AM335x. Can you take a look ? The datasheet for both should
-be public too.
-
--- 
-Best regards,
-Marek Vasut
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogRG1pdHJ5IFZ5dWtvdiA8
+ZHZ5dWtvdkBnb29nbGUuY29tPg0KPiBTZW50OiAxMi1EZWMtMTggMDY6MDMNCj4gVG86IHN5emJv
+dCthYWI2MmI5YzdiMTJlN2M2YWIwYkBzeXprYWxsZXIuYXBwc3BvdG1haWwuY29tOyBKb24gTWFs
+b3kNCj4gPGpvbi5tYWxveUBlcmljc3Nvbi5jb20+OyBZaW5nIFh1ZSA8eWluZy54dWVAd2luZHJp
+dmVyLmNvbT47IERhdmlkDQo+IE1pbGxlciA8ZGF2ZW1AZGF2ZW1sb2Z0Lm5ldD47IHRpcGMtZGlz
+Y3Vzc2lvbkBsaXN0cy5zb3VyY2Vmb3JnZS5uZXQNCj4gQ2M6IEFsZXhleSBLdXpuZXRzb3YgPGt1
+em5ldEBtczIuaW5yLmFjLnJ1PjsgTEtNTCA8bGludXgtDQo+IGtlcm5lbEB2Z2VyLmtlcm5lbC5v
+cmc+OyBuZXRkZXYgPG5ldGRldkB2Z2VyLmtlcm5lbC5vcmc+OyBzeXprYWxsZXItYnVncw0KPiA8
+c3l6a2FsbGVyLWJ1Z3NAZ29vZ2xlZ3JvdXBzLmNvbT47IEhpZGVha2kgWU9TSElGVUpJIDx5b3No
+ZnVqaUBsaW51eC0NCj4gaXB2Ni5vcmc+DQo+IFN1YmplY3Q6IFJlOiBnZW5lcmFsIHByb3RlY3Rp
+b24gZmF1bHQgaW4gX19pcF9hcHBlbmRfZGF0YQ0KPiANCj4gT24gV2VkLCBEZWMgMTIsIDIwMTgg
+YXQgMTE6NTcgQU0gc3l6Ym90DQo+IDxzeXpib3QrYWFiNjJiOWM3YjEyZTdjNmFiMGJAc3l6a2Fs
+bGVyLmFwcHNwb3RtYWlsLmNvbT4gd3JvdGU6DQo+ID4NCj4gPiBIZWxsbywNCj4gPg0KPiA+IHN5
+emJvdCBmb3VuZCB0aGUgZm9sbG93aW5nIGNyYXNoIG9uOg0KPiA+DQo+ID4gSEVBRCBjb21taXQ6
+ICAgIGY1ZDU4Mjc3N2JjYiBNZXJnZSBicmFuY2ggJ2Zvci1saW51cycgb2YgZ2l0Oi8vZ2l0Lmtl
+cm5lbC4uLg0KPiA+IGdpdCB0cmVlOiAgICAgICB1cHN0cmVhbQ0KPiA+IGNvbnNvbGUgb3V0cHV0
+Og0KPiA+IGh0dHBzOi8vc3l6a2FsbGVyLmFwcHNwb3QuY29tL3gvbG9nLnR4dD94PTE2ZTAzYWZi
+NDAwMDAwDQo+ID4ga2VybmVsIGNvbmZpZzoNCj4gPiBodHRwczovL3N5emthbGxlci5hcHBzcG90
+LmNvbS94Ly5jb25maWc/eD1jODk3MGM4OWEwZWZiYjIzDQo+ID4gZGFzaGJvYXJkIGxpbms6DQo+
+IGh0dHBzOi8vc3l6a2FsbGVyLmFwcHNwb3QuY29tL2J1Zz9leHRpZD1hYWI2MmI5YzdiMTJlN2M2
+YWIwYg0KPiA+IGNvbXBpbGVyOiAgICAgICBnY2MgKEdDQykgOC4wLjEgMjAxODA0MTMgKGV4cGVy
+aW1lbnRhbCkNCj4gPiBzeXogcmVwcm86DQo+IGh0dHBzOi8vc3l6a2FsbGVyLmFwcHNwb3QuY29t
+L3gvcmVwcm8uc3l6P3g9MTNiYjljOGI0MDAwMDANCj4gPiBDIHJlcHJvZHVjZXI6DQo+IGh0dHBz
+Oi8vc3l6a2FsbGVyLmFwcHNwb3QuY29tL3gvcmVwcm8uYz94PTEyNjE2NjdkNDAwMDAwDQo+IA0K
+PiBGcm9tIHRoZSByZXByb2R1Y2VyIGl0IGxvb2tzIGxpa2UgYSBkdXAgb2YgVElQQyBidWc6DQo+
+IA0KPiAjc3l6IGR1cDogS0FTQU46IHVzZS1hZnRlci1mcmVlIFJlYWQgaW4ga2ZyZWVfc2tiICgy
+KQ0KDQpBZ3JlZSB3aXRoIHRoYXQsIGFsdGhvdWdoIGl0IGlzIG5vdCB0b3RhbGx5IG9idmlvdXMu
+IA0KTGV0J3Mgc2VlIHdoYXQgdGhlIGZ1cnRoZXIgdGVzdGluZyBnaXZlcyBhZnRlciBDb25nJ3Mg
+cGF0Y2ggaXMgYXBwbGllZC4NCg0KLy8vam9uDQoNCj4gDQo+IA0KPiANCj4gPiBJTVBPUlRBTlQ6
+IGlmIHlvdSBmaXggdGhlIGJ1ZywgcGxlYXNlIGFkZCB0aGUgZm9sbG93aW5nIHRhZyB0byB0aGUg
+Y29tbWl0Og0KPiA+IFJlcG9ydGVkLWJ5OiBzeXpib3QrYWFiNjJiOWM3YjEyZTdjNmFiMGJAc3l6
+a2FsbGVyLmFwcHNwb3RtYWlsLmNvbQ0KPiA+DQo+ID4gRW5hYmxpbmcgb2YgYmVhcmVyIDx1ZHA6
+c3l6MT4gcmVqZWN0ZWQsIGFscmVhZHkgZW5hYmxlZCBFbmFibGluZyBvZg0KPiA+IGJlYXJlciA8
+dWRwOnN5ejE+IHJlamVjdGVkLCBhbHJlYWR5IGVuYWJsZWQgRW5hYmxpbmcgb2YgYmVhcmVyDQo+
+ID4gPHVkcDpzeXoxPiByZWplY3RlZCwgYWxyZWFkeSBlbmFibGVkDQo+ID4ga2FzYW46IENPTkZJ
+R19LQVNBTl9JTkxJTkUgZW5hYmxlZA0KPiA+IGthc2FuOiBHUEYgY291bGQgYmUgY2F1c2VkIGJ5
+IE5VTEwtcHRyIGRlcmVmIG9yIHVzZXIgbWVtb3J5IGFjY2Vzcw0KPiA+IGdlbmVyYWwgcHJvdGVj
+dGlvbiBmYXVsdDogMDAwMCBbIzFdIFBSRUVNUFQgU01QIEtBU0FODQo+ID4gQ1BVOiAxIFBJRDog
+MTYgQ29tbToga3NvZnRpcnFkLzEgTm90IHRhaW50ZWQgNC4yMC4wLXJjNisgIzM3MSBIYXJkd2Fy
+ZQ0KPiA+IG5hbWU6IEdvb2dsZSBHb29nbGUgQ29tcHV0ZSBFbmdpbmUvR29vZ2xlIENvbXB1dGUg
+RW5naW5lLCBCSU9TDQo+IEdvb2dsZQ0KPiA+IDAxLzAxLzIwMTENCj4gPiBSSVA6IDAwMTA6X19p
+cF9hcHBlbmRfZGF0YS5pc3JhLjQ4KzB4MzFhLzB4MjliMA0KPiA+IG5ldC9pcHY0L2lwX291dHB1
+dC5jOjg5Ng0KPiA+IENvZGU6IGM3IDg1IGM4IGZkIGZmIGZmIDAwIDAwIDAwIDAwIDBmIDg1IDEy
+IDEwIDAwIDAwIGU4IDdiIGMxIGUwIGZhDQo+ID4gNDggOGINCj4gPiA5NSA0OCBmZSBmZiBmZiA0
+OCBiOCAwMCAwMCAwMCAwMCAwMCBmYyBmZiBkZiA0OCBjMSBlYSAwMyA8ODA+IDNjIDAyIDAwDQo+
+ID4gMGYNCj4gPiA4NSBlNSAyMiAwMCAwMCA0OCA4YiA4NSA0OCBmZSBmZiBmZiA0OCA4YiAxOCA0
+OCBiOA0KPiA+IFJTUDogMDAxODpmZmZmODg4MWQ5YjU2OWMwIEVGTEFHUzogMDAwMTAyNDYNCj4g
+PiBSQVg6IGRmZmZmYzAwMDAwMDAwMDAgUkJYOiAwMDAwMDAwMDAwMDAwMDAwIFJDWDogZmZmZmZm
+ZmY4NjllYzI3NQ0KPiA+IFJEWDogMDAwMDAwMDAwMDAwMDAwMCBSU0k6IGZmZmZmZmZmODY5ZWMy
+ZjUgUkRJOiAwMDAwMDAwMDAwMDAwMDAxDQo+ID4gUkJQOiBmZmZmODg4MWQ5YjU2YzI4IFIwODog
+ZmZmZjg4ODFkOWI0YTQ0MCBSMDk6IGZmZmZmZmZmODZiMTEzYjANCj4gPiBSMTA6IGZmZmY4ODgx
+ZDliNTZkYTAgUjExOiAwMDAwMDAwMDAwMDAwMDAwIFIxMjogZmZmZjg4ODFkMmMxOGE4OA0KPiA+
+IFIxMzogZmZmZmZmZmY4NjI1OGJhMCBSMTQ6IGZmZmZmZmZmOGJjMzcxMTAgUjE1OiBmZmZmODg4
+MWQyYzE4Y2Q4DQo+ID4gRlM6ICAwMDAwMDAwMDAwMDAwMDAwKDAwMDApIEdTOmZmZmY4ODgxZGFm
+MDAwMDAoMDAwMCkNCj4gPiBrbmxHUzowMDAwMDAwMDAwMDAwMDAwDQo+ID4gQ1M6ICAwMDEwIERT
+OiAwMDAwIEVTOiAwMDAwIENSMDogMDAwMDAwMDA4MDA1MDAzMw0KPiA+IENSMjogMDAwMDAwMDAy
+MDAwMWFjMCBDUjM6IDAwMDAwMDAxY2I2ZWEwMDAgQ1I0OiAwMDAwMDAwMDAwMTQwNmUwDQo+ID4g
+RFIwOiAwMDAwMDAwMDAwMDAwMDAwIERSMTogMDAwMDAwMDAwMDAwMDAwMCBEUjI6IDAwMDAwMDAw
+MDAwMDAwMDANCj4gPiBEUjM6IDAwMDAwMDAwMDAwMDAwMDAgRFI2OiAwMDAwMDAwMGZmZmUwZmYw
+IERSNzogMDAwMDAwMDAwMDAwMDQwMCBDYWxsDQo+ID4gVHJhY2U6DQo+ID4gICBpcF9hcHBlbmRf
+ZGF0YS5wYXJ0LjQ5KzB4ZWYvMHgxNzAgbmV0L2lwdjQvaXBfb3V0cHV0LmM6MTE5Nw0KPiA+ICAg
+aXBfYXBwZW5kX2RhdGErMHg2ZC8weDkwIG5ldC9pcHY0L2lwX291dHB1dC5jOjExODYNCj4gPiAg
+IGljbXBfcHVzaF9yZXBseSsweDE4ZS8weDU0MCBuZXQvaXB2NC9pY21wLmM6Mzc1DQo+ID4gICBp
+Y21wX3NlbmQrMHgxNTQ0LzB4MWJkMCBuZXQvaXB2NC9pY21wLmM6NzM2DQo+ID4gICBfX3VkcDRf
+bGliX3JjdisweDI0ODQvMHgzMmUwIG5ldC9pcHY0L3VkcC5jOjIyMzMNCj4gPiAgIHVkcF9yY3Yr
+MHgyMS8weDMwIG5ldC9pcHY0L3VkcC5jOjIzOTINCj4gPiAgIGlwX2xvY2FsX2RlbGl2ZXJfZmlu
+aXNoKzB4MmU5LzB4ZGEwIG5ldC9pcHY0L2lwX2lucHV0LmM6MjE1DQo+ID4gICBORl9IT09LIGlu
+Y2x1ZGUvbGludXgvbmV0ZmlsdGVyLmg6Mjg5IFtpbmxpbmVdDQo+ID4gICBpcF9sb2NhbF9kZWxp
+dmVyKzB4MWU5LzB4NzUwIG5ldC9pcHY0L2lwX2lucHV0LmM6MjU2DQo+ID4gICBkc3RfaW5wdXQg
+aW5jbHVkZS9uZXQvZHN0Lmg6NDUwIFtpbmxpbmVdDQo+ID4gICBpcF9yY3ZfZmluaXNoKzB4MWY5
+LzB4MzAwIG5ldC9pcHY0L2lwX2lucHV0LmM6NDE1DQo+ID4gICBORl9IT09LIGluY2x1ZGUvbGlu
+dXgvbmV0ZmlsdGVyLmg6Mjg5IFtpbmxpbmVdDQo+ID4gICBpcF9yY3YrMHhlZC8weDYwMCBuZXQv
+aXB2NC9pcF9pbnB1dC5jOjUyNA0KPiA+ICAgX19uZXRpZl9yZWNlaXZlX3NrYl9vbmVfY29yZSsw
+eDE0ZC8weDIwMCBuZXQvY29yZS9kZXYuYzo0OTQ2DQo+ID4gICBfX25ldGlmX3JlY2VpdmVfc2ti
+KzB4MmMvMHgxZTAgbmV0L2NvcmUvZGV2LmM6NTA1Ng0KPiA+ICAgcHJvY2Vzc19iYWNrbG9nKzB4
+MjRlLzB4N2EwIG5ldC9jb3JlL2Rldi5jOjU4NjQNCj4gPiAgIG5hcGlfcG9sbCBuZXQvY29yZS9k
+ZXYuYzo2Mjg3IFtpbmxpbmVdDQo+ID4gICBuZXRfcnhfYWN0aW9uKzB4N2ZhLzB4MTliMCBuZXQv
+Y29yZS9kZXYuYzo2MzUzDQo+ID4gICBfX2RvX3NvZnRpcnErMHgzMDgvMHhiN2Uga2VybmVsL3Nv
+ZnRpcnEuYzoyOTINCj4gPiAgIHJ1bl9rc29mdGlycWQrMHg1ZS8weDEwMCBrZXJuZWwvc29mdGly
+cS5jOjY1NA0KPiA+ICAgc21wYm9vdF90aHJlYWRfZm4rMHg2OGIvMHhhMDAga2VybmVsL3NtcGJv
+b3QuYzoxNjQNCj4gPiAgIGt0aHJlYWQrMHgzNWEvMHg0NDAga2VybmVsL2t0aHJlYWQuYzoyNDYN
+Cj4gPiAgIHJldF9mcm9tX2ZvcmsrMHgzYS8weDUwIGFyY2gveDg2L2VudHJ5L2VudHJ5XzY0LlM6
+MzUyIE1vZHVsZXMgbGlua2VkDQo+ID4gaW46DQo+ID4gLS0tWyBlbmQgdHJhY2UgNzYyMTY1Y2Rh
+NWZkYzEzOCBdLS0tDQo+ID4gRW5hYmxpbmcgb2YgYmVhcmVyIDx1ZHA6c3l6MT4gcmVqZWN0ZWQs
+IGFscmVhZHkgZW5hYmxlZA0KPiA+IFJJUDogMDAxMDpfX2lwX2FwcGVuZF9kYXRhLmlzcmEuNDgr
+MHgzMWEvMHgyOWIwDQo+ID4gbmV0L2lwdjQvaXBfb3V0cHV0LmM6ODk2DQo+ID4gQ29kZTogYzcg
+ODUgYzggZmQgZmYgZmYgMDAgMDAgMDAgMDAgMGYgODUgMTIgMTAgMDAgMDAgZTggN2IgYzEgZTAg
+ZmENCj4gPiA0OCA4Yg0KPiA+IDk1IDQ4IGZlIGZmIGZmIDQ4IGI4IDAwIDAwIDAwIDAwIDAwIGZj
+IGZmIGRmIDQ4IGMxIGVhIDAzIDw4MD4gM2MgMDIgMDANCj4gPiAwZg0KPiA+IDg1IGU1IDIyIDAw
+IDAwIDQ4IDhiIDg1IDQ4IGZlIGZmIGZmIDQ4IDhiIDE4IDQ4IGI4IEVuYWJsaW5nIG9mIGJlYXJl
+cg0KPiA+IDx1ZHA6c3l6MT4gcmVqZWN0ZWQsIGFscmVhZHkgZW5hYmxlZA0KPiA+IFJTUDogMDAx
+ODpmZmZmODg4MWQ5YjU2OWMwIEVGTEFHUzogMDAwMTAyNDYNCj4gPiBSQVg6IGRmZmZmYzAwMDAw
+MDAwMDAgUkJYOiAwMDAwMDAwMDAwMDAwMDAwIFJDWDogZmZmZmZmZmY4NjllYzI3NQ0KPiA+IFJE
+WDogMDAwMDAwMDAwMDAwMDAwMCBSU0k6IGZmZmZmZmZmODY5ZWMyZjUgUkRJOiAwMDAwMDAwMDAw
+MDAwMDAxDQo+ID4gUkJQOiBmZmZmODg4MWQ5YjU2YzI4IFIwODogZmZmZjg4ODFkOWI0YTQ0MCBS
+MDk6IGZmZmZmZmZmODZiMTEzYjANCj4gPiBSMTA6IGZmZmY4ODgxZDliNTZkYTAgUjExOiAwMDAw
+MDAwMDAwMDAwMDAwIFIxMjogZmZmZjg4ODFkMmMxOGE4OA0KPiA+IFIxMzogZmZmZmZmZmY4NjI1
+OGJhMCBSMTQ6IGZmZmZmZmZmOGJjMzcxMTAgUjE1OiBmZmZmODg4MWQyYzE4Y2Q4DQo+ID4gRW5h
+Ymxpbmcgb2YgYmVhcmVyIDx1ZHA6c3l6MT4gcmVqZWN0ZWQsIGFscmVhZHkgZW5hYmxlZA0KPiA+
+IEZTOiAgMDAwMDAwMDAwMDAwMDAwMCgwMDAwKSBHUzpmZmZmODg4MWRhZjAwMDAwKDAwMDApDQo+
+ID4ga25sR1M6MDAwMDAwMDAwMDAwMDAwMA0KPiA+IENTOiAgMDAxMCBEUzogMDAwMCBFUzogMDAw
+MCBDUjA6IDAwMDAwMDAwODAwNTAwMzMNCj4gPiBDUjI6IDAwMDAwMDAwMjAwMDFhYzAgQ1IzOiAw
+MDAwMDAwMDA5NDZhMDAwIENSNDogMDAwMDAwMDAwMDE0MDZlMA0KPiA+IERSMDogMDAwMDAwMDAw
+MDAwMDAwMCBEUjE6IDAwMDAwMDAwMDAwMDAwMDAgRFIyOiAwMDAwMDAwMDAwMDAwMDAwDQo+ID4g
+RFIzOiAwMDAwMDAwMDAwMDAwMDAwIERSNjogMDAwMDAwMDBmZmZlMGZmMCBEUjc6IDAwMDAwMDAw
+MDAwMDA0MDANCj4gPg0KPiA+DQo+ID4gLS0tDQo+ID4gVGhpcyBidWcgaXMgZ2VuZXJhdGVkIGJ5
+IGEgYm90LiBJdCBtYXkgY29udGFpbiBlcnJvcnMuDQo+ID4gU2VlIGh0dHBzOi8vZ29vLmdsL3Rw
+c21FSiBmb3IgbW9yZSBpbmZvcm1hdGlvbiBhYm91dCBzeXpib3QuDQo+ID4gc3l6Ym90IGVuZ2lu
+ZWVycyBjYW4gYmUgcmVhY2hlZCBhdCBzeXprYWxsZXJAZ29vZ2xlZ3JvdXBzLmNvbS4NCj4gPg0K
+PiA+IHN5emJvdCB3aWxsIGtlZXAgdHJhY2sgb2YgdGhpcyBidWcgcmVwb3J0LiBTZWU6DQo+ID4g
+aHR0cHM6Ly9nb28uZ2wvdHBzbUVKI2J1Zy1zdGF0dXMtdHJhY2tpbmcgZm9yIGhvdyB0byBjb21t
+dW5pY2F0ZSB3aXRoDQo+ID4gc3l6Ym90Lg0KPiA+IHN5emJvdCBjYW4gdGVzdCBwYXRjaGVzIGZv
+ciB0aGlzIGJ1ZywgZm9yIGRldGFpbHMgc2VlOg0KPiA+IGh0dHBzOi8vZ29vLmdsL3Rwc21FSiN0
+ZXN0aW5nLXBhdGNoZXMNCj4gPg0KPiA+IC0tDQo+ID4gWW91IHJlY2VpdmVkIHRoaXMgbWVzc2Fn
+ZSBiZWNhdXNlIHlvdSBhcmUgc3Vic2NyaWJlZCB0byB0aGUgR29vZ2xlDQo+IEdyb3VwcyAic3l6
+a2FsbGVyLWJ1Z3MiIGdyb3VwLg0KPiA+IFRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBncm91cCBh
+bmQgc3RvcCByZWNlaXZpbmcgZW1haWxzIGZyb20gaXQsIHNlbmQgYW4NCj4gZW1haWwgdG8gc3l6
+a2FsbGVyLWJ1Z3MrdW5zdWJzY3JpYmVAZ29vZ2xlZ3JvdXBzLmNvbS4NCj4gPiBUbyB2aWV3IHRo
+aXMgZGlzY3Vzc2lvbiBvbiB0aGUgd2ViIHZpc2l0DQo+IGh0dHBzOi8vZ3JvdXBzLmdvb2dsZS5j
+b20vZC9tc2dpZC9zeXprYWxsZXItDQo+IGJ1Z3MvMDAwMDAwMDAwMDAwZTY4ODI2MDU3Y2QxMGU5
+OSU0MGdvb2dsZS5jb20uDQo+ID4gRm9yIG1vcmUgb3B0aW9ucywgdmlzaXQgaHR0cHM6Ly9ncm91
+cHMuZ29vZ2xlLmNvbS9kL29wdG91dC4NCg==
