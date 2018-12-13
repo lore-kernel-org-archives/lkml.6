@@ -2,106 +2,191 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 088EDC65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 14:59:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36F51C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 15:00:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC3EC20870
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 14:59:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="lbOFkc9u";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Xi8IWeLw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC3EC20870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 048B12080F
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 15:00:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 048B12080F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729308AbeLMO7T (ORCPT
+        id S1729233AbeLMPA1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 09:59:19 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:48676 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728584AbeLMO7T (ORCPT
+        Thu, 13 Dec 2018 10:00:27 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:49072 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728584AbeLMPA0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 09:59:19 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 6335A607DE; Thu, 13 Dec 2018 14:59:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1544713158;
-        bh=4+REwWo0kCpLa7q0OYVauAxnbmMjyfbWeSeNpNHJ3fw=;
-        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=lbOFkc9uAufJu7uPjOvnO4ra/q5xROm96Ck7fD2UbkSpd6RQiGwD5XzFXW4WrTkoz
-         zUOdX4fG3HsH+UBpw7xmvw6dLkYDl9rsG/5X3m9dhEd65FKmo6vndHtv+ydqleFp/I
-         Z4g+rwaKmI3gcmrKYP4IHHi06O+Ehafq4x4jWtIU=
-Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 6778F6013C;
-        Thu, 13 Dec 2018 14:59:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1544713157;
-        bh=4+REwWo0kCpLa7q0OYVauAxnbmMjyfbWeSeNpNHJ3fw=;
-        h=Subject:From:In-Reply-To:References:To:Cc:From;
-        b=Xi8IWeLwQAlD86blyxyTW8WszmOa2x08MC4JOGlvA0pANIY1baJMtoDGtNYUZ343/
-         fPtPravC/Q2rlFqJTtlD+fP+U7ZtzLTpBE4NhzuH7dvFru8NsJj2BM8NDzIbK0o7Qu
-         6h4tdcRDh3q/Kah4wl4JFQ8i2koB0Up5uqFmm+wE=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6778F6013C
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
+        Thu, 13 Dec 2018 10:00:26 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id wBDF0Avr061567;
+        Thu, 13 Dec 2018 09:00:10 -0600
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wBDF0ANI034883
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 13 Dec 2018 09:00:10 -0600
+Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Thu, 13
+ Dec 2018 09:00:09 -0600
+Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Thu, 13 Dec 2018 09:00:09 -0600
+Received: from [127.0.0.1] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wBDF06Wm005904;
+        Thu, 13 Dec 2018 09:00:06 -0600
+Subject: Re: [PATCH 1/2] arm64: dts: ti: k3-am654: Add McSPI DT nodes
+To:     Vignesh R <vigneshr@ti.com>, Nishanth Menon <nm@ti.com>
+CC:     Rob Herring <robh+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20181209102222.7624-1-vigneshr@ti.com>
+ <20181209102222.7624-2-vigneshr@ti.com>
+From:   Tero Kristo <t-kristo@ti.com>
+Message-ID: <7b718f70-bb74-0530-9566-d621371c3d13@ti.com>
+Date:   Thu, 13 Dec 2018 16:59:45 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
+In-Reply-To: <20181209102222.7624-2-vigneshr@ti.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH] brcmfmac: fix false-positive -Wmaybe-unintialized warning
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <20181210205555.3000038-1-arnd@arndb.de>
-References: <20181210205555.3000038-1-arnd@arndb.de>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Arend van Spriel <arend.vanspriel@broadcom.com>,
-        Franky Lin <franky.lin@broadcom.com>,
-        Hante Meuleman <hante.meuleman@broadcom.com>,
-        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
-        Wright Feng <wright.feng@cypress.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Pieter-Paul Giesberts <pieter-paul.giesberts@broadcom.com>,
-        Lyude Paul <lyude@redhat.com>, linux-wireless@vger.kernel.org,
-        brcm80211-dev-list.pdl@broadcom.com,
-        brcm80211-dev-list@cypress.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
-Message-Id: <20181213145918.6335A607DE@smtp.codeaurora.org>
-Date:   Thu, 13 Dec 2018 14:59:18 +0000 (UTC)
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Arnd Bergmann <arnd@arndb.de> wrote:
-
-> When CONFIG_NO_AUTO_INLINE is set, we get a false-postive warning
-> for the brcmf_fw_request_nvram_done() function, after gcc figures
-> out that brcmf_fw_nvram_from_efi() might not set the 'data_len'
-> variable, but fails to notice that it always returns NULL:
+On 09/12/2018 12:22, Vignesh R wrote:
+> There are 3 instances of McSPI in MCU domain and 4 instances in Main domain.
+> Add DT nodes for all McSPI instances present on AM654 SoC.
 > 
-> drivers/net/wireless/broadcom/brcm80211/brcmfmac/firmware.c: In function 'brcmf_fw_request_nvram_done':
-> drivers/net/wireless/broadcom/brcm80211/brcmfmac/firmware.c:560:11: error: 'data_len' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+> Signed-off-by: Vignesh R <vigneshr@ti.com>
+> ---
+>   arch/arm64/boot/dts/ti/k3-am65-main.dtsi | 52 ++++++++++++++++++++++++
+>   arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi  | 30 ++++++++++++++
+>   2 files changed, 82 insertions(+)
 > 
-> Mark it 'inline' to force gcc to understand this.
+> diff --git a/arch/arm64/boot/dts/ti/k3-am65-main.dtsi b/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
+> index 0a0a8fc5df64..6c71e67b8988 100644
+> --- a/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
+> @@ -138,4 +138,56 @@
+>   		clocks = <&k3_clks 39 0>;
+>   		clock-names = "fck";
+>   	};
+> +
+> +	main_spi0: spi@2100000 {
+> +		compatible = "ti,am654-mcspi","ti,omap4-mcspi";
+
+WARNING: DT compatible string "ti,am654-mcspi" appears un-documented -- 
+check ../../Documentation/devicetree/bindings/
+#63: FILE: arch/arm64/boot/dts/ti/k3-am65-main.dtsi:143:
++		compatible = "ti,am654-mcspi","ti,omap4-mcspi";
+
+Same for the rest of the nodes.
+
+Did you forget documentation part?
+
+-Tero
+
+> +		reg = <0x0 0x2100000 0x0 0x400>;
+> +		interrupts = <GIC_SPI 184 IRQ_TYPE_LEVEL_HIGH>;
+> +		clocks = <&k3_clks 137 1>;
+> +		power-domains = <&k3_pds 137>;
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +	};
+> +
+> +	main_spi1: spi@2110000 {
+> +		compatible = "ti,am654-mcspi","ti,omap4-mcspi";
+> +		reg = <0x0 0x2110000 0x0 0x400>;
+> +		interrupts = <GIC_SPI 185 IRQ_TYPE_LEVEL_HIGH>;
+> +		clocks = <&k3_clks 138 1>;
+> +		power-domains = <&k3_pds 138>;
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +		assigned-clocks = <&k3_clks 137 1>;
+> +		assigned-clock-rates = <48000000>;
+> +	};
+> +
+> +	main_spi2: spi@2120000 {
+> +		compatible = "ti,am654-mcspi","ti,omap4-mcspi";
+> +		reg = <0x0 0x2120000 0x0 0x400>;
+> +		interrupts = <GIC_SPI 186 IRQ_TYPE_LEVEL_HIGH>;
+> +		clocks = <&k3_clks 139 1>;
+> +		power-domains = <&k3_pds 139>;
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +	};
+> +
+> +	main_spi3: spi@2130000 {
+> +		compatible = "ti,am654-mcspi","ti,omap4-mcspi";
+> +		reg = <0x0 0x2130000 0x0 0x400>;
+> +		interrupts = <GIC_SPI 187 IRQ_TYPE_LEVEL_HIGH>;
+> +		clocks = <&k3_clks 140 1>;
+> +		power-domains = <&k3_pds 140>;
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +	};
+> +
+> +	main_spi4: spi@2140000 {
+> +		compatible = "ti,am654-mcspi","ti,omap4-mcspi";
+> +		reg = <0x0 0x2140000 0x0 0x400>;
+> +		interrupts = <GIC_SPI 188 IRQ_TYPE_LEVEL_HIGH>;
+> +		clocks = <&k3_clks 141 1>;
+> +		power-domains = <&k3_pds 141>;
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +	};
+>   };
+> diff --git a/arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi b/arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi
+> index 1fd027748e1f..1aeae52fb239 100644
+> --- a/arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi
+> @@ -26,4 +26,34 @@
+>   		clocks = <&k3_clks 114 1>;
+>   		power-domains = <&k3_pds 114>;
+>   	};
+> +
+> +	mcu_spi0: spi@40300000 {
+> +		compatible = "ti,am654-mcspi","ti,omap4-mcspi";
+> +		reg = <0x0 0x40300000 0x0 0x400>;
+> +		interrupts = <GIC_SPI 560 IRQ_TYPE_LEVEL_HIGH>;
+> +		clocks = <&k3_clks 142 1>;
+> +		power-domains = <&k3_pds 142>;
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +	};
+> +
+> +	mcu_spi1: spi@40310000 {
+> +		compatible = "ti,am654-mcspi","ti,omap4-mcspi";
+> +		reg = <0x0 0x40310000 0x0 0x400>;
+> +		interrupts = <GIC_SPI 561 IRQ_TYPE_LEVEL_HIGH>;
+> +		clocks = <&k3_clks 143 1>;
+> +		power-domains = <&k3_pds 143>;
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +	};
+> +
+> +	mcu_spi2: spi@40320000 {
+> +		compatible = "ti,am654-mcspi","ti,omap4-mcspi";
+> +		reg = <0x0 0x40320000 0x0 0x400>;
+> +		interrupts = <GIC_SPI 562 IRQ_TYPE_LEVEL_HIGH>;
+> +		clocks = <&k3_clks 144 1>;
+> +		power-domains = <&k3_pds 144>;
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +	};
+>   };
 > 
-> Fixes: ce2e6db554fa ("brcmfmac: Add support for getting nvram contents from EFI variables")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
 
-Patch applied to wireless-drivers-next.git, thanks.
-
-412dd15c8177 brcmfmac: fix false-positive -Wmaybe-unintialized warning
-
--- 
-https://patchwork.kernel.org/patch/10722445/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
-
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
