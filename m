@@ -2,241 +2,108 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,T_MIXED_ES,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD312C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 16:21:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CE0DC65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 16:21:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 792B42086D
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 16:21:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=telus.net header.i=@telus.net header.b="6IEbMn4V"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 792B42086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=telus.net
+	by mail.kernel.org (Postfix) with ESMTP id C622D2086D
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 16:21:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544718111;
+	bh=c/j66IG/dT41g4E31OoZrCGY8G7Q1R97z6/EfNmw3d0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=J+JogHgFXLrMqBxIhRYDEPqMwwfag02Re/0/H9qS9TDGQe11oH/7QPFFOwZyJJsvz
+	 Eem+GocEV6NPP5oCkZR9IC0WL4EfkkqID8aXHkoVR28sxBRN4124NlPH+DNG7JNNVo
+	 uXpxe1uat1gzVhMTFudMhVdftB/bhyFUB/FVNaII=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C622D2086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729581AbeLMQV0 (ORCPT
+        id S1729593AbeLMQVu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 11:21:26 -0500
-Received: from cmta19.telus.net ([209.171.16.92]:45501 "EHLO cmta19.telus.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728059AbeLMQVZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 11:21:25 -0500
-Received: from dougxps ([173.180.45.4])
-        by cmsmtp with SMTP
-        id XTjkgApiQTtUEXTjlgB0Hj; Thu, 13 Dec 2018 09:21:23 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=telus.net; s=neo;
-        t=1544718083; bh=ijHCCznavQKU+kGngDuPh7hp8ApKECrHsnR4SP8T924=;
-        h=From:To:Cc:References:In-Reply-To:Subject:Date;
-        b=6IEbMn4VBCiYdzXlWQwRcUrRQ8CrMt78UwcdM2irxlAEem3ebjNEUuBdBSh6jJldK
-         uNgPvxvdXAaIEwn7AvWahC3jIyV2VU8t37cxTtOIePFlz9UoL6MuBcngTGNkXicfdm
-         0RVfVn+3qH+JBE4CBD9OfQlJ2gs61cfNugYyjHAONhExU8CvmX5Vyqy1vsJDhUc0WI
-         JCgJjsrDCEKwo+yj92zWnQN5hYJnqWMMmdebP1wrP+QupXLALkRcD16YH9hfCg+6fd
-         8h3u/lKVwY2Ac0D++tPGuOjATFFyqkenl9S8Fg9ZcyMWhQ11Pq++i9OpvvrZCTXDEO
-         fGNEVGg9SYt5g==
-X-Authority-Analysis: v=2.3 cv=a6fhCnaF c=1 sm=1 tr=0
- a=zJWegnE7BH9C0Gl4FFgQyA==:117 a=zJWegnE7BH9C0Gl4FFgQyA==:17
- a=Pyq9K9CWowscuQLKlpiwfMBGOR0=:19 a=IkcTkHD0fZMA:10 a=iQT1cQ1TT91TDHW7ZZEA:9
- a=7Zwj6sZBwVKJAoWSPKxL6X1jA+E=:19 a=FOppCqAxHePfreZ6:21 a=Vs2E80nf5gLWMOdh:21
- a=QEXdDO2ut3YA:10
-From:   "Doug Smythies" <dsmythies@telus.net>
-To:     "'Paul Menzel'" <pmenzel@molgen.mpg.de>
-Cc:     <linux-pm@vger.kernel.org>,
-        "'LKML'" <linux-kernel@vger.kernel.org>,
-        "'Srinivas Pandruvada'" <srinivas.pandruvada@linux.intel.com>,
-        "'Len Brown'" <lenb@kernel.org>,
-        "'Rafael J. Wysocki'" <rafael@kernel.org>,
-        "Doug Smythies" <dsmythies@telus.net>
-References: <000701d4926f$533eb270$f9bc1750$@net> <a4321c48-e9df-1a2a-cfbd-bac07a9c65d8@molgen.mpg.de> <CAJZ5v0gUDzy8vV=JajDHZJi2F0FyHUkFfYbbJhMioUa5XoKuqA@mail.gmail.com> XQJBgte7nsc7nXQJGgJNBR
-In-Reply-To: XQJBgte7nsc7nXQJGgJNBR
-Subject: RE: intel_pstate: Lowest frequency not reached with Intel i7-6700
-Date:   Thu, 13 Dec 2018 08:21:18 -0800
-Message-ID: <001f01d492ff$e2b6e5e0$a824b1a0$@net>
+        Thu, 13 Dec 2018 11:21:50 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50844 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727428AbeLMQVu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 11:21:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=1ZPyUi+NucTkUmx5MvjHpi6IlZV+xVgDeYM4R4Ictdo=; b=Rr4WWjlgkn1w8MTqQ/Em/Fp27
+        ZSxWWEBhl7i+BbJrHhux/uArMuCno/gmJyjz2pXdaCrBuytw/B8gSEG91BynaFt/uwKcXva7dyaou
+        oewlXjj+BAhQFQI9atxGKOjy+VlA9Mt25WTUUrwCcJxDZbyrLnoKkoko8a3/m0K3T011M=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gXTk6-0001s6-6J; Thu, 13 Dec 2018 16:21:42 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id C5D4711254D1; Thu, 13 Dec 2018 16:21:41 +0000 (GMT)
+Date:   Thu, 13 Dec 2018 16:21:41 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Andrei.Stefanescu@microchip.com
+Cc:     robh+dt@kernel.org, lgirdwood@gmail.com, mark.rutland@arm.com,
+        gregkh@linuxfoundation.org, Cristian.Birsan@microchip.com,
+        Nicolas.Ferre@microchip.com, Claudiu.Beznea@microchip.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, andr3i.stefanescu@gmail.com
+Subject: Re: [RESEND PATCH v3 3/3] regulator: mcp16502: add regulator driver
+ for MCP16502
+Message-ID: <20181213162141.GQ10669@sirena.org.uk>
+References: <1544522876-15967-1-git-send-email-andrei.stefanescu@microchip.com>
+ <1544522876-15967-4-git-send-email-andrei.stefanescu@microchip.com>
+ <20181211164706.GL6686@sirena.org.uk>
+ <6a35df06-1309-f069-9b22-8c2cc5cca56e@microchip.com>
+ <20181212155502.GD6920@sirena.org.uk>
+ <2f24d81a-5271-6ea7-32a2-bc2e708521fa@microchip.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Office Outlook 12.0
-Content-Language: en-ca
-Thread-Index: AdSS4ThGrxyQlOqmSe6EmQT5+bKFyAAHAsMQ
-X-CMAE-Envelope: MS4wfE6l3RCWtvtgBmsLCskkW0svmfNDmYry9OY0gdOvrh0UYcBrz3ByeKwCis/gjC+QLgczXF+AEWCtfKV4maQshYAuLl0QnTKjkGgvvHt9v1TFNKloUT4V
- l2BR5160//zNvYksektXtr4GSzoVAcBhs66j82kw3SPIIRh0RTBJIexGOU+m65euLwoy08C1/FKM3W0JxDmC2u3ciL8iBtWjcL9Th2zh/ROW2y/x6mcoPhtr
- sftEFqZ0FwZ2L/qo9SFrgsDWzkGu4aAepNMWfjJEyg080G3ydbGJ3CrpcjpLcW36aATUgzC5Nk3mqTNTNa2y3g6xP2Id50HGYptffo0y1xh56GPF/XnBqQwO
- nkzQp1VnM9ZhIaCYOGCMj/gcflHiHA==
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="KHqYxKoy+XnO4RVf"
+Content-Disposition: inline
+In-Reply-To: <2f24d81a-5271-6ea7-32a2-bc2e708521fa@microchip.com>
+X-Cookie: Some optional equipment shown.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018.12.13 04:42 Paul Menzel wrote:
-> On 12/13/18 11:39, Rafael J. Wysocki wrote:
->> On Thu, Dec 13, 2018 at 10:54 AM Paul Menzel <pmenzel@molgen.mpg.de> =
-wrote:
->>> On 12/13/18 00:06, Doug Smythies wrote:
->>>> On 2018.12.12 13:40 Paul Menzel wrote:
->>>>
->>>>> Using *powersave* as P-state selection algorithm, on an idle =
-system
->>>>
->>>> Define "idle system".
->>>> If your computer is running a GUI, or is even a server without a =
-GUI
->>>> but with many services running, then "idle" really isn't.
->>>> Below is from my test server, with many services disabled, so
->>>> "idle" really is quite "idle"
->>>>
->>>> doug@s15:~/temp$ sudo turbostat --Summary --quiet --show =
-Busy%,Bzy_MHz,PkgTmp,PkgWatt --interval 15
->>>> Busy%   Bzy_MHz PkgTmp  PkgWatt
->>>> 0.01    1608    27      3.71
->>>> 0.01    1619    27      3.71
->>>> 0.01    1600    28      3.71
->>>> 0.01    1600    28      3.70
->>>>
->>>> Note that p state 16 (1600 MHz) is the minimum for my older =
-i7-2600k
->>>> processor.
->>>
->>> The thing is, on an Intel Kaby Lake laptop with Ubuntu 18.10 and =
-GNOME
->>> running, it goes down to the lowest listed frequency.
->
-> Checking the numbers again, I was mistaken. The lowest possible =
-frequency
-> of the Intel Kaby Lake i7-7500U in that laptop is 400 MHz, and it is
-> going down to 600 MHz. Busy% from turbostat is 0.3 to 0.4.
->
->> Kaby Lake has hardware-managed P-states (HWP) which is a different =
-mechanism.
->
-> Isn=E2=80=99t HWP also available for the 6th generation?
->
->    $ dmesg | grep intel_pstate
->    [    2.092456] intel_pstate: Intel P-state driver initializing
->    [    2.094820] intel_pstate: HWP enabled
 
-Yes, you have HWP. I do not have HWP. I don't think HWP or not is
-particularly relevant to this discussion.
+--KHqYxKoy+XnO4RVf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
->>>>> Shouldn=E2=80=99t it go down until 800 MHz?
->>>>
->>>> We would need some actual busy information, turbostat is the
->>>> recommended tool, to know for sure.
->>>
->>> Here you go.
->>>
->>> ```
->>> tools/power/x86/turbostat> sudo ./turbostat --Summary --quiet --show =
-Busy%,Bzy_MHz,PkgTmp,PkgWatt --interval 15
->>> Busy%    Bzy_MHz    PkgTmp    PkgWatt
->>> 3.59    1167    31    1.68
->>> 3.21    903    31    1.34
->>> 3.21    906    31    1.34
->>> 3.27    901    31    1.35
->>> 8.23    2715    30    2.32  =E2=86=90 stopping GDM (systemctl stop =
-gdm)
->>> 2.95    915    30    1.18
->>> 2.91    906    30    1.18
->>> 2.92    903    30    1.17
->>> 2.90    900    29    1.17
->>> 2.89    903    29    1.18
->>> 2.91    903    30    1.18
->>> 2.89    903    29    1.18
->>> 2.89    900    29    1.18
->>> 2.90    903    30    1.18
->>> 2.90    903    29    1.17
->>> 2.90    903    29    1.17
->>> 2.90    900    29    1.16
->>> 2.90    903    29    1.14
->>> 2.90    903    28    1.11
->>> 2.90    903    29    1.10
->>> 2.91    900    29    1.16
->>> 2.91    903    29    1.14
->>> 2.90    903    29    1.12
->>> 2.90    903    29    1.16
->>> 2.90    900    28    1.17
->>> 2.92    903    29    1.16
->>> 2.90    903    29    1.16
->>> 2.90    903    29    1.16
->>> ```
->>>
->>> 800 MHz should be enough to keep GDM running, shouldn=E2=80=99t it?
->>=20
->> Well, depending.
->>=20
->>> Otherwise only SSH was running.
->>=20
->> There obviously is something that causes it to stay at 900 MHz.
+On Thu, Dec 13, 2018 at 12:19:16PM +0000, Andrei.Stefanescu@microchip.com wrote:
 
-Agreed. Clearly some more stuff was using some CPU.
-The resulting requested CPU frequency is also highly dependent on
-the frequency of the load. Example:
+> I tried with both suspend_late/resume_early and suspend_noirq/resume_noirq.
+> Everything seems to work ok.
 
-doug@s15:~/csv-plot$ sudo turbostat --Summary --quiet --show =
-Busy%,Bzy_MHz,PkgTmp,PkgWatt --interval 60
-Busy%   Bzy_MHz PkgTmp  PkgWatt
-0.08    2567    27      3.77  <<< Note the high active CPU frequency =
-with virtually no load.
-0.01    1600    26      3.69
-0.01    1600    27      3.70
-0.83    1600    30      4.18
-1.80    1600    30      4.59  <<< This load is at 435 Hertz work / sleep =
-frequency
-1.80    1600    32      4.59
-0.74    3033    27      4.49  <<< This load is at 1 Hertz work / sleep =
-frequency
-0.76    3380    27      4.63
-0.76    3384    28      4.62
-0.38    3356    28      4.16
-0.01    1615    28      3.71
-0.01    1609    27      3.70
+> Which one do you think is more appropriate? I am guessing that during
+> suspend_late some devices may still need to be turned on and that it would
+> be the safest during suspend_noirq.
 
->
-> It=E2=80=99s not obvious to me, but you have more experience. =
-It=E2=80=99d expect
-> to at least one core(?) to go down to 800 MHz and not all to stay
-> at 900 MHz.
+I agree, noirq is going to be the safest option.  Can you respin with
+that please?
 
-There is only PLL (Phase Locked Loop). The highest requested vote
-for CPU frequency wins. CPUs in deep idle do not get a vote.
+--KHqYxKoy+XnO4RVf
+Content-Type: application/pgp-signature; name="signature.asc"
 
->> Please check max_perf_pct, min_perf_pct and num_pstates under
->> /sys/devices/system/cpu/intel_pstate/ .
->
->    /sys/devices/system/cpu/intel_pstate> cat max_perf_pct min_perf_pct =
-num_pstates
->    100
->    20
->    33
->
->> Also cpuinfo_max_freq, cpuinfo_min_freq, scaling_max_freq,
->> scaling_min_freq under /sys/devices/system/cpu/cpufreq/policy0/ .
->
-> /sys/devices/system/cpu/cpufreq/policy0> cat cpuinfo_{min,max}_freq =
-scaling_{min,max}_freq
->    800000
->    4000000
->    800000
->    4000000
->
->> However, please note that Busy% of 3 isn't particularly low.
->
-> Indeed. On the laptop it is around 0.3 to 0.4 even with GNOME
-> running.
->
-> So, to check if everything is working, I boot into initramfs
-> and check the numbers there?
->
+-----BEGIN PGP SIGNATURE-----
 
-Myself, I think there is nothing wrong here. If you want
-to pursue further, then my suggestion would be to disable
-HWP and use trace and the intel_pstate_tracer.py utility
-to fully analyze your "idle" system load and your systems
-response to it.
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlwShxUACgkQJNaLcl1U
+h9C/zwf/Q9S+epb2YtPqpjlyCkUDkJehQHR8TCNGVpUBk2xmCbAb2Fl9ggO3wMFA
+l7rsBe74p6O9e3j0eKXlCXhK/t+PwgLYDnF5s8a9mTRtCxJ5o36xQ2HaNd9RiONu
+gglSeDYP2j9GSvwj5phIBYSe2YlhIm616SHLOTMx8GMZCwtU1Vf0HxO5itpelnuM
+3EJOd/jE31Jzmjsmd2c0hneaAReu8S8NaC28wX8gRPtF7nVFyVHxKhGlWTRCWxWr
+tTpfIMyuN2RPdWRYM0HbLH1qfFpfdDHHe/vQbF8H8Euw/RWFIciEprNfWuoN4en4
+PiX/rGxZYtRyD1/3Sk96iufnjs74XA==
+=9cSY
+-----END PGP SIGNATURE-----
 
-... Doug
-
-
+--KHqYxKoy+XnO4RVf--
