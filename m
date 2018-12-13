@@ -2,119 +2,122 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDCA7C67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 00:18:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA761C6786C
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 00:18:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC81920811
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 00:18:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC81920811
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 6FBF720811
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 00:18:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="MWXAw3eI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FBF720811
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728638AbeLMASj (ORCPT
+        id S1728660AbeLMASq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 19:18:39 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:41930 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728582AbeLMASi (ORCPT
+        Wed, 12 Dec 2018 19:18:46 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:42538 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728546AbeLMASq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 19:18:38 -0500
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBD0IamL032586
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 19:18:36 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2pbamj5hyu-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 19:18:31 -0500
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Thu, 13 Dec 2018 00:18:29 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 13 Dec 2018 00:18:24 -0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBD0INBL3277198
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 13 Dec 2018 00:18:23 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3B6244C04E;
-        Thu, 13 Dec 2018 00:18:23 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id AC7784C040;
-        Thu, 13 Dec 2018 00:18:21 +0000 (GMT)
-Received: from dhcp-9-31-102-82.watson.ibm.com (unknown [9.31.102.82])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 13 Dec 2018 00:18:21 +0000 (GMT)
-Subject: Re: [PATCH v2 7/7] ima: Support platform keyring for kernel
- appraisal
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Thiago Jung Bauermann <bauerman@linux.ibm.com>,
-        Nayna Jain <nayna@linux.ibm.com>
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-efi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dhowells@redhat.com,
-        jforbes@redhat.com, seth.forshee@canonical.com,
-        kexec@lists.infradead.org, keyrings@vger.kernel.org,
-        vgoyal@redhat.com, ebiederm@xmission.com, mpe@ellerman.id.au
-Date:   Wed, 12 Dec 2018 19:18:21 -0500
-In-Reply-To: <8736r2fw88.fsf@morokweng.localdomain>
-References: <20181208202705.18673-1-nayna@linux.ibm.com>
-         <20181208202705.18673-8-nayna@linux.ibm.com>
-         <8736r2fw88.fsf@morokweng.localdomain>
+        Wed, 12 Dec 2018 19:18:46 -0500
+Received: by mail-ot1-f65.google.com with SMTP id v23so245448otk.9
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 16:18:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=trKvHReNYo/dk54jKRABoh0JOeqpM3qo9C96CdbN7mk=;
+        b=MWXAw3eIrocyUG+1GBisNHfA5B/126iTcQadagNJR+ZYnOlsyV29qOY1VncRPLr++P
+         gFD7jfBBa9aytzcBC0+UtC9nY/OivouxVYX5Uv7tsOOQ6tlZ6rpslNvzrA0ywLyq3KNB
+         zN6V/htav21Y7p9pDepCJaxNiEdLtJ65+gmnbWYZMV4FPGoSssThnSGzQwfT6sJQV4rg
+         oAKg5fjCNo83rCaF+WW3pc9fPkxRuxTKSTE/58+NejXABa2NQjpapozTjwrfjvcIg8an
+         uPCutukMuUU365RR2qcnTJlwkj6UuOyygnnedB8Zxz3h+zOo0PZP1U678ttXTIY0CqKN
+         OETA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=trKvHReNYo/dk54jKRABoh0JOeqpM3qo9C96CdbN7mk=;
+        b=D1wDjhGFe6rxiZYFBk8LwqaQorud9MyiBVliof5ipssVDljquCBD5E2F75tMX6mEZg
+         ems53ink2Kl+WJ8bu5I9O3R9i05OycJd77enRF6SIFK8gi5QmJ53RWvoQ8AGq/08exaY
+         a56lBsmSjPvtc6ICOBTjZ4CZjAvCkIuwRAOxHD9F0I0By+vJfCYKk4PAPADpOnrftKTL
+         hYTyaMYgLxZ2Igl3JH5XjhVfwdfe1rKCXkOj1CVCS5g0Ovr/UAWt3eq5sEyJuJmC82LD
+         0044UxWV/Kww3bMpR/U4jpta+KJWRvHpM2QcBa3Y2G5v0XhbRBJKpCVrtHFxHJTLvzh9
+         mRLQ==
+X-Gm-Message-State: AA+aEWaj3If3YRidGHc9+jeL2/btwVoPsdQpsh6FpfjLQt3a3xjg/DbG
+        yQMw6RH5PbYYjJTEzjwj2N70JkFoWz00wPbxVlthoA==
+X-Google-Smtp-Source: AFSGD/WNfv+wsm+e8QLHC01qWENkG0UIsRBUpP6LiKYTsH2+mSSKlDWKRG5MdDXExW5Zm0fv9VEsg+9Tr+eOEXCnwRM=
+X-Received: by 2002:a9d:3ac:: with SMTP id f41mr14865456otf.98.1544660324967;
+ Wed, 12 Dec 2018 16:18:44 -0800 (PST)
+MIME-Version: 1.0
+References: <20181207191620.GD3293@redhat.com> <3c4d46c0-aced-f96f-1bf3-725d02f11b60@nvidia.com>
+ <20181208022445.GA7024@redhat.com> <20181210102846.GC29289@quack2.suse.cz>
+ <20181212150319.GA3432@redhat.com> <CAPcyv4go0Xzhz8rXdfscWuXDu83BO9v8WD4upDUJWb7gKzX5OQ@mail.gmail.com>
+ <20181212213005.GE5037@redhat.com> <CAPcyv4gJHeFjEgna1S-2uE4KxkSUgkc=e=2E5oqfoirec84C-w@mail.gmail.com>
+ <20181212215348.GF5037@redhat.com> <20181212233703.GB2947@ziepe.ca> <20181213000109.GK5037@redhat.com>
+In-Reply-To: <20181213000109.GK5037@redhat.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Wed, 12 Dec 2018 16:18:33 -0800
+Message-ID: <CAPcyv4ii6hyrNj=fijoZ1no8w6N1Kk2jGZyWCn7hFKNKaNsyXQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
+To:     =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>, Jan Kara <jack@suse.cz>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        John Hubbard <john.hubbard@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>, tom@talpey.com,
+        Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
+        Christoph Hellwig <hch@infradead.org>,
+        Christopher Lameter <cl@linux.com>,
+        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        rcampbell@nvidia.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        "Weiny, Ira" <ira.weiny@intel.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18121300-0020-0000-0000-000002F62DD4
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18121300-0021-0000-0000-000021465CEF
-Message-Id: <1544660301.3956.3.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-12_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812130001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-12-12 at 16:14 -0200, Thiago Jung Bauermann wrote:
-[snip]
+On Wed, Dec 12, 2018 at 4:01 PM Jerome Glisse <jglisse@redhat.com> wrote:
+>
+> On Wed, Dec 12, 2018 at 04:37:03PM -0700, Jason Gunthorpe wrote:
+> > On Wed, Dec 12, 2018 at 04:53:49PM -0500, Jerome Glisse wrote:
+> > > > Almost, we need some safety around assuming that DMA is complete the
+> > > > page, so the notification would need to go all to way to userspace
+> > > > with something like a file lease notification. It would also need to
+> > > > be backstopped by an IOMMU in the case where the hardware does not /
+> > > > can not stop in-flight DMA.
+> > >
+> > > You can always reprogram the hardware right away it will redirect
+> > > any dma to the crappy page.
+> >
+> > That causes silent data corruption for RDMA users - we can't do that.
+> >
+> > The only way out for current hardware is to forcibly terminate the
+> > RDMA activity somehow (and I'm not even sure this is possible, at
+> > least it would be driver specific)
+> >
+> > Even the IOMMU idea probably doesn't work, I doubt all current
+> > hardware can handle a PCI-E error TLP properly.
+>
+> What i saying is reprogram hardware to crappy page ie valid page
+> dma map but that just has random content as a last resort to allow
+> filesystem to reuse block. So their should be no PCIE error unless
+> hardware freak out to see its page table reprogram randomly.
 
-> Subject: [PATCH] ima: Only use the platform keyring if it's enabled
-> 
-> Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
-
-Good catch!  Thanks.
-
-Mimi
-
-> ---
->  security/integrity/ima/ima_appraise.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-> index e8f520450895..f6ac405daabb 100644
-> --- a/security/integrity/ima/ima_appraise.c
-> +++ b/security/integrity/ima/ima_appraise.c
-> @@ -297,7 +297,8 @@ int ima_appraise_measurement(enum ima_hooks func,
->  			status = INTEGRITY_UNKNOWN;
->  			break;
->  		}
-> -		if (rc && func == KEXEC_KERNEL_CHECK)
-> +		if (IS_ENABLED(CONFIG_INTEGRITY_PLATFORM_KEYRING) && rc &&
-> +		    func == KEXEC_KERNEL_CHECK)
->  			rc = integrity_digsig_verify(INTEGRITY_KEYRING_PLATFORM,
->  						     (const char *)xattr_value,
->  						     xattr_len,
-
+Hardware has a hard enough time stopping I/O to existing page let
+alone switching to a new one in the middle of a transaction. This is a
+non-starter, but it's also a non-concern because the bulk of DMA is
+transient. For non-transient DMA there is a usually a registration
+phase where the capability to support revocation can be validated,
