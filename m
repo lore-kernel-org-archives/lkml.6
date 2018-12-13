@@ -7,50 +7,49 @@ X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C699FC67874
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:28:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15D6EC65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:28:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A93C21104
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:28:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D315E20879
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:28:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544675329;
-	bh=PHlnXzD4ezrTAWqIoECBrKFZ3fTpKZNtwLgUOCugjtk=;
+	s=default; t=1544675333;
+	bh=NsacCFtlTmwPMHNMAFtbP/JG7NGM3lone9hfForMMn8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=FqrNxTHSP3jKaoldwtXEAEh4oe0+WFKKWCE+ODK92Whyj4SpgM6XjtnTYJGELrs4p
-	 CDL07aBQhWB/0rdSlZXLTzjplbunh0c8Is83JtjAj9fObH36MvkgveW+91Ev6yvWNS
-	 HdsF0OXTO6jpzp5jFB3rY4vX9rj8L9Vdhtbggfkc=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A93C21104
+	b=QVomVU6p/ZT5OATiksSIAGtYOiHPBxf+vSdZnNtZfN0bJPu5HpABvYPyQqUZ/nRL0
+	 m4m5Xymz2KbC3HBfvMZ8+eRMHyFawGR8u06zwA40iAFKIiWKQOV11SwErUc7ANrgb2
+	 d4fhEorxeTPJzD74Tg9kF4MlEPAGhjz3pxzjB5Rg=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D315E20879
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727019AbeLME2s (ORCPT
+        id S1727111AbeLME2w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 23:28:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41542 "EHLO mail.kernel.org"
+        Wed, 12 Dec 2018 23:28:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41640 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726960AbeLME2r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 23:28:47 -0500
+        id S1726960AbeLME2t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 23:28:49 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E295620879;
-        Thu, 13 Dec 2018 04:28:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 539A320849;
+        Thu, 13 Dec 2018 04:28:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544675326;
-        bh=PHlnXzD4ezrTAWqIoECBrKFZ3fTpKZNtwLgUOCugjtk=;
+        s=default; t=1544675329;
+        bh=NsacCFtlTmwPMHNMAFtbP/JG7NGM3lone9hfForMMn8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Gz2WHQZ6WHDqbHA+BwziEpobWtojW3NJUQvrYphXQS3PHI+TPkuydnERL4Xjx8gPA
-         DRA4l87i3Av/AIT9WqXTOmABf8oy6AkWHPi4hu7mFwUpK/51Q5gIf3uelb2i+o/yKW
-         KBHmuhasnlM+jUkgKPKaCQgATFxbcK1XfqZ93DJE=
+        b=nbcjS941OeDru80t9Q8wvq5JLrarxKLfbaAAd1XfcN1i5aLocS78eWpjBGdIlO8MF
+         4PSRJDfAgX6EPeyvy50RddPi1kwtyjZQvoRVgsbJt2U5Fc3Oo6PJaBupFVaiqrFBLI
+         LGt7pBHl4uJ5++CYDjWHbc2dETKQdFC8ylSTlEy4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Martin KaFai Lau <kafai@fb.com>, Yonghong Song <yhs@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
-        linux-kselftest@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 06/73] tools/bpf: fix two test_btf unit test cases
-Date:   Wed, 12 Dec 2018 23:27:31 -0500
-Message-Id: <20181213042838.75160-6-sashal@kernel.org>
+Cc:     Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 08/73] net: ethernet: ave: Replace NET_IP_ALIGN with AVE_FRAME_HEADROOM
+Date:   Wed, 12 Dec 2018 23:27:33 -0500
+Message-Id: <20181213042838.75160-8-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181213042838.75160-1-sashal@kernel.org>
 References: <20181213042838.75160-1-sashal@kernel.org>
@@ -62,58 +61,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Martin KaFai Lau <kafai@fb.com>
+From: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
 
-[ Upstream commit 8800cd031af085807028656c6ba7eb7908d78262 ]
+[ Upstream commit 88113957ddb7b7d5451e28cd708c82ea7e63b097 ]
 
-There are two unit test cases, which should encode
-TYPEDEF type, but instead encode PTR type.
-The error is flagged out after enforcing name
-checking in the previous patch.
+In commit 26a4676faa1a ("arm64: mm: define NET_IP_ALIGN to 0"),
+AVE controller affects this modification because the controller forces
+to ignore lower 2bits of buffer start address, and make 2-byte headroom,
+that is, data reception starts from (buffer + 2).
 
-Fixes: c0fa1b6c3efc ("bpf: btf: Add BTF tests")
-Signed-off-by: Martin KaFai Lau <kafai@fb.com>
-Signed-off-by: Yonghong Song <yhs@fb.com>
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+This patch defines AVE_FRAME_HEADROOM macro as hardware-specific value,
+and replaces NET_IP_ALIGN with it.
+
+Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/testing/selftests/bpf/test_btf.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ drivers/net/ethernet/socionext/sni_ave.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/tools/testing/selftests/bpf/test_btf.c b/tools/testing/selftests/bpf/test_btf.c
-index 6b5cfeb7a9cc..4909aab4d6ab 100644
---- a/tools/testing/selftests/bpf/test_btf.c
-+++ b/tools/testing/selftests/bpf/test_btf.c
-@@ -431,11 +431,11 @@ static struct btf_raw_test raw_tests[] = {
- 		/* const void* */	/* [3] */
- 		BTF_TYPE_ENC(0, BTF_INFO_ENC(BTF_KIND_PTR, 0, 0), 2),
- 		/* typedef const void * const_void_ptr */
--		BTF_TYPE_ENC(NAME_TBD, BTF_INFO_ENC(BTF_KIND_PTR, 0, 0), 3),
--		/* struct A { */	/* [4] */
-+		BTF_TYPEDEF_ENC(NAME_TBD, 3),	/* [4] */
-+		/* struct A { */	/* [5] */
- 		BTF_TYPE_ENC(NAME_TBD, BTF_INFO_ENC(BTF_KIND_STRUCT, 0, 1), sizeof(void *)),
- 		/* const_void_ptr m; */
--		BTF_MEMBER_ENC(NAME_TBD, 3, 0),
-+		BTF_MEMBER_ENC(NAME_TBD, 4, 0),
- 		/* } */
- 		BTF_END_RAW,
- 	},
-@@ -493,10 +493,10 @@ static struct btf_raw_test raw_tests[] = {
- 		BTF_TYPE_ENC(0, BTF_INFO_ENC(BTF_KIND_CONST, 0, 0), 0),
- 		/* const void* */	/* [3] */
- 		BTF_TYPE_ENC(0, BTF_INFO_ENC(BTF_KIND_PTR, 0, 0), 2),
--		/* typedef const void * const_void_ptr */	/* [4] */
--		BTF_TYPE_ENC(NAME_TBD, BTF_INFO_ENC(BTF_KIND_PTR, 0, 0), 3),
--		/* const_void_ptr[4] */	/* [5] */
--		BTF_TYPE_ARRAY_ENC(3, 1, 4),
-+		/* typedef const void * const_void_ptr */
-+		BTF_TYPEDEF_ENC(NAME_TBD, 3),	/* [4] */
-+		/* const_void_ptr[4] */
-+		BTF_TYPE_ARRAY_ENC(4, 1, 4),	/* [5] */
- 		BTF_END_RAW,
- 	},
- 	.str_sec = "\0const_void_ptr",
+diff --git a/drivers/net/ethernet/socionext/sni_ave.c b/drivers/net/ethernet/socionext/sni_ave.c
+index f7ecceeb1e28..f27d67a4d304 100644
+--- a/drivers/net/ethernet/socionext/sni_ave.c
++++ b/drivers/net/ethernet/socionext/sni_ave.c
+@@ -194,6 +194,7 @@
+ 
+ /* Parameter for ethernet frame */
+ #define AVE_MAX_ETHFRAME	1518
++#define AVE_FRAME_HEADROOM	2
+ 
+ /* Parameter for interrupt */
+ #define AVE_INTM_COUNT		20
+@@ -585,12 +586,13 @@ static int ave_rxdesc_prepare(struct net_device *ndev, int entry)
+ 
+ 	skb = priv->rx.desc[entry].skbs;
+ 	if (!skb) {
+-		skb = netdev_alloc_skb_ip_align(ndev,
+-						AVE_MAX_ETHFRAME);
++		skb = netdev_alloc_skb(ndev, AVE_MAX_ETHFRAME);
+ 		if (!skb) {
+ 			netdev_err(ndev, "can't allocate skb for Rx\n");
+ 			return -ENOMEM;
+ 		}
++		skb->data += AVE_FRAME_HEADROOM;
++		skb->tail += AVE_FRAME_HEADROOM;
+ 	}
+ 
+ 	/* set disable to cmdsts */
+@@ -603,12 +605,12 @@ static int ave_rxdesc_prepare(struct net_device *ndev, int entry)
+ 	 * - Rx buffer begins with 2 byte headroom, and data will be put from
+ 	 *   (buffer + 2).
+ 	 * To satisfy this, specify the address to put back the buffer
+-	 * pointer advanced by NET_IP_ALIGN by netdev_alloc_skb_ip_align(),
+-	 * and expand the map size by NET_IP_ALIGN.
++	 * pointer advanced by AVE_FRAME_HEADROOM, and expand the map size
++	 * by AVE_FRAME_HEADROOM.
+ 	 */
+ 	ret = ave_dma_map(ndev, &priv->rx.desc[entry],
+-			  skb->data - NET_IP_ALIGN,
+-			  AVE_MAX_ETHFRAME + NET_IP_ALIGN,
++			  skb->data - AVE_FRAME_HEADROOM,
++			  AVE_MAX_ETHFRAME + AVE_FRAME_HEADROOM,
+ 			  DMA_FROM_DEVICE, &paddr);
+ 	if (ret) {
+ 		netdev_err(ndev, "can't map skb for Rx\n");
 -- 
 2.19.1
 
