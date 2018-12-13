@@ -2,150 +2,111 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C862C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 20:10:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35D92C67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 20:10:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D475E20851
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 20:10:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA54620870
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 20:10:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="wJP1SQ8I"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D475E20851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="q1u9ibXO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA54620870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.ws
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727296AbeLMUKM (ORCPT
+        id S1727397AbeLMUKm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 15:10:12 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:33397 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726461AbeLMUKL (ORCPT
+        Thu, 13 Dec 2018 15:10:42 -0500
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:43897 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726442AbeLMUKm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 15:10:11 -0500
-Received: by mail-io1-f65.google.com with SMTP id t24so2669776ioi.0
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 12:10:10 -0800 (PST)
+        Thu, 13 Dec 2018 15:10:42 -0500
+Received: by mail-qk1-f195.google.com with SMTP id r71so1905253qkr.10
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 12:10:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=fHszRcQD/Xo2QERAL0m1tRp8DU2FUA/4azDChFxDoGU=;
-        b=wJP1SQ8ImzHtwUh0cjnLe7Dk8ufoQYVWa4WBiuA1Q1UDTjqC2eHMHWJIzJ71ZT90N+
-         O+f4vVZxqMMST9jVOXUCJIsS8bk3k+z9nX1jb/DhOhF1xi318pufij+kPLR5HJMHHVTv
-         lQWGLO9IogK6WHgondokFSd0iaHsFbA9O5EWrFa1nKO1AuOmUDbUqF5QTdlGk85Z+Ljl
-         D6rKlD1DxeTYvoAS67buBkBlKOV70deiksigOln/m3RdCqABptRo5gggXiHpRjkfpCjr
-         CwVRH3ZQnRRJQw+ZTCbX47jyXZWbJZ7cEgHmV0CAuM/84nFJf8weneRjJ1CyEZq+uisQ
-         Lxxg==
+        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=UGksc5dkleZautdnPF1eglxzeAr2TyOFjX0wqhtUuGE=;
+        b=q1u9ibXOid8VWVqEWh2XU+eNW07no2fku7MPyB+DdZUSos9B4yoqDSCNoTbeiD8bpM
+         ZdOYNts3pgAoPpnUP5n59pLEar6YeGENUJwuPNR55OixPw9j0N5HMCj1oskBoIrtyXqT
+         F/an88jlBpq6THNQtjMRs4rCs5gXGcvX+PQz5eZ+4NwwVuBVbd5iHVfiQdlWwYJRBf5l
+         XPDP6DpxHneX51ofRFJ67o2zyNyaVAjiyd29QsDel28FnF4DwbDVlQXw3X4LMASua8U+
+         udrDfOclTUsqE2GCa7AiiZ/aKMOsc0KsZEjgAWpCnRn4TnW+JKEocSMDcIVCMk/4/Lc9
+         yLew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=fHszRcQD/Xo2QERAL0m1tRp8DU2FUA/4azDChFxDoGU=;
-        b=kxYWzofva9cmRvG+iuovixaRigy8x+cdwK470uxH+l8ww1tshs3q28lxfpt/PxHixs
-         2pOPVFtnF2yTl9wnXkzo5QvNkQQNM7OdYR9m73pDbLJAmvGq5HY/GTt+3JyQZ1wlXPUt
-         rhKma2WxlVxWMMjoO+ItZHHhzYxoqC1mvomcJo0z5Lc1Txu8CKFKaLBHRJIBqy/JIz5e
-         jzS2OTeZbMIJkGFNYvn0FvdmIFgVI18yhBcon3V/LGkQFUqtMp2EKUSitmfa95a/BBB4
-         tnJqxpLixYWF5ZAqUn+M6q43qSH49hVJ0rWltPNLSieZvjN8LeBS2l2mWftT8osyPO5u
-         NBWQ==
-X-Gm-Message-State: AA+aEWbK9iZUWNbeJrYJSEnd4G1aNjxbiztZf1Pgcqa/zHgT4XiaIwk9
-        sj6WDozM8wTrCNzVMw4M/R2MTVWPKXHMsQ==
-X-Google-Smtp-Source: AFSGD/WbNT5vSYvjlwnUOjkduziJpXxxwiug1qSHDeh12QzNa2d+1SlqLyaEVpKR2s0I4J2sNZ2WsA==
-X-Received: by 2002:a5d:9697:: with SMTP id m23mr139037ion.201.1544731809649;
-        Thu, 13 Dec 2018 12:10:09 -0800 (PST)
-Received: from [192.168.1.56] ([216.160.245.98])
-        by smtp.gmail.com with ESMTPSA id k2sm1460678itk.35.2018.12.13.12.10.07
+        bh=UGksc5dkleZautdnPF1eglxzeAr2TyOFjX0wqhtUuGE=;
+        b=h3WvXCGmDxO5inwJT/1A7QMk3gMhKUMkE03yi6BYqZ4yvMq1T6ktalV/kS9S6FgwTa
+         uofRw0lpT01LqGUiqJIYQuUh8Hhg3/5jgVGYKH3BfjCrcnRhk1sZKRePN+WEDe5GSRu/
+         edOD5XuQGxIZWGJTKha54PvCSyfvkJHwDIK67+YJ4k/+WXRJYoLe1JIu2/NRJCOjJxvG
+         FgrSQI3kDC9B4fvY0tRG44QVVLUc12Ue6z1qyquqFLCfIbWwCjrPVavSQOzqzlTjaXF6
+         bhTzqW3AN9tMm0OGFRLP/IWlZvgkWyJssXSy0NBZ2PvGlVmAPDesK+Kr7uEtmE03PgXw
+         gTiw==
+X-Gm-Message-State: AA+aEWZ1HYpk3Bk8I2b1AtGJ3gu2qmREh8VOAzvPhVdQe18ijEfqrxuf
+        qCEgQYueXe4sS3wbyMZu+o3LQwp9byk=
+X-Google-Smtp-Source: AFSGD/V4p3lBYjjUvjJoUrkd3r7pkpq9sDp/cSoey56/on7xRDBL8EUw/XCntqNgiTHG0zyzkZvZ8w==
+X-Received: by 2002:a37:10d4:: with SMTP id 81mr170676qkq.19.1544731840879;
+        Thu, 13 Dec 2018 12:10:40 -0800 (PST)
+Received: from localhost.localdomain ([173.38.117.85])
+        by smtp.gmail.com with ESMTPSA id 190sm1609072qkh.25.2018.12.13.12.10.39
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 13 Dec 2018 12:10:08 -0800 (PST)
-Subject: Re: [PATCH v2] block: fix iolat timestamp and restore accounting
- semantics
-To:     Josef Bacik <josef@toxicpanda.com>
-Cc:     Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>,
-        kernel-team@fb.com, linux-block@vger.kernel.org,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20181211230114.65967-1-dennis@kernel.org>
- <59500829-10f5-fa83-b2db-fcfa4a1cd11d@kernel.dk>
- <20181213195208.qgvfeb5ilbf3ttsf@MacBook-Pro-91.local>
- <cbf1ca87-6a47-6c98-0c41-5cf495d6508b@kernel.dk>
- <20181213200358.e5zxe4tacrwylg32@MacBook-Pro-91.local>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <317a289a-5c0a-636b-70af-c3aaaf9b0d81@kernel.dk>
-Date:   Thu, 13 Dec 2018 13:10:07 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 13 Dec 2018 12:10:40 -0800 (PST)
+From:   Tycho Andersen <tycho@tycho.ws>
+To:     Kees Cook <keescook@chromium.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Philipp Rudo <prudo@linux.vnet.ibm.com>
+Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Tycho Andersen <tycho@tycho.ws>
+Subject: [PATCH] seccomp, s390: fix build for syscall type change
+Date:   Thu, 13 Dec 2018 13:10:30 -0700
+Message-Id: <20181213201030.4072-1-tycho@tycho.ws>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-In-Reply-To: <20181213200358.e5zxe4tacrwylg32@MacBook-Pro-91.local>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/13/18 1:03 PM, Josef Bacik wrote:
-> On Thu, Dec 13, 2018 at 12:59:03PM -0700, Jens Axboe wrote:
->> On 12/13/18 12:52 PM, Josef Bacik wrote:
->>> On Thu, Dec 13, 2018 at 12:48:11PM -0700, Jens Axboe wrote:
->>>> On 12/11/18 4:01 PM, Dennis Zhou wrote:
->>>>> The blk-iolatency controller measures the time from
->>>>> rq_qos_throttle() to rq_qos_done_bio() and attributes this time to
->>>>> the first bio that needs to create the request. This means if a bio
->>>>> is plug-mergeable or bio-mergeable, it gets to bypass the
->>>>> blk-iolatency controller.
->>>>>
->>>>> The recent series, to tag all bios w/ blkgs in [1] changed the
->>>>> timing incorrectly as well. First, the iolatency controller was
->>>>> tagging bios and using that information if it should process it in
->>>>> rq_qos_done_bio().  However, now that all bios are tagged, this
->>>>> caused the atomic_t for the struct rq_wait inflight count to
->>>>> underflow resulting in a stall. Second, now the timing was using the
->>>>> duration a bio from generic_make_request() rather than the timing
->>>>> mentioned above.
->>>>>
->>>>> This patch fixes these issues by reusing the BLK_QUEUE_ENTERED flag
->>>>> to determine if a bio has entered the request layer and is
->>>>> responsible for starting a request. Stacked drivers don't recurse
->>>>> through blk_mq_make_request(), so the overhead of using time between
->>>>> generic_make_request() and the blk_mq_get_request() should be
->>>>> minimal.  blk-iolatency now checks if this flag is set to determine
->>>>> if it should process the bio in rq_qos_done_bio().
->>>>
->>>> I'm having a hard time convincing myself that this is correct...
->>>> Maybe we should just add a new flag for this specific use case? Or
->>>> feel free to convince me otherwise.
->>>>
->>>
->>> I mean it'll work for now, but then when somebody else wants to do
->>> something similar *cough*io.weight*cough* it'll need a new flag.  I
->>> kind of hate adding a new flag for every controller, but then again
->>> it's not like there's thousands of these things.  I'm having a hard
->>> time coming up with a solution other than a per-tracker flag.  As for
->>> this specific version, I still think it needs to be in iolatency
->>> itself, trying to make it generic just means it'll get fucked up again
->>> later down the line.  Thanks,
->>
->> We definitely don't have that many flags, and I'd hate to add a
->> per-whatever flag for this.
->>
->> But do we need that? We really just need single flag for this, my main
->> worry was overloading ENTERED. Especially since we're adding different
->> clearing and setting for it. If we had a specific one, if it's set, we
->> would need to disallow merging for it, I guess.
->>
->> And there's already BIO_THROTTLED...
->>
-> 
-> Oh well I guess we only really want to know if we saw the BIO, which
-> should be able to be shared by all the rq_qos implementations.  I
-> think I'd rather just have a BIO_TRACKED to indicate it went through
-> the normal rq_qos path.  Thanks,
+A recent patch landed in the security tree [1] that changed the type of the
+seccomp syscall. Unfortunately, I didn't quite get every instance of the
+forward declarations, and thus there is a build failure. Here's the last
+one that I could find, for s390. It should go through the security tree,
+although hopefully some s390 people can check and make sure it looks
+reasonable?
 
-Agree, so how about renaming BIO_THROTTLED to BIO_TRACKED and using
-that?
+The only oddity is the trailing semicolon; some lines around this patch
+have it, and some lines don't. I've left this one as-is.
 
+[1]: https://lore.kernel.org/lkml/20181212231630.GA31584@beast/T/#u
+
+Signed-off-by: Tycho Andersen <tycho@tycho.ws>
+---
+ arch/s390/kernel/compat_wrapper.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/s390/kernel/compat_wrapper.c b/arch/s390/kernel/compat_wrapper.c
+index 2ce28bf0c5ec..48c4ce668244 100644
+--- a/arch/s390/kernel/compat_wrapper.c
++++ b/arch/s390/kernel/compat_wrapper.c
+@@ -164,7 +164,7 @@ COMPAT_SYSCALL_WRAP3(finit_module, int, fd, const char __user *, uargs, int, fla
+ COMPAT_SYSCALL_WRAP3(sched_setattr, pid_t, pid, struct sched_attr __user *, attr, unsigned int, flags);
+ COMPAT_SYSCALL_WRAP4(sched_getattr, pid_t, pid, struct sched_attr __user *, attr, unsigned int, size, unsigned int, flags);
+ COMPAT_SYSCALL_WRAP5(renameat2, int, olddfd, const char __user *, oldname, int, newdfd, const char __user *, newname, unsigned int, flags);
+-COMPAT_SYSCALL_WRAP3(seccomp, unsigned int, op, unsigned int, flags, const char __user *, uargs)
++COMPAT_SYSCALL_WRAP3(seccomp, unsigned int, op, unsigned int, flags, void __user *, uargs)
+ COMPAT_SYSCALL_WRAP3(getrandom, char __user *, buf, size_t, count, unsigned int, flags)
+ COMPAT_SYSCALL_WRAP2(memfd_create, const char __user *, uname, unsigned int, flags)
+ COMPAT_SYSCALL_WRAP3(bpf, int, cmd, union bpf_attr *, attr, unsigned int, size);
 -- 
-Jens Axboe
+2.19.1
 
