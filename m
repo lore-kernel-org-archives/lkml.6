@@ -2,130 +2,100 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.9 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D750C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 07:37:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47084C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 07:39:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69FC320873
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 07:37:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69FC320873
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id F045620873
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 07:39:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F045620873
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727097AbeLMHhS (ORCPT
+        id S1727088AbeLMHjo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 02:37:18 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:50665 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726564AbeLMHhR (ORCPT
+        Thu, 13 Dec 2018 02:39:44 -0500
+Received: from rtits2.realtek.com ([211.75.126.72]:56372 "EHLO
+        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726564AbeLMHjo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 02:37:17 -0500
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gXLYU-0001kV-Hr; Thu, 13 Dec 2018 08:37:10 +0100
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gXLYS-0008KV-Ir; Thu, 13 Dec 2018 08:37:08 +0100
-Date:   Thu, 13 Dec 2018 08:37:08 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Jeremy Cline <jcline@redhat.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Joe Perches <joe@perches.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] scripts/spdxcheck.py: Always open files in binary
- mode
-Message-ID: <20181213073708.nwj4nmnccuugvrhc@pengutronix.de>
-References: <20181212131210.28024-1-thierry.reding@gmail.com>
- <20181212181410.GC2352@laptop.jcline.org>
+        Thu, 13 Dec 2018 02:39:44 -0500
+Authenticated-By: 
+X-SpamFilter-By: BOX Solutions SpamTrap 5.62 with qID wBD7dUAX002667, This message is accepted by code: ctloc85258
+Received: from mail.realtek.com (rtitcas12.realtek.com.tw[172.21.6.16])
+        by rtits2.realtek.com.tw (8.15.2/2.57/5.78) with ESMTPS id wBD7dUAX002667
+        (version=TLSv1 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Thu, 13 Dec 2018 15:39:30 +0800
+Received: from RTITMBSVM02.realtek.com.tw ([fe80::9150:f9a6:a910:df93]) by
+ RTITCAS12.realtek.com.tw ([::1]) with mapi id 14.03.0415.000; Thu, 13 Dec
+ 2018 15:39:29 +0800
+From:   Pkshih <pkshih@realtek.com>
+To:     "kai.heng.feng@canonical.com" <kai.heng.feng@canonical.com>
+CC:     "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "kvalo@codeaurora.org" <kvalo@codeaurora.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] rtlwifi: Fix non-working BSS STA mode
+Thread-Topic: [PATCH] rtlwifi: Fix non-working BSS STA mode
+Thread-Index: AQHUkdl2d+IRD9YiqUGI3cgkd+Pb7aV7TcMAgABT8QCAACJwgA==
+Date:   Thu, 13 Dec 2018 07:39:29 +0000
+Message-ID: <1544686767.21783.3.camel@realtek.com>
+References: <20181212051335.22580-1-kai.heng.feng@canonical.com>
+         <1544661346.2548.2.camel@realtek.com>
+         <A95FEB12-29C5-404D-9C4E-04D1900C4E88@canonical.com>
+In-Reply-To: <A95FEB12-29C5-404D-9C4E-04D1900C4E88@canonical.com>
+Accept-Language: en-US, zh-TW
+Content-Language: zh-TW
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.21.69.146]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <A8C07F1567786B4298DCFCECEE071F09@realtek.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181212181410.GC2352@laptop.jcline.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 12, 2018 at 01:14:10PM -0500, Jeremy Cline wrote:
-> Hi,
-> 
-> On Wed, Dec 12, 2018 at 02:12:09PM +0100, Thierry Reding wrote:
-> > From: Thierry Reding <treding@nvidia.com>
-> > 
-> > The spdxcheck script currently falls over when confronted with a binary
-> > file (such as Documentation/logo.gif). To avoid that, always open files
-> > in binary mode and decode line-by-line, ignoring encoding errors.
-
-I suggest pointing out that the breakage only happens with python3 and
-results in a UnicodeDecodeError.
-
-> > One tricky case is when piping data into the script and reading it from
-> > standard input. By default, standard input will be opened in text mode,
-> > so we need to reopen it in binary mode.
-> > 
-> > Signed-off-by: Thierry Reding <treding@nvidia.com>
-> > ---
-> >  scripts/spdxcheck.py | 6 ++++--
-> >  1 file changed, 4 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/scripts/spdxcheck.py b/scripts/spdxcheck.py
-> > index 5056fb3b897d..e559c6294c39 100755
-> > --- a/scripts/spdxcheck.py
-> > +++ b/scripts/spdxcheck.py
-> > @@ -168,6 +168,7 @@ class id_parser(object):
-> >          self.curline = 0
-> >          try:
-> >              for line in fd:
-> > +                line = line.decode(locale.getpreferredencoding(False), errors='ignore')
-> >                  self.curline += 1
-> >                  if self.curline > maxlines:
-> >                      break
-> > @@ -249,12 +250,13 @@ if __name__ == '__main__':
-> >  
-> >      try:
-> >          if len(args.path) and args.path[0] == '-':
-> > -            parser.parse_lines(sys.stdin, args.maxlines, '-')
-> > +            stdin = os.fdopen(sys.stdin.fileno(), 'rb')
-> > +            parser.parse_lines(stdin, args.maxlines, '-')
-> >          else:
-> >              if args.path:
-> >                  for p in args.path:
-> >                      if os.path.isfile(p):
-> > -                        parser.parse_lines(open(p), args.maxlines, p)
-> > +                        parser.parse_lines(open(p, 'rb'), args.maxlines, p)
-> >                      elif os.path.isdir(p):
-> >                          scan_git_subtree(repo.head.reference.commit.tree, p)
-> >                      else:
-> > -- 
-> > 2.19.1
-> > 
-> 
-> It might be worth noting this fixes commit 6f4d29df66ac
-> ("scripts/spdxcheck.py: make python3 compliant") and also Cc this for
-> stable since 6f4d29df66ac got backported to v4.19. While that commit
-> did indeed make the script work with Python 3 for piping data, it broke
-> Python 2 and made its way to stable.
-
-It didn't break for me. Can you provide details about how and when it
-broke for you?
-
-Best regards
-Uwe
-
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+T24gVGh1LCAyMDE4LTEyLTEzIGF0IDEzOjM2ICswODAwLCBLYWkgSGVuZyBGZW5nIHdyb3RlOg0K
+PiA+IE9uIERlYyAxMywgMjAxOCwgYXQgMDg6MzUsIFBrc2hpaCA8cGtzaGloQHJlYWx0ZWsuY29t
+PiB3cm90ZToNCj4gPsKgDQo+ID4gT24gV2VkLCAyMDE4LTEyLTEyIGF0IDEzOjEzICswODAwLCBL
+YWktSGVuZyBGZW5nIHdyb3RlOg0KPiA+PiBPbmNlIEJTUyBTVEEgbW9kZSBnZXRzIHN0YXJ0ZWQs
+IGl0IGNhbiBiZSBzY2FubmVkIGJ5IG90aGVyIGNsaWVudHMgYnV0DQo+ID4+IGNhbm5vdCBlbnRh
+Ymxpc2ggYSBjb25uZWN0aW9uLg0KPiA+wqDCoMKgwqDCoMKgwqDCoMKgwqBeXl4gdHlwbzogZXN0
+YWJsaXNoDQo+ID4+wqANCj4gPj4gVHVybnMgb3V0IHRoZSBzZXRfYmNuX3JlZygpIGFuZCBpdHMg
+Kl9zZXRfYmVhY29uX3JlbGF0ZWRfcmVnaXN0ZXJzKCkNCj4gPj4gY2FsbGJhY2tzIG5ldmVyIGdl
+dCBjYWxsZWQgc28gaXQgaGFzIHByb2JsZW0gYmVhY29uaW5nLg0KPiA+PsKgDQo+ID4+IEVuYWJs
+ZSB0aGUgZnVuY3Rpb24gaW4gcnRsX29wX2Jzc19pbmZvX2NoYW5nZWQoKSBjYW4gbWFrZSBCU1Mg
+U1RBIG1vZGUNCj4gPj4gc3RhcnQgdG8gd29yay4NCj4gPj7CoA0KPiA+PiBTaWduZWQtb2ZmLWJ5
+OiBLYWktSGVuZyBGZW5nIDxrYWkuaGVuZy5mZW5nQGNhbm9uaWNhbC5jb20+DQo+ID4+IC0tLQ0K
+PiA+PsKgwqBkcml2ZXJzL25ldC93aXJlbGVzcy9yZWFsdGVrL3J0bHdpZmkvY29yZS5jIHwgMiAr
+LQ0KPiA+PsKgwqAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEgZGVsZXRpb24oLSkN
+Cj4gPj7CoA0KPiA+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9uZXQvd2lyZWxlc3MvcmVhbHRlay9y
+dGx3aWZpL2NvcmUuYw0KPiA+PiBiL2RyaXZlcnMvbmV0L3dpcmVsZXNzL3JlYWx0ZWsvcnRsd2lm
+aS9jb3JlLmMNCj4gPj4gaW5kZXggNGJmNzk2NzU5MGNhLi4xMWQyN2E1Y2M1NzYgMTAwNjQ0DQo+
+ID4+IC0tLSBhL2RyaXZlcnMvbmV0L3dpcmVsZXNzL3JlYWx0ZWsvcnRsd2lmaS9jb3JlLmMNCj4g
+Pj4gKysrIGIvZHJpdmVycy9uZXQvd2lyZWxlc3MvcmVhbHRlay9ydGx3aWZpL2NvcmUuYw0KPiA+
+PiBAQCAtMTA1NCw3ICsxMDU0LDcgQEAgc3RhdGljIHZvaWQgcnRsX29wX2Jzc19pbmZvX2NoYW5n
+ZWQoc3RydWN0DQo+IGllZWU4MDIxMV9odw0KPiA+PiAqaHcsDQo+ID4+wqDCoAkJCQkJwqAiQlNT
+X0NIQU5HRURfQkVBQ09OX0VOQUJMRURcbiIpOw0KPiA+PsKgwqANCj4gPj7CoMKgCQkJCS8qc3Rh
+cnQgaHcgYmVhY29uIGludGVycnVwdC4gKi8NCj4gPj4gLQkJCQkvKnJ0bHByaXYtPmNmZy0+b3Bz
+LT5zZXRfYmNuX3JlZyhodyk7ICovDQo+ID4+ICsJCQkJcnRscHJpdi0+Y2ZnLT5vcHMtPnNldF9i
+Y25fcmVnKGh3KTsNCj4gPj7CoMKgCQkJCW1hYy0+YmVhY29uX2VuYWJsZWQgPSAxOw0KPiA+PsKg
+wqAJCQkJcnRscHJpdi0+Y2ZnLT5vcHMtDQo+ID51cGRhdGVfaW50ZXJydXB0X21hc2soaHcsDQo+
+ID4+wqDCoAkJCQkJCXJ0bHByaXYtPmNmZy0+bWFwcw0KPiA+wqANCj4gPiBXaGljaCB3aWZpIGNo
+aXAgZG8geW91IHVzZT8gQW5kLCBwbGVhc2Ugc2hhcmUgeW91ciB0ZXN0IHNjZW5hcmlvLg0KPiAN
+Cj4gSXTigJlzIFJlYWx0ZWsgODcyM0RFLCB3aGljaCBpcyBjdXJyZW50bHkgbm90IHN1cHBvcnRl
+ZCBpbiBtYWlubGluZSBzbyBJIHVzZQ0KPiBydGw4NzIzZGUgaW4gcnRsd2lmaV9uZXcgWzFdIHRv
+IHRlc3QgaXQgb3V0Lg0KPiANCj4gVGhlIHRlc3Qgc2NlbmFyaW8gaXMgc2ltcGx5IGVuYWJsZSBo
+b3RzcG90IHRocm91Z2ggbmV0d29yayBtYW5hZ2VyLCB3aGljaCB1c2VzDQo+IHdwYV9zdXBwbGlj
+YW50IHRvIGRvIHRoZSB3b3JrLg0KPiANCj4gWzFdIGh0dHBzOi8vZ2l0aHViLmNvbS9sd2Zpbmdl
+ci9ydGx3aWZpX25ldw0KPiANCg0KU2luY2UgcnRsODcyM2RlIGlzbid0IHN1cHBvcnRlZCB5ZXQs
+IHRoaXMgcGF0Y2ggd291bGQgYmUgcGVuZGluZy4NCkknbGwgdGFrZSB0aW1lIHRvIGNoZWNrIHdo
+ZXRoZXIgaXQgd29ya3Mgb24gZXhpc3RpbmcgY2hpcHMuDQoNClRoYW5rcw0KUEsNCg==
