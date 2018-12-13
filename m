@@ -2,255 +2,101 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB8F8C67872
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 10:33:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBEA3C67872
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 10:33:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8512020849
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 10:33:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8512020849
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id A24C820811
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 10:33:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="JLHOCAhg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A24C820811
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728585AbeLMKdK (ORCPT
+        id S1728605AbeLMKdS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 05:33:10 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32811 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727396AbeLMKdJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 05:33:09 -0500
-Received: from lhreml707-cah.china.huawei.com (unknown [172.18.7.108])
-        by Forcepoint Email with ESMTP id 21F905858A00;
-        Thu, 13 Dec 2018 10:33:06 +0000 (GMT)
-Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.153)
- by smtpsuk.huawei.com (10.201.108.48) with Microsoft SMTP Server (TLS) id
- 14.3.408.0; Thu, 13 Dec 2018 10:33:01 +0000
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     <jarkko.sakkinen@linux.intel.com>, <zohar@linux.ibm.com>,
-        <david.safford@ge.com>, <monty.wiseman@ge.com>
-CC:     <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH v7 1/5] tpm: dynamically allocate the allocated_banks array
-Date:   Thu, 13 Dec 2018 11:29:41 +0100
-Message-ID: <20181213102945.30946-2-roberto.sassu@huawei.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181213102945.30946-1-roberto.sassu@huawei.com>
-References: <20181213102945.30946-1-roberto.sassu@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.204.65.153]
-X-CFilter-Loop: Reflected
+        Thu, 13 Dec 2018 05:33:18 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:33158 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727374AbeLMKdS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 05:33:18 -0500
+Received: by mail-wr1-f66.google.com with SMTP id c14so1461659wrr.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 02:33:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=LtSfmEgwkXLipM2oN/tEJZ5i0J/LLJlpLAEY0OfDiU0=;
+        b=JLHOCAhgzFEHqBtVgFMSU0jr0FAQyMNzUj1aOGT/ZKypZXOwMexKpagmP70EPmgHAe
+         1CnUr3h+ie1j36w7LOjwn88K8z1eRP1js/WvHpquqqvRIjlvse+hx0smY33i7evJyosl
+         CUlQTukUHKH/vmSGSg9T8KB54MenF3tEZHNyE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=LtSfmEgwkXLipM2oN/tEJZ5i0J/LLJlpLAEY0OfDiU0=;
+        b=GWWAVjKXIFrqwXnc+r/aIiHQSMjdnu0vMx9Km6RMLg/g90q89AZC1HJqHXe3jhiQ4a
+         E3ogENHLq2ssJGH54hBUThLRhmZunNRTtHbxVZXb/ljqOs26kVbvC2UZKQF1n5Oopy/p
+         8IZ+hfdglw0FZsjbzrbVvx/Z//Nvl5AXAg+rVaSVN2crYQUk5xF6Uwe2EfAAugX1bRwh
+         y14rbp58gCt1tXM/jL8kOR2WKYaWJE0zep0/54Vt9jqWcVXAS7RtB4Sqc7BIYDLW3i+Z
+         EWuIHawB9qICuxAalRTSZA0pVj//4Pcushq9ecWWZFoBPL0SMpezu6z92PfUp3PWRruG
+         fiew==
+X-Gm-Message-State: AA+aEWbgn3cC6lD2mYDsAB9icPaqon+ClDfQ+kjHwr9KecyMIlv/W5x0
+        rWPANwUncBij0XfjN8XQ9IsOhA==
+X-Google-Smtp-Source: AFSGD/WykvkLgnLRFD8Su9Um5xoJbrYFafEDHsVSgEWPR4/QPDMlQEYiPI92nrS8tIAQsPzUWWae7g==
+X-Received: by 2002:adf:e407:: with SMTP id g7mr19801956wrm.277.1544697196160;
+        Thu, 13 Dec 2018 02:33:16 -0800 (PST)
+Received: from mannams-OptiPlex-7010.dhcp.broadcom.net ([192.19.234.250])
+        by smtp.gmail.com with ESMTPSA id x76sm3327058wmd.27.2018.12.13.02.33.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 13 Dec 2018 02:33:15 -0800 (PST)
+From:   Srinath Mannam <srinath.mannam@broadcom.com>
+To:     Bjorn Helgaas <bhelgaas@google.com>,
+        Robin Murphy <robin.murphy@arm.com>, poza@codeaurora.org,
+        Joerg Roedel <joro@8bytes.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Ray Jui <rjui@broadcom.com>
+Cc:     bcm-kernel-feedback-list@broadcom.com, linux-pci@vger.kernel.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        Srinath Mannam <srinath.mannam@broadcom.com>
+Subject: [PATCH v2 0/3] PCIe Host request to reserve IOVA
+Date:   Thu, 13 Dec 2018 16:02:51 +0530
+Message-Id: <1544697174-6029-1-git-send-email-srinath.mannam@broadcom.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch renames active_banks (member of tpm_chip) to allocated_banks,
-stores the number of allocated PCR banks in nr_allocated_banks (new member
-of tpm_chip), and replaces the static array with a pointer to a dynamically
-allocated array.
+Few SOCs have limitation that their PCIe host can't allow few inbound
+address ranges.
+Allowed inbound address ranges are listed in dma-ranges DT property and
+this address ranges are required to do IOVA mapping.
+Remaining address ranges have to be reserved in IOVA mapping.
 
-tpm2_get_pcr_allocation() determines if a PCR bank is allocated by checking
-the mask in the TPML_PCR_SELECTION structure returned by the TPM for
-TPM2_Get_Capability(). If a bank is not allocated, the TPM returns that
-bank in TPML_PCR_SELECTION, with all bits in the mask set to zero. In this
-case, the bank is not included in chip->allocated_banks, to avoid that TPM
-driver users unnecessarily calculate a digest for that bank.
+PCIe Host driver of those SOCs has to list all address ranges which have
+to reserve their IOVA address into PCIe host bridge resource entry list.
+IOMMU framework will reserve these IOVAs while initializing IOMMU domain.
 
-One PCR bank with algorithm set to SHA1 is always allocated for TPM 1.x.
+This patch set is based on Linux-4.19-rc1.
 
-As a consequence of the introduction of nr_allocated_banks,
-tpm_pcr_extend() does not check anymore if the algorithm stored in tpm_chip
-is equal to zero.
+Changes from v1:
+  - Addressed Oza review comments.
 
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
----
- drivers/char/tpm/tpm-chip.c      |  1 +
- drivers/char/tpm/tpm-interface.c | 18 +++++++++--------
- drivers/char/tpm/tpm.h           |  3 ++-
- drivers/char/tpm/tpm1-cmd.c      | 10 ++++++++++
- drivers/char/tpm/tpm2-cmd.c      | 34 ++++++++++++++++++++++----------
- 5 files changed, 47 insertions(+), 19 deletions(-)
+Srinath Mannam (3):
+  PCI: Add dma-resv window list
+  iommu/dma: IOVA reserve for PCI host reserve address list
+  PCI: iproc: Add dma reserve resources to host
 
-diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
-index 32db84683c40..ce851c62bb68 100644
---- a/drivers/char/tpm/tpm-chip.c
-+++ b/drivers/char/tpm/tpm-chip.c
-@@ -160,6 +160,7 @@ static void tpm_dev_release(struct device *dev)
- 	kfree(chip->log.bios_event_log);
- 	kfree(chip->work_space.context_buf);
- 	kfree(chip->work_space.session_buf);
-+	kfree(chip->allocated_banks);
- 	kfree(chip);
- }
- 
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index d9439f9abe78..7b80919228be 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -488,8 +488,7 @@ EXPORT_SYMBOL_GPL(tpm_pcr_read);
- int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash)
- {
- 	int rc;
--	struct tpm2_digest digest_list[ARRAY_SIZE(chip->active_banks)];
--	u32 count = 0;
-+	struct tpm2_digest *digest_list;
- 	int i;
- 
- 	chip = tpm_find_get_ops(chip);
-@@ -497,16 +496,19 @@ int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash)
- 		return -ENODEV;
- 
- 	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
--		memset(digest_list, 0, sizeof(digest_list));
-+		digest_list = kcalloc(chip->nr_allocated_banks,
-+				      sizeof(*digest_list), GFP_KERNEL);
-+		if (!digest_list)
-+			return -ENOMEM;
- 
--		for (i = 0; i < ARRAY_SIZE(chip->active_banks) &&
--			    chip->active_banks[i] != TPM2_ALG_ERROR; i++) {
--			digest_list[i].alg_id = chip->active_banks[i];
-+		for (i = 0; i < chip->nr_allocated_banks; i++) {
-+			digest_list[i].alg_id = chip->allocated_banks[i];
- 			memcpy(digest_list[i].digest, hash, TPM_DIGEST_SIZE);
--			count++;
- 		}
- 
--		rc = tpm2_pcr_extend(chip, pcr_idx, count, digest_list);
-+		rc = tpm2_pcr_extend(chip, pcr_idx, chip->nr_allocated_banks,
-+				     digest_list);
-+		kfree(digest_list);
- 		tpm_put_ops(chip);
- 		return rc;
- 	}
-diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index f27d1f38a93d..6b94306ab7c5 100644
---- a/drivers/char/tpm/tpm.h
-+++ b/drivers/char/tpm/tpm.h
-@@ -257,7 +257,8 @@ struct tpm_chip {
- 	const struct attribute_group *groups[3];
- 	unsigned int groups_cnt;
- 
--	u16 active_banks[7];
-+	u32 nr_allocated_banks;
-+	u16 *allocated_banks;
- #ifdef CONFIG_ACPI
- 	acpi_handle acpi_dev_handle;
- 	char ppi_version[TPM_PPI_VERSION_LEN + 1];
-diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
-index 6f306338953b..0874743ca96d 100644
---- a/drivers/char/tpm/tpm1-cmd.c
-+++ b/drivers/char/tpm/tpm1-cmd.c
-@@ -709,6 +709,16 @@ int tpm1_auto_startup(struct tpm_chip *chip)
- 		goto out;
- 	}
- 
-+	chip->allocated_banks = kcalloc(1, sizeof(*chip->allocated_banks),
-+					GFP_KERNEL);
-+	if (!chip->allocated_banks) {
-+		rc = -ENOMEM;
-+		goto out;
-+	}
-+
-+	chip->allocated_banks[0] = TPM2_ALG_SHA1;
-+	chip->nr_allocated_banks = 1;
-+
- 	return rc;
- out:
- 	if (rc > 0)
-diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-index a6bec13afa69..245669a7aba5 100644
---- a/drivers/char/tpm/tpm2-cmd.c
-+++ b/drivers/char/tpm/tpm2-cmd.c
-@@ -234,7 +234,7 @@ int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
- 	int i;
- 	int j;
- 
--	if (count > ARRAY_SIZE(chip->active_banks))
-+	if (count > chip->nr_allocated_banks)
- 		return -EINVAL;
- 
- 	rc = tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_PCR_EXTEND);
-@@ -825,11 +825,14 @@ static ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
- 	void *marker;
- 	void *end;
- 	void *pcr_select_offset;
--	unsigned int count;
- 	u32 sizeof_pcr_selection;
-+	u32 nr_possible_banks;
-+	u32 nr_alloc_banks = 0;
-+	u16 hash_alg;
- 	u32 rsp_len;
- 	int rc;
- 	int i = 0;
-+	int j;
- 
- 	rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_GET_CAPABILITY);
- 	if (rc)
-@@ -844,11 +847,14 @@ static ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
- 	if (rc)
- 		goto out;
- 
--	count = be32_to_cpup(
-+	nr_possible_banks = be32_to_cpup(
- 		(__be32 *)&buf.data[TPM_HEADER_SIZE + 5]);
- 
--	if (count > ARRAY_SIZE(chip->active_banks)) {
--		rc = -ENODEV;
-+	chip->allocated_banks = kcalloc(nr_possible_banks,
-+					sizeof(*chip->allocated_banks),
-+					GFP_KERNEL);
-+	if (!chip->allocated_banks) {
-+		rc = -ENOMEM;
- 		goto out;
- 	}
- 
-@@ -857,7 +863,7 @@ static ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
- 	rsp_len = be32_to_cpup((__be32 *)&buf.data[2]);
- 	end = &buf.data[rsp_len];
- 
--	for (i = 0; i < count; i++) {
-+	for (i = 0; i < nr_possible_banks; i++) {
- 		pcr_select_offset = marker +
- 			offsetof(struct tpm2_pcr_selection, size_of_select);
- 		if (pcr_select_offset >= end) {
-@@ -866,17 +872,25 @@ static ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
- 		}
- 
- 		memcpy(&pcr_selection, marker, sizeof(pcr_selection));
--		chip->active_banks[i] = be16_to_cpu(pcr_selection.hash_alg);
-+		hash_alg = be16_to_cpu(pcr_selection.hash_alg);
-+
-+		for (j = 0; j < pcr_selection.size_of_select; j++)
-+			if (pcr_selection.pcr_select[j])
-+				break;
-+
-+		if (j < pcr_selection.size_of_select) {
-+			chip->allocated_banks[nr_alloc_banks] = hash_alg;
-+			nr_alloc_banks++;
-+		}
-+
- 		sizeof_pcr_selection = sizeof(pcr_selection.hash_alg) +
- 			sizeof(pcr_selection.size_of_select) +
- 			pcr_selection.size_of_select;
- 		marker = marker + sizeof_pcr_selection;
- 	}
- 
-+	chip->nr_allocated_banks = nr_alloc_banks;
- out:
--	if (i < ARRAY_SIZE(chip->active_banks))
--		chip->active_banks[i] = TPM2_ALG_ERROR;
--
- 	tpm_buf_destroy(&buf);
- 
- 	return rc;
+ drivers/iommu/dma-iommu.c           |  8 ++++++
+ drivers/pci/controller/pcie-iproc.c | 51 ++++++++++++++++++++++++++++++++++++-
+ drivers/pci/probe.c                 |  3 +++
+ include/linux/pci.h                 |  1 +
+ 4 files changed, 62 insertions(+), 1 deletion(-)
+
 -- 
-2.17.1
+2.7.4
 
