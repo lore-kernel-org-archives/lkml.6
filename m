@@ -2,148 +2,351 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA3F9C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:59:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E1B3C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:59:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 657CE20645
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:59:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="1sf4IzzJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 657CE20645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	by mail.kernel.org (Postfix) with ESMTP id F325220645
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:59:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F325220645
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729261AbeLMM7E (ORCPT
+        id S1729278AbeLMM7f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 07:59:04 -0500
-Received: from esa2.microchip.iphmx.com ([68.232.149.84]:3720 "EHLO
-        esa2.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729164AbeLMM7E (ORCPT
+        Thu, 13 Dec 2018 07:59:35 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:57419 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728803AbeLMM7e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 07:59:04 -0500
-X-IronPort-AV: E=Sophos;i="5.56,349,1539673200"; 
-   d="scan'208";a="24166953"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/AES128-SHA; 13 Dec 2018 05:59:03 -0700
-Received: from NAM01-BN3-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.76.37) with Microsoft SMTP Server (TLS) id
- 14.3.352.0; Thu, 13 Dec 2018 05:59:03 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector1-microchiptechnology-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CmFWb1ptoxv6agxuvhy+mw0EdN1NdImH9+CRh+UhbiM=;
- b=1sf4IzzJAjwDEINYi+MsCT5XeNraB/N6THmU6jlMIrxMKmNNwQ0sx+6gy8xnb24CSdoqoOtQNy3B5ysOd070dvR0BP2djVW3aTZE5/tiVfuyw6ytAewQcruiJg8kYOwWaCoouEFTKb0sD1g/N0DrlXc9AiCeunhqXg7FIaD/kmU=
-Received: from BY2PR11MB0744.namprd11.prod.outlook.com (10.163.112.142) by
- BY2PR11MB0728.namprd11.prod.outlook.com (10.163.112.139) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1404.25; Thu, 13 Dec 2018 12:59:00 +0000
-Received: from BY2PR11MB0744.namprd11.prod.outlook.com
- ([fe80::cd88:53bd:589a:ab7f]) by BY2PR11MB0744.namprd11.prod.outlook.com
- ([fe80::cd88:53bd:589a:ab7f%2]) with mapi id 15.20.1425.016; Thu, 13 Dec 2018
- 12:59:00 +0000
-From:   <Claudiu.Beznea@microchip.com>
-To:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <Nicolas.Ferre@microchip.com>,
-        <alexandre.belloni@bootlin.com>, <Ludovic.Desroches@microchip.com>
-CC:     <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v4 0/5] add PM functionality for act8945a PMIC
-Thread-Topic: [PATCH v4 0/5] add PM functionality for act8945a PMIC
-Thread-Index: AQHUkuJSt817GApqBkOd8F4AATMFUKV8oWoA
-Date:   Thu, 13 Dec 2018 12:59:00 +0000
-Message-ID: <0291f79e-b8df-f7ae-1ded-cacd404bc5fc@microchip.com>
-References: <1544703110-27161-1-git-send-email-claudiu.beznea@microchip.com>
-In-Reply-To: <1544703110-27161-1-git-send-email-claudiu.beznea@microchip.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: VI1PR0701CA0049.eurprd07.prod.outlook.com
- (2603:10a6:800:5f::11) To BY2PR11MB0744.namprd11.prod.outlook.com
- (2a01:111:e400:52de::14)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Claudiu.Beznea@microchip.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [94.177.32.154]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BY2PR11MB0728;6:CbT/jFJV+rn/oyT7jhcb1krtLgUBuAIKNTYR4lISrAHZqFSjJLewphHUEWYMig5hjfCQ30epEpeXbO1myd267tSqsmgsbLZFqL7E8SoIUnGvJ07TIT1spLANb86vWERqaO8RkNmJTmjSwMg71VzK+TjDbj9dq2vT1l6106F7eftCYbMN4t4FAXWm7adDRDqs9B10wuINS96NMIpLcgVpfpcogP0aP/LA41Y8h3huY64/5RTs+yIJVjLi3Qtbl56YNIN/Ya3fxpNsUFpflQELrdxQ49SCXL+ZqBSWvj6G8ihX9moDZTzHJiEhGuubsP7A7YU/DSaWT20iY6GM69TGGFNbToMnio8tuWlHom/qrsg/on2v2PT5cHfL8i3pRbajurvJArb47chXgDBHaIOpzWPdVxHd0XUF2oOjxtpP5EQU4JammaNXu6GqWzVuVtIty73eREF59yu7vn1Wr1Ms4p8zZ/5AyjYHWLQh2oxnb+U=;5:BAtwXFapqhcx8j75CPAd4FO2e08gVQ6nxwOYwnmg5b77j2HvsBO81GrHSIcsnOJHf5AGdxUPYcDR2uSpJiFGXtssdckTM541xbhXQba7DyCUogpfqbTfMyxDubKJFWv/sYMA3/v/0SbhhYfaZ0+TuqzPnySBixTswdxH17+E0LU=;7:5frqvicclKFfH2lm8d+Mlz+3uOPnlUX4b4Wnx9biMzqRRtNS0AHO7z+pcgejzv5yjHAl1lgtqaLs0NnqHoAQqsQXJDBZkrAILpx8rt3bIP0OZLYm+1qHa+i3C5EojUkCwJRSscg/ey/ZsMficw87VA==
-x-ms-office365-filtering-correlation-id: 60adcae5-a101-4af5-5a89-08d660fabfe1
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BY2PR11MB0728;
-x-ms-traffictypediagnostic: BY2PR11MB0728:
-x-microsoft-antispam-prvs: <BY2PR11MB0728DE6757532A5DCB73AD9987A00@BY2PR11MB0728.namprd11.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(3230021)(999002)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231475)(944501520)(52105112)(10201501046)(3002001)(148016)(149066)(150057)(6041310)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:BY2PR11MB0728;BCL:0;PCL:0;RULEID:;SRVR:BY2PR11MB0728;
-x-forefront-prvs: 088552DE73
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(366004)(346002)(39860400002)(396003)(376002)(199004)(189003)(106356001)(81156014)(71200400001)(386003)(71190400001)(105586002)(14444005)(76176011)(66066001)(6506007)(6116002)(53546011)(256004)(2906002)(446003)(11346002)(6436002)(2616005)(316002)(110136005)(2501003)(478600001)(476003)(53936002)(6512007)(72206003)(99286004)(14454004)(52116002)(97736004)(229853002)(6636002)(68736007)(7736002)(3846002)(54906003)(186003)(5660300001)(26005)(31686004)(39060400002)(6486002)(81166006)(36756003)(4326008)(86362001)(6246003)(31696002)(102836004)(8936002)(486006)(25786009)(8676002)(305945005);DIR:OUT;SFP:1101;SCL:1;SRVR:BY2PR11MB0728;H:BY2PR11MB0744.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: microchip.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: WVAnPWTvWWxLYGJEu0vwk5gg4CneNb4Lhs9RC1m/pWgL6AzzfktUU+ebExnWDmPs/nczoC99pesNTeLjMDjoJbd8YDACurW4hTjmSM3JRNS1CvelmFtPbRGQKu5p7uCI5H5xAY+PaaykpYnXU+21vxDNb5Ko615qznflAkP25qlbTbu3NZ6hxGvsCUE64SZYlZWvBU0fsJbLQIuc6bJa9+z1unUB1ZD1eO+8hrUFm+93LN2iHk++WrCmz+sLM6ZXxCWD+xjONRdLW3yWfHgYtaEXCUxeSk/s7gjaO7c+iQOdc0FKWPuBez0FF/D6MTm9
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <C412264179B89043BB78573E38543AB7@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 60adcae5-a101-4af5-5a89-08d660fabfe1
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Dec 2018 12:59:00.0524
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY2PR11MB0728
-X-OriginatorOrg: microchip.com
+        Thu, 13 Dec 2018 07:59:34 -0500
+Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1gXQaN-0000m9-97; Thu, 13 Dec 2018 13:59:27 +0100
+Message-ID: <1544705964.5886.1.camel@pengutronix.de>
+Subject: Re: [PATCH v5 02/12] gpu: ipu-csi: Swap fields according to
+ input/output field types
+From:   Philipp Zabel <p.zabel@pengutronix.de>
+To:     Steve Longerbeam <slongerbeam@gmail.com>,
+        linux-media@vger.kernel.org
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        "open list:DRM DRIVERS FOR FREESCALE IMX" 
+        <dri-devel@lists.freedesktop.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>,
+        "open list:FRAMEBUFFER LAYER" <linux-fbdev@vger.kernel.org>
+Date:   Thu, 13 Dec 2018 13:59:24 +0100
+In-Reply-To: <20181017000027.23696-3-slongerbeam@gmail.com>
+References: <20181017000027.23696-1-slongerbeam@gmail.com>
+         <20181017000027.23696-3-slongerbeam@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgTWFyaywNCg0KSSBzYXcgdGhhdCBwcmV2aW91cyB2ZXJzaW9uIG9mIHRoaXMgc2VyaWVzIHdh
-cyBhcHBsaWVkIHRvIHlvdXIgdHJlZSBqdXN0DQphZnRlciBJJ3ZlIHNlbmQgdGhpcyBuZXcgb25l
-LiBUaGUgb25seSBkaWZmZXJlbmNlIGIvdyB0aGVtIGlzIGluIHRoZQ0KZG9jdW1lbnRhdGlvbiBw
-YXRjaCB3aGVyZSBJIG1vdmVkIHRoZSBuZXcgaGVhZGVyLiBObyBmdW5jdGlvbmFsaXR5IGNoYW5n
-ZS4NCg0KU29ycnkgZm9yIHRoZSBub2lzZSwNCkNsYXVkaXUgQmV6bmVhDQoNCk9uIDEzLjEyLjIw
-MTggMTQ6NDksIENsYXVkaXUgQmV6bmVhIC0gTTE4MDYzIHdyb3RlOg0KPiBGcm9tOiBDbGF1ZGl1
-IEJlem5lYSA8Y2xhdWRpdS5iZXpuZWFAbWljcm9jaGlwLmNvbT4NCj4gDQo+IFRoaXMgc2VyaWVz
-IGltcGxlbWVudHMgUE0gZnVuY3Rpb25hbGl0eSBmb3IgYWN0ODk0NWEgUE1JQyBhbmQgdXNlIHRo
-YXQgc3VwcG9ydA0KPiBvbiBTQU1BNUQyIFhwbGFpbmVkIGJvYXJkLg0KPiANCj4gQ2hhbmdlcyBp
-biB2NDoNCj4gLSBtb3ZlIGR0LWJpbmRpbmdzL3JlZ3VsYXRvci9hY3RpdmUtc2VtaSw4OTQ1YS1y
-ZWd1bGF0b3IuaCBpbiBkb2N1bWVudGF0aW9uDQo+ICAgcGF0Y2g7IGRyaXZlciB1c2VzIG1hY3Jv
-cyBpbmNsdWRlZCBpbiB0aGlzIGZpbGU7IGR1ZSB0byB0aGlzIGRvY3VtZW50YXRpb24NCj4gICBw
-YXRjaCBhbmQgZHJpdmVycyBwYXRjaGVzIHNob3VsZCBnbyB0aHJvdWdoIHRoZSBzYW1lIHRyZWUN
-Cj4gLSBtYWtlIGRvY3VtZW50YXRpb24gcGF0Y2gsIHBhdGNoIDIgb2YgdGhpcyBzZXJpZXMNCj4g
-DQo+IENoYW5nZXMgaW4gdjM6DQo+IC0gYWRkIHBhdGNoICJ1bmxvY2sgZXhwZXJ0IHJlZ2lzdGVy
-cyI7IGl0IHdhcyB3cm9uZ2x5IG1pc3NlZCBpbiBwcmV2aW91cyB2ZXJzaW9uDQo+IA0KPiBDaGFu
-Z2VzIGluIHYyOg0KPiAtIHNwbGl0IHBhdGNoIDEvMSBmcm9tIHByZXZpb3VzIHNlcmllcyBpbiAz
-IHBhdGNoZXM6IG9uZSBhZGRpbmcgcmVnbWFwLA0KPiAgIG9uZSBhZGRpbmcgcG0gZnVuY3Rpb25h
-bGl0eSwgb25lIGFkZGluZyBzaHV0ZG93biBmdW5jdGlvbmFsaXR5DQo+IC0gdXNlIGRldl9wbV9v
-cHMgc3VzcGVuZCBmdW5jdGlvbiB0byBzZXQgcmVnaXN0ZXIgc3BlY2lmaWMgdG8gUFdSSExEIGxp
-bmU6IHRoaXMNCj4gICBpcyBzcGVjaWZpYyB0byBQTUlDIGl0c2VsZiBhbmQgbm90IHRvIHJlZ3Vs
-YXRvcnMNCj4gLSBhZGQgbW9kZSBzdXBwb3J0IGZvciBMRE9zDQo+IC0gYWRkIGNvbnN0YW50cyBm
-b3IgbW9kZSBpbiBkdC1iaW5kaW5ncy9yZWd1bGF0b3IvYWN0aXZlLXNlbWksODk0NWEtcmVndWxh
-dG9yLmgNCj4gLSBkb2N1bWVudCBtb2RlcyBhbmQgcmVndWxhdG9yIHN1c3BlbmQgc3RhdGVzDQo+
-IC0gcmVtb3ZlIHJkZXZzIGZyb20gc3RydWN0IGFjdDg5NDVhX3BtaWMgc2luY2Ugd2VyZSBub3Qg
-dXNlZCBhbnl3aGVyZQ0KPiAtIGFkZCBvcF9tb2RlIGZpZWxkIGluIHN0cnVjdCBhY3Q4OTQ1YV9w
-bWljLCB1cGRhdGUgaXQgd2hlbiBzZXR0aW5nIG1vZGUgYW5kDQo+ICAgcmV0dXJuIGl0IHdoZW4g
-cmVhZGluZyBtb2RlIChhdm9pZGluZyBvbmUgZXh0cmEgcmVnaXN0ZXIgcmVhZCB3aGlsZQ0KPiAg
-IHJlYWRpbmcgbW9kZSkNCj4gLSBhZGQgYSBwYXRjaCB0byBmaXggYSBjaGVja3BhdGNoLnBsIHdh
-cm5pbmcNCj4gLSBpbiBzaHV0ZG93biBmdW5jdGlvbiB1c2UgZGlyZWN0bHkgYWN0ODk0NWEtPnJl
-Z21hcCBpbnN0ZWFkIG9mIGFuIGludGVybWVkaWFyeQ0KPiAgIHN0cnVjdCByZWdtYXAgdmFyaWFi
-bGUNCj4gDQo+IEJvcmlzIEJyZXppbGxvbiAoMik6DQo+ICAgcmVndWxhdG9yOiBhY3Q4OTQ1YS1y
-ZWd1bGF0b3I6IEltcGxlbWVudCBQTSBmdW5jdGlvbmFsaXRpZXMNCj4gICBBUk06IGR0czogYXQ5
-MTogc2FtYTVkMl94cGxhaW5lZDogQWRkIHByb3BlciByZWd1bGF0b3Igc3RhdGVzIGZvcg0KPiAg
-ICAgc3VzcGVuZC10by1tZW0NCj4gDQo+IENsYXVkaXUgQmV6bmVhICgzKToNCj4gICByZWd1bGF0
-b3I6IGFjdDg5NDVhLXJlZ3VsYXRvcjogZml4IGxpbmUgb3ZlciA4MCBjaGFycyB3YXJuaW5nDQo+
-ICAgcmVndWxhdG9yOiBhY3Q4OTQ1YS1yZWd1bGF0b3I6IGFkZCBzaHV0ZG93biBmdW5jdGlvbg0K
-PiAgIHJlZ3VsYXRvcjogYWRkIGRvY3VtZW50YXRpb24gZm9yIHJlZ3VsYXRvciBtb2RlcyBhbmQg
-c3VzcGVuZCBzdGF0ZXMNCj4gDQo+ICAuLi4vYmluZGluZ3MvcmVndWxhdG9yL2FjdDg5NDVhLXJl
-Z3VsYXRvci50eHQgICAgICB8ICAzNCArKysrDQo+ICBhcmNoL2FybS9ib290L2R0cy9hdDkxLXNh
-bWE1ZDJfeHBsYWluZWQuZHRzICAgICAgICB8ICA1NCArKysrKysNCj4gIGRyaXZlcnMvcmVndWxh
-dG9yL2FjdDg5NDVhLXJlZ3VsYXRvci5jICAgICAgICAgICAgIHwgMjAwICsrKysrKysrKysrKysr
-KysrKysrLQ0KPiAgLi4uL3JlZ3VsYXRvci9hY3RpdmUtc2VtaSw4OTQ1YS1yZWd1bGF0b3IuaCAg
-ICAgICAgfCAgMzAgKysrKw0KPiAgNCBmaWxlcyBjaGFuZ2VkLCAzMTIgaW5zZXJ0aW9ucygrKSwg
-NiBkZWxldGlvbnMoLSkNCj4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBpbmNsdWRlL2R0LWJpbmRpbmdz
-L3JlZ3VsYXRvci9hY3RpdmUtc2VtaSw4OTQ1YS1yZWd1bGF0b3IuaA0KPiANCg==
+Hi Steve,
+
+On Tue, 2018-10-16 at 17:00 -0700, Steve Longerbeam wrote:
+> The function ipu_csi_init_interface() was inverting the F-bit for
+> NTSC case, in the CCIR_CODE_1/2 registers. The result being that
+> for NTSC bottom-top field order, the CSI would swap fields and
+> capture in top-bottom order.
+> 
+> Instead, base field swap on the field order of the input to the CSI,
+> and the field order of the requested output. If the input/output
+> fields are sequential but different, swap fields, otherwise do
+> not swap. This requires passing both the input and output mbus
+> frame formats to ipu_csi_init_interface().
+> 
+> Move this code to a new private function ipu_csi_set_bt_interlaced_codes()
+> that programs the CCIR_CODE_1/2 registers for interlaced BT.656 (and
+> possibly interlaced BT.1120 in the future).
+> 
+> When detecting input video standard from the input frame width/height,
+> make sure to double height if input field type is alternate, since
+> in that case input height only includes lines for one field.
+> 
+> Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
+> ---
+> Changes since v4:
+> - Cleaned up some convoluted code in ipu_csi_init_interface(), suggested
+>   by Philipp Zabel.
+> - Fixed a regression in csi_setup(), caught by Philipp.
+> ---
+>  drivers/gpu/ipu-v3/ipu-csi.c              | 119 +++++++++++++++-------
+>  drivers/staging/media/imx/imx-media-csi.c |  17 +---
+>  include/video/imx-ipu-v3.h                |   3 +-
+>  3 files changed, 88 insertions(+), 51 deletions(-)
+> 
+> diff --git a/drivers/gpu/ipu-v3/ipu-csi.c b/drivers/gpu/ipu-v3/ipu-csi.c
+> index aa0e30a2ba18..4a15e513fa05 100644
+> --- a/drivers/gpu/ipu-v3/ipu-csi.c
+> +++ b/drivers/gpu/ipu-v3/ipu-csi.c
+> @@ -325,6 +325,15 @@ static int mbus_code_to_bus_cfg(struct ipu_csi_bus_config *cfg, u32 mbus_code,
+>  	return 0;
+>  }
+>  
+> +/* translate alternate field mode based on given standard */
+> +static inline enum v4l2_field
+> +ipu_csi_translate_field(enum v4l2_field field, v4l2_std_id std)
+> +{
+> +	return (field != V4L2_FIELD_ALTERNATE) ? field :
+> +		((std & V4L2_STD_525_60) ?
+> +		 V4L2_FIELD_SEQ_BT : V4L2_FIELD_SEQ_TB);
+> +}
+> +
+>  /*
+>   * Fill a CSI bus config struct from mbus_config and mbus_framefmt.
+>   */
+> @@ -374,22 +383,75 @@ static int fill_csi_bus_cfg(struct ipu_csi_bus_config *csicfg,
+>  	return 0;
+>  }
+>  
+> +static int ipu_csi_set_bt_interlaced_codes(struct ipu_csi *csi,
+> +					   struct v4l2_mbus_framefmt *infmt,
+> +					   struct v4l2_mbus_framefmt *outfmt,
+
+infmt and outfmt parameters could be const.
+
+> +					   v4l2_std_id std)
+> +{
+> +	enum v4l2_field infield, outfield;
+> +	bool swap_fields;
+> +
+> +	/* get translated field type of input and output */
+> +	infield = ipu_csi_translate_field(infmt->field, std);
+> +	outfield = ipu_csi_translate_field(outfmt->field, std);
+> +
+> +	/*
+> +	 * Write the H-V-F codes the CSI will match against the
+> +	 * incoming data for start/end of active and blanking
+> +	 * field intervals. If input and output field types are
+> +	 * sequential but not the same (one is SEQ_BT and the other
+> +	 * is SEQ_TB), swap the F-bit so that the CSI will capture
+> +	 * field 1 lines before field 0 lines.
+> +	 */
+> +	swap_fields = (V4L2_FIELD_IS_SEQUENTIAL(infield) &&
+> +		       V4L2_FIELD_IS_SEQUENTIAL(outfield) &&
+> +		       infield != outfield);
+> +
+> +	if (!swap_fields) {
+> +		/*
+> +		 * Field0BlankEnd  = 110, Field0BlankStart  = 010
+> +		 * Field0ActiveEnd = 100, Field0ActiveStart = 000
+> +		 * Field1BlankEnd  = 111, Field1BlankStart  = 011
+> +		 * Field1ActiveEnd = 101, Field1ActiveStart = 001
+> +		 */
+> +		ipu_csi_write(csi, 0x40596 | CSI_CCIR_ERR_DET_EN,
+> +			      CSI_CCIR_CODE_1);
+> +		ipu_csi_write(csi, 0xD07DF, CSI_CCIR_CODE_2);
+> +	} else {
+> +		dev_dbg(csi->ipu->dev, "capture field swap\n");
+> +
+> +		/* same as above but with F-bit inverted */
+> +		ipu_csi_write(csi, 0xD07DF | CSI_CCIR_ERR_DET_EN,
+> +			      CSI_CCIR_CODE_1);
+> +		ipu_csi_write(csi, 0x40596, CSI_CCIR_CODE_2);
+> +	}
+> +
+> +	ipu_csi_write(csi, 0xFF0000, CSI_CCIR_CODE_3);
+> +
+> +	return 0;
+> +}
+> +
+> +
+>  int ipu_csi_init_interface(struct ipu_csi *csi,
+>  			   struct v4l2_mbus_config *mbus_cfg,
+> -			   struct v4l2_mbus_framefmt *mbus_fmt)
+> +			   struct v4l2_mbus_framefmt *infmt,
+> +			   struct v4l2_mbus_framefmt *outfmt)
+>  {
+>  	struct ipu_csi_bus_config cfg;
+>  	unsigned long flags;
+>  	u32 width, height, data = 0;
+> +	v4l2_std_id std;
+>  	int ret;
+>  
+> -	ret = fill_csi_bus_cfg(&cfg, mbus_cfg, mbus_fmt);
+> +	ret = fill_csi_bus_cfg(&cfg, mbus_cfg, infmt);
+>  	if (ret < 0)
+>  		return ret;
+>  
+>  	/* set default sensor frame width and height */
+> -	width = mbus_fmt->width;
+> -	height = mbus_fmt->height;
+> +	width = infmt->width;
+> +	height = infmt->height;
+> +	if (infmt->field == V4L2_FIELD_ALTERNATE)
+> +		height *= 2;
+>  
+>  	/* Set the CSI_SENS_CONF register remaining fields */
+>  	data |= cfg.data_width << CSI_SENS_CONF_DATA_WIDTH_SHIFT |
+> @@ -416,42 +478,22 @@ int ipu_csi_init_interface(struct ipu_csi *csi,
+>  		ipu_csi_write(csi, 0xFF0000, CSI_CCIR_CODE_3);
+>  		break;
+>  	case IPU_CSI_CLK_MODE_CCIR656_INTERLACED:
+> -		if (mbus_fmt->width == 720 && mbus_fmt->height == 576) {
+> -			/*
+> -			 * PAL case
+> -			 *
+> -			 * Field0BlankEnd = 0x6, Field0BlankStart = 0x2,
+> -			 * Field0ActiveEnd = 0x4, Field0ActiveStart = 0
+> -			 * Field1BlankEnd = 0x7, Field1BlankStart = 0x3,
+> -			 * Field1ActiveEnd = 0x5, Field1ActiveStart = 0x1
+> -			 */
+> -			height = 625; /* framelines for PAL */
+> -
+> -			ipu_csi_write(csi, 0x40596 | CSI_CCIR_ERR_DET_EN,
+> -					  CSI_CCIR_CODE_1);
+> -			ipu_csi_write(csi, 0xD07DF, CSI_CCIR_CODE_2);
+> -			ipu_csi_write(csi, 0xFF0000, CSI_CCIR_CODE_3);
+> -		} else if (mbus_fmt->width == 720 && mbus_fmt->height == 480) {
+> -			/*
+> -			 * NTSC case
+> -			 *
+> -			 * Field0BlankEnd = 0x7, Field0BlankStart = 0x3,
+> -			 * Field0ActiveEnd = 0x5, Field0ActiveStart = 0x1
+> -			 * Field1BlankEnd = 0x6, Field1BlankStart = 0x2,
+> -			 * Field1ActiveEnd = 0x4, Field1ActiveStart = 0
+> -			 */
+> -			height = 525; /* framelines for NTSC */
+> -
+> -			ipu_csi_write(csi, 0xD07DF | CSI_CCIR_ERR_DET_EN,
+> -					  CSI_CCIR_CODE_1);
+> -			ipu_csi_write(csi, 0x40596, CSI_CCIR_CODE_2);
+> -			ipu_csi_write(csi, 0xFF0000, CSI_CCIR_CODE_3);
+> +		if (width == 720 && height == 480) {
+> +			std = V4L2_STD_NTSC;
+> +			height = 525;
+> +		} else if (width == 720 && height == 576) {
+> +			std = V4L2_STD_PAL;
+> +			height = 625;
+>  		} else {
+>  			dev_err(csi->ipu->dev,
+> -				"Unsupported CCIR656 interlaced video mode\n");
+> -			spin_unlock_irqrestore(&csi->lock, flags);
+> -			return -EINVAL;
+> +				"Unsupported interlaced video mode\n");
+> +			ret = -EINVAL;
+> +			goto out_unlock;
+>  		}
+> +
+> +		ret = ipu_csi_set_bt_interlaced_codes(csi, infmt, outfmt, std);
+> +		if (ret)
+> +			goto out_unlock;
+>  		break;
+>  	case IPU_CSI_CLK_MODE_CCIR1120_PROGRESSIVE_DDR:
+>  	case IPU_CSI_CLK_MODE_CCIR1120_PROGRESSIVE_SDR:
+> @@ -476,9 +518,10 @@ int ipu_csi_init_interface(struct ipu_csi *csi,
+>  	dev_dbg(csi->ipu->dev, "CSI_ACT_FRM_SIZE = 0x%08X\n",
+>  		ipu_csi_read(csi, CSI_ACT_FRM_SIZE));
+>  
+> +out_unlock:
+>  	spin_unlock_irqrestore(&csi->lock, flags);
+>  
+> -	return 0;
+> +	return ret;
+>  }
+>  EXPORT_SYMBOL_GPL(ipu_csi_init_interface);
+>  
+> diff --git a/drivers/staging/media/imx/imx-media-csi.c b/drivers/staging/media/imx/imx-media-csi.c
+> index 4223f8d418ae..7ecbd4d76d09 100644
+> --- a/drivers/staging/media/imx/imx-media-csi.c
+> +++ b/drivers/staging/media/imx/imx-media-csi.c
+> @@ -663,15 +663,14 @@ static void csi_idmac_stop(struct csi_priv *priv)
+>  /* Update the CSI whole sensor and active windows */
+>  static int csi_setup(struct csi_priv *priv)
+>  {
+> -	struct v4l2_mbus_framefmt *infmt, *outfmt;
+> +	struct v4l2_mbus_framefmt infmt, outfmt;
+>  	const struct imx_media_pixfmt *incc;
+>  	struct v4l2_mbus_config mbus_cfg;
+> -	struct v4l2_mbus_framefmt if_fmt;
+>  	struct v4l2_rect crop;
+>  
+> -	infmt = &priv->format_mbus[CSI_SINK_PAD];
+> +	infmt = priv->format_mbus[CSI_SINK_PAD];
+
+Maybe still call this if_fmt, or maybe csi_fmt, to indicate this is not
+just the userspace visible input format as determined by the pad, but
+the modified format we set the interface to? Not a strong preference,
+though.
+
+>  	incc = priv->cc[CSI_SINK_PAD];
+> -	outfmt = &priv->format_mbus[priv->active_output_pad];
+> +	outfmt = priv->format_mbus[priv->active_output_pad];
+
+Copying the output format onto the stack seems unnecessary to me.
+
+>  
+>  	/* compose mbus_config from the upstream endpoint */
+>  	mbus_cfg.type = priv->upstream_ep.bus_type;
+> @@ -679,12 +678,6 @@ static int csi_setup(struct csi_priv *priv)
+>  		priv->upstream_ep.bus.parallel.flags :
+>  		priv->upstream_ep.bus.mipi_csi2.flags;
+>  
+> -	/*
+> -	 * we need to pass input frame to CSI interface, but
+> -	 * with translated field type from output format
+> -	 */
+> -	if_fmt = *infmt;
+> -	if_fmt.field = outfmt->field;
+>  	crop = priv->crop;
+>  
+>  	/*
+> @@ -692,7 +685,7 @@ static int csi_setup(struct csi_priv *priv)
+>  	 * generic/bayer data
+>  	 */
+>  	if (is_parallel_bus(&priv->upstream_ep) && incc->cycles) {
+> -		if_fmt.width *= incc->cycles;
+> +		infmt.width *= incc->cycles;
+>  		crop.width *= incc->cycles;
+>  	}
+>  
+> @@ -702,7 +695,7 @@ static int csi_setup(struct csi_priv *priv)
+>  			     priv->crop.width == 2 * priv->compose.width,
+>  			     priv->crop.height == 2 * priv->compose.height);
+>  
+> -	ipu_csi_init_interface(priv->csi, &mbus_cfg, &if_fmt);
+> +	ipu_csi_init_interface(priv->csi, &mbus_cfg, &infmt, &outfmt);
+
+We can just pass the &priv->format_mbus[priv->active_output_pad] here,
+or keep using struct v4l2_mbus_framefmt *outfmt as a shorthand.
+
+>  
+>  	ipu_csi_set_dest(priv->csi, priv->dest);
+>  
+> diff --git a/include/video/imx-ipu-v3.h b/include/video/imx-ipu-v3.h
+> index abbad94e14a1..f44a35192313 100644
+> --- a/include/video/imx-ipu-v3.h
+> +++ b/include/video/imx-ipu-v3.h
+> @@ -352,7 +352,8 @@ int ipu_prg_channel_configure(struct ipuv3_channel *ipu_chan,
+>  struct ipu_csi;
+>  int ipu_csi_init_interface(struct ipu_csi *csi,
+>  			   struct v4l2_mbus_config *mbus_cfg,
+> -			   struct v4l2_mbus_framefmt *mbus_fmt);
+> +			   struct v4l2_mbus_framefmt *infmt,
+> +			   struct v4l2_mbus_framefmt *outfmt);
+>  bool ipu_csi_is_interlaced(struct ipu_csi *csi);
+>  void ipu_csi_get_window(struct ipu_csi *csi, struct v4l2_rect *w);
+>  void ipu_csi_set_window(struct ipu_csi *csi, struct v4l2_rect *w);
+
+Either way,
+Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+
+regards
+Philipp
