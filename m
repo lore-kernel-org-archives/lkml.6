@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D9D1C67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:45:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1AC7C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:45:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0C7720849
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:45:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 86C1F20849
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:45:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544676350;
-	bh=Fbreh+Pfju7J2aX8+cIBYG7Wo3PHBgAYxf3fpn0Ea40=;
+	s=default; t=1544676352;
+	bh=uY9Rt4JIy3KkznDoJXSdKS4SqsB3u6ah+E2Cjmy9CyQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=L5zqNS8LYxMM2DUqMVUl/1c6RZgbHG6TU1cC3DKCvdgNpa5qPp/HK/dkB6EnwyMpm
-	 gJDdE/pv7iOht2+PeAaiR2wvehTySj6wPfApx4LlpBpAFUXRhOl2ihAb6t3obaDl97
-	 K2XvrvVQcuc7tP41dOTtWwWINBauPr8wCYR/OSyw=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0C7720849
+	b=ChHzWGPVOHYrtmPkYLwamVA81fL9huVAiJzijrQexCV4i2jLhjMLVfD9hnIi4RsUy
+	 M7Nao/ZV7TZ1riNZOKodq04mMl9KaKvIAtzY0SSqN8NcGWqds8e/yUScQdbNRhxF5v
+	 Us7RENzHQr8Fv12VD7T0RfbdAH3hcliNlCnVcJfQ=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86C1F20849
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728451AbeLMEau (ORCPT
+        id S1728737AbeLMEpv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 23:30:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43666 "EHLO mail.kernel.org"
+        Wed, 12 Dec 2018 23:45:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43690 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727372AbeLMEas (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 23:30:48 -0500
+        id S1728437AbeLMEau (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 23:30:50 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1F4D020879;
-        Thu, 13 Dec 2018 04:30:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3820620672;
+        Thu, 13 Dec 2018 04:30:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544675447;
-        bh=Fbreh+Pfju7J2aX8+cIBYG7Wo3PHBgAYxf3fpn0Ea40=;
+        s=default; t=1544675449;
+        bh=uY9Rt4JIy3KkznDoJXSdKS4SqsB3u6ah+E2Cjmy9CyQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=g0LKfEbFhsiHVGkmrz9Z3bdJIyjzgE0XbjzhLqA0F7vRgrII9B25TFb+4Ha9nslRa
-         2qL3aU53VPL/EyqusocJuwHkwybdPV/Hnf95rMyoU61cJwHXaLL0YFK5zsp2hB5dae
-         7ZAX4NsS042fEkPqdKvFgrcTYluUt2DztN9bRihE=
+        b=1RmNPPJrvjjW92QZGGBHUORA4C/G5kWxvaVg03YnKU6EvkdnN0X1FkJdc/0Zo0JiK
+         VneZVIjbcpP9jjMItBsWLMwQDIZPJsiE06l8Gcrsvy6CDUjGkHtyy47adCQbuDDmSK
+         UZl6sE1m+IFrXlQfz3nQYIgoJq/CXk/eBLf5QO4w=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Sasha Levin <sashal@kernel.org>, linux-i2c@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 69/73] i2c: uniphier-f: fix violation of tLOW requirement for Fast-mode
-Date:   Wed, 12 Dec 2018 23:28:34 -0500
-Message-Id: <20181213042838.75160-69-sashal@kernel.org>
+Cc:     Israel Rukshin <israelr@mellanox.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Sasha Levin <sashal@kernel.org>, linux-nvme@lists.infradead.org
+Subject: [PATCH AUTOSEL 4.19 71/73] nvmet-rdma: fix response use after free
+Date:   Wed, 12 Dec 2018 23:28:36 -0500
+Message-Id: <20181213042838.75160-71-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181213042838.75160-1-sashal@kernel.org>
 References: <20181213042838.75160-1-sashal@kernel.org>
@@ -61,56 +61,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
+From: Israel Rukshin <israelr@mellanox.com>
 
-[ Upstream commit ece27a337d42a3197935711997f2880f0957ed7e ]
+[ Upstream commit d7dcdf9d4e15189ecfda24cc87339a3425448d5c ]
 
-Currently, the clock duty is set as tLOW/tHIGH = 1/1. For Fast-mode,
-tLOW is set to 1.25 us while the I2C spec requires tLOW >= 1.3 us.
+nvmet_rdma_release_rsp() may free the response before using it at error
+flow.
 
-tLOW/tHIGH = 5/4 would meet both Standard-mode and Fast-mode:
-  Standard-mode: tLOW = 5.56 us, tHIGH = 4.44 us
-  Fast-mode:     tLOW = 1.39 us, tHIGH = 1.11 us
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Fixes: 8407879 ("nvmet-rdma: fix possible bogus dereference under heavy load")
+Signed-off-by: Israel Rukshin <israelr@mellanox.com>
+Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
+Reviewed-by: Max Gurtovoy <maxg@mellanox.com>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/i2c/busses/i2c-uniphier-f.c | 19 ++++++++++++++++++-
- 1 file changed, 18 insertions(+), 1 deletion(-)
+ drivers/nvme/target/rdma.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/i2c/busses/i2c-uniphier-f.c b/drivers/i2c/busses/i2c-uniphier-f.c
-index a403e8579b65..bc26ec822e26 100644
---- a/drivers/i2c/busses/i2c-uniphier-f.c
-+++ b/drivers/i2c/busses/i2c-uniphier-f.c
-@@ -470,9 +470,26 @@ static void uniphier_fi2c_hw_init(struct uniphier_fi2c_priv *priv)
+diff --git a/drivers/nvme/target/rdma.c b/drivers/nvme/target/rdma.c
+index bfc4da660bb4..e57f3902beb3 100644
+--- a/drivers/nvme/target/rdma.c
++++ b/drivers/nvme/target/rdma.c
+@@ -529,6 +529,7 @@ static void nvmet_rdma_send_done(struct ib_cq *cq, struct ib_wc *wc)
+ {
+ 	struct nvmet_rdma_rsp *rsp =
+ 		container_of(wc->wr_cqe, struct nvmet_rdma_rsp, send_cqe);
++	struct nvmet_rdma_queue *queue = cq->cq_context;
  
- 	uniphier_fi2c_reset(priv);
+ 	nvmet_rdma_release_rsp(rsp);
  
-+	/*
-+	 *  Standard-mode: tLOW + tHIGH = 10 us
-+	 *  Fast-mode:     tLOW + tHIGH = 2.5 us
-+	 */
- 	writel(cyc, priv->membase + UNIPHIER_FI2C_CYC);
--	writel(cyc / 2, priv->membase + UNIPHIER_FI2C_LCTL);
-+	/*
-+	 *  Standard-mode: tLOW = 4.7 us, tHIGH = 4.0 us, tBUF = 4.7 us
-+	 *  Fast-mode:     tLOW = 1.3 us, tHIGH = 0.6 us, tBUF = 1.3 us
-+	 * "tLow/tHIGH = 5/4" meets both.
-+	 */
-+	writel(cyc * 5 / 9, priv->membase + UNIPHIER_FI2C_LCTL);
-+	/*
-+	 *  Standard-mode: tHD;STA = 4.0 us, tSU;STA = 4.7 us, tSU;STO = 4.0 us
-+	 *  Fast-mode:     tHD;STA = 0.6 us, tSU;STA = 0.6 us, tSU;STO = 0.6 us
-+	 */
- 	writel(cyc / 2, priv->membase + UNIPHIER_FI2C_SSUT);
-+	/*
-+	 *  Standard-mode: tSU;DAT = 250 ns
-+	 *  Fast-mode:     tSU;DAT = 100 ns
-+	 */
- 	writel(cyc / 16, priv->membase + UNIPHIER_FI2C_DSUT);
+@@ -536,7 +537,7 @@ static void nvmet_rdma_send_done(struct ib_cq *cq, struct ib_wc *wc)
+ 		     wc->status != IB_WC_WR_FLUSH_ERR)) {
+ 		pr_err("SEND for CQE 0x%p failed with status %s (%d).\n",
+ 			wc->wr_cqe, ib_wc_status_msg(wc->status), wc->status);
+-		nvmet_rdma_error_comp(rsp->queue);
++		nvmet_rdma_error_comp(queue);
+ 	}
+ }
  
- 	uniphier_fi2c_prepare_operation(priv);
 -- 
 2.19.1
 
