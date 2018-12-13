@@ -2,162 +2,117 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E747C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 15:36:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C860DC67872
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 15:38:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C950120870
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 15:36:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="HA61QUkE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C950120870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 8C3C920870
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 15:38:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544715491;
+	bh=tEUtgrgbBbkMhRpyP02t+bNZtvpM2zX8nctqBRGCaDw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=pUl5ZgsHuy+8uvidIGByu+o0knnOpuECx30d6qKsC4fbSZDzJPnZM4GwQQ+FCrUaj
+	 q19f2S/H3EkKulX/caoG/hQNc9AZn++zMDZ9acKH/XFXM0NSPn8/NX+fUUUBUIYEn7
+	 ZtivdVI57K+JmQyg/ekwlrBpuzG/a1jzbKIHwz3o=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C3C920870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729062AbeLMPg1 (ORCPT
+        id S1729106AbeLMPiK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 10:36:27 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:38791 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727901AbeLMPg1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 10:36:27 -0500
-Received: by mail-it1-f195.google.com with SMTP id h65so4413044ith.3
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 07:36:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=32ZhPyu2hLO8paPnfPzkD4x4r1Dp+eAZ8wUUn8wLWls=;
-        b=HA61QUkEBvIAtEtreXj15JVRAREb/TdrKCh4IlG80+xhoz9ClW/LXyK8jhzqGt+qms
-         J5UzlfqQT2m8rDJeA4GwN2apmTMtnoFMacYRgr0tcLAEgJ3/pHWB4libUfNEXSI3OTtV
-         d3tn77hLmNTr04QZN/0LhlQDuRZzJCV2mEspY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=32ZhPyu2hLO8paPnfPzkD4x4r1Dp+eAZ8wUUn8wLWls=;
-        b=nAVPO6sWiN5tsy5l9CqoLI5g1b7nHbk0vNueAWZZyqkt6UnboW3VkLWq5h+93o7qMt
-         95UypK2emVrdigFLEE+kOwd17m90vupCSrr1KY9VaCJuJCiMSNZ7i1PQzHv726cRcHFq
-         XKXyJw4YiS9680YwJMVHhFjimXlPSY3Q8ajjFuemVSX6xCr36rjkp6WG/TPucDWGyPZm
-         L6nOxKmmlDR6AUEQUzgFyx0fUfGcFZT2FzSpYATUBTI78LGlD6y5M6C15A/DCDbMEk7b
-         d+PxXpdzXf0Ks1g4Qe1SBniAx05DfMEzfb8ec4TpZwrQpKT2XKghiTb3lh5kF25e0EUE
-         mZsQ==
-X-Gm-Message-State: AA+aEWaoIgYiTqNrjXORQwXet/BinSbp8JVxV85BzYSU4WkEPTUhTH+1
-        AG2wdIX1aO7uHAJlK6ektUTZCcol0B51NIhe3veJXw==
-X-Google-Smtp-Source: AFSGD/XlyDcZd+itS+JBLmueFV6UJP2bH7x2yKyyYuZRqme5gFnOFemU/DuaIebeovIgab8R1z2L/1DFgCaytkxDQe0=
-X-Received: by 2002:a24:a20e:: with SMTP id j14mr10472142itf.14.1544715385675;
- Thu, 13 Dec 2018 07:36:25 -0800 (PST)
+        Thu, 13 Dec 2018 10:38:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33490 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728930AbeLMPiK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 10:38:10 -0500
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B3C2820870;
+        Thu, 13 Dec 2018 15:38:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544715489;
+        bh=tEUtgrgbBbkMhRpyP02t+bNZtvpM2zX8nctqBRGCaDw=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=0wzrcN9w7gHWzgoMsu7hpqH+tfTz36CkSQtO6Ww5sFzGIrj747iL1tLgLYJzd1cby
+         zkE4xC/lGMWlnmesqPzWS78HmbCzCMG5L1MRUvInWKMUE3K1SSqdOzqduGgJdlIALv
+         5nmchj8Htr3/UhrGPDn+kV1hvq1hVKgOiHQOEDZw=
+Received: by mail-qk1-f171.google.com with SMTP id q1so1326736qkf.13;
+        Thu, 13 Dec 2018 07:38:09 -0800 (PST)
+X-Gm-Message-State: AA+aEWb8FXA2BLNKdImTPtL5hHsyYWxCAZBv00T1jasHJioccDVno9BE
+        ePADocls6nn9344xY+6yw1+UJo45YAvx8p3uxA==
+X-Google-Smtp-Source: AFSGD/W5LexxU/3vb56Ir91vqA7EDPRWGo+vjaKyNB+FbgO5CR1fDZ+mSGPxljWM0uZY6R9LBpOxpTtgE89VeH3+Ghk=
+X-Received: by 2002:a37:a483:: with SMTP id n125mr1208572qke.184.1544715488926;
+ Thu, 13 Dec 2018 07:38:08 -0800 (PST)
 MIME-Version: 1.0
-References: <1533657387-29039-1-git-send-email-vincent.guittot@linaro.org>
- <1533657387-29039-4-git-send-email-vincent.guittot@linaro.org> <20181213135208.GI5289@hirez.programming.kicks-ass.net>
-In-Reply-To: <20181213135208.GI5289@hirez.programming.kicks-ass.net>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Thu, 13 Dec 2018 16:36:14 +0100
-Message-ID: <CAKfTPtBXTmX1p0-QCVGh9OAt5Yc6sA-GNvNh4pFr00GJytSkAA@mail.gmail.com>
-Subject: Re: [PATCH 3/3] sched/fair: fix unnecessary increase of balance interval
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Morten Rasmussen <Morten.Rasmussen@arm.com>
+References: <1544705183-13288-1-git-send-email-stefan.popa@analog.com> <1544705183-13288-2-git-send-email-stefan.popa@analog.com>
+In-Reply-To: <1544705183-13288-2-git-send-email-stefan.popa@analog.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Thu, 13 Dec 2018 09:37:57 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqLMF=uf5Dcrfz_57KwYK9XDtJamGtf23JiUMDH-F6xa7w@mail.gmail.com>
+Message-ID: <CAL_JsqLMF=uf5Dcrfz_57KwYK9XDtJamGtf23JiUMDH-F6xa7w@mail.gmail.com>
+Subject: Re: [PATCH 01/11] staging: iio: adc: ad7606: Simplify the Kconfing menu
+To:     Stefan Popa <stefan.popa@analog.com>
+Cc:     Jonathan Cameron <jic23@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald <pmeerw@pmeerw.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
+        Stefan Popa <stefan.popa@analog.co>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 13 Dec 2018 at 14:52, Peter Zijlstra <peterz@infradead.org> wrote:
+On Thu, Dec 13, 2018 at 8:18 AM Stefan Popa <stefan.popa@analog.com> wrote:
 >
-> On Tue, Aug 07, 2018 at 05:56:27PM +0200, Vincent Guittot wrote:
-> > +static inline bool
-> > +asym_active_balance(enum cpu_idle_type idle, unsigned int flags, int dst, int src)
-> >  {
-> > +     if (idle != CPU_NOT_IDLE) {
-> >
-> >               /*
-> >                * ASYM_PACKING needs to force migrate tasks from busy but
-> >                * lower priority CPUs in order to pack all tasks in the
-> >                * highest priority CPUs.
-> >                */
-> > +             if ((flags & SD_ASYM_PACKING) &&
-> > +                 sched_asym_prefer(dst, src))
-> > +                     return true;
-> >       }
-> >
-> > +     return false;
-> > +}
-> > +
-> > +static int need_active_balance(struct lb_env *env)
-> > +{
-> > +     struct sched_domain *sd = env->sd;
-> > +
-> > +
-> > +     if (asym_active_balance(env->idle, sd->flags, env->dst_cpu, env->src_cpu))
-> > +             return 1;
-> > +
-> >       /*
-> >        * The dst_cpu is idle and the src_cpu CPU has only 1 CFS task.
-> >        * It's worth migrating the task if the src_cpu's capacity is reduced
-> > @@ -8650,7 +8660,8 @@ static int load_balance(int this_cpu, struct rq *this_rq,
-> >       } else
-> >               sd->nr_balance_failed = 0;
-> >
-> > +     if (likely(!active_balance) ||
-> > +         asym_active_balance(env.idle, sd->flags, env.dst_cpu, env.src_cpu)) {
+> There is no point in having three menu entries that can be selected
+> individually. Instead, the SPI and parallel interfaces should select
+> AD7606.
 >
-> Perhaps like the below?
-
-Yes. Far more simple and readable
-
+> Signed-off-by: Stefan Popa <stefan.popa@analog.com>
+> ---
+>  drivers/staging/iio/adc/Kconfig | 24 +++++++++---------------
+>  1 file changed, 9 insertions(+), 15 deletions(-)
 >
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -8857,21 +8857,24 @@ static struct rq *find_busiest_queue(str
->   */
->  #define MAX_PINNED_INTERVAL    512
+> diff --git a/drivers/staging/iio/adc/Kconfig b/drivers/staging/iio/adc/Kconfig
+> index fc23059..af1bad8 100644
+> --- a/drivers/staging/iio/adc/Kconfig
+> +++ b/drivers/staging/iio/adc/Kconfig
+> @@ -4,35 +4,29 @@
+>  menu "Analog to digital converters"
 >
-> +static inline bool
-> +asym_active_balance(struct lb_env *env)
-> +{
-> +       /*
-> +        * ASYM_PACKING needs to force migrate tasks from busy but
-> +        * lower priority CPUs in order to pack all tasks in the
-> +        * highest priority CPUs.
-> +        */
-> +       return env->idle != CPU_NOT_IDLE && (env->sd->flags & SD_ASYM_PACKING) &&
-> +               sched_asym_prefer(env->dst_cpu, env->src_cpu);
-> +}
-> +
->  static int need_active_balance(struct lb_env *env)
->  {
->         struct sched_domain *sd = env->sd;
->
-> -       if (env->idle != CPU_NOT_IDLE) {
+>  config AD7606
+> -       tristate "Analog Devices AD7606 ADC driver"
+> +       tristate
+>         depends on GPIOLIB || COMPILE_TEST
+>         depends on HAS_IOMEM
+>         select IIO_BUFFER
+>         select IIO_TRIGGERED_BUFFER
+> -       help
+> -         Say yes here to build support for Analog Devices:
+> -         ad7605-4, ad7606, ad7606-6, ad7606-4 analog to digital converters (ADC).
 > -
-> -               /*
-> -                * ASYM_PACKING needs to force migrate tasks from busy but
-> -                * lower priority CPUs in order to pack all tasks in the
-> -                * highest priority CPUs.
-> -                */
-> -               if ((sd->flags & SD_ASYM_PACKING) &&
-> -                   sched_asym_prefer(env->dst_cpu, env->src_cpu))
-> -                       return 1;
-> -       }
-> +       if (asym_active_balance(env))
-> +               return 1;
+> -         To compile this driver as a module, choose M here: the
+> -         module will be called ad7606.
 >
->         /*
->          * The dst_cpu is idle and the src_cpu CPU has only 1 CFS task.
-> @@ -9150,7 +9153,7 @@ static int load_balance(int this_cpu, st
->         } else
->                 sd->nr_balance_failed = 0;
->
-> -       if (likely(!active_balance)) {
-> +       if (likely(!active_balance) || asym_active_balance(&env)) {
->                 /* We were unbalanced, so reset the balancing interval */
->                 sd->balance_interval = sd->min_interval;
->         } else {
+>  config AD7606_IFACE_PARALLEL
+> -       tristate "parallel interface support"
+> -       depends on AD7606
+> +       tristate "Analog Devices AD7606 ADC driver with parallel interface support"
+> +       select AD7606
+
+I don't think this works because the depends on for AD7606 may not be
+satisfied. Moving the HAS_IOMEM here would help and either drop
+GPIOLIB or move that too.
+
+Rob
