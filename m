@@ -2,148 +2,157 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-19.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 770D2C67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 14:41:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFF8AC67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 14:43:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BFFA20870
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 14:41:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544712079;
-	bh=2Y9dcSxEbm7++2W57FJQNCnpbdFgMI2E2n6HsLTa0SI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=XWezWqe+R/g5cIuL9MYCF5vEvfPbHw6kzF45VqQ8ARNZl2Q9dx7Z94laxx9c6oo7F
-	 joJNoqqjUrxlRMfeEcE8FpfmCPfC7VHDSO8Kb8PtEKf/K54JcPH6L91SBN2E9yL2rD
-	 eHLxhFLkbPh6fbowrT65KTNXGx87rrVMUcsoyjJM=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BFFA20870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id B24B220849
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 14:43:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="otDY7uur"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B24B220849
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728908AbeLMOlS (ORCPT
+        id S1728861AbeLMOnR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 09:41:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37290 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727618AbeLMOlR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 09:41:17 -0500
-Received: from localhost (173-25-171-118.client.mchsi.com [173.25.171.118])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E8CEC20849;
-        Thu, 13 Dec 2018 14:41:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544712077;
-        bh=2Y9dcSxEbm7++2W57FJQNCnpbdFgMI2E2n6HsLTa0SI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=NaFSsTx73EVZhzLJ/ne6WrSUMZcjxwczulAfKDaeZmYYjxArXML9M+aH2Ue2QDFLG
-         RMI4KMUCgeCB1TmHC79pAecJ66fTRX0Y8YsWuNlv9lViSLnWGr1OcHO23HsptPJ5Ms
-         7YxdgoPScJvi4EV6RYfnU6PxMMlifnGr6pihU0fU=
-Date:   Thu, 13 Dec 2018 08:41:15 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Richard Zhu <hongxing.zhu@nxp.com>
-Cc:     "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
-        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
-        "andrew.smirnov@gmail.com" <andrew.smirnov@gmail.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [v2] PCI: imx: make msi work without pcieportbus
-Message-ID: <20181213144115.GA4701@google.com>
-References: <1544687042-16595-1-git-send-email-hongxing.zhu@nxp.com>
+        Thu, 13 Dec 2018 09:43:17 -0500
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:38577 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728620AbeLMOnP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 09:43:15 -0500
+Received: by mail-yb1-f196.google.com with SMTP id d187so882358ybb.5
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 06:43:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=UOnn/n4LPkiDFTvjproHCRcPfd9P9L5PF6TwtBYO1RI=;
+        b=otDY7uurWun3Nceokfezvs9m4a/EYIJPiCAtzQ7W0Lxa9Z67/bGM5hnNcBV+EJqRMJ
+         8ndjriRpB+AvCLgIvrvq/qnICUY+2jfjxKciU2UMlxMnrOEsx3Qg6pajzE5Vni1hFzDz
+         PWiDk8wLgtO3EOiGa1w2+UwtcIlcVqQb2b/0ExaDfnd4YXTUKyI1BcjrPeVhJIgKHeg8
+         m3lxdXz5pPheeDHseZ7uzCVdu6lqpc5u0Q1vOncstYrkv9dABUiPXumieGRYjBL4kA/p
+         oixZd6NNg7gGLQC8ZqHUEaalvmJ9a9po5DrgREkIjQ6oLT1TqCEqj4x4WxA8Wg8sTRxz
+         WanA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=UOnn/n4LPkiDFTvjproHCRcPfd9P9L5PF6TwtBYO1RI=;
+        b=b818mTZUb5aYsM3S9eSkGAcGA9iwTzUtlFIyvAsIIuIZKLOciMZach+0LOpGKBZVWl
+         Mk437+9toHMvE8D7RSBuiB0wa2t6J0jdOGn4f5yphP7OiVcKAW3pc0FvX1UglV+eIdn8
+         c/t8iMm2Jnn82ZBOtO1OizBoVhmFndwSp5Ue3ZWxNct8J4xaQFwAO0E2Xu2EzPiQ0nIR
+         qk1i22lDwl65CVZBr2a4n+5TeRcIiC/rLJMOP8GSZxbBJwnDngbbwLQIF/uj8RyNIBVA
+         JwVTW5N5BwJXk7j48nvJ6wW44NClCKIbrsrhRmcDuIOhANkTNAYc/y05DG39489ushir
+         NnGA==
+X-Gm-Message-State: AA+aEWaDXd3P0ZmcIcqPP2XAIfyRu3ECNn1CgiVQvFzO3Prd+CULWQRY
+        sDKpBQoQrDppdp4CYxKuflc5s6VgL345E5uKKHmUUQ==
+X-Google-Smtp-Source: AFSGD/UBj1IgCxqV0Vk+zhx0OD76T3Q/Ai2wZqpHxLCPP1Z3Ex1fIHiedyw2NBs/qH4zDtQnAuwemuqry8poVLZVFdo=
+X-Received: by 2002:a25:d9d2:: with SMTP id q201mr6188045ybg.151.1544712193640;
+ Thu, 13 Dec 2018 06:43:13 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1544687042-16595-1-git-send-email-hongxing.zhu@nxp.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20181211190053.9997-1-enric.balletbo@collabora.com>
+In-Reply-To: <20181211190053.9997-1-enric.balletbo@collabora.com>
+From:   Guenter Roeck <groeck@google.com>
+Date:   Thu, 13 Dec 2018 06:43:02 -0800
+Message-ID: <CABXOdTcN5d69w4vorq_5hGPiaq_nDcAGDNVbU6gyVjNWy9Yubw@mail.gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: add maintainers for ChromeOS EC sub-drivers
+To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>, a.zummo@towertech.it,
+        linux-pwm@vger.kernel.org, linux-iio@vger.kernel.org,
+        alexandre.belloni@bootlin.com, linux-i2c@vger.kernel.org,
+        Guenter Roeck <groeck@chromium.org>, kernel@collabora.com,
+        linux-rtc@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        linux-input@vger.kernel.org,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE" 
+        <devicetree@vger.kernel.org>, thierry.reding@gmail.com,
+        linux-pm@vger.kernel.org, bleung@chromiumg.org,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Miller <davem@davemloft.net>, mchehab+samsung@kernel.org,
+        nicolas.ferre@microchip.com,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 13, 2018 at 08:02:11AM +0000, Richard Zhu wrote:
-> MSI_EN of iMX PCIe RC would be asserted when
-> PCIEPORTBUS driver is selected.
-> Thus, the MSI works fine on iMX PCIe before.
-> Assert it unconditionally when MSI is supported.
-> Otherwise, the MSI wouldn't be triggered although
-> the EP is present and the MSIs are assigned.
+Enric,
 
-This subject line and changelog need some rework.  I can't understand
-what's going on at all.  Lorenzo or I can help craft something, but I
-don't understand enough to propose anything yet.
-
-"MSI_EN" doesn't appear in the driver; I assume it's some
-device-specific signal.
-
-"iMX" does not look like the typical spelling.  You could use "imx6"
-to refer to the driver, but in this case you're talking about the
-hardware itself, not the driver.  So you should use "i.MX6" or
-whatever the appropriate brand is.
-
-If "PCIEPORTBUS driver is selected" means "CONFIG_PCIEPORTBUS=y", say
-that.  The connection of portdrv (which is generic PCIe support) to
-MSI_EN (which is apparently device-specific) is unclear.  It would be
-helpful if you could connect those dots a little more.
-
-"MSI works fine on iMX PCIe before."  Before what?  Is this a
-regression, where MSI worked before some commit and this patch fixes
-it?
-
-Please rewrap the changelog so it uses the entire 80-column width.
-Wrap to 75 so it still fits when "git log" adds the 4 char indent.
-
-> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
+On Tue, Dec 11, 2018 at 11:01 AM Enric Balletbo i Serra
+<enric.balletbo@collabora.com> wrote:
+>
+> There are multiple ChromeOS EC sub-drivers spread in different
+> subsystems, as all of them are related to the Chrome stuff add
+> Benson and myself as a maintainers for all these sub-drivers.
+>
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 > ---
->  drivers/pci/controller/dwc/pci-imx6.c | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
-> index 26087b3..d3e4296 100644
-> --- a/drivers/pci/controller/dwc/pci-imx6.c
-> +++ b/drivers/pci/controller/dwc/pci-imx6.c
-> @@ -74,6 +74,7 @@ struct imx6_pcie {
->  #define PHY_PLL_LOCK_WAIT_USLEEP_MAX	200
->  
->  /* PCIe Root Complex registers (memory-mapped) */
-> +#define PCI_MSI_CAP				0x50
+>
+>  MAINTAINERS | 24 ++++++++++++++++++++++++
+>  1 file changed, 24 insertions(+)
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index a24129b0b043..2f24f5c977ca 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -3625,6 +3625,30 @@ S:       Maintained
+>  T:     git git://git.kernel.org/pub/scm/linux/kernel/git/bleung/chrome-platform.git
+>  F:     drivers/platform/chrome/
+>
+> +CHROMEOS EC SUBDRIVERS
+> +M:     Benson Leung <bleung@chromiumg.org>
+> +M:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
 
-I wish this didn't look quite so much like a PCI core name, because
-this is really an i.MX-specific offset.  It looks like the PCIE_RC_*
-names are all similar i.MX-specific things.  Shouldn't this match
-those?
+It might possibly make sense to add
 
->  #define PCIE_RC_LCR				0x7c
->  #define PCIE_RC_LCR_MAX_LINK_SPEEDS_GEN1	0x1
->  #define PCIE_RC_LCR_MAX_LINK_SPEEDS_GEN2	0x2
-> @@ -926,6 +927,7 @@ static int imx6_pcie_probe(struct platform_device *pdev)
->  	struct resource *dbi_base;
->  	struct device_node *node = dev->of_node;
->  	int ret;
-> +	u16 val;
->  
->  	imx6_pcie = devm_kzalloc(dev, sizeof(*imx6_pcie), GFP_KERNEL);
->  	if (!imx6_pcie)
-> @@ -1070,6 +1072,11 @@ static int imx6_pcie_probe(struct platform_device *pdev)
->  	ret = imx6_add_pcie_port(imx6_pcie, pdev);
->  	if (ret < 0)
->  		return ret;
-> +	if (IS_ENABLED(CONFIG_PCI_MSI)) {
-> +		val = dw_pcie_readw_dbi(pci, PCI_MSI_CAP + PCI_MSI_FLAGS);
-> +		val |= PCI_MSI_FLAGS_ENABLE;
-> +		dw_pcie_writew_dbi(pci, PCI_MSI_CAP + PCI_MSI_FLAGS, val);
-> +	}
->  
->  	return 0;
->  }
-> -- 
-> 2.7.4
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+R: Guenter Roeck <groeck@chromium.org>
+
+since it looks like I am doing a lot of the actual reviewing anyway.
+
+Thanks,
+Guenter
+
+> +S:     Maintained
+> +F:     Documentation/devicetree/bindings/extcon/extcon-usbc-cros-ec.txt
+> +F:     Documentation/devicetree/bindings/input/cros-ec-keyb.txt
+> +F:     Documentation/devicetree/bindings/pwm/google,cros-ec-pwm.txt
+> +F:     Documentation/devicetree/bindings/i2c/i2c-cros-ec-tunnel.txt
+> +F:     Documentation/devicetree/bindings/mfd/cros-ec.txt
+> +F:     Documentation/ABI/testing/sysfs-bus-iio-cros-ec
+> +F:     drivers/extcon/extcon-usbc-cros-ec.c
+> +F:     drivers/i2c/busses/i2c-cros-ec-tunnel.c
+> +F:     drivers/iio/accel/cros_ec*
+> +F:     drivers/iio/common/cros_ec_sensors/
+> +F:     drivers/iio/light/cros_ec*
+> +F:     drivers/iio/pressure/cros_ec*
+> +F:     drivers/input/keyboard/cros_ec*
+> +F:     drivers/mfd/cros_ec*
+> +F:     drivers/power/supply/cros_usbpd-charger.c
+> +F:     drivers/pwm/pwm-cros-ec.c
+> +F:     drivers/rtc/rtc-cros-ec.c
+> +F:     include/linux/iio/common/cros_ec_sensors_core.h
+> +F:     include/linux/mfd/cros_ec*
+> +
+>  CIRRUS LOGIC AUDIO CODEC DRIVERS
+>  M:     Brian Austin <brian.austin@cirrus.com>
+>  M:     Paul Handrigan <Paul.Handrigan@cirrus.com>
+> --
+> 2.19.2
+>
