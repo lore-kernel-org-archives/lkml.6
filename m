@@ -2,119 +2,74 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C39EC67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 20:26:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 683DFC67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 20:26:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06C1620851
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 20:26:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06C1620851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 3B01B20851
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 20:26:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B01B20851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729071AbeLMU0K (ORCPT
+        id S1729119AbeLMU0O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 15:26:10 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:42222 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726533AbeLMU0J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 15:26:09 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 042183082211;
-        Thu, 13 Dec 2018 20:26:09 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.18.25.234])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id BD58B1057070;
-        Thu, 13 Dec 2018 20:26:08 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 553F22208FC; Thu, 13 Dec 2018 15:26:08 -0500 (EST)
-Date:   Thu, 13 Dec 2018 15:26:08 -0500
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Stephen Smalley <sds@tycho.nsa.gov>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        Ondrej Mosnacek <omosnace@redhat.com>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Mark Salyzyn <salyzyn@android.com>,
-        Paul Moore <paul@paul-moore.com>, linux-kernel@vger.kernel.org,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, selinux@vger.kernel.org,
-        Daniel J Walsh <dwalsh@redhat.com>
-Subject: Re: overlayfs access checks on underlying layers
-Message-ID: <20181213202608.GD4384@redhat.com>
-References: <20181204161747.GC16818@redhat.com>
- <e8841bf0-d6b8-0e7d-6a35-055a06441d30@tycho.nsa.gov>
- <20181205134317.GA11337@redhat.com>
- <8eb7f677-fd71-c31b-bfed-29fb7187d132@tycho.nsa.gov>
- <20181211214821.GD17242@redhat.com>
- <2e4d90ce-61e7-56b1-c161-4e5fb7236537@tycho.nsa.gov>
- <20181213145813.GB4384@redhat.com>
- <846eb23e-1188-9e45-ee0a-676d26cc715e@tycho.nsa.gov>
- <20181213185456.GC4384@redhat.com>
- <6de7d35e-9ee7-5324-86d0-e0e42c6a6d29@tycho.nsa.gov>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6de7d35e-9ee7-5324-86d0-e0e42c6a6d29@tycho.nsa.gov>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Thu, 13 Dec 2018 20:26:09 +0000 (UTC)
+        Thu, 13 Dec 2018 15:26:14 -0500
+Received: from relmlor2.renesas.com ([210.160.252.172]:33715 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726533AbeLMU0M (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 15:26:12 -0500
+X-Greylist: delayed 302 seconds by postgrey-1.27 at vger.kernel.org; Thu, 13 Dec 2018 15:26:12 EST
+X-IronPort-AV: E=Sophos;i="5.56,349,1539615600"; 
+   d="scan'208";a="2555672"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 14 Dec 2018 05:21:08 +0900
+Received: from fabrizio-dev.ree.adwin.renesas.com (unknown [10.226.37.69])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 2D1F440F76C3;
+        Fri, 14 Dec 2018 05:21:05 +0900 (JST)
+From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH] dt-bindings: usb: renesas_usbhs: Add r8a774c0 support
+Date:   Thu, 13 Dec 2018 20:21:03 +0000
+Message-Id: <1544732463-6685-1-git-send-email-fabrizio.castro@bp.renesas.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 13, 2018 at 03:09:55PM -0500, Stephen Smalley wrote:
-> On 12/13/18 1:54 PM, Vivek Goyal wrote:
-> > On Thu, Dec 13, 2018 at 11:12:31AM -0500, Stephen Smalley wrote:
-> > 
-> > [..]
-> > > > > > Can you elaborate a bit more on how this is leaking data through overlay
-> > > > > > mount. If it is, then why accessing file on lower is not equivalent of
-> > > > > > leaking of data.
-> > > > > 
-> > > > > In the container use case, retaining the lower label on copy-up for a
-> > > > > context-mounted overlay permits a process in the container to leak the
-> > > > > container data out to host files not labeled with the container label and
-> > > > > thus potentially accessible to other containers or host processes.
-> > > > 
-> > > > > The
-> > > > > container process appears to just be writing to files labeled with the
-> > > > > container label via the overlay, but the written data and/or metadata is
-> > > > > directly accessible through the lower label, which is likely readable to
-> > > > > all/many containers and host processes.
-> > > > > 
-> > > > > In the multi-level security (MLS) use case, an analogy would a situation
-> > > > > where you have an unclassified lower dir with some content to be shared
-> > > > > read-only across all levels, and an overlay is context-mounted at each level
-> > > > > with a corresponding upper dir and work dir private to that level.  If a
-> > > > > client process at secret performs a write to a file via the secret overlay,
-> > > > > and if the written data is stored in a file in the upper dir that inherits
-> > > > > the label from the lower file (unclassified), then the secret process can
-> > > > > leak data to unclassified processes at will, violating the MLS policy.
-> > > > 
-> > > > For the case of devices, its already happening. One might change metadata
-> > > > of a device (hence trigger copy up). Now all writes to upper device file
-> > > > from secret process still go to same underlying device and are still
-> > > > readable from lower device file.
-> > > 
-> > > This is an argument for not copying up device files IMHO, not for preserving
-> > > the lower label on them.
-> > 
-> > How do we handle metadata change to device node (like timestamp, ownership
-> > change) without copy up.
-> 
-> Do we need to support such metadata changes to device nodes through an
-> overlay mount?  Is that required for some legitimate purpose (and if so,
-> what is the use case?)?  If not, just deny it up front.  Much simpler and no
-> potential for a leak.
+Document RZ/G2E (R8A774C0) SoC bindings.
 
-This will be overlay specific behavior and further from POSIX
-like filesystem behavior. Don't know which workloads depend on changing
-ownership of devices of changing metadata of devices.
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+---
+ Documentation/devicetree/bindings/usb/renesas_usbhs.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-Thanks
-Vivek
+diff --git a/Documentation/devicetree/bindings/usb/renesas_usbhs.txt b/Documentation/devicetree/bindings/usb/renesas_usbhs.txt
+index 90719f5..d93b6a1 100644
+--- a/Documentation/devicetree/bindings/usb/renesas_usbhs.txt
++++ b/Documentation/devicetree/bindings/usb/renesas_usbhs.txt
+@@ -7,6 +7,7 @@ Required properties:
+ 	- "renesas,usbhs-r8a7744" for r8a7744 (RZ/G1N) compatible device
+ 	- "renesas,usbhs-r8a7745" for r8a7745 (RZ/G1E) compatible device
+ 	- "renesas,usbhs-r8a774a1" for r8a774a1 (RZ/G2M) compatible device
++	- "renesas,usbhs-r8a774c0" for r8a774c0 (RZ/G2E) compatible device
+ 	- "renesas,usbhs-r8a7790" for r8a7790 (R-Car H2) compatible device
+ 	- "renesas,usbhs-r8a7791" for r8a7791 (R-Car M2-W) compatible device
+ 	- "renesas,usbhs-r8a7792" for r8a7792 (R-Car V2H) compatible device
+-- 
+2.7.4
+
