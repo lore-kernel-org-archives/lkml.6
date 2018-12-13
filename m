@@ -7,49 +7,50 @@ X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27BE7C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:29:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 385A1C67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:29:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7B9820880
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:29:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E32F020873
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:29:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544675370;
-	bh=t0VN4sjSkLmd3y8W/i/LYDbPHeuOtz+Lew0Q6mxB3ho=;
+	s=default; t=1544675373;
+	bh=DBN5kwkL/AY1jaA8doZZN+E0JR4Vt2HIaEBuJZ7Wmls=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=MN0J9ervXPGcaZ6amYYvuYFIkjAsJfYOtVLHfyqsee8PZ0rXEHZhG5AhiLTI0klyM
-	 C/fuRMPL7bQQFSkSfS0DAOB8URjROcaM768Mtl6BY5aQAk/MUULX55oFAeKO1Vc/nj
-	 MlC1nDx+cu2ykTdu6S08aGzXhPUSxSyUb4Zl7rDA=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7B9820880
+	b=F0YuA60e7Vfbxf8eKNy9wny7T1MgXAczUdjvPf2HxM9+tg97x+F90BD8lTrYzaIFV
+	 +UtGBu4FmXff8vFTv+CLPgP29/QG0tKngknHyTKcjiCP2LAnXgraVi/gXOaBFUQk2n
+	 a4Jw4aT+T+QhF5gCNolk+ES0HdCoTNoEzdgR8cFk=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E32F020873
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727702AbeLME32 (ORCPT
+        id S1727730AbeLME3b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 23:29:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42420 "EHLO mail.kernel.org"
+        Wed, 12 Dec 2018 23:29:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42490 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726630AbeLME3Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 23:29:25 -0500
+        id S1727692AbeLME32 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 23:29:28 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CBA1C20873;
-        Thu, 13 Dec 2018 04:29:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 31C2F20879;
+        Thu, 13 Dec 2018 04:29:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544675364;
-        bh=t0VN4sjSkLmd3y8W/i/LYDbPHeuOtz+Lew0Q6mxB3ho=;
+        s=default; t=1544675367;
+        bh=DBN5kwkL/AY1jaA8doZZN+E0JR4Vt2HIaEBuJZ7Wmls=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AoaMCzzzSRN92SYijIOCJyrdBLkjzStgKJb2kF/6lO8wF/AKOyZqZdANHQZ8YVXX0
-         tVB5UjdiKGHiTzufUzPNUGPafaKOl2jINOhzL4Wrw3+9r/HKxaUXYg5gCugE6G3QOf
-         ExToNZYrNnzMSkrMhlnAFwgw9cNuJ1QlMrQIFCS4=
+        b=aofh86u3mCQs3Jsv98WAaYBkwP6W0gAE8aR/rAvzvBJbxUsHbdV87LPUnatEm6Szo
+         PHp/n1IpzLJ67+gkgQ1KrrCrVRUm8XeSqlqYweaNcsCWXCKXLE0zOZ4ISOrcnzQ2SZ
+         EsWggXDj+GdtI0dDgyIkfPm6a0ZVE4uUPh78UiyY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Yangtao Li <tiny.windzz@gmail.com>,
         "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, sparclinux@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 28/73] sbus: char: add of_node_put()
-Date:   Wed, 12 Dec 2018 23:27:53 -0500
-Message-Id: <20181213042838.75160-28-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, sparclinux@vger.kernel.org,
+        linux-serial@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 30/73] drivers/tty: add missing of_node_put()
+Date:   Wed, 12 Dec 2018 23:27:55 -0500
+Message-Id: <20181213042838.75160-30-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181213042838.75160-1-sashal@kernel.org>
 References: <20181213042838.75160-1-sashal@kernel.org>
@@ -63,29 +64,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Yangtao Li <tiny.windzz@gmail.com>
 
-[ Upstream commit 87d81a23e24f24ebe014891e8bdf3ff8785031e8 ]
+[ Upstream commit dac097c4546e4c5b16dd303a1e97c1d319c8ab3e ]
 
-use of_node_put() to release the refcount.
+of_find_node_by_path() acquires a reference to the node
+returned by it and that reference needs to be dropped by its caller.
+This place is not doing this, so fix it.
 
 Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/sbus/char/display7seg.c | 1 +
+ drivers/tty/serial/suncore.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/sbus/char/display7seg.c b/drivers/sbus/char/display7seg.c
-index 5c8ed7350a04..a36e4cf1841d 100644
---- a/drivers/sbus/char/display7seg.c
-+++ b/drivers/sbus/char/display7seg.c
-@@ -220,6 +220,7 @@ static int d7s_probe(struct platform_device *op)
- 	dev_set_drvdata(&op->dev, p);
- 	d7s_device = p;
- 	err = 0;
-+	of_node_put(opts);
+diff --git a/drivers/tty/serial/suncore.c b/drivers/tty/serial/suncore.c
+index 70a4ea4eaa6e..990376576970 100644
+--- a/drivers/tty/serial/suncore.c
++++ b/drivers/tty/serial/suncore.c
+@@ -112,6 +112,7 @@ void sunserial_console_termios(struct console *con, struct device_node *uart_dp)
+ 		mode = of_get_property(dp, mode_prop, NULL);
+ 		if (!mode)
+ 			mode = "9600,8,n,1,-";
++		of_node_put(dp);
+ 	}
  
- out:
- 	return err;
+ 	cflag = CREAD | HUPCL | CLOCAL;
 -- 
 2.19.1
 
