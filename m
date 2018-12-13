@@ -7,52 +7,53 @@ X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C224C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:41:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9D9BC67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:41:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E604020849
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:41:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 81FA020849
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:41:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544676068;
-	bh=ttrfBu99qtgWpRc0a/8Ui+TleXiT555AvdMlbmPBL0c=;
+	s=default; t=1544676073;
+	bh=GOlZfrGOXJvQfR+Uh9Tr0ORZk0bNMmNmIWOjF1SBbxg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Wt5zvnb60A0iQIreXK3HOW0UHwHM8VSp3wk3YIecgsTlhRARIg0r86odYojPcMlYF
-	 0Ps1viRm6JuHZ2IET20zh3UjBW4Kry9Fg+m6y7nKGXxydH+7VkWkIY0wzigtmqeh0t
-	 avGlIaDwX5AFYO5vJXSMcc0zO0xo1Byg8+r/fNtw=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E604020849
+	b=bTVQnhp/8rr+eixIkNgp/hNsy1Kc+HVcwwfpg7xDDgHJYiiJWvbMtAwldSjTfZgbU
+	 tH5ANKj7/RAl0QBaxda4isyC86fafZZVhcSCGgSQFeO6Lt4fwBQpOKFhMXz0Eq3H22
+	 KmivErCvJTUrqzLD7cyTMeLis7UvAIkU3QSKH6ic=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81FA020849
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728346AbeLMElG (ORCPT
+        id S1728979AbeLMEcI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 23:41:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45096 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728940AbeLMEcI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 12 Dec 2018 23:32:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44920 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728940AbeLMEcA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 23:32:00 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 92AFF20873;
-        Thu, 13 Dec 2018 04:32:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9E33F20873;
+        Thu, 13 Dec 2018 04:31:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544675528;
-        bh=ttrfBu99qtgWpRc0a/8Ui+TleXiT555AvdMlbmPBL0c=;
+        s=default; t=1544675519;
+        bh=GOlZfrGOXJvQfR+Uh9Tr0ORZk0bNMmNmIWOjF1SBbxg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZhlZlkDGxJ9UoDkHUjM63u6x38moGCmBa4QyGuJ2ewEBn5qa2go/+00/wbMS1rgAt
-         E5k/zXMzRnoITOwO0CcKYdulZt1SsvqKkio7S6GZhWqa4USKvqRB5a/jzgB24guLUr
-         1smfet6qBII5xo4Ig+qvQa6P3n+uirVDSeJTv/jU=
+        b=y9YlahKqFcdHD0Ex2pbAMNojfLG+xBtG1Xihk15h/IeasmbR/OjHvfH4wUEwHl2g0
+         NZkjt2e3aoZcYSGVLFJP78yleDbENlvH0CAOOqTShO+01n/Ifu7TjWkXTogM+jPYiQ
+         el/585meEIye6fCBnm/SxqPIAJrl2idnNtlyitXg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Sean Paul <seanpaul@chromium.org>, Rob Clark <robdclark@gmail.com>,
-        Sasha Levin <sashal@kernel.org>, linux-arm-msm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.9 05/34] drm/msm: Grab a vblank reference when waiting for commit_done
-Date:   Wed, 12 Dec 2018 23:31:31 -0500
-Message-Id: <20181213043200.76295-5-sashal@kernel.org>
+Cc:     Tarick Bedeir <tarick@google.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
+        linux-rdma@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 41/41] net/mlx4_core: Correctly set PFC param if global pause is turned off.
+Date:   Wed, 12 Dec 2018 23:30:54 -0500
+Message-Id: <20181213043054.75891-41-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181213043200.76295-1-sashal@kernel.org>
-References: <20181213043200.76295-1-sashal@kernel.org>
+In-Reply-To: <20181213043054.75891-1-sashal@kernel.org>
+References: <20181213043054.75891-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -61,39 +62,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Paul <seanpaul@chromium.org>
+From: Tarick Bedeir <tarick@google.com>
 
-[ Upstream commit 3b712e43e3876b42b38321ecf790a1f5fe59c834 ]
+[ Upstream commit bd5122cd1e0644d8bd8dd84517c932773e999766 ]
 
-Similar to the atomic helpers, we should enable vblank while we're
-waiting for the commit to finish. DPU needs this, MDP5 seems to work
-fine without it.
+rx_ppp and tx_ppp can be set between 0 and 255, so don't clamp to 1.
 
-Reviewed-by: Abhinav Kumar <abhinavk@codeaurora.org>
-Signed-off-by: Sean Paul <seanpaul@chromium.org>
-Signed-off-by: Rob Clark <robdclark@gmail.com>
+Fixes: 6e8814ceb7e8 ("net/mlx4_en: Fix mixed PFC and Global pause user control requests")
+Signed-off-by: Tarick Bedeir <tarick@google.com>
+Reviewed-by: Eran Ben Elisha <eranbe@mellanox.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/msm/msm_atomic.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/net/ethernet/mellanox/mlx4/en_ethtool.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/msm/msm_atomic.c b/drivers/gpu/drm/msm/msm_atomic.c
-index 73bae382eac3..5c58a98f67c0 100644
---- a/drivers/gpu/drm/msm/msm_atomic.c
-+++ b/drivers/gpu/drm/msm/msm_atomic.c
-@@ -98,7 +98,12 @@ static void msm_atomic_wait_for_commit_done(struct drm_device *dev,
- 		if (old_state->legacy_cursor_update)
- 			continue;
+diff --git a/drivers/net/ethernet/mellanox/mlx4/en_ethtool.c b/drivers/net/ethernet/mellanox/mlx4/en_ethtool.c
+index 5fe56dc4cfae..5363cee88a0a 100644
+--- a/drivers/net/ethernet/mellanox/mlx4/en_ethtool.c
++++ b/drivers/net/ethernet/mellanox/mlx4/en_ethtool.c
+@@ -1070,8 +1070,8 @@ static int mlx4_en_set_pauseparam(struct net_device *dev,
  
-+		if (drm_crtc_vblank_get(crtc))
-+			continue;
-+
- 		kms->funcs->wait_for_crtc_commit_done(kms, crtc);
-+
-+		drm_crtc_vblank_put(crtc);
- 	}
- }
+ 	tx_pause = !!(pause->tx_pause);
+ 	rx_pause = !!(pause->rx_pause);
+-	rx_ppp = priv->prof->rx_ppp && !(tx_pause || rx_pause);
+-	tx_ppp = priv->prof->tx_ppp && !(tx_pause || rx_pause);
++	rx_ppp = (tx_pause || rx_pause) ? 0 : priv->prof->rx_ppp;
++	tx_ppp = (tx_pause || rx_pause) ? 0 : priv->prof->tx_ppp;
  
+ 	err = mlx4_SET_PORT_general(mdev->dev, priv->port,
+ 				    priv->rx_skb_size + ETH_FCS_LEN,
 -- 
 2.19.1
 
