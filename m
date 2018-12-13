@@ -2,97 +2,132 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5293C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 14:03:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA73EC67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 14:03:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 964D020880
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 14:03:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD0DF2145D
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 14:03:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="VI3Yup4A"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 964D020880
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=crapouillou.net
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="StbrLesM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD0DF2145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729602AbeLMODY (ORCPT
+        id S1729627AbeLMODf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 09:03:24 -0500
-Received: from outils.crapouillou.net ([89.234.176.41]:34004 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729505AbeLMODY (ORCPT
+        Thu, 13 Dec 2018 09:03:35 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:41450 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729568AbeLMODf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 09:03:24 -0500
-Date:   Thu, 13 Dec 2018 15:03:15 +0100
-From:   Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH v8 15/26] pwm: jz4740: Add support for the JZ4725B
-To:     Uwe =?iso-8859-1?q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Mathieu Malaterre <malat@debian.org>,
-        Ezequiel Garcia <ezequiel@collabora.co.uk>,
-        PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>,
-        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-clk@vger.kernel.org, od@zcrc.me
-Message-Id: <1544709795.18952.1@crapouillou.net>
-In-Reply-To: <20181213092409.ml4wpnzow2nnszkd@pengutronix.de>
-References: <20181212220922.18759-1-paul@crapouillou.net>
-        <20181212220922.18759-16-paul@crapouillou.net>
-        <20181213092409.ml4wpnzow2nnszkd@pengutronix.de>
+        Thu, 13 Dec 2018 09:03:35 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=/CF9W99XVoYJNDd3+iCcFlq55XNH3VI4Dmssok+metU=; b=StbrLesMyZm3hkPcFR0TlBB1k
+        biToAlqNNAU45exC7ziE3x5zylI/5DM2pEuWQbX+3rIujDKvV4nLE6a76ZP9Hr/lZI40Bet7qMKIl
+        uP3fxp9jCjilL/goM/EICUSBndGtlO/1Wfa5ICoeaS/XYaonlXuKmrb3c0BF1VwgrMFhBTsvHid7W
+        SfxQySuBN38hg/3YQIZAdOK3fARjKc0XymAlAW2zm3VjchDATUpbqTqprgSUcH+2LxaRNI6rTAcNf
+        m4boOKC3D79vEuu733ahoW4FoVXLJcxVHMBF9zV5t0N5yDsUCP5vTwgHCrL3px2Qg8J/tzTjW6jyo
+        xeKh/YU/A==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gXRaL-0001kl-9S; Thu, 13 Dec 2018 14:03:29 +0000
+Date:   Thu, 13 Dec 2018 06:03:29 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Tomasz Figa <tfiga@chromium.org>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        "Matwey V. Kornilov" <matwey@sai.msu.ru>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Matwey V. Kornilov" <matwey.kornilov@gmail.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Ezequiel Garcia <ezequiel@collabora.com>, hdegoede@redhat.com,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        rostedt@goodmis.org, mingo@redhat.com,
+        Mike Isely <isely@pobox.com>,
+        Bhumika Goyal <bhumirks@gmail.com>,
+        Colin King <colin.king@canonical.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        keiichiw@chromium.org
+Subject: Re: [PATCH v5 2/2] media: usb: pwc: Don't use coherent DMA buffers
+ for ISO transfer
+Message-ID: <20181213140329.GA25339@infradead.org>
+References: <20180821170629.18408-1-matwey@sai.msu.ru>
+ <20180821170629.18408-3-matwey@sai.msu.ru>
+ <2213616.rQm4DhIJ7U@avalon>
+ <20181207152502.GA30455@infradead.org>
+ <CAAFQd5C6gUvg8p0+Gtk22Z-dmeMPytdF4HujL9evYAew15bUmA@mail.gmail.com>
+ <20181212090917.GA30598@infradead.org>
+ <CAAFQd5DhDOfk_2Dhq4MfJmoxpXP=Bm36HMZ55PSXxwkTAoCXSQ@mail.gmail.com>
+ <20181212135440.GA6137@infradead.org>
+ <CAAFQd5C4RbMxRP+ox+BDuApMusTD=WUD9Vs6aWL3u=HovuWUig@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Transfer-Encoding: quoted-printable
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net; s=mail; t=1544709800; bh=frmtz49k6LA14hTn2E0zYZw2txe+WryAadRkNe7b+oU=; h=Date:From:Subject:To:Cc:Message-Id:In-Reply-To:References:MIME-Version:Content-Type:Content-Transfer-Encoding; b=VI3Yup4AKeBMFaGvEAJZCyvc/aSWXerVaXml+CznEDTeyPODJZ0a0B+IRGz2o1KeX/OodV3dPUtCdIpVwc5HlYIuSiqZvEcL/976hytp2WLxwT2sGDSKIARKgUZ4a4R/IyXMK48U6wGEMl5W8BYX6kXtWK5mAmtXb+4D3zWAZIo=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAAFQd5C4RbMxRP+ox+BDuApMusTD=WUD9Vs6aWL3u=HovuWUig@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Thu, Dec 13, 2018 at 12:13:29PM +0900, Tomasz Figa wrote:
+> Putting aside the problem of memory without struct page, one thing to
+> note here that what is a contiguous DMA range for device X, may not be
+> mappable contiguously for device Y and it would still need something
+> like a scatter list to fully describe the buffer.
 
-Le jeu. 13 d=E9c. 2018 =E0 10:24, Uwe Kleine-K=F6nig=20
-<u.kleine-koenig@pengutronix.de> a =E9crit :
-> Hello,
->=20
-> On Wed, Dec 12, 2018 at 11:09:10PM +0100, Paul Cercueil wrote:
->>  The PWM in the JZ4725B works the same as in the JZ4740, except that=20
->> it
->>  only has 6 channels available instead of 8.
->=20
-> this driver is probed only from device tree? If yes, it might be
-> sensible to specify the number of PWMs there and get it from there.
-> There doesn't seem to be a generic binding for that, but there are
-> several drivers that could benefit from it. (This is a bigger project
-> though and shouldn't stop your patch. Still more as it already got
-> Thierry's ack.)
+I think we need to define contiguous here.
 
-I think there needs to be a proper guideline, as there doesn't seem to=20
-be
-a consensus about this. I learned from emails with Rob and Linus=20
-(Walleij)
-that I should not have in devicetree what I can deduce from the=20
-compatible
-string.
+If the buffer always is physically contiguous, as it is in the currently
+posted series, we can always map it with a single dma_map_single call
+(if the hardware can handle that in a single segment is a different
+question, but out of scope here).
 
-> Best regards
-> Uwe
->=20
-> --
-> Pengutronix e.K.                           | Uwe Kleine-K=F6nig       =20
->     |
-> Industrial Linux Solutions                 |=20
-> http://www.pengutronix.de/  |
-=
+If on the other hand we have multiple discontiguous physical address
+range that are mapped using the iommu and vmap this interface doesn't
+work anyway.
 
+But in that case you should just do multiple allocations and then use
+dma_map_sg coalescing on the hardware side, and vmap [1] if really
+needed.  I guess for this we want to gurantee that dma_alloc_attrs
+with the DMA_ATTR_NON_CONSISTENT allows virt_to_page to be used on
+the return value, which the currently posted implementation does,
+although I'm a it reluctant about the API guarantee.
+
+
+> Do we already have a structure that would work for this purposes? I'd
+> assume that we need something like the existing scatterlist but with
+> page links replaced with something that doesn't require the memory to
+> have struct page, possibly just PFN?
+
+The problem is that just the PFN / physical address isn't enough for
+most use cases as you also need a kernel virtual address.  But moving
+struct scatterlist to store a pfn instead of a struct page would be
+pretty nice for various reasons anyway.
+
+> 
+> >
+> > It would also be great to use that opportunity to get rid of all the
+> > code duplication of almost the same dmabug provides backed by the
+> > DMA API.
+> 
+> Could you sched some more light on this? I'm curious what is the code
+> duplication you're referring to.
+
+It seems like a lot of the dmabuf ops are just slight various of
+dma_alloc + dma_get_sttable + dma_map_sg / dma_unmap_sg.  There must be
+a void to not duplicate that over and over.
+
+[1] and use invalidate_kernel_vmap_range and flush_kernel_vmap_range
+    to manually take care of cache flushing.
