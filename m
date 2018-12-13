@@ -2,134 +2,163 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2D9CC65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:38:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19CB4C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:39:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9657520879
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:38:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D0CCB20870
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:39:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544704739;
-	bh=6/+wVR+4FeLl7Gmd1usmDwcc0CvYvxL9d0LTHNtuQ4U=;
+	s=default; t=1544704798;
+	bh=B4ZS2Xjj5e9m9Rx1EDdUC5hZbO0GoQhq4QVI+0GeLGM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=hKPO+zCXj71/hbrHnh5qBBuz/vJQ8iyexe5q7vl/f6sCxGJYjMEhoDz1d1GlL7VKn
-	 lxARH6jJIExObboxNi+0RUDh3cl0/aFGIpE61AlzS1i7rPkH967p4PU0i1ACMHbd02
-	 31vukdtZuI6GSyxU3OiHuTEBi6PJWwdOiue6RF6U=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9657520879
+	b=AwlG43Daf2TnSFIBcEwDPzXTKarmEI6EokHLYJok76mbCDgf+KZsNF5W4Fuq+81Wu
+	 aw97cUzbBN+76uDMXDlEhg1MlEGXjMN1HBT1oDoojvPBd3MtrycA8nasY4z/drZRXB
+	 vJ18/SwFClXMzQriTEtlqtzpNi0rAO0i+o2O/7UY=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0CCB20870
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729188AbeLMMi6 (ORCPT
+        id S1729195AbeLMMj6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 07:38:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55912 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729059AbeLMMi6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 07:38:58 -0500
-Received: from quaco.ghostprotocols.net (unknown [190.15.121.82])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B2DEB2086D;
-        Thu, 13 Dec 2018 12:38:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544704736;
-        bh=6/+wVR+4FeLl7Gmd1usmDwcc0CvYvxL9d0LTHNtuQ4U=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=VybyT44FeVWNR0QeRCSSpMCzZK/7fuPzoJbikQsishe6iSaozdQlm7W0lqJCXIbCZ
-         z4bDBCCBFk17PvNZGxr1+rRUkku5XFeVwN0l+E8RC8fwOj1lCIL+MPWNfCCM6GD34a
-         kX1DTjp/JbwBSSLfx+7nCejqnZZxqvAzOUyPha04=
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 7AA2241B1D; Thu, 13 Dec 2018 09:38:54 -0300 (-03)
-Date:   Thu, 13 Dec 2018 09:38:54 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Leo Yan <leo.yan@linaro.org>
-Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Coresight ML <coresight@lists.linaro.org>,
-        Mike Leach <mike.leach@linaro.org>,
-        Robert Walker <robert.walker@arm.com>
-Subject: Re: [PATCH v3 6/8] perf cs-etm: Treat NO_SYNC element as trace
- discontinuity
-Message-ID: <20181213123854.GE21027@kernel.org>
-References: <1544513908-16805-1-git-send-email-leo.yan@linaro.org>
- <1544513908-16805-7-git-send-email-leo.yan@linaro.org>
+        Thu, 13 Dec 2018 07:39:58 -0500
+Received: from mx2.suse.de ([195.135.220.15]:57882 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728971AbeLMMj5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 07:39:57 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id A14FFAEBB;
+        Thu, 13 Dec 2018 12:39:54 +0000 (UTC)
+Date:   Thu, 13 Dec 2018 13:39:52 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Liu Bo <bo.liu@linux.alibaba.com>, Jan Kara <jack@suse.cz>,
+        Dave Chinner <david@fromorbit.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        Stable tree <stable@vger.kernel.org>
+Subject: Re: [PATCH v3] mm, memcg: fix reclaim deadlock with writeback
+Message-ID: <20181213123952.GZ1286@dhcp22.suse.cz>
+References: <20181212155055.1269-1-mhocko@kernel.org>
+ <20181213092221.27270-1-mhocko@kernel.org>
+ <20181213104147.ud2lngxn5avri2zm@kshutemo-mobl1>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1544513908-16805-7-git-send-email-leo.yan@linaro.org>
-X-Url:  http://acmel.wordpress.com
+In-Reply-To: <20181213104147.ud2lngxn5avri2zm@kshutemo-mobl1>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Tue, Dec 11, 2018 at 03:38:26PM +0800, Leo Yan escreveu:
-> CoreSight tracer driver might insert barrier packet between different
-> buffers, thus the decoder can spot the boundaries based on the barrier
-> packet; the decoder is possible to hit a barrier packet and emit a
-> NO_SYNC element, then the decoder will find a periodic synchronisation
-> point inside that next trace block that starts trace again but does not
-> have the TRACE_ON element as indicator - usually because this block of
-> trace has wrapped the buffer so we have lost the original point that
-> trace was enabled.
+On Thu 13-12-18 13:41:47, Kirill A. Shutemov wrote:
+> On Thu, Dec 13, 2018 at 10:22:21AM +0100, Michal Hocko wrote:
+> > From: Michal Hocko <mhocko@suse.com>
+> > 
+> > Liu Bo has experienced a deadlock between memcg (legacy) reclaim and the
+> > ext4 writeback
+> > task1:
+> > [<ffffffff811aaa52>] wait_on_page_bit+0x82/0xa0
+> > [<ffffffff811c5777>] shrink_page_list+0x907/0x960
+> > [<ffffffff811c6027>] shrink_inactive_list+0x2c7/0x680
+> > [<ffffffff811c6ba4>] shrink_node_memcg+0x404/0x830
+> > [<ffffffff811c70a8>] shrink_node+0xd8/0x300
+> > [<ffffffff811c73dd>] do_try_to_free_pages+0x10d/0x330
+> > [<ffffffff811c7865>] try_to_free_mem_cgroup_pages+0xd5/0x1b0
+> > [<ffffffff8122df2d>] try_charge+0x14d/0x720
+> > [<ffffffff812320cc>] memcg_kmem_charge_memcg+0x3c/0xa0
+> > [<ffffffff812321ae>] memcg_kmem_charge+0x7e/0xd0
+> > [<ffffffff811b68a8>] __alloc_pages_nodemask+0x178/0x260
+> > [<ffffffff8120bff5>] alloc_pages_current+0x95/0x140
+> > [<ffffffff81074247>] pte_alloc_one+0x17/0x40
+> > [<ffffffff811e34de>] __pte_alloc+0x1e/0x110
+> > [<ffffffffa06739de>] alloc_set_pte+0x5fe/0xc20
+> > [<ffffffff811e5d93>] do_fault+0x103/0x970
+> > [<ffffffff811e6e5e>] handle_mm_fault+0x61e/0xd10
+> > [<ffffffff8106ea02>] __do_page_fault+0x252/0x4d0
+> > [<ffffffff8106ecb0>] do_page_fault+0x30/0x80
+> > [<ffffffff8171bce8>] page_fault+0x28/0x30
+> > [<ffffffffffffffff>] 0xffffffffffffffff
+> > 
+> > task2:
+> > [<ffffffff811aadc6>] __lock_page+0x86/0xa0
+> > [<ffffffffa02f1e47>] mpage_prepare_extent_to_map+0x2e7/0x310 [ext4]
+> > [<ffffffffa08a2689>] ext4_writepages+0x479/0xd60
+> > [<ffffffff811bbede>] do_writepages+0x1e/0x30
+> > [<ffffffff812725e5>] __writeback_single_inode+0x45/0x320
+> > [<ffffffff81272de2>] writeback_sb_inodes+0x272/0x600
+> > [<ffffffff81273202>] __writeback_inodes_wb+0x92/0xc0
+> > [<ffffffff81273568>] wb_writeback+0x268/0x300
+> > [<ffffffff81273d24>] wb_workfn+0xb4/0x390
+> > [<ffffffff810a2f19>] process_one_work+0x189/0x420
+> > [<ffffffff810a31fe>] worker_thread+0x4e/0x4b0
+> > [<ffffffff810a9786>] kthread+0xe6/0x100
+> > [<ffffffff8171a9a1>] ret_from_fork+0x41/0x50
+> > [<ffffffffffffffff>] 0xffffffffffffffff
+> > 
+> > He adds
+> > : task1 is waiting for the PageWriteback bit of the page that task2 has
+> > : collected in mpd->io_submit->io_bio, and tasks2 is waiting for the LOCKED
+> > : bit the page which tasks1 has locked.
+> > 
+> > More precisely task1 is handling a page fault and it has a page locked
+> > while it charges a new page table to a memcg. That in turn hits a memory
+> > limit reclaim and the memcg reclaim for legacy controller is waiting on
+> > the writeback but that is never going to finish because the writeback
+> > itself is waiting for the page locked in the #PF path. So this is
+> > essentially ABBA deadlock:
+> >                                         lock_page(A)
+> >                                         SetPageWriteback(A)
+> >                                         unlock_page(A)
+> > lock_page(B)
+> >                                         lock_page(B)
+> > pte_alloc_pne
+> >   shrink_page_list
+> >     wait_on_page_writeback(A)
+> >                                         SetPageWriteback(B)
+> >                                         unlock_page(B)
+> > 
+> >                                         # flush A, B to clear the writeback
+> > 
+> > This accumulating of more pages to flush is used by several filesystems
+> > to generate a more optimal IO patterns.
+> > 
+> > Waiting for the writeback in legacy memcg controller is a workaround
+> > for pre-mature OOM killer invocations because there is no dirty IO
+> > throttling available for the controller. There is no easy way around
+> > that unfortunately. Therefore fix this specific issue by pre-allocating
+> > the page table outside of the page lock. We have that handy
+> > infrastructure for that already so simply reuse the fault-around pattern
+> > which already does this.
+> > 
+> > There are probably other hidden __GFP_ACCOUNT | GFP_KERNEL allocations
+> > from under a fs page locked but they should be really rare. I am not
+> > aware of a better solution unfortunately.
+> > 
+> > Reported-and-Debugged-by: Liu Bo <bo.liu@linux.alibaba.com>
+> > Cc: stable
+> > Fixes: c3b94f44fcb0 ("memcg: further prevent OOM with too many dirty pages")
+> > Signed-off-by: Michal Hocko <mhocko@suse.com>
 > 
-> In upper case, it results in the trace stream only inserts the
-> OCSD_GEN_TRC_ELEM_NO_SYNC element in the middle of tracing stream, but
-> we don't handle NO_SYNC element properly and at the end users miss to
-> see the info for trace discontinuity.
+> Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 
+Thanks!
 
-"In upper case"? Maybe:
+> Will you take care about converting vmf_insert_* to use the pre-allocated
+> page table?
 
-In the former case it causes the insertion of a OCSD_GEN_TRC_ELEM_NO_SYNC
-in the middle of the the tracing stream, but as we were npt handling the
-NO_SYNC element properly which ends up making users miss the
-discontinuity indication"?
-
-
-> Though OCSD_GEN_TRC_ELEM_NO_SYNC is different from CS_ETM_TRACE_ON when
-> output from the decoder, but both of them indicate the trace data is
-
-can we remove the "but" and "of them" (redundant) above?
-
-> discontinuous; this patch treats OCSD_GEN_TRC_ELEM_NO_SYNC as trace
-                                                               a
-> discontinuity and generates CS_ETM_DISCONTINUITY packet for it, so
-> cs-etm can handle discontinuity for this case, finally it saves the last
-                       it (way too many "discontinuity")
-> trace data for previous trace block and restart samples for new block.
-> 
-> Signed-off-by: Leo Yan <leo.yan@linaro.org>
-> Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> Cc: Mike Leach <mike.leach@linaro.org>
-> Cc: Robert Walker <robert.walker@arm.com>
-> ---
->  tools/perf/util/cs-etm-decoder/cs-etm-decoder.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
-> index 1039f364..bee026e 100644
-> --- a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
-> +++ b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
-> @@ -410,7 +410,6 @@ static ocsd_datapath_resp_t cs_etm_decoder__gen_trace_elem_printer(
->  	case OCSD_GEN_TRC_ELEM_UNKNOWN:
->  		break;
->  	case OCSD_GEN_TRC_ELEM_NO_SYNC:
-> -		break;
->  	case OCSD_GEN_TRC_ELEM_TRACE_ON:
->  		resp = cs_etm_decoder__buffer_discontinuity(decoder,
->  							    trace_chan_id);
-> -- 
-> 2.7.4
-
+I can try but I would appreciate if somebody more familiar with the code
+could do that. I am busy as hell and I do not want to promis something I
+will likely not get to soon.
 -- 
-
-- Arnaldo
+Michal Hocko
+SUSE Labs
