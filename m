@@ -7,68 +7,51 @@ X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7E22C67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:29:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12A3CC67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:29:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEFAB20879
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:29:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C57A92087F
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:29:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544675347;
-	bh=zkAUfal45l9g3LqBJLr0ZfwiMqnzAmugf+weQIly7OE=;
+	s=default; t=1544675351;
+	bh=q6EjXbBFZ7jJUEBFvP86MEQkDEGPnjuWDJ5PU9J5Z6E=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=czHfTO1VVfcPfuEcqLyBRgAHaDG5Q9K2t0nUFojrx/sos4/w6vKDHYIRe+H1FqdlQ
-	 7ag92SVALhOuJNXTYDUL92X6FRxtr4VQiNAdqC5PVOvYj1WHBEVHSs9cnA5U/yXM6g
-	 VKfoWn2WR1yjrbFdUApnsTEg2+yNxHFjWcDmwZbk=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEFAB20879
+	b=K/y1Y2rNLd4aHdzqn/qDEwVKi0sskciMzAJKQq9R4tKg8xqyF6jdW5K6IRUTdYxZ7
+	 f2+gmMpuaCNVBM7WUF+pF4Oyh5WwdJc9MiL1Wbk8ObAgFqmZdsfkG6ujwsNCm2wvuz
+	 GsFMkfRGazfBzZz+Zk/SyztJgjUzuSALDcYVa+XY=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C57A92087F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727357AbeLME3G (ORCPT
+        id S1727422AbeLME3J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 23:29:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41788 "EHLO mail.kernel.org"
+        Wed, 12 Dec 2018 23:29:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41904 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727160AbeLME24 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 23:28:56 -0500
+        id S1727236AbeLME26 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 23:28:58 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0BEE220873;
-        Thu, 13 Dec 2018 04:28:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1653420879;
+        Thu, 13 Dec 2018 04:28:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544675335;
-        bh=zkAUfal45l9g3LqBJLr0ZfwiMqnzAmugf+weQIly7OE=;
+        s=default; t=1544675338;
+        bh=q6EjXbBFZ7jJUEBFvP86MEQkDEGPnjuWDJ5PU9J5Z6E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SN7+XxW3K9TFDcGq2PtKZra8nTMDvCx1C9JnbT+ac9W1qZVjQE5oVXsINrZ6sL+aI
-         EeohpIbWGQz7IulNL0xi9kFXqkjx8iwz7CpcYCjdSEcj4V6ZQJiwPQSQQogI8EMXJ+
-         U+v1Nskx0/l5vZJj7iqahdym0CajVXPRFwVDIRyo=
+        b=g0N5/RlgOyr/0q1jq3RuaafYEgzjMrs26R/sj99bw0MoJTBdR3r/aoRtrCJToXylL
+         kCL+tuZHhM76ebvlTgwKT21DP0h2rj1ad377xel/hjksITZGgvgWnPKk7mnx0AvYpo
+         KkqYqMKOtCJz80Y+OxDcmRYoj1jp6OP5UMtugN+8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     YiFei Zhu <zhuyifei1999@gmail.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arend van Spriel <arend.vanspriel@broadcom.com>,
-        Bhupesh Sharma <bhsharma@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Eric Snowberg <eric.snowberg@oracle.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Joe Perches <joe@perches.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Julien Thierry <julien.thierry@arm.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
-        Sedat Dilek <sedat.dilek@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 11/73] x86/earlyprintk/efi: Fix infinite loop on some screen widths
-Date:   Wed, 12 Dec 2018 23:27:36 -0500
-Message-Id: <20181213042838.75160-11-sashal@kernel.org>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Rob Clark <robdclark@gmail.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Sasha Levin <sashal@kernel.org>, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 4.19 13/73] drm/msm/gpu: Fix a couple memory leaks in debugfs
+Date:   Wed, 12 Dec 2018 23:27:38 -0500
+Message-Id: <20181213042838.75160-13-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181213042838.75160-1-sashal@kernel.org>
 References: <20181213042838.75160-1-sashal@kernel.org>
@@ -80,63 +63,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YiFei Zhu <zhuyifei1999@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 79c2206d369b87b19ac29cb47601059b6bf5c291 ]
+[ Upstream commit 51270de91412b819f654b849db3bf92dac0a0855 ]
 
-An affected screen resolution is 1366 x 768, which width is not
-divisible by 8, the default font width. On such screens, when longer
-lines are earlyprintk'ed, overflow-to-next-line can never trigger,
-due to the left-most x-coordinate of the next character always less
-than the screen width. Earlyprintk will infinite loop in trying to
-print the rest of the string but unable to, due to the line being
-full.
+The msm_gpu_open() function should free "show_priv" on error or it
+causes static checker warnings.
 
-This patch makes the trigger consider the right-most x-coordinate,
-instead of left-most, as the value to compare against the screen
-width threshold.
-
-Signed-off-by: YiFei Zhu <zhuyifei1999@gmail.com>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Arend van Spriel <arend.vanspriel@broadcom.com>
-Cc: Bhupesh Sharma <bhsharma@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Eric Snowberg <eric.snowberg@oracle.com>
-Cc: Hans de Goede <hdegoede@redhat.com>
-Cc: Joe Perches <joe@perches.com>
-Cc: Jon Hunter <jonathanh@nvidia.com>
-Cc: Julien Thierry <julien.thierry@arm.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Matt Fleming <matt@codeblueprint.co.uk>
-Cc: Nathan Chancellor <natechancellor@gmail.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-Cc: Sedat Dilek <sedat.dilek@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-efi@vger.kernel.org
-Link: http://lkml.kernel.org/r/20181129171230.18699-12-ard.biesheuvel@linaro.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Fixes: 4f776f4511c7 ("drm/msm/gpu: Convert the GPU show function to use the GPU state")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Rob Clark <robdclark@gmail.com>
+Signed-off-by: Sean Paul <seanpaul@chromium.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/platform/efi/early_printk.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/msm/msm_debugfs.c | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
 
-diff --git a/arch/x86/platform/efi/early_printk.c b/arch/x86/platform/efi/early_printk.c
-index 5fdacb322ceb..c3e6be110b7d 100644
---- a/arch/x86/platform/efi/early_printk.c
-+++ b/arch/x86/platform/efi/early_printk.c
-@@ -179,7 +179,7 @@ early_efi_write(struct console *con, const char *str, unsigned int num)
- 			num--;
- 		}
+diff --git a/drivers/gpu/drm/msm/msm_debugfs.c b/drivers/gpu/drm/msm/msm_debugfs.c
+index f0da0d3c8a80..d756436c1fcd 100644
+--- a/drivers/gpu/drm/msm/msm_debugfs.c
++++ b/drivers/gpu/drm/msm/msm_debugfs.c
+@@ -84,7 +84,7 @@ static int msm_gpu_open(struct inode *inode, struct file *file)
  
--		if (efi_x >= si->lfb_width) {
-+		if (efi_x + font->width > si->lfb_width) {
- 			efi_x = 0;
- 			efi_y += font->height;
- 		}
+ 	ret = mutex_lock_interruptible(&dev->struct_mutex);
+ 	if (ret)
+-		return ret;
++		goto free_priv;
+ 
+ 	pm_runtime_get_sync(&gpu->pdev->dev);
+ 	show_priv->state = gpu->funcs->gpu_state_get(gpu);
+@@ -94,13 +94,20 @@ static int msm_gpu_open(struct inode *inode, struct file *file)
+ 
+ 	if (IS_ERR(show_priv->state)) {
+ 		ret = PTR_ERR(show_priv->state);
+-		kfree(show_priv);
+-		return ret;
++		goto free_priv;
+ 	}
+ 
+ 	show_priv->dev = dev;
+ 
+-	return single_open(file, msm_gpu_show, show_priv);
++	ret = single_open(file, msm_gpu_show, show_priv);
++	if (ret)
++		goto free_priv;
++
++	return 0;
++
++free_priv:
++	kfree(show_priv);
++	return ret;
+ }
+ 
+ static const struct file_operations msm_gpu_fops = {
 -- 
 2.19.1
 
