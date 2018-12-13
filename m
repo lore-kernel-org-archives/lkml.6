@@ -2,117 +2,120 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FDBFC65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 07:47:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3E42C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 07:48:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36E662080F
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 07:47:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B62E120873
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 07:48:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TpqAYoYw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36E662080F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="P8kUBjNw";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="P8kUBjNw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B62E120873
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727003AbeLMHro (ORCPT
+        id S1727142AbeLMHsv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 02:47:44 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:42461 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726609AbeLMHrn (ORCPT
+        Thu, 13 Dec 2018 02:48:51 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:44342 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726609AbeLMHsu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 02:47:43 -0500
-Received: by mail-pl1-f193.google.com with SMTP id y1so652104plp.9;
-        Wed, 12 Dec 2018 23:47:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=U1kdblOkJeUGCFzl5KLv1H49TEpdl9qC6nK7L+3L29c=;
-        b=TpqAYoYwMe1TJDoCr58p8u4c15c86tjuJio3/1Um7s9VeQMthzh84tY1nz/a74ZQxf
-         MyvzBmj+EE/ZiEYbonVNj+PmNsVClYy1b14oQJAv2onUlwDS55YdHkWpnj4dpPAnvacM
-         o/AoSNObkNYx66T/5FmPq3PhYzTv4hcle+nY6WzqoRFufR5Eah8MI/wyE3vfwgwidnYf
-         OKSIbP0njF4oFHHqh5W8kGbIRdfQMhgyR3i6XX0CnAjkRvqvu3mTZikVUMzlNpAYrrMg
-         aJVyi0JQfUAh5R5hZ3KxSiXN+eBjSOAQYWJOnRjfQ0dH003JGBrhvSkxJau7Z3UuXV6h
-         8IFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=U1kdblOkJeUGCFzl5KLv1H49TEpdl9qC6nK7L+3L29c=;
-        b=WnaRG+OnJwWEHVd8k7yH5Dl4so/ZhBpyKPzdpyuhqx+Sp8Ln/yTHXXqs7BTIYGSRcf
-         w4rq4JaGu7JU/R+3QgGV62rqAtFA07chEoGffU++LBGHtnNTvYq8tMW060YiSqte7IZT
-         KrmHcNsx6IPHPu7fOgSiJZdZ+9YwlYUKl9RGvDnvudap9yhcqkSgMZlXwPP6Xxqfok2n
-         6oovOXTgn7N9psUVtCkiX4hphpmQzf5cveqGHV5r+icXCxHM/APWMFifZ/ur8RsmUrSb
-         Jo7fbFpwSjbJoA1VqNqKaotEJ/PCOJvgUy52bf0HuwtYnQEdaLbJ7xU7VHUFToKehB60
-         kbqg==
-X-Gm-Message-State: AA+aEWYK+PnZdx97ll2U/BmIbHPzBAFO+I1kJzPUaCPeHGbvLTv9mZ6d
-        Dm4Azi8j0jW7dKukmcyGsp2tPmK3PuP6xR6om44=
-X-Google-Smtp-Source: AFSGD/XaHQurPfiJZl0nifD8SVpllsWxHwP1gQEAMsEgMubG9uFN1wv4BtJUNE8J6a9nm+2+ylSuJ8ODlQsaQfiABOY=
-X-Received: by 2002:a17:902:d806:: with SMTP id a6mr21675813plz.172.1544687262841;
- Wed, 12 Dec 2018 23:47:42 -0800 (PST)
+        Thu, 13 Dec 2018 02:48:50 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id E4FE0608FB; Thu, 13 Dec 2018 07:48:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1544687328;
+        bh=wO2+tBLzvjM9latYmCvhXPtbyqczn04etYpNU1M1lbI=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=P8kUBjNwUrq0buUVrvTu85+leuj5l6FS5X5ZIBW/u0uiN/kKbzHGn3FOquMJO0E0j
+         w7SQVAida58sDUWJ7V+TAJWIK0FMk4oJ6yCvI+kBRmbYs6/Los2QLsaeLBC//dt+iE
+         hBXPnGiiz5MdwO2XfmmWn5Y4p1HxXXy4y0p3q1iY=
+Received: from [10.79.165.62] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tdas@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 403D36081C;
+        Thu, 13 Dec 2018 07:48:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1544687328;
+        bh=wO2+tBLzvjM9latYmCvhXPtbyqczn04etYpNU1M1lbI=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=P8kUBjNwUrq0buUVrvTu85+leuj5l6FS5X5ZIBW/u0uiN/kKbzHGn3FOquMJO0E0j
+         w7SQVAida58sDUWJ7V+TAJWIK0FMk4oJ6yCvI+kBRmbYs6/Los2QLsaeLBC//dt+iE
+         hBXPnGiiz5MdwO2XfmmWn5Y4p1HxXXy4y0p3q1iY=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 403D36081C
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+Subject: Re: [PATCH v11 2/2] cpufreq: qcom-hw: Add support for QCOM cpufreq HW
+ driver
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        devicetree@vger.kernel.org, robh@kernel.org,
+        skannan@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        evgreen@google.com
+References: <1543722903-10989-1-git-send-email-tdas@codeaurora.org>
+ <1543722903-10989-3-git-send-email-tdas@codeaurora.org>
+ <20181204051231.mm5ixli7ckpfzvd4@vireshk-i7>
+ <154396249199.88331.1800559141437859959@swboyd.mtv.corp.google.com>
+ <154396472692.88331.13742924031474269133@swboyd.mtv.corp.google.com>
+ <49139ae4-4373-9e70-02ad-80f7bbc4494c@codeaurora.org>
+ <20181205061600.7zglbpkgbktn27am@vireshk-i7>
+ <82b168d1-79bc-f454-8e19-4f7630a34069@codeaurora.org>
+ <20181212044702.jp2r3mviq4ffal42@vireshk-i7>
+From:   Taniya Das <tdas@codeaurora.org>
+Message-ID: <72a7312a-5529-92df-63e9-c3e6905103c2@codeaurora.org>
+Date:   Thu, 13 Dec 2018 13:18:39 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-References: <20181206132113.2691-1-Tianyu.Lan@microsoft.com>
- <20181206132113.2691-8-Tianyu.Lan@microsoft.com> <20181212050353.GF22265@blackberry>
-In-Reply-To: <20181212050353.GF22265@blackberry>
-From:   Tianyu Lan <lantianyu1986@gmail.com>
-Date:   Thu, 13 Dec 2018 15:47:31 +0800
-Message-ID: <CAOLK0pyKsS2hLagZ6pumMdfRokPig2P+KJambVOq7p+NU-OqgA@mail.gmail.com>
-Subject: Re: [Resend PATCH V5 7/10] KVM: Make kvm_set_spte_hva() return int
-To:     paulus@ozlabs.org
-Cc:     Tianyu Lan <Tianyu.Lan@microsoft.com>, christoffer.dall@arm.com,
-        marc.zyngier@arm.com, linux@armlinux.org.uk,
-        catalin.marinas@arm.com, will.deacon@arm.com, jhogan@kernel.org,
-        ralf@linux-mips.org, paul.burton@mips.com,
-        benh@kernel.crashing.org, mpe@ellerman.id.au,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim Krcmar <rkrcmar@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, bp@alien8.de,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
-        "linux-kernel@vger kernel org" <linux-kernel@vger.kernel.org>,
-        linux-mips@linux-mips.org, kvm-ppc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, kvm <kvm@vger.kernel.org>,
-        michael.h.kelley@microsoft.com, kys@microsoft.com,
-        vkuznets@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181212044702.jp2r3mviq4ffal42@vireshk-i7>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Paul:
-             Thanks for your review.
-On Wed, Dec 12, 2018 at 1:03 PM Paul Mackerras <paulus@ozlabs.org> wrote:
->
-> On Thu, Dec 06, 2018 at 09:21:10PM +0800, lantianyu1986@gmail.com wrote:
-> > From: Lan Tianyu <Tianyu.Lan@microsoft.com>
-> >
-> > The patch is to make kvm_set_spte_hva() return int and caller can
-> > check return value to determine flush tlb or not.
->
-> It would be helpful if the patch description told the reader which
-> return value(s) mean that the caller should flush the tlb.  I would
-> guess that non-zero means to do the flush, but you should make that
-> explicit.
+Hello Viresh,
 
-OK. Thanks for suggestion and will update in the next version.
+On 12/12/2018 10:17 AM, Viresh Kumar wrote:
+> On 11-12-18, 19:05, Taniya Das wrote:
+>> The design here assumes that there would not be any per-cpu/per-cluster
+>> based SW requirement for the HW during frequency transitions, which again
+>> makes me think that we would require to re-introduce these structures again
+>> in case we have such requirements in near future.
+> 
+> Firstly, even in such cases we can go ahead with the design we proposed. And I
+> am not at all concerned about some hardware which we don't have right now. We
+> will see what to do when such hardware comes, maybe reintroduce the structures,
+> but that doesn't matter right now.
+> 
+>> Also I think leaving the structures also helps us debug any boot up issues
+>> looking at the ram contents of the per-(cpu/cluster) structures with the
+>> contents from the firmware.
+> 
+> I don't see how debugging would be hard without those structures in place.
+> 
+>> Hope these above helps us to go ahead with the current SW design.
+> 
+> Sorry, but I don't see any satisfactory reason on why you shouldn't make the
+> suggested changes. We are trying to make your (and any other developer who will
+> work on that driver) life simple by simplifying the code. Nothing beyond that :)
+> 
 
->
-> > Signed-off-by: Lan Tianyu <Tianyu.Lan@microsoft.com>
->
-> For the powerpc bits:
->
-> Acked-by: Paul Mackerras <paulus@ozlabs.org>
-
-
+Sure, Thanks, will submit the next patch series for your ACK :).
 
 -- 
-Best regards
-Tianyu Lan
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation.
+
+--
