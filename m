@@ -2,95 +2,106 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F431C67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 14:55:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93D34C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 14:57:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 316522086D
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 14:55:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 52DEA2086D
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 14:57:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="n102LHND";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="XNysctt5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 316522086D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=ssi.gouv.fr header.i=@ssi.gouv.fr header.b="R1LLWeuF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52DEA2086D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ssi.gouv.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729489AbeLMOzt (ORCPT
+        id S1729219AbeLMO5L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 09:55:49 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:44706 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728947AbeLMOzs (ORCPT
+        Thu, 13 Dec 2018 09:57:11 -0500
+Received: from smtp-out.ssi.gouv.fr ([86.65.182.90]:54644 "EHLO
+        smtp-out.ssi.gouv.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727618AbeLMO5L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 09:55:48 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 68F0260918; Thu, 13 Dec 2018 14:55:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1544712947;
-        bh=WN+wMegvQrjg9qirZr0ng2i7TLWnHymea9OdN/Wwdn0=;
-        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=n102LHNDTzRAwzsdhCgyy+eszBPRhIrHpHMgjGbiapvjep7fx/ljxOFKuMOvtq45F
-         h3gog4Q2L0iKV6DcG1mpJXHhqtPE9kWfaI15Q8E4qoCwn5iyGOytBbRKUa4W/38goJ
-         O86VluICPm/dPw6FZhH5825ZYSbJtEYrwQsObTH8=
-Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3902660960;
-        Thu, 13 Dec 2018 14:55:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1544712945;
-        bh=WN+wMegvQrjg9qirZr0ng2i7TLWnHymea9OdN/Wwdn0=;
-        h=Subject:From:In-Reply-To:References:To:Cc:From;
-        b=XNysctt5cnarYIh5a7dCpME1h77QI8dkoDZH7yUdXE+AgPHGYv4h4Lc7BbgtnJdET
-         KoHTyUcxdotawNlw6wX02q+dGiYCXA3K19WAiKDRf0Jvuqv++EOh+FslFNd2uwV+1D
-         i8cRxN4FtQhKQi7iDCKD2z2hPt6ky/A+6pCZ22nM=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3902660960
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
+        Thu, 13 Dec 2018 09:57:11 -0500
+Received: from smtp-out.ssi.gouv.fr (localhost [127.0.0.1])
+        by smtp-out.ssi.gouv.fr (Postfix) with ESMTP id 2B833D0006B;
+        Thu, 13 Dec 2018 15:57:17 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ssi.gouv.fr;
+        s=20160407; t=1544713037;
+        bh=hmviYkZAUzSSN4VTzvQLUSCMhOsq6DYKpUiHzI6rReA=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To:From:Subject;
+        b=R1LLWeuFQXYicPyde+2L/5l1lnaFYwDfgRmEBw3E9WCmmCD6EgbN+Z6ZzJO73skY/
+         WDLTEhYl0+oC3tiRw9wkRp4Web7BQeev58BsJpf+2Sz9/rWiuTl6ArElznFhvALliz
+         k8WToO2CpmKORRXoZpFPemas/nO9etlNaSKND0yE76qsYk2tuyvgclN/h5x7PGqBVj
+         jjlI7zoFsB1oMVgHUKPn74Vd2NhvkLTpX7hTekaIOBQdwcgLuyWRtb+gq+QcYQffg9
+         DeDbusb/qwDu9nx18FzQAERzupwa9lp3FE/j3uZeDH/QZLSquDUh/HrBDfeA03E9/j
+         tcixwdWCiP4cQ==
+Subject: Re: [RFC PATCH v1 0/5] Add support for O_MAYEXEC
+To:     Florian Weimer <fweimer@redhat.com>,
+        James Morris <jmorris@namei.org>
+CC:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
+        <linux-kernel@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Garrett <mjg59@google.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>, Shuah Khan <shuah@kernel.org>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        Yves-Alexis Perez <yves-alexis.perez@ssi.gouv.fr>,
+        <kernel-hardening@lists.openwall.com>, <linux-api@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>
+References: <20181212081712.32347-1-mic@digikod.net>
+ <alpine.LRH.2.21.1812130642250.29507@namei.org>
+ <87lg4upkpv.fsf@oldenburg2.str.redhat.com>
+ <alpine.LRH.2.21.1812131039400.7600@namei.org>
+ <87ftv2ovp8.fsf@oldenburg2.str.redhat.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>
+Message-ID: <21824ed9-0fe4-85dd-bdd2-d4426e97233d@ssi.gouv.fr>
+Date:   Thu, 13 Dec 2018 15:57:15 +0100
+User-Agent: Mozilla/5.0 (X11; Linux i686; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
+In-Reply-To: <87ftv2ovp8.fsf@oldenburg2.str.redhat.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Subject: Re: [RFC PATCH v2 1/2] mwifiex: refactor mwifiex_parse_htinfo() for
- reuse
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <20181207001249.165477-1-briannorris@chromium.org>
-References: <20181207001249.165477-1-briannorris@chromium.org>
-To:     Brian Norris <briannorris@chromium.org>
-Cc:     <linux-kernel@vger.kernel.org>,
-        Amitkumar Karwar <amitkarwar@gmail.com>,
-        Nishant Sarmukadam <nishants@marvell.com>,
-        Ganapathi Bhat <gbhat@marvell.com>,
-        Xinming Hu <huxinming820@gmail.com>,
-        linux-wireless@vger.kernel.org,
-        Brian Norris <briannorris@chromium.org>
-User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
-Message-Id: <20181213145547.68F0260918@smtp.codeaurora.org>
-Date:   Thu, 13 Dec 2018 14:55:45 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Brian Norris <briannorris@chromium.org> wrote:
 
-> This function converts some firmware-specific parameters into cfg80211
-> 'rate_info' structures. It currently assumes it's dealing only with TX
-> bitrate, but the RX bitrate looks to be the same, so refactor this
-> function to be reusable.
+On 13/12/2018 06:13, Florian Weimer wrote:
+> * James Morris:
 > 
-> Signed-off-by: Brian Norris <briannorris@chromium.org>
+>> On Wed, 12 Dec 2018, Florian Weimer wrote:
+>>
+>>> * James Morris:
+>>>
+>>>> If you're depending on the script interpreter to flag that the user may 
+>>>> execute code, this seems to be equivalent in security terms to depending 
+>>>> on the user.  e.g. what if the user uses ptrace and clears O_MAYEXEC?
 
-2 patches applied to wireless-drivers-next.git, thanks.
+This security mechanism makes sense in an hardened system where the user
+is not allowed to import and execute new file (write xor execute
+policy). This can be enforced with appropriate mount points a more
+advanced access control policy.
 
-a256707fbd4b mwifiex: refactor mwifiex_parse_htinfo() for reuse
-ed0b2b067bad mwifiex: add NL80211_STA_INFO_RX_BITRATE support
+>>>
+>>> The argument I've heard is this: Using ptrace (and adding the +x
+>>> attribute) are auditable events.
+>>
+>> I guess you could also preload a modified libc which strips the flag.
+> 
+> My understanding is that this new libc would have to come somewhere, and
+> making it executable would be an auditable even as well.
 
--- 
-https://patchwork.kernel.org/patch/10717275/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
-
+Auditing is a possible use case as well, but the W^X idea is to deny use
+of libraries which are not in an executable mount point, i.e. only
+execute trusted code.
