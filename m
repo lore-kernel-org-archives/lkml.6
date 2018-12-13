@@ -2,166 +2,148 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 065F5C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 08:40:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35EC7C67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 08:40:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9F9A2075B
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 08:40:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9F9A2075B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id EFE5B20645
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 08:40:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="TFs2sKBA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFE5B20645
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727766AbeLMIkF (ORCPT
+        id S1727816AbeLMIkf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 03:40:05 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:38670 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727481AbeLMIjQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 03:39:16 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id C6BB020BE1; Thu, 13 Dec 2018 09:39:14 +0100 (CET)
-Received: from localhost.localdomain (unknown [91.224.148.103])
-        by mail.bootlin.com (Postfix) with ESMTPSA id D9517206FF;
-        Thu, 13 Dec 2018 09:39:13 +0100 (CET)
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Gregory Clement <gregory.clement@bootlin.com>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>
-Cc:     <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Nadav Haklai <nadavh@marvell.com>,
-        Marcin Wojtas <mw@semihalf.com>,
-        Grzegorz Jaszczyk <jaz@semihalf.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: [PATCH v4 4/7] dt-bindings: phy: mvebu-comphy: extend the file to describe a3700 bindings
-Date:   Thu, 13 Dec 2018 09:39:05 +0100
-Message-Id: <20181213083908.14180-5-miquel.raynal@bootlin.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181213083908.14180-1-miquel.raynal@bootlin.com>
-References: <20181213083908.14180-1-miquel.raynal@bootlin.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Thu, 13 Dec 2018 03:40:35 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:44179 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727095AbeLMIkf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 03:40:35 -0500
+Received: by mail-pg1-f196.google.com with SMTP id t13so708982pgr.11
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 00:40:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=m3cLeHLRBiju9/BiIuYZUnRWafttwm6OywruYFw+J70=;
+        b=TFs2sKBA7/Qow4XJfz9tHh5W17kHTFTTrLQmunFeH1/pOFVsHudSVVBKND94q29UAx
+         lojB9X4v3q5P9oPcgHEo2Aolwu9fsX4w5ALiua0LlAoBW2N90KHTA1DGL2clHHG2GCAW
+         7V2V7IiQzdHH+pjya1P6yMo/PfH4aJKBIwKkc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=m3cLeHLRBiju9/BiIuYZUnRWafttwm6OywruYFw+J70=;
+        b=cWwcTHBvtfPj52w31W8KTtBtYlp09diIWSJiyZAFkK13pXyacpZk59cH+wP3rKsowJ
+         ODTTc4+7O+2dB5x1WY6TdrdjrNgn+1e7s8U/Ahzm7YZAYPlfdDg9w05o5Lwj8jQHo4zJ
+         nBQFkXQ8VjLkXrWOLCcxzJWVrOOBdWQH9vqdEaV9VwKzXasUccEKgfsAjOZNsOeb4qTz
+         M9UcJJYz5i4p7aLdSFyIKonfQHyhoZHGzbx2ZY9G8EEVtpgXhj8WD/AWxR9iEKMz0tp6
+         PlNRqhHFQbFEnuZfd9WmNVGAgfr5JCog5ioiMpQq4msj30tQaMeQ6CE19h+L2NOAZJQZ
+         0mbg==
+X-Gm-Message-State: AA+aEWaGO3L5UZoGsPjS9o4GBShFC3JjCACL6MVPwRkITKbYN6gqyYHO
+        gz5vsmTLAUVbGC3m61UGiG++DA==
+X-Google-Smtp-Source: AFSGD/UTbVg/iVrhybaQp/mDcbU+BdkBS3ztNJ/iSRElDfMooWONLkAT/5CqZA5Ay3jfRM5KVcR0+Q==
+X-Received: by 2002:a63:2f86:: with SMTP id v128mr20326933pgv.407.1544690434284;
+        Thu, 13 Dec 2018 00:40:34 -0800 (PST)
+Received: from excession.tpe.corp.google.com ([2401:fa00:1:10:b167:8a11:31b5:8daa])
+        by smtp.gmail.com with ESMTPSA id d202sm2047340pfd.58.2018.12.13.00.40.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 13 Dec 2018 00:40:33 -0800 (PST)
+From:   Louis Collard <louiscollard@chromium.org>
+To:     linux-crypto@vger.kernel.org
+Cc:     Matt Mackall <mpm@selenic.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Gary R Hook <gary.hook@amd.com>, Michael Buesch <m@bues.ch>,
+        PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>,
+        Louis Collard <louiscollard@chromium.org>,
+        "Michael S . Tsirkin" <mst@redhat.com>,
+        linux-kernel@vger.kernel.org, apronin@chromium.org,
+        jarkko.sakkinen@linux.intel.com, linux@mniewoehner.de,
+        david.bild@xaptum.com
+Subject: [RESEND PATCH] Allow hwrng to initialize crng.
+Date:   Thu, 13 Dec 2018 16:40:17 +0800
+Message-Id: <20181213084017.80850-1-louiscollard@chromium.org>
+X-Mailer: git-send-email 2.13.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Current file describe COMPHY bindings for the IP available on the
-CP110 of Armada 7k/8k. Bindings are very close (and serve the same
-purpose) as the new Armada 3700 COMPHY driver so update this file to
-describe both. Also add an example of how to use this second
-compatible (same as for the ESPRESSObin).
+Some systems, for example embedded systems, do not generate
+enough entropy on boot through interrupts, and boot may be blocked for
+several minutes waiting for a call to getrandom to complete.
 
-While doing so, enhance a bit the file by adding upper case where
-needed.
+Currently, random data is read from a hwrng when it is registered,
+and is loaded into primary_crng. This data is treated in the same
+way as data that is device-specific but otherwise unchanging, and
+so primary_crng cannot become initialized with the data from the
+hwrng.
 
-Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
+This change causes the data initially read from the hwrng to be
+treated the same as subsequent data that is read from the hwrng if
+it's quality score is non-zero.
+
+The implications of this are:
+
+The data read from hwrng can cause primary_crng to become
+initialized, therefore avoiding problems of getrandom blocking
+on boot.
+
+Calls to getrandom (with GRND_RANDOM) may be using entropy
+exclusively (or in practise, almost exclusively) from the hwrng.
+
+Regarding the latter point; this behavior is the same as if a
+user specified a quality score of 1 (bit of entropy per 1024 bits)
+so hopefully this is not too scary a change to make.
+
+This change is the result of the discussion here:
+https://patchwork.kernel.org/patch/10453893/
+
+Signed-off-by: Louis Collard <louiscollard@chromium.org>
+Acked-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 ---
- .../bindings/phy/phy-mvebu-comphy.txt         | 65 +++++++++++++++----
- 1 file changed, 53 insertions(+), 12 deletions(-)
+ drivers/char/hw_random/core.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/phy/phy-mvebu-comphy.txt b/Documentation/devicetree/bindings/phy/phy-mvebu-comphy.txt
-index bfcf80341657..cf2cd86db267 100644
---- a/Documentation/devicetree/bindings/phy/phy-mvebu-comphy.txt
-+++ b/Documentation/devicetree/bindings/phy/phy-mvebu-comphy.txt
-@@ -1,16 +1,27 @@
--mvebu comphy driver
---------------------
-+MVEBU comphy drivers
-+--------------------
+diff --git a/drivers/char/hw_random/core.c b/drivers/char/hw_random/core.c
+index 95be7228f327..99c3e4127949 100644
+--- a/drivers/char/hw_random/core.c
++++ b/drivers/char/hw_random/core.c
+@@ -24,6 +24,7 @@
+ #include <linux/sched.h>
+ #include <linux/slab.h>
+ #include <linux/uaccess.h>
++#include <crypto/chacha20.h>
  
--A comphy controller can be found on Marvell Armada 7k/8k on the CP110. It
--provides a number of shared PHYs used by various interfaces (network, sata,
--usb, PCIe...).
-+COMPHY controllers can be found on the following Marvell MVEBU SoCs:
-+* Armada 7k/8k (on the CP110)
-+* Armada 3700
-+It provides a number of shared PHYs used by various interfaces (network, SATA,
-+USB, PCIe...).
+ #define RNG_MODULE_NAME		"hw_random"
  
- Required properties:
+@@ -64,13 +65,17 @@ static size_t rng_buffer_size(void)
+ static void add_early_randomness(struct hwrng *rng)
+ {
+ 	int bytes_read;
+-	size_t size = min_t(size_t, 16, rng_buffer_size());
++	/* Read enough to initialize crng. */
++	size_t size = 2*CHACHA20_KEY_SIZE;
  
--- compatible: should be "marvell,comphy-cp110"
--- reg: should contain the comphy register location and length.
--- marvell,system-controller: should contain a phandle to the
--                             system controller node.
-+- compatible: should be one of:
-+  * "marvell,comphy-cp110" for Armada 7k/8k
-+  * "marvell,comphy-a3700" for Armada 3700
-+- reg: should contain the COMPHY register(s) location(s) and length(s).
-+  * 1 entry for Armada 7k/8k
-+  * 4 entries for Armada 3700 along with the corresponding reg-names
-+    properties, memory areas are:
-+    * Generic COMPHY registers
-+    * Lane 1 (PCIe/GbE)
-+    * Lane 0 (USB3/GbE)
-+    * Lane 2 (SATA/USB3)
-+- marvell,system-controller: should contain a phandle to the system
-+			     controller node (only for Armada 7k/8k)
- - #address-cells: should be 1.
- - #size-cells: should be 0.
+ 	mutex_lock(&reading_mutex);
+ 	bytes_read = rng_get_data(rng, rng_buffer, size, 1);
+ 	mutex_unlock(&reading_mutex);
+ 	if (bytes_read > 0)
+-		add_device_randomness(rng_buffer, bytes_read);
++		/* Allow crng to become initialized, but do not add
++		 * entropy to the pool.
++		 */
++		add_hwgenerator_randomness(rng_buffer, bytes_read, 0);
+ }
  
-@@ -18,11 +29,11 @@ A sub-node is required for each comphy lane provided by the comphy.
- 
- Required properties (child nodes):
- 
--- reg: comphy lane number.
--- #phy-cells : from the generic phy bindings, must be 1. Defines the
-+- reg: COMPHY lane number.
-+- #phy-cells : from the generic PHY bindings, must be 1. Defines the
-                input port to use for a given comphy lane.
- 
--Example:
-+Examples:
- 
- 	cpm_comphy: phy@120000 {
- 		compatible = "marvell,comphy-cp110";
-@@ -41,3 +52,33 @@ Example:
- 			#phy-cells = <1>;
- 		};
- 	};
-+
-+	comphy: phy@18300 {
-+		compatible = "marvell,comphy-a3700";
-+		reg = <0x18300 0x300>,
-+		<0x1F000 0x400>,
-+		<0x5C000 0x400>,
-+		<0xe0178 0x8>;
-+		reg-names = "comphy",
-+		"lane1_pcie_gbe",
-+		"lane0_usb3_gbe",
-+		"lane2_sata_usb3";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+
-+		comphy0: phy@0 {
-+			reg = <0>;
-+			#phy-cells = <1>;
-+		};
-+
-+		comphy1: phy@1 {
-+			reg = <1>;
-+			#phy-cells = <1>;
-+		};
-+
-+		comphy2: phy@2 {
-+			reg = <2>;
-+			#phy-cells = <1>;
-+		};
-+	};
+ static inline void cleanup_rng(struct kref *kref)
 -- 
-2.19.1
+2.13.5
 
