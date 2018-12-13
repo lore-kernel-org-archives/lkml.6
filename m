@@ -2,123 +2,112 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-2.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40676C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 20:40:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30C65C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 20:42:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 038DF20811
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 20:40:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 038DF20811
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id EB9D920870
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 20:42:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB9D920870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727897AbeLMUk4 (ORCPT
+        id S1727786AbeLMUme (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 15:40:56 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:34678 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726401AbeLMUkz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 15:40:55 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2E40AC057F33;
-        Thu, 13 Dec 2018 20:40:55 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.18.25.234])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id F236760BE7;
-        Thu, 13 Dec 2018 20:40:52 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 8CE142208FC; Thu, 13 Dec 2018 15:40:52 -0500 (EST)
-Date:   Thu, 13 Dec 2018 15:40:52 -0500
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        KVM list <kvm@vger.kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Stefan Hajnoczi <stefanha@redhat.com>, sweil@redhat.com,
-        Steven Whitehouse <swhiteho@redhat.com>
-Subject: Re: [PATCH 15/52] fuse: map virtio_fs DAX window BAR
-Message-ID: <20181213204052.GE4384@redhat.com>
-References: <20181210171318.16998-1-vgoyal@redhat.com>
- <20181210171318.16998-16-vgoyal@redhat.com>
- <CAA9_cmdLvFqG_Us5ZoBopj2ssWzxVbyNqf4XcgmY+=D_gARWDA@mail.gmail.com>
- <20181213200936.GU2313@work-vm>
- <CAPcyv4hwPBGLkAN8MKhtti8e-=hksg+oD3CDAUY6B9uh54zBLw@mail.gmail.com>
+        Thu, 13 Dec 2018 15:42:34 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:33243 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726401AbeLMUme (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 15:42:34 -0500
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1gXXoL-0003hN-Dt; Thu, 13 Dec 2018 21:42:21 +0100
+Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1gXXoK-0001FF-2n; Thu, 13 Dec 2018 21:42:20 +0100
+Date:   Thu, 13 Dec 2018 21:42:19 +0100
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Paul Cercueil <paul@crapouillou.net>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mathieu Malaterre <malat@debian.org>,
+        Ezequiel Garcia <ezequiel@collabora.co.uk>,
+        PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>,
+        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-clk@vger.kernel.org, od@zcrc.me,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v8 15/26] pwm: jz4740: Add support for the JZ4725B
+Message-ID: <20181213204219.onem3q6dcmakusl2@pengutronix.de>
+References: <20181212220922.18759-1-paul@crapouillou.net>
+ <20181212220922.18759-16-paul@crapouillou.net>
+ <20181213092409.ml4wpnzow2nnszkd@pengutronix.de>
+ <1544709795.18952.1@crapouillou.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <CAPcyv4hwPBGLkAN8MKhtti8e-=hksg+oD3CDAUY6B9uh54zBLw@mail.gmail.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Thu, 13 Dec 2018 20:40:55 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1544709795.18952.1@crapouillou.net>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 13, 2018 at 12:15:51PM -0800, Dan Williams wrote:
-> On Thu, Dec 13, 2018 at 12:09 PM Dr. David Alan Gilbert
-> <dgilbert@redhat.com> wrote:
-> >
-> > * Dan Williams (dan.j.williams@intel.com) wrote:
-> > > On Mon, Dec 10, 2018 at 9:22 AM Vivek Goyal <vgoyal@redhat.com> wrote:
-> > > >
-> > > > From: Stefan Hajnoczi <stefanha@redhat.com>
-> > > >
-> > > > Experimental QEMU code introduces an MMIO BAR for mapping portions of
-> > > > files in the virtio-fs device.  Map this BAR so that FUSE DAX can access
-> > > > file contents from the host page cache.
-> > >
-> > > FUSE DAX sounds terrifying, can you explain a bit more about what this is?
-> >
-> > We've got a guest running in QEMU, it sees an emulated PCI device;
-> > that runs a FUSE protocol over virtio on that PCI device, but also has
-> > a trick where via commands sent over the virtio queue associated with that device,
-> > (fragments of) host files get mmap'd into the qemu virtual memory that corresponds
-> > to the kvm slot exposed to the guest for that bar.
-> >
-> > The guest sees those chunks in that BAR, and thus you can read/write
-> > to the host file by directly writing into that BAR.
+[Adding Linus Walleij to Cc:]
+
+Hello,
+
+On Thu, Dec 13, 2018 at 03:03:15PM +0100, Paul Cercueil wrote:
+> Le jeu. 13 déc. 2018 à 10:24, Uwe Kleine-König
+> <u.kleine-koenig@pengutronix.de> a écrit :
+> > On Wed, Dec 12, 2018 at 11:09:10PM +0100, Paul Cercueil wrote:
+> > >  The PWM in the JZ4725B works the same as in the JZ4740, except that
+> > > it
+> > >  only has 6 channels available instead of 8.
+> > 
+> > this driver is probed only from device tree? If yes, it might be
+> > sensible to specify the number of PWMs there and get it from there.
+> > There doesn't seem to be a generic binding for that, but there are
+> > several drivers that could benefit from it. (This is a bigger project
+> > though and shouldn't stop your patch. Still more as it already got
+> > Thierry's ack.)
 > 
-> Ok so it's all software emulated and there won't be hardware DMA
-> initiated by the guest to that address?
+> I think there needs to be a proper guideline, as there doesn't seem to be
+> a consensus about this. I learned from emails with Rob and Linus (Walleij)
+> that I should not have in devicetree what I can deduce from the compatible
+> string.
 
-That's my understanding.
+I understood them a bit differently. It is ok to deduce things from the
+compatible string. But if you define a generic property (say) "num-pwms"
+that is used uniformly in most bindings this is ok, too. (And then the
+two different devices could use the same compatible.)
 
-> I.e. if the host file gets
-> truncated / hole-punched the guest would just cause a refault and the
-> filesystem could fill in the block,
+An upside of the generic "num-pwms" property is that the pwm core could
+sanity check pwm phandles before passing them to the hardware drivers.
 
-Right
+Best regards
+Uwe
 
-> or the guest is expected to die if
-> the fault to the truncated file range results in SIGBUS.
-
-Are you referring to the case where a file page is mapped in qemu and
-another guest/process trucates that page and when qemu tries to access it it
-will get SIGBUS. Have not tried it, will give it a try. Not sure what
-happens when QEMU receives SIGBUS.
-
-Having said that, this is not different from the case of one process
-mapping a file and another process truncating the file and first process
-getting SIGBUS, right?
-
-Thanks
-Vivek
-
-> 
-> > > > The DAX window is accessed by the fs/dax.c infrastructure and must have
-> > > > struct pages (at least on x86).  Use devm_memremap_pages() to map the
-> > > > DAX window PCI BAR and allocate struct page.
-> > >
-> > > PCI BAR space is not cache coherent,
-> >
-> > Note that no real PCI infrastructure is involved - this is all emulated
-> > devices, backed by mmap'd files on the host qemu process.
-> 
-> Ok, terror level decreased.
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
