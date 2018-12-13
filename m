@@ -2,96 +2,161 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45DA5C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 09:20:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 784EBC67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 09:20:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D90EB20870
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 09:20:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D90EB20870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 320E720849
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 09:20:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="j5Q94pHw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 320E720849
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728030AbeLMJUO (ORCPT
+        id S1727964AbeLMJUp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 04:20:14 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:23494 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726976AbeLMJUO (ORCPT
+        Thu, 13 Dec 2018 04:20:45 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:37317 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727548AbeLMJUo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 04:20:14 -0500
-X-UUID: 379e1e9401194f5082da103833bf8fd7-20181213
-X-UUID: 379e1e9401194f5082da103833bf8fd7-20181213
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw01.mediatek.com
-        (envelope-from <yong.wu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 571457956; Thu, 13 Dec 2018 17:20:02 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Thu, 13 Dec 2018 17:20:00 +0800
-Received: from localhost.localdomain (10.17.3.153) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 13 Dec 2018 17:19:59 +0800
-From:   Yong Wu <yong.wu@mediatek.com>
-To:     Robin Murphy <robin.murphy@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-CC:     Tomasz Figa <tfiga@google.com>,
-        <linux-mediatek@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <iommu@lists.linux-foundation.org>, <yong.wu@mediatek.com>,
-        <youlin.pei@mediatek.com>, Nicolas Boichat <drinkcat@chromium.org>,
-        CK Hu <ck.hu@mediatek.com>, Stephen Boyd <swboyd@chromium.org>
-Subject: [PATCH] Revert "iommu/io-pgtable-arm: Check for v7s-incapable systems"
-Date:   Thu, 13 Dec 2018 17:19:48 +0800
-Message-ID: <1544692788-24427-1-git-send-email-yong.wu@mediatek.com>
-X-Mailer: git-send-email 1.9.1
+        Thu, 13 Dec 2018 04:20:44 -0500
+Received: by mail-oi1-f195.google.com with SMTP id y23so1082843oia.4
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 01:20:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Q7AVazXsZePEjvqArdeaIpI3yjrkGc+WeG0TPRsT/4M=;
+        b=j5Q94pHwTxT7p20xoaLMhp9wPTXPZdUQJvg+NOiho9Q9Gckik8/4xSR+ZzdHOYT8G/
+         HXdBZGZMVwHC7BtJX9+WBf0IRAfb/xMHgrl3IiE0/38YzZTefP+/srtZIfC0A064z03H
+         S3HcYXWgvBHYgjM2GPdTQrs1hk03dAO7VWgZM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Q7AVazXsZePEjvqArdeaIpI3yjrkGc+WeG0TPRsT/4M=;
+        b=GjJpBMizSXrqN+nuFm9se593BmirZ6xpfBKnBJ1AicWK1PR/Tiz0uP7nJ+Cpq86tyZ
+         ilG57F672sMIPzayDaPKCvP6YoZeR0dJrww6d2pkl6NH7PJScFX1XKAm6sCO+u1Ki3VV
+         +dnD0lmugiOnmCLWRShfGl8i16vrbWuWwqxC5KH+LEdgmfECf2kKSMFTRJJ6Bp4LjlL2
+         Tx5j1+cmBQruol6e8I7BnFKTCwRKiBevgu0lAkmJc6I1Y3TpedXG2oxWSxd1w9hmRykr
+         htNFCgkpmzrVUWvbiIfx/hJkGOmm8TZpHdJz+wgVKorH2LBInoORfxi+oeaBoA4la4hO
+         mznQ==
+X-Gm-Message-State: AA+aEWbnGWC4rSm4pgl7/EBO/CypqdkSugZykS0Vxbukx+KKi7iRAW1B
+        zz58mAAeSdvEVa0NMe3+xh/L1RWh5DUCTze0CYxrOw==
+X-Google-Smtp-Source: AFSGD/WPm0mv8whcIs6QQO/uKGRxeRv1ZvRfwQ8sHb6QKkxdW8JLXUmA6lf9KAl+vbpc8sIOYaNMR/uSWESO8M8v/0Q=
+X-Received: by 2002:aca:53cd:: with SMTP id h196mr2576903oib.355.1544692843661;
+ Thu, 13 Dec 2018 01:20:43 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-SNTS-SMTP: 3D9AC9C0C1586A31BB1116196A82212BA0D434382E2BCF7BBE09B5DA483EADBF2000:8
-X-MTK:  N
+References: <20181213084017.80850-1-louiscollard@chromium.org> <20181213085102.aiw64pubxgoohlo3@gondor.apana.org.au>
+In-Reply-To: <20181213085102.aiw64pubxgoohlo3@gondor.apana.org.au>
+From:   Louis Collard <louiscollard@chromium.org>
+Date:   Thu, 13 Dec 2018 17:20:32 +0800
+Message-ID: <CAKNRAJVAVQdRCmUFYC0PvzaSxFTjZmJMNuRzx8TgS2ihxCqE8A@mail.gmail.com>
+Subject: Re: [RESEND PATCH] Allow hwrng to initialize crng.
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     linux-crypto@vger.kernel.org, mpm@selenic.com,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Gary R Hook <gary.hook@amd.com>, Michael Buesch <m@bues.ch>,
+        PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>,
+        mst@redhat.com, linux-kernel@vger.kernel.org,
+        Andrey Pronin <apronin@chromium.org>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux@mniewoehner.de, "David R. Bild" <david.bild@xaptum.com>,
+        tytso@mit.edu
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This reverts commit 82db33dc5e49fb625262d81125625d07a0d6184e.
+On Thu, Dec 13, 2018 at 4:51 PM Herbert Xu <herbert@gondor.apana.org.au> wrote:
+>
+> On Thu, Dec 13, 2018 at 04:40:17PM +0800, Louis Collard wrote:
+> > Some systems, for example embedded systems, do not generate
+> > enough entropy on boot through interrupts, and boot may be blocked for
+> > several minutes waiting for a call to getrandom to complete.
+> >
+> > Currently, random data is read from a hwrng when it is registered,
+> > and is loaded into primary_crng. This data is treated in the same
+> > way as data that is device-specific but otherwise unchanging, and
+> > so primary_crng cannot become initialized with the data from the
+> > hwrng.
+> >
+> > This change causes the data initially read from the hwrng to be
+> > treated the same as subsequent data that is read from the hwrng if
+> > it's quality score is non-zero.
+> >
+> > The implications of this are:
+> >
+> > The data read from hwrng can cause primary_crng to become
+> > initialized, therefore avoiding problems of getrandom blocking
+> > on boot.
+> >
+> > Calls to getrandom (with GRND_RANDOM) may be using entropy
+> > exclusively (or in practise, almost exclusively) from the hwrng.
+> >
+> > Regarding the latter point; this behavior is the same as if a
+> > user specified a quality score of 1 (bit of entropy per 1024 bits)
+> > so hopefully this is not too scary a change to make.
+> >
+> > This change is the result of the discussion here:
+> > https://patchwork.kernel.org/patch/10453893/
+> >
+> > Signed-off-by: Louis Collard <louiscollard@chromium.org>
+> > Acked-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > ---
+> >  drivers/char/hw_random/core.c | 9 +++++++--
+> >  1 file changed, 7 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/char/hw_random/core.c b/drivers/char/hw_random/core.c
+> > index 95be7228f327..99c3e4127949 100644
+> > --- a/drivers/char/hw_random/core.c
+> > +++ b/drivers/char/hw_random/core.c
+> > @@ -24,6 +24,7 @@
+> >  #include <linux/sched.h>
+> >  #include <linux/slab.h>
+> >  #include <linux/uaccess.h>
+> > +#include <crypto/chacha20.h>
+> >
+> >  #define RNG_MODULE_NAME              "hw_random"
+> >
+> > @@ -64,13 +65,17 @@ static size_t rng_buffer_size(void)
+> >  static void add_early_randomness(struct hwrng *rng)
+> >  {
+> >       int bytes_read;
+> > -     size_t size = min_t(size_t, 16, rng_buffer_size());
+> > +     /* Read enough to initialize crng. */
+> > +     size_t size = 2*CHACHA20_KEY_SIZE;
+> >
+> >       mutex_lock(&reading_mutex);
+> >       bytes_read = rng_get_data(rng, rng_buffer, size, 1);
+> >       mutex_unlock(&reading_mutex);
+> >       if (bytes_read > 0)
+> > -             add_device_randomness(rng_buffer, bytes_read);
+> > +             /* Allow crng to become initialized, but do not add
+> > +              * entropy to the pool.
+> > +              */
+> > +             add_hwgenerator_randomness(rng_buffer, bytes_read, 0);
+> >  }
+> >
+> >  static inline void cleanup_rng(struct kref *kref)
+> > --
+> > 2.13.5
+> >
+>
+> Adding Ted Ts'o to the cc list.
+> --
+> Email: Herbert Xu <herbert@gondor.apana.org.au>
+> Home Page: http://gondor.apana.org.au/~herbert/
+> PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
-After the commit 29859aeb8a6e ("iommu/io-pgtable-arm-v7s: Abort
-allocation when table address overflows the PTE"), v7s will return fail
-if the page table allocation isn't expected. this PHYS_OFFSET check
-is unnecessary now.
-
-And this check may lead to fail. For example, If CONFIG_RANDOMIZE_BASE
-is enabled, the "memstart_addr" will be updated randomly, then the
-PHYS_OFFSET may be random.
-
-Reported-by: CK Hu <ck.hu@mediatek.com>
-Signed-off-by: Yong Wu <yong.wu@mediatek.com>
----
- drivers/iommu/io-pgtable-arm-v7s.c | 4 ----
- 1 file changed, 4 deletions(-)
-
-diff --git a/drivers/iommu/io-pgtable-arm-v7s.c b/drivers/iommu/io-pgtable-arm-v7s.c
-index 445c3bd..cec29bf 100644
---- a/drivers/iommu/io-pgtable-arm-v7s.c
-+++ b/drivers/iommu/io-pgtable-arm-v7s.c
-@@ -709,10 +709,6 @@ static struct io_pgtable *arm_v7s_alloc_pgtable(struct io_pgtable_cfg *cfg,
- {
- 	struct arm_v7s_io_pgtable *data;
- 
--#ifdef PHYS_OFFSET
--	if (upper_32_bits(PHYS_OFFSET))
--		return NULL;
--#endif
- 	if (cfg->ias > ARM_V7S_ADDR_BITS || cfg->oas > ARM_V7S_ADDR_BITS)
- 		return NULL;
- 
--- 
-1.9.1
-
+Thanks - and apologies, just re-read this and realized I clearly
+wasn't paying attention the first time, have sent a v2 that calculates
+size correctly.
