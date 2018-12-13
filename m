@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CB35C67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:39:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 338CCC67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:40:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED00E20849
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:39:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EDCE620870
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:40:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544675985;
-	bh=CR3tCVNf/g+IdVoivBlK9AtAHsGbe7q88I8SiM8rXLY=;
+	s=default; t=1544676001;
+	bh=xYKZTlivoHMvuG3FDDpYNyHwBtp6xlVP49sKxHZsUCk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=iRsHJQEuiB+96MKeEcsNglDRUg3HKUP6P+Ett1krYQ16+wBEiaRXKD178LykNgzd4
-	 uBzF0C2tOl5utesQiF82ybSXh6UPbMDC9FdsIcClDsnMrH3R4KQfMaNISL+jbunN04
-	 K0WK8jPeol2PGpDYEpcsXViPGEb0eQplDF9RaOFg=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED00E20849
+	b=vyjBXkdP6A7Q8nlMLT0Ni4/DjZsYeIVhRiCmo27G9nB6XkRe1dESO78uSPcN0b5Cv
+	 KZ2OFzYkOC79Yq3O/cSJSSF8Dv1+7oi1oExZ+hCBZqQAuqlIVzA39RU3LIoJmEq7zV
+	 EJ3V608/jhDUa8W+8/JEU6HBUQIlj1WDIra/mG9c=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDCE620870
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728784AbeLMEjn (ORCPT
+        id S1729104AbeLMEj7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 23:39:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45556 "EHLO mail.kernel.org"
+        Wed, 12 Dec 2018 23:39:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45456 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729127AbeLMEcj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 23:32:39 -0500
+        id S1729105AbeLMEcd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 23:32:33 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 685C020882;
-        Thu, 13 Dec 2018 04:32:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 22C5720873;
+        Thu, 13 Dec 2018 04:32:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544675559;
-        bh=CR3tCVNf/g+IdVoivBlK9AtAHsGbe7q88I8SiM8rXLY=;
+        s=default; t=1544675552;
+        bh=xYKZTlivoHMvuG3FDDpYNyHwBtp6xlVP49sKxHZsUCk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sEoldz1WfAn/F62mEfL6Xj4jI+aLscrs45FWR38+OQipBDlWoMximqePDG+Z7rsim
-         4+kwaZGGbpQUeBsmHPjzuMubSgVGDQze8GyqmKOBtUsQWcyreKiinNSY/u6P+3vBU4
-         oz9VZAm0XnYqhfU5Yq3Q6iSVALWHX6SQdbByHCXs=
+        b=OukXHj/BPBxeqUMRYkXuMY2fwJVSS860v6D7q2iZ9cBDtj5c+D1of0OVscCjlMqvQ
+         J8hNiA11PCksFJxcfxKNbD7ISlSGYcMJvAWz829JXymwfuqQr8VlA5Dk80IHT2l9J6
+         tvTQaRFkSke4MxsVM+0dyDMKyigKKv46YfsB4qOk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Anderson Luiz Alves <alacn1@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 22/34] mv88e6060: disable hardware level MAC learning
-Date:   Wed, 12 Dec 2018 23:31:48 -0500
-Message-Id: <20181213043200.76295-22-sashal@kernel.org>
+Cc:     Juha-Matti Tilli <juha-matti.tilli@iki.fi>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
+        linux-ide@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 18/34] libata: whitelist all SAMSUNG MZ7KM* solid-state disks
+Date:   Wed, 12 Dec 2018 23:31:44 -0500
+Message-Id: <20181213043200.76295-18-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181213043200.76295-1-sashal@kernel.org>
 References: <20181213043200.76295-1-sashal@kernel.org>
@@ -61,52 +61,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anderson Luiz Alves <alacn1@gmail.com>
+From: Juha-Matti Tilli <juha-matti.tilli@iki.fi>
 
-[ Upstream commit a74515604a7b171f2702bdcbd1e231225fb456d0 ]
+[ Upstream commit fd6f32f78645db32b6b95a42e45da2ddd6de0e67 ]
 
-Disable hardware level MAC learning because it breaks station roaming.
-When enabled it drops all frames that arrive from a MAC address
-that is on a different port at learning table.
+These devices support read zero after trim (RZAT), as they advertise to
+the OS. However, the OS doesn't believe the SSDs unless they are
+explicitly whitelisted.
 
-Signed-off-by: Anderson Luiz Alves <alacn1@gmail.com>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Acked-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Juha-Matti Tilli <juha-matti.tilli@iki.fi>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/dsa/mv88e6060.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+ drivers/ata/libata-core.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/dsa/mv88e6060.c b/drivers/net/dsa/mv88e6060.c
-index 7ce36dbd9b62..a3607d083332 100644
---- a/drivers/net/dsa/mv88e6060.c
-+++ b/drivers/net/dsa/mv88e6060.c
-@@ -114,8 +114,7 @@ static int mv88e6060_switch_reset(struct dsa_switch *ds)
- 	/* Reset the switch. */
- 	REG_WRITE(REG_GLOBAL, GLOBAL_ATU_CONTROL,
- 		  GLOBAL_ATU_CONTROL_SWRESET |
--		  GLOBAL_ATU_CONTROL_ATUSIZE_1024 |
--		  GLOBAL_ATU_CONTROL_ATE_AGE_5MIN);
-+		  GLOBAL_ATU_CONTROL_LEARNDIS);
+diff --git a/drivers/ata/libata-core.c b/drivers/ata/libata-core.c
+index a166359ad5d4..35be49f5791d 100644
+--- a/drivers/ata/libata-core.c
++++ b/drivers/ata/libata-core.c
+@@ -4476,6 +4476,7 @@ static const struct ata_blacklist_entry ata_device_blacklist [] = {
+ 	{ "SSD*INTEL*",			NULL,	ATA_HORKAGE_ZERO_AFTER_TRIM, },
+ 	{ "Samsung*SSD*",		NULL,	ATA_HORKAGE_ZERO_AFTER_TRIM, },
+ 	{ "SAMSUNG*SSD*",		NULL,	ATA_HORKAGE_ZERO_AFTER_TRIM, },
++	{ "SAMSUNG*MZ7KM*",		NULL,	ATA_HORKAGE_ZERO_AFTER_TRIM, },
+ 	{ "ST[1248][0248]0[FH]*",	NULL,	ATA_HORKAGE_ZERO_AFTER_TRIM, },
  
- 	/* Wait up to one second for reset to complete. */
- 	timeout = jiffies + 1 * HZ;
-@@ -140,13 +139,10 @@ static int mv88e6060_setup_global(struct dsa_switch *ds)
- 	 */
- 	REG_WRITE(REG_GLOBAL, GLOBAL_CONTROL, GLOBAL_CONTROL_MAX_FRAME_1536);
- 
--	/* Enable automatic address learning, set the address
--	 * database size to 1024 entries, and set the default aging
--	 * time to 5 minutes.
-+	/* Disable automatic address learning.
- 	 */
- 	REG_WRITE(REG_GLOBAL, GLOBAL_ATU_CONTROL,
--		  GLOBAL_ATU_CONTROL_ATUSIZE_1024 |
--		  GLOBAL_ATU_CONTROL_ATE_AGE_5MIN);
-+		  GLOBAL_ATU_CONTROL_LEARNDIS);
- 
- 	return 0;
- }
+ 	/*
 -- 
 2.19.1
 
