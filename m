@@ -4,53 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3801C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:32:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1836BC65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:32:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F74920882
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:32:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C971F20880
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:32:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544675549;
-	bh=Mx7mTbHU78xt5DU+4w7FGaUb7kaD0qPBSy0kDcGxyLU=;
+	s=default; t=1544675550;
+	bh=bjxYaD8HVrmIx8uz5j2E58Eiup7UbzoqqXgJuPimOQE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=GK3K174ujsh/+0+Hm9OIFam7p6r6hLWooTwd86UTc1YZ+hWggVoLgwrZKLto3wnO5
-	 vGR+fY/LZdC/JQ/lxfficZqPXXuP000WJK6+N/f1msqfVaFZczbqqUxQ5Bb9Am7Iz+
-	 tiSXiCji5QTyfwZQ+6t9XmoC0DfR9cSnQe+g9ZkE=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F74920882
+	b=t60YpGbymS0iNQuJJto87IoBiRPiROyFIaxmWaMTbFBscjhEw8IaoN6Hlm5o1wK5J
+	 vL251TQLxdjcdQDof7yVrjG506v79RIMeM7+1gCpMpHAneZd+ZK41AN3CTSzFbKNCp
+	 FGJci+yiP0u2fqcQPfXqdlDlC9GWsz7dmWX8ij8c=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C971F20880
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729084AbeLMEc2 (ORCPT
+        id S1729096AbeLMEc3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 23:32:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45330 "EHLO mail.kernel.org"
+        Wed, 12 Dec 2018 23:32:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45368 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729067AbeLMEcZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 23:32:25 -0500
+        id S1729076AbeLMEc1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 23:32:27 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E164B20873;
-        Thu, 13 Dec 2018 04:32:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 67E1C20672;
+        Thu, 13 Dec 2018 04:32:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544675544;
-        bh=Mx7mTbHU78xt5DU+4w7FGaUb7kaD0qPBSy0kDcGxyLU=;
+        s=default; t=1544675547;
+        bh=bjxYaD8HVrmIx8uz5j2E58Eiup7UbzoqqXgJuPimOQE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zJ2hGyWZ1pCJsr8aeb4SzF1ccP9St7X6GqQPJ1cQw4F7damwRK+iiSpMYvkcJh5oA
-         lxuQjboYfjLoIQBopqiGv+CJVRiNxwbOr5VU5l2EOcomR7MVQKECMtr3ETFNZ4WBOE
-         gpcLgZZaDU4US1dbsLYZA/g/7oUHOhf8VPUB+Efc=
+        b=JhSUDHY/zKaVyDzeahYG9fRM0X5ThaAN4K+o04/DwBamQcrkcgSVT8h0NMa3DW5NC
+         Bv8oS3WaA0UqnZcpJI2aMMcdYi1DwbQwUJ6MB7K+CVFai+S86AACnjeScNXWoumdQO
+         IlTo1YAXsCV5uu4OLrO3fx04Lq81vZhpMpHbsjKc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Yangtao Li <tiny.windzz@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, linux-ide@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH AUTOSEL 4.9 14/34] ide: pmac: add of_node_put()
-Date:   Wed, 12 Dec 2018 23:31:40 -0500
-Message-Id: <20181213043200.76295-14-sashal@kernel.org>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 15/34] clk: mvebu: Off by one bugs in cp110_of_clk_get()
+Date:   Wed, 12 Dec 2018 23:31:41 -0500
+Message-Id: <20181213043200.76295-15-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181213043200.76295-1-sashal@kernel.org>
 References: <20181213043200.76295-1-sashal@kernel.org>
@@ -62,31 +60,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yangtao Li <tiny.windzz@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit a51921c0db3fd26c4ed83dc0ec5d32988fa02aa5 ]
+[ Upstream commit d9f5b7f5dd0fa74a89de5a7ac1e26366f211ccee ]
 
-use of_node_put() to release the refcount.
+These > comparisons should be >= to prevent reading beyond the end of
+of the clk_data->hws[] buffer.
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+The clk_data->hws[] array is allocated in cp110_syscon_common_probe()
+when we do:
+	cp110_clk_data = devm_kzalloc(dev, sizeof(*cp110_clk_data) +
+				      sizeof(struct clk_hw *) * CP110_CLK_NUM,
+				      GFP_KERNEL);
+As you can see, it has CP110_CLK_NUM elements which is equivalent to
+CP110_MAX_CORE_CLOCKS + CP110_MAX_GATABLE_CLOCKS.
+
+Fixes: d3da3eaef7f4 ("clk: mvebu: new driver for Armada CP110 system controller")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/ide/pmac.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/clk/mvebu/cp110-system-controller.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/ide/pmac.c b/drivers/ide/pmac.c
-index 0c5d3a99468e..b20025a5a8d9 100644
---- a/drivers/ide/pmac.c
-+++ b/drivers/ide/pmac.c
-@@ -920,6 +920,7 @@ static u8 pmac_ide_cable_detect(ide_hwif_t *hwif)
- 	struct device_node *root = of_find_node_by_path("/");
- 	const char *model = of_get_property(root, "model", NULL);
+diff --git a/drivers/clk/mvebu/cp110-system-controller.c b/drivers/clk/mvebu/cp110-system-controller.c
+index f2303da7fda7..465953c75320 100644
+--- a/drivers/clk/mvebu/cp110-system-controller.c
++++ b/drivers/clk/mvebu/cp110-system-controller.c
+@@ -172,11 +172,11 @@ static struct clk *cp110_of_clk_get(struct of_phandle_args *clkspec, void *data)
+ 	unsigned int idx = clkspec->args[1];
  
-+	of_node_put(root);
- 	/* Get cable type from device-tree. */
- 	if (cable && !strncmp(cable, "80-", 3)) {
- 		/* Some drives fail to detect 80c cable in PowerBook */
+ 	if (type == CP110_CLK_TYPE_CORE) {
+-		if (idx > CP110_MAX_CORE_CLOCKS)
++		if (idx >= CP110_MAX_CORE_CLOCKS)
+ 			return ERR_PTR(-EINVAL);
+ 		return clk_data->clks[idx];
+ 	} else if (type == CP110_CLK_TYPE_GATABLE) {
+-		if (idx > CP110_MAX_GATABLE_CLOCKS)
++		if (idx >= CP110_MAX_GATABLE_CLOCKS)
+ 			return ERR_PTR(-EINVAL);
+ 		return clk_data->clks[CP110_MAX_CORE_CLOCKS + idx];
+ 	}
 -- 
 2.19.1
 
