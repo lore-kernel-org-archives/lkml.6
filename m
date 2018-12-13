@@ -2,107 +2,81 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C77CDC65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 15:49:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6896C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 15:52:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95E132086D
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 15:49:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95E132086D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rowland.harvard.edu
+	by mail.kernel.org (Postfix) with ESMTP id CF9B720870
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 15:52:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF9B720870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tuxdriver.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729058AbeLMPtv (ORCPT
+        id S1728757AbeLMPwg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 10:49:51 -0500
-Received: from iolanthe.rowland.org ([192.131.102.54]:41182 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1728965AbeLMPtu (ORCPT
+        Thu, 13 Dec 2018 10:52:36 -0500
+Received: from charlotte.tuxdriver.com ([70.61.120.58]:49240 "EHLO
+        smtp.tuxdriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727726AbeLMPwg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 10:49:50 -0500
-Received: (qmail 2270 invoked by uid 2102); 13 Dec 2018 10:49:49 -0500
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 13 Dec 2018 10:49:49 -0500
-Date:   Thu, 13 Dec 2018 10:49:49 -0500 (EST)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
-cc:     David Goldblatt <davidtgoldblatt@gmail.com>,
-        <mathieu.desnoyers@efficios.com>,
-        Florian Weimer <fweimer@redhat.com>, <triegel@redhat.com>,
-        <libc-alpha@sourceware.org>, <andrea.parri@amarulasolutions.com>,
-        <will.deacon@arm.com>, <peterz@infradead.org>,
-        <boqun.feng@gmail.com>, <npiggin@gmail.com>, <dhowells@redhat.com>,
-        <j.alglave@ucl.ac.uk>, <luc.maranget@inria.fr>, <akiyks@gmail.com>,
-        <dlustig@nvidia.com>, <linux-arch@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] Linux: Implement membarrier function
-In-Reply-To: <20181212224931.GD4170@linux.ibm.com>
-Message-ID: <Pine.LNX.4.44L0.1812131026570.1586-100000@iolanthe.rowland.org>
+        Thu, 13 Dec 2018 10:52:36 -0500
+Received: from cpe-2606-a000-111b-405a-a193-cb97-58ba-1c15.dyn6.twc.com ([2606:a000:111b:405a:a193:cb97:58ba:1c15] helo=localhost)
+        by smtp.tuxdriver.com with esmtpsa (TLSv1:AES256-SHA:256)
+        (Exim 4.63)
+        (envelope-from <nhorman@tuxdriver.com>)
+        id 1gXTHd-0001Pr-8u; Thu, 13 Dec 2018 10:52:28 -0500
+Date:   Thu, 13 Dec 2018 10:51:49 -0500
+From:   Neil Horman <nhorman@tuxdriver.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Xin Long <lucien.xin@gmail.com>, kent.overstreet@gmail.com,
+        LKML <linux-kernel@vger.kernel.org>, dave.hansen@intel.com,
+        davem <davem@davemloft.net>, Oleg Babin <obabin@virtuozzo.com>,
+        Konstantin Khorenko <khorenko@virtuozzo.com>
+Subject: Re: [PATCH 6/6] Drop flex_arrays
+Message-ID: <20181213155149.GA4127@hmswarspite.think-freely.org>
+References: <20180907165635.8469-1-kent.overstreet@gmail.com>
+ <20180907165635.8469-7-kent.overstreet@gmail.com>
+ <CADvbK_ccPYY5jGRV+cLNc5Nzcfv0mq0eNMeU-ALvepax0ZSizQ@mail.gmail.com>
+ <20181213144111.GO6830@bombadil.infradead.org>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181213144111.GO6830@bombadil.infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 12 Dec 2018, Paul E. McKenney wrote:
-
-> > Well, what are you trying to accomplish?  Do you want to find an 
-> > argument similar to the one I posted for the 6-CPU test to show that 
-> > this test should be forbidden?
+On Thu, Dec 13, 2018 at 06:41:11AM -0800, Matthew Wilcox wrote:
+> On Thu, Dec 13, 2018 at 09:30:47PM +0900, Xin Long wrote:
+> > On Sat, Sep 8, 2018 at 1:57 AM Kent Overstreet
+> > <kent.overstreet@gmail.com> wrote:
+> > >
+> > > All existing users have been converted to generic radix trees
+> > NAK, SCTP is still using flex_arrays,
+> > # grep flex_array net/sctp/*
+> > 
+> > This patch will break the build.
 > 
-> I am trying to check odd corner cases.  Your sys_membarrier() model
-> is quite nice and certainly fits nicely with the rest of the model,
-> but where I come from, that is actually reason for suspicion.  ;-)
+> sctp added that user after this patch was sent.  Please stop adding
+> flexarray users!
 > 
-> All kidding aside, your argument for the 6-CPU test was extremely
-> valuable, as it showed me a way to think of that test from an
-> implementation viewpoint.  Then the question is whether or not that
-> viewpoint actually matches the model, which seems to be the case thus far.
+> This particular user should probably have just used kvmalloc.
+> 
 
-It should, since I formulated the reasoning behind that viewpoint 
-directly from the model.  The basic idea is this:
+No, I don't think thats right.
 
-	By induction, show that whenever we have A ->rcu-fence B then
-	anything po-before A executes before anything po-after B, and
-	furthermore, any write which propagates to A's CPU before A
-	executes will propagate to every CPU before B finishes (i.e.,
-	before anything po-after B executes).
+This appears to have been sent on September 7th.  Commit
+0d493b4d0be352b5e361e4fa0bc3efe952d8b10e, which added the use of flex_arrays to
+sctp, seems to have been merged on August 10th, a month prior.
 
-	Using this, show that whenever X ->rb Y holds then X must
-	execute before Y.
+regardless, however, sctp has a current in-tree use of flex_arrays, and merging
+this patch will break the build without a respin.
 
-That's what the 6-CPU argument did.  In that litmus test we have
-mb2 ->rcu-fence mb23, Rc ->rb Re, mb1 ->rcu-fence mb14, Rb ->rb Rf,
-mb0 ->rcu-fence mb05, and lastly Ra ->rb Ra.  The last one is what 
-shows that the test is forbidden.
-
-> A good next step would be to automatically generate random tests along
-> with an automatically generated prediction, like I did for RCU a few
-> years back.  I should be able to generalize my time-based cheat for RCU to
-> also cover SRCU, though sys_membarrier() will require a bit more thought.
-> (The time-based cheat was to have fixed duration RCU grace periods and
-> RCU read-side critical sections, with the grace period duration being
-> slightly longer than that of the critical sections.  The number of
-> processes is of course limited by the chosen durations, but that limit
-> can easily be made insanely large.)
-
-Imagine that each sys_membarrier call takes a fixed duration and each 
-other instruction takes slightly less (the idea being that each 
-instruction is a critical section).  Instructions can be reordered 
-(although not across a sys_membarrier call), but no matter how the 
-reordering is done, the result is disallowed.
-
-> I guess that I still haven't gotten over being a bit surprised that the
-> RCU counting rule also applies to sys_membarrier().  ;-)
-
-Why not?  They are both synchronization mechanisms with heavy-weight
-write sides and light-weight read sides, and most importantly, they
-provide the same Guarantee.
-
-Alan
+Neil
 
 
