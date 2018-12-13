@@ -7,50 +7,49 @@ X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 376C9C67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:31:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94068C67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:31:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E995B20873
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:31:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 59ABB20879
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:31:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544675512;
-	bh=pPoYjaib85wJGJNjqi3xgTbDNgYvegN61UzG23fNtqU=;
+	s=default; t=1544675515;
+	bh=V84an21/hUx3qDLbKOg7WJ4D8T2YYXOVhnqg+suWI8c=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=QTzUruZToR3PZKXM4yRBG8Hh2huP8rpMnYhCkydW67TrEHNg3dGb625WzrJqtupAq
-	 V+ejQlB2juFzKxg+AybPd5Z5DT725XoWlYYamtWAINADVyb7YbAgV4/ItN7Vs2L5na
-	 dTpF7QRIM+MQyviM1T7gzk4SkDldfnLmrvuRxBFY=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E995B20873
+	b=M21ltjjrrPR+JWJGZd5xCbHfc/gD8qYqhbkiZB27/lWES7sW40wuKfVenj0wqrmId
+	 o6gj7bEyncRJm/zPmUBZunbslcMUDYXnE8DVcxNYtAdh0y24DdToI6dJ8yu+IC5g/S
+	 49v47384WcUVGuFWy6zZ07rHD5IB7uc0O7FeIMjI=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59ABB20879
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728900AbeLMEbv (ORCPT
+        id S1728917AbeLMEby (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 23:31:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44712 "EHLO mail.kernel.org"
+        Wed, 12 Dec 2018 23:31:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44780 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727911AbeLMEbr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 23:31:47 -0500
+        id S1728896AbeLMEbu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 23:31:50 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4200A20873;
-        Thu, 13 Dec 2018 04:31:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8AA0D20672;
+        Thu, 13 Dec 2018 04:31:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544675506;
-        bh=pPoYjaib85wJGJNjqi3xgTbDNgYvegN61UzG23fNtqU=;
+        s=default; t=1544675510;
+        bh=V84an21/hUx3qDLbKOg7WJ4D8T2YYXOVhnqg+suWI8c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VrvNbSUb7cMVtPw43c02v17/mx2cggygLmdUAS8kk2gNo3Coae18TepyxvXNRlXr0
-         iNo448IwZfSgCGX1VgJEwVh+Cgldbu81vCweLnbRJ1SmQCk9FcgMwnMq6RsV7E2jU3
-         SEOBGfH+Pdo8vqMXr5KhTc352G4ohzbWPudg+wls=
+        b=BIpNzE+VzbWs9OIBWXnANN+c4zty4RPZ/BMN6shZD/cg7c337/eMQFjpiv9sgz+G1
+         HAfG395hHqsUfw8lcedSbfio9pNm9qv3kxLNaR1ZDNyyA2+gHND+sjpCwyUKfTlKNo
+         LgDK+JFHpfRjkTcM0PHPslkNDSHIvVGJ7hGHZzSU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Sam Bobroff <sbobroff@linux.ibm.com>,
-        Dave Airlie <airlied@redhat.com>,
-        Sasha Levin <sashal@kernel.org>,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.14 32/41] drm/ast: Fix connector leak during driver unload
-Date:   Wed, 12 Dec 2018 23:30:45 -0500
-Message-Id: <20181213043054.75891-32-sashal@kernel.org>
+Cc:     Ido Schimmel <idosch@mellanox.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 35/41] mlxsw: spectrum_switchdev: Fix VLAN device deletion via ioctl
+Date:   Wed, 12 Dec 2018 23:30:48 -0500
+Message-Id: <20181213043054.75891-35-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181213043054.75891-1-sashal@kernel.org>
 References: <20181213043054.75891-1-sashal@kernel.org>
@@ -62,38 +61,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sam Bobroff <sbobroff@linux.ibm.com>
+From: Ido Schimmel <idosch@mellanox.com>
 
-[ Upstream commit e594a5e349ddbfdaca1951bb3f8d72f3f1660d73 ]
+[ Upstream commit 993107fea5eefdfdfde1ca38d3f01f0bebf76e77 ]
 
-When unloading the ast driver, a warning message is printed by
-drm_mode_config_cleanup() because a reference is still held to one of
-the drm_connector structs.
+When deleting a VLAN device using an ioctl the netdev is unregistered
+before the VLAN filter is updated via ndo_vlan_rx_kill_vid(). It can
+lead to a use-after-free in mlxsw in case the VLAN device is deleted
+while being enslaved to a bridge.
 
-Correct this by calling drm_crtc_force_disable_all() in
-ast_fbdev_destroy().
+The reason for the above is that when mlxsw receives the CHANGEUPPER
+event, it wrongly assumes that the VLAN device is no longer its upper
+and thus destroys the internal representation of the bridge port despite
+the reference count being non-zero.
 
-Signed-off-by: Sam Bobroff <sbobroff@linux.ibm.com>
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Signed-off-by: Dave Airlie <airlied@redhat.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/1e613f3c630c7bbc72e04a44b178259b9164d2f6.1543798395.git.sbobroff@linux.ibm.com
+Fix this by checking if the VLAN device is our upper using its real
+device. In net-next I'm going to remove this trick and instead make
+mlxsw completely agnostic to the order of the events.
+
+Fixes: c57529e1d5d8 ("mlxsw: spectrum: Replace vPorts with Port-VLAN")
+Signed-off-by: Ido Schimmel <idosch@mellanox.com>
+Reviewed-by: Petr Machata <petrm@mellanox.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/ast/ast_fb.c | 1 +
- 1 file changed, 1 insertion(+)
+ .../net/ethernet/mellanox/mlxsw/spectrum_switchdev.c   | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/ast/ast_fb.c b/drivers/gpu/drm/ast/ast_fb.c
-index 0cd827e11fa2..de26df0c6044 100644
---- a/drivers/gpu/drm/ast/ast_fb.c
-+++ b/drivers/gpu/drm/ast/ast_fb.c
-@@ -263,6 +263,7 @@ static void ast_fbdev_destroy(struct drm_device *dev,
+diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
+index 32c25772f755..21611613f44c 100644
+--- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
+@@ -295,7 +295,13 @@ static bool
+ mlxsw_sp_bridge_port_should_destroy(const struct mlxsw_sp_bridge_port *
+ 				    bridge_port)
  {
- 	struct ast_framebuffer *afb = &afbdev->afb;
+-	struct mlxsw_sp *mlxsw_sp = mlxsw_sp_lower_get(bridge_port->dev);
++	struct net_device *dev = bridge_port->dev;
++	struct mlxsw_sp *mlxsw_sp;
++
++	if (is_vlan_dev(dev))
++		mlxsw_sp = mlxsw_sp_lower_get(vlan_dev_real_dev(dev));
++	else
++		mlxsw_sp = mlxsw_sp_lower_get(dev);
  
-+	drm_crtc_force_disable_all(dev);
- 	drm_fb_helper_unregister_fbi(&afbdev->helper);
+ 	/* In case ports were pulled from out of a bridged LAG, then
+ 	 * it's possible the reference count isn't zero, yet the bridge
+@@ -1646,7 +1652,7 @@ mlxsw_sp_bridge_8021d_port_leave(struct mlxsw_sp_bridge_device *bridge_device,
+ 	u16 vid = vlan_dev_vlan_id(bridge_port->dev);
  
- 	if (afb->obj) {
+ 	mlxsw_sp_port_vlan = mlxsw_sp_port_vlan_find_by_vid(mlxsw_sp_port, vid);
+-	if (WARN_ON(!mlxsw_sp_port_vlan))
++	if (!mlxsw_sp_port_vlan)
+ 		return;
+ 
+ 	mlxsw_sp_port_vlan_bridge_leave(mlxsw_sp_port_vlan);
 -- 
 2.19.1
 
