@@ -2,81 +2,193 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36136C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 15:27:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76F1FC65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 15:29:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF54820870
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 15:27:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF54820870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 44BFB204FD
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 15:29:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44BFB204FD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=virtuozzo.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729717AbeLMP1M (ORCPT
+        id S1729658AbeLMP31 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 10:27:12 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:39998 "EHLO mx1.redhat.com"
+        Thu, 13 Dec 2018 10:29:27 -0500
+Received: from relay.sw.ru ([185.231.240.75]:38578 "EHLO relay.sw.ru"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728757AbeLMP1L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 10:27:11 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3E8514E33B;
-        Thu, 13 Dec 2018 15:27:11 +0000 (UTC)
-Received: from redhat.com (ovpn-120-178.rdu2.redhat.com [10.10.120.178])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 462435C221;
-        Thu, 13 Dec 2018 15:27:10 +0000 (UTC)
-Date:   Thu, 13 Dec 2018 10:27:09 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 0/3] vhost: accelerate metadata access through
- vmap()
-Message-ID: <20181213102315-mutt-send-email-mst@kernel.org>
-References: <20181213101022.12475-1-jasowang@redhat.com>
+        id S1727618AbeLMP30 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 10:29:26 -0500
+Received: from [172.16.25.169] (helo=localhost.localdomain)
+        by relay.sw.ru with esmtp (Exim 4.91)
+        (envelope-from <ktkhai@virtuozzo.com>)
+        id 1gXSvG-00052D-2u; Thu, 13 Dec 2018 18:29:10 +0300
+Subject: [PATCH] mm: Reuse only-pte-mapped KSM page in do_wp_page()
+From:   Kirill Tkhai <ktkhai@virtuozzo.com>
+To:     akpm@linux-foundation.org, kirill@shutemov.name, hughd@google.com,
+        aarcange@redhat.com
+Cc:     christian.koenig@amd.com, imbrenda@linux.vnet.ibm.com,
+        yang.shi@linux.alibaba.com, riel@surriel.com, ying.huang@intel.com,
+        minchan@kernel.org, ktkhai@virtuozzo.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Date:   Thu, 13 Dec 2018 18:29:08 +0300
+Message-ID: <154471491016.31352.1168978849911555609.stgit@localhost.localdomain>
+User-Agent: StGit/0.18
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181213101022.12475-1-jasowang@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Thu, 13 Dec 2018 15:27:11 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 13, 2018 at 06:10:19PM +0800, Jason Wang wrote:
-> Hi:
-> 
-> This series tries to access virtqueue metadata through kernel virtual
-> address instead of copy_user() friends since they had too much
-> overheads like checks, spec barriers or even hardware feature
-> toggling.
+This patch adds an optimization for KSM pages almost
+in the same way, that we have for ordinary anonymous
+pages. If there is a write fault in a page, which is
+mapped to an only pte, and it is not related to swap
+cache; the page may be reused without copying its
+content.
 
-Userspace accesses through remapping tricks and next time there's a need
-for a new barrier we are left to figure it out by ourselves.  I don't
-like the idea I have to say.  As a first step, why don't we switch to
-unsafe_put_user/unsafe_get_user etc?
-That would be more of an apples to apples comparison, would it not?
+[Note, that we do not consider PageSwapCache() pages
+ at least for now, since we don't want to complicate
+ __get_ksm_page(), which has nice optimization based
+ on this (for the migration case). Currenly it is
+ spinning on PageSwapCache() pages, waiting for when
+ they have unfreezed counters (i.e., for the migration
+ finish). But we don't want to make it also spinning
+ on swap cache pages, which we try to reuse, since
+ there is not a very high probability to reuse them.
+ So, for now we do not consider PageSwapCache() pages
+ at all.]
 
+So, in reuse_ksm_page() we check for 1)PageSwapCache()
+and 2)page_stable_node(), to skip a page, which KSM
+is currently trying to link to stable tree. Then we
+do page_ref_freeze() to prohibit KSM to merge one more
+page into the page, we are reusing. After that, nobody
+can refer to the reusing page: KSM skips !PageSwapCache()
+pages with zero refcount; and the protection against
+of all other participants is the same as for reused
+ordinary anon pages pte lock, page lock and mmap_sem.
 
-> Test shows about 24% improvement on TX PPS. It should benefit other
-> cases as well.
-> 
-> Please review
-> 
-> Jason Wang (3):
->   vhost: generalize adding used elem
->   vhost: fine grain userspace memory accessors
->   vhost: access vq metadata through kernel virtual address
-> 
->  drivers/vhost/vhost.c | 281 ++++++++++++++++++++++++++++++++++++++----
->  drivers/vhost/vhost.h |  11 ++
->  2 files changed, 266 insertions(+), 26 deletions(-)
-> 
-> -- 
-> 2.17.1
+Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+---
+ include/linux/ksm.h |    7 +++++++
+ mm/ksm.c            |   25 +++++++++++++++++++++++--
+ mm/memory.c         |   16 ++++++++++++++--
+ 3 files changed, 44 insertions(+), 4 deletions(-)
+
+diff --git a/include/linux/ksm.h b/include/linux/ksm.h
+index 161e8164abcf..e48b1e453ff5 100644
+--- a/include/linux/ksm.h
++++ b/include/linux/ksm.h
+@@ -53,6 +53,8 @@ struct page *ksm_might_need_to_copy(struct page *page,
+ 
+ void rmap_walk_ksm(struct page *page, struct rmap_walk_control *rwc);
+ void ksm_migrate_page(struct page *newpage, struct page *oldpage);
++bool reuse_ksm_page(struct page *page,
++			struct vm_area_struct *vma, unsigned long address);
+ 
+ #else  /* !CONFIG_KSM */
+ 
+@@ -86,6 +88,11 @@ static inline void rmap_walk_ksm(struct page *page,
+ static inline void ksm_migrate_page(struct page *newpage, struct page *oldpage)
+ {
+ }
++static inline bool reuse_ksm_page(struct page *page,
++			struct vm_area_struct *vma, unsigned long address)
++{
++	return false;
++}
+ #endif /* CONFIG_MMU */
+ #endif /* !CONFIG_KSM */
+ 
+diff --git a/mm/ksm.c b/mm/ksm.c
+index 383f961e577a..fbd14264d784 100644
+--- a/mm/ksm.c
++++ b/mm/ksm.c
+@@ -707,8 +707,9 @@ static struct page *__get_ksm_page(struct stable_node *stable_node,
+ 	 * case this node is no longer referenced, and should be freed;
+ 	 * however, it might mean that the page is under page_ref_freeze().
+ 	 * The __remove_mapping() case is easy, again the node is now stale;
+-	 * but if page is swapcache in migrate_page_move_mapping(), it might
+-	 * still be our page, in which case it's essential to keep the node.
++	 * the same is in reuse_ksm_page() case; but if page is swapcache
++	 * in migrate_page_move_mapping(), it might still be our page,
++	 * in which case it's essential to keep the node.
+ 	 */
+ 	while (!get_page_unless_zero(page)) {
+ 		/*
+@@ -2666,6 +2667,26 @@ void rmap_walk_ksm(struct page *page, struct rmap_walk_control *rwc)
+ 		goto again;
+ }
+ 
++bool reuse_ksm_page(struct page *page,
++		    struct vm_area_struct *vma,
++		    unsigned long address)
++{
++	VM_BUG_ON_PAGE(is_zero_pfn(page_to_pfn(page)), page);
++	VM_BUG_ON_PAGE(!page_mapped(page), page);
++	VM_BUG_ON_PAGE(!PageLocked(page), page);
++
++	if (PageSwapCache(page) || !page_stable_node(page))
++		return false;
++	/* Prohibit parallel get_ksm_page() */
++	if (!page_ref_freeze(page, 1))
++		return false;
++
++	page_move_anon_rmap(page, vma);
++	page->index = linear_page_index(vma, address);
++	page_ref_unfreeze(page, 1);
++
++	return true;
++}
+ #ifdef CONFIG_MIGRATION
+ void ksm_migrate_page(struct page *newpage, struct page *oldpage)
+ {
+diff --git a/mm/memory.c b/mm/memory.c
+index 532061217e03..5817527f1877 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -2509,8 +2509,11 @@ static vm_fault_t do_wp_page(struct vm_fault *vmf)
+ 	 * Take out anonymous pages first, anonymous shared vmas are
+ 	 * not dirty accountable.
+ 	 */
+-	if (PageAnon(vmf->page) && !PageKsm(vmf->page)) {
++	if (PageAnon(vmf->page)) {
+ 		int total_map_swapcount;
++		if (PageKsm(vmf->page) && (PageSwapCache(vmf->page) ||
++					   page_count(vmf->page) != 1))
++			goto copy;
+ 		if (!trylock_page(vmf->page)) {
+ 			get_page(vmf->page);
+ 			pte_unmap_unlock(vmf->pte, vmf->ptl);
+@@ -2525,6 +2528,15 @@ static vm_fault_t do_wp_page(struct vm_fault *vmf)
+ 			}
+ 			put_page(vmf->page);
+ 		}
++		if (PageKsm(vmf->page)) {
++			bool reused = reuse_ksm_page(vmf->page, vmf->vma,
++						     vmf->address);
++			unlock_page(vmf->page);
++			if (!reused)
++				goto copy;
++			wp_page_reuse(vmf);
++			return VM_FAULT_WRITE;
++		}
+ 		if (reuse_swap_page(vmf->page, &total_map_swapcount)) {
+ 			if (total_map_swapcount == 1) {
+ 				/*
+@@ -2545,7 +2557,7 @@ static vm_fault_t do_wp_page(struct vm_fault *vmf)
+ 					(VM_WRITE|VM_SHARED))) {
+ 		return wp_page_shared(vmf);
+ 	}
+-
++copy:
+ 	/*
+ 	 * Ok, we need to copy. Oh, well..
+ 	 */
+
