@@ -7,55 +7,53 @@ X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A77E1C67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:51:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1658FC67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:51:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65EA92080F
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:51:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D24672080F
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:51:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544676696;
-	bh=PucmPDlw15LNfzkKgoSTqsGsPy4Wsd708bf38o3fgBs=;
+	s=default; t=1544676704;
+	bh=87wMa19j3zV9fhlC6uKzNhaqNhRh5ySWn9cJ3RS0zc8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=D4+sGDwS33gOmZir0P1FZ0XlBvdUwSYPcQLqA7BEHLnqwMIWMpG6tMUdfxspQJ87T
-	 KVH11UVf0SSSCaj7hEBCuxtHk+ykDtPBT9VYkUR8/QXJjmWCuEAs+LYhYp0+3GSOVU
-	 WJqB28IxAVLqI2NpyTZC6/Snc3u3OgPYRWNGesdw=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65EA92080F
+	b=NLW5NjF+UDtG5cEMNu+zxUk7HR5JkHofv8D+jFGgiWy2wtOF+UjUJebsRt6yUc1XM
+	 X5b9S3QqP0I0oJF0Ag5uj95kB05PRCE2XNwc+wzQe2yY5HExw/1/dvJl3KxkpScA4k
+	 RV0Y96EWKuylihQ/6qmy6UMlvtfZGeDnTLKaSVhk=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D24672080F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728037AbeLMEve (ORCPT
+        id S1728622AbeLMEvn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 23:51:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42168 "EHLO mail.kernel.org"
+        Wed, 12 Dec 2018 23:51:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42070 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727385AbeLME3J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 23:29:09 -0500
+        id S1727340AbeLME3F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 23:29:05 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A591F20849;
-        Thu, 13 Dec 2018 04:29:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 02B3620879;
+        Thu, 13 Dec 2018 04:29:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544675348;
-        bh=PucmPDlw15LNfzkKgoSTqsGsPy4Wsd708bf38o3fgBs=;
+        s=default; t=1544675344;
+        bh=87wMa19j3zV9fhlC6uKzNhaqNhRh5ySWn9cJ3RS0zc8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kPGDpefsT+YsJ8SfJN5qE5j7UftlVl5ckmWm4VujHI3InaTZHweF7SG7vZjK6CB1k
-         pTNPpSlR6MhIIhKIlZcMnukudohPpkYptcyjSnMvAG3XfLePaaraXo6QfLLufEhI6R
-         c7RRe95uK+1g+bC0UjI9ZaJcfPPH/4vbS9/qlGdw=
+        b=d+lR2YP18yMmSdaraIoykjOBbrf8tcfwngvCGeLXfHwhMTElEP0bF8Z0Jbc889Ylq
+         IGLrW5AsDy1itskMpZeDBBKl+FdHfDczDfXYM9r91fpiZG4V1+UPvntT0Yo28caAkx
+         GfL78PWY5OoadAWHfzZnIbe7Pwe/1GoSPaorksio=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.19 18/73] drm/amdgpu: wait for IB test on first device open
-Date:   Wed, 12 Dec 2018 23:27:43 -0500
-Message-Id: <20181213042838.75160-18-sashal@kernel.org>
+Cc:     Sean Paul <seanpaul@chromium.org>, Rob Clark <robdclark@gmail.com>,
+        Sasha Levin <sashal@kernel.org>, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 4.19 16/73] drm/msm: Grab a vblank reference when waiting for commit_done
+Date:   Wed, 12 Dec 2018 23:27:41 -0500
+Message-Id: <20181213042838.75160-16-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181213042838.75160-1-sashal@kernel.org>
 References: <20181213042838.75160-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -63,46 +61,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christian König <christian.koenig@amd.com>
+From: Sean Paul <seanpaul@chromium.org>
 
-[ Upstream commit 3bfa8897e4d08f822d1d58cf6cbbffbccef82e08 ]
+[ Upstream commit 3b712e43e3876b42b38321ecf790a1f5fe59c834 ]
 
-Instead of delaying that to the first query. Otherwise we could try to use the
-SDMA for VM updates before the IB tests are done.
+Similar to the atomic helpers, we should enable vblank while we're
+waiting for the commit to finish. DPU needs this, MDP5 seems to work
+fine without it.
 
-Signed-off-by: Christian König <christian.koenig@amd.com>
-Reviewed-by: Chunming Zhou <david1.zhou@amd.com>
-Reviewed-by: Junwei Zhang <Jerry.Zhang@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Reviewed-by: Abhinav Kumar <abhinavk@codeaurora.org>
+Signed-off-by: Sean Paul <seanpaul@chromium.org>
+Signed-off-by: Rob Clark <robdclark@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/msm/msm_atomic.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c
-index bd98cc5fb97b..fd825d30edf1 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c
-@@ -292,9 +292,6 @@ static int amdgpu_info_ioctl(struct drm_device *dev, void *data, struct drm_file
- 	if (!info->return_size || !info->return_pointer)
- 		return -EINVAL;
+diff --git a/drivers/gpu/drm/msm/msm_atomic.c b/drivers/gpu/drm/msm/msm_atomic.c
+index c1f1779c980f..2b7bb6e166d3 100644
+--- a/drivers/gpu/drm/msm/msm_atomic.c
++++ b/drivers/gpu/drm/msm/msm_atomic.c
+@@ -32,7 +32,12 @@ static void msm_atomic_wait_for_commit_done(struct drm_device *dev,
+ 		if (!new_crtc_state->active)
+ 			continue;
  
--	/* Ensure IB tests are run on ring */
--	flush_delayed_work(&adev->late_init_work);
--
- 	switch (info->query) {
- 	case AMDGPU_INFO_ACCEL_WORKING:
- 		ui32 = adev->accel_working;
-@@ -861,6 +858,9 @@ int amdgpu_driver_open_kms(struct drm_device *dev, struct drm_file *file_priv)
- 	struct amdgpu_fpriv *fpriv;
- 	int r, pasid;
- 
-+	/* Ensure IB tests are run on ring */
-+	flush_delayed_work(&adev->late_init_work);
++		if (drm_crtc_vblank_get(crtc))
++			continue;
 +
- 	file_priv->driver_priv = NULL;
+ 		kms->funcs->wait_for_crtc_commit_done(kms, crtc);
++
++		drm_crtc_vblank_put(crtc);
+ 	}
+ }
  
- 	r = pm_runtime_get_sync(dev->dev);
 -- 
 2.19.1
 
