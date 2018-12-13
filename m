@@ -2,157 +2,110 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D62DC67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 02:18:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EE02C67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 02:19:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B37D20851
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 02:18:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B37D20851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id D5F2120851
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 02:19:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B1ysleMX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5F2120851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726651AbeLMCS2 (ORCPT
+        id S1726663AbeLMCTc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 21:18:28 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:15681 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726405AbeLMCS1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 21:18:27 -0500
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id ED07A2F3174ED;
-        Thu, 13 Dec 2018 10:18:21 +0800 (CST)
-Received: from [127.0.0.1] (10.177.31.14) by DGGEMS405-HUB.china.huawei.com
- (10.3.19.205) with Microsoft SMTP Server id 14.3.408.0; Thu, 13 Dec 2018
- 10:18:22 +0800
-Subject: Re: [PATCH] squashfs: enable __GFP_FS in ->readpage to prevent hang
- in mem alloc
-From:   Hou Tao <houtao1@huawei.com>
-To:     <phillip@squashfs.org.uk>
-CC:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mm@kvack.org>
-References: <20181204020840.49576-1-houtao1@huawei.com>
- <4315acd7-f4b2-b11d-18d8-ab6ce63244b3@huawei.com>
-Message-ID: <9a6b1897-7b02-09d8-4103-d887a286dda3@huawei.com>
-Date:   Thu, 13 Dec 2018 10:18:21 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Wed, 12 Dec 2018 21:19:32 -0500
+Received: from mail-pf1-f179.google.com ([209.85.210.179]:44033 "EHLO
+        mail-pf1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726405AbeLMCTb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 21:19:31 -0500
+Received: by mail-pf1-f179.google.com with SMTP id u6so265155pfh.11;
+        Wed, 12 Dec 2018 18:19:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=iuKbwuI7ax9j8vklsGI+FwnpZkLXaH6aVKIbSsViT0I=;
+        b=B1ysleMXW1qcISFGIfQd8iNHklE0+uyxogpdrsJMdbzUrQQu6D8lNKMVyna97lFBbZ
+         H8R/r2IJJXnt3UzvI4rsY5DR6qoPGeCzFtl8Q/dPw3lMIBW9UQLSDdZs8/3cvXKj5vKo
+         SvT4vdFD+HO3kq2YSfTIHaB1EdrpSQgGWgtFN91dinvhUTIckiI7VsdaAzhC75wnTuu4
+         rQMDEdE+PNmjKXMuqYHtY7IIVBCvMjoqzS10aqxwUoJOQNmHoPLR6+4v5diAvaF+Frfm
+         jAM4InXDtL+LmRrU1FejzXH48yQ7akQoBgoLKtQsFNSpc7cVmqsAjEXpL1p11KZdowyB
+         jSjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=iuKbwuI7ax9j8vklsGI+FwnpZkLXaH6aVKIbSsViT0I=;
+        b=rPQfzru586xvLVoLKBAegFmDkttvqTfuTct+awdR2io4BPN65y/rUWk6UmdkQ5ugAC
+         E3PX4EtSWnKWG9SENFW1lavPNVf+ShyrcaeP8bQpoXhMfxUbDGoYMSOGqcEk6QuD5ES1
+         pGl44cCzNa2/BCpCK1KFtHCqyUzI4GjnPz4JGjy5D3l1yGPwGQOyrEANXuOlmg7BKzzv
+         g43Sc31yOhYnLbQ7mRhGZe2I8ij4B4E+0pHP5TfJ6MjRgPVX5ACVDPuekCCGMtT/tWKU
+         uZ1R1XT2K+/dj+dQbL9Or9ClpCf8+AYhpo33EZ42ZfNt7jQkezZaY3y0VHO/ev7C0hdA
+         jNHQ==
+X-Gm-Message-State: AA+aEWYpRFuXiEySsFF1ytQfDzr/QcerrE1G4G0CYnmtWDKXV26tpnMQ
+        XZghHrfBFZ2sZ6YL9VsxgXc=
+X-Google-Smtp-Source: AFSGD/XGjEP8npxxbhZHwo83wjBzS7ltiuGTG7A5s7ajul2A3CjgQLqO0/UwrdpmH6yVEgdV8IcbVQ==
+X-Received: by 2002:a63:ba4d:: with SMTP id l13mr891173pgu.194.1544667571017;
+        Wed, 12 Dec 2018 18:19:31 -0800 (PST)
+Received: from localhost ([110.70.59.213])
+        by smtp.gmail.com with ESMTPSA id i1sm373292pgb.46.2018.12.12.18.19.29
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 12 Dec 2018 18:19:30 -0800 (PST)
+Date:   Thu, 13 Dec 2018 11:19:26 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Dmitry Safonov <dima@arista.com>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Jiri Slaby <jslaby@suse.cz>,
+        kernel test robot <rong.a.chen@intel.com>, lkp@01.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mikulas Patocka <mpatocka@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-serial@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Waiman Long <longman@redhat.com>
+Subject: Re: [LKP] [tty] c96cf923a9:
+ WARNING:possible_circular_locking_dependency_detected
+Message-ID: <20181213021926.GC4860@jagdpanzerIV>
+References: <20181211091154.GL23332@shao2-debian>
+ <b8a5b151-9eaa-b098-f24f-b17c1886f456@suse.cz>
+ <2780774e-b397-dcc2-6950-cccb527d5014@arista.com>
+ <20181212034252.GD431@jagdpanzerIV>
+ <137479ad-d38e-7d26-dae4-a4e721d69928@arista.com>
 MIME-Version: 1.0
-In-Reply-To: <4315acd7-f4b2-b11d-18d8-ab6ce63244b3@huawei.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.31.14]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <137479ad-d38e-7d26-dae4-a4e721d69928@arista.com>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ping ?
+On (12/12/18 14:54), Dmitry Safonov wrote:
+> > In this particular case we probably can just move free_page()
+> > out of uart_port lock scope. Note that free_page()->MM can printk()
+> > on its own.
+> > 
+> > 
+> > Something like this (not tested):
+> 
+> Looks good to me.
+> Probably, it's worth to update comment about freeing just to make sure
+> no one will "refactor"/"simplify" it some day.
+> 
+> Does it make sense to add this to your patch?
 
-On 2018/12/6 9:14, Hou Tao wrote:
-> ping ?
-> 
-> On 2018/12/4 10:08, Hou Tao wrote:
->> There is no need to disable __GFP_FS in ->readpage:
->> * It's a read-only fs, so there will be no dirty/writeback page and
->>   there will be no deadlock against the caller's locked page
->> * It just allocates one page, so compaction will not be invoked
->> * It doesn't take any inode lock, so the reclamation of inode will be fine
->>
->> And no __GFP_FS may lead to hang in __alloc_pages_slowpath() if a
->> squashfs page fault occurs in the context of a memory hogger, because
->> the hogger will not be killed due to the logic in __alloc_pages_may_oom().
->>
->> Signed-off-by: Hou Tao <houtao1@huawei.com>
->> ---
->>  fs/squashfs/file.c          |  3 ++-
->>  fs/squashfs/file_direct.c   |  4 +++-
->>  fs/squashfs/squashfs_fs_f.h | 25 +++++++++++++++++++++++++
->>  3 files changed, 30 insertions(+), 2 deletions(-)
->>  create mode 100644 fs/squashfs/squashfs_fs_f.h
->>
->> diff --git a/fs/squashfs/file.c b/fs/squashfs/file.c
->> index f1c1430ae721..8603dda4a719 100644
->> --- a/fs/squashfs/file.c
->> +++ b/fs/squashfs/file.c
->> @@ -51,6 +51,7 @@
->>  #include "squashfs_fs.h"
->>  #include "squashfs_fs_sb.h"
->>  #include "squashfs_fs_i.h"
->> +#include "squashfs_fs_f.h"
->>  #include "squashfs.h"
->>  
->>  /*
->> @@ -414,7 +415,7 @@ void squashfs_copy_cache(struct page *page, struct squashfs_cache_entry *buffer,
->>  		TRACE("bytes %d, i %d, available_bytes %d\n", bytes, i, avail);
->>  
->>  		push_page = (i == page->index) ? page :
->> -			grab_cache_page_nowait(page->mapping, i);
->> +			squashfs_grab_cache_page_nowait(page->mapping, i);
->>  
->>  		if (!push_page)
->>  			continue;
->> diff --git a/fs/squashfs/file_direct.c b/fs/squashfs/file_direct.c
->> index 80db1b86a27c..a0fdd6215348 100644
->> --- a/fs/squashfs/file_direct.c
->> +++ b/fs/squashfs/file_direct.c
->> @@ -17,6 +17,7 @@
->>  #include "squashfs_fs.h"
->>  #include "squashfs_fs_sb.h"
->>  #include "squashfs_fs_i.h"
->> +#include "squashfs_fs_f.h"
->>  #include "squashfs.h"
->>  #include "page_actor.h"
->>  
->> @@ -60,7 +61,8 @@ int squashfs_readpage_block(struct page *target_page, u64 block, int bsize,
->>  	/* Try to grab all the pages covered by the Squashfs block */
->>  	for (missing_pages = 0, i = 0, n = start_index; i < pages; i++, n++) {
->>  		page[i] = (n == target_page->index) ? target_page :
->> -			grab_cache_page_nowait(target_page->mapping, n);
->> +			squashfs_grab_cache_page_nowait(
->> +					target_page->mapping, n);
->>  
->>  		if (page[i] == NULL) {
->>  			missing_pages++;
->> diff --git a/fs/squashfs/squashfs_fs_f.h b/fs/squashfs/squashfs_fs_f.h
->> new file mode 100644
->> index 000000000000..fc5fb7aeb27d
->> --- /dev/null
->> +++ b/fs/squashfs/squashfs_fs_f.h
->> @@ -0,0 +1,25 @@
->> +/* SPDX-License-Identifier: GPL-2.0 */
->> +#ifndef SQUASHFS_FS_F
->> +#define SQUASHFS_FS_F
->> +
->> +/*
->> + * No need to use FGP_NOFS here:
->> + * 1. It's a read-only fs, so there will be no dirty/writeback page and
->> + *    there will be no deadlock against the caller's locked page.
->> + * 2. It just allocates one page, so compaction will not be invoked.
->> + * 3. It doesn't take any inode lock, so the reclamation of inode
->> + *    will be fine.
->> + *
->> + * And GFP_NOFS may lead to infinite loop in __alloc_pages_slowpath() if a
->> + * squashfs page fault occurs in the context of a memory hogger, because
->> + * the hogger will not be killed due to the logic in __alloc_pages_may_oom().
->> + */
->> +static inline struct page *
->> +squashfs_grab_cache_page_nowait(struct address_space *mapping, pgoff_t index)
->> +{
->> +	return pagecache_get_page(mapping, index,
->> +			FGP_LOCK|FGP_CREAT|FGP_NOWAIT,
->> +			mapping_gfp_mask(mapping));
->> +}
->> +#endif
->> +
->>
-> 
-> 
-> .
-> 
+Makes perfect sense, thanks! I'll send a patch a bit later.
 
+	-ss
