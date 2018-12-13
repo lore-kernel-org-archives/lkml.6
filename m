@@ -2,176 +2,127 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_HK_NAME_DR,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2B3EC67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 09:13:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F99BC67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 09:13:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91E8D20672
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 09:13:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91E8D20672
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 3CA8E20672
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 09:13:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CA8E20672
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727716AbeLMJNj (ORCPT
+        id S1727793AbeLMJNn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 04:13:39 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:36346 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727599AbeLMJNj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 04:13:39 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A03C931256A8;
-        Thu, 13 Dec 2018 09:13:38 +0000 (UTC)
-Received: from work-vm (ovpn-117-213.ams2.redhat.com [10.36.117.213])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id D02AE60C66;
-        Thu, 13 Dec 2018 09:13:22 +0000 (UTC)
-Date:   Thu, 13 Dec 2018 09:13:20 +0000
-From:   "Dr. David Alan Gilbert" <dgilbert@redhat.com>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     Vivek Goyal <vgoyal@redhat.com>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        miklos@szeredi.hu, stefanha@redhat.com, sweil@redhat.com,
-        swhiteho@redhat.com
-Subject: Re: [PATCH 18/52] virtio-fs: Map cache using the values from the
- capabilities
-Message-ID: <20181213091320.GA2313@work-vm>
-References: <20181210171318.16998-1-vgoyal@redhat.com>
- <20181210171318.16998-19-vgoyal@redhat.com>
- <de46a955-813b-355d-49f2-4d866603a8fa@redhat.com>
+        Thu, 13 Dec 2018 04:13:43 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:56840 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727720AbeLMJNk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 04:13:40 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A351580D;
+        Thu, 13 Dec 2018 01:13:39 -0800 (PST)
+Received: from [10.1.197.36] (e112298-lin.cambridge.arm.com [10.1.197.36])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CFB563F6A8;
+        Thu, 13 Dec 2018 01:13:37 -0800 (PST)
+Subject: Re: [PATCH 1/6] arm64: kpti: move check for non-vulnerable CPUs to a
+ function
+To:     Jeremy Linton <jeremy.linton@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     catalin.marinas@arm.com, will.deacon@arm.com, marc.zyngier@arm.com,
+        suzuki.poulose@arm.com, dave.martin@arm.com,
+        shankerd@codeaurora.org, mark.rutland@arm.com,
+        linux-kernel@vger.kernel.org, ykaukab@suse.de
+References: <20181206234408.1287689-1-jeremy.linton@arm.com>
+ <20181206234408.1287689-2-jeremy.linton@arm.com>
+From:   Julien Thierry <julien.thierry@arm.com>
+Message-ID: <1c6081ca-8335-759f-3f49-f8fa60b2fb90@arm.com>
+Date:   Thu, 13 Dec 2018 09:13:36 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <de46a955-813b-355d-49f2-4d866603a8fa@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Thu, 13 Dec 2018 09:13:38 +0000 (UTC)
+In-Reply-To: <20181206234408.1287689-2-jeremy.linton@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* David Hildenbrand (david@redhat.com) wrote:
-> On 10.12.18 18:12, Vivek Goyal wrote:
-> > Instead of assuming we had the fixed bar for the cache, use the
-> > value from the capabilities.
-> > 
-> > Signed-off-by: Dr. David Alan Gilbert <dgilbert@redhat.com>
-> > ---
-> >  fs/fuse/virtio_fs.c | 32 +++++++++++++++++---------------
-> >  1 file changed, 17 insertions(+), 15 deletions(-)
-> > 
-> > diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
-> > index 60d496c16841..55bac1465536 100644
-> > --- a/fs/fuse/virtio_fs.c
-> > +++ b/fs/fuse/virtio_fs.c
-> > @@ -14,11 +14,6 @@
-> >  #include <uapi/linux/virtio_pci.h>
-> >  #include "fuse_i.h"
-> >  
-> > -enum {
-> > -	/* PCI BAR number of the virtio-fs DAX window */
-> > -	VIRTIO_FS_WINDOW_BAR = 2,
-> > -};
-> > -
-> >  /* List of virtio-fs device instances and a lock for the list */
-> >  static DEFINE_MUTEX(virtio_fs_mutex);
-> >  static LIST_HEAD(virtio_fs_instances);
-> > @@ -518,7 +513,7 @@ static int virtio_fs_setup_dax(struct virtio_device *vdev, struct virtio_fs *fs)
-> >  	struct dev_pagemap *pgmap;
-> >  	struct pci_dev *pci_dev;
-> >  	phys_addr_t phys_addr;
-> > -	size_t len;
-> > +	size_t bar_len;
-> >  	int ret;
-> >  	u8 have_cache, cache_bar;
-> >  	u64 cache_offset, cache_len;
-> > @@ -551,17 +546,13 @@ static int virtio_fs_setup_dax(struct virtio_device *vdev, struct virtio_fs *fs)
-> >          }
-> >  
-> >  	/* TODO handle case where device doesn't expose BAR? */
-> 
-> For virtio-pmem we decided to not go via BARs as this would effectively
-> make it only usable for virtio-pci implementers. Instead, we are going
-> to export the applicable physical device region directly (e.g.
-> phys_start, phys_size in virtio config), so it is decoupled from PCI
-> details. Doing the same for virtio-fs would allow e.g. also virtio-ccw
-> to make eventually use of this.
+Hi,
 
-That makes it a very odd looking PCI device;  I can see that with
-virtio-pmem it makes some sense, given that it's job is to expose
-arbitrary chunks of memory.
+On 06/12/2018 23:44, Jeremy Linton wrote:
+> From: Mian Yousaf Kaukab <ykaukab@suse.de>
+> 
+> Add is_meltdown_safe() which is a whitelist of known safe cores.
+> 
+> Signed-off-by: Mian Yousaf Kaukab <ykaukab@suse.de>
+> [Moved location of function]
+> Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
+> ---
+>  arch/arm64/kernel/cpufeature.c | 16 ++++++++++++----
+>  1 file changed, 12 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+> index aec5ecb85737..242898395f68 100644
+> --- a/arch/arm64/kernel/cpufeature.c
+> +++ b/arch/arm64/kernel/cpufeature.c
+> @@ -908,8 +908,7 @@ has_useable_cnp(const struct arm64_cpu_capabilities *entry, int scope)
+>  #ifdef CONFIG_UNMAP_KERNEL_AT_EL0
+>  static int __kpti_forced; /* 0: not forced, >0: forced on, <0: forced off */
+>  
+> -static bool unmap_kernel_at_el0(const struct arm64_cpu_capabilities *entry,
+> -				int scope)
+> +static bool is_cpu_meltdown_safe(void)
+>  {
+>  	/* List of CPUs that are not vulnerable and don't need KPTI */
+>  	static const struct midr_range kpti_safe_list[] = {
+> @@ -917,6 +916,16 @@ static bool unmap_kernel_at_el0(const struct arm64_cpu_capabilities *entry,
+>  		MIDR_ALL_VERSIONS(MIDR_BRCM_VULCAN),
+>  		{ /* sentinel */ }
+>  	};
+> +	/* Don't force KPTI for CPUs that are not vulnerable */
 
-Dave
+This is really a nit, but that comment would make more sense where
+is_cpu_meltdown_safe() is called since unmap_kernel_at_el0 is the one
+deciding whether to apply KPTI, is_cpu_meltdown_safe() just states
+whether the core is safe of not.
 
+Otherwise:
 
-> > -	ret = pci_request_region(pci_dev, VIRTIO_FS_WINDOW_BAR,
-> > -				 "virtio-fs-window");
-> > +	ret = pci_request_region(pci_dev, cache_bar, "virtio-fs-window");
-> >  	if (ret < 0) {
-> >  		dev_err(&vdev->dev, "%s: failed to request window BAR\n",
-> >  			__func__);
-> >  		return ret;
-> >  	}
-> >  
-> > -	phys_addr = pci_resource_start(pci_dev, VIRTIO_FS_WINDOW_BAR);
-> > -	len = pci_resource_len(pci_dev, VIRTIO_FS_WINDOW_BAR);
-> > -
-> >  	mi = devm_kzalloc(&pci_dev->dev, sizeof(*mi), GFP_KERNEL);
-> >  	if (!mi)
-> >  		return -ENOMEM;
-> > @@ -586,6 +577,17 @@ static int virtio_fs_setup_dax(struct virtio_device *vdev, struct virtio_fs *fs)
-> >  	pgmap->ref = &mi->ref;
-> >  	pgmap->type = MEMORY_DEVICE_FS_DAX;
-> >  
-> > +	phys_addr = pci_resource_start(pci_dev, cache_bar);
-> > +	bar_len = pci_resource_len(pci_dev, cache_bar);
-> > +
-> > +	if (cache_offset + cache_len > bar_len) {
-> > +		dev_err(&vdev->dev,
-> > +			"%s: cache bar shorter than cap offset+len\n",
-> > +			__func__);
-> > +		return -EINVAL;
-> > +	}
-> > +	phys_addr += cache_offset;
-> > +
-> >  	/* Ideally we would directly use the PCI BAR resource but
-> >  	 * devm_memremap_pages() wants its own copy in pgmap.  So
-> >  	 * initialize a struct resource from scratch (only the start
-> > @@ -594,7 +596,7 @@ static int virtio_fs_setup_dax(struct virtio_device *vdev, struct virtio_fs *fs)
-> >  	pgmap->res = (struct resource){
-> >  		.name = "virtio-fs dax window",
-> >  		.start = phys_addr,
-> > -		.end = phys_addr + len,
-> > +		.end = phys_addr + cache_len,
-> >  	};
-> >  
-> >  	fs->window_kaddr = devm_memremap_pages(&pci_dev->dev, pgmap);
-> > @@ -607,10 +609,10 @@ static int virtio_fs_setup_dax(struct virtio_device *vdev, struct virtio_fs *fs)
-> >  		return ret;
-> >  
-> >  	fs->window_phys_addr = phys_addr;
-> > -	fs->window_len = len;
-> > +	fs->window_len = cache_len;
-> >  
-> > -	dev_dbg(&vdev->dev, "%s: window kaddr 0x%px phys_addr 0x%llx len %zu\n",
-> > -		__func__, fs->window_kaddr, phys_addr, len);
-> > +	dev_dbg(&vdev->dev, "%s: cache kaddr 0x%px phys_addr 0x%llx len %llx\n",
-> > +		__func__, fs->window_kaddr, phys_addr, cache_len);
-> >  
-> >  	fs->dax_dev = alloc_dax(fs, NULL, &virtio_fs_dax_ops);
-> >  	if (!fs->dax_dev)
-> > 
+Reviewed-by: Julien Thierry <julien.thierry@arm.com>
+
+Cheers,
+
+Julien
+
+> +	if (is_midr_in_range_list(read_cpuid_id(), kpti_safe_list))
+> +		return true;
+> +
+> +	return false;
+> +}
+> +
+> +static bool unmap_kernel_at_el0(const struct arm64_cpu_capabilities *entry,
+> +				int scope)
+> +{
+>  	char const *str = "command line option";
+>  
+>  	/*
+> @@ -940,8 +949,7 @@ static bool unmap_kernel_at_el0(const struct arm64_cpu_capabilities *entry,
+>  	if (IS_ENABLED(CONFIG_RANDOMIZE_BASE))
+>  		return true;
+>  
+> -	/* Don't force KPTI for CPUs that are not vulnerable */
+> -	if (is_midr_in_range_list(read_cpuid_id(), kpti_safe_list))
+> +	if (is_cpu_meltdown_safe())
+>  		return false;
+>  
+>  	/* Defer to CPU feature registers */
 > 
-> 
-> -- 
-> 
-> Thanks,
-> 
-> David / dhildenb
---
-Dr. David Alan Gilbert / dgilbert@redhat.com / Manchester, UK
+
+-- 
+Julien Thierry
