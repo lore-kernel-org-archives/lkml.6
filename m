@@ -2,132 +2,175 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48384C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 20:31:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8147FC65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 20:33:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 078C320851
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 20:31:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 078C320851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 516B420851
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 20:33:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 516B420851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727544AbeLMUbZ convert rfc822-to-8bit (ORCPT
+        id S1727870AbeLMUc7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 15:31:25 -0500
-Received: from mga06.intel.com ([134.134.136.31]:45390 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726408AbeLMUbY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 15:31:24 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Dec 2018 12:31:24 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,349,1539673200"; 
-   d="scan'208";a="129746197"
-Received: from fmsmsx106.amr.corp.intel.com ([10.18.124.204])
-  by fmsmga001.fm.intel.com with ESMTP; 13 Dec 2018 12:31:24 -0800
-Received: from fmsmsx122.amr.corp.intel.com (10.18.125.37) by
- FMSMSX106.amr.corp.intel.com (10.18.124.204) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Thu, 13 Dec 2018 12:31:23 -0800
-Received: from hasmsx112.ger.corp.intel.com (10.184.198.40) by
- fmsmsx122.amr.corp.intel.com (10.18.125.37) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Thu, 13 Dec 2018 12:31:23 -0800
-Received: from hasmsx108.ger.corp.intel.com ([169.254.9.61]) by
- HASMSX112.ger.corp.intel.com ([169.254.11.88]) with mapi id 14.03.0415.000;
- Thu, 13 Dec 2018 22:31:20 +0200
-From:   "Winkler, Tomas" <tomas.winkler@intel.com>
-To:     Avri Altman <Avri.Altman@wdc.com>,
-        "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Vinayak Holikatti <vinholikatti@gmail.com>,
-        "Hunter, Adrian" <adrian.hunter@intel.com>
-CC:     Christoph Hellwig <hch@lst.de>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Subhash Jadavani <subhashj@codeaurora.org>,
-        Alex Lemberg <Alex.Lemberg@wdc.com>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] scsi: ufs: revamp string descriptor reading
-Thread-Topic: [PATCH] scsi: ufs: revamp string descriptor reading
-Thread-Index: AQHUkToXZ68GRbLa4ESXHC/L0gTpRaV5llCAgAOL1XA=
-Date:   Thu, 13 Dec 2018 20:31:19 +0000
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9DA525B5@hasmsx108.ger.corp.intel.com>
-References: <20181211110705.11646-1-tomas.winkler@intel.com>
- <DM6PR04MB4923D16D47784A1750811A19FCA60@DM6PR04MB4923.namprd04.prod.outlook.com>
-In-Reply-To: <DM6PR04MB4923D16D47784A1750811A19FCA60@DM6PR04MB4923.namprd04.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMzBlNTBjOTctYWU1Yy00OWE3LWFjOGEtZjUxMjBjNDRhMWQwIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiQmlGZzZzMzRnV1MzSzhtYm1OUmliR0xlc0ZoVWpVUmdocEdEcXVlQ3hWQ250dE1zZVVxTTJvVTBsTWd4XC9qaUsifQ==
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.249.91.43]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Thu, 13 Dec 2018 15:32:59 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:58281 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726401AbeLMUc6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 15:32:58 -0500
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1gXXf4-0002sW-Mz; Thu, 13 Dec 2018 21:32:46 +0100
+Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1gXXf1-0000z0-Sz; Thu, 13 Dec 2018 21:32:43 +0100
+Date:   Thu, 13 Dec 2018 21:32:43 +0100
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Paul Cercueil <paul@crapouillou.net>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mathieu Malaterre <malat@debian.org>,
+        Ezequiel Garcia <ezequiel@collabora.co.uk>,
+        PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>,
+        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-clk@vger.kernel.org, od@zcrc.me
+Subject: Re: [PATCH v8 12/26] pwm: jz4740: Allow selection of PWM channels 0
+ and 1
+Message-ID: <20181213203243.ucjwqtkyp6aboxp4@pengutronix.de>
+References: <20181212220922.18759-1-paul@crapouillou.net>
+ <20181212220922.18759-13-paul@crapouillou.net>
+ <20181213091822.r5ilpsllfhzaiqw4@pengutronix.de>
+ <1544709511.18952.0@crapouillou.net>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1544709511.18952.0@crapouillou.net>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Dec 13, 2018 at 02:58:31PM +0100, Paul Cercueil wrote:
+> Hi,
+> 
+> Le jeu. 13 déc. 2018 à 10:18, Uwe Kleine-König
+> <u.kleine-koenig@pengutronix.de> a écrit :
+> > On Wed, Dec 12, 2018 at 11:09:07PM +0100, Paul Cercueil wrote:
+> > >  The TCU channels 0 and 1 were previously reserved for system tasks,
+> > > and
+> > >  thus unavailable for PWM.
+> > > 
+> > >  The driver will now only allow a PWM channel to be requested if
+> > > memory
+> > >  resources corresponding to the register area of the channel were
+> > >  supplied to the driver. This allows the TCU channels to be reserved
+> > > for
+> > >  system tasks from within the devicetree.
+> > > 
+> > >  Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> > 
+> > While there is someone caring for this driver I'd like to complete (a
+> > bit) my picture about the different capabilities and specialities of the
+> > supported PWMs. So I have a few questions:
+> > 
+> > Is there a publicly available reference manual for this device? (If
+> > yes, adding a link to the driver would be great.)
+> 
+> I have them here: https://zcrc.me/~paul/jz_docs/
 
+Is this link good enough to add it to the driver? From a quick view I'd
+say this is another pwm implementation that gets active on pwm_disable().
+Can you confirm this?
 
-> -----Original Message-----
-> From: Avri Altman [mailto:Avri.Altman@wdc.com]
-> Sent: Tuesday, December 11, 2018 18:18
-> To: Winkler, Tomas <tomas.winkler@intel.com>; James E . J . Bottomley
-> <jejb@linux.vnet.ibm.com>; Martin K . Petersen
-> <martin.petersen@oracle.com>; Vinayak Holikatti <vinholikatti@gmail.com>;
-> Hunter, Adrian <adrian.hunter@intel.com>
-> Cc: Christoph Hellwig <hch@lst.de>; Vivek Gautam
-> <vivek.gautam@codeaurora.org>; Subhash Jadavani
-> <subhashj@codeaurora.org>; Alex Lemberg <Alex.Lemberg@wdc.com>; linux-
-> scsi@vger.kernel.org; linux-kernel@vger.kernel.org
-> Subject: RE: [PATCH] scsi: ufs: revamp string descriptor reading
+> > jz4740_pwm_config looks as if the currently running period isn't
+> > completed before the new config is in effect. Is that correct? If yes,
+> > can this be fixed? A similar question for set_polarity: Does setting the
+> > JZ_TIMER_CTRL_PWM_ACTIVE_LOW bit in the control register take effect
+> > immediately or is this shadowed until the next period starts?
 > 
-> Hello Tomas,
-> 
-> >
-> > Define new a type: uc_string_id for easier string handling and less
-> > casting. Reduce number or string copies in price of a dynamic
-> > allocation.
-> >
-> > Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-> Tested-by: Avri Altman <avri.altman@wdc.com>
-> 
-> Just one nit - doesn't really matters.
-> 
-> Cheers,
-> Avri
-> 
-> > ---
-> >  drivers/scsi/ufs/ufs-sysfs.c |  20 ++---
-> >  drivers/scsi/ufs/ufs.h       |   2 +-
-> >  drivers/scsi/ufs/ufshcd.c    | 164 +++++++++++++++++++++--------------
-> >  drivers/scsi/ufs/ufshcd.h    |   9 +-
-> >  4 files changed, 115 insertions(+), 80 deletions(-)
-> 
-> 
-> >
-> >  	ufs_fixup_device_setup(hba, &card);
-> > +	ufs_put_device_desc(&card);
-> ufs_get_device_desc() and ufs_put_device_desc() actually serves the quirks
-> setup.
-> Make sense to call it from within so the logic is clear and in one place.
-> Might also save ufs_put_device_desc().
+> I don't really know. We only use this driver for a rumble motor and
+> backlight.
+> Somebody would have to check with a logic analyzer.
 
-You are right from the current perspective , just I'd need it also for the RPMB  patches that should follow,  
-then it will have bit larger span than the quirks.
+depending on the possible timings you might also be able to test this
+e.g. by setting:
 
-Thanks
-Tomas
- 
- 
+	duty_cycle=1ms, period=5s
+
+and then
+
+	duty_cycle=5s, period=5s
+
+. If the implementation is right your display should be dark for nearly
+5 seconds. (And the second call to pwm_apply should also block until the
+display is on.)
+
+> > How does the device's output behave after the PWM is disabled?
+> > Does it complete the currently running period? How does the output
+> > behave then? (active/inactive/high/low/high-z?)
+> 
+> There's a bit to toggle between "graceful" shutdown (bit clear) and "abrupt"
+> shutdown (bit set). TCSR bit 9. I think that graceful shutdown will complete
+> the running period, then keep the level active. Abrupt shutdown will keep
+> the
+> current level of the line.
+
+Can you confirm the things you think above? I'd like to have them
+eventually documented in the driver.
+
+> > >  @@ -42,11 +68,7 @@ static int jz4740_pwm_request(struct pwm_chip
+> > > *chip, struct pwm_device *pwm)
+> > >   	char clk_name[16];
+> > >   	int ret;
+> > > 
+> > >  -	/*
+> > >  -	 * Timers 0 and 1 are used for system tasks, so they are
+> > > unavailable
+> > >  -	 * for use as PWMs.
+> > >  -	 */
+> > >  -	if (pwm->hwpwm < 2)
+> > >  +	if (!jz4740_pwm_can_use_chn(jz, pwm->hwpwm))
+> > >   		return -EBUSY;
+> > 
+> > Maybe EBUSY isn't the best choice here. If the needed register space for
+> > the requested pwm is not included in the memory resources provided to
+> > the device I'd prefer ENXIO or ENODEV.
+> 
+> The idea was that if we don't get the register space we need, that means
+> the channel is used for something else, hence the EBUSY. Should I switch
+> it to ENXIO?
+
+I understand your reasoning, but I think it's misleading. If I get
+-EBUSY from a PWM driver I'd start searching for another user of said
+resource. With ENXIO or ENODEV it's more obvious that the driver isn't
+responsible for the resource that was requested.
+
+Best regards
+Uwe
+
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
