@@ -2,111 +2,169 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D95B3C67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 17:13:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C98D1C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 17:13:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F18C20851
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 17:13:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ODXbHPL6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F18C20851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 9A49820880
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 17:13:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A49820880
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729021AbeLMRNR (ORCPT
+        id S1729429AbeLMRNo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 12:13:17 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:59148 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727511AbeLMRNR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 12:13:17 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
-        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=zgLLqs+Me2TbdLlj8B9zK597kfXhai0M2M28sPkMVp0=; b=ODXbHPL6AhflSJ6NiRudG//aZQ
-        8CNzkuzsbKhKOB4M0bSuN1H7NOGsnFmlJsjEswFW78ArPIt/x2G7zU9NyjklD0zRJtJdZJikmXQCI
-        nklfjvshoZYTWqAJbjPW/0knYJyCkGS2MDb/FYFhgC43DduGkYKF8NmsA5kPnpTqCHW/VR3+ALKeV
-        wJCZDEGHrUYmqFQl5XkAZgxlnCgmR5mAJ7Aw6V8my8s7Ey73AFr8C55C8Fa2GII5pEczwakWLtRpU
-        MEOL6qvHkMnaue2+x3us3Yp9GRFfb2kOf85TibumGbyW0h2d6elojMrBbww6GE5AbmcWHvJUT2JsD
-        XO3Ugwrw==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gXUXv-0002r0-4G; Thu, 13 Dec 2018 17:13:11 +0000
-Date:   Thu, 13 Dec 2018 09:13:10 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mickael.salaun@ssi.gouv.fr>
-Cc:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-        linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        James Morris <jmorris@namei.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Matthew Garrett <mjg59@google.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Philippe =?iso-8859-1?Q?Tr=E9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>, Shuah Khan <shuah@kernel.org>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        Yves-Alexis Perez <yves-alexis.perez@ssi.gouv.fr>,
-        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH v1 0/5] Add support for O_MAYEXEC
-Message-ID: <20181213171310.GR6830@bombadil.infradead.org>
-References: <20181212081712.32347-1-mic@digikod.net>
- <20181213030228.GM6830@bombadil.infradead.org>
- <374ea88c-edc5-f1a6-3637-748635e1e7df@ssi.gouv.fr>
+        Thu, 13 Dec 2018 12:13:44 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:38436 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727511AbeLMRNo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 12:13:44 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 44D5181DE5;
+        Thu, 13 Dec 2018 17:13:43 +0000 (UTC)
+Received: from localhost.localdomain.com (ovpn-121-185.rdu2.redhat.com [10.10.121.185])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id BBBDD60141;
+        Thu, 13 Dec 2018 17:13:36 +0000 (UTC)
+From:   jglisse@redhat.com
+To:     linux-kernel@vger.kernel.org
+Cc:     =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        Jan Kara <jack@suse.cz>,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Ross Zwisler <zwisler@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        John Hubbard <jhubbard@nvidia.com>, kvm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-rdma@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH v3 0/3] mmu notifier contextual informations
+Date:   Thu, 13 Dec 2018 12:13:27 -0500
+Message-Id: <20181213171330.8489-1-jglisse@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <374ea88c-edc5-f1a6-3637-748635e1e7df@ssi.gouv.fr>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Thu, 13 Dec 2018 17:13:43 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 13, 2018 at 04:17:29PM +0100, Micka�l Sala�n wrote:
-> On 13/12/2018 04:02, Matthew Wilcox wrote:
-> > On Wed, Dec 12, 2018 at 09:17:07AM +0100, Micka�l Sala�n wrote:
-> >> The goal of this patch series is to control script interpretation.  A
-> >> new O_MAYEXEC flag used by sys_open() is added to enable userland script
-> >> interpreter to delegate to the kernel (and thus the system security
-> >> policy) the permission to interpret scripts or other files containing
-> >> what can be seen as commands.
-> > 
-> > I don't have a problem with the concept, but we're running low on O_ bits.
-> > Does this have to be done before the process gets a file descriptor,
-> > or could we have a new syscall?  Since we're going to be changing the
-> > interpreters anyway, it doesn't seem like too much of an imposition to
-> > ask them to use:
-> > 
-> > 	int verify_for_exec(int fd)
-> > 
-> > instead of adding an O_MAYEXEC.
-> 
-> Adding a new syscall for this simple use case seems excessive. I think
+From: Jérôme Glisse <jglisse@redhat.com>
 
-We have somewhat less than 400 syscalls today.  We have 20 O_ bits defined.
-Obviously there's a lower practical limit on syscalls, but in principle
-we could have up to 2^32 syscalls, and there are only 12 O_ bits remaining.
+Changes since v2:
+ - fix build warning with CONFIG_MMU_NOTIFIER=n
+ - fix make htmldocs warning
 
-> that the open/openat syscall familly are the right place to do an atomic
-> open and permission check, the same way the kernel does for other file
-> access. Moreover, it will be easier to patch upstream interpreters
-> without the burden of handling a (new) syscall that may not exist on the
-> running system, whereas unknown open flags are ignored.
+Changes since v1:
+ - fix build with CONFIG_MMU_NOTIFIER=n
+ - kernel docs
 
-Ah, but that's the problem.  The interpreter can see an -ENOSYS response
-and handle it appropriately.  If the flag is silently ignored, the
-interpreter has no idea whether it can do a racy check or whether to
-skip even trying to do the check.
+
+Original cover letter:
+
+This patchset add contextual information, why an invalidation is
+happening, to mmu notifier callback. This is necessary for user
+of mmu notifier that wish to maintains their own data structure
+without having to add new fields to struct vm_area_struct (vma).
+
+For instance device can have they own page table that mirror the
+process address space. When a vma is unmap (munmap() syscall) the
+device driver can free the device page table for the range.
+
+Today we do not have any information on why a mmu notifier call
+back is happening and thus device driver have to assume that it
+is always an munmap(). This is inefficient at it means that it
+needs to re-allocate device page table on next page fault and
+rebuild the whole device driver data structure for the range.
+
+Other use case beside munmap() also exist, for instance it is
+pointless for device driver to invalidate the device page table
+when the invalidation is for the soft dirtyness tracking. Or
+device driver can optimize away mprotect() that change the page
+table permission access for the range.
+
+This patchset enable all this optimizations for device driver.
+I do not include any of those in this serie but other patchset
+i am posting will leverage this.
+
+
+From code point of view the patchset is pretty simple, the first
+two patches consolidate all mmu notifier arguments into a struct
+so that it is easier to add/change arguments. The last patch adds
+the contextual information (munmap, protection, soft dirty, clear,
+...).
+
+Cheers,
+Jérôme
+
+Cc: Christian König <christian.koenig@amd.com>
+Cc: Jan Kara <jack@suse.cz>
+Cc: Felix Kuehling <Felix.Kuehling@amd.com>
+Cc: Jason Gunthorpe <jgg@mellanox.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Matthew Wilcox <mawilcox@microsoft.com>
+Cc: Ross Zwisler <zwisler@kernel.org>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Cc: Michal Hocko <mhocko@kernel.org>
+Cc: Christian Koenig <christian.koenig@amd.com>
+Cc: Ralph Campbell <rcampbell@nvidia.com>
+Cc: John Hubbard <jhubbard@nvidia.com>
+Cc: kvm@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org
+Cc: linux-rdma@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>
+
+Jérôme Glisse (3):
+  mm/mmu_notifier: use structure for invalidate_range_start/end callback
+    v2
+  mm/mmu_notifier: use structure for invalidate_range_start/end calls v3
+  mm/mmu_notifier: contextual information for event triggering
+    invalidation v2
+
+ drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c  |  47 ++++-----
+ drivers/gpu/drm/i915/i915_gem_userptr.c |  14 ++-
+ drivers/gpu/drm/radeon/radeon_mn.c      |  16 ++-
+ drivers/infiniband/core/umem_odp.c      |  20 ++--
+ drivers/infiniband/hw/hfi1/mmu_rb.c     |  13 +--
+ drivers/misc/mic/scif/scif_dma.c        |  11 +-
+ drivers/misc/sgi-gru/grutlbpurge.c      |  14 ++-
+ drivers/xen/gntdev.c                    |  12 +--
+ fs/dax.c                                |  15 ++-
+ fs/proc/task_mmu.c                      |   8 +-
+ include/linux/mm.h                      |   4 +-
+ include/linux/mmu_notifier.h            | 132 ++++++++++++++++++------
+ kernel/events/uprobes.c                 |  11 +-
+ mm/hmm.c                                |  23 ++---
+ mm/huge_memory.c                        |  58 +++++------
+ mm/hugetlb.c                            |  54 +++++-----
+ mm/khugepaged.c                         |  11 +-
+ mm/ksm.c                                |  23 ++---
+ mm/madvise.c                            |  22 ++--
+ mm/memory.c                             | 103 +++++++++---------
+ mm/migrate.c                            |  29 +++---
+ mm/mmu_notifier.c                       |  22 ++--
+ mm/mprotect.c                           |  16 +--
+ mm/mremap.c                             |  11 +-
+ mm/oom_kill.c                           |  17 +--
+ mm/rmap.c                               |  32 +++---
+ virt/kvm/kvm_main.c                     |  14 +--
+ 27 files changed, 406 insertions(+), 346 deletions(-)
+
+-- 
+2.17.2
 
