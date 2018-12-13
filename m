@@ -2,163 +2,154 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,T_MIXED_ES,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19CB4C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:39:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41C19C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:40:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0CCB20870
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:39:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544704798;
-	bh=B4ZS2Xjj5e9m9Rx1EDdUC5hZbO0GoQhq4QVI+0GeLGM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=AwlG43Daf2TnSFIBcEwDPzXTKarmEI6EokHLYJok76mbCDgf+KZsNF5W4Fuq+81Wu
-	 aw97cUzbBN+76uDMXDlEhg1MlEGXjMN1HBT1oDoojvPBd3MtrycA8nasY4z/drZRXB
-	 vJ18/SwFClXMzQriTEtlqtzpNi0rAO0i+o2O/7UY=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0CCB20870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 111892087F
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:40:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 111892087F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729195AbeLMMj6 (ORCPT
+        id S1729203AbeLMMkb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 07:39:58 -0500
-Received: from mx2.suse.de ([195.135.220.15]:57882 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728971AbeLMMj5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 07:39:57 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id A14FFAEBB;
-        Thu, 13 Dec 2018 12:39:54 +0000 (UTC)
-Date:   Thu, 13 Dec 2018 13:39:52 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Liu Bo <bo.liu@linux.alibaba.com>, Jan Kara <jack@suse.cz>,
-        Dave Chinner <david@fromorbit.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        Stable tree <stable@vger.kernel.org>
-Subject: Re: [PATCH v3] mm, memcg: fix reclaim deadlock with writeback
-Message-ID: <20181213123952.GZ1286@dhcp22.suse.cz>
-References: <20181212155055.1269-1-mhocko@kernel.org>
- <20181213092221.27270-1-mhocko@kernel.org>
- <20181213104147.ud2lngxn5avri2zm@kshutemo-mobl1>
+        Thu, 13 Dec 2018 07:40:31 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:32894 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729145AbeLMMkb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 07:40:31 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B3A4BA78;
+        Thu, 13 Dec 2018 04:40:30 -0800 (PST)
+Received: from localhost (unknown [10.1.25.102])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 758FF3F575;
+        Thu, 13 Dec 2018 04:40:30 -0800 (PST)
+Received: from cmarinas by localhost with local (Exim 4.89)
+        (envelope-from <catalin.marinas@arm.com>)
+        id 1gXQHx-0001Pq-Na; Thu, 13 Dec 2018 12:40:25 +0000
+Date:   Thu, 13 Dec 2018 12:40:25 +0000
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Rich Felker <dalias@libc.org>, tg@mirbsd.de,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Florian Weimer <fweimer@redhat.com>,
+        Mike Frysinger <vapier@gentoo.org>,
+        "H. J. Lu" <hjl.tools@gmail.com>, x32@buildd.debian.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Will Deacon <will.deacon@arm.com>
+Subject: Re: Can we drop upstream Linux x32 support?
+Message-ID: <20181213124025.bczxzj6ez34joo6v@localhost>
+References: <CALCETrXoRAibsbWa9nfbDrt0iEuebMnCMhSFg-d9W-J2g8mDjw@mail.gmail.com>
+ <CAHk-=wi_Kp=3XmGDdzmadzFSPFvuL+aAJ6ZPAR=o4z=KwYT2vw@mail.gmail.com>
+ <Pine.BSM.4.64L.1812112150480.21176@herc.mirbsd.org>
+ <CALCETrWgpAX7FV23zHmid83SsgnwFMKD4a_-xSEgB6v0kJR5sA@mail.gmail.com>
+ <Pine.BSM.4.64L.1812112327500.21176@herc.mirbsd.org>
+ <CALCETrXf0rmadycxmpGxd41qP9X+PAjyGHTwbGhKyp6oMKMRrA@mail.gmail.com>
+ <Pine.BSM.4.64L.1812120231410.21176@herc.mirbsd.org>
+ <CALCETrUYn=S=hmJ0tKdm2LoSgkWchY2_65sH7hJZp7wfS30giw@mail.gmail.com>
+ <20181212165237.GT23599@brightrain.aerifal.cx>
+ <CALCETrV6+YAazq7vY_aR=4kXc4ykXb1Se7hgvHeEVJtbZ91=Qg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181213104147.ud2lngxn5avri2zm@kshutemo-mobl1>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CALCETrV6+YAazq7vY_aR=4kXc4ykXb1Se7hgvHeEVJtbZ91=Qg@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 13-12-18 13:41:47, Kirill A. Shutemov wrote:
-> On Thu, Dec 13, 2018 at 10:22:21AM +0100, Michal Hocko wrote:
-> > From: Michal Hocko <mhocko@suse.com>
-> > 
-> > Liu Bo has experienced a deadlock between memcg (legacy) reclaim and the
-> > ext4 writeback
-> > task1:
-> > [<ffffffff811aaa52>] wait_on_page_bit+0x82/0xa0
-> > [<ffffffff811c5777>] shrink_page_list+0x907/0x960
-> > [<ffffffff811c6027>] shrink_inactive_list+0x2c7/0x680
-> > [<ffffffff811c6ba4>] shrink_node_memcg+0x404/0x830
-> > [<ffffffff811c70a8>] shrink_node+0xd8/0x300
-> > [<ffffffff811c73dd>] do_try_to_free_pages+0x10d/0x330
-> > [<ffffffff811c7865>] try_to_free_mem_cgroup_pages+0xd5/0x1b0
-> > [<ffffffff8122df2d>] try_charge+0x14d/0x720
-> > [<ffffffff812320cc>] memcg_kmem_charge_memcg+0x3c/0xa0
-> > [<ffffffff812321ae>] memcg_kmem_charge+0x7e/0xd0
-> > [<ffffffff811b68a8>] __alloc_pages_nodemask+0x178/0x260
-> > [<ffffffff8120bff5>] alloc_pages_current+0x95/0x140
-> > [<ffffffff81074247>] pte_alloc_one+0x17/0x40
-> > [<ffffffff811e34de>] __pte_alloc+0x1e/0x110
-> > [<ffffffffa06739de>] alloc_set_pte+0x5fe/0xc20
-> > [<ffffffff811e5d93>] do_fault+0x103/0x970
-> > [<ffffffff811e6e5e>] handle_mm_fault+0x61e/0xd10
-> > [<ffffffff8106ea02>] __do_page_fault+0x252/0x4d0
-> > [<ffffffff8106ecb0>] do_page_fault+0x30/0x80
-> > [<ffffffff8171bce8>] page_fault+0x28/0x30
-> > [<ffffffffffffffff>] 0xffffffffffffffff
-> > 
-> > task2:
-> > [<ffffffff811aadc6>] __lock_page+0x86/0xa0
-> > [<ffffffffa02f1e47>] mpage_prepare_extent_to_map+0x2e7/0x310 [ext4]
-> > [<ffffffffa08a2689>] ext4_writepages+0x479/0xd60
-> > [<ffffffff811bbede>] do_writepages+0x1e/0x30
-> > [<ffffffff812725e5>] __writeback_single_inode+0x45/0x320
-> > [<ffffffff81272de2>] writeback_sb_inodes+0x272/0x600
-> > [<ffffffff81273202>] __writeback_inodes_wb+0x92/0xc0
-> > [<ffffffff81273568>] wb_writeback+0x268/0x300
-> > [<ffffffff81273d24>] wb_workfn+0xb4/0x390
-> > [<ffffffff810a2f19>] process_one_work+0x189/0x420
-> > [<ffffffff810a31fe>] worker_thread+0x4e/0x4b0
-> > [<ffffffff810a9786>] kthread+0xe6/0x100
-> > [<ffffffff8171a9a1>] ret_from_fork+0x41/0x50
-> > [<ffffffffffffffff>] 0xffffffffffffffff
-> > 
-> > He adds
-> > : task1 is waiting for the PageWriteback bit of the page that task2 has
-> > : collected in mpd->io_submit->io_bio, and tasks2 is waiting for the LOCKED
-> > : bit the page which tasks1 has locked.
-> > 
-> > More precisely task1 is handling a page fault and it has a page locked
-> > while it charges a new page table to a memcg. That in turn hits a memory
-> > limit reclaim and the memcg reclaim for legacy controller is waiting on
-> > the writeback but that is never going to finish because the writeback
-> > itself is waiting for the page locked in the #PF path. So this is
-> > essentially ABBA deadlock:
-> >                                         lock_page(A)
-> >                                         SetPageWriteback(A)
-> >                                         unlock_page(A)
-> > lock_page(B)
-> >                                         lock_page(B)
-> > pte_alloc_pne
-> >   shrink_page_list
-> >     wait_on_page_writeback(A)
-> >                                         SetPageWriteback(B)
-> >                                         unlock_page(B)
-> > 
-> >                                         # flush A, B to clear the writeback
-> > 
-> > This accumulating of more pages to flush is used by several filesystems
-> > to generate a more optimal IO patterns.
-> > 
-> > Waiting for the writeback in legacy memcg controller is a workaround
-> > for pre-mature OOM killer invocations because there is no dirty IO
-> > throttling available for the controller. There is no easy way around
-> > that unfortunately. Therefore fix this specific issue by pre-allocating
-> > the page table outside of the page lock. We have that handy
-> > infrastructure for that already so simply reuse the fault-around pattern
-> > which already does this.
-> > 
-> > There are probably other hidden __GFP_ACCOUNT | GFP_KERNEL allocations
-> > from under a fs page locked but they should be really rare. I am not
-> > aware of a better solution unfortunately.
-> > 
-> > Reported-and-Debugged-by: Liu Bo <bo.liu@linux.alibaba.com>
-> > Cc: stable
-> > Fixes: c3b94f44fcb0 ("memcg: further prevent OOM with too many dirty pages")
-> > Signed-off-by: Michal Hocko <mhocko@suse.com>
+On Wed, Dec 12, 2018 at 10:03:30AM -0800, Andy Lutomirski wrote:
+> On Wed, Dec 12, 2018 at 8:52 AM Rich Felker <dalias@libc.org> wrote:
+> > On Wed, Dec 12, 2018 at 08:39:53AM -0800, Andy Lutomirski wrote:
+> > > I'm proposing another alternative.  Given that x32 already proves that
+> > > the user bitness model doesn't have to match the kernel model (in x32,
+> > > user "long" is 32-bit but the kernel ABI "long" is 64-bit), I'm
+> > > proposing extending this to just make the kernel ABI be LP64.  So
+> > > __kernel_size_t would be 64-bit and pointers in kernel data structures
+> > > would be 64-bit.  In other words, most or all of the kernel ABI would
+> > > just match x86_64.
+> > >
+> > > As far as I can tell, the only thing that really needs unusual
+> > > toolchain features here is that C doesn't have an extra-wide pointer
+> > > type.  The kernel headers would need a way to say "this pointer is
+> > > still logically a pointer, and user code may assume that it's 32 bits,
+> > > but it has 8-byte alignment."
+> >
+> > None of this works on the userspace/C side, nor should any attempt be
+> > made to make it work. Types fundamentally cannot have alignments
+> > larger than their size. If you want to make the alignment of some
+> > pointers 8, you have to make their size 8, and then you just have LP64
+> > again if you did it for all pointers.
+> >
+> > If on the other hand you tried to make just some pointers "wide
+> > pointers", you'd also be completely breaking the specified API
+> > contracts of standard interfaces. For example in struct iovec's
+> > iov_base, &foo->iov_base is no longer a valid pointer to an object of
+> > type void* that you can pass to interfaces expecting void**. Sloppy
+> > misunderstandings like what you're making now are exactly why x32 is
+> > already broken and buggy (&foo->tv_nsec already has wrong type for
+> > struct timespec foo).
 > 
-> Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> I don't think it's quite that broken.  For the struct iovec example,
+> we currently have:
+> 
+>            struct iovec {
+>                void  *iov_base;    /* Starting address */
+>                size_t iov_len;     /* Number of bytes to transfer */
+>            };
+> 
+> we could have, instead: (pardon any whitespace damage)
+> 
+>            struct iovec {
+>                void  *iov_base;    /* Starting address */
+>                uint32_t __pad0;
+>                size_t iov_len;     /* Number of bytes to transfer */
+>                uint32_t __pad1;
+>            } __attribute__((aligned(8));
+> 
+> or the same thing but where iov_len is uint64_t.  A pointer to
+> iov_base still works exactly as expected.  Something would need to be
+> done to ensure that the padding is all zeroed, which might be a real
+> problem.
 
-Thanks!
+We looked at this approach briefly for arm64/ILP32 and zeroing the pads
+was the biggest problem. User programs would not explicitly zero the pad
+and I'm not sure the compiler would be any smarter. This means it's the
+kernel's responsibility to zero the pad (around get_user,
+copy_from_user), so it doesn't actually simplify the kernel side of the
+syscall interface.
 
-> Will you take care about converting vmf_insert_* to use the pre-allocated
-> page table?
+If the data flow goes the other way (kernel to user), this approach
+works fine.
 
-I can try but I would appreciate if somebody more familiar with the code
-could do that. I am busy as hell and I do not want to promis something I
-will likely not get to soon.
+> No one wants to actually type all the macro gunk into the headers to
+> make this work, but this type of transformation is what I have in mind
+> when the compiler is asked to handle the headers.  Or there could
+> potentially be a tool that automatically consumes the uapi headers and
+> spits out modified headers like this.
+
+If the compiler can handle the zeroing, that would be great, though not
+sure how (some __attribute__((zero)) which generates a type constructor
+for such structure; it kind of departs from what the C language offers).
+
+> Realistically, I think a much better model would be to use true ILP32
+> code, where all the memory layouts in the uapi match i386.
+
+The conclusion we came to on arm64 was that an ILP32 ABI should not
+really be any different from a _new_ 32-bit architecture ABI. It differs
+from arm32 a bit (different syscall numbers, off_t is 64-bit,
+sigcontext) but not significantly as it is still able to use the
+majority of the compat_sys_* wrappers.
+
 -- 
-Michal Hocko
-SUSE Labs
+Catalin
