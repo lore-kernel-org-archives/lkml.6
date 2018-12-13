@@ -2,119 +2,87 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E11FC65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 17:22:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CDE8C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 17:22:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51DF520870
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 17:22:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51DF520870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
+	by mail.kernel.org (Postfix) with ESMTP id 65C7420870
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 17:22:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="fARB5zXy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65C7420870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729818AbeLMRWn (ORCPT
+        id S1729829AbeLMRWu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 12:22:43 -0500
-Received: from vmicros1.altlinux.org ([194.107.17.57]:38492 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729768AbeLMRWm (ORCPT
+        Thu, 13 Dec 2018 12:22:50 -0500
+Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:41008 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729365AbeLMRWt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 12:22:42 -0500
-Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id 8B51072CC6C;
-        Thu, 13 Dec 2018 20:22:39 +0300 (MSK)
-Received: by mua.local.altlinux.org (Postfix, from userid 508)
-        id 80A47964E82; Thu, 13 Dec 2018 20:22:39 +0300 (MSK)
-Date:   Thu, 13 Dec 2018 20:22:39 +0300
-From:   "Dmitry V. Levin" <ldv@altlinux.org>
-To:     Greentime Hu <green.hu@gmail.com>,
-        Vincent Chen <deanbo422@gmail.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@redhat.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>
-Cc:     Elvira Khabirova <lineprinter@altlinux.org>,
-        Eugene Syromyatnikov <esyr@redhat.com>, linux-audit@redhat.com,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v6 13/27] nds32: define syscall_get_arch()
-Message-ID: <20181213172239.GM6024@altlinux.org>
-References: <20181213171833.GA5240@altlinux.org>
+        Thu, 13 Dec 2018 12:22:49 -0500
+Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id 6FB7724E2447;
+        Thu, 13 Dec 2018 09:22:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1544721769; bh=JGXz0eK9bsy6yQXx4w6fV/Q0LpM0PjVtOBL1qqullrU=;
+        h=From:To:CC:Subject:Date:References:From;
+        b=fARB5zXySuzqRT0+1loCuFiLK+SXZfzZ6kgjAU9Xo2sAdIyEp04zWXHDY+clHOH2B
+         QHi15k+D2NmPjIdpORJOrQh1qVts7JliW/N30ZNejE9h53WhMKXEAlKx9qWqumdf21
+         ZGhxh7k5fbFmovkdtzGRLux+JvxY7da/G8U502YSKpgJnqdTEZGkKVylm0CCHGbHuO
+         HekknpGh/G0O0R6urMxXsixPx6R9TIZze8NYF3IxsFCA+oEBJv1z4rKw9c0m1mJv+2
+         +VJLwHirceXoMW+ZDVBLFj9H5kqV+ocKwFx1AvxdCp67uVotM5jy8RXtOzi9fbYYwG
+         9y06YIr1gkckw==
+Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 4E060545A;
+        Thu, 13 Dec 2018 09:22:49 -0800 (PST)
+Received: from US01WEMBX2.internal.synopsys.com ([fe80::e4b6:5520:9c0d:250b])
+ by US01WEHTC3.internal.synopsys.com ([::1]) with mapi id 14.03.0415.000; Thu,
+ 13 Dec 2018 09:22:49 -0800
+From:   Vineet Gupta <vineet.gupta1@synopsys.com>
+To:     Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        "linux-snps-arc@lists.infradead.org" 
+        <linux-snps-arc@lists.infradead.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Alexey Brodkin" <alexey.brodkin@synopsys.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Ingo Molnar" <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>
+Subject: Re: [PATCH v2 4/4] ARC: perf: avoid kernel killing where it is
+ possible
+Thread-Topic: [PATCH v2 4/4] ARC: perf: avoid kernel killing where it is
+ possible
+Thread-Index: AQHUkwTZDe0O9rumH0iW9HwwEK2kbw==
+Date:   Thu, 13 Dec 2018 17:22:48 +0000
+Message-ID: <C2D7FE5348E1B147BCA15975FBA23075014641F690@US01WEMBX2.internal.synopsys.com>
+References: <20181213165621.20817-1-Eugeniy.Paltsev@synopsys.com>
+ <20181213165621.20817-5-Eugeniy.Paltsev@synopsys.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.144.199.106]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syscall_get_arch() is required to be implemented on all architectures
-in addition to already implemented syscall_get_nr(),
-syscall_get_arguments(), syscall_get_error(), and
-syscall_get_return_value() functions in order to extend the generic
-ptrace API with PTRACE_GET_SYSCALL_INFO request.
-
-Cc: Greentime Hu <green.hu@gmail.com>
-Cc: Vincent Chen <deanbo422@gmail.com>
-Cc: Paul Moore <paul@paul-moore.com>
-Cc: Eric Paris <eparis@redhat.com>
-Cc: Oleg Nesterov <oleg@redhat.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Elvira Khabirova <lineprinter@altlinux.org>
-Cc: Eugene Syromyatnikov <esyr@redhat.com>
-Cc: linux-audit@redhat.com
-Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
----
-
-Notes:
-    v6: unchanged
-    v5: added Cc
-    v2: apparently, this architecture can be configured as big-endian,
-        so changed AUDIT_ARCH_NDS32 to be little-endian, and added
-        AUDIT_ARCH_NDS32BE.
-
- arch/nds32/include/asm/syscall.h | 8 ++++++++
- include/uapi/linux/audit.h       | 2 ++
- 2 files changed, 10 insertions(+)
-
-diff --git a/arch/nds32/include/asm/syscall.h b/arch/nds32/include/asm/syscall.h
-index f7e5e86765fe..569149ca25da 100644
---- a/arch/nds32/include/asm/syscall.h
-+++ b/arch/nds32/include/asm/syscall.h
-@@ -5,6 +5,7 @@
- #ifndef _ASM_NDS32_SYSCALL_H
- #define _ASM_NDS32_SYSCALL_H	1
- 
-+#include <uapi/linux/audit.h>
- #include <linux/err.h>
- struct task_struct;
- struct pt_regs;
-@@ -185,4 +186,11 @@ void syscall_set_arguments(struct task_struct *task, struct pt_regs *regs,
- 
- 	memcpy(&regs->uregs[0] + i, args, n * sizeof(args[0]));
- }
-+
-+static inline int syscall_get_arch(void)
-+{
-+	return IS_ENABLED(CONFIG_CPU_BIG_ENDIAN)
-+		? AUDIT_ARCH_NDS32BE : AUDIT_ARCH_NDS32;
-+}
-+
- #endif /* _ASM_NDS32_SYSCALL_H */
-diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
-index b8e848736031..54551adb3d5d 100644
---- a/include/uapi/linux/audit.h
-+++ b/include/uapi/linux/audit.h
-@@ -401,6 +401,8 @@ enum {
- #define AUDIT_ARCH_MIPSEL64	(EM_MIPS|__AUDIT_ARCH_64BIT|__AUDIT_ARCH_LE)
- #define AUDIT_ARCH_MIPSEL64N32	(EM_MIPS|__AUDIT_ARCH_64BIT|__AUDIT_ARCH_LE|\
- 				 __AUDIT_ARCH_CONVENTION_MIPS64_N32)
-+#define AUDIT_ARCH_NDS32	(EM_NDS32|__AUDIT_ARCH_LE)
-+#define AUDIT_ARCH_NDS32BE	(EM_NDS32)
- #define AUDIT_ARCH_OPENRISC	(EM_OPENRISC)
- #define AUDIT_ARCH_PARISC	(EM_PARISC)
- #define AUDIT_ARCH_PARISC64	(EM_PARISC|__AUDIT_ARCH_64BIT)
--- 
-ldv
+On 12/13/18 8:56 AM, Eugeniy Paltsev wrote:=0A=
+> No, not gonna die tonight.=0A=
+>=0A=
+> Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>=0A=
+=0A=
+Applied.=0A=
+=0A=
+Thx,=0A=
+-Vineet=0A=
