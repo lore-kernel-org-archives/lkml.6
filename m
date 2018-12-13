@@ -2,258 +2,120 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,T_MIXED_ES,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF1F5C67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 02:02:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2999C67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 02:03:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98DBD20873
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 02:02:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98DBD20873
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id B4A7620873
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 02:03:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XIZbuwaK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4A7620873
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726516AbeLMCCf (ORCPT
+        id S1726612AbeLMCDr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 21:02:35 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:47364 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726372AbeLMCCf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 21:02:35 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 43D3D308FB90;
-        Thu, 13 Dec 2018 02:02:34 +0000 (UTC)
-Received: from redhat.com (ovpn-124-14.rdu2.redhat.com [10.10.124.14])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 87C9C607B3;
-        Thu, 13 Dec 2018 02:02:31 +0000 (UTC)
-Date:   Wed, 12 Dec 2018 21:02:29 -0500
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Jan Kara <jack@suse.cz>, John Hubbard <jhubbard@nvidia.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        John Hubbard <john.hubbard@gmail.com>,
+        Wed, 12 Dec 2018 21:03:47 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:37127 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726372AbeLMCDr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 21:03:47 -0500
+Received: by mail-pl1-f193.google.com with SMTP id b5so253196plr.4
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 18:03:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=UjZBh/bAPUwkg3HpYHmym8vez0Qh5RE9CNc/Xw+QIB0=;
+        b=XIZbuwaKb7jm5cEBumQUQdSS0hoEhuaYd98aPV+NaINZ6rHQhRKgkdXM5X9v/1/Nrm
+         axnOxvOqIgDTjzPDoDtKTI7Iw+nZ1PsfoVbJg445j3GPedENhgwMLG7s2r0j1H6n5bY5
+         XwAOicejlthbA4dGjl5008/FM5NFio7QZIz/7h5thuBY/sHkHZOOUi2aCemE8pv1xp+R
+         0+FiasesziiOiIuiR62zYMcKk+FCobTKqYE9F0x4MGjdznPNkClLzTuYLowcCUx5UTrk
+         NRdS3P5NbitZk0AxihsvPxK3tkOG8HCEnAD4ObDa66hQkmNmUn+hvWFIgPozNOoQhyd2
+         d6gw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=UjZBh/bAPUwkg3HpYHmym8vez0Qh5RE9CNc/Xw+QIB0=;
+        b=gIlFV3R3KHDd/MicQw68eG1srJ7cam9C7nRl8ZaTtU9woTf+w9gkbAs78/oK8a/bes
+         r8Z88YWLumwehuDrvFSdkeFnUMP13i/W0mPvhwXu/5qFnUORta6b2lar013lZrn7aEV5
+         y9kp4H8ifJWbffyr37l5Pc5UzEpmoBr9SZ6jgOipNkZArqVZtnjzwb/blydvxBTv7QNI
+         LnfZfabM9E4Dxukv6/TsJuEgXRixTqvGLJNa7L5LCS82YKdE5MGXTxiAiauUWvH4F/A8
+         VgDQMpQrGRVrote3E7aDeAtshWZtnWfUeYGUPBBsJfOmcPQL0nG89B3FajD5Ku7k/r43
+         XP5A==
+X-Gm-Message-State: AA+aEWZvEwkj9IDOiGLX4xVU7tF+yqIhnNpBBV0eSn900Xe1T+8l+ZSb
+        xYyklx1sn/9xkitAKbpGtw0=
+X-Google-Smtp-Source: AFSGD/V1ccIsdkEGygYqHo/O2xXNUPzD12LSb7gMh1+zF8jO4QYwavhjex0dBUDNmPT19hm8EKjdAw==
+X-Received: by 2002:a17:902:298a:: with SMTP id h10mr22243409plb.312.1544666626324;
+        Wed, 12 Dec 2018 18:03:46 -0800 (PST)
+Received: from localhost ([110.70.59.213])
+        by smtp.gmail.com with ESMTPSA id g5sm331781pgu.57.2018.12.12.18.03.44
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 12 Dec 2018 18:03:45 -0800 (PST)
+Date:   Thu, 13 Dec 2018 11:03:42 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Waiman Long <longman@redhat.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>, tom@talpey.com,
-        Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
-        Christoph Hellwig <hch@infradead.org>,
-        Christopher Lameter <cl@linux.com>,
-        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Michal Hocko <mhocko@kernel.org>, mike.marciniszyn@intel.com,
-        rcampbell@nvidia.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
-Message-ID: <20181213020229.GN5037@redhat.com>
-References: <59ca5c4b-fd5b-1fc6-f891-c7986d91908e@nvidia.com>
- <7b4733be-13d3-c790-ff1b-ac51b505e9a6@nvidia.com>
- <20181207191620.GD3293@redhat.com>
- <3c4d46c0-aced-f96f-1bf3-725d02f11b60@nvidia.com>
- <20181208022445.GA7024@redhat.com>
- <20181210102846.GC29289@quack2.suse.cz>
- <20181212150319.GA3432@redhat.com>
- <20181212214641.GB29416@dastard>
- <20181212215931.GG5037@redhat.com>
- <20181213005119.GD29416@dastard>
+        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Yang Shi <yang.shi@linux.alibaba.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Dmitry Safonov <dima@arista.com>
+Subject: Re: [PATCH] debugobjects: Move printk out of db lock critical
+ sections
+Message-ID: <20181213020342.GA4860@jagdpanzerIV>
+References: <1544653694-27873-1-git-send-email-longman@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181213005119.GD29416@dastard>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Thu, 13 Dec 2018 02:02:34 +0000 (UTC)
+In-Reply-To: <1544653694-27873-1-git-send-email-longman@redhat.com>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 13, 2018 at 11:51:19AM +1100, Dave Chinner wrote:
-> On Wed, Dec 12, 2018 at 04:59:31PM -0500, Jerome Glisse wrote:
-> > On Thu, Dec 13, 2018 at 08:46:41AM +1100, Dave Chinner wrote:
-> > > On Wed, Dec 12, 2018 at 10:03:20AM -0500, Jerome Glisse wrote:
-> > > > On Mon, Dec 10, 2018 at 11:28:46AM +0100, Jan Kara wrote:
-> > > > > On Fri 07-12-18 21:24:46, Jerome Glisse wrote:
-> > > > > So this approach doesn't look like a win to me over using counter in struct
-> > > > > page and I'd rather try looking into squeezing HMM public page usage of
-> > > > > struct page so that we can fit that gup counter there as well. I know that
-> > > > > it may be easier said than done...
-> > > > 
-> > > > So i want back to the drawing board and first i would like to ascertain
-> > > > that we all agree on what the objectives are:
-> > > > 
-> > > >     [O1] Avoid write back from a page still being written by either a
-> > > >          device or some direct I/O or any other existing user of GUP.
+On (12/12/18 17:28), Waiman Long wrote:
+> The db->lock is a raw spinlock and so the lock hold time is supposed
+> to be short. This will not be the case when printk() is being involved
+> in some of the critical sections. In order to avoid the long hold time,
+> in case some messages need to be printed, the debug_object_is_on_stack()
+> and debug_print_object() calls are now moved out of those critical
+> sections.
 > 
-> IOWs, you need to mark pages being written to by a GUP as
-> PageWriteback, so all attempts to write the page will block on
-> wait_on_page_writeback() before trying to write the dirty page.
-
-No you don't and you can't for the simple reasons is that the GUP
-of some device driver can last days, weeks, months, years ... so
-it is not something you want to do. Here is what happens today:
-    - user space submit directio read from a file and writing to
-      virtual address and the problematic case is when that virtual
-      address is actualy a mmap of a file itself
-    - kernel do GUP on the virtual address, if the page has write
-      permission in the CPU page table mapping then the page
-      refcount is incremented and the page is return to directio
-      kernel code that do memcpy
-
-      It means that the page already went through page_mkwrite so
-      all is fine from fs point of view.
-
-      If page does not have write permission then a page fault is
-      triggered and page_mkwrite will happen and prep the page
-      accordingly
-
-In the above scheme a page write back might happens after we looked
-up the page from the CPU page table and before directio finish with
-memcpy so that the page content during the write back might not be
-stable. This is a small window for things to go bad and i do not
-think we know if anybody ever experience a bug because of that.
-
-For other GUP users the flow is the same except that device driver
-that keep the page around and do continuous dma to it might last
-days, weeks, months, years ... so for those the race window is big
-enough for bad things to happen. Jan have report of such bugs.
-
-So what i am proposing to fix the above is have page_mkclean return
-a is_pin boolean if page is pin than the fs code use a bounce page
-to do the write back giving a stable bounce page. More over fs will
-need to keep around all buffer_head, blocks, ... ie whatever is
-associated with that file offset so that any latter set_page_dirty
-would not freak out and would not need to reallocate blocks or do
-anything heavy weight.
-
-We have a separate discussion on what to do about truncate and other
-fs event that inherently invalidate portion of file so i do not
-want to complexify present discussion with those but we also have
-that in mind.
-
-Do you see any fundamental issues with that ? It abides by all
-existing fs standard AFAICT (you have a page_mkwrite and we ask
-fs to keep the result of that around).
-
-
-> > > >          This would avoid possible file system corruption.
+> Holding the db->lock while calling printk() may lead to deadlock if
+> printk() somehow requires the allocation/freeing of debug object that
+> happens to be in the same hash bucket or a circular lock dependency
+> warning from lockdep as reported in https://lkml.org/lkml/2018/12/11/143.
 > 
-> This isn't a filesystem corruption vector. At worst, it could cause
-> torn data writes due to updating the page while it is under IO. We
-> have a name for this: "stable pages". This is designed to prevent
-> updates to pages via mmap writes from causing corruption of things
-> like MD RAID due to modification of the data during RAID parity
-> calculations. Hence we have wait_for_stable_page() calls in all
-> ->page_mkwrite implementations so that new mmap writes block until
-> writeback IO is complete on the devices that require stable pages
-> to prevent corruption.
+> [   87.209665] WARNING: possible circular locking dependency detected
+> [   87.210547] 4.20.0-rc4-00057-gc96cf92 #1 Tainted: G        W
+> [   87.211449] ------------------------------------------------------
+> [   87.212405] getty/519 is trying to acquire lock:
+> [   87.213074] (____ptrval____) (&obj_hash[i].lock){-.-.}, at: debug_check_no_obj_freed+0xb4/0x302
+> [   87.214343]
+> [   87.214343] but task is already holding lock:
+> [   87.215174] (____ptrval____) (&port_lock_key){-.-.}, at: uart_shutdown+0x3a3/0x4e2
+> [   87.216260]
+> [   87.216260] which lock already depends on the new lock.
 > 
-> IOWs, we already deal with this "delay new modification while
-> writeback is in progress" problem in the mmap/filesystem world and
-> have infrastructure to handle it. And the ->page_mkwrite code
-> already deals with it.
+> This patch was also found to be able to fix a boot hanging problem
+> when the initramfs image was switched on after a debugobjects splat
+> from the EFI code.
+> 
+> Signed-off-by: Waiman Long <longman@redhat.com>
 
-Does the above answer that too ?
+The patch looks good to me. A bit curious if we need to also patch
+the self-test part debugobjects - check_results(). That guy still
+printk()-s under bucket ->lock.
 
-> 
-> > > > 
-> > > >     [O2] Avoid crash when set_page_dirty() is call on a page that is
-> > > >          considered clean by core mm (buffer head have been remove and
-> > > >          with some file system this turns into an ugly mess).
-> > > 
-> > > I think that's wrong. This isn't an "avoid a crash" case, this is a
-> > > "prevent data and/or filesystem corruption" case. The primary goal
-> > > we have here is removing our exposure to potential corruption, which
-> > > has the secondary effect of avoiding the crash/panics that currently
-> > > occur as a result of inconsistent page/filesystem state.
-> > 
-> > This is O1 avoid corruption is O1
-> 
-> It's "avoid a specific instance of data corruption", not a general
-> mechanism for avoiding data/filesystem corruption.
-> 
-> Calling set_page_dirty() on a file backed page which has not been
-> correctly prepared can cause data corruption, filesystem coruption
-> and shutdowns, etc because we have dirty data over a region that is
-> not correctly mapped. Yes, it can also cause a crash (because we
-> really, really suck at validation and error handling in generic code
-> paths), but there's so, so much more that can go wrong than crash
-> the kernel when we do stupid shit like this.
-
-I believe i answer in the above explaination.
-
-> 
-> > > i.e. The goal is to have ->page_mkwrite() called on the clean page
-> > > /before/ the file-backed page is marked dirty, and hence we don't
-> > > expose ourselves to potential corruption or crashes that are a
-> > > result of inappropriately calling set_page_dirty() on clean
-> > > file-backed pages.
-> > 
-> > Yes and this would be handle by put_user_page ie:
-> 
-> No, put_user_page() is too late - it's after the DMA has completed,
-> but we have to ensure the file has backing store allocated and the
-> pages are in the correct state /before/ the DMA is done.
-> 
-> Think ENOSPC - that has to be handled before we do the DMA, not
-> after. Before the DMA it is a recoverable error, after the DMA it is
-> data loss/corruption failure.
-
-Yes agree and i hope that the above explaination properly explains
-that it would become legal to do set_page_dirty in put_user_page
-thanks to page_mkclean telling fs code not to recycle anything
-after write back finish.
-
-
-> > put_user_page(struct page *page, bool dirty)
-> > {
-> >     if (!PageAnon(page)) {
-> >         if (dirty) {
-> >             // Do the whole dance ie page_mkwrite and all before
-> >             // calling set_page_dirty()
-> >         }
-> >         ...
-> >     }
-> >     ...
-> > }
-> 
-> Essentially, doing this would require a whole new "dirty a page"
-> infrastructure because it is in the IO path, not the page fault
-> path.
-> 
-> And, for hardware that does it's own page faults for DMA, this whole
-> post-DMA page setup is broken because the pages will have already
-> gone through ->page_mkwrite() and be set up correctly already.
-
-Does the above properly explain that you would not need a new
-set_page_dirty ?
-
-> 
-> > > > For [O2] i believe we can handle that case in the put_user_page()
-> > > > function to properly dirty the page without causing filesystem
-> > > > freak out.
-> > > 
-> > > I'm pretty sure you can't call ->page_mkwrite() from
-> > > put_user_page(), so I don't think this is workable at all.
-> > 
-> > Hu why ? i can not think of any reason whike you could not. User of
-> 
-> It's not a fault path, you can't safely lock pages, you can't take
-> fault-path only locks in the IO path (mmap_sem inversion problems),
-> etc.
-> 
-> /me has a nagging feeling this was all explained in a previous
-> discussions of this patchset...
-
-Did i explain properly my idea this time ? In the scheme i am proposing
-it abides by all fs rules that i am aware of at least. I hope i did not
-forget any.
-
-Cheers,
-Jérôme
+	-ss
