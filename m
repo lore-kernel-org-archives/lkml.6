@@ -2,124 +2,98 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=unavailable
+X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A525C67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 19:00:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FE1DC65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 19:02:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4F6620870
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 19:00:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=wavesemi.onmicrosoft.com header.i=@wavesemi.onmicrosoft.com header.b="r7cGmVvE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4F6620870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mips.com
+	by mail.kernel.org (Postfix) with ESMTP id EE6812086D
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 19:02:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE6812086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727414AbeLMTAU (ORCPT
+        id S1727548AbeLMTCy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 14:00:20 -0500
-Received: from mail-eopbgr750095.outbound.protection.outlook.com ([40.107.75.95]:13874
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726453AbeLMTAU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 14:00:20 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=wavesemi.onmicrosoft.com; s=selector1-wavecomp-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2lsj33vFQdYj5aPxKXeyYZxA+ND3cmBOzKO9LrnSwmI=;
- b=r7cGmVvEb010fxOZUOGbM6nQCCiKlWHk8aPNKofmYSUJkqSke6fUxMDblEEQEp3XEU9hbDYHVG2cqvpAf1O8eKBDXqKsPvOwZyKHppqvUqEfEQ4lVq7p7iUXRKOiRDekRezTHQNB8C53mXtkl3YIdfmi61kCgnkgpkqHoV3KlTE=
-Received: from MWHPR2201MB1277.namprd22.prod.outlook.com (10.174.162.17) by
- MWHPR2201MB1358.namprd22.prod.outlook.com (10.174.162.148) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1404.22; Thu, 13 Dec 2018 19:00:16 +0000
-Received: from MWHPR2201MB1277.namprd22.prod.outlook.com
- ([fe80::c07a:a95:8ba9:8435]) by MWHPR2201MB1277.namprd22.prod.outlook.com
- ([fe80::c07a:a95:8ba9:8435%7]) with mapi id 15.20.1425.016; Thu, 13 Dec 2018
- 19:00:16 +0000
-From:   Paul Burton <paul.burton@mips.com>
-To:     "Dmitry V. Levin" <ldv@altlinux.org>
-CC:     Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Elvira Khabirova <lineprinter@altlinux.org>,
-        Eugene Syromyatnikov <esyr@redhat.com>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v6 16/27] mips: define syscall_get_error()
-Thread-Topic: [PATCH v6 16/27] mips: define syscall_get_error()
-Thread-Index: AQHUkwiCMnDgH17LcEa/2ulDTss1d6V9BhiA
-Date:   Thu, 13 Dec 2018 19:00:16 +0000
-Message-ID: <20181213190015.olf6vhuimjl4jixs@pburton-laptop>
-References: <20181213171833.GA5240@altlinux.org>
- <20181213172302.GP6024@altlinux.org>
-In-Reply-To: <20181213172302.GP6024@altlinux.org>
+        Thu, 13 Dec 2018 14:02:54 -0500
+Received: from mga12.intel.com ([192.55.52.136]:46023 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726453AbeLMTCx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 14:02:53 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Dec 2018 11:02:53 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,349,1539673200"; 
+   d="scan'208";a="259267541"
+Received: from orsmsx104.amr.corp.intel.com ([10.22.225.131])
+  by orsmga004.jf.intel.com with ESMTP; 13 Dec 2018 11:02:53 -0800
+Received: from orsmsx112.amr.corp.intel.com ([169.254.3.201]) by
+ ORSMSX104.amr.corp.intel.com ([169.254.4.59]) with mapi id 14.03.0415.000;
+ Thu, 13 Dec 2018 11:02:52 -0800
+From:   "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+To:     "namit@vmware.com" <namit@vmware.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "daniel@iogearbox.net" <daniel@iogearbox.net>,
+        "jeyu@kernel.org" <jeyu@kernel.org>,
+        "rostedt@goodmis.org" <rostedt@goodmis.org>,
+        "ast@kernel.org" <ast@kernel.org>,
+        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "jannh@google.com" <jannh@google.com>,
+        "Dock, Deneen T" <deneen.t.dock@intel.com>,
+        "kristen@linux.intel.com" <kristen@linux.intel.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "kernel-hardening@lists.openwall.com" 
+        <kernel-hardening@lists.openwall.com>,
+        "Keshavamurthy, Anil S" <anil.s.keshavamurthy@intel.com>,
+        "mhiramat@kernel.org" <mhiramat@kernel.org>,
+        "naveen.n.rao@linux.vnet.ibm.com" <naveen.n.rao@linux.vnet.ibm.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "Hansen, Dave" <dave.hansen@intel.com>
+Subject: Re: [PATCH v2 2/4] modules: Add new special vfree flags
+Thread-Topic: [PATCH v2 2/4] modules: Add new special vfree flags
+Thread-Index: AQHUka9V1MIYVg+ExEqbD4KauZHiBaV8StmAgAFEtYA=
+Date:   Thu, 13 Dec 2018 19:02:51 +0000
+Message-ID: <ae9292380803f891a2472ebec70361b7c1af48d8.camel@intel.com>
+References: <20181212000354.31955-1-rick.p.edgecombe@intel.com>
+         <20181212000354.31955-3-rick.p.edgecombe@intel.com>
+         <3AD9DBCA-C6EC-4FA6-84DC-09F3D4A9C47B@vmware.com>
+In-Reply-To: <3AD9DBCA-C6EC-4FA6-84DC-09F3D4A9C47B@vmware.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-clientproxiedby: MWHPR14CA0054.namprd14.prod.outlook.com
- (2603:10b6:300:81::16) To MWHPR2201MB1277.namprd22.prod.outlook.com
- (2603:10b6:301:24::17)
-user-agent: NeoMutt/20180716
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=pburton@wavecomp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [4.16.204.77]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHPR2201MB1358;6:Tdb6FIURQVkTaOMUGZvi4AYNY9cCm7UmC2c1smY0hnzlBxZ/UuZ3QyZARcblqmZ5velg22WVqPt0aTT4E3jYDBFnd/qpZO/pX5eEAMp/AtlfbMocAOpZumJAe1UMxdQJ1wJMyJZNT55gXML0XTqXieG3lg1C49KZlFZvI5BrYaRJcYJZ9j9sjVSNwm2h0vxsaMhXNxQBCMRWGYscpjIUTPou4/1vpZzDMD+DxW4ea0vSIfsG6VYHwjkFn1iBrXO7RS4ffiPiiHhyQFxpTEeUmmTRQiY4A07QfuLBldpOGus4agWmtzueAQAe4/w/HwfTAmH4um+JMS8rOGSpyg6sOX+lgmW9NDJW9zkWS7cK39FgNcaHmKBLyTexpijV9SzIfkm7kofI6LQ0P/d5ZpSJxAPWMCfZy8WMGg+p/wDaOaRqiT+D4mpY6l3MMoOZ0c/Rmrr+WEytAwod/W4J6bLGqw==;5:kCYRXPAzrBDYMbhQW2u1vi3vs63NhFTPzt/9czvndCON7tUTP0DOsKP7pEvu6oJbsqT6HrevY516viHqTsUqALIz5jvO7jDMrlYLxTnK1caUD2wlZhbd2HIrN/21x727sS93T1HkdC/Mh1dOMG5o73TIs69tL33/aA8HViMoSjY=;7:8szzUSOIrg5LkcY+pjD0Oyt81m3B4HRBh95U7fOQEg1f9NH+JWEJ5lOLZtI5vezrr6nB5j9C/itLdRfMGLrfmvKMinwKSD5IjiyGahqe5v9ahfo7NFvavEKCPcWUYuX71iBlhV2WkGD2RJU6GHKsEg==
-x-ms-office365-filtering-correlation-id: 1748eecc-ab9c-41a5-ca12-08d6612d37ea
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(7021145)(8989299)(4534185)(7022145)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:MWHPR2201MB1358;
-x-ms-traffictypediagnostic: MWHPR2201MB1358:
-x-microsoft-antispam-prvs: <MWHPR2201MB1358E873C94C1110B51884A6C1A00@MWHPR2201MB1358.namprd22.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(3230021)(999002)(6040522)(2401047)(5005006)(8121501046)(3002001)(10201501046)(3231475)(944501520)(52105112)(93006095)(148016)(149066)(150057)(6041310)(20161123560045)(2016111802025)(20161123564045)(20161123562045)(20161123558120)(6043046)(201708071742011)(7699051)(76991095);SRVR:MWHPR2201MB1358;BCL:0;PCL:0;RULEID:;SRVR:MWHPR2201MB1358;
-x-forefront-prvs: 088552DE73
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(7916004)(396003)(366004)(39850400004)(136003)(346002)(376002)(199004)(189003)(316002)(6116002)(68736007)(446003)(305945005)(53936002)(6512007)(11346002)(9686003)(1076002)(66066001)(58126008)(33716001)(6246003)(105586002)(102836004)(4326008)(3846002)(99286004)(54906003)(106356001)(26005)(52116002)(386003)(5660300001)(186003)(33896004)(7736002)(76176011)(6436002)(6916009)(71200400001)(71190400001)(42882007)(81156014)(14454004)(81166006)(14444005)(8936002)(476003)(256004)(97736004)(8676002)(44832011)(508600001)(229853002)(25786009)(2906002)(6506007)(6486002)(486006);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR2201MB1358;H:MWHPR2201MB1277.namprd22.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: wavecomp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: qgLJ9ODYlgmO6e8syJa4MXWpidyfywi9eZdbQMdzuCbRgG/37Lxkf4im2+MQg3UjOHO9g/JCoOkyxmQcnRiIl7o5gq+Dr4HUmO9EF0aSTfvYfQ0Qn+rduTqFAqko7MBxmJOmXwc706qhI1cJKBp/xQCa2NgDVbl65XFQbCMxWzrt9exZPI99Vj8xYf3cuRe9au5eNoEf6po95PxeGRJ53zeuEskTUWIgu14c7PPrRCs1/PReqVk7cnU8wS7PbIPafh4quiQ7AWODWRUfy2pvglDg14R2ZQgcSTifsew0V+BvKyy5eW6NsHrN7/cBfSuV
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3EAF7152C6D1FF4FB79B95DEBDC01690@namprd22.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+x-originating-ip: [10.54.75.141]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <A94C43946908D040A3E03262A753F155@intel.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-X-OriginatorOrg: mips.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1748eecc-ab9c-41a5-ca12-08d6612d37ea
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Dec 2018 19:00:16.5622
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 463607d3-1db3-40a0-8a29-970c56230104
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR2201MB1358
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dmitry,
-
-On Thu, Dec 13, 2018 at 08:23:02PM +0300, Dmitry V. Levin wrote:
-> syscall_get_error() is required to be implemented on all
-> architectures in addition to already implemented syscall_get_nr(),
-> syscall_get_arguments(), syscall_get_return_value(), and
-> syscall_get_arch() functions in order to extend the generic
-> ptrace API with PTRACE_GET_SYSCALL_INFO request.
->=20
-> Cc: Paul Burton <paul.burton@mips.com>
-> Cc: Ralf Baechle <ralf@linux-mips.org>
-> Cc: James Hogan <jhogan@kernel.org>
-> Cc: Oleg Nesterov <oleg@redhat.com>
-> Cc: Andy Lutomirski <luto@kernel.org>
-> Cc: Elvira Khabirova <lineprinter@altlinux.org>
-> Cc: Eugene Syromyatnikov <esyr@redhat.com>
-> Cc: linux-mips@vger.kernel.org
-> Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
-
-Acked-by: Paul Burton <paul.burton@mips.com>
-
-Thanks,
-    Paul
+T24gV2VkLCAyMDE4LTEyLTEyIGF0IDIzOjQwICswMDAwLCBOYWRhdiBBbWl0IHdyb3RlOg0KPiA+
+IE9uIERlYyAxMSwgMjAxOCwgYXQgNDowMyBQTSwgUmljayBFZGdlY29tYmUgPHJpY2sucC5lZGdl
+Y29tYmVAaW50ZWwuY29tPg0KPiA+IHdyb3RlOg0KPiA+IA0KPiA+IEFkZCBuZXcgZmxhZ3MgZm9y
+IGhhbmRsaW5nIGZyZWVpbmcgb2Ygc3BlY2lhbCBwZXJtaXNzaW9uZWQgbWVtb3J5IGluDQo+ID4g
+dm1hbGxvYywNCj4gPiBhbmQgcmVtb3ZlIHBsYWNlcyB3aGVyZSB0aGUgaGFuZGxpbmcgd2FzIGRv
+bmUgaW4gbW9kdWxlLmMuDQo+ID4gDQo+ID4gVGhpcyB3aWxsIGVuYWJsZSB0aGlzIGZsYWcgZm9y
+IGFsbCBhcmNoaXRlY3R1cmVzLg0KPiA+IA0KPiA+IFNpZ25lZC1vZmYtYnk6IFJpY2sgRWRnZWNv
+bWJlIDxyaWNrLnAuZWRnZWNvbWJlQGludGVsLmNvbT4NCj4gPiAtLS0NCj4gPiBrZXJuZWwvbW9k
+dWxlLmMgfCA0MyArKysrKysrKysrKystLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQo+
+ID4gMSBmaWxlIGNoYW5nZWQsIDEyIGluc2VydGlvbnMoKyksIDMxIGRlbGV0aW9ucygtKQ0KPiA+
+IA0KPiANCj4gSSBjb3VudCBvbiB5b3UgZm9yIG1lcmdpbmcgeW91ciBwYXRjaC1zZXQgd2l0aCBt
+aW5lLCBzaW5jZSBjbGVhcmx5IHRoZXkNCj4gY29uZmxpY3QuDQo+IA0KWWVzLCBJIGNhbiByZWJh
+c2Ugb24gdG9wIG9mIHlvdXJzIGlmIHlvdSBvbWl0IHRoZSBjaGFuZ2VzIGFyb3VuZCBtb2R1bGVf
+bWVtZnJlZSANCmZvciB5b3VyIG5leHQgdmVyc2lvbi4gSXQgc2hvdWxkIGZpdCB0b2dldGhlciBw
+cmV0dHkgY2xlYW5seSBmb3IgQlBGIGFuZCBtb2R1bGVzDQpJIHRoaW5rLiBOb3Qgc3VyZSB3aGF0
+IHlvdSBhcmUgcGxhbm5pbmcgZm9yIGtwcm9iZXMgYW5kIGZ0cmFjZS4NCg==
