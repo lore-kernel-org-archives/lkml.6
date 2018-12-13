@@ -7,53 +7,49 @@ X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1768EC65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:40:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C224C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:41:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B782720849
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:40:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E604020849
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:41:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544676058;
-	bh=iKpdsWNrXAPsASuUodZcuGVbdk04VYHiKmO/afWLtpI=;
+	s=default; t=1544676068;
+	bh=ttrfBu99qtgWpRc0a/8Ui+TleXiT555AvdMlbmPBL0c=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=OJw6dRbLXRc0yMBub3jxZ+QxHGPhBGh2Bff48L5+35YQ2HunK6WaSN6Z0HIFT/rKh
-	 Lu1j4/0HQ4uSis4zAHk4NWSTOQokdh/ZB9J/K94A1dbmxG2fParZ8Sll90Xiuj2jsy
-	 sPKrTBSDhMz9IrqeVR1r8pEnosQhz6FEf2N4Je4g=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B782720849
+	b=Wt5zvnb60A0iQIreXK3HOW0UHwHM8VSp3wk3YIecgsTlhRARIg0r86odYojPcMlYF
+	 0Ps1viRm6JuHZ2IET20zh3UjBW4Kry9Fg+m6y7nKGXxydH+7VkWkIY0wzigtmqeh0t
+	 avGlIaDwX5AFYO5vJXSMcc0zO0xo1Byg8+r/fNtw=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E604020849
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729009AbeLMEcO (ORCPT
+        id S1728346AbeLMElG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 23:32:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45134 "EHLO mail.kernel.org"
+        Wed, 12 Dec 2018 23:41:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45096 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727044AbeLMEcM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 23:32:12 -0500
+        id S1728940AbeLMEcI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 23:32:08 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 49D5D20672;
-        Thu, 13 Dec 2018 04:32:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 92AFF20873;
+        Thu, 13 Dec 2018 04:32:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544675531;
-        bh=iKpdsWNrXAPsASuUodZcuGVbdk04VYHiKmO/afWLtpI=;
+        s=default; t=1544675528;
+        bh=ttrfBu99qtgWpRc0a/8Ui+TleXiT555AvdMlbmPBL0c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NR6I0hmkDyGEghHFfoAvs9LlXX+IAr2tuAJjEALSCqIa7k1+CxYZjCyp9RCh8pqOW
-         FxHmi5bU0zBJeUEUIfU4cRsqjpNyviZEazuhpBHolxyVj9vpxbi7KSo1hE7wLC7qBq
-         4ALMMZ0Y4lpVI18/20MgfESWP12I3dEO1W7PnHT4=
+        b=ZhlZlkDGxJ9UoDkHUjM63u6x38moGCmBa4QyGuJ2ewEBn5qa2go/+00/wbMS1rgAt
+         E5k/zXMzRnoITOwO0CcKYdulZt1SsvqKkio7S6GZhWqa4USKvqRB5a/jzgB24guLUr
+         1smfet6qBII5xo4Ig+qvQa6P3n+uirVDSeJTv/jU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jose Abreu <joabreu@synopsys.com>,
-        Alexey Brodkin <abrodkin@synopsys.com>,
-        Joao Pinto <jpinto@synopsys.com>,
-        David Laight <David.Laight@ACULAB.COM>,
-        Vineet Gupta <vgupta@synopsys.com>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-snps-arc@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.9 06/34] ARC: io.h: Implement reads{x}()/writes{x}()
-Date:   Wed, 12 Dec 2018 23:31:32 -0500
-Message-Id: <20181213043200.76295-6-sashal@kernel.org>
+Cc:     Sean Paul <seanpaul@chromium.org>, Rob Clark <robdclark@gmail.com>,
+        Sasha Levin <sashal@kernel.org>, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 4.9 05/34] drm/msm: Grab a vblank reference when waiting for commit_done
+Date:   Wed, 12 Dec 2018 23:31:31 -0500
+Message-Id: <20181213043200.76295-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181213043200.76295-1-sashal@kernel.org>
 References: <20181213043200.76295-1-sashal@kernel.org>
@@ -65,143 +61,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jose Abreu <joabreu@synopsys.com>
+From: Sean Paul <seanpaul@chromium.org>
 
-[ Upstream commit 10d443431dc2bb733cf7add99b453e3fb9047a2e ]
+[ Upstream commit 3b712e43e3876b42b38321ecf790a1f5fe59c834 ]
 
-Some ARC CPU's do not support unaligned loads/stores. Currently, generic
-implementation of reads{b/w/l}()/writes{b/w/l}() is being used with ARC.
-This can lead to misfunction of some drivers as generic functions do a
-plain dereference of a pointer that can be unaligned.
+Similar to the atomic helpers, we should enable vblank while we're
+waiting for the commit to finish. DPU needs this, MDP5 seems to work
+fine without it.
 
-Let's use {get/put}_unaligned() helpers instead of plain dereference of
-pointer in order to fix. The helpers allow to get and store data from an
-unaligned address whilst preserving the CPU internal alignment.
-According to [1], the use of these helpers are costly in terms of
-performance so we added an initial check for a buffer already aligned so
-that the usage of the helpers can be avoided, when possible.
-
-[1] Documentation/unaligned-memory-access.txt
-
-Cc: Alexey Brodkin <abrodkin@synopsys.com>
-Cc: Joao Pinto <jpinto@synopsys.com>
-Cc: David Laight <David.Laight@ACULAB.COM>
-Tested-by: Vitor Soares <soares@synopsys.com>
-Signed-off-by: Jose Abreu <joabreu@synopsys.com>
-Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
+Reviewed-by: Abhinav Kumar <abhinavk@codeaurora.org>
+Signed-off-by: Sean Paul <seanpaul@chromium.org>
+Signed-off-by: Rob Clark <robdclark@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arc/include/asm/io.h | 72 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 72 insertions(+)
+ drivers/gpu/drm/msm/msm_atomic.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/arch/arc/include/asm/io.h b/arch/arc/include/asm/io.h
-index c22b181e8206..2f39d9b3886e 100644
---- a/arch/arc/include/asm/io.h
-+++ b/arch/arc/include/asm/io.h
-@@ -12,6 +12,7 @@
- #include <linux/types.h>
- #include <asm/byteorder.h>
- #include <asm/page.h>
-+#include <asm/unaligned.h>
+diff --git a/drivers/gpu/drm/msm/msm_atomic.c b/drivers/gpu/drm/msm/msm_atomic.c
+index 73bae382eac3..5c58a98f67c0 100644
+--- a/drivers/gpu/drm/msm/msm_atomic.c
++++ b/drivers/gpu/drm/msm/msm_atomic.c
+@@ -98,7 +98,12 @@ static void msm_atomic_wait_for_commit_done(struct drm_device *dev,
+ 		if (old_state->legacy_cursor_update)
+ 			continue;
  
- #ifdef CONFIG_ISA_ARCV2
- #include <asm/barrier.h>
-@@ -94,6 +95,42 @@ static inline u32 __raw_readl(const volatile void __iomem *addr)
- 	return w;
++		if (drm_crtc_vblank_get(crtc))
++			continue;
++
+ 		kms->funcs->wait_for_crtc_commit_done(kms, crtc);
++
++		drm_crtc_vblank_put(crtc);
+ 	}
  }
  
-+/*
-+ * {read,write}s{b,w,l}() repeatedly access the same IO address in
-+ * native endianness in 8-, 16-, 32-bit chunks {into,from} memory,
-+ * @count times
-+ */
-+#define __raw_readsx(t,f) \
-+static inline void __raw_reads##f(const volatile void __iomem *addr,	\
-+				  void *ptr, unsigned int count)	\
-+{									\
-+	bool is_aligned = ((unsigned long)ptr % ((t) / 8)) == 0;	\
-+	u##t *buf = ptr;						\
-+									\
-+	if (!count)							\
-+		return;							\
-+									\
-+	/* Some ARC CPU's don't support unaligned accesses */		\
-+	if (is_aligned) {						\
-+		do {							\
-+			u##t x = __raw_read##f(addr);			\
-+			*buf++ = x;					\
-+		} while (--count);					\
-+	} else {							\
-+		do {							\
-+			u##t x = __raw_read##f(addr);			\
-+			put_unaligned(x, buf++);			\
-+		} while (--count);					\
-+	}								\
-+}
-+
-+#define __raw_readsb __raw_readsb
-+__raw_readsx(8, b)
-+#define __raw_readsw __raw_readsw
-+__raw_readsx(16, w)
-+#define __raw_readsl __raw_readsl
-+__raw_readsx(32, l)
-+
- #define __raw_writeb __raw_writeb
- static inline void __raw_writeb(u8 b, volatile void __iomem *addr)
- {
-@@ -126,6 +163,35 @@ static inline void __raw_writel(u32 w, volatile void __iomem *addr)
- 
- }
- 
-+#define __raw_writesx(t,f)						\
-+static inline void __raw_writes##f(volatile void __iomem *addr, 	\
-+				   const void *ptr, unsigned int count)	\
-+{									\
-+	bool is_aligned = ((unsigned long)ptr % ((t) / 8)) == 0;	\
-+	const u##t *buf = ptr;						\
-+									\
-+	if (!count)							\
-+		return;							\
-+									\
-+	/* Some ARC CPU's don't support unaligned accesses */		\
-+	if (is_aligned) {						\
-+		do {							\
-+			__raw_write##f(*buf++, addr);			\
-+		} while (--count);					\
-+	} else {							\
-+		do {							\
-+			__raw_write##f(get_unaligned(buf++), addr);	\
-+		} while (--count);					\
-+	}								\
-+}
-+
-+#define __raw_writesb __raw_writesb
-+__raw_writesx(8, b)
-+#define __raw_writesw __raw_writesw
-+__raw_writesx(16, w)
-+#define __raw_writesl __raw_writesl
-+__raw_writesx(32, l)
-+
- /*
-  * MMIO can also get buffered/optimized in micro-arch, so barriers needed
-  * Based on ARM model for the typical use case
-@@ -141,10 +207,16 @@ static inline void __raw_writel(u32 w, volatile void __iomem *addr)
- #define readb(c)		({ u8  __v = readb_relaxed(c); __iormb(); __v; })
- #define readw(c)		({ u16 __v = readw_relaxed(c); __iormb(); __v; })
- #define readl(c)		({ u32 __v = readl_relaxed(c); __iormb(); __v; })
-+#define readsb(p,d,l)		({ __raw_readsb(p,d,l); __iormb(); })
-+#define readsw(p,d,l)		({ __raw_readsw(p,d,l); __iormb(); })
-+#define readsl(p,d,l)		({ __raw_readsl(p,d,l); __iormb(); })
- 
- #define writeb(v,c)		({ __iowmb(); writeb_relaxed(v,c); })
- #define writew(v,c)		({ __iowmb(); writew_relaxed(v,c); })
- #define writel(v,c)		({ __iowmb(); writel_relaxed(v,c); })
-+#define writesb(p,d,l)		({ __iowmb(); __raw_writesb(p,d,l); })
-+#define writesw(p,d,l)		({ __iowmb(); __raw_writesw(p,d,l); })
-+#define writesl(p,d,l)		({ __iowmb(); __raw_writesl(p,d,l); })
- 
- /*
-  * Relaxed API for drivers which can handle barrier ordering themselves
 -- 
 2.19.1
 
