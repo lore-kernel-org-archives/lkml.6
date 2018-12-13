@@ -2,99 +2,128 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B31DC67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 02:28:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF088C6786C
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 02:28:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0AB4620870
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 02:28:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AB4620870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 7A09F20870
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 02:28:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A09F20870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726722AbeLMC2D (ORCPT
+        id S1726765AbeLMC2L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 21:28:03 -0500
-Received: from mx2.suse.de ([195.135.220.15]:51162 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726381AbeLMC2D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 21:28:03 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 459C3ABE2;
-        Thu, 13 Dec 2018 02:28:01 +0000 (UTC)
-Received: by unicorn.suse.cz (Postfix, from userid 1000)
-        id 9D298E1116; Thu, 13 Dec 2018 03:28:00 +0100 (CET)
-From:   Michal Kubecek <mkubecek@suse.cz>
-Subject: [PATCH net] net: ipv4: do not handle duplicate fragments as
- overlapping
-To:     "David S. Miller" <davem@davemloft.net>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Peter Oskolkov <posk@google.com>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        Gustavo Figueira <gfigueira@suse.com>
-Message-Id: <20181213022800.9D298E1116@unicorn.suse.cz>
-Date:   Thu, 13 Dec 2018 03:28:00 +0100 (CET)
+        Wed, 12 Dec 2018 21:28:11 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:37614 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726381AbeLMC2J (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 21:28:09 -0500
+X-UUID: c0a92660643d46bdae0eddd384e92c5a-20181213
+X-UUID: c0a92660643d46bdae0eddd384e92c5a-20181213
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
+        (envelope-from <ryder.lee@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 61952231; Thu, 13 Dec 2018 10:27:56 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Thu, 13 Dec 2018 10:27:54 +0800
+Received: from mtkslt306.mediatek.inc (10.21.14.136) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Thu, 13 Dec 2018 10:27:54 +0800
+From:   Ryder Lee <ryder.lee@mediatek.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Sean Wang <sean.wang@kernel.org>
+CC:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Weijie Gao <weijie.gao@mediatek.com>,
+        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        Ryder Lee <ryder.lee@mediatek.com>
+Subject: [PATCH v1] pinctrl: mediatek: improve Kconfig dependencies
+Date:   Thu, 13 Dec 2018 10:27:50 +0800
+Message-ID: <e4eb66dec2901016e01767932461c5d560762f66.1544666839.git.ryder.lee@mediatek.com>
+X-Mailer: git-send-email 1.9.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-TM-SNTS-SMTP: 74EC1AB088B4CA87EB1FB2653C89E3A127430D56A4982A245F8657EB419E777A2000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since commit 7969e5c40dfd ("ip: discard IPv4 datagrams with overlapping
-segments.") IPv4 reassembly code drops the whole queue whenever an
-overlapping fragment is received. However, the test is written in a way
-which detects duplicate fragments as overlapping so that in environments
-with many duplicate packets, fragmented packets may be undeliverable.
+Remove prompts to make all pinctrl cores to non-visible symbols and
+make sure the target SoCs would be coupled with the corresponding
+cores.
 
-Add an extra test and for (potentially) duplicate fragment, only drop the
-new fragment rather than the whole queue. Only starting offset and length
-are checked, not the contents of the fragments as that would be too
-expensive.  Check for duplicity with last (tail) fragment first as in real
-life scenarios this should be the most frequent case and we would have to
-iterate through the whole "run" otherwise.
-
-Fixes: 7969e5c40dfd ("ip: discard IPv4 datagrams with overlapping segments.")
-Signed-off-by: Michal Kubecek <mkubecek@suse.cz>
+Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
 ---
- net/ipv4/ip_fragment.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+Changes since v1:
+- Revise commit message
+- Change all pinctrl cores to non-visible symbols
+- Drop EINT_MTK in PINCTRL_MTK_MOORE
+---
+ drivers/pinctrl/mediatek/Kconfig | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/net/ipv4/ip_fragment.c b/net/ipv4/ip_fragment.c
-index aa0b22697998..f09e3683b209 100644
---- a/net/ipv4/ip_fragment.c
-+++ b/net/ipv4/ip_fragment.c
-@@ -436,6 +436,10 @@ static int ip_frag_queue(struct ipq *qp, struct sk_buff *skb)
- 			ip4_frag_append_to_last_run(&qp->q, skb);
- 		else
- 			ip4_frag_create_run(&qp->q, skb);
-+	} else if (offset == prev_tail->ip_defrag_offset &&
-+		   skb->len == prev_tail->len) {
-+		/* potential duplicate of last fragment */
-+		goto err;
- 	} else {
- 		/* Binary search. Note that skb can become the first fragment,
- 		 * but not the last (covered above).
-@@ -449,8 +453,16 @@ static int ip_frag_queue(struct ipq *qp, struct sk_buff *skb)
- 			else if (offset >= skb1->ip_defrag_offset +
- 						FRAG_CB(skb1)->frag_run_len)
- 				rbn = &parent->rb_right;
--			else /* Found an overlap with skb1. */
-+			else {
-+				/* check for potential duplicate */
-+				while (skb1 && skb1->ip_defrag_offset < offset)
-+					skb1 = FRAG_CB(skb1)->next_frag;
-+				if (skb1 && offset == skb1->ip_defrag_offset &&
-+				    skb->len == skb1->len)
-+					goto err;
-+				/* Found an overlap */
- 				goto overlap;
-+			}
- 		} while (*rbn);
- 		/* Here we have parent properly set, and rbn pointing to
- 		 * one of its NULL left/right children. Insert skb.
+diff --git a/drivers/pinctrl/mediatek/Kconfig b/drivers/pinctrl/mediatek/Kconfig
+index d8cb584..1817786 100644
+--- a/drivers/pinctrl/mediatek/Kconfig
++++ b/drivers/pinctrl/mediatek/Kconfig
+@@ -17,7 +17,7 @@ config PINCTRL_MTK
+ 	select OF_GPIO
+ 
+ config PINCTRL_MTK_MOORE
+-	bool "MediaTek Moore Core that implements generic binding"
++	bool
+ 	depends on OF
+ 	select GENERIC_PINCONF
+ 	select GENERIC_PINCTRL_GROUPS
+@@ -26,7 +26,7 @@ config PINCTRL_MTK_MOORE
+ 	select OF_GPIO
+ 
+ config PINCTRL_MTK_PARIS
+-	bool "MediaTek Paris Core that implements vendor binding"
++	bool
+ 	depends on OF
+ 	select PINMUX
+ 	select GENERIC_PINCONF
+@@ -45,14 +45,14 @@ config PINCTRL_MT2701
+ config PINCTRL_MT7623
+ 	bool "Mediatek MT7623 pin control with generic binding"
+ 	depends on MACH_MT7623 || COMPILE_TEST
+-	depends on PINCTRL_MTK_MOORE
+-	default y
++	default MACH_MT7623
++	select PINCTRL_MTK_MOORE
+ 
+ config PINCTRL_MT7629
+ 	bool "Mediatek MT7629 pin control"
+ 	depends on MACH_MT7629 || COMPILE_TEST
+-	depends on PINCTRL_MTK_MOORE
+-	default y
++	default MACH_MT7629
++	select PINCTRL_MTK_MOORE
+ 
+ config PINCTRL_MT8135
+ 	bool "Mediatek MT8135 pin control"
+@@ -93,8 +93,8 @@ config PINCTRL_MT6797
+ config PINCTRL_MT7622
+ 	bool "MediaTek MT7622 pin control"
+ 	depends on ARM64 || COMPILE_TEST
+-	depends on PINCTRL_MTK_MOORE
+-	default y
++	default ARM64 && ARCH_MEDIATEK
++	select PINCTRL_MTK_MOORE
+ 
+ config PINCTRL_MT8173
+ 	bool "Mediatek MT8173 pin control"
 -- 
-2.19.2
+1.9.1
 
