@@ -2,90 +2,201 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,T_MIXED_ES,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0BBBC65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 22:03:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2145BC65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 22:04:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5A9220870
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 22:03:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544738599;
-	bh=TGIIEKIj1Eo16LtviyDATImfpZYQv60QUIs+Kr3c5zw=;
-	h=Subject:From:To:Cc:Date:List-ID:From;
-	b=kb19yz359g+2YH8K0x0gmzAhFxtG/JJ3XCDutQrsoBIg3Ifa/OcZGJ/bZIUYPJEA2
-	 2z2y9Bf258aGxuyr4ImcGnutcn+CHe0/fMSMrYVFvya9EKHNusOAvQ0umlUYfqxJ6Z
-	 5aPco3SWoD9TYcTYhQ0/TpopFZbx5Iy7A/MCPr5g=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5A9220870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id A3F7020870
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 22:04:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20150623.gappssmtp.com header.i=@cmpxchg-org.20150623.gappssmtp.com header.b="f8IyS7Qm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3F7020870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cmpxchg.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728069AbeLMWDS (ORCPT
+        id S1728235AbeLMWED (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 17:03:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35770 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726457AbeLMWDS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 17:03:18 -0500
-Received: from tzanussi-mobl (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F116520811;
-        Thu, 13 Dec 2018 22:03:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544738597;
-        bh=TGIIEKIj1Eo16LtviyDATImfpZYQv60QUIs+Kr3c5zw=;
-        h=Subject:From:To:Cc:Date:From;
-        b=kOx9FDHRBPLa7Uz9Agv2DupwfNjFW5qr0lrM5fviMGjW1/nspCDoXqottTeZBfAOB
-         SZImLwqbPXiNfICBWX0cPy2xA6hu3Kkk69ReCdk0ZLTKmKyGtetA3GtuWBx0If9/Zh
-         RSz/cfk0KU/ruBjZkqCdcxJGXLf6PVE54aX37mqA=
-Message-ID: <1544738596.10497.5.camel@kernel.org>
-Subject: [ANNOUNCE] 3.18.129-rt110
-From:   Tom Zanussi <zanussi@kernel.org>
-To:     LKML <linux-kernel@vger.kernel.org>,
-        linux-rt-users <linux-rt-users@vger.kernel.org>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Carsten Emde <C.Emde@osadl.org>,
-        John Kacur <jkacur@redhat.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Daniel Wagner <daniel.wagner@siemens.com>,
-        Julia Cartwright <julia@ni.com>
-Date:   Thu, 13 Dec 2018 16:03:16 -0600
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.1-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Thu, 13 Dec 2018 17:04:03 -0500
+Received: from mail-yb1-f195.google.com ([209.85.219.195]:42102 "EHLO
+        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726457AbeLMWED (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 17:04:03 -0500
+Received: by mail-yb1-f195.google.com with SMTP id m129so1453496ybf.9
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 14:04:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=foC72XB4GNrSEnp94npMMNWltCrFXG+GOh1ykOFNNXE=;
+        b=f8IyS7QmkeCWKIKcbBcORAiM8enil8GmeI78yC0U5BGuZiyqI8BEM3+qaoYlvjjkzm
+         hS3/4sISPzUbn5LNq5Ky42nI3uXWoo8Da0q5P6caOg8KR7PrQBAKJDHXxB3HgEG4YT9W
+         /rxkse00EpxnhkuV8ALM8K3nQRJtuhROey+Qtf85ZRGc8+Vve990XJVSRZqseJn/RKAq
+         vUhhdpHZ7Hnp0ahk8VXYQ9KmFii9f8lHN4EwCJ5w3h909KxzNrj2bth6/EC2sy1DAE2B
+         1UGxzcp+MQKrAuKc3HjU2mcFbKHSBtmaoj33X/Z++UaJZNhGTHofsXGqvMnB3WfO8+pU
+         c5nA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=foC72XB4GNrSEnp94npMMNWltCrFXG+GOh1ykOFNNXE=;
+        b=ceWyj2BUyAMtSPC/6zF8BkEt3yYW/O1bNmPOfuIjLJyFOv22gwbqt1x7aNflRv16N8
+         oOF7Hojt9P8HmnAhQB7gbig2obzw/hWcIwA1pDc7aCdSTjGy+P0w881UJGEFSUDRJzCu
+         sXnnqhpd/Xq/bg1gs6LOLDsfrS3KTX/ajPfIeDfrZj9BmzpuRCPjt0ZJgh1oebHXEzjF
+         yBNLW9fJgcYFLxE0yvCTJmOwiQfh7ih3XG02I5gmfBQJdPWg16wJsc4HSM5VQQ++7YZX
+         p/Xpy5gAa5m41teWV/wNfyOybXVxiAI0f5/KsAZlHbRd8ZGWnaA8HNDEXX4qGFlXL/QV
+         WBTA==
+X-Gm-Message-State: AA+aEWYHt1kyCo3va4pFyrL2PdWEPoLGW4nZ7c1HmxuPk7FJd+XzO0/V
+        Qj/SBpCQsCD3wpj9E7Sv+ozqdQ==
+X-Google-Smtp-Source: AFSGD/WswjrZUf7a6//muaofkPIEHVlJjNqt2ELwXiKCXLNg1c26Q6O5aJtVv33pjePifbjRKV1XsQ==
+X-Received: by 2002:a25:2207:: with SMTP id i7mr554285ybi.365.1544738642165;
+        Thu, 13 Dec 2018 14:04:02 -0800 (PST)
+Received: from localhost ([2620:10d:c091:200::5:f0b3])
+        by smtp.gmail.com with ESMTPSA id r62sm941186ywd.4.2018.12.13.14.04.01
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 13 Dec 2018 14:04:01 -0800 (PST)
+Date:   Thu, 13 Dec 2018 17:04:00 -0500
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Liu Bo <bo.liu@linux.alibaba.com>, Jan Kara <jack@suse.cz>,
+        Dave Chinner <david@fromorbit.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Shakeel Butt <shakeelb@google.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Stable tree <stable@vger.kernel.org>
+Subject: Re: [PATCH v3] mm, memcg: fix reclaim deadlock with writeback
+Message-ID: <20181213220400.GA9829@cmpxchg.org>
+References: <20181212155055.1269-1-mhocko@kernel.org>
+ <20181213092221.27270-1-mhocko@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181213092221.27270-1-mhocko@kernel.org>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello RT Folks!
+On Thu, Dec 13, 2018 at 10:22:21AM +0100, Michal Hocko wrote:
+> From: Michal Hocko <mhocko@suse.com>
+> 
+> Liu Bo has experienced a deadlock between memcg (legacy) reclaim and the
+> ext4 writeback
+> task1:
+> [<ffffffff811aaa52>] wait_on_page_bit+0x82/0xa0
+> [<ffffffff811c5777>] shrink_page_list+0x907/0x960
+> [<ffffffff811c6027>] shrink_inactive_list+0x2c7/0x680
+> [<ffffffff811c6ba4>] shrink_node_memcg+0x404/0x830
+> [<ffffffff811c70a8>] shrink_node+0xd8/0x300
+> [<ffffffff811c73dd>] do_try_to_free_pages+0x10d/0x330
+> [<ffffffff811c7865>] try_to_free_mem_cgroup_pages+0xd5/0x1b0
+> [<ffffffff8122df2d>] try_charge+0x14d/0x720
+> [<ffffffff812320cc>] memcg_kmem_charge_memcg+0x3c/0xa0
+> [<ffffffff812321ae>] memcg_kmem_charge+0x7e/0xd0
+> [<ffffffff811b68a8>] __alloc_pages_nodemask+0x178/0x260
+> [<ffffffff8120bff5>] alloc_pages_current+0x95/0x140
+> [<ffffffff81074247>] pte_alloc_one+0x17/0x40
+> [<ffffffff811e34de>] __pte_alloc+0x1e/0x110
+> [<ffffffffa06739de>] alloc_set_pte+0x5fe/0xc20
+> [<ffffffff811e5d93>] do_fault+0x103/0x970
+> [<ffffffff811e6e5e>] handle_mm_fault+0x61e/0xd10
+> [<ffffffff8106ea02>] __do_page_fault+0x252/0x4d0
+> [<ffffffff8106ecb0>] do_page_fault+0x30/0x80
+> [<ffffffff8171bce8>] page_fault+0x28/0x30
+> [<ffffffffffffffff>] 0xffffffffffffffff
+> 
+> task2:
+> [<ffffffff811aadc6>] __lock_page+0x86/0xa0
+> [<ffffffffa02f1e47>] mpage_prepare_extent_to_map+0x2e7/0x310 [ext4]
+> [<ffffffffa08a2689>] ext4_writepages+0x479/0xd60
+> [<ffffffff811bbede>] do_writepages+0x1e/0x30
+> [<ffffffff812725e5>] __writeback_single_inode+0x45/0x320
+> [<ffffffff81272de2>] writeback_sb_inodes+0x272/0x600
+> [<ffffffff81273202>] __writeback_inodes_wb+0x92/0xc0
+> [<ffffffff81273568>] wb_writeback+0x268/0x300
+> [<ffffffff81273d24>] wb_workfn+0xb4/0x390
+> [<ffffffff810a2f19>] process_one_work+0x189/0x420
+> [<ffffffff810a31fe>] worker_thread+0x4e/0x4b0
+> [<ffffffff810a9786>] kthread+0xe6/0x100
+> [<ffffffff8171a9a1>] ret_from_fork+0x41/0x50
+> [<ffffffffffffffff>] 0xffffffffffffffff
+> 
+> He adds
+> : task1 is waiting for the PageWriteback bit of the page that task2 has
+> : collected in mpd->io_submit->io_bio, and tasks2 is waiting for the LOCKED
+> : bit the page which tasks1 has locked.
+> 
+> More precisely task1 is handling a page fault and it has a page locked
+> while it charges a new page table to a memcg. That in turn hits a memory
+> limit reclaim and the memcg reclaim for legacy controller is waiting on
+> the writeback but that is never going to finish because the writeback
+> itself is waiting for the page locked in the #PF path. So this is
+> essentially ABBA deadlock:
+>                                         lock_page(A)
+>                                         SetPageWriteback(A)
+>                                         unlock_page(A)
+> lock_page(B)
+>                                         lock_page(B)
+> pte_alloc_pne
+>   shrink_page_list
+>     wait_on_page_writeback(A)
+>                                         SetPageWriteback(B)
+>                                         unlock_page(B)
+> 
+>                                         # flush A, B to clear the writeback
+> 
+> This accumulating of more pages to flush is used by several filesystems
+> to generate a more optimal IO patterns.
+> 
+> Waiting for the writeback in legacy memcg controller is a workaround
+> for pre-mature OOM killer invocations because there is no dirty IO
+> throttling available for the controller. There is no easy way around
+> that unfortunately. Therefore fix this specific issue by pre-allocating
+> the page table outside of the page lock. We have that handy
+> infrastructure for that already so simply reuse the fault-around pattern
+> which already does this.
+> 
+> There are probably other hidden __GFP_ACCOUNT | GFP_KERNEL allocations
+> from under a fs page locked but they should be really rare. I am not
+> aware of a better solution unfortunately.
+> 
+> Reported-and-Debugged-by: Liu Bo <bo.liu@linux.alibaba.com>
+> Cc: stable
+> Fixes: c3b94f44fcb0 ("memcg: further prevent OOM with too many dirty pages")
+> Signed-off-by: Michal Hocko <mhocko@suse.com>
 
-I'm pleased to announce the 3.18.129-rt110 stable release.
+Acked-by: Johannes Weiner <hannes@cmpxchg.org>
 
-This release is just an update to the new stable 3.18.129 version
-and no RT specific changes have been made.
+Just one nit:
 
-You can get this release via the git tree at:
+> @@ -2993,6 +2993,17 @@ static vm_fault_t __do_fault(struct vm_fault *vmf)
+>  	struct vm_area_struct *vma = vmf->vma;
+>  	vm_fault_t ret;
+>  
+> +	/*
+> +	 * Preallocate pte before we take page_lock because this might lead to
+> +	 * deadlocks for memcg reclaim which waits for pages under writeback.
+> +	 */
+> +	if (pmd_none(*vmf->pmd) && !vmf->prealloc_pte) {
+> +		vmf->prealloc_pte = pte_alloc_one(vmf->vma->vm_mm, vmf->address);
+> +		if (!vmf->prealloc_pte)
+> +			return VM_FAULT_OOM;
+> +		smp_wmb(); /* See comment in __pte_alloc() */
+> +	}
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git
+Could you be more specific in the deadlock comment? git blame will
+work fine for a while, but it becomes a pain to find corresponding
+patches after stuff gets moved around for years.
 
-  branch: v3.18-rt
-  Head SHA1: 9447e39d7222edcc6b3c063cd8e189a4f6a03f46
-
-Or to build 3.18.129-rt110 directly, the following patches should be applied:
-
-  http://www.kernel.org/pub/linux/kernel/v3.x/linux-3.18.tar.xz
-
-  http://www.kernel.org/pub/linux/kernel/v3.x/patch-3.18.129.xz
-
-  http://www.kernel.org/pub/linux/kernel/projects/rt/3.18/patch-3.18.129-rt110.patch.xz
-
-
-Enjoy!
-   
-   Tom
+In particular the race diagram between reclaim with a page lock held
+and the fs doing SetPageWriteback batches before kicking off IO would
+be useful directly in the code, IMO.
