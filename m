@@ -2,195 +2,146 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25BDCC65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 09:22:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32D1CC65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 09:23:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D32FA2075B
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 09:22:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544692952;
-	bh=pcPAYq2OeVdibUbDZ/LXWIR+Cs58xfvYpbQ9MNrtF9U=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=jlTcrydHDranLF+K19t8ykKC60/vrFYioE70yOjI6htVN3yOgrPyXcXS6ihy6c8NE
-	 afW/zt7j+GduhCRepZsp05D8aJVvFqE2ePHEIl6f53bVHi+l+TJrRFh8DFl1SN4zQK
-	 43O+z5He4qq9yp1Gu7nd3/vbYdiadjBXbIoc5icM=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D32FA2075B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id F09D82075B
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 09:23:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F09D82075B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728081AbeLMJWa (ORCPT
+        id S1727446AbeLMJXm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 04:22:30 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:45991 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727343AbeLMJWa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 04:22:30 -0500
-Received: by mail-ed1-f67.google.com with SMTP id d39so1385173edb.12;
-        Thu, 13 Dec 2018 01:22:28 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=JUicFBR02yoMFdfZBlyVnEhzti2L20thT/sD8xlcfyI=;
-        b=lPGESSAbtYCyFi8tMSpyXk1ytCu0PbIuCHBTMjkXQCJJh4wgwBQZOqkxaWjv97neL/
-         nqc03aklc/DrMBR+TIMRlFMC6pzXAfgPuBBN4jo7rNVghpieLUZmf4uK7lIost57mQgp
-         FQB3ATaYcAahfCej937Id0doB1xdqZNyGiD4YfNB9RGpQtQzmJLtFRyRaR/3IC/HdMD0
-         RhBfK5YQRuy0eeH1sdHGbgQMJTtsbOYciSu3CS7++0LHPSPGW/FRgNquvSqWpYY7vpn6
-         0PTz6oxIDMTe3wkC2JUeN8GJrZr3Hde2i82RIqucZayhHeOYdEVAf/OU9s6Q5MmHtIZ+
-         5DwQ==
-X-Gm-Message-State: AA+aEWZ/ujhk8VfmHmIGE9wiR7KCR4/qmvsT1Cd7HH0joIZ2y4XI/+Mi
-        xG/LfNHD3e7L8vjRaJav6/s=
-X-Google-Smtp-Source: AFSGD/VVTDGIqbyHthrws0tyrv81OrMOTPIkOhePFkpMhdy/flordrFKk+vHkSil+fdCwb5w4zkDdg==
-X-Received: by 2002:a50:9b1d:: with SMTP id o29mr20594527edi.246.1544692947665;
-        Thu, 13 Dec 2018 01:22:27 -0800 (PST)
-Received: from tiehlicka.suse.cz (prg-ext-pat.suse.com. [213.151.95.130])
-        by smtp.gmail.com with ESMTPSA id z9sm472036edr.61.2018.12.13.01.22.26
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 13 Dec 2018 01:22:26 -0800 (PST)
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc:     Liu Bo <bo.liu@linux.alibaba.com>, Jan Kara <jack@suse.cz>,
-        Dave Chinner <david@fromorbit.com>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        <linux-mm@kvack.org>, <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Stable tree <stable@vger.kernel.org>
-Subject: [PATCH v3] mm, memcg: fix reclaim deadlock with writeback
-Date:   Thu, 13 Dec 2018 10:22:21 +0100
-Message-Id: <20181213092221.27270-1-mhocko@kernel.org>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20181212155055.1269-1-mhocko@kernel.org>
-References: <20181212155055.1269-1-mhocko@kernel.org>
+        Thu, 13 Dec 2018 04:23:42 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:57198 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726578AbeLMJXm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 04:23:42 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CCC5415AD;
+        Thu, 13 Dec 2018 01:23:41 -0800 (PST)
+Received: from [10.1.197.36] (e112298-lin.cambridge.arm.com [10.1.197.36])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 085993F6A8;
+        Thu, 13 Dec 2018 01:23:39 -0800 (PST)
+Subject: Re: [PATCH 2/6] arm64: add sysfs vulnerability show for meltdown
+To:     Jeremy Linton <jeremy.linton@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     catalin.marinas@arm.com, will.deacon@arm.com, marc.zyngier@arm.com,
+        suzuki.poulose@arm.com, dave.martin@arm.com,
+        shankerd@codeaurora.org, mark.rutland@arm.com,
+        linux-kernel@vger.kernel.org, ykaukab@suse.de
+References: <20181206234408.1287689-1-jeremy.linton@arm.com>
+ <20181206234408.1287689-3-jeremy.linton@arm.com>
+From:   Julien Thierry <julien.thierry@arm.com>
+Message-ID: <d1ad00a8-1b87-f234-aa41-c1f342cb28dc@arm.com>
+Date:   Thu, 13 Dec 2018 09:23:38 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181206234408.1287689-3-jeremy.linton@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michal Hocko <mhocko@suse.com>
+Hi Jeremy,
 
-Liu Bo has experienced a deadlock between memcg (legacy) reclaim and the
-ext4 writeback
-task1:
-[<ffffffff811aaa52>] wait_on_page_bit+0x82/0xa0
-[<ffffffff811c5777>] shrink_page_list+0x907/0x960
-[<ffffffff811c6027>] shrink_inactive_list+0x2c7/0x680
-[<ffffffff811c6ba4>] shrink_node_memcg+0x404/0x830
-[<ffffffff811c70a8>] shrink_node+0xd8/0x300
-[<ffffffff811c73dd>] do_try_to_free_pages+0x10d/0x330
-[<ffffffff811c7865>] try_to_free_mem_cgroup_pages+0xd5/0x1b0
-[<ffffffff8122df2d>] try_charge+0x14d/0x720
-[<ffffffff812320cc>] memcg_kmem_charge_memcg+0x3c/0xa0
-[<ffffffff812321ae>] memcg_kmem_charge+0x7e/0xd0
-[<ffffffff811b68a8>] __alloc_pages_nodemask+0x178/0x260
-[<ffffffff8120bff5>] alloc_pages_current+0x95/0x140
-[<ffffffff81074247>] pte_alloc_one+0x17/0x40
-[<ffffffff811e34de>] __pte_alloc+0x1e/0x110
-[<ffffffffa06739de>] alloc_set_pte+0x5fe/0xc20
-[<ffffffff811e5d93>] do_fault+0x103/0x970
-[<ffffffff811e6e5e>] handle_mm_fault+0x61e/0xd10
-[<ffffffff8106ea02>] __do_page_fault+0x252/0x4d0
-[<ffffffff8106ecb0>] do_page_fault+0x30/0x80
-[<ffffffff8171bce8>] page_fault+0x28/0x30
-[<ffffffffffffffff>] 0xffffffffffffffff
+On 06/12/2018 23:44, Jeremy Linton wrote:
+> Add a simple state machine which will track whether
+> all the online cores in a machine are vulnerable.
+> 
+> Once that is done we have a fairly authoritative view
+> of the machine vulnerability, which allows us to make a
+> judgment about machine safety if it hasn't been mitigated.
+> 
+> Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
+> ---
+>  arch/arm64/kernel/cpufeature.c | 31 ++++++++++++++++++++++++++-----
+>  1 file changed, 26 insertions(+), 5 deletions(-)
+> 
+> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+> index 242898395f68..bea9adfef7fa 100644
+> --- a/arch/arm64/kernel/cpufeature.c
+> +++ b/arch/arm64/kernel/cpufeature.c
+> @@ -905,6 +905,8 @@ has_useable_cnp(const struct arm64_cpu_capabilities *entry, int scope)
+>  	return has_cpuid_feature(entry, scope);
+>  }
+>  
+> +static enum { A64_MELT_UNSET, A64_MELT_SAFE, A64_MELT_UNKN } __meltdown_safe = A64_MELT_UNSET;
+> +
 
-task2:
-[<ffffffff811aadc6>] __lock_page+0x86/0xa0
-[<ffffffffa02f1e47>] mpage_prepare_extent_to_map+0x2e7/0x310 [ext4]
-[<ffffffffa08a2689>] ext4_writepages+0x479/0xd60
-[<ffffffff811bbede>] do_writepages+0x1e/0x30
-[<ffffffff812725e5>] __writeback_single_inode+0x45/0x320
-[<ffffffff81272de2>] writeback_sb_inodes+0x272/0x600
-[<ffffffff81273202>] __writeback_inodes_wb+0x92/0xc0
-[<ffffffff81273568>] wb_writeback+0x268/0x300
-[<ffffffff81273d24>] wb_workfn+0xb4/0x390
-[<ffffffff810a2f19>] process_one_work+0x189/0x420
-[<ffffffff810a31fe>] worker_thread+0x4e/0x4b0
-[<ffffffff810a9786>] kthread+0xe6/0x100
-[<ffffffff8171a9a1>] ret_from_fork+0x41/0x50
-[<ffffffffffffffff>] 0xffffffffffffffff
+I'm wondering, do we really need that tri state?
 
-He adds
-: task1 is waiting for the PageWriteback bit of the page that task2 has
-: collected in mpd->io_submit->io_bio, and tasks2 is waiting for the LOCKED
-: bit the page which tasks1 has locked.
+Can't we consider that we are safe an move to unsafe/unkown if any cpu
+during bring up is not in the safe list?
 
-More precisely task1 is handling a page fault and it has a page locked
-while it charges a new page table to a memcg. That in turn hits a memory
-limit reclaim and the memcg reclaim for legacy controller is waiting on
-the writeback but that is never going to finish because the writeback
-itself is waiting for the page locked in the #PF path. So this is
-essentially ABBA deadlock:
-                                        lock_page(A)
-                                        SetPageWriteback(A)
-                                        unlock_page(A)
-lock_page(B)
-                                        lock_page(B)
-pte_alloc_pne
-  shrink_page_list
-    wait_on_page_writeback(A)
-                                        SetPageWriteback(B)
-                                        unlock_page(B)
+The only user of this is cpu_show_meltdown, but I don't imagine it'll
+get called before unmap_kernel_at_el0() is called for the boot CPU which
+should initialise that state.
 
-                                        # flush A, B to clear the writeback
+Or is there another reason for having that UNSET state?
 
-This accumulating of more pages to flush is used by several filesystems
-to generate a more optimal IO patterns.
+Thanks,
 
-Waiting for the writeback in legacy memcg controller is a workaround
-for pre-mature OOM killer invocations because there is no dirty IO
-throttling available for the controller. There is no easy way around
-that unfortunately. Therefore fix this specific issue by pre-allocating
-the page table outside of the page lock. We have that handy
-infrastructure for that already so simply reuse the fault-around pattern
-which already does this.
+>  #ifdef CONFIG_UNMAP_KERNEL_AT_EL0
+>  static int __kpti_forced; /* 0: not forced, >0: forced on, <0: forced off */
+>  
+> @@ -928,6 +930,15 @@ static bool unmap_kernel_at_el0(const struct arm64_cpu_capabilities *entry,
+>  {
+>  	char const *str = "command line option";
+>  
+> +	bool meltdown_safe = is_cpu_meltdown_safe() ||
+> +		has_cpuid_feature(entry, scope);
+> +
+> +	/* Only safe if all booted cores are known safe */
+> +	if (meltdown_safe && __meltdown_safe == A64_MELT_UNSET)
+> +		__meltdown_safe = A64_MELT_SAFE;
+> +	else if (!meltdown_safe)
+> +		__meltdown_safe = A64_MELT_UNKN;
+> +
+>  	/*
+>  	 * For reasons that aren't entirely clear, enabling KPTI on Cavium
+>  	 * ThunderX leads to apparent I-cache corruption of kernel text, which
+> @@ -949,11 +960,7 @@ static bool unmap_kernel_at_el0(const struct arm64_cpu_capabilities *entry,
+>  	if (IS_ENABLED(CONFIG_RANDOMIZE_BASE))
+>  		return true;
+>  
+> -	if (is_cpu_meltdown_safe())
+> -		return false;
+> -
+> -	/* Defer to CPU feature registers */
+> -	return !has_cpuid_feature(entry, scope);
+> +	return !meltdown_safe;
+>  }
+>  
+>  static void
+> @@ -1920,3 +1927,17 @@ static int __init enable_mrs_emulation(void)
+>  }
+>  
+>  core_initcall(enable_mrs_emulation);
+> +
+> +#ifdef CONFIG_GENERIC_CPU_VULNERABILITIES
+> +ssize_t cpu_show_meltdown(struct device *dev, struct device_attribute *attr,
+> +		char *buf)
+> +{
+> +	if (arm64_kernel_unmapped_at_el0())
+> +		return sprintf(buf, "Mitigation: KPTI\n");
+> +
+> +	if (__meltdown_safe == A64_MELT_SAFE)
+> +		return sprintf(buf, "Not affected\n");
+> +
+> +	return sprintf(buf, "Unknown\n");
+> +}
+> +#endif
+> 
 
-There are probably other hidden __GFP_ACCOUNT | GFP_KERNEL allocations
-from under a fs page locked but they should be really rare. I am not
-aware of a better solution unfortunately.
-
-Reported-and-Debugged-by: Liu Bo <bo.liu@linux.alibaba.com>
-Cc: stable
-Fixes: c3b94f44fcb0 ("memcg: further prevent OOM with too many dirty pages")
-Signed-off-by: Michal Hocko <mhocko@suse.com>
----
- mm/memory.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
-
-diff --git a/mm/memory.c b/mm/memory.c
-index 4ad2d293ddc2..bb78e90a9b70 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -2993,6 +2993,17 @@ static vm_fault_t __do_fault(struct vm_fault *vmf)
- 	struct vm_area_struct *vma = vmf->vma;
- 	vm_fault_t ret;
- 
-+	/*
-+	 * Preallocate pte before we take page_lock because this might lead to
-+	 * deadlocks for memcg reclaim which waits for pages under writeback.
-+	 */
-+	if (pmd_none(*vmf->pmd) && !vmf->prealloc_pte) {
-+		vmf->prealloc_pte = pte_alloc_one(vmf->vma->vm_mm, vmf->address);
-+		if (!vmf->prealloc_pte)
-+			return VM_FAULT_OOM;
-+		smp_wmb(); /* See comment in __pte_alloc() */
-+	}
-+
- 	ret = vma->vm_ops->fault(vmf);
- 	if (unlikely(ret & (VM_FAULT_ERROR | VM_FAULT_NOPAGE | VM_FAULT_RETRY |
- 			    VM_FAULT_DONE_COW)))
 -- 
-2.19.2
-
+Julien Thierry
