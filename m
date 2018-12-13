@@ -2,44 +2,36 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3035AC65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 08:31:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4070C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 08:33:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE29420811
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 08:31:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE29420811
+	by mail.kernel.org (Postfix) with ESMTP id 9768F20811
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 08:33:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9768F20811
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727268AbeLMIb0 (ORCPT
+        id S1727344AbeLMIdX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 03:31:26 -0500
-Received: from mx2.suse.de ([195.135.220.15]:45850 "EHLO mx1.suse.de"
+        Thu, 13 Dec 2018 03:33:23 -0500
+Received: from mx2.suse.de ([195.135.220.15]:46150 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725949AbeLMIb0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 03:31:26 -0500
+        id S1725949AbeLMIdX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 03:33:23 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 2E113AF68;
-        Thu, 13 Dec 2018 08:31:24 +0000 (UTC)
-Date:   Thu, 13 Dec 2018 09:31:22 +0100
-Message-ID: <s5himzxu8th.wl-tiwai@suse.de>
+        by mx1.suse.de (Postfix) with ESMTP id 57E34AF68;
+        Thu, 13 Dec 2018 08:33:20 +0000 (UTC)
+Date:   Thu, 13 Dec 2018 09:33:20 +0100
+Message-ID: <s5hefalu8q7.wl-tiwai@suse.de>
 From:   Takashi Iwai <tiwai@suse.de>
-To:     "Ayman Bagabas" <ayman.bagabas@gmail.com>
-Cc:     <alsa-devel@alsa-project.org>, "Hui Wang" <hui.wang@canonical.com>,
-        "Andy Shevchenko" <andy@infradead.org>,
-        "Darren Hart" <dvhart@infradead.org>,
-        "Jaroslav Kysela" <perex@perex.cz>,
-        "Kailang Yang" <kailang@realtek.com>,
-        <linux-kernel@vger.kernel.org>,
-        <platform-driver-x86@vger.kernel.org>
-Subject: Re: [PATCH v11 0/3] Huawei laptops
-In-Reply-To: <20181212230802.21140-1-ayman.bagabas@gmail.com>
-References: <20181212230802.21140-1-ayman.bagabas@gmail.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] sound fixes for 4.20-rc7
 User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
  FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/26
  (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
@@ -50,65 +42,192 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 13 Dec 2018 00:07:56 +0100,
-Ayman Bagabas wrote:
-> 
-> This patch set is based on the new audio LED triggers in topic/leds-trigger branch from
->         git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git
-> 
-> Changes in v11:
-> * Minor code changes
-> 
-> Changes in v10:
-> * Use ec_get_handle instead of acpi_get_handle since we are using the ec device
-> * Switch to WMI0_EXPENSIVE_GUID and wmi_query_block to fetch keycode when WMI0 is used
-> 
-> Changes in v9:
-> * Explicitly use NULL in acpi_get_handle
-> * Drop __initconst from huawei_wmi_keymap
-> 
-> Changes in v8:
-> * Switch to wmi_driver
-> * Use devm to allocate and manage devices
-> * Skip registering LED subsystem if a ACPI controller method was not found
-> 
-> Changes in v7:
-> * Use audio LED triggers patch set
-> * Use KEY_CONFIG (XF86Tools) instead of KEY_PROG1.
->  In Windows, the key is used to launch Huawei PC manager. XF86Tools is
->  used by default on most desktop environments i.e. Gnome.
-> 
-> Changes in v6:
-> * Review tags
-> 
-> Changes in v5:
-> * Consistency in file names
-> * How module would be enabled (Kconfig)
-> * Match license in SPDX and MODULE_LICENSE 
-> 
-> Changes in v4:
-> * Code formatting
-> 
-> Changes in v3:
-> * Support for Huawei MBX
-> * Style and formatting issues
-> 
-> Ayman Bagabas (3):
->   ALSA: hda: fix front speakers on Huawei MBXP.
->   x86: add support for Huawei WMI hotkeys.
->   ALSA: hda: add support for Huawei WMI micmute LED
+Linus,
 
-Thank you for your patient works!
+please pull sound fixes for v4.20-rc7 from:
 
-Now I applied all three patches to topic/huawei-leds branch of sound
-git tree (with just minor corrections of patch descriptions).  This is
-merged to for-next branch for 4.21 inclusion.
+  git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git tags/sound-4.20-rc7
 
-Andy, feel free to merge topic/huawei-leds branch into your tree if
-needed.  This one is already based on topic/leds-trigger branch, where
-both branches are immutable.
+The topmost commit is 0bea4cc8383519f78f3f74caca7bdebdfb346d3b
 
+----------------------------------------------------------------
 
-thanks,
+sound fixes for 4.20-rc7
 
-Takashi
+Only usual suspects here: a few more fixups for Realtek HD-audio on
+various PCs, including a regression fix in the previous fix for
+Lenovo X1 Carbon, as well as a typo fix in the recent Fireface patch.
+
+----------------------------------------------------------------
+
+Chris Chiu (1):
+      ALSA: hda/realtek: ALC294 mic and headset-mode fixups for ASUS X542UN
+
+Hui Wang (1):
+      ALSA: hda/realtek - Fix the mute LED regresion on Lenovo X1 Carbon
+
+Jian-Hong Pan (2):
+      ALSA: hda/realtek: Enable audio jacks of ASUS UX533FD with ALC294
+      ALSA: hda/realtek: Enable audio jacks of ASUS UX433FN/UX333FA with ALC294
+
+Kailang Yang (1):
+      ALSA: hda/realtek - Fixed headphone issue for ALC700
+
+Takashi Sakamoto (1):
+      ALSA: fireface: fix reference to wrong register for clock configuration
+
+---
+ sound/firewire/fireface/ff-protocol-ff400.c |  2 +-
+ sound/pci/hda/patch_realtek.c               | 77 +++++++++++++++++++++++++++++
+ 2 files changed, 78 insertions(+), 1 deletion(-)
+
+diff --git a/sound/firewire/fireface/ff-protocol-ff400.c b/sound/firewire/fireface/ff-protocol-ff400.c
+index 64c3cb0fb926..654a50319198 100644
+--- a/sound/firewire/fireface/ff-protocol-ff400.c
++++ b/sound/firewire/fireface/ff-protocol-ff400.c
+@@ -30,7 +30,7 @@ static int ff400_get_clock(struct snd_ff *ff, unsigned int *rate,
+ 	int err;
+ 
+ 	err = snd_fw_transaction(ff->unit, TCODE_READ_QUADLET_REQUEST,
+-				 FF400_SYNC_STATUS, &reg, sizeof(reg), 0);
++				 FF400_CLOCK_CONFIG, &reg, sizeof(reg), 0);
+ 	if (err < 0)
+ 		return err;
+ 	data = le32_to_cpu(reg);
+diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
+index 8d75597028ee..15021c839372 100644
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -5520,6 +5520,9 @@ enum {
+ 	ALC285_FIXUP_LENOVO_HEADPHONE_NOISE,
+ 	ALC295_FIXUP_HP_AUTO_MUTE,
+ 	ALC286_FIXUP_ACER_AIO_MIC_NO_PRESENCE,
++	ALC294_FIXUP_ASUS_MIC,
++	ALC294_FIXUP_ASUS_HEADSET_MIC,
++	ALC294_FIXUP_ASUS_SPK,
+ };
+ 
+ static const struct hda_fixup alc269_fixups[] = {
+@@ -6392,6 +6395,8 @@ static const struct hda_fixup alc269_fixups[] = {
+ 	[ALC285_FIXUP_LENOVO_HEADPHONE_NOISE] = {
+ 		.type = HDA_FIXUP_FUNC,
+ 		.v.func = alc285_fixup_invalidate_dacs,
++		.chained = true,
++		.chain_id = ALC269_FIXUP_THINKPAD_ACPI
+ 	},
+ 	[ALC295_FIXUP_HP_AUTO_MUTE] = {
+ 		.type = HDA_FIXUP_FUNC,
+@@ -6406,6 +6411,36 @@ static const struct hda_fixup alc269_fixups[] = {
+ 		.chained = true,
+ 		.chain_id = ALC269_FIXUP_HEADSET_MIC
+ 	},
++	[ALC294_FIXUP_ASUS_MIC] = {
++		.type = HDA_FIXUP_PINS,
++		.v.pins = (const struct hda_pintbl[]) {
++			{ 0x13, 0x90a60160 }, /* use as internal mic */
++			{ 0x19, 0x04a11120 }, /* use as headset mic, without its own jack detect */
++			{ }
++		},
++		.chained = true,
++		.chain_id = ALC269_FIXUP_HEADSET_MODE_NO_HP_MIC
++	},
++	[ALC294_FIXUP_ASUS_HEADSET_MIC] = {
++		.type = HDA_FIXUP_PINS,
++		.v.pins = (const struct hda_pintbl[]) {
++			{ 0x19, 0x01a1113c }, /* use as headset mic, without its own jack detect */
++			{ }
++		},
++		.chained = true,
++		.chain_id = ALC269_FIXUP_HEADSET_MODE_NO_HP_MIC
++	},
++	[ALC294_FIXUP_ASUS_SPK] = {
++		.type = HDA_FIXUP_VERBS,
++		.v.verbs = (const struct hda_verb[]) {
++			/* Set EAPD high */
++			{ 0x20, AC_VERB_SET_COEF_INDEX, 0x40 },
++			{ 0x20, AC_VERB_SET_PROC_COEF, 0x8800 },
++			{ }
++		},
++		.chained = true,
++		.chain_id = ALC294_FIXUP_ASUS_HEADSET_MIC
++	},
+ };
+ 
+ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
+@@ -6548,6 +6583,7 @@ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
+ 	SND_PCI_QUIRK(0x1043, 0x12e0, "ASUS X541SA", ALC256_FIXUP_ASUS_MIC),
+ 	SND_PCI_QUIRK(0x1043, 0x13b0, "ASUS Z550SA", ALC256_FIXUP_ASUS_MIC),
+ 	SND_PCI_QUIRK(0x1043, 0x1427, "Asus Zenbook UX31E", ALC269VB_FIXUP_ASUS_ZENBOOK),
++	SND_PCI_QUIRK(0x1043, 0x14a1, "ASUS UX533FD", ALC294_FIXUP_ASUS_SPK),
+ 	SND_PCI_QUIRK(0x1043, 0x1517, "Asus Zenbook UX31A", ALC269VB_FIXUP_ASUS_ZENBOOK_UX31A),
+ 	SND_PCI_QUIRK(0x1043, 0x16e3, "ASUS UX50", ALC269_FIXUP_STEREO_DMIC),
+ 	SND_PCI_QUIRK(0x1043, 0x1a13, "Asus G73Jw", ALC269_FIXUP_ASUS_G73JW),
+@@ -7155,6 +7191,14 @@ static const struct snd_hda_pin_quirk alc269_pin_fixup_tbl[] = {
+ 	SND_HDA_PIN_QUIRK(0x10ec0293, 0x1028, "Dell", ALC293_FIXUP_DELL1_MIC_NO_PRESENCE,
+ 		ALC292_STANDARD_PINS,
+ 		{0x13, 0x90a60140}),
++	SND_HDA_PIN_QUIRK(0x10ec0294, 0x1043, "ASUS", ALC294_FIXUP_ASUS_MIC,
++		{0x14, 0x90170110},
++		{0x1b, 0x90a70130},
++		{0x21, 0x04211020}),
++	SND_HDA_PIN_QUIRK(0x10ec0294, 0x1043, "ASUS", ALC294_FIXUP_ASUS_SPK,
++		{0x12, 0x90a60130},
++		{0x17, 0x90170110},
++		{0x21, 0x04211020}),
+ 	SND_HDA_PIN_QUIRK(0x10ec0295, 0x1028, "Dell", ALC269_FIXUP_DELL1_MIC_NO_PRESENCE,
+ 		ALC295_STANDARD_PINS,
+ 		{0x17, 0x21014020},
+@@ -7227,6 +7271,37 @@ static void alc269_fill_coef(struct hda_codec *codec)
+ 	alc_update_coef_idx(codec, 0x4, 0, 1<<11);
+ }
+ 
++static void alc294_hp_init(struct hda_codec *codec)
++{
++	struct alc_spec *spec = codec->spec;
++	hda_nid_t hp_pin = spec->gen.autocfg.hp_pins[0];
++	int i, val;
++
++	if (!hp_pin)
++		return;
++
++	snd_hda_codec_write(codec, hp_pin, 0,
++			    AC_VERB_SET_AMP_GAIN_MUTE, AMP_OUT_MUTE);
++
++	msleep(100);
++
++	snd_hda_codec_write(codec, hp_pin, 0,
++			    AC_VERB_SET_PIN_WIDGET_CONTROL, 0x0);
++
++	alc_update_coef_idx(codec, 0x6f, 0x000f, 0);/* Set HP depop to manual mode */
++	alc_update_coefex_idx(codec, 0x58, 0x00, 0x8000, 0x8000); /* HP depop procedure start */
++
++	/* Wait for depop procedure finish  */
++	val = alc_read_coefex_idx(codec, 0x58, 0x01);
++	for (i = 0; i < 20 && val & 0x0080; i++) {
++		msleep(50);
++		val = alc_read_coefex_idx(codec, 0x58, 0x01);
++	}
++	/* Set HP depop to auto mode */
++	alc_update_coef_idx(codec, 0x6f, 0x000f, 0x000b);
++	msleep(50);
++}
++
+ /*
+  */
+ static int patch_alc269(struct hda_codec *codec)
+@@ -7352,6 +7427,7 @@ static int patch_alc269(struct hda_codec *codec)
+ 		spec->codec_variant = ALC269_TYPE_ALC294;
+ 		spec->gen.mixer_nid = 0; /* ALC2x4 does not have any loopback mixer path */
+ 		alc_update_coef_idx(codec, 0x6b, 0x0018, (1<<4) | (1<<3)); /* UAJ MIC Vref control by verb */
++		alc294_hp_init(codec);
+ 		break;
+ 	case 0x10ec0300:
+ 		spec->codec_variant = ALC269_TYPE_ALC300;
+@@ -7363,6 +7439,7 @@ static int patch_alc269(struct hda_codec *codec)
+ 		spec->codec_variant = ALC269_TYPE_ALC700;
+ 		spec->gen.mixer_nid = 0; /* ALC700 does not have any loopback mixer path */
+ 		alc_update_coef_idx(codec, 0x4a, 1 << 15, 0); /* Combo jack auto trigger control */
++		alc294_hp_init(codec);
+ 		break;
+ 
+ 	}
