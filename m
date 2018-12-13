@@ -2,105 +2,86 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18580C67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 10:07:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AA70C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 10:08:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0BFD20873
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 10:07:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0BFD20873
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 5B07220989
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 10:08:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rENiGhGj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B07220989
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728135AbeLMKHX (ORCPT
+        id S1728150AbeLMKIW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 05:07:23 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:45655 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727489AbeLMKHW (ORCPT
+        Thu, 13 Dec 2018 05:08:22 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:46374 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727489AbeLMKIV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 05:07:22 -0500
-Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
-        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
-        (envelope-from <l.stach@pengutronix.de>)
-        id 1gXNtl-00047C-Pu; Thu, 13 Dec 2018 11:07:17 +0100
-Message-ID: <1544695636.3137.27.camel@pengutronix.de>
-Subject: Re: [v2] PCI: imx: make msi work without pcieportbus
-From:   Lucas Stach <l.stach@pengutronix.de>
-To:     Richard Zhu <hongxing.zhu@nxp.com>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
-        "andrew.smirnov@gmail.com" <andrew.smirnov@gmail.com>
-Cc:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Date:   Thu, 13 Dec 2018 11:07:16 +0100
-In-Reply-To: <AM0PR0402MB35705EF0F4A77BD7B0AAFDDD8CA00@AM0PR0402MB3570.eurprd04.prod.outlook.com>
-References: <1544687042-16595-1-git-send-email-hongxing.zhu@nxp.com>
-         <1544692768.3137.25.camel@pengutronix.de>
-         <AM0PR0402MB35705EF0F4A77BD7B0AAFDDD8CA00@AM0PR0402MB3570.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
-X-SA-Exim-Mail-From: l.stach@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        Thu, 13 Dec 2018 05:08:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=QEGS9UZIzTSKcv9u0r4X/A1K8VcJujXRQzgKL+31vyk=; b=rENiGhGj1IdrDSLougaZd45hN
+        fNGeYgWivWTswqfeYd3jJjmwiSQK+7N76rKAYcnD2jM+VMYVZMYI78eBkqFo+m1U2o3dJEB2pB9ai
+        CuVkKbpiT9Gj98CtwnoanB1a2ac6MT0JHW6yzzOes64B8q96BQaFhfG5gCAz9YjYuAQxeIoIG44tQ
+        mJDYt5Fm5o6Euikm1FrCGLTwUcDMBe4PFfNb7o1uMnBFMM4s+YN+tizXqOLBRFNMJYdkIAG0NIDYS
+        IZSXmrqg6rX4JdiGihYbaJwzC27JktJh/c//oQYnEUJWvRm11ddOZKkurArvxr0LPPw1VG9XRbVoN
+        izJY0DGiw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gXNuk-0008Kp-4J; Thu, 13 Dec 2018 10:08:18 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id A26EA207261FE; Thu, 13 Dec 2018 11:08:16 +0100 (CET)
+Date:   Thu, 13 Dec 2018 11:08:16 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     "Dmitry V. Levin" <ldv@altlinux.org>, Jiri Olsa <jolsa@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Luis Claudio R. Goncalves" <lclaudio@uudg.org>,
+        Eugene Syromyatnikov <esyr@redhat.com>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        lkml <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/8] perf: Allow to block process in syscall tracepoints
+Message-ID: <20181213100816.GC5307@hirez.programming.kicks-ass.net>
+References: <20181207085839.GC2237@hirez.programming.kicks-ass.net>
+ <20181207072701.5bc564c7@vmware.local.home>
+ <20181207151105.GB5289@hirez.programming.kicks-ass.net>
+ <20181207151433.20bf0399@vmware.local.home>
+ <20181208104423.GE5289@hirez.programming.kicks-ass.net>
+ <20181208123805.1c158665@vmware.local.home>
+ <20181210101818.GJ5289@hirez.programming.kicks-ass.net>
+ <20181213003938.GD24195@altlinux.org>
+ <20181212202639.1978ec88@vmware.local.home>
+ <20181213100149.GF5289@hirez.programming.kicks-ass.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181213100149.GF5289@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Donnerstag, den 13.12.2018, 09:57 +0000 schrieb Richard Zhu:
-> Hi Lucas:
-> 
-> > -----Original Message-----
-> > > > From: Lucas Stach [mailto:l.stach@pengutronix.de]
-> > Sent: 2018年12月13日 17:19
-> > > > > > To: Richard Zhu <hongxing.zhu@nxp.com>; bhelgaas@google.com;
-> > lorenzo.pieralisi@arm.com; andrew.smirnov@gmail.com
-> > > > > > Cc: linux-pci@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
-> > linux-kernel@vger.kernel.org
-> > Subject: Re: [v2] PCI: imx: make msi work without pcieportbus
-> > 
-> > Hi Richard,
-> > 
-> > Am Donnerstag, den 13.12.2018, 08:02 +0000 schrieb Richard Zhu:
-> > > MSI_EN of iMX PCIe RC would be asserted when PCIEPORTBUS driver is
-> > > selected.
-> > > Thus, the MSI works fine on iMX PCIe before.
-> > > Assert it unconditionally when MSI is supported.
-> > > Otherwise, the MSI wouldn't be triggered although the EP is present
-> > > and the MSIs are assigned.
-> > 
-> > Thanks for digging into this issue. This seems like the right way forward.
-> > However, did you test this with devices using legacy IRQs?
-> > I.e. booting with "nomsi" on the kernel command line to see if legacy IRQs still
-> > work if this bit is set, or if we need to avoid setting this when the user
-> > explicitly requests to disable MSIs?
-> > 
-> > Regards,
-> > Lucas
-> > 
-> 
-> [Richard Zhu] Thanks for your review.
-> The Legacy INTx is broken.
-> The MSI_EN bit shouldn't be asserted when the user explicitly requests to disable MSIs.
+On Thu, Dec 13, 2018 at 11:01:49AM +0100, Peter Zijlstra wrote:
+>  - the wakeups side is icky; the best I can come up with is making the
+>    data page R/O and single stepping on write fault, but that isn't
+>    multi-threading safe.
 
-Okay, so this patch should be extended with a check for
-pci_msi_enabled() to see if the user explicitly want legacy IRQs.
-
-> BTW, regarding to Baruch's comments, it seems that all the (IS_ENABLED(CONFIG_PCI_MSI) check in
->  the dwc host drivers are not required anymore, since the depends on PCI_MSI_IRQ_DOMAIN, right?
-
-That's correct. This is mostly a historical artifact from the time when
- we were able to build without MSI support. Those checks could be
-cleaned up now that we depend on the MSI options.
-
-Regards,
-Lucas
+We can emulate the instruction, that would actually work and be thread
+safe. Just a small matter of decoding and interpreting any possible
+write instruction ;-)
