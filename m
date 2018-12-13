@@ -6,92 +6,69 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08A1BC65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 20:27:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53C19C67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 20:27:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02A3C2086D
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 20:27:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02A3C2086D
+	by mail.kernel.org (Postfix) with ESMTP id 1A4E320851
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 20:27:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A4E320851
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727937AbeLMU1L (ORCPT
+        id S1728500AbeLMU12 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 15:27:11 -0500
-Received: from relmlor2.renesas.com ([210.160.252.172]:19026 "EHLO
+        Thu, 13 Dec 2018 15:27:28 -0500
+Received: from relmlor2.renesas.com ([210.160.252.172]:37948 "EHLO
         relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726457AbeLMU1K (ORCPT
+        by vger.kernel.org with ESMTP id S1726457AbeLMU12 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 15:27:10 -0500
+        Thu, 13 Dec 2018 15:27:28 -0500
 X-IronPort-AV: E=Sophos;i="5.56,349,1539615600"; 
-   d="scan'208";a="2555724"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 14 Dec 2018 05:22:05 +0900
+   d="scan'208";a="2555751"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 14 Dec 2018 05:22:23 +0900
 Received: from fabrizio-dev.ree.adwin.renesas.com (unknown [10.226.37.69])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id CC9B94072C54;
-        Fri, 14 Dec 2018 05:22:02 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 1CE6640F76C4;
+        Fri, 14 Dec 2018 05:22:20 +0900 (JST)
 From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
+To:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
 Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Simon Horman <horms@verge.net.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>
-Subject: [PATCH] media: dt-bindings: rcar-vin: Add R8A774C0 support
-Date:   Thu, 13 Dec 2018 20:21:59 +0000
-Message-Id: <1544732519-6956-1-git-send-email-fabrizio.castro@bp.renesas.com>
+        Biju Das <biju.das@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH] usb: gadget: udc: renesas_usb3: Add bindings for r8a774c0
+Date:   Thu, 13 Dec 2018 20:22:18 +0000
+Message-Id: <1544732538-7049-1-git-send-email-fabrizio.castro@bp.renesas.com>
 X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the compatible string for RZ/G2E (a.k.a. R8A774C0) to the list
-of SoCs supported by rcar-vin driver.
+Document RZ/G2E (R8A774C0) SoC bindings.
 
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- Documentation/devicetree/bindings/media/rcar_vin.txt | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ Documentation/devicetree/bindings/usb/renesas_usb3.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/media/rcar_vin.txt b/Documentation/devicetree/bindings/media/rcar_vin.txt
-index 7c878ca..34dcd28 100644
---- a/Documentation/devicetree/bindings/media/rcar_vin.txt
-+++ b/Documentation/devicetree/bindings/media/rcar_vin.txt
-@@ -7,12 +7,13 @@ family of devices.
- Each VIN instance has a single parallel input that supports RGB and YUV video,
- with both external synchronization and BT.656 synchronization for the latter.
- Depending on the instance the VIN input is connected to external SoC pins, or
--on Gen3 platforms to a CSI-2 receiver.
-+on Gen3 and RZ/G2 platforms to a CSI-2 receiver.
- 
-  - compatible: Must be one or more of the following
-    - "renesas,vin-r8a7743" for the R8A7743 device
-    - "renesas,vin-r8a7744" for the R8A7744 device
-    - "renesas,vin-r8a7745" for the R8A7745 device
-+   - "renesas,vin-r8a774c0" for the R8A774C0 device
-    - "renesas,vin-r8a7778" for the R8A7778 device
-    - "renesas,vin-r8a7779" for the R8A7779 device
-    - "renesas,vin-r8a7790" for the R8A7790 device
-@@ -60,10 +61,10 @@ The per-board settings Gen2 platforms:
-     - data-enable-active: polarity of CLKENB signal, see [1] for
-       description. Default is active high.
- 
--The per-board settings Gen3 platforms:
-+The per-board settings Gen3 and RZ/G2 platforms:
- 
--Gen3 platforms can support both a single connected parallel input source
--from external SoC pins (port@0) and/or multiple parallel input sources
-+Gen3 and RZ/G2 platforms can support both a single connected parallel input
-+source from external SoC pins (port@0) and/or multiple parallel input sources
- from local SoC CSI-2 receivers (port@1) depending on SoC.
- 
- - renesas,id - ID number of the VIN, VINx in the documentation.
+diff --git a/Documentation/devicetree/bindings/usb/renesas_usb3.txt b/Documentation/devicetree/bindings/usb/renesas_usb3.txt
+index d366555..35039e7 100644
+--- a/Documentation/devicetree/bindings/usb/renesas_usb3.txt
++++ b/Documentation/devicetree/bindings/usb/renesas_usb3.txt
+@@ -3,6 +3,7 @@ Renesas Electronics USB3.0 Peripheral driver
+ Required properties:
+   - compatible: Must contain one of the following:
+ 	- "renesas,r8a774a1-usb3-peri"
++	- "renesas,r8a774c0-usb3-peri"
+ 	- "renesas,r8a7795-usb3-peri"
+ 	- "renesas,r8a7796-usb3-peri"
+ 	- "renesas,r8a77965-usb3-peri"
 -- 
 2.7.4
 
