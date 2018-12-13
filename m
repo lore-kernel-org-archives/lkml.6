@@ -4,95 +4,116 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96548C67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:49:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72DABC65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:49:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50FDA20849
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:49:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37EBF20873
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:49:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544676543;
-	bh=iGAVxKq1iO2xLjOIllpXFqks25VHwv/ORYwa3/+kFAE=;
+	s=default; t=1544676556;
+	bh=n6HhcqaFl9aGw8SajgMuXO42PlMmzPSsGMneHHCn/h0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=N6qUTcwSF3ZgVTw62q5iP91ddXmkvJ+ZxbXbywQPFzocnvrnUeuxh+LgRLWHBoCoU
-	 aip++S1DhM29XuNrcFx7PTuoArS/dPRAslOolDLTwyyNVUmBOgZj3qgyhNHIFYEOI2
-	 iI7hBY02foCTQu/5VlyuabuFwwTgFWeLhQ1IQiSs=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50FDA20849
+	b=t/fun/1uqEMe3wwgGxr3Ssf8ikoy/PrmMF/CXIFcJMVX5avneKUk+yzDHavYJ7Fid
+	 h1Vpy7Ia54MmhQIZOYxa6iEtIVo6tePiSToNZz47xLLioGPGjmEfncse0qENK21v+s
+	 juWf1WWJGJhVbPLpRmUEKtF22c8lk+wgpreUSye4=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37EBF20873
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728486AbeLMEtC (ORCPT
+        id S1728780AbeLMEtO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 23:49:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33848 "EHLO mail.kernel.org"
+        Wed, 12 Dec 2018 23:49:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42942 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726478AbeLMEsi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 23:48:38 -0500
-Received: from sinanubuntu1604.mkjiurmyylmellclgttazegk5f.bx.internal.cloudapp.net (unknown [40.121.85.218])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        id S1727901AbeLMEaB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 23:30:01 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E32EF20870;
-        Thu, 13 Dec 2018 04:48:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C697A20879;
+        Thu, 13 Dec 2018 04:29:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544676518;
-        bh=iGAVxKq1iO2xLjOIllpXFqks25VHwv/ORYwa3/+kFAE=;
+        s=default; t=1544675400;
+        bh=n6HhcqaFl9aGw8SajgMuXO42PlMmzPSsGMneHHCn/h0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rFfHEDHtgi396HxYO3H4NI7lK9WGJZbmWLO31D8p6+kUYDzfe4wOwo/HX3p+OQVlV
-         eB9/cVvc80Kc/z2xge9p8j7MnrGTzENtPTMRIVL/KdDJQ85RuWNOe4WCoN4RDIgbwa
-         jxO+O8t8cu6H+TKAOZgL4jI8E8T7mWcTBn78JDBE=
-From:   Sinan Kaya <okaya@kernel.org>
-To:     linux-acpi@vger.kernel.org
-Cc:     Sinan Kaya <okaya@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v7 3/5] ACPI / OSL: Stub out acpi_os_write_pci_configuration when CONFIG_PCI is unset
-Date:   Thu, 13 Dec 2018 04:48:31 +0000
-Message-Id: <20181213044833.23952-4-okaya@kernel.org>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20181213044833.23952-1-okaya@kernel.org>
-References: <20181213044833.23952-1-okaya@kernel.org>
+        b=w25mVZdgcnUa6ZZNiKi8dnRnSAZnb+B00w5O9/SJtMipzvOoUxu1t2ciOrowDDdf5
+         k3LZ0EwiGhoJevvjlKes1cdFAP46T3/eAcSMLS0hHpvx4sG/Y4fjkgWf75hv4ahoBR
+         F7YCqTug2aFPxVkyalZJrNvioYbuADN3YjvASytI=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Heiner Kallweit <hkallweit1@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 42/73] net: phy: don't allow __set_phy_supported to add unsupported modes
+Date:   Wed, 12 Dec 2018 23:28:07 -0500
+Message-Id: <20181213042838.75160-42-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181213042838.75160-1-sashal@kernel.org>
+References: <20181213042838.75160-1-sashal@kernel.org>
 MIME-Version: 1.0
+X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Getting ready to allow CONFIG_PCI to be disabled with ACPI enabled. Stub
-out acpi_os_write_pci_configuration function that depend on PCI.
+From: Heiner Kallweit <hkallweit1@gmail.com>
 
-Signed-off-by: Sinan Kaya <okaya@kernel.org>
+[ Upstream commit d2a36971ef595069b7a600d1144c2e0881a930a1 ]
+
+Currently __set_phy_supported allows to add modes w/o checking whether
+the PHY supports them. This is wrong, it should never add modes but
+only remove modes we don't want to support.
+
+The commit marked as fixed didn't do anything wrong, it just copied
+existing functionality to the helper which is being fixed now.
+
+Fixes: f3a6bd393c2c ("phylib: Add phy_set_max_speed helper")
+Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/acpi/osl.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/net/phy/phy_device.c | 19 ++++++++-----------
+ 1 file changed, 8 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/acpi/osl.c b/drivers/acpi/osl.c
-index fb92b8a0ad31..524fd5f33ea4 100644
---- a/drivers/acpi/osl.c
-+++ b/drivers/acpi/osl.c
-@@ -812,6 +812,7 @@ acpi_status
- acpi_os_write_pci_configuration(struct acpi_pci_id * pci_id, u32 reg,
- 				u64 value, u32 width)
+diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
+index 733e35b7c4bb..20d1be2b070b 100644
+--- a/drivers/net/phy/phy_device.c
++++ b/drivers/net/phy/phy_device.c
+@@ -1738,20 +1738,17 @@ EXPORT_SYMBOL(genphy_loopback);
+ 
+ static int __set_phy_supported(struct phy_device *phydev, u32 max_speed)
  {
-+#ifdef CONFIG_PCI
- 	int result, size;
+-	phydev->supported &= ~(PHY_1000BT_FEATURES | PHY_100BT_FEATURES |
+-			       PHY_10BT_FEATURES);
+-
+ 	switch (max_speed) {
+-	default:
+-		return -ENOTSUPP;
+-	case SPEED_1000:
+-		phydev->supported |= PHY_1000BT_FEATURES;
++	case SPEED_10:
++		phydev->supported &= ~PHY_100BT_FEATURES;
+ 		/* fall through */
+ 	case SPEED_100:
+-		phydev->supported |= PHY_100BT_FEATURES;
+-		/* fall through */
+-	case SPEED_10:
+-		phydev->supported |= PHY_10BT_FEATURES;
++		phydev->supported &= ~PHY_1000BT_FEATURES;
++		break;
++	case SPEED_1000:
++		break;
++	default:
++		return -ENOTSUPP;
+ 	}
  
- 	switch (width) {
-@@ -833,6 +834,12 @@ acpi_os_write_pci_configuration(struct acpi_pci_id * pci_id, u32 reg,
- 				reg, size, value);
- 
- 	return (result ? AE_ERROR : AE_OK);
-+#else
-+	int rc;
-+
-+	rc = pr_warn_once("PCI configuration space access is not supported\n");
-+	return rc ? AE_SUPPORT : AE_OK;
-+#endif
- }
- 
- static void acpi_os_execute_deferred(struct work_struct *work)
+ 	return 0;
 -- 
-2.19.0
+2.19.1
 
