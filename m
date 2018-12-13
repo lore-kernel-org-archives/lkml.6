@@ -7,50 +7,49 @@ X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28824C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:31:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F07CC67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:31:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8E6A20879
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:31:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1DE8420672
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:31:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544675482;
-	bh=9kzaQpxtP+bjm9z3urHk5tq1rRPjRSdkROWqMnScT5A=;
+	s=default; t=1544675484;
+	bh=+trt5WXd89UdDfXyN9azN1n2wCcO3940CTZhoBUIQA8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=N/k3WHJalWLQbuvCppyCKQPiNvGqZkk/idTmS47w2rHXlKG6RGV4fZIGpco24Kjb1
-	 0IxhnObOt5jgxOB8cPpbWuKcsw8Ikt/CiE4Qrhu85PNWAejhaXetKgc7XSdp2RG8Af
-	 rPSe6tKq4T9Ge249+1j3Vgmw/pf6vPTCtjsLRYOM=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8E6A20879
+	b=ZyT+PWqr5qZug8MZXw8fR5vHRWZf0rnyTWsd87BdkDgNHJ41qX83yEClLwQVAz0Xl
+	 2ZZicelharAT2kktEDT4eKGGk+wenzHmCAcI7AfwA7ozft+9Mvm91fD1/EC+FyWhn4
+	 7/d/ESqenRN5FI/pJjXS5wLHOoDjQWyKW+06ijjA=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DE8420672
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728714AbeLMEbV (ORCPT
+        id S1728729AbeLMEbX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 23:31:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44028 "EHLO mail.kernel.org"
+        Wed, 12 Dec 2018 23:31:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44106 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728652AbeLMEbM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 23:31:12 -0500
+        id S1728694AbeLMEbR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 23:31:17 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 92F7E20873;
-        Thu, 13 Dec 2018 04:31:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7725820873;
+        Thu, 13 Dec 2018 04:31:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544675471;
-        bh=9kzaQpxtP+bjm9z3urHk5tq1rRPjRSdkROWqMnScT5A=;
+        s=default; t=1544675477;
+        bh=+trt5WXd89UdDfXyN9azN1n2wCcO3940CTZhoBUIQA8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jqF5XQ8DZXN010cRkEOMYLN23YCggGAjCo4nXdWbsX6ILdBxU4Z5BxZw74rNOxvHP
-         scrQzeGD6A6ykh+IQk+/IMBo5P7oRu+XxovWpo9NBdC5xQmhprTg5MEgy2HneDghZY
-         y0LzvdINz040GOz+uCU8O+htOvnGTSuaCpiAFL50=
+        b=jimFCjiWLqAtVx8GmNshN9btrfMYlyd5+A6KcqQ/e3fccYjJxDbxmT9gMyZPjRyYE
+         qvftHO2qU09Wgp7rs5hPRlvqZwFQM0bohr6S6GFBHBg8kyUrhozVpbPG4BiFLfZ/jH
+         anYFf45mmHKQ7rLiHXCo04gn8RrL8W5W9WcAtD90=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Chuck Lever <chuck.lever@oracle.com>, stable@kernel.org,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Sasha Levin <sashal@kernel.org>, linux-nfs@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 11/41] SUNRPC: Fix leak of krb5p encode pages
-Date:   Wed, 12 Dec 2018 23:30:24 -0500
-Message-Id: <20181213043054.75891-11-sashal@kernel.org>
+Cc:     Yangtao Li <tiny.windzz@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, sparclinux@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 14/41] drivers/sbus/char: add of_node_put()
+Date:   Wed, 12 Dec 2018 23:30:27 -0500
+Message-Id: <20181213043054.75891-14-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181213043054.75891-1-sashal@kernel.org>
 References: <20181213043054.75891-1-sashal@kernel.org>
@@ -62,44 +61,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chuck Lever <chuck.lever@oracle.com>
+From: Yangtao Li <tiny.windzz@gmail.com>
 
-[ Upstream commit 8dae5398ab1ac107b1517e8195ed043d5f422bd0 ]
+[ Upstream commit 6bd520ab7cf69486ea81fd3cdfd2d5a390ad1100 ]
 
-call_encode can be invoked more than once per RPC call. Ensure that
-each call to gss_wrap_req_priv does not overwrite pointers to
-previously allocated memory.
+use of_node_put() to release the refcount.
 
-Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
-Cc: stable@kernel.org
-Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/sunrpc/auth_gss/auth_gss.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/sbus/char/envctrl.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/net/sunrpc/auth_gss/auth_gss.c b/net/sunrpc/auth_gss/auth_gss.c
-index 9463af4b32e8..1281b967dbf9 100644
---- a/net/sunrpc/auth_gss/auth_gss.c
-+++ b/net/sunrpc/auth_gss/auth_gss.c
-@@ -1736,6 +1736,7 @@ priv_release_snd_buf(struct rpc_rqst *rqstp)
- 	for (i=0; i < rqstp->rq_enc_pages_num; i++)
- 		__free_page(rqstp->rq_enc_pages[i]);
- 	kfree(rqstp->rq_enc_pages);
-+	rqstp->rq_release_snd_buf = NULL;
- }
+diff --git a/drivers/sbus/char/envctrl.c b/drivers/sbus/char/envctrl.c
+index 56e962a01493..b8481927bfe4 100644
+--- a/drivers/sbus/char/envctrl.c
++++ b/drivers/sbus/char/envctrl.c
+@@ -910,8 +910,10 @@ static void envctrl_init_i2c_child(struct device_node *dp,
+ 			for (len = 0; len < PCF8584_MAX_CHANNELS; ++len) {
+ 				pchild->mon_type[len] = ENVCTRL_NOMON;
+ 			}
++			of_node_put(root_node);
+ 			return;
+ 		}
++		of_node_put(root_node);
+ 	}
  
- static int
-@@ -1744,6 +1745,9 @@ alloc_enc_pages(struct rpc_rqst *rqstp)
- 	struct xdr_buf *snd_buf = &rqstp->rq_snd_buf;
- 	int first, last, i;
- 
-+	if (rqstp->rq_release_snd_buf)
-+		rqstp->rq_release_snd_buf(rqstp);
-+
- 	if (snd_buf->page_len == 0) {
- 		rqstp->rq_enc_pages_num = 0;
- 		return 0;
+ 	/* Get the monitor channels. */
 -- 
 2.19.1
 
