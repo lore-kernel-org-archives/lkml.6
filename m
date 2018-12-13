@@ -2,95 +2,88 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 572C5C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 14:25:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97271C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 14:25:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1619820870
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 14:25:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544711107;
-	bh=vfOHb70GOidRcI8Dne8O2P6ASrrz7uigYJcPuqI8rFA=;
-	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
-	b=nfKn0Kk7n3u7DzuyfQ+Y8FtOHvkz5ezOVgnOaFSV9Rsn4a60GhBC9AdCMUE9fgGsy
-	 i0focxWXM8PKHFiPBC6HEJiG64DloCEDEbbLPgu3Z2CzCtWcaMhybysPGKa/5D49ip
-	 p9Skp+AmSI9MYy/Frxe/SkVILxf0Slbl2CE+hdew=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1619820870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 52E6020851
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 14:25:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LL2gSny3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52E6020851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728648AbeLMOZG (ORCPT
+        id S1728681AbeLMOZw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 09:25:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60398 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727618AbeLMOZG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 09:25:06 -0500
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AA23F20851;
-        Thu, 13 Dec 2018 14:25:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544711105;
-        bh=vfOHb70GOidRcI8Dne8O2P6ASrrz7uigYJcPuqI8rFA=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=y5xk/w1ezH/m2lzjWjC5V1vWJvaN9fvDbxXrHoj9a/1O8cjIBIhcyr4QiTDPAyWXd
-         rn/143xLm0DKyG2jh5CwLY9rWY344W/wBlALNairNNu1fgMVbB9u3jn6dEb3MnxrNO
-         mADJPjNzxUjZWNvxhVIFBzb4SFi/VmR9ESNkl//Y=
-Subject: Re: [PATCH][next] selftests: watchdog: fix spelling mistake
- "experies" -> "expires"
-To:     Colin King <colin.king@canonical.com>,
-        Jerry Hoemann <jerry.hoemann@hpe.com>,
-        linux-kselftest@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        shuah <shuah@kernel.org>
-References: <20181213094015.31397-1-colin.king@canonical.com>
-From:   shuah <shuah@kernel.org>
-Message-ID: <32532eac-969a-83e2-4373-fdbef613ce33@kernel.org>
-Date:   Thu, 13 Dec 2018 07:24:51 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 13 Dec 2018 09:25:52 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:49292 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727707AbeLMOZw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 09:25:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=RNdAwpOpjcEw5gyuU3aQftdjop2zfLzob/Tq26DDJHw=; b=LL2gSny39IbnWdLneMuNTDPVd
+        4QMA8s4nvuxWbjA5v+KtHBy4QSYzu3QwpPJjeBP2GktX8pQMxI0QMZ/2P4yTFObHDOWKnrwe7xwGo
+        Yg/PYVrtsBODwZEiP/6m+v4iYiLRKIF1OczVGhCKaH0nU3WnPAf/OZZKJjleTyS9VNVQFHMh/CVZC
+        zaAGkjnSrIOLLzlcSxut7PdRoRaB2unXhUXgfdeBBASLVQbRibHfEl4ULqbskDfUhreO2dng/f1fI
+        4owRphFHDMHwaut8TKcT9KrKa22gOySIvyLl5SbNq5MvDAjmIH7m3UOUvC78vmWYOim8LARSf8Htt
+        Tp20i7YLQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gXRvx-00033Q-9b; Thu, 13 Dec 2018 14:25:49 +0000
+Date:   Thu, 13 Dec 2018 06:25:49 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, david@fromorbit.com,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        linux-xfs@vger.kernel.org, Eric Sandeen <sandeen@sandeen.net>
+Subject: Re: [GIT PULL] xfs: fixes for v4.20-rc6
+Message-ID: <20181213142549.GA6708@infradead.org>
+References: <20181208163639.GR24487@magnolia>
+ <CAHk-=who9EqvvGaazise-dh7_DH6rLOULWXzysinyAPnHS4B0A@mail.gmail.com>
+ <20181211135818.GA29626@infradead.org>
+ <20181212181658.GA24487@magnolia>
 MIME-Version: 1.0
-In-Reply-To: <20181213094015.31397-1-colin.king@canonical.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181212181658.GA24487@magnolia>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/13/18 2:40 AM, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+On Wed, Dec 12, 2018 at 10:16:58AM -0800, Darrick J. Wong wrote:
+> On Tue, Dec 11, 2018 at 05:58:18AM -0800, Christoph Hellwig wrote:
+> > On Sat, Dec 08, 2018 at 11:24:48AM -0800, Linus Torvalds wrote:
+> > > Honestly, I really wish you simply wouldn't send me "xfs" fixes that
+> > > aren't really xfs-specific at all.
+> > > 
+> > > All the splice patches (and honestly, I feel some of the iomap ones
+> > > too) that have come in through the xfs tree should have been handled
+> > > separately as actual VFS patches. Or at least had acks from Al or
+> > > something.
+> > 
+> > iomap came in through the XFS tree originally, and has been very much
+> > maintained in combo, even though we now have another user with gfs.
+> > 
+> > Maybe we just need to make that official in MAINTAINERS?
 > 
-> There is a spelling mistake in the --gettimeleft help text, fix it.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->   tools/testing/selftests/watchdog/watchdog-test.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/tools/testing/selftests/watchdog/watchdog-test.c b/tools/testing/selftests/watchdog/watchdog-test.c
-> index dac907a932ce..c2333c78cf04 100644
-> --- a/tools/testing/selftests/watchdog/watchdog-test.c
-> +++ b/tools/testing/selftests/watchdog/watchdog-test.c
-> @@ -78,7 +78,7 @@ static void usage(char *progname)
->   	printf(" -T, --gettimeout    Get the timeout\n");
->   	printf(" -n, --pretimeout=T  Set the pretimeout to T seconds\n");
->   	printf(" -N, --getpretimeout Get the pretimeout\n");
-> -	printf(" -L, --gettimeleft   Get the time left until timer experies\n");
-> +	printf(" -L, --gettimeleft   Get the time left until timer expires\n");
->   	printf("\n");
->   	printf("Parameters are parsed left-to-right in real-time.\n");
->   	printf("Example: %s -d -t 10 -p 5 -e\n", progname);
-> 
+> Yes, though who should be the official maintainer?  You wrote most of
+> the iomap code; do you want to maintain it yourself?  Or have people
+> funnel them wherever XFS patches go? :)
 
-That is quick! Thanks for the patch. I will apply it to linuxk-kselftest 
-next
-
-thanks,
--- Shuah
+Well, the original version is from Dave, although I'm not sure if much
+of that code is left.  I think just maintaining it with XFS is a good
+idea.  But if we need an explicit maintainer I can do it.
