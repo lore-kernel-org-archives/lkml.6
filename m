@@ -7,50 +7,68 @@ X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAA57C67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:29:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7E22C67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:29:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF02F20849
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:29:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AEFAB20879
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:29:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544675344;
-	bh=8lsBQtSTM/RdnxZ+FR10LTHgzmmFPISdxgYkJsR6mNU=;
+	s=default; t=1544675347;
+	bh=zkAUfal45l9g3LqBJLr0ZfwiMqnzAmugf+weQIly7OE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=NegZi7ue8WejgyZ8pCKly03m29nYe+A+Jyr8uaXNbqy3bdpozl1yZYpxXVZiPTFY3
-	 3gupXCHJLX6Iri4xBnjO5dMsD8skPaPSQBfyFbQJIfrWeTU6fhdt/vRmGQ0NVp/83a
-	 HNQ4rENEBmjHdreJeGGEZylp10mN57rJpTN6C+94=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF02F20849
+	b=czHfTO1VVfcPfuEcqLyBRgAHaDG5Q9K2t0nUFojrx/sos4/w6vKDHYIRe+H1FqdlQ
+	 7ag92SVALhOuJNXTYDUL92X6FRxtr4VQiNAdqC5PVOvYj1WHBEVHSs9cnA5U/yXM6g
+	 VKfoWn2WR1yjrbFdUApnsTEg2+yNxHFjWcDmwZbk=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEFAB20879
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727316AbeLME3E (ORCPT
+        id S1727357AbeLME3G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 23:29:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41752 "EHLO mail.kernel.org"
+        Wed, 12 Dec 2018 23:29:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41788 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727118AbeLME2x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 23:28:53 -0500
+        id S1727160AbeLME24 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 23:28:56 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D833620849;
-        Thu, 13 Dec 2018 04:28:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0BEE220873;
+        Thu, 13 Dec 2018 04:28:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544675332;
-        bh=8lsBQtSTM/RdnxZ+FR10LTHgzmmFPISdxgYkJsR6mNU=;
+        s=default; t=1544675335;
+        bh=zkAUfal45l9g3LqBJLr0ZfwiMqnzAmugf+weQIly7OE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GlUbZjEFaQ7feXojfAyUJTkx8QxRtKsUueJNLNLSnPrn1f9mlujk/9/pfkXj1OZoL
-         0ggo9NFVfGSN+vrpzuu2Gq6PX8DN3QRVDl5JNkcJrgLOFgO4d9m+MED7kQIW6vqQdq
-         zeMRU3637DxQY9QXeePDDDv8fdxkoQunWDMfrVsw=
+        b=SN7+XxW3K9TFDcGq2PtKZra8nTMDvCx1C9JnbT+ac9W1qZVjQE5oVXsINrZ6sL+aI
+         EeohpIbWGQz7IulNL0xi9kFXqkjx8iwz7CpcYCjdSEcj4V6ZQJiwPQSQQogI8EMXJ+
+         U+v1Nskx0/l5vZJj7iqahdym0CajVXPRFwVDIRyo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Roman Li <Roman.Li@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.19 10/73] drm/amd/display: Fix 6x4K displays light-up on Vega20 (v2)
-Date:   Wed, 12 Dec 2018 23:27:35 -0500
-Message-Id: <20181213042838.75160-10-sashal@kernel.org>
+Cc:     YiFei Zhu <zhuyifei1999@gmail.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arend van Spriel <arend.vanspriel@broadcom.com>,
+        Bhupesh Sharma <bhsharma@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Eric Snowberg <eric.snowberg@oracle.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Joe Perches <joe@perches.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Julien Thierry <julien.thierry@arm.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
+        Sedat Dilek <sedat.dilek@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 11/73] x86/earlyprintk/efi: Fix infinite loop on some screen widths
+Date:   Wed, 12 Dec 2018 23:27:36 -0500
+Message-Id: <20181213042838.75160-11-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181213042838.75160-1-sashal@kernel.org>
 References: <20181213042838.75160-1-sashal@kernel.org>
@@ -62,43 +80,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Roman Li <Roman.Li@amd.com>
+From: YiFei Zhu <zhuyifei1999@gmail.com>
 
-[ Upstream commit c6888879fd55b1ba903c2a770127edbf6aef6f27 ]
+[ Upstream commit 79c2206d369b87b19ac29cb47601059b6bf5c291 ]
 
-[Why]
-More than 4x4K didn't lightup on Vega20 due to low dcfclk value.
-Powerplay expects valid min requirement for dcfclk from DC.
+An affected screen resolution is 1366 x 768, which width is not
+divisible by 8, the default font width. On such screens, when longer
+lines are earlyprintk'ed, overflow-to-next-line can never trigger,
+due to the left-most x-coordinate of the next character always less
+than the screen width. Earlyprintk will infinite loop in trying to
+print the rest of the string but unable to, due to the line being
+full.
 
-[How]
-Update min_dcfclock_khz based on min_engine_clock value.
+This patch makes the trigger consider the right-most x-coordinate,
+instead of left-most, as the value to compare against the screen
+width threshold.
 
-v2: backport to 4.20 (Alex)
-
-Reviewed-by: Hersen Wu <hersenxs.wu@amd.com>
-Reviewed-by: Feifei Xu <Feifei.Xu@amd.com>
-Reviewed-by: Evan Quan <evan.quan@amd.com>
-Acked-by: Alex Deucher <alexander.deucher@amd.com>
-Signed-off-by: Roman Li <Roman.Li@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: YiFei Zhu <zhuyifei1999@gmail.com>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Arend van Spriel <arend.vanspriel@broadcom.com>
+Cc: Bhupesh Sharma <bhsharma@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Eric Snowberg <eric.snowberg@oracle.com>
+Cc: Hans de Goede <hdegoede@redhat.com>
+Cc: Joe Perches <joe@perches.com>
+Cc: Jon Hunter <jonathanh@nvidia.com>
+Cc: Julien Thierry <julien.thierry@arm.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Matt Fleming <matt@codeblueprint.co.uk>
+Cc: Nathan Chancellor <natechancellor@gmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+Cc: Sedat Dilek <sedat.dilek@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-efi@vger.kernel.org
+Link: http://lkml.kernel.org/r/20181129171230.18699-12-ard.biesheuvel@linaro.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/display/dc/dce110/dce110_hw_sequencer.c | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/x86/platform/efi/early_printk.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/dce110/dce110_hw_sequencer.c b/drivers/gpu/drm/amd/display/dc/dce110/dce110_hw_sequencer.c
-index b2f308766a9e..0941f3c689bc 100644
---- a/drivers/gpu/drm/amd/display/dc/dce110/dce110_hw_sequencer.c
-+++ b/drivers/gpu/drm/amd/display/dc/dce110/dce110_hw_sequencer.c
-@@ -2530,6 +2530,8 @@ static void pplib_apply_display_requirements(
- 			dc,
- 			context->bw.dce.sclk_khz);
+diff --git a/arch/x86/platform/efi/early_printk.c b/arch/x86/platform/efi/early_printk.c
+index 5fdacb322ceb..c3e6be110b7d 100644
+--- a/arch/x86/platform/efi/early_printk.c
++++ b/arch/x86/platform/efi/early_printk.c
+@@ -179,7 +179,7 @@ early_efi_write(struct console *con, const char *str, unsigned int num)
+ 			num--;
+ 		}
  
-+	pp_display_cfg->min_dcfclock_khz = pp_display_cfg->min_engine_clock_khz;
-+
- 	pp_display_cfg->min_engine_clock_deep_sleep_khz
- 			= context->bw.dce.sclk_deep_sleep_khz;
- 
+-		if (efi_x >= si->lfb_width) {
++		if (efi_x + font->width > si->lfb_width) {
+ 			efi_x = 0;
+ 			efi_y += font->height;
+ 		}
 -- 
 2.19.1
 
