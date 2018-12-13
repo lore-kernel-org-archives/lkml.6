@@ -2,153 +2,162 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DFFAC65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 22:00:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99F27C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 22:01:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2239020870
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 22:00:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="eA8WIXgS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2239020870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+	by mail.kernel.org (Postfix) with ESMTP id 5573F20870
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 22:01:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5573F20870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728449AbeLMWAJ (ORCPT
+        id S1727709AbeLMWBF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 17:00:09 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:41391 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726581AbeLMWAH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 17:00:07 -0500
-Received: by mail-pg1-f193.google.com with SMTP id m1so39653pgq.8
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 14:00:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=x+f/EfUPLBLGG2sYEYaNMMzAuZ97OhsHrasfcI1i1dE=;
-        b=eA8WIXgSivGYPJTr0NmtofJ1i6L/CP111yK6ftVgSy96wCASqEQE2oDzTfksMNS2hW
-         zcB5g5rZXoCwGruRvB3THy6MpdDVQ5b4pQpZiSqs6dx1l0IUsdXYSMGwmkYndyyPSo0k
-         SNmhUS7qpcrRTJZBoxk/UVow85iGHcnMczKKEVmJo30KoEucUXdfS4BVztFVqSAy+8wS
-         af39tNLBmFyirIILRlSX/igBcqwJmxMETArz4sVzz8ewrSJ4H0cxrnYeBZQkOEA6Zv1A
-         gu4FxxohgB4giy5I5/6uAAs9ZwGUKzkuIWkVSvHg4SjSfNu9VGldLjpPKSp2hvXeR+cg
-         e2+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=x+f/EfUPLBLGG2sYEYaNMMzAuZ97OhsHrasfcI1i1dE=;
-        b=tyd5q160083pKMGHI5PchstNLVLy+AZImoFYjlzrJ1BEKc7c1d+hkgVw4QmxdvBeTx
-         FsGIFQ0IYAQr4pyclGaLktCT51NEMi3MmwJfRjnNPqpXu4bAiUJfdmVi+GG4QeFZ7Wje
-         soQrNV1qRY/qs2QtgpR3lou3rQJqvDUcx8/y1rX0XsHBQEvSCeRVbxYEv7gHAj/Ll31o
-         uoM2/oIHVPxMXvqYhGhMwNgWifua5zWzSwvbOs5Du/Mojt2Cb4GJigW2emqTKAbGIUN8
-         jCGYgaB4LBBLdL5U5L5ek5eJUBui8xyyrKEfbZiZGmaJgih4w2fHHyGaq3/1blXclslo
-         FhNA==
-X-Gm-Message-State: AA+aEWaVmM5rGQGHapki5zhSPV4+mwSggcpJnGQ5zScIX9ad92+EFo5x
-        ImqUhTIKJH+KzcE5tksvss88/Q==
-X-Google-Smtp-Source: AFSGD/UoDUJ78ZW1naZJSgg/wi6mH6Y8aDd8bc49O21snTBR+QJpStXL8gKjaA5qi8Rp0MNVjDsxMg==
-X-Received: by 2002:a62:3006:: with SMTP id w6mr452895pfw.258.1544738406057;
-        Thu, 13 Dec 2018 14:00:06 -0800 (PST)
-Received: from kshutemo-mobl1.localdomain ([192.55.54.45])
-        by smtp.gmail.com with ESMTPSA id r66sm3935854pfk.157.2018.12.13.14.00.04
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 13 Dec 2018 14:00:05 -0800 (PST)
-Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
-        id AFE6E30025E; Fri, 14 Dec 2018 01:00:00 +0300 (+03)
-Date:   Fri, 14 Dec 2018 01:00:00 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Richard Weinberger <richard@nod.at>
-Cc:     zhangjun <openzhangj@gmail.com>,
-        Artem Bityutskiy <dedekind1@gmail.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kirill.shutemov@linux.intel.com, hch@lst.de,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2] ubifs: fix page_count in ->ubifs_migrate_page()
-Message-ID: <20181213220000.7b56wysed67y5iv6@kshutemo-mobl1>
-References: <1544728817-2870-1-git-send-email-openzhangj@gmail.com>
- <8239265.3QN2sXB6kY@blindfold>
+        Thu, 13 Dec 2018 17:01:05 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:51762 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726457AbeLMWBE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 17:01:04 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id A3E818CAF;
+        Thu, 13 Dec 2018 22:01:03 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-223.bos.redhat.com [10.18.17.223])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 376C36012D;
+        Thu, 13 Dec 2018 22:01:02 +0000 (UTC)
+Subject: Re: [PATCH] debugobjects: Move printk out of db lock critical
+ sections
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+        Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Yang Shi <yang.shi@linux.alibaba.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Dmitry Safonov <dima@arista.com>
+References: <1544653694-27873-1-git-send-email-longman@redhat.com>
+ <20181212153901.4e9c142cf2d6a75373d28368@linux-foundation.org>
+From:   Waiman Long <longman@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ weim8xU=
+Organization: Red Hat
+Message-ID: <2f2ef86b-e28c-7d98-6a89-bf09e26ff3f8@redhat.com>
+Date:   Thu, 13 Dec 2018 17:01:01 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8239265.3QN2sXB6kY@blindfold>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20181212153901.4e9c142cf2d6a75373d28368@linux-foundation.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Thu, 13 Dec 2018 22:01:03 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 13, 2018 at 10:36:47PM +0100, Richard Weinberger wrote:
-> Am Donnerstag, 13. Dezember 2018, 20:20:17 CET schrieb zhangjun:
-> > Because the PagePrivate() in UBIFS is different meanings,
-> 
-> ...has different meanings...
-> 
-> I'll fix up that myself after applying your patch. No need to send a v3.
-> 
-> > alloc_cma() will fail when one dirty page cache located in
-> > the type of MIGRATE_CMA
-> > 
-> > If not adjust the 'extra_count' for dirty page,
-> > ubifs_migrate_page() -> migrate_page_move_mapping() will
-> > always return -EAGAIN for:
-> > 	expected_count += page_has_private(page)
-> > This causes the migration to fail until the page cache is cleaned
-> > 
-> > In general, PagePrivate() indicates that buff_head is already bound
-> > to this page, and at the same time page_count() will also increase.
-> > But UBIFS set private flag when the cache is dirty, and page_count()
-> > not increase.
-> > Therefore, the expected_count of UBIFS is different from the general
-> > case.
-> > 
-> > Signed-off-by: zhangjun <openzhangj@gmail.com>
-> 
-> Fixes: 4ac1c17b2044 ("UBIFS: Implement ->migratepage()")
-> 
-> > ---
-> >  fs/ubifs/file.c | 11 ++++++++++-
-> >  1 file changed, 10 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/fs/ubifs/file.c b/fs/ubifs/file.c
-> > index 1b78f2e..890dfce 100644
-> > --- a/fs/ubifs/file.c
-> > +++ b/fs/ubifs/file.c
-> > @@ -1480,8 +1480,17 @@ static int ubifs_migrate_page(struct address_space *mapping,
-> >  		struct page *newpage, struct page *page, enum migrate_mode mode)
-> >  {
-> >  	int rc;
-> > +	int extra_count = 0;
-> >  
-> > -	rc = migrate_page_move_mapping(mapping, newpage, page, NULL, mode, 0);
-> > +	/*
-> > +	 * UBIFS uses PG_private as marker and does not raise the page counter.
-> > +	 * migrate_page_move_mapping() expects a incremented counter if
-> > +	 * PG_private is set. Therefore pass -1 as extra_count for this case.
-> > +	 */
-> > +	if (page_has_private(page))
-> > +		extra_count = -1;
-> > +	rc = migrate_page_move_mapping(mapping, newpage, page,
-> > +			NULL, mode, extra_count);
-> >  	if (rc != MIGRATEPAGE_SUCCESS)
-> >  		return rc;
-> >  
-> 
-> Let's wait a few days to give Kirill a chance to review, then I'll apply the patch.
+On 12/12/2018 06:39 PM, Andrew Morton wrote:
+> On Wed, 12 Dec 2018 17:28:14 -0500 Waiman Long <longman@redhat.com> wrote:
+>
+>> The db->lock is a raw spinlock and so the lock hold time is supposed
+>> to be short. This will not be the case when printk() is being involved
+>> in some of the critical sections. In order to avoid the long hold time,
+>> in case some messages need to be printed, the debug_object_is_on_stack()
+>> and debug_print_object() calls are now moved out of those critical
+>> sections.
+>>
+>> Holding the db->lock while calling printk() may lead to deadlock if
+>> printk() somehow requires the allocation/freeing of debug object that
+>> happens to be in the same hash bucket or a circular lock dependency
+>> warning from lockdep as reported in https://lkml.org/lkml/2018/12/11/143.
+>>
+>> [   87.209665] WARNING: possible circular locking dependency detected
+>> [   87.210547] 4.20.0-rc4-00057-gc96cf92 #1 Tainted: G        W
+>> [   87.211449] ------------------------------------------------------
+>> [   87.212405] getty/519 is trying to acquire lock:
+>> [   87.213074] (____ptrval____) (&obj_hash[i].lock){-.-.}, at: debug_check_no_obj_freed+0xb4/0x302
+>> [   87.214343]
+>> [   87.214343] but task is already holding lock:
+>> [   87.215174] (____ptrval____) (&port_lock_key){-.-.}, at: uart_shutdown+0x3a3/0x4e2
+>> [   87.216260]
+>> [   87.216260] which lock already depends on the new lock.
+>>
+>> This patch was also found to be able to fix a boot hanging problem
+>> when the initramfs image was switched on after a debugobjects splat
+>> from the EFI code.
+> Patch looks sensible, but I have a nit about the variable names.
+>
+>> --- a/lib/debugobjects.c
+>> +++ b/lib/debugobjects.c
+>> @@ -375,6 +375,8 @@ static void debug_object_is_on_stack(void *addr, int onstack)
+>>  	struct debug_bucket *db;
+>>  	struct debug_obj *obj;
+>>  	unsigned long flags;
+>> +	bool debug_printobj = false;
+> "debug_printobject" would be better, but this code already intermingles
+> "obj" and "object".
+>
+>> +	bool debug_chkstack = false;
+> Not so good.  Is it debug_chkstack or debug_checkstk or ...
+>
+> This file uses "check" consistently so let's not depart from that? 
+> Linux style is to avoid these tricky little abbreviations and to use
+> full words.  
+>
+> ie, debug_checkstack, please.  Better would be debug_check_stack.  Or
+> simply check_stack: the "debug" doesn't add anything useful.
+>
+>
+Thanks for the review. I have eliminated debug_printobj in the new v2 patch.
 
-I don't remmeber much context now...
+Cheers,
+Longman
 
-Could you remind me why ubifs doesn't take additional pin when sets
-PG_private?
-
-Migration is not the only place where the additional pin is implied.
-See all users of page_has_private() helper. Notably reclaim path.
-
--- 
- Kirill A. Shutemov
