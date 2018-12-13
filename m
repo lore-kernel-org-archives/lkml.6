@@ -2,146 +2,112 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.4 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D1E6C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 09:50:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FC79C67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 09:51:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C818E20645
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 09:50:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C818E20645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 3124220645
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 09:51:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gJPT08Ze"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3124220645
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728049AbeLMJuy (ORCPT
+        id S1728148AbeLMJvC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 04:50:54 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:42476 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727570AbeLMJux (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 04:50:53 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 78DE9207B8; Thu, 13 Dec 2018 10:50:50 +0100 (CET)
-Received: from localhost (unknown [88.191.26.124])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 43EB92037D;
-        Thu, 13 Dec 2018 10:50:50 +0100 (CET)
-Date:   Thu, 13 Dec 2018 10:50:50 +0100
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        linux-pwm@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-i2c@vger.kernel.org, groeck@chromium.org,
-        kernel@collabora.com, linux-rtc@vger.kernel.org,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Benson Leung <bleung@chromium.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        linux-input@vger.kernel.org,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        devicetree@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-pm@vger.kernel.org, MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH v2] MAINTAINERS: add maintainers for ChromeOS EC
- sub-drivers
-Message-ID: <20181213095050.GM19816@piout.net>
-References: <20181211190953.13626-1-enric.balletbo@collabora.com>
- <20181212222937.GL19816@piout.net>
- <6f688bfe-2ebe-1934-0375-016ae859dcfb@collabora.com>
+        Thu, 13 Dec 2018 04:51:02 -0500
+Received: from mail-io1-f67.google.com ([209.85.166.67]:37019 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727570AbeLMJvB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 04:51:01 -0500
+Received: by mail-io1-f67.google.com with SMTP id f14so1107965iol.4;
+        Thu, 13 Dec 2018 01:51:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ezbHoWf80BLtCbUijBrlHvAIXH6La9Qg8eHy3jvz1Ec=;
+        b=gJPT08ZeREatQfB1fKpjZyEtVL1OD6wi2rDoSK97K2ICAbAzsJDG7EzbwYbh9yR5lM
+         V3jNXHYLptW6duIC4LsFFZVcoRDTlBaOjrxaI30W6oXw1JFfjlE1JJX2clRpkkqqDpU7
+         Y6NEXKuQBxQmWnCiySmwyiSs7snNOdkh18qWm1dC27GnAze2uaBNdo99tmp3tUhWBoZy
+         lK5ne1adYFTIwyuAgpa99c2Qa4HGHELLNc4dLhjQR83eqmX92BIXXsUHhAhloNU3l6xK
+         Lr90OYb8WQVcmdx3Cw/WaVJOYiMFIa4gdxTkWvuVPWeBuoZ/TaE8TukfQ/Q5SKc/HhSI
+         +57w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ezbHoWf80BLtCbUijBrlHvAIXH6La9Qg8eHy3jvz1Ec=;
+        b=fn0cGLUB33oCgOT807+pDn1cdjnCI3hJRrfT6VeMemOYc0/NsWpVQYJazgrDcJeLwz
+         5BoUJqs2m/rLfXsPsZUHn7igLQZqodXn6qkLg+NqfhJJCKOBx4w/tDOPFwfeBkpU3T7t
+         UCuMelS2lGPzQRsQcyZsUUSMiYKrgpYMXUnsU7GAvBAnNebQmDpuAMSdJ/H7V5ezkl3V
+         f6KEeG4Nsww3Rs9NJPJd1zBR5hnrwA85yutSHA9nlZ9XnHsC6QgbYWPitlGMf+J8rTin
+         9I77taYgAzmPOxwd+KtSKcTnmuPU+vQpfHwb1pars/Ae4snlRNnJETQPocfP1O4b/cCF
+         7apQ==
+X-Gm-Message-State: AA+aEWbEij3iWiqqpmA35E6TgmgysiQ4nkFWVANJldLhZ8Gwd73xAa58
+        nlkVwFRp8q711TAd2qKtlg0Xhic9pXzN9iA6S3g=
+X-Google-Smtp-Source: AFSGD/VvcG6681dh8RZvPDokrHevqQUIAbBMwvvyeri7cZM03Mh+ThQ6QK9/xYMGEZ9MnOK79Jp/jxOy/aDAdQ9Djj8=
+X-Received: by 2002:a5e:db44:: with SMTP id r4mr17624992iop.142.1544694660615;
+ Thu, 13 Dec 2018 01:51:00 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6f688bfe-2ebe-1934-0375-016ae859dcfb@collabora.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1544014590-14429-1-git-send-email-laoar.shao@gmail.com>
+ <1544014590-14429-4-git-send-email-laoar.shao@gmail.com> <20181212232648.qsvyuc3g2jj5v2ej@salvia>
+In-Reply-To: <20181212232648.qsvyuc3g2jj5v2ej@salvia>
+From:   Yafang Shao <laoar.shao@gmail.com>
+Date:   Thu, 13 Dec 2018 17:50:23 +0800
+Message-ID: <CALOAHbDfYD-nEWrW5pryibafg7tEYDsyu-6-Ey2Sdwa9O64Xnw@mail.gmail.com>
+Subject: Re: [PATCH 4/5] netfilter: fix missed NULL check in nf_conntrack_proto_pernet_init()
+To:     pablo@netfilter.org
+Cc:     kadlec@blackhole.kfki.hu, fw@strlen.de,
+        David Miller <davem@davemloft.net>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        netdev <netdev@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13/12/2018 10:30:16+0100, Enric Balletbo i Serra wrote:
-> > However, you should probably indicate which tree do you expect that to
-> > go through ;)
-> > 
-> 
-> Well, these are sub-drivers for different subsystems but are related to the main
-> ChromeOS EC. I expect all go through their specific subsystem and their
-> maintainer. I.e the rtc driver go through your tree, the mfd go through Lee's
-> tree, iio drivers through Jonathan's tree, etc. This is the reason I did not add
-> the tree. Main purpose here as that Benson and I are aware when someone sends a
-> change on one of the sub-drivers and we can review these patches.
-> 
+On Thu, Dec 13, 2018 at 7:26 AM Pablo Neira Ayuso <pablo@netfilter.org> wrote:
+>
+> On Wed, Dec 05, 2018 at 08:56:29PM +0800, Yafang Shao wrote:
+> > nf_ct_l4proto_net() may return NULL.
+> > That may happens if some module forget to set both l4proto->get_net_proto
+> > and l4proto->net_id.
+> > We'd check the return value here, in case crash happens.
+> >
+> > Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+> > ---
+> >  net/netfilter/nf_conntrack_proto.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> >
+> > diff --git a/net/netfilter/nf_conntrack_proto.c b/net/netfilter/nf_conntrack_proto.c
+> > index 154e8c0..316fef3 100644
+> > --- a/net/netfilter/nf_conntrack_proto.c
+> > +++ b/net/netfilter/nf_conntrack_proto.c
+> > @@ -946,6 +946,9 @@ int nf_conntrack_proto_pernet_init(struct net *net)
+> >       struct nf_proto_net *pn = nf_ct_l4proto_net(net,
+> >                                       &nf_conntrack_l4proto_generic);
+>
+> There is another spot missing in this file that is missing the check
+> for NULL.
+>
+> We can probably simplify all this is we place the gre conntracker in
+> the conntrack core, as it's been suggested already. It's the only one
+> remaining as a module and it now supports for IPv6, so it's probably
+> better follow that path.
 
-Sure, sorry I was not clear but I was asking about this particular
-patch because as it is, you will get acks from all the maintainers but I
-think they all think someone else will apply it ;)
+Got it.
+Thanks for your explanation.
 
-> Thanks,
->  Enric
-> 
-> >> ---
-> >>
-> >> Changes in v2:
-> >> - Fix typo in Benson email address.
-> >>
-> >>  MAINTAINERS | 24 ++++++++++++++++++++++++
-> >>  1 file changed, 24 insertions(+)
-> >>
-> >> diff --git a/MAINTAINERS b/MAINTAINERS
-> >> index a24129b0b043..bbe7180e2851 100644
-> >> --- a/MAINTAINERS
-> >> +++ b/MAINTAINERS
-> >> @@ -3625,6 +3625,30 @@ S:	Maintained
-> >>  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/bleung/chrome-platform.git
-> >>  F:	drivers/platform/chrome/
-> >>  
-> >> +CHROMEOS EC SUBDRIVERS
-> >> +M:	Benson Leung <bleung@chromium.org>
-> >> +M:	Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> >> +S:	Maintained
-> >> +F:	Documentation/devicetree/bindings/extcon/extcon-usbc-cros-ec.txt
-> >> +F:	Documentation/devicetree/bindings/input/cros-ec-keyb.txt
-> >> +F:	Documentation/devicetree/bindings/pwm/google,cros-ec-pwm.txt
-> >> +F:	Documentation/devicetree/bindings/i2c/i2c-cros-ec-tunnel.txt
-> >> +F:	Documentation/devicetree/bindings/mfd/cros-ec.txt
-> >> +F:	Documentation/ABI/testing/sysfs-bus-iio-cros-ec
-> >> +F:	drivers/extcon/extcon-usbc-cros-ec.c
-> >> +F:	drivers/i2c/busses/i2c-cros-ec-tunnel.c
-> >> +F:	drivers/iio/accel/cros_ec*
-> >> +F:	drivers/iio/common/cros_ec_sensors/
-> >> +F:	drivers/iio/light/cros_ec*
-> >> +F:	drivers/iio/pressure/cros_ec*
-> >> +F:	drivers/input/keyboard/cros_ec*
-> >> +F:	drivers/mfd/cros_ec*
-> >> +F:	drivers/power/supply/cros_usbpd-charger.c
-> >> +F:	drivers/pwm/pwm-cros-ec.c
-> >> +F:	drivers/rtc/rtc-cros-ec.c
-> >> +F:	include/linux/iio/common/cros_ec_sensors_core.h
-> >> +F:	include/linux/mfd/cros_ec*
-> >> +
-> >>  CIRRUS LOGIC AUDIO CODEC DRIVERS
-> >>  M:	Brian Austin <brian.austin@cirrus.com>
-> >>  M:	Paul Handrigan <Paul.Handrigan@cirrus.com>
-> >> -- 
-> >> 2.19.2
-> >>
-> > 
-
--- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Thanks
+Yafang
