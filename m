@@ -2,154 +2,102 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,T_MIXED_ES,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41C19C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:40:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EBDDC67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:40:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 111892087F
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:40:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 111892087F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 02EA12086D
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:40:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544704849;
+	bh=WHz2jgBkZmKTEOjKSNezVMlxGOUitAURhKFHYdVjYpM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=sR5hzcpAdEIn9RWcmtdwbA3HR21RzEar116KLiLj0fGiQcuVgd73FD5FS66ucbGmV
+	 T29c5UFUP0lR4b8LITy2TeW+eb+4pxkmGPcLWEdxiWntWEMFeaGwOaVGWXL7txCplN
+	 AV8bOUKZknH32mTQy8pUP6cucAhtCJtbg309VMic=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02EA12086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729203AbeLMMkb (ORCPT
+        id S1729220AbeLMMkr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 07:40:31 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:32894 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729145AbeLMMkb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 07:40:31 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B3A4BA78;
-        Thu, 13 Dec 2018 04:40:30 -0800 (PST)
-Received: from localhost (unknown [10.1.25.102])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 758FF3F575;
-        Thu, 13 Dec 2018 04:40:30 -0800 (PST)
-Received: from cmarinas by localhost with local (Exim 4.89)
-        (envelope-from <catalin.marinas@arm.com>)
-        id 1gXQHx-0001Pq-Na; Thu, 13 Dec 2018 12:40:25 +0000
-Date:   Thu, 13 Dec 2018 12:40:25 +0000
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Rich Felker <dalias@libc.org>, tg@mirbsd.de,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Florian Weimer <fweimer@redhat.com>,
-        Mike Frysinger <vapier@gentoo.org>,
-        "H. J. Lu" <hjl.tools@gmail.com>, x32@buildd.debian.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Will Deacon <will.deacon@arm.com>
-Subject: Re: Can we drop upstream Linux x32 support?
-Message-ID: <20181213124025.bczxzj6ez34joo6v@localhost>
-References: <CALCETrXoRAibsbWa9nfbDrt0iEuebMnCMhSFg-d9W-J2g8mDjw@mail.gmail.com>
- <CAHk-=wi_Kp=3XmGDdzmadzFSPFvuL+aAJ6ZPAR=o4z=KwYT2vw@mail.gmail.com>
- <Pine.BSM.4.64L.1812112150480.21176@herc.mirbsd.org>
- <CALCETrWgpAX7FV23zHmid83SsgnwFMKD4a_-xSEgB6v0kJR5sA@mail.gmail.com>
- <Pine.BSM.4.64L.1812112327500.21176@herc.mirbsd.org>
- <CALCETrXf0rmadycxmpGxd41qP9X+PAjyGHTwbGhKyp6oMKMRrA@mail.gmail.com>
- <Pine.BSM.4.64L.1812120231410.21176@herc.mirbsd.org>
- <CALCETrUYn=S=hmJ0tKdm2LoSgkWchY2_65sH7hJZp7wfS30giw@mail.gmail.com>
- <20181212165237.GT23599@brightrain.aerifal.cx>
- <CALCETrV6+YAazq7vY_aR=4kXc4ykXb1Se7hgvHeEVJtbZ91=Qg@mail.gmail.com>
+        Thu, 13 Dec 2018 07:40:47 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:46824 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729144AbeLMMkr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 07:40:47 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=WHz2jgBkZmKTEOjKSNezVMlxGOUitAURhKFHYdVjYpM=; b=S5BaPGc9SFzsyMkH79BLXdx+U
+        mv7QshaHvtqal58jcwPJh4qhDkBL+ftfzuzvWlN/CsNBxh/Xy6LXj8udCAxTa9Qb7KiqMKKltenZ2
+        7pRUTKnb6AT2h5e10shbTjpKBs2jh2ILcTgOH+OycFmmE3D1IQGyJ73UeM0PoYswb5Mwo=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gXQIE-00015A-GZ; Thu, 13 Dec 2018 12:40:42 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 102C411254D1; Thu, 13 Dec 2018 12:40:42 +0000 (GMT)
+Date:   Thu, 13 Dec 2018 12:40:42 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Anders Roxell <anders.roxell@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, catalin.marinas@arm.com,
+        will.deacon@arm.com, arnd@arndb.de, mingo@redhat.com,
+        rostedt@goodmis.org, akpm@linux-foundation.org
+Subject: Re: [RFC PATCH 1/3] config: provide a fragment to enable gdb for qemu
+Message-ID: <20181213124042.GG10669@sirena.org.uk>
+References: <20181213122910.24193-1-anders.roxell@linaro.org>
+ <20181213122910.24193-2-anders.roxell@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="+sHJum3is6Tsg7/J"
 Content-Disposition: inline
-In-Reply-To: <CALCETrV6+YAazq7vY_aR=4kXc4ykXb1Se7hgvHeEVJtbZ91=Qg@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20181213122910.24193-2-anders.roxell@linaro.org>
+X-Cookie: Some optional equipment shown.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 12, 2018 at 10:03:30AM -0800, Andy Lutomirski wrote:
-> On Wed, Dec 12, 2018 at 8:52 AM Rich Felker <dalias@libc.org> wrote:
-> > On Wed, Dec 12, 2018 at 08:39:53AM -0800, Andy Lutomirski wrote:
-> > > I'm proposing another alternative.  Given that x32 already proves that
-> > > the user bitness model doesn't have to match the kernel model (in x32,
-> > > user "long" is 32-bit but the kernel ABI "long" is 64-bit), I'm
-> > > proposing extending this to just make the kernel ABI be LP64.  So
-> > > __kernel_size_t would be 64-bit and pointers in kernel data structures
-> > > would be 64-bit.  In other words, most or all of the kernel ABI would
-> > > just match x86_64.
-> > >
-> > > As far as I can tell, the only thing that really needs unusual
-> > > toolchain features here is that C doesn't have an extra-wide pointer
-> > > type.  The kernel headers would need a way to say "this pointer is
-> > > still logically a pointer, and user code may assume that it's 32 bits,
-> > > but it has 8-byte alignment."
-> >
-> > None of this works on the userspace/C side, nor should any attempt be
-> > made to make it work. Types fundamentally cannot have alignments
-> > larger than their size. If you want to make the alignment of some
-> > pointers 8, you have to make their size 8, and then you just have LP64
-> > again if you did it for all pointers.
-> >
-> > If on the other hand you tried to make just some pointers "wide
-> > pointers", you'd also be completely breaking the specified API
-> > contracts of standard interfaces. For example in struct iovec's
-> > iov_base, &foo->iov_base is no longer a valid pointer to an object of
-> > type void* that you can pass to interfaces expecting void**. Sloppy
-> > misunderstandings like what you're making now are exactly why x32 is
-> > already broken and buggy (&foo->tv_nsec already has wrong type for
-> > struct timespec foo).
-> 
-> I don't think it's quite that broken.  For the struct iovec example,
-> we currently have:
-> 
->            struct iovec {
->                void  *iov_base;    /* Starting address */
->                size_t iov_len;     /* Number of bytes to transfer */
->            };
-> 
-> we could have, instead: (pardon any whitespace damage)
-> 
->            struct iovec {
->                void  *iov_base;    /* Starting address */
->                uint32_t __pad0;
->                size_t iov_len;     /* Number of bytes to transfer */
->                uint32_t __pad1;
->            } __attribute__((aligned(8));
-> 
-> or the same thing but where iov_len is uint64_t.  A pointer to
-> iov_base still works exactly as expected.  Something would need to be
-> done to ensure that the padding is all zeroed, which might be a real
-> problem.
 
-We looked at this approach briefly for arm64/ILP32 and zeroing the pads
-was the biggest problem. User programs would not explicitly zero the pad
-and I'm not sure the compiler would be any smarter. This means it's the
-kernel's responsibility to zero the pad (around get_user,
-copy_from_user), so it doesn't actually simplify the kernel side of the
-syscall interface.
+--+sHJum3is6Tsg7/J
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-If the data flow goes the other way (kernel to user), this approach
-works fine.
+On Thu, Dec 13, 2018 at 01:29:08PM +0100, Anders Roxell wrote:
+> Adding a fragment to make it easier to know what options is needed to
+> build a kernel to get the that you can debug in qemu.
 
-> No one wants to actually type all the macro gunk into the headers to
-> make this work, but this type of transformation is what I have in mind
-> when the compiler is asked to handle the headers.  Or there could
-> potentially be a tool that automatically consumes the uapi headers and
-> spits out modified headers like this.
+> @@ -0,0 +1,7 @@
+> +# Enable debug info for gdb
+> +# CONFIG_COMPILE_TEST is not set
+> +CONFIG_DEBUG_INFO=y
+> +CONFIG_GDB_SCRIPTS=y
 
-If the compiler can handle the zeroing, that would be great, though not
-sure how (some __attribute__((zero)) which generates a type constructor
-for such structure; it kind of departs from what the C language offers).
+Is this specifically for qemu or is this just good for debugging with
+GDB in general (eg, via JTAG)?
 
-> Realistically, I think a much better model would be to use true ILP32
-> code, where all the memory layouts in the uapi match i386.
+--+sHJum3is6Tsg7/J
+Content-Type: application/pgp-signature; name="signature.asc"
 
-The conclusion we came to on arm64 was that an ILP32 ABI should not
-really be any different from a _new_ 32-bit architecture ABI. It differs
-from arm32 a bit (different syscall numbers, off_t is 64-bit,
-sigcontext) but not significantly as it is still able to use the
-majority of the compat_sys_* wrappers.
+-----BEGIN PGP SIGNATURE-----
 
--- 
-Catalin
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlwSU0kACgkQJNaLcl1U
+h9CJSgf+JoSC5WlMXPrwaqWqdvGhMgwkszPHMobyuzsHn3AKk0dpx5VUMUFmslzx
+P6mP2XvVdUZxdYHhxE07jGMaSEYKzMia4AFawsFfgH/+iFcR1heSqPfQtpLq24Te
+x1Nj3WK+GPrCqVpnVrUjNG7dT3o8HjxnN8mvOyQHgs1HCDt7ifQhqlQJugHPGRPc
+wzTOtQJyeMRSsADs1sZFeJTmi3yWqN5LmHsywpMQiQ3ZaAEiqbbu3GU8R5AacFjL
+LNsmFMB3TYAYIOHc8dl+fxZl2n6ndH5TzDDCpFDe85tDRam0n4jeQ07PtqHpm/ws
+W6SvU3XSsJ91W0sP6fgZkVe1t5FzvQ==
+=+pgG
+-----END PGP SIGNATURE-----
+
+--+sHJum3is6Tsg7/J--
