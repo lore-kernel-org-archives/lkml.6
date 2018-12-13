@@ -2,78 +2,117 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCFB1C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 18:43:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66812C67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 18:45:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98F8820870
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 18:43:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98F8820870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codesourcery.com
+	by mail.kernel.org (Postfix) with ESMTP id 30CD820851
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 18:45:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qdDGzgm+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30CD820851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726701AbeLMSnB (ORCPT
+        id S1727140AbeLMSp6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 13:43:01 -0500
-Received: from relay1.mentorg.com ([192.94.38.131]:45457 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726381AbeLMSnB (ORCPT
+        Thu, 13 Dec 2018 13:45:58 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:52356 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726465AbeLMSp6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 13:43:01 -0500
-Received: from nat-ies.mentorg.com ([192.94.31.2] helo=svr-ies-mbx-01.mgc.mentorg.com)
-        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
-        id 1gXVwf-00034E-Ph from joseph_myers@mentor.com ; Thu, 13 Dec 2018 10:42:49 -0800
-Received: from digraph.polyomino.org.uk (137.202.0.90) by
- svr-ies-mbx-01.mgc.mentorg.com (139.181.222.1) with Microsoft SMTP Server
- (TLS) id 15.0.1320.4; Thu, 13 Dec 2018 18:42:46 +0000
-Received: from jsm28 (helo=localhost)
-        by digraph.polyomino.org.uk with local-esmtp (Exim 4.90_1)
-        (envelope-from <joseph@codesourcery.com>)
-        id 1gXVwb-0002GH-US; Thu, 13 Dec 2018 18:42:45 +0000
-Date:   Thu, 13 Dec 2018 18:42:45 +0000
-From:   Joseph Myers <joseph@codesourcery.com>
-X-X-Sender: jsm28@digraph.polyomino.org.uk
-To:     Florian Weimer <fweimer@redhat.com>
-CC:     Rich Felker <dalias@libc.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Andy Lutomirski <luto@kernel.org>, <tg@mirbsd.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Mike Frysinger <vapier@gentoo.org>,
-        "H. J. Lu" <hjl.tools@gmail.com>, <x32@buildd.debian.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Will Deacon <will.deacon@arm.com>
-Subject: Re: Can we drop upstream Linux x32 support?
-In-Reply-To: <87o99pl8es.fsf@oldenburg2.str.redhat.com>
-Message-ID: <alpine.DEB.2.21.1812131833430.2735@digraph.polyomino.org.uk>
-References: <CAHk-=wi_Kp=3XmGDdzmadzFSPFvuL+aAJ6ZPAR=o4z=KwYT2vw@mail.gmail.com>        <Pine.BSM.4.64L.1812112150480.21176@herc.mirbsd.org>        <CALCETrWgpAX7FV23zHmid83SsgnwFMKD4a_-xSEgB6v0kJR5sA@mail.gmail.com>        <Pine.BSM.4.64L.1812112327500.21176@herc.mirbsd.org>
-        <CALCETrXf0rmadycxmpGxd41qP9X+PAjyGHTwbGhKyp6oMKMRrA@mail.gmail.com>        <Pine.BSM.4.64L.1812120231410.21176@herc.mirbsd.org>        <CALCETrUYn=S=hmJ0tKdm2LoSgkWchY2_65sH7hJZp7wfS30giw@mail.gmail.com>        <20181212165237.GT23599@brightrain.aerifal.cx>
-        <CALCETrV6+YAazq7vY_aR=4kXc4ykXb1Se7hgvHeEVJtbZ91=Qg@mail.gmail.com>        <20181213124025.bczxzj6ez34joo6v@localhost>        <20181213155744.GU23599@brightrain.aerifal.cx> <87o99pl8es.fsf@oldenburg2.str.redhat.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Thu, 13 Dec 2018 13:45:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=xgs3EcOadYV+Qewa6SO0rYOJK8l5HD9i5bO5aVWIznk=; b=qdDGzgm+fi5wLLhnyKWf8Aw+1
+        IjeteiAGzQUPBQ4I7g1STBFYl74/DVrW4biwRsuHwnuTIlUgKrkI5kguAhU50X7xPyFXsvV6oyBrP
+        vWKONKDwvJTKAlmso0Gqrp9Zw+rNJXWyw+Un6NBtK/wguMLXy0xT+yoU6sviPX+rGTmWoFGrb368L
+        NmBx4vsUIsXZWDP9ZzfbKroX/LZQuelKjpONbDZrCwbHp58Dq/G7+BvmkjwqkI91cm4qnj34HmDDw
+        m9o/UZmFrAbk9ROTj8hl2P/h2r/mhVbovFNVxxlYjiQzeFj46GTOqMMfqMVM48u7onNlhoVp4/O/Y
+        54kn20Sbw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gXVzY-0006bL-Pe; Thu, 13 Dec 2018 18:45:49 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 4091D207264F1; Thu, 13 Dec 2018 19:45:46 +0100 (CET)
+Date:   Thu, 13 Dec 2018 19:45:46 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Song Liu <songliubraving@fb.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "ast@kernel.org" <ast@kernel.org>,
+        "daniel@iogearbox.net" <daniel@iogearbox.net>,
+        Kernel Team <Kernel-team@fb.com>,
+        "acme@kernel.org" <acme@kernel.org>
+Subject: Re: [PATCH v3 perf, bpf-next 1/4] perf, bpf: Introduce
+ PERF_RECORD_BPF_EVENT
+Message-ID: <20181213184546.GM5289@hirez.programming.kicks-ass.net>
+References: <20181211233351.4036381-1-songliubraving@fb.com>
+ <20181211233351.4036381-2-songliubraving@fb.com>
+ <20181212131549.GZ5289@hirez.programming.kicks-ass.net>
+ <C6E2C200-4C86-4EE0-97FA-228C0E0629B1@fb.com>
+ <20181212180553.GC5289@hirez.programming.kicks-ass.net>
+ <20181212133320.75d5cad8@gandalf.local.home>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-X-Originating-IP: [137.202.0.90]
-X-ClientProxiedBy: svr-ies-mbx-01.mgc.mentorg.com (139.181.222.1) To
- svr-ies-mbx-01.mgc.mentorg.com (139.181.222.1)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181212133320.75d5cad8@gandalf.local.home>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 13 Dec 2018, Florian Weimer wrote:
+On Wed, Dec 12, 2018 at 01:33:20PM -0500, Steven Rostedt wrote:
+> On Wed, 12 Dec 2018 19:05:53 +0100
+> Peter Zijlstra <peterz@infradead.org> wrote:
+> 
+> > On Wed, Dec 12, 2018 at 05:09:17PM +0000, Song Liu wrote:
+> > > > And while this tracks the bpf kallsyms, it does not do all kallsyms.
+> > > > 
+> > > > .... Oooh, I see the problem, everybody is doing their own custom
+> > > > kallsym_{add,del}() thing, instead of having that in generic code :-(
+> > > > 
+> > > > This, for example, doesn't track module load/unload nor ftrace
+> > > > trampolines, even though both affect kallsyms.  
+> > > 
+> > > I think we can use PERF_RECORD_MMAP(or MMAP2) for module load/unload. 
+> > > That could be separate sets of patches.   
+> > 
+> > So I would actually like to move bpf_lock/bpf_kallsyms/bpf_tree +
+> > bpf_prog_kallsyms_*() + __bpf_address_lookup() into kernel/kallsyms.c
+> > and also have ftrace use that.
+> > 
+> > Because currently the ftrace stuff is otherwise invisible.
+> > 
+> > A generic kallsym register/unregister for any JIT.
+> 
+> That's if it needs to look up the symbols that were recorded when init
+> was unloaded.
+> 
+> The ftrace kallsyms is used to save the function names of init code
+> that was freed, but may have been recorded. With out the ftrace
+> kallsyms the functions traced at init time would just show up as hex
+> addresses (not very useful).
+> 
+> I'm not sure how BPF would need those symbols unless they were executed
+> during init (module or core) and needed to see what the symbols use to
+> be).
 
-> Similarly, we could have integer types with trap representations.
+Aah, that sounds entirely dodgy and possibly quite broken. We freed that
+init code, so BPF or your trampolines (or a tiny module) could actually
+fit in there and insert their own kallsyms, and then we have overlapping
+symbols, which would be pretty bad.
 
-C++2a will require two's complement representation for integer types, with 
-no trap representations (other than for bool, where only 0 and 1 are valid 
-representations).  It seems very plausible that C will follow.
-
--- 
-Joseph S. Myers
-joseph@codesourcery.com
+I thought the ftrace kallsym stuff was for the trampolines, which would
+be fairly similar to what BPF is doing. And why I'm trying to get a
+generic dynamic kallsym thing sorted. There's bound the be other
+code-gen things at some point.
