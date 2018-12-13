@@ -2,106 +2,210 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,T_MIXED_ES,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93D34C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 14:57:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63D37C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 14:58:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52DEA2086D
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 14:57:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ssi.gouv.fr header.i=@ssi.gouv.fr header.b="R1LLWeuF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52DEA2086D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ssi.gouv.fr
+	by mail.kernel.org (Postfix) with ESMTP id 1843D2086D
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 14:58:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1843D2086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729219AbeLMO5L (ORCPT
+        id S1729266AbeLMO6Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 09:57:11 -0500
-Received: from smtp-out.ssi.gouv.fr ([86.65.182.90]:54644 "EHLO
-        smtp-out.ssi.gouv.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727618AbeLMO5L (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 09:57:11 -0500
-Received: from smtp-out.ssi.gouv.fr (localhost [127.0.0.1])
-        by smtp-out.ssi.gouv.fr (Postfix) with ESMTP id 2B833D0006B;
-        Thu, 13 Dec 2018 15:57:17 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ssi.gouv.fr;
-        s=20160407; t=1544713037;
-        bh=hmviYkZAUzSSN4VTzvQLUSCMhOsq6DYKpUiHzI6rReA=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To:From:Subject;
-        b=R1LLWeuFQXYicPyde+2L/5l1lnaFYwDfgRmEBw3E9WCmmCD6EgbN+Z6ZzJO73skY/
-         WDLTEhYl0+oC3tiRw9wkRp4Web7BQeev58BsJpf+2Sz9/rWiuTl6ArElznFhvALliz
-         k8WToO2CpmKORRXoZpFPemas/nO9etlNaSKND0yE76qsYk2tuyvgclN/h5x7PGqBVj
-         jjlI7zoFsB1oMVgHUKPn74Vd2NhvkLTpX7hTekaIOBQdwcgLuyWRtb+gq+QcYQffg9
-         DeDbusb/qwDu9nx18FzQAERzupwa9lp3FE/j3uZeDH/QZLSquDUh/HrBDfeA03E9/j
-         tcixwdWCiP4cQ==
-Subject: Re: [RFC PATCH v1 0/5] Add support for O_MAYEXEC
-To:     Florian Weimer <fweimer@redhat.com>,
-        James Morris <jmorris@namei.org>
-CC:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
-        <linux-kernel@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Matthew Garrett <mjg59@google.com>,
-        Michael Kerrisk <mtk.manpages@gmail.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        =?UTF-8?Q?Philippe_Tr=c3=a9buchet?= 
-        <philippe.trebuchet@ssi.gouv.fr>, Shuah Khan <shuah@kernel.org>,
-        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
-        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
-        Yves-Alexis Perez <yves-alexis.perez@ssi.gouv.fr>,
-        <kernel-hardening@lists.openwall.com>, <linux-api@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>
-References: <20181212081712.32347-1-mic@digikod.net>
- <alpine.LRH.2.21.1812130642250.29507@namei.org>
- <87lg4upkpv.fsf@oldenburg2.str.redhat.com>
- <alpine.LRH.2.21.1812131039400.7600@namei.org>
- <87ftv2ovp8.fsf@oldenburg2.str.redhat.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>
-Message-ID: <21824ed9-0fe4-85dd-bdd2-d4426e97233d@ssi.gouv.fr>
-Date:   Thu, 13 Dec 2018 15:57:15 +0100
-User-Agent: Mozilla/5.0 (X11; Linux i686; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Thu, 13 Dec 2018 09:58:16 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:44386 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728591AbeLMO6P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 09:58:15 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id A1E802D7E4;
+        Thu, 13 Dec 2018 14:58:14 +0000 (UTC)
+Received: from horse.redhat.com (unknown [10.18.25.234])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2E8A55D9C9;
+        Thu, 13 Dec 2018 14:58:14 +0000 (UTC)
+Received: by horse.redhat.com (Postfix, from userid 10451)
+        id AF6A32208FC; Thu, 13 Dec 2018 09:58:13 -0500 (EST)
+Date:   Thu, 13 Dec 2018 09:58:13 -0500
+From:   Vivek Goyal <vgoyal@redhat.com>
+To:     Stephen Smalley <sds@tycho.nsa.gov>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        Ondrej Mosnacek <omosnace@redhat.com>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Mark Salyzyn <salyzyn@android.com>,
+        Paul Moore <paul@paul-moore.com>, linux-kernel@vger.kernel.org,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, selinux@vger.kernel.org,
+        Daniel J Walsh <dwalsh@redhat.com>
+Subject: Re: overlayfs access checks on underlying layers
+Message-ID: <20181213145813.GB4384@redhat.com>
+References: <20181204152248.GB21509@redhat.com>
+ <CAJfpegtFVvq286HAorGLg6ywMsfs51KqaQwFkcuV7Dtu8TLaLg@mail.gmail.com>
+ <20181204154243.GA16818@redhat.com>
+ <665ec6f3-f16d-681f-30d5-eface14c9808@tycho.nsa.gov>
+ <20181204161747.GC16818@redhat.com>
+ <e8841bf0-d6b8-0e7d-6a35-055a06441d30@tycho.nsa.gov>
+ <20181205134317.GA11337@redhat.com>
+ <8eb7f677-fd71-c31b-bfed-29fb7187d132@tycho.nsa.gov>
+ <20181211214821.GD17242@redhat.com>
+ <2e4d90ce-61e7-56b1-c161-4e5fb7236537@tycho.nsa.gov>
 MIME-Version: 1.0
-In-Reply-To: <87ftv2ovp8.fsf@oldenburg2.str.redhat.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2e4d90ce-61e7-56b1-c161-4e5fb7236537@tycho.nsa.gov>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Thu, 13 Dec 2018 14:58:14 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 13/12/2018 06:13, Florian Weimer wrote:
-> * James Morris:
+On Wed, Dec 12, 2018 at 09:51:59AM -0500, Stephen Smalley wrote:
+> On 12/11/18 4:48 PM, Vivek Goyal wrote:
+> > On Thu, Dec 06, 2018 at 03:26:26PM -0500, Stephen Smalley wrote:
+> > > On 12/5/18 8:43 AM, Vivek Goyal wrote:
+> > > > On Tue, Dec 04, 2018 at 11:49:16AM -0500, Stephen Smalley wrote:
+> > > > > On 12/4/18 11:17 AM, Vivek Goyal wrote:
+> > > > > > On Tue, Dec 04, 2018 at 11:05:46AM -0500, Stephen Smalley wrote:
+> > > > > > > On 12/4/18 10:42 AM, Vivek Goyal wrote:
+> > > > > > > > On Tue, Dec 04, 2018 at 04:31:09PM +0100, Miklos Szeredi wrote:
+> > > > > > > > > On Tue, Dec 4, 2018 at 4:22 PM Vivek Goyal <vgoyal@redhat.com> wrote:
+> > > > > > > > > 
+> > > > > > > > > > Having said that, this still create little anomaly when mknod to client
+> > > > > > > > > > is not allowed on context label. So a device file, which is on lower
+> > > > > > > > > > and client can not open it for read/write on host, it can now be opened
+> > > > > > > > > > for read/write because mounter will allow access. So why it is different
+> > > > > > > > > > that regular copy up. Well, in regular copy up, we created a copy of
+> > > > > > > > > > the original object and allowed writing to that object (cp --preserve=all)
+> > > > > > > > > > model. But in case of device file, writes will go to same original
+> > > > > > > > > > object. (And not a separate copy).
+> > > > > > > > > 
+> > > > > > > > > That's true.
+> > > > > > > > > 
+> > > > > > > > > In that sense copy up of special file should result in upper having
+> > > > > > > > > the same label as of lower, right?
+> > > > > > > > 
+> > > > > > > > I guess that might be reasonable (if this behavior is a concern). So even
+> > > > > > > > after copy up, client will not be able to read/write a device if it was
+> > > > > > > > not allowed on lower.
+> > > > > > > > 
+> > > > > > > > Stephen, what do you think about retaining label of lower for device
+> > > > > > > > files during copy up. What about socket/fifo.
+> > > > > > > 
+> > > > > > > We don't check client task access to the upper inode label, only to the
+> > > > > > > overlay, right?  So the client is still free to access the device through
+> > > > > > > the overlay even if we preserve the lower inode label on the upper inode?
+> > > > > > > What do we gain?
+> > > > > > 
+> > > > > > That's only with latest code and Miklos said he will revert it for 4.20.
+> > > > > > 
+> > > > > > IOW, I am assuming that we will continue to check access to a file
+> > > > > > on upper in the context of mounter. Otherwise, client will be able to access
+> > > > > > files on upper/ which even mounter can't access.
+> > > > > 
+> > > > > I was assuming we're talking about the proposed solution, where we check
+> > > > > client access to the overlay (unchanged), mounter access to lower
+> > > > > (unchanged), copy-up if denied (new), mounter access to upper (new in the
+> > > > > sense that previously we didn't copy-up on denials).
+> > > > > 
+> > > > > In that situation, propagating the lower inode label to the upper inode only
+> > > > > impacts the mounter checks, and in that case makes copy-up pointless - if it
+> > > > > wasn't allowed to lower it won't be allowed to upper.  If it is allowed,
+> > > > > then client task is free to access the device regardless as long as it has
+> > > > > permissions to the overlay inode.  So I don't see what we gain by
+> > > > > propagating the lower inode label to the upper inode in the context mount
+> > > > > case, and it creates an inconsistency between special files and regular
+> > > > > ones.
+> > > > 
+> > > > If we agree on retaining lower label of lower device file on copy up, then
+> > > > I am assuming we will change rule c) to copy up only non device files.
+> > > > (because if you don't have access on lower, you will not have access
+> > > > even after copy up).
+> > > > 
+> > > > There are other paths where copy up happnes. Like link or when file
+> > > > metadata (ownership, permissions, timestmap) changes. In those cases,
+> > > > if we retain the lower label over copy up, it probably will help.
+> > > > 
+> > > > IOW, just by creating a link to a device, one will not get access to
+> > > > a device on upper which could not be accessed on lower.
+> > > > 
+> > > > Device files are special anyway. In regular files we are creating a
+> > > > copy and user writes to copy. But that's not the case with device
+> > > > files. So I guess these will have to be treated differently.
+> > > 
+> > > I don't understand what you are suggesting.  In the case of a context mount,
+> > > the context specified by the mounter must be assigned to the upper inode for
+> > > any files that are copied up.  Otherwise, changes to file data or metadata
+> > > made through the overlay will be visible under two different security
+> > > contexts simultaneously: the context of the overlay inode (i.e. the one
+> > > specified by the mounter) and the context of the upper inode (in your
+> > > suggestion, the context from the lower inode). This allows a violation of
+> > > MAC policy where one can leak data through an overlay to an unauthorized
+> > > context.
+> > 
+> > Hi Stephen,
+> > 
+> > Sorry, I don't understand this point of leaking data through overlay. Even
+> > if we retain lower label on copy up (for device file), to open that file
+> > process should have access on overlay context label and then mounter needs
+> > to have access on upper inode (lower label). This is not different from
+> > opening a file on lower. Just that metadata of this file on upper might
+> > be different.
+> > 
+> > Can you elaborate a bit more on how this is leaking data through overlay
+> > mount. If it is, then why accessing file on lower is not equivalent of
+> > leaking of data.
 > 
->> On Wed, 12 Dec 2018, Florian Weimer wrote:
->>
->>> * James Morris:
->>>
->>>> If you're depending on the script interpreter to flag that the user may 
->>>> execute code, this seems to be equivalent in security terms to depending 
->>>> on the user.  e.g. what if the user uses ptrace and clears O_MAYEXEC?
+> In the container use case, retaining the lower label on copy-up for a
+> context-mounted overlay permits a process in the container to leak the
+> container data out to host files not labeled with the container label and
+> thus potentially accessible to other containers or host processes.
 
-This security mechanism makes sense in an hardened system where the user
-is not allowed to import and execute new file (write xor execute
-policy). This can be enforced with appropriate mount points a more
-advanced access control policy.
-
->>>
->>> The argument I've heard is this: Using ptrace (and adding the +x
->>> attribute) are auditable events.
->>
->> I guess you could also preload a modified libc which strips the flag.
+> The
+> container process appears to just be writing to files labeled with the
+> container label via the overlay, but the written data and/or metadata is
+> directly accessible through the lower label, which is likely readable to
+> all/many containers and host processes.
 > 
-> My understanding is that this new libc would have to come somewhere, and
-> making it executable would be an auditable even as well.
+> In the multi-level security (MLS) use case, an analogy would a situation
+> where you have an unclassified lower dir with some content to be shared
+> read-only across all levels, and an overlay is context-mounted at each level
+> with a corresponding upper dir and work dir private to that level.  If a
+> client process at secret performs a write to a file via the secret overlay,
+> and if the written data is stored in a file in the upper dir that inherits
+> the label from the lower file (unclassified), then the secret process can
+> leak data to unclassified processes at will, violating the MLS policy.
 
-Auditing is a possible use case as well, but the W^X idea is to deny use
-of libraries which are not in an executable mount point, i.e. only
-execute trusted code.
+For the case of devices, its already happening. One might change metadata
+of a device (hence trigger copy up). Now all writes to upper device file
+from secret process still go to same underlying device and are still
+readable from lower device file.
+
+In fact, for the case of devices, that is even more of a reason to retain
+the label same as lower. Otherwise upper device node is leaking data
+of a secret process which can be accessed using device at lower/ (lower's
+label is readable).
+
+> 
+> The difference with the lower is that it is read-only and the mounter is
+> explicitly choosing to export it under the new context for reading (but not
+> for writing).
+
+If we retain the label and if lower is not writable, then upper deivce
+node is not being written to as well. So from label point of view, lower
+and upper inode are not different. Only difference is that some metadata
+of upper inode might be different.
+
+Thanks
+Vivek
+> 
+> As a side note, the actual checking during a context mount isn't as granular
+> as we might like here, since there is no overlay-specific logic and thus no
+> individual checking of the lower, upper, and work directory labels.
