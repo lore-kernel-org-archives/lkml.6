@@ -6,82 +6,88 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E4FEC65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 22:10:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69150C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 22:10:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BD442075B
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 22:10:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BD442075B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 369A62075B
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 22:10:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 369A62075B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=iki.fi
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728171AbeLMWKo (ORCPT
+        id S1728421AbeLMWKu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 17:10:44 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:42254 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726457AbeLMWKn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 17:10:43 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Thu, 13 Dec 2018 17:10:50 -0500
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:38042 "EHLO
+        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726457AbeLMWKt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 17:10:49 -0500
+Received: from valkosipuli.localdomain (valkosipuli.retiisi.org.uk [IPv6:2001:1bc8:1a6:d3d5::80:2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 62602653C7;
-        Thu, 13 Dec 2018 22:10:43 +0000 (UTC)
-Received: from treble (ovpn-120-195.rdu2.redhat.com [10.10.120.195])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 75D3A19008;
-        Thu, 13 Dec 2018 22:10:39 +0000 (UTC)
-Date:   Thu, 13 Dec 2018 16:10:37 -0600
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     Jiri Kosina <jikos@kernel.org>, Miroslav Benes <mbenes@suse.cz>,
-        Jason Baron <jbaron@akamai.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jessica Yu <jeyu@kernel.org>
-Subject: Re: [PATCH v14 03/11] livepatch: Consolidate klp_free functions
-Message-ID: <20181213221037.qaxd5jswdrbv5oxz@treble>
-References: <20181129094431.7801-1-pmladek@suse.com>
- <20181129094431.7801-4-pmladek@suse.com>
+        by hillosipuli.retiisi.org.uk (Postfix) with ESMTPS id 1CE71634C7D;
+        Fri, 14 Dec 2018 00:10:31 +0200 (EET)
+Received: from sailus by valkosipuli.localdomain with local (Exim 4.89)
+        (envelope-from <sakari.ailus@retiisi.org.uk>)
+        id 1gXZBf-0000lZ-3R; Fri, 14 Dec 2018 00:10:31 +0200
+Date:   Fri, 14 Dec 2018 00:10:31 +0200
+From:   sakari.ailus@iki.fi
+To:     Chen-Yu Tsai <wens@csie.org>
+Cc:     Yong Deng <yong.deng@magewell.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/6] media: sun6i: Separate H3 compatible from A31
+Message-ID: <20181213221030.f7c5mzuyke3ik43r@valkosipuli.retiisi.org.uk>
+References: <20181130075849.16941-1-wens@csie.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181129094431.7801-4-pmladek@suse.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Thu, 13 Dec 2018 22:10:43 +0000 (UTC)
+In-Reply-To: <20181130075849.16941-1-wens@csie.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 29, 2018 at 10:44:23AM +0100, Petr Mladek wrote:
-> +static void klp_free_funcs(struct klp_object *obj)
->  {
->  	struct klp_func *func;
->  
-> -	for (func = obj->funcs; func->old_name && func != limit; func++)
-> -		kobject_put(&func->kobj);
-> +	klp_for_each_func(obj, func) {
-> +		/* Might be called from klp_init_patch() error path. */
-> +		if (func->kobj_alive) {
-> +			func->kobj_alive = false;
-> +			kobject_put(&func->kobj);
-> +		}
+Hi Chen-Yu,
 
-Why does it set 'kobj_alive' to false?  The value will never be read
-again anyway, right?
+On Fri, Nov 30, 2018 at 03:58:43PM +0800, Chen-Yu Tsai wrote:
+> The CSI (camera sensor interface) controller found on the H3 (and H5)
+> is a reduced version of the one found on the A31. It only has 1 channel,
+> instead of 4 channels supporting time-multiplexed BT.656 on the A31.
+> Since the H3 is a reduced version, it cannot "fallback" to a compatible
+> that implements more features than it supports.
+> 
+> This series separates support for the H3 variant from the A31 variant.
+> 
+> Patches 1 ~ 3 separate H3 CSI from A31 CSI in the bindings, driver, and
+> device tree, respectively.
+> 
+> Patch 4 adds a pinmux setting for the MCLK (master clock). Some camera
+> sensors use the master clock from the SoC instead of a standalone
+> crystal.
 
-Also, the name isn't quite right.  The kobject is technically still
-alive here, and may even continue to be alive after the kobject_put(),
-if there's a sysfs reference to it somewhere.
+I've picked patches 1 and 2, but I presume patches 3 and 4 would go through
+another tree. Is that right?
 
-Maybe it should be called something like 'kobj_initialized' instead.
-Then it doesn't ever need to be set to false -- unless I'm missing
-something.
+> 
+> Patches 5 and 6 are examples of using a camera sensor with an SBC.
+> Since the modules are detachable, these changes should not be merged.
+> They should be implemented as overlays instead.
+> 
+> Please have a look.
+> 
+> In addition, I found that the first frame captured seems to always be
+> incomplete, with either parts cropped, out of position, or missing
+> color components.
 
-(And the same comment for the other 'kobj_alive' fields in
-klp_object/patch.)
 
 -- 
-Josh
+Regards,
+
+Sakari Ailus
