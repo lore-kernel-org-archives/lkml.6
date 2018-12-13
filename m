@@ -2,59 +2,94 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30273C67872
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 03:39:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EE50C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 03:41:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2C4120879
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 03:39:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2C4120879
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id D7F1E20880
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 03:41:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="c52uY8zp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7F1E20880
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726712AbeLMDjY (ORCPT
+        id S1726842AbeLMDlk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 22:39:24 -0500
-Received: from Mailgw01.mediatek.com ([1.203.163.78]:41547 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726298AbeLMDjY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 22:39:24 -0500
-X-UUID: c892295cf96d4f7fb7d669c2537ff3c8-20181213
-X-UUID: c892295cf96d4f7fb7d669c2537ff3c8-20181213
-Received: from mtkcas35.mediatek.inc [(172.27.4.250)] by mailgw01.mediatek.com
-        (envelope-from <ryder.lee@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 629260881; Thu, 13 Dec 2018 11:39:21 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- MTKMBS31N2.mediatek.inc (172.27.4.87) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Thu, 13 Dec 2018 11:39:18 +0800
-Received: from [172.21.77.33] (172.21.77.33) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 13 Dec 2018 11:39:16 +0800
-Message-ID: <1544672356.26338.4.camel@mtkswgap22>
-Subject: Re: [PATCH 2/2] PCI: mediatek: Add controller support for MT7629
-From:   Ryder Lee <ryder.lee@mediatek.com>
-To:     Jianjun Wang <jianjun.wang@mediatek.com>
-CC:     <bhelgaas@google.com>, <robh+dt@kernel.org>,
-        <lorenzo.pieralisi@arm.com>, <matthias.bgg@gmail.com>,
-        <linux-pci@vger.kernel.org>, <mark.rutland@arm.com>,
-        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <honghui.zhang@mediatek.com>, <youlin.pei@mediatek.com>
-Date:   Thu, 13 Dec 2018 11:39:16 +0800
-In-Reply-To: <1544058553-10936-3-git-send-email-jianjun.wang@mediatek.com>
-References: <1544058553-10936-1-git-send-email-jianjun.wang@mediatek.com>
-         <1544058553-10936-3-git-send-email-jianjun.wang@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Wed, 12 Dec 2018 22:41:40 -0500
+Received: from mail-eopbgr1410138.outbound.protection.outlook.com ([40.107.141.138]:29660
+        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726630AbeLMDli (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 22:41:38 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=N+ri0UZGRHcd47RPhrtnkcNdwV38h2oItHNfChjKox0=;
+ b=c52uY8zpVXugsDdvdRoNcRnE+OEklv+MscI+Tse2r6drr8+w0mcXRBcZQvNKeyBqzGoSbL5JeVd60dtPSl3vbR+ej6pAGvDMMY12dxw3eVHcDQkHRbeKymkNFOCgFmLrvCXe/mW0EK3dUYUU4uuNiitZDNXqPU/Ww5UkrlKDMfA=
+Received: from OSAPR01MB2290.jpnprd01.prod.outlook.com (52.134.238.13) by
+ OSAPR01MB1746.jpnprd01.prod.outlook.com (52.134.232.141) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1404.22; Thu, 13 Dec 2018 03:41:35 +0000
+Received: from OSAPR01MB2290.jpnprd01.prod.outlook.com
+ ([fe80::a8ae:bee4:d7e7:e5b7]) by OSAPR01MB2290.jpnprd01.prod.outlook.com
+ ([fe80::a8ae:bee4:d7e7:e5b7%2]) with mapi id 15.20.1425.016; Thu, 13 Dec 2018
+ 03:41:35 +0000
+From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To:     YueHaibing <yuehaibing@huawei.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "felipe.balbi@linux.intel.com" <felipe.balbi@linux.intel.com>,
+        "horms+renesas@verge.net.au" <horms+renesas@verge.net.au>,
+        "fengguang.wu@intel.com" <fengguang.wu@intel.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>
+Subject: RE: [PATCH -next] usb: renesas_usbhs: Fix unused function warning
+ when CONFIG_PM not set
+Thread-Topic: [PATCH -next] usb: renesas_usbhs: Fix unused function warning
+ when CONFIG_PM not set
+Thread-Index: AQHUkpK+6yEVcLy11kCcGUYFJhrwx6V8BfFQ
+Date:   Thu, 13 Dec 2018 03:41:35 +0000
+Message-ID: <OSAPR01MB2290C7C3221C7BE4594DB31CD8A00@OSAPR01MB2290.jpnprd01.prod.outlook.com>
+References: <20181213031924.12216-1-yuehaibing@huawei.com>
+In-Reply-To: <20181213031924.12216-1-yuehaibing@huawei.com>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=yoshihiro.shimoda.uh@renesas.com; 
+x-originating-ip: [211.11.155.140]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;OSAPR01MB1746;20:6jIeJHNx+buKsnZ5cBqGI/5A/0xCVNukXNNhx56KEUBcSiae1o/g04RCOr9KDPjgbCgm05tV8tfTLFeCd9QOvdkPmVFbLoJJUd9SO9DPuVmX7P5SA342RsqFvCZ1RU01lcPQPlQhc32P7GgDs5icUUob1/UGVu0247aq6Tjqsws=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: c0249dbb-d48b-4c7b-6841-08d660ace197
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:OSAPR01MB1746;
+x-ms-traffictypediagnostic: OSAPR01MB1746:
+x-microsoft-antispam-prvs: <OSAPR01MB17468161BF1ADE93A4822278D8A00@OSAPR01MB1746.jpnprd01.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(3231475)(944501520)(52105112)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:OSAPR01MB1746;BCL:0;PCL:0;RULEID:;SRVR:OSAPR01MB1746;
+x-forefront-prvs: 088552DE73
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(39860400002)(376002)(396003)(346002)(136003)(189003)(199004)(4326008)(7736002)(6506007)(33656002)(6116002)(486006)(186003)(3846002)(106356001)(229853002)(446003)(11346002)(105586002)(305945005)(26005)(5660300001)(76176011)(2906002)(102836004)(74316002)(99286004)(7696005)(110136005)(71190400001)(71200400001)(6246003)(476003)(316002)(2501003)(6436002)(54906003)(68736007)(25786009)(345774005)(478600001)(81156014)(8676002)(81166006)(97736004)(8936002)(14444005)(9686003)(575784001)(2201001)(53936002)(86362001)(55016002)(66066001)(256004)(6306002)(966005)(14454004);DIR:OUT;SFP:1102;SCL:1;SRVR:OSAPR01MB1746;H:OSAPR01MB2290.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: renesas.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: VCMFJD8rscN7l42xahFBy7Kr3M/Wc1S6r2sad6Fbi9vQADlc2Xy4Axb0cALyr1HwwKOlrDvzfach+sFJItaiGfADkg7Rv+b/+sQ7c0EqBYqK2Szza8WhiuvT8vrAeEcmvV4Sn7YDq7QNwfv3sMz58rsL2d94lzzLODnuli4UAEYbF1TTgSv1YhoB7LuLfFavieT2NqI8Puf4GAhwLWsLCPF0Fe4W2RIHhmrgmgm2BqmtmJAGGuYIupI8M6+wiuRWQA8KehuIs65nBVfwHvQbVTSOzeyiymcBcBCG+wTMRtTevyO37wEGG5v+A+GRShna
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-MTK:  N
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c0249dbb-d48b-4c7b-6841-08d660ace197
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Dec 2018 03:41:35.2960
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSAPR01MB1746
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -62,109 +97,24 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hi,
 
-On Thu, 2018-12-06 at 09:09 +0800, Jianjun Wang wrote:
-> MT7629 is an arm platform SoC which has the same PCIe IP with MT7622.
-> 
-> The read value of BAR0 is 0xffff_ffff, it's size will be calculated as 4GB
-> in arm64 but bogus alignment values at arm32, the pcie device and devices
-> behind this bridge will not be enabled. Fix it's BAR0 resource size to
-> guarantee the pcie devices will be enabled correctly.
-> 
-> The HW default value of its device id is invalid, fix it's device id to
-> match the hardware implementation.
-> 
-> Signed-off-by: Jianjun Wang <jianjun.wang@mediatek.com>
-> ---
->  drivers/pci/controller/pcie-mediatek.c | 26 ++++++++++++++++++++++++++
->  include/linux/pci_ids.h                |  1 +
->  2 files changed, 27 insertions(+)
-> 
-> diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
-> index d20cf461ba00..f8937cc3c87c 100644
-> --- a/drivers/pci/controller/pcie-mediatek.c
-> +++ b/drivers/pci/controller/pcie-mediatek.c
-> @@ -73,6 +73,7 @@
->  #define PCIE_MSI_VECTOR		0x0c0
->  
->  #define PCIE_CONF_VEND_ID	0x100
-> +#define PCIE_CONF_DEVICE_ID	0x102
->  #define PCIE_CONF_CLASS_ID	0x106
->  
->  #define PCIE_INT_MASK		0x420
-> @@ -135,12 +136,14 @@ struct mtk_pcie_port;
->  /**
->   * struct mtk_pcie_soc - differentiate between host generations
->   * @need_fix_class_id: whether this host's class ID needed to be fixed or not
-> + * @need_fix_device_id: whether this host's device ID needed to be fixed or not
->   * @ops: pointer to configuration access functions
->   * @startup: pointer to controller setting functions
->   * @setup_irq: pointer to initialize IRQ functions
->   */
->  struct mtk_pcie_soc {
->  	bool need_fix_class_id;
-> +	bool need_fix_device_id;
->  	struct pci_ops *ops;
->  	int (*startup)(struct mtk_pcie_port *port);
->  	int (*setup_irq)(struct mtk_pcie_port *port, struct device_node *node);
-> @@ -692,6 +695,11 @@ static int mtk_pcie_startup_port_v2(struct mtk_pcie_port *port)
->  		writew(val, port->base + PCIE_CONF_CLASS_ID);
->  	}
->  
-> +	if (soc->need_fix_device_id) {
-> +		val = PCI_DEVICE_ID_MEDIATEK_7629;
+> From: YueHaibing, Sent: Thursday, December 13, 2018 12:19 PM
+>=20
+> with CONFIG_PM not set, gcc warning this:
+> drivers/usb/renesas_usbhs/common.c:844:12:
+>  warning: 'usbhsc_suspend' defined but not used [-Wunused-function]
+> drivers/usb/renesas_usbhs/common.c:860:12:
+>  warning: 'usbhsc_resume' defined but not used [-Wunused-function]
+>=20
+> fix this by adding #ifdef around it.
+>=20
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-<just_checking>
-  Could we have a generic way to fix it? It's better not to add SoC
-specific settings in shared function.
-</just_checking>
+Thank you for the patch.
+However, this issue is already fixed on the Greg's usb.git / usb-next branc=
+h:
+https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git/commit/?h=3D=
+usb-next&id=3Deaf3074e0a8c2a39c4c14aa8ef1c2ec09ace9c79
 
-> +		writew(val, port->base + PCIE_CONF_DEVICE_ID);
-> +	}
-> +
->  	/* 100ms timeout value should be enough for Gen1/2 training */
->  	err = readl_poll_timeout(port->base + PCIE_LINK_STATUS_V2, val,
->  				 !!(val & PCIE_PORT_LINKUP_V2), 20,
-> @@ -1238,11 +1246,29 @@ static const struct mtk_pcie_soc mtk_pcie_soc_mt7622 = {
->  	.setup_irq = mtk_pcie_setup_irq,
->  };
->  
-> +static const struct mtk_pcie_soc mtk_pcie_soc_mt7629 = {
-> +	.need_fix_class_id = true,
-> +	.need_fix_device_id = true,
-> +	.ops = &mtk_pcie_ops_v2,
-> +	.startup = mtk_pcie_startup_port_v2,
-> +	.setup_irq = mtk_pcie_setup_irq,
-> +};
-> +
-> +static void mtk_fixup_bar_size(struct pci_dev *dev)
-> +{
-> +	struct resource *dev_res = &dev->resource[0];
-> +	/* 32bit resource length will calculate size to 0, set it smaller */
-> +	dev_res->end = 0xfffffffe;
-> +}
-> +DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_MEDIATEK, PCI_DEVICE_ID_MEDIATEK_7629,
-> +			 mtk_fixup_bar_size);
-> +
->  static const struct of_device_id mtk_pcie_ids[] = {
->  	{ .compatible = "mediatek,mt2701-pcie", .data = &mtk_pcie_soc_v1 },
->  	{ .compatible = "mediatek,mt7623-pcie", .data = &mtk_pcie_soc_v1 },
->  	{ .compatible = "mediatek,mt2712-pcie", .data = &mtk_pcie_soc_mt2712 },
->  	{ .compatible = "mediatek,mt7622-pcie", .data = &mtk_pcie_soc_mt7622 },
-> +	{ .compatible = "mediatek,mt7629-pcie", .data = &mtk_pcie_soc_mt7629 },
->  	{},
->  };
->  
-> diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
-> index 69f0abe1ba1a..77b278bac3a8 100644
-> --- a/include/linux/pci_ids.h
-> +++ b/include/linux/pci_ids.h
-> @@ -2126,6 +2126,7 @@
->  #define PCI_VENDOR_ID_MYRICOM		0x14c1
->  
->  #define PCI_VENDOR_ID_MEDIATEK		0x14c3
-> +#define PCI_DEVICE_ID_MEDIATEK_7629	0x7629
->  
->  #define PCI_VENDOR_ID_TITAN		0x14D2
->  #define PCI_DEVICE_ID_TITAN_010L	0x8001
-
+Best regards,
+Yoshihiro Shimoda
 
