@@ -2,72 +2,147 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D510CC67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 02:51:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E9C3C67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 02:53:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8307020873
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 02:51:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8307020873
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id 5D7E420851
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 02:53:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D7E420851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726633AbeLMCvX (ORCPT
+        id S1726685AbeLMCxS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 21:51:23 -0500
-Received: from smtprelay0080.hostedemail.com ([216.40.44.80]:40056 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726344AbeLMCvX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 21:51:23 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay06.hostedemail.com (Postfix) with ESMTP id DF88018014B01;
-        Thu, 13 Dec 2018 02:51:21 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: dock83_45efa883e5c09
-X-Filterd-Recvd-Size: 1539
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf03.hostedemail.com (Postfix) with ESMTPA;
-        Thu, 13 Dec 2018 02:51:20 +0000 (UTC)
-Message-ID: <642dd9ea144c03041ad74b14777553fe652acd1a.camel@perches.com>
-Subject: Re: [PATCH 1/2] scripts/spdxcheck.py: Always open files in binary
- mode
-From:   Joe Perches <joe@perches.com>
-To:     Jeremy Cline <jcline@redhat.com>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>, linux-kernel@vger.kernel.org
-Date:   Wed, 12 Dec 2018 18:51:19 -0800
-In-Reply-To: <20181212181410.GC2352@laptop.jcline.org>
-References: <20181212131210.28024-1-thierry.reding@gmail.com>
-         <20181212181410.GC2352@laptop.jcline.org>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.1-1build1 
-Mime-Version: 1.0
+        Wed, 12 Dec 2018 21:53:18 -0500
+Received: from mga14.intel.com ([192.55.52.115]:32532 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726344AbeLMCxR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 21:53:17 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Dec 2018 18:53:17 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,347,1539673200"; 
+   d="scan'208";a="129501976"
+Received: from shao2-debian.sh.intel.com (HELO [10.239.13.6]) ([10.239.13.6])
+  by fmsmga001.fm.intel.com with ESMTP; 12 Dec 2018 18:53:15 -0800
+Subject: Re: [kbuild-all] [PATCH v3] ARM: smp: add support for per-task stack
+ canaries
+To:     Russell King - ARM Linux <linux@armlinux.org.uk>,
+        kbuild test robot <lkp@intel.com>
+Cc:     Kees Cook <keescook@chromium.org>, Arnd Bergmann <arnd@arndb.de>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        kernel-hardening@lists.openwall.com, linux-kernel@vger.kernel.org,
+        Emese Revfy <re.emese@gmail.com>, kbuild-all@01.org,
+        Laura Abbott <labbott@redhat.com>,
+        linux-arm-kernel@lists.infradead.org
+References: <20181206083257.9596-1-ard.biesheuvel@linaro.org>
+ <201812091807.4emRkZ7L%fengguang.wu@intel.com>
+ <20181209103740.GB30658@n2100.armlinux.org.uk>
+From:   Rong Chen <rong.a.chen@intel.com>
+Message-ID: <47a91e5a-0e97-334c-2f36-a0bd966a0050@intel.com>
+Date:   Thu, 13 Dec 2018 10:53:29 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.4.0
+MIME-Version: 1.0
+In-Reply-To: <20181209103740.GB30658@n2100.armlinux.org.uk>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-12-12 at 13:14 -0500, Jeremy Cline wrote:
-> It might be worth noting this fixes commit 6f4d29df66ac
-> ("scripts/spdxcheck.py: make python3 compliant")
 
-umm, how does it do that?
 
-> and also Cc this for
-> stable since 6f4d29df66ac got backported to v4.19. While that commit
-> did indeed make the script work with Python 3 for piping data, it broke
-> Python 2 and made its way to stable.
+On 12/09/2018 06:37 PM, Russell King - ARM Linux wrote:
+> On Sun, Dec 09, 2018 at 06:28:11PM +0800, kbuild test robot wrote:
+>> Hi Ard,
+>>
+>> I love your patch! Perhaps something to improve:
+> Hi,
+>
+> This looks to me like a false warning - how can a patch touching arch
+> code affect the result of lib/test_ubsan.c?  Please can you double-
+> check this result?
 
-I think attempting to use spdxcheck on binary files
-is not useful in the first place.
+Hi,
 
+I'm sorry for the trouble, It's a false warning, we will look into it.
+
+Best Regards,
+Rong Chen
+
+> Thanks.
+>
+>> [auto build test WARNING on arm/for-next]
+>> [also build test WARNING on v4.20-rc5]
+>> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+>>
+>> url:    https://github.com/0day-ci/linux/commits/Ard-Biesheuvel/ARM-smp-add-support-for-per-task-stack-canaries/20181209-033321
+>> base:   git://git.armlinux.org.uk/~rmk/linux-arm.git for-next
+>> config: arm-allmodconfig (attached as .config)
+>> compiler: arm-linux-gnueabi-gcc (Debian 7.2.0-11) 7.2.0
+>> reproduce:
+>>          wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+>>          chmod +x ~/bin/make.cross
+>>          # save the attached .config to linux build tree
+>>          GCC_VERSION=7.2.0 make.cross ARCH=arm
+>>
+>> All warnings (new ones prefixed by >>):
+>>
+>>     lib/test_ubsan.c: In function 'test_ubsan_vla_bound_not_positive':
+>>>> lib/test_ubsan.c:48:2: warning: ISO C90 forbids variable length array 'buf' [-Wvla]
+>>       char buf[size];
+>>       ^~~~
+>>     lib/test_ubsan.c: In function 'test_ubsan_out_of_bounds':
+>>>> lib/test_ubsan.c:64:2: warning: ISO C90 forbids variable length array 'arr' [-Wvla]
+>>       volatile int arr[i];
+>>       ^~~~~~~~
+>>
+>> vim +/buf +48 lib/test_ubsan.c
+>>
+>> 854686f4 Jinbum Park 2018-04-10  44
+>> 854686f4 Jinbum Park 2018-04-10  45  static void test_ubsan_vla_bound_not_positive(void)
+>> 854686f4 Jinbum Park 2018-04-10  46  {
+>> 854686f4 Jinbum Park 2018-04-10  47  	volatile int size = -1;
+>> 854686f4 Jinbum Park 2018-04-10 @48  	char buf[size];
+>> 854686f4 Jinbum Park 2018-04-10  49
+>> 854686f4 Jinbum Park 2018-04-10  50  	(void)buf;
+>> 854686f4 Jinbum Park 2018-04-10  51  }
+>> 854686f4 Jinbum Park 2018-04-10  52
+>> 854686f4 Jinbum Park 2018-04-10  53  static void test_ubsan_shift_out_of_bounds(void)
+>> 854686f4 Jinbum Park 2018-04-10  54  {
+>> 854686f4 Jinbum Park 2018-04-10  55  	volatile int val = -1;
+>> 854686f4 Jinbum Park 2018-04-10  56  	int val2 = 10;
+>> 854686f4 Jinbum Park 2018-04-10  57
+>> 854686f4 Jinbum Park 2018-04-10  58  	val2 <<= val;
+>> 854686f4 Jinbum Park 2018-04-10  59  }
+>> 854686f4 Jinbum Park 2018-04-10  60
+>> 854686f4 Jinbum Park 2018-04-10  61  static void test_ubsan_out_of_bounds(void)
+>> 854686f4 Jinbum Park 2018-04-10  62  {
+>> 854686f4 Jinbum Park 2018-04-10  63  	volatile int i = 4, j = 5;
+>> 854686f4 Jinbum Park 2018-04-10 @64  	volatile int arr[i];
+>> 854686f4 Jinbum Park 2018-04-10  65
+>> 854686f4 Jinbum Park 2018-04-10  66  	arr[j] = i;
+>> 854686f4 Jinbum Park 2018-04-10  67  }
+>> 854686f4 Jinbum Park 2018-04-10  68
+>>
+>> :::::: The code at line 48 was first introduced by commit
+>> :::::: 854686f4edf483db1e0d26d972bdb8fb65c8bfaa lib: add testing module for UBSAN
+>>
+>> :::::: TO: Jinbum Park <jinb.park7@gmail.com>
+>> :::::: CC: Linus Torvalds <torvalds@linux-foundation.org>
+>>
+>> ---
+>> 0-DAY kernel test infrastructure                Open Source Technology Center
+>> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+>
+>
 
