@@ -2,109 +2,158 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13807C67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 09:47:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E840C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 09:48:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 171712087F
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 09:47:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B288A208E7
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 09:48:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b="T9s9oG6J"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 171712087F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xenosoft.de
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="M3/BKtg8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B288A208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728110AbeLMJrY (ORCPT
+        id S1728125AbeLMJsT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 04:47:24 -0500
-Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.53]:21286 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727489AbeLMJrY (ORCPT
+        Thu, 13 Dec 2018 04:48:19 -0500
+Received: from mail-io1-f67.google.com ([209.85.166.67]:44778 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727921AbeLMJsT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 04:47:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1544694441;
-        s=strato-dkim-0002; d=xenosoft.de;
-        h=In-Reply-To:Date:Message-ID:From:References:Cc:To:Subject:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=OgkIjYTVAghMHYNbTQQs7wlhsYtJAPI86xVTVQ+Yu8w=;
-        b=T9s9oG6JjUO6rPO99wNShRgsSoOw8ADJpueSloiAc6Su9MohDwK1FCido8PWeAwB1c
-        yIiEoiMsw9dOmMd3gk1ryLh/wWkH68fIxYHqnDDgJzihibyAUmoLcTz9fIY9q7k1L3XW
-        +g4L/9GHkKOqLHgI5N6QkX8JQ272kzTqrrCWNl/vmwhPs9vAcYAIsDXmsZ+t3Jm5XMNn
-        2I+4iUOcgi/0skD+pWcNEVUzlFt6ogJVmIhLGzAUIU1vMaHYgLTR4iUxQNF9yfIy5Z+r
-        z60IyNmGggmMk0C7b/IOJBDcEqNNygZFwS/pcmXfesuWhs5Jj9wbLKWCA698Fw4gjbRo
-        mDxw==
-X-RZG-AUTH: ":L2QefEenb+UdBJSdRCXu93KJ1bmSGnhMdmOod1DhGM4l4Hio94KKxRySfLxnHfJ+Dkjp5G5MdirQj0WG7CkH2j1S+d7f+qCRMaRzyLzUgdHjSA=="
-X-RZG-CLASS-ID: mo00
-Received: from [IPv6:2a02:8109:a400:162c:8d43:e6ec:d963:b7de]
-        by smtp.strato.de (RZmta 44.8 AUTH)
-        with ESMTPSA id e03c1euBD9lJ0Qm
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Thu, 13 Dec 2018 10:47:19 +0100 (CET)
-Subject: Re: use generic DMA mapping code in powerpc V4
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     linux-arch@vger.kernel.org,
-        Darren Stevens <darren@stevens-zone.net>,
-        linux-kernel@vger.kernel.org, Julian Margetson <runaway@candw.ms>,
-        linux-mm@kvack.org, iommu@lists.linux-foundation.org,
-        Paul Mackerras <paulus@samba.org>,
-        Olof Johansson <olof@lixom.net>, linuxppc-dev@lists.ozlabs.org
-References: <8a2c4581-0c85-8065-f37e-984755eb31ab@xenosoft.de>
- <424bb228-c9e5-6593-1ab7-5950d9b2bd4e@xenosoft.de>
- <c86d76b4-b199-557e-bc64-4235729c1e72@xenosoft.de>
- <1ecb7692-f3fb-a246-91f9-2db1b9496305@xenosoft.de>
- <6c997c03-e072-97a9-8ae0-38a4363df919@xenosoft.de>
- <4cfb3f26-74e1-db01-b014-759f188bb5a6@xenosoft.de>
- <82879d3f-83de-6438-c1d6-49c571dcb671@xenosoft.de>
- <20181212141556.GA4801@lst.de>
- <2242B4B2-6311-492E-BFF9-6740E36EC6D4@xenosoft.de>
- <84558d7f-5a7f-5219-0c3a-045e6b4c494f@xenosoft.de>
- <20181213091021.GA2106@lst.de>
-From:   Christian Zigotzky <chzigotzky@xenosoft.de>
-Message-ID: <835bd119-081e-a5ea-1899-189d439c83d6@xenosoft.de>
-Date:   Thu, 13 Dec 2018 10:47:18 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
+        Thu, 13 Dec 2018 04:48:19 -0500
+Received: by mail-io1-f67.google.com with SMTP id r200so1063068iod.11
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 01:48:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=MA/7VFDGosHgcPekhBDpGbbUmcrDyTLEUNnFmkYTeqo=;
+        b=M3/BKtg8jZ20add7U379jPdCGP7xCZ6ZRKXFIQIZgx+ZBGMgQXlEkBbj//1HuwshJX
+         ToL4D1B0RRbirrDMrnwdBHqCgjGUnckEp4gnm4My/zZDch8TqTQnJNq++EmvcB+rQCrL
+         y/1z7RNzW29bHR0LqbMsx1bOlr3J15P4ShK1o=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MA/7VFDGosHgcPekhBDpGbbUmcrDyTLEUNnFmkYTeqo=;
+        b=argd51TidA7llKtm2a9coDs25zeQCo/lo6UHo+pvdGEXlMQ5k4sYIL9GFmNRpqpazW
+         d1d+7E+MkuPetEtAeM9obnE5XpPrgHp2oo2suXWS/M4N3MyB+EHmG0oY93Xlf5f0qibn
+         2mFx7/M9usG4WLNdiVq6XCwhHHIomafryIpuwCkQvbil0J7u+Q7X29wiz9bmxnGpL2dp
+         rdRZfL4SoNOGEZnuGc9BGdQkLxCkYzu10byLdjO02n/4u1V9twdgVGqxdE9DteLEhxRi
+         dn5Kk2JgShDLL2Fb/1b2dQPWc8WVV/wIkyyiXnHxDhR/9kWPOuZ6x9U6BV6jwXJj+Npm
+         6p4Q==
+X-Gm-Message-State: AA+aEWYC+MW+Jo4/yYC590iQIaH90qYeQwoZuSNb7kBNBfKbCscBqvWT
+        VpPyqNLI1llHzw8GVXmA7HvlH9zG7U1bpUEe3rOrIQ==
+X-Google-Smtp-Source: AFSGD/W3qNGNsBBiGQpBel9ajnA1DwW6xJTBKhxvhQJbcGFMGHVnT4EwvUd8SmxTp25+zCCqk1JOlDtb7Pd/A3jCLyI=
+X-Received: by 2002:a5d:8415:: with SMTP id i21mr19613588ion.173.1544694498460;
+ Thu, 13 Dec 2018 01:48:18 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181213091021.GA2106@lst.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: de-DE
+References: <20181213091848.81327-1-louiscollard@chromium.org>
+In-Reply-To: <20181213091848.81327-1-louiscollard@chromium.org>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Thu, 13 Dec 2018 10:48:07 +0100
+Message-ID: <CAKv+Gu9sWw=VHjYivokAkhGP+p1P15bs3ThfRghARNesW5kyOA@mail.gmail.com>
+Subject: Re: [PATCH v2] Allow hwrng to initialize crng.
+To:     louiscollard@chromium.org
+Cc:     "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>, mpm@selenic.com,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        gary.hook@amd.com, m@bues.ch,
+        PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        apronin@chromium.org,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux@mniewoehner.de, david.bild@xaptum.com,
+        "Theodore Ts'o" <tytso@mit.edu>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13 December 2018 at 10:10AM, Christoph Hellwig wrote:
-> On Thu, Dec 13, 2018 at 09:41:50AM +0100, Christian Zigotzky wrote:
->> Today I tried the first patch (0001-get_required_mask.patch) with the last
->> good commit (977706f9755d2d697aa6f45b4f9f0e07516efeda). Unfortunately this
->> patch is already included in the last good commit
->> (977706f9755d2d697aa6f45b4f9f0e07516efeda). I will try the next patch.
-> Hmm, I don't think this is the case.  This is my local git log output:
+On Thu, 13 Dec 2018 at 10:18, Louis Collard <louiscollard@chromium.org> wrote:
 >
-> commit 83a4b87de6bc6a75b500c9959de88e2157fbcd7c
-> Author: Christoph Hellwig <hch@lst.de>
-> Date:   Wed Dec 12 15:07:49 2018 +0100
+> Some systems, for example embedded systems, do not generate
+> enough entropy on boot through interrupts, and boot may be blocked for
+> several minutes waiting for a call to getrandom to complete.
 >
->      get_required_mask
+> Currently, random data is read from a hwrng when it is registered,
+> and is loaded into primary_crng. This data is treated in the same
+> way as data that is device-specific but otherwise unchanging, and
+> so primary_crng cannot become initialized with the data from the
+> hwrng.
 >
-> commit 977706f9755d2d697aa6f45b4f9f0e07516efeda
-> Author: Christoph Hellwig <hch@lst.de>
-> Date:   Sat Nov 10 22:34:27 2018 +0100
+> This change causes the data initially read from the hwrng to be
+> treated the same as subsequent data that is read from the hwrng if
+> it's quality score is non-zero.
 >
->      powerpc/dma: remove dma_nommu_mmap_coherent
+> The implications of this are:
 >
-> I've also pushed a git branch with these out to:
+> The data read from hwrng can cause primary_crng to become
+> initialized, therefore avoiding problems of getrandom blocking
+> on boot.
 >
->      git://git.infradead.org/users/hch/misc.git powerpc-dma.5-debug
+> Calls to getrandom (with GRND_RANDOM) may be using entropy
+> exclusively (or in practise, almost exclusively) from the hwrng.
 >
-Sorry Christioph. I was wrong. The first patch isn't included in the 
-last good commit. I will try it again. I can only test beside my main 
-work. That means it takes longer.
+> Regarding the latter point; this behavior is the same as if a
+> user specified a quality score of 1 (bit of entropy per 1024 bits)
+> so hopefully this is not too scary a change to make.
+>
+> This change is the result of the discussion here:
+> https://patchwork.kernel.org/patch/10453893/
+>
+> Signed-off-by: Louis Collard <louiscollard@chromium.org>
+> Acked-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> ---
+>  drivers/char/hw_random/core.c | 11 +++++++++--
+>  1 file changed, 9 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/char/hw_random/core.c b/drivers/char/hw_random/core.c
+> index 95be7228f327..7736e1a96321 100644
+> --- a/drivers/char/hw_random/core.c
+> +++ b/drivers/char/hw_random/core.c
+> @@ -24,6 +24,7 @@
+>  #include <linux/sched.h>
+>  #include <linux/slab.h>
+>  #include <linux/uaccess.h>
+> +#include <crypto/chacha20.h>
+>
+>  #define RNG_MODULE_NAME                "hw_random"
+>
+> @@ -64,13 +65,19 @@ static size_t rng_buffer_size(void)
+>  static void add_early_randomness(struct hwrng *rng)
+>  {
+>         int bytes_read;
+> -       size_t size = min_t(size_t, 16, rng_buffer_size());
+> +       /* Read enough to initialize crng. */
+> +       size_t size = min_t(size_t,
+> +                           2*CHACHA20_KEY_SIZE,
 
--- Christian
+This should be as symbolic constant that retains its meaning even if
+we move away from ChaCha20 or modify the current implementation
 
+> +                           rng_buffer_size());
+>
+>         mutex_lock(&reading_mutex);
+>         bytes_read = rng_get_data(rng, rng_buffer, size, 1);
+>         mutex_unlock(&reading_mutex);
+>         if (bytes_read > 0)
+> -               add_device_randomness(rng_buffer, bytes_read);
+> +               /* Allow crng to become initialized, but do not add
+> +                * entropy to the pool.
+> +                */
+> +               add_hwgenerator_randomness(rng_buffer, bytes_read, 0);
+>  }
+>
+>  static inline void cleanup_rng(struct kref *kref)
+> --
+> 2.13.5
+>
