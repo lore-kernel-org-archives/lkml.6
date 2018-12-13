@@ -7,68 +7,53 @@ X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C8C9C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:37:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D090C67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:37:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40A0B20849
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:37:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD41F20849
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:37:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544675863;
-	bh=NT41W/fl9LiqvsXnR+3j1VNE+w6nNpGax3NrpCTJxzI=;
+	s=default; t=1544675867;
+	bh=UvaFHo+6Kpl14ZS36XmaHRf1R+6LY0g7uri8Q/+EvNU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ThVoVfy9u5Lv8zrrcxc9n/fOgvGSyaJEZ6ATB8up+xTnLs9RDWgDInfoioUxjMCUn
-	 vZtcxnFJCrXlS0RVooDInoTZRnqq3m/z66oiffyqbfN/Ha63JYbqciQ8PV80NjkTRY
-	 YYk/R12SJgtlOWflgExd5DROYRdx5NcwsvrKwFQ0=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40A0B20849
+	b=TFhXF/erJck47Kft5ozXUY5DmnUIaEJB/wzPIhJsW/AJUTAsXVq/vPHCYBF3qjkYc
+	 xbeHUE5x3Fzt9qYpOL2wfOHGJe4GsThd7wY63CFZHmO8zd+Rpc3oXTxp8q5oqzmo5V
+	 X+tpHjhV+bV4t+lUl+GD6e32JLdrM9OuQXMnmGkM=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD41F20849
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728595AbeLMEdL (ORCPT
+        id S1729064AbeLMEhp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 23:33:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45946 "EHLO mail.kernel.org"
+        Wed, 12 Dec 2018 23:37:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46012 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729245AbeLMEdH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 23:33:07 -0500
+        id S1728075AbeLMEdK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 23:33:10 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ADB41208E7;
-        Thu, 13 Dec 2018 04:33:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AFD5720672;
+        Thu, 13 Dec 2018 04:33:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544675586;
-        bh=NT41W/fl9LiqvsXnR+3j1VNE+w6nNpGax3NrpCTJxzI=;
+        s=default; t=1544675589;
+        bh=UvaFHo+6Kpl14ZS36XmaHRf1R+6LY0g7uri8Q/+EvNU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=y7Tl567b38opafSB2NExSG1h/cfpHypbj0Ic4ifho79BMKOZBOcIC64OGd2wQnRDB
-         5BQEgv6YUHrijVvhZJ0iY5eHKK3Kw9GlGxPFJ8erFuIg8YQYkn54iW0g3kDLnb5Y/m
-         qvz3BiI0PPgjLTxeRMb5jc4+POndPlWy+thOWhGk=
+        b=WkQDwVC+L6M1cijpd7Fywix4zDjf/OSbfLIh+AuWyN2Cvcba7r3in7fKUdMv64tcB
+         lrdmcSzH+YHcjmyaav+e+oL/+qiebRlzR+qCkojOuVwAFlZuFzzSAo1gN89eeQpenI
+         nCoc496Fog1wQc8x569MXB7mPl61KHfKCuO4W6v8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     YiFei Zhu <zhuyifei1999@gmail.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arend van Spriel <arend.vanspriel@broadcom.com>,
-        Bhupesh Sharma <bhsharma@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Eric Snowberg <eric.snowberg@oracle.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Joe Perches <joe@perches.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Julien Thierry <julien.thierry@arm.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
-        Sedat Dilek <sedat.dilek@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 04/23] x86/earlyprintk/efi: Fix infinite loop on some screen widths
-Date:   Wed, 12 Dec 2018 23:32:40 -0500
-Message-Id: <20181213043259.76643-4-sashal@kernel.org>
+Cc:     Jose Abreu <joabreu@synopsys.com>,
+        Alexey Brodkin <abrodkin@synopsys.com>,
+        Joao Pinto <jpinto@synopsys.com>,
+        David Laight <David.Laight@ACULAB.COM>,
+        Vineet Gupta <vgupta@synopsys.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-snps-arc@lists.infradead.org
+Subject: [PATCH AUTOSEL 4.4 06/23] ARC: io.h: Implement reads{x}()/writes{x}()
+Date:   Wed, 12 Dec 2018 23:32:42 -0500
+Message-Id: <20181213043259.76643-6-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181213043259.76643-1-sashal@kernel.org>
 References: <20181213043259.76643-1-sashal@kernel.org>
@@ -80,63 +65,143 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YiFei Zhu <zhuyifei1999@gmail.com>
+From: Jose Abreu <joabreu@synopsys.com>
 
-[ Upstream commit 79c2206d369b87b19ac29cb47601059b6bf5c291 ]
+[ Upstream commit 10d443431dc2bb733cf7add99b453e3fb9047a2e ]
 
-An affected screen resolution is 1366 x 768, which width is not
-divisible by 8, the default font width. On such screens, when longer
-lines are earlyprintk'ed, overflow-to-next-line can never trigger,
-due to the left-most x-coordinate of the next character always less
-than the screen width. Earlyprintk will infinite loop in trying to
-print the rest of the string but unable to, due to the line being
-full.
+Some ARC CPU's do not support unaligned loads/stores. Currently, generic
+implementation of reads{b/w/l}()/writes{b/w/l}() is being used with ARC.
+This can lead to misfunction of some drivers as generic functions do a
+plain dereference of a pointer that can be unaligned.
 
-This patch makes the trigger consider the right-most x-coordinate,
-instead of left-most, as the value to compare against the screen
-width threshold.
+Let's use {get/put}_unaligned() helpers instead of plain dereference of
+pointer in order to fix. The helpers allow to get and store data from an
+unaligned address whilst preserving the CPU internal alignment.
+According to [1], the use of these helpers are costly in terms of
+performance so we added an initial check for a buffer already aligned so
+that the usage of the helpers can be avoided, when possible.
 
-Signed-off-by: YiFei Zhu <zhuyifei1999@gmail.com>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Arend van Spriel <arend.vanspriel@broadcom.com>
-Cc: Bhupesh Sharma <bhsharma@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Eric Snowberg <eric.snowberg@oracle.com>
-Cc: Hans de Goede <hdegoede@redhat.com>
-Cc: Joe Perches <joe@perches.com>
-Cc: Jon Hunter <jonathanh@nvidia.com>
-Cc: Julien Thierry <julien.thierry@arm.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Matt Fleming <matt@codeblueprint.co.uk>
-Cc: Nathan Chancellor <natechancellor@gmail.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-Cc: Sedat Dilek <sedat.dilek@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-efi@vger.kernel.org
-Link: http://lkml.kernel.org/r/20181129171230.18699-12-ard.biesheuvel@linaro.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+[1] Documentation/unaligned-memory-access.txt
+
+Cc: Alexey Brodkin <abrodkin@synopsys.com>
+Cc: Joao Pinto <jpinto@synopsys.com>
+Cc: David Laight <David.Laight@ACULAB.COM>
+Tested-by: Vitor Soares <soares@synopsys.com>
+Signed-off-by: Jose Abreu <joabreu@synopsys.com>
+Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/platform/efi/early_printk.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arc/include/asm/io.h | 72 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 72 insertions(+)
 
-diff --git a/arch/x86/platform/efi/early_printk.c b/arch/x86/platform/efi/early_printk.c
-index 524142117296..82324fc25d5e 100644
---- a/arch/x86/platform/efi/early_printk.c
-+++ b/arch/x86/platform/efi/early_printk.c
-@@ -179,7 +179,7 @@ early_efi_write(struct console *con, const char *str, unsigned int num)
- 			num--;
- 		}
+diff --git a/arch/arc/include/asm/io.h b/arch/arc/include/asm/io.h
+index cb69299a492e..f120d823e8c2 100644
+--- a/arch/arc/include/asm/io.h
++++ b/arch/arc/include/asm/io.h
+@@ -12,6 +12,7 @@
+ #include <linux/types.h>
+ #include <asm/byteorder.h>
+ #include <asm/page.h>
++#include <asm/unaligned.h>
  
--		if (efi_x >= si->lfb_width) {
-+		if (efi_x + font->width > si->lfb_width) {
- 			efi_x = 0;
- 			efi_y += font->height;
- 		}
+ #ifdef CONFIG_ISA_ARCV2
+ #include <asm/barrier.h>
+@@ -85,6 +86,42 @@ static inline u32 __raw_readl(const volatile void __iomem *addr)
+ 	return w;
+ }
+ 
++/*
++ * {read,write}s{b,w,l}() repeatedly access the same IO address in
++ * native endianness in 8-, 16-, 32-bit chunks {into,from} memory,
++ * @count times
++ */
++#define __raw_readsx(t,f) \
++static inline void __raw_reads##f(const volatile void __iomem *addr,	\
++				  void *ptr, unsigned int count)	\
++{									\
++	bool is_aligned = ((unsigned long)ptr % ((t) / 8)) == 0;	\
++	u##t *buf = ptr;						\
++									\
++	if (!count)							\
++		return;							\
++									\
++	/* Some ARC CPU's don't support unaligned accesses */		\
++	if (is_aligned) {						\
++		do {							\
++			u##t x = __raw_read##f(addr);			\
++			*buf++ = x;					\
++		} while (--count);					\
++	} else {							\
++		do {							\
++			u##t x = __raw_read##f(addr);			\
++			put_unaligned(x, buf++);			\
++		} while (--count);					\
++	}								\
++}
++
++#define __raw_readsb __raw_readsb
++__raw_readsx(8, b)
++#define __raw_readsw __raw_readsw
++__raw_readsx(16, w)
++#define __raw_readsl __raw_readsl
++__raw_readsx(32, l)
++
+ #define __raw_writeb __raw_writeb
+ static inline void __raw_writeb(u8 b, volatile void __iomem *addr)
+ {
+@@ -117,6 +154,35 @@ static inline void __raw_writel(u32 w, volatile void __iomem *addr)
+ 
+ }
+ 
++#define __raw_writesx(t,f)						\
++static inline void __raw_writes##f(volatile void __iomem *addr, 	\
++				   const void *ptr, unsigned int count)	\
++{									\
++	bool is_aligned = ((unsigned long)ptr % ((t) / 8)) == 0;	\
++	const u##t *buf = ptr;						\
++									\
++	if (!count)							\
++		return;							\
++									\
++	/* Some ARC CPU's don't support unaligned accesses */		\
++	if (is_aligned) {						\
++		do {							\
++			__raw_write##f(*buf++, addr);			\
++		} while (--count);					\
++	} else {							\
++		do {							\
++			__raw_write##f(get_unaligned(buf++), addr);	\
++		} while (--count);					\
++	}								\
++}
++
++#define __raw_writesb __raw_writesb
++__raw_writesx(8, b)
++#define __raw_writesw __raw_writesw
++__raw_writesx(16, w)
++#define __raw_writesl __raw_writesl
++__raw_writesx(32, l)
++
+ /*
+  * MMIO can also get buffered/optimized in micro-arch, so barriers needed
+  * Based on ARM model for the typical use case
+@@ -132,10 +198,16 @@ static inline void __raw_writel(u32 w, volatile void __iomem *addr)
+ #define readb(c)		({ u8  __v = readb_relaxed(c); __iormb(); __v; })
+ #define readw(c)		({ u16 __v = readw_relaxed(c); __iormb(); __v; })
+ #define readl(c)		({ u32 __v = readl_relaxed(c); __iormb(); __v; })
++#define readsb(p,d,l)		({ __raw_readsb(p,d,l); __iormb(); })
++#define readsw(p,d,l)		({ __raw_readsw(p,d,l); __iormb(); })
++#define readsl(p,d,l)		({ __raw_readsl(p,d,l); __iormb(); })
+ 
+ #define writeb(v,c)		({ __iowmb(); writeb_relaxed(v,c); })
+ #define writew(v,c)		({ __iowmb(); writew_relaxed(v,c); })
+ #define writel(v,c)		({ __iowmb(); writel_relaxed(v,c); })
++#define writesb(p,d,l)		({ __iowmb(); __raw_writesb(p,d,l); })
++#define writesw(p,d,l)		({ __iowmb(); __raw_writesw(p,d,l); })
++#define writesl(p,d,l)		({ __iowmb(); __raw_writesl(p,d,l); })
+ 
+ /*
+  * Relaxed API for drivers which can handle barrier ordering themselves
 -- 
 2.19.1
 
