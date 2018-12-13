@@ -3,209 +3,156 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E1A5C67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 02:15:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D62DC67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 02:18:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 493D92087F
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 02:15:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 493D92087F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 2B37D20851
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 02:18:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B37D20851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726649AbeLMCPn convert rfc822-to-8bit (ORCPT
+        id S1726651AbeLMCS2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 21:15:43 -0500
-Received: from mga03.intel.com ([134.134.136.65]:37204 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726526AbeLMCPm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 21:15:42 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Dec 2018 18:15:41 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,347,1539673200"; 
-   d="scan'208";a="129494241"
-Received: from fmsmsx106.amr.corp.intel.com ([10.18.124.204])
-  by fmsmga001.fm.intel.com with ESMTP; 12 Dec 2018 18:15:41 -0800
-Received: from shsmsx102.ccr.corp.intel.com (10.239.4.154) by
- FMSMSX106.amr.corp.intel.com (10.18.124.204) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Wed, 12 Dec 2018 18:15:41 -0800
-Received: from shsmsx104.ccr.corp.intel.com ([169.254.5.203]) by
- shsmsx102.ccr.corp.intel.com ([169.254.2.182]) with mapi id 14.03.0415.000;
- Thu, 13 Dec 2018 10:11:35 +0800
-From:   "Zhang, Jun" <jun.zhang@intel.com>
-To:     "paulmck@linux.ibm.com" <paulmck@linux.ibm.com>,
-        "He, Bo" <bo.he@intel.com>
-CC:     Steven Rostedt <rostedt@goodmis.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "josh@joshtriplett.org" <josh@joshtriplett.org>,
-        "mathieu.desnoyers@efficios.com" <mathieu.desnoyers@efficios.com>,
-        "jiangshanlai@gmail.com" <jiangshanlai@gmail.com>,
-        "Xiao, Jin" <jin.xiao@intel.com>,
-        "Zhang, Yanmin" <yanmin.zhang@intel.com>,
-        "Bai, Jie A" <jie.a.bai@intel.com>,
-        "Sun, Yi J" <yi.j.sun@intel.com>
-Subject: RE: rcu_preempt caused oom
-Thread-Topic: rcu_preempt caused oom
-Thread-Index: AdSHvQIr70OYynHSTxKgLAvVXX+0Zv//yKOAgAAWeAD//li4UIADPhuAgAAJSYD//3lRYIAAoJ4A//tcRfABJU8zAP/+T9Nw//xa4AD/91m7QP/uoBSA/9vB3nD/t3F+AP9tcGAw/tr6woD9snCZgPtjpC6Q9sakFQDtjQLogNsYI6iwtjC+vgDsYEklwNjA58YAsYF15gDjAkI/QMYE+T8AjAlMjtA=
-Date:   Thu, 13 Dec 2018 02:11:35 +0000
-Message-ID: <88DC34334CA3444C85D647DBFA962C2735AD5F77@SHSMSX104.ccr.corp.intel.com>
-References: <20181209195601.GA7854@linux.ibm.com>
- <CD6925E8781EFD4D8E11882D20FC406D52A186D0@SHSMSX104.ccr.corp.intel.com>
- <20181211003838.GD4170@linux.ibm.com> <20181211044631.GA19942@linux.ibm.com>
- <CD6925E8781EFD4D8E11882D20FC406D52A18E53@SHSMSX104.ccr.corp.intel.com>
- <20181212022446.GV4170@linux.ibm.com>
- <CD6925E8781EFD4D8E11882D20FC406D52A192C3@SHSMSX104.ccr.corp.intel.com>
- <20181212154224.GX4170@linux.ibm.com> <20181212210316.GA14777@linux.ibm.com>
- <CD6925E8781EFD4D8E11882D20FC406D52A193C3@SHSMSX104.ccr.corp.intel.com>
- <20181213001214.GE4170@linux.ibm.com>
-In-Reply-To: <20181213001214.GE4170@linux.ibm.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMjM4MTUxYzItNzVmMC00ZTBiLThjNjQtNTU2MGFhZmM2ZDZhIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoicXo2K1ZUYU5Nd0dMRDZSUlFSNUhBc2V0eG9hR3ZGUTlUb1FacE9OaG5mRzhsZjBYYmZ6RXpKQXpvUDJIa2lEeCJ9
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.239.127.40]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Wed, 12 Dec 2018 21:18:28 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:15681 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726405AbeLMCS1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 21:18:27 -0500
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id ED07A2F3174ED;
+        Thu, 13 Dec 2018 10:18:21 +0800 (CST)
+Received: from [127.0.0.1] (10.177.31.14) by DGGEMS405-HUB.china.huawei.com
+ (10.3.19.205) with Microsoft SMTP Server id 14.3.408.0; Thu, 13 Dec 2018
+ 10:18:22 +0800
+Subject: Re: [PATCH] squashfs: enable __GFP_FS in ->readpage to prevent hang
+ in mem alloc
+From:   Hou Tao <houtao1@huawei.com>
+To:     <phillip@squashfs.org.uk>
+CC:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mm@kvack.org>
+References: <20181204020840.49576-1-houtao1@huawei.com>
+ <4315acd7-f4b2-b11d-18d8-ab6ce63244b3@huawei.com>
+Message-ID: <9a6b1897-7b02-09d8-4103-d887a286dda3@huawei.com>
+Date:   Thu, 13 Dec 2018 10:18:21 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
+In-Reply-To: <4315acd7-f4b2-b11d-18d8-ab6ce63244b3@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.31.14]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello, Paul
+ping ?
 
-I think the next patch is better.
-Because ULONG_CMP_GE could cause double write, which has risk that write back old value.
-Please help review.
-I don't test it. If you agree, we will test it.
-Thanks!
-
-
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index 0b760c1..c00f34e 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -1849,7 +1849,7 @@ static bool __note_gp_changes(struct rcu_state *rsp, struct rcu_node *rnp,
-                zero_cpu_stall_ticks(rdp);
-        }
-        rdp->gp_seq = rnp->gp_seq;  /* Remember new grace-period state. */
--       if (ULONG_CMP_GE(rnp->gp_seq_needed, rdp->gp_seq_needed) || rdp->gpwrap)
-+       if (ULONG_CMP_LT(rdp->gp_seq_needed, rnp->gp_seq_needed) || rdp->gpwrap)
-                rdp->gp_seq_needed = rnp->gp_seq_needed;
-        WRITE_ONCE(rdp->gpwrap, false);
-        rcu_gpnum_ovf(rnp, rdp);
-
-
------Original Message-----
-From: Paul E. McKenney [mailto:paulmck@linux.ibm.com] 
-Sent: Thursday, December 13, 2018 08:12
-To: He, Bo <bo.he@intel.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>; linux-kernel@vger.kernel.org; josh@joshtriplett.org; mathieu.desnoyers@efficios.com; jiangshanlai@gmail.com; Zhang, Jun <jun.zhang@intel.com>; Xiao, Jin <jin.xiao@intel.com>; Zhang, Yanmin <yanmin.zhang@intel.com>; Bai, Jie A <jie.a.bai@intel.com>; Sun, Yi J <yi.j.sun@intel.com>
-Subject: Re: rcu_preempt caused oom
-
-On Wed, Dec 12, 2018 at 11:13:22PM +0000, He, Bo wrote:
-> I don't see the rcutree.sysrq_rcu parameter in v4.19 kernel, I also checked the latest kernel and the latest tag v4.20-rc6, not see the sysrq_rcu.
-> Please correct me if I have something wrong.
-
-That would be because I sent you the wrong patch, apologies!  :-/
-
-Please instead see the one below, which does add sysrq_rcu.
-
-							Thanx, Paul
-
-> -----Original Message-----
-> From: Paul E. McKenney <paulmck@linux.ibm.com>
-> Sent: Thursday, December 13, 2018 5:03 AM
-> To: He, Bo <bo.he@intel.com>
-> Cc: Steven Rostedt <rostedt@goodmis.org>; 
-> linux-kernel@vger.kernel.org; josh@joshtriplett.org; 
-> mathieu.desnoyers@efficios.com; jiangshanlai@gmail.com; Zhang, Jun 
-> <jun.zhang@intel.com>; Xiao, Jin <jin.xiao@intel.com>; Zhang, Yanmin 
-> <yanmin.zhang@intel.com>; Bai, Jie A <jie.a.bai@intel.com>
-> Subject: Re: rcu_preempt caused oom
+On 2018/12/6 9:14, Hou Tao wrote:
+> ping ?
 > 
-> On Wed, Dec 12, 2018 at 07:42:24AM -0800, Paul E. McKenney wrote:
-> > On Wed, Dec 12, 2018 at 01:21:33PM +0000, He, Bo wrote:
-> > > we reproduce on two boards, but I still not see the show_rcu_gp_kthreads() dump logs, it seems the patch can't catch the scenario.
-> > > I double confirmed the CONFIG_PROVE_RCU=y is enabled in the config as it's extracted from the /proc/config.gz.
-> > 
-> > Strange.
-> > 
-> > Are the systems responsive to sysrq keys once failure occurs?  If 
-> > so, I will provide you a sysrq-R or some such to dump out the RCU state.
+> On 2018/12/4 10:08, Hou Tao wrote:
+>> There is no need to disable __GFP_FS in ->readpage:
+>> * It's a read-only fs, so there will be no dirty/writeback page and
+>>   there will be no deadlock against the caller's locked page
+>> * It just allocates one page, so compaction will not be invoked
+>> * It doesn't take any inode lock, so the reclamation of inode will be fine
+>>
+>> And no __GFP_FS may lead to hang in __alloc_pages_slowpath() if a
+>> squashfs page fault occurs in the context of a memory hogger, because
+>> the hogger will not be killed due to the logic in __alloc_pages_may_oom().
+>>
+>> Signed-off-by: Hou Tao <houtao1@huawei.com>
+>> ---
+>>  fs/squashfs/file.c          |  3 ++-
+>>  fs/squashfs/file_direct.c   |  4 +++-
+>>  fs/squashfs/squashfs_fs_f.h | 25 +++++++++++++++++++++++++
+>>  3 files changed, 30 insertions(+), 2 deletions(-)
+>>  create mode 100644 fs/squashfs/squashfs_fs_f.h
+>>
+>> diff --git a/fs/squashfs/file.c b/fs/squashfs/file.c
+>> index f1c1430ae721..8603dda4a719 100644
+>> --- a/fs/squashfs/file.c
+>> +++ b/fs/squashfs/file.c
+>> @@ -51,6 +51,7 @@
+>>  #include "squashfs_fs.h"
+>>  #include "squashfs_fs_sb.h"
+>>  #include "squashfs_fs_i.h"
+>> +#include "squashfs_fs_f.h"
+>>  #include "squashfs.h"
+>>  
+>>  /*
+>> @@ -414,7 +415,7 @@ void squashfs_copy_cache(struct page *page, struct squashfs_cache_entry *buffer,
+>>  		TRACE("bytes %d, i %d, available_bytes %d\n", bytes, i, avail);
+>>  
+>>  		push_page = (i == page->index) ? page :
+>> -			grab_cache_page_nowait(page->mapping, i);
+>> +			squashfs_grab_cache_page_nowait(page->mapping, i);
+>>  
+>>  		if (!push_page)
+>>  			continue;
+>> diff --git a/fs/squashfs/file_direct.c b/fs/squashfs/file_direct.c
+>> index 80db1b86a27c..a0fdd6215348 100644
+>> --- a/fs/squashfs/file_direct.c
+>> +++ b/fs/squashfs/file_direct.c
+>> @@ -17,6 +17,7 @@
+>>  #include "squashfs_fs.h"
+>>  #include "squashfs_fs_sb.h"
+>>  #include "squashfs_fs_i.h"
+>> +#include "squashfs_fs_f.h"
+>>  #include "squashfs.h"
+>>  #include "page_actor.h"
+>>  
+>> @@ -60,7 +61,8 @@ int squashfs_readpage_block(struct page *target_page, u64 block, int bsize,
+>>  	/* Try to grab all the pages covered by the Squashfs block */
+>>  	for (missing_pages = 0, i = 0, n = start_index; i < pages; i++, n++) {
+>>  		page[i] = (n == target_page->index) ? target_page :
+>> -			grab_cache_page_nowait(target_page->mapping, n);
+>> +			squashfs_grab_cache_page_nowait(
+>> +					target_page->mapping, n);
+>>  
+>>  		if (page[i] == NULL) {
+>>  			missing_pages++;
+>> diff --git a/fs/squashfs/squashfs_fs_f.h b/fs/squashfs/squashfs_fs_f.h
+>> new file mode 100644
+>> index 000000000000..fc5fb7aeb27d
+>> --- /dev/null
+>> +++ b/fs/squashfs/squashfs_fs_f.h
+>> @@ -0,0 +1,25 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +#ifndef SQUASHFS_FS_F
+>> +#define SQUASHFS_FS_F
+>> +
+>> +/*
+>> + * No need to use FGP_NOFS here:
+>> + * 1. It's a read-only fs, so there will be no dirty/writeback page and
+>> + *    there will be no deadlock against the caller's locked page.
+>> + * 2. It just allocates one page, so compaction will not be invoked.
+>> + * 3. It doesn't take any inode lock, so the reclamation of inode
+>> + *    will be fine.
+>> + *
+>> + * And GFP_NOFS may lead to infinite loop in __alloc_pages_slowpath() if a
+>> + * squashfs page fault occurs in the context of a memory hogger, because
+>> + * the hogger will not be killed due to the logic in __alloc_pages_may_oom().
+>> + */
+>> +static inline struct page *
+>> +squashfs_grab_cache_page_nowait(struct address_space *mapping, pgoff_t index)
+>> +{
+>> +	return pagecache_get_page(mapping, index,
+>> +			FGP_LOCK|FGP_CREAT|FGP_NOWAIT,
+>> +			mapping_gfp_mask(mapping));
+>> +}
+>> +#endif
+>> +
+>>
 > 
-> Or, as it turns out, sysrq-y if booting with rcutree.sysrq_rcu=1 using the patch below.  Only lightly tested.
-
-------------------------------------------------------------------------
-
-commit 04b6245c8458e8725f4169e62912c1fadfdf8141
-Author: Paul E. McKenney <paulmck@linux.ibm.com>
-Date:   Wed Dec 12 16:10:09 2018 -0800
-
-    rcu: Add sysrq rcu_node-dump capability
-    
-    Backported from v4.21/v5.0
-    
-    Life is hard if RCU manages to get stuck without triggering RCU CPU
-    stall warnings or triggering the rcu_check_gp_start_stall() checks
-    for failing to start a grace period.  This commit therefore adds a
-    boot-time-selectable sysrq key (commandeering "y") that allows manually
-    dumping Tree RCU state.  The new rcutree.sysrq_rcu kernel boot parameter
-    must be set for this sysrq to be available.
-    
-    Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
-
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c index 0b760c1369f7..e9392a9d6291 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -61,6 +61,7 @@
- #include <linux/trace_events.h>
- #include <linux/suspend.h>
- #include <linux/ftrace.h>
-+#include <linux/sysrq.h>
- 
- #include "tree.h"
- #include "rcu.h"
-@@ -128,6 +129,9 @@ int num_rcu_lvl[] = NUM_RCU_LVL_INIT;  int rcu_num_nodes __read_mostly = NUM_RCU_NODES; /* Total # rcu_nodes in use. */
- /* panic() on RCU Stall sysctl. */
- int sysctl_panic_on_rcu_stall __read_mostly;
-+/* Commandeer a sysrq key to dump RCU's tree. */ static bool sysrq_rcu; 
-+module_param(sysrq_rcu, bool, 0444);
- 
- /*
-  * The rcu_scheduler_active variable is initialized to the value @@ -662,6 +666,27 @@ void show_rcu_gp_kthreads(void)  }  EXPORT_SYMBOL_GPL(show_rcu_gp_kthreads);
- 
-+/* Dump grace-period-request information due to commandeered sysrq. */ 
-+static void sysrq_show_rcu(int key) {
-+	show_rcu_gp_kthreads();
-+}
-+
-+static struct sysrq_key_op sysrq_rcudump_op = {
-+	.handler = sysrq_show_rcu,
-+	.help_msg = "show-rcu(y)",
-+	.action_msg = "Show RCU tree",
-+	.enable_mask = SYSRQ_ENABLE_DUMP,
-+};
-+
-+static int __init rcu_sysrq_init(void)
-+{
-+	if (sysrq_rcu)
-+		return register_sysrq_key('y', &sysrq_rcudump_op);
-+	return 0;
-+}
-+early_initcall(rcu_sysrq_init);
-+
- /*
-  * Send along grace-period-related data for rcutorture diagnostics.
-  */
+> 
+> .
+> 
 
