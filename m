@@ -4,57 +4,57 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00416C67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 09:08:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E882C67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 09:08:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B13D020873
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 09:08:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1886E2087F
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 09:08:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="j3XDd+Xx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B13D020873
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="h4lx10TU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1886E2087F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727848AbeLMJIj (ORCPT
+        id S1727885AbeLMJIq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 04:08:39 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:45903 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727596AbeLMJIi (ORCPT
+        Thu, 13 Dec 2018 04:08:46 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:38528 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727791AbeLMJIp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 04:08:38 -0500
-Received: by mail-pl1-f193.google.com with SMTP id a14so751519plm.12
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 01:08:38 -0800 (PST)
+        Thu, 13 Dec 2018 04:08:45 -0500
+Received: by mail-pf1-f195.google.com with SMTP id q1so799751pfi.5
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 01:08:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=rU0gk7hC5OI7CZ52UOe6mv3nED6+D6wIX2KCfJFy6io=;
-        b=j3XDd+XxodEjM1gZV3hozEvfjM5kpnKur2kK4gWra0dyNx4p9Y9YvHDE7LnUYaNUZ8
-         6fa09rwN0AGpv1qWmreFaZv8IZ3zNvaV9ZpMOj/KN7oXSraNhpWAf3pqax36XKDpMdSh
-         8oPvxBKMyt8C4xhQHwZro+nyAG5y9bz33W2Ew=
+        bh=ebvja7ppkTsEwfDofOxrBD+NfckjZ0iQFP4vJ8R1TQI=;
+        b=h4lx10TUdlrChEdu0MXS85znwBmk5v0MRQmTPnFhnmeFduQK02TziYBx2ZslzT28bV
+         qjpVTOHxSApyY5r1bOFSlDndAKUkOrrc0SLr+TbBynGQRiuNbwZLsUCpOqPYMD7CF1Xf
+         QBnjZIhUBZA4uZtE8H+D72PgUDBfEamx7j2eU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=rU0gk7hC5OI7CZ52UOe6mv3nED6+D6wIX2KCfJFy6io=;
-        b=eDk2gV+fQUYyqUa5NbBfeyNuz7lkjJO2kDVv9vgQ5qYqWyK481v/xo3rDyxFisWAat
-         40urqVBh0OS0kziOIR+Tz0H9YVIT1t3XZlU9xb71Q5cObtn3EAg/B1zK+01dRwpzemqu
-         /YJGqds7ww6tJcVRif/KWaZDyBOBjtNd+2HT4QLq/1aNaTV63QfinwwPURgboEW/RyJQ
-         oblN0NBFVeMwL4PwbBhBYkyxrjArsTaDng8exZ+BmGaZqGLhpYfFPy3yc06qEBdEZByI
-         in8SbxO5w0LI3ClwGnzvMzEOhmxdmBvVIFi8DamQBk0QWE0rMliNqVEATNMgYFmTUyLC
-         EAZg==
-X-Gm-Message-State: AA+aEWZucd831Yt4oqyxJF1wHWTPcyNQIFoyU1IbXTsSV4WbYJRDWqms
-        oyedgrjDvt0KPouVp4WxgtM+nA==
-X-Google-Smtp-Source: AFSGD/WM/1Nnxp8BrD2CFlPKyjK6EFSjQNkSptiN0Ipx67M/oIXS+H+4wc/4bhBgcAnKJXKhcoDzoQ==
-X-Received: by 2002:a17:902:28c1:: with SMTP id f59mr22911296plb.37.1544692117973;
-        Thu, 13 Dec 2018 01:08:37 -0800 (PST)
+        bh=ebvja7ppkTsEwfDofOxrBD+NfckjZ0iQFP4vJ8R1TQI=;
+        b=tCs3MEhMD234iWt6KlwfLRVmkV3v9c6521C/iKTcpBMjIAGSgtGfRyCfxel/MNhqzM
+         Tuuh3b//NMbKBxOlQeBc+YeeJmKPpQw3W4qZOZu2pKQLpQVfNw7DhuZYEg6CsRyVpic/
+         GW5CdanlFRTz9Z/QQPEkbmVIHIkfvyQBauGFKjnOgQ5ShgIweqwzzQl/zYQZuWyZXUDm
+         yiHX/Lf7MDQrJvusZ6Q3M5/AarGIcT2nJcIAyjh1CBoggmivWFAeBtBNdO/T4EQ2+yDo
+         W5NhrU72G5IC2sc0z11+52bjoyU9lagEWUzSwRUcQGFR5jmXTvjzbH5EVZL87zi7shq/
+         Gk6A==
+X-Gm-Message-State: AA+aEWYiXkUu9NCYxZwR1f4JaP76Ad9JK20L6uVkfbqVAkItdYRsR5A7
+        4PitfA41++fgYWKkEEHyOv+izQ==
+X-Google-Smtp-Source: AFSGD/UjO3/QgoJ8eWigG4vmxKOwB7gsz2kofsORubjuGc41N6CNQOhcz3uxVVGHvvWQ4CuYwPNvDA==
+X-Received: by 2002:a63:de04:: with SMTP id f4mr20796162pgg.292.1544692124018;
+        Thu, 13 Dec 2018 01:08:44 -0800 (PST)
 Received: from qualcomm-HP-ZBook-14-G2.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com. [103.229.18.19])
-        by smtp.gmail.com with ESMTPSA id m11sm1650533pgh.51.2018.12.13.01.08.33
+        by smtp.gmail.com with ESMTPSA id m11sm1650533pgh.51.2018.12.13.01.08.38
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 13 Dec 2018 01:08:37 -0800 (PST)
+        Thu, 13 Dec 2018 01:08:43 -0800 (PST)
 From:   Firoz Khan <firoz.khan@linaro.org>
 To:     linux-mips@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>,
         Paul Burton <paul.burton@mips.com>,
@@ -66,9 +66,9 @@ To:     linux-mips@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>,
 Cc:     y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
         linux-arch@vger.kernel.org, arnd@arndb.de, deepa.kernel@gmail.com,
         marcin.juszkiewicz@linaro.org, firoz.khan@linaro.org
-Subject: [PATCH v5 4/7] mips: add +1 to __NR_syscalls in uapi header
-Date:   Thu, 13 Dec 2018 14:37:36 +0530
-Message-Id: <1544692059-9728-5-git-send-email-firoz.khan@linaro.org>
+Subject: [PATCH v5 5/7] mips: remove syscall table entries
+Date:   Thu, 13 Dec 2018 14:37:37 +0530
+Message-Id: <1544692059-9728-6-git-send-email-firoz.khan@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1544692059-9728-1-git-send-email-firoz.khan@linaro.org>
 References: <1544692059-9728-1-git-send-email-firoz.khan@linaro.org>
@@ -77,187 +77,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-All other architectures are hold a value for __NR_syscalls will
-be equal to the last system call number +1.
+The config flag - CONFIG_MIPS_MT_FPAFF uses to check whether which
+syscall entries need to be used in scall32-o32.S file.
 
-But in mips architecture, __NR_syscalls hold the value equal to
-total number of system exits in the architecture. One of the
-patch in this patch series will genarate uapi header files.
+One of the patch in this patch series will generate syscall table
+file. But CONFIG_MIPS_MT_FPAFF flag will add more complexity in the
+script to generate the syscall table file.
 
-In order to make the implementation common across all architect-
-ures, add +1 to __NR_syscalls, which will be equal to the last
-system call number +1.
+In order to come up with a common implementation across all archit-
+ecture, we need to remove mipsmt_sys_sched_setaffinity and mipsmt-
+_sys_sched_getaffinity from the table and define it in other way.
 
 Signed-off-by: Firoz Khan <firoz.khan@linaro.org>
 ---
- arch/mips/include/uapi/asm/unistd.h | 12 ++++++------
- arch/mips/kernel/ftrace.c           |  6 +++---
- arch/mips/kernel/scall32-o32.S      |  4 ++--
- arch/mips/kernel/scall64-n32.S      |  4 ++--
- arch/mips/kernel/scall64-n64.S      |  2 +-
- arch/mips/kernel/scall64-o32.S      |  6 +++---
- 6 files changed, 17 insertions(+), 17 deletions(-)
+ arch/mips/kernel/scall32-o32.S | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
-diff --git a/arch/mips/include/uapi/asm/unistd.h b/arch/mips/include/uapi/asm/unistd.h
-index baea6e4..e4a7b46 100644
---- a/arch/mips/include/uapi/asm/unistd.h
-+++ b/arch/mips/include/uapi/asm/unistd.h
-@@ -392,13 +392,13 @@
- #define __NR_io_pgetevents		(__NR_Linux + 368)
- 
- #ifdef __KERNEL__
--#define __NR_syscalls			368
-+#define __NR_syscalls			369
- #endif
- 
- #endif /* _MIPS_SIM == _MIPS_SIM_ABI32 */
- 
- #define __NR_O32_Linux			4000
--#define __NR_O32_Linux_syscalls		368
-+#define __NR_O32_Linux_syscalls		369
- 
- #if _MIPS_SIM == _MIPS_SIM_ABI64
- 
-@@ -737,13 +737,13 @@
- #define __NR_io_pgetevents		(__NR_Linux + 328)
- 
- #ifdef __KERNEL__
--#define __NR_syscalls			328
-+#define __NR_syscalls			329
- #endif
- 
- #endif /* _MIPS_SIM == _MIPS_SIM_ABI64 */
- 
- #define __NR_N64_Linux			5000
--#define __NR_N64_Linux_syscalls		328
-+#define __NR_N64_Linux_syscalls		329
- 
- #if _MIPS_SIM == _MIPS_SIM_NABI32
- 
-@@ -1086,12 +1086,12 @@
- #define __NR_io_pgetevents		(__NR_Linux + 332)
- 
- #ifdef __KERNEL__
--#define __NR_syscalls			332
-+#define __NR_syscalls			333
- #endif
- 
- #endif /* _MIPS_SIM == _MIPS_SIM_NABI32 */
- 
- #define __NR_N32_Linux			6000
--#define __NR_N32_Linux_syscalls		332
-+#define __NR_N32_Linux_syscalls		333
- 
- #endif /* _UAPI_ASM_UNISTD_H */
-diff --git a/arch/mips/kernel/ftrace.c b/arch/mips/kernel/ftrace.c
-index d91a6e7..be8e69f 100644
---- a/arch/mips/kernel/ftrace.c
-+++ b/arch/mips/kernel/ftrace.c
-@@ -400,13 +400,13 @@ unsigned long __init arch_syscall_addr(int nr)
- unsigned long __init arch_syscall_addr(int nr)
- {
- #ifdef CONFIG_MIPS32_N32
--	if (nr >= __NR_N32_Linux && nr <= __NR_N32_Linux + __NR_N32_Linux_syscalls)
-+	if (nr >= __NR_N32_Linux && nr < __NR_N32_Linux + __NR_N32_Linux_syscalls)
- 		return (unsigned long)sysn32_call_table[nr - __NR_N32_Linux];
- #endif
--	if (nr >= __NR_N64_Linux  && nr <= __NR_N64_Linux + __NR_N64_Linux_syscalls)
-+	if (nr >= __NR_N64_Linux  && nr < __NR_N64_Linux + __NR_N64_Linux_syscalls)
- 		return (unsigned long)sys_call_table[nr - __NR_N64_Linux];
- #ifdef CONFIG_MIPS32_O32
--	if (nr >= __NR_O32_Linux && nr <= __NR_O32_Linux + __NR_O32_Linux_syscalls)
-+	if (nr >= __NR_O32_Linux && nr < __NR_O32_Linux + __NR_O32_Linux_syscalls)
- 		return (unsigned long)sys32_call_table[nr - __NR_O32_Linux];
- #endif
- 
 diff --git a/arch/mips/kernel/scall32-o32.S b/arch/mips/kernel/scall32-o32.S
-index fea6edb..10f6367 100644
+index 10f6367..43fa5cd 100644
 --- a/arch/mips/kernel/scall32-o32.S
 +++ b/arch/mips/kernel/scall32-o32.S
-@@ -86,7 +86,7 @@ loads_done:
- 	bnez	t0, syscall_trace_entry # -> yes
- syscall_common:
- 	subu	v0, v0, __NR_O32_Linux	# check syscall number
--	sltiu	t0, v0, __NR_O32_Linux_syscalls + 1
-+	sltiu	t0, v0, __NR_O32_Linux_syscalls
- 	beqz	t0, illegal_syscall
+@@ -205,6 +205,18 @@ einval: li	v0, -ENOSYS
+ 	jr	ra
+ 	END(sys_syscall)
  
- 	sll	t0, v0, 2
-@@ -182,7 +182,7 @@ illegal_syscall:
- 
- 	LEAF(sys_syscall)
- 	subu	t0, a0, __NR_O32_Linux	# check syscall number
--	sltiu	v0, t0, __NR_O32_Linux_syscalls + 1
-+	sltiu	v0, t0, __NR_O32_Linux_syscalls
- 	beqz	t0, einval		# do not recurse
- 	sll	t1, t0, 2
- 	beqz	v0, einval
-diff --git a/arch/mips/kernel/scall64-n32.S b/arch/mips/kernel/scall64-n32.S
-index c65eaac..6468546 100644
---- a/arch/mips/kernel/scall64-n32.S
-+++ b/arch/mips/kernel/scall64-n32.S
-@@ -33,7 +33,7 @@ NESTED(handle_sysn32, PT_SIZE, sp)
- #endif
- 
- 	dsubu	t0, v0, __NR_N32_Linux	# check syscall number
--	sltiu	t0, t0, __NR_N32_Linux_syscalls + 1
-+	sltiu	t0, t0, __NR_N32_Linux_syscalls
- 
- #ifndef CONFIG_MIPS32_O32
- 	ld	t1, PT_EPC(sp)		# skip syscall on return
-@@ -87,7 +87,7 @@ n32_syscall_trace_entry:
- 	ld	a5, PT_R9(sp)
- 
- 	dsubu	t2, v0, __NR_N32_Linux	# check (new) syscall number
--	sltiu   t0, t2, __NR_N32_Linux_syscalls + 1
-+	sltiu   t0, t2, __NR_N32_Linux_syscalls
- 	beqz	t0, not_n32_scall
- 
- 	j	syscall_common
-diff --git a/arch/mips/kernel/scall64-n64.S b/arch/mips/kernel/scall64-n64.S
-index 497cd62..0bded19 100644
---- a/arch/mips/kernel/scall64-n64.S
-+++ b/arch/mips/kernel/scall64-n64.S
-@@ -54,7 +54,7 @@ NESTED(handle_sys64, PT_SIZE, sp)
- 
- syscall_common:
- 	dsubu	t2, v0, __NR_N64_Linux
--	sltiu   t0, t2, __NR_N64_Linux_syscalls + 1
-+	sltiu   t0, t2, __NR_N64_Linux_syscalls
- 	beqz	t0, illegal_syscall
- 
- 	dsll	t0, t2, 3		# offset into table
-diff --git a/arch/mips/kernel/scall64-o32.S b/arch/mips/kernel/scall64-o32.S
-index 73913f0..eb53d8ea 100644
---- a/arch/mips/kernel/scall64-o32.S
-+++ b/arch/mips/kernel/scall64-o32.S
-@@ -34,7 +34,7 @@ NESTED(handle_sys, PT_SIZE, sp)
- 	ld	t1, PT_EPC(sp)		# skip syscall on return
- 
- 	dsubu	t0, v0, __NR_O32_Linux	# check syscall number
--	sltiu	t0, t0, __NR_O32_Linux_syscalls + 1
-+	sltiu	t0, t0, __NR_O32_Linux_syscalls
- 	daddiu	t1, 4			# skip to next instruction
- 	sd	t1, PT_EPC(sp)
- 	beqz	t0, not_o32_scall
-@@ -144,7 +144,7 @@ trace_a_syscall:
- 	ld	a7, PT_R11(sp)		# For indirect syscalls
- 
- 	dsubu	t0, v0, __NR_O32_Linux	# check (new) syscall number
--	sltiu	t0, t0, __NR_O32_Linux_syscalls + 1
-+	sltiu	t0, t0, __NR_O32_Linux_syscalls
- 	beqz	t0, not_o32_scall
- 
- 	j	syscall_common
-@@ -193,7 +193,7 @@ not_o32_scall:
- 
- LEAF(sys32_syscall)
- 	subu	t0, a0, __NR_O32_Linux	# check syscall number
--	sltiu	v0, t0, __NR_O32_Linux_syscalls + 1
-+	sltiu	v0, t0, __NR_O32_Linux_syscalls
- 	beqz	t0, einval		# do not recurse
- 	dsll	t1, t0, 3
- 	beqz	v0, einval
++#ifdef CONFIG_MIPS_MT_FPAFF
++	/*
++	 * For FPU affinity scheduling on MIPS MT processors, we need to
++	 * intercept sys_sched_xxxaffinity() calls until we get a proper hook
++	 * in kernel/sched/core.c.  Considered only temporary we only support
++	 * these hooks for the 32-bit kernel - there is no MIPS64 MT processor
++	 * atm.
++	 */
++#define sys_sched_setaffinity	mipsmt_sys_sched_setaffinity
++#define sys_sched_getaffinity	mipsmt_sys_sched_getaffinity
++#endif /* CONFIG_MIPS_MT_FPAFF */
++
+ 	.align	2
+ 	.type	sys_call_table, @object
+ EXPORT(sys_call_table)
+@@ -447,20 +459,8 @@ EXPORT(sys_call_table)
+ 	PTR	sys_tkill
+ 	PTR	sys_sendfile64
+ 	PTR	sys_futex
+-#ifdef CONFIG_MIPS_MT_FPAFF
+-	/*
+-	 * For FPU affinity scheduling on MIPS MT processors, we need to
+-	 * intercept sys_sched_xxxaffinity() calls until we get a proper hook
+-	 * in kernel/sched/core.c.  Considered only temporary we only support
+-	 * these hooks for the 32-bit kernel - there is no MIPS64 MT processor
+-	 * atm.
+-	 */
+-	PTR	mipsmt_sys_sched_setaffinity
+-	PTR	mipsmt_sys_sched_getaffinity
+-#else
+ 	PTR	sys_sched_setaffinity
+ 	PTR	sys_sched_getaffinity		/* 4240 */
+-#endif /* CONFIG_MIPS_MT_FPAFF */
+ 	PTR	sys_io_setup
+ 	PTR	sys_io_destroy
+ 	PTR	sys_io_getevents
 -- 
 1.9.1
 
