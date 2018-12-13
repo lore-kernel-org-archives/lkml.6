@@ -2,101 +2,122 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B693C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 22:25:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A2BAC65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 22:30:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 193882086D
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 22:25:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QX2QcFJ7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 193882086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 615D320870
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 22:30:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 615D320870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727810AbeLMWZa (ORCPT
+        id S1727904AbeLMWaG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 17:25:30 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:46100 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726461AbeLMWZ3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 17:25:29 -0500
-Received: by mail-pg1-f196.google.com with SMTP id w7so1686804pgp.13
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 14:25:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=82G2s0eNg1Waw7tQy542Ln9rn5Nef2ejP4Ifav2gnPY=;
-        b=QX2QcFJ7EpUmdxlwczPHtencyswmaN9HO6RQ//j/ciI4KtAz74/CVjm5p0EXzvA6wE
-         556yjz8lrMXicg0NtamgFPabSpxQxH5XEfxyTdWyp1kxLMmnRbj7KI+U2q0kV48dI2Rx
-         NeJWHOtr4RlAlANrYhUPA3ZgVg0ir68XhRQH3Wmh0lUvUdzeVRHPXDzSKJoBTBoKDIM9
-         JtUy4w502YzZ/ykB9fm5/mya5+dcX7S2kVaEEKHJcMyGSrhzBaLznvnv4s0w028iFIVD
-         16fUCb1g6oA5F9I3eebi9a8sB4OviQQ9RnTYK1SR85xxsm5pr//KnBDCaJAVgtMAtgyU
-         Lvdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=82G2s0eNg1Waw7tQy542Ln9rn5Nef2ejP4Ifav2gnPY=;
-        b=Hmo7D7NOFIVWfkmDd2ZZXJrXwAxL43f9QQQhJ60SZVuLziu7RTjfihMLz5YAY8VJdp
-         JTsYCMTaJJ0D0buKjqVz0PAgRjQOkVOdlnQqyomI1QGESTMCdGd8LSNuDHZuXW3DINGE
-         PYWiNhOvdxWaf8nr9LmJM8Ae8EzYbFDMIuziYedTvMgIbqICLzEl1wgRsNy+yLcv8O1d
-         pTwPt1GVLshkabl8VZQ/ROOr+qz/AAqx2QuXWu22sV+E7m7N0NaT03fc0tgrIxkkNGMX
-         2zY3rN8LkznYvYMngrubPx8YrHcWaI5rdbNKvLvXhTsdvA3TCQsLYFR+d34aBlZthH/O
-         iVpg==
-X-Gm-Message-State: AA+aEWZEr1RJ/6slCxt9o5rQ6TmDdThe9nGOUr8U6PnmNjE2tU+Ckhq4
-        XY1/z4L9dhk5iakLQQrTpOq1NQOPfgnlArSeskvZXQ==
-X-Google-Smtp-Source: AFSGD/XqkTmeQNL65Ca252Etd85Y3VkSOf4U18w6zhEaqzECmUnW/QV75IF5hGu2gsLm76fpU6yTcAt+WMeXkoV1hho=
-X-Received: by 2002:a63:e156:: with SMTP id h22mr505371pgk.255.1544739928397;
- Thu, 13 Dec 2018 14:25:28 -0800 (PST)
+        Thu, 13 Dec 2018 17:30:06 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:41714 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726813AbeLMWaF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 17:30:05 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 719BDC057E2B;
+        Thu, 13 Dec 2018 22:30:05 +0000 (UTC)
+Received: from treble (ovpn-120-195.rdu2.redhat.com [10.10.120.195])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3F11160FE6;
+        Thu, 13 Dec 2018 22:30:01 +0000 (UTC)
+Date:   Thu, 13 Dec 2018 16:29:59 -0600
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Joe Lawrence <joe.lawrence@redhat.com>
+Cc:     Petr Mladek <pmladek@suse.com>, Miroslav Benes <mbenes@suse.cz>,
+        Jiri Kosina <jikos@kernel.org>,
+        Jason Baron <jbaron@akamai.com>,
+        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v14 05/11] livepatch: Simplify API by removing
+ registration step
+Message-ID: <20181213222959.5fbc6iy2vqwr4wxd@treble>
+References: <20181129094431.7801-1-pmladek@suse.com>
+ <20181129094431.7801-6-pmladek@suse.com>
+ <20181205193253.mhlqj37r4o6ukkhp@redhat.com>
+ <20181206082814.uyzjw2q4avknhswd@pathway.suse.cz>
+ <alpine.LSU.2.21.1812061019500.17628@pobox.suse.cz>
+ <20181206101423.3nps4tgyg45jwofj@pathway.suse.cz>
+ <22937554-9c7c-ed9a-0f8d-70aa6e81b25d@redhat.com>
 MIME-Version: 1.0
-References: <20181209032715.3466040-1-liuxiaozhou@bytedance.com>
- <CANiq72nqFuJm5f69G-Pc_9QHz+anwaon-WfVsPrkZWah1OP7Fg@mail.gmail.com> <CANiq72=Sim1rmTBqWx6+t4GpRmZoNAhTppvbhEjOo-T2_g0N2A@mail.gmail.com>
-In-Reply-To: <CANiq72=Sim1rmTBqWx6+t4GpRmZoNAhTppvbhEjOo-T2_g0N2A@mail.gmail.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Thu, 13 Dec 2018 14:25:17 -0800
-Message-ID: <CAKwvOdnven3n6P6i+WGs_TyWZzH+Cw-RwY8oay0gfnQCfxd=_A@mail.gmail.com>
-Subject: Re: [PATCH v2] Compiler Attributes: don't pollute userspace with
- macro definitions
-To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc:     liuxiaozhou@bytedance.com, Greg KH <gregkh@linuxfoundation.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        paul.burton@mips.com, Arnd Bergmann <arnd@arndb.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <22937554-9c7c-ed9a-0f8d-70aa6e81b25d@redhat.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Thu, 13 Dec 2018 22:30:05 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->> compiling error
->> showing "unknown type name =E2=80=98__gnu_inline=E2=80=99" will pop up, =
-if userspace
->> somehow includes <linux/compiler.h>.
+On Thu, Dec 06, 2018 at 09:36:06AM -0500, Joe Lawrence wrote:
+> On 12/06/2018 05:14 AM, Petr Mladek wrote:
+> > On Thu 2018-12-06 10:23:40, Miroslav Benes wrote:
+> >> On Thu, 6 Dec 2018, Petr Mladek wrote:
+> >>
+> >>> On Wed 2018-12-05 14:32:53, Joe Lawrence wrote:
+> >>>>> diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
+> >>>>> index 972520144713..e01dfa3b58d2 100644
+> >>>>> --- a/kernel/livepatch/core.c
+> >>>>> +++ b/kernel/livepatch/core.c
+> >>>>> @@ -45,7 +45,7 @@
+> >>>>>   */
+> >>>>>  DEFINE_MUTEX(klp_mutex);
+> >>>>>  
+> >>>>> -/* Registered patches */
+> >>>>> +/* Actively used patches. */
+> >>>>>  LIST_HEAD(klp_patches);
+> >>>>
+> >>>> By itself, this comment makes me wonder if there are un-active and/or
+> >>>> un-used patches that I need to worry about.  After this patchset,
+> >>>> klp_patches will include patches that have been enabled and those that
+> >>>> have been replaced, but the replacement transition is still in progress.  
+> >>>>
+> >>>> If that sounds accurate, how about adding to the comment:
+> >>>>
+> >>>> /* Actively used patches: enabled or replaced and awaiting transition */
+> >>>
+> >>> The replaced patches are not in the list. This is why I used the word
+> >>> "actively".
+> >>
+> 
+> After writing out my suggestion I realized that's why you chose
+> "actively" and almost erased my comment.  I think the extra text would
+> help a fresh reader of the code, so ...
+> 
+> >> The replaced patches are removed in klp_discard_replaced_patches(), which 
+> >> is called from klp_complete_transition(). Joe is right. The patches are in 
+> >> the list if a transition is still in progress.
+> > 
+> > These are patches that are being replaced. The replaced (after the
+> >  transition finishes) are not in the list.
+> > 
+> > By other word, Joe's text could be understand that replaced patches
+> > will never get removed from the list.
+> >
+> > So, is the text below acceptable?
+> > 
+> > /*
+> >  * Actively used patches: enabled or in transition. Note that replaced
+> >  * or disabled patches are not listed even though the related kernel
+> >  * module still can be loaded.
+> >  */
+> 
+> Yes this works and is more accurate than my original suggestion.
 
-Oops.
+From my perspective, no comment is needed at all, and _any_ comment just
+serves to add confusion -- including the above one.  But maybe that's
+because I already know that disabled and replace patches get discarded.
 
-> If not, I can pick it up in compiler-attributes tree linux-next.
-
-That's probably the best, unless we'd like this fix in mainline ASAP?
-
-Moving the __KERNEL__ guard should not affect the kernel, only what
-userspace sees.  __gnu_inline only affects which
-implementation/definition you get, so even if userspace doesn't know
-what the kernel's inline is redefined to, it should not matter as
-userspace should only ever care about the function signature, which
-does not change between our definitions of inline.
-
-Acked-by: Nick Desaulniers <ndesaulniers@google.com>
-
---=20
-Thanks,
-~Nick Desaulniers
+-- 
+Josh
