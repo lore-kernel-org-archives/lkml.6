@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0CCCC67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:31:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F087C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:31:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65BE720672
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:31:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E159720873
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:31:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544675506;
-	bh=AVc1Wlq1EIiXhZUUzJMuRzU7aOXK7S8QrAmtDr8xZdQ=;
+	s=default; t=1544675510;
+	bh=BkPk/8lu8091stSOzflfVMYJGvxJ+jdMDC9JtIjla7Q=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=fLFsrAWp/XQoBDPfsMFkUqk8gxoCmw9EiOzHCnpuSAXzw8Pzn0VwNwYcdrSW/mQPV
-	 g57bd20sBuaUvpmoaHDKH2LAGY+6r5Qfhdl+npQMjH91QeE23HO8TyTsDHnkoi6dKd
-	 C42sCn2CqU7rkmYf+iCx0+yVmvoxJfDt0+4UuJbE=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65BE720672
+	b=TEIhnqeaM+nHijv4/2MqUim/QeVS6/wkmE3Hb7SY+D5kIn9kNPr2LcExi5g9wtisA
+	 rjmYQQrFPYrWWXdVYHQ/cPs+A/qZBFUdL+IetrEo102v0GDDb019+bvDi06s68zd6D
+	 wod82Bay7DQgEBDStDl/04GT2t/oAELxQWrvrjmg=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E159720873
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728863AbeLMEbp (ORCPT
+        id S1728883AbeLMEbs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 23:31:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44630 "EHLO mail.kernel.org"
+        Wed, 12 Dec 2018 23:31:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44674 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728844AbeLMEbm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 23:31:42 -0500
+        id S1728858AbeLMEbp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 23:31:45 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EB0A020880;
-        Thu, 13 Dec 2018 04:31:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E889F20879;
+        Thu, 13 Dec 2018 04:31:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544675501;
-        bh=AVc1Wlq1EIiXhZUUzJMuRzU7aOXK7S8QrAmtDr8xZdQ=;
+        s=default; t=1544675504;
+        bh=BkPk/8lu8091stSOzflfVMYJGvxJ+jdMDC9JtIjla7Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1ytBtbOEB4/wWQbWnXYXckSOcVIw8cVsWuxCdLEvNRIDpJZbeRuqmbIwMnGgLLcQA
-         p65BZriZprEq7XqX9rFZLUtLZcPhbr6HxTNYPjwUkA3h1ZGqdedMj7CyBEYE2b5KC+
-         /043AtdVExErUFq4RfXHTGn1+sGTWGl7dIToO/Cs=
+        b=PxHPoCqJmwIiqZU9cvtH4SMMzjBfNkelIAXZj+gxrjNhwY8y0JoG6x9V+ygFCXaPb
+         ynf60agDeIOe6fnbTbzGTCZQagOoZ0ewRGY+hab1bo3nhmlnwYZAnCAhTLUWJClEU7
+         wYdFBvNkW61FAC/yjzlQyz3O8m9rEu0nRtqXodOc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Chris Cole <chris@sageembedded.com>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 29/41] ARM: 8814/1: mm: improve/fix ARM v7_dma_inv_range() unaligned address handling
-Date:   Wed, 12 Dec 2018 23:30:42 -0500
-Message-Id: <20181213043054.75891-29-sashal@kernel.org>
+Cc:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 31/41] ethernet: fman: fix wrong of_node_put() in probe function
+Date:   Wed, 12 Dec 2018 23:30:44 -0500
+Message-Id: <20181213043054.75891-31-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181213043054.75891-1-sashal@kernel.org>
 References: <20181213043054.75891-1-sashal@kernel.org>
@@ -61,73 +61,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chris Cole <chris@sageembedded.com>
+From: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 
-[ Upstream commit a1208f6a822ac29933e772ef1f637c5d67838da9 ]
+[ Upstream commit ecb239d96d369c23c33d41708646df646de669f4 ]
 
-This patch addresses possible memory corruption when
-v7_dma_inv_range(start_address, end_address) address parameters are not
-aligned to whole cache lines. This function issues "invalidate" cache
-management operations to all cache lines from start_address (inclusive)
-to end_address (exclusive). When start_address and/or end_address are
-not aligned, the start and/or end cache lines are first issued "clean &
-invalidate" operation. The assumption is this is done to ensure that any
-dirty data addresses outside the address range (but part of the first or
-last cache lines) are cleaned/flushed so that data is not lost, which
-could happen if just an invalidate is issued.
+After getting a reference to the platform device's of_node the probe
+function ends up calling of_find_matching_node() using the node as an
+argument. The function takes care of decreasing the refcount on it. We
+are then incorrectly decreasing the refcount on that node again.
 
-The problem is that these first/last partial cache lines are issued
-"clean & invalidate" and then "invalidate". This second "invalidate" is
-not required and worse can cause "lost" writes to addresses outside the
-address range but part of the cache line. If another component writes to
-its part of the cache line between the "clean & invalidate" and
-"invalidate" operations, the write can get lost. This fix is to remove
-the extra "invalidate" operation when unaligned addressed are used.
+This patch removes the unwarranted call to of_node_put().
 
-A kernel module is available that has a stress test to reproduce the
-issue and a unit test of the updated v7_dma_inv_range(). It can be
-downloaded from
-http://ftp.sageembedded.com/outgoing/linux/cache-test-20181107.tgz.
-
-v7_dma_inv_range() is call by dmac_[un]map_area(addr, len, direction)
-when the direction is DMA_FROM_DEVICE. One can (I believe) successfully
-argue that DMA from a device to main memory should use buffers aligned
-to cache line size, because the "clean & invalidate" might overwrite
-data that the device just wrote using DMA. But if a driver does use
-unaligned buffers, at least this fix will prevent memory corruption
-outside the buffer.
-
-Signed-off-by: Chris Cole <chris@sageembedded.com>
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Fixes: 414fd46e7762 ("fsl/fman: Add FMan support")
+Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/mm/cache-v7.S | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/freescale/fman/fman.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/mm/cache-v7.S b/arch/arm/mm/cache-v7.S
-index de78109d002d..50a70edbc863 100644
---- a/arch/arm/mm/cache-v7.S
-+++ b/arch/arm/mm/cache-v7.S
-@@ -359,14 +359,16 @@ v7_dma_inv_range:
- 	ALT_UP(W(nop))
- #endif
- 	mcrne	p15, 0, r0, c7, c14, 1		@ clean & invalidate D / U line
-+	addne	r0, r0, r2
+diff --git a/drivers/net/ethernet/freescale/fman/fman.c b/drivers/net/ethernet/freescale/fman/fman.c
+index 9530405030a7..97425d94e280 100644
+--- a/drivers/net/ethernet/freescale/fman/fman.c
++++ b/drivers/net/ethernet/freescale/fman/fman.c
+@@ -2786,7 +2786,7 @@ static struct fman *read_dts_node(struct platform_device *of_dev)
+ 	if (!muram_node) {
+ 		dev_err(&of_dev->dev, "%s: could not find MURAM node\n",
+ 			__func__);
+-		goto fman_node_put;
++		goto fman_free;
+ 	}
  
- 	tst	r1, r3
- 	bic	r1, r1, r3
- 	mcrne	p15, 0, r1, c7, c14, 1		@ clean & invalidate D / U line
--1:
--	mcr	p15, 0, r0, c7, c6, 1		@ invalidate D / U line
--	add	r0, r0, r2
- 	cmp	r0, r1
-+1:
-+	mcrlo	p15, 0, r0, c7, c6, 1		@ invalidate D / U line
-+	addlo	r0, r0, r2
-+	cmplo	r0, r1
- 	blo	1b
- 	dsb	st
- 	ret	lr
+ 	err = of_address_to_resource(muram_node, 0,
+@@ -2795,11 +2795,10 @@ static struct fman *read_dts_node(struct platform_device *of_dev)
+ 		of_node_put(muram_node);
+ 		dev_err(&of_dev->dev, "%s: of_address_to_resource() = %d\n",
+ 			__func__, err);
+-		goto fman_node_put;
++		goto fman_free;
+ 	}
+ 
+ 	of_node_put(muram_node);
+-	of_node_put(fm_node);
+ 
+ 	err = devm_request_irq(&of_dev->dev, irq, fman_irq, 0, "fman", fman);
+ 	if (err < 0) {
 -- 
 2.19.1
 
