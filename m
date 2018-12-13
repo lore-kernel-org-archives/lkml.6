@@ -4,61 +4,57 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 082B2C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:09:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEE77C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:09:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3F2E20851
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:09:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 75C7D208E7
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:09:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544702981;
-	bh=7ywETw7ijWxbKxj7UgEno/MRazMByzFpqzeyXouAz5I=;
+	s=default; t=1544702987;
+	bh=GRoAKM/hcyxUT2KQatksz7ANOJqDf+1CEFvvQhDILww=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=bw9VBqFE7kOWcsjBmXTsaMix8VrhxHZEF1tS4mmFvCnKzvYjsin9bi/RYOvg7ag1e
-	 FPxfFc8TofEJ7wEBtnWmpd3AJCPRAKE91xhzswx22jFyhy8iLtSIF6f6Qw7RU5a15R
-	 Bh/qXwxAZzqA0oMicTlrahwcablQjjV2kjv3OWHE=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3F2E20851
+	b=ZyV/tmcsONMC37XxX+bui2rDa/HuaiS/A1YHaDX9pJoc31/7gQ9kurV0czcfuPwkx
+	 0dkIuhUc0qTX5KnzUo2GTigvqXBlqJvXXr0SXXt1apUiL2x+HN3sTYLIfkuEFMpthi
+	 ybjLx30MXT+E627OoUJqUdQ8UNIs8d5OjqZ9EZzU=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75C7D208E7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729090AbeLMMJk (ORCPT
+        id S1729072AbeLMMJj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 07:09:40 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50126 "EHLO
+        Thu, 13 Dec 2018 07:09:39 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50190 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728938AbeLMMJI (ORCPT
+        with ESMTP id S1728962AbeLMMJK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 07:09:08 -0500
+        Thu, 13 Dec 2018 07:09:10 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=Ixo3sfGEacve1OwFyxuMVyccDUTAC0pmwvgOrXHJTJ8=; b=Cizs9jqSdX7J
-        ulJ4wOJQ624/Jo5bpN5JFo2LwIpR55YPc395QIktLCoQN3ztXKJC/OVObw6A7Lfhya8jbPEVN+HBI
-        ohiJKPEwAG+/4FjdV1BY1CIlEFXH/Hup6tmVoDw1DYGrga9Mjxd8mkU8dPH20tzN/1nIz1y++Vwcp
-        xm8sw=;
+        List-Archive; bh=NfmUPjgCUL+KnJXJY/1GlR0M79cR7GSAAm6TSpd2mQA=; b=GJOYULWq6YZr
+        GNjPplhG9+uIL2UF02jvbOAAWTNKgWHSQJ/RvNnYn8bxyypavhrBAdmRFaSj30xW2A0NMUPTTXK+7
+        tK4s/GpMaagDRD3/FGGfUOYbTdIoobHjrHOBrvdtCqjV0ZkUIf4QcRsgHTkHb7eHIGG1kuM9Kg82i
+        rWNKc=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gXPnJ-0000yB-M1; Thu, 13 Dec 2018 12:08:45 +0000
+        id 1gXPne-0000zJ-G3; Thu, 13 Dec 2018 12:09:06 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 5A29511254D1; Thu, 13 Dec 2018 12:08:45 +0000 (GMT)
+        id 3290711254D1; Thu, 13 Dec 2018 12:09:06 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
-To:     Jerome Brunet <jbrunet@baylibre.com>
-Cc:     Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>, devicetree@vger.kernel.org,
-        alsa-devel@alsa-project.org, linux-amlogic@lists.infradead.org,
-        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: meson: axg-toddr: add support for spdifin backend" to the asoc tree
-In-Reply-To:  <20181211134713.4908-2-jbrunet@baylibre.com>
+To:     Claudiu Beznea <claudiu.beznea@microchip.com>
+Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Applied "regulator: act8945a-regulator: unlock expert registers" to the regulator tree
+In-Reply-To: 
 X-Patchwork-Hint: ignore
-Message-Id: <20181213120845.5A29511254D1@debutante.sirena.org.uk>
-Date:   Thu, 13 Dec 2018 12:08:45 +0000 (GMT)
+Message-Id: <20181213120906.3290711254D1@debutante.sirena.org.uk>
+Date:   Thu, 13 Dec 2018 12:09:06 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -66,11 +62,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: meson: axg-toddr: add support for spdifin backend
+   regulator: act8945a-regulator: unlock expert registers
 
-has been applied to the asoc tree at
+has been applied to the regulator tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -91,82 +87,70 @@ to this mail.
 Thanks,
 Mark
 
-From 984463a94d5cb23120bfe7d689077b940c25128b Mon Sep 17 00:00:00 2001
-From: Jerome Brunet <jbrunet@baylibre.com>
-Date: Tue, 11 Dec 2018 14:47:10 +0100
-Subject: [PATCH] ASoC: meson: axg-toddr: add support for spdifin backend
+From 90bc8ac220aab82df91322e67587d0418ec3b251 Mon Sep 17 00:00:00 2001
+From: Claudiu Beznea <claudiu.beznea@microchip.com>
+Date: Tue, 11 Dec 2018 15:56:36 +0000
+Subject: [PATCH] regulator: act8945a-regulator: unlock expert registers
 
-add IEC958_SUBFRAME_LE to the list of format accepted by the fifo frontend.
+Unlock expert registers for act8945a.
+This is based on orginal work of Boris Brezillon at [1].
 
-As opposed to what was initially noted in the toddr dai driver, the spdifin
-does not place the msb at bit 28, it just output a whole spdif subframe.
+[1] https://www.spinics.net/lists/kernel/msg2942960.html
 
-Placing the msb at bit 28 in the toddr driver just filters out the parity,
-user, channel status and validity bits. It is better to just provide the
-whole spdif subframe to the userspace and let the iec958 plugin deal with
-it.
-
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/meson/axg-fifo.h  |  3 ++-
- sound/soc/meson/axg-toddr.c | 15 +++++----------
- 2 files changed, 7 insertions(+), 11 deletions(-)
+ drivers/regulator/act8945a-regulator.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
-diff --git a/sound/soc/meson/axg-fifo.h b/sound/soc/meson/axg-fifo.h
-index cb6c4013ca33..d9f516cfbeda 100644
---- a/sound/soc/meson/axg-fifo.h
-+++ b/sound/soc/meson/axg-fifo.h
-@@ -25,7 +25,8 @@ struct snd_soc_pcm_runtime;
- 					 SNDRV_PCM_FMTBIT_S16_LE |	\
- 					 SNDRV_PCM_FMTBIT_S20_LE |	\
- 					 SNDRV_PCM_FMTBIT_S24_LE |	\
--					 SNDRV_PCM_FMTBIT_S32_LE)
-+					 SNDRV_PCM_FMTBIT_S32_LE |	\
-+					 SNDRV_PCM_FMTBIT_IEC958_SUBFRAME_LE)
+diff --git a/drivers/regulator/act8945a-regulator.c b/drivers/regulator/act8945a-regulator.c
+index 43fda8b4455a..8d71d9893d0d 100644
+--- a/drivers/regulator/act8945a-regulator.c
++++ b/drivers/regulator/act8945a-regulator.c
+@@ -15,6 +15,7 @@
+ #include <linux/module.h>
+ #include <linux/of_device.h>
+ #include <linux/platform_device.h>
++#include <linux/regmap.h>
+ #include <linux/regulator/driver.h>
+ #include <linux/regulator/machine.h>
  
- #define AXG_FIFO_BURST			8
- #define AXG_FIFO_MIN_CNT		64
-diff --git a/sound/soc/meson/axg-toddr.c b/sound/soc/meson/axg-toddr.c
-index c2c9bb312586..0e9ca3882ae5 100644
---- a/sound/soc/meson/axg-toddr.c
-+++ b/sound/soc/meson/axg-toddr.c
-@@ -25,6 +25,8 @@
- #define CTRL0_TODDR_LSB_POS_MASK	GENMASK(7, 3)
- #define CTRL0_TODDR_LSB_POS(x)		((x) << 3)
+@@ -23,6 +24,7 @@
+  */
+ #define ACT8945A_SYS_MODE	0x00
+ #define ACT8945A_SYS_CTRL	0x01
++#define ACT8945A_SYS_UNLK_REGS	0x0b
+ #define ACT8945A_DCDC1_VSET1	0x20
+ #define ACT8945A_DCDC1_VSET2	0x21
+ #define ACT8945A_DCDC1_CTRL	0x22
+@@ -123,9 +125,17 @@ static int act8945a_pmic_probe(struct platform_device *pdev)
+ 	struct regulator_config config = { };
+ 	const struct regulator_desc *regulators;
+ 	struct regulator_dev *rdev;
++	struct regmap *regmap;
+ 	int i, num_regulators;
+ 	bool voltage_select;
  
-+#define TODDR_MSB_POS	31
++	regmap = dev_get_regmap(pdev->dev.parent, NULL);
++	if (!regmap) {
++		dev_err(&pdev->dev,
++			"could not retrieve regmap from parent device\n");
++		return -EINVAL;
++	}
 +
- static int axg_toddr_pcm_new(struct snd_soc_pcm_runtime *rtd,
- 			     struct snd_soc_dai *dai)
- {
-@@ -36,14 +38,7 @@ static int axg_toddr_dai_hw_params(struct snd_pcm_substream *substream,
- 				   struct snd_soc_dai *dai)
- {
- 	struct axg_fifo *fifo = snd_soc_dai_get_drvdata(dai);
--	unsigned int type, width, msb = 31;
--
--	/*
--	 * NOTE:
--	 * Almost all backend will place the MSB at bit 31, except SPDIF Input
--	 * which will put it at index 28. When adding support for the SPDIF
--	 * Input, we'll need to find which type of backend we are connected to.
--	 */
-+	unsigned int type, width;
+ 	voltage_select = of_property_read_bool(pdev->dev.parent->of_node,
+ 					       "active-semi,vsel-high");
  
- 	switch (params_physical_width(params)) {
- 	case 8:
-@@ -66,8 +61,8 @@ static int axg_toddr_dai_hw_params(struct snd_pcm_substream *substream,
- 			   CTRL0_TODDR_MSB_POS_MASK |
- 			   CTRL0_TODDR_LSB_POS_MASK,
- 			   CTRL0_TODDR_TYPE(type) |
--			   CTRL0_TODDR_MSB_POS(msb) |
--			   CTRL0_TODDR_LSB_POS(msb - (width - 1)));
-+			   CTRL0_TODDR_MSB_POS(TODDR_MSB_POS) |
-+			   CTRL0_TODDR_LSB_POS(TODDR_MSB_POS - (width - 1)));
+@@ -149,7 +159,8 @@ static int act8945a_pmic_probe(struct platform_device *pdev)
+ 		}
+ 	}
  
- 	return 0;
+-	return 0;
++	/* Unlock expert registers. */
++	return regmap_write(regmap, ACT8945A_SYS_UNLK_REGS, 0xef);
  }
+ 
+ static struct platform_driver act8945a_pmic_driver = {
 -- 
 2.19.0.rc2
 
