@@ -2,118 +2,94 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14DADC65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 09:14:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCF6DC65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 09:15:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D199420811
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 09:14:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D199420811
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 9E5A420672
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 09:15:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="K+uYQkDv";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="afPlkLa4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E5A420672
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727859AbeLMJOE (ORCPT
+        id S1727863AbeLMJPd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 04:14:04 -0500
-Received: from mailgw02.mediatek.com ([1.203.163.81]:42795 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727095AbeLMJOE (ORCPT
+        Thu, 13 Dec 2018 04:15:33 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:36386 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726578AbeLMJPc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 04:14:04 -0500
-X-UUID: c80aa5f96e3445abb442e1da0c70cc33-20181213
-X-UUID: c80aa5f96e3445abb442e1da0c70cc33-20181213
-Received: from mtkcas34.mediatek.inc [(172.27.4.250)] by mailgw02.mediatek.com
-        (envelope-from <qii.wang@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 1045786807; Thu, 13 Dec 2018 17:14:01 +0800
-Received: from MTKCAS32.mediatek.inc (172.27.4.184) by MTKMBS31DR.mediatek.inc
- (172.27.6.102) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 13 Dec
- 2018 17:13:50 +0800
-Received: from [10.17.3.153] (10.17.3.153) by MTKCAS32.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 13 Dec 2018 17:13:50 +0800
-Message-ID: <1544692429.11699.31.camel@mhfsdcap03>
-Subject: Re: [PATCH 2/5] i2c: mediatek: remove useless code and replace
- definitions
-From:   Qii Wang <qii.wang@mediatek.com>
-To:     Wolfram Sang <wsa@the-dreams.de>
-CC:     <linux-i2c@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>, <leilk.liu@mediatek.com>,
-        <ryder.lee@mediatek.com>
-Date:   Thu, 13 Dec 2018 17:13:49 +0800
-In-Reply-To: <20181211202058.cd4wyz4so66iqspt@ninjato>
-References: <1543843974-4054-1-git-send-email-qii.wang@mediatek.com>
-         <1543843974-4054-3-git-send-email-qii.wang@mediatek.com>
-         <20181211202058.cd4wyz4so66iqspt@ninjato>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Thu, 13 Dec 2018 04:15:32 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 5EF3460740; Thu, 13 Dec 2018 09:15:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1544692532;
+        bh=EUwwDUiSz3J5E3XW7cPOaSupj7MAEuIrU4lYKKeF2do=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=K+uYQkDv+RoJORYsGAYsA7VnA6ZXLD53m3YkAjjOkSM2+wPfNntszhSHjGW9sUlc5
+         Dl1Gw15Z5FXi5G0w9uOOHtORgv6JNM1LiEPuUx6dlXj5rjYcpsg4UN3a05tlXdXEEz
+         L/tWfrZ/WPQ3qJweGH6maDxlB4UyvZfYVeepJdP4=
+Received: from purkki.adurom.net (purkki.adurom.net [80.68.90.206])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3414560159;
+        Thu, 13 Dec 2018 09:15:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1544692531;
+        bh=EUwwDUiSz3J5E3XW7cPOaSupj7MAEuIrU4lYKKeF2do=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=afPlkLa4PUL0AuVMo32kMoQgBivLYdfxycMtUQzf62ZY+VjPGGtDZtpgSVvZ1ZlKM
+         rmjXBT1Zzaz6WNGEmjCqW4fHS4nt5z9x8TdrtwvlcKiQceIcd/BTOdFfduyszUWqHF
+         DvfapPLfkpA1hIOXfX0ozd2AyxMXiGCrw7Xh+occ=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3414560159
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+From:   Kalle Valo <kvalo@codeaurora.org>
+To:     Sasha Levin <sashal@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Alexey Khoroshilov <khoroshilov@ispras.ru>,
+        Johannes Berg <johannes.berg@intel.com>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH AUTOSEL 4.14 01/41] mac80211_hwsim: fix module init error paths for netlink
+References: <20181213043054.75891-1-sashal@kernel.org>
+Date:   Thu, 13 Dec 2018 11:15:27 +0200
+In-Reply-To: <20181213043054.75891-1-sashal@kernel.org> (Sasha Levin's message
+        of "Wed, 12 Dec 2018 23:30:14 -0500")
+Message-ID: <87imzx949c.fsf@purkki.adurom.net>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/23.4 (gnu/linux)
 MIME-Version: 1.0
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-12-11 at 21:20 +0100, Wolfram Sang wrote:
-> On Mon, Dec 03, 2018 at 09:32:51PM +0800, qii.wang@mediatek.com wrote:
-> > From: qii wang <qii.wang@mediatek.com>
-> > 
-> > Completion_done is useless when we don't use its return value,
-> > so we remove it. Different speeds have been defined by macros,
-> > so we use macros definitions.
-> 
-> Those are two seperate patches, or?
-> 
+Sasha Levin <sashal@kernel.org> writes:
 
-These two changes are relatively small, but it seems better to be
-divided into two seperate patches.
+> From: Alexey Khoroshilov <khoroshilov@ispras.ru>
+>
+> [ Upstream commit 05cc09de4c017663a217630682041066f2f9a5cd ]
+>
+> There is no unregister netlink notifier and family on error paths
+> in init_mac80211_hwsim(). Also there is an error path where
+> hwsim_class is not destroyed.
+>
+> Found by Linux Driver Verification project (linuxtesting.org).
+>
+> Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+> Fixes: 62759361eb49 ("mac80211-hwsim: Provide multicast event for HWSIM_CMD_NEW_RADIO")
+> Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
 
-> > 
-> > Signed-off-by: qii wang <qii.wang@mediatek.com>
-> > ---
-> >  drivers/i2c/busses/i2c-mt65xx.c |    6 ++----
-> >  1 file changed, 2 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/drivers/i2c/busses/i2c-mt65xx.c b/drivers/i2c/busses/i2c-mt65xx.c
-> > index a74ef76..660de1e 100644
-> > --- a/drivers/i2c/busses/i2c-mt65xx.c
-> > +++ b/drivers/i2c/busses/i2c-mt65xx.c
-> > @@ -456,7 +456,7 @@ static int mtk_i2c_do_transfer(struct mtk_i2c *i2c, struct i2c_msg *msgs,
-> >  
-> >  	control_reg = readw(i2c->base + OFFSET_CONTROL) &
-> >  			~(I2C_CONTROL_DIR_CHANGE | I2C_CONTROL_RS);
-> > -	if ((i2c->speed_hz > 400000) || (left_num >= 1))
-> > +	if ((i2c->speed_hz > MAX_FS_MODE_SPEED) || (left_num >= 1))
-> >  		control_reg |= I2C_CONTROL_RS;
-> >  
-> >  	if (i2c->op == I2C_MASTER_WRRD)
-> > @@ -465,7 +465,7 @@ static int mtk_i2c_do_transfer(struct mtk_i2c *i2c, struct i2c_msg *msgs,
-> >  	writew(control_reg, i2c->base + OFFSET_CONTROL);
-> >  
-> >  	/* set start condition */
-> > -	if (i2c->speed_hz <= 100000)
-> > +	if (i2c->speed_hz <= I2C_DEFAULT_SPEED)
-> >  		writew(I2C_ST_START_CON, i2c->base + OFFSET_EXT_CONF);
-> >  	else
-> >  		writew(I2C_FS_START_CON, i2c->base + OFFSET_EXT_CONF);
-> > @@ -642,8 +642,6 @@ static int mtk_i2c_do_transfer(struct mtk_i2c *i2c, struct i2c_msg *msgs,
-> >  		return -ETIMEDOUT;
-> >  	}
-> >  
-> > -	completion_done(&i2c->msg_complete);
-> > -
-> >  	if (i2c->irq_stat & (I2C_HS_NACKERR | I2C_ACKERR)) {
-> >  		dev_dbg(i2c->dev, "addr: %x, transfer ACK error\n", msgs->addr);
-> >  		mtk_i2c_init_hw(i2c);
-> > -- 
-> > 1.7.9.5
-> > 
+BTW, thanks for adding "X-Patchwork-Hint: Ignore" to the headers. I
+don't see this patch in patchwork and that helps me a lot :)
 
-
+-- 
+Kalle Valo
