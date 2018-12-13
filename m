@@ -2,41 +2,44 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30196C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 17:22:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7049EC65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 17:22:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE61620870
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 17:22:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE61620870
+	by mail.kernel.org (Postfix) with ESMTP id 43ED920870
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 17:22:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43ED920870
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729744AbeLMRWE (ORCPT
+        id S1729757AbeLMRWM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 12:22:04 -0500
-Received: from vmicros1.altlinux.org ([194.107.17.57]:37656 "EHLO
+        Thu, 13 Dec 2018 12:22:12 -0500
+Received: from vmicros1.altlinux.org ([194.107.17.57]:37846 "EHLO
         vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729196AbeLMRWC (ORCPT
+        with ESMTP id S1729196AbeLMRWK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 12:22:02 -0500
+        Thu, 13 Dec 2018 12:22:10 -0500
 Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id B1F0D72CC70;
-        Thu, 13 Dec 2018 20:22:00 +0300 (MSK)
+        by vmicros1.altlinux.org (Postfix) with ESMTP id B027172CC70;
+        Thu, 13 Dec 2018 20:22:07 +0300 (MSK)
 Received: by mua.local.altlinux.org (Postfix, from userid 508)
-        id A72B6964E84; Thu, 13 Dec 2018 20:22:00 +0300 (MSK)
-Date:   Thu, 13 Dec 2018 20:22:00 +0300
+        id A942C964E82; Thu, 13 Dec 2018 20:22:07 +0300 (MSK)
+Date:   Thu, 13 Dec 2018 20:22:07 +0300
 From:   "Dmitry V. Levin" <ldv@altlinux.org>
-To:     Guo Ren <guoren@kernel.org>, Oleg Nesterov <oleg@redhat.com>,
+To:     Guo Ren <guoren@kernel.org>, Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@redhat.com>,
+        Oleg Nesterov <oleg@redhat.com>,
         Andy Lutomirski <luto@kernel.org>
 Cc:     Elvira Khabirova <lineprinter@altlinux.org>,
-        Eugene Syromyatnikov <esyr@redhat.com>,
+        Eugene Syromyatnikov <esyr@redhat.com>, linux-audit@redhat.com,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v6 07/27] elf-em.h: add EM_CSKY
-Message-ID: <20181213172200.GG6024@altlinux.org>
+Subject: [PATCH v6 08/27] csky: define syscall_get_arch()
+Message-ID: <20181213172207.GH6024@altlinux.org>
 References: <20181213171833.GA5240@altlinux.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -46,39 +49,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The uapi/linux/audit.h header is going to use EM_CSKY in order
-to define AUDIT_ARCH_CSKY which is needed to implement
-syscall_get_arch() which in turn is required to extend
-the generic ptrace API with PTRACE_GET_SYSCALL_INFO request.
-
-The value for EM_CSKY has been taken from arch/csky/include/asm/elf.h
-and confirmed by binutils:include/elf/common.h
+syscall_get_arch() is required to be implemented on all architectures
+in order to extend the generic ptrace API with PTRACE_GET_SYSCALL_INFO
+request.
 
 Cc: Guo Ren <guoren@kernel.org>
+Cc: Paul Moore <paul@paul-moore.com>
+Cc: Eric Paris <eparis@redhat.com>
 Cc: Oleg Nesterov <oleg@redhat.com>
 Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Elvira Khabirova <lineprinter@altlinux.org>
 Cc: Eugene Syromyatnikov <esyr@redhat.com>
+Cc: linux-audit@redhat.com
 Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
 ---
 
 Notes:
     v6: unchanged
 
- include/uapi/linux/elf-em.h | 1 +
- 1 file changed, 1 insertion(+)
+ arch/csky/include/asm/syscall.h | 7 +++++++
+ include/uapi/linux/audit.h      | 1 +
+ 2 files changed, 8 insertions(+)
 
-diff --git a/include/uapi/linux/elf-em.h b/include/uapi/linux/elf-em.h
-index 42b7546352a6..ee0b26ab92b0 100644
---- a/include/uapi/linux/elf-em.h
-+++ b/include/uapi/linux/elf-em.h
-@@ -45,6 +45,7 @@
- #define EM_ARCV2	195	/* ARCv2 Cores */
- #define EM_RISCV	243	/* RISC-V */
- #define EM_BPF		247	/* Linux BPF - in-kernel virtual machine */
-+#define EM_CSKY		252	/* C-SKY processor family */
- #define EM_FRV		0x5441	/* Fujitsu FR-V */
+diff --git a/arch/csky/include/asm/syscall.h b/arch/csky/include/asm/syscall.h
+index 926a64a8b4ee..d637445737b7 100644
+--- a/arch/csky/include/asm/syscall.h
++++ b/arch/csky/include/asm/syscall.h
+@@ -6,6 +6,7 @@
+ #include <linux/sched.h>
+ #include <linux/err.h>
+ #include <abi/regdef.h>
++#include <uapi/linux/audit.h>
  
- /*
+ static inline int
+ syscall_get_nr(struct task_struct *task, struct pt_regs *regs)
+@@ -68,4 +69,10 @@ syscall_set_arguments(struct task_struct *task, struct pt_regs *regs,
+ 	memcpy(&regs->a1 + i * sizeof(regs->a1), args, n * sizeof(regs->a0));
+ }
+ 
++static inline int
++syscall_get_arch(void)
++{
++	return AUDIT_ARCH_CSKY;
++}
++
+ #endif	/* __ASM_SYSCALL_H */
+diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
+index 72aeea0a740d..55904a40d768 100644
+--- a/include/uapi/linux/audit.h
++++ b/include/uapi/linux/audit.h
+@@ -384,6 +384,7 @@ enum {
+ #define AUDIT_ARCH_C6X		(EM_TI_C6000|__AUDIT_ARCH_LE)
+ #define AUDIT_ARCH_C6XBE	(EM_TI_C6000)
+ #define AUDIT_ARCH_CRIS		(EM_CRIS|__AUDIT_ARCH_LE)
++#define AUDIT_ARCH_CSKY		(EM_CSKY|__AUDIT_ARCH_LE)
+ #define AUDIT_ARCH_FRV		(EM_FRV)
+ #define AUDIT_ARCH_I386		(EM_386|__AUDIT_ARCH_LE)
+ #define AUDIT_ARCH_IA64		(EM_IA_64|__AUDIT_ARCH_64BIT|__AUDIT_ARCH_LE)
 -- 
 ldv
