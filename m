@@ -2,372 +2,149 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0E58C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 13:49:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2838C67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 13:52:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D7A021473
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 13:49:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D7A021473
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 736AF20849
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 13:52:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="TTqY4a0t"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 736AF20849
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729522AbeLMNtS (ORCPT
+        id S1729543AbeLMNwO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 08:49:18 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:43292 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729359AbeLMNtR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 08:49:17 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 16962307DAAA;
-        Thu, 13 Dec 2018 13:49:17 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-117-174.ams2.redhat.com [10.36.117.174])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 717315C20D;
-        Thu, 13 Dec 2018 13:49:16 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 986C816E29; Thu, 13 Dec 2018 14:49:15 +0100 (CET)
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     Gerd Hoffmann <kraxel@redhat.com>, David Airlie <airlied@linux.ie>,
-        virtualization@lists.linux-foundation.org (open list:VIRTIO GPU DRIVER),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] drm/virtio: switch to generic fbdev emulation
-Date:   Thu, 13 Dec 2018 14:49:15 +0100
-Message-Id: <20181213134915.24722-1-kraxel@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Thu, 13 Dec 2018 13:49:17 +0000 (UTC)
+        Thu, 13 Dec 2018 08:52:14 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:48484 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729359AbeLMNwO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 08:52:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Xhd2WcmUZgrVvNlO5+Nw2dYl2VibqnuQnPMDb/w3x84=; b=TTqY4a0tmpPr9K/mVtEElpmY/
+        1cLypjrBKWZlAAlD/aosqJXL7wGpqHkkLK0c1LK40grXl0pU5A48aAX35YRBzAy0QR9H+S5fPU2PN
+        omluIapeuwoNV4oStC5xKnenaHHN1v8wuWQysdjCFGnW1HhWVcaTdXsgUXJjbEDabhqghSxm5woMH
+        jhgplazAZ6dhJHzDnRzecVlG5ECVZWq/M8leXwq7p5sKPB0NHNP4XzHWc8eC71dpHuKtuc6LmCSXz
+        FfYL9Dp96EOycEowRP44iGWJsD+pK+aSyHZ5TyGvqP6FNcEPymlpC1rc6XtI/NqztnvZjgmSFKu87
+        2D0M6+UKA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gXRPN-0004TK-Ga; Thu, 13 Dec 2018 13:52:09 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 105D5207264F0; Thu, 13 Dec 2018 14:52:08 +0100 (CET)
+Date:   Thu, 13 Dec 2018 14:52:08 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     mingo@kernel.org, linux-kernel@vger.kernel.org,
+        valentin.schneider@arm.com, Morten.Rasmussen@arm.com
+Subject: Re: [PATCH 3/3] sched/fair: fix unnecessary increase of balance
+ interval
+Message-ID: <20181213135208.GI5289@hirez.programming.kicks-ass.net>
+References: <1533657387-29039-1-git-send-email-vincent.guittot@linaro.org>
+ <1533657387-29039-4-git-send-email-vincent.guittot@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1533657387-29039-4-git-send-email-vincent.guittot@linaro.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
----
- drivers/gpu/drm/virtio/virtgpu_drv.h     |  14 ---
- drivers/gpu/drm/virtio/virtgpu_display.c |   1 -
- drivers/gpu/drm/virtio/virtgpu_drv.c     |   9 +-
- drivers/gpu/drm/virtio/virtgpu_fb.c      | 191 -------------------------------
- drivers/gpu/drm/virtio/virtgpu_kms.c     |   8 --
- 5 files changed, 8 insertions(+), 215 deletions(-)
+On Tue, Aug 07, 2018 at 05:56:27PM +0200, Vincent Guittot wrote:
+> +static inline bool
+> +asym_active_balance(enum cpu_idle_type idle, unsigned int flags, int dst, int src)
+>  {
+> +	if (idle != CPU_NOT_IDLE) {
+>  
+>  		/*
+>  		 * ASYM_PACKING needs to force migrate tasks from busy but
+>  		 * lower priority CPUs in order to pack all tasks in the
+>  		 * highest priority CPUs.
+>  		 */
+> +		if ((flags & SD_ASYM_PACKING) &&
+> +		    sched_asym_prefer(dst, src))
+> +			return true;
+>  	}
+>  
+> +	return false;
+> +}
+> +
+> +static int need_active_balance(struct lb_env *env)
+> +{
+> +	struct sched_domain *sd = env->sd;
+> +
+> +
+> +	if (asym_active_balance(env->idle, sd->flags, env->dst_cpu, env->src_cpu))
+> +		return 1;
+> +
+>  	/*
+>  	 * The dst_cpu is idle and the src_cpu CPU has only 1 CFS task.
+>  	 * It's worth migrating the task if the src_cpu's capacity is reduced
+> @@ -8650,7 +8660,8 @@ static int load_balance(int this_cpu, struct rq *this_rq,
+>  	} else
+>  		sd->nr_balance_failed = 0;
+>  
+> +	if (likely(!active_balance) ||
+> +	    asym_active_balance(env.idle, sd->flags, env.dst_cpu, env.src_cpu)) {
 
-diff --git a/drivers/gpu/drm/virtio/virtgpu_drv.h b/drivers/gpu/drm/virtio/virtgpu_drv.h
-index 1deb41d42e..63704915f8 100644
---- a/drivers/gpu/drm/virtio/virtgpu_drv.h
-+++ b/drivers/gpu/drm/virtio/virtgpu_drv.h
-@@ -137,19 +137,10 @@ struct virtio_gpu_framebuffer {
- #define to_virtio_gpu_framebuffer(x) \
- 	container_of(x, struct virtio_gpu_framebuffer, base)
- 
--struct virtio_gpu_fbdev {
--	struct drm_fb_helper           helper;
--	struct virtio_gpu_framebuffer  vgfb;
--	struct virtio_gpu_device       *vgdev;
--	struct delayed_work            work;
--};
--
- struct virtio_gpu_mman {
- 	struct ttm_bo_device		bdev;
- };
- 
--struct virtio_gpu_fbdev;
--
- struct virtio_gpu_queue {
- 	struct virtqueue *vq;
- 	spinlock_t qlock;
-@@ -180,8 +171,6 @@ struct virtio_gpu_device {
- 
- 	struct virtio_gpu_mman mman;
- 
--	/* pointer to fbdev info structure */
--	struct virtio_gpu_fbdev *vgfbdev;
- 	struct virtio_gpu_output outputs[VIRTIO_GPU_MAX_SCANOUTS];
- 	uint32_t num_scanouts;
- 
-@@ -249,9 +238,6 @@ int virtio_gpu_mode_dumb_mmap(struct drm_file *file_priv,
- 			      uint32_t handle, uint64_t *offset_p);
- 
- /* virtio_fb */
--#define VIRTIO_GPUFB_CONN_LIMIT 1
--int virtio_gpu_fbdev_init(struct virtio_gpu_device *vgdev);
--void virtio_gpu_fbdev_fini(struct virtio_gpu_device *vgdev);
- int virtio_gpu_surface_dirty(struct virtio_gpu_framebuffer *qfb,
- 			     struct drm_clip_rect *clips,
- 			     unsigned int num_clips);
-diff --git a/drivers/gpu/drm/virtio/virtgpu_display.c b/drivers/gpu/drm/virtio/virtgpu_display.c
-index b5580b11a0..e1c223e18d 100644
---- a/drivers/gpu/drm/virtio/virtgpu_display.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_display.c
-@@ -390,6 +390,5 @@ void virtio_gpu_modeset_fini(struct virtio_gpu_device *vgdev)
- 
- 	for (i = 0 ; i < vgdev->num_scanouts; ++i)
- 		kfree(vgdev->outputs[i].edid);
--	virtio_gpu_fbdev_fini(vgdev);
- 	drm_mode_config_cleanup(vgdev->ddev);
- }
-diff --git a/drivers/gpu/drm/virtio/virtgpu_drv.c b/drivers/gpu/drm/virtio/virtgpu_drv.c
-index f7f32a885a..7df50920c1 100644
---- a/drivers/gpu/drm/virtio/virtgpu_drv.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_drv.c
-@@ -42,13 +42,20 @@ module_param_named(modeset, virtio_gpu_modeset, int, 0400);
- 
- static int virtio_gpu_probe(struct virtio_device *vdev)
- {
-+	int ret;
-+
- 	if (vgacon_text_force() && virtio_gpu_modeset == -1)
- 		return -EINVAL;
- 
- 	if (virtio_gpu_modeset == 0)
- 		return -EINVAL;
- 
--	return drm_virtio_init(&driver, vdev);
-+	ret = drm_virtio_init(&driver, vdev);
-+	if (ret)
-+		return ret;
-+
-+	drm_fbdev_generic_setup(vdev->priv, 32);
-+	return 0;
- }
- 
- static void virtio_gpu_remove(struct virtio_device *vdev)
-diff --git a/drivers/gpu/drm/virtio/virtgpu_fb.c b/drivers/gpu/drm/virtio/virtgpu_fb.c
-index fb1cc8b2f1..b07584b1c2 100644
---- a/drivers/gpu/drm/virtio/virtgpu_fb.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_fb.c
-@@ -27,8 +27,6 @@
- #include <drm/drm_fb_helper.h>
- #include "virtgpu_drv.h"
- 
--#define VIRTIO_GPU_FBCON_POLL_PERIOD (HZ / 60)
--
- static int virtio_gpu_dirty_update(struct virtio_gpu_framebuffer *fb,
- 				   bool store, int x, int y,
- 				   int width, int height)
-@@ -150,192 +148,3 @@ int virtio_gpu_surface_dirty(struct virtio_gpu_framebuffer *vgfb,
- 				      left, top, right - left, bottom - top);
- 	return 0;
- }
--
--static void virtio_gpu_fb_dirty_work(struct work_struct *work)
--{
--	struct delayed_work *delayed_work = to_delayed_work(work);
--	struct virtio_gpu_fbdev *vfbdev =
--		container_of(delayed_work, struct virtio_gpu_fbdev, work);
--	struct virtio_gpu_framebuffer *vgfb = &vfbdev->vgfb;
--
--	virtio_gpu_dirty_update(&vfbdev->vgfb, false, vgfb->x1, vgfb->y1,
--				vgfb->x2 - vgfb->x1, vgfb->y2 - vgfb->y1);
--}
--
--static void virtio_gpu_3d_fillrect(struct fb_info *info,
--				   const struct fb_fillrect *rect)
--{
--	struct virtio_gpu_fbdev *vfbdev = info->par;
--
--	drm_fb_helper_sys_fillrect(info, rect);
--	virtio_gpu_dirty_update(&vfbdev->vgfb, true, rect->dx, rect->dy,
--			     rect->width, rect->height);
--	schedule_delayed_work(&vfbdev->work, VIRTIO_GPU_FBCON_POLL_PERIOD);
--}
--
--static void virtio_gpu_3d_copyarea(struct fb_info *info,
--				   const struct fb_copyarea *area)
--{
--	struct virtio_gpu_fbdev *vfbdev = info->par;
--
--	drm_fb_helper_sys_copyarea(info, area);
--	virtio_gpu_dirty_update(&vfbdev->vgfb, true, area->dx, area->dy,
--			   area->width, area->height);
--	schedule_delayed_work(&vfbdev->work, VIRTIO_GPU_FBCON_POLL_PERIOD);
--}
--
--static void virtio_gpu_3d_imageblit(struct fb_info *info,
--				    const struct fb_image *image)
--{
--	struct virtio_gpu_fbdev *vfbdev = info->par;
--
--	drm_fb_helper_sys_imageblit(info, image);
--	virtio_gpu_dirty_update(&vfbdev->vgfb, true, image->dx, image->dy,
--			     image->width, image->height);
--	schedule_delayed_work(&vfbdev->work, VIRTIO_GPU_FBCON_POLL_PERIOD);
--}
--
--static struct fb_ops virtio_gpufb_ops = {
--	.owner = THIS_MODULE,
--	DRM_FB_HELPER_DEFAULT_OPS,
--	.fb_fillrect = virtio_gpu_3d_fillrect,
--	.fb_copyarea = virtio_gpu_3d_copyarea,
--	.fb_imageblit = virtio_gpu_3d_imageblit,
--};
--
--static int virtio_gpufb_create(struct drm_fb_helper *helper,
--			       struct drm_fb_helper_surface_size *sizes)
--{
--	struct virtio_gpu_fbdev *vfbdev =
--		container_of(helper, struct virtio_gpu_fbdev, helper);
--	struct drm_device *dev = helper->dev;
--	struct virtio_gpu_device *vgdev = dev->dev_private;
--	struct fb_info *info;
--	struct drm_framebuffer *fb;
--	struct drm_mode_fb_cmd2 mode_cmd = {};
--	struct virtio_gpu_object *obj;
--	uint32_t format, size;
--	int ret;
--
--	mode_cmd.width = sizes->surface_width;
--	mode_cmd.height = sizes->surface_height;
--	mode_cmd.pitches[0] = mode_cmd.width * 4;
--	mode_cmd.pixel_format = DRM_FORMAT_HOST_XRGB8888;
--
--	format = virtio_gpu_translate_format(mode_cmd.pixel_format);
--	if (format == 0)
--		return -EINVAL;
--
--	size = mode_cmd.pitches[0] * mode_cmd.height;
--	obj = virtio_gpu_alloc_object(dev, size, false, true);
--	if (IS_ERR(obj))
--		return PTR_ERR(obj);
--
--	virtio_gpu_cmd_create_resource(vgdev, obj, format,
--				       mode_cmd.width, mode_cmd.height);
--
--	ret = virtio_gpu_object_kmap(obj);
--	if (ret) {
--		DRM_ERROR("failed to kmap fb %d\n", ret);
--		goto err_obj_vmap;
--	}
--
--	/* attach the object to the resource */
--	ret = virtio_gpu_object_attach(vgdev, obj, NULL);
--	if (ret)
--		goto err_obj_attach;
--
--	info = drm_fb_helper_alloc_fbi(helper);
--	if (IS_ERR(info)) {
--		ret = PTR_ERR(info);
--		goto err_fb_alloc;
--	}
--
--	info->par = helper;
--
--	ret = virtio_gpu_framebuffer_init(dev, &vfbdev->vgfb,
--					  &mode_cmd, &obj->gem_base);
--	if (ret)
--		goto err_fb_alloc;
--
--	fb = &vfbdev->vgfb.base;
--
--	vfbdev->helper.fb = fb;
--
--	strcpy(info->fix.id, "virtiodrmfb");
--	info->fbops = &virtio_gpufb_ops;
--	info->pixmap.flags = FB_PIXMAP_SYSTEM;
--
--	info->screen_buffer = obj->vmap;
--	info->screen_size = obj->gem_base.size;
--	drm_fb_helper_fill_fix(info, fb->pitches[0], fb->format->depth);
--	drm_fb_helper_fill_var(info, &vfbdev->helper,
--			       sizes->fb_width, sizes->fb_height);
--
--	info->fix.mmio_start = 0;
--	info->fix.mmio_len = 0;
--	return 0;
--
--err_fb_alloc:
--	virtio_gpu_object_detach(vgdev, obj);
--err_obj_attach:
--err_obj_vmap:
--	virtio_gpu_gem_free_object(&obj->gem_base);
--	return ret;
--}
--
--static int virtio_gpu_fbdev_destroy(struct drm_device *dev,
--				    struct virtio_gpu_fbdev *vgfbdev)
--{
--	struct virtio_gpu_framebuffer *vgfb = &vgfbdev->vgfb;
--
--	drm_fb_helper_unregister_fbi(&vgfbdev->helper);
--
--	if (vgfb->base.obj[0])
--		vgfb->base.obj[0] = NULL;
--	drm_fb_helper_fini(&vgfbdev->helper);
--	drm_framebuffer_cleanup(&vgfb->base);
--
--	return 0;
--}
--static const struct drm_fb_helper_funcs virtio_gpu_fb_helper_funcs = {
--	.fb_probe = virtio_gpufb_create,
--};
--
--int virtio_gpu_fbdev_init(struct virtio_gpu_device *vgdev)
--{
--	struct virtio_gpu_fbdev *vgfbdev;
--	int bpp_sel = 32; /* TODO: parameter from somewhere? */
--	int ret;
--
--	vgfbdev = kzalloc(sizeof(struct virtio_gpu_fbdev), GFP_KERNEL);
--	if (!vgfbdev)
--		return -ENOMEM;
--
--	vgfbdev->vgdev = vgdev;
--	vgdev->vgfbdev = vgfbdev;
--	INIT_DELAYED_WORK(&vgfbdev->work, virtio_gpu_fb_dirty_work);
--
--	drm_fb_helper_prepare(vgdev->ddev, &vgfbdev->helper,
--			      &virtio_gpu_fb_helper_funcs);
--	ret = drm_fb_helper_init(vgdev->ddev, &vgfbdev->helper,
--				 VIRTIO_GPUFB_CONN_LIMIT);
--	if (ret) {
--		kfree(vgfbdev);
--		return ret;
--	}
--
--	drm_fb_helper_single_add_all_connectors(&vgfbdev->helper);
--	drm_fb_helper_initial_config(&vgfbdev->helper, bpp_sel);
--	return 0;
--}
--
--void virtio_gpu_fbdev_fini(struct virtio_gpu_device *vgdev)
--{
--	if (!vgdev->vgfbdev)
--		return;
--
--	virtio_gpu_fbdev_destroy(vgdev->ddev, vgdev->vgfbdev);
--	kfree(vgdev->vgfbdev);
--	vgdev->vgfbdev = NULL;
--}
-diff --git a/drivers/gpu/drm/virtio/virtgpu_kms.c b/drivers/gpu/drm/virtio/virtgpu_kms.c
-index 3af6181c05..1072064a0d 100644
---- a/drivers/gpu/drm/virtio/virtgpu_kms.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_kms.c
-@@ -28,11 +28,6 @@
- #include <drm/drmP.h>
- #include "virtgpu_drv.h"
- 
--static int virtio_gpu_fbdev = 1;
--
--MODULE_PARM_DESC(fbdev, "Disable/Enable framebuffer device & console");
--module_param_named(fbdev, virtio_gpu_fbdev, int, 0400);
--
- static void virtio_gpu_config_changed_work_func(struct work_struct *work)
- {
- 	struct virtio_gpu_device *vgdev =
-@@ -212,9 +207,6 @@ int virtio_gpu_driver_load(struct drm_device *dev, unsigned long flags)
- 	virtio_gpu_cmd_get_display_info(vgdev);
- 	wait_event_timeout(vgdev->resp_wq, !vgdev->display_info_pending,
- 			   5 * HZ);
--	if (virtio_gpu_fbdev)
--		virtio_gpu_fbdev_init(vgdev);
--
- 	return 0;
- 
- err_modeset:
--- 
-2.9.3
+Perhaps like the below?
 
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -8857,21 +8857,24 @@ static struct rq *find_busiest_queue(str
+  */
+ #define MAX_PINNED_INTERVAL	512
+ 
++static inline bool
++asym_active_balance(struct lb_env *env)
++{
++	/*
++	 * ASYM_PACKING needs to force migrate tasks from busy but
++	 * lower priority CPUs in order to pack all tasks in the
++	 * highest priority CPUs.
++	 */
++	return env->idle != CPU_NOT_IDLE && (env->sd->flags & SD_ASYM_PACKING) &&
++		sched_asym_prefer(env->dst_cpu, env->src_cpu);
++}
++
+ static int need_active_balance(struct lb_env *env)
+ {
+ 	struct sched_domain *sd = env->sd;
+ 
+-	if (env->idle != CPU_NOT_IDLE) {
+-
+-		/*
+-		 * ASYM_PACKING needs to force migrate tasks from busy but
+-		 * lower priority CPUs in order to pack all tasks in the
+-		 * highest priority CPUs.
+-		 */
+-		if ((sd->flags & SD_ASYM_PACKING) &&
+-		    sched_asym_prefer(env->dst_cpu, env->src_cpu))
+-			return 1;
+-	}
++	if (asym_active_balance(env))
++		return 1;
+ 
+ 	/*
+ 	 * The dst_cpu is idle and the src_cpu CPU has only 1 CFS task.
+@@ -9150,7 +9153,7 @@ static int load_balance(int this_cpu, st
+ 	} else
+ 		sd->nr_balance_failed = 0;
+ 
+-	if (likely(!active_balance)) {
++	if (likely(!active_balance) || asym_active_balance(&env)) {
+ 		/* We were unbalanced, so reset the balancing interval */
+ 		sd->balance_interval = sd->min_interval;
+ 	} else {
