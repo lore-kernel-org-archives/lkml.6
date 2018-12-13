@@ -2,120 +2,155 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C950C67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 19:42:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0C77C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 19:43:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 162DF20870
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 19:42:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B355721104
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 19:43:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="EPX4fBl2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 162DF20870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="VyuTJZdF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B355721104
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728643AbeLMTme (ORCPT
+        id S1728922AbeLMTn2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 14:42:34 -0500
-Received: from mail-io1-f68.google.com ([209.85.166.68]:38908 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728023AbeLMTme (ORCPT
+        Thu, 13 Dec 2018 14:43:28 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:41664 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728102AbeLMTn2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 14:42:34 -0500
-Received: by mail-io1-f68.google.com with SMTP id l14so2576866ioj.5
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 11:42:33 -0800 (PST)
+        Thu, 13 Dec 2018 14:43:28 -0500
+Received: by mail-pg1-f195.google.com with SMTP id 70so1507095pgh.8
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 11:43:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=7apot8fWpYOasMIUwI0FadJYsYG0fNGlbakQC2sa4eI=;
-        b=EPX4fBl2zvox6KMlpTsRkXiotK0Ca3EGiCrh/1bDc11qxWMDvPUjUKkoghJn0N/eoZ
-         csUlNzFHctXf5Paifnsh3sUXtbknaL/rFdnVwC4QiCpBAF/qcVo2EfLv84tNxrWGHpzM
-         wBp6cjvxuCypI7lmiNEEXhP2jfol7/FyPDLzfrPne/0LAstFnh4jn1WG49rLTpJolifQ
-         sGb8q/FUimwz1nRMVbG2+zTvlmTV9Cg4+yZL4yygVIKNkbnlYavmuNLx5dm2eMz9kRdf
-         cAu3eB8xZxeEcWNFJkkWgM/G43VpVsOlYJJ19vx0lD+hwC842AySJcBECGYTXSS+7NGJ
-         7LmQ==
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=OW0nMljRvOSqvoSd2jmdZZH8Ftrw0r5xrrRavReTO7g=;
+        b=VyuTJZdF0XcZQSwpZMvxcpPU/C7R1WHQxSFM/YWY4hldN2Cf3DbDfBr65cIMNEol8Y
+         uf7hW6AOSAej7NSx16VKpXhLNFcmfcXMIJybpqcZW9Wy5W17WIQ72gXDUiOGCOtSccLv
+         o7O22983VDLBM6+8hgo0q1cz8JZT1cD/MY0B8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=7apot8fWpYOasMIUwI0FadJYsYG0fNGlbakQC2sa4eI=;
-        b=r04nM6jIXRhxAdTSkhEEyN2cPJekKGgCTZkVH8Tq+1LgopaEVvHomdIri1PtoGDKPR
-         p8bC8TiScuQLOSirspRepY3suyskBPr5mK8TDFPDwDLBu6ytDvJfQqJCtIy/oKtHse4m
-         QwBSoBBNsVYnnsGEBaDH2s1XuFPbeIs1naey8uLJJKJACiOtYbGEX2E+znrmscjIQrIv
-         o+GT64u2IocqjZCKfO5VXS3zjyEgyb0+t3sUaorqVZBxmTOcga7+NRn5TkNguArPEJnZ
-         aEtnS4i9LozK2thE7N6aSIQLEDoFTGr99FSG/s2GuqxfbaD2yIpZlVJl7X3n1EJmDvdi
-         WOkw==
-X-Gm-Message-State: AA+aEWak66ooOh0dPoU6JVUknt9/ZqSw8p3E2z+F7XTeFOhmV6kNtB6m
-        jdyMoT4w2XT1/+yOPWvv+8XWOw==
-X-Google-Smtp-Source: AFSGD/WGs0wqFgi+0x4VXT1KsypjPcBuuvAQetudj4qM+NDqT14vUuVv5f6Z/Ax0A0gOU1pmESca/Q==
-X-Received: by 2002:a5e:8b05:: with SMTP id g5mr86140iok.144.1544730153002;
-        Thu, 13 Dec 2018 11:42:33 -0800 (PST)
-Received: from [192.168.1.56] ([216.160.245.98])
-        by smtp.gmail.com with ESMTPSA id h140sm1680572itb.23.2018.12.13.11.42.30
+        bh=OW0nMljRvOSqvoSd2jmdZZH8Ftrw0r5xrrRavReTO7g=;
+        b=JiG+kSvpcki7GASS2aLVw/7R+bWgY2q8VWYltVvvxy0D46p9LI+kJXj9g7TBYmQnO+
+         r6fjtlG86ThhSWCpf/MhgC7J0hDVD6xKN5nn56tv/03BdEuHnDNFGR36BabFqUv8HAnB
+         PWhig2bDTP3K+M4yf4SygdZ7oW7RO2bKebS8+EdHrQKLSJX4qu/pl/GP4ImYgop3e5rd
+         GQXIu2s1nR2W5wO3+vFNxBjADTTBbcIlGOYjNyDacXJotb/OQajeuHyG9WNk9+FmGKmE
+         8FH8dYjYJeU/aKuWLQVxIpIWe0WNqsHM9gqpfoqvwg5zb19MMChWKQkz8+0eIHwFDlvX
+         uRPA==
+X-Gm-Message-State: AA+aEWbfZPTI6D84gxrJGZEjCpfNILQb5PQIEm7060/S4ZwHOh8aXHYX
+        vd0M66iiIm6FxnM+5w9k4XWiWw==
+X-Google-Smtp-Source: AFSGD/WulkL++EXOeaYI1nye5KYZ5SUm17EHGe4qtxYib3KRYy+O6HGHhVuQnU1XXBBIB4deGN6/sQ==
+X-Received: by 2002:a63:2109:: with SMTP id h9mr74628pgh.277.1544730207319;
+        Thu, 13 Dec 2018 11:43:27 -0800 (PST)
+Received: from ryandcase.mtv.corp.google.com ([2620:15c:202:201:ed1c:3d1c:9d92:99cb])
+        by smtp.gmail.com with ESMTPSA id i184sm5259320pfc.41.2018.12.13.11.43.26
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 13 Dec 2018 11:42:32 -0800 (PST)
-Subject: Re: [PATCH 2/2] scsi: ufs: add inline crypto support to UFS HCD
-To:     Ladvine D Almeida <ladvine.dalmeida@synopsys.com>,
-        Parshuram Raju Thombare <pthombar@cadence.com>,
-        Eric Biggers <ebiggers@kernel.org>
-Cc:     "vinholikatti@gmail.com" <vinholikatti@gmail.com>,
-        "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
-        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        Alan Douglas <adouglas@cadence.com>,
-        Janek Kotas <jank@cadence.com>,
-        Rafal Ciepiela <rafalc@cadence.com>,
-        AnilKumar Chimata <anilc@codeaurora.org>,
-        Satya Tangirala <satyat@google.com>,
-        Paul Crowley <paulcrowley@google.com>,
-        Manjunath M Bettegowda <manjunath.mb@synopsys.com>,
-        Tejas Joglekar <tejas.joglekar@synopsys.com>,
-        Joao Pinto <Joao.Pinto@synopsys.com>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>
-References: <20181211095027.GA3316@lvlogina.cadence.com>
- <20181211181647.GC221175@gmail.com>
- <CO2PR07MB2469AD9C0A121EBF94129A11C1A70@CO2PR07MB2469.namprd07.prod.outlook.com>
- <BD7FB879CC136E419544C8E2AE7B9C30227EE5@IN01WEMBXA.internal.synopsys.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <fb17d794-c682-3261-cbad-94ce4c14eea1@kernel.dk>
-Date:   Thu, 13 Dec 2018 12:42:30 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 13 Dec 2018 11:43:26 -0800 (PST)
+From:   Ryan Case <ryandcase@chromium.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>
+Cc:     Doug Anderson <dianders@chromium.org>,
+        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+        Stephen Boyd <swboyd@chromium.org>,
+        Ryan Case <ryandcase@chromium.org>
+Subject: [PATCH v2] tty: serial: qcom_geni_serial: Remove interrupt storm
+Date:   Thu, 13 Dec 2018 11:43:20 -0800
+Message-Id: <20181213194321.240148-1-ryandcase@chromium.org>
+X-Mailer: git-send-email 2.20.0.rc2.403.gdbc3b29805-goog
 MIME-Version: 1.0
-In-Reply-To: <BD7FB879CC136E419544C8E2AE7B9C30227EE5@IN01WEMBXA.internal.synopsys.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/13/18 12:39 PM, Ladvine D Almeida wrote:
-> Suggest to take a look into the article https://lwn.net/Articles/717754
-> My real concern is how to achieve it without any modifications to the
-> bio.(because key slot information has to finally reach the target block
-> device)
+Disable M_TX_FIFO_WATERMARK_EN after we've sent all data for a given
+transaction so we don't continue to receive a flurry of free space
+interrupts while waiting for the M_CMD_DONE notification. Re-enable the
+watermark when establishing the next transaction.
 
-Guys, you both need to edit when you reply, wading through 650 lines of
-text to get to this...
+Also clear the watermark interrupt after filling the FIFO so we do not
+receive notification again prior to actually having free space.
 
-You obviously can't modify the bio if you don't own it, but you could
-clone it and then you have storage in ->bi_private.
+Signed-off-by: Ryan Case <ryandcase@chromium.org>
+---
 
+Changes in v2:
+Addressed Doug's comments
+ - Avoid M_TX_WATERMARK_EN writes when values already match
+ - Added note about M_TX_WATERMARK_EN triggering and latching
+
+ drivers/tty/serial/qcom_geni_serial.c | 25 +++++++++++++++++++++++--
+ 1 file changed, 23 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/tty/serial/qcom_geni_serial.c b/drivers/tty/serial/qcom_geni_serial.c
+index 6e38498362ef..0c93beb69e73 100644
+--- a/drivers/tty/serial/qcom_geni_serial.c
++++ b/drivers/tty/serial/qcom_geni_serial.c
+@@ -724,6 +724,7 @@ static void qcom_geni_serial_handle_tx(struct uart_port *uport, bool done,
+ 	size_t pending;
+ 	int i;
+ 	u32 status;
++	u32 irq_en;
+ 	unsigned int chunk;
+ 	int tail;
+ 
+@@ -752,6 +753,11 @@ static void qcom_geni_serial_handle_tx(struct uart_port *uport, bool done,
+ 	if (!port->tx_remaining) {
+ 		qcom_geni_serial_setup_tx(uport, pending);
+ 		port->tx_remaining = pending;
++
++		irq_en = readl_relaxed(uport->membase + SE_GENI_M_IRQ_EN);
++		if (!(irq_en & M_TX_FIFO_WATERMARK_EN))
++			writel_relaxed(irq_en | M_TX_FIFO_WATERMARK_EN,
++					uport->membase + SE_GENI_M_IRQ_EN);
+ 	}
+ 
+ 	remaining = chunk;
+@@ -775,7 +781,23 @@ static void qcom_geni_serial_handle_tx(struct uart_port *uport, bool done,
+ 	}
+ 
+ 	xmit->tail = tail & (UART_XMIT_SIZE - 1);
++
++	/*
++	 * The tx fifo watermark is level triggered and latched. Though we had
++	 * cleared it in qcom_geni_serial_isr it will have already reasserted
++	 * so we must clear it again here after our writes.
++	 */
++	writel_relaxed(M_TX_FIFO_WATERMARK_EN,
++			uport->membase + SE_GENI_M_IRQ_CLEAR);
++
+ out_write_wakeup:
++	if (!port->tx_remaining) {
++		irq_en = readl_relaxed(uport->membase + SE_GENI_M_IRQ_EN);
++		if (irq_en & M_TX_FIFO_WATERMARK_EN)
++			writel_relaxed(irq_en & ~M_TX_FIFO_WATERMARK_EN,
++					uport->membase + SE_GENI_M_IRQ_EN);
++	}
++
+ 	if (uart_circ_chars_pending(xmit) < WAKEUP_CHARS)
+ 		uart_write_wakeup(uport);
+ }
+@@ -811,8 +833,7 @@ static irqreturn_t qcom_geni_serial_isr(int isr, void *dev)
+ 		tty_insert_flip_char(tport, 0, TTY_OVERRUN);
+ 	}
+ 
+-	if (m_irq_status & (M_TX_FIFO_WATERMARK_EN | M_CMD_DONE_EN) &&
+-	    m_irq_en & (M_TX_FIFO_WATERMARK_EN | M_CMD_DONE_EN))
++	if (m_irq_status & m_irq_en & (M_TX_FIFO_WATERMARK_EN | M_CMD_DONE_EN))
+ 		qcom_geni_serial_handle_tx(uport, m_irq_status & M_CMD_DONE_EN,
+ 					geni_status & M_GENI_CMD_ACTIVE);
+ 
 -- 
-Jens Axboe
+2.20.0.rc2.403.gdbc3b29805-goog
 
