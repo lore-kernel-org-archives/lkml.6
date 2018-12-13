@@ -2,77 +2,91 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D945C67872
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 20:22:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCF0FC67872
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 20:22:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B94920851
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 20:22:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B94920851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
+	by mail.kernel.org (Postfix) with ESMTP id 834F520851
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 20:22:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mqBP98E7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 834F520851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728430AbeLMUWm (ORCPT
+        id S1728549AbeLMUWv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 15:22:42 -0500
-Received: from relmlor1.renesas.com ([210.160.252.171]:48793 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726408AbeLMUWl (ORCPT
+        Thu, 13 Dec 2018 15:22:51 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:53152 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726408AbeLMUWu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 15:22:41 -0500
-X-IronPort-AV: E=Sophos;i="5.56,349,1539615600"; 
-   d="scan'208";a="2765968"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 14 Dec 2018 05:22:40 +0900
-Received: from fabrizio-dev.ree.adwin.renesas.com (unknown [10.226.37.69])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 112BA4072C54;
-        Fri, 14 Dec 2018 05:22:37 +0900 (JST)
-From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] i2c: sh_mobile: Add support for r8a774c0 (RZ/G2E)
-Date:   Thu, 13 Dec 2018 20:22:34 +0000
-Message-Id: <1544732554-7140-1-git-send-email-fabrizio.castro@bp.renesas.com>
-X-Mailer: git-send-email 2.7.4
+        Thu, 13 Dec 2018 15:22:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=lATmiD54zaGiCNJvHMHCxwMrMhP+1Ph5WForTo8SHb0=; b=mqBP98E7LiLv/9XyBtIGaO0R5
+        xbSHbhTFGaRbXgOLIgrnTC+rD2zoNGE0usX9M+NZo4CHNRJP/WVeBV13QuK94WxNVeqqIO/qOEArQ
+        rySS9qDtRVLWecThsIEi6vFmCr10uaj5eUH9/R5NttBEUfGMpvAw9+QZRnPDUrzYpx6x26wSP2oWw
+        naD9/PeT5A910EzPgpmbEYPcK2pvPhNzS9IOE80TaNcthWuwBHsuw7hLC1yjrH8m5aS53eeOvGUj4
+        C63UzVRMXQJe17FzYE8Mj8kCNKbqxtEtM6wLEinApCrgYOTNoRJK9r12d4nnlDd3Zg3qdUjWFRC6R
+        n0DvJhwiQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gXXVR-0002kx-CF; Thu, 13 Dec 2018 20:22:49 +0000
+Date:   Thu, 13 Dec 2018 12:22:49 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Theodore Y . Ts'o" <tytso@mit.edu>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Victor Hsieh <victorhsieh@google.com>,
+        Chandan Rajendra <chandan@linux.vnet.ibm.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH v2 01/12] fs-verity: add a documentation file
+Message-ID: <20181213202249.GA3797@infradead.org>
+References: <20181101225230.88058-1-ebiggers@kernel.org>
+ <20181101225230.88058-2-ebiggers@kernel.org>
+ <20181212091406.GA31723@infradead.org>
+ <20181212202609.GA193967@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181212202609.GA193967@gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Similarly to R-Car E3, RZ/G2E doesn't come with automatic
-transmission registers, as such it is not considered compatible
-with the existing fallback bindings.
+On Wed, Dec 12, 2018 at 12:26:10PM -0800, Eric Biggers wrote:
+> > As this apparently got merged despite no proper reviews from VFS
+> > level persons:
+> 
+> fs-verity has been out for review since August, and Cc'ed to all relevant
+> mailing lists including linux-fsdevel, linux-ext4, linux-f2fs-devel,
+> linux-fscrypt, linux-integrity, and linux-kernel.  There are tests,
+> documentation (since v2), and a userspace tool.  It's also been presented at
+> multiple conferences, and has been covered by LWN multiple times.  If more
+> people want to review it, then they should do so; there's nothing stopping them.
 
-Add SoC specific binding compatibility to allow for later
-support for automatic transmission.
+But you did not got a review from someone like Al, Linus, Andrew or me,
+did you?
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
----
- drivers/i2c/busses/i2c-sh_mobile.c | 1 +
- 1 file changed, 1 insertion(+)
+> Can you elaborate on the actual problems you think the current solution has, and
+> exactly what solution you'd prefer instead?  Keep in mind that (1) for large
+> files the Merkle tree can be gigabytes long, (2) Linux doesn't have an API for
+> file streams, and (3) when fs-verity is combined with fscrypt, it's important
+> that the hashes be encrypted, so as to not leak information about the plaintext.
 
-diff --git a/drivers/i2c/busses/i2c-sh_mobile.c b/drivers/i2c/busses/i2c-sh_mobile.c
-index 28db6b5..a64f2ff 100644
---- a/drivers/i2c/busses/i2c-sh_mobile.c
-+++ b/drivers/i2c/busses/i2c-sh_mobile.c
-@@ -800,6 +800,7 @@ static const struct sh_mobile_dt_config r8a7740_dt_config = {
- static const struct of_device_id sh_mobile_i2c_dt_ids[] = {
- 	{ .compatible = "renesas,iic-r8a73a4", .data = &fast_clock_dt_config },
- 	{ .compatible = "renesas,iic-r8a7740", .data = &r8a7740_dt_config },
-+	{ .compatible = "renesas,iic-r8a774c0", .data = &fast_clock_dt_config },
- 	{ .compatible = "renesas,iic-r8a7790", .data = &v2_freq_calc_dt_config },
- 	{ .compatible = "renesas,iic-r8a7791", .data = &fast_clock_dt_config },
- 	{ .compatible = "renesas,iic-r8a7792", .data = &fast_clock_dt_config },
--- 
-2.7.4
-
+Given that you alread use an ioctl as the interface what is the problem
+of passing this data through the ioctl?
