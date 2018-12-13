@@ -2,70 +2,181 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2FC4C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:37:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C210AC65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:38:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 975772086D
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:37:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="NTaRqw77"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 975772086D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
+	by mail.kernel.org (Postfix) with ESMTP id 911A22086D
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:38:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 911A22086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729142AbeLMMhE (ORCPT
+        id S1729167AbeLMMid (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 07:37:04 -0500
-Received: from vps0.lunn.ch ([185.16.172.187]:46320 "EHLO vps0.lunn.ch"
+        Thu, 13 Dec 2018 07:38:33 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:35610 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728517AbeLMMhE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 07:37:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
-        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=hT0m26R4vKY2hSuvgd9syT4EEIE8+/YSCvxwL6QL8B4=;
-        b=NTaRqw77Qmr0rEnqKLjduHMMGWxPGXkgI1/a+rNtD7XW1s8oMe0RQ6U7MsGjUITrn9+RauUdo8nkDbCDYzpVInKy8wkEWrP0FD7j4AW8lcSwEvA2AmagbCcbYkf+yZJCvtr7jLiIUicnbfwwDGCKZKUkkv46jnUIeCQWkSuDuTA=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1gXQEc-0002u0-Jh; Thu, 13 Dec 2018 13:36:58 +0100
-Date:   Thu, 13 Dec 2018 13:36:58 +0100
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Biao Huang <biao.huang@mediatek.com>
-Cc:     davem@davemloft.net, robh+dt@kernel.org,
-        honghui.zhang@mediatek.com, yt.shen@mediatek.com,
-        liguo.zhang@mediatek.com, mark.rutland@arm.com,
-        nelson.chang@mediatek.com, matthias.bgg@gmail.com,
-        netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, joabreu@synopsys.com
-Subject: Re: [v7, PATCH 2/2] dt-binding: mediatek-dwmac: add binding document
- for MediaTek MT2712 DWMAC
-Message-ID: <20181213123658.GG1605@lunn.ch>
-References: <1544666173-5121-1-git-send-email-biao.huang@mediatek.com>
- <1544666173-5121-3-git-send-email-biao.huang@mediatek.com>
+        id S1728859AbeLMMid (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 07:38:33 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6CCA12D2BFE;
+        Thu, 13 Dec 2018 12:38:32 +0000 (UTC)
+Received: from gondolin (dhcp-192-187.str.redhat.com [10.33.192.187])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3B2065F90E;
+        Thu, 13 Dec 2018 12:38:25 +0000 (UTC)
+Date:   Thu, 13 Dec 2018 13:38:23 +0100
+From:   Cornelia Huck <cohuck@redhat.com>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        Vivek Goyal <vgoyal@redhat.com>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        miklos@szeredi.hu, stefanha@redhat.com, sweil@redhat.com,
+        swhiteho@redhat.com
+Subject: Re: [PATCH 18/52] virtio-fs: Map cache using the values from the
+ capabilities
+Message-ID: <20181213133823.2272736b.cohuck@redhat.com>
+In-Reply-To: <0f1b43f6-57e3-c6d2-7ffe-cf783e125a7b@redhat.com>
+References: <20181210171318.16998-1-vgoyal@redhat.com>
+        <20181210171318.16998-19-vgoyal@redhat.com>
+        <de46a955-813b-355d-49f2-4d866603a8fa@redhat.com>
+        <20181213091320.GA2313@work-vm>
+        <d8c093db-9dda-1342-41c2-d08083cc150b@redhat.com>
+        <20181213100058.GC2313@work-vm>
+        <96d9ea85-ddf3-3331-77ce-124475b26da4@redhat.com>
+        <20181213121548.GN2313@work-vm>
+        <0f1b43f6-57e3-c6d2-7ffe-cf783e125a7b@redhat.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1544666173-5121-3-git-send-email-biao.huang@mediatek.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Thu, 13 Dec 2018 12:38:32 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> +- mediatek,rx-delay-ps: RX clock delay macro value. Default is 0.
-> +	It should be defined for rgmii/rgmii-txid/mii/rmii interface.
-> +Both delay properties need to be a multiple of 170 for fine-tune rgmii,
-> +range 0~31*170.
-> +Both delay properties need to be a multiple of 550 for coarse-tune rgmii,
-> +range 0~31*550.
-> +Both delay properties need to be a multiple of 550 for mii/rmii,
-> +range 0~31*550.
+On Thu, 13 Dec 2018 13:24:31 +0100
+David Hildenbrand <david@redhat.com> wrote:
 
-You see "need to be" here, but the driver does not care. It will round
-down. Please either make the driver check, or change the text to
-rather say it will round down.
+> On 13.12.18 13:15, Dr. David Alan Gilbert wrote:
+> > * David Hildenbrand (david@redhat.com) wrote:  
+> >> On 13.12.18 11:00, Dr. David Alan Gilbert wrote:  
+> >>> * David Hildenbrand (david@redhat.com) wrote:  
+> >>>> On 13.12.18 10:13, Dr. David Alan Gilbert wrote:  
+> >>>>> * David Hildenbrand (david@redhat.com) wrote:  
+> >>>>>> On 10.12.18 18:12, Vivek Goyal wrote:  
+> >>>>>>> Instead of assuming we had the fixed bar for the cache, use the
+> >>>>>>> value from the capabilities.
+> >>>>>>>
+> >>>>>>> Signed-off-by: Dr. David Alan Gilbert <dgilbert@redhat.com>
+> >>>>>>> ---
+> >>>>>>>  fs/fuse/virtio_fs.c | 32 +++++++++++++++++---------------
+> >>>>>>>  1 file changed, 17 insertions(+), 15 deletions(-)
+> >>>>>>>
+> >>>>>>> diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
+> >>>>>>> index 60d496c16841..55bac1465536 100644
+> >>>>>>> --- a/fs/fuse/virtio_fs.c
+> >>>>>>> +++ b/fs/fuse/virtio_fs.c
+> >>>>>>> @@ -14,11 +14,6 @@
+> >>>>>>>  #include <uapi/linux/virtio_pci.h>
+> >>>>>>>  #include "fuse_i.h"
+> >>>>>>>  
+> >>>>>>> -enum {
+> >>>>>>> -	/* PCI BAR number of the virtio-fs DAX window */
+> >>>>>>> -	VIRTIO_FS_WINDOW_BAR = 2,
+> >>>>>>> -};
+> >>>>>>> -
+> >>>>>>>  /* List of virtio-fs device instances and a lock for the list */
+> >>>>>>>  static DEFINE_MUTEX(virtio_fs_mutex);
+> >>>>>>>  static LIST_HEAD(virtio_fs_instances);
+> >>>>>>> @@ -518,7 +513,7 @@ static int virtio_fs_setup_dax(struct virtio_device *vdev, struct virtio_fs *fs)
+> >>>>>>>  	struct dev_pagemap *pgmap;
+> >>>>>>>  	struct pci_dev *pci_dev;
+> >>>>>>>  	phys_addr_t phys_addr;
+> >>>>>>> -	size_t len;
+> >>>>>>> +	size_t bar_len;
+> >>>>>>>  	int ret;
+> >>>>>>>  	u8 have_cache, cache_bar;
+> >>>>>>>  	u64 cache_offset, cache_len;
+> >>>>>>> @@ -551,17 +546,13 @@ static int virtio_fs_setup_dax(struct virtio_device *vdev, struct virtio_fs *fs)
+> >>>>>>>          }
+> >>>>>>>  
+> >>>>>>>  	/* TODO handle case where device doesn't expose BAR? */  
+> >>>>>>
+> >>>>>> For virtio-pmem we decided to not go via BARs as this would effectively
+> >>>>>> make it only usable for virtio-pci implementers. Instead, we are going
+> >>>>>> to export the applicable physical device region directly (e.g.
+> >>>>>> phys_start, phys_size in virtio config), so it is decoupled from PCI
+> >>>>>> details. Doing the same for virtio-fs would allow e.g. also virtio-ccw
+> >>>>>> to make eventually use of this.  
+> >>>>>
+> >>>>> That makes it a very odd looking PCI device;  I can see that with
+> >>>>> virtio-pmem it makes some sense, given that it's job is to expose
+> >>>>> arbitrary chunks of memory.
+> >>>>>
+> >>>>> Dave  
+> >>>>
+> >>>> Well, the fact that your are
+> >>>>
+> >>>> - including <uapi/linux/virtio_pci.h>
+> >>>> - adding pci related code
+> >>>>
+> >>>> in/to fs/fuse/virtio_fs.c
+> >>>>
+> >>>> tells me that these properties might be better communicated on the
+> >>>> virtio layer, not on the PCI layer.
+> >>>>
+> >>>> Or do you really want to glue virtio-fs to virtio-pci for all eternity?  
+> >>>
+> >>> No, these need cleaning up; and the split within the bar
+> >>> is probably going to change to be communicated via virtio layer
+> >>> rather than pci capabilities.  However, I don't want to make our PCI
+> >>> device look odd, just to make portability to non-PCI devices - so it's
+> >>> right to make the split appropriately, but still to use PCI bars
+> >>> for what they were designed for.
+> >>>
+> >>> Dave  
+> >>
+> >> Let's discuss after the cleanup. In general I am not convinced this is
+> >> the right thing to do. Using virtio-pci for anything else than pure
+> >> transport smells like bad design to me (well, I am no virtio expert
+> >> after all ;) ). No matter what PCI bars were designed for. If we can't
+> >> get the same running with e.g. virtio-ccw or virtio-whatever, it is
+> >> broken by design (or an addon that is tightly glued to virtio-pci, if
+> >> that is the general idea).  
+> > 
+> > I'm sure we can find alternatives for virtio-*, so I wouldn't expect
+> > it to be glued to virtio-pci.
+> > 
+> > Dave  
+> 
+> As s390x does not have the concept of memory mapped io (RAM is RAM,
+> nothing else), this is not architectured. vitio-ccw can therefore not
+> define anything similar like that. However, in virtual environments we
+> can do whatever we want on top of the pure transport (e.g. on the virtio
+> layer).
+> 
+> Conny can correct me if I am wrong.
 
-       Andrew
+I don't think you're wrong, but I haven't read the code yet and I'm
+therefore not aware of the purpose of this BAR.
+
+Generally, if there is a memory location shared between host and guest,
+we need a way to communicate its location, which will likely differ
+between transports. For ccw, I could imagine a new channel command
+dedicated to exchanging configuration information (similar to what
+exists today to communicate the locations of virtqueues), but I'd
+rather not go down this path.
+
+Without reading the code/design further, can we use one of the
+following instead of a BAR:
+- a virtqueue;
+- something in config space?
+That would be implementable by any virtio transport.
