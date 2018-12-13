@@ -2,117 +2,88 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4134C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 17:59:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B21B4C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 18:01:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54D3220870
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 17:59:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54D3220870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 8AFA520870
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 18:01:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AFA520870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728888AbeLMR7L (ORCPT
+        id S1729147AbeLMSBS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 12:59:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44620 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727618AbeLMR7L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 12:59:11 -0500
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A084020851;
-        Thu, 13 Dec 2018 17:59:09 +0000 (UTC)
-Date:   Thu, 13 Dec 2018 12:59:07 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>, stable-rt@vger.kernel.org
-Subject: Re: [PATCH RT] x86/mm/pat: disable preemption __split_large_page()
- after spin_lock()
-Message-ID: <20181213125907.48e75b89@gandalf.local.home>
-In-Reply-To: <20181213164430.mggilzfjgr5retz6@linutronix.de>
-References: <20181213164430.mggilzfjgr5retz6@linutronix.de>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Thu, 13 Dec 2018 13:01:18 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39562 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727815AbeLMSBS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 13:01:18 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 677B8A78;
+        Thu, 13 Dec 2018 10:01:17 -0800 (PST)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 3610C3F575;
+        Thu, 13 Dec 2018 10:01:17 -0800 (PST)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id 07AD51AE0838; Thu, 13 Dec 2018 18:01:40 +0000 (GMT)
+Date:   Thu, 13 Dec 2018 18:01:40 +0000
+From:   Will Deacon <will.deacon@arm.com>
+To:     Kristina Martsenko <kristina.martsenko@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        Adam Wallis <awallis@codeaurora.org>,
+        Amit Kachhap <amit.kachhap@arm.com>,
+        Andrew Jones <drjones@redhat.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave P Martin <dave.martin@arm.com>,
+        Jacob Bramley <jacob.bramley@arm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>,
+        Richard Henderson <richard.henderson@linaro.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 00/13] ARMv8.3 pointer authentication userspace support
+Message-ID: <20181213180140.GA18185@edgewater-inn.cambridge.arm.com>
+References: <20181207183931.4285-1-kristina.martsenko@arm.com>
+ <20181212193544.GB22013@edgewater-inn.cambridge.arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181212193544.GB22013@edgewater-inn.cambridge.arm.com>
+User-Agent: Mutt/1.11.1+30 (d10eec459b35) ()
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 13 Dec 2018 17:44:31 +0100
-Sebastian Andrzej Siewior <bigeasy@linutronix.de> wrote:
-
-> Commit "x86/mm/pat: Disable preemption around __flush_tlb_all()" added a
-> warning if __flush_tlb_all() is invoked in preemptible context. On !RT
-> the warning does not trigger because a spin lock is acquired which
-> disables preemption. On RT the spin lock does not disable preemption and
-> so the warning is seen.
+On Wed, Dec 12, 2018 at 07:35:44PM +0000, Will Deacon wrote:
+> On Fri, Dec 07, 2018 at 06:39:18PM +0000, Kristina Martsenko wrote:
+> > This series adds support for the ARMv8.3 pointer authentication extension,
+> > enabling userspace return address protection with GCC 7 and above.
 > 
-> Disable preemption to avoid the warning in __flush_tlb_all().
-
-I'm guessing the reason for the warn on is that we don't want a task to
-be scheduled in where we expected the TLB to have been flushed.
-
-
+> I've pushed this out to for-next/ptr-auth with the following changes:
 > 
-> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> ---
->  arch/x86/mm/pageattr.c | 4 ++++
->  1 file changed, 4 insertions(+)
+>   * Rebased onto for-next/core
+>   * Dropped the GET/SET ptrace requests for now, due to fragile regset usage
+>   * Moved the user key state from thread_info to thread_struct
+>   * Removed use of VA_BITS for the PAC mask (doesn't work with 52-bit user VAs)
+>   * Added a patch to use _BITUL for the bit definitions in sysreg.h
+>   * Tidied up the HWCAP generation [need to run this past Suzuki]
+>   * Reduced the number of CPU caps from 6 to 4 [also need to run past Suzuki]
+>   * Added Reviewed-by tags
 > 
-> diff --git a/arch/x86/mm/pageattr.c b/arch/x86/mm/pageattr.c
-> index e2d4b25c7aa44..abbe3e93ec266 100644
-> --- a/arch/x86/mm/pageattr.c
-> +++ b/arch/x86/mm/pageattr.c
-> @@ -687,6 +687,7 @@ __split_large_page(struct cpa_data *cpa, pte_t *kpte, unsigned long address,
->  	pgprot_t ref_prot;
->  
->  	spin_lock(&pgd_lock);
+> I've not merged it into for-next/core yet, because it could use some testing
+> and review first.
 
-We probably should have comment explaining why we have a
-preempt_disable here.
+This is now in for-next/core, so I've removed the for-next/ptr-auth staging
+branch.
 
-> +	preempt_disable();
->  	/*
->  	 * Check for races, another CPU might have split this page
->  	 * up for us already:
-> @@ -694,6 +695,7 @@ __split_large_page(struct cpa_data *cpa, pte_t *kpte, unsigned long address,
->  	tmp = _lookup_address_cpa(cpa, address, &level);
->  	if (tmp != kpte) {
->  		spin_unlock(&pgd_lock);
-> +		preempt_enable();
-
-Shouldn't the preempt_enable() be before the unlock?
-
->  		return 1;
->  	}
->  
-> @@ -727,6 +729,7 @@ __split_large_page(struct cpa_data *cpa, pte_t *kpte, unsigned long address,
->  
->  	default:
->  		spin_unlock(&pgd_lock);
-> +		preempt_enable();
-
-Here too.
-
--- Steve
-
->  		return 1;
->  	}
->  
-> @@ -764,6 +767,7 @@ __split_large_page(struct cpa_data *cpa, pte_t *kpte, unsigned long address,
->  	 * going on.
->  	 */
->  	__flush_tlb_all();
-> +	preempt_enable();
->  	spin_unlock(&pgd_lock);
->  
->  	return 0;
-
+Will
