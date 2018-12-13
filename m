@@ -4,52 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77154C67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:36:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24CBDC67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:37:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3EB8420849
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:36:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE60D20849
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:37:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544675814;
-	bh=fPevtBCpCI7OeWBoiw7u+hEN7U4CFepaVeHhQdjkGZ0=;
+	s=default; t=1544675832;
+	bh=Tdxf+gi/OLduCJFhzmv/kpLIbv39O8UmfQR1UR0qTA8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ZG4FTzPSxPDCU+IZdL0gXSDIdj9j1gr0jOsXTkC54swL2YpyONYG7hi5vuPXPqCnC
-	 1as3DPDv36f1jq7Gjwvs1z5V6VydhQVPraK/T7asmR4amZ5Ch4C8yXUkCWOAlPoNWS
-	 Bys12bVSYeaxEbbDfGQ8DfyoozCHQbYz5EPNgLJo=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EB8420849
+	b=UpanUIxuUxrwv99+jhWm+I3T1u8zltLrmS+qaHP+Rhrn7lBEYDKvutkdl/tDbAtcb
+	 bYst0PHFSakWUk5hGYwmnZ1iqJ+MJK7anZQJK2HaJvFqrgvmCleJrHS0YAjR93gjnE
+	 +sDZwHeY+0mRBd5NkLGiVOXBnn9376QIr28gwhXo=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE60D20849
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729340AbeLMEgx (ORCPT
+        id S1729255AbeLMEhK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 23:36:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46378 "EHLO mail.kernel.org"
+        Wed, 12 Dec 2018 23:37:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46238 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728260AbeLMEd2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 23:33:28 -0500
+        id S1728643AbeLMEdV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 23:33:21 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 144C820672;
-        Thu, 13 Dec 2018 04:33:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7DD9C20880;
+        Thu, 13 Dec 2018 04:33:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544675607;
-        bh=fPevtBCpCI7OeWBoiw7u+hEN7U4CFepaVeHhQdjkGZ0=;
+        s=default; t=1544675601;
+        bh=Tdxf+gi/OLduCJFhzmv/kpLIbv39O8UmfQR1UR0qTA8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0U09o2/w57iFZDyl8fgE6Whix5ivUrpTnzmoO4mb5H4dgGqrVeWorJeWVJvVxYuju
-         mjLCRU6wlXUUBFk1aODTieDimvwPmp8KsdV2V7aBpfIDoiK7xiTGETakQjYqgaUxas
-         okdRO12uCYOmtiqo9Fy4ERhQhTAYsrlrkzAK5qj4=
+        b=kQO1nNdI49hR5+4W/75ng/wVeZ+GV0muRuWM031OqIsDXoHJVIHNeMVvds1+blSX2
+         db+FDzL2yZMgSR/nNcYDtHHDXSQQSxo55VcbHaqoVHFMfsVtix0h3SWvRhRqPptuu8
+         3+t80rkETtOt2/r0xV1PaRIYHIg7BIVt7Vc5nOfs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Tony Lindgren <tony@atomide.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Sasha Levin <sashal@kernel.org>, linux-input@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 15/23] Input: omap-keypad - fix keyboard debounce configuration
-Date:   Wed, 12 Dec 2018 23:32:51 -0500
-Message-Id: <20181213043259.76643-15-sashal@kernel.org>
+Cc:     Yangtao Li <tiny.windzz@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, sparclinux@vger.kernel.org,
+        linux-serial@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.4 12/23] drivers/tty: add missing of_node_put()
+Date:   Wed, 12 Dec 2018 23:32:48 -0500
+Message-Id: <20181213043259.76643-12-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181213043259.76643-1-sashal@kernel.org>
 References: <20181213043259.76643-1-sashal@kernel.org>
@@ -61,67 +61,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tony Lindgren <tony@atomide.com>
+From: Yangtao Li <tiny.windzz@gmail.com>
 
-[ Upstream commit 6c3516fed7b61a3527459ccfa67fab130d910610 ]
+[ Upstream commit dac097c4546e4c5b16dd303a1e97c1d319c8ab3e ]
 
-I noticed that the Android v3.0.8 kernel on droid4 is using different
-keypad values from the mainline kernel and does not have issues with
-keys occasionally being stuck until pressed again. Turns out there was
-an earlier patch posted to fix this as "Input: omap-keypad: errata i689:
-Correct debounce time", but it was never reposted to fix use macros
-for timing calculations.
+of_find_node_by_path() acquires a reference to the node
+returned by it and that reference needs to be dropped by its caller.
+This place is not doing this, so fix it.
 
-This updated version is using macros, and also fixes the use of the
-input clock rate to use 32768KiHz instead of 32000KiHz. And we want to
-use the known good Android kernel values of 3 and 6 instead of 2 and 6
-in the earlier patch.
-
-Reported-by: Pavel Machek <pavel@ucw.cz>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/input/keyboard/omap4-keypad.c | 18 ++++++++++++++----
- 1 file changed, 14 insertions(+), 4 deletions(-)
+ drivers/tty/serial/suncore.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/input/keyboard/omap4-keypad.c b/drivers/input/keyboard/omap4-keypad.c
-index 6639b2b8528a..f78c464899db 100644
---- a/drivers/input/keyboard/omap4-keypad.c
-+++ b/drivers/input/keyboard/omap4-keypad.c
-@@ -60,8 +60,18 @@
+diff --git a/drivers/tty/serial/suncore.c b/drivers/tty/serial/suncore.c
+index 127472bd6a7c..209f314745ab 100644
+--- a/drivers/tty/serial/suncore.c
++++ b/drivers/tty/serial/suncore.c
+@@ -111,6 +111,7 @@ void sunserial_console_termios(struct console *con, struct device_node *uart_dp)
+ 		mode = of_get_property(dp, mode_prop, NULL);
+ 		if (!mode)
+ 			mode = "9600,8,n,1,-";
++		of_node_put(dp);
+ 	}
  
- /* OMAP4 values */
- #define OMAP4_VAL_IRQDISABLE		0x0
--#define OMAP4_VAL_DEBOUNCINGTIME	0x7
--#define OMAP4_VAL_PVT			0x7
-+
-+/*
-+ * Errata i689: If a key is released for a time shorter than debounce time,
-+ * the keyboard will idle and never detect the key release. The workaround
-+ * is to use at least a 12ms debounce time. See omap5432 TRM chapter
-+ * "26.4.6.2 Keyboard Controller Timer" for more information.
-+ */
-+#define OMAP4_KEYPAD_PTV_DIV_128        0x6
-+#define OMAP4_KEYPAD_DEBOUNCINGTIME_MS(dbms, ptv)     \
-+	((((dbms) * 1000) / ((1 << ((ptv) + 1)) * (1000000 / 32768))) - 1)
-+#define OMAP4_VAL_DEBOUNCINGTIME_16MS					\
-+	OMAP4_KEYPAD_DEBOUNCINGTIME_MS(16, OMAP4_KEYPAD_PTV_DIV_128)
- 
- enum {
- 	KBD_REVISION_OMAP4 = 0,
-@@ -181,9 +191,9 @@ static int omap4_keypad_open(struct input_dev *input)
- 
- 	kbd_writel(keypad_data, OMAP4_KBD_CTRL,
- 			OMAP4_DEF_CTRL_NOSOFTMODE |
--			(OMAP4_VAL_PVT << OMAP4_DEF_CTRL_PTV_SHIFT));
-+			(OMAP4_KEYPAD_PTV_DIV_128 << OMAP4_DEF_CTRL_PTV_SHIFT));
- 	kbd_writel(keypad_data, OMAP4_KBD_DEBOUNCINGTIME,
--			OMAP4_VAL_DEBOUNCINGTIME);
-+			OMAP4_VAL_DEBOUNCINGTIME_16MS);
- 	/* clear pending interrupts */
- 	kbd_write_irqreg(keypad_data, OMAP4_KBD_IRQSTATUS,
- 			 kbd_read_irqreg(keypad_data, OMAP4_KBD_IRQSTATUS));
+ 	cflag = CREAD | HUPCL | CLOCAL;
 -- 
 2.19.1
 
