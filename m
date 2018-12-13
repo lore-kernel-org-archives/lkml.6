@@ -2,168 +2,326 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C57FEC6786C
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 00:42:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 780A3C67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 00:43:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E82E20851
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 00:42:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2682D20851
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 00:43:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=wavesemi.onmicrosoft.com header.i=@wavesemi.onmicrosoft.com header.b="U1ZpprjA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E82E20851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mips.com
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="G6IfcdFt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2682D20851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727067AbeLMAmJ (ORCPT
+        id S1726973AbeLMAnC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 19:42:09 -0500
-Received: from mail-eopbgr770107.outbound.protection.outlook.com ([40.107.77.107]:28895
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726278AbeLMAmI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 19:42:08 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=wavesemi.onmicrosoft.com; s=selector1-wavecomp-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oKrfGGoqgnbe7kVjuyIkvj2H4OXMvSVOqG1d6ar5GJg=;
- b=U1ZpprjAL0fhz6+lEmntCpyn6Aj4byX6QYcSE3gDhEXC4p9pbzWXnxYVpDBkHUY749Grwvx7YpcKmafscDglPMXdF6PvnTgzPRVuNCsdqNtYNpNH322dGxUqN5uEC0elpaqkrozHtKuQGrxTk1kZm3+LzBQTcjq5kfjLEp5DbbQ=
-Received: from MWHPR2201MB1277.namprd22.prod.outlook.com (10.174.162.17) by
- MWHPR2201MB1565.namprd22.prod.outlook.com (10.172.63.19) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1404.22; Thu, 13 Dec 2018 00:41:23 +0000
-Received: from MWHPR2201MB1277.namprd22.prod.outlook.com
- ([fe80::c07a:a95:8ba9:8435]) by MWHPR2201MB1277.namprd22.prod.outlook.com
- ([fe80::c07a:a95:8ba9:8435%7]) with mapi id 15.20.1425.016; Thu, 13 Dec 2018
- 00:41:22 +0000
-From:   Paul Burton <paul.burton@mips.com>
-To:     Marek Vasut <marex@denx.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>
-Subject: Re: [PATCH] serial: 8250: Fix clearing FIFOs in RS485 mode again
-Thread-Topic: [PATCH] serial: 8250: Fix clearing FIFOs in RS485 mode again
-Thread-Index: AQHUknyRs52wg14NwUm+r/H2374buA==
-Date:   Thu, 13 Dec 2018 00:41:22 +0000
-Message-ID: <20181213004120.yn35mzfo4skffabv@pburton-laptop>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: MWHPR1701CA0024.namprd17.prod.outlook.com
- (2603:10b6:301:14::34) To MWHPR2201MB1277.namprd22.prod.outlook.com
- (2603:10b6:301:24::17)
-user-agent: NeoMutt/20180716
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=pburton@wavecomp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [4.16.204.77]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHPR2201MB1565;6:netpb+2fVTF4gd8pbDogmxkVocsq4Gzsz/QpiI4GUbiz75QyE8H1vOyRIvbObrDLcmAN/EQ7+8cGNFlkpKlI0gnTOIAwLB0zxCQIYwdz1VPMC+Wqp2nBraSr2nQTDmz+dMfrY5T8i8MYGMh2HJGinVJ/rbVc19gDIF0QMLzFXLmdxTSk9MvBpDMMzDw63xIZd+9NfAW28e8n6ery1471+EBVA456ylQiQ5i4+iVXoexG3Ldv9hQXkYEqMNGoePTUo0TWB7JdeEjsSwH+nmaHzmzBeVtx0SgewfN6IvcIpx/uhH/dHTuvELH6Q6jRfPMXL+q6ORJM0vMnJMTtVMZv934TNG91TKatAOUUTGP9nqMkdpA6k9LuxoL7VtwL0ON+1wFHXN/pltuOeH2MbRVP6kszkNDWQ++sbvt+z6BI6OwwasSUOP3wsUGmCItXdSD2Zl0udx37jKLZNSSSMyKIQQ==;5:9o2QAefyTdb6g3UqwJwK0egh6Ectlq7urfHFO2ULqoUJCdIWRD478tL/Z5t22zdr0KQeEdVMOtraHq8jd3fIj7dysTz3+ceybjSebXrF8tApEma5U4v6GYcF9y0XVwzr3IF9KHSilPVxo/DQXNfh77h+VzFr8aA9c1s1VM8sH8A=;7:n606wdYYeiOGUxh3hmAkhuGPF3aThvCT05miMoUOB9wCeHXKLBsbGyDwHwH2J1wj8pg3ac3lnaxhHD5pTjo6tow3LBiet4cPuOHAv4vn453QJH16fGnOj72Q8gS3bPn86Pva7/j4kLj2sr8lroJFMA==
-x-ms-office365-filtering-correlation-id: edd1535f-acae-4d5c-8f60-08d66093b43e
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(7021145)(8989299)(4534185)(7022145)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:MWHPR2201MB1565;
-x-ms-traffictypediagnostic: MWHPR2201MB1565:
-x-microsoft-antispam-prvs: <MWHPR2201MB15653D22F44C3CA367961B86C1A00@MWHPR2201MB1565.namprd22.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(3230020)(999002)(6040522)(2401047)(5005006)(8121501046)(3231475)(944501520)(52105112)(10201501046)(93006095)(3002001)(148016)(149066)(150057)(6041310)(20161123558120)(20161123560045)(20161123564045)(2016111802025)(20161123562045)(6043046)(201708071742011)(7699051)(76991095);SRVR:MWHPR2201MB1565;BCL:0;PCL:0;RULEID:;SRVR:MWHPR2201MB1565;
-x-forefront-prvs: 088552DE73
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(7916004)(376002)(346002)(136003)(366004)(396003)(39850400004)(199004)(189003)(52116002)(14454004)(229853002)(186003)(6506007)(1076002)(66066001)(102836004)(6246003)(54906003)(26005)(71190400001)(6436002)(99286004)(6116002)(68736007)(110136005)(33896004)(3846002)(42882007)(7736002)(71200400001)(14444005)(53936002)(5660300001)(316002)(6486002)(256004)(8676002)(4326008)(8936002)(33716001)(9686003)(508600001)(2906002)(6512007)(58126008)(25786009)(106356001)(97736004)(476003)(486006)(44832011)(305945005)(81156014)(81166006)(105586002)(386003);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR2201MB1565;H:MWHPR2201MB1277.namprd22.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: wavecomp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: 9HS9YA+e/3h15FPq0dSi6sQHHm5KlPHSu/9K8D40m4X7puJgu54QggAeIaavIMBOZzIFUdX3LVJjSF9BGUHorfi5EBkLnHkw1HhiCcJhayyo2a3SSglBz+CBf3S85v8Nty6XGhwAK7Gai1BUMgvTNTzuqNemZlxK64B6hurvb+Ixe0MHNL356fqQ3fFwSdkOscwz+x5/K+YFtsPNqXHIGj5rWpIPibRy+Pi5aIfdaMT7J7vvQ7NchLyIRsozKUdFpoQqN3mrPNxVSiXzcvxxMOcxK+IJH7q1Sn/MCsFUYrEHX/fb1M4v59VaCLRmLDrR
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <211D3890AA0E0543B59BC94DFAD83100@namprd22.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Wed, 12 Dec 2018 19:43:02 -0500
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:47416 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726278AbeLMAnC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 19:43:02 -0500
+Received: from pps.filterd (m0044010.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wBD0eDVW008401
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 16:43:01 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=facebook;
+ bh=toYWGMdEaKlULS1VfM+kwvQ4g8gEokiemAyYxH0AZXA=;
+ b=G6IfcdFtHRfqQ8XkXeDudB6/bUgW1bEhdHkyUw40AfK8ReGO+vHmie4aVAXlGpCyISEw
+ wMp6d/AFFXcC3DxnNia1FcqLy3Ww66w1XKLPTzxuyomz5JnB1DsChs/+IS+oCPPp1AHX
+ ZUdAtw811sKhyd3R6KbzbX9XvJRw8US0EhE= 
+Received: from mail.thefacebook.com ([199.201.64.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2pba37rm28-4
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 16:43:01 -0800
+Received: from mx-out.facebook.com (2620:10d:c081:10::13) by
+ mail.thefacebook.com (2620:10d:c081:35::125) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1531.3;
+ Wed, 12 Dec 2018 16:43:00 -0800
+Received: by dev003.prn2.facebook.com (Postfix, from userid 572441)
+        id 8A7493644C3E; Wed, 12 Dec 2018 16:42:58 -0800 (PST)
+Smtp-Origin-Hostprefix: dev
+From:   Matt Mullins <mmullins@fb.com>
+Smtp-Origin-Hostname: dev003.prn2.facebook.com
+To:     <ast@kernel.org>, <daniel@iogearbox.net>, <netdev@vger.kernel.org>
+CC:     <kernel-team@fb.com>, Matt Mullins <mmullins@fb.com>,
+        Jessica Yu <jeyu@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>, <linux-kernel@vger.kernel.org>
+Smtp-Origin-Cluster: prn2c23
+Subject: [PATCH bpf-next v2] bpf: support raw tracepoints in modules
+Date:   Wed, 12 Dec 2018 16:42:37 -0800
+Message-ID: <20181213004237.3888568-1-mmullins@fb.com>
+X-Mailer: git-send-email 2.17.1
+X-FB-Internal: Safe
 MIME-Version: 1.0
-X-OriginatorOrg: mips.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: edd1535f-acae-4d5c-8f60-08d66093b43e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Dec 2018 00:41:22.8711
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 463607d3-1db3-40a0-8a29-970c56230104
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR2201MB1565
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-12_04:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marek / Greg / all,
+Distributions build drivers as modules, including network and filesystem
+drivers which export numerous tracepoints.  This enables
+bpf(BPF_RAW_TRACEPOINT_OPEN) to attach to those tracepoints.
 
-On Mon, Sep 03, 2018 at 12:44:52AM +0000, Marek Vasut wrote:
-> The 8250 FIFOs indeed need to be cleared after stopping transmission in
-> RS485 mode without SER_RS485_RX_DURING_TX flag set. But there are two
-> problems with the approach taken by the previous patch from Fixes tag.
->=20
-> First, serial8250_clear_fifos() should clear fifos, but what it really
-> does is it enables the FIFOs unconditionally if present, clears them
-> and then sets the FCR register to zero, which effectively disables the
-> FIFOs. In case the FIFO is disabled, enabling it and clearing it makes
-> no sense and in fact can trigger misbehavior of the 8250 core. Moreover,
-> the FCR register may contain other FIFO configuration bits which may not
-> be writable unconditionally and writing them incorrectly can trigger
-> misbehavior of the 8250 core too. (ie. AM335x UART swallows the first
-> byte and retransmits the last byte twice because of this FCR write).
->=20
-> Second, serial8250_clear_and_reinit_fifos() completely reloads the FCR,
-> but what really has to happen at the end of the RS485 transmission is
-> clearing of the FIFOs and nothing else.
->=20
-> This patch repairs serial8250_clear_fifos() so that it really only
-> clears the FIFOs by operating on FCR[2:1] bits and leaves all the
-> other bits alone. It also undoes serial8250_clear_and_reinit_fifos()
-> from __do_stop_tx_rs485() as serial8250_clear_fifos() is sufficient.
->=20
-> Signed-off-by: Marek Vasut <marex@denx.de>
-> Fixes: 2bed8a8e7072 ("Clearing FIFOs in RS485 emulation mode causes subse=
-quent transmits to break")
-> Cc: Daniel Jedrychowski <avistel@gmail.com>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> ---
-> NOTE: I am not entirely certain this won't break some other hardware,
->       esp. since there might be dependencies on the weird previous
->       behavior of the serial8250_clear_fifos() somewhere.
+Signed-off-by: Matt Mullins <mmullins@fb.com>
+---
+v1->v2:
+  * avoid taking the mutex in bpf_event_notify when op is neither COMING nor
+    GOING.
+  * check that kzalloc actually succeeded
 
-This patch has broken the UART on my Ingenic JZ4780 based MIPS Creator
-Ci20 board. After this patch the system seems to detect garbage input
-that is recognized as SysRq triggers which spam the console & eventually
-reset the system.
+I didn't try to check list_empty before taking the mutex since I want to avoid
+races between bpf_event_notify and bpf_get_raw_tracepoint.  Additionally,
+list_for_each_entry_safe is not strictly necessary upon MODULE_STATE_GOING, but
+Alexei suggested I use it to protect against fragility if the subsequent break;
+eventually disappears.
 
-One thing of note is that both serial8250_do_startup() &
-serial8250_do_shutdown() contain comments that explicitly state their
-expectation that the FIFOs will be disabled by serial8250_clear_fifos(),
-which is no longer true after this patch.
+ include/linux/module.h       |  4 ++
+ include/linux/trace_events.h |  8 ++-
+ kernel/bpf/syscall.c         | 11 ++--
+ kernel/module.c              |  5 ++
+ kernel/trace/bpf_trace.c     | 99 +++++++++++++++++++++++++++++++++++-
+ 5 files changed, 120 insertions(+), 7 deletions(-)
 
-I found that restoring the old behaviour for serial8250_do_startup() is
-enough to make my system work again, but this is obviously a hack:
-
-diff --git a/drivers/tty/serial/8250/8250_port.c b/drivers/tty/serial/8250/=
-8250_port.c
-index f776b3eafb96..8def02933d19 100644
---- a/drivers/tty/serial/8250/8250_port.c
-+++ b/drivers/tty/serial/8250/8250_port.c
-@@ -2210,7 +2210,11 @@ int serial8250_do_startup(struct uart_port *port)
- 	 * Clear the FIFO buffers and disable them.
- 	 * (they will be reenabled in set_termios())
- 	 */
--	serial8250_clear_fifos(up);
-+	if (up->capabilities & UART_CAP_FIFO) {
-+		serial_port_out(port, UART_FCR, UART_FCR_ENABLE_FIFO);
-+		serial8250_clear_fifos(up);
-+		serial_port_out(port, UART_FCR, 0);
+diff --git a/include/linux/module.h b/include/linux/module.h
+index fce6b4335e36..5f147dd5e709 100644
+--- a/include/linux/module.h
++++ b/include/linux/module.h
+@@ -432,6 +432,10 @@ struct module {
+ 	unsigned int num_tracepoints;
+ 	tracepoint_ptr_t *tracepoints_ptrs;
+ #endif
++#ifdef CONFIG_BPF_EVENTS
++	unsigned int num_bpf_raw_events;
++	struct bpf_raw_event_map *bpf_raw_events;
++#endif
+ #ifdef HAVE_JUMP_LABEL
+ 	struct jump_entry *jump_entries;
+ 	unsigned int num_jump_entries;
+diff --git a/include/linux/trace_events.h b/include/linux/trace_events.h
+index 4130a5497d40..8a62731673f7 100644
+--- a/include/linux/trace_events.h
++++ b/include/linux/trace_events.h
+@@ -471,7 +471,8 @@ void perf_event_detach_bpf_prog(struct perf_event *event);
+ int perf_event_query_prog_array(struct perf_event *event, void __user *info);
+ int bpf_probe_register(struct bpf_raw_event_map *btp, struct bpf_prog *prog);
+ int bpf_probe_unregister(struct bpf_raw_event_map *btp, struct bpf_prog *prog);
+-struct bpf_raw_event_map *bpf_find_raw_tracepoint(const char *name);
++struct bpf_raw_event_map *bpf_get_raw_tracepoint(const char *name);
++void bpf_put_raw_tracepoint(struct bpf_raw_event_map *btp);
+ int bpf_get_perf_event_info(const struct perf_event *event, u32 *prog_id,
+ 			    u32 *fd_type, const char **buf,
+ 			    u64 *probe_offset, u64 *probe_addr);
+@@ -502,10 +503,13 @@ static inline int bpf_probe_unregister(struct bpf_raw_event_map *btp, struct bpf
+ {
+ 	return -EOPNOTSUPP;
+ }
+-static inline struct bpf_raw_event_map *bpf_find_raw_tracepoint(const char *name)
++static inline struct bpf_raw_event_map *bpf_get_raw_tracepoint(const char *name)
+ {
+ 	return NULL;
+ }
++static inline void bpf_put_raw_tracepoint(struct bpf_raw_event_map *btp)
++{
++}
+ static inline int bpf_get_perf_event_info(const struct perf_event *event,
+ 					  u32 *prog_id, u32 *fd_type,
+ 					  const char **buf, u64 *probe_offset,
+diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+index 70fb11106fc2..754370e3155e 100644
+--- a/kernel/bpf/syscall.c
++++ b/kernel/bpf/syscall.c
+@@ -1609,6 +1609,7 @@ static int bpf_raw_tracepoint_release(struct inode *inode, struct file *filp)
+ 		bpf_probe_unregister(raw_tp->btp, raw_tp->prog);
+ 		bpf_prog_put(raw_tp->prog);
+ 	}
++	bpf_put_raw_tracepoint(raw_tp->btp);
+ 	kfree(raw_tp);
+ 	return 0;
+ }
+@@ -1634,13 +1635,15 @@ static int bpf_raw_tracepoint_open(const union bpf_attr *attr)
+ 		return -EFAULT;
+ 	tp_name[sizeof(tp_name) - 1] = 0;
+ 
+-	btp = bpf_find_raw_tracepoint(tp_name);
++	btp = bpf_get_raw_tracepoint(tp_name);
+ 	if (!btp)
+ 		return -ENOENT;
+ 
+ 	raw_tp = kzalloc(sizeof(*raw_tp), GFP_USER);
+-	if (!raw_tp)
+-		return -ENOMEM;
++	if (!raw_tp) {
++		err = -ENOMEM;
++		goto out_put_btp;
 +	}
-=20
- 	/*
- 	 * Clear the interrupt registers.
+ 	raw_tp->btp = btp;
+ 
+ 	prog = bpf_prog_get_type(attr->raw_tracepoint.prog_fd,
+@@ -1668,6 +1671,8 @@ static int bpf_raw_tracepoint_open(const union bpf_attr *attr)
+ 	bpf_prog_put(prog);
+ out_free_tp:
+ 	kfree(raw_tp);
++out_put_btp:
++	bpf_put_raw_tracepoint(btp);
+ 	return err;
+ }
+ 
+diff --git a/kernel/module.c b/kernel/module.c
+index 49a405891587..06ec68f08387 100644
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -3093,6 +3093,11 @@ static int find_module_sections(struct module *mod, struct load_info *info)
+ 					     sizeof(*mod->tracepoints_ptrs),
+ 					     &mod->num_tracepoints);
+ #endif
++#ifdef CONFIG_BPF_EVENTS
++	mod->bpf_raw_events = section_objs(info, "__bpf_raw_tp_map",
++					   sizeof(*mod->bpf_raw_events),
++					   &mod->num_bpf_raw_events);
++#endif
+ #ifdef HAVE_JUMP_LABEL
+ 	mod->jump_entries = section_objs(info, "__jump_table",
+ 					sizeof(*mod->jump_entries),
+diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+index 9864a35c8bb5..9ddb6fddb4e0 100644
+--- a/kernel/trace/bpf_trace.c
++++ b/kernel/trace/bpf_trace.c
+@@ -17,6 +17,43 @@
+ #include "trace_probe.h"
+ #include "trace.h"
+ 
++#ifdef CONFIG_MODULES
++struct bpf_trace_module {
++	struct module *module;
++	struct list_head list;
++};
++
++static LIST_HEAD(bpf_trace_modules);
++static DEFINE_MUTEX(bpf_module_mutex);
++
++static struct bpf_raw_event_map *bpf_get_raw_tracepoint_module(const char *name)
++{
++	struct bpf_raw_event_map *btp, *ret = NULL;
++	struct bpf_trace_module *btm;
++	unsigned int i;
++
++	mutex_lock(&bpf_module_mutex);
++	list_for_each_entry(btm, &bpf_trace_modules, list) {
++		for (i = 0; i < btm->module->num_bpf_raw_events; ++i) {
++			btp = &btm->module->bpf_raw_events[i];
++			if (!strcmp(btp->tp->name, name)) {
++				if (try_module_get(btm->module))
++					ret = btp;
++				goto out;
++			}
++		}
++	}
++out:
++	mutex_unlock(&bpf_module_mutex);
++	return ret;
++}
++#else
++static struct bpf_raw_event_map *bpf_get_raw_tracepoint_module(const char *name)
++{
++	return NULL;
++}
++#endif /* CONFIG_MODULES */
++
+ u64 bpf_get_stackid(u64 r1, u64 r2, u64 r3, u64 r4, u64 r5);
+ u64 bpf_get_stack(u64 r1, u64 r2, u64 r3, u64 r4, u64 r5);
+ 
+@@ -1076,7 +1113,7 @@ int perf_event_query_prog_array(struct perf_event *event, void __user *info)
+ extern struct bpf_raw_event_map __start__bpf_raw_tp[];
+ extern struct bpf_raw_event_map __stop__bpf_raw_tp[];
+ 
+-struct bpf_raw_event_map *bpf_find_raw_tracepoint(const char *name)
++struct bpf_raw_event_map *bpf_get_raw_tracepoint(const char *name)
+ {
+ 	struct bpf_raw_event_map *btp = __start__bpf_raw_tp;
+ 
+@@ -1084,7 +1121,16 @@ struct bpf_raw_event_map *bpf_find_raw_tracepoint(const char *name)
+ 		if (!strcmp(btp->tp->name, name))
+ 			return btp;
+ 	}
+-	return NULL;
++
++	return bpf_get_raw_tracepoint_module(name);
++}
++
++void bpf_put_raw_tracepoint(struct bpf_raw_event_map *btp)
++{
++	struct module *mod = __module_address((unsigned long)btp);
++
++	if (mod)
++		module_put(mod);
+ }
+ 
+ static __always_inline
+@@ -1222,3 +1268,52 @@ int bpf_get_perf_event_info(const struct perf_event *event, u32 *prog_id,
+ 
+ 	return err;
+ }
++
++#ifdef CONFIG_MODULES
++int bpf_event_notify(struct notifier_block *nb, unsigned long op, void *module)
++{
++	struct bpf_trace_module *btm, *tmp;
++	struct module *mod = module;
++
++	if (mod->num_bpf_raw_events == 0 ||
++	    (op != MODULE_STATE_COMING && op != MODULE_STATE_GOING))
++		return 0;
++
++	mutex_lock(&bpf_module_mutex);
++
++	switch (op) {
++	case MODULE_STATE_COMING:
++		btm = kzalloc(sizeof(*btm), GFP_KERNEL);
++		if (btm) {
++			btm->module = module;
++			list_add(&btm->list, &bpf_trace_modules);
++		}
++		break;
++	case MODULE_STATE_GOING:
++		list_for_each_entry_safe(btm, tmp, &bpf_trace_modules, list) {
++			if (btm->module == module) {
++				list_del(&btm->list);
++				kfree(btm);
++				break;
++			}
++		}
++		break;
++	}
++
++	mutex_unlock(&bpf_module_mutex);
++
++	return 0;
++}
++
++static struct notifier_block bpf_module_nb = {
++	.notifier_call = bpf_event_notify,
++};
++
++int __init bpf_event_init(void)
++{
++	register_module_notifier(&bpf_module_nb);
++	return 0;
++}
++
++fs_initcall(bpf_event_init);
++#endif /* CONFIG_MODULES */
+-- 
+2.17.1
 
-Any ideas? Given the mismatch between this patch & comments that clearly
-expect the old behaviour I think the __do_stop_tx_rs485() case probably
-needs something different to other callers.
-
-Thanks,
-    Paul
