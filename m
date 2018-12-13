@@ -2,109 +2,180 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC266C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 14:47:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 423E8C67872
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 14:49:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A779820849
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 14:47:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544712431;
-	bh=ySw6AfQq1chQWgDkXqPz1oolEhXXVS7NBI/h7h/dz3A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=SDwoK9ebvCfZWJHMeamyv7bMISH82o50e5jzwIrdvi2J+dq5xLSoMzdO9yA6WjAa/
-	 2WvrnbFGrqtwSwjk5JFhzjZTDrHP53RPbjbF9q9DvorDIgAfO3w+TAiDGtliRDLq5m
-	 I6EqCc3BEK6wVRU9J7LyZ7O9qGiYlLmEbWl4RCtU=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A779820849
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 06B8920849
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 14:49:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ssi.gouv.fr header.i=@ssi.gouv.fr header.b="BjZH5dC6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06B8920849
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ssi.gouv.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729061AbeLMOrK (ORCPT
+        id S1728949AbeLMOtM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 09:47:10 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:33068 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727999AbeLMOrK (ORCPT
+        Thu, 13 Dec 2018 09:49:12 -0500
+Received: from smtp-out.ssi.gouv.fr ([86.65.182.90]:52230 "EHLO
+        smtp-out.ssi.gouv.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727551AbeLMOtL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 09:47:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=qRtWbz/XRT/w+V4fwIVLyDmZ1S91tp+ygosT3Sp06Nc=; b=we8wQ/tDBNfLiFPiVLOzXxDMj
-        RTKxNr/oNV2dYfFqhSaaFfoS996vWHujpbcFYr44q4JqSkv9DEZ68MU9m3ga+cK+Pou7QYC64y3Yx
-        YGXwRRp0xXQJtmPUOCkosm3NC6Qqpl8e5xSbpe1vOe+sgvuKDBkZq7fCVYR/BSEWIC//k=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gXSGP-0001Vi-9I; Thu, 13 Dec 2018 14:46:57 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id B933311254D1; Thu, 13 Dec 2018 14:46:56 +0000 (GMT)
-Date:   Thu, 13 Dec 2018 14:46:56 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     Priit Laes <plaes@plaes.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Olliver Schinagl <oliver@schinagl.nl>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Subject: Re: [PATCH 1/8] mfd: axp20x: name voltage ramping define properly
-Message-ID: <20181213144656.GJ10669@sirena.org.uk>
-References: <cover.4110554ae84987dedb8b58888a8a63d6b7f98c72.1544466940.git-series.plaes@plaes.org>
- <01367c4f4f1e174fefbef9aac645f6792bda07e5.1544466940.git-series.plaes@plaes.org>
- <20181213115506.GD10669@sirena.org.uk>
- <20181213132802.GQ4497@dell>
+        Thu, 13 Dec 2018 09:49:11 -0500
+Received: from smtp-out.ssi.gouv.fr (localhost [127.0.0.1])
+        by smtp-out.ssi.gouv.fr (Postfix) with ESMTP id B4794D0006B;
+        Thu, 13 Dec 2018 15:49:17 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ssi.gouv.fr;
+        s=20160407; t=1544712557;
+        bh=t4ZkM2bb49k43HJTH04W2MsitYuRiCp32PthRZd/wpM=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To:From:Subject;
+        b=BjZH5dC6RomNffMo1aRB2qd7ETRmVRwb3O80beKZyGLeTYzynVNIu78HxbLsIb1/a
+         65XnS4vZ1T1e4Trm9SoeEGdmpQbN6bvAcDzw9UZcMPfS4cg/w3l2lG8XN7a2TNk6V8
+         bDAYaWjIfxlQcWzpTmk14kfe8ShUC/RmeOT13jewBLe3SrEIzFALjkOC/NXob3ps98
+         8yUpoA1170ifJvyDyenIERxzc710yHHqkiRw7Y0k6zoBDTkw8gY0ds0pb9pYMRDHsx
+         xowu/c8l5kchULtz4G8cgS8wI32+bsQNKJS6z6ctuOWsbtL0HQOL/jWG5FavYwrPFn
+         OvyGtxO3O7GiA==
+Subject: Re: [RFC PATCH v1 3/5] Yama: Enforces noexec mounts or file
+ executability through O_MAYEXEC
+To:     Jann Horn <jannh@google.com>,
+        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+CC:     kernel list <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        James Morris <jmorris@namei.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Garrett <mjg59@google.com>,
+        Michael Kerrisk-manpages <mtk.manpages@gmail.com>,
+        <zohar@linux.ibm.com>, <philippe.trebuchet@ssi.gouv.fr>,
+        <shuah@kernel.org>, <thibaut.sautereau@ssi.gouv.fr>,
+        <vincent.strubel@ssi.gouv.fr>, <yves-alexis.perez@ssi.gouv.fr>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>
+References: <20181212081712.32347-1-mic@digikod.net>
+ <20181212081712.32347-4-mic@digikod.net>
+ <CAG48ez3SAW8EyaJ9T1U3qPoRhYwe4CCyL9bAxuc3GxjrXipi-A@mail.gmail.com>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>
+Message-ID: <f13bf750-f418-343c-baa6-9eee6e0f5e19@ssi.gouv.fr>
+Date:   Thu, 13 Dec 2018 15:49:16 +0100
+User-Agent: Mozilla/5.0 (X11; Linux i686; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="F4+N/OgRSdC8YnqX"
-Content-Disposition: inline
-In-Reply-To: <20181213132802.GQ4497@dell>
-X-Cookie: Some optional equipment shown.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAG48ez3SAW8EyaJ9T1U3qPoRhYwe4CCyL9bAxuc3GxjrXipi-A@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---F4+N/OgRSdC8YnqX
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 12/12/2018 18:09, Jann Horn wrote:
+> On Wed, Dec 12, 2018 at 9:18 AM Mickaël Salaün <mic@digikod.net> wrote:
+>> Enable to either propagate the mount options from the underlying VFS
+>> mount to prevent execution, or to propagate the file execute permission.
+>> This may allow a script interpreter to check execution permissions
+>> before reading commands from a file.
+>>
+>> The main goal is to be able to protect the kernel by restricting
+>> arbitrary syscalls that an attacker could perform with a crafted binary
+>> or certain script languages.  It also improves multilevel isolation
+>> by reducing the ability of an attacker to use side channels with
+>> specific code.  These restrictions can natively be enforced for ELF
+>> binaries (with the noexec mount option) but require this kernel
+>> extension to properly handle scripts (e.g., Python, Perl).
+>>
+>> Add a new sysctl kernel.yama.open_mayexec_enforce to control this
+>> behavior.  A following patch adds documentation.
+>>
+>> Signed-off-by: Mickaël Salaün <mic@digikod.net>
+>> Reviewed-by: Philippe Trébuchet <philippe.trebuchet@ssi.gouv.fr>
+>> Reviewed-by: Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>
+>> Cc: Kees Cook <keescook@chromium.org>
+>> Cc: Mickaël Salaün <mickael.salaun@ssi.gouv.fr>
+>> ---
+> [...]
+>> +/**
+>> + * yama_inode_permission - check O_MAYEXEC permission before accessing an inode
+>> + * @inode: inode structure to check
+>> + * @mask: permission mask
+>> + *
+>> + * Return 0 if access is permitted, -EACCES otherwise.
+>> + */
+>> +int yama_inode_permission(struct inode *inode, int mask)
+> 
+> This should be static, no?
 
-On Thu, Dec 13, 2018 at 01:28:02PM +0000, Lee Jones wrote:
-> On Thu, 13 Dec 2018, Mark Brown wrote:
+Right, it will be in the next series. The previous function
+(yama_ptrace_traceme) is not static though.
 
-> > What's going on with this patch?  Will you be applying it or is this an
-> > ack for it to be applied with the rest of the series?
+> 
+>> +{
+>> +       if (!(mask & MAY_OPENEXEC))
+>> +               return 0;
+>> +       /*
+>> +        * Match regular files and directories to make it easier to
+>> +        * modify script interpreters.
+>> +        */
+>> +       if (!S_ISREG(inode->i_mode) && !S_ISDIR(inode->i_mode))
+>> +               return 0;
+> 
+> So files are subject to checks, but loading code from things like
+> sockets is always fine?
 
-> I don't have anything else queued for include/linux/mfd/axp20x.h, so
-> you can take it if you want.  Just make sure you 's/-for-MFD//'.=20
+As I said in a previous email, these checks do not handle fifo either.
+This is relevant in a threat model targeting persistent attacks (and
+with additional protections/restrictions). We may want to only whitelist
+fifo, but I don't get how a socket is relevant here. Can you please clarify?
 
-Great, thanks!
+> 
+>> +       if ((open_mayexec_enforce & YAMA_OMAYEXEC_ENFORCE_MOUNT) &&
+>> +                       !(mask & MAY_EXECMOUNT))
+>> +               return -EACCES;
+>> +
+>> +       /*
+>> +        * May prefer acl_permission_check() instead of generic_permission(),
+>> +        * to not be bypassable with CAP_DAC_READ_SEARCH.
+>> +        */
+>> +       if (open_mayexec_enforce & YAMA_OMAYEXEC_ENFORCE_FILE)
+>> +               return generic_permission(inode, MAY_EXEC);
+>> +
+>> +       return 0;
+>> +}
+>> +
+>>  static struct security_hook_list yama_hooks[] __lsm_ro_after_init = {
+>> +       LSM_HOOK_INIT(inode_permission, yama_inode_permission),
+>>         LSM_HOOK_INIT(ptrace_access_check, yama_ptrace_access_check),
+>>         LSM_HOOK_INIT(ptrace_traceme, yama_ptrace_traceme),
+>>         LSM_HOOK_INIT(task_prctl, yama_task_prctl),
+>> @@ -447,6 +489,37 @@ static int yama_dointvec_minmax(struct ctl_table *table, int write,
+>>         return proc_dointvec_minmax(&table_copy, write, buffer, lenp, ppos);
+>>  }
+>>
+>> +static int yama_dointvec_bitmask_macadmin(struct ctl_table *table, int write,
+>> +                                         void __user *buffer, size_t *lenp,
+>> +                                         loff_t *ppos)
+>> +{
+>> +       int error;
+>> +
+>> +       if (write) {
+>> +               struct ctl_table table_copy;
+>> +               int tmp_mayexec_enforce;
+>> +
+>> +               if (!capable(CAP_MAC_ADMIN))
+>> +                       return -EPERM;
+> 
+> Don't put capable() checks in sysctls, it doesn't work.
+> 
 
---F4+N/OgRSdC8YnqX
-Content-Type: application/pgp-signature; name="signature.asc"
+I tested it and the root user can indeed open the file even if the
+process doesn't have CAP_MAC_ADMIN, however writing in the sysctl file
+is denied. Btw there is a similar check in the previous function
+(yama_dointvec_minmax).
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlwScN8ACgkQJNaLcl1U
-h9CADAgAhszym9ayUapGaP8xybHHtlq59rLNx5BSeXxz6VSIeaHuXtLZ6rQeb3/2
-PtLTejwmQTTguCSfPTRAVqG/d0bI/oAfdCCZkft3/FKGvB+CacwhJ3c5RfVav9Y+
-kJ6JRArQNYJ4jeDi8/2SiXqrrof3nl9JjCvSZ0RXULKsxdsNa9t7I5DtOU4z90wy
-YkB9Gi3ICyCbu5Q1x51LdWiuMVWXwqgCKUQhsVFjhZGTiwM4iOjW7l9exoCp6DdZ
-UAcfeYLMg+LxL3COGKZN58KUuQTZ/T3kDf4fgba0BPHNW2nz1btBsgZCLh0gOoK6
-tcX4IsdA7ruOOQnBzmh1fI/VXb6x5Q==
-=FLny
------END PGP SIGNATURE-----
-
---F4+N/OgRSdC8YnqX--
+Thanks
