@@ -7,52 +7,53 @@ X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20207C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:32:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57CC9C67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:32:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D18A620879
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:32:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14B5F20873
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:32:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544675528;
-	bh=Fbreh+Pfju7J2aX8+cIBYG7Wo3PHBgAYxf3fpn0Ea40=;
+	s=default; t=1544675531;
+	bh=Ae92FgUPGkBXNenWVxVz0xvYDtSAPOrMAQFaH5Oriok=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=MU9EuYxxDA98DJzq/T8E09gsZY1PE7/bGm93Xfjxv2ExGWFPhX8JITJE8UWhXkm+P
-	 mRS9XjgNb3Yw/VnJ46IDD4iwIQbAxnhwfSdb7KACUzk4GP97FWjtpiDGJyeKXuRew7
-	 quvFqBGY7fOBnvpXXwxAztUd3atpXtS/UZ/nefsI=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D18A620879
+	b=ZLBHvZOYZU/eC5Kd7ZfvYtoi1GxZcVVS71TW/w94uLkjPQoqJGZ3zzIOK+oY5R42R
+	 UiIDqHiUTFMsXLnt9OiV2QeYMnnQPAAFziiT6cpTviLa6dpyHLVERuZBR9RxKdpqWX
+	 DsCdxvWa6VmBVd1oE3J4H6IQzg7WSEhhlBDcTxCU=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14B5F20873
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728978AbeLMEcG (ORCPT
+        id S1728999AbeLMEcK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 23:32:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44884 "EHLO mail.kernel.org"
+        Wed, 12 Dec 2018 23:32:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44984 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728924AbeLMEb5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 23:31:57 -0500
+        id S1728968AbeLMEcD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 23:32:03 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8215820879;
-        Thu, 13 Dec 2018 04:31:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9C95120873;
+        Thu, 13 Dec 2018 04:32:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544675517;
-        bh=Fbreh+Pfju7J2aX8+cIBYG7Wo3PHBgAYxf3fpn0Ea40=;
+        s=default; t=1544675523;
+        bh=Ae92FgUPGkBXNenWVxVz0xvYDtSAPOrMAQFaH5Oriok=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BHXJXET+BVNrDkEpj/EwmvakftDz6b1RCEJgaBkdcycgotJuNPRQkBbZIr2VnFLIq
-         jSKkyfLC1FKu+h9helaiiroz4TEZIrzR2v9E25Vu2zEDxUUveawMLd1u+9HgAhXmuE
-         KoWHkcJ0ieqKYC4XuU+RdHrWOuKLsF4FCfG4BWJg=
+        b=x26x68K0FR+0mcKpGIjDwqCjMRJ/rCYuqYq2lEgrMOJYoqrSamHu/8Q0wvK5b+K3e
+         W5gpARTuJy+uL9zEeD1Fn8139xErfA4QLv3trDl2nF0LymSHQuOqd5yqEXNhYKyZ/T
+         jqJcpFypv9zc1/COEFVhFARGEWx6J/de/2YOrxJ0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Sasha Levin <sashal@kernel.org>, linux-i2c@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 39/41] i2c: uniphier-f: fix violation of tLOW requirement for Fast-mode
-Date:   Wed, 12 Dec 2018 23:30:52 -0500
-Message-Id: <20181213043054.75891-39-sashal@kernel.org>
+Cc:     Fred Herard <fred.herard@oracle.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>, open-iscsi@googlegroups.com,
+        linux-scsi@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 02/34] scsi: libiscsi: Fix NULL pointer dereference in iscsi_eh_session_reset
+Date:   Wed, 12 Dec 2018 23:31:28 -0500
+Message-Id: <20181213043200.76295-2-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181213043054.75891-1-sashal@kernel.org>
-References: <20181213043054.75891-1-sashal@kernel.org>
+In-Reply-To: <20181213043200.76295-1-sashal@kernel.org>
+References: <20181213043200.76295-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -61,56 +62,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
+From: Fred Herard <fred.herard@oracle.com>
 
-[ Upstream commit ece27a337d42a3197935711997f2880f0957ed7e ]
+[ Upstream commit 5db6dd14b31397e8cccaaddab2ff44ebec1acf25 ]
 
-Currently, the clock duty is set as tLOW/tHIGH = 1/1. For Fast-mode,
-tLOW is set to 1.25 us while the I2C spec requires tLOW >= 1.3 us.
+This commit addresses NULL pointer dereference in iscsi_eh_session_reset.
+Reference should not be made to session->leadconn when session->state is
+set to ISCSI_STATE_TERMINATE.
 
-tLOW/tHIGH = 5/4 would meet both Standard-mode and Fast-mode:
-  Standard-mode: tLOW = 5.56 us, tHIGH = 4.44 us
-  Fast-mode:     tLOW = 1.39 us, tHIGH = 1.11 us
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Signed-off-by: Fred Herard <fred.herard@oracle.com>
+Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Reviewed-by: Lee Duncan <lduncan@suse.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/i2c/busses/i2c-uniphier-f.c | 19 ++++++++++++++++++-
- 1 file changed, 18 insertions(+), 1 deletion(-)
+ drivers/scsi/libiscsi.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-uniphier-f.c b/drivers/i2c/busses/i2c-uniphier-f.c
-index a403e8579b65..bc26ec822e26 100644
---- a/drivers/i2c/busses/i2c-uniphier-f.c
-+++ b/drivers/i2c/busses/i2c-uniphier-f.c
-@@ -470,9 +470,26 @@ static void uniphier_fi2c_hw_init(struct uniphier_fi2c_priv *priv)
- 
- 	uniphier_fi2c_reset(priv);
- 
-+	/*
-+	 *  Standard-mode: tLOW + tHIGH = 10 us
-+	 *  Fast-mode:     tLOW + tHIGH = 2.5 us
-+	 */
- 	writel(cyc, priv->membase + UNIPHIER_FI2C_CYC);
--	writel(cyc / 2, priv->membase + UNIPHIER_FI2C_LCTL);
-+	/*
-+	 *  Standard-mode: tLOW = 4.7 us, tHIGH = 4.0 us, tBUF = 4.7 us
-+	 *  Fast-mode:     tLOW = 1.3 us, tHIGH = 0.6 us, tBUF = 1.3 us
-+	 * "tLow/tHIGH = 5/4" meets both.
-+	 */
-+	writel(cyc * 5 / 9, priv->membase + UNIPHIER_FI2C_LCTL);
-+	/*
-+	 *  Standard-mode: tHD;STA = 4.0 us, tSU;STA = 4.7 us, tSU;STO = 4.0 us
-+	 *  Fast-mode:     tHD;STA = 0.6 us, tSU;STA = 0.6 us, tSU;STO = 0.6 us
-+	 */
- 	writel(cyc / 2, priv->membase + UNIPHIER_FI2C_SSUT);
-+	/*
-+	 *  Standard-mode: tSU;DAT = 250 ns
-+	 *  Fast-mode:     tSU;DAT = 100 ns
-+	 */
- 	writel(cyc / 16, priv->membase + UNIPHIER_FI2C_DSUT);
- 
- 	uniphier_fi2c_prepare_operation(priv);
+diff --git a/drivers/scsi/libiscsi.c b/drivers/scsi/libiscsi.c
+index cc8f2a7c2463..c79743de48f9 100644
+--- a/drivers/scsi/libiscsi.c
++++ b/drivers/scsi/libiscsi.c
+@@ -2414,8 +2414,8 @@ int iscsi_eh_session_reset(struct scsi_cmnd *sc)
+ failed:
+ 		ISCSI_DBG_EH(session,
+ 			     "failing session reset: Could not log back into "
+-			     "%s, %s [age %d]\n", session->targetname,
+-			     conn->persistent_address, session->age);
++			     "%s [age %d]\n", session->targetname,
++			     session->age);
+ 		spin_unlock_bh(&session->frwd_lock);
+ 		mutex_unlock(&session->eh_mutex);
+ 		return FAILED;
 -- 
 2.19.1
 
