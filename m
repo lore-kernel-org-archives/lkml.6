@@ -2,159 +2,218 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7A37C67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 19:46:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68B93C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 19:48:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 813092086D
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 19:46:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 813092086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 3046A2087F
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 19:48:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="DWfUfBh+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3046A2087F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728584AbeLMTqR (ORCPT
+        id S1728523AbeLMTsI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 14:46:17 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:56930 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727684AbeLMTqR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 14:46:17 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 25A0D3002891;
-        Thu, 13 Dec 2018 19:46:16 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-223.bos.redhat.com [10.18.17.223])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 345496179D;
-        Thu, 13 Dec 2018 19:46:14 +0000 (UTC)
-Subject: Re: WARNING: locking bug in lock_downgrade
-To:     Yang Shi <yang.shi@linux.alibaba.com>,
-        syzbot <syzbot+53383ae265fb161ef488@syzkaller.appspotmail.com>,
-        akpm@linux-foundation.org, kirill.shutemov@linux.intel.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux@dominikbrodowski.net, mhocko@suse.com, rientjes@google.com,
-        syzkaller-bugs@googlegroups.com, vbabka@suse.cz,
-        peterz@infradead.org, "mingo@redhat.com" <mingo@redhat.com>,
-        boqun.feng@gmail.com
-References: <00000000000043ae20057b974f14@google.com>
- <f0acc6af-cdd5-0e46-bca5-2e2a9a4c983e@linux.alibaba.com>
-From:   Waiman Long <longman@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- weim8xU=
-Organization: Red Hat
-Message-ID: <69273d51-c129-6b0f-35eb-d98655476ff9@redhat.com>
-Date:   Thu, 13 Dec 2018 14:46:13 -0500
+        Thu, 13 Dec 2018 14:48:08 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:40303 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727965AbeLMTsI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 14:48:08 -0500
+Received: by mail-lf1-f65.google.com with SMTP id v5so2489930lfe.7
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 11:48:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:organization:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=pWKbsIdfu6FrnU6d0cazKNK450zlM8oBtt4BJcYKBfg=;
+        b=DWfUfBh+jiP94xaM4kBaBv3xFhHvqRP0kN3XdSwvltNbGAMR2qUlE6P98D6yDZnqPN
+         xjUHhC7qoyaXuOBAC4sXQtxJHUeH19zrhdZit+FRPHqvrATdqG3TlyynOZVxmenaSH5i
+         nFc7pi123Ak/+9j/hGcZ461ldN7kfbXMjtvnzdq5xfHy1E9YasuofNEtdG5YE5tzFqg/
+         RpPj/aJ0JCJQFdb2Zce6Rw7HDuUui+ytbazJiB8SWsekJk1PKGZcJOuY8QNzpagZAJRQ
+         fc4TPjqsBwvgPe3oQKSjGzKt+/9Cp3Che1R4j39qDcHgh6SXYscZ5Z/Rzp0nx83wjxP3
+         rYUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=pWKbsIdfu6FrnU6d0cazKNK450zlM8oBtt4BJcYKBfg=;
+        b=Z5snj0kbU2GUebvaIo6ceHCLK+k9ihOKchahaK6TpwjM+LC3vYqX5HVHjU+4GRLmRD
+         V6jvEFkggfDEYv5qafi5C7shxRYUT+uMovBu8kqYQTKE9Yq+fW5FQNZ3CcSPxR3Xdrx/
+         GT9ydtAAb0Pgc1bDK5avoBzDSyOr9aGxJxgyJrfQzothH2R6SdpHSIridY+ayhP7uRzP
+         6/wDvC5BoE40G4Dm057EBoQu8QbVhWmHHROypczq9vlP2IvFhY2gmGkibYpzmYg1FHr8
+         SxNw6ljGY7y1yYotjCDXyghObH4zT6ejzAv4Hsb6vhmAgO+qg8WS5JbG2NUnPyD79gRE
+         tyjA==
+X-Gm-Message-State: AA+aEWaDmERZuD8Yuer/6yUke7GAIFpShnKCQSHQPLc77gqXUJmUDj08
+        FPtFQVjpg+m1gS/b4FDQOlIWiQ==
+X-Google-Smtp-Source: AFSGD/XDmcv0CdsbqBfu5WASkcuMsIUKXk1cZxfx/jZCNdVDK/AduxnFz4nnCucD3gqrjlCgkxKMlw==
+X-Received: by 2002:a19:c801:: with SMTP id y1mr55097lff.53.1544730484903;
+        Thu, 13 Dec 2018 11:48:04 -0800 (PST)
+Received: from wasted.cogentembedded.com ([31.173.84.245])
+        by smtp.gmail.com with ESMTPSA id r4sm510710lfe.60.2018.12.13.11.48.03
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 13 Dec 2018 11:48:04 -0800 (PST)
+Subject: Re: [PATCH v3 1/2] spi: Add Renesas R-Car Gen3 RPC SPI controller
+ driver
+To:     Mason Yang <masonccyang@mxic.com.tw>, broonie@kernel.org,
+        marek.vasut@gmail.com, linux-kernel@vger.kernel.org,
+        linux-spi@vger.kernel.org, boris.brezillon@bootlin.com,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     juliensu@mxic.com.tw, Simon Horman <horms@verge.net.au>,
+        zhengxunli@mxic.com.tw
+References: <1544181199-3373-1-git-send-email-masonccyang@mxic.com.tw>
+ <1544181199-3373-2-git-send-email-masonccyang@mxic.com.tw>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Organization: Cogent Embedded
+Message-ID: <557c8114-2819-7be3-21b8-02918aa89c04@cogentembedded.com>
+Date:   Thu, 13 Dec 2018 22:48:02 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-In-Reply-To: <f0acc6af-cdd5-0e46-bca5-2e2a9a4c983e@linux.alibaba.com>
+In-Reply-To: <1544181199-3373-2-git-send-email-masonccyang@mxic.com.tw>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Thu, 13 Dec 2018 19:46:16 +0000 (UTC)
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/12/2018 08:14 PM, Yang Shi wrote:
-> Cc'ed Peter, Ingo and Waiman.
->
->
-> It took me a few days to look into this warning, but I got lost in
-> lockdep code.
->
->
-> The problem is the commit dd2283f2605e ("mm: mmap: zap pages with read
-> mmap_sem in munmap") does an optimization for munmap by downgrading
-> write mmap_sem to read before zapping pages. But, lockdep reports
-> downgrading a read lock.
->
->
-> I'm pretty sure mmap_sem is held as write before downgrade_write() is
-> called in the patch. And, there are 4 places which may downgrade a
-> mmap_sem:
->
->     - munmap
->
->     - mremap
->
->     - brk
->
->     - clear_refs_write (fs/proc/task_mmu.c)
->
->
-> The first three come from my patches, and they just do:
-> down_write_killable() -> .. -> downgrade_write().
->
-> But the last one is a little bit more complicated, it does down_read()
-> ->.. -> up_read() ->.. -> down_write_killable() ->.. ->
-> downgrade_write().
->
-> And, the last one may be called from any process to touch the other
-> processes' mmap_sem.
->
->
-> By looking into lockdep code, I'm not sure if lockdep may get confused
-> by such sequence or not?
->
->
-> Any hint is appreciated.
->
->
-> Regards,
->
-> Yang 
+On 12/07/2018 02:13 PM, Mason Yang wrote:
 
-The warning was printed because hlock->read was set when doing the
-downgrade_write(). So it is either downgrade_write() was called a second
-time or a read lock was held originally. It is hard to tell what is the
-root cause without a reproducer.
+> Add a driver for Renesas R-Car Gen3 RPC SPI controller.
+> 
+> Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
+> ---
+>  drivers/spi/Kconfig           |   6 +
+>  drivers/spi/Makefile          |   1 +
+>  drivers/spi/spi-renesas-rpc.c | 776 ++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 783 insertions(+)
+>  create mode 100644 drivers/spi/spi-renesas-rpc.c
+> 
+> diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
+> index 7d3a5c9..54b40f8 100644
+> --- a/drivers/spi/Kconfig
+> +++ b/drivers/spi/Kconfig
+[...]
+> diff --git a/drivers/spi/spi-renesas-rpc.c b/drivers/spi/spi-renesas-rpc.c
+> new file mode 100644
+> index 0000000..cec5669
+> --- /dev/null
+> +++ b/drivers/spi/spi-renesas-rpc.c
+> @@ -0,0 +1,776 @@
+[...]
+> +static int rpc_spi_do_reset(struct rpc_spi *rpc)
+> +{
+> +	int ret;
+> +
+> +	ret = reset_control_reset(rpc->rstc);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return 0;
 
-Cheers,
-Longman
+   This degrades to:
+
+{
+	return reset_control_reset(rpc->rstc);
+}
+
+   So, we hardly need this function now...
+
+[...]
+> +static int rpc_spi_io_xfer(struct rpc_spi *rpc,
+> +			   const void *tx_buf, void *rx_buf)
+> +{
+> +	u32 smenr, smcr, data, pos = 0;
+> +	int ret = 0;
+> +
+> +	regmap_write(rpc->regmap, RPC_CMNCR, RPC_CMNCR_MD | RPC_CMNCR_SFDE |
+> +				  RPC_CMNCR_MOIIO_HIZ | RPC_CMNCR_IOFV_HIZ |
+> +				  RPC_CMNCR_BSZ(0));
+> +	regmap_write(rpc->regmap, RPC_SMDRENR, 0x0);
+> +	regmap_write(rpc->regmap, RPC_SMCMR, rpc->cmd);
+> +	regmap_write(rpc->regmap, RPC_SMDMCR, rpc->dummy);
+> +	regmap_write(rpc->regmap, RPC_SMADR, rpc->addr);
+> +
+> +	if (tx_buf) {
+> +		smenr = rpc->smenr;
+> +
+> +		while (pos < rpc->xferlen) {
+> +			u32 nbytes = rpc->xferlen  - pos;
+> +
+> +			regmap_write(rpc->regmap, RPC_SMWDR0,
+> +				     get_unaligned((u32 *)(tx_buf + pos)));
+> +
+> +			if (nbytes > 4) {
+> +				nbytes = 4;
+> +				smcr = rpc->smcr |
+> +				       RPC_SMCR_SPIE | RPC_SMCR_SSLKP;
+> +			} else {
+> +				smcr = rpc->smcr | RPC_SMCR_SPIE;
+> +			}
+> +
+> +			regmap_write(rpc->regmap, RPC_SMENR, smenr);
+> +			regmap_write(rpc->regmap, RPC_SMCR, smcr);
+> +			ret = wait_msg_xfer_end(rpc);
+> +			if (ret)
+> +				goto out;
+> +
+> +			pos += nbytes;
+> +			smenr = rpc->smenr & ~RPC_SMENR_CDE &
+> +					     ~RPC_SMENR_ADE(0xf);
+> +		}
+> +	} else if (rx_buf) {
+> +		while (pos < rpc->xferlen) {
+> +			u32 nbytes = rpc->xferlen  - pos;
+> +
+> +			if (nbytes > 4)
+> +				nbytes = 4;
+> +
+> +			regmap_write(rpc->regmap, RPC_SMENR, rpc->smenr);
+> +			regmap_write(rpc->regmap, RPC_SMCR,
+> +				     rpc->smcr | RPC_SMCR_SPIE);
+
+   Hm... our flash chip (Spansion S25FS512S) doesn't get detected; it sends
+JEDEC ID bytes 0..3 repeatedly, unless I copy the SSLKP logic from the writing
+branch above...
+
+> +			ret = wait_msg_xfer_end(rpc);
+> +			if (ret)
+> +				goto out;
+> +
+> +			regmap_read(rpc->regmap, RPC_SMRDR0, &data);
+> +			memcpy_fromio(rx_buf + pos, (void *)&data, nbytes);
+> +			pos += nbytes;
+
+   ... and it skips byte 4 unless I copy the code from the end of the writing
+branch, clearing CDE/ADE. But even then the byte 4 reads as 0x03 instead of 0.
+
+> +			regmap_write(rpc->regmap, RPC_SMCMR, rpc->cmd);
+> +			regmap_write(rpc->regmap, RPC_SMDMCR, rpc->dummy);
+> +			regmap_write(rpc->regmap, RPC_SMADR, rpc->addr + pos);
+> +		}
+> +	} else {
+> +		regmap_write(rpc->regmap, RPC_SMENR, rpc->smenr);
+> +		regmap_write(rpc->regmap, RPC_SMCR, rpc->smcr | RPC_SMCR_SPIE);
+> +		ret = wait_msg_xfer_end(rpc);
+> +		if (ret)
+> +			goto out;
+> +	}
+> +
+> +	return ret;
+> +out:
+> +	return rpc_spi_do_reset(rpc);
+> +}
+[...]
+
+MBR, Sergei
