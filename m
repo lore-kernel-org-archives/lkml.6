@@ -2,224 +2,148 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_NEOMUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1C23C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 20:14:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3671CC67872
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 20:15:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65BF520870
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 20:14:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65BF520870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id E4F0220851
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 20:15:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=wavesemi.onmicrosoft.com header.i=@wavesemi.onmicrosoft.com header.b="Cy/Tnnqq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4F0220851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mips.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726930AbeLMUOw (ORCPT
+        id S1726976AbeLMUPs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 15:14:52 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:50383 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726510AbeLMUOw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 15:14:52 -0500
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gXXNg-0000ic-L7; Thu, 13 Dec 2018 21:14:48 +0100
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gXXNf-0000R5-TJ; Thu, 13 Dec 2018 21:14:47 +0100
-Date:   Thu, 13 Dec 2018 21:14:47 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Michal =?utf-8?B?Vm9rw6HEjQ==?= <michal.vokac@ysoft.com>,
-        linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel@pengutronix.de
-Subject: Re: [PATCH 3/3] pwm: imx: Implement get_state() function for
- hardware readout
-Message-ID: <20181213201447.v2ivule5q6knxqyp@pengutronix.de>
-References: <1538403588-68850-1-git-send-email-michal.vokac@ysoft.com>
- <1538403588-68850-3-git-send-email-michal.vokac@ysoft.com>
- <20181212105432.GD17654@ulmo>
- <20181213085213.7k5ihn7bdrtess3g@pengutronix.de>
- <20181213170000.GA14581@ulmo>
+        Thu, 13 Dec 2018 15:15:48 -0500
+Received: from mail-eopbgr780119.outbound.protection.outlook.com ([40.107.78.119]:20160
+        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726355AbeLMUPr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 15:15:47 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=wavesemi.onmicrosoft.com; s=selector1-wavecomp-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OYSJppRypAbfSqsaVGV1DpWHTN0hqm0x7bkPHXNLG/o=;
+ b=Cy/TnnqqRknZ+35W78oqUXzZvGZ+wHvx37I6MRKroNPf9NAgS52qZ5j5wwLHVvdCBDOuU4Eg9alB6ampkSB8CBOxy2I2jmI12gtyDqpoQdIbb6/ezKKKFywst1Cw7b2bMQ7ndjORFzwSOtL92ZiYasdXNoDriQcB2UXNH+sZ+CU=
+Received: from MWHPR2201MB1277.namprd22.prod.outlook.com (10.174.162.17) by
+ MWHPR2201MB1150.namprd22.prod.outlook.com (10.174.166.39) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1425.19; Thu, 13 Dec 2018 20:15:41 +0000
+Received: from MWHPR2201MB1277.namprd22.prod.outlook.com
+ ([fe80::c07a:a95:8ba9:8435]) by MWHPR2201MB1277.namprd22.prod.outlook.com
+ ([fe80::c07a:a95:8ba9:8435%7]) with mapi id 15.20.1425.016; Thu, 13 Dec 2018
+ 20:15:41 +0000
+From:   Paul Burton <paul.burton@mips.com>
+To:     Firoz Khan <firoz.khan@linaro.org>
+CC:     "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-Arch <linux-arch@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
+Subject: Re: [PATCH v4 3/7] mips: rename macros and files from '64' to 'n64'
+Thread-Topic: [PATCH v4 3/7] mips: rename macros and files from '64' to 'n64'
+Thread-Index: AQHUjSNJ15+cZub/wUiwPpyZjNjVYqV4aUcAgADYI4CAAKuugIAAoKeAgAEsAwCAAK6QgIAAvqMA
+Date:   Thu, 13 Dec 2018 20:15:41 +0000
+Message-ID: <20181213201540.ae6pxtm2xmrxnaaa@pburton-laptop>
+References: <1544073508-13720-1-git-send-email-firoz.khan@linaro.org>
+ <1544073508-13720-4-git-send-email-firoz.khan@linaro.org>
+ <20181210195144.dvprpyxyddusyb5c@pburton-laptop>
+ <CALxhOng7EzAd2zHKAOj3ipEd6y=DpS2JGo34s4V_cWVgmLjPwg@mail.gmail.com>
+ <20181211185947.gnaachztyh3ils7o@pburton-laptop>
+ <CALxhOngErLD7+CEhgSPwQUnGg7YEFTcH-v6dhR0j55SvEg1FoA@mail.gmail.com>
+ <20181212222834.2zf3rb67fxfcmwuw@pburton-laptop>
+ <CALxhOnht8H6r38bwm7xqbHuJs6dvLB03GCKyws2cif1mEE+sKA@mail.gmail.com>
+In-Reply-To: <CALxhOnht8H6r38bwm7xqbHuJs6dvLB03GCKyws2cif1mEE+sKA@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: MWHPR19CA0067.namprd19.prod.outlook.com
+ (2603:10b6:300:94::29) To MWHPR2201MB1277.namprd22.prod.outlook.com
+ (2603:10b6:301:24::17)
+user-agent: NeoMutt/20180716
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=pburton@wavecomp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [4.16.204.77]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR2201MB1150;6:u5yWjmAX2D/hMNyr+AIwkZsveiP6LE2MJON8YGHrIkPyD68bRX1oI1/BhD0u2Sub7zYJFGI7OZkmHs0iR1MRK7bzomXeZAe4RpF7xKpDdYS8PmmGb9TXHeB3QTXDjqB9ov9lPUZaWa12HXE34174rgPOIWsPLrNeoqxw5sNjqSZzaNeqYN99/rsmog+ADlhNneyuunD0bugggJHLjRw55+YtMuyP5VOvSZa3XBbswXJIcXHnu8f+e4x7V2LCJbZ8q1XOy3TWANJqKGtkCsUwQ8OnnnzYp4q5PzmMvizW8lOF9JHnZunMaqeLe6lQhXjaAXLgKF9Yqjd4d5w+uTgYfiTYmpzA/uGQSZ9y3pRePxBgkpNKIQzehQvILQT3PeUJI7Y0nvpZO4+iAcMQwfJdY5+BmE3XcYh9zbi9VehOynVGC8GU6qP/6Ledh2TlC+dt5xpJekwWRf1KZ3xRLxeHxg==;5:qJaIhRXbWustMt05zwIyvF6zL7xG+BDRUo7FWEby0xNfsvkRXIBQmClmMDrp7vNfPxV4WyQUVC1/notXDP+m0cHpUiI+7HM6oGZgnbr4aQt+BLxGMIt5Yo1y4hkWk77K0Bm6LRNyHfgMiZUMzF4O3rZPFuneKROvzwDIHgHjwpI=;7:lp7U7MQL9za4aDghL95SvqHdxqoK+4ddEqlnOkZz+dVP6jmRWYATBOJl930wtNRLwq8b7iE5ZUkqkIDrnF1rBsyWTIa3i5X/hGBf+GK8Pmioyf+7RzIplfcmTbi0vgs32URLk/xQnciuaMPzSNPUjQ==
+x-ms-office365-filtering-correlation-id: d8224f74-5472-479c-964b-08d66137c0fb
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(7021145)(8989299)(5600074)(711020)(4534185)(7022145)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(2017052603328)(7153060)(7193020);SRVR:MWHPR2201MB1150;
+x-ms-traffictypediagnostic: MWHPR2201MB1150:
+x-microsoft-antispam-prvs: <MWHPR2201MB115010CE2194C44F78ACB930C1A00@MWHPR2201MB1150.namprd22.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(3230021)(999002)(6040522)(2401047)(8121501046)(5005006)(3231475)(944501520)(52105112)(93006095)(3002001)(10201501046)(148016)(149066)(150057)(6041310)(20161123558120)(20161123560045)(20161123564045)(20161123562045)(2016111802025)(6043046)(201708071742011)(7699051)(76991095);SRVR:MWHPR2201MB1150;BCL:0;PCL:0;RULEID:;SRVR:MWHPR2201MB1150;
+x-forefront-prvs: 088552DE73
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(7916004)(376002)(346002)(366004)(396003)(39840400004)(136003)(199004)(189003)(7416002)(305945005)(44832011)(256004)(14444005)(66066001)(7736002)(25786009)(186003)(81156014)(316002)(53936002)(6512007)(6246003)(54906003)(9686003)(68736007)(8936002)(39060400002)(8676002)(81166006)(6306002)(5660300001)(486006)(102836004)(58126008)(476003)(26005)(42882007)(93886005)(71190400001)(52116002)(76176011)(386003)(6506007)(446003)(2906002)(4326008)(71200400001)(11346002)(97736004)(6916009)(105586002)(14454004)(33896004)(99286004)(1076002)(6116002)(229853002)(966005)(33716001)(6486002)(3846002)(508600001)(6436002)(106356001);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR2201MB1150;H:MWHPR2201MB1277.namprd22.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: wavecomp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: xmad1FMKTQB+y0Ug1BDE0Edxo2sCMptoH7wKVCrgBjfXKFQ1lDzalDtI03PwQoZK9HNWn6oL6Z4VTm436v54tUmOZaEVIPE5XtQQpMP+AVBRiXdIkV03OyLQ8qgviVOlAkHW55VgDTwd7U4JoWV90w/CN6jsnUYTdD1JWdblsSuOqcrUey9Yk0STOtr+zXAem4v4ccpvjYt9Rh8ImbeB5wt+w+xbH3vrfkqNUIhAHcQ0fAcg/9I2HxvAbVF4hkr8mT2UIIn6pztHeCtVQhTc157iiJOyCOe2MTuWbphyqijpOaKIkTq+32cxgMM3cATF
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <49E9E6D96F297A4DB4F2CB168090837C@namprd22.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181213170000.GA14581@ulmo>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+X-OriginatorOrg: mips.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d8224f74-5472-479c-964b-08d66137c0fb
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Dec 2018 20:15:41.2093
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 463607d3-1db3-40a0-8a29-970c56230104
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR2201MB1150
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Thierry,
+Hi Firoz,
 
-On Thu, Dec 13, 2018 at 06:00:00PM +0100, Thierry Reding wrote:
-> On Thu, Dec 13, 2018 at 09:52:13AM +0100, Uwe Kleine-König wrote:
-> > On Wed, Dec 12, 2018 at 11:54:32AM +0100, Thierry Reding wrote:
-> > > On Mon, Oct 01, 2018 at 04:19:48PM +0200, Michal Vokáč wrote:
-> > > > Implement the get_state() function and set the initial state to reflect
-> > > > real state of the hardware. This allows to keep the PWM running if it was
-> > > > enabled in bootloader. It is very similar to the GPIO behavior. GPIO pin
-> > > > set as output in bootloader keep the same setting in Linux unless it is
-> > > > reconfigured.
-> > > > 
-> > > > If we find the PWM block enabled we need to prepare and enable its source
-> > > > clock otherwise the clock will be disabled late in the boot as unused.
-> > > > That will leave the PWM in enabled state but with disabled clock. That has
-> > > > a side effect that the PWM output is left at its current level at which
-> > > > the clock was disabled. It is totally non-deterministic and it may be LOW
-> > > > or HIGH.
-> > > > 
-> > > > Signed-off-by: Michal Vokáč <michal.vokac@ysoft.com>
-> > > > ---
-> > > >  drivers/pwm/pwm-imx.c | 53 +++++++++++++++++++++++++++++++++++++++++++++++++++
-> > > >  1 file changed, 53 insertions(+)
-> > > 
-> > > Applied, thanks.
-> > 
-> > Did you miss my feedback for this patch or did you choose to ignore it?
-> 
-> Don't have anything in my inbox, but I see that it's there on patchwork,
-> so I suspect it was eaten by the spam filter.
+On Thu, Dec 13, 2018 at 02:23:21PM +0530, Firoz Khan wrote:
+> > > So If you confirm I can send v5 without '64' to 'n64' conversion (not=
+ just above
+> > > one, completely from this patch series). Or uou can take a call just
+> > > keep this macro -
+> > > _MIPS_SIM_ABI64 as it is and change it rest of the place.
+> >
+> > Let's just go ahead & leave everything as 64, and I'll do the 64 -> n64
+> > rename later. I hoped whilst you were adding n64-specific code this
+> > would be an easy change, but at this point let's just prioritize gettin=
+g
+> > the series applied without the naming change so it can sit in -next for
+> > a while before the merge window.
+>=20
+> I'll keep the macro - _MIPS_SIM_ABI64 same and will not change the rest
+> of the patch series. Unfortunately, reverting back to 64 from n64 has lot=
+s of
+> work.
 
-:-|
+I've applied v5 but undone the change from __NR_64_* to __NR_N64_*
+because it's part of the UAPI & a github code search showed that it's
+actually used.
 
-> Let me copy-paste here and go through it.
-> 
-> > > @@ -93,6 +96,55 @@ struct imx_chip {
-> > >
-> > >  #define to_imx_chip(chip) container_of(chip, struct imx_chip, chip)
-> > >
-> > > +static void imx_pwm_get_state(struct pwm_chip *chip,
-> > > +  struct pwm_device *pwm, struct pwm_state *state)
-> > 
-> > broken alignment.
-> 
-> I can fix that up, no need to resend for that.
+Could you take a look at this branch & check that you're OK with it
+before I push it to mips-next?
 
-fine.
+  git://git.kernel.org/pub/scm/linux/kernel/git/mips/linux.git test-syscall=
+s
 
-> > > +{
-> > > + struct imx_chip *imx = to_imx_chip(chip);
-> > > + u32 period, prescaler, pwm_clk, ret, val;
-> > > + u64 tmp;
-> > > +
-> > > + val = readl(imx->mmio_base + MX3_PWMCR);
-> > > +
-> > > + if (val & MX3_PWMCR_EN) {
-> > > +  state->enabled = true;
-> > > +  ret = clk_prepare_enable(imx->clk_per);
-> > > +  if (ret)
-> > > +   return;
-> > > + } else {
-> > > +  state->enabled = false;
-> > > + }
-> > > +
-> > > + switch (FIELD_GET(MX3_PWMCR_POUTC, val)) {
-> > > + case MX3_PWMCR_POUTC_NORMAL:
-> > > +  state->polarity = PWM_POLARITY_NORMAL;
-> > > +  break;
-> > > + case MX3_PWMCR_POUTC_INVERTED:
-> > > +  state->polarity = PWM_POLARITY_INVERSED;
-> > > +  break;
-> > > + default:
-> > > +  dev_warn(chip->dev, "can't set polarity, output disconnected");
-> > 
-> > Should we return an error here?
-> 
-> We can't return an error here because the function has a void return
-> type. I'm not sure what it means if the POUTC is neither "normal" nor
-> "inverted", but perhaps a good idea would be to default to either of
-> those two in that case, or perhaps forcibly disable the PWM so that
-> we get known-good values in the registers?
+  https://git.kernel.org/pub/scm/linux/kernel/git/mips/linux.git/log/?h=3Dt=
+est-syscalls
 
-The manual says "PWM output is disconnected". So I think the right thing
-to do is to consider the pwm as disabled. (But checking how the output
-actually behaves would be great.) (Maybe this setting is even the
-solution to our "Make the output high-Z on disable" discussion?)
-
-> I'm tempted not to treat this as a blocker because it's not actually
-> a bug or anything. Prior to this patch we also ignore whatever this
-> field was set to.
-
-Prior to this patch this field was never read as this is only needed in
-.get_state. And in .apply the value is correctly written.
-
-> > > + }
-> > > +
-> > > + prescaler = MX3_PWMCR_PRESCALER_GET(val);
-> > > + pwm_clk = clk_get_rate(imx->clk_per);
-> > > + pwm_clk = DIV_ROUND_CLOSEST_ULL(pwm_clk, prescaler);
-> > > + val = readl(imx->mmio_base + MX3_PWMPR);
-> > 
-> > It would be more cautionous to not rely on the reserved bits to read as
-> > zero. So I suggest to mask the value with 0xffff.
-> 
-> If that's what the documentation says I think it's okay to rely on it.
-> But I can add the mask if we want to play it extra safe.
-
-The PERIOD field only covers bits 0 to 15 and the upper 16 bits of this
-register are reserved. The registers are documented to read as 0, still
-I'd prefer to mask them out for maximal correctness.
-
-> > > + period = val >= MX3_PWMPR_MAX ? MX3_PWMPR_MAX : val;
-> > > +
-> > > + /* PWMOUT (Hz) = PWMCLK / (PWMPR + 2) */
-> > > + tmp = NSEC_PER_SEC * (u64)(period + 2);
-> > > + state->period = DIV_ROUND_CLOSEST_ULL(tmp, pwm_clk);
-> > 
-> > Would it make sense to introduce a policy about how to round in this
-> > case? (Similarily for .apply?) This is of course out of scope for this
-> > patch.
-> 
-> I'm not sure what you means by policy. The above already does round to
-> closest. Is that not an appropriate policy?
-
-I mean to document the expectation of the pwm framework how the driver
-is supposed to configure the hardware when it should program the PWM
-with say duty_cycle=100ns/period=300ns and but the hardware can only
-implement both duty_cycle and period in steps of 3ns. So the (IMHO) good
-candidates are:
-
-	duty_cycle = 99ns / period = 297ns
-	duty_cycle = 99ns / period = 300ns
-	duty_cycle = 102ns / period = 300ns
-	duty_cycle = 102ns / period = 306ns
-
-As it's not obvious which is the best here (or is it?) and taking into
-account that the PWM user might care, it would be right to specify
-something like:
-
-  The driver is supposed to configure the biggest duty_cycle that
-  is not greater than the requested duty_cycle. Similarily it should
-  pick the biggest possible period that is not greater than the
-  requested period.
-
-To actually allow the user to find the setting that he or she prefers
-something like the clk framework provides with clk_round_rate() would be
-needed of course.
-
-And for .get_state I'd specify something similar that ensures that in
-the sequence
-
-	myops->get_state(chip, pwm, state);
-	myops->apply(chip, pwm, state);
-
-the latter is a noop.
-
-Best regards
-Uwe
-
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Thanks,
+    Paul
