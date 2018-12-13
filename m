@@ -2,98 +2,111 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FE1DC65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 19:02:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E962DC67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 19:06:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE6812086D
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 19:02:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE6812086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 940DB20811
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 19:06:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="QlZsuJp0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 940DB20811
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727548AbeLMTCy (ORCPT
+        id S1727506AbeLMTGl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 14:02:54 -0500
-Received: from mga12.intel.com ([192.55.52.136]:46023 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726453AbeLMTCx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 14:02:53 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Dec 2018 11:02:53 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,349,1539673200"; 
-   d="scan'208";a="259267541"
-Received: from orsmsx104.amr.corp.intel.com ([10.22.225.131])
-  by orsmga004.jf.intel.com with ESMTP; 13 Dec 2018 11:02:53 -0800
-Received: from orsmsx112.amr.corp.intel.com ([169.254.3.201]) by
- ORSMSX104.amr.corp.intel.com ([169.254.4.59]) with mapi id 14.03.0415.000;
- Thu, 13 Dec 2018 11:02:52 -0800
-From:   "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-To:     "namit@vmware.com" <namit@vmware.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "daniel@iogearbox.net" <daniel@iogearbox.net>,
-        "jeyu@kernel.org" <jeyu@kernel.org>,
-        "rostedt@goodmis.org" <rostedt@goodmis.org>,
-        "ast@kernel.org" <ast@kernel.org>,
-        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "jannh@google.com" <jannh@google.com>,
-        "Dock, Deneen T" <deneen.t.dock@intel.com>,
-        "kristen@linux.intel.com" <kristen@linux.intel.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "kernel-hardening@lists.openwall.com" 
-        <kernel-hardening@lists.openwall.com>,
-        "Keshavamurthy, Anil S" <anil.s.keshavamurthy@intel.com>,
-        "mhiramat@kernel.org" <mhiramat@kernel.org>,
-        "naveen.n.rao@linux.vnet.ibm.com" <naveen.n.rao@linux.vnet.ibm.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "Hansen, Dave" <dave.hansen@intel.com>
-Subject: Re: [PATCH v2 2/4] modules: Add new special vfree flags
-Thread-Topic: [PATCH v2 2/4] modules: Add new special vfree flags
-Thread-Index: AQHUka9V1MIYVg+ExEqbD4KauZHiBaV8StmAgAFEtYA=
-Date:   Thu, 13 Dec 2018 19:02:51 +0000
-Message-ID: <ae9292380803f891a2472ebec70361b7c1af48d8.camel@intel.com>
-References: <20181212000354.31955-1-rick.p.edgecombe@intel.com>
-         <20181212000354.31955-3-rick.p.edgecombe@intel.com>
-         <3AD9DBCA-C6EC-4FA6-84DC-09F3D4A9C47B@vmware.com>
-In-Reply-To: <3AD9DBCA-C6EC-4FA6-84DC-09F3D4A9C47B@vmware.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.54.75.141]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <A94C43946908D040A3E03262A753F155@intel.com>
-Content-Transfer-Encoding: base64
+        Thu, 13 Dec 2018 14:06:41 -0500
+Received: from mail-io1-f67.google.com ([209.85.166.67]:45494 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726457AbeLMTGl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 14:06:41 -0500
+Received: by mail-io1-f67.google.com with SMTP id n3so2455571iog.12
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 11:06:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=43z7sxCwsioeuUTMZ1cXwqY1NBaDS2DfjVGCxspeBxw=;
+        b=QlZsuJp0sBhkp3igKmlBJSPaw/hJyDz89X3YmO8eZxakjZXVGpK2/Y4gxK0omw3/jd
+         EfiIYXUIzf2cOqrKnuVeUzwHlOzimrzM0v/t+5EYj8Hboh70mp+1TzMtkDZ/ibm9PXEL
+         uNTLU9Lu+aA2lif3hBGsvgl8goeYV8YOvMOSM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=43z7sxCwsioeuUTMZ1cXwqY1NBaDS2DfjVGCxspeBxw=;
+        b=IpXUx+aZVh1QfWczy6XGpf7N8Q+yvXdkN4HqTnjCM6Tn29pK1SuF5E6AbuCzSdtbP5
+         xNVK6LkJyAj9FxlkhJCDzGQC54im8PxQsUx3GgajZEZQIyZ2EFD+imlEg5IexbTIOoiA
+         EdBT7s1BPoJiMpfF6Jf5aBy9w4lyPfY+gcOZNbogodf3Dp/K4DvlW8mUCwxJioqu55Hc
+         5fjdcc6Lg2t0n1I3qBZicn97BTL/WIYr8X3qhJXppAtPrjZSA195bOniOSPsBn75YbpY
+         seUQCSKUv6GdnzYPLDPPGRZ+18W/nDLjNgWMTSZ73FCSHBnaSPykD0GJcpZ5nZITKbyh
+         4ICg==
+X-Gm-Message-State: AA+aEWZByQgw/TQvEixMMVZ7hpeyy0y/1nhLRHrVl08RMHpLjyMc1tgk
+        2eyXBnZ1RBIsImTUtCTa0We09rl8H/N2Yty4VenM97vs
+X-Google-Smtp-Source: AFSGD/UsOcluBOvBaDwJckDa8x/5AuBcadqjPG+0B4nGmQVg0KlVzXaat113/aLq3gF2bzj4N9ZWDtCQFM8UOZtYj5g=
+X-Received: by 2002:a6b:4001:: with SMTP id k1mr19536ioa.34.1544728000350;
+ Thu, 13 Dec 2018 11:06:40 -0800 (PST)
 MIME-Version: 1.0
+References: <7586985.G9YL5ver76@aspire.rjw.lan> <20181213185304.GB18107@kroah.com>
+In-Reply-To: <20181213185304.GB18107@kroah.com>
+From:   Daniel Vetter <daniel.vetter@ffwll.ch>
+Date:   Thu, 13 Dec 2018 20:06:28 +0100
+Message-ID: <CAKMK7uFFpqFy8tksvMxW2X6_gT-Se8Y9Jbtcxun99e4vRSdgQA@mail.gmail.com>
+Subject: Re: [PATCH] driver core: Add missing dev->bus->need_parent_lock checks
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>, liumartin@google.com,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gV2VkLCAyMDE4LTEyLTEyIGF0IDIzOjQwICswMDAwLCBOYWRhdiBBbWl0IHdyb3RlOg0KPiA+
-IE9uIERlYyAxMSwgMjAxOCwgYXQgNDowMyBQTSwgUmljayBFZGdlY29tYmUgPHJpY2sucC5lZGdl
-Y29tYmVAaW50ZWwuY29tPg0KPiA+IHdyb3RlOg0KPiA+IA0KPiA+IEFkZCBuZXcgZmxhZ3MgZm9y
-IGhhbmRsaW5nIGZyZWVpbmcgb2Ygc3BlY2lhbCBwZXJtaXNzaW9uZWQgbWVtb3J5IGluDQo+ID4g
-dm1hbGxvYywNCj4gPiBhbmQgcmVtb3ZlIHBsYWNlcyB3aGVyZSB0aGUgaGFuZGxpbmcgd2FzIGRv
-bmUgaW4gbW9kdWxlLmMuDQo+ID4gDQo+ID4gVGhpcyB3aWxsIGVuYWJsZSB0aGlzIGZsYWcgZm9y
-IGFsbCBhcmNoaXRlY3R1cmVzLg0KPiA+IA0KPiA+IFNpZ25lZC1vZmYtYnk6IFJpY2sgRWRnZWNv
-bWJlIDxyaWNrLnAuZWRnZWNvbWJlQGludGVsLmNvbT4NCj4gPiAtLS0NCj4gPiBrZXJuZWwvbW9k
-dWxlLmMgfCA0MyArKysrKysrKysrKystLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQo+
-ID4gMSBmaWxlIGNoYW5nZWQsIDEyIGluc2VydGlvbnMoKyksIDMxIGRlbGV0aW9ucygtKQ0KPiA+
-IA0KPiANCj4gSSBjb3VudCBvbiB5b3UgZm9yIG1lcmdpbmcgeW91ciBwYXRjaC1zZXQgd2l0aCBt
-aW5lLCBzaW5jZSBjbGVhcmx5IHRoZXkNCj4gY29uZmxpY3QuDQo+IA0KWWVzLCBJIGNhbiByZWJh
-c2Ugb24gdG9wIG9mIHlvdXJzIGlmIHlvdSBvbWl0IHRoZSBjaGFuZ2VzIGFyb3VuZCBtb2R1bGVf
-bWVtZnJlZSANCmZvciB5b3VyIG5leHQgdmVyc2lvbi4gSXQgc2hvdWxkIGZpdCB0b2dldGhlciBw
-cmV0dHkgY2xlYW5seSBmb3IgQlBGIGFuZCBtb2R1bGVzDQpJIHRoaW5rLiBOb3Qgc3VyZSB3aGF0
-IHlvdSBhcmUgcGxhbm5pbmcgZm9yIGtwcm9iZXMgYW5kIGZ0cmFjZS4NCg==
+On Thu, Dec 13, 2018 at 7:53 PM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Thu, Dec 13, 2018 at 07:27:47PM +0100, Rafael J. Wysocki wrote:
+> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >
+> > __device_release_driver() has to check dev->bus->need_parent_lock
+> > before dropping the parent lock and acquiring it again as it may
+> > attempt to drop a lock that hasn't been acquired or lock a device
+> > that shouldn't be locked and create a lock imbalance.
+> >
+> > Fixes: 8c97a46af04b (driver core: hold dev's parent lock when needed)
+> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > ---
+> >
+> > This should go into -stable for everything over 4.18 methinks.
+>
+> Does this fix Daniel's lockdep splat?
+
+Nah, separate issue. Afaiui bus->need_parent_lock is only set for usb,
+I'm unbinding pci devices. I guess the combination of someone
+unbinding an usb device through sysfs which also has some device links
+attached doesn't happen.
+
+Since I've dug around in this, for this patch here from Rafael:
+
+Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+
+Cheers, Daniel
+
+>
+> thanks,
+>
+> greg k-h
+
+
+
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
