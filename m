@@ -2,104 +2,95 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B92E4C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 05:18:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63C81C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 05:22:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73A6520672
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 05:18:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TiwIeexB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73A6520672
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 20E6820873
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 05:22:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20E6820873
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726666AbeLMFS6 (ORCPT
+        id S1726849AbeLMFWI convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 00:18:58 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:35206 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726226AbeLMFS5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 00:18:57 -0500
-Received: by mail-pf1-f195.google.com with SMTP id z9so499696pfi.2
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 21:18:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=iOJgq/M54U/KgwawNPpYMt16/DMHyCVGKzYXtCd0qSs=;
-        b=TiwIeexBlX1n6EqhkULlRXyWnuBBbrSOU9zLMqccpr2s1kEjxuYI7K0n6gG4TBF+oY
-         +8ddBX4CPax7EBroeWFVRJ9DPPVJonHn5OdE//jicJwQcR9jpIzODIgk2BQoTwbUfSdq
-         WtAEePC/2LcMwdhgOvSUjo12BV0xhWbWhaHOfh/iOFrEl9LRdGsiAjM8IpHp3/4WqcLc
-         09NQ0tzmAURe91pvMO9GFCwnk7NlLkeWUoiS1djSe8sgwOaTwL6Ik4aAPuRo023fphIM
-         lgKRQckaKZcjXCmoMfoNBe168zEll+N/ajRdaxXbhMYOP++Bl2vemV41NwUxJof6L2Bz
-         PYcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=iOJgq/M54U/KgwawNPpYMt16/DMHyCVGKzYXtCd0qSs=;
-        b=oyWeAllU2y+j5xjaLfhgc3cX97QQfG6C0GKXFVVky0ovQkRAjvVhZXv88k60Ngernh
-         oMFs5+F/fnsPOgN5ZZEwB1qGbTwQ34deXAJIX7/kruenxsmNGcTwYVN39oiXmShdqZKn
-         tmGlBmDFPMet2hrCnstfMn++3owsgy8kCR+dTv146MTCWCnBlAdbLaEHVMcerdg5r3UM
-         2tJkIYgK2eXeW8Vz2RPGXi6gvoKT2IFeAx2hnZ5PDCi+nVpliEovWo+zN0wMNGEhaorq
-         dkMKDVXSJsSL24n/XDBzmt1z3yMGLsKJmGC5d14xB0M46BXheOvs+j/Tk8YWPcOxD1m3
-         BxVA==
-X-Gm-Message-State: AA+aEWZ+59OJfwg7JCqDYoNCZgYYgtejBuvbE3buTk0VTABjXlfG1i4c
-        pcC0zIm2n4pY6YCztewrp+Y=
-X-Google-Smtp-Source: AFSGD/UpyUjK1vEdCFSuVItq3vEGuMUtqFZYPhWSiYVZ/tJxdPRyHX+NFV1YW07ywvOA772PDrMIMQ==
-X-Received: by 2002:a63:fc05:: with SMTP id j5mr21083620pgi.434.1544678337279;
-        Wed, 12 Dec 2018 21:18:57 -0800 (PST)
-Received: from localhost ([110.70.59.213])
-        by smtp.gmail.com with ESMTPSA id x26sm874550pfn.50.2018.12.12.21.18.55
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 12 Dec 2018 21:18:56 -0800 (PST)
-Date:   Thu, 13 Dec 2018 14:18:53 +0900
-From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To:     Dmitry Safonov <dima@arista.com>
-Cc:     Waiman Long <longman@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Yang Shi <yang.shi@linux.alibaba.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Subject: Re: [PATCH] debugobjects: Move printk out of db lock critical
- sections
-Message-ID: <20181213051853.GG4860@jagdpanzerIV>
-References: <1544653694-27873-1-git-send-email-longman@redhat.com>
- <9cb1526a-e82f-dfa7-4b3c-5ea911a8d476@arista.com>
+        Thu, 13 Dec 2018 00:22:08 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:44472 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726226AbeLMFWH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 00:22:07 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 624738E588;
+        Thu, 13 Dec 2018 05:22:07 +0000 (UTC)
+Received: from oldenburg2.str.redhat.com (ovpn-116-82.ams2.redhat.com [10.36.116.82])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id CF8C85D9C7;
+        Thu, 13 Dec 2018 05:22:02 +0000 (UTC)
+From:   Florian Weimer <fweimer@redhat.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+        linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        James Morris <jmorris@namei.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Garrett <mjg59@google.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mickael.salaun@ssi.gouv.fr>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Philippe =?utf-8?Q?Tr=C3=A9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>, Shuah Khan <shuah@kernel.org>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        Yves-Alexis Perez <yves-alexis.perez@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC PATCH v1 0/5] Add support for O_MAYEXEC
+References: <20181212081712.32347-1-mic@digikod.net>
+        <20181213030228.GM6830@bombadil.infradead.org>
+Date:   Thu, 13 Dec 2018 06:22:00 +0100
+In-Reply-To: <20181213030228.GM6830@bombadil.infradead.org> (Matthew Wilcox's
+        message of "Wed, 12 Dec 2018 19:02:28 -0800")
+Message-ID: <87bm5qovbb.fsf@oldenburg2.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9cb1526a-e82f-dfa7-4b3c-5ea911a8d476@arista.com>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Thu, 13 Dec 2018 05:22:07 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (12/13/18 04:35), Dmitry Safonov wrote:
-> I've tried to review it and found minor issues like missed
-> debug_object_is_on_stack() for initializing already active object.
-> 
-> But than I come to opinion that it's just generally unsafe:
-> debug_obj life-time is protected by bucket's spin_lock.
-> Check the conditions when free_object() is being called.
+* Matthew Wilcox:
 
-I thought about it for a second, but couldn't figure out if this race
-was real.
+> On Wed, Dec 12, 2018 at 09:17:07AM +0100, Mickaël Salaün wrote:
+>> The goal of this patch series is to control script interpretation.  A
+>> new O_MAYEXEC flag used by sys_open() is added to enable userland script
+>> interpreter to delegate to the kernel (and thus the system security
+>> policy) the permission to interpret scripts or other files containing
+>> what can be seen as commands.
+>
+> I don't have a problem with the concept, but we're running low on O_ bits.
+> Does this have to be done before the process gets a file descriptor,
+> or could we have a new syscall?  Since we're going to be changing the
+> interpreters anyway, it doesn't seem like too much of an imposition to
+> ask them to use:
+>
+> 	int verify_for_exec(int fd)
+>
+> instead of adding an O_MAYEXEC.
 
-E.g. uart case - if there are two paths which concurrently free and
-access debug object, then the same race condition should exist for
-the xmit.buf page. debug object's lifespan should be the same as the
-lifespan of, ummm, whatever the thing that debug object is attached
-to? I'm surely missing something here.
+Will this work for auditing?
 
-	-ss
+Maybe add an interface which explicitly upgrades O_PATH descriptors, and
+give that a separate flag argument?  I suppose that would be more
+friendly to auditing.
+
+Thanks,
+Florian
