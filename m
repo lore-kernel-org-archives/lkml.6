@@ -6,53 +6,52 @@ X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C077C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:33:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A602C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:33:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34E8420672
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:33:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 54D3F20880
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:33:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544675584;
-	bh=tgw2o/ELW3xKp7gmQ92MEG20bEigBPPWCZ+A2wVDJKY=;
+	s=default; t=1544675589;
+	bh=Alx0jNtoEH3FonTd70LeW+ommCwkYVbIADEXCyi6hNM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=fe3CP6al1z3ok88OzXxv+7y6ZskOFWD2gMb3es393oqlK5zd77v8LJeu5BEy+caAG
-	 EUiHIMZ8jmRib7BnLsw2oLSbNQ79ebmgsTvf3p5udAq9yW4EoHitGIDoJLyg256uEr
-	 sz45bFzPOWyRujNGydjR7DPhWkdtfvC9Ywr96pE4=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34E8420672
+	b=V9k1OfJ/Kr8maeEeyMpGCsoSyd4u5n9KVgC48hpcTY8kiJJynO3Ue0WkBH3tPbIi5
+	 vBBvVkh42lzkTG1QP2g/RO+2DusLj4cDn2g38eTYGw8z33rdvnr/GNFr1/VUjv71Vu
+	 sSfVvORq31OnP+pyauoo93E9nzHxk9GCOFJg69d4=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54D3F20880
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729239AbeLMEdD (ORCPT
+        id S1729252AbeLMEdH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 23:33:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45810 "EHLO mail.kernel.org"
+        Wed, 12 Dec 2018 23:33:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45906 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728532AbeLMEc7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 23:32:59 -0500
+        id S1728341AbeLMEdE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 23:33:04 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E3DFE20879;
-        Thu, 13 Dec 2018 04:32:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A743020880;
+        Thu, 13 Dec 2018 04:33:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544675578;
-        bh=tgw2o/ELW3xKp7gmQ92MEG20bEigBPPWCZ+A2wVDJKY=;
+        s=default; t=1544675583;
+        bh=Alx0jNtoEH3FonTd70LeW+ommCwkYVbIADEXCyi6hNM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fL1M2PA0jmJi5d8tl1GarUWfJoAcnB1gQm2g67ALyGyNLcBozY/0yEa3O+fvY4HT7
-         f+tRdjoI3KiUKyp2XroF1PH+nWzT89Vxfg3VtVcPryh9mE15fFb+I8225RdIPq1K4y
-         j1g+wzNwIfDNUNud5lWjcnbrrrjrXhpFUcjcj1Z0=
+        b=m+1wke4yRQHQc+dEgza1qGiWy4Y4FV7YDDkq1GmdrTcOiIQmysFmeXdGU5fjwRnH8
+         J3j5YSY8yxwbfOiVJizMSJKid8gT6ycsRnIm49iH9gddQnEeK+WnS+sQ2gwo6fAvZy
+         fOi2i4QcQsTeg5nNNtqIaroSbMYGQYA4CCWX9pbk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Tarick Bedeir <tarick@google.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 34/34] net/mlx4_core: Correctly set PFC param if global pause is turned off.
-Date:   Wed, 12 Dec 2018 23:32:00 -0500
-Message-Id: <20181213043200.76295-34-sashal@kernel.org>
+Cc:     Cathy Avery <cavery@redhat.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.4 03/23] scsi: vmw_pscsi: Rearrange code to avoid multiple calls to free_irq during unload
+Date:   Wed, 12 Dec 2018 23:32:39 -0500
+Message-Id: <20181213043259.76643-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181213043200.76295-1-sashal@kernel.org>
-References: <20181213043200.76295-1-sashal@kernel.org>
+In-Reply-To: <20181213043259.76643-1-sashal@kernel.org>
+References: <20181213043259.76643-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -61,36 +60,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tarick Bedeir <tarick@google.com>
+From: Cathy Avery <cavery@redhat.com>
 
-[ Upstream commit bd5122cd1e0644d8bd8dd84517c932773e999766 ]
+[ Upstream commit 02f425f811cefcc4d325d7a72272651e622dc97e ]
 
-rx_ppp and tx_ppp can be set between 0 and 255, so don't clamp to 1.
+Currently pvscsi_remove calls free_irq more than once as
+pvscsi_release_resources and __pvscsi_shutdown both call
+pvscsi_shutdown_intr. This results in a 'Trying to free already-free IRQ'
+warning and stack trace. To solve the problem pvscsi_shutdown_intr has been
+moved out of pvscsi_release_resources.
 
-Fixes: 6e8814ceb7e8 ("net/mlx4_en: Fix mixed PFC and Global pause user control requests")
-Signed-off-by: Tarick Bedeir <tarick@google.com>
-Reviewed-by: Eran Ben Elisha <eranbe@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Cathy Avery <cavery@redhat.com>
+Reviewed-by: Ewan D. Milne <emilne@redhat.com>
+Reviewed-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/mellanox/mlx4/en_ethtool.c | 4 ++--
+ drivers/scsi/vmw_pvscsi.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/mellanox/mlx4/en_ethtool.c b/drivers/net/ethernet/mellanox/mlx4/en_ethtool.c
-index 9a4c4f8281bd..8a9a332d78b4 100644
---- a/drivers/net/ethernet/mellanox/mlx4/en_ethtool.c
-+++ b/drivers/net/ethernet/mellanox/mlx4/en_ethtool.c
-@@ -1027,8 +1027,8 @@ static int mlx4_en_set_pauseparam(struct net_device *dev,
+diff --git a/drivers/scsi/vmw_pvscsi.c b/drivers/scsi/vmw_pvscsi.c
+index 0de2f9069e23..23081ed8f1e3 100644
+--- a/drivers/scsi/vmw_pvscsi.c
++++ b/drivers/scsi/vmw_pvscsi.c
+@@ -1199,8 +1199,6 @@ static void pvscsi_shutdown_intr(struct pvscsi_adapter *adapter)
  
- 	tx_pause = !!(pause->tx_pause);
- 	rx_pause = !!(pause->rx_pause);
--	rx_ppp = priv->prof->rx_ppp && !(tx_pause || rx_pause);
--	tx_ppp = priv->prof->tx_ppp && !(tx_pause || rx_pause);
-+	rx_ppp = (tx_pause || rx_pause) ? 0 : priv->prof->rx_ppp;
-+	tx_ppp = (tx_pause || rx_pause) ? 0 : priv->prof->tx_ppp;
+ static void pvscsi_release_resources(struct pvscsi_adapter *adapter)
+ {
+-	pvscsi_shutdown_intr(adapter);
+-
+ 	if (adapter->workqueue)
+ 		destroy_workqueue(adapter->workqueue);
  
- 	err = mlx4_SET_PORT_general(mdev->dev, priv->port,
- 				    priv->rx_skb_size + ETH_FCS_LEN,
+@@ -1529,6 +1527,7 @@ static int pvscsi_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ out_reset_adapter:
+ 	ll_adapter_reset(adapter);
+ out_release_resources:
++	pvscsi_shutdown_intr(adapter);
+ 	pvscsi_release_resources(adapter);
+ 	scsi_host_put(host);
+ out_disable_device:
+@@ -1537,6 +1536,7 @@ static int pvscsi_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 	return error;
+ 
+ out_release_resources_and_disable:
++	pvscsi_shutdown_intr(adapter);
+ 	pvscsi_release_resources(adapter);
+ 	goto out_disable_device;
+ }
 -- 
 2.19.1
 
