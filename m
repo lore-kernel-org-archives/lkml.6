@@ -3,73 +3,68 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB98CC65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 11:24:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBE01C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 11:25:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B04C20880
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 11:24:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B04C20880
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 6388D21104
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 11:25:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6388D21104
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728852AbeLMLYE (ORCPT
+        id S1728746AbeLMLZM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 06:24:04 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:35076 "EHLO mx1.redhat.com"
+        Thu, 13 Dec 2018 06:25:12 -0500
+Received: from verein.lst.de ([213.95.11.211]:40318 "EHLO newverein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728733AbeLMLYE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 06:24:04 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D0E97C058CB7;
-        Thu, 13 Dec 2018 11:24:03 +0000 (UTC)
-Received: from krava (unknown [10.43.17.30])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 4F161600C5;
-        Thu, 13 Dec 2018 11:24:02 +0000 (UTC)
-Date:   Thu, 13 Dec 2018 12:24:01 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Jonathan Cameron <jic23@kernel.org>
-Cc:     Jiri Olsa <jolsa@kernel.org>, lkml <linux-kernel@vger.kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        "Herton R. Krzesinski" <herton@redhat.com>
-Subject: Re: [PATCH 5/6] tools iio: Override CFLAGS assignments
-Message-ID: <20181213112401.GC731@krava>
-References: <20181212102537.25902-1-jolsa@kernel.org>
- <20181212102537.25902-6-jolsa@kernel.org>
- <20181212185025.2d771573@archlinux>
+        id S1727871AbeLMLZM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 06:25:12 -0500
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id 1881668DD2; Thu, 13 Dec 2018 12:25:11 +0100 (CET)
+Date:   Thu, 13 Dec 2018 12:25:11 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     Christian Zigotzky <chzigotzky@xenosoft.de>
+Cc:     Christoph Hellwig <hch@lst.de>, linux-arch@vger.kernel.org,
+        Darren Stevens <darren@stevens-zone.net>,
+        linux-kernel@vger.kernel.org, Julian Margetson <runaway@candw.ms>,
+        linux-mm@kvack.org, iommu@lists.linux-foundation.org,
+        Paul Mackerras <paulus@samba.org>,
+        Olof Johansson <olof@lixom.net>, linuxppc-dev@lists.ozlabs.org
+Subject: Re: use generic DMA mapping code in powerpc V4
+Message-ID: <20181213112511.GA4574@lst.de>
+References: <1ecb7692-f3fb-a246-91f9-2db1b9496305@xenosoft.de> <6c997c03-e072-97a9-8ae0-38a4363df919@xenosoft.de> <4cfb3f26-74e1-db01-b014-759f188bb5a6@xenosoft.de> <82879d3f-83de-6438-c1d6-49c571dcb671@xenosoft.de> <20181212141556.GA4801@lst.de> <2242B4B2-6311-492E-BFF9-6740E36EC6D4@xenosoft.de> <84558d7f-5a7f-5219-0c3a-045e6b4c494f@xenosoft.de> <20181213091021.GA2106@lst.de> <835bd119-081e-a5ea-1899-189d439c83d6@xenosoft.de> <76bc684a-b4d2-1d26-f18d-f5c9ba65978c@xenosoft.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181212185025.2d771573@archlinux>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Thu, 13 Dec 2018 11:24:03 +0000 (UTC)
+In-Reply-To: <76bc684a-b4d2-1d26-f18d-f5c9ba65978c@xenosoft.de>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 12, 2018 at 06:50:25PM +0000, Jonathan Cameron wrote:
-> On Wed, 12 Dec 2018 11:25:36 +0100
-> Jiri Olsa <jolsa@kernel.org> wrote:
-> 
-> > So user could specify outside CFLAGS values.
-> > 
-> > Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > Cc: Jonathan Cameron <jic23@kernel.org>
-> > Cc: Hartmut Knaack <knaack.h@gmx.de>
-> > Cc: Lars-Peter Clausen <lars@metafoo.de>
-> > Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-> 
-> Sorry. I must have failed to reply.  I applied this from previous
-> version. It's in Linux next - I just checked. 
+On Thu, Dec 13, 2018 at 12:19:26PM +0100, Christian Zigotzky wrote:
+> I tried it again but I get the following error message:
+>
+> MODPOST vmlinux.o
+> arch/powerpc/kernel/dma-iommu.o: In function `.dma_iommu_get_required_mask':
+> (.text+0x274): undefined reference to `.dma_direct_get_required_mask'
+> make: *** [vmlinux] Error 1
 
-great, thanks
+Sorry, you need this one liner before all the patches posted last time:
 
-jirka
+diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+index d8819e3a1eb1..7e78c2798f2f 100644
+--- a/arch/powerpc/Kconfig
++++ b/arch/powerpc/Kconfig
+@@ -154,6 +154,7 @@ config PPC
+ 	select CLONE_BACKWARDS
+ 	select DCACHE_WORD_ACCESS		if PPC64 && CPU_LITTLE_ENDIAN
+ 	select DYNAMIC_FTRACE			if FUNCTION_TRACER
++	select DMA_DIRECT_OPS
+ 	select EDAC_ATOMIC_SCRUB
+ 	select EDAC_SUPPORT
+ 	select GENERIC_ATOMIC64			if PPC32
