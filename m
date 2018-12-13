@@ -2,123 +2,1023 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60C74C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 21:59:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4DBFC65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 21:59:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DE6920811
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 21:59:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3AB0620879
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 21:59:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aDCRYKFw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DE6920811
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="FxVPURmD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3AB0620879
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brauner.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728123AbeLMV7Y (ORCPT
+        id S1728252AbeLMV73 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 16:59:24 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:35946 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726435AbeLMV7X (ORCPT
+        Thu, 13 Dec 2018 16:59:29 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:44105 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726435AbeLMV72 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 16:59:23 -0500
-Received: by mail-lf1-f67.google.com with SMTP id a16so2766222lfg.3
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 13:59:22 -0800 (PST)
+        Thu, 13 Dec 2018 16:59:28 -0500
+Received: by mail-wr1-f65.google.com with SMTP id z5so3528822wrt.11
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 13:59:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/i3Qn5RbIp1Jj9tl455vSrzT6kqJoyyhRMnpm0rgy6M=;
-        b=aDCRYKFw4DNAg/YTIDlFZfBRTdrjnwxkDhVWmL7eqcMCSR0qTFQuxZluHZkAKL53Id
-         uEqlpBG9+byF5aRVn9qTvWoY93PKGLuBXJaYqNcASFfZH3N3XJZfuOiTCQG94uMqrW5f
-         2YO/EoMWUSQG1s6zKsjon+ttOFmbo0jo7i5OT5Bb03YQlvhLm5jdrfPV/s+CKYr5PLSm
-         HtfsBM7kKjgyL15TzgsOnqUABF7A1omVmpEi2M91H+ewCYSLfMlMJwADuh3CUH2Xdf2M
-         MjOrAH3PB5x7ewIRZMorDGdDvUwzgDnXZSFrBtyltfSWkJGkZfY6Q47Ndzzh7xzNBLKJ
-         uJBg==
+        d=brauner.io; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=YKyVa20FmmdfitVGeNxN168e9WTaPUbX9cjbia486D4=;
+        b=FxVPURmDxc2C0/ucfjW06oTw8sV5UpP5mtkTSE/zsKE5MjExZZifiEczVgnzRS+bw0
+         9zgS85qDFS3KAM6GTzi37Z24Gj+5s73mnAkkXWm2c7So2p4o56uggQjJ8gH6+WGoPnli
+         /1T6JgqzFe5jJZ8ZGPzkjmfZxunZFwJaKAvtf/qojs9OWKTBiELx06eKkXn+orXxD3oW
+         W7x5OBW0en9lDW5xxSDoqkxjElCLdolvxcFTQGn9H8WLuBDPekr9Tr6ZwIQvfF4PXmuY
+         Xr0fkbusyXajJ8j2MAbtbPdyMaH0kbt6yP3a/rrrygWLRCTOc9nFeVoxRb+OZhlONA0L
+         YlVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/i3Qn5RbIp1Jj9tl455vSrzT6kqJoyyhRMnpm0rgy6M=;
-        b=NQzSbtb5hBOzBKvgh2iImeelW3G5Rg7oeqgWBSqRB3Ld7SbuctVNSXoKpPjQQWU832
-         XlDVzfVGohq3SxuVJSRUclryagGUjlB/C4ZZ+JrQbMl0N6XImJ6tEzgLBvKTVOVm7aY0
-         3pBZp+0wrHdniQSUY4M8OScI79AN06FxfEu+Oh0O1G/cDCqye2Zkw4LOhIaMeU7wEAce
-         hdpX9P06GqjL2slhLae4faFATUV9QsptOUw1KFPU1/ooUBaem+xugkDWIPD8AJl259Fw
-         oFf5FH/iAxaApk+XKDmvZNBbjPhS0p3FQyT99Hz9HPRq0oqMaQbIbGR9u/T0Yy4vAlhx
-         vSig==
-X-Gm-Message-State: AA+aEWanuoVi7M/wpdIvXiA8P0ykOd6cBRkw3+DzZC4wDoqzpnXwKye8
-        K/lwj3kpGgrYCSs8EHdg0d0KyNfl/x8i6NQOeupVVdRrTzs=
-X-Google-Smtp-Source: AFSGD/WKgTsUh/0smVGyEgvXuGsh4JAwWwdrTdvIYFPbl8OH/2hIssxfKG8DZwxEvirSCwq5ggXoF/3ssL5FB3zMs4A=
-X-Received: by 2002:a19:54d7:: with SMTP id b84mr237163lfl.131.1544738361431;
- Thu, 13 Dec 2018 13:59:21 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=YKyVa20FmmdfitVGeNxN168e9WTaPUbX9cjbia486D4=;
+        b=VEPfwlsHQrRSgV+3zkC1Eqm9OkOQz7r7XrBlzrZkV5h1FyuKcwjWZKHtc+XCxb3SJp
+         asMR2eu5+KmxQ8X8yBtVTscQKxP3mTfqe/bpi25z0Hw6M3jRgvknVet0tKF5itF9uCYE
+         mt353q+4X6q6iRh3HrwA4eeoPi03QENKgpgXkFTREJ/FGKlFiZJtT6LN/nzix6OXwudL
+         EhkEWlxvl5sC2uUGQ6+BoI2FP9TkyZ0g/sPWdP/YvLaBb1G+cDLay9X7VqXNUVG6iark
+         3lMRMSXa4Cj6uLNItYGO+O5pC+u0eESbJXwiK4zASfEMv2O1IIPDMoV9J8cDDQgP482p
+         EFrg==
+X-Gm-Message-State: AA+aEWb2e9fTafOZqhL66zMhAOADB+IQtTK4K/BNZ89hUCDkCsvld3Xx
+        Cnkfn4bpYcbPcjVXtoUtW/lLgw==
+X-Google-Smtp-Source: AFSGD/Um9sgHi3vodWZ/zOsDhtBpCy/mg5kfCQvPdgYm785Vsta7MZxcnRhmTbHD2C4V26EA6nCS8g==
+X-Received: by 2002:adf:e78f:: with SMTP id n15mr442468wrm.115.1544738364982;
+        Thu, 13 Dec 2018 13:59:24 -0800 (PST)
+Received: from localhost.localdomain ([2a02:8070:88c2:4000:69e7:45c9:1529:166d])
+        by smtp.gmail.com with ESMTPSA id x12sm2469837wrt.20.2018.12.13.13.59.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 13 Dec 2018 13:59:24 -0800 (PST)
+From:   Christian Brauner <christian@brauner.io>
+To:     gregkh@linuxfoundation.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Cc:     arve@android.com, joel@joelfernandes.org, darrick.wong@oracle.com,
+        david@fromorbit.com, kilobyte@angband.pl, chouryzhou@tencent.com,
+        tkjos@google.com, Christian Brauner <christian@brauner.io>,
+        Martijn Coenen <maco@android.com>
+Subject: [PATCH v2] binder: implement binderfs
+Date:   Thu, 13 Dec 2018 22:59:11 +0100
+Message-Id: <20181213215911.24891-1-christian@brauner.io>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-References: <20181209032715.3466040-1-liuxiaozhou@bytedance.com>
-In-Reply-To: <20181209032715.3466040-1-liuxiaozhou@bytedance.com>
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Thu, 13 Dec 2018 22:59:10 +0100
-Message-ID: <CANiq72nqFuJm5f69G-Pc_9QHz+anwaon-WfVsPrkZWah1OP7Fg@mail.gmail.com>
-Subject: Re: [PATCH v2] Compiler Attributes: don't pollute userspace with
- macro definitions
-To:     liuxiaozhou@bytedance.com, Greg KH <gregkh@linuxfoundation.org>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Xiaozhou,
+As discussed at Linux Plumbers Conference 2018 in Vancouver [1] this is the
+implementation of binderfs.
 
-Couple of comments.
+/* Abstract */
+binderfs is a backwards-compatible filesystem for Android's binder ipc
+mechanism. Each ipc namespace will mount a new binderfs instance. Mounting
+binderfs multiple times at different locations in the same ipc namespace
+will not cause a new super block to be allocated and hence it will be the
+same filesystem instance.
+Each new binderfs mount will have its own set of binder devices only
+visible in the ipc namespace it has been mounted in. All devices in a new
+binderfs mount will follow the scheme binder%d and numbering will always
+start at 0.
 
-On Sun, Dec 9, 2018 at 4:27 AM Xiaozhou Liu <liuxiaozhou@bytedance.com> wrote:
->
-> v2: update commit message.
+/* Backwards compatibility */
+Devices requested in the Kconfig via CONFIG_ANDROID_BINDER_DEVICES for the
+initial ipc namespace will work as before. They will be registered via
+misc_register() and appear in the devtmpfs mount. Specifically, the
+standard devices binder, hwbinder, and vndbinder will all appear in their
+standard locations in /dev. Mounting or unmounting the binderfs mount in
+the initial ipc namespace will have no effect on these devices, i.e. they
+will neither show up in the binderfs mount nor will they disappear when the
+binderfs mount is gone.
 
-This line should go below the "---", since it shouldn't be part of the
-commit message.
+/* binder-control */
+Each new binderfs instance comes with a binder-control device. No other
+devices will be present at first. The binder-control device can be used to
+dynamically allocate binder devices. All requests operate on the binderfs
+mount the binder-control device resides in.
+Assuming a new instance of binderfs has been mounted at /dev/binderfs
+via mount -t binderfs binderfs /dev/binderfs. Then a request to create a
+new binder device can be made as illustrated in [2].
+Binderfs devices can simply be removed via unlink().
 
-> +#ifdef __KERNEL__
-> +
->  #ifdef CONFIG_ENABLE_MUST_CHECK
->  #define __must_check           __attribute__((__warn_unused_result__))
->  #else
-> @@ -215,4 +217,6 @@ struct ftrace_likely_data {
->   */
->  #define noinline_for_stack noinline
->
-> +#endif /* __KERNEL */
+/* Implementation details */
+- dynamic major number allocation:
+  When binderfs is registered as a new filesystem it will dynamically
+  allocate a new major number. The allocated major number will be returned
+  in struct binderfs_device when a new binder device is allocated.
+- global minor number tracking:
+  Minor are tracked in a global idr struct that is capped at
+  BINDERFS_MAX_MINOR. The minor number tracker is protected by a global
+  mutex. This is the only point of contention between binderfs mounts.
+- struct binderfs_info:
+  Each binderfs super block has its own struct binderfs_info that tracks
+  specific details about a binderfs instance:
+  - ipc namespace
+  - dentry of the binder-control device
+  - root uid and root gid of the user namespace the binderfs instance
+    was mounted in
+- mountable by user namespace root:
+  binderfs can be mounted by user namespace root in a non-initial user
+  namespace. The devices will be owned by user namespace root.
+- binderfs binder devices without misc infrastructure:
+  New binder devices associated with a binderfs mount do not use the
+  full misc_register() infrastructure.
+  The misc_register() infrastructure can only create new devices in the
+  host's devtmpfs mount. binderfs does however only make devices appear
+  under its own mountpoint and thus allocates new character device nodes
+  from the inode of the root dentry of the super block. This will have
+  the side-effect that binderfs specific device nodes do not appear in
+  sysfs. This behavior is similar to devpts allocated pts devices and
+  has no effect on the functionality of the ipc mechanism itself.
 
-I wonder if we can/should simply move them into the __KERNEL__ &&
-!__ASSEMBLY__ block that is above, instead. It would be simpler to
-read, and there aren't apparently dependencies to those outside it
-that go after the block.
+[1]: https://goo.gl/JL2tfX
+[2]: program to allocate a new binderfs binder device:
 
-I took a look at where the macros were at each "step", and, on one
-hand, compiler-gcc.h was (and is) included entirely inside it, which
-is from where most of the macros come originally from. On the other
-hand, not all do: __must_check (the generic version, not the one in
--gcc.h) and noinline_for_stack were defined in __KERNEL__ (only)
-before commit 815f0ddb346c ("include/linux/compiler*.h: make
-compiler-*.h mutually exclusive"). But anyway using those two in
-assembly does not make sense, right?
+     #define _GNU_SOURCE
+     #include <errno.h>
+     #include <fcntl.h>
+     #include <stdio.h>
+     #include <stdlib.h>
+     #include <string.h>
+     #include <sys/ioctl.h>
+     #include <sys/stat.h>
+     #include <sys/types.h>
+     #include <unistd.h>
+     #include <linux/android/binder_ctl.h>
 
-What do you think?
+     int main(int argc, char *argv[])
+     {
+             int fd, ret, saved_errno;
+             size_t len;
+             struct binderfs_device device = { 0 };
 
-Greg/Linus, are you going to pick this (or a v3) directly? If not, I
-can pick it up in compiler-attributes tree linux-next.
+             if (argc < 2)
+                     exit(EXIT_FAILURE);
 
-PS: In addition (related to this but not for this patch), we should
-review whether other macros that are currently outside should be there
-or simply pushed back into __KERNEL__ (and possibly __ASSEMBLY__). For
-instance, __latent_entropy (the generic one) is outside, but it is
-only defined in compiler-gcc.h, so the generic one should be inside
-the __KERNEL__ && !__ASSEMBLY__ block, no?
+             len = strlen(argv[1]);
+             if (len > BINDERFS_MAX_NAME)
+                     exit(EXIT_FAILURE);
 
-Cheers,
-Miguel
+             memcpy(device.name, argv[1], len);
+
+             fd = open("/dev/binderfs/binder-control", O_RDONLY | O_CLOEXEC);
+             if (fd < 0) {
+                     printf("%s - Failed to open binder-control device\n",
+                            strerror(errno));
+                     exit(EXIT_FAILURE);
+             }
+
+             ret = ioctl(fd, BINDER_CTL_ADD, &device);
+             saved_errno = errno;
+             close(fd);
+             errno = saved_errno;
+             if (ret < 0) {
+                     printf("%s - Failed to allocate new binder device\n",
+                            strerror(errno));
+                     exit(EXIT_FAILURE);
+             }
+
+             printf("Allocated new binder device with major %d, minor %d, and "
+                    "name %s\n", device.major, device.minor,
+                    device.name);
+
+             exit(EXIT_SUCCESS);
+     }
+
+Cc: Martijn Coenen <maco@android.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+Acked-by: Todd Kjos <tkjos@google.com>
+---
+v1:
+- pleasing kbot
+  Please kbot when casting from __user in binderfs_ctl_ioctl().
+- improve example allocation program
+  Although very minor, I used strncpy unconditionally without checking for
+  truncation. Let's not be a bad example for the kids. :)
+- cleanup commit message
+v1:
+- simplify init_binderfs()
+  Move the creation of binder-control into binderfs_fill_super() so that we can
+  cleanly and without any complex error handling deallocate the super block on
+  failure.
+- switch from __u32 to __u8 in struct binderfs_device
+  __u8 is the correct value to cross the kernel <-> userspace boundary.
+- introduce BINDERFS_MAX_NAME
+  This determines the maximum length of a binderfs binder device name.
+- add name member struct binderfs_device
+  This lets userspace specify a name for the binder device. The maximum length
+  is determined by BINDERFS_MAX_NAME.
+- handle naming collisions
+  Since userspace now gives us a name to use for the device we need to handle
+  the case where userspace passes the same device name twice. This is done by
+  using d_lookup() (takes rename lock too). If a matching dentry under the root
+  dentry of the superblock is found we test whether it is still active and if
+  so return -EEXIST.
+- remove per-super block idr tracking and locking
+  Since userspace now determines the name remove the idr tracking since it's
+  not needed anymore.
+- remove ctl_mutex from struct binders_info
+  It was only needed to protect the per-super block idr which has been removed.
+  If I'm not mistaken we currently do not need to lock the ioctl() itself since
+  removing is handled by a simple unlink(). So remove the mutex.
+- ensure that binderfs_evict_inode() doesn't cause double-frees on iput()
+  When setting up the inode fails at a step where a new inode already has been
+  allocated we need to set inode->i_private to NULL to ensure that
+  binderfs_evict_inode() doesn't try to free up stuff that we already freed
+  while handling the error.
+---
+ drivers/android/Kconfig                 |  12 +
+ drivers/android/Makefile                |   1 +
+ drivers/android/binder.c                |  25 +-
+ drivers/android/binder_internal.h       |  49 ++
+ drivers/android/binderfs.c              | 565 ++++++++++++++++++++++++
+ include/uapi/linux/android/binder_ctl.h |  35 ++
+ include/uapi/linux/magic.h              |   1 +
+ 7 files changed, 671 insertions(+), 17 deletions(-)
+ create mode 100644 drivers/android/binder_internal.h
+ create mode 100644 drivers/android/binderfs.c
+ create mode 100644 include/uapi/linux/android/binder_ctl.h
+
+diff --git a/drivers/android/Kconfig b/drivers/android/Kconfig
+index 51e8250d113f..4c190f8d1f4c 100644
+--- a/drivers/android/Kconfig
++++ b/drivers/android/Kconfig
+@@ -20,6 +20,18 @@ config ANDROID_BINDER_IPC
+ 	  Android process, using Binder to identify, invoke and pass arguments
+ 	  between said processes.
+ 
++config ANDROID_BINDERFS
++	bool "Android Binderfs filesystem"
++	depends on ANDROID_BINDER_IPC
++	default n
++	---help---
++	  Binderfs is a pseudo-filesystem for the Android Binder IPC driver
++	  which can be mounted per-ipc namespace allowing to run multiple
++	  instances of Android.
++	  Each binderfs mount initially only contains a binder-control device.
++	  It can be used to dynamically allocate new binder IPC devices via
++	  ioctls.
++
+ config ANDROID_BINDER_DEVICES
+ 	string "Android Binder devices"
+ 	depends on ANDROID_BINDER_IPC
+diff --git a/drivers/android/Makefile b/drivers/android/Makefile
+index a01254c43ee3..c7856e3200da 100644
+--- a/drivers/android/Makefile
++++ b/drivers/android/Makefile
+@@ -1,4 +1,5 @@
+ ccflags-y += -I$(src)			# needed for trace events
+ 
++obj-$(CONFIG_ANDROID_BINDERFS)		+= binderfs.o
+ obj-$(CONFIG_ANDROID_BINDER_IPC)	+= binder.o binder_alloc.o
+ obj-$(CONFIG_ANDROID_BINDER_IPC_SELFTEST) += binder_alloc_selftest.o
+diff --git a/drivers/android/binder.c b/drivers/android/binder.c
+index cb30a524d16d..3ed8bc4b7451 100644
+--- a/drivers/android/binder.c
++++ b/drivers/android/binder.c
+@@ -78,6 +78,7 @@
+ #include <asm/cacheflush.h>
+ 
+ #include "binder_alloc.h"
++#include "binder_internal.h"
+ #include "binder_trace.h"
+ 
+ static HLIST_HEAD(binder_deferred_list);
+@@ -262,20 +263,6 @@ static struct binder_transaction_log_entry *binder_transaction_log_add(
+ 	return e;
+ }
+ 
+-struct binder_context {
+-	struct binder_node *binder_context_mgr_node;
+-	struct mutex context_mgr_node_lock;
+-
+-	kuid_t binder_context_mgr_uid;
+-	const char *name;
+-};
+-
+-struct binder_device {
+-	struct hlist_node hlist;
+-	struct miscdevice miscdev;
+-	struct binder_context context;
+-};
+-
+ /**
+  * struct binder_work - work enqueued on a worklist
+  * @entry:             node enqueued on list
+@@ -4935,8 +4922,12 @@ static int binder_open(struct inode *nodp, struct file *filp)
+ 	proc->tsk = current->group_leader;
+ 	INIT_LIST_HEAD(&proc->todo);
+ 	proc->default_priority = task_nice(current);
+-	binder_dev = container_of(filp->private_data, struct binder_device,
+-				  miscdev);
++	/* binderfs stashes devices in i_private */
++	if (is_binderfs_device(nodp))
++		binder_dev = nodp->i_private;
++	else
++		binder_dev = container_of(filp->private_data,
++					  struct binder_device, miscdev);
+ 	proc->context = &binder_dev->context;
+ 	binder_alloc_init(&proc->alloc);
+ 
+@@ -5724,7 +5715,7 @@ static int binder_transaction_log_show(struct seq_file *m, void *unused)
+ 	return 0;
+ }
+ 
+-static const struct file_operations binder_fops = {
++const struct file_operations binder_fops = {
+ 	.owner = THIS_MODULE,
+ 	.poll = binder_poll,
+ 	.unlocked_ioctl = binder_ioctl,
+diff --git a/drivers/android/binder_internal.h b/drivers/android/binder_internal.h
+new file mode 100644
+index 000000000000..7fb97f503ef2
+--- /dev/null
++++ b/drivers/android/binder_internal.h
+@@ -0,0 +1,49 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++
++#ifndef _LINUX_BINDER_INTERNAL_H
++#define _LINUX_BINDER_INTERNAL_H
++
++#include <linux/export.h>
++#include <linux/fs.h>
++#include <linux/list.h>
++#include <linux/miscdevice.h>
++#include <linux/mutex.h>
++#include <linux/stddef.h>
++#include <linux/types.h>
++#include <linux/uidgid.h>
++
++struct binder_context {
++	struct binder_node *binder_context_mgr_node;
++	struct mutex context_mgr_node_lock;
++	kuid_t binder_context_mgr_uid;
++	const char *name;
++};
++
++/**
++ * struct binder_device - information about a binder device node
++ * @hlist:          list of binder devices (only used for devices requested via
++ *                  CONFIG_ANDROID_BINDER_DEVICES)
++ * @miscdev:        information about a binder character device node
++ * @context:        binder context information
++ * @binderfs_inode: This is the inode of the root dentry of the super block
++ *                  belonging to a binderfs mount.
++ */
++struct binder_device {
++	struct hlist_node hlist;
++	struct miscdevice miscdev;
++	struct binder_context context;
++	struct inode *binderfs_inode;
++};
++
++extern const struct file_operations binder_fops;
++
++#ifdef CONFIG_ANDROID_BINDERFS
++extern bool is_binderfs_device(const struct inode *inode);
++#else
++static inline bool is_binderfs_device(const struct inode *inode)
++{
++	return false;
++}
++#endif
++
++#endif /* _LINUX_BINDER_INTERNAL_H */
+diff --git a/drivers/android/binderfs.c b/drivers/android/binderfs.c
+new file mode 100644
+index 000000000000..20a2a6ed8c43
+--- /dev/null
++++ b/drivers/android/binderfs.c
+@@ -0,0 +1,565 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++
++#include <linux/compiler_types.h>
++#include <linux/errno.h>
++#include <linux/fs.h>
++#include <linux/fsnotify.h>
++#include <linux/gfp.h>
++#include <linux/idr.h>
++#include <linux/init.h>
++#include <linux/ipc_namespace.h>
++#include <linux/kdev_t.h>
++#include <linux/kernel.h>
++#include <linux/list.h>
++#include <linux/magic.h>
++#include <linux/major.h>
++#include <linux/miscdevice.h>
++#include <linux/module.h>
++#include <linux/mutex.h>
++#include <linux/mount.h>
++#include <linux/parser.h>
++#include <linux/radix-tree.h>
++#include <linux/sched.h>
++#include <linux/slab.h>
++#include <linux/spinlock_types.h>
++#include <linux/stddef.h>
++#include <linux/string.h>
++#include <linux/types.h>
++#include <linux/uaccess.h>
++#include <linux/user_namespace.h>
++#include <linux/xarray.h>
++#include <uapi/asm-generic/errno-base.h>
++#include <uapi/linux/android/binder.h>
++#include <uapi/linux/android/binder_ctl.h>
++
++#include "binder_internal.h"
++
++#define FIRST_INODE 1
++#define SECOND_INODE 2
++#define INODE_OFFSET 3
++#define INTSTRLEN 21
++#define BINDERFS_MAX_MINOR (1U << MINORBITS)
++
++static struct vfsmount *binderfs_mnt;
++
++static dev_t binderfs_dev;
++static DEFINE_MUTEX(binderfs_minors_mutex);
++static DEFINE_IDA(binderfs_minors);
++
++/**
++ * binderfs_info - information about a binderfs mount
++ * @ipc_ns:         The ipc namespace the binderfs mount belongs to.
++ * @control_dentry: This records the dentry of this binderfs mount
++ *                  binder-control device.
++ * @root_uid:       uid that needs to be used when a new binder device is
++ *                  created.
++ * @root_gid:       gid that needs to be used when a new binder device is
++ *                  created.
++ */
++struct binderfs_info {
++	struct ipc_namespace *ipc_ns;
++	struct dentry *control_dentry;
++	kuid_t root_uid;
++	kgid_t root_gid;
++
++};
++
++static inline struct binderfs_info *BINDERFS_I(struct inode *inode)
++{
++	return inode->i_sb->s_fs_info;
++}
++
++bool is_binderfs_device(const struct inode *inode)
++{
++	if (inode->i_sb->s_magic == BINDERFS_SUPER_MAGIC)
++		return true;
++
++	return false;
++}
++
++/**
++ * binderfs_new_inode - allocate inode from super block of a binderfs mount
++ * @ref_inode: inode from wich the super block will be taken
++ * @userp:     buffer to copy information about new device for userspace to
++ * @device:    binder device for which the new inode will be allocated
++ * @req:       struct binderfs_device as copied from userspace
++ *
++ * This function will allocate a new inode from the super block of the
++ * filesystem mount and attach a dentry to that inode.
++ * Minor numbers are limited and tracked globally in binderfs_minors.
++ * The function will stash a struct binder_device for the specific binder
++ * device in i_private of the inode.
++ *
++ * Return: 0 on success, negative errno on failure
++ */
++static int binderfs_new_inode(struct inode *ref_inode,
++			      struct binder_device *device,
++			      struct binderfs_device __user *userp,
++			      struct binderfs_device *req)
++{
++	int minor, ret;
++	struct dentry *dentry, *dup, *root;
++	size_t name_len = BINDERFS_MAX_NAME + 1;
++	char *name = NULL;
++	struct inode *inode = NULL;
++	struct super_block *sb = ref_inode->i_sb;
++	struct binderfs_info *info = sb->s_fs_info;
++
++	/* Reserve new minor number for the new device. */
++	mutex_lock(&binderfs_minors_mutex);
++	minor = ida_alloc_max(&binderfs_minors, BINDERFS_MAX_MINOR, GFP_KERNEL);
++	mutex_unlock(&binderfs_minors_mutex);
++	if (minor < 0)
++		return minor;
++
++	ret = -ENOMEM;
++	inode = new_inode(sb);
++	if (!inode)
++		goto err;
++
++	inode->i_ino = minor + INODE_OFFSET;
++	inode->i_mtime = inode->i_atime = inode->i_ctime = current_time(inode);
++	init_special_inode(inode, S_IFCHR | 0600,
++			   MKDEV(MAJOR(binderfs_dev), minor));
++	inode->i_fop = &binder_fops;
++	inode->i_uid = info->root_uid;
++	inode->i_gid = info->root_gid;
++	inode->i_private = device;
++
++	name = kmalloc(name_len, GFP_KERNEL);
++	if (!name)
++		goto err;
++
++	ret = snprintf(name, name_len, "%s", req->name);
++	if (ret < 0 || (size_t)ret >= name_len) {
++		ret = -EINVAL;
++		goto err;
++	}
++
++	device->binderfs_inode = inode;
++	device->context.binder_context_mgr_uid = INVALID_UID;
++	device->context.name = name;
++	device->miscdev.name = name;
++	device->miscdev.minor = minor;
++	mutex_init(&device->context.context_mgr_node_lock);
++
++	req->major = MAJOR(binderfs_dev);
++	req->minor = minor;
++
++	ret = copy_to_user(userp, req, sizeof(*req));
++	if (ret)
++		goto err;
++
++	root = sb->s_root;
++	inode_lock(d_inode(root));
++	dentry = d_alloc_name(root, name);
++	if (!dentry) {
++		inode_unlock(d_inode(root));
++		ret = -ENOMEM;
++		goto err;
++	}
++
++	/* Verify that the name userspace gave us is not already in use. */
++	dup = d_lookup(root, &dentry->d_name);
++	if (dup) {
++		if (d_really_is_positive(dup)) {
++			dput(dup);
++			dput(dentry);
++			inode_unlock(d_inode(root));
++			/*
++			 * Prevent double free since iput() calls
++			 * binderfs_evict_inode().
++			 */
++			inode->i_private = NULL;
++			ret = -EEXIST;
++			goto err;
++		}
++		dput(dup);
++	}
++
++	d_add(dentry, inode);
++	fsnotify_create(root->d_inode, dentry);
++	inode_unlock(d_inode(root));
++
++	return 0;
++
++err:
++	kfree(name);
++	mutex_lock(&binderfs_minors_mutex);
++	ida_free(&binderfs_minors, minor);
++	mutex_unlock(&binderfs_minors_mutex);
++	iput(inode);
++
++	return ret;
++}
++
++static int binderfs_binder_device_create(struct inode *inode,
++					 struct binderfs_device __user *userp,
++					 struct binderfs_device *req)
++{
++	struct binder_device *device;
++	int ret;
++
++	device = kzalloc(sizeof(*device), GFP_KERNEL);
++	if (!device)
++		return -ENOMEM;
++
++	ret = binderfs_new_inode(inode, device, userp, req);
++	if (ret < 0) {
++		kfree(device);
++		return ret;
++	}
++
++	return 0;
++}
++
++/**
++ * binderfs_ctl_ioctl - handle binder device node allocation requests
++ *
++ * The request handler for the binder-control device. All requests operate on
++ * the binderfs mount the binder-control device resides in:
++ * - BINDER_CTL_ADD
++ *   Allocate a new binder device.
++ *
++ * Return: 0 on success, negative errno on failure
++ */
++static long binder_ctl_ioctl(struct file *file, unsigned int cmd,
++			     unsigned long arg)
++{
++	struct binderfs_info *info;
++	int ret = -EINVAL;
++	struct inode *inode = file_inode(file);
++	struct binderfs_device __user *device = (struct binderfs_device __user *)arg;
++	struct binderfs_device device_req;
++
++	info = BINDERFS_I(inode);
++	switch (cmd) {
++	case BINDER_CTL_ADD:
++		ret = copy_from_user(&device_req, device, sizeof(device_req));
++		if (ret)
++			break;
++
++		ret = binderfs_binder_device_create(inode, device, &device_req);
++		break;
++	default:
++		break;
++	}
++
++	return ret;
++}
++
++static void binderfs_evict_inode(struct inode *inode)
++{
++	struct binder_device *device = inode->i_private;
++
++	clear_inode(inode);
++
++	if (!device)
++		return;
++
++	mutex_lock(&binderfs_minors_mutex);
++	ida_free(&binderfs_minors, device->miscdev.minor);
++	mutex_unlock(&binderfs_minors_mutex);
++
++	kfree(device->context.name);
++	kfree(device);
++}
++
++static const struct super_operations binderfs_super_ops = {
++	.statfs = simple_statfs,
++	.evict_inode = binderfs_evict_inode,
++};
++
++static int binderfs_rename(struct inode *old_dir, struct dentry *old_dentry,
++			   struct inode *new_dir, struct dentry *new_dentry,
++			   unsigned int flags)
++{
++	struct inode *inode = d_inode(old_dentry);
++
++	/* binderfs doesn't support directories. */
++	if (d_is_dir(old_dentry))
++		return -EPERM;
++
++	if (flags & ~RENAME_NOREPLACE)
++		return -EINVAL;
++
++	if (!simple_empty(new_dentry))
++		return -ENOTEMPTY;
++
++	if (d_really_is_positive(new_dentry))
++		simple_unlink(new_dir, new_dentry);
++
++	old_dir->i_ctime = old_dir->i_mtime = new_dir->i_ctime =
++		new_dir->i_mtime = inode->i_ctime = current_time(old_dir);
++
++	return 0;
++}
++
++static int binderfs_unlink(struct inode *dir, struct dentry *dentry)
++{
++	/*
++	 * The control dentry is only ever touched during mount so checking it
++	 * here should not require us to take lock.
++	 */
++	if (BINDERFS_I(dir)->control_dentry == dentry)
++		return -EPERM;
++
++	return simple_unlink(dir, dentry);
++}
++
++static const struct file_operations binder_ctl_fops = {
++	.owner		= THIS_MODULE,
++	.open		= nonseekable_open,
++	.unlocked_ioctl	= binder_ctl_ioctl,
++	.compat_ioctl	= binder_ctl_ioctl,
++	.llseek		= noop_llseek,
++};
++
++/**
++ * binderfs_binder_ctl_create - create a new binder-control device
++ * @sb: super block of the binderfs mount
++ *
++ * This function creates a new binder-control device node in the binderfs mount
++ * referred to by @sb.
++ *
++ * Return: 0 on success, negative errno on failure
++ */
++static int binderfs_binder_ctl_create(struct super_block *sb)
++{
++	int minor;
++	struct dentry *dentry;
++	struct binder_device *device;
++	int ret = 0;
++	struct inode *inode = NULL;
++	struct dentry *root = sb->s_root;
++	struct binderfs_info *info = sb->s_fs_info;
++
++	device = kzalloc(sizeof(*device), GFP_KERNEL);
++	if (!device)
++		return -ENOMEM;
++
++	inode_lock(d_inode(root));
++
++	if (info->control_dentry)
++		goto out;
++
++	ret = -ENOMEM;
++	inode = new_inode(sb);
++	if (!inode)
++		goto out;
++
++	/* Reserve a new minor number for the new device. */
++	mutex_lock(&binderfs_minors_mutex);
++	minor = ida_alloc_max(&binderfs_minors, BINDERFS_MAX_MINOR, GFP_KERNEL);
++	mutex_unlock(&binderfs_minors_mutex);
++	if (minor < 0) {
++		ret = minor;
++		goto out;
++	}
++
++	inode->i_ino = SECOND_INODE;
++	inode->i_mtime = inode->i_atime = inode->i_ctime = current_time(inode);
++	init_special_inode(inode, S_IFCHR | 0600,
++			   MKDEV(MAJOR(binderfs_dev), minor));
++	inode->i_fop = &binder_ctl_fops;
++	inode->i_uid = info->root_uid;
++	inode->i_gid = info->root_gid;
++	inode->i_private = device;
++
++	device->binderfs_inode = inode;
++	device->miscdev.minor = minor;
++
++	dentry = d_alloc_name(root, "binder-control");
++	if (!dentry)
++		goto out;
++
++	info->control_dentry = dentry;
++	d_add(dentry, inode);
++	inode_unlock(d_inode(root));
++
++	return 0;
++
++out:
++	inode_unlock(d_inode(root));
++	kfree(device);
++	if (inode) {
++		inode->i_private = NULL;
++		iput(inode);
++	}
++
++	return ret;
++}
++
++static const struct inode_operations binderfs_dir_inode_operations = {
++	.lookup = simple_lookup,
++	.rename = binderfs_rename,
++	.unlink = binderfs_unlink,
++};
++
++static int binderfs_fill_super(struct super_block *sb, void *data, int silent)
++{
++	struct binderfs_info *info;
++	int ret = -ENOMEM;
++	struct inode *inode = NULL;
++	struct ipc_namespace *ipc_ns = sb->s_fs_info;
++
++	get_ipc_ns(ipc_ns);
++
++	sb->s_blocksize = PAGE_SIZE;
++	sb->s_blocksize_bits = PAGE_SHIFT;
++
++	/*
++	 * The binderfs filesystem can be mounted by userns root in a
++	 * non-initial userns. By default such mounts have the SB_I_NODEV flag
++	 * set in s_iflags to prevent security issues where userns root can
++	 * just create random device nodes via mknod() since it owns the
++	 * filesystem mount. But binderfs does not allow to create any files
++	 * including devices nodes. The only way to create binder devices nodes
++	 * is through the binder-control device which userns root is explicitly
++	 * allowed to do. So removing the SB_I_NODEV flag from s_iflags is both
++	 * necessary and safe.
++	 */
++	sb->s_iflags &= ~SB_I_NODEV;
++	sb->s_iflags |= SB_I_NOEXEC;
++	sb->s_magic = BINDERFS_SUPER_MAGIC;
++	sb->s_op = &binderfs_super_ops;
++	sb->s_time_gran = 1;
++
++	info = kzalloc(sizeof(struct binderfs_info), GFP_KERNEL);
++	if (!info)
++		return ret;
++
++	info->ipc_ns = ipc_ns;
++	info->root_gid = make_kgid(sb->s_user_ns, 0);
++	if (!gid_valid(info->root_gid))
++		info->root_gid = GLOBAL_ROOT_GID;
++	info->root_uid = make_kuid(sb->s_user_ns, 0);
++	if (!uid_valid(info->root_uid))
++		info->root_uid = GLOBAL_ROOT_UID;
++
++	sb->s_fs_info = info;
++
++	inode = new_inode(sb);
++	if (!inode)
++		goto err_without_dentry;
++
++	inode->i_ino = FIRST_INODE;
++	inode->i_fop = &simple_dir_operations;
++	inode->i_mode = S_IFDIR | 0755;
++	inode->i_mtime = inode->i_atime = inode->i_ctime = current_time(inode);
++	inode->i_op = &binderfs_dir_inode_operations;
++	set_nlink(inode, 2);
++
++	sb->s_root = d_make_root(inode);
++	if (!sb->s_root)
++		goto err_without_dentry;
++
++	ret = binderfs_binder_ctl_create(sb);
++	if (ret)
++		goto err_with_dentry;
++
++	return 0;
++
++err_with_dentry:
++	dput(sb->s_root);
++	sb->s_root = NULL;
++
++err_without_dentry:
++	if (inode)
++		iput(inode);
++	kfree(info);
++	put_ipc_ns(ipc_ns);
++
++	return ret;
++}
++
++static int binderfs_test_super(struct super_block *sb, void *data)
++{
++	struct binderfs_info *info = sb->s_fs_info;
++
++	if (info)
++		return info->ipc_ns == data;
++
++	return 0;
++}
++
++static int binderfs_set_super(struct super_block *sb, void *data)
++{
++	sb->s_fs_info = data;
++	return set_anon_super(sb, NULL);
++}
++
++static struct dentry *binderfs_mount(struct file_system_type *fs_type,
++				     int flags, const char *dev_name,
++				     void *data)
++{
++	struct super_block *sb;
++	struct ipc_namespace *ipc_ns = current->nsproxy->ipc_ns;
++
++	if (!ns_capable(ipc_ns->user_ns, CAP_SYS_ADMIN))
++		return ERR_PTR(-EPERM);
++
++	sb = sget_userns(fs_type, binderfs_test_super, binderfs_set_super,
++			 flags, ipc_ns->user_ns, ipc_ns);
++	if (IS_ERR(sb))
++		return ERR_CAST(sb);
++
++	if (!sb->s_root) {
++		int ret = binderfs_fill_super(sb, data, flags & SB_SILENT ? 1 : 0);
++		if (ret) {
++			deactivate_locked_super(sb);
++			return ERR_PTR(ret);
++		}
++
++		sb->s_flags |= SB_ACTIVE;
++	}
++
++	return dget(sb->s_root);
++}
++
++static void binderfs_kill_super(struct super_block *sb)
++{
++	struct binderfs_info *info = sb->s_fs_info;
++
++	if (info && info->ipc_ns)
++		put_ipc_ns(info->ipc_ns);
++
++	kfree(info);
++	kill_litter_super(sb);
++}
++
++static struct file_system_type binder_fs_type = {
++	.name		= "binder",
++	.mount		= binderfs_mount,
++	.kill_sb	= binderfs_kill_super,
++	.fs_flags	= FS_USERNS_MOUNT,
++};
++
++static int __init init_binderfs(void)
++{
++	int ret;
++
++	/* Allocate new major number for binderfs. */
++	ret = alloc_chrdev_region(&binderfs_dev, 0, BINDERFS_MAX_MINOR,
++				  "binder");
++	if (ret < 0)
++		return ret;
++
++	ret = register_filesystem(&binder_fs_type);
++	if (ret) {
++		unregister_chrdev_region(binderfs_dev, BINDERFS_MAX_MINOR);
++		return ret;
++	}
++
++	binderfs_mnt = kern_mount(&binder_fs_type);
++	if (IS_ERR(binderfs_mnt)) {
++		ret = PTR_ERR(binderfs_mnt);
++		binderfs_mnt = NULL;
++		unregister_filesystem(&binder_fs_type);
++		unregister_chrdev_region(binderfs_dev, BINDERFS_MAX_MINOR);
++	}
++
++	return ret;
++}
++
++device_initcall(init_binderfs);
+diff --git a/include/uapi/linux/android/binder_ctl.h b/include/uapi/linux/android/binder_ctl.h
+new file mode 100644
+index 000000000000..65b2efd1a0a5
+--- /dev/null
++++ b/include/uapi/linux/android/binder_ctl.h
+@@ -0,0 +1,35 @@
++/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
++/*
++ * Copyright (C) 2018 Canonical Ltd.
++ *
++ */
++
++#ifndef _UAPI_LINUX_BINDER_CTL_H
++#define _UAPI_LINUX_BINDER_CTL_H
++
++#include <linux/android/binder.h>
++#include <linux/types.h>
++#include <linux/ioctl.h>
++
++#define BINDERFS_MAX_NAME 255
++
++/**
++ * struct binderfs_device - retrieve information about a new binder device
++ * @name:   the name to use for the new binderfs binder device
++ * @major:  major number allocated for binderfs binder devices
++ * @minor:  minor number allocated for the new binderfs binder device
++ *
++ */
++struct binderfs_device {
++	char name[BINDERFS_MAX_NAME + 1];
++	__u8 major;
++	__u8 minor;
++};
++
++/**
++ * Allocate a new binder device.
++ */
++#define BINDER_CTL_ADD _IOWR('b', 1, struct binderfs_device)
++
++#endif /* _UAPI_LINUX_BINDER_CTL_H */
++
+diff --git a/include/uapi/linux/magic.h b/include/uapi/linux/magic.h
+index 96c24478d8ce..f8c00045d537 100644
+--- a/include/uapi/linux/magic.h
++++ b/include/uapi/linux/magic.h
+@@ -73,6 +73,7 @@
+ #define DAXFS_MAGIC             0x64646178
+ #define BINFMTFS_MAGIC          0x42494e4d
+ #define DEVPTS_SUPER_MAGIC	0x1cd1
++#define BINDERFS_SUPER_MAGIC	0x6c6f6f70
+ #define FUTEXFS_SUPER_MAGIC	0xBAD1DEA
+ #define PIPEFS_MAGIC            0x50495045
+ #define PROC_SUPER_MAGIC	0x9fa0
+-- 
+2.19.1
+
