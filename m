@@ -7,56 +7,58 @@ X-Spam-Status: No, score=-12.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF713C67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:09:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2765EC65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:09:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 715DA20851
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:09:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E030320851
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:09:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544702961;
-	bh=qeFRZ+D/lrxu72LUXEoZNtsPk3cUVu+AMyhSHOIh67U=;
+	s=default; t=1544702965;
+	bh=ZPV99ruivtBpiiPby1x6oX54cQYe65dlXzKtjhQi5b0=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=EtEg8WvfsAHyVxh52VmNsXtA4kD6Fb4Ta3ChlG6Uq58XUzGdsjVoBFmXn3tXm3qD2
-	 UGuVB0hDx+sWyrrER5VNDFE5pYJS0YIJuQJ/2FH+X4pjVpehvznFuoOrWM6JackGLu
-	 v+lYpSUB1hP3HUZqvNxIn45HnSpYbMgm1eoum+Dc=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 715DA20851
+	b=vLrHHW83NbOsWTSqfBYxrAmiVlutc+Q38jneRrzvXKCL+gJXEV4j2KqalUvHQgnNg
+	 s5ykBqTSaA8/zoCYtSsppc8dL3rncqUh09RsA5tLNfdJsezsyV3BMGL4uxb9OQP+lZ
+	 K2Vza5I5XJyqyjeLowWLhkZMR8Qx/Y4e9PhKJfV4=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E030320851
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728912AbeLMMJU (ORCPT
+        id S1729057AbeLMMJY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 07:09:20 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50322 "EHLO
+        Thu, 13 Dec 2018 07:09:24 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50496 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729006AbeLMMJP (ORCPT
+        with ESMTP id S1729030AbeLMMJU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 07:09:15 -0500
+        Thu, 13 Dec 2018 07:09:20 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=4Pdibq4JLvelDe0mNfau29MoONqe9UnU7hAMaJuLphs=; b=U+WkMJD9X5/T
-        i00ePz379vMdNlm0MNvnVyUJmpp9X+2v6nqkKFB8Sy0i8ll0xKb+UGjxPSG9B+ogBxEyaen5TxEST
-        lHg7NdBpHLvjhP83szWFzeRMWL29QxWSXwUJXD9I85nF5dLEvYDGKyCwXAEM2i8+3P7VwEwNpfJIT
-        Oy7/8=;
+        List-Archive; bh=47b6UFW9JssHYmyaxpcTmf1PEZG11RjDQTensH3WEt0=; b=CTKZVoui2LhN
+        BaWBYQbeVuTJ49pouYxsk0LOoV2rxFFvAQwyF0PytXzJrMiKBYyg2cNoElbgNdqr9Nr2Pt3QbkaCJ
+        tuid+jVEIieC834m2lRKEUldu9xSsIpJxPOo/TKn/NB5C2I9xNveJlb7ocdmLkFDBP7uPSpy/1deh
+        D1xZU=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gXPng-0000zP-5w; Thu, 13 Dec 2018 12:09:08 +0000
+        id 1gXPno-0000ze-E0; Thu, 13 Dec 2018 12:09:16 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id D6B4711254D1; Thu, 13 Dec 2018 12:09:07 +0000 (GMT)
+        id 1C82111254D1; Thu, 13 Dec 2018 12:09:16 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Applied "regulator: arizona-ldo1: Rely on core to handle GPIO descriptor" to the regulator tree
-In-Reply-To: 
+To:     Clark Wang <xiaoning.wang@nxp.com>
+Cc:     Mark Brown <broonie@kernel.org>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-spi@vger.kernel.org
+Subject: Applied "doc: lpspi: Document DT bindings for LPSPI slave mode" to the spi tree
+In-Reply-To:  <20181207024924.6315-5-xiaoning.wang@nxp.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20181213120907.D6B4711254D1@debutante.sirena.org.uk>
-Date:   Thu, 13 Dec 2018 12:09:07 +0000 (GMT)
+Message-Id: <20181213120916.1C82111254D1@debutante.sirena.org.uk>
+Date:   Thu, 13 Dec 2018 12:09:16 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -64,11 +66,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: arizona-ldo1: Rely on core to handle GPIO descriptor
+   doc: lpspi: Document DT bindings for LPSPI slave mode
 
-has been applied to the regulator tree at
+has been applied to the spi tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -89,39 +91,41 @@ to this mail.
 Thanks,
 Mark
 
-From f306d76082358fa9a3fb3e66674a5852bb48845f Mon Sep 17 00:00:00 2001
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 11 Dec 2018 10:53:19 +0100
-Subject: [PATCH] regulator: arizona-ldo1: Rely on core to handle GPIO
- descriptor
+From 62f82df488ce16f7068c7285820b2b7f7dcd7597 Mon Sep 17 00:00:00 2001
+From: Clark Wang <xiaoning.wang@nxp.com>
+Date: Fri, 7 Dec 2018 02:50:41 +0000
+Subject: [PATCH] doc: lpspi: Document DT bindings for LPSPI slave mode
 
-After making sure that the regulator core always take over
-handling of the GPIO descriptors, the gpiod_put()
-on the errorpath of the Arizona LDO1 driver becomes
-redundant.
+Add introductions of interrupt-parent and spi-slave.
 
-Reported-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Signed-off-by: Clark Wang <xiaoning.wang@nxp.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/arizona-ldo1.c | 3 ---
- 1 file changed, 3 deletions(-)
+ Documentation/devicetree/bindings/spi/spi-fsl-lpspi.txt | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/regulator/arizona-ldo1.c b/drivers/regulator/arizona-ldo1.c
-index 9a72eae4926d..b9a93049e41e 100644
---- a/drivers/regulator/arizona-ldo1.c
-+++ b/drivers/regulator/arizona-ldo1.c
-@@ -283,9 +283,6 @@ static int arizona_ldo1_common_init(struct platform_device *pdev,
- 	of_node_put(config.of_node);
+diff --git a/Documentation/devicetree/bindings/spi/spi-fsl-lpspi.txt b/Documentation/devicetree/bindings/spi/spi-fsl-lpspi.txt
+index 8d178a4503cf..6cc3c6fe25a3 100644
+--- a/Documentation/devicetree/bindings/spi/spi-fsl-lpspi.txt
++++ b/Documentation/devicetree/bindings/spi/spi-fsl-lpspi.txt
+@@ -5,8 +5,11 @@ Required properties:
+   - "fsl,imx7ulp-spi" for LPSPI compatible with the one integrated on i.MX7ULP soc
+   - "fsl,imx8qxp-spi" for LPSPI compatible with the one integrated on i.MX8QXP soc
+ - reg : address and length of the lpspi master registers
++- interrupt-parent : core interrupt controller
+ - interrupts : lpspi interrupt
+ - clocks : lpspi clock specifier
++- spi-slave : spi slave mode support. In slave mode, add this attribute without
++	      value. In master mode, remove it.
  
- 	if (IS_ERR(ldo1->regulator)) {
--		if (config.ena_gpiod)
--			gpiod_put(config.ena_gpiod);
--
- 		ret = PTR_ERR(ldo1->regulator);
- 		dev_err(&pdev->dev, "Failed to register LDO1 supply: %d\n",
- 			ret);
+ Examples:
+ 
+@@ -16,4 +19,5 @@ lpspi2: lpspi@40290000 {
+ 	interrupt-parent = <&intc>;
+ 	interrupts = <GIC_SPI 28 IRQ_TYPE_LEVEL_HIGH>;
+ 	clocks = <&clks IMX7ULP_CLK_LPSPI2>;
++	spi-slave;
+ };
 -- 
 2.19.0.rc2
 
