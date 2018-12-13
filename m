@@ -2,92 +2,93 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.8 required=3.0 tests=DATE_IN_PAST_03_06,
+	DKIMWL_WL_MED,DKIM_SIGNED,DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB6C1C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 06:52:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D82C6C67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 06:52:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD5242080F
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 06:52:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C89E2080F
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 06:52:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="O6yeEAUp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD5242080F
+	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="KMqP9efC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C89E2080F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lixom.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727465AbeLMGwH (ORCPT
+        id S1727208AbeLMGvk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 01:52:07 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:34769 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727158AbeLMGvk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 13 Dec 2018 01:51:40 -0500
-Received: by mail-lj1-f196.google.com with SMTP id u6-v6so808805ljd.1
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 22:51:39 -0800 (PST)
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:35843 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727051AbeLMGvg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 01:51:36 -0500
+Received: by mail-lf1-f66.google.com with SMTP id a16so709240lfg.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 22:51:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=lixom-net.20150623.gappssmtp.com; s=20150623;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=f+dqQ+gQRatgd27zUadLvVLrqMLHrjFK7tPpkgqay+s=;
-        b=O6yeEAUp+WcqdsHc4ykm2UDHbBkNKjPjBjiYjedaR18NnVPVJ6DBVWD6ZqRYE+kzSO
-         U3DwCUtiSnUc4onCnhwWDIrKHlXTMfmW0U2Qq8j41s7rXhYS6Uq2gX4bEySAeuviIgjj
-         CttzfQDQu+8LaeynN+Bq936ZDM46dFDvxBundj4JYc54ZCsUMB5hXu4Ex/oAjZ+aM8wp
-         CU5aJSrXZhY251mdsVhegRtrt8GaMKZ7AVi/WawuM/2A91by7VkhagkosA8zHrI8J6iQ
-         hy71nq85elB/WyRp+wuVP9B/w7uTIkOJeNbCk6QICx/84fhn44Hdh4+WKt2dZu7Aaidd
-         dbdg==
+        bh=JdgcwaD2BuNk7SPz5Qho5H0RctNB2IAwYYQYfuyLYf4=;
+        b=KMqP9efCNfIIZz6WnaMVik0lnS8XmdqtZFA6uHyfye/HwrH+27cTawXz2U9gGTbzag
+         D1fVHRtmxbu+qCpLXTKDgscQnyWrQO8j4rQcTg2iV6tiMyltC4ozyeyeGNkgInITFqhv
+         SYOGy26SS6apyixX8OC3Bsvtlo98TBdKcRiELPLicI0doMvyiqTpZWoMbSzYXfN6aPYf
+         oD/ZasYzv8TbUKmdW5tDUbwrLFylzk0hRtTofinGQmZdUE2fo8tl99xov9Au+70//O5u
+         fAnMLF4pLKtL/Oz0XgRAJwtJ0fN/ju1Pl24c2G/uQGodPGaO1A9N6KngjHp7S1FjlJ1n
+         LSsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=f+dqQ+gQRatgd27zUadLvVLrqMLHrjFK7tPpkgqay+s=;
-        b=pStYg01WKkkYyMHAXIr753ncdImVuTmtFq/RmJv+c7NoFkabKDLbSEIOmiKGi4xe5a
-         8GuBXDXKZDShfhmUGkDrNiAkgUseQ6unS/iRmp1ISO3N11fc5M1n4ibN/oeiJcuDlssF
-         BeOEJEJPusI9s0mKnJdPRSaG8KjhpiY83lW0Cd9rYDSRTAQNasOoVvazIX/VO1/6Fing
-         4K6zr/Uxsf1OKzluA6QHE1peDKxSl/pIBPKnoRdyZpqWZG60K+yrgGp82Osh5vVtw+re
-         tugIOD85g1GMjt0szavsRtz63x5HJbMbHI3hpxmmConnipjqMfdkQ0fx369OvjT+vhL6
-         L+dA==
-X-Gm-Message-State: AA+aEWb6ZXgyaZk/oZmB2zzV80MsTqhB5hybvNNV5KyvgMbu1/tL+F2e
-        dG43c3sU5JUr40SOPAYk7kNYZQ==
-X-Google-Smtp-Source: AFSGD/Wi7FFI2BAbqsQFgx1NvN7dDhywGpU2sE+7AMxg/55dvU1CJ72zF1mv+mZG5ADUftP0DutxlA==
-X-Received: by 2002:a2e:9e95:: with SMTP id f21-v6mr13796777ljk.128.1544683898574;
-        Wed, 12 Dec 2018 22:51:38 -0800 (PST)
+        bh=JdgcwaD2BuNk7SPz5Qho5H0RctNB2IAwYYQYfuyLYf4=;
+        b=MRXezdWmSHJyzSEXFQy7onF6cMzcVOP/Aoi8V8t7hROUHOOVrb8ICmEtW35xgmj3fa
+         58XsXh6EvmE1RAVRgQzHh7Ab7bFqvfTPMR+UCc/uatL3pyfPB6CQ7aamsDL4yAZD+iO7
+         2NfjAVwcMYRX37Sp2Pk4oUtLen9nlYgP7g3Mk/hdzb9h4Rls9RdjFn44T5eaRppNkioy
+         cYfSkH2NaJ83S2D6KkUoSel8x6G2DTxZeKnnjH/gHypjUo586aRFHkUhDpR8jZd01AcK
+         GEKsraj3ithKXF31KGn5iX9cLTN5eY27zyJk3jgY/lxw5xqTGAb0Bg1w+cFcKdVbuXmk
+         pi1w==
+X-Gm-Message-State: AA+aEWYFkUr6cav9SGyMlaezqP7S04Z57BULEQQBQC1LvUerVoMtlTft
+        mmbuyEGN94FGNIcBbWRJtNaHZhUaXotyhQ==
+X-Google-Smtp-Source: AFSGD/WUo8ssXkqSckXrLXameooM4KZASyiq2mEX1a75tFA+P9k/7c9zWJEjZvvH9SPMcrbt/J5WqQ==
+X-Received: by 2002:a19:4345:: with SMTP id m5mr13228859lfj.142.1544683894283;
+        Wed, 12 Dec 2018 22:51:34 -0800 (PST)
 Received: from localhost (h85-30-9-151.cust.a3fiber.se. [85.30.9.151])
-        by smtp.gmail.com with ESMTPSA id b17sm180280lfc.21.2018.12.12.22.51.36
+        by smtp.gmail.com with ESMTPSA id r27-v6sm152528lja.65.2018.12.12.22.51.32
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 12 Dec 2018 22:51:37 -0800 (PST)
-Date:   Wed, 12 Dec 2018 22:47:35 -0800
+        Wed, 12 Dec 2018 22:51:33 -0800 (PST)
+Date:   Wed, 12 Dec 2018 18:14:42 -0800
 From:   Olof Johansson <olof@lixom.net>
 To:     Marc Gonzalez <marc.w.gonzalez@free.fr>
 Cc:     arm-soc <arm@kernel.org>,
         Linux ARM <linux-arm-kernel@lists.infradead.org>,
         LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 6/9] arm64: defconfig: Drop redundant
- SND_SOC_ROCKCHIP_I2S
-Message-ID: <20181213064735.j3l5luli7hzkwzcv@localhost>
+Subject: Re: [PATCH v3 4/9] arm64: defconfig: Drop USB_ULPI_BUS and
+ USB_CHIPIDEA_ULPI
+Message-ID: <20181213021442.i7eabju22cviqnae@localhost>
 References: <49a5d199-4eeb-a7c2-b539-13356162547f@free.fr>
- <f893ee9c-210e-8dc2-8660-fc9a9b2a567a@free.fr>
+ <a5a9193c-018a-8d52-7b62-2743db048a69@free.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f893ee9c-210e-8dc2-8660-fc9a9b2a567a@free.fr>
+In-Reply-To: <a5a9193c-018a-8d52-7b62-2743db048a69@free.fr>
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 09, 2018 at 02:03:55AM +0100, Marc Gonzalez wrote:
-> SND_SOC_ROCKCHIP_RT5645 selects SND_SOC_ROCKCHIP_I2S
+On Fri, Nov 09, 2018 at 02:02:18AM +0100, Marc Gonzalez wrote:
+> Commit a930d8bd94d8 ("usb: chipidea: Always build ULPI code") made
+> USB_CHIPIDEA select USB_ULPI_BUS, and removed USB_CHIPIDEA_ULPI.
 > 
+> Reviewed-by: Fabio Estevam <festevam@gmail.com>
 > Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
-> ---
->  arch/arm64/configs/defconfig | 1 -
->  1 file changed, 1 deletion(-)
 
-This one got covered by patch 1 too.
+This one is the same as some of the others; it had already dropped off with the
+refresh.
 
 
 -Olof
