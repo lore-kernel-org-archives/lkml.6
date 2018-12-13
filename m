@@ -2,66 +2,87 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-1.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C6BAC67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 09:37:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 093A0C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 09:38:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5175F2080F
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 09:37:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5175F2080F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.net
+	by mail.kernel.org (Postfix) with ESMTP id C25B52080F
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 09:38:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544693909;
+	bh=GTjSPiSbAgWLrIc6CeUDyZKHFKSMjUVUb42Z3cK+270=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=ItJTzYVV8KRT+vhg3L+LJJXawEutepH7NE6+bqi4lAmH9FTKXYz1UMUUw1T3BLW0i
+	 hDShZPi5MQBhAIjdO2RI+FMC+/50I7Sx8OrnDp0TbADgCO07vVS5YW/1I3eq194nhm
+	 fEstbAfUp4LR751SfAgTNEcGh1/9ol0PXgmU3djk=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C25B52080F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727703AbeLMJhe (ORCPT
+        id S1727773AbeLMJi2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 04:37:34 -0500
-Received: from mout.gmx.net ([212.227.15.19]:36555 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727063AbeLMJhd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 04:37:33 -0500
-Received: from localhost ([130.180.45.238]) by mail.gmx.com (mrgmx003
- [212.227.17.190]) with ESMTPSA (Nemesis) id 0MNIAz-1gVSgX1kID-006uaN for
- <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 10:37:32 +0100
-Date:   Thu, 13 Dec 2018 10:37:31 +0100 (CET)
-Message-Id: <20181213.103731.734229932284065893.hartrumpf@gmx.net>
-To:     linux-kernel@vger.kernel.org
-Subject: Re: Can we drop upstream Linux x32 support?
-From:   Sven Hartrumpf <hartrumpf@gmx.net>
-In-Reply-To: <CAFLxGvy2sMW1nyMpxGN7xHPdUea713g89MdE3EcUNHJDCvZ3jA@mail.gmail.com>
-References: <70bb54b2-8ed3-b5ee-c02d-6ef66c4f27eb@physik.fu-berlin.de>
-        <20181213050313.GA21201@ip-172-31-15-78>
-        <CAFLxGvy2sMW1nyMpxGN7xHPdUea713g89MdE3EcUNHJDCvZ3jA@mail.gmail.com>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:qeTAEsQfxW5b8jxtdvvsiAn4/PTkY+4n9B0zsK4joLJEiOGo/Up
- FI8SKFzBKj+JtIYp4tF3O3zkJnyWA8MSjHjuhcp8BndtSv7DC8X/fss0cg9rHQnSSoz2OHN
- otohIkNy0lMluE8QDbbZ2ZlHRrdcZJXgYs/xq75x2tYuntYtIp/snE/IYWboB7S0P8WExOO
- gCriAobNC6o5lw6t9b8JA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:zVvhfCzvVXU=:78bClzqYaE2xpKcoCVIcRQ
- 6h9yVTRjEvKp3boaUYAFzZvsjCWY5g0akEy3xngZLj/FdaMLKdy0KKDpAEEg5by+m/2mJUwTm
- TJ3aqCUGoAFlBugAPSH4grEr1xlCb+mP3N8aeFCZl99GCXG/oELu5xqzGzJlsSDA9O1yjU0YC
- rznhtmk+6nCm6zHoZxzQ0QCrC39MeOKNk4CDMDacLAtI5C48UePQtGYQCJH3PlzKh322iGzAf
- d4Fm/v2CygJYZLAECND3C4H1lbCc/QBxbHW6V0PxWSHk9EKPPLZQTc4DA1q/Qqg1ZEWDlr4Nw
- 5p19cBC1rMbCPIrxh2LtIxjQgp+0IJoAZmCWdxQrHEXq4rkFbCe/9Z6vOPdJwyXY++7UaGqBx
- BUs4md/NtscfJvpvduEC1Y5+SYeSFlALrHdPnUqJeM123Y6D3Tq6wKmBDdKdLhefPt9SF1QWu
- tNgQcxT0j1vRV1Fel7PvInD6/xG5prmbhBcZ6PEdaOVmBN/tZuRuFISuWvUJzXeHakUgTE38s
- fA8lsVTHsXhpHhlDS0q6NToOJp5URagyjhR/Tc/9T2sn3decbpYCdz0XaOq2Ea2Og40VxZkI5
- 8E7UiARL6nJbNQBUe1PEpZL5BUfDjNuOeXpkup18bymrC94DAL7YZUTmAr88eLp9bmBUBQT7F
- 0LxEQUysyfFiWfxFXqTP0eSOSLakwC2cLorTAjr0H/wB1z0aaNLEFA41RGQyQZ65oWtuKhmmG
- Qv3lDxF14fv6LuQ5TjhEPSGfsEV4QUr9rHnWmJYEm9AxWLItVdaCUVs8gqeEBQAIJt73tWTb9
- OVxT0qBDKf14WZG7ECHpmLcLdB3dixislrt/yrWOSyL/egFbzARDSvVZYHtfJFcXGrj7jInA7
- jokTafJOpVddUPIGw44HsOgLM7E6N4U/EPO5FaKXThevZQbv9RWgu0oBtSB6R/
+        Thu, 13 Dec 2018 04:38:28 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:46195 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727063AbeLMJi2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 04:38:28 -0500
+Received: by mail-ot1-f66.google.com with SMTP id w25so1263136otm.13
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 01:38:27 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BwlM//7rajUlzBAHZri4m4C8lfBJGmdRgDoRpWub1OI=;
+        b=kyRrIGKe5G657XQFup4cj+3dla4T5wJsB4zVqKjfm6XSzTEu1SeRrpKgVznS7jLLQC
+         TN6VMfHVnScHLvlPIg+jPZtVOOAcsP6fugji1qPre2NP8agd8l7VbgUGajwb9X2mU1Vl
+         X1Eq3WaaxJKKGuV0pKMWdVqhB3LbGj0oFqWJrbqDl1CxGATqgK/ipMrp1nS3SBD7EoLZ
+         3Y8at7HcRH8LqO+RQ1jOO61EkzE8HdSplp6e0k3FVtOsEErZVv8fvpZOJOW96C7X7L8L
+         Qs0hDrRZ2g/72pIkN2CkhHeINjSYXXXn3JKrg/yZGQVJeR8aqqo2KRI/pZj9tvSqzLvx
+         R9Jw==
+X-Gm-Message-State: AA+aEWZz79bvEQLkybISEzhccZBTW4nYorb7WyvJ30EVSNJdakvDTmnr
+        VZxbX6DtnfIXi0MucM51GLOLs29pEkE7BGyi+g0LKvHX
+X-Google-Smtp-Source: AFSGD/Xz/zA6ZV9nHvS4GTuJ/WFogVZtxK5svxNu1Mdr6AC3cEaCQ0KI1fapfRMGtd3VvzY8AdG2rqEpOQD2LHIAFUw=
+X-Received: by 2002:a9d:5f06:: with SMTP id f6mr17226345oti.258.1544693906442;
+ Thu, 13 Dec 2018 01:38:26 -0800 (PST)
+MIME-Version: 1.0
+References: <20181210084653.7268-1-daniel.vetter@ffwll.ch>
+In-Reply-To: <20181210084653.7268-1-daniel.vetter@ffwll.ch>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Thu, 13 Dec 2018 10:38:14 +0100
+Message-ID: <CAJZ5v0jkE=Rt2ozwcTxRdUN++Sr4HXULksDeMx4jEWj1jVDcyA@mail.gmail.com>
+Subject: Re: [PATCH] drivers/base: use a worker for sysfs unbind
+To:     Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        ramalingam.c@intel.com,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Daniel Vetter <daniel.vetter@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Will the proposed patch ("only") remove the possibility to build x32 kernels
-or will it make impossible to compile and run any x32 binaries?
+On Mon, Dec 10, 2018 at 9:47 AM Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
+>
+> Drivers might want to remove some sysfs files, which needs the same
+> locks and ends up angering lockdep. Relevant snippet of the stack
+> trace:
+>
+>   kernfs_remove_by_name_ns+0x3b/0x80
+>   bus_remove_driver+0x92/0xa0
+>   acpi_video_unregister+0x24/0x40
+>   i915_driver_unload+0x42/0x130 [i915]
+>   i915_pci_remove+0x19/0x30 [i915]
+>   pci_device_remove+0x36/0xb0
+>   device_release_driver_internal+0x185/0x250
+>   unbind_store+0xaf/0x180
+>   kernfs_fop_write+0x104/0x190
 
-Sven
+Is the acpi_bus_unregister_driver() in acpi_video_unregister() the
+source of the lockdep unhappiness?
