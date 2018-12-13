@@ -4,53 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84D2AC65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:32:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FBD9C67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:32:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A83120880
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:32:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB9F2208E7
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:32:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544675575;
-	bh=LePkWrP1k5na/uQiWHYpZzCOC8oezxLDOL1s2ijSOHs=;
+	s=default; t=1544675579;
+	bh=P8FJaj+ZbPNh46pQqM3sch+2BOPlHiPNoYHMUQ86CoI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=f0BWeRMBRNFUZ4oqO3Z5Qzm5Xp4Npel2a+3BBF5u/rwf3h7qyJJsGCRjuLH7dty6a
-	 1JCLk5vRz/L39eYsNLONeJRBIXQk4zgZmwVGLUxqTCElYbDqtPiI0zQpIF+B3ArBOq
-	 k6BpdDvZoheTfYsRTVaiDToZ3HN4Jq8eYTGZR3W8=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A83120880
+	b=FvOHOXaE+kDX593hpJ47Ja0vKE2JKi9tpKFyW1t+ekvB/bXdL9p1gf3ezKZVTupkR
+	 cBUD5MThw3JXn8NkR+YX7i2E2SGJWrN03F+Xoojxxam+5jEnOVCivxYue5VOUwZrBW
+	 o/tR32yXrY6qdMUZR+gp+S5l27Iz2EZXmi9cck1M=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB9F2208E7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729199AbeLMEcx (ORCPT
+        id S1729209AbeLMEc5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 23:32:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45686 "EHLO mail.kernel.org"
+        Wed, 12 Dec 2018 23:32:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45694 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728433AbeLMEct (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 23:32:49 -0500
+        id S1726465AbeLMEcu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 23:32:50 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 887BE20880;
-        Thu, 13 Dec 2018 04:32:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9205320879;
+        Thu, 13 Dec 2018 04:32:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544675569;
-        bh=LePkWrP1k5na/uQiWHYpZzCOC8oezxLDOL1s2ijSOHs=;
+        s=default; t=1544675570;
+        bh=P8FJaj+ZbPNh46pQqM3sch+2BOPlHiPNoYHMUQ86CoI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZxawUUc/O3lICw6LvE+f/H6odle+gsVYP5FaQjtMiIWJhA72gQLG9vJ16FEwePbvX
-         ObWhZ6UL89MVw8/ouDrJGS3IhtIfJk416NGs3qNj2QQYPIn4/87C4P7N+O0GUifAyj
-         W8YRUt+FeCirh+tv2+JJqwznRtQCnIbhU+fUysGI=
+        b=akI1nxPYV0Jd4n8bGTomZn9L3JM3/Iln6hkz3GKb2WYC+ff0R10skghJ51Rd9O6e9
+         qnhJsZ4NZBMkKrse4OuAx5rVN5ALBpe3FDEeUtO3KkCqhgfH+HWWprW+hJ13krRP4A
+         +ArLhRVwjspEsJD8mVTDl0vgBltG5T0tR1Xb3/QE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Sam Bobroff <sbobroff@linux.ibm.com>,
-        Dave Airlie <airlied@redhat.com>,
-        Sasha Levin <sashal@kernel.org>,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.9 28/34] drm/ast: Fix connector leak during driver unload
-Date:   Wed, 12 Dec 2018 23:31:54 -0500
-Message-Id: <20181213043200.76295-28-sashal@kernel.org>
+Cc:     Steve French <stfrench@microsoft.com>,
+        Sasha Levin <sashal@kernel.org>, linux-cifs@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 29/34] cifs: In Kconfig CONFIG_CIFS_POSIX needs depends on legacy (insecure cifs)
+Date:   Wed, 12 Dec 2018 23:31:55 -0500
+Message-Id: <20181213043200.76295-29-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181213043200.76295-1-sashal@kernel.org>
 References: <20181213043200.76295-1-sashal@kernel.org>
@@ -62,38 +59,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sam Bobroff <sbobroff@linux.ibm.com>
+From: Steve French <stfrench@microsoft.com>
 
-[ Upstream commit e594a5e349ddbfdaca1951bb3f8d72f3f1660d73 ]
+[ Upstream commit 6e785302dad32228819d8066e5376acd15d0e6ba ]
 
-When unloading the ast driver, a warning message is printed by
-drm_mode_config_cleanup() because a reference is still held to one of
-the drm_connector structs.
+Missing a dependency.  Shouldn't show cifs posix extensions
+in Kconfig if CONFIG_CIFS_ALLOW_INSECURE_DIALECTS (ie SMB1
+protocol) is disabled.
 
-Correct this by calling drm_crtc_force_disable_all() in
-ast_fbdev_destroy().
-
-Signed-off-by: Sam Bobroff <sbobroff@linux.ibm.com>
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Signed-off-by: Dave Airlie <airlied@redhat.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/1e613f3c630c7bbc72e04a44b178259b9164d2f6.1543798395.git.sbobroff@linux.ibm.com
+Signed-off-by: Steve French <stfrench@microsoft.com>
+Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/ast/ast_fb.c | 1 +
- 1 file changed, 1 insertion(+)
+ fs/cifs/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/ast/ast_fb.c b/drivers/gpu/drm/ast/ast_fb.c
-index 7a86e24e2687..5e0d3e561b04 100644
---- a/drivers/gpu/drm/ast/ast_fb.c
-+++ b/drivers/gpu/drm/ast/ast_fb.c
-@@ -286,6 +286,7 @@ static void ast_fbdev_destroy(struct drm_device *dev,
- {
- 	struct ast_framebuffer *afb = &afbdev->afb;
+diff --git a/fs/cifs/Kconfig b/fs/cifs/Kconfig
+index e7b478b49985..8bef27b8f85d 100644
+--- a/fs/cifs/Kconfig
++++ b/fs/cifs/Kconfig
+@@ -111,7 +111,7 @@ config CIFS_XATTR
  
-+	drm_crtc_force_disable_all(dev);
- 	drm_fb_helper_unregister_fbi(&afbdev->helper);
- 	drm_fb_helper_release_fbi(&afbdev->helper);
- 
+ config CIFS_POSIX
+         bool "CIFS POSIX Extensions"
+-        depends on CIFS_XATTR
++        depends on CIFS && CIFS_ALLOW_INSECURE_LEGACY && CIFS_XATTR
+         help
+           Enabling this option will cause the cifs client to attempt to
+ 	  negotiate a newer dialect with servers, such as Samba 3.0.5
 -- 
 2.19.1
 
