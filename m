@@ -2,134 +2,154 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65793C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 19:52:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D298C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 19:53:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30B8720811
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 19:52:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544730737;
-	bh=2i/AYWkFpEOlg+61T3YaTh6wAxl5PxRc41maMyWJSdI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=WfuNBd9xzR45eKLxsR4nlZN7Ji4Q0mrHjJBIIysmQBdm80d0HM35XpD/twtmz0oqk
-	 bmYLFghBUl9mXksp20y4E8V2GnIrvSJmkuKsiVmIVSGE8LOuTz6PWMdrlcJcYTASWI
-	 Qr6ArL6qBNJ/V+jS3qjJRXE918tHFj7xL88zvKcA=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30B8720811
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id E48F920811
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 19:53:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="cjYEpoTx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E48F920811
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728755AbeLMTwQ (ORCPT
+        id S1728837AbeLMTxm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 14:52:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38028 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727707AbeLMTwP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 14:52:15 -0500
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 023EB20880
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 19:52:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544730734;
-        bh=2i/AYWkFpEOlg+61T3YaTh6wAxl5PxRc41maMyWJSdI=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Xbp270yxIQfjK7fnpEcEFLXY3rrvmtoYlTjrFPOI5D38VqBBTcmFIfNne21rQ63nf
-         R4CuDV1mPLjeEDgGM0kb6o05XcWIwee42ropA9edH0NXFSCRJFYe0AtJKO1UpsMNRD
-         ChbWegpQtOd7VMCL9bTg/zcSfY6YaU5x/HGq/4e0=
-Received: by mail-wm1-f53.google.com with SMTP id y139so3541999wmc.5
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 11:52:13 -0800 (PST)
-X-Gm-Message-State: AA+aEWYvQc35tEuDoLpWpCT820UxjOFSHdz5jb8sRukQD6wbpcqGwZ34
-        317A1u2mB7nCHHjgwR73kHaJgPOipT0yYi2V+oI=
-X-Google-Smtp-Source: AFSGD/VdKzErsmhgheAe4tPdHiaMdYZY63egoG/6rkOg2ATjLgHZOTebqJcMUFJM/049zlGxv5/3vDvS+xebT+lOLbU=
-X-Received: by 2002:a1c:4d12:: with SMTP id o18mr749046wmh.92.1544730732499;
- Thu, 13 Dec 2018 11:52:12 -0800 (PST)
+        Thu, 13 Dec 2018 14:53:42 -0500
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:59372 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727707AbeLMTxm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 14:53:42 -0500
+Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
+        by m0089730.ppops.net (8.16.0.27/8.16.0.27) with SMTP id wBDJoA9U026122
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 11:53:40 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=facebook;
+ bh=6xPDv9eZuGzy18l8+m8l21alMMgLY5002Osi37fXirM=;
+ b=cjYEpoTxWLNSelJAd2nOvr86y39f34QNlK1PU2rTXxTRuM+RRFtLGtWeEqRQqPaAGe+v
+ 8BloczqzjvaLAf0mRYJiDL581aeBQ/XTtAGMmzgNQWUds+TAgB0Rrptce8AybhJNxg/O
+ FwFfeAIkDI8iPig28rbpWA86dzf5eOPqmvU= 
+Received: from maileast.thefacebook.com ([199.201.65.23])
+        by m0089730.ppops.net with ESMTP id 2pbv9t8dn3-9
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 11:53:40 -0800
+Received: from mx-out.facebook.com (2620:10d:c0a1:3::13) by
+ mail.thefacebook.com (2620:10d:c021:18::171) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1531.3;
+ Thu, 13 Dec 2018 11:53:24 -0800
+Received: by devvm4117.prn2.facebook.com (Postfix, from userid 167582)
+        id 830714EBD9B4; Thu, 13 Dec 2018 11:53:22 -0800 (PST)
+Smtp-Origin-Hostprefix: devvm
+From:   Vijay Khemka <vijaykhemka@fb.com>
+Smtp-Origin-Hostname: devvm4117.prn2.facebook.com
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-aspeed@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>
+CC:     <vijaykhemka@fb.com>,
+        "openbmc @ lists . ozlabs . org" <openbmc@lists.ozlabs.org>
+Smtp-Origin-Cluster: prn2c23
+Subject: [PATCH 1/4] ARM: dts: aspeed: Add sensors devices for Facebook
+Date:   Thu, 13 Dec 2018 11:53:16 -0800
+Message-ID: <20181213195319.1333402-1-vijaykhemka@fb.com>
+X-Mailer: git-send-email 2.17.1
+X-FB-Internal: Safe
 MIME-Version: 1.0
-References: <1544693783-25079-1-git-send-email-chuanjia.liu@mediatek.com>
-In-Reply-To: <1544693783-25079-1-git-send-email-chuanjia.liu@mediatek.com>
-From:   Sean Wang <sean.wang@kernel.org>
-Date:   Thu, 13 Dec 2018 11:51:40 -0800
-X-Gmail-Original-Message-ID: <CAGp9LzrTZjEPLKEB+OwSVbLx=KBQRFVmN41KDqj_xTJ5oyU0KQ@mail.gmail.com>
-Message-ID: <CAGp9LzrTZjEPLKEB+OwSVbLx=KBQRFVmN41KDqj_xTJ5oyU0KQ@mail.gmail.com>
-Subject: Re: [PATCH] eint: add gpio vritual number select
-To:     chuanjia.liu@mediatek.com
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-mediatek@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        hongkun.cao@mediatek.com, youlin.pei@mediatek.com,
-        eddie.huang@mediatek.com, zhiyong.tao@mediatek.com,
-        hailong.fan@mediatek.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-13_03:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-And the subject should be also corrected with prefix starting with
-"pinctrl: mediatek:", typo fixup, and having a better subject close to
-the content.
+Added ADC and other sensor devices in Facebook Tiogapass device tree.
 
-On Thu, Dec 13, 2018 at 1:36 AM <chuanjia.liu@mediatek.com> wrote:
->
-> From: Chuanjia Liu <Chuanjia.Liu@mediatek.com>
->
-> This patch add gpio vritual number select,avoid virtual gpio set SMT.
->
-> Signed-off-by: Chuanjia Liu <Chuanjia.Liu@mediatek.com>
-> ---
->  drivers/pinctrl/mediatek/mtk-eint.h              |    1 +
->  drivers/pinctrl/mediatek/pinctrl-mt8183.c        |    1 +
->  drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c |    9 ++++++---
->  3 files changed, 8 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/pinctrl/mediatek/mtk-eint.h b/drivers/pinctrl/mediatek/mtk-eint.h
-> index 48468d0..c16beaf 100644
-> --- a/drivers/pinctrl/mediatek/mtk-eint.h
-> +++ b/drivers/pinctrl/mediatek/mtk-eint.h
-> @@ -37,6 +37,7 @@ struct mtk_eint_hw {
->         u8              ports;
->         unsigned int    ap_num;
->         unsigned int    db_cnt;
-> +       unsigned int    vir_start;
->  };
->
->  struct mtk_eint;
-> diff --git a/drivers/pinctrl/mediatek/pinctrl-mt8183.c b/drivers/pinctrl/mediatek/pinctrl-mt8183.c
-> index 6262fd3..bbeafd3 100644
-> --- a/drivers/pinctrl/mediatek/pinctrl-mt8183.c
-> +++ b/drivers/pinctrl/mediatek/pinctrl-mt8183.c
-> @@ -497,6 +497,7 @@
->         .ports     = 6,
->         .ap_num    = 212,
->         .db_cnt    = 13,
-> +       .vir_start = 180,
->  };
->
->  static const struct mtk_pin_soc mt8183_data = {
-> diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
-> index 4a9e0d4..ca3bae1 100644
-> --- a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
-> +++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
-> @@ -289,9 +289,12 @@ static int mtk_xt_set_gpio_as_eint(void *data, unsigned long eint_n)
->         if (err)
->                 return err;
->
-> -       err = mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_SMT, MTK_ENABLE);
-> -       if (err)
-> -               return err;
-> +       if (gpio_n < hw->eint->hw->vir_start) {
-> +               err = mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_SMT,
-> +                                      MTK_ENABLE);
-> +               if (err)
-> +                       return err;
-> +       }
->
->         return 0;
->  }
-> --
-> 1.7.9.5
+Signed-off-by: Vijay Khemka <vijaykhemka@fb.com>
+---
+ .../dts/aspeed-bmc-facebook-tiogapass.dts     | 33 +++++++++++++++++--
+ 1 file changed, 31 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/boot/dts/aspeed-bmc-facebook-tiogapass.dts b/arch/arm/boot/dts/aspeed-bmc-facebook-tiogapass.dts
+index f8e7b71af7e6..58bbe08d3ba7 100644
+--- a/arch/arm/boot/dts/aspeed-bmc-facebook-tiogapass.dts
++++ b/arch/arm/boot/dts/aspeed-bmc-facebook-tiogapass.dts
+@@ -21,6 +21,25 @@
+ 	memory@80000000 {
+ 		reg = <0x80000000 0x20000000>;
+ 	};
++
++	iio-hwmon {
++		compatible = "iio-hwmon";
++		oemname0 = "MB_P3V3";
++		oemname1 = "MB_P5V";
++		oemname2 = "MB_P12V";
++		oemname3 = "MB_P1V05";
++		oemname4 = "MB_PVNN_PCH_STBY";
++		oemname5 = "MB_P3V3_STBY";
++		oemname6 = "MB_P5V_STBY";
++		io-channels = <&adc 0>, <&adc 1>, <&adc 2>, <&adc 3>,
++					<&adc 4>, <&adc 5>, <&adc 6>;
++	};
++
++	iio-hwmon-battery {
++		oemname0 = "MB_P3V_BAT";
++		compatible = "iio-hwmon";
++		io-channels = <&adc 7>;
++	};
+ };
+ 
+ &fmc {
+@@ -64,6 +83,10 @@
+ 	use-ncsi;
+ };
+ 
++&adc {
++	status = "okay";
++};
++
+ &i2c0 {
+ 	status = "okay";
+ 	//Airmax Conn B, CPU0 PIROM, CPU1 PIROM
+@@ -122,6 +145,10 @@
+ 
+ &i2c8 {
+ 	status = "okay";
++	tmp421@1f {
++		compatible = "ti,tmp421";
++		reg = <0x1f>;
++	};
+ 	//Mezz Sensor SMBus
+ };
+ 
+@@ -134,13 +161,15 @@
+ 	status = "okay";
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&pinctrl_pwm0_default &pinctrl_pwm1_default>;
++	oemname0 = "System_Fan_Connector_1";
++	oemname1 = "System_Fan_Connector_3";
+ 	fan@0 {
+ 		reg = <0x00>;
+ 		aspeed,fan-tach-ch = /bits/ 8 <0x00>;
+ 	};
+ 
+ 	fan@1 {
+-		reg = <0x00>;
+-		aspeed,fan-tach-ch = /bits/ 8 <0x01>;
++		reg = <0x01>;
++		aspeed,fan-tach-ch = /bits/ 8 <0x02>;
+ 	};
+ };
+-- 
+2.17.1
+
