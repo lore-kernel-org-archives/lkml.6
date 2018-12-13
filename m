@@ -2,87 +2,90 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A30B9C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 22:02:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0BBBC65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 22:03:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6367820811
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 22:02:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jO1FuZfd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6367820811
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id A5A9220870
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 22:03:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544738599;
+	bh=TGIIEKIj1Eo16LtviyDATImfpZYQv60QUIs+Kr3c5zw=;
+	h=Subject:From:To:Cc:Date:List-ID:From;
+	b=kb19yz359g+2YH8K0x0gmzAhFxtG/JJ3XCDutQrsoBIg3Ifa/OcZGJ/bZIUYPJEA2
+	 2z2y9Bf258aGxuyr4ImcGnutcn+CHe0/fMSMrYVFvya9EKHNusOAvQ0umlUYfqxJ6Z
+	 5aPco3SWoD9TYcTYhQ0/TpopFZbx5Iy7A/MCPr5g=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5A9220870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728215AbeLMWC1 (ORCPT
+        id S1728069AbeLMWDS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 17:02:27 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:38379 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726457AbeLMWC0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 17:02:26 -0500
-Received: by mail-lj1-f193.google.com with SMTP id c19-v6so3164648lja.5
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 14:02:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=2oOUbeilDloeeTJzZDJe3BPrxt2FvEZMxHiEX/QypYs=;
-        b=jO1FuZfdUVnSdEG5+Ugve/Z4sVkidPr8go09mWftVP/K009oYH36LZGk/oqJIF9Hde
-         IxqfcGHcn7HEYZfPErUhkhGUv+kk9GHFhpB6yT3ceUM9pDdHvtaSUj2dowZHtpX7g8TT
-         2NiRpaIuugTScmPo0S3veEZJWJHpnwpG3i+tdW1x6oBI2bRm4/1grMWC/URA3lim++9q
-         CNtyySceqsNXS8s4yd/0IS44GF8G0C5HdCeXH3pm2E0UuFWThJziJC1mDko12EsEH4bE
-         S/CBU8E/RW7azZcfYcRNxKHinepLqc5Jil/rubTCEFFBALSAJ7nEarfIRujqOhHBhvV1
-         IiGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2oOUbeilDloeeTJzZDJe3BPrxt2FvEZMxHiEX/QypYs=;
-        b=Hf4TdfVzyofGy0bJT8rRRV9Ejr9e1bQEICnXR3LmMVCx72ZHS26c8xSs9g8UZ25ozI
-         q4/AZzmeDqoKLMsE+4LiU55ttM0IZHi2jTka2DryunG8MT7qM+hCM4MyKGm/nAR7Usv3
-         8cFhKudcMkn12ImSN7JXYZW3BzMDDwZZ7dS+xbQ/RHzB6Rp4IdeMdfk/tXL0jJRfqZfD
-         0ccVw8ZwvlwQusbAdzaO0MdbdIPgKPiET1PSLtj7dOdkAItb0m2F7Xk4Y8gbc5WAOh8x
-         gvDkej0cnzs92SdbSobBe3n4kIo4JbPJzvovjUr1HCRUi6xhO9+OZMtgpMWwDlyqLTAS
-         tUAw==
-X-Gm-Message-State: AA+aEWYPqSVmQi0ZKNKG15ym9y5825u0dDn5LPqmXd/PEhHe8dQNhLEf
-        Uz9uW07wV6L2+8Sz775hHJ2yhlqcAwoh7g7gDEU=
-X-Google-Smtp-Source: AFSGD/U0jDFVm5lWRo18wJY+4/PP9KcbwQtNDnF0QxcsTPgZcM15ig6UVgFKeubaze1S5FMidF3aADxb8ELX2v8QNRo=
-X-Received: by 2002:a2e:5054:: with SMTP id v20-v6mr267004ljd.45.1544738544259;
- Thu, 13 Dec 2018 14:02:24 -0800 (PST)
-MIME-Version: 1.0
-References: <20181209032715.3466040-1-liuxiaozhou@bytedance.com> <CANiq72nqFuJm5f69G-Pc_9QHz+anwaon-WfVsPrkZWah1OP7Fg@mail.gmail.com>
-In-Reply-To: <CANiq72nqFuJm5f69G-Pc_9QHz+anwaon-WfVsPrkZWah1OP7Fg@mail.gmail.com>
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Thu, 13 Dec 2018 23:02:13 +0100
-Message-ID: <CANiq72=Sim1rmTBqWx6+t4GpRmZoNAhTppvbhEjOo-T2_g0N2A@mail.gmail.com>
-Subject: Re: [PATCH v2] Compiler Attributes: don't pollute userspace with
- macro definitions
-To:     liuxiaozhou@bytedance.com, Greg KH <gregkh@linuxfoundation.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Paul Burton <paul.burton@mips.com>,
-        Arnd Bergmann <arnd@arndb.de>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
+        Thu, 13 Dec 2018 17:03:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35770 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726457AbeLMWDS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 17:03:18 -0500
+Received: from tzanussi-mobl (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id F116520811;
+        Thu, 13 Dec 2018 22:03:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544738597;
+        bh=TGIIEKIj1Eo16LtviyDATImfpZYQv60QUIs+Kr3c5zw=;
+        h=Subject:From:To:Cc:Date:From;
+        b=kOx9FDHRBPLa7Uz9Agv2DupwfNjFW5qr0lrM5fviMGjW1/nspCDoXqottTeZBfAOB
+         SZImLwqbPXiNfICBWX0cPy2xA6hu3Kkk69ReCdk0ZLTKmKyGtetA3GtuWBx0If9/Zh
+         RSz/cfk0KU/ruBjZkqCdcxJGXLf6PVE54aX37mqA=
+Message-ID: <1544738596.10497.5.camel@kernel.org>
+Subject: [ANNOUNCE] 3.18.129-rt110
+From:   Tom Zanussi <zanussi@kernel.org>
+To:     LKML <linux-kernel@vger.kernel.org>,
+        linux-rt-users <linux-rt-users@vger.kernel.org>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Carsten Emde <C.Emde@osadl.org>,
+        John Kacur <jkacur@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Daniel Wagner <daniel.wagner@siemens.com>,
+        Julia Cartwright <julia@ni.com>
+Date:   Thu, 13 Dec 2018 16:03:16 -0600
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.1-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 13, 2018 at 10:59 PM Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
->
-> What do you think?
+Hello RT Folks!
 
-[Cc'ing Nick et. al. as well.]
+I'm pleased to announce the 3.18.129-rt110 stable release.
 
-Cheers,
-Miguel
+This release is just an update to the new stable 3.18.129 version
+and no RT specific changes have been made.
+
+You can get this release via the git tree at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git
+
+  branch: v3.18-rt
+  Head SHA1: 9447e39d7222edcc6b3c063cd8e189a4f6a03f46
+
+Or to build 3.18.129-rt110 directly, the following patches should be applied:
+
+  http://www.kernel.org/pub/linux/kernel/v3.x/linux-3.18.tar.xz
+
+  http://www.kernel.org/pub/linux/kernel/v3.x/patch-3.18.129.xz
+
+  http://www.kernel.org/pub/linux/kernel/projects/rt/3.18/patch-3.18.129-rt110.patch.xz
+
+
+Enjoy!
+   
+   Tom
