@@ -2,309 +2,136 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,T_MIXED_ES autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABF94C67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 18:12:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F37BC65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 18:12:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CB9220870
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 18:12:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CB9220870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=talpey.com
+	by mail.kernel.org (Postfix) with ESMTP id 0CDA920870
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 18:12:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544724743;
+	bh=cZvSfRG/8/v1+hbVZi8v2vUxMsGFlRIdhgVQ3yZ2lLs=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
+	b=gu7Djy5Nyf0aIGeOl0e+8MNxYifvTs71BHFYNsvSukqLuXXn8dAfPKZXrlMNIoeDP
+	 RNhQBmqtiNCH/Q2MbIx1q7qTCtWpg9AIVSuBoZ0RzWgl6XYG1Xe6+UJ4KGHJTwX6ZH
+	 r0Q3kSrNRQt/Ndc/+Yth+DxymFjiq8wfzTL7L1f8=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CDA920870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729865AbeLMSMO (ORCPT
+        id S1729876AbeLMSMV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 13:12:14 -0500
-Received: from p3plsmtpa07-06.prod.phx3.secureserver.net ([173.201.192.235]:57675
-        "EHLO p3plsmtpa07-06.prod.phx3.secureserver.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729071AbeLMSML (ORCPT
+        Thu, 13 Dec 2018 13:12:21 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:37550 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729181AbeLMSLk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 13:12:11 -0500
-Received: from [192.168.0.55] ([24.218.182.144])
-        by :SMTPAUTH: with ESMTPSA
-        id XVSxguL6iPCUFXVSygJo9O; Thu, 13 Dec 2018 11:12:10 -0700
-Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
-To:     Jerome Glisse <jglisse@redhat.com>
-Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Jan Kara <jack@suse.cz>, John Hubbard <jhubbard@nvidia.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        John Hubbard <john.hubbard@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
-        Christoph Hellwig <hch@infradead.org>,
-        Christopher Lameter <cl@linux.com>,
-        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        rcampbell@nvidia.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "Weiny, Ira" <ira.weiny@intel.com>
-References: <20181212213005.GE5037@redhat.com>
- <CAPcyv4gJHeFjEgna1S-2uE4KxkSUgkc=e=2E5oqfoirec84C-w@mail.gmail.com>
- <20181212215348.GF5037@redhat.com> <20181212233703.GB2947@ziepe.ca>
- <20181213000109.GK5037@redhat.com> <20181213032043.GA3204@ziepe.ca>
- <20181213124325.GA3186@redhat.com>
- <81a731bb-6a8a-a554-cf99-5d0588b0a21f@talpey.com>
- <20181213141838.GB3186@redhat.com>
- <0b75a9a6-3907-ea88-6352-256bc2954f4a@talpey.com>
- <20181213151839.GC3186@redhat.com>
-From:   Tom Talpey <tom@talpey.com>
-Message-ID: <a6c25182-9691-d9f9-b3b5-a42b2b5d6f7f@talpey.com>
-Date:   Thu, 13 Dec 2018 13:12:06 -0500
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
-MIME-Version: 1.0
-In-Reply-To: <20181213151839.GC3186@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CMAE-Envelope: MS4wfLHqUliG4fv6mCutCeGoEY0OhEHhxQvV4kQgrdK4DW/IVAm3qjqDs0xsVrJsXg47v5gpmv3gg38y1NZOYb1weHD7jFyEL3vKK/xRk5gB27zuox+HLMrr
- 2b/nZocyShjJ3YxEkfcheXp3nzRMNqbtcMc58j/n7DH2NptlZ/4M+VkgQ7Gz0wj4LiW7EdOYINxkW+NR8GIbJdTtV+nqvsW4wPymXBMndrcqKFoTchRVdHVp
- w2Q4NftIDuLurWoHWf+I3iJwC/g1opjKwunpEb+dARt4PEYQdM+z1zuFjmHfPYt5casaEi1P8ucZMuhA9Po8apDGIdKItda0BHmMmP+YiR5zGpoC9ICP3jwG
- +e4ly+CpRdCpS4jMzKYzCvFhJpTdhIIjAVpOIsI6+DjnaVXRSmYcgE51SL8q7qbgXnuN0empkyQMk06+NW7S6QfSFKpzOErT7c++A5zuH28s2hwfXvbKj5Sc
- WYn8nrgKnCmK7wBjBL/yhvs220O1+F60W6/C17RWX0gNZzHbeCR7vNV0lCCYgZY9CFoT7fFD9iRbrypD74oph2T1D12MepOhIQaXqJzH2XR+glMvIbxm3b/1
- Fux4BXXkJmivYdamqGcZ4zMZRuDi+PdBD8sPgWe3sPO7/TEqdW7zfb4cj5QJLJR7HeprxG5dqaWplPFyII7WkPHB3tGo04tZQkkaCzdBALdYqCcpbicnYpe3
- CRe7TdubQFeATqIJkUy8NbHG6OAv3c4ST+zg/QlFNXfCdJOFO0cyB1FwbWkSb/mM6Lob5Pvb+lrvHykhR/DaYZKWVb5TfyGD
+        Thu, 13 Dec 2018 13:11:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=3IFeZCz8gv/scnrupK+s9h/aSMdWS/wRWB7/Pip0l7U=; b=ldoKWHPYY/az
+        gvGuUpBdeuXCQkKnGbdMeUGLLaJ2H0ZNwrAq9TcEvX+l5sNEBS5wT9G12vxowI1MWlrkQnY4c7S+n
+        63Zb1zQtpcfuXM1aESrSN1NJvDUkagaP4gHR4a1C75hDIWJf6ZQzwOOV4hvwL4pPKsZ7jImTSrM77
+        PIRF0=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gXVSQ-0002Qw-NL; Thu, 13 Dec 2018 18:11:34 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 63D8411254D1; Thu, 13 Dec 2018 18:11:34 +0000 (GMT)
+From:   Mark Brown <broonie@kernel.org>
+To:     Olliver Schinagl <oliver@schinagl.nl>
+Cc:     Priit Laes <plaes@plaes.org>, Lee Jones <lee.jones@linaro.org>,
+        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Applied "mfd: axp20x: Clean up included headers" to the regulator tree
+In-Reply-To: 
+X-Patchwork-Hint: ignore
+Message-Id: <20181213181134.63D8411254D1@debutante.sirena.org.uk>
+Date:   Thu, 13 Dec 2018 18:11:34 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/13/2018 10:18 AM, Jerome Glisse wrote:
-> On Thu, Dec 13, 2018 at 09:51:18AM -0500, Tom Talpey wrote:
->> On 12/13/2018 9:18 AM, Jerome Glisse wrote:
->>> On Thu, Dec 13, 2018 at 08:40:49AM -0500, Tom Talpey wrote:
->>>> On 12/13/2018 7:43 AM, Jerome Glisse wrote:
->>>>> On Wed, Dec 12, 2018 at 08:20:43PM -0700, Jason Gunthorpe wrote:
->>>>>> On Wed, Dec 12, 2018 at 07:01:09PM -0500, Jerome Glisse wrote:
->>>>>>> On Wed, Dec 12, 2018 at 04:37:03PM -0700, Jason Gunthorpe wrote:
->>>>>>>> On Wed, Dec 12, 2018 at 04:53:49PM -0500, Jerome Glisse wrote:
->>>>>>>>>> Almost, we need some safety around assuming that DMA is complete the
->>>>>>>>>> page, so the notification would need to go all to way to userspace
->>>>>>>>>> with something like a file lease notification. It would also need to
->>>>>>>>>> be backstopped by an IOMMU in the case where the hardware does not /
->>>>>>>>>> can not stop in-flight DMA.
->>>>>>>>>
->>>>>>>>> You can always reprogram the hardware right away it will redirect
->>>>>>>>> any dma to the crappy page.
->>>>>>>>
->>>>>>>> That causes silent data corruption for RDMA users - we can't do that.
->>>>>>>>
->>>>>>>> The only way out for current hardware is to forcibly terminate the
->>>>>>>> RDMA activity somehow (and I'm not even sure this is possible, at
->>>>>>>> least it would be driver specific)
->>>>>>>>
->>>>>>>> Even the IOMMU idea probably doesn't work, I doubt all current
->>>>>>>> hardware can handle a PCI-E error TLP properly.
->>>>>>>
->>>>>>> What i saying is reprogram hardware to crappy page ie valid page
->>>>>>> dma map but that just has random content as a last resort to allow
->>>>>>> filesystem to reuse block. So their should be no PCIE error unless
->>>>>>> hardware freak out to see its page table reprogram randomly.
->>>>>>
->>>>>> No, that isn't an option. You can't silently provide corrupted data
->>>>>> for RDMA to transfer out onto the network, or silently discard data
->>>>>> coming in!!
->>>>>>
->>>>>> Think of the consequences of that - I have a fileserver process and
->>>>>> someone does ftruncate and now my clients receive corrupted data??
->>>>>
->>>>> This is what happens _today_ ie today someone do GUP on page file
->>>>> and then someone else do truncate the first GUP is effectively
->>>>> streaming _random_ data to network as the page does not correspond
->>>>> to anything anymore and once the RDMA MR goes aways and release
->>>>> the page the page content will be lost. So i am not changing anything
->>>>> here, what i proposed was to make it explicit to device driver at
->>>>> least that they were streaming random data. Right now this is all
->>>>> silent but this is what is happening wether you like it or not :)
->>>>>
->>>>> Note that  i am saying do that only for truncate to allow to be
->>>>> nice to fs. But again i am fine with whatever solution but you can
->>>>> not please everyone here. Either block truncate and fs folks will
->>>>> hate you or make it clear to device driver that you are streaming
->>>>> random things and RDMA people hates you.
->>>>>
->>>>>
->>>>>> The only option is to prevent the RDMA transfer from ever happening,
->>>>>> and we just don't have hardware support (beyond destroy everything) to
->>>>>> do that.
->>>>>>
->>>>>>> The question is who do you want to punish ? RDMA user that pin stuff
->>>>>>> and expect thing to work forever without worrying for other fs
->>>>>>> activities ? Or filesystem to pin block forever :)
->>>>>>
->>>>>> I don't want to punish everyone, I want both sides to have complete
->>>>>> data integrity as the USER has deliberately decided to combine DAX and
->>>>>> RDMA. So either stop it at the front end (ie get_user_pages_longterm)
->>>>>> or make it work in a way that guarantees integrity for both.
->>>>>>
->>>>>>>        S2: notify userspace program through device/sub-system
->>>>>>>            specific API and delay ftruncate. After a while if there
->>>>>>>            is no answer just be mean and force hardware to use
->>>>>>>            crappy page as anyway this is what happens today
->>>>>>
->>>>>> I don't think this happens today (outside of DAX).. Does it?
->>>>>
->>>>> It does it is just silent, i don't remember anything in the code
->>>>> that would stop a truncate to happen because of elevated refcount.
->>>>> This does not happen with ODP mlx5 as it does abide by _all_ mmu
->>>>> notifier. This is for anything that does ODP without support for
->>>>> mmu notifier.
->>>>
->>>> Wait - is it expected that the MMU notifier upcall is handled
->>>> synchronously? That is, the page DMA mapping must be torn down
->>>> immediately, and before returning?
->>>
->>> Yes you must torn down mapping before returning from mmu notifier
->>> call back. Any time after is too late. You obviously need hardware
->>> that can support that. In the infiniband sub-system AFAIK only the
->>> mlx5 hardware can do that. In the GPU sub-system everyone is fine.
->>
->> I'm skeptical that MLX5 can actually make this guarantee. But we
->> can take that offline in linux-rdma.
-> 
-> It does unless the code lies about what the hardware do :) See umem_odp.c
-> in core and odp.c in mlx5 directories.
+The patch
 
-Ok, I did look and there are numerous error returns from these calls.
-Some are related to resource shortages (including the rather ominous-
-sounding "emergency_pages" in odp.c), others related to the generic
-RDMA behaviors such as posting work requests and reaping their
-completion status.
+   mfd: axp20x: Clean up included headers
 
-So I'd ask - what is the backup plan from the mmu notifier if the
-unmap fails? Which it certainly will, in many real-world situations.
+has been applied to the regulator tree at
 
-Tom.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
 
->> I'm also skeptical that NVMe can do this.
->>
->>> Dunno about other sub-systems.
->>>
->>>
->>>> That's simply not possible, since the hardware needs to get control
->>>> to do this. Even if there were an IOMMU that could intercept the
->>>> DMA, reprogramming it will require a flush, which cannot be guaranteed
->>>> to occur "inline".
->>>
->>> If hardware can not do that then hardware should not use GUP, at
->>> least not on file back page. I advocated in favor of forbiding GUP
->>> for device that can not do that as right now this silently breaks
->>> in few cases (truncate, mremap, splice, reflink, ...). So the device
->>> in those cases can end up with GUPed pages that do not correspond
->>> to anything anymore ie they do not correspond to the memory backing
->>> the virtual address they were GUP against, nor they correspond to
->>> the file content at the given offset anymore. It is just random
->>> data as far as the kernel or filesystem is concern.
->>>
->>> Of course for this to happen you need an application that do stupid
->>> thing like create an MR in one thread on the mmap of a file and
->>> truncate that same file in another thread (or from the same thread).
->>>
->>> So this is unlikely to happen in sane program. It does not mean it
->>> will not happen.
->>
->> Completely agree. In other words, this is the responsibility of the
->> DAX (or g-u-p) consumer, which is nt necessarily the program itself,
->> it could be an upper layer.
->>
->> In SMB3 and NFSv4, which I've been focused on, we envision using the
->> existing protocol leases to protect this. When requesting a DAX mapping,
->> the server may requires an exclusive lease. If this mapping needs to
->> change, because of another conflicting mapping, the lease would be
->> recalled and the mapping dropped. This is a normal and well-established
->> filesystem requirement.
->>
->> The twist here is that the platform itself can initiate such an event.
->> It's my belief that this plumbing must flow to the *top* of the stack,
->> i.e. the entity that took the mapping (e.g. filesystem), and not
->> depend on the MMU notifier at the very bottom.
-> 
-> So this patchset is about mm plumbings, what fs does before mm code
-> gets call is a fs discussion. Note also that GUP is always against
-> a virtual address of a process. GUP is use by few driver to allow
-> the device direct access to some portion of process address space.
-> 
-> The issues is that some of those device have designed an API that
-> fully ignore things like munmap, splice, truncate, ... and as such
-> they open the door for undefined behavior. I believe the original
-> intention in all the cases was that the user would not do stupid
-> thing like setup the device mapping through device specific API and
-> then munmap or truncate or anything that would affect the range of
-> virtual address.
-> 
-> Thing is from kernel point of view we should not and can not assume
-> that userspace will behave properly. So we have to brace for the
-> worst. Which is what this patchset is trying to do ie fix some of
-> issues and make the rest of them explicit to device driver so that
-> they can decide what to do about it.
-> 
-> My advice is for each of those sub-system/device to fail loudly
-> when such thing happens so that the user knows he is doing something
-> stupid or illegal.
-> 
-> 
->>> The second set of issue at to deals with set_page_dirty happening
->>> long time after page_release did happens and thus the fs dirty
->>> page callback will see page in bad state and will BUG() and you
->>> will have an oops and loose any data your device might have written
->>> to the page. This is highly filesystem dependend and also timing
->>> dependend and link to thing like memory pressure so it might not
->>> happen that often but again it can happen.
->>>
->>>
->>>>>> .. and the remedy here is to kill the process, not provide corrupt
->>>>>> data. Kill the process is likely to not go over well with any real
->>>>>> users that want this combination.
->>>>>>
->>>>>> Think Samba serving files over RDMA - you can't have random unpriv
->>>>>> users calling ftruncate and causing smbd to be killed or serve corrupt
->>>>>> data.
->>>>>
->>>>> So what i am saying is there is a choice and it would be better to
->>>>> decide something than let the existing status quo where we just keep
->>>>> streaming random data after truncate to a GUPed page.
->>>>
->>>> Let's also remember that any torn-down DMA mapping can't be recycled
->>>> until all uses of the old DMA addresses are destroyed. The whole
->>>> thing screams for reference counting all the way down, to me.
->>>
->>> I am not saying reuse the DMA address in the emergency_mean_callback
->>> the idea was:
->>>
->>>       gup_page_emergency_revoke(device, page)
->>>       {
->>>           crapy_page = alloc_page();
->>>           dma_addr = dma_map(crappy_page, device, ...);
->>>           mydevice_page_table_update(device, crappy_page, dma_addr);
->>>           mydevice_tlb_flush(device);
->>>           mydevice_wait_pending_dma(device)
->>>
->>>           // at this point the original GUPed page is not access by hw
->>>
->>>           dma_unmap(page);
->>>           put_user_page(page);
->>>       }
->>
->> Ok, but my concern was also that the old DMA address then becomes
->> unused and may be grabbed by a new i/o. If the hardware still has
->> reads or writes in flight, and they arrive after the old address
->> becomes valid, well, oops.
-> 
-> In above code at the comment point the driver garanty the hardware
-> will never use the old dma address any more ie that all in flight
-> dma are done. I know this can be done for some devices. It might
-> very well not work for all and this is why this need to be a sub-
-> system/device discussion.
-> 
-> Cheers,
-> Jérôme
-> 
-> 
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From dcea4d5c0a349034686ef9f8ba8a9910e0a1c14b Mon Sep 17 00:00:00 2001
+From: Olliver Schinagl <oliver@schinagl.nl>
+Date: Tue, 11 Dec 2018 17:17:11 +0200
+Subject: [PATCH] mfd: axp20x: Clean up included headers
+
+Add the bitops.h header as we need it, alphabetize header order.
+
+Signed-off-by: Olliver Schinagl <oliver@schinagl.nl>
+Signed-off-by: Priit Laes <plaes@plaes.org>
+Acked-by: Lee Jones <lee.jones@linaro.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/mfd/axp20x.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/mfd/axp20x.c b/drivers/mfd/axp20x.c
+index 0be511dd93d0..da54399dc7b3 100644
+--- a/drivers/mfd/axp20x.c
++++ b/drivers/mfd/axp20x.c
+@@ -16,18 +16,19 @@
+  * published by the Free Software Foundation.
+  */
+ 
+-#include <linux/err.h>
++#include <linux/acpi.h>
++#include <linux/bitops.h>
+ #include <linux/delay.h>
++#include <linux/err.h>
+ #include <linux/interrupt.h>
+ #include <linux/kernel.h>
++#include <linux/mfd/axp20x.h>
++#include <linux/mfd/core.h>
+ #include <linux/module.h>
++#include <linux/of_device.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/regmap.h>
+ #include <linux/regulator/consumer.h>
+-#include <linux/mfd/axp20x.h>
+-#include <linux/mfd/core.h>
+-#include <linux/of_device.h>
+-#include <linux/acpi.h>
+ 
+ #define AXP20X_OFF	0x80
+ 
+-- 
+2.19.0.rc2
+
