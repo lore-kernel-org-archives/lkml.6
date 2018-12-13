@@ -2,228 +2,665 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B446C67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 18:12:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1287C67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 18:12:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B78F20880
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 18:12:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544724721;
-	bh=+LZJe2GKcs94/m6XrG8Tfg4nAhPvhH0Xg/QLP55BVXU=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=wVa1MIS2uj1iWQGw8EgqO5GhlZt76WJ2nGkUq4svRWfi1koha7pDr1B7i0mhFhCxT
-	 OSE/cjK8xvNbxXVNpBslCRXXa9MspzcELV04COR3Ej8OlfGbUEdZIUaICf3ufJkdqO
-	 PgmVjaAdFKe/fxMMxgpZxrjxU9drqOr6Tllne+i0=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B78F20880
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 9D59120870
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 18:12:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D59120870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729860AbeLMSL7 (ORCPT
+        id S1729838AbeLMSL7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Thu, 13 Dec 2018 13:11:59 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:37716 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729797AbeLMSLp (ORCPT
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40318 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729775AbeLMSLq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 13:11:45 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=EIv3B2nzBQF12AuMbWDaWyOpEQ87adi/yIr4RxFSIoo=; b=Gt/ID8UhXYOe
-        Pu1pjyh++Rvn0znZ1U54CXFYPPfqokUF8JgL4WUpjHM+Bm7Kak2FOBShw+xYa3KuIqrNr6UkeWBIL
-        Oo0zTnUtFdJwjHHHcspJGQtsxJrl7zjNuGAPRbNsf3m6dSbSsQAyQCHSG1AMbT5eoZ0lBEAHsAsQI
-        EAFec=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gXVSZ-0002Rb-0V; Thu, 13 Dec 2018 18:11:43 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id A5F3911254D1; Thu, 13 Dec 2018 18:11:42 +0000 (GMT)
-From:   Mark Brown <broonie@kernel.org>
-To:     Olliver Schinagl <oliver@schinagl.nl>
-Cc:     Priit Laes <plaes@plaes.org>, Mark Brown <broonie@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: Applied "regulator: axp20x: add support for set_ramp_delay for AXP209" to the regulator tree
-In-Reply-To: 
-X-Patchwork-Hint: ignore
-Message-Id: <20181213181142.A5F3911254D1@debutante.sirena.org.uk>
-Date:   Thu, 13 Dec 2018 18:11:42 +0000 (GMT)
+        Thu, 13 Dec 2018 13:11:46 -0500
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBDHx06L127458
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 13:11:44 -0500
+Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2pbtrh5r3j-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 13:11:43 -0500
+Received: from localhost
+        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Thu, 13 Dec 2018 18:11:43 -0000
+Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
+        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 13 Dec 2018 18:11:38 -0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBDIBbIT22610074
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 13 Dec 2018 18:11:37 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E0B5BB205F;
+        Thu, 13 Dec 2018 18:11:36 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id ADCBCB206A;
+        Thu, 13 Dec 2018 18:11:36 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.38])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu, 13 Dec 2018 18:11:36 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id BB9EC16C104C; Thu, 13 Dec 2018 10:11:36 -0800 (PST)
+Date:   Thu, 13 Dec 2018 10:11:36 -0800
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     "He, Bo" <bo.he@intel.com>
+Cc:     "Zhang, Jun" <jun.zhang@intel.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "josh@joshtriplett.org" <josh@joshtriplett.org>,
+        "mathieu.desnoyers@efficios.com" <mathieu.desnoyers@efficios.com>,
+        "jiangshanlai@gmail.com" <jiangshanlai@gmail.com>,
+        "Xiao, Jin" <jin.xiao@intel.com>,
+        "Zhang, Yanmin" <yanmin.zhang@intel.com>,
+        "Bai, Jie A" <jie.a.bai@intel.com>,
+        "Sun, Yi J" <yi.j.sun@intel.com>
+Subject: Re: rcu_preempt caused oom
+Reply-To: paulmck@linux.ibm.com
+References: <CD6925E8781EFD4D8E11882D20FC406D52A192C3@SHSMSX104.ccr.corp.intel.com>
+ <20181212154224.GX4170@linux.ibm.com>
+ <20181212210316.GA14777@linux.ibm.com>
+ <CD6925E8781EFD4D8E11882D20FC406D52A193C3@SHSMSX104.ccr.corp.intel.com>
+ <20181213001214.GE4170@linux.ibm.com>
+ <88DC34334CA3444C85D647DBFA962C2735AD5F77@SHSMSX104.ccr.corp.intel.com>
+ <20181213024234.GF4170@linux.ibm.com>
+ <88DC34334CA3444C85D647DBFA962C2735AD5F9E@SHSMSX104.ccr.corp.intel.com>
+ <20181213044020.GA19765@linux.ibm.com>
+ <CD6925E8781EFD4D8E11882D20FC406D52A197EC@SHSMSX104.ccr.corp.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CD6925E8781EFD4D8E11882D20FC406D52A197EC@SHSMSX104.ccr.corp.intel.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18121318-0060-0000-0000-000002E386EC
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010220; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000271; SDB=6.01131271; UDB=6.00587906; IPR=6.00911403;
+ MB=3.00024682; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-13 18:11:41
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18121318-0061-0000-0000-00004786DC1C
+Message-Id: <20181213181136.GL4170@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-13_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812130155
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On Thu, Dec 13, 2018 at 03:26:08PM +0000, He, Bo wrote:
+> one of the board reproduce the issue with the show_rcu_gp_kthreads(), I also enclosed the logs as attachment.
+> 
+> [17818.936032] rcu: rcu_preempt: wait state: RCU_GP_WAIT_GPS(1) ->state: 0x402 delta ->gp_activity 308257 ->gp_req_activity 308256 ->gp_wake_time 308258 ->gp_wake_seq       21808189 ->gp_seq 21808192 ->gp_seq_needed 21808196 ->gp_flags 0x1
 
-   regulator: axp20x: add support for set_ramp_delay for AXP209
+This is quite helpful, thank you!
 
-has been applied to the regulator tree at
+The "RCU lockdep checking is enabled" says that CONFIG_PROVE_RCU=y,
+which is good.  The "RCU_GP_WAIT_GPS(1)" means that the rcu_preempt task
+is waiting for a new grace-period request.  The "->state: 0x402" means
+that it is sleeping, neither running nor in the process of waking up.
+The "delta ->gp_activity 308257 ->gp_req_activity 308256 ->gp_wake_time
+308258" means that it has been more than 300,000 jiffies since the
+rcu_preempt task did anything or was requested to do anything.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
+The "->gp_wake_seq 21808189 ->gp_seq 21808192" says that the last attempt
+to awaken the rcu_preempt task happened during the last grace period.
+The "->gp_seq_needed 21808196 ->gp_flags 0x1" nevertheless says that
+someone requested a new grace period.  So if the rcu_preempt task were
+to wake up, it would process the new grace period.  Note again also
+the ->gp_req_activity 308256, which indicates that ->gp_flags was set
+more than 300,000 jiffies ago, just after the last recorded activity
+of the rcu_preempt task.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+But this is exactly the situation that rcu_check_gp_start_stall() is
+designed to warn about (and does warn about for me when I comment
+out the wakeup code).  So why is rcu_check_gp_start_stall() not being
+called?  Here are a couple of possibilities:
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+1.	Because rcu_check_gp_start_stall() is only ever invoked from
+	RCU_SOFTIRQ, it is possible that softirqs are stalled for
+	whatever reason.
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+2.	Because RCU_SOFTIRQ is invoked primarily from the scheduler-clock
+	interrupt handler, it is possible that the scheduler tick has
+	somehow been disabled.  Traces from earlier runs showed a great
+	deal of RCU callbacks queued, which would have caused RCU to
+	refuse to allow the scheduler tick to be disabled, even if the
+	corresponding CPU was idle.
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+3.	You have CONFIG_FAST_NO_HZ=y (which you probably do, given
+	that you are building for a battery-powered device) and all of the
+	CPU's callbacks are lazy.  Except that your earlier traces showed
+	lots of non-lazy callbacks.  Besides, even if all callbacks were
+	lazy, there would still be a scheduling-clock interrupt every
+	six seconds, and there are quite a few six-second intervals
+	in a two-minute watchdog timeout.
 
-Thanks,
-Mark
+	But if we cannot find the problem quickly, I will likely ask
+	you to try reproducing with CONFIG_FAST_NO_HZ=n.  This could
+	be thought of as bisecting the RCU code looking for the bug.
 
-From d29f54df8b167be6174881f265b12453a558e48a Mon Sep 17 00:00:00 2001
-From: Olliver Schinagl <oliver@schinagl.nl>
-Date: Tue, 11 Dec 2018 17:17:06 +0200
-Subject: [PATCH] regulator: axp20x: add support for set_ramp_delay for AXP209
+The first two of these seem unlikely given that the watchdog timer was
+still firing.  Still, I don't see how 300,000 jiffies elapsed with a grace
+period requested and not started otherwise.  Could you please check?
+One way to do so would be to enable ftrace on rcu_check_callbacks(),
+__rcu_process_callbacks(), and rcu_check_gp_start_stall().  It might
+be necessary to no-inline rcu_check_gp_start_stall().  You might have
+better ways to collect this information.
 
-The AXP209 supports ramping up voltages on several regulators such as
-DCDC2 and LDO3.
+Without this information, the only workaround patch I can give you will
+degrade battery lifetime, which might not be what you want.
 
-This patch adds preliminary support for the regulator-ramp-delay property
-for these 2 regulators. Note that the voltage ramp only works when
-regulator is already enabled. E.g. when going from say 0.7 V to 3.6 V.
+You do have a lockdep complaint early at boot.  Although I don't
+immediately see how this self-deadlock would affect RCU, please do get
+it fixed.  Sometimes the consequences of this sort of deadlock can
+propagate to unexepected places.
 
-When turning on the regulator, no voltage ramp is performed in hardware.
+Regardless of why rcu_check_gp_start_stall() failed to complain, it looks
+like this was set after the rcu_preempt task slept for the last time,
+and so there should have been a wakeup the last time that ->gp_flags
+was set.  Perhaps there is some code path that drops the wakeup.
+I did check this in current -rcu, but you are instead running v4.19,
+so I should also check there.
 
-What this means, is that if the bootloader brings up the voltage at 0.7 V,
-the ramp delay property is properly applied. If however, the bootloader
-leaves the power off, no ramp delay is applied when the power is
-enabled by the regulator framework.
+The ->gp_flags has its RCU_GP_FLAG_INIT bit set in rcu_start_this_gp()
+and in rcu_gp_cleanup().  We can eliminate rcu_gp_cleanup() from
+consideration because only the rcu_preempt task will execute that code,
+and we know that this task was asleep at the last time this bit was set.
+Now rcu_start_this_gp() returns a flag indicating whether or not a wakeup
+is needed, and the caller must do the wakeup once it is safe to do so,
+that is, after the various rcu_node locks have been released (doing a
+wakeup while holding any of those locks results in deadlock).
 
-Signed-off-by: Olliver Schinagl <oliver@schinagl.nl>
-Signed-off-by: Priit Laes <plaes@plaes.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/regulator/axp20x-regulator.c | 85 ++++++++++++++++++++++++++++
- 1 file changed, 85 insertions(+)
+The following functions invoke rcu_start_this_gp: rcu_accelerate_cbs()
+and rcu_nocb_wait_gp().  We can eliminate rcu_nocb_wait_gp() because you
+are building with CONFIG_RCU_NOCB_CPU=n.  Then rcu_accelerate_cbs()
+is invoked from:
 
-diff --git a/drivers/regulator/axp20x-regulator.c b/drivers/regulator/axp20x-regulator.c
-index 9a2db28effb5..1d9fa6238aec 100644
---- a/drivers/regulator/axp20x-regulator.c
-+++ b/drivers/regulator/axp20x-regulator.c
-@@ -51,6 +51,17 @@
- #define AXP20X_PWR_OUT_DCDC2_MASK	BIT_MASK(4)
- #define AXP20X_PWR_OUT_LDO3_MASK	BIT_MASK(6)
- 
-+#define AXP20X_DCDC2_LDO3_V_RAMP_DCDC2_RATE_MASK	BIT_MASK(0)
-+#define AXP20X_DCDC2_LDO3_V_RAMP_DCDC2_RATE(x) \
-+	((x) << 0)
-+#define AXP20X_DCDC2_LDO3_V_RAMP_LDO3_RATE_MASK		BIT_MASK(1)
-+#define AXP20X_DCDC2_LDO3_V_RAMP_LDO3_RATE(x) \
-+	((x) << 1)
-+#define AXP20X_DCDC2_LDO3_V_RAMP_DCDC2_EN_MASK		BIT_MASK(2)
-+#define AXP20X_DCDC2_LDO3_V_RAMP_DCDC2_EN		BIT(2)
-+#define AXP20X_DCDC2_LDO3_V_RAMP_LDO3_EN_MASK		BIT_MASK(3)
-+#define AXP20X_DCDC2_LDO3_V_RAMP_LDO3_EN		BIT(3)
-+
- #define AXP20X_LDO4_V_OUT_1250mV_START	0x0
- #define AXP20X_LDO4_V_OUT_1250mV_STEPS	0
- #define AXP20X_LDO4_V_OUT_1250mV_END	\
-@@ -346,6 +357,79 @@
- 		.ops		= &axp20x_ops_range,				\
- 	}
- 
-+static const int axp209_dcdc2_ldo3_slew_rates[] = {
-+	1600,
-+	 800,
-+};
-+
-+static int axp20x_set_ramp_delay(struct regulator_dev *rdev, int ramp)
-+{
-+	struct axp20x_dev *axp20x = rdev_get_drvdata(rdev);
-+	const struct regulator_desc *desc = rdev->desc;
-+	u8 reg, mask, enable, cfg = 0xff;
-+	const int *slew_rates;
-+	int rate_count = 0;
-+
-+	if (!rdev)
-+		return -EINVAL;
-+
-+	switch (axp20x->variant) {
-+	case AXP209_ID:
-+		if (desc->id == AXP20X_DCDC2) {
-+			rate_count = ARRAY_SIZE(axp209_dcdc2_ldo3_slew_rates);
-+			reg = AXP20X_DCDC2_LDO3_V_RAMP;
-+			mask = AXP20X_DCDC2_LDO3_V_RAMP_DCDC2_RATE_MASK |
-+			       AXP20X_DCDC2_LDO3_V_RAMP_DCDC2_EN_MASK;
-+			enable = (ramp > 0) ?
-+				 AXP20X_DCDC2_LDO3_V_RAMP_DCDC2_EN :
-+				 !AXP20X_DCDC2_LDO3_V_RAMP_DCDC2_EN;
-+			break;
-+		}
-+
-+		if (desc->id == AXP20X_LDO3) {
-+			slew_rates = axp209_dcdc2_ldo3_slew_rates;
-+			rate_count = ARRAY_SIZE(axp209_dcdc2_ldo3_slew_rates);
-+			reg = AXP20X_DCDC2_LDO3_V_RAMP;
-+			mask = AXP20X_DCDC2_LDO3_V_RAMP_LDO3_RATE_MASK |
-+			       AXP20X_DCDC2_LDO3_V_RAMP_LDO3_EN_MASK;
-+			enable = (ramp > 0) ?
-+				 AXP20X_DCDC2_LDO3_V_RAMP_LDO3_EN :
-+				 !AXP20X_DCDC2_LDO3_V_RAMP_LDO3_EN;
-+			break;
-+		}
-+
-+		if (rate_count > 0)
-+			break;
-+
-+		/* fall through */
-+	default:
-+		/* Not supported for this regulator */
-+		return -ENOTSUPP;
-+	}
-+
-+	if (ramp == 0) {
-+		cfg = enable;
-+	} else {
-+		int i;
-+
-+		for (i = 0; i < rate_count; i++) {
-+			if (ramp <= slew_rates[i])
-+				cfg = AXP20X_DCDC2_LDO3_V_RAMP_LDO3_RATE(i);
-+			else
-+				break;
-+		}
-+
-+		if (cfg == 0xff) {
-+			dev_err(axp20x->dev, "unsupported ramp value %d", ramp);
-+			return -EINVAL;
-+		}
-+
-+		cfg |= enable;
-+	}
-+
-+	return regmap_update_bits(axp20x->regmap, reg, mask, cfg);
-+}
-+
- static const struct regulator_ops axp20x_ops_fixed = {
- 	.list_voltage		= regulator_list_voltage_linear,
- };
-@@ -366,6 +450,7 @@ static const struct regulator_ops axp20x_ops = {
- 	.enable			= regulator_enable_regmap,
- 	.disable		= regulator_disable_regmap,
- 	.is_enabled		= regulator_is_enabled_regmap,
-+	.set_ramp_delay		= axp20x_set_ramp_delay,
- };
- 
- static const struct regulator_ops axp20x_ops_sw = {
--- 
-2.19.0.rc2
+o	rcu_accelerate_cbs_unlocked(), which does the following, thus
+	properly awakening the rcu_preempt task when needed:
+
+	needwake = rcu_accelerate_cbs(rsp, rnp, rdp);
+	raw_spin_unlock_rcu_node(rnp); /* irqs remain disabled. */
+	if (needwake)
+		rcu_gp_kthread_wake(rsp);
+
+o	rcu_advance_cbs(), which returns the value returned by
+	rcu_accelerate_cbs(), thus pushing the problem off to its
+	callers, which are called out below.
+
+o	__note_gp_changes(), which also returns the value returned by
+	rcu_accelerate_cbs(), thus pushing the problem off to its callers,
+	which are called out below.
+
+o	rcu_gp_cleanup(), which is only ever invoked by RCU grace-period
+	kthreads such as the rcu_preempt task.	Therefore, this function
+	never needs to awaken the rcu_preempt task, because the fact
+	that this function is executing means that this task is already
+	awake.	(Also, as noted above, we can eliminate this code from
+	consideration because this task is known to have been sleeping
+	at the last time that the RCU_GP_FLAG_INIT bit was set.)
+
+o	rcu_report_qs_rdp(), which does the following, thus properly
+	awakening the rcu_preempt task when needed:
+
+		needwake = rcu_accelerate_cbs(rsp, rnp, rdp);
+
+		rcu_report_qs_rnp(mask, rsp, rnp, rnp->gp_seq, flags);
+		/* ^^^ Released rnp->lock */
+		if (needwake)
+			rcu_gp_kthread_wake(rsp);
+
+o	rcu_prepare_for_idle(), which does the following, thus properly
+	awakening the rcu_preempt task when needed:
+
+		needwake = rcu_accelerate_cbs(rsp, rnp, rdp);
+		raw_spin_unlock_rcu_node(rnp); /* irqs remain disabled. */
+		if (needwake)
+			rcu_gp_kthread_wake(rsp);
+
+Now for rcu_advance_cbs():
+
+o	__note_gp_changes(), which which also returns the value returned
+	by rcu_advance_cbs(), thus pushing the problem off to its callers,
+	which are called out below.
+
+o	rcu_migrate_callbacks(), which does the following, thus properly
+	awakening the rcu_preempt task when needed:
+
+	needwake = rcu_advance_cbs(rsp, rnp_root, rdp) ||
+		   rcu_advance_cbs(rsp, rnp_root, my_rdp);
+	rcu_segcblist_merge(&my_rdp->cblist, &rdp->cblist);
+	WARN_ON_ONCE(rcu_segcblist_empty(&my_rdp->cblist) !=
+		     !rcu_segcblist_n_cbs(&my_rdp->cblist));
+	raw_spin_unlock_irqrestore_rcu_node(rnp_root, flags);
+	if (needwake)
+		rcu_gp_kthread_wake(rsp);
+
+Now for __note_gp_changes():
+
+o	note_gp_changes(), which does the following, thus properly
+	awakening the rcu_preempt task when needed:
+
+	needwake = __note_gp_changes(rsp, rnp, rdp);
+	raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
+	if (needwake)
+		rcu_gp_kthread_wake(rsp);
+
+o	rcu_gp_init() which is only ever invoked by RCU grace-period
+	kthreads such as the rcu_preempt task, which makes wakeups
+	unnecessary, just as for rcu_gp_cleanup() above.
+
+o	rcu_gp_cleanup(), ditto.
+
+So I am not seeing how I am losing a wakeup, but please do feel free to
+double-check my analysis.  One way to do that is using event tracing.
+
+							Thanx, Paul
+
+------------------------------------------------------------------------
+lockdep complaint:
+------------------------------------------------------------------------
+
+[    2.895507] ======================================================
+[    2.895511] WARNING: possible circular locking dependency detected
+[    2.895517] 4.19.5-quilt-2e5dc0ac-g4d59bbd0fd1a #1 Tainted: G     U           
+[    2.895521] ------------------------------------------------------
+[    2.895525] earlyEvs/1839 is trying to acquire lock:
+[    2.895530] 00000000ff344115 (&asd->mutex){+.+.}, at: ipu_isys_subdev_get_ffmt+0x32/0x90
+[    2.895546] 
+[    2.895546] but task is already holding lock:
+[    2.895550] 0000000069562e72 (&mdev->graph_mutex){+.+.}, at: media_pipeline_start+0x28/0x50
+[    2.895561] 
+[    2.895561] which lock already depends on the new lock.
+[    2.895561] 
+[    2.895566] 
+[    2.895566] the existing dependency chain (in reverse order) is:
+[    2.895570] 
+[    2.895570] -> #1 (&mdev->graph_mutex){+.+.}:
+[    2.895583]        __mutex_lock+0x80/0x9a0
+[    2.895588]        mutex_lock_nested+0x1b/0x20
+[    2.895593]        media_device_register_entity+0x92/0x1e0
+[    2.895598]        v4l2_device_register_subdev+0xc2/0x1b0
+[    2.895604]        ipu_isys_csi2_init+0x22c/0x520
+[    2.895608]        isys_probe+0x6cb/0xed0
+[    2.895613]        ipu_bus_probe+0xfd/0x2e0
+[    2.895620]        really_probe+0x268/0x3d0
+[    2.895625]        driver_probe_device+0x11a/0x130
+[    2.895630]        __device_attach_driver+0x86/0x100
+[    2.895635]        bus_for_each_drv+0x6e/0xb0
+[    2.895640]        __device_attach+0xdf/0x160
+[    2.895645]        device_initial_probe+0x13/0x20
+[    2.895650]        bus_probe_device+0xa6/0xc0
+[    2.895655]        deferred_probe_work_func+0x88/0xe0
+[    2.895661]        process_one_work+0x220/0x5c0
+[    2.895665]        worker_thread+0x1da/0x3b0
+[    2.895670]        kthread+0x12c/0x150
+[    2.895675]        ret_from_fork+0x3a/0x50
+[    2.895678] 
+[    2.895678] -> #0 (&asd->mutex){+.+.}:
+[    2.895688]        lock_acquire+0x95/0x1a0
+[    2.895693]        __mutex_lock+0x80/0x9a0
+[    2.895698]        mutex_lock_nested+0x1b/0x20
+[    2.895703]        ipu_isys_subdev_get_ffmt+0x32/0x90
+[    2.895708]        ipu_isys_csi2_get_fmt+0x14/0x30
+[    2.895713]        v4l2_subdev_link_validate_get_format.isra.6+0x52/0x80
+[    2.895718]        v4l2_subdev_link_validate_one+0x67/0x120
+[    2.895723]        v4l2_subdev_link_validate+0x246/0x490
+[    2.895728]        csi2_link_validate+0xc6/0x220
+[    2.895733]        __media_pipeline_start+0x15b/0x2f0
+[    2.895738]        media_pipeline_start+0x33/0x50
+[    2.895743]        ipu_isys_video_prepare_streaming+0x1e0/0x610
+[    2.895748]        start_streaming+0x186/0x3a0
+[    2.895753]        vb2_start_streaming+0x6d/0x130
+[    2.895758]        vb2_core_streamon+0x108/0x140
+[    2.895762]        vb2_streamon+0x29/0x50
+[    2.895767]        vb2_ioctl_streamon+0x42/0x50
+[    2.895772]        v4l_streamon+0x20/0x30
+[    2.895776]        __video_do_ioctl+0x1af/0x3c0
+[    2.895781]        video_usercopy+0x27e/0x7e0
+[    2.895785]        video_ioctl2+0x15/0x20
+[    2.895789]        v4l2_ioctl+0x49/0x50
+[    2.895794]        do_video_ioctl+0x93c/0x2360
+[    2.895799]        v4l2_compat_ioctl32+0x93/0xe0
+[    2.895806]        __ia32_compat_sys_ioctl+0x73a/0x1c90
+[    2.895813]        do_fast_syscall_32+0x9a/0x2d6
+[    2.895818]        entry_SYSENTER_compat+0x6d/0x7c
+[    2.895821] 
+[    2.895821] other info that might help us debug this:
+[    2.895821] 
+[    2.895826]  Possible unsafe locking scenario:
+[    2.895826] 
+[    2.895830]        CPU0                    CPU1
+[    2.895833]        ----                    ----
+[    2.895836]   lock(&mdev->graph_mutex);
+[    2.895842]                                lock(&asd->mutex);
+[    2.895847]                                lock(&mdev->graph_mutex);
+[    2.895852]   lock(&asd->mutex);
+[    2.895857] 
+[    2.895857]  *** DEADLOCK ***
+[    2.895857] 
+[    2.895863] 3 locks held by earlyEvs/1839:
+[    2.895866]  #0: 00000000ed860090 (&av->mutex){+.+.}, at: __video_do_ioctl+0xbf/0x3c0
+[    2.895876]  #1: 000000000cb253e7 (&isys->stream_mutex){+.+.}, at: start_streaming+0x5c/0x3a0
+[    2.895886]  #2: 0000000069562e72 (&mdev->graph_mutex){+.+.}, at: media_pipeline_start+0x28/0x50
+[    2.895896] 
+[    2.895896] stack backtrace:
+[    2.895903] CPU: 0 PID: 1839 Comm: earlyEvs Tainted: G     U            4.19.5-quilt-2e5dc0ac-g4d59bbd0fd1a #1
+[    2.895907] Call Trace:
+[    2.895915]  dump_stack+0x70/0xa5
+[    2.895921]  print_circular_bug.isra.35+0x1d8/0x1e6
+[    2.895927]  __lock_acquire+0x1284/0x1340
+[    2.895931]  ? __lock_acquire+0x2b5/0x1340
+[    2.895940]  lock_acquire+0x95/0x1a0
+[    2.895945]  ? lock_acquire+0x95/0x1a0
+[    2.895950]  ? ipu_isys_subdev_get_ffmt+0x32/0x90
+[    2.895956]  ? ipu_isys_subdev_get_ffmt+0x32/0x90
+[    2.895961]  __mutex_lock+0x80/0x9a0
+[    2.895966]  ? ipu_isys_subdev_get_ffmt+0x32/0x90
+[    2.895971]  ? crlmodule_get_format+0x43/0x50
+[    2.895979]  mutex_lock_nested+0x1b/0x20
+[    2.895984]  ? mutex_lock_nested+0x1b/0x20
+[    2.895989]  ipu_isys_subdev_get_ffmt+0x32/0x90
+[    2.895995]  ipu_isys_csi2_get_fmt+0x14/0x30
+[    2.896001]  v4l2_subdev_link_validate_get_format.isra.6+0x52/0x80
+[    2.896006]  v4l2_subdev_link_validate_one+0x67/0x120
+[    2.896011]  ? crlmodule_get_format+0x2a/0x50
+[    2.896018]  ? find_held_lock+0x35/0xa0
+[    2.896023]  ? crlmodule_get_format+0x43/0x50
+[    2.896030]  v4l2_subdev_link_validate+0x246/0x490
+[    2.896035]  ? __mutex_unlock_slowpath+0x58/0x2f0
+[    2.896042]  ? mutex_unlock+0x12/0x20
+[    2.896046]  ? crlmodule_get_format+0x43/0x50
+[    2.896052]  ? v4l2_subdev_link_validate_get_format.isra.6+0x52/0x80
+[    2.896057]  ? v4l2_subdev_link_validate_one+0x67/0x120
+[    2.896065]  ? __is_insn_slot_addr+0xad/0x120
+[    2.896070]  ? kernel_text_address+0xc4/0x100
+[    2.896078]  ? v4l2_subdev_link_validate+0x246/0x490
+[    2.896085]  ? kernel_text_address+0xc4/0x100
+[    2.896092]  ? __lock_acquire+0x1106/0x1340
+[    2.896096]  ? __lock_acquire+0x1169/0x1340
+[    2.896103]  csi2_link_validate+0xc6/0x220
+[    2.896110]  ? __lock_is_held+0x5a/0xa0
+[    2.896115]  ? mark_held_locks+0x58/0x80
+[    2.896122]  ? __kmalloc+0x207/0x2e0
+[    2.896127]  ? __lock_is_held+0x5a/0xa0
+[    2.896134]  ? rcu_read_lock_sched_held+0x81/0x90
+[    2.896139]  ? __kmalloc+0x2a3/0x2e0
+[    2.896144]  ? media_pipeline_start+0x28/0x50
+[    2.896150]  ? __media_entity_enum_init+0x33/0x70
+[    2.896155]  ? csi2_has_route+0x18/0x20
+[    2.896160]  ? media_graph_walk_next.part.9+0xac/0x290
+[    2.896166]  __media_pipeline_start+0x15b/0x2f0
+[    2.896173]  ? rcu_read_lock_sched_held+0x81/0x90
+[    2.896179]  media_pipeline_start+0x33/0x50
+[    2.896186]  ipu_isys_video_prepare_streaming+0x1e0/0x610
+[    2.896191]  ? __lock_acquire+0x132e/0x1340
+[    2.896198]  ? __lock_acquire+0x2b5/0x1340
+[    2.896204]  ? lock_acquire+0x95/0x1a0
+[    2.896209]  ? start_streaming+0x5c/0x3a0
+[    2.896215]  ? start_streaming+0x5c/0x3a0
+[    2.896221]  ? __mutex_lock+0x391/0x9a0
+[    2.896226]  ? v4l_enable_media_source+0x2d/0x70
+[    2.896233]  ? find_held_lock+0x35/0xa0
+[    2.896238]  ? v4l_enable_media_source+0x57/0x70
+[    2.896245]  start_streaming+0x186/0x3a0
+[    2.896250]  ? __mutex_unlock_slowpath+0x58/0x2f0
+[    2.896257]  vb2_start_streaming+0x6d/0x130
+[    2.896262]  ? vb2_start_streaming+0x6d/0x130
+[    2.896267]  vb2_core_streamon+0x108/0x140
+[    2.896273]  vb2_streamon+0x29/0x50
+[    2.896278]  vb2_ioctl_streamon+0x42/0x50
+[    2.896284]  v4l_streamon+0x20/0x30
+[    2.896288]  __video_do_ioctl+0x1af/0x3c0
+[    2.896296]  ? __might_fault+0x85/0x90
+[    2.896302]  video_usercopy+0x27e/0x7e0
+[    2.896307]  ? copy_overflow+0x20/0x20
+[    2.896313]  ? find_held_lock+0x35/0xa0
+[    2.896319]  ? __might_fault+0x3e/0x90
+[    2.896325]  video_ioctl2+0x15/0x20
+[    2.896330]  v4l2_ioctl+0x49/0x50
+[    2.896335]  do_video_ioctl+0x93c/0x2360
+[    2.896343]  v4l2_compat_ioctl32+0x93/0xe0
+[    2.896349]  __ia32_compat_sys_ioctl+0x73a/0x1c90
+[    2.896354]  ? lockdep_hardirqs_on+0xef/0x180
+[    2.896359]  ? do_fast_syscall_32+0x3b/0x2d6
+[    2.896364]  do_fast_syscall_32+0x9a/0x2d6
+[    2.896370]  entry_SYSENTER_compat+0x6d/0x7c
+[    2.896377] RIP: 0023:0xf7e79b79
+[    2.896382] Code: 85 d2 74 02 89 0a 5b 5d c3 8b 04 24 c3 8b 0c 24 c3 8b 1c 24 c3 90 90 90 90 90 90 90 90 90 90 90 90 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 eb 0d 90 90 90 90 90 90 90 90 90 90 90 90
+[    2.896387] RSP: 002b:00000000f76816bc EFLAGS: 00000292 ORIG_RAX: 0000000000000036
+[    2.896393] RAX: ffffffffffffffda RBX: 000000000000000e RCX: 0000000040045612
+[    2.896396] RDX: 00000000f768172c RSI: 00000000f7d42d9c RDI: 00000000f768172c
+[    2.896400] RBP: 00000000f7681708 R08: 0000000000000000 R09: 0000000000000000
+[    2.896404] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+[    2.896408] R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+
+------------------------------------------------------------------------
+
+> [17818.936039] rcu:     rcu_node 0:3 ->gp_seq 21808192 ->gp_seq_needed 21808196
+> [17818.936048] rcu: rcu_sched: wait state: RCU_GP_WAIT_GPS(1) ->state: 0x402 delta ->gp_activity 101730 ->gp_req_activity 101732 ->gp_wake_time 101730 ->gp_wake_seq 1357 -  >gp_seq 1360 ->gp_seq_needed 1360 ->gp_flags 0x0                                                                                                                             
+> [17818.936056] rcu: rcu_bh: wait state: RCU_GP_WAIT_GPS(1) ->state: 0x402 delta ->gp_activity 4312486108 ->gp_req_activity 4312486108 ->gp_wake_time 4312486108 -            >gp_wake_seq 0 ->gp_seq -1200 ->gp_seq_needed -1200 ->gp_flags 0x0
+> 
+> -----Original Message-----
+> From: Paul E. McKenney <paulmck@linux.ibm.com> 
+> Sent: Thursday, December 13, 2018 12:40 PM
+> To: Zhang, Jun <jun.zhang@intel.com>
+> Cc: He, Bo <bo.he@intel.com>; Steven Rostedt <rostedt@goodmis.org>; linux-kernel@vger.kernel.org; josh@joshtriplett.org; mathieu.desnoyers@efficios.com; jiangshanlai@gmail.com; Xiao, Jin <jin.xiao@intel.com>; Zhang, Yanmin <yanmin.zhang@intel.com>; Bai, Jie A <jie.a.bai@intel.com>; Sun, Yi J <yi.j.sun@intel.com>
+> Subject: Re: rcu_preempt caused oom
+> 
+> On Thu, Dec 13, 2018 at 03:28:46AM +0000, Zhang, Jun wrote:
+> > Ok, we will test it, thanks!
+> 
+> But please also try the sysrq-y with the earlier patch after a hang!
+> 
+> 							Thanx, Paul
+> 
+> > -----Original Message-----
+> > From: Paul E. McKenney [mailto:paulmck@linux.ibm.com]
+> > Sent: Thursday, December 13, 2018 10:43
+> > To: Zhang, Jun <jun.zhang@intel.com>
+> > Cc: He, Bo <bo.he@intel.com>; Steven Rostedt <rostedt@goodmis.org>; 
+> > linux-kernel@vger.kernel.org; josh@joshtriplett.org; 
+> > mathieu.desnoyers@efficios.com; jiangshanlai@gmail.com; Xiao, Jin 
+> > <jin.xiao@intel.com>; Zhang, Yanmin <yanmin.zhang@intel.com>; Bai, Jie 
+> > A <jie.a.bai@intel.com>; Sun, Yi J <yi.j.sun@intel.com>
+> > Subject: Re: rcu_preempt caused oom
+> > 
+> > On Thu, Dec 13, 2018 at 02:11:35AM +0000, Zhang, Jun wrote:
+> > > Hello, Paul
+> > > 
+> > > I think the next patch is better.
+> > > Because ULONG_CMP_GE could cause double write, which has risk that write back old value.
+> > > Please help review.
+> > > I don't test it. If you agree, we will test it.
+> > 
+> > Just to make sure that I understand, you are worried about something like the following, correct?
+> > 
+> > o	__note_gp_changes() compares rnp->gp_seq_needed and rdp->gp_seq_needed
+> > 	and finds them equal.
+> > 
+> > o	At just this time something like rcu_start_this_gp() assigns a new
+> > 	(larger) value to rdp->gp_seq_needed.
+> > 
+> > o	Then __note_gp_changes() overwrites rdp->gp_seq_needed with the
+> > 	old value.
+> > 
+> > This cannot happen because __note_gp_changes() runs with interrupts disabled on the CPU corresponding to the rcu_data structure referenced by the rdp pointer.  So there is no way for rcu_start_this_gp() to be invoked on the same CPU during this "if" statement.
+> > 
+> > Of course, there could be bugs.  For example:
+> > 
+> > o	__note_gp_changes() might be called on a different CPU than that
+> > 	corresponding to rdp.  You can check this with something like:
+> > 
+> > 	WARN_ON_ONCE(rdp->cpu != smp_processor_id());
+> > 
+> > o	The same things could happen with rcu_start_this_gp(), and the
+> > 	above WARN_ON_ONCE() would work there as well.
+> > 
+> > o	rcutree_prepare_cpu() is a special case, but is irrelevant unless
+> > 	you are doing CPU-hotplug operations.  (It can run on a CPU other
+> > 	than rdp->cpu, but only at times when rdp->cpu is offline.)
+> > 
+> > o	Interrupts might not really be disabled.
+> > 
+> > That said, your patch could reduce overhead slightly, given that the two values will be equal much of the time.  So it might be worth testing just for that reason.
+> > 
+> > So why not just test it anyway?  If it makes the bug go away, I will 
+> > be surprised, but it would not be the first surprise for me.  ;-)
+> > 
+> > 							Thanx, Paul
+> > 
+> > > Thanks!
+> > > 
+> > > 
+> > > diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c index 
+> > > 0b760c1..c00f34e 100644
+> > > --- a/kernel/rcu/tree.c
+> > > +++ b/kernel/rcu/tree.c
+> > > @@ -1849,7 +1849,7 @@ static bool __note_gp_changes(struct rcu_state *rsp, struct rcu_node *rnp,
+> > >                 zero_cpu_stall_ticks(rdp);
+> > >         }
+> > >         rdp->gp_seq = rnp->gp_seq;  /* Remember new grace-period state. */
+> > > -       if (ULONG_CMP_GE(rnp->gp_seq_needed, rdp->gp_seq_needed) || rdp->gpwrap)
+> > > +       if (ULONG_CMP_LT(rdp->gp_seq_needed, rnp->gp_seq_needed) ||
+> > > + rdp->gpwrap)
+> > >                 rdp->gp_seq_needed = rnp->gp_seq_needed;
+> > >         WRITE_ONCE(rdp->gpwrap, false);
+> > >         rcu_gpnum_ovf(rnp, rdp);
+> > > 
+> > > 
+> > > -----Original Message-----
+> > > From: Paul E. McKenney [mailto:paulmck@linux.ibm.com]
+> > > Sent: Thursday, December 13, 2018 08:12
+> > > To: He, Bo <bo.he@intel.com>
+> > > Cc: Steven Rostedt <rostedt@goodmis.org>; 
+> > > linux-kernel@vger.kernel.org; josh@joshtriplett.org; 
+> > > mathieu.desnoyers@efficios.com; jiangshanlai@gmail.com; Zhang, Jun 
+> > > <jun.zhang@intel.com>; Xiao, Jin <jin.xiao@intel.com>; Zhang, Yanmin 
+> > > <yanmin.zhang@intel.com>; Bai, Jie A <jie.a.bai@intel.com>; Sun, Yi 
+> > > J <yi.j.sun@intel.com>
+> > > Subject: Re: rcu_preempt caused oom
+> > > 
+> > > On Wed, Dec 12, 2018 at 11:13:22PM +0000, He, Bo wrote:
+> > > > I don't see the rcutree.sysrq_rcu parameter in v4.19 kernel, I also checked the latest kernel and the latest tag v4.20-rc6, not see the sysrq_rcu.
+> > > > Please correct me if I have something wrong.
+> > > 
+> > > That would be because I sent you the wrong patch, apologies!  :-/
+> > > 
+> > > Please instead see the one below, which does add sysrq_rcu.
+> > > 
+> > > 							Thanx, Paul
+> > > 
+> > > > -----Original Message-----
+> > > > From: Paul E. McKenney <paulmck@linux.ibm.com>
+> > > > Sent: Thursday, December 13, 2018 5:03 AM
+> > > > To: He, Bo <bo.he@intel.com>
+> > > > Cc: Steven Rostedt <rostedt@goodmis.org>; 
+> > > > linux-kernel@vger.kernel.org; josh@joshtriplett.org; 
+> > > > mathieu.desnoyers@efficios.com; jiangshanlai@gmail.com; Zhang, Jun 
+> > > > <jun.zhang@intel.com>; Xiao, Jin <jin.xiao@intel.com>; Zhang, 
+> > > > Yanmin <yanmin.zhang@intel.com>; Bai, Jie A <jie.a.bai@intel.com>
+> > > > Subject: Re: rcu_preempt caused oom
+> > > > 
+> > > > On Wed, Dec 12, 2018 at 07:42:24AM -0800, Paul E. McKenney wrote:
+> > > > > On Wed, Dec 12, 2018 at 01:21:33PM +0000, He, Bo wrote:
+> > > > > > we reproduce on two boards, but I still not see the show_rcu_gp_kthreads() dump logs, it seems the patch can't catch the scenario.
+> > > > > > I double confirmed the CONFIG_PROVE_RCU=y is enabled in the config as it's extracted from the /proc/config.gz.
+> > > > > 
+> > > > > Strange.
+> > > > > 
+> > > > > Are the systems responsive to sysrq keys once failure occurs?  
+> > > > > If so, I will provide you a sysrq-R or some such to dump out the RCU state.
+> > > > 
+> > > > Or, as it turns out, sysrq-y if booting with rcutree.sysrq_rcu=1 using the patch below.  Only lightly tested.
+> > > 
+> > > --------------------------------------------------------------------
+> > > --
+> > > --
+> > > 
+> > > commit 04b6245c8458e8725f4169e62912c1fadfdf8141
+> > > Author: Paul E. McKenney <paulmck@linux.ibm.com>
+> > > Date:   Wed Dec 12 16:10:09 2018 -0800
+> > > 
+> > >     rcu: Add sysrq rcu_node-dump capability
+> > >     
+> > >     Backported from v4.21/v5.0
+> > >     
+> > >     Life is hard if RCU manages to get stuck without triggering RCU CPU
+> > >     stall warnings or triggering the rcu_check_gp_start_stall() checks
+> > >     for failing to start a grace period.  This commit therefore adds a
+> > >     boot-time-selectable sysrq key (commandeering "y") that allows manually
+> > >     dumping Tree RCU state.  The new rcutree.sysrq_rcu kernel boot parameter
+> > >     must be set for this sysrq to be available.
+> > >     
+> > >     Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
+> > > 
+> > > diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c index
+> > > 0b760c1369f7..e9392a9d6291 100644
+> > > --- a/kernel/rcu/tree.c
+> > > +++ b/kernel/rcu/tree.c
+> > > @@ -61,6 +61,7 @@
+> > >  #include <linux/trace_events.h>
+> > >  #include <linux/suspend.h>
+> > >  #include <linux/ftrace.h>
+> > > +#include <linux/sysrq.h>
+> > >  
+> > >  #include "tree.h"
+> > >  #include "rcu.h"
+> > > @@ -128,6 +129,9 @@ int num_rcu_lvl[] = NUM_RCU_LVL_INIT;  int 
+> > > rcu_num_nodes __read_mostly = NUM_RCU_NODES; /* Total # rcu_nodes in 
+> > > use. */
+> > >  /* panic() on RCU Stall sysctl. */
+> > >  int sysctl_panic_on_rcu_stall __read_mostly;
+> > > +/* Commandeer a sysrq key to dump RCU's tree. */ static bool 
+> > > +sysrq_rcu; module_param(sysrq_rcu, bool, 0444);
+> > >  
+> > >  /*
+> > >   * The rcu_scheduler_active variable is initialized to the value @@
+> > > -662,6 +666,27 @@ void show_rcu_gp_kthreads(void)  } 
+> > > EXPORT_SYMBOL_GPL(show_rcu_gp_kthreads);
+> > >  
+> > > +/* Dump grace-period-request information due to commandeered sysrq. 
+> > > +*/ static void sysrq_show_rcu(int key) {
+> > > +	show_rcu_gp_kthreads();
+> > > +}
+> > > +
+> > > +static struct sysrq_key_op sysrq_rcudump_op = {
+> > > +	.handler = sysrq_show_rcu,
+> > > +	.help_msg = "show-rcu(y)",
+> > > +	.action_msg = "Show RCU tree",
+> > > +	.enable_mask = SYSRQ_ENABLE_DUMP,
+> > > +};
+> > > +
+> > > +static int __init rcu_sysrq_init(void) {
+> > > +	if (sysrq_rcu)
+> > > +		return register_sysrq_key('y', &sysrq_rcudump_op);
+> > > +	return 0;
+> > > +}
+> > > +early_initcall(rcu_sysrq_init);
+> > > +
+> > >  /*
+> > >   * Send along grace-period-related data for rcutorture diagnostics.
+> > >   */
+> > > 
+> > 
+> 
+
 
