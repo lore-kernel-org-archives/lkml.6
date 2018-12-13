@@ -4,52 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,T_MIXED_ES,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15D6EC65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:28:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0E8BC67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:28:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D315E20879
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:28:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9539520882
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:28:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544675333;
-	bh=NsacCFtlTmwPMHNMAFtbP/JG7NGM3lone9hfForMMn8=;
+	s=default; t=1544675339;
+	bh=U9SdCP2U6zBoOrSvg1Jmxos/e5jXc++Zw4vh13iBADg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=QVomVU6p/ZT5OATiksSIAGtYOiHPBxf+vSdZnNtZfN0bJPu5HpABvYPyQqUZ/nRL0
-	 m4m5Xymz2KbC3HBfvMZ8+eRMHyFawGR8u06zwA40iAFKIiWKQOV11SwErUc7ANrgb2
-	 d4fhEorxeTPJzD74Tg9kF4MlEPAGhjz3pxzjB5Rg=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D315E20879
+	b=A1r0B6J2YcvY6TE+xzkFOG6LCaobFFbQznX5R5mYVBHPsghV/D0AZBrzMLWKt2u9L
+	 zEF3oohlsuPvMgfqCpWenXBZSDnWfmZtqWma68ZuU1UGMOTTKU0EjqvX9Nom2WpZjE
+	 2BrfhRmtELMdn/7I4iDVz4GqX2AFnQcgnl2rTk+c=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9539520882
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727111AbeLME2w (ORCPT
+        id S1727234AbeLME26 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 23:28:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41640 "EHLO mail.kernel.org"
+        Wed, 12 Dec 2018 23:28:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41554 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726960AbeLME2t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726986AbeLME2t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 12 Dec 2018 23:28:49 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 539A320849;
-        Thu, 13 Dec 2018 04:28:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2AE0020873;
+        Thu, 13 Dec 2018 04:28:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544675329;
-        bh=NsacCFtlTmwPMHNMAFtbP/JG7NGM3lone9hfForMMn8=;
+        s=default; t=1544675328;
+        bh=U9SdCP2U6zBoOrSvg1Jmxos/e5jXc++Zw4vh13iBADg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nbcjS941OeDru80t9Q8wvq5JLrarxKLfbaAAd1XfcN1i5aLocS78eWpjBGdIlO8MF
-         4PSRJDfAgX6EPeyvy50RddPi1kwtyjZQvoRVgsbJt2U5Fc3Oo6PJaBupFVaiqrFBLI
-         LGt7pBHl4uJ5++CYDjWHbc2dETKQdFC8ylSTlEy4=
+        b=dP7qPZ3Oo5zce0HJ8XWDPvwlCLLe00TLqtXZc+iNabcSDbuV8sXN/Y3Iu++itATse
+         n+FuslzOA6TZ7tEoXgZT4vGlYuG44lLCkD60uB/eFlO83+6W21qSauMmRug8PrmvPo
+         +4o0p6gxUYLptWiEov7CchGRt70gYq/YrlQZIgPw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 08/73] net: ethernet: ave: Replace NET_IP_ALIGN with AVE_FRAME_HEADROOM
-Date:   Wed, 12 Dec 2018 23:27:33 -0500
-Message-Id: <20181213042838.75160-8-sashal@kernel.org>
+Cc:     Yonghong Song <yhs@fb.com>, Alexei Starovoitov <ast@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
+        linux-kselftest@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 07/73] tools/bpf: add addition type tests to test_btf
+Date:   Wed, 12 Dec 2018 23:27:32 -0500
+Message-Id: <20181213042838.75160-7-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181213042838.75160-1-sashal@kernel.org>
 References: <20181213042838.75160-1-sashal@kernel.org>
@@ -61,70 +61,412 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+From: Yonghong Song <yhs@fb.com>
 
-[ Upstream commit 88113957ddb7b7d5451e28cd708c82ea7e63b097 ]
+[ Upstream commit d08489125e04a9f73d9323caea43270fd22d395f ]
 
-In commit 26a4676faa1a ("arm64: mm: define NET_IP_ALIGN to 0"),
-AVE controller affects this modification because the controller forces
-to ignore lower 2bits of buffer start address, and make 2-byte headroom,
-that is, data reception starts from (buffer + 2).
+The following additional unit testcases are added to test_btf:
+...
+BTF raw test[42] (typedef (invalid name, name_off = 0)): OK
+BTF raw test[43] (typedef (invalid name, invalid identifier)): OK
+BTF raw test[44] (ptr type (invalid name, name_off <> 0)): OK
+BTF raw test[45] (volatile type (invalid name, name_off <> 0)): OK
+BTF raw test[46] (const type (invalid name, name_off <> 0)): OK
+BTF raw test[47] (restrict type (invalid name, name_off <> 0)): OK
+BTF raw test[48] (fwd type (invalid name, name_off = 0)): OK
+BTF raw test[49] (fwd type (invalid name, invalid identifier)): OK
+BTF raw test[50] (array type (invalid name, name_off <> 0)): OK
+BTF raw test[51] (struct type (name_off = 0)): OK
+BTF raw test[52] (struct type (invalid name, invalid identifier)): OK
+BTF raw test[53] (struct member (name_off = 0)): OK
+BTF raw test[54] (struct member (invalid name, invalid identifier)): OK
+BTF raw test[55] (enum type (name_off = 0)): OK
+BTF raw test[56] (enum type (invalid name, invalid identifier)): OK
+BTF raw test[57] (enum member (invalid name, name_off = 0)): OK
+BTF raw test[58] (enum member (invalid name, invalid identifier)): OK
+...
 
-This patch defines AVE_FRAME_HEADROOM macro as hardware-specific value,
-and replaces NET_IP_ALIGN with it.
-
-Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: c0fa1b6c3efc ("bpf: btf: Add BTF tests")
+Acked-by: Martin KaFai Lau <kafai@fb.com>
+Signed-off-by: Yonghong Song <yhs@fb.com>
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/socionext/sni_ave.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ tools/testing/selftests/bpf/test_btf.c | 361 +++++++++++++++++++++++++
+ 1 file changed, 361 insertions(+)
 
-diff --git a/drivers/net/ethernet/socionext/sni_ave.c b/drivers/net/ethernet/socionext/sni_ave.c
-index f7ecceeb1e28..f27d67a4d304 100644
---- a/drivers/net/ethernet/socionext/sni_ave.c
-+++ b/drivers/net/ethernet/socionext/sni_ave.c
-@@ -194,6 +194,7 @@
+diff --git a/tools/testing/selftests/bpf/test_btf.c b/tools/testing/selftests/bpf/test_btf.c
+index 4909aab4d6ab..29116366a9fc 100644
+--- a/tools/testing/selftests/bpf/test_btf.c
++++ b/tools/testing/selftests/bpf/test_btf.c
+@@ -1291,6 +1291,367 @@ static struct btf_raw_test raw_tests[] = {
+ 	.err_str = "type != 0",
+ },
  
- /* Parameter for ethernet frame */
- #define AVE_MAX_ETHFRAME	1518
-+#define AVE_FRAME_HEADROOM	2
- 
- /* Parameter for interrupt */
- #define AVE_INTM_COUNT		20
-@@ -585,12 +586,13 @@ static int ave_rxdesc_prepare(struct net_device *ndev, int entry)
- 
- 	skb = priv->rx.desc[entry].skbs;
- 	if (!skb) {
--		skb = netdev_alloc_skb_ip_align(ndev,
--						AVE_MAX_ETHFRAME);
-+		skb = netdev_alloc_skb(ndev, AVE_MAX_ETHFRAME);
- 		if (!skb) {
- 			netdev_err(ndev, "can't allocate skb for Rx\n");
- 			return -ENOMEM;
- 		}
-+		skb->data += AVE_FRAME_HEADROOM;
-+		skb->tail += AVE_FRAME_HEADROOM;
- 	}
- 
- 	/* set disable to cmdsts */
-@@ -603,12 +605,12 @@ static int ave_rxdesc_prepare(struct net_device *ndev, int entry)
- 	 * - Rx buffer begins with 2 byte headroom, and data will be put from
- 	 *   (buffer + 2).
- 	 * To satisfy this, specify the address to put back the buffer
--	 * pointer advanced by NET_IP_ALIGN by netdev_alloc_skb_ip_align(),
--	 * and expand the map size by NET_IP_ALIGN.
-+	 * pointer advanced by AVE_FRAME_HEADROOM, and expand the map size
-+	 * by AVE_FRAME_HEADROOM.
- 	 */
- 	ret = ave_dma_map(ndev, &priv->rx.desc[entry],
--			  skb->data - NET_IP_ALIGN,
--			  AVE_MAX_ETHFRAME + NET_IP_ALIGN,
-+			  skb->data - AVE_FRAME_HEADROOM,
-+			  AVE_MAX_ETHFRAME + AVE_FRAME_HEADROOM,
- 			  DMA_FROM_DEVICE, &paddr);
- 	if (ret) {
- 		netdev_err(ndev, "can't map skb for Rx\n");
++{
++	.descr = "typedef (invalid name, name_off = 0)",
++	.raw_types = {
++		BTF_TYPE_INT_ENC(0, BTF_INT_SIGNED, 0, 32, 4),	/* [1] */
++		BTF_TYPEDEF_ENC(0, 1),				/* [2] */
++		BTF_END_RAW,
++	},
++	.str_sec = "\0__int",
++	.str_sec_size = sizeof("\0__int"),
++	.map_type = BPF_MAP_TYPE_ARRAY,
++	.map_name = "typedef_check_btf",
++	.key_size = sizeof(int),
++	.value_size = sizeof(int),
++	.key_type_id = 1,
++	.value_type_id = 1,
++	.max_entries = 4,
++	.btf_load_err = true,
++	.err_str = "Invalid name",
++},
++
++{
++	.descr = "typedef (invalid name, invalid identifier)",
++	.raw_types = {
++		BTF_TYPE_INT_ENC(0, BTF_INT_SIGNED, 0, 32, 4),	/* [1] */
++		BTF_TYPEDEF_ENC(NAME_TBD, 1),			/* [2] */
++		BTF_END_RAW,
++	},
++	.str_sec = "\0__!int",
++	.str_sec_size = sizeof("\0__!int"),
++	.map_type = BPF_MAP_TYPE_ARRAY,
++	.map_name = "typedef_check_btf",
++	.key_size = sizeof(int),
++	.value_size = sizeof(int),
++	.key_type_id = 1,
++	.value_type_id = 1,
++	.max_entries = 4,
++	.btf_load_err = true,
++	.err_str = "Invalid name",
++},
++
++{
++	.descr = "ptr type (invalid name, name_off <> 0)",
++	.raw_types = {
++		BTF_TYPE_INT_ENC(0, BTF_INT_SIGNED, 0, 32, 4),		/* [1] */
++		BTF_TYPE_ENC(NAME_TBD,
++			     BTF_INFO_ENC(BTF_KIND_PTR, 0, 0), 1),	/* [2] */
++		BTF_END_RAW,
++	},
++	.str_sec = "\0__int",
++	.str_sec_size = sizeof("\0__int"),
++	.map_type = BPF_MAP_TYPE_ARRAY,
++	.map_name = "ptr_type_check_btf",
++	.key_size = sizeof(int),
++	.value_size = sizeof(int),
++	.key_type_id = 1,
++	.value_type_id = 1,
++	.max_entries = 4,
++	.btf_load_err = true,
++	.err_str = "Invalid name",
++},
++
++{
++	.descr = "volatile type (invalid name, name_off <> 0)",
++	.raw_types = {
++		BTF_TYPE_INT_ENC(0, BTF_INT_SIGNED, 0, 32, 4),		/* [1] */
++		BTF_TYPE_ENC(NAME_TBD,
++			     BTF_INFO_ENC(BTF_KIND_VOLATILE, 0, 0), 1),	/* [2] */
++		BTF_END_RAW,
++	},
++	.str_sec = "\0__int",
++	.str_sec_size = sizeof("\0__int"),
++	.map_type = BPF_MAP_TYPE_ARRAY,
++	.map_name = "volatile_type_check_btf",
++	.key_size = sizeof(int),
++	.value_size = sizeof(int),
++	.key_type_id = 1,
++	.value_type_id = 1,
++	.max_entries = 4,
++	.btf_load_err = true,
++	.err_str = "Invalid name",
++},
++
++{
++	.descr = "const type (invalid name, name_off <> 0)",
++	.raw_types = {
++		BTF_TYPE_INT_ENC(0, BTF_INT_SIGNED, 0, 32, 4),		/* [1] */
++		BTF_TYPE_ENC(NAME_TBD,
++			     BTF_INFO_ENC(BTF_KIND_CONST, 0, 0), 1),	/* [2] */
++		BTF_END_RAW,
++	},
++	.str_sec = "\0__int",
++	.str_sec_size = sizeof("\0__int"),
++	.map_type = BPF_MAP_TYPE_ARRAY,
++	.map_name = "const_type_check_btf",
++	.key_size = sizeof(int),
++	.value_size = sizeof(int),
++	.key_type_id = 1,
++	.value_type_id = 1,
++	.max_entries = 4,
++	.btf_load_err = true,
++	.err_str = "Invalid name",
++},
++
++{
++	.descr = "restrict type (invalid name, name_off <> 0)",
++	.raw_types = {
++		BTF_TYPE_INT_ENC(0, BTF_INT_SIGNED, 0, 32, 4),		/* [1] */
++		BTF_TYPE_ENC(0, BTF_INFO_ENC(BTF_KIND_PTR, 0, 0), 1),	/* [2] */
++		BTF_TYPE_ENC(NAME_TBD,
++			     BTF_INFO_ENC(BTF_KIND_RESTRICT, 0, 0), 2),	/* [3] */
++		BTF_END_RAW,
++	},
++	.str_sec = "\0__int",
++	.str_sec_size = sizeof("\0__int"),
++	.map_type = BPF_MAP_TYPE_ARRAY,
++	.map_name = "restrict_type_check_btf",
++	.key_size = sizeof(int),
++	.value_size = sizeof(int),
++	.key_type_id = 1,
++	.value_type_id = 1,
++	.max_entries = 4,
++	.btf_load_err = true,
++	.err_str = "Invalid name",
++},
++
++{
++	.descr = "fwd type (invalid name, name_off = 0)",
++	.raw_types = {
++		BTF_TYPE_INT_ENC(0, BTF_INT_SIGNED, 0, 32, 4),		/* [1] */
++		BTF_TYPE_ENC(0, BTF_INFO_ENC(BTF_KIND_FWD, 0, 0), 0),	/* [2] */
++		BTF_END_RAW,
++	},
++	.str_sec = "\0__skb",
++	.str_sec_size = sizeof("\0__skb"),
++	.map_type = BPF_MAP_TYPE_ARRAY,
++	.map_name = "fwd_type_check_btf",
++	.key_size = sizeof(int),
++	.value_size = sizeof(int),
++	.key_type_id = 1,
++	.value_type_id = 1,
++	.max_entries = 4,
++	.btf_load_err = true,
++	.err_str = "Invalid name",
++},
++
++{
++	.descr = "fwd type (invalid name, invalid identifier)",
++	.raw_types = {
++		BTF_TYPE_INT_ENC(0, BTF_INT_SIGNED, 0, 32, 4),		/* [1] */
++		BTF_TYPE_ENC(NAME_TBD,
++			     BTF_INFO_ENC(BTF_KIND_FWD, 0, 0), 0),	/* [2] */
++		BTF_END_RAW,
++	},
++	.str_sec = "\0__!skb",
++	.str_sec_size = sizeof("\0__!skb"),
++	.map_type = BPF_MAP_TYPE_ARRAY,
++	.map_name = "fwd_type_check_btf",
++	.key_size = sizeof(int),
++	.value_size = sizeof(int),
++	.key_type_id = 1,
++	.value_type_id = 1,
++	.max_entries = 4,
++	.btf_load_err = true,
++	.err_str = "Invalid name",
++},
++
++{
++	.descr = "array type (invalid name, name_off <> 0)",
++	.raw_types = {
++		BTF_TYPE_INT_ENC(0, BTF_INT_SIGNED, 0, 32, 4),		/* [1] */
++		BTF_TYPE_ENC(NAME_TBD,
++			     BTF_INFO_ENC(BTF_KIND_ARRAY, 0, 0), 0),	/* [2] */
++		BTF_ARRAY_ENC(1, 1, 4),
++		BTF_END_RAW,
++	},
++	.str_sec = "\0__skb",
++	.str_sec_size = sizeof("\0__skb"),
++	.map_type = BPF_MAP_TYPE_ARRAY,
++	.map_name = "array_type_check_btf",
++	.key_size = sizeof(int),
++	.value_size = sizeof(int),
++	.key_type_id = 1,
++	.value_type_id = 1,
++	.max_entries = 4,
++	.btf_load_err = true,
++	.err_str = "Invalid name",
++},
++
++{
++	.descr = "struct type (name_off = 0)",
++	.raw_types = {
++		BTF_TYPE_INT_ENC(0, BTF_INT_SIGNED, 0, 32, 4),		/* [1] */
++		BTF_TYPE_ENC(0,
++			     BTF_INFO_ENC(BTF_KIND_STRUCT, 0, 1), 4),	/* [2] */
++		BTF_MEMBER_ENC(NAME_TBD, 1, 0),
++		BTF_END_RAW,
++	},
++	.str_sec = "\0A",
++	.str_sec_size = sizeof("\0A"),
++	.map_type = BPF_MAP_TYPE_ARRAY,
++	.map_name = "struct_type_check_btf",
++	.key_size = sizeof(int),
++	.value_size = sizeof(int),
++	.key_type_id = 1,
++	.value_type_id = 1,
++	.max_entries = 4,
++},
++
++{
++	.descr = "struct type (invalid name, invalid identifier)",
++	.raw_types = {
++		BTF_TYPE_INT_ENC(0, BTF_INT_SIGNED, 0, 32, 4),		/* [1] */
++		BTF_TYPE_ENC(NAME_TBD,
++			     BTF_INFO_ENC(BTF_KIND_STRUCT, 0, 1), 4),	/* [2] */
++		BTF_MEMBER_ENC(NAME_TBD, 1, 0),
++		BTF_END_RAW,
++	},
++	.str_sec = "\0A!\0B",
++	.str_sec_size = sizeof("\0A!\0B"),
++	.map_type = BPF_MAP_TYPE_ARRAY,
++	.map_name = "struct_type_check_btf",
++	.key_size = sizeof(int),
++	.value_size = sizeof(int),
++	.key_type_id = 1,
++	.value_type_id = 1,
++	.max_entries = 4,
++	.btf_load_err = true,
++	.err_str = "Invalid name",
++},
++
++{
++	.descr = "struct member (name_off = 0)",
++	.raw_types = {
++		BTF_TYPE_INT_ENC(0, BTF_INT_SIGNED, 0, 32, 4),		/* [1] */
++		BTF_TYPE_ENC(0,
++			     BTF_INFO_ENC(BTF_KIND_STRUCT, 0, 1), 4),	/* [2] */
++		BTF_MEMBER_ENC(NAME_TBD, 1, 0),
++		BTF_END_RAW,
++	},
++	.str_sec = "\0A",
++	.str_sec_size = sizeof("\0A"),
++	.map_type = BPF_MAP_TYPE_ARRAY,
++	.map_name = "struct_type_check_btf",
++	.key_size = sizeof(int),
++	.value_size = sizeof(int),
++	.key_type_id = 1,
++	.value_type_id = 1,
++	.max_entries = 4,
++},
++
++{
++	.descr = "struct member (invalid name, invalid identifier)",
++	.raw_types = {
++		BTF_TYPE_INT_ENC(0, BTF_INT_SIGNED, 0, 32, 4),		/* [1] */
++		BTF_TYPE_ENC(NAME_TBD,
++			     BTF_INFO_ENC(BTF_KIND_STRUCT, 0, 1), 4),	/* [2] */
++		BTF_MEMBER_ENC(NAME_TBD, 1, 0),
++		BTF_END_RAW,
++	},
++	.str_sec = "\0A\0B*",
++	.str_sec_size = sizeof("\0A\0B*"),
++	.map_type = BPF_MAP_TYPE_ARRAY,
++	.map_name = "struct_type_check_btf",
++	.key_size = sizeof(int),
++	.value_size = sizeof(int),
++	.key_type_id = 1,
++	.value_type_id = 1,
++	.max_entries = 4,
++	.btf_load_err = true,
++	.err_str = "Invalid name",
++},
++
++{
++	.descr = "enum type (name_off = 0)",
++	.raw_types = {
++		BTF_TYPE_INT_ENC(0, BTF_INT_SIGNED, 0, 32, 4),		/* [1] */
++		BTF_TYPE_ENC(0,
++			     BTF_INFO_ENC(BTF_KIND_ENUM, 0, 1),
++			     sizeof(int)),				/* [2] */
++		BTF_ENUM_ENC(NAME_TBD, 0),
++		BTF_END_RAW,
++	},
++	.str_sec = "\0A\0B",
++	.str_sec_size = sizeof("\0A\0B"),
++	.map_type = BPF_MAP_TYPE_ARRAY,
++	.map_name = "enum_type_check_btf",
++	.key_size = sizeof(int),
++	.value_size = sizeof(int),
++	.key_type_id = 1,
++	.value_type_id = 1,
++	.max_entries = 4,
++},
++
++{
++	.descr = "enum type (invalid name, invalid identifier)",
++	.raw_types = {
++		BTF_TYPE_INT_ENC(0, BTF_INT_SIGNED, 0, 32, 4),		/* [1] */
++		BTF_TYPE_ENC(NAME_TBD,
++			     BTF_INFO_ENC(BTF_KIND_ENUM, 0, 1),
++			     sizeof(int)),				/* [2] */
++		BTF_ENUM_ENC(NAME_TBD, 0),
++		BTF_END_RAW,
++	},
++	.str_sec = "\0A!\0B",
++	.str_sec_size = sizeof("\0A!\0B"),
++	.map_type = BPF_MAP_TYPE_ARRAY,
++	.map_name = "enum_type_check_btf",
++	.key_size = sizeof(int),
++	.value_size = sizeof(int),
++	.key_type_id = 1,
++	.value_type_id = 1,
++	.max_entries = 4,
++	.btf_load_err = true,
++	.err_str = "Invalid name",
++},
++
++{
++	.descr = "enum member (invalid name, name_off = 0)",
++	.raw_types = {
++		BTF_TYPE_INT_ENC(0, BTF_INT_SIGNED, 0, 32, 4),		/* [1] */
++		BTF_TYPE_ENC(0,
++			     BTF_INFO_ENC(BTF_KIND_ENUM, 0, 1),
++			     sizeof(int)),				/* [2] */
++		BTF_ENUM_ENC(0, 0),
++		BTF_END_RAW,
++	},
++	.str_sec = "",
++	.str_sec_size = sizeof(""),
++	.map_type = BPF_MAP_TYPE_ARRAY,
++	.map_name = "enum_type_check_btf",
++	.key_size = sizeof(int),
++	.value_size = sizeof(int),
++	.key_type_id = 1,
++	.value_type_id = 1,
++	.max_entries = 4,
++	.btf_load_err = true,
++	.err_str = "Invalid name",
++},
++
++{
++	.descr = "enum member (invalid name, invalid identifier)",
++	.raw_types = {
++		BTF_TYPE_INT_ENC(0, BTF_INT_SIGNED, 0, 32, 4),		/* [1] */
++		BTF_TYPE_ENC(0,
++			     BTF_INFO_ENC(BTF_KIND_ENUM, 0, 1),
++			     sizeof(int)),				/* [2] */
++		BTF_ENUM_ENC(NAME_TBD, 0),
++		BTF_END_RAW,
++	},
++	.str_sec = "\0A!",
++	.str_sec_size = sizeof("\0A!"),
++	.map_type = BPF_MAP_TYPE_ARRAY,
++	.map_name = "enum_type_check_btf",
++	.key_size = sizeof(int),
++	.value_size = sizeof(int),
++	.key_type_id = 1,
++	.value_type_id = 1,
++	.max_entries = 4,
++	.btf_load_err = true,
++	.err_str = "Invalid name",
++},
+ {
+ 	.descr = "arraymap invalid btf key (a bit field)",
+ 	.raw_types = {
 -- 
 2.19.1
 
