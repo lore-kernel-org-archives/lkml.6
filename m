@@ -2,85 +2,170 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F251C67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 00:36:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 724B1C67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 00:39:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03B5E20870
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 00:36:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03B5E20870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com
+	by mail.kernel.org (Postfix) with ESMTP id 3619320870
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 00:39:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3619320870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728551AbeLMAgB (ORCPT
+        id S1726719AbeLMAjm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 19:36:01 -0500
-Received: from rtits2.realtek.com ([211.75.126.72]:41662 "EHLO
-        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726278AbeLMAgB (ORCPT
+        Wed, 12 Dec 2018 19:39:42 -0500
+Received: from vmicros1.altlinux.org ([194.107.17.57]:59818 "EHLO
+        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726298AbeLMAjl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 19:36:01 -0500
-Authenticated-By: 
-X-SpamFilter-By: BOX Solutions SpamTrap 5.62 with qID wBD0Zmpp016330, This message is accepted by code: ctloc85258
-Received: from mail.realtek.com (rtitcas11.realtek.com.tw[172.21.6.12])
-        by rtits2.realtek.com.tw (8.15.2/2.57/5.78) with ESMTPS id wBD0Zmpp016330
-        (version=TLSv1 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Thu, 13 Dec 2018 08:35:48 +0800
-Received: from RTITMBSVM02.realtek.com.tw ([fe80::9150:f9a6:a910:df93]) by
- RTITCAS11.realtek.com.tw ([fe80::7c6d:ced5:c4ff:8297%15]) with mapi id
- 14.03.0399.000; Thu, 13 Dec 2018 08:35:48 +0800
-From:   Pkshih <pkshih@realtek.com>
-To:     "kai.heng.feng@canonical.com" <kai.heng.feng@canonical.com>
-CC:     "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "kvalo@codeaurora.org" <kvalo@codeaurora.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] rtlwifi: Fix non-working BSS STA mode
-Thread-Topic: [PATCH] rtlwifi: Fix non-working BSS STA mode
-Thread-Index: AQHUkdl2d+IRD9YiqUGI3cgkd+Pb7aV7TcMA
-Date:   Thu, 13 Dec 2018 00:35:47 +0000
-Message-ID: <1544661346.2548.2.camel@realtek.com>
-References: <20181212051335.22580-1-kai.heng.feng@canonical.com>
-In-Reply-To: <20181212051335.22580-1-kai.heng.feng@canonical.com>
-Accept-Language: en-US, zh-TW
-Content-Language: zh-TW
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.21.69.146]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <F68BADFFDE478E4984F15FA97748EF5E@realtek.com>
-Content-Transfer-Encoding: base64
+        Wed, 12 Dec 2018 19:39:41 -0500
+Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
+        by vmicros1.altlinux.org (Postfix) with ESMTP id 7959E72CC6C;
+        Thu, 13 Dec 2018 03:39:38 +0300 (MSK)
+Received: by mua.local.altlinux.org (Postfix, from userid 508)
+        id 52EFD95D299; Thu, 13 Dec 2018 03:39:38 +0300 (MSK)
+Date:   Thu, 13 Dec 2018 03:39:38 +0300
+From:   "Dmitry V. Levin" <ldv@altlinux.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Steven Rostedt <rostedt@goodmis.org>, Jiri Olsa <jolsa@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Luis Claudio R. Goncalves" <lclaudio@uudg.org>,
+        Eugene Syromyatnikov <esyr@redhat.com>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        lkml <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/8] perf: Allow to block process in syscall tracepoints
+Message-ID: <20181213003938.GD24195@altlinux.org>
+References: <20181206081028.GE4234@hirez.programming.kicks-ass.net>
+ <20181206083400.GA13675@hirez.programming.kicks-ass.net>
+ <20181206131946.2c47f556@vmware.local.home>
+ <20181207085839.GC2237@hirez.programming.kicks-ass.net>
+ <20181207072701.5bc564c7@vmware.local.home>
+ <20181207151105.GB5289@hirez.programming.kicks-ass.net>
+ <20181207151433.20bf0399@vmware.local.home>
+ <20181208104423.GE5289@hirez.programming.kicks-ass.net>
+ <20181208123805.1c158665@vmware.local.home>
+ <20181210101818.GJ5289@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="DiL7RhKs8rK9YGuF"
+Content-Disposition: inline
+In-Reply-To: <20181210101818.GJ5289@hirez.programming.kicks-ass.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gV2VkLCAyMDE4LTEyLTEyIGF0IDEzOjEzICswODAwLCBLYWktSGVuZyBGZW5nIHdyb3RlOg0K
-PiBPbmNlIEJTUyBTVEEgbW9kZSBnZXRzIHN0YXJ0ZWQsIGl0IGNhbiBiZSBzY2FubmVkIGJ5IG90
-aGVyIGNsaWVudHMgYnV0DQo+IGNhbm5vdCBlbnRhYmxpc2ggYSBjb25uZWN0aW9uLg0KwqAgwqAg
-wqAgwqAgwqBeXl4gdHlwbzogZXN0YWJsaXNoDQo+IA0KPiBUdXJucyBvdXQgdGhlIHNldF9iY25f
-cmVnKCkgYW5kIGl0cyAqX3NldF9iZWFjb25fcmVsYXRlZF9yZWdpc3RlcnMoKQ0KPiBjYWxsYmFj
-a3MgbmV2ZXIgZ2V0IGNhbGxlZCBzbyBpdCBoYXMgcHJvYmxlbSBiZWFjb25pbmcuDQo+IA0KPiBF
-bmFibGUgdGhlIGZ1bmN0aW9uIGluIHJ0bF9vcF9ic3NfaW5mb19jaGFuZ2VkKCkgY2FuIG1ha2Ug
-QlNTIFNUQSBtb2RlDQo+IHN0YXJ0IHRvIHdvcmsuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBLYWkt
-SGVuZyBGZW5nIDxrYWkuaGVuZy5mZW5nQGNhbm9uaWNhbC5jb20+DQo+IC0tLQ0KPiDCoGRyaXZl
-cnMvbmV0L3dpcmVsZXNzL3JlYWx0ZWsvcnRsd2lmaS9jb3JlLmMgfCAyICstDQo+IMKgMSBmaWxl
-IGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pDQo+IA0KPiBkaWZmIC0tZ2l0
-IGEvZHJpdmVycy9uZXQvd2lyZWxlc3MvcmVhbHRlay9ydGx3aWZpL2NvcmUuYw0KPiBiL2RyaXZl
-cnMvbmV0L3dpcmVsZXNzL3JlYWx0ZWsvcnRsd2lmaS9jb3JlLmMNCj4gaW5kZXggNGJmNzk2NzU5
-MGNhLi4xMWQyN2E1Y2M1NzYgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvbmV0L3dpcmVsZXNzL3Jl
-YWx0ZWsvcnRsd2lmaS9jb3JlLmMNCj4gKysrIGIvZHJpdmVycy9uZXQvd2lyZWxlc3MvcmVhbHRl
-ay9ydGx3aWZpL2NvcmUuYw0KPiBAQCAtMTA1NCw3ICsxMDU0LDcgQEAgc3RhdGljIHZvaWQgcnRs
-X29wX2Jzc19pbmZvX2NoYW5nZWQoc3RydWN0IGllZWU4MDIxMV9odw0KPiAqaHcsDQo+IMKgCQkJ
-CQnCoCJCU1NfQ0hBTkdFRF9CRUFDT05fRU5BQkxFRFxuIik7DQo+IMKgDQo+IMKgCQkJCS8qc3Rh
-cnQgaHcgYmVhY29uIGludGVycnVwdC4gKi8NCj4gLQkJCQkvKnJ0bHByaXYtPmNmZy0+b3BzLT5z
-ZXRfYmNuX3JlZyhodyk7ICovDQo+ICsJCQkJcnRscHJpdi0+Y2ZnLT5vcHMtPnNldF9iY25fcmVn
-KGh3KTsNCj4gwqAJCQkJbWFjLT5iZWFjb25fZW5hYmxlZCA9IDE7DQo+IMKgCQkJCXJ0bHByaXYt
-PmNmZy0+b3BzLT51cGRhdGVfaW50ZXJydXB0X21hc2soaHcsDQo+IMKgCQkJCQkJcnRscHJpdi0+
-Y2ZnLT5tYXBzDQoNCldoaWNoIHdpZmkgY2hpcCBkbyB5b3UgdXNlPyBBbmQsIHBsZWFzZSBzaGFy
-ZSB5b3VyIHRlc3Qgc2NlbmFyaW8uDQoNClRoYW5rcw0KDQo=
+
+--DiL7RhKs8rK9YGuF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Peter,
+
+On Mon, Dec 10, 2018 at 11:18:18AM +0100, Peter Zijlstra wrote:
+> On Sat, Dec 08, 2018 at 12:38:05PM -0500, Steven Rostedt wrote:
+> > On Sat, 8 Dec 2018 11:44:23 +0100, Peter Zijlstra wrote:
+>=20
+> > > > Why do we care about lost events? Because strace records *all* even=
+ts,
+> > > > as that's what it does and that's what it always has done. It would=
+ be
+> > > > a break in functionality (a regression) if it were to start losing
+> > > > events. I use strace to see everything that an application is doing=
+=2E =20
+> > >=20
+> > > So make a new tool; break the expectation of all events. See if there=
+'s
+> > > anybody that really cares.
+> >=20
+> > Basically you are saying, break strace and see if anyone notices?
+>=20
+> Nah, give it a new name. Clearly mark this is a new tool.
+>=20
+> > > > When we discussed this at plumbers, Oracle people came to me and sa=
+id
+> > > > how awesome it would be to run strace against their database access=
+es.
+> > > > The problem today is that strace causes such a large overhead that =
+it
+> > > > isn't feasible to trace any high speed applications, especially if
+> > > > there are time restraints involved. =20
+> > >=20
+> > > So have them run that perf thing acme pointed to.
+> > >=20
+> > > So far nobody's made a good argument for why we cannot have LOST even=
+ts.
+> >=20
+> > If you don't see the use case, I'm not sure anyone can convince you.
+> > Again, I like the fact that when I do a strace of an application I know
+> > that all system calls that the application I'm tracing is recorded. I
+> > don't need to worry about what happened in the "lost events" space.
+>=20
+> You're the one pushing for this crap without _any_ justification. Why
+> are you getting upset if I ask for some?
+>=20
+> If people care so much, it shouldn't be hard to write up a coherent
+> story on this, so far all I seem to get is: because it's always been
+> like that.
+>=20
+> Which really isn't much of an argument.
+
+As you rightly pointed out, strace users are expecting that no events are
+lost because it's always been like that, and it would require some efforts
+to imagine what kind of things are going to break if this is no longer the
+case.
+
+Last FOSDEM I attended a talk [1] by Philippe Ombredanne, he was speaking
+about a strace-based tool called TraceCode that constructs build graphs
+that are used to find out "exactly which files were built, by what and how
+they were transformed in multiple steps from sources to your final binaries=
+".
+
+Imagine you told Philippe that strace now works faster but it's no longer
+reliable because some events may be lost, and he would have to repeat
+builds under strace again and again until he is lucky.  I can imagine his
+reaction to this piece of news, and I certainly wouldn't like to be the
+messenger.
+
+btw, I didn't ask for the implementation to be ugly.
+You don't have to introduce polling into the kernel if you don't want to,
+userspace is perfectly capable of invoking wait4(2) in a loop.
+Just block the tracee, notify the tracer, and let it pick up the pieces.
+
+[1] https://archive.fosdem.org/2018/schedule/event/debugging_tools_stracing=
+_build/
+
+
+--=20
+ldv
+
+--DiL7RhKs8rK9YGuF
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBCAAGBQJcEapKAAoJEAVFT+BVnCUIGMQP/078NhxXNLpbMS/DEVDJ4Yun
+cQb0lCE5SEcPpQ0u6Zd5oP8wrKSCBd1Yp0uG/HFTTioTQKRpcUZ0lmshVGKAZJ49
+kkCZQ2y4DxIOLzhilXeOkFmCBGJ5y5dNfSGETIynI228oO/BkaEO9itQNqHaNzdz
+YD7lqeTStTJO5zPFFjXSObNw+cmW+akYg07k75Y5xBPXAFCMUP4MzvSCQc0U6h12
+G7ycg3ImCEB00b5OajI3mlHq6ZJsIH/d02m+GcunalS/f/Oe1VnqiHwa9Jb2fk+v
+p+UT63aPCABBImraRl2L1irkGYNVZuehfcDE6ZfuB3WtJXcX/Xrd6cHYR5gNswy7
+dr545sHaLiqu4OGsdObgx2NsEgzBKEiaECO92ywHUeY+ql1VJoJoKX5Qt5iI+1hw
+9YIyuQoNt2jT+vCA6Zp8FErdIqrf4ehy25YmGOAQZ951ys5qZiYzBQikZy3NPkyC
+2Mu1x0BnY8+BTcSGy/Bv9EgPXhOk1LdykuurbfnYAFHPlraVRq/nSpid2cqk0FZ+
+Skn9gk6OXY9F0uEey5Ckr2foOTbXNV8/yaR04OzmPliSP8UXhLbbXJVA6Of/8MHA
+Cell6w71+T5fd65qawPPF9KBTfv3Ise+ym6pZDf9rDEVZ/YTjjGVDTJui9Ql2vgu
+uFb3R7TCrIrKXFhJIOc3
+=CGBN
+-----END PGP SIGNATURE-----
+
+--DiL7RhKs8rK9YGuF--
