@@ -2,205 +2,161 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7551FC65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 08:29:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8320C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 08:29:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 28EEA2086D
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 08:29:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28EEA2086D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
+	by mail.kernel.org (Postfix) with ESMTP id B299720811
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 08:29:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B299720811
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727328AbeLMI3Y (ORCPT
+        id S1727391AbeLMI3i convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 03:29:24 -0500
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:30863 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725949AbeLMI3X (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 03:29:23 -0500
-Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wBD8R11v000579;
-        Thu, 13 Dec 2018 09:29:17 +0100
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2p84kxu737-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Thu, 13 Dec 2018 09:29:17 +0100
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 2D6B33F;
-        Thu, 13 Dec 2018 08:29:15 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag5node2.st.com [10.75.127.14])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id E698C10DA;
-        Thu, 13 Dec 2018 08:29:14 +0000 (GMT)
-Received: from SFHDAG5NODE3.st.com (10.75.127.15) by SFHDAG5NODE2.st.com
- (10.75.127.14) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu, 13 Dec
- 2018 09:29:14 +0100
-Received: from SFHDAG5NODE3.st.com ([fe80::7c09:5d6b:d2c7:5f47]) by
- SFHDAG5NODE3.st.com ([fe80::7c09:5d6b:d2c7:5f47%20]) with mapi id
- 15.00.1347.000; Thu, 13 Dec 2018 09:29:14 +0100
-From:   Fabien DESSENNE <fabien.dessenne@st.com>
-To:     Yangtao Li <tiny.windzz@gmail.com>,
-        "mchehab@kernel.org" <mchehab@kernel.org>,
-        Jean Christophe TROTIN <jean-christophe.trotin@st.com>
-CC:     "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3] media: platform: sti: remove bdisp_dbg_declare() and
- hva_dbg_declare()
-Thread-Topic: [PATCH v3] media: platform: sti: remove bdisp_dbg_declare() and
- hva_dbg_declare()
-Thread-Index: AQHUkjeI3AKGLWsUyE2f0zziUe6jYaV8RqiA
-Date:   Thu, 13 Dec 2018 08:29:14 +0000
-Message-ID: <a1874cb1-2417-6314-5b11-79199daa58e9@st.com>
-References: <20181212162703.23546-1-tiny.windzz@gmail.com>
-In-Reply-To: <20181212162703.23546-1-tiny.windzz@gmail.com>
-Accept-Language: fr-FR, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.46]
+        Thu, 13 Dec 2018 03:29:38 -0500
+Received: from mga01.intel.com ([192.55.52.88]:33680 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725949AbeLMI3i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 03:29:38 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Dec 2018 00:29:37 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,347,1539673200"; 
+   d="scan'208";a="98409523"
+Received: from jlahtine-desk.ger.corp.intel.com (HELO localhost) ([10.251.85.148])
+  by orsmga007.jf.intel.com with ESMTP; 13 Dec 2018 00:29:34 -0800
 Content-Type: text/plain; charset="utf-8"
-Content-ID: <F8F0B55C5C47AA4194566C3F87B7EAB3@st.com>
-Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-13_01:,,
- signatures=0
+Content-Transfer-Encoding: 8BIT
+To:     Pavel Machek <pavel@ucw.cz>
+From:   Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20181212182902.GA7380@amd>
+Cc:     bp@alien8.de, hpa@zytor.com,
+        kernel list <linux-kernel@vger.kernel.org>, mingo@redhat.com,
+        tglx@linutronix.de, x86@kernel.org, jani.nikula@linux.intel.com,
+        rodrigo.vivi@intel.com, intel-gfx@lists.freedesktop.org,
+        chris@chris-wilson.co.uk
+References: <20181108175803.GA10785@amd>
+ <154279919462.20217.14259089584802660420@jlahtine-desk.ger.corp.intel.com>
+ <20181121115449.GA32455@amd>
+ <154296105546.7930.1457928786446716358@jlahtine-desk.ger.corp.intel.com>
+ <20181124152352.GA9548@amd> <20181208111346.GA5535@amd>
+ <20181208112447.GA9663@amd>
+ <64409c484c0601e7504ccc0cf8d211b3bb524ebe.camel@linux.intel.com>
+ <20181212182902.GA7380@amd>
+Message-ID: <154468977288.4945.12937975200892746470@jlahtine-desk.ger.corp.intel.com>
+User-Agent: alot/0.6
+Subject: Re: 4.20.0-rc6-next-20181210, v4.20-rc1: list_del corruption on thinkpad x220,
+ graphics related?
+Date:   Thu, 13 Dec 2018 10:29:33 +0200
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGksDQoNClRoYW5rIHlvdSBmb3IgdGhlIHBhdGNoLg0KDQpGYWJpZW4NCg0KDQpPbiAxMi8xMi8y
-MDE4IDU6MjcgUE0sIFlhbmd0YW8gTGkgd3JvdGU6DQo+IFdlIGFscmVhZHkgaGF2ZSB0aGUgREVG
-SU5FX1NIT1dfQVRUUklCVVRFLiBUaGVyZSBpcyBubyBuZWVkIHRvIGRlZmluZQ0KPiBiZGlzcF9k
-YmdfZGVjbGFyZSBhbmQgaHZhX2RiZ19kZWNsYXJlLCBzbyByZW1vdmUgdGhlbS4gQWxzbyB1c2UN
-Cj4gREVGSU5FX1NIT1dfQVRUUklCVVRFIHRvIHNpbXBsaWZ5IHNvbWUgY29kZS4NCj4NCj4gU2ln
-bmVkLW9mZi1ieTogWWFuZ3RhbyBMaSA8dGlueS53aW5kenpAZ21haWwuY29tPg0KDQpSZXZpZXdl
-ZC1ieTogRmFiaWVuIERlc3Nlbm5lIDxmYWJpZW4uZGVzc2VubmVAc3QuY29tPg0KDQo+IC0tLQ0K
-PiAgIC4uLi9tZWRpYS9wbGF0Zm9ybS9zdGkvYmRpc3AvYmRpc3AtZGVidWcuYyAgICB8IDM0ICsr
-KysrKy0tLS0tLS0tLS0tLQ0KPiAgIGRyaXZlcnMvbWVkaWEvcGxhdGZvcm0vc3RpL2h2YS9odmEt
-ZGVidWdmcy5jICB8IDM2ICsrKysrKystLS0tLS0tLS0tLS0NCj4gICAyIGZpbGVzIGNoYW5nZWQs
-IDIzIGluc2VydGlvbnMoKyksIDQ3IGRlbGV0aW9ucygtKQ0KPg0KPiBkaWZmIC0tZ2l0IGEvZHJp
-dmVycy9tZWRpYS9wbGF0Zm9ybS9zdGkvYmRpc3AvYmRpc3AtZGVidWcuYyBiL2RyaXZlcnMvbWVk
-aWEvcGxhdGZvcm0vc3RpL2JkaXNwL2JkaXNwLWRlYnVnLmMNCj4gaW5kZXggYzZhNGUyZGU1YzBj
-Li43N2NhNzUxN2ZhM2UgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvbWVkaWEvcGxhdGZvcm0vc3Rp
-L2JkaXNwL2JkaXNwLWRlYnVnLmMNCj4gKysrIGIvZHJpdmVycy9tZWRpYS9wbGF0Zm9ybS9zdGkv
-YmRpc3AvYmRpc3AtZGVidWcuYw0KPiBAQCAtMzE1LDcgKzMxNSw3IEBAIHN0YXRpYyB2b2lkIGJk
-aXNwX2RiZ19kdW1wX2l2bXgoc3RydWN0IHNlcV9maWxlICpzLA0KPiAgIAlzZXFfcHV0cyhzLCAi
-VW5rbm93biBjb252ZXJzaW9uXG4iKTsNCj4gICB9DQo+ICAgDQo+IC1zdGF0aWMgaW50IGJkaXNw
-X2RiZ19sYXN0X25vZGVzKHN0cnVjdCBzZXFfZmlsZSAqcywgdm9pZCAqZGF0YSkNCj4gK3N0YXRp
-YyBpbnQgbGFzdF9ub2Rlc19zaG93KHN0cnVjdCBzZXFfZmlsZSAqcywgdm9pZCAqZGF0YSkNCj4g
-ICB7DQo+ICAgCS8qIE5vdCBkdW1waW5nIGFsbCBmaWVsZHMsIGZvY3VzaW5nIG9uIHNpZ25pZmlj
-YW50IG9uZXMgKi8NCj4gICAJc3RydWN0IGJkaXNwX2RldiAqYmRpc3AgPSBzLT5wcml2YXRlOw0K
-PiBAQCAtMzg4LDcgKzM4OCw3IEBAIHN0YXRpYyBpbnQgYmRpc3BfZGJnX2xhc3Rfbm9kZXMoc3Ry
-dWN0IHNlcV9maWxlICpzLCB2b2lkICpkYXRhKQ0KPiAgIAlyZXR1cm4gMDsNCj4gICB9DQo+ICAg
-DQo+IC1zdGF0aWMgaW50IGJkaXNwX2RiZ19sYXN0X25vZGVzX3JhdyhzdHJ1Y3Qgc2VxX2ZpbGUg
-KnMsIHZvaWQgKmRhdGEpDQo+ICtzdGF0aWMgaW50IGxhc3Rfbm9kZXNfcmF3X3Nob3coc3RydWN0
-IHNlcV9maWxlICpzLCB2b2lkICpkYXRhKQ0KPiAgIHsNCj4gICAJc3RydWN0IGJkaXNwX2RldiAq
-YmRpc3AgPSBzLT5wcml2YXRlOw0KPiAgIAlzdHJ1Y3QgYmRpc3Bfbm9kZSAqbm9kZTsNCj4gQEAg
-LTQzNyw3ICs0MzcsNyBAQCBzdGF0aWMgY29uc3QgY2hhciAqYmRpc3BfZm10X3RvX3N0cihzdHJ1
-Y3QgYmRpc3BfZnJhbWUgZnJhbWUpDQo+ICAgCX0NCj4gICB9DQo+ICAgDQo+IC1zdGF0aWMgaW50
-IGJkaXNwX2RiZ19sYXN0X3JlcXVlc3Qoc3RydWN0IHNlcV9maWxlICpzLCB2b2lkICpkYXRhKQ0K
-PiArc3RhdGljIGludCBsYXN0X3JlcXVlc3Rfc2hvdyhzdHJ1Y3Qgc2VxX2ZpbGUgKnMsIHZvaWQg
-KmRhdGEpDQo+ICAgew0KPiAgIAlzdHJ1Y3QgYmRpc3BfZGV2ICpiZGlzcCA9IHMtPnByaXZhdGU7
-DQo+ICAgCXN0cnVjdCBiZGlzcF9yZXF1ZXN0ICpyZXF1ZXN0ID0gJmJkaXNwLT5kYmcuY29weV9y
-ZXF1ZXN0Ow0KPiBAQCAtNDc0LDcgKzQ3NCw3IEBAIHN0YXRpYyBpbnQgYmRpc3BfZGJnX2xhc3Rf
-cmVxdWVzdChzdHJ1Y3Qgc2VxX2ZpbGUgKnMsIHZvaWQgKmRhdGEpDQo+ICAgDQo+ICAgI2RlZmlu
-ZSBEVU1QKHJlZykgc2VxX3ByaW50ZihzLCAjcmVnICIgXHQweCUwOFhcbiIsIHJlYWRsKGJkaXNw
-LT5yZWdzICsgcmVnKSkNCj4gICANCj4gLXN0YXRpYyBpbnQgYmRpc3BfZGJnX3JlZ3Moc3RydWN0
-IHNlcV9maWxlICpzLCB2b2lkICpkYXRhKQ0KPiArc3RhdGljIGludCByZWdzX3Nob3coc3RydWN0
-IHNlcV9maWxlICpzLCB2b2lkICpkYXRhKQ0KPiAgIHsNCj4gICAJc3RydWN0IGJkaXNwX2RldiAq
-YmRpc3AgPSBzLT5wcml2YXRlOw0KPiAgIAlpbnQgcmV0Ow0KPiBAQCAtNTgyLDcgKzU4Miw3IEBA
-IHN0YXRpYyBpbnQgYmRpc3BfZGJnX3JlZ3Moc3RydWN0IHNlcV9maWxlICpzLCB2b2lkICpkYXRh
-KQ0KPiAgIA0KPiAgICNkZWZpbmUgU0VDT05EIDEwMDAwMDANCj4gICANCj4gLXN0YXRpYyBpbnQg
-YmRpc3BfZGJnX3BlcmYoc3RydWN0IHNlcV9maWxlICpzLCB2b2lkICpkYXRhKQ0KPiArc3RhdGlj
-IGludCBwZXJmX3Nob3coc3RydWN0IHNlcV9maWxlICpzLCB2b2lkICpkYXRhKQ0KPiAgIHsNCj4g
-ICAJc3RydWN0IGJkaXNwX2RldiAqYmRpc3AgPSBzLT5wcml2YXRlOw0KPiAgIAlzdHJ1Y3QgYmRp
-c3BfcmVxdWVzdCAqcmVxdWVzdCA9ICZiZGlzcC0+ZGJnLmNvcHlfcmVxdWVzdDsNCj4gQEAgLTYy
-NywyNyArNjI3LDE1IEBAIHN0YXRpYyBpbnQgYmRpc3BfZGJnX3BlcmYoc3RydWN0IHNlcV9maWxl
-ICpzLCB2b2lkICpkYXRhKQ0KPiAgIAlyZXR1cm4gMDsNCj4gICB9DQo+ICAgDQo+IC0jZGVmaW5l
-IGJkaXNwX2RiZ19kZWNsYXJlKG5hbWUpIFwNCj4gLQlzdGF0aWMgaW50IGJkaXNwX2RiZ18jI25h
-bWUjI19vcGVuKHN0cnVjdCBpbm9kZSAqaSwgc3RydWN0IGZpbGUgKmYpIFwNCj4gLQl7IFwNCj4g
-LQkJcmV0dXJuIHNpbmdsZV9vcGVuKGYsIGJkaXNwX2RiZ18jI25hbWUsIGktPmlfcHJpdmF0ZSk7
-IFwNCj4gLQl9IFwNCj4gLQlzdGF0aWMgY29uc3Qgc3RydWN0IGZpbGVfb3BlcmF0aW9ucyBiZGlz
-cF9kYmdfIyNuYW1lIyNfZm9wcyA9IHsgXA0KPiAtCQkub3BlbiAgICAgICAgICAgPSBiZGlzcF9k
-YmdfIyNuYW1lIyNfb3BlbiwgXA0KPiAtCQkucmVhZCAgICAgICAgICAgPSBzZXFfcmVhZCwgXA0K
-PiAtCQkubGxzZWVrICAgICAgICAgPSBzZXFfbHNlZWssIFwNCj4gLQkJLnJlbGVhc2UgICAgICAg
-ID0gc2luZ2xlX3JlbGVhc2UsIFwNCj4gLQl9DQo+IC0NCj4gICAjZGVmaW5lIGJkaXNwX2RiZ19j
-cmVhdGVfZW50cnkobmFtZSkgXA0KPiAgIAlkZWJ1Z2ZzX2NyZWF0ZV9maWxlKCNuYW1lLCBTX0lS
-VUdPLCBiZGlzcC0+ZGJnLmRlYnVnZnNfZW50cnksIGJkaXNwLCBcDQo+IC0JCQkgICAgJmJkaXNw
-X2RiZ18jI25hbWUjI19mb3BzKQ0KPiArCQkJICAgICZuYW1lIyNfZm9wcykNCj4gICANCj4gLWJk
-aXNwX2RiZ19kZWNsYXJlKHJlZ3MpOw0KPiAtYmRpc3BfZGJnX2RlY2xhcmUobGFzdF9ub2Rlcyk7
-DQo+IC1iZGlzcF9kYmdfZGVjbGFyZShsYXN0X25vZGVzX3Jhdyk7DQo+IC1iZGlzcF9kYmdfZGVj
-bGFyZShsYXN0X3JlcXVlc3QpOw0KPiAtYmRpc3BfZGJnX2RlY2xhcmUocGVyZik7DQo+ICtERUZJ
-TkVfU0hPV19BVFRSSUJVVEUocmVncyk7DQo+ICtERUZJTkVfU0hPV19BVFRSSUJVVEUobGFzdF9u
-b2Rlcyk7DQo+ICtERUZJTkVfU0hPV19BVFRSSUJVVEUobGFzdF9ub2Rlc19yYXcpOw0KPiArREVG
-SU5FX1NIT1dfQVRUUklCVVRFKGxhc3RfcmVxdWVzdCk7DQo+ICtERUZJTkVfU0hPV19BVFRSSUJV
-VEUocGVyZik7DQo+ICAgDQo+ICAgaW50IGJkaXNwX2RlYnVnZnNfY3JlYXRlKHN0cnVjdCBiZGlz
-cF9kZXYgKmJkaXNwKQ0KPiAgIHsNCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbWVkaWEvcGxhdGZv
-cm0vc3RpL2h2YS9odmEtZGVidWdmcy5jIGIvZHJpdmVycy9tZWRpYS9wbGF0Zm9ybS9zdGkvaHZh
-L2h2YS1kZWJ1Z2ZzLmMNCj4gaW5kZXggOWY3ZThhYzg3NWQxLi43ZDEyYTViNWQ5MTQgMTAwNjQ0
-DQo+IC0tLSBhL2RyaXZlcnMvbWVkaWEvcGxhdGZvcm0vc3RpL2h2YS9odmEtZGVidWdmcy5jDQo+
-ICsrKyBiL2RyaXZlcnMvbWVkaWEvcGxhdGZvcm0vc3RpL2h2YS9odmEtZGVidWdmcy5jDQo+IEBA
-IC0yNzEsNyArMjcxLDcgQEAgc3RhdGljIHZvaWQgaHZhX2RiZ19wZXJmX2NvbXB1dGUoc3RydWN0
-IGh2YV9jdHggKmN0eCkNCj4gICAgKiBkZXZpY2UgZGVidWcgaW5mbw0KPiAgICAqLw0KPiAgIA0K
-PiAtc3RhdGljIGludCBodmFfZGJnX2RldmljZShzdHJ1Y3Qgc2VxX2ZpbGUgKnMsIHZvaWQgKmRh
-dGEpDQo+ICtzdGF0aWMgaW50IGRldmljZV9zaG93KHN0cnVjdCBzZXFfZmlsZSAqcywgdm9pZCAq
-ZGF0YSkNCj4gICB7DQo+ICAgCXN0cnVjdCBodmFfZGV2ICpodmEgPSBzLT5wcml2YXRlOw0KPiAg
-IA0KPiBAQCAtMjgxLDcgKzI4MSw3IEBAIHN0YXRpYyBpbnQgaHZhX2RiZ19kZXZpY2Uoc3RydWN0
-IHNlcV9maWxlICpzLCB2b2lkICpkYXRhKQ0KPiAgIAlyZXR1cm4gMDsNCj4gICB9DQo+ICAgDQo+
-IC1zdGF0aWMgaW50IGh2YV9kYmdfZW5jb2RlcnMoc3RydWN0IHNlcV9maWxlICpzLCB2b2lkICpk
-YXRhKQ0KPiArc3RhdGljIGludCBlbmNvZGVyc19zaG93KHN0cnVjdCBzZXFfZmlsZSAqcywgdm9p
-ZCAqZGF0YSkNCj4gICB7DQo+ICAgCXN0cnVjdCBodmFfZGV2ICpodmEgPSBzLT5wcml2YXRlOw0K
-PiAgIAl1bnNpZ25lZCBpbnQgaSA9IDA7DQo+IEBAIC0yOTksNyArMjk5LDcgQEAgc3RhdGljIGlu
-dCBodmFfZGJnX2VuY29kZXJzKHN0cnVjdCBzZXFfZmlsZSAqcywgdm9pZCAqZGF0YSkNCj4gICAJ
-cmV0dXJuIDA7DQo+ICAgfQ0KPiAgIA0KPiAtc3RhdGljIGludCBodmFfZGJnX2xhc3Qoc3RydWN0
-IHNlcV9maWxlICpzLCB2b2lkICpkYXRhKQ0KPiArc3RhdGljIGludCBsYXN0X3Nob3coc3RydWN0
-IHNlcV9maWxlICpzLCB2b2lkICpkYXRhKQ0KPiAgIHsNCj4gICAJc3RydWN0IGh2YV9kZXYgKmh2
-YSA9IHMtPnByaXZhdGU7DQo+ICAgCXN0cnVjdCBodmFfY3R4ICpsYXN0X2N0eCA9ICZodmEtPmRi
-Zy5sYXN0X2N0eDsNCj4gQEAgLTMxNiw3ICszMTYsNyBAQCBzdGF0aWMgaW50IGh2YV9kYmdfbGFz
-dChzdHJ1Y3Qgc2VxX2ZpbGUgKnMsIHZvaWQgKmRhdGEpDQo+ICAgCXJldHVybiAwOw0KPiAgIH0N
-Cj4gICANCj4gLXN0YXRpYyBpbnQgaHZhX2RiZ19yZWdzKHN0cnVjdCBzZXFfZmlsZSAqcywgdm9p
-ZCAqZGF0YSkNCj4gK3N0YXRpYyBpbnQgcmVnc19zaG93KHN0cnVjdCBzZXFfZmlsZSAqcywgdm9p
-ZCAqZGF0YSkNCj4gICB7DQo+ICAgCXN0cnVjdCBodmFfZGV2ICpodmEgPSBzLT5wcml2YXRlOw0K
-PiAgIA0KPiBAQCAtMzI1LDI2ICszMjUsMTQgQEAgc3RhdGljIGludCBodmFfZGJnX3JlZ3Moc3Ry
-dWN0IHNlcV9maWxlICpzLCB2b2lkICpkYXRhKQ0KPiAgIAlyZXR1cm4gMDsNCj4gICB9DQo+ICAg
-DQo+IC0jZGVmaW5lIGh2YV9kYmdfZGVjbGFyZShuYW1lKQkJCQkJCSAgXA0KPiAtCXN0YXRpYyBp
-bnQgaHZhX2RiZ18jI25hbWUjI19vcGVuKHN0cnVjdCBpbm9kZSAqaSwgc3RydWN0IGZpbGUgKmYp
-IFwNCj4gLQl7CQkJCQkJCQkgIFwNCj4gLQkJcmV0dXJuIHNpbmdsZV9vcGVuKGYsIGh2YV9kYmdf
-IyNuYW1lLCBpLT5pX3ByaXZhdGUpOwkgIFwNCj4gLQl9CQkJCQkJCQkgIFwNCj4gLQlzdGF0aWMg
-Y29uc3Qgc3RydWN0IGZpbGVfb3BlcmF0aW9ucyBodmFfZGJnXyMjbmFtZSMjX2ZvcHMgPSB7CSAg
-XA0KPiAtCQkub3BlbgkJPSBodmFfZGJnXyMjbmFtZSMjX29wZW4sCQkgIFwNCj4gLQkJLnJlYWQJ
-CT0gc2VxX3JlYWQsCQkJCSAgXA0KPiAtCQkubGxzZWVrCQk9IHNlcV9sc2VlaywJCQkJICBcDQo+
-IC0JCS5yZWxlYXNlCT0gc2luZ2xlX3JlbGVhc2UsCQkJICBcDQo+IC0JfQ0KPiAtDQo+ICAgI2Rl
-ZmluZSBodmFfZGJnX2NyZWF0ZV9lbnRyeShuYW1lKQkJCQkJIFwNCj4gICAJZGVidWdmc19jcmVh
-dGVfZmlsZSgjbmFtZSwgMDQ0NCwgaHZhLT5kYmcuZGVidWdmc19lbnRyeSwgaHZhLCBcDQo+IC0J
-CQkgICAgJmh2YV9kYmdfIyNuYW1lIyNfZm9wcykNCj4gKwkJCSAgICAmbmFtZSMjX2ZvcHMpDQo+
-ICAgDQo+IC1odmFfZGJnX2RlY2xhcmUoZGV2aWNlKTsNCj4gLWh2YV9kYmdfZGVjbGFyZShlbmNv
-ZGVycyk7DQo+IC1odmFfZGJnX2RlY2xhcmUobGFzdCk7DQo+IC1odmFfZGJnX2RlY2xhcmUocmVn
-cyk7DQo+ICtERUZJTkVfU0hPV19BVFRSSUJVVEUoZGV2aWNlKTsNCj4gK0RFRklORV9TSE9XX0FU
-VFJJQlVURShlbmNvZGVycyk7DQo+ICtERUZJTkVfU0hPV19BVFRSSUJVVEUobGFzdCk7DQo+ICtE
-RUZJTkVfU0hPV19BVFRSSUJVVEUocmVncyk7DQo+ICAgDQo+ICAgdm9pZCBodmFfZGVidWdmc19j
-cmVhdGUoc3RydWN0IGh2YV9kZXYgKmh2YSkNCj4gICB7DQo+IEBAIC0zODAsNyArMzY4LDcgQEAg
-dm9pZCBodmFfZGVidWdmc19yZW1vdmUoc3RydWN0IGh2YV9kZXYgKmh2YSkNCj4gICAgKiBjb250
-ZXh0IChpbnN0YW5jZSkgZGVidWcgaW5mbw0KPiAgICAqLw0KPiAgIA0KPiAtc3RhdGljIGludCBo
-dmFfZGJnX2N0eChzdHJ1Y3Qgc2VxX2ZpbGUgKnMsIHZvaWQgKmRhdGEpDQo+ICtzdGF0aWMgaW50
-IGN0eF9zaG93KHN0cnVjdCBzZXFfZmlsZSAqcywgdm9pZCAqZGF0YSkNCj4gICB7DQo+ICAgCXN0
-cnVjdCBodmFfY3R4ICpjdHggPSBzLT5wcml2YXRlOw0KPiAgIA0KPiBAQCAtMzkyLDcgKzM4MCw3
-IEBAIHN0YXRpYyBpbnQgaHZhX2RiZ19jdHgoc3RydWN0IHNlcV9maWxlICpzLCB2b2lkICpkYXRh
-KQ0KPiAgIAlyZXR1cm4gMDsNCj4gICB9DQo+ICAgDQo+IC1odmFfZGJnX2RlY2xhcmUoY3R4KTsN
-Cj4gK0RFRklORV9TSE9XX0FUVFJJQlVURShjdHgpOw0KPiAgIA0KPiAgIHZvaWQgaHZhX2RiZ19j
-dHhfY3JlYXRlKHN0cnVjdCBodmFfY3R4ICpjdHgpDQo+ICAgew0KPiBAQCAtNDA3LDcgKzM5NSw3
-IEBAIHZvaWQgaHZhX2RiZ19jdHhfY3JlYXRlKHN0cnVjdCBodmFfY3R4ICpjdHgpDQo+ICAgDQo+
-ICAgCWN0eC0+ZGJnLmRlYnVnZnNfZW50cnkgPSBkZWJ1Z2ZzX2NyZWF0ZV9maWxlKG5hbWUsIDA0
-NDQsDQo+ICAgCQkJCQkJICAgICBodmEtPmRiZy5kZWJ1Z2ZzX2VudHJ5LA0KPiAtCQkJCQkJICAg
-ICBjdHgsICZodmFfZGJnX2N0eF9mb3BzKTsNCj4gKwkJCQkJCSAgICAgY3R4LCAmY3R4X2ZvcHMp
-Ow0KPiAgIH0NCj4gICANCj4gICB2b2lkIGh2YV9kYmdfY3R4X3JlbW92ZShzdHJ1Y3QgaHZhX2N0
-eCAqY3R4KQ==
+Quoting Pavel Machek (2018-12-12 20:29:02)
+> Hi!
+> 
+> > > > > > > > There's one similar for nouveau in Bugzilla, but it seems like a genuine
+> > > > > > > > memory corruption (1 bit flipped):
+> > > > > > > > 
+> > > > > > > > https://bugs.freedesktop.org/show_bug.cgi?id=84880
+> > > > > > > > 
+> > > > > > > > Any extra information would be of use :)
+> > > > > > > > 
+> > > > > > > > Regards, Joonas
+> > > > > > > > 
+> > > > > > > > PS. Could you open a bug to Bugzilla, it'll help to collect the
+> > > > > > > > information in one consolidated place:
+> > > > > > > > 
+> > > > > > > > https://01.org/linuxgraphics/documentation/how-report-bugs
+> > > > > > > 
+> > > > > > > I prefer email... certainly for bugs that can't be reproduced.
+> > > > > > 
+> > > > > > By adding it to the Bugzilla it may be recognized by somebody else
+> > > > > > who is experiencing a similar issue. Internet points are not deducted
+> > > > > > for submitting bugs in good faith, even if they get closed as
+> > > > > > NOTABUG.
+> > > > 
+> > > > Well, your documentation suggests you'll deduce my internet points:
+> > > > 
+> > > >   Before filing the bug, please try to reproduce your issue with the
+> > > >   latest kernel. Use the latest drm-tip branch from
+> > > >   http://cgit.freedesktop.org/drm-tip and build as instructed on our
+> > > >   Build Guide.
+> > > > 
+> > > > :-)
+> > > 
+> > > I'd prefer not to run drm-tip. I'll update to 2.6.20-rc5+ and see if
+> > > it re-appears (but it takes long time to reproduce :-().
+> > 
+> > If we can or can not reproduce the issue with drm-tip, is a very useful
+> > datapoint for us. If we can not reproduce, it'll be possible to bisect
+> > which commit fixed it, and backport that. On the other hand, if it's
+> > still reproducible, we know we're not spending time on something we
+> > already fixed, and the priority gets a bump.
+> 
+> bisect ... is not practical on something that takes 2 days to reproduce.
+> 
+> > > If you think it is useful, I can try to update my machine to
+> > > linux-next.
+> > 
+> > linux-next is closer to drm-tip, so it's better. Do you have some
+> > specific reason for not wanting to run drm-tip (but linux-next is still
+> > ok)?
+> 
+> I already have build/update scripts for -next, and I trust -next not
+> to store screenshots of my desktop in my master boot record :-).
+> 
+> Anyway, it does happen with -next. This time, chromiums were running,
+> and crash happened minute? after I exited flightgear. It can be seen
+> in the logs.
+> 
+> Oh and I might want to mention -- machine was rather deep in swap this
+> time, as in "mouse jumping when starting fgfs" and "could feel the
+> chromium being swapped back in". I might have had this situation
+> before, and just powercycled the machine "because it is so deep in
+> swap that it will not recover".
+> 
+> top says:
+> 
+> top - 19:18:24 up 2 days,  8:03,  2 users,  load average: 3.02, 3.45,
+> 3.21
+> Tasks: 141 total,   1 running,  86 sleeping,   0 stopped,   2 zombie
+> %Cpu(s): 18.8 us,  7.6 sy,  3.0 ni, 68.4 id,  1.3 wa,  0.0 hi,  0.9
+> si,  0.0 st
+> KiB Mem:   5967968 total,   663244 used,  5304724 free,    48876
+> buffers
+> KiB Swap:  1681428 total,   170904 used,  1510524 free.   446280
+> cached Mem
+> 
+> ....but of course that memory is free once everything died.
+> 
+> Any ideas? Should I go back to v4.19 to see if it happens there, too?
+
+linux-next includes very much the same code as drm-tip. There's nobody
+magically reviewing the code more than it is reviewed for inclusion into
+drm-tip, when it is fed into linux-next. So thinking linux-next would be
+some way safer is an illusion.
+
+It sounds like having memory pressure expedites the corruption, which
+should make it easier to reproduce and thus fix.
+
+So if you could please try drm-tip reproducing AND open a bug in Bugzilla.
+If you are unwilling to do that, it is very difficult to help you more.
+
+Regards, Joonas
+
+> 
+> 
+>                                                                         Pavel
+> -- 
+> (english) http://www.livejournal.com/~pavelmachek
+> (cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
