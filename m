@@ -2,83 +2,94 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91810C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 18:23:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89953C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 18:26:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 402B120811
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 18:23:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 40E3C20811
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 18:26:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="A0gHO6nz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 402B120811
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dgZ9J17R"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40E3C20811
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728924AbeLMSXU (ORCPT
+        id S1727736AbeLMS01 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 13:23:20 -0500
-Received: from us01smtprelay-2.synopsys.com ([198.182.60.111]:41512 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727775AbeLMSXU (ORCPT
+        Thu, 13 Dec 2018 13:26:27 -0500
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:38488 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727340AbeLMS00 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 13:23:20 -0500
-Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id AB55F10C0C0E;
-        Thu, 13 Dec 2018 10:23:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1544725399; bh=eQ9omTdtGI8YPXkxucnTGpLTuTupiotPXtk1FfrUFMs=;
-        h=From:To:CC:Subject:Date:References:From;
-        b=A0gHO6nzfz/CHKgdu5WhMwgWRsczgeHPzyxuBBbDQqEVZuX6HX4USYM8e7QPD3qoV
-         HE/wXLeVLPaG5vZS04uBmReEcurzIPNCm3dBBaV1nG7uLoGTgyxZp+se9jn+xxdFeh
-         /jnCJmt6l7Aw33E3zb9fTiAc6v+l3Xg8T875KqAdXJm5yM/T/bX8iZDpzqWjGnDdPa
-         IRqxhd0LRBsoo+oGMo1mWM4CcoynPkDSwIXf8Kj3Zen0pWaz3r+1nD0jr2dT//M+hK
-         M95aKGQyzs83uYiN4y52fc1+PxFU0LsWK9EiJOW238kT18MxSXwvh5lylg7PFn7cM0
-         HMGMU0LNqV/5w==
-Received: from US01WXQAHTC1.internal.synopsys.com (us01wxqahtc1.internal.synopsys.com [10.12.238.230])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 9FEB33B22;
-        Thu, 13 Dec 2018 10:23:19 -0800 (PST)
-Received: from US01WEMBX2.internal.synopsys.com ([fe80::e4b6:5520:9c0d:250b])
- by US01WXQAHTC1.internal.synopsys.com ([::1]) with mapi id 14.03.0415.000;
- Thu, 13 Dec 2018 10:23:19 -0800
-From:   Vineet Gupta <vineet.gupta1@synopsys.com>
-To:     Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-        "linux-snps-arc@lists.infradead.org" 
-        <linux-snps-arc@lists.infradead.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Alexey Brodkin" <alexey.brodkin@synopsys.com>
-Subject: Re: [PATCH] ARC: fix __ffs return value to avoid build warnings
-Thread-Topic: [PATCH] ARC: fix __ffs return value to avoid build warnings
-Thread-Index: AQHUkvqJxXSvGyNzLkuvtcEIj0Ff0w==
-Date:   Thu, 13 Dec 2018 18:23:18 +0000
-Message-ID: <C2D7FE5348E1B147BCA15975FBA23075014641F6E3@US01WEMBX2.internal.synopsys.com>
-References: <20181213154257.23033-1-Eugeniy.Paltsev@synopsys.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.144.199.106]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
+        Thu, 13 Dec 2018 13:26:26 -0500
+Received: by mail-yw1-f68.google.com with SMTP id i20so1214076ywc.5
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 10:26:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=lcpo9vkJaU/B4DRr40bY8llUuPtTjVRD00OqQ9pC5Zo=;
+        b=dgZ9J17RUPUsqOOMfwvpBt5e4f74oO/VZvzdKi3C7aPTbDQKiPcbF6JWqRgJLXMGUx
+         koHMvOjy0Daf7pL+eQ1K09oTyfZ7w7R8JOU28p/6e+QGX4gjslGSQehQEqKn79HfIMwF
+         KT+1YE5AftrG3MdLwZskFK0pTF/9m1Pbu6qBSrICa7T8FXI+uhJXyNc9TH9NWxx6EKM1
+         +iqjJVj1De9r/9AniE6J2r49THX5Njcm+Rd55egqi1jdM3ORoYnO5sD4j7/whbKwuM7B
+         1Wkj59UcbkYcdmOfvi5tfj09NB7sdOIZ1xR2k7AQqFUufS6BouJFGNztFu6Qyk+ickuC
+         8jww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=lcpo9vkJaU/B4DRr40bY8llUuPtTjVRD00OqQ9pC5Zo=;
+        b=LLgQfgXNrFCFe4zXk91nrip4Iuao+OCPU/YKHvDuFRPZNVKcXmnowKDJ064bKPSwPb
+         AlVT98KZD3pL01iVSj4/g4NOD/5La2+tqvfT6FQcoR5Frcugx6dNIu/xuI3GsBgkxagY
+         T8TM/P2ik3K+F8Ybmw4AarovdDjTzJxPc3As8LGrtEaCwS5B/FxqXZ2LtQfWcxa/MPjc
+         ruqiDND7EBfw8fbUipYOKiaOyJjzUw9y6J5lljo4LRVqMRPA3uWf9t4ZAAUo3NDr552f
+         8qwMqoaWW/5iePhb6rrP5aqS8XoAdi9P21YUjiwbw0nLKFqwaeKH7dF2Nxsk5wKlXLar
+         D3/w==
+X-Gm-Message-State: AA+aEWYTskiz1vC0wKv4Mb542FUo8qqdcS0SodkKdlm6JVyvmgXn/jWw
+        qfyPp/xwwOGUWuMOH/HlqvU=
+X-Google-Smtp-Source: AFSGD/UC9mxyyUIeO5pDvQMTLYWfxQnQ1DDjcnNSdQsHBZdqgGl7EcwzeKVJBRq2aTOW4qxN9O2Crg==
+X-Received: by 2002:a81:b623:: with SMTP id u35mr26337540ywh.177.1544725586238;
+        Thu, 13 Dec 2018 10:26:26 -0800 (PST)
+Received: from ubuntu ([67.191.186.148])
+        by smtp.gmail.com with ESMTPSA id u84sm786258ywb.12.2018.12.13.10.26.25
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 13 Dec 2018 10:26:25 -0800 (PST)
+From:   Amir Mahdi Ghorbanian <indigoomega021@gmail.com>
+To:     abbotti@mev.co.uk
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        gregkh@linuxfoundation.org
+Subject: [PATCH] Staging: comedi: cb_pcidas: fixed a spelling mistake coding style issue
+Date:   Thu, 13 Dec 2018 10:26:24 -0800
+Message-Id: <1544725584-39138-1-git-send-email-indigoomega021@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/13/18 7:43 AM, Eugeniy Paltsev wrote:=0A=
-> Change __ffs return value from 'int' to 'unsigned long' as it=0A=
-> is done in other implementations (like asm-generic, x86, etc...)=0A=
-> to avoid build-time warnings in places where type is strictly=0A=
-> checked.=0A=
->=0A=
-> As __ffs may return values in [0-31] interval changing return=0A=
-> type to unsigned is valid.=0A=
->=0A=
-> Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>=0A=
-=0A=
-Can you please paste a couple of lines of offending output !=0A=
-=0A=
--Vineet=0A=
+Fixed a coding style issue.
+
+Signed-off-by: Amir Mahdi Ghorbanian <indigoomega021@gmail.com>
+---
+ drivers/staging/comedi/drivers/cb_pcidas.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/staging/comedi/drivers/cb_pcidas.c b/drivers/staging/comedi/drivers/cb_pcidas.c
+index 8429d57..02ae00c 100644
+--- a/drivers/staging/comedi/drivers/cb_pcidas.c
++++ b/drivers/staging/comedi/drivers/cb_pcidas.c
+@@ -116,7 +116,7 @@
+ #define PCIDAS_TRIG_SEL_ANALOG	PCIDAS_TRIG_SEL(3) /* ext. analog trigger */
+ #define PCIDAS_TRIG_SEL_MASK	PCIDAS_TRIG_SEL(3) /* start trigger mask */
+ #define PCIDAS_TRIG_POL		BIT(2)	/* invert trigger (1602 only) */
+-#define PCIDAS_TRIG_MODE	BIT(3)	/* edge/level trigerred (1602 only) */
++#define PCIDAS_TRIG_MODE	BIT(3)	/* edge/level triggered (1602 only) */
+ #define PCIDAS_TRIG_EN		BIT(4)	/* enable external start trigger */
+ #define PCIDAS_TRIG_BURSTE	BIT(5)	/* burst mode enable */
+ #define PCIDAS_TRIG_CLR		BIT(7)	/* clear external trigger */
+-- 
+2.7.4
+
