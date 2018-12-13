@@ -4,151 +4,86 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CF0AC65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 19:34:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2313C67872
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 19:36:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58A0E20870
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 19:34:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9CB8D20870
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 19:36:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544729649;
-	bh=+2DwOz/MH+BB+HkI8y/EmWLob9eNm41yKPZRvzwGPgc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=amTtxLllRORAlnSSufFzf3uY8+oJjVBLh4JMLqm7YG3A0Vf9+hGV2NNIomZk2Ugcj
-	 kNiw8gcZjEbT+x1nFIUsw4URN2fW302asK2440YAaQvkwsgAdQ0C4Pv65IgFQdmM3T
-	 cHjqYU1n/Qn6CE397c5Y9kauk0InxI1sKuuiAv7I=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58A0E20870
+	s=default; t=1544729783;
+	bh=5Lk5CdTHmRY4t+blL2zeIHiMM+B3ZNO9k98hvL6UXHg=;
+	h=In-Reply-To:Subject:To:References:From:Cc:Date:List-ID:From;
+	b=m0Xq38mHnH06g61jHDkev70uXjQBdh8pS9ZekgK2BZzDXhCvIylwr+ZsZ5KBl4bro
+	 Gj7duw8+bc5w5ZE72ScMAdFY8Ld2YHIlt0r2VTUNtihUvx5VT7EQJqfrNGyJGk8WBm
+	 MPaZ2zvUSRWnpj/9ZTOCZx3uZYmr0Yz5FMGHhVyY=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CB8D20870
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727890AbeLMTeI (ORCPT
+        id S1728008AbeLMTgW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 14:34:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55690 "EHLO mail.kernel.org"
+        Thu, 13 Dec 2018 14:36:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56440 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726465AbeLMTeI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 14:34:08 -0500
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1726465AbeLMTgW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 14:36:22 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6318F20870
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 19:34:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 81F8D2086D;
+        Thu, 13 Dec 2018 19:36:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544729646;
-        bh=+2DwOz/MH+BB+HkI8y/EmWLob9eNm41yKPZRvzwGPgc=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=183oY3MkNSyTam6gDEc+TnWQ5fXXTU7i0tMLCKRR5Fqx39ACy5YFSm4+JFDjOP1DJ
-         OrHzpqsO3BgK7XW7AMHuwruRWxvGeyKONzi/VMHnXKyg7h2iyTYg6F3N71H1aS3+/c
-         cFiGw2dzoW7cPKsHowDtfnczld4h73oU4WT2x2LE=
-Received: by mail-wm1-f44.google.com with SMTP id y185so14615757wmd.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 11:34:06 -0800 (PST)
-X-Gm-Message-State: AA+aEWbJvzPIr2meSA+MZsp4sp6YuJ7r/sQCNZSVmtTbej4YJ98FG/R0
-        XuWtjWfS75fnOJ+2KE4M6miKrrvjhfi8Ux/HIbk=
-X-Google-Smtp-Source: AFSGD/WCM5TQMRZLYmU/DT5Vcx2iAEN58rY6k1Sj9drFCxAh1iwNp4t+ljPwQ3rilA3Sz8jVW6L2sESO8zdFcXrEHZY=
-X-Received: by 2002:a1c:66c5:: with SMTP id a188mr605099wmc.129.1544729641513;
- Thu, 13 Dec 2018 11:34:01 -0800 (PST)
+        s=default; t=1544729781;
+        bh=5Lk5CdTHmRY4t+blL2zeIHiMM+B3ZNO9k98hvL6UXHg=;
+        h=In-Reply-To:Subject:To:References:From:Cc:Date:From;
+        b=LCzIXalZPXtfVERJAzxnCfKY65QjxaYZ+WlibU+E5TZAHuoFYtF/OyPeaiThd9fFc
+         plMaZWx6ZmwgeOeYc1qp+nMvt/ewHv96ZQNRHQJFzOD1yu+MYWr3/g8ihMlBICpFxL
+         4/AYZ1KttPv98u8FioHAOGCNatP/nIqLJfHhU+i4=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <1544693783-25079-1-git-send-email-chuanjia.liu@mediatek.com>
-In-Reply-To: <1544693783-25079-1-git-send-email-chuanjia.liu@mediatek.com>
-From:   Sean Wang <sean.wang@kernel.org>
-Date:   Thu, 13 Dec 2018 11:33:29 -0800
-X-Gmail-Original-Message-ID: <CAGp9LzpcRCMWSn-u6K6+eRT=Zr8PR22Vd381miyhVYbF87N02g@mail.gmail.com>
-Message-ID: <CAGp9LzpcRCMWSn-u6K6+eRT=Zr8PR22Vd381miyhVYbF87N02g@mail.gmail.com>
-Subject: Re: [PATCH] eint: add gpio vritual number select
-To:     chuanjia.liu@mediatek.com
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-mediatek@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        hongkun.cao@mediatek.com, youlin.pei@mediatek.com,
-        eddie.huang@mediatek.com, zhiyong.tao@mediatek.com,
-        hailong.fan@mediatek.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1544720370-11598-1-git-send-email-jhugo@codeaurora.org>
+Subject: Re: [PATCH] clk: qcom: Leave mmss noc on for 8998
+To:     Jeffrey Hugo <jhugo@codeaurora.org>, andy.gross@linaro.org,
+        david.brown@linaro.org, mturquette@baylibre.com
+References: <1544720370-11598-1-git-send-email-jhugo@codeaurora.org>
+Message-ID: <154472978059.19322.5895645487468845661@swboyd.mtv.corp.google.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+User-Agent: alot/0.8
+Cc:     bjorn.andersson@linaro.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        marc.w.gonzalez@free.fr, Jeffrey Hugo <jhugo@codeaurora.org>
+Date:   Thu, 13 Dec 2018 11:36:20 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 13, 2018 at 1:36 AM <chuanjia.liu@mediatek.com> wrote:
->
-> From: Chuanjia Liu <Chuanjia.Liu@mediatek.com>
->
-> This patch add gpio vritual number select,avoid virtual gpio set SMT.
-
-s/gpio/GPIO/
-s/vritual/virtual/
-
-Virtual GPIOs you said here that means these pins only used inside SoC
-and not being exported to outside SoC, right? It seems this kind of
-pins doesn't need SMT.
-
->
-> Signed-off-by: Chuanjia Liu <Chuanjia.Liu@mediatek.com>
+Quoting Jeffrey Hugo (2018-12-13 08:59:30)
+> Similar to other qcom targets, gcc_mmss_noc_cfg_ahb_clk should not be
+> disabled.  Any mmss access depends on this clock, and its been observed
+> that enabling mmssnoc_axi_rpm_clk with rpmcc results in an implicit
+> access to mmss and will crash the system if gcc_mmss_noc_cfg_ahb_clk is
+> disabled.
+>=20
+> Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
 > ---
->  drivers/pinctrl/mediatek/mtk-eint.h              |    1 +
->  drivers/pinctrl/mediatek/pinctrl-mt8183.c        |    1 +
->  drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c |    9 ++++++---
->  3 files changed, 8 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/pinctrl/mediatek/mtk-eint.h b/drivers/pinctrl/mediatek/mtk-eint.h
-> index 48468d0..c16beaf 100644
-> --- a/drivers/pinctrl/mediatek/mtk-eint.h
-> +++ b/drivers/pinctrl/mediatek/mtk-eint.h
-> @@ -37,6 +37,7 @@ struct mtk_eint_hw {
->         u8              ports;
->         unsigned int    ap_num;
->         unsigned int    db_cnt;
-> +       unsigned int    vir_start;
->  };
->
->  struct mtk_eint;
-> diff --git a/drivers/pinctrl/mediatek/pinctrl-mt8183.c b/drivers/pinctrl/mediatek/pinctrl-mt8183.c
-> index 6262fd3..bbeafd3 100644
-> --- a/drivers/pinctrl/mediatek/pinctrl-mt8183.c
-> +++ b/drivers/pinctrl/mediatek/pinctrl-mt8183.c
-> @@ -497,6 +497,7 @@
->         .ports     = 6,
->         .ap_num    = 212,
->         .db_cnt    = 13,
-> +       .vir_start = 180,
->  };
->
->  static const struct mtk_pin_soc mt8183_data = {
-> diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
-> index 4a9e0d4..ca3bae1 100644
-> --- a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
-> +++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
-> @@ -289,9 +289,12 @@ static int mtk_xt_set_gpio_as_eint(void *data, unsigned long eint_n)
->         if (err)
->                 return err;
->
-> -       err = mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_SMT, MTK_ENABLE);
-> -       if (err)
-> -               return err;
-> +       if (gpio_n < hw->eint->hw->vir_start) {
-> +               err = mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_SMT,
-> +                                      MTK_ENABLE);
-> +               if (err)
-> +                       return err;
-> +       }
+>  drivers/clk/qcom/gcc-msm8998.c | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/drivers/clk/qcom/gcc-msm8998.c b/drivers/clk/qcom/gcc-msm899=
+8.c
+> index 4b75a09..b371308 100644
+> --- a/drivers/clk/qcom/gcc-msm8998.c
+> +++ b/drivers/clk/qcom/gcc-msm8998.c
+> @@ -2014,6 +2014,7 @@ enum {
+>                 .hw.init =3D &(struct clk_init_data){
+>                         .name =3D "gcc_mmss_noc_cfg_ahb_clk",
+>                         .ops =3D &clk_branch2_ops,
+> +                       .flags =3D CLK_IGNORE_UNUSED,
 
-The changes will break these SoCs without a properly configured vir_start.
+It should be marked as CLK_IS_CRITICAL and a comment should be added to
+the code indicating why it's critical.
 
-If SMT seems unnecessary for these kinds of virtual GPIOs pin in the
-path, we can do it as
-
-err = mtk_hw_set_value(hw, desc, PINCTRL_PIN_REG_SMT,
-                                        MTK_ENABLE);
-/* please add comments for the exclusion condition */
-if (err && err != -ENOTSUPP)
-        return err;
-
-If there is getting much special on certain pins between SoCs, and
-then we can consider creating a desc->flag to split logic.
-
->
->         return 0;
->  }
-> --
-> 1.7.9.5
