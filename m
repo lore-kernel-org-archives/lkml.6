@@ -7,28 +7,28 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1B5DC65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 10:34:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F810C67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 10:35:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7192B20811
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 10:34:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7192B20811
+	by mail.kernel.org (Postfix) with ESMTP id 45E7C20811
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 10:35:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45E7C20811
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728701AbeLMKel (ORCPT
+        id S1728702AbeLMKfL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 05:34:41 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32814 "EHLO huawei.com"
+        Thu, 13 Dec 2018 05:35:11 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32815 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727590AbeLMKel (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 05:34:41 -0500
+        id S1728367AbeLMKfK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 05:35:10 -0500
 Received: from lhreml707-cah.china.huawei.com (unknown [172.18.7.108])
-        by Forcepoint Email with ESMTP id 61AFC4A3976DD;
-        Thu, 13 Dec 2018 10:34:37 +0000 (GMT)
+        by Forcepoint Email with ESMTP id DB4A94C2F276;
+        Thu, 13 Dec 2018 10:35:07 +0000 (GMT)
 Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.153)
  by smtpsuk.huawei.com (10.201.108.48) with Microsoft SMTP Server (TLS) id
- 14.3.408.0; Thu, 13 Dec 2018 10:34:31 +0000
+ 14.3.408.0; Thu, 13 Dec 2018 10:35:01 +0000
 From:   Roberto Sassu <roberto.sassu@huawei.com>
 To:     <jarkko.sakkinen@linux.intel.com>, <zohar@linux.ibm.com>,
         <david.safford@ge.com>, <monty.wiseman@ge.com>
@@ -36,9 +36,9 @@ CC:     <linux-integrity@vger.kernel.org>,
         <linux-security-module@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>,
         Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH v7 4/5] tpm: retrieve digest size of unknown algorithms with PCR read
-Date:   Thu, 13 Dec 2018 11:29:44 +0100
-Message-ID: <20181213102945.30946-5-roberto.sassu@huawei.com>
+Subject: [PATCH v7 5/5] tpm: pass an array of tpm_extend_digest structures to tpm_pcr_extend()
+Date:   Thu, 13 Dec 2018 11:29:45 +0100
+Message-ID: <20181213102945.30946-6-roberto.sassu@huawei.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181213102945.30946-1-roberto.sassu@huawei.com>
 References: <20181213102945.30946-1-roberto.sassu@huawei.com>
@@ -51,358 +51,297 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, the TPM driver retrieves the digest size from a table mapping
-TPM algorithms identifiers to identifiers defined by the crypto subsystem.
-If the algorithm is not defined by the latter, the digest size can be
-retrieved from the output of the PCR read command.
+Currently, tpm_pcr_extend() accepts as an input only a SHA1 digest.
 
-The patch modifies the definition of tpm_pcr_read() and tpm2_pcr_read() to
-pass the desired hash algorithm and obtain the digest size at TPM startup.
-Algorithms and corresponding digest sizes are stored in the new structure
-tpm_bank_info, member of tpm_chip, so that the information can be used by
-other kernel subsystems.
+This patch modifies the definition of tpm_pcr_extend() to allow other
+kernel subsystems to pass a digest for each algorithm supported by the TPM.
+All digests are processed by the TPM in one operation.
 
-tpm_bank_info contains: the TPM algorithm identifier, necessary to generate
-the event log as defined by Trusted Computing Group (TCG); the digest size,
-to pad/truncate a digest calculated with a different algorithm; the crypto
-subsystem identifier, to calculate the digest of event data.
+If a tpm_pcr_extend() caller provides a subset of the supported algorithms,
+the TPM driver extends the remaining PCR banks with the first digest
+passed as an argument to the function.
 
-This patch also protects against data corruption that could happen in the
-bus, by checking that the digest size returned by the TPM during a PCR read
-matches the size of the algorithm passed to tpm2_pcr_read().
+The new tpm_extend digest structure has been preferred to the tpm_digest
+structure, to let the caller specify the size of the digest (which may be
+unknown to the TPM driver).
 
-For the initial PCR read, when digest sizes are not yet available, this
-patch ensures that the amount of data copied from the output returned by
-the TPM does not exceed the size of the array data are copied to.
+Due to the API change, ima_pcr_extend() and pcrlock() have been modified.
 
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Acked-by: Mimi Zohar <zohar@linux.ibm.com>
 ---
- drivers/char/tpm/tpm-interface.c    | 16 +++---
- drivers/char/tpm/tpm.h              |  5 +-
- drivers/char/tpm/tpm1-cmd.c         |  4 +-
- drivers/char/tpm/tpm2-cmd.c         | 84 +++++++++++++++++++++++------
- include/linux/tpm.h                 | 12 ++++-
- security/integrity/ima/ima_crypto.c | 10 ++--
- 6 files changed, 96 insertions(+), 35 deletions(-)
+ drivers/char/tpm/tpm-interface.c   | 24 +++++---------------
+ drivers/char/tpm/tpm.h             |  5 +++--
+ drivers/char/tpm/tpm1-cmd.c        | 13 ++++++++---
+ drivers/char/tpm/tpm2-cmd.c        | 35 +++++++++++++++++++++---------
+ include/linux/tpm.h                | 13 ++++++++---
+ security/integrity/ima/ima_queue.c |  5 ++++-
+ security/keys/trusted.c            |  5 ++++-
+ 7 files changed, 62 insertions(+), 38 deletions(-)
 
 diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index 96c8261d0f04..eb7c79ca8a94 100644
+index eb7c79ca8a94..911fea19e408 100644
 --- a/drivers/char/tpm/tpm-interface.c
 +++ b/drivers/char/tpm/tpm-interface.c
-@@ -451,11 +451,12 @@ EXPORT_SYMBOL_GPL(tpm_is_tpm2);
-  * tpm_pcr_read - read a PCR value from SHA1 bank
+@@ -478,42 +478,30 @@ EXPORT_SYMBOL_GPL(tpm_pcr_read);
+  * tpm_pcr_extend - extend a PCR value in SHA1 bank.
   * @chip:	a &struct tpm_chip instance, %NULL for the default chip
   * @pcr_idx:	the PCR to be retrieved
-- * @res_buf:	the value of the PCR
-+ * @digest:	the PCR bank and buffer current PCR value is written to
+- * @hash:	the hash value used to extend the PCR value
++ * @count:	number of tpm_extend_digest structures
++ * @digests:	array of tpm_extend_digest structures used to extend PCRs
+  *
+  * Note: with TPM 2.0 extends also those banks for which no digest was
+  * specified in order to prevent malicious use of those PCR banks.
   *
   * Return: same as with tpm_transmit_cmd()
   */
--int tpm_pcr_read(struct tpm_chip *chip, u32 pcr_idx, u8 *res_buf)
-+int tpm_pcr_read(struct tpm_chip *chip, u32 pcr_idx,
-+		 struct tpm_digest *digest)
+-int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash)
++int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
++		   const struct tpm_extend_digest *digests)
  {
  	int rc;
+-	struct tpm_digest *digest_list;
+-	int i;
  
-@@ -464,9 +465,9 @@ int tpm_pcr_read(struct tpm_chip *chip, u32 pcr_idx, u8 *res_buf)
+ 	chip = tpm_find_get_ops(chip);
+ 	if (!chip)
  		return -ENODEV;
  
- 	if (chip->flags & TPM_CHIP_FLAG_TPM2)
--		rc = tpm2_pcr_read(chip, pcr_idx, res_buf);
-+		rc = tpm2_pcr_read(chip, pcr_idx, digest, NULL);
- 	else
--		rc = tpm1_pcr_read(chip, pcr_idx, res_buf);
-+		rc = tpm1_pcr_read(chip, pcr_idx, digest->digest);
- 
- 	tpm_put_ops(chip);
- 	return rc;
-@@ -479,9 +480,8 @@ EXPORT_SYMBOL_GPL(tpm_pcr_read);
-  * @pcr_idx:	the PCR to be retrieved
-  * @hash:	the hash value used to extend the PCR value
-  *
-- * Note: with TPM 2.0 extends also those banks with a known digest size to the
-- * cryto subsystem in order to prevent malicious use of those PCR banks. In the
-- * future we should dynamically determine digest sizes.
-+ * Note: with TPM 2.0 extends also those banks for which no digest was
-+ * specified in order to prevent malicious use of those PCR banks.
-  *
-  * Return: same as with tpm_transmit_cmd()
-  */
-@@ -502,7 +502,7 @@ int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash)
- 			return -ENOMEM;
- 
- 		for (i = 0; i < chip->nr_allocated_banks; i++) {
--			digest_list[i].alg_id = chip->allocated_banks[i];
-+			digest_list[i].alg_id = chip->allocated_banks[i].alg_id;
- 			memcpy(digest_list[i].digest, hash, TPM_DIGEST_SIZE);
- 		}
- 
-diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
-index e961e5c5d197..64d93d26087f 100644
---- a/drivers/char/tpm/tpm.h
-+++ b/drivers/char/tpm/tpm.h
-@@ -247,7 +247,7 @@ struct tpm_chip {
- 	unsigned int groups_cnt;
- 
- 	u32 nr_allocated_banks;
--	u16 *allocated_banks;
-+	struct tpm_bank_info *allocated_banks;
- #ifdef CONFIG_ACPI
- 	acpi_handle acpi_dev_handle;
- 	char ppi_version[TPM_PPI_VERSION_LEN + 1];
-@@ -548,7 +548,8 @@ static inline u32 tpm2_rc_value(u32 rc)
- }
- 
- int tpm2_get_timeouts(struct tpm_chip *chip);
--int tpm2_pcr_read(struct tpm_chip *chip, u32 pcr_idx, u8 *res_buf);
-+int tpm2_pcr_read(struct tpm_chip *chip, u32 pcr_idx,
-+		  struct tpm_digest *digest, u16 *digest_size_ptr);
- int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
- 		    struct tpm_digest *digests);
- int tpm2_get_random(struct tpm_chip *chip, u8 *dest, size_t max);
-diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
-index ec4f197bae0a..8b70a7f884a7 100644
---- a/drivers/char/tpm/tpm1-cmd.c
-+++ b/drivers/char/tpm/tpm1-cmd.c
-@@ -716,7 +716,9 @@ int tpm1_auto_startup(struct tpm_chip *chip)
- 		goto out;
+ 	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
+-		digest_list = kcalloc(chip->nr_allocated_banks,
+-				      sizeof(*digest_list), GFP_KERNEL);
+-		if (!digest_list)
+-			return -ENOMEM;
+-
+-		for (i = 0; i < chip->nr_allocated_banks; i++) {
+-			digest_list[i].alg_id = chip->allocated_banks[i].alg_id;
+-			memcpy(digest_list[i].digest, hash, TPM_DIGEST_SIZE);
+-		}
+-
+-		rc = tpm2_pcr_extend(chip, pcr_idx, chip->nr_allocated_banks,
+-				     digest_list);
+-		kfree(digest_list);
++		rc = tpm2_pcr_extend(chip, pcr_idx, count, digests);
+ 		tpm_put_ops(chip);
+ 		return rc;
  	}
  
--	chip->allocated_banks[0] = TPM_ALG_SHA1;
-+	chip->allocated_banks[0].alg_id = TPM_ALG_SHA1;
-+	chip->allocated_banks[0].digest_size = hash_digest_size[HASH_ALGO_SHA1];
-+	chip->allocated_banks[0].crypto_id = HASH_ALGO_SHA1;
- 	chip->nr_allocated_banks = 1;
- 
+-	rc = tpm1_pcr_extend(chip, pcr_idx, hash,
++	rc = tpm1_pcr_extend(chip, pcr_idx, count, digests,
+ 			     "attempting extend a PCR value");
+ 	tpm_put_ops(chip);
  	return rc;
+diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+index 64d93d26087f..6b446504d2fe 100644
+--- a/drivers/char/tpm/tpm.h
++++ b/drivers/char/tpm/tpm.h
+@@ -504,7 +504,8 @@ int tpm1_auto_startup(struct tpm_chip *chip);
+ int tpm1_do_selftest(struct tpm_chip *chip);
+ int tpm1_get_timeouts(struct tpm_chip *chip);
+ unsigned long tpm1_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
+-int tpm1_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash,
++int tpm1_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
++		    const struct tpm_extend_digest *digests,
+ 		    const char *log_msg);
+ int tpm1_pcr_read(struct tpm_chip *chip, u32 pcr_idx, u8 *res_buf);
+ ssize_t tpm1_getcap(struct tpm_chip *chip, u32 subcap_id, cap_t *cap,
+@@ -551,7 +552,7 @@ int tpm2_get_timeouts(struct tpm_chip *chip);
+ int tpm2_pcr_read(struct tpm_chip *chip, u32 pcr_idx,
+ 		  struct tpm_digest *digest, u16 *digest_size_ptr);
+ int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
+-		    struct tpm_digest *digests);
++		    const struct tpm_extend_digest *digests);
+ int tpm2_get_random(struct tpm_chip *chip, u8 *dest, size_t max);
+ void tpm2_flush_context_cmd(struct tpm_chip *chip, u32 handle,
+ 			    unsigned int flags);
+diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
+index 8b70a7f884a7..04ee10284b8c 100644
+--- a/drivers/char/tpm/tpm1-cmd.c
++++ b/drivers/char/tpm/tpm1-cmd.c
+@@ -449,12 +449,20 @@ int tpm1_get_timeouts(struct tpm_chip *chip)
+ }
+ 
+ #define TPM_ORD_PCR_EXTEND 20
+-int tpm1_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash,
++int tpm1_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
++		    const struct tpm_extend_digest *digests,
+ 		    const char *log_msg)
+ {
+ 	struct tpm_buf buf;
++	u8 dummy_hash[TPM_DIGEST_SIZE] = { 0 };
++	const u8 *hash;
+ 	int rc;
+ 
++	hash = dummy_hash;
++	if (count)
++		memcpy(dummy_hash, digests[0].data,
++		       min(digests[0].size, (u16)sizeof(dummy_hash)));
++
+ 	rc = tpm_buf_init(&buf, TPM_TAG_RQU_COMMAND, TPM_ORD_PCR_EXTEND);
+ 	if (rc)
+ 		return rc;
+@@ -743,7 +751,6 @@ int tpm1_auto_startup(struct tpm_chip *chip)
+  */
+ int tpm1_pm_suspend(struct tpm_chip *chip, u32 tpm_suspend_pcr)
+ {
+-	u8 dummy_hash[TPM_DIGEST_SIZE] = { 0 };
+ 	struct tpm_buf buf;
+ 	unsigned int try;
+ 	int rc;
+@@ -751,7 +758,7 @@ int tpm1_pm_suspend(struct tpm_chip *chip, u32 tpm_suspend_pcr)
+ 
+ 	/* for buggy tpm, flush pcrs with extend to selected dummy */
+ 	if (tpm_suspend_pcr)
+-		rc = tpm1_pcr_extend(chip, tpm_suspend_pcr, dummy_hash,
++		rc = tpm1_pcr_extend(chip, tpm_suspend_pcr, 0, NULL,
+ 				     "extending dummy pcr before suspend");
+ 
+ 	rc = tpm_buf_init(&buf, TPM_TAG_RQU_COMMAND, TPM_ORD_SAVESTATE);
 diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
-index 4afd14892cbf..6ce5173cf0e5 100644
+index 6ce5173cf0e5..77b5808270c6 100644
 --- a/drivers/char/tpm/tpm2-cmd.c
 +++ b/drivers/char/tpm/tpm2-cmd.c
-@@ -171,20 +171,36 @@ struct tpm2_pcr_read_out {
-  * tpm2_pcr_read() - read a PCR value
+@@ -247,21 +247,22 @@ struct tpm2_null_auth_area {
+  *
   * @chip:	TPM chip to use.
-  * @pcr_idx:	index of the PCR to read.
-- * @res_buf:	buffer to store the resulting hash.
-+ * @digest:	PCR bank and buffer current PCR value is written to.
-+ * @digest_size_ptr:	pointer to variable that stores the digest size.
+  * @pcr_idx:	index of the PCR.
+- * @count:	number of digests passed.
+- * @digests:	list of pcr banks and corresponding digest values to extend.
++ * @count:	number of tpm_extend_digest passed.
++ * @digests:	array of tpm_extend_digest with digest values to extend.
   *
   * Return: Same as with tpm_transmit_cmd.
   */
--int tpm2_pcr_read(struct tpm_chip *chip, u32 pcr_idx, u8 *res_buf)
-+int tpm2_pcr_read(struct tpm_chip *chip, u32 pcr_idx,
-+		  struct tpm_digest *digest, u16 *digest_size_ptr)
+ int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
+-		    struct tpm_digest *digests)
++		    const struct tpm_extend_digest *digests)
  {
-+	int i;
- 	int rc;
  	struct tpm_buf buf;
- 	struct tpm2_pcr_read_out *out;
- 	u8 pcr_select[TPM2_PCR_SELECT_MIN] = {0};
-+	u16 digest_size;
-+	u16 expected_digest_size = 0;
- 
- 	if (pcr_idx >= TPM2_PLATFORM_PCR)
- 		return -EINVAL;
- 
-+	if (!digest_size_ptr) {
-+		for (i = 0; i < chip->nr_allocated_banks &&
-+		     chip->allocated_banks[i].alg_id != digest->alg_id; i++)
-+			;
-+
-+		if (i == chip->nr_allocated_banks)
-+			return -EINVAL;
-+
-+		expected_digest_size = chip->allocated_banks[i].digest_size;
-+	}
-+
- 	rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_PCR_READ);
- 	if (rc)
- 		return rc;
-@@ -192,18 +208,29 @@ int tpm2_pcr_read(struct tpm_chip *chip, u32 pcr_idx, u8 *res_buf)
- 	pcr_select[pcr_idx >> 3] = 1 << (pcr_idx & 0x7);
- 
- 	tpm_buf_append_u32(&buf, 1);
--	tpm_buf_append_u16(&buf, TPM_ALG_SHA1);
-+	tpm_buf_append_u16(&buf, digest->alg_id);
- 	tpm_buf_append_u8(&buf, TPM2_PCR_SELECT_MIN);
- 	tpm_buf_append(&buf, (const unsigned char *)pcr_select,
- 		       sizeof(pcr_select));
- 
- 	rc = tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE, 0, 0,
--			res_buf ? "attempting to read a pcr value" : NULL);
--	if (rc == 0 && res_buf) {
--		out = (struct tpm2_pcr_read_out *)&buf.data[TPM_HEADER_SIZE];
--		memcpy(res_buf, out->digest, SHA1_DIGEST_SIZE);
-+			      "attempting to read a pcr value");
-+	if (rc)
-+		goto out;
-+
-+	out = (struct tpm2_pcr_read_out *)&buf.data[TPM_HEADER_SIZE];
-+	digest_size = be16_to_cpu(out->digest_size);
-+	if (digest_size > sizeof(digest->digest) ||
-+	    (!digest_size_ptr && digest_size != expected_digest_size)) {
-+		rc = -EINVAL;
-+		goto out;
- 	}
- 
-+	if (digest_size_ptr)
-+		*digest_size_ptr = digest_size;
-+
-+	memcpy(digest->digest, out->digest, digest_size);
-+out:
- 	tpm_buf_destroy(&buf);
- 	return rc;
- }
-@@ -232,7 +259,6 @@ int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
  	struct tpm2_null_auth_area auth_area;
++	const struct tpm_extend_digest *digest;
++	u8 dummy_hash[SHA512_DIGEST_SIZE] = { 0 };
++	const u8 *hash;
  	int rc;
  	int i;
--	int j;
+-
+-	if (count > chip->nr_allocated_banks)
+-		return -EINVAL;
++	int j;
  
- 	if (count > chip->nr_allocated_banks)
- 		return -EINVAL;
-@@ -254,14 +280,9 @@ int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
- 	tpm_buf_append_u32(&buf, count);
+ 	rc = tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_PCR_EXTEND);
+ 	if (rc)
+@@ -277,11 +278,25 @@ int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
+ 	tpm_buf_append_u32(&buf, sizeof(struct tpm2_null_auth_area));
+ 	tpm_buf_append(&buf, (const unsigned char *)&auth_area,
+ 		       sizeof(auth_area));
+-	tpm_buf_append_u32(&buf, count);
++	tpm_buf_append_u32(&buf, chip->nr_allocated_banks);
++
++	if (count)
++		memcpy(dummy_hash, digests[0].data, digests[0].size);
++
++	for (i = 0; i < chip->nr_allocated_banks; i++) {
++		tpm_buf_append_u16(&buf, chip->allocated_banks[i].alg_id);
++
++		hash = dummy_hash;
++		for (j = 0; j < count; j++) {
++			digest = digests + j;
++
++			if (digest->alg_id == chip->allocated_banks[i].alg_id) {
++				hash = digest->data;
++				break;
++			}
++		}
  
- 	for (i = 0; i < count; i++) {
--		for (j = 0; j < ARRAY_SIZE(tpm2_hash_map); j++) {
--			if (digests[i].alg_id != tpm2_hash_map[j].tpm_id)
--				continue;
--			tpm_buf_append_u16(&buf, digests[i].alg_id);
--			tpm_buf_append(&buf, (const unsigned char
--					      *)&digests[i].digest,
--			       hash_digest_size[tpm2_hash_map[j].crypto_id]);
--		}
-+		tpm_buf_append_u16(&buf, digests[i].alg_id);
-+		tpm_buf_append(&buf, (const unsigned char *)&digests[i].digest,
-+			       chip->allocated_banks[i].digest_size);
+-	for (i = 0; i < count; i++) {
+-		tpm_buf_append_u16(&buf, digests[i].alg_id);
+-		tpm_buf_append(&buf, (const unsigned char *)&digests[i].digest,
++		tpm_buf_append(&buf, hash,
+ 			       chip->allocated_banks[i].digest_size);
  	}
  
- 	rc = tpm_transmit_cmd(chip, NULL, buf.data, PAGE_SIZE, 0, 0,
-@@ -812,6 +833,30 @@ int tpm2_probe(struct tpm_chip *chip)
- }
- EXPORT_SYMBOL_GPL(tpm2_probe);
- 
-+static int tpm2_init_bank_info(struct tpm_chip *chip, u32 bank_index)
-+{
-+	struct tpm_bank_info *bank = chip->allocated_banks + bank_index;
-+	struct tpm_digest digest = { .alg_id = bank->alg_id };
-+	int i;
-+
-+	/*
-+	 * Avoid unnecessary PCR read operations to reduce overhead
-+	 * and obtain identifiers of the crypto subsystem.
-+	 */
-+	for (i = 0; i < ARRAY_SIZE(tpm2_hash_map); i++) {
-+		enum hash_algo crypto_algo = tpm2_hash_map[i].crypto_id;
-+
-+		if (bank->alg_id != tpm2_hash_map[i].tpm_id)
-+			continue;
-+
-+		bank->digest_size = hash_digest_size[crypto_algo];
-+		bank->crypto_id = crypto_algo;
-+		return 0;
-+	}
-+
-+	return tpm2_pcr_read(chip, 0, &digest, &bank->digest_size);
-+}
-+
- struct tpm2_pcr_selection {
- 	__be16  hash_alg;
- 	u8  size_of_select;
-@@ -879,7 +924,12 @@ static ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
- 				break;
- 
- 		if (j < pcr_selection.size_of_select) {
--			chip->allocated_banks[nr_alloc_banks] = hash_alg;
-+			chip->allocated_banks[nr_alloc_banks].alg_id = hash_alg;
-+
-+			rc = tpm2_init_bank_info(chip, nr_alloc_banks);
-+			if (rc < 0)
-+				break;
-+
- 			nr_alloc_banks++;
- 		}
- 
 diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-index 330c0a481581..72df8d4252ef 100644
+index 72df8d4252ef..f865bfdc39dc 100644
 --- a/include/linux/tpm.h
 +++ b/include/linux/tpm.h
-@@ -46,6 +46,12 @@ struct tpm_digest {
- 	u8 digest[SHA512_DIGEST_SIZE];
- } __packed;
+@@ -52,6 +52,12 @@ struct tpm_bank_info {
+ 	u16 crypto_id;
+ };
  
-+struct tpm_bank_info {
++struct tpm_extend_digest {
 +	u16 alg_id;
-+	u16 digest_size;
-+	u16 crypto_id;
++	u16 size;
++	const u8 *data;
 +};
 +
  enum TPM_OPS_FLAGS {
  	TPM_OPS_AUTO_STARTUP = BIT(0),
  };
-@@ -71,7 +77,8 @@ struct tpm_class_ops {
- #if defined(CONFIG_TCG_TPM) || defined(CONFIG_TCG_TPM_MODULE)
- 
+@@ -79,7 +85,8 @@ struct tpm_class_ops {
  extern int tpm_is_tpm2(struct tpm_chip *chip);
--extern int tpm_pcr_read(struct tpm_chip *chip, u32 pcr_idx, u8 *res_buf);
-+extern int tpm_pcr_read(struct tpm_chip *chip, u32 pcr_idx,
-+			struct tpm_digest *digest);
- extern int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash);
+ extern int tpm_pcr_read(struct tpm_chip *chip, u32 pcr_idx,
+ 			struct tpm_digest *digest);
+-extern int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash);
++extern int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
++			  const struct tpm_extend_digest *digests);
  extern int tpm_send(struct tpm_chip *chip, void *cmd, size_t buflen);
  extern int tpm_get_random(struct tpm_chip *chip, u8 *data, size_t max);
-@@ -88,7 +95,8 @@ static inline int tpm_is_tpm2(struct tpm_chip *chip)
+ extern int tpm_seal_trusted(struct tpm_chip *chip,
+@@ -101,8 +108,8 @@ static inline int tpm_pcr_read(struct tpm_chip *chip, int pcr_idx,
  	return -ENODEV;
  }
  
--static inline int tpm_pcr_read(struct tpm_chip *chip, u32 pcr_idx, u8 *res_buf)
-+static inline int tpm_pcr_read(struct tpm_chip *chip, int pcr_idx,
-+			       struct tpm_digest *digest)
+-static inline int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx,
+-				 const u8 *hash)
++static inline int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
++				 const struct tpm_extend_digest *digests)
  {
  	return -ENODEV;
  }
-diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
-index acf2c7df7145..16a4f45863b1 100644
---- a/security/integrity/ima/ima_crypto.c
-+++ b/security/integrity/ima/ima_crypto.c
-@@ -643,12 +643,12 @@ int ima_calc_buffer_hash(const void *buf, loff_t len,
- 	return calc_buffer_shash(buf, len, hash);
- }
+diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/ima_queue.c
+index b186819bd5aa..183733cfb5d2 100644
+--- a/security/integrity/ima/ima_queue.c
++++ b/security/integrity/ima/ima_queue.c
+@@ -140,12 +140,15 @@ unsigned long ima_get_binary_runtime_size(void)
  
--static void __init ima_pcrread(u32 idx, u8 *pcr)
-+static void __init ima_pcrread(u32 idx, struct tpm_digest *d)
+ static int ima_pcr_extend(const u8 *hash, int pcr)
  {
++	struct tpm_extend_digest digest = { .alg_id = TPM_ALG_SHA1,
++					    .size = TPM_DIGEST_SIZE,
++					    .data = hash };
+ 	int result = 0;
+ 
  	if (!ima_tpm_chip)
- 		return;
+ 		return result;
  
--	if (tpm_pcr_read(ima_tpm_chip, idx, pcr) != 0)
-+	if (tpm_pcr_read(ima_tpm_chip, idx, d) != 0)
- 		pr_err("Error Communicating to TPM chip\n");
+-	result = tpm_pcr_extend(ima_tpm_chip, pcr, hash);
++	result = tpm_pcr_extend(ima_tpm_chip, pcr, 1, &digest);
+ 	if (result != 0)
+ 		pr_err("Error Communicating to TPM chip, result: %d\n", result);
+ 	return result;
+diff --git a/security/keys/trusted.c b/security/keys/trusted.c
+index ff6789365a12..208a64a3fe1f 100644
+--- a/security/keys/trusted.c
++++ b/security/keys/trusted.c
+@@ -380,6 +380,9 @@ EXPORT_SYMBOL_GPL(trusted_tpm_send);
+ static int pcrlock(const int pcrnum)
+ {
+ 	unsigned char hash[SHA1_DIGEST_SIZE];
++	struct tpm_extend_digest digest = { .alg_id = TPM_ALG_SHA1,
++					    .size = sizeof(hash),
++					    .data = hash };
+ 	int ret;
+ 
+ 	if (!capable(CAP_SYS_ADMIN))
+@@ -387,7 +390,7 @@ static int pcrlock(const int pcrnum)
+ 	ret = tpm_get_random(NULL, hash, SHA1_DIGEST_SIZE);
+ 	if (ret != SHA1_DIGEST_SIZE)
+ 		return ret;
+-	return tpm_pcr_extend(NULL, pcrnum, hash) ? -EINVAL : 0;
++	return tpm_pcr_extend(NULL, pcrnum, 1, &digest) ? -EINVAL : 0;
  }
  
-@@ -658,7 +658,7 @@ static void __init ima_pcrread(u32 idx, u8 *pcr)
- static int __init ima_calc_boot_aggregate_tfm(char *digest,
- 					      struct crypto_shash *tfm)
- {
--	u8 pcr_i[TPM_DIGEST_SIZE];
-+	struct tpm_digest d = { .alg_id = TPM_ALG_SHA1, .digest = {0} };
- 	int rc;
- 	u32 i;
- 	SHASH_DESC_ON_STACK(shash, tfm);
-@@ -672,9 +672,9 @@ static int __init ima_calc_boot_aggregate_tfm(char *digest,
- 
- 	/* cumulative sha1 over tpm registers 0-7 */
- 	for (i = TPM_PCR0; i < TPM_PCR8; i++) {
--		ima_pcrread(i, pcr_i);
-+		ima_pcrread(i, &d);
- 		/* now accumulate with current aggregate */
--		rc = crypto_shash_update(shash, pcr_i, TPM_DIGEST_SIZE);
-+		rc = crypto_shash_update(shash, d.digest, TPM_DIGEST_SIZE);
- 	}
- 	if (!rc)
- 		crypto_shash_final(shash, digest);
+ /*
 -- 
 2.17.1
 
