@@ -2,99 +2,84 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-2.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2589C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 22:57:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5587C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 23:00:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD82C2080F
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 22:57:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD82C2080F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fromorbit.com
+	by mail.kernel.org (Postfix) with ESMTP id 636422080F
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 23:00:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 636422080F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728239AbeLMW5l (ORCPT
+        id S1728178AbeLMXAv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 17:57:41 -0500
-Received: from ipmail03.adl2.internode.on.net ([150.101.137.141]:33401 "EHLO
-        ipmail03.adl2.internode.on.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726228AbeLMW5l (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 17:57:41 -0500
-Received: from ppp59-167-129-252.static.internode.on.net (HELO dastard) ([59.167.129.252])
-  by ipmail03.adl2.internode.on.net with ESMTP; 14 Dec 2018 09:27:38 +1030
-Received: from dave by dastard with local (Exim 4.80)
-        (envelope-from <david@fromorbit.com>)
-        id 1gXZvF-0002OX-0B; Fri, 14 Dec 2018 09:57:37 +1100
-Date:   Fri, 14 Dec 2018 09:57:36 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Richard Weinberger <richard@nod.at>
-Cc:     zhangjun <openzhangj@gmail.com>,
-        Artem Bityutskiy <dedekind1@gmail.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kirill.shutemov@linux.intel.com, hch@lst.de,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: ubifs: fix page_count in ->ubifs_migrate_page()
-Message-ID: <20181213225736.GF29416@dastard>
-References: <1544624037-3436-1-git-send-email-openzhangj@gmail.com>
- <5829763.q4qAXljTxb@blindfold>
+        Thu, 13 Dec 2018 18:00:51 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:42152 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726236AbeLMXAv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 18:00:51 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 537873002F85;
+        Thu, 13 Dec 2018 23:00:51 +0000 (UTC)
+Received: from treble (ovpn-120-195.rdu2.redhat.com [10.10.120.195])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id E6CAF6012D;
+        Thu, 13 Dec 2018 23:00:47 +0000 (UTC)
+Date:   Thu, 13 Dec 2018 17:00:45 -0600
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     Jiri Kosina <jikos@kernel.org>, Miroslav Benes <mbenes@suse.cz>,
+        Jason Baron <jbaron@akamai.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v14 08/11] livepatch: Remove Nop structures when unused
+Message-ID: <20181213230045.2xgi2pyewkjbou22@treble>
+References: <20181129094431.7801-1-pmladek@suse.com>
+ <20181129094431.7801-9-pmladek@suse.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <5829763.q4qAXljTxb@blindfold>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20181129094431.7801-9-pmladek@suse.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Thu, 13 Dec 2018 23:00:51 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 13, 2018 at 03:23:37PM +0100, Richard Weinberger wrote:
-> Hello zhangjun,
-> 
-> thanks a lot for bringing this up!
-> 
-> Am Mittwoch, 12. Dezember 2018, 15:13:57 CET schrieb zhangjun:
-> > Because the PagePrivate() in UBIFS is different meanings,
-> > alloc_cma() will fail when one dirty page cache located in
-> > the type of MIGRATE_CMA
-> > 
-> > If not adjust the 'extra_count' for dirty page,
-> > ubifs_migrate_page() -> migrate_page_move_mapping() will
-> > always return -EAGAIN for:
-> > 	expected_count += page_has_private(page)
-> > This causes the migration to fail until the page cache is cleaned
-> > 
-> > In general, PagePrivate() indicates that buff_head is already bound
-> > to this page, and at the same time page_count() will also increase.
+On Thu, Nov 29, 2018 at 10:44:28AM +0100, Petr Mladek wrote:
+> +static void __klp_free_funcs(struct klp_object *obj, bool free_all)
+>  {
+> -	struct klp_func *func;
+> +	struct klp_func *func, *tmp_func;
+> +
+> +	klp_for_each_func_safe(obj, func, tmp_func) {
+> +		if (!free_all && !func->nop)
+> +			continue;
 
+I suspect that changing 'free_all" to 'nops_only' (and inverting the
+condition) would make the code more readable.
 
-That's an invalid assumption.
+And a similar suggestion for __klp_free_objects().
 
-We should not be trying to infer what PagePrivate() means in code
-that has no business using looking at it i.e. page->private is private
-information for the owner of the page, and it's life cycle and
-intent are unknown to anyone other than the page owner.
+> +
+> +		/*
+> +		 * Avoid double free. It would be tricky to wait for kobject
+> +		 * callbacks when only NOPs are handled.
+> +		 */
+> +		list_del(&func->node);
 
-e.g. on XFS, a page cache page's page->private /might/ contain a
-struct iomap_page, or it might be NULL. Assigning a struct
-iomap_page to the page does not change the reference count on the
-page.  IOWs, the page needs to be handled exactly the same
-way by external code regardless of whether there is somethign
-attached to page->private or not.
+I've read this comment several times but I still have no idea how it
+relates to the code :-)
 
-Hence it looks to me like the migration code is making invalid
-assumptions about PagePrivate inferring reference counts and so the
-migration code needs to be fixed. Requiring filesystems to work
-around invalid assumptions in the migration code is a sure recipe
-for problems with random filesystems using page->private for their
-own internal purposes....
+And a similar comment for __klp_free_objects().
 
-Cheers,
-
-Dave.
 -- 
-Dave Chinner
-david@fromorbit.com
+Josh
