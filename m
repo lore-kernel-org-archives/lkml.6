@@ -2,226 +2,198 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0A86C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 16:36:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E14ADC65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 16:36:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 465D320870
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 16:36:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="UKYNYYix"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 465D320870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
+	by mail.kernel.org (Postfix) with ESMTP id B037F21104
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 16:36:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B037F21104
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729445AbeLMQgJ (ORCPT
+        id S1729510AbeLMQgn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 11:36:09 -0500
-Received: from mail-eopbgr1320099.outbound.protection.outlook.com ([40.107.132.99]:35401
-        "EHLO APC01-PU1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727579AbeLMQgI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 11:36:08 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=THbkvuDf9f37Z7I+vbG1UeR92v1XYke7tVqlNTkxCfE=;
- b=UKYNYYixr3Bk0GdhZZWFZvuIQwBZ/XXCUCNTh1oRuYmKJnjNG1iR5S2nRrDKIhVLIpHMGLfRe8Sg1YgWVpHb5mbAfa/Pswz/WO//06Qfhuy8P9aJloUBYKZKzjGd1NA70dlApwjGWuITrWRj8JEAqecR5ChlWmUA7C5Gr0TbPk4=
-Received: from PU1P153MB0169.APCP153.PROD.OUTLOOK.COM (10.170.189.13) by
- PU1P153MB0124.APCP153.PROD.OUTLOOK.COM (10.170.188.138) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1446.1; Thu, 13 Dec 2018 16:35:44 +0000
-Received: from PU1P153MB0169.APCP153.PROD.OUTLOOK.COM
- ([fe80::99da:e3db:6b66:c8d4]) by PU1P153MB0169.APCP153.PROD.OUTLOOK.COM
- ([fe80::99da:e3db:6b66:c8d4%5]) with mapi id 15.20.1446.010; Thu, 13 Dec 2018
- 16:35:44 +0000
-From:   Dexuan Cui <decui@microsoft.com>
-To:     "'gregkh@linuxfoundation.org'" <gregkh@linuxfoundation.org>,
-        KY Srinivasan <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
-        "'devel@linuxdriverproject.org'" <devel@linuxdriverproject.org>
-CC:     Sasha Levin <Alexander.Levin@microsoft.com>,
-        "'apw@canonical.com'" <apw@canonical.com>,
-        vkuznets <vkuznets@redhat.com>,
-        "'olaf@aepfle.de'" <olaf@aepfle.de>,
-        "'jasowang@redhat.com'" <jasowang@redhat.com>,
-        Michael Kelley <mikelley@microsoft.com>
-Subject: [PATCH] Drivers: hv: vmbus: Return -EINVAL for the sys files for
- unopened channels
-Thread-Topic: [PATCH] Drivers: hv: vmbus: Return -EINVAL for the sys files for
- unopened channels
-Thread-Index: AdSSumYR+EFelO/iSCugbWbDq9Br5w==
-Date:   Thu, 13 Dec 2018 16:35:43 +0000
-Message-ID: <PU1P153MB0169DDAA2CBC2901505AE692BFA00@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=decui@microsoft.com;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2018-12-13T08:08:03.3171735Z;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
- Information Protection;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic;
- Sensitivity=General
-x-originating-ip: [2601:600:a27f:df20:2973:fa11:e530:c034]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;PU1P153MB0124;6:HnFQKHInQ7GYDKHP41a3dXVG7MIiyk67WwMf0BxV0ODuE+rUpLXuCfFkuipMrzqmw3qTk+lsWpDHXcu4ybqgihRNv+rEa2cl1MOQiND0nexb0DRujIeeVf+J1pNIdEh2ttHlRplVIIAr3K2j85oOUizYh6ytNEyYUv3PRmdSyMKHv1zezo0Q/qo8ldilBpvm6DfJ3gAK3nhTCq1aqpDw5GKFMAFDIUZb6P9hGcbVddsR3VbQ+beXwgwNeNFx06UTC6DBcQQ0zGIU8legPQ13MwLobXxdhbeLhfRdlBEcWoMFnIodptDP6w+GGPIawOKIpSFeR8sd6Mm9O1pN25lVncWALixQpKKZu6LdLsV0xHEXaPnJWJ6HBvz8OXX4vjcl0q2Z59g1eZYDvh8nAsZnClPnNVG1fXKaW+8d3PP8G3fNSUOCaZLXzyI73ZJbQH5N6AN8E9BHKjaCFU+yOPE/nQ==;5:mUF+eTBgbsfOL1oTsEpQUEbMD3HtlT4KLaZl9VTrCBMC6OmJpo1vxfLGesE3cSfB3K3XW6rFmwMtwi1y43qLgH8d+tmDu0nkUUot/FLnnjHrNkeq4fDWv1Jw5iBb23ohwhl2RBFlSR3QdC/rjnIiMBPdld7oZXyEFvIAFtu/U+Y=;7:eZ0wUAP+cq/hBMI6Y2oYJfm+7CpthYTYZ4nQvxo2OIhH/M3jV2fc4BNJ0RxlpN+4FeVohmXppMfUnXddgUIc+Z669u5lavsjDcA9YSZjo3hyjVEfLz8VhyHiAfmqhPeFkZZRKEqw17HQB1GIlXkF4Q==
-x-ms-office365-filtering-correlation-id: 12f1fee3-4ca9-4bb3-b6ae-08d661190725
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:PU1P153MB0124;
-x-ms-traffictypediagnostic: PU1P153MB0124:
-x-ms-exchange-purlcount: -3
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=decui@microsoft.com; 
-x-ld-processed: 72f988bf-86f1-41af-91ab-2d7cd011db47,ExtAddr
-x-microsoft-antispam-prvs: <PU1P153MB0124E22BD472B84A7ACFF152BFA00@PU1P153MB0124.APCP153.PROD.OUTLOOK.COM>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(6040522)(8220035)(2401047)(5005006)(8121501046)(10201501046)(93006095)(93001095)(3231475)(944501520)(2018427008)(3002001)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123558120)(20161123562045)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:PU1P153MB0124;BCL:0;PCL:0;RULEID:;SRVR:PU1P153MB0124;
-x-forefront-prvs: 088552DE73
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(39860400002)(366004)(396003)(376002)(136003)(189003)(199004)(10090500001)(476003)(74316002)(305945005)(5660300001)(71190400001)(71200400001)(8990500004)(33656002)(55016002)(97736004)(107886003)(256004)(7736002)(186003)(486006)(6436002)(110136005)(54906003)(25786009)(316002)(1511001)(14454004)(2906002)(4326008)(22452003)(478600001)(10290500003)(46003)(68736007)(53936002)(6116002)(105586002)(7696005)(81166006)(6506007)(81156014)(102836004)(8676002)(9686003)(106356001)(99286004)(575784001)(86362001)(86612001)(8936002)(491001);DIR:OUT;SFP:1102;SCL:1;SRVR:PU1P153MB0124;H:PU1P153MB0169.APCP153.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: nnRNNxtxdk/vwZj8D0cUcWky/rZ+7S0SVn2gSHd9DUEREyjyFuBYWeydnafuRiM4MjY17q4pxSeke/dtAi0onKz/L+PiRts6VL7TEKja+2fIHSlUSagGBfA6HnOlYIhrrHo3eqqFQK9i0uXWnUPdKrXJ+xUJ+vlASkDF2zwUUfL+vMkI9EqyzbV+TGibi3YuOsU7DTdWwisYt2AmfDj3xbz1+A9X7mhLK3oWWCt0a28LQEGyXE3pewpUKzz0UIKo4kCslAUB4B/NBZHbtsrO8WiGa/HPXJw4AkxkNILug6pbizR0t+i40rivrwHttXv/
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 12f1fee3-4ca9-4bb3-b6ae-08d661190725
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Dec 2018 16:35:43.8040
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PU1P153MB0124
+        Thu, 13 Dec 2018 11:36:43 -0500
+Received: from mga06.intel.com ([134.134.136.31]:20264 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727579AbeLMQgn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 11:36:43 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Dec 2018 08:36:42 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,349,1539673200"; 
+   d="scan'208";a="129684813"
+Received: from spandruv-mobl.amr.corp.intel.com ([10.252.153.167])
+  by fmsmga001.fm.intel.com with ESMTP; 13 Dec 2018 08:36:36 -0800
+Message-ID: <f65d387ffa66caf0ca6e124f7cd77f411e80ade7.camel@linux.intel.com>
+Subject: Re: intel_pstate: Lowest frequency not reached with Intel i7-6700
+From:   Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+To:     Paul Menzel <pmenzel@molgen.mpg.de>,
+        "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Doug Smythies <dsmythies@telus.net>, linux-pm@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>, Len Brown <lenb@kernel.org>
+Date:   Thu, 13 Dec 2018 08:36:29 -0800
+In-Reply-To: <efc5d72c-ca07-9a09-8e9e-2bb0732e0040@molgen.mpg.de>
+References: <000701d4926f$533eb270$f9bc1750$@net>
+         <a4321c48-e9df-1a2a-cfbd-bac07a9c65d8@molgen.mpg.de>
+         <CAJZ5v0gUDzy8vV=JajDHZJi2F0FyHUkFfYbbJhMioUa5XoKuqA@mail.gmail.com>
+         <efc5d72c-ca07-9a09-8e9e-2bb0732e0040@molgen.mpg.de>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, 2018-12-13 at 13:41 +0100, Paul Menzel wrote:
+> Dear Rafael,
+> 
+> 
+> On 12/13/18 11:39, Rafael J. Wysocki wrote:
+> > On Thu, Dec 13, 2018 at 10:54 AM Paul Menzel <pmenzel@molgen.mpg.de
+> > > wrote:
+> > > On 12/13/18 00:06, Doug Smythies wrote:
+> > > > On 2018.12.12 13:40 Paul Menzel wrote:
+> > > > 
+> > > > > Using *powersave* as P-state selection algorithm, on an idle
+> > > > > system
+> > > > 
+> > > > Define "idle system".
+> > > > If your computer is running a GUI, or is even a server without
+> > > > a GUI
+> > > > but with many services running, then "idle" really isn't.
+> > > > Below is from my test server, with many services disabled, so
+> > > > "idle" really is quite "idle"
+> > > > 
+> > > > doug@s15:~/temp$ sudo turbostat --Summary --quiet --show
+> > > > Busy%,Bzy_MHz,PkgTmp,PkgWatt --interval 15
+> > > > Busy%   Bzy_MHz PkgTmp  PkgWatt
+> > > > 0.01    1608    27      3.71
+> > > > 0.01    1619    27      3.71
+> > > > 0.01    1600    28      3.71
+> > > > 0.01    1600    28      3.70
+> > > > 
+> > > > Note that p state 16 (1600 MHz) is the minimum for my older i7-
+> > > > 2600k
+> > > > processor.
+> > > 
+> > > The thing is, on an Intel Kaby Lake laptop with Ubuntu 18.10 and
+> > > GNOME
+> > > running, it goes down to the lowest listed frequency.
+> 
+> Checking the numbers again, I was mistaken. The lowest possible
+> frequency
+> of the Intel Kaby Lake i7-7500U in that laptop is 400 MHz, and it is
+> going down to 600 MHz. Busy% from turbostat is 0.3 to 0.4.
+> 
+> > Kaby Lake has hardware-managed P-states (HWP) which is a different
+> > mechanism.
+> 
+> Isn’t HWP also available for the 6th generation?
+> 
+>     $ dmesg | grep intel_pstate
+>     [    2.092456] intel_pstate: Intel P-state driver initializing
+>     [    2.094820] intel_pstate: HWP enabled
+> 
+> > > > > Shouldn’t it go down until 800 MHz?
+> > > > 
+> > > > We would need some actual busy information, turbostat is the
+> > > > recommended tool, to know for sure.
+> > > 
+> > > Here you go.
+> > > 
+> > > ```
+> > > tools/power/x86/turbostat> sudo ./turbostat --Summary --quiet --
+> > > show Busy%,Bzy_MHz,PkgTmp,PkgWatt --interval 15
+> > > Busy%    Bzy_MHz    PkgTmp    PkgWatt
+> > > 3.59    1167    31    1.68
+> > > 3.21    903    31    1.34
+> > > 3.21    906    31    1.34
+> > > 3.27    901    31    1.35
+> > > 8.23    2715    30    2.32  ← stopping GDM (systemctl stop gdm)
+> > > 2.95    915    30    1.18
+> > > 2.91    906    30    1.18
+> > > 2.92    903    30    1.17
+> > > 2.90    900    29    1.17
+> > > 2.89    903    29    1.18
+> > > 2.91    903    30    1.18
+> > > 2.89    903    29    1.18
+> > > 2.89    900    29    1.18
+> > > 2.90    903    30    1.18
+> > > 2.90    903    29    1.17
+> > > 2.90    903    29    1.17
+> > > 2.90    900    29    1.16
+> > > 2.90    903    29    1.14
+> > > 2.90    903    28    1.11
+> > > 2.90    903    29    1.10
+> > > 2.91    900    29    1.16
+> > > 2.91    903    29    1.14
+> > > 2.90    903    29    1.12
+> > > 2.90    903    29    1.16
+> > > 2.90    900    28    1.17
+> > > 2.92    903    29    1.16
+> > > 2.90    903    29    1.16
+> > > 2.90    903    29    1.16
+> > > ```
+> > > 
+> > > 800 MHz should be enough to keep GDM running, shouldn’t it?
+> > 
+> > Well, depending.
+> > 
+> > > Otherwise only SSH was running.
+> > 
+> > There obviously is something that causes it to stay at 900 MHz.
+> 
+> It’s not obvious to me, but you have more experience. It’d expect
+> to at least one core(?) to go down to 800 MHz and not all to stay
+> at 900 MHz.
+Also HWP will pick up energy efficient P-state. If it sees that it is
+better to run at a higher P-state and complete the job at the same
+power level.
+There is a way to turn off that but better not do.
 
-Before 98f4c651762c, we returned zeros for unopened channels.
-With 98f4c651762c, we started to return random on-stack values.
+Thanks,
+Srinivas
 
-We'd better return -EINVAL instead.
-
-Fixes: 98f4c651762c ("hv: move ringbuffer bus attributes to dev_groups")
-Cc: stable@vger.kernel.org
-Cc: K. Y. Srinivasan <kys@microsoft.com>
-Cc: Haiyang Zhang <haiyangz@microsoft.com>
-Cc: Stephen Hemminger <sthemmin@microsoft.com>
-Signed-off-by: Dexuan Cui <decui@microsoft.com>
----
- drivers/hv/vmbus_drv.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
-
-diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
-index 283d184..d0ff656 100644
---- a/drivers/hv/vmbus_drv.c
-+++ b/drivers/hv/vmbus_drv.c
-@@ -316,6 +316,8 @@ static ssize_t out_intr_mask_show(struct device *dev,
-=20
- 	if (!hv_dev->channel)
- 		return -ENODEV;
-+	if (hv_dev->channel->state !=3D CHANNEL_OPENED_STATE)
-+		return -EINVAL;
- 	hv_ringbuffer_get_debuginfo(&hv_dev->channel->outbound, &outbound);
- 	return sprintf(buf, "%d\n", outbound.current_interrupt_mask);
- }
-@@ -329,6 +331,8 @@ static ssize_t out_read_index_show(struct device *dev,
-=20
- 	if (!hv_dev->channel)
- 		return -ENODEV;
-+	if (hv_dev->channel->state !=3D CHANNEL_OPENED_STATE)
-+		return -EINVAL;
- 	hv_ringbuffer_get_debuginfo(&hv_dev->channel->outbound, &outbound);
- 	return sprintf(buf, "%d\n", outbound.current_read_index);
- }
-@@ -343,6 +347,8 @@ static ssize_t out_write_index_show(struct device *dev,
-=20
- 	if (!hv_dev->channel)
- 		return -ENODEV;
-+	if (hv_dev->channel->state !=3D CHANNEL_OPENED_STATE)
-+		return -EINVAL;
- 	hv_ringbuffer_get_debuginfo(&hv_dev->channel->outbound, &outbound);
- 	return sprintf(buf, "%d\n", outbound.current_write_index);
- }
-@@ -357,6 +363,8 @@ static ssize_t out_read_bytes_avail_show(struct device =
-*dev,
-=20
- 	if (!hv_dev->channel)
- 		return -ENODEV;
-+	if (hv_dev->channel->state !=3D CHANNEL_OPENED_STATE)
-+		return -EINVAL;
- 	hv_ringbuffer_get_debuginfo(&hv_dev->channel->outbound, &outbound);
- 	return sprintf(buf, "%d\n", outbound.bytes_avail_toread);
- }
-@@ -371,6 +379,8 @@ static ssize_t out_write_bytes_avail_show(struct device=
- *dev,
-=20
- 	if (!hv_dev->channel)
- 		return -ENODEV;
-+	if (hv_dev->channel->state !=3D CHANNEL_OPENED_STATE)
-+		return -EINVAL;
- 	hv_ringbuffer_get_debuginfo(&hv_dev->channel->outbound, &outbound);
- 	return sprintf(buf, "%d\n", outbound.bytes_avail_towrite);
- }
-@@ -384,6 +394,8 @@ static ssize_t in_intr_mask_show(struct device *dev,
-=20
- 	if (!hv_dev->channel)
- 		return -ENODEV;
-+	if (hv_dev->channel->state !=3D CHANNEL_OPENED_STATE)
-+		return -EINVAL;
- 	hv_ringbuffer_get_debuginfo(&hv_dev->channel->inbound, &inbound);
- 	return sprintf(buf, "%d\n", inbound.current_interrupt_mask);
- }
-@@ -397,6 +409,8 @@ static ssize_t in_read_index_show(struct device *dev,
-=20
- 	if (!hv_dev->channel)
- 		return -ENODEV;
-+	if (hv_dev->channel->state !=3D CHANNEL_OPENED_STATE)
-+		return -EINVAL;
- 	hv_ringbuffer_get_debuginfo(&hv_dev->channel->inbound, &inbound);
- 	return sprintf(buf, "%d\n", inbound.current_read_index);
- }
-@@ -410,6 +424,8 @@ static ssize_t in_write_index_show(struct device *dev,
-=20
- 	if (!hv_dev->channel)
- 		return -ENODEV;
-+	if (hv_dev->channel->state !=3D CHANNEL_OPENED_STATE)
-+		return -EINVAL;
- 	hv_ringbuffer_get_debuginfo(&hv_dev->channel->inbound, &inbound);
- 	return sprintf(buf, "%d\n", inbound.current_write_index);
- }
-@@ -424,6 +440,8 @@ static ssize_t in_read_bytes_avail_show(struct device *=
-dev,
-=20
- 	if (!hv_dev->channel)
- 		return -ENODEV;
-+	if (hv_dev->channel->state !=3D CHANNEL_OPENED_STATE)
-+		return -EINVAL;
- 	hv_ringbuffer_get_debuginfo(&hv_dev->channel->inbound, &inbound);
- 	return sprintf(buf, "%d\n", inbound.bytes_avail_toread);
- }
-@@ -438,6 +456,8 @@ static ssize_t in_write_bytes_avail_show(struct device =
-*dev,
-=20
- 	if (!hv_dev->channel)
- 		return -ENODEV;
-+	if (hv_dev->channel->state !=3D CHANNEL_OPENED_STATE)
-+		return -EINVAL;
- 	hv_ringbuffer_get_debuginfo(&hv_dev->channel->inbound, &inbound);
- 	return sprintf(buf, "%d\n", inbound.bytes_avail_towrite);
- }
---=20
-2.7.4
+> 
+> > Please check max_perf_pct, min_perf_pct and num_pstates under
+> > /sys/devices/system/cpu/intel_pstate/ .
+> 
+>     /sys/devices/system/cpu/intel_pstate> cat max_perf_pct
+> min_perf_pct num_pstates
+>     100
+>     20
+>     33
+> 
+> > Also cpuinfo_max_freq, cpuinfo_min_freq, scaling_max_freq,
+> > scaling_min_freq under /sys/devices/system/cpu/cpufreq/policy0/ .
+> 
+> /sys/devices/system/cpu/cpufreq/policy0> cat cpuinfo_{min,max}_freq
+> scaling_{min,max}_freq
+>     800000
+>     4000000
+>     800000
+>     4000000
+> 
+> > However, please note that Busy% of 3 isn't particularly low.
+> 
+> Indeed. On the laptop it is around 0.3 to 0.4 even with GNOME
+> running.
+> 
+> So, to check if everything is working, I boot into initramfs
+> and check the numbers there?
+> 
+> 
+> Kind regards,
+> 
+> Paul
+> 
 
