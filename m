@@ -2,117 +2,87 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66812C67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 18:45:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69FA3C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 18:50:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30CD820851
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 18:45:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qdDGzgm+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30CD820851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 301C520870
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 18:50:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 301C520870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727140AbeLMSp6 (ORCPT
+        id S1727276AbeLMSuY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 13:45:58 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:52356 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726465AbeLMSp6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 13:45:58 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=xgs3EcOadYV+Qewa6SO0rYOJK8l5HD9i5bO5aVWIznk=; b=qdDGzgm+fi5wLLhnyKWf8Aw+1
-        IjeteiAGzQUPBQ4I7g1STBFYl74/DVrW4biwRsuHwnuTIlUgKrkI5kguAhU50X7xPyFXsvV6oyBrP
-        vWKONKDwvJTKAlmso0Gqrp9Zw+rNJXWyw+Un6NBtK/wguMLXy0xT+yoU6sviPX+rGTmWoFGrb368L
-        NmBx4vsUIsXZWDP9ZzfbKroX/LZQuelKjpONbDZrCwbHp58Dq/G7+BvmkjwqkI91cm4qnj34HmDDw
-        m9o/UZmFrAbk9ROTj8hl2P/h2r/mhVbovFNVxxlYjiQzeFj46GTOqMMfqMVM48u7onNlhoVp4/O/Y
-        54kn20Sbw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gXVzY-0006bL-Pe; Thu, 13 Dec 2018 18:45:49 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 4091D207264F1; Thu, 13 Dec 2018 19:45:46 +0100 (CET)
-Date:   Thu, 13 Dec 2018 19:45:46 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Song Liu <songliubraving@fb.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "ast@kernel.org" <ast@kernel.org>,
-        "daniel@iogearbox.net" <daniel@iogearbox.net>,
-        Kernel Team <Kernel-team@fb.com>,
-        "acme@kernel.org" <acme@kernel.org>
-Subject: Re: [PATCH v3 perf, bpf-next 1/4] perf, bpf: Introduce
- PERF_RECORD_BPF_EVENT
-Message-ID: <20181213184546.GM5289@hirez.programming.kicks-ass.net>
-References: <20181211233351.4036381-1-songliubraving@fb.com>
- <20181211233351.4036381-2-songliubraving@fb.com>
- <20181212131549.GZ5289@hirez.programming.kicks-ass.net>
- <C6E2C200-4C86-4EE0-97FA-228C0E0629B1@fb.com>
- <20181212180553.GC5289@hirez.programming.kicks-ass.net>
- <20181212133320.75d5cad8@gandalf.local.home>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181212133320.75d5cad8@gandalf.local.home>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Thu, 13 Dec 2018 13:50:24 -0500
+Received: from mout.gmx.net ([212.227.17.22]:40131 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726453AbeLMSuY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 13:50:24 -0500
+Received: from localhost ([130.180.45.238]) by mail.gmx.com (mrgmx103
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 0Lxgnf-1hUXjA0KNP-017Hhs for
+ <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 19:50:23 +0100
+Date:   Thu, 13 Dec 2018 19:50:22 +0100 (CET)
+Message-Id: <20181213.195022.492897188175961278.hartrumpf@gmx.net>
+To:     linux-kernel@vger.kernel.org
+Subject: Re: Can we drop upstream Linux x32 support?
+From:   Sven Hartrumpf <hartrumpf@gmx.net>
+In-Reply-To: <20181213.103731.734229932284065893.hartrumpf@gmx.net>
+References: <20181213050313.GA21201@ip-172-31-15-78>
+        <CAFLxGvy2sMW1nyMpxGN7xHPdUea713g89MdE3EcUNHJDCvZ3jA@mail.gmail.com>
+        <20181213.103731.734229932284065893.hartrumpf@gmx.net>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:QdfRhXBL1DdDpgKVshKQK1J5pM7xusv/HTd25EFIxnVht230Kbk
+ UrYqhtjT/ER7awA8gL3jtpSCbkYem6gPPhmWliYg100KRbcQcGChBUngp1Sn4D13VO7KgvZ
+ O31t8or9CLs9i2a8mcE6mTJBqDfL6b55WSnyFlbP4xmM7jEbi0IQRxWwmSxxR6IV9NAHoHU
+ 7WbKcRQSYwNwk+s5G62nA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:cSB6lsYv4io=:+FtQjIk+1EP9Vq+zuY2YDA
+ 7TRkLZdLEknmhD2dVeI6IajiTrhePyM8KP+GC19mmk/GJ70STfgNYdw4U0CKhlYbVWQDyOmHM
+ SQ82PZUIyVkzr7kolUPvmuGHXTI+6sx8lHY5tb/XD/ZXSX2x/4jVAGgVOJlXuXsqsAaLBVdUX
+ F84S3Mwu6BpJq6XXNk7zWNOAFyzGJ/n5wk62RVMz401I0+R6FU6Db878uROluYNE9rtQ+T3zt
+ 43xlcjn3gi6YAtNcegQbysbT3Zbz1NggDi7C1Hk9jTG0R0TV4Kd20bUsX/Hpov+gPq7OSXGuA
+ ZT0csjHIQnVw15Ph3AHhp6HLqV2IQtHXqVZ1UTRfI1Q+jmN1DhcOMpxtmDzj4BhnUob0KEYvv
+ uP8YluBWiW1BYUTnvPX+hxxEFS1mWSOlXh52ooy2zdvWuEx3mBof0BriAWz7kqoqL0B5TS4wx
+ D9wTt5aqajmP5gpZUVc87+M5q6VkTFZ60qcKMPrNOHwpUTnQVmsvrWRPJfKiGII+aauafQAY5
+ ovpY7IUewbvumJoB4mExfDZU5kbWgRG5p4G744NfcJPXEe7g319stc9SmmyDmTjgh6iSWdaJc
+ xxo8VRIoG3ei96cx9jyzOMpXJ6o/xaKYMdC88jiqifhZFOhKDQ7hBMD32CT5MCeHTnLdYkFRB
+ OSGk6XpEPcGWh7AjPrJ7PKccpOm0D3R4CbjPbuSq9qI+FRKNqCqQ8o6t4Uox5cxRBB1O9jg8s
+ Zm+NXPQZluElVttUkg8eCXJ85si/rabQVOYV5fuviZ2GFFjRroDV33A+P9biUcQmvMrvqwPVt
+ /zmWKOInEbHRX8xxNGCeelEjmngKya6r4VEyaTNZ2asE9UkPlIkP42Lm2sMd/LZhI2hMR5adv
+ dOyArF1JP1no54gOVQE/jDTnz4QnN1ezdJen8RhRM4Iiy1H1DkU1asAgoCq5uR
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 12, 2018 at 01:33:20PM -0500, Steven Rostedt wrote:
-> On Wed, 12 Dec 2018 19:05:53 +0100
-> Peter Zijlstra <peterz@infradead.org> wrote:
-> 
-> > On Wed, Dec 12, 2018 at 05:09:17PM +0000, Song Liu wrote:
-> > > > And while this tracks the bpf kallsyms, it does not do all kallsyms.
-> > > > 
-> > > > .... Oooh, I see the problem, everybody is doing their own custom
-> > > > kallsym_{add,del}() thing, instead of having that in generic code :-(
-> > > > 
-> > > > This, for example, doesn't track module load/unload nor ftrace
-> > > > trampolines, even though both affect kallsyms.  
-> > > 
-> > > I think we can use PERF_RECORD_MMAP(or MMAP2) for module load/unload. 
-> > > That could be separate sets of patches.   
-> > 
-> > So I would actually like to move bpf_lock/bpf_kallsyms/bpf_tree +
-> > bpf_prog_kallsyms_*() + __bpf_address_lookup() into kernel/kallsyms.c
-> > and also have ftrace use that.
-> > 
-> > Because currently the ftrace stuff is otherwise invisible.
-> > 
-> > A generic kallsym register/unregister for any JIT.
-> 
-> That's if it needs to look up the symbols that were recorded when init
-> was unloaded.
-> 
-> The ftrace kallsyms is used to save the function names of init code
-> that was freed, but may have been recorded. With out the ftrace
-> kallsyms the functions traced at init time would just show up as hex
-> addresses (not very useful).
-> 
-> I'm not sure how BPF would need those symbols unless they were executed
-> during init (module or core) and needed to see what the symbols use to
-> be).
+Hi.
 
-Aah, that sounds entirely dodgy and possibly quite broken. We freed that
-init code, so BPF or your trampolines (or a tiny module) could actually
-fit in there and insert their own kallsyms, and then we have overlapping
-symbols, which would be pretty bad.
+I reported several significant speedups gained by the x32 ABI
+for Scheme-based applications (compiled via a gcc backend), e.g.
 
-I thought the ftrace kallsym stuff was for the trampolines, which would
-be fairly similar to what BPF is doing. And why I'm trying to get a
-generic dynamic kallsym thing sorted. There's bound the be other
-code-gen things at some point.
+https://lists.nongnu.org/archive/html/chicken-users/2015-09/msg00000.html
+https://www.mail-archive.com/bigloo@inria.fr/msg00427.html
+https://forum.manjaro.org/t/why-is-there-no-kernel-support-for-the-x32-abi-config-x86-x32/55156/9
+
+As a tech startup in cognitive search and NLP (https://www.sempria.de/),
+the benefits of the x32 ABI in terms of saved compute time and costs are
+vital for us.
+
+It's a pity that x32 has not gained the momentum that it deserves.
+Two suggestions to change this:
+
+1. One could extend a prominent page like https://sites.google.com/site/x32abi/
+   with positive and negative results for applications w.r.t. the x32 ABI.
+   I am willing to rewrite and update the results that I reported over the years.
+
+2. The name x32 is too short, not search-engine friendly, and ambiguous (most
+   people think it's about i386 ...). Is not there a better name?
+
+Ciao
+Sven
