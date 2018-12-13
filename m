@@ -4,51 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B79AC65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:49:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC341C67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:49:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 28FE520849
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:49:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7FCC820849
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:49:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544676576;
-	bh=1966haSkD7Am1iqQXIyrqWOSsOF2F1QgqNW8FGvHJtI=;
+	s=default; t=1544676594;
+	bh=s9jculQmF5oj+3znmtzfEGyVfsLa532XYmpOeJiVqCc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Ae0sUp0gpFn6CQ8//c0Kl3/htd0BmhLMpEI8ftDH1So+rk814S027RMZ9e30aa4Mk
-	 VmTywIdAaanaXXK4hGQD0LF18x/i5N92x4G68SdDeECSSU1zxaL7Ljm1hk+VlWpINX
-	 cz5rRWjEIdBzEjGKrsTMAxXKPEvbZuqkq9W1rg8Q=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28FE520849
+	b=ekbeIjVxK7wW9FJadnP8toLKVE/iUBg0Q0fK43G8y0ki3/jovXrbI4EZ3v7vBehi1
+	 hYyv3EgGoXiymUshKPy5+fA2/kkgACJhOgx6jP7vz52Ia6jOlFvlnTtzj+z5PG7QOh
+	 caNH9tuHhqLzHh5z6fl2Y0sM3PXoRJmYnO/yzKXs=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FCC820849
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728991AbeLMEtf (ORCPT
+        id S1728657AbeLMEtw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 23:49:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42814 "EHLO mail.kernel.org"
+        Wed, 12 Dec 2018 23:49:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42568 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727872AbeLME3w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 23:29:52 -0500
+        id S1727692AbeLME3f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 23:29:35 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F1E8A20873;
-        Thu, 13 Dec 2018 04:29:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5D79620879;
+        Thu, 13 Dec 2018 04:29:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544675391;
-        bh=1966haSkD7Am1iqQXIyrqWOSsOF2F1QgqNW8FGvHJtI=;
+        s=default; t=1544675374;
+        bh=s9jculQmF5oj+3znmtzfEGyVfsLa532XYmpOeJiVqCc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=T6x8CwLHei4T0jrGRJnMqV+lVpZT3N7rnlEqFmg6u1zdwpwGbiGD7ndjj1cniTo9o
-         AR7pLVgRYCuHkUoiEx3Z3zS5MEADTdQO4m9KzyXxYB6nIbstcMjp7byh6yJ8O4HM7Z
-         /TKbCr/bHZlFoHxAUquaeZZu1TYK3Ouh6Kkss0XE=
+        b=un5WVOu8pJK8yUX+IfxftfHbXZzTujDVsfmimUhTgw5kB9LccVaFSTzO7aizsXjb2
+         0eFOA9pLxtenpTrpxhONHm65+A84l20JTIls0VBBCATERnOsnhFQMfYRZU12egnWFK
+         B1gr340TbmDxd2YMBHNVSe9EFPAWoRMIduSY90cg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 37/73] clk: mvebu: Off by one bugs in cp110_of_clk_get()
-Date:   Wed, 12 Dec 2018 23:28:02 -0500
-Message-Id: <20181213042838.75160-37-sashal@kernel.org>
+Cc:     Todor Tomov <todor.tomov@linaro.org>,
+        Rob Clark <robdclark@gmail.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Sasha Levin <sashal@kernel.org>, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 4.19 32/73] drm/msm/hdmi: Enable HPD after HDMI IRQ is set up
+Date:   Wed, 12 Dec 2018 23:27:57 -0500
+Message-Id: <20181213042838.75160-32-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181213042838.75160-1-sashal@kernel.org>
 References: <20181213042838.75160-1-sashal@kernel.org>
@@ -60,47 +63,110 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Todor Tomov <todor.tomov@linaro.org>
 
-[ Upstream commit d9f5b7f5dd0fa74a89de5a7ac1e26366f211ccee ]
+[ Upstream commit ee4456359640defe3f51cc6b728bfce4bc444c9e ]
 
-These > comparisons should be >= to prevent reading beyond the end of
-of the clk_data->hws[] buffer.
+SoCs that contain MDP5 have a top level wrapper called MDSS that
+manages locks, power and irq for the sub-blocks within it.
 
-The clk_data->hws[] array is allocated in cp110_syscon_common_probe()
-when we do:
-	cp110_clk_data = devm_kzalloc(dev, sizeof(*cp110_clk_data) +
-				      sizeof(struct clk_hw *) * CP110_CLK_NUM,
-				      GFP_KERNEL);
-As you can see, it has CP110_CLK_NUM elements which is equivalent to
-CP110_MAX_CORE_CLOCKS + CP110_MAX_GATABLE_CLOCKS.
+Irq for HDMI is also routed through the MDSS.
 
-Fixes: d3da3eaef7f4 ("clk: mvebu: new driver for Armada CP110 system controller")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Shortly after the Hot Plug Detection (HPD) is enabled in HDMI,
+HDMI interrupts are recieved by the MDSS interrupt handler.
+However at this moment the HDMI irq is still not mapped to
+the MDSS irq domain so the HDMI irq handler cannot be called
+to process the interrupts.
+
+This leads to a flood of HDMI interrupts on CPU 0.
+
+If we are lucky to have the HDMI initialization running on a
+different CPU, it will eventually map the HDMI irq to MDSS irq
+domain, the next HDMI interrupt will be handled by the HDMI irq
+handler, the interrupt flood will stop and we will recover.
+
+If the HDMI initialization is running on CPU 0, then it cannot
+complete and there is nothing to stop the interrupt flood on
+CPU 0. The system is stuck.
+
+Fix this by moving the HPD enablement after the HDMI irq is
+mapped to the MDSS irq domain.
+
+Signed-off-by: Todor Tomov <todor.tomov@linaro.org>
+Signed-off-by: Rob Clark <robdclark@gmail.com>
+Signed-off-by: Sean Paul <seanpaul@chromium.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/mvebu/cp110-system-controller.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/msm/hdmi/hdmi.c           |  6 ++++++
+ drivers/gpu/drm/msm/hdmi/hdmi.h           |  1 +
+ drivers/gpu/drm/msm/hdmi/hdmi_connector.c | 10 ++--------
+ 3 files changed, 9 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/clk/mvebu/cp110-system-controller.c b/drivers/clk/mvebu/cp110-system-controller.c
-index 75bf7b8f282f..0153c76d4a20 100644
---- a/drivers/clk/mvebu/cp110-system-controller.c
-+++ b/drivers/clk/mvebu/cp110-system-controller.c
-@@ -202,11 +202,11 @@ static struct clk_hw *cp110_of_clk_get(struct of_phandle_args *clkspec,
- 	unsigned int idx = clkspec->args[1];
- 
- 	if (type == CP110_CLK_TYPE_CORE) {
--		if (idx > CP110_MAX_CORE_CLOCKS)
-+		if (idx >= CP110_MAX_CORE_CLOCKS)
- 			return ERR_PTR(-EINVAL);
- 		return clk_data->hws[idx];
- 	} else if (type == CP110_CLK_TYPE_GATABLE) {
--		if (idx > CP110_MAX_GATABLE_CLOCKS)
-+		if (idx >= CP110_MAX_GATABLE_CLOCKS)
- 			return ERR_PTR(-EINVAL);
- 		return clk_data->hws[CP110_MAX_CORE_CLOCKS + idx];
+diff --git a/drivers/gpu/drm/msm/hdmi/hdmi.c b/drivers/gpu/drm/msm/hdmi/hdmi.c
+index c79659ca5706..33e083f71a17 100644
+--- a/drivers/gpu/drm/msm/hdmi/hdmi.c
++++ b/drivers/gpu/drm/msm/hdmi/hdmi.c
+@@ -332,6 +332,12 @@ int msm_hdmi_modeset_init(struct hdmi *hdmi,
+ 		goto fail;
  	}
+ 
++	ret = msm_hdmi_hpd_enable(hdmi->connector);
++	if (ret < 0) {
++		DRM_DEV_ERROR(&hdmi->pdev->dev, "failed to enable HPD: %d\n", ret);
++		goto fail;
++	}
++
+ 	encoder->bridge = hdmi->bridge;
+ 
+ 	priv->bridges[priv->num_bridges++]       = hdmi->bridge;
+diff --git a/drivers/gpu/drm/msm/hdmi/hdmi.h b/drivers/gpu/drm/msm/hdmi/hdmi.h
+index accc9a61611d..5c5df6ab2a57 100644
+--- a/drivers/gpu/drm/msm/hdmi/hdmi.h
++++ b/drivers/gpu/drm/msm/hdmi/hdmi.h
+@@ -245,6 +245,7 @@ void msm_hdmi_bridge_destroy(struct drm_bridge *bridge);
+ 
+ void msm_hdmi_connector_irq(struct drm_connector *connector);
+ struct drm_connector *msm_hdmi_connector_init(struct hdmi *hdmi);
++int msm_hdmi_hpd_enable(struct drm_connector *connector);
+ 
+ /*
+  * i2c adapter for ddc:
+diff --git a/drivers/gpu/drm/msm/hdmi/hdmi_connector.c b/drivers/gpu/drm/msm/hdmi/hdmi_connector.c
+index e9c9a0af508e..30e908dfded7 100644
+--- a/drivers/gpu/drm/msm/hdmi/hdmi_connector.c
++++ b/drivers/gpu/drm/msm/hdmi/hdmi_connector.c
+@@ -167,8 +167,9 @@ static void enable_hpd_clocks(struct hdmi *hdmi, bool enable)
+ 	}
+ }
+ 
+-static int hpd_enable(struct hdmi_connector *hdmi_connector)
++int msm_hdmi_hpd_enable(struct drm_connector *connector)
+ {
++	struct hdmi_connector *hdmi_connector = to_hdmi_connector(connector);
+ 	struct hdmi *hdmi = hdmi_connector->hdmi;
+ 	const struct hdmi_platform_config *config = hdmi->config;
+ 	struct device *dev = &hdmi->pdev->dev;
+@@ -450,7 +451,6 @@ struct drm_connector *msm_hdmi_connector_init(struct hdmi *hdmi)
+ {
+ 	struct drm_connector *connector = NULL;
+ 	struct hdmi_connector *hdmi_connector;
+-	int ret;
+ 
+ 	hdmi_connector = kzalloc(sizeof(*hdmi_connector), GFP_KERNEL);
+ 	if (!hdmi_connector)
+@@ -471,12 +471,6 @@ struct drm_connector *msm_hdmi_connector_init(struct hdmi *hdmi)
+ 	connector->interlace_allowed = 0;
+ 	connector->doublescan_allowed = 0;
+ 
+-	ret = hpd_enable(hdmi_connector);
+-	if (ret) {
+-		dev_err(&hdmi->pdev->dev, "failed to enable HPD: %d\n", ret);
+-		return ERR_PTR(ret);
+-	}
+-
+ 	drm_connector_attach_encoder(connector, hdmi->encoder);
+ 
+ 	return connector;
 -- 
 2.19.1
 
