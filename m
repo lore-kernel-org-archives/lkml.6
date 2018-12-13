@@ -3,99 +3,112 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89AE3C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 16:01:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB4E2C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 16:02:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 589FF20851
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 16:01:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 589FF20851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 953FA20879
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 16:02:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 953FA20879
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729201AbeLMQBX (ORCPT
+        id S1729207AbeLMQCJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 11:01:23 -0500
-Received: from mx2.suse.de ([195.135.220.15]:33674 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727942AbeLMQBW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 11:01:22 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id A7132AED2;
-        Thu, 13 Dec 2018 16:01:20 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 518BF1E13E6; Thu, 13 Dec 2018 17:01:18 +0100 (CET)
-Date:   Thu, 13 Dec 2018 17:01:18 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Josef Bacik <josef@toxicpanda.com>, kernel-team@fb.com,
-        hannes@cmpxchg.org, linux-kernel@vger.kernel.org, tj@kernel.org,
-        david@fromorbit.com, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, riel@redhat.com, jack@suse.cz
-Subject: Re: [PATCH][v6] filemap: drop the mmap_sem for all blocking
- operations
-Message-ID: <20181213160118.GA27517@quack2.suse.cz>
-References: <20181211173801.29535-4-josef@toxicpanda.com>
- <20181212152757.10017-1-josef@toxicpanda.com>
- <20181212155536.5fb770a0c9b4f2399d4794e4@linux-foundation.org>
+        Thu, 13 Dec 2018 11:02:09 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:56086 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727942AbeLMQCJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 11:02:09 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id EDF0DC058CB1;
+        Thu, 13 Dec 2018 16:02:07 +0000 (UTC)
+Received: from redhat.com (ovpn-121-185.rdu2.redhat.com [10.10.121.185])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 70DA7648AB;
+        Thu, 13 Dec 2018 16:02:05 +0000 (UTC)
+Date:   Thu, 13 Dec 2018 11:02:03 -0500
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Christopher Lameter <cl@linux.com>
+Cc:     Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.cz>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        John Hubbard <john.hubbard@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>, tom@talpey.com,
+        Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
+        Christoph Hellwig <hch@infradead.org>,
+        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Michal Hocko <mhocko@kernel.org>, mike.marciniszyn@intel.com,
+        rcampbell@nvidia.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
+Message-ID: <20181213160203.GD3186@redhat.com>
+References: <20181207191620.GD3293@redhat.com>
+ <3c4d46c0-aced-f96f-1bf3-725d02f11b60@nvidia.com>
+ <20181208022445.GA7024@redhat.com>
+ <20181210102846.GC29289@quack2.suse.cz>
+ <20181212150319.GA3432@redhat.com>
+ <20181212214641.GB29416@dastard>
+ <20181212215931.GG5037@redhat.com>
+ <20181213005119.GD29416@dastard>
+ <20181213020229.GN5037@redhat.com>
+ <01000167a8483bd2-16ae0d3e-d217-4993-a80a-25d221c677e4-000000@email.amazonses.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20181212155536.5fb770a0c9b4f2399d4794e4@linux-foundation.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <01000167a8483bd2-16ae0d3e-d217-4993-a80a-25d221c677e4-000000@email.amazonses.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Thu, 13 Dec 2018 16:02:08 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 12-12-18 15:55:36, Andrew Morton wrote:
-> On Wed, 12 Dec 2018 10:27:57 -0500 Josef Bacik <josef@toxicpanda.com> wrote:
+On Thu, Dec 13, 2018 at 03:56:05PM +0000, Christopher Lameter wrote:
+> On Wed, 12 Dec 2018, Jerome Glisse wrote:
 > 
-> > v5->v6:
-> > - added more comments as per Andrew's suggestion.
-> > - fixed the fpin leaks in the two error paths that were pointed out.
-> > 
+> > On Thu, Dec 13, 2018 at 11:51:19AM +1100, Dave Chinner wrote:
+> > > > > >     [O1] Avoid write back from a page still being written by either a
+> > > > > >          device or some direct I/O or any other existing user of GUP.
+> > >
+> > > IOWs, you need to mark pages being written to by a GUP as
+> > > PageWriteback, so all attempts to write the page will block on
+> > > wait_on_page_writeback() before trying to write the dirty page.
+> >
+> > No you don't and you can't for the simple reasons is that the GUP
+> > of some device driver can last days, weeks, months, years ... so
+> > it is not something you want to do. Here is what happens today:
 > 
-> hm,
-> 
-> > --- a/mm/filemap.c~filemap-drop-the-mmap_sem-for-all-blocking-operations-v6
-> > +++ a/mm/filemap.c
-> > @@ -2461,7 +2476,8 @@ static struct file *do_sync_mmap_readahe
-> >  
-> >  /*
-> >   * Asynchronous readahead happens when we find the page and PG_readahead,
-> > - * so we want to possibly extend the readahead further..
-> > + * so we want to possibly extend the readahead further.  We return the file that
-> > + * was pinned if we have to drop the mmap_sem in order to do IO.
-> >   */
-> >  static struct file *do_async_mmap_readahead(struct vm_fault *vmf,
-> >  					    struct page *page)
-> > @@ -2545,14 +2561,15 @@ retry_find:
-> >  		page = pagecache_get_page(mapping, offset,
-> >  					  FGP_CREAT|FGP_FOR_MMAP,
-> >  					  vmf->gfp_mask);
-> > -		if (!page)
-> > +		if (!page) {
-> > +			if (fpin)
-> > +				goto out_retry;
-> 
-> Is this right?  If pagecache_get_page() returns NULL we can now return
-> VM_FAULT_MAJOR|VM_FAULT_RETRY whereas we used to return ENOMEM.
+> I think it would be better to use the established way to block access that
+> Dave suggests. Maybe deal with the issue of threads being blocked for
+> a long time instead? Introduce a way to abort these attempts in a
+> controlled fashion that also allows easy debugging of these conflicts?
 
-Yes, but once we've dropped mmap_sem, there's no way safely return -ENOMEM.
-So VM_FAULT_RETRY is really the only option to tell the caller that
-mmap_sem is not held anymore...
+GUP does not have the information on how long the GUP will last,
+the GUP caller might not know either. What is worse is that the
+GUP user provide API today to userspace to do this and thus any
+attempt to block this from happening can be interpreted (from
+some point of view) as a regression ie worked in linux X.Y does
+not work in linux X.Y+1.
 
-So the patch looks good to me now. You can add:
+I am not against doing that, in fact i advocated at last LSF that
+any user of GUP that does not abide to mmu notifier should be
+denied GUP (direct IO, kvm and couple other like that being the
+exception because they are case we can properly fix).
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+Anyone that abide to mmu notifier will drop the page reference on
+any event like truncate, split, mremap, munmap, write back ... so
+anyone with mmu notifier is fine.
 
-
-								Honza
-
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Cheers,
+Jérôme
