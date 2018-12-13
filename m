@@ -2,193 +2,175 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E1D1C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 10:33:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CDC6C67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 10:33:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A78120811
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 10:33:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="BuYqOYAG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A78120811
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
+	by mail.kernel.org (Postfix) with ESMTP id 07DF920811
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 10:33:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07DF920811
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728669AbeLMKdd (ORCPT
+        id S1728685AbeLMKdk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 05:33:33 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:34433 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727374AbeLMKdb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 05:33:31 -0500
-Received: by mail-wr1-f67.google.com with SMTP id j2so1457118wrw.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 02:33:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=KsLuq/w2+4wqAK3w1JgIljoenhpHR4ZyQN2xHQt5mAo=;
-        b=BuYqOYAGhory4gRz4+f3zZ1cpevXvNvZRNWlLzPUD53iF/w8IlaDeHT0wOw3Vplr10
-         6WUvAg/kMiKqusZhcf9IU0jadnGSg4OflOBOPghzbU3NISvlQNgUpSKLZQ7ybqK/VRd0
-         BraSgBOqy1xDUlmAwu2nFtf7JJTravNmW8z6g=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=KsLuq/w2+4wqAK3w1JgIljoenhpHR4ZyQN2xHQt5mAo=;
-        b=OhTVHAPR3167artrvAwNP8k3cmR+y9YFjH806/vp+uDdXLE0x+2YIQJkY4HlU06IwL
-         o2SM1PQyiDfiPsXKVTI+aIvW0kZJpoD3xdqIcO6UMB33SFMQSoV4GFq8Z05mK98eY8is
-         VvhfsH+lg+wIUfDNyWp916+wxaFOEUrBN/pXEKze8CzeCB9JxFnTMMA55IsHLcOivnBE
-         aF2HjNWf76fSr/nwXrCRjjqlqi74WtOnL4JoPSzQpE5QPNc+BaHtI93riXyrdL/BP7Fi
-         1wYNlICwPWEglDqczZYRAM5BPyrr9PCJCG9ZqGdK/McYaK+t6i6Hs4J2BpPLtagY2mth
-         4CBg==
-X-Gm-Message-State: AA+aEWa1m9UoPEE92b95zgcv2YIQ6eXUytwEoBFBxkD1A82FfiNwhYt3
-        qmLQU7qGGUz5RsCX0kBt8PZBfQ==
-X-Google-Smtp-Source: AFSGD/UELeyC7vWsdTldPryopCXnyHUgRP0R9wNEeFAeaSxQ5osycF83oKahNPiRilY7IcU8mZWnIQ==
-X-Received: by 2002:adf:84e4:: with SMTP id 91mr20254748wrg.237.1544697209674;
-        Thu, 13 Dec 2018 02:33:29 -0800 (PST)
-Received: from mannams-OptiPlex-7010.dhcp.broadcom.net ([192.19.234.250])
-        by smtp.gmail.com with ESMTPSA id x76sm3327058wmd.27.2018.12.13.02.33.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 13 Dec 2018 02:33:28 -0800 (PST)
-From:   Srinath Mannam <srinath.mannam@broadcom.com>
-To:     Bjorn Helgaas <bhelgaas@google.com>,
-        Robin Murphy <robin.murphy@arm.com>, poza@codeaurora.org,
-        Joerg Roedel <joro@8bytes.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Ray Jui <rjui@broadcom.com>
-Cc:     bcm-kernel-feedback-list@broadcom.com, linux-pci@vger.kernel.org,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        Srinath Mannam <srinath.mannam@broadcom.com>
-Subject: [PATCH v2 3/3] PCI: iproc: Add dma reserve resources to host
-Date:   Thu, 13 Dec 2018 16:02:54 +0530
-Message-Id: <1544697174-6029-4-git-send-email-srinath.mannam@broadcom.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1544697174-6029-1-git-send-email-srinath.mannam@broadcom.com>
-References: <1544697174-6029-1-git-send-email-srinath.mannam@broadcom.com>
+        Thu, 13 Dec 2018 05:33:40 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32812 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728017AbeLMKdj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 05:33:39 -0500
+Received: from lhreml707-cah.china.huawei.com (unknown [172.18.7.108])
+        by Forcepoint Email with ESMTP id 8866BDE12DE1C;
+        Thu, 13 Dec 2018 10:33:36 +0000 (GMT)
+Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.153)
+ by smtpsuk.huawei.com (10.201.108.48) with Microsoft SMTP Server (TLS) id
+ 14.3.408.0; Thu, 13 Dec 2018 10:33:31 +0000
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     <jarkko.sakkinen@linux.intel.com>, <zohar@linux.ibm.com>,
+        <david.safford@ge.com>, <monty.wiseman@ge.com>
+CC:     <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH v7 2/5] tpm: add _head suffix to tcg_efi_specid_event and tcg_pcr_event2
+Date:   Thu, 13 Dec 2018 11:29:42 +0100
+Message-ID: <20181213102945.30946-3-roberto.sassu@huawei.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181213102945.30946-1-roberto.sassu@huawei.com>
+References: <20181213102945.30946-1-roberto.sassu@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.204.65.153]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-IPROC host has the limitation that it can use only those address ranges
-given by dma-ranges property as inbound address.
-So that the memory address holes in dma-ranges should be reserved to
-allocate as DMA address.
+TCG defines two structures, TCG_EfiSpecIDEventStruct and TCG_PCR_EVENT2,
+which contain variable-sized arrays in the middle of the definition.
 
-Inbound address of host accessed by pcie devices will not be translated
-before it comes to IOMMU or directly to PE.
-But the limitation of this host is, access to few address ranges are
-ignored. So that IOVA ranges for these address ranges have to be reserved.
+Since these structures are not suitable for type casting, this patch
+removes structure members after the variable-sized arrays and adds the
+_head suffix to the structure name, to indicate that the renamed structures
+do not contain all fields defined by TCG.
 
-All such addresses ranges are created as resource entries by parsing
-dma-ranges DT parameter and add to dma_resv list of pci host bridge.
+Lastly, given that variable-sized arrays are now in the last position, and
+given that the size of the arrays cannot be determined in advance, this
+patch also sets the size of those arrays to zero and removes the definition
+of TPM2_ACTIVE_PCR_BANKS.
 
-Ex:
-dma-ranges = < \
-  0x43000000 0x00 0x80000000 0x00 0x80000000 0x00 0x80000000 \
-  0x43000000 0x08 0x00000000 0x08 0x00000000 0x08 0x00000000 \
-  0x43000000 0x80 0x00000000 0x80 0x00000000 0x40 0x00000000>
-
-In the above example of dma-ranges, memory address from
-0x0 - 0x80000000,
-0x100000000 - 0x800000000,
-0x1000000000 - 0x8000000000 and
-0x10000000000 - 0xffffffffffffffff.
-are not allowed to use as inbound addresses.
-So that we need to add these address ranges to dma_resv list to reserve
-corresponding IOVA address ranges.
-
-Signed-off-by: Srinath Mannam <srinath.mannam@broadcom.com>
-Based-on-patch-by: Oza Pawandeep <oza.oza@broadcom.com>
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Tested-by: Nayna Jain <nayna@linux.ibm.com>
 ---
- drivers/pci/controller/pcie-iproc.c | 51 ++++++++++++++++++++++++++++++++++++-
- 1 file changed, 50 insertions(+), 1 deletion(-)
+ drivers/char/tpm/eventlog/tpm2.c | 12 ++++++------
+ include/linux/tpm_eventlog.h     | 12 ++++--------
+ 2 files changed, 10 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/pci/controller/pcie-iproc.c b/drivers/pci/controller/pcie-iproc.c
-index 3160e93..636e92d 100644
---- a/drivers/pci/controller/pcie-iproc.c
-+++ b/drivers/pci/controller/pcie-iproc.c
-@@ -1154,25 +1154,74 @@ static int iproc_pcie_setup_ib(struct iproc_pcie *pcie,
- 	return ret;
- }
- 
-+static int
-+iproc_pcie_add_dma_resv_range(struct device *dev, struct list_head *resources,
-+			      uint64_t start, uint64_t end)
-+{
-+	struct resource *res;
-+
-+	res = devm_kzalloc(dev, sizeof(struct resource), GFP_KERNEL);
-+	if (!res)
-+		return -ENOMEM;
-+
-+	res->start = (resource_size_t)start;
-+	res->end = (resource_size_t)end;
-+	pci_add_resource_offset(resources, res, 0);
-+
-+	return 0;
-+}
-+
- static int iproc_pcie_map_dma_ranges(struct iproc_pcie *pcie)
+diff --git a/drivers/char/tpm/eventlog/tpm2.c b/drivers/char/tpm/eventlog/tpm2.c
+index 1b8fa9de2cac..d8b77133a83a 100644
+--- a/drivers/char/tpm/eventlog/tpm2.c
++++ b/drivers/char/tpm/eventlog/tpm2.c
+@@ -37,10 +37,10 @@
+  *
+  * Returns size of the event. If it is an invalid event, returns 0.
+  */
+-static int calc_tpm2_event_size(struct tcg_pcr_event2 *event,
++static int calc_tpm2_event_size(struct tcg_pcr_event2_head *event,
+ 				struct tcg_pcr_event *event_header)
  {
-+	struct pci_host_bridge *host = pci_host_bridge_from_priv(pcie);
- 	struct of_pci_range range;
- 	struct of_pci_range_parser parser;
- 	int ret;
-+	uint64_t start, end;
-+	LIST_HEAD(resources);
+-	struct tcg_efi_specid_event *efispecid;
++	struct tcg_efi_specid_event_head *efispecid;
+ 	struct tcg_event_field *event_field;
+ 	void *marker;
+ 	void *marker_start;
+@@ -55,7 +55,7 @@ static int calc_tpm2_event_size(struct tcg_pcr_event2 *event,
+ 	marker = marker + sizeof(event->pcr_idx) + sizeof(event->event_type)
+ 		+ sizeof(event->count);
  
- 	/* Get the dma-ranges from DT */
- 	ret = of_pci_dma_range_parser_init(&parser, pcie->dev->of_node);
- 	if (ret)
- 		return ret;
+-	efispecid = (struct tcg_efi_specid_event *)event_header->event;
++	efispecid = (struct tcg_efi_specid_event_head *)event_header->event;
  
-+	start = 0;
- 	for_each_of_pci_range(&parser, &range) {
-+		end = range.pci_addr;
-+		/* dma-ranges list expected in sorted order */
-+		if (end < start) {
-+			ret = -EINVAL;
-+			goto out;
-+		}
- 		/* Each range entry corresponds to an inbound mapping region */
- 		ret = iproc_pcie_setup_ib(pcie, &range, IPROC_PCIE_IB_MAP_MEM);
- 		if (ret)
--			return ret;
-+			goto out;
-+
-+		if (end - start) {
-+			ret = iproc_pcie_add_dma_resv_range(pcie->dev,
-+							    &resources,
-+							    start, end);
-+			if (ret)
-+				goto out;
-+		}
-+		start = range.pci_addr + range.size;
- 	}
+ 	/* Check if event is malformed. */
+ 	if (event->count > efispecid->num_algs)
+@@ -95,7 +95,7 @@ static void *tpm2_bios_measurements_start(struct seq_file *m, loff_t *pos)
+ 	void *addr = log->bios_event_log;
+ 	void *limit = log->bios_event_log_end;
+ 	struct tcg_pcr_event *event_header;
+-	struct tcg_pcr_event2 *event;
++	struct tcg_pcr_event2_head *event;
+ 	size_t size;
+ 	int i;
  
-+	end = DMA_BIT_MASK(sizeof(dma_addr_t) * BITS_PER_BYTE);
-+	if (end - start) {
-+		ret = iproc_pcie_add_dma_resv_range(pcie->dev, &resources,
-+						    start, end);
-+		if (ret)
-+			goto out;
-+	}
-+
-+	list_splice_init(&resources, &host->dma_resv);
-+
- 	return 0;
-+out:
-+	pci_free_resource_list(&resources);
-+	return ret;
- }
+@@ -136,7 +136,7 @@ static void *tpm2_bios_measurements_next(struct seq_file *m, void *v,
+ 					 loff_t *pos)
+ {
+ 	struct tcg_pcr_event *event_header;
+-	struct tcg_pcr_event2 *event;
++	struct tcg_pcr_event2_head *event;
+ 	struct tpm_chip *chip = m->private;
+ 	struct tpm_bios_log *log = &chip->log;
+ 	void *limit = log->bios_event_log_end;
+@@ -180,7 +180,7 @@ static int tpm2_binary_bios_measurements_show(struct seq_file *m, void *v)
+ 	struct tpm_chip *chip = m->private;
+ 	struct tpm_bios_log *log = &chip->log;
+ 	struct tcg_pcr_event *event_header = log->bios_event_log;
+-	struct tcg_pcr_event2 *event = v;
++	struct tcg_pcr_event2_head *event = v;
+ 	void *temp_ptr;
+ 	size_t size;
  
- static int iproce_pcie_get_msi(struct iproc_pcie *pcie,
+diff --git a/include/linux/tpm_eventlog.h b/include/linux/tpm_eventlog.h
+index 20d9da77fc11..f47342361e87 100644
+--- a/include/linux/tpm_eventlog.h
++++ b/include/linux/tpm_eventlog.h
+@@ -8,7 +8,6 @@
+ #define TCG_EVENT_NAME_LEN_MAX	255
+ #define MAX_TEXT_EVENT		1000	/* Max event string length */
+ #define ACPI_TCPA_SIG		"TCPA"	/* 0x41504354 /'TCPA' */
+-#define TPM2_ACTIVE_PCR_BANKS	3
+ 
+ #define EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2 0x1
+ #define EFI_TCG2_EVENT_LOG_FORMAT_TCG_2   0x2
+@@ -82,7 +81,7 @@ struct tcg_efi_specid_event_algs {
+ 	u16 digest_size;
+ } __packed;
+ 
+-struct tcg_efi_specid_event {
++struct tcg_efi_specid_event_head {
+ 	u8 signature[16];
+ 	u32 platform_class;
+ 	u8 spec_version_minor;
+@@ -90,9 +89,7 @@ struct tcg_efi_specid_event {
+ 	u8 spec_errata;
+ 	u8 uintnsize;
+ 	u32 num_algs;
+-	struct tcg_efi_specid_event_algs digest_sizes[TPM2_ACTIVE_PCR_BANKS];
+-	u8 vendor_info_size;
+-	u8 vendor_info[0];
++	struct tcg_efi_specid_event_algs digest_sizes[];
+ } __packed;
+ 
+ struct tcg_pcr_event {
+@@ -113,12 +110,11 @@ struct tpm2_digest {
+ 	u8 digest[SHA512_DIGEST_SIZE];
+ } __packed;
+ 
+-struct tcg_pcr_event2 {
++struct tcg_pcr_event2_head {
+ 	u32 pcr_idx;
+ 	u32 event_type;
+ 	u32 count;
+-	struct tpm2_digest digests[TPM2_ACTIVE_PCR_BANKS];
+-	struct tcg_event_field event;
++	struct tpm2_digest digests[];
+ } __packed;
+ 
+ #endif
 -- 
-2.7.4
+2.17.1
 
