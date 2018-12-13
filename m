@@ -7,58 +7,57 @@ X-Spam-Status: No, score=-12.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7C1EC67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 18:11:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F4033C67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 18:11:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95BBD20880
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 18:11:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C256F20880
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 18:11:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544724679;
-	bh=irQx8cWqQ+wsAM9wi9zjQvk5WED1/PzZmEj18yqFQ8U=;
+	s=default; t=1544724684;
+	bh=JaKtde/uE9wp5aPoWm87MaAV9UoU5nuCXRDV5RzPu3M=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=ngVO1xjohIEsl5YvleyVIRRN9Fwghq2Id/d5uQcrhuXcW3cSsaEuNou6lM+OsxmYX
-	 wgnUwpXbN1JNeGkDLrD8uE8feJjE+meuPy0z/Ygf50zEya1racA8eSb0LFLhl+Tp5m
-	 s36kSlNDHi0DDz3xIKXEuk1OVc4SxZBSQOgQFH2w=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95BBD20880
+	b=z5HNh5DGETTph5ZSCv7Mp8C6HKvd39QUBQ3s1XIladUC9BJ2ffxtAE7jdS/yWasG0
+	 5cqJ/cgUWfJEEkVGXH80a2eMi0EZ9AxauM/ay3FmN/RkCp/2NwvRU3ZA3Jeu4QKE4H
+	 ZUsOkapA/kIgA8wBpGmU4zH1X3PDcl+RDXhhlSfg=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C256F20880
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729206AbeLMSLS (ORCPT
+        id S1729450AbeLMSLX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 13:11:18 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:36796 "EHLO
+        Thu, 13 Dec 2018 13:11:23 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:36974 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727659AbeLMSLR (ORCPT
+        with ESMTP id S1727659AbeLMSLW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 13:11:17 -0500
+        Thu, 13 Dec 2018 13:11:22 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=d5nEPPG99hGb9NnBzfz1aDvxs86ohilkb71VFmHkFtc=; b=gRJ6T3mS2Ugs
-        2QrsVhC5GraQjbi2z3riV7v5YL77UA/YrbeufmzVz/74Oj4gG615hIfWBFklEPTeEaqBPUtnpjm4E
-        93dMcBHem9Qot1n8ClHLNFu/2NemQd2hYGjeUuKsoUjvDP9CQgZBCjoMPTBQm+vNbMs3CvHjHGxRM
-        1gSLI=;
+        List-Archive; bh=kQqCsWcCkuBNLrVD5TkOHzLsbOMO0XE5sCMDGIpEz+4=; b=Pjmmt8NpVlBW
+        lXdeFvGq7ufyB+o2NRUaOg0eaBr6k+NuWmGxBUdH1NgK45le7shBJ8swfU/ezezMxZugO0H/vgQdk
+        1U6POYchJGgQ2O75IbdXJaovMjnkaK0Ervsu098hpbrfymylq0KAaLZdRZ+86mZt91NIm0oT44j82
+        Y65ks=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gXVRt-0002Ow-GE; Thu, 13 Dec 2018 18:11:01 +0000
+        id 1gXVS4-0002Pp-Ga; Thu, 13 Dec 2018 18:11:12 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 3188611254D1; Thu, 13 Dec 2018 18:11:01 +0000 (GMT)
+        id 3561611254D1; Thu, 13 Dec 2018 18:11:12 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
-To:     Jerome Brunet <jbrunet@baylibre.com>
+To:     Kirill Marinushkin <kmarinushkin@birdec.tech>
 Cc:     Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>, devicetree@vger.kernel.org,
-        alsa-devel@alsa-project.org, linux-amlogic@lists.infradead.org,
-        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: meson: fix do_div warning in spdifin" to the asoc tree
-In-Reply-To:  <20181213154428.6070-1-jbrunet@baylibre.com>
+        alsa-devel@alsa-project.org, Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>,
+        alsa-devel@alsa-project.org
+Subject: Applied "ASoC: pcm3060: Add powersaving widgets for DAC and ADC" to the asoc tree
+In-Reply-To:  <20181207190234.12040-1-kmarinushkin@birdec.tech>
 X-Patchwork-Hint: ignore
-Message-Id: <20181213181101.3188611254D1@debutante.sirena.org.uk>
-Date:   Thu, 13 Dec 2018 18:11:01 +0000 (GMT)
+Message-Id: <20181213181112.3561611254D1@debutante.sirena.org.uk>
+Date:   Thu, 13 Dec 2018 18:11:12 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -66,7 +65,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: meson: fix do_div warning in spdifin
+   ASoC: pcm3060: Add powersaving widgets for DAC and ADC
 
 has been applied to the asoc tree at
 
@@ -91,37 +90,68 @@ to this mail.
 Thanks,
 Mark
 
-From 165be3c260f88a5f8c55d89458ad1f1d9efd701f Mon Sep 17 00:00:00 2001
-From: Jerome Brunet <jbrunet@baylibre.com>
-Date: Thu, 13 Dec 2018 16:44:28 +0100
-Subject: [PATCH] ASoC: meson: fix do_div warning in spdifin
+From bb9963b850ea9e1ef39f4368eae83a9462f60166 Mon Sep 17 00:00:00 2001
+From: Kirill Marinushkin <kmarinushkin@birdec.tech>
+Date: Fri, 7 Dec 2018 20:02:34 +0100
+Subject: [PATCH] ASoC: pcm3060: Add powersaving widgets for DAC and ADC
 
-Even if this spdif input driver is only supposed to be used on 64bits
-platform, there is possible problem with 32bits and do_div, as reported
-by the kbuild robot. Just fix it.
+Enable DAC/ADC only when playing/capturing
 
-Fixes: 5ce5658375e6 ("ASoC: meson: add axg spdif input")
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Kirill Marinushkin <kmarinushkin@birdec.tech>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/meson/axg-spdifin.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ sound/soc/codecs/pcm3060.c | 14 ++++++++++----
+ sound/soc/codecs/pcm3060.h |  2 ++
+ 2 files changed, 12 insertions(+), 4 deletions(-)
 
-diff --git a/sound/soc/meson/axg-spdifin.c b/sound/soc/meson/axg-spdifin.c
-index 09f385a2bbba..01b2035fa841 100644
---- a/sound/soc/meson/axg-spdifin.c
-+++ b/sound/soc/meson/axg-spdifin.c
-@@ -146,8 +146,8 @@ static void axg_spdifin_write_mode_param(struct regmap *map, int mode,
- 					 unsigned int base_reg,
- 					 unsigned int width)
- {
--	unsigned int offset = mode, rem;
--	unsigned int reg, shift;
-+	uint64_t offset = mode;
-+	unsigned int reg, shift, rem;
+diff --git a/sound/soc/codecs/pcm3060.c b/sound/soc/codecs/pcm3060.c
+index 1dd851a7b43b..6714aa8d9026 100644
+--- a/sound/soc/codecs/pcm3060.c
++++ b/sound/soc/codecs/pcm3060.c
+@@ -198,19 +198,25 @@ static const struct snd_kcontrol_new pcm3060_dapm_controls[] = {
+ };
  
- 	rem = do_div(offset, num_per_reg);
+ static const struct snd_soc_dapm_widget pcm3060_dapm_widgets[] = {
++	SND_SOC_DAPM_DAC("DAC", "Playback", PCM3060_REG64,
++			 PCM3060_REG_SHIFT_DAPSV, 1),
++
+ 	SND_SOC_DAPM_OUTPUT("OUTL"),
+ 	SND_SOC_DAPM_OUTPUT("OUTR"),
  
+ 	SND_SOC_DAPM_INPUT("INL"),
+ 	SND_SOC_DAPM_INPUT("INR"),
++
++	SND_SOC_DAPM_ADC("ADC", "Capture", PCM3060_REG64,
++			 PCM3060_REG_SHIFT_ADPSV, 1),
+ };
+ 
+ static const struct snd_soc_dapm_route pcm3060_dapm_map[] = {
+-	{ "OUTL", NULL, "Playback" },
+-	{ "OUTR", NULL, "Playback" },
++	{ "OUTL", NULL, "DAC" },
++	{ "OUTR", NULL, "DAC" },
+ 
+-	{ "Capture", NULL, "INL" },
+-	{ "Capture", NULL, "INR" },
++	{ "ADC", NULL, "INL" },
++	{ "ADC", NULL, "INR" },
+ };
+ 
+ /* soc component */
+diff --git a/sound/soc/codecs/pcm3060.h b/sound/soc/codecs/pcm3060.h
+index c895cf40ee10..6a027b4a845d 100644
+--- a/sound/soc/codecs/pcm3060.h
++++ b/sound/soc/codecs/pcm3060.h
+@@ -37,7 +37,9 @@ int pcm3060_remove(struct device *dev);
+ #define PCM3060_REG_MRST		0x80
+ #define PCM3060_REG_SRST		0x40
+ #define PCM3060_REG_ADPSV		0x20
++#define PCM3060_REG_SHIFT_ADPSV	0x05
+ #define PCM3060_REG_DAPSV		0x10
++#define PCM3060_REG_SHIFT_DAPSV	0x04
+ #define PCM3060_REG_SE			0x01
+ 
+ #define PCM3060_REG65			0x41
 -- 
 2.19.0.rc2
 
