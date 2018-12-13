@@ -2,287 +2,179 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B138C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 09:17:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDCD1C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 09:18:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47AE220672
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 09:17:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8521F20672
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 09:18:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="ZaGtW9/t"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47AE220672
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FxxMJmpJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8521F20672
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727688AbeLMJRY (ORCPT
+        id S1727917AbeLMJSA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 04:17:24 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:35559 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726578AbeLMJRW (ORCPT
+        Thu, 13 Dec 2018 04:18:00 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:45302 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727075AbeLMJR7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 04:17:22 -0500
-Received: by mail-wr1-f66.google.com with SMTP id 96so1197624wrb.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 01:17:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=J9y68ZP9FLvJD7+DsuEi7azlVGsBu+pdfu6qn1+HeM8=;
-        b=ZaGtW9/thiv3BbI5MrrBEaMkZveH+ALmjKCYEvVg+GkXcpGhLnWRJCcatQQEQuE50w
-         ujjHrOS9to2hoHxxBjHSWMS7nKtLxbrdmSc2di7QRvmmsN3lC1SGU0Rqv+HcUCjWPkQ9
-         OEsKnbj8ku1tZ3TQqtTiI3jH33UlwVX6zu3qk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=J9y68ZP9FLvJD7+DsuEi7azlVGsBu+pdfu6qn1+HeM8=;
-        b=POkgJVF0WsnAGA63KZRdz6eclhJqSL91kxKw09XyfylPjywqy+avIq+sSqINjYPeKF
-         JLJY0h/q+lDqzyJccxNvYBzeSlL3KgRvUYvWB6HCRSz7Pfnr0yw2LwCN9ikh0skpKXBP
-         uJKo1DCRAdM2j+eTf9juWuCAYOd847Aibd/S13h+MwGIS/wz4MQyqmqkTGuxR1zxK/xS
-         866FrKdZsV6JqM5wOVVUUl0ShN+jXDfarT3+Vj1px16UvbfD1lYZM2mQthxC9dqMP16X
-         Uni2ClqEKO3S39kTAP4x/Oinoe7698msyRFjxfvZKckNaJN8viBOctS8C14lv0iEXlVi
-         FBRQ==
-X-Gm-Message-State: AA+aEWaO46VuYLnS9Ubg4X5Oj0ybAO2soG/GaMIkGXSsrJgw5b+TQy8q
-        QqNP73v8QTf1e9MAsSe1N4DZYu6f4FaWb3G9G3yx7Q==
-X-Google-Smtp-Source: AFSGD/VQWIEVlyWgHdxErhci2keVs8n6HRE8qOoPdRSEzSCBDn12mbITsSAh76UiLzS//lBbvWzJSLSjnDpJdmefyVg=
-X-Received: by 2002:adf:f052:: with SMTP id t18mr21522120wro.112.1544692640217;
- Thu, 13 Dec 2018 01:17:20 -0800 (PST)
+        Thu, 13 Dec 2018 04:17:59 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=4SuYwpGKGN9YTOF8aelt1/2OLh6iYUzmCHZqX7WFM9o=; b=FxxMJmpJFfs9aGudz1GOwB/Kg
+        kFCzz53hRQQX9PZQRxKYWCW9SbEsASnFdfnXOO6DOnq30K26RhuCqFZHhOSxhUXkm8A+M9CbtbE4C
+        ZuJEi2qyOYOsne4D5Ut8ovZ4QmoayAKP3bGgL6I4F/GoVF4eFTWJv/S75vl8nxgbMWmdfUeEsT9qZ
+        S8BJ0NWjRIhvVBBnjtImA2G7T1xUd56uhWgUf9dh/pNr4pqbpd3FpNx7m2Ct0IQUUPHYfsfnI72fw
+        sSaNFBZmmFN0LF4pZzv+TuW961jpqrYxwHCR0MXegp5NQxZcrU46k3xmFKwQJldsQ0oLRPR32GD8W
+        2gpxhJfmQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gXN7g-0002Kw-4H; Thu, 13 Dec 2018 09:17:36 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 6550D207261E5; Thu, 13 Dec 2018 10:17:33 +0100 (CET)
+Date:   Thu, 13 Dec 2018 10:17:33 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Waiman Long <longman@redhat.com>,
+        Dmitry Safonov <dima@arista.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Petr Mladek <pmladek@suse.com>
+Subject: Re: [PATCH] tty/serial: do not free trasnmit buffer page under port
+ lock
+Message-ID: <20181213091733.GD5289@hirez.programming.kicks-ass.net>
+References: <20181213045839.9692-1-sergey.senozhatsky@gmail.com>
 MIME-Version: 1.0
-References: <1544593569-8923-1-git-send-email-srinath.mannam@broadcom.com>
- <1544593569-8923-4-git-send-email-srinath.mannam@broadcom.com> <117bb87c4567d14f189642b685dd8813@codeaurora.org>
-In-Reply-To: <117bb87c4567d14f189642b685dd8813@codeaurora.org>
-From:   Srinath Mannam <srinath.mannam@broadcom.com>
-Date:   Thu, 13 Dec 2018 14:47:08 +0530
-Message-ID: <CABe79T4fqHoW4rww2jRNNaiirzOqm7dTvap3Eqi1w17SV4j+qQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 3/3] PCI: iproc: Add dma reserve resources to host
-To:     poza@codeaurora.org
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Ray Jui <rjui@broadcom.com>,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        linux-pci@vger.kernel.org, iommu@lists.linux-foundation.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-pci-owner@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181213045839.9692-1-sergey.senozhatsky@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Oza,
+On Thu, Dec 13, 2018 at 01:58:39PM +0900, Sergey Senozhatsky wrote:
+> LKP has hit yet another circular locking dependency between uart
+> console drivers and debugobjects [1]:
+> 
+>      CPU0                                    CPU1
+> 
+>                                             rhltable_init()
+>                                              __init_work()
+>                                               debug_object_init
+>      uart_shutdown()                          /* db->lock */
+>       /* uart_port->lock */                    debug_print_object()
+>        free_page()                              printk()
+>                                                  call_console_drivers()
+>         debug_check_no_obj_freed()                /* uart_port->lock */
+>          /* db->lock */
+>           debug_print_object()
+> 
+> So there are two dependency chains:
+> 	uart_port->lock -> db->lock
+> And
+> 	db->lock -> uart_port->lock
+> 
+> This particular circular locking dependency can be addressed in several
+> ways:
+> 
+> a) One way would be to move debug_print_object() out of db->lock scope
+>    and, thus, break the db->lock -> uart_port->lock chain.
+> b) Another one would be to free() transmit buffer page out of db->lock
+>    in UART code; which is what this patch does.
+> 
+> It makes sense to apply a) and b) independently: there are too many things
+> going on behind free(), none of which depend on uart_port->lock.
+> 
+> The patch fixes transmit buffer page free() in uart_shutdown() and,
+> additionally, in uart_port_startup() (as was suggested by Dmitry Safonov).
+> 
+> [1] https://lore.kernel.org/lkml/20181211091154.GL23332@shao2-debian/T/#u
+> Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Jiri Slaby <jslaby@suse.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Waiman Long <longman@redhat.com>
+> Cc: Dmitry Safonov <dima@arista.com>
+> Cc: Steven Rostedt <rostedt@goodmis.org>
+> Cc: Petr Mladek <pmladek@suse.com>
 
-Thank you for the review.
-Please find my comments in lined.
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 
-On Thu, Dec 13, 2018 at 11:33 AM <poza@codeaurora.org> wrote:
->
-> On 2018-12-12 11:16, Srinath Mannam wrote:
-> > IPROC host has the limitation that it can use
-> > only those address ranges given by dma-ranges
-> > property as inbound address.
-> > So that the memory address holes in dma-ranges
-> > should be reserved to allocate as DMA address.
-> >
-> > All such reserved addresses are created as resource
-> > entries and add to dma_resv list of pci host bridge.
-> >
-> > These dma reserve resources created by parsing
-> > dma-ranges parameter.
-> >
-> > Ex:
-> > dma-ranges = < \
-> >   0x43000000 0x00 0x80000000 0x00 0x80000000 0x00 0x80000000 \
-> >   0x43000000 0x08 0x00000000 0x08 0x00000000 0x08 0x00000000 \
-> >   0x43000000 0x80 0x00000000 0x80 0x00000000 0x40 0x00000000>
-> >
-> > In the above example of dma-ranges, memory address from
-> > 0x0 - 0x80000000,
-> > 0x100000000 - 0x800000000,
-> > 0x1000000000 - 0x8000000000 and
-> > 0x10000000000 - 0xffffffffffffffff.
-> > are not allowed to use as inbound addresses.
-> > So that we need to add these address range to dma_resv
-> > list to reserve their IOVA address ranges.
-> >
-> > Signed-off-by: Srinath Mannam <srinath.mannam@broadcom.com>
-> > ---
-> >  drivers/pci/controller/pcie-iproc.c | 49
-> > +++++++++++++++++++++++++++++++++++++
-> >  1 file changed, 49 insertions(+)
-> >
-> > diff --git a/drivers/pci/controller/pcie-iproc.c
-> > b/drivers/pci/controller/pcie-iproc.c
-> > index 3160e93..43e465a 100644
-> > --- a/drivers/pci/controller/pcie-iproc.c
-> > +++ b/drivers/pci/controller/pcie-iproc.c
-> > @@ -1154,25 +1154,74 @@ static int iproc_pcie_setup_ib(struct
-> > iproc_pcie *pcie,
-> >       return ret;
-> >  }
-> >
-> > +static int
-> > +iproc_pcie_add_dma_resv_range(struct device *dev, struct list_head
-> > *resources,
-> > +                           uint64_t start, uint64_t end)
-> > +{
-> > +     struct resource *res;
-> > +
-> > +     res = devm_kzalloc(dev, sizeof(struct resource), GFP_KERNEL);
-> > +     if (!res)
-> > +             return -ENOMEM;
-> > +
-> > +     res->start = (resource_size_t)start;
-> > +     res->end = (resource_size_t)end;
-> > +     pci_add_resource_offset(resources, res, 0);
-> > +
-> > +     return 0;
-> > +}
-> > +
-> >  static int iproc_pcie_map_dma_ranges(struct iproc_pcie *pcie)
-> >  {
-> > +     struct pci_host_bridge *host = pci_host_bridge_from_priv(pcie);
-> >       struct of_pci_range range;
-> >       struct of_pci_range_parser parser;
-> >       int ret;
-> > +     uint64_t start, end;
-> > +     LIST_HEAD(resources);
-> >
-> >       /* Get the dma-ranges from DT */
-> >       ret = of_pci_dma_range_parser_init(&parser, pcie->dev->of_node);
-> >       if (ret)
-> >               return ret;
-> >
-> > +     start = 0;
-> >       for_each_of_pci_range(&parser, &range) {
-> > +             end = range.pci_addr;
-> > +             /* dma-ranges list expected in sorted order */
-> > +             if (end < start) {
-> > +                     ret = -EINVAL;
-> > +                     goto out;
-> > +             }
-> >               /* Each range entry corresponds to an inbound mapping region */
-> >               ret = iproc_pcie_setup_ib(pcie, &range, IPROC_PCIE_IB_MAP_MEM);
-> >               if (ret)
-> >                       return ret;
-> > +
-> > +             if (end - start) {
-> > +                     ret = iproc_pcie_add_dma_resv_range(pcie->dev,
-> > +                                                         &resources,
-> > +                                                         start, end);
-> > +                     if (ret)
-> > +                             goto out;
-> > +             }
-> > +             start = range.pci_addr + range.size;
-> >       }
-> >
-> > +     end = ~0;
-> Hi Srinath,
->
-> this series is based on following patch sets.
->
-> https://lkml.org/lkml/2017/5/16/19
-> https://lkml.org/lkml/2017/5/16/23
-> https://lkml.org/lkml/2017/5/16/21,
->
-Yes, this patch series is done based on the inputs of the patches you
-sent earlier.
-
-> some comments to be adapted from the patch-set I did.
->
-> end = ~0;
-> you should consider DMA_MASK, to see iproc controller is in 32 bit or 64
-> bit system.
-> please check following code snippet.
->
-> if (tmp_dma_addr < DMA_BIT_MASK(sizeof(dma_addr_t) * 8)) {
-> +                       lo = iova_pfn(iovad, tmp_dma_addr);
-> +                       hi = iova_pfn(iovad,
-> +                                     DMA_BIT_MASK(sizeof(dma_addr_t) * 8) - 1);
-> +                       reserve_iova(iovad, lo, hi);
-> +               }
->
-> Also if this controller is integrated to 64bit platform, but decide to
-> restrict DMA to 32 bit for some reason, the code should address such
-> scenarios.
-> so it is always safe to do
->
-> #define BITS_PER_BYTE 8
-> DMA_BIT_MASK(sizeof(dma_addr_t) * BITS_PER_BYTE)
-> so please use kernle macro to find the end of DMA region.
->
-this change done with the assumption, that end_address is max bus
-address(~0) instead
-pcie RC dma mask.
-Even dma-ranges has 64bit size dma-mask of PCIe host is forced to 32bit.
-// in of_dma_configure function
-    dev->coherent_dma_mask = DMA_BIT_MASK(32);
-And dma-mask of endpoint was set to 64bit in their drivers. also SMMU supported
-dma mask is 48-bit.
-But here requirement is all address ranges except dma-ranges address
-between 0x0 - ~0x0
-have to be reserved.
-as you suggested I will change ~0 to DMA_BIT_MASK macro it will look
-more cleaner.
->
-> Also ideally according to SBSA v5
->
-> 8.3 PCI Express device view of memory
->
-> Transactions from a PCI express device will either directly address the
-> memory system of the base server system
-> or be presented to a SMMU for optional address translation and
-> permission policing.
-> In systems that are compatible with level 3 or above of the SBSA, the
-> addresses sent by PCI express devices
-> must be presented to the memory system or SMMU unmodified. In a system
-> where the PCI express does not use
-> an SMMU, the PCI express devices have the same view of physical memory
-> as the PEs. In a system with a
-> SMMU for PCI express there are no transformations to addresses being
-> sent by PCI express devices before they
-> are presented as an input address to the SMMU.
->
-> which is a limitation of iproc controller, please list the limitation in
-> detail as it violates SBSA.
-Inbound address sent by pcie devices to the host will not be translate
-(unchanged) before it comes to
-SMMU or directly to PE. but the there is limitation that, few address
-ranges are not allowed by
-IPROC PCIe RC and those were filtered out. That is the reason forces
-this change request.
-I will append these details in commit message.
-
-Regards,
-Srinath.
->
-> Regards,
-> Oza.
->
-> > +     if (end - start) {
-> > +             ret = iproc_pcie_add_dma_resv_range(pcie->dev, &resources,
-> > +                                                 start, end);
-> > +             if (ret)
-> > +                     goto out;
-> > +     }
-> > +
-> > +     list_splice_init(&resources, &host->dma_resv);
-> > +
-> >       return 0;
-> > +out:
-> > +     pci_free_resource_list(&resources);
-> > +     return ret;
-> >  }
-> >
-> >  static int iproce_pcie_get_msi(struct iproc_pcie *pcie,
->
->
->
->
->
+> ---
+>  drivers/tty/serial/serial_core.c | 22 ++++++++++++++++------
+>  1 file changed, 16 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/tty/serial/serial_core.c b/drivers/tty/serial/serial_core.c
+> index c439a5a1e6c0..d4cca5bdaf1c 100644
+> --- a/drivers/tty/serial/serial_core.c
+> +++ b/drivers/tty/serial/serial_core.c
+> @@ -205,10 +205,15 @@ static int uart_port_startup(struct tty_struct *tty, struct uart_state *state,
+>  	if (!state->xmit.buf) {
+>  		state->xmit.buf = (unsigned char *) page;
+>  		uart_circ_clear(&state->xmit);
+> +		uart_port_unlock(uport, flags);
+>  	} else {
+> +		uart_port_unlock(uport, flags);
+> +		/*
+> +		 * Do not free() the page under the port lock, see
+> +		 * uart_shutdown().
+> +		 */
+>  		free_page(page);
+>  	}
+> -	uart_port_unlock(uport, flags);
+>  
+>  	retval = uport->ops->startup(uport);
+>  	if (retval == 0) {
+> @@ -268,6 +273,7 @@ static void uart_shutdown(struct tty_struct *tty, struct uart_state *state)
+>  	struct uart_port *uport = uart_port_check(state);
+>  	struct tty_port *port = &state->port;
+>  	unsigned long flags = 0;
+> +	char *xmit_buf = NULL;
+>  
+>  	/*
+>  	 * Set the TTY IO error marker
+> @@ -298,14 +304,18 @@ static void uart_shutdown(struct tty_struct *tty, struct uart_state *state)
+>  	tty_port_set_suspended(port, 0);
+>  
+>  	/*
+> -	 * Free the transmit buffer page.
+> +	 * Do not free() the transmit buffer page under the port lock since
+> +	 * this can create various circular locking scenarios. For instance,
+> +	 * console driver may need to allocate/free a debug object, which
+> +	 * can endup in printk() recursion.
+>  	 */
+>  	uart_port_lock(state, flags);
+> -	if (state->xmit.buf) {
+> -		free_page((unsigned long)state->xmit.buf);
+> -		state->xmit.buf = NULL;
+> -	}
+> +	xmit_buf = state->xmit.buf;
+> +	state->xmit.buf = NULL;
+>  	uart_port_unlock(uport, flags);
+> +
+> +	if (xmit_buf)
+> +		free_page((unsigned long)xmit_buf);
+>  }
+>  
+>  /**
+> -- 
+> 2.20.0
+> 
