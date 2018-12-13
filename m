@@ -2,81 +2,84 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13F49C6786C
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 01:10:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DBDEC67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 01:13:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC44820811
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 01:10:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=jms.id.au header.i=@jms.id.au header.b="ng8UcRvb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC44820811
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jms.id.au
+	by mail.kernel.org (Postfix) with ESMTP id 4FF7220811
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 01:13:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FF7220811
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726491AbeLMBKE (ORCPT
+        id S1726479AbeLMBNJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 20:10:04 -0500
-Received: from mail-qt1-f175.google.com ([209.85.160.175]:36914 "EHLO
-        mail-qt1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726321AbeLMBKD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 20:10:03 -0500
-Received: by mail-qt1-f175.google.com with SMTP id z16so411989qtq.4;
-        Wed, 12 Dec 2018 17:10:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=jms.id.au; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=4NUXph6sewKAF+Apf1FNRprvzsnumssa+ieZdO5X5ig=;
-        b=ng8UcRvbK0jA0sVddxz9JoZN5d+fO5P9VO91aj7IV9eXZu1Cp4MhapTcjqFFLORoT1
-         DwFNp3Uki8xpvMGTc3iUbh1+EkPvkkyhkIljNF/xC17BCCF1xhqaYHmFGgOJzphul/uL
-         bKESJTjQAnULgPKYAtXFStMhf0MxVlQJ099ss=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4NUXph6sewKAF+Apf1FNRprvzsnumssa+ieZdO5X5ig=;
-        b=q80/is+ZqI3xZ0kC4RK+ounosjDtxZCbq5zPh9IaR6Z0PnMA+Bm4UJSRW6MpFQyzkx
-         aP6VfZzu0ON8lsyaZE4hjSYdWi8ZSkR+pkvL9mrZUKifnp3TRWodOhzJKAkagQTdfzlJ
-         UVBlUODn4AFnSWp5KkzZgYgkwkBucvgk801HVtcav8/SFwPTPpodxzVZvtU8vbXNpCJ2
-         OtQaR0D+mAD+CquOuHRxQdNVLHqjfeI+OkQh5ZDbOvloo1ImJqAoifz+8gzt4an1qBuN
-         +KyQHIpNMm+vslcVkQRAwHgFgDvA1ihXwY8TPDQn+tTxjlSWyl7ou7SQg5M3EUryaqds
-         OxyQ==
-X-Gm-Message-State: AA+aEWZheuamU+jMTytSEIO/X9Am0D/ObJxd+AevAW5QaTywdEzJYNLr
-        bBXsaZDnpYtIpkhTUOmaA4mEmNBSJDHq0cWS6fg=
-X-Google-Smtp-Source: AFSGD/UA2uv6C0lcuruKpIf2RhbZzybNULof2IpPd7ZmIoT47JeDFYvYL9EdwGuPrndoew8T2SukoqpDgcYH9Uj8iVE=
-X-Received: by 2002:a0c:c927:: with SMTP id r36mr21779472qvj.51.1544663401828;
- Wed, 12 Dec 2018 17:10:01 -0800 (PST)
+        Wed, 12 Dec 2018 20:13:09 -0500
+Received: from muru.com ([72.249.23.125]:57914 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726337AbeLMBNI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 20:13:08 -0500
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 42516809F;
+        Thu, 13 Dec 2018 01:13:11 +0000 (UTC)
+Date:   Wed, 12 Dec 2018 17:13:04 -0800
+From:   Tony Lindgren <tony@atomide.com>
+To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc:     "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Takashi Iwai <tiwai@suse.com>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Mark Brown <broonie@kernel.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Jarkko Nikula <jarkko.nikula@bitmer.com>
+Subject: Re: [alsa-devel] [PATCH 0/2] Graph fixes for using multiple
+        endpoints per port
+Message-ID: <20181213011304.GL6707@atomide.com>
+References: <87wooga9an.wl-kuninori.morimoto.gx@renesas.com>
+ <20181211141649.GL6707@atomide.com>
+ <87ftv33bpg.wl-kuninori.morimoto.gx@renesas.com>
+ <20181212001950.GX6707@atomide.com>
+ <877egf33m9.wl-kuninori.morimoto.gx@renesas.com>
+ <87k1kfs0u5.wl-kuninori.morimoto.gx@renesas.com>
+ <20181212152725.GE6707@atomide.com>
+ <87imzy2sh1.wl-kuninori.morimoto.gx@renesas.com>
+ <20181213004009.GK6707@atomide.com>
+ <87h8fi2qit.wl-kuninori.morimoto.gx@renesas.com>
 MIME-Version: 1.0
-References: <20181212215305.3852170-1-taoren@fb.com>
-In-Reply-To: <20181212215305.3852170-1-taoren@fb.com>
-From:   Joel Stanley <joel@jms.id.au>
-Date:   Thu, 13 Dec 2018 11:39:50 +1030
-Message-ID: <CACPK8XcHN07D5vtoAZ2BnaFzc55P+XEhzsTajOm1S2fvcrrm5Q@mail.gmail.com>
-Subject: Re: [PATCH] gpio: aspeed: remove duplicated statement
-To:     Tao Ren <taoren@fb.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Andrew Jeffery <andrew@aj.id.au>, linux-gpio@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-aspeed@lists.ozlabs.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87h8fi2qit.wl-kuninori.morimoto.gx@renesas.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 13 Dec 2018 at 08:24, Tao Ren <taoren@fb.com> wrote:
->
-> Remove duplicated assignment statement from aspeed_gpio_probe() function.
->
-> Signed-off-by: Tao Ren <taoren@fb.com>
+* Kuninori Morimoto <kuninori.morimoto.gx@renesas.com> [181213 01:06]:
+> 
+> Hi Tony
+> 
+> > > According to OF graph maintainer, he said that
+> > > counting port / endpoint are not guaranteed,
+> > > and we need to use "reg".
+> > > (It is the reason of b6f3fc005a2c8b425d7a0973b43bef05890bf479)
+> > > 
+> > > If you could double checked, and we could agreed
+> > > that "reg" is the solution for us.
+> > > I will post patches.
+> > 
+> > OK yes your "reg" proposal works for me.
+> 
+> OK, thanks.
+> I will post patch-set, soon.
 
-Acked-by: Joel Stanley <joel@jms.id.au>
+OK sounds good to me.
 
-Thanks Tao!
+Thanks,
+
+Tony
