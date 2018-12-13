@@ -2,121 +2,216 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_MIXED_ES,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80229C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 11:19:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8CB8C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 11:20:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 456A720870
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 11:19:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 617F0208E7
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 11:20:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b="XkCjJwtL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 456A720870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xenosoft.de
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="PI7JXbyj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 617F0208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728726AbeLMLTc (ORCPT
+        id S1728764AbeLMLUI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 06:19:32 -0500
-Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.50]:33646 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727590AbeLMLTb (ORCPT
+        Thu, 13 Dec 2018 06:20:08 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:34001 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728727AbeLMLUG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 06:19:31 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1544699970;
-        s=strato-dkim-0002; d=xenosoft.de;
-        h=In-Reply-To:Date:Message-ID:References:Cc:To:From:Subject:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=NM/tCvoZjS6Cq0okdsCXWAFeCWiiRjP6wOttAZsaJ+k=;
-        b=XkCjJwtL5I4o2BuAth7dPK/zbV0QBmOOcMyLvdgMvJl2K+02oAlu6bIyWZC7YV6jDX
-        sMpTBf5DFHWZvCeeXvMHLfk9YArNqPs2sBnoDDAGnHYLvMYKbFDvKz73MnppZ1Qisf/z
-        T48d4pQ3fOKlmiw3CdV78b1SgTGK+fBMQmBG1Kyy1wvFCGWY1+TKy8TNehepiXL5q2aJ
-        rQkI3Af7/yGLes6kIOoMxMURMUg2L5BixEgvTM2rh6YQgib+kVw3ab/wllKppg6217zM
-        mtHz9zPtCxmbV8IldjronNDMcTZxf2Yv7lfjyPC+Ztw+b+VqhE6p5MwssLKVUtJzzNVI
-        zMLw==
-X-RZG-AUTH: ":L2QefEenb+UdBJSdRCXu93KJ1bmSGnhMdmOod1DhGM4l4Hio94KKxRySfLxnHfJ+Dkjp5G5MdirQj0WG7CldjnCRzW8IkK59KggYFzh3F3K3Xw=="
-X-RZG-CLASS-ID: mo00
-Received: from [IPv6:2a02:8109:a400:162c:b0e1:84d0:6a78:d27a]
-        by smtp.strato.de (RZmta 44.8 AUTH)
-        with ESMTPSA id e03c1euBDBJR170
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Thu, 13 Dec 2018 12:19:27 +0100 (CET)
-Subject: Re: use generic DMA mapping code in powerpc V4
-From:   Christian Zigotzky <chzigotzky@xenosoft.de>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     linux-arch@vger.kernel.org,
-        Darren Stevens <darren@stevens-zone.net>,
-        linux-kernel@vger.kernel.org, Julian Margetson <runaway@candw.ms>,
-        linux-mm@kvack.org, iommu@lists.linux-foundation.org,
-        Paul Mackerras <paulus@samba.org>,
-        Olof Johansson <olof@lixom.net>, linuxppc-dev@lists.ozlabs.org
-References: <8a2c4581-0c85-8065-f37e-984755eb31ab@xenosoft.de>
- <424bb228-c9e5-6593-1ab7-5950d9b2bd4e@xenosoft.de>
- <c86d76b4-b199-557e-bc64-4235729c1e72@xenosoft.de>
- <1ecb7692-f3fb-a246-91f9-2db1b9496305@xenosoft.de>
- <6c997c03-e072-97a9-8ae0-38a4363df919@xenosoft.de>
- <4cfb3f26-74e1-db01-b014-759f188bb5a6@xenosoft.de>
- <82879d3f-83de-6438-c1d6-49c571dcb671@xenosoft.de>
- <20181212141556.GA4801@lst.de>
- <2242B4B2-6311-492E-BFF9-6740E36EC6D4@xenosoft.de>
- <84558d7f-5a7f-5219-0c3a-045e6b4c494f@xenosoft.de>
- <20181213091021.GA2106@lst.de>
- <835bd119-081e-a5ea-1899-189d439c83d6@xenosoft.de>
-Message-ID: <76bc684a-b4d2-1d26-f18d-f5c9ba65978c@xenosoft.de>
-Date:   Thu, 13 Dec 2018 12:19:26 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
+        Thu, 13 Dec 2018 06:20:06 -0500
+Received: by mail-ed1-f66.google.com with SMTP id b3so1730394ede.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 03:20:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=mMX6OBgczGKgREVlBAc+Cx3Zl3lpeS31D8IJu4mm39U=;
+        b=PI7JXbyj/Mdr1lOjpjaGpCm3a0TZZs/pIjCjh7AGSxCES7fMmBgnuvppfgN0GD6tvN
+         vLHeVcVE+IvjzvRicD9eWYhSVumPX4DYC7NZNuKfzhWxGqjmVxDrFAPgzxhzr60AoffL
+         1yeB0DN4tBkshBSrLo3IIcY+WTIFCkPH9euYY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=mMX6OBgczGKgREVlBAc+Cx3Zl3lpeS31D8IJu4mm39U=;
+        b=VvZQpshORO3bvL67A/E7NZ7u9s8zzA5ROSKx0gscHdf6d008h11hX/w05ZGs/sMNMJ
+         RzzndAGve/bmpy/AyFIPCv4wgZdqzKDf83W3C0zuecVdZToBIwenHfleekn/qsRrHO4A
+         mheKbb9WbR77Xa2k9cN5PS14DzhgZfYLg+K/MwDtvbA6P529A788+P85DpnoGJeRF8fo
+         +h/Vabsnzv4TXB/ti+0NaNGe37xF5UUxkHEXZqBNS9ekjMa5UluU/H2T13LGAB/18V5E
+         8L5WEuJ5fkoLr3Rjdb1mcTnY48bfMTH1qHKwu10C5lZg0/CPgZkfSoQ2nh+2F3rNYzDx
+         Al8g==
+X-Gm-Message-State: AA+aEWYcyAU6G9vFa2UJl1vAAjJ1A0jkQot85TpkrCbcfJ65SLzVkTPe
+        apteiAhlv7SY6u21q3SC1f8vNQ==
+X-Google-Smtp-Source: AFSGD/UE24/lWaJwkZwQ2F61/NDvNW/y+TFIZsv7wCFk+s3RNAU6odl7MNEkuO7Xcl60XPaoTV9a1A==
+X-Received: by 2002:a05:6402:170d:: with SMTP id y13mr22536746edu.45.1544700003912;
+        Thu, 13 Dec 2018 03:20:03 -0800 (PST)
+Received: from andrea (85.100.broadband17.iol.cz. [109.80.100.85])
+        by smtp.gmail.com with ESMTPSA id v20sm541221edm.29.2018.12.13.03.20.02
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 13 Dec 2018 03:20:03 -0800 (PST)
+Date:   Thu, 13 Dec 2018 12:19:57 +0100
+From:   Andrea Parri <andrea.parri@amarulasolutions.com>
+To:     Roman Penyaev <rpenyaev@suse.de>
+Cc:     Davidlohr Bueso <dbueso@suse.de>, Jason Baron <jbaron@akamai.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] epoll: use rwlock in order to reduce
+ ep_poll_callback() contention
+Message-ID: <20181213111957.GA8459@andrea>
+References: <20181212110357.25656-1-rpenyaev@suse.de>
+ <20181212110357.25656-4-rpenyaev@suse.de>
+ <20181212171348.GA12786@andrea>
+ <a30306ad68b4b7171fbb587f5f845ea5@suse.de>
 MIME-Version: 1.0
-In-Reply-To: <835bd119-081e-a5ea-1899-189d439c83d6@xenosoft.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: de-DE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a30306ad68b4b7171fbb587f5f845ea5@suse.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13 December 2018 at 10:47AM, Christian Zigotzky wrote:
-> On 13 December 2018 at 10:10AM, Christoph Hellwig wrote:
->> On Thu, Dec 13, 2018 at 09:41:50AM +0100, Christian Zigotzky wrote:
->>> Today I tried the first patch (0001-get_required_mask.patch) with 
->>> the last
->>> good commit (977706f9755d2d697aa6f45b4f9f0e07516efeda). 
->>> Unfortunately this
->>> patch is already included in the last good commit
->>> (977706f9755d2d697aa6f45b4f9f0e07516efeda). I will try the next patch.
->> Hmm, I don't think this is the case.  This is my local git log output:
->>
->> commit 83a4b87de6bc6a75b500c9959de88e2157fbcd7c
->> Author: Christoph Hellwig <hch@lst.de>
->> Date:   Wed Dec 12 15:07:49 2018 +0100
->>
->>      get_required_mask
->>
->> commit 977706f9755d2d697aa6f45b4f9f0e07516efeda
->> Author: Christoph Hellwig <hch@lst.de>
->> Date:   Sat Nov 10 22:34:27 2018 +0100
->>
->>      powerpc/dma: remove dma_nommu_mmap_coherent
->>
->> I've also pushed a git branch with these out to:
->>
->>      git://git.infradead.org/users/hch/misc.git powerpc-dma.5-debug
->>
-> Sorry Christioph. I was wrong. The first patch isn't included in the 
-> last good commit. I will try it again. I can only test beside my main 
-> work. That means it takes longer.
->
-> -- Christian
->
->
-I tried it again but I get the following error message:
+On Thu, Dec 13, 2018 at 11:13:58AM +0100, Roman Penyaev wrote:
+> On 2018-12-12 18:13, Andrea Parri wrote:
+> > On Wed, Dec 12, 2018 at 12:03:57PM +0100, Roman Penyaev wrote:
+> 
+> [...]
+> 
+> > > +static inline void list_add_tail_lockless(struct list_head *new,
+> > > +					  struct list_head *head)
+> > > +{
+> > > +	struct list_head *prev;
+> > > +
+> > > +	new->next = head;
+> > > +
+> > > +	/*
+> > > +	 * Initially ->next of a new element must be updated with the head
+> > > +	 * (we are inserting to the tail) and only then pointers are
+> > > atomically
+> > > +	 * exchanged.  XCHG guarantees memory ordering, thus ->next should
+> > > be
+> > > +	 * updated before pointers are actually swapped.
+> > > +	 */
+> > > +
+> > > +	prev = xchg(&head->prev, new);
+> > > +
+> > > +	/*
+> > > +	 * It is safe to modify prev->next and new->prev, because a new
+> > > element
+> > > +	 * is added only to the tail and new->next is updated before XCHG.
+> > > +	 */
+> > 
+> > IIUC, you're also relying on "some" ordering between the atomic load
+> > of &head->prev above and the store to prev->next below: consider the
+> > following snippet for two concurrent list_add_tail_lockless()'s:
+> > 
+> > {Initially: List := H -> A -> B}
+> > 
+> > CPU0					CPU1
+> > 
+> > list_add_tail_lockless(C, H):		list_add_tail_lockless(D, H):
+> > 
+> > C->next = H				D->next = H
+> > prev = xchg(&H->prev, C) // =B		prev = xchg(&H->prev, D) // =C
+> > B->next = C				C->next = D
+> > C->prev = B				D->prev = C
+> > 
+> > Here, as annotated, CPU0's xchg() "wins" over CPU1's xchg() (i.e., the
+> > latter reads the value of &H->prev that the former stored to that same
+> > location).
+> > 
+> > As you noted above, the xchg() guarantees that CPU0's store to C->next
+> > is "ordered before" CPU0's store to &H->prev.
+> > 
+> > But we also want CPU1's load from &H->prev to be ordered before CPU1's
+> > store to C->next, which is also guaranteed by the xchg() (or, FWIW, by
+> > the address dependency between these two memory accesses).
+> > 
+> > I do not see what could guarantee "C->next == D" in the end, otherwise.
+> > 
+> > What am I missing?
+> 
+> Hi Andrea,
+> 
+> xchg always acts as a full memory barrier, i.e. mfence in x86 terms.  So the
+> following statement should be always true, otherwise nothing should work as
+> the same code pattern is used in many generic places:
+> 
+>    CPU0               CPU1
+> 
+>  C->next = H
+>  xchg(&ptr, C)
+>                      C = xchg(&ptr, D)
+>                      C->next = D
+> 
+> 
+> This is the only guarantee we need, i.e. make it simplier:
+> 
+>    C->next = H
+>    mfence            mfence
+>                      C->next = D
+> 
+> the gurantee that two stores won't reorder.  Pattern is always the same: we
+> prepare chunk of memory on CPU0 and do pointers xchg, CPU1 sees chunks of
+> memory with all stores committed by CPU0 (regardless of CPU1 does loads
+> or stores to this chunk).
+> 
+> I am repeating the same thing which you also noted, but I just want to be
+> sure that I do not say nonsense.  So basically repeating to myself.
+> 
+> Ok, let's commit that.  Returning to your question: "I do not see what
+> could guarantee "C->next == D" in the end"
+> 
+> At the end of what?  Lockless insert procedure (insert to tail) relies only
+> on "head->prev".  This is the single "place" where we atomically exchange
+> list elements and "somehow" chain them.  So insert needs only actual
+> "head->prev", and xchg provides this guarantees to us.
 
-MODPOST vmlinux.o
-arch/powerpc/kernel/dma-iommu.o: In function `.dma_iommu_get_required_mask':
-(.text+0x274): undefined reference to `.dma_direct_get_required_mask'
-make: *** [vmlinux] Error 1
+When all the operations reported in the snippet have completed (i.e.,
+executed and propagated to memory).
 
+To rephrase my remark:
+
+I am saying that we do need some ordering between the xchg() and the
+program-order _subsequent stores, and implicitly suggesting to write
+this down in the comment.  As I wrote, this ordering _is provided by
+the xchg() itself or by the dependency; so, maybe, something like:
+
+	/*
+	 * [...]  XCHG guarantees memory ordering, thus new->next is
+	 * updated before pointers are actually swapped and pointers
+	 * are swapped before prev->next is updated.
+	 */
+
+Adding a snippet, say in the form you reported above, would not hurt
+of course. ;-)
+
+  Andrea
+
+
+> 
+> But there is also a user of the list, who needs to iterate over the list
+> or to delete elements, etc, i.e. this user of the list needs list fully
+> committed to the memory.  This user takes write_lock().  So answering your
+> question (if I understood it correctly): at the end write_lock() guarantees
+> that list won't be seen as corrupted and updates to the last element, i.e.
+> "->next" or "->prev" pointers of the last element are committed and seen
+> correctly.
+> 
+> --
+> Roman
+> 
+> 
+> 
+> 
+> 
