@@ -2,74 +2,95 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,T_HK_NAME_DR,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EBD2C67872
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 20:08:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E31BDC65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 20:09:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4AAB820870
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 20:08:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="g7tX9SBB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AAB820870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id B35C820879
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 20:09:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B35C820879
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726875AbeLMUI5 (ORCPT
+        id S1727104AbeLMUJo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 15:08:57 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:48720 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725949AbeLMUI5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 15:08:57 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=7nzAL3z7f4g+9WAy1nKklmAeRlS9+GIAuGoi38nwjWQ=; b=g7tX9SBB2b8bTFwhMc8QesK7W
-        IWaBvFhrvd0Y8GDw9rupIq1NE6QoI4+rq989Jn2Fttm274vPwxMije3Xz7xsfBogC2LIlnAE6odAr
-        yZLJ/gEvLBb9XAYJU0XUhrRfqvZUv3NVeDpT+d1BbuQ2wMfoflIkYSWQQgnWQpXANXRC5zQj598+A
-        JtFdm9lcW0Y5ONEvgdV0rXmPahIWw91QGtnUxZtgO2ea7si9pmSxzumssBHnozhOlXKdQRL2LQifD
-        TNLeNmIuvRsRBOTy7QPXI0xXVAbk1YWa3HP4mTW+YcW0phWJs54Q3MH3zGQeMMRHRF0JNi0rqDJML
-        LezPQDhGQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gXXHq-0005jQ-8p; Thu, 13 Dec 2018 20:08:46 +0000
-Date:   Thu, 13 Dec 2018 12:08:46 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     iommu@lists.linux-foundation.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jesper Dangaard Brouer <brouer@redhat.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Toke =?iso-8859-1?Q?H=F8iland-J=F8rgensen?= <toke@toke.dk>,
-        linux-ia64@vger.kernel.org,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        linux-pci@vger.kernel.org,
-        Ilias Apalodimas <ilias.apalodimas@linaro.org>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, Keith Busch <keith.busch@intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Jonathan Derrick <jonathan.derrick@intel.com>,
-        Tariq Toukan <tariqt@mellanox.com>
-Subject: Re: [RFC] avoid indirect calls for DMA direct mappings v2
-Message-ID: <20181213200846.GA21726@infradead.org>
-References: <20181207190720.18517-1-hch@lst.de>
+        Thu, 13 Dec 2018 15:09:44 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:51348 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725949AbeLMUJo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 15:09:44 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 3A000307EA90;
+        Thu, 13 Dec 2018 20:09:44 +0000 (UTC)
+Received: from work-vm (ovpn-117-213.ams2.redhat.com [10.36.117.213])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id EE4FE19744;
+        Thu, 13 Dec 2018 20:09:38 +0000 (UTC)
+Date:   Thu, 13 Dec 2018 20:09:36 +0000
+From:   "Dr. David Alan Gilbert" <dgilbert@redhat.com>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     vgoyal@redhat.com, linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        KVM list <kvm@vger.kernel.org>,
+        Miklos Szeredi <miklos@szeredi.hu>, stefanha@redhat.com,
+        sweil@redhat.com, swhiteho@redhat.com
+Subject: Re: [PATCH 15/52] fuse: map virtio_fs DAX window BAR
+Message-ID: <20181213200936.GU2313@work-vm>
+References: <20181210171318.16998-1-vgoyal@redhat.com>
+ <20181210171318.16998-16-vgoyal@redhat.com>
+ <CAA9_cmdLvFqG_Us5ZoBopj2ssWzxVbyNqf4XcgmY+=D_gARWDA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181207190720.18517-1-hch@lst.de>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <CAA9_cmdLvFqG_Us5ZoBopj2ssWzxVbyNqf4XcgmY+=D_gARWDA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Thu, 13 Dec 2018 20:09:44 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I've pulled v2 with the ia64 into dma-mapping for-next.  This should
-give us a little more than a week in linux-next to sort out any
-issues.
+* Dan Williams (dan.j.williams@intel.com) wrote:
+> On Mon, Dec 10, 2018 at 9:22 AM Vivek Goyal <vgoyal@redhat.com> wrote:
+> >
+> > From: Stefan Hajnoczi <stefanha@redhat.com>
+> >
+> > Experimental QEMU code introduces an MMIO BAR for mapping portions of
+> > files in the virtio-fs device.  Map this BAR so that FUSE DAX can access
+> > file contents from the host page cache.
+> 
+> FUSE DAX sounds terrifying, can you explain a bit more about what this is?
+
+We've got a guest running in QEMU, it sees an emulated PCI device;
+that runs a FUSE protocol over virtio on that PCI device, but also has
+a trick where via commands sent over the virtio queue associated with that device,
+(fragments of) host files get mmap'd into the qemu virtual memory that corresponds
+to the kvm slot exposed to the guest for that bar.
+
+The guest sees those chunks in that BAR, and thus you can read/write
+to the host file by directly writing into that BAR.
+
+> > The DAX window is accessed by the fs/dax.c infrastructure and must have
+> > struct pages (at least on x86).  Use devm_memremap_pages() to map the
+> > DAX window PCI BAR and allocate struct page.
+> 
+> PCI BAR space is not cache coherent,
+
+Note that no real PCI infrastructure is involved - this is all emulated
+devices, backed by mmap'd files on the host qemu process.
+
+Dave
+
+> what prevents these pages from
+> being used in paths that would do:
+> 
+>    object = page_address(pfn_to_page(virtio_fs_pfn));
+> 
+> ...?
+--
+Dr. David Alan Gilbert / dgilbert@redhat.com / Manchester, UK
