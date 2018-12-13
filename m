@@ -2,86 +2,116 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E97D3C67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 02:24:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 861CAC67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 02:24:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FE2420870
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 02:24:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="dllMkPU+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FE2420870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 5615820870
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 02:24:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5615820870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726600AbeLMCYH (ORCPT
+        id S1726671AbeLMCY0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 21:24:07 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:37470 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726344AbeLMCYG (ORCPT
+        Wed, 12 Dec 2018 21:24:26 -0500
+Received: from Mailgw01.mediatek.com ([1.203.163.78]:8081 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726344AbeLMCYZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 21:24:06 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wBD2K6oB131714;
-        Thu, 13 Dec 2018 02:24:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : references : date : in-reply-to : message-id : mime-version :
- content-type; s=corp-2018-07-02;
- bh=Z86DU0JX6NrAkdmqyKzAAffGePwWlTicHKlaIabUcqk=;
- b=dllMkPU+EJFkfrdGaLcVtnzn9bpGi4AimwKkIhJKaCL05jx2EO/Uv4S7bHo9bCzR3jPY
- xLJi597qGC2JgKANqYGgL9f9ZEYnp9jk7efPJ3gJm13W9OtwOYgSFRW3DjfwIP/yKhyf
- +ZHZizh7Ja3jUtPNqLt0oWsRQDBH+Q8i84m79DZasjSuMCn0oXVp0Ke4/HBJJ8pS51+p
- iTvytH2t5QUAqg/3IhuqlxNbTedT3XCC8QwKO4ZKIU0AVgR5Vxc8fmS6sKp3FZhQkS9r
- 2QuqtBBJvT55ySiAa0oAyR2ZwYsVGzgxFbXzgbs5+OBRG3cBeyqXRDbdvI07dVppyULZ bQ== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2130.oracle.com with ESMTP id 2pb3n735gw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 13 Dec 2018 02:24:00 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wBD2O0l8015113
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 13 Dec 2018 02:24:00 GMT
-Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wBD2NxOa001428;
-        Thu, 13 Dec 2018 02:23:59 GMT
-Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 12 Dec 2018 18:23:59 -0800
-To:     John Garry <john.garry@huawei.com>
-Cc:     <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>,
-        <linuxarm@huawei.com>, <linux-kernel@vger.kernel.org>,
-        <linux-scsi@vger.kernel.org>
-Subject: Re: [PATCH v4 0/5]  hisi_sas: DIF support
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <1544103284-100497-1-git-send-email-john.garry@huawei.com>
-Date:   Wed, 12 Dec 2018 21:23:51 -0500
-In-Reply-To: <1544103284-100497-1-git-send-email-john.garry@huawei.com> (John
-        Garry's message of "Thu, 6 Dec 2018 21:34:39 +0800")
-Message-ID: <yq1k1kego5k.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Wed, 12 Dec 2018 21:24:25 -0500
+X-UUID: 1ca81a550d4744f9a545eadbf4d575d7-20181213
+X-UUID: 1ca81a550d4744f9a545eadbf4d575d7-20181213
+Received: from mtkcas35.mediatek.inc [(172.27.4.250)] by mailgw01.mediatek.com
+        (envelope-from <yong.wu@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 1136412764; Thu, 13 Dec 2018 10:24:17 +0800
+Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS31DR.mediatek.inc
+ (172.27.6.102) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 13 Dec
+ 2018 10:24:15 +0800
+Received: from [10.17.3.153] (10.17.3.153) by MTKCAS36.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Thu, 13 Dec 2018 10:24:15 +0800
+Message-ID: <1544667855.8755.7.camel@mhfsdcap03>
+Subject: Re: [PATCH] iommu/io-pgtable-arm-v7s: Don't check PHYS_OFFSET if
+ RAMDOMIZE_BASE is enabled
+From:   Yong Wu <yong.wu@mediatek.com>
+To:     Robin Murphy <robin.murphy@arm.com>
+CC:     Will Deacon <will.deacon@arm.com>, Joerg Roedel <joro@8bytes.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <youlin.pei@mediatek.com>,
+        "Nicolas Boichat" <drinkcat@chromium.org>,
+        <srv_heupstream@mediatek.com>, <linux-kernel@vger.kernel.org>,
+        Tomasz Figa <tfiga@google.com>,
+        <iommu@lists.linux-foundation.org>,
+        <linux-mediatek@lists.infradead.org>, "CK Hu" <ck.hu@mediatek.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        "Stephen Boyd" <swboyd@chromium.org>
+Date:   Thu, 13 Dec 2018 10:24:15 +0800
+In-Reply-To: <50292758-47b1-1d08-5827-f7bdb3c33e1c@arm.com>
+References: <1544619737-6313-1-git-send-email-yong.wu@mediatek.com>
+         <50292758-47b1-1d08-5827-f7bdb3c33e1c@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9105 signatures=668679
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=465
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1812130019
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, 2018-12-12 at 13:39 +0000, Robin Murphy wrote:
+> On 12/12/2018 13:02, Yong Wu wrote:
+> > If CONFIG_RANDOMIZE_BASE is enabled, the "memstart_addr" will be updated
+> > randomly, then the PHYS_OFFSET may be random.
+> 
+> Oh, I hadn't ever realised that, good catch. However, since 29859aeb8a6e 
+> I think we should probably just remove this check altogether.
 
-John,
+Thanks the hint. It looks that I only need revert 82db33dc5e49.
 
-> This patchset introduces support to the driver for DIF/DIX.
+> 
+> > Fixes: 82db33dc5e49 ("iommu/io-pgtable-arm: Check for v7s-incapable
+> > systems")
+> 
+> Note that this alone wouldn't be sufficient for stable prior to 4.18, 
+> since CONFIG_RANDOMIZE_BASE would then allow the original crash to 
+> happen again.
 
-Applied 1-3 to 4.21/scsi-queue.
+Yes. the problem always exist. Nicolas is fixing this. I will delete the
+tag here.
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+> 
+> Robin.
+> 
+> > Reported-by: CK Hu <ck.hu@mediatek.com>
+> > Signed-off-by: Yong Wu <yong.wu@mediatek.com>
+> > ---
+> >   drivers/iommu/io-pgtable-arm-v7s.c | 2 +-
+> >   1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/iommu/io-pgtable-arm-v7s.c b/drivers/iommu/io-pgtable-arm-v7s.c
+> > index 445c3bd..70941e6 100644
+> > --- a/drivers/iommu/io-pgtable-arm-v7s.c
+> > +++ b/drivers/iommu/io-pgtable-arm-v7s.c
+> > @@ -709,7 +709,7 @@ static struct io_pgtable *arm_v7s_alloc_pgtable(struct io_pgtable_cfg *cfg,
+> >   {
+> >   	struct arm_v7s_io_pgtable *data;
+> >   
+> > -#ifdef PHYS_OFFSET
+> > +#if defined(PHYS_OFFSET) && !defined(CONFIG_RANDOMIZE_BASE)
+> >   	if (upper_32_bits(PHYS_OFFSET))
+> >   		return NULL;
+> >   #endif
+> > 
+> 
+> _______________________________________________
+> Linux-mediatek mailing list
+> Linux-mediatek@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-mediatek
+
+
