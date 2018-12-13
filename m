@@ -4,57 +4,58 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59474C67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:51:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A77E1C67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:51:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C56120870
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:51:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 65EA92080F
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:51:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544676692;
-	bh=N8AfGWv1BymxIbK9rX5NHROOq0ClCwsRM2lj4GdEsZI=;
+	s=default; t=1544676696;
+	bh=PucmPDlw15LNfzkKgoSTqsGsPy4Wsd708bf38o3fgBs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=G4bmgXhSaPcD+UXLddu7tsmZlz9puWWOu3U4vrBHWQZErVJnpPvfZi4oSK2rAq/s9
-	 TSQh6xAb/KG5cCsiJh6KZuy0warNHtFFz0C9r44mp61AwuCiUwdhUFtwR+XYAIco8L
-	 sPMI9Cq7M3FQwWkzTJ3OuxLkDzhH1uhoM/DqAzgk=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C56120870
+	b=D4+sGDwS33gOmZir0P1FZ0XlBvdUwSYPcQLqA7BEHLnqwMIWMpG6tMUdfxspQJ87T
+	 KVH11UVf0SSSCaj7hEBCuxtHk+ykDtPBT9VYkUR8/QXJjmWCuEAs+LYhYp0+3GSOVU
+	 WJqB28IxAVLqI2NpyTZC6/Snc3u3OgPYRWNGesdw=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65EA92080F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727390AbeLME3J (ORCPT
+        id S1728037AbeLMEve (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 23:29:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41872 "EHLO mail.kernel.org"
+        Wed, 12 Dec 2018 23:51:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42168 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727188AbeLME25 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 23:28:57 -0500
+        id S1727385AbeLME3J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 23:29:09 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C042220849;
-        Thu, 13 Dec 2018 04:28:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A591F20849;
+        Thu, 13 Dec 2018 04:29:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544675336;
-        bh=N8AfGWv1BymxIbK9rX5NHROOq0ClCwsRM2lj4GdEsZI=;
+        s=default; t=1544675348;
+        bh=PucmPDlw15LNfzkKgoSTqsGsPy4Wsd708bf38o3fgBs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QfTUsg9I9YCcUht0QnGb3/DKbiFxMlbE+OwUqvrvv/hsoHbNFm6O92Q7OnbO5JPIr
-         x87tYKlKXWK+ewZ/TV5IAYVtigXTG0w9qtUo77+VDai72An5PcybO/HcmBFz4wqiBs
-         PPG3x0RlfcJLvBRmeZ7wsV0VWOmrt4pS6s4nemcI=
+        b=kPGDpefsT+YsJ8SfJN5qE5j7UftlVl5ckmWm4VujHI3InaTZHweF7SG7vZjK6CB1k
+         pTNPpSlR6MhIIhKIlZcMnukudohPpkYptcyjSnMvAG3XfLePaaraXo6QfLLufEhI6R
+         c7RRe95uK+1g+bC0UjI9ZaJcfPPH/4vbS9/qlGdw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Sharat Masetty <smasetty@codeaurora.org>,
-        Rob Clark <robdclark@gmail.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Sasha Levin <sashal@kernel.org>, linux-arm-msm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.19 12/73] drm/msm: Fix task dump in gpu recovery
-Date:   Wed, 12 Dec 2018 23:27:37 -0500
-Message-Id: <20181213042838.75160-12-sashal@kernel.org>
+Cc:     =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 4.19 18/73] drm/amdgpu: wait for IB test on first device open
+Date:   Wed, 12 Dec 2018 23:27:43 -0500
+Message-Id: <20181213042838.75160-18-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181213042838.75160-1-sashal@kernel.org>
 References: <20181213042838.75160-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -62,55 +63,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sharat Masetty <smasetty@codeaurora.org>
+From: Christian König <christian.koenig@amd.com>
 
-[ Upstream commit 482f96324a4e08818db7d75bb12beaaea6c9561d ]
+[ Upstream commit 3bfa8897e4d08f822d1d58cf6cbbffbccef82e08 ]
 
-The current recovery code gets a pointer to the task struct and does a
-few things all within the rcu_read_lock. This puts constraints on the
-types of gfp flags that can be used within the rcu lock. This patch
-instead gets a reference to the task within the rcu lock and releases
-the lock immediately, this way the task stays afloat until we need it and
-we also get to use the desired gfp flags.
+Instead of delaying that to the first query. Otherwise we could try to use the
+SDMA for VM updates before the IB tests are done.
 
-Signed-off-by: Sharat Masetty <smasetty@codeaurora.org>
-Signed-off-by: Rob Clark <robdclark@gmail.com>
-Signed-off-by: Sean Paul <seanpaul@chromium.org>
+Signed-off-by: Christian König <christian.koenig@amd.com>
+Reviewed-by: Chunming Zhou <david1.zhou@amd.com>
+Reviewed-by: Junwei Zhang <Jerry.Zhang@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/msm/msm_gpu.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/msm/msm_gpu.c b/drivers/gpu/drm/msm/msm_gpu.c
-index 46e6b82f7b66..52a2146dc1f2 100644
---- a/drivers/gpu/drm/msm/msm_gpu.c
-+++ b/drivers/gpu/drm/msm/msm_gpu.c
-@@ -425,10 +425,9 @@ static void recover_worker(struct work_struct *work)
- 	if (submit) {
- 		struct task_struct *task;
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c
+index bd98cc5fb97b..fd825d30edf1 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c
+@@ -292,9 +292,6 @@ static int amdgpu_info_ioctl(struct drm_device *dev, void *data, struct drm_file
+ 	if (!info->return_size || !info->return_pointer)
+ 		return -EINVAL;
  
--		rcu_read_lock();
--		task = pid_task(submit->pid, PIDTYPE_PID);
-+		task = get_pid_task(submit->pid, PIDTYPE_PID);
- 		if (task) {
--			comm = kstrdup(task->comm, GFP_ATOMIC);
-+			comm = kstrdup(task->comm, GFP_KERNEL);
+-	/* Ensure IB tests are run on ring */
+-	flush_delayed_work(&adev->late_init_work);
+-
+ 	switch (info->query) {
+ 	case AMDGPU_INFO_ACCEL_WORKING:
+ 		ui32 = adev->accel_working;
+@@ -861,6 +858,9 @@ int amdgpu_driver_open_kms(struct drm_device *dev, struct drm_file *file_priv)
+ 	struct amdgpu_fpriv *fpriv;
+ 	int r, pasid;
  
- 			/*
- 			 * So slightly annoying, in other paths like
-@@ -441,10 +440,10 @@ static void recover_worker(struct work_struct *work)
- 			 * about the submit going away.
- 			 */
- 			mutex_unlock(&dev->struct_mutex);
--			cmd = kstrdup_quotable_cmdline(task, GFP_ATOMIC);
-+			cmd = kstrdup_quotable_cmdline(task, GFP_KERNEL);
-+			put_task_struct(task);
- 			mutex_lock(&dev->struct_mutex);
- 		}
--		rcu_read_unlock();
++	/* Ensure IB tests are run on ring */
++	flush_delayed_work(&adev->late_init_work);
++
+ 	file_priv->driver_priv = NULL;
  
- 		if (comm && cmd) {
- 			dev_err(dev->dev, "%s: offending task: %s (%s)\n",
+ 	r = pm_runtime_get_sync(dev->dev);
 -- 
 2.19.1
 
