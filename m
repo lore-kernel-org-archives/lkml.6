@@ -2,116 +2,106 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AC7CC65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 18:01:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0102C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 18:09:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD60D20879
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 18:01:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="usMNei7J"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD60D20879
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id B1F932086D
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 18:09:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544724568;
+	bh=qDBwkOTOn0HjUuprDA0mac7GDunlvK4TugoO8opAnqA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=PdfYDJYeqSPf9/T1hk+8ReWif0KIky8QO3L5v05dkm0bUpB4xPdVTKObft33e1s8u
+	 lThU0R0Qru18XQnuJYzkHdS72sX3soufGBWEZf2Hi8oMUv9AfXtnrHRQQ51fFshi68
+	 X0QU7JFyE4WMnBA9jsXY+igS5aV2CauVxoTy0OhY=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1F932086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729521AbeLMSBp (ORCPT
+        id S1728201AbeLMSJ1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 13:01:45 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:35416 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728587AbeLMSBp (ORCPT
+        Thu, 13 Dec 2018 13:09:27 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:42803 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727618AbeLMSJ1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 13:01:45 -0500
-Received: by mail-pf1-f195.google.com with SMTP id z9so1483881pfi.2
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 10:01:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=MfztylOV0k5Rj79YOKzZ8VdvRVm49wDfHbQ5r2xL8Yc=;
-        b=usMNei7JhqGbhh03xwsc5PT/UoqpiO6i+Lu2TyOK+kIhwETvDLM/XADhJusl9NwKNz
-         1RfcUYqfMGYdvqVDp1g/XqBwbeU//+m6wpFNE8iqdd91jKZ6+Pml8HwC7f2j1MZfghVh
-         mh3MTkfI/C9YMMdGURwS+06V/SqsBiTN3U4McuunQFPJifY0c01FDSRoNEq6QVSjSyOk
-         I1z5L//KziwqdK5m/aT6CxYE+beQLAHejAXsBBrT4zTmAs14chQ2jFSFVKYDt/Ek4iNU
-         k2wjmILC2haEX1vIfPUpjyE2VuZ/gCcg6uHR5kDGo+ATzvCCE7O3dzZq7Z+7OklSGgMS
-         e0jg==
+        Thu, 13 Dec 2018 13:09:27 -0500
+Received: by mail-oi1-f196.google.com with SMTP id w13so2363399oiw.9
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 10:09:27 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=MfztylOV0k5Rj79YOKzZ8VdvRVm49wDfHbQ5r2xL8Yc=;
-        b=j9iFQkRNvAYZph+nDEZk4SKxU5fBevpEayOCQwY3E2S+clkOWV86Fpx7+x4CnoXeo+
-         J5m/m/pOHssZSj33OpooKewnhVqck0vFQLzBFhKjdyN5lPIqG06+1b1+lQ4CG84yjqip
-         PL1FotvoASAOtr6zggIckf+8P0bEtSoQ+iY2YUijtpNH5ehjMHP/EeuTSuG6M6RSW5oL
-         gYSj2lW1moEQ3CKEpjX7mVw6kk+8vKV6vU7z+A5Ni+NKjpX8udS12X6LR1sP635v/boS
-         mH4+t4APnUAZISoDknVD1qybHhNcLxKEjypBmyqL2FpHvAsQXq02Aknck7u3Q01POUCP
-         +AsQ==
-X-Gm-Message-State: AA+aEWZJguP3ULF8SdvmwIMwqThxPHDOjLuAmQSUj3J8Lrj/8eOPe7fK
-        mIewPAyCNwv0l3o5cl/R4IdLODHqRBU=
-X-Google-Smtp-Source: AFSGD/XDhw7ueLFs7oZiOGFiMlDFIDdcWC7mTLFDpIm3VaczHxqYiOP7y1mbVvftZ2jLuO6XdER8OA==
-X-Received: by 2002:a62:5486:: with SMTP id i128mr24366388pfb.215.1544724103105;
-        Thu, 13 Dec 2018 10:01:43 -0800 (PST)
-Received: from localhost.localdomain ([2601:646:877f:9499::6872])
-        by smtp.gmail.com with ESMTPSA id 196sm10929734pfc.77.2018.12.13.10.01.42
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 13 Dec 2018 10:01:42 -0800 (PST)
-From:   Khem Raj <raj.khem@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Khem Raj <raj.khem@gmail.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH] include linux/stddef.h in swab.h uapi header
-Date:   Thu, 13 Dec 2018 10:01:29 -0800
-Message-Id: <20181213180129.1373-1-raj.khem@gmail.com>
-X-Mailer: git-send-email 2.20.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qDBwkOTOn0HjUuprDA0mac7GDunlvK4TugoO8opAnqA=;
+        b=XM/j3IbljFQ/V9yUlK2Ez9ga6md1kxTQjWekjuPTG9AIfNgr+cATiB1k7ev23Bk6Lz
+         Z60MZ3XF/+1lCQ+e3OzwRnRAkF5JUQ/8+cwW2RiNkAEXrbFjpp6YB3F9lLX29OdfheFO
+         V6XQbq3Fk9B4um2EANdEVBtp9VaR36/rJRyxYIm/ExTA11uuqAG6v+tflQcP31YaKSAP
+         UO6bGBYdKw7t1qkTBA9e+STliuMQe6vwRVvVUufcJ3oZc4iuk2Jks/H+WSZqYfXEH5w6
+         EjQtY0S7It7Ewa0OPVcWWvbI7EDEf3+1vgDGms/IgZ880q0sIvE2D3hA9M5mgOT0rYQ+
+         kqaQ==
+X-Gm-Message-State: AA+aEWYdaa2sZI5KmsfG7O8FMHGZtxB7G4upLMnbS+6vqqRrG4ij5vWs
+        DLTCCBFod8uICAXkBNKMteG6ngeGP46CAzZDukQ=
+X-Google-Smtp-Source: AFSGD/Wu2QseQfOHZspNR6Vawokqg3LYcDH1z7KvUC+T0OTWqFddmxrJsBqbykK3+QVW41gtMVrxuowVyq58Dr7sENw=
+X-Received: by 2002:aca:a698:: with SMTP id t24mr2522192oij.76.1544724566459;
+ Thu, 13 Dec 2018 10:09:26 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20181210084653.7268-1-daniel.vetter@ffwll.ch> <CAJZ5v0jkE=Rt2ozwcTxRdUN++Sr4HXULksDeMx4jEWj1jVDcyA@mail.gmail.com>
+ <20181213095814.GC21184@phenom.ffwll.local> <CAJZ5v0iWshem3kuurF53gutVJ8jFm_caAbetK2CiSCpyc6ReeQ@mail.gmail.com>
+ <CAKMK7uF7noCEgwE0QYZWQFx-OPxipAF1MojUZ8KTo_SXfQW8+w@mail.gmail.com>
+ <CAJZ5v0g+-R8tbbJscL-3s23UPhyNX1v1Lj3aC=QdUBzdSCrspw@mail.gmail.com> <CAKMK7uHACB5-ak0b_BT-HoAmXHZ9EaCNTt7WuqckNWKQM-g2fQ@mail.gmail.com>
+In-Reply-To: <CAKMK7uHACB5-ak0b_BT-HoAmXHZ9EaCNTt7WuqckNWKQM-g2fQ@mail.gmail.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Thu, 13 Dec 2018 19:09:15 +0100
+Message-ID: <CAJZ5v0hOiL1oWGCmFv2N8-0UvCibXz02DhdFMyUQsQZ1hDjV=w@mail.gmail.com>
+Subject: Re: [PATCH] drivers/base: use a worker for sysfs unbind
+To:     Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        ramalingam.c@intel.com,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Daniel Vetter <daniel.vetter@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-swab.h uses __always_inline without including the header where it is
-defined, this is exposed by musl based distributions where this macro is
-not defined by system C library headers unlike glibc where it is defined
-in sys/cdefs.h and that header gets pulled in indirectly via
+On Thu, Dec 13, 2018 at 5:25 PM Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
+>
+> On Thu, Dec 13, 2018 at 5:18 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
+> >
+> > On Thu, Dec 13, 2018 at 1:36 PM Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
 
-features.h -> sys/cdefs.h
+[cut]
 
-and features.h gets pulled in a lot of headers. Therefore it may work in
-cases where features.h is includes but not otherwise.
+> > > I can do the old code exactly, but afaict the non-NULL parent just
+> > > takes care of the parent bus locking for us, instead of hand-rolling
+> > > it in the caller. But if I missed something, I can easily undo that
+> > > part.
+> >
+> > It is different if device links are present, but I'm not worried about
+> > that case honestly. :-)
+>
+> What would change with device links? We have some cleanup plans to
+> remove our usage for early/late s/r hooks with a device link, to make
+> sure i915 resumes before snd_hda_intel. Digging more into the code I
+> only see the temporary dropping of the parent's device_lock, but I
+> have no idea what that even implies ...
 
-Adding linux/stddef.h here ensures that __always_inline is always
-defined independent of which C library is used in userspace
+That's just it (which is why I said I was not worried).
 
-Signed-off-by: Khem Raj <raj.khem@gmail.com>
-Cc: Philippe Ombredanne <pombredanne@nexb.com>
-Cc: Kate Stewart <kstewart@linuxfoundation.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
----
- include/uapi/linux/swab.h | 1 +
- 1 file changed, 1 insertion(+)
+Running device_links_unbind_consumers() with the parent lock held may
+deadlock if another child of the same parent also is a consumer of the
+current device (which really is a corner case), but the current code
+has this problem - it goes away with your change.
 
-diff --git a/include/uapi/linux/swab.h b/include/uapi/linux/swab.h
-index 23cd84868cc3..acddbe50a20d 100644
---- a/include/uapi/linux/swab.h
-+++ b/include/uapi/linux/swab.h
-@@ -3,6 +3,7 @@
- #define _UAPI_LINUX_SWAB_H
- 
- #include <linux/types.h>
-+#include <linux/stddef.h>
- #include <linux/compiler.h>
- #include <asm/swab.h>
- 
--- 
-2.20.0
+But dev->bus->need_parent_lock checks are missing in there AFAICS, let
+me cut a patch to fix that.
 
+Cheers,
+Rafael
