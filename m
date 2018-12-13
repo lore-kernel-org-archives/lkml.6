@@ -2,77 +2,148 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0E43C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 14:41:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 770D2C67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 14:41:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87A6020849
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 14:41:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YM6QXjkj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87A6020849
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 3BFFA20870
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 14:41:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544712079;
+	bh=2Y9dcSxEbm7++2W57FJQNCnpbdFgMI2E2n6HsLTa0SI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=XWezWqe+R/g5cIuL9MYCF5vEvfPbHw6kzF45VqQ8ARNZl2Q9dx7Z94laxx9c6oo7F
+	 joJNoqqjUrxlRMfeEcE8FpfmCPfC7VHDSO8Kb8PtEKf/K54JcPH6L91SBN2E9yL2rD
+	 eHLxhFLkbPh6fbowrT65KTNXGx87rrVMUcsoyjJM=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BFFA20870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728762AbeLMOlN (ORCPT
+        id S1728908AbeLMOlS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 09:41:13 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:36040 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727618AbeLMOlN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 09:41:13 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=MuLIODc8lAkCTdglzl626DzKhFKlNDRph8viRI9Of9s=; b=YM6QXjkj+8ShnNwjFjqWhQb1a
-        cS+ujdq4KMznS+4cK4PNgdG4qbfd+AZyeW7ZCeE5aaI9SxIkzoaGcOAtfk89MZOI0rfQ4QEzMZfrL
-        Gu2XqNosdluoSa0i5rozkgs0aDI1x0Qx9m4+1qT39BldwY0HN4uqvMhcdaH4iYoyN3IC5kuWNyeI1
-        Apb0GSIOM1VSPGTekwywVXjhwd/Ieyc9yVSkL/NQ+ozSj7ffnIUjX1wGAONTWH/BY76mK4t34hGja
-        BK9yZ9aJXhcaqis8s/5qdQ6IdfQYdSPVIoqQg3n2noDn38fJVIFKVFlkYIBpkOiNVv1PgXwGPRenO
-        LD0vjy1+Q==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gXSAp-0002yV-Eg; Thu, 13 Dec 2018 14:41:11 +0000
-Date:   Thu, 13 Dec 2018 06:41:11 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Xin Long <lucien.xin@gmail.com>
-Cc:     kent.overstreet@gmail.com, LKML <linux-kernel@vger.kernel.org>,
-        dave.hansen@intel.com, davem <davem@davemloft.net>,
-        Neil Horman <nhorman@tuxdriver.com>,
-        Oleg Babin <obabin@virtuozzo.com>,
-        Konstantin Khorenko <khorenko@virtuozzo.com>
-Subject: Re: [PATCH 6/6] Drop flex_arrays
-Message-ID: <20181213144111.GO6830@bombadil.infradead.org>
-References: <20180907165635.8469-1-kent.overstreet@gmail.com>
- <20180907165635.8469-7-kent.overstreet@gmail.com>
- <CADvbK_ccPYY5jGRV+cLNc5Nzcfv0mq0eNMeU-ALvepax0ZSizQ@mail.gmail.com>
+        Thu, 13 Dec 2018 09:41:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37290 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727618AbeLMOlR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 09:41:17 -0500
+Received: from localhost (173-25-171-118.client.mchsi.com [173.25.171.118])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E8CEC20849;
+        Thu, 13 Dec 2018 14:41:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544712077;
+        bh=2Y9dcSxEbm7++2W57FJQNCnpbdFgMI2E2n6HsLTa0SI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=NaFSsTx73EVZhzLJ/ne6WrSUMZcjxwczulAfKDaeZmYYjxArXML9M+aH2Ue2QDFLG
+         RMI4KMUCgeCB1TmHC79pAecJ66fTRX0Y8YsWuNlv9lViSLnWGr1OcHO23HsptPJ5Ms
+         7YxdgoPScJvi4EV6RYfnU6PxMMlifnGr6pihU0fU=
+Date:   Thu, 13 Dec 2018 08:41:15 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Richard Zhu <hongxing.zhu@nxp.com>
+Cc:     "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
+        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
+        "andrew.smirnov@gmail.com" <andrew.smirnov@gmail.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [v2] PCI: imx: make msi work without pcieportbus
+Message-ID: <20181213144115.GA4701@google.com>
+References: <1544687042-16595-1-git-send-email-hongxing.zhu@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CADvbK_ccPYY5jGRV+cLNc5Nzcfv0mq0eNMeU-ALvepax0ZSizQ@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <1544687042-16595-1-git-send-email-hongxing.zhu@nxp.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 13, 2018 at 09:30:47PM +0900, Xin Long wrote:
-> On Sat, Sep 8, 2018 at 1:57 AM Kent Overstreet
-> <kent.overstreet@gmail.com> wrote:
-> >
-> > All existing users have been converted to generic radix trees
-> NAK, SCTP is still using flex_arrays,
-> # grep flex_array net/sctp/*
+On Thu, Dec 13, 2018 at 08:02:11AM +0000, Richard Zhu wrote:
+> MSI_EN of iMX PCIe RC would be asserted when
+> PCIEPORTBUS driver is selected.
+> Thus, the MSI works fine on iMX PCIe before.
+> Assert it unconditionally when MSI is supported.
+> Otherwise, the MSI wouldn't be triggered although
+> the EP is present and the MSIs are assigned.
+
+This subject line and changelog need some rework.  I can't understand
+what's going on at all.  Lorenzo or I can help craft something, but I
+don't understand enough to propose anything yet.
+
+"MSI_EN" doesn't appear in the driver; I assume it's some
+device-specific signal.
+
+"iMX" does not look like the typical spelling.  You could use "imx6"
+to refer to the driver, but in this case you're talking about the
+hardware itself, not the driver.  So you should use "i.MX6" or
+whatever the appropriate brand is.
+
+If "PCIEPORTBUS driver is selected" means "CONFIG_PCIEPORTBUS=y", say
+that.  The connection of portdrv (which is generic PCIe support) to
+MSI_EN (which is apparently device-specific) is unclear.  It would be
+helpful if you could connect those dots a little more.
+
+"MSI works fine on iMX PCIe before."  Before what?  Is this a
+regression, where MSI worked before some commit and this patch fixes
+it?
+
+Please rewrap the changelog so it uses the entire 80-column width.
+Wrap to 75 so it still fits when "git log" adds the 4 char indent.
+
+> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
+> ---
+>  drivers/pci/controller/dwc/pci-imx6.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
 > 
-> This patch will break the build.
+> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
+> index 26087b3..d3e4296 100644
+> --- a/drivers/pci/controller/dwc/pci-imx6.c
+> +++ b/drivers/pci/controller/dwc/pci-imx6.c
+> @@ -74,6 +74,7 @@ struct imx6_pcie {
+>  #define PHY_PLL_LOCK_WAIT_USLEEP_MAX	200
+>  
+>  /* PCIe Root Complex registers (memory-mapped) */
+> +#define PCI_MSI_CAP				0x50
 
-sctp added that user after this patch was sent.  Please stop adding
-flexarray users!
+I wish this didn't look quite so much like a PCI core name, because
+this is really an i.MX-specific offset.  It looks like the PCIE_RC_*
+names are all similar i.MX-specific things.  Shouldn't this match
+those?
 
-This particular user should probably have just used kvmalloc.
+>  #define PCIE_RC_LCR				0x7c
+>  #define PCIE_RC_LCR_MAX_LINK_SPEEDS_GEN1	0x1
+>  #define PCIE_RC_LCR_MAX_LINK_SPEEDS_GEN2	0x2
+> @@ -926,6 +927,7 @@ static int imx6_pcie_probe(struct platform_device *pdev)
+>  	struct resource *dbi_base;
+>  	struct device_node *node = dev->of_node;
+>  	int ret;
+> +	u16 val;
+>  
+>  	imx6_pcie = devm_kzalloc(dev, sizeof(*imx6_pcie), GFP_KERNEL);
+>  	if (!imx6_pcie)
+> @@ -1070,6 +1072,11 @@ static int imx6_pcie_probe(struct platform_device *pdev)
+>  	ret = imx6_add_pcie_port(imx6_pcie, pdev);
+>  	if (ret < 0)
+>  		return ret;
+> +	if (IS_ENABLED(CONFIG_PCI_MSI)) {
+> +		val = dw_pcie_readw_dbi(pci, PCI_MSI_CAP + PCI_MSI_FLAGS);
+> +		val |= PCI_MSI_FLAGS_ENABLE;
+> +		dw_pcie_writew_dbi(pci, PCI_MSI_CAP + PCI_MSI_FLAGS, val);
+> +	}
+>  
+>  	return 0;
+>  }
+> -- 
+> 2.7.4
+> 
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
