@@ -2,93 +2,137 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-12.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1F10C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:07:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6725C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:09:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F1FA20851
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:07:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F1FA20851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 83E9120880
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:09:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544702940;
+	bh=SRvq9miauBiEPnST8mewDs/Orb8bXcgeL1OX9l8XMbA=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
+	b=K1+DoMYrOxwRg+IB5WPjcri8BzWazfXfEiJme5V7yoU3DIcwKrO5nRZOrM0ntCYgO
+	 A6zqOntQO6QtK9TTX+FRiDU56XYwAYd7Lnfy0drMfJc0mXlCGdsIU4lAG/sfwF7eye
+	 AEugnrRTUVLtGt3FVwrPGH+WMJ1ehOEJeP8CRGhA=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83E9120880
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728878AbeLMMHd (ORCPT
+        id S1728896AbeLMMI7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 07:07:33 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:60452 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728733AbeLMMHd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 07:07:33 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AED25A78;
-        Thu, 13 Dec 2018 04:07:32 -0800 (PST)
-Received: from e103592.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E06FA3F575;
-        Thu, 13 Dec 2018 04:07:30 -0800 (PST)
-Date:   Thu, 13 Dec 2018 12:07:28 +0000
-From:   Dave Martin <Dave.Martin@arm.com>
-To:     Jeremy Linton <jeremy.linton@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, mark.rutland@arm.com,
-        suzuki.poulose@arm.com, marc.zyngier@arm.com,
-        catalin.marinas@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, ykaukab@suse.de,
-        shankerd@codeaurora.org
-Subject: Re: [PATCH 0/6] add system vulnerability sysfs entries
-Message-ID: <20181213120726.GB3505@e103592.cambridge.arm.com>
-References: <20181206234408.1287689-1-jeremy.linton@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181206234408.1287689-1-jeremy.linton@arm.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Thu, 13 Dec 2018 07:08:59 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49844 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728733AbeLMMI6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 07:08:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=IxTRNukDKABFeyuNYETUnkxqv/pjSeC320eG86XAj/Q=; b=Txbvjk5Ibt2Y
+        hFuKRJ0PbHnBK40iZa5MAefH+8knM2nVzpvX37ZsixHBjEYROlyRtkHkNiIKc1O0P2sgtWANn6ilD
+        Ti9JdMxQxmcyQmuYZLsQMy7ORXsxqHcS7pm7A2i6KYaXFm8qDFvE82hkKCTj10RUSTbKnZe+hy7Sg
+        F0tQ4=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gXPnH-0000y0-RN; Thu, 13 Dec 2018 12:08:43 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 876CB11254D1; Thu, 13 Dec 2018 12:08:43 +0000 (GMT)
+From:   Mark Brown <broonie@kernel.org>
+To:     Jerome Brunet <jbrunet@baylibre.com>
+Cc:     Mark Brown <broonie@kernel.org>, Mark Brown <broonie@kernel.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>, devicetree@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-amlogic@lists.infradead.org,
+        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: meson: add axg spdif input DT binding documentation" to the asoc tree
+In-Reply-To:  <20181211134713.4908-3-jbrunet@baylibre.com>
+X-Patchwork-Hint: ignore
+Message-Id: <20181213120843.876CB11254D1@debutante.sirena.org.uk>
+Date:   Thu, 13 Dec 2018 12:08:43 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 06, 2018 at 05:44:02PM -0600, Jeremy Linton wrote:
-> Part of this series was originally by Mian Yousaf Kaukab.
-> 
-> Arm64 machines should be displaying a human readable
-> vulnerability status to speculative execution attacks in
-> /sys/devices/system/cpu/vulnerabilities 
+The patch
 
-Is there any agreement on the strings that will be returned in there?
+   ASoC: meson: add axg spdif input DT binding documentation
 
-A quick search didn't find anything obvious upstream.  There is
-documentation proposed in [1], but I don't know what happened to it and
-it doesn't define the mitigation strings at all.  (I didn't follow the
-discussion, so there is likely background here I'm not aware of.)
+has been applied to the asoc tree at
 
-If the mitigation strings are meaningful at all, they really ought to be
-documented somewhere since this is ABI.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-> This series enables that behavior by providing the expected
-> functions. Those functions expose the cpu errata and feature
-> states, as well as whether firmware is responding appropriately
-> to display the overall machine status. This means that in a
-> heterogeneous machine we will only claim the machine is mitigated
-> or safe if we are confident all booted cores are safe or
-> mitigated. Otherwise, we will display unknown or unsafe
-> depending on how much of the machine configuration can
-> be assured.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-Can the vulnerability status change once we enter userspace?
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-I see no locking or other concurrency protections, and various global
-variables that could be __ro_after_init if nothing will change them
-after boot.
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-If they can change after boot, userspace has no way to be notified,
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-(I haven't grokked the patches fully, so the answer to this question may
-be reasonably straightforward...)
+Thanks,
+Mark
 
+From 18dc4665fb6f3bb617c2e6d7da3f19586d06ab17 Mon Sep 17 00:00:00 2001
+From: Jerome Brunet <jbrunet@baylibre.com>
+Date: Tue, 11 Dec 2018 14:47:11 +0100
+Subject: [PATCH] ASoC: meson: add axg spdif input DT binding documentation
 
-Cheers
----Dave
+Add the DT binding documentation for axg's SPDIF input.
 
-[1] https://lkml.org/lkml/2018/1/8/145
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ .../bindings/sound/amlogic,axg-spdifin.txt    | 22 +++++++++++++++++++
+ 1 file changed, 22 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sound/amlogic,axg-spdifin.txt
+
+diff --git a/Documentation/devicetree/bindings/sound/amlogic,axg-spdifin.txt b/Documentation/devicetree/bindings/sound/amlogic,axg-spdifin.txt
+new file mode 100644
+index 000000000000..2e6cb7d9b202
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sound/amlogic,axg-spdifin.txt
+@@ -0,0 +1,22 @@
++* Amlogic Audio SPDIF Input
++
++Required properties:
++- compatible: 'amlogic,axg-spdifin'
++- interrupts: interrupt specifier for the spdif input.
++- clocks: list of clock phandle, one for each entry clock-names.
++- clock-names: should contain the following:
++  * "pclk" : peripheral clock.
++  * "refclk" : spdif input reference clock
++- #sound-dai-cells: must be 0.
++
++Example on the A113 SoC:
++
++spdifin: audio-controller@400 {
++	compatible = "amlogic,axg-spdifin";
++	reg = <0x0 0x400 0x0 0x30>;
++	#sound-dai-cells = <0>;
++	interrupts = <GIC_SPI 87 IRQ_TYPE_EDGE_RISING>;
++	clocks = <&clkc_audio AUD_CLKID_SPDIFIN>,
++		 <&clkc_audio AUD_CLKID_SPDIFIN_CLK>;
++	clock-names = "pclk", "refclk";
++};
+-- 
+2.19.0.rc2
+
