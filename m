@@ -4,71 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17E52C67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:41:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC68AC65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:41:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2E1820849
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:41:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B34D720870
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:41:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544676077;
-	bh=zkAUfal45l9g3LqBJLr0ZfwiMqnzAmugf+weQIly7OE=;
+	s=default; t=1544676088;
+	bh=HZl83tmxNxlg/Mzwg3FeqQD3CaICDb7II0A65fXiZ88=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=o6w36Sec+53038oV4J8XkhI90t50eTaLCopeyw0wTUtMsuz+F7H8BFZNQMAx7PVY5
-	 WNUOsjYdOCHbXvyGKoNy14mFjCM1CdcwQ99s/jeruZcfpQiAQdHUKSKRSyYufE8FZF
-	 UDAV33bONTKlhhIu7GPCvRLv4N4q2Ors1RifOuZY=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2E1820849
+	b=jh9Q+msm+XyD+rxsRl1rUONGmBOFhTVCmTrKtB1FROwgjMRYgc+1LwTIQPsf2L3pM
+	 Sajntin9ZIHM69qzSLWE6JJ9OcohcywSXQZf8F6olCwursATMBKkwjMdauRYmYBcWX
+	 lp3G6elsP7McyVvhF75At0XVpta+XLu3qIhOR6hg=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B34D720870
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728969AbeLMElQ (ORCPT
+        id S1729085AbeLMEl1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 23:41:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45030 "EHLO mail.kernel.org"
+        Wed, 12 Dec 2018 23:41:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44992 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728983AbeLMEcI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 23:32:08 -0500
+        id S1728973AbeLMEcF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 23:32:05 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C2FD720882;
-        Thu, 13 Dec 2018 04:32:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BA36920880;
+        Thu, 13 Dec 2018 04:32:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544675527;
-        bh=zkAUfal45l9g3LqBJLr0ZfwiMqnzAmugf+weQIly7OE=;
+        s=default; t=1544675524;
+        bh=HZl83tmxNxlg/Mzwg3FeqQD3CaICDb7II0A65fXiZ88=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=klPzG+mUHpwSkmHjf5Ampgv2McdJAEYRAeC4hjNq3oL/ek6SqgDWiNyhXQjnVHYG3
-         Ws1726x1pMhnc4mPNYkfnuyZNHMx4OuWNJKBksUGwBzbuKdE2P4i0Ewy9A/IRtmQ+U
-         TkHPXHSG3cenn8WM5gRpdrBietS4X0CurG/urUc0=
+        b=MIy1sthManzc/yoLYzzfQGeoOOZtKNZl8+UItVXk7PnSfhRfcAu2/edYUE0euX8qj
+         EDJkRp5v1Sb3VpjWyvyHUEIZp6vHYST70vUG64XgqKtnD3lSPwKW9Zv7NzpNVuCce8
+         GxOK7b+vrPN0cqxTqqM4dU0d6JfWxFnm2mQ+Wzo8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     YiFei Zhu <zhuyifei1999@gmail.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arend van Spriel <arend.vanspriel@broadcom.com>,
-        Bhupesh Sharma <bhsharma@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Eric Snowberg <eric.snowberg@oracle.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Joe Perches <joe@perches.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Julien Thierry <julien.thierry@arm.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
-        Sedat Dilek <sedat.dilek@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 04/34] x86/earlyprintk/efi: Fix infinite loop on some screen widths
-Date:   Wed, 12 Dec 2018 23:31:30 -0500
-Message-Id: <20181213043200.76295-4-sashal@kernel.org>
+Cc:     Cathy Avery <cavery@redhat.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 03/34] scsi: vmw_pscsi: Rearrange code to avoid multiple calls to free_irq during unload
+Date:   Wed, 12 Dec 2018 23:31:29 -0500
+Message-Id: <20181213043200.76295-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181213043200.76295-1-sashal@kernel.org>
 References: <20181213043200.76295-1-sashal@kernel.org>
@@ -80,63 +60,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YiFei Zhu <zhuyifei1999@gmail.com>
+From: Cathy Avery <cavery@redhat.com>
 
-[ Upstream commit 79c2206d369b87b19ac29cb47601059b6bf5c291 ]
+[ Upstream commit 02f425f811cefcc4d325d7a72272651e622dc97e ]
 
-An affected screen resolution is 1366 x 768, which width is not
-divisible by 8, the default font width. On such screens, when longer
-lines are earlyprintk'ed, overflow-to-next-line can never trigger,
-due to the left-most x-coordinate of the next character always less
-than the screen width. Earlyprintk will infinite loop in trying to
-print the rest of the string but unable to, due to the line being
-full.
+Currently pvscsi_remove calls free_irq more than once as
+pvscsi_release_resources and __pvscsi_shutdown both call
+pvscsi_shutdown_intr. This results in a 'Trying to free already-free IRQ'
+warning and stack trace. To solve the problem pvscsi_shutdown_intr has been
+moved out of pvscsi_release_resources.
 
-This patch makes the trigger consider the right-most x-coordinate,
-instead of left-most, as the value to compare against the screen
-width threshold.
-
-Signed-off-by: YiFei Zhu <zhuyifei1999@gmail.com>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Arend van Spriel <arend.vanspriel@broadcom.com>
-Cc: Bhupesh Sharma <bhsharma@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Eric Snowberg <eric.snowberg@oracle.com>
-Cc: Hans de Goede <hdegoede@redhat.com>
-Cc: Joe Perches <joe@perches.com>
-Cc: Jon Hunter <jonathanh@nvidia.com>
-Cc: Julien Thierry <julien.thierry@arm.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Matt Fleming <matt@codeblueprint.co.uk>
-Cc: Nathan Chancellor <natechancellor@gmail.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-Cc: Sedat Dilek <sedat.dilek@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-efi@vger.kernel.org
-Link: http://lkml.kernel.org/r/20181129171230.18699-12-ard.biesheuvel@linaro.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Cathy Avery <cavery@redhat.com>
+Reviewed-by: Ewan D. Milne <emilne@redhat.com>
+Reviewed-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/platform/efi/early_printk.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/scsi/vmw_pvscsi.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/platform/efi/early_printk.c b/arch/x86/platform/efi/early_printk.c
-index 5fdacb322ceb..c3e6be110b7d 100644
---- a/arch/x86/platform/efi/early_printk.c
-+++ b/arch/x86/platform/efi/early_printk.c
-@@ -179,7 +179,7 @@ early_efi_write(struct console *con, const char *str, unsigned int num)
- 			num--;
- 		}
+diff --git a/drivers/scsi/vmw_pvscsi.c b/drivers/scsi/vmw_pvscsi.c
+index 874e9f085326..fcfbe2dcd025 100644
+--- a/drivers/scsi/vmw_pvscsi.c
++++ b/drivers/scsi/vmw_pvscsi.c
+@@ -1233,8 +1233,6 @@ static void pvscsi_shutdown_intr(struct pvscsi_adapter *adapter)
  
--		if (efi_x >= si->lfb_width) {
-+		if (efi_x + font->width > si->lfb_width) {
- 			efi_x = 0;
- 			efi_y += font->height;
- 		}
+ static void pvscsi_release_resources(struct pvscsi_adapter *adapter)
+ {
+-	pvscsi_shutdown_intr(adapter);
+-
+ 	if (adapter->workqueue)
+ 		destroy_workqueue(adapter->workqueue);
+ 
+@@ -1563,6 +1561,7 @@ static int pvscsi_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ out_reset_adapter:
+ 	ll_adapter_reset(adapter);
+ out_release_resources:
++	pvscsi_shutdown_intr(adapter);
+ 	pvscsi_release_resources(adapter);
+ 	scsi_host_put(host);
+ out_disable_device:
+@@ -1571,6 +1570,7 @@ static int pvscsi_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 	return error;
+ 
+ out_release_resources_and_disable:
++	pvscsi_shutdown_intr(adapter);
+ 	pvscsi_release_resources(adapter);
+ 	goto out_disable_device;
+ }
 -- 
 2.19.1
 
