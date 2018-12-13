@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4172AC65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 20:25:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94242C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 20:25:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 121E22087F
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 20:25:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 121E22087F
+	by mail.kernel.org (Postfix) with ESMTP id 642DB2086D
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 20:25:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 642DB2086D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728231AbeLMUZQ (ORCPT
+        id S1728591AbeLMUZ0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 15:25:16 -0500
-Received: from relmlor2.renesas.com ([210.160.252.172]:62340 "EHLO
+        Thu, 13 Dec 2018 15:25:26 -0500
+Received: from relmlor2.renesas.com ([210.160.252.172]:56712 "EHLO
         relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726435AbeLMUZP (ORCPT
+        by vger.kernel.org with ESMTP id S1726435AbeLMUZZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 15:25:15 -0500
+        Thu, 13 Dec 2018 15:25:25 -0500
+X-Greylist: delayed 303 seconds by postgrey-1.27 at vger.kernel.org; Thu, 13 Dec 2018 15:25:25 EST
 X-IronPort-AV: E=Sophos;i="5.56,349,1539615600"; 
-   d="scan'208";a="2555628"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 14 Dec 2018 05:20:12 +0900
+   d="scan'208";a="2555639"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 14 Dec 2018 05:20:21 +0900
 Received: from fabrizio-dev.ree.adwin.renesas.com (unknown [10.226.37.69])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 643174072C4F;
-        Fri, 14 Dec 2018 05:20:09 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 0903B40F76BF;
+        Fri, 14 Dec 2018 05:20:18 +0900 (JST)
 From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To:     Rob Herring <robh+dt@kernel.org>,
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
 Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
+        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Simon Horman <horms@verge.net.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] ASoC: rsnd: Add r8a774c0 support
-Date:   Thu, 13 Dec 2018 20:20:06 +0000
-Message-Id: <1544732406-6408-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Subject: [PATCH] dt-bindings: pwm: rcar: Add r8a774c0 support
+Date:   Thu, 13 Dec 2018 20:20:15 +0000
+Message-Id: <1544732415-6453-1-git-send-email-fabrizio.castro@bp.renesas.com>
 X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -55,21 +55,21 @@ Document RZ/G2E (R8A774C0) SoC bindings.
 
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- Documentation/devicetree/bindings/sound/renesas,rsnd.txt | 1 +
+ Documentation/devicetree/bindings/pwm/renesas,pwm-rcar.txt | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/sound/renesas,rsnd.txt b/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
-index d92b705..f93f56a 100644
---- a/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
-+++ b/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
-@@ -346,6 +346,7 @@ Required properties:
- 				    - "renesas,rcar_sound-r8a7744" (RZ/G1N)
- 				    - "renesas,rcar_sound-r8a7745" (RZ/G1E)
- 				    - "renesas,rcar_sound-r8a774a1" (RZ/G2M)
-+				    - "renesas,rcar_sound-r8a774c0" (RZ/G2E)
- 				    - "renesas,rcar_sound-r8a7778" (R-Car M1A)
- 				    - "renesas,rcar_sound-r8a7779" (R-Car H1)
- 				    - "renesas,rcar_sound-r8a7790" (R-Car H2)
+diff --git a/Documentation/devicetree/bindings/pwm/renesas,pwm-rcar.txt b/Documentation/devicetree/bindings/pwm/renesas,pwm-rcar.txt
+index 7f31fe7..fbd6a4f 100644
+--- a/Documentation/devicetree/bindings/pwm/renesas,pwm-rcar.txt
++++ b/Documentation/devicetree/bindings/pwm/renesas,pwm-rcar.txt
+@@ -6,6 +6,7 @@ Required Properties:
+  - "renesas,pwm-r8a7744": for RZ/G1N
+  - "renesas,pwm-r8a7745": for RZ/G1E
+  - "renesas,pwm-r8a774a1": for RZ/G2M
++ - "renesas,pwm-r8a774c0": for RZ/G2E
+  - "renesas,pwm-r8a7778": for R-Car M1A
+  - "renesas,pwm-r8a7779": for R-Car H1
+  - "renesas,pwm-r8a7790": for R-Car H2
 -- 
 2.7.4
 
