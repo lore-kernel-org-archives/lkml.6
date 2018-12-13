@@ -2,81 +2,107 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5AD4C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:33:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95A4FC67872
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:33:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8441320645
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:33:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8441320645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 642E920645
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:33:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 642E920645
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729133AbeLMMdK (ORCPT
+        id S1729158AbeLMMdW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 07:33:10 -0500
-Received: from mx2.suse.de ([195.135.220.15]:56942 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728517AbeLMMdJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 07:33:09 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 1D6BBACBA;
-        Thu, 13 Dec 2018 12:33:08 +0000 (UTC)
-Date:   Thu, 13 Dec 2018 13:33:06 +0100
-From:   Petr Mladek <pmladek@suse.com>
-To:     Nicholas Mc Guire <hofrat@osadl.org>
-Cc:     Josh Poimboeuf <jpoimboe@redhat.com>, Jessica Yu <jeyu@kernel.org>,
-        Jiri Kosina <jikos@kernel.org>,
-        Miroslav Benes <mbenes@suse.cz>, live-patching@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] livepatch: handle kzalloc failure
-Message-ID: <20181213123306.g7ond2gy6vqq7sge@pathway.suse.cz>
-References: <1544699390-15673-1-git-send-email-hofrat@osadl.org>
- <1544699390-15673-2-git-send-email-hofrat@osadl.org>
+        Thu, 13 Dec 2018 07:33:22 -0500
+Received: from foss.arm.com ([217.140.101.70]:60858 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728517AbeLMMdW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 07:33:22 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 81326A78;
+        Thu, 13 Dec 2018 04:33:21 -0800 (PST)
+Received: from red-moon (red-moon.cambridge.arm.com [10.1.197.39])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 298E23F575;
+        Thu, 13 Dec 2018 04:33:20 -0800 (PST)
+Date:   Thu, 13 Dec 2018 12:34:01 +0000
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Lucas Stach <l.stach@pengutronix.de>
+Cc:     Richard Zhu <hongxing.zhu@nxp.com>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "andrew.smirnov@gmail.com" <andrew.smirnov@gmail.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [v2] PCI: imx: make msi work without pcieportbus
+Message-ID: <20181213123401.GA26763@red-moon>
+References: <1544687042-16595-1-git-send-email-hongxing.zhu@nxp.com>
+ <1544692768.3137.25.camel@pengutronix.de>
+ <AM0PR0402MB35705EF0F4A77BD7B0AAFDDD8CA00@AM0PR0402MB3570.eurprd04.prod.outlook.com>
+ <1544695636.3137.27.camel@pengutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1544699390-15673-2-git-send-email-hofrat@osadl.org>
-User-Agent: NeoMutt/20170421 (1.8.2)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1544695636.3137.27.camel@pengutronix.de>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 2018-12-13 12:09:50, Nicholas Mc Guire wrote:
-> kzalloc() return should be checked. On dummy_alloc() failing
-> in kzalloc() NULL should be returned.
+On Thu, Dec 13, 2018 at 11:07:16AM +0100, Lucas Stach wrote:
+> Am Donnerstag, den 13.12.2018, 09:57 +0000 schrieb Richard Zhu:
+> > Hi Lucas:
+> > 
+> > > -----Original Message-----
+> > > > > From: Lucas Stach [mailto:l.stach@pengutronix.de]
+> > > Sent: 2018年12月13日 17:19
+> > > > > > > To: Richard Zhu <hongxing.zhu@nxp.com>; bhelgaas@google.com;
+> > > lorenzo.pieralisi@arm.com; andrew.smirnov@gmail.com
+> > > > > > > Cc: linux-pci@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
+> > > linux-kernel@vger.kernel.org
+> > > Subject: Re: [v2] PCI: imx: make msi work without pcieportbus
+> > > 
+> > > Hi Richard,
+> > > 
+> > > Am Donnerstag, den 13.12.2018, 08:02 +0000 schrieb Richard Zhu:
+> > > > MSI_EN of iMX PCIe RC would be asserted when PCIEPORTBUS driver is
+> > > > selected.
+> > > > Thus, the MSI works fine on iMX PCIe before.
+> > > > Assert it unconditionally when MSI is supported.
+> > > > Otherwise, the MSI wouldn't be triggered although the EP is present
+> > > > and the MSIs are assigned.
+> > > 
+> > > Thanks for digging into this issue. This seems like the right way forward.
+> > > However, did you test this with devices using legacy IRQs?
+> > > I.e. booting with "nomsi" on the kernel command line to see if legacy IRQs still
+> > > work if this bit is set, or if we need to avoid setting this when the user
+> > > explicitly requests to disable MSIs?
+> > > 
+> > > Regards,
+> > > Lucas
+> > > 
+> > 
+> > [Richard Zhu] Thanks for your review.
+> > The Legacy INTx is broken.
+> > The MSI_EN bit shouldn't be asserted when the user explicitly requests to disable MSIs.
 > 
-> Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-> ---
+> Okay, so this patch should be extended with a check for
+> pci_msi_enabled() to see if the user explicitly want legacy IRQs.
 > 
-> Problem was located with an experimental coccinelle script
+> > BTW, regarding to Baruch's comments, it seems that all the (IS_ENABLED(CONFIG_PCI_MSI) check in
+> >  the dwc host drivers are not required anymore, since the depends on PCI_MSI_IRQ_DOMAIN, right?
 > 
-> Patch was compile tested with: x86_64_defconfig + FTRACE=y
-> FUNCTION_TRACER=y, EXPERT=y, LATENCYTOP=y, SAMPLES=y, SAMPLE_LIVEPATCH=y
-> (with a number of unrelated sparse warnings on symbols not being static)
-> 
-> Patch is against 4.20-rc6 (localversion-next is next-20181213)
-> 
->  samples/livepatch/livepatch-shadow-mod.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/samples/livepatch/livepatch-shadow-mod.c b/samples/livepatch/livepatch-shadow-mod.c
-> index 4c54b25..57d5cde 100644
-> --- a/samples/livepatch/livepatch-shadow-mod.c
-> +++ b/samples/livepatch/livepatch-shadow-mod.c
-> @@ -118,6 +118,8 @@ noinline struct dummy *dummy_alloc(void)
->  
->  	/* Oops, forgot to save leak! */
->  	leak = kzalloc(sizeof(int), GFP_KERNEL);
-> +	if (!leak)
-> +		return NULL;
+> That's correct. This is mostly a historical artifact from the time when
+>  we were able to build without MSI support. Those checks could be
+> cleaned up now that we depend on the MSI options.
 
-The same comments apply here as for PATCH 1/2.
+The question is whether we should really depend on PCI_MSI_IRQ_DOMAIN
+option, should we ?
 
-Best Regards,
-Petr
+Lorenzo
