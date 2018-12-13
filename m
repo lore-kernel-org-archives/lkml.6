@@ -2,100 +2,188 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.9 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47084C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 07:39:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C71B4C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 07:44:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F045620873
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 07:39:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F045620873
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com
+	by mail.kernel.org (Postfix) with ESMTP id 75CAA20873
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 07:44:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YMXNNONm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75CAA20873
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727088AbeLMHjo (ORCPT
+        id S1727024AbeLMHoM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 02:39:44 -0500
-Received: from rtits2.realtek.com ([211.75.126.72]:56372 "EHLO
-        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726564AbeLMHjo (ORCPT
+        Thu, 13 Dec 2018 02:44:12 -0500
+Received: from mail-yb1-f195.google.com ([209.85.219.195]:32992 "EHLO
+        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726782AbeLMHoL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 02:39:44 -0500
-Authenticated-By: 
-X-SpamFilter-By: BOX Solutions SpamTrap 5.62 with qID wBD7dUAX002667, This message is accepted by code: ctloc85258
-Received: from mail.realtek.com (rtitcas12.realtek.com.tw[172.21.6.16])
-        by rtits2.realtek.com.tw (8.15.2/2.57/5.78) with ESMTPS id wBD7dUAX002667
-        (version=TLSv1 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Thu, 13 Dec 2018 15:39:30 +0800
-Received: from RTITMBSVM02.realtek.com.tw ([fe80::9150:f9a6:a910:df93]) by
- RTITCAS12.realtek.com.tw ([::1]) with mapi id 14.03.0415.000; Thu, 13 Dec
- 2018 15:39:29 +0800
-From:   Pkshih <pkshih@realtek.com>
-To:     "kai.heng.feng@canonical.com" <kai.heng.feng@canonical.com>
-CC:     "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "kvalo@codeaurora.org" <kvalo@codeaurora.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] rtlwifi: Fix non-working BSS STA mode
-Thread-Topic: [PATCH] rtlwifi: Fix non-working BSS STA mode
-Thread-Index: AQHUkdl2d+IRD9YiqUGI3cgkd+Pb7aV7TcMAgABT8QCAACJwgA==
-Date:   Thu, 13 Dec 2018 07:39:29 +0000
-Message-ID: <1544686767.21783.3.camel@realtek.com>
-References: <20181212051335.22580-1-kai.heng.feng@canonical.com>
-         <1544661346.2548.2.camel@realtek.com>
-         <A95FEB12-29C5-404D-9C4E-04D1900C4E88@canonical.com>
-In-Reply-To: <A95FEB12-29C5-404D-9C4E-04D1900C4E88@canonical.com>
-Accept-Language: en-US, zh-TW
-Content-Language: zh-TW
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.21.69.146]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <A8C07F1567786B4298DCFCECEE071F09@realtek.com>
-Content-Transfer-Encoding: base64
+        Thu, 13 Dec 2018 02:44:11 -0500
+Received: by mail-yb1-f195.google.com with SMTP id c67so448061ybf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 23:44:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=N2z45zySSpBNWTDX9P/10CqNrMQHhWpVlI8K95yLzwY=;
+        b=YMXNNONmk4JrLlqqm/kJiz5LH4lAQDf+71RPNtfeozTLyXzPocx+QWhmlQ6XkolQCs
+         YwngJhk/AaE83nP5E0DwOInhjWg4jtRg8ROPnUhshtQUb1uX6gq0huj4liydOXEjegX1
+         eSuvF8nVibxQklx54q0GZNHHklQLq6DGK/3vA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=N2z45zySSpBNWTDX9P/10CqNrMQHhWpVlI8K95yLzwY=;
+        b=oLtuKB3FPhOuvNx1hV5n4IPRIw6BEiD7GpdpdebY9DvdmUuzm0euZBoxMGQ+H5jeED
+         3kTNvcPl8kuCQmw93cu4J7oK0b5XfdT2Kdsbf1ogYRV9v1plHPVboWHWqCtt/5mtF7kw
+         9G/vVdJIvQ5M04eYWNraytBjJu+uOxirJE7a+FquHvmcFMMe/oBOIcRiyxx4N9ngeiIN
+         ZKoslGD1P/q7X3bF818k/Kcwtl633xvF6HhRNnfXuqHbjRk4WaXEc/KdqEmTjAPyXume
+         Ho+JvmqlDOzUcXyIzubecjV/phhkN2uSn+bTlT+UbL33qz1Cy7YqvqScSnr9ngL6mWnR
+         ybTQ==
+X-Gm-Message-State: AA+aEWauK84pyyT6aQt0CdsFylijBiVzj3lDNDPsuP2pD76rPp2zTXLf
+        jCm/5YZPi0a4O7tmI6CM0O0/8Y2hDvY=
+X-Google-Smtp-Source: AFSGD/WqpIoCw94WMtJsJAQZHAyBIm7/HgzVYI4Hl26bWd8htNzaa+o4hEf74OAYyhar8Xhi70dGuA==
+X-Received: by 2002:a25:a1aa:: with SMTP id a39-v6mr22907811ybi.381.1544687050380;
+        Wed, 12 Dec 2018 23:44:10 -0800 (PST)
+Received: from mail-yw1-f54.google.com (mail-yw1-f54.google.com. [209.85.161.54])
+        by smtp.gmail.com with ESMTPSA id v78sm414051ywa.103.2018.12.12.23.44.08
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 12 Dec 2018 23:44:09 -0800 (PST)
+Received: by mail-yw1-f54.google.com with SMTP id y194so451594ywg.3
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 23:44:08 -0800 (PST)
+X-Received: by 2002:a0d:eb06:: with SMTP id u6mr23356312ywe.443.1544687048496;
+ Wed, 12 Dec 2018 23:44:08 -0800 (PST)
 MIME-Version: 1.0
+References: <20181123215354.14540-1-helen.koike@collabora.com>
+In-Reply-To: <20181123215354.14540-1-helen.koike@collabora.com>
+From:   Tomasz Figa <tfiga@chromium.org>
+Date:   Thu, 13 Dec 2018 16:43:57 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5BHPjode=KqEHs=eNqqCe-xvsqx1ko9hQn29djFxuSWUA@mail.gmail.com>
+Message-ID: <CAAFQd5BHPjode=KqEHs=eNqqCe-xvsqx1ko9hQn29djFxuSWUA@mail.gmail.com>
+Subject: Re: [PATCH v2] drm/atomic: add ATOMIC_AMEND flag to the Atomic IOCTL.
+To:     helen.koike@collabora.com
+Cc:     David Airlie <airlied@linux.ie>, dnicoara@chromium.org,
+        Alexandros Frantzis <alexandros.frantzis@collabora.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Gustavo Padovan <gustavo.padovan@collabora.com>,
+        Sean Paul <seanpaul@google.com>, kernel@collabora.com,
+        =?UTF-8?Q?St=C3=A9phane_Marchesin?= <marcheu@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gVGh1LCAyMDE4LTEyLTEzIGF0IDEzOjM2ICswODAwLCBLYWkgSGVuZyBGZW5nIHdyb3RlOg0K
-PiA+IE9uIERlYyAxMywgMjAxOCwgYXQgMDg6MzUsIFBrc2hpaCA8cGtzaGloQHJlYWx0ZWsuY29t
-PiB3cm90ZToNCj4gPsKgDQo+ID4gT24gV2VkLCAyMDE4LTEyLTEyIGF0IDEzOjEzICswODAwLCBL
-YWktSGVuZyBGZW5nIHdyb3RlOg0KPiA+PiBPbmNlIEJTUyBTVEEgbW9kZSBnZXRzIHN0YXJ0ZWQs
-IGl0IGNhbiBiZSBzY2FubmVkIGJ5IG90aGVyIGNsaWVudHMgYnV0DQo+ID4+IGNhbm5vdCBlbnRh
-Ymxpc2ggYSBjb25uZWN0aW9uLg0KPiA+wqDCoMKgwqDCoMKgwqDCoMKgwqBeXl4gdHlwbzogZXN0
-YWJsaXNoDQo+ID4+wqANCj4gPj4gVHVybnMgb3V0IHRoZSBzZXRfYmNuX3JlZygpIGFuZCBpdHMg
-Kl9zZXRfYmVhY29uX3JlbGF0ZWRfcmVnaXN0ZXJzKCkNCj4gPj4gY2FsbGJhY2tzIG5ldmVyIGdl
-dCBjYWxsZWQgc28gaXQgaGFzIHByb2JsZW0gYmVhY29uaW5nLg0KPiA+PsKgDQo+ID4+IEVuYWJs
-ZSB0aGUgZnVuY3Rpb24gaW4gcnRsX29wX2Jzc19pbmZvX2NoYW5nZWQoKSBjYW4gbWFrZSBCU1Mg
-U1RBIG1vZGUNCj4gPj4gc3RhcnQgdG8gd29yay4NCj4gPj7CoA0KPiA+PiBTaWduZWQtb2ZmLWJ5
-OiBLYWktSGVuZyBGZW5nIDxrYWkuaGVuZy5mZW5nQGNhbm9uaWNhbC5jb20+DQo+ID4+IC0tLQ0K
-PiA+PsKgwqBkcml2ZXJzL25ldC93aXJlbGVzcy9yZWFsdGVrL3J0bHdpZmkvY29yZS5jIHwgMiAr
-LQ0KPiA+PsKgwqAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEgZGVsZXRpb24oLSkN
-Cj4gPj7CoA0KPiA+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9uZXQvd2lyZWxlc3MvcmVhbHRlay9y
-dGx3aWZpL2NvcmUuYw0KPiA+PiBiL2RyaXZlcnMvbmV0L3dpcmVsZXNzL3JlYWx0ZWsvcnRsd2lm
-aS9jb3JlLmMNCj4gPj4gaW5kZXggNGJmNzk2NzU5MGNhLi4xMWQyN2E1Y2M1NzYgMTAwNjQ0DQo+
-ID4+IC0tLSBhL2RyaXZlcnMvbmV0L3dpcmVsZXNzL3JlYWx0ZWsvcnRsd2lmaS9jb3JlLmMNCj4g
-Pj4gKysrIGIvZHJpdmVycy9uZXQvd2lyZWxlc3MvcmVhbHRlay9ydGx3aWZpL2NvcmUuYw0KPiA+
-PiBAQCAtMTA1NCw3ICsxMDU0LDcgQEAgc3RhdGljIHZvaWQgcnRsX29wX2Jzc19pbmZvX2NoYW5n
-ZWQoc3RydWN0DQo+IGllZWU4MDIxMV9odw0KPiA+PiAqaHcsDQo+ID4+wqDCoAkJCQkJwqAiQlNT
-X0NIQU5HRURfQkVBQ09OX0VOQUJMRURcbiIpOw0KPiA+PsKgwqANCj4gPj7CoMKgCQkJCS8qc3Rh
-cnQgaHcgYmVhY29uIGludGVycnVwdC4gKi8NCj4gPj4gLQkJCQkvKnJ0bHByaXYtPmNmZy0+b3Bz
-LT5zZXRfYmNuX3JlZyhodyk7ICovDQo+ID4+ICsJCQkJcnRscHJpdi0+Y2ZnLT5vcHMtPnNldF9i
-Y25fcmVnKGh3KTsNCj4gPj7CoMKgCQkJCW1hYy0+YmVhY29uX2VuYWJsZWQgPSAxOw0KPiA+PsKg
-wqAJCQkJcnRscHJpdi0+Y2ZnLT5vcHMtDQo+ID51cGRhdGVfaW50ZXJydXB0X21hc2soaHcsDQo+
-ID4+wqDCoAkJCQkJCXJ0bHByaXYtPmNmZy0+bWFwcw0KPiA+wqANCj4gPiBXaGljaCB3aWZpIGNo
-aXAgZG8geW91IHVzZT8gQW5kLCBwbGVhc2Ugc2hhcmUgeW91ciB0ZXN0IHNjZW5hcmlvLg0KPiAN
-Cj4gSXTigJlzIFJlYWx0ZWsgODcyM0RFLCB3aGljaCBpcyBjdXJyZW50bHkgbm90IHN1cHBvcnRl
-ZCBpbiBtYWlubGluZSBzbyBJIHVzZQ0KPiBydGw4NzIzZGUgaW4gcnRsd2lmaV9uZXcgWzFdIHRv
-IHRlc3QgaXQgb3V0Lg0KPiANCj4gVGhlIHRlc3Qgc2NlbmFyaW8gaXMgc2ltcGx5IGVuYWJsZSBo
-b3RzcG90IHRocm91Z2ggbmV0d29yayBtYW5hZ2VyLCB3aGljaCB1c2VzDQo+IHdwYV9zdXBwbGlj
-YW50IHRvIGRvIHRoZSB3b3JrLg0KPiANCj4gWzFdIGh0dHBzOi8vZ2l0aHViLmNvbS9sd2Zpbmdl
-ci9ydGx3aWZpX25ldw0KPiANCg0KU2luY2UgcnRsODcyM2RlIGlzbid0IHN1cHBvcnRlZCB5ZXQs
-IHRoaXMgcGF0Y2ggd291bGQgYmUgcGVuZGluZy4NCkknbGwgdGFrZSB0aW1lIHRvIGNoZWNrIHdo
-ZXRoZXIgaXQgd29ya3Mgb24gZXhpc3RpbmcgY2hpcHMuDQoNClRoYW5rcw0KUEsNCg==
+Hi Helen,
+
+On Sat, Nov 24, 2018 at 6:54 AM Helen Koike <helen.koike@collabora.com> wrote:
+>
+> This flag tells core to jump ahead the queued update if the conditions
+> in drm_atomic_async_check() are met. That means we are only able to do an
+> async update if no modeset is pending and update for the same plane is
+> not queued.
+
+First of all, thanks for the patch. Please see my comments below.
+
+If the description above applies (and AFAICT that's what the existing
+code does indeed), then this doesn't sound like "amend" to me. It
+sounds exactly as the kernel code calls it - "async update" or perhaps
+"instantaneous commit" could better describe it?
+
+>
+> It uses the already in place infrastructure for async updates.
+>
+> It is useful for cursor updates and async PageFlips over the atomic
+> ioctl, otherwise in some cases updates may be delayed to the point the
+> user will notice it. Note that for now it's only enabled for cursor
+> planes.
+>
+> DRM_MODE_ATOMIC_AMEND should be passed to the Atomic IOCTL to use this
+> feature.
+>
+> Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.com>
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> [updated for upstream]
+> Signed-off-by: Helen Koike <helen.koike@collabora.com>
+> ---
+> Hi,
+>
+> This is the second attempt to introduce the new ATOMIC_AMEND flag for atomic
+> operations, see the commit message for a more detailed description.
+>
+> This was tested using a small program that exercises the uAPI for easy
+> sanity testing. The program was created by Alexandros and modified by
+> Enric to test the capability flag [2].
+>
+> To test, just build the program and use the --atomic flag to use the cursor
+> plane with the ATOMIC_AMEND flag. E.g.
+>
+>   drm_cursor --atomic
+>
+> The test worked on a rockchip Ficus v1.1 board on top of mainline plus
+> the patch to update cursors asynchronously through atomic for the
+> drm/rockchip driver plus the DRM_CAP_ASYNC_UPDATE patch.
+>
+> Alexandros also did a proof-of-concept to use this flag and draw cursors
+> using atomic if possible on ozone [1].
+>
+> Thanks
+> Helen
+>
+> [1] https://chromium-review.googlesource.com/c/chromium/src/+/1092711
+> [2] https://gitlab.collabora.com/eballetbo/drm-cursor/commits/async-capability
+>
+>
+> Changes in v2:
+> - rebase tree
+> - do not fall back to a non-async update if if there isn't any
+> pending commit to amend
+>
+> Changes in v1:
+> - https://patchwork.freedesktop.org/patch/243088/
+> - Only enable it if userspace requests it.
+> - Only allow async update for cursor type planes.
+> - Rename ASYNC_UPDATE for ATOMIC_AMEND.
+>
+>  drivers/gpu/drm/drm_atomic_helper.c | 6 +++++-
+>  drivers/gpu/drm/drm_atomic_uapi.c   | 6 ++++++
+>  include/uapi/drm/drm_mode.h         | 4 +++-
+>  3 files changed, 14 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
+> index 269f1a74de38..333190c6a0a4 100644
+> --- a/drivers/gpu/drm/drm_atomic_helper.c
+> +++ b/drivers/gpu/drm/drm_atomic_helper.c
+> @@ -934,7 +934,7 @@ int drm_atomic_helper_check(struct drm_device *dev,
+>         if (ret)
+>                 return ret;
+>
+> -       if (state->legacy_cursor_update)
+> +       if (state->async_update || state->legacy_cursor_update)
+>                 state->async_update = !drm_atomic_helper_async_check(dev, state);
+>
+>         return ret;
+> @@ -1602,6 +1602,10 @@ int drm_atomic_helper_async_check(struct drm_device *dev,
+>         if (new_plane_state->fence)
+>                 return -EINVAL;
+>
+> +       /* Only allow async update for cursor type planes. */
+> +       if (plane->type != DRM_PLANE_TYPE_CURSOR)
+> +               return -EINVAL;
+> +
+
+So the existing upstream code already allowed this for any planes and
+we're restricting this to cursor planes only. Is this expected? No
+potential users that already started using this for other plane types?
+
+Best regards,
+Tomasz
