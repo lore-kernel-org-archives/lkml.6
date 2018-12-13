@@ -2,147 +2,76 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E9C3C67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 02:53:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D130BC6786C
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 02:53:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D7E420851
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 02:53:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D7E420851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 9DECC20851
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 02:53:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DECC20851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726685AbeLMCxS (ORCPT
+        id S1726784AbeLMCxq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 21:53:18 -0500
-Received: from mga14.intel.com ([192.55.52.115]:32532 "EHLO mga14.intel.com"
+        Wed, 12 Dec 2018 21:53:46 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:42330 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726344AbeLMCxR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 21:53:17 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Dec 2018 18:53:17 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,347,1539673200"; 
-   d="scan'208";a="129501976"
-Received: from shao2-debian.sh.intel.com (HELO [10.239.13.6]) ([10.239.13.6])
-  by fmsmga001.fm.intel.com with ESMTP; 12 Dec 2018 18:53:15 -0800
-Subject: Re: [kbuild-all] [PATCH v3] ARM: smp: add support for per-task stack
- canaries
-To:     Russell King - ARM Linux <linux@armlinux.org.uk>,
-        kbuild test robot <lkp@intel.com>
-Cc:     Kees Cook <keescook@chromium.org>, Arnd Bergmann <arnd@arndb.de>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        kernel-hardening@lists.openwall.com, linux-kernel@vger.kernel.org,
-        Emese Revfy <re.emese@gmail.com>, kbuild-all@01.org,
-        Laura Abbott <labbott@redhat.com>,
-        linux-arm-kernel@lists.infradead.org
-References: <20181206083257.9596-1-ard.biesheuvel@linaro.org>
- <201812091807.4emRkZ7L%fengguang.wu@intel.com>
- <20181209103740.GB30658@n2100.armlinux.org.uk>
-From:   Rong Chen <rong.a.chen@intel.com>
-Message-ID: <47a91e5a-0e97-334c-2f36-a0bd966a0050@intel.com>
-Date:   Thu, 13 Dec 2018 10:53:29 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.4.0
-MIME-Version: 1.0
-In-Reply-To: <20181209103740.GB30658@n2100.armlinux.org.uk>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+        id S1726344AbeLMCxq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 21:53:46 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1996437EEF;
+        Thu, 13 Dec 2018 02:53:46 +0000 (UTC)
+Received: from jason-ThinkPad-T450s.redhat.com (ovpn-12-167.pek2.redhat.com [10.72.12.167])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A3DB45D70A;
+        Thu, 13 Dec 2018 02:53:41 +0000 (UTC)
+From:   Jason Wang <jasowang@redhat.com>
+To:     mst@redhat.com, jasowang@redhat.com, kvm@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH net V3 0/3] Fix various issue of vhost
+Date:   Thu, 13 Dec 2018 10:53:36 +0800
+Message-Id: <20181213025339.14023-1-jasowang@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Thu, 13 Dec 2018 02:53:46 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi:
 
+This series tries to fix various issues of vhost:
 
-On 12/09/2018 06:37 PM, Russell King - ARM Linux wrote:
-> On Sun, Dec 09, 2018 at 06:28:11PM +0800, kbuild test robot wrote:
->> Hi Ard,
->>
->> I love your patch! Perhaps something to improve:
-> Hi,
->
-> This looks to me like a false warning - how can a patch touching arch
-> code affect the result of lib/test_ubsan.c?  Please can you double-
-> check this result?
+- Patch 1 adds a missing write barrier between used idx updating and
+  logging.
+- Patch 2-3 brings back the protection of device IOTLB through vq
+  mutex, this fixes possible use after free in device IOTLB entries.
 
-Hi,
+Please consider them for -stable.
 
-I'm sorry for the trouble, It's a false warning, we will look into it.
+Thanks
 
-Best Regards,
-Rong Chen
+Changes from V2:
+- drop dirty page fix and make it for net-next
+Changes from V1:
+- silent compiler warning for 32bit.
+- use mutex_trylock() on slowpath instead of mutex_lock() even on fast
+  path.
 
-> Thanks.
->
->> [auto build test WARNING on arm/for-next]
->> [also build test WARNING on v4.20-rc5]
->> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
->>
->> url:    https://github.com/0day-ci/linux/commits/Ard-Biesheuvel/ARM-smp-add-support-for-per-task-stack-canaries/20181209-033321
->> base:   git://git.armlinux.org.uk/~rmk/linux-arm.git for-next
->> config: arm-allmodconfig (attached as .config)
->> compiler: arm-linux-gnueabi-gcc (Debian 7.2.0-11) 7.2.0
->> reproduce:
->>          wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->>          chmod +x ~/bin/make.cross
->>          # save the attached .config to linux build tree
->>          GCC_VERSION=7.2.0 make.cross ARCH=arm
->>
->> All warnings (new ones prefixed by >>):
->>
->>     lib/test_ubsan.c: In function 'test_ubsan_vla_bound_not_positive':
->>>> lib/test_ubsan.c:48:2: warning: ISO C90 forbids variable length array 'buf' [-Wvla]
->>       char buf[size];
->>       ^~~~
->>     lib/test_ubsan.c: In function 'test_ubsan_out_of_bounds':
->>>> lib/test_ubsan.c:64:2: warning: ISO C90 forbids variable length array 'arr' [-Wvla]
->>       volatile int arr[i];
->>       ^~~~~~~~
->>
->> vim +/buf +48 lib/test_ubsan.c
->>
->> 854686f4 Jinbum Park 2018-04-10  44
->> 854686f4 Jinbum Park 2018-04-10  45  static void test_ubsan_vla_bound_not_positive(void)
->> 854686f4 Jinbum Park 2018-04-10  46  {
->> 854686f4 Jinbum Park 2018-04-10  47  	volatile int size = -1;
->> 854686f4 Jinbum Park 2018-04-10 @48  	char buf[size];
->> 854686f4 Jinbum Park 2018-04-10  49
->> 854686f4 Jinbum Park 2018-04-10  50  	(void)buf;
->> 854686f4 Jinbum Park 2018-04-10  51  }
->> 854686f4 Jinbum Park 2018-04-10  52
->> 854686f4 Jinbum Park 2018-04-10  53  static void test_ubsan_shift_out_of_bounds(void)
->> 854686f4 Jinbum Park 2018-04-10  54  {
->> 854686f4 Jinbum Park 2018-04-10  55  	volatile int val = -1;
->> 854686f4 Jinbum Park 2018-04-10  56  	int val2 = 10;
->> 854686f4 Jinbum Park 2018-04-10  57
->> 854686f4 Jinbum Park 2018-04-10  58  	val2 <<= val;
->> 854686f4 Jinbum Park 2018-04-10  59  }
->> 854686f4 Jinbum Park 2018-04-10  60
->> 854686f4 Jinbum Park 2018-04-10  61  static void test_ubsan_out_of_bounds(void)
->> 854686f4 Jinbum Park 2018-04-10  62  {
->> 854686f4 Jinbum Park 2018-04-10  63  	volatile int i = 4, j = 5;
->> 854686f4 Jinbum Park 2018-04-10 @64  	volatile int arr[i];
->> 854686f4 Jinbum Park 2018-04-10  65
->> 854686f4 Jinbum Park 2018-04-10  66  	arr[j] = i;
->> 854686f4 Jinbum Park 2018-04-10  67  }
->> 854686f4 Jinbum Park 2018-04-10  68
->>
->> :::::: The code at line 48 was first introduced by commit
->> :::::: 854686f4edf483db1e0d26d972bdb8fb65c8bfaa lib: add testing module for UBSAN
->>
->> :::::: TO: Jinbum Park <jinb.park7@gmail.com>
->> :::::: CC: Linus Torvalds <torvalds@linux-foundation.org>
->>
->> ---
->> 0-DAY kernel test infrastructure                Open Source Technology Center
->> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
->
->
+Jason Wang (3):
+  vhost: make sure used idx is seen before log in vhost_add_used_n()
+  vhost_net: switch to use mutex_trylock() in vhost_net_busy_poll()
+  Revert "net: vhost: lock the vqs one by one"
+
+ drivers/vhost/net.c   |  8 +++++++-
+ drivers/vhost/vhost.c | 23 +++++++++++++++++++----
+ 2 files changed, 26 insertions(+), 5 deletions(-)
+
+-- 
+2.17.1
 
