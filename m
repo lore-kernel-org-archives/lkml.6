@@ -2,201 +2,92 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,T_MIXED_ES,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-1.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2145BC65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 22:04:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E558C67872
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 22:04:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3F7020870
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 22:04:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20150623.gappssmtp.com header.i=@cmpxchg-org.20150623.gappssmtp.com header.b="f8IyS7Qm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3F7020870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cmpxchg.org
+	by mail.kernel.org (Postfix) with ESMTP id ED17E20870
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 22:04:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544738653;
+	bh=oFbVQf52DmAIyJr+d31487v9PZakzmy0brakd4X3SRk=;
+	h=In-Reply-To:Subject:To:References:From:Cc:Date:List-ID:From;
+	b=y4u0h7FYgfM+D75Tvz9OF3nxjZld59fMFeoAHUu0nmdejnxep0ICGQi9v9WNYSxKA
+	 AIejIB7psGNO3fABeHtYBULTa0Hw8ygVgZMLcy34DVewPFdHbcwdtohKlLdKiDCTNZ
+	 oYwW7UewawI0d5Ubz6Rtr28o4uSzlKorT6FMOtXw=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED17E20870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728235AbeLMWED (ORCPT
+        id S1728392AbeLMWEM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 17:04:03 -0500
-Received: from mail-yb1-f195.google.com ([209.85.219.195]:42102 "EHLO
-        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726457AbeLMWED (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 17:04:03 -0500
-Received: by mail-yb1-f195.google.com with SMTP id m129so1453496ybf.9
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 14:04:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=foC72XB4GNrSEnp94npMMNWltCrFXG+GOh1ykOFNNXE=;
-        b=f8IyS7QmkeCWKIKcbBcORAiM8enil8GmeI78yC0U5BGuZiyqI8BEM3+qaoYlvjjkzm
-         hS3/4sISPzUbn5LNq5Ky42nI3uXWoo8Da0q5P6caOg8KR7PrQBAKJDHXxB3HgEG4YT9W
-         /rxkse00EpxnhkuV8ALM8K3nQRJtuhROey+Qtf85ZRGc8+Vve990XJVSRZqseJn/RKAq
-         vUhhdpHZ7Hnp0ahk8VXYQ9KmFii9f8lHN4EwCJ5w3h909KxzNrj2bth6/EC2sy1DAE2B
-         1UGxzcp+MQKrAuKc3HjU2mcFbKHSBtmaoj33X/Z++UaJZNhGTHofsXGqvMnB3WfO8+pU
-         c5nA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=foC72XB4GNrSEnp94npMMNWltCrFXG+GOh1ykOFNNXE=;
-        b=ceWyj2BUyAMtSPC/6zF8BkEt3yYW/O1bNmPOfuIjLJyFOv22gwbqt1x7aNflRv16N8
-         oOF7Hojt9P8HmnAhQB7gbig2obzw/hWcIwA1pDc7aCdSTjGy+P0w881UJGEFSUDRJzCu
-         sXnnqhpd/Xq/bg1gs6LOLDsfrS3KTX/ajPfIeDfrZj9BmzpuRCPjt0ZJgh1oebHXEzjF
-         yBNLW9fJgcYFLxE0yvCTJmOwiQfh7ih3XG02I5gmfBQJdPWg16wJsc4HSM5VQQ++7YZX
-         p/Xpy5gAa5m41teWV/wNfyOybXVxiAI0f5/KsAZlHbRd8ZGWnaA8HNDEXX4qGFlXL/QV
-         WBTA==
-X-Gm-Message-State: AA+aEWYHt1kyCo3va4pFyrL2PdWEPoLGW4nZ7c1HmxuPk7FJd+XzO0/V
-        Qj/SBpCQsCD3wpj9E7Sv+ozqdQ==
-X-Google-Smtp-Source: AFSGD/WswjrZUf7a6//muaofkPIEHVlJjNqt2ELwXiKCXLNg1c26Q6O5aJtVv33pjePifbjRKV1XsQ==
-X-Received: by 2002:a25:2207:: with SMTP id i7mr554285ybi.365.1544738642165;
-        Thu, 13 Dec 2018 14:04:02 -0800 (PST)
-Received: from localhost ([2620:10d:c091:200::5:f0b3])
-        by smtp.gmail.com with ESMTPSA id r62sm941186ywd.4.2018.12.13.14.04.01
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 13 Dec 2018 14:04:01 -0800 (PST)
-Date:   Thu, 13 Dec 2018 17:04:00 -0500
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Liu Bo <bo.liu@linux.alibaba.com>, Jan Kara <jack@suse.cz>,
-        Dave Chinner <david@fromorbit.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Shakeel Butt <shakeelb@google.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Stable tree <stable@vger.kernel.org>
-Subject: Re: [PATCH v3] mm, memcg: fix reclaim deadlock with writeback
-Message-ID: <20181213220400.GA9829@cmpxchg.org>
-References: <20181212155055.1269-1-mhocko@kernel.org>
- <20181213092221.27270-1-mhocko@kernel.org>
+        Thu, 13 Dec 2018 17:04:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36516 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727604AbeLMWEL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 17:04:11 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A38E320811;
+        Thu, 13 Dec 2018 22:04:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544738650;
+        bh=oFbVQf52DmAIyJr+d31487v9PZakzmy0brakd4X3SRk=;
+        h=In-Reply-To:Subject:To:References:From:Cc:Date:From;
+        b=dRyPqZxyRpxuNzYDZakK0/cp3yuCvuPdKK91bOinJT3mJ8GV6eqyBzG2Y7ckignJB
+         tAKHyRzVnA1GpaA4boOiluc9rjgDF81EJFhN/ZN6sC0dsqCrdClhCsyngdq1z02LZ1
+         Z2y7O2/6gcpr/fkyMHrFS9QexgnVl8beKTEY84Tw=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181213092221.27270-1-mhocko@kernel.org>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <AM0PR04MB4211C143F6BEDD5716E746AA80A00@AM0PR04MB4211.eurprd04.prod.outlook.com>
+Subject: RE: [PATCH] clk: imx: Make the i.MX8MQ CCM clock driver CLK_IMX8MQ dependant
+To:     Abel Vesa <abel.vesa@nxp.com>, Aisheng Dong <aisheng.dong@nxp.com>,
+        Daniel Baluta <daniel.baluta@gmail.com>
+References: <1544717789-27388-1-git-send-email-abel.vesa@nxp.com> <CAEnQRZC+frwbcdA657v5SB_u1z=FaOFOFrQxuNXsWNrDgnPzGA@mail.gmail.com> <AM0PR04MB4211C143F6BEDD5716E746AA80A00@AM0PR04MB4211.eurprd04.prod.outlook.com>
+Message-ID: <154473864987.19322.9053094167554135382@swboyd.mtv.corp.google.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+User-Agent: alot/0.8
+Cc:     "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "olof@lixom.net" <olof@lixom.net>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "l.stach@pengutronix.de" <l.stach@pengutronix.de>
+Date:   Thu, 13 Dec 2018 14:04:09 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 13, 2018 at 10:22:21AM +0100, Michal Hocko wrote:
-> From: Michal Hocko <mhocko@suse.com>
-> 
-> Liu Bo has experienced a deadlock between memcg (legacy) reclaim and the
-> ext4 writeback
-> task1:
-> [<ffffffff811aaa52>] wait_on_page_bit+0x82/0xa0
-> [<ffffffff811c5777>] shrink_page_list+0x907/0x960
-> [<ffffffff811c6027>] shrink_inactive_list+0x2c7/0x680
-> [<ffffffff811c6ba4>] shrink_node_memcg+0x404/0x830
-> [<ffffffff811c70a8>] shrink_node+0xd8/0x300
-> [<ffffffff811c73dd>] do_try_to_free_pages+0x10d/0x330
-> [<ffffffff811c7865>] try_to_free_mem_cgroup_pages+0xd5/0x1b0
-> [<ffffffff8122df2d>] try_charge+0x14d/0x720
-> [<ffffffff812320cc>] memcg_kmem_charge_memcg+0x3c/0xa0
-> [<ffffffff812321ae>] memcg_kmem_charge+0x7e/0xd0
-> [<ffffffff811b68a8>] __alloc_pages_nodemask+0x178/0x260
-> [<ffffffff8120bff5>] alloc_pages_current+0x95/0x140
-> [<ffffffff81074247>] pte_alloc_one+0x17/0x40
-> [<ffffffff811e34de>] __pte_alloc+0x1e/0x110
-> [<ffffffffa06739de>] alloc_set_pte+0x5fe/0xc20
-> [<ffffffff811e5d93>] do_fault+0x103/0x970
-> [<ffffffff811e6e5e>] handle_mm_fault+0x61e/0xd10
-> [<ffffffff8106ea02>] __do_page_fault+0x252/0x4d0
-> [<ffffffff8106ecb0>] do_page_fault+0x30/0x80
-> [<ffffffff8171bce8>] page_fault+0x28/0x30
-> [<ffffffffffffffff>] 0xffffffffffffffff
-> 
-> task2:
-> [<ffffffff811aadc6>] __lock_page+0x86/0xa0
-> [<ffffffffa02f1e47>] mpage_prepare_extent_to_map+0x2e7/0x310 [ext4]
-> [<ffffffffa08a2689>] ext4_writepages+0x479/0xd60
-> [<ffffffff811bbede>] do_writepages+0x1e/0x30
-> [<ffffffff812725e5>] __writeback_single_inode+0x45/0x320
-> [<ffffffff81272de2>] writeback_sb_inodes+0x272/0x600
-> [<ffffffff81273202>] __writeback_inodes_wb+0x92/0xc0
-> [<ffffffff81273568>] wb_writeback+0x268/0x300
-> [<ffffffff81273d24>] wb_workfn+0xb4/0x390
-> [<ffffffff810a2f19>] process_one_work+0x189/0x420
-> [<ffffffff810a31fe>] worker_thread+0x4e/0x4b0
-> [<ffffffff810a9786>] kthread+0xe6/0x100
-> [<ffffffff8171a9a1>] ret_from_fork+0x41/0x50
-> [<ffffffffffffffff>] 0xffffffffffffffff
-> 
-> He adds
-> : task1 is waiting for the PageWriteback bit of the page that task2 has
-> : collected in mpd->io_submit->io_bio, and tasks2 is waiting for the LOCKED
-> : bit the page which tasks1 has locked.
-> 
-> More precisely task1 is handling a page fault and it has a page locked
-> while it charges a new page table to a memcg. That in turn hits a memory
-> limit reclaim and the memcg reclaim for legacy controller is waiting on
-> the writeback but that is never going to finish because the writeback
-> itself is waiting for the page locked in the #PF path. So this is
-> essentially ABBA deadlock:
->                                         lock_page(A)
->                                         SetPageWriteback(A)
->                                         unlock_page(A)
-> lock_page(B)
->                                         lock_page(B)
-> pte_alloc_pne
->   shrink_page_list
->     wait_on_page_writeback(A)
->                                         SetPageWriteback(B)
->                                         unlock_page(B)
-> 
->                                         # flush A, B to clear the writeback
-> 
-> This accumulating of more pages to flush is used by several filesystems
-> to generate a more optimal IO patterns.
-> 
-> Waiting for the writeback in legacy memcg controller is a workaround
-> for pre-mature OOM killer invocations because there is no dirty IO
-> throttling available for the controller. There is no easy way around
-> that unfortunately. Therefore fix this specific issue by pre-allocating
-> the page table outside of the page lock. We have that handy
-> infrastructure for that already so simply reuse the fault-around pattern
-> which already does this.
-> 
-> There are probably other hidden __GFP_ACCOUNT | GFP_KERNEL allocations
-> from under a fs page locked but they should be really rare. I am not
-> aware of a better solution unfortunately.
-> 
-> Reported-and-Debugged-by: Liu Bo <bo.liu@linux.alibaba.com>
-> Cc: stable
-> Fixes: c3b94f44fcb0 ("memcg: further prevent OOM with too many dirty pages")
-> Signed-off-by: Michal Hocko <mhocko@suse.com>
+Quoting Aisheng Dong (2018-12-13 08:51:18)
+> [...]
+>=20
+> > > --- a/drivers/clk/imx/Makefile
+> > > +++ b/drivers/clk/imx/Makefile
+> > > @@ -34,5 +34,6 @@ obj-$(CONFIG_SOC_IMX6SX) +=3D clk-imx6sx.o
+> > >  obj-$(CONFIG_SOC_IMX6UL) +=3D clk-imx6ul.o
+> > >  obj-$(CONFIG_SOC_IMX7D)  +=3D clk-imx7d.o
+> > >  obj-$(CONFIG_SOC_IMX7ULP) +=3D clk-imx7ulp.o
+> > > -obj-$(CONFIG_SOC_IMX8MQ) +=3D clk-imx8mq.o
+> > >  obj-$(CONFIG_SOC_VF610)  +=3D clk-vf610.o
+> > > +
+> > > +obj-$(CONFIG_CLK_IMX8MQ) +=3D clk-imx8mq.o
+> >=20
+> > Nit: Do we want to keep CONFIG_ sorted?
+>=20
+> IMHO It might be okay to make MX8 (ARM64) a new group to start
+> To get a clear separation. (Slightly not sorted due to VF610)
+> Anyway, it leaves to Stephen to make the judge.
+>=20
 
-Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+This is fine to split the two if they're not related. Just have a
+comment indicating this.
 
-Just one nit:
-
-> @@ -2993,6 +2993,17 @@ static vm_fault_t __do_fault(struct vm_fault *vmf)
->  	struct vm_area_struct *vma = vmf->vma;
->  	vm_fault_t ret;
->  
-> +	/*
-> +	 * Preallocate pte before we take page_lock because this might lead to
-> +	 * deadlocks for memcg reclaim which waits for pages under writeback.
-> +	 */
-> +	if (pmd_none(*vmf->pmd) && !vmf->prealloc_pte) {
-> +		vmf->prealloc_pte = pte_alloc_one(vmf->vma->vm_mm, vmf->address);
-> +		if (!vmf->prealloc_pte)
-> +			return VM_FAULT_OOM;
-> +		smp_wmb(); /* See comment in __pte_alloc() */
-> +	}
-
-Could you be more specific in the deadlock comment? git blame will
-work fine for a while, but it becomes a pain to find corresponding
-patches after stuff gets moved around for years.
-
-In particular the race diagram between reclaim with a page lock held
-and the fs doing SetPageWriteback batches before kicking off IO would
-be useful directly in the code, IMO.
