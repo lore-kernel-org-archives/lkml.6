@@ -2,149 +2,76 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74463C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:06:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA18CC65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:08:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39F7920811
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:06:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39F7920811
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 9114620989
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:08:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nic.cz header.i=@nic.cz header.b="DAV3sxeA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9114620989
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=nic.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726689AbeLMEGj (ORCPT
+        id S1726792AbeLMEIc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 23:06:39 -0500
-Received: from mga05.intel.com ([192.55.52.43]:43046 "EHLO mga05.intel.com"
+        Wed, 12 Dec 2018 23:08:32 -0500
+Received: from mail.nic.cz ([217.31.204.67]:36041 "EHLO mail.nic.cz"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726298AbeLMEGi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 23:06:38 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Dec 2018 20:06:37 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,347,1539673200"; 
-   d="scan'208";a="109978357"
-Received: from mint-dev.iind.intel.com ([10.223.25.164])
-  by orsmga003.jf.intel.com with ESMTP; 12 Dec 2018 20:06:33 -0800
-From:   Ramalingam C <ramalingam.c@intel.com>
-To:     intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        seanpaul@chromium.org, daniel.vetter@ffwll.ch,
-        tomas.winkler@intel.com, uma.shankar@intel.com
-Cc:     ville.syrjala@linux.intel.com, chris@chris-wilson.co.uk,
-        Ramalingam C <ramalingam.c@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v9 04/39] component: alloc component_match without any comp to match
-Date:   Thu, 13 Dec 2018 09:31:06 +0530
-Message-Id: <1544673701-6353-5-git-send-email-ramalingam.c@intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1544673701-6353-1-git-send-email-ramalingam.c@intel.com>
-References: <1544673701-6353-1-git-send-email-ramalingam.c@intel.com>
+        id S1726226AbeLMEIc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 23:08:32 -0500
+Received: from localhost (unknown [172.20.6.218])
+        by mail.nic.cz (Postfix) with ESMTPS id 8A7B162921;
+        Thu, 13 Dec 2018 05:08:30 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nic.cz; s=default;
+        t=1544674110; bh=j7Zf0G2rtW7vEnmWtnVZudM/ZAQStV4sQ+VkHkrAlQI=;
+        h=Date:From:To;
+        b=DAV3sxeApFvxVejH66JVCSG+J/J/utyy7UlVVmP2q4BUNWF1I1hD5XPPHeuunNM40
+         xgLQU+IYeaAxR+kxmg+6/Lh++TyupjualS04nXIMBSyfz+kzzghr5rbeS22F8iCRMT
+         bJ5J+mlXz0DGkCLujzqbxktI/I9Gsqer3jZDJQgo=
+Date:   Thu, 13 Dec 2018 05:08:29 +0100
+From:   Marek Behun <marek.behun@nic.cz>
+To:     Rob Herring <robh@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Gregory CLEMENT <gregory.clement@bootlin.com>,
+        linux-arm-kernel@lists.infradead.org, Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH RFC] ARM64: dts: marvell: Add DTS file for Turris Mox
+Message-ID: <20181213050829.6d942510@nic.cz>
+In-Reply-To: <20181204203706.GA25038@bogus>
+References: <20181113134408.5681-1-marek.behun@nic.cz>
+        <20181204203706.GA25038@bogus>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.99.2 at mail
+X-Virus-Status: Clean
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If all the components associated to a component master is not added
-to the component framework due to the HW capability or Kconfig
-selection, component_match will be NULL at
-component_master_add_with_match().
+Hi Rob
 
-To avoid this, component_match_alloc() is added to the framework,
-to allcoate the struct component_match with zero associated components.
-Hence component master can be added with a component_match with zero
-associated components.
+On Tue, 4 Dec 2018 14:37:06 -0600
+Rob Herring <robh@kernel.org> wrote:
 
-This helps the component master bind call to get triggered,
-even if no component is registered for that particular master.
+> > +
+> > +	switch1@2 {  
+> 
+> Ideally, we shouldn't have this switch0, switch1, etc.
 
-This is meant for big PCI device drivers where small/optional
-features are external components, and based on usecases different
-combination of components are build as entire driver.
+I can rename peridot switches (switch0@10, switch1@11, switch2@12 to
+swtich@10, switch@11, switch@12), but I cannot rename Topaz to
+switch@2. Topaz always has MDIO address 2, because there can be only
+one, but it can be connected either directly or after the first or
+second peridot. Therefore I have three different nodes, each describing
+different connection to the previous switch/cpu.
 
-In such PCI device driver Load, if we use the component master for
-waiting for few  components(features) availability, only if they are
-supported by the underlying HW, then we need to allocate memory for
-component_match using the API introduced in this change before
-the call to component_master_add_with_match.
+How should I rename it?
 
-v2:
-  No Change.
-
-Signed-off-by: Ramalingam C <ramalingam.c@intel.com>
-Suggested-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Kate Stewart <kstewart@linuxfoundation.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Philippe Ombredanne <pombredanne@nexb.com>
-Cc: linux-kernel@vger.kernel.org
----
- drivers/base/component.c  | 30 ++++++++++++++++++++++++++++++
- include/linux/component.h |  2 ++
- 2 files changed, 32 insertions(+)
-
-diff --git a/drivers/base/component.c b/drivers/base/component.c
-index e8d676fad0c9..0ab36b2255ea 100644
---- a/drivers/base/component.c
-+++ b/drivers/base/component.c
-@@ -312,6 +312,36 @@ static int component_match_realloc(struct device *dev,
- }
- 
- /*
-+ * Allocate the match without any component_match_array elements.
-+ *
-+ * This function is useful when the component master might end up
-+ * registering itself without any matching components.
-+ */
-+void component_match_alloc(struct device *master,
-+	struct component_match **matchptr)
-+{
-+	struct component_match *match = *matchptr;
-+
-+	if (IS_ERR(match))
-+		return;
-+
-+	if (match)
-+		return;
-+
-+	match = devres_alloc(devm_component_match_release,
-+			     sizeof(*match), GFP_KERNEL);
-+	if (!match) {
-+		*matchptr = ERR_PTR(-ENOMEM);
-+		return;
-+	}
-+
-+	devres_add(master, match);
-+
-+	*matchptr = match;
-+}
-+EXPORT_SYMBOL(component_match_alloc);
-+
-+/*
-  * Add a component to be matched, with a release function.
-  *
-  * The match array is first created or extended if necessary.
-diff --git a/include/linux/component.h b/include/linux/component.h
-index e71fbbbc74e2..3f6b420a58f8 100644
---- a/include/linux/component.h
-+++ b/include/linux/component.h
-@@ -37,6 +37,8 @@ void component_match_add_release(struct device *master,
- 	struct component_match **matchptr,
- 	void (*release)(struct device *, void *),
- 	int (*compare)(struct device *, void *), void *compare_data);
-+void component_match_alloc(struct device *master,
-+	struct component_match **matchptr);
- 
- static inline void component_match_add(struct device *master,
- 	struct component_match **matchptr,
--- 
-2.7.4
-
+Marek
