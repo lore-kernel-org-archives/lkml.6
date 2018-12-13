@@ -2,81 +2,99 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95FE7C67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 02:27:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B31DC67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 02:28:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61A4C20870
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 02:27:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61A4C20870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 0AB4620870
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 02:28:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AB4620870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726659AbeLMC1i (ORCPT
+        id S1726722AbeLMC2D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 21:27:38 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:14192 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726344AbeLMC1i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 21:27:38 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 06E0480F91;
-        Thu, 13 Dec 2018 02:27:38 +0000 (UTC)
-Received: from [10.72.12.167] (ovpn-12-167.pek2.redhat.com [10.72.12.167])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id E4CBE614C1;
-        Thu, 13 Dec 2018 02:27:32 +0000 (UTC)
-Subject: Re: [PATCH net V2 3/4] Revert "net: vhost: lock the vqs one by one"
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Tonghao Zhang <xiangxia.m.yue@gmail.com>
-References: <20181212100819.21295-1-jasowang@redhat.com>
- <20181212100819.21295-4-jasowang@redhat.com>
- <20181212092102-mutt-send-email-mst@kernel.org>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <6988960f-68da-af52-21b6-9cdf8bddca0c@redhat.com>
-Date:   Thu, 13 Dec 2018 10:27:26 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20181212092102-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Thu, 13 Dec 2018 02:27:38 +0000 (UTC)
+        Wed, 12 Dec 2018 21:28:03 -0500
+Received: from mx2.suse.de ([195.135.220.15]:51162 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726381AbeLMC2D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 21:28:03 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 459C3ABE2;
+        Thu, 13 Dec 2018 02:28:01 +0000 (UTC)
+Received: by unicorn.suse.cz (Postfix, from userid 1000)
+        id 9D298E1116; Thu, 13 Dec 2018 03:28:00 +0100 (CET)
+From:   Michal Kubecek <mkubecek@suse.cz>
+Subject: [PATCH net] net: ipv4: do not handle duplicate fragments as
+ overlapping
+To:     "David S. Miller" <davem@davemloft.net>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Peter Oskolkov <posk@google.com>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        Gustavo Figueira <gfigueira@suse.com>
+Message-Id: <20181213022800.9D298E1116@unicorn.suse.cz>
+Date:   Thu, 13 Dec 2018 03:28:00 +0100 (CET)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Since commit 7969e5c40dfd ("ip: discard IPv4 datagrams with overlapping
+segments.") IPv4 reassembly code drops the whole queue whenever an
+overlapping fragment is received. However, the test is written in a way
+which detects duplicate fragments as overlapping so that in environments
+with many duplicate packets, fragmented packets may be undeliverable.
 
-On 2018/12/12 下午10:24, Michael S. Tsirkin wrote:
-> On Wed, Dec 12, 2018 at 06:08:18PM +0800, Jason Wang wrote:
->> This reverts commit 78139c94dc8c96a478e67dab3bee84dc6eccb5fd. We don't
->> protect device IOTLB with vq mutex, which will lead e.g use after free
->> for device IOTLB entries. And since we've switched to use
->> mutex_trylock() in previous patch, it's safe to revert it without
->> having deadlock.
->>
->> Fixes: commit 78139c94dc8c ("net: vhost: lock the vqs one by one")
->> Cc: Tonghao Zhang<xiangxia.m.yue@gmail.com>
->> Signed-off-by: Jason Wang<jasowang@redhat.com>
-> Acked-by: Michael S. Tsirkin<mst@redhat.com>
->
-> I'd try to put this in 4.20 if we can
-> and it's needed for -stable I think.
->
-> Also looks like we should allow iotlb entries per vq
-> to improve locking. What do you think?
->
+Add an extra test and for (potentially) duplicate fragment, only drop the
+new fragment rather than the whole queue. Only starting offset and length
+are checked, not the contents of the fragments as that would be too
+expensive.  Check for duplicity with last (tail) fragment first as in real
+life scenarios this should be the most frequent case and we would have to
+iterate through the whole "run" otherwise.
 
-Yes, we can do it for -next.
+Fixes: 7969e5c40dfd ("ip: discard IPv4 datagrams with overlapping segments.")
+Signed-off-by: Michal Kubecek <mkubecek@suse.cz>
+---
+ net/ipv4/ip_fragment.c | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
 
-Thanks
+diff --git a/net/ipv4/ip_fragment.c b/net/ipv4/ip_fragment.c
+index aa0b22697998..f09e3683b209 100644
+--- a/net/ipv4/ip_fragment.c
++++ b/net/ipv4/ip_fragment.c
+@@ -436,6 +436,10 @@ static int ip_frag_queue(struct ipq *qp, struct sk_buff *skb)
+ 			ip4_frag_append_to_last_run(&qp->q, skb);
+ 		else
+ 			ip4_frag_create_run(&qp->q, skb);
++	} else if (offset == prev_tail->ip_defrag_offset &&
++		   skb->len == prev_tail->len) {
++		/* potential duplicate of last fragment */
++		goto err;
+ 	} else {
+ 		/* Binary search. Note that skb can become the first fragment,
+ 		 * but not the last (covered above).
+@@ -449,8 +453,16 @@ static int ip_frag_queue(struct ipq *qp, struct sk_buff *skb)
+ 			else if (offset >= skb1->ip_defrag_offset +
+ 						FRAG_CB(skb1)->frag_run_len)
+ 				rbn = &parent->rb_right;
+-			else /* Found an overlap with skb1. */
++			else {
++				/* check for potential duplicate */
++				while (skb1 && skb1->ip_defrag_offset < offset)
++					skb1 = FRAG_CB(skb1)->next_frag;
++				if (skb1 && offset == skb1->ip_defrag_offset &&
++				    skb->len == skb1->len)
++					goto err;
++				/* Found an overlap */
+ 				goto overlap;
++			}
+ 		} while (*rbn);
+ 		/* Here we have parent properly set, and rbn pointing to
+ 		 * one of its NULL left/right children. Insert skb.
+-- 
+2.19.2
 
