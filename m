@@ -4,52 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CC07C67839
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B8ECC67873
 	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:28:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB15B208E7
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:28:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 16FC421104
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:28:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544675328;
-	bh=D9T187AVX6fK+0+jD4eUd5hS6yPUb2fa7uZv7PdDAUM=;
+	s=default; t=1544675329;
+	bh=59NPg5PfjOOqsOGAq6sevnI+rCa6TrmpyOnsMSJgqP4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=VL/o3a11Bf4JIc5HlB54efXP5Psvq5OZY7S+W/ipysOUc2FF2/n4jY+cAlyZOV+DJ
-	 byvnonurSey2E+xCohve3Risn34+U3240733HVqvJkBCZTiJo7cMlqgxP5jRCL+9b+
-	 MZyn48Kt9oALBf19O1S/UFbsp7cYcfPJ0cn7oy0s=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB15B208E7
+	b=PHnhm+QyDFJXVYOirlaoiJ0TNQZISv6HhWYj1bcdUPn+rG+kZYap7rq3p0Pb+ePnd
+	 Xv6Dx5zB8BrtSFGs73aVyvIVvju9LE+nTlRccN9cGbAmPMeOT1HvKaA9mMRl9x7Ecu
+	 laVkIVtrRkeGQOKJtRgyemGojxiEAYcBCnxsKyI4=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16FC421104
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726933AbeLME2q (ORCPT
+        id S1726971AbeLME2r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 23:28:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41490 "EHLO mail.kernel.org"
+        Wed, 12 Dec 2018 23:28:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41506 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726814AbeLME2o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726870AbeLME2o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 12 Dec 2018 23:28:44 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AEAA12087F;
-        Thu, 13 Dec 2018 04:28:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BA604208E7;
+        Thu, 13 Dec 2018 04:28:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544675323;
-        bh=D9T187AVX6fK+0+jD4eUd5hS6yPUb2fa7uZv7PdDAUM=;
+        s=default; t=1544675324;
+        bh=59NPg5PfjOOqsOGAq6sevnI+rCa6TrmpyOnsMSJgqP4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=of43hvQZKj/HkO3nv/c2FAc0YezDx8XSzfxpNKgCNN/hWzfLdSJ8zCa3lpBKCS+vj
-         QYKSNXgo91tIzFaDvlaA33hp1liimZ9m4x86cvnwu4G65DGQMg+7QzJyK+1/JFVA+K
-         /dkPhMEaR6GROhenWS/W8orkCZEHA8nxPd2NayZ0=
+        b=dFHNfJgCY791l4JsEe76ciI+Zf7l/Zpz2QQdtF7k8A91op6CDyuRbvrwev68sQ0EI
+         MobO+gudRwl78yNhTr49WGl1ncf8bO96spSX8vZRpu4vhP+3+dLy9djUD9RLfQCYcc
+         RMLsiw1mern6oPv/mR0BHJzAL8UNXe+S+LpIDrgE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Sasha Levin <sashal@kernel.org>, linux-i2c@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 03/73] i2c: rcar: check bus state before reinitializing
-Date:   Wed, 12 Dec 2018 23:27:28 -0500
-Message-Id: <20181213042838.75160-3-sashal@kernel.org>
+Cc:     Fred Herard <fred.herard@oracle.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>, open-iscsi@googlegroups.com,
+        linux-scsi@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 04/73] scsi: libiscsi: Fix NULL pointer dereference in iscsi_eh_session_reset
+Date:   Wed, 12 Dec 2018 23:27:29 -0500
+Message-Id: <20181213042838.75160-4-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181213042838.75160-1-sashal@kernel.org>
 References: <20181213042838.75160-1-sashal@kernel.org>
@@ -61,52 +61,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+From: Fred Herard <fred.herard@oracle.com>
 
-[ Upstream commit 0b57436f15bf40e432487086c4f2d01fd3529393 ]
+[ Upstream commit 5db6dd14b31397e8cccaaddab2ff44ebec1acf25 ]
 
-We should check the bus state before reinitializing the IP core.
-Otherwise, the internal bus busy state which also tracks multi-master
-activity is lost.
+This commit addresses NULL pointer dereference in iscsi_eh_session_reset.
+Reference should not be made to session->leadconn when session->state is
+set to ISCSI_STATE_TERMINATE.
 
-Credits go to the Renesas BSP team for suggesting this change.
-
-Reported-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Fixes: ae481cc13965 ("i2c: rcar: fix resume by always initializing registers before transfer")
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Signed-off-by: Fred Herard <fred.herard@oracle.com>
+Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Reviewed-by: Lee Duncan <lduncan@suse.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/i2c/busses/i2c-rcar.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/scsi/libiscsi.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-rcar.c b/drivers/i2c/busses/i2c-rcar.c
-index 4aa7dde876f3..254e6219e538 100644
---- a/drivers/i2c/busses/i2c-rcar.c
-+++ b/drivers/i2c/busses/i2c-rcar.c
-@@ -779,6 +779,11 @@ static int rcar_i2c_master_xfer(struct i2c_adapter *adap,
- 
- 	pm_runtime_get_sync(dev);
- 
-+	/* Check bus state before init otherwise bus busy info will be lost */
-+	ret = rcar_i2c_bus_barrier(priv);
-+	if (ret < 0)
-+		goto out;
-+
- 	/* Gen3 needs a reset before allowing RXDMA once */
- 	if (priv->devtype == I2C_RCAR_GEN3) {
- 		priv->flags |= ID_P_NO_RXDMA;
-@@ -791,10 +796,6 @@ static int rcar_i2c_master_xfer(struct i2c_adapter *adap,
- 
- 	rcar_i2c_init(priv);
- 
--	ret = rcar_i2c_bus_barrier(priv);
--	if (ret < 0)
--		goto out;
--
- 	for (i = 0; i < num; i++)
- 		rcar_i2c_request_dma(priv, msgs + i);
- 
+diff --git a/drivers/scsi/libiscsi.c b/drivers/scsi/libiscsi.c
+index 93c66ebad907..f78d2e5c1471 100644
+--- a/drivers/scsi/libiscsi.c
++++ b/drivers/scsi/libiscsi.c
+@@ -2416,8 +2416,8 @@ int iscsi_eh_session_reset(struct scsi_cmnd *sc)
+ failed:
+ 		ISCSI_DBG_EH(session,
+ 			     "failing session reset: Could not log back into "
+-			     "%s, %s [age %d]\n", session->targetname,
+-			     conn->persistent_address, session->age);
++			     "%s [age %d]\n", session->targetname,
++			     session->age);
+ 		spin_unlock_bh(&session->frwd_lock);
+ 		mutex_unlock(&session->eh_mutex);
+ 		return FAILED;
 -- 
 2.19.1
 
