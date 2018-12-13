@@ -7,49 +7,50 @@ X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85D94C67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:33:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0D99C67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:33:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44CDE20880
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:33:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A58020879
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:33:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544675594;
-	bh=QW1MSBku8/10q+xpmvsf5YZa8MJn1+v2uvoEKFpGnRs=;
+	s=default; t=1544675599;
+	bh=FTXN4IfJ7V/wDNvV3OPzDtFHb0i06sTJUOmwnlwnszc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=D5xUjWHpBLZDILzI53E6AswgTDb84UZzRiMIHtOXXUMLR/QvUArpLt7EiTXtFwGch
-	 981TP7gXkbBR0yjlm+oJjOj9CtN8r9j7Y/vowpunVEkvhLj6AvNBuafmBJCk6Lgme7
-	 nJlOyKVLYpKQ9u1m1OhjPeQqDuCE/PVJxWCB0AaY=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44CDE20880
+	b=s4C6Zm5kW1iBu++J9YC+P7HHax023tLKmOFlPmHK/YBd/aFcquLeK2bWGij3wpfEm
+	 TMH8tw3sHCrnEgbsPW6rXFCDfJaWN6oO0QfCWE49L4xbKpp4ij6XvAZaLeMsl0OaOS
+	 zDmeLwqNUncwCXklQe07HA+M8kbEdfyn3TysgUGU=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A58020879
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729282AbeLMEdN (ORCPT
+        id S1728254AbeLMEdS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 23:33:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45980 "EHLO mail.kernel.org"
+        Wed, 12 Dec 2018 23:33:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46092 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729253AbeLMEdH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 23:33:07 -0500
+        id S1729283AbeLMEdN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 23:33:13 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5A24F20672;
-        Thu, 13 Dec 2018 04:33:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5757220873;
+        Thu, 13 Dec 2018 04:33:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544675587;
-        bh=QW1MSBku8/10q+xpmvsf5YZa8MJn1+v2uvoEKFpGnRs=;
+        s=default; t=1544675593;
+        bh=FTXN4IfJ7V/wDNvV3OPzDtFHb0i06sTJUOmwnlwnszc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vTyE0JjrBxtmzCT7p1Q1VsT3lp6rpjy5eif/DRD7RZDXxqD1KyuMjmc3CwMRQouwV
-         bo7B81MqPTQhuQIrkL//jF6YE5AlIbH2NYzgNiRP8AA0MfPIn5Y5DEL4/ki9w78eBV
-         f6rhb4VP1SGIlENmDiRCHXjRbJxWlMprsjZ1Rso8=
+        b=bGPCzWqe1CRfkjzUHf+cWUC3lTHZcexEBrmJBX3OeNxV5wFH5jfsOCWGusnVNRHnK
+         MDxT9kQJ/cz2ujntneEOndAnsgWTPbYItFA+ZJksuHq8ahd/vXGxmu48gmCYwp+DaA
+         hn+8DITnhvNZ6CEjBlz7VZbQaNV46a0Zknn1QSOg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Sean Paul <seanpaul@chromium.org>, Rob Clark <robdclark@gmail.com>,
-        Sasha Levin <sashal@kernel.org>, linux-arm-msm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.4 05/23] drm/msm: Grab a vblank reference when waiting for commit_done
-Date:   Wed, 12 Dec 2018 23:32:41 -0500
-Message-Id: <20181213043259.76643-5-sashal@kernel.org>
+Cc:     Chuck Lever <chuck.lever@oracle.com>, stable@kernel.org,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Sasha Levin <sashal@kernel.org>, linux-nfs@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.4 08/23] SUNRPC: Fix leak of krb5p encode pages
+Date:   Wed, 12 Dec 2018 23:32:44 -0500
+Message-Id: <20181213043259.76643-8-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181213043259.76643-1-sashal@kernel.org>
 References: <20181213043259.76643-1-sashal@kernel.org>
@@ -61,39 +62,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Paul <seanpaul@chromium.org>
+From: Chuck Lever <chuck.lever@oracle.com>
 
-[ Upstream commit 3b712e43e3876b42b38321ecf790a1f5fe59c834 ]
+[ Upstream commit 8dae5398ab1ac107b1517e8195ed043d5f422bd0 ]
 
-Similar to the atomic helpers, we should enable vblank while we're
-waiting for the commit to finish. DPU needs this, MDP5 seems to work
-fine without it.
+call_encode can be invoked more than once per RPC call. Ensure that
+each call to gss_wrap_req_priv does not overwrite pointers to
+previously allocated memory.
 
-Reviewed-by: Abhinav Kumar <abhinavk@codeaurora.org>
-Signed-off-by: Sean Paul <seanpaul@chromium.org>
-Signed-off-by: Rob Clark <robdclark@gmail.com>
+Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
+Cc: stable@kernel.org
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/msm/msm_atomic.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ net/sunrpc/auth_gss/auth_gss.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/gpu/drm/msm/msm_atomic.c b/drivers/gpu/drm/msm/msm_atomic.c
-index 7eb253bc24df..221eaea651d4 100644
---- a/drivers/gpu/drm/msm/msm_atomic.c
-+++ b/drivers/gpu/drm/msm/msm_atomic.c
-@@ -107,7 +107,12 @@ static void msm_atomic_wait_for_commit_done(struct drm_device *dev,
- 		if (old_state->legacy_cursor_update)
- 			continue;
- 
-+		if (drm_crtc_vblank_get(crtc))
-+			continue;
-+
- 		kms->funcs->wait_for_crtc_commit_done(kms, crtc);
-+
-+		drm_crtc_vblank_put(crtc);
- 	}
+diff --git a/net/sunrpc/auth_gss/auth_gss.c b/net/sunrpc/auth_gss/auth_gss.c
+index 1f0687d8e3d7..62fca77bf3c7 100644
+--- a/net/sunrpc/auth_gss/auth_gss.c
++++ b/net/sunrpc/auth_gss/auth_gss.c
+@@ -1722,6 +1722,7 @@ priv_release_snd_buf(struct rpc_rqst *rqstp)
+ 	for (i=0; i < rqstp->rq_enc_pages_num; i++)
+ 		__free_page(rqstp->rq_enc_pages[i]);
+ 	kfree(rqstp->rq_enc_pages);
++	rqstp->rq_release_snd_buf = NULL;
  }
  
+ static int
+@@ -1730,6 +1731,9 @@ alloc_enc_pages(struct rpc_rqst *rqstp)
+ 	struct xdr_buf *snd_buf = &rqstp->rq_snd_buf;
+ 	int first, last, i;
+ 
++	if (rqstp->rq_release_snd_buf)
++		rqstp->rq_release_snd_buf(rqstp);
++
+ 	if (snd_buf->page_len == 0) {
+ 		rqstp->rq_enc_pages_num = 0;
+ 		return 0;
 -- 
 2.19.1
 
