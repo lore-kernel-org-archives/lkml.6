@@ -7,49 +7,48 @@ X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1AC7C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:45:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7634C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:46:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86C1F20849
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:45:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6FFC620849
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:46:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544676352;
-	bh=uY9Rt4JIy3KkznDoJXSdKS4SqsB3u6ah+E2Cjmy9CyQ=;
+	s=default; t=1544676362;
+	bh=66bIVOUhszalWq34bmkerV14UFkvSHRPxHOyFzoG0Rw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ChHzWGPVOHYrtmPkYLwamVA81fL9huVAiJzijrQexCV4i2jLhjMLVfD9hnIi4RsUy
-	 M7Nao/ZV7TZ1riNZOKodq04mMl9KaKvIAtzY0SSqN8NcGWqds8e/yUScQdbNRhxF5v
-	 Us7RENzHQr8Fv12VD7T0RfbdAH3hcliNlCnVcJfQ=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86C1F20849
+	b=PcIvX5OwdP1OVbsUZUxSGyMuwuft8BaDXq9e8T6UWlr08Z8eYyAPxLLnAKHdz21q2
+	 rt+qoW5aT7yYj13scBgAb8qB6/U+CJoxbmVsHIEHk1oTL593cZ4RF1X6KzaWo22gsz
+	 S3TvZ1o9H7LG7d5xN8nCIZsXaA3jOQI3TiGSJYDk=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FFC620849
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728737AbeLMEpv (ORCPT
+        id S1728876AbeLMEqB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 23:45:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43690 "EHLO mail.kernel.org"
+        Wed, 12 Dec 2018 23:46:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43672 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728437AbeLMEau (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 23:30:50 -0500
+        id S1727406AbeLMEat (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 23:30:49 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3820620672;
-        Thu, 13 Dec 2018 04:30:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2ED0820989;
+        Thu, 13 Dec 2018 04:30:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544675449;
-        bh=uY9Rt4JIy3KkznDoJXSdKS4SqsB3u6ah+E2Cjmy9CyQ=;
+        s=default; t=1544675448;
+        bh=66bIVOUhszalWq34bmkerV14UFkvSHRPxHOyFzoG0Rw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1RmNPPJrvjjW92QZGGBHUORA4C/G5kWxvaVg03YnKU6EvkdnN0X1FkJdc/0Zo0JiK
-         VneZVIjbcpP9jjMItBsWLMwQDIZPJsiE06l8Gcrsvy6CDUjGkHtyy47adCQbuDDmSK
-         UZl6sE1m+IFrXlQfz3nQYIgoJq/CXk/eBLf5QO4w=
+        b=IawTy8P1U1l3pVoDP6OOqVGQSKDds8Ps9RLc85Ung+5YvCv30LKTSbQJRQB0wYrZa
+         7IGSo6Va3yzTn5swkiN6U+DR0czBYmTI9x/U8Buzs+cB1U02/+7atln9LbAkO86jYy
+         XZT/ynDdvm+igAGORxlNfC4rxugLowXFqeAy+7lo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Israel Rukshin <israelr@mellanox.com>,
-        Christoph Hellwig <hch@lst.de>,
+Cc:     James Smart <jsmart2021@gmail.com>, Christoph Hellwig <hch@lst.de>,
         Sasha Levin <sashal@kernel.org>, linux-nvme@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.19 71/73] nvmet-rdma: fix response use after free
-Date:   Wed, 12 Dec 2018 23:28:36 -0500
-Message-Id: <20181213042838.75160-71-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 70/73] nvme: validate controller state before rescheduling keep alive
+Date:   Wed, 12 Dec 2018 23:28:35 -0500
+Message-Id: <20181213042838.75160-70-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181213042838.75160-1-sashal@kernel.org>
 References: <20181213042838.75160-1-sashal@kernel.org>
@@ -61,44 +60,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Israel Rukshin <israelr@mellanox.com>
+From: James Smart <jsmart2021@gmail.com>
 
-[ Upstream commit d7dcdf9d4e15189ecfda24cc87339a3425448d5c ]
+[ Upstream commit 86880d646122240596d6719b642fee3213239994 ]
 
-nvmet_rdma_release_rsp() may free the response before using it at error
-flow.
+Delete operations are seeing NULL pointer references in call_timer_fn.
+Tracking these back, the timer appears to be the keep alive timer.
 
-Fixes: 8407879 ("nvmet-rdma: fix possible bogus dereference under heavy load")
-Signed-off-by: Israel Rukshin <israelr@mellanox.com>
+nvme_keep_alive_work() which is tied to the timer that is cancelled
+by nvme_stop_keep_alive(), simply starts the keep alive io but doesn't
+wait for it's completion. So nvme_stop_keep_alive() only stops a timer
+when it's pending. When a keep alive is in flight, there is no timer
+running and the nvme_stop_keep_alive() will have no affect on the keep
+alive io. Thus, if the io completes successfully, the keep alive timer
+will be rescheduled.   In the failure case, delete is called, the
+controller state is changed, the nvme_stop_keep_alive() is called while
+the io is outstanding, and the delete path continues on. The keep
+alive happens to successfully complete before the delete paths mark it
+as aborted as part of the queue termination, so the timer is restarted.
+The delete paths then tear down the controller, and later on the timer
+code fires and the timer entry is now corrupt.
+
+Fix by validating the controller state before rescheduling the keep
+alive. Testing with the fix has confirmed the condition above was hit.
+
+Signed-off-by: James Smart <jsmart2021@gmail.com>
 Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
-Reviewed-by: Max Gurtovoy <maxg@mellanox.com>
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/nvme/target/rdma.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/nvme/host/core.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/nvme/target/rdma.c b/drivers/nvme/target/rdma.c
-index bfc4da660bb4..e57f3902beb3 100644
---- a/drivers/nvme/target/rdma.c
-+++ b/drivers/nvme/target/rdma.c
-@@ -529,6 +529,7 @@ static void nvmet_rdma_send_done(struct ib_cq *cq, struct ib_wc *wc)
+diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+index 0ba301f7e8b4..05bd7f49d6e0 100644
+--- a/drivers/nvme/host/core.c
++++ b/drivers/nvme/host/core.c
+@@ -831,6 +831,8 @@ static int nvme_submit_user_cmd(struct request_queue *q,
+ static void nvme_keep_alive_end_io(struct request *rq, blk_status_t status)
  {
- 	struct nvmet_rdma_rsp *rsp =
- 		container_of(wc->wr_cqe, struct nvmet_rdma_rsp, send_cqe);
-+	struct nvmet_rdma_queue *queue = cq->cq_context;
+ 	struct nvme_ctrl *ctrl = rq->end_io_data;
++	unsigned long flags;
++	bool startka = false;
  
- 	nvmet_rdma_release_rsp(rsp);
+ 	blk_mq_free_request(rq);
  
-@@ -536,7 +537,7 @@ static void nvmet_rdma_send_done(struct ib_cq *cq, struct ib_wc *wc)
- 		     wc->status != IB_WC_WR_FLUSH_ERR)) {
- 		pr_err("SEND for CQE 0x%p failed with status %s (%d).\n",
- 			wc->wr_cqe, ib_wc_status_msg(wc->status), wc->status);
--		nvmet_rdma_error_comp(rsp->queue);
-+		nvmet_rdma_error_comp(queue);
+@@ -841,7 +843,13 @@ static void nvme_keep_alive_end_io(struct request *rq, blk_status_t status)
+ 		return;
  	}
+ 
+-	schedule_delayed_work(&ctrl->ka_work, ctrl->kato * HZ);
++	spin_lock_irqsave(&ctrl->lock, flags);
++	if (ctrl->state == NVME_CTRL_LIVE ||
++	    ctrl->state == NVME_CTRL_CONNECTING)
++		startka = true;
++	spin_unlock_irqrestore(&ctrl->lock, flags);
++	if (startka)
++		schedule_delayed_work(&ctrl->ka_work, ctrl->kato * HZ);
  }
  
+ static int nvme_keep_alive(struct nvme_ctrl *ctrl)
 -- 
 2.19.1
 
