@@ -2,105 +2,104 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4C7BC65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 20:50:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6CFCC65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 20:52:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A019020870
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 20:50:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A019020870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 669B120870
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 20:52:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="cmtNbrLb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 669B120870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brauner.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727434AbeLMUuF (ORCPT
+        id S1727642AbeLMUwH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 15:50:05 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:55598 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726437AbeLMUuF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 15:50:05 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id ED861A4023;
-        Thu, 13 Dec 2018 20:50:04 +0000 (UTC)
-Received: from treble (ovpn-120-195.rdu2.redhat.com [10.10.120.195])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 74AB6104C529;
-        Thu, 13 Dec 2018 20:50:00 +0000 (UTC)
-Date:   Thu, 13 Dec 2018 14:49:58 -0600
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Joe Lawrence <joe.lawrence@redhat.com>
-Cc:     Nicholas Mc Guire <der.herr@hofr.at>,
-        Nicholas Mc Guire <hofrat@osadl.org>,
-        Jessica Yu <jeyu@kernel.org>, Jiri Kosina <jikos@kernel.org>,
-        Miroslav Benes <mbenes@suse.cz>,
-        Petr Mladek <pmladek@suse.com>, live-patching@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2 V2] livepatch: handle kzalloc failure properly
-Message-ID: <20181213204958.tkapx6qi7fnm5t6h@treble>
-References: <1544709956-16701-1-git-send-email-hofrat@osadl.org>
- <1544709956-16701-2-git-send-email-hofrat@osadl.org>
- <daf5bf66-3bcc-476c-6237-0e46028cb269@redhat.com>
- <20181213153954.GA9816@osadl.at>
- <2d712c92-e661-a32c-06cf-4de93ad93f77@redhat.com>
- <20181213185126.GA24202@osadl.at>
- <7aa8369b-0e64-ecf4-79a1-986c6ffeb59b@redhat.com>
+        Thu, 13 Dec 2018 15:52:07 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:34989 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726437AbeLMUwG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 15:52:06 -0500
+Received: by mail-wr1-f66.google.com with SMTP id 96so3400387wrb.2
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 12:52:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brauner.io; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=BpNv9ccLyR9E1IN+AlajsDMHnXXbLFU5paJ5yRuJZE4=;
+        b=cmtNbrLbiZVQwl6JRkzUN683oQIjG7w9pb43+mMy2zRi3S7N9rawMDwoKJzIWskwsX
+         jBJYt/ap8D3Am+4hgrrlpG+sMEztpcM8eOZu9ml94TdHHztlY9p/LGdnvQ/kxwwysERZ
+         TvbPxrKf2xTXOyo51Anh8pmW/T4d4+AJiFAuloWYUDGUNKiOjnNO3war1iedvslgdeye
+         B27dan/iELzq9OI2Wva0rdK3Q/e5dcP+WvLMRG5vcpGYb76gJAy2uf6Q875yjSOpRm5c
+         dE+1pkyGMN8o2/uHWnvxUkAuF4/1SBpcG3LRdpLyxTmMJUpd2OHYrbFkHUtlsHLAXfgB
+         FqeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=BpNv9ccLyR9E1IN+AlajsDMHnXXbLFU5paJ5yRuJZE4=;
+        b=ToQ4/oKajCJC9zboM3pagH3ttJVuespWU8FbD8JoUuwkHSJKy/Z1MBMHipGEmBcOYQ
+         1KOTt98jmWnIS9z4KTV65LN7y8Rs6m3Nn93pO3e2WrBxCrcE+PgbRv5033M+qyXchxmN
+         ZWWpFQrq9Vytcl8sitOqRHGlo9eJpxR5S8SVlqXR5gQFskgmK4TQ4pw7CJMO68WHvs8O
+         7DrLAJpoLwvkeUeNwlCfjVLwWlv13LQaDzpPRNxASwyiJ5Zw4lv0JVzQT4OKeuplKaTW
+         HGucDXk1HgzI2TVktm5Q3X9vbP63KwtpdGsAz+eaYDz9GEj/SRVPdNG6ecDgzUwlYI+A
+         vj8Q==
+X-Gm-Message-State: AA+aEWaUUestNYO4AzwmGWv5Eg4NIQJ7fdADDJkYQ5B72NIN/ecDG6oI
+        8CdZBj0a8llDqgAHPHYWeFHT4w==
+X-Google-Smtp-Source: AFSGD/W5x7JbG9Dc8ym8Oh9DzY6GcjJbE9M4OO2XsA7DGeOf0BUhGOC8wCr5M7hf0s9m4Is2hee8Jw==
+X-Received: by 2002:adf:d112:: with SMTP id a18mr279928wri.17.1544734325050;
+        Thu, 13 Dec 2018 12:52:05 -0800 (PST)
+Received: from brauner.io ([2a02:8070:88c2:4000:69e7:45c9:1529:166d])
+        by smtp.gmail.com with ESMTPSA id o64sm2493876wmo.47.2018.12.13.12.52.03
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 13 Dec 2018 12:52:04 -0800 (PST)
+Date:   Thu, 13 Dec 2018 21:52:03 +0100
+From:   Christian Brauner <christian@brauner.io>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Todd Kjos <tkjos@google.com>, Todd Kjos <tkjos@android.com>,
+        Martijn Coenen <maco@android.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Arve =?utf-8?B?SGrDuG5uZXbDpWc=?= <arve@android.com>,
+        joel@joelfernandes.org, darrick.wong@oracle.com,
+        david@fromorbit.com, kilobyte@angband.pl,
+        "open list:ANDROID DRIVERS" <devel@driverdev.osuosl.org>,
+        chouryzhou@tencent.com
+Subject: Re: [PATCH v1] binder: implement binderfs
+Message-ID: <20181213205201.d4stjhypnseb3ska@brauner.io>
+References: <20181207232509.31771-1-christian@brauner.io>
+ <CAHRSSEzxR2wRw9UxaKkXTZ7cu989+70-V07PxMm6o+BfLTQ=6w@mail.gmail.com>
+ <20181212125126.4lhnjvrvaz5wwpib@brauner.io>
+ <20181213175626.GB7218@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <7aa8369b-0e64-ecf4-79a1-986c6ffeb59b@redhat.com>
+In-Reply-To: <20181213175626.GB7218@kroah.com>
 User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Thu, 13 Dec 2018 20:50:05 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 13, 2018 at 03:39:20PM -0500, Joe Lawrence wrote:
-> Ahh, I understand the question now.  Yeah, by making those routines local 
-> static, the compiler applied optimizations that renamed the symbols:
+On Thu, Dec 13, 2018 at 06:56:26PM +0100, Greg Kroah-Hartman wrote:
+> On Wed, Dec 12, 2018 at 01:51:27PM +0100, Christian Brauner wrote:
+> > > > Cc: Martijn Coenen <maco@android.com>
+> > > > Cc: Todd Kjos <tkjos@google.com>
+> > > > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > > > Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+> > 
+> > Do we plan to bring this into mergeable shape before Christmas? I'm
+> > happy to do it. :)
 > 
->   noinline static
->   % readelf --syms samples/livepatch/livepatch-shadow-mod.o | grep dummy_                                          
->        5: 0000000000000000    20 FUNC    LOCAL  DEFAULT    1 dummy_check.isra.0
->        7: 0000000000000020    52 FUNC    LOCAL  DEFAULT    1 dummy_free.constprop.1
->       12: 00000000000000c0    32 OBJECT  LOCAL  DEFAULT    3 dummy_list_mutex
->       13: 00000000000000e0    16 OBJECT  LOCAL  DEFAULT    3 dummy_list
->       15: 0000000000000160   115 FUNC    LOCAL  DEFAULT    1 dummy_alloc
-> 
-> 
-> I can avoid that optimization (and successfully load all the modules) 
-> by using either:
-> 
->   __attribute__((optimize("O0"))) noinline static
->   % readelf --syms samples/livepatch/livepatch-shadow-mod.o | grep dummy_
->        6: 0000000000000000  6016 FUNC    LOCAL  DEFAULT    1 dummy_alloc
->       11: 00000000000000c0    32 OBJECT  LOCAL  DEFAULT    3 dummy_list_mutex
->       12: 00000000000000e0    16 OBJECT  LOCAL  DEFAULT    3 dummy_list
->       14: 0000000000001810    73 FUNC    LOCAL  DEFAULT    1 dummy_free
->       16: 0000000000001860   108 FUNC    LOCAL  DEFAULT    1 dummy_check
-> 
-> or:
-> 
->   __noclone noinline static
->   % readelf --syms samples/livepatch/livepatch-shadow-mod.o | grep dummy_
->        5: 0000000000000000    22 FUNC    LOCAL  DEFAULT    1 dummy_check
->        7: 0000000000000020    51 FUNC    LOCAL  DEFAULT    1 dummy_free
->       12: 00000000000000c0    32 OBJECT  LOCAL  DEFAULT    3 dummy_list_mutex
->       13: 00000000000000e0    16 OBJECT  LOCAL  DEFAULT    3 dummy_list
->       15: 0000000000000160   115 FUNC    LOCAL  DEFAULT    1 dummy_alloc
-> 
-> but I'm not sure if either is the definitive way to avoid such
-> optimization.  Anyone know for sure?
+> I haven't had the chance to give it a good review yet, but you should at
+> least fix up the kbuild warnings that the 0-day bot sent you :)
 
-Yeah, for now I think "static __noclone" is the way to go.  Soon we'll
-have a GCC flag which disables such optimizations for all functions.
+__user is what's confusing kbot here. You want me to wait for your
+review or send out a v2 right now? :)
 
-And the dummy_list* variables can just be "static".
-
--- 
-Josh
+Thanks!
+Christian
