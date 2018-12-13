@@ -2,217 +2,274 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_MIXED_ES
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ACA7C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 16:08:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45818C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 16:10:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B71AD2054F
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 16:08:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D82D520870
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 16:10:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="CsdjFiGI";
-	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="JPwGwETZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B71AD2054F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=tycho.nsa.gov header.i=@tycho.nsa.gov header.b="Epp5Dfmq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D82D520870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=tycho.nsa.gov
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729576AbeLMQIl (ORCPT
+        id S1729222AbeLMQKN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 11:08:41 -0500
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:40366 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728059AbeLMQIl (ORCPT
+        Thu, 13 Dec 2018 11:10:13 -0500
+Received: from upbd19pa10.eemsg.mail.mil ([214.24.27.85]:54741 "EHLO
+        upbd19pa10.eemsg.mail.mil" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728059AbeLMQKN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 11:08:41 -0500
-Received: from pps.filterd (m0044008.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wBDG5LkH011930;
-        Thu, 13 Dec 2018 08:07:51 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=facebook;
- bh=PC9EfKN/ObKmr1o33zsl3h4+ClegvGjpyofJvJpJVKM=;
- b=CsdjFiGIxAARPnSRmDdBVJJ1XEbdQklQcOiMLwQoL0M3+VR7HtOuSS1/EtnnFtqvJhSX
- tdqqzFqzoXZhKTF1hKaCCSUTas9ZH48bq6tHDYCMHA/ew2vnHn7zq2E0AWFOZNhS6ei+
- 3R/BX7iUHKs5m3GH1nNTJSNOoTkMjf6draU= 
-Received: from maileast.thefacebook.com ([199.201.65.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2pbq91gn8r-16
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Thu, 13 Dec 2018 08:07:51 -0800
-Received: from frc-hub03.TheFacebook.com (2620:10d:c021:18::173) by
- frc-hub03.TheFacebook.com (2620:10d:c021:18::173) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.1.1531.3; Thu, 13 Dec 2018 08:07:36 -0800
-Received: from NAM03-BY2-obe.outbound.protection.outlook.com (192.168.183.28)
- by o365-in.thefacebook.com (192.168.177.73) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1531.3
- via Frontend Transport; Thu, 13 Dec 2018 08:07:36 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector1-fb-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PC9EfKN/ObKmr1o33zsl3h4+ClegvGjpyofJvJpJVKM=;
- b=JPwGwETZUAPUPGyCArld/RTAQj53P1/cREmLrdI+bK25L/Eeug5SvLQdEbv8ZPubZc7OA+VzFv87P9nw2rfnkonMvzfU6sCtaSdqErcENfViWmAUxxTbODqVJ0LXp1+beR6c+MM/vjdNb3ypoAeRsWTpaNzZQtoYnZWWSDcat1M=
-Received: from DM5PR15MB1163.namprd15.prod.outlook.com (10.173.208.149) by
- DM5PR15MB1497.namprd15.prod.outlook.com (10.173.225.142) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1425.20; Thu, 13 Dec 2018 16:07:24 +0000
-Received: from DM5PR15MB1163.namprd15.prod.outlook.com
- ([fe80::2d27:7549:4f23:c230]) by DM5PR15MB1163.namprd15.prod.outlook.com
- ([fe80::2d27:7549:4f23:c230%6]) with mapi id 15.20.1404.026; Thu, 13 Dec 2018
- 16:07:24 +0000
-From:   Song Liu <songliubraving@fb.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-CC:     lkml <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "ast@kernel.org" <ast@kernel.org>,
-        "daniel@iogearbox.net" <daniel@iogearbox.net>,
-        Kernel Team <Kernel-team@fb.com>,
-        "acme@kernel.org" <acme@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCH v3 perf, bpf-next 1/4] perf, bpf: Introduce
- PERF_RECORD_BPF_EVENT
-Thread-Topic: [PATCH v3 perf, bpf-next 1/4] perf, bpf: Introduce
- PERF_RECORD_BPF_EVENT
-Thread-Index: AQHUkan/BrxKv3p0HEGwaC6e4kWgY6V7FkWAgABBOQCAAA/SgIAADgwAgAFXkoCAAAubgA==
-Date:   Thu, 13 Dec 2018 16:07:23 +0000
-Message-ID: <0EA5B36C-0A7A-442D-B1EF-E7C2E63109F2@fb.com>
-References: <20181211233351.4036381-1-songliubraving@fb.com>
- <20181211233351.4036381-2-songliubraving@fb.com>
- <20181212131549.GZ5289@hirez.programming.kicks-ass.net>
- <C6E2C200-4C86-4EE0-97FA-228C0E0629B1@fb.com>
- <20181212180553.GC5289@hirez.programming.kicks-ass.net>
- <3D79DAF3-0746-41A2-B902-E1D99F098AF9@fb.com>
- <20181213152551.GL5289@hirez.programming.kicks-ass.net>
-In-Reply-To: <20181213152551.GL5289@hirez.programming.kicks-ass.net>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: Apple Mail (2.3445.102.3)
-x-originating-ip: [2620:10d:c090:180::1:c293]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR15MB1497;20:Hauw0QVSLpPiK15xxSRzvAJBJi+lB3NRCpsswjJT6iti+24Ej8/qPcn1zWnwsESh/38nrovMwr2oMVKj8Q/nOGiVG50U8V7ySESKdafcr3DZiIoGkY/IK93WYtgJCGyYSSvBjNdu0SUGPikWxFw6676fXMVbaGGbQYjqngmXd/4=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 02de36d1-3b53-4601-6569-08d6611511dd
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:DM5PR15MB1497;
-x-ms-traffictypediagnostic: DM5PR15MB1497:
-x-microsoft-antispam-prvs: <DM5PR15MB1497124AFDB0300153B89370B3A00@DM5PR15MB1497.namprd15.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(11241501185)(6040522)(2401047)(5005006)(8121501046)(823302103)(10201501046)(3002001)(93006095)(93001095)(3231475)(944501520)(52105112)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:DM5PR15MB1497;BCL:0;PCL:0;RULEID:;SRVR:DM5PR15MB1497;
-x-forefront-prvs: 088552DE73
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(39860400002)(346002)(136003)(376002)(366004)(189003)(199004)(14454004)(7736002)(229853002)(6486002)(2906002)(8676002)(46003)(93886005)(256004)(14444005)(36756003)(105586002)(6436002)(106356001)(5660300001)(8936002)(6116002)(57306001)(81156014)(305945005)(6916009)(81166006)(50226002)(83716004)(4326008)(71200400001)(71190400001)(99286004)(11346002)(446003)(102836004)(53546011)(2616005)(6506007)(486006)(476003)(6246003)(316002)(186003)(25786009)(54906003)(86362001)(478600001)(33656002)(76176011)(82746002)(97736004)(6512007)(53936002)(68736007);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR15MB1497;H:DM5PR15MB1163.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: SSl+zQ6rP9eL03qiBjUdUNnrEosGh3QIibcDlkPTWudhaedoqi4A9Shbtzj+ydyOrlc6uZYGkYkGkNaHGjtjFHDVqm3QiZ6JOBrcAzyLuejA9i/m8FFWhv11W1fwY8RhTDBCNJoGWYGaSbA85121TQekQgri5Y7oXVQty/766MzWoGIXraepMZW8W8DStLwElVv832V4rt/WQP2M6tFJE680RQdg+SE10PepTL5mf8sTiO7Ynm1u0fg1kLfGVAcVKWuO3L3enLYppvB5YwH1mjqMVOea2vw0KO0gAWupWgY+jl7HXXv5NDpVORWIq6Sf
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <5DB6563A5E014245A5D293F6AC2611EB@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Thu, 13 Dec 2018 11:10:13 -0500
+X-EEMSG-check-008: 186847030|UPBD19PA10_EEMSG_MP10.csd.disa.mil
+Received: from emsm-gh1-uea10.ncsc.mil ([214.29.60.2])
+  by upbd19pa10.eemsg.mail.mil with ESMTP/TLS/DHE-RSA-AES256-SHA256; 13 Dec 2018 16:10:04 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=tycho.nsa.gov; i=@tycho.nsa.gov; q=dns/txt;
+  s=tycho.nsa.gov; t=1544717405; x=1576253405;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=1o873b0JilHc41AIAQGfpwRMp5Q4g4cDK0+LGW7bCK8=;
+  b=Epp5DfmqmKidwhGsXKSFNr6Xexj53FvCFWhwmJ31+Y8ub1vr4ucsclxT
+   vlkHgG6wgp/hmU74uXralxXdtqn2r7gfYFwkdCb9yQm00XD8kXkWivQ1x
+   s2Fp1E7NqMYLDGvyJAhFiYHCqUSYzBaWCtu1yAA03rqAZiiJsq+P333u2
+   c01O7P6+ZDjGUHQQxGsLZBkMxM4vfIMwH0RmmxoCDxobVD+4gFyJPERfi
+   OHilwzE7xM9GT7cUy9yv4OCyyl+0LIdUDpa5v3LPm7YHAirwp5qBshzD8
+   lcWiYi6d0HjkDCxcBnPrmlncWirwXpy4YzSL6IN9+BrBW5wC/oVt/akNA
+   w==;
+X-IronPort-AV: E=Sophos;i="5.56,349,1539648000"; 
+   d="scan'208";a="18686255"
+IronPort-PHdr: =?us-ascii?q?9a23=3ACPWNvhMLqFRiJT85hQ0l6mtUPXoX/o7sNwtQ0K?=
+ =?us-ascii?q?IMzox0K//zp8bcNUDSrc9gkEXOFd2Cra4c26yO6+jJYi8p2d65qncMcZhBBV?=
+ =?us-ascii?q?cuqP49uEgeOvODElDxN/XwbiY3T4xoXV5h+GynYwAOQJ6tL1LdrWev4jEMBx?=
+ =?us-ascii?q?7xKRR6JvjvGo7Vks+7y/2+94fcbglUhzexe69+IAmrpgjNq8cahpdvJLwswR?=
+ =?us-ascii?q?XTuHtIfOpWxWJsJV2Nmhv3+9m98p1+/SlOovwt78FPX7n0cKQ+VrxYES8pM3?=
+ =?us-ascii?q?sp683xtBnMVhWA630BWWgLiBVIAgzF7BbnXpfttybxq+Rw1DWGMcDwULs5Qi?=
+ =?us-ascii?q?qp4bt1RxD0iScHLz85/3/Risxsl6JQvRatqwViz4LIfI2ZMfxzca3HfdMeWG?=
+ =?us-ascii?q?FPQMBfWSJcCY+4docDEfYNMeNeooLgpVUBsAG+CBGxCu3xxD9Ghnz406M03O?=
+ =?us-ascii?q?suEw7JwAMuEskSsHnWttj5KLseXO63waTO0D7Nb+lW2TD46IXQbx4hve+DXa?=
+ =?us-ascii?q?pwccXPz0kkCh7LjlCKpozhOzOayOQMuHWc4up7SO2vkHUqqx1xozezxscsjZ?=
+ =?us-ascii?q?PFhoQOyl/e7yl5z4E1JcOhRUN9fNWqE4NQujmHO4Z5Tc4uWWFltDsgxrEYtp?=
+ =?us-ascii?q?O3YjIGxIkhyhXCcfKIaZKI7QjmVOuJJDd4g29qd6ynihap9Eig1vX8Vs6p0F?=
+ =?us-ascii?q?ZWtiZFksfDtnQK1xHL9siIUOF9/ka82TaUzQzT9uFFLlw0larcMZIhxKI/lo?=
+ =?us-ascii?q?EPvkjZGy/2mUH2gLeXdkUi5Oeo9/zqbqjpq5KTLYN5ihzyPr4wlsGwH+g0KB?=
+ =?us-ascii?q?UCU3Ce+eum1b3j+UP5QK9Njv0ziqTZq43VJd8Aq66lAw5azoYj6xGlAzegy9?=
+ =?us-ascii?q?QXh2MLLF1CeBKZl4TpIU3BIOjkDfejhFShiClrx//BPrzhGJrNKmPOkK3/cr?=
+ =?us-ascii?q?lg605T0hYzwcpD6JJTD7ELOOjzVVPptNzEEh85NBS5w+PmCNV+0oMeXnmPD7?=
+ =?us-ascii?q?SCMKLTr1CI/PwgLPSNZIMPuDb9NuAv5+Tygn8hhV8dYa6p0IMQaHC9GfRmOE?=
+ =?us-ascii?q?OZbmDwjdgfCmoKpBQxQ/HqiFKYTT5ffWq9X6U55jsjEoKpEZ/DRpyxgLyGxC?=
+ =?us-ascii?q?q0BZNWZmFYBVCIDHjobJ6JW/kNaC2MJs9ujycEWqa6S4M70hGurgD6waJ9Lu?=
+ =?us-ascii?q?XI4i0YqY7j1N9t6u3Ijx4y8Tx1DsWd0mGLVGx7hGUISCIs3KB4oExy102P3r?=
+ =?us-ascii?q?R/g/xdDdZT/e9GUh8mNZ7AyOx3E8jyVRjcfteNU1umWs+pASw1Tt4oxt8OZE?=
+ =?us-ascii?q?F9G8+8gRzZwyWqBLoVnaSRBJMo6qLcw2TxJ8FlxnbC1akhiUQmQ8RWOW2lmK?=
+ =?us-ascii?q?F/7Q7TCJDNk0iCiaaqeroT3DTX+GeA02WOpkdYXxB0UanfWnAffETWp8zj5k?=
+ =?us-ascii?q?zeV7+uFagnMgxZxM6GK6tKbMDpjFpfSPf+PtTeYmWxm2G+BRaT3b6McoXqdH?=
+ =?us-ascii?q?sH3CnHC0gLjRoT/XCYOgg6HCuhpHjeDDN2H1L1f0zs6fV+qG+8TkIsywGKbk?=
+ =?us-ascii?q?th16e6+xIMi/ycUO4c0awauCg/rzV5B0i9393IBNqavQZhf7tTYck74FhZ0W?=
+ =?us-ascii?q?LVrQt9PoavL6p6nF4Rbxx3v1/y1xVwEohAitYlrHcrzAp0NKKZ30hMdy2X3Z?=
+ =?us-ascii?q?/uIL3bMGry8w61a67QxF7e1Mya+qAV6PQ3s1/jph2mFlI+83V71NlYy2aT55?=
+ =?us-ascii?q?vQAwoWSpLxUl069wJkqL7HYiky/Z/U2WdwPqmztz+Rk+4uUdUk1BujN/hYIa?=
+ =?us-ascii?q?qAXFvsHMoLDsyGMuEmm1G1KBkDObYB2rQzOpada/ae2KOtdN1llTaigHUPtJ?=
+ =?us-ascii?q?txyWqQ5iF8TajOxJ9DzPaGiFjUHwzghUus55ik0btPYisfSy/mk3Dp?=
+X-IPAS-Result: =?us-ascii?q?A2CBAAD+ghJc/wHyM5BjHAEBAQQBAQcEAQGBUwUBAQsBg?=
+ =?us-ascii?q?VopgWgng3yUeQUGgQgIJYkhjjOBejgBhEACgwMiNgcNAQMBAQEBAQECAWwog?=
+ =?us-ascii?q?jYkAYJhAQEBAQIBIxU0CgMQCw4KAgImAgJXBg0GAgEBF4JHP4F0BQinFYEvh?=
+ =?us-ascii?q?UCEcYELizEXeIEHgREnDIJfhDuDSoJXAokqggiEXDdRj3kJkVMGGIFciEaHK?=
+ =?us-ascii?q?JsWDCWBVisIAhgIIQ+DJ4InF447IQMwgQUBAYoKgj4BAQ?=
+Received: from tarius.tycho.ncsc.mil ([144.51.242.1])
+  by EMSM-GH1-UEA10.NCSC.MIL with ESMTP; 13 Dec 2018 16:10:02 +0000
+Received: from moss-pluto.infosec.tycho.ncsc.mil (moss-pluto.infosec.tycho.ncsc.mil [192.168.25.131])
+        by tarius.tycho.ncsc.mil (8.14.4/8.14.4) with ESMTP id wBDG9wDa024080;
+        Thu, 13 Dec 2018 11:09:58 -0500
+Subject: Re: overlayfs access checks on underlying layers
+To:     Vivek Goyal <vgoyal@redhat.com>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        Ondrej Mosnacek <omosnace@redhat.com>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Mark Salyzyn <salyzyn@android.com>,
+        Paul Moore <paul@paul-moore.com>, linux-kernel@vger.kernel.org,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, selinux@vger.kernel.org,
+        Daniel J Walsh <dwalsh@redhat.com>
+References: <20181204152248.GB21509@redhat.com>
+ <CAJfpegtFVvq286HAorGLg6ywMsfs51KqaQwFkcuV7Dtu8TLaLg@mail.gmail.com>
+ <20181204154243.GA16818@redhat.com>
+ <665ec6f3-f16d-681f-30d5-eface14c9808@tycho.nsa.gov>
+ <20181204161747.GC16818@redhat.com>
+ <e8841bf0-d6b8-0e7d-6a35-055a06441d30@tycho.nsa.gov>
+ <20181205134317.GA11337@redhat.com>
+ <8eb7f677-fd71-c31b-bfed-29fb7187d132@tycho.nsa.gov>
+ <20181211214821.GD17242@redhat.com>
+ <2e4d90ce-61e7-56b1-c161-4e5fb7236537@tycho.nsa.gov>
+ <20181213145813.GB4384@redhat.com>
+From:   Stephen Smalley <sds@tycho.nsa.gov>
+Message-ID: <846eb23e-1188-9e45-ee0a-676d26cc715e@tycho.nsa.gov>
+Date:   Thu, 13 Dec 2018 11:12:31 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 02de36d1-3b53-4601-6569-08d6611511dd
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Dec 2018 16:07:23.9141
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR15MB1497
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-13_03:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+In-Reply-To: <20181213145813.GB4384@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 12/13/18 9:58 AM, Vivek Goyal wrote:
+> On Wed, Dec 12, 2018 at 09:51:59AM -0500, Stephen Smalley wrote:
+>> On 12/11/18 4:48 PM, Vivek Goyal wrote:
+>>> On Thu, Dec 06, 2018 at 03:26:26PM -0500, Stephen Smalley wrote:
+>>>> On 12/5/18 8:43 AM, Vivek Goyal wrote:
+>>>>> On Tue, Dec 04, 2018 at 11:49:16AM -0500, Stephen Smalley wrote:
+>>>>>> On 12/4/18 11:17 AM, Vivek Goyal wrote:
+>>>>>>> On Tue, Dec 04, 2018 at 11:05:46AM -0500, Stephen Smalley wrote:
+>>>>>>>> On 12/4/18 10:42 AM, Vivek Goyal wrote:
+>>>>>>>>> On Tue, Dec 04, 2018 at 04:31:09PM +0100, Miklos Szeredi wrote:
+>>>>>>>>>> On Tue, Dec 4, 2018 at 4:22 PM Vivek Goyal <vgoyal@redhat.com> wrote:
+>>>>>>>>>>
+>>>>>>>>>>> Having said that, this still create little anomaly when mknod to client
+>>>>>>>>>>> is not allowed on context label. So a device file, which is on lower
+>>>>>>>>>>> and client can not open it for read/write on host, it can now be opened
+>>>>>>>>>>> for read/write because mounter will allow access. So why it is different
+>>>>>>>>>>> that regular copy up. Well, in regular copy up, we created a copy of
+>>>>>>>>>>> the original object and allowed writing to that object (cp --preserve=all)
+>>>>>>>>>>> model. But in case of device file, writes will go to same original
+>>>>>>>>>>> object. (And not a separate copy).
+>>>>>>>>>>
+>>>>>>>>>> That's true.
+>>>>>>>>>>
+>>>>>>>>>> In that sense copy up of special file should result in upper having
+>>>>>>>>>> the same label as of lower, right?
+>>>>>>>>>
+>>>>>>>>> I guess that might be reasonable (if this behavior is a concern). So even
+>>>>>>>>> after copy up, client will not be able to read/write a device if it was
+>>>>>>>>> not allowed on lower.
+>>>>>>>>>
+>>>>>>>>> Stephen, what do you think about retaining label of lower for device
+>>>>>>>>> files during copy up. What about socket/fifo.
+>>>>>>>>
+>>>>>>>> We don't check client task access to the upper inode label, only to the
+>>>>>>>> overlay, right?  So the client is still free to access the device through
+>>>>>>>> the overlay even if we preserve the lower inode label on the upper inode?
+>>>>>>>> What do we gain?
+>>>>>>>
+>>>>>>> That's only with latest code and Miklos said he will revert it for 4.20.
+>>>>>>>
+>>>>>>> IOW, I am assuming that we will continue to check access to a file
+>>>>>>> on upper in the context of mounter. Otherwise, client will be able to access
+>>>>>>> files on upper/ which even mounter can't access.
+>>>>>>
+>>>>>> I was assuming we're talking about the proposed solution, where we check
+>>>>>> client access to the overlay (unchanged), mounter access to lower
+>>>>>> (unchanged), copy-up if denied (new), mounter access to upper (new in the
+>>>>>> sense that previously we didn't copy-up on denials).
+>>>>>>
+>>>>>> In that situation, propagating the lower inode label to the upper inode only
+>>>>>> impacts the mounter checks, and in that case makes copy-up pointless - if it
+>>>>>> wasn't allowed to lower it won't be allowed to upper.  If it is allowed,
+>>>>>> then client task is free to access the device regardless as long as it has
+>>>>>> permissions to the overlay inode.  So I don't see what we gain by
+>>>>>> propagating the lower inode label to the upper inode in the context mount
+>>>>>> case, and it creates an inconsistency between special files and regular
+>>>>>> ones.
+>>>>>
+>>>>> If we agree on retaining lower label of lower device file on copy up, then
+>>>>> I am assuming we will change rule c) to copy up only non device files.
+>>>>> (because if you don't have access on lower, you will not have access
+>>>>> even after copy up).
+>>>>>
+>>>>> There are other paths where copy up happnes. Like link or when file
+>>>>> metadata (ownership, permissions, timestmap) changes. In those cases,
+>>>>> if we retain the lower label over copy up, it probably will help.
+>>>>>
+>>>>> IOW, just by creating a link to a device, one will not get access to
+>>>>> a device on upper which could not be accessed on lower.
+>>>>>
+>>>>> Device files are special anyway. In regular files we are creating a
+>>>>> copy and user writes to copy. But that's not the case with device
+>>>>> files. So I guess these will have to be treated differently.
+>>>>
+>>>> I don't understand what you are suggesting.  In the case of a context mount,
+>>>> the context specified by the mounter must be assigned to the upper inode for
+>>>> any files that are copied up.  Otherwise, changes to file data or metadata
+>>>> made through the overlay will be visible under two different security
+>>>> contexts simultaneously: the context of the overlay inode (i.e. the one
+>>>> specified by the mounter) and the context of the upper inode (in your
+>>>> suggestion, the context from the lower inode). This allows a violation of
+>>>> MAC policy where one can leak data through an overlay to an unauthorized
+>>>> context.
+>>>
+>>> Hi Stephen,
+>>>
+>>> Sorry, I don't understand this point of leaking data through overlay. Even
+>>> if we retain lower label on copy up (for device file), to open that file
+>>> process should have access on overlay context label and then mounter needs
+>>> to have access on upper inode (lower label). This is not different from
+>>> opening a file on lower. Just that metadata of this file on upper might
+>>> be different.
+>>>
+>>> Can you elaborate a bit more on how this is leaking data through overlay
+>>> mount. If it is, then why accessing file on lower is not equivalent of
+>>> leaking of data.
+>>
+>> In the container use case, retaining the lower label on copy-up for a
+>> context-mounted overlay permits a process in the container to leak the
+>> container data out to host files not labeled with the container label and
+>> thus potentially accessible to other containers or host processes.
+> 
+>> The
+>> container process appears to just be writing to files labeled with the
+>> container label via the overlay, but the written data and/or metadata is
+>> directly accessible through the lower label, which is likely readable to
+>> all/many containers and host processes.
+>>
+>> In the multi-level security (MLS) use case, an analogy would a situation
+>> where you have an unclassified lower dir with some content to be shared
+>> read-only across all levels, and an overlay is context-mounted at each level
+>> with a corresponding upper dir and work dir private to that level.  If a
+>> client process at secret performs a write to a file via the secret overlay,
+>> and if the written data is stored in a file in the upper dir that inherits
+>> the label from the lower file (unclassified), then the secret process can
+>> leak data to unclassified processes at will, violating the MLS policy.
+> 
+> For the case of devices, its already happening. One might change metadata
+> of a device (hence trigger copy up). Now all writes to upper device file
+> from secret process still go to same underlying device and are still
+> readable from lower device file.
 
+This is an argument for not copying up device files IMHO, not for 
+preserving the lower label on them.
 
-> On Dec 13, 2018, at 7:25 AM, Peter Zijlstra <peterz@infradead.org> wrote:
->=20
-> On Wed, Dec 12, 2018 at 06:56:11PM +0000, Song Liu wrote:
->>=20
->>=20
->>> On Dec 12, 2018, at 10:05 AM, Peter Zijlstra <peterz@infradead.org> wro=
-te:
->>>=20
->>> On Wed, Dec 12, 2018 at 05:09:17PM +0000, Song Liu wrote:
->>>>> And while this tracks the bpf kallsyms, it does not do all kallsyms.
->>>>>=20
->>>>> .... Oooh, I see the problem, everybody is doing their own custom
->>>>> kallsym_{add,del}() thing, instead of having that in generic code :-(
->>>>>=20
->>>>> This, for example, doesn't track module load/unload nor ftrace
->>>>> trampolines, even though both affect kallsyms.
->>>>=20
->>>> I think we can use PERF_RECORD_MMAP(or MMAP2) for module load/unload.=
-=20
->>>> That could be separate sets of patches.=20
->>>=20
->>> So I would actually like to move bpf_lock/bpf_kallsyms/bpf_tree +
->>> bpf_prog_kallsyms_*() + __bpf_address_lookup() into kernel/kallsyms.c
->>> and also have ftrace use that.
->>>=20
->>> Because currently the ftrace stuff is otherwise invisible.
->>>=20
->>> A generic kallsym register/unregister for any JIT.
->>=20
->> I guess this is _not_ a requirement for this patchset? BPF program has
->> special data (id, sub_id, tag) that we need PERF_RECORD_BPF_EVENT. So=20
->> this patchset should be orthogonal to the generic kallsym framework?
->=20
-> Well, it is a question of ABI. I don't like mixing the kallsym updates
-> with the BPF updates.
+Even just allowing the secret process to trigger the creation of an 
+unclassified file through copy-up is a violation of the MLS policy.  It 
+doesn't require writing to the file itself.
 
-I have been always thinking the two is one update: "mapping this BPF=20
-program to this ksym".=20
-
-On the other hand, if we really want to separate the two. I guess we=20
-need two PERF_RECORD_*:
-
-       /*
-        * PERF_RECORD_KSYM_ADD/DEL or MMAP3/MUNMAP3
-        *
-        * struct {
-        *      struct perf_event_header header;
-        *      u64                             addr;
-        *      u64                             len;
-        *      char                            name[];
-        *      struct sample_id                sample_id;
-        * };
-        */
-
-and
-
-       /*
-        * PERF_RECORD_BPF_EVENT
-        *
-        * struct {
-        *      struct perf_event_header header;
-        *      u32                             type;
-        *      u32                             flags;
-        *      u32                             id; // prog_id or other id
-        *      u32                             sub_id; // subprog id
-        *
-        *      // for bpf_prog types, bpf prog or subprog
-        *      u8                              tag[BPF_TAG_SIZE];
-        *      struct sample_id                sample_id;
-        * };
-        */
-
-In this case, PERF_RECORD_BPF_EVENT is only needed when user want
-annotation. When annotation is needed, kernel will generate both
-record for each BPF program load/unload. Then, user space will do=20
-some work to match the two.=20
-
-Personally, I think this is not as clean as current version. But
-it would work.=20
-
-Would you recommend we go on this direction?=20
-
-Thanks,
-Song
-
-
+> 
+> In fact, for the case of devices, that is even more of a reason to retain
+> the label same as lower. Otherwise upper device node is leaking data
+> of a secret process which can be accessed using device at lower/ (lower's
+> label is readable).
+> 
+>>
+>> The difference with the lower is that it is read-only and the mounter is
+>> explicitly choosing to export it under the new context for reading (but not
+>> for writing).
+> 
+> If we retain the label and if lower is not writable, then upper deivce
+> node is not being written to as well. So from label point of view, lower
+> and upper inode are not different. Only difference is that some metadata
+> of upper inode might be different.
+> 
+> Thanks
+> Vivek
+>>
+>> As a side note, the actual checking during a context mount isn't as granular
+>> as we might like here, since there is no overlay-specific logic and thus no
+>> individual checking of the lower, upper, and work directory labels.
 
