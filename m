@@ -2,118 +2,96 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7209C67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 17:21:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 926A8C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 17:22:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A6BF20870
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 17:21:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A6BF20870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
+	by mail.kernel.org (Postfix) with ESMTP id 5AABD20870
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 17:22:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="bDmPD71u"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5AABD20870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729721AbeLMRV5 (ORCPT
+        id S1729733AbeLMRWA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 12:21:57 -0500
-Received: from vmicros1.altlinux.org ([194.107.17.57]:37358 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729196AbeLMRV4 (ORCPT
+        Thu, 13 Dec 2018 12:22:00 -0500
+Received: from us01smtprelay-2.synopsys.com ([198.182.60.111]:38932 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729196AbeLMRV6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 12:21:56 -0500
-Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id E983A72CC71;
-        Thu, 13 Dec 2018 20:21:52 +0300 (MSK)
-Received: by mua.local.altlinux.org (Postfix, from userid 508)
-        id E0C56964E82; Thu, 13 Dec 2018 20:21:52 +0300 (MSK)
-Date:   Thu, 13 Dec 2018 20:21:52 +0300
-From:   "Dmitry V. Levin" <ldv@altlinux.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Mark Salter <msalter@redhat.com>,
-        Aurelien Jacquiot <jacquiot.aurelien@gmail.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@redhat.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Elvira Khabirova <lineprinter@altlinux.org>,
-        Eugene Syromyatnikov <esyr@redhat.com>,
-        linux-c6x-dev@linux-c6x.org, linux-audit@redhat.com
-Subject: [PATCH v6 06/27] c6x: define syscall_get_arch()
-Message-ID: <20181213172152.GF6024@altlinux.org>
-References: <20181213171833.GA5240@altlinux.org>
+        Thu, 13 Dec 2018 12:21:58 -0500
+Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id B2F1010C1804;
+        Thu, 13 Dec 2018 09:21:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1544721717; bh=iM3tty5sEBIwEcW2k042XW5kanV2CwYKjIIsWapDXeY=;
+        h=From:To:CC:Subject:Date:References:From;
+        b=bDmPD71uiZGTx2G+zmmnIkjKdF/j5jAhbVRtJQl5yUymM1VC6Vs1uKts8MqNozj/w
+         0mm0815wOkZ40DeGT7sBx0TDcNTvyqAicFDe0UdVPqCNxghBI9AV8YEsrzCy1n4irC
+         l7jI3Q00EkebGLOZBfi5kHmg9Cnwa99buHavz+1HQvigtSdySiT60DqkffX1ogL1gw
+         +tvvIEGERC+3hXGqHXxdeebu8fD2Sn4V7JRS9xQUYE2X0JPjVQxDI2mt20GEEtI8Am
+         oFlal6nlID/Ot/MHrb22Ot+U8a/FI3ZMs+WbnDdD4K/QdtyGDl/5fKjEAX0PoMychN
+         i3m/AiN+G6FZw==
+Received: from us01wehtc1.internal.synopsys.com (us01wehtc1-vip.internal.synopsys.com [10.12.239.236])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 9C235383E;
+        Thu, 13 Dec 2018 09:21:57 -0800 (PST)
+Received: from US01WEMBX2.internal.synopsys.com ([fe80::e4b6:5520:9c0d:250b])
+ by us01wehtc1.internal.synopsys.com ([::1]) with mapi id 14.03.0415.000; Thu,
+ 13 Dec 2018 09:21:57 -0800
+From:   Vineet Gupta <vineet.gupta1@synopsys.com>
+To:     Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        "linux-snps-arc@lists.infradead.org" 
+        <linux-snps-arc@lists.infradead.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Alexey Brodkin" <alexey.brodkin@synopsys.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Ingo Molnar" <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>
+Subject: Re: [PATCH v2 1/4] ARC: perf: trivial code cleanup
+Thread-Topic: [PATCH v2 1/4] ARC: perf: trivial code cleanup
+Thread-Index: AQHUkwTP5/gt24tZc0icQ7a9STUNcQ==
+Date:   Thu, 13 Dec 2018 17:21:57 +0000
+Message-ID: <C2D7FE5348E1B147BCA15975FBA23075014641F684@US01WEMBX2.internal.synopsys.com>
+References: <20181213165621.20817-1-Eugeniy.Paltsev@synopsys.com>
+ <20181213165621.20817-2-Eugeniy.Paltsev@synopsys.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.144.199.106]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syscall_get_arch() is required to be implemented on all architectures
-in addition to already implemented syscall_get_nr(),
-syscall_get_arguments(), syscall_get_error(), and
-syscall_get_return_value() functions in order to extend the generic
-ptrace API with PTRACE_GET_SYSCALL_INFO request.
-
-Acked-by: Mark Salter <msalter@redhat.com>
-Cc: Aurelien Jacquiot <jacquiot.aurelien@gmail.com>
-Cc: Paul Moore <paul@paul-moore.com>
-Cc: Eric Paris <eparis@redhat.com>
-Cc: Oleg Nesterov <oleg@redhat.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Elvira Khabirova <lineprinter@altlinux.org>
-Cc: Eugene Syromyatnikov <esyr@redhat.com>
-Cc: linux-c6x-dev@linux-c6x.org
-Cc: linux-audit@redhat.com
-Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
----
-
-Notes:
-    v6: added Acked-by
-    v5: added Cc
-
- arch/c6x/include/asm/syscall.h | 7 +++++++
- include/uapi/linux/audit.h     | 2 ++
- 2 files changed, 9 insertions(+)
-
-diff --git a/arch/c6x/include/asm/syscall.h b/arch/c6x/include/asm/syscall.h
-index ae2be315ee9c..39dbd1ef994c 100644
---- a/arch/c6x/include/asm/syscall.h
-+++ b/arch/c6x/include/asm/syscall.h
-@@ -11,6 +11,7 @@
- #ifndef __ASM_C6X_SYSCALL_H
- #define __ASM_C6X_SYSCALL_H
- 
-+#include <uapi/linux/audit.h>
- #include <linux/err.h>
- #include <linux/sched.h>
- 
-@@ -120,4 +121,10 @@ static inline void syscall_set_arguments(struct task_struct *task,
- 	}
- }
- 
-+static inline int syscall_get_arch(void)
-+{
-+	return IS_ENABLED(CONFIG_CPU_BIG_ENDIAN)
-+		? AUDIT_ARCH_C6XBE : AUDIT_ARCH_C6X;
-+}
-+
- #endif /* __ASM_C6X_SYSCALLS_H */
-diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
-index bedf3bf54c3a..72aeea0a740d 100644
---- a/include/uapi/linux/audit.h
-+++ b/include/uapi/linux/audit.h
-@@ -381,6 +381,8 @@ enum {
- #define AUDIT_ARCH_ARCV2BE	(EM_ARCV2)
- #define AUDIT_ARCH_ARM		(EM_ARM|__AUDIT_ARCH_LE)
- #define AUDIT_ARCH_ARMEB	(EM_ARM)
-+#define AUDIT_ARCH_C6X		(EM_TI_C6000|__AUDIT_ARCH_LE)
-+#define AUDIT_ARCH_C6XBE	(EM_TI_C6000)
- #define AUDIT_ARCH_CRIS		(EM_CRIS|__AUDIT_ARCH_LE)
- #define AUDIT_ARCH_FRV		(EM_FRV)
- #define AUDIT_ARCH_I386		(EM_386|__AUDIT_ARCH_LE)
--- 
-ldv
+On 12/13/18 8:56 AM, Eugeniy Paltsev wrote:=0A=
+> * Use BIT(), lower_32_bits(), upper_32_bits() macroses,=0A=
+>   fix code style violations.=0A=
+> * Use u32, u64, s64 instead of uint32_t, uint64_t, int64_t=0A=
+> * Fix description comment as this code doesn't belong only to=0A=
+>   ARC700 anymore.=0A=
+> * Use SPDX License Identifier.=0A=
+> * Remove useless ifdefs. ifdef around 'arc_pmu_match' structure=0A=
+>   declaration is useless as we refer to 'arc_pmu_match' in=0A=
+>   several places which aren't guarded with ifdef. Nevertheless=0A=
+>   'ARC' option selects 'OF' unconditionally so we can simply=0A=
+>   get rid of this ifdef.=0A=
+>=0A=
+> Acked-by: Vineet Gupta <vgupta@synopsys.com>=0A=
+> Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>=0A=
+=0A=
+Applied !=0A=
+=0A=
+Thx,=0A=
+-Vineet=0A=
