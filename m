@@ -4,52 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,T_MIXED_ES,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3539EC67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:31:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EAB7C67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:31:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F04BB20879
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:31:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4CBD720873
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:31:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544675500;
-	bh=mPAtKeE437UPbYAkWlvpOcvmMwyq8vL+8s5hce/ZBuA=;
+	s=default; t=1544675503;
+	bh=6B500M820Lqe7C+CH2xLxG6Ty4WpGqC5VFv+g8BPRSM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=vGIicBG2H75us5DhTH39pYMq7oqfMZENAUUHADFECx7zXqIz+wyZlGaEFS2et+huL
-	 q+o3CbeXIjDNfyDsRZcivkPwBuHJ6sSFOGjC86+WsYQJ49RvJfY7wE3YsEZXv6Ve5J
-	 bAu4hS3HHtJlx88sc91hRYIqIQxffR24hlsXogY8=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F04BB20879
+	b=E5n1ZAOcDndpqbzUU59y/6K4kYXe9mhDK7VeCZZheNZ9J8LwHBdWpwLLVqNABCUiX
+	 fYJjhOv7gVl/G0WjuckEHnuC9W13mpSG6xklKhHIyzjDjGGH/ilkI6W6JSRtzgU3XX
+	 Q6JDyJrj6enStBbCE2fS/AjBZR+aObUtX2eGDRN0=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4CBD720873
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728823AbeLMEbj (ORCPT
+        id S1728847AbeLMEbm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 23:31:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44498 "EHLO mail.kernel.org"
+        Wed, 12 Dec 2018 23:31:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44560 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728800AbeLMEbf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 23:31:35 -0500
+        id S1727856AbeLMEbj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 23:31:39 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1893A20672;
-        Thu, 13 Dec 2018 04:31:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 65C4B20672;
+        Thu, 13 Dec 2018 04:31:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544675494;
-        bh=mPAtKeE437UPbYAkWlvpOcvmMwyq8vL+8s5hce/ZBuA=;
+        s=default; t=1544675498;
+        bh=6B500M820Lqe7C+CH2xLxG6Ty4WpGqC5VFv+g8BPRSM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=r8jDocwr2XTj5Lsu0Z9n9WyhMXEKf7ynkiePe8QxAI4fygGOfSK1QsYkf9gF5cwR4
-         BWsY8KQHOjCAy2aN2+rtgND7S3B8Y3lwvUguv91hPzQDvXrwUvFIi8jtXxXxQIv3eK
-         Zu94qP7pKxSovi6e4mAU8xRgGPQEmPACB6M0oaWY=
+        b=gqDVsuNET/RcfYCnamRwCoFfRUwNKYd7+MLaoPINv70Ho1dYrUDfGIZefL6pmGpVX
+         j6hvF5COw6t7n1vZCil7mI+KrDR0eSH19wkmd+GLy0waBhbwFPGMZvJpLQuMi0EqpK
+         H9zdnPcH4D0tFWOxVpbguywwXCKtztxa8So/jgNM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Su Yanjun <suyj.fnst@cn.fujitsu.com>,
+Cc:     Eran Ben Elisha <eranbe@mellanox.com>,
+        Tariq Toukan <tariqt@mellanox.com>,
         "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 24/41] net: 8139cp: fix a BUG triggered by changing mtu with network traffic
-Date:   Wed, 12 Dec 2018 23:30:37 -0500
-Message-Id: <20181213043054.75891-24-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
+        linux-rdma@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 27/41] net/mlx4_en: Change min MTU size to ETH_MIN_MTU
+Date:   Wed, 12 Dec 2018 23:30:40 -0500
+Message-Id: <20181213043054.75891-27-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181213043054.75891-1-sashal@kernel.org>
 References: <20181213043054.75891-1-sashal@kernel.org>
@@ -61,146 +63,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Su Yanjun <suyj.fnst@cn.fujitsu.com>
+From: Eran Ben Elisha <eranbe@mellanox.com>
 
-[ Upstream commit a5d4a89245ead1f37ed135213653c5beebea4237 ]
+[ Upstream commit 24be19e47779d604d1492c114459dca9a92acf78 ]
 
-When changing mtu many times with traffic, a bug is triggered:
+NIC driver minimal MTU size shall be set to ETH_MIN_MTU, as defined in
+the RFC791 and in the network stack. Remove old mlx4_en only define for
+it, which was set to wrong value.
 
-[ 1035.684037] kernel BUG at lib/dynamic_queue_limits.c:26!
-[ 1035.684042] invalid opcode: 0000 [#1] SMP
-[ 1035.684049] Modules linked in: loop binfmt_misc 8139cp(OE) macsec
-tcp_diag udp_diag inet_diag unix_diag af_packet_diag netlink_diag tcp_lp
-fuse uinput xt_CHECKSUM iptable_mangle ipt_MASQUERADE
-nf_nat_masquerade_ipv4 iptable_nat nf_nat_ipv4 nf_nat nf_conntrack_ipv4
-nf_defrag_ipv4 xt_conntrack nf_conntrack ipt_REJECT nf_reject_ipv4 tun
-bridge stp llc ebtable_filter ebtables ip6table_filter devlink
-ip6_tables iptable_filter sunrpc snd_hda_codec_generic snd_hda_intel
-snd_hda_codec snd_hda_core snd_hwdep ppdev snd_seq iosf_mbi crc32_pclmul
-parport_pc snd_seq_device ghash_clmulni_intel parport snd_pcm
-aesni_intel joydev lrw snd_timer virtio_balloon sg gf128mul glue_helper
-ablk_helper cryptd snd soundcore i2c_piix4 pcspkr ip_tables xfs
-libcrc32c sr_mod sd_mod cdrom crc_t10dif crct10dif_generic ata_generic
-[ 1035.684102]  pata_acpi virtio_console qxl drm_kms_helper syscopyarea
-sysfillrect sysimgblt floppy fb_sys_fops crct10dif_pclmul
-crct10dif_common ttm crc32c_intel serio_raw ata_piix drm libata 8139too
-virtio_pci drm_panel_orientation_quirks virtio_ring virtio mii dm_mirror
-dm_region_hash dm_log dm_mod [last unloaded: 8139cp]
-[ 1035.684132] CPU: 9 PID: 25140 Comm: if-mtu-change Kdump: loaded
-Tainted: G           OE  ------------ T 3.10.0-957.el7.x86_64 #1
-[ 1035.684134] Hardware name: Red Hat KVM, BIOS 0.5.1 01/01/2011
-[ 1035.684136] task: ffff8f59b1f5a080 ti: ffff8f5a2e32c000 task.ti:
-ffff8f5a2e32c000
-[ 1035.684149] RIP: 0010:[<ffffffffba3a40d0>]  [<ffffffffba3a40d0>]
-dql_completed+0x180/0x190
-[ 1035.684162] RSP: 0000:ffff8f5a75483e50  EFLAGS: 00010093
-[ 1035.684162] RAX: 00000000000000c2 RBX: ffff8f5a6f91c000 RCX:
-0000000000000000
-[ 1035.684162] RDX: 0000000000000000 RSI: 0000000000000184 RDI:
-ffff8f599fea3ec0
-[ 1035.684162] RBP: ffff8f5a75483ea8 R08: 00000000000000c2 R09:
-0000000000000000
-[ 1035.684162] R10: 00000000000616ef R11: ffff8f5a75483b56 R12:
-ffff8f599fea3e00
-[ 1035.684162] R13: 0000000000000001 R14: 0000000000000000 R15:
-0000000000000184
-[ 1035.684162] FS:  00007fa8434de740(0000) GS:ffff8f5a75480000(0000)
-knlGS:0000000000000000
-[ 1035.684162] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[ 1035.684162] CR2: 00000000004305d0 CR3: 000000024eb66000 CR4:
-00000000001406e0
-[ 1035.684162] Call Trace:
-[ 1035.684162]  <IRQ>
-[ 1035.684162]  [<ffffffffc08cbaf8>] ? cp_interrupt+0x478/0x580 [8139cp]
-[ 1035.684162]  [<ffffffffba14a294>]
-__handle_irq_event_percpu+0x44/0x1c0
-[ 1035.684162]  [<ffffffffba14a442>] handle_irq_event_percpu+0x32/0x80
-[ 1035.684162]  [<ffffffffba14a4cc>] handle_irq_event+0x3c/0x60
-[ 1035.684162]  [<ffffffffba14db29>] handle_fasteoi_irq+0x59/0x110
-[ 1035.684162]  [<ffffffffba02e554>] handle_irq+0xe4/0x1a0
-[ 1035.684162]  [<ffffffffba7795dd>] do_IRQ+0x4d/0xf0
-[ 1035.684162]  [<ffffffffba76b362>] common_interrupt+0x162/0x162
-[ 1035.684162]  <EOI>
-[ 1035.684162]  [<ffffffffba0c2ae4>] ? __wake_up_bit+0x24/0x70
-[ 1035.684162]  [<ffffffffba1e46f5>] ? do_set_pte+0xd5/0x120
-[ 1035.684162]  [<ffffffffba1b64fb>] unlock_page+0x2b/0x30
-[ 1035.684162]  [<ffffffffba1e4879>] do_read_fault.isra.61+0x139/0x1b0
-[ 1035.684162]  [<ffffffffba1e9134>] handle_pte_fault+0x2f4/0xd10
-[ 1035.684162]  [<ffffffffba1ebc6d>] handle_mm_fault+0x39d/0x9b0
-[ 1035.684162]  [<ffffffffba76f5e3>] __do_page_fault+0x203/0x500
-[ 1035.684162]  [<ffffffffba76f9c6>] trace_do_page_fault+0x56/0x150
-[ 1035.684162]  [<ffffffffba76ef42>] do_async_page_fault+0x22/0xf0
-[ 1035.684162]  [<ffffffffba76b788>] async_page_fault+0x28/0x30
-[ 1035.684162] Code: 54 c7 47 54 ff ff ff ff 44 0f 49 ce 48 8b 35 48 2f
-9c 00 48 89 77 58 e9 fe fe ff ff 0f 1f 80 00 00 00 00 41 89 d1 e9 ef fe
-ff ff <0f> 0b 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 55 8d 42 ff 48
-[ 1035.684162] RIP  [<ffffffffba3a40d0>] dql_completed+0x180/0x190
-[ 1035.684162]  RSP <ffff8f5a75483e50>
-
-It's not the same as in 7fe0ee09 patch described.
-As 8139cp uses shared irq mode, other device irq will trigger
-cp_interrupt to execute.
-
-cp_change_mtu
- -> cp_close
- -> cp_open
-
-In cp_close routine  just before free_irq(), some interrupt may occur.
-In my environment, cp_interrupt exectutes and IntrStatus is 0x4,
-exactly TxOk. That will cause cp_tx to wake device queue.
-
-As device queue is started, cp_start_xmit and cp_open will run at same
-time which will cause kernel BUG.
-
-For example:
-[#] for tx descriptor
-
-At start:
-
-[#][#][#]
-num_queued=3
-
-After cp_init_hw->cp_start_hw->netdev_reset_queue:
-
-[#][#][#]
-num_queued=0
-
-When 8139cp starts to work then cp_tx will check
-num_queued mismatchs the complete_bytes.
-
-The patch will check IntrMask before check IntrStatus in cp_interrupt.
-When 8139cp interrupt is disabled, just return.
-
-Signed-off-by: Su Yanjun <suyj.fnst@cn.fujitsu.com>
+Fixes: b80f71f5816f ("ethernet/mellanox: use core min/max MTU checking")
+Signed-off-by: Eran Ben Elisha <eranbe@mellanox.com>
+Signed-off-by: Tariq Toukan <tariqt@mellanox.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/realtek/8139cp.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/net/ethernet/mellanox/mlx4/en_netdev.c | 4 ++--
+ drivers/net/ethernet/mellanox/mlx4/mlx4_en.h   | 1 -
+ 2 files changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/ethernet/realtek/8139cp.c b/drivers/net/ethernet/realtek/8139cp.c
-index e7ab23e87de2..d1e88712a275 100644
---- a/drivers/net/ethernet/realtek/8139cp.c
-+++ b/drivers/net/ethernet/realtek/8139cp.c
-@@ -571,6 +571,7 @@ static irqreturn_t cp_interrupt (int irq, void *dev_instance)
- 	struct cp_private *cp;
- 	int handled = 0;
- 	u16 status;
-+	u16 mask;
+diff --git a/drivers/net/ethernet/mellanox/mlx4/en_netdev.c b/drivers/net/ethernet/mellanox/mlx4/en_netdev.c
+index faa4bd21f148..0fb85d71c11b 100644
+--- a/drivers/net/ethernet/mellanox/mlx4/en_netdev.c
++++ b/drivers/net/ethernet/mellanox/mlx4/en_netdev.c
+@@ -3505,8 +3505,8 @@ int mlx4_en_init_netdev(struct mlx4_en_dev *mdev, int port,
+ 		dev->gso_partial_features = NETIF_F_GSO_UDP_TUNNEL_CSUM;
+ 	}
  
- 	if (unlikely(dev == NULL))
- 		return IRQ_NONE;
-@@ -578,6 +579,10 @@ static irqreturn_t cp_interrupt (int irq, void *dev_instance)
+-	/* MTU range: 46 - hw-specific max */
+-	dev->min_mtu = MLX4_EN_MIN_MTU;
++	/* MTU range: 68 - hw-specific max */
++	dev->min_mtu = ETH_MIN_MTU;
+ 	dev->max_mtu = priv->max_mtu;
  
- 	spin_lock(&cp->lock);
+ 	mdev->pndev[port] = dev;
+diff --git a/drivers/net/ethernet/mellanox/mlx4/mlx4_en.h b/drivers/net/ethernet/mellanox/mlx4/mlx4_en.h
+index 09f4764a3f39..bdd87438a354 100644
+--- a/drivers/net/ethernet/mellanox/mlx4/mlx4_en.h
++++ b/drivers/net/ethernet/mellanox/mlx4/mlx4_en.h
+@@ -157,7 +157,6 @@
+ #define HEADER_COPY_SIZE       (128 - NET_IP_ALIGN)
+ #define MLX4_LOOPBACK_TEST_PAYLOAD (HEADER_COPY_SIZE - ETH_HLEN)
  
-+	mask = cpr16(IntrMask);
-+	if (!mask)
-+		goto out_unlock;
-+
- 	status = cpr16(IntrStatus);
- 	if (!status || (status == 0xFFFF))
- 		goto out_unlock;
+-#define MLX4_EN_MIN_MTU		46
+ /* VLAN_HLEN is added twice,to support skb vlan tagged with multiple
+  * headers. (For example: ETH_P_8021Q and ETH_P_8021AD).
+  */
 -- 
 2.19.1
 
