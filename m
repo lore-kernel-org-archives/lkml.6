@@ -2,155 +2,376 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEE77C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:09:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56D0DC67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:09:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75C7D208E7
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:09:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544702987;
-	bh=GRoAKM/hcyxUT2KQatksz7ANOJqDf+1CEFvvQhDILww=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=ZyV/tmcsONMC37XxX+bui2rDa/HuaiS/A1YHaDX9pJoc31/7gQ9kurV0czcfuPwkx
-	 0dkIuhUc0qTX5KnzUo2GTigvqXBlqJvXXr0SXXt1apUiL2x+HN3sTYLIfkuEFMpthi
-	 ybjLx30MXT+E627OoUJqUdQ8UNIs8d5OjqZ9EZzU=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75C7D208E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 0622220851
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:09:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nokia.onmicrosoft.com header.i=@nokia.onmicrosoft.com header.b="qXmHUKxG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0622220851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nokia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729072AbeLMMJj (ORCPT
+        id S1729105AbeLMMJv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 07:09:39 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50190 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728962AbeLMMJK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 07:09:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=NfmUPjgCUL+KnJXJY/1GlR0M79cR7GSAAm6TSpd2mQA=; b=GJOYULWq6YZr
-        GNjPplhG9+uIL2UF02jvbOAAWTNKgWHSQJ/RvNnYn8bxyypavhrBAdmRFaSj30xW2A0NMUPTTXK+7
-        tK4s/GpMaagDRD3/FGGfUOYbTdIoobHjrHOBrvdtCqjV0ZkUIf4QcRsgHTkHb7eHIGG1kuM9Kg82i
-        rWNKc=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gXPne-0000zJ-G3; Thu, 13 Dec 2018 12:09:06 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 3290711254D1; Thu, 13 Dec 2018 12:09:06 +0000 (GMT)
-From:   Mark Brown <broonie@kernel.org>
-To:     Claudiu Beznea <claudiu.beznea@microchip.com>
-Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Applied "regulator: act8945a-regulator: unlock expert registers" to the regulator tree
-In-Reply-To: 
-X-Patchwork-Hint: ignore
-Message-Id: <20181213120906.3290711254D1@debutante.sirena.org.uk>
-Date:   Thu, 13 Dec 2018 12:09:06 +0000 (GMT)
+        Thu, 13 Dec 2018 07:09:51 -0500
+Received: from mail-eopbgr60130.outbound.protection.outlook.com ([40.107.6.130]:8992
+        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729088AbeLMMJs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 07:09:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nokia.onmicrosoft.com;
+ s=selector1-nokia-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cgvQ9Wf0CFqiBszG3NIR0ORzd1Qp2hk/cYM0s9AxuEk=;
+ b=qXmHUKxGWei+UOpH2ylvnMux60rEIyfjaD5Y/HWUw6J4DWmVZLfTiiySIHceWqihY155Yd7bV8KqmI7QrfjtRu+3/PEk67tL43zrJ44Mmbo44MqmQpYg8Arnf1ry3eZJr7teNbZ/tPqZMNgS764G0hna4lIeBgxwnoGh2hLrRNM=
+Received: from HE1PR07MB3434.eurprd07.prod.outlook.com (10.170.247.141) by
+ HE1PR07MB4314.eurprd07.prod.outlook.com (20.176.167.11) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1425.9; Thu, 13 Dec 2018 12:09:38 +0000
+Received: from HE1PR07MB3434.eurprd07.prod.outlook.com
+ ([fe80::3073:f1ea:c220:6f63]) by HE1PR07MB3434.eurprd07.prod.outlook.com
+ ([fe80::3073:f1ea:c220:6f63%2]) with mapi id 15.20.1446.006; Thu, 13 Dec 2018
+ 12:09:38 +0000
+From:   "Adamski, Krzysztof (Nokia - PL/Wroclaw)" 
+        <krzysztof.adamski@nokia.com>
+To:     Wolfram Sang <wsa@the-dreams.de>
+CC:     "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Tobias Jordan <Tobias.Jordan@elektrobit.com>,
+        Peter Rosin <peda@axentia.se>,
+        "Sverdlin, Alexander (Nokia - DE/Ulm)" <alexander.sverdlin@nokia.com>
+Subject: [PATCH v2] i2c: axxia: support sequence command mode
+Thread-Topic: [PATCH v2] i2c: axxia: support sequence command mode
+Thread-Index: AQHUkty4Wm0dhdK350uQLPiB4SOUtg==
+Date:   Thu, 13 Dec 2018 12:09:38 +0000
+Message-ID: <20181213120926.GA10479@localhost.localdomain>
+References: <20181211200435.abk3jdsmltz7c26w@ninjato>
+In-Reply-To: <20181211200435.abk3jdsmltz7c26w@ninjato>
+Accept-Language: pl-PL, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: HE1PR05CA0300.eurprd05.prod.outlook.com
+ (2603:10a6:7:93::31) To HE1PR07MB3434.eurprd07.prod.outlook.com
+ (2603:10a6:7:2c::13)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=krzysztof.adamski@nokia.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [131.228.32.191]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;HE1PR07MB4314;6:9pe2h8MRhFkUQF2CJ86OR5VKinBnifZYF0JsgSLakiNm3UBAc8klRcVKu1GypotZZiVpyEvc/OjwiI2Ol2G+iR7ChqHYzQXGvZMnScYwabEb6htSMWHmDXnRsiCNA4+Au0gKx53XJL6+wu6rv6LWZbmAVEeIFqhBqoL5DgnXROdWKdrlTqjOGRUA6cbi8H6WxfaxCv/W2LB4pp0MYs84CwTBsLjBwAsKmkJxVdD+xHNkfSVP0tFbGCO6N7uyj30/I5TDCuMcOLPRvfZ7Ntccg7DmlSCmM8Il/0zlqkej8zG1E/EcrzR1sSbeuzBx3hMK+fKRp99GaBp/ZF+6Q8EjiiWXMk7RzqyxwhZrNeSdMHJkdHk/16E1YKfIBCJOSGlnfA2t99Sv8Awq4ztqrCFZrWk9U1wikHnX+y9o0tBYQ9l7ZDHWpZfuHILQWYuXHrasj0A9gbkt7n88QHCg7hKtYA==;5:GnvW4/gupsoUMT8P5kt3U+EAtHdxx46yrBWuo7n+BUy7wmpoA200HF8qFnSEOxwszP0w5LgQgmaju1SJHNcXxPzWUpuT1gDZ1RiqPHHBGaKydn2kmDGs+OZCRnMS40qELQSTebSvFl9AhtDbTp6kqmSPfTyyu0nUWjjAUTBGZRs=;7:qWxpvBrPzWzlNOFhxIq42Ml8YlpOdoFSBgB9qUkotn7jNxdUvGSCx0dZaqTuwcJHEx9uxYqTJwSnPOO+bHbPfzji+pPw45S+qm4YodU3+EhB2Ys1md5JxZ45mryRFe1Cuz7O/UQo1ArubpzT++4tzQ==
+x-ms-office365-filtering-correlation-id: c1de3ca9-16ef-431f-2b62-08d660f3daaf
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:HE1PR07MB4314;
+x-ms-traffictypediagnostic: HE1PR07MB4314:
+x-microsoft-antispam-prvs: <HE1PR07MB431439BD23DC386E447B0A98EFA00@HE1PR07MB4314.eurprd07.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(11241501185)(806100)(6040522)(2401047)(8121501046)(5005006)(3002001)(3231475)(944501520)(52105112)(10201501046)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123562045)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:HE1PR07MB4314;BCL:0;PCL:0;RULEID:;SRVR:HE1PR07MB4314;
+x-forefront-prvs: 088552DE73
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(346002)(396003)(366004)(136003)(39860400002)(199004)(189003)(33656002)(14454004)(6512007)(551934003)(5660300001)(53936002)(33896004)(11346002)(81166006)(76176011)(7736002)(305945005)(9686003)(99286004)(446003)(2906002)(52116002)(106356001)(81156014)(8676002)(6436002)(14444005)(8936002)(105586002)(256004)(316002)(71190400001)(6486002)(68736007)(54906003)(1076002)(575784001)(4326008)(71200400001)(66066001)(6506007)(6116002)(3846002)(61506002)(478600001)(386003)(6916009)(26005)(86362001)(97736004)(476003)(102836004)(186003)(25786009)(486006)(107886003);DIR:OUT;SFP:1102;SCL:1;SRVR:HE1PR07MB4314;H:HE1PR07MB3434.eurprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nokia.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: qKX86rYplxf9ZolEn6DgJXZXBgYhzT1HZ/AxFGs5GGM24nbkUgtHUh5fjnGeO6Vkvymtz7512gsPNBbmKWsyrIhjchRz2x27pScPgVlkNd+JXQUpBZxisIbCxJeUQvTsydH2Gu4rdlN6Z9NA8pEPY9CI1tXmcCHyhOcF3ogJMLY8zCRo2zwJluLFnfZ2iwv97LKrEbJwMdbrCFAYilsV7mX5N0kD5Kr/cHU4cRVBdOspSvMYT2s/nq5rbsFNG1KcHuOHAWoeSYkzQQgsmsGhatc61XWzdmOrV+TW5pH0BKhjcCUXcpCMvmk9/ytl1aIi
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-ID: <820069974CB8F348B78F6929DDEA2E52@eurprd07.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nokia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c1de3ca9-16ef-431f-2b62-08d660f3daaf
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Dec 2018 12:09:38.4236
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 5d471751-9675-428d-917b-70f44f9630b0
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR07MB4314
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+In order to comply with SMBus specification, the Axxia I=B2C module will
+abort the multi message transfer if the delay between finishing sending
+one message and starting another is longer than 25ms. Unfortunately it
+isn't that hard to trigger this situation on a busy system. In order to
+fix this problem, we should make sure hardware does whole transaction
+without waiting for software to fill some data.
 
-   regulator: act8945a-regulator: unlock expert registers
+Fortunately, in addition to Manual mode that is currently used by the
+driver to perform I=B2C transfers, the module supports also so called
+Sequence mode. In this mode, the module automatically performs
+predefined sequence of operations - it sends a slave address, transmits
+specified number of bytes from the FIFO, changes transfer direction,
+resends the slave address and then reads specified number of bytes to
+FIFO. While very inflexible, this does fit a most common case of multi
+message transfer - the one where you first write a register number you
+want to read and then read it.
 
-has been applied to the regulator tree at
+To use this mode effectively, a number of conditions must be met to
+ensure the transaction does fit the predefined sequence. In case this is
+not the case, a fallback to manual mode is used.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
+The initialization of this mode is very similar to Manual mode. The most
+notable difference is different bit in the Master Interrupt Status
+designating finishing of transaction. Also some of the errors, like TSS,
+cannot happen in this mode.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+While it is possible to support transactions requesting a read of any
+size (RFL interrupt will be generated when FIFO size is not enough) the
+TFL interrupt is not available in this mode, thus the write part of the
+transaction cannot exceed FIFO_SIZE (8).
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+Note that in case of a NAK during transaction, the NA/ND status bits
+will be set before STOP command is generated, triggering an interrupt
+while the controller is still busy. Current solution for this problem is
+to actively wait for this command to stop before leaving xfer callback.
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 90bc8ac220aab82df91322e67587d0418ec3b251 Mon Sep 17 00:00:00 2001
-From: Claudiu Beznea <claudiu.beznea@microchip.com>
-Date: Tue, 11 Dec 2018 15:56:36 +0000
-Subject: [PATCH] regulator: act8945a-regulator: unlock expert registers
-
-Unlock expert registers for act8945a.
-This is based on orginal work of Boris Brezillon at [1].
-
-[1] https://www.spinics.net/lists/kernel/msg2942960.html
-
-Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Krzysztof Adamski <krzysztof.adamski@nokia.com>
 ---
- drivers/regulator/act8945a-regulator.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/regulator/act8945a-regulator.c b/drivers/regulator/act8945a-regulator.c
-index 43fda8b4455a..8d71d9893d0d 100644
---- a/drivers/regulator/act8945a-regulator.c
-+++ b/drivers/regulator/act8945a-regulator.c
-@@ -15,6 +15,7 @@
- #include <linux/module.h>
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
-+#include <linux/regmap.h>
- #include <linux/regulator/driver.h>
- #include <linux/regulator/machine.h>
- 
-@@ -23,6 +24,7 @@
+Sorry for those problems I still don't know why my checkpatch did not
+complain about it (have to verify that) and I did add smatch to my
+arsenal now.
+
+Changes in v2:
+- added timeout to axxia_i2c_handle_seq_nak()
+- changed udelay to usleep_range in axxia_i2c_handle_seq_nak()
+
+ drivers/i2c/busses/i2c-axxia.c | 108 ++++++++++++++++++++++++++++++---
+ 1 file changed, 101 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/i2c/busses/i2c-axxia.c b/drivers/i2c/busses/i2c-axxia.=
+c
+index 35258321e81b..03f1ce75a32e 100644
+--- a/drivers/i2c/busses/i2c-axxia.c
++++ b/drivers/i2c/busses/i2c-axxia.c
+@@ -12,6 +12,7 @@
   */
- #define ACT8945A_SYS_MODE	0x00
- #define ACT8945A_SYS_CTRL	0x01
-+#define ACT8945A_SYS_UNLK_REGS	0x0b
- #define ACT8945A_DCDC1_VSET1	0x20
- #define ACT8945A_DCDC1_VSET2	0x21
- #define ACT8945A_DCDC1_CTRL	0x22
-@@ -123,9 +125,17 @@ static int act8945a_pmic_probe(struct platform_device *pdev)
- 	struct regulator_config config = { };
- 	const struct regulator_desc *regulators;
- 	struct regulator_dev *rdev;
-+	struct regmap *regmap;
- 	int i, num_regulators;
- 	bool voltage_select;
- 
-+	regmap = dev_get_regmap(pdev->dev.parent, NULL);
-+	if (!regmap) {
-+		dev_err(&pdev->dev,
-+			"could not retrieve regmap from parent device\n");
-+		return -EINVAL;
+ #include <linux/clk.h>
+ #include <linux/clkdev.h>
++#include <linux/delay.h>
+ #include <linux/err.h>
+ #include <linux/i2c.h>
+ #include <linux/init.h>
+@@ -25,6 +26,7 @@
+ #define I2C_XFER_TIMEOUT    (msecs_to_jiffies(250))
+ #define I2C_STOP_TIMEOUT    (msecs_to_jiffies(100))
+ #define FIFO_SIZE           8
++#define SEQ_LEN             2
+=20
+ #define GLOBAL_CONTROL		0x00
+ #define   GLOBAL_MST_EN         BIT(0)
+@@ -51,6 +53,7 @@
+ #define   CMD_BUSY		(1<<3)
+ #define   CMD_MANUAL		(0x00 | CMD_BUSY)
+ #define   CMD_AUTO		(0x01 | CMD_BUSY)
++#define   CMD_SEQUENCE		(0x02 | CMD_BUSY)
+ #define MST_RX_XFER		0x2c
+ #define MST_TX_XFER		0x30
+ #define MST_ADDR_1		0x34
+@@ -87,7 +90,9 @@
+  * axxia_i2c_dev - I2C device context
+  * @base: pointer to register struct
+  * @msg: pointer to current message
+- * @msg_xfrd: number of bytes transferred in msg
++ * @msg_r: pointer to current read message (sequence transfer)
++ * @msg_xfrd: number of bytes transferred in tx_fifo
++ * @msg_xfrd_r: number of bytes transferred in rx_fifo
+  * @msg_err: error code for completed message
+  * @msg_complete: xfer completion object
+  * @dev: device reference
+@@ -98,7 +103,9 @@
+ struct axxia_i2c_dev {
+ 	void __iomem *base;
+ 	struct i2c_msg *msg;
++	struct i2c_msg *msg_r;
+ 	size_t msg_xfrd;
++	size_t msg_xfrd_r;
+ 	int msg_err;
+ 	struct completion msg_complete;
+ 	struct device *dev;
+@@ -227,14 +234,14 @@ static int i2c_m_recv_len(const struct i2c_msg *msg)
+  */
+ static int axxia_i2c_empty_rx_fifo(struct axxia_i2c_dev *idev)
+ {
+-	struct i2c_msg *msg =3D idev->msg;
++	struct i2c_msg *msg =3D idev->msg_r;
+ 	size_t rx_fifo_avail =3D readl(idev->base + MST_RX_FIFO);
+-	int bytes_to_transfer =3D min(rx_fifo_avail, msg->len - idev->msg_xfrd);
++	int bytes_to_transfer =3D min(rx_fifo_avail, msg->len - idev->msg_xfrd_r)=
+;
+=20
+ 	while (bytes_to_transfer-- > 0) {
+ 		int c =3D readl(idev->base + MST_DATA);
+=20
+-		if (idev->msg_xfrd =3D=3D 0 && i2c_m_recv_len(msg)) {
++		if (idev->msg_xfrd_r =3D=3D 0 && i2c_m_recv_len(msg)) {
+ 			/*
+ 			 * Check length byte for SMBus block read
+ 			 */
+@@ -247,7 +254,7 @@ static int axxia_i2c_empty_rx_fifo(struct axxia_i2c_dev=
+ *idev)
+ 			msg->len =3D 1 + c;
+ 			writel(msg->len, idev->base + MST_RX_XFER);
+ 		}
+-		msg->buf[idev->msg_xfrd++] =3D c;
++		msg->buf[idev->msg_xfrd_r++] =3D c;
+ 	}
+=20
+ 	return 0;
+@@ -287,7 +294,7 @@ static irqreturn_t axxia_i2c_isr(int irq, void *_dev)
+ 	}
+=20
+ 	/* RX FIFO needs service? */
+-	if (i2c_m_rd(idev->msg) && (status & MST_STATUS_RFL))
++	if (i2c_m_rd(idev->msg_r) && (status & MST_STATUS_RFL))
+ 		axxia_i2c_empty_rx_fifo(idev);
+=20
+ 	/* TX FIFO needs service? */
+@@ -320,9 +327,12 @@ static irqreturn_t axxia_i2c_isr(int irq, void *_dev)
+ 	} else if (status & MST_STATUS_SNS) {
+ 		/* Transfer done */
+ 		i2c_int_disable(idev, ~MST_STATUS_TSS);
+-		if (i2c_m_rd(idev->msg) && idev->msg_xfrd < idev->msg->len)
++		if (i2c_m_rd(idev->msg_r) && idev->msg_xfrd_r < idev->msg_r->len)
+ 			axxia_i2c_empty_rx_fifo(idev);
+ 		complete(&idev->msg_complete);
++	} else if (status & MST_STATUS_SS) {
++		/* Auto/Sequence transfer done */
++		complete(&idev->msg_complete);
+ 	} else if (status & MST_STATUS_TSS) {
+ 		/* Transfer timeout */
+ 		idev->msg_err =3D -ETIMEDOUT;
+@@ -363,6 +373,70 @@ static void axxia_i2c_set_addr(struct axxia_i2c_dev *i=
+dev, struct i2c_msg *msg)
+ 	writel(addr_2, idev->base + MST_ADDR_2);
+ }
+=20
++/* The NAK interrupt will be sent _before_ issuing STOP command
++ * so the controller might still be busy processing it. No
++ * interrupt will be sent at the end so we have to poll for it
++ */
++static int axxia_i2c_handle_seq_nak(struct axxia_i2c_dev *idev)
++{
++	unsigned long timeout =3D jiffies + I2C_XFER_TIMEOUT;
++
++	do {
++		if ((readl(idev->base + MST_COMMAND) & CMD_BUSY) =3D=3D 0)
++			return 0;
++		usleep_range(1, 100);
++	} while (time_before(jiffies, timeout));
++
++	return -ETIMEDOUT;
++}
++
++static int axxia_i2c_xfer_seq(struct axxia_i2c_dev *idev, struct i2c_msg m=
+sgs[])
++{
++	u32 int_mask =3D MST_STATUS_ERR | MST_STATUS_SS | MST_STATUS_RFL;
++	u32 rlen =3D i2c_m_recv_len(&msgs[1]) ? I2C_SMBUS_BLOCK_MAX : msgs[1].len=
+;
++	unsigned long time_left;
++
++	axxia_i2c_set_addr(idev, &msgs[0]);
++
++	writel(msgs[0].len, idev->base + MST_TX_XFER);
++	writel(rlen, idev->base + MST_RX_XFER);
++
++	idev->msg =3D &msgs[0];
++	idev->msg_r =3D &msgs[1];
++	idev->msg_xfrd =3D 0;
++	idev->msg_xfrd_r =3D 0;
++	axxia_i2c_fill_tx_fifo(idev);
++
++	writel(CMD_SEQUENCE, idev->base + MST_COMMAND);
++
++	reinit_completion(&idev->msg_complete);
++	i2c_int_enable(idev, int_mask);
++
++	time_left =3D wait_for_completion_timeout(&idev->msg_complete,
++						I2C_XFER_TIMEOUT);
++
++	i2c_int_disable(idev, int_mask);
++
++	axxia_i2c_empty_rx_fifo(idev);
++
++	if (idev->msg_err =3D=3D -ENXIO) {
++		if (axxia_i2c_handle_seq_nak(idev))
++			axxia_i2c_init(idev);
++	} else if (readl(idev->base + MST_COMMAND) & CMD_BUSY)
++		dev_warn(idev->dev, "busy after xfer\n");
++
++	if (time_left =3D=3D 0) {
++		idev->msg_err =3D -ETIMEDOUT;
++		i2c_recover_bus(&idev->adapter);
++		axxia_i2c_init(idev);
 +	}
 +
- 	voltage_select = of_property_read_bool(pdev->dev.parent->of_node,
- 					       "active-semi,vsel-high");
- 
-@@ -149,7 +159,8 @@ static int act8945a_pmic_probe(struct platform_device *pdev)
- 		}
- 	}
- 
--	return 0;
-+	/* Unlock expert registers. */
-+	return regmap_write(regmap, ACT8945A_SYS_UNLK_REGS, 0xef);
++	if (unlikely(idev->msg_err) && idev->msg_err !=3D -ENXIO)
++		axxia_i2c_init(idev);
++
++	return idev->msg_err;
++}
++
+ static int axxia_i2c_xfer_msg(struct axxia_i2c_dev *idev, struct i2c_msg *=
+msg)
+ {
+ 	u32 int_mask =3D MST_STATUS_ERR | MST_STATUS_SNS;
+@@ -371,7 +445,9 @@ static int axxia_i2c_xfer_msg(struct axxia_i2c_dev *ide=
+v, struct i2c_msg *msg)
+ 	unsigned int wt_value;
+=20
+ 	idev->msg =3D msg;
++	idev->msg_r =3D msg;
+ 	idev->msg_xfrd =3D 0;
++	idev->msg_xfrd_r =3D 0;
+ 	reinit_completion(&idev->msg_complete);
+=20
+ 	axxia_i2c_set_addr(idev, msg);
+@@ -452,6 +528,18 @@ static int axxia_i2c_stop(struct axxia_i2c_dev *idev)
+ 	return 0;
  }
- 
- static struct platform_driver act8945a_pmic_driver = {
--- 
-2.19.0.rc2
+=20
++/* This function checks if the msgs[] array contains messages compatible w=
+ith
++ * Sequence mode of operation. This mode assumes there will be exactly one
++ * write of non-zero length followed by exactly one read of non-zero lengt=
+h,
++ * both targeted at the same client device.
++ */
++static bool axxia_i2c_sequence_ok(struct i2c_msg msgs[], int num)
++{
++	return num =3D=3D SEQ_LEN && !i2c_m_rd(&msgs[0]) && i2c_m_rd(&msgs[1]) &&
++	       msgs[0].len > 0 && msgs[0].len <=3D FIFO_SIZE &&
++	       msgs[1].len > 0 && msgs[0].addr =3D=3D msgs[1].addr;
++}
++
+ static int
+ axxia_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[], int num)
+ {
+@@ -460,6 +548,12 @@ axxia_i2c_xfer(struct i2c_adapter *adap, struct i2c_ms=
+g msgs[], int num)
+ 	int ret =3D 0;
+=20
+ 	idev->msg_err =3D 0;
++
++	if (axxia_i2c_sequence_ok(msgs, num)) {
++		ret =3D axxia_i2c_xfer_seq(idev, msgs);
++		return ret ? : SEQ_LEN;
++	}
++
+ 	i2c_int_enable(idev, MST_STATUS_TSS);
+=20
+ 	for (i =3D 0; ret =3D=3D 0 && i < num; ++i)
+--=20
+2.17.2
 
