@@ -6,55 +6,50 @@ X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90619C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:48:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96548C67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:49:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56B4720879
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:48:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 50FDA20849
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:49:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544676530;
-	bh=JSnqW4EVNCLR8clO+ZtGh9AaHwHlbjePrfHlvSYS+c0=;
+	s=default; t=1544676543;
+	bh=iGAVxKq1iO2xLjOIllpXFqks25VHwv/ORYwa3/+kFAE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=LhXktacXes793dGRGuYKKZw3gurdzEoAsEDJEr2I7v/yH0YNtzm6BfePtmfhkvC+5
-	 e1WUlO691pR8T8qjo6HyZiVtqAaeexmEb4jF6Ydw25KTvJL/GGZI9s7QThy0MX9ahw
-	 qJyuO4aznPWqSWHJSTi27HxotzZ0H9Y7bcpyjHBY=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56B4720879
+	b=N6qUTcwSF3ZgVTw62q5iP91ddXmkvJ+ZxbXbywQPFzocnvrnUeuxh+LgRLWHBoCoU
+	 aip++S1DhM29XuNrcFx7PTuoArS/dPRAslOolDLTwyyNVUmBOgZj3qgyhNHIFYEOI2
+	 iI7hBY02foCTQu/5VlyuabuFwwTgFWeLhQ1IQiSs=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50FDA20849
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729418AbeLMEss (ORCPT
+        id S1728486AbeLMEtC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 23:48:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33958 "EHLO mail.kernel.org"
+        Wed, 12 Dec 2018 23:49:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33848 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729006AbeLMEsq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 23:48:46 -0500
+        id S1726478AbeLMEsi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 23:48:38 -0500
 Received: from sinanubuntu1604.mkjiurmyylmellclgttazegk5f.bx.internal.cloudapp.net (unknown [40.121.85.218])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8C70B20849;
-        Thu, 13 Dec 2018 04:48:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E32EF20870;
+        Thu, 13 Dec 2018 04:48:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544676525;
-        bh=JSnqW4EVNCLR8clO+ZtGh9AaHwHlbjePrfHlvSYS+c0=;
+        s=default; t=1544676518;
+        bh=iGAVxKq1iO2xLjOIllpXFqks25VHwv/ORYwa3/+kFAE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aeBAIQHQkQPD5dm8HmZjc/DF38AW4KZmsalSbOSi8dh4MrmBNobt0Avs8e/grs+2z
-         M5ZregFUgekrlzx+1/1AqN+Eiil+y/RvawrsBdtMrn9FIe47erqe7OoxpC5YPB07XZ
-         Z1oW0dMCP/GSjou8bm0UVmvklTfQ3JYeb4O31o1w=
+        b=rFfHEDHtgi396HxYO3H4NI7lK9WGJZbmWLO31D8p6+kUYDzfe4wOwo/HX3p+OQVlV
+         eB9/cVvc80Kc/z2xge9p8j7MnrGTzENtPTMRIVL/KdDJQ85RuWNOe4WCoN4RDIgbwa
+         jxO+O8t8cu6H+TKAOZgL4jI8E8T7mWcTBn78JDBE=
 From:   Sinan Kaya <okaya@kernel.org>
 To:     linux-acpi@vger.kernel.org
 Cc:     Sinan Kaya <okaya@kernel.org>,
-        Robert Moore <robert.moore@intel.com>,
-        Erik Schmauss <erik.schmauss@intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
         Len Brown <lenb@kernel.org>,
-        Anuj Mittal <anuj.mittal@intel.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        devel@acpica.org (open list:ACPI COMPONENT ARCHITECTURE (ACPICA)),
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v7 5/5] ACPICA: Remove PCI bits from ACPICA when CONFIG_PCI is unset
-Date:   Thu, 13 Dec 2018 04:48:33 +0000
-Message-Id: <20181213044833.23952-6-okaya@kernel.org>
+Subject: [PATCH v7 3/5] ACPI / OSL: Stub out acpi_os_write_pci_configuration when CONFIG_PCI is unset
+Date:   Thu, 13 Dec 2018 04:48:31 +0000
+Message-Id: <20181213044833.23952-4-okaya@kernel.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181213044833.23952-1-okaya@kernel.org>
 References: <20181213044833.23952-1-okaya@kernel.org>
@@ -65,75 +60,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that we allow CONFIG_PCI to be unset, remove useless code from ACPICA
-too.
+Getting ready to allow CONFIG_PCI to be disabled with ACPI enabled. Stub
+out acpi_os_write_pci_configuration function that depend on PCI.
 
 Signed-off-by: Sinan Kaya <okaya@kernel.org>
 ---
- drivers/acpi/acpica/Makefile    | 2 +-
- drivers/acpi/acpica/achware.h   | 9 +++++++++
- include/acpi/platform/aclinux.h | 4 ++++
- 3 files changed, 14 insertions(+), 1 deletion(-)
+ drivers/acpi/osl.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/acpi/acpica/Makefile b/drivers/acpi/acpica/Makefile
-index b14621da5413..59700433a96e 100644
---- a/drivers/acpi/acpica/Makefile
-+++ b/drivers/acpi/acpica/Makefile
-@@ -77,13 +77,13 @@ acpi-y +=		\
- 	hwacpi.o	\
- 	hwesleep.o	\
- 	hwgpe.o		\
--	hwpci.o		\
- 	hwregs.o	\
- 	hwsleep.o	\
- 	hwvalid.o	\
- 	hwxface.o	\
- 	hwxfsleep.o
- 
-+acpi-$(CONFIG_PCI) += hwpci.o
- acpi-$(ACPI_FUTURE_USAGE) += hwtimer.o
- 
- acpi-y +=		\
-diff --git a/drivers/acpi/acpica/achware.h b/drivers/acpi/acpica/achware.h
-index 43ce67a9da1f..ef99e2fc37f8 100644
---- a/drivers/acpi/acpica/achware.h
-+++ b/drivers/acpi/acpica/achware.h
-@@ -106,11 +106,20 @@ acpi_hw_enable_runtime_gpe_block(struct acpi_gpe_xrupt_info *gpe_xrupt_info,
- 				 struct acpi_gpe_block_info *gpe_block,
- 				 void *context);
- 
-+#ifdef ACPI_PCI_CONFIGURED
- /*
-  * hwpci - PCI configuration support
-  */
- acpi_status
- acpi_hw_derive_pci_id(struct acpi_pci_id *pci_id,
- 		      acpi_handle root_pci_device, acpi_handle pci_region);
-+#else
-+static inline acpi_status
-+acpi_hw_derive_pci_id(struct acpi_pci_id *pci_id, acpi_handle root_pci_device,
-+		      acpi_handle pci_region)
-+{
-+	return AE_SUPPORT;
-+}
-+#endif
- 
- #endif				/* __ACHWARE_H__ */
-diff --git a/include/acpi/platform/aclinux.h b/include/acpi/platform/aclinux.h
-index 7451b3bca83a..e3d21d014fcc 100644
---- a/include/acpi/platform/aclinux.h
-+++ b/include/acpi/platform/aclinux.h
-@@ -33,6 +33,10 @@
- 
- /* Kernel specific ACPICA configuration */
- 
+diff --git a/drivers/acpi/osl.c b/drivers/acpi/osl.c
+index fb92b8a0ad31..524fd5f33ea4 100644
+--- a/drivers/acpi/osl.c
++++ b/drivers/acpi/osl.c
+@@ -812,6 +812,7 @@ acpi_status
+ acpi_os_write_pci_configuration(struct acpi_pci_id * pci_id, u32 reg,
+ 				u64 value, u32 width)
+ {
 +#ifdef CONFIG_PCI
-+#define ACPI_PCI_CONFIGURED
-+#endif
+ 	int result, size;
+ 
+ 	switch (width) {
+@@ -833,6 +834,12 @@ acpi_os_write_pci_configuration(struct acpi_pci_id * pci_id, u32 reg,
+ 				reg, size, value);
+ 
+ 	return (result ? AE_ERROR : AE_OK);
++#else
++	int rc;
 +
- #ifdef CONFIG_ACPI_REDUCED_HARDWARE_ONLY
- #define ACPI_REDUCED_HARDWARE 1
- #endif
++	rc = pr_warn_once("PCI configuration space access is not supported\n");
++	return rc ? AE_SUPPORT : AE_OK;
++#endif
+ }
+ 
+ static void acpi_os_execute_deferred(struct work_struct *work)
 -- 
 2.19.0
 
