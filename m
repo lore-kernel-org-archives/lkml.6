@@ -7,52 +7,71 @@ X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5302C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:33:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C136C67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:33:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABC0A20879
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:33:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 11B9E20879
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:33:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544675629;
-	bh=UKh4X80K4DDDMjx0WiFv+istppd6ERCLIwM7tlK+k4s=;
+	s=default; t=1544675639;
+	bh=NT41W/fl9LiqvsXnR+3j1VNE+w6nNpGax3NrpCTJxzI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=X5dNsy7LE5RrDQ3mC0EzHO9zOFLiw8Y57lHwC8/LRYfY3ua+I5iufKhnhFJqT9c91
-	 mw5he0BDoDFHFP6nHN/uXe5jcr774T3v6jmct2efjn3McHo0zmqWRhyEX2b8jqsFCD
-	 bKRJwDNeYRRPUTijcGehxwSjIZrMM12SwL9YsIbI=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABC0A20879
+	b=aDgpuIOpWcxR7SmqtOe6odLnnXrQKLwiNeFTyXLpvSkJdwGkUjbe8qB4ssDFcZbkA
+	 vj+ZrY83ulRI+aXT5b3ySRD9mAx5u7rNWwop98cKmHbNUww6OiJwrSScgyhrD/SteO
+	 6sYZM1Mpy8YML3/fldq2W5kmNTS0jZ8hUSuUeGCc=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11B9E20879
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728385AbeLMEds (ORCPT
+        id S1728943AbeLMEd5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 23:33:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46700 "EHLO mail.kernel.org"
+        Wed, 12 Dec 2018 23:33:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46878 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729418AbeLMEdn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 23:33:43 -0500
+        id S1728374AbeLMEdu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 23:33:50 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2F76320873;
-        Thu, 13 Dec 2018 04:33:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D1F7620880;
+        Thu, 13 Dec 2018 04:33:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544675622;
-        bh=UKh4X80K4DDDMjx0WiFv+istppd6ERCLIwM7tlK+k4s=;
+        s=default; t=1544675629;
+        bh=NT41W/fl9LiqvsXnR+3j1VNE+w6nNpGax3NrpCTJxzI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xfTbOJ1z7z94NGsQu8ZhuQ2e6jUmfkJjo6UICQWIydQo2YUPoEaKewSxn1oInU+kQ
-         vxmLocbLz8srCjQEeNMLy+UFtVI7yzafluaqLo3vca4bwZHN6sVwfouKGg/gM78lFw
-         JkPPjnLw8miNuv65TlLw67+I/RzSN0Pso+/ENOac=
+        b=2P6CgTPBqUDFNl31CUtR+ARKH82rQ2fAyQajnF4vSKTvWkTqD5NnOBDIZOVUxnnlU
+         5gS/V2xq0Evm4UrD5KjF7H6wJLmSl5kXzMMz4yRY38AJklbgCaXGon7EHUHtemmegz
+         Z72wDr+9X5/6kyJa+9Cwy0mkzgNCeErmmtxrM/as=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Sasha Levin <sashal@kernel.org>, linux-i2c@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 23/23] i2c: scmi: Fix probe error on devices with an empty SMB0001 ACPI device node
-Date:   Wed, 12 Dec 2018 23:32:59 -0500
-Message-Id: <20181213043259.76643-23-sashal@kernel.org>
+Cc:     YiFei Zhu <zhuyifei1999@gmail.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arend van Spriel <arend.vanspriel@broadcom.com>,
+        Bhupesh Sharma <bhsharma@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Eric Snowberg <eric.snowberg@oracle.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Joe Perches <joe@perches.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Julien Thierry <julien.thierry@arm.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
+        Sedat Dilek <sedat.dilek@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 3.18 03/16] x86/earlyprintk/efi: Fix infinite loop on some screen widths
+Date:   Wed, 12 Dec 2018 23:33:30 -0500
+Message-Id: <20181213043343.76896-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181213043259.76643-1-sashal@kernel.org>
-References: <20181213043259.76643-1-sashal@kernel.org>
+In-Reply-To: <20181213043343.76896-1-sashal@kernel.org>
+References: <20181213043343.76896-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -61,71 +80,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: YiFei Zhu <zhuyifei1999@gmail.com>
 
-[ Upstream commit 0544ee4b1ad574aec3b6379af5f5cdee42840971 ]
+[ Upstream commit 79c2206d369b87b19ac29cb47601059b6bf5c291 ]
 
-Some AMD based HP laptops have a SMB0001 ACPI device node which does not
-define any methods.
+An affected screen resolution is 1366 x 768, which width is not
+divisible by 8, the default font width. On such screens, when longer
+lines are earlyprintk'ed, overflow-to-next-line can never trigger,
+due to the left-most x-coordinate of the next character always less
+than the screen width. Earlyprintk will infinite loop in trying to
+print the rest of the string but unable to, due to the line being
+full.
 
-This leads to the following error in dmesg:
+This patch makes the trigger consider the right-most x-coordinate,
+instead of left-most, as the value to compare against the screen
+width threshold.
 
-[    5.222731] cmi: probe of SMB0001:00 failed with error -5
-
-This commit makes acpi_smbus_cmi_add() return -ENODEV instead in this case
-silencing the error. In case of a failure of the i2c_add_adapter() call
-this commit now propagates the error from that call instead of -EIO.
-
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Signed-off-by: YiFei Zhu <zhuyifei1999@gmail.com>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Arend van Spriel <arend.vanspriel@broadcom.com>
+Cc: Bhupesh Sharma <bhsharma@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Eric Snowberg <eric.snowberg@oracle.com>
+Cc: Hans de Goede <hdegoede@redhat.com>
+Cc: Joe Perches <joe@perches.com>
+Cc: Jon Hunter <jonathanh@nvidia.com>
+Cc: Julien Thierry <julien.thierry@arm.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Matt Fleming <matt@codeblueprint.co.uk>
+Cc: Nathan Chancellor <natechancellor@gmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+Cc: Sedat Dilek <sedat.dilek@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-efi@vger.kernel.org
+Link: http://lkml.kernel.org/r/20181129171230.18699-12-ard.biesheuvel@linaro.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/i2c/busses/i2c-scmi.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ arch/x86/platform/efi/early_printk.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/i2c/busses/i2c-scmi.c b/drivers/i2c/busses/i2c-scmi.c
-index efefcfa24a4c..d2178f701b41 100644
---- a/drivers/i2c/busses/i2c-scmi.c
-+++ b/drivers/i2c/busses/i2c-scmi.c
-@@ -364,6 +364,7 @@ static int acpi_smbus_cmi_add(struct acpi_device *device)
- {
- 	struct acpi_smbus_cmi *smbus_cmi;
- 	const struct acpi_device_id *id;
-+	int ret;
+diff --git a/arch/x86/platform/efi/early_printk.c b/arch/x86/platform/efi/early_printk.c
+index 524142117296..82324fc25d5e 100644
+--- a/arch/x86/platform/efi/early_printk.c
++++ b/arch/x86/platform/efi/early_printk.c
+@@ -179,7 +179,7 @@ early_efi_write(struct console *con, const char *str, unsigned int num)
+ 			num--;
+ 		}
  
- 	smbus_cmi = kzalloc(sizeof(struct acpi_smbus_cmi), GFP_KERNEL);
- 	if (!smbus_cmi)
-@@ -385,8 +386,10 @@ static int acpi_smbus_cmi_add(struct acpi_device *device)
- 	acpi_walk_namespace(ACPI_TYPE_METHOD, smbus_cmi->handle, 1,
- 			    acpi_smbus_cmi_query_methods, NULL, smbus_cmi, NULL);
- 
--	if (smbus_cmi->cap_info == 0)
-+	if (smbus_cmi->cap_info == 0) {
-+		ret = -ENODEV;
- 		goto err;
-+	}
- 
- 	snprintf(smbus_cmi->adapter.name, sizeof(smbus_cmi->adapter.name),
- 		"SMBus CMI adapter %s",
-@@ -397,7 +400,8 @@ static int acpi_smbus_cmi_add(struct acpi_device *device)
- 	smbus_cmi->adapter.class = I2C_CLASS_HWMON | I2C_CLASS_SPD;
- 	smbus_cmi->adapter.dev.parent = &device->dev;
- 
--	if (i2c_add_adapter(&smbus_cmi->adapter)) {
-+	ret = i2c_add_adapter(&smbus_cmi->adapter);
-+	if (ret) {
- 		dev_err(&device->dev, "Couldn't register adapter!\n");
- 		goto err;
- 	}
-@@ -407,7 +411,7 @@ static int acpi_smbus_cmi_add(struct acpi_device *device)
- err:
- 	kfree(smbus_cmi);
- 	device->driver_data = NULL;
--	return -EIO;
-+	return ret;
- }
- 
- static int acpi_smbus_cmi_remove(struct acpi_device *device)
+-		if (efi_x >= si->lfb_width) {
++		if (efi_x + font->width > si->lfb_width) {
+ 			efi_x = 0;
+ 			efi_y += font->height;
+ 		}
 -- 
 2.19.1
 
