@@ -2,54 +2,55 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1F98C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 21:36:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47AEDC67872
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 21:37:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5FB862086D
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 21:36:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FB862086D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
+	by mail.kernel.org (Postfix) with ESMTP id 0D75A2086D
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 21:37:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="rU8q2mDc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D75A2086D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727455AbeLMVgv (ORCPT
+        id S1727743AbeLMVhP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 16:36:51 -0500
-Received: from lithops.sigma-star.at ([195.201.40.130]:39872 "EHLO
-        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726442AbeLMVgv (ORCPT
+        Thu, 13 Dec 2018 16:37:15 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:47520 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726442AbeLMVhP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 16:36:51 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id DB1AA6083256;
-        Thu, 13 Dec 2018 22:36:48 +0100 (CET)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id 0rCerxW0RO-f; Thu, 13 Dec 2018 22:36:48 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id 71A2A6083246;
-        Thu, 13 Dec 2018 22:36:48 +0100 (CET)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id qb1VqvaGNiG1; Thu, 13 Dec 2018 22:36:48 +0100 (CET)
-Received: from blindfold.localnet (213-47-184-186.cable.dynamic.surfer.at [213.47.184.186])
-        by lithops.sigma-star.at (Postfix) with ESMTPSA id E56D0608A3BE;
-        Thu, 13 Dec 2018 22:36:47 +0100 (CET)
-From:   Richard Weinberger <richard@nod.at>
-To:     zhangjun <openzhangj@gmail.com>
-Cc:     Artem Bityutskiy <dedekind1@gmail.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kirill.shutemov@linux.intel.com, hch@lst.de,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2] ubifs: fix page_count in ->ubifs_migrate_page()
-Date:   Thu, 13 Dec 2018 22:36:47 +0100
-Message-ID: <8239265.3QN2sXB6kY@blindfold>
-In-Reply-To: <1544728817-2870-1-git-send-email-openzhangj@gmail.com>
-References: <1544728817-2870-1-git-send-email-openzhangj@gmail.com>
+        Thu, 13 Dec 2018 16:37:15 -0500
+Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 51E92549;
+        Thu, 13 Dec 2018 22:37:12 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1544737032;
+        bh=q/zSdv4xFdeaIo7pL8QOsLZrYbfHMzkWb9lbYbQ/NJw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=rU8q2mDcA/CCxz4n0bYZaOakBBM+mlmsBDTyhoWJF6wOB+Vy7umghYpEGJQaBGfS+
+         8BPmw/V9bzXImvBdE5FxxFG9kuvLncoHxAFNU15ZuwQgSQB3GTjKlyXzYINd8Pzqvl
+         fvz2B+x/q5KL3gcNPJloS0S3bLpeEtHHbQYNTf5Y=
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc:     David Airlie <airlied@linux.ie>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: Re: [PATCH] drm: rcar-du: lvds: add R8A774C0 support
+Date:   Thu, 13 Dec 2018 23:37:59 +0200
+Message-ID: <19818144.G1rqBgM4ba@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <1544732616-7322-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1544732616-7322-1-git-send-email-fabrizio.castro@bp.renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
@@ -58,65 +59,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Donnerstag, 13. Dezember 2018, 20:20:17 CET schrieb zhangjun:
-> Because the PagePrivate() in UBIFS is different meanings,
+Hi Fabrizio,
 
-...has different meanings...
+Thank you for the patch.
 
-I'll fix up that myself after applying your patch. No need to send a v3.
+On Thursday, 13 December 2018 22:23:36 EET Fabrizio Castro wrote:
+> The LVDS implementation on the RZ/G2E (a.k.a. R8A774C0) is very similar
+> to the one found on R-Car E3 (a.k.a. R8A77990), therefore add RZ/G2E
+> LVDS support to the LVDS encoder driver in a similar fashion to what
 
-> alloc_cma() will fail when one dirty page cache located in
-> the type of MIGRATE_CMA
+s/what/what is/
+
+> done for R-Car E3.
 > 
-> If not adjust the 'extra_count' for dirty page,
-> ubifs_migrate_page() -> migrate_page_move_mapping() will
-> always return -EAGAIN for:
-> 	expected_count += page_has_private(page)
-> This causes the migration to fail until the page cache is cleaned
-> 
-> In general, PagePrivate() indicates that buff_head is already bound
-> to this page, and at the same time page_count() will also increase.
-> But UBIFS set private flag when the cache is dirty, and page_count()
-> not increase.
-> Therefore, the expected_count of UBIFS is different from the general
-> case.
-> 
-> Signed-off-by: zhangjun <openzhangj@gmail.com>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-Fixes: 4ac1c17b2044 ("UBIFS: Implement ->migratepage()")
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+and applied to my tree with the above fix.
 
 > ---
->  fs/ubifs/file.c | 11 ++++++++++-
->  1 file changed, 10 insertions(+), 1 deletion(-)
+>  drivers/gpu/drm/rcar-du/rcar_lvds.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> diff --git a/fs/ubifs/file.c b/fs/ubifs/file.c
-> index 1b78f2e..890dfce 100644
-> --- a/fs/ubifs/file.c
-> +++ b/fs/ubifs/file.c
-> @@ -1480,8 +1480,17 @@ static int ubifs_migrate_page(struct address_space *mapping,
->  		struct page *newpage, struct page *page, enum migrate_mode mode)
->  {
->  	int rc;
-> +	int extra_count = 0;
->  
-> -	rc = migrate_page_move_mapping(mapping, newpage, page, NULL, mode, 0);
-> +	/*
-> +	 * UBIFS uses PG_private as marker and does not raise the page counter.
-> +	 * migrate_page_move_mapping() expects a incremented counter if
-> +	 * PG_private is set. Therefore pass -1 as extra_count for this case.
-> +	 */
-> +	if (page_has_private(page))
-> +		extra_count = -1;
-> +	rc = migrate_page_move_mapping(mapping, newpage, page,
-> +			NULL, mode, extra_count);
->  	if (rc != MIGRATEPAGE_SUCCESS)
->  		return rc;
->  
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_lvds.c
+> b/drivers/gpu/drm/rcar-du/rcar_lvds.c index 173d7ad..329dfca 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_lvds.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_lvds.c
+> @@ -785,6 +785,7 @@ static const struct rcar_lvds_device_info
+> rcar_lvds_r8a77995_info = {
+> 
+>  static const struct of_device_id rcar_lvds_of_table[] = {
+>  	{ .compatible = "renesas,r8a7743-lvds", .data = &rcar_lvds_gen2_info },
+> +	{ .compatible = "renesas,r8a774c0-lvds", .data = &rcar_lvds_r8a77990_info
+> }, { .compatible = "renesas,r8a7790-lvds", .data = &rcar_lvds_r8a7790_info
+> }, { .compatible = "renesas,r8a7791-lvds", .data = &rcar_lvds_gen2_info },
+> { .compatible = "renesas,r8a7793-lvds", .data = &rcar_lvds_gen2_info },
 
-Let's wait a few days to give Kirill a chance to review, then I'll apply the patch.
 
-Thanks,
-//richard 
+-- 
+Regards,
+
+Laurent Pinchart
 
 
 
