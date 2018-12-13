@@ -4,52 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,T_MIXED_ES,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C3E8C67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:32:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03BC9C67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:32:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4368A20882
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:32:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B58E320880
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:32:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544675564;
-	bh=/DNLEpM7QFSxINJKskHUmSovMUykVLzeVauKLNUkxw0=;
+	s=default; t=1544675566;
+	bh=mSPnV8odF5xAoHtLwP67okvSv65+I4DGhocXF0boKkg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Cl69HeVL3vPoYrmQ0CGo3VN9NXRhP8TEUnCJYA9R9n3uOkUNBSi7HJsSDQJwu34iR
-	 CoXMv/FrVub8WrVkEUPMEXnqCnUN5Vijv8b0OFJBBPvC6guDi0dJ18fFabI3M2Z01Q
-	 sJDDAlovz1SfqV4EfnMSV9raGL+F03SmZAWqqyX8=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4368A20882
+	b=xBOSgO1FAhbZGoX5tnzAeEjnz+5mosm60MwuuwGFICPGnuX2XKa0efGfTvxuNeovG
+	 UoTto3fx2xt03AYsfNQAKNBGGEHihKiW+I8j1RTr+FaJJQ+ZyImbZin++eUFrMnOQY
+	 A0b+hB6tFfM+ImqSgNlCZUmJnS+8Px6ZKu7EtaLY=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B58E320880
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729159AbeLMEcm (ORCPT
+        id S1729174AbeLMEcp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 23:32:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45510 "EHLO mail.kernel.org"
+        Wed, 12 Dec 2018 23:32:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45578 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727758AbeLMEci (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 23:32:38 -0500
+        id S1726465AbeLMEcl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 23:32:41 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 53E0220879;
-        Thu, 13 Dec 2018 04:32:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A461520672;
+        Thu, 13 Dec 2018 04:32:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544675557;
-        bh=/DNLEpM7QFSxINJKskHUmSovMUykVLzeVauKLNUkxw0=;
+        s=default; t=1544675561;
+        bh=mSPnV8odF5xAoHtLwP67okvSv65+I4DGhocXF0boKkg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=X3hoxVCWPGqjmXKU+Lyn4EC3trlvtVd3sDWZc9DHm0z92n5wUKINluhm54JWYF4Ee
-         n1FVSBJebc/SUp7yFg6VunI4XuiC+DezPM96wqqnTaR4Af8BSqoRhA8njuqGq8mNs5
-         9i3ZSO3fquWdZWOneo7bwt0sMIcdjEjJUd6en9l8=
+        b=fCeUdQtZ5nuyp/xHE7UJVpFyPvpWSxO2gn/0Xabamka/3Fgx+NRj88PoVfzPEIbot
+         F7jc+RK7C5On6uCJ2yOsmf2YsHx6hJecIM1yC+1yy67kt02RsM77u2SWlOKsh7jovV
+         bTl940htvUJWiidHtHJ3cV/az/nq0QasGevGTetQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Su Yanjun <suyj.fnst@cn.fujitsu.com>,
-        "David S . Miller" <davem@davemloft.net>,
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
         Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 20/34] net: 8139cp: fix a BUG triggered by changing mtu with network traffic
-Date:   Wed, 12 Dec 2018 23:31:46 -0500
-Message-Id: <20181213043200.76295-20-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 24/34] bpf: check pending signals while verifying programs
+Date:   Wed, 12 Dec 2018 23:31:50 -0500
+Message-Id: <20181213043200.76295-24-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181213043200.76295-1-sashal@kernel.org>
 References: <20181213043200.76295-1-sashal@kernel.org>
@@ -61,146 +61,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Su Yanjun <suyj.fnst@cn.fujitsu.com>
+From: Alexei Starovoitov <ast@kernel.org>
 
-[ Upstream commit a5d4a89245ead1f37ed135213653c5beebea4237 ]
+[ Upstream commit c3494801cd1785e2c25f1a5735fa19ddcf9665da ]
 
-When changing mtu many times with traffic, a bug is triggered:
+Malicious user space may try to force the verifier to use as much cpu
+time and memory as possible. Hence check for pending signals
+while verifying the program.
+Note that suspend of sys_bpf(PROG_LOAD) syscall will lead to EAGAIN,
+since the kernel has to release the resources used for program verification.
 
-[ 1035.684037] kernel BUG at lib/dynamic_queue_limits.c:26!
-[ 1035.684042] invalid opcode: 0000 [#1] SMP
-[ 1035.684049] Modules linked in: loop binfmt_misc 8139cp(OE) macsec
-tcp_diag udp_diag inet_diag unix_diag af_packet_diag netlink_diag tcp_lp
-fuse uinput xt_CHECKSUM iptable_mangle ipt_MASQUERADE
-nf_nat_masquerade_ipv4 iptable_nat nf_nat_ipv4 nf_nat nf_conntrack_ipv4
-nf_defrag_ipv4 xt_conntrack nf_conntrack ipt_REJECT nf_reject_ipv4 tun
-bridge stp llc ebtable_filter ebtables ip6table_filter devlink
-ip6_tables iptable_filter sunrpc snd_hda_codec_generic snd_hda_intel
-snd_hda_codec snd_hda_core snd_hwdep ppdev snd_seq iosf_mbi crc32_pclmul
-parport_pc snd_seq_device ghash_clmulni_intel parport snd_pcm
-aesni_intel joydev lrw snd_timer virtio_balloon sg gf128mul glue_helper
-ablk_helper cryptd snd soundcore i2c_piix4 pcspkr ip_tables xfs
-libcrc32c sr_mod sd_mod cdrom crc_t10dif crct10dif_generic ata_generic
-[ 1035.684102]  pata_acpi virtio_console qxl drm_kms_helper syscopyarea
-sysfillrect sysimgblt floppy fb_sys_fops crct10dif_pclmul
-crct10dif_common ttm crc32c_intel serio_raw ata_piix drm libata 8139too
-virtio_pci drm_panel_orientation_quirks virtio_ring virtio mii dm_mirror
-dm_region_hash dm_log dm_mod [last unloaded: 8139cp]
-[ 1035.684132] CPU: 9 PID: 25140 Comm: if-mtu-change Kdump: loaded
-Tainted: G           OE  ------------ T 3.10.0-957.el7.x86_64 #1
-[ 1035.684134] Hardware name: Red Hat KVM, BIOS 0.5.1 01/01/2011
-[ 1035.684136] task: ffff8f59b1f5a080 ti: ffff8f5a2e32c000 task.ti:
-ffff8f5a2e32c000
-[ 1035.684149] RIP: 0010:[<ffffffffba3a40d0>]  [<ffffffffba3a40d0>]
-dql_completed+0x180/0x190
-[ 1035.684162] RSP: 0000:ffff8f5a75483e50  EFLAGS: 00010093
-[ 1035.684162] RAX: 00000000000000c2 RBX: ffff8f5a6f91c000 RCX:
-0000000000000000
-[ 1035.684162] RDX: 0000000000000000 RSI: 0000000000000184 RDI:
-ffff8f599fea3ec0
-[ 1035.684162] RBP: ffff8f5a75483ea8 R08: 00000000000000c2 R09:
-0000000000000000
-[ 1035.684162] R10: 00000000000616ef R11: ffff8f5a75483b56 R12:
-ffff8f599fea3e00
-[ 1035.684162] R13: 0000000000000001 R14: 0000000000000000 R15:
-0000000000000184
-[ 1035.684162] FS:  00007fa8434de740(0000) GS:ffff8f5a75480000(0000)
-knlGS:0000000000000000
-[ 1035.684162] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[ 1035.684162] CR2: 00000000004305d0 CR3: 000000024eb66000 CR4:
-00000000001406e0
-[ 1035.684162] Call Trace:
-[ 1035.684162]  <IRQ>
-[ 1035.684162]  [<ffffffffc08cbaf8>] ? cp_interrupt+0x478/0x580 [8139cp]
-[ 1035.684162]  [<ffffffffba14a294>]
-__handle_irq_event_percpu+0x44/0x1c0
-[ 1035.684162]  [<ffffffffba14a442>] handle_irq_event_percpu+0x32/0x80
-[ 1035.684162]  [<ffffffffba14a4cc>] handle_irq_event+0x3c/0x60
-[ 1035.684162]  [<ffffffffba14db29>] handle_fasteoi_irq+0x59/0x110
-[ 1035.684162]  [<ffffffffba02e554>] handle_irq+0xe4/0x1a0
-[ 1035.684162]  [<ffffffffba7795dd>] do_IRQ+0x4d/0xf0
-[ 1035.684162]  [<ffffffffba76b362>] common_interrupt+0x162/0x162
-[ 1035.684162]  <EOI>
-[ 1035.684162]  [<ffffffffba0c2ae4>] ? __wake_up_bit+0x24/0x70
-[ 1035.684162]  [<ffffffffba1e46f5>] ? do_set_pte+0xd5/0x120
-[ 1035.684162]  [<ffffffffba1b64fb>] unlock_page+0x2b/0x30
-[ 1035.684162]  [<ffffffffba1e4879>] do_read_fault.isra.61+0x139/0x1b0
-[ 1035.684162]  [<ffffffffba1e9134>] handle_pte_fault+0x2f4/0xd10
-[ 1035.684162]  [<ffffffffba1ebc6d>] handle_mm_fault+0x39d/0x9b0
-[ 1035.684162]  [<ffffffffba76f5e3>] __do_page_fault+0x203/0x500
-[ 1035.684162]  [<ffffffffba76f9c6>] trace_do_page_fault+0x56/0x150
-[ 1035.684162]  [<ffffffffba76ef42>] do_async_page_fault+0x22/0xf0
-[ 1035.684162]  [<ffffffffba76b788>] async_page_fault+0x28/0x30
-[ 1035.684162] Code: 54 c7 47 54 ff ff ff ff 44 0f 49 ce 48 8b 35 48 2f
-9c 00 48 89 77 58 e9 fe fe ff ff 0f 1f 80 00 00 00 00 41 89 d1 e9 ef fe
-ff ff <0f> 0b 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 55 8d 42 ff 48
-[ 1035.684162] RIP  [<ffffffffba3a40d0>] dql_completed+0x180/0x190
-[ 1035.684162]  RSP <ffff8f5a75483e50>
-
-It's not the same as in 7fe0ee09 patch described.
-As 8139cp uses shared irq mode, other device irq will trigger
-cp_interrupt to execute.
-
-cp_change_mtu
- -> cp_close
- -> cp_open
-
-In cp_close routine  just before free_irq(), some interrupt may occur.
-In my environment, cp_interrupt exectutes and IntrStatus is 0x4,
-exactly TxOk. That will cause cp_tx to wake device queue.
-
-As device queue is started, cp_start_xmit and cp_open will run at same
-time which will cause kernel BUG.
-
-For example:
-[#] for tx descriptor
-
-At start:
-
-[#][#][#]
-num_queued=3
-
-After cp_init_hw->cp_start_hw->netdev_reset_queue:
-
-[#][#][#]
-num_queued=0
-
-When 8139cp starts to work then cp_tx will check
-num_queued mismatchs the complete_bytes.
-
-The patch will check IntrMask before check IntrStatus in cp_interrupt.
-When 8139cp interrupt is disabled, just return.
-
-Signed-off-by: Su Yanjun <suyj.fnst@cn.fujitsu.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Reported-by: Anatoly Trosinenko <anatoly.trosinenko@gmail.com>
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Acked-by: Daniel Borkmann <daniel@iogearbox.net>
+Acked-by: Edward Cree <ecree@solarflare.com>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/realtek/8139cp.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ kernel/bpf/verifier.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/net/ethernet/realtek/8139cp.c b/drivers/net/ethernet/realtek/8139cp.c
-index 5297bf77211c..d608c2a6c01f 100644
---- a/drivers/net/ethernet/realtek/8139cp.c
-+++ b/drivers/net/ethernet/realtek/8139cp.c
-@@ -578,6 +578,7 @@ static irqreturn_t cp_interrupt (int irq, void *dev_instance)
- 	struct cp_private *cp;
- 	int handled = 0;
- 	u16 status;
-+	u16 mask;
+diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+index 1438b7396cb4..335c00209f74 100644
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -2919,6 +2919,9 @@ static int do_check(struct bpf_verifier_env *env)
+ 			goto process_bpf_exit;
+ 		}
  
- 	if (unlikely(dev == NULL))
- 		return IRQ_NONE;
-@@ -585,6 +586,10 @@ static irqreturn_t cp_interrupt (int irq, void *dev_instance)
- 
- 	spin_lock(&cp->lock);
- 
-+	mask = cpr16(IntrMask);
-+	if (!mask)
-+		goto out_unlock;
++		if (signal_pending(current))
++			return -EAGAIN;
 +
- 	status = cpr16(IntrStatus);
- 	if (!status || (status == 0xFFFF))
- 		goto out_unlock;
+ 		if (need_resched())
+ 			cond_resched();
+ 
 -- 
 2.19.1
 
