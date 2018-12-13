@@ -4,120 +4,110 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C08D2C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 10:46:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3483CC67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 10:47:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F065208E7
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 10:46:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F065208E7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 053DE20880
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 10:47:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 053DE20880
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728676AbeLMKqe (ORCPT
+        id S1728694AbeLMKq6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 05:46:34 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:58870 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728104AbeLMKqe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 05:46:34 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6A208A78;
-        Thu, 13 Dec 2018 02:46:33 -0800 (PST)
-Received: from [10.1.197.36] (e112298-lin.cambridge.arm.com [10.1.197.36])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9BCB83F6A8;
-        Thu, 13 Dec 2018 02:46:31 -0800 (PST)
-Subject: Re: [PATCH 2/6] arm64: add sysfs vulnerability show for meltdown
-From:   Julien Thierry <julien.thierry@arm.com>
-To:     Jeremy Linton <jeremy.linton@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     catalin.marinas@arm.com, will.deacon@arm.com, marc.zyngier@arm.com,
-        suzuki.poulose@arm.com, dave.martin@arm.com,
-        shankerd@codeaurora.org, mark.rutland@arm.com,
-        linux-kernel@vger.kernel.org, ykaukab@suse.de
-References: <20181206234408.1287689-1-jeremy.linton@arm.com>
- <20181206234408.1287689-3-jeremy.linton@arm.com>
- <d1ad00a8-1b87-f234-aa41-c1f342cb28dc@arm.com>
-Message-ID: <af4f1e1e-673d-28e0-909d-f1e85b4d5b45@arm.com>
-Date:   Thu, 13 Dec 2018 10:46:29 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <d1ad00a8-1b87-f234-aa41-c1f342cb28dc@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thu, 13 Dec 2018 05:46:58 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:36101 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727403AbeLMKq6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 05:46:58 -0500
+Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <l.stach@pengutronix.de>)
+        id 1gXOW5-0000m9-Ln; Thu, 13 Dec 2018 11:46:53 +0100
+Message-ID: <1544698012.3137.28.camel@pengutronix.de>
+Subject: Re: [v3] PCI: imx: make msi work without pcieportbus
+From:   Lucas Stach <l.stach@pengutronix.de>
+To:     Richard Zhu <hongxing.zhu@nxp.com>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
+        "andrew.smirnov@gmail.com" <andrew.smirnov@gmail.com>
+Cc:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Date:   Thu, 13 Dec 2018 11:46:52 +0100
+In-Reply-To: <1544696723-1673-1-git-send-email-hongxing.zhu@nxp.com>
+References: <1544696723-1673-1-git-send-email-hongxing.zhu@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 13/12/2018 09:23, Julien Thierry wrote:
-> Hi Jeremy,
+Am Donnerstag, den 13.12.2018, 10:43 +0000 schrieb Richard Zhu:
+> MSI_EN of iMX PCIe RC would be asserted when
+> PCIEPORTBUS driver is selected.
+> Thus, the MSI works fine on iMX PCIe before.
+> Assert it unconditionally when MSI is enabled.
+> Otherwise, the MSI wouldn't be triggered although
+> the EP is present and the MSIs are assigned.
 > 
-> On 06/12/2018 23:44, Jeremy Linton wrote:
->> Add a simple state machine which will track whether
->> all the online cores in a machine are vulnerable.
->>
->> Once that is done we have a fairly authoritative view
->> of the machine vulnerability, which allows us to make a
->> judgment about machine safety if it hasn't been mitigated.
->>
->> Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
->> ---
->>  arch/arm64/kernel/cpufeature.c | 31 ++++++++++++++++++++++++++-----
->>  1 file changed, 26 insertions(+), 5 deletions(-)
->>
->> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
->> index 242898395f68..bea9adfef7fa 100644
->> --- a/arch/arm64/kernel/cpufeature.c
->> +++ b/arch/arm64/kernel/cpufeature.c
->> @@ -905,6 +905,8 @@ has_useable_cnp(const struct arm64_cpu_capabilities *entry, int scope)
->>  	return has_cpuid_feature(entry, scope);
->>  }
->>  
->> +static enum { A64_MELT_UNSET, A64_MELT_SAFE, A64_MELT_UNKN } __meltdown_safe = A64_MELT_UNSET;
->> +
+> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
+
+Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
+
+> ---
+> Changes v1 -> v2:
+> * Assert the MSI_EN unconditionally when MSI is supported.
+> Changes v2 -> v3:
+> * Remove the IS_ENABLED(CONFIG_PCI_MSI) since the driver
+> depends on PCI_MSI_IRQ_DOMAIN
+> * Extended with a check for pci_msi_enabled() to see
+> if the user explicitly want legacy IRQs
+> ---
+>  drivers/pci/controller/dwc/pci-imx6.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
 > 
-> I'm wondering, do we really need that tri state?
-> 
-> Can't we consider that we are safe an move to unsafe/unkown if any cpu
-> during bring up is not in the safe list?
-> 
-> The only user of this is cpu_show_meltdown, but I don't imagine it'll
-> get called before unmap_kernel_at_el0() is called for the boot CPU which
-> should initialise that state.
-> 
-> Or is there another reason for having that UNSET state?
-> 
-
-Ok, I think I get the point of the UNSET as #ifndef
-CONFIG_UNMAP_KERNEL_AT_EL0 we don't set the state. But does that mean we
-always fall in the "Unknown" case when we don't build kpti in? Is that
-desirable?
-
-If so, I'd suggest replacing the tri-state with the following change:
-
-
->> +
->> +#ifdef CONFIG_GENERIC_CPU_VULNERABILITIES
->> +ssize_t cpu_show_meltdown(struct device *dev, struct device_attribute *attr,
->> +		char *buf)
->> +{
->> +	if (arm64_kernel_unmapped_at_el0())
->> +		return sprintf(buf, "Mitigation: KPTI\n");
->> +
-
-	if (!IS_ENABLED(UNMAP_KERNEL_AT_EL0) || !meltdown_safe)
-		sprintf(buf, "Unknown\n");
-	else
-		sprintf(buf, "Not affected\n");
-
-
-Thanks,
-
--- 
-Julien Thierry
+> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
+> index 26087b3..1c59a93 100644
+> --- a/drivers/pci/controller/dwc/pci-imx6.c
+> +++ b/drivers/pci/controller/dwc/pci-imx6.c
+> @@ -74,6 +74,7 @@ struct imx6_pcie {
+> >  #define PHY_PLL_LOCK_WAIT_USLEEP_MAX	200
+>  
+>  /* PCIe Root Complex registers (memory-mapped) */
+> > +#define PCI_MSI_CAP				0x50
+> >  #define PCIE_RC_LCR				0x7c
+> >  #define PCIE_RC_LCR_MAX_LINK_SPEEDS_GEN1	0x1
+> >  #define PCIE_RC_LCR_MAX_LINK_SPEEDS_GEN2	0x2
+> @@ -926,6 +927,7 @@ static int imx6_pcie_probe(struct platform_device *pdev)
+> >  	struct resource *dbi_base;
+> >  	struct device_node *node = dev->of_node;
+> >  	int ret;
+> > +	u16 val;
+>  
+> >  	imx6_pcie = devm_kzalloc(dev, sizeof(*imx6_pcie), GFP_KERNEL);
+> >  	if (!imx6_pcie)
+> @@ -1071,6 +1073,12 @@ static int imx6_pcie_probe(struct platform_device *pdev)
+> >  	if (ret < 0)
+> >  		return ret;
+>  
+> > +	if (pci_msi_enabled()) {
+> > +		val = dw_pcie_readw_dbi(pci, PCI_MSI_CAP + PCI_MSI_FLAGS);
+> > +		val |= PCI_MSI_FLAGS_ENABLE;
+> > +		dw_pcie_writew_dbi(pci, PCI_MSI_CAP + PCI_MSI_FLAGS, val);
+> > +	}
+> +
+> >  	return 0;
+>  }
+>  
