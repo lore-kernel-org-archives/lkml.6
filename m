@@ -7,50 +7,49 @@ X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00BD8C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:47:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DBDAC67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:47:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B977B20870
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:47:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4435020849
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:47:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544676435;
-	bh=zQf/L+b3WFd4rJBEAlVsxd9uIGB8od/4GFq2DZ0bXPY=;
+	s=default; t=1544676439;
+	bh=WVZddildhXeQP6kV5VGP+x4nGfe8+6TzHWp1uFE2zVo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=0A3FReHdDAw6KhZWT1sf36cb0eyQif1vQ4cJWc/JifTU0ynTNUY0lTFhohuiTDimY
-	 rzL6Su+CfIp3H4MnuM4JlPGIvkBx1D85JzmR2GKyzmMj8rQfFmLxWR06t7MRrHcB8v
-	 OQZVuFsbS6W1DkOQexI8965Adwbw1oitlkgh4XsA=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B977B20870
+	b=klaqjszt4Z5a2g4R09/kn8wHEVJVIlZX5yI8bm4NLzOGVeVP1sJI9xV5R+uto+pK6
+	 wWijR+ESTrnj1OA6BUpBMQ7Kdfu6U+OZQyDMaSYA6Y1zpSX7fOkg4rNrfcLRXth+Cn
+	 c2DsgJx3mN8WXZmmgpDOu9yo7AQJoQ01Eso4G3z0=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4435020849
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729295AbeLMErO (ORCPT
+        id S1728913AbeLMErM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 23:47:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43198 "EHLO mail.kernel.org"
+        Wed, 12 Dec 2018 23:47:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43258 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728159AbeLMEaQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 23:30:16 -0500
+        id S1728184AbeLMEaT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 23:30:19 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4812120879;
-        Thu, 13 Dec 2018 04:30:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4D3C020989;
+        Thu, 13 Dec 2018 04:30:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544675416;
-        bh=zQf/L+b3WFd4rJBEAlVsxd9uIGB8od/4GFq2DZ0bXPY=;
+        s=default; t=1544675419;
+        bh=WVZddildhXeQP6kV5VGP+x4nGfe8+6TzHWp1uFE2zVo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VjixBlcLtyTDFSbiao0OqMmPCF1CGwk2BCKtMuhsG6jGPG3d9gUi6p38fwRUAIlrT
-         lEwGL8VKlYGFb5c4j2DnR3+H0vnyhyBYYHsdZ7w+Wyevrf8fcDAIdilMmDjuQ2BQYW
-         3TtnHW2tKSIDG98rconfmj6MdFcMr0ad5A7Q4ubE=
+        b=tH8k8OFdo9PftFj2dj7K5SxYkmRt5truABCDA4rtC9js9+TqQMimNfwYIUuEVNGci
+         6IZ3taMJT8mmH5S0fYVFGBG42ilP5eaKit7jWr3D13yopiEoKwOxnigJLNBf5mO5vj
+         PSSTu8EwnVtZCsIQ2kHiMkxW28zAfUkneGqF7/iM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Vladimir Murzin <vladimir.murzin@arm.com>,
-        Chris Cole <chris@sageembedded.com>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 52/73] ARM: 8815/1: V7M: align v7m_dma_inv_range() with v7 counterpart
-Date:   Wed, 12 Dec 2018 23:28:17 -0500
-Message-Id: <20181213042838.75160-52-sashal@kernel.org>
+Cc:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 54/73] ethernet: fman: fix wrong of_node_put() in probe function
+Date:   Wed, 12 Dec 2018 23:28:19 -0500
+Message-Id: <20181213042838.75160-54-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181213042838.75160-1-sashal@kernel.org>
 References: <20181213042838.75160-1-sashal@kernel.org>
@@ -62,63 +61,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vladimir Murzin <vladimir.murzin@arm.com>
+From: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 
-[ Upstream commit 3d0358d0ba048c5afb1385787aaec8fa5ad78fcc ]
+[ Upstream commit ecb239d96d369c23c33d41708646df646de669f4 ]
 
-Chris has discovered and reported that v7_dma_inv_range() may corrupt
-memory if address range is not aligned to cache line size.
+After getting a reference to the platform device's of_node the probe
+function ends up calling of_find_matching_node() using the node as an
+argument. The function takes care of decreasing the refcount on it. We
+are then incorrectly decreasing the refcount on that node again.
 
-Since the whole cache-v7m.S was lifted form cache-v7.S the same
-observation applies to v7m_dma_inv_range(). So the fix just mirrors
-what has been done for v7 with a little specific of M-class.
+This patch removes the unwarranted call to of_node_put().
 
-Cc: Chris Cole <chris@sageembedded.com>
-Signed-off-by: Vladimir Murzin <vladimir.murzin@arm.com>
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Fixes: 414fd46e7762 ("fsl/fman: Add FMan support")
+Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/mm/cache-v7m.S | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+ drivers/net/ethernet/freescale/fman/fman.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/mm/cache-v7m.S b/arch/arm/mm/cache-v7m.S
-index 788486e830d3..32aa2a2aa260 100644
---- a/arch/arm/mm/cache-v7m.S
-+++ b/arch/arm/mm/cache-v7m.S
-@@ -73,9 +73,11 @@
- /*
-  * dcimvac: Invalidate data cache line by MVA to PoC
-  */
--.macro dcimvac, rt, tmp
--	v7m_cacheop \rt, \tmp, V7M_SCB_DCIMVAC
-+.irp    c,,eq,ne,cs,cc,mi,pl,vs,vc,hi,ls,ge,lt,gt,le,hs,lo
-+.macro dcimvac\c, rt, tmp
-+	v7m_cacheop \rt, \tmp, V7M_SCB_DCIMVAC, \c
- .endm
-+.endr
+diff --git a/drivers/net/ethernet/freescale/fman/fman.c b/drivers/net/ethernet/freescale/fman/fman.c
+index c415ac67cb7b..e80fedb27cee 100644
+--- a/drivers/net/ethernet/freescale/fman/fman.c
++++ b/drivers/net/ethernet/freescale/fman/fman.c
+@@ -2786,7 +2786,7 @@ static struct fman *read_dts_node(struct platform_device *of_dev)
+ 	if (!muram_node) {
+ 		dev_err(&of_dev->dev, "%s: could not find MURAM node\n",
+ 			__func__);
+-		goto fman_node_put;
++		goto fman_free;
+ 	}
  
- /*
-  * dccmvau: Clean data cache line by MVA to PoU
-@@ -369,14 +371,16 @@ v7m_dma_inv_range:
- 	tst	r0, r3
- 	bic	r0, r0, r3
- 	dccimvacne r0, r3
-+	addne	r0, r0, r2
- 	subne	r3, r2, #1	@ restore r3, corrupted by v7m's dccimvac
- 	tst	r1, r3
- 	bic	r1, r1, r3
- 	dccimvacne r1, r3
--1:
--	dcimvac r0, r3
--	add	r0, r0, r2
- 	cmp	r0, r1
-+1:
-+	dcimvaclo r0, r3
-+	addlo	r0, r0, r2
-+	cmplo	r0, r1
- 	blo	1b
- 	dsb	st
- 	ret	lr
+ 	err = of_address_to_resource(muram_node, 0,
+@@ -2795,11 +2795,10 @@ static struct fman *read_dts_node(struct platform_device *of_dev)
+ 		of_node_put(muram_node);
+ 		dev_err(&of_dev->dev, "%s: of_address_to_resource() = %d\n",
+ 			__func__, err);
+-		goto fman_node_put;
++		goto fman_free;
+ 	}
+ 
+ 	of_node_put(muram_node);
+-	of_node_put(fm_node);
+ 
+ 	err = devm_request_irq(&of_dev->dev, irq, fman_irq, IRQF_SHARED,
+ 			       "fman", fman);
 -- 
 2.19.1
 
