@@ -2,145 +2,172 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,T_MIXED_ES,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12E05C67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 13:13:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41879C67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 13:13:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9EC720849
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 13:13:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9EC720849
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 0394220849
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 13:13:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0394220849
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729379AbeLMNNb (ORCPT
+        id S1729399AbeLMNNl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 08:13:31 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:51322 "EHLO mx1.redhat.com"
+        Thu, 13 Dec 2018 08:13:41 -0500
+Received: from mga17.intel.com ([192.55.52.151]:5262 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729218AbeLMNNb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 08:13:31 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 67E2AC0587F9;
-        Thu, 13 Dec 2018 13:13:30 +0000 (UTC)
-Received: from [10.36.112.30] (ovpn-112-30.ams2.redhat.com [10.36.112.30])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 98CE15D756;
-        Thu, 13 Dec 2018 13:13:23 +0000 (UTC)
-Subject: Re: [PATCH v8 0/7] KVM: x86: Allow Qemu/KVM to use PVH entry point
-To:     Maran Wilson <maran.wilson@oracle.com>, x86@kernel.org,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, jgross@suse.com
-Cc:     boris.ostrovsky@oracle.com, bp@suse.de,
-        dave.hansen@linux.intel.com, davem@davemloft.net,
-        gregkh@linuxfoundation.org, hpa@zytor.com, jpoimboe@redhat.com,
-        kirill.shutemov@linux.intel.com, luto@kernel.org,
-        mchehab@kernel.org, mingo@redhat.com, rdunlap@infradead.org,
-        tglx@linutronix.de, thomas.lendacky@amd.com, hch@infradead.org,
-        roger.pau@citrix.com, rkrcmar@redhat.com
-References: <1544076152-21637-1-git-send-email-maran.wilson@oracle.com>
- <e8ed34e7-f82a-2314-9919-185d48510715@redhat.com>
- <faae2cec-1ff2-74eb-69c8-b75f64cfca3a@oracle.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- uUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
-Message-ID: <64b4fc44-d3f5-ed4e-ee4c-38e78313d979@redhat.com>
-Date:   Thu, 13 Dec 2018 14:13:21 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        id S1729118AbeLMNNl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 08:13:41 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Dec 2018 05:13:40 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,349,1539673200"; 
+   d="scan'208";a="109243705"
+Received: from gao-cwp.sh.intel.com (HELO gao-cwp) ([10.239.159.28])
+  by fmsmga008.fm.intel.com with ESMTP; 13 Dec 2018 05:13:39 -0800
+Date:   Thu, 13 Dec 2018 21:17:21 +0800
+From:   Chao Gao <chao.gao@intel.com>
+To:     Jan Beulich <JBeulich@suse.com>
+Cc:     Roger Pau Monne <roger.pau@citrix.com>,
+        Jia-Ju Bai <baijiaju1990@gmail.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        xen-devel <xen-devel@lists.xenproject.org>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] xen: xen-pciback: Reset MSI-X state when exposing a
+ device
+Message-ID: <20181213131719.GA24109@gao-cwp>
+References: <1543976357-1053-1-git-send-email-chao.gao@intel.com>
+ <20181205093223.dncg4nq4dh6xmrhk@mac>
+ <c27236d3-6125-4049-6268-3d9c93cf3ef2@oracle.com>
+ <20181212070654.GA13411@gao-cwp>
+ <5C10CBF50200007800205596@prv1-mh.provo.novell.com>
+ <20181212151824.GA17227@gao-cwp>
+ <5C112783020000780020589C@prv1-mh.provo.novell.com>
+ <20181213034657.GA26926@gao-cwp>
+ <5C12104C0200007800205B4B@prv1-mh.provo.novell.com>
 MIME-Version: 1.0
-In-Reply-To: <faae2cec-1ff2-74eb-69c8-b75f64cfca3a@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Thu, 13 Dec 2018 13:13:30 +0000 (UTC)
+In-Reply-To: <5C12104C0200007800205B4B@prv1-mh.provo.novell.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/12/18 19:09, Maran Wilson wrote:
-> On 12/6/2018 1:21 PM, Paolo Bonzini wrote:
->> On 06/12/18 07:02, Maran Wilson wrote:
->>> For certain applications it is desirable to rapidly boot a KVM virtual
->>> machine. In cases where legacy hardware and software support within the
->>> guest is not needed, Qemu should be able to boot directly into the
->>> uncompressed Linux kernel binary without the need to run firmware.
+On Thu, Dec 13, 2018 at 12:54:52AM -0700, Jan Beulich wrote:
+>>>> On 13.12.18 at 04:46, <chao.gao@intel.com> wrote:
+>> On Wed, Dec 12, 2018 at 08:21:39AM -0700, Jan Beulich wrote:
+>>>>>> On 12.12.18 at 16:18, <chao.gao@intel.com> wrote:
+>>>> On Wed, Dec 12, 2018 at 01:51:01AM -0700, Jan Beulich wrote:
+>>>>>>>> On 12.12.18 at 08:06, <chao.gao@intel.com> wrote:
+>>>>>> On Wed, Dec 05, 2018 at 09:01:33AM -0500, Boris Ostrovsky wrote:
+>>>>>>>On 12/5/18 4:32 AM, Roger Pau Monn� wrote:
+>>>>>>>> On Wed, Dec 05, 2018 at 10:19:17AM +0800, Chao Gao wrote:
+>>>>>>>>> I find some pass-thru devices don't work any more across guest reboot.
+>>>>>>>>> Assigning it to another guest also meets the same issue. And the only
+>>>>>>>>> way to make it work again is un-binding and binding it to pciback.
+>>>>>>>>> Someone reported this issue one year ago [1]. More detail also can be
+>>>>>>>>> found in [2].
+>>>>>>>>>
+>>>>>>>>> The root-cause is Xen's internal MSI-X state isn't reset properly
+>>>>>>>>> during reboot or re-assignment. In the above case, Xen set maskall bit
+>>>>>>>>> to mask all MSI interrupts after it detected a potential security
+>>>>>>>>> issue. Even after device reset, Xen didn't reset its internal maskall
+>>>>>>>>> bit. As a result, maskall bit would be set again in next write to
+>>>>>>>>> MSI-X message control register.
+>>>>>>>>>
+>>>>>>>>> Given that PHYSDEVOPS_prepare_msix() also triggers Xen resetting MSI-X
+>>>>>>>>> internal state of a device, we employ it to fix this issue rather than
+>>>>>>>>> introducing another dedicated sub-hypercall.
+>>>>>>>>>
+>>>>>>>>> Note that PHYSDEVOPS_release_msix() will fail if the mapping between
+>>>>>>>>> the device's msix and pirq has been created. This limitation prevents
+>>>>>>>>> us calling this function when detaching a device from a guest during
+>>>>>>>>> guest shutdown. Thus it is called right before calling
+>>>>>>>>> PHYSDEVOPS_prepare_msix().
+>>>>>>>> s/PHYSDEVOPS/PHYSDEVOP/ (no final S). And then I would also drop the
+>>>>>>>> () at the end of the hypercall name since it's not a function.
+>>>>>>>>
+>>>>>>>> I'm also wondering why the release can't be done when the device is
+>>>>>>>> detached from the guest (or the guest has been shut down). This makes
+>>>>>>>> me worry about the raciness of the attach/detach procedure: if there's
+>>>>>>>> a state where pciback assumes the device has been detached from the
+>>>>>>>> guest, but there are still pirqs bound, an attempt to attach to
+>>>>>>>> another guest in such state will fail.
+>>>>>>>
+>>>>>>>I wonder whether this additional reset functionality could be done out
+>>>>>>>of xen_pcibk_xenbus_remove(). We first do a (best effort) device reset
+>>>>>>>and then do the extra things that are not properly done there.
+>>>>>> 
+>>>>>> No. It cannot be done in xen_pcibk_xenbus_remove() without modifying
+>>>>>> the handler of PHYSDEVOP_release_msix. To do a successful Xen internal
+>>>>>> MSI-X state reset, PHYSDEVOP_{release, prepare}_msix should be finished
+>>>>>> without error. But ATM, xen expects that no msi is bound to pirq when
+>>>>>> doing PHYSDEVOP_release_msix. Otherwise it fails with error code -EBUSY.
+>>>>>> However, the expectation isn't guaranteed in xen_pcibk_xenbus_remove().
+>>>>>> In some cases, if qemu fails to unmap MSIs, MSIs are unmapped by Xen
+>>>>>> at last minute, which happens after device reset in 
+>>>>>> xen_pcibk_xenbus_remove().
+>>>>>
+>>>>>But that may need taking care of: I don't think it is a good idea to have
+>>>>>anything left from the prior owning domain when the device gets reset.
+>>>>>I.e. left over IRQ bindings should perhaps be forcibly cleared before
+>>>>>invoking the reset;
+>>>> 
+>>>> Agree. How about pciback to track the established IRQ bindings? Then
+>>>> pciback can clear irq binding before invoking the reset.
 >>>
->>> There already exists an ABI to allow this for Xen PVH guests and the ABI
->>> is supported by Linux and FreeBSD:
+>>>How would pciback even know of those mappings, when it's qemu
+>>>who establishes (and manages) them?
+>> 
+>> I meant to expose some interfaces from pciback. And pciback serves
+>> as the proxy of IRQ (un)binding APIs.
+>
+>If at all possible we should avoid having to change more parties (qemu,
+>libxc, kernel, hypervisor) than really necessary. Remember that such
+>a bug fix may want backporting, and making sure affected people have
+>all relevant components updated is increasingly difficult with their
+>number growing.
+>
+>>>>>in fact I'd expect this to happen in the course of
+>>>>>domain destruction, and I'd expect the device reset to come after the
+>>>>>domain was cleaned up. Perhaps simply an ordering issue in the tool
+>>>>>stack?
+>>>> 
+>>>> I don't think reversing the sequences of device reset and domain
+>>>> destruction would be simple. Furthermore, during device hot-unplug,
+>>>> device reset is done when the owner is alive. So if we use domain
+>>>> destruction to enforce all irq binding cleared, in theory, it won't be
+>>>> applicable to hot-unplug case (if qemu's hot-unplug logic is
+>>>> compromised).
 >>>
->>>     https://xenbits.xen.org/docs/unstable/misc/pvh.html
->>>
->>> This patch series would enable Qemu to use that same entry point for
->>> booting KVM guests.
->> Thanks!  I should be able to post a Tested-by next Monday.  Boris, are
->> you going to pick it up for 4.21?
-> 
-> Hi Paolo,
-> 
-> Are you still planning on running some testing of your own for these
-> patches? Should Boris wait to hear from you before moving forward?
+>>>Even in the hot-unplug case the tool stack could issue unbind
+>>>requests, behind the back of the possibly compromised qemu,
+>>>once neither the guest nor qemu have access to the device
+>>>anymore.
+>> 
+>> But currently, tool stack doesn't know the remaining IRQ bindings.
+>> If tool stack can maintaine IRQ binding information of a pass-thru
+>> device (stored in Xenstore?), we can come up with a clean solution
+>> without modifying linux kernel and Xen.
+>
+>If there's no way for the tool stack to either find out the bindings
+>or "blindly" issue unbind requests (accepting them to fail), then a
+>"wildcard" unbind operation may want adding. Or, perhaps even
+>better, XEN_DOMCTL_deassign_device could unbind anything left
+>in place for the specified device.
 
-He can go ahead with v9, I was just curious about it.
+Good idea. I will take this advice.
 
-Paolo
-
+Thanks
+Chao
