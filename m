@@ -2,159 +2,112 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_MIXED_ES
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7273CC67872
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 09:00:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1DAAC65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 09:00:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 392D92086D
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 09:00:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544691630;
-	bh=n60jGYTA/cKtftl3HoEEGpChDFMsL9X1Zzmy/CGdafY=;
-	h=In-Reply-To:Subject:To:References:From:Cc:Date:List-ID:From;
-	b=XQk6Yctu5P9x9vka4+iEhkrip2ceFUJ0Hp/yk4sY1NRwdWJEcd3tm4PTOdUjt9bDx
-	 COkqAh2U/y5EZDqPx377da026ifBXWtfhGGazmoBxMb2WBDanvlEDqEb87IpuEZ6YK
-	 BJDbpFwrEt+1B1DjMFM4ifRLIkgYpatjvZRj70zo=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 392D92086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id B57A920672
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 09:00:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MtBYMcT8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B57A920672
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727222AbeLMJA3 (ORCPT
+        id S1727433AbeLMJAe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 04:00:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43208 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725949AbeLMJA2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 04:00:28 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2337D20849;
-        Thu, 13 Dec 2018 09:00:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544691627;
-        bh=n60jGYTA/cKtftl3HoEEGpChDFMsL9X1Zzmy/CGdafY=;
-        h=In-Reply-To:Subject:To:References:From:Cc:Date:From;
-        b=Xulx05i19h7jFFRHMAeXFXCVrfhvV+m6PqVuIvnMWKZ+Olr5aILeaRuptg4Irz3fl
-         bxqTX8WhPe6tndc3U2APdeMKb7lat3wFpJSL4RA08KSzOuhg+Z+UkxPZg2wkGh8ZJn
-         MZrrzcPDJ+PUXd6moutluLNSFavnUTGD4xiQyMkM=
-Content-Type: text/plain; charset="utf-8"
+        Thu, 13 Dec 2018 04:00:34 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:41225 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725949AbeLMJAd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 04:00:33 -0500
+Received: by mail-pl1-f193.google.com with SMTP id u6so746229plm.8
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 01:00:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=RbiTCO+OSlfp4GdZoOQfhsM8gZ3dLWt1a+yNSWdYEqc=;
+        b=MtBYMcT8RPsL2Mfzf7AP4bLUpnS7U/cmym3rwjwbHD+JJNU2pWP7ZVtSMvHWBVV+7J
+         ba0FpZRtdPnqDqknB4W0+Dm8DUSOlDXIXf7rSkjtJr4PrJHRKVp5wW2OZqsvEXHPaMVf
+         /PzZdqrbpmdA/ItEo8lOjyr0ggY55sRuO7TF3p32zGeu5qCN58ocVLarAqXUNxoq/5gR
+         ympqaCxVmgPqvlr/IRwhYXoPSlq/uQz9o27jMqQb1wYgYw9el2NoIh9GKu/9vKqPM2HF
+         Q4yedKgbM1IPnxWS3Lqy6XsFOeEJRXmqhE6FOo962X4a1ZA4fjDtoW2Gw12UUimXXQAT
+         U4oQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=RbiTCO+OSlfp4GdZoOQfhsM8gZ3dLWt1a+yNSWdYEqc=;
+        b=MWX3Z54ZauHSVbG3rbSXJeHq6cEJWkSsFzUKEscovhfimngegHQ5+RA4OuLaThsOnz
+         28bwapExWVrJGodX8oWgqZpbjStkVRQZHuQWzK2FBpsSwIsYqk8fiIXSdN/9LsODPDfN
+         UwrXCFbJi0z0MhVdg8uhg+mn3rJh1EAUmiiml/SBx35sojpwJJ2vXhSN0FClxOvMJQhF
+         xUeX5RDSNeoEhT2oRYYWqTzBSaWrFgtjEsTPKr6jXUtdef38UO4P25CTwP1cQKCUfFHJ
+         ZVQ9awfjFo9m6+bnAIrVfGcuD0XEwHJOHr6XJzZU9kMT1q0aFdfo0s1befladA3oQuQN
+         xr/Q==
+X-Gm-Message-State: AA+aEWYGX6kTLNkSloqjmYrICuoSZTGGJPm+1moPK3whimKVAAjmoi4C
+        kzo6m8IXLyhOjLzyTnQzmQA=
+X-Google-Smtp-Source: AFSGD/Wfb6hu3MHQw+bAUqQqDLR6VCn0n99btKRU4n+gWQmZjYVhdcCGOcIn6dxkJjqEpQCAOgswiA==
+X-Received: by 2002:a17:902:aa0a:: with SMTP id be10mr22489681plb.266.1544691632153;
+        Thu, 13 Dec 2018 01:00:32 -0800 (PST)
+Received: from localhost ([110.70.59.213])
+        by smtp.gmail.com with ESMTPSA id z62sm2391122pfl.33.2018.12.13.01.00.30
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 13 Dec 2018 01:00:30 -0800 (PST)
+Date:   Thu, 13 Dec 2018 18:00:27 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Dmitry Safonov <0x7f454c46@gmail.com>
+Cc:     sergey.senozhatsky.work@gmail.com,
+        Dmitry Safonov <dima@arista.com>, longman@redhat.com,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        yang.shi@linux.alibaba.com, Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH] debugobjects: Move printk out of db lock critical
+ sections
+Message-ID: <20181213090026.GA7278@jagdpanzerIV>
+References: <1544653694-27873-1-git-send-email-longman@redhat.com>
+ <9cb1526a-e82f-dfa7-4b3c-5ea911a8d476@arista.com>
+ <20181213051853.GG4860@jagdpanzerIV>
+ <CAJwJo6YZNtdsQuGyk6=YDj9QzvktfYeNc5FTi-qw5ttQDVoJ0w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20181211141627.GA526@e107981-ln.cambridge.arm.com>
-Subject: Re: [PATCH 05/12] PCI: aardvark: add suspend to RAM support
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-References: <20181123141831.8214-1-miquel.raynal@bootlin.com> <1999610.6DN9RK2Tt3@aspire.rjw.lan> <20181204094558.GA24588@e107981-ln.cambridge.arm.com> <1966692.fVZYlVgWHv@aspire.rjw.lan> <20181211141627.GA526@e107981-ln.cambridge.arm.com>
-Message-ID: <154469162632.19322.13092710881803732022@swboyd.mtv.corp.google.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-User-Agent: alot/0.8
-Cc:     Miquel Raynal <miquel.raynal@bootlin.com>, sudeep.holla@arm.com,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Nadav Haklai <nadavh@marvell.com>
-Date:   Thu, 13 Dec 2018 01:00:26 -0800
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJwJo6YZNtdsQuGyk6=YDj9QzvktfYeNc5FTi-qw5ttQDVoJ0w@mail.gmail.com>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Lorenzo Pieralisi (2018-12-11 06:16:27)
-> On Tue, Dec 04, 2018 at 10:42:19PM +0100, Rafael J. Wysocki wrote:
-> > On Tuesday, December 4, 2018 10:45:58 AM CET Lorenzo Pieralisi wrote:
-> > > On Mon, Dec 03, 2018 at 11:00:20PM +0100, Rafael J. Wysocki wrote:
-> > > > On Monday, December 3, 2018 4:38:46 PM CET Miquel Raynal wrote:
-> > >=20
-> > > I did not ask my question (that may be silly) properly apologies. I k=
-now
-> > > that the S2R context allows sleeping the question is, in case
-> > > clk_disable_unprepare() (and resume counterparts) sleeps,
-> >=20
-> > If it just sleeps, then this is not a problem, but if it actually *wait=
-s*
-> > for something meaningful to happen (which I guess is what you really me=
-an),
-> > then things may go awry.
-> >=20
-> > > what is going to wake it up, given that we are in the S2R NOIRQ phase=
- and as
-> > > you said the action handlers (that are possibly required to wake up t=
-he eg
-> > > clk_disable_unprepare() caller) are disabled (unless, AFAIK,
-> > > IRQF_NO_SUSPEND is passed at IRQ request time in the respective drive=
-r).
-> >=20
-> > So if it waits for an action handler to do something and wake it up, it=
- may
-> > very well deadlock.  I have no idea if that really happens, though.
-> >=20
-> > > The clk API implementations back-ends are beyond my depth, I just wan=
-ted
-> > > to make sure I understand how the S2R flow is expected to work in this
-> > > specific case.
-> >=20
-> > Action handlers won't run unless the IRQs are marked as IRQF_NO_SUSPEND
-> > (well, there are a few more complications I don't recall exactly, but
-> > that's the basic rule).  If anything depends on them to run, it will bl=
-ock.
->=20
-> Stephen, any comments on this ?
+On (12/13/18 05:54), Dmitry Safonov wrote:
+> > I thought about it for a second, but couldn't figure out if this race
+> > was real.
+> >
+> > E.g. uart case - if there are two paths which concurrently free and
+> > access debug object, then the same race condition should exist for
+> > the xmit.buf page. debug object's lifespan should be the same as the
+> > lifespan of, ummm, whatever the thing that debug object is attached
+> > to? I'm surely missing something here.
+> 
+> I think the point of debugobjects is to reduce the damage caused
+> by an improper life-time of objects.
+> 
+> IIUC:
+> 1. alloc_page()
+> 2. dynamically allocate a workqueue on a new page
+> 3. schedule some work
+> 4. until the work has run free_page()
 
-Sorry I seemed to miss this email. BTW, what is an "action handler"
-here? The IRQ action handler?
+Hmm, if we free() that page then __debug_check_no_obj_freed() should ->fixup
+all ODEBUG_STATE_ACTIVE objects first. Maybe we are talking about different
+scenarios.
 
-> I would like to understand if it is safe
-> to call a clk_*unprepare/prepare_* function (that may have a blocking
-> back-end waiting on a wake-up event triggered by an IRQ action) in the
-> suspend/resume NOIRQ phase.
-
-Does this ever occur in practice? I imagine "blocking back-end waiting
-on a wake-up event" would be some sort of i2c or SPI based "slow" clk
-that is prepared/unprepared in the NOIRQ phase of suspend/resume? So
-that function call into the clk API fails because the i2c or SPI
-controller used to toggle the clk on/off state relies on the
-controller's IRQ to manage the transaction over the bus but that IRQ is
-disabled. I suppose this is possible but I've never heard of it
-happening in practice. Do you have such a scenario?
-
->=20
-> It is not clear how the unprepare/prepare() callers can possibly know
-> whether it is safe to block at that stage given that IRQ actions are
-> suspended and the wake-up may never trigger.
->=20
-
-Is this solved in other situations somehow? I don't think clk consumers
-have any idea that things are safe or not safe to use in the NOIRQ phase
-of suspend, but I also don't see how clks are special here. Any provider
-consumer pattern would fall into the same trap, but maybe clks are the
-first ones to get here.
-
-It seems like a larger problem with NOIRQ suspend in general and how it
-is too coarse of a solution for suspend ordering of devices. It's not
-like we need *all* device interrupts to be disabled to do something in
-suspend with one particular device. Most likely, we just need the device
-and all it's children to be suspended and this device to have it's IRQ
-disabled for the NOIRQ suspend callback to work. (Maybe any devices it's
-supplying with device links too?)
-
-If that's really the case, then I can see how one device and it's
-children are suspended and the irq for it is disabled but the providing
-devices (clk, regulator, bus controller, etc.) are still fully active
-and not suspended but in fact completely usable and able to service
-interrupts. If that all makes sense, then I would answer the question
-with a definitive "yes it's all fine" because the clk consumer could be
-in the NOIRQ phase of its suspend but the clk provider wouldn't have
-even started suspending yet when clk_disable_unprepare() is called.
-
+	-ss
