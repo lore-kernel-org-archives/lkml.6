@@ -2,74 +2,61 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,T_MIXED_ES,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB5B9C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 11:58:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F6D0C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:02:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 750CE20870
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 11:58:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=micronovasrl.com header.i=@micronovasrl.com header.b="RQzViI0U"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 750CE20870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=micronovasrl.com
+	by mail.kernel.org (Postfix) with ESMTP id E4B112086D
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:02:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4B112086D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728858AbeLML65 (ORCPT
+        id S1728835AbeLMMCq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 06:58:57 -0500
-Received: from mail.micronovasrl.com ([212.103.203.10]:60614 "EHLO
-        mail.micronovasrl.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728770AbeLML64 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 06:58:56 -0500
-Received: from mail.micronovasrl.com (mail.micronovasrl.com [127.0.0.1])
-        by mail.micronovasrl.com (Postfix) with ESMTP id E41BEB01968
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 12:58:54 +0100 (CET)
-Authentication-Results: mail.micronovasrl.com (amavisd-new); dkim=pass
-        reason="pass (just generated, assumed good)" header.d=micronovasrl.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=micronovasrl.com;
-         h=content-transfer-encoding:content-language:content-type
-        :content-type:in-reply-to:mime-version:user-agent:date:date
-        :message-id:from:from:references:to:subject:subject; s=dkim; t=
-        1544702333; x=1545566334; bh=Bx8meC0FWDSHNC6fJ6mJV61gPaVubU8oonO
-        /vQEzoys=; b=RQzViI0Ufi8nAnkjiy8slEtjCIekZ4JaR8rZYtYL0rvXBNgNqZf
-        MLC7Bx8S5XGwsGxHVNp8GbZfECyMcC26yRdh0eHo4agay80qFoW1BeZFinMztPhF
-        B5IFYMl/5wfAnru7ZCeGSR0HO9pGInvgeW1EP2a2dnzoXFQvsUPWQoPw=
-X-Virus-Scanned: Debian amavisd-new at mail.micronovasrl.com
-Received: from mail.micronovasrl.com ([127.0.0.1])
-        by mail.micronovasrl.com (mail.micronovasrl.com [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id y5BPS7GCtLxM for <linux-kernel@vger.kernel.org>;
-        Thu, 13 Dec 2018 12:58:53 +0100 (CET)
-Received: from [192.168.178.33] (host180-21-dynamic.5-87-r.retail.telecomitalia.it [87.5.21.180])
-        by mail.micronovasrl.com (Postfix) with ESMTPSA id 107B4B01928;
-        Thu, 13 Dec 2018 12:58:52 +0100 (CET)
-Subject: Re: [PATCH] drm/sun4i: fix HSYNC and VSYNC polarity
-To:     Jonathan Liu <net147@gmail.com>
-Cc:     Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <1518717288-123578-1-git-send-email-giulio.benetti@micronovasrl.com>
- <CANwerB3Zr9axz+1rwCnNpLsX-xcOhOKEY4MT53v1+vzd99KRMg@mail.gmail.com>
- <57d929cf-4458-dae4-36d4-4e89170eba4a@micronovasrl.com>
- <CANwerB1aUP4Rw-B_qmzOu0BWmkpr-LQ5b4FKQbzZeeYHPtGoqA@mail.gmail.com>
- <05786c98-6bc9-44f1-91ea-14452448cced@micronovasrl.com>
- <CANwerB0mR3NK8488g4bWCroEzoEQkoE+btVivq9m_TzHctTfuQ@mail.gmail.com>
-From:   Giulio Benetti <giulio.benetti@micronovasrl.com>
-Message-ID: <f75bfd8a-5f1a-8860-78ec-4af1f394f01c@micronovasrl.com>
-Date:   Thu, 13 Dec 2018 12:58:58 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
+        Thu, 13 Dec 2018 07:02:46 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:60312 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728733AbeLMMCq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 07:02:46 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B9D2BA78;
+        Thu, 13 Dec 2018 04:02:45 -0800 (PST)
+Received: from [10.1.197.36] (e112298-lin.cambridge.arm.com [10.1.197.36])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6AD643F575;
+        Thu, 13 Dec 2018 04:02:43 -0800 (PST)
+Subject: Re: [PATCH v7 11/25] arm64: irqflags: Use ICC_PMR_EL1 for interrupt
+ masking
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        joel@joelfernandes.org, Marc Zyngier <marc.zyngier@arm.com>,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        James Morse <james.morse@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>, oleg@redhat.com
+References: <1544633245-6036-1-git-send-email-julien.thierry@arm.com>
+ <1544633245-6036-12-git-send-email-julien.thierry@arm.com>
+ <CAKv+Gu8E9g=J78a-2HAdcijaHyVFL1KA3civwfoVHQ=mp7yJJA@mail.gmail.com>
+ <19500d6b-62a3-21cb-9ac0-a4e5d4714a63@arm.com>
+ <CAKv+Gu8+1JNzM4AUujiEfkYujpgakLXcUwTDG4eHwvQ7pKAzFA@mail.gmail.com>
+ <31e41461-763f-aa7d-91ea-b493ede81eed@arm.com>
+ <CAKv+Gu9PaeGbfB-9r0Gv1oYn+jORJDk9ozajEwKbse3KjkSmbQ@mail.gmail.com>
+From:   Julien Thierry <julien.thierry@arm.com>
+Message-ID: <bc27fb6d-1adf-d7e9-ded2-2cbed81b6e03@arm.com>
+Date:   Thu, 13 Dec 2018 12:02:40 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <CANwerB0mR3NK8488g4bWCroEzoEQkoE+btVivq9m_TzHctTfuQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: it
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAKv+Gu9PaeGbfB-9r0Gv1oYn+jORJDk9ozajEwKbse3KjkSmbQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -77,186 +64,100 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-Il 13/12/2018 04:08, Jonathan Liu ha scritto:
-> Hi Giulio,
-> 
-> On Wed, 12 Dec 2018 at 04:20, Giulio Benetti
-> <giulio.benetti@micronovasrl.com> wrote:
+On 13/12/2018 11:35, Ard Biesheuvel wrote:
+> On Thu, 13 Dec 2018 at 09:54, Julien Thierry <julien.thierry@arm.com> wrote:
 >>
->> Hi Jonathan,
 >>
->> Il 11/12/2018 11:49, Jonathan Liu ha scritto:
->>> Hi Giulio,
->>>
->>> On Thu, 6 Dec 2018 at 22:00, Giulio Benetti
->>> <giulio.benetti@micronovasrl.com> wrote:
+>>
+>> On 12/12/2018 18:10, Ard Biesheuvel wrote:
+>>> On Wed, 12 Dec 2018 at 18:59, Julien Thierry <julien.thierry@arm.com> wrote:
 >>>>
->>>> Hi Jonathan,
 >>>>
->>>> Il 06/12/2018 08:29, Jonathan Liu ha scritto:
->>>>> Hi Giulio,
->>>>>
->>>>> On Thu, 15 Feb 2018 at 17:54, Giulio Benetti
->>>>> <giulio.benetti@micronovasrl.com> wrote:
+>>>>
+>>>> On 12/12/2018 17:27, Ard Biesheuvel wrote:
+>>>>> On Wed, 12 Dec 2018 at 17:48, Julien Thierry <julien.thierry@arm.com> wrote:
 >>>>>>
->>>>>> Differently from other Lcd signals, HSYNC and VSYNC signals
->>>>>> result inverted if their bits are cleared to 0.
+>>>>>> Instead disabling interrupts by setting the PSR.I bit, use a priority
+>>>>>> higher than the one used for interrupts to mask them via PMR.
 >>>>>>
->>>>>> Invert their settings of IO_POL register.
+>>>>>> When using PMR to disable interrupts, the value of PMR will be used
+>>>>>> instead of PSR.[DAIF] for the irqflags.
 >>>>>>
->>>>>> Signed-off-by: Giulio Benetti <giulio.benetti@micronovasrl.com>
+>>>>>> Signed-off-by: Julien Thierry <julien.thierry@arm.com>
+>>>>>> Suggested-by: Daniel Thompson <daniel.thompson@linaro.org>
+>>>>>> Cc: Catalin Marinas <catalin.marinas@arm.com>
+>>>>>> Cc: Will Deacon <will.deacon@arm.com>
+>>>>>> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+>>>>>> Cc: Oleg Nesterov <oleg@redhat.com>
 >>>>>> ---
->>>>>>     drivers/gpu/drm/sun4i/sun4i_tcon.c | 4 ++--
->>>>>>     1 file changed, 2 insertions(+), 2 deletions(-)
+>>>>>>  arch/arm64/include/asm/efi.h      |   5 +-
+>>>>>>  arch/arm64/include/asm/irqflags.h | 123 +++++++++++++++++++++++++++++---------
+>>>>>>  2 files changed, 99 insertions(+), 29 deletions(-)
 >>>>>>
->>>>>> diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
->>>>>> index 3c15cf2..aaf911a 100644
->>>>>> --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
->>>>>> +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
->>>>>> @@ -389,10 +389,10 @@ static void sun4i_tcon0_mode_set_rgb(struct sun4i_tcon *tcon,
->>>>>>                         SUN4I_TCON0_BASIC3_H_SYNC(hsync));
+>>>>>> diff --git a/arch/arm64/include/asm/efi.h b/arch/arm64/include/asm/efi.h
+>>>>>> index 7ed3208..a9d3ebc 100644
+>>>>>> --- a/arch/arm64/include/asm/efi.h
+>>>>>> +++ b/arch/arm64/include/asm/efi.h
+>>>>>> @@ -42,7 +42,10 @@
 >>>>>>
->>>>>>            /* Setup the polarity of the various signals */
->>>>>> -       if (!(mode->flags & DRM_MODE_FLAG_PHSYNC))
->>>>>> +       if (mode->flags & DRM_MODE_FLAG_PHSYNC)
->>>>>>                    val |= SUN4I_TCON0_IO_POL_HSYNC_POSITIVE;
+>>>>>>  efi_status_t __efi_rt_asm_wrapper(void *, const char *, ...);
 >>>>>>
->>>>>> -       if (!(mode->flags & DRM_MODE_FLAG_PVSYNC))
->>>>>> +       if (mode->flags & DRM_MODE_FLAG_PVSYNC)
->>>>>>                    val |= SUN4I_TCON0_IO_POL_VSYNC_POSITIVE;
+>>>>>> -#define ARCH_EFI_IRQ_FLAGS_MASK (PSR_D_BIT | PSR_A_BIT | PSR_I_BIT | PSR_F_BIT)
+>>>>>> +#define ARCH_EFI_IRQ_FLAGS_MASK                                                \
+>>>>>> +       (system_uses_irq_prio_masking() ?                               \
+>>>>>> +               GIC_PRIO_IRQON :                                        \
+>>>>>> +               (PSR_D_BIT | PSR_A_BIT | PSR_I_BIT | PSR_F_BIT))
 >>>>>>
->>>>>>            regmap_update_bits(tcon->regs, SUN4I_TCON0_IO_POL_REG,
 >>>>>
->>>>> I am running Linux 4.19.6 and noticed with Olimex LCD-OLinuXino-7TS 7"
->>>>> LCD touchscreen (Innolux AT070TN92) connected to Olimex
->>>>> A20-OLinuXino-MICRO that the image does not display correctly after
->>>>> this change.
->>>>> The image is shifted to the right.
+>>>>> This mask is used to determine whether we return from a firmware call
+>>>>> with a different value for the I flag than we entered it with. So
+>>>>> instead of changing the mask, we should change the way we record DAIF,
+>>>>> given that the firmware is still going to poke the I bit if it
+>>>>> misbehaves, regardless of whether the OS happens to use priorities for
+>>>>> interrupt masking.
 >>>>>
->>>>> Reverting the change results in the image being displayed correctly on
->>>>> the screen.
->>>>>
->>>>> I have in the device tree a "panel" node with compatible =
->>>>> "innolux,at070tn92" which uses the timings in
->>>>> drivers/gpu/drm/panel/panel-simple.c.
->>>>>
->>>>> Any ideas?
+>>>>
+>>>> Thanks for pointing that out, so this change makes little sense...
+>>>>
+>>>> The annoying part is that the flag checking takes place in the arch
+>>>> agnostic code.
+>>>>
+>>>> Would introducing some overriddable efi_get_flags() or efi_save_flags()
+>>>> that default to local_save_flags() seem like an acceptable solution?
+>>>>
+>>>> This way I could override it for arm64 and still return the DAIF bits.
+>>>>
 >>>
->>>>
->>>> Checking Display Datasheet:
->>>> https://www.olimex.com/Products/Retired/A13-LCD7-TS/resources/S700-AT070TN92.pdf
->>>>
->>>> Page 13 section 3.3.2 you can see it needs active low VS and HS.
->>>>
->>>> You can refer to this Thread and check scope captures about VS and HS
->>>> versus TCON0_IOPOL register:
->>>> https://lists.freedesktop.org/archives/dri-devel/2018-January/163874.html
->>>>
->>>> There should be something that wrongly sets one of these or both:
->>>> mode->flags |= DRM_MODE_FLAG_PHSYNC;
->>>> and/or
->>>> mode->flags |= DRM_MODE_FLAG_PVSYNC;
->>>>
->>>> Checked in panel-simple.c but it's not there.
-> 
+>>> I don't follow the reasoning below about irqflags exactly, but is
+>>> there any way we could simply but both PMR and DAIF in flags? We could
+>>> even update the mask here to ensure that the firmware doesn't corrupt
+>>> the PMR.
 >>>
->>> flags is 0 because it is not assigned in the struct definition for the panel.
 >>
->> I don't think it is 0, because otherwise IO_POL_REG wouldn't be set to
->> 0x03000000 but to 0.
->> What is checked is exactly mode->flags, so the problem seems to be upstream.
+>> So, that was the case in my previous versions of the series, and as you
+>> said, that covered checking both DAIF bits and PMR on return from EFI
+>> services. But Catalin suggested that irqflags could just use PMR when we
+>> enable the priority masking feature. Catalin's suggestion does simplify
+>> things, except for this part.
 >>
->> This is my doubt, it seems mode->flags is not initialized or overriden
->> at a certain point, this is why I want to debug it with Jtag tomorrow.
-
-mode->flags is correct, just checked with debugger.
-
+>> However, it doesn't seem to far-fetched to me that the architecture
+>> could have a more generic way to tell the EFI driver "this is the set of
+>> stuff that I care about and you should return from runtime services with
+>> this stuff in the same state as before" without the "set of stuff" being
+>> limited to irqflags.
+>>
+>> But maybe this would be over-engineering just to deal with my use-case...
 >>
 > 
-> If you look at the change made by your patch:
-> --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> @@ -389,10 +389,10 @@ static void sun4i_tcon0_mode_set_rgb(struct
-> sun4i_tcon *tcon,
->                       SUN4I_TCON0_BASIC3_H_SYNC(hsync));
+> No, that makes sense. As you said, you can just create a
+> efi_get_irqflags() helper that defaults to what we are using now, and
+> can be overridden to just return DAIF in our case.
 > 
->          /* Setup the polarity of the various signals */
-> -       if (!(mode->flags & DRM_MODE_FLAG_PHSYNC))
-> +       if (mode->flags & DRM_MODE_FLAG_PHSYNC)
->                  val |= SUN4I_TCON0_IO_POL_HSYNC_POSITIVE;
-> 
-> -       if (!(mode->flags & DRM_MODE_FLAG_PVSYNC))
-> +       if (mode->flags & DRM_MODE_FLAG_PVSYNC)
->                  val |= SUN4I_TCON0_IO_POL_VSYNC_POSITIVE;
-> 
->          regmap_update_bits(tcon->regs, SUN4I_TCON0_IO_POL_REG,
-> 
-> If mode->flags is 0, 
 
-mode->flags is 0xa(DRM_MODE_FLAG_NHSYNC | DRM_MODE_FLAG_NVSYNC) by 
-default if not specified different in panel-simple.c so the signals must 
-be active LOW(IO_POL_REG = 0x00000000).
+Good, thanks for the confirmation. I'll do that for the next version of
+the series.
 
-> then before your change it would set
-> SUN4I_TCON0_IO_POL_HSYNC_POSITIVE and
-> SUN4I_TCON0_IO_POL_VSYNC_POSITIVE bits to 1 (resulting in 0x03000000).
+Thanks,
 
-And it was wrong, because as I've pointed you above, especially in the 
-Thread with all the scope captures, 0x03000000 means active HIGH 
-H/Vsync, while 0x00000000 means active LOW H/Vsync.
-
-> If mode->flags is not 0, then after your change it would not set
-> SUN4I_TCON0_IO_POL_HSYNC_POSITIVE and
-> SUN4I_TCON0_IO_POL_VSYNC_POSITIVE bits to 1 (resulting in 0x00000000).
-
-If mode->flags is 0x5(DRM_MODE_FLAG_PHSYNC | DRM_MODE_FLAG_PVSYNC) i.e. 
-specified in panel-simple.c the signals must be active HIGH(IO_POL_REG = 
-0x03000000).
-
-IO_POL_REG = 0x03000000 is active HIGH
-IO_POL_REG = 0x00000000 is active LOW
-
-as I've checked many times and rechecked today lot of times too.
-
->>> Before this change, TCON0_IO_POL_REG would be 0x03000000 (both bits
->>> set to 1) and image displays correctly > After this change, TCON0_IO_POL_REG is 0x00000000 (both bits set to 0)
->>> and image doesn't display correctly.
->>>
->>> Checked using "devmem2 0x01c0c088" on A20-OLinuXino-MICRO Rev J.
->>
->> 0x03000000 as I've triple checked with scope means Positive H/Vsync,
->> and 0x00000000 Negative H/VSync.
->>
->> Please check on the Thread I've pointed you above where there are all
->> the links to the scope captures.
->>
->> Are you completely sure you're using the correct panel?
-> 
-> Yes, I am sure I am using the correct panel. It has the following
-> marking on sticker:
-> AT070TN92V.X 89A070ZZ-0K1
-
-At this point the only way to make it working is to specify 
-DRM_MODE_FLAG_NHSYNC | DRM_MODE_FLAG_NVSYNC in panel-simple.c and check.
-Can you do a check and tell me if this solves the problem?
-Also, it's not sufficient to submit a patch for that display in 
-panel-simple.c (IMHO) because I would check with scope if it is the way 
-wou're describing.
-
-I don't know how to describe it better than this and IMHO the scope can 
-give us the final answer.
-
-Hope I've been helpful.
-
-Best regards
 -- 
-Giulio Benetti
-CTO
-
-MICRONOVA SRL
-Sede: Via A. Niedda 3 - 35010 Vigonza (PD)
-Tel. 049/8931563 - Fax 049/8931346
-Cod.Fiscale - P.IVA 02663420285
-Capitale Sociale € 26.000 i.v.
-Iscritta al Reg. Imprese di Padova N. 02663420285
-Numero R.E.A. 258642
+Julien Thierry
