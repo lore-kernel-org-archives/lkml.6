@@ -2,133 +2,89 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0ED4C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 08:51:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F226DC65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 08:52:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9C5E20849
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 08:51:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9C5E20849
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
+	by mail.kernel.org (Postfix) with ESMTP id BFA9620672
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 08:52:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFA9620672
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727452AbeLMIv3 (ORCPT
+        id S1727459AbeLMIwQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 03:51:29 -0500
-Received: from orcrist.hmeau.com ([104.223.48.154]:50056 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726416AbeLMIv2 (ORCPT
+        Thu, 13 Dec 2018 03:52:16 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:46965 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726930AbeLMIwQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 03:51:28 -0500
-Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
-        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1gXMi8-0001IE-Qg; Thu, 13 Dec 2018 16:51:12 +0800
-Received: from herbert by gondobar with local (Exim 4.89)
-        (envelope-from <herbert@gondor.apana.org.au>)
-        id 1gXMhy-0004Rj-JT; Thu, 13 Dec 2018 16:51:02 +0800
-Date:   Thu, 13 Dec 2018 16:51:02 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Louis Collard <louiscollard@chromium.org>
-Cc:     linux-crypto@vger.kernel.org, Matt Mackall <mpm@selenic.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Gary R Hook <gary.hook@amd.com>, Michael Buesch <m@bues.ch>,
-        PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>,
-        "Michael S . Tsirkin" <mst@redhat.com>,
-        linux-kernel@vger.kernel.org, apronin@chromium.org,
-        jarkko.sakkinen@linux.intel.com, linux@mniewoehner.de,
-        david.bild@xaptum.com, Theodore Ts'o <tytso@mit.edu>
-Subject: Re: [RESEND PATCH] Allow hwrng to initialize crng.
-Message-ID: <20181213085102.aiw64pubxgoohlo3@gondor.apana.org.au>
-References: <20181213084017.80850-1-louiscollard@chromium.org>
+        Thu, 13 Dec 2018 03:52:16 -0500
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1gXMj8-0002B6-1H; Thu, 13 Dec 2018 09:52:14 +0100
+Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1gXMj7-0003bw-9e; Thu, 13 Dec 2018 09:52:13 +0100
+Date:   Thu, 13 Dec 2018 09:52:13 +0100
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Michal =?utf-8?B?Vm9rw6HEjQ==?= <michal.vokac@ysoft.com>,
+        linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] pwm: imx: Implement get_state() function for
+ hardware readout
+Message-ID: <20181213085213.7k5ihn7bdrtess3g@pengutronix.de>
+References: <1538403588-68850-1-git-send-email-michal.vokac@ysoft.com>
+ <1538403588-68850-3-git-send-email-michal.vokac@ysoft.com>
+ <20181212105432.GD17654@ulmo>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20181213084017.80850-1-louiscollard@chromium.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181212105432.GD17654@ulmo>
 User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 13, 2018 at 04:40:17PM +0800, Louis Collard wrote:
-> Some systems, for example embedded systems, do not generate
-> enough entropy on boot through interrupts, and boot may be blocked for
-> several minutes waiting for a call to getrandom to complete.
+On Wed, Dec 12, 2018 at 11:54:32AM +0100, Thierry Reding wrote:
+> On Mon, Oct 01, 2018 at 04:19:48PM +0200, Michal Vokáč wrote:
+> > Implement the get_state() function and set the initial state to reflect
+> > real state of the hardware. This allows to keep the PWM running if it was
+> > enabled in bootloader. It is very similar to the GPIO behavior. GPIO pin
+> > set as output in bootloader keep the same setting in Linux unless it is
+> > reconfigured.
+> > 
+> > If we find the PWM block enabled we need to prepare and enable its source
+> > clock otherwise the clock will be disabled late in the boot as unused.
+> > That will leave the PWM in enabled state but with disabled clock. That has
+> > a side effect that the PWM output is left at its current level at which
+> > the clock was disabled. It is totally non-deterministic and it may be LOW
+> > or HIGH.
+> > 
+> > Signed-off-by: Michal Vokáč <michal.vokac@ysoft.com>
+> > ---
+> >  drivers/pwm/pwm-imx.c | 53 +++++++++++++++++++++++++++++++++++++++++++++++++++
+> >  1 file changed, 53 insertions(+)
 > 
-> Currently, random data is read from a hwrng when it is registered,
-> and is loaded into primary_crng. This data is treated in the same
-> way as data that is device-specific but otherwise unchanging, and
-> so primary_crng cannot become initialized with the data from the
-> hwrng.
-> 
-> This change causes the data initially read from the hwrng to be
-> treated the same as subsequent data that is read from the hwrng if
-> it's quality score is non-zero.
-> 
-> The implications of this are:
-> 
-> The data read from hwrng can cause primary_crng to become
-> initialized, therefore avoiding problems of getrandom blocking
-> on boot.
-> 
-> Calls to getrandom (with GRND_RANDOM) may be using entropy
-> exclusively (or in practise, almost exclusively) from the hwrng.
-> 
-> Regarding the latter point; this behavior is the same as if a
-> user specified a quality score of 1 (bit of entropy per 1024 bits)
-> so hopefully this is not too scary a change to make.
-> 
-> This change is the result of the discussion here:
-> https://patchwork.kernel.org/patch/10453893/
-> 
-> Signed-off-by: Louis Collard <louiscollard@chromium.org>
-> Acked-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> ---
->  drivers/char/hw_random/core.c | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/char/hw_random/core.c b/drivers/char/hw_random/core.c
-> index 95be7228f327..99c3e4127949 100644
-> --- a/drivers/char/hw_random/core.c
-> +++ b/drivers/char/hw_random/core.c
-> @@ -24,6 +24,7 @@
->  #include <linux/sched.h>
->  #include <linux/slab.h>
->  #include <linux/uaccess.h>
-> +#include <crypto/chacha20.h>
->  
->  #define RNG_MODULE_NAME		"hw_random"
->  
-> @@ -64,13 +65,17 @@ static size_t rng_buffer_size(void)
->  static void add_early_randomness(struct hwrng *rng)
->  {
->  	int bytes_read;
-> -	size_t size = min_t(size_t, 16, rng_buffer_size());
-> +	/* Read enough to initialize crng. */
-> +	size_t size = 2*CHACHA20_KEY_SIZE;
->  
->  	mutex_lock(&reading_mutex);
->  	bytes_read = rng_get_data(rng, rng_buffer, size, 1);
->  	mutex_unlock(&reading_mutex);
->  	if (bytes_read > 0)
-> -		add_device_randomness(rng_buffer, bytes_read);
-> +		/* Allow crng to become initialized, but do not add
-> +		 * entropy to the pool.
-> +		 */
-> +		add_hwgenerator_randomness(rng_buffer, bytes_read, 0);
->  }
->  
->  static inline void cleanup_rng(struct kref *kref)
-> -- 
-> 2.13.5
-> 
+> Applied, thanks.
 
-Adding Ted Ts'o to the cc list.
+Did you miss my feedback for this patch or did you choose to ignore it?
+
+Best regards
+Uwe
+
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
