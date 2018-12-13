@@ -2,105 +2,75 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19EB3C67872
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 22:32:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22C07C67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 22:35:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D37B12086D
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 22:32:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="LW4mF41B";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="PdE1kqbB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D37B12086D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id E020E20811
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 22:35:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E020E20811
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728367AbeLMWcP (ORCPT
+        id S1728017AbeLMWfl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 17:32:15 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:45886 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726813AbeLMWcP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 17:32:15 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 6185060722; Thu, 13 Dec 2018 22:32:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1544740334;
-        bh=BdeQTVEhx+OiI8GAjJO6EgneqyfQJOFlkV8VQCzRM9I=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=LW4mF41BojFdZbdko0Rz13XcVcF2ZsfCYVI47BTH41XLy/gB6LIa3iGp/nPe7Uytx
-         f8d1MxBspalrysqQFaCgjXuX6cQDG5KfK21kB+lnFuANmNcvfTEkzv8OMHZsW3dwUA
-         hAOmqNzbCy/43eAj/677mk9RYt1ZPuP1sTlB1C5E=
-Received: from [10.226.60.81] (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        Thu, 13 Dec 2018 17:35:41 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:53094 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726457AbeLMWfl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 17:35:41 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: jhugo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 09DB660237;
-        Thu, 13 Dec 2018 22:32:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1544740333;
-        bh=BdeQTVEhx+OiI8GAjJO6EgneqyfQJOFlkV8VQCzRM9I=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=PdE1kqbBiR62AveZkXMEkihW/pjooc5DnSBVtwYnHmsb2AHdd0YGBqf/L8z8uEs+e
-         4rubcRfDGF7Hdke1JbLGzHBs7PuCXBMOjTRnoIa8vFWAN8WCkhi36l1IjPzMeqzhrF
-         EAtyxdQxn1TwPqEDu6eduEFRqO0lLnjjMK/hwbpo=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 09DB660237
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
-Subject: Re: [PATCH v2] clk: qcom: Drop unused 8998 clock
-To:     Stephen Boyd <sboyd@kernel.org>, andy.gross@linaro.org,
-        david.brown@linaro.org, mturquette@baylibre.com
-Cc:     bjorn.andersson@linaro.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        marc.w.gonzalez@free.fr
-References: <1544720949-18404-1-git-send-email-jhugo@codeaurora.org>
- <154472988944.19322.6557891989616167911@swboyd.mtv.corp.google.com>
-From:   Jeffrey Hugo <jhugo@codeaurora.org>
-Message-ID: <d7ac2e27-8e9e-7ee1-430d-ed0f61d98171@codeaurora.org>
-Date:   Thu, 13 Dec 2018 15:32:12 -0700
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        by mx1.redhat.com (Postfix) with ESMTPS id 073F77CDE4;
+        Thu, 13 Dec 2018 22:35:41 +0000 (UTC)
+Received: from treble (ovpn-120-195.rdu2.redhat.com [10.10.120.195])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2709A66075;
+        Thu, 13 Dec 2018 22:35:35 +0000 (UTC)
+Date:   Thu, 13 Dec 2018 16:35:33 -0600
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Miroslav Benes <mbenes@suse.cz>
+Cc:     Petr Mladek <pmladek@suse.com>, Jiri Kosina <jikos@kernel.org>,
+        Jason Baron <jbaron@akamai.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jessica Yu <jeyu@kernel.org>
+Subject: Re: [PATCH v14 03/11] livepatch: Consolidate klp_free functions
+Message-ID: <20181213223533.oucddzzhrnx7b7ov@treble>
+References: <20181129094431.7801-1-pmladek@suse.com>
+ <20181129094431.7801-4-pmladek@suse.com>
+ <alpine.LSU.2.21.1812031542540.22317@pobox.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <154472988944.19322.6557891989616167911@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <alpine.LSU.2.21.1812031542540.22317@pobox.suse.cz>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Thu, 13 Dec 2018 22:35:41 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/13/2018 12:38 PM, Stephen Boyd wrote:
-> Quoting Jeffrey Hugo (2018-12-13 09:09:09)
->> gcc_lpass_trig_clk is not used downstream, therefore there is no reason to
->> expect it to be needed for clients.  Let's remove it because messing with
->> the clock has been observed to cause Linux hangs when the qdss_clk is
->> initialized by rpmcc.
->>
->> Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
->> Reviewed-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
->> ---
->>
->> v2:
->> -corrected commit text per Marc
->> -added Marc's reviewed-by
+On Mon, Dec 03, 2018 at 03:59:57PM +0100, Miroslav Benes wrote:
+> On Thu, 29 Nov 2018, Petr Mladek wrote:
 > 
-> Please slow down. There isn't any need to resend for such things.
+> > -static int klp_init_patch(struct klp_patch *patch)
+> > +/* Init operations that must succeed before klp_free_patch() can be called. */
+> > +static int klp_init_patch_before_free(struct klp_patch *patch)
 > 
+> There is no klp_free_patch() now, so the comment is not correct. Also I 
+> don't know if the function name is ideal, but I don't have a better one.
 
-Sorry.  Used to other maintainers.
- From your v1 comment, would be
-Fixes: 4807c71cc688 (arm64: dts: Add msm8998 SoC and MTP board support)
-I'm assuming from the above, you'll just apply the tag when you apply 
-the change.
+Yeah, I found the name of this function to be confusing.  It sounds like
+you're initializing the patch before freeing it, which seems like an
+obvious thing to do :-)
+
+How about klp_init_patch_early()?
 
 -- 
-Jeffrey Hugo
-Qualcomm Datacenter Technologies as an affiliate of Qualcomm 
-Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+Josh
