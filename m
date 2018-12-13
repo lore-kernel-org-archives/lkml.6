@@ -2,306 +2,146 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-10.4 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69125C67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 09:48:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D1E6C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 09:50:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 188EC20882
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 09:48:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="S1aL6XSn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 188EC20882
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+	by mail.kernel.org (Postfix) with ESMTP id C818E20645
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 09:50:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C818E20645
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728145AbeLMJsj (ORCPT
+        id S1728049AbeLMJuy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 04:48:39 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:39916 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727867AbeLMJsi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 04:48:38 -0500
-Received: by mail-io1-f65.google.com with SMTP id k7so1090024iob.6
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 01:48:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=JnzthssgCHCyfK4Tvc+YTxwLve2ENC9DKMVrmVFkkUs=;
-        b=S1aL6XSnLAEEq5tgGi+0Z/TjocDAIoK1QWrFbT8riEH5DN9F6zBZnWtdJMzhPu/5Fc
-         aRQg+w+D6YRhiVmMdADgwoqPtTduqhjtrkGfjLrhq+fnOE242KMKV7dwRhE7LXq3AqgZ
-         lSiuQR3qN4Yr99Too7Jr3Jdr6hUli0yOW/CPA9bxvpLj+Y4Tfx8imy4A79bzGdH5W2U+
-         DT9YogT09N40z/2YX6SICj0jxnMXGy8X7XUaYtk8dqhz+DuW8QOtAXJCtaBglLGqqBO6
-         LAH8X7B7ojMl5O6lzuO3WQ3NVdqPfrg+F76SDB5hGsPm+woS2DxfkUlcILtmh5otpI+j
-         dOcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=JnzthssgCHCyfK4Tvc+YTxwLve2ENC9DKMVrmVFkkUs=;
-        b=XRRLY38aTf+PLqCPPeHAOySo+kKdpmqGsBEA9BR1sczV6gjhQ08krXVy2sbJYV51qN
-         x1FGO2J2250ZYuAMR0JumroX34m503f+xQg+LoxtU0+Nmk5C6R/oG1QzJ0MjUcb+o9G/
-         X8H9fdNnAcEq00LduTIgo9h/yoekDhXdzlhLLsehW4xyGep/kXya+jkurdRQXgQ6ujT4
-         bWYOKjoaAHM+a9Y55C17oI+ILQ6bROZX0Bg43eqIaXTuLA0ikmamPoN/NosqSNNcoVhb
-         U3PG1zbARKjczkGKowbUj3/a9fjBVvD3ZjYemMRc/VT3Ah8fpjM5SBXb8xg6UstHcFMZ
-         f9ZQ==
-X-Gm-Message-State: AA+aEWb6FjcoASNos2flnD7T9C/4IXCZ2qUpGlHl3N0QaVy8Sa+Jd97/
-        vOBEfl/4887Rxbu4rlBUQvrqTU89f3ZPaTIskfIWjA==
-X-Google-Smtp-Source: AFSGD/VqX131FiAO8gwmgKTGw/XoePJFck5bK4hOp4vP43oQa0SRKlHay9q3ILHwulwNuIbRs6A3oP2rYIFVmWis6HI=
-X-Received: by 2002:a5e:aa06:: with SMTP id s6mr1864050ioe.187.1544694517480;
- Thu, 13 Dec 2018 01:48:37 -0800 (PST)
-MIME-Version: 1.0
-References: <20181207130452.1910-1-brgl@bgdev.pl>
-In-Reply-To: <20181207130452.1910-1-brgl@bgdev.pl>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Thu, 13 Dec 2018 10:48:26 +0100
-Message-ID: <CAMRc=MeSr80=k10foLpQZwos2zRnGtD42mQA2bcKXXL_WEWLRA@mail.gmail.com>
-Subject: Re: [PATCH v2] regmap: irq: handle HW using separate rising/falling
- edge interrupts
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Thu, 13 Dec 2018 04:50:54 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:42476 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727570AbeLMJux (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 04:50:53 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 78DE9207B8; Thu, 13 Dec 2018 10:50:50 +0100 (CET)
+Received: from localhost (unknown [88.191.26.124])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 43EB92037D;
+        Thu, 13 Dec 2018 10:50:50 +0100 (CET)
+Date:   Thu, 13 Dec 2018 10:50:50 +0100
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        linux-pwm@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-i2c@vger.kernel.org, groeck@chromium.org,
+        kernel@collabora.com, linux-rtc@vger.kernel.org,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Benson Leung <bleung@chromium.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        linux-input@vger.kernel.org,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        devicetree@vger.kernel.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-pm@vger.kernel.org, MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH v2] MAINTAINERS: add maintainers for ChromeOS EC
+ sub-drivers
+Message-ID: <20181213095050.GM19816@piout.net>
+References: <20181211190953.13626-1-enric.balletbo@collabora.com>
+ <20181212222937.GL19816@piout.net>
+ <6f688bfe-2ebe-1934-0375-016ae859dcfb@collabora.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6f688bfe-2ebe-1934-0375-016ae859dcfb@collabora.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-pt., 7 gru 2018 o 14:04 Bartosz Golaszewski <brgl@bgdev.pl> napisa=C5=82(a)=
-:
->
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
->
-> Some interrupt controllers use separate bits for controlling rising
-> and falling edge interrupts in the mask register i.e. they have one
-> interrupt for rising edge and one for falling.
->
-> We already handle the case where we have a single interrupt in the
-> mask register and a separate type configuration register.
->
-> Add a new switch to regmap_irq_chip which tells the framework to use
-> the mask_base address for configuring the edge of the interrupts that
-> define type_falling/rising_mask values.
->
-> For such interrupts we never update the type_base bits. For interrupts
-> that don't define type masks or their regmap irq chip doesn't set the
-> type_in_mask to true everything stays the same.
->
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> ---
-> This is a second try at supporting HW which uses separate interrupts
-> for rising/falling edge events.
->
-> This time we're adding an explicit flag for such chips.
->
-> Below is an example of the regmap irq chip configuration that makes
-> use of this new feature:
->
-> static const struct regmap_irq foobar_irqs[] =3D {
->         /*
->          * Make two interrupts into a single virtual irq with
->          * configurable edge.
->          */
->         [FOOBAR_INT_EDGE] =3D {
->                 .reg_offset             =3D FOOBAR_INT_GLBL_OFFSET,
->                 /* mask is two bits here but regmap handles it nicely */
->                 .mask                   =3D FOOBAR_INT_GPIO_MSK,
->                 .type_falling_mask      =3D FOOBAR_INT_GPIO_F_MSK,
->                 .type_rising_mask       =3D FOOBAR_INT_GPIO_R_MSK,
->         },
->         /* Regular interrupt, nothing changes. */
->         [FOOBAR_INT_NOEDGE] =3D {
->                 .reg_offset             =3D FOOBAR_INT_GLBL_OFFSET,
->                 .mask                   =3D FOOBAR_INT_FOO_MSK,
->         },
->
-> static struct regmap_irq_chip foobar_irq_chip =3D {
->         .name                   =3D "foobar-irq",
->         .irqs                   =3D foobar_irqs,
->         .num_irqs               =3D ARRAY_SIZE(foobar_irqs),
->         .num_regs               =3D 2,
->         .status_base            =3D FOOBAR_REG_INT_GLBL,
->         .mask_base              =3D FOOBAR_REG_INTM_GLBL,
->         .type_in_mask           =3D true,
->         /* NOTE: we're not defining type_base here. */
-> };
->
+On 13/12/2018 10:30:16+0100, Enric Balletbo i Serra wrote:
+> > However, you should probably indicate which tree do you expect that to
+> > go through ;)
+> > 
+> 
+> Well, these are sub-drivers for different subsystems but are related to the main
+> ChromeOS EC. I expect all go through their specific subsystem and their
+> maintainer. I.e the rtc driver go through your tree, the mfd go through Lee's
+> tree, iio drivers through Jonathan's tree, etc. This is the reason I did not add
+> the tree. Main purpose here as that Benson and I are aware when someone sends a
+> change on one of the sub-drivers and we can review these patches.
+> 
 
-Hi Mark,
+Sure, sorry I was not clear but I was asking about this particular
+patch because as it is, you will get acks from all the maintainers but I
+think they all think someone else will apply it ;)
 
-would you be willing to pick this one up for v4.21 or do you have some
-objections? If it would go in in the next merge window then it would
-make it easier to merge my driver afterwards since I could already
-make use of it.
+> Thanks,
+>  Enric
+> 
+> >> ---
+> >>
+> >> Changes in v2:
+> >> - Fix typo in Benson email address.
+> >>
+> >>  MAINTAINERS | 24 ++++++++++++++++++++++++
+> >>  1 file changed, 24 insertions(+)
+> >>
+> >> diff --git a/MAINTAINERS b/MAINTAINERS
+> >> index a24129b0b043..bbe7180e2851 100644
+> >> --- a/MAINTAINERS
+> >> +++ b/MAINTAINERS
+> >> @@ -3625,6 +3625,30 @@ S:	Maintained
+> >>  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/bleung/chrome-platform.git
+> >>  F:	drivers/platform/chrome/
+> >>  
+> >> +CHROMEOS EC SUBDRIVERS
+> >> +M:	Benson Leung <bleung@chromium.org>
+> >> +M:	Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> >> +S:	Maintained
+> >> +F:	Documentation/devicetree/bindings/extcon/extcon-usbc-cros-ec.txt
+> >> +F:	Documentation/devicetree/bindings/input/cros-ec-keyb.txt
+> >> +F:	Documentation/devicetree/bindings/pwm/google,cros-ec-pwm.txt
+> >> +F:	Documentation/devicetree/bindings/i2c/i2c-cros-ec-tunnel.txt
+> >> +F:	Documentation/devicetree/bindings/mfd/cros-ec.txt
+> >> +F:	Documentation/ABI/testing/sysfs-bus-iio-cros-ec
+> >> +F:	drivers/extcon/extcon-usbc-cros-ec.c
+> >> +F:	drivers/i2c/busses/i2c-cros-ec-tunnel.c
+> >> +F:	drivers/iio/accel/cros_ec*
+> >> +F:	drivers/iio/common/cros_ec_sensors/
+> >> +F:	drivers/iio/light/cros_ec*
+> >> +F:	drivers/iio/pressure/cros_ec*
+> >> +F:	drivers/input/keyboard/cros_ec*
+> >> +F:	drivers/mfd/cros_ec*
+> >> +F:	drivers/power/supply/cros_usbpd-charger.c
+> >> +F:	drivers/pwm/pwm-cros-ec.c
+> >> +F:	drivers/rtc/rtc-cros-ec.c
+> >> +F:	include/linux/iio/common/cros_ec_sensors_core.h
+> >> +F:	include/linux/mfd/cros_ec*
+> >> +
+> >>  CIRRUS LOGIC AUDIO CODEC DRIVERS
+> >>  M:	Brian Austin <brian.austin@cirrus.com>
+> >>  M:	Paul Handrigan <Paul.Handrigan@cirrus.com>
+> >> -- 
+> >> 2.19.2
+> >>
+> > 
 
-Bart
-
->  drivers/base/regmap/regmap-irq.c | 64 ++++++++++++++++++++++----------
->  include/linux/regmap.h           |  4 ++
->  2 files changed, 48 insertions(+), 20 deletions(-)
->
-> diff --git a/drivers/base/regmap/regmap-irq.c b/drivers/base/regmap/regma=
-p-irq.c
-> index 429ca8ed7e51..603b1554f81c 100644
-> --- a/drivers/base/regmap/regmap-irq.c
-> +++ b/drivers/base/regmap/regmap-irq.c
-> @@ -157,20 +157,23 @@ static void regmap_irq_sync_unlock(struct irq_data =
-*data)
->                 }
->         }
->
-> -       for (i =3D 0; i < d->chip->num_type_reg; i++) {
-> -               if (!d->type_buf_def[i])
-> -                       continue;
-> -               reg =3D d->chip->type_base +
-> -                       (i * map->reg_stride * d->type_reg_stride);
-> -               if (d->chip->type_invert)
-> -                       ret =3D regmap_irq_update_bits(d, reg,
-> -                               d->type_buf_def[i], ~d->type_buf[i]);
-> -               else
-> -                       ret =3D regmap_irq_update_bits(d, reg,
-> -                               d->type_buf_def[i], d->type_buf[i]);
-> -               if (ret !=3D 0)
-> -                       dev_err(d->map->dev, "Failed to sync type in %x\n=
-",
-> -                               reg);
-> +       /* Don't update the type bits if we're using mask bits for irq ty=
-pe. */
-> +       if (!d->chip->type_in_mask) {
-> +               for (i =3D 0; i < d->chip->num_type_reg; i++) {
-> +                       if (!d->type_buf_def[i])
-> +                               continue;
-> +                       reg =3D d->chip->type_base +
-> +                               (i * map->reg_stride * d->type_reg_stride=
-);
-> +                       if (d->chip->type_invert)
-> +                               ret =3D regmap_irq_update_bits(d, reg,
-> +                                       d->type_buf_def[i], ~d->type_buf[=
-i]);
-> +                       else
-> +                               ret =3D regmap_irq_update_bits(d, reg,
-> +                                       d->type_buf_def[i], d->type_buf[i=
-]);
-> +                       if (ret !=3D 0)
-> +                               dev_err(d->map->dev, "Failed to sync type=
- in %x\n",
-> +                                       reg);
-> +               }
->         }
->
->         if (d->chip->runtime_pm)
-> @@ -194,8 +197,27 @@ static void regmap_irq_enable(struct irq_data *data)
->         struct regmap_irq_chip_data *d =3D irq_data_get_irq_chip_data(dat=
-a);
->         struct regmap *map =3D d->map;
->         const struct regmap_irq *irq_data =3D irq_to_regmap_irq(d, data->=
-hwirq);
-> +       unsigned int mask, type;
-> +
-> +       type =3D irq_data->type_falling_mask | irq_data->type_rising_mask=
-;
-> +
-> +       /*
-> +        * The type_in_mask flag means that the underlying hardware uses
-> +        * separate mask bits for rising and falling edge interrupts, but
-> +        * we want to make them into a single virtual interrupt with
-> +        * configurable edge.
-> +        *
-> +        * If the interrupt we're enabling defines the falling or rising
-> +        * masks then instead of using the regular mask bits for this
-> +        * interrupt, use the value previously written to the type buffer
-> +        * at the corresponding offset in regmap_irq_set_type().
-> +        */
-> +       if (d->chip->type_in_mask && type)
-> +               mask =3D d->type_buf[irq_data->reg_offset / map->reg_stri=
-de];
-> +       else
-> +               mask =3D irq_data->mask;
->
-> -       d->mask_buf[irq_data->reg_offset / map->reg_stride] &=3D ~irq_dat=
-a->mask;
-> +       d->mask_buf[irq_data->reg_offset / map->reg_stride] &=3D ~mask;
->  }
->
->  static void regmap_irq_disable(struct irq_data *data)
-> @@ -430,6 +452,7 @@ int regmap_add_irq_chip(struct regmap *map, int irq, =
-int irq_flags,
->         struct regmap_irq_chip_data *d;
->         int i;
->         int ret =3D -ENOMEM;
-> +       int num_type_reg;
->         u32 reg;
->         u32 unmask_offset;
->
-> @@ -479,13 +502,14 @@ int regmap_add_irq_chip(struct regmap *map, int irq=
-, int irq_flags,
->                         goto err_alloc;
->         }
->
-> -       if (chip->num_type_reg) {
-> -               d->type_buf_def =3D kcalloc(chip->num_type_reg,
-> -                                       sizeof(unsigned int), GFP_KERNEL)=
-;
-> +       num_type_reg =3D chip->type_in_mask ? chip->num_regs : chip->num_=
-type_reg;
-> +       if (num_type_reg) {
-> +               d->type_buf_def =3D kcalloc(num_type_reg,
-> +                                         sizeof(unsigned int), GFP_KERNE=
-L);
->                 if (!d->type_buf_def)
->                         goto err_alloc;
->
-> -               d->type_buf =3D kcalloc(chip->num_type_reg, sizeof(unsign=
-ed int),
-> +               d->type_buf =3D kcalloc(num_type_reg, sizeof(unsigned int=
-),
->                                       GFP_KERNEL);
->                 if (!d->type_buf)
->                         goto err_alloc;
-> @@ -600,7 +624,7 @@ int regmap_add_irq_chip(struct regmap *map, int irq, =
-int irq_flags,
->                 }
->         }
->
-> -       if (chip->num_type_reg) {
-> +       if (chip->num_type_reg && !chip->type_in_mask) {
->                 for (i =3D 0; i < chip->num_irqs; i++) {
->                         reg =3D chip->irqs[i].type_reg_offset / map->reg_=
-stride;
->                         d->type_buf_def[reg] |=3D chip->irqs[i].type_risi=
-ng_mask |
-> diff --git a/include/linux/regmap.h b/include/linux/regmap.h
-> index a367d59c301d..b7aa50cfb306 100644
-> --- a/include/linux/regmap.h
-> +++ b/include/linux/regmap.h
-> @@ -1131,6 +1131,9 @@ struct regmap_irq {
->   * @ack_invert:  Inverted ack register: cleared bits for ack.
->   * @wake_invert: Inverted wake register: cleared bits are wake enabled.
->   * @type_invert: Invert the type flags.
-> + * @type_in_mask: Use the mask registers for controlling irq type. For
-> + *                interrupts defining type_rising/falling_mask use mask_=
-base
-> + *                for edge configuration and never update bits in type_b=
-ase.
->   * @runtime_pm:  Hold a runtime PM lock on the device when accessing it.
->   *
->   * @num_regs:    Number of registers in each control bank.
-> @@ -1169,6 +1172,7 @@ struct regmap_irq_chip {
->         bool wake_invert:1;
->         bool runtime_pm:1;
->         bool type_invert:1;
-> +       bool type_in_mask:1;
->
->         int num_regs;
->
-> --
-> 2.19.1
->
+-- 
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
