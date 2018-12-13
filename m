@@ -2,187 +2,110 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40A51C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 17:36:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 048FAC65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 17:44:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02D1C2086D
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 17:36:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB6C120811
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 17:44:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="MM14MWZw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02D1C2086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="cknB3/Rf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB6C120811
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729669AbeLMRgh (ORCPT
+        id S1729544AbeLMRoM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 12:36:37 -0500
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:42233 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728115AbeLMRgh (ORCPT
+        Thu, 13 Dec 2018 12:44:12 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:57254 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729208AbeLMRoM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 12:36:37 -0500
-Received: by mail-vs1-f67.google.com with SMTP id b74so1670065vsd.9
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 09:36:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0hcnbEc4kGXOG5LKamiEGBnahMZZ5sKiUiIKI5mE9LE=;
-        b=MM14MWZwKX9QmpwRRGQO7ZtYyX9gjWmx9XGPTNtpeRPurIEYmfR8764leZsvM5mR97
-         ZrE0UbhRg4y49mKinGAkCSicDr5XB2000nDTRCASZy2MlMVu5cAGYnFqZ19bm4afZlOp
-         ZmRHwvN9vCKeyl6Y/EsYxVOUbDElmyey7WNk0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0hcnbEc4kGXOG5LKamiEGBnahMZZ5sKiUiIKI5mE9LE=;
-        b=q2rc+WRyLKf1IxEVer1n0lDl52j4OTUF69PleT04Rk8OcOYJZpD/ebF3eD0ELkH9OF
-         nLkFXQLSYm9WDxWxZw+JNHOSgxRk/MLzBU9hKCI8UHUIaT42TJvch0qhY3Doap62k7o5
-         3Iuh9jxHvSZxim7zpw2Uyb/cmNW6T5ktXoDAjbh2yciKehuU79XfJDOUIKv/wGLCvJzR
-         frv9/xlMe8ZK6I/WJdKLqTVRk48an7RyTLO7u5xG9+l6qpPLPFdYdZFQS5hN8g2TCOg3
-         tBBhTbG/b8vy6ed2KlUshZS1JYCquwLYWFeUvcbiV2RVow8Mw8P51VtHAEH+hPoY52mq
-         1pRA==
-X-Gm-Message-State: AA+aEWapeVkAWzXOrl7uXLsqPKzjEojLjQyb3HG6uWiSZ1RO8PpqTyl8
-        UGMVX72TKecvzDcNsolKUDZ/R28MknI=
-X-Google-Smtp-Source: AFSGD/UnXF9+buUuNXKUsYve828TQB7C/N4mkayeyt8Bb19HRSKsIloD6rTX5BCjWw7f4qX6qaTe4A==
-X-Received: by 2002:a67:7993:: with SMTP id u141mr12094989vsc.119.1544722594537;
-        Thu, 13 Dec 2018 09:36:34 -0800 (PST)
-Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com. [209.85.217.48])
-        by smtp.gmail.com with ESMTPSA id s11sm607277uao.15.2018.12.13.09.36.33
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 13 Dec 2018 09:36:33 -0800 (PST)
-Received: by mail-vs1-f48.google.com with SMTP id b74so1669972vsd.9
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 09:36:33 -0800 (PST)
-X-Received: by 2002:a67:1505:: with SMTP id 5mr10314309vsv.20.1544722592704;
- Thu, 13 Dec 2018 09:36:32 -0800 (PST)
+        Thu, 13 Dec 2018 12:44:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
+        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=vHGUuj0rnCXK7jCzmngG9EdSGcppwG64C2WaGQxemxQ=; b=cknB3/RfhMcgP/LryCBIdo1cOp
+        Feqy1/knxhUX8eAa3sORC/FcKvArI4TbXYZ1aklrDdcXirP9YOAr5Q7G/r8Lk9KD1D0emIc9+EUH7
+        +2Ib50F4sxDSQi82OL7/W4CBDLlchqmeWJporWm809fLYmDvK+vu/Jy+bnIFlGrRzYErC5I6fGzqc
+        ZXpkOflllvTR+KUMdZa0myJZ0oKfImIYq4p9/OAv3rewao99cH2xjRuzwNs+2vKYzAmg9CQBEmMJE
+        swKz9k8fF6xjH0MWSZdjGmGr1XllQ+Od0BU4CX+18Bi7bJHjKioedp1AczQ4XEj86G1gj3//Tanr4
+        B4m+/tCA==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gXV1s-00082H-FV; Thu, 13 Dec 2018 17:44:08 +0000
+Date:   Thu, 13 Dec 2018 09:44:08 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mickael.salaun@ssi.gouv.fr>
+Cc:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+        linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        James Morris <jmorris@namei.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Garrett <mjg59@google.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Philippe =?iso-8859-1?Q?Tr=E9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>, Shuah Khan <shuah@kernel.org>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        Yves-Alexis Perez <yves-alexis.perez@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC PATCH v1 0/5] Add support for O_MAYEXEC
+Message-ID: <20181213174408.GS6830@bombadil.infradead.org>
+References: <20181212081712.32347-1-mic@digikod.net>
+ <20181213030228.GM6830@bombadil.infradead.org>
+ <374ea88c-edc5-f1a6-3637-748635e1e7df@ssi.gouv.fr>
+ <20181213171310.GR6830@bombadil.infradead.org>
+ <ba523381-1b98-a8bf-ee5b-94a71caee48c@ssi.gouv.fr>
 MIME-Version: 1.0
-References: <20181212003522.239189-1-ryandcase@chromium.org>
-In-Reply-To: <20181212003522.239189-1-ryandcase@chromium.org>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Thu, 13 Dec 2018 09:36:20 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=XyG0z3BvDyWiXTNz5mwf3cFH-U9=1fhury9+csW5TVjw@mail.gmail.com>
-Message-ID: <CAD=FV=XyG0z3BvDyWiXTNz5mwf3cFH-U9=1fhury9+csW5TVjw@mail.gmail.com>
-Subject: Re: [PATCH] tty: serial: qcom_geni_serial: Remove interrupt storm
-To:     Ryan Case <ryandcase@chromium.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-serial@vger.kernel.org, Stephen Boyd <swboyd@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ba523381-1b98-a8bf-ee5b-94a71caee48c@ssi.gouv.fr>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Thu, Dec 13, 2018 at 06:36:15PM +0100, Mickaël Salaün wrote:
+> On 13/12/2018 18:13, Matthew Wilcox wrote:
+> > On Thu, Dec 13, 2018 at 04:17:29PM +0100, Mickaël Salaün wrote:
+> >> Adding a new syscall for this simple use case seems excessive. I think
+> > 
+> > We have somewhat less than 400 syscalls today.  We have 20 O_ bits defined.
+> > Obviously there's a lower practical limit on syscalls, but in principle
+> > we could have up to 2^32 syscalls, and there are only 12 O_ bits remaining.
+> > 
+> >> that the open/openat syscall familly are the right place to do an atomic
+> >> open and permission check, the same way the kernel does for other file
+> >> access. Moreover, it will be easier to patch upstream interpreters
+> >> without the burden of handling a (new) syscall that may not exist on the
+> >> running system, whereas unknown open flags are ignored.
+> > 
+> > Ah, but that's the problem.  The interpreter can see an -ENOSYS response
+> > and handle it appropriately.  If the flag is silently ignored, the
+> > interpreter has no idea whether it can do a racy check or whether to
+> > skip even trying to do the check.
+> 
+> Right, but the interpreter should interpret the script if the open with
+> O_MAYEXEC succeed (but not otherwise): it may be because the flag is
+> known by the kernel and the system policy allow this call, or because
+> the (old) kernel doesn't known about this flag (which is fine and needed
+> for backward compatibility). The script interpretation must not failed
+> if the kernel doesn't support O_MAYEXEC, it is then useless for the
+> interpreter to do any additional check.
 
-On Tue, Dec 11, 2018 at 4:36 PM Ryan Case <ryandcase@chromium.org> wrote:
->
-> Disable M_TX_FIFO_WATERMARK_EN after we've sent all data for a given
-> transaction so we don't continue to receive a flurry of free space
-> interrupts while waiting for the M_CMD_DONE notification. Re-enable the
-> watermark when establishing the next transaction.
->
-> Also clear the watermark interrupt after filling the FIFO so we do not
-> receive notification again prior to actually having free space.
->
-> Signed-off-by: Ryan Case <ryandcase@chromium.org>
-> ---
->
->  drivers/tty/serial/qcom_geni_serial.c | 16 ++++++++++++++--
->  1 file changed, 14 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/tty/serial/qcom_geni_serial.c b/drivers/tty/serial/qcom_geni_serial.c
-> index 6e38498362ef..965aefa54114 100644
-> --- a/drivers/tty/serial/qcom_geni_serial.c
-> +++ b/drivers/tty/serial/qcom_geni_serial.c
-> @@ -724,10 +724,12 @@ static void qcom_geni_serial_handle_tx(struct uart_port *uport, bool done,
->         size_t pending;
->         int i;
->         u32 status;
-> +       u32 irq_en;
->         unsigned int chunk;
->         int tail;
->
->         status = readl_relaxed(uport->membase + SE_GENI_TX_FIFO_STATUS);
-> +       irq_en = readl_relaxed(uport->membase + SE_GENI_M_IRQ_EN);
->
->         /* Complete the current tx command before taking newly added data */
->         if (active)
-> @@ -752,6 +754,9 @@ static void qcom_geni_serial_handle_tx(struct uart_port *uport, bool done,
->         if (!port->tx_remaining) {
->                 qcom_geni_serial_setup_tx(uport, pending);
->                 port->tx_remaining = pending;
-> +
-> +               irq_en |= M_TX_FIFO_WATERMARK_EN;
-> +               writel_relaxed(irq_en, uport->membase + SE_GENI_M_IRQ_EN);
+If that's the way interpreters want to work, then that's fine.  They
+can just call the verify() syscall and ignore the -ENOSYS.  Done.
 
-I notice other places that turn on the watermark only do so if
-"xfer_mode == GENI_SE_FIFO".  ...but it looks as if the mode is always
-FIFO mode, so you should be fine.  Probably the right thing to do is
-that someone should do a future patch to kill all the "if xfer_mode ==
-GENI_SE_FIFO" stuff and if/when someone wants to add DMA then they can
-do it from scratch.
-
-
->         }
->
->         remaining = chunk;
-> @@ -775,7 +780,15 @@ static void qcom_geni_serial_handle_tx(struct uart_port *uport, bool done,
->         }
->
->         xmit->tail = tail & (UART_XMIT_SIZE - 1);
-> +       writel_relaxed(M_TX_FIFO_WATERMARK_EN,
-> +                       uport->membase + SE_GENI_M_IRQ_CLEAR);
-
-Worth a comment saying that the watermark is "level-triggered and
-latched" so it's obvious why it's not a race (because it will just
-re-assert itself) and also why we need to ACK it at the end of the
-function (because it'll keep re-latching itself until you put
-something in the FIFO)?
-
-
-> +
->  out_write_wakeup:
-> +       if (!port->tx_remaining) {
-> +               irq_en &= ~M_TX_FIFO_WATERMARK_EN;
-> +               writel_relaxed(irq_en, uport->membase + SE_GENI_M_IRQ_EN);
-
-I think you should change this (and probably the other write to
-irq_en) to a read/modify/write rather than using the value you read at
-the top of the function.  Specifically there are enough helper
-functions called that might also be touching irq_en and I'd be worried
-that the value you read at the top of the function might not be truth
-anymore.  I also wonder if it's worth an "if" test to only do the
-writel_relaxed() if the value wasn't already right since sometimes IO
-writes can be slow.
-
-If I followed the code correctly, doing the read/modify/write actually
-might matter.  The code calls qcom_geni_serial_stop_tx() which _does_
-modify irq_en.  Then the code does "goto out_write_wakeup" where it'll
-clobber qcom_geni_serial_stop_tx()'s modifications.
-
-
-> +       }
-> +
->         if (uart_circ_chars_pending(xmit) < WAKEUP_CHARS)
->                 uart_write_wakeup(uport);
->  }
-> @@ -811,8 +824,7 @@ static irqreturn_t qcom_geni_serial_isr(int isr, void *dev)
->                 tty_insert_flip_char(tport, 0, TTY_OVERRUN);
->         }
->
-> -       if (m_irq_status & (M_TX_FIFO_WATERMARK_EN | M_CMD_DONE_EN) &&
-> -           m_irq_en & (M_TX_FIFO_WATERMARK_EN | M_CMD_DONE_EN))
-> +       if (m_irq_status & m_irq_en & (M_TX_FIFO_WATERMARK_EN | M_CMD_DONE_EN))
-
-Unrelated to everything else in this patch, but seems OK to me.
-
-
--Doug
+Or somebody who cares very, very deeply can change the interpreter to
+decline to run any scripts if the kernel returns -ENOSYS.
