@@ -2,156 +2,151 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEDB2C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 06:20:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B28D9C67872
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 06:22:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1A4120645
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 06:20:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6FD6320870
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 06:22:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ceV58Foe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1A4120645
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="DvUpcVEK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FD6320870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726952AbeLMGUr (ORCPT
+        id S1726959AbeLMGWS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 01:20:47 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:55752 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726542AbeLMGUr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 01:20:47 -0500
-Received: by mail-wm1-f68.google.com with SMTP id y139so1068581wmc.5;
-        Wed, 12 Dec 2018 22:20:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=NX1EyyAP3eemGkNK/vkRtfNsdIgvvL0WSVyq1VJH7JM=;
-        b=ceV58Foeac7+ehro5f0yLL0LNUfKLbKXOAmp/0i3Gc/wIr2qKQw+pVICcISKgaVjmT
-         tEN95QHgXsc79tGcQ1xZuCICyHXtuHFVJ3KccZg31mRCICPGvjnDt6H/tfRB5/cilf7+
-         HcDHVsBUIICNw+OO95WBKt+RqVMEtqiq1/ODhrLjnZS48Kc4shuh1WS4ieaJXt2KzAMD
-         tYsq8lF1DAGK9PjeCNIjdB5pOWQkcXaReYKoNSMQXuVq2sqIt0t+52fFXsoDBHPGhEa1
-         nW8aGY09SwOVKEO+NUl79XdBACDH/kwwQcQn/u9zOXJEVQbTlQq5bJMVWpw6sUZYkB3f
-         q5UA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=NX1EyyAP3eemGkNK/vkRtfNsdIgvvL0WSVyq1VJH7JM=;
-        b=JAk8/fWTa/DG/RdCH6OdrHIyhHg8lWRTh+RxomBsgMS+5+b8T8otHTaxtY4emfCFWX
-         xSXWQoNOjtXmiIgL1A1QwCj7m1CYveU0/UzWhdSIyJAhldzg9DkOTzsc0uewd0d8Pyb8
-         MANKQFW+1vVPhwTsjw2Xd8doLObCzUwpwHbrMe0dDbvQTc0sxdTHgiRYSgHtozmN9mym
-         uMhN5Eiu1kSE3EgoPjinwY8srI78W5ekQk1WcpchpW8ctzq98ixOlqQKchAOiD+buO16
-         sYZL9Ur9s66ZO60xtsZRE6l3PP4cMczCpAZULNUdPlUn6o+TXwNo3QpkxkMBSnnJnvt/
-         HmoQ==
-X-Gm-Message-State: AA+aEWZYNpH+lJyxYAQcS3406vblc5xXkv3esqlWqbaTqE/SZthEWoU3
-        lrlO7kC9DAsHidlEMCFH7aA=
-X-Google-Smtp-Source: AFSGD/U18TI/FlBrHa8S1Rhgz7f6jc1pySfq8hMRqR04ACEcM6MJ6sfXDYZEkm3kGGJmiSA32ikjnw==
-X-Received: by 2002:a1c:e287:: with SMTP id z129mr8818537wmg.71.1544682044998;
-        Wed, 12 Dec 2018 22:20:44 -0800 (PST)
-Received: from [192.168.8.147] (65.83.136.77.rev.sfr.net. [77.136.83.65])
-        by smtp.gmail.com with ESMTPSA id g129sm951288wmf.39.2018.12.12.22.20.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 12 Dec 2018 22:20:43 -0800 (PST)
-Subject: Re: [PATCH net] net: ipv4: do not handle duplicate fragments as
- overlapping
-To:     Michal Kubecek <mkubecek@suse.cz>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Peter Oskolkov <posk@google.com>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        Gustavo Figueira <gfigueira@suse.com>
-References: <20181213022800.9D298E1116@unicorn.suse.cz>
-From:   Eric Dumazet <eric.dumazet@gmail.com>
-Message-ID: <cb96bca9-1dda-b243-b581-91f1b51f1517@gmail.com>
-Date:   Wed, 12 Dec 2018 22:20:42 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20181213022800.9D298E1116@unicorn.suse.cz>
-Content-Type: text/plain; charset=utf-8
+        Thu, 13 Dec 2018 01:22:18 -0500
+Received: from mail-eopbgr70075.outbound.protection.outlook.com ([40.107.7.75]:58881
+        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726542AbeLMGWR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 01:22:17 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Y9PjC6aXpb3Ulw9veAsp3U8QjuYpp9OpqITy71HhzFc=;
+ b=DvUpcVEKIbwW/NFA6OTIoTvv5yTT3gPhSux/SPUNnHwEiaYSyLx7ykGMe++FPNqEE5h9MKo+WM3GooVBu18MSekp473LMj890Ar4lo8GspkB+H3ohxT+B661AjmGGPUYrdEdN5DJKeawPTThtpycQsW1PMPV7ZQuYjy5+wTvj8s=
+Received: from AM0PR0402MB3570.eurprd04.prod.outlook.com (52.133.46.11) by
+ AM0PR0402MB3588.eurprd04.prod.outlook.com (52.133.46.17) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1425.19; Thu, 13 Dec 2018 06:22:13 +0000
+Received: from AM0PR0402MB3570.eurprd04.prod.outlook.com
+ ([fe80::94f8:5fdd:f384:8af8]) by AM0PR0402MB3570.eurprd04.prod.outlook.com
+ ([fe80::94f8:5fdd:f384:8af8%8]) with mapi id 15.20.1425.016; Thu, 13 Dec 2018
+ 06:22:13 +0000
+From:   Richard Zhu <hongxing.zhu@nxp.com>
+To:     "bhelgaas@google.com" <bhelgaas@google.com>,
+        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
+        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
+        "andrew.smirnov@gmail.com" <andrew.smirnov@gmail.com>
+CC:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Richard Zhu <hongxing.zhu@nxp.com>
+Subject: [PATCH] PCI: imx: make msi work without pcieportbus
+Thread-Topic: [PATCH] PCI: imx: make msi work without pcieportbus
+Thread-Index: AQHUkqwvGziAch1e1EiTcyWLiZ4Kew==
+Date:   Thu, 13 Dec 2018 06:22:13 +0000
+Message-ID: <1544681043-3792-1-git-send-email-hongxing.zhu@nxp.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: git-send-email 2.7.4
+x-clientproxiedby: HK2P15301CA0018.APCP153.PROD.OUTLOOK.COM
+ (2603:1096:202:1::28) To AM0PR0402MB3570.eurprd04.prod.outlook.com
+ (2603:10a6:208:1c::11)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=hongxing.zhu@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM0PR0402MB3588;6:vnx3CVMqsN4A7w39NHHzzv/MGsPC3DHj8sjewpwZUQIXBv7LrGDjpZu4db3X0fVEkI7XcrauzuOsSxyGRy2E5ej/A2ecpGEeTCqB4bwESTneLbSPcBgNtYN9VvQOhLl2woAuJ22XQmOzJHzNqmcO0hW0umX951UzIV77ACL/27+r1L6wLNPErn8GX4Z8Yba6gYHgxYeqyHyGxiRzgZlwI9VoMUhy8pohI534/s3hYgILs13wkL8F0J8U5o7gDc/pBZyC45sZSQkv4GPy5zxsSzumgrefG8TjvCoh7PouHIZTkHYVlQeVYHCQ8PKmqeP7aZAH8oiNSY7h8Z/ex0ePJe/+h1ftLNOCZLaFQxyvazHDEtl9qSCjKr0DI3jj0b7bXNMvsLdT2bwzJ8rMvH/Ug5mpezQe0U6S2XqhB6lqokEnQS9daG/b9r0YyoKloawgrIiPWWzwGewMlQb+aTKJpw==;5:thbBAn6qZJFL5SrE+KjpsYTZuV5OslokJe2hLa/qFAML2Wq6hVJyUkZWwmeffCLdaSRteD/B4p1Mcxwvteyw5hQHbbsLJUDp7aP6ZNVFOMV8zcey0YUGzUuvoK9/9OHqwWd5Sl+QuS6+L44gw94g6rfixT47e2ic3CStFoPz5/8=;7:t/d4iKCg+YKRo4czaRSecRxwPQR+Pwkb1g7KbauIpZeP+KCldiwbjkaKt1YWe9emhZSfHIKd3RvuynYZtLPTcActx3lbeypYOzvpnwNqxTb7vQ5PxrFvRnqpfOn9c2plT9fBIRZiTCVU+58rve2POw==
+x-ms-office365-filtering-correlation-id: 901b02a4-5d71-4063-11bf-08d660c351e8
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR0402MB3588;
+x-ms-traffictypediagnostic: AM0PR0402MB3588:
+x-microsoft-antispam-prvs: <AM0PR0402MB3588E89490FDA02E4EFCD2478CA00@AM0PR0402MB3588.eurprd04.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(6040522)(2401047)(5005006)(8121501046)(3231475)(944501520)(52105112)(3002001)(93006095)(93001095)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123562045)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:AM0PR0402MB3588;BCL:0;PCL:0;RULEID:;SRVR:AM0PR0402MB3588;
+x-forefront-prvs: 088552DE73
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(396003)(346002)(376002)(366004)(136003)(189003)(199004)(68736007)(26005)(6506007)(52116002)(14444005)(386003)(256004)(6512007)(53936002)(5660300001)(71190400001)(102836004)(71200400001)(4326008)(6116002)(3846002)(2906002)(2201001)(478600001)(39060400002)(575784001)(25786009)(105586002)(86362001)(106356001)(486006)(14454004)(2616005)(305945005)(81166006)(99286004)(476003)(8676002)(8936002)(36756003)(50226002)(81156014)(7736002)(6486002)(66066001)(97736004)(2501003)(6436002)(316002)(110136005)(186003)(54906003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR0402MB3588;H:AM0PR0402MB3570.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: j89R61eOJJ3GLd5n6gKV0hGQbzgdiUa0E1DgD+iu1YWZJ3k1zMvuQLBO/X+6I9AG6MyTePNqDpGfOaXe1wk+DS9gSiA8IRWDPmRcex0AsVeyqHxiU38a5vrf0jDfwIoDZZuZfQ7oPAJcGuI6RoAX/N/5Bs0Z76jXGraTfQldoMAJ5cOzDF432PjMGvqOVzitfpaJygYU1yQvfVszi01oAHtQPP0BIfKzXWIVkwjNQyoij6HyJkBdQzTDAPVEPdPVX/1GLQCJfP0glu5rWZUnUbGzEeuriPTWm/GtyyLm1HNjMSf5NfPHhQDzorXcG81L
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 901b02a4-5d71-4063-11bf-08d660c351e8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Dec 2018 06:22:13.2649
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR0402MB3588
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+MSI_EN of iMX PCIe RC would be asserted when
+PCIEPORTBUS driver is selected.
+Thus, the MSI works fine on iMX PCIe before.
+Make a double check on this bit, and assert it
+when it is not set and MSI is supported.
+Otherwise, the MSI wouldn't be triggered although
+the EP is present and the MSIs are assigned.
 
+Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
+---
+ drivers/pci/controller/dwc/pci-imx6.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-On 12/12/2018 06:28 PM, Michal Kubecek wrote:
-> Since commit 7969e5c40dfd ("ip: discard IPv4 datagrams with overlapping
-> segments.") IPv4 reassembly code drops the whole queue whenever an
-> overlapping fragment is received. However, the test is written in a way
-> which detects duplicate fragments as overlapping so that in environments
-> with many duplicate packets, fragmented packets may be undeliverable.
-> 
-> Add an extra test and for (potentially) duplicate fragment, only drop the
-> new fragment rather than the whole queue. Only starting offset and length
-> are checked, not the contents of the fragments as that would be too
-> expensive.  Check for duplicity with last (tail) fragment first as in real
-> life scenarios this should be the most frequent case and we would have to
-> iterate through the whole "run" otherwise.
-> 
-> Fixes: 7969e5c40dfd ("ip: discard IPv4 datagrams with overlapping segments.")
-> Signed-off-by: Michal Kubecek <mkubecek@suse.cz>
-> ---
->  net/ipv4/ip_fragment.c | 14 +++++++++++++-
->  1 file changed, 13 insertions(+), 1 deletion(-)
-> 
-> diff --git a/net/ipv4/ip_fragment.c b/net/ipv4/ip_fragment.c
-> index aa0b22697998..f09e3683b209 100644
-> --- a/net/ipv4/ip_fragment.c
-> +++ b/net/ipv4/ip_fragment.c
-> @@ -436,6 +436,10 @@ static int ip_frag_queue(struct ipq *qp, struct sk_buff *skb)
->  			ip4_frag_append_to_last_run(&qp->q, skb);
->  		else
->  			ip4_frag_create_run(&qp->q, skb);
-> +	} else if (offset == prev_tail->ip_defrag_offset &&
-> +		   skb->len == prev_tail->len) {
-> +		/* potential duplicate of last fragment */
-> +		goto err;
+diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller=
+/dwc/pci-imx6.c
+index 26087b3..6c3e56b 100644
+--- a/drivers/pci/controller/dwc/pci-imx6.c
++++ b/drivers/pci/controller/dwc/pci-imx6.c
+@@ -74,6 +74,7 @@ struct imx6_pcie {
+ #define PHY_PLL_LOCK_WAIT_USLEEP_MAX	200
+=20
+ /* PCIe Root Complex registers (memory-mapped) */
++#define PCI_MSI_CAP				0x50
+ #define PCIE_RC_LCR				0x7c
+ #define PCIE_RC_LCR_MAX_LINK_SPEEDS_GEN1	0x1
+ #define PCIE_RC_LCR_MAX_LINK_SPEEDS_GEN2	0x2
+@@ -926,6 +927,7 @@ static int imx6_pcie_probe(struct platform_device *pdev=
+)
+ 	struct resource *dbi_base;
+ 	struct device_node *node =3D dev->of_node;
+ 	int ret;
++	u16 val;
+=20
+ 	imx6_pcie =3D devm_kzalloc(dev, sizeof(*imx6_pcie), GFP_KERNEL);
+ 	if (!imx6_pcie)
+@@ -1070,6 +1072,14 @@ static int imx6_pcie_probe(struct platform_device *p=
+dev)
+ 	ret =3D imx6_add_pcie_port(imx6_pcie, pdev);
+ 	if (ret < 0)
+ 		return ret;
++	if (IS_ENABLED(CONFIG_PCI_MSI)) {
++		val =3D dw_pcie_readw_dbi(pci, PCI_MSI_CAP + PCI_MSI_FLAGS);
++		if ((val & PCI_MSI_FLAGS_ENABLE) =3D=3D 0) {
++			val |=3D PCI_MSI_FLAGS_ENABLE;
++			dw_pcie_writew_dbi(pci, PCI_MSI_CAP +
++					PCI_MSI_FLAGS, val);
++		}
++	}
+=20
+ 	return 0;
+ }
+--=20
+2.7.4
 
-What value is in @err variable at this point ?
-
-Are you sure callers expect to receive -EINVAL ?
-
-
-
->  	} else {
->  		/* Binary search. Note that skb can become the first fragment,
->  		 * but not the last (covered above).
-> @@ -449,8 +453,16 @@ static int ip_frag_queue(struct ipq *qp, struct sk_buff *skb)
->  			else if (offset >= skb1->ip_defrag_offset +
->  						FRAG_CB(skb1)->frag_run_len)
->  				rbn = &parent->rb_right;
-> -			else /* Found an overlap with skb1. */
-> +			else {
-> +				/* check for potential duplicate */
-> +				while (skb1 && skb1->ip_defrag_offset < offset)
-> +					skb1 = FRAG_CB(skb1)->next_frag;
-> +				if (skb1 && offset == skb1->ip_defrag_offset &&
-> +				    skb->len == skb1->len)
-> +					goto err;
-
-Maybe we should not care, if the node in the rbtree contains the range of this
-incoming fragment, do not worry about finding if it is overlap or not ?
-
-I am nervous about adding back a linear scan.
-
-> +				/* Found an overlap */
->  				goto overlap;
-> +			}
->  		} while (*rbn);
->  		/* Here we have parent properly set, and rbn pointing to
->  		 * one of its NULL left/right children. Insert skb.
-> 
-
-Thanks !
