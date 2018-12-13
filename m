@@ -2,89 +2,188 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B466BC65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 13:26:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D99A8C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 13:28:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72C6C20879
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 13:26:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544707598;
-	bh=FSPT6FdCdx6F/u0KcpI/0VkpZb498tvGi970S0lOTh8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=tKPFJJBO15EC+jDn03PG8nAkDFVNPOuGnTLGaR3jkpFOytD3toqctsM1cGoV293Yi
-	 91iOQ3IGVDJHcWRypLeSj3aOgV7orrWOeqrt7jrhbpYi0BgEyoINowP3BOj/++wHyq
-	 Ermp2FqwaqyC0gN9V1+6PAQRAonuIjaYLznVFKTw=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72C6C20879
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 90FFF2086D
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 13:28:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="c74LWK7H"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90FFF2086D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lca.pw
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729479AbeLMN0h (ORCPT
+        id S1729464AbeLMN2A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 08:26:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54816 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729319AbeLMN0g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 08:26:36 -0500
-Received: from quaco.ghostprotocols.net (unknown [190.15.121.82])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EBA732086D;
-        Thu, 13 Dec 2018 13:26:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544707596;
-        bh=FSPT6FdCdx6F/u0KcpI/0VkpZb498tvGi970S0lOTh8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=iz9ByEO/aEV1EqJk9Qpae5hj8CtUHXopaEsuvJdfUi/2BnGUYkfZhpu3Syqxpzxf1
-         1aW2s4tcc1CYvTCQuouSjxxNTMksP7rqRKsxg0KR0ssuPgc5Qrv1rtvGKSiu2ReALf
-         chPiVy1AicyFESoC9WBdqXs70cJkAY0jDZlvQmCU=
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id B1B4E41B1D; Thu, 13 Dec 2018 10:26:33 -0300 (-03)
-Date:   Thu, 13 Dec 2018 10:26:33 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     leo.yan@linaro.org
-Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Coresight ML <coresight@lists.linaro.org>,
-        Mike Leach <mike.leach@linaro.org>,
-        Robert Walker <robert.walker@arm.com>
-Subject: Re: [PATCH v3 6/8] perf cs-etm: Treat NO_SYNC element as trace
- discontinuity
-Message-ID: <20181213132633.GJ21027@kernel.org>
-References: <1544513908-16805-1-git-send-email-leo.yan@linaro.org>
- <1544513908-16805-7-git-send-email-leo.yan@linaro.org>
- <20181213123854.GE21027@kernel.org>
- <20181213124154.GF21027@kernel.org>
- <20181213130949.GB17663@leoy-ThinkPad-X240s>
- <20181213132126.GI21027@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181213132126.GI21027@kernel.org>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Thu, 13 Dec 2018 08:28:00 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:41456 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729289AbeLMN17 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 08:27:59 -0500
+Received: by mail-qk1-f194.google.com with SMTP id 189so1079564qkj.8
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 05:27:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=ZSfpgZQ1KJM2Qc4oMGwGhyO37vNQOB2PTv45WiDW8so=;
+        b=c74LWK7HxTkVhtXq2JU8w8F4ob4k7H4rosyrozf1tNs1ZX9qsNxbfdZpYIS8Pv4IHd
+         iG1H84RaB89bdhNCToyCCqGlrNIqnkttoHMmpSbUzyDvzZXCFlcj+XSrW6gmHTEXjEsO
+         akRFl3COjU2CUM+8bPVZtlC3MChaQriiOdOvi7AMNrgiyMkT6H+wrYAruuLExfMi4Kev
+         LPkFfXs5HhnIkCJicnEjk7WOvVL0TTrfXJjruCrhROj1QmoVMgNeVtK6aL1zGFD7FIXI
+         PmFPM4Gxok0n9reIlIjqCDbtSw2l5P8tGV1FifH6ftyZORmSQ7EdnhsT2fKqximqYfA8
+         yz/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=ZSfpgZQ1KJM2Qc4oMGwGhyO37vNQOB2PTv45WiDW8so=;
+        b=qcptEgQ74/1NgaYMiZIkuSByICykyGJECFPKkFQJ2bNOnN8HDrOY2cAJm5S1Odrpa8
+         HIJnoGkdtjiQDwt7FWUUt/hqVg3+yLp/7bbuVocLBV0lGMNSTigEMRtCWKT++tyicIOt
+         wDcDHWf742wGDOFuTPfbgQ8L8btOH4Svz9jg/LKkbx66/QKAVYDjxnBgUtEuiweoYS0c
+         FojrQozmqQtAjAruBK+5lOiljWPBfTUGTP8ZW76z8E+yJFFqlxTT6F6xw2F30DF6BaQV
+         TeCZUjQyFmTzV9Ja4i5CNM/e8eFEhexfswJzbld5MtE6alI1DiH2NL1JxcNjVq0lLcr0
+         V36Q==
+X-Gm-Message-State: AA+aEWZUnFsAkFZD8QFLVls2XjmD+iLBpALEkL8Std09JpFBe8HrzswD
+        E7NCJv6LxGHEHNJsHLE6B2x2ig==
+X-Google-Smtp-Source: AFSGD/UoFiz7veXAS2FGG6PGnnfqulb9ClsGYINtm4vNSS/n4B8Y+EXOpBXgaU3g809W4D164ZCglw==
+X-Received: by 2002:a37:7682:: with SMTP id r124mr22183075qkc.79.1544707676696;
+        Thu, 13 Dec 2018 05:27:56 -0800 (PST)
+Received: from ovpn-121-90.rdu2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id l30sm982696qte.44.2018.12.13.05.27.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 13 Dec 2018 05:27:56 -0800 (PST)
+From:   Qian Cai <cai@lca.pw>
+To:     akpm@linux-foundation.org
+Cc:     kashyap.desai@broadcom.com, sumit.saxena@broadcom.com,
+        shivasharan.srikanteshwara@broadcom.com, jejb@linux.vnet.ibm.com,
+        martin.petersen@oracle.com, thenzl@redhat.com, hch@lst.de,
+        megaraidlinux.pdl@broadcom.com, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Qian Cai <cai@lca.pw>
+Subject: [RESEND PATCH v2] megaraid: fix out-of-bound array accesses
+Date:   Thu, 13 Dec 2018 08:27:27 -0500
+Message-Id: <20181213132727.57058-1-cai@lca.pw>
+X-Mailer: git-send-email 2.17.2 (Apple Git-113)
+In-Reply-To: <20181206212252.36732-1-cai@lca.pw>
+References: <20181206212252.36732-1-cai@lca.pw>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Thu, Dec 13, 2018 at 10:21:26AM -0300, Arnaldo Carvalho de Melo escreveu:
-> Em Thu, Dec 13, 2018 at 09:09:49PM +0800, leo.yan@linaro.org escreveu:
-> > Thanks a lot for helping.  If you prefer me to resend the patch set,
-> > also let me know.
-> 
-> I can fix it, here.
+UBSAN reported those with MegaRAID SAS-3 3108,
 
-Can I take a look at the result:
+[   77.467308] UBSAN: Undefined behaviour in drivers/scsi/megaraid/megaraid_sas_fp.c:117:32
+[   77.475402] index 255 is out of range for type 'MR_LD_SPAN_MAP [1]'
+[   77.481677] CPU: 16 PID: 333 Comm: kworker/16:1 Not tainted 4.20.0-rc5+ #1
+[   77.488556] Hardware name: Huawei TaiShan 2280 /BC11SPCD, BIOS 1.50 06/01/2018
+[   77.495791] Workqueue: events work_for_cpu_fn
+[   77.500154] Call trace:
+[   77.502610]  dump_backtrace+0x0/0x2c8
+[   77.506279]  show_stack+0x24/0x30
+[   77.509604]  dump_stack+0x118/0x19c
+[   77.513098]  ubsan_epilogue+0x14/0x60
+[   77.516765]  __ubsan_handle_out_of_bounds+0xfc/0x13c
+[   77.521767]  mr_update_load_balance_params+0x150/0x158 [megaraid_sas]
+[   77.528230]  MR_ValidateMapInfo+0x2cc/0x10d0 [megaraid_sas]
+[   77.533825]  megasas_get_map_info+0x244/0x2f0 [megaraid_sas]
+[   77.539505]  megasas_init_adapter_fusion+0x9b0/0xf48 [megaraid_sas]
+[   77.545794]  megasas_init_fw+0x1ab4/0x3518 [megaraid_sas]
+[   77.551212]  megasas_probe_one+0x2c4/0xbe0 [megaraid_sas]
+[   77.556614]  local_pci_probe+0x7c/0xf0
+[   77.560365]  work_for_cpu_fn+0x34/0x50
+[   77.564118]  process_one_work+0x61c/0xf08
+[   77.568129]  worker_thread+0x534/0xa70
+[   77.571882]  kthread+0x1c8/0x1d0
+[   77.575114]  ret_from_fork+0x10/0x1c
 
-https://git.kernel.org/acme/c/222b0bead7e4
+[   89.240332] UBSAN: Undefined behaviour in drivers/scsi/megaraid/megaraid_sas_fp.c:117:32
+[   89.248426] index 255 is out of range for type 'MR_LD_SPAN_MAP [1]'
+[   89.254700] CPU: 16 PID: 95 Comm: kworker/u130:0 Not tainted 4.20.0-rc5+ #1
+[   89.261665] Hardware name: Huawei TaiShan 2280 /BC11SPCD, BIOS 1.50 06/01/2018
+[   89.268903] Workqueue: events_unbound async_run_entry_fn
+[   89.274222] Call trace:
+[   89.276680]  dump_backtrace+0x0/0x2c8
+[   89.280348]  show_stack+0x24/0x30
+[   89.283671]  dump_stack+0x118/0x19c
+[   89.287167]  ubsan_epilogue+0x14/0x60
+[   89.290835]  __ubsan_handle_out_of_bounds+0xfc/0x13c
+[   89.295828]  MR_LdRaidGet+0x50/0x58 [megaraid_sas]
+[   89.300638]  megasas_build_io_fusion+0xbb8/0xd90 [megaraid_sas]
+[   89.306576]  megasas_build_and_issue_cmd_fusion+0x138/0x460 [megaraid_sas]
+[   89.313468]  megasas_queue_command+0x398/0x3d0 [megaraid_sas]
+[   89.319222]  scsi_dispatch_cmd+0x1dc/0x8a8
+[   89.323321]  scsi_request_fn+0x8e8/0xdd0
+[   89.327249]  __blk_run_queue+0xc4/0x158
+[   89.331090]  blk_execute_rq_nowait+0xf4/0x158
+[   89.335449]  blk_execute_rq+0xdc/0x158
+[   89.339202]  __scsi_execute+0x130/0x258
+[   89.343041]  scsi_probe_and_add_lun+0x2fc/0x1488
+[   89.347661]  __scsi_scan_target+0x1cc/0x8c8
+[   89.351848]  scsi_scan_channel.part.3+0x8c/0xc0
+[   89.356382]  scsi_scan_host_selected+0x130/0x1f0
+[   89.361002]  do_scsi_scan_host+0xd8/0xf0
+[   89.364927]  do_scan_async+0x9c/0x320
+[   89.368594]  async_run_entry_fn+0x138/0x420
+[   89.372780]  process_one_work+0x61c/0xf08
+[   89.376793]  worker_thread+0x13c/0xa70
+[   89.380546]  kthread+0x1c8/0x1d0
+[   89.383778]  ret_from_fork+0x10/0x1c
 
-?
+This is because when populating Driver Map using firmware raid map, all
+non-existing VDs set their ldTgtIdToLd to 0xff, so it can be skipped
+later.
 
-- Arnaldo
+From drivers/scsi/megaraid/megaraid_sas_base.c ,
+memset(instance->ld_ids, 0xff, MEGASAS_MAX_LD_IDS);
+
+From drivers/scsi/megaraid/megaraid_sas_fp.c ,
+/* For non existing VDs, iterate to next VD*/
+if (ld >= (MAX_LOGICAL_DRIVES_EXT - 1))
+	continue;
+
+However, there are a few places that failed to skip those non-existing
+VDs due to off-by-one errors. Then, those 0xff leaked into
+MR_LdRaidGet(0xff, map) and triggered the out-of-bound accesses.
+
+Fixes: 51087a8617fe (megaraid_sas : Extended VD support)
+Signed-off-by: Qian Cai <cai@lca.pw>
+---
+ drivers/scsi/megaraid/megaraid_sas_fp.c     | 2 +-
+ drivers/scsi/megaraid/megaraid_sas_fusion.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/scsi/megaraid/megaraid_sas_fp.c b/drivers/scsi/megaraid/megaraid_sas_fp.c
+index 59ecbb3b53b5..a33628550425 100644
+--- a/drivers/scsi/megaraid/megaraid_sas_fp.c
++++ b/drivers/scsi/megaraid/megaraid_sas_fp.c
+@@ -1266,7 +1266,7 @@ void mr_update_load_balance_params(struct MR_DRV_RAID_MAP_ALL *drv_map,
+ 
+ 	for (ldCount = 0; ldCount < MAX_LOGICAL_DRIVES_EXT; ldCount++) {
+ 		ld = MR_TargetIdToLdGet(ldCount, drv_map);
+-		if (ld >= MAX_LOGICAL_DRIVES_EXT) {
++		if (ld >= MAX_LOGICAL_DRIVES_EXT - 1) {
+ 			lbInfo[ldCount].loadBalanceFlag = 0;
+ 			continue;
+ 		}
+diff --git a/drivers/scsi/megaraid/megaraid_sas_fusion.c b/drivers/scsi/megaraid/megaraid_sas_fusion.c
+index f74b5ea24f0f..49eaa87608f6 100644
+--- a/drivers/scsi/megaraid/megaraid_sas_fusion.c
++++ b/drivers/scsi/megaraid/megaraid_sas_fusion.c
+@@ -2832,7 +2832,7 @@ static void megasas_build_ld_nonrw_fusion(struct megasas_instance *instance,
+ 		device_id < instance->fw_supported_vd_count)) {
+ 
+ 		ld = MR_TargetIdToLdGet(device_id, local_map_ptr);
+-		if (ld >= instance->fw_supported_vd_count)
++		if (ld >= instance->fw_supported_vd_count - 1)
+ 			fp_possible = 0;
+ 		else {
+ 			raid = MR_LdRaidGet(ld, local_map_ptr);
+-- 
+2.17.2 (Apple Git-113)
+
