@@ -6,41 +6,39 @@ X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D74AC67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 17:22:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2B68C67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 17:22:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3CDC20870
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 17:22:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3CDC20870
+	by mail.kernel.org (Postfix) with ESMTP id 74A2020870
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 17:22:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74A2020870
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729796AbeLMRWb (ORCPT
+        id S1729807AbeLMRWf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 12:22:31 -0500
-Received: from vmicros1.altlinux.org ([194.107.17.57]:38230 "EHLO
+        Thu, 13 Dec 2018 12:22:35 -0500
+Received: from vmicros1.altlinux.org ([194.107.17.57]:38368 "EHLO
         vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729768AbeLMRW2 (ORCPT
+        with ESMTP id S1729768AbeLMRWd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 12:22:28 -0500
+        Thu, 13 Dec 2018 12:22:33 -0500
 Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id 3678872CC6C;
-        Thu, 13 Dec 2018 20:22:25 +0300 (MSK)
+        by vmicros1.altlinux.org (Postfix) with ESMTP id DB7E372CC6C;
+        Thu, 13 Dec 2018 20:22:30 +0300 (MSK)
 Received: by mua.local.altlinux.org (Postfix, from userid 508)
-        id 1E034964E82; Thu, 13 Dec 2018 20:22:24 +0300 (MSK)
-Date:   Thu, 13 Dec 2018 20:22:24 +0300
+        id D4E9B964E82; Thu, 13 Dec 2018 20:22:30 +0300 (MSK)
+Date:   Thu, 13 Dec 2018 20:22:30 +0300
 From:   "Dmitry V. Levin" <ldv@altlinux.org>
-To:     Richard Kuo <rkuo@codeaurora.org>,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@redhat.com>,
+To:     Greentime Hu <green.hu@gmail.com>,
+        Vincent Chen <deanbo422@gmail.com>,
         Oleg Nesterov <oleg@redhat.com>,
         Andy Lutomirski <luto@kernel.org>
 Cc:     Elvira Khabirova <lineprinter@altlinux.org>,
         Eugene Syromyatnikov <esyr@redhat.com>,
-        linux-hexagon@vger.kernel.org, linux-audit@redhat.com,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v6 11/27] hexagon: define remaining syscall_get_* functions
-Message-ID: <20181213172224.GK6024@altlinux.org>
+Subject: [PATCH v6 12/27] Move EM_NDS32 to uapi/linux/elf-em.h
+Message-ID: <20181213172230.GL6024@altlinux.org>
 References: <20181213171833.GA5240@altlinux.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -50,83 +48,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syscall_get_* functions are required to be implemented on all
-architectures in order to extend the generic ptrace API with
-PTRACE_GET_SYSCALL_INFO request.
+This should never have been defined in the arch tree to begin with,
+and now uapi/linux/audit.h header is going to use EM_NDS32
+in order to define AUDIT_ARCH_NDS32 which is needed to implement
+syscall_get_arch() which in turn is required to extend
+the generic ptrace API with PTRACE_GET_SYSCALL_INFO request.
 
-This adds remaining 3 syscall_get_* functions as documented in
-asm-generic/syscall.h: syscall_get_error, syscall_get_return_value,
-and syscall_get_arch.
-
-Cc: Richard Kuo <rkuo@codeaurora.org>
-Cc: Paul Moore <paul@paul-moore.com>
-Cc: Eric Paris <eparis@redhat.com>
+Cc: Greentime Hu <green.hu@gmail.com>
+Cc: Vincent Chen <deanbo422@gmail.com>
 Cc: Oleg Nesterov <oleg@redhat.com>
 Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Elvira Khabirova <lineprinter@altlinux.org>
 Cc: Eugene Syromyatnikov <esyr@redhat.com>
-Cc: linux-hexagon@vger.kernel.org
-Cc: linux-audit@redhat.com
 Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
 ---
 
 Notes:
-    v6: added missing includes
-    v5: added syscall_get_error and syscall_get_return_value
+    v6: unchanged
+    v5: added Cc
 
- arch/hexagon/include/asm/syscall.h | 22 ++++++++++++++++++++++
- include/uapi/linux/audit.h         |  1 +
- 2 files changed, 23 insertions(+)
+ arch/nds32/include/asm/elf.h | 3 +--
+ include/uapi/linux/elf-em.h  | 2 ++
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/arch/hexagon/include/asm/syscall.h b/arch/hexagon/include/asm/syscall.h
-index 4af9c7b6f13a..c3290c0bc458 100644
---- a/arch/hexagon/include/asm/syscall.h
-+++ b/arch/hexagon/include/asm/syscall.h
-@@ -21,6 +21,10 @@
- #ifndef _ASM_HEXAGON_SYSCALL_H
- #define _ASM_HEXAGON_SYSCALL_H
+diff --git a/arch/nds32/include/asm/elf.h b/arch/nds32/include/asm/elf.h
+index f5f9cf7e0544..71f9d51481a2 100644
+--- a/arch/nds32/include/asm/elf.h
++++ b/arch/nds32/include/asm/elf.h
+@@ -9,14 +9,13 @@
+  */
  
-+#include <linux/err.h>
-+#include <asm/ptrace.h>
-+#include <uapi/linux/audit.h>
-+
- typedef long (*syscall_fn)(unsigned long, unsigned long,
- 	unsigned long, unsigned long,
- 	unsigned long, unsigned long);
-@@ -43,4 +47,22 @@ static inline void syscall_get_arguments(struct task_struct *task,
- 	BUG_ON(i + n > 6);
- 	memcpy(args, &(&regs->r00)[i], n * sizeof(args[0]));
- }
-+
-+static inline long syscall_get_error(struct task_struct *task,
-+				     struct pt_regs *regs)
-+{
-+	return IS_ERR_VALUE(regs->r00) ? regs->r00 : 0;
-+}
-+
-+static inline long syscall_get_return_value(struct task_struct *task,
-+					    struct pt_regs *regs)
-+{
-+	return regs->r00;
-+}
-+
-+static inline int syscall_get_arch(void)
-+{
-+	return AUDIT_ARCH_HEXAGON;
-+}
-+
- #endif
-diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
-index 672c6d9d7577..b8e848736031 100644
---- a/include/uapi/linux/audit.h
-+++ b/include/uapi/linux/audit.h
-@@ -387,6 +387,7 @@ enum {
- #define AUDIT_ARCH_CSKY		(EM_CSKY|__AUDIT_ARCH_LE)
- #define AUDIT_ARCH_FRV		(EM_FRV)
- #define AUDIT_ARCH_H8300	(EM_H8_300)
-+#define AUDIT_ARCH_HEXAGON	(EM_HEXAGON)
- #define AUDIT_ARCH_I386		(EM_386|__AUDIT_ARCH_LE)
- #define AUDIT_ARCH_IA64		(EM_IA_64|__AUDIT_ARCH_64BIT|__AUDIT_ARCH_LE)
- #define AUDIT_ARCH_M32R		(EM_M32R)
+ #include <asm/ptrace.h>
++#include <linux/elf-em.h>
+ 
+ typedef unsigned long elf_greg_t;
+ typedef unsigned long elf_freg_t[3];
+ 
+ extern unsigned int elf_hwcap;
+ 
+-#define EM_NDS32			167
+-
+ #define R_NDS32_NONE			0
+ #define R_NDS32_16_RELA			19
+ #define R_NDS32_32_RELA			20
+diff --git a/include/uapi/linux/elf-em.h b/include/uapi/linux/elf-em.h
+index e0fb2794bbad..d8695ad90f6b 100644
+--- a/include/uapi/linux/elf-em.h
++++ b/include/uapi/linux/elf-em.h
+@@ -39,6 +39,8 @@
+ #define EM_ALTERA_NIOS2	113	/* Altera Nios II soft-core processor */
+ #define EM_TI_C6000	140	/* TI C6X DSPs */
+ #define EM_HEXAGON	164	/* QUALCOMM Hexagon */
++#define EM_NDS32	167	/* Andes Technology compact code size
++				   embedded RISC processor family */
+ #define EM_AARCH64	183	/* ARM 64 bit */
+ #define EM_TILEPRO	188	/* Tilera TILEPro */
+ #define EM_MICROBLAZE	189	/* Xilinx MicroBlaze */
 -- 
 ldv
