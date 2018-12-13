@@ -2,59 +2,84 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0338AC67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 01:05:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A6DBC67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 01:06:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F6D120811
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 01:05:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F6D120811
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=namei.org
+	by mail.kernel.org (Postfix) with ESMTP id CB5F420811
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 01:06:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB5F420811
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726469AbeLMBFn (ORCPT
+        id S1726506AbeLMBGQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 20:05:43 -0500
-Received: from namei.org ([65.99.196.166]:51520 "EHLO namei.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726321AbeLMBFn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 20:05:43 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id wBD08iIm009513;
-        Thu, 13 Dec 2018 00:08:44 GMT
-Date:   Thu, 13 Dec 2018 11:08:44 +1100 (AEDT)
-From:   James Morris <jmorris@namei.org>
-To:     Kees Cook <keescook@chromium.org>
-cc:     linux-kernel@vger.kernel.org, Serge Hallyn <serge@hallyn.com>,
-        Tycho Andersen <tycho@tycho.ws>
-Subject: Re: [GIT PULL] seccomp updates for next
-In-Reply-To: <20181212231630.GA31584@beast>
-Message-ID: <alpine.LRH.2.21.1812131108130.7600@namei.org>
-References: <20181212231630.GA31584@beast>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
-MIME-Version: 1.0
+        Wed, 12 Dec 2018 20:06:16 -0500
+Received: from relmlor2.renesas.com ([210.160.252.172]:10883 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726321AbeLMBGQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 20:06:16 -0500
+Date:   13 Dec 2018 10:06:14 +0900
+X-IronPort-AV: E=Sophos;i="5.56,346,1539615600"; 
+   d="scan'208";a="2459960"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 13 Dec 2018 10:06:14 +0900
+Received: from morimoto-PC.renesas.com (unknown [10.166.18.140])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id B9AD54039BA3;
+        Thu, 13 Dec 2018 10:06:14 +0900 (JST)
+Message-ID: <87h8fi2qit.wl-kuninori.morimoto.gx@renesas.com>
+From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To:     Tony Lindgren <tony@atomide.com>
+Cc:     "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Takashi Iwai <tiwai@suse.com>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Mark Brown <broonie@kernel.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Jarkko Nikula <jarkko.nikula@bitmer.com>
+Subject: Re: [alsa-devel] [PATCH 0/2] Graph fixes for using multiple    endpoints per port
+In-Reply-To: <20181213004009.GK6707@atomide.com>
+References: <871s6obqkb.wl-kuninori.morimoto.gx@renesas.com>
+        <20181211053536.GJ6707@atomide.com>
+        <87wooga9an.wl-kuninori.morimoto.gx@renesas.com>
+        <20181211141649.GL6707@atomide.com>
+        <87ftv33bpg.wl-kuninori.morimoto.gx@renesas.com>
+        <20181212001950.GX6707@atomide.com>
+        <877egf33m9.wl-kuninori.morimoto.gx@renesas.com>
+        <87k1kfs0u5.wl-kuninori.morimoto.gx@renesas.com>
+        <20181212152725.GE6707@atomide.com>
+        <87imzy2sh1.wl-kuninori.morimoto.gx@renesas.com>
+        <20181213004009.GK6707@atomide.com>
+User-Agent: Wanderlust/2.15.9 Emacs/24.5 Mule/6.0
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
 Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 12 Dec 2018, Kees Cook wrote:
 
-> Hi James,
+Hi Tony
+
+> > According to OF graph maintainer, he said that
+> > counting port / endpoint are not guaranteed,
+> > and we need to use "reg".
+> > (It is the reason of b6f3fc005a2c8b425d7a0973b43bef05890bf479)
+> > 
+> > If you could double checked, and we could agreed
+> > that "reg" is the solution for us.
+> > I will post patches.
 > 
-> Please pull these seccomp changes for next.
-> 
+> OK yes your "reg" proposal works for me.
 
-Pulled to next-seccomp and next-testing in:
+OK, thanks.
+I will post patch-set, soon.
 
-git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git
-
-
--- 
-James Morris
-<jmorris@namei.org>
-
+Best regards
+---
+Kuninori Morimoto
