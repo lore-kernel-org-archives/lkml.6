@@ -2,162 +2,165 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,T_MIXED_ES,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50027C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 07:54:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F6F7C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 07:55:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 01A0720870
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 07:54:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01A0720870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id F3A682075B
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 07:55:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f2ceH7Q6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3A682075B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727032AbeLMHyz (ORCPT
+        id S1727156AbeLMHze (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 02:54:55 -0500
-Received: from prv1-mh.provo.novell.com ([137.65.248.33]:49930 "EHLO
-        prv1-mh.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726609AbeLMHyz (ORCPT
-        <rfc822;groupwise-linux-kernel@vger.kernel.org:8:1>);
-        Thu, 13 Dec 2018 02:54:55 -0500
-Received: from INET-PRV1-MTA by prv1-mh.provo.novell.com
-        with Novell_GroupWise; Thu, 13 Dec 2018 00:54:54 -0700
-Message-Id: <5C12104C0200007800205B4B@prv1-mh.provo.novell.com>
-X-Mailer: Novell GroupWise Internet Agent 18.1.0 
-Date:   Thu, 13 Dec 2018 00:54:52 -0700
-From:   "Jan Beulich" <JBeulich@suse.com>
-To:     "Chao Gao" <chao.gao@intel.com>
-Cc:     "Roger Pau Monne" <roger.pau@citrix.com>,
-        "Jia-Ju Bai" <baijiaju1990@gmail.com>,
-        "Stefano Stabellini" <sstabellini@kernel.org>,
-        "xen-devel" <xen-devel@lists.xenproject.org>,
-        "Boris Ostrovsky" <boris.ostrovsky@oracle.com>,
-        "Juergen Gross" <jgross@suse.com>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] xen: xen-pciback: Reset MSI-X state when exposing
- a device
-References: <1543976357-1053-1-git-send-email-chao.gao@intel.com>
- <20181205093223.dncg4nq4dh6xmrhk@mac>
- <c27236d3-6125-4049-6268-3d9c93cf3ef2@oracle.com>
- <20181212070654.GA13411@gao-cwp>
- <5C10CBF50200007800205596@prv1-mh.provo.novell.com>
- <20181212151824.GA17227@gao-cwp>
- <5C112783020000780020589C@prv1-mh.provo.novell.com>
- <20181213034657.GA26926@gao-cwp>
-In-Reply-To: <20181213034657.GA26926@gao-cwp>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Content-Disposition: inline
+        Thu, 13 Dec 2018 02:55:34 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:55428 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726578AbeLMHzd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 02:55:33 -0500
+Received: by mail-it1-f196.google.com with SMTP id o19so2362737itg.5
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 23:55:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mvXSIz7pyaoKhHJHa9iccA3pdu8W31AHnSaQXOtbK+Q=;
+        b=f2ceH7Q637GgyJ4RBeAwWr8e337vD2vn85Ykx8tm7alj8YeidIjfuKKfrcEup0Dn+K
+         Ser2zsslkV6taESeLTAyXws5SCX73n9RA7+S1qnjAOn9ccr2PCir/M/vmhiXRDrGDiEV
+         Bqr+8iCSA2xLxI0v4muCK7KZ1/1VVRQWQxBRVPAFkom6T8oI1fHBpEKciQlmWRHdJBIX
+         fsOliv3Na+WQUnqwbTVjC+DaoJX4TXe2CaIPTmDpw4FdS5yaRU1QNNVOUxiRukue7ilp
+         mQSHjQMNfU/T2NR9p1SEYy1fPwVwz1S39MBwoDh8/nzBiF5u8oMfMnxptzWOJ70tWQV8
+         QkuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mvXSIz7pyaoKhHJHa9iccA3pdu8W31AHnSaQXOtbK+Q=;
+        b=badbcSWF20bR9u1oLJ5yiOZPrSb2H1jwxaHelLz2vZsDA6fz5IIl4FnYRH7KAwtHnB
+         5fsed1o4WXbH5s0/0kRm5SRDwi2G3lgrS6LcAh0RVX3YEER4XXas9H1y8qtu4tVwOF2A
+         tsiN2W6oG15kWSsKrbKOsEwH6iqhP+DZOmd4b8V3RI+WBtZiK+T7deZ4lVJWcyMwJmUc
+         AeiO3ysyxZenPTBEvHMqC5QuzXjtRdkMrn/DvKgLXOUA4YhDB+0E8ga4jGw2wJNrN4m2
+         zpoPYa9/echAaRc2BJorD04VcKObbs84osrP3U1o89licXKuH39/XE7JsNRvtAwFiNL7
+         S9Ng==
+X-Gm-Message-State: AA+aEWbr778+v9nmQQYzVJERfkBFOT38apYIfwo7FlvSq40u12OqBUOX
+        1V3+DxaeMYne6Tgv2fkRMuABYkuACm/OKWvhNbI=
+X-Google-Smtp-Source: AFSGD/XhLPSOnwvanKlnAILlliUhOPn2c+beM1UNNf+gwNg4w75KuCzaD/uHD53dG+hBfNGGBW1qgzKVgqnOsdlsTTs=
+X-Received: by 2002:a02:8ca8:: with SMTP id f37mr23036116jak.80.1544687732284;
+ Wed, 12 Dec 2018 23:55:32 -0800 (PST)
+MIME-Version: 1.0
+References: <20181213051510.20306-1-peterx@redhat.com>
+In-Reply-To: <20181213051510.20306-1-peterx@redhat.com>
+From:   Konstantin Khlebnikov <koct9i@gmail.com>
+Date:   Thu, 13 Dec 2018 10:55:21 +0300
+Message-ID: <CALYGNiM-L6Hf7S0yyi0XZyt9u=fxLNBHoVV51XQWp4ggS1XH9Q@mail.gmail.com>
+Subject: Re: [PATCH v3] mm: thp: fix flags for pmd migration when split
+To:     peterx@redhat.com
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@suse.com>, dave.jiang@intel.com,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Souptick Joarder <jrdr.linux@gmail.com>,
+        =?UTF-8?B?0JrQvtC90YHRgtCw0L3RgtC40L0g0KXQu9C10LHQvdC40LrQvtCy?= 
+        <khlebnikov@yandex-team.ru>, zi.yan@cs.rutgers.edu,
+        linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->>> On 13.12.18 at 04:46, <chao.gao@intel.com> wrote:
-> On Wed, Dec 12, 2018 at 08:21:39AM -0700, Jan Beulich wrote:
->>>>> On 12.12.18 at 16:18, <chao.gao@intel.com> wrote:
->>> On Wed, Dec 12, 2018 at 01:51:01AM -0700, Jan Beulich wrote:
->>>>>>> On 12.12.18 at 08:06, <chao.gao@intel.com> wrote:
->>>>> On Wed, Dec 05, 2018 at 09:01:33AM -0500, Boris Ostrovsky wrote:
->>>>>>On 12/5/18 4:32 AM, Roger Pau Monné wrote:
->>>>>>> On Wed, Dec 05, 2018 at 10:19:17AM +0800, Chao Gao wrote:
->>>>>>>> I find some pass-thru devices don't work any more across guest reboot.
->>>>>>>> Assigning it to another guest also meets the same issue. And the only
->>>>>>>> way to make it work again is un-binding and binding it to pciback.
->>>>>>>> Someone reported this issue one year ago [1]. More detail also can be
->>>>>>>> found in [2].
->>>>>>>>
->>>>>>>> The root-cause is Xen's internal MSI-X state isn't reset properly
->>>>>>>> during reboot or re-assignment. In the above case, Xen set maskall bit
->>>>>>>> to mask all MSI interrupts after it detected a potential security
->>>>>>>> issue. Even after device reset, Xen didn't reset its internal maskall
->>>>>>>> bit. As a result, maskall bit would be set again in next write to
->>>>>>>> MSI-X message control register.
->>>>>>>>
->>>>>>>> Given that PHYSDEVOPS_prepare_msix() also triggers Xen resetting MSI-X
->>>>>>>> internal state of a device, we employ it to fix this issue rather than
->>>>>>>> introducing another dedicated sub-hypercall.
->>>>>>>>
->>>>>>>> Note that PHYSDEVOPS_release_msix() will fail if the mapping between
->>>>>>>> the device's msix and pirq has been created. This limitation prevents
->>>>>>>> us calling this function when detaching a device from a guest during
->>>>>>>> guest shutdown. Thus it is called right before calling
->>>>>>>> PHYSDEVOPS_prepare_msix().
->>>>>>> s/PHYSDEVOPS/PHYSDEVOP/ (no final S). And then I would also drop the
->>>>>>> () at the end of the hypercall name since it's not a function.
->>>>>>>
->>>>>>> I'm also wondering why the release can't be done when the device is
->>>>>>> detached from the guest (or the guest has been shut down). This makes
->>>>>>> me worry about the raciness of the attach/detach procedure: if there's
->>>>>>> a state where pciback assumes the device has been detached from the
->>>>>>> guest, but there are still pirqs bound, an attempt to attach to
->>>>>>> another guest in such state will fail.
->>>>>>
->>>>>>I wonder whether this additional reset functionality could be done out
->>>>>>of xen_pcibk_xenbus_remove(). We first do a (best effort) device reset
->>>>>>and then do the extra things that are not properly done there.
->>>>> 
->>>>> No. It cannot be done in xen_pcibk_xenbus_remove() without modifying
->>>>> the handler of PHYSDEVOP_release_msix. To do a successful Xen internal
->>>>> MSI-X state reset, PHYSDEVOP_{release, prepare}_msix should be finished
->>>>> without error. But ATM, xen expects that no msi is bound to pirq when
->>>>> doing PHYSDEVOP_release_msix. Otherwise it fails with error code -EBUSY.
->>>>> However, the expectation isn't guaranteed in xen_pcibk_xenbus_remove().
->>>>> In some cases, if qemu fails to unmap MSIs, MSIs are unmapped by Xen
->>>>> at last minute, which happens after device reset in 
->>>>> xen_pcibk_xenbus_remove().
->>>>
->>>>But that may need taking care of: I don't think it is a good idea to have
->>>>anything left from the prior owning domain when the device gets reset.
->>>>I.e. left over IRQ bindings should perhaps be forcibly cleared before
->>>>invoking the reset;
->>> 
->>> Agree. How about pciback to track the established IRQ bindings? Then
->>> pciback can clear irq binding before invoking the reset.
->>
->>How would pciback even know of those mappings, when it's qemu
->>who establishes (and manages) them?
-> 
-> I meant to expose some interfaces from pciback. And pciback serves
-> as the proxy of IRQ (un)binding APIs.
+On Thu, Dec 13, 2018 at 8:15 AM Peter Xu <peterx@redhat.com> wrote:
+>
+> When splitting a huge migrating PMD, we'll transfer all the existing
+> PMD bits and apply them again onto the small PTEs.  However we are
+> fetching the bits unconditionally via pmd_soft_dirty(), pmd_write()
+> or pmd_yound() while actually they don't make sense at all when it's
+> a migration entry.  Fix them up.  Since at it, drop the ifdef together
+> as not needed.
+>
+> Note that if my understanding is correct about the problem then if
+> without the patch there is chance to lose some of the dirty bits in
+> the migrating pmd pages (on x86_64 we're fetching bit 11 which is part
+> of swap offset instead of bit 2) and it could potentially corrupt the
+> memory of an userspace program which depends on the dirty bit.
+>
 
-If at all possible we should avoid having to change more parties (qemu,
-libxc, kernel, hypervisor) than really necessary. Remember that such
-a bug fix may want backporting, and making sure affected people have
-all relevant components updated is increasingly difficult with their
-number growing.
+Looks good to me
 
->>>>in fact I'd expect this to happen in the course of
->>>>domain destruction, and I'd expect the device reset to come after the
->>>>domain was cleaned up. Perhaps simply an ordering issue in the tool
->>>>stack?
->>> 
->>> I don't think reversing the sequences of device reset and domain
->>> destruction would be simple. Furthermore, during device hot-unplug,
->>> device reset is done when the owner is alive. So if we use domain
->>> destruction to enforce all irq binding cleared, in theory, it won't be
->>> applicable to hot-unplug case (if qemu's hot-unplug logic is
->>> compromised).
->>
->>Even in the hot-unplug case the tool stack could issue unbind
->>requests, behind the back of the possibly compromised qemu,
->>once neither the guest nor qemu have access to the device
->>anymore.
-> 
-> But currently, tool stack doesn't know the remaining IRQ bindings.
-> If tool stack can maintaine IRQ binding information of a pass-thru
-> device (stored in Xenstore?), we can come up with a clean solution
-> without modifying linux kernel and Xen.
+Reviewed-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
 
-If there's no way for the tool stack to either find out the bindings
-or "blindly" issue unbind requests (accepting them to fail), then a
-"wildcard" unbind operation may want adding. Or, perhaps even
-better, XEN_DOMCTL_deassign_device could unbind anything left
-in place for the specified device. I actually wonder why that's not
-already the case.
-
-Jan
-
+> CC: Andrea Arcangeli <aarcange@redhat.com>
+> CC: Andrew Morton <akpm@linux-foundation.org>
+> CC: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+> CC: Matthew Wilcox <willy@infradead.org>
+> CC: Michal Hocko <mhocko@suse.com>
+> CC: Dave Jiang <dave.jiang@intel.com>
+> CC: "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>
+> CC: Souptick Joarder <jrdr.linux@gmail.com>
+> CC: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+> CC: Zi Yan <zi.yan@cs.rutgers.edu>
+> CC: linux-mm@kvack.org
+> CC: linux-kernel@vger.kernel.org
+> Signed-off-by: Peter Xu <peterx@redhat.com>
+> ---
+> v2:
+> - fix it up for young/write/dirty bits too [Konstantin]
+> v3:
+> - fetch write correctly for migration entry; drop macro [Konstantin]
+> ---
+>  mm/huge_memory.c | 20 +++++++++++---------
+>  1 file changed, 11 insertions(+), 9 deletions(-)
+>
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index f2d19e4fe854..aebade83cec9 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -2145,23 +2145,25 @@ static void __split_huge_pmd_locked(struct vm_area_struct *vma, pmd_t *pmd,
+>          */
+>         old_pmd = pmdp_invalidate(vma, haddr, pmd);
+>
+> -#ifdef CONFIG_ARCH_ENABLE_THP_MIGRATION
+>         pmd_migration = is_pmd_migration_entry(old_pmd);
+> -       if (pmd_migration) {
+> +       if (unlikely(pmd_migration)) {
+>                 swp_entry_t entry;
+>
+>                 entry = pmd_to_swp_entry(old_pmd);
+>                 page = pfn_to_page(swp_offset(entry));
+> -       } else
+> -#endif
+> +               write = is_write_migration_entry(entry);
+> +               young = false;
+> +               soft_dirty = pmd_swp_soft_dirty(old_pmd);
+> +       } else {
+>                 page = pmd_page(old_pmd);
+> +               if (pmd_dirty(old_pmd))
+> +                       SetPageDirty(page);
+> +               write = pmd_write(old_pmd);
+> +               young = pmd_young(old_pmd);
+> +               soft_dirty = pmd_soft_dirty(old_pmd);
+> +       }
+>         VM_BUG_ON_PAGE(!page_count(page), page);
+>         page_ref_add(page, HPAGE_PMD_NR - 1);
+> -       if (pmd_dirty(old_pmd))
+> -               SetPageDirty(page);
+> -       write = pmd_write(old_pmd);
+> -       young = pmd_young(old_pmd);
+> -       soft_dirty = pmd_soft_dirty(old_pmd);
+>
+>         /*
+>          * Withdraw the table only after we mark the pmd entry invalid.
+> --
+> 2.17.1
+>
