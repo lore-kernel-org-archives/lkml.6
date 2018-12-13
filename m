@@ -4,52 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B802C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:37:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76A60C67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:37:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E58E20849
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:37:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3DB3520870
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:37:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544675843;
-	bh=o2cnIvKBLHufatzcGZRf/NEvIfuTjg9cLw/0V3xHAPY=;
+	s=default; t=1544675851;
+	bh=V78kKx1h1H8f0vQoGBMMG13Myw2x+2qLWhUE3Wj6oiw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=EUgWmglhFaXWBuIVmz8pyMOkijSXcAIzkXuc4FKF7cFjx85s+AoC1O3CQ2muEllgY
-	 xvVjvnghHw/A0bsOx2xvNavTC05Kl5jegmIpqfV7NLzlmv76JcMvPybbpEKq6EVwKm
-	 ixYFjN7zlzQTEJqyuFDSnTgEngl5AemjkP77Bkf8=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E58E20849
+	b=BieyoE6uRDNkRdafAMwNtLBfZOHmWWREJnlhzpXalQxaONaK/pQxRz0ZZc6fWbY5f
+	 rZayEJ7ad8UtVEaxd7d+IMlJrys4IArQg7vh8L4V1Ooavj0tC9mzCHuCS7r4p5zn3W
+	 1bw/8TCZzBlw4SxASsIf533KHp2HKcLVg4FROezE=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DB3520870
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729304AbeLMEdQ (ORCPT
+        id S1729425AbeLMEh3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 23:33:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46068 "EHLO mail.kernel.org"
+        Wed, 12 Dec 2018 23:37:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46120 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728584AbeLMEdL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 23:33:11 -0500
+        id S1729289AbeLMEdO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 23:33:14 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 091E420879;
-        Thu, 13 Dec 2018 04:33:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8B9C320879;
+        Thu, 13 Dec 2018 04:33:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544675590;
-        bh=o2cnIvKBLHufatzcGZRf/NEvIfuTjg9cLw/0V3xHAPY=;
+        s=default; t=1544675594;
+        bh=V78kKx1h1H8f0vQoGBMMG13Myw2x+2qLWhUE3Wj6oiw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lvlo2NJXOa2R/Oi6XVEpPBvqrUnPZp41IfTWQZoZRn5OHDjKarz/+v89QLcNKQhdv
-         Cx1yUP9d+llSZbB0wEMKBX8Py9aWh8FF0yrqLNPDoKEzaVWNSXmenpmyteX6TkN/BO
-         M6i08A+uCp42DyjcgpPCH0NiqIC92KiI8NrimKOw=
+        b=aArHLZPzb82IK0g/DCHo5LfwIoo+jWJYO4NxPQLl2i+L8Bcb0py7gdtTZowOTTOI2
+         XxwsZxXlcGbxPvNBJXEcAYPJPyihvGHT5ntxtKwMdVPRpfS4OjZh4uZwgmplKn09hh
+         nv/VF6AnRMeVrGvvumGhIiL4wPwskbZCDOntsQKg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Toni Peltonen <peltzi@peltzi.fi>,
-        Jay Vosburgh <jay.vosburgh@canonical.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 07/23] bonding: fix 802.3ad state sent to partner when unbinding slave
-Date:   Wed, 12 Dec 2018 23:32:43 -0500
-Message-Id: <20181213043259.76643-7-sashal@kernel.org>
+Cc:     Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Sasha Levin <sashal@kernel.org>, linux-nfs@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.4 09/23] SUNRPC: Fix a potential race in xprt_connect()
+Date:   Wed, 12 Dec 2018 23:32:45 -0500
+Message-Id: <20181213043259.76643-9-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181213043259.76643-1-sashal@kernel.org>
 References: <20181213043259.76643-1-sashal@kernel.org>
@@ -61,60 +61,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Toni Peltonen <peltzi@peltzi.fi>
+From: Trond Myklebust <trond.myklebust@hammerspace.com>
 
-[ Upstream commit 3b5b3a3331d141e8f2a7aaae3a94dfa1e61ecbe4 ]
+[ Upstream commit 0a9a4304f3614e25d9de9b63502ca633c01c0d70 ]
 
-Previously when unbinding a slave the 802.3ad implementation only told
-partner that the port is not suitable for aggregation by setting the port
-aggregation state from aggregatable to individual. This is not enough. If the
-physical layer still stays up and we only unbinded this port from the bond there
-is nothing in the aggregation status alone to prevent the partner from sending
-traffic towards us. To ensure that the partner doesn't consider this
-port at all anymore we should also disable collecting and distributing to
-signal that this actor is going away. Also clear AD_STATE_SYNCHRONIZATION to
-ensure partner exits collecting + distributing state.
+If an asynchronous connection attempt completes while another task is
+in xprt_connect(), then the call to rpc_sleep_on() could end up
+racing with the call to xprt_wake_pending_tasks().
+So add a second test of the connection state after we've put the
+task to sleep and set the XPRT_CONNECTING flag, when we know that there
+can be no asynchronous connection attempts still in progress.
 
-I have tested this behaviour againts Arista EOS switches with mlx5 cards
-(physical link stays up even when interface is down) and simulated
-the same situation virtually Linux <-> Linux with two network namespaces
-running two veth device pairs. In both cases setting aggregation to
-individual doesn't alone prevent traffic from being to sent towards this
-port given that the link stays up in partners end. Partner still keeps
-it's end in collecting + distributing state and continues until timeout is
-reached. In most cases this means we are losing the traffic partner sends
-towards our port while we wait for timeout. This is most visible with slow
-periodic time (LACP rate slow).
-
-Other open source implementations like Open VSwitch and libreswitch, and
-vendor implementations like Arista EOS, seem to disable collecting +
-distributing to when doing similar port disabling/detaching/removing change.
-With this patch kernel implementation would behave the same way and ensure
-partner doesn't consider our actor viable anymore.
-
-Signed-off-by: Toni Peltonen <peltzi@peltzi.fi>
-Signed-off-by: Jay Vosburgh <jay.vosburgh@canonical.com>
-Acked-by: Jonathan Toppins <jtoppins@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 0b9e79431377d ("SUNRPC: Move the test for XPRT_CONNECTING into...")
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/bonding/bond_3ad.c | 3 +++
- 1 file changed, 3 insertions(+)
+ net/sunrpc/xprt.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/bonding/bond_3ad.c b/drivers/net/bonding/bond_3ad.c
-index 940e2ebbdea8..399c627b15cc 100644
---- a/drivers/net/bonding/bond_3ad.c
-+++ b/drivers/net/bonding/bond_3ad.c
-@@ -2011,6 +2011,9 @@ void bond_3ad_unbind_slave(struct slave *slave)
- 		   aggregator->aggregator_identifier);
- 
- 	/* Tell the partner that this port is not suitable for aggregation */
-+	port->actor_oper_port_state &= ~AD_STATE_SYNCHRONIZATION;
-+	port->actor_oper_port_state &= ~AD_STATE_COLLECTING;
-+	port->actor_oper_port_state &= ~AD_STATE_DISTRIBUTING;
- 	port->actor_oper_port_state &= ~AD_STATE_AGGREGATION;
- 	__update_lacpdu_from_port(port);
- 	ad_lacpdu_send(port);
+diff --git a/net/sunrpc/xprt.c b/net/sunrpc/xprt.c
+index 2e98f4a243e5..112c191b8336 100644
+--- a/net/sunrpc/xprt.c
++++ b/net/sunrpc/xprt.c
+@@ -758,8 +758,15 @@ void xprt_connect(struct rpc_task *task)
+ 			return;
+ 		if (xprt_test_and_set_connecting(xprt))
+ 			return;
+-		xprt->stat.connect_start = jiffies;
+-		xprt->ops->connect(xprt, task);
++		/* Race breaker */
++		if (!xprt_connected(xprt)) {
++			xprt->stat.connect_start = jiffies;
++			xprt->ops->connect(xprt, task);
++		} else {
++			xprt_clear_connecting(xprt);
++			task->tk_status = 0;
++			rpc_wake_up_queued_task(&xprt->pending, task);
++		}
+ 	}
+ 	xprt_release_write(xprt, task);
+ }
 -- 
 2.19.1
 
