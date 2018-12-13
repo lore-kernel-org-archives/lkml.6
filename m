@@ -2,123 +2,167 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EE4BC65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 11:29:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 089B3C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 11:35:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59FA920880
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 11:29:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59FA920880
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id B01CF20870
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 11:35:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="BrgD7g7r"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B01CF20870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728748AbeLML3a (ORCPT
+        id S1728728AbeLMLfl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 06:29:30 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:41664 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726178AbeLML33 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 06:29:29 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2DC80C04B948;
-        Thu, 13 Dec 2018 11:29:29 +0000 (UTC)
-Received: from krava (unknown [10.43.17.30])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 54FB7607BD;
-        Thu, 13 Dec 2018 11:29:23 +0000 (UTC)
-Date:   Thu, 13 Dec 2018 12:29:22 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        "Dmitry V. Levin" <ldv@altlinux.org>, Jiri Olsa <jolsa@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Luis Claudio R. Goncalves" <lclaudio@uudg.org>,
-        Eugene Syromyatnikov <esyr@redhat.com>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        lkml <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/8] perf: Allow to block process in syscall tracepoints
-Message-ID: <20181213112922.GD731@krava>
-References: <20181207085839.GC2237@hirez.programming.kicks-ass.net>
- <20181207072701.5bc564c7@vmware.local.home>
- <20181207151105.GB5289@hirez.programming.kicks-ass.net>
- <20181207151433.20bf0399@vmware.local.home>
- <20181208104423.GE5289@hirez.programming.kicks-ass.net>
- <20181208123805.1c158665@vmware.local.home>
- <20181210101818.GJ5289@hirez.programming.kicks-ass.net>
- <20181213003938.GD24195@altlinux.org>
- <20181212202639.1978ec88@vmware.local.home>
- <20181213100149.GF5289@hirez.programming.kicks-ass.net>
+        Thu, 13 Dec 2018 06:35:41 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:37318 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727590AbeLMLfk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 06:35:40 -0500
+Received: by mail-it1-f194.google.com with SMTP id b5so3315615iti.2
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 03:35:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=P0b7P212MRl/oZ6/6OYVSWLwFMUJ0ti0OMLLNAr9VX4=;
+        b=BrgD7g7rcUlvufNbKR+6W3NRUotf614lqNaBoj6EO9Kd8gru5l1uDn7x4DDtduPG+E
+         3r4t0x2u/8neRRf0UNOZ+0LT9TJAN3WeUtFbzcwEDTcLaFa9shMXfoUpS4pwUbi4GUHg
+         zEU7JqDrG8kmGLKc/w+iwaLe6QyoorDtc6i7Y=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=P0b7P212MRl/oZ6/6OYVSWLwFMUJ0ti0OMLLNAr9VX4=;
+        b=SOA0U7oDQcTlb8y1oWpDOuCU/D4KAtElGkcTKxvVzEOf0zMqWE9rDxZvngiDEpmWoB
+         i6zYbeKEMKYp59UidzmPI29HlEqDn8NjDsMw62kH0AgnpHOe3SzyggCiBU/FbM+BtjqA
+         muayvKKqnkD6D4n5Z2vJMze9PEilZSLeu2v4/98+Ox6LKA1A3gh59wWbuRMt+ucTioz+
+         xZ/nEpcd6MgWEppY2RkRH9yctOUgTz5/ycUL5HSMb6P2EtFqL3WuSQemQxc5SY3pa90w
+         IQktnc9vqUg8ev9xFUcVXZLZujTPL3FJPEhkr0r8TPKThKRMOYiwo1X7+VzJHyPRzcfa
+         U7Bg==
+X-Gm-Message-State: AA+aEWbDDc98dkIoD5DptAUo8BqYCJzMRDBSowLElHMkkqmHxaks0W7Y
+        LiaSFJx+pViVCdvmfJl7YKCkfmOgmuC7NiawBMuO4ngc
+X-Google-Smtp-Source: AFSGD/XUHqg/ATs/aQBA4WcpoUVlbhRhNl1pKzpcwcaHE2yTC67ygtPVr0A8K9BG+H6Qrrfak+jrKVu+Xy5V/bWcC4o=
+X-Received: by 2002:a24:edc4:: with SMTP id r187mr10159468ith.158.1544700939482;
+ Thu, 13 Dec 2018 03:35:39 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181213100149.GF5289@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Thu, 13 Dec 2018 11:29:29 +0000 (UTC)
+References: <1544633245-6036-1-git-send-email-julien.thierry@arm.com>
+ <1544633245-6036-12-git-send-email-julien.thierry@arm.com>
+ <CAKv+Gu8E9g=J78a-2HAdcijaHyVFL1KA3civwfoVHQ=mp7yJJA@mail.gmail.com>
+ <19500d6b-62a3-21cb-9ac0-a4e5d4714a63@arm.com> <CAKv+Gu8+1JNzM4AUujiEfkYujpgakLXcUwTDG4eHwvQ7pKAzFA@mail.gmail.com>
+ <31e41461-763f-aa7d-91ea-b493ede81eed@arm.com>
+In-Reply-To: <31e41461-763f-aa7d-91ea-b493ede81eed@arm.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Thu, 13 Dec 2018 12:35:28 +0100
+Message-ID: <CAKv+Gu9PaeGbfB-9r0Gv1oYn+jORJDk9ozajEwKbse3KjkSmbQ@mail.gmail.com>
+Subject: Re: [PATCH v7 11/25] arm64: irqflags: Use ICC_PMR_EL1 for interrupt masking
+To:     Julien Thierry <julien.thierry@arm.com>
+Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        joel@joelfernandes.org, Marc Zyngier <marc.zyngier@arm.com>,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        James Morse <james.morse@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>, oleg@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 13, 2018 at 11:01:49AM +0100, Peter Zijlstra wrote:
-> On Wed, Dec 12, 2018 at 08:26:39PM -0500, Steven Rostedt wrote:
-> > On Thu, 13 Dec 2018 03:39:38 +0300
-> > "Dmitry V. Levin" <ldv@altlinux.org> wrote:
-> > 
-> > > btw, I didn't ask for the implementation to be ugly.
-> > > You don't have to introduce polling into the kernel if you don't want to,
-> > > userspace is perfectly capable of invoking wait4(2) in a loop.
-> > > Just block the tracee, notify the tracer, and let it pick up the pieces.
-> > 
-> > Note, there's been some discussion offlist to only have perf set a flag
-> > when it dropped an event and have the ptrace code do the heavy lifting
-> > of blocking the task and waking it back up. I think that would be a
-> > cleaner solution and wont muck with perf as badly.
-> 
-> It's still really horrid -- the question is not if we can come up with
-> something, anything, to make strace work. The question is if we can
-> extend something in a sane and maintainable manner to allow this.
-> 
-> So there's a whole bunch of problems I see with all this, in no
-> particular order:
-> 
->  - we cannot block when writing to the actual buffer, and have to unroll
->    the callstack and bolt on the blocking manualy in a few specific
->    sites. This is ugly, inconsistent and maintenance heavy.
-> 
->  - it only works for some 'magic' events that got the treatment, but not
->    for many other you might expect it to work for with no real
->    indication which and why.
-> 
->  - the wakeups side is icky; the best I can come up with is making the
->    data page R/O and single stepping on write fault, but that isn't
->    multi-threading safe.
-> 
->    Another alternative would be keeping the whole page R/O and
->    using write(2) or an ioctl() to update the head pointer.
-> 
-> Again, if we're going to do this; it needs to be done well and
-> consistent and not as a special hack to enable strace-like
-> functionality. And without clean and sane solutions to the above I just
-> don't see it happening.
-> 
-> Note that the first 2 points are equally true for ftrace; so I don't see
-> how we could sanely add it there either.
-> 
-> 
-> One, very big maybe, would be to add a new tracepoint type that includes
-> a might_sleep() and we very carefully undo all the preempt_disable and
-> go sleep where we should. That also gives the tracepoint crud the
-> information it needs to publish the capability to userspace.
+On Thu, 13 Dec 2018 at 09:54, Julien Thierry <julien.thierry@arm.com> wrote:
+>
+>
+>
+> On 12/12/2018 18:10, Ard Biesheuvel wrote:
+> > On Wed, 12 Dec 2018 at 18:59, Julien Thierry <julien.thierry@arm.com> wrote:
+> >>
+> >>
+> >>
+> >> On 12/12/2018 17:27, Ard Biesheuvel wrote:
+> >>> On Wed, 12 Dec 2018 at 17:48, Julien Thierry <julien.thierry@arm.com> wrote:
+> >>>>
+> >>>> Instead disabling interrupts by setting the PSR.I bit, use a priority
+> >>>> higher than the one used for interrupts to mask them via PMR.
+> >>>>
+> >>>> When using PMR to disable interrupts, the value of PMR will be used
+> >>>> instead of PSR.[DAIF] for the irqflags.
+> >>>>
+> >>>> Signed-off-by: Julien Thierry <julien.thierry@arm.com>
+> >>>> Suggested-by: Daniel Thompson <daniel.thompson@linaro.org>
+> >>>> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> >>>> Cc: Will Deacon <will.deacon@arm.com>
+> >>>> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> >>>> Cc: Oleg Nesterov <oleg@redhat.com>
+> >>>> ---
+> >>>>  arch/arm64/include/asm/efi.h      |   5 +-
+> >>>>  arch/arm64/include/asm/irqflags.h | 123 +++++++++++++++++++++++++++++---------
+> >>>>  2 files changed, 99 insertions(+), 29 deletions(-)
+> >>>>
+> >>>> diff --git a/arch/arm64/include/asm/efi.h b/arch/arm64/include/asm/efi.h
+> >>>> index 7ed3208..a9d3ebc 100644
+> >>>> --- a/arch/arm64/include/asm/efi.h
+> >>>> +++ b/arch/arm64/include/asm/efi.h
+> >>>> @@ -42,7 +42,10 @@
+> >>>>
+> >>>>  efi_status_t __efi_rt_asm_wrapper(void *, const char *, ...);
+> >>>>
+> >>>> -#define ARCH_EFI_IRQ_FLAGS_MASK (PSR_D_BIT | PSR_A_BIT | PSR_I_BIT | PSR_F_BIT)
+> >>>> +#define ARCH_EFI_IRQ_FLAGS_MASK                                                \
+> >>>> +       (system_uses_irq_prio_masking() ?                               \
+> >>>> +               GIC_PRIO_IRQON :                                        \
+> >>>> +               (PSR_D_BIT | PSR_A_BIT | PSR_I_BIT | PSR_F_BIT))
+> >>>>
+> >>>
+> >>> This mask is used to determine whether we return from a firmware call
+> >>> with a different value for the I flag than we entered it with. So
+> >>> instead of changing the mask, we should change the way we record DAIF,
+> >>> given that the firmware is still going to poke the I bit if it
+> >>> misbehaves, regardless of whether the OS happens to use priorities for
+> >>> interrupt masking.
+> >>>
+> >>
+> >> Thanks for pointing that out, so this change makes little sense...
+> >>
+> >> The annoying part is that the flag checking takes place in the arch
+> >> agnostic code.
+> >>
+> >> Would introducing some overriddable efi_get_flags() or efi_save_flags()
+> >> that default to local_save_flags() seem like an acceptable solution?
+> >>
+> >> This way I could override it for arm64 and still return the DAIF bits.
+> >>
+> >
+> > I don't follow the reasoning below about irqflags exactly, but is
+> > there any way we could simply but both PMR and DAIF in flags? We could
+> > even update the mask here to ensure that the firmware doesn't corrupt
+> > the PMR.
+> >
+>
+> So, that was the case in my previous versions of the series, and as you
+> said, that covered checking both DAIF bits and PMR on return from EFI
+> services. But Catalin suggested that irqflags could just use PMR when we
+> enable the priority masking feature. Catalin's suggestion does simplify
+> things, except for this part.
+>
+> However, it doesn't seem to far-fetched to me that the architecture
+> could have a more generic way to tell the EFI driver "this is the set of
+> stuff that I care about and you should return from runtime services with
+> this stuff in the same state as before" without the "set of stuff" being
+> limited to irqflags.
+>
+> But maybe this would be over-engineering just to deal with my use-case...
+>
 
-nice, I like this one.. seems like the most clean solution
-
-jirka
+No, that makes sense. As you said, you can just create a
+efi_get_irqflags() helper that defaults to what we are using now, and
+can be overridden to just return DAIF in our case.
