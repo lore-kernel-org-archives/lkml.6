@@ -2,146 +2,166 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES,
+	UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCCFAC67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 01:55:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A42FAC67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 01:56:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 815F920811
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 01:55:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 815F920811
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 76D7220873
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 01:56:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76D7220873
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726492AbeLMBzJ convert rfc822-to-8bit (ORCPT
+        id S1726568AbeLMB4c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 20:55:09 -0500
-Received: from mga07.intel.com ([134.134.136.100]:57284 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726372AbeLMBzI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 20:55:08 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Dec 2018 17:55:08 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,347,1539673200"; 
-   d="scan'208";a="101117969"
-Received: from fmsmsx107.amr.corp.intel.com ([10.18.124.205])
-  by orsmga008.jf.intel.com with ESMTP; 12 Dec 2018 17:55:07 -0800
-Received: from fmsmsx115.amr.corp.intel.com (10.18.116.19) by
- fmsmsx107.amr.corp.intel.com (10.18.124.205) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Wed, 12 Dec 2018 17:55:07 -0800
-Received: from shsmsx104.ccr.corp.intel.com (10.239.4.70) by
- fmsmsx115.amr.corp.intel.com (10.18.116.19) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Wed, 12 Dec 2018 17:55:07 -0800
-Received: from shsmsx101.ccr.corp.intel.com ([169.254.1.201]) by
- SHSMSX104.ccr.corp.intel.com ([169.254.5.203]) with mapi id 14.03.0415.000;
- Thu, 13 Dec 2018 09:53:52 +0800
-From:   "Liu, Chuansheng" <chuansheng.liu@intel.com>
-To:     Petr Mladek <pmladek@suse.com>
-CC:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "sergey.senozhatsky@gmail.com" <sergey.senozhatsky@gmail.com>,
-        "rostedt@goodmis.org" <rostedt@goodmis.org>,
-        "dvyukov@google.com" <dvyukov@google.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] kernel/hung_task.c: force ignore_loglevel before panic
-Thread-Topic: [PATCH] kernel/hung_task.c: force ignore_loglevel before panic
-Thread-Index: AdSQSf5rRH8ZTwaTR0Kl+UXxB6vgiP//fUMA//93HeCAAJABgIAAP2cA//572zCAAxdpgP/+fODAAGM4r4D//nT1YA==
-Date:   Thu, 13 Dec 2018 01:53:51 +0000
-Message-ID: <27240C0AC20F114CBF8149A2696CBE4A6015B695@SHSMSX101.ccr.corp.intel.com>
-References: <27240C0AC20F114CBF8149A2696CBE4A6015A889@SHSMSX101.ccr.corp.intel.com>
- <20181210054622.GA6291@jagdpanzerIV>
- <27240C0AC20F114CBF8149A2696CBE4A6015A8D9@SHSMSX101.ccr.corp.intel.com>
- <20181210061151.GA28533@jagdpanzerIV>
- <f6e39c8f-2ca2-4a01-cf42-9ed3bc2462a8@i-love.sakura.ne.jp>
- <27240C0AC20F114CBF8149A2696CBE4A6015ABB6@SHSMSX101.ccr.corp.intel.com>
- <77864d48-ce55-a699-ee6e-60d9ec36e305@i-love.sakura.ne.jp>
- <27240C0AC20F114CBF8149A2696CBE4A6015B06E@SHSMSX101.ccr.corp.intel.com>
- <20181212101732.5kayilcr7ww5cyu5@pathway.suse.cz>
-In-Reply-To: <20181212101732.5kayilcr7ww5cyu5@pathway.suse.cz>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiOTI5NmNhMGMtMzY2ZS00YjQxLWFlMGQtMmQ4ZjE3MmFjMWE2IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoic3FYQTNIZDVrSE5WN0M1ejd6VVZhXC9GcjhcL0p2d1czSVwvRGVCbTVpK0twa2JERjFFZXFlcGRycjF1NFhFR2FlOSJ9
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.239.127.40]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Wed, 12 Dec 2018 20:56:32 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:22136 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726372AbeLMB4b (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 20:56:31 -0500
+X-UUID: 503c09e2c30c4f56912b463af71065de-20181213
+X-UUID: 503c09e2c30c4f56912b463af71065de-20181213
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
+        (envelope-from <biao.huang@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 856517064; Thu, 13 Dec 2018 09:56:22 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs03n1.mediatek.inc (172.21.101.181) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Thu, 13 Dec 2018 09:56:21 +0800
+Received: from localhost.localdomain (10.17.3.153) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Thu, 13 Dec 2018 09:56:20 +0800
+From:   Biao Huang <biao.huang@mediatek.com>
+To:     <davem@davemloft.net>, <robh+dt@kernel.org>
+CC:     <honghui.zhang@mediatek.com>, <yt.shen@mediatek.com>,
+        <liguo.zhang@mediatek.com>, <mark.rutland@arm.com>,
+        <nelson.chang@mediatek.com>, <matthias.bgg@gmail.com>,
+        <biao.huang@mediatek.com>, <netdev@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <joabreu@synopsys.com>,
+        <andrew@lunn.ch>
+Subject: [v7, PATCH 2/2] dt-binding: mediatek-dwmac: add binding document for MediaTek MT2712 DWMAC
+Date:   Thu, 13 Dec 2018 09:56:13 +0800
+Message-ID: <1544666173-5121-3-git-send-email-biao.huang@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
+In-Reply-To: <1544666173-5121-1-git-send-email-biao.huang@mediatek.com>
+References: <1544666173-5121-1-git-send-email-biao.huang@mediatek.com>
 MIME-Version: 1.0
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The commit adds the device tree binding documentation for the MediaTek DWMAC
+found on MediaTek MT2712.
 
+Signed-off-by: Biao Huang <biao.huang@mediatek.com>
+---
+ .../devicetree/bindings/net/mediatek-dwmac.txt     |   87 ++++++++++++++++++++
+ 1 file changed, 87 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/net/mediatek-dwmac.txt
 
-> -----Original Message-----
-> From: Petr Mladek [mailto:pmladek@suse.com]
-> Sent: Wednesday, December 12, 2018 6:18 PM
-> To: Liu, Chuansheng <chuansheng.liu@intel.com>
-> Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>; Sergey Senozhatsky
-> <sergey.senozhatsky.work@gmail.com>; akpm@linux-foundation.org;
-> sergey.senozhatsky@gmail.com; rostedt@goodmis.org; dvyukov@google.com;
-> linux-kernel@vger.kernel.org
-> Subject: Re: [PATCH] kernel/hung_task.c: force ignore_loglevel before panic
-> 
-> On Wed 2018-12-12 01:16:11, Liu, Chuansheng wrote:
-> >
-> >
-> > > -----Original Message-----
-> > > From: Tetsuo Handa [mailto:penguin-kernel@i-love.sakura.ne.jp]
-> > > Sent: Tuesday, December 11, 2018 6:02 PM
-> > > To: Liu, Chuansheng <chuansheng.liu@intel.com>; Sergey Senozhatsky
-> > > <sergey.senozhatsky.work@gmail.com>
-> > > Cc: akpm@linux-foundation.org; pmladek@suse.com;
-> > > sergey.senozhatsky@gmail.com; rostedt@goodmis.org;
-> dvyukov@google.com;
-> > > linux-kernel@vger.kernel.org
-> > > Subject: Re: [PATCH] kernel/hung_task.c: force ignore_loglevel before panic
-> > >
-> > > On 2018/12/11 10:16, Liu, Chuansheng wrote:
-> > > > We may enhance it by:
-> > > > -       if (sysctl_hung_task_warnings) {
-> > > > +       if (sysctl_hung_task_panic || sysctl_hung_task_warnings) {
-> > > >                 if (sysctl_hung_task_warnings > 0)
-> > > >                         sysctl_hung_task_warnings--;
-> > >
-> > > Why ignore sysctl_hung_task_warnings? The administrator can already
-> > > configure as sysctl_hung_task_warnings == -1 && sysctl_hung_task_panic
-> == 1
-> > > if he/she does not want to suppress neither sched_show_task() nor
-> > > debug_show_all_locks()/trigger_all_cpu_backtrace(). Someone might want
-> that
-> > > sysctl_hung_task_warnings == 0 (which is a request to suppress only
-> > > sched_show_task()) should not be ignored by sysctl_hung_task_panic == 1
-> > > (which is a request to trigger panic).
-> >
-> >
-> > My complete idea is in patch V1 which has been sent. Paste here:
-> > If sysctl_hung_task_panic == 1, I will force sched_show_task(t) and set
-> > hung_task_call_panic = true
-> > hung_task_show_lock = true
-> 
-> Please, do not mix two changes into one patch.
-Thanks your suggestion.
-
-> 
-> Add console_verbose() in one patch. It is simple and
-> everyone has agreed with it so far.
-Has sent it out, please help review.
-
-> 
-> Force sched_show_task() when hung_task_call_panic == 1 in
-> another patch. It seems to be controversial and should be
-> discussed/changed separately.
-I found some other points also, and will send out patches later.
+diff --git a/Documentation/devicetree/bindings/net/mediatek-dwmac.txt b/Documentation/devicetree/bindings/net/mediatek-dwmac.txt
+new file mode 100644
+index 0000000..4de479b
+--- /dev/null
++++ b/Documentation/devicetree/bindings/net/mediatek-dwmac.txt
+@@ -0,0 +1,87 @@
++MediaTek DWMAC glue layer controller
++
++This file documents platform glue layer for stmmac.
++Please see stmmac.txt for the other unchanged properties.
++
++The device node has following properties.
++
++Required properties:
++- compatible:  Should be "mediatek,mt2712-gmac" for MT2712 SoC
++- reg:  Address and length of the register set for the device
++- interrupts:  Should contain the MAC interrupts
++- interrupt-names: Should contain a list of interrupt names corresponding to
++	the interrupts in the interrupts property, if available.
++	Should be "macirq" for the main MAC IRQ
++- clocks: Must contain a phandle for each entry in clock-names.
++- clock-names: The name of the clock listed in the clocks property. These are
++	"axi", "apb", "mac_main", "ptp_ref" for MT2712 SoC
++- mac-address: See ethernet.txt in the same directory
++- phy-mode: See ethernet.txt in the same directory
++- mediatek,pericfg: A phandle to the syscon node that control ethernet
++	interface and timing delay.
++
++Optional properties:
++- mediatek,tx-delay-ps: TX clock delay macro value. Default is 0.
++	It should be defined for rgmii/rgmii-rxid/mii interface.
++- mediatek,rx-delay-ps: RX clock delay macro value. Default is 0.
++	It should be defined for rgmii/rgmii-txid/mii/rmii interface.
++Both delay properties need to be a multiple of 170 for fine-tune rgmii,
++range 0~31*170.
++Both delay properties need to be a multiple of 550 for coarse-tune rgmii,
++range 0~31*550.
++Both delay properties need to be a multiple of 550 for mii/rmii,
++range 0~31*550.
++
++- mediatek,fine-tune: boolean property, if present indicates that fine delay
++	is selected for rgmii interface.
++	If present, tx-delay-ps/rx-delay-ps is 170+/-50ps per stage.
++	Else tx-delay-ps/rx-delay-ps of coarse delay macro is 0.55+/-0.2ns per stage.
++	This property do not apply to non-rgmii PHYs.
++	Only coarse-tune delay is supported for mii/rmii PHYs.
++- mediatek,rmii-rxc: boolean property, if present indicates that the rmii
++	reference clock, which is from external PHYs, is connected to RXC pin
++	on MT2712 SoC.
++	Otherwise, is connected to TXC pin.
++- mediatek,txc-inverse: boolean property, if present indicates that
++	1. tx clock will be inversed in mii/rgmii case,
++	2. tx clock inside MAC will be inversed relative to reference clock
++	   which is from external PHYs in rmii case, and it rarely happen.
++- mediatek,rxc-inverse: boolean property, if present indicates that
++	1. rx clock will be inversed in mii/rgmii case.
++	2. reference clock will be inversed when arrived at MAC in rmii case.
++- assigned-clocks: mac_main and ptp_ref clocks
++- assigned-clock-parents: parent clocks of the assigned clocks
++
++Example:
++	eth: ethernet@1101c000 {
++		compatible = "mediatek,mt2712-gmac";
++		reg = <0 0x1101c000 0 0x1300>;
++		interrupts = <GIC_SPI 237 IRQ_TYPE_LEVEL_LOW>;
++		interrupt-names = "macirq";
++		phy-mode ="rgmii";
++		mac-address = [00 55 7b b5 7d f7];
++		clock-names = "axi",
++			      "apb",
++			      "mac_main",
++			      "ptp_ref",
++			      "ptp_top";
++		clocks = <&pericfg CLK_PERI_GMAC>,
++			 <&pericfg CLK_PERI_GMAC_PCLK>,
++			 <&topckgen CLK_TOP_ETHER_125M_SEL>,
++			 <&topckgen CLK_TOP_ETHER_50M_SEL>;
++		assigned-clocks = <&topckgen CLK_TOP_ETHER_125M_SEL>,
++				  <&topckgen CLK_TOP_ETHER_50M_SEL>;
++		assigned-clock-parents = <&topckgen CLK_TOP_ETHERPLL_125M>,
++					 <&topckgen CLK_TOP_APLL1_D3>;
++		mediatek,pericfg = <&pericfg>;
++		mediatek,tx-delay-ps = <1530>;
++		mediatek,rx-delay-ps = <1530>;
++		mediatek,fine-tune;
++		mediatek,rmii-rxc;
++		mediatek,txc-inverse;
++		mediatek,rxc-inverse;
++		snps,txpbl = <32>;
++		snps,rxpbl = <32>;
++		snps,reset-gpio = <&pio 87 GPIO_ACTIVE_LOW>;
++		snps,reset-active-low;
++	};
+-- 
+1.7.9.5
 
