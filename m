@@ -7,90 +7,90 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A691C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:50:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 463DBC67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:50:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 28AAF20880
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:50:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DF69C20870
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:50:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cadence.com header.i=@cadence.com header.b="URlOwKen";
-	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="pFGOFgUc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28AAF20880
+	dkim=pass (2048-bit key) header.d=cadence.com header.i=@cadence.com header.b="i+geOX4k";
+	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="a7SxEMkt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF69C20870
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cadence.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729406AbeLMMuE (ORCPT
+        id S1729426AbeLMMuG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 07:50:04 -0500
-Received: from mx0a-0014ca01.pphosted.com ([208.84.65.235]:54242 "EHLO
+        Thu, 13 Dec 2018 07:50:06 -0500
+Received: from mx0a-0014ca01.pphosted.com ([208.84.65.235]:54342 "EHLO
         mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729315AbeLMMt6 (ORCPT
+        by vger.kernel.org with ESMTP id S1729402AbeLMMuE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 07:49:58 -0500
+        Thu, 13 Dec 2018 07:50:04 -0500
 Received: from pps.filterd (m0042385.ppops.net [127.0.0.1])
-        by mx0a-0014ca01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wBDClA9Y016634;
-        Thu, 13 Dec 2018 04:49:51 -0800
+        by mx0a-0014ca01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wBDClEjr016651;
+        Thu, 13 Dec 2018 04:49:59 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-type; s=proofpoint;
- bh=XTldVszy6fPZyy2zl2CRKt95xR3zPhnZb9W+RO/xbRM=;
- b=URlOwKenEYvxAkg26If18xgAwsJyo0CQEfyFLMWGk+zr+VmIH7r1ZPit+ebU+CCEg3QI
- D7SoZZfE3rCCHgzS6F2BZIqWWvWOo4yf01j/XY05Ahb2/gwIVyxJALkK/coVFbyZ+LxS
- Z0cQ8ZZCUyuNhgg8/sot3T5X2m/B8hIaoP25tD6SCKdI2qHUCTka7kGioCSwtr8104bR
- 30ysV4Q9wRpJuir3N9zkg1v1Dc6P3c/nYdH5pRkPwipjVoiUwO02twPLDGda6fTro0V+
- GuvFqh8eqZGNPzttqDD7wUh6ohskDIN1aorZNhAIdsQDNZoLJDBmo9jHHpBn1cmgrIdV TQ== 
+ bh=PJZq7Kwn2JWgq5RgY8J2u0bh5+L1ATJvmk5HkHK+8uc=;
+ b=i+geOX4kgqH0WWEQ+/mWpXLaX/Rl4gDZCatP/Kl4PoKWH6ccTPiAWr96WcsKqqCMZ316
+ YotZ1aWFk62q2O6jL2PPYL3xxPk6sAPTriwj+ddnePfkAt/SVcu8L1aokM2DVX8KOyvl
+ OdtQDk/R8ZJw+d5j1QMJmb7CO8ttmQhiiKo00JFKxM+KoRjCC7ub5D/p0hkJXFOlarxt
+ p2cLOpNWEVwFt/yRYuG4kv9fH7MG/sGUov9hA1Gi5Uj88HBZeLKTNGpiJvD/es82ZjjH
+ RwFb3Oz5769aMz7m9BzwoQUXKkcK1ojkxcFaEPdwa7Dmsitlh7zAgynve1C1UHZZpaCu 5A== 
 Authentication-Results: cadence.com;
         spf=pass smtp.mailfrom=jank@cadence.com
-Received: from nam05-by2-obe.outbound.protection.outlook.com (mail-by2nam05lp2051.outbound.protection.outlook.com [104.47.50.51])
-        by mx0a-0014ca01.pphosted.com with ESMTP id 2pbf1ujfbw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 13 Dec 2018 04:49:51 -0800
+Received: from nam01-bn3-obe.outbound.protection.outlook.com (mail-bn3nam01lp2052.outbound.protection.outlook.com [104.47.33.52])
+        by mx0a-0014ca01.pphosted.com with ESMTP id 2pbf1ujfcm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Thu, 13 Dec 2018 04:49:58 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XTldVszy6fPZyy2zl2CRKt95xR3zPhnZb9W+RO/xbRM=;
- b=pFGOFgUcT9VQ8GwsPNwxKw/gutO3qhxVeFv/BFvDZ3Mf6auYCbJ+Lbw15mpp//bWeJlk4MYQzZQH3Eg3bA1bwT8CTEi6P4QWy+CKer2DohTuVO6bqjyWHxTvhtTNSMFkQ91gCk06UeFts6S7NaX/EKFlSDJ3S0qLZdigdY5keBY=
-Received: from SN4PR0701CA0010.namprd07.prod.outlook.com
- (2603:10b6:803:28::20) by DM5PR0701MB3720.namprd07.prod.outlook.com
- (2603:10b6:4:7e::32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1425.19; Thu, 13 Dec
- 2018 12:49:49 +0000
+ bh=PJZq7Kwn2JWgq5RgY8J2u0bh5+L1ATJvmk5HkHK+8uc=;
+ b=a7SxEMkt0dwGKulOAOeMg8qp+pPaaB3GvmX4GBOjJpHlI8nxniZg05vGJK9EV1dkLjCjV2MPrj9a+ULX3ghW5PKA0mTTf967hRnutLXBIAVXeGfccusKRavMCBncgEtHbfk1nL2NZDPsdt9TJIycyYv3XZa2fTDgp9Q963Xvjio=
+Received: from SN4PR0701CA0021.namprd07.prod.outlook.com
+ (2603:10b6:803:28::31) by BN4PR07MB2162.namprd07.prod.outlook.com
+ (2a01:111:e400:59c6::20) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1425.18; Thu, 13 Dec
+ 2018 12:49:54 +0000
 Received: from CO1NAM05FT045.eop-nam05.prod.protection.outlook.com
- (2a01:111:f400:7e50::208) by SN4PR0701CA0010.outlook.office365.com
- (2603:10b6:803:28::20) with Microsoft SMTP Server (version=TLS1_2,
+ (2a01:111:f400:7e50::203) by SN4PR0701CA0021.outlook.office365.com
+ (2603:10b6:803:28::31) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1425.19 via Frontend
- Transport; Thu, 13 Dec 2018 12:49:49 +0000
+ Transport; Thu, 13 Dec 2018 12:49:53 +0000
 Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
  cadence.com discourages use of 158.140.1.28 as permitted sender)
-Received: from sjmaillnx1.cadence.com (158.140.1.28) by
+Received: from sjmaillnx2.cadence.com (158.140.1.28) by
  CO1NAM05FT045.mail.protection.outlook.com (10.152.96.159) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.1446.5 via Frontend Transport; Thu, 13 Dec 2018 12:49:49 +0000
+ 15.20.1446.5 via Frontend Transport; Thu, 13 Dec 2018 12:49:53 +0000
 Received: from maileu3.global.cadence.com (maileu3.cadence.com [10.160.88.99])
-        by sjmaillnx1.cadence.com (8.14.4/8.14.4) with ESMTP id wBDCnk3B020136
+        by sjmaillnx2.cadence.com (8.14.4/8.14.4) with ESMTP id wBDCnnUY028859
         (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
-        Thu, 13 Dec 2018 04:49:47 -0800
+        Thu, 13 Dec 2018 04:49:51 -0800
 X-CrossPremisesHeadersFilteredBySendConnector: maileu3.global.cadence.com
 Received: from maileu3.global.cadence.com (10.160.88.99) by
  maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
- 15.0.1367.3; Thu, 13 Dec 2018 13:49:47 +0100
+ 15.0.1367.3; Thu, 13 Dec 2018 13:49:51 +0100
 Received: from lvloginb.cadence.com (10.165.177.11) by
  maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
- 15.0.1367.3 via Frontend Transport; Thu, 13 Dec 2018 13:49:47 +0100
+ 15.0.1367.3 via Frontend Transport; Thu, 13 Dec 2018 13:49:51 +0100
 Received: from lvloginb.cadence.com (localhost [127.0.0.1])
-        by lvloginb.cadence.com (8.14.4/8.14.4) with ESMTP id wBDCnjer000760;
-        Thu, 13 Dec 2018 12:49:45 GMT
+        by lvloginb.cadence.com (8.14.4/8.14.4) with ESMTP id wBDCnme1000868;
+        Thu, 13 Dec 2018 12:49:48 GMT
 Received: (from jank@localhost)
-        by lvloginb.cadence.com (8.14.4/8.14.4/Submit) id wBDCnijK000749;
-        Thu, 13 Dec 2018 12:49:44 GMT
+        by lvloginb.cadence.com (8.14.4/8.14.4/Submit) id wBDCnmQ9000849;
+        Thu, 13 Dec 2018 12:49:48 GMT
 From:   Jan Kotas <jank@cadence.com>
 To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
         <robh+dt@kernel.org>, <mark.rutland@arm.com>
 CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, Jan Kotas <jank@cadence.com>
-Subject: [PATCH v2 1/2] dt-bindings: clk: Add bindings for Fixed MMIO clock
-Date:   Thu, 13 Dec 2018 12:49:28 +0000
-Message-ID: <20181213124929.32736-2-jank@cadence.com>
+Subject: [PATCH v2 2/2] clk: Add Fixed MMIO clock driver
+Date:   Thu, 13 Dec 2018 12:49:29 +0000
+Message-ID: <20181213124929.32736-3-jank@cadence.com>
 X-Mailer: git-send-email 2.15.0
 In-Reply-To: <20181213124929.32736-1-jank@cadence.com>
 References: <20181213124929.32736-1-jank@cadence.com>
@@ -98,51 +98,52 @@ MIME-Version: 1.0
 Content-Type: text/plain
 X-OrganizationHeadersPreserved: maileu3.global.cadence.com
 X-EOPAttributedMessage: 0
-X-Forefront-Antispam-Report: CIP:158.140.1.28;IPV:CAL;SCL:-1;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(346002)(136003)(376002)(396003)(39860400002)(2980300002)(199004)(189003)(36092001)(336012)(426003)(316002)(8936002)(50226002)(8676002)(51416003)(42186006)(16586007)(54906003)(110136005)(246002)(11346002)(26005)(76176011)(86362001)(356004)(186003)(486006)(6666004)(7636002)(48376002)(47776003)(305945005)(50466002)(446003)(126002)(2906002)(4326008)(107886003)(476003)(2616005)(1076002)(87636003)(5660300001)(106466001)(105596002)(478600001)(26826003)(36756003);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR0701MB3720;H:sjmaillnx1.cadence.com;FPR:;SPF:SoftFail;LANG:en;PTR:corp.cadence.com;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: 1;CO1NAM05FT045;1:rN6vixrh3BEJk/OTdQNUEcRXT/QIGvwd/1QLvjx2dswEG/PfPz80S/OqC9+y2Bju9xxSkkCSfagl0yvqr+fGJSX6kRFBHBMci2hOcWTlqTfPsNqko2RoF2EO0493+nwP
+X-Forefront-Antispam-Report: CIP:158.140.1.28;IPV:CAL;SCL:-1;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(396003)(136003)(346002)(39860400002)(376002)(2980300002)(189003)(36092001)(199004)(8676002)(54906003)(246002)(8936002)(2906002)(50226002)(110136005)(26826003)(305945005)(7636002)(107886003)(87636003)(186003)(26005)(478600001)(6346003)(316002)(76176011)(2616005)(6666004)(105596002)(446003)(16586007)(11346002)(106466001)(126002)(426003)(486006)(42186006)(36756003)(51416003)(356004)(5660300001)(47776003)(336012)(1076002)(86362001)(50466002)(48376002)(476003)(4326008);DIR:OUT;SFP:1101;SCL:1;SRVR:BN4PR07MB2162;H:sjmaillnx2.cadence.com;FPR:;SPF:SoftFail;LANG:en;PTR:corp.cadence.com;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: 1;CO1NAM05FT045;1:yFTRnvIUkpE6/JA56k1tE3DMcQQxfnLhfwNwuDCzSbjvQHp7L/sxEkG7uVNfMdVtrhATfxIvRvVnd7pFYy+QcZQ/BeXtACu3/lAsafmU8yQW7lD6hD1P+JkjmCBPEDqz
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: ee4985c7-8a94-4c51-26d1-08d660f977f9
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060);SRVR:DM5PR0701MB3720;
-X-Microsoft-Exchange-Diagnostics: 1;DM5PR0701MB3720;3:DY4E6af6j5pWGUaW2KdKdp8OYf2qINhGHWDJVZ8BksdvfuegrGAXwRHCwUOtpmcvfqcMsckMY6ZUyTlW+jAEWBPErR994b7iO92+v6Ega5qFiv+RxaOdavvGijCmupdJeLcIYn1kxQFjvnRbIj0s1AsXGJPTBIW4BborF/+3BtiJVCcC37aax+hhrekQYkAt/vvjlK/rzeEad4Q2XGXDwZzS4Fjzx8nJTOVDm6pzk4azyjzGjcacigW6IO3AL8SV2Bp4CVCClqv2OK1RjIWuIe/l4HZYevKhQ9oQl3ObIT330V82jdNs076kmLA6iQ+lnZwhvnV3FE3ywZBCkVw7g8Ufpllo+1OtQYr83L3D7rA=;25:sDStFDJkv748EyoNRMhN9yjCz81Ikdi/aOkAZ6VQMrfaD2veQy/XIB+he+VScQuHlM67mysl2IuuqGFKLQDKJN5ejD8DQxk2FYA/kHW3jTlDpV2OV3nsUlIm9ZICHn779e4Lv5+QT/Y7J+1OqXQrXZVX4l//kvLITstQ6xqK1Vf6qdHTdlHqVUn2SWMvaoyaMxEDhJ3F2BcMuD2jgDFvjrIc48knUvzyWqr+liR4vjuLGZPDXkK+Qse8Mi8FOgcHL+SJF1Xq+6ms5aizT/OeUOL+ZDW4ZMBwmfmFvec+E5tK+xfNfaWQKEqrpAUod9uJp/hOvdbV801hqb6G4vpHrA==
-X-MS-TrafficTypeDiagnostic: DM5PR0701MB3720:
-X-Microsoft-Exchange-Diagnostics: 1;DM5PR0701MB3720;31:uOltKjmcqIBjoxNYUepKnhaEG+PuapRIq+viOVnv1JYd2qC3Ai7jrC8f3wUXk4ebahkjmIjg2jryxozOC7xv/0OKmN/8DZ8bhgtFEl8g7LBISuig/nokuO7iGzlGNjdMPHtpcdzS134XlsPG3X3Rutt6OR59DD/HtCzs3TlhNxGMCrbo/m9Qdp8xHdk9rqWHDzPz9cCUfun5fJuzAsAr1qg0xxUWMkDrZ49RD2o3e1I=;20:CdH3UO+Z1hwDBDZLfy2bGxyQ2jqix/1rqn5Ius27x+G1lb3eH12dXVqWli+ZnEGOuj38Hp9Tma2OdSwJ8E1rKbZOVs9FZZqjMglAXpXz37zER8jOPbXetNL/nc5klyhb9yf3qJUpBQD15A3hku9pWbhPQ3mQaXgepA33aeVQdBTUn11zw3QSsnC1Cefcf1l22cyTQb6Aoq4WI1T9sChPnklTw6TMIMOuJEkd9DuLDeHisCEJj4Z6fZhkZ33TIZ+K/tZd3PHEsdDUOzgMpR6zmsqQ+Y3VGtkeJyyvnzAFB4GpgBexZBAOv/Da7EdTlaKO0B92gG6cqdVI0us8tVYeyPMO1EGYXymDoAbLvFXF2d7Ir9RGR9M9fLgKnXl2HMSxnar/KMnG9U4rBHFry8wIBFlNS8aLINNsQv6+dkC6M+4x112MymHj86CjPS4z/T9XV/p7GrYw+jScPojX4YdP+t3ICQ9X/0Fc2CMooz2ajprsRmkptEBcK1SxefjzrmlI
-X-Microsoft-Antispam-PRVS: <DM5PR0701MB37208DC656ED1237DB1826D9D0A00@DM5PR0701MB3720.namprd07.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: 34db03c5-d015-4dc2-d3d7-08d660f97a69
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060);SRVR:BN4PR07MB2162;
+X-Microsoft-Exchange-Diagnostics: 1;BN4PR07MB2162;3:+xh1UrhIA1EJzRVw9t3OprkC+i5mBimvpTzr+voXSCh+5qNEIJYPkIpSCKhS9kWD9tVRuyjJBU8NsZf1Ezr+m5k0qCRDVcAWkKBO1Lu1UBJhxRLhlLLEXZSjbr9o76ucRp8w5/ZbhInnKx3QgiZsZqYBsf1Xkr447Z3G5pnbLwaoVGsVQvZ7yrxR5d8kaiLOzsfingM5McD0vnqzQdziSz4N/LcksNgzGbzX8z/Fqv1z9ynmabruZfpqL0NMJfYOW7gCFslhZS/tc+lbGiHlBgIspsNG9rmgk3GZHujymlA32zNNqFezgvP9KMnSvBDgRttJkhC4UcEQIUmAHhFSC1E3jH9hAR56f0nJL7Wx5JI=;25:vZud1GhyHNgbeZGx0NoIwKcaRMevJKCgoEiwTqQHTs7Tp377AOMML81Phmvipv3DFFnG/xnmYRmW6/usqXx4GV0Oa6bejG6AJxxAJPBb3xyC28mVJrANbLT5Jg1A0493cOfJPDZsX62no5xeVMm5EsWNTvXWf8dH6MwK93DWTWX1KdYBWZeUjq6RKmCmCbDfdZpRqvAjLJVdbRr342jxjLllVCpOZ0MZuM2ImFt6J7tzZGQBq1RryxzFgnT31mdOfbeQb56vq9TBHsQ7iRgvKi29Sqqgg5rYUFQQ6Xkap5ywtkF+o9T2kqAyNtLyOALZ11nwzgxCePrZ9Ygr1j/9PwQNQPuNAEmm40+47QYdOqQ=
+X-MS-TrafficTypeDiagnostic: BN4PR07MB2162:
+X-Microsoft-Exchange-Diagnostics: 1;BN4PR07MB2162;31:lzXQbKYn0rxkz/olvSdBoxZOLjdMp5A8J156R+DXA2xjcK3eRoOOeo3WSiDsh2P0d00SFoVbXW5rJbrzjXmJRsQIa3URURGtmDaHjzk3AedWZuzIkCsFMwEZXqZ0IQTBOcKGeqFlkaXxkYb7aTnrNza551RJwdNdAYd/nLx1ble4bj7CAmpQK+CKGK3Xdh60067khhDFKvVcBP6VPZ/FaotYvKoEsxeCflECm+a8oGk=;20:30PMaa1vmdXgvDO6utTEDEO8J0SAYOEWf4/yNcsTbJKPEQ4sXQmeSFrK95fESMX1UGedDHpiR68I5Ne7SnvA5NgIZiGyVXmFmSGlsvTjG6qaAeA0SnCkAiSJ7scaBBU+ou4YnvEEERZA+15FIvMpXeXbH0wEmgkokfyYxisP+hxAKnbWd26eSvRZS0nWZz8gbTME7bBZ047CkDx0kOcf47niLyhR2iAuzp0B9TySwM2W+wkLgu+ZYIpxCX4R3+x/u4DaSsytg1IoRGhyNkpafeLO/PjaLqKzsCKy8zBoe9AFfDOzdjLsq04HyVm10Nu+Ku+M3XFLCBelz9ooZr9901B+ZD68jlTprS3O0Argf+2uNlAZ7gkMb4AMWZboxR6WOcUaVracLKFgFfpHzzDNNlO6r5UrghuOFZMOVpmtsjxJwlp2o/yiXfoothRF27q4CyPD51a69lzUN0hlz7mE5vpXtSkU7pIyp5LTf15ssaVCmxRDOWLsLAb1AqJ4S9cO
+X-Microsoft-Antispam-PRVS: <BN4PR07MB2162BFB4E0A7978BE6D8F261D0A00@BN4PR07MB2162.namprd07.prod.outlook.com>
 X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3231475)(944501520)(52105112)(93006095)(93003095)(3002001)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(20161123564045)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:DM5PR0701MB3720;BCL:0;PCL:0;RULEID:;SRVR:DM5PR0701MB3720;
-X-Microsoft-Exchange-Diagnostics: 1;DM5PR0701MB3720;4:WvVLWCzBr8hf2Pe8bz1r0AbpH0goEtCCPFwfO0KCHrwgT8DgjmUJiYZwoo2v7XreBfPKXENoH3aaY/T2WM0QLuxc+MoLaqvJRDfNY48HhSl56V2/K4t91TUA/RCXgE/sSfx6pgudL44/3+uaJcqsluzAvD0yjNiykoK3HTOibY5v1x1o2TBmCUNdXys5ECKHo6cav3WRd5GxagF41FiUJ5O6S5qgO5TLoLmisd9g1MjDs0gsCrdOfzYvZr4wbBrqSKIWz8Pc5xJjFJkh1lR8wg==
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(6040522)(2401047)(8121501046)(5005006)(3002001)(3231475)(944501520)(52105112)(10201501046)(93006095)(93003095)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123562045)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:BN4PR07MB2162;BCL:0;PCL:0;RULEID:;SRVR:BN4PR07MB2162;
+X-Microsoft-Exchange-Diagnostics: 1;BN4PR07MB2162;4:+i2AxuvMdEiljdKDMQr8VBlXGpceT5jVjY5CnerVsW0HTE2A8pef/bZZ/79vtY7ozMvoKOBRWAhU1sbuLxsTyNF2U1/h4lgxjQ+dMxbHUheDjCWbmhnjApNC71SVOQMMWkeIT0/TGQr8RzMbtkXEFyB9WfO6+zM2RroyiJ389uz+dhjMcw4lUwj7H4KHMs96QsJutbBLoq3L35RVauZr8XaMtTvA8g8wHSRZUjGpnmdcsXMkMZZ+GxNJQtg3phorho3tNekX+iVwa4CIOnaj/w==
 X-Forefront-PRVS: 088552DE73
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DM5PR0701MB3720;23:qSzYljyreToeeuIpUWxaWki0kzLfKp7aVgRPVir?=
- =?us-ascii?Q?EVTQhk/9GdCMMx5XiJvBe/0iM0dnNx1IliS1Rj85i2T0ObyUanTXHouGYy1l?=
- =?us-ascii?Q?qBwY4aoo0hdYOtSK6soUJrAiGK0Dh4TAgUkg/DXoDEsIBKYRF7w38s5Ng4wt?=
- =?us-ascii?Q?BMv4qrTYBRA/fdOtv8Hmu1qOlS7MkG18dq/dib4Qad/zFeOr6jREfj9MPyWF?=
- =?us-ascii?Q?q0zNkjiC3B7r4zSdYXZ7/R4A7SBg69DlsKcGKgLXu56YVx/H06+RPfsxGQUL?=
- =?us-ascii?Q?NuvW/OmkRVMmqAR5oE71ClPJmqOWEq50yhl1hw22NDBgn5t68G+gDDa1NA0Z?=
- =?us-ascii?Q?RuJSMTdJL0WSFdwX675g5NdpBz0QQLjI0arSEQmHnY/fwFPk+gT/x1H9MudW?=
- =?us-ascii?Q?1Dl1CeqcOeQfaz2aegIzPFO1pmZePbJpxgtVlVHameGHGfg+ExjJYLFJuNbm?=
- =?us-ascii?Q?PCDPKEGKhAkrj7u3D0vQS/dyb2xZ/8GXkBzW/pLLZiq7DGn8xFMymzl5USRn?=
- =?us-ascii?Q?/I9HUHTKzFJmvBpsvG0bA7bmdKTVzu6tYF7DpS6k9K46JNDvO4qCTKCVZIq4?=
- =?us-ascii?Q?+MEdTQnX5w/7a0p9Ci9CYDcRDRR92TrGSRQa25yU4ccQgKo50ESLsiQ44bdQ?=
- =?us-ascii?Q?EoTCvp8bGK6V3XIHj+hTFZ6i7+iRH19udhYR1wblsiWrwFBax4tjTFAdb9Rz?=
- =?us-ascii?Q?lJUgH6/NCxqs3TOEaCjt9aOTtW8qDtOwXAsEOoZhZAYtFR3f+JikUbOQMh8f?=
- =?us-ascii?Q?VtsoCuJ06iugQEpjp6tQQFgSRdQlo3LJL4JWYHr8L3Iy85jgUcSCDI2NOH35?=
- =?us-ascii?Q?nqgOz3qN9SkEUNoQywHJgQ1qDwD3MN+yorAqb/lV5/L5yYBTtyvMOc2LG4Ys?=
- =?us-ascii?Q?x6DAKuJEubCIJmnTPjnMOGWbGNlnXswftV0mwT+kAdt1NwZBJFyU684tG8zc?=
- =?us-ascii?Q?eH4d7ltxfcTf9yzv8FJWizsBoE63n41Vi7Ot0/lCXi/VEpvAmklVNKTFnPNB?=
- =?us-ascii?Q?VxOC046TOHli/NR+9Pt2wjVEK5yIzZTRbj4FyItOhKutJAeWbWf47XIPk9aT?=
- =?us-ascii?Q?MOjAAy3luHn2W7nmQ57I9VyL3sAMZvt9evlsy6WRH+IAuMbZT+Q=3D=3D?=
-X-Microsoft-Antispam-Message-Info: p9B4NzRUNg5Nfs8CCu3/+nLsO2cfZUaJiDlHB3dp3vZtwpZ4PleJS4P/Fs7972KD/TpOLCZ0Lx5iHfOP4mt4Id5uPT0YzQ8hs6Bb0n8PBiGq62kNErBd9SEqzxGNeYrSyeIQPY5pWUmMoo154x8U/JTkzzF3ZG3W+CzftBLxWFnRmgL3cwJJkuSXUG5mSbonIAfbJU2McIMCqfkMql9fGNUIfBFr71wd97lCMnM4mnSbdHWiQ9tWJKyxgzpAvam96rbYeL0q+jBtS9CguWEC/rf/rzzCsdqmpVqSZGJupv34dvKJ1MPO6AiOwM1fKbbH
-X-Microsoft-Exchange-Diagnostics: 1;DM5PR0701MB3720;6:YenoNQdrsZilRhfmXdcqPYaHqpf5zfqnoaJYzJLio5BQnEjt5EK10ajpywgGLS8x4x37BXk5K4+mYv+Ex8Oqls9E5TQ8SsHmPDe4B699FnCkJMaO2kP61iuxSEHkViSNB1ZGK7YC91A0QLSRvCG6WdNfvvEssxEZfIrYQKQ8S1lwir6o+pMVy5BUoEPgX7OFVNwpW4TwP/0kT2UkwGUFkQ2zj/CkK42h8RVymO3oT8j9bWdiPsAzcE9GSUrkvr2Xxdo2N5kr1bmMy/TtrHmj/lVRAiTt0gpLnach8RkSES8+SOa66VfS7scqxOMuwo0NHiV4q4B8BtMrk27uWIjt/5s66ONUlhFwh9P8R1ac9P85bCG0t2FBZDeyJf5gwOTYz5La2VzWsWWXP3lMCflIyu5hxfqjZhS6Xr8BASbWvlExjLcFC2JKd2wk8SnAJIeHWkt3K6j9MFWsNW5O6/Efig==;5:9c4tIk6UUoOpv2HEa2ABcZpradjZBcrZfhk49TxnIk1qjebOtSw2rcG193FdPyhjSlfJsvMLrDTUZ4r8Fu3W9kgWqnaL3q/s35LYS+5jduJR1MYRRP98ori6UI9PRwh6VOREX8D/x6b+QS2049pOc0tAOUM6lHS2KujFcR6tzVM=;7:TFHl8lxagwdZkkSZHsGFzNDkHqodGC6xshLSYt/c03ezZdjCaImeJ6T5sZHUblXtqDIulpZL/ICdgqD7PmydhbP+HLDd4B2jn/PBciBw/mfCvzt7qZQszTGBpwDw8R19uAOeijlO4zlSiAri5BTDYw==
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BN4PR07MB2162;23:YzJmkbG0W8yoQT2KNtokrBxjaMd4pRerowNIBQZ97?=
+ =?us-ascii?Q?eMW9uX8fL0ZVC8rIBBcgHY7Li/UmZtf82irbv6iBEteQm4dYjnXl7On/jsIz?=
+ =?us-ascii?Q?Ph24ghlhTnJxtuCS9jtiNcQ35ITE6XhgGH0vlRAA9SAiZVesNSoW7rUSuUGF?=
+ =?us-ascii?Q?tXbr8lNIy6ZcyXlyIoQ+TUXDZKk5FkCYpc6BkQNaazkL8TOGnEFX4Dy1G0PP?=
+ =?us-ascii?Q?MxjD9z7nAcS0C4/vag+sR0MaypDjEuDFzKmRWQ6qFxVAv2dMvxHBmHFAm0x+?=
+ =?us-ascii?Q?8zZ+Bqa43FNOQ2h1J6+dAYKuBl3ITVWdojmDfoAmRbK14iqQLjpXesueaieI?=
+ =?us-ascii?Q?bmT4HYExIJBOSG1O3HOMKmi2Mp29dytp7uAnHwYJ1pq36u+tUXvKOPj0ZanS?=
+ =?us-ascii?Q?cMN7hyNcMtK5XpkioRR/RS9THUatpIKYqiUgH+Gwj9ObYqH9McFXq3L6KRTk?=
+ =?us-ascii?Q?O6nr5ikrj44CE1qGfOG/T+QvLearpVwBXdG6CCBGCMFjkJBjQvT9W0YCKxZ1?=
+ =?us-ascii?Q?irSJPO1KskNLrCt5qlYQnjjAGr/HVIdrpbYCuClt/izoyI5W+WKXTTv4YqFz?=
+ =?us-ascii?Q?VoHlclHsDRkGO5lYVCaEZ1/ceBCOYrG089S2opOG/Fty3E+gM42rt9Z/Hhhg?=
+ =?us-ascii?Q?W+Co+iH6vmOiOenLvdtzW5IkbcXkTWpw59kUE/WXZCF0cHGkf3nThFYJ2RMU?=
+ =?us-ascii?Q?ueUUae2+WN2Bzhr9nFK8Rq4MYsD25t8m8Tw6cbgqI5gOJ9WyaQ1IH97eZJNQ?=
+ =?us-ascii?Q?NnRmlZm4hJyjRQQ3aQkpmlqW51ZDeXahbf/rSy1AO0kZH64ueU5gseylk9lT?=
+ =?us-ascii?Q?uWzg0AgruXt7E7Aty58+OOJa/8nXtYgmKmb4xEBi7sVYe2oQyB/gAWUm2/JR?=
+ =?us-ascii?Q?ml4Ra+jjI00PWDIFu5cfSx6SgpLFKnD5UKLay6LY3gU9B3fqVcPVSClyNtiX?=
+ =?us-ascii?Q?LqKOxtYST/NdAghfWOBa/r624aPT6i8VsfUAIUTe89LTv0L6fGgbOtUkGngM?=
+ =?us-ascii?Q?FnRThicn52Oc/Exnh1pfcmbZrTSvDC46G5NpgjLp3MTSP9nLlzv6pXdiwTL+?=
+ =?us-ascii?Q?/Wb1OWRqmn8Lpbqww2ofrXlHZAORxPy4hgA10B2376xJJCU42gEnkU0aQuNa?=
+ =?us-ascii?Q?uD6JvqDz7g=3D?=
+X-Microsoft-Antispam-Message-Info: bpxrIkX6MeyXwhPL2oMOzATIXWQViMnUk5Wchnh566BbdI9+MjabdNfOmsSiEjBZzsaPt4j8buPk+M0sivKNiM3PSJsH8vMgxf+FjC4BzUkU7qR4MLc3hognCHFPBbLp8DwvQRr3QnikQzkjhUoXhxHFGVIRsfGChDYquWw4Czro3dKbyemFRnbX2wL6R84173MvygkkFf3V6/CCLrHxVzgeUIU+VKEPXjxEomPO1dnyZsUo0zyBXniQHYxxoh65NwNua2V6TvDqRFMoRsAErEQNoD2WS+rxriPcmc47yrYiyf0gbVSJA8CltRGVFe5i
+X-Microsoft-Exchange-Diagnostics: 1;BN4PR07MB2162;6:xEx0KGfgAXTK3CQVw7fgIyqaqz16of67bPkAoVVrf9sYBHZnova2pA2lz8o99EzUg9fSgOnEWwQo8+CDdsMs4regZeGcUgyKnsHnpgzC6eLnM7Btfs56wc0DwRp3b6/rTCtwJA+LVt1K4pL6bxwmcBYysgv9VFhhBb4HaTtppmaYJ1GU3cQhGk4RV/5e52AUXe0s5AQd5fDw74m5BgMAdHmWnpckIKj/wUDNdVG/59T0dkYc7JWWI/e0OSE9rq1GmHWmKyKN64J/HjgMgdr4ptlifMaLpcTMN8jw686fQdzPd0Iu/1ncmI4jkWBqq3PCcdiRRs4DmxliYVDnYC+zTvCaXD0IvBVbwIab5gvfH0rmg6S562uqqatPM85dgsX8RBVfHS2Z1if70KJaC5XAzxjU/wilqv011dxSzb6oDi8oMEes1+J0RKbFKENdiY05hltnaZNvpnP4joRgqX+B/A==;5:VEu1Ktekl+9ncq4yWOF71hxcJeZ0kNF2uwUI8H8Yo7fS/3rH7+Pq+u30deFlDSgsPTpy1rf8Tr0U5pAXrUHdDTbTw+DhNjWaRMglLZQNudWzzQbqwEzc2LlcRl5kGiuCftW54BuWqRhP2hesN1fS9BzLnnXiedTcBG+AMEFL2+4=;7:bmMn652URjSKhn2CUfhJftOX4JJVT5vsu8sKjM5M7JDAShTJWXIYdgOILvNDoRHlYyCMEsfGTIUv5N8cJ+wBb49p0Aw5yvguAcNi8ms6bs3S6N7MuNE2D8yE7po4E1AphBzxVsiBKtZsBcyaKQhopw==
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;DM5PR0701MB3720;20:5rOAMSM9ZaEnPQ0lRNPUuemqcjLZE5u055pWQjowgfT0+zUQVANmyxsC82vjzJCkewHXMDImhjito1aCqVk9usf6rsFeGHtHW2TXTJSroMJpEJXMjl5jj19vcCsUj5NZntJDLeBE63nJlpnkRuB7l7X00xf6BDC4mKp7MfD0Bv1lcnwI0uuDh9NcmEPxl4FqZAMyTAPdjzxrjj0IVoB2qqbob4CogAVpOep+1tTANM5CwZfI+xfqjr8Ll0Wk9pL8
+X-Microsoft-Exchange-Diagnostics: 1;BN4PR07MB2162;20:vOl8qIluv7lMojcA4Hyj5wgN5M99poB5mDmVVckVy77Y/JE2V2JFGzuXD9TSYS2mbXBUcxQTTnFqMeOAiSvMdpz8XklZ2p5DWRd39qh0oNnZAZ3iCGDkdxM6PgSL8uW6dhtYRmxXoDnAsKo4WqFUroEbwGTR7erquyjFVvnGBIdUhReQTo/xIzav+Wq5J4q9r7KE8A2UYM8sEB38304+at2/p+6cUP0ApfYPJT0SMRllS/M4qm7k0sbGqebt76Dr
 X-OriginatorOrg: cadence.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Dec 2018 12:49:49.2944
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Dec 2018 12:49:53.3101
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: ee4985c7-8a94-4c51-26d1-08d660f977f9
+X-MS-Exchange-CrossTenant-Network-Message-Id: 34db03c5-d015-4dc2-d3d7-08d660f97a69
 X-MS-Exchange-CrossTenant-Id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=d36035c5-6ce6-4662-a3dc-e762e61ae4c9;Ip=[158.140.1.28];Helo=[sjmaillnx1.cadence.com]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=d36035c5-6ce6-4662-a3dc-e762e61ae4c9;Ip=[158.140.1.28];Helo=[sjmaillnx2.cadence.com]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR0701MB3720
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN4PR07MB2162
 X-Proofpoint-SPF-Result: pass
 X-Proofpoint-SPF-Record: v=spf1 include:_spf.salesforce.com include:mktomail.com
  include:spf-0014ca01.pphosted.com include:spf.protection.outlook.com
@@ -159,45 +160,164 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds a DT binding documentation for Fixed
-Memory Mapped IO clocks.
+This patch adds a driver for Fixed MMIO clock.
+The driver reads a clock frequency value from a single 32-bit memory
+mapped register and registers it as a fixed rate clock.
+
+It can be enabled with COMMON_CLK_FIXED_MMIO Kconfig option.
 
 Signed-off-by: Jan Kotas <jank@cadence.com>
 ---
- .../devicetree/bindings/clock/fixed-mmio-clock.txt | 24 ++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/fixed-mmio-clock.txt
+ drivers/clk/Kconfig          |   6 +++
+ drivers/clk/Makefile         |   1 +
+ drivers/clk/clk-fixed-mmio.c | 109 +++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 116 insertions(+)
+ create mode 100644 drivers/clk/clk-fixed-mmio.c
 
-diff --git a/Documentation/devicetree/bindings/clock/fixed-mmio-clock.txt b/Documentation/devicetree/bindings/clock/fixed-mmio-clock.txt
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 81cdb4eac..69c7fb859 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -283,6 +283,12 @@ config COMMON_CLK_STM32H7
+ 	---help---
+ 	  Support for stm32h7 SoC family clocks
+ 
++config COMMON_CLK_FIXED_MMIO
++	bool "Clock driver for Memory Mapped Fixed values"
++	depends on COMMON_CLK && OF
++	help
++	  Support for Memory Mapped IO Fixed clocks
++
+ source "drivers/clk/actions/Kconfig"
+ source "drivers/clk/bcm/Kconfig"
+ source "drivers/clk/hisilicon/Kconfig"
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index 72be7a38c..4e61961dc 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -26,6 +26,7 @@ obj-$(CONFIG_COMMON_CLK_CDCE925)	+= clk-cdce925.o
+ obj-$(CONFIG_ARCH_CLPS711X)		+= clk-clps711x.o
+ obj-$(CONFIG_COMMON_CLK_CS2000_CP)	+= clk-cs2000-cp.o
+ obj-$(CONFIG_ARCH_EFM32)		+= clk-efm32gg.o
++obj-$(CONFIG_COMMON_CLK_FIXED_MMIO)	+= clk-fixed-mmio.o
+ obj-$(CONFIG_COMMON_CLK_GEMINI)		+= clk-gemini.o
+ obj-$(CONFIG_COMMON_CLK_ASPEED)		+= clk-aspeed.o
+ obj-$(CONFIG_ARCH_HIGHBANK)		+= clk-highbank.o
+diff --git a/drivers/clk/clk-fixed-mmio.c b/drivers/clk/clk-fixed-mmio.c
 new file mode 100644
-index 000000000..c359367fd
+index 000000000..84e202d07
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/fixed-mmio-clock.txt
-@@ -0,0 +1,24 @@
-+Binding for simple memory mapped io fixed-rate clock sources.
-+The driver reads a clock frequency value from a single 32-bit memory mapped
-+I/O register and registers it as a fixed rate clock.
++++ b/drivers/clk/clk-fixed-mmio.c
+@@ -0,0 +1,109 @@
++// SPDX-License-Identifier: GPL-2.0
 +
-+It was designed for test systems, like FPGA, not for complete, finished SoCs.
++/*
++ * Memory Mapped IO Fixed clock driver
++ *
++ * Copyright (C) 2018 Cadence Design Systems, Inc.
++ *
++ * Authors:
++ *	Jan Kotas <jank@cadence.com>
++ */
 +
-+This binding uses the common clock binding[1].
++#include <linux/clk-provider.h>
++#include <linux/of_address.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
 +
-+[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
++static struct clk *fixed_mmio_clk_setup(struct device_node *node)
++{
++	struct clk *clk;
++	const char *clk_name = node->name;
++	void __iomem *base;
++	u32 freq;
++	int ret;
 +
-+Required properties:
-+- compatible : shall be "fixed-mmio-clock".
-+- #clock-cells : from common clock binding; shall be set to 0.
-+- reg : Address and length of the clock value register set.
++	base = of_iomap(node, 0);
++	if (!base) {
++		pr_err("%pOFn: failed to map address\n", node);
++		return ERR_PTR(-EIO);
++	}
 +
-+Optional properties:
-+- clock-output-names : From common clock binding.
++	freq = readl(base);
++	iounmap(base);
++	of_property_read_string(node, "clock-output-names", &clk_name);
 +
-+Example:
-+sysclock: sysclock@fd020004 {
-+	#clock-cells = <0>;
-+	compatible = "fixed-mmio-clock";
-+	reg = <0xfd020004 0x4>;
++	clk = clk_register_fixed_rate(NULL, clk_name, NULL, 0, freq);
++	if (IS_ERR(clk)) {
++		pr_err("%pOFn: failed to register fixed rate clock\n", node);
++		return clk;
++	}
++
++	ret = of_clk_add_provider(node, of_clk_src_simple_get, clk);
++	if (ret) {
++		pr_err("%pOFn: failed to add clock provider\n", node);
++		clk_unregister(clk);
++		return ERR_PTR(ret);
++	}
++
++	return clk;
++}
++
++/**
++ * Setup function for fixed mmio clock
++ */
++void __init of_fixed_mmio_clk_setup(struct device_node *node)
++{
++	fixed_mmio_clk_setup(node);
++}
++CLK_OF_DECLARE(fixed_mmio_clk, "fixed-mmio-clock", of_fixed_mmio_clk_setup);
++
++
++/**
++ * Platform driver probe
++ * It is not executed when of_fixed_mmio_clk_setup succeeded.
++ */
++static int of_fixed_mmio_clk_probe(struct platform_device *pdev)
++{
++	struct clk *clk;
++
++	clk = fixed_mmio_clk_setup(pdev->dev.of_node);
++	if (IS_ERR(clk))
++		return PTR_ERR(clk);
++
++	platform_set_drvdata(pdev, clk);
++
++	return 0;
++}
++
++/**
++ * Platform driver remove
++ */
++static int of_fixed_mmio_clk_remove(struct platform_device *pdev)
++{
++	struct clk *clk = platform_get_drvdata(pdev);
++
++	of_clk_del_provider(pdev->dev.of_node);
++	clk_unregister_fixed_rate(clk);
++
++	return 0;
++}
++
++static const struct of_device_id of_fixed_mmio_clk_ids[] = {
++	{ .compatible = "fixed-mmio-clock" },
++	{ }
 +};
++MODULE_DEVICE_TABLE(of, of_fixed_mmio_clk_ids);
++
++static struct platform_driver of_fixed_mmio_clk_driver = {
++	.driver = {
++		.name = "of_fixed_mmio_clk",
++		.of_match_table = of_fixed_mmio_clk_ids,
++	},
++	.probe = of_fixed_mmio_clk_probe,
++	.remove = of_fixed_mmio_clk_remove,
++};
++module_platform_driver(of_fixed_mmio_clk_driver);
++
++MODULE_AUTHOR("Jan Kotas <jank@cadence.com>");
++MODULE_DESCRIPTION("Memory Mapped IO Fixed clock driver");
++MODULE_LICENSE("GPL v2");
 -- 
 2.15.0
 
