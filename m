@@ -2,111 +2,129 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-11.9 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9199BC65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 05:23:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 829C1C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 05:37:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DC6920672
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 05:23:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="Dj9m70el"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DC6920672
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lca.pw
+	by mail.kernel.org (Postfix) with ESMTP id 4836B2080F
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 05:37:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4836B2080F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726921AbeLMFXU (ORCPT
+        id S1726826AbeLMFgT convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 00:23:20 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:46741 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726226AbeLMFXT (ORCPT
+        Thu, 13 Dec 2018 00:36:19 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:54846 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726542AbeLMFgT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 00:23:19 -0500
-Received: by mail-qt1-f194.google.com with SMTP id y20so822271qtm.13
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 21:23:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=T+bov1s7uPUUt2flzevFiGtl1wqIIJ2TOIfomd+w+To=;
-        b=Dj9m70eleoZgBa8BKuA1YWEPUTpmJnw/74UHJOuBoD5eqOrACBo9OZIeQy6rZqX8vV
-         xkWDwoYJRFOoySx9t0MJlH7lX1r7UXY1PQFuRdglNHjyJo33DSt/t/KzOdEeNheFIfbw
-         95tzZeaCQql9OE9OgzsaKZpwPv/sJvyYGX2xmxdz1LRwZhSaN+FjVS6/4dWn5fH8hng5
-         /lb4X0x8BT+xk4MuS0uI82bN+L0T/qxexHYFSx4k52Z8cIrsYE5bBQ+y48ozint0D619
-         SifA6g8TkQoVniVsHZ5/ehsWF2kzadkYYpF4Y8gl2VhO1q6y2KWETqFnX3kmUNIPQ6dR
-         rIVg==
+        Thu, 13 Dec 2018 00:36:19 -0500
+Received: from mail-pf1-f200.google.com ([209.85.210.200])
+        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <kai.heng.feng@canonical.com>)
+        id 1gXJfV-0006sK-7C
+        for linux-kernel@vger.kernel.org; Thu, 13 Dec 2018 05:36:17 +0000
+Received: by mail-pf1-f200.google.com with SMTP id 82so771525pfs.20
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 21:36:17 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=T+bov1s7uPUUt2flzevFiGtl1wqIIJ2TOIfomd+w+To=;
-        b=uPzoJePrxio28j7a/PxYhIbhqK3QDdyBTADkqvqO8C+icSoirz2Tn0N2DMyamo48Z8
-         9uauzdqmFhI2rcut/daUzml4Pdjo/qtUeYsTQzPNKYRVctGrnyDOl2n9Fsqb8ipvg+0Y
-         BsbNrzZQI+glsyy8FjpIQjQxm+jfqCuN0LJ73GJ3xnRf4/XpRh2BbhyG4IA+vrKxMc7z
-         vFpHbKU2V1UAA0xBPUMPrlrxWabnyjBy+YO+RSv25QbzUhu1kIuJWIQQd6NmFHoLWvrb
-         RiYy7j2RrVEibOA4fuIVJ9uaf8nDucr+ITiJf8NAbWtEFMxVvyBgIm0mkKhoAzD1eHxr
-         V27g==
-X-Gm-Message-State: AA+aEWZ4E8fbEn+I3IiHod5Jc5yNdwQj6QEySdldRw7V29Xx73j9H9vg
-        X+trLJmukgv6IiyLMzO8xXra1Q==
-X-Google-Smtp-Source: AFSGD/Vu5/NTqWAqWCepYpmLvF9kyNshrMAVmb7Ev3/8VWn4Zu9TNixizeNE6rpP1R2Ab3SakKtagw==
-X-Received: by 2002:a0c:9239:: with SMTP id a54mr21531273qva.17.1544678598851;
-        Wed, 12 Dec 2018 21:23:18 -0800 (PST)
-Received: from ovpn-121-90.rdu2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id u4sm460607qkk.51.2018.12.12.21.23.17
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=fFrlb3KsMLahbgSt4CAK3tYh4PnoLEhBfupxlV6enHY=;
+        b=Z7/uvqeWEnjdm9HedPiYXs0MW5b0LK2v0C0MmgGJ31ID1MLDfjl8cR0WEa6FdP5j82
+         wZtK3R6Qn8E+N7HVowYjAt/TkIHPQregXqSDU2hdUPlbdeKmUxiA34Uk6i73S+xo+kRi
+         SmP2LopouSxG+VZ03KZG2jN+R0N734Ji1jWWGYMVy7IixCb5UBdf5O1iupP0zlJxWsEM
+         oMAw7+faxNVV/49lzBC0SWLvXFbOxz04JiDy98C0vLkrmxEjTgDSTNMnsYg2Xz1/ANhN
+         nFrPbYzf6qPYBFgvyAdjeLSFN/1QOGKdj4OVkvR71VV5Kl3dn7x7NobSmK+OD6UWJoav
+         45Gw==
+X-Gm-Message-State: AA+aEWagELlINjO8Y0S8YqOoLYo8ZlQAUJ4QG18039r5lQ/nynjC8Q/r
+        AUcUQLiSOl1t0X2ZKIU4JKHym6h8vFHY83DwcFb5PAoxRxHTxPZVRFoO6IbHf2ejmWsyQgNRj3G
+        2WBSdJJNyCFCcpazFTFtYAz/iyArKTPFX1hmpWkCEJA==
+X-Received: by 2002:a63:85c6:: with SMTP id u189mr19906923pgd.156.1544679375816;
+        Wed, 12 Dec 2018 21:36:15 -0800 (PST)
+X-Google-Smtp-Source: AFSGD/Xrc5/Y3HEMEPWQZ1Q1Zl85qjTSWLu9ee8fKReEBEox0nut/4pjMDFexeCjZbZQl3dANOgIxQ==
+X-Received: by 2002:a63:85c6:: with SMTP id u189mr19906912pgd.156.1544679375546;
+        Wed, 12 Dec 2018 21:36:15 -0800 (PST)
+Received: from 2001-b011-380f-3f3d-a8b0-6af4-8075-4442.dynamic-ip6.hinet.net (2001-b011-380f-3f3d-a8b0-6af4-8075-4442.dynamic-ip6.hinet.net. [2001:b011:380f:3f3d:a8b0:6af4:8075:4442])
+        by smtp.gmail.com with ESMTPSA id l5sm735789pgu.86.2018.12.12.21.36.13
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 12 Dec 2018 21:23:18 -0800 (PST)
-From:   Qian Cai <cai@lca.pw>
-To:     catalin.marinas@arm.com, will.deacon@arm.com
-Cc:     marc.zyngier@arm.com, james.morse@arm.com,
-        takahiro.akashi@linaro.org, ard.biesheuvel@linaro.org,
-        linux-arm-kernel@lists.infradead.org, kexec@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Qian Cai <cai@lca.pw>
-Subject: [PATCH] arm64: invalidate TLB before turning MMU on
-Date:   Thu, 13 Dec 2018 00:22:59 -0500
-Message-Id: <20181213052259.56352-1-cai@lca.pw>
-X-Mailer: git-send-email 2.17.2 (Apple Git-113)
-In-Reply-To: <1544654224.18411.11.camel@lca.pw>
-References: <1544654224.18411.11.camel@lca.pw>
+        Wed, 12 Dec 2018 21:36:15 -0800 (PST)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
+Subject: Re: [PATCH] rtlwifi: Fix non-working BSS STA mode
+From:   Kai Heng Feng <kai.heng.feng@canonical.com>
+In-Reply-To: <1544661346.2548.2.camel@realtek.com>
+Date:   Thu, 13 Dec 2018 13:36:12 +0800
+Cc:     "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "kvalo@codeaurora.org" <kvalo@codeaurora.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: 8BIT
+Message-Id: <A95FEB12-29C5-404D-9C4E-04D1900C4E88@canonical.com>
+References: <20181212051335.22580-1-kai.heng.feng@canonical.com>
+ <1544661346.2548.2.camel@realtek.com>
+To:     Pkshih <pkshih@realtek.com>
+X-Mailer: Apple Mail (2.3445.102.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On this HPE Apollo 70 arm64 server with 256 CPUs, triggering a crash
-dump just hung. It has 4 threads on each core. Each 2-core share a same
-L1 and L2 caches, so that is 8 CPUs shares those. All CPUs share a same
-L3 cache.
 
-It turned out that this was due to the TLB contained stale entries (or
-uninitialized junk which just happened to look valid) from the first
-kernel before turning the MMU on in the second kernel which caused this
-instruction hung,
 
-msr	sctlr_el1, x0
+> On Dec 13, 2018, at 08:35, Pkshih <pkshih@realtek.com> wrote:
+> 
+> On Wed, 2018-12-12 at 13:13 +0800, Kai-Heng Feng wrote:
+>> Once BSS STA mode gets started, it can be scanned by other clients but
+>> cannot entablish a connection.
+>          ^^^ typo: establish
+>> 
+>> Turns out the set_bcn_reg() and its *_set_beacon_related_registers()
+>> callbacks never get called so it has problem beaconing.
+>> 
+>> Enable the function in rtl_op_bss_info_changed() can make BSS STA mode
+>> start to work.
+>> 
+>> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+>> ---
+>>  drivers/net/wireless/realtek/rtlwifi/core.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>> 
+>> diff --git a/drivers/net/wireless/realtek/rtlwifi/core.c
+>> b/drivers/net/wireless/realtek/rtlwifi/core.c
+>> index 4bf7967590ca..11d27a5cc576 100644
+>> --- a/drivers/net/wireless/realtek/rtlwifi/core.c
+>> +++ b/drivers/net/wireless/realtek/rtlwifi/core.c
+>> @@ -1054,7 +1054,7 @@ static void rtl_op_bss_info_changed(struct ieee80211_hw
+>> *hw,
+>>  					 "BSS_CHANGED_BEACON_ENABLED\n");
+>>  
+>>  				/*start hw beacon interrupt. */
+>> -				/*rtlpriv->cfg->ops->set_bcn_reg(hw); */
+>> +				rtlpriv->cfg->ops->set_bcn_reg(hw);
+>>  				mac->beacon_enabled = 1;
+>>  				rtlpriv->cfg->ops->update_interrupt_mask(hw,
+>>  						rtlpriv->cfg->maps
+> 
+> Which wifi chip do you use? And, please share your test scenario.
 
-Signed-off-by: Qian Cai <cai@lca.pw>
----
- arch/arm64/kernel/head.S | 4 ++++
- 1 file changed, 4 insertions(+)
+It’s Realtek 8723DE, which is currently not supported in mainline so I use rtl8723de in rtlwifi_new [1] to test it out.
 
-diff --git a/arch/arm64/kernel/head.S b/arch/arm64/kernel/head.S
-index 4471f570a295..5196f3d729de 100644
---- a/arch/arm64/kernel/head.S
-+++ b/arch/arm64/kernel/head.S
-@@ -771,6 +771,10 @@ ENTRY(__enable_mmu)
- 	msr	ttbr0_el1, x2			// load TTBR0
- 	msr	ttbr1_el1, x1			// load TTBR1
- 	isb
-+	dsb	nshst
-+	tlbi	vmalle1				// invalidate TLB
-+	dsb	nsh
-+	isb
- 	msr	sctlr_el1, x0
- 	isb
- 	/*
--- 
-2.17.2 (Apple Git-113)
+The test scenario is simply enable hotspot through network manager, which uses wpa_supplicant to do the work.
+
+[1] https://github.com/lwfinger/rtlwifi_new
+
+Kai-Heng
+
+> 
+> Thanks
+> 
 
