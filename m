@@ -2,182 +2,87 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.9 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C6B9C67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 21:12:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6F75C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 21:14:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2AA9B20851
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 21:12:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AA9B20851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 5BDEF20879
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 21:14:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544735642;
+	bh=Q3fRZSXVt4I6OcAAQVRcbD1m3y+AzuZkcx9Dc/EGRTk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=hBG5hVTxetdQNnwDp8yva5UMiPeBuRdlcazunjwdaFgMz1mZLtcwRfCm+29Sa3HXT
+	 3a4bIK0cwmwl2WfzW8w4oZEuu5SDhlyDSzEXq+xqj1PVsXRP3Rxi3UJA4BRqdrWwE7
+	 ULeM01twHSzbRroJQ6rEEpCDV9TT1ClR49gqVDK8=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BDEF20879
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727707AbeLMVMo (ORCPT
+        id S1727951AbeLMVOB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 16:12:44 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:47902 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726461AbeLMVMn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 16:12:43 -0500
-Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
-        (envelope-from <bigeasy@linutronix.de>)
-        id 1gXYHf-0007sr-Qu; Thu, 13 Dec 2018 22:12:40 +0100
-Date:   Thu, 13 Dec 2018 22:12:39 +0100
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        linux-rt-users <linux-rt-users@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: [ANNOUNCE] v4.19.8-rt6
-Message-ID: <20181213211239.4u7c5ntx6hyjcdbw@linutronix.de>
+        Thu, 13 Dec 2018 16:14:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45868 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726510AbeLMVOA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 16:14:00 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B021420851;
+        Thu, 13 Dec 2018 21:13:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544735640;
+        bh=Q3fRZSXVt4I6OcAAQVRcbD1m3y+AzuZkcx9Dc/EGRTk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=S+AlaEFMEGSZNJPqUdAegxQfXzVkEMCHYR4ZAerF6kJ8qCpCom870oroTZYNVhAbb
+         S6ITpOqBDqgN3q+awzPQJsdk9MYQ9PZbLtC+I1NBSuAp6geIsFOYZZGkfu+uks8c66
+         eZhzjnJOw5emOzwmI71axtYtGZ0pLfeL2RQPoEpc=
+Date:   Thu, 13 Dec 2018 22:13:57 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Christian Brauner <christian@brauner.io>
+Cc:     "open list:ANDROID DRIVERS" <devel@driverdev.osuosl.org>,
+        kilobyte@angband.pl, Todd Kjos <tkjos@android.com>,
+        darrick.wong@oracle.com, chouryzhou@tencent.com,
+        david@fromorbit.com, LKML <linux-kernel@vger.kernel.org>,
+        Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+        joel@joelfernandes.org, Martijn Coenen <maco@android.com>,
+        Todd Kjos <tkjos@google.com>
+Subject: Re: [PATCH v1] binder: implement binderfs
+Message-ID: <20181213211357.GA16654@kroah.com>
+References: <20181207232509.31771-1-christian@brauner.io>
+ <CAHRSSEzxR2wRw9UxaKkXTZ7cu989+70-V07PxMm6o+BfLTQ=6w@mail.gmail.com>
+ <20181212125126.4lhnjvrvaz5wwpib@brauner.io>
+ <20181213175626.GB7218@kroah.com>
+ <20181213205201.d4stjhypnseb3ska@brauner.io>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20181213205201.d4stjhypnseb3ska@brauner.io>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear RT folks!
+On Thu, Dec 13, 2018 at 09:52:03PM +0100, Christian Brauner wrote:
+> On Thu, Dec 13, 2018 at 06:56:26PM +0100, Greg Kroah-Hartman wrote:
+> > On Wed, Dec 12, 2018 at 01:51:27PM +0100, Christian Brauner wrote:
+> > > > > Cc: Martijn Coenen <maco@android.com>
+> > > > > Cc: Todd Kjos <tkjos@google.com>
+> > > > > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > > > > Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
+> > > 
+> > > Do we plan to bring this into mergeable shape before Christmas? I'm
+> > > happy to do it. :)
+> > 
+> > I haven't had the chance to give it a good review yet, but you should at
+> > least fix up the kbuild warnings that the 0-day bot sent you :)
+> 
+> __user is what's confusing kbot here. You want me to wait for your
+> review or send out a v2 right now? :)
 
-I'm pleased to announce the v4.19.8-rt6 patch set. 
-
-Changes since v4.19.8-rt5:
-
-  - Move a state change in do_nanosleep() do avoid a warning in
-    hrtimer_cancel().
-
-  - Disable tracing events on i915. The tracing events are using
-    spin_locks() which is not working on -RT. Reported by Luca Abeni.
-
-  - A recently added preemption check on x86 in __flush_tlb_all()
-    triggers on RT. Disabling preemption to get similar environment like
-    in !RT.
-
-  - A bugfix in __fpu__restore_sig() on x86 requires extra care on RT.
-
-Known issues
-     - A warning triggered in "rcu_note_context_switch" originated from
-       SyS_timer_gettime(). The issue was always there, it is now
-       visible. Reported by Grygorii Strashko and Daniel Wagner.
-
-The delta patch against v4.19.8-rt5 is appended below and can be found here:
- 
-     https://cdn.kernel.org/pub/linux/kernel/projects/rt/4.19/incr/patch-4.19.8-rt5-rt6.patch.xz
-
-You can get this release via the git tree at:
-
-    git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-rt-devel.git v4.19.8-rt6
-
-The RT patch against v4.19.8 can be found here:
-
-    https://cdn.kernel.org/pub/linux/kernel/projects/rt/4.19/older/patch-4.19.8-rt6.patch.xz
-
-The split quilt queue is available at:
-
-    https://cdn.kernel.org/pub/linux/kernel/projects/rt/4.19/older/patches-4.19.8-rt6.tar.xz
-
-Sebastian
-
-diff --git a/arch/x86/kernel/fpu/signal.c b/arch/x86/kernel/fpu/signal.c
-index d99a8ee9e185e..5e0274a941333 100644
---- a/arch/x86/kernel/fpu/signal.c
-+++ b/arch/x86/kernel/fpu/signal.c
-@@ -344,10 +344,12 @@ static int __fpu__restore_sig(void __user *buf, void __user *buf_fx, int size)
- 			sanitize_restored_xstate(tsk, &env, xfeatures, fx_only);
- 		}
- 
-+		preempt_disable();
- 		local_bh_disable();
- 		fpu->initialized = 1;
- 		fpu__restore(fpu);
- 		local_bh_enable();
-+		preempt_enable();
- 
- 		return err;
- 	} else {
-diff --git a/arch/x86/mm/pageattr.c b/arch/x86/mm/pageattr.c
-index e2d4b25c7aa44..9626ebb9e3c84 100644
---- a/arch/x86/mm/pageattr.c
-+++ b/arch/x86/mm/pageattr.c
-@@ -687,12 +687,18 @@ __split_large_page(struct cpa_data *cpa, pte_t *kpte, unsigned long address,
- 	pgprot_t ref_prot;
- 
- 	spin_lock(&pgd_lock);
-+	/*
-+	 * Keep preemption disabled after __flush_tlb_all() which expects not be
-+	 * preempted during the flush of the local TLB.
-+	 */
-+	preempt_disable();
- 	/*
- 	 * Check for races, another CPU might have split this page
- 	 * up for us already:
- 	 */
- 	tmp = _lookup_address_cpa(cpa, address, &level);
- 	if (tmp != kpte) {
-+		preempt_enable();
- 		spin_unlock(&pgd_lock);
- 		return 1;
- 	}
-@@ -726,6 +732,7 @@ __split_large_page(struct cpa_data *cpa, pte_t *kpte, unsigned long address,
- 		break;
- 
- 	default:
-+		preempt_enable();
- 		spin_unlock(&pgd_lock);
- 		return 1;
- 	}
-@@ -764,6 +771,7 @@ __split_large_page(struct cpa_data *cpa, pte_t *kpte, unsigned long address,
- 	 * going on.
- 	 */
- 	__flush_tlb_all();
-+	preempt_enable();
- 	spin_unlock(&pgd_lock);
- 
- 	return 0;
-diff --git a/drivers/gpu/drm/i915/i915_trace.h b/drivers/gpu/drm/i915/i915_trace.h
-index b50c6b829715e..cc54ec0ef75c1 100644
---- a/drivers/gpu/drm/i915/i915_trace.h
-+++ b/drivers/gpu/drm/i915/i915_trace.h
-@@ -2,6 +2,10 @@
- #if !defined(_I915_TRACE_H_) || defined(TRACE_HEADER_MULTI_READ)
- #define _I915_TRACE_H_
- 
-+#ifdef CONFIG_PREEMPT_RT_BASE
-+#define NOTRACE
-+#endif
-+
- #include <linux/stringify.h>
- #include <linux/types.h>
- #include <linux/tracepoint.h>
-diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
-index bf0ec3fbbe797..851b2134e77f4 100644
---- a/kernel/time/hrtimer.c
-+++ b/kernel/time/hrtimer.c
-@@ -1785,12 +1785,12 @@ static int __sched do_nanosleep(struct hrtimer_sleeper *t, enum hrtimer_mode mod
- 		if (likely(t->task))
- 			freezable_schedule();
- 
-+		__set_current_state(TASK_RUNNING);
- 		hrtimer_cancel(&t->timer);
- 		mode = HRTIMER_MODE_ABS;
- 
- 	} while (t->task && !signal_pending(current));
- 
--	__set_current_state(TASK_RUNNING);
- 
- 	if (!t->task)
- 		return 0;
-diff --git a/localversion-rt b/localversion-rt
-index 0efe7ba1930e1..8fc605d806670 100644
---- a/localversion-rt
-+++ b/localversion-rt
-@@ -1 +1 @@
---rt5
-+-rt6
+A v2 is good, I'm not going to get to my review today...
