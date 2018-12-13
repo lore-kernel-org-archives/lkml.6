@@ -2,93 +2,153 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.8 required=3.0 tests=DATE_IN_PAST_03_06,
-	DKIMWL_WL_MED,DKIM_SIGNED,DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D82C6C67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 06:52:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0BD1C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 06:52:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C89E2080F
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 06:52:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="KMqP9efC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C89E2080F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lixom.net
+	by mail.kernel.org (Postfix) with ESMTP id 8E5E920873
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 06:52:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E5E920873
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727208AbeLMGvk (ORCPT
+        id S1727493AbeLMGwa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 01:51:40 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:35843 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727051AbeLMGvg (ORCPT
+        Thu, 13 Dec 2018 01:52:30 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:58240 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726564AbeLMGwa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 01:51:36 -0500
-Received: by mail-lf1-f66.google.com with SMTP id a16so709240lfg.3
-        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 22:51:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=JdgcwaD2BuNk7SPz5Qho5H0RctNB2IAwYYQYfuyLYf4=;
-        b=KMqP9efCNfIIZz6WnaMVik0lnS8XmdqtZFA6uHyfye/HwrH+27cTawXz2U9gGTbzag
-         D1fVHRtmxbu+qCpLXTKDgscQnyWrQO8j4rQcTg2iV6tiMyltC4ozyeyeGNkgInITFqhv
-         SYOGy26SS6apyixX8OC3Bsvtlo98TBdKcRiELPLicI0doMvyiqTpZWoMbSzYXfN6aPYf
-         oD/ZasYzv8TbUKmdW5tDUbwrLFylzk0hRtTofinGQmZdUE2fo8tl99xov9Au+70//O5u
-         fAnMLF4pLKtL/Oz0XgRAJwtJ0fN/ju1Pl24c2G/uQGodPGaO1A9N6KngjHp7S1FjlJ1n
-         LSsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=JdgcwaD2BuNk7SPz5Qho5H0RctNB2IAwYYQYfuyLYf4=;
-        b=MRXezdWmSHJyzSEXFQy7onF6cMzcVOP/Aoi8V8t7hROUHOOVrb8ICmEtW35xgmj3fa
-         58XsXh6EvmE1RAVRgQzHh7Ab7bFqvfTPMR+UCc/uatL3pyfPB6CQ7aamsDL4yAZD+iO7
-         2NfjAVwcMYRX37Sp2Pk4oUtLen9nlYgP7g3Mk/hdzb9h4Rls9RdjFn44T5eaRppNkioy
-         cYfSkH2NaJ83S2D6KkUoSel8x6G2DTxZeKnnjH/gHypjUo586aRFHkUhDpR8jZd01AcK
-         GEKsraj3ithKXF31KGn5iX9cLTN5eY27zyJk3jgY/lxw5xqTGAb0Bg1w+cFcKdVbuXmk
-         pi1w==
-X-Gm-Message-State: AA+aEWYFkUr6cav9SGyMlaezqP7S04Z57BULEQQBQC1LvUerVoMtlTft
-        mmbuyEGN94FGNIcBbWRJtNaHZhUaXotyhQ==
-X-Google-Smtp-Source: AFSGD/WUo8ssXkqSckXrLXameooM4KZASyiq2mEX1a75tFA+P9k/7c9zWJEjZvvH9SPMcrbt/J5WqQ==
-X-Received: by 2002:a19:4345:: with SMTP id m5mr13228859lfj.142.1544683894283;
-        Wed, 12 Dec 2018 22:51:34 -0800 (PST)
-Received: from localhost (h85-30-9-151.cust.a3fiber.se. [85.30.9.151])
-        by smtp.gmail.com with ESMTPSA id r27-v6sm152528lja.65.2018.12.12.22.51.32
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 12 Dec 2018 22:51:33 -0800 (PST)
-Date:   Wed, 12 Dec 2018 18:14:42 -0800
-From:   Olof Johansson <olof@lixom.net>
-To:     Marc Gonzalez <marc.w.gonzalez@free.fr>
-Cc:     arm-soc <arm@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 4/9] arm64: defconfig: Drop USB_ULPI_BUS and
- USB_CHIPIDEA_ULPI
-Message-ID: <20181213021442.i7eabju22cviqnae@localhost>
-References: <49a5d199-4eeb-a7c2-b539-13356162547f@free.fr>
- <a5a9193c-018a-8d52-7b62-2743db048a69@free.fr>
+        Thu, 13 Dec 2018 01:52:30 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id wBD6pxsr059201;
+        Thu, 13 Dec 2018 00:51:59 -0600
+Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wBD6pxWe044868
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 13 Dec 2018 00:51:59 -0600
+Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Thu, 13
+ Dec 2018 00:51:59 -0600
+Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Thu, 13 Dec 2018 00:51:59 -0600
+Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wBD6puR1018748;
+        Thu, 13 Dec 2018 00:51:57 -0600
+Subject: Re: [PATCH 0/2] Graph fixes for using multiple endpoints per port
+To:     Tony Lindgren <tony@atomide.com>
+CC:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Jarkko Nikula <jarkko.nikula@bitmer.com>
+References: <20181211020557.61783-1-tony@atomide.com>
+ <8736r4bvf3.wl-kuninori.morimoto.gx@renesas.com>
+ <20181211045220.GI6707@atomide.com>
+ <871s6obqkb.wl-kuninori.morimoto.gx@renesas.com>
+ <20181211053536.GJ6707@atomide.com>
+ <87wooga9an.wl-kuninori.morimoto.gx@renesas.com>
+ <20181211141649.GL6707@atomide.com>
+ <87ftv33bpg.wl-kuninori.morimoto.gx@renesas.com>
+ <20181212001950.GX6707@atomide.com>
+ <01e3f547-318e-8988-b48a-e10c0a2904d6@ti.com>
+ <20181212145022.GB6707@atomide.com>
+From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
+Message-ID: <34191403-3c56-47ac-77d9-e900d88f2ae5@ti.com>
+Date:   Thu, 13 Dec 2018 08:53:38 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a5a9193c-018a-8d52-7b62-2743db048a69@free.fr>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20181212145022.GB6707@atomide.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 09, 2018 at 02:02:18AM +0100, Marc Gonzalez wrote:
-> Commit a930d8bd94d8 ("usb: chipidea: Always build ULPI code") made
-> USB_CHIPIDEA select USB_ULPI_BUS, and removed USB_CHIPIDEA_ULPI.
+
+
+On 12/12/2018 16.50, Tony Lindgren wrote:
+> * Peter Ujfalusi <peter.ujfalusi@ti.com> [181212 13:03]:
+>> On 12/12/2018 2.19, Tony Lindgren wrote:
+>>> In my McBSP case there is only a single physical I2S port
+>>> that can be TDM split into timeslots.
+>>
+>> So what is missing from the McBSP driver is to configure the TDM. We
+>> never had a hardware which would require it so it is _not_ implemented.
 > 
-> Reviewed-by: Fabio Estevam <festevam@gmail.com>
-> Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
+> Curiously.. Nothing needs to be done in the McBSP driver for the droid
+> 4 TDM configuration AFAIK.
 
-This one is the same as some of the others; it had already dropped off with the
-refresh.
+So you always have 4 timeslot and that's it?
 
+> The CPCAP PMIC is the clock master, and only the PMIC registers need to
+> be configured in this case for the timeslot to switch between codecs
+> connected to McBSP3.
 
--Olof
+The McBSP TDM configuration is not master only.
+You basically tell McBSP on which timeslot to transmit/receive.
+Let's say you have two codecs connected to a single McBSP.
+codec1 is configured to listen for timeslot 0/1
+codec2 is configured to listen for timeslot 2/3
+
+If you open a stereo stream to codec1 then you tell McBSP to
+send/receive the data under timeslot 0/1 and ignore any other timeslots.
+
+If you open a stereo stream to codec2 then you tell McBSP to
+send/receive the data under timeslot 2/3 and ignore any other timeslots.
+
+For codec1 you don't really need anything regarding to TDM configuration
+as McBSP will send/receive right after the start condition on the FS,
+but for codec2 you need to configure the TDM mode of McBSP to ignore
+timeslot 0/1
+
+>> imho the 'only' thing is to implement the set_tdm_slot callback for the
+>> McBSP DAI. In DT you would have single card with two dai_link section
+>> and each section would set different tdm slots to use for the codecs
+>> listening on different slots.
+>>
+>> There is one issue for sure with this setup: the two PCM can not be used
+>> at the same time. But we have one DMA channel so if you would open both
+>> the PCM stream need to be set up in a way to match with the HW or create
+>> a asound.conf file to do some mapping.
+> 
+> Yes in the droid 4 TDM case only one device can be used at a time
+> and all that configuration is done in the PMIC codec .set_tdm_slot
+> function.
+
+Hrm, do you have two DAIs on the PMIC side or different timeslots from
+the TDM stream is routed to different outputs, similarly to twl6040
+where timeslot 0/1 is Headset, timeslot 2/3 is Handsfree and timeslot 5
+is to drive a vibra?
+
+> I think it's possible to do more complex configurations where McBSP
+> is the master and would implement a .set_tdm_slot function. But I
+> don't know anything about that and I'm not aware of any such use
+> cases in the mainline kernel.
+
+No, the set_tdm_slot is applicable for both master and slave mode of McBSP.
+
+> 
+> Regards,
+> 
+> Tony
+> 
+
+- Péter
+
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
