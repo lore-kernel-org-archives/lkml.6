@@ -2,96 +2,95 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A888C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 23:07:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A991FC65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 23:14:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA92D20851
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 23:07:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA92D20851
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 5013E20879
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 23:14:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="ZpOn5i61"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5013E20879
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=wdc.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728350AbeLMXHA (ORCPT
+        id S1727911AbeLMXOx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 18:07:00 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:48448 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726813AbeLMXHA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 18:07:00 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E096531256A8;
-        Thu, 13 Dec 2018 23:06:59 +0000 (UTC)
-Received: from treble (ovpn-120-195.rdu2.redhat.com [10.10.120.195])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5507D26355;
-        Thu, 13 Dec 2018 23:06:55 +0000 (UTC)
-Date:   Thu, 13 Dec 2018 17:06:52 -0600
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     Jiri Kosina <jikos@kernel.org>, Miroslav Benes <mbenes@suse.cz>,
-        Jason Baron <jbaron@akamai.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v14 10/11] livepatch: Remove ordering and refuse loading
- conflicting patches
-Message-ID: <20181213230652.e2vn27qvqhumtaog@treble>
-References: <20181129094431.7801-1-pmladek@suse.com>
- <20181129094431.7801-11-pmladek@suse.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20181129094431.7801-11-pmladek@suse.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Thu, 13 Dec 2018 23:07:00 +0000 (UTC)
+        Thu, 13 Dec 2018 18:14:53 -0500
+Received: from esa2.hgst.iphmx.com ([68.232.143.124]:15458 "EHLO
+        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726236AbeLMXOw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 18:14:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1544742895; x=1576278895;
+  h=from:to:cc:subject:date:message-id;
+  bh=RTsWalh1XbKdBNzRQGYMWqHt94ahyZseETm1+e2I45A=;
+  b=ZpOn5i613aYEEnfPPoqVOgzaWAx5Gc3F9JLfsxByXGF9thcEkBEV2/aX
+   I/VHghHGv0Bp7kwnig3RWJK+GmkLGYLGk5j+7a+DHaLOuEsWXPxReObjt
+   Fkuue2OWYm5v4/QVhSNJMIchpYAnl2+JS04XRzha3MMm25+/g0ITPj49A
+   FxETibxvWy8qqoEvbYz8Wpcuxj6BBSZtNIW709hKq2HxXQOgS0EswfIa8
+   5tVb0/8v8+azOkY+fSn/S5TkydzQFuSsB/sZ7Y33VjhhDC4kQwMvBQPQ5
+   YOsxq2illStOztNV3AASFcVi38nss7jpLXcl2rnnC1BAl9J/t1ELhXTGi
+   w==;
+X-IronPort-AV: E=Sophos;i="5.56,350,1539619200"; 
+   d="scan'208";a="194445532"
+Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 14 Dec 2018 07:14:54 +0800
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep02.wdc.com with ESMTP; 13 Dec 2018 14:57:20 -0800
+Received: from jedi-01.sdcorp.global.sandisk.com (HELO jedi-01.int.fusionio.com) ([10.11.143.218])
+  by uls-op-cesaip02.wdc.com with ESMTP; 13 Dec 2018 15:14:53 -0800
+From:   Atish Patra <atish.patra@wdc.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Atish Patra <atish.patra@wdc.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        devicetree@vger.kernel.org,
+        Dmitriy Cherkasov <dmitriy@oss-tech.org>,
+        linux-riscv@lists.infradead.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Anup Patel <anup@brainfault.org>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Christoph Hellwig <hch@infradead.org>
+Subject: [PATCH v2 0/4] Timer code cleanup. 
+Date:   Thu, 13 Dec 2018 15:14:25 -0800
+Message-Id: <1544742869-19980-1-git-send-email-atish.patra@wdc.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 29, 2018 at 10:44:30AM +0100, Petr Mladek wrote:
-> The atomic replace and cumulative patches were introduced as a more secure
-> way to handle dependent patches. They simplify the logic:
-> 
->   + Any new cumulative patch is supposed to take over shadow variables
->     and changes made by callbacks from previous livepatches.
-> 
->   + All replaced patches are discarded and the modules can be unloaded.
->     As a result, there is only one scenario when a cumulative livepatch
->     gets disabled.
-> 
-> The different handling of "normal" and cumulative patches might cause
-> confusion. It would make sense to keep only one mode. On the other hand,
-> it would be rude to enforce using the cumulative livepatches even for
-> trivial and independent (hot) fixes.
-> 
-> This patch removes the stack of patches. The list of enabled patches
-> is still needed but the ordering is not longer enforced.
-> 
-> Note that it is not possible to catch all possible dependencies. It is
-> the responsibility of the livepatch authors to decide.
-> 
-> Nevertheless this patch prevents having two patches for the same function
-> enabled at the same time after the transition finishes. It might help
-> to catch obvious mistakes. But more importantly, we do not need to
-> handle situation when a patch in the middle of the function stack
-> (ops->func_stack) is being removed.
 
-I'm not sure about this patch.  I like the removal of the stacking.  But
-do we really want to enforce no dependencies between non-cumulative
-patches?  It can be done correctly if the user is careful.
+This patch series provides an assorted timer cleanups in RISC-V.
 
-Maybe we should just let users do it if they want to.  And then that
-also would mean less code for us to maintain.
+Changes from v1->v2:
 
-And as usual, I apologize if I'm either contradicting or repeating past
-versions of myself. :-)
+1. Updated commit text in 1/4.
+2. Added a timebase check for each cpu.
+3. Added a warning for invalid hartid 4/4.
 
--- 
-Josh
+Atish Patra (3):
+RISC-V: Support per-hart timebase-frequency
+RISC-V: Remove per cpu clocksource
+RISC-V: Fix non-smp kernel boot on SMP systems
+
+Palmer Dabbelt (1):
+dt-bindings: Correct RISC-V's timebase-frequency
+
+Documentation/devicetree/bindings/riscv/cpus.txt |  4 +-
+arch/riscv/kernel/time.c                         |  9 +----
+drivers/clocksource/riscv_timer.c                | 51 +++++++++++++++++++++---
+3 files changed, 49 insertions(+), 15 deletions(-)
+
+--
+2.7.4
+
