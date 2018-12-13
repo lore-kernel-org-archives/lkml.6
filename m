@@ -6,53 +6,51 @@ X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CC37C67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:51:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59474C67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:51:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 146C120870
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:51:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C56120870
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:51:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544676682;
-	bh=iKpdsWNrXAPsASuUodZcuGVbdk04VYHiKmO/afWLtpI=;
+	s=default; t=1544676692;
+	bh=N8AfGWv1BymxIbK9rX5NHROOq0ClCwsRM2lj4GdEsZI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=QxVg4IQGjtWLjmisCNiKkTGjxt0e8+1k8J9uwmC2gpuESeMUUgwCri3n6gHNNUTj3
-	 fzwo4QiLoTaXWF4p2QEhehn5yP8/Naeq4dFstO/1/6puIYjK3ZNSZjwB32rccVuZfl
-	 v6B+WqvI91I/UjHpbZI2dn16YJeTyvJIA9PSqZjM=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 146C120870
+	b=G4bmgXhSaPcD+UXLddu7tsmZlz9puWWOu3U4vrBHWQZErVJnpPvfZi4oSK2rAq/s9
+	 TSQh6xAb/KG5cCsiJh6KZuy0warNHtFFz0C9r44mp61AwuCiUwdhUFtwR+XYAIco8L
+	 sPMI9Cq7M3FQwWkzTJ3OuxLkDzhH1uhoM/DqAzgk=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C56120870
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727467AbeLME3N (ORCPT
+        id S1727390AbeLME3J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 23:29:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42190 "EHLO mail.kernel.org"
+        Wed, 12 Dec 2018 23:29:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41872 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727236AbeLME3L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 23:29:11 -0500
+        id S1727188AbeLME25 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 23:28:57 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DA03720849;
-        Thu, 13 Dec 2018 04:29:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C042220849;
+        Thu, 13 Dec 2018 04:28:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544675350;
-        bh=iKpdsWNrXAPsASuUodZcuGVbdk04VYHiKmO/afWLtpI=;
+        s=default; t=1544675336;
+        bh=N8AfGWv1BymxIbK9rX5NHROOq0ClCwsRM2lj4GdEsZI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uv6YZOj1q3Kh04YjZbHgoTba19DYfloryMYxYNrteFQS6R8+CAwTHLciwkALpVyOt
-         kAuWa2kOFU9zGjX/+c/y+UQLEA4xwUzxUkWCzlPjAUpDwRW4PUKHJXepHc0rAnUADT
-         9AtENLNa2i63cYTngf/ObFEsPkU6d8Q0wl7EGmiA=
+        b=QfTUsg9I9YCcUht0QnGb3/DKbiFxMlbE+OwUqvrvv/hsoHbNFm6O92Q7OnbO5JPIr
+         x87tYKlKXWK+ewZ/TV5IAYVtigXTG0w9qtUo77+VDai72An5PcybO/HcmBFz4wqiBs
+         PPG3x0RlfcJLvBRmeZ7wsV0VWOmrt4pS6s4nemcI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jose Abreu <joabreu@synopsys.com>,
-        Alexey Brodkin <abrodkin@synopsys.com>,
-        Joao Pinto <jpinto@synopsys.com>,
-        David Laight <David.Laight@ACULAB.COM>,
-        Vineet Gupta <vgupta@synopsys.com>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-snps-arc@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.19 19/73] ARC: io.h: Implement reads{x}()/writes{x}()
-Date:   Wed, 12 Dec 2018 23:27:44 -0500
-Message-Id: <20181213042838.75160-19-sashal@kernel.org>
+Cc:     Sharat Masetty <smasetty@codeaurora.org>,
+        Rob Clark <robdclark@gmail.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Sasha Levin <sashal@kernel.org>, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 4.19 12/73] drm/msm: Fix task dump in gpu recovery
+Date:   Wed, 12 Dec 2018 23:27:37 -0500
+Message-Id: <20181213042838.75160-12-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181213042838.75160-1-sashal@kernel.org>
 References: <20181213042838.75160-1-sashal@kernel.org>
@@ -64,143 +62,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jose Abreu <joabreu@synopsys.com>
+From: Sharat Masetty <smasetty@codeaurora.org>
 
-[ Upstream commit 10d443431dc2bb733cf7add99b453e3fb9047a2e ]
+[ Upstream commit 482f96324a4e08818db7d75bb12beaaea6c9561d ]
 
-Some ARC CPU's do not support unaligned loads/stores. Currently, generic
-implementation of reads{b/w/l}()/writes{b/w/l}() is being used with ARC.
-This can lead to misfunction of some drivers as generic functions do a
-plain dereference of a pointer that can be unaligned.
+The current recovery code gets a pointer to the task struct and does a
+few things all within the rcu_read_lock. This puts constraints on the
+types of gfp flags that can be used within the rcu lock. This patch
+instead gets a reference to the task within the rcu lock and releases
+the lock immediately, this way the task stays afloat until we need it and
+we also get to use the desired gfp flags.
 
-Let's use {get/put}_unaligned() helpers instead of plain dereference of
-pointer in order to fix. The helpers allow to get and store data from an
-unaligned address whilst preserving the CPU internal alignment.
-According to [1], the use of these helpers are costly in terms of
-performance so we added an initial check for a buffer already aligned so
-that the usage of the helpers can be avoided, when possible.
-
-[1] Documentation/unaligned-memory-access.txt
-
-Cc: Alexey Brodkin <abrodkin@synopsys.com>
-Cc: Joao Pinto <jpinto@synopsys.com>
-Cc: David Laight <David.Laight@ACULAB.COM>
-Tested-by: Vitor Soares <soares@synopsys.com>
-Signed-off-by: Jose Abreu <joabreu@synopsys.com>
-Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
+Signed-off-by: Sharat Masetty <smasetty@codeaurora.org>
+Signed-off-by: Rob Clark <robdclark@gmail.com>
+Signed-off-by: Sean Paul <seanpaul@chromium.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arc/include/asm/io.h | 72 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 72 insertions(+)
+ drivers/gpu/drm/msm/msm_gpu.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arc/include/asm/io.h b/arch/arc/include/asm/io.h
-index c22b181e8206..2f39d9b3886e 100644
---- a/arch/arc/include/asm/io.h
-+++ b/arch/arc/include/asm/io.h
-@@ -12,6 +12,7 @@
- #include <linux/types.h>
- #include <asm/byteorder.h>
- #include <asm/page.h>
-+#include <asm/unaligned.h>
+diff --git a/drivers/gpu/drm/msm/msm_gpu.c b/drivers/gpu/drm/msm/msm_gpu.c
+index 46e6b82f7b66..52a2146dc1f2 100644
+--- a/drivers/gpu/drm/msm/msm_gpu.c
++++ b/drivers/gpu/drm/msm/msm_gpu.c
+@@ -425,10 +425,9 @@ static void recover_worker(struct work_struct *work)
+ 	if (submit) {
+ 		struct task_struct *task;
  
- #ifdef CONFIG_ISA_ARCV2
- #include <asm/barrier.h>
-@@ -94,6 +95,42 @@ static inline u32 __raw_readl(const volatile void __iomem *addr)
- 	return w;
- }
+-		rcu_read_lock();
+-		task = pid_task(submit->pid, PIDTYPE_PID);
++		task = get_pid_task(submit->pid, PIDTYPE_PID);
+ 		if (task) {
+-			comm = kstrdup(task->comm, GFP_ATOMIC);
++			comm = kstrdup(task->comm, GFP_KERNEL);
  
-+/*
-+ * {read,write}s{b,w,l}() repeatedly access the same IO address in
-+ * native endianness in 8-, 16-, 32-bit chunks {into,from} memory,
-+ * @count times
-+ */
-+#define __raw_readsx(t,f) \
-+static inline void __raw_reads##f(const volatile void __iomem *addr,	\
-+				  void *ptr, unsigned int count)	\
-+{									\
-+	bool is_aligned = ((unsigned long)ptr % ((t) / 8)) == 0;	\
-+	u##t *buf = ptr;						\
-+									\
-+	if (!count)							\
-+		return;							\
-+									\
-+	/* Some ARC CPU's don't support unaligned accesses */		\
-+	if (is_aligned) {						\
-+		do {							\
-+			u##t x = __raw_read##f(addr);			\
-+			*buf++ = x;					\
-+		} while (--count);					\
-+	} else {							\
-+		do {							\
-+			u##t x = __raw_read##f(addr);			\
-+			put_unaligned(x, buf++);			\
-+		} while (--count);					\
-+	}								\
-+}
-+
-+#define __raw_readsb __raw_readsb
-+__raw_readsx(8, b)
-+#define __raw_readsw __raw_readsw
-+__raw_readsx(16, w)
-+#define __raw_readsl __raw_readsl
-+__raw_readsx(32, l)
-+
- #define __raw_writeb __raw_writeb
- static inline void __raw_writeb(u8 b, volatile void __iomem *addr)
- {
-@@ -126,6 +163,35 @@ static inline void __raw_writel(u32 w, volatile void __iomem *addr)
+ 			/*
+ 			 * So slightly annoying, in other paths like
+@@ -441,10 +440,10 @@ static void recover_worker(struct work_struct *work)
+ 			 * about the submit going away.
+ 			 */
+ 			mutex_unlock(&dev->struct_mutex);
+-			cmd = kstrdup_quotable_cmdline(task, GFP_ATOMIC);
++			cmd = kstrdup_quotable_cmdline(task, GFP_KERNEL);
++			put_task_struct(task);
+ 			mutex_lock(&dev->struct_mutex);
+ 		}
+-		rcu_read_unlock();
  
- }
- 
-+#define __raw_writesx(t,f)						\
-+static inline void __raw_writes##f(volatile void __iomem *addr, 	\
-+				   const void *ptr, unsigned int count)	\
-+{									\
-+	bool is_aligned = ((unsigned long)ptr % ((t) / 8)) == 0;	\
-+	const u##t *buf = ptr;						\
-+									\
-+	if (!count)							\
-+		return;							\
-+									\
-+	/* Some ARC CPU's don't support unaligned accesses */		\
-+	if (is_aligned) {						\
-+		do {							\
-+			__raw_write##f(*buf++, addr);			\
-+		} while (--count);					\
-+	} else {							\
-+		do {							\
-+			__raw_write##f(get_unaligned(buf++), addr);	\
-+		} while (--count);					\
-+	}								\
-+}
-+
-+#define __raw_writesb __raw_writesb
-+__raw_writesx(8, b)
-+#define __raw_writesw __raw_writesw
-+__raw_writesx(16, w)
-+#define __raw_writesl __raw_writesl
-+__raw_writesx(32, l)
-+
- /*
-  * MMIO can also get buffered/optimized in micro-arch, so barriers needed
-  * Based on ARM model for the typical use case
-@@ -141,10 +207,16 @@ static inline void __raw_writel(u32 w, volatile void __iomem *addr)
- #define readb(c)		({ u8  __v = readb_relaxed(c); __iormb(); __v; })
- #define readw(c)		({ u16 __v = readw_relaxed(c); __iormb(); __v; })
- #define readl(c)		({ u32 __v = readl_relaxed(c); __iormb(); __v; })
-+#define readsb(p,d,l)		({ __raw_readsb(p,d,l); __iormb(); })
-+#define readsw(p,d,l)		({ __raw_readsw(p,d,l); __iormb(); })
-+#define readsl(p,d,l)		({ __raw_readsl(p,d,l); __iormb(); })
- 
- #define writeb(v,c)		({ __iowmb(); writeb_relaxed(v,c); })
- #define writew(v,c)		({ __iowmb(); writew_relaxed(v,c); })
- #define writel(v,c)		({ __iowmb(); writel_relaxed(v,c); })
-+#define writesb(p,d,l)		({ __iowmb(); __raw_writesb(p,d,l); })
-+#define writesw(p,d,l)		({ __iowmb(); __raw_writesw(p,d,l); })
-+#define writesl(p,d,l)		({ __iowmb(); __raw_writesl(p,d,l); })
- 
- /*
-  * Relaxed API for drivers which can handle barrier ordering themselves
+ 		if (comm && cmd) {
+ 			dev_err(dev->dev, "%s: offending task: %s (%s)\n",
 -- 
 2.19.1
 
