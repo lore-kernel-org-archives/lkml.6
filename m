@@ -2,134 +2,101 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD336C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 20:12:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3EE8C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 20:12:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FC4A20851
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 20:12:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="jEjlkQGN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FC4A20851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	by mail.kernel.org (Postfix) with ESMTP id BAF9420851
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 20:12:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BAF9420851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727398AbeLMUMC (ORCPT
+        id S1727481AbeLMUMb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 15:12:02 -0500
-Received: from mail-it1-f178.google.com ([209.85.166.178]:40206 "EHLO
-        mail-it1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726381AbeLMUMC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 15:12:02 -0500
-Received: by mail-it1-f178.google.com with SMTP id h193so5831412ita.5
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 12:12:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=mX2ALEwjE1rpKxMZZtMIe1LvqvpMJ3rKLrSyCou1id8=;
-        b=jEjlkQGN8givBGPjlUEXTo+FQpexfTdZ+nzzWkkJuWhddHY0A5OKm3jcz3H4XtgsMO
-         HqDWxzcaSqNnjg2N+J8W0PnlpJqR9YVJrtmf29gzwtyg69TJjZSdhRbBIHvwKi8r58lP
-         BUZPZ9bLzeRpcN+S+8SHLvQO72MR1CTPxEEOJ0RgAqyXOKn8hYIAWkUowvBrIuOAOndg
-         RCQNivzTe31s5IGNkLGFGfD1JUhBZ47lyfecT77UfE9AKgliik8istrSgwD4rfBYjBmo
-         KfIwK+mCWJQcqEj1pbsOnXbjDZg9CPKzf7jvmFxsPwPkG6TxKKNBByziPMbjUCCcw6rn
-         wRpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=mX2ALEwjE1rpKxMZZtMIe1LvqvpMJ3rKLrSyCou1id8=;
-        b=IFfpPZMCEMoC6FLAXVf+TH7aSiLeNKDq84KUFKew2EV0V4b4FSOJwFUkuAlcp2gEYO
-         XVc6jJdWUHrrUFwONegNHP1+5iBeUDEgOL+RbaGFMydf8A399s8aFqA8cnN50YjL3HZN
-         yr697GgIxLNAqD12089itQEBuzGaE525hwGaLdbbr+JNAbyJHaG/JeZiv6/Rlb9Qbr2t
-         OimpJ+4JzdXR1QLDZp06YPak3A5x28/Q7e/sZZ1gQqUw8FEOujJaXDjGJzMuxR0n422w
-         BBD/36qQ8FCFWRKLe23pQ0r89zZWQejqttGCbZaVlg7mFAKCBq80WgNDlUxuPjUugMri
-         SsBg==
-X-Gm-Message-State: AA+aEWbjINky2z1fykYuXYTaZpA1AqXBC3cbT4YIYp6137r8C8EUOyzh
-        JTcXorJhMMDoMgwUq5wnpTWQNA==
-X-Google-Smtp-Source: AFSGD/VWeYU9uI2KQMGoEP+rIeXreT5Nl4KRvMvUuSC+HiHdrbhXDJL0OgR3zblRXtpeYLbKDepOAg==
-X-Received: by 2002:a02:1a0a:: with SMTP id 10mr198790jai.50.1544731920696;
-        Thu, 13 Dec 2018 12:12:00 -0800 (PST)
-Received: from [192.168.1.56] ([216.160.245.98])
-        by smtp.gmail.com with ESMTPSA id h14sm1085023ior.41.2018.12.13.12.11.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 13 Dec 2018 12:11:59 -0800 (PST)
-Subject: Re: [PATCH 2/2] scsi: ufs: add inline crypto support to UFS HCD
-To:     Ladvine D Almeida <ladvine.dalmeida@synopsys.com>,
-        Parshuram Raju Thombare <pthombar@cadence.com>,
-        Eric Biggers <ebiggers@kernel.org>
-Cc:     "vinholikatti@gmail.com" <vinholikatti@gmail.com>,
-        "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
-        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        Alan Douglas <adouglas@cadence.com>,
-        Janek Kotas <jank@cadence.com>,
-        Rafal Ciepiela <rafalc@cadence.com>,
-        AnilKumar Chimata <anilc@codeaurora.org>,
-        Satya Tangirala <satyat@google.com>,
-        Paul Crowley <paulcrowley@google.com>,
-        Manjunath M Bettegowda <manjunath.mb@synopsys.com>,
-        Tejas Joglekar <tejas.joglekar@synopsys.com>,
-        Joao Pinto <Joao.Pinto@synopsys.com>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>
-References: <20181211095027.GA3316@lvlogina.cadence.com>
- <20181211181647.GC221175@gmail.com>
- <CO2PR07MB2469AD9C0A121EBF94129A11C1A70@CO2PR07MB2469.namprd07.prod.outlook.com>
- <BD7FB879CC136E419544C8E2AE7B9C30227EE5@IN01WEMBXA.internal.synopsys.com>
- <fb17d794-c682-3261-cbad-94ce4c14eea1@kernel.dk>
- <BD7FB879CC136E419544C8E2AE7B9C30227F0B@IN01WEMBXA.internal.synopsys.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <6309baec-bb1f-4986-6872-a70047fbc469@kernel.dk>
-Date:   Thu, 13 Dec 2018 13:11:58 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 13 Dec 2018 15:12:31 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:45256 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726435AbeLMUMb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 15:12:31 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 34C663082138;
+        Thu, 13 Dec 2018 20:12:31 +0000 (UTC)
+Received: from redhat.com (ovpn-120-21.rdu2.redhat.com [10.10.120.21])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 14BB560BE7;
+        Thu, 13 Dec 2018 20:12:29 +0000 (UTC)
+Date:   Thu, 13 Dec 2018 15:12:29 -0500
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Jason Wang <jasowang@redhat.com>
+Cc:     kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 0/3] vhost: accelerate metadata access through
+ vmap()
+Message-ID: <20181213144116-mutt-send-email-mst@kernel.org>
+References: <20181213101022.12475-1-jasowang@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <BD7FB879CC136E419544C8E2AE7B9C30227F0B@IN01WEMBXA.internal.synopsys.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181213101022.12475-1-jasowang@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Thu, 13 Dec 2018 20:12:31 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/13/18 1:04 PM, Ladvine D Almeida wrote:
-> On 13/12/18 7:42 PM, Jens Axboe wrote:
->> On 12/13/18 12:39 PM, Ladvine D Almeida wrote:
->>> Suggest to take a look into the article https://urldefense.proofpoint.com/v2/url?u=https-3A__lwn.net_Articles_717754&d=DwICaQ&c=DPL6_X_6JkXFx7AXWqB0tg&r=z00zRD9ARrwHpe-XSl1OtUp1uNKGYoXI1G2DhOaDDBI&m=-pGzV3wdSje337vKOYoYB6NgU_DGDmQvfQ9egLDRYNQ&s=c4FXsrwD0BLAjE4UC47R2ngLnx_DP5jiOr0dtZ7tGsw&e=
->>> My real concern is how to achieve it without any modifications to the
->>> bio.(because key slot information has to finally reach the target block
->>> device)
->>
->> Guys, you both need to edit when you reply, wading through 650 lines of
->> text to get to this...
-> Jens, Thanks for your reply. I will take care of it next time onwards. :-)
+On Thu, Dec 13, 2018 at 06:10:19PM +0800, Jason Wang wrote:
+> Hi:
 > 
->>
->> You obviously can't modify the bio if you don't own it, but you could
->> clone it and then you have storage in ->bi_private.
->>
+> This series tries to access virtqueue metadata through kernel virtual
+> address instead of copy_user() friends since they had too much
+> overheads like checks, spec barriers or even hardware feature
+> toggling.
 > 
-> I agree. I can clone the bio in the crypto target and use bi_private.
-> But, when i finally submit the bio and it reaches the target block
-> device, the information stored in bi_private is lost.
+> Test shows about 24% improvement on TX PPS. It should benefit other
+> cases as well.
+> 
+> Please review
 
-I don't follow, what do you mean it's lost? It's persistent from
-bio setup to end_io time.
+I think the idea of speeding up userspace access is a good one.
+However I think that moving all checks to start is way too aggressive.
+Instead, let's batch things up but let's not keep them
+around forever.
+Here are some ideas:
 
--- 
-Jens Axboe
 
+1. Disable preemption, process a small number of small packets
+   directly in an atomic context. This should cut latency
+   down significantly, the tricky part is to only do it
+   on a light load and disable this
+   for the streaming case otherwise it's unfair.
+   This might fail, if it does just bounce things out to
+   a thread.
+
+2. Switch to unsafe_put_user/unsafe_get_user,
+   and batch up multiple accesses.
+
+3. Allow adding a fixup point manually,
+   such that multiple independent get_user accesses
+   can get a single fixup (will allow better compiler
+   optimizations).
+
+
+
+
+
+> Jason Wang (3):
+>   vhost: generalize adding used elem
+>   vhost: fine grain userspace memory accessors
+>   vhost: access vq metadata through kernel virtual address
+> 
+>  drivers/vhost/vhost.c | 281 ++++++++++++++++++++++++++++++++++++++----
+>  drivers/vhost/vhost.h |  11 ++
+>  2 files changed, 266 insertions(+), 26 deletions(-)
+> 
+> -- 
+> 2.17.1
