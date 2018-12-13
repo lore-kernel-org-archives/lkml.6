@@ -2,94 +2,96 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83FE3C67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 16:56:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29236C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 16:59:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 496622086D
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 16:56:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E3DE42087F
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 16:59:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="ktAY/uMD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 496622086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="BLU0B29T";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="QKZAIc7y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3DE42087F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729675AbeLMQ4u (ORCPT
+        id S1729583AbeLMQ7o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 11:56:50 -0500
-Received: from smtprelay.synopsys.com ([198.182.47.9]:39874 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728993AbeLMQ4t (ORCPT
+        Thu, 13 Dec 2018 11:59:44 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:40674 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727815AbeLMQ7o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 11:56:49 -0500
-Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 58FB524E2434;
-        Thu, 13 Dec 2018 08:56:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1544720209; bh=J8GQPU5nXQ0BMDJt7JPPSLsm7zQ7XUo/eyaDmHXUdnA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ktAY/uMDaeO/RG/vpcFs3LZJk2RPagGIr5plHp4+Qaa2p6oZvXSUB/YVbF9jNiVRB
-         bXsJ/VlggjJr/wgAvLGSZxIqRpoXR03wpLUgWFuSaAl7qVS6QwCAu5r1KYseak0Hah
-         TvEKZSJi5nmogq2t6ITlyvHOXsFSxHSRhM7qR+I4Lda6jKJ38hW7BizpzaZpE+dhMk
-         wTqiiGET54h+yVdpHwC9BFI8dsfeLUYupFD5SKCU9Q5xgZl7u9QXWVfrPzB6hrb/ZG
-         4gQqfkqGY8T6VQ6tCoyp0DC2unooG2A7oEw5n6s+h9iexY1U2QEzVpKqanKJlbnDl2
-         GFMLcf0qfAUCw==
-Received: from paltsev-e7480.internal.synopsys.com (paltsev-e7480.internal.synopsys.com [10.121.3.66])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 7EC8730CF;
-        Thu, 13 Dec 2018 08:56:45 -0800 (PST)
-From:   Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-To:     linux-snps-arc@lists.infradead.org,
-        Vineet Gupta <vineet.gupta1@synopsys.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Alexey Brodkin <alexey.brodkin@synopsys.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Subject: [PATCH v2 4/4] ARC: perf: avoid kernel killing where it is possible
-Date:   Thu, 13 Dec 2018 19:56:21 +0300
-Message-Id: <20181213165621.20817-5-Eugeniy.Paltsev@synopsys.com>
-X-Mailer: git-send-email 2.14.5
-In-Reply-To: <20181213165621.20817-1-Eugeniy.Paltsev@synopsys.com>
-References: <20181213165621.20817-1-Eugeniy.Paltsev@synopsys.com>
+        Thu, 13 Dec 2018 11:59:44 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 0841F60132; Thu, 13 Dec 2018 16:59:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1544720383;
+        bh=dKzQjPrQFAlvgQoG9iZUPmDlA4WUnrorf26brMypZX4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=BLU0B29TQ31UmhE8mP32B8EmlRADP1fw7zz3xGhO6AY9IQi3AEFBwZGJCHYxbg2yO
+         n3QvVJv/s/6fC/zZHA1H5frnw5JAKci7gtFkLLqr+3mk621wS407dlIiKPRWdZgwoi
+         cV+cuJF1z98PvTxH7rQ69sb/YyORMKyng1AIPMkY=
+Received: from jhugo-perf-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: jhugo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4E6C0602F8;
+        Thu, 13 Dec 2018 16:59:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1544720382;
+        bh=dKzQjPrQFAlvgQoG9iZUPmDlA4WUnrorf26brMypZX4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=QKZAIc7y4c/QqqZ9GQiLKpyNx4AfcoPR6XmdMof91f5WH29RrbMODj0TfnOtt+yz6
+         sHAFrQ66339IUb777YnpFRl2+ISLx096r3rtDGRj1JUOQ7ItOziB+RPcL/o86SEWzt
+         Sf0cSQPDA9oR+cmdM7pbiy9TU/hlfs7WHB4wP3fk=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4E6C0602F8
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
+From:   Jeffrey Hugo <jhugo@codeaurora.org>
+To:     sboyd@kernel.org, andy.gross@linaro.org, david.brown@linaro.org,
+        mturquette@baylibre.com
+Cc:     bjorn.andersson@linaro.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        marc.w.gonzalez@free.fr, Jeffrey Hugo <jhugo@codeaurora.org>
+Subject: [PATCH] clk: qcom: Leave mmss noc on for 8998
+Date:   Thu, 13 Dec 2018 09:59:30 -0700
+Message-Id: <1544720370-11598-1-git-send-email-jhugo@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-No, not gonna die tonight.
+Similar to other qcom targets, gcc_mmss_noc_cfg_ahb_clk should not be
+disabled.  Any mmss access depends on this clock, and its been observed
+that enabling mmssnoc_axi_rpm_clk with rpmcc results in an implicit
+access to mmss and will crash the system if gcc_mmss_noc_cfg_ahb_clk is
+disabled.
 
-Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
 ---
- arch/arc/kernel/perf_event.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/clk/qcom/gcc-msm8998.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arc/kernel/perf_event.c b/arch/arc/kernel/perf_event.c
-index 0c4714906a06..b0f7eeffde9f 100644
---- a/arch/arc/kernel/perf_event.c
-+++ b/arch/arc/kernel/perf_event.c
-@@ -567,10 +567,12 @@ static int arc_pmu_device_probe(struct platform_device *pdev)
- 		return -ENODEV;
- 	}
- 	BUILD_BUG_ON(ARC_PERF_MAX_COUNTERS > 32);
--	BUG_ON(pct_bcr.c > ARC_PERF_MAX_COUNTERS);
-+	if (WARN_ON(pct_bcr.c > ARC_PERF_MAX_COUNTERS))
-+		return -EINVAL;
- 
- 	READ_BCR(ARC_REG_CC_BUILD, cc_bcr);
--	BUG_ON(!cc_bcr.v); /* Counters exist but No countable conditions ? */
-+	if (WARN(!cc_bcr.v, "Counters exist but No countable conditions?"))
-+		return -EINVAL;
- 
- 	arc_pmu = devm_kzalloc(&pdev->dev, sizeof(struct arc_pmu), GFP_KERNEL);
- 	if (!arc_pmu)
+diff --git a/drivers/clk/qcom/gcc-msm8998.c b/drivers/clk/qcom/gcc-msm8998.c
+index 4b75a09..b371308 100644
+--- a/drivers/clk/qcom/gcc-msm8998.c
++++ b/drivers/clk/qcom/gcc-msm8998.c
+@@ -2014,6 +2014,7 @@ enum {
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "gcc_mmss_noc_cfg_ahb_clk",
+ 			.ops = &clk_branch2_ops,
++			.flags = CLK_IGNORE_UNUSED,
+ 		},
+ 	},
+ };
 -- 
-2.14.5
+Qualcomm Datacenter Technologies as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
 
