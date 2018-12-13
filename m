@@ -2,158 +2,95 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_HK_NAME_DR,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D794CC65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:15:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B5B7C67872
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:16:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4B6120645
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:15:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4B6120645
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 50D9620645
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:16:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="U0v7yaA5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50D9620645
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728901AbeLMMP6 (ORCPT
+        id S1728940AbeLMMQu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 07:15:58 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:42998 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728767AbeLMMP6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 07:15:58 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 94598461D0;
-        Thu, 13 Dec 2018 12:15:57 +0000 (UTC)
-Received: from work-vm (ovpn-117-213.ams2.redhat.com [10.36.117.213])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id A097860C66;
-        Thu, 13 Dec 2018 12:15:51 +0000 (UTC)
-Date:   Thu, 13 Dec 2018 12:15:49 +0000
-From:   "Dr. David Alan Gilbert" <dgilbert@redhat.com>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     Vivek Goyal <vgoyal@redhat.com>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        miklos@szeredi.hu, stefanha@redhat.com, sweil@redhat.com,
-        swhiteho@redhat.com
-Subject: Re: [PATCH 18/52] virtio-fs: Map cache using the values from the
- capabilities
-Message-ID: <20181213121548.GN2313@work-vm>
-References: <20181210171318.16998-1-vgoyal@redhat.com>
- <20181210171318.16998-19-vgoyal@redhat.com>
- <de46a955-813b-355d-49f2-4d866603a8fa@redhat.com>
- <20181213091320.GA2313@work-vm>
- <d8c093db-9dda-1342-41c2-d08083cc150b@redhat.com>
- <20181213100058.GC2313@work-vm>
- <96d9ea85-ddf3-3331-77ce-124475b26da4@redhat.com>
+        Thu, 13 Dec 2018 07:16:50 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:47792 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728806AbeLMMQu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 07:16:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
+        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=4ZXtW55JAa/vg3hQkSbYV2kNZlrL5oduqPKvGV7TOe0=; b=U0v7yaA5V9wVYtvPRItgV/9ZUY
+        US6ZjDY/ysvQOu15Y3/azoIN4C0QCObr9ZWszHqkM1ZcF0aOW7+FA/q2SjXv4Khz3tmknei2qrrSH
+        tAltIO3mgfQeLH5UD+52ZXFMHgTQNVz24x90l7Nb+WLyjkuO+4ZY5VArrMOtvpSR2ZnPkv+Bw3Q2M
+        5cOyOg3CvX3E1Gn12ctQm63+qeCJ9jPQOSGIMpGMdUlXm/SPfBYaJUXmWOOixVN1o6eg0AZ5KUtf2
+        IbL4KjwryqD9vigGzf8sRYhwVqNtJdoN3oGcizaG76TwznbWNSyenbBGXowAUSJkX4FKXXTuO6qqt
+        PeYnujiw==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gXPv4-0002z1-75; Thu, 13 Dec 2018 12:16:46 +0000
+Date:   Thu, 13 Dec 2018 04:16:46 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+        linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        James Morris <jmorris@namei.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Garrett <mjg59@google.com>,
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mickael.salaun@ssi.gouv.fr>,
+        Philippe =?iso-8859-1?Q?Tr=E9buchet?= 
+        <philippe.trebuchet@ssi.gouv.fr>, Shuah Khan <shuah@kernel.org>,
+        Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+        Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+        Yves-Alexis Perez <yves-alexis.perez@ssi.gouv.fr>,
+        kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC PATCH v1 0/5] Add support for O_MAYEXEC
+Message-ID: <20181213121645.GN6830@bombadil.infradead.org>
+References: <20181212081712.32347-1-mic@digikod.net>
+ <20181213030228.GM6830@bombadil.infradead.org>
+ <1544699060.6703.11.camel@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <96d9ea85-ddf3-3331-77ce-124475b26da4@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Thu, 13 Dec 2018 12:15:57 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1544699060.6703.11.camel@linux.ibm.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* David Hildenbrand (david@redhat.com) wrote:
-> On 13.12.18 11:00, Dr. David Alan Gilbert wrote:
-> > * David Hildenbrand (david@redhat.com) wrote:
-> >> On 13.12.18 10:13, Dr. David Alan Gilbert wrote:
-> >>> * David Hildenbrand (david@redhat.com) wrote:
-> >>>> On 10.12.18 18:12, Vivek Goyal wrote:
-> >>>>> Instead of assuming we had the fixed bar for the cache, use the
-> >>>>> value from the capabilities.
-> >>>>>
-> >>>>> Signed-off-by: Dr. David Alan Gilbert <dgilbert@redhat.com>
-> >>>>> ---
-> >>>>>  fs/fuse/virtio_fs.c | 32 +++++++++++++++++---------------
-> >>>>>  1 file changed, 17 insertions(+), 15 deletions(-)
-> >>>>>
-> >>>>> diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
-> >>>>> index 60d496c16841..55bac1465536 100644
-> >>>>> --- a/fs/fuse/virtio_fs.c
-> >>>>> +++ b/fs/fuse/virtio_fs.c
-> >>>>> @@ -14,11 +14,6 @@
-> >>>>>  #include <uapi/linux/virtio_pci.h>
-> >>>>>  #include "fuse_i.h"
-> >>>>>  
-> >>>>> -enum {
-> >>>>> -	/* PCI BAR number of the virtio-fs DAX window */
-> >>>>> -	VIRTIO_FS_WINDOW_BAR = 2,
-> >>>>> -};
-> >>>>> -
-> >>>>>  /* List of virtio-fs device instances and a lock for the list */
-> >>>>>  static DEFINE_MUTEX(virtio_fs_mutex);
-> >>>>>  static LIST_HEAD(virtio_fs_instances);
-> >>>>> @@ -518,7 +513,7 @@ static int virtio_fs_setup_dax(struct virtio_device *vdev, struct virtio_fs *fs)
-> >>>>>  	struct dev_pagemap *pgmap;
-> >>>>>  	struct pci_dev *pci_dev;
-> >>>>>  	phys_addr_t phys_addr;
-> >>>>> -	size_t len;
-> >>>>> +	size_t bar_len;
-> >>>>>  	int ret;
-> >>>>>  	u8 have_cache, cache_bar;
-> >>>>>  	u64 cache_offset, cache_len;
-> >>>>> @@ -551,17 +546,13 @@ static int virtio_fs_setup_dax(struct virtio_device *vdev, struct virtio_fs *fs)
-> >>>>>          }
-> >>>>>  
-> >>>>>  	/* TODO handle case where device doesn't expose BAR? */
-> >>>>
-> >>>> For virtio-pmem we decided to not go via BARs as this would effectively
-> >>>> make it only usable for virtio-pci implementers. Instead, we are going
-> >>>> to export the applicable physical device region directly (e.g.
-> >>>> phys_start, phys_size in virtio config), so it is decoupled from PCI
-> >>>> details. Doing the same for virtio-fs would allow e.g. also virtio-ccw
-> >>>> to make eventually use of this.
-> >>>
-> >>> That makes it a very odd looking PCI device;  I can see that with
-> >>> virtio-pmem it makes some sense, given that it's job is to expose
-> >>> arbitrary chunks of memory.
-> >>>
-> >>> Dave
-> >>
-> >> Well, the fact that your are
-> >>
-> >> - including <uapi/linux/virtio_pci.h>
-> >> - adding pci related code
-> >>
-> >> in/to fs/fuse/virtio_fs.c
-> >>
-> >> tells me that these properties might be better communicated on the
-> >> virtio layer, not on the PCI layer.
-> >>
-> >> Or do you really want to glue virtio-fs to virtio-pci for all eternity?
+On Thu, Dec 13, 2018 at 06:04:20AM -0500, Mimi Zohar wrote:
+> > I don't have a problem with the concept, but we're running low on O_ bits.
+> > Does this have to be done before the process gets a file descriptor,
+> > or could we have a new syscall?  Since we're going to be changing the
+> > interpreters anyway, it doesn't seem like too much of an imposition to
+> > ask them to use:
 > > 
-> > No, these need cleaning up; and the split within the bar
-> > is probably going to change to be communicated via virtio layer
-> > rather than pci capabilities.  However, I don't want to make our PCI
-> > device look odd, just to make portability to non-PCI devices - so it's
-> > right to make the split appropriately, but still to use PCI bars
-> > for what they were designed for.
+> > 	int verify_for_exec(int fd)
 > > 
-> > Dave
+> > instead of adding an O_MAYEXEC.
 > 
-> Let's discuss after the cleanup. In general I am not convinced this is
-> the right thing to do. Using virtio-pci for anything else than pure
-> transport smells like bad design to me (well, I am no virtio expert
-> after all ;) ). No matter what PCI bars were designed for. If we can't
-> get the same running with e.g. virtio-ccw or virtio-whatever, it is
-> broken by design (or an addon that is tightly glued to virtio-pci, if
-> that is the general idea).
+> The indication needs to be set during file open, before the open
+> returns to the caller.  This is the point where ima_file_check()
+> verifies the file's signature.  On failure, access to the file is
+> denied.
 
-I'm sure we can find alternatives for virtio-*, so I wouldn't expect
-it to be glued to virtio-pci.
-
-Dave
-
-> -- 
-> 
-> Thanks,
-> 
-> David / dhildenb
---
-Dr. David Alan Gilbert / dgilbert@redhat.com / Manchester, UK
+I understand that's what happens today, but do we need to do it that way?
+There's no harm in the interpreter having an fd to a file if it knows
+not to execute it.  This is different from a program opening a file and
+having the LSM deny access to it because it violates the security model.
