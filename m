@@ -2,131 +2,116 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A94A5C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 14:23:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B304C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 14:23:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52DE220851
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 14:23:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52DE220851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
+	by mail.kernel.org (Postfix) with ESMTP id F0B8420851
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 14:23:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0B8420851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728739AbeLMOXm (ORCPT
+        id S1728785AbeLMOXq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 09:23:42 -0500
-Received: from lithops.sigma-star.at ([195.201.40.130]:33262 "EHLO
-        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727618AbeLMOXl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 09:23:41 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id 62D446083254;
-        Thu, 13 Dec 2018 15:23:39 +0100 (CET)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id U1Lavz_jk_qo; Thu, 13 Dec 2018 15:23:38 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id DB8656083255;
-        Thu, 13 Dec 2018 15:23:38 +0100 (CET)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id kzNdH1PHB-Kv; Thu, 13 Dec 2018 15:23:38 +0100 (CET)
-Received: from blindfold.localnet (unknown [82.150.214.1])
-        by lithops.sigma-star.at (Postfix) with ESMTPSA id 762426083253;
-        Thu, 13 Dec 2018 15:23:38 +0100 (CET)
-From:   Richard Weinberger <richard@nod.at>
-To:     zhangjun <openzhangj@gmail.com>
-Cc:     Artem Bityutskiy <dedekind1@gmail.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kirill.shutemov@linux.intel.com, hch@lst.de,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: ubifs: fix page_count in ->ubifs_migrate_page()
-Date:   Thu, 13 Dec 2018 15:23:37 +0100
-Message-ID: <5829763.q4qAXljTxb@blindfold>
-In-Reply-To: <1544624037-3436-1-git-send-email-openzhangj@gmail.com>
-References: <1544624037-3436-1-git-send-email-openzhangj@gmail.com>
+        Thu, 13 Dec 2018 09:23:46 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:34886 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727618AbeLMOXo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 09:23:44 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 61CCB80D;
+        Thu, 13 Dec 2018 06:23:43 -0800 (PST)
+Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 93ECB3F59C;
+        Thu, 13 Dec 2018 06:23:41 -0800 (PST)
+Subject: Re: [PATCH 1/3] dt-bindings: interrupt-controller: stm32: Document
+ hwlock properties
+To:     Rob Herring <robh@kernel.org>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Cc:     tglx@linutronix.de, jason@lakedaemon.net, mark.rutland@arm.com,
+        alexandre.torgue@st.com, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        Benjamin Gaignard <benjamin.gaignard@st.com>
+References: <20181113144805.1054-1-benjamin.gaignard@st.com>
+ <20181113144805.1054-2-benjamin.gaignard@st.com>
+ <20181204204733.GA14508@bogus>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: ARM Ltd
+Message-ID: <64704359-d4ec-4a63-72cc-4d0a036bce8a@arm.com>
+Date:   Thu, 13 Dec 2018 14:23:40 +0000
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20181204204733.GA14508@bogus>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello zhangjun,
-
-thanks a lot for bringing this up!
-
-Am Mittwoch, 12. Dezember 2018, 15:13:57 CET schrieb zhangjun:
-> Because the PagePrivate() in UBIFS is different meanings,
-> alloc_cma() will fail when one dirty page cache located in
-> the type of MIGRATE_CMA
+On 04/12/2018 20:47, Rob Herring wrote:
+> On Tue, Nov 13, 2018 at 03:48:03PM +0100, Benjamin Gaignard wrote:
+>> Add hwlocks as optional property
+>>
+>> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
 > 
-> If not adjust the 'extra_count' for dirty page,
-> ubifs_migrate_page() -> migrate_page_move_mapping() will
-> always return -EAGAIN for:
-> 	expected_count += page_has_private(page)
-> This causes the migration to fail until the page cache is cleaned
-> 
-> In general, PagePrivate() indicates that buff_head is already bound
-> to this page, and at the same time page_count() will also increase.
-> But UBIFS set private flag when the cache is dirty, and page_count()
-> not increase.
-> Therefore, the expected_count of UBIFS is different from the general
-> case.
+> Should be linaro.org S-o-b?
 
-As you noted, UBIFS uses PG_private a little different.
-It uses it as marker and when set, the page counter is not incremented,
-since no private data is attached.
-The migration code assumes that PG_private indicates a counter of +1.
-So, we have to pass a extra count of -1 to migrate_page_move_mapping() if
-the flag is set.
-Just like F2FS does. Not really nice but hey...
-
-> Signed-off-by: zhangjun <openzhangj@gmail.com>
-
-Fixes: 4ac1c17b2044 ("UBIFS: Implement ->migratepage()")
-
-> ---
->  fs/ubifs/file.c | 9 ++++++++-
->  1 file changed, 8 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/ubifs/file.c b/fs/ubifs/file.c
-> index 1b78f2e..2136a5c 100644
-> --- a/fs/ubifs/file.c
-> +++ b/fs/ubifs/file.c
-> @@ -1480,8 +1480,15 @@ static int ubifs_migrate_page(struct address_space *mapping,
->  		struct page *newpage, struct page *page, enum migrate_mode mode)
->  {
->  	int rc;
-> +	int extra_count;
->  
-> -	rc = migrate_page_move_mapping(mapping, newpage, page, NULL, mode, 0);
-> +	/*
-> +	 * UBIFS is using PagePrivate() which can have different meanings across
-> +	 * filesystems. So here adjusting the 'extra_count' make it work.
-> +	 */
-
-Please rewrite that comment.
-/*
- * UBIFS uses PG_private as marker and does not raise the page counter.
- * migrate_page_move_mapping() expects a incremented counter if PG_private
- * is set. Therefore pass -1 as extra_count for this case.
- */
-
-> +	extra_count = 0 - page_has_private(page);
-
-if (page_has_private(page))
-	extra_count = -1;
-
-That way this corner is much more obvious.
+What is the status on this? I'm not going to queue it if there is a
+doubt on the SoB...
 
 Thanks,
-//richard
 
-
+	M.
+-- 
+Jazz is not dead. It just smells funny...
