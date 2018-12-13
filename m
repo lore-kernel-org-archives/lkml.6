@@ -2,294 +2,767 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE429C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 19:39:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAC33C67872
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 19:39:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FC262086D
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 19:39:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F00920879
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 19:39:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="Ttn3waUt";
-	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="dtdvTLIT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FC262086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="KCj/tVzi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F00920879
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728671AbeLMTjV (ORCPT
+        id S1728715AbeLMTjm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 14:39:21 -0500
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:54496 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727812AbeLMTjU (ORCPT
+        Thu, 13 Dec 2018 14:39:42 -0500
+Received: from smtprelay4.synopsys.com ([198.182.47.9]:47240 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727812AbeLMTjl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 14:39:20 -0500
-Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
-        by m0089730.ppops.net (8.16.0.27/8.16.0.27) with SMTP id wBDJcr0K015144;
-        Thu, 13 Dec 2018 11:38:55 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=facebook;
- bh=8fD1j64vhdW9J3Z+MGWuxhkkVqlsgxJWBNCMd34u+EQ=;
- b=Ttn3waUtA6oe7WvBQQDfcwKLA4V5NkCBQW3raLV9vP8mhthOj8WEF3g6Xb1+lvbtZJGq
- 4VTWNEE/vRKHaRUE+D57aoAjEgUQ+FXjjGmKaBa7EhQvnxCg9nkBv+CnKb2b/Z3nCO1X
- NesJe/VxIeql4eP4RYTm7GTYCWnX6pWL1mc= 
-Received: from mail.thefacebook.com ([199.201.64.23])
-        by m0089730.ppops.net with ESMTP id 2pbv9t8bue-4
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Thu, 13 Dec 2018 11:38:55 -0800
-Received: from prn-mbx06.TheFacebook.com (2620:10d:c081:6::20) by
- prn-hub01.TheFacebook.com (2620:10d:c081:35::125) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.1.1531.3; Thu, 13 Dec 2018 11:38:54 -0800
-Received: from prn-hub02.TheFacebook.com (2620:10d:c081:35::126) by
- prn-mbx06.TheFacebook.com (2620:10d:c081:6::20) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.1.1531.3; Thu, 13 Dec 2018 11:38:54 -0800
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (192.168.54.28)
- by o365-in.thefacebook.com (192.168.16.26) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1531.3
- via Frontend Transport; Thu, 13 Dec 2018 11:38:54 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector1-fb-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8fD1j64vhdW9J3Z+MGWuxhkkVqlsgxJWBNCMd34u+EQ=;
- b=dtdvTLITMDP9IN/iu776ecc6nKFZVHuR5s8skfnaBKOtyd5RnvQ2XtCNG9eRJgV1S4dBKAC3XMuwDh3DrV0VzAfsf2BnGkr4ypRVFpN5mXIeWfCoSzrNrOwFoYc0BqgORutKs8Ojm+U6jm8Q3V7wGoWblGA0eb+Xrv2DLr797mg=
-Received: from MWHPR15MB1262.namprd15.prod.outlook.com (10.175.3.12) by
- MWHPR15MB1246.namprd15.prod.outlook.com (10.175.3.8) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1425.20; Thu, 13 Dec 2018 19:38:52 +0000
-Received: from MWHPR15MB1262.namprd15.prod.outlook.com
- ([fe80::1486:f93e:364a:cf0f]) by MWHPR15MB1262.namprd15.prod.outlook.com
- ([fe80::1486:f93e:364a:cf0f%9]) with mapi id 15.20.1425.016; Thu, 13 Dec 2018
- 19:38:52 +0000
-From:   Matt Mullins <mmullins@fb.com>
-To:     Martin Lau <kafai@fb.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "daniel@iogearbox.net" <daniel@iogearbox.net>,
-        "jeyu@kernel.org" <jeyu@kernel.org>,
-        "rostedt@goodmis.org" <rostedt@goodmis.org>,
-        "ast@kernel.org" <ast@kernel.org>,
-        Kernel Team <Kernel-team@fb.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Subject: Re: [PATCH bpf-next v2] bpf: support raw tracepoints in modules
-Thread-Topic: [PATCH bpf-next v2] bpf: support raw tracepoints in modules
-Thread-Index: AQHUknzZRBI2y1uzaEitGmxMq3put6V9DX8AgAAEd4A=
-Date:   Thu, 13 Dec 2018 19:38:51 +0000
-Message-ID: <7fcf04f0f46d4a1df98687312bfc607dd7fffb1c.camel@fb.com>
-References: <20181213004237.3888568-1-mmullins@fb.com>
-         <20181213192248.ljc6i5unafdlgryf@kafai-mbp>
-In-Reply-To: <20181213192248.ljc6i5unafdlgryf@kafai-mbp>
-Accept-Language: en-US
+        Thu, 13 Dec 2018 14:39:41 -0500
+Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id 6C51F24E0625;
+        Thu, 13 Dec 2018 11:39:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1544729980; bh=jVeOEqFRQSyNOQJA3xA02D3LR3Cl/BVwX3fxZqQxGt4=;
+        h=From:To:CC:Subject:Date:References:From;
+        b=KCj/tVziVoCyzqhfbrXoW1xls2no5pa9g1pJMl3pPq8xfJPdka7oh6ILvCj9z9NRV
+         JYje0nTK42FjyYv0MaGXm/Oy7o7SWw74k6ADCgnBrR0lZWT5S2g3x9ngFYywBN3Tbl
+         kmm64BqaqmJLHMPQcKIMdubJxr28n/OL0p15LROJ9UZ6dFoDeofSOkiLpqOdawd2g5
+         p6sJOOu26hm3lmSxzOVmciPAYntvhUc+BaRSNjg/knDXyWsQV4rXqpoB9CHwfpmG7/
+         lycq6UPoZQNX7wP79oNkYmAVTJOZ3Mw7NEDzbfkpdkPZ+V+3WQw5O038U8gc+02Biy
+         VLiq3rMlU2nhA==
+Received: from US01WXQAHTC1.internal.synopsys.com (us01wxqahtc1.internal.synopsys.com [10.12.238.230])
+        by mailhost.synopsys.com (Postfix) with ESMTP id A216E368C;
+        Thu, 13 Dec 2018 11:39:38 -0800 (PST)
+Received: from IN01WEHTCA.internal.synopsys.com (10.144.199.104) by
+ US01WXQAHTC1.internal.synopsys.com (10.12.238.230) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Thu, 13 Dec 2018 11:39:37 -0800
+Received: from IN01WEMBXA.internal.synopsys.com ([fe80::ed6f:22d3:d35:4833])
+ by IN01WEHTCA.internal.synopsys.com ([::1]) with mapi id 14.03.0415.000; Fri,
+ 14 Dec 2018 01:09:34 +0530
+From:   Ladvine D Almeida <ladvine.dalmeida@synopsys.com>
+To:     Parshuram Raju Thombare <pthombar@cadence.com>,
+        Eric Biggers <ebiggers@kernel.org>
+CC:     "axboe@kernel.dk" <axboe@kernel.dk>,
+        "vinholikatti@gmail.com" <vinholikatti@gmail.com>,
+        "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>,
+        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        Alan Douglas <adouglas@cadence.com>,
+        "Janek Kotas" <jank@cadence.com>,
+        Rafal Ciepiela <rafalc@cadence.com>,
+        "AnilKumar Chimata" <anilc@codeaurora.org>,
+        Ladvine D Almeida <ladvine.dalmeida@synopsys.com>,
+        Satya Tangirala <satyat@google.com>,
+        "Paul Crowley" <paulcrowley@google.com>,
+        Manjunath M Bettegowda <manjunath.mb@synopsys.com>,
+        Tejas Joglekar <tejas.joglekar@synopsys.com>,
+        Joao Pinto <Joao.Pinto@synopsys.com>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>
+Subject: Re: [PATCH 2/2] scsi: ufs: add inline crypto support to UFS HCD
+Thread-Topic: [PATCH 2/2] scsi: ufs: add inline crypto support to UFS HCD
+Thread-Index: AQHUkX263UDDRFD5F0ekGH+h/ea8Aw==
+Date:   Thu, 13 Dec 2018 19:39:33 +0000
+Message-ID: <BD7FB879CC136E419544C8E2AE7B9C30227EE5@IN01WEMBXA.internal.synopsys.com>
+References: <20181211095027.GA3316@lvlogina.cadence.com>
+ <20181211181647.GC221175@gmail.com>
+ <CO2PR07MB2469AD9C0A121EBF94129A11C1A70@CO2PR07MB2469.namprd07.prod.outlook.com>
+Accept-Language: en-US, en-IN
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
-x-originating-ip: [2620:10d:c090:200::6:1475]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHPR15MB1246;20:OgBAAzO6dB2PSaXApA4wVRAFShiuPdVUtwxUceObS/zXd9iv8vfyOvCtdhM1W4nZrp4H0UVXGUaGi8/ZUOgxLQgJdiMlpx71SUfTW7clzoNGTQTNt2bGOWRENKtDaM+Y8ZCgxqSq022ct4m8hmiYqxArwy3zHaIIhP7AWiT52T8=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
-x-ms-office365-filtering-correlation-id: 8456c9d4-fbcd-4e0a-01d7-08d661329c72
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:MWHPR15MB1246;
-x-ms-traffictypediagnostic: MWHPR15MB1246:
-x-microsoft-antispam-prvs: <MWHPR15MB12460159EBA2DBE6CC734D61B0A00@MWHPR15MB1246.namprd15.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(11241501185)(6040522)(2401047)(5005006)(8121501046)(823302103)(3231475)(944501520)(52105112)(93006095)(93001095)(3002001)(10201501046)(148016)(149066)(150057)(6041310)(20161123564045)(20161123558120)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:MWHPR15MB1246;BCL:0;PCL:0;RULEID:;SRVR:MWHPR15MB1246;
-x-forefront-prvs: 088552DE73
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(136003)(376002)(346002)(39860400002)(366004)(189003)(199004)(106356001)(305945005)(46003)(53936002)(25786009)(86362001)(5024004)(14444005)(256004)(37006003)(229853002)(6636002)(6862004)(14454004)(71200400001)(71190400001)(6512007)(186003)(4326008)(6116002)(478600001)(6246003)(2906002)(102836004)(6506007)(76176011)(5660300001)(105586002)(50226002)(476003)(2616005)(8936002)(99286004)(36756003)(446003)(54906003)(11346002)(6436002)(6486002)(68736007)(316002)(81166006)(7736002)(118296001)(81156014)(4001150100001)(8676002)(97736004)(486006)(99106002);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR15MB1246;H:MWHPR15MB1262.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: Kp9Uab+uxJ9ZfcV5et8HnkohZs8fI5E9j11Hs+WkK7X1Mjg5GFc+DfHKYaIudHoA+vNab0T80NivA+DK5eHK3UmsZE+XquIUbi+3kZdHl6QstlOKNHb0UKh0yhA6UIJv0RR6QO85Xr49ANSVD1VJoJOag1sXZWNehl06JyPvdPlhdWdAHQ++g6jHyfKhcezPDs2ObZWha9uC62jd75vNVUihiLz2wfeE/J8W7XIPZZrEQYf9qVheTXKLPYxnekfgPNB7J22VxhAJ4djM1gex2rMnvJs/E3+NtaU5n6CQB5HcOMjf3KNQVrh67ooK14QV
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <C666EB015681A941A37FE2106DDBA8F4@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: base64
+x-originating-ip: [10.12.239.236]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8456c9d4-fbcd-4e0a-01d7-08d661329c72
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Dec 2018 19:38:51.8398
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR15MB1246
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-13_03:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gVGh1LCAyMDE4LTEyLTEzIGF0IDE5OjIyICswMDAwLCBNYXJ0aW4gTGF1IHdyb3RlOg0KPiBP
-biBXZWQsIERlYyAxMiwgMjAxOCBhdCAwNDo0MjozN1BNIC0wODAwLCBNYXR0IE11bGxpbnMgd3Jv
-dGU6DQo+ID4gRGlzdHJpYnV0aW9ucyBidWlsZCBkcml2ZXJzIGFzIG1vZHVsZXMsIGluY2x1ZGlu
-ZyBuZXR3b3JrIGFuZCBmaWxlc3lzdGVtDQo+ID4gZHJpdmVycyB3aGljaCBleHBvcnQgbnVtZXJv
-dXMgdHJhY2Vwb2ludHMuICBUaGlzIGVuYWJsZXMNCj4gPiBicGYoQlBGX1JBV19UUkFDRVBPSU5U
-X09QRU4pIHRvIGF0dGFjaCB0byB0aG9zZSB0cmFjZXBvaW50cy4NCj4gPiANCj4gPiBTaWduZWQt
-b2ZmLWJ5OiBNYXR0IE11bGxpbnMgPG1tdWxsaW5zQGZiLmNvbT4NCj4gPiAtLS0NCj4gPiB2MS0+
-djI6DQo+ID4gICAqIGF2b2lkIHRha2luZyB0aGUgbXV0ZXggaW4gYnBmX2V2ZW50X25vdGlmeSB3
-aGVuIG9wIGlzIG5laXRoZXIgQ09NSU5HIG5vcg0KPiA+ICAgICBHT0lORy4NCj4gPiAgICogY2hl
-Y2sgdGhhdCBremFsbG9jIGFjdHVhbGx5IHN1Y2NlZWRlZA0KPiA+IA0KPiA+IEkgZGlkbid0IHRy
-eSB0byBjaGVjayBsaXN0X2VtcHR5IGJlZm9yZSB0YWtpbmcgdGhlIG11dGV4IHNpbmNlIEkgd2Fu
-dCB0byBhdm9pZA0KPiA+IHJhY2VzIGJldHdlZW4gYnBmX2V2ZW50X25vdGlmeSBhbmQgYnBmX2dl
-dF9yYXdfdHJhY2Vwb2ludC4gIEFkZGl0aW9uYWxseSwNCj4gPiBsaXN0X2Zvcl9lYWNoX2VudHJ5
-X3NhZmUgaXMgbm90IHN0cmljdGx5IG5lY2Vzc2FyeSB1cG9uIE1PRFVMRV9TVEFURV9HT0lORywg
-YnV0DQo+ID4gQWxleGVpIHN1Z2dlc3RlZCBJIHVzZSBpdCB0byBwcm90ZWN0IGFnYWluc3QgZnJh
-Z2lsaXR5IGlmIHRoZSBzdWJzZXF1ZW50IGJyZWFrOw0KPiA+IGV2ZW50dWFsbHkgZGlzYXBwZWFy
-cy4NCj4gPiANCj4gPiAgaW5jbHVkZS9saW51eC9tb2R1bGUuaCAgICAgICB8ICA0ICsrDQo+ID4g
-IGluY2x1ZGUvbGludXgvdHJhY2VfZXZlbnRzLmggfCAgOCArKy0NCj4gPiAga2VybmVsL2JwZi9z
-eXNjYWxsLmMgICAgICAgICB8IDExICsrLS0NCj4gPiAga2VybmVsL21vZHVsZS5jICAgICAgICAg
-ICAgICB8ICA1ICsrDQo+ID4gIGtlcm5lbC90cmFjZS9icGZfdHJhY2UuYyAgICAgfCA5OSArKysr
-KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKy0NCj4gPiAgNSBmaWxlcyBjaGFuZ2VkLCAx
-MjAgaW5zZXJ0aW9ucygrKSwgNyBkZWxldGlvbnMoLSkNCj4gPiANCj4gPiBkaWZmIC0tZ2l0IGEv
-aW5jbHVkZS9saW51eC9tb2R1bGUuaCBiL2luY2x1ZGUvbGludXgvbW9kdWxlLmgNCj4gPiBpbmRl
-eCBmY2U2YjQzMzVlMzYuLjVmMTQ3ZGQ1ZTcwOSAxMDA2NDQNCj4gPiAtLS0gYS9pbmNsdWRlL2xp
-bnV4L21vZHVsZS5oDQo+ID4gKysrIGIvaW5jbHVkZS9saW51eC9tb2R1bGUuaA0KPiA+IEBAIC00
-MzIsNiArNDMyLDEwIEBAIHN0cnVjdCBtb2R1bGUgew0KPiA+ICAJdW5zaWduZWQgaW50IG51bV90
-cmFjZXBvaW50czsNCj4gPiAgCXRyYWNlcG9pbnRfcHRyX3QgKnRyYWNlcG9pbnRzX3B0cnM7DQo+
-ID4gICNlbmRpZg0KPiA+ICsjaWZkZWYgQ09ORklHX0JQRl9FVkVOVFMNCj4gPiArCXVuc2lnbmVk
-IGludCBudW1fYnBmX3Jhd19ldmVudHM7DQo+ID4gKwlzdHJ1Y3QgYnBmX3Jhd19ldmVudF9tYXAg
-KmJwZl9yYXdfZXZlbnRzOw0KPiA+ICsjZW5kaWYNCj4gPiAgI2lmZGVmIEhBVkVfSlVNUF9MQUJF
-TA0KPiA+ICAJc3RydWN0IGp1bXBfZW50cnkgKmp1bXBfZW50cmllczsNCj4gPiAgCXVuc2lnbmVk
-IGludCBudW1fanVtcF9lbnRyaWVzOw0KPiA+IGRpZmYgLS1naXQgYS9pbmNsdWRlL2xpbnV4L3Ry
-YWNlX2V2ZW50cy5oIGIvaW5jbHVkZS9saW51eC90cmFjZV9ldmVudHMuaA0KPiA+IGluZGV4IDQx
-MzBhNTQ5N2Q0MC4uOGE2MjczMTY3M2Y3IDEwMDY0NA0KPiA+IC0tLSBhL2luY2x1ZGUvbGludXgv
-dHJhY2VfZXZlbnRzLmgNCj4gPiArKysgYi9pbmNsdWRlL2xpbnV4L3RyYWNlX2V2ZW50cy5oDQo+
-ID4gQEAgLTQ3MSw3ICs0NzEsOCBAQCB2b2lkIHBlcmZfZXZlbnRfZGV0YWNoX2JwZl9wcm9nKHN0
-cnVjdCBwZXJmX2V2ZW50ICpldmVudCk7DQo+ID4gIGludCBwZXJmX2V2ZW50X3F1ZXJ5X3Byb2df
-YXJyYXkoc3RydWN0IHBlcmZfZXZlbnQgKmV2ZW50LCB2b2lkIF9fdXNlciAqaW5mbyk7DQo+ID4g
-IGludCBicGZfcHJvYmVfcmVnaXN0ZXIoc3RydWN0IGJwZl9yYXdfZXZlbnRfbWFwICpidHAsIHN0
-cnVjdCBicGZfcHJvZyAqcHJvZyk7DQo+ID4gIGludCBicGZfcHJvYmVfdW5yZWdpc3RlcihzdHJ1
-Y3QgYnBmX3Jhd19ldmVudF9tYXAgKmJ0cCwgc3RydWN0IGJwZl9wcm9nICpwcm9nKTsNCj4gPiAt
-c3RydWN0IGJwZl9yYXdfZXZlbnRfbWFwICpicGZfZmluZF9yYXdfdHJhY2Vwb2ludChjb25zdCBj
-aGFyICpuYW1lKTsNCj4gPiArc3RydWN0IGJwZl9yYXdfZXZlbnRfbWFwICpicGZfZ2V0X3Jhd190
-cmFjZXBvaW50KGNvbnN0IGNoYXIgKm5hbWUpOw0KPiA+ICt2b2lkIGJwZl9wdXRfcmF3X3RyYWNl
-cG9pbnQoc3RydWN0IGJwZl9yYXdfZXZlbnRfbWFwICpidHApOw0KPiA+ICBpbnQgYnBmX2dldF9w
-ZXJmX2V2ZW50X2luZm8oY29uc3Qgc3RydWN0IHBlcmZfZXZlbnQgKmV2ZW50LCB1MzIgKnByb2df
-aWQsDQo+ID4gIAkJCSAgICB1MzIgKmZkX3R5cGUsIGNvbnN0IGNoYXIgKipidWYsDQo+ID4gIAkJ
-CSAgICB1NjQgKnByb2JlX29mZnNldCwgdTY0ICpwcm9iZV9hZGRyKTsNCj4gPiBAQCAtNTAyLDEw
-ICs1MDMsMTMgQEAgc3RhdGljIGlubGluZSBpbnQgYnBmX3Byb2JlX3VucmVnaXN0ZXIoc3RydWN0
-IGJwZl9yYXdfZXZlbnRfbWFwICpidHAsIHN0cnVjdCBicGYNCj4gPiAgew0KPiA+ICAJcmV0dXJu
-IC1FT1BOT1RTVVBQOw0KPiA+ICB9DQo+ID4gLXN0YXRpYyBpbmxpbmUgc3RydWN0IGJwZl9yYXdf
-ZXZlbnRfbWFwICpicGZfZmluZF9yYXdfdHJhY2Vwb2ludChjb25zdCBjaGFyICpuYW1lKQ0KPiA+
-ICtzdGF0aWMgaW5saW5lIHN0cnVjdCBicGZfcmF3X2V2ZW50X21hcCAqYnBmX2dldF9yYXdfdHJh
-Y2Vwb2ludChjb25zdCBjaGFyICpuYW1lKQ0KPiA+ICB7DQo+ID4gIAlyZXR1cm4gTlVMTDsNCj4g
-PiAgfQ0KPiA+ICtzdGF0aWMgaW5saW5lIHZvaWQgYnBmX3B1dF9yYXdfdHJhY2Vwb2ludChzdHJ1
-Y3QgYnBmX3Jhd19ldmVudF9tYXAgKmJ0cCkNCj4gPiArew0KPiA+ICt9DQo+ID4gIHN0YXRpYyBp
-bmxpbmUgaW50IGJwZl9nZXRfcGVyZl9ldmVudF9pbmZvKGNvbnN0IHN0cnVjdCBwZXJmX2V2ZW50
-ICpldmVudCwNCj4gPiAgCQkJCQkgIHUzMiAqcHJvZ19pZCwgdTMyICpmZF90eXBlLA0KPiA+ICAJ
-CQkJCSAgY29uc3QgY2hhciAqKmJ1ZiwgdTY0ICpwcm9iZV9vZmZzZXQsDQo+ID4gZGlmZiAtLWdp
-dCBhL2tlcm5lbC9icGYvc3lzY2FsbC5jIGIva2VybmVsL2JwZi9zeXNjYWxsLmMNCj4gPiBpbmRl
-eCA3MGZiMTExMDZmYzIuLjc1NDM3MGUzMTU1ZSAxMDA2NDQNCj4gPiAtLS0gYS9rZXJuZWwvYnBm
-L3N5c2NhbGwuYw0KPiA+ICsrKyBiL2tlcm5lbC9icGYvc3lzY2FsbC5jDQo+ID4gQEAgLTE2MDks
-NiArMTYwOSw3IEBAIHN0YXRpYyBpbnQgYnBmX3Jhd190cmFjZXBvaW50X3JlbGVhc2Uoc3RydWN0
-IGlub2RlICppbm9kZSwgc3RydWN0IGZpbGUgKmZpbHApDQo+ID4gIAkJYnBmX3Byb2JlX3VucmVn
-aXN0ZXIocmF3X3RwLT5idHAsIHJhd190cC0+cHJvZyk7DQo+ID4gIAkJYnBmX3Byb2dfcHV0KHJh
-d190cC0+cHJvZyk7DQo+ID4gIAl9DQo+ID4gKwlicGZfcHV0X3Jhd190cmFjZXBvaW50KHJhd190
-cC0+YnRwKTsNCj4gPiAgCWtmcmVlKHJhd190cCk7DQo+ID4gIAlyZXR1cm4gMDsNCj4gPiAgfQ0K
-PiA+IEBAIC0xNjM0LDEzICsxNjM1LDE1IEBAIHN0YXRpYyBpbnQgYnBmX3Jhd190cmFjZXBvaW50
-X29wZW4oY29uc3QgdW5pb24gYnBmX2F0dHIgKmF0dHIpDQo+ID4gIAkJcmV0dXJuIC1FRkFVTFQ7
-DQo+ID4gIAl0cF9uYW1lW3NpemVvZih0cF9uYW1lKSAtIDFdID0gMDsNCj4gPiAgDQo+ID4gLQli
-dHAgPSBicGZfZmluZF9yYXdfdHJhY2Vwb2ludCh0cF9uYW1lKTsNCj4gPiArCWJ0cCA9IGJwZl9n
-ZXRfcmF3X3RyYWNlcG9pbnQodHBfbmFtZSk7DQo+ID4gIAlpZiAoIWJ0cCkNCj4gPiAgCQlyZXR1
-cm4gLUVOT0VOVDsNCj4gPiAgDQo+ID4gIAlyYXdfdHAgPSBremFsbG9jKHNpemVvZigqcmF3X3Rw
-KSwgR0ZQX1VTRVIpOw0KPiA+IC0JaWYgKCFyYXdfdHApDQo+ID4gLQkJcmV0dXJuIC1FTk9NRU07
-DQo+ID4gKwlpZiAoIXJhd190cCkgew0KPiA+ICsJCWVyciA9IC1FTk9NRU07DQo+ID4gKwkJZ290
-byBvdXRfcHV0X2J0cDsNCj4gPiArCX0NCj4gPiAgCXJhd190cC0+YnRwID0gYnRwOw0KPiA+ICAN
-Cj4gPiAgCXByb2cgPSBicGZfcHJvZ19nZXRfdHlwZShhdHRyLT5yYXdfdHJhY2Vwb2ludC5wcm9n
-X2ZkLA0KPiA+IEBAIC0xNjY4LDYgKzE2NzEsOCBAQCBzdGF0aWMgaW50IGJwZl9yYXdfdHJhY2Vw
-b2ludF9vcGVuKGNvbnN0IHVuaW9uIGJwZl9hdHRyICphdHRyKQ0KPiA+ICAJYnBmX3Byb2dfcHV0
-KHByb2cpOw0KPiA+ICBvdXRfZnJlZV90cDoNCj4gPiAgCWtmcmVlKHJhd190cCk7DQo+ID4gK291
-dF9wdXRfYnRwOg0KPiA+ICsJYnBmX3B1dF9yYXdfdHJhY2Vwb2ludChidHApOw0KPiA+ICAJcmV0
-dXJuIGVycjsNCj4gPiAgfQ0KPiA+ICANCj4gPiBkaWZmIC0tZ2l0IGEva2VybmVsL21vZHVsZS5j
-IGIva2VybmVsL21vZHVsZS5jDQo+ID4gaW5kZXggNDlhNDA1ODkxNTg3Li4wNmVjNjhmMDgzODcg
-MTAwNjQ0DQo+ID4gLS0tIGEva2VybmVsL21vZHVsZS5jDQo+ID4gKysrIGIva2VybmVsL21vZHVs
-ZS5jDQo+ID4gQEAgLTMwOTMsNiArMzA5MywxMSBAQCBzdGF0aWMgaW50IGZpbmRfbW9kdWxlX3Nl
-Y3Rpb25zKHN0cnVjdCBtb2R1bGUgKm1vZCwgc3RydWN0IGxvYWRfaW5mbyAqaW5mbykNCj4gPiAg
-CQkJCQkgICAgIHNpemVvZigqbW9kLT50cmFjZXBvaW50c19wdHJzKSwNCj4gPiAgCQkJCQkgICAg
-ICZtb2QtPm51bV90cmFjZXBvaW50cyk7DQo+ID4gICNlbmRpZg0KPiA+ICsjaWZkZWYgQ09ORklH
-X0JQRl9FVkVOVFMNCj4gPiArCW1vZC0+YnBmX3Jhd19ldmVudHMgPSBzZWN0aW9uX29ianMoaW5m
-bywgIl9fYnBmX3Jhd190cF9tYXAiLA0KPiA+ICsJCQkJCSAgIHNpemVvZigqbW9kLT5icGZfcmF3
-X2V2ZW50cyksDQo+ID4gKwkJCQkJICAgJm1vZC0+bnVtX2JwZl9yYXdfZXZlbnRzKTsNCj4gPiAr
-I2VuZGlmDQo+ID4gICNpZmRlZiBIQVZFX0pVTVBfTEFCRUwNCj4gPiAgCW1vZC0+anVtcF9lbnRy
-aWVzID0gc2VjdGlvbl9vYmpzKGluZm8sICJfX2p1bXBfdGFibGUiLA0KPiA+ICAJCQkJCXNpemVv
-ZigqbW9kLT5qdW1wX2VudHJpZXMpLA0KPiA+IGRpZmYgLS1naXQgYS9rZXJuZWwvdHJhY2UvYnBm
-X3RyYWNlLmMgYi9rZXJuZWwvdHJhY2UvYnBmX3RyYWNlLmMNCj4gPiBpbmRleCA5ODY0YTM1Yzhi
-YjUuLjlkZGI2ZmRkYjRlMCAxMDA2NDQNCj4gPiAtLS0gYS9rZXJuZWwvdHJhY2UvYnBmX3RyYWNl
-LmMNCj4gPiArKysgYi9rZXJuZWwvdHJhY2UvYnBmX3RyYWNlLmMNCj4gPiBAQCAtMTcsNiArMTcs
-NDMgQEANCj4gPiAgI2luY2x1ZGUgInRyYWNlX3Byb2JlLmgiDQo+ID4gICNpbmNsdWRlICJ0cmFj
-ZS5oIg0KPiA+ICANCj4gPiArI2lmZGVmIENPTkZJR19NT0RVTEVTDQo+ID4gK3N0cnVjdCBicGZf
-dHJhY2VfbW9kdWxlIHsNCj4gPiArCXN0cnVjdCBtb2R1bGUgKm1vZHVsZTsNCj4gPiArCXN0cnVj
-dCBsaXN0X2hlYWQgbGlzdDsNCj4gPiArfTsNCj4gPiArDQo+ID4gK3N0YXRpYyBMSVNUX0hFQUQo
-YnBmX3RyYWNlX21vZHVsZXMpOw0KPiA+ICtzdGF0aWMgREVGSU5FX01VVEVYKGJwZl9tb2R1bGVf
-bXV0ZXgpOw0KPiA+ICsNCj4gPiArc3RhdGljIHN0cnVjdCBicGZfcmF3X2V2ZW50X21hcCAqYnBm
-X2dldF9yYXdfdHJhY2Vwb2ludF9tb2R1bGUoY29uc3QgY2hhciAqbmFtZSkNCj4gPiArew0KPiA+
-ICsJc3RydWN0IGJwZl9yYXdfZXZlbnRfbWFwICpidHAsICpyZXQgPSBOVUxMOw0KPiA+ICsJc3Ry
-dWN0IGJwZl90cmFjZV9tb2R1bGUgKmJ0bTsNCj4gPiArCXVuc2lnbmVkIGludCBpOw0KPiA+ICsN
-Cj4gPiArCW11dGV4X2xvY2soJmJwZl9tb2R1bGVfbXV0ZXgpOw0KPiA+ICsJbGlzdF9mb3JfZWFj
-aF9lbnRyeShidG0sICZicGZfdHJhY2VfbW9kdWxlcywgbGlzdCkgew0KPiA+ICsJCWZvciAoaSA9
-IDA7IGkgPCBidG0tPm1vZHVsZS0+bnVtX2JwZl9yYXdfZXZlbnRzOyArK2kpIHsNCj4gPiArCQkJ
-YnRwID0gJmJ0bS0+bW9kdWxlLT5icGZfcmF3X2V2ZW50c1tpXTsNCj4gPiArCQkJaWYgKCFzdHJj
-bXAoYnRwLT50cC0+bmFtZSwgbmFtZSkpIHsNCj4gPiArCQkJCWlmICh0cnlfbW9kdWxlX2dldChi
-dG0tPm1vZHVsZSkpDQo+ID4gKwkJCQkJcmV0ID0gYnRwOw0KPiA+ICsJCQkJZ290byBvdXQ7DQo+
-ID4gKwkJCX0NCj4gPiArCQl9DQo+ID4gKwl9DQo+ID4gK291dDoNCj4gPiArCW11dGV4X3VubG9j
-aygmYnBmX21vZHVsZV9tdXRleCk7DQo+ID4gKwlyZXR1cm4gcmV0Ow0KPiA+ICt9DQo+ID4gKyNl
-bHNlDQo+ID4gK3N0YXRpYyBzdHJ1Y3QgYnBmX3Jhd19ldmVudF9tYXAgKmJwZl9nZXRfcmF3X3Ry
-YWNlcG9pbnRfbW9kdWxlKGNvbnN0IGNoYXIgKm5hbWUpDQo+ID4gK3sNCj4gPiArCXJldHVybiBO
-VUxMOw0KPiA+ICt9DQo+ID4gKyNlbmRpZiAvKiBDT05GSUdfTU9EVUxFUyAqLw0KPiA+ICsNCj4g
-PiAgdTY0IGJwZl9nZXRfc3RhY2tpZCh1NjQgcjEsIHU2NCByMiwgdTY0IHIzLCB1NjQgcjQsIHU2
-NCByNSk7DQo+ID4gIHU2NCBicGZfZ2V0X3N0YWNrKHU2NCByMSwgdTY0IHIyLCB1NjQgcjMsIHU2
-NCByNCwgdTY0IHI1KTsNCj4gPiAgDQo+ID4gQEAgLTEwNzYsNyArMTExMyw3IEBAIGludCBwZXJm
-X2V2ZW50X3F1ZXJ5X3Byb2dfYXJyYXkoc3RydWN0IHBlcmZfZXZlbnQgKmV2ZW50LCB2b2lkIF9f
-dXNlciAqaW5mbykNCj4gPiAgZXh0ZXJuIHN0cnVjdCBicGZfcmF3X2V2ZW50X21hcCBfX3N0YXJ0
-X19icGZfcmF3X3RwW107DQo+ID4gIGV4dGVybiBzdHJ1Y3QgYnBmX3Jhd19ldmVudF9tYXAgX19z
-dG9wX19icGZfcmF3X3RwW107DQo+ID4gIA0KPiA+IC1zdHJ1Y3QgYnBmX3Jhd19ldmVudF9tYXAg
-KmJwZl9maW5kX3Jhd190cmFjZXBvaW50KGNvbnN0IGNoYXIgKm5hbWUpDQo+ID4gK3N0cnVjdCBi
-cGZfcmF3X2V2ZW50X21hcCAqYnBmX2dldF9yYXdfdHJhY2Vwb2ludChjb25zdCBjaGFyICpuYW1l
-KQ0KPiA+ICB7DQo+ID4gIAlzdHJ1Y3QgYnBmX3Jhd19ldmVudF9tYXAgKmJ0cCA9IF9fc3RhcnRf
-X2JwZl9yYXdfdHA7DQo+ID4gIA0KPiA+IEBAIC0xMDg0LDcgKzExMjEsMTYgQEAgc3RydWN0IGJw
-Zl9yYXdfZXZlbnRfbWFwICpicGZfZmluZF9yYXdfdHJhY2Vwb2ludChjb25zdCBjaGFyICpuYW1l
-KQ0KPiA+ICAJCWlmICghc3RyY21wKGJ0cC0+dHAtPm5hbWUsIG5hbWUpKQ0KPiA+ICAJCQlyZXR1
-cm4gYnRwOw0KPiA+ICAJfQ0KPiA+IC0JcmV0dXJuIE5VTEw7DQo+ID4gKw0KPiA+ICsJcmV0dXJu
-IGJwZl9nZXRfcmF3X3RyYWNlcG9pbnRfbW9kdWxlKG5hbWUpOw0KPiA+ICt9DQo+ID4gKw0KPiA+
-ICt2b2lkIGJwZl9wdXRfcmF3X3RyYWNlcG9pbnQoc3RydWN0IGJwZl9yYXdfZXZlbnRfbWFwICpi
-dHApDQo+ID4gK3sNCj4gPiArCXN0cnVjdCBtb2R1bGUgKm1vZCA9IF9fbW9kdWxlX2FkZHJlc3Mo
-KHVuc2lnbmVkIGxvbmcpYnRwKTsNCj4gPiArDQo+ID4gKwlpZiAobW9kKQ0KPiA+ICsJCW1vZHVs
-ZV9wdXQobW9kKTsNCj4gPiAgfQ0KPiA+ICANCj4gPiAgc3RhdGljIF9fYWx3YXlzX2lubGluZQ0K
-PiA+IEBAIC0xMjIyLDMgKzEyNjgsNTIgQEAgaW50IGJwZl9nZXRfcGVyZl9ldmVudF9pbmZvKGNv
-bnN0IHN0cnVjdCBwZXJmX2V2ZW50ICpldmVudCwgdTMyICpwcm9nX2lkLA0KPiA+ICANCj4gPiAg
-CXJldHVybiBlcnI7DQo+ID4gIH0NCj4gPiArDQo+ID4gKyNpZmRlZiBDT05GSUdfTU9EVUxFUw0K
-PiA+ICtpbnQgYnBmX2V2ZW50X25vdGlmeShzdHJ1Y3Qgbm90aWZpZXJfYmxvY2sgKm5iLCB1bnNp
-Z25lZCBsb25nIG9wLCB2b2lkICptb2R1bGUpDQo+ID4gK3sNCj4gPiArCXN0cnVjdCBicGZfdHJh
-Y2VfbW9kdWxlICpidG0sICp0bXA7DQo+ID4gKwlzdHJ1Y3QgbW9kdWxlICptb2QgPSBtb2R1bGU7
-DQo+ID4gKw0KPiA+ICsJaWYgKG1vZC0+bnVtX2JwZl9yYXdfZXZlbnRzID09IDAgfHwNCj4gPiAr
-CSAgICAob3AgIT0gTU9EVUxFX1NUQVRFX0NPTUlORyAmJiBvcCAhPSBNT0RVTEVfU1RBVEVfR09J
-TkcpKQ0KPiA+ICsJCXJldHVybiAwOw0KPiA+ICsNCj4gPiArCW11dGV4X2xvY2soJmJwZl9tb2R1
-bGVfbXV0ZXgpOw0KPiA+ICsNCj4gPiArCXN3aXRjaCAob3ApIHsNCj4gPiArCWNhc2UgTU9EVUxF
-X1NUQVRFX0NPTUlORzoNCj4gPiArCQlidG0gPSBremFsbG9jKHNpemVvZigqYnRtKSwgR0ZQX0tF
-Uk5FTCk7DQo+ID4gKwkJaWYgKGJ0bSkgew0KPiA+ICsJCQlidG0tPm1vZHVsZSA9IG1vZHVsZTsN
-Cj4gPiArCQkJbGlzdF9hZGQoJmJ0bS0+bGlzdCwgJmJwZl90cmFjZV9tb2R1bGVzKTsNCj4gPiAr
-CQl9DQo+IA0KPiBJcyBpdCBmaW5lIHRvIHJldHVybiAwIG9uICFidG0gY2FzZT8NCg0KVGhhdCBl
-ZmZlY3RpdmVseSBqdXN0IG1lYW5zIHdlJ2xsIGJlIGlnbm9yaW5nIHRyYWNlcG9pbnRzIGZvciBh
-IG1vZHVsZQ0KdGhhdCBpcyBsb2FkZWQgd2hpbGUgd2UgY2FuJ3QgYWxsb2NhdGUgYSBicGZfdHJh
-Y2VfbW9kdWxlICgyNCBieXRlcykgdG8NCnRyYWNrIGl0LiAgVGhhdCBmZWVscyBsaWtlIHJlYXNv
-bmFibGUgYmVoYXZpb3IgdG8gbWUuDQoNCj4gDQo+IE90aGVyIGxvb2tzIGdvb2QuDQo+IA0KPiA+
-ICsJCWJyZWFrOw0KPiA+ICsJY2FzZSBNT0RVTEVfU1RBVEVfR09JTkc6DQo+ID4gKwkJbGlzdF9m
-b3JfZWFjaF9lbnRyeV9zYWZlKGJ0bSwgdG1wLCAmYnBmX3RyYWNlX21vZHVsZXMsIGxpc3QpIHsN
-Cj4gPiArCQkJaWYgKGJ0bS0+bW9kdWxlID09IG1vZHVsZSkgew0KPiA+ICsJCQkJbGlzdF9kZWwo
-JmJ0bS0+bGlzdCk7DQo+ID4gKwkJCQlrZnJlZShidG0pOw0KPiA+ICsJCQkJYnJlYWs7DQo+ID4g
-KwkJCX0NCj4gPiArCQl9DQo+ID4gKwkJYnJlYWs7DQo+ID4gKwl9DQo+ID4gKw0KPiA+ICsJbXV0
-ZXhfdW5sb2NrKCZicGZfbW9kdWxlX211dGV4KTsNCj4gPiArDQo+ID4gKwlyZXR1cm4gMDsNCj4g
-PiArfQ0KPiA+ICsNCj4gPiArc3RhdGljIHN0cnVjdCBub3RpZmllcl9ibG9jayBicGZfbW9kdWxl
-X25iID0gew0KPiA+ICsJLm5vdGlmaWVyX2NhbGwgPSBicGZfZXZlbnRfbm90aWZ5LA0KPiA+ICt9
-Ow0KPiA+ICsNCj4gPiAraW50IF9faW5pdCBicGZfZXZlbnRfaW5pdCh2b2lkKQ0KPiA+ICt7DQo+
-ID4gKwlyZWdpc3Rlcl9tb2R1bGVfbm90aWZpZXIoJmJwZl9tb2R1bGVfbmIpOw0KPiA+ICsJcmV0
-dXJuIDA7DQo+ID4gK30NCj4gPiArDQo+ID4gK2ZzX2luaXRjYWxsKGJwZl9ldmVudF9pbml0KTsN
-Cj4gPiArI2VuZGlmIC8qIENPTkZJR19NT0RVTEVTICovDQo+ID4gLS0gDQo+ID4gMi4xNy4xDQo+
-ID4gDQo=
+On 12/12/18 5:52 AM, Parshuram Raju Thombare wrote:=0A=
+> Hello Eric,=0A=
+> =0A=
+> Thank you for a comment.=0A=
+> =0A=
+>> -----Original Message-----=0A=
+>> From: Eric Biggers <ebiggers@kernel.org>=0A=
+>> Sent: Tuesday, December 11, 2018 11:47 PM=0A=
+>> To: Parshuram Raju Thombare <pthombar@cadence.com>=0A=
+>> Cc: axboe@kernel.dk; vinholikatti@gmail.com; jejb@linux.vnet.ibm.com;=0A=
+>> martin.petersen@oracle.com; mchehab+samsung@kernel.org;=0A=
+>> gregkh@linuxfoundation.org; davem@davemloft.net; akpm@linux-=0A=
+>> foundation.org; nicolas.ferre@microchip.com; arnd@arndb.de; linux-=0A=
+>> kernel@vger.kernel.org; linux-block@vger.kernel.org; linux-=0A=
+>> scsi@vger.kernel.org; Alan Douglas <adouglas@cadence.com>; Janek Kotas=
+=0A=
+>> <jank@cadence.com>; Rafal Ciepiela <rafalc@cadence.com>; AnilKumar=0A=
+>> Chimata <anilc@codeaurora.org>; Ladvine D Almeida <ladvine@synopsys.com>=
+;=0A=
+>> Satya Tangirala <satyat@google.com>; Paul Crowley=0A=
+>> <paulcrowley@google.com>=0A=
+>> Subject: Re: [PATCH 2/2] scsi: ufs: add inline crypto support to UFS HCD=
+=0A=
+>>=0A=
+>> EXTERNAL MAIL=0A=
+>>=0A=
+>>=0A=
+>> [+Cc other people who have been working on this]=0A=
+Eric, Thanks for cc-ing me to the mail chain.=0A=
+=0A=
+Parshuram,=0A=
+Glad to know that you are working on the Inline Encryption support.=0A=
+My concerns are mentioned inline below.=0A=
+=0A=
+>>=0A=
+>>=0A=
+>>=0A=
+>> Hi Parshuram,=0A=
+>>=0A=
+>>=0A=
+>>=0A=
+>> On Tue, Dec 11, 2018 at 09:50:27AM +0000, Parshuram Thombare wrote:=0A=
+>>=0A=
+>>> Add real time crypto support to UFS HCD using new device=0A=
+>>=0A=
+>>> mapper 'crypto-ufs'. dmsetup tool can be used to enable=0A=
+>>=0A=
+>>> real time / inline crypto support using device mapper=0A=
+>>=0A=
+>>> 'crypt-ufs'.=0A=
+=0A=
+Where is Crypto target 'crypto-ufs' implementation available? Did you=0A=
+submitted any other patch for the same?=0A=
+Also, it is better to provide a generic name as the target is valid for=0A=
+all other block devices.=0A=
+=0A=
+>>=0A=
+>>>=0A=
+>>=0A=
+>>> Signed-off-by: Parshuram Thombare <pthombar@cadence.com>=0A=
+>>=0A=
+>>> ---=0A=
+>>=0A=
+>>>  MAINTAINERS                      |    7 +=0A=
+>>=0A=
+>>>  block/Kconfig                    |    5 +=0A=
+>>=0A=
+>>>  drivers/scsi/ufs/Kconfig         |   12 +=0A=
+>>=0A=
+>>>  drivers/scsi/ufs/Makefile        |    1 +=0A=
+>>=0A=
+>>>  drivers/scsi/ufs/ufshcd-crypto.c |  453=0A=
+>> ++++++++++++++++++++++++++++++++++++++=0A=
+>>=0A=
+>>>  drivers/scsi/ufs/ufshcd-crypto.h |  102 +++++++++=0A=
+>>=0A=
+>>>  drivers/scsi/ufs/ufshcd.c        |   27 +++-=0A=
+>>=0A=
+>>>  drivers/scsi/ufs/ufshcd.h        |    6 +=0A=
+>>=0A=
+>>>  drivers/scsi/ufs/ufshci.h        |    1 +=0A=
+>>=0A=
+>>>  9 files changed, 613 insertions(+), 1 deletions(-)=0A=
+>>=0A=
+>>>  create mode 100644 drivers/scsi/ufs/ufshcd-crypto.c=0A=
+>>=0A=
+>>>  create mode 100644 drivers/scsi/ufs/ufshcd-crypto.h=0A=
+>>=0A=
+>>>=0A=
+>>=0A=
+>>> diff --git a/MAINTAINERS b/MAINTAINERS=0A=
+>>=0A=
+>>> index f485597..3a68126 100644=0A=
+>>=0A=
+>>> --- a/MAINTAINERS=0A=
+>>=0A=
+>>> +++ b/MAINTAINERS=0A=
+>>=0A=
+>>> @@ -15340,6 +15340,13 @@ S:	Supported=0A=
+>>=0A=
+>>>  F:	Documentation/scsi/ufs.txt=0A=
+>>=0A=
+>>>  F:	drivers/scsi/ufs/=0A=
+>>=0A=
+>>>=0A=
+>>=0A=
+>>> +UNIVERSAL FLASH STORAGE HOST CONTROLLER CRYPTO DRIVER=0A=
+>>=0A=
+>>> +M:	Parshuram Thombare <pthombar@cadence.com>=0A=
+>>=0A=
+>>> +L:	linux-scsi@vger.kernel.org=0A=
+>>=0A=
+>>> +S:	Supported=0A=
+>>=0A=
+>>> +F:	drivers/scsi/ufs/ufshcd-crypto.c=0A=
+>>=0A=
+>>> +F:	drivers/scsi/ufs/ufshcd-crypto.h=0A=
+>>=0A=
+>>> +=0A=
+>>=0A=
+>>>  UNIVERSAL FLASH STORAGE HOST CONTROLLER DRIVER DWC HOOKS=0A=
+>>=0A=
+>>>  M:	Joao Pinto <jpinto@synopsys.com>=0A=
+>>=0A=
+>>>  L:	linux-scsi@vger.kernel.org=0A=
+>>=0A=
+>>> diff --git a/block/Kconfig b/block/Kconfig=0A=
+>>=0A=
+>>> index f7045aa..6afe131 100644=0A=
+>>=0A=
+>>> --- a/block/Kconfig=0A=
+>>=0A=
+>>> +++ b/block/Kconfig=0A=
+>>=0A=
+>>> @@ -224,4 +224,9 @@ config BLK_MQ_RDMA=0A=
+>>=0A=
+>>>  config BLK_PM=0A=
+>>=0A=
+>>>  	def_bool BLOCK && PM=0A=
+>>=0A=
+>>>=0A=
+>>=0A=
+>>> +config BLK_DEV_HW_RT_ENCRYPTION=0A=
+>>=0A=
+>>> +	bool=0A=
+>>=0A=
+>>> +	depends on SCSI_UFSHCD_RT_ENCRYPTION=0A=
+>>=0A=
+>>> +	default n=0A=
+>>=0A=
+>>> +=0A=
+>>=0A=
+>>>  source block/Kconfig.iosched=0A=
+>>=0A=
+>>> diff --git a/drivers/scsi/ufs/Kconfig b/drivers/scsi/ufs/Kconfig=0A=
+>>=0A=
+>>> index 2ddbb26..09a3ec0 100644=0A=
+>>=0A=
+>>> --- a/drivers/scsi/ufs/Kconfig=0A=
+>>=0A=
+>>> +++ b/drivers/scsi/ufs/Kconfig=0A=
+>>=0A=
+>>> @@ -136,3 +136,15 @@ config SCSI_UFS_BSG=0A=
+>>=0A=
+>>>=0A=
+>>=0A=
+>>>  	  Select this if you need a bsg device node for your UFS controller.=
+=0A=
+>>=0A=
+>>>  	  If unsure, say N.=0A=
+>>=0A=
+>>> +=0A=
+>>=0A=
+>>> +config SCSI_UFSHCD_RT_ENCRYPTION=0A=
+>>=0A=
+>>> +	bool "Universal Flash Storage Controller RT encryption support"=0A=
+>>=0A=
+>>> +	depends on SCSI_UFSHCD=0A=
+>>=0A=
+>>> +	default n=0A=
+>>=0A=
+>>> +	select BLK_DEV_HW_RT_ENCRYPTION if SCSI_UFSHCD_RT_ENCRYPTION=0A=
+>>=0A=
+>>> +	select BLK_DEV_DM if SCSI_UFSHCD_RT_ENCRYPTION=0A=
+>>=0A=
+>>> +	help=0A=
+>>=0A=
+>>> +	Universal Flash Storage Controller RT encryption support=0A=
+>>=0A=
+>>> +=0A=
+>>=0A=
+>>> +	Select this if you want to enable real time encryption on UFS control=
+ler=0A=
+>>=0A=
+>>> +	If unsure, say N.=0A=
+>>=0A=
+>>> diff --git a/drivers/scsi/ufs/Makefile b/drivers/scsi/ufs/Makefile=0A=
+>>=0A=
+>>> index a3bd70c..6169096 100644=0A=
+>>=0A=
+>>> --- a/drivers/scsi/ufs/Makefile=0A=
+>>=0A=
+>>> +++ b/drivers/scsi/ufs/Makefile=0A=
+>>=0A=
+>>> @@ -7,6 +7,7 @@ obj-$(CONFIG_SCSI_UFS_QCOM) +=3D ufs-qcom.o=0A=
+>>=0A=
+>>>  obj-$(CONFIG_SCSI_UFSHCD) +=3D ufshcd-core.o=0A=
+>>=0A=
+>>>  ufshcd-core-y				+=3D ufshcd.o ufs-sysfs.o=0A=
+>>=0A=
+>>>  ufshcd-core-$(CONFIG_SCSI_UFS_BSG)	+=3D ufs_bsg.o=0A=
+>>=0A=
+>>> +ufshcd-core-$(CONFIG_SCSI_UFSHCD_RT_ENCRYPTION) +=3D ufshcd-crypto.o=
+=0A=
+>>=0A=
+>>>  obj-$(CONFIG_SCSI_UFSHCD_PCI) +=3D ufshcd-pci.o=0A=
+>>=0A=
+>>>  obj-$(CONFIG_SCSI_UFSHCD_PLATFORM) +=3D ufshcd-pltfrm.o=0A=
+>>=0A=
+>>>  obj-$(CONFIG_SCSI_UFS_HISI) +=3D ufs-hisi.o=0A=
+>>=0A=
+>>> diff --git a/drivers/scsi/ufs/ufshcd-crypto.c b/drivers/scsi/ufs/ufshcd=
+-crypto.c=0A=
+>>=0A=
+>>> new file mode 100644=0A=
+>>=0A=
+>>> index 0000000..9c95ff3=0A=
+>>=0A=
+>>> --- /dev/null=0A=
+>>=0A=
+>>> +++ b/drivers/scsi/ufs/ufshcd-crypto.c=0A=
+>>=0A=
+>>> @@ -0,0 +1,453 @@=0A=
+>>=0A=
+>>> +// SPDX-License-Identifier: GPL-2.0=0A=
+>>=0A=
+>>> +/*=0A=
+>>=0A=
+>>> + * UFS Host controller crypto driver=0A=
+>>=0A=
+>>> + *=0A=
+>>=0A=
+>>> + * Copyright (C) 2018 Cadence Design Systems, Inc.=0A=
+>>=0A=
+>>> + *=0A=
+>>=0A=
+>>> + * Authors:=0A=
+>>=0A=
+>>> + *	Parshuram Thombare <pthombar@cadence.com>=0A=
+>>=0A=
+>>> + *=0A=
+>>=0A=
+>>> + */=0A=
+>>=0A=
+>>> +=0A=
+>>=0A=
+>>> +#include <linux/module.h>=0A=
+>>=0A=
+>>> +#include <linux/kernel.h>=0A=
+>>=0A=
+>>> +#include <crypto/aes.h>=0A=
+>>=0A=
+>>> +#include <linux/device-mapper.h>=0A=
+>>=0A=
+>>> +#include "ufshcd.h"=0A=
+>>=0A=
+>>> +#include "ufshcd-crypto.h"=0A=
+>>=0A=
+>>> +#include "scsi/scsi_device.h"=0A=
+>>=0A=
+>>> +#include "scsi/scsi_host.h"=0A=
+>>=0A=
+>>> +=0A=
+>>=0A=
+>>> +struct ufshcd_dm_ctx {=0A=
+>>=0A=
+>>> +	struct dm_dev *dev;=0A=
+>>=0A=
+>>> +	sector_t start;=0A=
+>>=0A=
+>>> +	unsigned short int sector_size;=0A=
+>>=0A=
+>>> +	unsigned char sector_shift;=0A=
+>>=0A=
+>>> +	int cci;=0A=
+>>=0A=
+>>> +	int cap_idx;=0A=
+>>=0A=
+>>> +	char key[AES_MAX_KEY_SIZE];=0A=
+>>=0A=
+>>> +	struct ufs_hba *hba;=0A=
+>>=0A=
+>>> +};=0A=
+>>=0A=
+>>> +=0A=
+>>=0A=
+>>> +static int dm_registered;=0A=
+>>=0A=
+>>> +=0A=
+>>=0A=
+>>> +static inline int=0A=
+>>=0A=
+>>> +ufshcd_key_id_to_len(int key_id)=0A=
+>>=0A=
+>>> +{=0A=
+>>=0A=
+>>> +	int key_len =3D -1;=0A=
+>>=0A=
+>>> +=0A=
+>>=0A=
+>>> +	switch (key_id) {=0A=
+>>=0A=
+>>> +	case UFS_CRYPTO_KEY_ID_128BITS:=0A=
+>>=0A=
+>>> +		key_len =3D AES_KEYSIZE_128;=0A=
+>>=0A=
+>>> +		break;=0A=
+>>=0A=
+>>> +	case UFS_CRYPTO_KEY_ID_192BITS:=0A=
+>>=0A=
+>>> +		key_len =3D AES_KEYSIZE_192;=0A=
+>>=0A=
+>>> +		break;=0A=
+>>=0A=
+>>> +	case UFS_CRYPTO_KEY_ID_256BITS:=0A=
+>>=0A=
+>>> +		key_len =3D AES_KEYSIZE_256;=0A=
+>>=0A=
+>>> +		break;=0A=
+>>=0A=
+>>> +	default:=0A=
+>>=0A=
+>>> +		break;=0A=
+>>=0A=
+>>> +	}=0A=
+>>=0A=
+>>> +	return key_len;=0A=
+>>=0A=
+>>> +}=0A=
+=0A=
+Why not -EINVAL for invalid key length?=0A=
+=0A=
+>>=0A=
+>>> +=0A=
+>>=0A=
+>>> +static inline int=0A=
+>>=0A=
+>>> +ufshcd_key_len_to_id(int key_len)=0A=
+>>=0A=
+>>> +{=0A=
+>>=0A=
+>>> +	int key_id =3D -1;=0A=
+>>=0A=
+>>> +=0A=
+>>=0A=
+>>> +	switch (key_len) {=0A=
+>>=0A=
+>>> +	case AES_KEYSIZE_128:=0A=
+>>=0A=
+>>> +		key_id =3D UFS_CRYPTO_KEY_ID_128BITS;=0A=
+>>=0A=
+>>> +		break;=0A=
+>>=0A=
+>>> +	case AES_KEYSIZE_192:=0A=
+>>=0A=
+>>> +		key_id =3D UFS_CRYPTO_KEY_ID_192BITS;=0A=
+>>=0A=
+>>> +		break;=0A=
+>>=0A=
+>>> +	case AES_KEYSIZE_256:=0A=
+>>=0A=
+>>> +		key_id =3D UFS_CRYPTO_KEY_ID_256BITS;=0A=
+>>=0A=
+>>> +		break;=0A=
+>>=0A=
+>>> +	default:=0A=
+>>=0A=
+>>> +		break;=0A=
+>>=0A=
+>>> +	}=0A=
+>>=0A=
+>>> +	return key_id;=0A=
+>>=0A=
+>>> +}=0A=
+>>=0A=
+>>> +=0A=
+>>=0A=
+>>> +static void=0A=
+>>=0A=
+>>> +ufshcd_read_crypto_capabilities(struct ufs_hba *hba)=0A=
+>>=0A=
+>>> +{=0A=
+>>=0A=
+>>> +	u32 tmp, i;=0A=
+>>=0A=
+>>> +	struct ufshcd_crypto_ctx *cctx =3D hba->cctx;=0A=
+>>=0A=
+>>> +=0A=
+>>=0A=
+>>> +	for (i =3D 0; i < cctx->cap_cnt; i++) {=0A=
+>>=0A=
+>>> +		tmp =3D ufshcd_readl(hba, REG_UFS_CRYPTOCAP + i);=0A=
+>>=0A=
+>>> +		cctx->ccaps[i].key_id =3D (tmp & CRYPTO_CAPS_KS_MASK) >>=0A=
+>>=0A=
+>>> +						CRYPTO_CAPS_KS_SHIFT;=0A=
+>>=0A=
+>>> +		cctx->ccaps[i].sdusb =3D (tmp & CRYPTO_CAPS_SDUSB_MASK) >>=0A=
+>>=0A=
+>>> +						CRYPTO_CAPS_SDUSB_SHIFT;=0A=
+>>=0A=
+>>> +		cctx->ccaps[i].alg_id =3D (tmp & CRYPTO_CAPS_ALG_ID_MASK) >>=0A=
+>>=0A=
+>>> +						CRYPTO_CAPS_ALG_ID_SHIFT;=0A=
+>>=0A=
+>>> +	}=0A=
+>>=0A=
+>>> +}=0A=
+>>=0A=
+>>> +=0A=
+>>=0A=
+>>> +static inline int=0A=
+>>=0A=
+>>> +ufshcd_get_cap_idx(struct ufshcd_crypto_ctx *cctx, int alg_id,=0A=
+>>=0A=
+>>> +	int key_id)=0A=
+>>=0A=
+>>> +{=0A=
+>>=0A=
+>>> +	int cap_idx;=0A=
+>>=0A=
+>>> +=0A=
+>>=0A=
+>>> +	for (cap_idx =3D 0; cap_idx < cctx->cap_cnt; cap_idx++) {=0A=
+>>=0A=
+>>> +		if (((cctx->ccaps[cap_idx].alg_id =3D=3D alg_id) &&=0A=
+>>=0A=
+>>> +			cctx->ccaps[cap_idx].key_id =3D=3D key_id))=0A=
+>>=0A=
+>>> +			break;=0A=
+>>=0A=
+>>> +	}=0A=
+>>=0A=
+>>> +	return ((cap_idx < cctx->cap_cnt) ? cap_idx : -1);=0A=
+>>=0A=
+>>> +}=0A=
+>>=0A=
+>>> +=0A=
+>>=0A=
+>>> +static inline int=0A=
+>>=0A=
+>>> +ufshcd_get_cci_slot(struct ufshcd_crypto_ctx *cctx)=0A=
+>>=0A=
+>>> +{=0A=
+>>=0A=
+>>> +	int  cci;=0A=
+>>=0A=
+>>> +=0A=
+>>=0A=
+>>> +	for (cci =3D 0; cci < cctx->config_cnt; cci++) {=0A=
+>>=0A=
+>>> +		if (!cctx->cconfigs[cci].cfge) {=0A=
+>>=0A=
+>>> +			cctx->cconfigs[cci].cfge =3D 1;=0A=
+>>=0A=
+>>> +			break;=0A=
+>>=0A=
+>>> +		}=0A=
+>>=0A=
+>>> +	}=0A=
+>>=0A=
+>>> +	return ((cci < cctx->config_cnt) ? cci : -1);=0A=
+>>=0A=
+>>> +}=0A=
+>>=0A=
+>>> +=0A=
+>>=0A=
+>>> +static void=0A=
+>>=0A=
+>>> +ufshcd_aes_ecb_set_key(struct ufshcd_dm_ctx *ctx)=0A=
+>>=0A=
+>>> +{=0A=
+>>=0A=
+>>> +	int i, key_size;=0A=
+>>=0A=
+>>> +	u32 val, cconfig16, crypto_config_addr;=0A=
+>>=0A=
+>>> +	struct ufshcd_crypto_ctx *cctx;=0A=
+>>=0A=
+>>> +	struct ufshcd_crypto_config *cconfig;=0A=
+>>=0A=
+>>> +	struct ufshcd_crypto_cap ccap;=0A=
+>>=0A=
+>>> +=0A=
+>>=0A=
+>>> +	cctx =3D ctx->hba->cctx;=0A=
+>>=0A=
+>>> +	if (ctx->cci <=3D 0)=0A=
+>>=0A=
+>>> +		ctx->cci =3D ufshcd_get_cci_slot(cctx);=0A=
+>>=0A=
+>>> +	/* If no slot is available, slot 0 is shared */=0A=
+>>=0A=
+>>> +	ctx->cci =3D ctx->cci < 0 ? 0 : ctx->cci;=0A=
+>>=0A=
+>>> +	cconfig =3D &(cctx->cconfigs[ctx->cci]);=0A=
+>>=0A=
+>>> +	ccap =3D cctx->ccaps[ctx->cap_idx];=0A=
+>>=0A=
+>>> +	key_size =3D ufshcd_key_id_to_len(ccap.key_id);=0A=
+>>=0A=
+>>> +=0A=
+>>=0A=
+>>> +	if ((cconfig->cap_idx !=3D ctx->cap_idx) ||=0A=
+>>=0A=
+>>> +		((key_size > 0) &&=0A=
+>>=0A=
+>>> +		memcmp(cconfig->key, ctx->key, key_size))) {=0A=
+>>=0A=
+>>> +		cconfig->cap_idx =3D ctx->cap_idx;=0A=
+>>=0A=
+>>> +		memcpy(cconfig->key, ctx->key, key_size);=0A=
+>>=0A=
+>>> +		crypto_config_addr =3D cctx->crypto_config_base_addr +=0A=
+>>=0A=
+>>> +				ctx->cci * CRYPTO_CONFIG_SIZE;=0A=
+>>=0A=
+>>> +		cconfig16 =3D ccap.sdusb | (1 <<=0A=
+>> CRYPTO_CCONFIG16_CFGE_SHIFT);=0A=
+>>=0A=
+>>> +		cconfig16 |=3D ((ctx->cap_idx <<=0A=
+>> CRYPTO_CCONFIG16_CAP_IDX_SHIFT) &=0A=
+>>=0A=
+>>> +				CRYPTO_CCONFIG16_CAP_IDX_MASK);=0A=
+>>=0A=
+>>> +		spin_lock(&cctx->crypto_lock);=0A=
+>>=0A=
+>>> +		for (i =3D 0; i < key_size; i +=3D 4) {=0A=
+>>=0A=
+>>> +			val =3D (ctx->key[i] | (ctx->key[i + 1] << 8) |=0A=
+>>=0A=
+>>> +				(ctx->key[i + 2] << 16) |=0A=
+>>=0A=
+>>> +				(ctx->key[i + 3] << 24));=0A=
+>>=0A=
+>>> +			ufshcd_writel(ctx->hba, val, crypto_config_addr + i);=0A=
+>>=0A=
+>>> +		}=0A=
+>>=0A=
+>>> +		ufshcd_writel(ctx->hba, cpu_to_le32(cconfig16),=0A=
+>>=0A=
+>>> +				crypto_config_addr + (4 * 16));=0A=
+>>=0A=
+>>> +		spin_unlock(&cctx->crypto_lock);=0A=
+>>=0A=
+>>> +		/* Make sure keys are programmed */=0A=
+>>=0A=
+>>> +		mb();=0A=
+>>=0A=
+>>> +	}=0A=
+>>=0A=
+>>> +}=0A=
+>>=0A=
+>>=0A=
+>>=0A=
+>> First of all, thanks for working on this.  A lot of Android device vendo=
+rs would=0A=
+>>=0A=
+>> like to have upstream support for inline encryption.  However, are you a=
+ware of=0A=
+>>=0A=
+>> previous (unsuccessful) patchsets by other people working on this?  Have=
+ you=0A=
+>>=0A=
+>> addressed the concerns and improved on their work, or is this just yet a=
+nother=0A=
+>>=0A=
+>> new effort starting from scratch?=0A=
+>>=0A=
+>>=0A=
+>>=0A=
+>> AnilKumar Chimata <anilc@codeaurora.org> (Qualcomm) in October 2018:=0A=
+>>=0A=
+>>=0A=
+>>=0A=
+>> 	https://urldefense.proofpoint.com/v2/url?u=3Dhttps-=0A=
+>> 3A__patchwork.kernel.org_cover_10645739_&d=3DDwIBAg&c=3DaUq983L2pue2FqKF=
+=0A=
+>> oP6PGHMJQyoJ7kl3s3GZ-_haXqY&r=3DGTefrem3hiBCnsjCOqAuapQHRN8-=0A=
+>> rKC1FRbk0it-=0A=
+>> LDs&m=3DL9VLjsZ31dZ4TP4LdveuvcjPFzdZWGlZaZnzqGZH3zc&s=3DZzYaAaVic5TB4RUS=
+=0A=
+>> cR5kzcM_8gvLYdlNAzuY80_ASzI&e=3D=0A=
+>>=0A=
+>>=0A=
+>>=0A=
+>> Ladvine D Almeida <ladvine@synopsys.com> in May 2018:=0A=
+>>=0A=
+>>=0A=
+>>=0A=
+>> 	https://urldefense.proofpoint.com/v2/url?u=3Dhttp-3A__lists-=0A=
+>> 2Darchives.com_linux-2Dkernel_29135393-2Dscsi-2Dufs-2Dufs-2Dhost-=0A=
+>> 2Dcontroller-2Dcrypto-=0A=
+>> 2Dchanges.html&d=3DDwIBAg&c=3DaUq983L2pue2FqKFoP6PGHMJQyoJ7kl3s3GZ-=0A=
+>> _haXqY&r=3DGTefrem3hiBCnsjCOqAuapQHRN8-rKC1FRbk0it-=0A=
+>> LDs&m=3DL9VLjsZ31dZ4TP4LdveuvcjPFzdZWGlZaZnzqGZH3zc&s=3D3pxSBZrt_DpDSz-=
+=0A=
+>> ZXrM7_bj0QXmRzcbasPl_wB259Us&e=3D=0A=
+>>=0A=
+>>=0A=
+>>=0A=
+>> Satya Tangirala <satyat@google.com> is also working on it but I don't be=
+lieve=0A=
+>>=0A=
+>> he's sent out a patchset yet.=0A=
+>>=0A=
+>>=0A=
+>>=0A=
+>> It would be nice to coordinate to get a proper solution upstream that wo=
+rks for=0A=
+>>=0A=
+>> everyone, rather than having everyone try independently and fail repeate=
+dly :-)=0A=
+> I had look at Ladvine's submission and think the approach of using Linux =
+crypto API and=0A=
+> adding algorithm which is supposed to work inline (and with UFS devices o=
+nly) in global=0A=
+> pool of algorithms (which is supposed to be generic) makes it risky, if s=
+elected/used for=0A=
+> other type of device not supporting inline encryption. Also apparently it=
+ is not possible to=0A=
+> support multiple UFS controllers in the system with that approach.=0A=
+> There was suggestion from Milan to use separate device mapper which seems=
+ cleaner way=0A=
+> of enabling inline encryption. Hence new device mapper is used.=0A=
+> I think this is better idea to coordinate and come up with a generic solu=
+tion.=0A=
+=0A=
+Suggest to take a look into the article https://lwn.net/Articles/717754=0A=
+My real concern is how to achieve it without any modifications to the=0A=
+bio.(because key slot information has to finally reach the target block=0A=
+device)=0A=
+=0A=
+>>=0A=
+>>=0A=
+>>=0A=
+>> Also, note that ECB mode is not appropriate for disk encryption.  So thi=
+s patch=0A=
+>>=0A=
+>> (and the hardware you tested it on, if that's all it supports) is effect=
+ively=0A=
+>>=0A=
+>> useless as-is.  You need to support XTS mode.=0A=
+> For now only AES-ECB is supported, we are working on adding other modes.=
+=0A=
+>>=0A=
+>>=0A=
+>>=0A=
+>> Thanks!=0A=
+>>=0A=
+>>=0A=
+>>=0A=
+>> - Eric=0A=
+> =0A=
+> Regards,=0A=
+> Parshuram Thombare=0A=
+> =0A=
+=0A=
+Thanks,=0A=
+Ladvine=0A=
+=0A=
