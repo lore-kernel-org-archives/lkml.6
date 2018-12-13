@@ -2,94 +2,149 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21789C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 16:53:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44804C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 16:56:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D01402086D
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 16:53:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mi1YUKaX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D01402086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 00936208E7
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 16:56:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00936208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729565AbeLMQxU (ORCPT
+        id S1729315AbeLMQ4D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 11:53:20 -0500
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:41111 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727511AbeLMQxU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 11:53:20 -0500
-Received: by mail-yw1-f68.google.com with SMTP id f65so1077841ywc.8
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 08:53:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=FHaLBt9H2hOOTwP5FxmmI503NqEsUSU4gN9Qp7qTk18=;
-        b=mi1YUKaXPIuC2Bh6LEW0El+zGU28bZ9XrxfXj8D75SYAqevJYs9xVEwpfAMsoBnMkO
-         5Awn1a1ayuVjTBS53ZITU5+cpjauLiVKg9L/1jLFMvnkylxUQUGuADnkormREawEh2GT
-         h6blWs+ZtCOlnws7xQh7mlAyaEMntHBSCcIo/ZS8cSR2OJzSws+WsnqFE8NQXrypz+TP
-         9eWak8jf5MWuOLPejD43Fw6eYIpXKsCXsWZyH5SIdD+NsR0HXSlD77YC/kyU79dmff2N
-         SRC/eMgoDMJ4LEIcOLENby3LXQCPfRtW98VPReu7Wx/vqDH02+AnKq83eB8aomAiZt0j
-         NVag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=FHaLBt9H2hOOTwP5FxmmI503NqEsUSU4gN9Qp7qTk18=;
-        b=nsNTXzMGtBSnEEcRMycNXRCUCsPtwKsawGrykxYdI2KPHhXiNW2Sr4JfRDjzhPko8a
-         gfS6EobsbLmmpKnsfIqkh8QNQaSYaXhg7tNCGamO0CJflKFYoZYDQnCeBA+7QuPV5I0X
-         hPWky57ORzWhVXyM8AAheMHP/Ba4R+w6lmCgLCDWvUjVxLB8PCU0FWJw+VDFg8CRTsGq
-         u0Fr71T1j42ecOJnBx0sC1T7MzNrSC268Fk8IrGh8oCarpTdRRIuACpS0NgfTHFcP9CZ
-         slAIa6iaJ1byKd/nHmlTd8FloAOU8httlluMipBAR4mhxlI/KLcbHZbeNE03mcQunpdV
-         Y2ww==
-X-Gm-Message-State: AA+aEWb0j9xVH1W/WrJK+hwn6oz4vaR9OP0tBlC40M3glQOeM0Qe0Fb0
-        TkguQmHsTMJ3E31lcZFC2RM=
-X-Google-Smtp-Source: AFSGD/V4fZMLNC4tjM7IW7dP0c4f4bCtbzt489yQueZPSzXnt22QUG5QRu9vriKKvDJrrS4Bxir/2Q==
-X-Received: by 2002:a81:1086:: with SMTP id 128mr14536952ywq.418.1544719998876;
-        Thu, 13 Dec 2018 08:53:18 -0800 (PST)
-Received: from ubuntu ([67.191.186.148])
-        by smtp.gmail.com with ESMTPSA id r188sm663614ywb.30.2018.12.13.08.53.18
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 13 Dec 2018 08:53:18 -0800 (PST)
-From:   Amir Mahdi Ghorbanian <indigoomega021@gmail.com>
-To:     abbotti@mev.co.uk
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        gregkh@linuxfoundation.org,
-        Amir Mahdi Ghorbanian <indigoOmega021@gmail.com>
-Subject: [PATCH] Staging: comedi: 8255: fixed an SPDX License Tag coding style issue
-Date:   Thu, 13 Dec 2018 08:53:17 -0800
-Message-Id: <1544719997-4490-1-git-send-email-indigoomega021@gmail.com>
-X-Mailer: git-send-email 2.7.4
+        Thu, 13 Dec 2018 11:56:03 -0500
+Received: from muru.com ([72.249.23.125]:58152 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727511AbeLMQ4D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 11:56:03 -0500
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 771778081;
+        Thu, 13 Dec 2018 16:56:05 +0000 (UTC)
+Date:   Thu, 13 Dec 2018 08:55:58 -0800
+From:   Tony Lindgren <tony@atomide.com>
+To:     Peter Ujfalusi <peter.ujfalusi@ti.com>
+Cc:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Jarkko Nikula <jarkko.nikula@bitmer.com>
+Subject: Re: [PATCH 0/2] Graph fixes for using multiple endpoints per port
+Message-ID: <20181213165558.GO6707@atomide.com>
+References: <20181211045220.GI6707@atomide.com>
+ <871s6obqkb.wl-kuninori.morimoto.gx@renesas.com>
+ <20181211053536.GJ6707@atomide.com>
+ <87wooga9an.wl-kuninori.morimoto.gx@renesas.com>
+ <20181211141649.GL6707@atomide.com>
+ <87ftv33bpg.wl-kuninori.morimoto.gx@renesas.com>
+ <20181212001950.GX6707@atomide.com>
+ <01e3f547-318e-8988-b48a-e10c0a2904d6@ti.com>
+ <20181212145022.GB6707@atomide.com>
+ <34191403-3c56-47ac-77d9-e900d88f2ae5@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <34191403-3c56-47ac-77d9-e900d88f2ae5@ti.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Amir Mahdi Ghorbanian <indigoOmega021@gmail.com>
+* Peter Ujfalusi <peter.ujfalusi@ti.com> [181213 06:52]:
+> On 12/12/2018 16.50, Tony Lindgren wrote:
+> > * Peter Ujfalusi <peter.ujfalusi@ti.com> [181212 13:03]:
+> >> On 12/12/2018 2.19, Tony Lindgren wrote:
+> >>> In my McBSP case there is only a single physical I2S port
+> >>> that can be TDM split into timeslots.
+> >>
+> >> So what is missing from the McBSP driver is to configure the TDM. We
+> >> never had a hardware which would require it so it is _not_ implemented.
+> > 
+> > Curiously.. Nothing needs to be done in the McBSP driver for the droid
+> > 4 TDM configuration AFAIK.
+> 
+> So you always have 4 timeslot and that's it?
 
-Fixed a coding style issue.
+No.. "droid 4", not "4 timeslot" above :)
 
-Signed-off-by: Amir Mahdi Ghorbanian <indigoOmega021@gmail.com>
----
- drivers/staging/comedi/drivers/8255.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+See the McBSP3 parts of the diagram at [0]. The PMIC has
+register bits for timeslots 0 to 2:
 
-diff --git a/drivers/staging/comedi/drivers/8255.h b/drivers/staging/comedi/drivers/8255.h
-index 6cd1339..ceae3ca 100644
---- a/drivers/staging/comedi/drivers/8255.h
-+++ b/drivers/staging/comedi/drivers/8255.h
-@@ -1,4 +1,4 @@
--// SPDX-License-Identifier: GPL-2.0+
-+/* SPDX-License-Identifier: GPL-2.0+ */
- /*
-  * module/8255.h
-  * Header file for 8255
--- 
-2.7.4
+$ git grep CPCAP | grep TIMESLOT
+
+> > The CPCAP PMIC is the clock master, and only the PMIC registers need to
+> > be configured in this case for the timeslot to switch between codecs
+> > connected to McBSP3.
+> 
+> The McBSP TDM configuration is not master only.
+> You basically tell McBSP on which timeslot to transmit/receive.
+> Let's say you have two codecs connected to a single McBSP.
+> codec1 is configured to listen for timeslot 0/1
+> codec2 is configured to listen for timeslot 2/3
+
+OK. Right now I'm only configuring things at the PMIC
+end as the clocking is different compared to using CPCAP
+PMIC voice codec and when routing data from the MDM voice
+call codec to the CPCAP PMIC.
+
+> If you open a stereo stream to codec1 then you tell McBSP to
+> send/receive the data under timeslot 0/1 and ignore any other timeslots.
+> 
+> If you open a stereo stream to codec2 then you tell McBSP to
+> send/receive the data under timeslot 2/3 and ignore any other timeslots.
+> 
+> For codec1 you don't really need anything regarding to TDM configuration
+> as McBSP will send/receive right after the start condition on the FS,
+> but for codec2 you need to configure the TDM mode of McBSP to ignore
+> timeslot 0/1
+
+OK. Sounds like what you're describing could be used to route the
+MDM voice codec audio for capture to a file via McBSP etc.
+
+> >> imho the 'only' thing is to implement the set_tdm_slot callback for the
+> >> McBSP DAI. In DT you would have single card with two dai_link section
+> >> and each section would set different tdm slots to use for the codecs
+> >> listening on different slots.
+> >>
+> >> There is one issue for sure with this setup: the two PCM can not be used
+> >> at the same time. But we have one DMA channel so if you would open both
+> >> the PCM stream need to be set up in a way to match with the HW or create
+> >> a asound.conf file to do some mapping.
+> > 
+> > Yes in the droid 4 TDM case only one device can be used at a time
+> > and all that configuration is done in the PMIC codec .set_tdm_slot
+> > function.
+> 
+> Hrm, do you have two DAIs on the PMIC side or different timeslots from
+> the TDM stream is routed to different outputs, similarly to twl6040
+> where timeslot 0/1 is Headset, timeslot 2/3 is Handsfree and timeslot 5
+> is to drive a vibra?
+
+Two DAIs on the PMIC, one at McBSP2 and one shared with MDM codec
+at McBSP3.
+
+> > I think it's possible to do more complex configurations where McBSP
+> > is the master and would implement a .set_tdm_slot function. But I
+> > don't know anything about that and I'm not aware of any such use
+> > cases in the mainline kernel.
+> 
+> No, the set_tdm_slot is applicable for both master and slave mode of McBSP.
+
+OK sure.
+
+Regards,
+
+Tony
+
+[0] https://lkml.org/lkml/2018/3/28/405
 
