@@ -2,128 +2,109 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31F81C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 09:58:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F338C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 09:59:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E71C6208E7
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 09:58:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="eUBo/QWg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E71C6208E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 6A56B21104
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 09:59:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A56B21104
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728180AbeLMJ6a (ORCPT
+        id S1728121AbeLMJ7h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 04:58:30 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:45431 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728121AbeLMJ63 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 04:58:29 -0500
-Received: by mail-pg1-f196.google.com with SMTP id y4so807900pgc.12
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 01:58:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:content-transfer-encoding:in-reply-to:subject:to
-         :references:message-id:from:user-agent:cc:date;
-        bh=1kVV8CE7EWZ3is/5Q2ZpcJ9855pQEXrzA6Tf5+AYdxI=;
-        b=eUBo/QWgquKx41bva9jx5VllbXg4K55MJXYTtYRn87PvO1g/IgXhlbbRpw7b0YQCgf
-         IbzQaBWuGFZKGY5kW1FoDqwUZ163saheWgH+YAScc/S9iKWl7okO95BnoDzNiQI7xvpk
-         K4fC0k4UNOecSwHE0JnbU04ArW6fSX8xMDIdE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:content-transfer-encoding
-         :in-reply-to:subject:to:references:message-id:from:user-agent:cc
-         :date;
-        bh=1kVV8CE7EWZ3is/5Q2ZpcJ9855pQEXrzA6Tf5+AYdxI=;
-        b=ceoUXIhwZpCp6j0AoPTUlvwc+W0KFUXYMj/cC4IVSeGlf/ZXeyqWunsMyDf/mZouGx
-         +100gIrwKQrvlhgOrIvocG/2p7SQSz6wTmUVV6Ik3ljbTb2RGs0gmi9+laxJG/tFDo84
-         62LSUde3mlTBDU6G0+ar8bBln5QFNyS3EPhAXcIWy/f4IlPs1p4Y2p+qZwJqOp+pE3+W
-         A7BM5LNp91D3+17URoQoMlv6TVddYgoWul6dZGrvRcBQE8YgjjgqzkeYUANAG6j5ISvH
-         dAXtGlu+BpoEEffPAG6n7Daxa3q8EIYgYe1XxIeBk9Oo9Z3KZ3rYdTJsN++NH/McdyZE
-         pRBw==
-X-Gm-Message-State: AA+aEWbOWj13TGu3Mt4CqmyhdUgPa8n7fx0jrvcvGtJKpCDlG6fV7pC9
-        8bwGzjIttRaJmkq7OYOMaJUQzg==
-X-Google-Smtp-Source: AFSGD/W+wzfrYTZnGEbQoh/pHH0SFq5gpobZ2Z4GZ+uxGc6mDMTCS31cfwQWNAWa6hdjpkIRUhEXdw==
-X-Received: by 2002:a63:f241:: with SMTP id d1mr21389248pgk.2.1544695108476;
-        Thu, 13 Dec 2018 01:58:28 -0800 (PST)
-Received: from localhost ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id c13sm2173369pfo.121.2018.12.13.01.58.27
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 13 Dec 2018 01:58:27 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
+        Thu, 13 Dec 2018 04:59:37 -0500
+Received: from mx2.suse.de ([195.135.220.15]:59918 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727718AbeLMJ7g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 04:59:36 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 2FC82AE6B;
+        Thu, 13 Dec 2018 09:59:34 +0000 (UTC)
+Date:   Thu, 13 Dec 2018 10:59:31 +0100
+From:   Petr Mladek <pmladek@suse.com>
+To:     Daniel Wang <wonderfly@google.com>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Sasha Levin <sashal@kernel.org>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>, stable@vger.kernel.org,
+        Alexander.Levin@microsoft.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        byungchul.park@lge.com, dave.hansen@intel.com, hannes@cmpxchg.org,
+        jack@suse.cz, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Mel Gorman <mgorman@suse.de>, mhocko@kernel.org, pavel@ucw.cz,
+        penguin-kernel@i-love.sakura.ne.jp,
+        Peter Zijlstra <peterz@infradead.org>, tj@kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>, vbabka@suse.cz,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        Peter Feiner <pfeiner@google.com>
+Subject: Re: 4.14 backport request for dbdda842fe96f: "printk: Add console
+ owner and waiter logic to load balance console writes"
+Message-ID: <20181213095931.24qovurhtpa3jxzl@pathway.suse.cz>
+References: <20181212135939.GA10170@tigerII.localdomain>
+ <20181212174333.GC2746@sasha-vm>
+ <CAJmjG2_zey77QxMzq997ALkD56d0UtHmGjF4dhq=TbEc2gox5A@mail.gmail.com>
+ <20181212214337.GD2746@sasha-vm>
+ <CAJmjG2_C0YRtVmNh2sg4JqhJJ11LMmbRHqwADxyO9CGh9ixQbA@mail.gmail.com>
+ <20181212215225.GE2746@sasha-vm>
+ <CAJmjG28s9bz51k=5i8eoKH2crj8e7-qM_EYWMqtUKZ_nGREQOg@mail.gmail.com>
+ <CAJmjG29PnAfkUsU4PuVaFvjW-okO=U-MbHZHg7Sj_bBJ6EO09w@mail.gmail.com>
+ <20181213022703.GD4860@jagdpanzerIV>
+ <CAJmjG2-eoKTHtChWK0fdWfy872h5N1c-NgxBKZra1+ujutF+Fw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1544687394-331-3-git-send-email-tdas@codeaurora.org>
-Subject: Re: [PATCH v12 2/2] cpufreq: qcom-hw: Add support for QCOM cpufreq HW driver
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Taniya Das <tdas@codeaurora.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-References: <1544687394-331-1-git-send-email-tdas@codeaurora.org> <1544687394-331-3-git-send-email-tdas@codeaurora.org>
-Message-ID: <154469510700.19322.7762676027024031719@swboyd.mtv.corp.google.com>
-From:   Stephen Boyd <swboyd@chromium.org>
-User-Agent: alot/0.8
-Cc:     Rajendra Nayak <rnayak@codeaurora.org>, devicetree@vger.kernel.org,
-        robh@kernel.org, skannan@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, evgreen@google.com,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        Stephen Boyd <swboyd@chromium.org>
-Date:   Thu, 13 Dec 2018 01:58:27 -0800
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJmjG2-eoKTHtChWK0fdWfy872h5N1c-NgxBKZra1+ujutF+Fw@mail.gmail.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Taniya Das (2018-12-12 23:49:54)
-> The CPUfreq HW present in some QCOM chipsets offloads the steps necessary
-> for changing the frequency of CPUs. The driver implements the cpufreq
-> driver interface for this hardware engine.
->=20
-> Signed-off-by: Saravana Kannan <skannan@codeaurora.org>
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> ---
+On Wed 2018-12-12 18:39:42, Daniel Wang wrote:
+> > Additionally, for dbdda842fe96f to work as expected we really
+> need fd5f7cde1b85d4c. Otherwise printk() can schedule under
+> console_sem and console_owner, which will deactivate the "load
+> balance" logic.
+> 
+> It looks like fd5f7cde1b85d4c got into 4.14.82 that was released last month.
+> 
+> On Wed, Dec 12, 2018 at 6:27 PM Sergey Senozhatsky
+> <sergey.senozhatsky.work@gmail.com> wrote:
+> >
+> > On (12/12/18 16:40), Daniel Wang wrote:
+> > > In case this was buried in previous messages, the commit I'd like to
+> > > get backported to 4.14 is dbdda842fe96f: printk: Add console owner and
+> > > waiter logic to load balance console writes. But another followup
+> > > patch that fixes a bug in that patch is also required. That is
+> > > c14376de3a1b: printk: Wake klogd when passing console_lock owner.
+> >
+> > Additionally, for dbdda842fe96f to work as expected we really
+> > need fd5f7cde1b85d4c. Otherwise printk() can schedule under
+> > console_sem and console_owner, which will deactivate the "load
+> > balance" logic.
 
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+To make it clear. Please, make sure that the following commits are
+backported together:
 
-But I noticed that we don't release the I/O region anymore so hotplug
-and replug of a whole clk domain fails. I guess devm_ioremap_resource()
-was just too much magic so how about we downgrade to devm_ioremap()
-instead?
++ dbdda842fe96f8932ba ("printk: Add console owner and waiter
+		logic to load balance console writes")
++ c162d5b4338d72deed6 ("printk: Hide console waiter logic into
+		helpers")
++ fd5f7cde1b85d4c8e09 ("printk: Never set console_may_schedule
+		in console_trylock()")
++ c14376de3a1befa70d9 ("printk: Wake klogd when passing
+		console_lock owner")
 
-BTW, Viresh, I see a lockdep splat when cpufreq_init returns an error
-upon bringing the policy online the second time. I guess cpufreq_stats
-aren't able to be freed from there because they take locks in different
-order vs. the normal path?
 
------8<-------
-diff --git a/drivers/cpufreq/qcom-cpufreq-hw.c b/drivers/cpufreq/qcom-cpufr=
-eq-hw.c
-index fce7a1162e87..0e1105151478 100644
---- a/drivers/cpufreq/qcom-cpufreq-hw.c
-+++ b/drivers/cpufreq/qcom-cpufreq-hw.c
-@@ -182,9 +182,12 @@ static int qcom_cpufreq_hw_cpu_init(struct cpufreq_pol=
-icy *policy)
- 	index =3D args.args[0];
-=20
- 	res =3D platform_get_resource(global_pdev, IORESOURCE_MEM, index);
--	base =3D devm_ioremap_resource(dev, res);
--	if (IS_ERR(base))
--		return PTR_ERR(base);
-+	if (!res)
-+		return -ENODEV;
-+
-+	base =3D devm_ioremap(dev, res->start, resource_size(res));
-+	if (!base)
-+		return -ENOMEM;
-=20
- 	/* HW should be in enabled state to proceed */
- 	if (!(readl_relaxed(base + REG_ENABLE) & 0x1)) {
+I generated this list from git log using "Fixes:" tag. It seems
+to mention all commits dicussed above.
+
+Best Regards,
+Petr
