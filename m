@@ -2,174 +2,106 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 637E8C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 08:48:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F872C67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 08:48:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 238BA2086D
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 08:48:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544690885;
-	bh=wqQH0cnM10486spvnaEO1xjITOrLcaZxcmC0WviYREI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=zodY8qCQMavwD2258xlNa/VNShRIneaLBvmt33gS7DMUcVVsg6Y6gnNzfORLEq37w
-	 xM+a3RCxCmfpDRNJAksNGqxAy8IMXGatx70u+6760VJOscNzYFeajEOTyqegBhvyn7
-	 YXD1s4UjnekpbSkaxvZ8MMPYNUwX2m0qpUr0V/0s=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 238BA2086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id A148D2075B
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 08:48:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A148D2075B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727440AbeLMIsE (ORCPT
+        id S1727494AbeLMIsI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 03:48:04 -0500
-Received: from mx2.suse.de ([195.135.220.15]:48118 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725949AbeLMIsD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 03:48:03 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 23902AE4B;
-        Thu, 13 Dec 2018 08:48:01 +0000 (UTC)
-Date:   Thu, 13 Dec 2018 09:48:00 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Oscar Salvador <osalvador@suse.de>
-Cc:     akpm@linux-foundation.org, david@redhat.com,
-        pasha.tatashin@soleen.com, dan.j.williams@gmail.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v2] mm, memory_hotplug: Don't bail out in
- do_migrate_range prematurely
-Message-ID: <20181213084800.GV1286@dhcp22.suse.cz>
-References: <20181211135312.27034-1-osalvador@suse.de>
+        Thu, 13 Dec 2018 03:48:08 -0500
+Received: from orcrist.hmeau.com ([104.223.48.154]:50040 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725949AbeLMIsF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 03:48:05 -0500
+Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
+        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
+        id 1gXMf0-0001D9-ND; Thu, 13 Dec 2018 16:47:58 +0800
+Received: from herbert by gondobar with local (Exim 4.89)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1gXMex-0004Qc-Rt; Thu, 13 Dec 2018 16:47:55 +0800
+Date:   Thu, 13 Dec 2018 16:47:55 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     NeilBrown <neilb@suse.com>
+Cc:     Thomas Graf <tgraf@suug.ch>, Tom Herbert <tom@quantonium.net>,
+        David Miller <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] rhashtable: further improve stability of
+ rhashtable_walk
+Message-ID: <20181213084755.3kdwdd53qyasdwfw@gondor.apana.org.au>
+References: <20181207053943.7zacyn5uvqkfnfoi@gondor.apana.org.au>
+ <87k1kico1o.fsf@notabene.neil.brown.name>
+ <20181211051755.modgomqzszkbiihe@gondor.apana.org.au>
+ <87mupbvch0.fsf@notabene.neil.brown.name>
+ <20181212054601.wbzpxjunnsfi62mz@gondor.apana.org.au>
+ <87efanuu06.fsf@notabene.neil.brown.name>
+ <20181212080037.j2zs22t57uxdu2jr@gondor.apana.org.au>
+ <87bm5ruo3f.fsf@notabene.neil.brown.name>
+ <20181213014309.uufaeoijhympgxbz@gondor.apana.org.au>
+ <8736r2ulw4.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181211135312.27034-1-osalvador@suse.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <8736r2ulw4.fsf@notabene.neil.brown.name>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 11-12-18 14:53:12, Oscar Salvador wrote:
-> v1 -> v2:
->         - Keep branch to decrease refcount and print out
->           the failed pfn/page
->         - Modified changelog per Michal's feedback
->         - move put_page() out of the if/else branch
+On Thu, Dec 13, 2018 at 02:48:59PM +1100, NeilBrown wrote:
 > 
-> ---
-> >From f81da873be9a5b7845249d1e62a423f054c487d5 Mon Sep 17 00:00:00 2001
-> From: Oscar Salvador <osalvador@suse.com>
-> Date: Tue, 11 Dec 2018 11:45:19 +0100
-> Subject: [PATCH] mm, memory_hotplug: Don't bail out in do_migrate_range
->  prematurely
+> Yes, you could rcu_free the old one and allocate a new one.  Then you
+> would have to be ready to deal with memory allocation failure which
+> complicates usage (I already don't like that rhashtable_insert() can
+> report -ENOMEM!).
+
+Yes there will be a cost to dealing with allocation failure but at
+least it'll work reliably in all cases.  For the intended use-case
+of dumping things to user-space allocation failure is a non-issue.
+
+> > Now you're conflating two different things.  Dropping the RCU
+> > isn't necessarily slow.  We were talking about waiting for an
+> > RCU grace period which would only come into play if you were
+> > suspending the walk indefinitely.  Actually as I said above even
+> > there you don't really need to wait.
 > 
-> do_migrate_ranges() takes a memory range and tries to isolate the
-> pages to put them into a list.
-> This list will be later on used in migrate_pages() to know
-> the pages we need to migrate.
+> How would rhashtable_walk_stop() know if it was indefinite or not?
+
+You assume that it's always indefinite because the typical usage of
+stop is because we have run out of memory and must wait for user-
+space to read what we have produced so far to free up memory.
+
+> *Not* keeping them all in the hash chain is ideal, but not essential.
+> I see three costs with this.
+> One is that we would compare the same key multiple times for lookup.
+> How much of a problem is that? A failing compare is usually quite quick,
+> and most rhltable uses have inline memcmp for comparison (admittedly not
+> all).
 > 
-> Currently, if we fail to isolate a single page, we put all already
-> isolated pages back to their LRU and we bail out from the function.
-> This is quite suboptimal, as this will force us to start over again
-> because scan_movable_pages will give us the same range.
-> If there is no chance that we can isolate that page, we will loop here
-> forever.
-
-I still think that this doesn't give us a whole picture. Looping for
-ever is a bug. Failing the isolation is quite possible and it should be
-a ephemeral condition (e.g. a race with freeing the page or somebody else
-isolating the page for whatever reason). And here comes the disadvantage
-of the current implementation. We simply throw everything on the floor
-just because of a ephemeral condition. The racy page_count check is
-quite dubious to prevent from that.
-
-> Issue debugged in [1] has proved that.
-> During the debugging of that issue, it was noticed that if
-> do_migrate_ranges() fails to isolate a single page, we will
-> just discard the work we have done so far and bail out, which means
-> that scan_movable_pages() will find again the same set of pages.
+> The second cost is tracking the chain length against elasticity.
+> We could flag one object with each key as a 'master' (low bit of the
+> 'next' pointer) and only count the masters.  When lookup raced with
+> remove this might get a slightly incorrect count, but I don't think that
+> hurts.
 > 
-> Instead, we can just skip the error, keep isolating as much pages
-> as possible and then proceed with the call to migrate_pages().
-> 
-> This will allow us to do as much work as possible at once.
-> 
-> [1] https://lkml.org/lkml/2018/12/6/324
+> Finally, there is more pointer chasing as the chains are longer.
 
-lkml.org tends to have broken archives over time. Please use
-http://lkml.kernel.org/r/
+The biggest problem is that you can no longer return the lookup
+result.  When you perform a lookup on rhltable you need to return
+all the matching objects, not just a random one.
 
-instead
-
-> Signed-off-by: Oscar Salvador <osalvador@suse.de>
-
-Acked-by: Michal Hocko <mhocko@suse.com>
-
-> ---
->  mm/memory_hotplug.c | 18 ++----------------
->  1 file changed, 2 insertions(+), 16 deletions(-)
-> 
-> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-> index 86ab673fc4e3..68e740b1768e 100644
-> --- a/mm/memory_hotplug.c
-> +++ b/mm/memory_hotplug.c
-> @@ -1339,7 +1339,6 @@ do_migrate_range(unsigned long start_pfn, unsigned long end_pfn)
->  	unsigned long pfn;
->  	struct page *page;
->  	int move_pages = NR_OFFLINE_AT_ONCE_PAGES;
-> -	int not_managed = 0;
->  	int ret = 0;
->  	LIST_HEAD(source);
->  
-> @@ -1388,7 +1387,6 @@ do_migrate_range(unsigned long start_pfn, unsigned long end_pfn)
->  		else
->  			ret = isolate_movable_page(page, ISOLATE_UNEVICTABLE);
->  		if (!ret) { /* Success */
-> -			put_page(page);
->  			list_add_tail(&page->lru, &source);
->  			move_pages--;
->  			if (!__PageMovable(page))
-> @@ -1398,22 +1396,10 @@ do_migrate_range(unsigned long start_pfn, unsigned long end_pfn)
->  		} else {
->  			pr_warn("failed to isolate pfn %lx\n", pfn);
->  			dump_page(page, "isolation failed");
-> -			put_page(page);
-> -			/* Because we don't have big zone->lock. we should
-> -			   check this again here. */
-> -			if (page_count(page)) {
-> -				not_managed++;
-> -				ret = -EBUSY;
-> -				break;
-> -			}
->  		}
-> +		put_page(page);
->  	}
->  	if (!list_empty(&source)) {
-> -		if (not_managed) {
-> -			putback_movable_pages(&source);
-> -			goto out;
-> -		}
-> -
->  		/* Allocate a new page from the nearest neighbor node */
->  		ret = migrate_pages(&source, new_node_page, NULL, 0,
->  					MIGRATE_SYNC, MR_MEMORY_HOTPLUG);
-> @@ -1426,7 +1412,7 @@ do_migrate_range(unsigned long start_pfn, unsigned long end_pfn)
->  			putback_movable_pages(&source);
->  		}
->  	}
-> -out:
-> +
->  	return ret;
->  }
->  
-> -- 
-> 2.13.7
-
+Cheers,
 -- 
-Michal Hocko
-SUSE Labs
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
