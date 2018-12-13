@@ -7,49 +7,50 @@ X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F087C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:31:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 376C9C67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:31:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E159720873
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:31:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E995B20873
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:31:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544675510;
-	bh=BkPk/8lu8091stSOzflfVMYJGvxJ+jdMDC9JtIjla7Q=;
+	s=default; t=1544675512;
+	bh=pPoYjaib85wJGJNjqi3xgTbDNgYvegN61UzG23fNtqU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=TEIhnqeaM+nHijv4/2MqUim/QeVS6/wkmE3Hb7SY+D5kIn9kNPr2LcExi5g9wtisA
-	 rjmYQQrFPYrWWXdVYHQ/cPs+A/qZBFUdL+IetrEo102v0GDDb019+bvDi06s68zd6D
-	 wod82Bay7DQgEBDStDl/04GT2t/oAELxQWrvrjmg=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E159720873
+	b=QTzUruZToR3PZKXM4yRBG8Hh2huP8rpMnYhCkydW67TrEHNg3dGb625WzrJqtupAq
+	 V+ejQlB2juFzKxg+AybPd5Z5DT725XoWlYYamtWAINADVyb7YbAgV4/ItN7Vs2L5na
+	 dTpF7QRIM+MQyviM1T7gzk4SkDldfnLmrvuRxBFY=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E995B20873
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728883AbeLMEbs (ORCPT
+        id S1728900AbeLMEbv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 23:31:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44674 "EHLO mail.kernel.org"
+        Wed, 12 Dec 2018 23:31:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44712 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728858AbeLMEbp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 23:31:45 -0500
+        id S1727911AbeLMEbr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 23:31:47 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E889F20879;
-        Thu, 13 Dec 2018 04:31:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4200A20873;
+        Thu, 13 Dec 2018 04:31:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544675504;
-        bh=BkPk/8lu8091stSOzflfVMYJGvxJ+jdMDC9JtIjla7Q=;
+        s=default; t=1544675506;
+        bh=pPoYjaib85wJGJNjqi3xgTbDNgYvegN61UzG23fNtqU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PxHPoCqJmwIiqZU9cvtH4SMMzjBfNkelIAXZj+gxrjNhwY8y0JoG6x9V+ygFCXaPb
-         ynf60agDeIOe6fnbTbzGTCZQagOoZ0ewRGY+hab1bo3nhmlnwYZAnCAhTLUWJClEU7
-         wYdFBvNkW61FAC/yjzlQyz3O8m9rEu0nRtqXodOc=
+        b=VrvNbSUb7cMVtPw43c02v17/mx2cggygLmdUAS8kk2gNo3Coae18TepyxvXNRlXr0
+         iNo448IwZfSgCGX1VgJEwVh+Cgldbu81vCweLnbRJ1SmQCk9FcgMwnMq6RsV7E2jU3
+         SEOBGfH+Pdo8vqMXr5KhTc352G4ohzbWPudg+wls=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 31/41] ethernet: fman: fix wrong of_node_put() in probe function
-Date:   Wed, 12 Dec 2018 23:30:44 -0500
-Message-Id: <20181213043054.75891-31-sashal@kernel.org>
+Cc:     Sam Bobroff <sbobroff@linux.ibm.com>,
+        Dave Airlie <airlied@redhat.com>,
+        Sasha Levin <sashal@kernel.org>,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 4.14 32/41] drm/ast: Fix connector leak during driver unload
+Date:   Wed, 12 Dec 2018 23:30:45 -0500
+Message-Id: <20181213043054.75891-32-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181213043054.75891-1-sashal@kernel.org>
 References: <20181213043054.75891-1-sashal@kernel.org>
@@ -61,51 +62,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+From: Sam Bobroff <sbobroff@linux.ibm.com>
 
-[ Upstream commit ecb239d96d369c23c33d41708646df646de669f4 ]
+[ Upstream commit e594a5e349ddbfdaca1951bb3f8d72f3f1660d73 ]
 
-After getting a reference to the platform device's of_node the probe
-function ends up calling of_find_matching_node() using the node as an
-argument. The function takes care of decreasing the refcount on it. We
-are then incorrectly decreasing the refcount on that node again.
+When unloading the ast driver, a warning message is printed by
+drm_mode_config_cleanup() because a reference is still held to one of
+the drm_connector structs.
 
-This patch removes the unwarranted call to of_node_put().
+Correct this by calling drm_crtc_force_disable_all() in
+ast_fbdev_destroy().
 
-Fixes: 414fd46e7762 ("fsl/fman: Add FMan support")
-Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sam Bobroff <sbobroff@linux.ibm.com>
+Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Signed-off-by: Dave Airlie <airlied@redhat.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/1e613f3c630c7bbc72e04a44b178259b9164d2f6.1543798395.git.sbobroff@linux.ibm.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/freescale/fman/fman.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/ast/ast_fb.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/ethernet/freescale/fman/fman.c b/drivers/net/ethernet/freescale/fman/fman.c
-index 9530405030a7..97425d94e280 100644
---- a/drivers/net/ethernet/freescale/fman/fman.c
-+++ b/drivers/net/ethernet/freescale/fman/fman.c
-@@ -2786,7 +2786,7 @@ static struct fman *read_dts_node(struct platform_device *of_dev)
- 	if (!muram_node) {
- 		dev_err(&of_dev->dev, "%s: could not find MURAM node\n",
- 			__func__);
--		goto fman_node_put;
-+		goto fman_free;
- 	}
+diff --git a/drivers/gpu/drm/ast/ast_fb.c b/drivers/gpu/drm/ast/ast_fb.c
+index 0cd827e11fa2..de26df0c6044 100644
+--- a/drivers/gpu/drm/ast/ast_fb.c
++++ b/drivers/gpu/drm/ast/ast_fb.c
+@@ -263,6 +263,7 @@ static void ast_fbdev_destroy(struct drm_device *dev,
+ {
+ 	struct ast_framebuffer *afb = &afbdev->afb;
  
- 	err = of_address_to_resource(muram_node, 0,
-@@ -2795,11 +2795,10 @@ static struct fman *read_dts_node(struct platform_device *of_dev)
- 		of_node_put(muram_node);
- 		dev_err(&of_dev->dev, "%s: of_address_to_resource() = %d\n",
- 			__func__, err);
--		goto fman_node_put;
-+		goto fman_free;
- 	}
++	drm_crtc_force_disable_all(dev);
+ 	drm_fb_helper_unregister_fbi(&afbdev->helper);
  
- 	of_node_put(muram_node);
--	of_node_put(fm_node);
- 
- 	err = devm_request_irq(&of_dev->dev, irq, fman_irq, 0, "fman", fman);
- 	if (err < 0) {
+ 	if (afb->obj) {
 -- 
 2.19.1
 
