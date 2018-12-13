@@ -2,111 +2,208 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES,
+	UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E962DC67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 19:06:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DBBAC67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 19:15:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 940DB20811
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 19:06:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="QlZsuJp0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 940DB20811
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	by mail.kernel.org (Postfix) with ESMTP id DCE1D20811
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 19:15:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCE1D20811
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727506AbeLMTGl (ORCPT
+        id S1727834AbeLMTPU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 14:06:41 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:45494 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726457AbeLMTGl (ORCPT
+        Thu, 13 Dec 2018 14:15:20 -0500
+Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:60422 "EHLO
+        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727608AbeLMTPU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 14:06:41 -0500
-Received: by mail-io1-f67.google.com with SMTP id n3so2455571iog.12
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 11:06:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=43z7sxCwsioeuUTMZ1cXwqY1NBaDS2DfjVGCxspeBxw=;
-        b=QlZsuJp0sBhkp3igKmlBJSPaw/hJyDz89X3YmO8eZxakjZXVGpK2/Y4gxK0omw3/jd
-         EfiIYXUIzf2cOqrKnuVeUzwHlOzimrzM0v/t+5EYj8Hboh70mp+1TzMtkDZ/ibm9PXEL
-         uNTLU9Lu+aA2lif3hBGsvgl8goeYV8YOvMOSM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=43z7sxCwsioeuUTMZ1cXwqY1NBaDS2DfjVGCxspeBxw=;
-        b=IpXUx+aZVh1QfWczy6XGpf7N8Q+yvXdkN4HqTnjCM6Tn29pK1SuF5E6AbuCzSdtbP5
-         xNVK6LkJyAj9FxlkhJCDzGQC54im8PxQsUx3GgajZEZQIyZ2EFD+imlEg5IexbTIOoiA
-         EdBT7s1BPoJiMpfF6Jf5aBy9w4lyPfY+gcOZNbogodf3Dp/K4DvlW8mUCwxJioqu55Hc
-         5fjdcc6Lg2t0n1I3qBZicn97BTL/WIYr8X3qhJXppAtPrjZSA195bOniOSPsBn75YbpY
-         seUQCSKUv6GdnzYPLDPPGRZ+18W/nDLjNgWMTSZ73FCSHBnaSPykD0GJcpZ5nZITKbyh
-         4ICg==
-X-Gm-Message-State: AA+aEWZByQgw/TQvEixMMVZ7hpeyy0y/1nhLRHrVl08RMHpLjyMc1tgk
-        2eyXBnZ1RBIsImTUtCTa0We09rl8H/N2Yty4VenM97vs
-X-Google-Smtp-Source: AFSGD/UsOcluBOvBaDwJckDa8x/5AuBcadqjPG+0B4nGmQVg0KlVzXaat113/aLq3gF2bzj4N9ZWDtCQFM8UOZtYj5g=
-X-Received: by 2002:a6b:4001:: with SMTP id k1mr19536ioa.34.1544728000350;
- Thu, 13 Dec 2018 11:06:40 -0800 (PST)
+        Thu, 13 Dec 2018 14:15:20 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07486;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0TFcJoaW_1544728510;
+Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0TFcJoaW_1544728510)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Fri, 14 Dec 2018 03:15:14 +0800
+Subject: Re: [PATCH] mm: Reuse only-pte-mapped KSM page in do_wp_page()
+To:     Kirill Tkhai <ktkhai@virtuozzo.com>, akpm@linux-foundation.org,
+        kirill@shutemov.name, hughd@google.com, aarcange@redhat.com
+Cc:     christian.koenig@amd.com, imbrenda@linux.vnet.ibm.com,
+        riel@surriel.com, ying.huang@intel.com, minchan@kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+References: <154471491016.31352.1168978849911555609.stgit@localhost.localdomain>
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <5d5bfbd2-8411-e707-1628-18bde66a6793@linux.alibaba.com>
+Date:   Thu, 13 Dec 2018 11:15:04 -0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
 MIME-Version: 1.0
-References: <7586985.G9YL5ver76@aspire.rjw.lan> <20181213185304.GB18107@kroah.com>
-In-Reply-To: <20181213185304.GB18107@kroah.com>
-From:   Daniel Vetter <daniel.vetter@ffwll.ch>
-Date:   Thu, 13 Dec 2018 20:06:28 +0100
-Message-ID: <CAKMK7uFFpqFy8tksvMxW2X6_gT-Se8Y9Jbtcxun99e4vRSdgQA@mail.gmail.com>
-Subject: Re: [PATCH] driver core: Add missing dev->bus->need_parent_lock checks
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>, liumartin@google.com,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <154471491016.31352.1168978849911555609.stgit@localhost.localdomain>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 13, 2018 at 7:53 PM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
+
+
+On 12/13/18 7:29 AM, Kirill Tkhai wrote:
+> This patch adds an optimization for KSM pages almost
+> in the same way, that we have for ordinary anonymous
+> pages. If there is a write fault in a page, which is
+> mapped to an only pte, and it is not related to swap
+> cache; the page may be reused without copying its
+> content.
 >
-> On Thu, Dec 13, 2018 at 07:27:47PM +0100, Rafael J. Wysocki wrote:
-> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >
-> > __device_release_driver() has to check dev->bus->need_parent_lock
-> > before dropping the parent lock and acquiring it again as it may
-> > attempt to drop a lock that hasn't been acquired or lock a device
-> > that shouldn't be locked and create a lock imbalance.
-> >
-> > Fixes: 8c97a46af04b (driver core: hold dev's parent lock when needed)
-> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > ---
-> >
-> > This should go into -stable for everything over 4.18 methinks.
+> [Note, that we do not consider PageSwapCache() pages
+>   at least for now, since we don't want to complicate
+>   __get_ksm_page(), which has nice optimization based
+>   on this (for the migration case). Currenly it is
+>   spinning on PageSwapCache() pages, waiting for when
+>   they have unfreezed counters (i.e., for the migration
+>   finish). But we don't want to make it also spinning
+>   on swap cache pages, which we try to reuse, since
+>   there is not a very high probability to reuse them.
+>   So, for now we do not consider PageSwapCache() pages
+>   at all.]
 >
-> Does this fix Daniel's lockdep splat?
-
-Nah, separate issue. Afaiui bus->need_parent_lock is only set for usb,
-I'm unbinding pci devices. I guess the combination of someone
-unbinding an usb device through sysfs which also has some device links
-attached doesn't happen.
-
-Since I've dug around in this, for this patch here from Rafael:
-
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-
-Cheers, Daniel
-
+> So, in reuse_ksm_page() we check for 1)PageSwapCache()
+> and 2)page_stable_node(), to skip a page, which KSM
+> is currently trying to link to stable tree. Then we
+> do page_ref_freeze() to prohibit KSM to merge one more
+> page into the page, we are reusing. After that, nobody
+> can refer to the reusing page: KSM skips !PageSwapCache()
+> pages with zero refcount; and the protection against
+> of all other participants is the same as for reused
+> ordinary anon pages pte lock, page lock and mmap_sem.
 >
-> thanks,
+> Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+> ---
+>   include/linux/ksm.h |    7 +++++++
+>   mm/ksm.c            |   25 +++++++++++++++++++++++--
+>   mm/memory.c         |   16 ++++++++++++++--
+>   3 files changed, 44 insertions(+), 4 deletions(-)
 >
-> greg k-h
+> diff --git a/include/linux/ksm.h b/include/linux/ksm.h
+> index 161e8164abcf..e48b1e453ff5 100644
+> --- a/include/linux/ksm.h
+> +++ b/include/linux/ksm.h
+> @@ -53,6 +53,8 @@ struct page *ksm_might_need_to_copy(struct page *page,
+>   
+>   void rmap_walk_ksm(struct page *page, struct rmap_walk_control *rwc);
+>   void ksm_migrate_page(struct page *newpage, struct page *oldpage);
+> +bool reuse_ksm_page(struct page *page,
+> +			struct vm_area_struct *vma, unsigned long address);
+>   
+>   #else  /* !CONFIG_KSM */
+>   
+> @@ -86,6 +88,11 @@ static inline void rmap_walk_ksm(struct page *page,
+>   static inline void ksm_migrate_page(struct page *newpage, struct page *oldpage)
+>   {
+>   }
+> +static inline bool reuse_ksm_page(struct page *page,
+> +			struct vm_area_struct *vma, unsigned long address)
+> +{
+> +	return false;
+> +}
+>   #endif /* CONFIG_MMU */
+>   #endif /* !CONFIG_KSM */
+>   
+> diff --git a/mm/ksm.c b/mm/ksm.c
+> index 383f961e577a..fbd14264d784 100644
+> --- a/mm/ksm.c
+> +++ b/mm/ksm.c
+> @@ -707,8 +707,9 @@ static struct page *__get_ksm_page(struct stable_node *stable_node,
+>   	 * case this node is no longer referenced, and should be freed;
+>   	 * however, it might mean that the page is under page_ref_freeze().
+>   	 * The __remove_mapping() case is easy, again the node is now stale;
+> -	 * but if page is swapcache in migrate_page_move_mapping(), it might
+> -	 * still be our page, in which case it's essential to keep the node.
+> +	 * the same is in reuse_ksm_page() case; but if page is swapcache
+> +	 * in migrate_page_move_mapping(), it might still be our page,
+> +	 * in which case it's essential to keep the node.
+>   	 */
+>   	while (!get_page_unless_zero(page)) {
+>   		/*
+> @@ -2666,6 +2667,26 @@ void rmap_walk_ksm(struct page *page, struct rmap_walk_control *rwc)
+>   		goto again;
+>   }
+>   
+> +bool reuse_ksm_page(struct page *page,
+> +		    struct vm_area_struct *vma,
+> +		    unsigned long address)
+> +{
+> +	VM_BUG_ON_PAGE(is_zero_pfn(page_to_pfn(page)), page);
+> +	VM_BUG_ON_PAGE(!page_mapped(page), page);
+> +	VM_BUG_ON_PAGE(!PageLocked(page), page);
+> +
+> +	if (PageSwapCache(page) || !page_stable_node(page))
+> +		return false;
+> +	/* Prohibit parallel get_ksm_page() */
+> +	if (!page_ref_freeze(page, 1))
+> +		return false;
+> +
+> +	page_move_anon_rmap(page, vma);
+
+Once the mapping is changed, it is not KSM mapping anymore. It looks 
+later get_ksm_page() would always fail on this page. Is this expected?
+
+Thanks,
+Yang
 
 
+> +	page->index = linear_page_index(vma, address);
+> +	page_ref_unfreeze(page, 1);
+> +
+> +	return true;
+> +}
+>   #ifdef CONFIG_MIGRATION
+>   void ksm_migrate_page(struct page *newpage, struct page *oldpage)
+>   {
+> diff --git a/mm/memory.c b/mm/memory.c
+> index 532061217e03..5817527f1877 100644
+> --- a/mm/memory.c
+> +++ b/mm/memory.c
+> @@ -2509,8 +2509,11 @@ static vm_fault_t do_wp_page(struct vm_fault *vmf)
+>   	 * Take out anonymous pages first, anonymous shared vmas are
+>   	 * not dirty accountable.
+>   	 */
+> -	if (PageAnon(vmf->page) && !PageKsm(vmf->page)) {
+> +	if (PageAnon(vmf->page)) {
+>   		int total_map_swapcount;
+> +		if (PageKsm(vmf->page) && (PageSwapCache(vmf->page) ||
+> +					   page_count(vmf->page) != 1))
+> +			goto copy;
+>   		if (!trylock_page(vmf->page)) {
+>   			get_page(vmf->page);
+>   			pte_unmap_unlock(vmf->pte, vmf->ptl);
+> @@ -2525,6 +2528,15 @@ static vm_fault_t do_wp_page(struct vm_fault *vmf)
+>   			}
+>   			put_page(vmf->page);
+>   		}
+> +		if (PageKsm(vmf->page)) {
+> +			bool reused = reuse_ksm_page(vmf->page, vmf->vma,
+> +						     vmf->address);
+> +			unlock_page(vmf->page);
+> +			if (!reused)
+> +				goto copy;
+> +			wp_page_reuse(vmf);
+> +			return VM_FAULT_WRITE;
+> +		}
+>   		if (reuse_swap_page(vmf->page, &total_map_swapcount)) {
+>   			if (total_map_swapcount == 1) {
+>   				/*
+> @@ -2545,7 +2557,7 @@ static vm_fault_t do_wp_page(struct vm_fault *vmf)
+>   					(VM_WRITE|VM_SHARED))) {
+>   		return wp_page_shared(vmf);
+>   	}
+> -
+> +copy:
+>   	/*
+>   	 * Ok, we need to copy. Oh, well..
+>   	 */
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
