@@ -7,68 +7,50 @@ X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C136C67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:33:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07785C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:34:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11B9E20879
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:33:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B532A20672
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:34:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544675639;
-	bh=NT41W/fl9LiqvsXnR+3j1VNE+w6nNpGax3NrpCTJxzI=;
+	s=default; t=1544675642;
+	bh=zO3u641QPifStiTZcCVvVMD/q/BIwZgstAI2hTjKiaU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=aDgpuIOpWcxR7SmqtOe6odLnnXrQKLwiNeFTyXLpvSkJdwGkUjbe8qB4ssDFcZbkA
-	 vj+ZrY83ulRI+aXT5b3ySRD9mAx5u7rNWwop98cKmHbNUww6OiJwrSScgyhrD/SteO
-	 6sYZM1Mpy8YML3/fldq2W5kmNTS0jZ8hUSuUeGCc=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11B9E20879
+	b=uLkItZy8gV2i8kFSpbJPB508lq1ahyr+1M70qhpQ7vTrmNC3sJzy0+WzGUeQtrjDY
+	 NGUavCuXJdig8/hKkblA9+fH+1hGcOvAxaXfKLLbHhGmauppF0MNC2/rEz70NbQZ/L
+	 1K9+hSDIIbmenOCz08EmbEosgzmM+emna7nXDMb8=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B532A20672
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728943AbeLMEd5 (ORCPT
+        id S1729482AbeLMEeB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 23:33:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46878 "EHLO mail.kernel.org"
+        Wed, 12 Dec 2018 23:34:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47026 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728374AbeLMEdu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 23:33:50 -0500
+        id S1729456AbeLMEdx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 23:33:53 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D1F7620880;
-        Thu, 13 Dec 2018 04:33:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0363B20873;
+        Thu, 13 Dec 2018 04:33:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544675629;
-        bh=NT41W/fl9LiqvsXnR+3j1VNE+w6nNpGax3NrpCTJxzI=;
+        s=default; t=1544675632;
+        bh=zO3u641QPifStiTZcCVvVMD/q/BIwZgstAI2hTjKiaU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2P6CgTPBqUDFNl31CUtR+ARKH82rQ2fAyQajnF4vSKTvWkTqD5NnOBDIZOVUxnnlU
-         5gS/V2xq0Evm4UrD5KjF7H6wJLmSl5kXzMMz4yRY38AJklbgCaXGon7EHUHtemmegz
-         Z72wDr+9X5/6kyJa+9Cwy0mkzgNCeErmmtxrM/as=
+        b=ynBxtGl2tjXxua1bpOGa++VMys42g4Axb3psd1tpkU4mKnKr8Pbp6qx9JDz8OiAsv
+         CWch1HW/BA9NVtLJvs5fbv6+ivyT9R2ywaALNK+xWhDcvkr11KsLZ8utLSCU+AKz45
+         WR9t94Uk1BCURgXRF/TyKHWivXprX5sBWYFnb3Ug=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     YiFei Zhu <zhuyifei1999@gmail.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arend van Spriel <arend.vanspriel@broadcom.com>,
-        Bhupesh Sharma <bhsharma@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Eric Snowberg <eric.snowberg@oracle.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Joe Perches <joe@perches.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Julien Thierry <julien.thierry@arm.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
-        Sedat Dilek <sedat.dilek@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 3.18 03/16] x86/earlyprintk/efi: Fix infinite loop on some screen widths
-Date:   Wed, 12 Dec 2018 23:33:30 -0500
-Message-Id: <20181213043343.76896-3-sashal@kernel.org>
+Cc:     Chuck Lever <chuck.lever@oracle.com>, stable@kernel.org,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Sasha Levin <sashal@kernel.org>, linux-nfs@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 3.18 05/16] SUNRPC: Fix leak of krb5p encode pages
+Date:   Wed, 12 Dec 2018 23:33:32 -0500
+Message-Id: <20181213043343.76896-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181213043343.76896-1-sashal@kernel.org>
 References: <20181213043343.76896-1-sashal@kernel.org>
@@ -80,63 +62,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YiFei Zhu <zhuyifei1999@gmail.com>
+From: Chuck Lever <chuck.lever@oracle.com>
 
-[ Upstream commit 79c2206d369b87b19ac29cb47601059b6bf5c291 ]
+[ Upstream commit 8dae5398ab1ac107b1517e8195ed043d5f422bd0 ]
 
-An affected screen resolution is 1366 x 768, which width is not
-divisible by 8, the default font width. On such screens, when longer
-lines are earlyprintk'ed, overflow-to-next-line can never trigger,
-due to the left-most x-coordinate of the next character always less
-than the screen width. Earlyprintk will infinite loop in trying to
-print the rest of the string but unable to, due to the line being
-full.
+call_encode can be invoked more than once per RPC call. Ensure that
+each call to gss_wrap_req_priv does not overwrite pointers to
+previously allocated memory.
 
-This patch makes the trigger consider the right-most x-coordinate,
-instead of left-most, as the value to compare against the screen
-width threshold.
-
-Signed-off-by: YiFei Zhu <zhuyifei1999@gmail.com>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Arend van Spriel <arend.vanspriel@broadcom.com>
-Cc: Bhupesh Sharma <bhsharma@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Eric Snowberg <eric.snowberg@oracle.com>
-Cc: Hans de Goede <hdegoede@redhat.com>
-Cc: Joe Perches <joe@perches.com>
-Cc: Jon Hunter <jonathanh@nvidia.com>
-Cc: Julien Thierry <julien.thierry@arm.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Matt Fleming <matt@codeblueprint.co.uk>
-Cc: Nathan Chancellor <natechancellor@gmail.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-Cc: Sedat Dilek <sedat.dilek@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-efi@vger.kernel.org
-Link: http://lkml.kernel.org/r/20181129171230.18699-12-ard.biesheuvel@linaro.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
+Cc: stable@kernel.org
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/platform/efi/early_printk.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/sunrpc/auth_gss/auth_gss.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/arch/x86/platform/efi/early_printk.c b/arch/x86/platform/efi/early_printk.c
-index 524142117296..82324fc25d5e 100644
---- a/arch/x86/platform/efi/early_printk.c
-+++ b/arch/x86/platform/efi/early_printk.c
-@@ -179,7 +179,7 @@ early_efi_write(struct console *con, const char *str, unsigned int num)
- 			num--;
- 		}
+diff --git a/net/sunrpc/auth_gss/auth_gss.c b/net/sunrpc/auth_gss/auth_gss.c
+index 81e29f02d28e..7a0e287be77f 100644
+--- a/net/sunrpc/auth_gss/auth_gss.c
++++ b/net/sunrpc/auth_gss/auth_gss.c
+@@ -1721,6 +1721,7 @@ priv_release_snd_buf(struct rpc_rqst *rqstp)
+ 	for (i=0; i < rqstp->rq_enc_pages_num; i++)
+ 		__free_page(rqstp->rq_enc_pages[i]);
+ 	kfree(rqstp->rq_enc_pages);
++	rqstp->rq_release_snd_buf = NULL;
+ }
  
--		if (efi_x >= si->lfb_width) {
-+		if (efi_x + font->width > si->lfb_width) {
- 			efi_x = 0;
- 			efi_y += font->height;
- 		}
+ static int
+@@ -1729,6 +1730,9 @@ alloc_enc_pages(struct rpc_rqst *rqstp)
+ 	struct xdr_buf *snd_buf = &rqstp->rq_snd_buf;
+ 	int first, last, i;
+ 
++	if (rqstp->rq_release_snd_buf)
++		rqstp->rq_release_snd_buf(rqstp);
++
+ 	if (snd_buf->page_len == 0) {
+ 		rqstp->rq_enc_pages_num = 0;
+ 		return 0;
 -- 
 2.19.1
 
