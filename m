@@ -7,49 +7,50 @@ X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1097DC67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:40:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 883FFC67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:40:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C80F020870
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:40:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 440AC20849
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:40:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544676038;
-	bh=hTrYjJPrSdk6WB6hkDDLQKMe8wBaQGj9XqcIzRiC38M=;
+	s=default; t=1544676047;
+	bh=OQ4KDll6AVAiZX361qnS6dKsIvaMeFosM4YBMe/EC8s=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ErX/+UskNZ1Xr9fZQ4GC34gq+WkAlapG5UIR0aqx6L6j5tdCxfFwivhCcb4+bmjci
-	 ToqgbufclzAxF29UihbZMuZ8RKm28WUuNpM76jPPUfmT0LSCWe04hmHxE8Zw3MeBU6
-	 KDiBnJ/BwYP3E1DUdWRr8/xTpzaRfgZNj1r8XCvM=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C80F020870
+	b=0k7tS29dMKRwft5nVOMwU3XZ4jircKA+fWVqwjYyAjZyg634POt2zvRIXKB4ecjqO
+	 oGYkm7fP0LRCHcCO32m1jcy91VrQvMwRQHL8jRwyCc6pbPFQOju+Is/ADlRj7VhM95
+	 nL2dZmrIM7t5vHxG7X35NaJOOShawu1jMZ2S/lb4=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 440AC20849
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729221AbeLMEkh (ORCPT
+        id S1729234AbeLMEkq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 23:40:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45266 "EHLO mail.kernel.org"
+        Wed, 12 Dec 2018 23:40:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45192 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728280AbeLMEcU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 23:32:20 -0500
+        id S1729026AbeLMEcQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 23:32:16 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3A4E7208E7;
-        Thu, 13 Dec 2018 04:32:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4FF0C20873;
+        Thu, 13 Dec 2018 04:32:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544675539;
-        bh=hTrYjJPrSdk6WB6hkDDLQKMe8wBaQGj9XqcIzRiC38M=;
+        s=default; t=1544675536;
+        bh=OQ4KDll6AVAiZX361qnS6dKsIvaMeFosM4YBMe/EC8s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=t2522h74g134j/m/hWG6NhAdg2VVa4AZJT2BuyzMlmqEhfm7RMxaM6SBcqMz0QBM8
-         j3T54nRp1BHP8aNzRZcDnELMm+LBK4kbDQAajbh8kj3kcnB7JlqOHqAdUHtXtrp6hs
-         DIZ32b0fNgkxLMhht2qafwKeffwcqVr1oMnKcQFA=
+        b=zRhT/6OHqLln9cw6FrPT9vIEoz745sO3PZMnfThfYKfyiakFIKq9TD7fRkTVbe4ZE
+         H9cdSnleK26Zd1+2hOeHj4QT5DVtgNryJ2AHk3Ml0cCkbDZOoS6ZC491jilJKL3gI5
+         J7bygOLOlVc6o+KaVqd2lB7PMuiIvMK9T9ZifgkE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Yangtao Li <tiny.windzz@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, sparclinux@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 11/34] sbus: char: add of_node_put()
-Date:   Wed, 12 Dec 2018 23:31:37 -0500
-Message-Id: <20181213043200.76295-11-sashal@kernel.org>
+Cc:     Chuck Lever <chuck.lever@oracle.com>, stable@kernel.org,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Sasha Levin <sashal@kernel.org>, linux-nfs@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 09/34] SUNRPC: Fix leak of krb5p encode pages
+Date:   Wed, 12 Dec 2018 23:31:35 -0500
+Message-Id: <20181213043200.76295-9-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181213043200.76295-1-sashal@kernel.org>
 References: <20181213043200.76295-1-sashal@kernel.org>
@@ -61,31 +62,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yangtao Li <tiny.windzz@gmail.com>
+From: Chuck Lever <chuck.lever@oracle.com>
 
-[ Upstream commit 87d81a23e24f24ebe014891e8bdf3ff8785031e8 ]
+[ Upstream commit 8dae5398ab1ac107b1517e8195ed043d5f422bd0 ]
 
-use of_node_put() to release the refcount.
+call_encode can be invoked more than once per RPC call. Ensure that
+each call to gss_wrap_req_priv does not overwrite pointers to
+previously allocated memory.
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
+Cc: stable@kernel.org
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/sbus/char/display7seg.c | 1 +
- 1 file changed, 1 insertion(+)
+ net/sunrpc/auth_gss/auth_gss.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/sbus/char/display7seg.c b/drivers/sbus/char/display7seg.c
-index 33fbe8249fd5..044cffbc45e8 100644
---- a/drivers/sbus/char/display7seg.c
-+++ b/drivers/sbus/char/display7seg.c
-@@ -221,6 +221,7 @@ static int d7s_probe(struct platform_device *op)
- 	dev_set_drvdata(&op->dev, p);
- 	d7s_device = p;
- 	err = 0;
-+	of_node_put(opts);
+diff --git a/net/sunrpc/auth_gss/auth_gss.c b/net/sunrpc/auth_gss/auth_gss.c
+index 16cea00c959b..591d378d1a18 100644
+--- a/net/sunrpc/auth_gss/auth_gss.c
++++ b/net/sunrpc/auth_gss/auth_gss.c
+@@ -1736,6 +1736,7 @@ priv_release_snd_buf(struct rpc_rqst *rqstp)
+ 	for (i=0; i < rqstp->rq_enc_pages_num; i++)
+ 		__free_page(rqstp->rq_enc_pages[i]);
+ 	kfree(rqstp->rq_enc_pages);
++	rqstp->rq_release_snd_buf = NULL;
+ }
  
- out:
- 	return err;
+ static int
+@@ -1744,6 +1745,9 @@ alloc_enc_pages(struct rpc_rqst *rqstp)
+ 	struct xdr_buf *snd_buf = &rqstp->rq_snd_buf;
+ 	int first, last, i;
+ 
++	if (rqstp->rq_release_snd_buf)
++		rqstp->rq_release_snd_buf(rqstp);
++
+ 	if (snd_buf->page_len == 0) {
+ 		rqstp->rq_enc_pages_num = 0;
+ 		return 0;
 -- 
 2.19.1
 
