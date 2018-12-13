@@ -4,54 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC68AC65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:41:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68A6FC65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:41:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B34D720870
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:41:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E42520870
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:41:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544676088;
-	bh=HZl83tmxNxlg/Mzwg3FeqQD3CaICDb7II0A65fXiZ88=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=jh9Q+msm+XyD+rxsRl1rUONGmBOFhTVCmTrKtB1FROwgjMRYgc+1LwTIQPsf2L3pM
-	 Sajntin9ZIHM69qzSLWE6JJ9OcohcywSXQZf8F6olCwursATMBKkwjMdauRYmYBcWX
-	 lp3G6elsP7McyVvhF75At0XVpta+XLu3qIhOR6hg=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B34D720870
+	s=default; t=1544676098;
+	bh=VXKa1Xfu3bHDv/YOFsZQ7/rIi4ygf+QGdPVvadxtX88=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=VSRvBbp1TshVDAcCtpgQp7/uqcqrFYuLvoL9OJTvd1ieHVUSlO/04WoawdVZIpvo0
+	 4nDegI8aQPDtT29q+xHqqku7rqau2DdD0988mbiRPNkyiH9sqH0Tg0kOcHcOqO+t4I
+	 h/I5TGiiQoCThMkVH6rCE+kArG12bKSDNnhGg9RI=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E42520870
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729085AbeLMEl1 (ORCPT
+        id S1729137AbeLMElh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 23:41:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44992 "EHLO mail.kernel.org"
+        Wed, 12 Dec 2018 23:41:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44968 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728973AbeLMEcF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 23:32:05 -0500
+        id S1728962AbeLMEcC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 23:32:02 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BA36920880;
-        Thu, 13 Dec 2018 04:32:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7C10420879;
+        Thu, 13 Dec 2018 04:32:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544675524;
-        bh=HZl83tmxNxlg/Mzwg3FeqQD3CaICDb7II0A65fXiZ88=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MIy1sthManzc/yoLYzzfQGeoOOZtKNZl8+UItVXk7PnSfhRfcAu2/edYUE0euX8qj
-         EDJkRp5v1Sb3VpjWyvyHUEIZp6vHYST70vUG64XgqKtnD3lSPwKW9Zv7NzpNVuCce8
-         GxOK7b+vrPN0cqxTqqM4dU0d6JfWxFnm2mQ+Wzo8=
+        s=default; t=1544675522;
+        bh=VXKa1Xfu3bHDv/YOFsZQ7/rIi4ygf+QGdPVvadxtX88=;
+        h=From:To:Cc:Subject:Date:From;
+        b=uOlh1nklbz4laW/128G6xWaYiYhxBsv90GnSfqcOWuxNn8PiO3zUt8ce7QcCsumpP
+         xPHw10Jllz2XeRNahPRJMi3WT8q/VctuDTe/ZprY8gXMZR2mEOEKmF3BldgQtdZZ/z
+         C4utiSXnXntXHu+Gozshkb3ccdSIXhbkwcuV4KyY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Cathy Avery <cavery@redhat.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 03/34] scsi: vmw_pscsi: Rearrange code to avoid multiple calls to free_irq during unload
-Date:   Wed, 12 Dec 2018 23:31:29 -0500
-Message-Id: <20181213043200.76295-3-sashal@kernel.org>
+Cc:     Alexey Khoroshilov <khoroshilov@ispras.ru>,
+        Johannes Berg <johannes.berg@intel.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 01/34] mac80211_hwsim: fix module init error paths for netlink
+Date:   Wed, 12 Dec 2018 23:31:27 -0500
+Message-Id: <20181213043200.76295-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181213043200.76295-1-sashal@kernel.org>
-References: <20181213043200.76295-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -60,54 +60,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Cathy Avery <cavery@redhat.com>
+From: Alexey Khoroshilov <khoroshilov@ispras.ru>
 
-[ Upstream commit 02f425f811cefcc4d325d7a72272651e622dc97e ]
+[ Upstream commit 05cc09de4c017663a217630682041066f2f9a5cd ]
 
-Currently pvscsi_remove calls free_irq more than once as
-pvscsi_release_resources and __pvscsi_shutdown both call
-pvscsi_shutdown_intr. This results in a 'Trying to free already-free IRQ'
-warning and stack trace. To solve the problem pvscsi_shutdown_intr has been
-moved out of pvscsi_release_resources.
+There is no unregister netlink notifier and family on error paths
+in init_mac80211_hwsim(). Also there is an error path where
+hwsim_class is not destroyed.
 
-Signed-off-by: Cathy Avery <cavery@redhat.com>
-Reviewed-by: Ewan D. Milne <emilne@redhat.com>
-Reviewed-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Found by Linux Driver Verification project (linuxtesting.org).
+
+Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+Fixes: 62759361eb49 ("mac80211-hwsim: Provide multicast event for HWSIM_CMD_NEW_RADIO")
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/vmw_pvscsi.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/wireless/mac80211_hwsim.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/scsi/vmw_pvscsi.c b/drivers/scsi/vmw_pvscsi.c
-index 874e9f085326..fcfbe2dcd025 100644
---- a/drivers/scsi/vmw_pvscsi.c
-+++ b/drivers/scsi/vmw_pvscsi.c
-@@ -1233,8 +1233,6 @@ static void pvscsi_shutdown_intr(struct pvscsi_adapter *adapter)
+diff --git a/drivers/net/wireless/mac80211_hwsim.c b/drivers/net/wireless/mac80211_hwsim.c
+index cbb3e902e347..c591c7c1d33a 100644
+--- a/drivers/net/wireless/mac80211_hwsim.c
++++ b/drivers/net/wireless/mac80211_hwsim.c
+@@ -3403,16 +3403,16 @@ static int __init init_mac80211_hwsim(void)
+ 	if (err)
+ 		goto out_unregister_pernet;
  
- static void pvscsi_release_resources(struct pvscsi_adapter *adapter)
- {
--	pvscsi_shutdown_intr(adapter);
++	err = hwsim_init_netlink();
++	if (err)
++		goto out_unregister_driver;
++
+ 	hwsim_class = class_create(THIS_MODULE, "mac80211_hwsim");
+ 	if (IS_ERR(hwsim_class)) {
+ 		err = PTR_ERR(hwsim_class);
+-		goto out_unregister_driver;
++		goto out_exit_netlink;
+ 	}
+ 
+-	err = hwsim_init_netlink();
+-	if (err < 0)
+-		goto out_unregister_driver;
 -
- 	if (adapter->workqueue)
- 		destroy_workqueue(adapter->workqueue);
+ 	for (i = 0; i < radios; i++) {
+ 		struct hwsim_new_radio_params param = { 0 };
  
-@@ -1563,6 +1561,7 @@ static int pvscsi_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- out_reset_adapter:
- 	ll_adapter_reset(adapter);
- out_release_resources:
-+	pvscsi_shutdown_intr(adapter);
- 	pvscsi_release_resources(adapter);
- 	scsi_host_put(host);
- out_disable_device:
-@@ -1571,6 +1570,7 @@ static int pvscsi_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 	return error;
- 
- out_release_resources_and_disable:
-+	pvscsi_shutdown_intr(adapter);
- 	pvscsi_release_resources(adapter);
- 	goto out_disable_device;
- }
+@@ -3518,6 +3518,8 @@ static int __init init_mac80211_hwsim(void)
+ 	free_netdev(hwsim_mon);
+ out_free_radios:
+ 	mac80211_hwsim_free();
++out_exit_netlink:
++	hwsim_exit_netlink();
+ out_unregister_driver:
+ 	platform_driver_unregister(&mac80211_hwsim_driver);
+ out_unregister_pernet:
 -- 
 2.19.1
 
