@@ -2,117 +2,125 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 785A2C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:17:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA862C67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:17:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3427A20880
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:17:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=virtuozzo.com header.i=@virtuozzo.com header.b="QbP2x2qh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3427A20880
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=virtuozzo.com
+	by mail.kernel.org (Postfix) with ESMTP id 90F7C20870
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:17:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90F7C20870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729008AbeLMMRi (ORCPT
+        id S1729028AbeLMMRi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Thu, 13 Dec 2018 07:17:38 -0500
-Received: from mail-bgr052101130037.outbound.protection.outlook.com ([52.101.130.37]:6308
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728860AbeLMMRh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 07:17:37 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=virtuozzo.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=K3vMSgYp2qfTuw9XDhtrN+dRcIW8HaruF1dKNNyWjz4=;
- b=QbP2x2qhr+NYDZNfQG/65JvGqaeF7tnh5Ya0YLcom6TRn6WrPTmeME4GVhH8OLxid0CzbJfT3zS49bxk1CV326qCLSBFGHRytVnnj6L2bFof9j+CLGGSIlaLoKnD1tCD/KqSCSz0B5w9ceNZxbDh4ntqus/gg0k6tvZCMajphXs=
-Received: from DB8PR08MB4092.eurprd08.prod.outlook.com (20.179.10.210) by
- DB8PR08MB4012.eurprd08.prod.outlook.com (20.179.9.205) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1404.22; Thu, 13 Dec 2018 12:17:26 +0000
-Received: from DB8PR08MB4092.eurprd08.prod.outlook.com
- ([fe80::d0e0:ff54:c6fe:1407]) by DB8PR08MB4092.eurprd08.prod.outlook.com
- ([fe80::d0e0:ff54:c6fe:1407%3]) with mapi id 15.20.1425.016; Thu, 13 Dec 2018
- 12:17:26 +0000
-From:   Roman Kagan <rkagan@virtuozzo.com>
-To:     Vitaly Kuznetsov <vkuznets@redhat.com>
-CC:     "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?iso-8859-2?Q?Radim_Kr=E8m=E1=F8?= <rkrcmar@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/2] x86/hyper-v: Stop caring about EOI for direct
- stimers
-Thread-Topic: [PATCH v2 1/2] x86/hyper-v: Stop caring about EOI for direct
- stimers
-Thread-Index: AQHUkjrHjHKyrPOUG0Sh6Y24a/reJKV8lyWA
-Date:   Thu, 13 Dec 2018 12:17:26 +0000
-Message-ID: <20181213121722.GA2474@rkaganb.sw.ru>
-References: <20181212165017.13278-1-vkuznets@redhat.com>
- <20181212165017.13278-2-vkuznets@redhat.com>
-In-Reply-To: <20181212165017.13278-2-vkuznets@redhat.com>
-Accept-Language: en-US, ru-RU
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mutt/1.10.1 (2018-07-13)
-mail-followup-to: =?iso-8859-2?Q?Roman_Kagan_<rkagan@virtuozzo.com>,=09Vitaly_Kuznetsov_<vk?=
- =?iso-8859-2?Q?uznets@redhat.com>,_kvm@vger.kernel.org,=09Paolo_Bonzini_<?=
- =?iso-8859-2?Q?pbonzini@redhat.com>,=09Radim_Kr=E8m=E1=F8_<rkrcmar@redhat?=
- =?iso-8859-2?Q?.com>,=09linux-kernel@vger.kernel.org?=
-x-originating-ip: [185.231.240.5]
-x-clientproxiedby: HE1P18901CA0012.EURP189.PROD.OUTLOOK.COM
- (2603:10a6:3:8b::22) To DB8PR08MB4092.eurprd08.prod.outlook.com
- (2603:10a6:10:ab::18)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=rkagan@virtuozzo.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DB8PR08MB4012;7:MQwtfGhssLt1cg6hhqkILD8vVE9StbmhvQjLvUrKf/Fx3PRPXVm7fukXyfUj5oBCz4JdM70tHHA72RWZLEtbb8ZNuOW980OF+Dg7LjC9D92emNLGJAZ2dddgeiB7uiMOpgYYru4dtanECy37qwHJqw==;20:emgIz/VXbQENYuWiwwN2+PCrfoojNoHUa5R7P2fd7epD15gbzvu8lAWuGHXS7pFQ4c414UmBF5mMNNHA/zTV228KCHD9Gn5qeLFv5f/Fbo2So+/Sc2c+CrnfSFMWxCdb5obtnOIzOH/R12EeeursrQjJYadog9dYcB08LSalTWk=
-x-ms-office365-filtering-correlation-id: 36ddad59-e7d2-4eb8-a34e-08d660f4f1a1
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:DB8PR08MB4012;
-x-ms-traffictypediagnostic: DB8PR08MB4012:|DB8PR08MB4012:
-x-microsoft-antispam-prvs: <DB8PR08MB40129E31063EC236C78D0DB6C9A00@DB8PR08MB4012.eurprd08.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(3230021)(999002)(6040522)(2401047)(5005006)(8121501046)(3231475)(944501520)(52105112)(10201501046)(93006095)(93001095)(3002001)(148016)(149066)(150057)(6041310)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:DB8PR08MB4012;BCL:0;PCL:0;RULEID:;SRVR:DB8PR08MB4012;
-x-forefront-prvs: 088552DE73
-x-forefront-antispam-report: SFV:SPM;SFS:(10019020)(136003)(396003)(39850400004)(366004)(376002)(346002)(189003)(199004)(71200400001)(68736007)(58126008)(186003)(386003)(86362001)(102836004)(4326008)(71190400001)(33896004)(6506007)(26005)(105586002)(2906002)(54906003)(316002)(53936002)(97736004)(6116002)(6512007)(9686003)(1076002)(14454004)(6246003)(106356001)(36756003)(8676002)(5660300001)(478600001)(8936002)(81156014)(14444005)(6436002)(3846002)(81166006)(229853002)(256004)(7736002)(25786009)(99286004)(33656002)(6486002)(52116002)(446003)(66066001)(11346002)(476003)(486006)(6916009)(76176011)(305945005)(30126002);DIR:OUT;SFP:1501;SCL:5;SRVR:DB8PR08MB4012;H:DB8PR08MB4092.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: virtuozzo.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: yuTK6m6oAefHNDYqB6/SLjnCYZSEqtYi4dFgJz5Gk78MYRHWORNOUucn5jVtCXJCZhNws3SYCjMmV3rzA/FUnMgpQN6wps6hwIAXrhzNpLAaV9nbIJPCLYBHXtqyOgynd5TrOQRnaHS/JHXs7iBJZuHc7SPaQsQ6c7Uztwikq2wWw39D+i82TS/UNU/gGIgcjiCrHPGqS2FDiF/nwp2lclqrBuwkl9CurVRIbBBGQIC+loZydKjwUL3hdZHtxg/W3xhNr1rPEgKQSIefW2a6CNU3VmZ85GLE7wkT6mIHmtkicGzWK79F0EyNH0v0U2oNlcZgSEBa3EXNjBtInduyQQ8W7itpPBjuuwF/8WDURNGBjVxDBTjo4xrwTIFmJiDqbR08ZQ98EAxZqu5qYWKGDB1m7RYi9yVWJwMUbcdDivaz2Jex0C4bD3VPBLYf2EO4XLPODZgqNLw0FYPEtNnGdcVzz4F6tnQtqddBXW+ZAwq4KOfcvZX9exG1CmTmmCR/
-spamdiagnosticoutput: 1:22
-Content-Type: text/plain; charset="iso-8859-2"
-Content-ID: <FC58DB73E47BEF4D9E8B33E90E27BD71@eurprd08.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+Received: from pegase1.c-s.fr ([93.17.236.30]:18812 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728865AbeLMMRi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 07:17:38 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 43Ft3h0zlGz9v0cQ;
+        Thu, 13 Dec 2018 13:17:36 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id kgbHqzO4B0lF; Thu, 13 Dec 2018 13:17:36 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 43Ft3h0Ny3z9v0ZK;
+        Thu, 13 Dec 2018 13:17:36 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 38FF88B871;
+        Thu, 13 Dec 2018 13:17:37 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id DACdrZTjoSEZ; Thu, 13 Dec 2018 13:17:37 +0100 (CET)
+Received: from po14163vm.idsi0.si.c-s.fr (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id AFDC88B86E;
+        Thu, 13 Dec 2018 13:17:36 +0100 (CET)
+Subject: Re: [PATCH v1 03/13] powerpc/mm/32s: rework mmu_mapin_ram()
+To:     =?UTF-8?Q?Jonathan_Neusch=c3=a4fer?= <j.neuschaefer@gmx.net>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+References: <cover.1543517818.git.christophe.leroy@c-s.fr>
+ <8835330baa77d88e0267b0b1215b78c991e6d17a.1543517818.git.christophe.leroy@c-s.fr>
+ <20181203215558.GK15324@latitude>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Message-ID: <84624899-bbda-9f08-2527-151fddbd1b01@c-s.fr>
+Date:   Thu, 13 Dec 2018 12:16:00 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-X-OriginatorOrg: virtuozzo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 36ddad59-e7d2-4eb8-a34e-08d660f4f1a1
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Dec 2018 12:17:26.3724
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR08MB4012
+In-Reply-To: <20181203215558.GK15324@latitude>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 12, 2018 at 05:50:16PM +0100, Vitaly Kuznetsov wrote:
-> Turns out we over-engineered Direct Mode for stimers a bit: unlike
-> traditional stimers where we may want to try to re-inject the message upo=
-n
-> EOI, Direct Mode stimers just set the irq in APIC and kvm_apic_set_irq()
-> fails only when APIC is disabled (see APIC_DM_FIXED case in
-> __apic_accept_irq()). Remove the redundant part.
->=20
-> Suggested-by: Roman Kagan <rkagan@virtuozzo.com>
-> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-> ---
->  arch/x86/kvm/hyperv.c | 36 +++---------------------------------
->  1 file changed, 3 insertions(+), 33 deletions(-)
+Hi,
 
-Reviewed-by: Roman Kagan <rkagan@virtuozzo.com>
+On 12/03/2018 09:55 PM, Jonathan Neuschäfer wrote:
+> Hi,
+> 
+> On Thu, Nov 29, 2018 at 07:00:16PM +0000, Christophe Leroy wrote:
+>> This patch reworks mmu_mapin_ram() to be more generic and map as much
+>> blocks as possible. It now supports blocks not starting at address 0.
+>>
+>> It scans DBATs array to find free ones instead of forcing the use of
+>> BAT2 and BAT3.
+>>
+>> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+>> ---
+> 
+> I've just tested this series on my Wii, and starting from this patch
+> (03/13), it hangs at the following lines of output:
+> 
+> [    0.000000] printk: bootconsole [udbg0] enabled
+> [    0.000000] Total memory = 319MB; using 1024kB for hash table (at (ptrval))
+> 
+> Before this patch it looks like this and boots to userspace:
+> 
+> [    0.000000] printk: bootconsole [udbg0] enabled
+> [    0.000000] Total memory = 319MB; using 1024kB for hash table (at (ptrval))
+> [    0.000000] Linux version 4.20.0-rc5-wii-00022-gfbb911b84755 (jn@longitude) (gcc version 8.2.0 (Debian 8.2.0-9)) #1337 PREEMPT Mon Dec 3 21:49:02 CET 2018
+> ug_udbg_init: early -> final
+> usbgecko_udbg: ready
+> [    0.000000] Using wii machine description
+
+Can you tell/provide the .config and dts used ?
+
+You seem to have 319MB RAM wherease arch/powerpc/boot/dts/wii.dts only 
+has 88MB Memory:
+
+	memory {
+		device_type = "memory";
+		reg = <0x00000000 0x01800000	/* MEM1 24MB 1T-SRAM */
+		       0x10000000 0x04000000>;	/* MEM2 64MB GDDR3 */
+	};
+
+Christophe
+
+> ...
+> 
+> I've tested at patch 1, 2, 3, 4, and 13, so I don't know if it works
+> somewhere in the middle, but probably not.
+> 
+> (And in case you're wondering about the 22 in the version string: Those
+> are mostly patches that give me a serial console.)
+> 
+> I'm not sure what is going on, because I haven't looked closely at the
+> patches or tried to debug the problem. If you have some debugging tips,
+> I can try them.
+> 
+> 
+> Jonathan Neuschäfer
+> 
