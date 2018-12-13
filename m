@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73851C67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:43:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00DC7C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:43:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B56B20870
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:43:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BC2F420870
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:43:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544676185;
-	bh=LZXqW9sRkLrHNUNkZ73QWxz2lUzzitBkk37nZpIH0vw=;
+	s=default; t=1544676194;
+	bh=1Pjd7n0fUGFHSpwILx3e1IjELNF5v/LyjciW7+Ykz7U=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=uejh7sw6YuBXsYiO9a8Eg/vX3g5wczmwZ8a/UzCEia/vC2Sq1NV+56oD0IrQnn3DT
-	 p6neT0V7/pbCVXsfnLRrH+EwzRCEvrDFpfKA/MycSJLmihKj3Rs0D97P/G5LVhrEdv
-	 VeCwO4UxrmnEKlD6hcvFE48ma4x30tPjppO1BJWU=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B56B20870
+	b=EXio4QuwgeNy8bPOtWVOXG+MuaaHlrPWpM90cKUVDdxFQ2mL6+XXzkwYh1rfx6JTg
+	 7LTCqzkyTgOYP+MZDuVs6/anJJrwjTjjZPZI2tOdfGKP9lztaEDspEgLz9ui6BkSy2
+	 7mnKtIWAuzadK9RDz4IRaQfhxbmw8Lx9CqTr15+s=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC2F420870
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727486AbeLMEnE (ORCPT
+        id S1728804AbeLMEbg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 23:43:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44544 "EHLO mail.kernel.org"
+        Wed, 12 Dec 2018 23:31:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44328 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728816AbeLMEbh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 23:31:37 -0500
+        id S1728767AbeLMEb2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 23:31:28 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4C8AE20879;
-        Thu, 13 Dec 2018 04:31:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 14A8E20873;
+        Thu, 13 Dec 2018 04:31:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544675497;
-        bh=LZXqW9sRkLrHNUNkZ73QWxz2lUzzitBkk37nZpIH0vw=;
+        s=default; t=1544675487;
+        bh=1Pjd7n0fUGFHSpwILx3e1IjELNF5v/LyjciW7+Ykz7U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=s/CZjOVSjZbmowBjSFLomjl7eGp+I5bJGwN+SKjs2uO4wtVL4rLq5eLyxocS5R8wS
-         o9cBknQRbjsIudCUWrJRNKmmO21gvZdybZj71TH642v7FB2+WyF3JRzCNyc7pQVQ3d
-         S/Fj2rMtcD1cw2219neryfTugWIW68fY6y8jAq2g=
+        b=gaKMiXZ3ptDrGCZ/bw/3Is0RU6dyTviX6KnlS8IEdouN+W2cb1vQG8js76s+XOzvp
+         jRZosTP8p5RUXRxBdXxIADjw4ATlS3+JCDyJZQxXDvD3TRHj/ddOjzqaQsVOCAvWrn
+         o66SXwMH/cRUxd8CB5p+Xsot9KgMjlqe7Lzrd8Pw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Anderson Luiz Alves <alacn1@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 26/41] mv88e6060: disable hardware level MAC learning
-Date:   Wed, 12 Dec 2018 23:30:39 -0500
-Message-Id: <20181213043054.75891-26-sashal@kernel.org>
+Cc:     Teika Kazura <teika@gmx.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Sasha Levin <sashal@kernel.org>, linux-input@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 20/41] Input: synaptics - enable SMBus for HP 15-ay000
+Date:   Wed, 12 Dec 2018 23:30:33 -0500
+Message-Id: <20181213043054.75891-20-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181213043054.75891-1-sashal@kernel.org>
 References: <20181213043054.75891-1-sashal@kernel.org>
@@ -61,52 +61,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anderson Luiz Alves <alacn1@gmail.com>
+From: Teika Kazura <teika@gmx.com>
 
-[ Upstream commit a74515604a7b171f2702bdcbd1e231225fb456d0 ]
+[ Upstream commit 5a6dab15f7a79817cab4af612ddd99eda793fce6 ]
 
-Disable hardware level MAC learning because it breaks station roaming.
-When enabled it drops all frames that arrive from a MAC address
-that is on a different port at learning table.
+SMBus works fine for the touchpad with id SYN3221, used in the HP 15-ay000
+series,
 
-Signed-off-by: Anderson Luiz Alves <alacn1@gmail.com>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+This device has been reported in these messages in the "linux-input"
+mailing list:
+* https://marc.info/?l=linux-input&m=152016683003369&w=2
+* https://www.spinics.net/lists/linux-input/msg52525.html
+
+Reported-by: Nitesh Debnath <niteshkd1999@gmail.com>
+Reported-by: Teika Kazura <teika@gmx.com>
+Signed-off-by: Teika Kazura <teika@gmx.com>
+Reviewed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/dsa/mv88e6060.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+ drivers/input/mouse/synaptics.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/dsa/mv88e6060.c b/drivers/net/dsa/mv88e6060.c
-index f123ed57630d..86b41840f41a 100644
---- a/drivers/net/dsa/mv88e6060.c
-+++ b/drivers/net/dsa/mv88e6060.c
-@@ -114,8 +114,7 @@ static int mv88e6060_switch_reset(struct dsa_switch *ds)
- 	/* Reset the switch. */
- 	REG_WRITE(REG_GLOBAL, GLOBAL_ATU_CONTROL,
- 		  GLOBAL_ATU_CONTROL_SWRESET |
--		  GLOBAL_ATU_CONTROL_ATUSIZE_1024 |
--		  GLOBAL_ATU_CONTROL_ATE_AGE_5MIN);
-+		  GLOBAL_ATU_CONTROL_LEARNDIS);
+diff --git a/drivers/input/mouse/synaptics.c b/drivers/input/mouse/synaptics.c
+index 65c9095eb517..54f0d037b5b6 100644
+--- a/drivers/input/mouse/synaptics.c
++++ b/drivers/input/mouse/synaptics.c
+@@ -178,6 +178,7 @@ static const char * const smbus_pnp_ids[] = {
+ 	"LEN0096", /* X280 */
+ 	"LEN0097", /* X280 -> ALPS trackpoint */
+ 	"LEN200f", /* T450s */
++	"SYN3221", /* HP 15-ay000 */
+ 	NULL
+ };
  
- 	/* Wait up to one second for reset to complete. */
- 	timeout = jiffies + 1 * HZ;
-@@ -140,13 +139,10 @@ static int mv88e6060_setup_global(struct dsa_switch *ds)
- 	 */
- 	REG_WRITE(REG_GLOBAL, GLOBAL_CONTROL, GLOBAL_CONTROL_MAX_FRAME_1536);
- 
--	/* Enable automatic address learning, set the address
--	 * database size to 1024 entries, and set the default aging
--	 * time to 5 minutes.
-+	/* Disable automatic address learning.
- 	 */
- 	REG_WRITE(REG_GLOBAL, GLOBAL_ATU_CONTROL,
--		  GLOBAL_ATU_CONTROL_ATUSIZE_1024 |
--		  GLOBAL_ATU_CONTROL_ATE_AGE_5MIN);
-+		  GLOBAL_ATU_CONTROL_LEARNDIS);
- 
- 	return 0;
- }
 -- 
 2.19.1
 
