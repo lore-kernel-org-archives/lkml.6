@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4461EC67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:32:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61408C67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:32:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 048A320879
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:32:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E73120672
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:32:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544675542;
-	bh=UMQ7CAcx4Xs4fR2Xct2jrydV8zF1+bQV7RhEdOif7Tg=;
+	s=default; t=1544675546;
+	bh=a92wHhcYRBcW7LlPfP0ImEYk6g0oHgxuYBumLWhQDdQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=iMtgOZJSEw+w9Lf8f2VgAd/qB9fahCWXQewL2ffmCHvrmMK6pC10oYVKAsLUOyYTU
-	 D5rIQlbc+xZ4VMZ4U9hzlCEkapULH+Fgg+HOkhTnrMB3395x8ov673vND+m2rWpmpo
-	 ytgZz7b+CDdZ1qCLTGbYsWwrF14pirZxyKfWt9xo=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 048A320879
+	b=tgMV/BV6KQMh4Bl40ltHCSjj1tvZ/4emG6CFMKPmUYrWc7BtqqIUcm0kAADr29/7C
+	 NswE+22izMhKybjuJLEDxHz+32Rb8OtBl/UMAz+iSky+UsyF0Xt4WI+mr80GQXBSye
+	 rXSnnsusFUVBtxDPAUuvMOeiL5LFuJEZnfsIYgpQ=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E73120672
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729055AbeLMEcV (ORCPT
+        id S1729070AbeLMEcZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 23:32:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45228 "EHLO mail.kernel.org"
+        Wed, 12 Dec 2018 23:32:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45306 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729032AbeLMEcR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 23:32:17 -0500
+        id S1729032AbeLMEcX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 23:32:23 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8C99F20879;
-        Thu, 13 Dec 2018 04:32:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B7F4C20873;
+        Thu, 13 Dec 2018 04:32:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544675537;
-        bh=UMQ7CAcx4Xs4fR2Xct2jrydV8zF1+bQV7RhEdOif7Tg=;
+        s=default; t=1544675542;
+        bh=a92wHhcYRBcW7LlPfP0ImEYk6g0oHgxuYBumLWhQDdQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=M6N57AtGfUz1JVEA75c2uCYVBeZ5hzt1xkFiGIyg+zoExJdkuclqMMmLsy4jGN33S
-         3IERBVGc1ykpmdSPx+5NOv4R1IUO9QRlNfMg9hA3BtN2Cob96daIU+WxYp8u3o6sq9
-         eNcRprHwAmtEAhv/PWufZj6FMAwunzDrJMViF1+8=
+        b=zRERaA65BBDVvdungXRMjk12FRixq+zKHctouwLA0ZPfqWcx5VmHOrAacxXEs+i0o
+         cBNVKiw4Hm+c2fVVSIo/Opd81pl6hqHolWWsyFT4NQoyh6gihLJvHt6cEIAuGKZXBQ
+         cAEE1l8P1E0YWET2ojOiNCmwoMNuzw/mTjLltVzo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Sasha Levin <sashal@kernel.org>, linux-nfs@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 10/34] SUNRPC: Fix a potential race in xprt_connect()
-Date:   Wed, 12 Dec 2018 23:31:36 -0500
-Message-Id: <20181213043200.76295-10-sashal@kernel.org>
+Cc:     Yangtao Li <tiny.windzz@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, sparclinux@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 12/34] drivers/sbus/char: add of_node_put()
+Date:   Wed, 12 Dec 2018 23:31:38 -0500
+Message-Id: <20181213043200.76295-12-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181213043200.76295-1-sashal@kernel.org>
 References: <20181213043200.76295-1-sashal@kernel.org>
@@ -61,46 +61,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Trond Myklebust <trond.myklebust@hammerspace.com>
+From: Yangtao Li <tiny.windzz@gmail.com>
 
-[ Upstream commit 0a9a4304f3614e25d9de9b63502ca633c01c0d70 ]
+[ Upstream commit 6bd520ab7cf69486ea81fd3cdfd2d5a390ad1100 ]
 
-If an asynchronous connection attempt completes while another task is
-in xprt_connect(), then the call to rpc_sleep_on() could end up
-racing with the call to xprt_wake_pending_tasks().
-So add a second test of the connection state after we've put the
-task to sleep and set the XPRT_CONNECTING flag, when we know that there
-can be no asynchronous connection attempts still in progress.
+use of_node_put() to release the refcount.
 
-Fixes: 0b9e79431377d ("SUNRPC: Move the test for XPRT_CONNECTING into...")
-Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/sunrpc/xprt.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ drivers/sbus/char/envctrl.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/net/sunrpc/xprt.c b/net/sunrpc/xprt.c
-index 685e6d225414..1a8df242d26a 100644
---- a/net/sunrpc/xprt.c
-+++ b/net/sunrpc/xprt.c
-@@ -778,8 +778,15 @@ void xprt_connect(struct rpc_task *task)
+diff --git a/drivers/sbus/char/envctrl.c b/drivers/sbus/char/envctrl.c
+index 5609b602c54d..baa9b322520b 100644
+--- a/drivers/sbus/char/envctrl.c
++++ b/drivers/sbus/char/envctrl.c
+@@ -910,8 +910,10 @@ static void envctrl_init_i2c_child(struct device_node *dp,
+ 			for (len = 0; len < PCF8584_MAX_CHANNELS; ++len) {
+ 				pchild->mon_type[len] = ENVCTRL_NOMON;
+ 			}
++			of_node_put(root_node);
  			return;
- 		if (xprt_test_and_set_connecting(xprt))
- 			return;
--		xprt->stat.connect_start = jiffies;
--		xprt->ops->connect(xprt, task);
-+		/* Race breaker */
-+		if (!xprt_connected(xprt)) {
-+			xprt->stat.connect_start = jiffies;
-+			xprt->ops->connect(xprt, task);
-+		} else {
-+			xprt_clear_connecting(xprt);
-+			task->tk_status = 0;
-+			rpc_wake_up_queued_task(&xprt->pending, task);
-+		}
+ 		}
++		of_node_put(root_node);
  	}
- 	xprt_release_write(xprt, task);
- }
+ 
+ 	/* Get the monitor channels. */
 -- 
 2.19.1
 
