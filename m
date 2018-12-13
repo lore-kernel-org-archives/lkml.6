@@ -2,197 +2,354 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8783C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 19:25:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07802C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 19:26:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94E7120879
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 19:25:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE9CC20851
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 19:26:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b22eIwsv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94E7120879
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="MsTv48d6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE9CC20851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727929AbeLMTZi (ORCPT
+        id S1727995AbeLMT0Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 14:25:38 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:42427 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726453AbeLMTZi (ORCPT
+        Thu, 13 Dec 2018 14:26:16 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:36612 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726453AbeLMT0Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 14:25:38 -0500
-Received: by mail-qk1-f194.google.com with SMTP id 68so1814955qke.9
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 11:25:37 -0800 (PST)
+        Thu, 13 Dec 2018 14:26:16 -0500
+Received: by mail-it1-f196.google.com with SMTP id c9so5662954itj.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 11:26:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=uhQ4xtSsjXVEk8SJhow8yMIjHBwH0uGK8vR7TLRN4CU=;
-        b=b22eIwsvOSqNU24zUsdkGgx+ts4qX6kR12HTYYi2aL9RJulfS7VMPvlbS9MLzZTYK1
-         K7n+7QEm7ACysxIgrtSdKLAth9DEfjT3mo8sZwvn6AtsbV0Dp3DNX+ql5mhdBfUtZoSD
-         QgOfCb+J4EExTH2tXNxnQb7apxlaXeabK7vDG1K4QUSaYCdwesaBRjvi7uLH8V7rJ1cY
-         HXP0kz1V+NS4+XlUQj6+OE3ttQarR3bbLZO5qKo70iuAkMXTcQKXIfsj45R39yq3+6YV
-         corkbUxvoYju068wShyDCpi+FagHl1t1eCVPzjT8cLT87MkIxbsVAqSjcvUejt3P20TT
-         WIIA==
+        d=amarulasolutions.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=h6BK8gxs7/c5qHB/xAx5sSedZe35YsJEtBrR7XOfXrA=;
+        b=MsTv48d68HkIQOrH510MRk6X+FlG4HJzL86fqs1QJcOm/bgtgxdsKEd+XDOmwgITs3
+         9Ao51ljJyWbZMg81Kh4GYrQ6eHrPImvswAt1u66vDHgbHtRVZ/rW3MOeNL7B9fJJREFw
+         ZQTEikrWpICwMLbP4zMPEeN0wG22ky4KABIBo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=uhQ4xtSsjXVEk8SJhow8yMIjHBwH0uGK8vR7TLRN4CU=;
-        b=WGvB1XHba9IL2C7XyBAarDCtwv0kFr6hoNA1MdXp6mm6ZOEQ7QXZPwn2aR/H6ldoyl
-         DZypRloUvSk77//OFvbgoZ773Q2C8me/zzhk1rnLe2mRnomeCEdzNGcjiDiuifZOLVZq
-         tk9v09Ewi96y6SpVJ6kpaHPg46ddbIx0q7xSor4eUwk+rRqip4JmFIsbe7hrnmg1YsGW
-         NHRy0MWOWAYayr7fhw3G+677PYEbb2/GIS1vnfnai7v9osVf9lJKwrn3Odp6obFTooCC
-         rqUFnIcrFpNUdRHHBqMYx3wB+90fz6e32Mcj90ZqrvGkZhg6vn5bvL8mJ01AJZOGia79
-         EYng==
-X-Gm-Message-State: AA+aEWazP7XGe4eIYDDx1RHlyf0gUHcEp2gvfVsyT3niwDBTZ+1XuAWC
-        VI0LBo5Yb9L+FbvRIJtlIg==
-X-Google-Smtp-Source: AFSGD/UMjkDpf61UpSJjTmuAk3G2Dg1UoldDPibUtwhB9xw8m4HnPAATdTfQTSK4cxTLfFwC8beVkQ==
-X-Received: by 2002:ae9:f80f:: with SMTP id x15mr13167qkh.341.1544729136859;
-        Thu, 13 Dec 2018 11:25:36 -0800 (PST)
-Received: from gabell (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id c48sm1720168qtd.9.2018.12.13.11.25.35
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 13 Dec 2018 11:25:36 -0800 (PST)
-Date:   Thu, 13 Dec 2018 14:25:30 -0500
-From:   Masayoshi Mizuma <msys.mizuma@gmail.com>
-To:     Chao Fan <fanc.fnst@cn.fujitsu.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, bp@alien8.de,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        keescook@chromium.org, bhe@redhat.com, indou.takao@jp.fujitsu.com,
-        caoj.fnst@cn.fujitsu.com
-Subject: Re: [PATCH v13 2/6] x86/boot: Introduce get_acpi_rsdp() to parse
- RSDP in cmdline from KEXEC
-Message-ID: <20181213192529.yjklliaxy4tk4kck@gabell>
-References: <20181212031053.1815-1-fanc.fnst@cn.fujitsu.com>
- <20181212031053.1815-3-fanc.fnst@cn.fujitsu.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=h6BK8gxs7/c5qHB/xAx5sSedZe35YsJEtBrR7XOfXrA=;
+        b=pq3PBJH2qtr2XwFrFklbDh3DJzI0iTBvn50S5nSbnJb+W/P3+Jdn2CqLusORVvCZ4A
+         vkit83RPf0dyh2+RXjlm7lJXTNkU59d/KB8vgOgAh2by3qE2uCDFYEExUDjUqQzSENOl
+         gFOR0gLOToEGHRVifEUneSetMYJqKB9t9jj8y7fMi2b18EMUD4m15WRPNfVWxi/sIAJy
+         aA+RReBsc+kZ2UThP6r1tEbzy3z15CxcC1RbgkzMh3IhXcubu/ci/bAVdiX0SSrgeyZA
+         iyR7kTeGwSqbhzDRiz2h0qiHobNJVHYiwrQ0VF430lTqACWJh4r/t9LJ7VX54q7uHm0B
+         zpqA==
+X-Gm-Message-State: AA+aEWaxc1WSPH/a3Kistr97sMYj8FQgHvyd/f8K82o83upsK/PHkYFa
+        tRdZohT3nB+Ugo5sw47xxgkMPA62PMHKJPSyZC7wrw==
+X-Google-Smtp-Source: AFSGD/XmJxN+jnPyTNVIC4pdN8hDahNyNeQevslQntLro0uSBd4K7rc4GTk0xHBVgROFkprdm3iyQp4zxfi7qNkadSg=
+X-Received: by 2002:a02:4d99:: with SMTP id t25mr67236jad.58.1544729174899;
+ Thu, 13 Dec 2018 11:26:14 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181212031053.1815-3-fanc.fnst@cn.fujitsu.com>
-User-Agent: NeoMutt/20180716
+References: <20181116163916.29621-1-jagan@amarulasolutions.com>
+ <20181116163916.29621-12-jagan@amarulasolutions.com> <20181213150736.GL154160@art_vandelay>
+In-Reply-To: <20181213150736.GL154160@art_vandelay>
+From:   Jagan Teki <jagan@amarulasolutions.com>
+Date:   Fri, 14 Dec 2018 00:56:03 +0530
+Message-ID: <CAMty3ZAv1dHCRCShXYbxqMm4wV9WGDpAKPji+3G21eWq34ODaA@mail.gmail.com>
+Subject: Re: [PATCH v2 11/12] drm/panel: Add Feiyang FY07024DI26A30-D MIPI-DSI
+ LCD panel
+To:     Sean Paul <sean@poorly.run>
+Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        TL Lim <tllim@pine64.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        linux-amarula@amarulasolutions.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Chao,
+On Thu, Dec 13, 2018 at 8:37 PM Sean Paul <sean@poorly.run> wrote:
+>
+> On Fri, Nov 16, 2018 at 10:09:15PM +0530, Jagan Teki wrote:
+> > Feiyang FY07024DI26A30-D is 1024x600, 4-lane MIPI-DSI LCD panel.
+> >
+> > Add panel driver for it.
+> >
+> > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> > ---
+> >  MAINTAINERS                                   |   6 +
+> >  drivers/gpu/drm/panel/Kconfig                 |   9 +
+> >  drivers/gpu/drm/panel/Makefile                |   1 +
+> >  .../drm/panel/panel-feiyang-fy07024di26a30d.c | 286 ++++++++++++++++++
+> >  4 files changed, 302 insertions(+)
+> >  create mode 100644 drivers/gpu/drm/panel/panel-feiyang-fy07024di26a30d.c
+> >
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index 3dac08d0b3cb..40c8bfc974f4 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -4620,6 +4620,12 @@ T:     git git://anongit.freedesktop.org/drm/drm-misc
+> >  S:   Maintained
+> >  F:   drivers/gpu/drm/tve200/
+> >
+> > +DRM DRIVER FOR FEIYANG FY07024DI26A30-D MIPI-DSI LCD PANELS
+> > +M:   Jagan Teki <jagan@amarulasolutions.com>
+> > +S:   Maintained
+> > +F:   drivers/gpu/drm/panel/panel-feiyang-fy07024di26a30d.c
+> > +F:   Documentation/devicetree/bindings/display/panel/feiyang,fy07024di26a30d.txt
+> > +
+> >  DRM DRIVER FOR ILITEK ILI9225 PANELS
+> >  M:   David Lechner <david@lechnology.com>
+> >  S:   Maintained
+> > diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
+> > index d0d4e60f5153..bc70896fe43c 100644
+> > --- a/drivers/gpu/drm/panel/Kconfig
+> > +++ b/drivers/gpu/drm/panel/Kconfig
+> > @@ -47,6 +47,15 @@ config DRM_PANEL_SIMPLE
+> >         that it can be automatically turned off when the panel goes into a
+> >         low power state.
+> >
+> > +config DRM_PANEL_FEIYANG_FY07024DI26A30D
+> > +     tristate "Feiyang FY07024DI26A30-D MIPI-DSI LCD panel"
+> > +     depends on OF
+> > +     depends on DRM_MIPI_DSI
+> > +     depends on BACKLIGHT_CLASS_DEVICE
+> > +     help
+> > +       Say Y if you want to enable support for panels based on the
+> > +       Feiyang FY07024DI26A30-D MIPI-DSI interface.
+> > +
+> >  config DRM_PANEL_ILITEK_IL9322
+> >       tristate "Ilitek ILI9322 320x240 QVGA panels"
+> >       depends on OF && SPI
+> > diff --git a/drivers/gpu/drm/panel/Makefile b/drivers/gpu/drm/panel/Makefile
+> > index 88011f06edb8..e23c017639c7 100644
+> > --- a/drivers/gpu/drm/panel/Makefile
+> > +++ b/drivers/gpu/drm/panel/Makefile
+> > @@ -3,6 +3,7 @@ obj-$(CONFIG_DRM_PANEL_ARM_VERSATILE) += panel-arm-versatile.o
+> >  obj-$(CONFIG_DRM_PANEL_BANANAPI_S070WV20_ICN6211) += panel-bananapi-s070wv20-icn6211.o
+> >  obj-$(CONFIG_DRM_PANEL_LVDS) += panel-lvds.o
+> >  obj-$(CONFIG_DRM_PANEL_SIMPLE) += panel-simple.o
+> > +obj-$(CONFIG_DRM_PANEL_FEIYANG_FY07024DI26A30D) += panel-feiyang-fy07024di26a30d.o
+> >  obj-$(CONFIG_DRM_PANEL_ILITEK_IL9322) += panel-ilitek-ili9322.o
+> >  obj-$(CONFIG_DRM_PANEL_ILITEK_ILI9881C) += panel-ilitek-ili9881c.o
+> >  obj-$(CONFIG_DRM_PANEL_INNOLUX_P079ZCA) += panel-innolux-p079zca.o
+> > diff --git a/drivers/gpu/drm/panel/panel-feiyang-fy07024di26a30d.c b/drivers/gpu/drm/panel/panel-feiyang-fy07024di26a30d.c
+> > new file mode 100644
+> > index 000000000000..a4b46bd8fdbe
+> > --- /dev/null
+> > +++ b/drivers/gpu/drm/panel/panel-feiyang-fy07024di26a30d.c
+> > @@ -0,0 +1,286 @@
+> > +// SPDX-License-Identifier: GPL-2.0+
+> > +/*
+> > + * Copyright (C) 2018 Amarula Solutions
+> > + * Author: Jagan Teki <jagan@amarulasolutions.com>
+> > + */
+> > +
+> > +#include <linux/backlight.h>
+> > +#include <linux/delay.h>
+> > +#include <linux/module.h>
+> > +#include <linux/of_device.h>
+> > +
+> > +#include <linux/gpio/consumer.h>
+> > +#include <linux/regulator/consumer.h>
+> > +
+> > +#include <drm/drmP.h>
+> > +#include <drm/drm_mipi_dsi.h>
+> > +#include <drm/drm_panel.h>
+> > +
+> > +struct feiyang {
+> > +     struct drm_panel        panel;
+> > +     struct mipi_dsi_device  *dsi;
+> > +
+> > +     struct backlight_device *backlight;
+> > +     struct regulator        *dvdd;
+> > +     struct regulator        *avdd;
+> > +     struct gpio_desc        *reset;
+> > +};
+> > +
+> > +static inline struct feiyang *panel_to_feiyang(struct drm_panel *panel)
+> > +{
+> > +     return container_of(panel, struct feiyang, panel);
+> > +}
+> > +
+> > +struct feiyang_init_cmd {
+> > +     size_t len;
+> > +     const char *data;
+> > +};
+> > +
+> > +#define FY07024DI26A30D(...) { \
+> > +     .len = sizeof((char[]){__VA_ARGS__}), \
+> > +     .data = (char[]){__VA_ARGS__} }
+> > +
+> > +static const struct feiyang_init_cmd feiyang_init_cmds[] = {
+> > +     FY07024DI26A30D(0x80, 0x58),
+> > +     FY07024DI26A30D(0x81, 0x47),
+> > +     FY07024DI26A30D(0x82, 0xD4),
+> > +     FY07024DI26A30D(0x83, 0x88),
+> > +     FY07024DI26A30D(0x84, 0xA9),
+> > +     FY07024DI26A30D(0x85, 0xC3),
+> > +     FY07024DI26A30D(0x86, 0x82),
+> > +};
+>
+> These init cmds don't have to be so complicated. You've only got len == 2, so
+> just hardcode it in and avoid the macro:
+>
+> #define FEIYANG_INIT_CMD_LEN    2
+>
+> struct feiyang_init_cmd {
+>         u8 data[FEIYANG_INIT_CMD];
+> };
+>
+> static const struct feiyang_init_cmd feiyang_init_cmds[] = {
+>         { .data = { 0x80, 0x58 } },
+>         ...
+> };
+>
+> > +
+> > +static int feiyang_prepare(struct drm_panel *panel)
+> > +{
+> > +     struct feiyang *ctx = panel_to_feiyang(panel);
+> > +     struct mipi_dsi_device *dsi = ctx->dsi;
+> > +     unsigned int i;
+> > +     int ret;
+> > +
+> > +     ret = regulator_enable(ctx->dvdd);
+> > +     if (ret)
+> > +             return ret;
+> > +
+> > +     msleep(100);
+>
+> nit: You should do your best to correlate the sleeps with the timing parameters
+> from the datasheet with a comment.
+>
+> ie:
+>         /* T1: > 100ms */
+>         msleep(100);
 
-Great work! Let me say some trivial comments.
+Sorry, what does this mean?
 
-On Wed, Dec 12, 2018 at 11:10:49AM +0800, Chao Fan wrote:
-> Memory information in SRAT is necessary to fix the conflict between
-> KASLR and memory-hotremove.
-> 
-> ACPI SRAT (System/Static Resource Affinity Table) shows the details
-> about memory ranges, including ranges of memory provided by hot-added
-> memory devices. SRAT is introduced by Root System Description
-> Pointer(RSDP). So RSDP should be found firstly.
-> 
-> When booting form KEXEC/EFI/BIOS, the methods to find RSDP
-> are different. When booting from KEXEC, 'acpi_rsdp' may have been
-> added to cmdline, so parse cmdline to find RSDP.
-> 
-> Since 'RANDOMIZE_BASE' && 'MEMORY_HOTREMOVE' is needed, introduce
-> 'CONFIG_EARLY_PARSE_RSDP' to make ifdeffery clear.
-> 
-> Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
-> ---
->  arch/x86/Kconfig                | 10 ++++++++++
->  arch/x86/boot/compressed/acpi.c | 30 ++++++++++++++++++++++++++++++
->  arch/x86/boot/compressed/misc.h |  6 ++++++
->  3 files changed, 46 insertions(+)
->  create mode 100644 arch/x86/boot/compressed/acpi.c
-> 
-> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> index ba7e3464ee92..455da382fa9e 100644
-> --- a/arch/x86/Kconfig
-> +++ b/arch/x86/Kconfig
-> @@ -2149,6 +2149,16 @@ config X86_NEED_RELOCS
->  	def_bool y
->  	depends on RANDOMIZE_BASE || (X86_32 && RELOCATABLE)
->  
-> +config EARLY_PARSE_RSDP
-> +	bool "Parse RSDP pointer on compressed period for KASLR"
-> +	def_bool y
-> +	depends on RANDOMIZE_BASE && MEMORY_HOTREMOVE
-> +	help
-> +	  This option parses RSDP in compressed period. Works
-> +	  for KASLR to get memory information from SRAT table and choose
-> +	  immovable memory to extract kernel.
-> +	  Say Y if you want to use both KASLR and memory-hotremove.
-> +
->  config PHYSICAL_ALIGN
->  	hex "Alignment value to which kernel should be aligned"
->  	default "0x200000"
-> diff --git a/arch/x86/boot/compressed/acpi.c b/arch/x86/boot/compressed/acpi.c
-> new file mode 100644
-> index 000000000000..cad15686f82c
-> --- /dev/null
-> +++ b/arch/x86/boot/compressed/acpi.c
-> @@ -0,0 +1,30 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +#define BOOT_CTYPE_H
-> +#include "misc.h"
-> +#include "error.h"
-> +
-> +#include <linux/efi.h>
-> +#include <linux/numa.h>
-> +#include <linux/acpi.h>
-> +#include <asm/efi.h>
-> +
-> +#define STATIC
-> +#include <linux/decompress/mm.h>
-> +
-> +#include "../string.h"
-> +
-> +static acpi_physical_address get_acpi_rsdp(void)
-> +{
-> +#ifdef CONFIG_KEXEC
-> +	unsigned long long res;
-> +	int len = 0;
-> +	char val[MAX_ADDRESS_LENGTH+1];
-> +
+>
+> > +
+> > +     ret = regulator_enable(ctx->avdd);
+> > +     if (ret)
+> > +             return ret;
+> > +
+> > +     msleep(20);
+> > +
+> > +     gpiod_set_value(ctx->reset, 1);
+> > +     msleep(50);
+> > +
+> > +     gpiod_set_value(ctx->reset, 0);
+> > +     msleep(20);
+> > +
+> > +     gpiod_set_value(ctx->reset, 1);
+> > +     msleep(200);
+> > +
+> > +     for (i = 0; i < ARRAY_SIZE(feiyang_init_cmds); i++) {
+> > +             const struct feiyang_init_cmd *cmd =
+> > +                                             &feiyang_init_cmds[i];
+> > +
+> > +             ret = mipi_dsi_dcs_write_buffer(dsi, cmd->data, cmd->len);
+>
+>                 ret = mipi_dsi_dcs_write_buffer(dsi, cmd->data,
+>                                                 FEIYANG_INIT_CMD_LEN);
+>
+> > +             if (ret < 0)
+> > +                     return ret;
+> > +     }
+> > +
+> > +     return 0;
+> > +}
+> > +
+> > +static int feiyang_enable(struct drm_panel *panel)
+> > +{
+> > +     struct feiyang *ctx = panel_to_feiyang(panel);
+> > +
+> > +     msleep(120);
+> > +
+> > +     mipi_dsi_dcs_set_display_on(ctx->dsi);
+> > +     backlight_enable(ctx->backlight);
+> > +
+> > +     return 0;
+> > +}
+> > +
+> > +static int feiyang_disable(struct drm_panel *panel)
+> > +{
+> > +     struct feiyang *ctx = panel_to_feiyang(panel);
+> > +
+> > +     backlight_disable(ctx->backlight);
+> > +     return mipi_dsi_dcs_set_display_on(ctx->dsi);
+>
+> set_display_on? You probably want set_display_off here :)
+>
+> > +}
+> > +
+> > +static int feiyang_unprepare(struct drm_panel *panel)
+> > +{
+> > +     struct feiyang *ctx = panel_to_feiyang(panel);
+> > +     int ret;
+> > +
+> > +     ret = mipi_dsi_dcs_set_display_off(ctx->dsi);
+> > +     if (ret < 0)
+> > +             DRM_DEV_ERROR(panel->dev, "failed to set display off: %d\n",
+> > +                           ret);
+> > +
+> > +     ret = mipi_dsi_dcs_enter_sleep_mode(ctx->dsi);
+> > +     if (ret < 0)
+> > +             DRM_DEV_ERROR(panel->dev, "failed to enter sleep mode: %d\n",
+> > +                           ret);
+> > +
+> > +     msleep(100);
+> > +
+> > +     regulator_disable(ctx->avdd);
+> > +
+> > +     regulator_disable(ctx->dvdd);
+> > +
+> > +     gpiod_set_value(ctx->reset, 0);
+> > +
+> > +     gpiod_set_value(ctx->reset, 1);
+> > +
+> > +     gpiod_set_value(ctx->reset, 0);
+>
+> Presumably this reset line toggle isn't needed since the rails are already
+> disabled?
 
-> +	len = cmdline_find_option("acpi_rsdp", val, MAX_ADDRESS_LENGTH+1);
+Yes, rails need to reset and turn off. will swap.
 
-sizeof() is better here.
+>
+> > +
+> > +     return 0;
+> > +}
+> > +
+> > +static const struct drm_display_mode feiyang_default_mode = {
+> > +     .clock = 55000,
+> > +     .vrefresh = 60,
+>
+> This doesn't add up correctly. The pixel clock should be equal to:
+>
+>         (htotal * vtotal * vrefresh) / 1000
+>
+> For this reason, we usually don't specify the refresh rate since it can be
+> misleading. Your actual refresh rate with the pixel clock you specified is
+> actually going to be 56.2Hz instead of the 60 you want.
 
-	len = cmdline_find_option("acpi_rsdp", val, sizeof(var));
+The actual BSP do work 55MHz[1], I do specify refresh rate unnecessarily.
 
-> +	if (len > 0) {
-> +		val[len] = 0;
-
-'\0' should be fine here not 0.
-
-		val[len] = '\0';
-
-> +		return (acpi_physical_address)kstrtoull(val, 16, &res);
-> +	}
-> +	return 0;
-> +#endif
-> +}
-> diff --git a/arch/x86/boot/compressed/misc.h b/arch/x86/boot/compressed/misc.h
-> index a1d5918765f3..72fcfbfec3c6 100644
-> --- a/arch/x86/boot/compressed/misc.h
-> +++ b/arch/x86/boot/compressed/misc.h
-> @@ -116,3 +116,9 @@ static inline void console_init(void)
->  void set_sev_encryption_mask(void);
->  
->  #endif
-> +
-> +/* acpi.c */
-> +#ifdef CONFIG_EARLY_PARSE_RSDP
-> +/* Max length of 64-bit hex address string is 18, prefix "0x" + 16 hex digit. */
-> +#define MAX_ADDRESS_LENGTH 18
-> +#endif
-> -- 
-> 2.19.2
-> 
-> 
+[1] https://gitlab.com/pine64-android/tools/blob/01b3d9388439106bdd9985cf738c1b876bd617d3/pack/chips/sun50iw1p1/configs/db1000_lcd/sys_config_rgmii.fex#L483
