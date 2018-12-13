@@ -2,306 +2,138 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,T_MIXED_ES autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3476FC65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 09:58:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46417C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 09:58:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBCCF208E7
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 09:58:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 09B98208E7
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 09:58:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="juWi0RLb";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="SYckUIIv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBCCF208E7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="gghMC4j3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09B98208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728090AbeLMJ6H (ORCPT
+        id S1728118AbeLMJ6T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 04:58:07 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:45282 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727210AbeLMJ6G (ORCPT
+        Thu, 13 Dec 2018 04:58:19 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:40303 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727210AbeLMJ6T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 04:58:06 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 09DC5601E7; Thu, 13 Dec 2018 09:58:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1544695085;
-        bh=PctqfZZzTayhuob8pZMMrG+T2WCtccXx79xuu6ZTxX8=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=juWi0RLbrn/MQKHhu64icxzYFMpsy4IgT5ayxOSbbGQy6xJjkcSsurnHGGuUi21mq
-         z82Ct1dRzp9Bj/dWHUbVYMO5bcnJKl+aLPajQoTv0v5uOaJdgGQjuFM8UOOcjcklGg
-         +eY5m9BAm+DqClNb89kieuRHNnjYkN3XPNm5hqnQ=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 77FB4601EA;
-        Thu, 13 Dec 2018 09:58:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1544695081;
-        bh=PctqfZZzTayhuob8pZMMrG+T2WCtccXx79xuu6ZTxX8=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=SYckUIIvB6CN7nFHeBjCv7SAbzacgaWbQ1J6dSd122sG76Z1SaHtSewnCmM8fT7zv
-         S/2sT6ya6LhFOK0tgmhz9Kegfe4w93SPKgdy8/TsiN+44+sut2C1wBnVS40Ba9f0Lq
-         n/Zm42DY7DWt0m76jfriiHIReqO8znOSCHfi/O/g=
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Thu, 13 Dec 2018 15:28:01 +0530
-From:   poza@codeaurora.org
-To:     Srinath Mannam <srinath.mannam@broadcom.com>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Ray Jui <rjui@broadcom.com>,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        linux-pci@vger.kernel.org, iommu@lists.linux-foundation.org,
+        Thu, 13 Dec 2018 04:58:19 -0500
+Received: by mail-ed1-f67.google.com with SMTP id d3so1492899edx.7
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 01:58:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=DyFnPGwFai6jF7+vAFApibSkmEDc58F14dUuetMugDs=;
+        b=gghMC4j3C8I6NnpLypL3hnig0jjZnNyWWpdK5+P+gv42CrQ7qZztqebPbkF5N7fIAE
+         9Ba5Ow5ZZE0Er6lCxPhDOm0gMtkaUPI5IOCR1hsOUOKxZsQqHc19d2fe6beyfn6xHGw6
+         4sQohqr8d7ouhmmNA+V7Cqhh5uP3bbQPFY19k=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=DyFnPGwFai6jF7+vAFApibSkmEDc58F14dUuetMugDs=;
+        b=Y4+DiNvxVFL9fgxcXpKOoriA8ysf5fldVkrY8jYjAH6e2ev3KcJ5J4pjrOM86AtQWV
+         JvHgLVJNT7PuRK+6z4bvxQaRcYpev2gbEGto7GThEkBsWCbmu4T48rjZIrw2UF8rOsQt
+         p4Qc9aUptIAlawJeSGOum+b3P7C+RXBEkA6VI06icGRpayFv27nwOCHqRaAbKRaFodPn
+         Rd05M/Rh0nVqCoWAC19pYJ3LapMiRFURb/GU+4K/pl23vp697gyDW0zF6P7rESQ++OUM
+         M6BtkNufEATWTS14o5nbpPZMTwIqRx9livAL2mQYqjFxkGNmOl6ijfI5zp+AVGDEfGXJ
+         qCYw==
+X-Gm-Message-State: AA+aEWaZ3UyWalx01pln2vTkHarM+HyPc3IYHI3Qq8QtDLrIot5tT5rL
+        EGuUfKM4AYu0tvjyS4awx5qMqg==
+X-Google-Smtp-Source: AFSGD/W6g7AfWSX6jhwaRv95oKuwHlHP5BbLmBdTuQ3DWoAWOSu990Bgn0rp+iEBxaC8YlJU4v3elw==
+X-Received: by 2002:a17:906:38e:: with SMTP id b14-v6mr17236866eja.209.1544695097640;
+        Thu, 13 Dec 2018 01:58:17 -0800 (PST)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id r1sm499200eds.1.2018.12.13.01.58.16
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 13 Dec 2018 01:58:16 -0800 (PST)
+Date:   Thu, 13 Dec 2018 10:58:14 +0100
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-pci-owner@vger.kernel.org
-Subject: Re: [RFC PATCH 3/3] PCI: iproc: Add dma reserve resources to host
-In-Reply-To: <CABe79T4fqHoW4rww2jRNNaiirzOqm7dTvap3Eqi1w17SV4j+qQ@mail.gmail.com>
-References: <1544593569-8923-1-git-send-email-srinath.mannam@broadcom.com>
- <1544593569-8923-4-git-send-email-srinath.mannam@broadcom.com>
- <117bb87c4567d14f189642b685dd8813@codeaurora.org>
- <CABe79T4fqHoW4rww2jRNNaiirzOqm7dTvap3Eqi1w17SV4j+qQ@mail.gmail.com>
-Message-ID: <8d490281d496deb1b46d957b8220688e@codeaurora.org>
-X-Sender: poza@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        ramalingam.c@intel.com,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Daniel Vetter <daniel.vetter@intel.com>
+Subject: Re: [PATCH] drivers/base: use a worker for sysfs unbind
+Message-ID: <20181213095814.GC21184@phenom.ffwll.local>
+Mail-Followup-To: "Rafael J. Wysocki" <rafael@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>, ramalingam.c@intel.com,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Daniel Vetter <daniel.vetter@intel.com>
+References: <20181210084653.7268-1-daniel.vetter@ffwll.ch>
+ <CAJZ5v0jkE=Rt2ozwcTxRdUN++Sr4HXULksDeMx4jEWj1jVDcyA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJZ5v0jkE=Rt2ozwcTxRdUN++Sr4HXULksDeMx4jEWj1jVDcyA@mail.gmail.com>
+X-Operating-System: Linux phenom 4.18.0-2-amd64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-12-13 14:47, Srinath Mannam wrote:
-> Hi Oza,
+On Thu, Dec 13, 2018 at 10:38:14AM +0100, Rafael J. Wysocki wrote:
+> On Mon, Dec 10, 2018 at 9:47 AM Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
+> >
+> > Drivers might want to remove some sysfs files, which needs the same
+> > locks and ends up angering lockdep. Relevant snippet of the stack
+> > trace:
+> >
+> >   kernfs_remove_by_name_ns+0x3b/0x80
+> >   bus_remove_driver+0x92/0xa0
+> >   acpi_video_unregister+0x24/0x40
+> >   i915_driver_unload+0x42/0x130 [i915]
+> >   i915_pci_remove+0x19/0x30 [i915]
+> >   pci_device_remove+0x36/0xb0
+> >   device_release_driver_internal+0x185/0x250
+> >   unbind_store+0xaf/0x180
+> >   kernfs_fop_write+0x104/0x190
 > 
-> Thank you for the review.
-> Please find my comments in lined.
-> 
-> On Thu, Dec 13, 2018 at 11:33 AM <poza@codeaurora.org> wrote:
->> 
->> On 2018-12-12 11:16, Srinath Mannam wrote:
->> > IPROC host has the limitation that it can use
->> > only those address ranges given by dma-ranges
->> > property as inbound address.
->> > So that the memory address holes in dma-ranges
->> > should be reserved to allocate as DMA address.
->> >
->> > All such reserved addresses are created as resource
->> > entries and add to dma_resv list of pci host bridge.
->> >
->> > These dma reserve resources created by parsing
->> > dma-ranges parameter.
->> >
->> > Ex:
->> > dma-ranges = < \
->> >   0x43000000 0x00 0x80000000 0x00 0x80000000 0x00 0x80000000 \
->> >   0x43000000 0x08 0x00000000 0x08 0x00000000 0x08 0x00000000 \
->> >   0x43000000 0x80 0x00000000 0x80 0x00000000 0x40 0x00000000>
->> >
->> > In the above example of dma-ranges, memory address from
->> > 0x0 - 0x80000000,
->> > 0x100000000 - 0x800000000,
->> > 0x1000000000 - 0x8000000000 and
->> > 0x10000000000 - 0xffffffffffffffff.
->> > are not allowed to use as inbound addresses.
->> > So that we need to add these address range to dma_resv
->> > list to reserve their IOVA address ranges.
->> >
->> > Signed-off-by: Srinath Mannam <srinath.mannam@broadcom.com>
->> > ---
->> >  drivers/pci/controller/pcie-iproc.c | 49
->> > +++++++++++++++++++++++++++++++++++++
->> >  1 file changed, 49 insertions(+)
->> >
->> > diff --git a/drivers/pci/controller/pcie-iproc.c
->> > b/drivers/pci/controller/pcie-iproc.c
->> > index 3160e93..43e465a 100644
->> > --- a/drivers/pci/controller/pcie-iproc.c
->> > +++ b/drivers/pci/controller/pcie-iproc.c
->> > @@ -1154,25 +1154,74 @@ static int iproc_pcie_setup_ib(struct
->> > iproc_pcie *pcie,
->> >       return ret;
->> >  }
->> >
->> > +static int
->> > +iproc_pcie_add_dma_resv_range(struct device *dev, struct list_head
->> > *resources,
->> > +                           uint64_t start, uint64_t end)
->> > +{
->> > +     struct resource *res;
->> > +
->> > +     res = devm_kzalloc(dev, sizeof(struct resource), GFP_KERNEL);
->> > +     if (!res)
->> > +             return -ENOMEM;
->> > +
->> > +     res->start = (resource_size_t)start;
->> > +     res->end = (resource_size_t)end;
->> > +     pci_add_resource_offset(resources, res, 0);
->> > +
->> > +     return 0;
->> > +}
->> > +
->> >  static int iproc_pcie_map_dma_ranges(struct iproc_pcie *pcie)
->> >  {
->> > +     struct pci_host_bridge *host = pci_host_bridge_from_priv(pcie);
->> >       struct of_pci_range range;
->> >       struct of_pci_range_parser parser;
->> >       int ret;
->> > +     uint64_t start, end;
->> > +     LIST_HEAD(resources);
->> >
->> >       /* Get the dma-ranges from DT */
->> >       ret = of_pci_dma_range_parser_init(&parser, pcie->dev->of_node);
->> >       if (ret)
->> >               return ret;
->> >
->> > +     start = 0;
->> >       for_each_of_pci_range(&parser, &range) {
->> > +             end = range.pci_addr;
->> > +             /* dma-ranges list expected in sorted order */
->> > +             if (end < start) {
->> > +                     ret = -EINVAL;
->> > +                     goto out;
->> > +             }
->> >               /* Each range entry corresponds to an inbound mapping region */
->> >               ret = iproc_pcie_setup_ib(pcie, &range, IPROC_PCIE_IB_MAP_MEM);
->> >               if (ret)
->> >                       return ret;
->> > +
->> > +             if (end - start) {
->> > +                     ret = iproc_pcie_add_dma_resv_range(pcie->dev,
->> > +                                                         &resources,
->> > +                                                         start, end);
->> > +                     if (ret)
->> > +                             goto out;
->> > +             }
->> > +             start = range.pci_addr + range.size;
->> >       }
->> >
->> > +     end = ~0;
->> Hi Srinath,
->> 
->> this series is based on following patch sets.
->> 
->> https://lkml.org/lkml/2017/5/16/19
->> https://lkml.org/lkml/2017/5/16/23
->> https://lkml.org/lkml/2017/5/16/21,
->> 
-> Yes, this patch series is done based on the inputs of the patches you
-> sent earlier.
-> 
->> some comments to be adapted from the patch-set I did.
->> 
->> end = ~0;
->> you should consider DMA_MASK, to see iproc controller is in 32 bit or 
->> 64
->> bit system.
->> please check following code snippet.
->> 
->> if (tmp_dma_addr < DMA_BIT_MASK(sizeof(dma_addr_t) * 8)) {
->> +                       lo = iova_pfn(iovad, tmp_dma_addr);
->> +                       hi = iova_pfn(iovad,
->> +                                     DMA_BIT_MASK(sizeof(dma_addr_t) 
->> * 8) - 1);
->> +                       reserve_iova(iovad, lo, hi);
->> +               }
->> 
->> Also if this controller is integrated to 64bit platform, but decide to
->> restrict DMA to 32 bit for some reason, the code should address such
->> scenarios.
->> so it is always safe to do
->> 
->> #define BITS_PER_BYTE 8
->> DMA_BIT_MASK(sizeof(dma_addr_t) * BITS_PER_BYTE)
->> so please use kernle macro to find the end of DMA region.
->> 
-> this change done with the assumption, that end_address is max bus
-> address(~0) instead
-> pcie RC dma mask.
-> Even dma-ranges has 64bit size dma-mask of PCIe host is forced to 
-> 32bit.
-> // in of_dma_configure function
->     dev->coherent_dma_mask = DMA_BIT_MASK(32);
-> And dma-mask of endpoint was set to 64bit in their drivers. also SMMU 
-> supported
-> dma mask is 48-bit.
-> But here requirement is all address ranges except dma-ranges address
-> between 0x0 - ~0x0
-> have to be reserved.
-> as you suggested I will change ~0 to DMA_BIT_MASK macro it will look
-> more cleaner.
->> 
+> Is the acpi_bus_unregister_driver() in acpi_video_unregister() the
+> source of the lockdep unhappiness?
 
-agreed, makes sense;
+Yeah I guess I cut out too much of the lockdep splat. It complains about
+kernfs_fop_write and kernfs_remove_by_name_ns acquiring the same lock
+class. It's ofc not the same lock, so no real deadlock. Getting the
+device_release_driver outside of the callchain under kernfs_fop_write,
+which this patch does, "fixes" it. For "fixes" = shut up lockdep.
 
->> Also ideally according to SBSA v5
->> 
->> 8.3 PCI Express device view of memory
->> 
->> Transactions from a PCI express device will either directly address 
->> the
->> memory system of the base server system
->> or be presented to a SMMU for optional address translation and
->> permission policing.
->> In systems that are compatible with level 3 or above of the SBSA, the
->> addresses sent by PCI express devices
->> must be presented to the memory system or SMMU unmodified. In a system
->> where the PCI express does not use
->> an SMMU, the PCI express devices have the same view of physical memory
->> as the PEs. In a system with a
->> SMMU for PCI express there are no transformations to addresses being
->> sent by PCI express devices before they
->> are presented as an input address to the SMMU.
->> 
->> which is a limitation of iproc controller, please list the limitation 
->> in
->> detail as it violates SBSA.
-> Inbound address sent by pcie devices to the host will not be translate
-> (unchanged) before it comes to
-> SMMU or directly to PE. but the there is limitation that, few address
-> ranges are not allowed by
-> IPROC PCIe RC and those were filtered out. That is the reason forces
-> this change request.
-> I will append these details in commit message.
-> 
+Other options:
+- Anotate the recursion with the usual lockdep annotations. Potentially
+  results in lockdep not catching real deadlocks (you can still have other
+  loops closing the deadlock, maybe through some subsystem/bus lock).
 
-My intention was just to make sure that commit message clearly mentions 
-limitation.
-so yes, since controller has to be programmed for incoming address and 
-there is no way around to disable those 1:1 translations, and allow 
-everything incoming.
-that is the HW limitation.
+- Rewrite kernfs_fop_write to drop the lock (optionally, for callbacks
+  that know what they're doing), which should be fine if we refcount
+  everything properly (bus, driver & device).
 
-Thanks for addressing.
+- Also note that probably the same bug exists on the bind sysfs interface,
+  but we don't use that, so I don't care :-)
 
-> Regards,
-> Srinath.
->> 
->> Regards,
->> Oza.
->> 
->> > +     if (end - start) {
->> > +             ret = iproc_pcie_add_dma_resv_range(pcie->dev, &resources,
->> > +                                                 start, end);
->> > +             if (ret)
->> > +                     goto out;
->> > +     }
->> > +
->> > +     list_splice_init(&resources, &host->dma_resv);
->> > +
->> >       return 0;
->> > +out:
->> > +     pci_free_resource_list(&resources);
->> > +     return ret;
->> >  }
->> >
->> >  static int iproce_pcie_get_msi(struct iproc_pcie *pcie,
->> 
->> 
->> 
->> 
->> 
+- Most of these issues are never visible in normal usage, since normally
+  driver bind/unbind is done from a kthread or model_load/unload, neither
+  of which is running in the context of that kernfs mutex kernfs_fop_write
+  holds. That's why I think the task work is the best solution, since it
+  changes the locking context of the unbind sysfs to match the locking
+  context of module unload and hotunplug. Unfortunately that trick doesn't
+  work for the bind sysfs file, since that way we can't thread the errno
+  value back to userspace.
+
+Cheers, Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
