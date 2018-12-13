@@ -2,83 +2,96 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C20FFC67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 02:57:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2EB3C67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 02:59:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E4D820851
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 02:57:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E4D820851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+	by mail.kernel.org (Postfix) with ESMTP id A116820873
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 02:59:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cO13BLo0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A116820873
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726830AbeLMC5S (ORCPT
+        id S1726711AbeLMC7p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 21:57:18 -0500
-Received: from ozlabs.org ([203.11.71.1]:43985 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726344AbeLMC5R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 21:57:17 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43Fdd71xbWz9s8r;
-        Thu, 13 Dec 2018 13:57:15 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Frank Rowand <frowand.list@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     mwb@linux.vnet.ibm.com,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
-        tlfalcon@linux.vnet.ibm.com, minkim@us.ibm.com,
-        devicetree@vger.kernel.org,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v03] powerpc/mobility: Fix node detach/rename problem
-In-Reply-To: <48aa028d-b786-7704-70ff-75a6d2321474@gmail.com>
-References: <a2d46622-a957-dffe-04d1-8087bbf0f8b5@linux.vnet.ibm.com> <871s6oxkdf.fsf@concordia.ellerman.id.au> <CAL_Jsq+t--486MiSsHnKcVy=q2wVvJgUmtAV6Vy2WwSNKymELA@mail.gmail.com> <48aa028d-b786-7704-70ff-75a6d2321474@gmail.com>
-Date:   Thu, 13 Dec 2018 13:57:16 +1100
-Message-ID: <877egew2ur.fsf@concordia.ellerman.id.au>
+        Wed, 12 Dec 2018 21:59:45 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:40342 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726344AbeLMC7p (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 21:59:45 -0500
+Received: by mail-pg1-f195.google.com with SMTP id z10so312055pgp.7
+        for <linux-kernel@vger.kernel.org>; Wed, 12 Dec 2018 18:59:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Tm7CGrayk8PFOhAi26Fef9rSD14WP1jinUziapv+cUQ=;
+        b=cO13BLo0i8goaO8QXMxfxBElbrAE5N3QCPuSE8I7g/75aZuwQjtxdYsykH4HVCs5pi
+         FMdPB8ag+YhuXrF/libn+8+OVngNPP9zEWmC+NDQe70jYK1efM+AoOe3SZVYNqB0HAFj
+         FeTQY8Bbzhh2e4Y16KFGPemD333vdoUoCgiuOvM6+LnvLfEKO39PJnAV74qznnkUxXQG
+         /bM729audL39v/4bHBNZNddHSJDMHHO2J6722xJpP9bXC47VDFD4HjcSyRmsqsEUu3hU
+         PP5BawMNs/8MUad7kZB/tYQXpsSHxulJ9zSfoubqnn9pLcrDeNMpULjtFTKrKlYrIiom
+         USlQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Tm7CGrayk8PFOhAi26Fef9rSD14WP1jinUziapv+cUQ=;
+        b=rcwli9udcPtb0aoPJKmPhfs8CpXpBVdMFE286g3dUS0585OuG/y91Dlng0bGZ1GqR+
+         GM9v/I4Sbrj4lqQvY1rJqYSb6e1fcTGsTKwrOlVQGOkhaZix7R7Ks2Xr87SueD1YI2Qp
+         3HBBOlCO+izE6w+6D03v0ELhLfxXrUGbd56MBrfAUXj2mx1jRndBfXQFQndzByPM4m+2
+         fr93rj2kajxhJM276d9WkpaLN2mIZ+Qji+O+DCqouO1D80JgsM5z/VhCXNbTBkA0XxQs
+         mDRLb1RA1sX6SEJxW7bf+x7CXrS8wt3MGqCmi2OUE95KegWMrgqKa9peByeMw/uUJqzS
+         MyCw==
+X-Gm-Message-State: AA+aEWaUK+loP0Aha0LqUh3Z1TXsn9EAsztMOimpi3DbpHiYPhWzwtg0
+        FMRj1kFTq/i8dStNSl8sbnU=
+X-Google-Smtp-Source: AFSGD/Vr5Cex1wZVZ4mA7rPME84UZu2iDP0gS+47Cf5/Jz13fPxtXNVlFsCn2pGou70cS3hRq8e1ow==
+X-Received: by 2002:aa7:87ce:: with SMTP id i14mr22471970pfo.20.1544669984385;
+        Wed, 12 Dec 2018 18:59:44 -0800 (PST)
+Received: from localhost ([110.70.59.213])
+        by smtp.gmail.com with ESMTPSA id v12sm442982pgg.41.2018.12.12.18.59.42
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 12 Dec 2018 18:59:43 -0800 (PST)
+Date:   Thu, 13 Dec 2018 11:59:40 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Waiman Long <longman@redhat.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Yang Shi <yang.shi@linux.alibaba.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Dmitry Safonov <dima@arista.com>
+Subject: Re: [PATCH] debugobjects: Move printk out of db lock critical
+ sections
+Message-ID: <20181213025940.GF4860@jagdpanzerIV>
+References: <1544653694-27873-1-git-send-email-longman@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1544653694-27873-1-git-send-email-longman@redhat.com>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Frank Rowand <frowand.list@gmail.com> writes:
-> On 12/11/18 8:07 AM, Rob Herring wrote:
->> On Tue, Dec 11, 2018 at 7:29 AM Michael Ellerman <mpe@ellerman.id.au> wrote:
-...
->>> diff --git a/drivers/of/base.c b/drivers/of/base.c
->>> index 09692c9b32a7..d8e4534c0686 100644
->>> --- a/drivers/of/base.c
->>> +++ b/drivers/of/base.c
->>> @@ -1190,6 +1190,10 @@ struct device_node *of_find_node_by_phandle(phandle handle)
->>>                 if (phandle_cache[masked_handle] &&
->>>                     handle == phandle_cache[masked_handle]->phandle)
->>>                         np = phandle_cache[masked_handle];
->>> +
->>> +               /* If we find a detached node, remove it */
->>> +               if (of_node_check_flag(np, OF_DETACHED))
->>> +                       np = phandle_cache[masked_handle] = NULL;
->
-> The bug you found exposes a couple of different issues, a little bit
-> deeper than the proposed fix.  I'll work on a fuller fix tonight or
-> tomorrow.
+On (12/12/18 17:28), Waiman Long wrote:
+> 
+> warning from lockdep as reported in https://lkml.org/lkml/2018/12/11/143.
+> 
 
-OK thanks.
+That link shows an empty page, lkml.org is quite unstable. Let's
+use this one instead:
 
->> I'm wondering if we should explicitly remove the node from the cache
->> when we set OF_DETACHED. Otherwise, it could be possible that the node
->> pointer has been freed already. Or maybe we need both?
->
-> Yes, it should be explicitly removed.  I may also add in a paranoia check in
-> of_find_node_by_phandle().
+https://lore.kernel.org/lkml/20181211091154.GL23332@shao2-debian/T/#u
 
-That seems best to me.
-
-cheers
+	-ss
