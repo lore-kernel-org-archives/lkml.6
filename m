@@ -2,127 +2,104 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96223C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 13:54:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D77BC65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 13:54:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5930420849
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 13:54:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="SWT5PL1w";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Iay5FC1D"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5930420849
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id D290620849
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 13:54:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D290620849
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729563AbeLMNyH (ORCPT
+        id S1729577AbeLMNyL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 08:54:07 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:43596 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729477AbeLMNyH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 08:54:07 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 0A793602F8; Thu, 13 Dec 2018 13:54:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1544709246;
-        bh=nPiXomwx4vqRrhrxBskGpdJawAINHzNHm5i8qnJ3jOg=;
-        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=SWT5PL1wY6Ts9OUAhz0nPyXFfE8BMK4+Ss0nFp3WCuzCSfsTlFaE74oSLzKZVGG+0
-         LF6Fvv3i4d1XTHRfuAbnX8tMlBjOFHnkAxeiMMyaw+u9vGrnS8uRMqgkO5Jbuy3RC3
-         4JxrJugXNP27Xmo1DTw0KRFXVsvp36sxX0iAGSCw=
-Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id AFA7260237;
-        Thu, 13 Dec 2018 13:54:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1544709245;
-        bh=nPiXomwx4vqRrhrxBskGpdJawAINHzNHm5i8qnJ3jOg=;
-        h=Subject:From:In-Reply-To:References:To:Cc:From;
-        b=Iay5FC1DwgiemgzrvEUkwnFBcp1FWJQs7TzsoK8RQhwuKuxId+V1aQU/mAd6O+yHU
-         w00Ntw7Y/nNniQB+6ys13GJ/Y5Yb0ULWWWoTFat2C7LFtGuueiONi45DcWbZTnNKWS
-         cQ/yKROaD+UGgW6VQFgZYmAWhczLAzu04cZes43Y=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AFA7260237
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [4.20 PATCH] Revert "mwifiex: restructure rx_reorder_tbl_lock
- usage"
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <20181130175957.167031-1-briannorris@chromium.org>
-References: <20181130175957.167031-1-briannorris@chromium.org>
-To:     Brian Norris <briannorris@chromium.org>
-Cc:     <linux-kernel@vger.kernel.org>,
-        Amitkumar Karwar <amitkarwar@gmail.com>,
-        Nishant Sarmukadam <nishants@marvell.com>,
-        Ganapathi Bhat <gbhat@marvell.com>,
-        Xinming Hu <huxinming820@gmail.com>,
-        linux-wireless@vger.kernel.org,
-        Brian Norris <briannorris@chromium.org>, stable@vger.kernel.org
-User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
-Message-Id: <20181213135406.0A793602F8@smtp.codeaurora.org>
-Date:   Thu, 13 Dec 2018 13:54:05 +0000 (UTC)
+        Thu, 13 Dec 2018 08:54:11 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:39611 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729477AbeLMNyI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 08:54:08 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 43FwC14LDzz9v1BB;
+        Thu, 13 Dec 2018 14:54:05 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id luckFdVKSudX; Thu, 13 Dec 2018 14:54:05 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 43FwC13mHVz9v1B9;
+        Thu, 13 Dec 2018 14:54:05 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id DAE6C8B885;
+        Thu, 13 Dec 2018 14:54:06 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id C6z8slSvHBTQ; Thu, 13 Dec 2018 14:54:06 +0100 (CET)
+Received: from po14163vm.idsi0.si.c-s.fr (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id B4EBD8B883;
+        Thu, 13 Dec 2018 14:54:06 +0100 (CET)
+Received: by po14163vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id 7880671703; Thu, 13 Dec 2018 13:54:06 +0000 (UTC)
+Message-Id: <531e7e818b5c4867148412c7902a9cbeee5745ee.1544709040.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH] powerpc/prom: fix early DEBUG messages
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date:   Thu, 13 Dec 2018 13:54:06 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Brian Norris <briannorris@chromium.org> wrote:
+This patch fixes early DEBUG messages in prom.c:
+- Use %px instead of %p to see the addresses
+- Use %x instead of %llx when phys_addr_t is not 64 bits.
 
-> This reverts commit 5188d5453bc9380ccd4ae1086138dd485d13aef2, because it
-> introduced lock recursion:
-> 
->   BUG: spinlock recursion on CPU#2, kworker/u13:1/395
->    lock: 0xffffffc0e28a47f0, .magic: dead4ead, .owner: kworker/u13:1/395, .owner_cpu: 2
->   CPU: 2 PID: 395 Comm: kworker/u13:1 Not tainted 4.20.0-rc4+ #2
->   Hardware name: Google Kevin (DT)
->   Workqueue: MWIFIEX_RX_WORK_QUEUE mwifiex_rx_work_queue [mwifiex]
->   Call trace:
->    dump_backtrace+0x0/0x140
->    show_stack+0x20/0x28
->    dump_stack+0x84/0xa4
->    spin_bug+0x98/0xa4
->    do_raw_spin_lock+0x5c/0xdc
->    _raw_spin_lock_irqsave+0x38/0x48
->    mwifiex_flush_data+0x2c/0xa4 [mwifiex]
->    call_timer_fn+0xcc/0x1c4
->    run_timer_softirq+0x264/0x4f0
->    __do_softirq+0x1a8/0x35c
->    do_softirq+0x54/0x64
->    netif_rx_ni+0xe8/0x120
->    mwifiex_recv_packet+0xfc/0x10c [mwifiex]
->    mwifiex_process_rx_packet+0x1d4/0x238 [mwifiex]
->    mwifiex_11n_dispatch_pkt+0x190/0x1ac [mwifiex]
->    mwifiex_11n_rx_reorder_pkt+0x28c/0x354 [mwifiex]
->    mwifiex_process_sta_rx_packet+0x204/0x26c [mwifiex]
->    mwifiex_handle_rx_packet+0x15c/0x16c [mwifiex]
->    mwifiex_rx_work_queue+0x104/0x134 [mwifiex]
->    worker_thread+0x4cc/0x72c
->    kthread+0x134/0x13c
->    ret_from_fork+0x10/0x18
-> 
-> This was clearly not tested well at all. I simply performed 'wget' in a
-> loop and it fell over within a few seconds.
-> 
-> Fixes: 5188d5453bc9 ("mwifiex: restructure rx_reorder_tbl_lock usage")
-> Cc: <stable@vger.kernel.org>
-> Cc: Ganapathi Bhat <gbhat@marvell.com>
-> Signed-off-by: Brian Norris <briannorris@chromium.org>
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ arch/powerpc/kernel/prom.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-Patch applied to wireless-drivers.git, thanks.
-
-1aa48f088615 Revert "mwifiex: restructure rx_reorder_tbl_lock usage"
-
+diff --git a/arch/powerpc/kernel/prom.c b/arch/powerpc/kernel/prom.c
+index fe758cedb93f..d8e56e03c9c6 100644
+--- a/arch/powerpc/kernel/prom.c
++++ b/arch/powerpc/kernel/prom.c
+@@ -129,7 +129,7 @@ static void __init move_device_tree(void)
+ 		p = __va(memblock_phys_alloc(size, PAGE_SIZE));
+ 		memcpy(p, initial_boot_params, size);
+ 		initial_boot_params = p;
+-		DBG("Moved device tree to 0x%p\n", p);
++		DBG("Moved device tree to 0x%px\n", p);
+ 	}
+ 
+ 	DBG("<- move_device_tree\n");
+@@ -689,7 +689,7 @@ void __init early_init_devtree(void *params)
+ {
+ 	phys_addr_t limit;
+ 
+-	DBG(" -> early_init_devtree(%p)\n", params);
++	DBG(" -> early_init_devtree(%px)\n", params);
+ 
+ 	/* Too early to BUG_ON(), do it by hand */
+ 	if (!early_init_dt_verify(params))
+@@ -749,7 +749,11 @@ void __init early_init_devtree(void *params)
+ 	memblock_allow_resize();
+ 	memblock_dump_all();
+ 
++#ifdef CONFIG_PHYS_64BIT
+ 	DBG("Phys. mem: %llx\n", memblock_phys_mem_size());
++#else
++	DBG("Phys. mem: %x\n", memblock_phys_mem_size());
++#endif
+ 
+ 	/* We may need to relocate the flat tree, do it now.
+ 	 * FIXME .. and the initrd too? */
 -- 
-https://patchwork.kernel.org/patch/10706959/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.13.3
 
