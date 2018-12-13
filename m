@@ -2,173 +2,92 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,T_MIXED_ES autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57ADCC65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 10:14:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EFA9C67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 10:14:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24BBB21104
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 10:14:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24BBB21104
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 352B120989
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 10:14:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 352B120989
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728285AbeLMKOD (ORCPT
+        id S1728316AbeLMKOI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 05:14:03 -0500
-Received: from mx2.suse.de ([195.135.220.15]:34240 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727720AbeLMKOB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 05:14:01 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 039FDAC8A;
-        Thu, 13 Dec 2018 10:13:58 +0000 (UTC)
+        Thu, 13 Dec 2018 05:14:08 -0500
+Received: from orcrist.hmeau.com ([104.223.48.154]:50402 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727720AbeLMKOH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 05:14:07 -0500
+Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
+        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
+        id 1gXO0I-0002vt-36; Thu, 13 Dec 2018 18:14:02 +0800
+Received: from herbert by gondobar with local (Exim 4.89)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1gXO0H-0004Xs-H3; Thu, 13 Dec 2018 18:14:01 +0800
+Date:   Thu, 13 Dec 2018 18:14:01 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Vitaly Chikunov <vt@altlinux.org>
+Cc:     dhowells@redhat.com, davem@davemloft.net, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH] X.509: Parse public key parameters from x509 for
+ akcipher
+Message-ID: <20181213101401.zsmpkz6okgkjmbw3@gondor.apana.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Thu, 13 Dec 2018 11:13:58 +0100
-From:   Roman Penyaev <rpenyaev@suse.de>
-To:     Andrea Parri <andrea.parri@amarulasolutions.com>
-Cc:     Davidlohr Bueso <dbueso@suse.de>, Jason Baron <jbaron@akamai.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] epoll: use rwlock in order to reduce
- ep_poll_callback() contention
-In-Reply-To: <20181212171348.GA12786@andrea>
-References: <20181212110357.25656-1-rpenyaev@suse.de>
- <20181212110357.25656-4-rpenyaev@suse.de> <20181212171348.GA12786@andrea>
-Message-ID: <a30306ad68b4b7171fbb587f5f845ea5@suse.de>
-X-Sender: rpenyaev@suse.de
-User-Agent: Roundcube Webmail
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181209135548.26232-1-vt@altlinux.org>
+X-Newsgroups: apana.lists.os.linux.cryptoapi,apana.lists.os.linux.kernel
+Organization: Core
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-12-12 18:13, Andrea Parri wrote:
-> On Wed, Dec 12, 2018 at 12:03:57PM +0100, Roman Penyaev wrote:
-
-[...]
-
->> +static inline void list_add_tail_lockless(struct list_head *new,
->> +					  struct list_head *head)
->> +{
->> +	struct list_head *prev;
->> +
->> +	new->next = head;
->> +
->> +	/*
->> +	 * Initially ->next of a new element must be updated with the head
->> +	 * (we are inserting to the tail) and only then pointers are 
->> atomically
->> +	 * exchanged.  XCHG guarantees memory ordering, thus ->next should 
->> be
->> +	 * updated before pointers are actually swapped.
->> +	 */
->> +
->> +	prev = xchg(&head->prev, new);
->> +
->> +	/*
->> +	 * It is safe to modify prev->next and new->prev, because a new 
->> element
->> +	 * is added only to the tail and new->next is updated before XCHG.
->> +	 */
+Vitaly Chikunov <vt@altlinux.org> wrote:
+> Some public key algorithms (like ECDSA) keep in parameters field
+> important data such as digest and curve OIDs (possibly more for
+> different ECDSA variants). Thus, just setting a public key (as
+> for RSA) is not enough.
 > 
-> IIUC, you're also relying on "some" ordering between the atomic load
-> of &head->prev above and the store to prev->next below: consider the
-> following snippet for two concurrent list_add_tail_lockless()'s:
+> Introduce set_params() callback for akcipher which will be used to
+> pass BER encoded parameters array, with additional argument of
+> algorithm OID.
 > 
-> {Initially: List := H -> A -> B}
+> This is done with the intent of adding support for EC-RDSA (ISO/IEC
+> 14888-3:2018, RFC 7091, and basically ECDSA variant) public keys (which
+> will be finally used in IMA subsystem). Thus, also oid_registry.h is
+> updated.
 > 
-> CPU0					CPU1
+> Rationale:
 > 
-> list_add_tail_lockless(C, H):		list_add_tail_lockless(D, H):
+> - For such keys just setting public key without parameters is
+>  meaningless, so it would be possible to add parameters in
+>  crypto_akcipher_set_pub_key (and .set_pub_key) calls. But, this will
+>  needlessly change API for RSA akcipher. Also, additional callback
+>  making it possible to pass parameters after
+>  crypto_akcipher_set_priv_key (and .set_priv_key) in the future.
 > 
-> C->next = H				D->next = H
-> prev = xchg(&H->prev, C) // =B		prev = xchg(&H->prev, D) // =C
-> B->next = C				C->next = D
-> C->prev = B				D->prev = C
+> - Algorithm OID is passed to be validated in .set_params callback,
+>  otherwise, it could have the wrong value.
 > 
-> Here, as annotated, CPU0's xchg() "wins" over CPU1's xchg() (i.e., the
-> latter reads the value of &H->prev that the former stored to that same
-> location).
+> - Particular algorithm OIDs are checked in x509_note_params, (because
+>  this is called from AlgorithmIdentifier (ASN.1) parser, which is
+>  called multiple times, as it's used multiple times in X.509
+>  certificate), to distinguish a public key call from a signature call.
 > 
-> As you noted above, the xchg() guarantees that CPU0's store to C->next
-> is "ordered before" CPU0's store to &H->prev.
-> 
-> But we also want CPU1's load from &H->prev to be ordered before CPU1's
-> store to C->next, which is also guaranteed by the xchg() (or, FWIW, by
-> the address dependency between these two memory accesses).
-> 
-> I do not see what could guarantee "C->next == D" in the end, otherwise.
-> 
-> What am I missing?
+> Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
 
-Hi Andrea,
+Please post this with a patch that actually uses the set_params
+callback.
 
-xchg always acts as a full memory barrier, i.e. mfence in x86 terms.  So 
-the
-following statement should be always true, otherwise nothing should work 
-as
-the same code pattern is used in many generic places:
-
-    CPU0               CPU1
-
-  C->next = H
-  xchg(&ptr, C)
-                      C = xchg(&ptr, D)
-                      C->next = D
-
-
-This is the only guarantee we need, i.e. make it simplier:
-
-    C->next = H
-    mfence            mfence
-                      C->next = D
-
-the gurantee that two stores won't reorder.  Pattern is always the same: 
-we
-prepare chunk of memory on CPU0 and do pointers xchg, CPU1 sees chunks 
-of
-memory with all stores committed by CPU0 (regardless of CPU1 does loads
-or stores to this chunk).
-
-I am repeating the same thing which you also noted, but I just want to 
-be
-sure that I do not say nonsense.  So basically repeating to myself.
-
-Ok, let's commit that.  Returning to your question: "I do not see what
-could guarantee "C->next == D" in the end"
-
-At the end of what?  Lockless insert procedure (insert to tail) relies 
-only
-on "head->prev".  This is the single "place" where we atomically 
-exchange
-list elements and "somehow" chain them.  So insert needs only actual
-"head->prev", and xchg provides this guarantees to us.
-
-But there is also a user of the list, who needs to iterate over the list
-or to delete elements, etc, i.e. this user of the list needs list fully
-committed to the memory.  This user takes write_lock().  So answering 
-your
-question (if I understood it correctly): at the end write_lock() 
-guarantees
-that list won't be seen as corrupted and updates to the last element, 
-i.e.
-"->next" or "->prev" pointers of the last element are committed and seen
-correctly.
-
---
-Roman
-
-
-
-
-
+Thanks,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
