@@ -2,151 +2,192 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UPPERCASE_50_75,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,T_MIXED_ES,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41C7CC67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 13:17:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6540C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 13:21:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFDB120849
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 13:17:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="m3RYvhoZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFDB120849
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id 7094B20870
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 13:21:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544707291;
+	bh=h6raYjVwHZoGVpoB6nODs9Vpyy4q63y2vA5/OdC5E2s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=qCdQ2+xyEOM7Aqs5FFR+9Yp5Xzq7kAGBdxtvmSCol/6PK+rVuvktCuuo82hwxGC+r
+	 kVsoX4GGYjTN6orTim26Bv8fxx4DAPTzK1Vz/31JuDbMby60roljXPFbLVYSmZGmVD
+	 y1bwYpltNKqDzIrBbzhiTFm5Vou1+nul/1XQjj6Y=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7094B20870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729459AbeLMNR4 (ORCPT
+        id S1729374AbeLMNVa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 08:17:56 -0500
-Received: from mail-eopbgr30086.outbound.protection.outlook.com ([40.107.3.86]:44700
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729366AbeLMNRw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 08:17:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=79Ryls9WoN2uPfg8zdg2z5SwKrCJUkH6KSy1ovwm9kQ=;
- b=m3RYvhoZ+LQQjfyKBNxVrrbgSYINvdMNMMyHcCgodLvUOVhaRTPaXVEsIHEXPsWzWla98KKRbeS3CfQaJKYVTLtlc47xB//QDrBEt0tNzbq48rmzfUwmU3H71lazmUJ3kLexBjVFd/re6AN/F++xKqV5nuT+EIXHdNDVENPxKC4=
-Received: from DB3PR0402MB3658.eurprd04.prod.outlook.com (52.134.65.28) by
- DB3PR0402MB3692.eurprd04.prod.outlook.com (52.134.65.15) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1425.19; Thu, 13 Dec 2018 13:17:44 +0000
-Received: from DB3PR0402MB3658.eurprd04.prod.outlook.com
- ([fe80::ce5:fddb:6290:c5eb]) by DB3PR0402MB3658.eurprd04.prod.outlook.com
- ([fe80::ce5:fddb:6290:c5eb%5]) with mapi id 15.20.1425.016; Thu, 13 Dec 2018
- 13:17:44 +0000
-From:   Abel Vesa <abel.vesa@nxp.com>
-To:     Shawn Guo <shawnguo@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        Aisheng Dong <aisheng.dong@nxp.com>
-CC:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Olof Johansson <olof@lixom.net>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>, Rob Herring <robh@kernel.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Abel Vesa <abel.vesa@nxp.com>
-Subject: [PATCH 3/3] arm64: Add i.MX8 boot necesarry configs to defconfig
-Thread-Topic: [PATCH 3/3] arm64: Add i.MX8 boot necesarry configs to defconfig
-Thread-Index: AQHUkuY7xsi/enJXskWRpq5LGMGyIg==
-Date:   Thu, 13 Dec 2018 13:17:44 +0000
-Message-ID: <1544707047-4417-4-git-send-email-abel.vesa@nxp.com>
-References: <1544707047-4417-1-git-send-email-abel.vesa@nxp.com>
-In-Reply-To: <1544707047-4417-1-git-send-email-abel.vesa@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: AM6P192CA0103.EURP192.PROD.OUTLOOK.COM
- (2603:10a6:209:8d::44) To DB3PR0402MB3658.eurprd04.prod.outlook.com
- (2603:10a6:8:2::28)
-x-originating-ip: [95.76.156.53]
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=abel.vesa@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DB3PR0402MB3692;6:owjKpEKlIXGMqCYxTtgVzhNSRxqN0puyEvY2+M5SBC9g93RsmkKN495LKmgnCwH9ypNfYCREavwiaN7a+v/QAfjBX383CXjpw53wWrzC4oklWild71QTkRXbD9MwEKXA8O7N7FInfD7XKg/Paw7uWsn0D/c6jrhOcdFC8QGWiL10WtkVsG6wN9Sk/HgLxiH7Yz/Tunw2qgfIxJDq37Ygeh3TkuEbfW/Gv+1cuQqcX8TxYI09jQWxL4oSqiO0feL07KOxtPpmYm8bm8uZWdW7JZOFReLMqpkT8WNvkc+5fp9jBKSoZEr1oNsC8pO66zKc0MOD//EnG3ZRE2HavCAF2ZSnSJJHTfBrfpkNhGXB/pXmPr4uU3QOqHJBBN94in5E+nI1R4o1pbP53WPw1ss7xrWAW75+DbDi0x/SwGaocBTMwq4xuDsl92Au4D5GLt292eitEzgyfDn+XIHsLCWxqQ==;5:HH9mCLWxb+2ifwfW6D+8lUPM+R/tCTg35DlsmvvLtByKv1AhG1ELLr9U8HeXz/djkJAJjM/689s2FeOOlYyxMyx4VcQ0D/9LoRGV16irdLf9efEkG4rSCKeJUHo6P6kCUyZeOjy3Q53o6MwbV0JnC9hakFpHOuGt0o785nqUm+8=;7:0JhnQbtCWt+s6lW7L2+2cByc+Z+JcMRTS+5BPlXqBgAuxxAoqrI60eitusng4YvK1ziME3xJeiu4KxlLAMZXjC3CJVJ0tHCxUIU7h/4SDsqMEL/QOsbxgqOfLJC0KEzv4SE13GPnBeMORherqZqQuQ==
-x-ms-office365-filtering-correlation-id: 320dbb52-4647-4120-2137-08d660fd5e42
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DB3PR0402MB3692;
-x-ms-traffictypediagnostic: DB3PR0402MB3692:
-x-microsoft-antispam-prvs: <DB3PR0402MB3692031EE5F6E09F4B5F294DF6A00@DB3PR0402MB3692.eurprd04.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(6040522)(2401047)(5005006)(8121501046)(3002001)(3231475)(944501520)(52105112)(10201501046)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(20161123562045)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:DB3PR0402MB3692;BCL:0;PCL:0;RULEID:;SRVR:DB3PR0402MB3692;
-x-forefront-prvs: 088552DE73
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(366004)(376002)(136003)(39860400002)(396003)(199004)(189003)(81166006)(36756003)(8936002)(486006)(186003)(25786009)(305945005)(2616005)(11346002)(446003)(76176011)(476003)(26005)(2906002)(68736007)(8676002)(81156014)(6486002)(14454004)(386003)(7416002)(478600001)(6436002)(6636002)(5660300001)(6506007)(256004)(6512007)(86362001)(66066001)(106356001)(105586002)(7736002)(54906003)(110136005)(102836004)(316002)(71190400001)(71200400001)(44832011)(52116002)(3846002)(6116002)(53936002)(97736004)(99286004)(4326008);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3692;H:DB3PR0402MB3658.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: qyw0JUxUeVhF+3y+16bEMgQ3yyA/NsIWUoeLaaaMyrCQaK8jK4T3GXEvJDJvWBFoqP76K9L5QxwyXkoWR1GDxWk1/w1+sRJT+HC3tsgceC4nY88AlkmwqWLG+FB0j/NdqVReRXIQUFgVfajqU18X2TuqjkJuydaRrRxPoFHSH5bWzm68D2RLleSTY5qkRG+bu6MIMeWTMNNC1HzguQ9NjemqPt/U5XWDazHljKL2k9jVYT6KsR2hn45W7uCDylHl3VeDOS/RIZxUSlXQLwtcdVQ3ZVPnepJ3Ng/VvuF2gSeMX/iIN/8ptKs2x1PNNybM
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Thu, 13 Dec 2018 08:21:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49828 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729265AbeLMNVa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 08:21:30 -0500
+Received: from quaco.ghostprotocols.net (unknown [190.15.121.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8CB0E2086D;
+        Thu, 13 Dec 2018 13:21:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544707288;
+        bh=h6raYjVwHZoGVpoB6nODs9Vpyy4q63y2vA5/OdC5E2s=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=PbpIrCD4q3POl5LUWTwhHkO/EJPEYrsO8payjHhVl37ioxeL+qo0q3ykFGq/VGDTp
+         9j7xKc03OO22+8EKoB/BVzPt0iyAC6SB9qDDo2LPisBaLNG9pV0U0Efub2i/URyzW3
+         asuk2Al18c7BSG1eKhZk3bGeWeTJaUk40Xj2Xe/0=
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id 490D141B1D; Thu, 13 Dec 2018 10:21:26 -0300 (-03)
+Date:   Thu, 13 Dec 2018 10:21:26 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     leo.yan@linaro.org
+Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Coresight ML <coresight@lists.linaro.org>,
+        Mike Leach <mike.leach@linaro.org>,
+        Robert Walker <robert.walker@arm.com>
+Subject: Re: [PATCH v3 6/8] perf cs-etm: Treat NO_SYNC element as trace
+ discontinuity
+Message-ID: <20181213132126.GI21027@kernel.org>
+References: <1544513908-16805-1-git-send-email-leo.yan@linaro.org>
+ <1544513908-16805-7-git-send-email-leo.yan@linaro.org>
+ <20181213123854.GE21027@kernel.org>
+ <20181213124154.GF21027@kernel.org>
+ <20181213130949.GB17663@leoy-ThinkPad-X240s>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 320dbb52-4647-4120-2137-08d660fd5e42
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Dec 2018 13:17:44.6770
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3692
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181213130949.GB17663@leoy-ThinkPad-X240s>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The CONFIG_ARCH_MXC will enable all the i.MX8 SoC.
-Also add the FEC config for ethernet support, the serial
-and the pinctrl for i.MX8MQ.
+Em Thu, Dec 13, 2018 at 09:09:49PM +0800, leo.yan@linaro.org escreveu:
+> Hi Arnaldo,
+> 
+> On Thu, Dec 13, 2018 at 09:41:54AM -0300, Arnaldo Carvalho de Melo wrote:
+> > Em Thu, Dec 13, 2018 at 09:38:54AM -0300, Arnaldo Carvalho de Melo escreveu:
+> > > Em Tue, Dec 11, 2018 at 03:38:26PM +0800, Leo Yan escreveu:
+> > > > CoreSight tracer driver might insert barrier packet between different
+> > > > buffers, thus the decoder can spot the boundaries based on the barrier
+> > > > packet; the decoder is possible to hit a barrier packet and emit a
+> > > > NO_SYNC element, then the decoder will find a periodic synchronisation
+> > > > point inside that next trace block that starts trace again but does not
+> > > > have the TRACE_ON element as indicator - usually because this block of
+> > > > trace has wrapped the buffer so we have lost the original point that
+> > > > trace was enabled.
+> > > > 
+> > > > In upper case, it results in the trace stream only inserts the
+> > > > OCSD_GEN_TRC_ELEM_NO_SYNC element in the middle of tracing stream, but
+> > > > we don't handle NO_SYNC element properly and at the end users miss to
+> > > > see the info for trace discontinuity.
+> > > 
+> > > 
+> > > "In upper case"? Maybe:
+> > > 
+> > > In the former case it causes the insertion of a OCSD_GEN_TRC_ELEM_NO_SYNC
+> > > in the middle of the the tracing stream, but as we were npt handling the
+> > > NO_SYNC element properly which ends up making users miss the
+> > > discontinuity indication"?
+> > 
+> > > > Though OCSD_GEN_TRC_ELEM_NO_SYNC is different from CS_ETM_TRACE_ON when
+> > > > output from the decoder, but both of them indicate the trace data is
+> > > 
+> > > can we remove the "but" and "of them" (redundant) above?
+> > > 
+> > > > discontinuous; this patch treats OCSD_GEN_TRC_ELEM_NO_SYNC as trace
+> > >                                                                a
+> > > > discontinuity and generates CS_ETM_DISCONTINUITY packet for it, so
+> > > > cs-etm can handle discontinuity for this case, finally it saves the last
+> > >                        it (way too many "discontinuity")
+> > > > trace data for previous trace block and restart samples for new block.
+> > 
+> > I've tentatively done those changes (and a few more) in my local branch,
+> > resulting in the wording below, plese let me know if you are ok with it:
+> 
+> Very appreciate your helping.  Please see some minor typos in below
+> commit:
+> 
+> > commit 148068b45fe2e93b19c06cfc1140ea12ca72eb59
+> > Author: Leo Yan <leo.yan@linaro.org>
+> > Date:   Tue Dec 11 15:38:26 2018 +0800
+> > 
+> >     perf cs-etm: Treat NO_SYNC element as trace discontinuity
+> >     
+> >     The CoreSight tracer driver might insert a barrier packets between
+>                                                          packet
 
-Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
----
- arch/arm64/configs/defconfig | 5 +++++
- 1 file changed, 5 insertions(+)
+                                             I'll remove the 'a' instead, ok?
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 5c2b1f6..a129e5e 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -45,6 +45,7 @@ CONFIG_ARCH_HISI=3Dy
- CONFIG_ARCH_MEDIATEK=3Dy
- CONFIG_ARCH_MESON=3Dy
- CONFIG_ARCH_MVEBU=3Dy
-+CONFIG_ARCH_MXC=3Dy
- CONFIG_ARCH_QCOM=3Dy
- CONFIG_ARCH_ROCKCHIP=3Dy
- CONFIG_ARCH_SEATTLE=3Dy
-@@ -226,6 +227,7 @@ CONFIG_NET_XGENE=3Dy
- CONFIG_ATL1C=3Dm
- CONFIG_MACB=3Dy
- CONFIG_THUNDER_NIC_PF=3Dy
-+CONFIG_FEC=3Dy
- CONFIG_HIX5HD2_GMAC=3Dy
- CONFIG_HNS_DSAF=3Dy
- CONFIG_HNS_ENET=3Dy
-@@ -300,6 +302,8 @@ CONFIG_SERIAL_MESON_CONSOLE=3Dy
- CONFIG_SERIAL_SAMSUNG=3Dy
- CONFIG_SERIAL_SAMSUNG_CONSOLE=3Dy
- CONFIG_SERIAL_TEGRA=3Dy
-+CONFIG_SERIAL_IMX=3Dy
-+CONFIG_SERIAL_IMX_CONSOLE=3Dy
- CONFIG_SERIAL_SH_SCI=3Dy
- CONFIG_SERIAL_MSM=3Dy
- CONFIG_SERIAL_MSM_CONSOLE=3Dy
-@@ -346,6 +350,7 @@ CONFIG_SPI_SPIDEV=3Dm
- CONFIG_SPMI=3Dy
- CONFIG_PINCTRL_SINGLE=3Dy
- CONFIG_PINCTRL_MAX77620=3Dy
-+CONFIG_PINCTRL_IMX8MQ=3Dy
- CONFIG_PINCTRL_IPQ8074=3Dy
- CONFIG_PINCTRL_MSM8916=3Dy
- CONFIG_PINCTRL_MSM8994=3Dy
---=20
-2.7.4
 
+> >     different buffers, thus the decoder can spot the boundaries based on the
+> >     barrier packet; it is possible for the decoder to hit a barrier packet
+> >     and emit a NO_SYNC element, then the decoder will find a periodic
+> >     synchronisation point inside that next trace block that starts the trace
+> >     again but does not have the TRACE_ON element as indicator - usually
+> >     because this trace block has wrapped the buffer so we have lost the
+> >     original point when the trace was enabled.
+> >     
+> >     In the first case it causes the insertion of a OCSD_GEN_TRC_ELEM_NO_SYNC
+>              former
+> >     in the middle of the the tracing stream, but as we were npt handling the
+>                                                               not
+> >     NO_SYNC element properly which ends up making users miss the
+> >     discontinuity indication"?
+>                               s/?/.
+> 
+> Thanks a lot for helping.  If you prefer me to resend the patch set,
+> also let me know.
+
+I can fix it, here.
+ 
+> >     Though OCSD_GEN_TRC_ELEM_NO_SYNC is different from CS_ETM_TRACE_ON when
+> >     output from the decoder, both indicate that the trace data is
+> >     discontinuous; this patch treats OCSD_GEN_TRC_ELEM_NO_SYNC as a trace
+> >     discontinuity and generates a CS_ETM_DISCONTINUITY packet for it, so
+> >     cs-etm can handle the discontinuity for this case, finally it saves the
+> >     last trace data for the previous trace block and restart samples for the
+> >     new block.
+> >     
+> >     Signed-off-by: Leo Yan <leo.yan@linaro.org>
+> >     Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> >     Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+> >     Cc: Jiri Olsa <jolsa@redhat.com>
+> >     Cc: Mike Leach <mike.leach@linaro.org>
+> >     Cc: Namhyung Kim <namhyung@kernel.org>
+> >     Cc: Robert Walker <robert.walker@arm.com>
+> >     Cc: coresight ml <coresight@lists.linaro.org>
+> >     Cc: linux-arm-kernel@lists.infradead.org
+> >     Link: http://lkml.kernel.org/r/1544513908-16805-7-git-send-email-leo.yan@linaro.org
+> >     Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> > 
+> > diff --git a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
+> > index 1039f364f4cc..bee026e76a4c 100644
+> > --- a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
+> > +++ b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
+> > @@ -410,7 +410,6 @@ static ocsd_datapath_resp_t cs_etm_decoder__gen_trace_elem_printer(
+> >  	case OCSD_GEN_TRC_ELEM_UNKNOWN:
+> >  		break;
+> >  	case OCSD_GEN_TRC_ELEM_NO_SYNC:
+> > -		break;
+> >  	case OCSD_GEN_TRC_ELEM_TRACE_ON:
+> >  		resp = cs_etm_decoder__buffer_discontinuity(decoder,
+> >  							    trace_chan_id);
+> > 
+> > 
+
+-- 
+
+- Arnaldo
