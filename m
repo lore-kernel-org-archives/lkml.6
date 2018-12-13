@@ -2,133 +2,183 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 041C2C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:50:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46285C67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:50:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB36E20645
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:50:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F423420645
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 12:50:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="FpJ/sHnS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB36E20645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	dkim=pass (2048-bit key) header.d=cadence.com header.i=@cadence.com header.b="V/RHDp2/";
+	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="FIPhsUgB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F423420645
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cadence.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729394AbeLMMuh (ORCPT
+        id S1729501AbeLMMur (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 07:50:37 -0500
-Received: from esa3.microchip.iphmx.com ([68.232.153.233]:35905 "EHLO
-        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729393AbeLMMuC (ORCPT
+        Thu, 13 Dec 2018 07:50:47 -0500
+Received: from mx0b-0014ca01.pphosted.com ([208.86.201.193]:40750 "EHLO
+        mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729296AbeLMMt4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 07:50:02 -0500
-X-IronPort-AV: E=Sophos;i="5.56,349,1539673200"; 
-   d="scan'208";a="24317964"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 13 Dec 2018 05:50:01 -0700
-Received: from NAM05-CO1-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.76.105) with Microsoft SMTP Server (TLS) id
- 14.3.352.0; Thu, 13 Dec 2018 05:50:01 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector1-microchiptechnology-onmicrosoft-com;
+        Thu, 13 Dec 2018 07:49:56 -0500
+Received: from pps.filterd (m0042333.ppops.net [127.0.0.1])
+        by mx0b-0014ca01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wBDCi0TF023749;
+        Thu, 13 Dec 2018 04:49:47 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-type; s=proofpoint;
+ bh=T0UMzpLF3AycVbxLT8Yc/ui+a0qFObNkZoNSQxZpIbA=;
+ b=V/RHDp2/IifMyrplCcEBMn4NbdTMKy3mwDgz2nUeD3yGH7Wl+lx8IgdUxaS6ubZwJFHn
+ qorzZNijVDCweYtTA8y3W0PGHmkssmzrQ9+wo2vKw7pUGV07jfciI7QEakVK5sZDXbY0
+ PKFyh76jn5WYACaZcWLlbUOrvN7TwBshw1XR2EepUOyIpIwxW+QN/+KPEC1ehLwKKIbl
+ Fi3V8wZLK3fWkGZhBDe+TztlSkLBP/6N301JbM2PluToKiSFvdgOINUTJhgEy0acsbvm
+ bn1/3TlUxvvWpoh3ohQxMHKmSviXwPZp5sy6m4rkT/YqsFnoOWCarsNM+ZTtk+eLaGqt Ag== 
+Authentication-Results: cadence.com;
+        spf=pass smtp.mailfrom=jank@cadence.com
+Received: from nam04-co1-obe.outbound.protection.outlook.com (mail-co1nam04lp2059.outbound.protection.outlook.com [104.47.45.59])
+        by mx0b-0014ca01.pphosted.com with ESMTP id 2pbkac1c6f-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 13 Dec 2018 04:49:46 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
+ s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=uN1Dg3nIpUQbfLfV7zTXkz/v8csDo2gqNaWQinGdKVo=;
- b=FpJ/sHnSbvI8J/FhuTTqCsjLRyqr0+IslFLMq5Y9DQ7eqxdoirtKPxUUPyUlkq8OuTGKVGamnL0stHi5YMgGcQeWlLHgypU7NjgY2gtKmh9h0yGJT9jWXko/+TNwPcVxdLaC9SFPT+WogjP6nqDShTmwUYatn9WwSI186HIbCR4=
-Received: from BY2PR11MB0744.namprd11.prod.outlook.com (10.163.112.142) by
- BY2PR11MB0519.namprd11.prod.outlook.com (10.163.158.29) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1425.18; Thu, 13 Dec 2018 12:49:58 +0000
-Received: from BY2PR11MB0744.namprd11.prod.outlook.com
- ([fe80::cd88:53bd:589a:ab7f]) by BY2PR11MB0744.namprd11.prod.outlook.com
- ([fe80::cd88:53bd:589a:ab7f%2]) with mapi id 15.20.1425.016; Thu, 13 Dec 2018
- 12:49:58 +0000
-From:   <Claudiu.Beznea@microchip.com>
-To:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <Nicolas.Ferre@microchip.com>,
-        <alexandre.belloni@bootlin.com>, <Ludovic.Desroches@microchip.com>
-CC:     <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <Claudiu.Beznea@microchip.com>
-Subject: [PATCH v4 4/6] regulator: act8945a-regulator: fix line over 80 chars
- warning
-Thread-Topic: [PATCH v4 4/6] regulator: act8945a-regulator: fix line over 80
- chars warning
-Thread-Index: AQHUkuJbEDUKpOh7VkeEzAI5wePo4A==
-Date:   Thu, 13 Dec 2018 12:49:58 +0000
-Message-ID: <1544703110-27161-5-git-send-email-claudiu.beznea@microchip.com>
-References: <1544703110-27161-1-git-send-email-claudiu.beznea@microchip.com>
-In-Reply-To: <1544703110-27161-1-git-send-email-claudiu.beznea@microchip.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: VI1PR07CA0248.eurprd07.prod.outlook.com
- (2603:10a6:803:b4::15) To BY2PR11MB0744.namprd11.prod.outlook.com
- (2a01:111:e400:52de::14)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Claudiu.Beznea@microchip.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [94.177.32.154]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BY2PR11MB0519;6:qaUoisCj88S52o7nbI/Nezxl+dRO8fXRa6kxxpmACqiMkAWECCNQBJ8peDxLbUGKpC1DDA1sKq0MZaWPaiUvHaU/1gydAgWFzksz/2OAIMhBLNu6UDzt2CVA7zpLVRBfGoAlw0tVD60KrLhJajOtRc+raMafoifnkXZqSluso94f9kRK8YCduPL8uk/zXv55TYrORpJ9fuhLyid8hQRsCa+2Nb4GsV3KZdMbyIE8RTCwYFSc7D9F/pYYl0SqLke1J3cFZhfD85uwcChTasb7IuqYDddOzrntcLYH1Y14WWx22oNNy/6LWYg/fpdr+2f8MdH92o/1iRIE7A8srGziW+JsRkWrZYpALv14bCTJbxPCo69BtZbo701xBP5Whk/l0R3MdGmQM+ary5BnLIzaT7J46T+qI68EhjAogWo3BxVdnqUcN2lTqN+Bgxs+MliRb4Vgbwmk1MM9qPx/sQ7DeyYWP+wzZ/aQs4XLaiJU2ZU=;5:A5QVzNKhWRAL6aJvfKxz23olzFGdxio2irCPOIqODRHN6ECS/Mn+9suajN1ldevK5GzLTlPOcQWbv6cHlMiDRd/LsMlteJou5aftaeyVIi7CTBEkaeTQF1Utt1Y5luxYjrURPIbKWMclAljugm5TkD0IQ3241OhTPXnuW0DMIwM=;7:nzZG9NU/Z7zy/PfXjJ0fRaS5N4gxkWh89dJUbALQ8eJ4VDrtPeMD8bZ1jhJlGiRSFYlxbvl8v1bGfTiQ8DchzO1IqgDXSVxk/w2BN+qxjMs9CsPfZQPKk12Q8px8BmoT4ugzOZTsaymzgkH2SdkJNA==
-x-ms-office365-filtering-correlation-id: f971ce38-670d-4670-e1f7-08d660f97d34
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:BY2PR11MB0519;
-x-ms-traffictypediagnostic: BY2PR11MB0519:
-x-microsoft-antispam-prvs: <BY2PR11MB05198F36009851342F09475487A00@BY2PR11MB0519.namprd11.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(3230021)(999002)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231475)(944501520)(52105112)(10201501046)(3002001)(148016)(149066)(150057)(6041310)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:BY2PR11MB0519;BCL:0;PCL:0;RULEID:;SRVR:BY2PR11MB0519;
-x-forefront-prvs: 088552DE73
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(346002)(396003)(136003)(39860400002)(366004)(199004)(189003)(316002)(5660300001)(305945005)(8936002)(97736004)(2501003)(102836004)(26005)(6436002)(36756003)(99286004)(476003)(68736007)(3846002)(386003)(6506007)(7736002)(14444005)(76176011)(52116002)(6486002)(106356001)(6116002)(186003)(4326008)(105586002)(6512007)(256004)(53936002)(81166006)(81156014)(8676002)(2906002)(66066001)(39060400002)(25786009)(2616005)(86362001)(486006)(446003)(6636002)(478600001)(54906003)(107886003)(110136005)(71200400001)(71190400001)(72206003)(11346002)(14454004);DIR:OUT;SFP:1101;SCL:1;SRVR:BY2PR11MB0519;H:BY2PR11MB0744.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: microchip.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: g3zyItpywM1op4OuYiK16CQNqkTAiH9cHybcVC5uAvMBo3K89Y0j20bCqi4POhNMM49HU6r3kw5Gk3Ts5jp0uz6JVyABeQ101HepWnh6OwyjHZIH3SvCtxIZGEpBDkpOtdirdrDiXEU0FCJAYZyToYyUEqxI7/BqLUOyC4CghLrI1dW5foJwXpv9zOOrtJehqK2gSDCK/+vUvAhq4Uu4cAZgS7tG1Awas7P2oD6FIftOiiB4uKcGU8dqG+4SgW1sRKPTxNPo/5arCVmwa6WcNhRXKtXwny3iDBoJTaiZd364FO02ryQ5H0tO69J6z7s3
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+ bh=T0UMzpLF3AycVbxLT8Yc/ui+a0qFObNkZoNSQxZpIbA=;
+ b=FIPhsUgBPRHiga1yZUa3eiyM408fbC7V0TpzLidtjFtLFbYIqy4nfNTnDej4HmBcquAFeGeHBgC466vpHK39NUu4OtWc9rKqw/ROVcmk8llVNakQ5Qwkr0WSdcMDwfERGx6U5eO++awnD78b0nFioGU7dA5Apb8wvDzXdfNlRkM=
+Received: from DM5PR07CA0035.namprd07.prod.outlook.com (2603:10b6:3:16::21) by
+ BYAPR07MB4407.namprd07.prod.outlook.com (2603:10b6:a02:c1::12) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1404.19; Thu, 13 Dec 2018 12:49:43 +0000
+Received: from BY2NAM05FT056.eop-nam05.prod.protection.outlook.com
+ (2a01:111:f400:7e52::206) by DM5PR07CA0035.outlook.office365.com
+ (2603:10b6:3:16::21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1425.19 via Frontend
+ Transport; Thu, 13 Dec 2018 12:49:42 +0000
+Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
+ cadence.com discourages use of 199.43.4.28 as permitted sender)
+Received: from rmmaillnx1.cadence.com (199.43.4.28) by
+ BY2NAM05FT056.mail.protection.outlook.com (10.152.100.193) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.1446.5 via Frontend Transport; Thu, 13 Dec 2018 12:49:42 +0000
+Received: from maileu3.global.cadence.com (maileu3.cadence.com [10.160.88.99])
+        by rmmaillnx1.cadence.com (8.14.4/8.14.4) with ESMTP id wBDCnccv019277
+        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
+        Thu, 13 Dec 2018 07:49:40 -0500
+X-CrossPremisesHeadersFilteredBySendConnector: maileu3.global.cadence.com
+Received: from maileu3.global.cadence.com (10.160.88.99) by
+ maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
+ 15.0.1367.3; Thu, 13 Dec 2018 13:49:40 +0100
+Received: from lvloginb.cadence.com (10.165.177.11) by
+ maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
+ 15.0.1367.3 via Frontend Transport; Thu, 13 Dec 2018 13:49:40 +0100
+Received: from lvloginb.cadence.com (localhost [127.0.0.1])
+        by lvloginb.cadence.com (8.14.4/8.14.4) with ESMTP id wBDCnapr000523;
+        Thu, 13 Dec 2018 12:49:36 GMT
+Received: (from jank@localhost)
+        by lvloginb.cadence.com (8.14.4/8.14.4/Submit) id wBDCnY1j000459;
+        Thu, 13 Dec 2018 12:49:34 GMT
+From:   Jan Kotas <jank@cadence.com>
+To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>
+CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Jan Kotas <jank@cadence.com>
+Subject: [PATCH v2 0/2] clk: Add driver and bindings for Fixed MMIO clock
+Date:   Thu, 13 Dec 2018 12:49:27 +0000
+Message-ID: <20181213124929.32736-1-jank@cadence.com>
+X-Mailer: git-send-email 2.15.0
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: f971ce38-670d-4670-e1f7-08d660f97d34
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Dec 2018 12:49:58.7759
+Content-Type: text/plain
+X-OrganizationHeadersPreserved: maileu3.global.cadence.com
+X-EOPAttributedMessage: 0
+X-Forefront-Antispam-Report: CIP:199.43.4.28;IPV:CAL;SCL:-1;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(346002)(39860400002)(136003)(396003)(376002)(2980300002)(199004)(189003)(36092001)(106466001)(87636003)(68736007)(110136005)(47776003)(316002)(42186006)(8936002)(51416003)(26005)(186003)(53936002)(8676002)(305945005)(50226002)(81156014)(81166006)(486006)(476003)(4326008)(2616005)(50466002)(126002)(69596002)(54906003)(426003)(105596002)(36756003)(5660300001)(16586007)(356004)(26826003)(336012)(107886003)(478600001)(86362001)(48376002)(1076002)(6666004)(2906002)(97736004);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR07MB4407;H:rmmaillnx1.cadence.com;FPR:;SPF:SoftFail;LANG:en;PTR:InfoDomainNonexistent;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: 1;BY2NAM05FT056;1:+k69O4Si6zoP1tQoGV7BvL51zc1O4HYnGgfqDOX1dzhnzCBBw6XuHCmKe1G1CSg1CfUv6a/X7eKgHnUfRC3gujUTaYs3WTZ8sAy3RWAD5lCeHLBaTv+K4868ZsKJFKSn
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 593d6f90-86ec-481e-7371-08d660f973da
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060);SRVR:BYAPR07MB4407;
+X-Microsoft-Exchange-Diagnostics: 1;BYAPR07MB4407;3:xpo/t2WIClewzSHvNcWaXIyPtqXS2QvFkJOAmPqP437ISo5hxmeMNakWfsSdayg9c0N3eqqYw9HOcEow/A1KlM2I2NrQrbUzQwEQkjM1GfgqmatidjSCr8If+Xdn2ht+4GEOcfHk8V9fTYaBIwT1W9UogCMHCa+L0ik6kOE2XTaWIfpWiHWmIkoxb6zXe4coJUGXCDyjjs7FsOSr0rxx/R9ztnqYSitFCL4Ru37ESrS01i/VFcQaxbsWQUghh5nwLMY0Nb17IEQCdvWoQdR42Nt40K7FJttrKPpZr+iL6JbzBQSjGcHUd6IZx+1v/liR3zNRlUD0+1zfyHF3ALFRpw==;25:mH5xhnVMXELlFUV6zbwdeuHY5oijgtBFtlYTaTgrZu1mX27U0bjcxyYKVl2x2i+q72vehf7brCjdRxP9EnikzAeRTXW2OjVclqCb3eKX9gf4QsZ08jIFMT0eBQPtXThayl99u3cjlYa0phHXi+wuH62q1xPatpilro1MZ/oIvMjG5+wMlTFdZf8Pi2RQGhUefROuqFtD5vUBWYGksC3cX9bo8SUU/jcUNQP9szP8q5XpU9ivZJrckAFcuecyLHmCA5vvJApHbBf34MfdGsMer/7Eh99CMrDPAzuatRbDsLgAKMDk1IURBrdRS7kgNhiCvdBMPjMnSF78s/wG5Doqp2iQJdsRqLU1JFJ7FqJu3Dw=
+X-MS-TrafficTypeDiagnostic: BYAPR07MB4407:
+X-Microsoft-Exchange-Diagnostics: 1;BYAPR07MB4407;31:DMnJa8ymqFQg0lsyy10/ySoeT/5/9K5ETZHxR9rqDJW/uFSZoQOk7xl71yoHtvcURcp5P70G5bhTjG/+cT8iouzXLdX93BYEs+buOnaujeaSdEpVlWTi/nSBuTqwgDVlt9xGre/eXNZEO2gsCol4SohSzISm/ZNYWRUZ26x62UaRsxLqGlMLdomrYEnYN5648kp6BOf/BUtMVb955oc50vCSwJGslDv8xlj/GyWiVVI=;20:I/3biE2BiIR2fXxJTg0xENAV42KXol9qdAfp/PP7AOc2tDKdeZG8tLwcwiAlHst1b4ABeVdfu+b8t3vW74ABy4gjnflnlZhPG95NeNynOstR1QH0qp5MbrV/sdy5Hix+D5AhPwtDMTPgd7SJRfJ+D145SDmrHPfeYieWkySTxj0RpLdisHQ29rGtTYKUb/DokyxTbXpR1vSpqb8b5qYL/mq7rCWQ2AtXoNTAS654MAOTmM4cxfWnjmuHpG104sd3ardqwYLnHn5aWz0dB7ETyORphl8Cv2aMY9eFOTsYFEqCWeuVz7Wu9igqXmvf4UmTnb8lTLauaYjcQddrdxqTSKNVOocZi3tvequV8S6oPalUofbTEYd2md5AH7LGCbmmgvOU8Q2gixWKFyfnopd5ebtdUxCC1WzYywN8zdgpD5yrF5/QmS2xFtCd09kqNIkxbZMATK7tV1Va1Wq/lvxFfNsPJafIfqFywcSfoqFhwWSYmQWbfZ/IZD7SaDuLVTHK
+X-Microsoft-Antispam-PRVS: <BYAPR07MB4407A5E0D71CDFE3793FCF80D0A00@BYAPR07MB4407.namprd07.prod.outlook.com>
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3231475)(944501520)(52105112)(93006095)(93003095)(3002001)(148016)(149066)(150057)(6041310)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:BYAPR07MB4407;BCL:0;PCL:0;RULEID:;SRVR:BYAPR07MB4407;
+X-Microsoft-Exchange-Diagnostics: 1;BYAPR07MB4407;4:E1mahWjTeszuGCyipWAyctD7Q+nZW4sguWgcKBPk4SRjvdrlKxAVak8tNep1WVyuGvYO3DPiXAincnAXbjllfVtl63wmKRbOyFn2o6C6gvbehriOBY3ceIsX8k5WAusGu1fQpGgnPBkZhTgBQ/Hj0v8DVp4STzkX1Yok1d6mjfVACQO06Is1TPoVm3l/b/2Rqm/+SoxOZrU6SoaRlebAAb4KkoaUYVQHSa5btd/Mkn3vbFr8wfNxpCjib+9PBDRHQdWHyO+NYNKGsFQYnnBbeA==
+X-Forefront-PRVS: 088552DE73
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BYAPR07MB4407;23:3/4eZzt0Fi9MJK/Wtzd8NhbIVYVMsMOnWuEnYHJHW?=
+ =?us-ascii?Q?Yzsh5a2024YcDNkpXJnl8h7cdG8wKd+nzqfzdBgq5HaBHMo80iAJ8Igga4dw?=
+ =?us-ascii?Q?0eLdY/r+P7b1iD7m7VxN7nvkRiu9cWaLB9nqphDEAdVaKmpqlxrrjr0C35GC?=
+ =?us-ascii?Q?2kN0uYt1wVrCrjqXT31G7As258+/NffJIbtQBFLP7/Z3sDZGmiM49M5nzw/7?=
+ =?us-ascii?Q?htYUQOYMFtrHo44naYZTaCz/Fh9kfEk4oge8+GWbVRshyDBqgOokNRcnIhVv?=
+ =?us-ascii?Q?zuyAGbaDHOT30e2m5hQ5tD0kkqM3lahw2eoRY1hNqd+lqKWl4dlJKAh6+ybw?=
+ =?us-ascii?Q?z76I1Vkwth3Jzayw/sn+4GNETt5HJkMK+7y+A1fBYMGMlz1u0rsGXzwoN2eU?=
+ =?us-ascii?Q?Zsj01QkWqdg1ftfGYDrFSBva+EA1M6Gjo/8Vtzb/yvu7GtSrGqV/lt+MoF0w?=
+ =?us-ascii?Q?9RW1TRkguJra48kWLT4nPY+Ih/oW9n9OBctC5Kbv7DyjL+KN7xPIQZw5Z8Ce?=
+ =?us-ascii?Q?rflcqAUOzKf2gDpR8mPPEAzaYFvt+0JEL/jVmhiJNkbHQi/zx0MtUtvW0WoJ?=
+ =?us-ascii?Q?KJYU8LN98WxjqmcXroSjAwsOwAw5RnwrBy9Bk0P51ykvJRyWAsEZmpQb0tLw?=
+ =?us-ascii?Q?AiAtv6yk0VBG5TsMNM26cv/XVEZz729iLlG5qf6SHA0ApN+2qpgYPRdCZ6IJ?=
+ =?us-ascii?Q?tOpEGXrbkIi2yn7SX8gKs4Ef26EcQVK4Jga3lIvbDerHW7PCuYp6dTSx76rr?=
+ =?us-ascii?Q?VFcI4dCJHxdOhjNSmVLPg6z+zRfmupZ3K99A+ggxkH++8H5eAM2LU0zcs68q?=
+ =?us-ascii?Q?kIdSpbrnbZ7zapUZcCxzB/wyUh84uoAppG4ra7VeXGsmgWhYNqUlHBrTXvcR?=
+ =?us-ascii?Q?4FgZDqoUzM/82vW+258ChkSHcTGXMp1VqwKi+EwUNE3Fq5+4B6K2DT9d3Vmx?=
+ =?us-ascii?Q?/qiGLgYtuKryLp3TORCWsYafClgF8rC2u14tp0W5eXXtEToVwRycqeO8E9lp?=
+ =?us-ascii?Q?uE6cRvUqlQUddWB7VnmwVxCTUsRjq8BmLYJRPGVkGRSQ0NdVYTB5UrLhney2?=
+ =?us-ascii?Q?SIs+igeJlgQGka50vGtxor3aiKFXqLtTMPVemkfRg7i1hG5XsxF5PXTtOSTN?=
+ =?us-ascii?Q?zt09a/Swvj022MMDszGVYwD3ovzu2K8?=
+X-Microsoft-Antispam-Message-Info: zuJmAk8iK8kljwuUzufdBMD8Rw5Ya/EhTzG09/2gaBx3qyLmrORbl76SwR7tDzYYoF+mYqDo7o7Go1cL/VPRZ3qCYhXxmliFj8d6KRs/DMARAHi9MmpbklauIXv42rStaMpsyImVn3PjHLUOJWHPGym+FYrkhW5mnXDh0Op1UgVCme4iST9+E/zKczoYjtfrboPkJa3EUeuRFUP3Tzh/mrfGIMcOafiM3sT1Q09t6cmtqTO4qmblIa6sugPMBum2doR59VcAO68x5DdBLAz0GBCkhD+pqMRqeRBA6f/Aw+Pm8BCxD2U56GpW98+YQzja
+X-Microsoft-Exchange-Diagnostics: 1;BYAPR07MB4407;6:8+0pQon1xHEwGgXIxZ5RQBd6bwue4Sb/6MQM4ulNoC3/zw/7P24x0WpkWKrnHHwny4p+1CB1WgE9v11pU+4sZpsOvd5S9SHd85CkRHwfWEeUsZsiTyOm3zNrF5krKCUyQ5KLYYDrlbnRcbcpAF/YQZD53BOd9mrInr6bb4XY6vTTNOf7lW4pNGHCFX6bB6bPB0Ao/Uej0hRi6wrDYBWNf7SPeA1rqpx+FYtQeONFcnVvVfJPxKvXl0nG18QtVr6sP7kmZQSLe5Od44VzGmAL8lmiyfZ+yC3il74TouMLHlLn9O//qfcpAdtWHITwQIran92UngsfE0Ypw+5XNCX8ZqQ8I/U2Yc0wlsgnxftr6luRXCERzMrhFGxRRhUl/Daoskj6ZRSkLPXpNil55ObhAX0vln8zMt2/GEJNW8O7gGJxBIF+fLGPbK/PkDHarDrsTtUgMEYXkOaFSz6mtDZ0Gg==;5:GhL6r0OYPkXNhcqfZHSm2UgoJVbuDq69+WhDjXt7pPV/fp97fuNlGfeE4TC/4iSaoS0TsTNy4u7RZRvZSE2B3Dv7TqtOgndLi/7VPqYe+dWtS9VStvN5HJfPybUPlLCxSbarTyGwxufoDKPFC79y8sLS3R6FtcowLqHfh4fsLSk=;7:C3gscq2b5DaHWhGOar5DEfvOqsy1BVt+Y7/oAw1CgZ6tcD5ZeNTiE7IY0yI1Wzz30pwk324puWJ0Pxq8LDDnbPo7anZuLVtIwdi+I2QpBzB6J/nQRE0KVCd6eQh266dC/julNQVS7WVVCcvAb8fl5Q==
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;BYAPR07MB4407;20:6emxAPNK/BjRZgri4WOSXwgFmiHhS2gjUH5dptdCxBhA5Jngzy3K2m8uHOnyl14B8Ql7GsIA5pmh77SJgMHT4dKv8dGl9qaWXpOVnxa3+uTCIOLLa4nvL8wGFrgmaV2WbQZdLfXWojq97xFks5VbkGUSbNMYD+mYK9nWurnhnyq7OQvmbNFdkUFPmpCzlF3uZf3Lquj8jVj9rSkYpFvVFHwnAyS6A8g5PXIIyFavccalQsDXw8wCQihkEQGoOsp+
+X-OriginatorOrg: cadence.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Dec 2018 12:49:42.3823
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY2PR11MB0519
-X-OriginatorOrg: microchip.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 593d6f90-86ec-481e-7371-08d660f973da
+X-MS-Exchange-CrossTenant-Id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=d36035c5-6ce6-4662-a3dc-e762e61ae4c9;Ip=[199.43.4.28];Helo=[rmmaillnx1.cadence.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR07MB4407
+X-Proofpoint-SPF-Result: pass
+X-Proofpoint-SPF-Record: v=spf1 include:_spf.salesforce.com include:mktomail.com
+ include:spf-0014ca01.pphosted.com include:spf.protection.outlook.com
+ include:auth.msgapp.com include:spf.mandrillapp.com ~all
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-13_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_check_notspam policy=outbound_check score=0
+ priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0
+ spamscore=0 clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=896 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812130113
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Claudiu Beznea <claudiu.beznea@microchip.com>
+This patchset adds a driver support for Fixed Memory Mapped IO clock.
 
-Fix line over 80 chars checkpatch.pl warning.
+The driver reads a clock frequency value from a single 32-bit memory
+mapped register and registers it as a fixed rate clock.
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
----
- drivers/regulator/act8945a-regulator.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+It can be useful for prototyping Linux on various hardware platforms.
+It is not intended to be used on finished, complete SoCs.
 
-diff --git a/drivers/regulator/act8945a-regulator.c b/drivers/regulator/act=
-8945a-regulator.c
-index f37d1a860407..f4d60743efb3 100644
---- a/drivers/regulator/act8945a-regulator.c
-+++ b/drivers/regulator/act8945a-regulator.c
-@@ -310,7 +310,8 @@ static int act8945a_pmic_probe(struct platform_device *=
-pdev)
- 	config.dev->of_node =3D pdev->dev.parent->of_node;
- 	config.driver_data =3D act8945a;
- 	for (i =3D 0; i < num_regulators; i++) {
--		rdev =3D devm_regulator_register(&pdev->dev, &regulators[i], &config);
-+		rdev =3D devm_regulator_register(&pdev->dev, &regulators[i],
-+					       &config);
- 		if (IS_ERR(rdev)) {
- 			dev_err(&pdev->dev,
- 				"failed to register %s regulator\n",
---=20
-2.7.4
+Changes since V1:
+	Added platform driver support.
+	Removed unnecessary messages.
+
+Jan Kotas (2):
+  dt-bindings: clk: Add bindings for Fixed MMIO clock
+  clk: Add Fixed MMIO clock driver
+
+ .../devicetree/bindings/clock/fixed-mmio-clock.txt |  24 +++++
+ drivers/clk/Kconfig                                |   6 ++
+ drivers/clk/Makefile                               |   1 +
+ drivers/clk/clk-fixed-mmio.c                       | 109 +++++++++++++++++++++
+ 4 files changed, 140 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/fixed-mmio-clock.txt
+ create mode 100644 drivers/clk/clk-fixed-mmio.c
+
+-- 
+2.15.0
 
