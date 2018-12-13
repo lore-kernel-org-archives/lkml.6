@@ -2,121 +2,156 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAD58C67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 11:00:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55EB7C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 11:04:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F70620870
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 11:00:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C6B5208E7
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 11:04:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="dMLyJ/20"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F70620870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="h0q2L6IP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C6B5208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728598AbeLMLAy (ORCPT
+        id S1728575AbeLMLEd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 06:00:54 -0500
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:45448 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727556AbeLMLAy (ORCPT
+        Thu, 13 Dec 2018 06:04:33 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:43704 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727590AbeLMLEc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 06:00:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=9qIbvvG/9lDI0uuCNjYROMG8ASH47z9X4H8Zg0GgJhE=; b=dMLyJ/20SBZrUcdB7qY2/6Jeu
-        KMy7yre+SRT/s1amlnFxPKoCI3hYLXWYrBQGbErxDh46P7PdfYvvZKeyp2U2Tk5u+puMh+KOnV4Tv
-        WnxroXw5DBjoPJXIy+pG6KQD7Y1XgNwYzOOzCrNFe0gg+YRiOxISLjehWIVhDKwUSvdX0=;
-Received: from n2100.armlinux.org.uk ([2002:4e20:1eda:1:214:fdff:fe10:4f86]:47708)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1gXOjN-0001ys-NR; Thu, 13 Dec 2018 11:00:37 +0000
-Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
-        (envelope-from <linux@n2100.armlinux.org.uk>)
-        id 1gXOjI-0003nr-Vm; Thu, 13 Dec 2018 11:00:33 +0000
-Date:   Thu, 13 Dec 2018 11:00:29 +0000
-From:   Russell King - ARM Linux <linux@armlinux.org.uk>
-To:     Ryder Lee <ryder.lee@mediatek.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Sean Wang <sean.wang@kernel.org>,
-        Weijie Gao <weijie.gao@mediatek.com>,
-        linux-kernel@vger.kernel.org, Roy Luo <cheng-hao.luo@mediatek.com>,
-        linux-mediatek@lists.infradead.org, linux-serial@vger.kernel.org,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] tty: serial: don't do termios for BTIF
-Message-ID: <20181213110029.GN30658@n2100.armlinux.org.uk>
-References: <972976519be8e28ee600651fe14d1f6d5f23e697.1544679557.git.ryder.lee@mediatek.com>
+        Thu, 13 Dec 2018 06:04:32 -0500
+Received: by mail-io1-f65.google.com with SMTP id l3so1223050ioc.10
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 03:04:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=enYweZX3f/WdB3dmT0wulTDSB51hPA+7xIs7b/pAhuU=;
+        b=h0q2L6IPMB/FZ9FngJ4jR6Cb3dfk8WHRyZeOpb+5QomPz4XS/qc5sdLYCsWjEw/BQE
+         Jw6AsvvpsVQfxoxxPrOjGOOxxrtYczMoZUoujN/GBT9KZZQ/C8YktQokiWECFOEjZO43
+         5ZtP75ZA86PrleEPxbLVj3WUTCOU+0iB5ojxg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=enYweZX3f/WdB3dmT0wulTDSB51hPA+7xIs7b/pAhuU=;
+        b=rX2i72UktDOBLNtf0CJ6Fo8Hm9edvaM5eW4hS+STJaq6GTE5cCiZQ6moz1eHFspIc4
+         ChfQmEyML7KfLtGlY5NQyk6K/D+fBemU5Fiu79FtKhATW3msqN1tRqGQs30zphEyMrZP
+         axGNZdc/HDKHoUxm9BFOdzB6WwMnxeuDhMTW3kbtkm2C6K24nvcXYBIz5mD0khbrRIHo
+         VMcra6WHGSbewpUjGTCd5N1zY9dv9rEeUitRspG+5q+Vw6YO5ALCbJpUyLS5k3ndzmNa
+         NTE107N9gJclmpvAheKQp2RW5eOkLk3dNkfn4vjjc65LkNZWW8ZuilCc8W7dAbq8Ifzu
+         RmZQ==
+X-Gm-Message-State: AA+aEWYP57YvXgZ1Gz23fNjYWWzJO/U3sGF+sU7HZn3jfcbOtAfxobsj
+        21+znBPypskI6xfdvyGGWZ2rcwvG+qVH6OFgdZiVfA==
+X-Google-Smtp-Source: AFSGD/WGdgTaGEt7oOXJiQlNjZqFNBl/Gdz/XTvE1B4kN875RD5rA8ghHeOSBrbvnO0s/iNsPtDJNFMuKqxEPHOph0U=
+X-Received: by 2002:a6b:6b15:: with SMTP id g21mr6674854ioc.18.1544699071103;
+ Thu, 13 Dec 2018 03:04:31 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <972976519be8e28ee600651fe14d1f6d5f23e697.1544679557.git.ryder.lee@mediatek.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <1536590589-437-1-git-send-email-vincent.guittot@linaro.org> <20181213104439.GG5289@hirez.programming.kicks-ass.net>
+In-Reply-To: <20181213104439.GG5289@hirez.programming.kicks-ass.net>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Thu, 13 Dec 2018 12:04:20 +0100
+Message-ID: <CAKfTPtBG_gcWzi4RUWF_c2aazqxDPHbb2rGWHvWND6pQHQxPGw@mail.gmail.com>
+Subject: Re: [PATCH v2] sched/fair: fix 1 task per CPU
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Morten Rasmussen <Morten.Rasmussen@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 13, 2018 at 02:24:03PM +0800, Ryder Lee wrote:
-> The MediaTek BTIF controller doesn't need to set termios so add
-> a new capability 'UART_CAP_NMOD' for the unsupported case.
-> 
-> 
-> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
-> ---
->  drivers/tty/serial/8250/8250.h      | 1 +
->  drivers/tty/serial/8250/8250_port.c | 7 ++++++-
->  2 files changed, 7 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/tty/serial/8250/8250.h b/drivers/tty/serial/8250/8250.h
-> index ebfb0bd..2b9ba39 100644
-> --- a/drivers/tty/serial/8250/8250.h
-> +++ b/drivers/tty/serial/8250/8250.h
-> @@ -80,6 +80,7 @@ struct serial8250_config {
->  #define UART_CAP_MINI	(1 << 17)	/* Mini UART on BCM283X family lacks:
->  					 * STOP PARITY EPAR SPAR WLEN5 WLEN6
->  					 */
-> +#define UART_CAP_NMOD	(1 << 18)	/* UART doesn't do termios */
->  
->  #define UART_BUG_QUOT	(1 << 0)	/* UART has buggy quot LSB */
->  #define UART_BUG_TXEN	(1 << 1)	/* UART has buggy TX IIR status */
-> diff --git a/drivers/tty/serial/8250/8250_port.c b/drivers/tty/serial/8250/8250_port.c
-> index c39482b..e4a69a0 100644
-> --- a/drivers/tty/serial/8250/8250_port.c
-> +++ b/drivers/tty/serial/8250/8250_port.c
-> @@ -297,7 +297,7 @@
->  		.tx_loadsz	= 16,
->  		.fcr		= UART_FCR_ENABLE_FIFO |
->  				  UART_FCR_CLEAR_RCVR | UART_FCR_CLEAR_XMIT,
-> -		.flags		= UART_CAP_FIFO,
-> +		.flags		= UART_CAP_FIFO | UART_CAP_NMOD,
->  	},
->  	[PORT_NPCM] = {
->  		.name		= "Nuvoton 16550",
-> @@ -2663,6 +2663,11 @@ static unsigned int serial8250_get_baud_rate(struct uart_port *port,
->  	unsigned long flags;
->  	unsigned int baud, quot, frac = 0;
->  
-> +	if (up->capabilities & UART_CAP_NMOD) {
-> +		termios->c_cflag = 0;
+On Thu, 13 Dec 2018 at 11:44, Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> On Mon, Sep 10, 2018 at 04:43:09PM +0200, Vincent Guittot wrote:
+> > When CPUs have different capacity because of RT/DL tasks or
+> > micro-architecture or max frequency differences, there are situation where
+> > the imbalance is not correctly set to migrate waiting task on the idle CPU.
+> >
+> > The UC uses the force_balance case:
+> >
+> >       if (env->idle != CPU_NOT_IDLE && group_has_capacity(env, local) &&
+> >           busiest->group_no_capacity)
+> >               goto force_balance;
+> >
+> > But calculate_imbalance fails to set the right amount of load to migrate
+> > a task because of the special condition:
+> >
+> >   busiest->avg_load <= sds->avg_load || local->avg_load >= sds->avg_load)
+> >
+> > Add in fix_small_imbalance, this special case that triggered the force
+> > balance in order to make sure that the amount of load to migrate will be
+> > enough.
+>
+> So I think this patch is going in the wrong direction for a number of
+> reasons:
+>
+>  - we'd like to get rid of fix_small_imbalance(), and this adds to it;
+>
+>  - the whole load_per_task stuff is terminally broken, it _cannot_ work
+>    right.
+>
+>
+> What I've suggested in the past is parameterizing the load balancer and
+> picking different criteria to balance on:
 
-So your port is limited to 5-bits and is unable to receive characters?
-That's what a zero cflag means, and that's what you'll be telling
-userspace here.
+This patch is clearly a fix of the current implementation.
+What you suggest below makes sense but implies a significant rework in
+the calculate_imbalance and the load_balancer in general and will need
+more time to reach a stable state.
+Nevertheless, I will have a look at that
 
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+I imagine that your feedback for https://lkml.org/lkml/2018/10/2/283
+will be the same ?
+
+Vincent
+
+>
+>  - nr_running ; if there are idle CPUs around
+>  - utilization ; if there's idle time (u<1)
+>  - weight
+>
+> And I suppose you're hitting one of the nr_running cases here.
+>
+> > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+> > ---
+> >  kernel/sched/fair.c | 14 ++++++++++++++
+> >  1 file changed, 14 insertions(+)
+> >
+> > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> > index 309c93f..72bc5e8 100644
+> > --- a/kernel/sched/fair.c
+> > +++ b/kernel/sched/fair.c
+> > @@ -8048,6 +8048,20 @@ void fix_small_imbalance(struct lb_env *env, struct sd_lb_stats *sds)
+> >       local = &sds->local_stat;
+> >       busiest = &sds->busiest_stat;
+> >
+> > +     /*
+> > +      * There is available capacity in local group and busiest group is
+> > +      * overloaded but calculate_imbalance can't compute the amount of load
+> > +      * to migrate because load_avg became meaningless due to asymetric
+> > +      * capacity between groups. In such case, we only want to migrate at
+> > +      * least one tasks of the busiest group and rely of the average load
+> > +      * per task to ensure the migration.
+> > +      */
+> > +     if (env->idle != CPU_NOT_IDLE && group_has_capacity(env, local) &&
+> > +         busiest->group_no_capacity) {
+> > +             env->imbalance = busiest->load_per_task;
+> > +             return;
+> > +     }
+> > +
+> >       if (!local->sum_nr_running)
+> >               local->load_per_task = cpu_avg_load_per_task(env->dst_cpu);
+> >       else if (busiest->load_per_task > local->load_per_task)
+> > --
+> > 2.7.4
+> >
