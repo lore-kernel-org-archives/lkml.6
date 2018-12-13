@@ -2,162 +2,115 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99F27C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 22:01:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CD15C67872
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 22:01:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5573F20870
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 22:01:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5573F20870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id CD9BA20879
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 22:01:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OVWvrZuH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD9BA20879
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727709AbeLMWBF (ORCPT
+        id S1728075AbeLMWBz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 17:01:05 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:51762 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726457AbeLMWBE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 17:01:04 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A3E818CAF;
-        Thu, 13 Dec 2018 22:01:03 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-223.bos.redhat.com [10.18.17.223])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 376C36012D;
-        Thu, 13 Dec 2018 22:01:02 +0000 (UTC)
-Subject: Re: [PATCH] debugobjects: Move printk out of db lock critical
- sections
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-        Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Yang Shi <yang.shi@linux.alibaba.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Dmitry Safonov <dima@arista.com>
-References: <1544653694-27873-1-git-send-email-longman@redhat.com>
- <20181212153901.4e9c142cf2d6a75373d28368@linux-foundation.org>
-From:   Waiman Long <longman@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- weim8xU=
-Organization: Red Hat
-Message-ID: <2f2ef86b-e28c-7d98-6a89-bf09e26ff3f8@redhat.com>
-Date:   Thu, 13 Dec 2018 17:01:01 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 13 Dec 2018 17:01:55 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:45572 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726457AbeLMWBy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 17:01:54 -0500
+Received: by mail-io1-f65.google.com with SMTP id n3so2866946iog.12;
+        Thu, 13 Dec 2018 14:01:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ck5VNCk3zkFstAhB+usPuWzSRVaH44SPvmgAQ6M6EtQ=;
+        b=OVWvrZuH/ia9nIoXmzEXyez1ZSQstM3L2KvOZohCIHh0cfj8YNFVpSE7d1BF8g/1wZ
+         xtvVNWjCmHzMMo0KPckWlAF3jzaNxHtOkIK96knYHyC8JqdmPTPHgj0rPtknb61p4Rue
+         +zoqzWQQDhLLozWHj/T60SWaoy6IcTbrjPQaKYlrkMricZ1QffESSB8Rdq/NJYARqUFW
+         we7OpFmpLn2VnTJSRcX24IBGuzjv9VzxypzCXQUi5tsAnnxjO4DiMOkPBFlzzgihifG0
+         oaoDOBiSXkNsch8repiN+0qb+Upr7Pp90nT/xt2KSL7vB/te624k2neQ1+aIAQ6+3Ilq
+         j8Yw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ck5VNCk3zkFstAhB+usPuWzSRVaH44SPvmgAQ6M6EtQ=;
+        b=KdOXT3tuIetdzymn7ts/jxIZ6GhZLlp5bbonhiykOtEnt2oA2Hg9iwxf3uDuFVjlXr
+         /OFIkD5BGNTbDtg49o61FxuaD9QhU2sR/UG4MSdGQ5SPSsx3NYXizWyCkpl2nEAzIBA8
+         1y1lkbw9fucPpF6yMgL2WKAlE3eLE/pcsQHJKE9nrMS5sucIktzgtnsI5oLTVBPY4+Xt
+         rZp/FcoSz7rtrJneIR59J+mor/rbN04GKXTsoYyvxliRTfcU8jfTvJ7Dz8lMJNtpH55w
+         FMR4U095yr7DT3FU9wwq+ioNxWixGVoFD1Kour+0Ev70bHx5q11W+/kGybdvxsUOZqZo
+         1xwQ==
+X-Gm-Message-State: AA+aEWaH/ansfucpqsuKyB21dbrHdtNGDlPnilQd8EmWSjInati2fndY
+        KLq+y8Q5I4cUe5wpzlUYh+U=
+X-Google-Smtp-Source: AFSGD/WeJCzN7UnlPQBAwaGoxO6yqpxdj5SA7KTcQVniOqOxDBe2KRyb2Q5YJyZvuzhns03JqrfJ3A==
+X-Received: by 2002:a6b:6203:: with SMTP id f3mr553286iog.36.1544738513502;
+        Thu, 13 Dec 2018 14:01:53 -0800 (PST)
+Received: from r2700x.localdomain (c-75-70-96-103.hsd1.co.comcast.net. [75.70.96.103])
+        by smtp.gmail.com with ESMTPSA id d192sm1430024iog.81.2018.12.13.14.01.52
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 13 Dec 2018 14:01:52 -0800 (PST)
+Date:   Thu, 13 Dec 2018 15:01:46 -0700
+From:   Jeremy Fertic <jeremyfertic@gmail.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Jonathan Cameron <jic23@kernel.org>, devel@driverdev.osuosl.org,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        linux-iio@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Hartmut Knaack <knaack.h@gmx.de>
+Subject: Re: [PATCH 04/11] staging: iio: adt7316: fix handling of dac high
+ resolution option
+Message-ID: <20181213220146.GA2496@r2700x.localdomain>
+References: <20181212005503.28054-1-jeremyfertic@gmail.com>
+ <20181212005503.28054-5-jeremyfertic@gmail.com>
+ <20181212082315.GI3116@kadam>
 MIME-Version: 1.0
-In-Reply-To: <20181212153901.4e9c142cf2d6a75373d28368@linux-foundation.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Thu, 13 Dec 2018 22:01:03 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181212082315.GI3116@kadam>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/12/2018 06:39 PM, Andrew Morton wrote:
-> On Wed, 12 Dec 2018 17:28:14 -0500 Waiman Long <longman@redhat.com> wrote:
->
->> The db->lock is a raw spinlock and so the lock hold time is supposed
->> to be short. This will not be the case when printk() is being involved
->> in some of the critical sections. In order to avoid the long hold time,
->> in case some messages need to be printed, the debug_object_is_on_stack()
->> and debug_print_object() calls are now moved out of those critical
->> sections.
->>
->> Holding the db->lock while calling printk() may lead to deadlock if
->> printk() somehow requires the allocation/freeing of debug object that
->> happens to be in the same hash bucket or a circular lock dependency
->> warning from lockdep as reported in https://lkml.org/lkml/2018/12/11/143.
->>
->> [   87.209665] WARNING: possible circular locking dependency detected
->> [   87.210547] 4.20.0-rc4-00057-gc96cf92 #1 Tainted: G        W
->> [   87.211449] ------------------------------------------------------
->> [   87.212405] getty/519 is trying to acquire lock:
->> [   87.213074] (____ptrval____) (&obj_hash[i].lock){-.-.}, at: debug_check_no_obj_freed+0xb4/0x302
->> [   87.214343]
->> [   87.214343] but task is already holding lock:
->> [   87.215174] (____ptrval____) (&port_lock_key){-.-.}, at: uart_shutdown+0x3a3/0x4e2
->> [   87.216260]
->> [   87.216260] which lock already depends on the new lock.
->>
->> This patch was also found to be able to fix a boot hanging problem
->> when the initramfs image was switched on after a debugobjects splat
->> from the EFI code.
-> Patch looks sensible, but I have a nit about the variable names.
->
->> --- a/lib/debugobjects.c
->> +++ b/lib/debugobjects.c
->> @@ -375,6 +375,8 @@ static void debug_object_is_on_stack(void *addr, int onstack)
->>  	struct debug_bucket *db;
->>  	struct debug_obj *obj;
->>  	unsigned long flags;
->> +	bool debug_printobj = false;
-> "debug_printobject" would be better, but this code already intermingles
-> "obj" and "object".
->
->> +	bool debug_chkstack = false;
-> Not so good.  Is it debug_chkstack or debug_checkstk or ...
->
-> This file uses "check" consistently so let's not depart from that? 
-> Linux style is to avoid these tricky little abbreviations and to use
-> full words.  
->
-> ie, debug_checkstack, please.  Better would be debug_check_stack.  Or
-> simply check_stack: the "debug" doesn't add anything useful.
->
->
-Thanks for the review. I have eliminated debug_printobj in the new v2 patch.
+On Wed, Dec 12, 2018 at 11:23:16AM +0300, Dan Carpenter wrote:
+> On Tue, Dec 11, 2018 at 05:54:56PM -0700, Jeremy Fertic wrote:
+> > @@ -651,10 +649,12 @@ static ssize_t adt7316_store_da_high_resolution(struct device *dev,
+> >  	u8 config3;
+> >  	int ret;
+> >  
+> > +	if (chip->id == ID_ADT7318 || chip->id == ID_ADT7519)
+> > +		return -EPERM;
+> 
+> return -EINVAL is more appropriate than -EPERM.
+> 
+> regards,
+> dan carpenter
+> 
 
-Cheers,
-Longman
+I chose -EPERM because the driver uses it quite a few times in similar
+circumstances. At least with this driver, -EINVAL is used when the user
+attempts to write data that would never be valid. -EPERM is used when
+either the current device settings prevent some functionality from being
+used, or the device never supports that functionality. This patch is the
+latter, that these two chip ids never support this function.
+
+I'll change to -EINVAL in a v2 series, but I wonder if I should hold off
+on a separate patch for other instances in this driver since it will be
+undergoing a substantial refactoring. Is there any rule of thumb about
+when -EPERM is appropriate for a driver, or is -EINVAL almost always the
+better option?
 
