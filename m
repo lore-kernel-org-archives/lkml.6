@@ -2,92 +2,86 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79A81C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 10:05:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AD94C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 10:05:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3985920849
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 10:05:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED65920811
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 10:05:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dBu5QExX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3985920849
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="J8lWDLMW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED65920811
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728076AbeLMKFL (ORCPT
+        id S1728122AbeLMKFe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 05:05:11 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:41377 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727754AbeLMKFK (ORCPT
+        Thu, 13 Dec 2018 05:05:34 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:44208 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727489AbeLMKFe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 05:05:10 -0500
-Received: by mail-pl1-f194.google.com with SMTP id u6so833156plm.8
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 02:05:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=fsStyqZ+Oi8IWCobZN88MbquuXK8Ka8f7XuCzY3T/so=;
-        b=dBu5QExXtmHRI6yefFNFpIi58jL7Dgg9POUt3KLusie6uaD821kxzmWAbUHkQ/J6pU
-         KHhiwytgAt2lC0UGrupj20D7zWce8zlQ4wDUNuhqgBTHeLbuJdiiQOMzJAkp9HT+7BTg
-         xfoZWSCXXEpJw2RrcoYq8NcyJdVpjoF4YvJOs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=fsStyqZ+Oi8IWCobZN88MbquuXK8Ka8f7XuCzY3T/so=;
-        b=P/KZ3a4jRIxuSRSq+x4iJ2ukSsYu0clhIrQD1RAeciIlPhfKAEz61ySCyRicv1t7t4
-         unNY2CJGAlf1v80eCPSnvgkSj+RtY/9nlKuBAioMfM9oMu1K+sVym7jT0slwLTI2s77s
-         4TpaV6bMTb360eXVlIcutNGazmQscjHDm31FOhpX4eKdzRmrZonFgoIogbEtc/ZcyGqw
-         /Pv3DWMhaCRkbgHqNlF2oThv9/L8PzYpNJB9kmAlTeuggYXR7wU3Ggd+9umFlprD8PF3
-         +dUf8y5zwunmwzwzNstfdwe0+SPwXBFmQKgvTN7R0GspATVbT9FFKKnNUctcOkwXS4UB
-         IRuw==
-X-Gm-Message-State: AA+aEWZoBqAHGZkGcdpchGSGbanxTECaJS1JM8UOKlDgFhm5N+xVDwRX
-        /MNnh7uNOt0RmtQz0CKCg8uGbQ==
-X-Google-Smtp-Source: AFSGD/X9KmmOs0ME0/acDGNNrY14c29aPstY8lmrtyFRSSenOe07pHP3TroJLZcS1cfRCdHj67Sonw==
-X-Received: by 2002:a17:902:724a:: with SMTP id c10mr23638944pll.51.1544695510074;
-        Thu, 13 Dec 2018 02:05:10 -0800 (PST)
-Received: from localhost ([122.172.23.29])
-        by smtp.gmail.com with ESMTPSA id u137sm3195111pfc.140.2018.12.13.02.05.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 13 Dec 2018 02:05:09 -0800 (PST)
-Date:   Thu, 13 Dec 2018 15:35:06 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Taniya Das <tdas@codeaurora.org>, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, Rajendra Nayak <rnayak@codeaurora.org>,
-        devicetree@vger.kernel.org, robh@kernel.org,
-        skannan@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        evgreen@google.com, Matthias Kaehlcke <mka@chromium.org>
-Subject: Re: [PATCH v12 2/2] cpufreq: qcom-hw: Add support for QCOM cpufreq
- HW driver
-Message-ID: <20181213100506.sy3haqjbxtmkthvt@vireshk-i7>
-References: <1544687394-331-1-git-send-email-tdas@codeaurora.org>
- <1544687394-331-3-git-send-email-tdas@codeaurora.org>
- <154469510700.19322.7762676027024031719@swboyd.mtv.corp.google.com>
+        Thu, 13 Dec 2018 05:05:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=YBeeqTd12/azfcgbMg0da5T4t/CPIDB12EmV7eINdMs=; b=J8lWDLMWgNMG5iPAa9sXwWBr9
+        7J3MxM+rDZLuOpNLkuHET+66iOghUrdU7fJWedrhRNmW5NCgCBtj69DIQAYVgsS6rl84y/wq5tC16
+        Q/JdU0qm8PPE4f1/Mivxz+55igg4sxmxKDpU5GqwXJ7hAxcQlc6sR2m4uXdGJzUOXEPFysYdMVEAM
+        9rbZFZLPcRXkEOckupN5zUWPoZOkZEcAZFHakzoK1rI+seNxAIIVCTobin7qy84HSSz70o1FbaAuJ
+        gFuVGHXDtSlWHNupF4N0Ug16smd+wP9pULw4FDYk9Zk77QJRk40TNwt2BVowlLo5+UPAYk3P0NYpY
+        PvyFqxDyw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gXNrz-0007hE-O7; Thu, 13 Dec 2018 10:05:27 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 48C6D207261ED; Thu, 13 Dec 2018 11:05:25 +0100 (CET)
+Date:   Thu, 13 Dec 2018 11:05:25 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     "Dmitry V. Levin" <ldv@altlinux.org>, Jiri Olsa <jolsa@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Luis Claudio R. Goncalves" <lclaudio@uudg.org>,
+        Eugene Syromyatnikov <esyr@redhat.com>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        lkml <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/8] perf: Allow to block process in syscall tracepoints
+Message-ID: <20181213100525.GB5307@hirez.programming.kicks-ass.net>
+References: <20181207085839.GC2237@hirez.programming.kicks-ass.net>
+ <20181207072701.5bc564c7@vmware.local.home>
+ <20181207151105.GB5289@hirez.programming.kicks-ass.net>
+ <20181207151433.20bf0399@vmware.local.home>
+ <20181208104423.GE5289@hirez.programming.kicks-ass.net>
+ <20181208123805.1c158665@vmware.local.home>
+ <20181210101818.GJ5289@hirez.programming.kicks-ass.net>
+ <20181213003938.GD24195@altlinux.org>
+ <20181212202639.1978ec88@vmware.local.home>
+ <20181213100149.GF5289@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <154469510700.19322.7762676027024031719@swboyd.mtv.corp.google.com>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+In-Reply-To: <20181213100149.GF5289@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13-12-18, 01:58, Stephen Boyd wrote:
-> BTW, Viresh, I see a lockdep splat when cpufreq_init returns an error
-> upon bringing the policy online the second time. I guess cpufreq_stats
-> aren't able to be freed from there because they take locks in different
-> order vs. the normal path?
+On Thu, Dec 13, 2018 at 11:01:49AM +0100, Peter Zijlstra wrote:
+> One, very big maybe, would be to add a new tracepoint type that includes
+> a might_sleep() and we very carefully undo all the preempt_disable and
+> go sleep where we should. That also gives the tracepoint crud the
+> information it needs to publish the capability to userspace.
 
-Please share the lockdep report and the steps to reproduce it. I will
-see if I can simulate the failure forcefully..
-
--- 
-viresh
+Note that this includes handling fun things like the buffer getting
+closed while we wait.
