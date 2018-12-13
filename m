@@ -2,83 +2,83 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB1C7C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 21:51:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE28FC65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 21:53:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8A0720811
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 21:51:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8A0720811
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+	by mail.kernel.org (Postfix) with ESMTP id 61C6120811
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 21:53:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tSA+Rc+B"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61C6120811
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727969AbeLMVvO (ORCPT
+        id S1727476AbeLMVxP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 16:51:14 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:42533 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726457AbeLMVvO (ORCPT
+        Thu, 13 Dec 2018 16:53:15 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:45822 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726435AbeLMVxO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 16:51:14 -0500
-Received: from 79.184.252.35.ipv4.supernova.orange.pl (79.184.252.35) (HELO aspire.rjw.lan)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.183)
- id bcac4d62866666fd; Thu, 13 Dec 2018 22:51:11 +0100
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Stephen Boyd <sboyd@kernel.org>, sudeep.holla@arm.com,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Nadav Haklai <nadavh@marvell.com>
-Subject: Re: [PATCH 05/12] PCI: aardvark: add suspend to RAM support
-Date:   Thu, 13 Dec 2018 22:50:51 +0100
-Message-ID: <61805564.abKDZ2rVK7@aspire.rjw.lan>
-In-Reply-To: <20181213153000.245d7d5f@xps13>
-References: <20181123141831.8214-1-miquel.raynal@bootlin.com> <20181213105302.GA5330@e107981-ln.cambridge.arm.com> <20181213153000.245d7d5f@xps13>
+        Thu, 13 Dec 2018 16:53:14 -0500
+Received: by mail-pf1-f195.google.com with SMTP id g62so1733230pfd.12;
+        Thu, 13 Dec 2018 13:53:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=l+XaacF6pcfIwa5UH45hGJNh3br2qCONULeyN+S4+9I=;
+        b=tSA+Rc+BjXUOmTioNtqVDLe7wMFcOBT1LT/SSeQ9zuy3aVGeyGFgloXCaeakQeTwxo
+         RreSQpVvxx/Ve8Bew9G7BMTFgC7eZ3q4mTmwKFOQ+R0lKqVPU6S6VA8u47x9+9LmfUlN
+         mHC9HERpakHBz2nQNa7ZJzgqPymcCeZxeq18Xeo/s7FeVXM5jiaFmpOGNPYtyDhcVYDc
+         MfIhvM4USt57ZOIkyqqsmoa5YcUpxV4YGp0/ut7o4ALtH+OO3Cc/WfjxJRTC5et2hPIm
+         eqIirFtNuoaDpYLu1MMoajDVisfu08H06fp42/zoaTmqL1A3qMpnSHW+Wjj3X4NlO478
+         7dKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=l+XaacF6pcfIwa5UH45hGJNh3br2qCONULeyN+S4+9I=;
+        b=HBK8rjmW3HgcJZSmHG+98vc66Nl0ysBFmY+4w6j7jSw1UDmExje/mEE5FQlUdAc33W
+         9XM/LwPHZCtYt8RQLQ9c6EWJfv+fSb4UdGbpSwF3buALA8G+EV85FHEV+wH2aYqrRjXT
+         i9RMANbN8A1FK0Ka6MVX92eyKXz9epEYFHvoMH+z3Fu3IX1D/tI4114DBHeQskOAVTGA
+         68wignuehZktWItiDX7ldx8Z14Z20F/w5DNDFovJ5o2n5YgjgWbAWWQzWpSb2hWkpoG+
+         RJn9h2OkmbHqe7njYpF5dn69ACjLADGmhtWtW7rIt3oBFeVsWx2mWP20TeweXwqNMuar
+         J4hA==
+X-Gm-Message-State: AA+aEWYAigVJRZRdoJ9ya8vWs4+x0RuXYFju/cSFt+1WiXTWGr44u+Ft
+        5z5hE1kzzGdUa0OTNkTpXtc=
+X-Google-Smtp-Source: AFSGD/XUulhFv2yikKgjJwIuPEtpggjVEWgedWf2vXqK6GW2Dl25tkt4V5W9tnwJxkWcAqxUxaCymw==
+X-Received: by 2002:a63:3c58:: with SMTP id i24mr451883pgn.284.1544737993959;
+        Thu, 13 Dec 2018 13:53:13 -0800 (PST)
+Received: from xldev-tmpl.dev.purestorage.com ([192.30.188.252])
+        by smtp.gmail.com with ESMTPSA id m85sm4263751pfj.171.2018.12.13.13.53.12
+        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
+        Thu, 13 Dec 2018 13:53:13 -0800 (PST)
+Date:   Thu, 13 Dec 2018 14:53:11 -0700
+From:   Anatoliy Glagolev <glagolig@gmail.com>
+To:     aglagolev@purestorage.com, adailey@purestorage.com,
+        jejb@linux.vnet.ibm.com, martin.petersen@oracle.com, hch@lst.de,
+        qla2xxx-upstream@qlogic.com, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] scsi: qla2xxx: deadlock by configfs_depend_item
+Message-ID: <20181213215310.GA29430@xldev-tmpl.dev.purestorage.com>
+References: <1544140125-3060-1-git-send-email-glagolig@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1544140125-3060-1-git-send-email-glagolig@gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thursday, December 13, 2018 3:30:00 PM CET Miquel Raynal wrote:
-> Hi Lorenzo,
-> 
-> > > If that's really the case, then I can see how one device and it's
-> > > children are suspended and the irq for it is disabled but the providing
-> > > devices (clk, regulator, bus controller, etc.) are still fully active
-> > > and not suspended but in fact completely usable and able to service
-> > > interrupts. If that all makes sense, then I would answer the question
-> > > with a definitive "yes it's all fine" because the clk consumer could be
-> > > in the NOIRQ phase of its suspend but the clk provider wouldn't have
-> > > even started suspending yet when clk_disable_unprepare() is called.  
-> > 
-> > That's a very good summary and address my concern, I still question this
-> > patch correctness (and many others that carry out clk operations in S2R
-> > NOIRQ phase), they may work but do not tell me they are rock solid given
-> > your accurate summary above.
-> 
-> I understand your concern but I don't see any alternative right now
-> and a deep rework of the PM core to respect such dependency is not
-> something that can be done in a reasonable amount of time.
+Any thoughts on this change?
 
-Maybe you don't need to rework anything. :-)
-
-Have you considered using device links?
-
-Thanks,
-Rafael
+Thanks.
 
