@@ -2,753 +2,194 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.5 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_MIXED_ES
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D73E7C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 15:11:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D7C0C65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 15:12:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82E4320870
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 15:11:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82E4320870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 409A02087F
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 15:12:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ifO42s1S"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 409A02087F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729318AbeLMPLG (ORCPT
+        id S1729305AbeLMPMO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 10:11:06 -0500
-Received: from mail-it1-f200.google.com ([209.85.166.200]:36279 "EHLO
-        mail-it1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727618AbeLMPLF (ORCPT
+        Thu, 13 Dec 2018 10:12:14 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:42427 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727618AbeLMPMN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 10:11:05 -0500
-Received: by mail-it1-f200.google.com with SMTP id w15so2796617ita.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 07:11:04 -0800 (PST)
+        Thu, 13 Dec 2018 10:12:13 -0500
+Received: by mail-ed1-f68.google.com with SMTP id j6so2290830edp.9
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 07:12:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:reply-to:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=l69N32jmQG2zGN93tkn7NJvUX29xf66d+hF+/Qin/d8=;
+        b=ifO42s1SwvAZ39OUs/6duMDQkzexKmBgUl5UhVqJp2Yc2D3UP3PYijgXyqcG99hvit
+         fvXkHTGUDjIn4r0eN3rcceZ16SPTRIBTI/brsTy2ehb1LcR/MGu7VFeQiZ87O9cnsJ5D
+         UfPR35tGu9g9hJFekDgLHf0FuMKKCtkhzDxGjDJsOMSLQN/hjAhlTtTA4b0AoWCiaCdB
+         CSwSdXr421dgP0Nzo2MSm7vDqnLZLm2Mne4lvq2lohnNPCQHnRopH1eaH5Z2+E5BdGXa
+         jcroCtTTvwmRWzlpKmgIZX8XW5fe66NSVAICqsGw1pKPD7Y9uscofQAQBsltWwFcnx9D
+         kRaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=5N0MAU8aKMlcajUt3kZpeBwR6S4nBwUNxveC1rwDAfU=;
-        b=DXb1IwjYnsU9lpSi9QZooMnV/dz0bwWd0kZYT7Bl+e0579pmrr2/abcxYqKY3sy3ys
-         YX7adJOwreBcu682aoPc97tXKRMXX+KHOhwqt6TelVhh9Y2a6qA5cP0SLOl1lwCMF3AE
-         HrF/qZNeydtEyeaTW+sejFt+H8wo389USaoF53iDy8Z/YMivNLgbR5y4y+PCVd6Ua51X
-         JRhAq6CFEXTVKEl9z/H8nkLjxO4cax9wcy751Qm2WIxFURb6BfzvKYE5MK3WtVnqWTUe
-         Bp2hT3Ez2N0tAKlmQFkHW7LqzqAgzKTEO9dsH0RNP9CiepJ2F/oQbpr24Gh0S6oawmuZ
-         CUGQ==
-X-Gm-Message-State: AA+aEWbFUKVtjzH03WS+9XnFJ5Zl9897nYbJp0eJz+DH9u36HgefkC1g
-        QCERgIXo2Ta1q8N1Kh2AOJENrA6l6PWN8bUxq74ePhl1Wkmu
-X-Google-Smtp-Source: AFSGD/XhmCDS+FWuuvh/6C0yX14hAJPg5kz/KFILoo9EIczS7aoJ4ra6/YTuPmYX9sM5+T2dKdluJ2fuc/TpNQApHFdfcXHkeq/d
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=l69N32jmQG2zGN93tkn7NJvUX29xf66d+hF+/Qin/d8=;
+        b=laWpocd6/boj5BRVQOuIHONw09sxdAgnillmni/g3suTs6vp3kn1XgQDwmicJRQlbu
+         PqOZ+iwpmjyGYCJcDfi5YZ3eXpuvt3C1OiE5vifzYkI7hXNmAY3PdSHlTYeNzAoUQoL3
+         nvGzsjBL15iLw5VJ4u5f+s2lkVOaHTgH9FoPXg5Y4bifaMxyBySGwdmWjFeFngecWUPG
+         QNQreV0Tho5A2kXQQxW3Vkif4sdqcQTZMou+6jWj9VqNQhHuHjJN9f3Q4ZoD/QfCrp7z
+         8pL6hOebs7Q2B64frPmcW6Cg1s3jFp8+Az2meCa+KamMhcfbn6QGheT7+8TT4deNH7Aw
+         mhcw==
+X-Gm-Message-State: AA+aEWbK2L8lGOllzllkPmVD4JGxtDsnfvr+bePZOeTAO3o4nn6Drm3t
+        gh4i+/696NjR3KJFy9WZ/PA=
+X-Google-Smtp-Source: AFSGD/USy8N9p1bdi6RLTHnkkBby299W73REWFxbklgRRQ8QR+PsvFHhncCH1bjRbtHOc6iTWYnu8g==
+X-Received: by 2002:a50:9f64:: with SMTP id b91mr22462900edf.235.1544713931234;
+        Thu, 13 Dec 2018 07:12:11 -0800 (PST)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id v14sm630587edq.74.2018.12.13.07.12.10
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 13 Dec 2018 07:12:10 -0800 (PST)
+Date:   Thu, 13 Dec 2018 15:12:09 +0000
+From:   Wei Yang <richard.weiyang@gmail.com>
+To:     Zaslonko Mikhail <zaslonko@linux.bm.com>
+Cc:     Wei Yang <richard.weiyang@gmail.com>,
+        Mikhail Zaslonko <zaslonko@linux.ibm.com>,
+        akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, mhocko@kernel.org,
+        Pavel.Tatashin@microsoft.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, gerald.schaefer@de.ibm.com
+Subject: Re: [PATCH v2 1/1] mm, memory_hotplug: Initialize struct pages for
+ the full memory section
+Message-ID: <20181213151209.hmrhrr5gvb256bzm@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20181212172712.34019-1-zaslonko@linux.ibm.com>
+ <20181212172712.34019-2-zaslonko@linux.ibm.com>
+ <20181213034615.4ntpo4cl2oo5mcx4@master>
+ <e4cebbae-3fcb-f03c-3d0e-a1a44ff0675a@linux.bm.com>
 MIME-Version: 1.0
-X-Received: by 2002:a24:1c5:: with SMTP id 188mr9138449itk.12.1544713863642;
- Thu, 13 Dec 2018 07:11:03 -0800 (PST)
-Date:   Thu, 13 Dec 2018 07:11:03 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000001f5aa6057ce8b94b@google.com>
-Subject: possible deadlock in try_to_wake_up
-From:   syzbot <syzbot+aa4d6d6e9844c73913b8@syzkaller.appspotmail.com>
-To:     akpm@linux-foundation.org, aryabinin@virtuozzo.com, guro@fb.com,
-        hannes@cmpxchg.org, jbacik@fb.com, ktkhai@virtuozzo.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        mgorman@techsingularity.net, mhocko@suse.com, shakeelb@google.com,
-        syzkaller-bugs@googlegroups.com, vdavydov.dev@gmail.com,
-        willy@infradead.org
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e4cebbae-3fcb-f03c-3d0e-a1a44ff0675a@linux.bm.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Thu, Dec 13, 2018 at 01:37:16PM +0100, Zaslonko Mikhail wrote:
+>On 13.12.2018 04:46, Wei Yang wrote:
+>> On Wed, Dec 12, 2018 at 06:27:12PM +0100, Mikhail Zaslonko wrote:
+>>> If memory end is not aligned with the sparse memory section boundary, the
+>>> mapping of such a section is only partly initialized. This may lead to
+>>> VM_BUG_ON due to uninitialized struct page access from
+>>> is_mem_section_removable() or test_pages_in_a_zone() function triggered by
+>>> memory_hotplug sysfs handlers:
+>>>
+>>> Here are the the panic examples:
+>>> CONFIG_DEBUG_VM=y
+>>> CONFIG_DEBUG_VM_PGFLAGS=y
+>>>
+>>> kernel parameter mem=2050M
+>>> --------------------------
+>>> page:000003d082008000 is uninitialized and poisoned
+>>> page dumped because: VM_BUG_ON_PAGE(PagePoisoned(p))
+>>> Call Trace:
+>>> ([<0000000000385b26>] test_pages_in_a_zone+0xde/0x160)
+>>>  [<00000000008f15c4>] show_valid_zones+0x5c/0x190
+>>>  [<00000000008cf9c4>] dev_attr_show+0x34/0x70
+>>>  [<0000000000463ad0>] sysfs_kf_seq_show+0xc8/0x148
+>>>  [<00000000003e4194>] seq_read+0x204/0x480
+>>>  [<00000000003b53ea>] __vfs_read+0x32/0x178
+>>>  [<00000000003b55b2>] vfs_read+0x82/0x138
+>>>  [<00000000003b5be2>] ksys_read+0x5a/0xb0
+>>>  [<0000000000b86ba0>] system_call+0xdc/0x2d8
+>>> Last Breaking-Event-Address:
+>>>  [<0000000000385b26>] test_pages_in_a_zone+0xde/0x160
+>>> Kernel panic - not syncing: Fatal exception: panic_on_oops
+>>>
+>>> kernel parameter mem=3075M
+>>> --------------------------
+>>> page:000003d08300c000 is uninitialized and poisoned
+>>> page dumped because: VM_BUG_ON_PAGE(PagePoisoned(p))
+>>> Call Trace:
+>>> ([<000000000038596c>] is_mem_section_removable+0xb4/0x190)
+>>>  [<00000000008f12fa>] show_mem_removable+0x9a/0xd8
+>>>  [<00000000008cf9c4>] dev_attr_show+0x34/0x70
+>>>  [<0000000000463ad0>] sysfs_kf_seq_show+0xc8/0x148
+>>>  [<00000000003e4194>] seq_read+0x204/0x480
+>>>  [<00000000003b53ea>] __vfs_read+0x32/0x178
+>>>  [<00000000003b55b2>] vfs_read+0x82/0x138
+>>>  [<00000000003b5be2>] ksys_read+0x5a/0xb0
+>>>  [<0000000000b86ba0>] system_call+0xdc/0x2d8
+>>> Last Breaking-Event-Address:
+>>>  [<000000000038596c>] is_mem_section_removable+0xb4/0x190
+>>> Kernel panic - not syncing: Fatal exception: panic_on_oops
+>>>
+>>> Fix the problem by initializing the last memory section of each zone
+>>> in memmap_init_zone() till the very end, even if it goes beyond the zone
+>>> end.
+>>>
+>>> Signed-off-by: Mikhail Zaslonko <zaslonko@linux.ibm.com>
+>>> Reviewed-by: Gerald Schaefer <gerald.schaefer@de.ibm.com>
+>>> Cc: <stable@vger.kernel.org>
+>>> ---
+>>> mm/page_alloc.c | 12 ++++++++++++
+>>> 1 file changed, 12 insertions(+)
+>>>
+>>> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+>>> index 2ec9cc407216..e2afdb2dc2c5 100644
+>>> --- a/mm/page_alloc.c
+>>> +++ b/mm/page_alloc.c
+>>> @@ -5542,6 +5542,18 @@ void __meminit memmap_init_zone(unsigned long size, int nid, unsigned long zone,
+>>> 			cond_resched();
+>>> 		}
+>>> 	}
+>>> +#ifdef CONFIG_SPARSEMEM
+>>> +	/*
+>>> +	 * If the zone does not span the rest of the section then
+>>> +	 * we should at least initialize those pages. Otherwise we
+>>> +	 * could blow up on a poisoned page in some paths which depend
+>>> +	 * on full sections being initialized (e.g. memory hotplug).
+>>> +	 */
+>>> +	while (end_pfn % PAGES_PER_SECTION) {
+>>> +		__init_single_page(pfn_to_page(end_pfn), end_pfn, zone, nid);
+>>> +		end_pfn++;
+>>> +	}
+>>> +#endif
+>>> }
+>> 
+>> What will happen if the end_pfn is PAGES_PER_SECTION aligned, but there
+>> is invalid pfn? For example, the page is skipped in the for loop of
+>> memmap_init_zone()?
+>> 
+>
+>If the end_pfn is PAGES_PER_SECTION aligned, we do not do any extra 
+>initialization.
+>If the page is skipped in the loop, it will remain uninitialized for 
+>the reason (e.g. a memory hole). The behavior has not been changed here.
+>
 
-syzbot found the following crash on:
+I may not describe my question clearly.
 
-HEAD commit:    ca40dc225d19 Add linux-next specific files for 20181213
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=126d9fd5400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=778d1d35b0e8272b
-dashboard link: https://syzkaller.appspot.com/bug?extid=aa4d6d6e9844c73913b8
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+If the page is skipped, then it is uninitialized. Then would this page
+trigger the call trace when read the removable sysfs?
 
-Unfortunately, I don't have any reproducer for this crash yet.
+>>>
+>>> #ifdef CONFIG_ZONE_DEVICE
+>>> -- 
+>>> 2.16.4
+>> 
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+aa4d6d6e9844c73913b8@syzkaller.appspotmail.com
-
-
-======================================================
-WARNING: possible circular locking dependency detected
-4.20.0-rc6-next-20181213+ #170 Not tainted
-------------------------------------------------------
-syz-executor5/1221 is trying to acquire lock:
-000000009d8713d8 (&p->pi_lock){-.-.}, at: try_to_wake_up+0xdc/0x1440  
-kernel/sched/core.c:1965
-
-but task is already holding lock:
-00000000a84a436c (&pgdat->kswapd_wait){....}, at:  
-__wake_up_common_lock+0x19e/0x330 kernel/sched/wait.c:120
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #4 (&pgdat->kswapd_wait){....}:
-        __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-        _raw_spin_lock_irqsave+0x99/0xd0 kernel/locking/spinlock.c:152
-        __wake_up_common_lock+0x19e/0x330 kernel/sched/wait.c:120
-        __wake_up+0xe/0x10 kernel/sched/wait.c:145
-        wakeup_kswapd+0x592/0x8f0 mm/vmscan.c:4001
-        steal_suitable_fallback+0x538/0x830 mm/page_alloc.c:2308
-        __rmqueue_fallback mm/page_alloc.c:2593 [inline]
-        __rmqueue mm/page_alloc.c:2619 [inline]
-        rmqueue_bulk mm/page_alloc.c:2641 [inline]
-        __rmqueue_pcplist mm/page_alloc.c:3106 [inline]
-        rmqueue_pcplist mm/page_alloc.c:3135 [inline]
-        rmqueue mm/page_alloc.c:3157 [inline]
-        get_page_from_freelist+0x32cf/0x5360 mm/page_alloc.c:3570
-        __alloc_pages_nodemask+0x668/0xec0 mm/page_alloc.c:4608
-        alloc_pages_current+0x173/0x350 mm/mempolicy.c:2106
-        alloc_pages include/linux/gfp.h:509 [inline]
-        __vmalloc_area_node mm/vmalloc.c:1690 [inline]
-        __vmalloc_node_range+0x5ca/0x8d0 mm/vmalloc.c:1750
-        __vmalloc_node mm/vmalloc.c:1795 [inline]
-        __vmalloc_node_flags mm/vmalloc.c:1809 [inline]
-        vmalloc+0x6f/0x80 mm/vmalloc.c:1831
-        do_replace_finish+0x10c/0x2940 net/bridge/netfilter/ebtables.c:1019
-        do_replace+0x384/0x4c0 net/bridge/netfilter/ebtables.c:1159
-        do_ebt_set_ctl+0xe7/0x110 net/bridge/netfilter/ebtables.c:1528
-        nf_sockopt net/netfilter/nf_sockopt.c:106 [inline]
-        nf_setsockopt+0x7d/0xd0 net/netfilter/nf_sockopt.c:115
-        ip_setsockopt+0xd8/0xf0 net/ipv4/ip_sockglue.c:1260
-        udp_setsockopt+0x62/0xa0 net/ipv4/udp.c:2649
-        ipv6_setsockopt+0x149/0x170 net/ipv6/ipv6_sockglue.c:935
-        tcp_setsockopt+0x93/0xe0 net/ipv4/tcp.c:3068
-        sock_common_setsockopt+0x9a/0xe0 net/core/sock.c:2986
-        __sys_setsockopt+0x1ba/0x3c0 net/socket.c:1903
-        __do_sys_setsockopt net/socket.c:1914 [inline]
-        __se_sys_setsockopt net/socket.c:1911 [inline]
-        __x64_sys_setsockopt+0xbe/0x150 net/socket.c:1911
-        do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-        entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
--> #3 (&(&zone->lock)->rlock){..-.}:
-        __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-        _raw_spin_lock_irqsave+0x99/0xd0 kernel/locking/spinlock.c:152
-        rmqueue mm/page_alloc.c:3167 [inline]
-        get_page_from_freelist+0x9eb/0x5360 mm/page_alloc.c:3570
-        __alloc_pages_nodemask+0x668/0xec0 mm/page_alloc.c:4608
-        __alloc_pages include/linux/gfp.h:473 [inline]
-        alloc_page_interleave+0x25/0x1c0 mm/mempolicy.c:1988
-        alloc_pages_current+0x2ac/0x350 mm/mempolicy.c:2104
-        alloc_pages include/linux/gfp.h:509 [inline]
-        depot_save_stack+0x3f1/0x470 lib/stackdepot.c:260
-        save_stack+0xa9/0xd0 mm/kasan/common.c:79
-        set_track mm/kasan/common.c:85 [inline]
-        kasan_kmalloc+0xcb/0xd0 mm/kasan/common.c:482
-        kasan_slab_alloc+0x12/0x20 mm/kasan/common.c:397
-        slab_post_alloc_hook mm/slab.h:444 [inline]
-        slab_alloc mm/slab.c:3379 [inline]
-        kmem_cache_alloc+0x11a/0x730 mm/slab.c:3539
-        kmem_cache_zalloc include/linux/slab.h:730 [inline]
-        fill_pool lib/debugobjects.c:134 [inline]
-        __debug_object_init+0xbb8/0x1290 lib/debugobjects.c:379
-        debug_object_init lib/debugobjects.c:431 [inline]
-        debug_object_activate+0x323/0x600 lib/debugobjects.c:512
-        debug_timer_activate kernel/time/timer.c:708 [inline]
-        debug_activate kernel/time/timer.c:763 [inline]
-        __mod_timer kernel/time/timer.c:1040 [inline]
-        mod_timer kernel/time/timer.c:1101 [inline]
-        add_timer+0x50e/0x15a0 kernel/time/timer.c:1137
-        __queue_delayed_work+0x249/0x380 kernel/workqueue.c:1533
-        queue_delayed_work_on+0x1a2/0x1f0 kernel/workqueue.c:1558
-        queue_delayed_work include/linux/workqueue.h:527 [inline]
-        schedule_delayed_work include/linux/workqueue.h:628 [inline]
-        start_dirtytime_writeback+0x4e/0x53 fs/fs-writeback.c:2043
-        do_one_initcall+0x145/0x957 init/main.c:888
-        do_initcall_level init/main.c:956 [inline]
-        do_initcalls init/main.c:964 [inline]
-        do_basic_setup init/main.c:982 [inline]
-        kernel_init_freeable+0x5cc/0x6ba init/main.c:1135
-        kernel_init+0x11/0x1ae init/main.c:1055
-        ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
-
--> #2 (&base->lock){-.-.}:
-        __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-        _raw_spin_lock_irqsave+0x99/0xd0 kernel/locking/spinlock.c:152
-        lock_timer_base+0xbb/0x2b0 kernel/time/timer.c:937
-        __mod_timer kernel/time/timer.c:1009 [inline]
-        mod_timer kernel/time/timer.c:1101 [inline]
-        add_timer+0x87f/0x15a0 kernel/time/timer.c:1137
-        __queue_delayed_work+0x249/0x380 kernel/workqueue.c:1533
-        queue_delayed_work_on+0x1a2/0x1f0 kernel/workqueue.c:1558
-        queue_delayed_work include/linux/workqueue.h:527 [inline]
-        schedule_delayed_work include/linux/workqueue.h:628 [inline]
-        psi_group_change kernel/sched/psi.c:485 [inline]
-        psi_task_change+0x3f1/0x5f0 kernel/sched/psi.c:534
-        psi_enqueue kernel/sched/stats.h:82 [inline]
-        enqueue_task kernel/sched/core.c:727 [inline]
-        activate_task+0x21a/0x430 kernel/sched/core.c:751
-        wake_up_new_task+0x523/0xcf0 kernel/sched/core.c:2423
-        _do_fork+0x33b/0x11d0 kernel/fork.c:2237
-        kernel_thread+0x34/0x40 kernel/fork.c:2271
-        rest_init+0x28/0x372 init/main.c:408
-        arch_call_rest_init+0xe/0x1b
-        start_kernel+0x9a5/0x9e0 init/main.c:740
-        x86_64_start_reservations+0x29/0x2b arch/x86/kernel/head64.c:470
-        x86_64_start_kernel+0x76/0x79 arch/x86/kernel/head64.c:451
-        secondary_startup_64+0xa4/0xb0 arch/x86/kernel/head_64.S:243
-
--> #1 (&rq->lock){-.-.}:
-        __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
-        _raw_spin_lock+0x2d/0x40 kernel/locking/spinlock.c:144
-        rq_lock kernel/sched/sched.h:1129 [inline]
-        task_fork_fair+0xb0/0x6d0 kernel/sched/fair.c:9820
-        sched_fork+0x443/0xba0 kernel/sched/core.c:2359
-        copy_process+0x25b9/0x87a0 kernel/fork.c:1883
-        _do_fork+0x1cb/0x11d0 kernel/fork.c:2212
-        kernel_thread+0x34/0x40 kernel/fork.c:2271
-        rest_init+0x28/0x372 init/main.c:408
-        arch_call_rest_init+0xe/0x1b
-        start_kernel+0x9a5/0x9e0 init/main.c:740
-        x86_64_start_reservations+0x29/0x2b arch/x86/kernel/head64.c:470
-        x86_64_start_kernel+0x76/0x79 arch/x86/kernel/head64.c:451
-        secondary_startup_64+0xa4/0xb0 arch/x86/kernel/head_64.S:243
-
--> #0 (&p->pi_lock){-.-.}:
-        lock_acquire+0x1ed/0x520 kernel/locking/lockdep.c:3844
-        __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-        _raw_spin_lock_irqsave+0x99/0xd0 kernel/locking/spinlock.c:152
-        try_to_wake_up+0xdc/0x1440 kernel/sched/core.c:1965
-        default_wake_function+0x30/0x50 kernel/sched/core.c:3710
-        autoremove_wake_function+0x80/0x370 kernel/sched/wait.c:375
-        __wake_up_common+0x1d7/0x7d0 kernel/sched/wait.c:92
-        __wake_up_common_lock+0x1c2/0x330 kernel/sched/wait.c:121
-        __wake_up+0xe/0x10 kernel/sched/wait.c:145
-        wakeup_kswapd+0x592/0x8f0 mm/vmscan.c:4001
-        steal_suitable_fallback+0x538/0x830 mm/page_alloc.c:2308
-        __rmqueue_fallback mm/page_alloc.c:2593 [inline]
-        __rmqueue mm/page_alloc.c:2619 [inline]
-        rmqueue_bulk mm/page_alloc.c:2641 [inline]
-        __rmqueue_pcplist mm/page_alloc.c:3106 [inline]
-        rmqueue_pcplist mm/page_alloc.c:3135 [inline]
-        rmqueue mm/page_alloc.c:3157 [inline]
-        get_page_from_freelist+0x32cf/0x5360 mm/page_alloc.c:3570
-        __alloc_pages_nodemask+0x668/0xec0 mm/page_alloc.c:4608
-        alloc_pages_current+0x173/0x350 mm/mempolicy.c:2106
-        alloc_pages include/linux/gfp.h:509 [inline]
-        __vmalloc_area_node mm/vmalloc.c:1690 [inline]
-        __vmalloc_node_range+0x5ca/0x8d0 mm/vmalloc.c:1750
-        __vmalloc_node mm/vmalloc.c:1795 [inline]
-        __vmalloc_node_flags mm/vmalloc.c:1809 [inline]
-        vmalloc+0x6f/0x80 mm/vmalloc.c:1831
-        do_replace_finish+0x10c/0x2940 net/bridge/netfilter/ebtables.c:1019
-        do_replace+0x384/0x4c0 net/bridge/netfilter/ebtables.c:1159
-        do_ebt_set_ctl+0xe7/0x110 net/bridge/netfilter/ebtables.c:1528
-        nf_sockopt net/netfilter/nf_sockopt.c:106 [inline]
-        nf_setsockopt+0x7d/0xd0 net/netfilter/nf_sockopt.c:115
-        ip_setsockopt+0xd8/0xf0 net/ipv4/ip_sockglue.c:1260
-        udp_setsockopt+0x62/0xa0 net/ipv4/udp.c:2649
-        ipv6_setsockopt+0x149/0x170 net/ipv6/ipv6_sockglue.c:935
-        tcp_setsockopt+0x93/0xe0 net/ipv4/tcp.c:3068
-        sock_common_setsockopt+0x9a/0xe0 net/core/sock.c:2986
-        __sys_setsockopt+0x1ba/0x3c0 net/socket.c:1903
-        __do_sys_setsockopt net/socket.c:1914 [inline]
-        __se_sys_setsockopt net/socket.c:1911 [inline]
-        __x64_sys_setsockopt+0xbe/0x150 net/socket.c:1911
-        do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-        entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-other info that might help us debug this:
-
-Chain exists of:
-   &p->pi_lock --> &(&zone->lock)->rlock --> &pgdat->kswapd_wait
-
-  Possible unsafe locking scenario:
-
-        CPU0                    CPU1
-        ----                    ----
-   lock(&pgdat->kswapd_wait);
-                                lock(&(&zone->lock)->rlock);
-                                lock(&pgdat->kswapd_wait);
-   lock(&p->pi_lock);
-
-  *** DEADLOCK ***
-
-2 locks held by syz-executor5/1221:
-  #0: 0000000023b66a9e (&(&zone->lock)->rlock){..-.}, at: spin_lock  
-include/linux/spinlock.h:329 [inline]
-  #0: 0000000023b66a9e (&(&zone->lock)->rlock){..-.}, at: rmqueue_bulk  
-mm/page_alloc.c:2639 [inline]
-  #0: 0000000023b66a9e (&(&zone->lock)->rlock){..-.}, at: __rmqueue_pcplist  
-mm/page_alloc.c:3106 [inline]
-  #0: 0000000023b66a9e (&(&zone->lock)->rlock){..-.}, at: rmqueue_pcplist  
-mm/page_alloc.c:3135 [inline]
-  #0: 0000000023b66a9e (&(&zone->lock)->rlock){..-.}, at: rmqueue  
-mm/page_alloc.c:3157 [inline]
-  #0: 0000000023b66a9e (&(&zone->lock)->rlock){..-.}, at:  
-get_page_from_freelist+0x1cdb/0x5360 mm/page_alloc.c:3570
-  #1: 00000000a84a436c (&pgdat->kswapd_wait){....}, at:  
-__wake_up_common_lock+0x19e/0x330 kernel/sched/wait.c:120
-
-stack backtrace:
-CPU: 0 PID: 1221 Comm: syz-executor5 Not tainted 4.20.0-rc6-next-20181213+  
-#170
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x244/0x39d lib/dump_stack.c:113
-  print_circular_bug.isra.35.cold.56+0x1bd/0x27d  
-kernel/locking/lockdep.c:1221
-  check_prev_add kernel/locking/lockdep.c:1863 [inline]
-  check_prevs_add kernel/locking/lockdep.c:1976 [inline]
-  validate_chain kernel/locking/lockdep.c:2347 [inline]
-  __lock_acquire+0x3399/0x4c20 kernel/locking/lockdep.c:3341
-  lock_acquire+0x1ed/0x520 kernel/locking/lockdep.c:3844
-  __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-  _raw_spin_lock_irqsave+0x99/0xd0 kernel/locking/spinlock.c:152
-  try_to_wake_up+0xdc/0x1440 kernel/sched/core.c:1965
-  default_wake_function+0x30/0x50 kernel/sched/core.c:3710
-  autoremove_wake_function+0x80/0x370 kernel/sched/wait.c:375
-  __wake_up_common+0x1d7/0x7d0 kernel/sched/wait.c:92
-  __wake_up_common_lock+0x1c2/0x330 kernel/sched/wait.c:121
-  __wake_up+0xe/0x10 kernel/sched/wait.c:145
-  wakeup_kswapd+0x592/0x8f0 mm/vmscan.c:4001
-  steal_suitable_fallback+0x538/0x830 mm/page_alloc.c:2308
-  __rmqueue_fallback mm/page_alloc.c:2593 [inline]
-  __rmqueue mm/page_alloc.c:2619 [inline]
-  rmqueue_bulk mm/page_alloc.c:2641 [inline]
-  __rmqueue_pcplist mm/page_alloc.c:3106 [inline]
-  rmqueue_pcplist mm/page_alloc.c:3135 [inline]
-  rmqueue mm/page_alloc.c:3157 [inline]
-  get_page_from_freelist+0x32cf/0x5360 mm/page_alloc.c:3570
-  __alloc_pages_nodemask+0x668/0xec0 mm/page_alloc.c:4608
-  alloc_pages_current+0x173/0x350 mm/mempolicy.c:2106
-  alloc_pages include/linux/gfp.h:509 [inline]
-  __vmalloc_area_node mm/vmalloc.c:1690 [inline]
-  __vmalloc_node_range+0x5ca/0x8d0 mm/vmalloc.c:1750
-  __vmalloc_node mm/vmalloc.c:1795 [inline]
-  __vmalloc_node_flags mm/vmalloc.c:1809 [inline]
-  vmalloc+0x6f/0x80 mm/vmalloc.c:1831
-  do_replace_finish+0x10c/0x2940 net/bridge/netfilter/ebtables.c:1019
-  do_replace+0x384/0x4c0 net/bridge/netfilter/ebtables.c:1159
-  do_ebt_set_ctl+0xe7/0x110 net/bridge/netfilter/ebtables.c:1528
-  nf_sockopt net/netfilter/nf_sockopt.c:106 [inline]
-  nf_setsockopt+0x7d/0xd0 net/netfilter/nf_sockopt.c:115
-  ip_setsockopt+0xd8/0xf0 net/ipv4/ip_sockglue.c:1260
-  udp_setsockopt+0x62/0xa0 net/ipv4/udp.c:2649
-  ipv6_setsockopt+0x149/0x170 net/ipv6/ipv6_sockglue.c:935
-  tcp_setsockopt+0x93/0xe0 net/ipv4/tcp.c:3068
-  sock_common_setsockopt+0x9a/0xe0 net/core/sock.c:2986
-  __sys_setsockopt+0x1ba/0x3c0 net/socket.c:1903
-  __do_sys_setsockopt net/socket.c:1914 [inline]
-  __se_sys_setsockopt net/socket.c:1911 [inline]
-  __x64_sys_setsockopt+0xbe/0x150 net/socket.c:1911
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x457679
-Code: fd b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 cb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f2b4ec2fc78 EFLAGS: 00000246 ORIG_RAX: 0000000000000036
-RAX: ffffffffffffffda RBX: 0000000000000005 RCX: 0000000000457679
-RDX: 0000000000000080 RSI: 0000000000000000 RDI: 0000000000000003
-RBP: 000000000072bf00 R08: 00000000000003e0 R09: 0000000000000000
-R10: 00000000200004c0 R11: 0000000000000246 R12: 00007f2b4ec306d4
-R13: 00000000004c4618 R14: 00000000004d77f8 R15: 00000000ffffffff
-__bpf_mt_check_bytecode: 9 callbacks suppressed
-xt_bpf: check failed: parse error
-kobject: 'loop5' (0000000051a7cf3c): kobject_uevent_env
-kobject: 'kvm' (00000000ef57b484): kobject_uevent_env
-kobject: 'loop5' (0000000051a7cf3c): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-kobject: 'kvm' (00000000ef57b484): fill_kobj_path: path  
-= '/devices/virtual/misc/kvm'
-xt_bpf: check failed: parse error
-kobject: 'kvm' (00000000ef57b484): kobject_uevent_env
-kobject: 'loop4' (00000000cc7e0096): kobject_uevent_env
-kobject: 'kvm' (00000000ef57b484): fill_kobj_path: path  
-= '/devices/virtual/misc/kvm'
-kobject: 'kvm' (00000000ef57b484): kobject_uevent_env
-kobject: 'loop4' (00000000cc7e0096): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'kvm' (00000000ef57b484): fill_kobj_path: path  
-= '/devices/virtual/misc/kvm'
-kobject: 'loop5' (0000000051a7cf3c): kobject_uevent_env
-xt_bpf: check failed: parse error
-kobject: 'loop5' (0000000051a7cf3c): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-xt_bpf: check failed: parse error
-kobject: 'loop2' (000000003765b848): kobject_uevent_env
-kobject: 'kvm' (00000000ef57b484): kobject_uevent_env
-kobject: 'loop2' (000000003765b848): fill_kobj_path: path  
-= '/devices/virtual/block/loop2'
-kobject: 'kvm' (00000000ef57b484): fill_kobj_path: path  
-= '/devices/virtual/misc/kvm'
-kobject: 'loop1' (00000000ab5963b8): kobject_uevent_env
-kobject: 'loop1' (00000000ab5963b8): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-kobject: 'loop4' (00000000cc7e0096): kobject_uevent_env
-xt_bpf: check failed: parse error
-xt_bpf: check failed: parse error
-kobject: 'loop4' (00000000cc7e0096): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'kvm' (00000000ef57b484): kobject_uevent_env
-kobject: 'kvm' (00000000ef57b484): fill_kobj_path: path  
-= '/devices/virtual/misc/kvm'
-kobject: 'loop5' (0000000051a7cf3c): kobject_uevent_env
-kobject: 'loop5' (0000000051a7cf3c): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-kobject: 'loop3' (000000007885b562): kobject_uevent_env
-kobject: 'loop3' (000000007885b562): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-kobject: 'loop2' (000000003765b848): kobject_uevent_env
-kobject: 'loop2' (000000003765b848): fill_kobj_path: path  
-= '/devices/virtual/block/loop2'
-kobject: 'kvm' (00000000ef57b484): kobject_uevent_env
-kobject: 'kvm' (00000000ef57b484): fill_kobj_path: path  
-= '/devices/virtual/misc/kvm'
-kobject: 'loop5' (0000000051a7cf3c): kobject_uevent_env
-xt_bpf: check failed: parse error
-xt_bpf: check failed: parse error
-kobject: 'loop5' (0000000051a7cf3c): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-kobject: 'kvm' (00000000ef57b484): kobject_uevent_env
-kobject: 'kvm' (00000000ef57b484): fill_kobj_path: path  
-= '/devices/virtual/misc/kvm'
-kobject: 'loop4' (00000000cc7e0096): kobject_uevent_env
-kobject: 'loop4' (00000000cc7e0096): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'loop1' (00000000ab5963b8): kobject_uevent_env
-kobject: 'loop1' (00000000ab5963b8): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-kobject: 'loop2' (000000003765b848): kobject_uevent_env
-xt_bpf: check failed: parse error
-kobject: 'kvm' (00000000ef57b484): kobject_uevent_env
-kobject: 'loop2' (000000003765b848): fill_kobj_path: path  
-= '/devices/virtual/block/loop2'
-kobject: 'kvm' (00000000ef57b484): fill_kobj_path: path  
-= '/devices/virtual/misc/kvm'
-kobject: 'loop5' (0000000051a7cf3c): kobject_uevent_env
-xt_bpf: check failed: parse error
-kobject: 'kvm' (00000000ef57b484): kobject_uevent_env
-kobject: 'loop5' (0000000051a7cf3c): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-kobject: 'kvm' (00000000ef57b484): fill_kobj_path: path  
-= '/devices/virtual/misc/kvm'
-kobject: 'loop4' (00000000cc7e0096): kobject_uevent_env
-kobject: 'loop4' (00000000cc7e0096): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'kvm' (00000000ef57b484): kobject_uevent_env
-kobject: 'loop3' (000000007885b562): kobject_uevent_env
-kobject: 'kvm' (00000000ef57b484): fill_kobj_path: path  
-= '/devices/virtual/misc/kvm'
-kobject: 'loop3' (000000007885b562): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-kobject: 'loop5' (0000000051a7cf3c): kobject_uevent_env
-kobject: 'loop5' (0000000051a7cf3c): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-kobject: 'kvm' (00000000ef57b484): kobject_uevent_env
-kobject: 'loop2' (000000003765b848): kobject_uevent_env
-kobject: 'loop2' (000000003765b848): fill_kobj_path: path  
-= '/devices/virtual/block/loop2'
-kobject: 'kvm' (00000000ef57b484): fill_kobj_path: path  
-= '/devices/virtual/misc/kvm'
-kobject: 'loop1' (00000000ab5963b8): kobject_uevent_env
-kobject: 'loop1' (00000000ab5963b8): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-kobject: 'loop4' (00000000cc7e0096): kobject_uevent_env
-kobject: 'loop4' (00000000cc7e0096): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'loop2' (000000003765b848): kobject_uevent_env
-kobject: 'loop2' (000000003765b848): fill_kobj_path: path  
-= '/devices/virtual/block/loop2'
-kobject: 'loop5' (0000000051a7cf3c): kobject_uevent_env
-kobject: 'loop5' (0000000051a7cf3c): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-kobject: 'kvm' (00000000ef57b484): kobject_uevent_env
-kobject: 'loop4' (00000000cc7e0096): kobject_uevent_env
-kobject: 'kvm' (00000000ef57b484): fill_kobj_path: path  
-= '/devices/virtual/misc/kvm'
-kobject: 'loop4' (00000000cc7e0096): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'loop1' (00000000ab5963b8): kobject_uevent_env
-kobject: 'loop1' (00000000ab5963b8): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-kobject: 'loop5' (0000000051a7cf3c): kobject_uevent_env
-kobject: 'loop5' (0000000051a7cf3c): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-kobject: 'loop4' (00000000cc7e0096): kobject_uevent_env
-kobject: 'loop4' (00000000cc7e0096): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'loop2' (000000003765b848): kobject_uevent_env
-kobject: 'kvm' (00000000ef57b484): kobject_uevent_env
-kobject: 'loop2' (000000003765b848): fill_kobj_path: path  
-= '/devices/virtual/block/loop2'
-kobject: 'kvm' (00000000ef57b484): fill_kobj_path: path  
-= '/devices/virtual/misc/kvm'
-kobject: 'loop3' (000000007885b562): kobject_uevent_env
-kobject: 'loop3' (000000007885b562): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-kobject: 'kvm' (00000000ef57b484): kobject_uevent_env
-kobject: 'kvm' (00000000ef57b484): kobject_uevent_env
-kobject: 'loop5' (0000000051a7cf3c): kobject_uevent_env
-kobject: 'loop5' (0000000051a7cf3c): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-kobject: 'kvm' (00000000ef57b484): fill_kobj_path: path  
-= '/devices/virtual/misc/kvm'
-kobject: 'kvm' (00000000ef57b484): fill_kobj_path: path  
-= '/devices/virtual/misc/kvm'
-kobject: 'loop1' (00000000ab5963b8): kobject_uevent_env
-kobject: 'loop1' (00000000ab5963b8): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-kobject: 'loop4' (00000000cc7e0096): kobject_uevent_env
-kobject: 'loop4' (00000000cc7e0096): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'kvm' (00000000ef57b484): kobject_uevent_env
-kobject: 'loop4' (00000000cc7e0096): kobject_uevent_env
-kobject: 'kvm' (00000000ef57b484): fill_kobj_path: path  
-= '/devices/virtual/misc/kvm'
-kobject: 'loop4' (00000000cc7e0096): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'loop5' (0000000051a7cf3c): kobject_uevent_env
-kobject: 'loop5' (0000000051a7cf3c): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-kobject: 'loop1' (00000000ab5963b8): kobject_uevent_env
-kobject: 'loop1' (00000000ab5963b8): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-kobject: 'loop4' (00000000cc7e0096): kobject_uevent_env
-kobject: 'kvm' (00000000ef57b484): kobject_uevent_env
-kobject: 'loop4' (00000000cc7e0096): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'loop5' (0000000051a7cf3c): kobject_uevent_env
-kobject: 'kvm' (00000000ef57b484): fill_kobj_path: path  
-= '/devices/virtual/misc/kvm'
-kobject: 'loop5' (0000000051a7cf3c): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-kobject: 'loop3' (000000007885b562): kobject_uevent_env
-kobject: 'loop3' (000000007885b562): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-kobject: 'kvm' (00000000ef57b484): kobject_uevent_env
-kobject: 'loop4' (00000000cc7e0096): kobject_uevent_env
-kobject: 'kvm' (00000000ef57b484): fill_kobj_path: path  
-= '/devices/virtual/misc/kvm'
-kobject: 'loop4' (00000000cc7e0096): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'kvm' (00000000ef57b484): kobject_uevent_env
-kobject: 'kvm' (00000000ef57b484): fill_kobj_path: path  
-= '/devices/virtual/misc/kvm'
-kobject: 'kvm' (00000000ef57b484): kobject_uevent_env
-kobject: 'loop1' (00000000ab5963b8): kobject_uevent_env
-kobject: 'kvm' (00000000ef57b484): fill_kobj_path: path  
-= '/devices/virtual/misc/kvm'
-kobject: 'loop1' (00000000ab5963b8): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-kobject: 'loop3' (000000007885b562): kobject_uevent_env
-kobject: 'loop3' (000000007885b562): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-kobject: 'kvm' (00000000ef57b484): kobject_uevent_env
-kobject: 'loop2' (000000003765b848): kobject_uevent_env
-kobject: 'loop2' (000000003765b848): fill_kobj_path: path  
-= '/devices/virtual/block/loop2'
-kobject: 'loop4' (00000000cc7e0096): kobject_uevent_env
-kobject: 'kvm' (00000000ef57b484): fill_kobj_path: path  
-= '/devices/virtual/misc/kvm'
-kobject: 'loop4' (00000000cc7e0096): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'kvm' (00000000ef57b484): kobject_uevent_env
-kobject: 'kvm' (00000000ef57b484): kobject_uevent_env
-kobject: 'loop5' (0000000051a7cf3c): kobject_uevent_env
-kobject: 'kvm' (00000000ef57b484): fill_kobj_path: path  
-= '/devices/virtual/misc/kvm'
-kobject: 'loop5' (0000000051a7cf3c): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-kobject: 'kvm' (00000000ef57b484): fill_kobj_path: path  
-= '/devices/virtual/misc/kvm'
-kobject: 'loop4' (00000000cc7e0096): kobject_uevent_env
-kobject: 'loop4' (00000000cc7e0096): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'loop1' (00000000ab5963b8): kobject_uevent_env
-kobject: 'loop1' (00000000ab5963b8): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-kobject: 'kvm' (00000000ef57b484): kobject_uevent_env
-kobject: 'kvm' (00000000ef57b484): fill_kobj_path: path  
-= '/devices/virtual/misc/kvm'
-kobject: 'loop2' (000000003765b848): kobject_uevent_env
-kobject: 'loop2' (000000003765b848): fill_kobj_path: path  
-= '/devices/virtual/block/loop2'
-kobject: 'loop4' (00000000cc7e0096): kobject_uevent_env
-kobject: 'loop4' (00000000cc7e0096): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'loop3' (000000007885b562): kobject_uevent_env
-kobject: 'kvm' (00000000ef57b484): kobject_uevent_env
-kobject: 'loop3' (000000007885b562): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-kobject: 'kvm' (00000000ef57b484): fill_kobj_path: path  
-= '/devices/virtual/misc/kvm'
-kobject: 'loop4' (00000000cc7e0096): kobject_uevent_env
-kobject: 'loop4' (00000000cc7e0096): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'kvm' (00000000ef57b484): kobject_uevent_env
-kobject: 'loop1' (00000000ab5963b8): kobject_uevent_env
-kobject: 'kvm' (00000000ef57b484): fill_kobj_path: path  
-= '/devices/virtual/misc/kvm'
-kobject: 'loop1' (00000000ab5963b8): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-kobject: 'kvm' (00000000ef57b484): kobject_uevent_env
-kobject: 'kvm' (00000000ef57b484): fill_kobj_path: path  
-= '/devices/virtual/misc/kvm'
-kobject: 'loop4' (00000000cc7e0096): kobject_uevent_env
-kobject: 'loop4' (00000000cc7e0096): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'kvm' (00000000ef57b484): kobject_uevent_env
-kobject: 'kvm' (00000000ef57b484): fill_kobj_path: path  
-= '/devices/virtual/misc/kvm'
-kobject: 'loop3' (000000007885b562): kobject_uevent_env
-kobject: 'loop3' (000000007885b562): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-kobject: 'loop1' (00000000ab5963b8): kobject_uevent_env
-kobject: 'loop1' (00000000ab5963b8): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-kobject: 'loop4' (00000000cc7e0096): kobject_uevent_env
-kobject: 'loop4' (00000000cc7e0096): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'loop2' (000000003765b848): kobject_uevent_env
-kobject: 'loop2' (000000003765b848): fill_kobj_path: path  
-= '/devices/virtual/block/loop2'
-kobject: 'loop5' (0000000051a7cf3c): kobject_uevent_env
-kobject: 'kvm' (00000000ef57b484): kobject_uevent_env
-kobject: 'loop5' (0000000051a7cf3c): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-__bpf_mt_check_bytecode: 22 callbacks suppressed
-xt_bpf: check failed: parse error
-kobject: 'kvm' (00000000ef57b484): fill_kobj_path: path  
-= '/devices/virtual/misc/kvm'
-kobject: 'loop4' (00000000cc7e0096): kobject_uevent_env
-kobject: 'loop4' (00000000cc7e0096): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'kvm' (00000000ef57b484): kobject_uevent_env
-kobject: 'kvm' (00000000ef57b484): fill_kobj_path: path  
-= '/devices/virtual/misc/kvm'
-kobject: 'loop5' (0000000051a7cf3c): kobject_uevent_env
-xt_bpf: check failed: parse error
-kobject: 'kvm' (00000000ef57b484): kobject_uevent_env
-kobject: 'loop5' (0000000051a7cf3c): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-kobject: 'kvm' (00000000ef57b484): fill_kobj_path: path  
-= '/devices/virtual/misc/kvm'
-xt_bpf: check failed: parse error
-kobject: 'loop5' (0000000051a7cf3c): kobject_uevent_env
-xt_bpf: check failed: parse error
-kobject: 'loop5' (0000000051a7cf3c): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-kobject: 'loop1' (00000000ab5963b8): kobject_uevent_env
-kobject: 'loop1' (00000000ab5963b8): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-kobject: 'loop4' (00000000cc7e0096): kobject_uevent_env
-kobject: 'kvm' (00000000ef57b484): kobject_uevent_env
-kobject: 'loop4' (00000000cc7e0096): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'kvm' (00000000ef57b484): fill_kobj_path: path  
-= '/devices/virtual/misc/kvm'
-kobject: 'loop5' (0000000051a7cf3c): kobject_uevent_env
-kobject: 'loop5' (0000000051a7cf3c): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-xt_bpf: check failed: parse error
-xt_bpf: check failed: parse error
-kobject: 'loop1' (00000000ab5963b8): kobject_uevent_env
-kobject: 'loop1' (00000000ab5963b8): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-kobject: 'loop3' (000000007885b562): kobject_uevent_env
-kobject: 'loop3' (000000007885b562): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-kobject: 'loop4' (00000000cc7e0096): kobject_uevent_env
-kobject: 'loop4' (00000000cc7e0096): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'kvm' (00000000ef57b484): kobject_uevent_env
-kobject: 'loop5' (0000000051a7cf3c): kobject_uevent_env
-kobject: 'kvm' (00000000ef57b484): fill_kobj_path: path  
-= '/devices/virtual/misc/kvm'
-kobject: 'loop5' (0000000051a7cf3c): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-kobject: 'kvm' (00000000ef57b484): kobject_uevent_env
-kobject: 'kvm' (00000000ef57b484): fill_kobj_path: path  
-= '/devices/virtual/misc/kvm'
-kobject: 'kvm' (00000000ef57b484): kobject_uevent_env
-kobject: 'kvm' (00000000ef57b484): fill_kobj_path: path  
-= '/devices/virtual/misc/kvm'
-kobject: 'loop1' (00000000ab5963b8): kobject_uevent_env
-kobject: 'loop1' (00000000ab5963b8): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-kobject: 'kvm' (00000000ef57b484): kobject_uevent_env
-kobject: 'kvm' (00000000ef57b484): fill_kobj_path: path  
-= '/devices/virtual/misc/kvm'
-kobject: 'loop3' (000000007885b562): kobject_uevent_env
-kobject: 'loop3' (000000007885b562): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-kobject: 'loop2' (000000003765b848): kobject_uevent_env
-kobject: 'kvm' (00000000ef57b484): kobject_uevent_env
-xt_bpf: check failed: parse error
-kobject: 'kvm' (00000000ef57b484): fill_kobj_path: path  
-= '/devices/virtual/misc/kvm'
-kobject: 'loop2' (000000003765b848): fill_kobj_path: path  
-= '/devices/virtual/block/loop2'
-kobject: 'loop4' (00000000cc7e0096): kobject_uevent_env
-kobject: 'kvm' (00000000ef57b484): kobject_uevent_env
-kobject: 'kvm' (00000000ef57b484): fill_kobj_path: path  
-= '/devices/virtual/misc/kvm'
-kobject: 'loop4' (00000000cc7e0096): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'kvm' (00000000ef57b484): kobject_uevent_env
-kobject: 'kvm' (00000000ef57b484): fill_kobj_path: path  
-= '/devices/virtual/misc/kvm'
-xt_bpf: check failed: parse error
-kobject: 'loop1' (00000000ab5963b8): kobject_uevent_env
-kobject: 'loop1' (00000000ab5963b8): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-kobject: 'kvm' (00000000ef57b484): kobject_uevent_env
-kobject: 'loop4' (00000000cc7e0096): kobject_uevent_env
-kobject: 'kvm' (00000000ef57b484): fill_kobj_path: path  
-= '/devices/virtual/misc/kvm'
-kobject: 'loop4' (00000000cc7e0096): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'loop3' (000000007885b562): kobject_uevent_env
-xt_bpf: check failed: parse error
-kobject: 'loop3' (000000007885b562): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-kobject: 'kvm' (00000000ef57b484): kobject_uevent_env
-kobject: 'kvm' (00000000ef57b484): fill_kobj_path: path  
-= '/devices/virtual/misc/kvm'
-kobject: 'loop4' (00000000cc7e0096): kobject_uevent_env
-kobject: 'loop4' (00000000cc7e0096): fill_kobj_path: path  
-= '/devices/virtual/block/loop4'
-kobject: 'kvm' (00000000ef57b484): kobject_uevent_env
-kobject: 'kvm' (00000000ef57b484): kobject_uevent_env
-kobject: 'loop1' (00000000ab5963b8): kobject_uevent_env
-kobject: 'loop1' (00000000ab5963b8): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-kobject: 'kvm' (00000000ef57b484): fill_kobj_path: path  
-= '/devices/virtual/misc/kvm'
-kobject: 'kvm' (00000000ef57b484): fill_kobj_path: path  
-= '/devices/virtual/misc/kvm'
-kobject: 'kvm' (00000000ef57b484): kobject_uevent_env
-kobject: 'kvm' (00000000ef57b484): fill_kobj_path: path  
-= '/devices/virtual/misc/kvm'
-kobject: 'loop3' (000000007885b562): kobject_uevent_env
-kobject: 'loop3' (000000007885b562): fill_kobj_path: path  
-= '/devices/virtual/block/loop3'
-kobject: 'loop2' (000000003765b848): kobject_uevent_env
-kobject: 'loop2' (000000003765b848): fill_kobj_path: path  
-= '/devices/virtual/block/loop2'
-xt_bpf: check failed: parse error
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
+-- 
+Wei Yang
+Help you, Help me
