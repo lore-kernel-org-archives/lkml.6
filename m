@@ -2,201 +2,82 @@ Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,T_MIXED_ES,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5154C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 19:18:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 879EDC65BAE
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 19:18:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A406020811
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 19:18:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A406020811
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 4E4AE20870
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 19:18:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nFNPMhb6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E4AE20870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727852AbeLMTST (ORCPT
+        id S1727910AbeLMTSk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 14:18:19 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:60550 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726453AbeLMTST (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 14:18:19 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A052630832C8;
-        Thu, 13 Dec 2018 19:18:18 +0000 (UTC)
-Received: from redhat.com (ovpn-121-185.rdu2.redhat.com [10.10.121.185])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id C92AD600C5;
-        Thu, 13 Dec 2018 19:18:15 +0000 (UTC)
-Date:   Thu, 13 Dec 2018 14:18:13 -0500
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Tom Talpey <tom@talpey.com>
-Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Jan Kara <jack@suse.cz>, John Hubbard <jhubbard@nvidia.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        John Hubbard <john.hubbard@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
-        Christoph Hellwig <hch@infradead.org>,
-        Christopher Lameter <cl@linux.com>,
-        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        rcampbell@nvidia.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "Weiny, Ira" <ira.weiny@intel.com>
-Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
-Message-ID: <20181213191813.GE3186@redhat.com>
-References: <20181212215348.GF5037@redhat.com>
- <20181212233703.GB2947@ziepe.ca>
- <20181213000109.GK5037@redhat.com>
- <20181213032043.GA3204@ziepe.ca>
- <20181213124325.GA3186@redhat.com>
- <81a731bb-6a8a-a554-cf99-5d0588b0a21f@talpey.com>
- <20181213141838.GB3186@redhat.com>
- <0b75a9a6-3907-ea88-6352-256bc2954f4a@talpey.com>
- <20181213151839.GC3186@redhat.com>
- <a6c25182-9691-d9f9-b3b5-a42b2b5d6f7f@talpey.com>
+        Thu, 13 Dec 2018 14:18:40 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:36292 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726453AbeLMTSj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 14:18:39 -0500
+Received: by mail-qt1-f194.google.com with SMTP id t13so3479909qtn.3
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 11:18:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=q6yXRiCNJgPjlUmsY+nqAH0pBk6/eg2nefPvcAKhK9w=;
+        b=nFNPMhb6gEe940yRMkuQABMB6UNyMn7mKt+fIANuZGA2AaZAJd6HT13xXIwJHkc7WO
+         5YIOEj0XzIydWnadVdKpznWttkcUl34FF9x+lrcCX23fQYXu99vaW7OjBaM+f60FZOAi
+         c/WnSMa1oiexGmUP1bpCVKxpX9QNCdxbt8N60cbHCb3rGQcDT+zjDKGGmLR2aREvu0TE
+         ij1LtHt4aiyD2zapxyTSkEONUMCsgWtB9n8RYl3a1egIPJ8nhkbqonnti+3ZSFdkNOLN
+         Q2yJEij5caTi5hdGZqISrNIrjaUx5oUwO1V7w16dazkW79R+747W0hU/7vwxkY5Oo6MC
+         X4FQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=q6yXRiCNJgPjlUmsY+nqAH0pBk6/eg2nefPvcAKhK9w=;
+        b=RIo/Mga/8WmulLJAKACVyeghYGeCOVVc22d9io4ruOQnrNChINzPGXoGZltAATKWYV
+         zhjOXaWf6O5xPMKnPxG08THARs2o0bw7viNRhkfec9kMzeeSfaygyWzNXCVIv+Pd064e
+         FkHMGzRYRSYcIhFx9A2Zep2K6L0jKsaYCm0OGBKh4lq2oNiCW5to0jPhwIj6L/t5wGyN
+         Dxwg2C8D0QD8+/l0aIzgsPucO9vzXqQsLJnAg38Bol7eljmd9A4ysW+EFOZ/halY4iKX
+         st5mDVB/v66feQu/aFPfYt6zsOXGdi8rN9ExE/hBhJKgovAykmPMY+szlOM+nBzLs8g4
+         r0gg==
+X-Gm-Message-State: AA+aEWbRlq5BIkUFZvrHtHTNl8PjvqmKjq1VhZaqtHs9DPMIxPtYGXSe
+        UPgRBerpJ0UhLKN+UJ+djCwsNuXxl/aijv8rHOKF+Q==
+X-Google-Smtp-Source: AFSGD/WUVcvXjHFVwx2W1VIccireHS1DX9aEn6D6jg+A+bAqpudYOJJ+hrr5DoNWGqmZsJz4rm1WFI81NBG1iK5nFmc=
+X-Received: by 2002:ac8:13c5:: with SMTP id i5mr25463005qtj.365.1544728718806;
+ Thu, 13 Dec 2018 11:18:38 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a6c25182-9691-d9f9-b3b5-a42b2b5d6f7f@talpey.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Thu, 13 Dec 2018 19:18:19 +0000 (UTC)
+References: <20181213134915.24722-1-kraxel@redhat.com>
+In-Reply-To: <20181213134915.24722-1-kraxel@redhat.com>
+From:   Dave Airlie <airlied@gmail.com>
+Date:   Fri, 14 Dec 2018 05:18:26 +1000
+Message-ID: <CAPM=9tyOHiR+Ou-h=qRpwtM+zzX-5z7W59+h8xKD=FSY4qbnsQ@mail.gmail.com>
+Subject: Re: [PATCH] drm/virtio: switch to generic fbdev emulation
+To:     Gerd Hoffmann <kraxel@redhat.com>
+Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
+        Dave Airlie <airlied@linux.ie>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "open list:VIRTIO CORE, NET..." 
+        <virtualization@lists.linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 13, 2018 at 01:12:06PM -0500, Tom Talpey wrote:
-> On 12/13/2018 10:18 AM, Jerome Glisse wrote:
-> > On Thu, Dec 13, 2018 at 09:51:18AM -0500, Tom Talpey wrote:
-> > > On 12/13/2018 9:18 AM, Jerome Glisse wrote:
-> > > > On Thu, Dec 13, 2018 at 08:40:49AM -0500, Tom Talpey wrote:
-> > > > > On 12/13/2018 7:43 AM, Jerome Glisse wrote:
-> > > > > > On Wed, Dec 12, 2018 at 08:20:43PM -0700, Jason Gunthorpe wrote:
-> > > > > > > On Wed, Dec 12, 2018 at 07:01:09PM -0500, Jerome Glisse wrote:
-> > > > > > > > On Wed, Dec 12, 2018 at 04:37:03PM -0700, Jason Gunthorpe wrote:
-> > > > > > > > > On Wed, Dec 12, 2018 at 04:53:49PM -0500, Jerome Glisse wrote:
-> > > > > > > > > > > Almost, we need some safety around assuming that DMA is complete the
-> > > > > > > > > > > page, so the notification would need to go all to way to userspace
-> > > > > > > > > > > with something like a file lease notification. It would also need to
-> > > > > > > > > > > be backstopped by an IOMMU in the case where the hardware does not /
-> > > > > > > > > > > can not stop in-flight DMA.
-> > > > > > > > > > 
-> > > > > > > > > > You can always reprogram the hardware right away it will redirect
-> > > > > > > > > > any dma to the crappy page.
-> > > > > > > > > 
-> > > > > > > > > That causes silent data corruption for RDMA users - we can't do that.
-> > > > > > > > > 
-> > > > > > > > > The only way out for current hardware is to forcibly terminate the
-> > > > > > > > > RDMA activity somehow (and I'm not even sure this is possible, at
-> > > > > > > > > least it would be driver specific)
-> > > > > > > > > 
-> > > > > > > > > Even the IOMMU idea probably doesn't work, I doubt all current
-> > > > > > > > > hardware can handle a PCI-E error TLP properly.
-> > > > > > > > 
-> > > > > > > > What i saying is reprogram hardware to crappy page ie valid page
-> > > > > > > > dma map but that just has random content as a last resort to allow
-> > > > > > > > filesystem to reuse block. So their should be no PCIE error unless
-> > > > > > > > hardware freak out to see its page table reprogram randomly.
-> > > > > > > 
-> > > > > > > No, that isn't an option. You can't silently provide corrupted data
-> > > > > > > for RDMA to transfer out onto the network, or silently discard data
-> > > > > > > coming in!!
-> > > > > > > 
-> > > > > > > Think of the consequences of that - I have a fileserver process and
-> > > > > > > someone does ftruncate and now my clients receive corrupted data??
-> > > > > > 
-> > > > > > This is what happens _today_ ie today someone do GUP on page file
-> > > > > > and then someone else do truncate the first GUP is effectively
-> > > > > > streaming _random_ data to network as the page does not correspond
-> > > > > > to anything anymore and once the RDMA MR goes aways and release
-> > > > > > the page the page content will be lost. So i am not changing anything
-> > > > > > here, what i proposed was to make it explicit to device driver at
-> > > > > > least that they were streaming random data. Right now this is all
-> > > > > > silent but this is what is happening wether you like it or not :)
-> > > > > > 
-> > > > > > Note that  i am saying do that only for truncate to allow to be
-> > > > > > nice to fs. But again i am fine with whatever solution but you can
-> > > > > > not please everyone here. Either block truncate and fs folks will
-> > > > > > hate you or make it clear to device driver that you are streaming
-> > > > > > random things and RDMA people hates you.
-> > > > > > 
-> > > > > > 
-> > > > > > > The only option is to prevent the RDMA transfer from ever happening,
-> > > > > > > and we just don't have hardware support (beyond destroy everything) to
-> > > > > > > do that.
-> > > > > > > 
-> > > > > > > > The question is who do you want to punish ? RDMA user that pin stuff
-> > > > > > > > and expect thing to work forever without worrying for other fs
-> > > > > > > > activities ? Or filesystem to pin block forever :)
-> > > > > > > 
-> > > > > > > I don't want to punish everyone, I want both sides to have complete
-> > > > > > > data integrity as the USER has deliberately decided to combine DAX and
-> > > > > > > RDMA. So either stop it at the front end (ie get_user_pages_longterm)
-> > > > > > > or make it work in a way that guarantees integrity for both.
-> > > > > > > 
-> > > > > > > >        S2: notify userspace program through device/sub-system
-> > > > > > > >            specific API and delay ftruncate. After a while if there
-> > > > > > > >            is no answer just be mean and force hardware to use
-> > > > > > > >            crappy page as anyway this is what happens today
-> > > > > > > 
-> > > > > > > I don't think this happens today (outside of DAX).. Does it?
-> > > > > > 
-> > > > > > It does it is just silent, i don't remember anything in the code
-> > > > > > that would stop a truncate to happen because of elevated refcount.
-> > > > > > This does not happen with ODP mlx5 as it does abide by _all_ mmu
-> > > > > > notifier. This is for anything that does ODP without support for
-> > > > > > mmu notifier.
-> > > > > 
-> > > > > Wait - is it expected that the MMU notifier upcall is handled
-> > > > > synchronously? That is, the page DMA mapping must be torn down
-> > > > > immediately, and before returning?
-> > > > 
-> > > > Yes you must torn down mapping before returning from mmu notifier
-> > > > call back. Any time after is too late. You obviously need hardware
-> > > > that can support that. In the infiniband sub-system AFAIK only the
-> > > > mlx5 hardware can do that. In the GPU sub-system everyone is fine.
-> > > 
-> > > I'm skeptical that MLX5 can actually make this guarantee. But we
-> > > can take that offline in linux-rdma.
-> > 
-> > It does unless the code lies about what the hardware do :) See umem_odp.c
-> > in core and odp.c in mlx5 directories.
-> 
-> Ok, I did look and there are numerous error returns from these calls.
-> Some are related to resource shortages (including the rather ominous-
-> sounding "emergency_pages" in odp.c), others related to the generic
-> RDMA behaviors such as posting work requests and reaping their
-> completion status.
-> 
-> So I'd ask - what is the backup plan from the mmu notifier if the
-> unmap fails? Which it certainly will, in many real-world situations.
+On Thu, 13 Dec 2018 at 23:49, Gerd Hoffmann <kraxel@redhat.com> wrote:
+>
+> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
 
-No backup, it must succeed, invalidation is:
-    invalidate_range_start_trampoline
-        mlx5_ib_invalidate_range
-            mlx5_ib_update_xlt
+Seems correct to me,
 
-Beside sanity check on data structure fields the only failure path
-i see there is are for allocating a page to send commands to device
-and failing to map that page. What mellanox should be doing there
-is pre-allocate and pre-map couple pages for that to avoid any failure
-because of that.
-
-
-There is no way we will accept mmu notifier to fail, it would block
-tons of syscall like munmap, truncate, mremap, madvise, mprotect,...
-So it is a non starter to try to ask for mmu notifier to fail.
-
-Cheers,
-Jérôme
+Reviewed-by: Dave Airlie <airlied@redhat.com>
