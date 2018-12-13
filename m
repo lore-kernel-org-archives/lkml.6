@@ -4,52 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94068C67839
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:31:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09B4AC67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:32:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59ABB20879
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:31:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C0DB220879
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 04:31:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544675515;
-	bh=V84an21/hUx3qDLbKOg7WJ4D8T2YYXOVhnqg+suWI8c=;
+	s=default; t=1544675519;
+	bh=UKh4X80K4DDDMjx0WiFv+istppd6ERCLIwM7tlK+k4s=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=M21ltjjrrPR+JWJGZd5xCbHfc/gD8qYqhbkiZB27/lWES7sW40wuKfVenj0wqrmId
-	 o6gj7bEyncRJm/zPmUBZunbslcMUDYXnE8DVcxNYtAdh0y24DdToI6dJ8yu+IC5g/S
-	 49v47384WcUVGuFWy6zZ07rHD5IB7uc0O7FeIMjI=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59ABB20879
+	b=gZHFSTiaFnFT4vom6/863KfFaLEhjIv+0vit8+36mB2SMg5KEbKDZ4ZWzyhAjzG3e
+	 N/mbOosCnTgpkQbhKE3QBtEBEhE9CUsQYYSSyxjpldvQ3mCzRXDQWqIjhiweFWyUcj
+	 nDy+IE6/C/9Emc8i54H8hPuIFDShDSMU27Up4GuY=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0DB220879
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728917AbeLMEby (ORCPT
+        id S1728937AbeLMEb7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 12 Dec 2018 23:31:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44780 "EHLO mail.kernel.org"
+        Wed, 12 Dec 2018 23:31:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44838 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728896AbeLMEbu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 12 Dec 2018 23:31:50 -0500
+        id S1728896AbeLMEbz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 12 Dec 2018 23:31:55 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8AA0D20672;
-        Thu, 13 Dec 2018 04:31:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7059020672;
+        Thu, 13 Dec 2018 04:31:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544675510;
-        bh=V84an21/hUx3qDLbKOg7WJ4D8T2YYXOVhnqg+suWI8c=;
+        s=default; t=1544675515;
+        bh=UKh4X80K4DDDMjx0WiFv+istppd6ERCLIwM7tlK+k4s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BIpNzE+VzbWs9OIBWXnANN+c4zty4RPZ/BMN6shZD/cg7c337/eMQFjpiv9sgz+G1
-         HAfG395hHqsUfw8lcedSbfio9pNm9qv3kxLNaR1ZDNyyA2+gHND+sjpCwyUKfTlKNo
-         LgDK+JFHpfRjkTcM0PHPslkNDSHIvVGJ7hGHZzSU=
+        b=tzSYRoErglUkAQaQdydmcLn7HO2Qf2cjuPefIM1aziNq6s+tu/JFmshbP3Ick+ulW
+         xv97/q9P6UnJeJqlMUQByQo1ZuMRWLMIHtBUs+pl0jmLN1imPDPwM5+GaHKpHxj5JQ
+         mcYc0UBNtFJwv3jGxqZjT7nnjsjD9of0YKSUhOEA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Ido Schimmel <idosch@mellanox.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 35/41] mlxsw: spectrum_switchdev: Fix VLAN device deletion via ioctl
-Date:   Wed, 12 Dec 2018 23:30:48 -0500
-Message-Id: <20181213043054.75891-35-sashal@kernel.org>
+Cc:     Hans de Goede <hdegoede@redhat.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Sasha Levin <sashal@kernel.org>, linux-i2c@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 37/41] i2c: scmi: Fix probe error on devices with an empty SMB0001 ACPI device node
+Date:   Wed, 12 Dec 2018 23:30:50 -0500
+Message-Id: <20181213043054.75891-37-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181213043054.75891-1-sashal@kernel.org>
 References: <20181213043054.75891-1-sashal@kernel.org>
@@ -61,61 +60,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ido Schimmel <idosch@mellanox.com>
+From: Hans de Goede <hdegoede@redhat.com>
 
-[ Upstream commit 993107fea5eefdfdfde1ca38d3f01f0bebf76e77 ]
+[ Upstream commit 0544ee4b1ad574aec3b6379af5f5cdee42840971 ]
 
-When deleting a VLAN device using an ioctl the netdev is unregistered
-before the VLAN filter is updated via ndo_vlan_rx_kill_vid(). It can
-lead to a use-after-free in mlxsw in case the VLAN device is deleted
-while being enslaved to a bridge.
+Some AMD based HP laptops have a SMB0001 ACPI device node which does not
+define any methods.
 
-The reason for the above is that when mlxsw receives the CHANGEUPPER
-event, it wrongly assumes that the VLAN device is no longer its upper
-and thus destroys the internal representation of the bridge port despite
-the reference count being non-zero.
+This leads to the following error in dmesg:
 
-Fix this by checking if the VLAN device is our upper using its real
-device. In net-next I'm going to remove this trick and instead make
-mlxsw completely agnostic to the order of the events.
+[    5.222731] cmi: probe of SMB0001:00 failed with error -5
 
-Fixes: c57529e1d5d8 ("mlxsw: spectrum: Replace vPorts with Port-VLAN")
-Signed-off-by: Ido Schimmel <idosch@mellanox.com>
-Reviewed-by: Petr Machata <petrm@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+This commit makes acpi_smbus_cmi_add() return -ENODEV instead in this case
+silencing the error. In case of a failure of the i2c_add_adapter() call
+this commit now propagates the error from that call instead of -EIO.
+
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../net/ethernet/mellanox/mlxsw/spectrum_switchdev.c   | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ drivers/i2c/busses/i2c-scmi.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
-index 32c25772f755..21611613f44c 100644
---- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
-@@ -295,7 +295,13 @@ static bool
- mlxsw_sp_bridge_port_should_destroy(const struct mlxsw_sp_bridge_port *
- 				    bridge_port)
+diff --git a/drivers/i2c/busses/i2c-scmi.c b/drivers/i2c/busses/i2c-scmi.c
+index efefcfa24a4c..d2178f701b41 100644
+--- a/drivers/i2c/busses/i2c-scmi.c
++++ b/drivers/i2c/busses/i2c-scmi.c
+@@ -364,6 +364,7 @@ static int acpi_smbus_cmi_add(struct acpi_device *device)
  {
--	struct mlxsw_sp *mlxsw_sp = mlxsw_sp_lower_get(bridge_port->dev);
-+	struct net_device *dev = bridge_port->dev;
-+	struct mlxsw_sp *mlxsw_sp;
-+
-+	if (is_vlan_dev(dev))
-+		mlxsw_sp = mlxsw_sp_lower_get(vlan_dev_real_dev(dev));
-+	else
-+		mlxsw_sp = mlxsw_sp_lower_get(dev);
+ 	struct acpi_smbus_cmi *smbus_cmi;
+ 	const struct acpi_device_id *id;
++	int ret;
  
- 	/* In case ports were pulled from out of a bridged LAG, then
- 	 * it's possible the reference count isn't zero, yet the bridge
-@@ -1646,7 +1652,7 @@ mlxsw_sp_bridge_8021d_port_leave(struct mlxsw_sp_bridge_device *bridge_device,
- 	u16 vid = vlan_dev_vlan_id(bridge_port->dev);
+ 	smbus_cmi = kzalloc(sizeof(struct acpi_smbus_cmi), GFP_KERNEL);
+ 	if (!smbus_cmi)
+@@ -385,8 +386,10 @@ static int acpi_smbus_cmi_add(struct acpi_device *device)
+ 	acpi_walk_namespace(ACPI_TYPE_METHOD, smbus_cmi->handle, 1,
+ 			    acpi_smbus_cmi_query_methods, NULL, smbus_cmi, NULL);
  
- 	mlxsw_sp_port_vlan = mlxsw_sp_port_vlan_find_by_vid(mlxsw_sp_port, vid);
--	if (WARN_ON(!mlxsw_sp_port_vlan))
-+	if (!mlxsw_sp_port_vlan)
- 		return;
+-	if (smbus_cmi->cap_info == 0)
++	if (smbus_cmi->cap_info == 0) {
++		ret = -ENODEV;
+ 		goto err;
++	}
  
- 	mlxsw_sp_port_vlan_bridge_leave(mlxsw_sp_port_vlan);
+ 	snprintf(smbus_cmi->adapter.name, sizeof(smbus_cmi->adapter.name),
+ 		"SMBus CMI adapter %s",
+@@ -397,7 +400,8 @@ static int acpi_smbus_cmi_add(struct acpi_device *device)
+ 	smbus_cmi->adapter.class = I2C_CLASS_HWMON | I2C_CLASS_SPD;
+ 	smbus_cmi->adapter.dev.parent = &device->dev;
+ 
+-	if (i2c_add_adapter(&smbus_cmi->adapter)) {
++	ret = i2c_add_adapter(&smbus_cmi->adapter);
++	if (ret) {
+ 		dev_err(&device->dev, "Couldn't register adapter!\n");
+ 		goto err;
+ 	}
+@@ -407,7 +411,7 @@ static int acpi_smbus_cmi_add(struct acpi_device *device)
+ err:
+ 	kfree(smbus_cmi);
+ 	device->driver_data = NULL;
+-	return -EIO;
++	return ret;
+ }
+ 
+ static int acpi_smbus_cmi_remove(struct acpi_device *device)
 -- 
 2.19.1
 
