@@ -3,102 +3,114 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC236C65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 15:19:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3393CC67839
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 15:20:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0CCE20851
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 15:19:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E51A320870
+	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 15:20:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544714363;
-	bh=BZ8s3NeEtJegPWgo8FJVejvAEnmL+/6CnIWx8+1aVvg=;
+	s=default; t=1544714409;
+	bh=3TRzL5JtzHpU0nY4U+cc2WOjnTZnN+Gx1vhogImV5cQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=PgDNSmjJrCsIBsHwtF8LetfuX3mslK3K9946xtOypqoULFG8+XetwV96bB0/LwUZD
-	 2v9Br0ptyEB/O0YS+IP+fXkugfrv7DU2EXyqbkXN8KXwLCzw6nXGLCY+5bn6Jz4WxD
-	 p5VKy0jZ9MW/hDIKJ8kbx8z/cqgMghsClJqxXHck=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0CCE20851
+	b=AzZwGvy4bGvexm2e2/WjMHUJrMJGrO31LqQ5EVPtjUE0t5wwzqY2kIecPi5YmAKFY
+	 vYyAj9+odG4IyW1HXmdYmPxfNRuvbCyFC1E93kN81r4bd/0kP8EL8uE95UPl0IfJDa
+	 pAQh1vZ1h4ISJuYv0tZvZTUH8MZIidCmx3HNhUPg=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E51A320870
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729590AbeLMPTW (ORCPT
+        id S1729598AbeLMPUH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 10:19:22 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:58984 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728288AbeLMPTW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 10:19:22 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=BZ8s3NeEtJegPWgo8FJVejvAEnmL+/6CnIWx8+1aVvg=; b=rRqBGNYOzyJJ1XqvhuMIXL8Pw
-        7HIY1l1VJ1yn+En36iTTgdF3fTsHIOasomag+USc/qlgpJIfS8hRpecledJSpX1/ATmYq7GTirYtc
-        0A6uTRuZcvadsXATNbGiO2D6ZZnrIF4nAm/ssUNuR4Ibrj9bJNn2jG/wGzgI2XKqEfZUs=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gXSld-0001fD-Te; Thu, 13 Dec 2018 15:19:13 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 962A611254D1; Thu, 13 Dec 2018 15:19:13 +0000 (GMT)
-Date:   Thu, 13 Dec 2018 15:19:13 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Claudiu.Beznea@microchip.com
-Cc:     lgirdwood@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        Nicolas.Ferre@microchip.com, alexandre.belloni@bootlin.com,
-        Ludovic.Desroches@microchip.com, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v4 0/5] add PM functionality for act8945a PMIC
-Message-ID: <20181213151913.GL10669@sirena.org.uk>
-References: <1544703110-27161-1-git-send-email-claudiu.beznea@microchip.com>
- <0291f79e-b8df-f7ae-1ded-cacd404bc5fc@microchip.com>
+        Thu, 13 Dec 2018 10:20:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53088 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729091AbeLMPUH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 10:20:07 -0500
+Received: from localhost (173-25-171-118.client.mchsi.com [173.25.171.118])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4F67320849;
+        Thu, 13 Dec 2018 15:20:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544714406;
+        bh=3TRzL5JtzHpU0nY4U+cc2WOjnTZnN+Gx1vhogImV5cQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=fFyxM6auhFnSZhALgyapwi9dYY0tvhTrgSAjLIipinCH7off6zqs5rMTDypcmR0ol
+         +c09XhccEkzDKPV3HCFzQl7i111AS0lydrkcuyTHZMuR8tS08xh9HJ71khCbVyS2+w
+         X9xRlunxhqFaLibZLTG2cTz1qB4E1D260Qdc4Jws=
+Date:   Thu, 13 Dec 2018 09:20:05 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Wesley Sheng <wesley.sheng@microchip.com>
+Cc:     kurt.schwemmer@microsemi.com, logang@deltatee.com,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        wesleyshenggit@sina.com
+Subject: Re: [PATCH 0/5] Switchtec MRPC DMA mode support
+Message-ID: <20181213152005.GE4701@google.com>
+References: <1544433144-7563-1-git-send-email-wesley.sheng@microchip.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="Bzq2cJcN05fcPrs+"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0291f79e-b8df-f7ae-1ded-cacd404bc5fc@microchip.com>
-X-Cookie: Some optional equipment shown.
+In-Reply-To: <1544433144-7563-1-git-send-email-wesley.sheng@microchip.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Dec 10, 2018 at 05:12:19PM +0800, Wesley Sheng wrote:
+> Hi, Everyone,
+> 
+> This patch series adds support for the Switchtec MRPC DMA mode.
+> 
+> Switchtec switches supports 2 MRPC interaction modes: MRPC normal mode and
+> MRPC DMA mode, a new feature in the latest firmware versions. MRPC normal 
+> mode requires the host to read the MRPC command status and output data. 
+> In MRPC DMA mode the command status and output data are pushed directly to
+> host memory and issues an interrupt upon completion. The advantage of MRPC
+> DMA mode is avoiding potential high latency response from the Memory Read
+> TLP. 
+> 
+> Additionally, we've made the following changes:
+> 
+> * Improve the efficiency of filling MRPC Input buffer by enabling write 
+>   combining on MRPC region of BAR
+> * Software workaround for delay responded Memory READ TLPs that access 
+>   the BAR
+> * And several bug fixes
+> 
+> Regards,
+> Wesley
+> 
+> --
+> 
+> Changed since v1:
+>   - It's a resend of v1
+> 
+> --
+> 
+> 
+> Boris Glimcher (1):
+>   switchtec: Set DMA coherent mask in Switchtec driver
+> 
+> Joey Zhang (1):
+>   switchtec: A temporary variable should be used for the flags of
+>     switchtec_ioctl_event_ctl
+> 
+> Kelvin Cao (2):
+>   switchtec: Remove immediate status check after submit a MRPC command
+>   switchtec: Improve MRPC efficiency by leveraging write combining
+> 
+> Wesley Sheng (1):
+>   switchtec: MRPC DMA mode implementation
+> 
+>  drivers/pci/switch/switchtec.c | 154 ++++++++++++++++++++++++++++++++++++-----
+>  include/linux/switchtec.h      |  16 +++++
+>  2 files changed, 153 insertions(+), 17 deletions(-)
 
---Bzq2cJcN05fcPrs+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I applied all these on pci/switchtec for v4.21, thanks!
 
-On Thu, Dec 13, 2018 at 12:59:00PM +0000, Claudiu.Beznea@microchip.com wrot=
-e:
-> Hi Mark,
->=20
-> I saw that previous version of this series was applied to your tree just
-> after I've send this new one. The only difference b/w them is in the
-> documentation patch where I moved the new header. No functionality change.
->=20
-> Sorry for the noise,
-
-No problem.
-
---Bzq2cJcN05fcPrs+
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlwSeHAACgkQJNaLcl1U
-h9ACcwf/f1jbeM50E48CoRS/p3byESPME9qFXzlzSPlBieoND1AP4rYAg5rZK7Dh
-8GqyVtXBN5kUU201y0DRmsxgM7C6qGvi5YEHZGx87e7ty7H5hbc+ZjySMSjZRs4n
-fONSaIP1v9owsc0JLafzy2U5N+nAs5m+tbFKmXwb3+8WImGCpmD6SKOgoT/xV1Ds
-Hn0/UjuQeivg3z+uPUrAjRRlqPk1nztYvp77wxwuUq5nxPUIa8yr8bnPTTzurNsZ
-M/cJKyW8THH68yh4le8f4p0TNWIjCl9yNWjsBlOjfS0xEwsn+HUb2CM85Vxe/MUz
-yf0BSk/EqpFl9pKKPs+oS9D4vcpMbA==
-=C7zy
------END PGP SIGNATURE-----
-
---Bzq2cJcN05fcPrs+--
+If you want to change anything, let me know.  I'm happy to replace or
+update patches.
