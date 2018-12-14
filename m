@@ -2,89 +2,103 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60509C67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 04:42:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF59AC67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 04:43:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FA2420892
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 04:42:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="QpNm40GJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FA2420892
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 8478620879
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 04:43:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544762595;
+	bh=0PodPA7J2fdcawuaOBgMyvAecMGGOoRfwK8VnZAZW8A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=hLLIzZMReARIdwz+d1nMbqCqEtXuo+INzxGRMS7DdiBoK8ZyimiqXND7B6SQYla8/
+	 rib53NdPOObDt+veo9nu+74VgfaCP/0UQKvrEXb232kMqh8HKPC3YUAAFpulz7HMdM
+	 3KPwj2a1LjVB+Od9dW6Dz6m87FS0JLbsH1a2TopI=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8478620879
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727086AbeLNEmT (ORCPT
+        id S1727145AbeLNEnO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 23:42:19 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:36204 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726465AbeLNEmS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 23:42:18 -0500
-Received: by mail-pf1-f193.google.com with SMTP id b85so2212102pfc.3
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 20:42:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=xmB9+EdxZMOL0QapvQAJVb2Nc83UeB5GuMqXc76N6Xo=;
-        b=QpNm40GJwcnVdDdHqRHFlnKVkHZS2o9WPGHin0jIOVNrchc1CcwzVdSA73U40dsjEX
-         URTaYKHNxwj/8UJSqXdDXUhn4v+GCVD9ms+kZVnqBVf+1/+VHWEd0HqD9DLB33EXmuu6
-         +quC4MYIls515YYqRrv3jKCjkzG+cHFppnrgw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=xmB9+EdxZMOL0QapvQAJVb2Nc83UeB5GuMqXc76N6Xo=;
-        b=N4qQH93fFc9BRe2unm43/dOEkFPKaPBZD3XrxDAvm96vJq+ha8/99yybjlsh9S0Cfx
-         wn5WA+mK2jnIuAmvxfxo7v0QoToxM+EfSBwpLx9t6FtlNMP03poDM6jEbN6g1TW3DwUB
-         +MaIhLS2355OCMnYaIFCqrregGxQ/r1yMAHdIqE12gkJ7Tv6YcOKsWi+rTzwZao7BchI
-         +yTnaxt/F3oPJh9C9YNQJJpVMBBbfHUGA5iJI5VVpGV7IRAoBDgWynMVldmqp3n1E9AW
-         KVjK2geiXa/X5WkNVatJIaxu/Z6jfdtyH8QGAwvo91V79/1c+N9pFkvmdC62ttzANSvu
-         sGjg==
-X-Gm-Message-State: AA+aEWYIsGWTqPpUuUEFU4q/U87qJnX992IS9U7ILPW0d2hMaR8aLRm/
-        3l3+BOYF34Vk1WFGvnQd0ucNZw==
-X-Google-Smtp-Source: AFSGD/XGhLvwe5krrUM1pWH84no7CVWOxOqCMv4AOr9Jx+a3gThHbp3E2aNk15d/Bnj18cljzhGpRg==
-X-Received: by 2002:a63:a064:: with SMTP id u36mr1443468pgn.145.1544762538037;
-        Thu, 13 Dec 2018 20:42:18 -0800 (PST)
-Received: from localhost ([122.172.23.29])
-        by smtp.gmail.com with ESMTPSA id p77sm5695789pfi.85.2018.12.13.20.42.16
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 13 Dec 2018 20:42:17 -0800 (PST)
-Date:   Fri, 14 Dec 2018 10:12:13 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Taniya Das <tdas@codeaurora.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        devicetree@vger.kernel.org, robh@kernel.org,
-        skannan@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        evgreen@google.com, Matthias Kaehlcke <mka@chromium.org>
-Subject: Re: [PATCH v13 0/2] cpufreq: qcom-hw: Add support for QCOM cpufreq HW
-Message-ID: <20181214044213.kae2yhogbrgomyu6@vireshk-i7>
-References: <1544760624-12874-1-git-send-email-tdas@codeaurora.org>
+        Thu, 13 Dec 2018 23:43:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48506 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726445AbeLNEnO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 23:43:14 -0500
+Received: from guoren-Inspiron-7460 (23.83.240.247.16clouds.com [23.83.240.247])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D6C0E2086D;
+        Fri, 14 Dec 2018 04:43:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544762593;
+        bh=0PodPA7J2fdcawuaOBgMyvAecMGGOoRfwK8VnZAZW8A=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=pYdhiPwfHKZxGQV94JK29P1To0MsxDpT+BipZafX9uSA+FpXvdiQ8m0Kxi+9LtuLz
+         3wTdm8dc+Mxp8atPvS6sXoJN3vkk+nYlHpnuu8hffEPjWJQjU8yucAAxjYE/yzV1x9
+         nUsjHoAShBr2ZPWcGQYGU6Szd/73ez5TDz5FNRoI=
+Date:   Fri, 14 Dec 2018 12:43:08 +0800
+From:   Guo Ren <guoren@kernel.org>
+To:     "Dmitry V. Levin" <ldv@altlinux.org>
+Cc:     Oleg Nesterov <oleg@redhat.com>, Andy Lutomirski <luto@kernel.org>,
+        Elvira Khabirova <lineprinter@altlinux.org>,
+        Eugene Syromyatnikov <esyr@redhat.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 07/27] elf-em.h: add EM_CSKY
+Message-ID: <20181214044308.GA15793@guoren-Inspiron-7460>
+References: <20181213171833.GA5240@altlinux.org>
+ <20181213172200.GG6024@altlinux.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1544760624-12874-1-git-send-email-tdas@codeaurora.org>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+In-Reply-To: <20181213172200.GG6024@altlinux.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14-12-18, 09:40, Taniya Das wrote:
->  [v13]
->    * Update Documentation binding to #freq-domain-cells in description.
->    * Replace devm_ioremap_resource() to use devm_ioremap() API.
+Reviewed-by: Guo Ren <guoren@kernel.org>
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-
--- 
-viresh
+On Thu, Dec 13, 2018 at 08:22:00PM +0300, Dmitry V. Levin wrote:
+> The uapi/linux/audit.h header is going to use EM_CSKY in order
+> to define AUDIT_ARCH_CSKY which is needed to implement
+> syscall_get_arch() which in turn is required to extend
+> the generic ptrace API with PTRACE_GET_SYSCALL_INFO request.
+> 
+> The value for EM_CSKY has been taken from arch/csky/include/asm/elf.h
+> and confirmed by binutils:include/elf/common.h
+> 
+> Cc: Guo Ren <guoren@kernel.org>
+> Cc: Oleg Nesterov <oleg@redhat.com>
+> Cc: Andy Lutomirski <luto@kernel.org>
+> Cc: Elvira Khabirova <lineprinter@altlinux.org>
+> Cc: Eugene Syromyatnikov <esyr@redhat.com>
+> Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
+> ---
+> 
+> Notes:
+>     v6: unchanged
+> 
+>  include/uapi/linux/elf-em.h | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/include/uapi/linux/elf-em.h b/include/uapi/linux/elf-em.h
+> index 42b7546352a6..ee0b26ab92b0 100644
+> --- a/include/uapi/linux/elf-em.h
+> +++ b/include/uapi/linux/elf-em.h
+> @@ -45,6 +45,7 @@
+>  #define EM_ARCV2	195	/* ARCv2 Cores */
+>  #define EM_RISCV	243	/* RISC-V */
+>  #define EM_BPF		247	/* Linux BPF - in-kernel virtual machine */
+> +#define EM_CSKY		252	/* C-SKY processor family */
+>  #define EM_FRV		0x5441	/* Fujitsu FR-V */
+>  
+>  /*
+> -- 
+> ldv
