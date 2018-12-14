@@ -2,112 +2,169 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,T_MIXED_ES,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E545C6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:26:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9809C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:26:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45B7720892
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:26:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b="M3w/SqrK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45B7720892
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=aol.com
+	by mail.kernel.org (Postfix) with ESMTP id 9054720892
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:26:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544790415;
+	bh=h9qf7Ikl+EAtaBnY+69ulNiY1WjIt6Q5Ql7IKkBP8o8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=DWDOzIr9zaKUmKJ+9Z+9YGjIzxMKZS+fOwqPq209F80kuvII84KVskLNWQ2lzn+ja
+	 2y9ACcPCbDCWIDOA127jeO2wmhVdwHwvH82VFm69IeT5CN7ZDnWB8Es3civQuMvWU8
+	 zb81UylmiXsknZs+PLdr8PA5R5GIPBnHPyMmduzA=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9054720892
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732137AbeLNM0n (ORCPT
+        id S1732079AbeLNM0y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:26:43 -0500
-Received: from sonic311-21.consmr.mail.gq1.yahoo.com ([98.137.65.202]:39828
-        "EHLO sonic311-21.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730449AbeLNM0k (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:26:40 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1544790399; bh=MvGm0pCZ7Sf8/dnaqLdLQsFvyOHUDsKr5vHwiTYpunk=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=M3w/SqrKty00/Pab4+5RAY1HY9Qbd7GLL0FWG0zsTZwcBA9DfAYma8StIMEk7zhRMHdXeL8SIbi2QQPNKX8QrCf6JT9Cis0hC7ZWVlAUTvG56mzcCAizouucpAySk/+qwlJV7t98K12h3tCUYseiy5SQOf87yRPZ8zZwbBmoh/IG9h8UBlfWvqPcKYhjbF3bA9nSI3T3RrxyS50xk3MbA+k5ytVh+phgIFDhURRhcai+0npEUNVgcodzBxHI66yksOx7/H++Qc/9H2lUXrrdbYVRb54AawINFpIzJb6u94kBY30f1lrE8KXpngdbiGNe6H+kfyKWy5pzZYqBBSSDYA==
-X-YMail-OSG: uvX2gKoVM1mdyIt.yNw190e_Ritr6zV7EosKJVQ6yY2V1q3bQ7Y8zpkBrjor1Mb
- I4R3udUooYpUu9HcGIIQe3o6cWK4Z5VIHjAy8LqL6OxTDwnYy.WlcWAvIZfdf4tLETqsvJmnLP8l
- pfhpWsJOEz_RrZmIdWcbRyXO4ergM_deHtwXZqiLYEl9.NwjQ86yyG03HJemKJTCxJ8dLpUvW8Ko
- TnDb0UvlftAn9egFkLgTbuHEB2LzSUDPoEOlHp_LLX9HHxQxp2aD8OLPuQUlOUrGkF1Fcx8_HI9w
- GVpyvbILulHXSjr_TqRTeZvQ0EWwszGwgwt8eVwPmzdU7DKnfv3lis1FuKZhFV.xFn0lGOgxuSng
- c7LLCebWhRKh6fMhrMGT4w.Npad3ct9kPX0kc3UIg4ax7xf.vyG7VzY4DKOTuGp8wxMFA542cI6u
- ncRhK5BSXLH8zbpuhPa7D5bi_yH3ug1u8QE7m.8mrt0zUjhZ9jLRFXNg3SAnlw0kouny5rs_zdvm
- rdEaAgvi28uO4AMzsA1JsUMGxbsnr4r.toud.HyQpA7W2tnyx8aJ8cw6JqPgLhQM6iIqCrG4eS_v
- whx2PctB98jcUHsYC6.joD3gFjaGk9Tc3b_j_iHibgagqjoQYVTLVx3jzs_Kxm8l15Gx0rzwN9Ex
- R_QmWV3REJJR21c7cOwW2xxdEi781KstYmK4iyaWShMbM5b1592WIyhDqzgpJjI85WII1.3Ntlug
- 4kSMijOvKjU6_x7OmjQOiQ8QiXRNMa1Sq9TYe5NcsobUBc2JqGkTtn2HFjMCPKOxqNBZaLiUeeFC
- QaQ_Jz9JiONJcJ8w41Gi3XhDE5.gBHqANdNPobBLVxftHYQumHAHeakLM4lRR8KIZcRSqW7M2YYk
- GkjEYLMiAKJJ9sT5GySO21icWGSaw4McmXswWqClvNe22mx_vnfKiBubCPshLgGEcQMvJngotOQ6
- gvbcbRmuj43GWY6dxGL.25f3Ou5mAdUzJFVZIWQO38cShQTpQTfd5mHi_ScgKqV0EMCgWACGH8DK
- L4hkbr7JwYk4JB5eud5x7vIPvXlG_0pvWfdEyviZH1twUUYAbrMSkobkZgQ--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic311.consmr.mail.gq1.yahoo.com with HTTP; Fri, 14 Dec 2018 12:26:39 +0000
-Received: from 125.120.80.114 (EHLO [10.1.1.220]) ([125.120.80.114])
-          by smtp417.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID b2ad19ee75ed59a223f036cbcd95ca4a;
-          Fri, 14 Dec 2018 12:26:37 +0000 (UTC)
-Subject: Re: [PATCH] fix page_count in ->iomap_migrate_page()
-To:     Richard Weinberger <richard@nod.at>
-Cc:     zhangjun <openzhangj@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Darrick J . Wong" <darrick.wong@oracle.com>, hch@lst.de,
-        bfoster@redhat.com, Dave Chinner <david@fromorbit.com>,
-        akpm@linux-foundation.org, kirill.shutemov@linux.intel.com,
-        mhocko@suse.com, n-horiguchi@ah.jp.nec.com,
-        mgorman@techsingularity.net, aarcange@redhat.com,
-        willy@infradead.org, linux@dominikbrodowski.net,
-        linux-mm@kvack.org, Gao Xiang <gaoxiang25@huawei.com>
-References: <1544766961-3492-1-git-send-email-openzhangj@gmail.com>
- <1618433.IpySj692Hd@blindfold>
-From:   Gao Xiang <hsiangkao@aol.com>
-Message-ID: <2b19b3c4-2bc4-15fa-15cc-27a13e5c7af1@aol.com>
-Date:   Fri, 14 Dec 2018 20:26:28 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
+        Fri, 14 Dec 2018 07:26:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58568 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731825AbeLNMLn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:11:43 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 744592133F;
+        Fri, 14 Dec 2018 12:11:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544789503;
+        bh=h9qf7Ikl+EAtaBnY+69ulNiY1WjIt6Q5Ql7IKkBP8o8=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=jQGNEYPYXsBOIk9Wlo5tIABk4lJJz3HvOxovW72FdgoURA2QSvoZ8xKyPPeC4bn9h
+         eXteTkW4wxQfQ1Lwf5b7v6pbKPpZ7+1voTgEzdTxtZVeQgWwabv+p4RImQTWBNCqnB
+         ovwLP3Hk5T7eVpZbxNNRnOr/W7cqhZwyyjqxVquM=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Prashant Bhole <bhole_prashant_q7@lab.ntt.co.jp>,
+        Tyler Hicks <tyhicks@canonical.com>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        Christoph Paasch <cpaasch@apple.com>,
+        Eric Dumazet <edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 06/51] net: Prevent invalid access to skb->prev in __qdisc_drop_all
+Date:   Fri, 14 Dec 2018 13:00:08 +0100
+Message-Id: <20181214115713.914283096@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.0
+In-Reply-To: <20181214115713.244259772@linuxfoundation.org>
+References: <20181214115713.244259772@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-In-Reply-To: <1618433.IpySj692Hd@blindfold>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Richard,
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
-On 2018/12/14 19:25, Richard Weinberger wrote:
-> This is the third place which needs this workaround.
-> UBIFS, F2FS, and now iomap.
-> 
-> I agree with Dave that nobody can assume that PG_private implies an additional
-> page reference.
-> But page migration does that. Including parts of the write back code.
+------------------
 
-It seems that it's clearly documented in
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/include/linux/mm.h#n780
+From: Christoph Paasch <cpaasch@apple.com>
 
- * A pagecache page contains an opaque `private' member, which belongs to the
- * page's address_space. Usually, this is the address of a circular list of
- * the page's disk buffers. PG_private must be set to tell the VM to call
- * into the filesystem to release these pages.
- *
- * A page may belong to an inode's memory mapping. In this case, page->mapping
- * is the pointer to the inode, and page->index is the file offset of the page,
- * in units of PAGE_SIZE.
- *
- * If pagecache pages are not associated with an inode, they are said to be
- * anonymous pages. These may become associated with the swapcache, and in that
- * case PG_swapcache is set, and page->private is an offset into the swapcache.
- *
- * In either case (swapcache or inode backed), the pagecache itself holds one
- * reference to the page. Setting PG_private should also increment the
- * refcount. The each user mapping also has a reference to the page.
+[ Upstream commit 9410d386d0a829ace9558336263086c2fbbe8aed ]
 
-and when I looked into that, I found
-https://lore.kernel.org/lkml/3CB3CA93.D141680B@zip.com.au/
+__qdisc_drop_all() accesses skb->prev to get to the tail of the
+segment-list.
+
+With commit 68d2f84a1368 ("net: gro: properly remove skb from list")
+the skb-list handling has been changed to set skb->next to NULL and set
+the list-poison on skb->prev.
+
+With that change, __qdisc_drop_all() will panic when it tries to
+dereference skb->prev.
+
+Since commit 992cba7e276d ("net: Add and use skb_list_del_init().")
+__list_del_entry is used, leaving skb->prev unchanged (thus,
+pointing to the list-head if it's the first skb of the list).
+This will make __qdisc_drop_all modify the next-pointer of the list-head
+and result in a panic later on:
+
+[   34.501053] general protection fault: 0000 [#1] SMP KASAN PTI
+[   34.501968] CPU: 2 PID: 0 Comm: swapper/2 Not tainted 4.20.0-rc2.mptcp #108
+[   34.502887] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 0.5.1 01/01/2011
+[   34.504074] RIP: 0010:dev_gro_receive+0x343/0x1f90
+[   34.504751] Code: e0 48 c1 e8 03 42 80 3c 30 00 0f 85 4a 1c 00 00 4d 8b 24 24 4c 39 65 d0 0f 84 0a 04 00 00 49 8d 7c 24 38 48 89 f8 48 c1 e8 03 <42> 0f b6 04 30 84 c0 74 08 3c 04
+[   34.507060] RSP: 0018:ffff8883af507930 EFLAGS: 00010202
+[   34.507761] RAX: 0000000000000007 RBX: ffff8883970b2c80 RCX: 1ffff11072e165a6
+[   34.508640] RDX: 1ffff11075867008 RSI: ffff8883ac338040 RDI: 0000000000000038
+[   34.509493] RBP: ffff8883af5079d0 R08: ffff8883970b2d40 R09: 0000000000000062
+[   34.510346] R10: 0000000000000034 R11: 0000000000000000 R12: 0000000000000000
+[   34.511215] R13: 0000000000000000 R14: dffffc0000000000 R15: ffff8883ac338008
+[   34.512082] FS:  0000000000000000(0000) GS:ffff8883af500000(0000) knlGS:0000000000000000
+[   34.513036] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   34.513741] CR2: 000055ccc3e9d020 CR3: 00000003abf32000 CR4: 00000000000006e0
+[   34.514593] Call Trace:
+[   34.514893]  <IRQ>
+[   34.515157]  napi_gro_receive+0x93/0x150
+[   34.515632]  receive_buf+0x893/0x3700
+[   34.516094]  ? __netif_receive_skb+0x1f/0x1a0
+[   34.516629]  ? virtnet_probe+0x1b40/0x1b40
+[   34.517153]  ? __stable_node_chain+0x4d0/0x850
+[   34.517684]  ? kfree+0x9a/0x180
+[   34.518067]  ? __kasan_slab_free+0x171/0x190
+[   34.518582]  ? detach_buf+0x1df/0x650
+[   34.519061]  ? lapic_next_event+0x5a/0x90
+[   34.519539]  ? virtqueue_get_buf_ctx+0x280/0x7f0
+[   34.520093]  virtnet_poll+0x2df/0xd60
+[   34.520533]  ? receive_buf+0x3700/0x3700
+[   34.521027]  ? qdisc_watchdog_schedule_ns+0xd5/0x140
+[   34.521631]  ? htb_dequeue+0x1817/0x25f0
+[   34.522107]  ? sch_direct_xmit+0x142/0xf30
+[   34.522595]  ? virtqueue_napi_schedule+0x26/0x30
+[   34.523155]  net_rx_action+0x2f6/0xc50
+[   34.523601]  ? napi_complete_done+0x2f0/0x2f0
+[   34.524126]  ? kasan_check_read+0x11/0x20
+[   34.524608]  ? _raw_spin_lock+0x7d/0xd0
+[   34.525070]  ? _raw_spin_lock_bh+0xd0/0xd0
+[   34.525563]  ? kvm_guest_apic_eoi_write+0x6b/0x80
+[   34.526130]  ? apic_ack_irq+0x9e/0xe0
+[   34.526567]  __do_softirq+0x188/0x4b5
+[   34.527015]  irq_exit+0x151/0x180
+[   34.527417]  do_IRQ+0xdb/0x150
+[   34.527783]  common_interrupt+0xf/0xf
+[   34.528223]  </IRQ>
+
+This patch makes sure that skb->prev is set to NULL when entering
+netem_enqueue.
+
+Cc: Prashant Bhole <bhole_prashant_q7@lab.ntt.co.jp>
+Cc: Tyler Hicks <tyhicks@canonical.com>
+Cc: Eric Dumazet <eric.dumazet@gmail.com>
+Fixes: 68d2f84a1368 ("net: gro: properly remove skb from list")
+Suggested-by: Eric Dumazet <eric.dumazet@gmail.com>
+Signed-off-by: Christoph Paasch <cpaasch@apple.com>
+Reviewed-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ net/sched/sch_netem.c |    3 +++
+ 1 file changed, 3 insertions(+)
+
+--- a/net/sched/sch_netem.c
++++ b/net/sched/sch_netem.c
+@@ -442,6 +442,9 @@ static int netem_enqueue(struct sk_buff
+ 	int count = 1;
+ 	int rc = NET_XMIT_SUCCESS;
+ 
++	/* Do not fool qdisc_drop_all() */
++	skb->prev = NULL;
++
+ 	/* Random duplication */
+ 	if (q->duplicate && q->duplicate >= get_crandom(&q->dup_cor))
+ 		++count;
 
 
-Thanks,
-Gao Xiang
