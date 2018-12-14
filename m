@@ -2,95 +2,614 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.4 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37A35C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 16:13:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B003C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 16:14:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FBDB2070B
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 16:13:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544804029;
-	bh=uxQ/GGsP60h8mW67Wmesep32qK4uKhmUVbl/0OtFLRA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=CXxA/0jSfxLwryu8irxqR6yheG/K/Y0SHkYfNa2x8kpWW9LjYILzGKfFbDmERKl5M
-	 AAjzC9sR9xnu6et7otdAyxmYllAVcN9psEV1JMBDYTJLBtxO4TXIUVTA8MHGkm8UaB
-	 kgRcs9fiMOn64tfu4zc5WoFCfTzlcaRz47wpfh6Q=
+	by mail.kernel.org (Postfix) with ESMTP id A3DEB2070B
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 16:14:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729795AbeLNQNr (ORCPT
+        id S1729885AbeLNQOP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 11:13:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44172 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726520AbeLNQNr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 11:13:47 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B89D5206E0;
-        Fri, 14 Dec 2018 16:13:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544804027;
-        bh=uxQ/GGsP60h8mW67Wmesep32qK4uKhmUVbl/0OtFLRA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=okr24d4oGkXwnumP9AaTMM8U7dwSLpWwX402yhOdt7/dlkTzYqRobEMVr1MFndCBd
-         HB+WEWiE7ZHShLwCA+bcPNnXXb5LwFHsX2Ni8cd/aPWyQkIgGuFsZXwk+PPHEI/CjN
-         ZToqK9UbI1c99jz9XlZ5PxOlCxLMIN76i0eAy4fA=
-Date:   Fri, 14 Dec 2018 17:13:44 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Joe Perches <joe@perches.com>
-Cc:     Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>,
-        apw@canonical.com, Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, niklas.cassel@linaro.org
-Subject: Re: [PATCH] checkpatch: add Co-Developed-by to signature tags
-Message-ID: <20181214161344.GA10654@kroah.com>
-References: <1544792494-15485-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
- <839c1d04000164e27dff9742e3efc3bcff3025b6.camel@perches.com>
+        Fri, 14 Dec 2018 11:14:15 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54698 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728565AbeLNQOP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 11:14:15 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2A43B80D;
+        Fri, 14 Dec 2018 08:14:14 -0800 (PST)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id CAD983F59C;
+        Fri, 14 Dec 2018 08:14:13 -0800 (PST)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id 2CB7B1AE087D; Fri, 14 Dec 2018 16:14:13 +0000 (GMT)
+Date:   Fri, 14 Dec 2018 16:14:13 +0000
+From:   Will Deacon <will.deacon@arm.com>
+To:     torvalds@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        catalin.marinas@arm.com
+Subject: [GIT PULL] arm64: updates for 4.21
+Message-ID: <20181214161412.GB8148@edgewater-inn.cambridge.arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <839c1d04000164e27dff9742e3efc3bcff3025b6.camel@perches.com>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+User-Agent: Mutt/1.11.1+30 (d10eec459b35) ()
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 14, 2018 at 07:52:15AM -0800, Joe Perches wrote:
-> On Fri, 2018-12-14 at 14:01 +0100, Jorge Ramirez-Ortiz wrote:
-> > As per Documentation/process/submitting-patches, Co-developed-by is a
-> > valid signature.
-> > 
-> > This commit removes the warning.
-> 
-> Your commit message doesn't match your subject.
-> 
-> A couple variants have been documented and only
-> one should actually be used.
-> 
-> $ git grep -i co-developed-by Documentation/process/
-> Documentation/process/5.Posting.rst: - Co-developed-by: states that the patch was also created by another developer
-> Documentation/process/submitting-patches.rst:12) When to use Acked-by:, Cc:, and Co-Developed-by:
-> Documentation/process/submitting-patches.rst:A Co-Developed-by: states that the patch was also created by another developer
-> 
-> $ git log --grep="co-developed-by:" -i | \
->   grep -ohiP "co-developed-by:" | sort | uniq -c | sort -rn
->      80 Co-developed-by:
->      40 Co-Developed-by:
-> 
-> So which should it be?
+Hi Linus,
 
-"Co-developed-by:" please.
+In a last-ditch attempt to use up some holiday, I'm off for the rest of
+the year so here's the arm64 pull request for 4.21 well ahead of the
+next merge window.
 
-Yeah, I wrote the original one wrong here, sorry.
+At present, there are a handful of straightforward conflicts:
 
-> btw: I prefer neither as I think Signed-off-by: is sufficient.
+  * The A76 workaround for erratum #1286807 landed in mainline after -rc3
+    ("ce8c80c536da"), so there's some shuffling needed to accomodate that
+    in conjunction with the workaround for erratum #1165522 here. I've
+    included my resolution at the end of this mail.
 
-Nope, sorry, it is not, we need something like this which is why it was
-added.
+  * The KHWASAN series queued via akpm has some minor conflicts with our
+    mm code which have all been resolved appropriately in linux-next.
+    For the most part it's "take both hunks" but there are a few places
+    where the same line is modified. It should be obvious to resolve,
+    but just shout if you run into anything tricky.
 
-thanks,
+It's possible a new conflict will crop up in next between now and 4.20,
+but I don't have anything on my radar. There are a few changes outside
+of our arch directory, but they have all been reviewed or acked by the
+relevant people.
 
-greg k-h
+As for the contents, I've stuck the details in the tag.
+Please pull.
+
+Cheers,
+
+Will
+
+--->8
+
+The following changes since commit 9ff01193a20d391e8dbce4403dd5ef87c7eaaca6:
+
+  Linux 4.20-rc3 (2018-11-18 13:33:44 -0800)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git tags/arm64-upstream
+
+for you to fetch changes up to 12f799c8c739518e12248bbd000eb0a246e8e5f8:
+
+  arm64: kaslr: print PHYS_OFFSET in dump_kernel_offset() (2018-12-14 09:33:49 +0000)
+
+----------------------------------------------------------------
+arm64 festive updates for 4.21
+
+In the end, we ended up with quite a lot more than I expected:
+
+- Support for ARMv8.3 Pointer Authentication in userspace (CRIU and
+  kernel-side support to come later)
+
+- Support for per-thread stack canaries, pending an update to GCC that
+  is currently undergoing review
+
+- Support for kexec_file_load(), which permits secure boot of a kexec
+  payload but also happens to improve the performance of kexec
+  dramatically because we can avoid the sucky purgatory code from
+  userspace. Kdump will come later (requires updates to libfdt).
+
+- Optimisation of our dynamic CPU feature framework, so that all
+  detected features are enabled via a single stop_machine() invocation
+
+- KPTI whitelisting of Cortex-A CPUs unaffected by Meltdown, so that
+  they can benefit from global TLB entries when KASLR is not in use
+
+- 52-bit virtual addressing for userspace (kernel remains 48-bit)
+
+- Patch in LSE atomics for per-cpu atomic operations
+
+- Custom preempt.h implementation to avoid unconditional calls to
+  preempt_schedule() from preempt_enable()
+
+- Support for the new 'SB' Speculation Barrier instruction
+
+- Vectorised implementation of XOR checksumming and CRC32 optimisations
+
+- Workaround for Cortex-A76 erratum #1165522
+
+- Improved compatibility with Clang/LLD
+
+- Support for TX2 system PMUS for profiling the L3 cache and DMC
+
+- Reflect read-only permissions in the linear map by default
+
+- Ensure MMIO reads are ordered with subsequent calls to Xdelay()
+
+- Initial support for memory hotplug
+
+- Tweak the threshold when we invalidate the TLB by-ASID, so that
+  mremap() performance is improved for ranges spanning multiple PMDs.
+
+- Minor refactoring and cleanups
+
+----------------------------------------------------------------
+AKASHI Takahiro (14):
+      asm-generic: add kexec_file_load system call to unistd.h
+      kexec_file: make kexec_image_post_load_cleanup_default() global
+      s390, kexec_file: drop arch_kexec_mem_walk()
+      powerpc, kexec_file: factor out memblock-based arch_kexec_walk_mem()
+      kexec_file: kexec_walk_memblock() only walks a dedicated region at kdump
+      arm64: add image head flag definitions
+      arm64: cpufeature: add MMFR0 helper functions
+      arm64: enable KEXEC_FILE config
+      arm64: kexec_file: load initrd and device-tree
+      arm64: kexec_file: allow for loading Image-format kernel
+      arm64: kexec_file: invoke the kernel without purgatory
+      include: pe.h: remove message[] from mz header definition
+      arm64: kexec_file: add kernel signature verification support
+      arm64: kexec_file: add kaslr support
+
+Alex Van Brunt (1):
+      arm64: mm: Don't wait for completion of TLB invalidation when page aging
+
+Allen Pais (1):
+      arm64: hugetlb: Register hugepages during arch init
+
+Anders Roxell (1):
+      arm64: perf: set suppress_bind_attrs flag to true
+
+Ard Biesheuvel (8):
+      arm64: mm: purge lazily unmapped vm regions before changing permissions
+      arm64: mm: apply r/o permissions of VM areas to its linear alias as well
+      arm64/insn: add support for emitting ADR/ADRP instructions
+      arm64/module: switch to ADRP/ADD sequences for PLT entries
+      arm64: drop linker script hack to hide __efistub_ symbols
+      arm64/lib: improve CRC32 performance for deep pipelines
+      arm64: relocatable: fix inconsistencies in linker script and options
+      arm64: enable per-task stack canaries
+
+Arnd Bergmann (2):
+      arm64: kexec_file: include linux/vmalloc.h
+      arm64: fix ARM64_USER_VA_BITS_52 builds
+
+Hoan Tran (1):
+      drivers/perf: xgene: Add CPU hotplug support
+
+Jackie Liu (2):
+      arm64/neon: add workaround for ambiguous C99 stdint.h types
+      arm64: crypto: add NEON accelerated XOR implementation
+
+James Morse (2):
+      arm64: Use a raw spinlock in __install_bp_hardening_cb()
+      arm64: kexec_file: forbid kdump via kexec_file_load()
+
+Jeremy Linton (2):
+      perf: arm_spe: Enable automatic DT loading
+      arm64: acpi: Prepare for longer MADTs
+
+Jessica Yu (1):
+      arm64/module: use plt section indices for relocations
+
+Kristina Martsenko (2):
+      arm64: add comments about EC exception levels
+      arm64: add prctl control for resetting ptrauth keys
+
+Kulkarni, Ganapatrao (2):
+      Documentation: perf: Add documentation for ThunderX2 PMU uncore driver
+      drivers/perf: Add Cavium ThunderX2 SoC UNCORE PMU driver
+
+Marc Zyngier (8):
+      arm64: KVM: Make VHE Stage-2 TLB invalidation operations non-interruptible
+      KVM: arm64: Rework detection of SVE, !VHE systems
+      arm64: KVM: Install stage-2 translation before enabling traps
+      arm64: Add TCR_EPD{0,1} definitions
+      arm64: KVM: Force VHE for systems affected by erratum 1165522
+      arm64: KVM: Add synchronization on translation regime change for erratum 1165522
+      arm64: KVM: Handle ARM erratum 1165522 in TLB invalidation
+      arm64: Add configuration/documentation for Cortex-A76 erratum 1165522
+
+Mark Rutland (27):
+      linkage: add generic GLOBAL() macro
+      arm64: ftrace: use GLOBAL()
+      arm64: ftrace: enable graph FP test
+      arm64: ftrace: don't adjust the LR value
+      arm64: ftrace: remove return_regs macros
+      arm64: ftrace: always pass instrumented pc in x0
+      arm64: remove bitop exports
+      arm64: move memstart_addr export inline
+      arm64: add EXPORT_SYMBOL_NOKASAN()
+      arm64: tishift: use asm EXPORT_SYMBOL()
+      arm64: smccc: use asm EXPORT_SYMBOL()
+      arm64: page: use asm EXPORT_SYMBOL()
+      arm64: uaccess: use asm EXPORT_SYMBOL()
+      arm64: string: use asm EXPORT_SYMBOL()
+      arm64: frace: use asm EXPORT_SYMBOL()
+      arm64: remove arm64ksyms.c
+      arm64: add <asm/asm-prototypes.h>
+      arm64: add pointer authentication register bits
+      arm64/kvm: consistently handle host HCR_EL2 flags
+      arm64/kvm: hide ptrauth from guests
+      arm64: Don't trap host pointer auth use to EL2
+      arm64/cpufeature: detect pointer authentication
+      arm64: add basic pointer authentication support
+      arm64: expose user PAC bit positions via ptrace
+      arm64: perf: strip PAC when unwinding userspace
+      arm64: enable pointer authentication
+      arm64: docs: document pointer authentication
+
+Miles Chen (1):
+      arm64: kaslr: print PHYS_OFFSET in dump_kernel_offset()
+
+Nicholas Mc Guire (1):
+      perf: arm_spe: handle devm_kasprintf() failure
+
+Qian Cai (1):
+      arm64: kasan: Increase stack size for KASAN_EXTRA
+
+Robin Murphy (1):
+      arm64: Add memory hotplug support
+
+Shaokun Zhang (1):
+      arm64: perf: Fix typos in comment
+
+Steve Capper (7):
+      mm: mmap: Allow for "high" userspace addresses
+      arm64: mm: Introduce DEFAULT_MAP_WINDOW
+      arm64: mm: Define arch_get_mmap_end, arch_get_mmap_base
+      arm64: mm: Offset TTBR1 to allow 52-bit PTRS_PER_PGD
+      arm64: mm: Prevent mismatched 52-bit VA support
+      arm64: mm: introduce 52-bit userspace support
+      arm64: mm: Allow forcing all userspace addresses to 52-bit
+
+Suzuki K Poulose (8):
+      arm64: capabilities: Merge entries for ARM64_WORKAROUND_CLEAN_CACHE
+      arm64: capabilities: Merge duplicate Cavium erratum entries
+      arm64: capabilities: Merge duplicate entries for Qualcomm erratum 1003
+      arm64: capabilities: Speed up capability lookup
+      arm64: capabilities: Optimize this_cpu_has_cap
+      arm64: capabilities: Use linear array for detection and verification
+      arm64: capabilities: Batch cpu_enable callbacks
+      arm64: smp: Handle errors reported by the firmware
+
+Will Deacon (34):
+      arm64: perf: Terminate PMU assignment statements with semicolons
+      arm64: perf: Add support for Armv8.1 PMCEID register format
+      arm64: perf: Remove duplicate generic cache events
+      arm64: perf: Move event definitions into perf_event.h
+      arm64: perf: Hook up new events
+      arm64: io: Ensure calls to delay routines are ordered against prior readX()
+      arm64: tlbi: Set MAX_TLBI_OPS to PTRS_PER_PTE
+      arm64: io: Ensure value passed to __iormb() is held in a 64-bit register
+      arm64: kexec_file: Refactor setup_dtb() to consolidate error checking
+      arm64: Add support for SB barrier and patch in over DSB; ISB sequences
+      arm64: entry: Place an SB sequence following an ERET instruction
+      arm64: entry: Remove confusing comment
+      preempt: Move PREEMPT_NEED_RESCHED definition into arch code
+      arm64: preempt: Provide our own implementation of asm/preempt.h
+      arm64: Avoid redundant type conversions in xchg() and cmpxchg()
+      arm64: Avoid masking "old" for LSE cmpxchg() implementation
+      arm64: percpu: Rewrite per-cpu ops to allow use of LSE atomics
+      arm64: cmpxchg: Use "K" instead of "L" for ll/sc immediate constraint
+      arm64: Fix minor issues with the dcache_by_line_op macro
+      arm64: Kconfig: Re-jig CONFIG options for 52-bit VA
+      arm64: smp: Rework early feature mismatched detection
+      Merge branch 'kvm/cortex-a76-erratum-1165522' into aarch64/for-next/core
+      Merge branch 'for-next/kexec' into aarch64/for-next/core
+      arm64: mm: EXPORT vabits_user to modules
+      arm64: preempt: Fix big-endian when checking preempt count in assembly
+      arm64: mm: Introduce MAX_USER_VA_BITS definition
+      arm64: percpu: Fix LSE implementation of value-returning pcpu atomics
+      Merge branch 'for-next/perf' into aarch64/for-next/core
+      arm64: kpti: Whitelist Cortex-A CPUs that don't implement the CSV3 field
+      arm64: perf: Treat EXCLUDE_EL* bit definitions as unsigned
+      arm64: ptr auth: Move per-thread keys from thread_info to thread_struct
+      arm64: cpufeature: Reduce number of pointer auth CPU caps from 6 to 4
+      arm64: cpufeature: Rework ptr auth hwcaps using multi_entry_cap_matches
+      arm64: sysreg: Use _BITUL() when defining register bits
+
+ Documentation/arm64/booting.txt                |   8 +
+ Documentation/arm64/cpu-feature-registers.txt  |   8 +
+ Documentation/arm64/elf_hwcaps.txt             |  12 +
+ Documentation/arm64/pointer-authentication.txt |  88 +++
+ Documentation/arm64/silicon-errata.txt         |   1 +
+ Documentation/perf/thunderx2-pmu.txt           |  41 ++
+ arch/arm/include/asm/kvm_host.h                |   2 +-
+ arch/arm64/Kconfig                             | 131 +++-
+ arch/arm64/Makefile                            |  12 +-
+ arch/arm64/include/asm/Kbuild                  |   2 -
+ arch/arm64/include/asm/acpi.h                  |  19 +-
+ arch/arm64/include/asm/asm-prototypes.h        |  26 +
+ arch/arm64/include/asm/assembler.h             |  90 ++-
+ arch/arm64/include/asm/atomic_ll_sc.h          |  63 +-
+ arch/arm64/include/asm/atomic_lse.h            |  48 +-
+ arch/arm64/include/asm/barrier.h               |   4 +
+ arch/arm64/include/asm/cmpxchg.h               | 116 ++--
+ arch/arm64/include/asm/cpucaps.h               |   8 +-
+ arch/arm64/include/asm/cpufeature.h            | 124 +++-
+ arch/arm64/include/asm/cputype.h               |   2 +
+ arch/arm64/include/asm/elf.h                   |   4 +
+ arch/arm64/include/asm/esr.h                   |  17 +-
+ arch/arm64/include/asm/ftrace.h                |   1 +
+ arch/arm64/include/asm/image.h                 |  59 ++
+ arch/arm64/include/asm/insn.h                  |   8 +
+ arch/arm64/include/asm/io.h                    |  32 +-
+ arch/arm64/include/asm/kexec.h                 |  19 +
+ arch/arm64/include/asm/kvm_arm.h               |   3 +
+ arch/arm64/include/asm/kvm_host.h              |  10 +-
+ arch/arm64/include/asm/kvm_hyp.h               |   8 +
+ arch/arm64/include/asm/memory.h                |  16 +-
+ arch/arm64/include/asm/mmu_context.h           |   5 +
+ arch/arm64/include/asm/module.h                |  44 +-
+ arch/arm64/include/asm/neon-intrinsics.h       |  39 ++
+ arch/arm64/include/asm/percpu.h                | 390 +++++------
+ arch/arm64/include/asm/perf_event.h            | 170 ++++-
+ arch/arm64/include/asm/pgtable-hwdef.h         |  12 +-
+ arch/arm64/include/asm/pgtable.h               |  22 +
+ arch/arm64/include/asm/pointer_auth.h          |  97 +++
+ arch/arm64/include/asm/preempt.h               |  89 +++
+ arch/arm64/include/asm/processor.h             |  36 +-
+ arch/arm64/include/asm/smp.h                   |  15 +-
+ arch/arm64/include/asm/stackprotector.h        |   3 +-
+ arch/arm64/include/asm/sysreg.h                | 109 ++--
+ arch/arm64/include/asm/thread_info.h           |  13 +-
+ arch/arm64/include/asm/tlbflush.h              |  15 +-
+ arch/arm64/include/asm/uaccess.h               |   3 +-
+ arch/arm64/include/asm/xor.h                   |  73 +++
+ arch/arm64/include/uapi/asm/hwcap.h            |   3 +
+ arch/arm64/include/uapi/asm/ptrace.h           |   7 +
+ arch/arm64/kernel/Makefile                     |   6 +-
+ arch/arm64/kernel/arm64ksyms.c                 |  88 ---
+ arch/arm64/kernel/asm-offsets.c                |   3 +
+ arch/arm64/kernel/cpu-reset.S                  |   8 +-
+ arch/arm64/kernel/cpu_errata.c                 | 149 ++---
+ arch/arm64/kernel/cpufeature.c                 | 312 ++++++---
+ arch/arm64/kernel/cpuinfo.c                    |   3 +
+ arch/arm64/kernel/entry-ftrace.S               |  55 +-
+ arch/arm64/kernel/entry.S                      |  12 +-
+ arch/arm64/kernel/ftrace.c                     |   4 +-
+ arch/arm64/kernel/head.S                       |  46 +-
+ arch/arm64/kernel/hibernate-asm.S              |   1 +
+ arch/arm64/kernel/image.h                      |  67 +-
+ arch/arm64/kernel/insn.c                       |  29 +
+ arch/arm64/kernel/kexec_image.c                | 130 ++++
+ arch/arm64/kernel/machine_kexec.c              |  12 +-
+ arch/arm64/kernel/machine_kexec_file.c         | 224 +++++++
+ arch/arm64/kernel/module-plts.c                | 135 ++--
+ arch/arm64/kernel/module.c                     |  13 +-
+ arch/arm64/kernel/perf_callchain.c             |   6 +-
+ arch/arm64/kernel/perf_event.c                 | 221 ++-----
+ arch/arm64/kernel/pointer_auth.c               |  47 ++
+ arch/arm64/kernel/process.c                    |   6 +-
+ arch/arm64/kernel/ptrace.c                     |  38 ++
+ arch/arm64/kernel/relocate_kernel.S            |   3 +-
+ arch/arm64/kernel/setup.c                      |   1 +
+ arch/arm64/kernel/smccc-call.S                 |   4 +
+ arch/arm64/kernel/smp.c                        |   7 +-
+ arch/arm64/kernel/vmlinux.lds.S                |   9 +-
+ arch/arm64/kvm/handle_exit.c                   |  18 +
+ arch/arm64/kvm/hyp/entry.S                     |   1 +
+ arch/arm64/kvm/hyp/hyp-entry.S                 |   4 +
+ arch/arm64/kvm/hyp/switch.c                    |  25 +-
+ arch/arm64/kvm/hyp/tlb.c                       |  71 +-
+ arch/arm64/kvm/sys_regs.c                      |   8 +
+ arch/arm64/lib/Makefile                        |   6 +
+ arch/arm64/lib/clear_page.S                    |   1 +
+ arch/arm64/lib/clear_user.S                    |   2 +
+ arch/arm64/lib/copy_from_user.S                |   4 +-
+ arch/arm64/lib/copy_in_user.S                  |   4 +-
+ arch/arm64/lib/copy_page.S                     |   1 +
+ arch/arm64/lib/copy_to_user.S                  |   4 +-
+ arch/arm64/lib/crc32.S                         |  54 +-
+ arch/arm64/lib/memchr.S                        |   1 +
+ arch/arm64/lib/memcmp.S                        |   1 +
+ arch/arm64/lib/memcpy.S                        |   2 +
+ arch/arm64/lib/memmove.S                       |   2 +
+ arch/arm64/lib/memset.S                        |   2 +
+ arch/arm64/lib/strchr.S                        |   1 +
+ arch/arm64/lib/strcmp.S                        |   1 +
+ arch/arm64/lib/strlen.S                        |   1 +
+ arch/arm64/lib/strncmp.S                       |   1 +
+ arch/arm64/lib/strnlen.S                       |   1 +
+ arch/arm64/lib/strrchr.S                       |   1 +
+ arch/arm64/lib/tishift.S                       |   5 +
+ arch/arm64/lib/xor-neon.c                      | 184 ++++++
+ arch/arm64/mm/cache.S                          |   3 +
+ arch/arm64/mm/fault.c                          |   2 +-
+ arch/arm64/mm/hugetlbpage.c                    |  33 +-
+ arch/arm64/mm/init.c                           |  12 +-
+ arch/arm64/mm/mmu.c                            |  35 +-
+ arch/arm64/mm/numa.c                           |  10 +
+ arch/arm64/mm/pageattr.c                       |  21 +
+ arch/arm64/mm/proc.S                           |  14 +-
+ arch/powerpc/kernel/machine_kexec_file_64.c    |  54 --
+ arch/s390/include/asm/preempt.h                |   2 +
+ arch/s390/kernel/machine_kexec_file.c          |  10 -
+ arch/x86/include/asm/preempt.h                 |   3 +
+ drivers/firmware/efi/arm-runtime.c             |   2 +-
+ drivers/firmware/efi/libstub/arm-stub.c        |   2 +-
+ drivers/perf/Kconfig                           |   9 +
+ drivers/perf/Makefile                          |   1 +
+ drivers/perf/arm_spe_pmu.c                     |   6 +
+ drivers/perf/thunderx2_pmu.c                   | 861 +++++++++++++++++++++++++
+ drivers/perf/xgene_pmu.c                       |  80 ++-
+ include/linux/cpuhotplug.h                     |   2 +
+ include/linux/kexec.h                          |  11 +-
+ include/linux/linkage.h                        |   6 +
+ include/linux/pe.h                             |   2 +-
+ include/linux/perf/arm_pmu.h                   |   4 +-
+ include/linux/preempt.h                        |   3 -
+ include/uapi/asm-generic/unistd.h              |   4 +-
+ include/uapi/linux/elf.h                       |   1 +
+ include/uapi/linux/prctl.h                     |   8 +
+ kernel/kexec_file.c                            |  70 +-
+ kernel/sys.c                                   |   8 +
+ mm/mmap.c                                      |  25 +-
+ virt/kvm/arm/arm.c                             |   8 +-
+ 138 files changed, 4287 insertions(+), 1197 deletions(-)
+ create mode 100644 Documentation/arm64/pointer-authentication.txt
+ create mode 100644 Documentation/perf/thunderx2-pmu.txt
+ create mode 100644 arch/arm64/include/asm/asm-prototypes.h
+ create mode 100644 arch/arm64/include/asm/image.h
+ create mode 100644 arch/arm64/include/asm/neon-intrinsics.h
+ create mode 100644 arch/arm64/include/asm/pointer_auth.h
+ create mode 100644 arch/arm64/include/asm/preempt.h
+ create mode 100644 arch/arm64/include/asm/xor.h
+ delete mode 100644 arch/arm64/kernel/arm64ksyms.c
+ create mode 100644 arch/arm64/kernel/kexec_image.c
+ create mode 100644 arch/arm64/kernel/machine_kexec_file.c
+ create mode 100644 arch/arm64/kernel/pointer_auth.c
+ create mode 100644 arch/arm64/lib/xor-neon.c
+ create mode 100644 drivers/perf/thunderx2_pmu.c
+
+--->8
+
+diff --cc Documentation/arm64/silicon-errata.txt
+index 8f9577621144,04f0bc4690c6..000000000000
+--- a/Documentation/arm64/silicon-errata.txt
++++ b/Documentation/arm64/silicon-errata.txt
+@@@ -57,7 -57,7 +57,8 @@@ stable kernels
+  | ARM            | Cortex-A73      | #858921         | ARM64_ERRATUM_858921        |
+  | ARM            | Cortex-A55      | #1024718        | ARM64_ERRATUM_1024718       |
+  | ARM            | Cortex-A76      | #1188873        | ARM64_ERRATUM_1188873       |
+ +| ARM            | Cortex-A76      | #1286807        | ARM64_ERRATUM_1286807       |
++ | ARM            | Cortex-A76      | #1165522        | ARM64_ERRATUM_1165522       |
+  | ARM            | MMU-500         | #841119,#826419 | N/A                         |
+  |                |                 |                 |                             |
+  | Cavium         | ThunderX ITS    | #22375, #24313  | CAVIUM_ERRATUM_22375        |
+diff --cc arch/arm64/Kconfig
+index ea2ab0330e3a,2a67abeca041..000000000000
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@@ -497,22 -507,16 +507,32 @@@ config ARM64_ERRATUM_118887
+  
+  	  If unsure, say Y.
+  
+ +config ARM64_ERRATUM_1286807
+ +	bool "Cortex-A76: Modification of the translation table for a virtual address might lead to read-after-read ordering violation"
+ +	default y
+ +	select ARM64_WORKAROUND_REPEAT_TLBI
+ +	help
+ +	  This option adds workaround for ARM Cortex-A76 erratum 1286807
+ +
+ +	  On the affected Cortex-A76 cores (r0p0 to r3p0), if a virtual
+ +	  address for a cacheable mapping of a location is being
+ +	  accessed by a core while another core is remapping the virtual
+ +	  address to a new physical page using the recommended
+ +	  break-before-make sequence, then under very rare circumstances
+ +	  TLBI+DSB completes before a read using the translation being
+ +	  invalidated has been observed by other observers. The
+ +	  workaround repeats the TLBI+DSB operation.
+ +
++ config ARM64_ERRATUM_1165522
++ 	bool "Cortex-A76: Speculative AT instruction using out-of-context translation regime could cause subsequent request to generate an incorrect translation"
++ 	default y
++ 	help
++ 	  This option adds work arounds for ARM Cortex-A76 erratum 1165522
++ 
++ 	  Affected Cortex-A76 cores (r0p0, r1p0, r2p0) could end-up with
++ 	  corrupted TLBs by speculating an AT instruction during a guest
++ 	  context switch.
++ 
+  	  If unsure, say Y.
+  
+  config CAVIUM_ERRATUM_22375
+diff --cc arch/arm64/kernel/cpu_errata.c
+index 6ad715d67df8,ff2fda3a98e1..000000000000
+--- a/arch/arm64/kernel/cpu_errata.c
++++ b/arch/arm64/kernel/cpu_errata.c
+@@@ -570,21 -538,43 +538,57 @@@ static const struct midr_range arm64_ha
+  
+  #endif
+  
+ +#ifdef CONFIG_ARM64_WORKAROUND_REPEAT_TLBI
+ +
+ +static const struct midr_range arm64_repeat_tlbi_cpus[] = {
+ +#ifdef CONFIG_QCOM_FALKOR_ERRATUM_1009
+ +	MIDR_RANGE(MIDR_QCOM_FALKOR_V1, 0, 0, 0, 0),
+ +#endif
+ +#ifdef CONFIG_ARM64_ERRATUM_1286807
+ +	MIDR_RANGE(MIDR_CORTEX_A76, 0, 0, 3, 0),
+ +#endif
+ +	{},
+ +};
+ +
+ +#endif
+ +
+- const struct arm64_cpu_capabilities arm64_errata[] = {
++ #ifdef CONFIG_CAVIUM_ERRATUM_27456
++ static const struct midr_range cavium_erratum_27456_cpus[] = {
++ 	/* Cavium ThunderX, T88 pass 1.x - 2.1 */
++ 	MIDR_RANGE(MIDR_THUNDERX, 0, 0, 1, 1),
++ 	/* Cavium ThunderX, T81 pass 1.0 */
++ 	MIDR_REV(MIDR_THUNDERX_81XX, 0, 0),
++ 	{},
++ };
++ #endif
++ 
++ #ifdef CONFIG_CAVIUM_ERRATUM_30115
++ static const struct midr_range cavium_erratum_30115_cpus[] = {
++ 	/* Cavium ThunderX, T88 pass 1.x - 2.2 */
++ 	MIDR_RANGE(MIDR_THUNDERX, 0, 0, 1, 2),
++ 	/* Cavium ThunderX, T81 pass 1.0 - 1.2 */
++ 	MIDR_REV_RANGE(MIDR_THUNDERX_81XX, 0, 0, 2),
++ 	/* Cavium ThunderX, T83 pass 1.0 */
++ 	MIDR_REV(MIDR_THUNDERX_83XX, 0, 0),
++ 	{},
++ };
++ #endif
++ 
++ #ifdef CONFIG_QCOM_FALKOR_ERRATUM_1003
++ static const struct arm64_cpu_capabilities qcom_erratum_1003_list[] = {
++ 	{
++ 		ERRATA_MIDR_REV(MIDR_QCOM_FALKOR_V1, 0, 0),
++ 	},
++ 	{
++ 		.midr_range.model = MIDR_QCOM_KRYO,
++ 		.matches = is_kryo_midr,
++ 	},
++ 	{},
++ };
++ #endif
++ 
++ #ifdef CONFIG_ARM64_WORKAROUND_CLEAN_CACHE
++ static const struct midr_range workaround_clean_cache[] = {
+  #if	defined(CONFIG_ARM64_ERRATUM_826319) || \
+  	defined(CONFIG_ARM64_ERRATUM_827319) || \
+  	defined(CONFIG_ARM64_ERRATUM_824069)
+@@@ -697,23 -666,17 +680,17 @@@ const struct arm64_cpu_capabilities arm
+  	},
+  #ifdef CONFIG_QCOM_FALKOR_ERRATUM_1003
+  	{
+- 		.desc = "Qualcomm Technologies Falkor erratum 1003",
+- 		.capability = ARM64_WORKAROUND_QCOM_FALKOR_E1003,
+- 		ERRATA_MIDR_REV(MIDR_QCOM_FALKOR_V1, 0, 0),
+- 	},
+- 	{
+- 		.desc = "Qualcomm Technologies Kryo erratum 1003",
++ 		.desc = "Qualcomm Technologies Falkor/Kryo erratum 1003",
+  		.capability = ARM64_WORKAROUND_QCOM_FALKOR_E1003,
+- 		.type = ARM64_CPUCAP_LOCAL_CPU_ERRATUM,
+- 		.midr_range.model = MIDR_QCOM_KRYO,
+- 		.matches = is_kryo_midr,
++ 		.matches = cpucap_multi_entry_cap_matches,
++ 		.match_list = qcom_erratum_1003_list,
+  	},
+  #endif
+ -#ifdef CONFIG_QCOM_FALKOR_ERRATUM_1009
+ +#ifdef CONFIG_ARM64_WORKAROUND_REPEAT_TLBI
+  	{
+ -		.desc = "Qualcomm Technologies Falkor erratum 1009",
+ +		.desc = "Qualcomm erratum 1009, ARM erratum 1286807",
+  		.capability = ARM64_WORKAROUND_REPEAT_TLBI,
+ -		ERRATA_MIDR_REV(MIDR_QCOM_FALKOR_V1, 0, 0),
+ +		ERRATA_MIDR_RANGE_LIST(arm64_repeat_tlbi_cpus),
+  	},
+  #endif
+  #ifdef CONFIG_ARM64_ERRATUM_858921
