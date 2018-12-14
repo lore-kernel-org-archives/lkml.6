@@ -2,100 +2,88 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4502C43612
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 21:53:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2836CC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 21:56:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 273932086D
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 21:53:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5135D2086D
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 21:56:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KmrSt/LS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731384AbeLNVxp (ORCPT
+        id S1731176AbeLNV4n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 16:53:45 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:46496 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731304AbeLNVxU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 16:53:20 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 098A67FD63;
-        Fri, 14 Dec 2018 21:53:20 +0000 (UTC)
-Received: from llong.com (dhcp-17-223.bos.redhat.com [10.18.17.223])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id F27DD18111;
-        Fri, 14 Dec 2018 21:53:17 +0000 (UTC)
-From:   Waiman Long <longman@redhat.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-doc@vger.kernel.org,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jan Kara <jack@suse.cz>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Larry Woodman <lwoodman@redhat.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        "Wangkai (Kevin C)" <wangkai86@huawei.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Waiman Long <longman@redhat.com>, stable@vger.kernel.org
-Subject: [RESEND PATCH v4 1/3] fs/dcache: Fix incorrect nr_dentry_unused accounting in shrink_dcache_sb()
-Date:   Fri, 14 Dec 2018 16:53:02 -0500
-Message-Id: <1544824384-17668-2-git-send-email-longman@redhat.com>
-In-Reply-To: <1544824384-17668-1-git-send-email-longman@redhat.com>
-References: <1544824384-17668-1-git-send-email-longman@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Fri, 14 Dec 2018 21:53:20 +0000 (UTC)
+        Fri, 14 Dec 2018 16:56:43 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:42114 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730887AbeLNV4m (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 16:56:42 -0500
+Received: by mail-lj1-f195.google.com with SMTP id l15-v6so6137064lja.9
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 13:56:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Z7b7MDcKHXLL8mJGaRJQExofHqN08iwchL4Zcr9axrQ=;
+        b=KmrSt/LS6T5Jbwmc6OKFeKjce6RCmZVUgt8sEuSGV7mig+Z8t7eNz6zvV8gc5aWjp1
+         75JaT/BIxgx4sx89uMVO4TdxIIIgdlcZUlitklvSQ9ttgMbJpOgwq87k9fPW/x2I/z/A
+         Fh6AQSULojiXA5vz8xGSW8LMPhSIczHrfz+wc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Z7b7MDcKHXLL8mJGaRJQExofHqN08iwchL4Zcr9axrQ=;
+        b=Q/Y9eM8q1qSWjrgS0GIFvUkFBhSg9L32YiG5Qd9mYVkYyVpMo2qxlpgPnsui9JfVAh
+         AYU/e59yFoEhHdX/GO1yoEtsNqqzCsuj4OsP9KUhiGg6ujS+c+JwDaaq63rFcLsjqlDw
+         vRXOesTPxVkGD4tZORNkakVEz9tWYkmAAIiV/MpYm7rVeoZhXa0U8ADq3Ozk2aviV5DE
+         Ofy4boANis+zvtyMg1fWrJRXy+fJzX2/nrmKuDBReFyM4EgYD5OpLFKJfUJtBW7vxKI2
+         TbG86EBOedfMPBUwHmkFyYHYomxxiO82vbtX37FPFnIN6oCpPuAuxHE1CrSBKVoc5r3j
+         uxLQ==
+X-Gm-Message-State: AA+aEWa/WVG0B0n5vZzq+scJU8JbL52Z1whL2aJwQpPHbyjVA7zqYiKn
+        P932xIV5b94Ck7Cg/fZYviklgFzrWkQGR4IuAHm3EFb/dYg=
+X-Google-Smtp-Source: AFSGD/VsT6JEn5seHFNZoPjAKoOfX/Lpl7nZSQNHRV2gTE3XuwtXNhK4sw9oypnL4Y0sM2+ExGm8Cg4BwCM+h5PBQ+s=
+X-Received: by 2002:a2e:9107:: with SMTP id m7-v6mr2817639ljg.23.1544824599964;
+ Fri, 14 Dec 2018 13:56:39 -0800 (PST)
+MIME-Version: 1.0
+References: <20181213013858.23996-1-sebastian.reichel@collabora.com>
+In-Reply-To: <20181213013858.23996-1-sebastian.reichel@collabora.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 14 Dec 2018 22:56:28 +0100
+Message-ID: <CACRpkdaEXJqpzmbnJpxkZewwCwLbekwwn1QnANOXP5pgnHfU8w@mail.gmail.com>
+Subject: Re: [PATCH] power: supply: isp1704: switch to gpiod API
+To:     Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc:     Sebastian Reichel <sre@kernel.org>,
+        =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The nr_dentry_unused per-cpu counter tracks dentries in both the
-LRU lists and the shrink lists where the DCACHE_LRU_LIST bit is set.
-The shrink_dcache_sb() function moves dentries from the LRU list to a
-shrink list and subtracts the dentry count from nr_dentry_unused. This
-is incorrect as the nr_dentry_unused count Will also be decremented in
-shrink_dentry_list() via d_shrink_del(). To fix this double decrement,
-the decrement in the shrink_dcache_sb() function is taken out.
+On Thu, Dec 13, 2018 at 2:39 AM Sebastian Reichel
+<sebastian.reichel@collabora.com> wrote:
 
-Fixes: 4e717f5c1083 ("list_lru: remove special case function list_lru_dispose_all."
-Cc: stable@vger.kernel.org
+> This migrates isp1704 driver from old GPIO API to new descriptor
+> based GPIO API and drops useless platform data as a side-effect.
+>
+> Migration is simple, since all mainline users are DT based and
+> DT API does not change. Out of tree users of the platform data
+> need to migrate to gpiod_lookup_table as described here:
+>
+> Documentation/driver-api/gpio/board.rst
+>
+> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 
-Signed-off-by: Waiman Long <longman@redhat.com>
-Reviewed-by: Dave Chinner <dchinner@redhat.com>
----
- fs/dcache.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-diff --git a/fs/dcache.c b/fs/dcache.c
-index 2593153..44e5652 100644
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -1188,15 +1188,11 @@ static enum lru_status dentry_lru_isolate_shrink(struct list_head *item,
-  */
- void shrink_dcache_sb(struct super_block *sb)
- {
--	long freed;
--
- 	do {
- 		LIST_HEAD(dispose);
- 
--		freed = list_lru_walk(&sb->s_dentry_lru,
-+		list_lru_walk(&sb->s_dentry_lru,
- 			dentry_lru_isolate_shrink, &dispose, 1024);
--
--		this_cpu_sub(nr_dentry_unused, freed);
- 		shrink_dentry_list(&dispose);
- 	} while (list_lru_count(&sb->s_dentry_lru) > 0);
- }
--- 
-1.8.3.1
+Excellent work!
 
+Yours,
+Linus Walleij
