@@ -2,55 +2,56 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC2F7C6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:14:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E09CC67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:14:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1513214DE
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:14:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E32BF214F0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:14:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544789663;
-	bh=a1ATPxPTW9ZYkZSCTi9Fh20B/vDl+MJIiwkdHvYFkkM=;
+	s=default; t=1544789667;
+	bh=/i5v8Erf7q3CEI+qLcPq/gV2RrGwts/Wzq824xFJhbk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Fh/1lfaLMPpBYxsxBaGCIEJAUk+Krh1UblK/RSrk5g042NZ62nzsRycY2jgoGmABX
-	 NIEMP2vVq2I26DMnN+BaPH1tIo3q//9amgm7ZQzAIn1mWrXE6C6Ettw0VLS4dXBHw+
-	 vr4BPUnxLxJ1lY/sHIA55fiu9Ff0FihbBnBkV1bM=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1513214DE
+	b=GQjn2W72iGJ3H6A46ESbaC1oJAF4dq87MxHyk+PcRYwZMowoJxpplQLWcgLvXE9Lg
+	 Ms0R0Ad7ZUEg3ZmpuIp5i+IqVigah8TIk2cAlK6dZMjEc06NaOqCbF2U5Ndu1N1Fax
+	 9NyYIrj++623WwZlA2BqFBdd3u6D1Xwxd3ELm1VA=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E32BF214F0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732329AbeLNMOW (ORCPT
+        id S1732338AbeLNMOZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:14:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33956 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:14:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33992 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732308AbeLNMOU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:14:20 -0500
+        id S1732323AbeLNMOW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:14:22 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8C58D21508;
-        Fri, 14 Dec 2018 12:14:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2DF4F2133F;
+        Fri, 14 Dec 2018 12:14:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789659;
-        bh=a1ATPxPTW9ZYkZSCTi9Fh20B/vDl+MJIiwkdHvYFkkM=;
+        s=default; t=1544789661;
+        bh=/i5v8Erf7q3CEI+qLcPq/gV2RrGwts/Wzq824xFJhbk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=R1n1vm/NDUWaKtZwTqn+13SVSuhlGEG3uSsnZyxithl7wNn+KrcHhcv4MN/mtnvks
-         nVwW3ne9cKjbumh63Vrdtq4z9CUccygjQLyDA9SuBFRSU4M5JZcjhyk6tYTcIjmn/t
-         urw+eVlLViEx4oB+bEncukuzK2b7Lgzymp/eVOck=
+        b=Bl7fAtKzAxhnFNvKall88fFOdw/0oAGVwoLLNTbuDYNfiiJnuOwFxERgqWW3+heqE
+         rZeH07X8OkxNt4SbG4SLZujbNQ0Ab3R2VMNmE3eS5xwg7XYr/hKo+CIhhRUHjDbZrY
+         htvBUgcHMW7aIwH0UlpZJrzJwHY9CYbBNgsNLxco=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiri Wiesner <jwiesner@suse.com>,
-        Per Sundstrom <per.sundstrom@redqube.se>,
-        Peter Oskolkov <posk@google.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 09/88] ipv4: ipv6: netfilter: Adjust the frag mem limit when truesize changes
-Date:   Fri, 14 Dec 2018 12:59:43 +0100
-Message-Id: <20181214115702.853870009@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 27/88] net: thunderx: fix NULL pointer dereference in nic_remove
+Date:   Fri, 14 Dec 2018 13:00:01 +0100
+Message-Id: <20181214115704.318348301@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115702.151309521@linuxfoundation.org>
 References: <20181214115702.151309521@linuxfoundation.org>
@@ -69,134 +70,82 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jiri Wiesner <jwiesner@suse.com>
+[ Upstream commit 24a6d2dd263bc910de018c78d1148b3e33b94512 ]
 
-[ Upstream commit ebaf39e6032faf77218220707fc3fa22487784e0 ]
+Fix a possible NULL pointer dereference in nic_remove routine
+removing the nicpf module if nic_probe fails.
+The issue can be triggered with the following reproducer:
 
-The *_frag_reasm() functions are susceptible to miscalculating the byte
-count of packet fragments in case the truesize of a head buffer changes.
-The truesize member may be changed by the call to skb_unclone(), leaving
-the fragment memory limit counter unbalanced even if all fragments are
-processed. This miscalculation goes unnoticed as long as the network
-namespace which holds the counter is not destroyed.
+$rmmod nicvf
+$rmmod nicpf
 
-Should an attempt be made to destroy a network namespace that holds an
-unbalanced fragment memory limit counter the cleanup of the namespace
-never finishes. The thread handling the cleanup gets stuck in
-inet_frags_exit_net() waiting for the percpu counter to reach zero. The
-thread is usually in running state with a stacktrace similar to:
+[  521.412008] Unable to handle kernel access to user memory outside uaccess routines at virtual address 0000000000000014
+[  521.422777] Mem abort info:
+[  521.425561]   ESR = 0x96000004
+[  521.428624]   Exception class = DABT (current EL), IL = 32 bits
+[  521.434535]   SET = 0, FnV = 0
+[  521.437579]   EA = 0, S1PTW = 0
+[  521.440730] Data abort info:
+[  521.443603]   ISV = 0, ISS = 0x00000004
+[  521.447431]   CM = 0, WnR = 0
+[  521.450417] user pgtable: 4k pages, 48-bit VAs, pgdp = 0000000072a3da42
+[  521.457022] [0000000000000014] pgd=0000000000000000
+[  521.461916] Internal error: Oops: 96000004 [#1] SMP
+[  521.511801] Hardware name: GIGABYTE H270-T70/MT70-HD0, BIOS T49 02/02/2018
+[  521.518664] pstate: 80400005 (Nzcv daif +PAN -UAO)
+[  521.523451] pc : nic_remove+0x24/0x88 [nicpf]
+[  521.527808] lr : pci_device_remove+0x48/0xd8
+[  521.532066] sp : ffff000013433cc0
+[  521.535370] x29: ffff000013433cc0 x28: ffff810f6ac50000
+[  521.540672] x27: 0000000000000000 x26: 0000000000000000
+[  521.545974] x25: 0000000056000000 x24: 0000000000000015
+[  521.551274] x23: ffff8007ff89a110 x22: ffff000001667070
+[  521.556576] x21: ffff8007ffb170b0 x20: ffff8007ffb17000
+[  521.561877] x19: 0000000000000000 x18: 0000000000000025
+[  521.567178] x17: 0000000000000000 x16: 000000000000010ffc33ff98 x8 : 0000000000000000
+[  521.593683] x7 : 0000000000000000 x6 : 0000000000000001
+[  521.598983] x5 : 0000000000000002 x4 : 0000000000000003
+[  521.604284] x3 : ffff8007ffb17184 x2 : ffff8007ffb17184
+[  521.609585] x1 : ffff000001662118 x0 : ffff000008557be0
+[  521.614887] Process rmmod (pid: 1897, stack limit = 0x00000000859535c3)
+[  521.621490] Call trace:
+[  521.623928]  nic_remove+0x24/0x88 [nicpf]
+[  521.627927]  pci_device_remove+0x48/0xd8
+[  521.631847]  device_release_driver_internal+0x1b0/0x248
+[  521.637062]  driver_detach+0x50/0xc0
+[  521.640628]  bus_remove_driver+0x60/0x100
+[  521.644627]  driver_unregister+0x34/0x60
+[  521.648538]  pci_unregister_driver+0x24/0xd8
+[  521.652798]  nic_cleanup_module+0x14/0x111c [nicpf]
+[  521.657672]  __arm64_sys_delete_module+0x150/0x218
+[  521.662460]  el0_svc_handler+0x94/0x110
+[  521.666287]  el0_svc+0x8/0xc
+[  521.669160] Code: aa1e03e0 9102c295 d503201f f9404eb3 (b9401660)
 
- PID: 1073   TASK: ffff880626711440  CPU: 1   COMMAND: "kworker/u48:4"
-  #5 [ffff880621563d48] _raw_spin_lock at ffffffff815f5480
-  #6 [ffff880621563d48] inet_evict_bucket at ffffffff8158020b
-  #7 [ffff880621563d80] inet_frags_exit_net at ffffffff8158051c
-  #8 [ffff880621563db0] ops_exit_list at ffffffff814f5856
-  #9 [ffff880621563dd8] cleanup_net at ffffffff814f67c0
- #10 [ffff880621563e38] process_one_work at ffffffff81096f14
-
-It is not possible to create new network namespaces, and processes
-that call unshare() end up being stuck in uninterruptible sleep state
-waiting to acquire the net_mutex.
-
-The bug was observed in the IPv6 netfilter code by Per Sundstrom.
-I thank him for his analysis of the problem. The parts of this patch
-that apply to IPv4 and IPv6 fragment reassembly are preemptive measures.
-
-Signed-off-by: Jiri Wiesner <jwiesner@suse.com>
-Reported-by: Per Sundstrom <per.sundstrom@redqube.se>
-Acked-by: Peter Oskolkov <posk@google.com>
+Fixes: 4863dea3fab0 ("net: Adding support for Cavium ThunderX network controller")
+Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/ipv4/ip_fragment.c                  |    7 +++++++
- net/ipv6/netfilter/nf_conntrack_reasm.c |    8 +++++++-
- net/ipv6/reassembly.c                   |    8 +++++++-
- 3 files changed, 21 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/cavium/thunder/nic_main.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/net/ipv4/ip_fragment.c
-+++ b/net/ipv4/ip_fragment.c
-@@ -538,6 +538,7 @@ static int ip_frag_reasm(struct ipq *qp,
- 	struct sk_buff *fp, *head = qp->q.fragments;
- 	int len;
- 	int ihlen;
-+	int delta;
- 	int err;
- 	u8 ecn;
- 
-@@ -578,10 +579,16 @@ static int ip_frag_reasm(struct ipq *qp,
- 	if (len > 65535)
- 		goto out_oversize;
- 
-+	delta = - head->truesize;
-+
- 	/* Head of list must not be cloned. */
- 	if (skb_unclone(head, GFP_ATOMIC))
- 		goto out_nomem;
- 
-+	delta += head->truesize;
-+	if (delta)
-+		add_frag_mem_limit(qp->q.net, delta);
-+
- 	/* If the first fragment is fragmented itself, we split
- 	 * it to two chunks: the first with data and paged part
- 	 * and the second, holding only fragments. */
---- a/net/ipv6/netfilter/nf_conntrack_reasm.c
-+++ b/net/ipv6/netfilter/nf_conntrack_reasm.c
-@@ -380,7 +380,7 @@ static struct sk_buff *
- nf_ct_frag6_reasm(struct frag_queue *fq, struct net_device *dev)
+diff --git a/drivers/net/ethernet/cavium/thunder/nic_main.c b/drivers/net/ethernet/cavium/thunder/nic_main.c
+index 16baaafed26c..cbdeb54eab51 100644
+--- a/drivers/net/ethernet/cavium/thunder/nic_main.c
++++ b/drivers/net/ethernet/cavium/thunder/nic_main.c
+@@ -1090,6 +1090,9 @@ static void nic_remove(struct pci_dev *pdev)
  {
- 	struct sk_buff *fp, *op, *head = fq->q.fragments;
--	int    payload_len;
-+	int    payload_len, delta;
- 	u8 ecn;
+ 	struct nicpf *nic = pci_get_drvdata(pdev);
  
- 	inet_frag_kill(&fq->q, &nf_frags);
-@@ -401,12 +401,18 @@ nf_ct_frag6_reasm(struct frag_queue *fq,
- 		goto out_oversize;
- 	}
- 
-+	delta = - head->truesize;
++	if (!nic)
++		return;
 +
- 	/* Head of list must not be cloned. */
- 	if (skb_unclone(head, GFP_ATOMIC)) {
- 		pr_debug("skb is cloned but can't expand head");
- 		goto out_oom;
- 	}
+ 	if (nic->flags & NIC_SRIOV_ENABLED)
+ 		pci_disable_sriov(pdev);
  
-+	delta += head->truesize;
-+	if (delta)
-+		add_frag_mem_limit(fq->q.net, delta);
-+
- 	/* If the first fragment is fragmented itself, we split
- 	 * it to two chunks: the first with data and paged part
- 	 * and the second, holding only fragments. */
---- a/net/ipv6/reassembly.c
-+++ b/net/ipv6/reassembly.c
-@@ -381,7 +381,7 @@ static int ip6_frag_reasm(struct frag_qu
- {
- 	struct net *net = container_of(fq->q.net, struct net, ipv6.frags);
- 	struct sk_buff *fp, *head = fq->q.fragments;
--	int    payload_len;
-+	int    payload_len, delta;
- 	unsigned int nhoff;
- 	int sum_truesize;
- 	u8 ecn;
-@@ -422,10 +422,16 @@ static int ip6_frag_reasm(struct frag_qu
- 	if (payload_len > IPV6_MAXPLEN)
- 		goto out_oversize;
- 
-+	delta = - head->truesize;
-+
- 	/* Head of list must not be cloned. */
- 	if (skb_unclone(head, GFP_ATOMIC))
- 		goto out_oom;
- 
-+	delta += head->truesize;
-+	if (delta)
-+		add_frag_mem_limit(fq->q.net, delta);
-+
- 	/* If the first fragment is fragmented itself, we split
- 	 * it to two chunks: the first with data and paged part
- 	 * and the second, holding only fragments. */
+-- 
+2.19.1
+
 
 
