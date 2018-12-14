@@ -2,81 +2,84 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE004C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 16:28:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B1CEC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 16:29:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FA7B206E0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 16:28:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F678206E0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 16:29:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BfzKGyCP"
+	dkim=pass (2048-bit key) header.d=6wind-com.20150623.gappssmtp.com header.i=@6wind-com.20150623.gappssmtp.com header.b="unIdA6Rd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730047AbeLNQ23 (ORCPT
+        id S1730000AbeLNQ3U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 11:28:29 -0500
-Received: from mail-yw1-f65.google.com ([209.85.161.65]:41422 "EHLO
-        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729803AbeLNQ22 (ORCPT
+        Fri, 14 Dec 2018 11:29:20 -0500
+Received: from mail-lj1-f176.google.com ([209.85.208.176]:35623 "EHLO
+        mail-lj1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729551AbeLNQ3T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 11:28:28 -0500
-Received: by mail-yw1-f65.google.com with SMTP id f65so2506733ywc.8
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 08:28:28 -0800 (PST)
+        Fri, 14 Dec 2018 11:29:19 -0500
+Received: by mail-lj1-f176.google.com with SMTP id x85-v6so5423112ljb.2
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 08:29:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=6wind-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=CPTovOa0/xKrjIcfaQ8pBrHGQV9oeq0Dh2k/kepRpuk=;
-        b=BfzKGyCPEn3S9vx4TA/G7Gq+nNp6JrEFqoGvZhZoEnAm/+YLo238eGNvQQxWyapY3c
-         B/qRvRXxUoCYejWVBH9QWp5F651YZud+G2SNGJtf8hoxkp7UNSRb/FxC/1z8vplw0B0K
-         5IhGWoN+iDjACxlh5HertycMVxS9I2yquGLIHq/u6b+Me61dZod6hbXY3MSzebAgNUp7
-         vWUpzX49UQ6Rsutf8Zcv6YNDbp+U4siPJs8+vzVlKHCq0T231F78R3dxS24jVBUQvh8l
-         0zMARbhnE+RpP1IY/FwenNvvp/YGzXTQX+KB61ck+wxUKlF6rHdOzBnF7/0oQ2TMaSoU
-         s7xw==
+         :cc:content-transfer-encoding;
+        bh=eSq5K7RDF9p4Zm0i/lxeURSsZydJRi/wcIz+onr3gvc=;
+        b=unIdA6RdA2S4EDqxR0pQMdcTPVBNaS7p+lzhDIUWy5QNsupR2NNNlX2Bq2r8A+eMRM
+         S1/PA34IaviNnEbeA492Fcranf0TQnilGu3eGDEO5rLjvuwB92KvkBv1OI0HnhoGzLVF
+         bBX3lSKebR5zLQSfOieTbnvzrg8XX0ghJp/KLs2TmdX7xh5zLv2pLJ66tZLyv45hjKsk
+         Tqdsh27Z7kY5FvJr1ppniyxqYlFGFsscN70ErbH5U0XFm3XLy/aAhx99JsQdm1avSOiT
+         XC4nGuQUmw1RluwfiVyAXJW2bCC+oVvL7tyqz+GVlwe22YQUk0ZdZRP3J6ayd+ru7JZX
+         56og==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=CPTovOa0/xKrjIcfaQ8pBrHGQV9oeq0Dh2k/kepRpuk=;
-        b=M1Yzec9GkmB1z6XMxwkIqQsiSLlFUVLTvAWNWKEJn4HBo0y46Pwu/JBYb7Zs+f5Ssv
-         kT+t5KcCpFoJ5wFHG+odYogGx9K6aEY88RWimDmSfOuyuK6CuUWBFnEEtH/q+StBxDZN
-         K9VZGgWhE3mvoe5B0I/OFNMupLFyaKdwKLw7LR18WmohFCXcbbuNSJHGdQ1fhCwIhJoN
-         AqLD6JBs1woCK0GwFgZ9o20cU/tMvmvDpQv2KOOeDRrXZ48kKWfOrNXuh1sR19syfhp+
-         N858773bnLlxjH8XErksFxOIMjPGo2fzM6P3b298JbSJMa1NERnJJr7Dyl4lNkIs67S5
-         y7/A==
-X-Gm-Message-State: AA+aEWaWUMxzKVdYyJFOLbqNB4HuhuW7H57rVFNkrhf0OwBJBQ2Ivf2k
-        nq0xL2bRIIRJxQDjVsiteopq6iV3/zxzZKwvYO0wi9iYZau94A==
-X-Google-Smtp-Source: AFSGD/UYGjzTZdcm72ohC6JrOpwjNsuuyqUtnI3e6nNGUKQcYE+p6wzw0aFVurw4WR5GTN0d+Nn4XLZSwxMy6iJLpA4=
-X-Received: by 2002:a81:6246:: with SMTP id w67mr3781204ywb.60.1544804907496;
- Fri, 14 Dec 2018 08:28:27 -0800 (PST)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=eSq5K7RDF9p4Zm0i/lxeURSsZydJRi/wcIz+onr3gvc=;
+        b=GxMC7jHnbOWZg2zsBEsEkjNA1TzyBIdKbiNj/+HTP9JvWCmeKaHX36YVnXkNTXuQxS
+         v4HUqcBy4IBGlKJZkrO97RJVjmlqmcHyXSIAHLee3DuSNfjbG7WeRxlWBQWhf3iQnvrw
+         RNEPpKzSq0WiuAYVi55THrUaH/ah1NR3kB0YdCw/00m+CpZeY2+S97ry4bh4MR4971E1
+         UqSbW7LyjkFEm9msspsYYkIzvjV7jphVCjRFz+8nnGOM1BP0d1P4m/nhEUzJxZqB8OaF
+         5K8wOd4X8SkUgwVEfcEOii3uIqgIWrlvLqZf7vjoBmlkV2wfzRdtupP31kXpq6dTSWFw
+         9LRw==
+X-Gm-Message-State: AA+aEWbG0J7jfuUDS8ox+bTEhw5IDcy4XjKROoIH8FaFwIEs2IyoUNnx
+        5Rq6vGwRF3UX5wDfX8Zfm0hzyRCp9gRXyElW2QWEHA==
+X-Google-Smtp-Source: AFSGD/VmkbD9puuKOlI36GZRU3G7YC8lGQwsJm5ZeqXW+ix3FiRaY3444l4YL/z/idM8nsl10WQ7hjrHVLLJXSNlH34=
+X-Received: by 2002:a2e:8643:: with SMTP id i3-v6mr1941987ljj.43.1544804957349;
+ Fri, 14 Dec 2018 08:29:17 -0800 (PST)
 MIME-Version: 1.0
-References: <20181214115729.658859279@linuxfoundation.org> <20181214115730.135586551@linuxfoundation.org>
- <20181214155226.GJ41383@MacBook-Pro-19.local> <20181214155435.GK41383@MacBook-Pro-19.local>
-In-Reply-To: <20181214155435.GK41383@MacBook-Pro-19.local>
-From:   Eric Dumazet <edumazet@google.com>
-Date:   Fri, 14 Dec 2018 08:28:13 -0800
-Message-ID: <CANn89i++i+4XayxaKDF8Auak3h+N2ppUguLhW6_0sz0GNXvNQg@mail.gmail.com>
-Subject: Re: [PATCH 4.14 09/89] net: Prevent invalid access to skb->prev in __qdisc_drop_all
-To:     Christoph Paasch <cpaasch@apple.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org,
-        bhole_prashant_q7@lab.ntt.co.jp,
-        Tyler Hicks <tyhicks@canonical.com>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        David Miller <davem@davemloft.net>
+References: <00000000000075fe86057ca6367e@google.com> <20181210124724.iuver2va3yjdsokf@breakpoint.cc>
+ <20181210.095856.580441946779980596.davem@davemloft.net> <2559562.n5nkmlqv4s@stwm.de>
+ <20181214143532.43zgy2hwkdskwfn2@breakpoint.cc> <CADdy8HpgzxLB-6QA+D5JfvhJmjyFUoFM1fQfz0rFAO6LEvRBAQ@mail.gmail.com>
+ <20181214162333.utlut746n3butkuf@breakpoint.cc>
+In-Reply-To: <20181214162333.utlut746n3butkuf@breakpoint.cc>
+From:   Christophe Gouault <christophe.gouault@6wind.com>
+Date:   Fri, 14 Dec 2018 17:28:47 +0100
+Message-ID: <CADdy8HpctPiaYTEMC48x8f1OYKwPm7Tx_NLktn2GWYFH+y+tAg@mail.gmail.com>
+Subject: Re: INFO: rcu detected stall in xfrm_hash_rebuild
+To:     Florian Westphal <fw@strlen.de>
+Cc:     Wolfgang Walter <linux@stwm.de>,
+        David Miller <davem@davemloft.net>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        Steffen Klassert <steffen.klassert@secunet.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 14, 2018 at 7:54 AM Christoph Paasch <cpaasch@apple.com> wrote:
+Le ven. 14 d=C3=A9c. 2018 =C3=A0 17:23, Florian Westphal <fw@strlen.de> a =
+=C3=A9crit :
+> I won't send a patch to remove your work, at least not at this time.
+>
+> In case I'd do this removal (thresholds, hash table, or both)
+> i will make these tests to see how large the impact is.
 
-> To clarify: Backport to v4.19.x is needed. The backport to v4.14 and older
-> should not be needed.
-
-Sure, but this does not cause any harm.
-
-No further action needed :)
+Perfect, thanks
+Christophe
