@@ -2,156 +2,116 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0357C65BAE
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 00:57:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5956AC65BAE
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 00:59:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C5C02054F
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 00:57:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C5C02054F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+	by mail.kernel.org (Postfix) with ESMTP id 1EA012054F
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 00:59:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Ww7eik0y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EA012054F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728941AbeLNA53 (ORCPT
+        id S1728802AbeLNA70 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 19:57:29 -0500
-Received: from ozlabs.org ([203.11.71.1]:48269 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726254AbeLNA53 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 19:57:29 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43GBwQ2Q8Rz9s9G;
-        Fri, 14 Dec 2018 11:57:26 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH] powerpc/mm: make NULL pointer deferences explicit on bad page faults.
-In-Reply-To: <42e7e2e9b74af526523fb5a1451fdb29cfe2687a.1539060806.git.christophe.leroy@c-s.fr>
-References: <42e7e2e9b74af526523fb5a1451fdb29cfe2687a.1539060806.git.christophe.leroy@c-s.fr>
-Date:   Fri, 14 Dec 2018 11:57:26 +1100
-Message-ID: <87zht9udqh.fsf@concordia.ellerman.id.au>
+        Thu, 13 Dec 2018 19:59:26 -0500
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:39075 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727638AbeLNA7Z (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 19:59:25 -0500
+Received: by mail-vs1-f68.google.com with SMTP id h78so2391577vsi.6
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 16:59:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=OgsD9ciJgYkwLnc5LxoTiPqRPu3UU+7P/7miboedbXk=;
+        b=Ww7eik0yCVL5JFp4NtYOx2Aq2VI4rj89hzTtAboCxccPjNz6pn7Y17/eJAng6yM529
+         ngP0P73QK8L294XgxAxZ5xtPCr+ZVAv7JoB6SL5LKDl4hWfJN9Dg8KjB4q0sQoPfaLD/
+         k3RvxIy2ksh5UNbQ/pDbmDchYC3guUpTT8/wk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=OgsD9ciJgYkwLnc5LxoTiPqRPu3UU+7P/7miboedbXk=;
+        b=lvVSAzVRVTkEp9TMTFkmJAU8UmYkzVkNiqCOcWOeaj22WzYn8qMxscb/0unwEDqRnA
+         lW+ozFA4UkpVDP1+0SI0eu05XuHyNkpSsDoaX+8KqZwoZJPRinYeN/M3ZLohCfPNPyVT
+         UVBvBGfMmepi8DxqE3j3ImZfp6de69yvIab4u3v8NfKQZi/LolMeC+ILQUipa+8GqioP
+         aqcnuaaAmkv+3RWJRbT2mpSp2s37eAhdizYofz7JoqgKLKF5OXZ2rgUWupnJi/Q9nu/T
+         mpuT5MqleNGQIdy02D2X1r/DJ/jiOlmYtKqAgl4hdWYue7xRof7XBEdHrrgZ7LIxWh9I
+         Lc7g==
+X-Gm-Message-State: AA+aEWYKhnOpiVEv3yzKAA8QXl8f0uhTFDntqdaHHOocYk+z0U4UxS0G
+        ctBvb02K6I/h6XFezzJBXNkaTbLWvbA=
+X-Google-Smtp-Source: AFSGD/WhMz/whJqvB9pc2grE7/t54Yo3M6RlEU8YsGJjNr8Z5TBNEujcvQnE51IgZ/Ks6LXNtK4vIw==
+X-Received: by 2002:a67:4541:: with SMTP id s62mr455568vsa.25.1544749163898;
+        Thu, 13 Dec 2018 16:59:23 -0800 (PST)
+Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com. [209.85.222.53])
+        by smtp.gmail.com with ESMTPSA id n206sm1503097vkn.36.2018.12.13.16.59.23
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 13 Dec 2018 16:59:23 -0800 (PST)
+Received: by mail-ua1-f53.google.com with SMTP id e16so1413915uam.12
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 16:59:23 -0800 (PST)
+X-Received: by 2002:a9f:3ba6:: with SMTP id r38mr477595uah.52.1544749162723;
+ Thu, 13 Dec 2018 16:59:22 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20181213194321.240148-1-ryandcase@chromium.org>
+In-Reply-To: <20181213194321.240148-1-ryandcase@chromium.org>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Thu, 13 Dec 2018 16:59:09 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=XoZKLppEzh+MSK7wMTCNvzE174aLYTtjvbgY00dDTLCQ@mail.gmail.com>
+Message-ID: <CAD=FV=XoZKLppEzh+MSK7wMTCNvzE174aLYTtjvbgY00dDTLCQ@mail.gmail.com>
+Subject: Re: [PATCH v2] tty: serial: qcom_geni_serial: Remove interrupt storm
+To:     Ryan Case <ryandcase@chromium.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-serial@vger.kernel.org, Stephen Boyd <swboyd@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Christophe,
+Hi,
 
-You know it's the trivial patches that are going to get lots of review
-comments :)
+On Thu, Dec 13, 2018 at 11:43 AM Ryan Case <ryandcase@chromium.org> wrote:
+>
+> Disable M_TX_FIFO_WATERMARK_EN after we've sent all data for a given
+> transaction so we don't continue to receive a flurry of free space
+> interrupts while waiting for the M_CMD_DONE notification. Re-enable the
+> watermark when establishing the next transaction.
+>
+> Also clear the watermark interrupt after filling the FIFO so we do not
+> receive notification again prior to actually having free space.
+>
+> Signed-off-by: Ryan Case <ryandcase@chromium.org>
+> ---
+>
+> Changes in v2:
+> Addressed Doug's comments
+>  - Avoid M_TX_WATERMARK_EN writes when values already match
+>  - Added note about M_TX_WATERMARK_EN triggering and latching
+>
+>  drivers/tty/serial/qcom_geni_serial.c | 25 +++++++++++++++++++++++--
+>  1 file changed, 23 insertions(+), 2 deletions(-)
 
-Christophe Leroy <christophe.leroy@c-s.fr> writes:
-> As several other arches including x86, this patch makes it explicit
-> that a bad page fault is a NULL pointer dereference when the fault
-> address is lower than PAGE_SIZE
+Thanks!
 
-I'm being pedantic, but it's not necessarily a NULL pointer dereference.
-It might just be a direct access to a low address, eg:
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
 
- char *p = 0x100;
- *p = 0;
+If I echo something out the serial port I now see 2 interrupts fire.
+That seems about right compared to before where we'd get boatloads.
+Thus:
 
-That's not a NULL pointer dereference.
-
-But other arches do print this so I guess it's OK to add, and in most
-cases it will be an actual NULL pointer dereference.
-
-I wonder though if we should use 4096 rather than PAGE_SIZE, given
-that's the actual value other arches are using. We support 256K pages on
-some systems, which is getting quite large.
-
-> diff --git a/arch/powerpc/mm/fault.c b/arch/powerpc/mm/fault.c
-> index d51cf5f4e45e..501a1eadb3e9 100644
-> --- a/arch/powerpc/mm/fault.c
-> +++ b/arch/powerpc/mm/fault.c
-> @@ -631,13 +631,16 @@ void bad_page_fault(struct pt_regs *regs, unsigned long address, int sig)
->  	switch (TRAP(regs)) {
->  	case 0x300:
->  	case 0x380:
-> -		printk(KERN_ALERT "Unable to handle kernel paging request for "
-> -			"data at address 0x%08lx\n", regs->dar);
-> +		pr_alert("Unable to handle kernel %s for data at address 0x%08lx\n",
-> +			 regs->dar < PAGE_SIZE ? "NULL pointer dereference" :
-> +						 "paging request",
-> +			 regs->dar);
-
-This is now too long I think, with printk time you get:
-
-[ 1096.450711] Unable to handle kernel NULL pointer dereference for data at address 0x00000000
-
-Which is 93 columns. It's true on many systems it doesn't really matter
-any more, but it would still be good if it was shorter.
-
-I like that on x86 they prefix it with "BUG:", just to avoid any confusion.
-
-What if we had for the NULL pointer case:
-
-  BUG: Kernel NULL pointer dereference at 0x00000000
-
-And for the normal case:
-
-  BUG: Unable to handle kernel data access at 0x00000000
-
-Note on the very next line we print:
-  Faulting instruction address: 0xc000000000795cc8
-
-So there should be no confusion about whether "at" refers to the data
-address or the instruction address.
-
->  	case 0x400:
->  	case 0x480:
-> -		printk(KERN_ALERT "Unable to handle kernel paging request for "
-> -			"instruction fetch\n");
-> +		pr_alert("Unable to handle kernel %s for instruction fetch\n",
-> +			 regs->nip < PAGE_SIZE ? "NULL pointer dereference" :
-> +						 "paging request");
-
-I don't really like using "NULL pointer dereference" here, that
-terminology makes me think of a load/store, I think it confuses things
-rather than making it clearer.
-
-What about:
-
-  BUG: Unable to handle kernel instruction fetch at 0x00000000
+Tested-by: Douglas Anderson <dianders@chromium.org>
 
 
->  		break;
->  	case 0x600:
->  		printk(KERN_ALERT "Unable to handle kernel paging request for "
-
-It would be good to clean up these other cases as well. They seem to be
-trying to use the "page request for" terminology which leads to them
-being very wordy. I assume that was done to help people grepping kernel
-logs for errors, but I think we should not worry about that if we have
-the "BUG:" prefix.
-
-So we have:
-	printk(KERN_ALERT "Unable to handle kernel paging request for "
-		"unaligned access at address 0x%08lx\n", regs->dar);
-
-What about:
-
-  BUG: Unable to handle kernel unaligned access at 0x00000000
-
-And:
-	printk(KERN_ALERT "Unable to handle kernel paging request for "
-		"unknown fault\n");
-
-What about:
-
-  BUG: Unable to handle unknown paging fault at 0x00000000
-
-
-Thoughts?
-
-cheers
+-Doug
