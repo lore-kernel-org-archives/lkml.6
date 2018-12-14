@@ -2,53 +2,55 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB4CAC67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:42:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BDF1C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:42:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE41620892
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:42:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3127D20892
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:42:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544791360;
-	bh=gGspOn1/vegOuqDB8u5K8d1A2vchGhmqt9WQXLxJTUo=;
+	s=default; t=1544791368;
+	bh=XrauvEOa53ikCGFVJHyx06BItSS9t0SpFyB/1npC0B0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=lZ5k/jH7esP8HBbsvMgAnXEbVbCOGSAHp9a+dv4hQTDflyIw2ykJh/qWs8Scxu2mx
-	 m+EcBgPj1o/069LtPBLVH07sTBM6Bdu3PRY5QlV0OBK10kkzgUQDWIZZKBW5XbXW7e
-	 C1pH9ybB3HkRv1GlK9pYXXejjhmqChbEzEBBOfMM=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE41620892
+	b=MaSyrtnDaKy0g25LJvR8oqoGiuWv0NLnUdX/VRdIG4UYN6Mg7otG8sJRr4LfPvfC5
+	 R+8L09NqQAhvfMuCj4NLybqq/MljvupDZ8szyH2Hc5jUjKQiZjzEtxn7+n7skCvdna
+	 bknmw1F25J5+j1jmUQ9Lkl9PUoojqtyBWexvSDlo=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3127D20892
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730526AbeLNMmj (ORCPT
+        id S1730137AbeLNMCp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:42:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45896 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:02:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45704 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730154AbeLNMCt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:02:49 -0500
+        id S1730102AbeLNMCl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:02:41 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3CA4E2146F;
-        Fri, 14 Dec 2018 12:02:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7F1942145D;
+        Fri, 14 Dec 2018 12:02:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544788968;
-        bh=gGspOn1/vegOuqDB8u5K8d1A2vchGhmqt9WQXLxJTUo=;
+        s=default; t=1544788961;
+        bh=XrauvEOa53ikCGFVJHyx06BItSS9t0SpFyB/1npC0B0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ByVntFfbroHMK32Gw0TpCqz5kYS3QtH4vN91h/LxD6utqyuCnhg1g9J8GfJC6kwLe
-         kMym5juL5wKlK9yDBWtJ/qsku5rtB1CqBd0LyarxPPMBSl50py4XfubnOSILtRLiX5
-         qHoooLC8FJRz0GhB7uL6fTOj1WG3cDP0YPW1Lg3I=
+        b=LCrMh5JbR25Sh4o4lWoH+pNHs9qXXye9FMHldRmoziIOOPP6/mSerzAJsieZnroxL
+         cTHkpSmD+M+GutzzCqZjrBhYJ2qe5mmN7F25HSIUMwGzoxa63T3g6aS/NY0HbXWL1d
+         JLu4Qrv0J849Qr1FAHn2tHAhDww9wqo3Uu5xcsNk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sabrina Dubroca <sd@queasysnail.net>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 020/142] net: restore call to netdev_queue_numa_node_write when resetting XPS
-Date:   Fri, 14 Dec 2018 12:58:25 +0100
-Message-Id: <20181214115747.856719566@linuxfoundation.org>
+        stable@vger.kernel.org, Florian Westphal <fw@strlen.de>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 039/142] netfilter: nf_tables: dont skip inactive chains during update
+Date:   Fri, 14 Dec 2018 12:58:44 +0100
+Message-Id: <20181214115748.612121736@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115747.053633987@linuxfoundation.org>
 References: <20181214115747.053633987@linuxfoundation.org>
@@ -67,52 +69,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sabrina Dubroca <sd@queasysnail.net>
+[ Upstream commit 0fb39bbe43d4481fcf300d2b5822de60942fd189 ]
 
-[ Upstream commit f28c020fb488e1a8b87469812017044bef88aa2b ]
+There is no synchronization between packet path and the configuration plane.
 
-Before commit 80d19669ecd3 ("net: Refactor XPS for CPUs and Rx queues"),
-netif_reset_xps_queues() did netdev_queue_numa_node_write() for all the
-queues being reset. Now, this is only done when the "active" variable in
-clean_xps_maps() is false, ie when on all the CPUs, there's no active
-XPS mapping left.
+The packet path uses two arrays with rules, one contains the current (active)
+generation.  The other either contains the last (obsolete) generation or
+the future one.
 
-Fixes: 80d19669ecd3 ("net: Refactor XPS for CPUs and Rx queues")
-Signed-off-by: Sabrina Dubroca <sd@queasysnail.net>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Consider:
+cpu1               cpu2
+                   nft_do_chain(c);
+delete c
+net->gen++;
+                   genbit = !!net->gen;
+                   rules = c->rg[genbit];
+
+cpu1 ignores c when updating if c is not active anymore in the new
+generation.
+
+On cpu2, we now use rules from wrong generation, as c->rg[old]
+contains the rules matching 'c' whereas c->rg[new] was not updated and
+can even point to rules that have been free'd already, causing a crash.
+
+To fix this, make sure that 'current' to the 'next' generation are
+identical for chains that are going away so that c->rg[new] will just
+use the matching rules even if genbit was incremented already.
+
+Fixes: 0cbc06b3faba7 ("netfilter: nf_tables: remove synchronize_rcu in commit phase")
+Signed-off-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/core/dev.c |   16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
+ net/netfilter/nf_tables_api.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -2173,17 +2173,19 @@ static void clean_xps_maps(struct net_de
- 		active |= remove_xps_queue_cpu(dev, dev_maps, j, offset,
- 					       count);
- 	if (!active) {
--		if (is_rxqs_map) {
-+		if (is_rxqs_map)
- 			RCU_INIT_POINTER(dev->xps_rxqs_map, NULL);
--		} else {
-+		else
- 			RCU_INIT_POINTER(dev->xps_cpus_map, NULL);
-+		kfree_rcu(dev_maps, rcu);
-+	}
- 
--			for (i = offset + (count - 1); count--; i--)
--				netdev_queue_numa_node_write(
--					netdev_get_tx_queue(dev, i),
--							NUMA_NO_NODE);
-+	if (!is_rxqs_map) {
-+		for (i = offset + (count - 1); count--; i--) {
-+			netdev_queue_numa_node_write(
-+				netdev_get_tx_queue(dev, i),
-+				NUMA_NO_NODE);
- 		}
--		kfree_rcu(dev_maps, rcu);
- 	}
+diff --git a/net/netfilter/nf_tables_api.c b/net/netfilter/nf_tables_api.c
+index 2cfb173cd0b2..4c016b49fe2b 100644
+--- a/net/netfilter/nf_tables_api.c
++++ b/net/netfilter/nf_tables_api.c
+@@ -6277,7 +6277,7 @@ static void nf_tables_commit_chain_free_rules_old(struct nft_rule **rules)
+ 	call_rcu(&old->h, __nf_tables_commit_chain_free_rules_old);
  }
  
+-static void nf_tables_commit_chain_active(struct net *net, struct nft_chain *chain)
++static void nf_tables_commit_chain(struct net *net, struct nft_chain *chain)
+ {
+ 	struct nft_rule **g0, **g1;
+ 	bool next_genbit;
+@@ -6363,11 +6363,8 @@ static int nf_tables_commit(struct net *net, struct sk_buff *skb)
+ 
+ 	/* step 2.  Make rules_gen_X visible to packet path */
+ 	list_for_each_entry(table, &net->nft.tables, list) {
+-		list_for_each_entry(chain, &table->chains, list) {
+-			if (!nft_is_active_next(net, chain))
+-				continue;
+-			nf_tables_commit_chain_active(net, chain);
+-		}
++		list_for_each_entry(chain, &table->chains, list)
++			nf_tables_commit_chain(net, chain);
+ 	}
+ 
+ 	/*
+-- 
+2.19.1
+
 
 
