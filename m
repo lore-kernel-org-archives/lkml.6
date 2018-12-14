@@ -2,117 +2,96 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39BDEC6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 09:31:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EABDC67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 09:32:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A23C2080F
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 09:31:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A23C2080F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
+	by mail.kernel.org (Postfix) with ESMTP id DD6C520645
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 09:32:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD6C520645
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729054AbeLNJay (ORCPT
+        id S1729258AbeLNJcE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 04:30:54 -0500
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:6629 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728866AbeLNJau (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 04:30:50 -0500
-X-IronPort-AV: E=Sophos;i="5.56,352,1539619200"; 
-   d="scan'208";a="49767742"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 14 Dec 2018 17:30:49 +0800
-Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
-        by cn.fujitsu.com (Postfix) with ESMTP id 392FE4B734D8;
-        Fri, 14 Dec 2018 17:30:46 +0800 (CST)
-Received: from localhost.local (10.167.225.56) by
- G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Fri, 14 Dec 2018 17:30:45 +0800
-From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
-To:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>, <bp@alien8.de>,
-        <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>,
-        <keescook@chromium.org>, <bhe@redhat.com>, <msys.mizuma@gmail.com>
-CC:     <indou.takao@jp.fujitsu.com>, <caoj.fnst@cn.fujitsu.com>,
-        <fanc.fnst@cn.fujitsu.com>
-Subject: [PATCH v14 1/5] x86/boot: Introduce get_acpi_rsdp() to parse RSDP in cmdline from KEXEC
-Date:   Fri, 14 Dec 2018 17:30:09 +0800
-Message-ID: <20181214093013.13370-2-fanc.fnst@cn.fujitsu.com>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20181214093013.13370-1-fanc.fnst@cn.fujitsu.com>
-References: <20181214093013.13370-1-fanc.fnst@cn.fujitsu.com>
+        Fri, 14 Dec 2018 04:32:04 -0500
+Received: from mx2.suse.de ([195.135.220.15]:45358 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727579AbeLNJcE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 04:32:04 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 864D2AD02;
+        Fri, 14 Dec 2018 09:32:02 +0000 (UTC)
+Date:   Fri, 14 Dec 2018 10:32:01 +0100
+From:   Petr Mladek <pmladek@suse.com>
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     Jiri Kosina <jikos@kernel.org>, Miroslav Benes <mbenes@suse.cz>,
+        Jason Baron <jbaron@akamai.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jessica Yu <jeyu@kernel.org>
+Subject: Re: [PATCH v14 03/11] livepatch: Consolidate klp_free functions
+Message-ID: <20181214093201.otrr7irvigrhwlzu@pathway.suse.cz>
+References: <20181129094431.7801-1-pmladek@suse.com>
+ <20181129094431.7801-4-pmladek@suse.com>
+ <20181213221037.qaxd5jswdrbv5oxz@treble>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.167.225.56]
-X-yoursite-MailScanner-ID: 392FE4B734D8.A8A8E
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181213221037.qaxd5jswdrbv5oxz@treble>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Memory information in SRAT is necessary to fix the conflict between
-KASLR and memory-hotremove.
+On Thu 2018-12-13 16:10:37, Josh Poimboeuf wrote:
+> On Thu, Nov 29, 2018 at 10:44:23AM +0100, Petr Mladek wrote:
+> > +static void klp_free_funcs(struct klp_object *obj)
+> >  {
+> >  	struct klp_func *func;
+> >  
+> > -	for (func = obj->funcs; func->old_name && func != limit; func++)
+> > -		kobject_put(&func->kobj);
+> > +	klp_for_each_func(obj, func) {
+> > +		/* Might be called from klp_init_patch() error path. */
+> > +		if (func->kobj_alive) {
+> > +			func->kobj_alive = false;
+> > +			kobject_put(&func->kobj);
+> > +		}
+> 
+> Why does it set 'kobj_alive' to false?  The value will never be read
+> again anyway, right?
 
-ACPI SRAT (System/Static Resource Affinity Table) shows the details
-about memory ranges, including ranges of memory provided by hot-added
-memory devices. SRAT is introduced by Root System Description
-Pointer(RSDP), so RSDP should be found firstly.
+You are right. I'll remove it in v15.
 
-When booting form KEXEC/EFI/BIOS, the methods to find RSDP
-are different. When booting from KEXEC, 'acpi_rsdp' may have been
-added to cmdline, so parse cmdline to find RSDP.
-
-Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
----
- arch/x86/boot/compressed/acpi.c | 30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
- create mode 100644 arch/x86/boot/compressed/acpi.c
-
-diff --git a/arch/x86/boot/compressed/acpi.c b/arch/x86/boot/compressed/acpi.c
-new file mode 100644
-index 000000000000..44f19546c169
---- /dev/null
-+++ b/arch/x86/boot/compressed/acpi.c
-@@ -0,0 +1,30 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#define BOOT_CTYPE_H
-+#include "misc.h"
-+#include "error.h"
-+
-+#include <linux/efi.h>
-+#include <linux/numa.h>
-+#include <linux/acpi.h>
-+#include <asm/efi.h>
-+
-+/* Max length of 64-bit hex address string is 18, prefix "0x" + 16 hex digits */
-+#define MAX_ADDRESS_LENGTH 18
-+
-+static acpi_physical_address get_acpi_rsdp(void)
-+{
-+#ifdef CONFIG_KEXEC
-+	char val[MAX_ADDRESS_LENGTH+1];
-+	unsigned long long res;
-+	int len;
-+
-+	len = cmdline_find_option("acpi_rsdp", val, MAX_ADDRESS_LENGTH+1);
-+	if (len > 0) {
-+		char *e;
-+
-+		val[len] = '\0';
-+		return (acpi_physical_address)simple_strtoull(val, &e, 16);
-+	}
-+#endif
-+	return 0;
-+}
--- 
-2.19.2
+My intention was that it might signalize that the kobject is being
+freed and eventually affect the behavior of sysfs-related callbacks.
+But in reality, it should be handled by some per-patch flag instead
+of a per-object one.
 
 
+> Also, the name isn't quite right.  The kobject is technically still
+> alive here, and may even continue to be alive after the kobject_put(),
+> if there's a sysfs reference to it somewhere.
+> 
+> Maybe it should be called something like 'kobj_initialized' instead.
+> Then it doesn't ever need to be set to false -- unless I'm missing
+> something.
 
+This might cause confusion with kobj.state_initialized. This internal
+kobject flag is set when the reference counter is initialized. But
+it is true even before kobject_add() is called.
+
+We need a flag that signalizes that kobject_add() succeeded and we
+can and must call kobject_put().
+
+What about calling it 'kobj_added'?
+
+Best Regards,
+Petr
