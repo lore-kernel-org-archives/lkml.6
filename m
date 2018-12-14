@@ -2,144 +2,284 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DA5CC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 21:43:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38B10C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 21:46:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4D9D2086D
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 21:43:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 620282086D
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 21:46:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="V1DP0JPO"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Fp3V11oG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731200AbeLNVnA (ORCPT
+        id S1731063AbeLNVqp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 16:43:00 -0500
-Received: from smtprelay.synopsys.com ([198.182.47.9]:40510 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730758AbeLNVnA (ORCPT
+        Fri, 14 Dec 2018 16:46:45 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:43315 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730734AbeLNVqo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 16:43:00 -0500
-Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id A328624E0EC0;
-        Fri, 14 Dec 2018 13:42:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1544823779; bh=Wu+TVcoDh+xsDcUVrnmqZ6QOZuZZGH4Y3fupPjy9T9M=;
-        h=From:To:CC:Subject:Date:References:From;
-        b=V1DP0JPOhr0BdyvFMjEHjmM4Ks7ah1CkR9Wn+9zgEXtTCxE1tAHLVSsdWae1rqexT
-         q76ftOZIS3lw1oLnVgL5p2ZRHZWDwd0jlXts2tqhfr9DHV+DSCo+kzz0KFH4qNG/F0
-         cM7Ae/V+383VuPe1lEJ1xc9wOO4mxHzRYjm52/erNmm30NTaVRdmAzQkWrWTw+XAG/
-         s8xUjBD//5mJLhaBIkdz8yndybaoPFgoBiupY9y+F2oZqh/FFeLJ6jQg0+NBgSK2LT
-         DE2V7g4tzf8eN/uec0QPqfG5Sxl3kEhA0dAtzyw04OmXZrzJrJXicfR5weQPSfzxw6
-         ikfxFEsjCrLCg==
-Received: from US01WXQAHTC1.internal.synopsys.com (us01wxqahtc1.internal.synopsys.com [10.12.238.230])
-        by mailhost.synopsys.com (Postfix) with ESMTP id CAE61376E;
-        Fri, 14 Dec 2018 13:42:55 -0800 (PST)
-Received: from us01wembx1.internal.synopsys.com ([169.254.1.228]) by
- US01WXQAHTC1.internal.synopsys.com ([::1]) with mapi id 14.03.0415.000; Fri,
- 14 Dec 2018 13:42:55 -0800
-From:   Thinh Nguyen <thinh.nguyen@synopsys.com>
-To:     Felipe Balbi <balbi@kernel.org>,
-        "Zengtao (B)" <prime.zeng@hisilicon.com>
-CC:     liangshengjun <liangshengjun@hisilicon.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Thinh Nguyen <thinh.nguyen@synopsys.com>
-Subject: Re: [PATCH] usb: dwc3: gadget: fix miss isoc issue introduced by
- IRQ latency
-Thread-Topic: [PATCH] usb: dwc3: gadget: fix miss isoc issue introduced by
- IRQ latency
-Thread-Index: AQHUk4c4aTEJCOLnsUKRaItzQg17Vw==
-Date:   Fri, 14 Dec 2018 21:42:54 +0000
-Message-ID: <30102591E157244384E984126FC3CB4F639AA2A3@us01wembx1.internal.synopsys.com>
-References: <1544805179-2248-1-git-send-email-prime.zeng@hisilicon.com>
- <87efaklcd1.fsf@linux.intel.com>
- <678F3D1BB717D949B966B68EAEB446ED24E20BE5@dggemm526-mbx.china.huawei.com>
- <878t0sl5br.fsf@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.13.184.20]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Fri, 14 Dec 2018 16:46:44 -0500
+Received: by mail-lj1-f196.google.com with SMTP id 83-v6so6110906ljf.10
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 13:46:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Uqopf14hjHTwb+DWu94IkkrLMh1BDWTMDJ4FeeBWyjs=;
+        b=Fp3V11oGIYca1raMHfhcjjf6R56DOiH5qDmOzJIoi6TVH4B+P+PYytyCiTQYNgI0tw
+         IsCVHxB/F7QsDQ1SfPA9j1Sx0sMD/kgATVUsXVqvRPas6sVK9SP1LJXtMIopxNGc1Sve
+         xrBN+hDJkmN9ybMUymx2+J2m0ZMxDjQoxh/vs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Uqopf14hjHTwb+DWu94IkkrLMh1BDWTMDJ4FeeBWyjs=;
+        b=nH+MFN3cPvsr7VlO4DL/Mta/9oEt1YJmR54MkV/EY5ZOMFbT3xTVUOcFZR5KUtD8po
+         aZKoRE484uKuKIG09L8ISwzq1LTfkPmWJdH2IAZvStFgH/VCJiBcRHo8gAJsfjKv7VA+
+         Xu67lDIP94I7Uf6GlLdN6ks/iM9gwknW2Hzf0a6WTyfPHKEiEeZSKJN4oABCKEMbDMbr
+         mvMtU8T5ieEBkCFPloJ88SKd2zf7P/wmvkDJuJDjh8/GQjeoFFZy2DYp8D57/2fZGmt/
+         QWYK8ayZIpfwL/1jr1VTMugA4tQ+oQYhFq6wFRRfsYUKzQ9I//g2MSVPJ2Zv5DPI+2AY
+         W6yQ==
+X-Gm-Message-State: AA+aEWaaiDFcrWfSUgiwbJ9+ERAnXb6IiUahHUrqW40fC2s3+l8hfSok
+        oRF5ZTLOEYepUfg8BQ0+4x/4sg==
+X-Google-Smtp-Source: AFSGD/Vp/7UtpjeAFNvXLB4WiJvyyDgGcSOrkohlbI+G2eMeZYlgc2Zvbxb7nvRTUCg0XFu/UfpGjg==
+X-Received: by 2002:a2e:7403:: with SMTP id p3-v6mr2795487ljc.97.1544824001695;
+        Fri, 14 Dec 2018 13:46:41 -0800 (PST)
+Received: from localhost.localdomain (c-573670d5.07-21-73746f28.bbcust.telenor.se. [213.112.54.87])
+        by smtp.gmail.com with ESMTPSA id m4-v6sm1021559ljb.58.2018.12.14.13.46.40
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 14 Dec 2018 13:46:40 -0800 (PST)
+Date:   Fri, 14 Dec 2018 22:07:34 +0100
+From:   Anders Roxell <anders.roxell@linaro.org>
+To:     shuah@kernel.org
+Cc:     tglx@linutronix.de, mingo@redhat.com, peterz@infradead.org,
+        dvhart@infradead.org, bamv2005@gmail.com, brgl@bgdev.pl,
+        fathi.boudra@linaro.org, daniel.diaz@linaro.org,
+        pintu.ping@gmail.com, pbonzini@redhat.com, drjones@redhat.com,
+        hofsass@google.com, peterx@redhat.com, peng.hao2@zte.com.cn,
+        wei@redhat.com, davem@davemloft.net, dcaratti@redhat.com,
+        akpm@linux-foundation.org, mhocko@suse.com, khalid.aziz@oracle.com,
+        mpe@ellerman.id.au, aneesh.kumar@linux.vnet.ibm.com,
+        dima@arista.com, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH] selftests: Fix test errors related to lib.mk khdr target
+Message-ID: <20181214210734.GF3448@localhost.localdomain>
+References: <20181213200011.10779-1-shuah@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20181213200011.10779-1-shuah@kernel.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Zengtao,=0A=
-=0A=
-On 12/14/2018 3:24 AM, Felipe Balbi wrote:=0A=
-> Hi,=0A=
->=0A=
-> "Zengtao (B)" <prime.zeng@hisilicon.com> writes:=0A=
->>> -----Original Message-----=0A=
->>> From: Felipe Balbi [mailto:balbi@kernel.org]=0A=
->>> Sent: Friday, December 14, 2018 4:52 PM=0A=
->>> To: Zengtao (B) <prime.zeng@hisilicon.com>=0A=
->>> Cc: liangshengjun <liangshengjun@hisilicon.com>; Zengtao (B)=0A=
->>> <prime.zeng@hisilicon.com>; Greg Kroah-Hartman=0A=
->>> <gregkh@linuxfoundation.org>; linux-usb@vger.kernel.org;=0A=
->>> linux-kernel@vger.kernel.org=0A=
->>> Subject: Re: [PATCH] usb: dwc3: gadget: fix miss isoc issue introduced =
-by=0A=
->>> IRQ latency=0A=
->>>=0A=
->>> * PGP Signed by an unknown key=0A=
->>>=0A=
->>> Zeng Tao <prime.zeng@hisilicon.com> writes:=0A=
->>>=0A=
->>>> If it's a busy system, some times when we start an isoc transfer, the=
-=0A=
->>>> framenumber get from the event buffer may be already elasped, in this=
-=0A=
->>>> case, we will get all the packets dropped due to miss isoc. And we=0A=
->>>> turn into transfer nothing, to fix this issue, we need to fix the=0A=
->>>> framenumber to make sure that it's not out of date.=0A=
->>>>=0A=
->>>> Signed-off-by: Liang Shengjun <liangshengjun@hisilicon.com>=0A=
->>>> Signed-off-by: Zeng Tao <prime.zeng@hisilicon.com>=0A=
->>> There's a patch going upstream already doing this:=0A=
->>>=0A=
->>> https://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git/commit/?h=
-=0A=
->>> =3Dnext&id=3Dd53701067f048b8b11635e964b6d3bd9a248c622=0A=
->>>=0A=
->> Sorry, I think I missed to update to the latest version. But I think my =
-=0A=
->> patch is more efficient. Because I just sync the frame from the HW, it=
-=0A=
->>  won't fail and there is no need to extra tries.=0A=
->>=0A=
->> What do you think about it?=0A=
-> the 14 bits you use for your check is not representative of the actual=0A=
-> micro-frame you're currently in. Thinh explained that in the discussion=
-=0A=
-> we had until we came to the patch I pointed you to above. Please look at=
-=0A=
-> the mailing list archives for details.=0A=
->=0A=
-=0A=
-There are several issues with this patch.=0A=
-1) Your frame elapsed time check is not based on interval but statically=0A=
-DWC3_EVENT_PRAM_SOFFN / 2. That's about 1 second. So it doesn't account=0A=
-for isoc transfers with large service interval of 1 sec or more.=0A=
-2) This function __dwc3_gadget_target_frame_elapsed() should have=0A=
-comments for what it does. The name implies that this function checks=0A=
-for eframe > cframe, and not eframe > cframe + 1s.=0A=
-3) If this check fails, then it will do DWC3_ALIGN_FRAME() at least=0A=
-twice. The isoc transfer will start 1 more interval into the future than=0A=
-it needs to.=0A=
-=0A=
-Also, I think the role of this check should be from the controller as it=0A=
-has more information and its own logic to decide if the selected future=0A=
-uframe has elapsed.=0A=
-=0A=
-BR,=0A=
-Thinh=0A=
+On 2018-12-13 13:00, shuah@kernel.org wrote:
+> From: Shuah Khan <shuah@kernel.org>
+> 
+> Commit b2d35fa5fc80 ("selftests: add headers_install to lib.mk") added
+> khdr target to run headers_install target from the main Makefile. The
+> logic uses KSFT_KHDR_INSTALL and top_srcdir as controls to initialize
+> variables and include files to run headers_install from the top level
+> Makefile. There are a few problems with this logic.
+> 
+> 1. Exposes top_srcdir to all tests
+> 2. Common logic impacts all tests
+> 3. Uses KSFT_KHDR_INSTALL, top_srcdir, and khdr in an adhoc way. Tests
+>    add "khdr" dependency in their Makefiles to TEST_PROGS_EXTENDED in
+>    some cases, and STATIC_LIBS in other cases. This makes this framework
+>    confusing to use.
+> 
+> The common logic that runs for all tests even when KSFT_KHDR_INSTALL
+> isn't defined by the test. top_srcdir is initialized to a default value
+> when test doesn't initialize it. It works for all tests without a sub-dir
+> structure and tests with sub-dir structure fail to build.
+> 
+> e.g: make -C sparc64/drivers/ or make -C drivers/dma-buf
+> 
+> ../../lib.mk:20: ../../../../scripts/subarch.include: No such file or directory
+> make: *** No rule to make target '../../../../scripts/subarch.include'.  Stop.
+> 
+> There is no reason to require all tests to define top_srcdir and there is
+> no need to require tests to add khdr dependency using adhoc changes to
+> TEST_* and other variables.
+> 
+> Fix it with a consistent use of KSFT_KHDR_INSTALL and top_srcdir from tests
+> that have the dependency on headers_install.
+> 
+> Change common logic to include khdr target define and "all" target with
+> dependency on khdr when KSFT_KHDR_INSTALL is defined.
+> 
+> Only tests that have dependency on headers_install have to define just
+> the KSFT_KHDR_INSTALL, and top_srcdir variables and there is no need to
+> specify khdr dependency in the test Makefiles.
+> 
+> Fixes: b2d35fa5fc80 ("selftests: add headers_install to lib.mk")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Shuah Khan <shuah@kernel.org>
+
+Looks good.
+
+Reviewed-by: Anders Roxell <anders.roxell@linaro.org>
+
+Cheers,
+Anders
+
+> 
+> ---
+>  tools/testing/selftests/android/Makefile                 | 2 +-
+>  tools/testing/selftests/futex/functional/Makefile        | 1 +
+>  tools/testing/selftests/gpio/Makefile                    | 6 +++---
+>  tools/testing/selftests/kvm/Makefile                     | 2 +-
+>  tools/testing/selftests/lib.mk                           | 8 ++++----
+>  tools/testing/selftests/networking/timestamping/Makefile | 1 +
+>  tools/testing/selftests/tc-testing/bpf/Makefile          | 1 +
+>  tools/testing/selftests/vm/Makefile                      | 1 +
+>  8 files changed, 13 insertions(+), 9 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/android/Makefile b/tools/testing/selftests/android/Makefile
+> index d9a725478375..72c25a3cb658 100644
+> --- a/tools/testing/selftests/android/Makefile
+> +++ b/tools/testing/selftests/android/Makefile
+> @@ -6,7 +6,7 @@ TEST_PROGS := run.sh
+>  
+>  include ../lib.mk
+>  
+> -all: khdr
+> +all:
+>  	@for DIR in $(SUBDIRS); do		\
+>  		BUILD_TARGET=$(OUTPUT)/$$DIR;	\
+>  		mkdir $$BUILD_TARGET  -p;	\
+> diff --git a/tools/testing/selftests/futex/functional/Makefile b/tools/testing/selftests/futex/functional/Makefile
+> index ad1eeb14fda7..30996306cabc 100644
+> --- a/tools/testing/selftests/futex/functional/Makefile
+> +++ b/tools/testing/selftests/futex/functional/Makefile
+> @@ -19,6 +19,7 @@ TEST_GEN_FILES := \
+>  TEST_PROGS := run.sh
+>  
+>  top_srcdir = ../../../../..
+> +KSFT_KHDR_INSTALL := 1
+>  include ../../lib.mk
+>  
+>  $(TEST_GEN_FILES): $(HEADERS)
+> diff --git a/tools/testing/selftests/gpio/Makefile b/tools/testing/selftests/gpio/Makefile
+> index 46648427d537..07f572a1bd3f 100644
+> --- a/tools/testing/selftests/gpio/Makefile
+> +++ b/tools/testing/selftests/gpio/Makefile
+> @@ -10,8 +10,6 @@ TEST_PROGS_EXTENDED := gpio-mockup-chardev
+>  GPIODIR := $(realpath ../../../gpio)
+>  GPIOOBJ := gpio-utils.o
+>  
+> -include ../lib.mk
+> -
+>  all: $(TEST_PROGS_EXTENDED)
+>  
+>  override define CLEAN
+> @@ -19,7 +17,9 @@ override define CLEAN
+>  	$(MAKE) -C $(GPIODIR) OUTPUT=$(GPIODIR)/ clean
+>  endef
+>  
+> -$(TEST_PROGS_EXTENDED):| khdr
+> +KSFT_KHDR_INSTALL := 1
+> +include ../lib.mk
+> +
+>  $(TEST_PROGS_EXTENDED): $(GPIODIR)/$(GPIOOBJ)
+>  
+>  $(GPIODIR)/$(GPIOOBJ):
+> diff --git a/tools/testing/selftests/kvm/Makefile b/tools/testing/selftests/kvm/Makefile
+> index 01a219229238..52bfe5e76907 100644
+> --- a/tools/testing/selftests/kvm/Makefile
+> +++ b/tools/testing/selftests/kvm/Makefile
+> @@ -1,6 +1,7 @@
+>  all:
+>  
+>  top_srcdir = ../../../..
+> +KSFT_KHDR_INSTALL := 1
+>  UNAME_M := $(shell uname -m)
+>  
+>  LIBKVM = lib/assert.c lib/elf.c lib/io.c lib/kvm_util.c lib/ucall.c lib/sparsebit.c
+> @@ -44,7 +45,6 @@ $(OUTPUT)/libkvm.a: $(LIBKVM_OBJ)
+>  
+>  all: $(STATIC_LIBS)
+>  $(TEST_GEN_PROGS): $(STATIC_LIBS)
+> -$(STATIC_LIBS):| khdr
+>  
+>  cscope: include_paths = $(LINUX_TOOL_INCLUDE) $(LINUX_HDR_PATH) include lib ..
+>  cscope:
+> diff --git a/tools/testing/selftests/lib.mk b/tools/testing/selftests/lib.mk
+> index 0a8e75886224..8b0f16409ed7 100644
+> --- a/tools/testing/selftests/lib.mk
+> +++ b/tools/testing/selftests/lib.mk
+> @@ -16,18 +16,18 @@ TEST_GEN_PROGS := $(patsubst %,$(OUTPUT)/%,$(TEST_GEN_PROGS))
+>  TEST_GEN_PROGS_EXTENDED := $(patsubst %,$(OUTPUT)/%,$(TEST_GEN_PROGS_EXTENDED))
+>  TEST_GEN_FILES := $(patsubst %,$(OUTPUT)/%,$(TEST_GEN_FILES))
+>  
+> +ifdef KSFT_KHDR_INSTALL
+>  top_srcdir ?= ../../../..
+>  include $(top_srcdir)/scripts/subarch.include
+>  ARCH		?= $(SUBARCH)
+>  
+> -all: $(TEST_GEN_PROGS) $(TEST_GEN_PROGS_EXTENDED) $(TEST_GEN_FILES)
+> -
+>  .PHONY: khdr
+>  khdr:
+>  	make ARCH=$(ARCH) -C $(top_srcdir) headers_install
+>  
+> -ifdef KSFT_KHDR_INSTALL
+> -$(TEST_GEN_PROGS) $(TEST_GEN_PROGS_EXTENDED) $(TEST_GEN_FILES):| khdr
+> +all: khdr $(TEST_GEN_PROGS) $(TEST_GEN_PROGS_EXTENDED) $(TEST_GEN_FILES)
+> +else
+> +all: $(TEST_GEN_PROGS) $(TEST_GEN_PROGS_EXTENDED) $(TEST_GEN_FILES)
+>  endif
+>  
+>  .ONESHELL:
+> diff --git a/tools/testing/selftests/networking/timestamping/Makefile b/tools/testing/selftests/networking/timestamping/Makefile
+> index 14cfcf006936..c46c0eefab9e 100644
+> --- a/tools/testing/selftests/networking/timestamping/Makefile
+> +++ b/tools/testing/selftests/networking/timestamping/Makefile
+> @@ -6,6 +6,7 @@ TEST_PROGS := hwtstamp_config rxtimestamp timestamping txtimestamp
+>  all: $(TEST_PROGS)
+>  
+>  top_srcdir = ../../../../..
+> +KSFT_KHDR_INSTALL := 1
+>  include ../../lib.mk
+>  
+>  clean:
+> diff --git a/tools/testing/selftests/tc-testing/bpf/Makefile b/tools/testing/selftests/tc-testing/bpf/Makefile
+> index dc92eb271d9a..be5a5e542804 100644
+> --- a/tools/testing/selftests/tc-testing/bpf/Makefile
+> +++ b/tools/testing/selftests/tc-testing/bpf/Makefile
+> @@ -4,6 +4,7 @@ APIDIR := ../../../../include/uapi
+>  TEST_GEN_FILES = action.o
+>  
+>  top_srcdir = ../../../../..
+> +KSFT_KHDR_INSTALL := 1
+>  include ../../lib.mk
+>  
+>  CLANG ?= clang
+> diff --git a/tools/testing/selftests/vm/Makefile b/tools/testing/selftests/vm/Makefile
+> index 6e67e726e5a5..e13eb6cc8901 100644
+> --- a/tools/testing/selftests/vm/Makefile
+> +++ b/tools/testing/selftests/vm/Makefile
+> @@ -25,6 +25,7 @@ TEST_GEN_FILES += virtual_address_range
+>  
+>  TEST_PROGS := run_vmtests
+>  
+> +KSFT_KHDR_INSTALL := 1
+>  include ../lib.mk
+>  
+>  $(OUTPUT)/userfaultfd: LDLIBS += -lpthread
+> -- 
+> 2.17.1
+> 
+
+-- 
+Anders Roxell
+anders.roxell@linaro.org
+M: +46 709 71 42 85 | IRC: roxell
