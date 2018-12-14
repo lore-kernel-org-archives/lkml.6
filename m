@@ -7,53 +7,51 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20D46C67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:19:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2288C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:19:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC8822133F
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:19:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B87862148E
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:19:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544789944;
-	bh=Vdf+RUGqfdB55Yba842auQRtheODbv0aK35uQQOS8UE=;
+	s=default; t=1544789956;
+	bh=cXxVJQOJd81blBIOU3TguTPpKNcj+JFsuWfUHw6U9IU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=DiU/1iHCSQyUUPB+ZIDCYugBCKaHYNbtreZHJ//TX8xQQ6v9W0J7qvYWVnBeShL5l
-	 dD64Dkl74IxPvbkr4WQ9+p2Lx59ws2osw8wMUKp86Ez1oqKFWXQy+eMq9SBYKnqXmQ
-	 mIZVbMkGP5vAjr/HK8ddUTz+WNUQEwoCyN6pP9lA=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC8822133F
+	b=VFIjkYfXtxxizxT8WwUp0KlF/xQrGEo8QiSgbdzN+7mzMM+dOXt81a+m61fbf3JxH
+	 m6be0J5yZQGI7C2MnDr/5PvYJ6BvyhtVJYUfdAdabM5SOPoiziWNhSIOI80RwiNTOs
+	 +vGb3ExvvU0fxVWQ1Ts9pDol3BHL5x31hC1ZuEBk=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B87862148E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732747AbeLNMTC (ORCPT
+        id S1731803AbeLNMTP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:19:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36176 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:19:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36096 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732675AbeLNMQE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:16:04 -0500
+        id S1732033AbeLNMP6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:15:58 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D6E3C2148E;
-        Fri, 14 Dec 2018 12:16:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EA7B321486;
+        Fri, 14 Dec 2018 12:15:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789763;
-        bh=Vdf+RUGqfdB55Yba842auQRtheODbv0aK35uQQOS8UE=;
+        s=default; t=1544789758;
+        bh=cXxVJQOJd81blBIOU3TguTPpKNcj+JFsuWfUHw6U9IU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=a+GdqC15rwBMlXRj2Dt4mi4CpGCVfVFDy7/OkfHIGVnI2tyJfvhsmrq3qAfFI/LKe
-         mOIQy1PU79XoFhy/eerqWBQ+qbOKaRxq8EgjJUa+Bcojnay4E6Bpp2Xmj7+eJX/vP7
-         +dYcs4mJIt0H87PR2EKMKjWkvdoKioniIaGqne5I=
+        b=OsGYF1UrPMTUa+3W2CTcp55gOOxqAufo+wdty+xvp/NA7W+ASr4OJ5qPytnOuDCid
+         0q6D9jCE4fTZTdBPFi2X61SwGvjfJMn8I+wWn0H81/Yzq0q04sXGscItz4kXH+XIfs
+         zKnr2RRr8Mf2LJaNeU56G762l5ltg5vbObT1z1bs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mike Kravetz <mike.kravetz@oracle.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Hillf Danton <hillf.zj@alibaba-inc.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Lior David <qca_liord@qca.qualcomm.com>,
+        Maya Erez <qca_merez@qca.qualcomm.com>,
+        Kalle Valo <kvalo@qca.qualcomm.com>,
         Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.4 68/88] mm/hugetlb.c: dont call region_abort if region_chg fails
-Date:   Fri, 14 Dec 2018 13:00:42 +0100
-Message-Id: <20181214115707.890165060@linuxfoundation.org>
+Subject: [PATCH 4.4 66/88] wil6210: missing length check in wmi_set_ie
+Date:   Fri, 14 Dec 2018 13:00:40 +0100
+Message-Id: <20181214115707.758817601@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115702.151309521@linuxfoundation.org>
 References: <20181214115702.151309521@linuxfoundation.org>
@@ -72,62 +70,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mike Kravetz <mike.kravetz@oracle.com>
+From: Lior David <qca_liord@qca.qualcomm.com>
 
-commit ff8c0c53c47530ffea82c22a0a6df6332b56c957 upstream.
+commit b5a8ffcae4103a9d823ea3aa3a761f65779fbe2a upstream.
 
-Changes to hugetlbfs reservation maps is a two step process.  The first
-step is a call to region_chg to determine what needs to be changed, and
-prepare that change.  This should be followed by a call to call to
-region_add to commit the change, or region_abort to abort the change.
+Add a length check in wmi_set_ie to detect unsigned integer
+overflow.
 
-The error path in hugetlb_reserve_pages called region_abort after a
-failed call to region_chg.  As a result, the adds_in_progress counter in
-the reservation map is off by 1.  This is caught by a VM_BUG_ON in
-resv_map_release when the reservation map is freed.
-
-syzkaller fuzzer (when using an injected kmalloc failure) found this
-bug, that resulted in the following:
-
- kernel BUG at mm/hugetlb.c:742!
- Call Trace:
-  hugetlbfs_evict_inode+0x7b/0xa0 fs/hugetlbfs/inode.c:493
-  evict+0x481/0x920 fs/inode.c:553
-  iput_final fs/inode.c:1515 [inline]
-  iput+0x62b/0xa20 fs/inode.c:1542
-  hugetlb_file_setup+0x593/0x9f0 fs/hugetlbfs/inode.c:1306
-  newseg+0x422/0xd30 ipc/shm.c:575
-  ipcget_new ipc/util.c:285 [inline]
-  ipcget+0x21e/0x580 ipc/util.c:639
-  SYSC_shmget ipc/shm.c:673 [inline]
-  SyS_shmget+0x158/0x230 ipc/shm.c:657
-  entry_SYSCALL_64_fastpath+0x1f/0xc2
- RIP: resv_map_release+0x265/0x330 mm/hugetlb.c:742
-
-Link: http://lkml.kernel.org/r/1490821682-23228-1-git-send-email-mike.kravetz@oracle.com
-Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
-Reported-by: Dmitry Vyukov <dvyukov@google.com>
-Acked-by: Hillf Danton <hillf.zj@alibaba-inc.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Lior David <qca_liord@qca.qualcomm.com>
+Signed-off-by: Maya Erez <qca_merez@qca.qualcomm.com>
+Signed-off-by: Kalle Valo <kvalo@qca.qualcomm.com>
 Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- mm/hugetlb.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/net/wireless/ath/wil6210/wmi.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -4142,7 +4142,9 @@ int hugetlb_reserve_pages(struct inode *
- 	return 0;
- out_err:
- 	if (!vma || vma->vm_flags & VM_MAYSHARE)
--		region_abort(resv_map, from, to);
-+		/* Don't call region_abort if region_chg failed */
-+		if (chg >= 0)
-+			region_abort(resv_map, from, to);
- 	if (vma && is_vma_resv_set(vma, HPAGE_RESV_OWNER))
- 		kref_put(&resv_map->refs, resv_map_release);
- 	return ret;
+--- a/drivers/net/wireless/ath/wil6210/wmi.c
++++ b/drivers/net/wireless/ath/wil6210/wmi.c
+@@ -1035,8 +1035,14 @@ int wmi_set_ie(struct wil6210_priv *wil,
+ 	};
+ 	int rc;
+ 	u16 len = sizeof(struct wmi_set_appie_cmd) + ie_len;
+-	struct wmi_set_appie_cmd *cmd = kzalloc(len, GFP_KERNEL);
++	struct wmi_set_appie_cmd *cmd;
+ 
++	if (len < ie_len) {
++		rc = -EINVAL;
++		goto out;
++	}
++
++	cmd = kzalloc(len, GFP_KERNEL);
+ 	if (!cmd) {
+ 		rc = -ENOMEM;
+ 		goto out;
 
 
