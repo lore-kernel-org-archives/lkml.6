@@ -7,50 +7,51 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 813CEC67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:05:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65F24C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:05:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48F602147D
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:05:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C00821486
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:05:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544789142;
-	bh=rreMxHsbuAgGyciKzb8/ZB7dJskN29t4BmNNZYJCWAA=;
+	s=default; t=1544789146;
+	bh=9YJZtbeOXBuJrc0Be4rdbbvnCo733eV1LuTjT6xgluU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=AcxU/ST6XoWvJ9Q5yszIPM9XW53Hk2ZXJNId0nuZiPzJMAjvTPh5yXQaAUBNlKR/g
-	 PuS/SyexO+7F/06Tj2Ww/nP1+NjKos7He2sdiQPtqi0+W/QEHBHnC5FDTIs2nmN/FH
-	 RHHOypMgCtDgdHGaT7h3pEKA3quMytXxF53muHY8=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48F602147D
+	b=gz1BlywWJMO+S6o4o0fnDvfGvFncmlnV90Y6LufRnfIlmm9krN4OCEf3l46S6V1/2
+	 xHafjsS8fvCPHwkNmzBLMlAy7ikd+TVgNJcYp5o9SjGKtEMAsEwf9fLletNcluF4M9
+	 hKLHLhnLA7LTf7N7NgR2w+3NFI2l/kvqS21KsY9g=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C00821486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730759AbeLNMFl (ORCPT
+        id S1730775AbeLNMFo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:05:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50498 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:05:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50560 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727579AbeLNMFj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:05:39 -0500
+        id S1727579AbeLNMFl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:05:41 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0AB0E21479;
-        Fri, 14 Dec 2018 12:05:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B4EA721486;
+        Fri, 14 Dec 2018 12:05:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789138;
-        bh=rreMxHsbuAgGyciKzb8/ZB7dJskN29t4BmNNZYJCWAA=;
+        s=default; t=1544789141;
+        bh=9YJZtbeOXBuJrc0Be4rdbbvnCo733eV1LuTjT6xgluU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jm4aOWpTPW7HhleG569matkkRaA8sJEtbq4xD1fFJlBwZBY0sFbYzrxvqI+oj7/aC
-         aNSZiX1Pnp6Cx/kOxJt53s9EbLI1VuHPVQ7/DAKAKNuIevqOzONAdx6LI9WVdm/4Vb
-         YcUm76gPyYiPhkXro5dEytYutFN+7RDRulPIJ6bo=
+        b=nA8zvvqSvJdaP8IFe0HkbVYoL+Ix+FZP2AovoXl84SgFrRYoo9CwHJBAMNpIO+Eac
+         SGUp/oJnNPYjY/J8/nC5dm/Nnms5gSiOqVlOTOha6uD05D2QXxskls5xJMBcryZCu/
+         w7xzqpVjNSznpaCQn5wflkr+t8Nsdxa9HdbmfpDs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pan Bian <bianpan2016@163.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, shaoyunl <shaoyun.liu@amd.com>,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 109/142] net: hisilicon: remove unexpected free_netdev
-Date:   Fri, 14 Dec 2018 12:59:54 +0100
-Message-Id: <20181214115751.407900304@linuxfoundation.org>
+Subject: [PATCH 4.19 110/142] drm/amdgpu: Add delay after enable RLC ucode
+Date:   Fri, 14 Dec 2018 12:59:55 +0100
+Message-Id: <20181214115751.446179869@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115747.053633987@linuxfoundation.org>
 References: <20181214115747.053633987@linuxfoundation.org>
@@ -69,35 +70,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit c758940158bf29fe14e9d0f89d5848f227b48134 ]
+[ Upstream commit ad97d9de45835b6a0f71983b0ae0cffd7306730a ]
 
-The net device ndev is freed via free_netdev when failing to register
-the device. The control flow then jumps to the error handling code
-block. ndev is used and freed again. Resulting in a use-after-free bug.
+Driver shouldn't try to access any GFX registers until RLC is idle.
+During the test, it took 12 seconds for RLC to clear the BUSY bit
+in RLC_GPM_STAT register which is un-acceptable for driver.
+As per RLC engineer, it would take RLC Ucode less than 10,000 GFXCLK
+cycles to finish its critical section. In a lowest 300M enginer clock
+setting(default from vbios), 50 us delay is enough.
 
-Signed-off-by: Pan Bian <bianpan2016@163.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+This commit fix the hang when RLC introduce the work around for XGMI
+which requires more cycles to setup more registers than normal
+
+Signed-off-by: shaoyunl <shaoyun.liu@amd.com>
+Acked-by: Felix Kuehling <Felix.Kuehling@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/hisilicon/hip04_eth.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hip04_eth.c b/drivers/net/ethernet/hisilicon/hip04_eth.c
-index 14374a856d30..6127697ede12 100644
---- a/drivers/net/ethernet/hisilicon/hip04_eth.c
-+++ b/drivers/net/ethernet/hisilicon/hip04_eth.c
-@@ -914,10 +914,8 @@ static int hip04_mac_probe(struct platform_device *pdev)
- 	}
+diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
+index ef00d14f8645..325e2213cac5 100644
+--- a/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/gfx_v9_0.c
+@@ -2243,12 +2243,13 @@ static void gfx_v9_0_rlc_start(struct amdgpu_device *adev)
+ #endif
  
- 	ret = register_netdev(ndev);
--	if (ret) {
--		free_netdev(ndev);
-+	if (ret)
- 		goto alloc_fail;
--	}
+ 	WREG32_FIELD15(GC, 0, RLC_CNTL, RLC_ENABLE_F32, 1);
++	udelay(50);
  
- 	return 0;
+ 	/* carrizo do enable cp interrupt after cp inited */
+-	if (!(adev->flags & AMD_IS_APU))
++	if (!(adev->flags & AMD_IS_APU)) {
+ 		gfx_v9_0_enable_gui_idle_interrupt(adev, true);
+-
+-	udelay(50);
++		udelay(50);
++	}
  
+ #ifdef AMDGPU_RLC_DEBUG_RETRY
+ 	/* RLC_GPM_GENERAL_6 : RLC Ucode version */
 -- 
 2.19.1
 
