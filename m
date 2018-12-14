@@ -7,50 +7,54 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B202CC6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:13:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57FD2C6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:13:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B36C214D9
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:13:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 12A692133F
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:13:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544789605;
-	bh=L53768I1l9Odszaco2KZ+QfazeXLZUI42s0Bt7hmSJ4=;
+	s=default; t=1544789610;
+	bh=ZKmyDZ8jgTv+OIK0DQi90VT6dZiJ/5f5rJotRyqaaf8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=tyqZHOzI298Ape2pWEiOkyZvD4ntfnVLQH54KBdTsP8GqniDj0xcVhZYWnuHVaqiM
-	 yD7A486z6y/t8ZfWz8/nwgOKKMtPBKF5XuLIgWLkaQeGIUq32o0Vw6PDNEyW8vJWcV
-	 4wo89QGWXiUmAoAN5RnlXLxjS4UnqOHIt7COxIrE=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B36C214D9
+	b=1/rN+p976yyRzxX1wm88Eg6rXwT6LIYGKs2By3iNXJpLpdve34czqlYQ3cgExEe+a
+	 yuAd2IAfi9+XpQxE+7HnfL45RyyEjeSWkNU33m7R/VU/3Ih01lJbhz7fWDTvgN5ks8
+	 bB63kgi0uWjEEp0ITS/AHzJuFct/Yf0314PnKq8E=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12A692133F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732118AbeLNMNY (ORCPT
+        id S1731442AbeLNMN2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:13:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60926 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:13:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32814 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730313AbeLNMNV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:13:21 -0500
+        id S1732119AbeLNMNZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:13:25 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1A08E2133F;
-        Fri, 14 Dec 2018 12:13:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D71E32133F;
+        Fri, 14 Dec 2018 12:13:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789600;
-        bh=L53768I1l9Odszaco2KZ+QfazeXLZUI42s0Bt7hmSJ4=;
+        s=default; t=1544789605;
+        bh=ZKmyDZ8jgTv+OIK0DQi90VT6dZiJ/5f5rJotRyqaaf8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rV2xjbB5aE9yOO/rMrdf7DcnZ6GlRCgbA6JaAP2ifWGQzJhztM13n+T4foKfsJCvV
-         iTtlm04Ehk5fw4n+FE/AsBnAkN1i7GPah50DDSpSR6U8yPRuXUBQ9/uFy7clGaARI4
-         BbQ37EFjW9BwDH1BSFSFLE8zKg03S9eEUHKd+rAk=
+        b=BzGsi8NSGUBOuNQv99J6t6JVtxj6zw6C6llt4MK7bVsTmWTw1mWWmHrQp1d5Adcxo
+         4C5yDaeUQxaI/09hvSK7Tk9h4kkIyvXPT2pjLh3D2N0dG3MMT9KCVuvwD3DNHE1w54
+         ZqVExJA+chaOuzUdp0sSmX0Cb28jewFRZDSDJcrc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
-        David Howells <dhowells@redhat.com>,
+        stable@vger.kernel.org, Pan Bian <bianpan2016@163.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Joe Perches <joe@perches.com>,
+        "Ernesto A. Fernandez" <ernesto.mnd.fernandez@gmail.com>,
+        Viacheslav Dubeyko <slava@dubeyko.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 44/51] fscache, cachefiles: remove redundant variable cache
-Date:   Fri, 14 Dec 2018 13:00:46 +0100
-Message-Id: <20181214115717.043523704@linuxfoundation.org>
+Subject: [PATCH 4.9 46/51] hfs: do not free node before using
+Date:   Fri, 14 Dec 2018 13:00:48 +0100
+Message-Id: <20181214115717.232339477@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115713.244259772@linuxfoundation.org>
 References: <20181214115713.244259772@linuxfoundation.org>
@@ -69,37 +73,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 31ffa563833576bd49a8bf53120568312755e6e2 ]
+[ Upstream commit ce96a407adef126870b3f4a1b73529dd8aa80f49 ]
 
-Variable 'cache' is being assigned but is never used hence it is
-redundant and can be removed.
+hfs_bmap_free() frees the node via hfs_bnode_put(node).  However, it
+then reads node->this when dumping error message on an error path, which
+may result in a use-after-free bug.  This patch frees the node only when
+it is never again used.
 
-Cleans up clang warning:
-warning: variable 'cache' set but not used [-Wunused-but-set-variable]
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
+Link: http://lkml.kernel.org/r/1542963889-128825-1-git-send-email-bianpan2016@163.com
+Fixes: a1185ffa2fc ("HFS rewrite")
+Signed-off-by: Pan Bian <bianpan2016@163.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Joe Perches <joe@perches.com>
+Cc: Ernesto A. Fernandez <ernesto.mnd.fernandez@gmail.com>
+Cc: Viacheslav Dubeyko <slava@dubeyko.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/cachefiles/rdwr.c | 3 ---
- 1 file changed, 3 deletions(-)
+ fs/hfs/btree.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/fs/cachefiles/rdwr.c b/fs/cachefiles/rdwr.c
-index 8d43306c038b..799b59d96fe2 100644
---- a/fs/cachefiles/rdwr.c
-+++ b/fs/cachefiles/rdwr.c
-@@ -969,11 +969,8 @@ int cachefiles_write_page(struct fscache_storage *op, struct page *page)
- void cachefiles_uncache_page(struct fscache_object *_object, struct page *page)
- {
- 	struct cachefiles_object *object;
--	struct cachefiles_cache *cache;
+diff --git a/fs/hfs/btree.c b/fs/hfs/btree.c
+index 37cdd955eceb..320f4372f172 100644
+--- a/fs/hfs/btree.c
++++ b/fs/hfs/btree.c
+@@ -328,13 +328,14 @@ void hfs_bmap_free(struct hfs_bnode *node)
  
- 	object = container_of(_object, struct cachefiles_object, fscache);
--	cache = container_of(object->fscache.cache,
--			     struct cachefiles_cache, cache);
- 
- 	_enter("%p,{%lu}", object, page->index);
- 
+ 		nidx -= len * 8;
+ 		i = node->next;
+-		hfs_bnode_put(node);
+ 		if (!i) {
+ 			/* panic */;
+ 			pr_crit("unable to free bnode %u. bmap not found!\n",
+ 				node->this);
++			hfs_bnode_put(node);
+ 			return;
+ 		}
++		hfs_bnode_put(node);
+ 		node = hfs_bnode_find(tree, i);
+ 		if (IS_ERR(node))
+ 			return;
 -- 
 2.19.1
 
