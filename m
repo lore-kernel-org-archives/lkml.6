@@ -2,111 +2,136 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7CC4C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 15:23:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A802C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 15:25:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED755206C2
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 15:23:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 64274206C2
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 15:25:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730277AbeLNPXf (ORCPT
+        id S1729826AbeLNPZq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 10:23:35 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:31981 "EHLO pegase1.c-s.fr"
+        Fri, 14 Dec 2018 10:25:46 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:55190 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726344AbeLNPXf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 10:23:35 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 43GZ7m40WZz9v18b;
-        Fri, 14 Dec 2018 16:23:32 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id CHM39Rs7AmHg; Fri, 14 Dec 2018 16:23:32 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 43GZ7m3P5mz9v18Z;
-        Fri, 14 Dec 2018 16:23:32 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id F35018B8EB;
-        Fri, 14 Dec 2018 16:23:33 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id YdRd5yRaKs_d; Fri, 14 Dec 2018 16:23:33 +0100 (CET)
-Received: from po14163vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.2])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id DC7428B8EA;
-        Fri, 14 Dec 2018 16:23:33 +0100 (CET)
-Received: by po14163vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id B22D871710; Fri, 14 Dec 2018 15:23:33 +0000 (UTC)
-Message-Id: <46e2533084dc3255a1d67553b682bd4b9642b176.1544800765.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v2] powerpc/mm: make NULL pointer deferences explicit on bad
- page faults.
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Fri, 14 Dec 2018 15:23:33 +0000 (UTC)
+        id S1726344AbeLNPZp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 10:25:45 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 8E6C8307DAA4;
+        Fri, 14 Dec 2018 15:25:44 +0000 (UTC)
+Received: from redhat.com (ovpn-125-82.rdu2.redhat.com [10.10.125.82])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4DA90101E597;
+        Fri, 14 Dec 2018 15:25:41 +0000 (UTC)
+Date:   Fri, 14 Dec 2018 10:25:38 -0500
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
+        Dan Williams <dan.j.williams@intel.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        John Hubbard <john.hubbard@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>, tom@talpey.com,
+        Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
+        Christoph Hellwig <hch@infradead.org>,
+        Christopher Lameter <cl@linux.com>,
+        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        rcampbell@nvidia.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        "Weiny, Ira" <ira.weiny@intel.com>
+Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
+Message-ID: <20181214152538.GC3645@redhat.com>
+References: <20181212150319.GA3432@redhat.com>
+ <CAPcyv4go0Xzhz8rXdfscWuXDu83BO9v8WD4upDUJWb7gKzX5OQ@mail.gmail.com>
+ <20181212213005.GE5037@redhat.com>
+ <CAPcyv4gJHeFjEgna1S-2uE4KxkSUgkc=e=2E5oqfoirec84C-w@mail.gmail.com>
+ <20181212215348.GF5037@redhat.com>
+ <20181212233703.GB2947@ziepe.ca>
+ <20181213000109.GK5037@redhat.com>
+ <20181213032043.GA3204@ziepe.ca>
+ <20181213124325.GA3186@redhat.com>
+ <20181214104125.GE8896@quack2.suse.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181214104125.GE8896@quack2.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Fri, 14 Dec 2018 15:25:45 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As several other arches including x86, this patch makes it explicit
-that a bad page fault is a NULL pointer dereference when the fault
-address is lower than PAGE_SIZE
+On Fri, Dec 14, 2018 at 11:41:25AM +0100, Jan Kara wrote:
+> On Thu 13-12-18 07:43:25, Jerome Glisse wrote:
+> > On Wed, Dec 12, 2018 at 08:20:43PM -0700, Jason Gunthorpe wrote:
+> > > On Wed, Dec 12, 2018 at 07:01:09PM -0500, Jerome Glisse wrote:
+> > > > > Even the IOMMU idea probably doesn't work, I doubt all current
+> > > > > hardware can handle a PCI-E error TLP properly. 
+> > > > 
+> > > > What i saying is reprogram hardware to crappy page ie valid page
+> > > > dma map but that just has random content as a last resort to allow
+> > > > filesystem to reuse block. So their should be no PCIE error unless
+> > > > hardware freak out to see its page table reprogram randomly.
+> > > 
+> > > No, that isn't an option. You can't silently provide corrupted data
+> > > for RDMA to transfer out onto the network, or silently discard data
+> > > coming in!! 
+> > > 
+> > > Think of the consequences of that - I have a fileserver process and
+> > > someone does ftruncate and now my clients receive corrupted data??
+> > 
+> > This is what happens _today_ ie today someone do GUP on page file
+> > and then someone else do truncate the first GUP is effectively
+> > streaming _random_ data to network as the page does not correspond
+> > to anything anymore and once the RDMA MR goes aways and release
+> > the page the page content will be lost. So i am not changing anything
+> > here, what i proposed was to make it explicit to device driver at
+> > least that they were streaming random data. Right now this is all
+> > silent but this is what is happening wether you like it or not :)
+> 
+> I think you're making the current behaviour sound worse than it really is.
+> You are correct that currently driver can setup RDMA with some page, one
+> instant later that page can get truncated from the file and thus has no
+> association to the file anymore. That can lead to *stale* data being
+> streamed over RDMA or loss of data that are coming from RDMA. But none of
+> this is actually a security issue - no streaming of random data or memory
+> corruption. And that's all kernel cares about. It is userspace
+> responsibility to make sure file cannot be truncated if it cannot tolerate
+> stale data.
+> 
+> So your "redirect RDMA to dummy page" solution has to make sure you really
+> swap one real page for one dummy page and copy old real page contents to
+> the dummy page contents. Then it will be equivalent to the current behavior
+> and if the hardware can do the swapping, then I'm fine with such
+> solution...
 
-In the mean time, this page makes all bad_page_fault() messages shorter
-so that they remain on one single line. And it prefixes them by "BUG: "
-so that they get easily greped.
+Yeah sorry if i make it sounds worse than it is, from my point of view
+it is random data because it no longer match to anything but yes it is
+still correspond to the correct file data before the truncate so in that
+sense it is not random.
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- v2: Taking into account comments from Michael
+Yes for copying the existing content to the new crappy page i said that
+at one point during the discussion to make the crappy page less crapy.
+But it seems people feels that device that do not abide by mmu notifier
+are also the device that can not be updated at _any_ time and thus that
+reprogramming their dma engine is a non starter.
 
- arch/powerpc/mm/fault.c | 19 +++++++++++--------
- 1 file changed, 11 insertions(+), 8 deletions(-)
+I believe the truncate and revoke issue is something that should be
+discussed sub-system by sub-system where people knows what their device
+can and can not do. I will try to write a document that explains the
+GUP pitfalls so that it can be use to explain the issue.
 
-diff --git a/arch/powerpc/mm/fault.c b/arch/powerpc/mm/fault.c
-index 01b9bcc7fa85..3398291f4785 100644
---- a/arch/powerpc/mm/fault.c
-+++ b/arch/powerpc/mm/fault.c
-@@ -636,21 +636,24 @@ void bad_page_fault(struct pt_regs *regs, unsigned long address, int sig)
- 	switch (TRAP(regs)) {
- 	case 0x300:
- 	case 0x380:
--		printk(KERN_ALERT "Unable to handle kernel paging request for "
--			"data at address 0x%08lx\n", regs->dar);
-+		if (regs->dar < PAGE_SIZE)
-+			pr_alert("BUG: Kernel NULL pointer dereference");
-+		else
-+			pr_alert("BUG: Unable to handle kernel data access");
-+		pr_cont(" at 0x%08lx\n", regs->dar);
- 		break;
- 	case 0x400:
- 	case 0x480:
--		printk(KERN_ALERT "Unable to handle kernel paging request for "
--			"instruction fetch\n");
-+		pr_alert("BUG: Unable to handle kernel instruction fetch%s",
-+			 regs->nip < PAGE_SIZE ? " (NULL pointer ?)\n" : "\n");
- 		break;
- 	case 0x600:
--		printk(KERN_ALERT "Unable to handle kernel paging request for "
--			"unaligned access at address 0x%08lx\n", regs->dar);
-+		pr_alert("BUG: Unable to handle kernel unaligned access at 0x%08lx\n",
-+			 regs->dar);
- 		break;
- 	default:
--		printk(KERN_ALERT "Unable to handle kernel paging request for "
--			"unknown fault\n");
-+		pr_alert("BUG: Unable to handle unknown paging fault at 0x%08lx\n",
-+			 regs->dar);
- 		break;
- 	}
- 	printk(KERN_ALERT "Faulting instruction address: 0x%08lx\n",
--- 
-2.13.3
-
+Cheers,
+Jérôme
