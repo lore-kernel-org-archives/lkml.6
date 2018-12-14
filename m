@@ -6,48 +6,46 @@ X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50777C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 16:33:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E59AC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 16:33:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1BFE2080F
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 16:33:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BE1C22075B
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 16:33:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544805214;
-	bh=1GRqsbYVwLz59qJD38TH6xczEZFBWO9wSJvd2hbyTvE=;
+	s=default; t=1544805216;
+	bh=Bs2xI0cuLFCzGAKEs9CWjrvwd+ItlwUs4IvLfjseGHA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=qiiRyjLfiyP2c2WaikXSndaq7kXNSqXGuldzQIrAIkDEBVn4ZsTYLUjDFLHB9/UPh
-	 MA4PJpJfl4cT0oAY/Bp9hwWRbmqLTPkM6VevL/Oh3cB7uXCZB3JlxlDggto2/OO2e0
-	 NtxDw7PvbxJ9T3Bu1ULfCLiZSxRgPTPz8DeZOCLs=
+	b=QSGanTDBl7TSAFhYHoGzaBEIfbYaYiOTVaONT4jzi+sWGBhQhNiC4JY8WnuulG0N3
+	 aabFDWV5vFZ4SEkuJk8z8Maivrv3cVWr2gEjY0keajesSeM7JybbWHpDcukwHsrM4M
+	 9rXcuJDKSWYopkRKgKuzGby9mjLAlwfIhJXzP3b4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730156AbeLNQdc (ORCPT
+        id S1730193AbeLNQdf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 11:33:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52738 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 11:33:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52754 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730070AbeLNQdb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 11:33:31 -0500
+        id S1730145AbeLNQdc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 11:33:32 -0500
 Received: from sinanubuntu1604.mkjiurmyylmellclgttazegk5f.bx.internal.cloudapp.net (unknown [23.96.30.70])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0833A2070B;
-        Fri, 14 Dec 2018 16:33:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DFF702075B;
+        Fri, 14 Dec 2018 16:33:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544805211;
-        bh=1GRqsbYVwLz59qJD38TH6xczEZFBWO9wSJvd2hbyTvE=;
+        s=default; t=1544805212;
+        bh=Bs2xI0cuLFCzGAKEs9CWjrvwd+ItlwUs4IvLfjseGHA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uXPXU9NmFNixZ7FR3wxhx7WmO5nXHykKThWuy0d/xn3YSPPU3RfDuji1Fg8A66P32
-         M5eTuYkgETZIvCXTYZ+n+1busycQ/DU8D33zv6MoGlOao/T5ytTDYpfe8L8F8EpkZu
-         ylVqLy6kistTAsuKLX8JzSkFdXCD5PGl3IkD4Y4g=
+        b=WXKPs1OJvnjBRCubA+PDaiFRJMeGL5vNJSgUQZNL3Pyy2xtnILby9JuggUX+aROA6
+         QsFF4jYYBhn4zCG7/blAL1OOdYRXCk+ePoZQpIa/Y7t06GlZflWT3mB572cJXZPzkn
+         dyj94DdLha9JrUbBvsu+KT0My2cLaWP5Ft2g2sTU=
 From:   Sinan Kaya <okaya@kernel.org>
 To:     linux-acpi@vger.kernel.org
-Cc:     Sinan Kaya <okaya@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-arm-kernel@lists.infradead.org (moderated list:ARM64 PORT
-        (AARCH64 ARCHITECTURE)), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v9 5/6] arm64: select ACPI PCI code only both features are enabled
-Date:   Fri, 14 Dec 2018 16:33:18 +0000
-Message-Id: <20181214163319.27479-6-okaya@kernel.org>
+Cc:     Sinan Kaya <okaya@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+        linux-pci@vger.kernel.org (open list:PCI SUBSYSTEM),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v9 6/6] PCI: Stub out pci_request_acs() when CONFIG_PCI is not set
+Date:   Fri, 14 Dec 2018 16:33:19 +0000
+Message-Id: <20181214163319.27479-7-okaya@kernel.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181214163319.27479-1-okaya@kernel.org>
 References: <20181214163319.27479-1-okaya@kernel.org>
@@ -58,36 +56,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ACPI and PCI are no longer coupled to each other. Specify requirements
-for both when pulling in code.
+ACPI IORT table code relies on pci_request_acs() to be present. Define
+a stub function when CONFI_PCI is not set.
 
 Signed-off-by: Sinan Kaya <okaya@kernel.org>
 ---
- arch/arm64/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ include/linux/pci.h | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index ea2ab0330e3a..bcb6262044d8 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -5,7 +5,7 @@ config ARM64
- 	select ACPI_GTDT if ACPI
- 	select ACPI_IORT if ACPI
- 	select ACPI_REDUCED_HARDWARE_ONLY if ACPI
--	select ACPI_MCFG if ACPI
-+	select ACPI_MCFG if (ACPI && PCI)
- 	select ACPI_SPCR_TABLE if ACPI
- 	select ACPI_PPTT if ACPI
- 	select ARCH_CLOCKSOURCE_DATA
-@@ -163,7 +163,7 @@ config ARM64
- 	select OF
- 	select OF_EARLY_FLATTREE
- 	select OF_RESERVED_MEM
--	select PCI_ECAM if ACPI
-+	select PCI_ECAM if (ACPI && PCI)
- 	select POWER_RESET
- 	select POWER_SUPPLY
- 	select REFCOUNT_FULL
+diff --git a/include/linux/pci.h b/include/linux/pci.h
+index 51a5a5217667..f0f2f55ea93c 100644
+--- a/include/linux/pci.h
++++ b/include/linux/pci.h
+@@ -2101,7 +2101,11 @@ static inline struct pci_dev *pcie_find_root_port(struct pci_dev *dev)
+ 	return NULL;
+ }
+ 
++#ifdef CONFIG_PCI
+ void pci_request_acs(void);
++#else
++static inline void pci_request_acs(void) {}
++#endif
+ bool pci_acs_enabled(struct pci_dev *pdev, u16 acs_flags);
+ bool pci_acs_path_enabled(struct pci_dev *start,
+ 			  struct pci_dev *end, u16 acs_flags);
 -- 
 2.19.0
 
