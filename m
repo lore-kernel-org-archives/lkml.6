@@ -7,52 +7,54 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1539C67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:27:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2D87C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:27:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65CC820892
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:27:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8FDFA20892
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:27:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544790460;
-	bh=0pgjI2BkBtqotSlXIAUsbtHj5oZgxE2aJUxKuImszho=;
+	s=default; t=1544790465;
+	bh=C6wy2jUT0ySD5IqZYVGT3F2U9oPxIONoTCXUjb7+6LM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=oy5hQZhTdkO7/pZHwxkj+e4p8s5auH0VBQ+fdiEYRbg62BSUjNRJmkrRKWj3MLh4/
-	 eRzsF8Ip8Ex4kl7r3a3heUxzAm/AKphLJ6Vm2CFKrqbbVZ1uWUJzhIPKQXcegU+7Eb
-	 Mn3/ZnueXHwACU4FYbY2Rl2ytZ51ykkVXNn/fpgo=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65CC820892
+	b=OoxCPgMj5++sl+7cPMuRMvfb6euI8hAuyw/XUFe5rWa7bp+dF2oHrgk9ezYLBeyV+
+	 nPFbFfd5jvWUo3K8k2Z/R2Ea8tXWjEAoNJLY/37THixmo4DmMit7/sQEUCEJ1JLq6r
+	 vLmBkILI+Le4fkUYdSRnieqneLCCKzeDdttMW2TY=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FDFA20892
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731757AbeLNMLU (ORCPT
+        id S1731174AbeLNM1o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:11:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57930 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:27:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57986 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730628AbeLNMLR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:11:17 -0500
+        id S1731753AbeLNMLU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:11:20 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 840402133F;
-        Fri, 14 Dec 2018 12:11:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1181B2147C;
+        Fri, 14 Dec 2018 12:11:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789477;
-        bh=0pgjI2BkBtqotSlXIAUsbtHj5oZgxE2aJUxKuImszho=;
+        s=default; t=1544789479;
+        bh=C6wy2jUT0ySD5IqZYVGT3F2U9oPxIONoTCXUjb7+6LM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=I83DTDBjNSksJv9rTyAOkE6rgzTHvOi7DL8kRR1yUwjnWFr0Mwk8nQfOiF0Q6z52F
-         eXSVS5lwZAf1dHAiEJvahYaUimFejno2wE11NW07Cpkw9YFskhH7IWFjMICVR1rv0J
-         upb4Wzu4TNA1FfSZiyFwu2fk3xrjkAmPbkesNoeg=
+        b=b0vT9aB4ouehFmVkHQ6AwMtt8PdWGq5PgA4yBtZBfS4cH4MOz7h+0BwMVPDzLRHxZ
+         dDKMKzpXXcY6pvLiyWfL4txdQ0wB7T1woyuCk1vXRFHUtRVaIOsnnWRUaZwb4AfuKg
+         QGxhY2S0IXKiLsaye6EeK4lcvBvzdJdff0tdCXMk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
-        Samuel Thibault <samuel.thibault@ens-lyon.org>
-Subject: [PATCH 4.14 86/89] staging: speakup: Replace strncpy with memcpy
-Date:   Fri, 14 Dec 2018 13:00:39 +0100
-Message-Id: <20181214115733.941693560@linuxfoundation.org>
+        stable@vger.kernel.org, Jiri Wiesner <jwiesner@suse.com>,
+        Per Sundstrom <per.sundstrom@redqube.se>,
+        Peter Oskolkov <posk@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 01/51] ipv4: ipv6: netfilter: Adjust the frag mem limit when truesize changes
+Date:   Fri, 14 Dec 2018 13:00:03 +0100
+Message-Id: <20181214115713.491383576@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
-In-Reply-To: <20181214115729.658859279@linuxfoundation.org>
-References: <20181214115729.658859279@linuxfoundation.org>
+In-Reply-To: <20181214115713.244259772@linuxfoundation.org>
+References: <20181214115713.244259772@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -64,59 +66,136 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Guenter Roeck <linux@roeck-us.net>
+From: Jiri Wiesner <jwiesner@suse.com>
 
-commit fd29edc7232bc19f969e8f463138afc5472b3d5f upstream.
+[ Upstream commit ebaf39e6032faf77218220707fc3fa22487784e0 ]
 
-gcc 8.1.0 generates the following warnings.
+The *_frag_reasm() functions are susceptible to miscalculating the byte
+count of packet fragments in case the truesize of a head buffer changes.
+The truesize member may be changed by the call to skb_unclone(), leaving
+the fragment memory limit counter unbalanced even if all fragments are
+processed. This miscalculation goes unnoticed as long as the network
+namespace which holds the counter is not destroyed.
 
-drivers/staging/speakup/kobjects.c: In function 'punc_store':
-drivers/staging/speakup/kobjects.c:522:2: warning:
-	'strncpy' output truncated before terminating nul
-	copying as many bytes from a string as its length
-drivers/staging/speakup/kobjects.c:504:6: note: length computed here
+Should an attempt be made to destroy a network namespace that holds an
+unbalanced fragment memory limit counter the cleanup of the namespace
+never finishes. The thread handling the cleanup gets stuck in
+inet_frags_exit_net() waiting for the percpu counter to reach zero. The
+thread is usually in running state with a stacktrace similar to:
 
-drivers/staging/speakup/kobjects.c: In function 'synth_store':
-drivers/staging/speakup/kobjects.c:391:2: warning:
-	'strncpy' output truncated before terminating nul
-	copying as many bytes from a string as its length
-drivers/staging/speakup/kobjects.c:388:8: note: length computed here
+ PID: 1073   TASK: ffff880626711440  CPU: 1   COMMAND: "kworker/u48:4"
+  #5 [ffff880621563d48] _raw_spin_lock at ffffffff815f5480
+  #6 [ffff880621563d48] inet_evict_bucket at ffffffff8158020b
+  #7 [ffff880621563d80] inet_frags_exit_net at ffffffff8158051c
+  #8 [ffff880621563db0] ops_exit_list at ffffffff814f5856
+  #9 [ffff880621563dd8] cleanup_net at ffffffff814f67c0
+ #10 [ffff880621563e38] process_one_work at ffffffff81096f14
 
-Using strncpy() is indeed less than perfect since the length of data to
-be copied has already been determined with strlen(). Replace strncpy()
-with memcpy() to address the warning and optimize the code a little.
+It is not possible to create new network namespaces, and processes
+that call unshare() end up being stuck in uninterruptible sleep state
+waiting to acquire the net_mutex.
 
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Reviewed-by: Samuel Thibault <samuel.thibault@ens-lyon.org>
+The bug was observed in the IPv6 netfilter code by Per Sundstrom.
+I thank him for his analysis of the problem. The parts of this patch
+that apply to IPv4 and IPv6 fragment reassembly are preemptive measures.
+
+Signed-off-by: Jiri Wiesner <jwiesner@suse.com>
+Reported-by: Per Sundstrom <per.sundstrom@redqube.se>
+Acked-by: Peter Oskolkov <posk@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/staging/speakup/kobjects.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/ipv4/ip_fragment.c                  |    7 +++++++
+ net/ipv6/netfilter/nf_conntrack_reasm.c |    8 +++++++-
+ net/ipv6/reassembly.c                   |    8 +++++++-
+ 3 files changed, 21 insertions(+), 2 deletions(-)
 
---- a/drivers/staging/speakup/kobjects.c
-+++ b/drivers/staging/speakup/kobjects.c
-@@ -387,7 +387,7 @@ static ssize_t synth_store(struct kobjec
- 	len = strlen(buf);
- 	if (len < 2 || len > 9)
- 		return -EINVAL;
--	strncpy(new_synth_name, buf, len);
-+	memcpy(new_synth_name, buf, len);
- 	if (new_synth_name[len - 1] == '\n')
- 		len--;
- 	new_synth_name[len] = '\0';
-@@ -518,7 +518,7 @@ static ssize_t punc_store(struct kobject
- 		return -EINVAL;
+--- a/net/ipv4/ip_fragment.c
++++ b/net/ipv4/ip_fragment.c
+@@ -511,6 +511,7 @@ static int ip_frag_reasm(struct ipq *qp,
+ 	struct rb_node *rbn;
+ 	int len;
+ 	int ihlen;
++	int delta;
+ 	int err;
+ 	u8 ecn;
+ 
+@@ -552,10 +553,16 @@ static int ip_frag_reasm(struct ipq *qp,
+ 	if (len > 65535)
+ 		goto out_oversize;
+ 
++	delta = - head->truesize;
++
+ 	/* Head of list must not be cloned. */
+ 	if (skb_unclone(head, GFP_ATOMIC))
+ 		goto out_nomem;
+ 
++	delta += head->truesize;
++	if (delta)
++		add_frag_mem_limit(qp->q.net, delta);
++
+ 	/* If the first fragment is fragmented itself, we split
+ 	 * it to two chunks: the first with data and paged part
+ 	 * and the second, holding only fragments. */
+--- a/net/ipv6/netfilter/nf_conntrack_reasm.c
++++ b/net/ipv6/netfilter/nf_conntrack_reasm.c
+@@ -348,7 +348,7 @@ static bool
+ nf_ct_frag6_reasm(struct frag_queue *fq, struct sk_buff *prev,  struct net_device *dev)
+ {
+ 	struct sk_buff *fp, *head = fq->q.fragments;
+-	int    payload_len;
++	int    payload_len, delta;
+ 	u8 ecn;
+ 
+ 	inet_frag_kill(&fq->q);
+@@ -370,10 +370,16 @@ nf_ct_frag6_reasm(struct frag_queue *fq,
+ 		return false;
  	}
  
--	strncpy(punc_buf, buf, x);
-+	memcpy(punc_buf, buf, x);
++	delta = - head->truesize;
++
+ 	/* Head of list must not be cloned. */
+ 	if (skb_unclone(head, GFP_ATOMIC))
+ 		return false;
  
- 	while (x && punc_buf[x - 1] == '\n')
- 		x--;
++	delta += head->truesize;
++	if (delta)
++		add_frag_mem_limit(fq->q.net, delta);
++
+ 	/* If the first fragment is fragmented itself, we split
+ 	 * it to two chunks: the first with data and paged part
+ 	 * and the second, holding only fragments. */
+--- a/net/ipv6/reassembly.c
++++ b/net/ipv6/reassembly.c
+@@ -343,7 +343,7 @@ static int ip6_frag_reasm(struct frag_qu
+ {
+ 	struct net *net = container_of(fq->q.net, struct net, ipv6.frags);
+ 	struct sk_buff *fp, *head = fq->q.fragments;
+-	int    payload_len;
++	int    payload_len, delta;
+ 	unsigned int nhoff;
+ 	int sum_truesize;
+ 	u8 ecn;
+@@ -384,10 +384,16 @@ static int ip6_frag_reasm(struct frag_qu
+ 	if (payload_len > IPV6_MAXPLEN)
+ 		goto out_oversize;
+ 
++	delta = - head->truesize;
++
+ 	/* Head of list must not be cloned. */
+ 	if (skb_unclone(head, GFP_ATOMIC))
+ 		goto out_oom;
+ 
++	delta += head->truesize;
++	if (delta)
++		add_frag_mem_limit(fq->q.net, delta);
++
+ 	/* If the first fragment is fragmented itself, we split
+ 	 * it to two chunks: the first with data and paged part
+ 	 * and the second, holding only fragments. */
 
 
