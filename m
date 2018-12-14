@@ -7,43 +7,42 @@ X-Spam-Status: No, score=-11.9 required=3.0
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0236DC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:24:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4207CC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:25:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B3EC2086D
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:24:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ACC16208C1
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:25:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730851AbeLNUYy (ORCPT
+        id S1730795AbeLNUZb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 15:24:54 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:57003 "EHLO
+        Fri, 14 Dec 2018 15:25:31 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:58323 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730750AbeLNUYx (ORCPT
+        with ESMTP id S1730123AbeLNUZa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 15:24:53 -0500
+        Fri, 14 Dec 2018 15:25:30 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBEKOkkv1453127
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBEKPNkD1453236
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Fri, 14 Dec 2018 12:24:46 -0800
+        Fri, 14 Dec 2018 12:25:23 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBEKOkOl1453123;
-        Fri, 14 Dec 2018 12:24:46 -0800
-Date:   Fri, 14 Dec 2018 12:24:46 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBEKPNv11453233;
+        Fri, 14 Dec 2018 12:25:23 -0800
+Date:   Fri, 14 Dec 2018 12:25:23 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Adrian Hunter <tipbot@zytor.com>
-Message-ID: <tip-2e9ed1958a8412622b7f45d8a0e2658b4463dcec@git.kernel.org>
-Cc:     tglx@linutronix.de, jolsa@redhat.com, linux-kernel@vger.kernel.org,
-        adrian.hunter@intel.com, hpa@zytor.com, acme@redhat.com,
-        mingo@kernel.org
-Reply-To: tglx@linutronix.de, jolsa@redhat.com,
-          linux-kernel@vger.kernel.org, adrian.hunter@intel.com,
-          hpa@zytor.com, mingo@kernel.org, acme@redhat.com
-In-Reply-To: <20181122135545.16295-1-adrian.hunter@intel.com>
-References: <20181122135545.16295-1-adrian.hunter@intel.com>
+Message-ID: <tip-3ebeae6efafd92bd21f600a6300a6492c525d39a@git.kernel.org>
+Cc:     jolsa@redhat.com, adrian.hunter@intel.com, acme@redhat.com,
+        mingo@kernel.org, tglx@linutronix.de, hpa@zytor.com,
+        linux-kernel@vger.kernel.org
+Reply-To: jolsa@redhat.com, hpa@zytor.com, linux-kernel@vger.kernel.org,
+          tglx@linutronix.de, mingo@kernel.org, acme@redhat.com,
+          adrian.hunter@intel.com
+In-Reply-To: <20181122140456.16817-1-adrian.hunter@intel.com>
+References: <20181122140456.16817-1-adrian.hunter@intel.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf tests record: Allow for 'sleep' being
- 'coreutils'
-Git-Commit-ID: 2e9ed1958a8412622b7f45d8a0e2658b4463dcec
+Subject: [tip:perf/core] perf test: Fix perf_event_attr test failure
+Git-Commit-ID: 3ebeae6efafd92bd21f600a6300a6492c525d39a
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -57,64 +56,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  2e9ed1958a8412622b7f45d8a0e2658b4463dcec
-Gitweb:     https://git.kernel.org/tip/2e9ed1958a8412622b7f45d8a0e2658b4463dcec
+Commit-ID:  3ebeae6efafd92bd21f600a6300a6492c525d39a
+Gitweb:     https://git.kernel.org/tip/3ebeae6efafd92bd21f600a6300a6492c525d39a
 Author:     Adrian Hunter <adrian.hunter@intel.com>
-AuthorDate: Thu, 22 Nov 2018 15:55:45 +0200
+AuthorDate: Thu, 22 Nov 2018 16:04:56 +0200
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Thu, 29 Nov 2018 20:42:48 -0300
 
-perf tests record: Allow for 'sleep' being 'coreutils'
+perf test: Fix perf_event_attr test failure
 
-If the 'sleep' command is provided by coreutils, then the "PERF_RECORD_*
-events & perf_sample fields" test will fail because the MMAP name is
-'coreutils' not 'sleep', and there is an extra COMM event. Fix the test
-to detect that case.
+Fix inconsistent use of tabs and spaces error:
+
+  # perf test 16 -v
+  16: Setup struct perf_event_attr                          :
+  --- start ---
+  test child forked, pid 20224
+    File "/usr/libexec/perf-core/tests/attr.py", line 119
+      log.warning("expected %s=%s, got %s" % (t, self[t], other[t]))
+                                                                 ^
+  TabError: inconsistent use of tabs and spaces in indentation
+  test child finished with -1
+  ---- end ----
+  Setup struct perf_event_attr: FAILED!
 
 Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Jiri Olsa <jolsa@redhat.com>
-Link: http://lkml.kernel.org/r/20181122135545.16295-1-adrian.hunter@intel.com
+Link: http://lkml.kernel.org/r/20181122140456.16817-1-adrian.hunter@intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/tests/perf-record.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ tools/perf/tests/attr.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/tests/perf-record.c b/tools/perf/tests/perf-record.c
-index 34394cc05077..07f6bd8ed719 100644
---- a/tools/perf/tests/perf-record.c
-+++ b/tools/perf/tests/perf-record.c
-@@ -58,6 +58,7 @@ int test__PERF_RECORD(struct test *test __maybe_unused, int subtest __maybe_unus
- 	char *bname, *mmap_filename;
- 	u64 prev_time = 0;
- 	bool found_cmd_mmap = false,
-+	     found_coreutils_mmap = false,
- 	     found_libc_mmap = false,
- 	     found_vdso_mmap = false,
- 	     found_ld_mmap = false;
-@@ -254,6 +255,8 @@ int test__PERF_RECORD(struct test *test __maybe_unused, int subtest __maybe_unus
- 					if (bname != NULL) {
- 						if (!found_cmd_mmap)
- 							found_cmd_mmap = !strcmp(bname + 1, cmd);
-+						if (!found_coreutils_mmap)
-+							found_coreutils_mmap = !strcmp(bname + 1, "coreutils");
- 						if (!found_libc_mmap)
- 							found_libc_mmap = !strncmp(bname + 1, "libc", 4);
- 						if (!found_ld_mmap)
-@@ -292,7 +295,7 @@ int test__PERF_RECORD(struct test *test __maybe_unused, int subtest __maybe_unus
- 	}
+diff --git a/tools/perf/tests/attr.py b/tools/perf/tests/attr.py
+index ff9b60b99f52..44090a9a19f3 100644
+--- a/tools/perf/tests/attr.py
++++ b/tools/perf/tests/attr.py
+@@ -116,7 +116,7 @@ class Event(dict):
+             if not self.has_key(t) or not other.has_key(t):
+                 continue
+             if not data_equal(self[t], other[t]):
+-		log.warning("expected %s=%s, got %s" % (t, self[t], other[t]))
++                log.warning("expected %s=%s, got %s" % (t, self[t], other[t]))
  
- found_exit:
--	if (nr_events[PERF_RECORD_COMM] > 1) {
-+	if (nr_events[PERF_RECORD_COMM] > 1 + !!found_coreutils_mmap) {
- 		pr_debug("Excessive number of PERF_RECORD_COMM events!\n");
- 		++errs;
- 	}
-@@ -302,7 +305,7 @@ found_exit:
- 		++errs;
- 	}
- 
--	if (!found_cmd_mmap) {
-+	if (!found_cmd_mmap && !found_coreutils_mmap) {
- 		pr_debug("PERF_RECORD_MMAP for %s missing!\n", cmd);
- 		++errs;
- 	}
+ # Test file description needs to have following sections:
+ # [config]
