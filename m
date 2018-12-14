@@ -2,237 +2,103 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03819C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 14:16:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14A2CC43612
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 14:17:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AAF90206E0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 14:16:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6239220B1F
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 14:07:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance-com.20150623.gappssmtp.com header.i=@bytedance-com.20150623.gappssmtp.com header.b="AayBWhx+"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="U6GtVnF7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730115AbeLNOQb (ORCPT
+        id S1730034AbeLNOHx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 09:16:31 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:36538 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726554AbeLNOQb (ORCPT
+        Fri, 14 Dec 2018 09:07:53 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:46123 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729758AbeLNOHx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 09:16:31 -0500
-Received: by mail-pf1-f193.google.com with SMTP id b85so2915082pfc.3
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 06:16:30 -0800 (PST)
+        Fri, 14 Dec 2018 09:07:53 -0500
+Received: by mail-lf1-f65.google.com with SMTP id f23so4315022lfc.13
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 06:07:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=FtWilRGInAcb/NUhcDtH7YAZJfSIOGwgW3nzbl0W9IQ=;
-        b=AayBWhx++Id141XiJ1IRtNF9YuU3agBHdXxOd/3mOX9QI5Ixe/HgEdjR4+SlOnKkXY
-         +WDDlWrGdSxw+eFCqbIIudDT1/TRbHsj5Wxs463ESrzam65sJ/qC8qeQKonGRmydjIrn
-         p8uwLJCPKAQzfyEP/c58CwnRfDMnzxGZTLrUpTsNC/zaQz714nS3entYsTi/3wAGjUNC
-         V0niZMkIlV25xdb32l/SnuK1ASUrMgBaUWQXFchI8jhSMAJx6g8m6CVKGd9EFi+apb0w
-         5YeGhODEsObV9Y2yFQOSb9LlroItQZwyPidfiv9HqGx3B0I1c9PLg7Q3Ko8WWDk5iIFj
-         ZaxA==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=5M6Pv0iTBeLAUiVLw36pC8WZ2QZ8He/+Zt26NeLbuVU=;
+        b=U6GtVnF7eAJVv7khtdSwGSPwtfeOFGb3AmwHeAZRNpUxNAiTA+CPoV+4MkTy96OZCg
+         llfuemrRXTEV9Uilr8+6aeA/v0YryAz/orceT9M9jcuCq79trqIpdPXhAK9W2akbY3md
+         9FpwYznvqCBPg7o+tBXtYA2vC/yvYZKQMMhaM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=FtWilRGInAcb/NUhcDtH7YAZJfSIOGwgW3nzbl0W9IQ=;
-        b=VN3CbWL4W1KhRPgVIJC9M8oUuhWiIbdGPFkRbryNyh0GJV8oHzXbtgYIK0UPXda0/j
-         iUlsgRxznpfNK/3xU2pcCHWqQVwXt5o2tRAm6XUbPM3j0OkUFoqEiCtWt3WUG2mFeGJM
-         vxYDShw92VtPYPgseU5cJiUo8KY6EQTnEj5hEnYW3+GDrvcrd2cCwv/ieuiQC22WLNPv
-         PcooqdRvw8DUf/BoShLJTDRXeE7jUy1F0eHvaDFaOM8owsnU7VviuO7Sa4pi5if+GuJN
-         eiKTJMxUvkKh0ObDPwpyxUH3Z1/gIwOCUkE4oBLr/xI3S6v6QT4LpuI8bRyB6lxpnyG5
-         EcSA==
-X-Gm-Message-State: AA+aEWaSbWG5WcEkOK1nC+Mcy7ciAqI+syScBtfH86yfmCh0C6QURe2k
-        CMCvm48OXuPHKXGP7gjpt6qj0Q==
-X-Google-Smtp-Source: AFSGD/VnPa7Ilyi4kELEkXmfJKFhQuKG28lsBk2a1kq2ePcVpNkxNhrwRr5S56tE2s4SiysKSVkyTg==
-X-Received: by 2002:a62:da5a:: with SMTP id w26mr3026717pfl.106.1544796989893;
-        Fri, 14 Dec 2018 06:16:29 -0800 (PST)
-Received: from n3-021-216.byted.org ([122.14.241.109])
-        by smtp.gmail.com with ESMTPSA id d6sm6199939pgc.89.2018.12.14.06.16.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 14 Dec 2018 06:16:29 -0800 (PST)
-From:   Xiaozhou Liu <liuxiaozhou@bytedance.com>
-To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Xiaozhou Liu <liuxiaozhou@bytedance.com>,
-        "ndesaulniers@google.com" <ndesaulniers@google.com>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Paul Burton <paul.burton@mips.com>,
-        Kees Cook <keescook@chromium.org>,
-        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
-Subject: [PATCH v3] Compiler Attributes: don't pollute userspace with macro definitions
-Date:   Fri, 14 Dec 2018 22:14:31 +0800
-Message-Id: <20181214141433.466991-1-liuxiaozhou@bytedance.com>
-X-Mailer: git-send-email 2.11.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=5M6Pv0iTBeLAUiVLw36pC8WZ2QZ8He/+Zt26NeLbuVU=;
+        b=Et4agyVa2n0kkS5418RbgJ3EOiaMdl4IGtgCtQ6HvfDcVhq8ksl9xSnJ/5aKhJXeKW
+         POYRfk3NdevfUHsOcEsCdLoh8CIEkm7K/ET5F021s8VlpearAa0u6xcXwui6WIOHol92
+         uErdyCmCnbouhLR+MySaaP925WjzzkDVP6NV7Yn+qpHKimAASzJQOPauB0CjuapC7TKd
+         jaoofSiNRdrHpaYmpMlA8RZT3OT9CDxO7eYgwl2Ztjs2L7o32wKVzLti+w/baOLwkTbo
+         rXN8wRznnW4RZ/i1s4Dgc6LC+lpPLGj9xvbetipzpv20nKPxZSRKkUkM3rgZGAJUMtMW
+         OtDg==
+X-Gm-Message-State: AA+aEWam/i1n8W4w7KEC3MLBEJrYVAVy8YytzdxEtEX0b0inZx5PwrtU
+        Y+iFVpjrnYwH2KVSOp6/Nu+7P1P7cnYYpqR8BCxqnA==
+X-Google-Smtp-Source: AFSGD/UZlHYoNN3mCLFfdSpGiUke2v/bIjJuaRlBuqBEpUmm76qC0EW70qcN3YGROjLD6SdV9p1lvdw2tRoG2V0kY6c=
+X-Received: by 2002:a19:5154:: with SMTP id f81mr2025291lfb.96.1544796471115;
+ Fri, 14 Dec 2018 06:07:51 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <CAMRc=Mef_O9ANUekZaz7vP7M2PpQFjZxJBoG8EPbXt6enRPL7g@mail.gmail.com>
+ <20181125211854.idnqxz4pco3r7ydr@pengutronix.de> <CAMRc=Mfu=e3BsjMN=_H9CbUvumdmT1pvNjsyivTo1WN+LC1+2A@mail.gmail.com>
+ <20181202215613.jcfrxwl4taiqgsql@pengutronix.de> <CAMRc=Me=FP537vMVx-jkuff2GqO66T+i3XUBza2Xb4oWzGNcLw@mail.gmail.com>
+ <CAMRc=MeD-O5-7sBfrFn2rt27VHXwcOQ5cX2ybLHXU8kFyA_dLQ@mail.gmail.com>
+ <20181203104923.gcb2bcsaoczjcjhk@pengutronix.de> <CAMRc=Me3srKHXLvdAVLAaVOyW79D378EGVh=dTXbCxo7FiyAsA@mail.gmail.com>
+ <20181203110654.53o3prw3qu3u2uyf@pengutronix.de> <CACRpkdahWTts9Vz_vdC8dfd_HxCb3NmiFcwK=x-tVvFRcRm3tg@mail.gmail.com>
+ <20181205132000.f7n2stv2pxldzcxu@pengutronix.de>
+In-Reply-To: <20181205132000.f7n2stv2pxldzcxu@pengutronix.de>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 14 Dec 2018 15:07:37 +0100
+Message-ID: <CACRpkdaTNFFevE-hauMn17cXbsoddkw_Bp3WyBHbzG1+dohxew@mail.gmail.com>
+Subject: Re: [PATCH 1/2] irq/irq_sim: provide irq_sim_fire_edge()
+To:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Macros 'inline' and '__gnu_inline' used to be defined in compiler-gcc.h,
-which was (and is) included entirely in (__KERNEL__ && !__ASSEMBLY__).
-Commit 815f0ddb346c ("include/linux/compiler*.h: make compiler-*.h mutually
-exclusive") had those macros exposed to userspace, unintentionally.
+On Wed, Dec 5, 2018 at 2:20 PM Uwe Kleine-K=C3=B6nig
+<u.kleine-koenig@pengutronix.de> wrote:
+> On Wed, Dec 05, 2018 at 01:19:54PM +0100, Linus Walleij wrote:
 
-Then commit a3f8a30f3f00 ("Compiler Attributes: use feature checks
-instead of version checks") moved '__gnu_inline' back into
-(__KERNEL__ && !__ASSEMBLY__) and 'inline' was left behind. Since 'inline'
-depends on '__gnu_inline', compiling error showing "unknown type name
-‘__gnu_inline’" will pop up, if userspace somehow includes
-<linux/compiler.h>.
+> > > The iio testing driver only needs the trigger and relies on an irq th=
+at
+> > > then calls the registerd handler. The iio driver doesn't need to tune
+> > > the edge sensitivity though and if your mockup driver just only calls
+> > > the fire routine if the configured sensitivity justifies that,
+> > > everything should work as expected.
+> >
+> > Simulating edges in the generic IRQ simulator codes seems
+> > generally useful to me, even if there is just one user now.
+>
+> I cannot imagine another potential user. Which kind of driver could use
+> that that is not a gpio simulator?
 
-Other macros like __must_check, notrace, etc. are in a similar situation.
-So just move all these macros back into (__KERNEL__ && !__ASSEMBLY__).
+I suppose anything that can generate an IRQ and wants to generate
+some test IRQs where edge matters, drivers/irqchips/?
 
-Note:
-  1. This patch only affects what userspace sees.
-  2. __must_check (when !CONFIG_ENABLE_MUST_CHECK) and noinline_for_stack
-     were once defined in __KERNEL__ only, but we believe that they can
-     be put into !__ASSEMBLY__ too.
+Regmap IRQ drivers/base/regmap/regmap-irq.c does support
+edges, and regmap already expose all registers it handles in
+debugfs, so it'd be really neat of you can also use debugfs
+to insert IRQs from a device using regmap.
 
-Acked-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Xiaozhou Liu <liuxiaozhou@bytedance.com>
----
-
-v3: move macros into !__ASSEMBLY__ too. (Miguel Ojeda)
-v2: update commit message.
-
- include/linux/compiler_types.h | 108 ++++++++++++++++++++---------------------
- 1 file changed, 54 insertions(+), 54 deletions(-)
-
-diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
-index 4a3f9c09c92d..ba814f18cb4c 100644
---- a/include/linux/compiler_types.h
-+++ b/include/linux/compiler_types.h
-@@ -104,6 +104,60 @@ struct ftrace_likely_data {
- 	unsigned long			constant;
- };
- 
-+#ifdef CONFIG_ENABLE_MUST_CHECK
-+#define __must_check		__attribute__((__warn_unused_result__))
-+#else
-+#define __must_check
-+#endif
-+
-+#if defined(CC_USING_HOTPATCH)
-+#define notrace			__attribute__((hotpatch(0, 0)))
-+#else
-+#define notrace			__attribute__((__no_instrument_function__))
-+#endif
-+
-+/*
-+ * it doesn't make sense on ARM (currently the only user of __naked)
-+ * to trace naked functions because then mcount is called without
-+ * stack and frame pointer being set up and there is no chance to
-+ * restore the lr register to the value before mcount was called.
-+ */
-+#define __naked			__attribute__((__naked__)) notrace
-+
-+#define __compiler_offsetof(a, b)	__builtin_offsetof(a, b)
-+
-+/*
-+ * Force always-inline if the user requests it so via the .config.
-+ * GCC does not warn about unused static inline functions for
-+ * -Wunused-function.  This turns out to avoid the need for complex #ifdef
-+ * directives.  Suppress the warning in clang as well by using "unused"
-+ * function attribute, which is redundant but not harmful for gcc.
-+ * Prefer gnu_inline, so that extern inline functions do not emit an
-+ * externally visible function. This makes extern inline behave as per gnu89
-+ * semantics rather than c99. This prevents multiple symbol definition errors
-+ * of extern inline functions at link time.
-+ * A lot of inline functions can cause havoc with function tracing.
-+ * Do not use __always_inline here, since currently it expands to inline again
-+ * (which would break users of __always_inline).
-+ */
-+#if !defined(CONFIG_ARCH_SUPPORTS_OPTIMIZED_INLINING) || \
-+	!defined(CONFIG_OPTIMIZE_INLINING)
-+#define inline inline __attribute__((__always_inline__)) __gnu_inline \
-+	__maybe_unused notrace
-+#else
-+#define inline inline                                    __gnu_inline \
-+	__maybe_unused notrace
-+#endif
-+
-+#define __inline__ inline
-+#define __inline   inline
-+
-+/*
-+ * Rather then using noinline to prevent stack consumption, use
-+ * noinline_for_stack instead.  For documentation reasons.
-+ */
-+#define noinline_for_stack noinline
-+
- #endif /* __KERNEL__ */
- 
- #endif /* __ASSEMBLY__ */
-@@ -161,58 +215,4 @@ struct ftrace_likely_data {
- #define __diag_error(compiler, version, option, comment) \
- 	__diag_ ## compiler(version, error, option)
- 
--#ifdef CONFIG_ENABLE_MUST_CHECK
--#define __must_check		__attribute__((__warn_unused_result__))
--#else
--#define __must_check
--#endif
--
--#if defined(CC_USING_HOTPATCH)
--#define notrace			__attribute__((hotpatch(0, 0)))
--#else
--#define notrace			__attribute__((__no_instrument_function__))
--#endif
--
--/*
-- * it doesn't make sense on ARM (currently the only user of __naked)
-- * to trace naked functions because then mcount is called without
-- * stack and frame pointer being set up and there is no chance to
-- * restore the lr register to the value before mcount was called.
-- */
--#define __naked			__attribute__((__naked__)) notrace
--
--#define __compiler_offsetof(a, b)	__builtin_offsetof(a, b)
--
--/*
-- * Force always-inline if the user requests it so via the .config.
-- * GCC does not warn about unused static inline functions for
-- * -Wunused-function.  This turns out to avoid the need for complex #ifdef
-- * directives.  Suppress the warning in clang as well by using "unused"
-- * function attribute, which is redundant but not harmful for gcc.
-- * Prefer gnu_inline, so that extern inline functions do not emit an
-- * externally visible function. This makes extern inline behave as per gnu89
-- * semantics rather than c99. This prevents multiple symbol definition errors
-- * of extern inline functions at link time.
-- * A lot of inline functions can cause havoc with function tracing.
-- * Do not use __always_inline here, since currently it expands to inline again
-- * (which would break users of __always_inline).
-- */
--#if !defined(CONFIG_ARCH_SUPPORTS_OPTIMIZED_INLINING) || \
--	!defined(CONFIG_OPTIMIZE_INLINING)
--#define inline inline __attribute__((__always_inline__)) __gnu_inline \
--	__maybe_unused notrace
--#else
--#define inline inline                                    __gnu_inline \
--	__maybe_unused notrace
--#endif
--
--#define __inline__ inline
--#define __inline   inline
--
--/*
-- * Rather then using noinline to prevent stack consumption, use
-- * noinline_for_stack instead.  For documentation reasons.
-- */
--#define noinline_for_stack noinline
--
- #endif /* __LINUX_COMPILER_TYPES_H */
--- 
-2.11.0
-
+Yours,
+Linus Walleij
