@@ -2,145 +2,105 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB00DC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 16:31:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3BCDC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 16:33:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 557D42070B
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 16:31:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D297206C2
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 16:33:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544805086;
-	bh=hwYrNRXPIcBUJyIkx/U1+4eAu1AHE2oRyldUhk1Nd8I=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=g20jUl6HDo4m+pmEwYFo85QSiketapLFqq5xkDSMSWU0zog9zvbrn3tiFc2chD0Fo
-	 Usbtrse+2Ok7LnOHa9WDkPkLKUpEoDSlJvY0JJg4D5xX5u70Wa4GTOOQe/FAp6bhAB
-	 CerdBkD9czI045PKfRMB8iiH9ACHZeSjEcm9rWfg=
+	s=default; t=1544805205;
+	bh=p9qvVHV9nKGHqNLq+91oTrAC9ljetBkDKMlNDrEsRaE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=jbOANpIqVh5B6OP2jwvkKPJFvm04VRKswT61QXCSnIzzVEskTFHxcIpdrd3gQzgoZ
+	 HoJIB0tzdf+2a/+rdIM/bi/czubRniMahas3WXIHTCXNR62R5Ew1gpgBWlriBx5d9A
+	 nZc2u/5flw9PmCZ44EDB+k+qg7dGc9f61v6hi1WU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730134AbeLNQbY (ORCPT
+        id S1729953AbeLNQdX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 11:31:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52008 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 11:33:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52570 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729672AbeLNQbX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 11:31:23 -0500
-Received: from devnote (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1729619AbeLNQdW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 11:33:22 -0500
+Received: from sinanubuntu1604.mkjiurmyylmellclgttazegk5f.bx.internal.cloudapp.net (unknown [23.96.30.70])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DC5AD206C2;
-        Fri, 14 Dec 2018 16:31:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 38ADE2070B;
+        Fri, 14 Dec 2018 16:33:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544805083;
-        bh=hwYrNRXPIcBUJyIkx/U1+4eAu1AHE2oRyldUhk1Nd8I=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=HUDtuYsja4VjbtYBKjropjemV8yXSCMR42BWmXwcsZz36iLNVkrdlXKGYgskGCokm
-         jhcs7K6hQh+OB8onkpqB53LIn+0GuCzzfiq6a3nO3aLChUwFdWMMTfyKn4A5earCFW
-         gdPcgDOvn30tBfk/YL67HlZ1ptHCtBvZuaZLQP7k=
-Date:   Sat, 15 Dec 2018 01:31:19 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Tom Zanussi <zanussi@kernel.org>
-Cc:     rostedt@goodmis.org, tglx@linutronix.de, mhiramat@kernel.org,
-        namhyung@kernel.org, vedang.patel@intel.com, bigeasy@linutronix.de,
-        joel@joelfernandes.org, mathieu.desnoyers@efficios.com,
-        julia@ni.com, linux-kernel@vger.kernel.org,
-        linux-rt-users@vger.kernel.org
-Subject: Re: [PATCH v8 20/22] tracing: Use hist trigger's var_ref array to
- destroy var_refs
-Message-Id: <20181215013119.dc796fd4d2d21535adb4cf6c@kernel.org>
-In-Reply-To: <4d6103ab7b4fdef81a82e2977b4005a26212a726.1544483273.git.tom.zanussi@linux.intel.com>
-References: <cover.1544483272.git.tom.zanussi@linux.intel.com>
-        <4d6103ab7b4fdef81a82e2977b4005a26212a726.1544483273.git.tom.zanussi@linux.intel.com>
-X-Mailer: Sylpheed 3.5.0 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        s=default; t=1544805202;
+        bh=p9qvVHV9nKGHqNLq+91oTrAC9ljetBkDKMlNDrEsRaE=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=L21JEqC+IMz3A18ouQqhIfY4mJNBO1nDlAZPV8wcFKrOB6W9XNdNcaUYz1yGd36bt
+         A+B3DG/n8wZxXb1pXalT5V/oQipfHbbuL+sDLni4UwIoZKBBA7NSHzsoxKvW4hb4pf
+         NNIWvyQpYoJCTdrK8J1T1HY3OSb0z6VV66vhczpw=
+From:   Sinan Kaya <okaya@kernel.org>
+To:     linux-acpi@vger.kernel.org
+Cc:     Sinan Kaya <okaya@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v9 1/6] ACPI: Allow CONFIG_PCI to be unset for reboot
+Date:   Fri, 14 Dec 2018 16:33:14 +0000
+Message-Id: <20181214163319.27479-2-okaya@kernel.org>
+X-Mailer: git-send-email 2.19.0
+In-Reply-To: <20181214163319.27479-1-okaya@kernel.org>
+References: <20181214163319.27479-1-okaya@kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 10 Dec 2018 18:01:34 -0600
-Tom Zanussi <zanussi@kernel.org> wrote:
+Make PCI reboot conditional on PCI support being present on the kernel
+configuration.
 
-> From: Tom Zanussi <tom.zanussi@linux.intel.com>
-> 
-> Since every var ref for a trigger has an entry in the var_ref[] array,
-> use that to destroy the var_refs, instead of piecemeal via the field
-> expressions.
-> 
-> This allows us to avoid having to keep and treat differently separate
-> lists for the action-related references, which future patches will
-> remove.
+Signed-off-by: Sinan Kaya <okaya@kernel.org>
+---
+ drivers/acpi/reboot.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-I'm not so sure, but this seems a bugfix... if so, please move this at
-the top of this series.
-
-Thank you,
-
-> 
-> Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
-> ---
->  kernel/trace/trace_events_hist.c | 24 +++++++++++++++++++-----
->  1 file changed, 19 insertions(+), 5 deletions(-)
-> 
-> diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-> index d07bb2d75e18..da4800c3f745 100644
-> --- a/kernel/trace/trace_events_hist.c
-> +++ b/kernel/trace/trace_events_hist.c
-> @@ -2312,6 +2312,15 @@ static int contains_operator(char *str)
->  	return field_op;
->  }
->  
-> +static void __destroy_hist_field(struct hist_field *hist_field)
-> +{
-> +	kfree(hist_field->var.name);
-> +	kfree(hist_field->name);
-> +	kfree(hist_field->type);
-> +
-> +	kfree(hist_field);
-> +}
-> +
->  static void destroy_hist_field(struct hist_field *hist_field,
->  			       unsigned int level)
->  {
-> @@ -2323,14 +2332,13 @@ static void destroy_hist_field(struct hist_field *hist_field,
->  	if (!hist_field)
->  		return;
->  
-> +	if (hist_field->flags & HIST_FIELD_FL_VAR_REF)
-> +		return; /* var refs will be destroyed separately */
-> +
->  	for (i = 0; i < HIST_FIELD_OPERANDS_MAX; i++)
->  		destroy_hist_field(hist_field->operands[i], level + 1);
->  
-> -	kfree(hist_field->var.name);
-> -	kfree(hist_field->name);
-> -	kfree(hist_field->type);
-> -
-> -	kfree(hist_field);
-> +	__destroy_hist_field(hist_field);
->  }
->  
->  static struct hist_field *create_hist_field(struct hist_trigger_data *hist_data,
-> @@ -2457,6 +2465,12 @@ static void destroy_hist_fields(struct hist_trigger_data *hist_data)
->  			hist_data->fields[i] = NULL;
->  		}
->  	}
-> +
-> +	for (i = 0; i < hist_data->n_var_refs; i++) {
-> +		WARN_ON(!(hist_data->var_refs[i]->flags & HIST_FIELD_FL_VAR_REF));
-> +		__destroy_hist_field(hist_data->var_refs[i]);
-> +		hist_data->var_refs[i] = NULL;
-> +	}
->  }
->  
->  static int init_var_ref(struct hist_field *ref_field,
-> -- 
-> 2.14.1
-> 
-
-
+diff --git a/drivers/acpi/reboot.c b/drivers/acpi/reboot.c
+index 6fa9c2a4cfe9..d75e637ee36a 100644
+--- a/drivers/acpi/reboot.c
++++ b/drivers/acpi/reboot.c
+@@ -7,8 +7,6 @@
+ void acpi_reboot(void)
+ {
+ 	struct acpi_generic_address *rr;
+-	struct pci_bus *bus0;
+-	unsigned int devfn;
+ 	u8 reset_value;
+ 
+ 	if (acpi_disabled)
+@@ -33,6 +31,11 @@ void acpi_reboot(void)
+ 	 * on a device on bus 0. */
+ 	switch (rr->space_id) {
+ 	case ACPI_ADR_SPACE_PCI_CONFIG:
++	{
++#ifdef CONFIG_PCI
++		unsigned int devfn;
++		struct pci_bus *bus0;
++
+ 		/* The reset register can only live on bus 0. */
+ 		bus0 = pci_find_bus(0, 0);
+ 		if (!bus0)
+@@ -44,8 +47,9 @@ void acpi_reboot(void)
+ 		/* Write the value that resets us. */
+ 		pci_bus_write_config_byte(bus0, devfn,
+ 				(rr->address & 0xffff), reset_value);
++#endif
+ 		break;
+-
++	}
+ 	case ACPI_ADR_SPACE_SYSTEM_MEMORY:
+ 	case ACPI_ADR_SPACE_SYSTEM_IO:
+ 		printk(KERN_DEBUG "ACPI MEMORY or I/O RESET_REG.\n");
 -- 
-Masami Hiramatsu <mhiramat@kernel.org>
+2.19.0
+
