@@ -2,103 +2,144 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80C83C6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:32:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A3C3C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:32:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30E3520892
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:32:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30E3520892
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=emlix.com
+	by mail.kernel.org (Postfix) with ESMTP id C593E208E7
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:32:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544790761;
+	bh=rEATTkx2UkX8phiMbMZKFxoj4ObMoKih62cQ6AAkjvI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=ObDcdTOIn6sz+GonuLEVn9+kngjSTy/DPO9iC/PGXE5gzYl9z0lRPnFLT4EtG6WeH
+	 1K3VuC0COLVDe3JDy/MWXVkJ5pBrICocSvIatM2cxT2rgNyNhBmmA/FV9mEUYBtv7j
+	 QqVK7uSru/FMHXaXJQ1+WkqASKFTz7Hm0mOTLqZQ=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C593E208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731504AbeLNMcd (ORCPT
+        id S1730601AbeLNMck (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:32:33 -0500
-Received: from mx1.emlix.com ([46.4.235.150]:34310 "EHLO mx1.emlix.com"
+        Fri, 14 Dec 2018 07:32:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54628 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729974AbeLNMJD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:09:03 -0500
-Received: from mailer.emlix.com (unknown [81.20.119.6])
-        (using TLSv1.2 with cipher ADH-AES256-GCM-SHA384 (256/256 bits))
+        id S1730274AbeLNMJB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:09:01 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.emlix.com (Postfix) with ESMTPS id 72F462605F7;
-        Fri, 14 Dec 2018 13:09:01 +0100 (CET)
-From:   Rolf Eike Beer <eb@emlix.com>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     Linux Kernel Developers List <linux-kernel@vger.kernel.org>,
-        David Woodhouse <dwmw2@infradead.org>
-Subject: Re: [PATCH v2] scripts: use pkg-config to locate libcrypto
-Date:   Fri, 14 Dec 2018 13:08:56 +0100
-Message-ID: <2004385.IFYbe2Do0L@devpool21>
-Organization: emlix GmbH
-In-Reply-To: <1637606.U1sPAt16y5@devpool21>
-References: <2429714.x0fLlpPdDl@devpool21> <20181124055339.E3B9120881@mail.kernel.org> <1637606.U1sPAt16y5@devpool21>
+        by mail.kernel.org (Postfix) with ESMTPSA id C4B19214AE;
+        Fri, 14 Dec 2018 12:09:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544789341;
+        bh=rEATTkx2UkX8phiMbMZKFxoj4ObMoKih62cQ6AAkjvI=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=CQNA0AId35fKZ1LljqsLuK20TbRN6XTiUwDhP7+yaVwWydLndmiaM9nQZyCLEkfPs
+         AatyEVS2uZ0ycJ+a/yi5rUv+GyHgT3y2jv/SlDzxsAx9fTpq+CsWtuGQPpMN9dcM+h
+         O+oMNrVQpxuemq3QZjf7rovJfTMWEmg3Ywqc7AEM=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Pablo Neira Ayuso <pablo@netfilter.org>,
+        Florian Westphal <fw@strlen.de>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 23/89] netfilter: nf_tables: fix use-after-free when deleting compat expressions
+Date:   Fri, 14 Dec 2018 12:59:36 +0100
+Message-Id: <20181214115730.826913856@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.0
+In-Reply-To: <20181214115729.658859279@linuxfoundation.org>
+References: <20181214115729.658859279@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart3571005.DoNfETGKzA"; micalg="pgp-sha256"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---nextPart3571005.DoNfETGKzA
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="UTF-8"
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-Am Montag, 26. November 2018, 10:13:23 CET schrieb Rolf Eike Beer:
-> Am Samstag, 24. November 2018, 06:53:39 CET schrieb Sasha Levin:
-> > Hi,
-> >=20
-> > [This is an automated email]
-> >=20
-> > This commit has been processed because it contains a -stable tag.
-> > The stable tag indicates that it's relevant for the following trees: all
-> >=20
-> > The bot has tested the following trees: v4.19.3, v4.14.82, v4.9.138,
-> > v4.4.164, v3.18.126.
-> >=20
-> > v4.19.3: Build failed! Errors:
-> >     collect2: error: ld returned 1 exit status
->=20
-> This sounds like it could actually be a problem, can you point me to the
-> full log, please?
->=20
-> > v4.14.82: Failed to apply! Possible dependencies:
-> >     Unable to calculate
->=20
-> This would either need 8377bd2b9ee1be35b39b5523f640a2b75ddd7c4e as well, =
-or
-> a modified patch. Manually fixing this up should be trivial. Just tell me
-> which way you prefer.
+------------------
 
-Ping?
-=2D-=20
-Rolf Eike Beer, emlix GmbH, http://www.emlix.com
-=46on +49 551 30664-0, Fax +49 551 30664-11
-Gothaer Platz 3, 37083 G=C3=B6ttingen, Germany
-Sitz der Gesellschaft: G=C3=B6ttingen, Amtsgericht G=C3=B6ttingen HR B 3160
-Gesch=C3=A4ftsf=C3=BChrung: Heike Jordan, Dr. Uwe Kracke =E2=80=93 Ust-IdNr=
-=2E: DE 205 198 055
+[ Upstream commit 29e3880109e357fdc607b4393f8308cef6af9413 ]
 
-emlix - smart embedded open source
---nextPart3571005.DoNfETGKzA
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
+nft_compat ops do not have static storage duration, unlike all other
+expressions.
 
------BEGIN PGP SIGNATURE-----
+When nf_tables_expr_destroy() returns, expr->ops might have been
+free'd already, so we need to store next address before calling
+expression destructor.
 
-iLMEAAEIAB0WIQQ/Uctzh31xzAxFCLur5FH7Xu2t/AUCXBOdWAAKCRCr5FH7Xu2t
-/LErBACUnOOLVkL23/QHuS+yA5Bgy7Yi6IrIxdne8krSW58vAFQkF0jHLpge62MT
-dNhUVejxRl7VZsjszTAA0PqTMrGZQiv9EnDj8YLvbVXkkJpq97vleL7SydKB1Iz1
-NJl39f5KabKc3fIRxdjZxDLhbJY7L7xJGwJN1WRDzHcVw3ZH+w==
-=36HA
------END PGP SIGNATURE-----
+For same reason, we can't deref match pointer after nft_xt_put().
 
---nextPart3571005.DoNfETGKzA--
+This can be easily reproduced by adding msleep() before
+nft_match_destroy() returns.
+
+Fixes: 0ca743a55991 ("netfilter: nf_tables: add compatibility layer for x_tables")
+Reported-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ net/netfilter/nf_tables_api.c | 5 +++--
+ net/netfilter/nft_compat.c    | 3 ++-
+ 2 files changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/net/netfilter/nf_tables_api.c b/net/netfilter/nf_tables_api.c
+index 3ae365f92bff..ea1e57daf50e 100644
+--- a/net/netfilter/nf_tables_api.c
++++ b/net/netfilter/nf_tables_api.c
+@@ -2252,7 +2252,7 @@ static int nf_tables_getrule(struct net *net, struct sock *nlsk,
+ static void nf_tables_rule_destroy(const struct nft_ctx *ctx,
+ 				   struct nft_rule *rule)
+ {
+-	struct nft_expr *expr;
++	struct nft_expr *expr, *next;
+ 
+ 	/*
+ 	 * Careful: some expressions might not be initialized in case this
+@@ -2260,8 +2260,9 @@ static void nf_tables_rule_destroy(const struct nft_ctx *ctx,
+ 	 */
+ 	expr = nft_expr_first(rule);
+ 	while (expr != nft_expr_last(rule) && expr->ops) {
++		next = nft_expr_next(expr);
+ 		nf_tables_expr_destroy(ctx, expr);
+-		expr = nft_expr_next(expr);
++		expr = next;
+ 	}
+ 	kfree(rule);
+ }
+diff --git a/net/netfilter/nft_compat.c b/net/netfilter/nft_compat.c
+index 6da1cec1494a..7533c2fd6b76 100644
+--- a/net/netfilter/nft_compat.c
++++ b/net/netfilter/nft_compat.c
+@@ -497,6 +497,7 @@ __nft_match_destroy(const struct nft_ctx *ctx, const struct nft_expr *expr,
+ 		    void *info)
+ {
+ 	struct xt_match *match = expr->ops->data;
++	struct module *me = match->me;
+ 	struct xt_mtdtor_param par;
+ 
+ 	par.net = ctx->net;
+@@ -507,7 +508,7 @@ __nft_match_destroy(const struct nft_ctx *ctx, const struct nft_expr *expr,
+ 		par.match->destroy(&par);
+ 
+ 	if (nft_xt_put(container_of(expr->ops, struct nft_xt, ops)))
+-		module_put(match->me);
++		module_put(me);
+ }
+ 
+ static void
+-- 
+2.19.1
 
 
 
