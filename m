@@ -2,150 +2,139 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EAF4C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 18:21:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 261C0C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 18:21:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 539BF206C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 18:21:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C34AB206C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 18:21:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=schoebel-theuer.de header.i=@schoebel-theuer.de header.b="aBmU9p0N"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730519AbeLNSVR convert rfc822-to-8bit (ORCPT
+        id S1730542AbeLNSVY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 13:21:17 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:46960 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729962AbeLNSVQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 13:21:16 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 504D0A04A0;
-        Fri, 14 Dec 2018 18:21:15 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-223.bos.redhat.com [10.18.17.223])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id ABAA61868C;
-        Fri, 14 Dec 2018 18:21:13 +0000 (UTC)
-Subject: Re: [PATCH] debugobjects: Move printk out of db lock critical
- sections
-To:     Dmitry Safonov <dima@arista.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Yang Shi <yang.shi@linux.alibaba.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-References: <1544653694-27873-1-git-send-email-longman@redhat.com>
- <9cb1526a-e82f-dfa7-4b3c-5ea911a8d476@arista.com>
- <c06a5233-0566-e391-6fc6-4ff6122c265c@redhat.com>
- <bae90b7f-0b1e-e5d9-d9e2-509b50612427@arista.com>
-From:   Waiman Long <longman@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- weim8xU=
-Organization: Red Hat
-Message-ID: <cdda51d4-c646-0898-0840-93ae46e5c2a5@redhat.com>
-Date:   Fri, 14 Dec 2018 13:21:13 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <bae90b7f-0b1e-e5d9-d9e2-509b50612427@arista.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Fri, 14 Dec 2018 18:21:15 +0000 (UTC)
+        Fri, 14 Dec 2018 13:21:24 -0500
+Received: from mo4-p00-ob.smtp.rzone.de ([85.215.255.22]:14413 "EHLO
+        mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729822AbeLNSVX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 13:21:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1544811681;
+        s=strato-dkim-0002; d=schoebel-theuer.de;
+        h=Message-Id:Date:Subject:To:From:X-RZG-CLASS-ID:X-RZG-AUTH:From:
+        Subject:Sender;
+        bh=YRfiBnjiDwd7o31QlQBDVcGk87v/b118oQScvE5nOLo=;
+        b=aBmU9p0Nf+M4Nyok3k9PhRHw/Ex8m/gmq38VDIUMxlOBpuTe29SqWkkxUmV00sqvZa
+        W9/I93C1UukQgbuS4T9jfxPp+pPxaMfNQ7uSnpg6H8Euk5klgJlKS6wnTvxWzAXHjQGU
+        /MRrGAMRH3pO6IIQkvhSK8anqfpYC1QxG9es1yfXvAYgcbhzooDyJNMZ2gmYt4mXraE2
+        VIfQiIhAMaXmOBYiIR0xRQ8I6rylfcCgk0DBvD4if3sKPSnmFT8fss3ljtKdOeu7CJ/A
+        ZY7nfdAH/zp+OPhqajY+/wG5vP2uzjyDtLFw4AhAzimvYea96EdzuSie4YiPHrPvBq1d
+        zS7g==
+X-RZG-AUTH: ":OH8QVVOrc/CP6za/qRmbF3BWedPGA1vjs2e0bDjfg8SjapJoMy/ngEsCKWYGdbtw+iItTz0PdE9lIA=="
+X-RZG-CLASS-ID: mo00
+Received: from schoebel-theuer.de
+        by smtp.strato.de (RZmta 44.8 DYNA|AUTH)
+        with ESMTPSA id V03c59uBEIFJ6lp
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate)
+        for <linux-kernel@vger.kernel.org>;
+        Fri, 14 Dec 2018 19:15:19 +0100 (CET)
+From:   Thomas Schoebel-Theuer <tst@schoebel-theuer.de>
+To:     linux-kernel@vger.kernel.org
+Subject: [PATCH] acpi / apei: fix NULL deref during init
+Date:   Fri, 14 Dec 2018 19:15:14 +0100
+Message-Id: <20181214181514.29891-1-tst@schoebel-theuer.de>
+X-Mailer: git-send-email 2.12.3
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/14/2018 01:06 PM, Dmitry Safonov wrote:
-> On 12/13/18 10:10 PM, Waiman Long wrote:
->> The bucket lock is for protecting the insertion and deletion of
->> debug_obj to/from the bucket list as well as searching within the bucket
->> list. It has nothing to do with the life time of the debug_obj itself.
-> The bucket lock also protects lookups on a bucket.
+Since commit commit d91525eb8ee6 ("ACPI, EINJ: Enhance error injection
+tolerance level"), starting with kernel 4.0, the following happens during
+boot of a specific old hardware:
 
-Yes, that is what I meant by "searching".
+APEI: Can not request [mem 0x0009c2f2-0x0009c2fc] for APEI ERST registers
+BUG: unable to handle kernel NULL pointer dereference at           (null)
+IP: [<ffffffff81343d8e>] __list_del_entry+0x5c/0x98
+PGD 0
+Oops: 0000 [#1] SMP
+Modules linked in:
+CPU: 0 PID: 1 UID: 0 Comm: swapper/0 Not tainted 4.4.0-ui18344.004-uiabi1-infong-amd64 #1
+Hardware name: IBM IBM eServer BladeCenter HS12 -[8028Z5S]-/Server Blade, BIOS -[N1E150AUS-1.11]- 11/04/2010
+task: ffff88021fe4e040 ti: ffff88021fe7c000 task.ti: ffff88021fe7c000
+RIP: 0010:[<ffffffff81343d8e>]  [<ffffffff81343d8e>] __list_del_entry+0x5c/0x98
+RSP: 0000:ffff88021fe7fd18  EFLAGS: 00010207
+RAX: 0000000000000000 RBX: ffff88021fe7fde0 RCX: ffff88021fe7fde0
+RDX: ffffffff819bd040 RSI: dead000000000200 RDI: ffff88021fe7fde0
+RBP: ffff88021fe7fd18 R08: 0000000000000000 R09: 0000000000000000
+R10: ffffffff816ce240 R11: 0000000000000001 R12: ffffffff819bd040
+R13: ffff88021fe7fda0 R14: ffff88021d2cd840 R15: 0000000000000000
+FS:  0000000000000000(0000) GS:ffff88022fc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000000000 CR3: 00000000019b6000 CR4: 0000000000040670
+Stack:
+ ffff88021fe7fd30 ffffffff81343dd7 ffff88021fe7fde0 ffff88021fe7fd58
+ ffffffff813931c0 ffff88021fe7fda0 ffff88021fe7fe00 ffff88021d2cd840
+ ffff88021fe7fd70 ffffffff813931e5 00000000ffffffea ffff88021fe7fdf0
+Call Trace:
+ [<ffffffff81343dd7>] list_del+0xd/0x25
+ [<ffffffff813931c0>] apei_res_clean+0x1f/0x37
+ [<ffffffff813931e5>] apei_resources_fini+0xd/0x19
+ [<ffffffff81393948>] apei_resources_request+0x24f/0x268
+ [<ffffffff8139301d>] ? apei_exec_for_each_entry+0x77/0x8e
+ [<ffffffff81b0f729>] ? setup_erst_disable+0x12/0x12
+ [<ffffffff81b0f816>] erst_init+0xed/0x2ca
+ [<ffffffff810003b2>] ? do_one_initcall+0x8c/0x174
+ [<ffffffff81b0f729>] ? setup_erst_disable+0x12/0x12
+ [<ffffffff81b0f729>] ? setup_erst_disable+0x12/0x12
+ [<ffffffff8100040f>] do_one_initcall+0xe9/0x174
+ [<ffffffff8105df00>] ? parse_args+0x161/0x296
+ [<ffffffff81ad6070>] kernel_init_freeable+0x169/0x1f6
+ [<ffffffff81ad579b>] ? do_early_param+0x88/0x88
+ [<ffffffff81663202>] ? rest_init+0x79/0x79
+ [<ffffffff8166320b>] kernel_init+0x9/0xd5
+ [<ffffffff816683f5>] ret_from_fork+0x55/0x80
+ [<ffffffff81663202>] ? rest_init+0x79/0x79
+Code: 02 00 00 00 00 ad de 48 39 f0 75 1f 49 89 c0 48 c7 c2 38 de 8e 81 be 38 00 00 00 48 c7 c7 13 dd 8e 81 31 c0 e8 94 36 d0 ff eb 3a <48> 8b 30 48 39 fe 74 11 49 89 f0 48 c7 c2 6c de 8e 81 be 3b 00
+RIP  [<ffffffff81343d8e>] __list_del_entry+0x5c/0x98
+ RSP <ffff88021fe7fd18>
+CR2: 0000000000000000
+---[ end trace 3610e544cef27e81 ]---
+Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000009
 
->
-> 1. Imagine, you have object in ODEBUG_STATE_DESTROYED.
-> If you will try debug_object_activate() with this patch, it will debug
-> print object outside of bucket lock, which means that
-> debug_check_no_obj_freed() may concurrently fixup/free object and
-> meta-data on another CPU.
->
-> I don't see this state is being used in many places around the kernel,
-> except selftest and i915 driver.
->
-> 2. If you try to deactivate already non-active object - you will have
-> debug print outside of bucket lock. The other CPU can fixup/free page
-> with this object concurrently.
->
-> (before your patch the lookup would fail and no printing)
->
-> So, I might be mistaken, I'm mostly worried about dereferencing the
-> descriptor inside of the object during printing.
-> And in my opinion, i.e., there was a reason to save `descr` before
-> releasing the bucket lock here:
-> https://elixir.bootlin.com/linux/latest/source/lib/debugobjects.c#L789
->
-> Anyway, I see that your patch is already in -mm tree and Thomas seems to
-> be fine with the change so whatever %)
+Reason is a conditional initialization of variable arch_res, which happens
+only under a specific precondition. When the condition is false, the
+variable remains uninitialized.
 
-I also thought about whether we should save descr before unlock. Anyway,
-we can always send a follow-up patch to make further change if it is the
-right thing to do.
+This may later trigger a splat, e.g. when some error path is taken.
 
-The debugobjects code is enabled in a debug kernel and never in a kernel
-for production use. The printk should only be triggered if there is a
-bug in the code which the debug object is tracking.
+Solution: do the initialisation unconditionally. Also as a safeguard.
 
-Thanks,
-Longman
+Fixes: d91525eb8ee6a622ce476955fe1a2530ade87c83
+Signed-off-by: Thomas Schoebel-Theuer <tst@schoebel-theuer.de>
+---
+ drivers/acpi/apei/apei-base.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/acpi/apei/apei-base.c b/drivers/acpi/apei/apei-base.c
+index da370e1d31f4..ef931b8a0b11 100644
+--- a/drivers/acpi/apei/apei-base.c
++++ b/drivers/acpi/apei/apei-base.c
+@@ -494,8 +494,8 @@ int apei_resources_request(struct apei_resources *resources,
+ 	if (rc)
+ 		goto nvs_res_fini;
+ 
++	apei_resources_init(&arch_res);
+ 	if (arch_apei_filter_addr) {
+-		apei_resources_init(&arch_res);
+ 		rc = apei_get_arch_resources(&arch_res);
+ 		if (rc)
+ 			goto arch_res_fini;
+-- 
+2.12.3
 
