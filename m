@@ -2,230 +2,213 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB26AC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 18:09:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E52FC43612
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 18:10:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB0DE206C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 18:09:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B3F3E206C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 18:10:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=apple.com header.i=@apple.com header.b="SV5KDEf7"
+	dkim=pass (1024-bit key) header.d=konsulko.com header.i=@konsulko.com header.b="o+h8mFAh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730478AbeLNSJq (ORCPT
+        id S1730488AbeLNSKp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 13:09:46 -0500
-Received: from nwk-aaemail-lapp03.apple.com ([17.151.62.68]:33654 "EHLO
-        nwk-aaemail-lapp03.apple.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730250AbeLNSJq (ORCPT
+        Fri, 14 Dec 2018 13:10:45 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:45007 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729752AbeLNSKo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 13:09:46 -0500
-X-Greylist: delayed 8101 seconds by postgrey-1.27 at vger.kernel.org; Fri, 14 Dec 2018 13:09:45 EST
-Received: from pps.filterd (nwk-aaemail-lapp03.apple.com [127.0.0.1])
-        by nwk-aaemail-lapp03.apple.com (8.16.0.22/8.16.0.22) with SMTP id wBEFlEDg028053;
-        Fri, 14 Dec 2018 07:54:36 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=apple.com; h=mime-version :
- content-transfer-encoding : content-type : sender : date : from : to : cc
- : subject : message-id : references : in-reply-to; s=20180706;
- bh=9YblhPdooUUtBn/2SFzAYvF9/v1ixOObHmmzlvw1qbw=;
- b=SV5KDEf7wPEfm63xZ3xn/ZwtiYbSANbV8NO6l18jZJyVLwulVvgMy81YlOhENr+oMjqh
- qQ1o0a0LLurBcPBfyBcq3vgTWe/EOiuuRR/U9BZ9BMxhrcAsIjV+wusqYFPEdv0GIl2A
- 5hacC0DOqn4/KHNjGVJ03WYqhcF515Le2txXrqgK+6ul3uDqcJWFcuUAGTXnRAsd8Rx2
- y/6P5Pug8oWb/iEqik3iLB0a/8dB95SzhzZa7H6wqb5YjM6KJy6uTrFC4VNn46/r3F2D
- tEKFeCM7dtdIT4k8PfF/0UPXDqRD9irQ/DYx5qIvHc/Hv29Tmf/qIvqcLXVLQLorjn0j Hg== 
-Received: from mr2-mtap-s01.rno.apple.com (mr2-mtap-s01.rno.apple.com [17.179.226.133])
-        by nwk-aaemail-lapp03.apple.com with ESMTP id 2p8bccvt3u-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
-        Fri, 14 Dec 2018 07:54:36 -0800
-MIME-version: 1.0
-Content-transfer-encoding: 7BIT
-Content-disposition: inline
-Content-type: text/plain; CHARSET=US-ASCII
-Received: from nwk-mmpp-sz10.apple.com
- (nwk-mmpp-sz10.apple.com [17.128.115.122]) by mr2-mtap-s01.rno.apple.com
- (Oracle Communications Messaging Server 8.0.2.3.20181024 64bit (built Oct 24
- 2018)) with ESMTPS id <0PJQ00887HJ0IQ70@mr2-mtap-s01.rno.apple.com>; Fri,
- 14 Dec 2018 07:54:36 -0800 (PST)
-Received: from process_viserion-daemon.nwk-mmpp-sz10.apple.com by
- nwk-mmpp-sz10.apple.com
- (Oracle Communications Messaging Server 8.0.2.3.20181024 64bit (built Oct 24
- 2018)) id <0PJQ00300HG20I00@nwk-mmpp-sz10.apple.com>; Fri,
- 14 Dec 2018 07:54:36 -0800 (PST)
-X-Va-A: 
-X-Va-T-CD: 3292cb8df71769077a8e6c728895331c
-X-Va-E-CD: 4323c9cb7650976afee1876783f7d85e
-X-Va-R-CD: d885efb23def6dc3d7fbf3a036d898ad
-X-Va-CD: 0
-X-Va-ID: f2d121e7-cc81-4503-bc7b-d921737a3687
-X-V-A:  
-X-V-T-CD: e3ce1f560f53d3ee7d03c9da4c45394f
-X-V-E-CD: 4323c9cb7650976afee1876783f7d85e
-X-V-R-CD: d885efb23def6dc3d7fbf3a036d898ad
-X-V-CD: 0
-X-V-ID: f7cadd00-fec5-43f7-abd7-d1127413a04e
-Received: from process_milters-daemon.nwk-mmpp-sz10.apple.com by
- nwk-mmpp-sz10.apple.com
- (Oracle Communications Messaging Server 8.0.2.3.20181024 64bit (built Oct 24
- 2018)) id <0PJQ00300HFZ0H00@nwk-mmpp-sz10.apple.com>; Fri,
- 14 Dec 2018 07:54:36 -0800 (PST)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,,
- definitions=2018-12-14_08:,, signatures=0
-Received: from localhost ([17.234.103.59]) by nwk-mmpp-sz10.apple.com
- (Oracle Communications Messaging Server 8.0.2.3.20181024 64bit (built Oct 24
- 2018)) with ESMTPSA id <0PJQ00677HIZ8350@nwk-mmpp-sz10.apple.com>; Fri,
- 14 Dec 2018 07:54:36 -0800 (PST)
-Date:   Fri, 14 Dec 2018 07:54:35 -0800
-From:   Christoph Paasch <cpaasch@apple.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Prashant Bhole <bhole_prashant_q7@lab.ntt.co.jp>,
-        Tyler Hicks <tyhicks@canonical.com>,
-        Eric Dumazet <eric.dumazet@gmail.com>,
-        Eric Dumazet <edumazet@google.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: Re: [PATCH 4.14 09/89] net: Prevent invalid access to skb->prev in
- __qdisc_drop_all
-Message-id: <20181214155435.GK41383@MacBook-Pro-19.local>
-References: <20181214115729.658859279@linuxfoundation.org>
- <20181214115730.135586551@linuxfoundation.org>
- <20181214155226.GJ41383@MacBook-Pro-19.local>
-In-reply-to: <20181214155226.GJ41383@MacBook-Pro-19.local>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-14_08:,,
- signatures=0
+        Fri, 14 Dec 2018 13:10:44 -0500
+Received: by mail-pl1-f196.google.com with SMTP id e11so2427493plt.11
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 10:10:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=konsulko.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=zzt3jh8EHDsAbb/yB3ZT+jxl/mYi+Wvr1wldxOUI4ac=;
+        b=o+h8mFAhld9M9nhZTUShMRQzgWKhh2Ofz2R9Ea9IjDDlv26nliuFFiRB02DolKFlNA
+         SEWGknUi+e8OfPQFIFAvozz5CE8pmteaHFlYXAD0cD+4g56ChBh0cjM/8Wfu4nJ8UwTH
+         /o/+XL48KXUmwcZS8e8jFvGDTQL6fvdDKeki8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zzt3jh8EHDsAbb/yB3ZT+jxl/mYi+Wvr1wldxOUI4ac=;
+        b=BQj0BSvUc00quwUOLSHFcFPHmC547TH7vkmHg1pvfKShdUNJA8eM1q8MNjl3IvPjis
+         hkIFGQdj7elQ0WsM5cMrT+o0k2PfN4k9e4W/lrNn1sb98cUB/X3fXmb9sMyt413IsQ0t
+         iP5QCNxf0I4RsGUtJzNvvVtFO31jy6r6hCytkwW7VQBN6rFTiZmSY7a+tpWCMqtlt0zL
+         9ElS0zHzvepS9WE52MjoZgXgfRInHyPK+nKKLVgwdPLNMUx76WLPuiEDNhUDRD3CH2Jv
+         9/HusVyauzpbxczDp6iwORu04rMyXAl6o5yOWOABWDBIPGLwPbmO/yAG9CcEPMZjy5nO
+         GDEw==
+X-Gm-Message-State: AA+aEWaA7siSTXpxmYTMAFs6OhYlo9Z0PT1OMwPbHVtmtnGZw1BvrCTK
+        yrXMDcEzTvqz2s+THjekz7lLcLjqQYcsbS3EQ0OO6Q==
+X-Google-Smtp-Source: AFSGD/XXt9dT44hec9IQeOnskgWoVq+d56tZmb3+ZpZfXqGxHRdWTzSu2S25rdeDTDEr/qDjFb3D/JI2dUOBdk33yDs=
+X-Received: by 2002:a17:902:59c8:: with SMTP id d8mr3817333plj.116.1544811044023;
+ Fri, 14 Dec 2018 10:10:44 -0800 (PST)
+MIME-Version: 1.0
+References: <20181212183011.16567-1-tduszyns@gmail.com> <20181212183011.16567-2-tduszyns@gmail.com>
+In-Reply-To: <20181212183011.16567-2-tduszyns@gmail.com>
+From:   Matt Ranostay <matt.ranostay@konsulko.com>
+Date:   Fri, 14 Dec 2018 10:10:32 -0800
+Message-ID: <CAJCx=gng3h-W21FpuTmwqhet7s4mj+Wss5Mrq0MF+o+vg2zyvA@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] iio: add IIO_MASSCONCENTRATION channel type
+To:     Tomasz Duszynski <tduszyns@gmail.com>
+Cc:     linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        jic23@jic23.retrosnub.co.uk,
+        Andreas Brauchli <a.brauchli@elementarea.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14/12/18 - 07:52:26, Christoph Paasch wrote:
-> Hello Greg,
-> 
-> On 14/12/18 - 12:59:22, Greg Kroah-Hartman wrote:
-> > 4.14-stable review patch.  If anyone has any objections, please let me know.
-> > 
-> > ------------------
-> > 
-> > From: Christoph Paasch <cpaasch@apple.com>
-> > 
-> > [ Upstream commit 9410d386d0a829ace9558336263086c2fbbe8aed ]
-> > 
-> > __qdisc_drop_all() accesses skb->prev to get to the tail of the
-> > segment-list.
-> > 
-> > With commit 68d2f84a1368 ("net: gro: properly remove skb from list")
-> > the skb-list handling has been changed to set skb->next to NULL and set
-> > the list-poison on skb->prev.
-> > 
-> > With that change, __qdisc_drop_all() will panic when it tries to
-> > dereference skb->prev.
-> > 
-> > Since commit 992cba7e276d ("net: Add and use skb_list_del_init().")
-> > __list_del_entry is used, leaving skb->prev unchanged (thus,
-> > pointing to the list-head if it's the first skb of the list).
-> > This will make __qdisc_drop_all modify the next-pointer of the list-head
-> > and result in a panic later on:
-> > 
-> > [   34.501053] general protection fault: 0000 [#1] SMP KASAN PTI
-> > [   34.501968] CPU: 2 PID: 0 Comm: swapper/2 Not tainted 4.20.0-rc2.mptcp #108
-> > [   34.502887] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 0.5.1 01/01/2011
-> > [   34.504074] RIP: 0010:dev_gro_receive+0x343/0x1f90
-> > [   34.504751] Code: e0 48 c1 e8 03 42 80 3c 30 00 0f 85 4a 1c 00 00 4d 8b 24 24 4c 39 65 d0 0f 84 0a 04 00 00 49 8d 7c 24 38 48 89 f8 48 c1 e8 03 <42> 0f b6 04 30 84 c0 74 08 3c 04
-> > [   34.507060] RSP: 0018:ffff8883af507930 EFLAGS: 00010202
-> > [   34.507761] RAX: 0000000000000007 RBX: ffff8883970b2c80 RCX: 1ffff11072e165a6
-> > [   34.508640] RDX: 1ffff11075867008 RSI: ffff8883ac338040 RDI: 0000000000000038
-> > [   34.509493] RBP: ffff8883af5079d0 R08: ffff8883970b2d40 R09: 0000000000000062
-> > [   34.510346] R10: 0000000000000034 R11: 0000000000000000 R12: 0000000000000000
-> > [   34.511215] R13: 0000000000000000 R14: dffffc0000000000 R15: ffff8883ac338008
-> > [   34.512082] FS:  0000000000000000(0000) GS:ffff8883af500000(0000) knlGS:0000000000000000
-> > [   34.513036] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > [   34.513741] CR2: 000055ccc3e9d020 CR3: 00000003abf32000 CR4: 00000000000006e0
-> > [   34.514593] Call Trace:
-> > [   34.514893]  <IRQ>
-> > [   34.515157]  napi_gro_receive+0x93/0x150
-> > [   34.515632]  receive_buf+0x893/0x3700
-> > [   34.516094]  ? __netif_receive_skb+0x1f/0x1a0
-> > [   34.516629]  ? virtnet_probe+0x1b40/0x1b40
-> > [   34.517153]  ? __stable_node_chain+0x4d0/0x850
-> > [   34.517684]  ? kfree+0x9a/0x180
-> > [   34.518067]  ? __kasan_slab_free+0x171/0x190
-> > [   34.518582]  ? detach_buf+0x1df/0x650
-> > [   34.519061]  ? lapic_next_event+0x5a/0x90
-> > [   34.519539]  ? virtqueue_get_buf_ctx+0x280/0x7f0
-> > [   34.520093]  virtnet_poll+0x2df/0xd60
-> > [   34.520533]  ? receive_buf+0x3700/0x3700
-> > [   34.521027]  ? qdisc_watchdog_schedule_ns+0xd5/0x140
-> > [   34.521631]  ? htb_dequeue+0x1817/0x25f0
-> > [   34.522107]  ? sch_direct_xmit+0x142/0xf30
-> > [   34.522595]  ? virtqueue_napi_schedule+0x26/0x30
-> > [   34.523155]  net_rx_action+0x2f6/0xc50
-> > [   34.523601]  ? napi_complete_done+0x2f0/0x2f0
-> > [   34.524126]  ? kasan_check_read+0x11/0x20
-> > [   34.524608]  ? _raw_spin_lock+0x7d/0xd0
-> > [   34.525070]  ? _raw_spin_lock_bh+0xd0/0xd0
-> > [   34.525563]  ? kvm_guest_apic_eoi_write+0x6b/0x80
-> > [   34.526130]  ? apic_ack_irq+0x9e/0xe0
-> > [   34.526567]  __do_softirq+0x188/0x4b5
-> > [   34.527015]  irq_exit+0x151/0x180
-> > [   34.527417]  do_IRQ+0xdb/0x150
-> > [   34.527783]  common_interrupt+0xf/0xf
-> > [   34.528223]  </IRQ>
-> > 
-> > This patch makes sure that skb->prev is set to NULL when entering
-> > netem_enqueue.
-> > 
-> > Cc: Prashant Bhole <bhole_prashant_q7@lab.ntt.co.jp>
-> > Cc: Tyler Hicks <tyhicks@canonical.com>
-> > Cc: Eric Dumazet <eric.dumazet@gmail.com>
-> > Fixes: 68d2f84a1368 ("net: gro: properly remove skb from list")
-> > Suggested-by: Eric Dumazet <eric.dumazet@gmail.com>
-> > Signed-off-by: Christoph Paasch <cpaasch@apple.com>
-> > Reviewed-by: Eric Dumazet <edumazet@google.com>
-> > Signed-off-by: David S. Miller <davem@davemloft.net>
-> > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> 
-> I don't think this patch needs to be backported. I haven't hit this panic on
-> v4.14.x (although, I only have been using v4.14.79 for now - not yet the
-> latest one). And the commits that seem to have introduced the issue haven't
-> been backported either AFAICS. That being said, I don't think a backport
-> would cause any side-effects.
-> 
-> Or have you seen reports of this panic in the stable branches?
-> 
-> (same for the other stable branches v4.4,... - cfr., the other mails
-> regarding this patch here)
+On Wed, Dec 12, 2018 at 10:31 AM Tomasz Duszynski <tduszyns@gmail.com> wrote:
+>
+> Measuring particulate matter in ug / m3 (micro-grams per cubic meter)
+> is de facto standard. Existing air quality sensors usually follow
+> this convention and are capable of returning measurements using
+> this unit.
+>
+> IIO currently does not offer suitable channel type for this
+> type of measurements hence this patch adds this.
+>
+> In addition, extra modifiers are introduced used for distinguishing
+> between fine pm1, pm2p5 and coarse pm4, pm10 particle measurements, i.e
+> IIO_MOD_PM1, IIO_MOD_PM25 and IIO_MOD_PM4, IIO_MOD_PM10.
+>
+> pmX consists of particles with aerodynamic diameter less or equal to
+> X micrometers.
+>
 
-To clarify: Backport to v4.19.x is needed. The backport to v4.14 and older
-should not be needed.
+Acked-by: Matt Ranostay <matt.ranostay@konsulko.com>
 
-
-Christoph
-
-> 
-> 
-> Cheers,
-> Christoph
-> 
-> 
-> 
-> 
-> > ---
-> >  net/sched/sch_netem.c |    3 +++
-> >  1 file changed, 3 insertions(+)
-> > 
-> > --- a/net/sched/sch_netem.c
-> > +++ b/net/sched/sch_netem.c
-> > @@ -436,6 +436,9 @@ static int netem_enqueue(struct sk_buff
-> >  	int count = 1;
-> >  	int rc = NET_XMIT_SUCCESS;
-> >  
-> > +	/* Do not fool qdisc_drop_all() */
-> > +	skb->prev = NULL;
-> > +
-> >  	/* Random duplication */
-> >  	if (q->duplicate && q->duplicate >= get_crandom(&q->dup_cor))
-> >  		++count;
-> > 
-> > 
+> Signed-off-by: Tomasz Duszynski <tduszyns@gmail.com>
+> ---
+>  Documentation/ABI/testing/sysfs-bus-iio | 17 ++++++++++++++++-
+>  drivers/iio/industrialio-core.c         |  5 +++++
+>  include/uapi/linux/iio/types.h          |  5 +++++
+>  tools/iio/iio_event_monitor.c           | 10 ++++++++++
+>  4 files changed, 36 insertions(+), 1 deletion(-)
+>
+> diff --git a/Documentation/ABI/testing/sysfs-bus-iio b/Documentation/ABI/testing/sysfs-bus-iio
+> index 8127a08e366d..ad9579a9385f 100644
+> --- a/Documentation/ABI/testing/sysfs-bus-iio
+> +++ b/Documentation/ABI/testing/sysfs-bus-iio
+> @@ -1684,4 +1684,19 @@ KernelVersion:   4.18
+>  Contact:       linux-iio@vger.kernel.org
+>  Description:
+>                 Raw (unscaled) phase difference reading from channel Y
+> -               that can be processed to radians.
+> \ No newline at end of file
+> +               that can be processed to radians.
+> +
+> +What:          /sys/bus/iio/devices/iio:deviceX/in_massconcentration_pm1_input
+> +What:          /sys/bus/iio/devices/iio:deviceX/in_massconcentrationY_pm1_input
+> +What:          /sys/bus/iio/devices/iio:deviceX/in_massconcentration_pm2p5_input
+> +What:          /sys/bus/iio/devices/iio:deviceX/in_massconcentrationY_pm2p5_input
+> +What:          /sys/bus/iio/devices/iio:deviceX/in_massconcentration_pm4_input
+> +What:          /sys/bus/iio/devices/iio:deviceX/in_massconcentrationY_pm4_input
+> +What:          /sys/bus/iio/devices/iio:deviceX/in_massconcentration_pm10_input
+> +What:          /sys/bus/iio/devices/iio:deviceX/in_massconcentrationY_pm10_input
+> +KernelVersion: 4.21
+> +Contact:       linux-iio@vger.kernel.org
+> +Description:
+> +               Mass concentration reading of particulate matter in ug / m3.
+> +               pmX consists of particles with aerodynamic diameter less or
+> +               equal to X micrometers.
+> diff --git a/drivers/iio/industrialio-core.c b/drivers/iio/industrialio-core.c
+> index 4f5cd9f60870..4700fd5d8c90 100644
+> --- a/drivers/iio/industrialio-core.c
+> +++ b/drivers/iio/industrialio-core.c
+> @@ -87,6 +87,7 @@ static const char * const iio_chan_type_name_spec[] = {
+>         [IIO_GRAVITY]  = "gravity",
+>         [IIO_POSITIONRELATIVE]  = "positionrelative",
+>         [IIO_PHASE] = "phase",
+> +       [IIO_MASSCONCENTRATION] = "massconcentration",
+>  };
+>
+>  static const char * const iio_modifier_names[] = {
+> @@ -127,6 +128,10 @@ static const char * const iio_modifier_names[] = {
+>         [IIO_MOD_Q] = "q",
+>         [IIO_MOD_CO2] = "co2",
+>         [IIO_MOD_VOC] = "voc",
+> +       [IIO_MOD_PM1] = "pm1",
+> +       [IIO_MOD_PM2P5] = "pm2p5",
+> +       [IIO_MOD_PM4] = "pm4",
+> +       [IIO_MOD_PM10] = "pm10",
+>  };
+>
+>  /* relies on pairs of these shared then separate */
+> diff --git a/include/uapi/linux/iio/types.h b/include/uapi/linux/iio/types.h
+> index 92baabc103ac..c59adac24b1c 100644
+> --- a/include/uapi/linux/iio/types.h
+> +++ b/include/uapi/linux/iio/types.h
+> @@ -46,6 +46,7 @@ enum iio_chan_type {
+>         IIO_GRAVITY,
+>         IIO_POSITIONRELATIVE,
+>         IIO_PHASE,
+> +       IIO_MASSCONCENTRATION,
+>  };
+>
+>  enum iio_modifier {
+> @@ -87,6 +88,10 @@ enum iio_modifier {
+>         IIO_MOD_VOC,
+>         IIO_MOD_LIGHT_UV,
+>         IIO_MOD_LIGHT_DUV,
+> +       IIO_MOD_PM1,
+> +       IIO_MOD_PM2P5,
+> +       IIO_MOD_PM4,
+> +       IIO_MOD_PM10,
+>  };
+>
+>  enum iio_event_type {
+> diff --git a/tools/iio/iio_event_monitor.c b/tools/iio/iio_event_monitor.c
+> index ac2de6b7e89f..f6b8003fbe3c 100644
+> --- a/tools/iio/iio_event_monitor.c
+> +++ b/tools/iio/iio_event_monitor.c
+> @@ -60,6 +60,7 @@ static const char * const iio_chan_type_name_spec[] = {
+>         [IIO_GRAVITY] = "gravity",
+>         [IIO_POSITIONRELATIVE] = "positionrelative",
+>         [IIO_PHASE] = "phase",
+> +       [IIO_MASSCONCENTRATION] = "massconcentration",
+>  };
+>
+>  static const char * const iio_ev_type_text[] = {
+> @@ -115,6 +116,10 @@ static const char * const iio_modifier_names[] = {
+>         [IIO_MOD_Q] = "q",
+>         [IIO_MOD_CO2] = "co2",
+>         [IIO_MOD_VOC] = "voc",
+> +       [IIO_MOD_PM1] = "pm1",
+> +       [IIO_MOD_PM2P5] = "pm2p5",
+> +       [IIO_MOD_PM4] = "pm4",
+> +       [IIO_MOD_PM10] = "pm10",
+>  };
+>
+>  static bool event_is_known(struct iio_event_data *event)
+> @@ -156,6 +161,7 @@ static bool event_is_known(struct iio_event_data *event)
+>         case IIO_GRAVITY:
+>         case IIO_POSITIONRELATIVE:
+>         case IIO_PHASE:
+> +       case IIO_MASSCONCENTRATION:
+>                 break;
+>         default:
+>                 return false;
+> @@ -200,6 +206,10 @@ static bool event_is_known(struct iio_event_data *event)
+>         case IIO_MOD_Q:
+>         case IIO_MOD_CO2:
+>         case IIO_MOD_VOC:
+> +       case IIO_MOD_PM1:
+> +       case IIO_MOD_PM2P5:
+> +       case IIO_MOD_PM4:
+> +       case IIO_MOD_PM10:
+>                 break;
+>         default:
+>                 return false;
+> --
+> 2.19.2
+>
