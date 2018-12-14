@@ -2,99 +2,121 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEB63C6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:26:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77B2AC6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:26:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6D4C20892
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:26:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="UkQA3jUK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6D4C20892
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 3D345208E7
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:26:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544790394;
+	bh=sEPBgKvMiBt9LfZ/o49QF2kDh2C/zrzn5ETFcLsmO7s=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=hWHdrUM2rSVWN8oPrqRZz4sB3CpdV/w4gjb8TZ2prnpuNLJV8nGJpUCINgrGokkDN
+	 3TUz1sm6NG9BegT0gBuJnYWLBo6vuJwZWsmCTarp0mbMTm3srAEo5Bh6Jw+9xpnJvb
+	 r9nI6q3I0P/Fsk0LO7ygXNP1Kt7SP7JL5tzpL2ng=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D345208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732133AbeLNM0Y (ORCPT
+        id S1731843AbeLNMLv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:26:24 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:41386 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730665AbeLNM0X (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:26:23 -0500
-Received: by mail-wr1-f68.google.com with SMTP id x10so5245136wrs.8
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 04:26:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=uYDmuUCRNFfuHQ8OAF81ypD3ZblmLZsnLEku4glONRQ=;
-        b=UkQA3jUKcfneEMRfR2lFynUyiIcZw4ZuJwlO8RFvMp/v4h/2rrsPb48kT5Tfi9Sn9h
-         44Li6qGlSYrJE9PSnO10QEQ4mgZJZteMnKCE14nokxtcKp5INwVtNJq9Jh2KV6soO9Sz
-         RDyYeqOdaePw8TN19ik44VmMOEdHiQfrvl4lo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=uYDmuUCRNFfuHQ8OAF81ypD3ZblmLZsnLEku4glONRQ=;
-        b=Byn2SLgGelXgFcypvMRaut9VRxT5DobFioW9xPMGzte/zEvjxQdqk93ypTgb5Uymsk
-         LmBpgoY1uXlRGZFvgQEjYwUF2ywSfHepb9qoZa2VAh+P3paltqUyCyz1GIBtmkpXr6SR
-         NurxdQDrVwsHNh1svDyu2vc9cUsVpN1UnFxkjmShl9/h/ax4JYnwBfr4Pe1RBFBCzX3U
-         fQGgZWmnAjQ6DOW+NNOYFwVp377le/HjYCHWm6NXh92CCn2AU1JblnSjXEAX7gz/QP5Z
-         zDGkPdhQbA8W1rMiRQdH0Qk7dgOUvM9z3QPC6LQS3jbQDJzHUGzoRHzSscVlZyDK+soc
-         W85Q==
-X-Gm-Message-State: AA+aEWbsElg/5A58SVX3hV3935koQ5A0yubeJQMapJ5I/CHTEV85mm07
-        hhbz6l11zBi3zV4fQuK1sRB7PA==
-X-Google-Smtp-Source: AFSGD/VUs1nLKy/FFlrIogRpNrUQdEvqLAojNtxljhbYEwkBkU1DUXZgblVFuZPLrHlmHrhwhAheLA==
-X-Received: by 2002:adf:ab51:: with SMTP id r17mr2469654wrc.62.1544790381075;
-        Fri, 14 Dec 2018 04:26:21 -0800 (PST)
-Received: from dell (host109-155-202-221.range109-155.btcentralplus.com. [109.155.202.221])
-        by smtp.gmail.com with ESMTPSA id k19sm6178167wre.5.2018.12.14.04.26.20
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 14 Dec 2018 04:26:20 -0800 (PST)
-Date:   Fri, 14 Dec 2018 12:26:19 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Christian Hohnstaedt <Christian.Hohnstaedt@wago.com>
-Cc:     "J, KEERTHY" <j-keerthy@ti.com>, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org
-Subject: Re: [PATCH] tps65218.c: fix IRQ resource leak in tps65218_probe()
-Message-ID: <20181214122619.GW4497@dell>
-References: <1544090279-26762-1-git-send-email-Christian.Hohnstaedt@wago.com>
- <20181214122559.GV4497@dell>
+        Fri, 14 Dec 2018 07:11:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58722 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730234AbeLNMLs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:11:48 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 89B6220892;
+        Fri, 14 Dec 2018 12:11:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544789508;
+        bh=sEPBgKvMiBt9LfZ/o49QF2kDh2C/zrzn5ETFcLsmO7s=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ePI4WgWHQ8wdY4KmG87qYQNffVWEEIjv14fLROWGTVLSmbpxQ01Kil3zCRF6UYSov
+         DcH/x8RmWRPliM6rfvqQSQrK0St7ITOqLL7T8jYZM74Z0dtDLi8o5IbPEF0/vL60OP
+         VLV/RaN6Yryqx9x1V0F3GkbXVbEQ7NBcY7l7mnls=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Rafael Tinoco <rafael.tinoco@linaro.org>,
+        Yuchung Cheng <ycheng@google.com>,
+        Eric Dumazet <edumazet@google.com>,
+        Neal Cardwell <ncardwell@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 08/51] tcp: fix NULL ref in tail loss probe
+Date:   Fri, 14 Dec 2018 13:00:10 +0100
+Message-Id: <20181214115714.053486486@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.0
+In-Reply-To: <20181214115713.244259772@linuxfoundation.org>
+References: <20181214115713.244259772@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181214122559.GV4497@dell>
-User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 14 Dec 2018, Lee Jones wrote:
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
-> On Thu, 06 Dec 2018, Christian Hohnstaedt wrote:
-> 
-> > Free allocated IRQ if reading the device ID fails.
-> 
-> The patch is fine.  However, in future please submit patches using the
-> format set (by precedent) by the subsystem.  I will fix the subject
-> for you this time.
-> 
-> To check the format, you can do:
-> 
->   `git log --oneline -- <subsystem>`
+------------------
 
-Patch applied, by the way.
+From: Yuchung Cheng <ycheng@google.com>
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+[ Upstream commit b2b7af861122a0c0f6260155c29a1b2e594cd5b5 ]
+
+TCP loss probe timer may fire when the retranmission queue is empty but
+has a non-zero tp->packets_out counter. tcp_send_loss_probe will call
+tcp_rearm_rto which triggers NULL pointer reference by fetching the
+retranmission queue head in its sub-routines.
+
+Add a more detailed warning to help catch the root cause of the inflight
+accounting inconsistency.
+
+Reported-by: Rafael Tinoco <rafael.tinoco@linaro.org>
+Signed-off-by: Yuchung Cheng <ycheng@google.com>
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: Neal Cardwell <ncardwell@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ net/ipv4/tcp_output.c |   12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
+
+--- a/net/ipv4/tcp_output.c
++++ b/net/ipv4/tcp_output.c
+@@ -2346,14 +2346,18 @@ void tcp_send_loss_probe(struct sock *sk
+ 		skb = tcp_write_queue_tail(sk);
+ 	}
+ 
++	if (unlikely(!skb)) {
++		WARN_ONCE(tp->packets_out,
++			  "invalid inflight: %u state %u cwnd %u mss %d\n",
++			  tp->packets_out, sk->sk_state, tp->snd_cwnd, mss);
++		inet_csk(sk)->icsk_pending = 0;
++		return;
++	}
++
+ 	/* At most one outstanding TLP retransmission. */
+ 	if (tp->tlp_high_seq)
+ 		goto rearm_timer;
+ 
+-	/* Retransmit last segment. */
+-	if (WARN_ON(!skb))
+-		goto rearm_timer;
+-
+ 	if (skb_still_in_host_queue(sk, skb))
+ 		goto rearm_timer;
+ 
+
+
