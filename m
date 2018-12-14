@@ -2,110 +2,131 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 982F2C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 19:48:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EBA4C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 19:48:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 945D62080F
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 19:48:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 63AF82080F
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 19:48:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="P0E8pHAE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730671AbeLNTsi (ORCPT
+        id S1730706AbeLNTsx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 14:48:38 -0500
-Received: from mout.kundenserver.de ([217.72.192.73]:54797 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730123AbeLNTsi (ORCPT
+        Fri, 14 Dec 2018 14:48:53 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:52172 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730123AbeLNTsw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 14:48:38 -0500
-Received: from localhost ([89.204.137.134]) by mrelayeu.kundenserver.de
- (mreue109 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1MVvCl-1gxZc10nm1-00RnAV; Fri, 14 Dec 2018 20:48:28 +0100
-Date:   Fri, 14 Dec 2018 20:48:25 +0100
-From:   Andreas Klinger <ak@it-klinger.de>
-To:     grygorii.strashko@ti.com, ssantosh@kernel.org, khilman@kernel.org,
-        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
-        robh+dt@kernel.org, mark.rutland@arm.com
-Cc:     linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] gpio-omap.txt: add reg and interrupts properties
-Message-ID: <20181214194822.lvavgczxq4cy7v64@arbad>
+        Fri, 14 Dec 2018 14:48:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=GOFeIogLWodk44VJVfXiQHdoFwjtMW1R85VpJJ8G9ls=; b=P0E8pHAEFlB29Cy3DD/00io64
+        gjdyTEJQBGM72v8ID9GWMpKJYsDN0Llk2YstpDtxt+2QLmE3iNcpQS6cVu11BGQtPQz1hQ1jWt52b
+        oUn1bHOv3vZVeQt/0DYRnfb1IqpCt371g+ByJ/P/oGVD1hKnGl3PyJ/oeUou+UVR5ODjB62WLpJFP
+        86tfkCfYuhV/1CTm2eelQg37cTdBZ83tkbH2C7/FDCM9hba5/7rhcUHEN/fIKUf4aOTI7Xx3rf5DN
+        jd2RcarBPr7QGEFZRoK9TpplKThhgmSHDVjFhIgOs/qENTUAa1Zvb8FDo9QWaaSff0Oa3vhE3yl6P
+        EuDKZvebg==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gXtRz-0000ZF-OF; Fri, 14 Dec 2018 19:48:43 +0000
+Date:   Fri, 14 Dec 2018 11:48:43 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     John Hubbard <jhubbard@nvidia.com>, david <david@fromorbit.com>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Jan Kara <jack@suse.cz>, John Hubbard <john.hubbard@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>, tom@talpey.com,
+        Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
+        Christoph Hellwig <hch@infradead.org>,
+        Christopher Lameter <cl@linux.com>,
+        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Michal Hocko <mhocko@kernel.org>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        rcampbell@nvidia.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>
+Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
+Message-ID: <20181214194843.GG10600@bombadil.infradead.org>
+References: <20181208022445.GA7024@redhat.com>
+ <20181210102846.GC29289@quack2.suse.cz>
+ <20181212150319.GA3432@redhat.com>
+ <20181212214641.GB29416@dastard>
+ <20181212215931.GG5037@redhat.com>
+ <20181213005119.GD29416@dastard>
+ <05a68829-6e6d-b766-11b4-99e1ba4bc87b@nvidia.com>
+ <CAPcyv4jyG3YTtghyr04wws_hcSBAmPBpnCm0tFcKgz9VwrV=ow@mail.gmail.com>
+ <01cf4e0c-b2d6-225a-3ee9-ef0f7e53684d@nvidia.com>
+ <CAPcyv4hrbA9H20bi+QMpKNi7r=egstt61MdQSD5Fb293W1btaw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-Provags-ID: V03:K1:W2f8lCThwwl9Q9No+DxfpR0Gbppo1wbu6KNjnxfLsIfqpamtStK
- qGTZ8LOqI97Zo61iPTKphSjfTjqBO9ovAvv4PR/fUyCpYWG0KvLgoE/JGU5oekigsPqcGPj
- aLWOGDKRrNKw8MqDbWHs57WKo7yGVb4bhVk4Jq3nLZs0VrBU1SgarpqLfMwVHSwMsdaQHVE
- V4wBG0MVHPXQ7zwXPqzVQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:OGWzmNs/hzk=:UQseVi2QISqKHnpGCQD2Ji
- 0OB1E17gfdzTVUjIxy6OE2iS0XIOQ+mVxnRYZ2HDzPZSt4E5m1LivHkB5eT5xHSbSWUb1K+hB
- M+ZGoj5y8Kf2Kfz/HM6bTztSYOU8wLxYEc6/lLYftoNsGo4vlrCIvYye4c1TcCC5TdyNry8pD
- P/HyMQlZ1pGoAIxGYOTgGUeBE5cQXgqTEsHYC5Z5Xzux81eSNViW0KDJH7pyUp0N3VIELwlit
- uZeG8SioedFavGZAJh5TSyhILQl9VhsI2DCBqFiJEwV7Qa948ROczzN6sUEXedRImmDNSblkW
- tUrhuvv0CHmBE3Fata45hQ0IUNkvRqFJb7Xg00xrSND4PQJ2EH9EJJSKq3Db258kTILp4scWw
- 7Qx2rvZ+qJFI3u+6W+xabo5JIFkSyuBRT7xSoHkArlDdXbcbspOvUYUyg6kIDOMPU3M+Dj+QC
- jObVGPbUiH+pyFCi7HAjlWOdMG+q7F3GVdypIW/EcLKgFRbO7qMDnCffNvzIBj8Ay3CIH5RX3
- WfuvGBz5Vh8aA7vT+3+3O0ScJZkawd0SZr5A5P2+wcanobZxGIh7IyGHk3lhMjU2O70dc9kbv
- 4/SPVsu/2kXRt8+b3Fln9cvXIEVsZsY4yk1yXf9FZt9HYXY4pqXwqW4oMv61hDfZOxN9vMzgc
- Ss2ICULgqvPWfj3cfXl4YDtS9gKw/PSr6KlrJNmD6R7y/6cN0fAlNRlxA8ulIoiviUy2lpsmq
- ICZNKcHTilfUls+9xwragqUWVxvni7wSW7ovzcIYG+NltxetMjmVo5bxXRw=
+In-Reply-To: <CAPcyv4hrbA9H20bi+QMpKNi7r=egstt61MdQSD5Fb293W1btaw@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Document properties reg and interrupts for OMAP GPIO controller bindings
+On Fri, Dec 14, 2018 at 11:38:59AM -0800, Dan Williams wrote:
+> On Thu, Dec 13, 2018 at 10:11 PM John Hubbard <jhubbard@nvidia.com> wrote:
+> > I don't have an answer for that, so maybe the page->mapping idea is dead already.
+> >
+> > So in that case, there is still one more way to do all of this, which is to
+> > combine ZONE_DEVICE, HMM, and gup/dma information in a per-page struct, and get
+> > there via basically page->private, more or less like this:
+> 
+> If we're going to allocate something new out-of-line then maybe we
+> should go even further to allow for a page "proxy" object to front a
+> real struct page. This idea arose from Dave Hansen as I explained to
+> him the dax-reflink problem, and dovetails with Dave Chinner's
+> suggestion earlier in this thread for dax-reflink.
+> 
+> Have get_user_pages() allocate a proxy object that gets passed around
+> to drivers. Something like a struct page pointer with bit 0 set. This
+> would add a conditional branch and pointer chase to many page
+> operations, like page_to_pfn(), I thought something like it would be
+> unacceptable a few years ago, but then HMM went and added similar
+> overhead to put_page() and nobody balked.
+> 
+> This has the additional benefit of catching cases that might be doing
+> a get_page() on a get_user_pages() result and should instead switch to
+> a "ref_user_page()" (opposite of put_user_page()) as the API to take
+> additional references on a get_user_pages() result.
+> 
+> page->index and page->mapping could be overridden by similar
+> attributes in the proxy, and allow an N:1 relationship of proxy
+> instances to actual pages. Filesystems could generate dynamic proxies
+> as well.
+> 
+> The auxiliary information (dev_pagemap, hmm_data, etc...) moves to the
+> proxy and stops polluting the base struct page which remains the
+> canonical location for dirty-tracking and dma operations.
+> 
+> The difficulties are reconciling the source of the proxies as both
+> get_user_pages() and filesystem may want to be the source of the
+> allocation. In the get_user_pages_fast() path we may not be able to
+> ask the filesystem for the proxy, at least not without destroying the
+> performance expectations of get_user_pages_fast().
 
-Also add unit address in node name of the example
+I think we can do better than a proxy object with bit 0 set.  I'd go
+for allocating something like this:
 
-Signed-off-by: Andreas Klinger <ak@it-klinger.de>
----
- Documentation/devicetree/bindings/gpio/gpio-omap.txt | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+struct dynamic_page {
+	struct page;
+	unsigned long vaddr;
+	unsigned long pfn;
+	...
+};
 
-diff --git a/Documentation/devicetree/bindings/gpio/gpio-omap.txt b/Documentation/devicetree/bindings/gpio/gpio-omap.txt
-index 8d950522e7fa..e57b2cb28f6c 100644
---- a/Documentation/devicetree/bindings/gpio/gpio-omap.txt
-+++ b/Documentation/devicetree/bindings/gpio/gpio-omap.txt
-@@ -5,6 +5,8 @@ Required properties:
-   - "ti,omap2-gpio" for OMAP2 controllers
-   - "ti,omap3-gpio" for OMAP3 controllers
-   - "ti,omap4-gpio" for OMAP4 controllers
-+- reg : Physical base address of the controller and length of memory mapped
-+  region.
- - gpio-controller : Marks the device node as a GPIO controller.
- - #gpio-cells : Should be two.
-   - first cell is the pin number
-@@ -18,6 +20,8 @@ Required properties:
-       2 = high-to-low edge triggered.
-       4 = active high level-sensitive.
-       8 = active low level-sensitive.
-+- interrupts : The interrupt the controller is rising as output when an
-+  interrupt occures
- 
- OMAP specific properties:
- - ti,hwmods:		Name of the hwmod associated to the GPIO:
-@@ -29,11 +33,13 @@ OMAP specific properties:
- 
- Example:
- 
--gpio4: gpio4 {
-+gpio0: gpio@44e07000 {
-     compatible = "ti,omap4-gpio";
--    ti,hwmods = "gpio4";
-+    reg = <0x44e07000 0x1000>;
-+    ti,hwmods = "gpio1";
-     gpio-controller;
-     #gpio-cells = <2>;
-     interrupt-controller;
-     #interrupt-cells = <2>;
-+    interrupts = <96>;
- };
--- 
-2.11.0
-
-
--- 
+and use a bit in struct page to indicate that this is a dynamic page.
