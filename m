@@ -7,56 +7,55 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DEDBC67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:07:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BF14C6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:07:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 488E8214AE
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:07:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C37B22148E
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:07:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544789240;
-	bh=Xs5zmi6onLYCyySaHHaeBQOjeSGc0vontuuUDhDZ8Hs=;
+	s=default; t=1544789243;
+	bh=zBRLDU+LBgzmyriOaBWeIOMWZPC4UiL147KMvwDxPH0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=jn5DUfdJvT1cglhf6v5akTMv6nvlhGtki+EHfZodXzY35t9Wr4KE29VeilLAcHmEH
-	 +A5cIhQxMgNvLTe+D7LTLPlTFEw5VfjrJaoiOVJqQcfVWe5RwzL2yObmIDoJi+OPhu
-	 OJYK/7Kf+40rp5BPPenG9KeEnKiSBaNOSyhIzTPM=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 488E8214AE
+	b=SPODWtTmP4cm3OQnT2WI//JO7ixR/veStACgQulrh+QmPogT4jxOL5B1yGoA5Sd2Q
+	 hM+xiCof/H6OYADASHwlJp7xqEmzpurFUV/gztMpKGqFlH5urtAylRDXZrhAiamPeO
+	 VxhJsJ6FUUXWU6KD2M3mNP5J7c/ewVXFCMfPlJg8=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C37B22148E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731089AbeLNMHT (ORCPT
+        id S1731103AbeLNMHW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:07:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52452 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:07:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52518 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731077AbeLNMHP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:07:15 -0500
+        id S1729873AbeLNMHS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:07:18 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 550482148E;
-        Fri, 14 Dec 2018 12:07:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F2135214AE;
+        Fri, 14 Dec 2018 12:07:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789234;
-        bh=Xs5zmi6onLYCyySaHHaeBQOjeSGc0vontuuUDhDZ8Hs=;
+        s=default; t=1544789237;
+        bh=zBRLDU+LBgzmyriOaBWeIOMWZPC4UiL147KMvwDxPH0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=X4i2AHk7BAg2Bw5YGwgiBk77AbrRCqERtODWQCYptOb7wWb3CBy/QjcoUyrmcayi/
-         SlvsTufk0w+/RdJ1WRs/4+ZpybkUGtOP+SsDGwHqOqSBVVXronYa3JWznq1tEw0Ji/
-         +MRYZzcaqfeDTQMywMwGmR+0g7wRv5LpXttDVGDI=
+        b=axS3ol9CDWHeT7VkW+G1lkBujsZijynJc8l295dzPIYMTWt9XW+xJexZqKTG4WXHz
+         duWYfx1o709uMKnWNCAapNW5l9BHdy4uNRsBLoybBQjjpAmYINhb/JFqYDWIeopz4d
+         dCZn4tWqJSjkFczqEzNTWrKrXY8024B6IfUfO2wA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Larry Chen <lchen@suse.com>,
-        Changwei Ge <ge.changwei@h3c.com>,
-        Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Junxiao Bi <junxiao.bi@oracle.com>,
-        Joseph Qi <jiangqi903@gmail.com>,
+        stable@vger.kernel.org, Wei Yang <richard.weiyang@gmail.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Oscar Salvador <osalvador@suse.de>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        Dave Hansen <dave.hansen@intel.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 124/142] ocfs2: fix deadlock caused by ocfs2_defrag_extent()
-Date:   Fri, 14 Dec 2018 13:00:09 +0100
-Message-Id: <20181214115751.993293054@linuxfoundation.org>
+Subject: [PATCH 4.19 125/142] mm/page_alloc.c: fix calculation of pgdat->nr_zones
+Date:   Fri, 14 Dec 2018 13:00:10 +0100
+Message-Id: <20181214115752.035179121@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115747.053633987@linuxfoundation.org>
 References: <20181214115747.053633987@linuxfoundation.org>
@@ -75,145 +74,86 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit e21e57445a64598b29a6f629688f9b9a39e7242a ]
+[ Upstream commit 8f416836c0d50b198cad1225132e5abebf8980dc ]
 
-ocfs2_defrag_extent may fall into deadlock.
+init_currently_empty_zone() will adjust pgdat->nr_zones and set it to
+'zone_idx(zone) + 1' unconditionally.  This is correct in the normal
+case, while not exact in hot-plug situation.
 
-ocfs2_ioctl_move_extents
-    ocfs2_ioctl_move_extents
-      ocfs2_move_extents
-        ocfs2_defrag_extent
-          ocfs2_lock_allocators_move_extents
+This function is used in two places:
 
-            ocfs2_reserve_clusters
-              inode_lock GLOBAL_BITMAP_SYSTEM_INODE
+  * free_area_init_core()
+  * move_pfn_range_to_zone()
 
-	  __ocfs2_flush_truncate_log
-              inode_lock GLOBAL_BITMAP_SYSTEM_INODE
+In the first case, we are sure zone index increase monotonically.  While
+in the second one, this is under users control.
 
-As backtrace shows above, ocfs2_reserve_clusters() will call inode_lock
-against the global bitmap if local allocator has not sufficient cluters.
-Once global bitmap could meet the demand, ocfs2_reserve_cluster will
-return success with global bitmap locked.
+One way to reproduce this is:
+----------------------------
 
-After ocfs2_reserve_cluster(), if truncate log is full,
-__ocfs2_flush_truncate_log() will definitely fall into deadlock because
-it needs to inode_lock global bitmap, which has already been locked.
+1. create a virtual machine with empty node1
 
-To fix this bug, we could remove from
-ocfs2_lock_allocators_move_extents() the code which intends to lock
-global allocator, and put the removed code after
-__ocfs2_flush_truncate_log().
+   -m 4G,slots=32,maxmem=32G \
+   -smp 4,maxcpus=8          \
+   -numa node,nodeid=0,mem=4G,cpus=0-3 \
+   -numa node,nodeid=1,mem=0G,cpus=4-7
 
-ocfs2_lock_allocators_move_extents() is referred by 2 places, one is
-here, the other does not need the data allocator context, which means
-this patch does not affect the caller so far.
+2. hot-add cpu 3-7
 
-Link: http://lkml.kernel.org/r/20181101071422.14470-1-lchen@suse.com
-Signed-off-by: Larry Chen <lchen@suse.com>
-Reviewed-by: Changwei Ge <ge.changwei@h3c.com>
-Cc: Mark Fasheh <mark@fasheh.com>
-Cc: Joel Becker <jlbec@evilplan.org>
-Cc: Junxiao Bi <junxiao.bi@oracle.com>
-Cc: Joseph Qi <jiangqi903@gmail.com>
+   cpu-add [3-7]
+
+2. hot-add memory to nod1
+
+   object_add memory-backend-ram,id=ram0,size=1G
+   device_add pc-dimm,id=dimm0,memdev=ram0,node=1
+
+3. online memory with following order
+
+   echo online_movable > memory47/state
+   echo online > memory40/state
+
+After this, node1 will have its nr_zones equals to (ZONE_NORMAL + 1)
+instead of (ZONE_MOVABLE + 1).
+
+Michal said:
+ "Having an incorrect nr_zones might result in all sorts of problems
+  which would be quite hard to debug (e.g. reclaim not considering the
+  movable zone). I do not expect many users would suffer from this it
+  but still this is trivial and obviously right thing to do so
+  backporting to the stable tree shouldn't be harmful (last famous
+  words)"
+
+Link: http://lkml.kernel.org/r/20181117022022.9956-1-richard.weiyang@gmail.com
+Fixes: f1dd2cd13c4b ("mm, memory_hotplug: do not associate hotadded memory to zones until online")
+Signed-off-by: Wei Yang <richard.weiyang@gmail.com>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Reviewed-by: Oscar Salvador <osalvador@suse.de>
+Cc: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: Dave Hansen <dave.hansen@intel.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/ocfs2/move_extents.c | 47 +++++++++++++++++++++++------------------
- 1 file changed, 26 insertions(+), 21 deletions(-)
+ mm/page_alloc.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/fs/ocfs2/move_extents.c b/fs/ocfs2/move_extents.c
-index 7eb3b0a6347e..f55f82ca3425 100644
---- a/fs/ocfs2/move_extents.c
-+++ b/fs/ocfs2/move_extents.c
-@@ -156,18 +156,14 @@ static int __ocfs2_move_extent(handle_t *handle,
- }
- 
- /*
-- * lock allocators, and reserving appropriate number of bits for
-- * meta blocks and data clusters.
-- *
-- * in some cases, we don't need to reserve clusters, just let data_ac
-- * be NULL.
-+ * lock allocator, and reserve appropriate number of bits for
-+ * meta blocks.
-  */
--static int ocfs2_lock_allocators_move_extents(struct inode *inode,
-+static int ocfs2_lock_meta_allocator_move_extents(struct inode *inode,
- 					struct ocfs2_extent_tree *et,
- 					u32 clusters_to_move,
- 					u32 extents_to_split,
- 					struct ocfs2_alloc_context **meta_ac,
--					struct ocfs2_alloc_context **data_ac,
- 					int extra_blocks,
- 					int *credits)
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index b721631d78ab..6a62b2421cdf 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -5733,8 +5733,10 @@ void __meminit init_currently_empty_zone(struct zone *zone,
+ 					unsigned long size)
  {
-@@ -192,13 +188,6 @@ static int ocfs2_lock_allocators_move_extents(struct inode *inode,
- 		goto out;
- 	}
+ 	struct pglist_data *pgdat = zone->zone_pgdat;
++	int zone_idx = zone_idx(zone) + 1;
  
--	if (data_ac) {
--		ret = ocfs2_reserve_clusters(osb, clusters_to_move, data_ac);
--		if (ret) {
--			mlog_errno(ret);
--			goto out;
--		}
--	}
+-	pgdat->nr_zones = zone_idx(zone) + 1;
++	if (zone_idx > pgdat->nr_zones)
++		pgdat->nr_zones = zone_idx;
  
- 	*credits += ocfs2_calc_extend_credits(osb->sb, et->et_root_el);
+ 	zone->zone_start_pfn = zone_start_pfn;
  
-@@ -257,10 +246,10 @@ static int ocfs2_defrag_extent(struct ocfs2_move_extents_context *context,
- 		}
- 	}
- 
--	ret = ocfs2_lock_allocators_move_extents(inode, &context->et, *len, 1,
--						 &context->meta_ac,
--						 &context->data_ac,
--						 extra_blocks, &credits);
-+	ret = ocfs2_lock_meta_allocator_move_extents(inode, &context->et,
-+						*len, 1,
-+						&context->meta_ac,
-+						extra_blocks, &credits);
- 	if (ret) {
- 		mlog_errno(ret);
- 		goto out;
-@@ -283,6 +272,21 @@ static int ocfs2_defrag_extent(struct ocfs2_move_extents_context *context,
- 		}
- 	}
- 
-+	/*
-+	 * Make sure ocfs2_reserve_cluster is called after
-+	 * __ocfs2_flush_truncate_log, otherwise, dead lock may happen.
-+	 *
-+	 * If ocfs2_reserve_cluster is called
-+	 * before __ocfs2_flush_truncate_log, dead lock on global bitmap
-+	 * may happen.
-+	 *
-+	 */
-+	ret = ocfs2_reserve_clusters(osb, *len, &context->data_ac);
-+	if (ret) {
-+		mlog_errno(ret);
-+		goto out_unlock_mutex;
-+	}
-+
- 	handle = ocfs2_start_trans(osb, credits);
- 	if (IS_ERR(handle)) {
- 		ret = PTR_ERR(handle);
-@@ -600,9 +604,10 @@ static int ocfs2_move_extent(struct ocfs2_move_extents_context *context,
- 		}
- 	}
- 
--	ret = ocfs2_lock_allocators_move_extents(inode, &context->et, len, 1,
--						 &context->meta_ac,
--						 NULL, extra_blocks, &credits);
-+	ret = ocfs2_lock_meta_allocator_move_extents(inode, &context->et,
-+						len, 1,
-+						&context->meta_ac,
-+						extra_blocks, &credits);
- 	if (ret) {
- 		mlog_errno(ret);
- 		goto out;
 -- 
 2.19.1
 
