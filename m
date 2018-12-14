@@ -2,128 +2,146 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.9 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CE34C43612
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:38:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40EB3C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:38:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9BD12080F
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:38:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544819913;
-	bh=hzltAayUK9lLKge3kpsO0GSbw5lLTpE2an01zAcOuRc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=POLcqH66ARrZu+B68n78rIwdWAoGX8dXuNyy0doq9znYqVSB0Hv6vENiqsUeQbdvb
-	 RzYnK1Vcz+0cddVwJlfLV0s4qbox9Ja5R5jI8FTLhoxKRWK/2GvJvAob1DlDwKMobZ
-	 6o/77BceUly4egn2L++4QF/r3TNjMEa/9a7YcMa4=
+	by mail.kernel.org (Postfix) with ESMTP id 95D932080F
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:38:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730964AbeLNUic (ORCPT
+        id S1730986AbeLNUig (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 15:38:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39794 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730860AbeLNUib (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 15:38:31 -0500
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E1B75208C1;
-        Fri, 14 Dec 2018 20:38:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544819911;
-        bh=hzltAayUK9lLKge3kpsO0GSbw5lLTpE2an01zAcOuRc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=eJkkvqBVLfGKn4C8bDA7hgwgcPJzf07Sw6FPMPhBDPjc9BjTfPHPeF2EM2S/YzPIO
-         GDLwMSJpz2q5ri/wKySWnrpZOi9tf1tuoEmz1I6seurZgVgseWVeRc87lsf1EKRSIR
-         f94hVWtyPYw0tPzW6m79gqNAjGq/vL8haNZwystg=
-Date:   Fri, 14 Dec 2018 14:38:29 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        "A.s. Dong" <aisheng.dong@nxp.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        devicetree@vger.kernel.org, linux-imx@nxp.com,
-        Leonard Crestez <leonard.crestez@nxp.com>, cphealy@gmail.com,
-        l.stach@pengutronix.de, Trent Piepho <tpiepho@impinj.com>
-Subject: Re: [PATCH v2 0/3] PCIE support for i.MX8MQ
-Message-ID: <20181214203828.GD20725@google.com>
-References: <20181206073545.10967-1-andrew.smirnov@gmail.com>
- <20181206121550.GA2725@e107981-ln.cambridge.arm.com>
+        Fri, 14 Dec 2018 15:38:36 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:34435 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730860AbeLNUid (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 15:38:33 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBEKcQUP1455588
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Fri, 14 Dec 2018 12:38:26 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBEKcPYa1455585;
+        Fri, 14 Dec 2018 12:38:25 -0800
+Date:   Fri, 14 Dec 2018 12:38:25 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Sihyeon Jang <tipbot@zytor.com>
+Message-ID: <tip-8f6af5da4c6bae998886b0ef82fddbb7629646f7@git.kernel.org>
+Cc:     mingo@kernel.org, linux-kernel@vger.kernel.org, jolsa@kernel.org,
+        acme@redhat.com, namhyung@kernel.org, tglx@linutronix.de,
+        uneedsihyeon@gmail.com, hpa@zytor.com
+Reply-To: hpa@zytor.com, uneedsihyeon@gmail.com, tglx@linutronix.de,
+          namhyung@kernel.org, acme@redhat.com,
+          linux-kernel@vger.kernel.org, jolsa@kernel.org, mingo@kernel.org
+In-Reply-To: <20181202080651.4685-1-uneedsihyeon@gmail.com>
+References: <20181202080651.4685-1-uneedsihyeon@gmail.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf beauty mmap_flags: Fixed syntax error Fixed
+ missing ']' error
+Git-Commit-ID: 8f6af5da4c6bae998886b0ef82fddbb7629646f7
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20181206121550.GA2725@e107981-ln.cambridge.arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[+cc Trent]
+Commit-ID:  8f6af5da4c6bae998886b0ef82fddbb7629646f7
+Gitweb:     https://git.kernel.org/tip/8f6af5da4c6bae998886b0ef82fddbb7629646f7
+Author:     Sihyeon Jang <uneedsihyeon@gmail.com>
+AuthorDate: Sun, 2 Dec 2018 17:06:51 +0900
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Mon, 3 Dec 2018 12:02:02 -0300
 
-On Thu, Dec 06, 2018 at 12:15:50PM +0000, Lorenzo Pieralisi wrote:
-> On Wed, Dec 05, 2018 at 11:35:42PM -0800, Andrey Smirnov wrote:
-> > Everyone:
-> > 
-> > This series contains changes I made in order to enable support of PCIE
-> > IP block on i.MX8MQ SoCs (full tree can be found at [github-v2]).
-> > 
-> > NOTE: The last patch have a Kconfig symbol depenency on [imx8mq-kconfig].
-> > 
-> > Changes since [v1]:
-> > 
-> >  - Driver changed to use single "fsl,controller-id" property to
-> >    distinguish between two intances of PCIE IP block
-> > 
-> >  - All code pertaining to L1SS was dropped to simplify the patch
-> > 
-> >  - Documented additions to DT bindings
-> > 
-> > Feedback is welcome!
-> > 
-> > Thanks,
-> > Andrey Smirnov
-> 
-> Andrey,
-> 
-> I have applied the patches, ...
+perf beauty mmap_flags: Fixed syntax error Fixed missing ']' error
 
-When I merged your pci/dwc branch, I noticed what looks like a merge
-conflict between these commits:
+Committer testing:
 
-  d123765b58ee ("PCI: dwc: Adjust Kconfig to allow IMX6 PCIe host on IMX7")
-  1a059d994189 ("PCI: imx: Add support for i.MX8MQ")
+Before:
 
-d123765b58ee added SOC_IMX7D:
+  # tools/perf/trace/beauty/mmap_flags.sh
+  static const char *mmap_flags[] = {
+	[ilog2(0x40) + 1] = "32BIT",
+  tools/perf/trace/beauty/mmap_flags.sh: line 23: [: missing `]'
+	[ilog2(0x01) + 1] = "SHARED",
+	[ilog2(0x02) + 1] = "PRIVATE",
+	[ilog2(0x10) + 1] = "FIXED",
+	[ilog2(0x20) + 1] = "ANONYMOUS",
+	[ilog2(0x100000) + 1] = "FIXED_NOREPLACE",
+  tools/perf/trace/beauty/mmap_flags.sh: line 28: [: missing `]'
+	[ilog2(0x0100) + 1] = "GROWSDOWN",
+	[ilog2(0x0800) + 1] = "DENYWRITE",
+	[ilog2(0x1000) + 1] = "EXECUTABLE",
+	[ilog2(0x2000) + 1] = "LOCKED",
+	[ilog2(0x4000) + 1] = "NORESERVE",
+	[ilog2(0x8000) + 1] = "POPULATE",
+	[ilog2(0x10000) + 1] = "NONBLOCK",
+	[ilog2(0x20000) + 1] = "STACK",
+	[ilog2(0x40000) + 1] = "HUGETLB",
+	[ilog2(0x80000) + 1] = "SYNC",
+  };
+  #
 
-  -       depends on SOC_IMX6Q || (ARM && COMPILE_TEST)
-  +       depends on SOC_IMX6Q || SOC_IMX7D || (ARM && COMPILE_TEST)
+After:
 
-and 1a059d994189 added SOC_IMX8MQ but dropped SOC_IMX7D again, which looks
-like a mistake:
+  $ tools/perf/trace/beauty/mmap_flags.sh
+  static const char *mmap_flags[] = {
+	[ilog2(0x40) + 1] = "32BIT",
+	[ilog2(0x01) + 1] = "SHARED",
+	[ilog2(0x02) + 1] = "PRIVATE",
+	[ilog2(0x10) + 1] = "FIXED",
+	[ilog2(0x20) + 1] = "ANONYMOUS",
+	[ilog2(0x100000) + 1] = "FIXED_NOREPLACE",
+	[ilog2(0x0100) + 1] = "GROWSDOWN",
+	[ilog2(0x0800) + 1] = "DENYWRITE",
+	[ilog2(0x1000) + 1] = "EXECUTABLE",
+	[ilog2(0x2000) + 1] = "LOCKED",
+	[ilog2(0x4000) + 1] = "NORESERVE",
+	[ilog2(0x8000) + 1] = "POPULATE",
+	[ilog2(0x10000) + 1] = "NONBLOCK",
+	[ilog2(0x20000) + 1] = "STACK",
+	[ilog2(0x40000) + 1] = "HUGETLB",
+	[ilog2(0x80000) + 1] = "SYNC",
+  };
+  $
 
-  -       depends on SOC_IMX6Q || SOC_IMX7D || (ARM && COMPILE_TEST)
-  +       depends on SOC_IMX8MQ || SOC_IMX6Q || (ARM && COMPILE_TEST)
+Signed-off-by: Sihyeon Jang <uneedsihyeon@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Fixes: aca70cc40a0b ("perf beauty mmap_flags: Check if the arch has a mmap.h file")
+Link: http://lkml.kernel.org/r/20181202080651.4685-1-uneedsihyeon@gmail.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/trace/beauty/mmap_flags.sh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-So my "next" branch[1] (current head 7053eeb009e0) is:
-
-  config PCI_IMX6
-        bool "Freescale i.MX6/7 PCIe controller"
-        depends on SOC_IMX8MQ || SOC_IMX6Q || (ARM && COMPILE_TEST)
-        depends on PCI_MSI_IRQ_DOMAIN
-        select PCIE_DW_HOST
-
-which I think is wrong.  Lorenzo, if you update your pci/dwc branch,
-I'll rebuild my "next" branch.
-
-If you want to tweak the switch statements and/or IMX8 checks, you
-could do that at the same time.
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git/log/?h=next
+diff --git a/tools/perf/trace/beauty/mmap_flags.sh b/tools/perf/trace/beauty/mmap_flags.sh
+index cd41023107d7..32bac9c0d694 100755
+--- a/tools/perf/trace/beauty/mmap_flags.sh
++++ b/tools/perf/trace/beauty/mmap_flags.sh
+@@ -20,12 +20,12 @@ egrep -q $regex ${arch_mman} && \
+ (egrep $regex ${arch_mman} | \
+ 	sed -r "s/$regex/\2 \1/g"	| \
+ 	xargs printf "\t[ilog2(%s) + 1] = \"%s\",\n")
+-[ ! -f ${arch_mman} || egrep -q '#[[:space:]]*include[[:space:]]+<uapi/asm-generic/mman.*' ${arch_mman} ] &&
++([ ! -f ${arch_mman} ] || egrep -q '#[[:space:]]*include[[:space:]]+<uapi/asm-generic/mman.*' ${arch_mman}) &&
+ (egrep $regex ${header_dir}/mman-common.h | \
+ 	egrep -vw 'MAP_(UNINITIALIZED|TYPE|SHARED_VALIDATE)' | \
+ 	sed -r "s/$regex/\2 \1/g"	| \
+ 	xargs printf "\t[ilog2(%s) + 1] = \"%s\",\n")
+-[ ! -f ${arch_mman} || egrep -q '#[[:space:]]*include[[:space:]]+<uapi/asm-generic/mman.h>.*' ${arch_mman} ] &&
++([ ! -f ${arch_mman} ] || egrep -q '#[[:space:]]*include[[:space:]]+<uapi/asm-generic/mman.h>.*' ${arch_mman}) &&
+ (egrep $regex ${header_dir}/mman.h | \
+ 	sed -r "s/$regex/\2 \1/g"	| \
+ 	xargs printf "\t[ilog2(%s) + 1] = \"%s\",\n")
