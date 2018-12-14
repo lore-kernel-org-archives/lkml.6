@@ -6,36 +6,37 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D0EAC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 15:54:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7816C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 15:54:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B85CE206DD
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 15:54:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 22808206DD
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 15:54:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729817AbeLNPyU (ORCPT
+        id S1729867AbeLNPyY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 10:54:20 -0500
+        Fri, 14 Dec 2018 10:54:24 -0500
 Received: from mga05.intel.com ([192.55.52.43]:15172 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729747AbeLNPyR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 10:54:17 -0500
+        id S1729801AbeLNPyT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 10:54:19 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Dec 2018 07:54:17 -0800
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Dec 2018 07:54:18 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,353,1539673200"; 
-   d="scan'208";a="283602007"
+   d="scan'208";a="283602010"
 Received: from black.fi.intel.com (HELO black.fi.intel.com.) ([10.237.72.28])
-  by orsmga005.jf.intel.com with ESMTP; 14 Dec 2018 07:54:15 -0800
+  by orsmga005.jf.intel.com with ESMTP; 14 Dec 2018 07:54:16 -0800
 From:   Alexander Shishkin <alexander.shishkin@linux.intel.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
         linux-kernel@vger.kernel.org,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Subject: [GIT PULL 2/3] stm class: Add a reference to the SyS-T document
-Date:   Fri, 14 Dec 2018 17:53:46 +0200
-Message-Id: <20181214155347.75722-3-alexander.shishkin@linux.intel.com>
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        stable@vger.kernel.org
+Subject: [GIT PULL 3/3] intel_th: msu: Fix an off-by-one in attribute store
+Date:   Fri, 14 Dec 2018 17:53:47 +0200
+Message-Id: <20181214155347.75722-4-alexander.shishkin@linux.intel.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181214155347.75722-1-alexander.shishkin@linux.intel.com>
 References: <20181214155347.75722-1-alexander.shishkin@linux.intel.com>
@@ -46,25 +47,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 4cb3653df0cd ("stm class: Document the MIPI SyS-T protocol usage")
-added a document describing the SyS-T protocol usage, but forgot to add
-it to the directory index. Fix that.
+The 'nr_pages' attribute of the 'msc' subdevices parses a comma-separated
+list of window sizes, passed from userspace. However, there is a bug in
+the string parsing logic wherein it doesn't exclude the comma character
+from the range of characters as it consumes them. This leads to an
+out-of-bounds access given a sufficiently long list. For example:
+
+> # echo 8,8,8,8 > /sys/bus/intel_th/devices/0-msc0/nr_pages
+> ==================================================================
+> BUG: KASAN: slab-out-of-bounds in memchr+0x1e/0x40
+> Read of size 1 at addr ffff8803ffcebcd1 by task sh/825
+>
+> CPU: 3 PID: 825 Comm: npktest.sh Tainted: G        W         4.20.0-rc1+
+> Call Trace:
+>  dump_stack+0x7c/0xc0
+>  print_address_description+0x6c/0x23c
+>  ? memchr+0x1e/0x40
+>  kasan_report.cold.5+0x241/0x308
+>  memchr+0x1e/0x40
+>  nr_pages_store+0x203/0xd00 [intel_th_msu]
+
+Fix this by accounting for the comma character.
 
 Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Fixes: 4cb3653df0cd ("stm class: Document the MIPI SyS-T protocol usage")
+Fixes: ba82664c134ef ("intel_th: Add Memory Storage Unit driver")
+Cc: stable@vger.kernel.org # v4.4+
 ---
- Documentation/trace/index.rst | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/hwtracing/intel_th/msu.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/trace/index.rst b/Documentation/trace/index.rst
-index 306997941ba1..6b4107cf4b98 100644
---- a/Documentation/trace/index.rst
-+++ b/Documentation/trace/index.rst
-@@ -22,3 +22,4 @@ Linux Tracing Technologies
-    hwlat_detector
-    intel_th
-    stm
-+   sys-t
+diff --git a/drivers/hwtracing/intel_th/msu.c b/drivers/hwtracing/intel_th/msu.c
+index d293e55553bd..ba7aaf421f36 100644
+--- a/drivers/hwtracing/intel_th/msu.c
++++ b/drivers/hwtracing/intel_th/msu.c
+@@ -1423,7 +1423,8 @@ nr_pages_store(struct device *dev, struct device_attribute *attr,
+ 		if (!end)
+ 			break;
+ 
+-		len -= end - p;
++		/* consume the number and the following comma, hence +1 */
++		len -= end - p + 1;
+ 		p = end + 1;
+ 	} while (len);
+ 
 -- 
 2.19.2
 
