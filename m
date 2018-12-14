@@ -2,246 +2,137 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.9 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A13B1C43612
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 14:23:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B96CC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 14:24:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A182C20656
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 14:23:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9630B20656
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 14:24:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730230AbeLNOX4 (ORCPT
+        id S1730184AbeLNOYX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 09:23:56 -0500
-Received: from icp-osb-irony-out3.external.iinet.net.au ([203.59.1.153]:14901
-        "EHLO icp-osb-irony-out3.external.iinet.net.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729971AbeLNOX4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 09:23:56 -0500
-X-Greylist: delayed 561 seconds by postgrey-1.27 at vger.kernel.org; Fri, 14 Dec 2018 09:23:54 EST
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2ACAADwuRNc/1uMqnwNVxkBAQEBAQE?=
- =?us-ascii?q?BAQEBAQEHAQEBAQEBgVIDAQEBAQELAYJpgSmDfIN7kXUIJXyWW4F6MoRHAoM?=
- =?us-ascii?q?nNQgNAQMBAQEBAQECgQmFSAEBAQEDIxVBEAsOAwECAQIBAgImAgJJBggGAQw?=
- =?us-ascii?q?GAgEBgx0BgWcBJ6RocIEvhC0BgRKEboELi0qBQD+BEScMgio1gwWBVYMtglc?=
- =?us-ascii?q?CiT4EgXSEXZEFCYEDgSWEZYNAhwcekVIsiQ+Edod8hHsBggwzGh+DQAmCHhe?=
- =?us-ascii?q?IXoVRYAEJi2eCTQEB?=
-X-IPAS-Result: =?us-ascii?q?A2ACAADwuRNc/1uMqnwNVxkBAQEBAQEBAQEBAQEHAQEBA?=
- =?us-ascii?q?QEBgVIDAQEBAQELAYJpgSmDfIN7kXUIJXyWW4F6MoRHAoMnNQgNAQMBAQEBA?=
- =?us-ascii?q?QECgQmFSAEBAQEDIxVBEAsOAwECAQIBAgImAgJJBggGAQwGAgEBgx0BgWcBJ?=
- =?us-ascii?q?6RocIEvhC0BgRKEboELi0qBQD+BEScMgio1gwWBVYMtglcCiT4EgXSEXZEFC?=
- =?us-ascii?q?YEDgSWEZYNAhwcekVIsiQ+Edod8hHsBggwzGh+DQAmCHheIXoVRYAEJi2eCT?=
- =?us-ascii?q?QEB?=
-X-IronPort-AV: E=Sophos;i="5.56,353,1539619200"; 
-   d="scan'208";a="149574510"
-Received: from 124-170-140-91.dyn.iinet.net.au (HELO [192.168.0.106]) ([124.170.140.91])
-  by icp-osb-irony-out3.iinet.net.au with ESMTP; 14 Dec 2018 22:14:29 +0800
-Subject: Re: [PATCH 1/2] dma-mapping: zero memory returned from dma_alloc_*
-To:     Christoph Hellwig <hch@lst.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Linux IOMMU <iommu@lists.linux-foundation.org>,
-        Michal Simek <monstr@monstr.eu>, ashutosh.dixit@intel.com,
-        alpha <linux-alpha@vger.kernel.org>,
-        arcml <linux-snps-arc@lists.infradead.org>,
-        linux-c6x-dev@linux-c6x.org,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        Openrisc <openrisc@lists.librecores.org>,
-        Parisc List <linux-parisc@vger.kernel.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        sparclinux <sparclinux@vger.kernel.org>,
-        linux-xtensa@linux-xtensa.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20181214082515.14835-1-hch@lst.de>
- <20181214082515.14835-2-hch@lst.de>
- <CAMuHMdWOr0EsgFQF8tjJYLxKVXx+Jwn73N8SVKt8AQGLKQ8V-A@mail.gmail.com>
- <20181214114719.GA3316@lst.de>
-From:   Greg Ungerer <gregungerer@westnet.com.au>
-Message-ID: <5ae55118-6858-9121-6b3e-9b19b41550ef@westnet.com.au>
-Date:   Sat, 15 Dec 2018 00:14:29 +1000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Fri, 14 Dec 2018 09:24:23 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:60684 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729935AbeLNOYW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 09:24:22 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 023FFC0C78;
+        Fri, 14 Dec 2018 14:24:22 +0000 (UTC)
+Received: from treble (ovpn-120-195.rdu2.redhat.com [10.10.120.195])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id D170F26FC7;
+        Fri, 14 Dec 2018 14:24:13 +0000 (UTC)
+Date:   Fri, 14 Dec 2018 08:24:09 -0600
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     Joe Lawrence <joe.lawrence@redhat.com>,
+        Miroslav Benes <mbenes@suse.cz>,
+        Jiri Kosina <jikos@kernel.org>,
+        Jason Baron <jbaron@akamai.com>,
+        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v14 05/11] livepatch: Simplify API by removing
+ registration step
+Message-ID: <20181214142409.sths2pkn7o7xdt2t@treble>
+References: <20181129094431.7801-1-pmladek@suse.com>
+ <20181129094431.7801-6-pmladek@suse.com>
+ <20181205193253.mhlqj37r4o6ukkhp@redhat.com>
+ <20181206082814.uyzjw2q4avknhswd@pathway.suse.cz>
+ <alpine.LSU.2.21.1812061019500.17628@pobox.suse.cz>
+ <20181206101423.3nps4tgyg45jwofj@pathway.suse.cz>
+ <22937554-9c7c-ed9a-0f8d-70aa6e81b25d@redhat.com>
+ <20181213222959.5fbc6iy2vqwr4wxd@treble>
+ <20181214094016.fojfsaxwfkikiw7g@pathway.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <20181214114719.GA3316@lst.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20181214094016.fojfsaxwfkikiw7g@pathway.suse.cz>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Fri, 14 Dec 2018 14:24:22 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 14/12/18 9:47 pm, Christoph Hellwig wrote:
-> On Fri, Dec 14, 2018 at 10:54:32AM +0100, Geert Uytterhoeven wrote:
->>> -       page = alloc_pages(flag, order);
->>> +       page = alloc_pages(flag | GFP_ZERO, order);
->>>          if (!page)
->>>                  return NULL;
->>
->> There's second implementation below, which calls __get_free_pages() and
->> does an explicit memset().  As __get_free_pages() calls alloc_pages(), perhaps
->> it makes sense to replace the memset() by GFP_ZERO, to increase consistency?
+On Fri, Dec 14, 2018 at 10:40:16AM +0100, Petr Mladek wrote:
+> On Thu 2018-12-13 16:29:59, Josh Poimboeuf wrote:
+> > On Thu, Dec 06, 2018 at 09:36:06AM -0500, Joe Lawrence wrote:
+> > > On 12/06/2018 05:14 AM, Petr Mladek wrote:
+> > > > On Thu 2018-12-06 10:23:40, Miroslav Benes wrote:
+> > > >> On Thu, 6 Dec 2018, Petr Mladek wrote:
+> > > >>
+> > > >>> On Wed 2018-12-05 14:32:53, Joe Lawrence wrote:
+> > > >>>>> diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
+> > > >>>>> index 972520144713..e01dfa3b58d2 100644
+> > > >>>>> --- a/kernel/livepatch/core.c
+> > > >>>>> +++ b/kernel/livepatch/core.c
+> > > >>>>> @@ -45,7 +45,7 @@
+> > > >>>>>   */
+> > > >>>>>  DEFINE_MUTEX(klp_mutex);
+> > > >>>>>  
+> > > >>>>> -/* Registered patches */
+> > > >>>>> +/* Actively used patches. */
+> > > >>>>>  LIST_HEAD(klp_patches);
+> > > >>>>
+> > > >>>> By itself, this comment makes me wonder if there are un-active and/or
+> > > >>>> un-used patches that I need to worry about.  After this patchset,
+> > > >>>> klp_patches will include patches that have been enabled and those that
+> > > >>>> have been replaced, but the replacement transition is still in progress.  
+> > > >>>>
+> > > >>>> If that sounds accurate, how about adding to the comment:
+> > > >>>>
+> > > >>>> /* Actively used patches: enabled or replaced and awaiting transition */
+> > > >>>
+> > > >>> The replaced patches are not in the list. This is why I used the word
+> > > >>> "actively".
+> > > >>
+> > > 
+> > > After writing out my suggestion I realized that's why you chose
+> > > "actively" and almost erased my comment.  I think the extra text would
+> > > help a fresh reader of the code, so ...
+> > > 
+> > > >> The replaced patches are removed in klp_discard_replaced_patches(), which 
+> > > >> is called from klp_complete_transition(). Joe is right. The patches are in 
+> > > >> the list if a transition is still in progress.
+> > > > 
+> > > > These are patches that are being replaced. The replaced (after the
+> > > >  transition finishes) are not in the list.
+> > > > 
+> > > > By other word, Joe's text could be understand that replaced patches
+> > > > will never get removed from the list.
+> > > >
+> > > > So, is the text below acceptable?
+> > > > 
+> > > > /*
+> > > >  * Actively used patches: enabled or in transition. Note that replaced
+> > > >  * or disabled patches are not listed even though the related kernel
+> > > >  * module still can be loaded.
+> > > >  */
+> > > 
+> > > Yes this works and is more accurate than my original suggestion.
+> > 
+> > >From my perspective, no comment is needed at all, and _any_ comment just
+> > serves to add confusion -- including the above one.  But maybe that's
+> > because I already know that disabled and replace patches get discarded.
 > 
-> It would, but this patch really tries to be minimally invasive to just
-> provide the zeroing everywhere.  There is plenty of opportunity
-> to improve the m68k dma allocator if I can get enough reviewers/testers:
+> Exactly. If I saw this code for the first time, I would find this
+> comment useful.
 > 
->   - for one the coldfire/nommu case absolutely does not make sense to
->     me as there is not work done at all to make sure the memory is
->     mapped uncached despite the architecture implementing cache
->     flushing for the map interface.  So this whole implementation
->     looks broken to me and will need some major work (I had a previous
->     discussion with Greg on that which needs to be dug out)
-
-Yep, that is right. Certainly the MMU case is broken. Some noMMU cases work
-by virtue of the SoC only having an instruction cache (the older V2 cores).
-
-The MMU case is fixable, but I think it will mean changing away from
-the fall-back virtual:physical 1:1 mapping it uses for the kernel address
-space. So not completely trivial. Either that or a dedicated area of RAM
-for coherent allocations that we can mark as non-cachable via the really
-course grained and limited ACR registers - not really very appealing.
-
-The noMMU case in general is probably limited to something like that same
-type of dedicated RAM/ACR register mechamism.
-
-The most commonly used periperal with DMA is the FEC ethernet module,
-and it has some "special" (used very loosely) cache flushing for
-parts like the 532x family which probably makes it mostly work right.
-There is a PCI bus on the 54xx family of parts, and I know general
-ethernet cards on it (like e1000's) have problems I am sure are
-related to the fact that coherent memory allocations aren't.
-
-I do plan to have a look at this for the MMU case some time soon.
-
-Regards
-Greg
-
-
-
-
->   - the "regular" implementation in this patch should probably be replaced
->     with the generic remapping helpers that have been added for the 4.21
->     merge window:
+> I often miss these top-level descriptions because they help to
+> get the picture about the code design.
 > 
-> 	http://git.infradead.org/users/hch/dma-mapping.git/commitdiff/0c3b3171ceccb8830c2bb5adff1b4e9b204c1450
+> Finally, the usage of the list has similar complexity as
+> the use of klp_mutex. There mutex has even longer comment.
 > 
-> Compile tested only patch below:
-> 
-> --
->>From ade86dc75b9850daf9111ebf9ce15825a6144f2d Mon Sep 17 00:00:00 2001
-> From: Christoph Hellwig <hch@lst.de>
-> Date: Fri, 14 Dec 2018 12:41:45 +0100
-> Subject: m68k: use the generic dma coherent remap allocator
-> 
-> This switche to using common code for the DMA allocations, including
-> potential use of the CMA allocator if configure.  Also add a few
-> comments where the existing behavior seems to be lacking.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->   arch/m68k/Kconfig      |  2 ++
->   arch/m68k/kernel/dma.c | 64 ++++++++++++------------------------------
->   2 files changed, 20 insertions(+), 46 deletions(-)
-> 
-> diff --git a/arch/m68k/Kconfig b/arch/m68k/Kconfig
-> index 8a5868e9a3a0..60788cf02fbc 100644
-> --- a/arch/m68k/Kconfig
-> +++ b/arch/m68k/Kconfig
-> @@ -2,10 +2,12 @@
->   config M68K
->   	bool
->   	default y
-> +	select ARCH_HAS_DMA_MMAP_PGPROT if MMU && !COLDFIRE
->   	select ARCH_HAS_SYNC_DMA_FOR_DEVICE if HAS_DMA
->   	select ARCH_MIGHT_HAVE_PC_PARPORT if ISA
->   	select ARCH_NO_COHERENT_DMA_MMAP if !MMU
->   	select ARCH_NO_PREEMPT if !COLDFIRE
-> +	select DMA_DIRECT_REMAP if MMU && !COLDFIRE
->   	select HAVE_IDE
->   	select HAVE_AOUT if MMU
->   	select HAVE_DEBUG_BUGVERBOSE
-> diff --git a/arch/m68k/kernel/dma.c b/arch/m68k/kernel/dma.c
-> index dafe99d08a6a..16da5d96e228 100644
-> --- a/arch/m68k/kernel/dma.c
-> +++ b/arch/m68k/kernel/dma.c
-> @@ -18,57 +18,29 @@
->   #include <asm/pgalloc.h>
->   
->   #if defined(CONFIG_MMU) && !defined(CONFIG_COLDFIRE)
-> -
-> -void *arch_dma_alloc(struct device *dev, size_t size, dma_addr_t *handle,
-> -		gfp_t flag, unsigned long attrs)
-> +void arch_dma_prep_coherent(struct page *page, size_t size)
->   {
-> -	struct page *page, **map;
-> -	pgprot_t pgprot;
-> -	void *addr;
-> -	int i, order;
-> -
-> -	pr_debug("dma_alloc_coherent: %d,%x\n", size, flag);
-> -
-> -	size = PAGE_ALIGN(size);
-> -	order = get_order(size);
-> -
-> -	page = alloc_pages(flag | GFP_ZERO, order);
-> -	if (!page)
-> -		return NULL;
-> -
-> -	*handle = page_to_phys(page);
-> -	map = kmalloc(sizeof(struct page *) << order, flag & ~__GFP_DMA);
-> -	if (!map) {
-> -		__free_pages(page, order);
-> -		return NULL;
-> -	}
-> -	split_page(page, order);
-> -
-> -	order = 1 << order;
-> -	size >>= PAGE_SHIFT;
-> -	map[0] = page;
-> -	for (i = 1; i < size; i++)
-> -		map[i] = page + i;
-> -	for (; i < order; i++)
-> -		__free_page(page + i);
-> -	pgprot = __pgprot(_PAGE_PRESENT | _PAGE_ACCESSED | _PAGE_DIRTY);
-> -	if (CPU_IS_040_OR_060)
-> -		pgprot_val(pgprot) |= _PAGE_GLOBAL040 | _PAGE_NOCACHE_S;
-> -	else
-> -		pgprot_val(pgprot) |= _PAGE_NOCACHE030;
-> -	addr = vmap(map, size, VM_MAP, pgprot);
-> -	kfree(map);
-> -
-> -	return addr;
-> +	/*
-> +	 * XXX: don't we need to flush and invalidate the caches before
-> +	 * creating a coherent mapping?
-> +	 * coherent?
-> +	 */
->   }
->   
-> -void arch_dma_free(struct device *dev, size_t size, void *addr,
-> -		dma_addr_t handle, unsigned long attrs)
-> +pgprot_t arch_dma_mmap_pgprot(struct device *dev, pgprot_t prot,
-> +		unsigned long attrs)
->   {
-> -	pr_debug("dma_free_coherent: %p, %x\n", addr, handle);
-> -	vfree(addr);
-> +	/*
-> +	 * XXX: this doesn't seem to handle the sun3 MMU at all.
-> +	 */
-> +	if (CPU_IS_040_OR_060) {
-> +		pgprot_val(prot) &= ~_PAGE_CACHE040;
-> +		pgprot_val(prot) |= _PAGE_GLOBAL040 | _PAGE_NOCACHE_S;
-> +	} else {
-> +		pgprot_val(prot) |= _PAGE_NOCACHE030;
-> +	}
-> +	return prot;
->   }
-> -
->   #else
->   
->   #include <asm/cacheflush.h>
-> 
+> I will use the longer text if you are not strictly against.
+
+Ok, fair enough.
+
+-- 
+Josh
