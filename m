@@ -2,199 +2,138 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25F61C67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 08:01:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04F89C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 08:05:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB2D62080F
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 08:01:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB2D62080F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id C3D042080F
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 08:05:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3D042080F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727314AbeLNIBy (ORCPT
+        id S1727556AbeLNIFR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 03:01:54 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:47965 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726533AbeLNIBy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 03:01:54 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 43GNL74xnwz9vGy9;
-        Fri, 14 Dec 2018 09:01:51 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id 1YohcOmq4HKZ; Fri, 14 Dec 2018 09:01:51 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 43GNL74CS4z9vGy8;
-        Fri, 14 Dec 2018 09:01:51 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 88AF98B89E;
-        Fri, 14 Dec 2018 09:01:52 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id gaXjU-IdF9US; Fri, 14 Dec 2018 09:01:52 +0100 (CET)
-Received: from PO15451 (po15451.idsi0.si.c-s.fr [172.25.231.2])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 48D898B89B;
-        Fri, 14 Dec 2018 09:01:52 +0100 (CET)
-Subject: Re: [PATCH] powerpc/mm: make NULL pointer deferences explicit on bad
- page faults.
-To:     Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-References: <42e7e2e9b74af526523fb5a1451fdb29cfe2687a.1539060806.git.christophe.leroy@c-s.fr>
- <87zht9udqh.fsf@concordia.ellerman.id.au>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <276439ce-aad9-e72f-7bc9-c57fb4a59339@c-s.fr>
-Date:   Fri, 14 Dec 2018 09:01:52 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
+        Fri, 14 Dec 2018 03:05:17 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:37110 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726494AbeLNIFR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 03:05:17 -0500
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 01C07974586CE;
+        Fri, 14 Dec 2018 16:05:13 +0800 (CST)
+Received: from [127.0.0.1] (10.142.63.192) by DGGEMS402-HUB.china.huawei.com
+ (10.3.19.202) with Microsoft SMTP Server id 14.3.408.0; Fri, 14 Dec 2018
+ 16:05:04 +0800
+CC:     <liuyu712@hisilicon.com>, Wangbinghui <wangbinghui@hisilicon.com>,
+        "Linux USB List" <linux-usb@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Suzhuangluan <suzhuangluan@hisilicon.com>,
+        <kongfei@hisilicon.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "John Stultz" <john.stultz@linaro.org>
+Subject: Re: [PATCH 01/10] dt-bindings: usb: add support for dwc3 controller
+ on HiSilicon SoCs
+To:     Rob Herring <robh@kernel.org>
+References: <20181027095820.40056-1-chenyu56@huawei.com>
+ <20181027095820.40056-2-chenyu56@huawei.com> <20181112160241.GA14074@bogus>
+ <9fce6a58-d986-25e4-1791-ba375e4f075e@huawei.com>
+ <CAL_JsqKObFGdf5tPdv=Ss2ZWCPBgimbEUn72rkR2+L7uRbAirg@mail.gmail.com>
+From:   Chen Yu <chenyu56@huawei.com>
+Message-ID: <8bd2e47a-5766-3236-2c89-a4eaf343991c@huawei.com>
+Date:   Fri, 14 Dec 2018 16:05:03 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
 MIME-Version: 1.0
-In-Reply-To: <87zht9udqh.fsf@concordia.ellerman.id.au>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
+In-Reply-To: <CAL_JsqKObFGdf5tPdv=Ss2ZWCPBgimbEUn72rkR2+L7uRbAirg@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.142.63.192]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Michael,
+Hi,
 
-Le 14/12/2018 à 01:57, Michael Ellerman a écrit :
-> Hi Christophe,
+On 2018/12/4 0:01, Rob Herring wrote:
+> On Fri, Nov 16, 2018 at 8:29 PM Chen Yu <chenyu56@huawei.com> wrote:
+>>
+>> Hi,
+>>
+>> On 2018/11/13 0:02, Rob Herring wrote:
+>>> On Sat, Oct 27, 2018 at 05:58:11PM +0800, Yu Chen wrote:
+>>>> This patch adds binding descriptions to support the dwc3 controller
+>>>> on HiSilicon SoCs and boards like the HiKey960.
+>>>>
+>>>> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>>>> Cc: Rob Herring <robh+dt@kernel.org>
+>>>> Cc: Mark Rutland <mark.rutland@arm.com>
+>>>> Cc: John Stultz <john.stultz@linaro.org>
+>>>> Signed-off-by: Yu Chen <chenyu56@huawei.com>
+>>>> ---
+>>>>  .../devicetree/bindings/usb/dwc3-hisi.txt          | 53 ++++++++++++++++++++++
+>>>>  1 file changed, 53 insertions(+)
+>>>>  create mode 100644 Documentation/devicetree/bindings/usb/dwc3-hisi.txt
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/usb/dwc3-hisi.txt b/Documentation/devicetree/bindings/usb/dwc3-hisi.txt
+>>>> new file mode 100644
+>>>> index 000000000000..e715e7b1c324
+>>>> --- /dev/null
+>>>> +++ b/Documentation/devicetree/bindings/usb/dwc3-hisi.txt
+>>>> @@ -0,0 +1,53 @@
+>>>> +HiSilicon DWC3 USB SoC controller
+>>>> +
+>>>> +This file documents the parameters for the dwc3-hisi driver.
+>>>> +
+>>>> +Required properties:
+>>>> +- compatible:       should be "hisilicon,hi3660-dwc3"
+>>>> +- clocks:   A list of phandle + clock-specifier pairs for the
+>>>> +            clocks listed in clock-names
+>>>> +- clock-names:      Specify clock names
+>>>> +- resets:   list of phandle and reset specifier pairs.
+>>>> +
+>>>> +Sub-nodes:
+>>>> +The dwc3 core should be added as subnode to HiSilicon DWC3 as shown in the
+>>>> +example below. The DT binding details of dwc3 can be found in:
+>>>> +Documentation/devicetree/bindings/usb/dwc3.txt
+>>>
+>>> If you only have clocks and resets and no glue registers, then you
+>>> don't need a sub-node. Just make the controller one node.
+>>>
+>>
+>> In dwc3 glue driver，the controller driver usually probed by call of_platform_populate
+>> which will search the child node of glue driver.
+>> The code of function of_platform_populate is as below:
+>>
+>>         for_each_child_of_node(root, child) {
+>>                  rc = of_platform_bus_create(child, matches, lookup, parent, true);
+>>                  if (rc) {
+>>                          of_node_put(child);
+>>                          break;
+>>                  }
+>>          }
+>>
+>> So I think the controller node should be a sub-node.
 > 
-> You know it's the trivial patches that are going to get lots of review
-> comments :)
+> It was done that way, but has changed. See commit fe8abf332b8f ("usb:
+> dwc3: support clocks and resets for DWC3 core").
+> 
+I have read the commit and there is a question. If I make the controller one node,
+how can the pm suspend of the glue driver be guaranteed to be called after the pm suspend
+of dwc3 controller? And also the order of pm resume.
+There are some reset registers that should be configured before the initialization
+of dwc3 controller on Hi3660 platform.
 
-I'm so happy to get comments.
+> Rob
+> 
+> .
+> 
 
-> 
-> Christophe Leroy <christophe.leroy@c-s.fr> writes:
->> As several other arches including x86, this patch makes it explicit
->> that a bad page fault is a NULL pointer dereference when the fault
->> address is lower than PAGE_SIZE
-> 
-> I'm being pedantic, but it's not necessarily a NULL pointer dereference.
-> It might just be a direct access to a low address, eg:
-> 
->   char *p = 0x100;
->   *p = 0;
-> 
-> That's not a NULL pointer dereference.
-> 
-> But other arches do print this so I guess it's OK to add, and in most
-> cases it will be an actual NULL pointer dereference.
-> 
-> I wonder though if we should use 4096 rather than PAGE_SIZE, given
-> that's the actual value other arches are using. We support 256K pages on
-> some systems, which is getting quite large.
-
-Those invalid accesses are catched because the first page is marked non 
-present or non accessible in the page table, so I thing using PAGE_SIZE 
-here is valid regardless of the page size.
-
-Looks like the arches have PAGE_SHIFT ranging from 12 to 16 mainly.
-
-> 
->> diff --git a/arch/powerpc/mm/fault.c b/arch/powerpc/mm/fault.c
->> index d51cf5f4e45e..501a1eadb3e9 100644
->> --- a/arch/powerpc/mm/fault.c
->> +++ b/arch/powerpc/mm/fault.c
->> @@ -631,13 +631,16 @@ void bad_page_fault(struct pt_regs *regs, unsigned long address, int sig)
->>   	switch (TRAP(regs)) {
->>   	case 0x300:
->>   	case 0x380:
->> -		printk(KERN_ALERT "Unable to handle kernel paging request for "
->> -			"data at address 0x%08lx\n", regs->dar);
->> +		pr_alert("Unable to handle kernel %s for data at address 0x%08lx\n",
->> +			 regs->dar < PAGE_SIZE ? "NULL pointer dereference" :
->> +						 "paging request",
->> +			 regs->dar);
-> 
-> This is now too long I think, with printk time you get:
-> 
-> [ 1096.450711] Unable to handle kernel NULL pointer dereference for data at address 0x00000000
-> 
-> Which is 93 columns. It's true on many systems it doesn't really matter
-> any more, but it would still be good if it was shorter.
-> 
-> I like that on x86 they prefix it with "BUG:", just to avoid any confusion.
-> 
-> What if we had for the NULL pointer case:
-> 
->    BUG: Kernel NULL pointer dereference at 0x00000000
-> 
-> And for the normal case:
-> 
->    BUG: Unable to handle kernel data access at 0x00000000
-> 
-> Note on the very next line we print:
->    Faulting instruction address: 0xc000000000795cc8
-> 
-> So there should be no confusion about whether "at" refers to the data
-> address or the instruction address.
-
-Agreed
-
-> 
->>   	case 0x400:
->>   	case 0x480:
->> -		printk(KERN_ALERT "Unable to handle kernel paging request for "
->> -			"instruction fetch\n");
->> +		pr_alert("Unable to handle kernel %s for instruction fetch\n",
->> +			 regs->nip < PAGE_SIZE ? "NULL pointer dereference" :
->> +						 "paging request");
-> 
-> I don't really like using "NULL pointer dereference" here, that
-> terminology makes me think of a load/store, I think it confuses things
-> rather than making it clearer.
-> 
-> What about:
-> 
->    BUG: Unable to handle kernel instruction fetch at 0x00000000
-
-I think we still need to make it explicit that we jumped there due to a 
-NULL function pointer, allthought I don't have a good text idea yet for 
-this.
-
-> 
-> 
->>   		break;
->>   	case 0x600:
->>   		printk(KERN_ALERT "Unable to handle kernel paging request for "
-> 
-> It would be good to clean up these other cases as well. They seem to be
-> trying to use the "page request for" terminology which leads to them
-> being very wordy. I assume that was done to help people grepping kernel
-> logs for errors, but I think we should not worry about that if we have
-> the "BUG:" prefix.
-> 
-> So we have:
-> 	printk(KERN_ALERT "Unable to handle kernel paging request for "
-> 		"unaligned access at address 0x%08lx\n", regs->dar);
-> 
-> What about:
-> 
->    BUG: Unable to handle kernel unaligned access at 0x00000000
-> 
-> And:
-> 	printk(KERN_ALERT "Unable to handle kernel paging request for "
-> 		"unknown fault\n");
-> 
-> What about:
-> 
->    BUG: Unable to handle unknown paging fault at 0x00000000
-> 
-> 
-> Thoughts?
-
-Looks like good ideas I'll carry on.
-
-Christophe
