@@ -2,214 +2,219 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADCE9C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 14:13:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09A29C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 14:13:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37E03206C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 14:13:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 581FD208C3
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 13:56:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=armh.onmicrosoft.com header.i=@armh.onmicrosoft.com header.b="MzCrrfRM"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UXHbywmJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730095AbeLNONI (ORCPT
+        id S1730105AbeLNN4l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 09:13:08 -0500
-Received: from mail-eopbgr80081.outbound.protection.outlook.com ([40.107.8.81]:18944
-        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729981AbeLNONI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 09:13:08 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
- s=selector1-arm-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HQAsCdEeWya4efGJdpQW9f7PTeGUNgKDLBpUGoBZ96E=;
- b=MzCrrfRMG54mexpJQM3PuMhGGxs05k6LejSoSEvi8IB1Ce8VxRgMSu5b5E6fsGxkpT/0VfOT0j7jBulbOOVCrviR/PBq8urBIwhQqH74ZxW9FBmJW/bKNEcWLC0wQyVh3Q/OU+QAfClF4S3+FIgXNtvqM6bZ47RZQ8NB8EyHD3M=
-Received: from AM0PR08MB3891.eurprd08.prod.outlook.com (20.178.82.147) by
- AM0PR08MB3217.eurprd08.prod.outlook.com (52.134.94.10) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1404.23; Fri, 14 Dec 2018 14:12:23 +0000
-Received: from AM0PR08MB3891.eurprd08.prod.outlook.com
- ([fe80::f1f9:6693:ed35:d489]) by AM0PR08MB3891.eurprd08.prod.outlook.com
- ([fe80::f1f9:6693:ed35:d489%4]) with mapi id 15.20.1425.021; Fri, 14 Dec 2018
- 14:12:23 +0000
-From:   Ayan Halder <Ayan.Halder@arm.com>
-To:     Liviu Dudau <Liviu.Dudau@arm.com>
-CC:     "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "arnd@arndb.de" <arnd@arndb.de>, "corbet@lwn.net" <corbet@lwn.net>,
-        "airlied@linux.ie" <airlied@linux.ie>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "maxime.ripard@bootlin.com" <maxime.ripard@bootlin.com>,
-        "malidp@foss.arm.com" <malidp@foss.arm.com>,
-        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        nd <nd@arm.com>, "sean@poorly.run" <sean@poorly.run>
-Subject: Re: [RFC AFBC 06/12] drm/arm/malidp:- Added support for new YUV
- formats for DP500, DP550 and DP650
-Thread-Topic: [RFC AFBC 06/12] drm/arm/malidp:- Added support for new YUV
- formats for DP500, DP550 and DP650
-Thread-Index: AQHUivvODNv595J0pU+YPcE059kyEKVuzv+AgA+JGQA=
-Date:   Fri, 14 Dec 2018 14:12:23 +0000
-Message-ID: <20181214141222.GC19564@arm.com>
-References: <1543836703-8491-1-git-send-email-ayan.halder@arm.com>
- <1543836703-8491-7-git-send-email-ayan.halder@arm.com>
- <20181204165746.GN988@e110455-lin.cambridge.arm.com>
-In-Reply-To: <20181204165746.GN988@e110455-lin.cambridge.arm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: CWLP265CA0233.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:401:4f::29) To AM0PR08MB3891.eurprd08.prod.outlook.com
- (2603:10a6:208:109::19)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Ayan.Halder@arm.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [217.140.106.50]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM0PR08MB3217;6:uaJXo2+KJzDkk53vPNu4Um3OfB4Z362Rjc4Z4ZKA0zi1Zy0Vhr8ZALFfc9RhDLH8c+zrU1tVYGzF4TjcI+12HAjd11dZkmanV9qHV8uDdtUJERL6xh0cHaVu/WvLD4bO5dLgq7eFAFQGRzhyhHNZ2Wpd75hg3QComISYCeXJZijp/j1HovM5ne6j7VjLAYJal+SqFlZ+z0zDZ79FX53m54FAs7tQ8FGNFXSWX+y0+v3f8IR46Y00ZFChHElZjTLkQ7IZD2LaSxos1znDtmz8U2nw7zL8GUl/0F71LuyT4U7n7cyGBaeW/WTvnAaVcL0WQWqpFW5JY2T4uVO03I7rIzh4OJNNKOGjTthKm0fb1WqzemkJoCZjj8wz4VM678MjzBStV+vxaqM2cuaZypcy8hkiPBDq2lT0QlyYXorNHOCZpNzFQ2ETT//kf5CtDEVySzPR8/yxzVD4aYkxmpevGw==;5:lJyXsfEENmm/QsjNnClJrmq5YVmf7yULZIpTizRPYDjznb7V/u5I0ZezmqihP8qI2SSi5FNyYY6lW6vHOWjGB2LP6ySQfs1WDtkteUEyzdYKQoGrdrq28N1V/qrP1iSK9M/fjW2dR3UKOtM8m9RzbtHeazc2/aez81uvPEv/arY=;7:FEo67FiK8CloJzzwRRXpChdgO2TX2pgLJRcJzWuDhY2JWaELuu4hnGlRyqk9L3L/PWafjyLHJzIFXcSKeca46uAAi8iVmtIPU58TDGP61IQV2N5OunNkqQmx7SzzmkG8fddnbqVLpvOHu7CEPBWTAQ==
-x-ms-office365-filtering-correlation-id: f88e2af3-38e0-4c1c-6652-08d661ce2ad2
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR08MB3217;
-x-ms-traffictypediagnostic: AM0PR08MB3217:
-nodisclaimer: True
-x-microsoft-antispam-prvs: <AM0PR08MB3217E979E904C02CA2C58AA8E4A10@AM0PR08MB3217.eurprd08.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(6040522)(2401047)(5005006)(8121501046)(3231475)(944501520)(52105112)(93006095)(93001095)(3002001)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(20161123564045)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:AM0PR08MB3217;BCL:0;PCL:0;RULEID:;SRVR:AM0PR08MB3217;
-x-forefront-prvs: 08864C38AC
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(396003)(136003)(366004)(346002)(376002)(199004)(189003)(71200400001)(6116002)(6246003)(6486002)(71190400001)(66066001)(68736007)(446003)(105586002)(478600001)(229853002)(53936002)(4326008)(76176011)(6862004)(81156014)(6436002)(476003)(97736004)(8676002)(2616005)(6636002)(256004)(11346002)(25786009)(33656002)(72206003)(486006)(14444005)(7736002)(217873002)(14454004)(8936002)(81166006)(2906002)(316002)(54906003)(36756003)(575784001)(44832011)(966005)(86362001)(6512007)(6306002)(106356001)(99286004)(7416002)(26005)(186003)(5660300001)(386003)(6506007)(305945005)(37006003)(1076002)(52116002)(102836004)(3846002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR08MB3217;H:AM0PR08MB3891.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: arm.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: iQS+TTEk5E9Wnc4YrwUY+XsFAX4WZatBxjn5QORN4pkzjyAKv0QHJKJ4cZxnd/xnpTaFhWGTHvH5jNWl+FHBTVhiXmN8QtKlkqB5gK2x0FQ+EcraUUS3UkG84sCVbYdsqEwCaUWUmCWFvnWmT0ZoTVuDKFgh24mD4W4Cr1LYftyBVZ+xZekWKn1XGAqPZMuEhEoNZTaoheITDlS75hU0+0NFJ9lMjxBKV+u/oTb9a8VD63kW6IjwbQAVsDImQvR23nr3Ju03xrs+FAEFQLW7mUdEMKbP+v6vR1x/+6HMlWYtAbh9AhDlCf+wKu7+3pfE
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <38B393AF784A9848BC01696DFDB772F3@eurprd08.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Fri, 14 Dec 2018 08:56:41 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:37208 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729641AbeLNN4l (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 08:56:41 -0500
+Received: by mail-wr1-f68.google.com with SMTP id s12so5088720wrt.4
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 05:56:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=MfkVA1cvUFm6l9t+etnGa86DMGuVQeEpE9AwskkVrDM=;
+        b=UXHbywmJL/JAdoiz9KaCZDRsHbhL83oD6upSmz75bso/1SNRS6vuvuyhoYYOCYrSza
+         5ykoFbFs2vxmh3KenJWadPqqltIBk0EH/U2POqkaaYulj4+hbq8p8TlI3ppWrmdoow1H
+         +d5UYg8+3ko7tb5OdK7KIs2Iok0coiFTQSxA9OUbJyzFMO97Lxiy9VmR1wJ30gCsV0VV
+         3mA3TVuiW/ICzwLCDOX0yiHDk/lJRaj9F35F5M+AQRVZTBApNnuhxnJ+7AhW5xUAQuAb
+         VzJ8XT7uPUoQfdbR+CxLS5axCH6ongkEWV6nwwD36gKvoqSuqtzzXZ4rnaPFetrhT91T
+         uxWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MfkVA1cvUFm6l9t+etnGa86DMGuVQeEpE9AwskkVrDM=;
+        b=GblCZCGi5TWdl5LjQASnASz53MZq9Q5Trgbb9aWOQf+Kua2q4+g0CBiCIGYKPY00pl
+         xOjpkfeg/SjiIiEsRNVwAH0uZi5HVR6pQ/Zu2ZTyjhRoeAyZKasREGUX7IrdrM03M6Jw
+         LHXkSeQtxopKMF/itaSmLDvCWP29y5WgLXSU6HUG47h5w3P8RyYL3NIrDxs/GIBRUJNf
+         /AB0I+2XQQFzX3wpbP0I2Hv6am6toXA/NTVCH9rGaZ4LR7HxvmwvtfhhUWnVreks1BLb
+         Qylfc0NleJ0bOb274PmNexgAETIyQuZkmSWByz7UCsqIp4dEZeVK8PxwvPgdjt1aYJ3p
+         tRLQ==
+X-Gm-Message-State: AA+aEWZNcUpPGwolZu0J3jIxEs3LXUFygLfddARJ2UYU8k62TgrepoZk
+        FHvIf+M3irYrhgEP+e3MI/+cJAS7VG+N0Z80yTI=
+X-Google-Smtp-Source: AFSGD/WDS0iPek6MPIjugXC76c2Y2AtyNB5SXitXq6H3A7vG8BKugqL/bKFliPwZWoCq4/BnwHTS8u4t+u01FGHwJS4=
+X-Received: by 2002:adf:b102:: with SMTP id l2mr2624320wra.296.1544795798889;
+ Fri, 14 Dec 2018 05:56:38 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f88e2af3-38e0-4c1c-6652-08d661ce2ad2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Dec 2018 14:12:23.3467
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR08MB3217
+References: <BLUPR13MB0289EFEB79833470EE62F48EDFD10@BLUPR13MB0289.namprd13.prod.outlook.com>
+ <20181128135242.gy3avmbp2pdmjaka@twin.jikos.cz> <5C0654EE.5040001@oberhumer.com>
+ <SN1PR13MB030484F09EE8A00DB094CDFADFA80@SN1PR13MB0304.namprd13.prod.outlook.com>
+ <5C093A30.4020705@oberhumer.com> <BLUPR13MB0289EC81589A10E95912675FDFA70@BLUPR13MB0289.namprd13.prod.outlook.com>
+ <5C110083.8060502@oberhumer.com>
+In-Reply-To: <5C110083.8060502@oberhumer.com>
+From:   Richard Weinberger <richard.weinberger@gmail.com>
+Date:   Fri, 14 Dec 2018 14:56:26 +0100
+Message-ID: <CAFLxGvzj=P2FY6w7CBYztsUjJ5Td53zCzGa_FUjrfxA94cmSgA@mail.gmail.com>
+Subject: Re: [PATCH v2] lzo: fix ip overrun during compress.
+To:     "Markus F.X.J. Oberhumer" <markus@oberhumer.com>
+Cc:     liyueyi@live.com, dsterba@suse.cz,
+        Greg KH <gregkh@linuxfoundation.org>, Willy Tarreau <w@1wt.eu>,
+        donb@securitymouse.com, Jiri Kosina <jikos@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Dec 04, 2018 at 04:57:46PM +0000, Liviu Dudau wrote:
+[CC'ing Kees]
 
-Hi Liviu,
-> On Mon, Dec 03, 2018 at 11:32:00AM +0000, Ayan Halder wrote:
-> > We have added some new formats to be supported on DP500/DP550/DP650.
->=20
-> Make a bit more descriptive commit message here, please!
+On Wed, Dec 12, 2018 at 1:37 PM Markus F.X.J. Oberhumer
+<markus@oberhumer.com> wrote:
 >
-I will keep the following commit message :-
+> I still claim that (0xfffffffffffff000, 4096) is not a valid C "pointer
+> to an object" according to the C standard - please see my reply below.
+>
+> And I thought ASLR was introduced to improve security and not to create
+> new security problems - someone from the ASLR team has to comment on this.
+>
+> Cheers,
+> Markus
+>
+>
+> On 2018-12-12 06:21, Yueyi Li wrote:
+> > Hi Markus,
+> >
+> > OK, thanks. I`ll change it in v3.
+> >
+> > Thanks,
+> > Yueyi
+> >
+> > On 2018/12/6 23:03, Markus F.X.J. Oberhumer wrote:
+> >> Hi Yueyi,
+> >>
+> >> yes, my LZO patch works for all cases.
+> >>
+> >> The reason behind the issue in the first place is that if KASLR
+> >> includes the very last page 0xfffffffffffff000 then we do not have a
+> >> valid C "pointer to an object" anymore because of address wraparound.
+> >>
+> >> Unrelated to my patch I'd argue that KASLR should *NOT* include the
+> >> very last page - indeed that might cause similar wraparound problems
+> >> in lots of code.
+> >>
+> >> Eg, look at this simple clear_memory() implementation:
+> >>
+> >> void clear_memory(char *p, size_t len) {
+> >>          char *end = p + len;
+> >>          while (p < end)
+> >>                  *p++= 0;
+> >> }
+> >>
+> >> Valid code like this will fail horribly when (p, len) is the very
+> >> last virtual page (because end will be the NULL pointer in this case).
+> >>
+> >> Cheers,
+> >> Markus
+> >>
+> >>
+> >>
+> >> On 2018-12-05 04:07, Yueyi Li wrote:
+> >>> Hi Markus,
+> >>>
+> >>> Thanks for your review.
+> >>>
+> >>> On 2018/12/4 18:20, Markus F.X.J. Oberhumer wrote:
+> >>>> Hi,
+> >>>>
+> >>>> I don't think that address space wraparound is legal in C, but I
+> >>>> understand that we are in kernel land and if you really want to
+> >>>> compress the last virtual page 0xfffffffffffff000 the following
+> >>>> small patch should fix that dubious case.
+> >>> I guess the VA 0xfffffffffffff000 is available because KASLR be
+> >>> enabled. For this case we can see:
+> >>>
+> >>> crash> kmem 0xfffffffffffff000
+> >>>         PAGE               PHYSICAL      MAPPING       INDEX CNT FLAGS
+> >>> ffffffbfffffffc0        1fffff000 ffffffff1655ecb9  7181fd5  2
+> >>> 8000000000064209 locked,uptodate,owner_priv_1,writeback,reclaim,swapbacked
+> >>>
+> >>>> This also avoids slowing down the the hot path of the compression
+> >>>> core function.
+> >>>>
+> >>>> Cheers,
+> >>>> Markus
+> >>>>
+> >>>>
+> >>>>
+> >>>> diff --git a/lib/lzo/lzo1x_compress.c b/lib/lzo/lzo1x_compress.c
+> >>>> index 236eb21167b5..959dec45f6fe 100644
+> >>>> --- a/lib/lzo/lzo1x_compress.c
+> >>>> +++ b/lib/lzo/lzo1x_compress.c
+> >>>> @@ -224,8 +224,8 @@ int lzo1x_1_compress(const unsigned char *in, size_t in_len,
+> >>>>
+> >>>>           while (l > 20) {
+> >>>>                   size_t ll = l <= (M4_MAX_OFFSET + 1) ? l : (M4_MAX_OFFSET + 1);
+> >>>> -               uintptr_t ll_end = (uintptr_t) ip + ll;
+> >>>> -               if ((ll_end + ((t + ll) >> 5)) <= ll_end)
+> >>>> +               // check for address space wraparound
+> >>>> +               if (((uintptr_t) ip + ll + ((t + ll) >> 5)) <= (uintptr_t) ip)
+> >>>>                           break;
+> >>>>                   BUILD_BUG_ON(D_SIZE * sizeof(lzo_dict_t) > LZO1X_1_MEM_COMPRESS);
+> >>>>                   memset(wrkmem, 0, D_SIZE * sizeof(lzo_dict_t));
+> >>> I parsed panic ramdump and loaded CPU register values,  can see:
+> >>>
+> >>> -000|lzo1x_1_do_compress(
+> >>>       |    in = 0xFFFFFFFFFFFFF000,
+> >>>       |  ?,
+> >>>       |    out = 0xFFFFFFFF2E2EE000,
+> >>>       |    out_len = 0xFFFFFF801CAA3510,
+> >>>       |  ?,
+> >>>       |    wrkmem = 0xFFFFFFFF4EBC0000)
+> >>>       |  dict = 0xFFFFFFFF4EBC0000
+> >>>       |  op = 0x1
+> >>>       |  ip = 0x9
+> >>>       |  ii = 0x9
+> >>>       |  in_end = 0x0
+> >>>       |  ip_end = 0xFFFFFFFFFFFFFFEC
+> >>>       |  m_len = 0
+> >>>       |  m_off = 1922
+> >>> -001|lzo1x_1_compress(
+> >>>       |    in = 0xFFFFFFFFFFFFF000,
+> >>>       |    in_len = 0,
+> >>>       |    out = 0xFFFFFFFF2E2EE000,
+> >>>       |    out_len = 0x00000001616FB7D0,
+> >>>       |    wrkmem = 0xFFFFFFFF4EBC0000)
+> >>>       |  ip = 0xFFFFFFFFFFFFF000
+> >>>       |  op = 0xFFFFFFFF2E2EE000
+> >>>       |  l = 4096
+> >>>       |  t = 0
+> >>>       |  ll = 4096
+> >>>
+> >>> ll = l = in_len = 4096 in lzo1x_1_compress,  so your patch is working
+> >>> for this panic case, but, I`m
+> >>> not sure, is it possible that in = 0xFFFFFFFFFFFFF000 and  in_len < 4096?
+> >>>
+> >>>
+> >>> Thanks,
+> >>> Yueyi
+> >>>
+> >
+> >
+>
+> --
+> Markus Oberhumer, <markus@oberhumer.com>, http://www.oberhumer.com/
 
-""We have added support for some AFBC only pixel formats like :-
-DRM_FORMAT_YUV420_8BIT (single plane YUV 420 8 bit format)
-DRM_FORMAT_VUY888 (single plane YUV 444 8 bit format)
-DRM_FORMAT_VUY101010 (single plane YUV 444 10 bit format)
-DRM_FORMAT_YUV420_10BIT (single plane YUV 420 10 bit format)
 
-Generally, these formats are supported by our hardware using the same hw-id=
-s as
-the equivalent multi plane pixel formats.
 
-Also we have added support for XYUV 444 8 and 10 bit formats.""
-
-Let me know if this looks fine.
-
+-- 
 Thanks,
-Ayan Kumar halder
-> >=20
-> > Signed-off-by: Ayan Kumar Halder <ayan.halder@arm.com>
-> >=20
-> > Depends on :- https://patchwork.kernel.org/patch/10460063/
->=20
-> Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
->=20
-> Best regards,
-> Liviu
->=20
-> > ---
-> >  drivers/gpu/drm/arm/malidp_hw.c | 22 +++++++++++++++++++++-
-> >  1 file changed, 21 insertions(+), 1 deletion(-)
-> >=20
-> > diff --git a/drivers/gpu/drm/arm/malidp_hw.c b/drivers/gpu/drm/arm/mali=
-dp_hw.c
-> > index 55d379b..25ac5890 100644
-> > --- a/drivers/gpu/drm/arm/malidp_hw.c
-> > +++ b/drivers/gpu/drm/arm/malidp_hw.c
-> > @@ -49,6 +49,12 @@ static const struct malidp_format_id malidp500_de_fo=
-rmats[] =3D {
-> >  	{ DRM_FORMAT_YUYV, DE_VIDEO1, 13 },
-> >  	{ DRM_FORMAT_NV12, DE_VIDEO1 | SE_MEMWRITE, 14 },
-> >  	{ DRM_FORMAT_YUV420, DE_VIDEO1, 15 },
-> > +	{ DRM_FORMAT_XYUV8888, DE_VIDEO1, 16 },
-> > +	/* These are supported with AFBC only */
-> > +	{ DRM_FORMAT_YUV420_8BIT, DE_VIDEO1, 14 },
-> > +	{ DRM_FORMAT_VUY888, DE_VIDEO1, 16 },
-> > +	{ DRM_FORMAT_VUY101010, DE_VIDEO1, 17 },
-> > +	{ DRM_FORMAT_YUV420_10BIT, DE_VIDEO1, 18 }
-> >  };
-> > =20
-> >  #define MALIDP_ID(__group, __format) \
-> > @@ -74,11 +80,25 @@ static const struct malidp_format_id malidp500_de_f=
-ormats[] =3D {
-> >  	{ DRM_FORMAT_ABGR1555, DE_VIDEO1 | DE_GRAPHICS1 | DE_VIDEO2, MALIDP_I=
-D(4, 1) }, \
-> >  	{ DRM_FORMAT_RGB565, DE_VIDEO1 | DE_GRAPHICS1 | DE_VIDEO2, MALIDP_ID(=
-4, 2) }, \
-> >  	{ DRM_FORMAT_BGR565, DE_VIDEO1 | DE_GRAPHICS1 | DE_VIDEO2, MALIDP_ID(=
-4, 3) }, \
-> > +	/* This is only supported with linear modifier */	\
-> > +	{ DRM_FORMAT_XYUV8888, DE_VIDEO1 | DE_VIDEO2, MALIDP_ID(5, 0) },\
-> > +	/* This is only supported with AFBC modifier */		\
-> > +	{ DRM_FORMAT_VUY888, DE_VIDEO1 | DE_VIDEO2, MALIDP_ID(5, 0) }, \
-> >  	{ DRM_FORMAT_YUYV, DE_VIDEO1 | DE_VIDEO2, MALIDP_ID(5, 2) },	\
-> > +	/* This is only supported with linear modifier */ \
-> >  	{ DRM_FORMAT_UYVY, DE_VIDEO1 | DE_VIDEO2, MALIDP_ID(5, 3) },	\
-> >  	{ DRM_FORMAT_NV12, DE_VIDEO1 | DE_VIDEO2 | SE_MEMWRITE, MALIDP_ID(5, =
-6) },	\
-> > +	/* This is only supported with AFBC modifier */ \
-> > +	{ DRM_FORMAT_YUV420_8BIT, DE_VIDEO1 | DE_VIDEO2, MALIDP_ID(5, 6) }, \
-> >  	{ DRM_FORMAT_YUV420, DE_VIDEO1 | DE_VIDEO2, MALIDP_ID(5, 7) }, \
-> > -	{ DRM_FORMAT_X0L2, DE_VIDEO1 | DE_VIDEO2, MALIDP_ID(6, 6)}
-> > +	/* This is only supported with linear modifier */ \
-> > +	{ DRM_FORMAT_XVYU2101010, DE_VIDEO1 | DE_VIDEO2, MALIDP_ID(6, 0)}, \
-> > +	/* This is only supported with AFBC modifier */ \
-> > +	{ DRM_FORMAT_VUY101010, DE_VIDEO1 | DE_VIDEO2, MALIDP_ID(6, 0)}, \
-> > +	{ DRM_FORMAT_X0L2, DE_VIDEO1 | DE_VIDEO2, MALIDP_ID(6, 6)}, \
-> > +	/* This is only supported with AFBC modifier */ \
-> > +	{ DRM_FORMAT_YUV420_10BIT, DE_VIDEO1 | DE_VIDEO2, MALIDP_ID(6, 7)}, \
-> > +	{ DRM_FORMAT_P010, DE_VIDEO1 | DE_VIDEO2, MALIDP_ID(6, 7)}
-> > =20
-> >  static const struct malidp_format_id malidp550_de_formats[] =3D {
-> >  	MALIDP_COMMON_FORMATS,
-> > --=20
-> > 2.7.4
-> >=20
->=20
-> --=20
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> | I would like to |
-> | fix the world,  |
-> | but they're not |
-> | giving me the   |
->  \ source code!  /
->   ---------------
->     ??\_(???)_/??
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+//richard
