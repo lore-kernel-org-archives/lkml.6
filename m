@@ -2,202 +2,97 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC160C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 15:49:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFE77C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 15:49:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03A9B2070B
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 15:49:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 333262070B
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 15:49:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a2MwdUR1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728678AbeLNPtS (ORCPT
+        id S1729208AbeLNPtZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 10:49:18 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:38712 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726298AbeLNPtS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 10:49:18 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2413A307D84C;
-        Fri, 14 Dec 2018 15:49:17 +0000 (UTC)
-Received: from [10.36.117.94] (ovpn-117-94.ams2.redhat.com [10.36.117.94])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 1650A18E33;
-        Fri, 14 Dec 2018 15:49:14 +0000 (UTC)
-Subject: Re: [PATCH v2 1/1] mm, memory_hotplug: Initialize struct pages for
- the full memory section
-From:   David Hildenbrand <david@redhat.com>
-To:     Mikhail Zaslonko <zaslonko@linux.ibm.com>,
-        akpm@linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        mhocko@kernel.org, Pavel.Tatashin@microsoft.com,
-        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        gerald.schaefer@de.ibm.com
-References: <20181212172712.34019-1-zaslonko@linux.ibm.com>
- <20181212172712.34019-2-zaslonko@linux.ibm.com>
- <476a80cb-5524-16c1-6dd5-da5febbd6139@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- SE+xAvmumFBY
-Organization: Red Hat GmbH
-Message-ID: <bcd0c49c-e417-ef8b-996f-99ecef540d9c@redhat.com>
-Date:   Fri, 14 Dec 2018 16:49:14 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Fri, 14 Dec 2018 10:49:25 -0500
+Received: from mail-wr1-f49.google.com ([209.85.221.49]:39043 "EHLO
+        mail-wr1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726298AbeLNPtZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 10:49:25 -0500
+Received: by mail-wr1-f49.google.com with SMTP id t27so5886787wra.6;
+        Fri, 14 Dec 2018 07:49:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=pj9Yi825DhQN+/UZQYzaEUx8hPvqRAlstl1W+AMIA44=;
+        b=a2MwdUR1E5BpQztxms+fyjySAPwY1DL198wU8Z9aUl6swuf9rTU/8Le8Tw32KZTo++
+         vbe0wk8iL0DgyiSEJZwpW5WcFiGqZI3fF7bxk/StUPGuhl3H7CdkFZtXzFkQW86ENeFm
+         ZvduIiqOvoPaEUCfDg7zi6e9zvLoyR9arQHry4KnzT7THpbXnbqLv6ZlPJc3CB/Gtqh8
+         LFLnapYzWjwnreTbGqhJjLL+mx97a0AKiQDab8sNG0R4WZef4TSdiJ2qzGmSX/Obd7HZ
+         C3k1sCFpI8R/98uNIgJqv2yit0rVdekjm3VvBLSqPlcLYfBCFon2HklrM/Wa7ZfCFlg8
+         /mog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=pj9Yi825DhQN+/UZQYzaEUx8hPvqRAlstl1W+AMIA44=;
+        b=kNJk+c2rUVrFDCQ5UWkVvPbIViMAmTDq8/Q222WpGHPL9eWYB/dfkyue6B2R9RZubh
+         Sy6Sxwt2CcC9jizE1qNvXBWgpecoCLQsPmoZRQOII/SHD+nBij9gJsaZYdsvPvFcrlQK
+         MPvQIDGLesIPyYsi7EXa+O5vIVi9rbOb9bi4LfKIVLpKN1u/IQAoj6JqepJzwoURd9am
+         p7i2KDd3sounFFJ2uAo9FkY7hZ6tfcAebtEnI2QIU2WkA/7v+wKdbZkT87LKzAXO2Sr7
+         104ckUW1pij9zVbQPTDpff1R9UAiufRaouvoC7oF7u7lMaRH+ENvb5JHrTxB6eWonZ1c
+         K68Q==
+X-Gm-Message-State: AA+aEWZ8qznaxQiggGVloR4JPqoCLcYmO94eGAg/qMQxmf9qIuUyO3LM
+        vDgpSo1jn6OAN2EceOgUU8Wymm2k
+X-Google-Smtp-Source: AFSGD/UgfhNROm/FvZP3TLNy2tJ0GLLagzeO3BnMIbUZFKjXMK8sk8rA1LJbzJk/z3QzjgzDYav/UA==
+X-Received: by 2002:adf:e1c3:: with SMTP id l3mr3156754wri.36.1544802562963;
+        Fri, 14 Dec 2018 07:49:22 -0800 (PST)
+Received: from localhost.localdomain (ip-94-112-136-201.net.upcbroadband.cz. [94.112.136.201])
+        by smtp.gmail.com with ESMTPSA id n127sm5870298wmd.20.2018.12.14.07.49.21
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 14 Dec 2018 07:49:22 -0800 (PST)
+From:   Ilya Dryomov <idryomov@gmail.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Ceph fix for 4.20-rc7
+Date:   Fri, 14 Dec 2018 16:48:58 +0100
+Message-Id: <20181214154858.1155-1-idryomov@gmail.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-In-Reply-To: <476a80cb-5524-16c1-6dd5-da5febbd6139@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Fri, 14 Dec 2018 15:49:17 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14.12.18 16:22, David Hildenbrand wrote:
-> On 12.12.18 18:27, Mikhail Zaslonko wrote:
->> If memory end is not aligned with the sparse memory section boundary, the
->> mapping of such a section is only partly initialized. This may lead to
->> VM_BUG_ON due to uninitialized struct page access from
->> is_mem_section_removable() or test_pages_in_a_zone() function triggered by
->> memory_hotplug sysfs handlers:
->>
->> Here are the the panic examples:
->>  CONFIG_DEBUG_VM=y
->>  CONFIG_DEBUG_VM_PGFLAGS=y
->>
->>  kernel parameter mem=2050M
->>  --------------------------
->>  page:000003d082008000 is uninitialized and poisoned
->>  page dumped because: VM_BUG_ON_PAGE(PagePoisoned(p))
->>  Call Trace:
->>  ([<0000000000385b26>] test_pages_in_a_zone+0xde/0x160)
->>   [<00000000008f15c4>] show_valid_zones+0x5c/0x190
->>   [<00000000008cf9c4>] dev_attr_show+0x34/0x70
->>   [<0000000000463ad0>] sysfs_kf_seq_show+0xc8/0x148
->>   [<00000000003e4194>] seq_read+0x204/0x480
->>   [<00000000003b53ea>] __vfs_read+0x32/0x178
->>   [<00000000003b55b2>] vfs_read+0x82/0x138
->>   [<00000000003b5be2>] ksys_read+0x5a/0xb0
->>   [<0000000000b86ba0>] system_call+0xdc/0x2d8
->>  Last Breaking-Event-Address:
->>   [<0000000000385b26>] test_pages_in_a_zone+0xde/0x160
->>  Kernel panic - not syncing: Fatal exception: panic_on_oops
->>
->>  kernel parameter mem=3075M
->>  --------------------------
->>  page:000003d08300c000 is uninitialized and poisoned
->>  page dumped because: VM_BUG_ON_PAGE(PagePoisoned(p))
->>  Call Trace:
->>  ([<000000000038596c>] is_mem_section_removable+0xb4/0x190)
->>   [<00000000008f12fa>] show_mem_removable+0x9a/0xd8
->>   [<00000000008cf9c4>] dev_attr_show+0x34/0x70
->>   [<0000000000463ad0>] sysfs_kf_seq_show+0xc8/0x148
->>   [<00000000003e4194>] seq_read+0x204/0x480
->>   [<00000000003b53ea>] __vfs_read+0x32/0x178
->>   [<00000000003b55b2>] vfs_read+0x82/0x138
->>   [<00000000003b5be2>] ksys_read+0x5a/0xb0
->>   [<0000000000b86ba0>] system_call+0xdc/0x2d8
->>  Last Breaking-Event-Address:
->>   [<000000000038596c>] is_mem_section_removable+0xb4/0x190
->>  Kernel panic - not syncing: Fatal exception: panic_on_oops
->>
->> Fix the problem by initializing the last memory section of each zone
->> in memmap_init_zone() till the very end, even if it goes beyond the zone
->> end.
->>
->> Signed-off-by: Mikhail Zaslonko <zaslonko@linux.ibm.com>
->> Reviewed-by: Gerald Schaefer <gerald.schaefer@de.ibm.com>
->> Cc: <stable@vger.kernel.org>
->> ---
->>  mm/page_alloc.c | 12 ++++++++++++
->>  1 file changed, 12 insertions(+)
->>
->> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
->> index 2ec9cc407216..e2afdb2dc2c5 100644
->> --- a/mm/page_alloc.c
->> +++ b/mm/page_alloc.c
->> @@ -5542,6 +5542,18 @@ void __meminit memmap_init_zone(unsigned long size, int nid, unsigned long zone,
->>  			cond_resched();
->>  		}
->>  	}
->> +#ifdef CONFIG_SPARSEMEM
->> +	/*
->> +	 * If the zone does not span the rest of the section then
->> +	 * we should at least initialize those pages. Otherwise we
->> +	 * could blow up on a poisoned page in some paths which depend
->> +	 * on full sections being initialized (e.g. memory hotplug).
->> +	 */
->> +	while (end_pfn % PAGES_PER_SECTION) {
->> +		__init_single_page(pfn_to_page(end_pfn), end_pfn, zone, nid);
->> +		end_pfn++;
-> 
-> This page will not be marked as PG_reserved - although it is a physical
-> memory gap. Do we care?
-> 
+Hi Linus,
 
-Hm, or do we even have any idea what this is (e.g. could it also be
-something not a gap)?
+The following changes since commit 40e020c129cfc991e8ab4736d2665351ffd1468d:
 
-For physical memory gaps within a section, architectures usually exclude
-that memory from getting passed to e.g. the page allocator by
-memblock_reserve().
+  Linux 4.20-rc6 (2018-12-09 15:31:00 -0800)
 
-Before handing all free pages to the page allocator, all such reserved
-memblocks will be marked reserved.
+are available in the Git repository at:
 
-But this here seems to be different. We don't have a previous
-memblock_reserve(), because otherwise these pages would have properly
-been initialized already when marking them reserved.
+  https://github.com/ceph/ceph-client.git tags/ceph-for-4.20-rc7
 
--- 
+for you to fetch changes up to 6f9718fe41c3a47e4362bddf145e2db6ad7d8e87:
 
-Thanks,
+  ceph: make 'nocopyfrom' a default mount option (2018-12-11 18:22:17 +0100)
 
-David / dhildenb
+----------------------------------------------------------------
+Luis discovered a problem with the new copyfrom offload on the server
+side.  Disable it for now.
+
+----------------------------------------------------------------
+Luis Henriques (1):
+      ceph: make 'nocopyfrom' a default mount option
+
+ fs/ceph/super.c | 4 ++--
+ fs/ceph/super.h | 4 +++-
+ 2 files changed, 5 insertions(+), 3 deletions(-)
