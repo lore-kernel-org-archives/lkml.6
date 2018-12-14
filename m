@@ -7,53 +7,50 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39717C6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:05:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46CF4C6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:05:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0207F21479
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:05:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E7D32148E
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:05:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544789121;
-	bh=s6rW6dKWAHj69G/7IMHe0iPeIPFdUPlsBFfzU3QRtJQ=;
+	s=default; t=1544789124;
+	bh=wTX8+7h3PS1Xg0QteLw0J1sjpKgMf6SZTxeIsFfTqSA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ww2LyRBjq3oDS6nObfKFsIOfXHMTgxBCG/3AViMQHbmvaDAWr0YVob6Rub2tfgqvb
-	 K1rN2AGX1uhAD+YAc+gvTbUaAJ9FK25g5SXhVJYH5Yk20iVQcTUEu55UMFvgDFRe6d
-	 HX77F7EuDHbzJcQkwpY8CAHLxBMPIutTvJRgHJ64=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0207F21479
+	b=bBV7pmb+tbuRwrs6oB+gbvu+1mvTYIiuQmTeoBDannb/tq2vwEkEylFsqm0FlksYo
+	 v7AHqGnpD8d5i1QaRDCta2zai5XISiyQtpJSlZSc0QZAXpzLLSYmqdT6C4l59AgdSb
+	 hn5yGQGUT0IQG4HX/wFiRWy5KkHFJWbIoBrKbGuM=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E7D32148E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730676AbeLNMFU (ORCPT
+        id S1730687AbeLNMFX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:05:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50040 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:05:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50136 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730662AbeLNMFP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:05:15 -0500
+        id S1730662AbeLNMFV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:05:21 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5FCB721486;
-        Fri, 14 Dec 2018 12:05:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 82F1421486;
+        Fri, 14 Dec 2018 12:05:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789114;
-        bh=s6rW6dKWAHj69G/7IMHe0iPeIPFdUPlsBFfzU3QRtJQ=;
+        s=default; t=1544789120;
+        bh=wTX8+7h3PS1Xg0QteLw0J1sjpKgMf6SZTxeIsFfTqSA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AGviU6u8URtwexOVe8u06PsN4F3RBEs5GKpXBqNO5tKqZ2MvVx6zZXzFSzbkbqTX4
-         0Le3OHqjqm3pNt/dthjMaaL938u3dYGmVLPsPr7q5t5NTxI8YNivCp+dBfWprargRE
-         VIFpoSk5EKp/ll8SHish1YIUHFyBXcz4bH900cWc=
+        b=qo+zsODb4FWf9Nt8s0cS3+TU/iO/BRcs62MY5AXLmXb+wPStrG15c2LdXs7ecN9p6
+         HJm/JEUkdhmB+3z/tDf5xCP9b3nkFG1pBu7YeUqbzmuZnFfLXEZSBHa9MVepl4x6qI
+         Qa1GYCYiM7UAF3kiZs1ne6RRLy/O0iRAUYbRcP20=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Manu Gautam <mgautam@codeaurora.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
+        stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 067/142] phy: qcom-qusb2: Use HSTX_TRIM fused value as is
-Date:   Fri, 14 Dec 2018 12:59:12 +0100
-Message-Id: <20181214115749.735610650@linuxfoundation.org>
+Subject: [PATCH 4.19 102/142] netfilter: nf_tables: deactivate expressions in rule replecement routine
+Date:   Fri, 14 Dec 2018 12:59:47 +0100
+Message-Id: <20181214115751.134262707@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115747.053633987@linuxfoundation.org>
 References: <20181214115747.053633987@linuxfoundation.org>
@@ -72,61 +69,91 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 6e34d358b24ffc40764eb3681164c79091765429 ]
+[ Upstream commit ca08987885a147643817d02bf260bc4756ce8cd4 ]
 
-Fix HSTX_TRIM tuning logic which instead of using fused value
-as HSTX_TRIM, incorrectly performs bitwise OR operation with
-existing default value.
+There is no expression deactivation call from the rule replacement path,
+hence, chain counter is not decremented. A few steps to reproduce the
+problem:
 
-Fixes: ca04d9d3e1b1 ("phy: qcom-qusb2: New driver for QUSB2 PHY on Qcom chips")
-Signed-off-by: Manu Gautam <mgautam@codeaurora.org>
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
-Acked-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+   %nft add table ip filter
+   %nft add chain ip filter c1
+   %nft add chain ip filter c1
+   %nft add rule ip filter c1 jump c2
+   %nft replace rule ip filter c1 handle 3 accept
+   %nft flush ruleset
+
+<jump c2> expression means immediate NFT_JUMP to chain c2.
+Reference count of chain c2 is increased when the rule is added.
+
+When rule is deleted or replaced, the reference counter of c2 should be
+decreased via nft_rule_expr_deactivate() which calls
+nft_immediate_deactivate().
+
+Splat looks like:
+[  214.396453] WARNING: CPU: 1 PID: 21 at net/netfilter/nf_tables_api.c:1432 nf_tables_chain_destroy.isra.38+0x2f9/0x3a0 [nf_tables]
+[  214.398983] Modules linked in: nf_tables nfnetlink
+[  214.398983] CPU: 1 PID: 21 Comm: kworker/1:1 Not tainted 4.20.0-rc2+ #44
+[  214.398983] Workqueue: events nf_tables_trans_destroy_work [nf_tables]
+[  214.398983] RIP: 0010:nf_tables_chain_destroy.isra.38+0x2f9/0x3a0 [nf_tables]
+[  214.398983] Code: 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 8e 00 00 00 48 8b 7b 58 e8 e1 2c 4e c6 48 89 df e8 d9 2c 4e c6 eb 9a <0f> 0b eb 96 0f 0b e9 7e fe ff ff e8 a7 7e 4e c6 e9 a4 fe ff ff e8
+[  214.398983] RSP: 0018:ffff8881152874e8 EFLAGS: 00010202
+[  214.398983] RAX: 0000000000000001 RBX: ffff88810ef9fc28 RCX: ffff8881152876f0
+[  214.398983] RDX: dffffc0000000000 RSI: 1ffff11022a50ede RDI: ffff88810ef9fc78
+[  214.398983] RBP: 1ffff11022a50e9d R08: 0000000080000000 R09: 0000000000000000
+[  214.398983] R10: 0000000000000000 R11: 0000000000000000 R12: 1ffff11022a50eba
+[  214.398983] R13: ffff888114446e08 R14: ffff8881152876f0 R15: ffffed1022a50ed6
+[  214.398983] FS:  0000000000000000(0000) GS:ffff888116400000(0000) knlGS:0000000000000000
+[  214.398983] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  214.398983] CR2: 00007fab9bb5f868 CR3: 000000012aa16000 CR4: 00000000001006e0
+[  214.398983] Call Trace:
+[  214.398983]  ? nf_tables_table_destroy.isra.37+0x100/0x100 [nf_tables]
+[  214.398983]  ? __kasan_slab_free+0x145/0x180
+[  214.398983]  ? nf_tables_trans_destroy_work+0x439/0x830 [nf_tables]
+[  214.398983]  ? kfree+0xdb/0x280
+[  214.398983]  nf_tables_trans_destroy_work+0x5f5/0x830 [nf_tables]
+[ ... ]
+
+Fixes: bb7b40aecbf7 ("netfilter: nf_tables: bogus EBUSY in chain deletions")
+Reported by: Christoph Anton Mitterer <calestyo@scientia.net>
+Link: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=914505
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=201791
+Signed-off-by: Taehee Yoo <ap420073@gmail.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/phy/qualcomm/phy-qcom-qusb2.c | 19 ++++++++++---------
- 1 file changed, 10 insertions(+), 9 deletions(-)
+ net/netfilter/nf_tables_api.c | 15 ++++-----------
+ 1 file changed, 4 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/phy/qualcomm/phy-qcom-qusb2.c b/drivers/phy/qualcomm/phy-qcom-qusb2.c
-index e70e425f26f5..9d6c88064158 100644
---- a/drivers/phy/qualcomm/phy-qcom-qusb2.c
-+++ b/drivers/phy/qualcomm/phy-qcom-qusb2.c
-@@ -402,10 +402,10 @@ static void qusb2_phy_set_tune2_param(struct qusb2_phy *qphy)
+diff --git a/net/netfilter/nf_tables_api.c b/net/netfilter/nf_tables_api.c
+index 06ed55cef962..fe0558b15fd3 100644
+--- a/net/netfilter/nf_tables_api.c
++++ b/net/netfilter/nf_tables_api.c
+@@ -2646,21 +2646,14 @@ static int nf_tables_newrule(struct net *net, struct sock *nlsk,
+ 	}
  
- 	/*
- 	 * Read efuse register having TUNE2/1 parameter's high nibble.
--	 * If efuse register shows value as 0x0, or if we fail to find
--	 * a valid efuse register settings, then use default value
--	 * as 0xB for high nibble that we have already set while
--	 * configuring phy.
-+	 * If efuse register shows value as 0x0 (indicating value is not
-+	 * fused), or if we fail to find a valid efuse register setting,
-+	 * then use default value for high nibble that we have already
-+	 * set while configuring the phy.
- 	 */
- 	val = nvmem_cell_read(qphy->cell, NULL);
- 	if (IS_ERR(val) || !val[0]) {
-@@ -415,12 +415,13 @@ static void qusb2_phy_set_tune2_param(struct qusb2_phy *qphy)
- 
- 	/* Fused TUNE1/2 value is the higher nibble only */
- 	if (cfg->update_tune1_with_efuse)
--		qusb2_setbits(qphy->base, cfg->regs[QUSB2PHY_PORT_TUNE1],
--			      val[0] << 0x4);
-+		qusb2_write_mask(qphy->base, cfg->regs[QUSB2PHY_PORT_TUNE1],
-+				 val[0] << HSTX_TRIM_SHIFT,
-+				 HSTX_TRIM_MASK);
- 	else
--		qusb2_setbits(qphy->base, cfg->regs[QUSB2PHY_PORT_TUNE2],
--			      val[0] << 0x4);
+ 	if (nlh->nlmsg_flags & NLM_F_REPLACE) {
+-		if (!nft_is_active_next(net, old_rule)) {
+-			err = -ENOENT;
+-			goto err2;
+-		}
+-		trans = nft_trans_rule_add(&ctx, NFT_MSG_DELRULE,
+-					   old_rule);
++		trans = nft_trans_rule_add(&ctx, NFT_MSG_NEWRULE, rule);
+ 		if (trans == NULL) {
+ 			err = -ENOMEM;
+ 			goto err2;
+ 		}
+-		nft_deactivate_next(net, old_rule);
+-		chain->use--;
 -
-+		qusb2_write_mask(qphy->base, cfg->regs[QUSB2PHY_PORT_TUNE2],
-+				 val[0] << HSTX_TRIM_SHIFT,
-+				 HSTX_TRIM_MASK);
- }
+-		if (nft_trans_rule_add(&ctx, NFT_MSG_NEWRULE, rule) == NULL) {
+-			err = -ENOMEM;
++		err = nft_delrule(&ctx, old_rule);
++		if (err < 0) {
++			nft_trans_destroy(trans);
+ 			goto err2;
+ 		}
  
- static int qusb2_phy_set_mode(struct phy *phy, enum phy_mode mode)
 -- 
 2.19.1
 
