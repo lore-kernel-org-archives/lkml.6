@@ -2,662 +2,117 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2654C6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 11:55:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5FD6C6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 11:57:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6518321104
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 11:55:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 86BB52133F
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 11:57:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="Glz5K1eB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6518321104
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brauner.io
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="nOAS6c5A"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86BB52133F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729554AbeLNLzr (ORCPT
+        id S1729654AbeLNL56 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 06:55:47 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:50389 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728415AbeLNLzr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 06:55:47 -0500
-Received: by mail-wm1-f65.google.com with SMTP id n190so5450643wmd.0
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 03:55:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=f13fPVVIdLMuxIn55XiaSWfzKq0HPuwwzvNohJhHsww=;
-        b=Glz5K1eBJf9jA8aSOLpRTNEuvc8uIv8YhxsfWYiHVAWKNVb4kAx+Viygsf+iFDM7VB
-         vTWh9sXrGIrfRLnEY4TxATY1H4QU31M8+XL79FsRkHgxs5e3relfQ2ib8i5bZgyInz80
-         RoPG5qD5Ih6PDHCUCYJlTpanhsc6S0gfyXWMD8yY3PFCJqaykPYa+wFosFV7NZgZCpHx
-         pQ0HRTHF/Z6yeNldR+wABZXdxUeLMMN/Rr/KmuL+nUGnYlL3FmhB4yERcaad91E0o0vn
-         eDeZ4K4kWWKL1YkMXAuwy0oLhCjf9VoFdCrTPEnZQfasXh4L4zh+lucOtX8cG3oSveQs
-         nReA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=f13fPVVIdLMuxIn55XiaSWfzKq0HPuwwzvNohJhHsww=;
-        b=MHXYWBRf6T8hlCpAY3POJ8AtN9RUOBt3gxEApig0NIkUJT/XSxVitc2YKVYS7k2k8W
-         x+Dqs0rEeP8BEi7zS4qFdSqsFcD7+IAhA6gXXxGQlXrBZBEI7zDrdL/wemOICpHRAbBz
-         ueY1x5i4MR7rrN81OwnEXkzfl6f+38L9N7Oez6yzixFRAgdkbS0qJI2CYtPaiymmaSh4
-         F7rGLLN/YnyhyM2+hrA6P4EakYeUthXswXC2utYD2e9Gh4AtiPWlVnlWI2fu8CBYobDD
-         YcLChswQIVQFpdrEDJkVumx7aAU/8dW898Z34uSzG+10JdXQCHxBmOOEyt1VPoBvgUI2
-         VDGg==
-X-Gm-Message-State: AA+aEWYLrCP1kt9jMrnhwZ5cp6QXH0N2iaGIFpuPcM2fIJW2S6+WbPq5
-        likuScCOlbV5wPK2cVmfHrlgSp5LuDxBEA==
-X-Google-Smtp-Source: AFSGD/V16zLTnhTyAUjjG4sO6CU94iV8wziuym9m62isVkQ/p0oKKBR15gABbDLo7LFN873IFfOOWw==
-X-Received: by 2002:a1c:414:: with SMTP id 20mr2997593wme.67.1544788543315;
-        Fri, 14 Dec 2018 03:55:43 -0800 (PST)
-Received: from brauner.io ([2a02:8070:88c2:4000:69e7:45c9:1529:166d])
-        by smtp.gmail.com with ESMTPSA id c9sm6140103wmh.27.2018.12.14.03.55.41
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 14 Dec 2018 03:55:42 -0800 (PST)
-Date:   Fri, 14 Dec 2018 12:55:41 +0100
-From:   Christian Brauner <christian@brauner.io>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     gregkh@linuxfoundation.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, kilobyte@angband.pl,
-        darrick.wong@oracle.com, chouryzhou@tencent.com,
-        david@fromorbit.com, arve@android.com, joel@joelfernandes.org,
-        Martijn Coenen <maco@android.com>, tkjos@google.com
-Subject: Re: [PATCH v2] binder: implement binderfs
-Message-ID: <20181214115539.evd7xay5ufpkzflb@brauner.io>
-References: <20181213215911.24891-1-christian@brauner.io>
- <20181214071123.GX3116@kadam>
+        Fri, 14 Dec 2018 06:57:58 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:55158 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726281AbeLNL55 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 06:57:57 -0500
+Received: from zn.tnic (p200300EC2BCFEF009546D97CB482D082.dip0.t-ipconnect.de [IPv6:2003:ec:2bcf:ef00:9546:d97c:b482:d082])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A258C1EC0C1D;
+        Fri, 14 Dec 2018 12:57:56 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1544788676;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=oH/29INGsD1Dv8T17pjTTxy4cUaLLSe49tjPIkhaeB8=;
+        b=nOAS6c5ATe+M0Z4/GmVQpjv5u7VOzijnBfLEdqejiPI2y2OVOhmXCPhq85xc8RCM/p8qYS
+        cR5JWcAzUfjRf9Xfh7++/dr85GU9uMXwvd/RTYmTfD61JKZTG/wM/YDfDVTZ42WMNaxOQh
+        iPujb5pz18fjdurZvzvqMSlw4pE3HCk=
+Date:   Fri, 14 Dec 2018 12:57:49 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Chao Fan <fanc.fnst@cn.fujitsu.com>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, tglx@linutronix.de,
+        mingo@redhat.com, hpa@zytor.com, keescook@chromium.org,
+        bhe@redhat.com, msys.mizuma@gmail.com, indou.takao@jp.fujitsu.com,
+        caoj.fnst@cn.fujitsu.com
+Subject: Re: [PATCH v13 1/6] x86/boot: Introduce kstrtoull() to boot
+ directory instead of simple_strtoull()
+Message-ID: <20181214115749.GC11710@zn.tnic>
+References: <20181212031053.1815-1-fanc.fnst@cn.fujitsu.com>
+ <20181212031053.1815-2-fanc.fnst@cn.fujitsu.com>
+ <20181213125059.GC25287@zn.tnic>
+ <20181214025917.GF24409@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20181214071123.GX3116@kadam>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20181214025917.GF24409@localhost.localdomain>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 14, 2018 at 10:11:23AM +0300, Dan Carpenter wrote:
-> On Thu, Dec 13, 2018 at 10:59:11PM +0100, Christian Brauner wrote:
-> > +/**
-> > + * binderfs_new_inode - allocate inode from super block of a binderfs mount
-> > + * @ref_inode: inode from wich the super block will be taken
-> > + * @userp:     buffer to copy information about new device for userspace to
-> > + * @device:    binder device for which the new inode will be allocated
-> > + * @req:       struct binderfs_device as copied from userspace
-> > + *
-> > + * This function will allocate a new inode from the super block of the
-> > + * filesystem mount and attach a dentry to that inode.
-> > + * Minor numbers are limited and tracked globally in binderfs_minors.
-> > + * The function will stash a struct binder_device for the specific binder
-> > + * device in i_private of the inode.
-> > + *
-> > + * Return: 0 on success, negative errno on failure
-> > + */
-> > +static int binderfs_new_inode(struct inode *ref_inode,
-> > +			      struct binder_device *device,
-> > +			      struct binderfs_device __user *userp,
-> > +			      struct binderfs_device *req)
-> > +{
-> > +	int minor, ret;
-> > +	struct dentry *dentry, *dup, *root;
-> > +	size_t name_len = BINDERFS_MAX_NAME + 1;
-> > +	char *name = NULL;
-> > +	struct inode *inode = NULL;
-> > +	struct super_block *sb = ref_inode->i_sb;
-> > +	struct binderfs_info *info = sb->s_fs_info;
-> > +
-> > +	/* Reserve new minor number for the new device. */
-> > +	mutex_lock(&binderfs_minors_mutex);
-> > +	minor = ida_alloc_max(&binderfs_minors, BINDERFS_MAX_MINOR, GFP_KERNEL);
-> > +	mutex_unlock(&binderfs_minors_mutex);
-> > +	if (minor < 0)
-> > +		return minor;
-> > +
-> > +	ret = -ENOMEM;
-> > +	inode = new_inode(sb);
-> > +	if (!inode)
-> > +		goto err;
-> > +
-> > +	inode->i_ino = minor + INODE_OFFSET;
-> > +	inode->i_mtime = inode->i_atime = inode->i_ctime = current_time(inode);
-> > +	init_special_inode(inode, S_IFCHR | 0600,
-> > +			   MKDEV(MAJOR(binderfs_dev), minor));
-> > +	inode->i_fop = &binder_fops;
-> > +	inode->i_uid = info->root_uid;
-> > +	inode->i_gid = info->root_gid;
-> > +	inode->i_private = device;
-> > +
-> > +	name = kmalloc(name_len, GFP_KERNEL);
-> > +	if (!name)
-> > +		goto err;
-> > +
-> > +	ret = snprintf(name, name_len, "%s", req->name);
-> > +	if (ret < 0 || (size_t)ret >= name_len) {
-> 
-> kernel snprintf() doesn't return negatives and the cast isn't required
-> either.
+On Fri, Dec 14, 2018 at 10:59:17AM +0800, Chao Fan wrote:
+> Cant't use div_u64() in math64.h directly, because  that will cause ld error.
 
-Good point. But I'd rather replace it with:
-strscpy(name, req->name, name_len);
-which is syntactically and semantically cleaner.
+Ok, I see it now.
 
-> 
-> > +		ret = -EINVAL;
-> > +		goto err;
-> > +	}
-> > +
-> > +	device->binderfs_inode = inode;
-> > +	device->context.binder_context_mgr_uid = INVALID_UID;
-> > +	device->context.name = name;
-> > +	device->miscdev.name = name;
-> > +	device->miscdev.minor = minor;
-> > +	mutex_init(&device->context.context_mgr_node_lock);
-> > +
-> > +	req->major = MAJOR(binderfs_dev);
-> > +	req->minor = minor;
-> > +
-> > +	ret = copy_to_user(userp, req, sizeof(*req));
-> > +	if (ret)
-> > +		goto err;
-> 
-> copy_to_user() returns the number of bytes remaining.
-> 
-> 	ret = -EFAULT;
-> 	if (copy_to_user(userp, req, sizeof(*req)))
-> 		goto err;
-> 
-> Also if this copy_to_user() fails, then does the kfree(name) and the
-> iput(inode) lead to a double free of name in binderfs_evict_inode()?
+> Even in 64-bit environment, arch/x86/boot/*.o will be built as 32-bit
+> binary. In 64-bit binary, the dividend is handled as 64-bit value,
+> that's OK, but in 32-bit binary, that's wrong. So it's necessary
+> to separate the dividend to upper and lower in 32-bit binary.
+> That's why copy the needed div_u64() here.
 
-I'm going to defer setting inode->i_private in all codepaths right
-before d_add() after which no error handling occurs any more.
+You could've written this in the commit message. This is an important
+piece of information.
 
-> 
-> > +
-> > +	root = sb->s_root;
-> > +	inode_lock(d_inode(root));
-> > +	dentry = d_alloc_name(root, name);
-> > +	if (!dentry) {
-> > +		inode_unlock(d_inode(root));
-> > +		ret = -ENOMEM;
-> > +		goto err;
-> > +	}
-> > +
-> > +	/* Verify that the name userspace gave us is not already in use. */
-> > +	dup = d_lookup(root, &dentry->d_name);
-> > +	if (dup) {
-> > +		if (d_really_is_positive(dup)) {
-> > +			dput(dup);
-> > +			dput(dentry);
-> > +			inode_unlock(d_inode(root));
-> > +			/*
-> > +			 * Prevent double free since iput() calls
-> > +			 * binderfs_evict_inode().
-> > +			 */
-> > +			inode->i_private = NULL;
-> > +			ret = -EEXIST;
-> > +			goto err;
-> > +		}
-> > +		dput(dup);
-> > +	}
-> > +
-> > +	d_add(dentry, inode);
-> > +	fsnotify_create(root->d_inode, dentry);
-> > +	inode_unlock(d_inode(root));
-> > +
-> > +	return 0;
-> > +
-> > +err:
-> > +	kfree(name);
-> > +	mutex_lock(&binderfs_minors_mutex);
-> > +	ida_free(&binderfs_minors, minor);
-> > +	mutex_unlock(&binderfs_minors_mutex);
-> > +	iput(inode);
-> > +
-> > +	return ret;
-> > +}
-> > +
-> > +static int binderfs_binder_device_create(struct inode *inode,
-> > +					 struct binderfs_device __user *userp,
-> > +					 struct binderfs_device *req)
-> > +{
-> > +	struct binder_device *device;
-> > +	int ret;
-> > +
-> > +	device = kzalloc(sizeof(*device), GFP_KERNEL);
-> > +	if (!device)
-> > +		return -ENOMEM;
-> 
-> Just move this allocation into binderfs_new_inode() and get rid of this
-> function.
+> So just like Baoquan said, it's a good choice to use simple_strtoull()
+> for now.
 
-Agreed.
+So, we tried a little, we encountered a problem and now we're giving up?
+Is that what you're trying to tell me?
 
-> 
-> > +
-> > +	ret = binderfs_new_inode(inode, device, userp, req);
-> > +	if (ret < 0) {
-> > +		kfree(device);
-> > +		return ret;
-> > +	}
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +/**
-> > + * binderfs_ctl_ioctl - handle binder device node allocation requests
-> > + *
-> > + * The request handler for the binder-control device. All requests operate on
-> > + * the binderfs mount the binder-control device resides in:
-> > + * - BINDER_CTL_ADD
-> > + *   Allocate a new binder device.
-> > + *
-> > + * Return: 0 on success, negative errno on failure
-> > + */
-> > +static long binder_ctl_ioctl(struct file *file, unsigned int cmd,
-> > +			     unsigned long arg)
-> > +{
-> > +	struct binderfs_info *info;
-> > +	int ret = -EINVAL;
-> > +	struct inode *inode = file_inode(file);
-> > +	struct binderfs_device __user *device = (struct binderfs_device __user *)arg;
-> > +	struct binderfs_device device_req;
-> > +
-> > +	info = BINDERFS_I(inode);
-> 
-> info is not used.
+Please explain what are we in a hurry for and why aren't we doing it
+right?
 
-Removed.
+Btw, one more thing I noticed:
 
-> 
-> > +	switch (cmd) {
-> > +	case BINDER_CTL_ADD:
-> > +		ret = copy_from_user(&device_req, device, sizeof(device_req));
-> 
-> if (copy_from_user(&device_req, device, sizeof(device_req))) {
-> 	ret = -EFAULT;
-> 	break;
-> }
+> +static acpi_physical_address get_acpi_rsdp(void)
+> +{
+> +#ifdef CONFIG_KEXEC
+> +       unsigned long long res;
+> +       int len = 0;
+> +       char val[MAX_ADDRESS_LENGTH+1];
+> +
+> +       len = cmdline_find_option("acpi_rsdp", val, MAX_ADDRESS_LENGTH+1);
+> +       if (len > 0) {
+> +               val[len] = 0;
+> +               return (acpi_physical_address)kstrtoull(val, 16, &res);
 
-Done.
+This would've never worked because the parsed integer gets returned in
+res but you're returning the kstrtoull() return value, which is
 
-> 
-> > +		if (ret)
-> > +			break;
-> > +
-> > +		ret = binderfs_binder_device_create(inode, device, &device_req);
-> > +		break;
-> > +	default:
-> > +		break;
-> > +	}
-> > +
-> > +	return ret;
-> > +}
-> > +
-> > +static void binderfs_evict_inode(struct inode *inode)
-> > +{
-> > +	struct binder_device *device = inode->i_private;
-> > +
-> > +	clear_inode(inode);
-> > +
-> > +	if (!device)
-> > +		return;
-> > +
-> > +	mutex_lock(&binderfs_minors_mutex);
-> > +	ida_free(&binderfs_minors, device->miscdev.minor);
-> > +	mutex_unlock(&binderfs_minors_mutex);
-> > +
-> > +	kfree(device->context.name);
-> > +	kfree(device);
-> > +}
-> > +
-> > +static const struct super_operations binderfs_super_ops = {
-> > +	.statfs = simple_statfs,
-> > +	.evict_inode = binderfs_evict_inode,
-> > +};
-> > +
-> > +static int binderfs_rename(struct inode *old_dir, struct dentry *old_dentry,
-> > +			   struct inode *new_dir, struct dentry *new_dentry,
-> > +			   unsigned int flags)
-> > +{
-> > +	struct inode *inode = d_inode(old_dentry);
-> > +
-> > +	/* binderfs doesn't support directories. */
-> > +	if (d_is_dir(old_dentry))
-> > +		return -EPERM;
-> > +
-> > +	if (flags & ~RENAME_NOREPLACE)
-> > +		return -EINVAL;
-> > +
-> > +	if (!simple_empty(new_dentry))
-> > +		return -ENOTEMPTY;
-> > +
-> > +	if (d_really_is_positive(new_dentry))
-> > +		simple_unlink(new_dir, new_dentry);
-> > +
-> > +	old_dir->i_ctime = old_dir->i_mtime = new_dir->i_ctime =
-> > +		new_dir->i_mtime = inode->i_ctime = current_time(old_dir);
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int binderfs_unlink(struct inode *dir, struct dentry *dentry)
-> > +{
-> > +	/*
-> > +	 * The control dentry is only ever touched during mount so checking it
-> > +	 * here should not require us to take lock.
-> > +	 */
-> > +	if (BINDERFS_I(dir)->control_dentry == dentry)
-> > +		return -EPERM;
-> > +
-> > +	return simple_unlink(dir, dentry);
-> > +}
-> > +
-> > +static const struct file_operations binder_ctl_fops = {
-> > +	.owner		= THIS_MODULE,
-> > +	.open		= nonseekable_open,
-> > +	.unlocked_ioctl	= binder_ctl_ioctl,
-> > +	.compat_ioctl	= binder_ctl_ioctl,
-> > +	.llseek		= noop_llseek,
-> > +};
-> > +
-> > +/**
-> > + * binderfs_binder_ctl_create - create a new binder-control device
-> > + * @sb: super block of the binderfs mount
-> > + *
-> > + * This function creates a new binder-control device node in the binderfs mount
-> > + * referred to by @sb.
-> > + *
-> > + * Return: 0 on success, negative errno on failure
-> > + */
-> > +static int binderfs_binder_ctl_create(struct super_block *sb)
-> > +{
-> > +	int minor;
-> > +	struct dentry *dentry;
-> > +	struct binder_device *device;
-> > +	int ret = 0;
-> > +	struct inode *inode = NULL;
-> > +	struct dentry *root = sb->s_root;
-> > +	struct binderfs_info *info = sb->s_fs_info;
-> > +
-> > +	device = kzalloc(sizeof(*device), GFP_KERNEL);
-> > +	if (!device)
-> > +		return -ENOMEM;
-> > +
-> > +	inode_lock(d_inode(root));
-> > +
-> > +	if (info->control_dentry)
-> > +		goto out;
-> 
-> I have a private static checker warning for gotos like this where we
-> don't set the error code before the goto out.  Apparently here this
-> is a success path.  I'm not an fs dev, so I don't know why this is a
-> success path.  :(  Maybe you could add a comment?
+"Returns 0 on success, -ERANGE on overflow and -EINVAL on parsing error."
 
-Added a comment. See also fs/devpts/inode.c for ptmx_dentry that has the
-same logic (checked right now).
+So this could not have been tested successfully, if at all...
 
-> 
-> 
-> > +
-> > +	ret = -ENOMEM;
-> > +	inode = new_inode(sb);
-> > +	if (!inode)
-> > +		goto out;
-> > +
-> > +	/* Reserve a new minor number for the new device. */
-> > +	mutex_lock(&binderfs_minors_mutex);
-> > +	minor = ida_alloc_max(&binderfs_minors, BINDERFS_MAX_MINOR, GFP_KERNEL);
-> > +	mutex_unlock(&binderfs_minors_mutex);
-> > +	if (minor < 0) {
-> > +		ret = minor;
-> > +		goto out;
-> > +	}
-> > +
-> > +	inode->i_ino = SECOND_INODE;
-> > +	inode->i_mtime = inode->i_atime = inode->i_ctime = current_time(inode);
-> > +	init_special_inode(inode, S_IFCHR | 0600,
-> > +			   MKDEV(MAJOR(binderfs_dev), minor));
-> > +	inode->i_fop = &binder_ctl_fops;
-> > +	inode->i_uid = info->root_uid;
-> > +	inode->i_gid = info->root_gid;
-> > +	inode->i_private = device;
-> > +
-> > +	device->binderfs_inode = inode;
-> > +	device->miscdev.minor = minor;
-> > +
-> > +	dentry = d_alloc_name(root, "binder-control");
-> > +	if (!dentry)
-> > +		goto out;
-> > +
-> > +	info->control_dentry = dentry;
-> > +	d_add(dentry, inode);
-> > +	inode_unlock(d_inode(root));
-> > +
-> > +	return 0;
-> > +
-> > +out:
-> > +	inode_unlock(d_inode(root));
-> > +	kfree(device);
-> > +	if (inode) {
-> > +		inode->i_private = NULL;
-> > +		iput(inode);
-> > +	}
-> > +
-> > +	return ret;
-> > +}
-> > +
-> > +static const struct inode_operations binderfs_dir_inode_operations = {
-> > +	.lookup = simple_lookup,
-> > +	.rename = binderfs_rename,
-> > +	.unlink = binderfs_unlink,
-> > +};
-> > +
-> > +static int binderfs_fill_super(struct super_block *sb, void *data, int silent)
-> > +{
-> > +	struct binderfs_info *info;
-> > +	int ret = -ENOMEM;
-> > +	struct inode *inode = NULL;
-> > +	struct ipc_namespace *ipc_ns = sb->s_fs_info;
-> > +
-> > +	get_ipc_ns(ipc_ns);
-> > +
-> > +	sb->s_blocksize = PAGE_SIZE;
-> > +	sb->s_blocksize_bits = PAGE_SHIFT;
-> > +
-> > +	/*
-> > +	 * The binderfs filesystem can be mounted by userns root in a
-> > +	 * non-initial userns. By default such mounts have the SB_I_NODEV flag
-> > +	 * set in s_iflags to prevent security issues where userns root can
-> > +	 * just create random device nodes via mknod() since it owns the
-> > +	 * filesystem mount. But binderfs does not allow to create any files
-> > +	 * including devices nodes. The only way to create binder devices nodes
-> > +	 * is through the binder-control device which userns root is explicitly
-> > +	 * allowed to do. So removing the SB_I_NODEV flag from s_iflags is both
-> > +	 * necessary and safe.
-> > +	 */
-> > +	sb->s_iflags &= ~SB_I_NODEV;
-> > +	sb->s_iflags |= SB_I_NOEXEC;
-> > +	sb->s_magic = BINDERFS_SUPER_MAGIC;
-> > +	sb->s_op = &binderfs_super_ops;
-> > +	sb->s_time_gran = 1;
-> > +
-> > +	info = kzalloc(sizeof(struct binderfs_info), GFP_KERNEL);
-> > +	if (!info)
-> > +		return ret;
-> 
-> You can't return directly here, you need to goto the put_ipc_ns()
-> function in the error handling.
+So let's please slow down, think about it good, do it right and test it
+properly before sending next time, ok?
 
-This can directly jump to err_without_dentry since iput() and kfree()
-handle NULL pointers.
+Thanks.
 
-> 
-> > +
-> > +	info->ipc_ns = ipc_ns;
-> > +	info->root_gid = make_kgid(sb->s_user_ns, 0);
-> > +	if (!gid_valid(info->root_gid))
-> > +		info->root_gid = GLOBAL_ROOT_GID;
-> > +	info->root_uid = make_kuid(sb->s_user_ns, 0);
-> > +	if (!uid_valid(info->root_uid))
-> > +		info->root_uid = GLOBAL_ROOT_UID;
-> > +
-> > +	sb->s_fs_info = info;
-> > +
-> > +	inode = new_inode(sb);
-> > +	if (!inode)
-> > +		goto err_without_dentry;
-> > +
-> > +	inode->i_ino = FIRST_INODE;
-> > +	inode->i_fop = &simple_dir_operations;
-> > +	inode->i_mode = S_IFDIR | 0755;
-> > +	inode->i_mtime = inode->i_atime = inode->i_ctime = current_time(inode);
-> > +	inode->i_op = &binderfs_dir_inode_operations;
-> > +	set_nlink(inode, 2);
-> > +
-> > +	sb->s_root = d_make_root(inode);
-> > +	if (!sb->s_root)
-> > +		goto err_without_dentry;
-> > +
-> > +	ret = binderfs_binder_ctl_create(sb);
-> > +	if (ret)
-> > +		goto err_with_dentry;
-> > +
-> > +	return 0;
-> > +
-> > +err_with_dentry:
-> > +	dput(sb->s_root);
-> > +	sb->s_root = NULL;
-> > +
-> > +err_without_dentry:
-> > +	if (inode)
-> > +		iput(inode);
-> 
-> iput accepts NULL pointers.
+-- 
+Regards/Gruss,
+    Boris.
 
-Yes, all if() checks are removed.
-
-> 
-> > +	kfree(info);
-> > +	put_ipc_ns(ipc_ns);
-> > +
-> > +	return ret;
-> > +}
-> > +
-> > +static int binderfs_test_super(struct super_block *sb, void *data)
-> > +{
-> > +	struct binderfs_info *info = sb->s_fs_info;
-> > +
-> > +	if (info)
-> > +		return info->ipc_ns == data;
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int binderfs_set_super(struct super_block *sb, void *data)
-> > +{
-> > +	sb->s_fs_info = data;
-> > +	return set_anon_super(sb, NULL);
-> > +}
-> > +
-> > +static struct dentry *binderfs_mount(struct file_system_type *fs_type,
-> > +				     int flags, const char *dev_name,
-> > +				     void *data)
-> > +{
-> > +	struct super_block *sb;
-> > +	struct ipc_namespace *ipc_ns = current->nsproxy->ipc_ns;
-> > +
-> > +	if (!ns_capable(ipc_ns->user_ns, CAP_SYS_ADMIN))
-> > +		return ERR_PTR(-EPERM);
-> > +
-> > +	sb = sget_userns(fs_type, binderfs_test_super, binderfs_set_super,
-> > +			 flags, ipc_ns->user_ns, ipc_ns);
-> > +	if (IS_ERR(sb))
-> > +		return ERR_CAST(sb);
-> > +
-> > +	if (!sb->s_root) {
-> > +		int ret = binderfs_fill_super(sb, data, flags & SB_SILENT ? 1 : 0);
-> > +		if (ret) {
-> > +			deactivate_locked_super(sb);
-> > +			return ERR_PTR(ret);
-> > +		}
-> > +
-> > +		sb->s_flags |= SB_ACTIVE;
-> > +	}
-> > +
-> > +	return dget(sb->s_root);
-> > +}
-> > +
-> > +static void binderfs_kill_super(struct super_block *sb)
-> > +{
-> > +	struct binderfs_info *info = sb->s_fs_info;
-> > +
-> > +	if (info && info->ipc_ns)
-> > +		put_ipc_ns(info->ipc_ns);
-> > +
-> > +	kfree(info);
-> > +	kill_litter_super(sb);
-> > +}
-> > +
-> > +static struct file_system_type binder_fs_type = {
-> > +	.name		= "binder",
-> > +	.mount		= binderfs_mount,
-> > +	.kill_sb	= binderfs_kill_super,
-> > +	.fs_flags	= FS_USERNS_MOUNT,
-> > +};
-> > +
-> > +static int __init init_binderfs(void)
-> > +{
-> > +	int ret;
-> > +
-> > +	/* Allocate new major number for binderfs. */
-> > +	ret = alloc_chrdev_region(&binderfs_dev, 0, BINDERFS_MAX_MINOR,
-> > +				  "binder");
-> > +	if (ret < 0)
->             ^^^^^^^
-> > +		return ret;
-> > +
-> > +	ret = register_filesystem(&binder_fs_type);
-> > +	if (ret) {
->             ^^^
-> These functions both return negative on error.  From my static checker
-> perspective it's easiest if everyone checks "if (ret) " but either way
-> let's make it consistent.
-
-if (ret) it is.
-
-> 
-> > +		unregister_chrdev_region(binderfs_dev, BINDERFS_MAX_MINOR);
-> > +		return ret;
-> > +	}
-> > +
-> > +	binderfs_mnt = kern_mount(&binder_fs_type);
-> > +	if (IS_ERR(binderfs_mnt)) {
-> > +		ret = PTR_ERR(binderfs_mnt);
-> > +		binderfs_mnt = NULL;
-> > +		unregister_filesystem(&binder_fs_type);
-> > +		unregister_chrdev_region(binderfs_dev, BINDERFS_MAX_MINOR);
-> 
-> Use gotos to unwind.
-
-The function is so short that it doesn't really make sense to use labels
-and gotos.
-
-Thanks for the review! Much appreciated.
-
-Christian
-
-> 
-> > +	}
-> > +
-> > +	return ret;
-> > +}
-> 
-> regards,
-> dan carpenter
-> 
+Good mailing practices for 400: avoid top-posting and trim the reply.
