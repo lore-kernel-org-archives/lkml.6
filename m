@@ -7,55 +7,50 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BF14C6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:07:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BDB5C6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:07:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C37B22148E
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:07:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E7031214AE
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:07:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544789243;
-	bh=zBRLDU+LBgzmyriOaBWeIOMWZPC4UiL147KMvwDxPH0=;
+	s=default; t=1544789249;
+	bh=7yaIQw3uyH1UzTHN1wSVlM9O9avNMnWBITnsPD2UbcA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=SPODWtTmP4cm3OQnT2WI//JO7ixR/veStACgQulrh+QmPogT4jxOL5B1yGoA5Sd2Q
-	 hM+xiCof/H6OYADASHwlJp7xqEmzpurFUV/gztMpKGqFlH5urtAylRDXZrhAiamPeO
-	 VxhJsJ6FUUXWU6KD2M3mNP5J7c/ewVXFCMfPlJg8=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C37B22148E
+	b=K7ca6dSQqitaTHN8aXkr9jorJfbUh8HmT/p0mDTaWZ7myXmw2LhGFQA4qunOBgVWN
+	 DgcwRi26IQ1pJWWuDmskljQxXts2OCkQAbDtBsoKxQXMBcmc/CmcFC8tQpAYywCLMD
+	 DBxi45hXO5hBUwB3H25c4f/KAPcR7dZDfSilNiL8=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7031214AE
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731103AbeLNMHW (ORCPT
+        id S1730026AbeLNMH1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:07:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52518 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:07:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52622 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729873AbeLNMHS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:07:18 -0500
+        id S1731104AbeLNMHX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:07:23 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F2135214AE;
-        Fri, 14 Dec 2018 12:07:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 13B57214AE;
+        Fri, 14 Dec 2018 12:07:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789237;
-        bh=zBRLDU+LBgzmyriOaBWeIOMWZPC4UiL147KMvwDxPH0=;
+        s=default; t=1544789242;
+        bh=7yaIQw3uyH1UzTHN1wSVlM9O9avNMnWBITnsPD2UbcA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=axS3ol9CDWHeT7VkW+G1lkBujsZijynJc8l295dzPIYMTWt9XW+xJexZqKTG4WXHz
-         duWYfx1o709uMKnWNCAapNW5l9BHdy4uNRsBLoybBQjjpAmYINhb/JFqYDWIeopz4d
-         dCZn4tWqJSjkFczqEzNTWrKrXY8024B6IfUfO2wA=
+        b=PxWE2rSKSQb4cCN59jNfFXHO3F6EVVAKS7HomAMYrtoKY26KT+33dbhS7lsmke/8y
+         68G9bubQDDcTlbkIi2YuX7fl8yNCjgWXGIJ2klykXDAnOSAVoxYzxpnC/dRwXnugCh
+         2AQ6avUxB7157kd9bLRO68XeZ+5GhYUXOgGfawag=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wei Yang <richard.weiyang@gmail.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Oscar Salvador <osalvador@suse.de>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, NeilBrown <neilb@suse.com>,
+        David Howells <dhowells@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 125/142] mm/page_alloc.c: fix calculation of pgdat->nr_zones
-Date:   Fri, 14 Dec 2018 13:00:10 +0100
-Message-Id: <20181214115752.035179121@linuxfoundation.org>
+Subject: [PATCH 4.19 117/142] fscache: fix race between enablement and dropping of object
+Date:   Fri, 14 Dec 2018 13:00:02 +0100
+Message-Id: <20181214115751.717013734@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115747.053633987@linuxfoundation.org>
 References: <20181214115747.053633987@linuxfoundation.org>
@@ -74,86 +69,72 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 8f416836c0d50b198cad1225132e5abebf8980dc ]
+[ Upstream commit c5a94f434c82529afda290df3235e4d85873c5b4 ]
 
-init_currently_empty_zone() will adjust pgdat->nr_zones and set it to
-'zone_idx(zone) + 1' unconditionally.  This is correct in the normal
-case, while not exact in hot-plug situation.
+It was observed that a process blocked indefintely in
+__fscache_read_or_alloc_page(), waiting for FSCACHE_COOKIE_LOOKING_UP
+to be cleared via fscache_wait_for_deferred_lookup().
 
-This function is used in two places:
+At this time, ->backing_objects was empty, which would normaly prevent
+__fscache_read_or_alloc_page() from getting to the point of waiting.
+This implies that ->backing_objects was cleared *after*
+__fscache_read_or_alloc_page was was entered.
 
-  * free_area_init_core()
-  * move_pfn_range_to_zone()
+When an object is "killed" and then "dropped",
+FSCACHE_COOKIE_LOOKING_UP is cleared in fscache_lookup_failure(), then
+KILL_OBJECT and DROP_OBJECT are "called" and only in DROP_OBJECT is
+->backing_objects cleared.  This leaves a window where
+something else can set FSCACHE_COOKIE_LOOKING_UP and
+__fscache_read_or_alloc_page() can start waiting, before
+->backing_objects is cleared
 
-In the first case, we are sure zone index increase monotonically.  While
-in the second one, this is under users control.
+There is some uncertainty in this analysis, but it seems to be fit the
+observations.  Adding the wake in this patch will be handled correctly
+by __fscache_read_or_alloc_page(), as it checks if ->backing_objects
+is empty again, after waiting.
 
-One way to reproduce this is:
-----------------------------
+Customer which reported the hang, also report that the hang cannot be
+reproduced with this fix.
 
-1. create a virtual machine with empty node1
+The backtrace for the blocked process looked like:
 
-   -m 4G,slots=32,maxmem=32G \
-   -smp 4,maxcpus=8          \
-   -numa node,nodeid=0,mem=4G,cpus=0-3 \
-   -numa node,nodeid=1,mem=0G,cpus=4-7
+PID: 29360  TASK: ffff881ff2ac0f80  CPU: 3   COMMAND: "zsh"
+ #0 [ffff881ff43efbf8] schedule at ffffffff815e56f1
+ #1 [ffff881ff43efc58] bit_wait at ffffffff815e64ed
+ #2 [ffff881ff43efc68] __wait_on_bit at ffffffff815e61b8
+ #3 [ffff881ff43efca0] out_of_line_wait_on_bit at ffffffff815e625e
+ #4 [ffff881ff43efd08] fscache_wait_for_deferred_lookup at ffffffffa04f2e8f [fscache]
+ #5 [ffff881ff43efd18] __fscache_read_or_alloc_page at ffffffffa04f2ffe [fscache]
+ #6 [ffff881ff43efd58] __nfs_readpage_from_fscache at ffffffffa0679668 [nfs]
+ #7 [ffff881ff43efd78] nfs_readpage at ffffffffa067092b [nfs]
+ #8 [ffff881ff43efda0] generic_file_read_iter at ffffffff81187a73
+ #9 [ffff881ff43efe50] nfs_file_read at ffffffffa066544b [nfs]
+#10 [ffff881ff43efe70] __vfs_read at ffffffff811fc756
+#11 [ffff881ff43efee8] vfs_read at ffffffff811fccfa
+#12 [ffff881ff43eff18] sys_read at ffffffff811fda62
+#13 [ffff881ff43eff50] entry_SYSCALL_64_fastpath at ffffffff815e986e
 
-2. hot-add cpu 3-7
-
-   cpu-add [3-7]
-
-2. hot-add memory to nod1
-
-   object_add memory-backend-ram,id=ram0,size=1G
-   device_add pc-dimm,id=dimm0,memdev=ram0,node=1
-
-3. online memory with following order
-
-   echo online_movable > memory47/state
-   echo online > memory40/state
-
-After this, node1 will have its nr_zones equals to (ZONE_NORMAL + 1)
-instead of (ZONE_MOVABLE + 1).
-
-Michal said:
- "Having an incorrect nr_zones might result in all sorts of problems
-  which would be quite hard to debug (e.g. reclaim not considering the
-  movable zone). I do not expect many users would suffer from this it
-  but still this is trivial and obviously right thing to do so
-  backporting to the stable tree shouldn't be harmful (last famous
-  words)"
-
-Link: http://lkml.kernel.org/r/20181117022022.9956-1-richard.weiyang@gmail.com
-Fixes: f1dd2cd13c4b ("mm, memory_hotplug: do not associate hotadded memory to zones until online")
-Signed-off-by: Wei Yang <richard.weiyang@gmail.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Reviewed-by: Oscar Salvador <osalvador@suse.de>
-Cc: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-
+Signed-off-by: NeilBrown <neilb@suse.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- mm/page_alloc.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ fs/fscache/object.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index b721631d78ab..6a62b2421cdf 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -5733,8 +5733,10 @@ void __meminit init_currently_empty_zone(struct zone *zone,
- 					unsigned long size)
- {
- 	struct pglist_data *pgdat = zone->zone_pgdat;
-+	int zone_idx = zone_idx(zone) + 1;
+diff --git a/fs/fscache/object.c b/fs/fscache/object.c
+index 9edc920f651f..6d9cb1719de5 100644
+--- a/fs/fscache/object.c
++++ b/fs/fscache/object.c
+@@ -730,6 +730,9 @@ static const struct fscache_state *fscache_drop_object(struct fscache_object *ob
  
--	pgdat->nr_zones = zone_idx(zone) + 1;
-+	if (zone_idx > pgdat->nr_zones)
-+		pgdat->nr_zones = zone_idx;
+ 	if (awaken)
+ 		wake_up_bit(&cookie->flags, FSCACHE_COOKIE_INVALIDATING);
++	if (test_and_clear_bit(FSCACHE_COOKIE_LOOKING_UP, &cookie->flags))
++		wake_up_bit(&cookie->flags, FSCACHE_COOKIE_LOOKING_UP);
++
  
- 	zone->zone_start_pfn = zone_start_pfn;
- 
+ 	/* Prevent a race with our last child, which has to signal EV_CLEARED
+ 	 * before dropping our spinlock.
 -- 
 2.19.1
 
