@@ -2,104 +2,157 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-11.9 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 805C1C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:50:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64053C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:50:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4D59206DD
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:50:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AAD00206DD
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:50:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731107AbeLNUt7 (ORCPT
+        id S1731117AbeLNUu1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 15:49:59 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58756 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730906AbeLNUt6 (ORCPT
+        Fri, 14 Dec 2018 15:50:27 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:39661 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730906AbeLNUu0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 15:49:58 -0500
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBEKmuoI061802
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 15:49:57 -0500
-Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2pcjn832e2-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 15:49:56 -0500
-Received: from localhost
-        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <mwb@linux.vnet.ibm.com>;
-        Fri, 14 Dec 2018 20:49:56 -0000
-Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
-        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 14 Dec 2018 20:49:54 -0000
-Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
-        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBEKnrsn21364880
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 14 Dec 2018 20:49:53 GMT
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4983BAE06D;
-        Fri, 14 Dec 2018 20:49:53 +0000 (GMT)
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2D4B3AE068;
-        Fri, 14 Dec 2018 20:49:53 +0000 (GMT)
-Received: from powerkvm6.aus.stglabs.ibm.com (unknown [9.40.192.78])
-        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
-        Fri, 14 Dec 2018 20:49:53 +0000 (GMT)
-Received: from powerkvm6.aus.stglabs.ibm.com (localhost [IPv6:::1])
-        by powerkvm6.aus.stglabs.ibm.com (Postfix) with ESMTP id 5E6F340E516A;
-        Fri, 14 Dec 2018 14:49:52 -0600 (CST)
-Subject: [RFC 0/6] powerpc/pseries: Refactor code to centralize drcinfo
- parsing
-From:   Michael Bringmann <mwb@linux.vnet.ibm.com>
-To:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-Cc:     Nathan Fontenot <nfont@linux.vnet.ibm.com>,
-        John Allen <jallen@linux.vnet.ibm.com>,
-        Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
-        Thomas Falcon <tlfalcon@linux.vnet.ibm.com>
-Date:   Fri, 14 Dec 2018 14:49:52 -0600
-User-Agent: StGit/0.18-105-g416a-dirty
+        Fri, 14 Dec 2018 15:50:26 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBEKo6pG1458096
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Fri, 14 Dec 2018 12:50:06 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBEKo6vb1458093;
+        Fri, 14 Dec 2018 12:50:06 -0800
+Date:   Fri, 14 Dec 2018 12:50:06 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
+Message-ID: <tip-2lj87zz8tq9ye1ntax3ulw0n@git.kernel.org>
+Cc:     alexander.shishkin@linux.intel.com, linux-kernel@vger.kernel.org,
+        davem@davemloft.net, mingo@kernel.org, jolsa@kernel.org,
+        hpa@zytor.com, namhyung@kernel.org, tglx@linutronix.de,
+        peterz@infradead.org
+Reply-To: tglx@linutronix.de, peterz@infradead.org, namhyung@kernel.org,
+          hpa@zytor.com, jolsa@kernel.org, davem@davemloft.net,
+          mingo@kernel.org, linux-kernel@vger.kernel.org,
+          alexander.shishkin@linux.intel.com
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf top: Save and display the drop count stats
+Git-Commit-ID: 30eacd0f6c569a2b2a53bf0dff03b05db91a49a8
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18121420-0068-0000-0000-00000371EEA7
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010225; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000271; SDB=6.01131804; UDB=6.00588226; IPR=6.00911935;
- MB=3.00024694; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-14 20:49:55
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18121420-0069-0000-0000-000046C5A3C6
-Message-Id: <20181214204914.16435.59083.stgit@powerkvm6.aus.stglabs.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-14_12:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=600 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812140176
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The implementation of the pseries-specific drc info information feature
-is currently implemented within and outside of the powerpc pseries
-code.  This patch set moves the parsing code for the pseries-specific
-device-tree properties ibm,drc-indexes, ibm,drc-names, ibm,drc-types,
-ibm,drc-power-domains, and the compressed ibm,drc-info into the
-platform-specific code for the Pseries features.
+Commit-ID:  30eacd0f6c569a2b2a53bf0dff03b05db91a49a8
+Gitweb:     https://git.kernel.org/tip/30eacd0f6c569a2b2a53bf0dff03b05db91a49a8
+Author:     Jiri Olsa <jolsa@kernel.org>
+AuthorDate: Sun, 11 Nov 2018 20:02:46 +0100
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Thu, 6 Dec 2018 14:12:34 -0300
 
-Signed-off-by: Michael W. Bringmann <mwb@linux.vnet.ibm.com>
+perf top: Save and display the drop count stats
 
-Michael Bringmann (6):
-  powerpc:/drc Define interface to acquire arch-specific drc info
-  pseries/drcinfo: Fix bug parsing ibm,drc-info
-  pseries/drcinfo: Pseries impl of arch_find_drc_info
-  powerpc/pseries: Use common drcinfo parsing
-  powerpc/pci/hotplug: Use common drcinfo parsing
-  powerpc: Enable support for ibm,drc-info devtree property
+Add drop count to 'perf top' headers:
 
+  # perf top --stdio
+   PerfTop:    3549 irqs/sec  kernel:51.8%  exact: 100.0% lost: 0/0 drop: 0/0 [4000Hz cycles:ppp],  (all, 8 CPUs)
+
+  # perf top
+  Samples: 0  of event 'cycles:ppp', 4000 Hz, Event count (approx.): 0 lost: 0/0 drop: 0/0
+
+The format is: <current period drop>/<total drop>
+
+Acked-by: David S. Miller <davem@davemloft.net>
+Acked-by: Namhyung Kim <namhyung@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/n/tip-2lj87zz8tq9ye1ntax3ulw0n@git.kernel.org
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+---
+ tools/perf/builtin-top.c       | 5 ++++-
+ tools/perf/ui/browsers/hists.c | 4 ++++
+ tools/perf/util/top.c          | 7 ++++---
+ tools/perf/util/top.h          | 2 +-
+ 4 files changed, 13 insertions(+), 5 deletions(-)
+
+diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
+index 234232d538c2..9166f6087e3f 100644
+--- a/tools/perf/builtin-top.c
++++ b/tools/perf/builtin-top.c
+@@ -1112,8 +1112,11 @@ static int deliver_event(struct ordered_events *qe,
+ 	struct machine *machine;
+ 	int ret = -1;
+ 
+-	if (should_drop(qevent, top))
++	if (should_drop(qevent, top)) {
++		top->drop++;
++		top->drop_total++;
+ 		return 0;
++	}
+ 
+ 	ret = perf_evlist__parse_sample(evlist, event, &sample);
+ 	if (ret) {
+diff --git a/tools/perf/ui/browsers/hists.c b/tools/perf/ui/browsers/hists.c
+index ae208c16c8a3..36b262c49f51 100644
+--- a/tools/perf/ui/browsers/hists.c
++++ b/tools/perf/ui/browsers/hists.c
+@@ -2223,6 +2223,10 @@ static int hists_browser__scnprintf_title(struct hist_browser *browser, char *bf
+ 				     " lost: %" PRIu64 "/%" PRIu64,
+ 				     top->lost, top->lost_total);
+ 
++		printed += scnprintf(bf + printed, size - printed,
++				     " drop: %" PRIu64 "/%" PRIu64,
++				     top->drop, top->drop_total);
++
+ 		if (top->zero)
+ 			printed += scnprintf(bf + printed, size - printed, " [z]");
+ 	}
+diff --git a/tools/perf/util/top.c b/tools/perf/util/top.c
+index e6582fa6a4db..31a8dee9af69 100644
+--- a/tools/perf/util/top.c
++++ b/tools/perf/util/top.c
+@@ -46,8 +46,9 @@ size_t perf_top__header_snprintf(struct perf_top *top, char *bf, size_t size)
+ 							samples_per_sec;
+ 		ret = SNPRINTF(bf, size,
+ 			       "   PerfTop:%8.0f irqs/sec  kernel:%4.1f%%"
+-			       "  exact: %4.1f%% lost: %" PRIu64 "/%" PRIu64 " [", samples_per_sec,
+-			       ksamples_percent, esamples_percent, top->lost, top->lost_total);
++			       "  exact: %4.1f%% lost: %" PRIu64 "/%" PRIu64 " drop: %" PRIu64 "/%" PRIu64 " [",
++			       samples_per_sec, ksamples_percent, esamples_percent,
++			       top->lost, top->lost_total, top->drop, top->drop_total);
+ 	} else {
+ 		float us_samples_per_sec = top->us_samples / top->delay_secs;
+ 		float guest_kernel_samples_per_sec = top->guest_kernel_samples / top->delay_secs;
+@@ -113,5 +114,5 @@ void perf_top__reset_sample_counters(struct perf_top *top)
+ {
+ 	top->samples = top->us_samples = top->kernel_samples =
+ 	top->exact_samples = top->guest_kernel_samples =
+-	top->guest_us_samples = top->lost = 0;
++	top->guest_us_samples = top->lost = top->drop = 0;
+ }
+diff --git a/tools/perf/util/top.h b/tools/perf/util/top.h
+index 5bce62ebcf14..19f95eaf75c8 100644
+--- a/tools/perf/util/top.h
++++ b/tools/perf/util/top.h
+@@ -22,7 +22,7 @@ struct perf_top {
+ 	 * Symbols will be added here in perf_event__process_sample and will
+ 	 * get out after decayed.
+ 	 */
+-	u64		   samples, lost, lost_total;
++	u64		   samples, lost, lost_total, drop, drop_total;
+ 	u64		   kernel_samples, us_samples;
+ 	u64		   exact_samples;
+ 	u64		   guest_us_samples, guest_kernel_samples;
