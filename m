@@ -7,50 +7,53 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2E99C6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:05:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2801C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:05:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85EC72147D
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:05:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B7CF22147D
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:05:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544789151;
-	bh=xm3fQicC1d248RCLrMYvLHVo5TrhScMcx5RZZbtAnTI=;
+	s=default; t=1544789154;
+	bh=6lfrRb5ZnkQPQMf7IQ9OYaHqiMDL+zEk+D8lT/Xyozc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=rIYe7YiDnZsGGXncU4xe4nmtHO1PtnQ4JIUZaxOsdIB+Z830jMxxpgX+FpsLPNM3i
-	 mFqUgrzFaxjtYol6NiYULBe4svPLflNIKTs7J/+nM9MWABCDjKN4BdZY6KyeQ3gSqi
-	 VsY9CTqOD+HivlT+moQOcengec+fH/H5oYzq6fUQ=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85EC72147D
+	b=NIlR6eaFaOrbHeGWgTZbjXl8AvsAVTEnYdMqdYV6dvnlg51A/TcrOo3OWKn7hAfcG
+	 TrERzTJ1Py9DaAiGIoN6CKDDnUSEJPnunY5BmbittcZ41DC89sAEv96AUibvc+tarh
+	 AAxVqM45mfH0hw4q1b+E4ZCTZ0r2Z5I0cg8gc7B8=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7CF22147D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730803AbeLNMFu (ORCPT
+        id S1730813AbeLNMFx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:05:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50692 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:05:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50752 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730338AbeLNMFr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:05:47 -0500
+        id S1729549AbeLNMFt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:05:49 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E02F421479;
-        Fri, 14 Dec 2018 12:05:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 66E2A21486;
+        Fri, 14 Dec 2018 12:05:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789146;
-        bh=xm3fQicC1d248RCLrMYvLHVo5TrhScMcx5RZZbtAnTI=;
+        s=default; t=1544789148;
+        bh=6lfrRb5ZnkQPQMf7IQ9OYaHqiMDL+zEk+D8lT/Xyozc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Qk2eUgQpYKPdj0gsckY8azjLkZhXpCDYQ/b7t+eCjsYZZRDQQJ84P04KP9LhQwuA8
-         Q0fIoBOIdDYZPEsjxKVDDWHRlhH9D3y27IH1rigr7nnPI6TWMyDS8F7VaV3i8y1oq7
-         uh/yoHtn1a6zuo9GqW8s2+89OB977Ji5yuU7GvPg=
+        b=EhcsqQwRE57X8sL/l/PezZwDnYh4edXqPQFg4wxzNfSbOuaNTvWMXmX49KNoIdF1M
+         rLsxbJAAgJS9qd1M8oUxCTbQUbAu2Y3Ev9H6EHexoIEGAojaDXmuKUA2CBNAtYMgi9
+         ir+dRHu93oiZ1jpl1JSDAKFwRdvmU+IYP4JwV+9E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
+        stable@vger.kernel.org,
+        Srikanth Boddepalli <boddepalli.srikanth@gmail.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Joey Pabalinas <joeypabalinas@gmail.com>,
+        Juergen Gross <jgross@suse.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 094/142] netfilter: add missing error handling code for register functions
-Date:   Fri, 14 Dec 2018 12:59:39 +0100
-Message-Id: <20181214115750.814386647@linuxfoundation.org>
+Subject: [PATCH 4.19 112/142] xen: xlate_mmu: add missing header to fix W=1 warning
+Date:   Fri, 14 Dec 2018 12:59:57 +0100
+Message-Id: <20181214115751.521840531@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115747.053633987@linuxfoundation.org>
 References: <20181214115747.053633987@linuxfoundation.org>
@@ -69,246 +72,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 584eab291c67894cb17cc87544b9d086228ea70f ]
+[ Upstream commit 72791ac854fea36034fa7976b748fde585008e78 ]
 
-register_{netdevice/inetaddr/inet6addr}_notifier may return an error
-value, this patch adds the code to handle these error paths.
+Add a missing header otherwise compiler warns about missed prototype:
 
-Signed-off-by: Taehee Yoo <ap420073@gmail.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+drivers/xen/xlate_mmu.c:183:5: warning: no previous prototype for 'xen_xlate_unmap_gfn_range?' [-Wmissing-prototypes]
+  int xen_xlate_unmap_gfn_range(struct vm_area_struct *vma,
+      ^~~~~~~~~~~~~~~~~~~~~~~~~
+
+Signed-off-by: Srikanth Boddepalli <boddepalli.srikanth@gmail.com>
+Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Reviewed-by: Joey Pabalinas <joeypabalinas@gmail.com>
+Signed-off-by: Juergen Gross <jgross@suse.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../net/netfilter/ipv4/nf_nat_masquerade.h    |  2 +-
- .../net/netfilter/ipv6/nf_nat_masquerade.h    |  2 +-
- net/ipv4/netfilter/ipt_MASQUERADE.c           |  7 ++--
- net/ipv4/netfilter/nf_nat_masquerade_ipv4.c   | 21 +++++++++---
- net/ipv4/netfilter/nft_masq_ipv4.c            |  4 ++-
- net/ipv6/netfilter/ip6t_MASQUERADE.c          |  8 +++--
- net/ipv6/netfilter/nf_nat_masquerade_ipv6.c   | 32 +++++++++++++------
- net/ipv6/netfilter/nft_masq_ipv6.c            |  4 ++-
- net/netfilter/nft_flow_offload.c              |  5 ++-
- 9 files changed, 63 insertions(+), 22 deletions(-)
+ drivers/xen/xlate_mmu.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/include/net/netfilter/ipv4/nf_nat_masquerade.h b/include/net/netfilter/ipv4/nf_nat_masquerade.h
-index cd24be4c4a99..13d55206bb9f 100644
---- a/include/net/netfilter/ipv4/nf_nat_masquerade.h
-+++ b/include/net/netfilter/ipv4/nf_nat_masquerade.h
-@@ -9,7 +9,7 @@ nf_nat_masquerade_ipv4(struct sk_buff *skb, unsigned int hooknum,
- 		       const struct nf_nat_range2 *range,
- 		       const struct net_device *out);
+diff --git a/drivers/xen/xlate_mmu.c b/drivers/xen/xlate_mmu.c
+index 23f1387b3ef7..e7df65d32c91 100644
+--- a/drivers/xen/xlate_mmu.c
++++ b/drivers/xen/xlate_mmu.c
+@@ -36,6 +36,7 @@
+ #include <asm/xen/hypervisor.h>
  
--void nf_nat_masquerade_ipv4_register_notifier(void);
-+int nf_nat_masquerade_ipv4_register_notifier(void);
- void nf_nat_masquerade_ipv4_unregister_notifier(void);
- 
- #endif /*_NF_NAT_MASQUERADE_IPV4_H_ */
-diff --git a/include/net/netfilter/ipv6/nf_nat_masquerade.h b/include/net/netfilter/ipv6/nf_nat_masquerade.h
-index 0c3b5ebf0bb8..2917bf95c437 100644
---- a/include/net/netfilter/ipv6/nf_nat_masquerade.h
-+++ b/include/net/netfilter/ipv6/nf_nat_masquerade.h
-@@ -5,7 +5,7 @@
- unsigned int
- nf_nat_masquerade_ipv6(struct sk_buff *skb, const struct nf_nat_range2 *range,
- 		       const struct net_device *out);
--void nf_nat_masquerade_ipv6_register_notifier(void);
-+int nf_nat_masquerade_ipv6_register_notifier(void);
- void nf_nat_masquerade_ipv6_unregister_notifier(void);
- 
- #endif /* _NF_NAT_MASQUERADE_IPV6_H_ */
-diff --git a/net/ipv4/netfilter/ipt_MASQUERADE.c b/net/ipv4/netfilter/ipt_MASQUERADE.c
-index ce1512b02cb2..fd3f9e8a74da 100644
---- a/net/ipv4/netfilter/ipt_MASQUERADE.c
-+++ b/net/ipv4/netfilter/ipt_MASQUERADE.c
-@@ -81,9 +81,12 @@ static int __init masquerade_tg_init(void)
- 	int ret;
- 
- 	ret = xt_register_target(&masquerade_tg_reg);
-+	if (ret)
-+		return ret;
- 
--	if (ret == 0)
--		nf_nat_masquerade_ipv4_register_notifier();
-+	ret = nf_nat_masquerade_ipv4_register_notifier();
-+	if (ret)
-+		xt_unregister_target(&masquerade_tg_reg);
- 
- 	return ret;
- }
-diff --git a/net/ipv4/netfilter/nf_nat_masquerade_ipv4.c b/net/ipv4/netfilter/nf_nat_masquerade_ipv4.c
-index ad3aeff152ed..4a7c1f207d6e 100644
---- a/net/ipv4/netfilter/nf_nat_masquerade_ipv4.c
-+++ b/net/ipv4/netfilter/nf_nat_masquerade_ipv4.c
-@@ -133,16 +133,29 @@ static struct notifier_block masq_inet_notifier = {
- 
- static atomic_t masquerade_notifier_refcount = ATOMIC_INIT(0);
- 
--void nf_nat_masquerade_ipv4_register_notifier(void)
-+int nf_nat_masquerade_ipv4_register_notifier(void)
- {
-+	int ret;
-+
- 	/* check if the notifier was already set */
- 	if (atomic_inc_return(&masquerade_notifier_refcount) > 1)
--		return;
-+		return 0;
- 
- 	/* Register for device down reports */
--	register_netdevice_notifier(&masq_dev_notifier);
-+	ret = register_netdevice_notifier(&masq_dev_notifier);
-+	if (ret)
-+		goto err_dec;
- 	/* Register IP address change reports */
--	register_inetaddr_notifier(&masq_inet_notifier);
-+	ret = register_inetaddr_notifier(&masq_inet_notifier);
-+	if (ret)
-+		goto err_unregister;
-+
-+	return ret;
-+err_unregister:
-+	unregister_netdevice_notifier(&masq_dev_notifier);
-+err_dec:
-+	atomic_dec(&masquerade_notifier_refcount);
-+	return ret;
- }
- EXPORT_SYMBOL_GPL(nf_nat_masquerade_ipv4_register_notifier);
- 
-diff --git a/net/ipv4/netfilter/nft_masq_ipv4.c b/net/ipv4/netfilter/nft_masq_ipv4.c
-index f1193e1e928a..6847de1d1db8 100644
---- a/net/ipv4/netfilter/nft_masq_ipv4.c
-+++ b/net/ipv4/netfilter/nft_masq_ipv4.c
-@@ -69,7 +69,9 @@ static int __init nft_masq_ipv4_module_init(void)
- 	if (ret < 0)
- 		return ret;
- 
--	nf_nat_masquerade_ipv4_register_notifier();
-+	ret = nf_nat_masquerade_ipv4_register_notifier();
-+	if (ret)
-+		nft_unregister_expr(&nft_masq_ipv4_type);
- 
- 	return ret;
- }
-diff --git a/net/ipv6/netfilter/ip6t_MASQUERADE.c b/net/ipv6/netfilter/ip6t_MASQUERADE.c
-index 491f808e356a..29c7f1915a96 100644
---- a/net/ipv6/netfilter/ip6t_MASQUERADE.c
-+++ b/net/ipv6/netfilter/ip6t_MASQUERADE.c
-@@ -58,8 +58,12 @@ static int __init masquerade_tg6_init(void)
- 	int err;
- 
- 	err = xt_register_target(&masquerade_tg6_reg);
--	if (err == 0)
--		nf_nat_masquerade_ipv6_register_notifier();
-+	if (err)
-+		return err;
-+
-+	err = nf_nat_masquerade_ipv6_register_notifier();
-+	if (err)
-+		xt_unregister_target(&masquerade_tg6_reg);
- 
- 	return err;
- }
-diff --git a/net/ipv6/netfilter/nf_nat_masquerade_ipv6.c b/net/ipv6/netfilter/nf_nat_masquerade_ipv6.c
-index e6eb7cf9b54f..10012fc687b6 100644
---- a/net/ipv6/netfilter/nf_nat_masquerade_ipv6.c
-+++ b/net/ipv6/netfilter/nf_nat_masquerade_ipv6.c
-@@ -120,8 +120,8 @@ static void iterate_cleanup_work(struct work_struct *work)
-  * of ipv6 addresses being deleted), we also need to add an upper
-  * limit to the number of queued work items.
-  */
--static int masq_inet_event(struct notifier_block *this,
--			   unsigned long event, void *ptr)
-+static int masq_inet6_event(struct notifier_block *this,
-+			    unsigned long event, void *ptr)
- {
- 	struct inet6_ifaddr *ifa = ptr;
- 	const struct net_device *dev;
-@@ -158,20 +158,34 @@ static int masq_inet_event(struct notifier_block *this,
- 	return NOTIFY_DONE;
- }
- 
--static struct notifier_block masq_inet_notifier = {
--	.notifier_call	= masq_inet_event,
-+static struct notifier_block masq_inet6_notifier = {
-+	.notifier_call	= masq_inet6_event,
- };
- 
- static atomic_t masquerade_notifier_refcount = ATOMIC_INIT(0);
- 
--void nf_nat_masquerade_ipv6_register_notifier(void)
-+int nf_nat_masquerade_ipv6_register_notifier(void)
- {
-+	int ret;
-+
- 	/* check if the notifier is already set */
- 	if (atomic_inc_return(&masquerade_notifier_refcount) > 1)
--		return;
-+		return 0;
- 
--	register_netdevice_notifier(&masq_dev_notifier);
--	register_inet6addr_notifier(&masq_inet_notifier);
-+	ret = register_netdevice_notifier(&masq_dev_notifier);
-+	if (ret)
-+		goto err_dec;
-+
-+	ret = register_inet6addr_notifier(&masq_inet6_notifier);
-+	if (ret)
-+		goto err_unregister;
-+
-+	return ret;
-+err_unregister:
-+	unregister_netdevice_notifier(&masq_dev_notifier);
-+err_dec:
-+	atomic_dec(&masquerade_notifier_refcount);
-+	return ret;
- }
- EXPORT_SYMBOL_GPL(nf_nat_masquerade_ipv6_register_notifier);
- 
-@@ -181,7 +195,7 @@ void nf_nat_masquerade_ipv6_unregister_notifier(void)
- 	if (atomic_dec_return(&masquerade_notifier_refcount) > 0)
- 		return;
- 
--	unregister_inet6addr_notifier(&masq_inet_notifier);
-+	unregister_inet6addr_notifier(&masq_inet6_notifier);
- 	unregister_netdevice_notifier(&masq_dev_notifier);
- }
- EXPORT_SYMBOL_GPL(nf_nat_masquerade_ipv6_unregister_notifier);
-diff --git a/net/ipv6/netfilter/nft_masq_ipv6.c b/net/ipv6/netfilter/nft_masq_ipv6.c
-index dd0122f3cffe..e06c82e9dfcd 100644
---- a/net/ipv6/netfilter/nft_masq_ipv6.c
-+++ b/net/ipv6/netfilter/nft_masq_ipv6.c
-@@ -70,7 +70,9 @@ static int __init nft_masq_ipv6_module_init(void)
- 	if (ret < 0)
- 		return ret;
- 
--	nf_nat_masquerade_ipv6_register_notifier();
-+	ret = nf_nat_masquerade_ipv6_register_notifier();
-+	if (ret)
-+		nft_unregister_expr(&nft_masq_ipv6_type);
- 
- 	return ret;
- }
-diff --git a/net/netfilter/nft_flow_offload.c b/net/netfilter/nft_flow_offload.c
-index d6bab8c3cbb0..5fd4c57c79cc 100644
---- a/net/netfilter/nft_flow_offload.c
-+++ b/net/netfilter/nft_flow_offload.c
-@@ -214,7 +214,9 @@ static int __init nft_flow_offload_module_init(void)
- {
- 	int err;
- 
--	register_netdevice_notifier(&flow_offload_netdev_notifier);
-+	err = register_netdevice_notifier(&flow_offload_netdev_notifier);
-+	if (err)
-+		goto err;
- 
- 	err = nft_register_expr(&nft_flow_offload_type);
- 	if (err < 0)
-@@ -224,6 +226,7 @@ static int __init nft_flow_offload_module_init(void)
- 
- register_expr:
- 	unregister_netdevice_notifier(&flow_offload_netdev_notifier);
-+err:
- 	return err;
- }
- 
+ #include <xen/xen.h>
++#include <xen/xen-ops.h>
+ #include <xen/page.h>
+ #include <xen/interface/xen.h>
+ #include <xen/interface/memory.h>
 -- 
 2.19.1
 
