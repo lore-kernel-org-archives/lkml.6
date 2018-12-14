@@ -2,140 +2,154 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2EDBC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 17:27:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6943C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 17:28:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E890B206E0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 17:27:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B2569206C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 17:28:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZTFSiWra"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730387AbeLNR1T (ORCPT
+        id S1730221AbeLNR2w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 12:27:19 -0500
-Received: from mx2.suse.de ([195.135.220.15]:59344 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726662AbeLNR1T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 12:27:19 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D6BA0AD7E;
-        Fri, 14 Dec 2018 17:27:16 +0000 (UTC)
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     linux-rpi-kernel@lists.infradead.org, stefan.wahren@i2se.com,
-        eric@anholt.net, Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/panel: rpi-touchscreen: Add backlight support
-Date:   Fri, 14 Dec 2018 18:27:04 +0100
-Message-Id: <20181214172704.7936-1-nsaenzjulienne@suse.de>
-X-Mailer: git-send-email 2.19.2
+        Fri, 14 Dec 2018 12:28:52 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:46102 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726662AbeLNR2v (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 12:28:51 -0500
+Received: by mail-pl1-f193.google.com with SMTP id t13so3009046ply.13
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 09:28:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=MWnPJgwsKNPqyFIyZqGRK3rRCDVyBFkQPh3SDdco/KY=;
+        b=ZTFSiWraZ6/6FMvPKaL8NuIQyVPjXCi/NYevE+kqMGDNtDxuiWvFJQXTs7Li1UP/MA
+         KcM4Gkc7Cs8+1wvBBcuJAoYtKHMewUSEl+DF98AvYWW87RGDCBA/29Nli5Zpth4sstX4
+         OyYEVMImarup0joV2lBwxHtyWmBjleWaviVU1aGLONeJLhE3kGsRw79YEJYMpEmW6at9
+         SVrAvsrbwNWQULFpu4XiRASxNnty86vNpf8wHA7Adet0EuVT23Wi6huJZjqb/ms6E6+D
+         7X37ppSTApPSGZJLsjSIFZiF+oVNBThDUl6BS1Wfla1m+qHaede2GCgBCusfmqAn4+yf
+         g7BQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=MWnPJgwsKNPqyFIyZqGRK3rRCDVyBFkQPh3SDdco/KY=;
+        b=WXQahr8oQi9EMDPvlnEEk9ma1n8cfCgjN7Gr5yV0S8D5DEelFQg0rwqkGSzgL2h+1w
+         Rovkf+7ezNdUVOsrBXeom+lu4oNlC9FUPk9VP+8qytRcLIQWwMvd4UBMDQnHpbVaqKIF
+         yJRxX+BASmtXJCpTHcdO0R2nWMQUJURvUohoNAJeoGf0JuC6nOETBakk2cFsBVJU2i5d
+         UyQC/UAPkMF8BN2e5UOvw2ngWnGQQuhfDv5Q4bp9Kj1VsyoK0GWy/y8iBCdMpm3yaoZx
+         qmcpB/qnzi0KROGC2CfqX7aA/bIoiFBkSDna967pHtyOiF8S77Yb1rum9stYaou+UurI
+         pi9g==
+X-Gm-Message-State: AA+aEWZPD+5LV3sJKcBaUANO89Jw4U6x/0obGqPDC+ZOqQcSbd/YmWiI
+        SjhVDSVq3GCtBloTX5QVfUXu5oS9
+X-Google-Smtp-Source: AFSGD/VN02xNdg0Kq/Mt5KFgrA3cI8kWCWESz/nFpp6yVvFrjHUvYHlnoUeJuzLlFP2T2twWyDzM/A==
+X-Received: by 2002:a17:902:264:: with SMTP id 91mr3705418plc.108.1544808531160;
+        Fri, 14 Dec 2018 09:28:51 -0800 (PST)
+Received: from himanshu-Vostro-3559 ([103.233.116.134])
+        by smtp.gmail.com with ESMTPSA id m67sm7325609pfm.73.2018.12.14.09.28.47
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 14 Dec 2018 09:28:50 -0800 (PST)
+Date:   Fri, 14 Dec 2018 22:58:43 +0530
+From:   Himanshu Jha <himanshujha199640@gmail.com>
+To:     Joe Perches <joe@perches.com>
+Cc:     Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>,
+        apw@canonical.com, Andrew Morton <akpm@linux-foundation.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, niklas.cassel@linaro.org
+Subject: Re: [PATCH] checkpatch: add Co-Developed-by to signature tags
+Message-ID: <20181214172843.GA18703@himanshu-Vostro-3559>
+References: <1544792494-15485-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
+ <839c1d04000164e27dff9742e3efc3bcff3025b6.camel@perches.com>
+ <20181214161604.GA17456@himanshu-Vostro-3559>
+ <8ae5c67a5c4516a783579e449313d1d59fe3a47d.camel@perches.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8ae5c67a5c4516a783579e449313d1d59fe3a47d.camel@perches.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch exposes backlight control into userspace by creating a
-backlight device instead of directly accessing the PWM registers.
+On Fri, Dec 14, 2018 at 08:27:33AM -0800, Joe Perches wrote:
+> On Fri, 2018-12-14 at 21:46 +0530, Himanshu Jha wrote:
+> > On Fri, Dec 14, 2018 at 07:52:15AM -0800, Joe Perches wrote:
+> > > On Fri, 2018-12-14 at 14:01 +0100, Jorge Ramirez-Ortiz wrote:
+> > > > As per Documentation/process/submitting-patches, Co-developed-by is a
+> > > > valid signature.
+> > > > 
+> > > > This commit removes the warning.
+> > > 
+> > > Your commit message doesn't match your subject.
+> > > 
+> > > A couple variants have been documented and only
+> > > one should actually be used.
+> > > 
+> > > $ git grep -i co-developed-by Documentation/process/
+> > > Documentation/process/5.Posting.rst: - Co-developed-by: states that the patch was also created by another developer
+> > > Documentation/process/submitting-patches.rst:12) When to use Acked-by:, Cc:, and Co-Developed-by:
+> > > Documentation/process/submitting-patches.rst:A Co-Developed-by: states that the patch was also created by another developer
+> > > 
+> > > $ git log --grep="co-developed-by:" -i | \
+> > >   grep -ohiP "co-developed-by:" | sort | uniq -c | sort -rn
+> > >      80 Co-developed-by:
+> > >      40 Co-Developed-by:
+> > > 
+> > > So which should it be?
+> > > 
+> > > btw: I prefer neither as I think Signed-off-by: is sufficient.
+> > 
+> > OK, but does multiple Signed-off-by: in the commits imply that
+> > the patch was created by all those developers ?
+> > 
+> > I don't think so, perhaps this was the reason to introduce
+> > Co-developed-by: tag.
+> 
+> Perhaps, but a sign-off is also a recognition that the
+> patch was passed-through by individuals
 
-The backlight driver can't go on a separate file as it shares the I2C
-bus & address with the panel.
+Yes, Agreed!
 
-Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
----
- .../drm/panel/panel-raspberrypi-touchscreen.c | 33 +++++++++++++++++--
- 1 file changed, 31 insertions(+), 2 deletions(-)
+> Effectively, there's no real difference.
+> 
+> "Co-developed-by:" is just another word for "Authored-by:"
+> where multiple "Authorship" is the thing being notated.
+> 
+> Is it really important to specify things like 75% / 25%
+> authorship crediting?
 
-diff --git a/drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c b/drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c
-index 2c9c9722734f..838b5c8767bc 100644
---- a/drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c
-+++ b/drivers/gpu/drm/panel/panel-raspberrypi-touchscreen.c
-@@ -52,6 +52,7 @@
- #include <linux/of_device.h>
- #include <linux/of_graph.h>
- #include <linux/pm.h>
-+#include <linux/backlight.h>
- 
- #include <drm/drm_panel.h>
- #include <drm/drmP.h>
-@@ -196,6 +197,7 @@ struct rpi_touchscreen {
- 	struct drm_panel base;
- 	struct mipi_dsi_device *dsi;
- 	struct i2c_client *i2c;
-+	struct backlight_device *backlight;
- };
- 
- static const struct drm_display_mode rpi_touchscreen_modes[] = {
-@@ -256,7 +258,8 @@ static int rpi_touchscreen_disable(struct drm_panel *panel)
- {
- 	struct rpi_touchscreen *ts = panel_to_ts(panel);
- 
--	rpi_touchscreen_i2c_write(ts, REG_PWM, 0);
-+	ts->backlight->props.brightness = 0;
-+	backlight_update_status(ts->backlight);
- 
- 	rpi_touchscreen_i2c_write(ts, REG_POWERON, 0);
- 	udelay(1);
-@@ -300,7 +303,8 @@ static int rpi_touchscreen_enable(struct drm_panel *panel)
- 	msleep(100);
- 
- 	/* Turn on the backlight. */
--	rpi_touchscreen_i2c_write(ts, REG_PWM, 255);
-+	ts->backlight->props.brightness = 255;
-+	backlight_update_status(ts->backlight);
- 
- 	/* Default to the same orientation as the closed source
- 	 * firmware used for the panel.  Runtime rotation
-@@ -358,12 +362,26 @@ static const struct drm_panel_funcs rpi_touchscreen_funcs = {
- 	.get_modes = rpi_touchscreen_get_modes,
- };
- 
-+static int raspberrypi_bl_update_status(struct backlight_device *bl)
-+{
-+	struct rpi_touchscreen *ts = bl_get_data(bl);
-+
-+	rpi_touchscreen_i2c_write(ts, REG_PWM, bl->props.brightness);
-+
-+	return 0;
-+}
-+
-+static const struct backlight_ops raspberrypi_bl_ops = {
-+	.update_status = raspberrypi_bl_update_status,
-+};
-+
- static int rpi_touchscreen_probe(struct i2c_client *i2c,
- 				 const struct i2c_device_id *id)
- {
- 	struct device *dev = &i2c->dev;
- 	struct rpi_touchscreen *ts;
- 	struct device_node *endpoint, *dsi_host_node;
-+	struct backlight_properties props;
- 	struct mipi_dsi_host *host;
- 	int ret, ver;
- 	struct mipi_dsi_device_info info = {
-@@ -398,6 +416,17 @@ static int rpi_touchscreen_probe(struct i2c_client *i2c,
- 	/* Turn off at boot, so we can cleanly sequence powering on. */
- 	rpi_touchscreen_i2c_write(ts, REG_POWERON, 0);
- 
-+	memset(&props, 0, sizeof(props));
-+	props.type = BACKLIGHT_RAW;
-+	props.max_brightness = 255;
-+	ts->backlight = devm_backlight_device_register(dev, dev_name(dev), dev,
-+						       ts, &raspberrypi_bl_ops,
-+						       &props);
-+	if (IS_ERR(ts->backlight)) {
-+		dev_err(dev, "Failed to create backlight device\n");
-+		return PTR_ERR(ts->backlight);
-+	}
-+
- 	/* Look up the DSI host.  It needs to probe before we do. */
- 	endpoint = of_graph_get_next_endpoint(dev->of_node, NULL);
- 	dsi_host_node = of_graph_get_remote_port_parent(endpoint);
+IDK how that ratio came up into this discussion ?
+
+Anyway, I saw on IIO list that a bunch of students were involved
+in driver cleaning with the help of developers from Analog Devices
+Inc who intially wrote some code snippets.
+
+And that authorship crediting for Analog Devices folks would be
+helpful distinguishing that it was not just passed-through and rather
+they spent their time on it.
+
+> I don't really care about attribution so the concept is
+> not particularly valuable to me.
+
+Well, it might not be valuable to you but it is for others and I saw
+one such example in the past during my project.
+
+At least I do care about those developers who spent a considerable
+time on IIO list guiding students aside from their mainline work.
+
+
+FYI, IIO has already +1'd for "Co-developed-by:"
+
 -- 
-2.19.2
-
+Himanshu Jha
+Undergraduate Student
+Department of Electronics & Communication
+Guru Tegh Bahadur Institute of Technology
