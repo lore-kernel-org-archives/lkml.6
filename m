@@ -7,52 +7,54 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2B37C6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:01:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E0E8C6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:01:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F5F22146E
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:01:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E79CE2146E
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:01:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544788893;
-	bh=0TDsQxidNhaLrobW5LGPmhGcCk+J4hd04DyZSU3OjLA=;
+	s=default; t=1544788897;
+	bh=WlgoTDTRuy/2tdn2El5d8nTmsm9ijnKXWt67VEHbng8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=M2imMYxnBKhy0QLPz1QToz5UzaYm5zYQitTo+HTPW1SYSYOMovGvLjjSjY6TH/J/L
-	 sCqhNAvzBmBumAgefi3ATpVIHJ0GyF35pIViOU58v2KmRkO78uvffhbwXeN05fH8Sp
-	 Be9BzzRAkFUr42DrvO3Rx+mkXUEV3I8lENWIGjZg=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F5F22146E
+	b=EitOUCsolJrJLOiWaGjSfqs+lv8IXADVG5DMGoPj/zoEmlftONWiET7Ha+U1Tg07l
+	 Vjy0njT/n7pSQj32WSud4lX3cTtPUaaDK3OGyZAe294P7KZbGYYw3NJATsOompg650
+	 DKNHY7iEujny+wj7/7wyxEbl7EfIZtLFNb5oqPyU=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E79CE2146E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729768AbeLNMBc (ORCPT
+        id S1729790AbeLNMBg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:01:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43924 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:01:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43996 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729738AbeLNMBa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:01:30 -0500
+        id S1729754AbeLNMBc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:01:32 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 67C7C2145D;
-        Fri, 14 Dec 2018 12:01:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0B46521104;
+        Fri, 14 Dec 2018 12:01:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544788888;
-        bh=0TDsQxidNhaLrobW5LGPmhGcCk+J4hd04DyZSU3OjLA=;
+        s=default; t=1544788891;
+        bh=WlgoTDTRuy/2tdn2El5d8nTmsm9ijnKXWt67VEHbng8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=15E7ckbZnp1CBiVdC2II4Q9pZQG2SJtNwQ+Bz2U0QNMC+ymKx7L0TRC6JHMA9C8P5
-         HOUW2W8pzmRUJSgVX/S9268o1VhPI2ietzyzrwgG0DG9tbrpB2QWq8325MMIP3JqBm
-         SDgq6mtIUufCAOCg/RPtDdPtntFPMf0EtYeESwLo=
+        b=L4HtoRLNALT4LEkO1L7boX86lzUZyGe667tt2IwhuvYFe0eQjjax5sdSLsbKn3Xl4
+         P3yWXSf/h8kE6AC0+9DuJR5l+CICIyjm7gCmB5y5XzZwRw/ZVqz2s0sAwxeM3/KAC2
+         jedWnCtjxD7yN1Dnr6J22dTVaV0jXHUZody0yIhA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Ido Schimmel <idosch@mellanox.com>,
-        David Ahern <dsahern@gmail.com>,
+        stable@vger.kernel.org,
+        syzbot+0b05d8aa7cb185107483@syzkaller.appspotmail.com,
+        syzbot+aad231d51b1923158444@syzkaller.appspotmail.com,
+        Neil Horman <nhorman@tuxdriver.com>,
+        Xin Long <lucien.xin@gmail.com>,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 012/142] rtnetlink: ndo_dflt_fdb_dump() only work for ARPHRD_ETHER devices
-Date:   Fri, 14 Dec 2018 12:58:17 +0100
-Message-Id: <20181214115747.536466224@linuxfoundation.org>
+Subject: [PATCH 4.19 013/142] sctp: kfree_rcu asoc
+Date:   Fri, 14 Dec 2018 12:58:18 +0100
+Message-Id: <20181214115747.578786199@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115747.053633987@linuxfoundation.org>
 References: <20181214115747.053633987@linuxfoundation.org>
@@ -71,152 +73,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Xin Long <lucien.xin@gmail.com>
 
-[ Upstream commit 688838934c231bb08f46db687e57f6d8bf82709c ]
+[ Upstream commit fb6df5a6234c38a9c551559506a49a677ac6f07a ]
 
-kmsan was able to trigger a kernel-infoleak using a gre device [1]
+In sctp_hash_transport/sctp_epaddr_lookup_transport, it dereferences
+a transport's asoc under rcu_read_lock while asoc is freed not after
+a grace period, which leads to a use-after-free panic.
 
-nlmsg_populate_fdb_fill() has a hard coded assumption
-that dev->addr_len is ETH_ALEN, as normally guaranteed
-for ARPHRD_ETHER devices.
+This patch fixes it by calling kfree_rcu to make asoc be freed after
+a grace period.
 
-A similar issue was fixed recently in commit da71577545a5
-("rtnetlink: Disallow FDB configuration for non-Ethernet device")
+Note that only the asoc's memory is delayed to free in the patch, it
+won't cause sk to linger longer.
 
-[1]
-BUG: KMSAN: kernel-infoleak in copyout lib/iov_iter.c:143 [inline]
-BUG: KMSAN: kernel-infoleak in _copy_to_iter+0x4c0/0x2700 lib/iov_iter.c:576
-CPU: 0 PID: 6697 Comm: syz-executor310 Not tainted 4.20.0-rc3+ #95
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x32d/0x480 lib/dump_stack.c:113
- kmsan_report+0x12c/0x290 mm/kmsan/kmsan.c:683
- kmsan_internal_check_memory+0x32a/0xa50 mm/kmsan/kmsan.c:743
- kmsan_copy_to_user+0x78/0xd0 mm/kmsan/kmsan_hooks.c:634
- copyout lib/iov_iter.c:143 [inline]
- _copy_to_iter+0x4c0/0x2700 lib/iov_iter.c:576
- copy_to_iter include/linux/uio.h:143 [inline]
- skb_copy_datagram_iter+0x4e2/0x1070 net/core/datagram.c:431
- skb_copy_datagram_msg include/linux/skbuff.h:3316 [inline]
- netlink_recvmsg+0x6f9/0x19d0 net/netlink/af_netlink.c:1975
- sock_recvmsg_nosec net/socket.c:794 [inline]
- sock_recvmsg+0x1d1/0x230 net/socket.c:801
- ___sys_recvmsg+0x444/0xae0 net/socket.c:2278
- __sys_recvmsg net/socket.c:2327 [inline]
- __do_sys_recvmsg net/socket.c:2337 [inline]
- __se_sys_recvmsg+0x2fa/0x450 net/socket.c:2334
- __x64_sys_recvmsg+0x4a/0x70 net/socket.c:2334
- do_syscall_64+0xcf/0x110 arch/x86/entry/common.c:291
- entry_SYSCALL_64_after_hwframe+0x63/0xe7
-RIP: 0033:0x441119
-Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 db 0a fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fffc7f008a8 EFLAGS: 00000207 ORIG_RAX: 000000000000002f
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 0000000000441119
-RDX: 0000000000000040 RSI: 00000000200005c0 RDI: 0000000000000003
-RBP: 00000000006cc018 R08: 0000000000000100 R09: 0000000000000100
-R10: 0000000000000100 R11: 0000000000000207 R12: 0000000000402080
-R13: 0000000000402110 R14: 0000000000000000 R15: 0000000000000000
+Thanks Neil and Marcelo to make this clear.
 
-Uninit was stored to memory at:
- kmsan_save_stack_with_flags mm/kmsan/kmsan.c:246 [inline]
- kmsan_save_stack mm/kmsan/kmsan.c:261 [inline]
- kmsan_internal_chain_origin+0x13d/0x240 mm/kmsan/kmsan.c:469
- kmsan_memcpy_memmove_metadata+0x1a9/0xf70 mm/kmsan/kmsan.c:344
- kmsan_memcpy_metadata+0xb/0x10 mm/kmsan/kmsan.c:362
- __msan_memcpy+0x61/0x70 mm/kmsan/kmsan_instr.c:162
- __nla_put lib/nlattr.c:744 [inline]
- nla_put+0x20a/0x2d0 lib/nlattr.c:802
- nlmsg_populate_fdb_fill+0x444/0x810 net/core/rtnetlink.c:3466
- nlmsg_populate_fdb net/core/rtnetlink.c:3775 [inline]
- ndo_dflt_fdb_dump+0x73a/0x960 net/core/rtnetlink.c:3807
- rtnl_fdb_dump+0x1318/0x1cb0 net/core/rtnetlink.c:3979
- netlink_dump+0xc79/0x1c90 net/netlink/af_netlink.c:2244
- __netlink_dump_start+0x10c4/0x11d0 net/netlink/af_netlink.c:2352
- netlink_dump_start include/linux/netlink.h:216 [inline]
- rtnetlink_rcv_msg+0x141b/0x1540 net/core/rtnetlink.c:4910
- netlink_rcv_skb+0x394/0x640 net/netlink/af_netlink.c:2477
- rtnetlink_rcv+0x50/0x60 net/core/rtnetlink.c:4965
- netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
- netlink_unicast+0x1699/0x1740 net/netlink/af_netlink.c:1336
- netlink_sendmsg+0x13c7/0x1440 net/netlink/af_netlink.c:1917
- sock_sendmsg_nosec net/socket.c:621 [inline]
- sock_sendmsg net/socket.c:631 [inline]
- ___sys_sendmsg+0xe3b/0x1240 net/socket.c:2116
- __sys_sendmsg net/socket.c:2154 [inline]
- __do_sys_sendmsg net/socket.c:2163 [inline]
- __se_sys_sendmsg+0x305/0x460 net/socket.c:2161
- __x64_sys_sendmsg+0x4a/0x70 net/socket.c:2161
- do_syscall_64+0xcf/0x110 arch/x86/entry/common.c:291
- entry_SYSCALL_64_after_hwframe+0x63/0xe7
-
-Uninit was created at:
- kmsan_save_stack_with_flags mm/kmsan/kmsan.c:246 [inline]
- kmsan_internal_poison_shadow+0x6d/0x130 mm/kmsan/kmsan.c:170
- kmsan_kmalloc+0xa1/0x100 mm/kmsan/kmsan_hooks.c:186
- __kmalloc+0x14c/0x4d0 mm/slub.c:3825
- kmalloc include/linux/slab.h:551 [inline]
- __hw_addr_create_ex net/core/dev_addr_lists.c:34 [inline]
- __hw_addr_add_ex net/core/dev_addr_lists.c:80 [inline]
- __dev_mc_add+0x357/0x8a0 net/core/dev_addr_lists.c:670
- dev_mc_add+0x6d/0x80 net/core/dev_addr_lists.c:687
- ip_mc_filter_add net/ipv4/igmp.c:1128 [inline]
- igmp_group_added+0x4d4/0xb80 net/ipv4/igmp.c:1311
- __ip_mc_inc_group+0xea9/0xf70 net/ipv4/igmp.c:1444
- ip_mc_inc_group net/ipv4/igmp.c:1453 [inline]
- ip_mc_up+0x1c3/0x400 net/ipv4/igmp.c:1775
- inetdev_event+0x1d03/0x1d80 net/ipv4/devinet.c:1522
- notifier_call_chain kernel/notifier.c:93 [inline]
- __raw_notifier_call_chain kernel/notifier.c:394 [inline]
- raw_notifier_call_chain+0x13d/0x240 kernel/notifier.c:401
- __dev_notify_flags+0x3da/0x860 net/core/dev.c:1733
- dev_change_flags+0x1ac/0x230 net/core/dev.c:7569
- do_setlink+0x165f/0x5ea0 net/core/rtnetlink.c:2492
- rtnl_newlink+0x2ad7/0x35a0 net/core/rtnetlink.c:3111
- rtnetlink_rcv_msg+0x1148/0x1540 net/core/rtnetlink.c:4947
- netlink_rcv_skb+0x394/0x640 net/netlink/af_netlink.c:2477
- rtnetlink_rcv+0x50/0x60 net/core/rtnetlink.c:4965
- netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
- netlink_unicast+0x1699/0x1740 net/netlink/af_netlink.c:1336
- netlink_sendmsg+0x13c7/0x1440 net/netlink/af_netlink.c:1917
- sock_sendmsg_nosec net/socket.c:621 [inline]
- sock_sendmsg net/socket.c:631 [inline]
- ___sys_sendmsg+0xe3b/0x1240 net/socket.c:2116
- __sys_sendmsg net/socket.c:2154 [inline]
- __do_sys_sendmsg net/socket.c:2163 [inline]
- __se_sys_sendmsg+0x305/0x460 net/socket.c:2161
- __x64_sys_sendmsg+0x4a/0x70 net/socket.c:2161
- do_syscall_64+0xcf/0x110 arch/x86/entry/common.c:291
- entry_SYSCALL_64_after_hwframe+0x63/0xe7
-
-Bytes 36-37 of 105 are uninitialized
-Memory access of size 105 starts at ffff88819686c000
-Data copied to user address 0000000020000380
-
-Fixes: d83b06036048 ("net: add fdb generic dump routine")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Cc: John Fastabend <john.fastabend@gmail.com>
-Cc: Ido Schimmel <idosch@mellanox.com>
-Cc: David Ahern <dsahern@gmail.com>
-Reviewed-by: Ido Schimmel <idosch@mellanox.com>
+Fixes: 7fda702f9315 ("sctp: use new rhlist interface on sctp transport rhashtable")
+Fixes: cd2b70875058 ("sctp: check duplicate node before inserting a new transport")
+Reported-by: syzbot+0b05d8aa7cb185107483@syzkaller.appspotmail.com
+Reported-by: syzbot+aad231d51b1923158444@syzkaller.appspotmail.com
+Suggested-by: Neil Horman <nhorman@tuxdriver.com>
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
+Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+Acked-by: Neil Horman <nhorman@tuxdriver.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/core/rtnetlink.c |    3 +++
- 1 file changed, 3 insertions(+)
+ include/net/sctp/structs.h |    2 ++
+ net/sctp/associola.c       |    2 +-
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
---- a/net/core/rtnetlink.c
-+++ b/net/core/rtnetlink.c
-@@ -3730,6 +3730,9 @@ int ndo_dflt_fdb_dump(struct sk_buff *sk
- {
- 	int err;
+--- a/include/net/sctp/structs.h
++++ b/include/net/sctp/structs.h
+@@ -2075,6 +2075,8 @@ struct sctp_association {
  
-+	if (dev->type != ARPHRD_ETHER)
-+		return -EINVAL;
+ 	__u64 abandoned_unsent[SCTP_PR_INDEX(MAX) + 1];
+ 	__u64 abandoned_sent[SCTP_PR_INDEX(MAX) + 1];
 +
- 	netif_addr_lock_bh(dev);
- 	err = nlmsg_populate_fdb(skb, cb, dev, idx, &dev->uc);
- 	if (err)
++	struct rcu_head rcu;
+ };
+ 
+ 
+--- a/net/sctp/associola.c
++++ b/net/sctp/associola.c
+@@ -434,7 +434,7 @@ static void sctp_association_destroy(str
+ 
+ 	WARN_ON(atomic_read(&asoc->rmem_alloc));
+ 
+-	kfree(asoc);
++	kfree_rcu(asoc, rcu);
+ 	SCTP_DBG_OBJCNT_DEC(assoc);
+ }
+ 
 
 
