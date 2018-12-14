@@ -2,151 +2,121 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12344C65BAE
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 02:23:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2E3AC65BAE
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 02:24:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE1E820811
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 02:23:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="MNLc+GMF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE1E820811
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 7EDDF21104
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 02:24:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EDDF21104
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728993AbeLNCXU (ORCPT
+        id S1729164AbeLNCYC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 21:23:20 -0500
-Received: from ozlabs.org ([203.11.71.1]:51589 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728517AbeLNCXT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 21:23:19 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43GDqS39Q2z9s4s;
-        Fri, 14 Dec 2018 13:23:16 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1544754196;
-        bh=jix4i77ESnwSLqH+A75ZOcU861BTOyBxhJSi0lweZrc=;
-        h=Date:From:To:Cc:Subject:From;
-        b=MNLc+GMFFRIOQbiK/8C78h/644hQRSpsJRtEanpYTxcmUG6UA21Beu52ck2CyzibS
-         r1YV56LA5qZVLwJyEkppVYkt0js9U0OPuHaZEHCcXWail/3RiO32HerUAt4RQ9Hdhd
-         3qAucgF3WI8KLUJ3D18mdJuOvoB3sV29VUQIrW0gLdqsCEB+c2QjdrWU/MmEYZyw2z
-         fnntrKfzhBwcn5DFaATCiGk4nPT7cNqF8R+1bAqMCOuJcZCB3DhlqsRFvQAozkVLZB
-         jb69nxmgRuzwgyZllWMB2PUj6PG0sD1oBNiWM2RD4w9p4mMrmbnskn06N76tU1xPrA
-         7EC/z01I2q7jw==
-Date:   Fri, 14 Dec 2018 13:23:15 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Jens Axboe <axboe@kernel.dk>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>
-Subject: linux-next: manual merge of the block tree with the scsi-fixes tree
-Message-ID: <20181214132315.601d020f@canb.auug.org.au>
+        Thu, 13 Dec 2018 21:24:02 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:47083 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728987AbeLNCYC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 21:24:02 -0500
+Received: by mail-ed1-f67.google.com with SMTP id o10so3687375edt.13;
+        Thu, 13 Dec 2018 18:24:00 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=WrNL09/DBqFQdRHyvLiqUAfyU2rTzrkrVarVXUnajTc=;
+        b=S+4QEu77uSRlSTTPczBx0iefEyx/zCDCJDfaXUWAjU9a64c+BhBWPXrM0fgZWEIp1y
+         sv4KXmsGOzLRAUwZDrr4Dtkry5Oe0xDdv3FQ02obksE1JidqqkdXv7TEidewRFxaHnZw
+         Hv8QDzIIRIGi0SRubjR36TCPCLarKD8V6DyWyiEzxL5OOS6VjSst++IqDFrMsRp6EpiP
+         GEC4QVqM/YIei3ZGprdiOLM9To/QrXfSiPJXm10FwI2BLtjiMKiLXzKCpwpG6jdymxT6
+         8UyyoLdJ0cIGFcOAYyIEnugia0h10iVUuJFvd2V9jtCFCs6eaamTCxzKa/m59Mke17dN
+         wuAg==
+X-Gm-Message-State: AA+aEWbmXmY+f9v023O9NO9IzHDBW2R/FU76UbwwMxiYwXET1LQWJUxj
+        kBO6/m7r8KSI80BBlIMEoCnj7G01m0w=
+X-Google-Smtp-Source: AFSGD/XpHQWyXtdxR6TPU6AN+2yT1zUAGBcArETjbMb+++H0SPAZdAsk5DndG2WcwNg98VXlsEfs4A==
+X-Received: by 2002:a50:a826:: with SMTP id j35mr1417136edc.230.1544754239671;
+        Thu, 13 Dec 2018 18:23:59 -0800 (PST)
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com. [209.85.221.41])
+        by smtp.gmail.com with ESMTPSA id b49sm1184102edb.73.2018.12.13.18.23.58
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 13 Dec 2018 18:23:59 -0800 (PST)
+Received: by mail-wr1-f41.google.com with SMTP id t27so3943795wra.6;
+        Thu, 13 Dec 2018 18:23:58 -0800 (PST)
+X-Received: by 2002:a5d:5208:: with SMTP id j8mr1018504wrv.188.1544754238556;
+ Thu, 13 Dec 2018 18:23:58 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/MP+fv/9tCmEqLKxW+OW4IcR"; protocol="application/pgp-signature"
+References: <20181130075849.16941-1-wens@csie.org> <20181213221030.f7c5mzuyke3ik43r@valkosipuli.retiisi.org.uk>
+In-Reply-To: <20181213221030.f7c5mzuyke3ik43r@valkosipuli.retiisi.org.uk>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Fri, 14 Dec 2018 10:23:46 +0800
+X-Gmail-Original-Message-ID: <CAGb2v675OQ6CQLr3Gzjd6yN-wkfB=ZfttgtTceN5AD2EXo2YEw@mail.gmail.com>
+Message-ID: <CAGb2v675OQ6CQLr3Gzjd6yN-wkfB=ZfttgtTceN5AD2EXo2YEw@mail.gmail.com>
+Subject: Re: [PATCH 0/6] media: sun6i: Separate H3 compatible from A31
+To:     sakari.ailus@iki.fi
+Cc:     Yong Deng <yong.deng@magewell.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/MP+fv/9tCmEqLKxW+OW4IcR
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Fri, Dec 14, 2018 at 6:10 AM <sakari.ailus@iki.fi> wrote:
+>
+> Hi Chen-Yu,
+>
+> On Fri, Nov 30, 2018 at 03:58:43PM +0800, Chen-Yu Tsai wrote:
+> > The CSI (camera sensor interface) controller found on the H3 (and H5)
+> > is a reduced version of the one found on the A31. It only has 1 channel,
+> > instead of 4 channels supporting time-multiplexed BT.656 on the A31.
+> > Since the H3 is a reduced version, it cannot "fallback" to a compatible
+> > that implements more features than it supports.
+> >
+> > This series separates support for the H3 variant from the A31 variant.
+> >
+> > Patches 1 ~ 3 separate H3 CSI from A31 CSI in the bindings, driver, and
+> > device tree, respectively.
+> >
+> > Patch 4 adds a pinmux setting for the MCLK (master clock). Some camera
+> > sensors use the master clock from the SoC instead of a standalone
+> > crystal.
+>
+> I've picked patches 1 and 2, but I presume patches 3 and 4 would go through
+> another tree. Is that right?
 
-Hi all,
+We'll merge patch 3 through the sunxi tree, probably as a fix for 4.21-rc.
+Maxime has said that pinmux settings won't be merged unless there are actual
+users in tree, so patch 4 won't be merged for now.
 
-Today's linux-next merge of the block tree got a conflict in:
+Thanks!
+ChenYu
 
-  drivers/scsi/sd.c
-
-between commit:
-
-  61cce6f6eece ("scsi: sd: use mempool for discard special page")
-
-from the scsi-fixes tree and commit:
-
-  159b2cbf59f4 ("scsi: return blk_status_t from scsi_init_io and ->init_com=
-mand")
-
-from the block tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/scsi/sd.c
-index bd0a5c694a97,4a6ed2fc8c71..000000000000
---- a/drivers/scsi/sd.c
-+++ b/drivers/scsi/sd.c
-@@@ -760,10 -759,9 +760,10 @@@ static blk_status_t sd_setup_unmap_cmnd
-  	unsigned int data_len =3D 24;
-  	char *buf;
- =20
- -	rq->special_vec.bv_page =3D alloc_page(GFP_ATOMIC | __GFP_ZERO);
- +	rq->special_vec.bv_page =3D mempool_alloc(sd_page_pool, GFP_ATOMIC);
-  	if (!rq->special_vec.bv_page)
-- 		return BLKPREP_DEFER;
-+ 		return BLK_STS_RESOURCE;
- +	clear_highpage(rq->special_vec.bv_page);
-  	rq->special_vec.bv_offset =3D 0;
-  	rq->special_vec.bv_len =3D data_len;
-  	rq->rq_flags |=3D RQF_SPECIAL_PAYLOAD;
-@@@ -794,10 -793,9 +795,10 @@@ static blk_status_t sd_setup_write_same
-  	u32 nr_sectors =3D blk_rq_sectors(rq) >> (ilog2(sdp->sector_size) - 9);
-  	u32 data_len =3D sdp->sector_size;
- =20
- -	rq->special_vec.bv_page =3D alloc_page(GFP_ATOMIC | __GFP_ZERO);
- +	rq->special_vec.bv_page =3D mempool_alloc(sd_page_pool, GFP_ATOMIC);
-  	if (!rq->special_vec.bv_page)
-- 		return BLKPREP_DEFER;
-+ 		return BLK_STS_RESOURCE;
- +	clear_highpage(rq->special_vec.bv_page);
-  	rq->special_vec.bv_offset =3D 0;
-  	rq->special_vec.bv_len =3D data_len;
-  	rq->rq_flags |=3D RQF_SPECIAL_PAYLOAD;
-@@@ -825,10 -824,9 +827,10 @@@ static blk_status_t sd_setup_write_same
-  	u32 nr_sectors =3D blk_rq_sectors(rq) >> (ilog2(sdp->sector_size) - 9);
-  	u32 data_len =3D sdp->sector_size;
- =20
- -	rq->special_vec.bv_page =3D alloc_page(GFP_ATOMIC | __GFP_ZERO);
- +	rq->special_vec.bv_page =3D mempool_alloc(sd_page_pool, GFP_ATOMIC);
-  	if (!rq->special_vec.bv_page)
-- 		return BLKPREP_DEFER;
-+ 		return BLK_STS_RESOURCE;
- +	clear_highpage(rq->special_vec.bv_page);
-  	rq->special_vec.bv_offset =3D 0;
-  	rq->special_vec.bv_len =3D data_len;
-  	rq->rq_flags |=3D RQF_SPECIAL_PAYLOAD;
-
---Sig_/MP+fv/9tCmEqLKxW+OW4IcR
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwTFBMACgkQAVBC80lX
-0GxqRwf/XLCJ4f42zhZWrE+ELAXs/HnBUF4h+4N9VaWVcOkXxRnOMKCcs8k+wwi8
-h8EZJ/ATLVH3COzMgHE0Td6mEYAArYmkDCUX0eeFNmWkxe6ZblULtE66+Xivy2N3
-R5eCJN/JZdr8uz1RQDk6bR9Pvmzrj4Cj3ymFS7IoliCJwWlI0sb/PaMIrJqhGSwn
-OYSLL79p6zwu2twiU4QaexrZ/JuRGeLRj9HrAsKtpO7Nd0VCkDvc2zy2BEaTRxbg
-Yp9UDwn1z/tB/1z65jy8n7CkRZkBhlkLPR4mm8QDeBGLPHyU2JiFPT2ciiZsnHE+
-ofvCQFHUtlZdfBgeAl+G4aSMU5XSgQ==
-=RHIN
------END PGP SIGNATURE-----
-
---Sig_/MP+fv/9tCmEqLKxW+OW4IcR--
+>
+> >
+> > Patches 5 and 6 are examples of using a camera sensor with an SBC.
+> > Since the modules are detachable, these changes should not be merged.
+> > They should be implemented as overlays instead.
+> >
+> > Please have a look.
+> >
+> > In addition, I found that the first frame captured seems to always be
+> > incomplete, with either parts cropped, out of position, or missing
+> > color components.
+>
+>
+> --
+> Regards,
+>
+> Sakari Ailus
