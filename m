@@ -2,112 +2,143 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AD4BC67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 04:06:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08AE2C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 04:07:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F6D620879
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 04:06:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C0DA02080F
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 04:07:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="TpdsM15S"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F6D620879
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IpZoYzLk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0DA02080F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726824AbeLNEGv (ORCPT
+        id S1727149AbeLNEHp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 23:06:51 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:37737 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726437AbeLNEGv (ORCPT
+        Thu, 13 Dec 2018 23:07:45 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:37190 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726437AbeLNEHp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 23:06:51 -0500
-Received: by mail-pg1-f196.google.com with SMTP id c25so559027pgb.4
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 20:06:50 -0800 (PST)
+        Thu, 13 Dec 2018 23:07:45 -0500
+Received: by mail-pf1-f195.google.com with SMTP id y126so2169101pfb.4
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 20:07:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=OFw4yzDyOHSC5n9Hi8nCtKnbyc7DAS/g61Kj7UOF3Rc=;
-        b=TpdsM15SXCQm5YlHHw5EmE2zCVBk751R4FDn0uhe5l2uPkRsL08SU+MUfERoustL3c
-         r/74ZJ45J3hhnqZnUXnnY/2kvwyC4sXZEHCr5KFiWhRnlG+Ozjinwq+CFo7mgXBFwH+I
-         DO9GVctweTbtjWwKE9P1ylqj7tS2RxIl9SzL1VwIJzbj+mym6NpBEbP+gdAs/YWkB7nP
-         PSlsOlugCSrr9YmQQCUzQLzr1HgKxZDaXd7NtyVIAXbB1NUfH/OUdPeU9kxdaSZQ2u92
-         VZYEMYMzCng8ZYCjM3/v1hTkQCBWRJrG09+jO/KhUnrSN920CvO1l84AYf0vTUKOWnwO
-         zktQ==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=706ugoSFA3ymuQUNBKujB1WwD4e1IjlNm1YwTPv7M+M=;
+        b=IpZoYzLklxBXfrJU2i26x/Up3fdEdRBeHckTBsTwEmj0ASs4if17wvS9yQykFSLJne
+         23QSHTlBsVA7Rx0AbI+fDrT1gDtQpaQq4NiR7tJkXauhn6Rl2hH+NjAGv2vT3lt6argH
+         fN8M2Sz1luM4yJX6VwIX6bBmKX5Voxxid5nzTwao61/lO+RiZmTWz57ERT3yfDkAOGId
+         ON+mt4qffLvIS2HQ6cXvohsm0SnIbD9mfqBWLBnB1FkXrPkDQEePBx5P1f1tV+yq5Adp
+         39edmuWZUgnUKgZNZ7FrHRayWp6gNyKHluEEVhKcCc69eJW7THwn5q2lW9SQZIJXiKoW
+         5Ruw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=OFw4yzDyOHSC5n9Hi8nCtKnbyc7DAS/g61Kj7UOF3Rc=;
-        b=rOfdiOQ0HPoXMtnKaIoVdrJnKVIdTmnTQ3td5DWB2iEa59WmIs3GNAd/Gb6ogsj3zA
-         sBBgkrxh7g4anYjFyjArH151eyYhdK6xw5GOU+fQW+tJSIyUMlEnNIM633h2tWBkUDeI
-         1lVqQOW7cQPdrmjFKxie9+XNc2cjJDwVd2E3IedwNkR/d2W0wMoZowSJgDvHIEBW0y1Q
-         GYHC2yLQCUliPGXbnmQHYhh7vDbRde9UZpG5Vhejw2UexTdpomtyQEAattf7UtkngDEk
-         anZdc4v47c/fR5TK0IoTLkrFy95+/YHcfCLO4ZTx31CF2Rabt6DXNSa5HZdpqZu/cjcm
-         Ymew==
-X-Gm-Message-State: AA+aEWYSrfD7kcT71kGgsmcR2qGYG9+pcYVFT7Zf/OjFqiDsFuJJa3u9
-        aWEd4VvN7vLLdawVIUoNAVC9bN7sHxg7fA==
-X-Google-Smtp-Source: AFSGD/Xwp9kuSXM+5L6NEHUw6kLPpJIWGxbSTTnA+jEYuh5yo0FVqUXU5iDaKBo8IrjM5eVgymtG2g==
-X-Received: by 2002:a63:de04:: with SMTP id f4mr1358035pgg.292.1544760410531;
-        Thu, 13 Dec 2018 20:06:50 -0800 (PST)
-Received: from [192.168.1.121] (66.29.188.166.static.utbb.net. [66.29.188.166])
-        by smtp.gmail.com with ESMTPSA id t2sm5205731pfm.32.2018.12.13.20.06.48
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=706ugoSFA3ymuQUNBKujB1WwD4e1IjlNm1YwTPv7M+M=;
+        b=S0Mj0oVdli45PsKVvZfqv7sdjFBA/yEqECCsm1OwIKT6tjdiIY4Jys/rUURFb9o3zP
+         g8i8XLnqJBRMOLwqtBGsx3FHHddYlYI3ZlgDz3s9RsfB8b4K65DknE2AEomCHufVPR46
+         WJ4BZn/TPx3wqK1QtFE0Kbi3IYsxanAybPAfN6GkPo54WHXAWgG4ol3PERfFutPcWC+1
+         Ul73COSN7ZX1ngNXBQ6AT7o0LpRrzkgV3Sd+OF5PxR+0Vf1GfViwX2e02UnC76J3Bw7l
+         8NDLWzXl2N34isHnXbK4huylvU7U/Ijfce+nn9YjTXcg8YMtGmJ78VhVc0tTESHllHVa
+         q7lw==
+X-Gm-Message-State: AA+aEWYwhD40Rn5YrAVbNNzejORqjYrsTDNrea8FVOrv4eBAXrmvsosO
+        pvBbNKs3KjlfAIJ96T0GQ90yfezbug==
+X-Google-Smtp-Source: AFSGD/XYoek3+hXpkI12rFuxYgdXh4eEeLByOOBViIf+PVj+WT3uBRWv+vhEx2I8Q1ZUT8y0dZQCdw==
+X-Received: by 2002:a63:5f88:: with SMTP id t130mr1362254pgb.395.1544760463739;
+        Thu, 13 Dec 2018 20:07:43 -0800 (PST)
+Received: from mylaptop.redhat.com ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id r66sm4609160pfk.157.2018.12.13.20.07.39
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 13 Dec 2018 20:06:49 -0800 (PST)
-Subject: Re: linux-next: manual merge of the block tree with the scsi-fixes
- tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>
-References: <20181214132315.601d020f@canb.auug.org.au>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <a48f78a5-901b-20be-8df0-d69770710932@kernel.dk>
-Date:   Thu, 13 Dec 2018 21:06:47 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20181214132315.601d020f@canb.auug.org.au>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thu, 13 Dec 2018 20:07:42 -0800 (PST)
+From:   Pingfan Liu <kernelfans@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Pingfan Liu <kernelfans@gmail.com>, Dave Young <dyoung@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Baoquan He <bhe@redhat.com>, yinghai@kernel.org,
+        vgoyal@redhat.com, kexec@lists.infradead.org
+Subject: [PATCHv2] x86/kdump: bugfix, make the behavior of crashkernel=X consistent with kaslr
+Date:   Fri, 14 Dec 2018 12:07:26 +0800
+Message-Id: <1544760446-506-1-git-send-email-kernelfans@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/13/18 7:23 PM, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the block tree got a conflict in:
-> 
->   drivers/scsi/sd.c
-> 
-> between commit:
-> 
->   61cce6f6eece ("scsi: sd: use mempool for discard special page")
-> 
-> from the scsi-fixes tree and commit:
-> 
->   159b2cbf59f4 ("scsi: return blk_status_t from scsi_init_io and ->init_command")
-> 
-> from the block tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+Customer reported a bug on a high end server with many pcie devices, where
+kernel bootup with crashkernel=384M, and kaslr is enabled. Even
+though we still see much memory under 896 MB, the finding still failed
+intermittently. Because currently we can only find region under 896 MB,
+if w/0 ',high' specified. Then KASLR breaks 896 MB into several parts
+randomly, and crashkernel reservation need be aligned to 128 MB, that's
+why failure is found. It raises confusion to the end user that sometimes
+crashkernel=X works while sometimes fails.
+If want to make it succeed, customer can change kernel option to
+"crashkernel=384M, high". Just this give "crashkernel=xx@yy" a very
+limited space to behave even though its grammer looks more generic.
+And we can't answer questions raised from customer that confidently:
+1) why it doesn't succeed to reserve 896 MB;
+2) what's wrong with memory region under 4G;
+3) why I have to add ',high', I only require 384 MB, not 3840 MB.
 
-Martin, I can carry this one to avoid this conflict. Let me know!
+This patch simplifies the method suggested in the mail [1]. It just goes
+bottom-up to find a candidate region for crashkernel. The bottom-up may be
+better compatible with the old reservation style, i.e. still want to get
+memory region from 896 MB firstly, then [896 MB, 4G], finally above 4G.
 
+There is one trivial thing about the compatibility with old kexec-tools:
+if the reserved region is above 896M, then old tool will fail to load
+bzImage. But without this patch, the old tool also fail since there is no
+memory below 896M can be reserved for crashkernel.
+
+[1]: http://lists.infradead.org/pipermail/kexec/2017-October/019571.html
+Signed-off-by: Pingfan Liu <kernelfans@gmail.com>
+Cc: Dave Young <dyoung@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Baoquan He <bhe@redhat.com>
+Cc: yinghai@kernel.org,
+Cc: vgoyal@redhat.com
+Cc: kexec@lists.infradead.org
+
+---
+v1->v2:
+  improve commit log
+ arch/x86/kernel/setup.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
+index d494b9b..60f12c4 100644
+--- a/arch/x86/kernel/setup.c
++++ b/arch/x86/kernel/setup.c
+@@ -541,15 +541,18 @@ static void __init reserve_crashkernel(void)
+ 
+ 	/* 0 means: find the address automatically */
+ 	if (crash_base <= 0) {
++		if (!memblock_bottom_up())
++			memblock_set_bottom_up(true);
+ 		/*
+ 		 * Set CRASH_ADDR_LOW_MAX upper bound for crash memory,
+ 		 * as old kexec-tools loads bzImage below that, unless
+ 		 * "crashkernel=size[KMG],high" is specified.
+ 		 */
+ 		crash_base = memblock_find_in_range(CRASH_ALIGN,
+-						    high ? CRASH_ADDR_HIGH_MAX
+-							 : CRASH_ADDR_LOW_MAX,
+-						    crash_size, CRASH_ALIGN);
++			(max_pfn * PAGE_SIZE), crash_size, CRASH_ALIGN);
++		if (!memblock_bottom_up())
++			memblock_set_bottom_up(false);
++
+ 		if (!crash_base) {
+ 			pr_info("crashkernel reservation failed - No suitable area found.\n");
+ 			return;
 -- 
-Jens Axboe
+2.7.4
 
