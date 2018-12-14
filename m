@@ -7,50 +7,52 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07B91C6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:40:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8CB5C6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:40:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C2941204FD
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:40:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B421204FD
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:40:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544791239;
-	bh=wMQ8xL0tHEeCC7LoyIRMHeDYSHlOBodryRp3UuUE5z8=;
+	s=default; t=1544791246;
+	bh=tQ2YPL0/rbTqRWllxU3t/H0HwAeqhLOXZy66eIMQm+Q=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=XRiYJI+8vKAU0U1aWJCKOnXoXmatYBmXaoGZln1Kccmff2cdKOpKpfnapms3L31Tg
-	 plODvkyTl2rpU6adIbNAhW2PjVfoYUxXG3dWVK+qODc3LDl+IkYsDQvE9KhH7y70Nx
-	 rIeNxopAIul2EJskBQWXpAoRvaKFGjZteQr2dLcU=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2941204FD
+	b=D/nEnb7+pIjv8MKNm5aC53j6/EOsnrCGovTMQNZv9EYL6QLSkq8l5ZYGnFrGoj5wy
+	 UkYLOwAJTmvte3IE34Lu+wYkaduIIbJCEdZ97ZKthvXBlumeoG7Es//Wp1iC8QO6rW
+	 PrglayL5nRFNrSgoE7GY60PJbPbw+HPn0bQmgoOg=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B421204FD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730426AbeLNMEE (ORCPT
+        id S1730604AbeLNMkp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:04:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48416 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:40:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48330 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730412AbeLNMEA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:04:00 -0500
+        id S1730404AbeLNMD5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:03:57 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4E0242146F;
-        Fri, 14 Dec 2018 12:03:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D3A282145D;
+        Fri, 14 Dec 2018 12:03:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789039;
-        bh=wMQ8xL0tHEeCC7LoyIRMHeDYSHlOBodryRp3UuUE5z8=;
+        s=default; t=1544789037;
+        bh=tQ2YPL0/rbTqRWllxU3t/H0HwAeqhLOXZy66eIMQm+Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iFBZPfSuRCW+llNAlZ48XlIvvlgKEk/xZm5CYnIpHvGQbIKXIxtoWf3lrnF0cjxMg
-         SrHLO0IT0GP1t+voiP9/K522k5NOqUmBfxN7zTw+OQF5e8xWnxhvv4yXiropSDRIm/
-         tHBqHC4ZeiHIQHi9wCykQbS2X1KRHz2oKEmGkRjU=
+        b=dz/enLSGuMvv3kzwnfwU6syQdNtiSspT7NpYWXGRfEe4oPOj4IpR7VCoYjiangydR
+         tXUi5967SmEdhZRguxv8mjLcMb7VNMkJPhjTJeJtim4eJ4j6EOyBnXaZlZxeCFUemF
+         O4Cs0V1ks4VB4VSAmTLHQwTvTb9Ge1dCSxFI5AKA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Katsuhiro Suzuki <katsuhiro@katsuster.net>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org,
+        =?UTF-8?q?Noralf=20Tr=C3=B8nnes?= <noralf@tronnes.org>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Guenter Roeck <linux@roeck-us.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 048/142] ASoC: rockchip: add missing slave_config setting for I2S
-Date:   Fri, 14 Dec 2018 12:58:53 +0100
-Message-Id: <20181214115748.982491698@linuxfoundation.org>
+Subject: [PATCH 4.19 047/142] hwmon: (raspberrypi) Fix initial notify
+Date:   Fri, 14 Dec 2018 12:58:52 +0100
+Message-Id: <20181214115748.940358262@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115747.053633987@linuxfoundation.org>
 References: <20181214115747.053633987@linuxfoundation.org>
@@ -69,30 +71,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 16a8ee4c80b45984b6de1f90a49edcf336b7c621 ]
+[ Upstream commit 35fdc3902179366489a12cae4cb3ccc3b95f0afe ]
 
-This patch adds missing prepare_sleve_config that is needed for
-setup the DMA slave channel for I2S.
+In case an under-voltage happens before probing the driver wont
+write the critical warning into the kernel log. So don't init
+of last_throttled during probe and fix this issue.
 
-Signed-off-by: Katsuhiro Suzuki <katsuhiro@katsuster.net>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: 74d1e007915f ("hwmon: Add support for RPi voltage sensor")
+Reported-by: "Noralf Trønnes" <noralf@tronnes.org>
+Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/rockchip/rockchip_pcm.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/hwmon/raspberrypi-hwmon.c | 6 ------
+ 1 file changed, 6 deletions(-)
 
-diff --git a/sound/soc/rockchip/rockchip_pcm.c b/sound/soc/rockchip/rockchip_pcm.c
-index f77538319221..7029e0b85f9e 100644
---- a/sound/soc/rockchip/rockchip_pcm.c
-+++ b/sound/soc/rockchip/rockchip_pcm.c
-@@ -32,6 +32,7 @@ static const struct snd_pcm_hardware snd_rockchip_hardware = {
+diff --git a/drivers/hwmon/raspberrypi-hwmon.c b/drivers/hwmon/raspberrypi-hwmon.c
+index be5ba4690895..0d0457245e7d 100644
+--- a/drivers/hwmon/raspberrypi-hwmon.c
++++ b/drivers/hwmon/raspberrypi-hwmon.c
+@@ -115,7 +115,6 @@ static int rpi_hwmon_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+ 	struct rpi_hwmon_data *data;
+-	int ret;
  
- static const struct snd_dmaengine_pcm_config rk_dmaengine_pcm_config = {
- 	.pcm_hardware = &snd_rockchip_hardware,
-+	.prepare_slave_config = snd_dmaengine_pcm_prepare_slave_config,
- 	.prealloc_buffer_size = 32 * 1024,
- };
+ 	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
+ 	if (!data)
+@@ -124,11 +123,6 @@ static int rpi_hwmon_probe(struct platform_device *pdev)
+ 	/* Parent driver assure that firmware is correct */
+ 	data->fw = dev_get_drvdata(dev->parent);
  
+-	/* Init throttled */
+-	ret = rpi_firmware_property(data->fw, RPI_FIRMWARE_GET_THROTTLED,
+-				    &data->last_throttled,
+-				    sizeof(data->last_throttled));
+-
+ 	data->hwmon_dev = devm_hwmon_device_register_with_info(dev, "rpi_volt",
+ 							       data,
+ 							       &rpi_chip_info,
 -- 
 2.19.1
 
