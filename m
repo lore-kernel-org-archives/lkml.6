@@ -7,56 +7,50 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21FD5C6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:15:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82AD6C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:16:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB19D2148E
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:15:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F65A214DB
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:16:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544789757;
-	bh=prmj2rE5bCztstZF9F1lLHK03FQpkZRNwrPD3RzpNcQ=;
+	s=default; t=1544789763;
+	bh=GOJ6cCnek1ymHYbP1KywIiqd+3O9ZhpRbXrz9IW9FH4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=RPIzQXW2dsw/AD6mQpgzE/I2EWlf8KfY8SC3whm78J+Yy6Zgz+0cFlxnOxYHGFNmD
-	 mUwfCPSiyADgTB5GNPaij2fr6LuKYc2GNCxi3ncyNE0ZWWY28tfim2mFjTeUA2XxgP
-	 lvIEsOw5iEOIxQvnsZCEh0Y8A4fDYUgaR2X7LXrs=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB19D2148E
+	b=N+9O+KmIa4I6bbZBfy/y/YqeegtYVCST1io4+G1p8yCqeoRaRaXrRABleHyenQiTa
+	 Gqs2L2wMpsELfpKI1hrwxTCYSplklsy6jFK1IogW3+uLyGEyTUCvhKEHktw0eszk1w
+	 EZiWkOWeCJnFcnnt2IDF7WbxH4RYDSm1NF0yd3ks=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F65A214DB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732655AbeLNMPz (ORCPT
+        id S1732672AbeLNMQB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:15:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35930 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:16:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36044 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732640AbeLNMPv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:15:51 -0500
+        id S1732369AbeLNMP5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:15:57 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 25A81214AE;
-        Fri, 14 Dec 2018 12:15:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4422621479;
+        Fri, 14 Dec 2018 12:15:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789750;
-        bh=prmj2rE5bCztstZF9F1lLHK03FQpkZRNwrPD3RzpNcQ=;
+        s=default; t=1544789755;
+        bh=GOJ6cCnek1ymHYbP1KywIiqd+3O9ZhpRbXrz9IW9FH4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TRFq1ZBJaRWyobAwA/5TUHgYF+SSXNhBPJg0amriO4a4RM/b8/lKTuf4jl6DKBaVn
-         lT0X6cY2NrU95PBA7IwhwNTakcfeJQPcOBqyytymK9jloMePl4+V5YXkjwV/DYCZ6k
-         H2XIctYDskZp91virqasvIgNlmUWw+DdbPGFk9Tc=
+        b=wF2+0wpmf2EzR26EIUtqz0KL+5nSIMyIFD3aA+bGiJqqzzbQRnYeu2bfo9Z4bEM4T
+         nFhDUstwB/GseMCUlubXoVzk1XWgv2DskEj9jLcUG3/lFlAZZPPCv5ckEndDxNcC8s
+         mK8WIdDN8getMSLxf+Du51XWQHB2O9ZZEF2gAUi8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
+        stable@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        linux-arch@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-        kernel-hardening@lists.openwall.com,
-        Al Viro <viro@zeniv.linux.org.uk>, alan@linux.intel.com,
         Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.4 55/88] x86/uaccess: Use __uaccess_begin_nospec() and uaccess_try_nospec
-Date:   Fri, 14 Dec 2018 13:00:29 +0100
-Message-Id: <20181214115707.004243853@linuxfoundation.org>
+Subject: [PATCH 4.4 65/88] bpf: Prevent memory disambiguation attack
+Date:   Fri, 14 Dec 2018 13:00:39 +0100
+Message-Id: <20181214115707.681167481@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115702.151309521@linuxfoundation.org>
 References: <20181214115702.151309521@linuxfoundation.org>
@@ -75,304 +69,145 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Williams <dan.j.williams@intel.com>
+From: Alexei Starovoitov <ast@kernel.org>
 
-commit 304ec1b050310548db33063e567123fae8fd0301 upstream.
+commit af86ca4e3088fe5eacf2f7e58c01fa68ca067672 upstream.
 
-Quoting Linus:
+Detect code patterns where malicious 'speculative store bypass' can be used
+and sanitize such patterns.
 
-    I do think that it would be a good idea to very expressly document
-    the fact that it's not that the user access itself is unsafe. I do
-    agree that things like "get_user()" want to be protected, but not
-    because of any direct bugs or problems with get_user() and friends,
-    but simply because get_user() is an excellent source of a pointer
-    that is obviously controlled from a potentially attacking user
-    space. So it's a prime candidate for then finding _subsequent_
-    accesses that can then be used to perturb the cache.
+ 39: (bf) r3 = r10
+ 40: (07) r3 += -216
+ 41: (79) r8 = *(u64 *)(r7 +0)   // slow read
+ 42: (7a) *(u64 *)(r10 -72) = 0  // verifier inserts this instruction
+ 43: (7b) *(u64 *)(r8 +0) = r3   // this store becomes slow due to r8
+ 44: (79) r1 = *(u64 *)(r6 +0)   // cpu speculatively executes this load
+ 45: (71) r2 = *(u8 *)(r1 +0)    // speculatively arbitrary 'load byte'
+                                 // is now sanitized
 
-__uaccess_begin_nospec() covers __get_user() and copy_from_iter() where the
-limit check is far away from the user pointer de-reference. In those cases
-a barrier_nospec() prevents speculation with a potential pointer to
-privileged memory. uaccess_try_nospec covers get_user_try.
+Above code after x86 JIT becomes:
+ e5: mov    %rbp,%rdx
+ e8: add    $0xffffffffffffff28,%rdx
+ ef: mov    0x0(%r13),%r14
+ f3: movq   $0x0,-0x48(%rbp)
+ fb: mov    %rdx,0x0(%r14)
+ ff: mov    0x0(%rbx),%rdi
+103: movzbq 0x0(%rdi),%rsi
 
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-Suggested-by: Andi Kleen <ak@linux.intel.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-arch@vger.kernel.org
-Cc: Kees Cook <keescook@chromium.org>
-Cc: kernel-hardening@lists.openwall.com
-Cc: gregkh@linuxfoundation.org
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: alan@linux.intel.com
-Link: https://lkml.kernel.org/r/151727416953.33451.10508284228526170604.stgit@dwillia2-desk3.amr.corp.intel.com
 [bwh: Backported to 4.4:
- - Convert several more functions to use __uaccess_begin_nospec(), that
-   are just wrappers in mainline
- - Adjust context]
+ - Add verifier_env parameter to check_stack_write()
+ - Look up stack slot_types with state->stack_slot_type[] rather than
+   state->stack[].slot_type[]
+ - Drop bpf_verifier_env argument to verbose()
+ - Adjust filename, context]
 Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/include/asm/uaccess.h    |    6 +++---
- arch/x86/include/asm/uaccess_32.h |   26 +++++++++++++-------------
- arch/x86/include/asm/uaccess_64.h |   20 ++++++++++----------
- arch/x86/lib/usercopy_32.c        |   10 +++++-----
- 4 files changed, 31 insertions(+), 31 deletions(-)
+ kernel/bpf/verifier.c |   63 ++++++++++++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 59 insertions(+), 4 deletions(-)
 
---- a/arch/x86/include/asm/uaccess.h
-+++ b/arch/x86/include/asm/uaccess.h
-@@ -436,7 +436,7 @@ do {									\
- ({									\
- 	int __gu_err;							\
- 	unsigned long __gu_val;						\
--	__uaccess_begin();						\
-+	__uaccess_begin_nospec();					\
- 	__get_user_size(__gu_val, (ptr), (size), __gu_err, -EFAULT);	\
- 	__uaccess_end();						\
- 	(x) = (__force __typeof__(*(ptr)))__gu_val;			\
-@@ -546,7 +546,7 @@ struct __large_struct { unsigned long bu
-  *	get_user_ex(...);
-  * } get_user_catch(err)
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -191,6 +191,7 @@ struct bpf_insn_aux_data {
+ 		enum bpf_reg_type ptr_type;	/* pointer type for load/store insns */
+ 		struct bpf_map *map_ptr;	/* pointer for call insn into lookup_elem */
+ 	};
++	int sanitize_stack_off; /* stack slot to be cleared */
+ 	bool seen; /* this insn was processed by the verifier */
+ };
+ 
+@@ -569,8 +570,9 @@ static bool is_spillable_regtype(enum bp
+ /* check_stack_read/write functions track spill/fill of registers,
+  * stack boundary and alignment are checked in check_mem_access()
   */
--#define get_user_try		uaccess_try
-+#define get_user_try		uaccess_try_nospec
- #define get_user_catch(err)	uaccess_catch(err)
- 
- #define get_user_ex(x, ptr)	do {					\
-@@ -581,7 +581,7 @@ extern void __cmpxchg_wrong_size(void)
- 	__typeof__(ptr) __uval = (uval);				\
- 	__typeof__(*(ptr)) __old = (old);				\
- 	__typeof__(*(ptr)) __new = (new);				\
--	__uaccess_begin();						\
-+	__uaccess_begin_nospec();					\
- 	switch (size) {							\
- 	case 1:								\
- 	{								\
---- a/arch/x86/include/asm/uaccess_32.h
-+++ b/arch/x86/include/asm/uaccess_32.h
-@@ -48,25 +48,25 @@ __copy_to_user_inatomic(void __user *to,
- 
- 		switch (n) {
- 		case 1:
--			__uaccess_begin();
-+			__uaccess_begin_nospec();
- 			__put_user_size(*(u8 *)from, (u8 __user *)to,
- 					1, ret, 1);
- 			__uaccess_end();
- 			return ret;
- 		case 2:
--			__uaccess_begin();
-+			__uaccess_begin_nospec();
- 			__put_user_size(*(u16 *)from, (u16 __user *)to,
- 					2, ret, 2);
- 			__uaccess_end();
- 			return ret;
- 		case 4:
--			__uaccess_begin();
-+			__uaccess_begin_nospec();
- 			__put_user_size(*(u32 *)from, (u32 __user *)to,
- 					4, ret, 4);
- 			__uaccess_end();
- 			return ret;
- 		case 8:
--			__uaccess_begin();
-+			__uaccess_begin_nospec();
- 			__put_user_size(*(u64 *)from, (u64 __user *)to,
- 					8, ret, 8);
- 			__uaccess_end();
-@@ -111,17 +111,17 @@ __copy_from_user_inatomic(void *to, cons
- 
- 		switch (n) {
- 		case 1:
--			__uaccess_begin();
-+			__uaccess_begin_nospec();
- 			__get_user_size(*(u8 *)to, from, 1, ret, 1);
- 			__uaccess_end();
- 			return ret;
- 		case 2:
--			__uaccess_begin();
-+			__uaccess_begin_nospec();
- 			__get_user_size(*(u16 *)to, from, 2, ret, 2);
- 			__uaccess_end();
- 			return ret;
- 		case 4:
--			__uaccess_begin();
-+			__uaccess_begin_nospec();
- 			__get_user_size(*(u32 *)to, from, 4, ret, 4);
- 			__uaccess_end();
- 			return ret;
-@@ -162,17 +162,17 @@ __copy_from_user(void *to, const void __
- 
- 		switch (n) {
- 		case 1:
--			__uaccess_begin();
-+			__uaccess_begin_nospec();
- 			__get_user_size(*(u8 *)to, from, 1, ret, 1);
- 			__uaccess_end();
- 			return ret;
- 		case 2:
--			__uaccess_begin();
-+			__uaccess_begin_nospec();
- 			__get_user_size(*(u16 *)to, from, 2, ret, 2);
- 			__uaccess_end();
- 			return ret;
- 		case 4:
--			__uaccess_begin();
-+			__uaccess_begin_nospec();
- 			__get_user_size(*(u32 *)to, from, 4, ret, 4);
- 			__uaccess_end();
- 			return ret;
-@@ -190,17 +190,17 @@ static __always_inline unsigned long __c
- 
- 		switch (n) {
- 		case 1:
--			__uaccess_begin();
-+			__uaccess_begin_nospec();
- 			__get_user_size(*(u8 *)to, from, 1, ret, 1);
- 			__uaccess_end();
- 			return ret;
- 		case 2:
--			__uaccess_begin();
-+			__uaccess_begin_nospec();
- 			__get_user_size(*(u16 *)to, from, 2, ret, 2);
- 			__uaccess_end();
- 			return ret;
- 		case 4:
--			__uaccess_begin();
-+			__uaccess_begin_nospec();
- 			__get_user_size(*(u32 *)to, from, 4, ret, 4);
- 			__uaccess_end();
- 			return ret;
---- a/arch/x86/include/asm/uaccess_64.h
-+++ b/arch/x86/include/asm/uaccess_64.h
-@@ -57,31 +57,31 @@ int __copy_from_user_nocheck(void *dst,
- 		return copy_user_generic(dst, (__force void *)src, size);
- 	switch (size) {
- 	case 1:
--		__uaccess_begin();
-+		__uaccess_begin_nospec();
- 		__get_user_asm(*(u8 *)dst, (u8 __user *)src,
- 			      ret, "b", "b", "=q", 1);
- 		__uaccess_end();
- 		return ret;
- 	case 2:
--		__uaccess_begin();
-+		__uaccess_begin_nospec();
- 		__get_user_asm(*(u16 *)dst, (u16 __user *)src,
- 			      ret, "w", "w", "=r", 2);
- 		__uaccess_end();
- 		return ret;
- 	case 4:
--		__uaccess_begin();
-+		__uaccess_begin_nospec();
- 		__get_user_asm(*(u32 *)dst, (u32 __user *)src,
- 			      ret, "l", "k", "=r", 4);
- 		__uaccess_end();
- 		return ret;
- 	case 8:
--		__uaccess_begin();
-+		__uaccess_begin_nospec();
- 		__get_user_asm(*(u64 *)dst, (u64 __user *)src,
- 			      ret, "q", "", "=r", 8);
- 		__uaccess_end();
- 		return ret;
- 	case 10:
--		__uaccess_begin();
-+		__uaccess_begin_nospec();
- 		__get_user_asm(*(u64 *)dst, (u64 __user *)src,
- 			       ret, "q", "", "=r", 10);
- 		if (likely(!ret))
-@@ -91,7 +91,7 @@ int __copy_from_user_nocheck(void *dst,
- 		__uaccess_end();
- 		return ret;
- 	case 16:
--		__uaccess_begin();
-+		__uaccess_begin_nospec();
- 		__get_user_asm(*(u64 *)dst, (u64 __user *)src,
- 			       ret, "q", "", "=r", 16);
- 		if (likely(!ret))
-@@ -190,7 +190,7 @@ int __copy_in_user(void __user *dst, con
- 	switch (size) {
- 	case 1: {
- 		u8 tmp;
--		__uaccess_begin();
-+		__uaccess_begin_nospec();
- 		__get_user_asm(tmp, (u8 __user *)src,
- 			       ret, "b", "b", "=q", 1);
- 		if (likely(!ret))
-@@ -201,7 +201,7 @@ int __copy_in_user(void __user *dst, con
- 	}
- 	case 2: {
- 		u16 tmp;
--		__uaccess_begin();
-+		__uaccess_begin_nospec();
- 		__get_user_asm(tmp, (u16 __user *)src,
- 			       ret, "w", "w", "=r", 2);
- 		if (likely(!ret))
-@@ -213,7 +213,7 @@ int __copy_in_user(void __user *dst, con
- 
- 	case 4: {
- 		u32 tmp;
--		__uaccess_begin();
-+		__uaccess_begin_nospec();
- 		__get_user_asm(tmp, (u32 __user *)src,
- 			       ret, "l", "k", "=r", 4);
- 		if (likely(!ret))
-@@ -224,7 +224,7 @@ int __copy_in_user(void __user *dst, con
- 	}
- 	case 8: {
- 		u64 tmp;
--		__uaccess_begin();
-+		__uaccess_begin_nospec();
- 		__get_user_asm(tmp, (u64 __user *)src,
- 			       ret, "q", "", "=r", 8);
- 		if (likely(!ret))
---- a/arch/x86/lib/usercopy_32.c
-+++ b/arch/x86/lib/usercopy_32.c
-@@ -570,7 +570,7 @@ do {									\
- unsigned long __copy_to_user_ll(void __user *to, const void *from,
- 				unsigned long n)
+-static int check_stack_write(struct verifier_state *state, int off, int size,
+-			     int value_regno)
++static int check_stack_write(struct verifier_env *env,
++			     struct verifier_state *state, int off,
++			     int size, int value_regno, int insn_idx)
  {
--	__uaccess_begin();
-+	__uaccess_begin_nospec();
- 	if (movsl_is_ok(to, from, n))
- 		__copy_user(to, from, n);
- 	else
-@@ -583,7 +583,7 @@ EXPORT_SYMBOL(__copy_to_user_ll);
- unsigned long __copy_from_user_ll(void *to, const void __user *from,
- 					unsigned long n)
- {
--	__uaccess_begin();
-+	__uaccess_begin_nospec();
- 	if (movsl_is_ok(to, from, n))
- 		__copy_user_zeroing(to, from, n);
- 	else
-@@ -596,7 +596,7 @@ EXPORT_SYMBOL(__copy_from_user_ll);
- unsigned long __copy_from_user_ll_nozero(void *to, const void __user *from,
- 					 unsigned long n)
- {
--	__uaccess_begin();
-+	__uaccess_begin_nospec();
- 	if (movsl_is_ok(to, from, n))
- 		__copy_user(to, from, n);
- 	else
-@@ -610,7 +610,7 @@ EXPORT_SYMBOL(__copy_from_user_ll_nozero
- unsigned long __copy_from_user_ll_nocache(void *to, const void __user *from,
- 					unsigned long n)
- {
--	__uaccess_begin();
-+	__uaccess_begin_nospec();
- #ifdef CONFIG_X86_INTEL_USERCOPY
- 	if (n > 64 && cpu_has_xmm2)
- 		n = __copy_user_zeroing_intel_nocache(to, from, n);
-@@ -627,7 +627,7 @@ EXPORT_SYMBOL(__copy_from_user_ll_nocach
- unsigned long __copy_from_user_ll_nocache_nozero(void *to, const void __user *from,
- 					unsigned long n)
- {
--	__uaccess_begin();
-+	__uaccess_begin_nospec();
- #ifdef CONFIG_X86_INTEL_USERCOPY
- 	if (n > 64 && cpu_has_xmm2)
- 		n = __copy_user_intel_nocache(to, from, n);
+ 	int i, spi = (MAX_BPF_STACK + off) / BPF_REG_SIZE;
+ 	/* caller checked that off % size == 0 and -MAX_BPF_STACK <= off < 0,
+@@ -589,8 +591,32 @@ static int check_stack_write(struct veri
+ 		/* save register state */
+ 		state->spilled_regs[spi] = state->regs[value_regno];
+ 
+-		for (i = 0; i < BPF_REG_SIZE; i++)
++		for (i = 0; i < BPF_REG_SIZE; i++) {
++			if (state->stack_slot_type[MAX_BPF_STACK + off + i] == STACK_MISC &&
++			    !env->allow_ptr_leaks) {
++				int *poff = &env->insn_aux_data[insn_idx].sanitize_stack_off;
++				int soff = (-spi - 1) * BPF_REG_SIZE;
++
++				/* detected reuse of integer stack slot with a pointer
++				 * which means either llvm is reusing stack slot or
++				 * an attacker is trying to exploit CVE-2018-3639
++				 * (speculative store bypass)
++				 * Have to sanitize that slot with preemptive
++				 * store of zero.
++				 */
++				if (*poff && *poff != soff) {
++					/* disallow programs where single insn stores
++					 * into two different stack slots, since verifier
++					 * cannot sanitize them
++					 */
++					verbose("insn %d cannot access two stack slots fp%d and fp%d",
++						insn_idx, *poff, soff);
++					return -EINVAL;
++				}
++				*poff = soff;
++			}
+ 			state->stack_slot_type[MAX_BPF_STACK + off + i] = STACK_SPILL;
++		}
+ 	} else {
+ 		/* regular write of data into stack */
+ 		state->spilled_regs[spi] = (struct reg_state) {};
+@@ -746,7 +772,8 @@ static int check_mem_access(struct verif
+ 				verbose("attempt to corrupt spilled pointer on stack\n");
+ 				return -EACCES;
+ 			}
+-			err = check_stack_write(state, off, size, value_regno);
++			err = check_stack_write(env, state, off, size,
++						value_regno, insn_idx);
+ 		} else {
+ 			err = check_stack_read(state, off, size, value_regno);
+ 		}
+@@ -2228,6 +2255,34 @@ static int convert_ctx_accesses(struct v
+ 		else
+ 			continue;
+ 
++		if (type == BPF_WRITE &&
++		    env->insn_aux_data[i + delta].sanitize_stack_off) {
++			struct bpf_insn patch[] = {
++				/* Sanitize suspicious stack slot with zero.
++				 * There are no memory dependencies for this store,
++				 * since it's only using frame pointer and immediate
++				 * constant of zero
++				 */
++				BPF_ST_MEM(BPF_DW, BPF_REG_FP,
++					   env->insn_aux_data[i + delta].sanitize_stack_off,
++					   0),
++				/* the original STX instruction will immediately
++				 * overwrite the same stack slot with appropriate value
++				 */
++				*insn,
++			};
++
++			cnt = ARRAY_SIZE(patch);
++			new_prog = bpf_patch_insn_data(env, i + delta, patch, cnt);
++			if (!new_prog)
++				return -ENOMEM;
++
++			delta    += cnt - 1;
++			env->prog = new_prog;
++			insn      = new_prog->insnsi + i + delta;
++			continue;
++		}
++
+ 		if (env->insn_aux_data[i + delta].ptr_type != PTR_TO_CTX)
+ 			continue;
+ 
 
 
