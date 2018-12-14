@@ -2,110 +2,102 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.9 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13DC1C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:57:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43074C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:58:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54CB92086D
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:57:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7180B2086D
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:58:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dJWHLX2F"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731131AbeLNU5p (ORCPT
+        id S1731161AbeLNU6J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 15:57:45 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:35479 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730123AbeLNU5p (ORCPT
+        Fri, 14 Dec 2018 15:58:09 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:33024 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730757AbeLNU6I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 15:57:45 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBEKvcIv1459718
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Fri, 14 Dec 2018 12:57:38 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBEKvcfj1459715;
-        Fri, 14 Dec 2018 12:57:38 -0800
-Date:   Fri, 14 Dec 2018 12:57:38 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-b663e33bm6x8hrkie4uxh7u2@git.kernel.org>
-Cc:     jolsa@kernel.org, hpa@zytor.com, acme@redhat.com, mingo@kernel.org,
-        adrian.hunter@intel.com, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, namhyung@kernel.org
-Reply-To: hpa@zytor.com, jolsa@kernel.org, acme@redhat.com,
-          mingo@kernel.org, adrian.hunter@intel.com,
-          linux-kernel@vger.kernel.org, tglx@linutronix.de,
-          namhyung@kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf parse-events: Fix unchecked usage of strncpy()
-Git-Commit-ID: d18302245c157e0cd87efe20b3ce530265907ca5
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Fri, 14 Dec 2018 15:58:08 -0500
+Received: by mail-pl1-f194.google.com with SMTP id z23so3263982plo.0;
+        Fri, 14 Dec 2018 12:58:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=nKn9yheUmyYNGOHtNqDCelwebCWGHkX+/pUrK3UVzM8=;
+        b=dJWHLX2FpXTq8S4acSufbNHvMbzNb4p0GG6Ed48izfhGWPWK1oHzmm8ZsDxs92mGMr
+         Jj+KmxM6oHj65FRaPcjYCEXWmPEZwVItcSv5BrVbNez6Zh8gKYim3rjY/axju+3hpiSH
+         Yg6dvx5VFq6l2JoQ+/7iuXK5snmBD/d0LeaxpLW8oG9haHl3SFjjCA1y/AqiHj1KAXYT
+         yDGnPdJvTTsi3kTlTpmBfvmwpa7ffYfvz8qXU+tiDsgDGRM2lGRktS2mutv93noIxov6
+         Kzbv66EznoQNG1OuQbehQN2RNUhNCyJvNksg0WiTQYc+ddxLNBBQRav29G1IVJ0uPxpu
+         NCJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=nKn9yheUmyYNGOHtNqDCelwebCWGHkX+/pUrK3UVzM8=;
+        b=LRk2kd4dTt9yNvn4cH52enPztxNRpeI8fap2dovdheAhTTcuvxq+GHS6/0/EQcg+zL
+         XQE1I5O8eUhAUR4IhDJ+PAk26yMLA7kfP1omlJG576IvkamVMhGsEgLe+lh1HFCDfWL+
+         eQxzYOt6+z6XbHRpzazApkhG9cauw2qraka5BcBuryGLfFfUpKmEU0aAv6tmmOlUZM5A
+         cwDCfddFmmTIjI1vwTHqCNVwYolJHc2ujDlrR3FquLk+aodPb/MW7aDCY6AI5ZUaBl/O
+         J8/2S3dzngWrvu+Je8s6pGxr7aGFyv9dNDSMV8ak99uYvJbXAEahEqVI9x97GQ1qi8vE
+         lvvg==
+X-Gm-Message-State: AA+aEWYb6Qydz4jxoqna6ZlKfUtIYLHekJR/Nw1qqIgWPCgl1U8GEh+8
+        gEigVfZBFljPOljFjbiRQNc=
+X-Google-Smtp-Source: AFSGD/VLOh89EnSalpSeo0xal3qwzpwuPo4L7brqqgRwlMOJJEBw6LlplkSXuEYB80SMB6owLwlrWw==
+X-Received: by 2002:a17:902:29ab:: with SMTP id h40mr4239467plb.238.1544821087915;
+        Fri, 14 Dec 2018 12:58:07 -0800 (PST)
+Received: from himanshu-Vostro-3559 ([103.233.116.134])
+        by smtp.gmail.com with ESMTPSA id a10sm7108659pfi.138.2018.12.14.12.58.04
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 14 Dec 2018 12:58:07 -0800 (PST)
+Date:   Sat, 15 Dec 2018 02:28:00 +0530
+From:   Himanshu Jha <himanshujha199640@gmail.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>,
+        joe@perches.com, gregkh@linuxfoundation.org, apw@canonical.com,
+        linux-kernel@vger.kernel.org, niklas.cassel@linaro.org,
+        corbet@lwn.net, linux-doc@vger.kernel.org
+Subject: Re: [PATCH 2/2] checkpatch: add Co-developed-by to signature tags
+Message-ID: <20181214205800.GA22639@himanshu-Vostro-3559>
+References: <1544808928-20002-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
+ <1544808928-20002-3-git-send-email-jorge.ramirez-ortiz@linaro.org>
+ <20181214121634.1157f2302c8ba1825fc03ad2@linux-foundation.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20181214121634.1157f2302c8ba1825fc03ad2@linux-foundation.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  d18302245c157e0cd87efe20b3ce530265907ca5
-Gitweb:     https://git.kernel.org/tip/d18302245c157e0cd87efe20b3ce530265907ca5
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Thu, 6 Dec 2018 13:52:13 -0300
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Thu, 6 Dec 2018 16:42:53 -0300
+On Fri, Dec 14, 2018 at 12:16:34PM -0800, Andrew Morton wrote:
+> On Fri, 14 Dec 2018 18:35:28 +0100 Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org> wrote:
+> 
+> > As per Documentation/process/submitting-patches, Co-developed-by is a
+> > valid signature.
+> > 
+> 
+> I'm with Joe - I find this tag kinda useless and duplicative.  But whatever.
 
-perf parse-events: Fix unchecked usage of strncpy()
+I'm fine either way, just the problem is:
 
-The strncpy() function may leave the destination string buffer
-unterminated, better use strlcpy() that we have a __weak fallback
-implementation for systems without it.
+	Co-developed-by Vs Co-Developed-by
 
-This fixes this warning on an Alpine Linux Edge system with gcc 8.2:
+with checkpatch spitting out that it is not a valid signature.
 
-  util/parse-events.c: In function 'print_symbol_events':
-  util/parse-events.c:2465:4: error: 'strncpy' specified bound 100 equals destination size [-Werror=stringop-truncation]
-      strncpy(name, syms->symbol, MAX_NAME_LEN);
-      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  In function 'print_symbol_events.constprop',
-      inlined from 'print_events' at util/parse-events.c:2508:2:
-  util/parse-events.c:2465:4: error: 'strncpy' specified bound 100 equals destination size [-Werror=stringop-truncation]
-      strncpy(name, syms->symbol, MAX_NAME_LEN);
-      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  In function 'print_symbol_events.constprop',
-      inlined from 'print_events' at util/parse-events.c:2511:2:
-  util/parse-events.c:2465:4: error: 'strncpy' specified bound 100 equals destination size [-Werror=stringop-truncation]
-      strncpy(name, syms->symbol, MAX_NAME_LEN);
-      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  cc1: all warnings being treated as errors
+In the end, I can completely remove the tag from docs if it is useless
+and duplicative.
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Fixes: 947b4ad1d198 ("perf list: Fix max event string size")
-Link: https://lkml.kernel.org/n/tip-b663e33bm6x8hrkie4uxh7u2@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/util/parse-events.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
-index 59be3466d64d..920e1e6551dd 100644
---- a/tools/perf/util/parse-events.c
-+++ b/tools/perf/util/parse-events.c
-@@ -2462,7 +2462,7 @@ restart:
- 		if (!name_only && strlen(syms->alias))
- 			snprintf(name, MAX_NAME_LEN, "%s OR %s", syms->symbol, syms->alias);
- 		else
--			strncpy(name, syms->symbol, MAX_NAME_LEN);
-+			strlcpy(name, syms->symbol, MAX_NAME_LEN);
- 
- 		evt_list[evt_i] = strdup(name);
- 		if (evt_list[evt_i] == NULL)
+-- 
+Himanshu Jha
+Undergraduate Student
+Department of Electronics & Communication
+Guru Tegh Bahadur Institute of Technology
