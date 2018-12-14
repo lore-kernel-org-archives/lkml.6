@@ -7,50 +7,50 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 596E1C67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:01:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34008C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:02:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1ED222146E
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:01:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF5C421473
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:01:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544788916;
-	bh=igHB7H/m0mUo8Mxz8ugV08OSfZOxkPyXtr/e+rM2S+k=;
+	s=default; t=1544788920;
+	bh=/csCYu5RZwmTmGX8u1n9AmiafdLVWxlDzkuXYQmY38M=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=bsqmgRI/2k3Ha+JViVCK17PTmGsaeVjeBVyvAaDEkDZpB+tWis9yXfCNqM95uvYEN
-	 Cp6H9YT140xidHqJXiOTBp0ynWbTSdqry5P50RRcN8avRybaTvwQAazK9ZVm/fBuhG
-	 aHrWJ/+XmFCjUb1eLA5o1zhXxioHZ/GoljhwbePQ=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1ED222146E
+	b=VDpaUtt0sz/ml2kssEP4mRxuxJz5yrpk5umrkxJdCtamSEtaTQ/gfWJB0iePAaTix
+	 rGFubyZzTt/vDriOvbQJfEGWkqDpr5Nx/7iqMiQ/yNRqmFbmA+l5ZqBNgdiA4kHxsY
+	 rNJRTcTKjwexB+7HhqVeN3gfVpFsJcVmS7308N3M=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF5C421473
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729882AbeLNMBz (ORCPT
+        id S1729917AbeLNMB7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:01:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44386 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:01:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44634 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729523AbeLNMBr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:01:47 -0500
+        id S1729894AbeLNMB5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:01:57 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6554D2146E;
-        Fri, 14 Dec 2018 12:01:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8CBA02146E;
+        Fri, 14 Dec 2018 12:01:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544788906;
-        bh=igHB7H/m0mUo8Mxz8ugV08OSfZOxkPyXtr/e+rM2S+k=;
+        s=default; t=1544788917;
+        bh=/csCYu5RZwmTmGX8u1n9AmiafdLVWxlDzkuXYQmY38M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fo33gIoXwtIlNyEJNT7sf5M7w6+fgNmts1Dh3qThP7MOJzD/H5iOoF0YpbZGIGsOc
-         wm+WkZ7k7oGr7xVf7hjfQR6l0KYwZZJPmo5wQfUk1sXmuTbv6/vKOwjA+FMlQx/iRh
-         kwgTwArXkAET5iMvhHcXX0P/6zmT7g9vec523Pp8=
+        b=BFQv0Eim9y0gYeIFkQ+uEOi8BRJZjxuoCMtJbzBm9wncW6wd4anNDczgDpMd+xkb7
+         xJDAskKIPnsVa7xcgNg3AKOYU0Dx5DTg+qrUqqlpALmHjBpAcsQdAiCEhzwdjiLsRh
+         XvXnOjpwz1CXGHBMwf9p4RDjjPDAC2elJ0wcZSY4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Shmulik Ladkani <shmulik.ladkani@gmail.com>,
+        stable@vger.kernel.org, Heiner Kallweit <hkallweit1@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 004/142] ipv6: sr: properly initialize flowi6 prior passing to ip6_route_output
-Date:   Fri, 14 Dec 2018 12:58:09 +0100
-Message-Id: <20181214115747.231205004@linuxfoundation.org>
+Subject: [PATCH 4.19 008/142] net: phy: dont allow __set_phy_supported to add unsupported modes
+Date:   Fri, 14 Dec 2018 12:58:13 +0100
+Message-Id: <20181214115747.381380475@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115747.053633987@linuxfoundation.org>
 References: <20181214115747.053633987@linuxfoundation.org>
@@ -69,30 +69,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Shmulik Ladkani <shmulik@metanetworks.com>
+From: Heiner Kallweit <hkallweit1@gmail.com>
 
-[ Upstream commit 1b4e5ad5d6b9f15cd0b5121f86d4719165958417 ]
+[ Upstream commit d2a36971ef595069b7a600d1144c2e0881a930a1 ]
 
-In 'seg6_output', stack variable 'struct flowi6 fl6' was missing
-initialization.
+Currently __set_phy_supported allows to add modes w/o checking whether
+the PHY supports them. This is wrong, it should never add modes but
+only remove modes we don't want to support.
 
-Fixes: 6c8702c60b88 ("ipv6: sr: add support for SRH encapsulation and injection with lwtunnels")
-Signed-off-by: Shmulik Ladkani <shmulik.ladkani@gmail.com>
+The commit marked as fixed didn't do anything wrong, it just copied
+existing functionality to the helper which is being fixed now.
+
+Fixes: f3a6bd393c2c ("phylib: Add phy_set_max_speed helper")
+Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv6/seg6_iptunnel.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/phy/phy_device.c |   19 ++++++++-----------
+ 1 file changed, 8 insertions(+), 11 deletions(-)
 
---- a/net/ipv6/seg6_iptunnel.c
-+++ b/net/ipv6/seg6_iptunnel.c
-@@ -347,6 +347,7 @@ static int seg6_output(struct net *net,
- 		struct ipv6hdr *hdr = ipv6_hdr(skb);
- 		struct flowi6 fl6;
+--- a/drivers/net/phy/phy_device.c
++++ b/drivers/net/phy/phy_device.c
+@@ -1738,20 +1738,17 @@ EXPORT_SYMBOL(genphy_loopback);
  
-+		memset(&fl6, 0, sizeof(fl6));
- 		fl6.daddr = hdr->daddr;
- 		fl6.saddr = hdr->saddr;
- 		fl6.flowlabel = ip6_flowinfo(hdr);
+ static int __set_phy_supported(struct phy_device *phydev, u32 max_speed)
+ {
+-	phydev->supported &= ~(PHY_1000BT_FEATURES | PHY_100BT_FEATURES |
+-			       PHY_10BT_FEATURES);
+-
+ 	switch (max_speed) {
+-	default:
+-		return -ENOTSUPP;
+-	case SPEED_1000:
+-		phydev->supported |= PHY_1000BT_FEATURES;
++	case SPEED_10:
++		phydev->supported &= ~PHY_100BT_FEATURES;
+ 		/* fall through */
+ 	case SPEED_100:
+-		phydev->supported |= PHY_100BT_FEATURES;
+-		/* fall through */
+-	case SPEED_10:
+-		phydev->supported |= PHY_10BT_FEATURES;
++		phydev->supported &= ~PHY_1000BT_FEATURES;
++		break;
++	case SPEED_1000:
++		break;
++	default:
++		return -ENOTSUPP;
+ 	}
+ 
+ 	return 0;
 
 
