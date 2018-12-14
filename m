@@ -2,187 +2,237 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39E22C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 14:15:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03819C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 14:16:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4146206C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 14:15:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AAF90206E0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 14:16:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=poorly.run header.i=@poorly.run header.b="ICwF57aN"
+	dkim=pass (2048-bit key) header.d=bytedance-com.20150623.gappssmtp.com header.i=@bytedance-com.20150623.gappssmtp.com header.b="AayBWhx+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730122AbeLNOPm (ORCPT
+        id S1730115AbeLNOQb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 09:15:42 -0500
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:42098 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729890AbeLNOPm (ORCPT
+        Fri, 14 Dec 2018 09:16:31 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:36538 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726554AbeLNOQb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 09:15:42 -0500
-Received: by mail-yw1-f67.google.com with SMTP id x2so2318693ywc.9
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 06:15:41 -0800 (PST)
+        Fri, 14 Dec 2018 09:16:31 -0500
+Received: by mail-pf1-f193.google.com with SMTP id b85so2915082pfc.3
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 06:16:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=poorly.run; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=QGILX5ZO5eZc/l5EQU1PR2qLPMBe3eqixLTUZdadH/k=;
-        b=ICwF57aNe2VbdRONM2zz7YqgFA4eLVjHyw5W8mG80Q0Kmy/ofC81ra7vaLiB4837HA
-         w4g41KH5V736OkbIxnIxmPKsjCEVudzZ32mlvLbai4HESWlwTJoy0WMB13tJQds7JNy2
-         zBE3Wy5y5va3SDrr96LZCv8fqEiotOqtcPAhHscdsIv76PlpvGuG7ivT/1q23GBm9o7+
-         g4k2Yj5UcbHIdR1hZH3Q5SOH0pdEZ1GyoCtkvnNQ9a6jBZ1loJjhR9SLR/Tsf1GC0M5G
-         9eaQDSbtaF9pTU5ej6O+ktKMcm8ojI/7xxQQn41RoQjJsge1jyvf0sWDPPtWofVlNwSH
-         3CWg==
+        d=bytedance-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=FtWilRGInAcb/NUhcDtH7YAZJfSIOGwgW3nzbl0W9IQ=;
+        b=AayBWhx++Id141XiJ1IRtNF9YuU3agBHdXxOd/3mOX9QI5Ixe/HgEdjR4+SlOnKkXY
+         +WDDlWrGdSxw+eFCqbIIudDT1/TRbHsj5Wxs463ESrzam65sJ/qC8qeQKonGRmydjIrn
+         p8uwLJCPKAQzfyEP/c58CwnRfDMnzxGZTLrUpTsNC/zaQz714nS3entYsTi/3wAGjUNC
+         V0niZMkIlV25xdb32l/SnuK1ASUrMgBaUWQXFchI8jhSMAJx6g8m6CVKGd9EFi+apb0w
+         5YeGhODEsObV9Y2yFQOSb9LlroItQZwyPidfiv9HqGx3B0I1c9PLg7Q3Ko8WWDk5iIFj
+         ZaxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=QGILX5ZO5eZc/l5EQU1PR2qLPMBe3eqixLTUZdadH/k=;
-        b=jYTEHeN6B7Q5COdj9qdi45HZh1cnOFOb+b9T1WzxRbJxlpLzr2qVrAaR4xHV6rN5At
-         /P3b5u4Ts/oRu142SMisX7DaOngsi2+gccK2s6DmJi4zG1XO5tOw+iiXZlGp1stkdLE7
-         ql2/NuAi9X78zZIId3ANlbenp4gRbqqFYZxKxG4C1Hg91lOSeteZWR9NdtfzF/ffqw5v
-         7ozufAVMPsbStzDCAlRY1dF5fEjOAItCq+2mvkrnFzeBAz7ENwdD58dTrKbFvwj3+BuM
-         CS2mRh26V/WWcJpRTN4f9jMtMhc4jC/K/1InueO1ShxH2OgWit/D9l4ab6kehMT1I4cI
-         7PSA==
-X-Gm-Message-State: AA+aEWZbbbJgHFmJGGnIXu9WUGenWlYTHo8R9Pkq+iMt4SsyfMMIRDT/
-        RYvoOilTdKd8diErGV7i6IDyRbnRJ4FGMw==
-X-Google-Smtp-Source: AFSGD/WPMHi4sx0LCASWAZa4KCSVJGgKlSQU+XCbWcBhaE5soDKWSJ6L7iTBk1nkyFT3YlOrXZH2jw==
-X-Received: by 2002:a81:7c04:: with SMTP id x4mr3146142ywc.264.1544796941192;
-        Fri, 14 Dec 2018 06:15:41 -0800 (PST)
-Received: from localhost ([2620:0:1013:11:ad55:b1db:adfe:3b9f])
-        by smtp.gmail.com with ESMTPSA id a65sm460127ywa.84.2018.12.14.06.15.40
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 14 Dec 2018 06:15:40 -0800 (PST)
-Date:   Fri, 14 Dec 2018 09:15:39 -0500
-From:   Sean Paul <sean@poorly.run>
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Sean Paul <sean@poorly.run>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        TL Lim <tllim@pine64.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        linux-amarula@amarulasolutions.com
-Subject: Re: [PATCH v2 11/12] drm/panel: Add Feiyang FY07024DI26A30-D
- MIPI-DSI LCD panel
-Message-ID: <20181214141539.GN154160@art_vandelay>
-References: <20181116163916.29621-1-jagan@amarulasolutions.com>
- <20181116163916.29621-12-jagan@amarulasolutions.com>
- <20181213150736.GL154160@art_vandelay>
- <CAMty3ZAv1dHCRCShXYbxqMm4wV9WGDpAKPji+3G21eWq34ODaA@mail.gmail.com>
- <20181213194804.GM154160@art_vandelay>
- <CAMty3ZCkGudTL9NLnWjTPD8+xqEzY2d0oLN9x=64Hk8MzKTM5g@mail.gmail.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=FtWilRGInAcb/NUhcDtH7YAZJfSIOGwgW3nzbl0W9IQ=;
+        b=VN3CbWL4W1KhRPgVIJC9M8oUuhWiIbdGPFkRbryNyh0GJV8oHzXbtgYIK0UPXda0/j
+         iUlsgRxznpfNK/3xU2pcCHWqQVwXt5o2tRAm6XUbPM3j0OkUFoqEiCtWt3WUG2mFeGJM
+         vxYDShw92VtPYPgseU5cJiUo8KY6EQTnEj5hEnYW3+GDrvcrd2cCwv/ieuiQC22WLNPv
+         PcooqdRvw8DUf/BoShLJTDRXeE7jUy1F0eHvaDFaOM8owsnU7VviuO7Sa4pi5if+GuJN
+         eiKTJMxUvkKh0ObDPwpyxUH3Z1/gIwOCUkE4oBLr/xI3S6v6QT4LpuI8bRyB6lxpnyG5
+         EcSA==
+X-Gm-Message-State: AA+aEWaSbWG5WcEkOK1nC+Mcy7ciAqI+syScBtfH86yfmCh0C6QURe2k
+        CMCvm48OXuPHKXGP7gjpt6qj0Q==
+X-Google-Smtp-Source: AFSGD/VnPa7Ilyi4kELEkXmfJKFhQuKG28lsBk2a1kq2ePcVpNkxNhrwRr5S56tE2s4SiysKSVkyTg==
+X-Received: by 2002:a62:da5a:: with SMTP id w26mr3026717pfl.106.1544796989893;
+        Fri, 14 Dec 2018 06:16:29 -0800 (PST)
+Received: from n3-021-216.byted.org ([122.14.241.109])
+        by smtp.gmail.com with ESMTPSA id d6sm6199939pgc.89.2018.12.14.06.16.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 14 Dec 2018 06:16:29 -0800 (PST)
+From:   Xiaozhou Liu <liuxiaozhou@bytedance.com>
+To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Xiaozhou Liu <liuxiaozhou@bytedance.com>,
+        "ndesaulniers@google.com" <ndesaulniers@google.com>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Paul Burton <paul.burton@mips.com>,
+        Kees Cook <keescook@chromium.org>,
+        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
+Subject: [PATCH v3] Compiler Attributes: don't pollute userspace with macro definitions
+Date:   Fri, 14 Dec 2018 22:14:31 +0800
+Message-Id: <20181214141433.466991-1-liuxiaozhou@bytedance.com>
+X-Mailer: git-send-email 2.11.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMty3ZCkGudTL9NLnWjTPD8+xqEzY2d0oLN9x=64Hk8MzKTM5g@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 14, 2018 at 04:35:11PM +0530, Jagan Teki wrote:
-> On Fri, Dec 14, 2018 at 1:25 AM Sean Paul <sean@poorly.run> wrote:
-> >
-> > On Fri, Dec 14, 2018 at 12:56:03AM +0530, Jagan Teki wrote:
-> > > On Thu, Dec 13, 2018 at 8:37 PM Sean Paul <sean@poorly.run> wrote:
-> > > >
-> > > > On Fri, Nov 16, 2018 at 10:09:15PM +0530, Jagan Teki wrote:
-> > > > > Feiyang FY07024DI26A30-D is 1024x600, 4-lane MIPI-DSI LCD panel.
-> > > > >
-> > > > > Add panel driver for it.
-> > > > >
-> > > > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> > > > > ---
-> > > > >  MAINTAINERS                                   |   6 +
-> > > > >  drivers/gpu/drm/panel/Kconfig                 |   9 +
-> > > > >  drivers/gpu/drm/panel/Makefile                |   1 +
-> > > > >  .../drm/panel/panel-feiyang-fy07024di26a30d.c | 286 ++++++++++++++++++
-> > > > >  4 files changed, 302 insertions(+)
-> > > > >  create mode 100644 drivers/gpu/drm/panel/panel-feiyang-fy07024di26a30d.c
-> > > > >
-> >
-> > /snip
-> >
-> > > > > diff --git a/drivers/gpu/drm/panel/panel-feiyang-fy07024di26a30d.c b/drivers/gpu/drm/panel/panel-feiyang-fy07024di26a30d.c
-> > > > > new file mode 100644
-> > > > > index 000000000000..a4b46bd8fdbe
-> > > > > --- /dev/null
-> > > > > +++ b/drivers/gpu/drm/panel/panel-feiyang-fy07024di26a30d.c
-> >
-> > /snip
-> >
-> > > > > +static int feiyang_prepare(struct drm_panel *panel)
-> > > > > +{
-> > > > > +     struct feiyang *ctx = panel_to_feiyang(panel);
-> > > > > +     struct mipi_dsi_device *dsi = ctx->dsi;
-> > > > > +     unsigned int i;
-> > > > > +     int ret;
-> > > > > +
-> > > > > +     ret = regulator_enable(ctx->dvdd);
-> > > > > +     if (ret)
-> > > > > +             return ret;
-> > > > > +
-> > > > > +     msleep(100);
-> > > >
-> > > > nit: You should do your best to correlate the sleeps with the timing parameters
-> > > > from the datasheet with a comment.
-> > > >
-> > > > ie:
-> > > >         /* T1: > 100ms */
-> > > >         msleep(100);
-> > >
-> > > Sorry, what does this mean?
-> >
-> > On page 9 of the datasheet you sent me [1], it has the delays required to safely
-> > power up the panel. This delay is the time between dvdd going high and avdd
-> > going high. On the figure in the datasheet, this would be T2 (T1 is dvdd rise
-> 
-> time between dvdd going high and avdd going high is T1 + T3 right?
-> 
-> T2 > 0ms
-> T3 > 20ms
-> 
-> In this case the delay can be msleep(20) ?
+Macros 'inline' and '__gnu_inline' used to be defined in compiler-gcc.h,
+which was (and is) included entirely in (__KERNEL__ && !__ASSEMBLY__).
+Commit 815f0ddb346c ("include/linux/compiler*.h: make compiler-*.h mutually
+exclusive") had those macros exposed to userspace, unintentionally.
 
-Hmm, yeah, I didn't notice that T3 was > 20ms, that's kind of confusing. So I
-think you're right, this should be T2 + T3 > 20ms (T1 is covered in the
-regulator_enable of dvdd).
+Then commit a3f8a30f3f00 ("Compiler Attributes: use feature checks
+instead of version checks") moved '__gnu_inline' back into
+(__KERNEL__ && !__ASSEMBLY__) and 'inline' was left behind. Since 'inline'
+depends on '__gnu_inline', compiling error showing "unknown type name
+‘__gnu_inline’" will pop up, if userspace somehow includes
+<linux/compiler.h>.
 
-> 
-> > time and should be handled in the regulator subsystem (iirc)). Also according to
-> > the datasheet, T2 just needs to be > 0, so you don't even need this delay. You
-> > could replace this with a comment like:
-> >
-> >         /* T1 (dvdd rise time) + T2 (dvdd->avdd) > 0 */
-> >
-> > So for all of the msleeps below you should get the delays from the datasheet and
-> > add a comment referencing them.
-> 
-> T5 and T6 are delay between avdd to reset enable it can be 10 + 10
-> =&gt; 20ms and finally T12 which is 200 after reset.
-> 
-> What about the delay between resets, I need to understand it a bit.
+Other macros like __must_check, notrace, etc. are in a similar situation.
+So just move all these macros back into (__KERNEL__ && !__ASSEMBLY__).
 
-These are usually accounted for at the end of disable. Take a look at the sleep
-parameters in panel-simple for an example.
+Note:
+  1. This patch only affects what userspace sees.
+  2. __must_check (when !CONFIG_ENABLE_MUST_CHECK) and noinline_for_stack
+     were once defined in __KERNEL__ only, but we believe that they can
+     be put into !__ASSEMBLY__ too.
 
-Sean
+Acked-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Xiaozhou Liu <liuxiaozhou@bytedance.com>
+---
 
+v3: move macros into !__ASSEMBLY__ too. (Miguel Ojeda)
+v2: update commit message.
+
+ include/linux/compiler_types.h | 108 ++++++++++++++++++++---------------------
+ 1 file changed, 54 insertions(+), 54 deletions(-)
+
+diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
+index 4a3f9c09c92d..ba814f18cb4c 100644
+--- a/include/linux/compiler_types.h
++++ b/include/linux/compiler_types.h
+@@ -104,6 +104,60 @@ struct ftrace_likely_data {
+ 	unsigned long			constant;
+ };
+ 
++#ifdef CONFIG_ENABLE_MUST_CHECK
++#define __must_check		__attribute__((__warn_unused_result__))
++#else
++#define __must_check
++#endif
++
++#if defined(CC_USING_HOTPATCH)
++#define notrace			__attribute__((hotpatch(0, 0)))
++#else
++#define notrace			__attribute__((__no_instrument_function__))
++#endif
++
++/*
++ * it doesn't make sense on ARM (currently the only user of __naked)
++ * to trace naked functions because then mcount is called without
++ * stack and frame pointer being set up and there is no chance to
++ * restore the lr register to the value before mcount was called.
++ */
++#define __naked			__attribute__((__naked__)) notrace
++
++#define __compiler_offsetof(a, b)	__builtin_offsetof(a, b)
++
++/*
++ * Force always-inline if the user requests it so via the .config.
++ * GCC does not warn about unused static inline functions for
++ * -Wunused-function.  This turns out to avoid the need for complex #ifdef
++ * directives.  Suppress the warning in clang as well by using "unused"
++ * function attribute, which is redundant but not harmful for gcc.
++ * Prefer gnu_inline, so that extern inline functions do not emit an
++ * externally visible function. This makes extern inline behave as per gnu89
++ * semantics rather than c99. This prevents multiple symbol definition errors
++ * of extern inline functions at link time.
++ * A lot of inline functions can cause havoc with function tracing.
++ * Do not use __always_inline here, since currently it expands to inline again
++ * (which would break users of __always_inline).
++ */
++#if !defined(CONFIG_ARCH_SUPPORTS_OPTIMIZED_INLINING) || \
++	!defined(CONFIG_OPTIMIZE_INLINING)
++#define inline inline __attribute__((__always_inline__)) __gnu_inline \
++	__maybe_unused notrace
++#else
++#define inline inline                                    __gnu_inline \
++	__maybe_unused notrace
++#endif
++
++#define __inline__ inline
++#define __inline   inline
++
++/*
++ * Rather then using noinline to prevent stack consumption, use
++ * noinline_for_stack instead.  For documentation reasons.
++ */
++#define noinline_for_stack noinline
++
+ #endif /* __KERNEL__ */
+ 
+ #endif /* __ASSEMBLY__ */
+@@ -161,58 +215,4 @@ struct ftrace_likely_data {
+ #define __diag_error(compiler, version, option, comment) \
+ 	__diag_ ## compiler(version, error, option)
+ 
+-#ifdef CONFIG_ENABLE_MUST_CHECK
+-#define __must_check		__attribute__((__warn_unused_result__))
+-#else
+-#define __must_check
+-#endif
+-
+-#if defined(CC_USING_HOTPATCH)
+-#define notrace			__attribute__((hotpatch(0, 0)))
+-#else
+-#define notrace			__attribute__((__no_instrument_function__))
+-#endif
+-
+-/*
+- * it doesn't make sense on ARM (currently the only user of __naked)
+- * to trace naked functions because then mcount is called without
+- * stack and frame pointer being set up and there is no chance to
+- * restore the lr register to the value before mcount was called.
+- */
+-#define __naked			__attribute__((__naked__)) notrace
+-
+-#define __compiler_offsetof(a, b)	__builtin_offsetof(a, b)
+-
+-/*
+- * Force always-inline if the user requests it so via the .config.
+- * GCC does not warn about unused static inline functions for
+- * -Wunused-function.  This turns out to avoid the need for complex #ifdef
+- * directives.  Suppress the warning in clang as well by using "unused"
+- * function attribute, which is redundant but not harmful for gcc.
+- * Prefer gnu_inline, so that extern inline functions do not emit an
+- * externally visible function. This makes extern inline behave as per gnu89
+- * semantics rather than c99. This prevents multiple symbol definition errors
+- * of extern inline functions at link time.
+- * A lot of inline functions can cause havoc with function tracing.
+- * Do not use __always_inline here, since currently it expands to inline again
+- * (which would break users of __always_inline).
+- */
+-#if !defined(CONFIG_ARCH_SUPPORTS_OPTIMIZED_INLINING) || \
+-	!defined(CONFIG_OPTIMIZE_INLINING)
+-#define inline inline __attribute__((__always_inline__)) __gnu_inline \
+-	__maybe_unused notrace
+-#else
+-#define inline inline                                    __gnu_inline \
+-	__maybe_unused notrace
+-#endif
+-
+-#define __inline__ inline
+-#define __inline   inline
+-
+-/*
+- * Rather then using noinline to prevent stack consumption, use
+- * noinline_for_stack instead.  For documentation reasons.
+- */
+-#define noinline_for_stack noinline
+-
+ #endif /* __LINUX_COMPILER_TYPES_H */
 -- 
-Sean Paul, Software Engineer, Google / Chromium OS
+2.11.0
+
