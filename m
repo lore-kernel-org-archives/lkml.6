@@ -2,90 +2,129 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15491C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 15:31:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7288C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 15:31:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2554E206DD
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 15:31:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D428B206E0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 15:31:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729414AbeLNPba (ORCPT
+        id S1729614AbeLNPbx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 10:31:30 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:15992 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727229AbeLNPb3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 10:31:29 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6FF34C05D3ED;
-        Fri, 14 Dec 2018 15:31:29 +0000 (UTC)
-Received: from redhat.com (ovpn-121-101.rdu2.redhat.com [10.10.121.101])
-        by smtp.corp.redhat.com (Postfix) with SMTP id AA52F60635;
-        Fri, 14 Dec 2018 15:31:28 +0000 (UTC)
-Date:   Fri, 14 Dec 2018 10:31:28 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 0/3] vhost: accelerate metadata access through
- vmap()
-Message-ID: <20181214102436-mutt-send-email-mst@kernel.org>
-References: <20181213101022.12475-1-jasowang@redhat.com>
- <20181213102315-mutt-send-email-mst@kernel.org>
- <9459e227-a943-8553-732b-d7f5225a0f22@redhat.com>
- <20181214072334-mutt-send-email-mst@kernel.org>
+        Fri, 14 Dec 2018 10:31:53 -0500
+Received: from iolanthe.rowland.org ([192.131.102.54]:59498 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1727361AbeLNPbw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 10:31:52 -0500
+Received: (qmail 3022 invoked by uid 2102); 14 Dec 2018 10:31:51 -0500
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 14 Dec 2018 10:31:51 -0500
+Date:   Fri, 14 Dec 2018 10:31:51 -0500 (EST)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
+cc:     David Goldblatt <davidtgoldblatt@gmail.com>,
+        <mathieu.desnoyers@efficios.com>,
+        Florian Weimer <fweimer@redhat.com>, <triegel@redhat.com>,
+        <libc-alpha@sourceware.org>, <andrea.parri@amarulasolutions.com>,
+        <will.deacon@arm.com>, <peterz@infradead.org>,
+        <boqun.feng@gmail.com>, <npiggin@gmail.com>, <dhowells@redhat.com>,
+        <j.alglave@ucl.ac.uk>, <luc.maranget@inria.fr>, <akiyks@gmail.com>,
+        <dlustig@nvidia.com>, <linux-arch@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] Linux: Implement membarrier function
+In-Reply-To: <20181214002043.GP4170@linux.ibm.com>
+Message-ID: <Pine.LNX.4.44L0.1812141013070.1570-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181214072334-mutt-send-email-mst@kernel.org>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Fri, 14 Dec 2018 15:31:29 +0000 (UTC)
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 14, 2018 at 07:33:20AM -0500, Michael S. Tsirkin wrote:
-> > - unsafe_put_user/unsafe_get_user is not sufficient for accessing structures
-> > (e.g accessing descriptor) or arrays (batching).
+On Thu, 13 Dec 2018, Paul E. McKenney wrote:
+
+> > > I guess that I still haven't gotten over being a bit surprised that the
+> > > RCU counting rule also applies to sys_membarrier().  ;-)
+> > 
+> > Why not?  They are both synchronization mechanisms with heavy-weight
+> > write sides and light-weight read sides, and most importantly, they
+> > provide the same Guarantee.
 > 
-> So you want unsafe_copy_xxx_user? I can do this. Hang on will post.
+> True, but I do feel the need to poke at it.
+> 
+> The zero-size sys_membarrier() read-side critical sections do make
+> things act a bit differently, for example, interchanging the accesses
+> in an RCU read-side critical section has no effect, while doing so in
+> a sys_membarrier() reader can cause the result to be allowed.  One key
+> point is that everything before the end of a read-side critical section
+> of any type is ordered before any later grace period of that same type,
+> and vice versa.
+> 
+> This is why reordering accesses matters for sys_membarrier() readers but
+> not for RCU and SRCU readers -- in the case of RCU and SRCU readers,
+> the accesses are inside the read-side critical section, while for
+> sys_membarrier() readers, the read-side critical sections don't have
+> an inside.  So yes, ordering also matters in the case of SRCU and
+> RCU readers for accesses outside of the read-side critical sections.
+> The reason sys_membarrier() seems surprising to me isn't because it is
+> any different in theoretical structure, but rather because the practice
+> is to put RCU and SRCU read-side accesses inside a read-side critical
+> sections, which is impossible for sys_membarrier().
 
-Like this basically? Warning: completely untested.
+RCU and sys_membarrier are more similar than you might think at first.  
+For one thing, if there were primitives for blocking and unblocking
+reception of IPIs, those primitives would delimit critical sections for
+sys_membarrier.  (Maybe such things do exist; I wouldn't know.)
 
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+For another, the way we model RCU isn't fully accurate for the Linux
+kernel, as you know.  Since individual instructions cannot be
+preempted, each instruction is a tiny read-side critical section.
+Thus, litmus tests like this one:
 
+	P0			P1
+	Wa=1			Wb=1
+	synchronize_rcu()	Ra=0
+	Rb=0
 
-diff --git a/arch/x86/include/asm/uaccess.h b/arch/x86/include/asm/uaccess.h
-index b5e58cc0c5e7..d2afd70793ca 100644
---- a/arch/x86/include/asm/uaccess.h
-+++ b/arch/x86/include/asm/uaccess.h
-@@ -728,5 +728,10 @@ do {										\
- 	if (unlikely(__gu_err)) goto err_label;					\
- } while (0)
- 
-+#define unsafe_copy_from_user(to, from, n)					\
-+	 __copy_user_ll(to, (__force const void *)from, n)
-+#define unsafe_copy_to_user(to, from, n)					\
-+	 __copy_user_ll((__force void *)to, from, n)
-+
- #endif /* _ASM_X86_UACCESS_H */
- 
-diff --git a/include/linux/uaccess.h b/include/linux/uaccess.h
-index efe79c1cdd47..b9d515ba2920 100644
---- a/include/linux/uaccess.h
-+++ b/include/linux/uaccess.h
-@@ -271,6 +271,8 @@ extern long strncpy_from_unsafe(char *dst, const void *unsafe_addr, long count);
- #define user_access_end() do { } while (0)
- #define unsafe_get_user(x, ptr, err) do { if (unlikely(__get_user(x, ptr))) goto err; } while (0)
- #define unsafe_put_user(x, ptr, err) do { if (unlikely(__put_user(x, ptr))) goto err; } while (0)
-+#define unsafe_copy_to_user(from, to, n) copy_to_user(from, to, n)
-+#define unsafe_copy_from_user(from, to, n) copy_from_user(from, to, n)
- #endif
- 
- #ifdef CONFIG_HARDENED_USERCOPY
+actually are forbidden in the kernel (provided P1 isn't part of the
+idle loop!), even though the LKMM allows them.  However, it wouldn't
+be forbidden if the accesses in P1 were swapped -- just like with
+sys_membarrier.
+
+Put these two observations together and you see that sys_membarrier is
+almost exactly the same as RCU without explicit read-side critical
+sections. Perhaps this isn't surprising, given that the initial
+implementation of sys_membarrier() was pretty much the same as
+synchronize_rcu().
+
+> The other thing that took some time to get used to is the possibility
+> of long delays during sys_membarrier() execution, allowing significant
+> execution and reordering between different CPUs' IPIs.  This was key
+> to my understanding of the six-process example, and probably needs to
+> be clearly called out, including in an example or two.
+
+In all the examples I'm aware of, no more than one of the IPIs
+generated by each sys_membarrier call really matters.  (Of course,
+there's no way to know in advance which one it will be, so you have to
+send an IPI to every CPU.)  The execution delays and reordering
+between different CPUs' IPIs don't appear to be significant.
+
+> The interleaving restrictions are straightforward for me, but the
+> fixed-time approach does have some interesting cross-talk potential
+> between sys_membarrier() and RCU read-side critical sections whose
+> accesses have been reversed.  I don't believe that it is possible to
+> leverage this "order the other guy's read-side critical sections" effect
+> in the general case, but I could be missing something.
+
+I regard the fixed-time approach as nothing more than a heuristic
+aid.  It's not an accurate explaination of what's really going on.
+
+> If you are claiming that I am worrying unnecessarily, you are probably
+> right.  But if I didn't worry unnecessarily, RCU wouldn't work at all!  ;-)
+
+Alan
+
