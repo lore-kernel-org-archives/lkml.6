@@ -2,135 +2,183 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F37B1C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 21:29:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64534C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 21:34:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D74C206DD
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 21:29:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IkSUEX2Z"
+	by mail.kernel.org (Postfix) with ESMTP id 8CC39208CA
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 21:34:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731002AbeLNV3x (ORCPT
+        id S1731025AbeLNVe0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 16:29:53 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:38275 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730878AbeLNV3w (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 16:29:52 -0500
-Received: by mail-it1-f195.google.com with SMTP id h65so11643171ith.3;
-        Fri, 14 Dec 2018 13:29:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=XPPxeyKFREoS2GcW2/S4Arhax4A1QyvIVUlnPDl3qyM=;
-        b=IkSUEX2ZG2+OXmGjasoWEA8H5Qt7SavwQcnYY4EzUCgPK6b/q+KtgSwMksPo6m/Hqs
-         zt5ny3D4v1LoUcbxvPo1dror9OWO0Npvlnk7in+Dl/etbWf2IHlHfiIFxetvy5BK0Ijn
-         tuRGw6xTh2kTJJT2AwMS65n/yplh8PJaagjIqK5ZR8W9n5W3ztGoLpEp819ya9r+PZGJ
-         oh5egrmNqbU6Lm3MyvcU6F/prCs6C5PorYtIJL1ILCy6NIOYHTDRzRLQeF6NiAUO+Gz4
-         omC3ynnLiw6Qq1ukLbfR5U5dkLchXtJvNxPWIuy3EKHCCTR/8zTrfu0fNuGY2vLt1Hk9
-         4Vyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=XPPxeyKFREoS2GcW2/S4Arhax4A1QyvIVUlnPDl3qyM=;
-        b=gpMEmhVwJY4CogExiHDy4LG14PSXrObtHtBh+RcdINoDP8zx960b9j1DEsPiGA934x
-         9xkgVR1DyILDLBD3x3rxr0If3GhiDmMxanMsdaGVbdw5ahe/90T6HbBDGzY2nFtUXwMw
-         JhaTfmapWWXR7tkzUINnjJVfqUd8HSYQXR7pk5UtQqHhGzxJJ5mBW4vqA+90nqSHFI90
-         q2FIvrVgYno0VlYd04P+pRK7Wsras8BLKIj4+ZUXljT4/L3vfntElfqSPrRwLbvq6pxy
-         YFtkQes653xuL2fZL6dTOc67uFsyYDQRULzrzQdGcGqLjOaQ6tArwtSBqy6mJdr/ShfD
-         L41A==
-X-Gm-Message-State: AA+aEWaQULluR7DmJGYuJebwDwhj1Wrl8abZjxvgk7fdRfIo8qX972e0
-        kG8C+c0KEAUFG2H03tgUipE=
-X-Google-Smtp-Source: AFSGD/UfTLz/MxOqqJygvlIMgYovl8fsIpop1qPRtjweAUXD07pZcRWsoLWpsv+nJQF+8f9uk2o9NQ==
-X-Received: by 2002:a24:d30c:: with SMTP id n12mr4984203itg.50.1544822991358;
-        Fri, 14 Dec 2018 13:29:51 -0800 (PST)
-Received: from r2700x.localdomain (c-75-70-96-103.hsd1.co.comcast.net. [75.70.96.103])
-        by smtp.gmail.com with ESMTPSA id b192sm3084256itb.12.2018.12.14.13.29.50
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 14 Dec 2018 13:29:50 -0800 (PST)
-Date:   Fri, 14 Dec 2018 14:29:44 -0700
-From:   Jeremy Fertic <jeremyfertic@gmail.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     devel@driverdev.osuosl.org, Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        linux-iio@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Jonathan Cameron <jic23@kernel.org>
-Subject: Re: [PATCH 04/11] staging: iio: adt7316: fix handling of dac high
- resolution option
-Message-ID: <20181214212944.GA2400@r2700x.localdomain>
-References: <20181212005503.28054-1-jeremyfertic@gmail.com>
- <20181212005503.28054-5-jeremyfertic@gmail.com>
- <20181212082315.GI3116@kadam>
- <20181213220146.GA2496@r2700x.localdomain>
- <20181214062618.GW3116@kadam>
+        Fri, 14 Dec 2018 16:34:26 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:34478 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730846AbeLNVeZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 16:34:25 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 3FC168AE7A;
+        Fri, 14 Dec 2018 21:34:25 +0000 (UTC)
+Received: from jlaw-desktop.bos.csb (dhcp-17-208.bos.redhat.com [10.18.17.208])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id CBE00299C7;
+        Fri, 14 Dec 2018 21:34:23 +0000 (UTC)
+Subject: Re: [PATCH 1/2] livepatch: fix non-static warnings
+To:     Nicholas Mc Guire <hofrat@osadl.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     Jessica Yu <jeyu@kernel.org>, Jiri Kosina <jikos@kernel.org>,
+        Miroslav Benes <mbenes@suse.cz>,
+        Petr Mladek <pmladek@suse.com>, live-patching@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1544806570-21299-1-git-send-email-hofrat@osadl.org>
+From:   Joe Lawrence <joe.lawrence@redhat.com>
+Organization: Red Hat
+Message-ID: <72b8f2a4-9070-23d3-4e75-66e10b2d94b5@redhat.com>
+Date:   Fri, 14 Dec 2018 16:34:23 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181214062618.GW3116@kadam>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1544806570-21299-1-git-send-email-hofrat@osadl.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Fri, 14 Dec 2018 21:34:25 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 14, 2018 at 09:26:18AM +0300, Dan Carpenter wrote:
-> On Thu, Dec 13, 2018 at 03:01:46PM -0700, Jeremy Fertic wrote:
-> > On Wed, Dec 12, 2018 at 11:23:16AM +0300, Dan Carpenter wrote:
-> > > On Tue, Dec 11, 2018 at 05:54:56PM -0700, Jeremy Fertic wrote:
-> > > > @@ -651,10 +649,12 @@ static ssize_t adt7316_store_da_high_resolution(struct device *dev,
-> > > >  	u8 config3;
-> > > >  	int ret;
-> > > >  
-> > > > +	if (chip->id == ID_ADT7318 || chip->id == ID_ADT7519)
-> > > > +		return -EPERM;
-> > > 
-> > > return -EINVAL is more appropriate than -EPERM.
-> > > 
-> > > regards,
-> > > dan carpenter
-> > > 
-> > 
-> > I chose -EPERM because the driver uses it quite a few times in similar
-> > circumstances.
-> 
-> Yeah.  I saw that when I reviewed the later patches in this series.
-> 
-> It's really not doing it right.  -EPERM means permission checks like
-> access_ok() failed so it's not appropriate.  -EINVAL is sort of general
-> purpose for invalid commands so it's probably the correct thing.
-> 
-> > At least with this driver, -EINVAL is used when the user
-> > attempts to write data that would never be valid. -EPERM is used when
-> > either the current device settings prevent some functionality from being
-> > used, or the device never supports that functionality. This patch is the
-> > latter, that these two chip ids never support this function.
-> > 
-> > I'll change to -EINVAL in a v2 series, but I wonder if I should hold off
-> > on a separate patch for other instances in this driver since it will be
-> > undergoing a substantial refactoring.
-> 
-> Generally, you should prefer kernel standards over driver standards and
-> especially for staging.  But it doesn't matter.  When I reviewed this
-> patch, I hadn't seen that the driver was doing it like this but now I
-> know so it's fine.  We can clean it all at once later if you want.
-> 
-> regards,
-> dan carpenter
-> 
+On 12/14/2018 11:56 AM, Nicholas Mc Guire wrote:
+> Sparse reported warnings about non-static symbols. For the variables a
+> simple static attribute is fine - for those symbols referenced by
+> livepatch via klp_func the symbol-names must be unmodified in the
+> relocation table - to resolve this the __noclone attribute (as 
+  ^^^^^^^^^^
+nit: symbol table
 
-I'll wait to deal with these error values since some of them might go away
-with all the changes necessary to get the driver out of staging. Thanks
-for clarifying things for me.
+> suggested by Joe Lawrence <joe.lawrence@redhat.com>) is used
+> for the statically declared functions.
+> 
+> Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+> Link: https://lkml.org/lkml/2018/12/13/827
+> ---
+> 
+> sparse reported the following warnings:
+> 
+>   CHECK   samples/livepatch/livepatch-shadow-fix1.c
+> samples/livepatch/livepatch-shadow-fix1.c:74:14: warning: symbol
+>  'livepatch_fix1_dummy alloc' was not declared. Should it be static?
+> samples/livepatch/livepatch-shadow-fix1.c:116:6: warning: symbol
+>  'livepatch_fix1_dummy free' was not declared. Should it be static?
+> 
+>   CHECK   samples/livepatch/livepatch-shadow-mod.c
+> samples/livepatch/livepatch-shadow-mod.c:99:1: warning: symbol
+>  'dummy_list' was not declared. Should it be static?
+> samples/livepatch/livepatch-shadow-mod.c:100:1: warning: symbol
+>  'dummy_list_mutex' was not declared. Should it be static?
+> samples/livepatch/livepatch-shadow-mod.c:107:23: warning: symbol
+>  'dummy_alloc' was not declared. Should it be static?
+> samples/livepatch/livepatch-shadow-mod.c:132:15: warning: symbol
+>  'dummy_free' was not declared. Should it be static?
+> samples/livepatch/livepatch-shadow-mod.c:140:15: warning: symbol
+>  'dummy_check' was not declared. Should it be static?
+> 
+> Patch was compile tested with: x86_64_defconfig + FTRACE=y
+> FUNCTION_TRACER=y, EXPERT=y, LATENCYTOP=y, SAMPLES=y,
+> SAMPLE_LIVEPATCH=y
+> 
+> Patch was runtested on an Intel i3 with:
+>    insmod samples/livepatch/livepatch-shadow-mod.ko
+>    insmod samples/livepatch/livepatch-shadow-fix1.ko
+>    insmod samples/livepatch/livepatch-shadow-fix2.ko
+>    echo 0 > /sys/kernel/livepatch/livepatch_shadow_fix2/enabled
+>    echo 0 > /sys/kernel/livepatch/livepatch_shadow_fix1/enabled
+>    rmmod livepatch-shadow-fix2
+>    rmmod livepatch-shadow-fix1
+>    rmmod livepatch-shadow-mod
+> and dmesg output checked.
+> 
+> Patch is against 4.20-rc6 (localversion-next is next-20181214)
 
+Great testing notes, thanks for including these!
+
+>  samples/livepatch/livepatch-shadow-fix1.c |  4 ++--
+>  samples/livepatch/livepatch-shadow-mod.c  | 16 +++++++++++-----
+>  2 files changed, 13 insertions(+), 7 deletions(-)
+
+Almost.  We should only need to annotate with __noclone for those
+function definitions which the samples will be patching.  As the commit
+message says, these correlate to klp_func.old_name functions found in
+klp_object.name objects (.ko modules or NULL for vmlinux).
+
+For the functions defined in samples/livepatch/*.c those would be:
+
+  livepatch-callbacks-busymod.c :: busymod_work_func()
+  livepatch-shadow-mod.c :: dummy_alloc()
+  livepatch-shadow-mod.c :: dummy_free()
+  livepatch-shadow-mod.c :: dummy_check()
+
+So even though livepatch-shadow-fix2 further refines
+livepatch-shadow-fix1, the livepatch core is going to redirect the
+original dummy_*() calls defined by livepatch-shadow-mod.c in both fix1
+and fix2 cases.  Ie, the fixes modules aren't patched, only the original.
+
+> 
+> diff --git a/samples/livepatch/livepatch-shadow-fix1.c b/samples/livepatch/livepatch-shadow-fix1.c
+> index 49b1355..eaab10f 100644
+> --- a/samples/livepatch/livepatch-shadow-fix1.c
+> +++ b/samples/livepatch/livepatch-shadow-fix1.c
+> @@ -71,7 +71,7 @@ static int shadow_leak_ctor(void *obj, void *shadow_data, void *ctor_data)
+>  	return 0;
+>  }
+>  
+> -struct dummy *livepatch_fix1_dummy_alloc(void)
+> +static __noclone struct dummy *livepatch_fix1_dummy_alloc(void)
+>  {
+>  	struct dummy *d;
+>  	void *leak;
+> @@ -108,7 +108,7 @@ static void livepatch_fix1_dummy_leak_dtor(void *obj, void *shadow_data)
+>  			 __func__, d, *shadow_leak);
+>  }
+>  
+> -void livepatch_fix1_dummy_free(struct dummy *d)
+> +static __noclone void livepatch_fix1_dummy_free(struct dummy *d)
+>  {
+>  	void **shadow_leak;
+>  
+> diff --git a/samples/livepatch/livepatch-shadow-mod.c b/samples/livepatch/livepatch-shadow-mod.c
+> index 4c54b25..0a72bc2 100644
+> --- a/samples/livepatch/livepatch-shadow-mod.c
+> +++ b/samples/livepatch/livepatch-shadow-mod.c
+> @@ -30,6 +30,11 @@
+>   * memory leak, please load these modules at your own risk -- some
+>   * amount of memory may leaked before the bug is patched.
+>   *
+> + * NOTE - the __noclone attribute to those functions that are to be
+> + * shared with other modules while being declared static. As livepatch
+> + * needs the unmodified symbol names and the usual "static" would
+> + * invoke gccs cloning mechanism that renames the functions this
+> + * needs to be suppressed with the additional __noclone attribute.
+
+I like the idea of providing the sample code reader this information,
+but since the compiler might also optimize livepatch-callbacks-busymod.c
+:: busymod_work_func(), it too should be annotated __noclone.  Would
+that file deserve a similar comment?
+
+I don't have a strong opinion, but would throw my vote at leaving this
+in the commit message only.
+
+
+BTW, Petr/Miroslav/Josh, should we be annotating the selftests in
+similar fashion?
+
+> [ ... snip ... ]
+
+Thanks for working on this,
+
+-- Joe
