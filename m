@@ -4,58 +4,58 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38618C6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 11:34:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B098DC6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 11:34:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8FC220892
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 11:34:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E4952133F
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 11:34:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="dgMzxd/M"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8FC220892
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="nbVRQjSg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E4952133F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729755AbeLNLe2 (ORCPT
+        id S1729719AbeLNLeW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 06:34:28 -0500
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:52290 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729708AbeLNLeW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 14 Dec 2018 06:34:22 -0500
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:52277 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729665AbeLNLeU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 06:34:20 -0500
 Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20181214113421euoutp027691d5e7e27151177ea999a65bd24741~wL9RRZcz02204822048euoutp02j;
-        Fri, 14 Dec 2018 11:34:21 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20181214113421euoutp027691d5e7e27151177ea999a65bd24741~wL9RRZcz02204822048euoutp02j
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20181214113418euoutp0278c632b4c58f6b534acb6fdb63589afe~wL9PCw0Ne2204822048euoutp02i;
+        Fri, 14 Dec 2018 11:34:18 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20181214113418euoutp0278c632b4c58f6b534acb6fdb63589afe~wL9PCw0Ne2204822048euoutp02i
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1544787261;
-        bh=0FWSvMwPOmMdRNz3JtGp6Ji4fysLQt8HrzqwtmH+LV4=;
+        s=mail20170921; t=1544787258;
+        bh=AKUsgv6gspXAloJymujKie5fq7hFCRFBHPM2TOJW0T4=;
         h=From:To:Cc:Subject:Date:In-reply-to:References:From;
-        b=dgMzxd/MNFXB11ZnbmHPOrbdLuBfknPSQimRBI+X46o/9dGL1smfTDdegcf0pUjQD
-         q0sertXfbkzXC2pj0ji2kBBjKuwTUQqOiYfkotefKw3L+dC81osWwsPeHpcAJ6pvd4
-         FoNxf4WSOBUatTVB5qntPdN33uDD13PdE/9X1G8M=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        b=nbVRQjSgjY2RUFDc+x5qoysZRJRxC9Zht/guYqsSSaoLxlo+vChlEDDnXJeBns3Yz
+         I1LhIL1ECKBDZYFYmanvkSoNaiK7zPuxUCnyWtYVZWRpLmyKl7RhCx//oUS3lnE1M8
+         P1/Y4dQWOhXmwM+WG8NjwQfP6W7HHCKQDxdNwcz8=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
         eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20181214113420eucas1p28210e3a107bb598bd0e9c0e60ffd1bae~wL9QpVXnj0452304523eucas1p2l;
-        Fri, 14 Dec 2018 11:34:20 +0000 (GMT)
+        20181214113418eucas1p2ff658c4880042d855f26d9e0363ee681~wL9OlUefb1030910309eucas1p2V;
+        Fri, 14 Dec 2018 11:34:18 +0000 (GMT)
 Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id CD.A2.04806.C35931C5; Fri, 14
-        Dec 2018 11:34:20 +0000 (GMT)
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id E2.59.04294.935931C5; Fri, 14
+        Dec 2018 11:34:17 +0000 (GMT)
 Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
         eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20181214113419eucas1p2473172a49bf798ddd95265fa31125d96~wL9P_sm9Y0434104341eucas1p2d;
-        Fri, 14 Dec 2018 11:34:19 +0000 (GMT)
-X-AuditID: cbfec7f5-34dff700000012c6-7d-5c13953ca0b4
+        20181214113417eucas1p2624705c077ae79267082bbf4628951ed~wL9NvhCZz1806618066eucas1p2-;
+        Fri, 14 Dec 2018 11:34:17 +0000 (GMT)
+X-AuditID: cbfec7f4-835ff700000010c6-26-5c1395397274
 Received: from eusync3.samsung.com ( [203.254.199.213]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 1E.D8.04284.B35931C5; Fri, 14
-        Dec 2018 11:34:19 +0000 (GMT)
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 9B.D8.04284.935931C5; Fri, 14
+        Dec 2018 11:34:17 +0000 (GMT)
 Received: from AMDC2765.digital.local ([106.116.147.25]) by
         eusync3.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0 64bit
         (built May  5 2014)) with ESMTPA id <0PJQ004655GZZA10@eusync3.samsung.com>;
-        Fri, 14 Dec 2018 11:34:19 +0000 (GMT)
+        Fri, 14 Dec 2018 11:34:17 +0000 (GMT)
 From:   Marek Szyprowski <m.szyprowski@samsung.com>
 To:     linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
         linux-samsung-soc@vger.kernel.org
@@ -67,80 +67,82 @@ Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Sylwester Nawrocki <s.nawrocki@samsung.com>,
         Lee Jones <lee.jones@linaro.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH 4/4] arm64: dts: exynos: Add Bluetooth chip to TM2(e) boards
-Date:   Fri, 14 Dec 2018 12:34:10 +0100
-Message-id: <20181214113410.22848-5-m.szyprowski@samsung.com>
+Subject: [PATCH 2/4] tty: serial: samsung: Properly set flags in autoCTS
+ mode
+Date:   Fri, 14 Dec 2018 12:34:08 +0100
+Message-id: <20181214113410.22848-3-m.szyprowski@samsung.com>
 X-Mailer: git-send-email 2.17.1
 In-reply-to: <20181214113410.22848-1-m.szyprowski@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrPIsWRmVeSWpSXmKPExsWy7djPc7o2U4VjDG5P47HYOGM9q8XpT9vY
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrHIsWRmVeSWpSXmKPExsWy7djPc7qWU4VjDBb+MrLYOGM9q8XpT9vY
         LZoXr2ezOH9+A7vF/a9HGS0u75rDZjHj/D4mizOLe9kt1h65y25x+E07q8WMyS/ZHLg9Nq3q
-        ZPO4c20Pm8f+uWvYPfq2rGL0+LxJLoA1issmJTUnsyy1SN8ugSvjxabTjAVPOCquPN3F1sC4
-        mr2LkZNDQsBE4viCrSwgtpDACkaJJxdyuhi5gOzPjBKrP9xmgSk6u6CVBSKxjFGi/+IuNgin
-        gUmiZ9ENNpAqNgFDia63XWC2iECyxLO5RxhBipgFHjJJdFz8BjZKWMBHYl7DUWYQm0VAVeL1
-        6itgNq+ArcSKpRNZIdbJS6zecAAszilgJ3FsyyZ2kEESAkvYJO7/2ckMUeQisfpvExOELSzx
-        6vgWqIdkJDo7DjJBNDQzSrTPmAXV3cMosXXODjaIKmuJw8cvgq1jFuCTmLRtOtBUDqA4r0RH
-        mxBEiYfE3vXToP6cyCjx8u9+lgmMkgsYGVYxiqeWFuempxYb56WW6xUn5haX5qXrJefnbmIE
-        Ruvpf8e/7mDc9yfpEKMAB6MSD++J2UIxQqyJZcWVuYcYJTiYlUR4w1qFY4R4UxIrq1KL8uOL
-        SnNSiw8xSnOwKInzVjM8iBYSSE8sSc1OTS1ILYLJMnFwSjUwinvuzbS9bB645tJv6RzmU2fa
-        KzSduY6s2rH2zqcfPDsjI3c/dmPbumi5FqcBl9OEdX6nn9b97y6TUNz+QHf3K259zemvZZTl
-        75Uevet88KFI19RvNVt4WflPOWo98Jt1N1fp9JtX8dJxv14aXIkqb4nP/aPy12pufe+VlZe+
-        P/62oaX3dcaqJ0osxRmJhlrMRcWJAKtCvJTSAgAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprDLMWRmVeSWpSXmKPExsVy+t/xq7rWU4VjDFb+1rTYOGM9q8XpT9vY
+        ZPO4c20Pm8f+uWvYPfq2rGL0+LxJLoA1issmJTUnsyy1SN8ugStj/o/17AVLuCqunFvM3MB4
+        mqOLkZNDQsBE4t2CZ+xdjFwcQgIrGCVOv17HCuF8ZpSYueEME0zV9IfboaqWMUp8fvkFymlg
+        kri9ajlYFZuAoUTX2y42EFtEIFni2dwjjCBFzAIPmSQ6Ln5jAUkIC/hL/G97BmazCKhKbOza
+        CTSJg4NXwFZi32p5iG3yEqs3HGAGsTkF7CSObdkEtkxCYAWbxKFHn1ghilwk3k2ZwQhhC0u8
+        Or6FHcKWkejsOMgE0dDMKNE+YxZUdw+jxNY5O9ggqqwlDh+/CDaJWYBPYtK26cwgV0gI8Ep0
+        tAlBmB4S5xY7QHw5kVFi3YXVLBMYJRcwMqxiFE8tLc5NTy02ykst1ytOzC0uzUvXS87P3cQI
+        jNXT/45/2cG460/SIUYBDkYlHt6MSUIxQqyJZcWVuYcYJTiYlUR4w1qFY4R4UxIrq1KL8uOL
+        SnNSiw8xSnOwKInzVjM8iBYSSE8sSc1OTS1ILYLJMnFwSjUwhtpnnzr2Z8MNt8T7+4z9fK/u
+        2CE596/LundbmV5tTbzp8rRL8B+r7genOnaz4G/3OWoO6U52KlshMnFDd97dOYuvznGU2rFj
+        3fYtyaofH4ocsn4kNWPZu2uzeTYo7IpU+ZR2XLdgs2iP4WX7dUZWTYK15+WN1gjK5fp1nb0n
+        yP/Zvqr8xbFj6kosxRmJhlrMRcWJAKw8FWnRAgAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprNLMWRmVeSWpSXmKPExsVy+t/xq7qWU4VjDI4dE7TYOGM9q8XpT9vY
         LZoXr2ezOH9+A7vF/a9HGS0u75rDZjHj/D4mizOLe9kt1h65y25x+E07q8WMyS/ZHLg9Nq3q
-        ZPO4c20Pm8f+uWvYPfq2rGL0+LxJLoA1issmJTUnsyy1SN8ugSvjxabTjAVPOCquPN3F1sC4
-        mr2LkZNDQsBE4uyCVpYuRi4OIYEljBLv9k+FcpqYJG5d+8EIUsUmYCjR9baLDcQWEUiW2PX3
-        BStIEbPAYyaJKS0vWEASwgI+EvMajjKD2CwCqhKvV18Bs3kFbCVWLJ3ICrFOXmL1hgNgcU4B
-        O4ljWzaBnSEEVPN1+hfGCYw8CxgZVjGKpJYW56bnFhvqFSfmFpfmpesl5+duYgSG2bZjPzfv
-        YLy0MfgQowAHoxIP74EpQjFCrIllxZW5hxglOJiVRHjDWoVjhHhTEiurUovy44tKc1KLDzFK
-        c7AoifOeN6iMEhJITyxJzU5NLUgtgskycXBKNTDyOz9S0/m/VPrK7IUaSQzP2DY/eulia7no
-        naRK4u6tPteY2OfZhWsbuz14vb2h8VX5np+X08v3R3D/Klw678wd35mqbbE1V1y3HbS+xbTX
-        4K3ZwVvCX3d9n2i18VubipqR25vKXS5PDPO3b1etuGzIVCm+/1gMH5tnR8vC4ljrM7/iz7T9
-        5uJSYinOSDTUYi4qTgQAPGyTdS8CAAA=
-X-CMS-MailID: 20181214113419eucas1p2473172a49bf798ddd95265fa31125d96
+        ZPO4c20Pm8f+uWvYPfq2rGL0+LxJLoA1issmJTUnsyy1SN8ugStj/o/17AVLuCqunFvM3MB4
+        mqOLkZNDQsBEYvrD7exdjFwcQgJLGCUeNd5ggXCamCR6NvSygVSxCRhKdL3tArNFBJIldv19
+        wQpSxCzwmEliSssLFpCEsICvxML2SUwgNouAqsTGrp1AYzk4eAVsJfatlofYJi+xesMBZhCb
+        U8BO4tiWTewgthBQydfpXxgnMPIsYGRYxSiSWlqcm55bbKhXnJhbXJqXrpecn7uJERhk2479
+        3LyD8dLG4EOMAhyMSjy8B6YIxQixJpYVV+YeYpTgYFYS4Q1rFY4R4k1JrKxKLcqPLyrNSS0+
+        xCjNwaIkznveoDJKSCA9sSQ1OzW1ILUIJsvEwSnVwBhid7k3L8bz9CPmOY3Pc/zu/K75YCC4
+        1fN+p2bR0ZaDZRc+LNqVsej/tbAv03Nkzqy2jg22vPxkfrfKQ2ktlw+vD4Ys5rvuxHEwuXCd
+        /k+eBxO739jp7goqsP0n/9ey/MbJK3aljs8Mt/obf4k647w8xnOhX/TGdZWL7xw3Upuu7iJ7
+        Kf1W9XolluKMREMt5qLiRAA3Ez3eLgIAAA==
+X-CMS-MailID: 20181214113417eucas1p2624705c077ae79267082bbf4628951ed
 X-Msg-Generator: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20181214113419eucas1p2473172a49bf798ddd95265fa31125d96
+X-CMS-RootMailID: 20181214113417eucas1p2624705c077ae79267082bbf4628951ed
 References: <20181214113410.22848-1-m.szyprowski@samsung.com>
-        <CGME20181214113419eucas1p2473172a49bf798ddd95265fa31125d96@eucas1p2.samsung.com>
+        <CGME20181214113417eucas1p2624705c077ae79267082bbf4628951ed@eucas1p2.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-TM2(e) boards have a Broadcom Bluetooth chip connected to 3rd UART port.
-Add a device tree node describing it and its resources (control GPIO lines
-and clock).
+From: Beomho Seo <beomho.seo@samsung.com>
 
+Commit 391f93f2ec9f ("serial: core: Rework hw-assited flow control support")
+has changed the way the autoCTS mode is handled.
+
+According to that change, serial drivers which enable H/W autoCTS mode must
+set UPSTAT_AUTOCTS to prevent the serial core from inadvertently disabling
+TX. This patch adds proper handling of UPSTAT_AUTOCTS flag.
+
+Signed-off-by: Beomho Seo <beomho.seo@samsung.com>
+[mszyprow: rephrased commit message]
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- .../boot/dts/exynos/exynos5433-tm2-common.dtsi     | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ drivers/tty/serial/samsung.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-index f3ed4c078ba5..d88e2f0e179a 100644
---- a/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos5433-tm2-common.dtsi
-@@ -1202,6 +1202,20 @@
- 	status = "okay";
- };
+diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
+index da1bd4bba8a9..2a49b6d876b8 100644
+--- a/drivers/tty/serial/samsung.c
++++ b/drivers/tty/serial/samsung.c
+@@ -1365,11 +1365,14 @@ static void s3c24xx_serial_set_termios(struct uart_port *port,
+ 	wr_regl(port, S3C2410_ULCON, ulcon);
+ 	wr_regl(port, S3C2410_UBRDIV, quot);
  
-+&serial_3 {
-+	status = "okay";
++	port->status &= ~UPSTAT_AUTOCTS;
 +
-+	bluetooth {
-+		compatible = "brcm,bcm43438-bt";
-+		max-speed = <3000000>;
-+		shutdown-gpios = <&gpd4 0 GPIO_ACTIVE_HIGH>;
-+		device-wakeup-gpios = <&gpr3 7 GPIO_ACTIVE_HIGH>;
-+		host-wakeup-gpios = <&gpa2 2 GPIO_ACTIVE_HIGH>;
-+		clocks = <&s2mps13_osc S2MPS11_CLK_BT>;
-+		clock-names = "extclk";
-+	};
-+};
-+
- &spi_1 {
- 	cs-gpios = <&gpd6 3 GPIO_ACTIVE_HIGH>;
- 	status = "okay";
+ 	umcon = rd_regl(port, S3C2410_UMCON);
+ 	if (termios->c_cflag & CRTSCTS) {
+ 		umcon |= S3C2410_UMCOM_AFC;
+ 		/* Disable RTS when RX FIFO contains 63 bytes */
+ 		umcon &= ~S3C2412_UMCON_AFC_8;
++		port->status = UPSTAT_AUTOCTS;
+ 	} else {
+ 		umcon &= ~S3C2410_UMCOM_AFC;
+ 	}
 -- 
 2.17.1
 
