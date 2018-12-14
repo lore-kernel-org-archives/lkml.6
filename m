@@ -2,144 +2,137 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A3C3C67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:32:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BD90C6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:32:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C593E208E7
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:32:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544790761;
-	bh=rEATTkx2UkX8phiMbMZKFxoj4ObMoKih62cQ6AAkjvI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ObDcdTOIn6sz+GonuLEVn9+kngjSTy/DPO9iC/PGXE5gzYl9z0lRPnFLT4EtG6WeH
-	 1K3VuC0COLVDe3JDy/MWXVkJ5pBrICocSvIatM2cxT2rgNyNhBmmA/FV9mEUYBtv7j
-	 QqVK7uSru/FMHXaXJQ1+WkqASKFTz7Hm0mOTLqZQ=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C593E208E7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 28EBD20892
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:32:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="o9ouC+mC";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ewahheGZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28EBD20892
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730601AbeLNMck (ORCPT
+        id S1731592AbeLNMcq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:32:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54628 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730274AbeLNMJB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:09:01 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C4B19214AE;
-        Fri, 14 Dec 2018 12:09:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789341;
-        bh=rEATTkx2UkX8phiMbMZKFxoj4ObMoKih62cQ6AAkjvI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CQNA0AId35fKZ1LljqsLuK20TbRN6XTiUwDhP7+yaVwWydLndmiaM9nQZyCLEkfPs
-         AatyEVS2uZ0ycJ+a/yi5rUv+GyHgT3y2jv/SlDzxsAx9fTpq+CsWtuGQPpMN9dcM+h
-         O+oMNrVQpxuemq3QZjf7rovJfTMWEmg3Ywqc7AEM=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pablo Neira Ayuso <pablo@netfilter.org>,
-        Florian Westphal <fw@strlen.de>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 23/89] netfilter: nf_tables: fix use-after-free when deleting compat expressions
-Date:   Fri, 14 Dec 2018 12:59:36 +0100
-Message-Id: <20181214115730.826913856@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.0
-In-Reply-To: <20181214115729.658859279@linuxfoundation.org>
-References: <20181214115729.658859279@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        Fri, 14 Dec 2018 07:32:46 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:33590 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730274AbeLNMcm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:32:42 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 8D9A560722; Fri, 14 Dec 2018 12:32:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1544790761;
+        bh=XekRt2hOofubrQgZvxE6EGgbsMq2ApkjU2sMqT1r22k=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=o9ouC+mC9AG4D3UWAv9YGiN8d+PtntqTZSc+YWKajn9Gdxo3NKG+WVsbs5iaIY7UI
+         +TwC6sDaGSDJfvkz669UZ5Ys6y5v7Qnsq1WQ3MCAEnSOhhQs8b6StQNjxZT7VYVe4P
+         MDKpXkUTitvX7K/gIGqfvW1cz34nzHt0VZ+KHUKc=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id C730C601C3;
+        Fri, 14 Dec 2018 12:32:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1544790760;
+        bh=XekRt2hOofubrQgZvxE6EGgbsMq2ApkjU2sMqT1r22k=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=ewahheGZZvnWEw1MD28ruUWcGcNCI1jvpQZ1iO6FFDxy4tgJG4gGsu1b9WTOtw1ES
+         KoU8S2FnINRIsaPdngEtY/oHRWDKeQaihmCmomljbb5HgnfzBijUYsIe72/1zpEMZO
+         e1MhMn4ijisTuP9TrGN17g6WPeqtQRERsd+H4khE=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Fri, 14 Dec 2018 18:02:40 +0530
+From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
+To:     Johan Hovold <johan@kernel.org>
+Cc:     marcel@holtmann.org, johan.hedberg@gmail.com, mka@chromium.org,
+        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        hemantg@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        Johan Hovold <jhovold@gmail.com>
+Subject: Re: [PATCH v3 1/4] Bluetooth: hci_qca: use wait_until_sent() for
+ power pulses
+In-Reply-To: <20181212164251.GI3500@localhost>
+References: <20181130150247.26294-1-bgodavar@codeaurora.org>
+ <20181130150247.26294-2-bgodavar@codeaurora.org>
+ <20181205062503.GG18087@localhost>
+ <c9bcbaed89a18499fe42463b20367499@codeaurora.org>
+ <20181212164251.GI3500@localhost>
+Message-ID: <53775e90cb3803cee9cfff2325cb7429@codeaurora.org>
+X-Sender: bgodavar@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+Hi Johan,
 
-------------------
+On 2018-12-12 22:12, Johan Hovold wrote:
+> On Thu, Dec 06, 2018 at 04:10:07PM +0530, Balakrishna Godavarthi wrote:
+>> Hi Johan,
+>> 
+>> On 2018-12-05 11:55, Johan Hovold wrote:
+>> > On Fri, Nov 30, 2018 at 08:32:44PM +0530, Balakrishna Godavarthi wrote:
+> 
+>> >> +	ret = serdev_device_write(hu->serdev, &cmd, sizeof(cmd), 0);
+>> >
+>> > You're still using 0 as a timeout here which is broken, as I already
+>> > told you.
+>> 
+>> [Bala]: got the change now will update to timeout to non zero value.
+>> 
+>> > From 4.21 this will result in an indefinite timeout, but currently
+>> > implies not to wait for a full write buffer to drain at all.
+>> >
+>> > As I also mentioned, you need to to make sure to call
+>> > serdev_device_write_wakeup() in the write_wakup() path if you are going
+>> > to use serdev_device_write() at all.
+>> 
+>> [Bala]: this where i am confused.
+>>          calling serdev_device_write is calling an wakeup internally.
+>> below is the flow
+>> 
+>>          ttyport_write_buf:
+>>                * calling serdev_device_write() will call write_buf() 
+>> in
+>> this call we are enabling bit "TTY_DO_WRITE_WAKEUP" and calling 
+>> write()
+>>                  i.e. uart_write() where we call in start_tx. this 
+>> will
+>> go to the vendor specific write where in isr we call 
+>> uart_write_wakeup()
+>> 
+>> https://elixir.bootlin.com/linux/latest/source/drivers/tty/serial/qcom_geni_serial.c#L756
+>> 
+>> 
+>> uart_write_wakeup()->ttyport_write_wakeup()->serdev_controller_write_wakeup()->hci_uart_write_wakeup()->hci_uart_tx_wakeup()
+>> 
+>>          the above is flow when serdev_device_write() is called, it is
+>> indirectly calling serdev_write_wakeup().
+> 
+> No, serdev_device_write_wakeup() is currently not called in this path,
+> which means you cannot use serdev_device_write().
+> 
+>>          Why actual we need to call an serdev_write_wakeup() is this
+>> wakeup related to the UART port or for the BT chip.
+> 
+> serdev_device_write_wakeup() is where a writer blocked on a full write
+> buffer in serdev_device_write() is woken up.
+> 
+> Johan
 
-[ Upstream commit 29e3880109e357fdc607b4393f8308cef6af9413 ]
+Is it preferred to use and serdev_device_write_buf() followed by 
+serdev_device_wait_until_sent()
+or do we required an write_wakeup() called before writing into 
+serdev_device_write_buf()
 
-nft_compat ops do not have static storage duration, unlike all other
-expressions.
-
-When nf_tables_expr_destroy() returns, expr->ops might have been
-free'd already, so we need to store next address before calling
-expression destructor.
-
-For same reason, we can't deref match pointer after nft_xt_put().
-
-This can be easily reproduced by adding msleep() before
-nft_match_destroy() returns.
-
-Fixes: 0ca743a55991 ("netfilter: nf_tables: add compatibility layer for x_tables")
-Reported-by: Pablo Neira Ayuso <pablo@netfilter.org>
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- net/netfilter/nf_tables_api.c | 5 +++--
- net/netfilter/nft_compat.c    | 3 ++-
- 2 files changed, 5 insertions(+), 3 deletions(-)
-
-diff --git a/net/netfilter/nf_tables_api.c b/net/netfilter/nf_tables_api.c
-index 3ae365f92bff..ea1e57daf50e 100644
---- a/net/netfilter/nf_tables_api.c
-+++ b/net/netfilter/nf_tables_api.c
-@@ -2252,7 +2252,7 @@ static int nf_tables_getrule(struct net *net, struct sock *nlsk,
- static void nf_tables_rule_destroy(const struct nft_ctx *ctx,
- 				   struct nft_rule *rule)
- {
--	struct nft_expr *expr;
-+	struct nft_expr *expr, *next;
- 
- 	/*
- 	 * Careful: some expressions might not be initialized in case this
-@@ -2260,8 +2260,9 @@ static void nf_tables_rule_destroy(const struct nft_ctx *ctx,
- 	 */
- 	expr = nft_expr_first(rule);
- 	while (expr != nft_expr_last(rule) && expr->ops) {
-+		next = nft_expr_next(expr);
- 		nf_tables_expr_destroy(ctx, expr);
--		expr = nft_expr_next(expr);
-+		expr = next;
- 	}
- 	kfree(rule);
- }
-diff --git a/net/netfilter/nft_compat.c b/net/netfilter/nft_compat.c
-index 6da1cec1494a..7533c2fd6b76 100644
---- a/net/netfilter/nft_compat.c
-+++ b/net/netfilter/nft_compat.c
-@@ -497,6 +497,7 @@ __nft_match_destroy(const struct nft_ctx *ctx, const struct nft_expr *expr,
- 		    void *info)
- {
- 	struct xt_match *match = expr->ops->data;
-+	struct module *me = match->me;
- 	struct xt_mtdtor_param par;
- 
- 	par.net = ctx->net;
-@@ -507,7 +508,7 @@ __nft_match_destroy(const struct nft_ctx *ctx, const struct nft_expr *expr,
- 		par.match->destroy(&par);
- 
- 	if (nft_xt_put(container_of(expr->ops, struct nft_xt, ops)))
--		module_put(match->me);
-+		module_put(me);
- }
- 
- static void
 -- 
-2.19.1
-
-
-
+Regards
+Balakrishna.
