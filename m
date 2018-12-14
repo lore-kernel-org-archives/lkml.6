@@ -2,158 +2,159 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35DE7C43612
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 17:16:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F443C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 17:16:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10490206E0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 17:16:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544807766;
-	bh=ySFlzq5RjV08D0LJcC5AwZ6G1xf3mFqoVIv4qlhNNmM=;
-	h=In-Reply-To:Subject:To:References:From:Cc:Date:List-ID:From;
-	b=m/V65JYYsSp0x6w+6W9bbw1TicN77RDLbm0xFjfa05ruFnjwZeHsOH+/1GX3PJlwT
-	 CuklGI+s8mSSTcaaHjvbAXetyUuAlRyaa9Yrs+ynR7sp3hQUMmAoDXUasAd28wIObg
-	 fQWDFX72JV6oQp6G7GKmJk1PISkPEPXOcIxT2EY4=
+	by mail.kernel.org (Postfix) with ESMTP id 5E6BC2070B
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 17:16:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VMlcDc6p"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730270AbeLNRQE (ORCPT
+        id S1730314AbeLNRQI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 12:16:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40314 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729508AbeLNRQD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 12:16:03 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C18AF206DD;
-        Fri, 14 Dec 2018 17:16:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544807763;
-        bh=ySFlzq5RjV08D0LJcC5AwZ6G1xf3mFqoVIv4qlhNNmM=;
-        h=In-Reply-To:Subject:To:References:From:Cc:Date:From;
-        b=Ow/ASwOosmXhefebjh04Lye50s8P5Wz0971HNukWKwnrcz9p40voQDBSeFQtcGHHj
-         HRwVxmh/XdryZD8DfY+B35UhBVNfbhsp4KVC1PrNkxxoDqA9X1omGE/metCXDEGQlc
-         cePgdb85M+aJgtnTYz6PJ5eDBkGQJpa7zpLCqcnI=
-Content-Type: text/plain; charset="utf-8"
+        Fri, 14 Dec 2018 12:16:08 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:44912 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730271AbeLNRQH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 12:16:07 -0500
+Received: by mail-pl1-f193.google.com with SMTP id e11so2364003plt.11
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 09:16:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=SQH8taIQkjdsZM4vXe8YuYSXfYbFmiDD/sxQ2CNRa+Q=;
+        b=VMlcDc6pBbefgdLgbx3BcKdCAoBNsxf/QXyvozcie1dZ7JHxwPkvj+fpOcvPhlxdCD
+         Aor+gaWOgpUb/+t5BxoCW1Zf56LnakBSXB7vCmyXudReJIdR5rm+k6CPIo6E1inL/Aw3
+         V9g8MO/sbuDMPNP0PILBab5iuBBuV1+hKwsVbnihgRz5ZZDffEC4ejVIYBcIw3FghUM1
+         2htQ844fjf/54XM5IWxGpdqSuvJLtBNhNuZePcROUtK8iuWon/vjfh1Q4sTGuotxzZ1t
+         PVEfrcG8EQoRG9WQ4mzZy8YmG7coFYwxA1htS7YNPMyoSZojqhCZsFpNhgLPcZwc8nSE
+         Cn1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=SQH8taIQkjdsZM4vXe8YuYSXfYbFmiDD/sxQ2CNRa+Q=;
+        b=KcxCTplm/jWEe+tgKW/gYQMfHKgxwAfd9Md1gS2xWFunsDncMhQqOwbfOS3PV4v2f1
+         IFvhOSbyvWAc9zOnlqS0cOO4+yVEcu0ePYqskas8Jjsp73c1B/c0jb77dJAwqo5lg7JC
+         CBxFW2Mju0THzbm5OR+KwHJDO4apIp86VECUqUMuhM8YFdzgHv9qR37axKrF14b0gcl4
+         IrkBKWxhE9THBvJZfm5mdFoAdyYUUZ3fZq2l7FAw9b16yftVbMfxImIcwwjRm5IfQf7s
+         kiEEUQ4GurhrrACJni9pwuL/1PDVuB//rQK6nIqpzcV3sDDXgHTCFjSf54tgWzzrZRN0
+         M5rA==
+X-Gm-Message-State: AA+aEWbFfnn1Vel0dy1adLbWiP6mBrJ7B5xBQihYcnc8/93WoFsrL3eH
+        H02LKYwJIPzLKmEpL7zfL5c2Ig==
+X-Google-Smtp-Source: AFSGD/VISB3dsALFF4TyZc+/KZMs0SYYeof/RgIJi+hcr7RmBwliOILzFmC7LQbu0KhL/8UaPsVDoQ==
+X-Received: by 2002:a17:902:70c6:: with SMTP id l6mr3733729plt.30.1544807766604;
+        Fri, 14 Dec 2018 09:16:06 -0800 (PST)
+Received: from surenb0.mtv.corp.google.com ([2620:0:1000:1612:3320:4357:47df:276b])
+        by smtp.googlemail.com with ESMTPSA id g185sm7605761pfc.174.2018.12.14.09.16.03
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 14 Dec 2018 09:16:04 -0800 (PST)
+From:   Suren Baghdasaryan <surenb@google.com>
+To:     gregkh@linuxfoundation.org
+Cc:     tj@kernel.org, lizefan@huawei.com, hannes@cmpxchg.org,
+        axboe@kernel.dk, dennis@kernel.org, dennisszhou@gmail.com,
+        mingo@redhat.com, peterz@infradead.org, akpm@linux-foundation.org,
+        corbet@lwn.net, cgroups@vger.kernel.org, linux-mm@kvack.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@android.com, Suren Baghdasaryan <surenb@google.com>
+Subject: [PATCH 0/6] psi: pressure stall monitors
+Date:   Fri, 14 Dec 2018 09:15:02 -0800
+Message-Id: <20181214171508.7791-1-surenb@google.com>
+X-Mailer: git-send-email 2.20.0.405.gbc1bbc6f85-goog
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20181214124145.dbtx6z3itwepsuwb@fsr-ub1664-175>
-Subject: Re: [PATCH 1/3] arm64: Remove CONFIG_SOC_IMX8MQ and use ARCH_MXC instead
-To:     Abel Vesa <abel.vesa@nxp.com>, Lucas Stach <l.stach@pengutronix.de>
-References: <1544707047-4417-1-git-send-email-abel.vesa@nxp.com> <1544707047-4417-2-git-send-email-abel.vesa@nxp.com> <1544711727.3137.32.camel@pengutronix.de> <20181213145149.6hyyhi6hxdzvikl4@fsr-ub1664-175> <20181214011207.GB13243@dragon> <1544779331.3137.36.camel@pengutronix.de> <20181214124145.dbtx6z3itwepsuwb@fsr-ub1664-175>
-Message-ID: <154480776200.19322.2879096818180669421@swboyd.mtv.corp.google.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-User-Agent: alot/0.8
-Cc:     Shawn Guo <shawnguo@kernel.org>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Olof Johansson <olof@lixom.net>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>, Rob Herring <robh@kernel.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>
-Date:   Fri, 14 Dec 2018 09:16:02 -0800
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Abel Vesa (2018-12-14 04:41:46)
-> On 18-12-14 10:22:11, Lucas Stach wrote:
-> > Hi Shawn,
-> >=20
-> > Am Freitag, den 14.12.2018, 09:12 +0800 schrieb Shawn Guo:
-> > > On Thu, Dec 13, 2018 at 02:51:50PM +0000, Abel Vesa wrote:
-> > > ...
-> > > > > > diff --git a/arch/arm64/Kconfig.platforms
-> > > > > > b/arch/arm64/Kconfig.platforms
-> > > > > > index 7e1545a..318dbb9 100644
-> > > > > > --- a/arch/arm64/Kconfig.platforms
-> > > > > > +++ b/arch/arm64/Kconfig.platforms
-> > > > > > @@ -148,14 +148,6 @@ config ARCH_MXC
-> > > > > > > > > > =C2=A0     =C2=A0=C2=A0This enables support for the ARM=
-v8 based SoCs in the
-> > > > > > > > > > =C2=A0     =C2=A0=C2=A0NXP i.MX family.
-> > > > > > =C2=A0
-> > > > > > -config SOC_IMX8MQ
-> > > > > > > > > > -     bool "i.MX8MQ support"
-> > > > > > > > > > -     depends on ARCH_MXC
-> > > > > > > > > > -     select ARM64_ERRATUM_843419
-> > > > > > > > > > -     select ARM64_ERRATUM_845719
-> > > > > > > > > > -     help
-> > > > > > > > > > -     =C2=A0=C2=A0This enables support for the i.MX8MQ =
-SoC.
-> > > > > > -
-> > > > >=20
-> > > > > NACK on this one. Having a single place where stuff that is absol=
-utely
-> > > > > critical for proper SoC operation can be selected is very useful =
-and
-> > > > > avoids hard to debug issues due to slightly wrong configs in the =
-long
-> > > > > run.
-> > > >=20
-> > > > As mentioned in the cover letter, please ignore this patch set enti=
-rely.
-> > > > The ARCH_MXC is actually used on arm32 too, so it won't work.
-> > > >=20
-> > > > I'm working on a patchset that will add the Kconfig into=C2=A0
-> > > > drivers/clk/imx/ and in it will add CLK_IMX8MQ. That will
-> > > > fix the clock dependency since the CLK_IMX8MQ will depend on
-> > > > ARCH_MXC and ARM64. I believe the CLK_IMX8QXP will follow
-> > > > the same pattern.
-> > > >=20
-> > > > As for the SOC_IMX8MQ, all the other vendors have one single
-> > > > config for all the arm64 platforms. TBH, to control every SoC
-> > > > independently it's a little bit of an overkill.
-> > >=20
-> > > Lucas,
-> > >=20
-> > > We are still waiting for further comments from Olof [1].=C2=A0=C2=A0B=
-ut it sounds
-> > > like SoC specific option is not welcomed on ARM64.
-> >=20
-> > While I personally would prefer to keep the SoC options, I see that we
-> > need to align with the judgment of the arm-soc maintainers.
-> >=20
-> > But at the very least we should keep the select for vital system
-> > workarounds. They need to move to the arch Kconfig symbol in that case
-> > and might select stuff that isn't needed on each of the i.MX8 SoCs. But
-> > better enabling more workaround and drivers than necessary than having
-> > hard to debug system failures in the future.
+Android is adopting psi to detect and remedy memory pressure that
+results in stuttering and decreased responsiveness on mobile devices.
 
-CPU erratas are typically implemented with runtime code patching and
-they're pretty much all 'default y' so having the SoC config option
-select them doesn't do much besides force the errata to always be
-enabled. If allowing the user to disable errata handling is a problem,
-then perhaps those should only be visible when CONFIG_EXPERT=3Dy.
+Psi gives us the stall information, but because we're dealing with
+latencies in the millisecond range, periodically reading the pressure
+files to detect stalls in a timely fashion is not feasible. Psi also
+doesn't aggregate its averages at a high-enough frequency right now.
 
-> >=20
->=20
-> I get your point. But that seems to be an issue with the whole arm64 appr=
-oach.
-> TBH, I believe now would be the perfect time to "get it right" on IMX sin=
-ce the 8MQ
-> is the first one to get boot-up support upstream. It will be way much har=
-der
-> to change this later when more arm64 IMX SoCs get upstreamed.
->=20
-> I would really love more opinions on this.
->=20
-> I have patches on stand-by that remove the SOC_IMX8MQ in all the subsyste=
-ms and
-> a patch for the defconfig update which I'll keep on holding on to until t=
-here
-> is a agreement on this.
->=20
+This patch series extends the psi interface such that users can
+configure sensitive latency thresholds and use poll() and friends to
+be notified when these are breached.
 
-I will merge the clk patch now. Hope that helps you feel more confident
-that CONFIG_SOC_FOO options aren't welcome.
+As high-frequency aggregation is costly, it implements an aggregation
+method that is optimized for fast, short-interval averaging, and makes
+the aggregation frequency adaptive, such that high-frequency updates
+only happen while monitored stall events are actively occurring.
+
+With these patches applied, Android can monitor for, and ward off,
+mounting memory shortages before they cause problems for the user.
+For example, using memory stall monitors in userspace low memory
+killer daemon (lmkd) we can detect mounting pressure and kill less
+important processes before device becomes visibly sluggish. In our
+memory stress testing psi memory monitors produce roughly 10x less
+false positives compared to vmpressure signals. Having ability to
+specify multiple triggers for the same psi metric allows other parts
+of Android framework to monitor memory state of the device and act
+accordingly.
+
+The new interface is straight-forward. The user opens one of the
+pressure files for writing and writes a trigger description into the
+file descriptor that defines the stall state - some or full, and the
+maximum stall time over a given window of time. E.g.:
+
+        /* Signal when stall time exceeds 100ms of a 1s window */
+        char trigger[] = "full 100000 1000000"
+        fd = open("/proc/pressure/memory")
+        write(fd, trigger, sizeof(trigger))
+        while (poll() >= 0) {
+                ...
+        };
+        close(fd);
+
+When the monitored stall state is entered, psi adapts its aggregation
+frequency according to what the configured time window requires in
+order to emit event signals in a timely fashion. Once the stalling
+subsides, aggregation reverts back to normal.
+
+The trigger is associated with the open file descriptor. To stop
+monitoring, the user only needs to close the file descriptor and the
+trigger is discarded.
+
+Patches 1-5 prepare the psi code for polling support. Patch 6
+implements the adaptive polling logic, the pressure growth detection
+optimized for short intervals, and hooks up write() and poll() on the
+pressure files.
+
+The patches were developed in collaboration with Johannes Weiner.
+
+The patches are based on 4.20-rc6.
+
+Johannes Weiner (3):
+  fs: kernfs: add poll file operation
+  kernel: cgroup: add poll file operation
+  psi: eliminate lazy clock mode
+
+Suren Baghdasaryan (3):
+  psi: introduce state_mask to represent stalled psi states
+  psi: rename psi fields in preparation for psi trigger addition
+  psi: introduce psi monitor
+
+ Documentation/accounting/psi.txt | 105 ++++++
+ fs/kernfs/file.c                 |  31 +-
+ include/linux/cgroup-defs.h      |   4 +
+ include/linux/kernfs.h           |   6 +
+ include/linux/psi.h              |  10 +
+ include/linux/psi_types.h        |  90 ++++-
+ kernel/cgroup/cgroup.c           | 119 ++++++-
+ kernel/sched/psi.c               | 586 +++++++++++++++++++++++++++----
+ 8 files changed, 865 insertions(+), 86 deletions(-)
+
+-- 
+2.20.0.405.gbc1bbc6f85-goog
 
