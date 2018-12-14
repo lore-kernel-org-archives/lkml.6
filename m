@@ -2,112 +2,81 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D625C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 16:27:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE004C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 16:28:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 153A2206C2
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 16:27:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3FA7B206E0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 16:28:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BfzKGyCP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730043AbeLNQ15 (ORCPT
+        id S1730047AbeLNQ23 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 11:27:57 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:60464 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730002AbeLNQ1z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 11:27:55 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C0F42307D992;
-        Fri, 14 Dec 2018 16:27:54 +0000 (UTC)
-Received: from madcap2.tricolour.ca (ovpn-112-24.phx2.redhat.com [10.3.112.24])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 73AD819C65;
-        Fri, 14 Dec 2018 16:27:47 +0000 (UTC)
-Date:   Fri, 14 Dec 2018 11:27:44 -0500
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
-        linux-kernel@vger.kernel.org, linux-audit@redhat.com,
-        Eric Paris <eparis@redhat.com>, sgrubb@redhat.com
-Subject: Re: [RFC PATCH ghak100 V1 0/2] audit: avoid umount hangs on missing
- mount
-Message-ID: <20181214162744.23sbfyl3rnwkgoie@madcap2.tricolour.ca>
-References: <cover.1542149969.git.rgb@redhat.com>
- <CAHC9VhT8iFLSXJBvocg_aPeveBy0hZ4bxZ547ufbUsTnkONpZg@mail.gmail.com>
+        Fri, 14 Dec 2018 11:28:29 -0500
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:41422 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729803AbeLNQ22 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 11:28:28 -0500
+Received: by mail-yw1-f65.google.com with SMTP id f65so2506733ywc.8
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 08:28:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=CPTovOa0/xKrjIcfaQ8pBrHGQV9oeq0Dh2k/kepRpuk=;
+        b=BfzKGyCPEn3S9vx4TA/G7Gq+nNp6JrEFqoGvZhZoEnAm/+YLo238eGNvQQxWyapY3c
+         B/qRvRXxUoCYejWVBH9QWp5F651YZud+G2SNGJtf8hoxkp7UNSRb/FxC/1z8vplw0B0K
+         5IhGWoN+iDjACxlh5HertycMVxS9I2yquGLIHq/u6b+Me61dZod6hbXY3MSzebAgNUp7
+         vWUpzX49UQ6Rsutf8Zcv6YNDbp+U4siPJs8+vzVlKHCq0T231F78R3dxS24jVBUQvh8l
+         0zMARbhnE+RpP1IY/FwenNvvp/YGzXTQX+KB61ck+wxUKlF6rHdOzBnF7/0oQ2TMaSoU
+         s7xw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=CPTovOa0/xKrjIcfaQ8pBrHGQV9oeq0Dh2k/kepRpuk=;
+        b=M1Yzec9GkmB1z6XMxwkIqQsiSLlFUVLTvAWNWKEJn4HBo0y46Pwu/JBYb7Zs+f5Ssv
+         kT+t5KcCpFoJ5wFHG+odYogGx9K6aEY88RWimDmSfOuyuK6CuUWBFnEEtH/q+StBxDZN
+         K9VZGgWhE3mvoe5B0I/OFNMupLFyaKdwKLw7LR18WmohFCXcbbuNSJHGdQ1fhCwIhJoN
+         AqLD6JBs1woCK0GwFgZ9o20cU/tMvmvDpQv2KOOeDRrXZ48kKWfOrNXuh1sR19syfhp+
+         N858773bnLlxjH8XErksFxOIMjPGo2fzM6P3b298JbSJMa1NERnJJr7Dyl4lNkIs67S5
+         y7/A==
+X-Gm-Message-State: AA+aEWaWUMxzKVdYyJFOLbqNB4HuhuW7H57rVFNkrhf0OwBJBQ2Ivf2k
+        nq0xL2bRIIRJxQDjVsiteopq6iV3/zxzZKwvYO0wi9iYZau94A==
+X-Google-Smtp-Source: AFSGD/UYGjzTZdcm72ohC6JrOpwjNsuuyqUtnI3e6nNGUKQcYE+p6wzw0aFVurw4WR5GTN0d+Nn4XLZSwxMy6iJLpA4=
+X-Received: by 2002:a81:6246:: with SMTP id w67mr3781204ywb.60.1544804907496;
+ Fri, 14 Dec 2018 08:28:27 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhT8iFLSXJBvocg_aPeveBy0hZ4bxZ547ufbUsTnkONpZg@mail.gmail.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Fri, 14 Dec 2018 16:27:54 +0000 (UTC)
+References: <20181214115729.658859279@linuxfoundation.org> <20181214115730.135586551@linuxfoundation.org>
+ <20181214155226.GJ41383@MacBook-Pro-19.local> <20181214155435.GK41383@MacBook-Pro-19.local>
+In-Reply-To: <20181214155435.GK41383@MacBook-Pro-19.local>
+From:   Eric Dumazet <edumazet@google.com>
+Date:   Fri, 14 Dec 2018 08:28:13 -0800
+Message-ID: <CANn89i++i+4XayxaKDF8Auak3h+N2ppUguLhW6_0sz0GNXvNQg@mail.gmail.com>
+Subject: Re: [PATCH 4.14 09/89] net: Prevent invalid access to skb->prev in __qdisc_drop_all
+To:     Christoph Paasch <cpaasch@apple.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org,
+        bhole_prashant_q7@lab.ntt.co.jp,
+        Tyler Hicks <tyhicks@canonical.com>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        David Miller <davem@davemloft.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-12-12 08:03, Paul Moore wrote:
-> On Fri, Nov 16, 2018 at 12:34 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > On user and remote filesystems, a forced umount can still hang due to
-> > attemting to fetch the fcaps of a mounted filesystem that is no longer
-> > available.
-> >
-> > These two patches take different approaches to address this, one by
-> > avoiding the lookup when the MNT_FORCE flag is included, the other by
-> > providing a method to filter out auditing specified types of filesystems.
-> >
-> > This can happen on ceph, cifs, 9p, lustre, fuse (gluster) or NFS.
-> >
-> > Arguably the better way to address this issue is to disable auditing
-> > processes that touch removable filesystems.
-> > Please see the github issue tracker
-> > https://github.com/linux-audit/audit-kernel/issues/100
-> >
-> > Richard Guy Briggs (2):
-> >   audit: avoid fcaps on MNT_FORCE
-> >   audit: moar filter PATH records keyed on filesystem magic
-> >
-> >  fs/namei.c            |  2 +-
-> >  fs/namespace.c        |  3 +++
-> >  include/linux/audit.h |  8 ++++++--
-> >  kernel/audit.c        |  5 +++--
-> >  kernel/audit.h        |  2 +-
-> >  kernel/auditsc.c      | 29 ++++++++++++++++++++++++++---
-> >  6 files changed, 40 insertions(+), 9 deletions(-)
-> 
-> Just to get this out of the way, don't use "moar", spell it properly.
-> 
-> Beyond that, it's not clear to me from your cover letter if you are
-> proposing these patches as an "or" or as an "and"; assuming the
-> patch(es) are reasonable, do you want us to merge both of these
-> patches, or only the one we like the most?
+On Fri, Dec 14, 2018 at 7:54 AM Christoph Paasch <cpaasch@apple.com> wrote:
 
-I would like each one to be considered on its own merits.
+> To clarify: Backport to v4.19.x is needed. The backport to v4.14 and older
+> should not be needed.
 
-The second was discussed back when the logs were flooded with "(null)"
-PATH records due to debugfs and tracefs noise.  Do you agree with the
-general concept or not?
+Sure, but this does not cause any harm.
 
-The first is being picked apart (rightfully) due to assumptions and
-choices made long ago in the audit system.  So while it is still in far
-more flux than the second patch, I think it has the potential to fix the
-problem more correctly and permanently but in the process may challenge
-our rules about the format and invariability of audit records.  The
-basic premise is to prevent audit from trying to get information (fcaps)
-from a filesystem that is likely to be far more ephemeral than local
-on-disk kernel filesystems or to fail to do so more gracefully.
-
-> paul moore
-
-- RGB
-
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+No further action needed :)
