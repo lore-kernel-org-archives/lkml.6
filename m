@@ -2,54 +2,56 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1297C6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:11:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AABDBC67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:11:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 788EB214C4
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:11:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 68B48214C4
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:11:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544789487;
-	bh=tlGw/gKX/Z45HCNDkh1wKKQMHpLIn883WBI3UM2d9vM=;
+	s=default; t=1544789490;
+	bh=lWo6AYXT0HIEGZ0zqKj+2iwMAYTT+oMv+Ii3AQdu+28=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=DIlgK28s+9HqRYTCkOw8V36KEVzzwobj2y4jCv+DR2cp541tcthyioxqxjDcwsN8m
-	 6LyB7d83yF4nhAeYtVsbavyUaN9efgzvllnnZQToErt5D882pEWDyPQjZ5JU54V9xv
-	 CBMx6jISwVSuS/kNgnhrNAPKX7C8dvTF+yXGW1No=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 788EB214C4
+	b=s+LlgUxSzsc5UN6u634WLiYvA5biVB116y/xE2qPEGahWWpDXG/gdsDY1G8iNXUg/
+	 MouMW3Q4+6bQyGcm9r+CXVirorsQRSXh9R5N0+2ylSWJZVovQKTrkUHt4xvekDE0C1
+	 stqNhpnH6I/8lPTEAhELcS598mp5+35Hu4s/MTko=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68B48214C4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731781AbeLNML0 (ORCPT
+        id S1731567AbeLNML2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:11:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58030 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:11:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58094 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731768AbeLNMLX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:11:23 -0500
+        id S1731771AbeLNMLZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:11:25 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8ACCE2147D;
-        Fri, 14 Dec 2018 12:11:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4E09D214D9;
+        Fri, 14 Dec 2018 12:11:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789482;
-        bh=tlGw/gKX/Z45HCNDkh1wKKQMHpLIn883WBI3UM2d9vM=;
+        s=default; t=1544789484;
+        bh=lWo6AYXT0HIEGZ0zqKj+2iwMAYTT+oMv+Ii3AQdu+28=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=A3m44encEcGUph48G47ElENz4EJb996ebFTpHT++aotTBmQQmvDhaawGYmSaV6FqS
-         0nfwZKVsyQWzTD0dS/ZbldwS+Re6ziRsIHHDF6xm+1KGTwXiCUVSojGbx8Q49oTyHE
-         VFL6hBjQrSjyU7YBuyrauf3zWGyuGfELq+9UqzyU=
+        b=niESpsAJcpWOHKiuRLZW/bJrcnCtDMIQ9urB9OPb0brGXvNKm6pVBqWv+lvzBfskE
+         ppMl231RUBt9COHTkWPmi1APk6o9D25vf2aZBngpVXENaveS5e3wxiB8J7bsIA9P94
+         GzRlqaEzlvP9VQhUHOrdrx7W0VODX1jzHxn4bUXo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stefano Brivio <sbrivio@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 10/51] neighbour: Avoid writing before skb->head in neigh_hh_output()
-Date:   Fri, 14 Dec 2018 13:00:12 +0100
-Message-Id: <20181214115714.246127730@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 11/51] ARM: OMAP2+: prm44xx: Fix section annotation on omap44xx_prm_enable_io_wakeup
+Date:   Fri, 14 Dec 2018 13:00:13 +0100
+Message-Id: <20181214115714.342549521@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115713.244259772@linuxfoundation.org>
 References: <20181214115713.244259772@linuxfoundation.org>
@@ -68,87 +70,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stefano Brivio <sbrivio@redhat.com>
+[ Upstream commit eef3dc34a1e0b01d53328b88c25237bcc7323777 ]
 
-[ Upstream commit e6ac64d4c4d095085d7dd71cbd05704ac99829b2 ]
+When building the kernel with Clang, the following section mismatch
+warning appears:
 
-While skb_push() makes the kernel panic if the skb headroom is less than
-the unaligned hardware header size, it will proceed normally in case we
-copy more than that because of alignment, and we'll silently corrupt
-adjacent slabs.
+WARNING: vmlinux.o(.text+0x38b3c): Section mismatch in reference from
+the function omap44xx_prm_late_init() to the function
+.init.text:omap44xx_prm_enable_io_wakeup()
+The function omap44xx_prm_late_init() references
+the function __init omap44xx_prm_enable_io_wakeup().
+This is often because omap44xx_prm_late_init lacks a __init
+annotation or the annotation of omap44xx_prm_enable_io_wakeup is wrong.
 
-In the case fixed by the previous patch,
-"ipv6: Check available headroom in ip6_xmit() even without options", we
-end up in neigh_hh_output() with 14 bytes headroom, 14 bytes hardware
-header and write 16 bytes, starting 2 bytes before the allocated buffer.
+Remove the __init annotation from omap44xx_prm_enable_io_wakeup so there
+is no more mismatch.
 
-Always check we're not writing before skb->head and, if the headroom is
-not enough, warn and drop the packet.
-
-v2:
- - instead of panicking with BUG_ON(), WARN_ON_ONCE() and drop the packet
-   (Eric Dumazet)
- - if we avoid the panic, though, we need to explicitly check the headroom
-   before the memcpy(), otherwise we'll have corrupted slabs on a running
-   kernel, after we warn
- - use __skb_push() instead of skb_push(), as the headroom check is
-   already implemented here explicitly (Eric Dumazet)
-
-Signed-off-by: Stefano Brivio <sbrivio@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/net/neighbour.h |   28 +++++++++++++++++++++++-----
- 1 file changed, 23 insertions(+), 5 deletions(-)
+ arch/arm/mach-omap2/prm44xx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/include/net/neighbour.h
-+++ b/include/net/neighbour.h
-@@ -448,6 +448,7 @@ static inline int neigh_hh_bridge(struct
- 
- static inline int neigh_hh_output(const struct hh_cache *hh, struct sk_buff *skb)
+diff --git a/arch/arm/mach-omap2/prm44xx.c b/arch/arm/mach-omap2/prm44xx.c
+index 30768003f854..8c505284bc0c 100644
+--- a/arch/arm/mach-omap2/prm44xx.c
++++ b/arch/arm/mach-omap2/prm44xx.c
+@@ -344,7 +344,7 @@ static void omap44xx_prm_reconfigure_io_chain(void)
+  * to occur, WAKEUPENABLE bits must be set in the pad mux registers, and
+  * omap44xx_prm_reconfigure_io_chain() must be called.  No return value.
+  */
+-static void __init omap44xx_prm_enable_io_wakeup(void)
++static void omap44xx_prm_enable_io_wakeup(void)
  {
-+	unsigned int hh_alen = 0;
- 	unsigned int seq;
- 	int hh_len;
+ 	s32 inst = omap4_prmst_get_prm_dev_inst();
  
-@@ -455,16 +456,33 @@ static inline int neigh_hh_output(const
- 		seq = read_seqbegin(&hh->hh_lock);
- 		hh_len = hh->hh_len;
- 		if (likely(hh_len <= HH_DATA_MOD)) {
--			/* this is inlined by gcc */
--			memcpy(skb->data - HH_DATA_MOD, hh->hh_data, HH_DATA_MOD);
-+			hh_alen = HH_DATA_MOD;
-+
-+			/* skb_push() would proceed silently if we have room for
-+			 * the unaligned size but not for the aligned size:
-+			 * check headroom explicitly.
-+			 */
-+			if (likely(skb_headroom(skb) >= HH_DATA_MOD)) {
-+				/* this is inlined by gcc */
-+				memcpy(skb->data - HH_DATA_MOD, hh->hh_data,
-+				       HH_DATA_MOD);
-+			}
- 		} else {
--			int hh_alen = HH_DATA_ALIGN(hh_len);
-+			hh_alen = HH_DATA_ALIGN(hh_len);
- 
--			memcpy(skb->data - hh_alen, hh->hh_data, hh_alen);
-+			if (likely(skb_headroom(skb) >= hh_alen)) {
-+				memcpy(skb->data - hh_alen, hh->hh_data,
-+				       hh_alen);
-+			}
- 		}
- 	} while (read_seqretry(&hh->hh_lock, seq));
- 
--	skb_push(skb, hh_len);
-+	if (WARN_ON_ONCE(skb_headroom(skb) < hh_alen)) {
-+		kfree_skb(skb);
-+		return NET_XMIT_DROP;
-+	}
-+
-+	__skb_push(skb, hh_len);
- 	return dev_queue_xmit(skb);
- }
- 
+-- 
+2.19.1
+
 
 
