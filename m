@@ -7,50 +7,50 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06731C67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:04:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 349A6C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:04:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC1E92148E
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:04:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EAB2C21486
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:04:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544789082;
-	bh=/ea1sVZVlnFhV+Il91RsO7gXWlbBMAVgNhg5IDQlT+g=;
+	s=default; t=1544789088;
+	bh=SENmB9h0Z+74h3yqtt43cYmiSwqQ73vTGDIOU1KpemI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ayzUkxEOJahdO5yqhACHdEGLuf4MQSkSRhOTWKsFoJcED0Y+C9qKuWYeu6JfOhl1g
-	 BOILg5uKNDzoCe858hSFgR34DKg8C32JVuI2kkJttV1GOUFX3O9kyG8+clDGLY5oAa
-	 m95jt8w3GXmEX/IomCMWTILw3kQstMPl+onT2h34=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC1E92148E
+	b=rWWnMv8hWycevibYpDXkkU471oDYBIZD4UWZOqnP5tO/ZfO7LRZrMJvJq/Gkg7EVl
+	 g9rWM5lsvwsEyX1U4tHeV8+elZDRv6GpnkTkXUYuRrBSt0bsswPuIqVCAlDBJTlrIv
+	 HpaPhFzGWjrcsLgo6l0PJIwrA+P6xFw7j4yuXJNg=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAB2C21486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730555AbeLNMEl (ORCPT
+        id S1730567AbeLNMEr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:04:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49362 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:04:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49422 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729788AbeLNMEj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:04:39 -0500
+        id S1730552AbeLNMEl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:04:41 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 67D1F2147D;
-        Fri, 14 Dec 2018 12:04:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E8BFD21479;
+        Fri, 14 Dec 2018 12:04:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789077;
-        bh=/ea1sVZVlnFhV+Il91RsO7gXWlbBMAVgNhg5IDQlT+g=;
+        s=default; t=1544789080;
+        bh=SENmB9h0Z+74h3yqtt43cYmiSwqQ73vTGDIOU1KpemI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Erd8rVfDs3LbVSuEc9l6pSLVqmhSzzWQSrtgRJEH/ZyBQXj0nIGQqGLesUOYrPywf
-         8+8Z+YfIAq3zZkNQgtRDievAVEsNMSj+FpdTAZ2gpROkupqux+AuBBBnmvCp038y0k
-         MiEfzL7Z1ikX96hZwj+Z2L3G/FwcTkwYYDcGBuGA=
+        b=AQAW5WgghmkfhjCTWpar1YhRFkeZZ9IG9BeUdzqW2DGocIYuGfkR5mVQaWR3IG3IR
+         oVeKPFs/Yi6WgpIgPZ0XvNDPoe3BMJofooapp4S9qoEtOKj9yoLfxccfHka3m9GWJq
+         hMoJZrZoPYJgpdqtZKCzi5+R2oriiMO68WqRE478=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        stable@vger.kernel.org, Romain Izard <romain.izard.pro@gmail.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 086/142] USB: omap_udc: fix crashes on probe error and module removal
-Date:   Fri, 14 Dec 2018 12:59:31 +0100
-Message-Id: <20181214115750.500715419@linuxfoundation.org>
+Subject: [PATCH 4.19 069/142] ARM: dts: at91: sama5d2: use the divided clock for SMC
+Date:   Fri, 14 Dec 2018 12:59:14 +0100
+Message-Id: <20181214115749.818717106@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115747.053633987@linuxfoundation.org>
 References: <20181214115747.053633987@linuxfoundation.org>
@@ -69,112 +69,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 99f700366fcea1aa2fa3c49c99f371670c3c62f8 ]
+[ Upstream commit 4ab7ca092c3c7ac8b16aa28eba723a8868f82f14 ]
 
-We currently crash if usb_add_gadget_udc_release() fails, since the
-udc->done is not initialized until in the remove function.
-Furthermore, on module removal the udc data is accessed although
-the release function is already triggered by usb_del_gadget_udc()
-early in the function.
+The SAMA5D2 is different from SAMA5D3 and SAMA5D4, as there are two
+different clocks for the peripherals in the SoC. The Static Memory
+controller is connected to the divided master clock.
 
-Fix by rewriting the release and remove functions, basically moving
-all the cleanup into the release function, and doing the completion
-only in the module removal case.
+Unfortunately, the device tree does not correctly show this and uses the
+master clock directly. This clock is then used by the code for the NAND
+controller to calculate the timings for the controller, and we end up with
+slow NAND Flash access.
 
-The patch fixes omap_udc module probe with a failing gadged, and also
-allows the removal of omap_udc. Tested by running "modprobe omap_udc;
-modprobe -r omap_udc" in a loop.
+Fix the device tree, and the performance of Flash access is improved.
 
-Signed-off-by: Aaro Koskinen <aaro.koskinen@iki.fi>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/gadget/udc/omap_udc.c | 50 ++++++++++++-------------------
- 1 file changed, 19 insertions(+), 31 deletions(-)
+ arch/arm/boot/dts/sama5d2.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/usb/gadget/udc/omap_udc.c b/drivers/usb/gadget/udc/omap_udc.c
-index 1c77218c82af..240ccba44592 100644
---- a/drivers/usb/gadget/udc/omap_udc.c
-+++ b/drivers/usb/gadget/udc/omap_udc.c
-@@ -2593,9 +2593,22 @@ omap_ep_setup(char *name, u8 addr, u8 type,
+diff --git a/arch/arm/boot/dts/sama5d2.dtsi b/arch/arm/boot/dts/sama5d2.dtsi
+index 61f68e5c48e9..b405992eb601 100644
+--- a/arch/arm/boot/dts/sama5d2.dtsi
++++ b/arch/arm/boot/dts/sama5d2.dtsi
+@@ -308,7 +308,7 @@
+ 				  0x1 0x0 0x60000000 0x10000000
+ 				  0x2 0x0 0x70000000 0x10000000
+ 				  0x3 0x0 0x80000000 0x10000000>;
+-			clocks = <&mck>;
++			clocks = <&h32ck>;
+ 			status = "disabled";
  
- static void omap_udc_release(struct device *dev)
- {
--	complete(udc->done);
-+	pullup_disable(udc);
-+	if (!IS_ERR_OR_NULL(udc->transceiver)) {
-+		usb_put_phy(udc->transceiver);
-+		udc->transceiver = NULL;
-+	}
-+	omap_writew(0, UDC_SYSCON1);
-+	remove_proc_file();
-+	if (udc->dc_clk) {
-+		if (udc->clk_requested)
-+			omap_udc_enable_clock(0);
-+		clk_put(udc->hhc_clk);
-+		clk_put(udc->dc_clk);
-+	}
-+	if (udc->done)
-+		complete(udc->done);
- 	kfree(udc);
--	udc = NULL;
- }
- 
- static int
-@@ -2900,12 +2913,8 @@ static int omap_udc_probe(struct platform_device *pdev)
- 	}
- 
- 	create_proc_file();
--	status = usb_add_gadget_udc_release(&pdev->dev, &udc->gadget,
--			omap_udc_release);
--	if (!status)
--		return 0;
--
--	remove_proc_file();
-+	return usb_add_gadget_udc_release(&pdev->dev, &udc->gadget,
-+					  omap_udc_release);
- 
- cleanup1:
- 	kfree(udc);
-@@ -2932,36 +2941,15 @@ static int omap_udc_remove(struct platform_device *pdev)
- {
- 	DECLARE_COMPLETION_ONSTACK(done);
- 
--	if (!udc)
--		return -ENODEV;
--
--	usb_del_gadget_udc(&udc->gadget);
--	if (udc->driver)
--		return -EBUSY;
--
- 	udc->done = &done;
- 
--	pullup_disable(udc);
--	if (!IS_ERR_OR_NULL(udc->transceiver)) {
--		usb_put_phy(udc->transceiver);
--		udc->transceiver = NULL;
--	}
--	omap_writew(0, UDC_SYSCON1);
--
--	remove_proc_file();
-+	usb_del_gadget_udc(&udc->gadget);
- 
--	if (udc->dc_clk) {
--		if (udc->clk_requested)
--			omap_udc_enable_clock(0);
--		clk_put(udc->hhc_clk);
--		clk_put(udc->dc_clk);
--	}
-+	wait_for_completion(&done);
- 
- 	release_mem_region(pdev->resource[0].start,
- 			pdev->resource[0].end - pdev->resource[0].start + 1);
- 
--	wait_for_completion(&done);
--
- 	return 0;
- }
- 
+ 			nand_controller: nand-controller {
 -- 
 2.19.1
 
