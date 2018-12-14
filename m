@@ -6,37 +6,36 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7816C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 15:54:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABE54C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 15:54:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22808206DD
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 15:54:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 080C3206DD
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 15:54:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729867AbeLNPyY (ORCPT
+        id S1729779AbeLNPyS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 10:54:24 -0500
+        Fri, 14 Dec 2018 10:54:18 -0500
 Received: from mga05.intel.com ([192.55.52.43]:15172 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729801AbeLNPyT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 10:54:19 -0500
+        id S1727538AbeLNPyP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 10:54:15 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Dec 2018 07:54:18 -0800
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Dec 2018 07:54:15 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,353,1539673200"; 
-   d="scan'208";a="283602010"
+   d="scan'208";a="283602006"
 Received: from black.fi.intel.com (HELO black.fi.intel.com.) ([10.237.72.28])
-  by orsmga005.jf.intel.com with ESMTP; 14 Dec 2018 07:54:16 -0800
+  by orsmga005.jf.intel.com with ESMTP; 14 Dec 2018 07:54:13 -0800
 From:   Alexander Shishkin <alexander.shishkin@linux.intel.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
         linux-kernel@vger.kernel.org,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        stable@vger.kernel.org
-Subject: [GIT PULL 3/3] intel_th: msu: Fix an off-by-one in attribute store
-Date:   Fri, 14 Dec 2018 17:53:47 +0200
-Message-Id: <20181214155347.75722-4-alexander.shishkin@linux.intel.com>
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Subject: [GIT PULL 1/3] stm class: Fix a module refcount leak in policy creation error path
+Date:   Fri, 14 Dec 2018 17:53:45 +0200
+Message-Id: <20181214155347.75722-2-alexander.shishkin@linux.intel.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181214155347.75722-1-alexander.shishkin@linux.intel.com>
 References: <20181214155347.75722-1-alexander.shishkin@linux.intel.com>
@@ -47,48 +46,74 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The 'nr_pages' attribute of the 'msc' subdevices parses a comma-separated
-list of window sizes, passed from userspace. However, there is a bug in
-the string parsing logic wherein it doesn't exclude the comma character
-from the range of characters as it consumes them. This leads to an
-out-of-bounds access given a sufficiently long list. For example:
+Commit ccddbbf4ef27 ("stm class: Introduce framing protocol drivers")
+adds a bug into the error path of policy creation, that would do a
+module_put() on a wrong module, if one tried to create a policy for
+an stm device which already has a policy, using a different protocol.
+IOW,
 
-> # echo 8,8,8,8 > /sys/bus/intel_th/devices/0-msc0/nr_pages
-> ==================================================================
-> BUG: KASAN: slab-out-of-bounds in memchr+0x1e/0x40
-> Read of size 1 at addr ffff8803ffcebcd1 by task sh/825
->
-> CPU: 3 PID: 825 Comm: npktest.sh Tainted: G        W         4.20.0-rc1+
-> Call Trace:
->  dump_stack+0x7c/0xc0
->  print_address_description+0x6c/0x23c
->  ? memchr+0x1e/0x40
->  kasan_report.cold.5+0x241/0x308
->  memchr+0x1e/0x40
->  nr_pages_store+0x203/0xd00 [intel_th_msu]
+| mkdir /config/stp-policy/dummy_stm.0:p_basic.test
+| mkdir /config/stp-policy/dummy_stm.0:p_sys-t.test # puts "p_basic"
+| mkdir /config/stp-policy/dummy_stm.0:p_sys-t.test # "p_basic" -> -1
 
-Fix this by accounting for the comma character.
+throws:
+
+| general protection fault: 0000 [#1] SMP PTI
+| CPU: 3 PID: 2887 Comm: mkdir
+| RIP: 0010:module_put.part.31+0xe/0x90
+| Call Trace:
+|  module_put+0x13/0x20
+|  stm_put_protocol+0x11/0x20 [stm_core]
+|  stp_policy_make+0xf1/0x210 [stm_core]
+|  ? __kmalloc+0x183/0x220
+|  ? configfs_mkdir+0x10d/0x4c0
+|  configfs_mkdir+0x169/0x4c0
+|  vfs_mkdir+0x108/0x1c0
+|  do_mkdirat+0xe8/0x110
+|  __x64_sys_mkdir+0x1b/0x20
+|  do_syscall_64+0x5a/0x140
+|  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+Correct this sad mistake by calling calling 'put' on the correct
+reference, which happens to match another error path in the same
+function, so we consolidate the two at the same time.
 
 Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Fixes: ba82664c134ef ("intel_th: Add Memory Storage Unit driver")
-Cc: stable@vger.kernel.org # v4.4+
+Fixes: ccddbbf4ef27 ("stm class: Introduce framing protocol drivers")
+Reported-by: Ammy Yi <ammy.yi@intel.com>
 ---
- drivers/hwtracing/intel_th/msu.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/hwtracing/stm/policy.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/hwtracing/intel_th/msu.c b/drivers/hwtracing/intel_th/msu.c
-index d293e55553bd..ba7aaf421f36 100644
---- a/drivers/hwtracing/intel_th/msu.c
-+++ b/drivers/hwtracing/intel_th/msu.c
-@@ -1423,7 +1423,8 @@ nr_pages_store(struct device *dev, struct device_attribute *attr,
- 		if (!end)
- 			break;
+diff --git a/drivers/hwtracing/stm/policy.c b/drivers/hwtracing/stm/policy.c
+index 0910ec807187..4b9e44b227d8 100644
+--- a/drivers/hwtracing/stm/policy.c
++++ b/drivers/hwtracing/stm/policy.c
+@@ -440,10 +440,8 @@ stp_policy_make(struct config_group *group, const char *name)
  
--		len -= end - p;
-+		/* consume the number and the following comma, hence +1 */
-+		len -= end - p + 1;
- 		p = end + 1;
- 	} while (len);
+ 	stm->policy = kzalloc(sizeof(*stm->policy), GFP_KERNEL);
+ 	if (!stm->policy) {
+-		mutex_unlock(&stm->policy_mutex);
+-		stm_put_protocol(pdrv);
+-		stm_put_device(stm);
+-		return ERR_PTR(-ENOMEM);
++		ret = ERR_PTR(-ENOMEM);
++		goto unlock_policy;
+ 	}
+ 
+ 	config_group_init_type_name(&stm->policy->group, name,
+@@ -458,7 +456,11 @@ stp_policy_make(struct config_group *group, const char *name)
+ 	mutex_unlock(&stm->policy_mutex);
+ 
+ 	if (IS_ERR(ret)) {
+-		stm_put_protocol(stm->pdrv);
++		/*
++		 * pdrv and stm->pdrv at this point can be quite different,
++		 * and only one of them needs to be 'put'
++		 */
++		stm_put_protocol(pdrv);
+ 		stm_put_device(stm);
+ 	}
  
 -- 
 2.19.2
