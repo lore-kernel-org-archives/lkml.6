@@ -2,231 +2,117 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FROM_EXCESS_BASE64,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39C5EC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 16:40:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DE88C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 16:40:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4B44206C2
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 16:40:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 81EBE206C2
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 16:40:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ysoft.com header.i=@ysoft.com header.b="yznXgIlx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730150AbeLNQkK (ORCPT
+        id S1730185AbeLNQke (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 11:40:10 -0500
-Received: from foss.arm.com ([217.140.101.70]:55092 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729551AbeLNQkK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 11:40:10 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C7DBCEBD;
-        Fri, 14 Dec 2018 08:40:09 -0800 (PST)
-Received: from [10.1.197.36] (e112298-lin.cambridge.arm.com [10.1.197.36])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D44DC3F59C;
-        Fri, 14 Dec 2018 08:40:07 -0800 (PST)
-Subject: Re: [PATCH v7 11/25] arm64: irqflags: Use ICC_PMR_EL1 for interrupt
- masking
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        joel@joelfernandes.org, Marc Zyngier <marc.zyngier@arm.com>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        James Morse <james.morse@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>, oleg@redhat.com
-References: <1544633245-6036-1-git-send-email-julien.thierry@arm.com>
- <1544633245-6036-12-git-send-email-julien.thierry@arm.com>
- <CAKv+Gu8E9g=J78a-2HAdcijaHyVFL1KA3civwfoVHQ=mp7yJJA@mail.gmail.com>
- <19500d6b-62a3-21cb-9ac0-a4e5d4714a63@arm.com>
- <CAKv+Gu8+1JNzM4AUujiEfkYujpgakLXcUwTDG4eHwvQ7pKAzFA@mail.gmail.com>
- <31e41461-763f-aa7d-91ea-b493ede81eed@arm.com>
- <CAKv+Gu9PaeGbfB-9r0Gv1oYn+jORJDk9ozajEwKbse3KjkSmbQ@mail.gmail.com>
- <bc27fb6d-1adf-d7e9-ded2-2cbed81b6e03@arm.com>
- <e0ecdb24-ef52-2c31-565d-66f7a2770f4a@arm.com>
- <7d42f570-541a-59a3-79fc-f00dc0b51689@arm.com>
- <CAKv+Gu8CNmL8v=ePXSvQ0vEAzD2O2YAKutQW-b+E6JmyYBPTnA@mail.gmail.com>
-From:   Julien Thierry <julien.thierry@arm.com>
-Message-ID: <9c64a977-fdee-b2b2-d726-1e9744d229a7@arm.com>
-Date:   Fri, 14 Dec 2018 16:40:05 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <CAKv+Gu8CNmL8v=ePXSvQ0vEAzD2O2YAKutQW-b+E6JmyYBPTnA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+        Fri, 14 Dec 2018 11:40:34 -0500
+Received: from mail-eopbgr150041.outbound.protection.outlook.com ([40.107.15.41]:24640
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729672AbeLNQke (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 11:40:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ysoft.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5PLml7wBhSI+w/Nxvs6/51jZ+I1XV3Uwd8BTliBO8do=;
+ b=yznXgIlxHief0QN74+724Pn9HHES8cW+PcS/Mpnm6zP58O4W1Hw9rVo5tpkX/vAVaHD9uiw2F11T4nCjg58vNv5C05mvKIhKHedR/oJrTdxJbyyv10nmso9RMr2ij8ytmoSwi4GFKKTD3LOVE1a7C8cjeyVO6fF78M0bNGgYoBQ=
+Received: from DB7PR04MB4667.eurprd04.prod.outlook.com (52.135.139.13) by
+ DB7PR04MB4204.eurprd04.prod.outlook.com (52.135.131.13) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1404.22; Fri, 14 Dec 2018 16:40:30 +0000
+Received: from DB7PR04MB4667.eurprd04.prod.outlook.com
+ ([fe80::2561:ec02:4e5e:f490]) by DB7PR04MB4667.eurprd04.prod.outlook.com
+ ([fe80::2561:ec02:4e5e:f490%3]) with mapi id 15.20.1425.021; Fri, 14 Dec 2018
+ 16:40:30 +0000
+From:   =?utf-8?B?Vm9rw6HEjSBNaWNoYWw=?= <Michal.Vokac@ysoft.com>
+To:     =?utf-8?B?VXdlIEtsZWluZS1Lw7ZuaWc=?= <uwe@kleine-koenig.org>
+CC:     Thierry Reding <thierry.reding@gmail.com>,
+        "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [3/3] pwm: imx: Implement get_state() function for hardware
+ readout
+Thread-Topic: [3/3] pwm: imx: Implement get_state() function for hardware
+ readout
+Thread-Index: AQHUkgijcYBGTtAP70mgN1nU8kTgYKV+c18A
+Date:   Fri, 14 Dec 2018 16:40:30 +0000
+Message-ID: <37cc424e-cafd-acb6-d7d2-c6c98abf53de@ysoft.com>
+References: <1538403588-68850-3-git-send-email-michal.vokac@ysoft.com>
+ <20181212105118.GA9268@taurus.defre.kleine-koenig.org>
+In-Reply-To: <20181212105118.GA9268@taurus.defre.kleine-koenig.org>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: VI1PR0202CA0011.eurprd02.prod.outlook.com
+ (2603:10a6:803:14::24) To DB7PR04MB4667.eurprd04.prod.outlook.com
+ (2603:10a6:5:37::13)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Michal.Vokac@ysoft.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [89.24.100.190]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DB7PR04MB4204;6:pFjrei3UFGpZREF48YFRXvwQyicRZMlRH1kPHY4MdF1Oj6INJ5DHrEQfAeyPNitQnAX6XNKdtGsBYHv7W+kcHPCRZmgWGILUekWJS91m1I+5gkKPAzz9lhXoEvUyrWRU1wwB6zCOUDAnBKq8LNVndTAwd2q4bmQGKRgPfEeTypFn8Xsw5engcSGGxGmkWOwiQgiraqQDtR39g4Vl8FWdz3Wwko68S6K+dBTqZBrPgFlZ6wVPvCG8eAybkLTMzQAHbKlbJ4igi6BqE2JO5dUDk3MYRt0ZvN1PRkBCdPrdF0mqYQEyuHRreTWfqJvStEe6+xDyqzJxyJuj0bIAP2ILfD8WSh6ki2F2d8Ce6Ll3v5vtKUHGcjKJoj9aPYopFG1KUV9xTIz/uLBx9iI/60GUxKezTPqPw1Er/D63D2XHXK9lS3sfwKkUqF82YNlmFVpmhpiXtm5l42gcIAUYLRYOvA==;5:wXbF+IGxBEACYoPa7TbQ8G28bto/qDx4ngX5DnZdcyj79CPMlbY1WfjDsuztDxUBEW2fa/pD1Ln7WbkXNRGGbSGMRNFMfhBgLKlxAYr80o/E2LRqp9MIGUfWaYZgBveM2xVQckTeVQvCRexx6vUQARtcRh45Z8PIRYt3oA6QyJg=;7:5uza+eRnMdXfObs1DchYos56mDNgJLLfpcgbnPSlSGhjXy9x+r/A2xLmjJGnYvEoxQgIupzf2+Nkr4gtbsPvz+QZIwbz8wlNMrJbz38mHI62IO54JbvvykhZSd3hCgQyRgS/Ur0hT0gnQl7DjRm+tQ==
+x-ms-office365-filtering-correlation-id: e1bb04cc-6cd4-49f9-7d19-08d661e2dc49
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:DB7PR04MB4204;
+x-ms-traffictypediagnostic: DB7PR04MB4204:
+x-microsoft-antispam-prvs: <DB7PR04MB42045E8FD8C2C5849CB243369EA10@DB7PR04MB4204.eurprd04.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(3230021)(999002)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3002001)(10201501046)(3231475)(944501520)(52105112)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:DB7PR04MB4204;BCL:0;PCL:0;RULEID:;SRVR:DB7PR04MB4204;
+x-forefront-prvs: 08864C38AC
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(366004)(376002)(39850400004)(396003)(136003)(199004)(189003)(386003)(6506007)(53546011)(6486002)(54906003)(6246003)(316002)(102836004)(66066001)(99286004)(6116002)(3846002)(2906002)(6916009)(71190400001)(76176011)(81166006)(5660300001)(71200400001)(36756003)(97736004)(25786009)(8936002)(31686004)(6512007)(256004)(14444005)(39060400002)(53936002)(66574011)(486006)(2616005)(11346002)(446003)(8676002)(52116002)(81156014)(476003)(4326008)(229853002)(31696002)(7736002)(305945005)(186003)(86362001)(478600001)(68736007)(72206003)(14454004)(106356001)(85182001)(105586002)(6436002)(26005);DIR:OUT;SFP:1101;SCL:1;SRVR:DB7PR04MB4204;H:DB7PR04MB4667.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: ysoft.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: il33yXLyoVRHjRkpPMGLMpvl7lCwBMlF8fSaq6DgJGIQBWUxMEohs108R5upET+/txEurj1rc5U3p6klbu+wvxRgtbbhhuSytWMR66sDKD3y1/qFCPi5kJcWB5tEGqqdoSrymIonvHfZjb7h1chNLRD5wqSFGycZvcJ55OMBh1vLT2c3gLHDGF8tZPA8V4IvOHWAajqUdPppUPvI63And21LNj8qWNgh5Sz9gVUB9XEBnp/KUAkuPMUfUcVE+WcbYB5/gZGB6JrXmONVxjmYU2ApI5t9y2p4gzCgnhEjMT5s8bA3WjJUJXnAj3DDVVL3
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <000F27EA2DB23041AA4355250AD4BF89@eurprd04.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: ysoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e1bb04cc-6cd4-49f9-7d19-08d661e2dc49
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Dec 2018 16:40:30.8072
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b5839965-430f-4be2-b282-d7a3149f2b37
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR04MB4204
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 14/12/2018 15:49, Ard Biesheuvel wrote:
-> On Fri, 14 Dec 2018 at 16:23, Julien Thierry <julien.thierry@arm.com> wrote:
->>
->> Hi,
->>
->> On 13/12/2018 15:03, Julien Thierry wrote:
->>>
->>> Argh, not as simple as I had expected.
->>>
->>> Turns out include/linux/efi.h does not include asm/efi.h (including it
->>> at the beginning of the file breaks the build because asm/efi.h misses
->>> the efi type definitions.
->>>
->>> So a thing like:
->>>
->>> #ifndef efi_get_irqflags
->>> #define efi_get_irqflags(flags) local_save_flags(flags)
->>> #endif
->>>
->>> in include/linux/efi.h cannot be overridden.
->>>
->>> Either I would need to introduce the definitions arm, arm64 and x86 (I
->>> don't think there are other arch supporting EFI right now) or I'll need
->>> to come up with another solution.
->>>
->>
-> 
-> It might be a bit nasty, but can we put the #ifndef above in
-> runtime-wrappers.c directly? The only reference in linux/efi.h is a
-> macro, so that shouldn't matter afaict.
-> 
-
-Sadly, in arch/x86/platform/uv/bios_uv.c, uv_bios_call() has a reference
-to the macro efi_call_virt_pointer() which wouldn't be able to see the
-definition in runtime-wrappers.c
-
-Otherwise, we could've moved efi_call_virt_pointer() and
-__efi_call_virt_pointer in runtime-wrappers.c and things would not have
-been as nasty.
-
-But no, I don't think we can do that without breaking some x86 build :( .
-
-Thanks,
-
-> 
->> Would the following patch be acceptable for the EFI generic side?
->>
->> If it is, I'll add it to the next iteration of this series.
->>
->> Thanks,
->>
->> Julien
->>
->> -->
->>
->> From 7acaa8e17142263addafb18ae10bd5d2d49cfb39 Mon Sep 17 00:00:00 2001
->> From: Julien Thierry <julien.thierry@arm.com>
->> Date: Fri, 14 Dec 2018 14:20:13 +0000
->> Subject: [RFC] efi: Let architectures decide the flags that should be
->>  saved/restored
->>
->> Currently, irqflags are saved before calling runtime services and
->> checked for mismatch on return.
->>
->> Add a config option to let architectures define a set of flags to be
->> checked and (if needed) restored when coming back from runtime services.
->> This allows to use check flags that are not necesarly related to
->> irqflags.
->>
->> Signed-off-by: Julien Thierry <julien.thierry@arm.com>
->> ---
->>  arch/Kconfig                            |  8 ++++++++
->>  drivers/firmware/efi/runtime-wrappers.c |  4 ++--
->>  include/linux/efi.h                     | 12 ++++++++++--
->>  3 files changed, 20 insertions(+), 4 deletions(-)
->>
->> diff --git a/arch/Kconfig b/arch/Kconfig
->> index e1e540f..cbec325 100644
->> --- a/arch/Kconfig
->> +++ b/arch/Kconfig
->> @@ -695,6 +695,14 @@ config HAVE_ARCH_HASH
->>           file which provides platform-specific implementations of some
->>           functions in <linux/hash.h> or fs/namei.c.
->>
->> +config HAVE_GENERIC_EFI_FLAGS
->> +       bool
->> +       default n
->> +       help
->> +         Architecture defines a set of flags that EFI runtime services
->> +         should take care to restore when returning to the OS.
->> +         If this is not set, the set of flags defaults to the arch irqflags.
->> +
->>  config ISA_BUS_API
->>         def_bool ISA
->>
->> diff --git a/drivers/firmware/efi/runtime-wrappers.c b/drivers/firmware/efi/runtime-wrappers.c
->> index 8903b9c..6dafa04 100644
->> --- a/drivers/firmware/efi/runtime-wrappers.c
->> +++ b/drivers/firmware/efi/runtime-wrappers.c
->> @@ -93,7 +93,7 @@ void efi_call_virt_check_flags(unsigned long flags, const char *call)
->>  {
->>         unsigned long cur_flags, mismatch;
->>
->> -       local_save_flags(cur_flags);
->> +       efi_save_flags(cur_flags);
->>
->>         mismatch = flags ^ cur_flags;
->>         if (!WARN_ON_ONCE(mismatch & ARCH_EFI_IRQ_FLAGS_MASK))
->> @@ -102,7 +102,7 @@ void efi_call_virt_check_flags(unsigned long flags, const char *call)
->>         add_taint(TAINT_FIRMWARE_WORKAROUND, LOCKDEP_NOW_UNRELIABLE);
->>         pr_err_ratelimited(FW_BUG "IRQ flags corrupted (0x%08lx=>0x%08lx) by EFI %s\n",
->>                            flags, cur_flags, call);
->> -       local_irq_restore(flags);
->> +       efi_restore_flags(flags);
->>  }
->>
->>  /*
->> diff --git a/include/linux/efi.h b/include/linux/efi.h
->> index 100ce4a..41c110a 100644
->> --- a/include/linux/efi.h
->> +++ b/include/linux/efi.h
->> @@ -1594,6 +1594,14 @@ enum efi_secureboot_mode {
->>
->>  void efi_retrieve_tpm2_eventlog(efi_system_table_t *sys_table);
->>
->> +#ifdef CONFIG_HAVE_GENERIC_EFI_FLAGS
->> +#define efi_save_flags(state_flags)    arch_efi_save_flags(state_flags)
->> +#define efi_restore_flags(state_flags) arch_efi_restore_flags(state_flags)
->> +#else
->> +#define efi_save_flags(state_flags)    local_save_flags(state_flags)
->> +#define efi_restore_flags(state_flags) local_irq_restore(state_flags)
->> +#endif
->> +
->>  /*
->>   * Arch code can implement the following three template macros, avoiding
->>   * reptition for the void/non-void return cases of {__,}efi_call_virt():
->> @@ -1621,7 +1629,7 @@ enum efi_secureboot_mode {
->>                                                                         \
->>         arch_efi_call_virt_setup();                                     \
->>                                                                         \
->> -       local_save_flags(__flags);                                      \
->> +       efi_save_flags(__flags);                                        \
->>         __s = arch_efi_call_virt(p, f, args);                           \
->>         efi_call_virt_check_flags(__flags, __stringify(f));             \
->>                                                                         \
->> @@ -1636,7 +1644,7 @@ enum efi_secureboot_mode {
->>                                                                         \
->>         arch_efi_call_virt_setup();                                     \
->>                                                                         \
->> -       local_save_flags(__flags);                                      \
->> +       efi_save_flags(__flags);                                        \
->>         arch_efi_call_virt(p, f, args);                                 \
->>         efi_call_virt_check_flags(__flags, __stringify(f));             \
->>                                                                         \
->> --
->> 1.9.1
->>
->>
->>
->>
->> --
->> Julien Thierry
-
--- 
-Julien Thierry
+T24gMTIuMTIuMjAxOCAxMTo1MSwgVXdlIEtsZWluZS1Lw7ZuaWcgd3JvdGU6DQo+IEhlbGxvLA0K
+PiANCj4gT24gTW9uLCBPY3QgMDEsIDIwMTggYXQgMDQ6MTk6NDhQTSArMDIwMCwgTWljaGFsIFZv
+a8OhxI0gd3JvdGU6DQo+PiBJbXBsZW1lbnQgdGhlIGdldF9zdGF0ZSgpIGZ1bmN0aW9uIGFuZCBz
+ZXQgdGhlIGluaXRpYWwgc3RhdGUgdG8gcmVmbGVjdA0KPj4gcmVhbCBzdGF0ZSBvZiB0aGUgaGFy
+ZHdhcmUuIFRoaXMgYWxsb3dzIHRvIGtlZXAgdGhlIFBXTSBydW5uaW5nIGlmIGl0IHdhcw0KPj4g
+ZW5hYmxlZCBpbiBib290bG9hZGVyLiBJdCBpcyB2ZXJ5IHNpbWlsYXIgdG8gdGhlIEdQSU8gYmVo
+YXZpb3IuIEdQSU8gcGluDQo+PiBzZXQgYXMgb3V0cHV0IGluIGJvb3Rsb2FkZXIga2VlcCB0aGUg
+c2FtZSBzZXR0aW5nIGluIExpbnV4IHVubGVzcyBpdCBpcw0KPj4gcmVjb25maWd1cmVkLg0KPj4N
+Cj4+IElmIHdlIGZpbmQgdGhlIFBXTSBibG9jayBlbmFibGVkIHdlIG5lZWQgdG8gcHJlcGFyZSBh
+bmQgZW5hYmxlIGl0cyBzb3VyY2UNCj4+IGNsb2NrIG90aGVyd2lzZSB0aGUgY2xvY2sgd2lsbCBi
+ZSBkaXNhYmxlZCBsYXRlIGluIHRoZSBib290IGFzIHVudXNlZC4NCj4+IFRoYXQgd2lsbCBsZWF2
+ZSB0aGUgUFdNIGluIGVuYWJsZWQgc3RhdGUgYnV0IHdpdGggZGlzYWJsZWQgY2xvY2suIFRoYXQg
+aGFzDQo+PiBhIHNpZGUgZWZmZWN0IHRoYXQgdGhlIFBXTSBvdXRwdXQgaXMgbGVmdCBhdCBpdHMg
+Y3VycmVudCBsZXZlbCBhdCB3aGljaA0KPj4gdGhlIGNsb2NrIHdhcyBkaXNhYmxlZC4gSXQgaXMg
+dG90YWxseSBub24tZGV0ZXJtaW5pc3RpYyBhbmQgaXQgbWF5IGJlIExPVw0KPj4gb3IgSElHSC4N
+Cj4gDQo+IERvZXMgdGhpcyBwcm9ibGVtIHN0aWxsIGV4aXN0IGlmIHRoZSBwd20taW14IGRyaXZl
+ciBpcyBhIG1vZHVsZT8NCg0KWWVzLiBUaGUgc291cmNlIGNsb2NrIGZvciBQV00gaXMgc3RvcHBl
+ZCBieSB0aGUgY2xvY2sgY29yZSBzaG9ydGx5DQpiZWZvcmUgaW5pdCBwcm9jZXNzIGlzIHN0YXJ0
+ZWQgYW5kIGl0IGRvZXMgbm90IG1hdHRlciBpZiB0aGUgcHdtLWlteA0KZHJpdmVyIGlzIGJ1aWx0
+IGFzIGEgbW9kdWxlIG9yIGJ1aWx0IGludG8gdGhlIGtlcm5lbC4NCg0KV2hlbiB0aGUgbW9kdWxl
+IGlzIGxvYWRlZCwgdGhlIC5nZXRfc3RhdGUgZnVuY3Rpb24gaXMgZXhlY3V0ZWQgYW5kDQpyZWFk
+cyB0aGUgUFdNIHJlZ2lzdGVycy4gSWYgdGhlIEVOIGJpdCBpcyBzZXQgdGhlIGNsb2NrIGlzIHN0
+YXJ0ZWQNCmFuZCBQV00gY29udGludWVzIGZyb20gd2hlcmUgaXQgd2FzIHN0b3BwZWQuDQoNCk1p
+Y2hhbA0K
