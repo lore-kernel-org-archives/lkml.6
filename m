@@ -7,50 +7,51 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4439BC6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:12:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4250CC6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:12:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08FE021473
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:12:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F3208214E0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:12:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544789522;
-	bh=6izZN2fxCkvrYD9XDyJ7TThAXaQN+UeXJP96wBeI97k=;
+	s=default; t=1544789526;
+	bh=Xn6/fW8xGdbFVdMAP91QURkQXJGbz5fAdZm8cZQoiqw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=DykXH8+8RH1++RlFOpJ6hDRutgsxBeP4JhyqDyuICP0FlOhPSnpuEbZYXB12bZSp3
-	 lqbkiyoAgF2xkR6WOCncfsRUR7I/iqFvk0t0y2M1/iJ2hqENNzGALYSbuZjQdu+VAq
-	 FODSyJY3JmKzGBZqsFiLTUIGyT2tzcpl/Pbw+Vvg=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08FE021473
+	b=ndXJRFVm8GQ4rQ2GMG136ihOnRdG339k22mqVD3DEkhsJUXdJO4urY4jJoHUYzBeR
+	 lemcdqmfwV/bL6+P2lQAFn547jBgOEi6bjuEI4Uo/dbNifc40ZHMFvUGV9KGLuQqUL
+	 E6L9LTHZetubm2payNcInIjFjVQFCcC0LW6+/Eno=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3208214E0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731870AbeLNMMA (ORCPT
+        id S1731881AbeLNMME (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:12:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58872 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:12:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59012 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730862AbeLNML4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:11:56 -0500
+        id S1731869AbeLNMMB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:12:01 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 27CAC21104;
-        Fri, 14 Dec 2018 12:11:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1B66621104;
+        Fri, 14 Dec 2018 12:11:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789515;
-        bh=6izZN2fxCkvrYD9XDyJ7TThAXaQN+UeXJP96wBeI97k=;
+        s=default; t=1544789520;
+        bh=Xn6/fW8xGdbFVdMAP91QURkQXJGbz5fAdZm8cZQoiqw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BAOOgRxwCB7S+IwuoUoewqNrRU2U2dTVa8gdr4J55erAuaQ+6+7Dm6kNVhiat0OrE
-         MDkjkDO4LdllhFCpqq7Qe6zMmnIso2sZwkXJhy+qBDhneR/St89HVhL02uqmPynZ/t
-         ynnS8EDwPUdQt5zSu1B3CZBrWW17tQLr8DwGfHqA=
+        b=axF9arEQJ8fY72vEf1kjCfsSlukgzPaa/KdPUqUsqK10YfQrhZReML4MXLcvP7TOc
+         CevZbRSZmYVR+QP7nd/fX8EbeeyFrBaz9TodeSeO9BYXj2XIDeYUUHHmRmoMJ8Y7jC
+         NWao4FyEBG8j0WV9IeYYaMsQ4bN8kD8Rt+GTjcwo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Florian Westphal <fw@strlen.de>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
+        stable@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Jarkko Nikula <jarkko.nikula@bitmer.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 15/51] selftests: add script to stress-test nft packet path vs. control plane
-Date:   Fri, 14 Dec 2018 13:00:17 +0100
-Message-Id: <20181214115714.734321195@linuxfoundation.org>
+Subject: [PATCH 4.9 25/51] ASoC: omap-mcpdm: Add pm_qos handling to avoid under/overruns with CPU_IDLE
+Date:   Fri, 14 Dec 2018 13:00:27 +0100
+Message-Id: <20181214115715.647550208@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115713.244259772@linuxfoundation.org>
 References: <20181214115713.244259772@linuxfoundation.org>
@@ -69,147 +70,124 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 25d8bcedbf4329895dbaf9dd67baa6f18dad918c ]
+[ Upstream commit 373a500e34aea97971c9d71e45edad458d3da98f ]
 
-Start flood ping for each cpu while loading/flushing rulesets to make
-sure we do not access already-free'd rules from nf_tables evaluation loop.
+We need to block sleep states which would require longer time to leave than
+the time the DMA must react to the DMA request in order to keep the FIFO
+serviced without under of overrun.
 
-Also add this to TARGETS so 'make run_tests' in selftest dir runs it
-automatically.
-
-This would have caught the bug fixed in previous change
-("netfilter: nf_tables: do not skip inactive chains during generation update")
-sooner.
-
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Acked-by: Jarkko Nikula <jarkko.nikula@bitmer.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/testing/selftests/Makefile              |  1 +
- tools/testing/selftests/netfilter/Makefile    |  6 ++
- tools/testing/selftests/netfilter/config      |  2 +
- .../selftests/netfilter/nft_trans_stress.sh   | 78 +++++++++++++++++++
- 4 files changed, 87 insertions(+)
- create mode 100644 tools/testing/selftests/netfilter/Makefile
- create mode 100644 tools/testing/selftests/netfilter/config
- create mode 100755 tools/testing/selftests/netfilter/nft_trans_stress.sh
+ sound/soc/omap/omap-mcpdm.c | 43 ++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 42 insertions(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
-index 76faf5bf0b32..d37dfc6608c6 100644
---- a/tools/testing/selftests/Makefile
-+++ b/tools/testing/selftests/Makefile
-@@ -15,6 +15,7 @@ TARGETS += memory-hotplug
- TARGETS += mount
- TARGETS += mqueue
- TARGETS += net
-+TARGETS += netfilter
- TARGETS += nsfs
- TARGETS += powerpc
- TARGETS += pstore
-diff --git a/tools/testing/selftests/netfilter/Makefile b/tools/testing/selftests/netfilter/Makefile
-new file mode 100644
-index 000000000000..47ed6cef93fb
---- /dev/null
-+++ b/tools/testing/selftests/netfilter/Makefile
-@@ -0,0 +1,6 @@
-+# SPDX-License-Identifier: GPL-2.0
-+# Makefile for netfilter selftests
+diff --git a/sound/soc/omap/omap-mcpdm.c b/sound/soc/omap/omap-mcpdm.c
+index 64609c77a79d..44ffeb71cd1d 100644
+--- a/sound/soc/omap/omap-mcpdm.c
++++ b/sound/soc/omap/omap-mcpdm.c
+@@ -54,6 +54,8 @@ struct omap_mcpdm {
+ 	unsigned long phys_base;
+ 	void __iomem *io_base;
+ 	int irq;
++	struct pm_qos_request pm_qos_req;
++	int latency[2];
+ 
+ 	struct mutex mutex;
+ 
+@@ -277,6 +279,9 @@ static void omap_mcpdm_dai_shutdown(struct snd_pcm_substream *substream,
+ 				  struct snd_soc_dai *dai)
+ {
+ 	struct omap_mcpdm *mcpdm = snd_soc_dai_get_drvdata(dai);
++	int tx = (substream->stream == SNDRV_PCM_STREAM_PLAYBACK);
++	int stream1 = tx ? SNDRV_PCM_STREAM_PLAYBACK : SNDRV_PCM_STREAM_CAPTURE;
++	int stream2 = tx ? SNDRV_PCM_STREAM_CAPTURE : SNDRV_PCM_STREAM_PLAYBACK;
+ 
+ 	mutex_lock(&mcpdm->mutex);
+ 
+@@ -289,6 +294,14 @@ static void omap_mcpdm_dai_shutdown(struct snd_pcm_substream *substream,
+ 		}
+ 	}
+ 
++	if (mcpdm->latency[stream2])
++		pm_qos_update_request(&mcpdm->pm_qos_req,
++				      mcpdm->latency[stream2]);
++	else if (mcpdm->latency[stream1])
++		pm_qos_remove_request(&mcpdm->pm_qos_req);
 +
-+TEST_PROGS := nft_trans_stress.sh
++	mcpdm->latency[stream1] = 0;
 +
-+include ../lib.mk
-diff --git a/tools/testing/selftests/netfilter/config b/tools/testing/selftests/netfilter/config
-new file mode 100644
-index 000000000000..1017313e41a8
---- /dev/null
-+++ b/tools/testing/selftests/netfilter/config
-@@ -0,0 +1,2 @@
-+CONFIG_NET_NS=y
-+NF_TABLES_INET=y
-diff --git a/tools/testing/selftests/netfilter/nft_trans_stress.sh b/tools/testing/selftests/netfilter/nft_trans_stress.sh
-new file mode 100755
-index 000000000000..f1affd12c4b1
---- /dev/null
-+++ b/tools/testing/selftests/netfilter/nft_trans_stress.sh
-@@ -0,0 +1,78 @@
-+#!/bin/bash
-+#
-+# This test is for stress-testing the nf_tables config plane path vs.
-+# packet path processing: Make sure we never release rules that are
-+# still visible to other cpus.
-+#
-+# set -e
+ 	mutex_unlock(&mcpdm->mutex);
+ }
+ 
+@@ -300,7 +313,7 @@ static int omap_mcpdm_dai_hw_params(struct snd_pcm_substream *substream,
+ 	int stream = substream->stream;
+ 	struct snd_dmaengine_dai_dma_data *dma_data;
+ 	u32 threshold;
+-	int channels;
++	int channels, latency;
+ 	int link_mask = 0;
+ 
+ 	channels = params_channels(params);
+@@ -340,14 +353,25 @@ static int omap_mcpdm_dai_hw_params(struct snd_pcm_substream *substream,
+ 
+ 		dma_data->maxburst =
+ 				(MCPDM_DN_THRES_MAX - threshold) * channels;
++		latency = threshold;
+ 	} else {
+ 		/* If playback is not running assume a stereo stream to come */
+ 		if (!mcpdm->config[!stream].link_mask)
+ 			mcpdm->config[!stream].link_mask = (0x3 << 3);
+ 
+ 		dma_data->maxburst = threshold * channels;
++		latency = (MCPDM_DN_THRES_MAX - threshold);
+ 	}
+ 
++	/*
++	 * The DMA must act to a DMA request within latency time (usec) to avoid
++	 * under/overflow
++	 */
++	mcpdm->latency[stream] = latency * USEC_PER_SEC / params_rate(params);
 +
-+# Kselftest framework requirement - SKIP code is 4.
-+ksft_skip=4
++	if (!mcpdm->latency[stream])
++		mcpdm->latency[stream] = 10;
 +
-+testns=testns1
-+tables="foo bar baz quux"
+ 	/* Check if we need to restart McPDM with this stream */
+ 	if (mcpdm->config[stream].link_mask &&
+ 	    mcpdm->config[stream].link_mask != link_mask)
+@@ -362,6 +386,20 @@ static int omap_mcpdm_prepare(struct snd_pcm_substream *substream,
+ 				  struct snd_soc_dai *dai)
+ {
+ 	struct omap_mcpdm *mcpdm = snd_soc_dai_get_drvdata(dai);
++	struct pm_qos_request *pm_qos_req = &mcpdm->pm_qos_req;
++	int tx = (substream->stream == SNDRV_PCM_STREAM_PLAYBACK);
++	int stream1 = tx ? SNDRV_PCM_STREAM_PLAYBACK : SNDRV_PCM_STREAM_CAPTURE;
++	int stream2 = tx ? SNDRV_PCM_STREAM_CAPTURE : SNDRV_PCM_STREAM_PLAYBACK;
++	int latency = mcpdm->latency[stream2];
 +
-+nft --version > /dev/null 2>&1
-+if [ $? -ne 0 ];then
-+	echo "SKIP: Could not run test without nft tool"
-+	exit $ksft_skip
-+fi
++	/* Prevent omap hardware from hitting off between FIFO fills */
++	if (!latency || mcpdm->latency[stream1] < latency)
++		latency = mcpdm->latency[stream1];
 +
-+ip -Version > /dev/null 2>&1
-+if [ $? -ne 0 ];then
-+	echo "SKIP: Could not run test without ip tool"
-+	exit $ksft_skip
-+fi
++	if (pm_qos_request_active(pm_qos_req))
++		pm_qos_update_request(pm_qos_req, latency);
++	else if (latency)
++		pm_qos_add_request(pm_qos_req, PM_QOS_CPU_DMA_LATENCY, latency);
+ 
+ 	if (!omap_mcpdm_active(mcpdm)) {
+ 		omap_mcpdm_start(mcpdm);
+@@ -423,6 +461,9 @@ static int omap_mcpdm_remove(struct snd_soc_dai *dai)
+ 	free_irq(mcpdm->irq, (void *)mcpdm);
+ 	pm_runtime_disable(mcpdm->dev);
+ 
++	if (pm_qos_request_active(&mcpdm->pm_qos_req))
++		pm_qos_remove_request(&mcpdm->pm_qos_req);
 +
-+tmp=$(mktemp)
-+
-+for table in $tables; do
-+	echo add table inet "$table" >> "$tmp"
-+	echo flush table inet "$table" >> "$tmp"
-+
-+	echo "add chain inet $table INPUT { type filter hook input priority 0; }" >> "$tmp"
-+	echo "add chain inet $table OUTPUT { type filter hook output priority 0; }" >> "$tmp"
-+	for c in $(seq 1 400); do
-+		chain=$(printf "chain%03u" "$c")
-+		echo "add chain inet $table $chain" >> "$tmp"
-+	done
-+
-+	for c in $(seq 1 400); do
-+		chain=$(printf "chain%03u" "$c")
-+		for BASE in INPUT OUTPUT; do
-+			echo "add rule inet $table $BASE counter jump $chain" >> "$tmp"
-+		done
-+		echo "add rule inet $table $chain counter return" >> "$tmp"
-+	done
-+done
-+
-+ip netns add "$testns"
-+ip -netns "$testns" link set lo up
-+
-+lscpu | grep ^CPU\(s\): | ( read cpu cpunum ;
-+cpunum=$((cpunum-1))
-+for i in $(seq 0 $cpunum);do
-+	mask=$(printf 0x%x $((1<<$i)))
-+        ip netns exec "$testns" taskset $mask ping -4 127.0.0.1 -fq > /dev/null &
-+        ip netns exec "$testns" taskset $mask ping -6 ::1 -fq > /dev/null &
-+done)
-+
-+sleep 1
-+
-+for i in $(seq 1 10) ; do ip netns exec "$testns" nft -f "$tmp" & done
-+
-+for table in $tables;do
-+	randsleep=$((RANDOM%10))
-+	sleep $randsleep
-+	ip netns exec "$testns" nft delete table inet $table 2>/dev/null
-+done
-+
-+randsleep=$((RANDOM%10))
-+sleep $randsleep
-+
-+pkill -9 ping
-+
-+wait
-+
-+rm -f "$tmp"
-+ip netns del "$testns"
+ 	return 0;
+ }
+ 
 -- 
 2.19.1
 
