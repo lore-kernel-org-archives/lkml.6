@@ -2,111 +2,101 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97ED6C67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 10:47:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17EC6C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 10:47:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4983220892
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 10:47:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D0C5820892
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 10:47:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="IGy6MCS4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4983220892
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GwxeC5Wa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0C5820892
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729327AbeLNKrf (ORCPT
+        id S1729477AbeLNKrr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 05:47:35 -0500
-Received: from smtprelay4.synopsys.com ([198.182.47.9]:46548 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726604AbeLNKrf (ORCPT
+        Fri, 14 Dec 2018 05:47:47 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:34367 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726344AbeLNKrq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 05:47:35 -0500
-Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id B054124E2106;
-        Fri, 14 Dec 2018 02:47:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1544784454; bh=kJjl3PpYxTm7l5O7YiNgHJPpM0dh8ECipLNdVvJsG8Y=;
-        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-        b=IGy6MCS4HA1rKhKP7FVOa2Ef/S6B8AA9LbKj4iDpiGyY+QhNGfkNTzkHOITiYNNwC
-         1k9UcytgR/rGCeC2eKnC60yOda4bSr+vsmUuE0LH3tbgnt4+AIFKyZdn65YmHGJl0X
-         uCG3OBmYeF3FETeJ4/mtVEg2VBFqytAn2g6qH1eAf9PLab7ziDKJkuodKqa8vbNJzT
-         3DYZgiI7B2D/Wxgx9bMaBXbM/PKDpH1VmgFOesP8xwu81sY/LG/VAOPBhTv4FmMPpg
-         VkCsCLdHvH6eEDwG5NN7WhXnQa5kcW9gQFsnAMdoPuu/hsqvYw4TnWaEqL0mkVtnoe
-         KM+HPPqb5pTDQ==
-Received: from US01WEHTC2.internal.synopsys.com (us01wehtc2.internal.synopsys.com [10.12.239.237])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 9FDDC3AF8;
-        Fri, 14 Dec 2018 02:47:34 -0800 (PST)
-Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
- US01WEHTC2.internal.synopsys.com (10.12.239.237) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Fri, 14 Dec 2018 02:47:34 -0800
-Received: from DE02WEMBXB.internal.synopsys.com ([fe80::95ce:118a:8321:a099])
- by DE02WEHTCA.internal.synopsys.com ([::1]) with mapi id 14.03.0415.000; Fri,
- 14 Dec 2018 11:47:31 +0100
-From:   Eugeniy Paltsev <eugeniy.paltsev@synopsys.com>
-To:     "Eugeniy.Paltsev@synopsys.com" <Eugeniy.Paltsev@synopsys.com>,
-        "Vineet Gupta" <vineet.gupta1@synopsys.com>,
-        "linux-snps-arc@lists.infradead.org" 
-        <linux-snps-arc@lists.infradead.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Alexey Brodkin" <alexey.brodkin@synopsys.com>
-Subject: Re: [PATCH] ARC: fix __ffs return value to avoid build warnings
-Thread-Topic: [PATCH] ARC: fix __ffs return value to avoid build warnings
-Thread-Index: AQHUkvqKb3uYi9qbnk+XGfa5481IQ6V9/hiA
-Date:   Fri, 14 Dec 2018 10:47:30 +0000
-Message-ID: <1544784449.3270.30.camel@synopsys.com>
-References: <20181213154257.23033-1-Eugeniy.Paltsev@synopsys.com>
-         <C2D7FE5348E1B147BCA15975FBA23075014641F6E3@US01WEMBX2.internal.synopsys.com>
-In-Reply-To: <C2D7FE5348E1B147BCA15975FBA23075014641F6E3@US01WEMBX2.internal.synopsys.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.121.3.66]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <24A3642CC61D014D81828E19E0649CB4@internal.synopsys.com>
-Content-Transfer-Encoding: base64
+        Fri, 14 Dec 2018 05:47:46 -0500
+Received: by mail-pg1-f195.google.com with SMTP id j10so1330848pga.1
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 02:47:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Xhw6ncEjQ60lIj0jN2vfwEh1OlRmF1+fjw0az21rJd8=;
+        b=GwxeC5WaWqFxeMw6e4ffgWtFv7Z5uul3ZWtCcBbwVVA73nsEWU5xHQZucvZmzJLhK7
+         HZlJRzdgh+db5SH+uThjECs+X+Ge6DCA0uihfYzVBtj3qReM1vF5+1nmqwUCgRQ1fIIS
+         XRnnW5fhOOEmU/6RFodsRl1Qk1/XwqneXYMvU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Xhw6ncEjQ60lIj0jN2vfwEh1OlRmF1+fjw0az21rJd8=;
+        b=EeumUF/wXm7pycIrhRyW9UB/XhVdDCf/dwoMJ4r2eJX4l3qEeOFBy7vK+N7Uufq5Lp
+         H7Ha+CS0zqghwyAIuJhtxD4wtjJ+0aMg9yu8es+Ut+4gBcXeeIMFPvP2rcHH53i3dnfP
+         zwLU7NjksYAErSj8qU1s9VHIH8d2K3BIivhWZzSuco1OPYgDzdL7WypmbF9tBHCXxu+2
+         QV3GWgybC6rbSNICPRH3gNG7KcLQPnUpnt1XfHqZ78qJQkv4VEwO6MSydl2geHTlYVkB
+         RBxISoF49PiB2c0aSDhglp6uMQ9o5YSGpDiSoOcuiWmdrb7vrPOONrJNT2qcZ1Ido60R
+         Tbvw==
+X-Gm-Message-State: AA+aEWZxQfqOY1G2GeRBUjd3jvy3mELcblXGSmNFRJsGiht7wJ4CCXYM
+        5u7hu3TP846fsn14fgPgTzvDbQ==
+X-Google-Smtp-Source: AFSGD/VjoMo4YgbkXExh4bZwnkSxRXv+KSe0ohaWOsttUZvSaJ5svDMZ3KhaHrWhHyH52skljny7zQ==
+X-Received: by 2002:a63:4c04:: with SMTP id z4mr2302595pga.312.1544784466103;
+        Fri, 14 Dec 2018 02:47:46 -0800 (PST)
+Received: from localhost ([122.172.23.29])
+        by smtp.gmail.com with ESMTPSA id e16sm6024989pfn.46.2018.12.14.02.47.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 14 Dec 2018 02:47:45 -0800 (PST)
+Date:   Fri, 14 Dec 2018 16:17:42 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Rafael Wysocki <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>, Pavel Machek <pavel@ucw.cz>,
+        Len Brown <len.brown@intel.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Niklas Cassel <niklas.cassel@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH V4 6/7] PM / Domains: Factorize
+ dev_pm_genpd_set_performance_state()
+Message-ID: <20181214104742.szicfipdffaegcoy@vireshk-i7>
+References: <cover.1544782279.git.viresh.kumar@linaro.org>
+ <f6153683d88cce25319945e4308bef46edaaaa54.1544782279.git.viresh.kumar@linaro.org>
+ <CAPDyKFr7_Cn0N=pctuTdqzcUy9fg-fmpd5OgEFS9eRz-SFh1Fw@mail.gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPDyKFr7_Cn0N=pctuTdqzcUy9fg-fmpd5OgEFS9eRz-SFh1Fw@mail.gmail.com>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgVmluZWV0LA0KDQpPbiBUaHUsIDIwMTgtMTItMTMgYXQgMTg6MjMgKzAwMDAsIFZpbmVldCBH
-dXB0YSB3cm90ZToNCj4gT24gMTIvMTMvMTggNzo0MyBBTSwgRXVnZW5peSBQYWx0c2V2IHdyb3Rl
-Og0KPiA+IENoYW5nZSBfX2ZmcyByZXR1cm4gdmFsdWUgZnJvbSAnaW50JyB0byAndW5zaWduZWQg
-bG9uZycgYXMgaXQNCj4gPiBpcyBkb25lIGluIG90aGVyIGltcGxlbWVudGF0aW9ucyAobGlrZSBh
-c20tZ2VuZXJpYywgeDg2LCBldGMuLi4pDQo+ID4gdG8gYXZvaWQgYnVpbGQtdGltZSB3YXJuaW5n
-cyBpbiBwbGFjZXMgd2hlcmUgdHlwZSBpcyBzdHJpY3RseQ0KPiA+IGNoZWNrZWQuDQo+ID4gDQo+
-ID4gQXMgX19mZnMgbWF5IHJldHVybiB2YWx1ZXMgaW4gWzAtMzFdIGludGVydmFsIGNoYW5naW5n
-IHJldHVybg0KPiA+IHR5cGUgdG8gdW5zaWduZWQgaXMgdmFsaWQuDQo+ID4gDQo+ID4gU2lnbmVk
-LW9mZi1ieTogRXVnZW5peSBQYWx0c2V2IDxFdWdlbml5LlBhbHRzZXZAc3lub3BzeXMuY29tPg0K
-PiANCj4gQ2FuIHlvdSBwbGVhc2UgcGFzdGUgYSBjb3VwbGUgb2YgbGluZXMgb2Ygb2ZmZW5kaW5n
-IG91dHB1dCAhDQoNCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0+OC0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KICBDQyAgICAgIG1tL25vYm9vdG1lbS5vDQpJbiBm
-aWxlIGluY2x1ZGVkIGZyb20gLi9pbmNsdWRlL2FzbS1nZW5lcmljL2J1Zy5oOjE4OjAsDQogICAg
-ICAgICAgICAgICAgIGZyb20gLi9hcmNoL2FyYy9pbmNsdWRlL2FzbS9idWcuaDozMiwNCiAgICAg
-ICAgICAgICAgICAgZnJvbSAuL2luY2x1ZGUvbGludXgvYnVnLmg6NSwNCiAgICAgICAgICAgICAg
-ICAgZnJvbSAuL2luY2x1ZGUvbGludXgvbW1kZWJ1Zy5oOjUsDQogICAgICAgICAgICAgICAgIGZy
-b20gLi9pbmNsdWRlL2xpbnV4L2dmcC5oOjUsDQogICAgICAgICAgICAgICAgIGZyb20gLi9pbmNs
-dWRlL2xpbnV4L3NsYWIuaDoxNSwNCiAgICAgICAgICAgICAgICAgZnJvbSBtbS9ub2Jvb3RtZW0u
-YzoxNDoNCm1tL25vYm9vdG1lbS5jOiBJbiBmdW5jdGlvbiDigJhfX2ZyZWVfcGFnZXNfbWVtb3J5
-4oCZOg0KLi9pbmNsdWRlL2xpbnV4L2tlcm5lbC5oOjg0NToyOTogd2FybmluZzogY29tcGFyaXNv
-biBvZiBkaXN0aW5jdCBwb2ludGVyIHR5cGVzIGxhY2tzIGEgY2FzdA0KICAgKCEhKHNpemVvZigo
-dHlwZW9mKHgpICopMSA9PSAodHlwZW9mKHkpICopMSkpKQ0KICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICBeDQouL2luY2x1ZGUvbGludXgva2VybmVsLmg6ODU5OjQ6IG5vdGU6IGluIGV4cGFu
-c2lvbiBvZiBtYWNybyDigJhfX3R5cGVjaGVja+KAmQ0KICAgKF9fdHlwZWNoZWNrKHgsIHkpICYm
-IF9fbm9fc2lkZV9lZmZlY3RzKHgsIHkpKQ0KICAgIF5+fn5+fn5+fn5+DQouL2luY2x1ZGUvbGlu
-dXgva2VybmVsLmg6ODY5OjI0OiBub3RlOiBpbiBleHBhbnNpb24gb2YgbWFjcm8g4oCYX19zYWZl
-X2NtcOKAmQ0KICBfX2J1aWx0aW5fY2hvb3NlX2V4cHIoX19zYWZlX2NtcCh4LCB5KSwgXA0KICAg
-ICAgICAgICAgICAgICAgICAgICAgXn5+fn5+fn5+fg0KLi9pbmNsdWRlL2xpbnV4L2tlcm5lbC5o
-Ojg3ODoxOTogbm90ZTogaW4gZXhwYW5zaW9uIG9mIG1hY3JvIOKAmF9fY2FyZWZ1bF9jbXDigJkN
-CiAjZGVmaW5lIG1pbih4LCB5KSBfX2NhcmVmdWxfY21wKHgsIHksIDwpDQogICAgICAgICAgICAg
-ICAgICAgXn5+fn5+fn5+fn5+fg0KbW0vbm9ib290bWVtLmM6MTA0OjExOiBub3RlOiBpbiBleHBh
-bnNpb24gb2YgbWFjcm8g4oCYbWlu4oCZDQogICBvcmRlciA9IG1pbihNQVhfT1JERVIgLSAxVUws
-IF9fZmZzKHN0YXJ0KSk7DQogICAgICAgICAgIF5+fg0KLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLT44LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQoNCj4gDQo+IC1W
-aW5lZXQNCi0tIA0KIEV1Z2VuaXkgUGFsdHNldg==
+On 14-12-18, 11:40, Ulf Hansson wrote:
+> Nitpick: Would be nice to remove the beginning "_" from both
+> _genpd_reeval_performance_state() and _genpd_set_performance_state(),
+> as to be consistent with existing function naming in genpd. However,
+> it's not a big deal and can be done on top.
+
+Actually it is used at some places and so I did the same for the
+internal routines:
+
+_genpd_power_on
+_genpd_power_off
+__genpd_runtime_suspend
+__genpd_runtime_resume
+__genpd_dev_pm_attach
+
+-- 
+viresh
