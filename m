@@ -2,96 +2,120 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF42CC6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:19:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED1B7C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:20:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6A462148E
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:19:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="A22IHm4Q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6A462148E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id AF835208E7
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:20:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544790014;
+	bh=tXLjY+AKxCW+dVyDb+FYlAK+X+BpQhZPadCDXcE1svc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=zdhWn2pEFHr8XFUvXBoJ+dc1pdNOPggUEUfcyD8mkbs455yGTkVpk826BBa/UZjOA
+	 j8TuLdBPDKFgC5HoWE1XQsdb4ZELCtuSo2YZrtzFNTQJOHYDo/L1o5BDvbsOnS3Mie
+	 mMKCkh8rPL7OaJk4kA/VZE1SNTYm135WN/QPDbMo=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF835208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732756AbeLNMTz (ORCPT
+        id S1732699AbeLNMUI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:19:55 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:38579 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731562AbeLNMTx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:19:53 -0500
-Received: by mail-wr1-f68.google.com with SMTP id v13so5236233wrw.5
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 04:19:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=eIUK5nWAn2uC36oRMKMidszRM7NyLisUmwIIpwhEcXE=;
-        b=A22IHm4Q+hXBEj4BPJJAjwQ6leLGE+N4lM1uPslmiYg3WUg9Fs13QWDL7lGJfupMmL
-         NyZi2JYiPErVjEkOaQKlOUWjbLQ1UGV9tC4T4JBb2XdTxYdhggYGPchhcSmQny7bJ7l9
-         CGNO3CHr74M4xc131fSnW44UjV7MjwCCXajRI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=eIUK5nWAn2uC36oRMKMidszRM7NyLisUmwIIpwhEcXE=;
-        b=Tf22jum9PVXRVtsYMXKqpxOvk7WDHI/2wPP4EoviCmFlW5lRnxsApHPGzqinuJv3h2
-         Knoy/c2pFdTk9MPAtYZsQzMtsCb2sojJ6yAnXJl4pjYIqvY6zESUArRWO6qUynHq2bNM
-         L8SC4KvyDeHZJ+P3v3B+/RIV9lKlM/o2dmRiZgaV27Y+psRlLJ0H0nnaJQm1jumhK56T
-         pYfCw3jNKYQKJlwz3GmYi4vjNEhOgmGeNiZuq4YVimDipL7ileYj5U9grHaL2EmmzhOG
-         9/sSVQjG+qkQPHk1S19Jff83ys0H1pP7ltKNhjEtMeMjnw9fkNGMQlMlOtWNNs6oL+Xy
-         8fCg==
-X-Gm-Message-State: AA+aEWYusARn+8ZI0gzwBtWa0g0QhVQbHmTcjdR5pBjhQxXn6T7Nvzjn
-        mNTJgJgdfngi63bOKy8h29KOKA==
-X-Google-Smtp-Source: AFSGD/VXPPCdsVeUdGfGoTg+IREPnXTGxCXT4yek2W4VlYUQch3G5mcw2e3nyJqqVzZ4MOSRvUNynw==
-X-Received: by 2002:a5d:568c:: with SMTP id f12mr2258181wrv.101.1544789990945;
-        Fri, 14 Dec 2018 04:19:50 -0800 (PST)
-Received: from dell (host109-155-202-221.range109-155.btcentralplus.com. [109.155.202.221])
-        by smtp.gmail.com with ESMTPSA id 129sm5334813wmd.18.2018.12.14.04.19.50
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 14 Dec 2018 04:19:50 -0800 (PST)
-Date:   Fri, 14 Dec 2018 12:19:48 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mfd: Use of_node_name_eq for node name comparisons
-Message-ID: <20181214121948.GS4497@dell>
-References: <20181205195050.4759-15-robh@kernel.org>
+        Fri, 14 Dec 2018 07:20:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35550 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732585AbeLNMPd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:15:33 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 78CD12133F;
+        Fri, 14 Dec 2018 12:15:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544789732;
+        bh=tXLjY+AKxCW+dVyDb+FYlAK+X+BpQhZPadCDXcE1svc=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Lv+oWljodW9Ks105sISZQGTrwRHaVUA9eZU/K5dnJpbKcUGVjhN7ctHlmIYAPtdu2
+         by2N8/U0bTnftA2GWCPbytN5fNHu+IeRJLwy9g2zwA7X3D1/nxSNtKy33DJyfF7hv1
+         BYLYkplJszlfP54scJp2zTqxgihQfmJ/ho/7PKL8=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Pan Bian <bianpan2016@163.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Ernesto A. Fernandez" <ernesto.mnd.fernandez@gmail.com>,
+        Joe Perches <joe@perches.com>,
+        Viacheslav Dubeyko <slava@dubeyko.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 36/88] hfsplus: do not free node before using
+Date:   Fri, 14 Dec 2018 13:00:10 +0100
+Message-Id: <20181214115705.130793524@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.0
+In-Reply-To: <20181214115702.151309521@linuxfoundation.org>
+References: <20181214115702.151309521@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181205195050.4759-15-robh@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 05 Dec 2018, Rob Herring wrote:
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
-> Convert string compares of DT node names to use of_node_name_eq helper
-> instead. This removes direct access to the node name pointer.
-> 
-> Cc: Lee Jones <lee.jones@linaro.org>
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
->  drivers/mfd/max77620.c |  2 +-
->  drivers/mfd/stmpe.c    | 12 ++++++------
->  2 files changed, 7 insertions(+), 7 deletions(-)
+------------------
 
-Applied, thanks.
+[ Upstream commit c7d7d620dcbd2a1c595092280ca943f2fced7bbd ]
 
+hfs_bmap_free() frees node via hfs_bnode_put(node).  However it then
+reads node->this when dumping error message on an error path, which may
+result in a use-after-free bug.  This patch frees node only when it is
+never used.
+
+Link: http://lkml.kernel.org/r/1543053441-66942-1-git-send-email-bianpan2016@163.com
+Signed-off-by: Pan Bian <bianpan2016@163.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Ernesto A. Fernandez <ernesto.mnd.fernandez@gmail.com>
+Cc: Joe Perches <joe@perches.com>
+Cc: Viacheslav Dubeyko <slava@dubeyko.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/hfsplus/btree.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/fs/hfsplus/btree.c b/fs/hfsplus/btree.c
+index 3345c7553edc..7adc8a327e03 100644
+--- a/fs/hfsplus/btree.c
++++ b/fs/hfsplus/btree.c
+@@ -453,14 +453,15 @@ void hfs_bmap_free(struct hfs_bnode *node)
+ 
+ 		nidx -= len * 8;
+ 		i = node->next;
+-		hfs_bnode_put(node);
+ 		if (!i) {
+ 			/* panic */;
+ 			pr_crit("unable to free bnode %u. "
+ 					"bmap not found!\n",
+ 				node->this);
++			hfs_bnode_put(node);
+ 			return;
+ 		}
++		hfs_bnode_put(node);
+ 		node = hfs_bnode_find(tree, i);
+ 		if (IS_ERR(node))
+ 			return;
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.19.1
+
+
+
