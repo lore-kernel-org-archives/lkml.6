@@ -7,50 +7,52 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F7E2C6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:15:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09C84C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:15:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4B0B2148E
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:15:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BC4752148E
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:15:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544789748;
-	bh=XSoNMXDI00nbjS8+aaKsX0GcUkUigxHmadMPsrtLKF0=;
+	s=default; t=1544789752;
+	bh=NA/CroSSL+bvEfpjeWs5o5uXdxUj1FxpE8RFBFvqG8s=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=h6jfmgP2SUvmqXQVxPKhKLoQLnIHV4WI60XtDNLSYW49/oA+wd0d6o18glVSmaSHL
-	 psMrqEfR53UbUtFmT2EdEHuA273u3g3Wt3V/YrUU9uXTHVQxXjdNlN+13y9nAimznO
-	 C4mV3kwhAjZ1yPF1CxsWIz87o/1YNUulp3Z1XU/I=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4B0B2148E
+	b=cq2ChA+S+xyWqFsw87+t0ngCINP0Cpdc+ycmz2FHd5+xHI2WAGG8oipNfZHT7vwVY
+	 qrQ+feujr8cV6J78INRjPD7E3lRKoxqA9BOkNFwpfCx4skk3EYP01ZD9r085KAHC5h
+	 VO4pTa9X5NoYcKu7XzqnviJuYzUW8tV5AcWpWxw0=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC4752148E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732621AbeLNMPr (ORCPT
+        id S1732039AbeLNMPv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:15:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35780 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:15:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35836 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732043AbeLNMPn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:15:43 -0500
+        id S1732095AbeLNMPr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:15:47 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BEA032133F;
-        Fri, 14 Dec 2018 12:15:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3C03521479;
+        Fri, 14 Dec 2018 12:15:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789743;
-        bh=XSoNMXDI00nbjS8+aaKsX0GcUkUigxHmadMPsrtLKF0=;
+        s=default; t=1544789745;
+        bh=NA/CroSSL+bvEfpjeWs5o5uXdxUj1FxpE8RFBFvqG8s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rcTwvBcdipnOGh2NqYcaN652qXTApy4o2t6pJ0JGZiaaIFWoC33u94BeRrlsPJZL0
-         a8u18vm3KDZ3HNiUX1V6QP04IGMxm8dIq/X4eTHD1DTUP1Nc2Mm40mFmV8pdsE2/rj
-         WBy7nT2Alt1T7aDte94CUnwsuL40pY7M3FdE8pos=
+        b=VKwq6lFEc0qm6Qcodi2TMXKZNY+qVAM82rkV9AdgJ3huV9ra3srHxUR9tMH7q77RF
+         GQyGxDUCZLKGw0omTuYlk8Qmy7r6PkTAYeaAB3t/Yse1cA2G+k1VbQlmjlaHyCGMNI
+         0251iDdnGlq8pvQNLeEO9BVnpgqN2tTjsRqqP+Ac=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
-        Takashi Iwai <tiwai@suse.de>,
+        stable@vger.kernel.org, Jim Mattson <jmattson@google.com>,
+        Wincy Van <fanwenyi0529@gmail.com>,
+        Wanpeng Li <wanpeng.li@hotmail.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
         Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.4 40/88] ALSA: pcm: remove SNDRV_PCM_IOCTL1_INFO internal command
-Date:   Fri, 14 Dec 2018 13:00:14 +0100
-Message-Id: <20181214115705.500826753@linuxfoundation.org>
+Subject: [PATCH 4.4 41/88] KVM: nVMX: fix msr bitmaps to prevent L2 from accessing L0 x2APIC
+Date:   Fri, 14 Dec 2018 13:00:15 +0100
+Message-Id: <20181214115705.548389759@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115702.151309521@linuxfoundation.org>
 References: <20181214115702.151309521@linuxfoundation.org>
@@ -69,71 +71,253 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+From: "Radim Krčmář" <rkrcmar@redhat.com>
 
-commit e11f0f90a626f93899687b1cc909ee37dd6c5809 upstream.
+commit d048c098218e91ed0e10dfa1f0f80e2567fe4ef7 upstream.
 
-Drivers can implement 'struct snd_pcm_ops.ioctl' to handle some requests
-from ALSA PCM core. These requests are internal purpose in kernel land.
-Usually common set of operations are used for it.
+msr bitmap can be used to avoid a VM exit (interception) on guest MSR
+accesses.  In some configurations of VMX controls, the guest can even
+directly access host's x2APIC MSRs.  See SDM 29.5 VIRTUALIZING MSR-BASED
+APIC ACCESSES.
 
-SNDRV_PCM_IOCTL1_INFO is one of the requests. According to code comment,
-it has been obsoleted in the old days.
+L2 could read all L0's x2APIC MSRs and write TPR, EOI, and SELF_IPI.
+To do so, L1 would first trick KVM to disable all possible interceptions
+by enabling APICv features and then would turn those features off;
+nested_vmx_merge_msr_bitmap() only disabled interceptions, so VMX would
+not intercept previously enabled MSRs even though they were not safe
+with the new configuration.
 
-We can see old releases in ftp.alsa-project.org. The command was firstly
-introduced in v0.5.0 release as SND_PCM_IOCTL1_INFO, to allow drivers to
-fill data of 'struct snd_pcm_channel_info' type. In v0.9.0 release,
-this was obsoleted by the other commands for ioctl(2) such as
-SNDRV_PCM_IOCTL_CHANNEL_INFO.
+Correctly re-enabling interceptions is not enough as a second bug would
+still allow L1+L2 to access host's MSRs: msr bitmap was shared for all
+VMCSs, so L1 could trigger a race to get the desired combination of msr
+bitmap and VMX controls.
 
-This commit removes the long-abandoned command, bye.
+This fix allocates a msr bitmap for every L1 VCPU, allows only safe
+x2APIC MSRs from L1's msr bitmap, and disables msr bitmaps if they would
+have to intercept everything anyway.
 
-Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Fixes: 3af18d9c5fe9 ("KVM: nVMX: Prepare for using hardware MSR bitmap")
+Reported-by: Jim Mattson <jmattson@google.com>
+Suggested-by: Wincy Van <fanwenyi0529@gmail.com>
+Reviewed-by: Wanpeng Li <wanpeng.li@hotmail.com>
+Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
+[bwh: Backported to 4.4:
+ - handle_vmon() doesn't allocate a cached vmcs12
+ - Adjust context]
 Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/sound/pcm.h     |    2 +-
- sound/core/pcm_lib.c    |    2 --
- sound/core/pcm_native.c |    6 +-----
- 3 files changed, 2 insertions(+), 8 deletions(-)
+ arch/x86/kvm/vmx.c |   96 ++++++++++++++++++++---------------------------------
+ 1 file changed, 38 insertions(+), 58 deletions(-)
 
---- a/include/sound/pcm.h
-+++ b/include/sound/pcm.h
-@@ -100,7 +100,7 @@ struct snd_pcm_ops {
- #endif
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -431,6 +431,8 @@ struct nested_vmx {
+ 	u16 posted_intr_nv;
+ 	u64 msr_ia32_feature_control;
  
- #define SNDRV_PCM_IOCTL1_RESET		0
--#define SNDRV_PCM_IOCTL1_INFO		1
-+/* 1 is absent slot. */
- #define SNDRV_PCM_IOCTL1_CHANNEL_INFO	2
- #define SNDRV_PCM_IOCTL1_GSTATE		3
- #define SNDRV_PCM_IOCTL1_FIFO_SIZE	4
---- a/sound/core/pcm_lib.c
-+++ b/sound/core/pcm_lib.c
-@@ -1849,8 +1849,6 @@ int snd_pcm_lib_ioctl(struct snd_pcm_sub
- 		      unsigned int cmd, void *arg)
- {
- 	switch (cmd) {
--	case SNDRV_PCM_IOCTL1_INFO:
--		return 0;
- 	case SNDRV_PCM_IOCTL1_RESET:
- 		return snd_pcm_lib_ioctl_reset(substream, arg);
- 	case SNDRV_PCM_IOCTL1_CHANNEL_INFO:
---- a/sound/core/pcm_native.c
-+++ b/sound/core/pcm_native.c
-@@ -214,11 +214,7 @@ int snd_pcm_info(struct snd_pcm_substrea
- 	info->subdevices_avail = pstr->substream_count - pstr->substream_opened;
- 	strlcpy(info->subname, substream->name, sizeof(info->subname));
- 	runtime = substream->runtime;
--	/* AB: FIXME!!! This is definitely nonsense */
--	if (runtime) {
--		info->sync = runtime->sync;
--		substream->ops->ioctl(substream, SNDRV_PCM_IOCTL1_INFO, info);
--	}
++	unsigned long *msr_bitmap;
 +
- 	return 0;
+ 	struct hrtimer preemption_timer;
+ 	bool preemption_timer_expired;
+ 
+@@ -912,7 +914,6 @@ static unsigned long *vmx_msr_bitmap_leg
+ static unsigned long *vmx_msr_bitmap_longmode;
+ static unsigned long *vmx_msr_bitmap_legacy_x2apic;
+ static unsigned long *vmx_msr_bitmap_longmode_x2apic;
+-static unsigned long *vmx_msr_bitmap_nested;
+ static unsigned long *vmx_vmread_bitmap;
+ static unsigned long *vmx_vmwrite_bitmap;
+ 
+@@ -2358,7 +2359,7 @@ static void vmx_set_msr_bitmap(struct kv
+ 	unsigned long *msr_bitmap;
+ 
+ 	if (is_guest_mode(vcpu))
+-		msr_bitmap = vmx_msr_bitmap_nested;
++		msr_bitmap = to_vmx(vcpu)->nested.msr_bitmap;
+ 	else if (vcpu->arch.apic_base & X2APIC_ENABLE) {
+ 		if (is_long_mode(vcpu))
+ 			msr_bitmap = vmx_msr_bitmap_longmode_x2apic;
+@@ -6192,13 +6193,6 @@ static __init int hardware_setup(void)
+ 	if (!vmx_msr_bitmap_longmode_x2apic)
+ 		goto out4;
+ 
+-	if (nested) {
+-		vmx_msr_bitmap_nested =
+-			(unsigned long *)__get_free_page(GFP_KERNEL);
+-		if (!vmx_msr_bitmap_nested)
+-			goto out5;
+-	}
+-
+ 	vmx_vmread_bitmap = (unsigned long *)__get_free_page(GFP_KERNEL);
+ 	if (!vmx_vmread_bitmap)
+ 		goto out6;
+@@ -6216,8 +6210,6 @@ static __init int hardware_setup(void)
+ 
+ 	memset(vmx_msr_bitmap_legacy, 0xff, PAGE_SIZE);
+ 	memset(vmx_msr_bitmap_longmode, 0xff, PAGE_SIZE);
+-	if (nested)
+-		memset(vmx_msr_bitmap_nested, 0xff, PAGE_SIZE);
+ 
+ 	if (setup_vmcs_config(&vmcs_config) < 0) {
+ 		r = -EIO;
+@@ -6354,9 +6346,6 @@ out8:
+ out7:
+ 	free_page((unsigned long)vmx_vmread_bitmap);
+ out6:
+-	if (nested)
+-		free_page((unsigned long)vmx_msr_bitmap_nested);
+-out5:
+ 	free_page((unsigned long)vmx_msr_bitmap_longmode_x2apic);
+ out4:
+ 	free_page((unsigned long)vmx_msr_bitmap_longmode);
+@@ -6382,8 +6371,6 @@ static __exit void hardware_unsetup(void
+ 	free_page((unsigned long)vmx_io_bitmap_a);
+ 	free_page((unsigned long)vmx_vmwrite_bitmap);
+ 	free_page((unsigned long)vmx_vmread_bitmap);
+-	if (nested)
+-		free_page((unsigned long)vmx_msr_bitmap_nested);
+ 
+ 	free_kvm_area();
+ }
+@@ -6825,10 +6812,17 @@ static int handle_vmon(struct kvm_vcpu *
+ 		return 1;
+ 	}
+ 
++	if (cpu_has_vmx_msr_bitmap()) {
++		vmx->nested.msr_bitmap =
++				(unsigned long *)__get_free_page(GFP_KERNEL);
++		if (!vmx->nested.msr_bitmap)
++			goto out_msr_bitmap;
++	}
++
+ 	if (enable_shadow_vmcs) {
+ 		shadow_vmcs = alloc_vmcs();
+ 		if (!shadow_vmcs)
+-			return -ENOMEM;
++			goto out_shadow_vmcs;
+ 		/* mark vmcs as shadow */
+ 		shadow_vmcs->revision_id |= (1u << 31);
+ 		/* init shadow vmcs */
+@@ -6850,6 +6844,12 @@ static int handle_vmon(struct kvm_vcpu *
+ 	skip_emulated_instruction(vcpu);
+ 	nested_vmx_succeed(vcpu);
+ 	return 1;
++
++out_shadow_vmcs:
++	free_page((unsigned long)vmx->nested.msr_bitmap);
++
++out_msr_bitmap:
++	return -ENOMEM;
  }
  
+ /*
+@@ -6919,6 +6919,10 @@ static void free_nested(struct vcpu_vmx
+ 	vmx->nested.vmxon = false;
+ 	free_vpid(vmx->nested.vpid02);
+ 	nested_release_vmcs12(vmx);
++	if (vmx->nested.msr_bitmap) {
++		free_page((unsigned long)vmx->nested.msr_bitmap);
++		vmx->nested.msr_bitmap = NULL;
++	}
+ 	if (enable_shadow_vmcs)
+ 		free_vmcs(vmx->nested.current_shadow_vmcs);
+ 	/* Unpin physical memory we referred to in current vmcs02 */
+@@ -9248,8 +9252,10 @@ static inline bool nested_vmx_merge_msr_
+ {
+ 	int msr;
+ 	struct page *page;
+-	unsigned long *msr_bitmap;
++	unsigned long *msr_bitmap_l1;
++	unsigned long *msr_bitmap_l0 = to_vmx(vcpu)->nested.msr_bitmap;
+ 
++	/* This shortcut is ok because we support only x2APIC MSRs so far. */
+ 	if (!nested_cpu_has_virt_x2apic_mode(vmcs12))
+ 		return false;
+ 
+@@ -9258,58 +9264,32 @@ static inline bool nested_vmx_merge_msr_
+ 		WARN_ON(1);
+ 		return false;
+ 	}
+-	msr_bitmap = (unsigned long *)kmap(page);
++	msr_bitmap_l1 = (unsigned long *)kmap(page);
++
++	memset(msr_bitmap_l0, 0xff, PAGE_SIZE);
+ 
+ 	if (nested_cpu_has_virt_x2apic_mode(vmcs12)) {
+ 		if (nested_cpu_has_apic_reg_virt(vmcs12))
+ 			for (msr = 0x800; msr <= 0x8ff; msr++)
+ 				nested_vmx_disable_intercept_for_msr(
+-					msr_bitmap,
+-					vmx_msr_bitmap_nested,
++					msr_bitmap_l1, msr_bitmap_l0,
+ 					msr, MSR_TYPE_R);
+-		/* TPR is allowed */
+-		nested_vmx_disable_intercept_for_msr(msr_bitmap,
+-				vmx_msr_bitmap_nested,
++
++		nested_vmx_disable_intercept_for_msr(
++				msr_bitmap_l1, msr_bitmap_l0,
+ 				APIC_BASE_MSR + (APIC_TASKPRI >> 4),
+ 				MSR_TYPE_R | MSR_TYPE_W);
++
+ 		if (nested_cpu_has_vid(vmcs12)) {
+-			/* EOI and self-IPI are allowed */
+ 			nested_vmx_disable_intercept_for_msr(
+-				msr_bitmap,
+-				vmx_msr_bitmap_nested,
++				msr_bitmap_l1, msr_bitmap_l0,
+ 				APIC_BASE_MSR + (APIC_EOI >> 4),
+ 				MSR_TYPE_W);
+ 			nested_vmx_disable_intercept_for_msr(
+-				msr_bitmap,
+-				vmx_msr_bitmap_nested,
++				msr_bitmap_l1, msr_bitmap_l0,
+ 				APIC_BASE_MSR + (APIC_SELF_IPI >> 4),
+ 				MSR_TYPE_W);
+ 		}
+-	} else {
+-		/*
+-		 * Enable reading intercept of all the x2apic
+-		 * MSRs. We should not rely on vmcs12 to do any
+-		 * optimizations here, it may have been modified
+-		 * by L1.
+-		 */
+-		for (msr = 0x800; msr <= 0x8ff; msr++)
+-			__vmx_enable_intercept_for_msr(
+-				vmx_msr_bitmap_nested,
+-				msr,
+-				MSR_TYPE_R);
+-
+-		__vmx_enable_intercept_for_msr(
+-				vmx_msr_bitmap_nested,
+-				APIC_BASE_MSR + (APIC_TASKPRI >> 4),
+-				MSR_TYPE_W);
+-		__vmx_enable_intercept_for_msr(
+-				vmx_msr_bitmap_nested,
+-				APIC_BASE_MSR + (APIC_EOI >> 4),
+-				MSR_TYPE_W);
+-		__vmx_enable_intercept_for_msr(
+-				vmx_msr_bitmap_nested,
+-				APIC_BASE_MSR + (APIC_SELF_IPI >> 4),
+-				MSR_TYPE_W);
+ 	}
+ 	kunmap(page);
+ 	nested_release_page_clean(page);
+@@ -9729,10 +9709,10 @@ static void prepare_vmcs02(struct kvm_vc
+ 	}
+ 
+ 	if (cpu_has_vmx_msr_bitmap() &&
+-	    exec_control & CPU_BASED_USE_MSR_BITMAPS) {
+-		nested_vmx_merge_msr_bitmap(vcpu, vmcs12);
+-		/* MSR_BITMAP will be set by following vmx_set_efer. */
+-	} else
++	    exec_control & CPU_BASED_USE_MSR_BITMAPS &&
++	    nested_vmx_merge_msr_bitmap(vcpu, vmcs12))
++		; /* MSR_BITMAP will be set by following vmx_set_efer. */
++	else
+ 		exec_control &= ~CPU_BASED_USE_MSR_BITMAPS;
+ 
+ 	/*
 
 
