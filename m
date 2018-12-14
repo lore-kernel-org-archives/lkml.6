@@ -2,151 +2,334 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F35F1C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 23:04:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4D57C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 23:04:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6314120675
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 23:04:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D273208C1
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 23:05:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730962AbeLNXEO (ORCPT
+        id S1730681AbeLNXE6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 18:04:14 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:59142 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726389AbeLNXEO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 18:04:14 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3C61E3F73C;
-        Fri, 14 Dec 2018 23:04:13 +0000 (UTC)
-Received: from madcap2.tricolour.ca (ovpn-112-24.phx2.redhat.com [10.3.112.24])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 62CB810021B1;
-        Fri, 14 Dec 2018 23:04:02 +0000 (UTC)
-Date:   Fri, 14 Dec 2018 18:03:59 -0500
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
-        linux-kernel@vger.kernel.org, linux-audit@redhat.com,
-        Eric Paris <eparis@redhat.com>, sgrubb@redhat.com
-Subject: Re: [RFC PATCH ghak100 V1 0/2] audit: avoid umount hangs on missing
- mount
-Message-ID: <20181214230359.5a6hshxrj6kqu3ev@madcap2.tricolour.ca>
-References: <cover.1542149969.git.rgb@redhat.com>
- <CAHC9VhT8iFLSXJBvocg_aPeveBy0hZ4bxZ547ufbUsTnkONpZg@mail.gmail.com>
- <20181214162744.23sbfyl3rnwkgoie@madcap2.tricolour.ca>
- <CAHC9VhQa5-CvFJkdY=XUkXc4Q1qVNy+3mcqrgzu8RosX-jP0iw@mail.gmail.com>
+        Fri, 14 Dec 2018 18:04:58 -0500
+Received: from outbound-smtp12.blacknight.com ([46.22.139.17]:54632 "EHLO
+        outbound-smtp12.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726389AbeLNXE5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 18:04:57 -0500
+Received: from mail.blacknight.com (pemlinmail04.blacknight.ie [81.17.254.17])
+        by outbound-smtp12.blacknight.com (Postfix) with ESMTPS id 046D21C1E00
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 23:04:54 +0000 (GMT)
+Received: (qmail 32511 invoked from network); 14 Dec 2018 23:04:53 -0000
+Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[37.228.245.71])
+  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 14 Dec 2018 23:04:53 -0000
+Date:   Fri, 14 Dec 2018 23:04:49 +0000
+From:   Mel Gorman <mgorman@techsingularity.net>
+To:     Linux-MM <linux-mm@kvack.org>
+Cc:     David Rientjes <rientjes@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>, ying.huang@intel.com,
+        kirill@shutemov.name, Andrew Morton <akpm@linux-foundation.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+Subject: [PATCH 10/14] mm, compaction: Use free lists to quickly locate a
+ migration source
+Message-ID: <20181214230449.GA29005@techsingularity.net>
+References: <20181214230310.572-1-mgorman@techsingularity.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-15
 Content-Disposition: inline
-In-Reply-To: <CAHC9VhQa5-CvFJkdY=XUkXc4Q1qVNy+3mcqrgzu8RosX-jP0iw@mail.gmail.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Fri, 14 Dec 2018 23:04:13 +0000 (UTC)
+In-Reply-To: <20181214230310.572-1-mgorman@techsingularity.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-12-14 17:02, Paul Moore wrote:
-> On Fri, Dec 14, 2018 at 11:27 AM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > On 2018-12-12 08:03, Paul Moore wrote:
-> > > On Fri, Nov 16, 2018 at 12:34 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > > On user and remote filesystems, a forced umount can still hang due to
-> > > > attemting to fetch the fcaps of a mounted filesystem that is no longer
-> > > > available.
-> > > >
-> > > > These two patches take different approaches to address this, one by
-> > > > avoiding the lookup when the MNT_FORCE flag is included, the other by
-> > > > providing a method to filter out auditing specified types of filesystems.
-> > > >
-> > > > This can happen on ceph, cifs, 9p, lustre, fuse (gluster) or NFS.
-> > > >
-> > > > Arguably the better way to address this issue is to disable auditing
-> > > > processes that touch removable filesystems.
-> > > > Please see the github issue tracker
-> > > > https://github.com/linux-audit/audit-kernel/issues/100
-> > > >
-> > > > Richard Guy Briggs (2):
-> > > >   audit: avoid fcaps on MNT_FORCE
-> > > >   audit: moar filter PATH records keyed on filesystem magic
-> > > >
-> > > >  fs/namei.c            |  2 +-
-> > > >  fs/namespace.c        |  3 +++
-> > > >  include/linux/audit.h |  8 ++++++--
-> > > >  kernel/audit.c        |  5 +++--
-> > > >  kernel/audit.h        |  2 +-
-> > > >  kernel/auditsc.c      | 29 ++++++++++++++++++++++++++---
-> > > >  6 files changed, 40 insertions(+), 9 deletions(-)
-> > >
-> > > Just to get this out of the way, don't use "moar", spell it properly.
-> > >
-> > > Beyond that, it's not clear to me from your cover letter if you are
-> > > proposing these patches as an "or" or as an "and"; assuming the
-> > > patch(es) are reasonable, do you want us to merge both of these
-> > > patches, or only the one we like the most?
-> >
-> > I would like each one to be considered on its own merits.
-> >
-> > The second was discussed back when the logs were flooded with "(null)"
-> > PATH records due to debugfs and tracefs noise.  Do you agree with the
-> > general concept or not?
-> 
-> I believe I was in favor of this back then, and I think it is still a
-> reasonable feature to add independent of the umount hang problem.
+The migration scanner is a linear scan of a zone which is a potentially
+very large search space. Furthermore, many pageblocks are unusable such
+as those filled with reserved pages or partially filled with pages that
+cannot migrate. These still get scanned in the common case of allocating
+a THP and the cost accumulates.
 
-I wasn't so keen then, but see more use for it now.
+The patch uses a partial search of the free lists to locate a migration
+source candidate that is marked as MOVABLE when allocating a THP. It
+prefers picking a block with a larger number of free pages already on
+the basis that there are fewer pages to migrate to free the entire block.
+The lowest PFN found during searches is tracked as the basis of the start
+for the linear search after the first search of the free list fails.
+After the search, the free list is shuffled so that the next search will
+not encounter the same page. If the search fails then the subsequent
+searches will be shorter and the linear scanner is used.
 
-> One possible enhancement might be to also support filesystem names and
-> not just magic numbers.  This could either be done in userspace or the
-> kernel via AUDIT_FSNAME, or similar.  If you do take the _FSNAME
-> approach you should have the kernel convert that to a magic number
-> when it translates the rule (performance reasons).
+If this search fails, or if the request is for a small or
+unmovable/reclaimable allocation then the linear scanner is still used. It
+is somewhat pointless to use the list search in these cases. Small free
+pages must be used for the search and there is no guarantee that movable
+pages are located within that block that are contiguous.
 
-I had looked at filesystem names previously with Steve and I seem to
-recall that was much better left to userspace to convert.  The biggest
-challenge I see here is that in-kernel filsystems have all their magic
-numbers listed in the kernel, whereas discovering the magic numbers for
-fuse and other remote filesystems is a bit harder.  This was one of the
-reasons I wanted to include the magic number in the name= field in patch
-#1 for ghak8 so it was easy to figure out what type of filesystem was
-involved.
+                                    4.20.0-rc6             4.20.0-rc6
+                                  noboost-v1r4           findmig-v1r4
+Amean     fault-both-3      3753.53 (   0.00%)     3545.40 (   5.54%)
+Amean     fault-both-5      5396.32 (   0.00%)     5431.98 (  -0.66%)
+Amean     fault-both-7      7393.46 (   0.00%)     7185.11 (   2.82%)
+Amean     fault-both-12    12155.50 (   0.00%)    11424.68 (   6.01%)
+Amean     fault-both-18    16445.96 (   0.00%)    14170.10 *  13.84%*
+Amean     fault-both-24    20465.03 (   0.00%)    16143.57 *  21.12%*
+Amean     fault-both-30    20813.54 (   0.00%)    19207.96 (   7.71%)
+Amean     fault-both-32    22384.02 (   0.00%)    20051.01 *  10.42%*
 
-> > The first is being picked apart (rightfully) due to assumptions and
-> > choices made long ago in the audit system.  So while it is still in far
-> > more flux than the second patch, I think it has the potential to fix the
-> > problem more correctly and permanently but in the process may challenge
-> > our rules about the format and invariability of audit records.  The
-> > basic premise is to prevent audit from trying to get information (fcaps)
-> > from a filesystem that is likely to be far more ephemeral than local
-> > on-disk kernel filesystems or to fail to do so more gracefully.
-> 
-> There is one minor nit: use "flags" instead of "lflags" in the
-> audit_inode parameter list, the local "flags" variable can be changed
-> to something else; the parameters are what callers see, make them
-> simple and familiar.
+Compaction migrate scanned    60836989    51005450
+Compaction free scanned      890084421   780359464
 
-Noted.
+This is showing a 16% reduction in migration scanning with some mild
+improvements on latency. A 2-socket machine showed similar reductions
+of scan rates in percentage terms.
 
-> However, beyond that I think the general approach of not recording
-> fcaps is reasonable if we can't reliably do it.  What do the fcaps
-> entries look like in this particular case, are they "0" or "?"?  I
-> would suggest "?" is the correct answer here.
+Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
+---
+ mm/compaction.c | 179 +++++++++++++++++++++++++++++++++++++++++++++++++++++++-
+ mm/internal.h   |   2 +
+ 2 files changed, 179 insertions(+), 2 deletions(-)
 
-I'd agree "?" would be the best option to make it clear it is not
-available rather than just zero.
+diff --git a/mm/compaction.c b/mm/compaction.c
+index 8ba9b3b479e3..65c7ab1847a0 100644
+--- a/mm/compaction.c
++++ b/mm/compaction.c
+@@ -1041,6 +1041,12 @@ static bool suitable_migration_target(struct compact_control *cc,
+ 	return false;
+ }
+ 
++static inline unsigned int
++freelist_scan_limit(struct compact_control *cc)
++{
++	return (COMPACT_CLUSTER_MAX >> cc->fast_search_fail) + 1;
++}
++
+ /*
+  * Test whether the free scanner has reached the same or lower pageblock than
+  * the migration scanner, and compaction should thus terminate.
+@@ -1051,6 +1057,19 @@ static inline bool compact_scanners_met(struct compact_control *cc)
+ 		<= (cc->migrate_pfn >> pageblock_order);
+ }
+ 
++/* Reorder the free list to reduce repeated future searches */
++static void
++move_freelist_tail(struct list_head *freelist, struct page *freepage)
++{
++	LIST_HEAD(sublist);
++
++	if (!list_is_last(freelist, &freepage->lru)) {
++		list_cut_position(&sublist, freelist, &freepage->lru);
++		if (!list_empty(&sublist))
++			list_splice_tail(&sublist, freelist);
++	}
++}
++
+ /*
+  * Based on information in the current compact_control, find blocks
+  * suitable for isolating free pages from and then isolate them.
+@@ -1208,6 +1227,160 @@ typedef enum {
+  */
+ int sysctl_compact_unevictable_allowed __read_mostly = 1;
+ 
++static inline void
++update_fast_start_pfn(struct compact_control *cc, unsigned long pfn)
++{
++	if (cc->fast_start_pfn == ULONG_MAX)
++		return;
++
++	if (!cc->fast_start_pfn)
++		cc->fast_start_pfn = pfn;
++
++	cc->fast_start_pfn = min(cc->fast_start_pfn, pfn);
++}
++
++static inline void
++reinit_migrate_pfn(struct compact_control *cc)
++{
++	if (!cc->fast_start_pfn || cc->fast_start_pfn == ULONG_MAX)
++		return;
++
++	cc->migrate_pfn = cc->fast_start_pfn;
++	cc->fast_start_pfn = ULONG_MAX;
++}
++
++/*
++ * Briefly search the free lists for a migration source that already has
++ * some free pages to reduce the number of pages that need migration
++ * before a pageblock is free.
++ */
++static unsigned long fast_find_migrateblock(struct compact_control *cc)
++{
++	unsigned int limit = freelist_scan_limit(cc);
++	unsigned int nr_scanned = 0;
++	unsigned long distance;
++	unsigned long pfn = cc->migrate_pfn;
++	unsigned long high_pfn;
++	int order;
++
++	/* Skip hints are relied on to avoid repeats on the fast search */
++	if (cc->ignore_skip_hint)
++		return pfn;
++
++	/*
++	 * If the migrate_pfn is not at the start of a zone or the start
++	 * of a pageblock then assume this is a continuation of a previous
++	 * scan restarted due to COMPACT_CLUSTER_MAX.
++	 */
++	if (pfn != cc->zone->zone_start_pfn && pfn != pageblock_start_pfn(pfn))
++		return pfn;
++
++	/*
++	 * For smaller orders, just linearly scan as the number of pages
++	 * to migrate should be relatively small and does not necessarily
++	 * justify freeing up a large block for a small allocation.
++	 */
++	if (cc->order <= PAGE_ALLOC_COSTLY_ORDER)
++		return pfn;
++
++	/*
++	 * Only allow kcompactd and direct requests for movable pages to
++	 * quickly clear out a MOVABLE pageblock for allocation. This
++	 * reduces the risk that a large movable pageblock is freed for
++	 * an unmovable/reclaimable small allocation.
++	 */
++	if (cc->direct_compaction && cc->migratetype != MIGRATE_MOVABLE)
++		return pfn;
++
++	/*
++	 * When starting the migration scanner, pick any pageblock within the
++	 * first half of the search space. Otherwise try and pick a pageblock
++	 * within the first eighth to reduce the chances that a migration
++	 * target later becomes a source.
++	 */
++	distance = (cc->free_pfn - cc->migrate_pfn) >> 1;
++	if (cc->migrate_pfn != cc->zone->zone_start_pfn)
++		distance >>= 2;
++	high_pfn = pageblock_start_pfn(cc->migrate_pfn + distance);
++
++	for (order = cc->order - 1;
++	     order >= PAGE_ALLOC_COSTLY_ORDER && pfn == cc->migrate_pfn && nr_scanned < limit;
++	     order--) {
++		struct free_area *area = &cc->zone->free_area[order];
++		struct list_head *freelist;
++		unsigned long nr_skipped = 0;
++		unsigned long flags;
++		struct page *freepage;
++
++		if (!area->nr_free)
++			continue;
++
++		spin_lock_irqsave(&cc->zone->lock, flags);
++		freelist = &area->free_list[MIGRATE_MOVABLE];
++		list_for_each_entry(freepage, freelist, lru) {
++			unsigned long free_pfn;
++
++			nr_scanned++;
++			free_pfn = page_to_pfn(freepage);
++			if (free_pfn < high_pfn) {
++				update_fast_start_pfn(cc, free_pfn);
++
++				/*
++				 * Avoid if skipped recently. Move to the tail
++				 * of the list so it will not be found again
++				 * soon
++				 */
++				if (get_pageblock_skip(freepage)) {
++
++					if (list_is_last(freelist, &freepage->lru))
++						break;
++
++					nr_skipped++;
++					list_del(&freepage->lru);
++					list_add_tail(&freepage->lru, freelist);
++					if (nr_skipped > 2)
++						break;
++					continue;
++				}
++
++				/* Reorder to so a future search skips recent pages */
++				move_freelist_tail(freelist, freepage);
++
++				pfn = pageblock_start_pfn(free_pfn);
++				cc->fast_search_fail = 0;
++				set_pageblock_skip(freepage);
++				break;
++			}
++
++			/*
++			 * If low PFNs are being found and discarded then
++			 * limit the scan as fast searching is finding
++			 * poor candidates.
++			 */
++			if (free_pfn < cc->migrate_pfn)
++				limit >>= 1;
++
++			if (nr_scanned >= limit) {
++				cc->fast_search_fail++;
++				move_freelist_tail(freelist, freepage);
++				break;
++			}
++		}
++		spin_unlock_irqrestore(&cc->zone->lock, flags);
++	}
++
++	cc->total_migrate_scanned += nr_scanned;
++
++	/*
++	 * If fast scanning failed then use a cached entry for a page block
++	 * that had free pages as the basis for starting a linear scan.
++	 */
++	if (pfn == cc->migrate_pfn)
++		reinit_migrate_pfn(cc);
++
++	return pfn;
++}
++
+ /*
+  * Isolate all pages that can be migrated from the first suitable block,
+  * starting at the block pointed to by the migrate scanner pfn within
+@@ -1226,9 +1399,10 @@ static isolate_migrate_t isolate_migratepages(struct zone *zone,
+ 
+ 	/*
+ 	 * Start at where we last stopped, or beginning of the zone as
+-	 * initialized by compact_zone()
++	 * initialized by compact_zone(). The first failure will use
++	 * the lowest PFN as the starting point for linear scanning.
+ 	 */
+-	low_pfn = cc->migrate_pfn;
++	low_pfn = fast_find_migrateblock(cc);
+ 	block_start_pfn = pageblock_start_pfn(low_pfn);
+ 	if (block_start_pfn < zone->zone_start_pfn)
+ 		block_start_pfn = zone->zone_start_pfn;
+@@ -1551,6 +1725,7 @@ static enum compact_result compact_zone(struct compact_control *cc)
+ 	 * want to compact the whole zone), but check that it is initialised
+ 	 * by ensuring the values are within zone boundaries.
+ 	 */
++	cc->fast_start_pfn = 0;
+ 	if (cc->whole_zone) {
+ 		cc->migrate_pfn = start_pfn;
+ 		cc->free_pfn = pageblock_start_pfn(end_pfn - 1);
+diff --git a/mm/internal.h b/mm/internal.h
+index 9b32f4cab0ae..983cb975545f 100644
+--- a/mm/internal.h
++++ b/mm/internal.h
+@@ -188,9 +188,11 @@ struct compact_control {
+ 	unsigned int nr_migratepages;	/* Number of pages to migrate */
+ 	unsigned long free_pfn;		/* isolate_freepages search base */
+ 	unsigned long migrate_pfn;	/* isolate_migratepages search base */
++	unsigned long fast_start_pfn;	/* a pfn to start linear scan from */
+ 	struct zone *zone;
+ 	unsigned long total_migrate_scanned;
+ 	unsigned long total_free_scanned;
++	unsigned int fast_search_fail;	/* failures to use free list searches */
+ 	const gfp_t gfp_mask;		/* gfp mask of a direct compactor */
+ 	int order;			/* order a direct compactor needs */
+ 	int migratetype;		/* migratetype of direct compactor */
+-- 
+2.16.4
 
-> paul moore
-
-- RGB
-
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
