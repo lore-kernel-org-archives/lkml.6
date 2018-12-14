@@ -7,50 +7,50 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60038C67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:02:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10966C6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:02:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2781B2146F
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:02:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB2D52147C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:02:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544788940;
-	bh=IDYmgvGFvvbu7Jr5AJIb7Y53/z8k1FD3I/c44so9IZQ=;
+	s=default; t=1544788943;
+	bh=OBidfP7TtQ631Hj71FNKfWeqByTAPdEjux/o3dG1d+U=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=R3H0CQ9iAI8cIkDciEPMiJDay9Zo/5gnEAVXp47PlTllN1jElCQqwqyNUMEQDS0w5
-	 DGRVzxcmtbqZ3g+u4QdxRdrJ4wHRc8w1CZExvwcFdRXAd12Uup8wsWDBll8n6nP4EQ
-	 pvNSd9qNiDZqkbAjZ1RMAoJYQeDrVrda13Bpcu2A=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2781B2146F
+	b=di8XI0qeksLTPPJ/dxcRZhXmdhgk9PW7Hx1eWbJpLjFw49n7nohWxvA/kPfZDDg0K
+	 Vu5l1nuSEzjGQXfpGe97aBC4FBQp9dLic7QPUFyhTt7pY9gRSOhN0wa/1fsFQa70sJ
+	 wFhcyotm0QUughflnk8j+yEQsk3T5V/X1qZGp6sc=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB2D52147C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730010AbeLNMCS (ORCPT
+        id S1730024AbeLNMCW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:02:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45096 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:02:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45172 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729981AbeLNMCP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:02:15 -0500
+        id S1730002AbeLNMCS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:02:18 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A4C322145D;
-        Fri, 14 Dec 2018 12:02:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 28F0F21479;
+        Fri, 14 Dec 2018 12:02:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544788935;
-        bh=IDYmgvGFvvbu7Jr5AJIb7Y53/z8k1FD3I/c44so9IZQ=;
+        s=default; t=1544788937;
+        bh=OBidfP7TtQ631Hj71FNKfWeqByTAPdEjux/o3dG1d+U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=biPFg4ODsGL42ZpInvi9e+5Qlp2yWXz39FcUoYhMZAXcih7isL7Z6lwJqPaQvzmx8
-         eiau9TUZuloKy0WBDwACIX2euQmExRnh9qJKFv3v4uspFGgoEo58IFZ/t3hVcyeiEk
-         D1JdTNDRvBsbfuzaIXPe/1f1kcRG2WMZQJm9vTas=
+        b=IysdQhsSrliSnxkJlXcUl6Fs86EMh+apZK+BoBefK1vYBWoIJryoiDhRQJVYAUok1
+         iKrMc+mTIeY2ImRPpFRYpnMORhl6V8gDm4/4Tm+cjtUG7bkTGjZjteIAlyv5ApSPbM
+         c9EwKQPliXKpcXHhjqA6Tou5AohKpz7ISoEVnkQQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Adam Ford <aford173@gmail.com>,
+        stable@vger.kernel.org, Janusz Krzysztofik <jmkrzyszt@gmail.com>,
         Tony Lindgren <tony@atomide.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 030/142] ARM: dts: am3517-som: Fix WL127x Wifi interrupt
-Date:   Fri, 14 Dec 2018 12:58:35 +0100
-Message-Id: <20181214115748.257417688@linuxfoundation.org>
+Subject: [PATCH 4.19 031/142] ARM: OMAP1: ams-delta: Fix possible use of uninitialized field
+Date:   Fri, 14 Dec 2018 12:58:36 +0100
+Message-Id: <20181214115748.296117818@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115747.053633987@linuxfoundation.org>
 References: <20181214115747.053633987@linuxfoundation.org>
@@ -69,35 +69,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 419b194cdedc76d0d3cd5b0900db0fa8177c4a52 ]
+[ Upstream commit cec83ff1241ec98113a19385ea9e9cfa9aa4125b ]
 
-At the same time the AM3517 EVM was gaining WiFi support,
-separate patches were introduced to move the interrupt
-from HIGH to RISING.  Because they overlapped, this was not
-done to the AM3517-EVM.  This patch fixes Kernel 4.19+
+While playing with initialization order of modem device, it has been
+discovered that under some circumstances (early console init, I
+believe) its .pm() callback may be called before the
+uart_port->private_data pointer is initialized from
+plat_serial8250_port->private_data, resulting in NULL pointer
+dereference.  Fix it by checking for uninitialized pointer before using
+it in modem_pm().
 
-Fixes: 6bf5e3410f19 ("ARM: dts: am3517-som: Add WL127x Wifi")
-
-Signed-off-by: Adam Ford <aford173@gmail.com>
+Fixes: aabf31737a6a ("ARM: OMAP1: ams-delta: update the modem to use regulator API")
+Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
 Signed-off-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/am3517-som.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/mach-omap1/board-ams-delta.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/arm/boot/dts/am3517-som.dtsi b/arch/arm/boot/dts/am3517-som.dtsi
-index dae6e458e59f..b1c988eed87c 100644
---- a/arch/arm/boot/dts/am3517-som.dtsi
-+++ b/arch/arm/boot/dts/am3517-som.dtsi
-@@ -163,7 +163,7 @@
- 		compatible = "ti,wl1271";
- 		reg = <2>;
- 		interrupt-parent = <&gpio6>;
--		interrupts = <10 IRQ_TYPE_LEVEL_HIGH>; /* gpio_170 */
-+		interrupts = <10 IRQ_TYPE_EDGE_RISING>; /* gpio_170 */
- 		ref-clock-frequency = <26000000>;
- 		tcxo-clock-frequency = <26000000>;
- 	};
+diff --git a/arch/arm/mach-omap1/board-ams-delta.c b/arch/arm/mach-omap1/board-ams-delta.c
+index dd28d2614d7f..d10d8831f527 100644
+--- a/arch/arm/mach-omap1/board-ams-delta.c
++++ b/arch/arm/mach-omap1/board-ams-delta.c
+@@ -726,6 +726,9 @@ static void modem_pm(struct uart_port *port, unsigned int state, unsigned old)
+ 	struct modem_private_data *priv = port->private_data;
+ 	int ret;
+ 
++	if (!priv)
++		return;
++
+ 	if (IS_ERR(priv->regulator))
+ 		return;
+ 
 -- 
 2.19.1
 
