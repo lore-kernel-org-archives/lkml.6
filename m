@@ -2,155 +2,156 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3174C67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 05:30:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DB85C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 05:33:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1D4B20879
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 05:30:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C3542086D
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 05:33:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="itN1jT9Q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1D4B20879
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="O9O3F2ZS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C3542086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727302AbeLNFak (ORCPT
+        id S1727162AbeLNFdD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 00:30:40 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:38852 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727127AbeLNFaj (ORCPT
+        Fri, 14 Dec 2018 00:33:03 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:36176 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726465AbeLNFdC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 00:30:39 -0500
-Received: by mail-pl1-f193.google.com with SMTP id e5so2185117plb.5
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 21:30:39 -0800 (PST)
+        Fri, 14 Dec 2018 00:33:02 -0500
+Received: by mail-pf1-f196.google.com with SMTP id b85so2270439pfc.3
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 21:33:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=FJWMHnE+f1N7VtA5gckashrUqqP/r697ZPMLxPpbIsg=;
-        b=itN1jT9QiEXRp1GyFXciM8N7EeQyMNRoBGdaEtCRJk3uShftjASv/VktKROr5QvimA
-         OA/GZXuc5YUZlzIsLqLD9iG10cV3L1ZQ19bhY0JyWm+F0YexJKJGz/TYdA7ifqOV46V0
-         3aApOtaQzyzm04E/Ot7Uglg3FYeQtiMW1G32w=
+        d=chromium.org; s=google;
+        h=mime-version:content-transfer-encoding:in-reply-to:subject:to
+         :references:message-id:from:user-agent:cc:date;
+        bh=sH6satQMgixv5yZbBv0B+B+pe3E3V+5j91qTsLkde58=;
+        b=O9O3F2ZSXbLR2FxV8Vy8O78AiiSaqfVkfFyvJdvTXnnS3Z6hkzpSQQZhc6BG63qqY1
+         XG/tfHSg1tyI/y+ZpyCoW9MWzyeGwnQyxf2e+7HBQ8zIF+dTze/gn2SHDn945CaLKXX/
+         TBDIwzupA+SE3SgeQuJnkQn/SQKd7l0akzP2c=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=FJWMHnE+f1N7VtA5gckashrUqqP/r697ZPMLxPpbIsg=;
-        b=unSSrhbL6Anr0IKi47UUOH6gz/5hG5EcA8VdIJ64JFX+j98miykUy1VOzSGwymnTMG
-         i5UyHyQFclr1J0mG65OFYSnZD4uJDX9+z3jXIPEmPxi0pOFqaiahtPFJD3xotAb6Jmjc
-         EYPcqDoq4+qSaeXPBvy3bLie/tyTUnbBDTrIN/RvNzkLRECjFwIQc9HjjLzNAQngZF6X
-         qH7Mh9w1X7lqLLVB+VBbpoC675FRHJo1qncVALBtxu/bpiTho8zcLgcXA5Hj1f6WrEOY
-         c4B4L7rx9PJNvn37LNUKsq9lV7nKENAq0ykPf2OGrMLTi8TfBWggtg7sT62vc9Q9bKDI
-         B9Cw==
-X-Gm-Message-State: AA+aEWZ2IJ+Ak8w1yV7csIzgg2vhaRXt3vYEwJxXCh98z8fhAWxYJuHz
-        LvpC1tbOWUS1dZ2iNLNDKx1+uQ==
-X-Google-Smtp-Source: AFSGD/V4pGkGEfX0GXDSvbndIhFh2TW3d4fTH7f+TKUb4FaWrl8iWicTCw3VoGXYtZ6HAPGB+ypmjA==
-X-Received: by 2002:a17:902:4503:: with SMTP id m3mr1660615pld.23.1544765439082;
-        Thu, 13 Dec 2018 21:30:39 -0800 (PST)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id q5sm6059436pfi.165.2018.12.13.21.30.37
+        h=x-gm-message-state:mime-version:content-transfer-encoding
+         :in-reply-to:subject:to:references:message-id:from:user-agent:cc
+         :date;
+        bh=sH6satQMgixv5yZbBv0B+B+pe3E3V+5j91qTsLkde58=;
+        b=EJfLxDlTdoDp7o8FAiHgawh8eEyJiHblWpSVoOiQhL4xJzFGi21QoXPdp1xRVqoK7K
+         AbtMts0NbAgNTRUUfr0EUgY8NyJgLtuGWaiP5pfCNpBdHO6jnZ8otumJfbzVKummpX4R
+         LJIe1HMfGagOVWA/stJd4mbteThpdf2hLssPqYOS5EGJBsjHmoC5DDJ4VHLlFECDv7g9
+         brVWudV8xjCJ6m2jKaQ4OG6p10RzCRbIIsH9z6y3WoZWlNW31tzyhw12H6kOdIOVu641
+         w2ORKIEfvr6PFgGRLCNXXElXn3C3eJFojZtimuF8A06wQJ/aLQvOD1TlfEmNERtvqTRn
+         Gpvg==
+X-Gm-Message-State: AA+aEWYnBu5FHIDLWWLPq67kOZg6mo3hlUVnhFwvd4x/uQCn6XgFGhJx
+        YL6clu/qYWpFVypgrmqgolfTNQ==
+X-Google-Smtp-Source: AFSGD/Vro6xou6KuB3P/VNV6jait+ntMVVFLDeQw+4nFW9UOkZYEhfOTz9SrqgVT1yMKS/cN86qBzw==
+X-Received: by 2002:a62:18ce:: with SMTP id 197mr1669004pfy.88.1544765581489;
+        Thu, 13 Dec 2018 21:33:01 -0800 (PST)
+Received: from localhost ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id i73sm5304872pfi.66.2018.12.13.21.33.00
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 13 Dec 2018 21:30:37 -0800 (PST)
-Date:   Thu, 13 Dec 2018 21:30:35 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     Rajendra Nayak <rnayak@codeaurora.org>, sre@kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH] power: reset: msm: Add support for download-mode control
-Message-ID: <20181214053035.GK1578@tuxbook-pro>
-References: <1531977529-23304-1-git-send-email-rnayak@codeaurora.org>
- <20180719054200.GB30024@minitux>
- <ca74b7f4-3e60-2f3b-3d66-ac167c913c0e@codeaurora.org>
- <153210869376.48062.15842782379577271631@swboyd.mtv.corp.google.com>
- <154282479571.88331.5041132574563990889@swboyd.mtv.corp.google.com>
+        Thu, 13 Dec 2018 21:33:00 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <154282479571.88331.5041132574563990889@swboyd.mtv.corp.google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1544760624-12874-2-git-send-email-tdas@codeaurora.org>
+Subject: Re: [PATCH v13 1/2] dt-bindings: cpufreq: Introduce QCOM CPUFREQ Firmware bindings
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Taniya Das <tdas@codeaurora.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+References: <1544760624-12874-1-git-send-email-tdas@codeaurora.org> <1544760624-12874-2-git-send-email-tdas@codeaurora.org>
+Message-ID: <154476557998.19322.11977618193120872801@swboyd.mtv.corp.google.com>
+From:   Stephen Boyd <swboyd@chromium.org>
+User-Agent: alot/0.8
+Cc:     Rajendra Nayak <rnayak@codeaurora.org>, devicetree@vger.kernel.org,
+        robh@kernel.org, skannan@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, evgreen@google.com,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Taniya Das <tdas@codeaurora.org>
+Date:   Thu, 13 Dec 2018 21:32:59 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 21 Nov 10:26 PST 2018, Stephen Boyd wrote:
+Quoting Taniya Das (2018-12-13 20:10:23)
+> Add QCOM cpufreq firmware device bindings for Qualcomm Technology Inc's
+> SoCs. This is required for managing the cpu frequency transitions which a=
+re
+> controlled by the hardware engine.
+>=20
+> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+> ---
 
-> Quoting Stephen Boyd (2018-07-20 10:44:53)
-> > Quoting Rajendra Nayak (2018-07-18 23:59:20)
-> > > On 7/19/2018 11:12 AM, Bjorn Andersson wrote:
-> > > > On Wed 18 Jul 22:18 PDT 2018, Rajendra Nayak wrote:
-> > > >> diff --git a/Documentation/devicetree/bindings/power/reset/msm-poweroff.txt b/Documentation/devicetree/bindings/power/reset/msm-poweroff.txt
-> > > >> index ce44ad3..9dd489f 100644
-> > > >> --- a/Documentation/devicetree/bindings/power/reset/msm-poweroff.txt
-> > > >> +++ b/Documentation/devicetree/bindings/power/reset/msm-poweroff.txt
-> > > >> @@ -8,6 +8,9 @@ settings.
-> > > >>   Required Properties:
-> > > >>   -compatible: "qcom,pshold"
-> > > >>   -reg: Specifies the physical address of the ps-hold register
-> > > >> +Optional Properties:
-> > > >> +-qcom,dload-mode: phandle to the TCSR hardware block and offset of the
-> > > >> +             download mode control register
-> > > >>   
-> > > >>   Example:
-> > > >>   
-> > > >> diff --git a/drivers/power/reset/Kconfig b/drivers/power/reset/Kconfig
-> > > >> index df58fc8..0c97e34 100644
-> > > >> --- a/drivers/power/reset/Kconfig
-> > > >> +++ b/drivers/power/reset/Kconfig
-> > > >> @@ -104,6 +104,17 @@ config POWER_RESET_MSM
-> > > >>      help
-> > > >>        Power off and restart support for Qualcomm boards.
-> > > >>   
-> > > >> +config POWER_RESET_MSM_DOWNLOAD_MODE
-> > > > 
-> > > > How about moving QCOM_SCM_DOWNLOAD_MODE_DEFAULT to
-> > > > drivers/soc/qcom/Kconfig (and removing "SCM") and referencing this in
-> > > > both drivers?
-> > > 
-> > > yes, thats possible, but I am not sure how to make the command line
-> > > option common for both. One other option I thought was if we could handle it
-> > > within the scm driver itself with an additional
-> > > binding to specify the non-secure download mode address.
-> > > something like qcom,dload-mode-ns?
-> > 
-> > Is the SCM device and driver always going to be present though? It may
-> > be better to make a TCSR platform device driver on designs that would
-> > configure the cookie with direct read/writes from Linux to break the
-> > relationship with scm entirely. Then the different configurations could
-> > flow from the DTS file either describing scm that has scm call, a
-> > special scm_writel address for TCSR, or a specific TCSR node with the
-> > address of the download mode cookie that triggers a TCSR driver to probe
-> > and register a reboot handler.
-> > 
-> 
-> Does my proposal work? I haven't seen anything new on the list since
-> this email.
-> 
+Reviewed-by: Stephen Boyd <swboyd@chromium.org>
 
-Afaiu the SCM device is still there, even though we don't use all the
-usual functionality.
+except one question below for Rob.
 
-I tested on qcs404 and sdm845-mtp (LA boot chain), and they both return
-positive on:
+> diff --git a/Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-hw.tx=
+t b/Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-hw.txt
+> new file mode 100644
+> index 0000000..33856947
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-hw.txt
+> @@ -0,0 +1,172 @@
+> +Qualcomm Technologies, Inc. CPUFREQ Bindings
+> +
+> +CPUFREQ HW is a hardware engine used by some Qualcomm Technologies, Inc.=
+ (QTI)
+> +SoCs to manage frequency in hardware. It is capable of controlling frequ=
+ency
+> +for multiple clusters.
+> +
+> +Properties:
+> +- compatible
+> +       Usage:          required
+> +       Value type:     <string>
+> +       Definition:     must be "qcom,cpufreq-hw".
+> +
+> +- clocks
+> +       Usage:          required
+> +       Value type:     <phandle> From common clock binding.
+> +       Definition:     clock handle for XO clock and GPLL0 clock.
+> +
+> +- clock-names
+> +       Usage:          required
+> +       Value type:     <string> From common clock binding.
+> +       Definition:     must be "xo", "alternate".
+> +
+> +- reg
+> +       Usage:          required
+> +       Value type:     <prop-encoded-array>
+> +       Definition:     Addresses and sizes for the memory of the HW base=
+s in
+> +                       each frequency domain.
+> +- reg-names
+> +       Usage:          Optional
+> +       Value type:     <string>
+> +       Definition:     Frequency domain name i.e.
+> +                       "freq-domain0", "freq-domain1".
+> +
+> +- #freq-domain-cells:
 
-  __qcom_scm_is_call_available(dev, QCOM_SCM_SVC_IO, QCOM_SCM_IO_WRITE)
+I still wonder if this should be #qcom,freq-domain-cells, but if Rob is
+OK I won't complain.
 
-So how about we change qcom_scm_set_download_mode() to do:
+> +       Usage:          required.
 
-  if (scm_call_avail(QCOM_SCM_SVC_BOOT, QCOM_SCM_SET_DLOAD_MODE))
-  	__qcom_scm_set_dload_mode()
-  else if (scm_call_avail(QCOM_SCM_SVC_IO, QCOM_SCM_IO_WRITE) && dload_mode_addr)
-  	__qcom_scm_io_writel();
-  else if (dload_mode_addr)
-  	writel()
+Nitpick: Weird full-stop here     ^
 
-This would also mean that we can put the dload addr in the sdm845.dtsi
-and share that between LA and ATF.
-
-Regards,
-Bjorn
+> +       Definition:     Number of cells in a freqency domain specifier.
+> +
+> +* Property qcom,freq-domain
+> +Devices supporting freq-domain must set their "qcom,freq-domain" propert=
+y with
+> +phandle to a cpufreq_hw followed by the Domain ID(0/1) in the CPU DT nod=
+e.
+> +
+> +
