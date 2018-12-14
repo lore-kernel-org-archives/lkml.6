@@ -2,145 +2,126 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.9 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37C0BC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:46:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 259A5C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:46:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D195206DD
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:46:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 62D7E206DD
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:46:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="ZT1teP6O"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731045AbeLNUqT (ORCPT
+        id S1731026AbeLNUqv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 15:46:19 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:37977 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730713AbeLNUqT (ORCPT
+        Fri, 14 Dec 2018 15:46:51 -0500
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:40647 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730713AbeLNUqv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 15:46:19 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBEKk0Wr1457380
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Fri, 14 Dec 2018 12:46:00 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBEKk04F1457377;
-        Fri, 14 Dec 2018 12:46:00 -0800
-Date:   Fri, 14 Dec 2018 12:46:00 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
-Message-ID: <tip-vgs9aoek21v14o3obza586yy@git.kernel.org>
-Cc:     mingo@kernel.org, peterz@infradead.org, hpa@zytor.com,
-        alexander.shishkin@linux.intel.com, davem@davemloft.net,
-        namhyung@kernel.org, linux-kernel@vger.kernel.org,
-        jolsa@kernel.org, tglx@linutronix.de
-Reply-To: mingo@kernel.org, peterz@infradead.org, hpa@zytor.com,
-          davem@davemloft.net, alexander.shishkin@linux.intel.com,
-          namhyung@kernel.org, linux-kernel@vger.kernel.org,
-          jolsa@kernel.org, tglx@linutronix.de
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf ordered_events: Add private data member
-Git-Commit-ID: 4bc8acb7e06b8bc882fc3ca42e0980275f6e629e
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Fri, 14 Dec 2018 15:46:51 -0500
+Received: by mail-yw1-f68.google.com with SMTP id r130so2837478ywg.7
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 12:46:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=YfuIbKfYXLeSMyVQXkpoPXxNgNbgjPxWgbF6UQTE2Kw=;
+        b=ZT1teP6O03u0Ot3l3HN5jKVttCwkmQ+L9bMa5U20ydMI/b0Uo0JwWlWl5XsFXYpnH2
+         13Mmj2J2P//9CxAF7arUlQK9Mm/cJvFOXNG/2Vnj2TzN6w3Y/QOESYez0pI9xDrcN8zC
+         BgY/QxWJf5kmKIG/9VaZTJpa0VS9lIieHky94=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=YfuIbKfYXLeSMyVQXkpoPXxNgNbgjPxWgbF6UQTE2Kw=;
+        b=KsmgPAIUaTHK3bzzHaDtHfgbPmeHhbV22doNmaj+jBmt8R8KJu/26Y5caLHy2O5S8q
+         POSMdIWg8BGNpPfOuTJqHJCtR1bsw6CrMddPBNNb2L0OzEqA9UYMjmKUavJLR0xvGof+
+         g0meR1KDdcQFu/ISaCh7mylbusNOS96rj1/A0AqKUXxOcjhkZK7NkL3T0yBz3LMfAzLm
+         MlB9HO65P3nEJd+Mj4d8jiF4yOgALwKn1BY/3HSpwNKLnd9B7F0iBmt8IY59i0uPojcU
+         97sMU1p4L8e4PKe5bY5FvE/pt99lCyP4ExFQFQQBv8mJ7AlCEHVgC6DVcjgF4SnuQln2
+         CdTA==
+X-Gm-Message-State: AA+aEWazXQ7uE9W5CZgsR7G6PkyfSt7QevWkJz44oVt6BsSjpQTENIPn
+        QTZHY5sNYLzlrBRP87hAebjbcw==
+X-Google-Smtp-Source: AFSGD/Uq/OzpdjkRSzGl08lTyGphSevUI9HFHNXSPdTeGnnei6VRCHHjW9N541dY7gdtWjxXgt0JQA==
+X-Received: by 2002:a0d:dcc5:: with SMTP id f188mr4610569ywe.210.1544820410182;
+        Fri, 14 Dec 2018 12:46:50 -0800 (PST)
+Received: from jagan-XPS-13-9350.homenet.telecomitalia.it (host211-95-static.0-79-b.business.telecomitalia.it. [79.0.95.211])
+        by smtp.gmail.com with ESMTPSA id f10sm3754614ywb.26.2018.12.14.12.46.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 14 Dec 2018 12:46:49 -0800 (PST)
+From:   Jagan Teki <jagan@amarulasolutions.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>, Sean Paul <sean@poorly.run>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-amarula@amarulasolutions.com
+Cc:     Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH v6 1/2] dt-bindings: panel: Add Sitronix ST7701 panel documentation
+Date:   Sat, 15 Dec 2018 02:16:39 +0530
+Message-Id: <20181214204640.9789-1-jagan@amarulasolutions.com>
+X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  4bc8acb7e06b8bc882fc3ca42e0980275f6e629e
-Gitweb:     https://git.kernel.org/tip/4bc8acb7e06b8bc882fc3ca42e0980275f6e629e
-Author:     Jiri Olsa <jolsa@kernel.org>
-AuthorDate: Wed, 7 Nov 2018 16:58:36 +0100
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Thu, 6 Dec 2018 14:12:32 -0300
+Techstar TS8550B MIPI DSI panel is 480x854, 2-lane MIPI DSI LCD panel
+with inbuilt ST7701 chip.
 
-perf ordered_events: Add private data member
+The default regulator names in ST7701 chip is renamed in Techstar TS8550B
+so, add specific binding names for them.
 
-We will need it in following patch, where we can't use the
-container_of() trick to get the higher level object.
-
-Acked-by: David S. Miller <davem@davemloft.net>
-Acked-by: Namhyung Kim <namhyung@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/n/tip-vgs9aoek21v14o3obza586yy@git.kernel.org
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 ---
- tools/perf/util/ordered-events.c | 6 ++++--
- tools/perf/util/ordered-events.h | 4 +++-
- tools/perf/util/session.c        | 3 ++-
- 3 files changed, 9 insertions(+), 4 deletions(-)
+Changes for v6:
+- none
 
-diff --git a/tools/perf/util/ordered-events.c b/tools/perf/util/ordered-events.c
-index 28f0f5c95024..d053aa0a7582 100644
---- a/tools/perf/util/ordered-events.c
-+++ b/tools/perf/util/ordered-events.c
-@@ -326,7 +326,8 @@ int ordered_events__flush(struct ordered_events *oe, enum oe_flush how)
- 	return err;
- }
- 
--void ordered_events__init(struct ordered_events *oe, ordered_events__deliver_t deliver)
-+void ordered_events__init(struct ordered_events *oe, ordered_events__deliver_t deliver,
-+			  void *data)
- {
- 	INIT_LIST_HEAD(&oe->events);
- 	INIT_LIST_HEAD(&oe->cache);
-@@ -334,6 +335,7 @@ void ordered_events__init(struct ordered_events *oe, ordered_events__deliver_t d
- 	oe->max_alloc_size = (u64) -1;
- 	oe->cur_alloc_size = 0;
- 	oe->deliver	   = deliver;
-+	oe->data	   = data;
- }
- 
- static void
-@@ -377,5 +379,5 @@ void ordered_events__reinit(struct ordered_events *oe)
- 
- 	ordered_events__free(oe);
- 	memset(oe, '\0', sizeof(*oe));
--	ordered_events__init(oe, old_deliver);
-+	ordered_events__init(oe, old_deliver, oe->data);
- }
-diff --git a/tools/perf/util/ordered-events.h b/tools/perf/util/ordered-events.h
-index 1338d5c345dc..507b4e4df79e 100644
---- a/tools/perf/util/ordered-events.h
-+++ b/tools/perf/util/ordered-events.h
-@@ -47,13 +47,15 @@ struct ordered_events {
- 	enum oe_flush			 last_flush_type;
- 	u32				 nr_unordered_events;
- 	bool				 copy_on_queue;
-+	void				*data;
- };
- 
- int ordered_events__queue(struct ordered_events *oe, union perf_event *event,
- 			  u64 timestamp, u64 file_offset);
- void ordered_events__delete(struct ordered_events *oe, struct ordered_event *event);
- int ordered_events__flush(struct ordered_events *oe, enum oe_flush how);
--void ordered_events__init(struct ordered_events *oe, ordered_events__deliver_t deliver);
-+void ordered_events__init(struct ordered_events *oe, ordered_events__deliver_t deliver,
-+			  void *data);
- void ordered_events__free(struct ordered_events *oe);
- void ordered_events__reinit(struct ordered_events *oe);
- 
-diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
-index f8eab197f35c..78a067777144 100644
---- a/tools/perf/util/session.c
-+++ b/tools/perf/util/session.c
-@@ -126,7 +126,8 @@ struct perf_session *perf_session__new(struct perf_data *data,
- 	session->tool   = tool;
- 	INIT_LIST_HEAD(&session->auxtrace_index);
- 	machines__init(&session->machines);
--	ordered_events__init(&session->ordered_events, ordered_events__deliver_event);
-+	ordered_events__init(&session->ordered_events,
-+			     ordered_events__deliver_event, NULL);
- 
- 	if (data) {
- 		if (perf_data__open(data))
+ .../display/panel/sitronix,st7701.txt         | 30 +++++++++++++++++++
+ 1 file changed, 30 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/panel/sitronix,st7701.txt
+
+diff --git a/Documentation/devicetree/bindings/display/panel/sitronix,st7701.txt b/Documentation/devicetree/bindings/display/panel/sitronix,st7701.txt
+new file mode 100644
+index 000000000000..ccd17597f1f6
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/panel/sitronix,st7701.txt
+@@ -0,0 +1,30 @@
++Sitronix ST7701 based LCD panels
++
++ST7701 designed for small and medium sizes of TFT LCD display, is
++capable of supporting up to 480RGBX864 in resolution. It provides
++several system interfaces like MIPI/RGB/SPI.
++
++Techstar TS8550B is 480x854, 2-lane MIPI DSI LCD panel which has
++inbuilt ST7701 chip.
++
++Required properties:
++- compatible: must be "sitronix,st7701" and one of
++  * "techstar,ts8550b"
++- reset-gpios: a GPIO phandle for the reset pin
++
++Required properties for techstar,ts8550b:
++- reg: DSI virtual channel used by that screen
++- VCC-supply: analog regulator for MIPI circuit
++- IOVCC-supply: I/O system regulator
++
++Optional properties:
++- backlight: phandle for the backlight control.
++
++panel@0 {
++	compatible = "techstar,ts8550b", "sitronix,st7701";
++	reg = <0>;
++	VCC-supply = <&reg_dldo2>;
++	IOVCC-supply = <&reg_dldo2>;
++	reset-gpios = <&pio 3 24 GPIO_ACTIVE_HIGH>; /* LCD-RST: PD24 */
++	backlight = <&backlight>;
++};
+-- 
+2.18.0.321.gffc6fa0e3
+
