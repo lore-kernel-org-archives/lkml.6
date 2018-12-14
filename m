@@ -2,66 +2,112 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CF3AC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 17:58:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7446AC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 17:59:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B19CA206DD
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 17:58:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8EE37206DD
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 17:59:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="P/rN+T/m"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="HuhENEoi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730117AbeLNR6o (ORCPT
+        id S1730399AbeLNR7Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 12:58:44 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:49994 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729684AbeLNR6o (ORCPT
+        Fri, 14 Dec 2018 12:59:25 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:39657 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729718AbeLNR7Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 12:58:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Vd7q6Y/7HvIvMjXnHmosjCED9/0KsC/J21bU6sFmxhs=; b=P/rN+T/mjdCrqOwwTPUbHV1NC
-        PG9cgHQEBCTsFxP+EbhNKfpnHKZL2fMKQSx8FbTQPDqq2//IK5HjbUdGAFJNPWVT6PZ1yg7BDmckl
-        oIhEkAXMtb9pSwPny4iyjg+95OyA6aT45w3RNDDQzLB9CH/Hak3yAdPKVPr1p755c1RFRjfC5awQl
-        3heYEunR06bjtRBD9bFUsEpqhUFp25wbOHArNwTRWrZvAeTJulJt+CN6NJmGWaLZm/9U2XBKyXN39
-        VtbQPN5bM5PypzS/Pc05cHGE/OlNkwQBb3QJXTQ8YpU9i7JiBjH8MB94GA/jl43ofKwD31klaC499
-        9OwbdreiQ==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gXrjV-0003L7-0i; Fri, 14 Dec 2018 17:58:41 +0000
-Date:   Fri, 14 Dec 2018 09:58:40 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Greg Kurz <groug@kaod.org>
-Cc:     linux-kernel@vger.kernel.org, Josef Bacik <jbacik@fb.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Frederic Barrat <fbarrat@linux.vnet.ibm.com>
-Subject: Re: [PATCH] radix tree: Don't return internal entries on lookup
-Message-ID: <20181214175840.GB10600@bombadil.infradead.org>
-References: <154408284374.405977.5950625525821388567.stgit@bahia.lan>
- <20181206133620.GC24603@bombadil.infradead.org>
- <20181206172102.0538b2a9@bahia.lab.toulouse-stg.fr.ibm.com>
- <20181213104314.71fd74eb@bahia.lab.toulouse-stg.fr.ibm.com>
+        Fri, 14 Dec 2018 12:59:24 -0500
+Received: by mail-lf1-f68.google.com with SMTP id n18so4901328lfh.6
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 09:59:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=sRJbbr64lvVh0lL0pj1PYc1G/ooZr74kh6CTU1AQsCc=;
+        b=HuhENEoi/whKaG+A+YSurhvmK8qQwGvJAZrDquZ65idKa1wrw78E8tyVBKOB16GiQY
+         0ATLMmjlultFzOxK9KdubWaRhfscmYv3G+RuInbsHirVVWeW91gl6R36Yn255FLsFJyN
+         /S7DvRNopo1fxUQ1pDOq6BrUdggpOVokCMhPs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=sRJbbr64lvVh0lL0pj1PYc1G/ooZr74kh6CTU1AQsCc=;
+        b=ifdYpk25VNguK+ynsvImSkiBvf6TDS+3/3w4jjGkAanI3scWbnLLe+TTJ9kZPs7PdA
+         dEpcfUmpVM1FYLHHkDIXmrz0M4O4MYavkjaZlz17VbJLaClmZ0oEacmQTi5tipDqBY+k
+         RptDy01aHQmVUG5SN6ZYZHixiXJ6bi/4wJpYcTRpGW2EYMeHbFC7g14fDPmDCN6lwRA6
+         xq1iWnrk0s7c/BeqCXPQNa3ukSIhx/gZ8ZL27q/skvluPjv7QemmFpIgDSNVoJWUDIMH
+         EmjgPNbWP/mI/AokR93N/TPPGiY1OpNARbgsH9kgLUyxvr5ahx7HnxO+HuCBhqALT9as
+         cVZg==
+X-Gm-Message-State: AA+aEWYmbVXl7bwihXrMS6RXehkxCvHWG4N6oAL5bKKlSa9Z2ejsc/JR
+        AzpDqa/zbCDAgpdQGDq1FRJO1A==
+X-Google-Smtp-Source: AFSGD/WHMJt9n1z+tUXnOAESctE90P3rY/wEHV93tSJIfHPL/2/+IstUs4iOlKxhLmKFsgL5H8fZrA==
+X-Received: by 2002:a19:1a14:: with SMTP id a20mr2291788lfa.1.1544810362450;
+        Fri, 14 Dec 2018 09:59:22 -0800 (PST)
+Received: from localhost ([195.238.92.132])
+        by smtp.gmail.com with ESMTPSA id r29-v6sm930739ljd.44.2018.12.14.09.59.21
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 14 Dec 2018 09:59:21 -0800 (PST)
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+To:     James Chapman <jchapman@katalix.com>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Guillaume Nault <g.nault@alphalink.fr>
+Subject: [PATCH] l2tp: Add protocol field decompression
+Date:   Fri, 14 Dec 2018 19:59:21 +0200
+Message-Id: <20181214175921.6859-1-semen.protsenko@linaro.org>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181213104314.71fd74eb@bahia.lab.toulouse-stg.fr.ibm.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 13, 2018 at 10:43:14AM +0100, Greg Kurz wrote:
-> I see this fix is in linux-next. I just want to make sure it will
-> land in 4.20 in order to avoid kernel panics in the OCXL driver.
+When Protocol Field Compression (PFC) is enabled, the "Protocol" field
+in PPP packet will be received without leading 0x00. See section 6.5 in
+RFC 1661 for details. So let's decompress protocol field if needed, the
+same way it's done in drivers/net/ppp/pptp.c.
 
-It's in now.  Looks like Linus actually pulled it last night but didn't
-push out the tree until this morning.  Thanks for the reminder (although
-I hadn't forgotten; I was chasing down another bug).
+In case when "nopcomp" pppd option is not enabled, PFC (pcomp) can be
+negotiated during LCP handshake, and L2TP driver in kernel will receive
+PPP packets with compressed Protocol field, which in turn leads to next
+error:
+
+    Protocol Rejected (unsupported protocol 0x2145)
+
+because instead of Protocol=0x0021 in PPP packet there will be
+Protocol=0x21. This patch unwraps it back to 0x0021, which fixes the
+issue.
+
+Sending the compressed Protocol field will be implemented in subsequent
+patch, this one is self-sufficient.
+
+Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+---
+ net/l2tp/l2tp_ppp.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/net/l2tp/l2tp_ppp.c b/net/l2tp/l2tp_ppp.c
+index 04d9946dcdba..c03c6461f236 100644
+--- a/net/l2tp/l2tp_ppp.c
++++ b/net/l2tp/l2tp_ppp.c
+@@ -236,6 +236,10 @@ static void pppol2tp_recv(struct l2tp_session *session, struct sk_buff *skb, int
+ 	    skb->data[1] == PPP_UI)
+ 		skb_pull(skb, 2);
+ 
++	/* Decompress protocol field if PFC is enabled */
++	if ((*skb->data) & 0x1)
++		*(u8 *)skb_push(skb, 1) = 0;
++
+ 	if (sk->sk_state & PPPOX_BOUND) {
+ 		struct pppox_sock *po;
+ 
+-- 
+2.19.1
+
