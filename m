@@ -2,497 +2,205 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 023FAC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 19:20:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BE51C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 19:23:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40309206C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 19:20:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OxNaDlJJ"
+	by mail.kernel.org (Postfix) with ESMTP id F113A204FD
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 19:23:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730679AbeLNTUr (ORCPT
+        id S1730605AbeLNTXZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 14:20:47 -0500
-Received: from mail-wr1-f43.google.com ([209.85.221.43]:43627 "EHLO
-        mail-wr1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730414AbeLNTUq (ORCPT
+        Fri, 14 Dec 2018 14:23:25 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:51696 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730405AbeLNTXY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 14:20:46 -0500
-Received: by mail-wr1-f43.google.com with SMTP id r10so6472279wrs.10;
-        Fri, 14 Dec 2018 11:20:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=gfNXg/JCN2pi43K3AgOZY/N+aBtwmvpygX/JOgIchvg=;
-        b=OxNaDlJJ4317xP7Nr8hfSmYI4BlucJJ0Pw2ZH/WpfKYtQzJwaq0ZYGn8XpIkDL/WDC
-         Ubo+tyB3Tn3ZvdevajTp8eqD+XevxA1bMrrgjbJvS6IdWoZs0DsyooiYh8g9o4eq0l0R
-         oYg1ke3krDsSvjE3R3jMlLfwojK8OhK6sUwiNQhaowr7Iw7+VhT7W16B5qg5uJ6r9hZn
-         EUdnfYAsXP9o2nRXuIN4OChg7o7hxi0M6mA4D+xzq8MG8ldsmsSSA2urO9UedZk60IOA
-         BQkSQXlDdQ5Jf7ZZBYBjNSYNDRewW1yBAvZk8mnw90gB7Ixn8r0MBnb1//CINXzjmIgD
-         jMBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=gfNXg/JCN2pi43K3AgOZY/N+aBtwmvpygX/JOgIchvg=;
-        b=HXc08cuvSRTxEXmDKlx3AaeYbqvLaqpbobcI70bQ59Tygu8f8R3vGW7igzqyzPPU7A
-         LdACnVzdgqPFRJzA4vEMARevw01/ycIKCODUAxcfE/j+BR4KmJKy532PviIFMAVm36PW
-         uKxWaHcyZvGf1VE6tQrUoqrE/4JP89H/Vd79HriomXktM0CTclNXPrksznCR864aD2OH
-         SvppNvWTXLVZvCmbgz5HaRcKRLxvD6fMDZg8RwoOuaeEtaDhO5HN6qnLpCwrRUULBurd
-         MngkA4XM7Q8OEwlYEMqNqW/BuzzusZTM40KdWhelcNBOU7Bcqmzs/Xmj5NHPivDKqxjo
-         CL/g==
-X-Gm-Message-State: AA+aEWY30BTBNRghk9CAXZiq4mDJQKA/FCxx+kRIEx9nrs+IK+tRjm44
-        K6k0Mmr0lxZ69Ze0NqfTgWw=
-X-Google-Smtp-Source: AFSGD/Vjw8p7bsZnCz4L5gY0IBZsowf9yFHYju0lqfqyCC4W/inbkZH5iusbR/Ju3f8fvXoXoK1rdw==
-X-Received: by 2002:a5d:51ca:: with SMTP id n10mr3406586wrv.316.1544815242487;
-        Fri, 14 Dec 2018 11:20:42 -0800 (PST)
-Received: from localhost ([212.58.114.41])
-        by smtp.gmail.com with ESMTPSA id x186sm5929792wmg.41.2018.12.14.11.20.39
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 14 Dec 2018 11:20:40 -0800 (PST)
-Date:   Fri, 14 Dec 2018 22:20:38 +0300
-From:   Yury Norov <yury.norov@gmail.com>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     yury.norov@gmail.com, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-team@lists.ubuntu.com
-Subject: mouse driver crashed on 4.15 kernel
-Message-ID: <20181214192038.GA2389@yury-thinkpad>
+        Fri, 14 Dec 2018 14:23:24 -0500
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBEJLdMZ020845
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 14:23:23 -0500
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2pcftjfwvv-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 14:23:23 -0500
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <gerald.schaefer@de.ibm.com>;
+        Fri, 14 Dec 2018 19:23:20 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 14 Dec 2018 19:23:17 -0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBEJNGHw3408186
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 14 Dec 2018 19:23:16 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id ACD1B11C058;
+        Fri, 14 Dec 2018 19:23:16 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 567D911C050;
+        Fri, 14 Dec 2018 19:23:16 +0000 (GMT)
+Received: from thinkpad (unknown [9.145.44.24])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri, 14 Dec 2018 19:23:16 +0000 (GMT)
+Date:   Fri, 14 Dec 2018 20:23:15 +0100
+From:   Gerald Schaefer <gerald.schaefer@de.ibm.com>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     Mikhail Zaslonko <zaslonko@linux.ibm.com>,
+        akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, mhocko@kernel.org,
+        Pavel.Tatashin@microsoft.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com
+Subject: Re: [PATCH v2 1/1] mm, memory_hotplug: Initialize struct pages for
+ the full memory section
+In-Reply-To: <bcd0c49c-e417-ef8b-996f-99ecef540d9c@redhat.com>
+References: <20181212172712.34019-1-zaslonko@linux.ibm.com>
+        <20181212172712.34019-2-zaslonko@linux.ibm.com>
+        <476a80cb-5524-16c1-6dd5-da5febbd6139@redhat.com>
+        <bcd0c49c-e417-ef8b-996f-99ecef540d9c@redhat.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="tThc/1wpZn/ma/RB"
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-TM-AS-GCONF: 00
+x-cbid: 18121419-4275-0000-0000-000002F0A52F
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18121419-4276-0000-0000-000037FDD6BD
+Message-Id: <20181214202315.1c685f1e@thinkpad>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-14_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812140164
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, 14 Dec 2018 16:49:14 +0100
+David Hildenbrand <david@redhat.com> wrote:
 
---tThc/1wpZn/ma/RB
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> On 14.12.18 16:22, David Hildenbrand wrote:
+> > On 12.12.18 18:27, Mikhail Zaslonko wrote:  
+> >> If memory end is not aligned with the sparse memory section boundary, the
+> >> mapping of such a section is only partly initialized. This may lead to
+> >> VM_BUG_ON due to uninitialized struct page access from
+> >> is_mem_section_removable() or test_pages_in_a_zone() function triggered by
+> >> memory_hotplug sysfs handlers:
+> >>
+> >> Here are the the panic examples:
+> >>  CONFIG_DEBUG_VM=y
+> >>  CONFIG_DEBUG_VM_PGFLAGS=y
+> >>
+> >>  kernel parameter mem=2050M
+> >>  --------------------------
+> >>  page:000003d082008000 is uninitialized and poisoned
+> >>  page dumped because: VM_BUG_ON_PAGE(PagePoisoned(p))
+> >>  Call Trace:
+> >>  ([<0000000000385b26>] test_pages_in_a_zone+0xde/0x160)
+> >>   [<00000000008f15c4>] show_valid_zones+0x5c/0x190
+> >>   [<00000000008cf9c4>] dev_attr_show+0x34/0x70
+> >>   [<0000000000463ad0>] sysfs_kf_seq_show+0xc8/0x148
+> >>   [<00000000003e4194>] seq_read+0x204/0x480
+> >>   [<00000000003b53ea>] __vfs_read+0x32/0x178
+> >>   [<00000000003b55b2>] vfs_read+0x82/0x138
+> >>   [<00000000003b5be2>] ksys_read+0x5a/0xb0
+> >>   [<0000000000b86ba0>] system_call+0xdc/0x2d8
+> >>  Last Breaking-Event-Address:
+> >>   [<0000000000385b26>] test_pages_in_a_zone+0xde/0x160
+> >>  Kernel panic - not syncing: Fatal exception: panic_on_oops
+> >>
+> >>  kernel parameter mem=3075M
+> >>  --------------------------
+> >>  page:000003d08300c000 is uninitialized and poisoned
+> >>  page dumped because: VM_BUG_ON_PAGE(PagePoisoned(p))
+> >>  Call Trace:
+> >>  ([<000000000038596c>] is_mem_section_removable+0xb4/0x190)
+> >>   [<00000000008f12fa>] show_mem_removable+0x9a/0xd8
+> >>   [<00000000008cf9c4>] dev_attr_show+0x34/0x70
+> >>   [<0000000000463ad0>] sysfs_kf_seq_show+0xc8/0x148
+> >>   [<00000000003e4194>] seq_read+0x204/0x480
+> >>   [<00000000003b53ea>] __vfs_read+0x32/0x178
+> >>   [<00000000003b55b2>] vfs_read+0x82/0x138
+> >>   [<00000000003b5be2>] ksys_read+0x5a/0xb0
+> >>   [<0000000000b86ba0>] system_call+0xdc/0x2d8
+> >>  Last Breaking-Event-Address:
+> >>   [<000000000038596c>] is_mem_section_removable+0xb4/0x190
+> >>  Kernel panic - not syncing: Fatal exception: panic_on_oops
+> >>
+> >> Fix the problem by initializing the last memory section of each zone
+> >> in memmap_init_zone() till the very end, even if it goes beyond the zone
+> >> end.
+> >>
+> >> Signed-off-by: Mikhail Zaslonko <zaslonko@linux.ibm.com>
+> >> Reviewed-by: Gerald Schaefer <gerald.schaefer@de.ibm.com>
+> >> Cc: <stable@vger.kernel.org>
+> >> ---
+> >>  mm/page_alloc.c | 12 ++++++++++++
+> >>  1 file changed, 12 insertions(+)
+> >>
+> >> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> >> index 2ec9cc407216..e2afdb2dc2c5 100644
+> >> --- a/mm/page_alloc.c
+> >> +++ b/mm/page_alloc.c
+> >> @@ -5542,6 +5542,18 @@ void __meminit memmap_init_zone(unsigned long size, int nid, unsigned long zone,
+> >>  			cond_resched();
+> >>  		}
+> >>  	}
+> >> +#ifdef CONFIG_SPARSEMEM
+> >> +	/*
+> >> +	 * If the zone does not span the rest of the section then
+> >> +	 * we should at least initialize those pages. Otherwise we
+> >> +	 * could blow up on a poisoned page in some paths which depend
+> >> +	 * on full sections being initialized (e.g. memory hotplug).
+> >> +	 */
+> >> +	while (end_pfn % PAGES_PER_SECTION) {
+> >> +		__init_single_page(pfn_to_page(end_pfn), end_pfn, zone, nid);
+> >> +		end_pfn++;  
+> > 
+> > This page will not be marked as PG_reserved - although it is a physical
+> > memory gap. Do we care?
+> >   
+> 
+> Hm, or do we even have any idea what this is (e.g. could it also be
+> something not a gap)?
 
-Hi Dmitry,
+In the "mem=" restriction scenario it would be a gap, and probably fall
+into the PG_reserved categorization from your recent patch:
+ * - Pages falling into physical memory gaps - not IORESOURCE_SYSRAM. Trying
+ *   to read/write these pages might end badly. Don't touch!
 
-It just happened to me on standard Ubuntu laptop (Lenovo X1 gen 5), so
-I had to reboot my machine. According to logs, there was also a problem
-with the wifi, but wifi driver managed to recover the hardware.
+Not sure if it could be something else. In theory, if it is possible to have
+a scenario where memory zones are not section-aligned, then this
+end_pfn % PAGES_PER_SECTION part could be part of another zone. But then it
+should not matter if the pages get pre-initialized here, with or w/o
+PG_reseved, because they should later be properly initialized in their zone.
 
-Looking at dmesg I cannot find something useful because it was wiped
-with a number of identical warning messages from the mouse and SMBus
-drivers. 
+So marking them as PG_reserved sounds right, especially in the light of your
+current PG_reserved clean-up.
 
-I'm just a victim, and don't know much, but at least I can recommend to
-use dev_warn_once() to avoid spamming the system log if things like this
-happen. 
+> 
+> For physical memory gaps within a section, architectures usually exclude
+> that memory from getting passed to e.g. the page allocator by
+> memblock_reserve().
+> 
+> Before handing all free pages to the page allocator, all such reserved
+> memblocks will be marked reserved.
+> 
+> But this here seems to be different. We don't have a previous
+> memblock_reserve(), because otherwise these pages would have properly
+> been initialized already when marking them reserved.
 
-Some system information is below, and system log is attached. Hope it
-will help.
+Not sure how memblock_reserve() and struct page initialization are
+related, but at least on s390 there is a memblock_reserve() on the range
+in question in setup_arch() -> reserve_memory_end(). However, in this
+"mem=" scenario, the range is also removed later with memblock_remove()
+in setup_memory_end(), because it is beyond memory_end.
 
-Thanks,
-Yury
-
-$ uname -a
-Linux yury-thinkpad 4.15.0-42-generic #45-Ubuntu SMP Thu Nov 15 19:32:57 UTC 2018 x86_64 x86_64 x86_64 GNU/Linux
-
-$ dmesg|grep mouse
-[    1.089631] mousedev: PS/2 mouse device common for all mice
-[    2.553529] psmouse serio1: synaptics: queried max coordinates: x [..5676], y [..4760]
-[    2.584367] psmouse serio1: synaptics: queried min coordinates: x [1266..], y [1094..]
-[    2.584370] psmouse serio1: synaptics: Trying to set up SMBus access
-[    3.115236] psmouse serio2: trackpoint: Elan TrackPoint firmware: 0x04, buttons: 3/3
-
-
-$ cat /proc/cpuinfo
-processor	: 0
-vendor_id	: GenuineIntel
-cpu family	: 6
-model		: 142
-model name	: Intel(R) Core(TM) i7-7600U CPU @ 2.80GHz
-stepping	: 9
-microcode	: 0x8e
-cpu MHz		: 1522.133
-cache size	: 4096 KB
-physical id	: 0
-siblings	: 4
-core id		: 0
-cpu cores	: 2
-apicid		: 0
-initial apicid	: 0
-fpu		: yes
-fpu_exception	: yes
-cpuid level	: 22
-wp		: yes
-flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf tsc_known_freq pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb invpcid_single pti ssbd ibrs ibpb stibp tpr_shadow vnmi flexpriority ept vpid fsgsbase tsc_adjust bmi1 hle avx2 smep bmi2 erms invpcid rtm mpx rdseed adx smap clflushopt intel_pt xsaveopt xsavec xgetbv1 xsaves dtherm ida arat pln pts hwp hwp_notify hwp_act_window hwp_epp flush_l1d
-bugs		: cpu_meltdown spectre_v1 spectre_v2 spec_store_bypass l1tf
-bogomips	: 5808.00
-clflush size	: 64
-cache_alignment	: 64
-address sizes	: 39 bits physical, 48 bits virtual
-power management:
-
-processor	: 1
-vendor_id	: GenuineIntel
-cpu family	: 6
-model		: 142
-model name	: Intel(R) Core(TM) i7-7600U CPU @ 2.80GHz
-stepping	: 9
-microcode	: 0x8e
-cpu MHz		: 1345.112
-cache size	: 4096 KB
-physical id	: 0
-siblings	: 4
-core id		: 1
-cpu cores	: 2
-apicid		: 2
-initial apicid	: 2
-fpu		: yes
-fpu_exception	: yes
-cpuid level	: 22
-wp		: yes
-flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf tsc_known_freq pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb invpcid_single pti ssbd ibrs ibpb stibp tpr_shadow vnmi flexpriority ept vpid fsgsbase tsc_adjust bmi1 hle avx2 smep bmi2 erms invpcid rtm mpx rdseed adx smap clflushopt intel_pt xsaveopt xsavec xgetbv1 xsaves dtherm ida arat pln pts hwp hwp_notify hwp_act_window hwp_epp flush_l1d
-bugs		: cpu_meltdown spectre_v1 spectre_v2 spec_store_bypass l1tf
-bogomips	: 5808.00
-clflush size	: 64
-cache_alignment	: 64
-address sizes	: 39 bits physical, 48 bits virtual
-power management:
-
-processor	: 2
-vendor_id	: GenuineIntel
-cpu family	: 6
-model		: 142
-model name	: Intel(R) Core(TM) i7-7600U CPU @ 2.80GHz
-stepping	: 9
-microcode	: 0x8e
-cpu MHz		: 1506.644
-cache size	: 4096 KB
-physical id	: 0
-siblings	: 4
-core id		: 0
-cpu cores	: 2
-apicid		: 1
-initial apicid	: 1
-fpu		: yes
-fpu_exception	: yes
-cpuid level	: 22
-wp		: yes
-flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf tsc_known_freq pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb invpcid_single pti ssbd ibrs ibpb stibp tpr_shadow vnmi flexpriority ept vpid fsgsbase tsc_adjust bmi1 hle avx2 smep bmi2 erms invpcid rtm mpx rdseed adx smap clflushopt intel_pt xsaveopt xsavec xgetbv1 xsaves dtherm ida arat pln pts hwp hwp_notify hwp_act_window hwp_epp flush_l1d
-bugs		: cpu_meltdown spectre_v1 spectre_v2 spec_store_bypass l1tf
-bogomips	: 5808.00
-clflush size	: 64
-cache_alignment	: 64
-address sizes	: 39 bits physical, 48 bits virtual
-power management:
-
-processor	: 3
-vendor_id	: GenuineIntel
-cpu family	: 6
-model		: 142
-model name	: Intel(R) Core(TM) i7-7600U CPU @ 2.80GHz
-stepping	: 9
-microcode	: 0x8e
-cpu MHz		: 1545.613
-cache size	: 4096 KB
-physical id	: 0
-siblings	: 4
-core id		: 1
-cpu cores	: 2
-apicid		: 3
-initial apicid	: 3
-fpu		: yes
-fpu_exception	: yes
-cpuid level	: 22
-wp		: yes
-flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf tsc_known_freq pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb invpcid_single pti ssbd ibrs ibpb stibp tpr_shadow vnmi flexpriority ept vpid fsgsbase tsc_adjust bmi1 hle avx2 smep bmi2 erms invpcid rtm mpx rdseed adx smap clflushopt intel_pt xsaveopt xsavec xgetbv1 xsaves dtherm ida arat pln pts hwp hwp_notify hwp_act_window hwp_epp flush_l1d
-bugs		: cpu_meltdown spectre_v1 spectre_v2 spec_store_bypass l1tf
-bogomips	: 5808.00
-clflush size	: 64
-cache_alignment	: 64
-address sizes	: 39 bits physical, 48 bits virtual
-power management:
-
-
---tThc/1wpZn/ma/RB
-Content-Type: application/gzip
-Content-Disposition: attachment; filename="dmesg.oops.gz"
-Content-Transfer-Encoding: base64
-
-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
-51cw+f8zZO0hEKECAA==
-
---tThc/1wpZn/ma/RB--
