@@ -6,43 +6,49 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EC4EC67872
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 06:27:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6671C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 06:27:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D37C220645
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 06:27:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D37C220645
+	by mail.kernel.org (Postfix) with ESMTP id 6B47720645
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 06:27:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B47720645
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727271AbeLNG1n (ORCPT
+        id S1727359AbeLNG1s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 01:27:43 -0500
+        Fri, 14 Dec 2018 01:27:48 -0500
 Received: from mga07.intel.com ([134.134.136.100]:52223 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726437AbeLNG1m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 01:27:42 -0500
+        id S1726437AbeLNG1q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 01:27:46 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Dec 2018 22:27:42 -0800
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Dec 2018 22:27:45 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,351,1539673200"; 
-   d="scan'208";a="125840795"
+   d="scan'208";a="125840808"
 Received: from yhuang-mobile.sh.intel.com ([10.239.197.226])
-  by fmsmga002.fm.intel.com with ESMTP; 13 Dec 2018 22:27:40 -0800
+  by fmsmga002.fm.intel.com with ESMTP; 13 Dec 2018 22:27:42 -0800
 From:   Huang Ying <ying.huang@intel.com>
 To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         Huang Ying <ying.huang@intel.com>,
-        Vineeth Remanan Pillai <vpillai@digitalocean.com>,
-        Kelley Nielsen <kelleynnn@gmail.com>,
-        Rik van Riel <riel@surriel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Hugh Dickins <hughd@google.com>
-Subject: [PATCH -V9 01/21] swap: Deal with PTE mapped THP when unuse PTE
-Date:   Fri, 14 Dec 2018 14:27:34 +0800
-Message-Id: <20181214062754.13723-2-ying.huang@intel.com>
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Shaohua Li <shli@kernel.org>, Hugh Dickins <hughd@google.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Rik van Riel <riel@redhat.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Zi Yan <zi.yan@cs.rutgers.edu>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>
+Subject: [PATCH -V9 02/21] swap: Enable PMD swap operations for CONFIG_THP_SWAP
+Date:   Fri, 14 Dec 2018 14:27:35 +0800
+Message-Id: <20181214062754.13723-3-ying.huang@intel.com>
 X-Mailer: git-send-email 2.18.1
 In-Reply-To: <20181214062754.13723-1-ying.huang@intel.com>
 References: <20181214062754.13723-1-ying.huang@intel.com>
@@ -51,42 +57,153 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A PTE swap entry may map to a normal swap slot inside a huge swap
-cluster.  To free the huge swap cluster and the corresponding
-THP (transparent huge page), all PTE swap entry mappings need to be
-unmapped.  The original implementation only checks current PTE swap
-entry mapping, this is fixed via calling try_to_free_swap() instead,
-which will check all PTE swap mappings inside the huge swap cluster.
+Currently, "the swap entry" in the page tables is used for a number of
+things outside of actual swap, like page migration, etc.  We support
+the THP/PMD "swap entry" for page migration currently and the
+functions behind this are tied to page migration's config
+option (CONFIG_ARCH_ENABLE_THP_MIGRATION).
 
-This fix could be folded into the patch: mm, swap: rid swapoff of
-quadratic complexity in -mm patchset.
+But, we also need them for THP swap optimization.  So a new config
+option (CONFIG_HAVE_PMD_SWAP_ENTRY) is added.  It is enabled when
+either CONFIG_ARCH_ENABLE_THP_MIGRATION or CONFIG_THP_SWAP is enabled.
+And PMD swap entry functions are tied to this new config option
+instead.  Some functions enabled by CONFIG_ARCH_ENABLE_THP_MIGRATION
+are for page migration only, they are still enabled only for that.
 
 Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
-Cc: Vineeth Remanan Pillai <vpillai@digitalocean.com>
-Cc: Kelley Nielsen <kelleynnn@gmail.com>
-Cc: Rik van Riel <riel@surriel.com>
-Cc: Matthew Wilcox <willy@infradead.org>
+Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: Michal Hocko <mhocko@kernel.org>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Shaohua Li <shli@kernel.org>
 Cc: Hugh Dickins <hughd@google.com>
+Cc: Minchan Kim <minchan@kernel.org>
+Cc: Rik van Riel <riel@redhat.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Cc: Zi Yan <zi.yan@cs.rutgers.edu>
+Cc: Daniel Jordan <daniel.m.jordan@oracle.com>
 ---
- mm/swapfile.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ arch/x86/include/asm/pgtable.h |  2 +-
+ include/asm-generic/pgtable.h  |  2 +-
+ include/linux/swapops.h        | 44 ++++++++++++++++++----------------
+ mm/Kconfig                     |  8 +++++++
+ 4 files changed, 33 insertions(+), 23 deletions(-)
 
-diff --git a/mm/swapfile.c b/mm/swapfile.c
-index 7464d0a92869..9e6da494781f 100644
---- a/mm/swapfile.c
-+++ b/mm/swapfile.c
-@@ -1921,10 +1921,8 @@ static int unuse_pte_range(struct vm_area_struct *vma, pmd_t *pmd,
- 			goto out;
- 		}
+diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
+index 40616e805292..e830ab345551 100644
+--- a/arch/x86/include/asm/pgtable.h
++++ b/arch/x86/include/asm/pgtable.h
+@@ -1333,7 +1333,7 @@ static inline pte_t pte_swp_clear_soft_dirty(pte_t pte)
+ 	return pte_clear_flags(pte, _PAGE_SWP_SOFT_DIRTY);
+ }
  
--		if (PageSwapCache(page) && (swap_count(*swap_map) == 0))
--			delete_from_swap_cache(compound_head(page));
-+		try_to_free_swap(page);
+-#ifdef CONFIG_ARCH_ENABLE_THP_MIGRATION
++#ifdef CONFIG_HAVE_PMD_SWAP_ENTRY
+ static inline pmd_t pmd_swp_mksoft_dirty(pmd_t pmd)
+ {
+ 	return pmd_set_flags(pmd, _PAGE_SWP_SOFT_DIRTY);
+diff --git a/include/asm-generic/pgtable.h b/include/asm-generic/pgtable.h
+index e0381a4ce7d4..2a619f378297 100644
+--- a/include/asm-generic/pgtable.h
++++ b/include/asm-generic/pgtable.h
+@@ -675,7 +675,7 @@ static inline void ptep_modify_prot_commit(struct mm_struct *mm,
+ #endif
  
--		SetPageDirty(page);
- 		unlock_page(page);
- 		put_page(page);
+ #ifdef CONFIG_HAVE_ARCH_SOFT_DIRTY
+-#ifndef CONFIG_ARCH_ENABLE_THP_MIGRATION
++#ifndef CONFIG_HAVE_PMD_SWAP_ENTRY
+ static inline pmd_t pmd_swp_mksoft_dirty(pmd_t pmd)
+ {
+ 	return pmd;
+diff --git a/include/linux/swapops.h b/include/linux/swapops.h
+index 4d961668e5fc..905ddc65caa3 100644
+--- a/include/linux/swapops.h
++++ b/include/linux/swapops.h
+@@ -254,17 +254,7 @@ static inline int is_write_migration_entry(swp_entry_t entry)
  
+ #endif
+ 
+-struct page_vma_mapped_walk;
+-
+-#ifdef CONFIG_ARCH_ENABLE_THP_MIGRATION
+-extern void set_pmd_migration_entry(struct page_vma_mapped_walk *pvmw,
+-		struct page *page);
+-
+-extern void remove_migration_pmd(struct page_vma_mapped_walk *pvmw,
+-		struct page *new);
+-
+-extern void pmd_migration_entry_wait(struct mm_struct *mm, pmd_t *pmd);
+-
++#ifdef CONFIG_HAVE_PMD_SWAP_ENTRY
+ static inline swp_entry_t pmd_to_swp_entry(pmd_t pmd)
+ {
+ 	swp_entry_t arch_entry;
+@@ -282,6 +272,28 @@ static inline pmd_t swp_entry_to_pmd(swp_entry_t entry)
+ 	arch_entry = __swp_entry(swp_type(entry), swp_offset(entry));
+ 	return __swp_entry_to_pmd(arch_entry);
+ }
++#else
++static inline swp_entry_t pmd_to_swp_entry(pmd_t pmd)
++{
++	return swp_entry(0, 0);
++}
++
++static inline pmd_t swp_entry_to_pmd(swp_entry_t entry)
++{
++	return __pmd(0);
++}
++#endif
++
++struct page_vma_mapped_walk;
++
++#ifdef CONFIG_ARCH_ENABLE_THP_MIGRATION
++extern void set_pmd_migration_entry(struct page_vma_mapped_walk *pvmw,
++		struct page *page);
++
++extern void remove_migration_pmd(struct page_vma_mapped_walk *pvmw,
++		struct page *new);
++
++extern void pmd_migration_entry_wait(struct mm_struct *mm, pmd_t *pmd);
+ 
+ static inline int is_pmd_migration_entry(pmd_t pmd)
+ {
+@@ -302,16 +314,6 @@ static inline void remove_migration_pmd(struct page_vma_mapped_walk *pvmw,
+ 
+ static inline void pmd_migration_entry_wait(struct mm_struct *m, pmd_t *p) { }
+ 
+-static inline swp_entry_t pmd_to_swp_entry(pmd_t pmd)
+-{
+-	return swp_entry(0, 0);
+-}
+-
+-static inline pmd_t swp_entry_to_pmd(swp_entry_t entry)
+-{
+-	return __pmd(0);
+-}
+-
+ static inline int is_pmd_migration_entry(pmd_t pmd)
+ {
+ 	return 0;
+diff --git a/mm/Kconfig b/mm/Kconfig
+index 25c71eb8a7db..d7c5299c5b7d 100644
+--- a/mm/Kconfig
++++ b/mm/Kconfig
+@@ -422,6 +422,14 @@ config THP_SWAP
+ 
+ 	  For selection by architectures with reasonable THP sizes.
+ 
++#
++# "PMD swap entry" in the page table is used both for migration and
++# actual swap.
++#
++config HAVE_PMD_SWAP_ENTRY
++	def_bool y
++	depends on THP_SWAP || ARCH_ENABLE_THP_MIGRATION
++
+ config	TRANSPARENT_HUGE_PAGECACHE
+ 	def_bool y
+ 	depends on TRANSPARENT_HUGEPAGE
 -- 
 2.18.1
 
