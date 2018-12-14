@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3EDAC6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 10:52:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFAF0C6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 10:52:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F172208E7
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 10:52:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F172208E7
+	by mail.kernel.org (Postfix) with ESMTP id A04BF20892
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 10:52:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A04BF20892
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729705AbeLNKw2 (ORCPT
+        id S1729727AbeLNKwd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 05:52:28 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:48512 "EHLO mx1.redhat.com"
+        Fri, 14 Dec 2018 05:52:33 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:60816 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729632AbeLNKw0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 05:52:26 -0500
+        id S1729693AbeLNKw1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 05:52:27 -0500
 Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 61FAC753E2;
-        Fri, 14 Dec 2018 10:52:25 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 160FB306429A;
+        Fri, 14 Dec 2018 10:52:27 +0000 (UTC)
 Received: from localhost.localdomain.com (unknown [10.32.181.131])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E3DC826FA9;
-        Fri, 14 Dec 2018 10:52:23 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A04C326FA9;
+        Fri, 14 Dec 2018 10:52:25 +0000 (UTC)
 From:   Paolo Abeni <pabeni@redhat.com>
 To:     netdev@vger.kernel.org
 Cc:     "David S. Miller" <davem@davemloft.net>,
@@ -37,299 +37,64 @@ Cc:     "David S. Miller" <davem@davemloft.net>,
         Paul Turner <pjt@google.com>, linux-kernel@vger.kernel.org,
         Edward Cree <ecree@solarflare.com>,
         David Woodhouse <dwmw2@infradead.org>
-Subject: [PATCH net-next v3 3/4] net: use indirect call wrappers at GRO transport layer
-Date:   Fri, 14 Dec 2018 11:51:59 +0100
-Message-Id: <95458ca1cb0119188b644681c966111b33330d30.1544784419.git.pabeni@redhat.com>
+Subject: [PATCH net-next v3 4/4] udp: use indirect call wrappers for GRO socket lookup
+Date:   Fri, 14 Dec 2018 11:52:00 +0100
+Message-Id: <c9ed62fbef796117aef08cb946d8b25d211f2710.1544784419.git.pabeni@redhat.com>
 In-Reply-To: <cover.1544784419.git.pabeni@redhat.com>
 References: <cover.1544784419.git.pabeni@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Fri, 14 Dec 2018 10:52:25 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Fri, 14 Dec 2018 10:52:27 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This avoids an indirect call in the receive path for TCP and UDP
-packets. TCP takes precedence on UDP, so that we have a single
-additional conditional in the common case.
-
-When IPV6 is build as module, all gro symbols except UDPv6 are
-builtin, while the latter belong to the ipv6 module, so we
-need some special care.
+This avoids another indirect call for UDP GRO. Again, the test
+for the IPv6 variant is performed first.
 
 v1 -> v2:
  - adapted to INDIRECT_CALL_ changes
-v2 -> v3:
- - fix build issue with CONFIG_IPV6=m
 
 Signed-off-by: Paolo Abeni <pabeni@redhat.com>
 ---
- include/net/inet_common.h |  7 +++++++
- net/ipv4/af_inet.c        | 13 +++++++++++--
- net/ipv4/tcp_offload.c    |  6 ++++--
- net/ipv4/udp_offload.c    |  7 ++++---
- net/ipv6/ip6_offload.c    | 29 +++++++++++++++++++++++++++--
- net/ipv6/tcpv6_offload.c  |  7 ++++---
- net/ipv6/udp_offload.c    |  7 ++++---
- 7 files changed, 61 insertions(+), 15 deletions(-)
+ net/ipv4/udp_offload.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/include/net/inet_common.h b/include/net/inet_common.h
-index 56e7592811ea..975901a95c0f 100644
---- a/include/net/inet_common.h
-+++ b/include/net/inet_common.h
-@@ -56,4 +56,11 @@ static inline void inet_ctl_sock_destroy(struct sock *sk)
- 		sock_release(sk->sk_socket);
- }
- 
-+#define indirect_call_gro_receive(f2, f1, cb, head, skb)	\
-+({								\
-+	unlikely(gro_recursion_inc_test(skb)) ?			\
-+		NAPI_GRO_CB(skb)->flush |= 1, NULL :		\
-+		INDIRECT_CALL_2(cb, f2, f1, head, skb);		\
-+})
-+
- #endif
-diff --git a/net/ipv4/af_inet.c b/net/ipv4/af_inet.c
-index 326c422c22f8..0dfb72c46671 100644
---- a/net/ipv4/af_inet.c
-+++ b/net/ipv4/af_inet.c
-@@ -1385,6 +1385,10 @@ struct sk_buff *inet_gso_segment(struct sk_buff *skb,
- }
- EXPORT_SYMBOL(inet_gso_segment);
- 
-+INDIRECT_CALLABLE_DECLARE(struct sk_buff *tcp4_gro_receive(struct list_head *,
-+							   struct sk_buff *));
-+INDIRECT_CALLABLE_DECLARE(struct sk_buff *udp4_gro_receive(struct list_head *,
-+							   struct sk_buff *));
- struct sk_buff *inet_gro_receive(struct list_head *head, struct sk_buff *skb)
- {
- 	const struct net_offload *ops;
-@@ -1494,7 +1498,8 @@ struct sk_buff *inet_gro_receive(struct list_head *head, struct sk_buff *skb)
- 	skb_gro_pull(skb, sizeof(*iph));
- 	skb_set_transport_header(skb, skb_gro_offset(skb));
- 
--	pp = call_gro_receive(ops->callbacks.gro_receive, head, skb);
-+	pp = indirect_call_gro_receive(tcp4_gro_receive, udp4_gro_receive,
-+				       ops->callbacks.gro_receive, head, skb);
- 
- out_unlock:
- 	rcu_read_unlock();
-@@ -1556,6 +1561,8 @@ int inet_recv_error(struct sock *sk, struct msghdr *msg, int len, int *addr_len)
- 	return -EINVAL;
- }
- 
-+INDIRECT_CALLABLE_DECLARE(int tcp4_gro_complete(struct sk_buff *, int));
-+INDIRECT_CALLABLE_DECLARE(int udp4_gro_complete(struct sk_buff *, int));
- int inet_gro_complete(struct sk_buff *skb, int nhoff)
- {
- 	__be16 newlen = htons(skb->len - nhoff);
-@@ -1581,7 +1588,9 @@ int inet_gro_complete(struct sk_buff *skb, int nhoff)
- 	 * because any hdr with option will have been flushed in
- 	 * inet_gro_receive().
- 	 */
--	err = ops->callbacks.gro_complete(skb, nhoff + sizeof(*iph));
-+	err = INDIRECT_CALL_2(ops->callbacks.gro_complete,
-+			      tcp4_gro_complete, udp4_gro_complete,
-+			      skb, nhoff + sizeof(*iph));
- 
- out_unlock:
- 	rcu_read_unlock();
-diff --git a/net/ipv4/tcp_offload.c b/net/ipv4/tcp_offload.c
-index 870b0a335061..0fbf7d4df9da 100644
---- a/net/ipv4/tcp_offload.c
-+++ b/net/ipv4/tcp_offload.c
-@@ -10,6 +10,7 @@
-  *	TCPv4 GSO/GRO support
-  */
- 
-+#include <linux/indirect_call_wrapper.h>
- #include <linux/skbuff.h>
- #include <net/tcp.h>
- #include <net/protocol.h>
-@@ -305,7 +306,8 @@ int tcp_gro_complete(struct sk_buff *skb)
- }
- EXPORT_SYMBOL(tcp_gro_complete);
- 
--static struct sk_buff *tcp4_gro_receive(struct list_head *head, struct sk_buff *skb)
-+INDIRECT_CALLABLE_SCOPE
-+struct sk_buff *tcp4_gro_receive(struct list_head *head, struct sk_buff *skb)
- {
- 	/* Don't bother verifying checksum if we're going to flush anyway. */
- 	if (!NAPI_GRO_CB(skb)->flush &&
-@@ -318,7 +320,7 @@ static struct sk_buff *tcp4_gro_receive(struct list_head *head, struct sk_buff *
- 	return tcp_gro_receive(head, skb);
- }
- 
--static int tcp4_gro_complete(struct sk_buff *skb, int thoff)
-+INDIRECT_CALLABLE_SCOPE int tcp4_gro_complete(struct sk_buff *skb, int thoff)
- {
- 	const struct iphdr *iph = ip_hdr(skb);
- 	struct tcphdr *th = tcp_hdr(skb);
 diff --git a/net/ipv4/udp_offload.c b/net/ipv4/udp_offload.c
-index 0646d61f4fa8..9a141a6cf1a0 100644
+index 9a141a6cf1a0..64f9715173ac 100644
 --- a/net/ipv4/udp_offload.c
 +++ b/net/ipv4/udp_offload.c
-@@ -13,6 +13,7 @@
- #include <linux/skbuff.h>
- #include <net/udp.h>
- #include <net/protocol.h>
-+#include <net/inet_common.h>
- 
- static struct sk_buff *__skb_udp_tunnel_segment(struct sk_buff *skb,
- 	netdev_features_t features,
-@@ -451,8 +452,8 @@ struct sk_buff *udp_gro_receive(struct list_head *head, struct sk_buff *skb,
- }
- EXPORT_SYMBOL(udp_gro_receive);
- 
--static struct sk_buff *udp4_gro_receive(struct list_head *head,
--					struct sk_buff *skb)
-+INDIRECT_CALLABLE_SCOPE
-+struct sk_buff *udp4_gro_receive(struct list_head *head, struct sk_buff *skb)
- {
- 	struct udphdr *uh = udp_gro_udphdr(skb);
- 
-@@ -525,7 +526,7 @@ int udp_gro_complete(struct sk_buff *skb, int nhoff,
- }
- EXPORT_SYMBOL(udp_gro_complete);
- 
--static int udp4_gro_complete(struct sk_buff *skb, int nhoff)
-+INDIRECT_CALLABLE_SCOPE int udp4_gro_complete(struct sk_buff *skb, int nhoff)
- {
- 	const struct iphdr *iph = ip_hdr(skb);
- 	struct udphdr *uh = (struct udphdr *)(skb->data + nhoff);
-diff --git a/net/ipv6/ip6_offload.c b/net/ipv6/ip6_offload.c
-index ff8b484d2258..5c045691c302 100644
---- a/net/ipv6/ip6_offload.c
-+++ b/net/ipv6/ip6_offload.c
-@@ -20,6 +20,23 @@
- 
- #include "ip6_offload.h"
- 
-+/* All GRO functions are always builtin, except UDP over ipv6, which lays in
-+ * ipv6 module, as it depends on UDPv6 lookup function, so we need special care
-+ * when ipv6 is built as a module
-+ */
-+#if IS_BUILTIN(CONFIG_IPV6)
-+#define INDIRECT_CALL_L4(f, f2, f1, ...) INDIRECT_CALL_2(f, f2, f1, __VA_ARGS__)
-+#else
-+#define INDIRECT_CALL_L4(f, f2, f1, ...) INDIRECT_CALL_1(f, f2, __VA_ARGS__)
-+#endif
-+
-+#define indirect_call_gro_receive_l4(f2, f1, cb, head, skb)	\
-+({								\
-+	unlikely(gro_recursion_inc_test(skb)) ?			\
-+		NAPI_GRO_CB(skb)->flush |= 1, NULL :		\
-+		INDIRECT_CALL_L4(cb, f2, f1, head, skb);	\
-+})
-+
- static int ipv6_gso_pull_exthdrs(struct sk_buff *skb, int proto)
- {
- 	const struct net_offload *ops = NULL;
-@@ -164,6 +181,10 @@ static int ipv6_exthdrs_len(struct ipv6hdr *iph,
- 	return len;
- }
- 
-+INDIRECT_CALLABLE_DECLARE(struct sk_buff *tcp6_gro_receive(struct list_head *,
-+							   struct sk_buff *));
-+INDIRECT_CALLABLE_DECLARE(struct sk_buff *udp6_gro_receive(struct list_head *,
-+							   struct sk_buff *));
- INDIRECT_CALLABLE_SCOPE struct sk_buff *ipv6_gro_receive(struct list_head *head,
- 							 struct sk_buff *skb)
- {
-@@ -260,7 +281,8 @@ INDIRECT_CALLABLE_SCOPE struct sk_buff *ipv6_gro_receive(struct list_head *head,
- 
- 	skb_gro_postpull_rcsum(skb, iph, nlen);
- 
--	pp = call_gro_receive(ops->callbacks.gro_receive, head, skb);
-+	pp = indirect_call_gro_receive_l4(tcp6_gro_receive, udp6_gro_receive,
-+					 ops->callbacks.gro_receive, head, skb);
- 
- out_unlock:
- 	rcu_read_unlock();
-@@ -301,6 +323,8 @@ static struct sk_buff *ip4ip6_gro_receive(struct list_head *head,
- 	return inet_gro_receive(head, skb);
- }
- 
-+INDIRECT_CALLABLE_DECLARE(int tcp6_gro_complete(struct sk_buff *, int));
-+INDIRECT_CALLABLE_DECLARE(int udp6_gro_complete(struct sk_buff *, int));
- INDIRECT_CALLABLE_SCOPE int ipv6_gro_complete(struct sk_buff *skb, int nhoff)
- {
- 	const struct net_offload *ops;
-@@ -320,7 +344,8 @@ INDIRECT_CALLABLE_SCOPE int ipv6_gro_complete(struct sk_buff *skb, int nhoff)
- 	if (WARN_ON(!ops || !ops->callbacks.gro_complete))
- 		goto out_unlock;
- 
--	err = ops->callbacks.gro_complete(skb, nhoff);
-+	err = INDIRECT_CALL_L4(ops->callbacks.gro_complete, tcp6_gro_complete,
-+			       udp6_gro_complete, skb, nhoff);
- 
- out_unlock:
- 	rcu_read_unlock();
-diff --git a/net/ipv6/tcpv6_offload.c b/net/ipv6/tcpv6_offload.c
-index e72947c99454..3179c425d7ff 100644
---- a/net/ipv6/tcpv6_offload.c
-+++ b/net/ipv6/tcpv6_offload.c
-@@ -9,14 +9,15 @@
-  *
-  *      TCPv6 GSO/GRO support
-  */
-+#include <linux/indirect_call_wrapper.h>
- #include <linux/skbuff.h>
- #include <net/protocol.h>
- #include <net/tcp.h>
- #include <net/ip6_checksum.h>
- #include "ip6_offload.h"
- 
--static struct sk_buff *tcp6_gro_receive(struct list_head *head,
--					struct sk_buff *skb)
-+INDIRECT_CALLABLE_SCOPE
-+struct sk_buff *tcp6_gro_receive(struct list_head *head, struct sk_buff *skb)
- {
- 	/* Don't bother verifying checksum if we're going to flush anyway. */
- 	if (!NAPI_GRO_CB(skb)->flush &&
-@@ -29,7 +30,7 @@ static struct sk_buff *tcp6_gro_receive(struct list_head *head,
- 	return tcp_gro_receive(head, skb);
- }
- 
--static int tcp6_gro_complete(struct sk_buff *skb, int thoff)
-+INDIRECT_CALLABLE_SCOPE int tcp6_gro_complete(struct sk_buff *skb, int thoff)
- {
- 	const struct ipv6hdr *iph = ipv6_hdr(skb);
- 	struct tcphdr *th = tcp_hdr(skb);
-diff --git a/net/ipv6/udp_offload.c b/net/ipv6/udp_offload.c
-index 828b2457f97b..83b11d0ac091 100644
---- a/net/ipv6/udp_offload.c
-+++ b/net/ipv6/udp_offload.c
-@@ -11,6 +11,7 @@
-  */
- #include <linux/skbuff.h>
- #include <linux/netdevice.h>
-+#include <linux/indirect_call_wrapper.h>
- #include <net/protocol.h>
- #include <net/ipv6.h>
- #include <net/udp.h>
-@@ -114,8 +115,8 @@ static struct sk_buff *udp6_ufo_fragment(struct sk_buff *skb,
- 	return segs;
- }
- 
--static struct sk_buff *udp6_gro_receive(struct list_head *head,
--					struct sk_buff *skb)
-+INDIRECT_CALLABLE_SCOPE
-+struct sk_buff *udp6_gro_receive(struct list_head *head, struct sk_buff *skb)
- {
- 	struct udphdr *uh = udp_gro_udphdr(skb);
- 
-@@ -142,7 +143,7 @@ static struct sk_buff *udp6_gro_receive(struct list_head *head,
+@@ -392,6 +392,8 @@ static struct sk_buff *udp_gro_receive_segment(struct list_head *head,
  	return NULL;
  }
  
--static int udp6_gro_complete(struct sk_buff *skb, int nhoff)
-+INDIRECT_CALLABLE_SCOPE int udp6_gro_complete(struct sk_buff *skb, int nhoff)
++INDIRECT_CALLABLE_DECLARE(struct sock *udp6_lib_lookup_skb(struct sk_buff *skb,
++						   __be16 sport, __be16 dport));
+ struct sk_buff *udp_gro_receive(struct list_head *head, struct sk_buff *skb,
+ 				struct udphdr *uh, udp_lookup_t lookup)
  {
- 	const struct ipv6hdr *ipv6h = ipv6_hdr(skb);
- 	struct udphdr *uh = (struct udphdr *)(skb->data + nhoff);
+@@ -403,7 +405,8 @@ struct sk_buff *udp_gro_receive(struct list_head *head, struct sk_buff *skb,
+ 	struct sock *sk;
+ 
+ 	rcu_read_lock();
+-	sk = (*lookup)(skb, uh->source, uh->dest);
++	sk = INDIRECT_CALL_INET(lookup, udp6_lib_lookup_skb,
++				udp4_lib_lookup_skb, skb, uh->source, uh->dest);
+ 	if (!sk)
+ 		goto out_unlock;
+ 
+@@ -503,7 +506,8 @@ int udp_gro_complete(struct sk_buff *skb, int nhoff,
+ 	uh->len = newlen;
+ 
+ 	rcu_read_lock();
+-	sk = (*lookup)(skb, uh->source, uh->dest);
++	sk = INDIRECT_CALL_INET(lookup, udp6_lib_lookup_skb,
++				udp4_lib_lookup_skb, skb, uh->source, uh->dest);
+ 	if (sk && udp_sk(sk)->gro_enabled) {
+ 		err = udp_gro_complete_segment(skb);
+ 	} else if (sk && udp_sk(sk)->gro_complete) {
 -- 
 2.19.2
 
