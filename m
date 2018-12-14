@@ -2,107 +2,140 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98521C6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:44:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40692C6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:44:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E6F320892
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:44:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 07FF720892
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:44:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544791460;
-	bh=Jwvp6HFBhEOyQbrgmdHS0AstgMrD860x0Q6UoEvnZLw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=PH1sALp2RUqZbKvFh1IWZVtMPxO8NBw+GQ8md5lXWHaVQIZDUpigLhsQPsLGQjDXA
-	 5fu4gCIHfms098oser920H5s4ftj81/nOcrX8fCmJcfahCqfRrDzH7jk9vvg7JxjPt
-	 A1p1Jcmr2e1mtrPMvqWIGc+gMMEU9e866P4UiHDs=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E6F320892
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	s=default; t=1544791467;
+	bh=KwA8NiXQRDJ3sBBao+LZ77qxpb2qnxOPsX8XlzTXEhI=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
+	b=bZfV0Vy2sUhfRQ0uETcN8AXAHN0kHzOFUVNP+iiNdb5baaDMa1K0ZjW2nh3Wg5tk6
+	 E0bkw7DoLJLxrjbNTa7p1NtZhX/h+5Y+eVcEgb+641LPDFRgXDedliwNjVZjbhs7zD
+	 M/Bqj2UrNWY6v5jyc4MJBkDzd19pQRT02Uu+Ne9w=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07FF720892
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730195AbeLNMoT (ORCPT
+        id S1730326AbeLNMoZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:44:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44088 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729774AbeLNMBe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:01:34 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8EFD82145D;
-        Fri, 14 Dec 2018 12:01:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544788894;
-        bh=Jwvp6HFBhEOyQbrgmdHS0AstgMrD860x0Q6UoEvnZLw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hq12z/t7XWYa1+PQvaCPUY2r4nq7viD6o3f3xgUrR2SgaU6xRLNHeSsm5orNhC0aq
-         Qen45YSSkAmDCAP2eoPJ2r8nPa64cVMTZ3sPDAWvlhKeIWDsRnfBm1a9j2ROxXxtO7
-         e45stzXb5kWAXNPVbi9S8nYuzdtnROC+sT2K5FLc=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Soheil Hassas Yeganeh <soheil@google.com>,
-        Yuchung Cheng <ycheng@google.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 014/142] tcp: Do not underestimate rwnd_limited
-Date:   Fri, 14 Dec 2018 12:58:19 +0100
-Message-Id: <20181214115747.617053615@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.0
-In-Reply-To: <20181214115747.053633987@linuxfoundation.org>
-References: <20181214115747.053633987@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Fri, 14 Dec 2018 07:44:25 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:41146 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730053AbeLNMoW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:44:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=ZULwrPacP2Bl/vFtkr5WkLd2+mrM63aFfdcwKr6+rso=; b=vC2OQDVjC0TD
+        scROHPIA3ej/R+kGQ5ygjNTEh6f4KFDnF8dp0+/kr4tczPU7NPw2OPXtlhgT4L9IzNSmAdQVaQvS2
+        hXDboqMZEi6tw5baBP/9pVPKf054kYfjEgL/B4Sht2ulEifBtz7+OVq/fqCzNgbXUZo1ZHwbHwZNs
+        WOzhk=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gXmpD-0006lA-GR; Fri, 14 Dec 2018 12:44:15 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 2B4C011258A2; Fri, 14 Dec 2018 12:44:15 +0000 (GMT)
+From:   Mark Brown <broonie@kernel.org>
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc:     Vinod Koul <vkoul@kernel.org>, Mark Brown <broonie@kernel.org>,
+        broonie@kernel.org, vkoul@kernel.org, devicetree@vger.kernel.org,
+        alsa-devel@alsa-project.org, bgoswami@codeaurora.org,
+        tiwai@suse.com, linux-kernel@vger.kernel.org, lgirdwood@gmail.com,
+        robh+dt@kernel.org, rohitkr@codeaurora.org, srini@kernel.org,
+        alsa-devel@alsa-project.org
+Subject: Applied "ASoC: qdsp6: q6asm: add support to MP3 format" to the asoc tree
+In-Reply-To:  <20181115181324.26784-5-srinivas.kandagatla@linaro.org>
 X-Patchwork-Hint: ignore
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Message-Id: <20181214124415.2B4C011258A2@debutante.sirena.org.uk>
+Date:   Fri, 14 Dec 2018 12:44:15 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.19-stable review patch.  If anyone has any objections, please let me know.
+The patch
 
-------------------
+   ASoC: qdsp6: q6asm: add support to MP3 format
 
-From: Eric Dumazet <edumazet@google.com>
+has been applied to the asoc tree at
 
-[ Upstream commit 41727549de3e7281feb174d568c6e46823db8684 ]
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-If available rwnd is too small, tcp_tso_should_defer()
-can decide it is worth waiting before splitting a TSO packet.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-This really means we are rwnd limited.
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-Fixes: 5615f88614a4 ("tcp: instrument how long TCP is limited by receive window")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Acked-by: Soheil Hassas Yeganeh <soheil@google.com>
-Reviewed-by: Yuchung Cheng <ycheng@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From f2e6c6aa0cb5f39e48627850680b87ec688070f8 Mon Sep 17 00:00:00 2001
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Date: Thu, 15 Nov 2018 18:13:23 +0000
+Subject: [PATCH] ASoC: qdsp6: q6asm: add support to MP3 format
+
+This patch adds support to mp3 format in ASM module.
+
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Acked-by: Vinod Koul <vkoul@kernel.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- net/ipv4/tcp_output.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ sound/soc/qcom/qdsp6/q6asm.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/net/ipv4/tcp_output.c
-+++ b/net/ipv4/tcp_output.c
-@@ -2338,8 +2338,11 @@ static bool tcp_write_xmit(struct sock *
- 		} else {
- 			if (!push_one &&
- 			    tcp_tso_should_defer(sk, skb, &is_cwnd_limited,
--						 max_segs))
-+						 max_segs)) {
-+				if (!is_cwnd_limited)
-+					is_rwnd_limited = true;
- 				break;
-+			}
- 		}
+diff --git a/sound/soc/qcom/qdsp6/q6asm.c b/sound/soc/qcom/qdsp6/q6asm.c
+index e1cfa846a1dc..4f85cb19a309 100644
+--- a/sound/soc/qcom/qdsp6/q6asm.c
++++ b/sound/soc/qcom/qdsp6/q6asm.c
+@@ -12,6 +12,7 @@
+ #include <linux/kref.h>
+ #include <linux/of.h>
+ #include <uapi/sound/asound.h>
++#include <uapi/sound/compress_params.h>
+ #include <linux/delay.h>
+ #include <linux/slab.h>
+ #include <linux/mm.h>
+@@ -36,6 +37,7 @@
+ #define ASM_PARAM_ID_ENCDEC_ENC_CFG_BLK_V2	0x00010DA3
+ #define ASM_SESSION_CMD_RUN_V2			0x00010DAA
+ #define ASM_MEDIA_FMT_MULTI_CHANNEL_PCM_V2	0x00010DA5
++#define ASM_MEDIA_FMT_MP3			0x00010BE9
+ #define ASM_DATA_CMD_WRITE_V2			0x00010DAB
+ #define ASM_DATA_CMD_READ_V2			0x00010DAC
+ #define ASM_SESSION_CMD_SUSPEND			0x00010DEC
+@@ -868,6 +870,9 @@ int q6asm_open_write(struct audio_client *ac, uint32_t format,
+ 	open->postprocopo_id = ASM_NULL_POPP_TOPOLOGY;
  
- 		limit = mss_now;
-
+ 	switch (format) {
++	case SND_AUDIOCODEC_MP3:
++		open->dec_fmt_id = ASM_MEDIA_FMT_MP3;
++		break;
+ 	case FORMAT_LINEAR_PCM:
+ 		open->dec_fmt_id = ASM_MEDIA_FMT_MULTI_CHANNEL_PCM_V2;
+ 		break;
+-- 
+2.19.0.rc2
 
