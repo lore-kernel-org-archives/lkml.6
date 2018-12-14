@@ -2,334 +2,139 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4D57C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 23:04:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5034BC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 23:05:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D273208C1
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 23:05:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B785B208C1
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 23:05:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="P2KMFLo8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730681AbeLNXE6 (ORCPT
+        id S1730771AbeLNXFC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 18:04:58 -0500
-Received: from outbound-smtp12.blacknight.com ([46.22.139.17]:54632 "EHLO
-        outbound-smtp12.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726389AbeLNXE5 (ORCPT
+        Fri, 14 Dec 2018 18:05:02 -0500
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:7848 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726389AbeLNXE7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 18:04:57 -0500
-Received: from mail.blacknight.com (pemlinmail04.blacknight.ie [81.17.254.17])
-        by outbound-smtp12.blacknight.com (Postfix) with ESMTPS id 046D21C1E00
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 23:04:54 +0000 (GMT)
-Received: (qmail 32511 invoked from network); 14 Dec 2018 23:04:53 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[37.228.245.71])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 14 Dec 2018 23:04:53 -0000
-Date:   Fri, 14 Dec 2018 23:04:49 +0000
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Linux-MM <linux-mm@kvack.org>
-Cc:     David Rientjes <rientjes@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Michal Hocko <mhocko@kernel.org>, ying.huang@intel.com,
-        kirill@shutemov.name, Andrew Morton <akpm@linux-foundation.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-Subject: [PATCH 10/14] mm, compaction: Use free lists to quickly locate a
- migration source
-Message-ID: <20181214230449.GA29005@techsingularity.net>
-References: <20181214230310.572-1-mgorman@techsingularity.net>
+        Fri, 14 Dec 2018 18:04:59 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c1437140000>; Fri, 14 Dec 2018 15:04:52 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Fri, 14 Dec 2018 15:04:58 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Fri, 14 Dec 2018 15:04:58 -0800
+Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL106.nvidia.com
+ (172.18.146.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 14 Dec
+ 2018 23:04:57 +0000
+Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
+ Transport; Fri, 14 Dec 2018 23:04:57 +0000
+Received: from skomatineni-linux.nvidia.com (Not Verified[10.110.103.52]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5c1437190001>; Fri, 14 Dec 2018 15:04:57 -0800
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <mperttunen@nvidia.com>, <avienamo@nvidia.com>,
+        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>
+CC:     <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: [PATCH V1] arm64: dtsi: Fix SDMMC address range
+Date:   Fri, 14 Dec 2018 15:04:55 -0800
+Message-ID: <1544828695-1462-1-git-send-email-skomatineni@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+X-NVConfidentiality: public
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-In-Reply-To: <20181214230310.572-1-mgorman@techsingularity.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1544828692; bh=CFBtF6ZaKNyqKgjWa+hPoclDVuRehYmyqcZmFtTTkGs=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         X-NVConfidentiality:MIME-Version:Content-Type;
+        b=P2KMFLo8/sOeBRnTBeHL4OdDz26fQNAK/HybEkgTudgq7zQv4uXgNccaT5SKz5QWy
+         oE944aSYj1IZMKP7+IH5co+DzlEoPaDrwYM/KCC/Oa54qOeDQbgf00NDoPXtggW0St
+         MMfzCQHwu0sDXvJdQVepwycL9mdpiDde5kKE1jFw+NtKC37sXCXvrG0XbWFE7YGYGp
+         ez23FbQ6/BTvYScBxDgbROjZBLvph+/+3ZgMZjM2P7+0JLpRYRuY1CvZtYxtHK8PZ1
+         k28zvZsxL50GPr8TDnxxOcrZO9caXM9PryOFCEvYLYinWCp5Y24bnRjGbBacPK8EcH
+         xpwatnFFj9zlw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The migration scanner is a linear scan of a zone which is a potentially
-very large search space. Furthermore, many pageblocks are unusable such
-as those filled with reserved pages or partially filled with pages that
-cannot migrate. These still get scanned in the common case of allocating
-a THP and the cost accumulates.
+This patch fixes the SDMMC Controllers address space to be exact
+defined register address range as per the design.
 
-The patch uses a partial search of the free lists to locate a migration
-source candidate that is marked as MOVABLE when allocating a THP. It
-prefers picking a block with a larger number of free pages already on
-the basis that there are fewer pages to migrate to free the entire block.
-The lowest PFN found during searches is tracked as the basis of the start
-for the linear search after the first search of the free list fails.
-After the search, the free list is shuffled so that the next search will
-not encounter the same page. If the search fails then the subsequent
-searches will be shorter and the linear scanner is used.
+SDMMC Controller supporting Command Queue has CQHCI registers at
+offset 0xF000.
 
-If this search fails, or if the request is for a small or
-unmovable/reclaimable allocation then the linear scanner is still used. It
-is somewhat pointless to use the list search in these cases. Small free
-pages must be used for the search and there is no guarantee that movable
-pages are located within that block that are contiguous.
+This fix helps to identify the Tegra SDMMC Controllers supporting
+Command Queue based on the size of address space.
 
-                                    4.20.0-rc6             4.20.0-rc6
-                                  noboost-v1r4           findmig-v1r4
-Amean     fault-both-3      3753.53 (   0.00%)     3545.40 (   5.54%)
-Amean     fault-both-5      5396.32 (   0.00%)     5431.98 (  -0.66%)
-Amean     fault-both-7      7393.46 (   0.00%)     7185.11 (   2.82%)
-Amean     fault-both-12    12155.50 (   0.00%)    11424.68 (   6.01%)
-Amean     fault-both-18    16445.96 (   0.00%)    14170.10 *  13.84%*
-Amean     fault-both-24    20465.03 (   0.00%)    16143.57 *  21.12%*
-Amean     fault-both-30    20813.54 (   0.00%)    19207.96 (   7.71%)
-Amean     fault-both-32    22384.02 (   0.00%)    20051.01 *  10.42%*
-
-Compaction migrate scanned    60836989    51005450
-Compaction free scanned      890084421   780359464
-
-This is showing a 16% reduction in migration scanning with some mild
-improvements on latency. A 2-socket machine showed similar reductions
-of scan rates in percentage terms.
-
-Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- mm/compaction.c | 179 +++++++++++++++++++++++++++++++++++++++++++++++++++++++-
- mm/internal.h   |   2 +
- 2 files changed, 179 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi | 6 +++---
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi | 4 ++--
+ 2 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/mm/compaction.c b/mm/compaction.c
-index 8ba9b3b479e3..65c7ab1847a0 100644
---- a/mm/compaction.c
-+++ b/mm/compaction.c
-@@ -1041,6 +1041,12 @@ static bool suitable_migration_target(struct compact_control *cc,
- 	return false;
- }
+diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+index 2f3c8e29520d..6fda3d6a7f3d 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+@@ -231,7 +231,7 @@
  
-+static inline unsigned int
-+freelist_scan_limit(struct compact_control *cc)
-+{
-+	return (COMPACT_CLUSTER_MAX >> cc->fast_search_fail) + 1;
-+}
-+
- /*
-  * Test whether the free scanner has reached the same or lower pageblock than
-  * the migration scanner, and compaction should thus terminate.
-@@ -1051,6 +1057,19 @@ static inline bool compact_scanners_met(struct compact_control *cc)
- 		<= (cc->migrate_pfn >> pageblock_order);
- }
+ 	sdmmc1: sdhci@3400000 {
+ 		compatible = "nvidia,tegra186-sdhci";
+-		reg = <0x0 0x03400000 0x0 0x10000>;
++		reg = <0x0 0x03400000 0x0 0x220>;
+ 		interrupts = <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&bpmp TEGRA186_CLK_SDMMC1>;
+ 		clock-names = "sdhci";
+@@ -256,7 +256,7 @@
  
-+/* Reorder the free list to reduce repeated future searches */
-+static void
-+move_freelist_tail(struct list_head *freelist, struct page *freepage)
-+{
-+	LIST_HEAD(sublist);
-+
-+	if (!list_is_last(freelist, &freepage->lru)) {
-+		list_cut_position(&sublist, freelist, &freepage->lru);
-+		if (!list_empty(&sublist))
-+			list_splice_tail(&sublist, freelist);
-+	}
-+}
-+
- /*
-  * Based on information in the current compact_control, find blocks
-  * suitable for isolating free pages from and then isolate them.
-@@ -1208,6 +1227,160 @@ typedef enum {
-  */
- int sysctl_compact_unevictable_allowed __read_mostly = 1;
+ 	sdmmc2: sdhci@3420000 {
+ 		compatible = "nvidia,tegra186-sdhci";
+-		reg = <0x0 0x03420000 0x0 0x10000>;
++		reg = <0x0 0x03420000 0x0 0x220>;
+ 		interrupts = <GIC_SPI 63 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&bpmp TEGRA186_CLK_SDMMC2>;
+ 		clock-names = "sdhci";
+@@ -276,7 +276,7 @@
  
-+static inline void
-+update_fast_start_pfn(struct compact_control *cc, unsigned long pfn)
-+{
-+	if (cc->fast_start_pfn == ULONG_MAX)
-+		return;
-+
-+	if (!cc->fast_start_pfn)
-+		cc->fast_start_pfn = pfn;
-+
-+	cc->fast_start_pfn = min(cc->fast_start_pfn, pfn);
-+}
-+
-+static inline void
-+reinit_migrate_pfn(struct compact_control *cc)
-+{
-+	if (!cc->fast_start_pfn || cc->fast_start_pfn == ULONG_MAX)
-+		return;
-+
-+	cc->migrate_pfn = cc->fast_start_pfn;
-+	cc->fast_start_pfn = ULONG_MAX;
-+}
-+
-+/*
-+ * Briefly search the free lists for a migration source that already has
-+ * some free pages to reduce the number of pages that need migration
-+ * before a pageblock is free.
-+ */
-+static unsigned long fast_find_migrateblock(struct compact_control *cc)
-+{
-+	unsigned int limit = freelist_scan_limit(cc);
-+	unsigned int nr_scanned = 0;
-+	unsigned long distance;
-+	unsigned long pfn = cc->migrate_pfn;
-+	unsigned long high_pfn;
-+	int order;
-+
-+	/* Skip hints are relied on to avoid repeats on the fast search */
-+	if (cc->ignore_skip_hint)
-+		return pfn;
-+
-+	/*
-+	 * If the migrate_pfn is not at the start of a zone or the start
-+	 * of a pageblock then assume this is a continuation of a previous
-+	 * scan restarted due to COMPACT_CLUSTER_MAX.
-+	 */
-+	if (pfn != cc->zone->zone_start_pfn && pfn != pageblock_start_pfn(pfn))
-+		return pfn;
-+
-+	/*
-+	 * For smaller orders, just linearly scan as the number of pages
-+	 * to migrate should be relatively small and does not necessarily
-+	 * justify freeing up a large block for a small allocation.
-+	 */
-+	if (cc->order <= PAGE_ALLOC_COSTLY_ORDER)
-+		return pfn;
-+
-+	/*
-+	 * Only allow kcompactd and direct requests for movable pages to
-+	 * quickly clear out a MOVABLE pageblock for allocation. This
-+	 * reduces the risk that a large movable pageblock is freed for
-+	 * an unmovable/reclaimable small allocation.
-+	 */
-+	if (cc->direct_compaction && cc->migratetype != MIGRATE_MOVABLE)
-+		return pfn;
-+
-+	/*
-+	 * When starting the migration scanner, pick any pageblock within the
-+	 * first half of the search space. Otherwise try and pick a pageblock
-+	 * within the first eighth to reduce the chances that a migration
-+	 * target later becomes a source.
-+	 */
-+	distance = (cc->free_pfn - cc->migrate_pfn) >> 1;
-+	if (cc->migrate_pfn != cc->zone->zone_start_pfn)
-+		distance >>= 2;
-+	high_pfn = pageblock_start_pfn(cc->migrate_pfn + distance);
-+
-+	for (order = cc->order - 1;
-+	     order >= PAGE_ALLOC_COSTLY_ORDER && pfn == cc->migrate_pfn && nr_scanned < limit;
-+	     order--) {
-+		struct free_area *area = &cc->zone->free_area[order];
-+		struct list_head *freelist;
-+		unsigned long nr_skipped = 0;
-+		unsigned long flags;
-+		struct page *freepage;
-+
-+		if (!area->nr_free)
-+			continue;
-+
-+		spin_lock_irqsave(&cc->zone->lock, flags);
-+		freelist = &area->free_list[MIGRATE_MOVABLE];
-+		list_for_each_entry(freepage, freelist, lru) {
-+			unsigned long free_pfn;
-+
-+			nr_scanned++;
-+			free_pfn = page_to_pfn(freepage);
-+			if (free_pfn < high_pfn) {
-+				update_fast_start_pfn(cc, free_pfn);
-+
-+				/*
-+				 * Avoid if skipped recently. Move to the tail
-+				 * of the list so it will not be found again
-+				 * soon
-+				 */
-+				if (get_pageblock_skip(freepage)) {
-+
-+					if (list_is_last(freelist, &freepage->lru))
-+						break;
-+
-+					nr_skipped++;
-+					list_del(&freepage->lru);
-+					list_add_tail(&freepage->lru, freelist);
-+					if (nr_skipped > 2)
-+						break;
-+					continue;
-+				}
-+
-+				/* Reorder to so a future search skips recent pages */
-+				move_freelist_tail(freelist, freepage);
-+
-+				pfn = pageblock_start_pfn(free_pfn);
-+				cc->fast_search_fail = 0;
-+				set_pageblock_skip(freepage);
-+				break;
-+			}
-+
-+			/*
-+			 * If low PFNs are being found and discarded then
-+			 * limit the scan as fast searching is finding
-+			 * poor candidates.
-+			 */
-+			if (free_pfn < cc->migrate_pfn)
-+				limit >>= 1;
-+
-+			if (nr_scanned >= limit) {
-+				cc->fast_search_fail++;
-+				move_freelist_tail(freelist, freepage);
-+				break;
-+			}
-+		}
-+		spin_unlock_irqrestore(&cc->zone->lock, flags);
-+	}
-+
-+	cc->total_migrate_scanned += nr_scanned;
-+
-+	/*
-+	 * If fast scanning failed then use a cached entry for a page block
-+	 * that had free pages as the basis for starting a linear scan.
-+	 */
-+	if (pfn == cc->migrate_pfn)
-+		reinit_migrate_pfn(cc);
-+
-+	return pfn;
-+}
-+
- /*
-  * Isolate all pages that can be migrated from the first suitable block,
-  * starting at the block pointed to by the migrate scanner pfn within
-@@ -1226,9 +1399,10 @@ static isolate_migrate_t isolate_migratepages(struct zone *zone,
+ 	sdmmc3: sdhci@3440000 {
+ 		compatible = "nvidia,tegra186-sdhci";
+-		reg = <0x0 0x03440000 0x0 0x10000>;
++		reg = <0x0 0x03440000 0x0 0x220>;
+ 		interrupts = <GIC_SPI 64 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&bpmp TEGRA186_CLK_SDMMC3>;
+ 		clock-names = "sdhci";
+diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+index c2091bb16546..6510ef6492b1 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+@@ -295,7 +295,7 @@
  
- 	/*
- 	 * Start at where we last stopped, or beginning of the zone as
--	 * initialized by compact_zone()
-+	 * initialized by compact_zone(). The first failure will use
-+	 * the lowest PFN as the starting point for linear scanning.
- 	 */
--	low_pfn = cc->migrate_pfn;
-+	low_pfn = fast_find_migrateblock(cc);
- 	block_start_pfn = pageblock_start_pfn(low_pfn);
- 	if (block_start_pfn < zone->zone_start_pfn)
- 		block_start_pfn = zone->zone_start_pfn;
-@@ -1551,6 +1725,7 @@ static enum compact_result compact_zone(struct compact_control *cc)
- 	 * want to compact the whole zone), but check that it is initialised
- 	 * by ensuring the values are within zone boundaries.
- 	 */
-+	cc->fast_start_pfn = 0;
- 	if (cc->whole_zone) {
- 		cc->migrate_pfn = start_pfn;
- 		cc->free_pfn = pageblock_start_pfn(end_pfn - 1);
-diff --git a/mm/internal.h b/mm/internal.h
-index 9b32f4cab0ae..983cb975545f 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -188,9 +188,11 @@ struct compact_control {
- 	unsigned int nr_migratepages;	/* Number of pages to migrate */
- 	unsigned long free_pfn;		/* isolate_freepages search base */
- 	unsigned long migrate_pfn;	/* isolate_migratepages search base */
-+	unsigned long fast_start_pfn;	/* a pfn to start linear scan from */
- 	struct zone *zone;
- 	unsigned long total_migrate_scanned;
- 	unsigned long total_free_scanned;
-+	unsigned int fast_search_fail;	/* failures to use free list searches */
- 	const gfp_t gfp_mask;		/* gfp mask of a direct compactor */
- 	int order;			/* order a direct compactor needs */
- 	int migratetype;		/* migratetype of direct compactor */
+ 		sdmmc1: sdhci@3400000 {
+ 			compatible = "nvidia,tegra194-sdhci", "nvidia,tegra186-sdhci";
+-			reg = <0x03400000 0x10000>;
++			reg = <0x03400000 0x220>;
+ 			interrupts = <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&bpmp TEGRA194_CLK_SDMMC1>;
+ 			clock-names = "sdhci";
+@@ -306,7 +306,7 @@
+ 
+ 		sdmmc3: sdhci@3440000 {
+ 			compatible = "nvidia,tegra194-sdhci", "nvidia,tegra186-sdhci";
+-			reg = <0x03440000 0x10000>;
++			reg = <0x03440000 0x220>;
+ 			interrupts = <GIC_SPI 64 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&bpmp TEGRA194_CLK_SDMMC3>;
+ 			clock-names = "sdhci";
 -- 
-2.16.4
+2.7.4
 
