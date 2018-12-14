@@ -7,51 +7,53 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3CA4C6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:18:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F660C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:18:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6AEFC2148E
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:18:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4248D2148E
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:18:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544789888;
-	bh=NJHspLz/WGWcC50f9uFlHL510jE5InGCIq2y+4Y58ts=;
+	s=default; t=1544789895;
+	bh=s5cxMasOIF5PI+mbRmOUN1g2ToIzjJgsG3OM2PKLpXo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=hwH6noSHVmLXJQRLIolROXj8M4FxpFAAJGEJlfdtI8aHa5ePnNn9iM1g9+cHJDZ+p
-	 HwwZfOh9x10AUJPsA4C6jx7LnkUhJxqUofJyFL8fz3l8R/MelTzvfTbyN1FZQjtw/R
-	 K2Y8EIt5dzgwqftyL9xQbZnq8npbJdOq4SIbEmUU=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AEFC2148E
+	b=QrL6KKEtMlo/JJ9E0jTWYAW34+oFlBGtk1LJaIkBSOQtUPTJ/YIn3pdim4zimvwx4
+	 JvFlGDvADSyeoOBSnXiejnyAaiFpH7tiSnSHLwhjHUoSVYptBmEEHlkn3VlzUTC+dH
+	 5ZBZcbTejGTqyPbn7cyV+4eJxmmO1M7ic/meCfNQ=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4248D2148E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732725AbeLNMSH (ORCPT
+        id S1732796AbeLNMQk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:18:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36956 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:16:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36740 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732810AbeLNMQo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:16:44 -0500
+        id S1732139AbeLNMQc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:16:32 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A35152148E;
-        Fri, 14 Dec 2018 12:16:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AC1D721486;
+        Fri, 14 Dec 2018 12:16:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789804;
-        bh=NJHspLz/WGWcC50f9uFlHL510jE5InGCIq2y+4Y58ts=;
+        s=default; t=1544789791;
+        bh=s5cxMasOIF5PI+mbRmOUN1g2ToIzjJgsG3OM2PKLpXo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uE3wLUknvHkytto3/nhXg20NqTPx/mdKwhKT5jG5tPeAjvFUfzUZXdslFVZik85E2
-         LxrOiwauJ7dpE5gcYnBoEtgw+vqU1favrTtn96a5n/+6WG+shmAMhEQ3xcRiyijc4U
-         nQKxGH8B32GEEOoITyqHI9Ahd8uv81BSKkot34yQ=
+        b=FmdNbi8W3a/UdHcwSyqXLqg9/qUb8VV1nbI762nYAkugL/PJErCiri6NZGmxihHTb
+         jmxBVeApzPUp0RfXXESKjEsSWEQxfRXaO+8WlqoySN15THogEMwJwMfngmpK8vT891
+         2aPI8/ZGfXzmYHyzTcpc3YF1yMDByXard8+lLUHg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        David Woodhouse <dwmw@amazon.co.uk>,
         Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.4 62/88] bpf: support 8-byte metafield access
-Date:   Fri, 14 Dec 2018 13:00:36 +0100
-Message-Id: <20181214115707.501910891@linuxfoundation.org>
+Subject: [PATCH 4.4 57/88] x86/KVM/VMX: Expose SPEC_CTRL Bit(2) to the guest
+Date:   Fri, 14 Dec 2018 13:00:31 +0100
+Message-Id: <20181214115707.221373346@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115702.151309521@linuxfoundation.org>
 References: <20181214115702.151309521@linuxfoundation.org>
@@ -70,51 +72,111 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexei Starovoitov <ast@fb.com>
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 
-commit cedaf52693f02372010548c63b2e63228b959099 upstream.
+commit da39556f66f5cfe8f9c989206974f1cb16ca5d7c upstream.
 
-The verifier supported only 4-byte metafields in
-struct __sk_buff and struct xdp_md. The metafields in upcoming
-struct bpf_perf_event are 8-byte to match register width in struct pt_regs.
-Teach verifier to recognize 8-byte metafield access.
-The patch doesn't affect safety of sockets and xdp programs.
-They check for 4-byte only ctx access before these conditions are hit.
+Expose the CPUID.7.EDX[31] bit to the guest, and also guard against various
+combinations of SPEC_CTRL MSR values.
 
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
-Acked-by: Daniel Borkmann <daniel@iogearbox.net>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+The handling of the MSR (to take into account the host value of SPEC_CTRL
+Bit(2)) is taken care of in patch:
+
+  KVM/SVM/VMX/x86/spectre_v2: Support the combination of guest and host IBRS
+
+Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Ingo Molnar <mingo@kernel.org>
+
+[dwmw2: Handle 4.9 guest CPUID differences, rename
+        guest_cpu_has_ibrs() → guest_cpu_has_spec_ctrl()]
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+[bwh: Backported to 4.4: Update feature bit name]
 Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/bpf/verifier.c |    9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ arch/x86/kvm/cpuid.c |    2 +-
+ arch/x86/kvm/cpuid.h |    4 ++--
+ arch/x86/kvm/svm.c   |    4 ++--
+ arch/x86/kvm/vmx.c   |    6 +++---
+ 4 files changed, 8 insertions(+), 8 deletions(-)
 
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -1844,7 +1844,8 @@ static int do_check(struct verifier_env
- 			if (err)
- 				return err;
+--- a/arch/x86/kvm/cpuid.c
++++ b/arch/x86/kvm/cpuid.c
+@@ -364,7 +364,7 @@ static inline int __do_cpuid_ent(struct
  
--			if (BPF_SIZE(insn->code) != BPF_W) {
-+			if (BPF_SIZE(insn->code) != BPF_W &&
-+			    BPF_SIZE(insn->code) != BPF_DW) {
- 				insn_idx++;
- 				continue;
- 			}
-@@ -2220,9 +2221,11 @@ static int convert_ctx_accesses(struct v
- 	for (i = 0; i < insn_cnt; i++, insn++) {
- 		u32 cnt;
+ 	/* cpuid 7.0.edx*/
+ 	const u32 kvm_cpuid_7_0_edx_x86_features =
+-		F(SPEC_CTRL) | F(ARCH_CAPABILITIES);
++		F(SPEC_CTRL) | F(SPEC_CTRL_SSBD) | F(ARCH_CAPABILITIES);
  
--		if (insn->code == (BPF_LDX | BPF_MEM | BPF_W))
-+		if (insn->code == (BPF_LDX | BPF_MEM | BPF_W) ||
-+		    insn->code == (BPF_LDX | BPF_MEM | BPF_DW))
- 			type = BPF_READ;
--		else if (insn->code == (BPF_STX | BPF_MEM | BPF_W))
-+		else if (insn->code == (BPF_STX | BPF_MEM | BPF_W) ||
-+			 insn->code == (BPF_STX | BPF_MEM | BPF_DW))
- 			type = BPF_WRITE;
- 		else
- 			continue;
+ 	/* all calls to cpuid_count() should be made on the same cpu */
+ 	get_cpu();
+--- a/arch/x86/kvm/cpuid.h
++++ b/arch/x86/kvm/cpuid.h
+@@ -170,7 +170,7 @@ static inline bool guest_cpuid_has_ibpb(
+ 	return best && (best->edx & bit(X86_FEATURE_SPEC_CTRL));
+ }
+ 
+-static inline bool guest_cpuid_has_ibrs(struct kvm_vcpu *vcpu)
++static inline bool guest_cpuid_has_spec_ctrl(struct kvm_vcpu *vcpu)
+ {
+ 	struct kvm_cpuid_entry2 *best;
+ 
+@@ -178,7 +178,7 @@ static inline bool guest_cpuid_has_ibrs(
+ 	if (best && (best->ebx & bit(X86_FEATURE_IBRS)))
+ 		return true;
+ 	best = kvm_find_cpuid_entry(vcpu, 7, 0);
+-	return best && (best->edx & bit(X86_FEATURE_SPEC_CTRL));
++	return best && (best->edx & (bit(X86_FEATURE_SPEC_CTRL) | bit(X86_FEATURE_SPEC_CTRL_SSBD)));
+ }
+ 
+ static inline bool guest_cpuid_has_arch_capabilities(struct kvm_vcpu *vcpu)
+--- a/arch/x86/kvm/svm.c
++++ b/arch/x86/kvm/svm.c
+@@ -3090,7 +3090,7 @@ static int svm_get_msr(struct kvm_vcpu *
+ 		break;
+ 	case MSR_IA32_SPEC_CTRL:
+ 		if (!msr_info->host_initiated &&
+-		    !guest_cpuid_has_ibrs(vcpu))
++		    !guest_cpuid_has_spec_ctrl(vcpu))
+ 			return 1;
+ 
+ 		msr_info->data = svm->spec_ctrl;
+@@ -3171,7 +3171,7 @@ static int svm_set_msr(struct kvm_vcpu *
+ 		break;
+ 	case MSR_IA32_SPEC_CTRL:
+ 		if (!msr->host_initiated &&
+-		    !guest_cpuid_has_ibrs(vcpu))
++		    !guest_cpuid_has_spec_ctrl(vcpu))
+ 			return 1;
+ 
+ 		/* The STIBP bit doesn't fault even if it's not advertised */
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -2861,7 +2861,7 @@ static int vmx_get_msr(struct kvm_vcpu *
+ 		break;
+ 	case MSR_IA32_SPEC_CTRL:
+ 		if (!msr_info->host_initiated &&
+-		    !guest_cpuid_has_ibrs(vcpu))
++		    !guest_cpuid_has_spec_ctrl(vcpu))
+ 			return 1;
+ 
+ 		msr_info->data = to_vmx(vcpu)->spec_ctrl;
+@@ -2973,11 +2973,11 @@ static int vmx_set_msr(struct kvm_vcpu *
+ 		break;
+ 	case MSR_IA32_SPEC_CTRL:
+ 		if (!msr_info->host_initiated &&
+-		    !guest_cpuid_has_ibrs(vcpu))
++		    !guest_cpuid_has_spec_ctrl(vcpu))
+ 			return 1;
+ 
+ 		/* The STIBP bit doesn't fault even if it's not advertised */
+-		if (data & ~(SPEC_CTRL_IBRS | SPEC_CTRL_STIBP))
++		if (data & ~(SPEC_CTRL_IBRS | SPEC_CTRL_STIBP | SPEC_CTRL_SSBD))
+ 			return 1;
+ 
+ 		vmx->spec_ctrl = data;
 
 
