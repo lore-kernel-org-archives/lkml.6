@@ -2,336 +2,766 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD31EC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 23:46:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B3C0C43612
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 23:55:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0EABB208D5
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 23:46:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="n1atIdl8"
+	by mail.kernel.org (Postfix) with ESMTP id 972D220896
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 23:55:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544831713;
+	bh=5h3+qCW6w/bDxb37nFK6xB2Ys2478r2G8AoxN8cVAEM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=rcr/mmG3++YcqMq8u2OHCtFCB4N3eHiWMYOnw7RJAk1kPHEigUPJJ9D8hZMCr8JSM
+	 1grrA1Ug/ptKUpiiCERjtj6mFvM4sTEINucEBHxaahdJQ9i2E6Ju6xTjJUuAquTDDC
+	 VlDNibH91psMVjj6wbHECsmk+kHrRMXvUFatyjnk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728951AbeLNXq4 (ORCPT
+        id S1728567AbeLNXzM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 18:46:56 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:41221 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726423AbeLNXqz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 18:46:55 -0500
-Received: by mail-pg1-f196.google.com with SMTP id m1so1739448pgq.8;
-        Fri, 14 Dec 2018 15:46:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=gTb3R4JcjfUoa8M4OjJIMXYC7z2CxLLTuNpIjiFVfi8=;
-        b=n1atIdl8wAeB5FfRz9uHqDk+ln/5rjIw8h1y0fmAzk/qWoF9sarTU0CvVuGmA/CHvS
-         9wN4eav8mTyqrnIdJogdUzIN7gEIIq0AHRIg8r7IKFJRzJIyXq1hrPTeEK/5lAYCZmkR
-         /etnzNVHBK+gaHtlQjrxSfec2a9ZTf53jmxSr5oi2dLNHTh7TofIugWlXfKTb1pghVuX
-         SBBezGY/GsdYbMCgJKjsKX0yM3eRzaNz2ty2bjbbtE171TLaqgebTowIjreXNwRArIAB
-         p9LZ4Fk93UoFMkdNQ0f25Mlq4oztoSdU/jZCHjwfb0I+vAqkED2ehOtJToXFgHKZD4H7
-         sIjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=gTb3R4JcjfUoa8M4OjJIMXYC7z2CxLLTuNpIjiFVfi8=;
-        b=Di/ptMDVsCFOo/5p41mRmYQU4Q1Mq4tf5eOPcNfBdmpklxTORicjK2RJC1S1UY/nTE
-         2gNALLJHTRDCZH2pyUMzP68Vy7/P+ta+Rq3WLrxG3r9ltviQeTL2bG9nh7pMHjqVcHg3
-         SfaOOhQA1bls2bFXF3phzPCdU2eKj0IJXg3GBZnujk9vhFtT/io+1WtxXlzG+kF5ceCA
-         5HuSM6SiOEDMfRXw/t/c+FYN1PPC3j82Y5UEHvXZBOKTyMNdS8MekudiDk/Z/W4NGLie
-         UNyeyKWgb37Vqgb4NeJ/i9URp3NgZcQCc8PtiptSn3F3kjdIaAHitG9IvaMOTsSMirpC
-         s9TA==
-X-Gm-Message-State: AA+aEWZKSUP/K64fJzGcIBa4vB49cDeC/XKS6duXuX2jARB1y7PoMlNA
-        S/9hpYj8ciuUoBcRVQwD0FVJh3xn
-X-Google-Smtp-Source: AFSGD/XVcGh1MpN4RdmSM2c+0YZzGwNeSSkM5TWkDxcg1NKpPF3NHDGKIA4/CGzy6hNGfBfNzsgccw==
-X-Received: by 2002:a63:66c6:: with SMTP id a189mr4451532pgc.167.1544831213903;
-        Fri, 14 Dec 2018 15:46:53 -0800 (PST)
-Received: from majic.sklembedded.com (c-98-210-181-167.hsd1.ca.comcast.net. [98.210.181.167])
-        by smtp.googlemail.com with ESMTPSA id 125sm13501087pfd.124.2018.12.14.15.46.52
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 14 Dec 2018 15:46:53 -0800 (PST)
-From:   Steve Longerbeam <slongerbeam@gmail.com>
-To:     linux-media@vger.kernel.org
-Cc:     Steve Longerbeam <slongerbeam@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        dri-devel@lists.freedesktop.org (open list:DRM DRIVERS FOR FREESCALE
-        IMX), linux-kernel@vger.kernel.org (open list),
-        devel@driverdev.osuosl.org (open list:STAGING SUBSYSTEM),
-        linux-fbdev@vger.kernel.org (open list:FRAMEBUFFER LAYER)
-Subject: [PATCH v6] gpu: ipu-csi: Swap fields according to input/output field types
-Date:   Fri, 14 Dec 2018 15:46:46 -0800
-Message-Id: <20181214234646.21359-1-slongerbeam@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Fri, 14 Dec 2018 18:55:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35812 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726423AbeLNXzL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 18:55:11 -0500
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AB4BF206E0;
+        Fri, 14 Dec 2018 23:55:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544831709;
+        bh=5h3+qCW6w/bDxb37nFK6xB2Ys2478r2G8AoxN8cVAEM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=pEdWG1ht09xYeWutSC9vgn0ccWyS0VOdtYG60Ulu4vgP2bb1K+232h5dh+7sgLb/v
+         G8B9+fU81DzNXKDsLUKUj9AtumBrlC5aKmI7jOHvS1J2hhL6aBMA7a9kCqz8B7sNI4
+         JfTYB4sTMsjO5QAAN+qLhgX545QClbx3FMZOWL2U=
+Date:   Fri, 14 Dec 2018 17:55:05 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc:     linux-pci@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        Shaokun Zhang <zhangshaokun@hisilicon.com>,
+        Will Deacon <will.deacon@arm.com>, linuxarm@huawei.com,
+        Keith Busch <keith.busch@intel.com>,
+        Zhou Wang <wangzhou1@hisilicon.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-arm-kernel@lists.infradead.org,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 2/2] PCI/portdrv Hisilicon PCIe transport layer Port
+ PMU driver.
+Message-ID: <20181214235505.GI20725@google.com>
+References: <20181214131055.52253-1-Jonathan.Cameron@huawei.com>
+ <20181214131055.52253-3-Jonathan.Cameron@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181214131055.52253-3-Jonathan.Cameron@huawei.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The function ipu_csi_init_interface() was inverting the F-bit for
-NTSC case, in the CCIR_CODE_1/2 registers. The result being that
-for NTSC bottom-top field order, the CSI would swap fields and
-capture in top-bottom order.
+[+cc Rafael, Len, linux-acpi, linux-kernel]
 
-Instead, base field swap on the field order of the input to the CSI,
-and the field order of the requested output. If the input/output
-fields are sequential but different, swap fields, otherwise do
-not swap. This requires passing both the input and output mbus
-frame formats to ipu_csi_init_interface().
+Thanks a lot for working on this!  I've been hoping somebody would
+push on the PMU issue because there are some real wrinkles to work
+out.
 
-Move this code to a new private function ipu_csi_set_bt_interlaced_codes()
-that programs the CCIR_CODE_1/2 registers for interlaced BT.656 (and
-possibly interlaced BT.1120 in the future).
+On Fri, Dec 14, 2018 at 09:10:55PM +0800, Jonathan Cameron wrote:
+> The Hip08 SoCs contain relatively detailed performance units for the
+> PCIe Transport Layer at each port.
+> 
+> The support here is a subset of what will come, but is intended to
+> provide some initial basic functionality.
+> 
+> Note that there is a _lot_ more functionality in this hardware unit
+> so this is the first RFC of several.
+> 
+> RFC questions:
+> 
+> 1. There is no standard for PCIe PMUs.  However, there are things that
+>    are elements of the PCIe protocol so any similar PMU is likely to
+>    support them.  Do we want to have a go at some consistent naming?
 
-When detecting input video standard from the input frame width/height,
-make sure to double height if input field type is alternate, since
-in that case input height only includes lines for one field.
+Is this a perf question, i.e., are you asking about the event names
+from "perf list"?  If so, I have no idea :)  But you're right that the
+events on the PCIe side are mostly defined by the PCIe spec and I
+agree it would make a lot of sense to use common names for those
+things.
 
-Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
----
-Changes since v5:
-- Convert to const the infmt, outfmt, and mbus_cfg pointer args to
-  ipu_csi_init_interface(), suggested by Philipp Zabel.
-- Bring back if_fmt local var and don't copy outfmt to local stack in
-  csi_setup(), suggested by Philipp.
+> 2. We are using an ACPI DSDT description to find what is basically a
+>    platform device that is associated with a PCIe device. Is this an
+>    acceptable thing to do?
 
-Changes since v4:
-- Cleaned up some convoluted code in ipu_csi_init_interface(), suggested
-  by Philipp.
-- Fixed a regression in csi_setup(), caught by Philipp.
----
- drivers/gpu/ipu-v3/ipu-csi.c              | 126 +++++++++++++++-------
- drivers/staging/media/imx/imx-media-csi.c |   7 +-
- include/video/imx-ipu-v3.h                |   5 +-
- 3 files changed, 89 insertions(+), 49 deletions(-)
+If the PCIe device itself, e.g., a Root Port, consumes address space,
+it should have a BAR that describes it.
 
-diff --git a/drivers/gpu/ipu-v3/ipu-csi.c b/drivers/gpu/ipu-v3/ipu-csi.c
-index aa0e30a2ba18..d1e575571a8d 100644
---- a/drivers/gpu/ipu-v3/ipu-csi.c
-+++ b/drivers/gpu/ipu-v3/ipu-csi.c
-@@ -325,12 +325,21 @@ static int mbus_code_to_bus_cfg(struct ipu_csi_bus_config *cfg, u32 mbus_code,
- 	return 0;
- }
- 
-+/* translate alternate field mode based on given standard */
-+static inline enum v4l2_field
-+ipu_csi_translate_field(enum v4l2_field field, v4l2_std_id std)
-+{
-+	return (field != V4L2_FIELD_ALTERNATE) ? field :
-+		((std & V4L2_STD_525_60) ?
-+		 V4L2_FIELD_SEQ_BT : V4L2_FIELD_SEQ_TB);
-+}
-+
- /*
-  * Fill a CSI bus config struct from mbus_config and mbus_framefmt.
-  */
- static int fill_csi_bus_cfg(struct ipu_csi_bus_config *csicfg,
--				 struct v4l2_mbus_config *mbus_cfg,
--				 struct v4l2_mbus_framefmt *mbus_fmt)
-+			    const struct v4l2_mbus_config *mbus_cfg,
-+			    const struct v4l2_mbus_framefmt *mbus_fmt)
- {
- 	int ret;
- 
-@@ -374,22 +383,76 @@ static int fill_csi_bus_cfg(struct ipu_csi_bus_config *csicfg,
- 	return 0;
- }
- 
-+static int
-+ipu_csi_set_bt_interlaced_codes(struct ipu_csi *csi,
-+				const struct v4l2_mbus_framefmt *infmt,
-+				const struct v4l2_mbus_framefmt *outfmt,
-+				v4l2_std_id std)
-+{
-+	enum v4l2_field infield, outfield;
-+	bool swap_fields;
-+
-+	/* get translated field type of input and output */
-+	infield = ipu_csi_translate_field(infmt->field, std);
-+	outfield = ipu_csi_translate_field(outfmt->field, std);
-+
-+	/*
-+	 * Write the H-V-F codes the CSI will match against the
-+	 * incoming data for start/end of active and blanking
-+	 * field intervals. If input and output field types are
-+	 * sequential but not the same (one is SEQ_BT and the other
-+	 * is SEQ_TB), swap the F-bit so that the CSI will capture
-+	 * field 1 lines before field 0 lines.
-+	 */
-+	swap_fields = (V4L2_FIELD_IS_SEQUENTIAL(infield) &&
-+		       V4L2_FIELD_IS_SEQUENTIAL(outfield) &&
-+		       infield != outfield);
-+
-+	if (!swap_fields) {
-+		/*
-+		 * Field0BlankEnd  = 110, Field0BlankStart  = 010
-+		 * Field0ActiveEnd = 100, Field0ActiveStart = 000
-+		 * Field1BlankEnd  = 111, Field1BlankStart  = 011
-+		 * Field1ActiveEnd = 101, Field1ActiveStart = 001
-+		 */
-+		ipu_csi_write(csi, 0x40596 | CSI_CCIR_ERR_DET_EN,
-+			      CSI_CCIR_CODE_1);
-+		ipu_csi_write(csi, 0xD07DF, CSI_CCIR_CODE_2);
-+	} else {
-+		dev_dbg(csi->ipu->dev, "capture field swap\n");
-+
-+		/* same as above but with F-bit inverted */
-+		ipu_csi_write(csi, 0xD07DF | CSI_CCIR_ERR_DET_EN,
-+			      CSI_CCIR_CODE_1);
-+		ipu_csi_write(csi, 0x40596, CSI_CCIR_CODE_2);
-+	}
-+
-+	ipu_csi_write(csi, 0xFF0000, CSI_CCIR_CODE_3);
-+
-+	return 0;
-+}
-+
-+
- int ipu_csi_init_interface(struct ipu_csi *csi,
--			   struct v4l2_mbus_config *mbus_cfg,
--			   struct v4l2_mbus_framefmt *mbus_fmt)
-+			   const struct v4l2_mbus_config *mbus_cfg,
-+			   const struct v4l2_mbus_framefmt *infmt,
-+			   const struct v4l2_mbus_framefmt *outfmt)
- {
- 	struct ipu_csi_bus_config cfg;
- 	unsigned long flags;
- 	u32 width, height, data = 0;
-+	v4l2_std_id std;
- 	int ret;
- 
--	ret = fill_csi_bus_cfg(&cfg, mbus_cfg, mbus_fmt);
-+	ret = fill_csi_bus_cfg(&cfg, mbus_cfg, infmt);
- 	if (ret < 0)
- 		return ret;
- 
- 	/* set default sensor frame width and height */
--	width = mbus_fmt->width;
--	height = mbus_fmt->height;
-+	width = infmt->width;
-+	height = infmt->height;
-+	if (infmt->field == V4L2_FIELD_ALTERNATE)
-+		height *= 2;
- 
- 	/* Set the CSI_SENS_CONF register remaining fields */
- 	data |= cfg.data_width << CSI_SENS_CONF_DATA_WIDTH_SHIFT |
-@@ -416,42 +479,22 @@ int ipu_csi_init_interface(struct ipu_csi *csi,
- 		ipu_csi_write(csi, 0xFF0000, CSI_CCIR_CODE_3);
- 		break;
- 	case IPU_CSI_CLK_MODE_CCIR656_INTERLACED:
--		if (mbus_fmt->width == 720 && mbus_fmt->height == 576) {
--			/*
--			 * PAL case
--			 *
--			 * Field0BlankEnd = 0x6, Field0BlankStart = 0x2,
--			 * Field0ActiveEnd = 0x4, Field0ActiveStart = 0
--			 * Field1BlankEnd = 0x7, Field1BlankStart = 0x3,
--			 * Field1ActiveEnd = 0x5, Field1ActiveStart = 0x1
--			 */
--			height = 625; /* framelines for PAL */
--
--			ipu_csi_write(csi, 0x40596 | CSI_CCIR_ERR_DET_EN,
--					  CSI_CCIR_CODE_1);
--			ipu_csi_write(csi, 0xD07DF, CSI_CCIR_CODE_2);
--			ipu_csi_write(csi, 0xFF0000, CSI_CCIR_CODE_3);
--		} else if (mbus_fmt->width == 720 && mbus_fmt->height == 480) {
--			/*
--			 * NTSC case
--			 *
--			 * Field0BlankEnd = 0x7, Field0BlankStart = 0x3,
--			 * Field0ActiveEnd = 0x5, Field0ActiveStart = 0x1
--			 * Field1BlankEnd = 0x6, Field1BlankStart = 0x2,
--			 * Field1ActiveEnd = 0x4, Field1ActiveStart = 0
--			 */
--			height = 525; /* framelines for NTSC */
--
--			ipu_csi_write(csi, 0xD07DF | CSI_CCIR_ERR_DET_EN,
--					  CSI_CCIR_CODE_1);
--			ipu_csi_write(csi, 0x40596, CSI_CCIR_CODE_2);
--			ipu_csi_write(csi, 0xFF0000, CSI_CCIR_CODE_3);
-+		if (width == 720 && height == 480) {
-+			std = V4L2_STD_NTSC;
-+			height = 525;
-+		} else if (width == 720 && height == 576) {
-+			std = V4L2_STD_PAL;
-+			height = 625;
- 		} else {
- 			dev_err(csi->ipu->dev,
--				"Unsupported CCIR656 interlaced video mode\n");
--			spin_unlock_irqrestore(&csi->lock, flags);
--			return -EINVAL;
-+				"Unsupported interlaced video mode\n");
-+			ret = -EINVAL;
-+			goto out_unlock;
- 		}
-+
-+		ret = ipu_csi_set_bt_interlaced_codes(csi, infmt, outfmt, std);
-+		if (ret)
-+			goto out_unlock;
- 		break;
- 	case IPU_CSI_CLK_MODE_CCIR1120_PROGRESSIVE_DDR:
- 	case IPU_CSI_CLK_MODE_CCIR1120_PROGRESSIVE_SDR:
-@@ -476,9 +519,10 @@ int ipu_csi_init_interface(struct ipu_csi *csi,
- 	dev_dbg(csi->ipu->dev, "CSI_ACT_FRM_SIZE = 0x%08X\n",
- 		ipu_csi_read(csi, CSI_ACT_FRM_SIZE));
- 
-+out_unlock:
- 	spin_unlock_irqrestore(&csi->lock, flags);
- 
--	return 0;
-+	return ret;
- }
- EXPORT_SYMBOL_GPL(ipu_csi_init_interface);
- 
-diff --git a/drivers/staging/media/imx/imx-media-csi.c b/drivers/staging/media/imx/imx-media-csi.c
-index 4223f8d418ae..c2a8d9cd31b7 100644
---- a/drivers/staging/media/imx/imx-media-csi.c
-+++ b/drivers/staging/media/imx/imx-media-csi.c
-@@ -679,12 +679,7 @@ static int csi_setup(struct csi_priv *priv)
- 		priv->upstream_ep.bus.parallel.flags :
- 		priv->upstream_ep.bus.mipi_csi2.flags;
- 
--	/*
--	 * we need to pass input frame to CSI interface, but
--	 * with translated field type from output format
--	 */
- 	if_fmt = *infmt;
--	if_fmt.field = outfmt->field;
- 	crop = priv->crop;
- 
- 	/*
-@@ -702,7 +697,7 @@ static int csi_setup(struct csi_priv *priv)
- 			     priv->crop.width == 2 * priv->compose.width,
- 			     priv->crop.height == 2 * priv->compose.height);
- 
--	ipu_csi_init_interface(priv->csi, &mbus_cfg, &if_fmt);
-+	ipu_csi_init_interface(priv->csi, &mbus_cfg, &if_fmt, outfmt);
- 
- 	ipu_csi_set_dest(priv->csi, priv->dest);
- 
-diff --git a/include/video/imx-ipu-v3.h b/include/video/imx-ipu-v3.h
-index abbad94e14a1..f5568ac87306 100644
---- a/include/video/imx-ipu-v3.h
-+++ b/include/video/imx-ipu-v3.h
-@@ -351,8 +351,9 @@ int ipu_prg_channel_configure(struct ipuv3_channel *ipu_chan,
-  */
- struct ipu_csi;
- int ipu_csi_init_interface(struct ipu_csi *csi,
--			   struct v4l2_mbus_config *mbus_cfg,
--			   struct v4l2_mbus_framefmt *mbus_fmt);
-+			   const struct v4l2_mbus_config *mbus_cfg,
-+			   const struct v4l2_mbus_framefmt *infmt,
-+			   const struct v4l2_mbus_framefmt *outfmt);
- bool ipu_csi_is_interlaced(struct ipu_csi *csi);
- void ipu_csi_get_window(struct ipu_csi *csi, struct v4l2_rect *w);
- void ipu_csi_set_window(struct ipu_csi *csi, struct v4l2_rect *w);
--- 
-2.17.1
+If the Root Complex, which is not a PCIe device and does not have an
+architected configuration or programming model, consumes address
+space, it would make sense to describe it via ACPI in the PNP0A03
+device like other host bridge registers.
 
+From your cover letter, I think you have the latter situation, and if
+I understand correctly, you have something like this in ACPI:
+
+  PNP0A03       PCI host bridge
+    HISIxxxx    PMU registers for Root Port 00:1c.0
+    HISIxxxx    PMU registers for Root Port 00:1c.2
+
+The PNP0A03 _CRS describes the address space it consumes, which
+comprises (1) the register space that operates the bridge itself,
+e.g., sets apertures, performs PCI config accesses, etc., and
+(2) space that is converted to PCI transactions on the downstream
+side.
+
+So this feels a little strange to me because ACPI says the HISIxxxx
+devices are below the host bridge, but instead of consuming PCI
+address space, they consume part of the PNP0A03 register space.
+But maybe that makes sense in ACPI, I dunno.
+
+As far as I can tell, you don't actually need *anything* supplied by
+portdrv except the pcie_device.port, which you only use to find the
+ACPI companion device and to hang the devm_ things on.
+
+As written, hisi_pcie_pmu will bind to any Port, including Switch
+Ports as well as Root Ports.  It has a poor-man's match() built into
+hisi_pcie_pmu_probe(), which is sort of sub-optimal.  It would be
+nicer to have a real match() function run by the bus driver.  I know
+portdrv doesn't give you that, and since portdrv claims every Port
+itself, there's no good way for other drivers like this to get
+connected to Ports.
+
+Do you have a hotplug strategy yet?  PMUs in Switches below the Root
+Ports sound like a useful thing.  Since you bind to every Port, you
+will bind to hot-added Switch Ports, but unless you use ACPI hotplug,
+you won't have a chance to add ACPI companion devices for them.
+
+> Not yet fully established.
+> 
+> 1. I haven't done enough testing with high performance devices to
+>    establish the 'minimum' frequency of the high resolution timer.
+>    It may be that we just end up dropping some of the counters
+>    because the load is too high to sample them often enough.
+>    Once the basic approach is established I'll run the numbers
+>    on this. These are up to Gen4x16 ports so things go pretty quick.
+> 
+> Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> ---
+>  drivers/pci/pcie/Kconfig         |   9 +
+>  drivers/pci/pcie/Makefile        |   2 +
+>  drivers/pci/pcie/hisi_pcie_pmu.c | 528 +++++++++++++++++++++++++++++++
+>  include/linux/cpuhotplug.h       |   1 +
+>  4 files changed, 540 insertions(+)
+
+This looks like a nice piece of work, but I'm not sure where to put
+it.  It really doesn't feel like part of the PCI core in the sense
+that the PCI specs don't help you write it, and it doesn't provide any
+PCI services used by other parts of the kernel.  It feels more like
+just another driver for a device that happens to be on a PCI bus.
+
+Granted, it currently requires portdrv, but I think the only reason
+for that is to resolve the "multiple drivers need the same device"
+problem.  I don't think portdrv is a good solution for that.
+
+The other portdrv services (AER, hotplug, DPC, etc) are all defined in
+the spec, and they're related in strange ways like sharing interrupts.
+I would *like* to see those services moved into the PCI core directly
+so they're not *drivers*, they're just optional features like MSI,
+IOV, etc.
+
+Then the Ports would by default not have a driver bound to them and
+device-specific drivers like this could directly bind to the Port PCI
+device.
+
+Bjorn
+
+> diff --git a/drivers/pci/pcie/Kconfig b/drivers/pci/pcie/Kconfig
+> index 44742b2e1126..983783c42cf0 100644
+> --- a/drivers/pci/pcie/Kconfig
+> +++ b/drivers/pci/pcie/Kconfig
+> @@ -47,6 +47,15 @@ config PCIEAER_INJECT
+>  	  gotten from:
+>  	     http://www.kernel.org/pub/linux/utils/pci/aer-inject/
+>  
+> +config PCIE_HISI_PMU
+> +       tristate "PCI Express Root Port Performance Monitoring for Hisilicon Hip08"
+> +       depends on PCIEPORTBUS
+> +       help
+> +	 The hisilicon Hip08 platform has root ports with integrated
+> +	 transport layer performance measurement units. These are
+> +	 exposed within the memory map, so resources must be provided
+> +	 via ACPI DSDT.
+> + 
+>  #
+>  # PCI Express ECRC
+>  #
+> diff --git a/drivers/pci/pcie/Makefile b/drivers/pci/pcie/Makefile
+> index ab514083d5d4..67435abef29d 100644
+> --- a/drivers/pci/pcie/Makefile
+> +++ b/drivers/pci/pcie/Makefile
+> @@ -12,3 +12,5 @@ obj-$(CONFIG_PCIEAER_INJECT)	+= aer_inject.o
+>  obj-$(CONFIG_PCIE_PME)		+= pme.o
+>  obj-$(CONFIG_PCIE_DPC)		+= dpc.o
+>  obj-$(CONFIG_PCIE_PTM)		+= ptm.o
+> +
+> +obj-$(CONFIG_PCIE_HISI_PMU)     += hisi_pcie_pmu.o
+> diff --git a/drivers/pci/pcie/hisi_pcie_pmu.c b/drivers/pci/pcie/hisi_pcie_pmu.c
+> new file mode 100644
+> index 000000000000..ddd2885a2b17
+> --- /dev/null
+> +++ b/drivers/pci/pcie/hisi_pcie_pmu.c
+> @@ -0,0 +1,528 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Provide performance monitoring for Hisilicon PCIe root ports
+> + *
+> + * Copyright (C) 2018 Hisilicon
+> + */
+> +
+> +#include <linux/acpi.h>
+> +#include <linux/bitmap.h>
+> +#include <linux/cpuhotplug.h>
+> +#include <linux/delay.h>
+> +#include <linux/device.h>
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/pci.h>
+> +#include <linux/perf_event.h>
+> +
+> +#include "portdrv.h"
+> +
+> +#define HISI_PP_TL_CNT_CTRL_REG 0x96C
+> +#define   HISI_PP_TL_CNT_CTRL_TX_FLOW_CNT_EN BIT(0)
+> +#define   HISI_PP_TL_CNT_CTRL_TX_ERR_CNT_EN BIT(1)
+> +#define   HISI_PP_TL_CNT_CTRL_TX_NAT_CPL_CNT_EN BIT(2)
+> +#define   HISI_PP_TL_CNT_CTRL_TX_FLOW_FUN_EN BIT(3)
+> +#define   HISI_PP_TL_CNT_CTRL_TX_FLOW_CNT_TIME_MASK 0xFFF0
+> +
+> +#define HISI_MAX_PERIOD(nr) (BIT_ULL(nr) - 1)
+> +
+> +#define HISI_PP_TIMER_PERIOD_NS 10000000
+> +
+> +enum hisi_pci_counts {
+> +	TX_MEM_RD,
+> +	TX_MEM_WR,
+> +	TX_CFG_RD,
+> +	TX_CFG_WR,
+> +	TX_IO_RD,
+> +	TX_IO_WR,
+> +	TX_MSG,
+> +	TX_CPL,
+> +	TX_CCIX,
+> +	TX_ATOMIC,
+> +	TX_P2P,
+> +	TX_TLP,
+> +	TX_PAYLOAD,
+> +	TX_DW,
+> +
+> +	RX_TOTAL_TLP,
+> +	RX_TOTAL_TR,
+> +	RX_DROP,
+> +	RX_POSTED,
+> +	RX_NONPOSTED,
+> +	RX_CPL,
+> +	HISI_PP_EVENTS,
+> +};
+> +
+> +static struct hisi_pcie_cnt {
+> +	u64 reg_offset;
+> +	u8 bits;
+> +} hisi_pcie_cnt_info[HISI_PP_EVENTS] = {
+> +	[TX_MEM_RD]		= { 0x908, 16 },
+> +	[TX_MEM_WR]		= { 0x90c, 16 },
+> +	[TX_CFG_RD]		= { 0x910, 16 },
+> +	[TX_CFG_WR]		= { 0x914, 16 },
+> +	[TX_IO_RD]		= { 0x918, 16 },
+> +	[TX_IO_WR]		= { 0x91C, 16 },
+> +	[TX_MSG]		= { 0x924, 16 },
+> +	[TX_CPL]		= { 0x930, 16 },
+> +	[TX_CCIX]		= { 0x934, 16 },
+> +	[TX_ATOMIC]		= { 0x938, 16 },
+> +	[TX_P2P]		= { 0x93C, 16 },
+> +	[TX_TLP]		= { 0x940, 32 },
+> +	[TX_PAYLOAD]		= { 0x944, 32 },
+> +	[TX_DW]			= { 0x948, 32 },
+> +
+> +	[RX_TOTAL_TLP]		= { 0xb38, 16 },
+> +	[RX_TOTAL_TR]		= { 0xb3c, 16 },
+> +	[RX_DROP]		= { 0xb40, 16 },
+> +	[RX_POSTED]		= { 0xb44, 16 },
+> +	[RX_NONPOSTED]		= { 0xb48, 16 },
+> +	[RX_CPL]		= { 0xb4c, 16 },
+> +};
+> +
+> +struct hisi_event_list {
+> +	struct list_head list;
+> +	struct perf_event *event;
+> +};
+> +
+> +struct hisi_pcie_pmu {
+> +	struct pmu pmu;
+> +	void __iomem *regs;
+> +	cpumask_t associated_cpus;
+> +	int on_cpu;
+> +	struct hlist_node node;
+> +	DECLARE_BITMAP(pmu_events, HISI_PP_EVENTS);
+> +	struct hisi_event_list events[HISI_PP_EVENTS];
+> +	struct hrtimer timer;
+> +	struct list_head event_list;
+> +};
+> +
+> +#define to_hisi_pcie_pmu(p) container_of((p), struct hisi_pcie_pmu, pmu)
+> +
+> +int hisi_pcie_pmu_online_cpu(unsigned int cpu, struct hlist_node *node)
+> +{
+> +	struct hisi_pcie_pmu *dev_info = hlist_entry_safe(node,
+> +							 struct hisi_pcie_pmu,
+> +							 node);
+> +
+> +	cpumask_set_cpu(cpu, &dev_info->associated_cpus);
+> +	/* If another CPU is already managing this PMU, simply return. */
+> +	if (dev_info->on_cpu != -1)
+> +		return 0;
+> +
+> +	/* Use this CPU in cpumask for event counting */
+> +	dev_info->on_cpu = cpu;
+> +
+> +	return 0;
+> +}
+> +
+> +int hisi_pcie_pmu_offline_cpu(unsigned int cpu, struct hlist_node *node)
+> +{
+> +	struct hisi_pcie_pmu *dev_info = hlist_entry_safe(node,
+> +							 struct hisi_pcie_pmu,
+> +							 node);
+> +	cpumask_t pmu_online_cpus;
+> +	unsigned int target;
+> +
+> +	if (!cpumask_test_and_clear_cpu(cpu, &dev_info->associated_cpus))
+> +		return 0;
+> +
+> +	if (dev_info->on_cpu != cpu)
+> +		return 0;
+> +
+> +	/* Give up ownership of the PMU */
+> +	dev_info->on_cpu = -1;
+> +
+> +	/* Choose a new CPU to migrate ownership of the PMU to */
+> +	cpumask_and(&pmu_online_cpus, &dev_info->associated_cpus,
+> +		    cpu_online_mask);
+> +	target = cpumask_any_but(&pmu_online_cpus, cpu);
+> +	if (target >= nr_cpu_ids)
+> +		return 0;
+> +
+> +	/* Use this CPU for event counting */
+> +	dev_info->on_cpu = target;
+> +	perf_pmu_migrate_context(&dev_info->pmu, cpu, target);
+> +
+> +	return 0;
+> +}
+> +
+> +void hisi_pcie_pmu_event_update(struct perf_event *event)
+> +{
+> +	struct hisi_pcie_pmu *dev_info = to_hisi_pcie_pmu(event->pmu);
+> +	struct hw_perf_event *hwc = &event->hw;
+> +	u64 delta, prev_raw_count, new_raw_count;
+> +	u64 offset = hisi_pcie_cnt_info[hwc->config_base].reg_offset;
+> +	u8 period = hisi_pcie_cnt_info[hwc->config_base].bits;
+> +
+> +	do {
+> +		new_raw_count = readl(dev_info->regs + offset);
+> +		prev_raw_count = local64_read(&hwc->prev_count);
+> +	} while (local64_cmpxchg(&hwc->prev_count, prev_raw_count,
+> +				 new_raw_count) != prev_raw_count);
+> +
+> +	delta = (new_raw_count - prev_raw_count) & HISI_MAX_PERIOD(period);
+> +	local64_add(delta, &event->count);
+> +}
+> +
+> +static enum hrtimer_restart event_read(struct hrtimer *timer)
+> +{
+> +	struct hisi_pcie_pmu *dev_info =
+> +		container_of(timer, struct hisi_pcie_pmu, timer);
+> +	struct hisi_event_list *hevent;
+> +
+> +	list_for_each_entry(hevent, &dev_info->event_list, list)
+> +		hisi_pcie_pmu_event_update(hevent->event);
+> +	hrtimer_forward_now(timer, HISI_PP_TIMER_PERIOD_NS);
+> +
+> +	return HRTIMER_RESTART;
+> +}
+> +
+> +int hisi_pcie_pmu_event_init(struct perf_event *event)
+> +{
+> +	struct hw_perf_event *hwc = &event->hw;
+> +	struct hisi_pcie_pmu *dev_info = to_hisi_pcie_pmu(event->pmu);
+> +
+> +	if (event->attr.type != event->pmu->type)
+> +		return -ENOENT;
+> +
+> +	if (is_sampling_event(event) || event->attach_state & PERF_ATTACH_TASK)
+> +		return -EOPNOTSUPP;
+> +
+> +	if (event->attr.exclude_user	||
+> +	    event->attr.exclude_kernel	||
+> +	    event->attr.exclude_host	||
+> +	    event->attr.exclude_guest	||
+> +	    event->attr.exclude_hv	||
+> +	    event->attr.exclude_idle)
+> +		return -EINVAL;
+> +
+> +	if (event->cpu < 0)
+> +		return -EINVAL;
+> +
+> +	hwc->idx = -1;
+> +	hwc->config_base = event->attr.config;
+> +
+> +	dev_info->events[hwc->config_base].event = event;
+> +
+> +	return 0;
+> +}
+> +
+> +void hisi_pcie_pmu_enable(struct pmu *pmu)
+> +{
+> +	struct hisi_pcie_pmu *dev_info = to_hisi_pcie_pmu(pmu);
+> +	u32 val;
+> +
+> +	if (bitmap_empty(dev_info->pmu_events, HISI_PP_EVENTS))
+> +		return;
+> +
+> +	val = readl(dev_info->regs + HISI_PP_TL_CNT_CTRL_REG);
+> +	/* Disable time period based flow counting */
+> +	val &= ~HISI_PP_TL_CNT_CTRL_TX_FLOW_CNT_TIME_MASK;
+> +	val |= HISI_PP_TL_CNT_CTRL_TX_FLOW_CNT_EN |
+> +		HISI_PP_TL_CNT_CTRL_TX_ERR_CNT_EN;
+> +	writel(val, dev_info->regs + HISI_PP_TL_CNT_CTRL_REG);
+> +}
+> +
+> +void hisi_pcie_pmu_disable(struct pmu *pmu)
+> +{
+> +	struct hisi_pcie_pmu *dev_info = to_hisi_pcie_pmu(pmu);
+> +	u32 val;
+> +	u32 new_raw_count;
+> +
+> +	new_raw_count = readl(dev_info->regs + 0x908);
+> +
+> +	val = readl(dev_info->regs + HISI_PP_TL_CNT_CTRL_REG);
+> +	val &= ~(HISI_PP_TL_CNT_CTRL_TX_FLOW_CNT_EN |
+> +		 HISI_PP_TL_CNT_CTRL_TX_ERR_CNT_EN);
+> +	writel(val, dev_info->regs + HISI_PP_TL_CNT_CTRL_REG);
+> +}
+> +
+> +void hisi_pcie_pmu_enable_event(struct perf_event *event)
+> +{
+> +	struct hisi_pcie_pmu *dev_info = to_hisi_pcie_pmu(event->pmu);
+> +	struct hw_perf_event *hwc = &event->hw;
+> +	u64 offset = hisi_pcie_cnt_info[hwc->config_base].reg_offset;
+> +
+> +	/* Register is write to clear */
+> +	local64_set(&hwc->prev_count, 0);
+> +	writel(0, dev_info->regs + offset);
+> +}
+> +
+> +void hisi_pcie_pmu_start(struct perf_event *event, int flags)
+> +{
+> +	struct hw_perf_event *hwc = &event->hw;
+> +
+> +	if (WARN_ON_ONCE(!(hwc->state & PERF_HES_STOPPED)))
+> +		return;
+> +
+> +	WARN_ON_ONCE(!(hwc->state & PERF_HES_UPTODATE));
+> +	hwc->state = 0;
+> +
+> +	hisi_pcie_pmu_enable_event(event);
+> +	perf_event_update_userpage(event);
+> +}
+> +
+> +void hisi_pcie_pmu_stop(struct perf_event *event, int flags)
+> +{
+> +	struct hw_perf_event *hwc = &event->hw;
+> +
+> +	WARN_ON_ONCE(hwc->state & PERF_HES_STOPPED);
+> +	hwc->state |= PERF_HES_STOPPED;
+> +
+> +	if (hwc->state & PERF_HES_UPTODATE)
+> +		return;
+> +
+> +	/* Read hardware counter and update the perf counter statistics */
+> +	hisi_pcie_pmu_event_update(event);
+> +	hwc->state |= PERF_HES_UPTODATE;
+> +}
+> +
+> +int hisi_pcie_pmu_add(struct perf_event *event, int flags)
+> +{
+> +	struct hisi_pcie_pmu *dev_info = to_hisi_pcie_pmu(event->pmu);
+> +	struct hw_perf_event *hwc = &event->hw;
+> +	bool prev_empty;
+> +
+> +	hwc->state = PERF_HES_STOPPED | PERF_HES_UPTODATE;
+> +	set_bit(hwc->config_base, dev_info->pmu_events);
+> +	if (flags & PERF_EF_START)
+> +		hisi_pcie_pmu_start(event, PERF_EF_RELOAD);
+> +	prev_empty = list_empty(&dev_info->event_list);
+> +	list_add(&dev_info->events[hwc->config_base].list,
+> +		 &dev_info->event_list);
+> +	if (prev_empty)
+> +		hrtimer_start(&dev_info->timer, HISI_PP_TIMER_PERIOD_NS,
+> +			      HRTIMER_MODE_REL);
+> +
+> +	return 0;
+> +}
+> +
+> +
+> +void hisi_pcie_pmu_del(struct perf_event *event, int flags)
+> +{
+> +	struct hisi_pcie_pmu *dev_info = to_hisi_pcie_pmu(event->pmu);
+> +	struct hw_perf_event *hwc = &event->hw;
+> +
+> +	list_del(&dev_info->events[hwc->config_base].list);
+> +	if (list_empty(&dev_info->event_list))
+> +		hrtimer_cancel(&dev_info->timer);
+> +	hisi_pcie_pmu_stop(event, PERF_EF_UPDATE);
+> +	clear_bit(hwc->config_base, dev_info->pmu_events);
+> +	perf_event_update_userpage(event);
+> +}
+> +
+> +ssize_t hisi_event_sysfs_show(struct device *dev,
+> +			      struct device_attribute *attr, char *page)
+> +{
+> +	struct dev_ext_attribute *eattr;
+> +
+> +	eattr = container_of(attr, struct dev_ext_attribute, attr);
+> +
+> +	return sprintf(page, "config=0x%lx\n", (unsigned long)eattr->var);
+> +}
+> +
+> +void hisi_pcie_pmu_read(struct perf_event *event)
+> +{
+> +	hisi_pcie_pmu_event_update(event);
+> +}
+> +
+> +ssize_t hisi_cpumask_sysfs_show(struct device *dev,
+> +				struct device_attribute *attr, char *buf)
+> +{
+> +	struct pmu *pmu = dev_get_drvdata(dev);
+> +	struct hisi_pcie_pmu *dev_info =
+> +		container_of(pmu, struct hisi_pcie_pmu, pmu);
+> +
+> +	return sprintf(buf, "%d\n", dev_info->on_cpu);
+> +}
+> +
+> +static DEVICE_ATTR(cpumask, 0444, hisi_cpumask_sysfs_show, NULL);
+> +
+> +static struct attribute *hisi_pcie_pmu_cpumask_attrs[] = {
+> +	&dev_attr_cpumask.attr,
+> +	NULL,
+> +};
+> +
+> +static const struct attribute_group hisi_pcie_pmu_cpumask_attr_group = {
+> +	.attrs = hisi_pcie_pmu_cpumask_attrs,
+> +};
+> +
+> +#define HISI_PP_ATTR(_name, _func, _config)			\
+> +	(&((struct dev_ext_attribute[]) {				\
+> +		{ __ATTR(_name, 0444, _func, NULL), (void *)_config }   \
+> +	})[0].attr.attr)
+> +
+> +#define HISI_PP_EVENT_ATTR(_name, _config)		\
+> +	HISI_PP_ATTR(_name, hisi_event_sysfs_show, (unsigned long)_config)
+> +
+> +static struct attribute *hisi_pcie_pmu_events_attr[] = {
+> +	HISI_PP_EVENT_ATTR(tx_mem_rd, TX_MEM_RD),
+> +	HISI_PP_EVENT_ATTR(tx_mem_wr, TX_MEM_WR),
+> +	HISI_PP_EVENT_ATTR(tx_cfg_rd, TX_CFG_RD),
+> +	HISI_PP_EVENT_ATTR(tx_cfg_wr, TX_CFG_WR),
+> +	HISI_PP_EVENT_ATTR(tx_io_rd, TX_IO_RD),
+> +	HISI_PP_EVENT_ATTR(tx_io_wr, TX_IO_WR),
+> +	HISI_PP_EVENT_ATTR(tx_msg, TX_MSG),
+> +
+> +	HISI_PP_EVENT_ATTR(tx_tlp, TX_TLP),
+> +	HISI_PP_EVENT_ATTR(tx_payload, TX_PAYLOAD),
+> +	HISI_PP_EVENT_ATTR(tx_dw, TX_DW),
+> +
+> +	HISI_PP_EVENT_ATTR(tx_cpl, TX_CPL),
+> +	HISI_PP_EVENT_ATTR(tx_ccix_tlp, TX_CCIX),
+> +	HISI_PP_EVENT_ATTR(tx_atomic_tlp, TX_ATOMIC),
+> +	HISI_PP_EVENT_ATTR(tx_p2p_tlp, TX_P2P),
+> +
+> +	HISI_PP_EVENT_ATTR(rx_tlp, RX_TOTAL_TLP),
+> +	HISI_PP_EVENT_ATTR(rx_tr_tlp, RX_TOTAL_TR),
+> +	HISI_PP_EVENT_ATTR(rx_posted_tlp, RX_POSTED),
+> +	HISI_PP_EVENT_ATTR(rx_nonposted_tlp, RX_NONPOSTED),
+> +	HISI_PP_EVENT_ATTR(rx_cpl_tlp, RX_CPL),
+> +	NULL,
+> +};
+> +
+> +static struct attribute_group hisi_pcie_pmu_events_group = {
+> +	.name = "events",
+> +	.attrs = hisi_pcie_pmu_events_attr,
+> +};
+> +
+> +static const struct attribute_group *hisi_pcie_pmu_attr_groups[] = {
+> +	&hisi_pcie_pmu_events_group,
+> +	&hisi_pcie_pmu_cpumask_attr_group,
+> +	NULL,
+> +};
+> +
+> +static int hisi_pcie_pmu_probe(struct pcie_device *dev)
+> +{
+> +	struct pci_dev *pdev = dev->port;
+> +	struct acpi_device *acpi_dev;
+> +	struct resource_entry *entry;
+> +	resource_size_t regs_start, regs_size;
+> +	struct hisi_pcie_pmu *dev_info;
+> +	struct list_head list;
+> +	char *name;
+> +	int ret;
+> +
+> +	INIT_LIST_HEAD(&list);
+> +
+> +	if (pdev->vendor != PCI_VENDOR_ID_HUAWEI)
+> +		return -ENODEV;
+> +
+> +	acpi_dev = ACPI_COMPANION(&pdev->dev);
+> +	if (!acpi_dev)
+> +		return -ENODEV;
+> +
+> +	ret = acpi_dev_get_resources(acpi_dev, &list, NULL, NULL);
+> +	if (ret < 0) {
+> +		pr_err("Failed to get PMU resources, ret=%d\n", ret);
+> +		return ret;
+> +	}
+> +	entry = list_first_entry(&list, struct resource_entry, node);
+> +	if (entry) {
+> +		regs_start = entry->res->start;
+> +		regs_size = resource_size(entry->res);
+> +		ret = 0;
+> +	} else
+> +		ret = -EINVAL;
+> +	acpi_dev_free_resource_list(&list);
+> +	if (ret)
+> +		return ret;
+> +
+> +	dev_info = devm_kzalloc(&pdev->dev, sizeof(*dev_info), GFP_KERNEL);
+> +	if (!dev_info)
+> +		return -ENOMEM;
+> +
+> +	hrtimer_init(&dev_info->timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
+> +	dev_info->timer.function = event_read;
+> +
+> +	INIT_LIST_HEAD(&dev_info->event_list);
+> +	dev_info->regs = devm_ioremap_nocache(&pdev->dev, regs_start,
+> +					      regs_size);
+> +	if (!dev_info->regs)
+> +		return -EINVAL;
+> +	name = devm_kasprintf(&pdev->dev, GFP_KERNEL, "hisi_pcie_port%04x_%02x",
+> +			      pdev->bus->number,
+> +			      PCI_SLOT(pdev->devfn));
+> +	if (!name)
+> +		return -ENOMEM;
+> +
+> +	dev_info->pmu = (struct pmu) {
+> +		.name = name,
+> +		.task_ctx_nr = perf_invalid_context,
+> +		.event_init = hisi_pcie_pmu_event_init,
+> +		.pmu_enable = hisi_pcie_pmu_enable,
+> +		.pmu_disable = hisi_pcie_pmu_disable,
+> +		.add = hisi_pcie_pmu_add,
+> +		.del = hisi_pcie_pmu_del,
+> +		.start = hisi_pcie_pmu_start,
+> +		.stop = hisi_pcie_pmu_stop,
+> +		.read = hisi_pcie_pmu_read,
+> +		.attr_groups = hisi_pcie_pmu_attr_groups,
+> +		.capabilities = PERF_PMU_CAP_NO_INTERRUPT,
+> +	};
+> +
+> +
+> +	ret = cpuhp_state_add_instance(CPUHP_AP_PERF_ARM_HISI_PCIE_PMU_ONLINE,
+> +				       &dev_info->node);
+> +	if (ret) {
+> +		dev_err(&pdev->dev, "Error %d registering hotplug;\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	ret = perf_pmu_register(&dev_info->pmu, name, -1);
+> +	if (ret) {
+> +		cpuhp_state_remove_instance(CPUHP_AP_PERF_ARM_HISI_PCIE_PMU_ONLINE,
+> +					    &dev_info->node);
+> +
+> +		return ret;
+> +	}
+> +
+> +	dev_set_drvdata(&pdev->dev, dev_info);
+> +
+> +	return 0;
+> +}
+> +
+> +static void hisi_pcie_pmu_remove(struct pcie_device *dev)
+> +{
+> +	struct hisi_pcie_pmu *dev_info = dev_get_drvdata(&dev->port->dev);
+> +
+> +	perf_pmu_unregister(&dev_info->pmu);
+> +	cpuhp_state_remove_instance(CPUHP_AP_PERF_ARM_HISI_PCIE_PMU_ONLINE,
+> +				    &dev_info->node);
+> +}
+> +
+> +static struct pcie_port_service_driver hisi_pcie_pmu = {
+> +	.name = "hisi_pcie_root_port_pmu",
+> +	.port_type = PCIE_ANY_PORT,
+> +	.service = PCIE_PORT_SERVICE_PMU,
+> +	.probe = hisi_pcie_pmu_probe,
+> +	.remove = hisi_pcie_pmu_remove,
+> +};
+> +
+> +static int __init hisi_pcie_service_init(void)
+> +{
+> +	int ret;
+> +
+> +	ret = cpuhp_setup_state_multi(CPUHP_AP_PERF_ARM_HISI_PCIE_PMU_ONLINE,
+> +				      "AP_PERF_ARM_HISI_PCIE_ONLINE",
+> +				      hisi_pcie_pmu_online_cpu,
+> +				      hisi_pcie_pmu_offline_cpu);
+> +	if (ret) {
+> +		pr_err("PCIE PMU: setup hotplug, ret = %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	pcie_port_service_register(&hisi_pcie_pmu);
+> +
+> +	return 0;
+> +}
+> +
+> +static void hisi_pcie_service_remove(void)
+> +{
+> +	pcie_port_service_unregister(&hisi_pcie_pmu);
+> +	cpuhp_remove_multi_state(CPUHP_AP_PERF_ARM_HISI_PCIE_PMU_ONLINE);
+> +}
+> +module_init(hisi_pcie_service_init);
+> +module_exit(hisi_pcie_service_remove);
+> +MODULE_LICENSE("GPL");
+> diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
+> index e0cd2baa8380..73f2bc8a7201 100644
+> --- a/include/linux/cpuhotplug.h
+> +++ b/include/linux/cpuhotplug.h
+> @@ -161,6 +161,7 @@ enum cpuhp_state {
+>  	CPUHP_AP_PERF_ARM_HISI_DDRC_ONLINE,
+>  	CPUHP_AP_PERF_ARM_HISI_HHA_ONLINE,
+>  	CPUHP_AP_PERF_ARM_HISI_L3_ONLINE,
+> +	CPUHP_AP_PERF_ARM_HISI_PCIE_PMU_ONLINE,
+>  	CPUHP_AP_PERF_ARM_L2X0_ONLINE,
+>  	CPUHP_AP_PERF_ARM_QCOM_L2_ONLINE,
+>  	CPUHP_AP_PERF_ARM_QCOM_L3_ONLINE,
+> -- 
+> 2.19.1
+> 
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
