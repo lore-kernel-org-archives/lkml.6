@@ -7,65 +7,66 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEDACC6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:20:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 861C3C67872
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:20:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F73920879
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:20:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3942C20892
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:20:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544790039;
-	bh=lkvVOYFCYPvZVPx1tJidpajfxYcsiJY+0EppzywJyoE=;
+	s=default; t=1544790042;
+	bh=KiCQkTtL+kuYtPklTuBrTW8hPkks9YXXHJaT4DVMmRg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=raGYtBXHMjC6MKrAd+kZEV+dQ1RbkVWfcablDamikXIfGzzankaQy6nlXTWW2DYUK
-	 OmVaNUcPK8m0SUpxkFEiv3SEQVzXP6/1BDp2GhyV3y04fhdxIsntWTBfXmmJ/l+KYu
-	 nAmLY8To/vMPXT/7sO6RBg8m47SDP6yWM2NnqUCA=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F73920879
+	b=i0UTbLFgH+igJi0RLByAfLm4E34iWkY7TEZRnm23DrbYQrMus1RxBcETwfFwHMtlF
+	 S0PawBQ938Aw5Nemip1Qx2HXM3yjE9wrkt8FkDO73nO5iKkico17c9c+fLRfcAfE4B
+	 bFYKYsVWytdrTCaTv8zNHLKencSoGOGtEIy9G1Qk=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3942C20892
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732502AbeLNMPN (ORCPT
+        id S1732045AbeLNMUl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:15:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34976 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:20:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35132 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732486AbeLNMPI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:15:08 -0500
+        id S1732495AbeLNMPN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:15:13 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C4F4421536;
-        Fri, 14 Dec 2018 12:15:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B535321527;
+        Fri, 14 Dec 2018 12:15:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789707;
-        bh=lkvVOYFCYPvZVPx1tJidpajfxYcsiJY+0EppzywJyoE=;
+        s=default; t=1544789712;
+        bh=KiCQkTtL+kuYtPklTuBrTW8hPkks9YXXHJaT4DVMmRg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vSLGv3NhlVxryb5XQU9QavqacpxjouQi+nBK2jBev1GuwJ3ogeY+G9LUu2ohfzKha
-         4GOm4LShEbAgF5P+2f7knrok8pXBsSSS/jU+ZTqdkeqhc/ufiI1HjK96L8bfMhbUTt
-         IzrYof5Hovdk9+ElqW+Vl2dRR9Wjb9zeCykSj0Ic=
+        b=Q4bZfjhSUpbc//mV19GnoOxMX74m8cnQWTw4ZMOGv6dCCRGzQLDNuiCoWJghBhOtu
+         NgW4I1O42djTgMAJVi3zp1LTBydkE0LAqCr3hCAzXZ4Tw6H8lOJTw0AuYzx3amr+in
+         63GH0JQtOXdkZMdpgPdNnyZIElVa2axzDDl4uSQc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ashok Raj <ashok.raj@intel.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        stable@vger.kernel.org, KarimAllah Ahmed <karahmed@amazon.de>,
         David Woodhouse <dwmw@amazon.co.uk>,
-        KarimAllah Ahmed <karahmed@amazon.de>,
         Thomas Gleixner <tglx@linutronix.de>,
+        Darren Kenny <darren.kenny@oracle.com>,
         Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Jim Mattson <jmattson@google.com>,
         Andrea Arcangeli <aarcange@redhat.com>,
-        Andi Kleen <ak@linux.intel.com>, kvm@vger.kernel.org,
-        Asit Mallick <asit.k.mallick@intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Jun Nakajima <jun.nakajima@intel.com>, kvm@vger.kernel.org,
         Dave Hansen <dave.hansen@intel.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Asit Mallick <asit.k.mallick@intel.com>,
         Arjan Van De Ven <arjan.van.de.ven@intel.com>,
-        Jun Nakajima <jun.nakajima@intel.com>,
         Paolo Bonzini <pbonzini@redhat.com>,
         Dan Williams <dan.j.williams@intel.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ashok Raj <ashok.raj@intel.com>,
         Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.4 46/88] KVM/x86: Add IBPB support
-Date:   Fri, 14 Dec 2018 13:00:20 +0100
-Message-Id: <20181214115706.058590072@linuxfoundation.org>
+Subject: [PATCH 4.4 48/88] KVM/VMX: Allow direct access to MSR_IA32_SPEC_CTRL
+Date:   Fri, 14 Dec 2018 13:00:22 +0100
+Message-Id: <20181214115706.203588912@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115702.151309521@linuxfoundation.org>
 References: <20181214115702.151309521@linuxfoundation.org>
@@ -84,243 +85,128 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ashok Raj <ashok.raj@intel.com>
+From: KarimAllah Ahmed <karahmed@amazon.de>
 
-commit 15d45071523d89b3fb7372e2135fbd72f6af9506 upstream.
+commit d28b387fb74da95d69d2615732f50cceb38e9a4d upstream.
 
-The Indirect Branch Predictor Barrier (IBPB) is an indirect branch
-control mechanism. It keeps earlier branches from influencing
-later ones.
+[ Based on a patch from Ashok Raj <ashok.raj@intel.com> ]
 
-Unlike IBRS and STIBP, IBPB does not define a new mode of operation.
-It's a command that ensures predicted branch targets aren't used after
-the barrier. Although IBRS and IBPB are enumerated by the same CPUID
-enumeration, IBPB is very different.
+Add direct access to MSR_IA32_SPEC_CTRL for guests. This is needed for
+guests that will only mitigate Spectre V2 through IBRS+IBPB and will not
+be using a retpoline+IBPB based approach.
 
-IBPB helps mitigate against three potential attacks:
+To avoid the overhead of saving and restoring the MSR_IA32_SPEC_CTRL for
+guests that do not actually use the MSR, only start saving and restoring
+when a non-zero is written to it.
 
-* Mitigate guests from being attacked by other guests.
-  - This is addressed by issing IBPB when we do a guest switch.
+No attempt is made to handle STIBP here, intentionally. Filtering STIBP
+may be added in a future patch, which may require trapping all writes
+if we don't want to pass it through directly to the guest.
 
-* Mitigate attacks from guest/ring3->host/ring3.
-  These would require a IBPB during context switch in host, or after
-  VMEXIT. The host process has two ways to mitigate
-  - Either it can be compiled with retpoline
-  - If its going through context switch, and has set !dumpable then
-    there is a IBPB in that path.
-    (Tim's patch: https://patchwork.kernel.org/patch/10192871)
-  - The case where after a VMEXIT you return back to Qemu might make
-    Qemu attackable from guest when Qemu isn't compiled with retpoline.
-  There are issues reported when doing IBPB on every VMEXIT that resulted
-  in some tsc calibration woes in guest.
+[dwmw2: Clean up CPUID bits, save/restore manually, handle reset]
 
-* Mitigate guest/ring0->host/ring0 attacks.
-  When host kernel is using retpoline it is safe against these attacks.
-  If host kernel isn't using retpoline we might need to do a IBPB flush on
-  every VMEXIT.
-
-Even when using retpoline for indirect calls, in certain conditions 'ret'
-can use the BTB on Skylake-era CPUs. There are other mitigations
-available like RSB stuffing/clearing.
-
-* IBPB is issued only for SVM during svm_free_vcpu().
-  VMX has a vmclear and SVM doesn't.  Follow discussion here:
-  https://lkml.org/lkml/2018/1/15/146
-
-Please refer to the following spec for more details on the enumeration
-and control.
-
-Refer here to get documentation about mitigations.
-
-https://software.intel.com/en-us/side-channel-security-support
-
-[peterz: rebase and changelog rewrite]
-[karahmed: - rebase
-           - vmx: expose PRED_CMD if guest has it in CPUID
-           - svm: only pass through IBPB if guest has it in CPUID
-           - vmx: support !cpu_has_vmx_msr_bitmap()]
-           - vmx: support nested]
-[dwmw2: Expose CPUID bit too (AMD IBPB only for now as we lack IBRS)
-        PRED_CMD is a write-only MSR]
-
-Signed-off-by: Ashok Raj <ashok.raj@intel.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
+Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Darren Kenny <darren.kenny@oracle.com>
 Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Reviewed-by: Jim Mattson <jmattson@google.com>
 Cc: Andrea Arcangeli <aarcange@redhat.com>
 Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Jun Nakajima <jun.nakajima@intel.com>
 Cc: kvm@vger.kernel.org
-Cc: Asit Mallick <asit.k.mallick@intel.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Tim Chen <tim.c.chen@linux.intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Asit Mallick <asit.k.mallick@intel.com>
 Cc: Arjan Van De Ven <arjan.van.de.ven@intel.com>
 Cc: Greg KH <gregkh@linuxfoundation.org>
-Cc: Jun Nakajima <jun.nakajima@intel.com>
 Cc: Paolo Bonzini <pbonzini@redhat.com>
 Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>
-Link: http://lkml.kernel.org/r/1515720739-43819-6-git-send-email-ashok.raj@intel.com
-Link: https://lkml.kernel.org/r/1517522386-18410-3-git-send-email-karahmed@amazon.de
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Ashok Raj <ashok.raj@intel.com>
+Link: https://lkml.kernel.org/r/1517522386-18410-5-git-send-email-karahmed@amazon.de
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-[bwh: Backported to 4.4: adjust context]
 Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kvm/cpuid.c |   11 ++++++-
- arch/x86/kvm/cpuid.h |   12 +++++++
- arch/x86/kvm/svm.c   |   28 ++++++++++++++++++
- arch/x86/kvm/vmx.c   |   79 +++++++++++++++++++++++++++++++++++++++++++++++++--
- 4 files changed, 127 insertions(+), 3 deletions(-)
+ arch/x86/kvm/cpuid.c |    8 ++-
+ arch/x86/kvm/cpuid.h |   11 +++++
+ arch/x86/kvm/vmx.c   |  103 ++++++++++++++++++++++++++++++++++++++++++++++++++-
+ arch/x86/kvm/x86.c   |    2 
+ 4 files changed, 118 insertions(+), 6 deletions(-)
 
 --- a/arch/x86/kvm/cpuid.c
 +++ b/arch/x86/kvm/cpuid.c
-@@ -341,6 +341,10 @@ static inline int __do_cpuid_ent(struct
- 		F(3DNOWPREFETCH) | F(OSVW) | 0 /* IBS */ | F(XOP) |
- 		0 /* SKINIT, WDT, LWP */ | F(FMA4) | F(TBM);
+@@ -343,7 +343,7 @@ static inline int __do_cpuid_ent(struct
  
-+	/* cpuid 0x80000008.ebx */
-+	const u32 kvm_cpuid_8000_0008_ebx_x86_features =
-+		F(IBPB);
-+
+ 	/* cpuid 0x80000008.ebx */
+ 	const u32 kvm_cpuid_8000_0008_ebx_x86_features =
+-		F(IBPB);
++		F(IBPB) | F(IBRS);
+ 
  	/* cpuid 0xC0000001.edx */
  	const u32 kvm_supported_word5_x86_features =
- 		F(XSTORE) | F(XSTORE_EN) | F(XCRYPT) | F(XCRYPT_EN) |
-@@ -583,7 +587,12 @@ static inline int __do_cpuid_ent(struct
- 		if (!g_phys_as)
+@@ -364,7 +364,7 @@ static inline int __do_cpuid_ent(struct
+ 
+ 	/* cpuid 7.0.edx*/
+ 	const u32 kvm_cpuid_7_0_edx_x86_features =
+-		F(ARCH_CAPABILITIES);
++		F(SPEC_CTRL) | F(ARCH_CAPABILITIES);
+ 
+ 	/* all calls to cpuid_count() should be made on the same cpu */
+ 	get_cpu();
+@@ -595,9 +595,11 @@ static inline int __do_cpuid_ent(struct
  			g_phys_as = phys_as;
  		entry->eax = g_phys_as | (virt_as << 8);
--		entry->ebx = entry->edx = 0;
-+		entry->edx = 0;
-+		/* IBPB isn't necessarily present in hardware cpuid */
-+		if (boot_cpu_has(X86_FEATURE_IBPB))
-+			entry->ebx |= F(IBPB);
-+		entry->ebx &= kvm_cpuid_8000_0008_ebx_x86_features;
-+		cpuid_mask(&entry->ebx, CPUID_8000_0008_EBX);
+ 		entry->edx = 0;
+-		/* IBPB isn't necessarily present in hardware cpuid */
++		/* IBRS and IBPB aren't necessarily present in hardware cpuid */
+ 		if (boot_cpu_has(X86_FEATURE_IBPB))
+ 			entry->ebx |= F(IBPB);
++		if (boot_cpu_has(X86_FEATURE_IBRS))
++			entry->ebx |= F(IBRS);
+ 		entry->ebx &= kvm_cpuid_8000_0008_ebx_x86_features;
+ 		cpuid_mask(&entry->ebx, CPUID_8000_0008_EBX);
  		break;
- 	}
- 	case 0x80000019:
 --- a/arch/x86/kvm/cpuid.h
 +++ b/arch/x86/kvm/cpuid.h
-@@ -159,6 +159,18 @@ static inline bool guest_cpuid_has_rdtsc
- 	return best && (best->edx & bit(X86_FEATURE_RDTSCP));
+@@ -170,6 +170,17 @@ static inline bool guest_cpuid_has_ibpb(
+ 	return best && (best->edx & bit(X86_FEATURE_SPEC_CTRL));
  }
  
-+static inline bool guest_cpuid_has_ibpb(struct kvm_vcpu *vcpu)
++static inline bool guest_cpuid_has_ibrs(struct kvm_vcpu *vcpu)
 +{
 +	struct kvm_cpuid_entry2 *best;
 +
 +	best = kvm_find_cpuid_entry(vcpu, 0x80000008, 0);
-+	if (best && (best->ebx & bit(X86_FEATURE_IBPB)))
++	if (best && (best->ebx & bit(X86_FEATURE_IBRS)))
 +		return true;
 +	best = kvm_find_cpuid_entry(vcpu, 7, 0);
 +	return best && (best->edx & bit(X86_FEATURE_SPEC_CTRL));
 +}
 +
-+
- /*
-  * NRIPS is provided through cpuidfn 0x8000000a.edx bit 3
-  */
---- a/arch/x86/kvm/svm.c
-+++ b/arch/x86/kvm/svm.c
-@@ -182,6 +182,7 @@ static const struct svm_direct_access_ms
- 	{ .index = MSR_CSTAR,				.always = true  },
- 	{ .index = MSR_SYSCALL_MASK,			.always = true  },
- #endif
-+	{ .index = MSR_IA32_PRED_CMD,			.always = false },
- 	{ .index = MSR_IA32_LASTBRANCHFROMIP,		.always = false },
- 	{ .index = MSR_IA32_LASTBRANCHTOIP,		.always = false },
- 	{ .index = MSR_IA32_LASTINTFROMIP,		.always = false },
-@@ -411,6 +412,7 @@ struct svm_cpu_data {
- 	struct kvm_ldttss_desc *tss_desc;
- 
- 	struct page *save_area;
-+	struct vmcb *current_vmcb;
- };
- 
- static DEFINE_PER_CPU(struct svm_cpu_data *, svm_data);
-@@ -1210,11 +1212,17 @@ static void svm_free_vcpu(struct kvm_vcp
- 	__free_pages(virt_to_page(svm->nested.msrpm), MSRPM_ALLOC_ORDER);
- 	kvm_vcpu_uninit(vcpu);
- 	kmem_cache_free(kvm_vcpu_cache, svm);
-+	/*
-+	 * The vmcb page can be recycled, causing a false negative in
-+	 * svm_vcpu_load(). So do a full IBPB now.
-+	 */
-+	indirect_branch_prediction_barrier();
- }
- 
- static void svm_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
+ static inline bool guest_cpuid_has_arch_capabilities(struct kvm_vcpu *vcpu)
  {
- 	struct vcpu_svm *svm = to_svm(vcpu);
-+	struct svm_cpu_data *sd = per_cpu(svm_data, cpu);
- 	int i;
- 
- 	if (unlikely(cpu != vcpu->cpu)) {
-@@ -1239,6 +1247,10 @@ static void svm_vcpu_load(struct kvm_vcp
- 			wrmsrl(MSR_AMD64_TSC_RATIO, tsc_ratio);
- 		}
- 	}
-+	if (sd->current_vmcb != svm->vmcb) {
-+		sd->current_vmcb = svm->vmcb;
-+		indirect_branch_prediction_barrier();
-+	}
- }
- 
- static void svm_vcpu_put(struct kvm_vcpu *vcpu)
-@@ -3125,6 +3137,22 @@ static int svm_set_msr(struct kvm_vcpu *
- 	case MSR_IA32_TSC:
- 		kvm_write_tsc(vcpu, msr);
- 		break;
-+	case MSR_IA32_PRED_CMD:
-+		if (!msr->host_initiated &&
-+		    !guest_cpuid_has_ibpb(vcpu))
-+			return 1;
-+
-+		if (data & ~PRED_CMD_IBPB)
-+			return 1;
-+
-+		if (!data)
-+			break;
-+
-+		wrmsrl(MSR_IA32_PRED_CMD, PRED_CMD_IBPB);
-+		if (is_guest_mode(vcpu))
-+			break;
-+		set_msr_interception(svm->msrpm, MSR_IA32_PRED_CMD, 0, 1);
-+		break;
- 	case MSR_STAR:
- 		svm->vmcb->save.star = data;
- 		break;
+ 	struct kvm_cpuid_entry2 *best;
 --- a/arch/x86/kvm/vmx.c
 +++ b/arch/x86/kvm/vmx.c
-@@ -544,6 +544,7 @@ struct vcpu_vmx {
- 	u64 		      msr_host_kernel_gs_base;
- 	u64 		      msr_guest_kernel_gs_base;
+@@ -546,6 +546,7 @@ struct vcpu_vmx {
  #endif
-+
+ 
+ 	u64 		      arch_capabilities;
++	u64 		      spec_ctrl;
+ 
  	u32 vm_entry_controls_shadow;
  	u32 vm_exit_controls_shadow;
- 	/*
-@@ -892,6 +893,8 @@ static void copy_vmcs12_to_shadow(struct
- static void copy_shadow_to_vmcs12(struct vcpu_vmx *vmx);
- static int alloc_identity_pagetable(struct kvm *kvm);
- static void vmx_update_msr_bitmap(struct kvm_vcpu *vcpu);
-+static void __always_inline vmx_disable_intercept_for_msr(unsigned long *msr_bitmap,
-+							  u32 msr, int type);
- 
- static DEFINE_PER_CPU(struct vmcs *, vmxarea);
- static DEFINE_PER_CPU(struct vmcs *, current_vmcs);
-@@ -1687,6 +1690,29 @@ static void update_exception_bitmap(stru
- 	vmcs_write32(EXCEPTION_BITMAP, eb);
+@@ -1693,6 +1694,29 @@ static void update_exception_bitmap(stru
  }
  
-+/*
-+ * Check if MSR is intercepted for L01 MSR bitmap.
+ /*
++ * Check if MSR is intercepted for currently loaded MSR bitmap.
 + */
-+static bool msr_write_intercepted_l01(struct kvm_vcpu *vcpu, u32 msr)
++static bool msr_write_intercepted(struct kvm_vcpu *vcpu, u32 msr)
 +{
 +	unsigned long *msr_bitmap;
 +	int f = sizeof(unsigned long);
@@ -328,7 +214,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 +	if (!cpu_has_vmx_msr_bitmap())
 +		return true;
 +
-+	msr_bitmap = to_vmx(vcpu)->vmcs01.msr_bitmap;
++	msr_bitmap = to_vmx(vcpu)->loaded_vmcs->msr_bitmap;
 +
 +	if (msr <= 0x1fff) {
 +		return !!test_bit(msr, msr_bitmap + 0x800 / f);
@@ -340,33 +226,41 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 +	return true;
 +}
 +
- static void clear_atomic_switch_msr_special(struct vcpu_vmx *vmx,
- 		unsigned long entry, unsigned long exit)
- {
-@@ -2072,6 +2098,7 @@ static void vmx_vcpu_load(struct kvm_vcp
- 	if (per_cpu(current_vmcs, cpu) != vmx->loaded_vmcs->vmcs) {
- 		per_cpu(current_vmcs, cpu) = vmx->loaded_vmcs->vmcs;
- 		vmcs_load(vmx->loaded_vmcs->vmcs);
-+		indirect_branch_prediction_barrier();
- 	}
- 
- 	if (vmx->loaded_vmcs->cpu != cpu) {
-@@ -2904,6 +2931,33 @@ static int vmx_set_msr(struct kvm_vcpu *
++/*
+  * Check if MSR is intercepted for L01 MSR bitmap.
+  */
+ static bool msr_write_intercepted_l01(struct kvm_vcpu *vcpu, u32 msr)
+@@ -2834,6 +2858,13 @@ static int vmx_get_msr(struct kvm_vcpu *
+ 	case MSR_IA32_TSC:
+ 		msr_info->data = guest_read_tsc(vcpu);
+ 		break;
++	case MSR_IA32_SPEC_CTRL:
++		if (!msr_info->host_initiated &&
++		    !guest_cpuid_has_ibrs(vcpu))
++			return 1;
++
++		msr_info->data = to_vmx(vcpu)->spec_ctrl;
++		break;
+ 	case MSR_IA32_ARCH_CAPABILITIES:
+ 		if (!msr_info->host_initiated &&
+ 		    !guest_cpuid_has_arch_capabilities(vcpu))
+@@ -2939,6 +2970,36 @@ static int vmx_set_msr(struct kvm_vcpu *
  	case MSR_IA32_TSC:
  		kvm_write_tsc(vcpu, msr_info);
  		break;
-+	case MSR_IA32_PRED_CMD:
++	case MSR_IA32_SPEC_CTRL:
 +		if (!msr_info->host_initiated &&
-+		    !guest_cpuid_has_ibpb(vcpu))
++		    !guest_cpuid_has_ibrs(vcpu))
 +			return 1;
 +
-+		if (data & ~PRED_CMD_IBPB)
++		/* The STIBP bit doesn't fault even if it's not advertised */
++		if (data & ~(SPEC_CTRL_IBRS | SPEC_CTRL_STIBP))
 +			return 1;
++
++		vmx->spec_ctrl = data;
 +
 +		if (!data)
 +			break;
-+
-+		wrmsrl(MSR_IA32_PRED_CMD, PRED_CMD_IBPB);
 +
 +		/*
 +		 * For non-nested:
@@ -377,53 +271,112 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 +		 * The handling of the MSR bitmap for L2 guests is done in
 +		 * nested_vmx_merge_msr_bitmap. We should not touch the
 +		 * vmcs02.msr_bitmap here since it gets completely overwritten
-+		 * in the merging.
++		 * in the merging. We update the vmcs01 here for L1 as well
++		 * since it will end up touching the MSR anyway now.
 +		 */
-+		vmx_disable_intercept_for_msr(vmx->vmcs01.msr_bitmap, MSR_IA32_PRED_CMD,
-+					      MSR_TYPE_W);
++		vmx_disable_intercept_for_msr(vmx->vmcs01.msr_bitmap,
++					      MSR_IA32_SPEC_CTRL,
++					      MSR_TYPE_RW);
 +		break;
- 	case MSR_IA32_CR_PAT:
- 		if (vmcs_config.vmentry_ctrl & VM_ENTRY_LOAD_IA32_PAT) {
- 			if (!kvm_mtrr_valid(vcpu, MSR_IA32_CR_PAT, data))
-@@ -9172,9 +9226,23 @@ static inline bool nested_vmx_merge_msr_
- 	struct page *page;
+ 	case MSR_IA32_PRED_CMD:
+ 		if (!msr_info->host_initiated &&
+ 		    !guest_cpuid_has_ibpb(vcpu))
+@@ -5045,6 +5106,7 @@ static void vmx_vcpu_reset(struct kvm_vc
+ 	u64 cr0;
+ 
+ 	vmx->rmode.vm86_active = 0;
++	vmx->spec_ctrl = 0;
+ 
+ 	vmx->soft_vnmi_blocked = 0;
+ 
+@@ -8589,6 +8651,15 @@ static void __noclone vmx_vcpu_run(struc
+ 	atomic_switch_perf_msrs(vmx);
+ 	debugctlmsr = get_debugctlmsr();
+ 
++	/*
++	 * If this vCPU has touched SPEC_CTRL, restore the guest's value if
++	 * it's non-zero. Since vmentry is serialising on affected CPUs, there
++	 * is no need to worry about the conditional branch over the wrmsr
++	 * being speculatively taken.
++	 */
++	if (vmx->spec_ctrl)
++		wrmsrl(MSR_IA32_SPEC_CTRL, vmx->spec_ctrl);
++
+ 	vmx->__launched = vmx->loaded_vmcs->launched;
+ 	asm(
+ 		/* Store host registers */
+@@ -8707,6 +8778,27 @@ static void __noclone vmx_vcpu_run(struc
+ #endif
+ 	      );
+ 
++	/*
++	 * We do not use IBRS in the kernel. If this vCPU has used the
++	 * SPEC_CTRL MSR it may have left it on; save the value and
++	 * turn it off. This is much more efficient than blindly adding
++	 * it to the atomic save/restore list. Especially as the former
++	 * (Saving guest MSRs on vmexit) doesn't even exist in KVM.
++	 *
++	 * For non-nested case:
++	 * If the L01 MSR bitmap does not intercept the MSR, then we need to
++	 * save it.
++	 *
++	 * For nested case:
++	 * If the L02 MSR bitmap does not intercept the MSR, then we need to
++	 * save it.
++	 */
++	if (!msr_write_intercepted(vcpu, MSR_IA32_SPEC_CTRL))
++		rdmsrl(MSR_IA32_SPEC_CTRL, vmx->spec_ctrl);
++
++	if (vmx->spec_ctrl)
++		wrmsrl(MSR_IA32_SPEC_CTRL, 0);
++
+ 	/* Eliminate branch target predictions from guest mode */
+ 	vmexit_fill_RSB();
+ 
+@@ -9242,7 +9334,7 @@ static inline bool nested_vmx_merge_msr_
  	unsigned long *msr_bitmap_l1;
  	unsigned long *msr_bitmap_l0 = to_vmx(vcpu)->nested.vmcs02.msr_bitmap;
-+	/*
-+	 * pred_cmd is trying to verify two things:
-+	 *
-+	 * 1. L0 gave a permission to L1 to actually passthrough the MSR. This
-+	 *    ensures that we do not accidentally generate an L02 MSR bitmap
-+	 *    from the L12 MSR bitmap that is too permissive.
-+	 * 2. That L1 or L2s have actually used the MSR. This avoids
-+	 *    unnecessarily merging of the bitmap if the MSR is unused. This
-+	 *    works properly because we only update the L01 MSR bitmap lazily.
-+	 *    So even if L0 should pass L1 these MSRs, the L01 bitmap is only
-+	 *    updated to reflect this when L1 (or its L2s) actually write to
-+	 *    the MSR.
-+	 */
-+	bool pred_cmd = msr_write_intercepted_l01(vcpu, MSR_IA32_PRED_CMD);
+ 	/*
+-	 * pred_cmd is trying to verify two things:
++	 * pred_cmd & spec_ctrl are trying to verify two things:
+ 	 *
+ 	 * 1. L0 gave a permission to L1 to actually passthrough the MSR. This
+ 	 *    ensures that we do not accidentally generate an L02 MSR bitmap
+@@ -9255,9 +9347,10 @@ static inline bool nested_vmx_merge_msr_
+ 	 *    the MSR.
+ 	 */
+ 	bool pred_cmd = msr_write_intercepted_l01(vcpu, MSR_IA32_PRED_CMD);
++	bool spec_ctrl = msr_write_intercepted_l01(vcpu, MSR_IA32_SPEC_CTRL);
  
--	/* This shortcut is ok because we support only x2APIC MSRs so far. */
--	if (!nested_cpu_has_virt_x2apic_mode(vmcs12))
-+	if (!nested_cpu_has_virt_x2apic_mode(vmcs12) &&
-+	    !pred_cmd)
+ 	if (!nested_cpu_has_virt_x2apic_mode(vmcs12) &&
+-	    !pred_cmd)
++	    !pred_cmd && !spec_ctrl)
  		return false;
  
  	page = nested_get_page(vcpu, vmcs12->msr_bitmap);
-@@ -9209,6 +9277,13 @@ static inline bool nested_vmx_merge_msr_
- 				MSR_TYPE_W);
+@@ -9293,6 +9386,12 @@ static inline bool nested_vmx_merge_msr_
  		}
  	}
-+
-+	if (pred_cmd)
+ 
++	if (spec_ctrl)
 +		nested_vmx_disable_intercept_for_msr(
 +					msr_bitmap_l1, msr_bitmap_l0,
-+					MSR_IA32_PRED_CMD,
-+					MSR_TYPE_W);
++					MSR_IA32_SPEC_CTRL,
++					MSR_TYPE_R | MSR_TYPE_W);
 +
- 	kunmap(page);
- 	nested_release_page_clean(page);
+ 	if (pred_cmd)
+ 		nested_vmx_disable_intercept_for_msr(
+ 					msr_bitmap_l1, msr_bitmap_l0,
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -961,7 +961,7 @@ static u32 msrs_to_save[] = {
+ #endif
+ 	MSR_IA32_TSC, MSR_IA32_CR_PAT, MSR_VM_HSAVE_PA,
+ 	MSR_IA32_FEATURE_CONTROL, MSR_IA32_BNDCFGS, MSR_TSC_AUX,
+-	MSR_IA32_ARCH_CAPABILITIES
++	MSR_IA32_SPEC_CTRL, MSR_IA32_ARCH_CAPABILITIES
+ };
  
+ static unsigned num_msrs_to_save;
 
 
