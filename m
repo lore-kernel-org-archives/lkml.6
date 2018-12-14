@@ -2,116 +2,120 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9350C67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:53:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D7D5C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:54:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD7102133F
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:53:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544792038;
-	bh=Ti3RnVhaAJbxhs+XP+FgSFV9+BKdeOBemVe96cWWCK0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=Ns6NsBkcraT7FjUC2JrGjnjjmhZ9/1qtG6Vj0AJtaFHQvsPwWdFSk0BBoN41XnL+4
-	 tnepa2jXWEbyxZH6IHWppFW5tzL64jzskyJmdFOp1WPQ8s2FKO6fsOSZrdR+eL8lod
-	 87wvKH402ZXGg7BZruUh2VYh8CNQqDqINNyhxv2k=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD7102133F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id B83732133F
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:54:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="C+lWUgz1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B83732133F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lca.pw
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729835AbeLNMx5 (ORCPT
+        id S1729843AbeLNMyT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:53:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34462 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726281AbeLNMx4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:53:56 -0500
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CB49B2145D
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 12:53:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544792036;
-        bh=Ti3RnVhaAJbxhs+XP+FgSFV9+BKdeOBemVe96cWWCK0=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=aeZ+t5hGS4Ny+DqQK0QLGttPqZmIq2loS+3+DNqC21mRD3i2jkcWUo7yArhjiOKZQ
-         wUa9cqkK3v+KeyaFpT/sxOWDuxVV7FnI1gpWkeMPfksLH/LJ00wpQRiFH8shl2Quy3
-         218nkqmA63ZPy6ntPrf7S8Mg9k33yYYkpKLTvGLs=
-Received: by mail-qk1-f182.google.com with SMTP id o89so3157250qko.0
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 04:53:55 -0800 (PST)
-X-Gm-Message-State: AA+aEWaaC+HSE8TnNpQagC+ZmGSsXnM9Bk+9iKV+To3imUSkJbM5uMoA
-        wKtfCcHii9Z5rfJUqQhx7p2B00hpVJb005RFveQ=
-X-Google-Smtp-Source: AFSGD/VyvvIejuyMeVGdbudmeVgjpDJMZdGlmgRJcpCC+GohqjnGSb2i3GDne1/9opf8IycIwMkTB0eTAigQUiGp1v4=
-X-Received: by 2002:a37:f706:: with SMTP id q6mr2314341qkj.96.1544792034950;
- Fri, 14 Dec 2018 04:53:54 -0800 (PST)
+        Fri, 14 Dec 2018 07:54:19 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:38712 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726281AbeLNMyT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:54:19 -0500
+Received: by mail-qt1-f196.google.com with SMTP id p17so6002695qtl.5
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 04:54:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=IDIsjugZ0+zssGZiEzloM69Wr9ndBpcxgmyaXzGXaYU=;
+        b=C+lWUgz1Qa2uLWK7CBUlqEANjVXgXT5vc2wsszMWa1T9mhk+HTvHFt3ABke/BR1gSO
+         v532aIQ3/JWAylTyaccSRKGIwl3+AfzJxTylrT58DpohjwNjzK3dFOkKWt2cxMQiXqgC
+         Qx3Y2alogh8ipu+gFHQg0dUUEMViRGo/744TtTFK17fp18eu9tizePWXXBsUttijmLZH
+         66PEPwI0efiZRT+SKVJR4X0lqvK5daG2XB0RNYT4hQF4ea2GZ+hXj7WfAD2jO5jaxUkf
+         Sc9Gv/s10onufDcYJvJ18Twi/+PbnPvKIlx9pp2CvpzgITN/AMB1EURnGqRkipbsMV+m
+         R2zQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=IDIsjugZ0+zssGZiEzloM69Wr9ndBpcxgmyaXzGXaYU=;
+        b=Ys5a/R9fY0V+2CygJ2bkYixoyyldv2lCW4bAocodpH7Hfh6SJZ/91hsYBDKQmLvRkf
+         sXBwMumZBsjNvrpxT8/1WDmEpgUKS93UJGsdBOecwdeZcaeh2dmoK3cRxdvFCYs+zh05
+         KbZJMEzj4joEd3WfHMwsUHtdBugoyWnWf3fC01qKM6N4242L9EHj1hgi8dA94kEIh0x+
+         1U1WmAYiAcAf7n/IpN0S4GaH2YPHSvJ5A0U7bGGVit0yVXZtnk24xW/IFowwB3qlfT6O
+         xIkRQHYHx4vO3dGLLlb51+6ZLiQjSoPNBrlTglvcr/8zMQPfok83GMuCa7AGqntXZ329
+         bZXQ==
+X-Gm-Message-State: AA+aEWbx3hrcPPp6NkKw6zi92dXWTeKmakc86MrMyTR+xKCzihmw0qLQ
+        l5eYOpFAEeJg11YibqEHeeMemQ==
+X-Google-Smtp-Source: AFSGD/U0s2exQhAvJ4ZK6CQBRYoy9LXBMxPBiztLWItKxcGZeWpRCcq0okgWxI/AN/k5W6XnLZnqVg==
+X-Received: by 2002:aed:358b:: with SMTP id c11mr2458884qte.155.1544792057645;
+        Fri, 14 Dec 2018 04:54:17 -0800 (PST)
+Received: from ovpn-121-90.rdu2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id t43sm3846017qtc.53.2018.12.14.04.54.16
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 14 Dec 2018 04:54:17 -0800 (PST)
+Subject: Re: [PATCH v2] arm64: invalidate TLB just before turning MMU on
+To:     Bhupesh Sharma <bhsharma@redhat.com>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        kexec mailing list <kexec@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        James Morse <james.morse@arm.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+References: <20181213052259.56352-1-cai@lca.pw>
+ <20181214040819.58625-1-cai@lca.pw>
+ <CACi5LpNQ1WGE54uv35OwNmJkKR_xnqTNqFK+R9oFBVkb683z_Q@mail.gmail.com>
+From:   Qian Cai <cai@lca.pw>
+Message-ID: <fad4c4e5-73e3-c264-511b-f4f28b7e16f3@lca.pw>
+Date:   Fri, 14 Dec 2018 07:54:14 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
+ Gecko/20100101 Thunderbird/60.3.3
 MIME-Version: 1.0
-References: <20181102111248.GA19135@chelsio.com>
-In-Reply-To: <20181102111248.GA19135@chelsio.com>
-From:   Josh Boyer <jwboyer@kernel.org>
-Date:   Fri, 14 Dec 2018 07:53:43 -0500
-X-Gmail-Original-Message-ID: <CA+5PVA6a9Gm71QY-ifntaXzOZH5rkDOBYia1nFVkFruC-EDvqw@mail.gmail.com>
-Message-ID: <CA+5PVA6a9Gm71QY-ifntaXzOZH5rkDOBYia1nFVkFruC-EDvqw@mail.gmail.com>
-Subject: Re: pull request: linux-firmware: update cxgb4 firmware
-To:     Ganesh Goudar <ganeshgr@chelsio.com>
-Cc:     Linux Firmware <linux-firmware@kernel.org>,
-        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>,
-        nirranjan@chelsio.com, dt@chelsio.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CACi5LpNQ1WGE54uv35OwNmJkKR_xnqTNqFK+R9oFBVkb683z_Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 2, 2018 at 7:56 AM Ganesh Goudar <ganeshgr@chelsio.com> wrote:
->
-> Hi,
->
-> Kindly pull the new firmware from the following URL.
-> git://git.chelsio.net/pub/git/linux-firmware.git for-upstream
->
-> Thanks
-> Ganesh
->
-> The following changes since commit 1baa34868b2c0a004dc595b20678145e3fff83e7:
->
->   Merge branch 'nxp_mc' of https://github.com/NXP/linux-firmware (2018-10-26 08:13:19 -0400)
->
-> are available in the git repository at:
->
->
->   git://git.chelsio.net/pub/git/linux-firmware.git for-upstream
->
-> for you to fetch changes up to e7cdec460311a76e4f99e6bed763628af5fc2208:
->
->   cxgb4: update firmware to revision 1.21.5.0 (2018-11-02 03:38:38 -0700)
->
-> ----------------------------------------------------------------
-> Ganesh Goudar (1):
->       cxgb4: update firmware to revision 1.21.5.0
->
->  WHENCE                  |  12 ++++++------
->  cxgb4/t4fw-1.20.8.0.bin | Bin 559616 -> 0 bytes
->  cxgb4/t4fw-1.21.5.0.bin | Bin 0 -> 561664 bytes
->  cxgb4/t4fw.bin          |   2 +-
->  cxgb4/t5fw-1.20.8.0.bin | Bin 646144 -> 0 bytes
->  cxgb4/t5fw-1.21.5.0.bin | Bin 0 -> 648704 bytes
->  cxgb4/t5fw.bin          |   2 +-
->  cxgb4/t6fw-1.20.8.0.bin | Bin 692736 -> 0 bytes
->  cxgb4/t6fw-1.21.5.0.bin | Bin 0 -> 695296 bytes
->  cxgb4/t6fw.bin          |   2 +-
->  10 files changed, 9 insertions(+), 9 deletions(-)
->  delete mode 100644 cxgb4/t4fw-1.20.8.0.bin
->  create mode 100644 cxgb4/t4fw-1.21.5.0.bin
->  delete mode 100644 cxgb4/t5fw-1.20.8.0.bin
->  create mode 100644 cxgb4/t5fw-1.21.5.0.bin
->  delete mode 100644 cxgb4/t6fw-1.20.8.0.bin
->  create mode 100644 cxgb4/t6fw-1.21.5.0.bin
+On 12/14/18 12:01 AM, Bhupesh Sharma wrote:
+> Not sure why I can't reproduce on my HPE Apollo machine, so a couple
+> of questions:
+> 1. How many CPUs do you enable in the kdump kernel - do you pass
+> 'nr_cpus=1' to the kdump kernel to limit the maximum number of cores
+> to 1 in the kdump kernel?
 
-Pulled and pushed out.  Apologies for the large delay.
+Yes
 
-josh
+> 2. Which firmware version do you use on your board?
+
+Handle 0x0000, DMI type 0, 26 bytes
+BIOS Information
+        Vendor: American Megatrends Inc.
+        Version: L50_5.13_1.0.6
+        Release Date: 07/10/2018
+        Address: 0xF0000
+        Runtime Size: 64 kB
+        ROM Size: 64 MB
+        Characteristics:
+                PCI is supported
+                BIOS is upgradeable
+                BIOS shadowing is allowed
+                Boot from CD is supported
+                Selectable boot is supported
+                BIOS ROM is socketed
+                ACPI is supported
+                BIOS boot specification is supported
+                Targeted content distribution is supported
+                UEFI is supported
+        BIOS Revision: 6.3
