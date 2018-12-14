@@ -6,57 +6,58 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7A8FC67872
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 10:05:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13C7FC67872
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 10:06:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F3822086D
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 10:05:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F3822086D
+	by mail.kernel.org (Postfix) with ESMTP id C78E42086D
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 10:06:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C78E42086D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729296AbeLNKFu (ORCPT
+        id S1729364AbeLNKGf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 05:05:50 -0500
-Received: from mail-vk1-f195.google.com ([209.85.221.195]:33661 "EHLO
-        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726344AbeLNKFu (ORCPT
+        Fri, 14 Dec 2018 05:06:35 -0500
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:46254 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726344AbeLNKGe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 05:05:50 -0500
-Received: by mail-vk1-f195.google.com with SMTP id d201so1154964vka.0;
-        Fri, 14 Dec 2018 02:05:49 -0800 (PST)
+        Fri, 14 Dec 2018 05:06:34 -0500
+Received: by mail-vs1-f65.google.com with SMTP id n10so3009645vso.13;
+        Fri, 14 Dec 2018 02:06:34 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=LKCo1QLU8uT7cgPsnRr67cnQq1XRBg+73LhYwBd/plo=;
-        b=sdKXaMrULu2tls7V+sRT6t7xTTK4fWCi8IEktG3CfxbN1etjEFlOOyJwOIs93OXrbR
-         8ZnAkYE6Nsn4oa7fYe22kzxfDT7q1WNsEkpr0ebH+pQTRuhtyXucmY5W68I4OCJ02VYp
-         TF2C5wEdwv5WycuagdVhzUYeqNkDipdjaeXEknEgZELiStnUK4laRJwuBO6cbK9HKWqP
-         eS6hNC/6Zj1BLjgCoqABakA2nAnYNm5gwfRC4y5mQgOrYZhGy9gxs/x59rLI249kw2Mm
-         2SImvJ0zula8390QSBiVp9gDYuBUGqIHOXpifHcfwvJ/hhg0XnBBlCHKbr+LKuSxJmVY
-         DveA==
-X-Gm-Message-State: AA+aEWaGfHy5uez45ebZYvLqJsx7uN8KWUcADI9v97wGuoO+Wkd1g/6E
-        FeKM7LkKciv75BMQP+fOFhkXRLGh87cEhG/pjXC69T0k
-X-Google-Smtp-Source: AFSGD/UFhajYMHxroswsPIWC9fik5vhY+u/0O2r+xb+OU1n0T6bcQDKMEhPYBRhbXHZSs2S+7PmlChsKzr/y9QzIPEQ=
-X-Received: by 2002:a1f:91cb:: with SMTP id t194mr962098vkd.74.1544781948899;
- Fri, 14 Dec 2018 02:05:48 -0800 (PST)
+        bh=0sD6C/f5j60o6YVaQU7FwP7ODkT/Pxt45sE4f3QoNLE=;
+        b=nj5eKFWsozCdOWVTQhQpI7XLSxZP7Q/PUTYGKj9LZsMXkRMtB412kPtw+G+tJvTP2C
+         YVFKs+29tPbUhQW26RRArOfVgXKC4QagXDZ0dzg4U0VVBEdEoE71Oi+82i17FDs7GvqL
+         EDm7Vng4DutgSpAaX0Hnd3jNMRwE/MjuvmpI7OxKCDwDvZcwKRe4AbA4SUV8OeYkaFK4
+         apU4ABMx3F3gzv9U1+6kdjJPQV9T2QWYU2liJqLa7lWwidBh9wtFad5HBiQfkMd8AGhb
+         ZrtU4atVe1hT3oFkRvo2qa/iGOdiLxe7StRDMfolz/naWdqwrQSVK+HnZQ0JdASzuyus
+         +V4g==
+X-Gm-Message-State: AA+aEWaR/O03SWVJLDmRr+vh+EoV8JO3vqcsfP3wKt7xDAcWZM9U3qZt
+        aSbz+Wnthq30X6yPPh/kr+eigubala+0Vt+jUyc=
+X-Google-Smtp-Source: AFSGD/Uc4OGan38/GHcDrAfqa2OdBltw6rRuoLb9+dE59xaubsYBF/ZWag9ZluqcJ98ouAdhADlRyqpJfshR+QdaPnQ=
+X-Received: by 2002:a67:f43:: with SMTP id 64mr1003454vsp.166.1544781993620;
+ Fri, 14 Dec 2018 02:06:33 -0800 (PST)
 MIME-Version: 1.0
-References: <1544732284-5951-1-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1544732284-5951-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1544732294-5996-1-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1544732294-5996-1-git-send-email-fabrizio.castro@bp.renesas.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 14 Dec 2018 11:05:37 +0100
-Message-ID: <CAMuHMdXq4fjyYy8RE_+oYedoUri_-=CvsdVn_gNbVsDpaOgK8w@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: irqchip: renesas-irqc: Document r8a774c0 support
+Date:   Fri, 14 Dec 2018 11:06:21 +0100
+Message-ID: <CAMuHMdUiSXfkHOzNzNCZdaOg4O4FYs6JZT-EH_ZuwbAfr6P_xA@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: gpio: rcar: Add r8a774c0 (RZ/G2E) support
 To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
         "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Simon Horman <horms@verge.net.au>,
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
@@ -69,7 +70,8 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Thu, Dec 13, 2018 at 9:18 PM Fabrizio Castro
 <fabrizio.castro@bp.renesas.com> wrote:
-> Document RZ/G2E (R8A774C0) SoC bindings.
+> Document Renesas' RZ/G2E (R8A774C0) GPIO blocks compatibility within the
+> relevant dt-bindings.
 >
 > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
