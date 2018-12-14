@@ -7,47 +7,45 @@ X-Spam-Status: No, score=-11.9 required=3.0
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 378DCC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:34:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A8DAC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:34:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93A83208C1
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:34:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B4BA02080F
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:34:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730902AbeLNUeC (ORCPT
+        id S1730921AbeLNUeZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 15:34:02 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:51245 "EHLO
+        Fri, 14 Dec 2018 15:34:25 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:34585 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730123AbeLNUeC (ORCPT
+        with ESMTP id S1730739AbeLNUeZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 15:34:02 -0500
+        Fri, 14 Dec 2018 15:34:25 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBEKXggt1454739
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBEKYGHI1454815
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Fri, 14 Dec 2018 12:33:42 -0800
+        Fri, 14 Dec 2018 12:34:16 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBEKXfjG1454736;
-        Fri, 14 Dec 2018 12:33:41 -0800
-Date:   Fri, 14 Dec 2018 12:33:41 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBEKYGUg1454811;
+        Fri, 14 Dec 2018 12:34:16 -0800
+Date:   Fri, 14 Dec 2018 12:34:16 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Jin Yao <tipbot@zytor.com>
-Message-ID: <tip-eb58157b92bfdddc5257f9a170edd3db96e96748@git.kernel.org>
-Cc:     kan.liang@linux.intel.com, acme@redhat.com, tglx@linutronix.de,
-        hpa@zytor.com, mingo@kernel.org, jolsa@kernel.org,
-        peterz@infradead.org, alexander.shishkin@linux.intel.com,
-        yao.jin@linux.intel.com, linux-kernel@vger.kernel.org,
-        ak@linux.intel.com
-Reply-To: tglx@linutronix.de, acme@redhat.com, kan.liang@linux.intel.com,
-          mingo@kernel.org, jolsa@kernel.org, hpa@zytor.com,
-          alexander.shishkin@linux.intel.com, peterz@infradead.org,
-          yao.jin@linux.intel.com, linux-kernel@vger.kernel.org,
-          ak@linux.intel.com
-In-Reply-To: <1543586097-27632-5-git-send-email-yao.jin@linux.intel.com>
-References: <1543586097-27632-5-git-send-email-yao.jin@linux.intel.com>
+From:   tip-bot for Tzvetomir Stoyanov <tipbot@zytor.com>
+Message-ID: <tip-c1f71ed8f5d1bb8d048c54c509ee9b08878900c6@git.kernel.org>
+Cc:     acme@redhat.com, linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        jolsa@redhat.com, namhyung@kernel.org, rostedt@goodmis.org,
+        akpm@linux-foundation.org, hpa@zytor.com, tstoyanov@vmware.com,
+        mingo@kernel.org
+Reply-To: linux-kernel@vger.kernel.org, acme@redhat.com,
+          tglx@linutronix.de, jolsa@redhat.com, namhyung@kernel.org,
+          rostedt@goodmis.org, akpm@linux-foundation.org, hpa@zytor.com,
+          tstoyanov@vmware.com, mingo@kernel.org
+In-Reply-To: <20181130154646.890615385@goodmis.org>
+References: <20181130154646.890615385@goodmis.org>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf report: Documentation average IPC and IPC
- coverage
-Git-Commit-ID: eb58157b92bfdddc5257f9a170edd3db96e96748
+Subject: [tip:perf/core] tools lib traceevent: Implement new API
+ tep_get_ref()
+Git-Commit-ID: c1f71ed8f5d1bb8d048c54c509ee9b08878900c6
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -61,51 +59,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  eb58157b92bfdddc5257f9a170edd3db96e96748
-Gitweb:     https://git.kernel.org/tip/eb58157b92bfdddc5257f9a170edd3db96e96748
-Author:     Jin Yao <yao.jin@linux.intel.com>
-AuthorDate: Fri, 30 Nov 2018 21:54:57 +0800
+Commit-ID:  c1f71ed8f5d1bb8d048c54c509ee9b08878900c6
+Gitweb:     https://git.kernel.org/tip/c1f71ed8f5d1bb8d048c54c509ee9b08878900c6
+Author:     Tzvetomir Stoyanov <tstoyanov@vmware.com>
+AuthorDate: Fri, 30 Nov 2018 10:44:04 -0500
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Fri, 30 Nov 2018 17:14:52 -0300
 
-perf report: Documentation average IPC and IPC coverage
+tools lib traceevent: Implement new API tep_get_ref()
 
-Add explanations for new columns "IPC" and "IPC coverage" in perf
-documentation.
+This patch implements a new API of the tracevent library:
 
- v5:
- ---
- Update the description according to Ingo's comments.
+  int tep_get_ref(struct tep_handle *tep);
 
-Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
-Reviewed-by: Ingo Molnar <mingo@kernel.org>
-Reviewed-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/1543586097-27632-5-git-send-email-yao.jin@linux.intel.com
+The API returns the reference counter "ref_count" of the tep handler.
+As "struct tep_handle" is internal only, its members cannot be accessed
+by the library users, the API is used to get the reference counter.
+
+Signed-off-by: Tzvetomir Stoyanov <tstoyanov@vmware.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Link: http://lkml.kernel.org/r/20181130154646.890615385@goodmis.org
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/Documentation/perf-report.txt | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ tools/lib/traceevent/event-parse.c | 7 +++++++
+ tools/lib/traceevent/event-parse.h | 1 +
+ 2 files changed, 8 insertions(+)
 
-diff --git a/tools/perf/Documentation/perf-report.txt b/tools/perf/Documentation/perf-report.txt
-index 474a4941f65d..ed2bf37ab132 100644
---- a/tools/perf/Documentation/perf-report.txt
-+++ b/tools/perf/Documentation/perf-report.txt
-@@ -126,6 +126,14 @@ OPTIONS
- 	And default sort keys are changed to comm, dso_from, symbol_from, dso_to
- 	and symbol_to, see '--branch-stack'.
+diff --git a/tools/lib/traceevent/event-parse.c b/tools/lib/traceevent/event-parse.c
+index 2b5cb33046ce..d1e6ee3d43cf 100644
+--- a/tools/lib/traceevent/event-parse.c
++++ b/tools/lib/traceevent/event-parse.c
+@@ -6730,6 +6730,13 @@ void tep_ref(struct tep_handle *pevent)
+ 	pevent->ref_count++;
+ }
  
-+	When the sort key symbol is specified, columns "IPC" and "IPC Coverage"
-+	are enabled automatically. Column "IPC" reports the average IPC per function
-+	and column "IPC coverage" reports the percentage of instructions with
-+	sampled IPC in this function. IPC means Instruction Per Cycle. If it's low,
-+	it indicates there may be a performance bottleneck when the function is
-+	executed, such as a memory access bottleneck. If a function has high overhead
-+	and low IPC, it's worth further analyzing it to optimize its performance.
++int tep_get_ref(struct tep_handle *tep)
++{
++	if (tep)
++		return tep->ref_count;
++	return 0;
++}
 +
- 	If the --mem-mode option is used, the following sort keys are also available
- 	(incompatible with --branch-stack):
- 	symbol_daddr, dso_daddr, locked, tlb, mem, snoop, dcacheline.
+ void tep_free_format_field(struct tep_format_field *field)
+ {
+ 	free(field->type);
+diff --git a/tools/lib/traceevent/event-parse.h b/tools/lib/traceevent/event-parse.h
+index 16bf4c890b6f..44ec26c72c2e 100644
+--- a/tools/lib/traceevent/event-parse.h
++++ b/tools/lib/traceevent/event-parse.h
+@@ -581,6 +581,7 @@ struct tep_handle *tep_alloc(void);
+ void tep_free(struct tep_handle *pevent);
+ void tep_ref(struct tep_handle *pevent);
+ void tep_unref(struct tep_handle *pevent);
++int tep_get_ref(struct tep_handle *tep);
+ 
+ /* access to the internal parser */
+ void tep_buffer_init(const char *buf, unsigned long long size);
