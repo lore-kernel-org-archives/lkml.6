@@ -4,53 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82AD6C67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:16:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9331BC67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:16:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F65A214DB
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:16:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 56D5B214DB
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:16:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544789763;
-	bh=GOJ6cCnek1ymHYbP1KywIiqd+3O9ZhpRbXrz9IW9FH4=;
+	s=default; t=1544789766;
+	bh=m+zIM6n1rDG23MPrC6DN9I4eVhYA1RjTvNailiUXD/g=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=N+9O+KmIa4I6bbZBfy/y/YqeegtYVCST1io4+G1p8yCqeoRaRaXrRABleHyenQiTa
-	 Gqs2L2wMpsELfpKI1hrwxTCYSplklsy6jFK1IogW3+uLyGEyTUCvhKEHktw0eszk1w
-	 EZiWkOWeCJnFcnnt2IDF7WbxH4RYDSm1NF0yd3ks=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F65A214DB
+	b=xvrHpwZoFI2q0kbguhtJdkVoj+1sDrNTzPHCUqnkKExyyEs5OBEetptgrM3yjoG1A
+	 P4CpflgusRPCmapff14i3Noe1tli0V+JY1xmQbqEGR4jaweF3GKL28Z4rvfuSUpTS9
+	 QhD9sHLuE/jtciGN/2QTBO7StvnU2/1bVqZ748Fs=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56D5B214DB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732672AbeLNMQB (ORCPT
+        id S1732150AbeLNMQF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:16:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36044 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:16:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36006 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732369AbeLNMP5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:15:57 -0500
+        id S1732649AbeLNMPy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:15:54 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4422621479;
-        Fri, 14 Dec 2018 12:15:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A1B232133F;
+        Fri, 14 Dec 2018 12:15:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789755;
-        bh=GOJ6cCnek1ymHYbP1KywIiqd+3O9ZhpRbXrz9IW9FH4=;
+        s=default; t=1544789753;
+        bh=m+zIM6n1rDG23MPrC6DN9I4eVhYA1RjTvNailiUXD/g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wF2+0wpmf2EzR26EIUtqz0KL+5nSIMyIFD3aA+bGiJqqzzbQRnYeu2bfo9Z4bEM4T
-         nFhDUstwB/GseMCUlubXoVzk1XWgv2DskEj9jLcUG3/lFlAZZPPCv5ckEndDxNcC8s
-         mK8WIdDN8getMSLxf+Du51XWQHB2O9ZZEF2gAUi8=
+        b=sLMBtZXJA0KC7s21Il/cr5fgnD3QD4ifNU8vLiMaiGz5XW67snL7rUi6VLtge5bda
+         0Dt8A/nfiAco7cdaPkJ+qpIRvC+lJA68eNwB3R0glE98A2zwNkddOVrm4ocKSeozCl
+         pNC/+vnLFbaS+rl/vV5nOiqAWqE6gQ9SOjTD3HDU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
+        stable@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>,
         Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.4 65/88] bpf: Prevent memory disambiguation attack
-Date:   Fri, 14 Dec 2018 13:00:39 +0100
-Message-Id: <20181214115707.681167481@linuxfoundation.org>
+Subject: [PATCH 4.4 64/88] bpf/verifier: Pass instruction index to check_mem_access() and check_xadd()
+Date:   Fri, 14 Dec 2018 13:00:38 +0100
+Message-Id: <20181214115707.623225928@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115702.151309521@linuxfoundation.org>
 References: <20181214115702.151309521@linuxfoundation.org>
@@ -69,145 +68,90 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexei Starovoitov <ast@kernel.org>
+From: Ben Hutchings <ben.hutchings@codethink.co.uk>
 
-commit af86ca4e3088fe5eacf2f7e58c01fa68ca067672 upstream.
+Extracted from commit 31fd85816dbe "bpf: permits narrower load from
+bpf program context fields".
 
-Detect code patterns where malicious 'speculative store bypass' can be used
-and sanitize such patterns.
-
- 39: (bf) r3 = r10
- 40: (07) r3 += -216
- 41: (79) r8 = *(u64 *)(r7 +0)   // slow read
- 42: (7a) *(u64 *)(r10 -72) = 0  // verifier inserts this instruction
- 43: (7b) *(u64 *)(r8 +0) = r3   // this store becomes slow due to r8
- 44: (79) r1 = *(u64 *)(r6 +0)   // cpu speculatively executes this load
- 45: (71) r2 = *(u8 *)(r1 +0)    // speculatively arbitrary 'load byte'
-                                 // is now sanitized
-
-Above code after x86 JIT becomes:
- e5: mov    %rbp,%rdx
- e8: add    $0xffffffffffffff28,%rdx
- ef: mov    0x0(%r13),%r14
- f3: movq   $0x0,-0x48(%rbp)
- fb: mov    %rdx,0x0(%r14)
- ff: mov    0x0(%rbx),%rdi
-103: movzbq 0x0(%rdi),%rsi
-
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-[bwh: Backported to 4.4:
- - Add verifier_env parameter to check_stack_write()
- - Look up stack slot_types with state->stack_slot_type[] rather than
-   state->stack[].slot_type[]
- - Drop bpf_verifier_env argument to verbose()
- - Adjust filename, context]
+Cc: Daniel Borkmann <daniel@iogearbox.net>
+Cc: Alexei Starovoitov <ast@kernel.org>
 Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/bpf/verifier.c |   63 ++++++++++++++++++++++++++++++++++++++++++++++----
- 1 file changed, 59 insertions(+), 4 deletions(-)
+ kernel/bpf/verifier.c |   16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
 --- a/kernel/bpf/verifier.c
 +++ b/kernel/bpf/verifier.c
-@@ -191,6 +191,7 @@ struct bpf_insn_aux_data {
- 		enum bpf_reg_type ptr_type;	/* pointer type for load/store insns */
- 		struct bpf_map *map_ptr;	/* pointer for call insn into lookup_elem */
- 	};
-+	int sanitize_stack_off; /* stack slot to be cleared */
- 	bool seen; /* this insn was processed by the verifier */
- };
- 
-@@ -569,8 +570,9 @@ static bool is_spillable_regtype(enum bp
- /* check_stack_read/write functions track spill/fill of registers,
-  * stack boundary and alignment are checked in check_mem_access()
+@@ -694,7 +694,7 @@ static bool is_ctx_reg(struct verifier_e
+  * if t==write && value_regno==-1, some unknown value is stored into memory
+  * if t==read && value_regno==-1, don't care what we read from memory
   */
--static int check_stack_write(struct verifier_state *state, int off, int size,
--			     int value_regno)
-+static int check_stack_write(struct verifier_env *env,
-+			     struct verifier_state *state, int off,
-+			     int size, int value_regno, int insn_idx)
+-static int check_mem_access(struct verifier_env *env, u32 regno, int off,
++static int check_mem_access(struct verifier_env *env, int insn_idx, u32 regno, int off,
+ 			    int bpf_size, enum bpf_access_type t,
+ 			    int value_regno)
  {
- 	int i, spi = (MAX_BPF_STACK + off) / BPF_REG_SIZE;
- 	/* caller checked that off % size == 0 and -MAX_BPF_STACK <= off < 0,
-@@ -589,8 +591,32 @@ static int check_stack_write(struct veri
- 		/* save register state */
- 		state->spilled_regs[spi] = state->regs[value_regno];
+@@ -758,7 +758,7 @@ static int check_mem_access(struct verif
+ 	return err;
+ }
  
--		for (i = 0; i < BPF_REG_SIZE; i++)
-+		for (i = 0; i < BPF_REG_SIZE; i++) {
-+			if (state->stack_slot_type[MAX_BPF_STACK + off + i] == STACK_MISC &&
-+			    !env->allow_ptr_leaks) {
-+				int *poff = &env->insn_aux_data[insn_idx].sanitize_stack_off;
-+				int soff = (-spi - 1) * BPF_REG_SIZE;
-+
-+				/* detected reuse of integer stack slot with a pointer
-+				 * which means either llvm is reusing stack slot or
-+				 * an attacker is trying to exploit CVE-2018-3639
-+				 * (speculative store bypass)
-+				 * Have to sanitize that slot with preemptive
-+				 * store of zero.
-+				 */
-+				if (*poff && *poff != soff) {
-+					/* disallow programs where single insn stores
-+					 * into two different stack slots, since verifier
-+					 * cannot sanitize them
-+					 */
-+					verbose("insn %d cannot access two stack slots fp%d and fp%d",
-+						insn_idx, *poff, soff);
-+					return -EINVAL;
-+				}
-+				*poff = soff;
-+			}
- 			state->stack_slot_type[MAX_BPF_STACK + off + i] = STACK_SPILL;
-+		}
- 	} else {
- 		/* regular write of data into stack */
- 		state->spilled_regs[spi] = (struct reg_state) {};
-@@ -746,7 +772,8 @@ static int check_mem_access(struct verif
- 				verbose("attempt to corrupt spilled pointer on stack\n");
- 				return -EACCES;
+-static int check_xadd(struct verifier_env *env, struct bpf_insn *insn)
++static int check_xadd(struct verifier_env *env, int insn_idx, struct bpf_insn *insn)
+ {
+ 	struct reg_state *regs = env->cur_state.regs;
+ 	int err;
+@@ -791,13 +791,13 @@ static int check_xadd(struct verifier_en
+ 	}
+ 
+ 	/* check whether atomic_add can read the memory */
+-	err = check_mem_access(env, insn->dst_reg, insn->off,
++	err = check_mem_access(env, insn_idx, insn->dst_reg, insn->off,
+ 			       BPF_SIZE(insn->code), BPF_READ, -1);
+ 	if (err)
+ 		return err;
+ 
+ 	/* check whether atomic_add can write into the same memory */
+-	return check_mem_access(env, insn->dst_reg, insn->off,
++	return check_mem_access(env, insn_idx, insn->dst_reg, insn->off,
+ 				BPF_SIZE(insn->code), BPF_WRITE, -1);
+ }
+ 
+@@ -1836,7 +1836,7 @@ static int do_check(struct verifier_env
+ 			/* check that memory (src_reg + off) is readable,
+ 			 * the state of dst_reg will be updated by this func
+ 			 */
+-			err = check_mem_access(env, insn->src_reg, insn->off,
++			err = check_mem_access(env, insn_idx, insn->src_reg, insn->off,
+ 					       BPF_SIZE(insn->code), BPF_READ,
+ 					       insn->dst_reg);
+ 			if (err)
+@@ -1875,7 +1875,7 @@ static int do_check(struct verifier_env
+ 			enum bpf_reg_type *prev_dst_type, dst_reg_type;
+ 
+ 			if (BPF_MODE(insn->code) == BPF_XADD) {
+-				err = check_xadd(env, insn);
++				err = check_xadd(env, insn_idx, insn);
+ 				if (err)
+ 					return err;
+ 				insn_idx++;
+@@ -1894,7 +1894,7 @@ static int do_check(struct verifier_env
+ 			dst_reg_type = regs[insn->dst_reg].type;
+ 
+ 			/* check that memory (dst_reg + off) is writeable */
+-			err = check_mem_access(env, insn->dst_reg, insn->off,
++			err = check_mem_access(env, insn_idx, insn->dst_reg, insn->off,
+ 					       BPF_SIZE(insn->code), BPF_WRITE,
+ 					       insn->src_reg);
+ 			if (err)
+@@ -1929,7 +1929,7 @@ static int do_check(struct verifier_env
  			}
--			err = check_stack_write(state, off, size, value_regno);
-+			err = check_stack_write(env, state, off, size,
-+						value_regno, insn_idx);
- 		} else {
- 			err = check_stack_read(state, off, size, value_regno);
- 		}
-@@ -2228,6 +2255,34 @@ static int convert_ctx_accesses(struct v
- 		else
- 			continue;
  
-+		if (type == BPF_WRITE &&
-+		    env->insn_aux_data[i + delta].sanitize_stack_off) {
-+			struct bpf_insn patch[] = {
-+				/* Sanitize suspicious stack slot with zero.
-+				 * There are no memory dependencies for this store,
-+				 * since it's only using frame pointer and immediate
-+				 * constant of zero
-+				 */
-+				BPF_ST_MEM(BPF_DW, BPF_REG_FP,
-+					   env->insn_aux_data[i + delta].sanitize_stack_off,
-+					   0),
-+				/* the original STX instruction will immediately
-+				 * overwrite the same stack slot with appropriate value
-+				 */
-+				*insn,
-+			};
-+
-+			cnt = ARRAY_SIZE(patch);
-+			new_prog = bpf_patch_insn_data(env, i + delta, patch, cnt);
-+			if (!new_prog)
-+				return -ENOMEM;
-+
-+			delta    += cnt - 1;
-+			env->prog = new_prog;
-+			insn      = new_prog->insnsi + i + delta;
-+			continue;
-+		}
-+
- 		if (env->insn_aux_data[i + delta].ptr_type != PTR_TO_CTX)
- 			continue;
- 
+ 			/* check that memory (dst_reg + off) is writeable */
+-			err = check_mem_access(env, insn->dst_reg, insn->off,
++			err = check_mem_access(env, insn_idx, insn->dst_reg, insn->off,
+ 					       BPF_SIZE(insn->code), BPF_WRITE,
+ 					       -1);
+ 			if (err)
 
 
