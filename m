@@ -7,50 +7,53 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10966C6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:02:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C00BC67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:02:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB2D52147C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:02:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E88162146F
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:02:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544788943;
-	bh=OBidfP7TtQ631Hj71FNKfWeqByTAPdEjux/o3dG1d+U=;
+	s=default; t=1544788950;
+	bh=xGaBNPbPJbaE32DvLZ7xGKfvTftzvNozimH+hG+LS6A=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=di8XI0qeksLTPPJ/dxcRZhXmdhgk9PW7Hx1eWbJpLjFw49n7nohWxvA/kPfZDDg0K
-	 Vu5l1nuSEzjGQXfpGe97aBC4FBQp9dLic7QPUFyhTt7pY9gRSOhN0wa/1fsFQa70sJ
-	 wFhcyotm0QUughflnk8j+yEQsk3T5V/X1qZGp6sc=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB2D52147C
+	b=ZMLmvM4hUdTYbUEqiEbywJEfji9fQA20rgoVN1CZty34yOs9KnhQNy+G/OfR5pQ7U
+	 XI6fARrb90P7rNLdEUWZ5DTmqIFobUzYppwlwY7LaermJB1UvCTHC4FXbO9iU50uAD
+	 QSPV1fFcShz+SDm07ckUscGGWzfZMcrfY4GWaDgQ=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E88162146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730024AbeLNMCW (ORCPT
+        id S1730051AbeLNMC2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:02:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45172 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:02:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45368 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730002AbeLNMCS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:02:18 -0500
+        id S1730030AbeLNMC0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:02:26 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 28F0F21479;
-        Fri, 14 Dec 2018 12:02:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 292E22145D;
+        Fri, 14 Dec 2018 12:02:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544788937;
-        bh=OBidfP7TtQ631Hj71FNKfWeqByTAPdEjux/o3dG1d+U=;
+        s=default; t=1544788945;
+        bh=xGaBNPbPJbaE32DvLZ7xGKfvTftzvNozimH+hG+LS6A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IysdQhsSrliSnxkJlXcUl6Fs86EMh+apZK+BoBefK1vYBWoIJryoiDhRQJVYAUok1
-         iKrMc+mTIeY2ImRPpFRYpnMORhl6V8gDm4/4Tm+cjtUG7bkTGjZjteIAlyv5ApSPbM
-         c9EwKQPliXKpcXHhjqA6Tou5AohKpz7ISoEVnkQQ=
+        b=F2Z3rUtKTC1QqbZFLNJWjpRfVJOkD5sOkuH/QleBg+BK5buOEdjbOBDk9CiE6UwES
+         gQGbcqQgALf1cSxDy+SLBhAharFBpq3uLn+AmBLqmDcx0FgHgKYNCwZXqST7fqIKNg
+         PwPpoPI3K0EmSF/vEgoqwJSbuhTnhjbnYcKG6CPw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Janusz Krzysztofik <jmkrzyszt@gmail.com>,
-        Tony Lindgren <tony@atomide.com>,
+        stable@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Andy Gross <andy.gross@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 031/142] ARM: OMAP1: ams-delta: Fix possible use of uninitialized field
-Date:   Fri, 14 Dec 2018 12:58:36 +0100
-Message-Id: <20181214115748.296117818@linuxfoundation.org>
+Subject: [PATCH 4.19 034/142] arm64: dts: sdm845-mtp: Reserve reserved gpios
+Date:   Fri, 14 Dec 2018 12:58:39 +0100
+Message-Id: <20181214115748.413523058@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115747.053633987@linuxfoundation.org>
 References: <20181214115747.053633987@linuxfoundation.org>
@@ -69,38 +72,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit cec83ff1241ec98113a19385ea9e9cfa9aa4125b ]
+[ Upstream commit 5f8d3ab136d0ccb59c4d628d8f85e0d8f2761d07 ]
 
-While playing with initialization order of modem device, it has been
-discovered that under some circumstances (early console init, I
-believe) its .pm() callback may be called before the
-uart_port->private_data pointer is initialized from
-plat_serial8250_port->private_data, resulting in NULL pointer
-dereference.  Fix it by checking for uninitialized pointer before using
-it in modem_pm().
+With the introduction of commit 3edfb7bd76bd ("gpiolib: Show correct
+direction from the beginning") the gpiolib will attempt to read the
+direction of all pins, which triggers a read from protected register
+regions.
 
-Fixes: aabf31737a6a ("ARM: OMAP1: ams-delta: update the modem to use regulator API")
-Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+The pins 0 through 3 and 81 through 84 are protected, so mark these as
+reserved.
+
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Andy Gross <andy.gross@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/mach-omap1/board-ams-delta.c | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/arm64/boot/dts/qcom/sdm845-mtp.dts | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/arch/arm/mach-omap1/board-ams-delta.c b/arch/arm/mach-omap1/board-ams-delta.c
-index dd28d2614d7f..d10d8831f527 100644
---- a/arch/arm/mach-omap1/board-ams-delta.c
-+++ b/arch/arm/mach-omap1/board-ams-delta.c
-@@ -726,6 +726,9 @@ static void modem_pm(struct uart_port *port, unsigned int state, unsigned old)
- 	struct modem_private_data *priv = port->private_data;
- 	int ret;
+diff --git a/arch/arm64/boot/dts/qcom/sdm845-mtp.dts b/arch/arm64/boot/dts/qcom/sdm845-mtp.dts
+index 6d651f314193..6921f8dc5ebb 100644
+--- a/arch/arm64/boot/dts/qcom/sdm845-mtp.dts
++++ b/arch/arm64/boot/dts/qcom/sdm845-mtp.dts
+@@ -31,6 +31,10 @@
+ 	status = "okay";
+ };
  
-+	if (!priv)
-+		return;
++&tlmm {
++	gpio-reserved-ranges = <0 4>, <81 4>;
++};
 +
- 	if (IS_ERR(priv->regulator))
- 		return;
- 
+ &uart9 {
+ 	status = "okay";
+ };
 -- 
 2.19.1
 
