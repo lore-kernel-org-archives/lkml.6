@@ -7,50 +7,49 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27867C67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:17:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21606C6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:17:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE9642148E
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:17:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD7382133F
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:17:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544789828;
-	bh=kGPn44POXcr1cm6LnGg8xi5OesJ0PYxwW7NQVuioPfQ=;
+	s=default; t=1544789832;
+	bh=558fEEKum02KDM4sZQGV1x4OqqhxF+d7BQUE0gJx9p0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=gmyJ3gTQz3Oy+/dlSE1U2ZpCmL5WZc6XHtL4GgUy7aq5bni/i3ucEZd9dpniPEzP0
-	 4iMl1nPew80OVyPhQG7GB88w38bVhyy8yEHbZZHIcKmrJqIRSbBJ7AL3cI2Ti7Vh2n
-	 ZcEu3t0WfUCvVg7y+h2MWWE0SJdiT5muU0uq23uw=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE9642148E
+	b=mmf6u38DCEztAwFFi+DsIV364QrcYVA7GbOGvPaF0gKmm8qk9IVUoDXwNgH93Vfdu
+	 zf+OVMtv4rjgF9JHB48tgzZVsNaMxonezDRcEbP6NiQNPjUqud9+SO0h9h64UJdcrG
+	 a54XQO/QQb2xmk8zxxdgbQQ57H2jzbfdAS2XjV4Y=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD7382133F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732879AbeLNMRG (ORCPT
+        id S1732888AbeLNMRK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:17:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37318 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:17:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37404 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732864AbeLNMRD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:17:03 -0500
+        id S1732864AbeLNMRI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:17:08 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 84AC1214F1;
-        Fri, 14 Dec 2018 12:17:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B236421479;
+        Fri, 14 Dec 2018 12:17:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789822;
-        bh=kGPn44POXcr1cm6LnGg8xi5OesJ0PYxwW7NQVuioPfQ=;
+        s=default; t=1544789827;
+        bh=558fEEKum02KDM4sZQGV1x4OqqhxF+d7BQUE0gJx9p0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PHYzyY5m+DjRR8fPe8SRo5RK9GHf5dgRHkEK0F4RuHDWAuxZIUnkgia+YVYpNidcz
-         LugqaKSAKKQuu0lTWBVL/EFhk51NxltNLUvl2AD++R4kpwD2FLoKCvyxgOq8JjOuuf
-         hdQfAM+LzFdJpVPQV6jYngvQY2+9Q4QOH5uNWQWc=
+        b=raUpZoWVkkl9BQHHkAKxF+FpsNHoz4KukLLYnjXsv15UgiWCdzTR+uX+7zAZQ+wxl
+         OjRt0Rhjec+pVFVNn18MSIkhoRgPKadecQ5vCk4zjn3qoEs0cHgInOanPmMsyudJYn
+         Ux7tjPvZt5HkKQhprGV69W711OO7muy9Bww2rKVY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.4 82/88] proc: dont use FOLL_FORCE for reading cmdline and environment
-Date:   Fri, 14 Dec 2018 13:00:56 +0100
-Message-Id: <20181214115708.851388434@linuxfoundation.org>
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Subject: [PATCH 4.4 84/88] media: dvb-frontends: fix i2c access helpers for KASAN
+Date:   Fri, 14 Dec 2018 13:00:58 +0100
+Message-Id: <20181214115709.282928971@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115702.151309521@linuxfoundation.org>
 References: <20181214115702.151309521@linuxfoundation.org>
@@ -69,99 +68,193 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Linus Torvalds <torvalds@linux-foundation.org>
+From: Arnd Bergmann <arnd@arndb.de>
 
-commit 272ddc8b37354c3fe111ab26d25e792629148eee upstream.
+commit 3cd890dbe2a4f14cc44c85bb6cf37e5e22d4dd0e upstream.
 
-Now that Lorenzo cleaned things up and made the FOLL_FORCE users
-explicit, it becomes obvious how some of them don't really need
-FOLL_FORCE at all.
+A typical code fragment was copied across many dvb-frontend drivers and
+causes large stack frames when built with with CONFIG_KASAN on gcc-5/6/7:
 
-So remove FOLL_FORCE from the proc code that reads the command line and
-arguments from user space.
+drivers/media/dvb-frontends/cxd2841er.c:3225:1: error: the frame size of 3992 bytes is larger than 3072 bytes [-Werror=frame-larger-than=]
+drivers/media/dvb-frontends/cxd2841er.c:3404:1: error: the frame size of 3136 bytes is larger than 3072 bytes [-Werror=frame-larger-than=]
+drivers/media/dvb-frontends/stv0367.c:3143:1: error: the frame size of 4016 bytes is larger than 3072 bytes [-Werror=frame-larger-than=]
+drivers/media/dvb-frontends/stv090x.c:3430:1: error: the frame size of 5312 bytes is larger than 3072 bytes [-Werror=frame-larger-than=]
+drivers/media/dvb-frontends/stv090x.c:4248:1: error: the frame size of 4872 bytes is larger than 3072 bytes [-Werror=frame-larger-than=]
 
-The mem_rw() function actually does want FOLL_FORCE, because gdd (and
-possibly many other debuggers) use it as a much more convenient version
-of PTRACE_PEEKDATA, but we should consider making the FOLL_FORCE part
-conditional on actually being a ptracer.  This does not actually do
-that, just moves adds a comment to that effect and moves the gup_flags
-settings next to each other.
+gcc-8 now solves this by consolidating the stack slots for the argument
+variables, but on older compilers we can get the same behavior by taking
+the pointer of a local variable rather than the inline function argument.
 
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=81715
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- fs/proc/base.c |   18 ++++++++----------
- 1 file changed, 8 insertions(+), 10 deletions(-)
 
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -254,7 +254,7 @@ static ssize_t proc_pid_cmdline_read(str
- 	 * Inherently racy -- command line shares address space
- 	 * with code and data.
- 	 */
--	rv = access_remote_vm(mm, arg_end - 1, &c, 1, FOLL_FORCE);
-+	rv = access_remote_vm(mm, arg_end - 1, &c, 1, 0);
- 	if (rv <= 0)
- 		goto out_free_page;
+---
+ drivers/media/dvb-frontends/ascot2e.c     |    4 +++-
+ drivers/media/dvb-frontends/cxd2841er.c   |    4 +++-
+ drivers/media/dvb-frontends/horus3a.c     |    4 +++-
+ drivers/media/dvb-frontends/itd1000.c     |    5 +++--
+ drivers/media/dvb-frontends/mt312.c       |    5 ++++-
+ drivers/media/dvb-frontends/stb0899_drv.c |    3 ++-
+ drivers/media/dvb-frontends/stb6100.c     |    6 ++++--
+ drivers/media/dvb-frontends/stv0367.c     |    4 +++-
+ drivers/media/dvb-frontends/stv090x.c     |    4 +++-
+ drivers/media/dvb-frontends/stv6110x.c    |    4 +++-
+ drivers/media/dvb-frontends/zl10039.c     |    4 +++-
+ 11 files changed, 34 insertions(+), 13 deletions(-)
+
+--- a/drivers/media/dvb-frontends/ascot2e.c
++++ b/drivers/media/dvb-frontends/ascot2e.c
+@@ -155,7 +155,9 @@ static int ascot2e_write_regs(struct asc
  
-@@ -272,8 +272,7 @@ static ssize_t proc_pid_cmdline_read(str
- 			int nr_read;
+ static int ascot2e_write_reg(struct ascot2e_priv *priv, u8 reg, u8 val)
+ {
+-	return ascot2e_write_regs(priv, reg, &val, 1);
++	u8 tmp = val; /* see gcc.gnu.org/bugzilla/show_bug.cgi?id=81715 */
++
++	return ascot2e_write_regs(priv, reg, &tmp, 1);
+ }
  
- 			_count = min3(count, len, PAGE_SIZE);
--			nr_read = access_remote_vm(mm, p, page, _count,
--					FOLL_FORCE);
-+			nr_read = access_remote_vm(mm, p, page, _count, 0);
- 			if (nr_read < 0)
- 				rv = nr_read;
- 			if (nr_read <= 0)
-@@ -308,8 +307,7 @@ static ssize_t proc_pid_cmdline_read(str
- 			bool final;
+ static int ascot2e_read_regs(struct ascot2e_priv *priv,
+--- a/drivers/media/dvb-frontends/cxd2841er.c
++++ b/drivers/media/dvb-frontends/cxd2841er.c
+@@ -241,7 +241,9 @@ static int cxd2841er_write_regs(struct c
+ static int cxd2841er_write_reg(struct cxd2841er_priv *priv,
+ 			       u8 addr, u8 reg, u8 val)
+ {
+-	return cxd2841er_write_regs(priv, addr, reg, &val, 1);
++	u8 tmp = val; /* see gcc.gnu.org/bugzilla/show_bug.cgi?id=81715 */
++
++	return cxd2841er_write_regs(priv, addr, reg, &tmp, 1);
+ }
  
- 			_count = min3(count, len, PAGE_SIZE);
--			nr_read = access_remote_vm(mm, p, page, _count,
--					FOLL_FORCE);
-+			nr_read = access_remote_vm(mm, p, page, _count, 0);
- 			if (nr_read < 0)
- 				rv = nr_read;
- 			if (nr_read <= 0)
-@@ -358,8 +356,7 @@ skip_argv:
- 			bool final;
+ static int cxd2841er_read_regs(struct cxd2841er_priv *priv,
+--- a/drivers/media/dvb-frontends/horus3a.c
++++ b/drivers/media/dvb-frontends/horus3a.c
+@@ -89,7 +89,9 @@ static int horus3a_write_regs(struct hor
  
- 			_count = min3(count, len, PAGE_SIZE);
--			nr_read = access_remote_vm(mm, p, page, _count,
--					FOLL_FORCE);
-+			nr_read = access_remote_vm(mm, p, page, _count, 0);
- 			if (nr_read < 0)
- 				rv = nr_read;
- 			if (nr_read <= 0)
-@@ -871,7 +868,7 @@ static ssize_t mem_rw(struct file *file,
- 	unsigned long addr = *ppos;
- 	ssize_t copied;
- 	char *page;
--	unsigned int flags = FOLL_FORCE;
-+	unsigned int flags;
+ static int horus3a_write_reg(struct horus3a_priv *priv, u8 reg, u8 val)
+ {
+-	return horus3a_write_regs(priv, reg, &val, 1);
++	u8 tmp = val; /* see gcc.gnu.org/bugzilla/show_bug.cgi?id=81715 */
++
++	return horus3a_write_regs(priv, reg, &tmp, 1);
+ }
  
- 	if (!mm)
- 		return 0;
-@@ -884,6 +881,8 @@ static ssize_t mem_rw(struct file *file,
- 	if (!atomic_inc_not_zero(&mm->mm_users))
- 		goto free;
+ static int horus3a_enter_power_save(struct horus3a_priv *priv)
+--- a/drivers/media/dvb-frontends/itd1000.c
++++ b/drivers/media/dvb-frontends/itd1000.c
+@@ -99,8 +99,9 @@ static int itd1000_read_reg(struct itd10
  
-+	/* Maybe we should limit FOLL_FORCE to actual ptrace users? */
-+	flags = FOLL_FORCE;
- 	if (write)
- 		flags |= FOLL_WRITE;
+ static inline int itd1000_write_reg(struct itd1000_state *state, u8 r, u8 v)
+ {
+-	int ret = itd1000_write_regs(state, r, &v, 1);
+-	state->shadow[r] = v;
++	u8 tmp = v; /* see gcc.gnu.org/bugzilla/show_bug.cgi?id=81715 */
++	int ret = itd1000_write_regs(state, r, &tmp, 1);
++	state->shadow[r] = tmp;
+ 	return ret;
+ }
  
-@@ -1007,8 +1006,7 @@ static ssize_t environ_read(struct file
- 		max_len = min_t(size_t, PAGE_SIZE, count);
- 		this_len = min(max_len, this_len);
+--- a/drivers/media/dvb-frontends/mt312.c
++++ b/drivers/media/dvb-frontends/mt312.c
+@@ -142,7 +142,10 @@ static inline int mt312_readreg(struct m
+ static inline int mt312_writereg(struct mt312_state *state,
+ 				 const enum mt312_reg_addr reg, const u8 val)
+ {
+-	return mt312_write(state, reg, &val, 1);
++	u8 tmp = val; /* see gcc.gnu.org/bugzilla/show_bug.cgi?id=81715 */
++
++
++	return mt312_write(state, reg, &tmp, 1);
+ }
  
--		retval = access_remote_vm(mm, (env_start + src),
--			page, this_len, FOLL_FORCE);
-+		retval = access_remote_vm(mm, (env_start + src), page, this_len, 0);
+ static inline u32 mt312_div(u32 a, u32 b)
+--- a/drivers/media/dvb-frontends/stb0899_drv.c
++++ b/drivers/media/dvb-frontends/stb0899_drv.c
+@@ -552,7 +552,8 @@ int stb0899_write_regs(struct stb0899_st
  
- 		if (retval <= 0) {
- 			ret = retval;
+ int stb0899_write_reg(struct stb0899_state *state, unsigned int reg, u8 data)
+ {
+-	return stb0899_write_regs(state, reg, &data, 1);
++	u8 tmp = data;
++	return stb0899_write_regs(state, reg, &tmp, 1);
+ }
+ 
+ /*
+--- a/drivers/media/dvb-frontends/stb6100.c
++++ b/drivers/media/dvb-frontends/stb6100.c
+@@ -226,12 +226,14 @@ static int stb6100_write_reg_range(struc
+ 
+ static int stb6100_write_reg(struct stb6100_state *state, u8 reg, u8 data)
+ {
++	u8 tmp = data; /* see gcc.gnu.org/bugzilla/show_bug.cgi?id=81715 */
++
+ 	if (unlikely(reg >= STB6100_NUMREGS)) {
+ 		dprintk(verbose, FE_ERROR, 1, "Invalid register offset 0x%x", reg);
+ 		return -EREMOTEIO;
+ 	}
+-	data = (data & stb6100_template[reg].mask) | stb6100_template[reg].set;
+-	return stb6100_write_reg_range(state, &data, reg, 1);
++	tmp = (tmp & stb6100_template[reg].mask) | stb6100_template[reg].set;
++	return stb6100_write_reg_range(state, &tmp, reg, 1);
+ }
+ 
+ 
+--- a/drivers/media/dvb-frontends/stv0367.c
++++ b/drivers/media/dvb-frontends/stv0367.c
+@@ -804,7 +804,9 @@ int stv0367_writeregs(struct stv0367_sta
+ 
+ static int stv0367_writereg(struct stv0367_state *state, u16 reg, u8 data)
+ {
+-	return stv0367_writeregs(state, reg, &data, 1);
++	u8 tmp = data; /* see gcc.gnu.org/bugzilla/show_bug.cgi?id=81715 */
++
++	return stv0367_writeregs(state, reg, &tmp, 1);
+ }
+ 
+ static u8 stv0367_readreg(struct stv0367_state *state, u16 reg)
+--- a/drivers/media/dvb-frontends/stv090x.c
++++ b/drivers/media/dvb-frontends/stv090x.c
+@@ -761,7 +761,9 @@ static int stv090x_write_regs(struct stv
+ 
+ static int stv090x_write_reg(struct stv090x_state *state, unsigned int reg, u8 data)
+ {
+-	return stv090x_write_regs(state, reg, &data, 1);
++	u8 tmp = data; /* see gcc.gnu.org/bugzilla/show_bug.cgi?id=81715 */
++
++	return stv090x_write_regs(state, reg, &tmp, 1);
+ }
+ 
+ static int stv090x_i2c_gate_ctrl(struct stv090x_state *state, int enable)
+--- a/drivers/media/dvb-frontends/stv6110x.c
++++ b/drivers/media/dvb-frontends/stv6110x.c
+@@ -97,7 +97,9 @@ static int stv6110x_write_regs(struct st
+ 
+ static int stv6110x_write_reg(struct stv6110x_state *stv6110x, u8 reg, u8 data)
+ {
+-	return stv6110x_write_regs(stv6110x, reg, &data, 1);
++	u8 tmp = data; /* see gcc.gnu.org/bugzilla/show_bug.cgi?id=81715 */
++
++	return stv6110x_write_regs(stv6110x, reg, &tmp, 1);
+ }
+ 
+ static int stv6110x_init(struct dvb_frontend *fe)
+--- a/drivers/media/dvb-frontends/zl10039.c
++++ b/drivers/media/dvb-frontends/zl10039.c
+@@ -138,7 +138,9 @@ static inline int zl10039_writereg(struc
+ 				const enum zl10039_reg_addr reg,
+ 				const u8 val)
+ {
+-	return zl10039_write(state, reg, &val, 1);
++	const u8 tmp = val; /* see gcc.gnu.org/bugzilla/show_bug.cgi?id=81715 */
++
++	return zl10039_write(state, reg, &tmp, 1);
+ }
+ 
+ static int zl10039_init(struct dvb_frontend *fe)
 
 
