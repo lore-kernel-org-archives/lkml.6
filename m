@@ -2,186 +2,230 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E84AEC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 18:08:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB26AC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 18:09:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A888206DD
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 18:08:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB0DE206C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 18:09:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ravbIwCC"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=apple.com header.i=@apple.com header.b="SV5KDEf7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730562AbeLNSIG (ORCPT
+        id S1730478AbeLNSJq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 13:08:06 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:41698 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730512AbeLNSHu (ORCPT
+        Fri, 14 Dec 2018 13:09:46 -0500
+Received: from nwk-aaemail-lapp03.apple.com ([17.151.62.68]:33654 "EHLO
+        nwk-aaemail-lapp03.apple.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730250AbeLNSJq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 13:07:50 -0500
-Received: by mail-pf1-f195.google.com with SMTP id b7so3185864pfi.8
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 10:07:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=31kslWA2pzzsHiz8Y5tC9Fd+SHDoREs2MeMPfRmzSCw=;
-        b=ravbIwCCdmKf4HxtAd0LBlD5fBNIcfvIVHABcxIopOo4LAyjDT/1svBMs2w8eK1Nd0
-         SXJ2E39boVT6Ne+SuVpPWKiXXPYLmLdmgw5V2NUswhpHJ6rpxBbvCYs+c2PcvPDSQEoi
-         NxQoGkpL7V4rdegdU3INlnD9GYPv09+WsJ3M6KzNlV0IPBZZUbJFyAHxDJzVg+v1TVxo
-         vt3p/0jsTIvDih+ftuiWNI8to8QkMJtNjycUcSNJwi0ojQ3qGIO13wzGOLR2qx3G4Yzb
-         6rcv6ciVXvHiZ4b7tj7iwvQH/+x9OfWuKTHSPWGbz4FJBzJ20kGhlhkjOWfmK+fJFXkx
-         3w6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=31kslWA2pzzsHiz8Y5tC9Fd+SHDoREs2MeMPfRmzSCw=;
-        b=M4yH7izwtu/iU2VFpTiGJ37IGiLkv/D6+tI5s/9sqltv6E6toD9tOUNFX34le/PZkw
-         RyZ/7g/IRQ6LfAB4OBLiTUh8C6k9keC7H3sGp1v5fMJORSi029d5ijtocSWY95OgPAk2
-         iekgz9E6zUpHvhpmgEkde8WVmFihZmzh3sL/WQXIgUGxoNjI8cNCmlu9WGewwmdWF6kD
-         Bc5nmYtAEDFKTQGnVCOHHmPsnD6N7oeuLy0ZCmKwNfMg3bokCPhOyJOvKWc9QbHh3kTS
-         EEXr95t2KwxBVB8B0gqbu3C+UB5V30wKI8yquFeVMbcH8qC3y4Ka7bdOgvMQhNID9cBB
-         a0vw==
-X-Gm-Message-State: AA+aEWZo493vNmvQMiCYgzlriVBXyd1+TfllIIq+pk7ksdf1irecYvMs
-        t6kHLhK9FmuVgi+NUdygAQ4=
-X-Google-Smtp-Source: AFSGD/WptKbrEs3BxathmN/kR19WDH39xE5sXtHrpcKCELKN5T/tzPlLlpfYs4rFDstZclsGpMduKw==
-X-Received: by 2002:a65:47ca:: with SMTP id f10mr3686922pgs.166.1544810869674;
-        Fri, 14 Dec 2018 10:07:49 -0800 (PST)
-Received: from tower.thefacebook.com ([2620:10d:c090:200::5:3d97])
-        by smtp.gmail.com with ESMTPSA id r2sm7180856pgo.18.2018.12.14.10.07.48
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 14 Dec 2018 10:07:49 -0800 (PST)
-From:   Roman Gushchin <guroan@gmail.com>
-X-Google-Original-From: Roman Gushchin <guro@fb.com>
-To:     linux-mm@kvack.org
-Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org,
-        kernel-team@fb.com, Roman Gushchin <guro@fb.com>
-Subject: [RFC 2/4] mm: separate memory allocation and actual work in alloc_vmap_area()
-Date:   Fri, 14 Dec 2018 10:07:18 -0800
-Message-Id: <20181214180720.32040-3-guro@fb.com>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20181214180720.32040-1-guro@fb.com>
-References: <20181214180720.32040-1-guro@fb.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Fri, 14 Dec 2018 13:09:46 -0500
+X-Greylist: delayed 8101 seconds by postgrey-1.27 at vger.kernel.org; Fri, 14 Dec 2018 13:09:45 EST
+Received: from pps.filterd (nwk-aaemail-lapp03.apple.com [127.0.0.1])
+        by nwk-aaemail-lapp03.apple.com (8.16.0.22/8.16.0.22) with SMTP id wBEFlEDg028053;
+        Fri, 14 Dec 2018 07:54:36 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=apple.com; h=mime-version :
+ content-transfer-encoding : content-type : sender : date : from : to : cc
+ : subject : message-id : references : in-reply-to; s=20180706;
+ bh=9YblhPdooUUtBn/2SFzAYvF9/v1ixOObHmmzlvw1qbw=;
+ b=SV5KDEf7wPEfm63xZ3xn/ZwtiYbSANbV8NO6l18jZJyVLwulVvgMy81YlOhENr+oMjqh
+ qQ1o0a0LLurBcPBfyBcq3vgTWe/EOiuuRR/U9BZ9BMxhrcAsIjV+wusqYFPEdv0GIl2A
+ 5hacC0DOqn4/KHNjGVJ03WYqhcF515Le2txXrqgK+6ul3uDqcJWFcuUAGTXnRAsd8Rx2
+ y/6P5Pug8oWb/iEqik3iLB0a/8dB95SzhzZa7H6wqb5YjM6KJy6uTrFC4VNn46/r3F2D
+ tEKFeCM7dtdIT4k8PfF/0UPXDqRD9irQ/DYx5qIvHc/Hv29Tmf/qIvqcLXVLQLorjn0j Hg== 
+Received: from mr2-mtap-s01.rno.apple.com (mr2-mtap-s01.rno.apple.com [17.179.226.133])
+        by nwk-aaemail-lapp03.apple.com with ESMTP id 2p8bccvt3u-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
+        Fri, 14 Dec 2018 07:54:36 -0800
+MIME-version: 1.0
+Content-transfer-encoding: 7BIT
+Content-disposition: inline
+Content-type: text/plain; CHARSET=US-ASCII
+Received: from nwk-mmpp-sz10.apple.com
+ (nwk-mmpp-sz10.apple.com [17.128.115.122]) by mr2-mtap-s01.rno.apple.com
+ (Oracle Communications Messaging Server 8.0.2.3.20181024 64bit (built Oct 24
+ 2018)) with ESMTPS id <0PJQ00887HJ0IQ70@mr2-mtap-s01.rno.apple.com>; Fri,
+ 14 Dec 2018 07:54:36 -0800 (PST)
+Received: from process_viserion-daemon.nwk-mmpp-sz10.apple.com by
+ nwk-mmpp-sz10.apple.com
+ (Oracle Communications Messaging Server 8.0.2.3.20181024 64bit (built Oct 24
+ 2018)) id <0PJQ00300HG20I00@nwk-mmpp-sz10.apple.com>; Fri,
+ 14 Dec 2018 07:54:36 -0800 (PST)
+X-Va-A: 
+X-Va-T-CD: 3292cb8df71769077a8e6c728895331c
+X-Va-E-CD: 4323c9cb7650976afee1876783f7d85e
+X-Va-R-CD: d885efb23def6dc3d7fbf3a036d898ad
+X-Va-CD: 0
+X-Va-ID: f2d121e7-cc81-4503-bc7b-d921737a3687
+X-V-A:  
+X-V-T-CD: e3ce1f560f53d3ee7d03c9da4c45394f
+X-V-E-CD: 4323c9cb7650976afee1876783f7d85e
+X-V-R-CD: d885efb23def6dc3d7fbf3a036d898ad
+X-V-CD: 0
+X-V-ID: f7cadd00-fec5-43f7-abd7-d1127413a04e
+Received: from process_milters-daemon.nwk-mmpp-sz10.apple.com by
+ nwk-mmpp-sz10.apple.com
+ (Oracle Communications Messaging Server 8.0.2.3.20181024 64bit (built Oct 24
+ 2018)) id <0PJQ00300HFZ0H00@nwk-mmpp-sz10.apple.com>; Fri,
+ 14 Dec 2018 07:54:36 -0800 (PST)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,,
+ definitions=2018-12-14_08:,, signatures=0
+Received: from localhost ([17.234.103.59]) by nwk-mmpp-sz10.apple.com
+ (Oracle Communications Messaging Server 8.0.2.3.20181024 64bit (built Oct 24
+ 2018)) with ESMTPSA id <0PJQ00677HIZ8350@nwk-mmpp-sz10.apple.com>; Fri,
+ 14 Dec 2018 07:54:36 -0800 (PST)
+Date:   Fri, 14 Dec 2018 07:54:35 -0800
+From:   Christoph Paasch <cpaasch@apple.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Prashant Bhole <bhole_prashant_q7@lab.ntt.co.jp>,
+        Tyler Hicks <tyhicks@canonical.com>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        Eric Dumazet <edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: Re: [PATCH 4.14 09/89] net: Prevent invalid access to skb->prev in
+ __qdisc_drop_all
+Message-id: <20181214155435.GK41383@MacBook-Pro-19.local>
+References: <20181214115729.658859279@linuxfoundation.org>
+ <20181214115730.135586551@linuxfoundation.org>
+ <20181214155226.GJ41383@MacBook-Pro-19.local>
+In-reply-to: <20181214155226.GJ41383@MacBook-Pro-19.local>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-14_08:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-alloc_vmap_area() is allocating memory for the vmap_area, and
-performing the actual lookup of the vm area and vmap_area
-initialization.
+On 14/12/18 - 07:52:26, Christoph Paasch wrote:
+> Hello Greg,
+> 
+> On 14/12/18 - 12:59:22, Greg Kroah-Hartman wrote:
+> > 4.14-stable review patch.  If anyone has any objections, please let me know.
+> > 
+> > ------------------
+> > 
+> > From: Christoph Paasch <cpaasch@apple.com>
+> > 
+> > [ Upstream commit 9410d386d0a829ace9558336263086c2fbbe8aed ]
+> > 
+> > __qdisc_drop_all() accesses skb->prev to get to the tail of the
+> > segment-list.
+> > 
+> > With commit 68d2f84a1368 ("net: gro: properly remove skb from list")
+> > the skb-list handling has been changed to set skb->next to NULL and set
+> > the list-poison on skb->prev.
+> > 
+> > With that change, __qdisc_drop_all() will panic when it tries to
+> > dereference skb->prev.
+> > 
+> > Since commit 992cba7e276d ("net: Add and use skb_list_del_init().")
+> > __list_del_entry is used, leaving skb->prev unchanged (thus,
+> > pointing to the list-head if it's the first skb of the list).
+> > This will make __qdisc_drop_all modify the next-pointer of the list-head
+> > and result in a panic later on:
+> > 
+> > [   34.501053] general protection fault: 0000 [#1] SMP KASAN PTI
+> > [   34.501968] CPU: 2 PID: 0 Comm: swapper/2 Not tainted 4.20.0-rc2.mptcp #108
+> > [   34.502887] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 0.5.1 01/01/2011
+> > [   34.504074] RIP: 0010:dev_gro_receive+0x343/0x1f90
+> > [   34.504751] Code: e0 48 c1 e8 03 42 80 3c 30 00 0f 85 4a 1c 00 00 4d 8b 24 24 4c 39 65 d0 0f 84 0a 04 00 00 49 8d 7c 24 38 48 89 f8 48 c1 e8 03 <42> 0f b6 04 30 84 c0 74 08 3c 04
+> > [   34.507060] RSP: 0018:ffff8883af507930 EFLAGS: 00010202
+> > [   34.507761] RAX: 0000000000000007 RBX: ffff8883970b2c80 RCX: 1ffff11072e165a6
+> > [   34.508640] RDX: 1ffff11075867008 RSI: ffff8883ac338040 RDI: 0000000000000038
+> > [   34.509493] RBP: ffff8883af5079d0 R08: ffff8883970b2d40 R09: 0000000000000062
+> > [   34.510346] R10: 0000000000000034 R11: 0000000000000000 R12: 0000000000000000
+> > [   34.511215] R13: 0000000000000000 R14: dffffc0000000000 R15: ffff8883ac338008
+> > [   34.512082] FS:  0000000000000000(0000) GS:ffff8883af500000(0000) knlGS:0000000000000000
+> > [   34.513036] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > [   34.513741] CR2: 000055ccc3e9d020 CR3: 00000003abf32000 CR4: 00000000000006e0
+> > [   34.514593] Call Trace:
+> > [   34.514893]  <IRQ>
+> > [   34.515157]  napi_gro_receive+0x93/0x150
+> > [   34.515632]  receive_buf+0x893/0x3700
+> > [   34.516094]  ? __netif_receive_skb+0x1f/0x1a0
+> > [   34.516629]  ? virtnet_probe+0x1b40/0x1b40
+> > [   34.517153]  ? __stable_node_chain+0x4d0/0x850
+> > [   34.517684]  ? kfree+0x9a/0x180
+> > [   34.518067]  ? __kasan_slab_free+0x171/0x190
+> > [   34.518582]  ? detach_buf+0x1df/0x650
+> > [   34.519061]  ? lapic_next_event+0x5a/0x90
+> > [   34.519539]  ? virtqueue_get_buf_ctx+0x280/0x7f0
+> > [   34.520093]  virtnet_poll+0x2df/0xd60
+> > [   34.520533]  ? receive_buf+0x3700/0x3700
+> > [   34.521027]  ? qdisc_watchdog_schedule_ns+0xd5/0x140
+> > [   34.521631]  ? htb_dequeue+0x1817/0x25f0
+> > [   34.522107]  ? sch_direct_xmit+0x142/0xf30
+> > [   34.522595]  ? virtqueue_napi_schedule+0x26/0x30
+> > [   34.523155]  net_rx_action+0x2f6/0xc50
+> > [   34.523601]  ? napi_complete_done+0x2f0/0x2f0
+> > [   34.524126]  ? kasan_check_read+0x11/0x20
+> > [   34.524608]  ? _raw_spin_lock+0x7d/0xd0
+> > [   34.525070]  ? _raw_spin_lock_bh+0xd0/0xd0
+> > [   34.525563]  ? kvm_guest_apic_eoi_write+0x6b/0x80
+> > [   34.526130]  ? apic_ack_irq+0x9e/0xe0
+> > [   34.526567]  __do_softirq+0x188/0x4b5
+> > [   34.527015]  irq_exit+0x151/0x180
+> > [   34.527417]  do_IRQ+0xdb/0x150
+> > [   34.527783]  common_interrupt+0xf/0xf
+> > [   34.528223]  </IRQ>
+> > 
+> > This patch makes sure that skb->prev is set to NULL when entering
+> > netem_enqueue.
+> > 
+> > Cc: Prashant Bhole <bhole_prashant_q7@lab.ntt.co.jp>
+> > Cc: Tyler Hicks <tyhicks@canonical.com>
+> > Cc: Eric Dumazet <eric.dumazet@gmail.com>
+> > Fixes: 68d2f84a1368 ("net: gro: properly remove skb from list")
+> > Suggested-by: Eric Dumazet <eric.dumazet@gmail.com>
+> > Signed-off-by: Christoph Paasch <cpaasch@apple.com>
+> > Reviewed-by: Eric Dumazet <edumazet@google.com>
+> > Signed-off-by: David S. Miller <davem@davemloft.net>
+> > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> 
+> I don't think this patch needs to be backported. I haven't hit this panic on
+> v4.14.x (although, I only have been using v4.14.79 for now - not yet the
+> latest one). And the commits that seem to have introduced the issue haven't
+> been backported either AFAICS. That being said, I don't think a backport
+> would cause any side-effects.
+> 
+> Or have you seen reports of this panic in the stable branches?
+> 
+> (same for the other stable branches v4.4,... - cfr., the other mails
+> regarding this patch here)
 
-This prevents us from using a pre-allocated memory for the map_area
-structure, which can be used in some cases to minimize the number
-of required memory allocations.
+To clarify: Backport to v4.19.x is needed. The backport to v4.14 and older
+should not be needed.
 
-Let's keep the memory allocation part in alloc_vmap_area() and
-separate everything else into init_vmap_area().
 
-Signed-off-by: Roman Gushchin <guro@fb.com>
-Acked-by: Johannes Weiner <hannes@cmpxchg.org>
----
- mm/vmalloc.c | 52 +++++++++++++++++++++++++++++++++++-----------------
- 1 file changed, 35 insertions(+), 17 deletions(-)
+Christoph
 
-diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index 24a84d584609..24c8ab28254d 100644
---- a/mm/vmalloc.c
-+++ b/mm/vmalloc.c
-@@ -395,16 +395,11 @@ static void purge_vmap_area_lazy(void);
- 
- static BLOCKING_NOTIFIER_HEAD(vmap_notify_list);
- 
--/*
-- * Allocate a region of KVA of the specified size and alignment, within the
-- * vstart and vend.
-- */
--static struct vmap_area *alloc_vmap_area(unsigned long size,
--				unsigned long align,
--				unsigned long vstart, unsigned long vend,
--				int node, gfp_t gfp_mask)
-+static int init_vmap_area(struct vmap_area *va, unsigned long size,
-+			  unsigned long align, unsigned long vstart,
-+			  unsigned long vend, int node, gfp_t gfp_mask)
- {
--	struct vmap_area *va;
-+
- 	struct rb_node *n;
- 	unsigned long addr;
- 	int purged = 0;
-@@ -416,11 +411,6 @@ static struct vmap_area *alloc_vmap_area(unsigned long size,
- 
- 	might_sleep();
- 
--	va = kmalloc_node(sizeof(struct vmap_area),
--			gfp_mask & GFP_RECLAIM_MASK, node);
--	if (unlikely(!va))
--		return ERR_PTR(-ENOMEM);
--
- 	/*
- 	 * Only scan the relevant parts containing pointers to other objects
- 	 * to avoid false negatives.
-@@ -512,7 +502,7 @@ static struct vmap_area *alloc_vmap_area(unsigned long size,
- 	BUG_ON(va->va_start < vstart);
- 	BUG_ON(va->va_end > vend);
- 
--	return va;
-+	return 0;
- 
- overflow:
- 	spin_unlock(&vmap_area_lock);
-@@ -534,10 +524,38 @@ static struct vmap_area *alloc_vmap_area(unsigned long size,
- 	if (!(gfp_mask & __GFP_NOWARN) && printk_ratelimit())
- 		pr_warn("vmap allocation for size %lu failed: use vmalloc=<size> to increase size\n",
- 			size);
--	kfree(va);
--	return ERR_PTR(-EBUSY);
-+
-+	return -EBUSY;
-+}
-+
-+/*
-+ * Allocate a region of KVA of the specified size and alignment, within the
-+ * vstart and vend.
-+ */
-+static struct vmap_area *alloc_vmap_area(unsigned long size,
-+					 unsigned long align,
-+					 unsigned long vstart,
-+					 unsigned long vend,
-+					 int node, gfp_t gfp_mask)
-+{
-+	struct vmap_area *va;
-+	int ret;
-+
-+	va = kmalloc_node(sizeof(struct vmap_area),
-+			gfp_mask & GFP_RECLAIM_MASK, node);
-+	if (unlikely(!va))
-+		return ERR_PTR(-ENOMEM);
-+
-+	ret = init_vmap_area(va, size, align, vstart, vend, node, gfp_mask);
-+	if (ret) {
-+		kfree(va);
-+		return ERR_PTR(ret);
-+	}
-+
-+	return va;
- }
- 
-+
- int register_vmap_purge_notifier(struct notifier_block *nb)
- {
- 	return blocking_notifier_chain_register(&vmap_notify_list, nb);
--- 
-2.19.2
-
+> 
+> 
+> Cheers,
+> Christoph
+> 
+> 
+> 
+> 
+> > ---
+> >  net/sched/sch_netem.c |    3 +++
+> >  1 file changed, 3 insertions(+)
+> > 
+> > --- a/net/sched/sch_netem.c
+> > +++ b/net/sched/sch_netem.c
+> > @@ -436,6 +436,9 @@ static int netem_enqueue(struct sk_buff
+> >  	int count = 1;
+> >  	int rc = NET_XMIT_SUCCESS;
+> >  
+> > +	/* Do not fool qdisc_drop_all() */
+> > +	skb->prev = NULL;
+> > +
+> >  	/* Random duplication */
+> >  	if (q->duplicate && q->duplicate >= get_crandom(&q->dup_cor))
+> >  		++count;
+> > 
+> > 
