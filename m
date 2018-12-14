@@ -2,133 +2,125 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D12C6C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 22:28:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B6E5C43612
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 22:29:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34FF32086D
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 22:28:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A9D0C2086D
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 22:29:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c2D21m7l"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730322AbeLNW2d (ORCPT
+        id S1730414AbeLNW3g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 17:28:33 -0500
-Received: from mail1.windriver.com ([147.11.146.13]:33048 "EHLO
-        mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729519AbeLNW2d (ORCPT
+        Fri, 14 Dec 2018 17:29:36 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:50826 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729519AbeLNW3f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 17:28:33 -0500
-Received: from ALA-HCA.corp.ad.wrs.com ([147.11.189.40])
-        by mail1.windriver.com (8.15.2/8.15.1) with ESMTPS id wBEMS32X002135
-        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
-        Fri, 14 Dec 2018 14:28:03 -0800 (PST)
-Received: from yow-pgortmak-d1.corp.ad.wrs.com (128.224.56.57) by
- ALA-HCA.corp.ad.wrs.com (147.11.189.40) with Microsoft SMTP Server id
- 14.3.408.0; Fri, 14 Dec 2018 14:28:03 -0800
-Received: by yow-pgortmak-d1.corp.ad.wrs.com (Postfix, from userid 1000)        id
- 8D95A2E0804; Fri, 14 Dec 2018 17:28:02 -0500 (EST)
-Date:   Fri, 14 Dec 2018 17:28:02 -0500
-From:   Paul Gortmaker <paul.gortmaker@windriver.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>, James Morris <jmorris@namei.org>
-CC:     Randy Dunlap <rdunlap@infradead.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        <linux-integrity@vger.kernel.org>, James Morris <jmorris@namei.org>
-Subject: Re: linux-next: Tree for Dec 14 (security/integrity/ima/)
-Message-ID: <20181214222802.GP11670@windriver.com>
-References: <20181214181826.5775b958@canb.auug.org.au>
- <8205aafb-bbc1-2196-17d9-e70e9ac56c2e@infradead.org>
- <1544815174.3681.16.camel@linux.ibm.com>
- <20181214202650.GO11670@windriver.com>
+        Fri, 14 Dec 2018 17:29:35 -0500
+Received: by mail-wm1-f67.google.com with SMTP id n190so7093517wmd.0;
+        Fri, 14 Dec 2018 14:29:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=uAaP4jVStVp4MUgrxkDDuXre0XdfMO7PrAfUyw0/N34=;
+        b=c2D21m7leRBVex++bCFf7t7X3A3WKuHXnOtFoopw9TByr2p/o5/48IUd0aLSvytUhG
+         qgVF2RWmlBB8KwHhmWitNMqMkmgk+pyes3aH5Pkg7KrVY315WoUFjnh1oJCnCwAE+NJ2
+         RMvAewDCL41t1Qt//EvMh5P83pX4YfDc47vJxILTh4hEQ7qfQdWpUpFAJC7gAAix+xR+
+         EWLOS8XFVXycL7vlKYqQEWSHSK2LFSIoIv5Lg6Xv8/LhrcVJB1aHTxlHvxMYoJ19r3uR
+         3c1eb1p2JD2OpYIgrpOsar/BVaO6vdC4R6/1vJQhsHVHvycjpOrnutS3Dq3PXUjEKlEA
+         ZWrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=uAaP4jVStVp4MUgrxkDDuXre0XdfMO7PrAfUyw0/N34=;
+        b=Wff3IvQf7y72TjdI4ViEmr2C2jdGXGcNuq0BvsXnHE9z9/stLd4cKcqRbuCyQRJJu+
+         YONayfSm9WqWqSrf7m409lTE3I86bGVZXRx5ryiLMhEiVflEBj/0pA2W1s0SEa/UjKMm
+         8ZoHAbwPE3o5jRN7/y+QhDQm4GgK2LMLF1FwCuEqJSTiRP9GR5nfANHpcvyTZE5vg8Pe
+         CKfOiLbQI8i95CUDf7XLg3Cubpd0WawJ5+EqVp8q+tvR/suz93i3PAPlB705LV3lJRu6
+         c35ex2alJs5olpJSHs8Rc9lyU5BjAn3cGlMvoUxwJbZLp8CJkFxlXutpMRM9WQ3sZBYU
+         ur1A==
+X-Gm-Message-State: AA+aEWbxB8QboWKi99GiUsf4csOU80TMlLbjRWDH+54uxlQOKro6yl6m
+        TbPg2yVzAT3nRrZHI5VLPYrllAHw
+X-Google-Smtp-Source: AFSGD/W1E1t2xDMHR+ArhLPP1DnN+0ZJbTugoHN8h1LVU1jtILWkgKkxC/rQqngsfHXOJDtrhRBahQ==
+X-Received: by 2002:a1c:de57:: with SMTP id v84mr4443721wmg.55.1544826572483;
+        Fri, 14 Dec 2018 14:29:32 -0800 (PST)
+Received: from [192.168.1.4] (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
+        by smtp.gmail.com with ESMTPSA id c7sm11260619wre.64.2018.12.14.14.29.31
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 14 Dec 2018 14:29:31 -0800 (PST)
+Subject: Re: [PATCH] clk: vc5: Initialize src in vc5_mux_set_parent()
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Alexey Firago <alexey_firago@mentor.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-renesas-soc@vger.kernel.org
+References: <20181214214959.162744-1-sboyd@kernel.org>
+From:   Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <c1065c2f-3e7e-e2c4-a9f5-e672e86beb43@gmail.com>
+Date:   Fri, 14 Dec 2018 23:29:30 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20181214202650.GO11670@windriver.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20181214214959.162744-1-sboyd@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[Re: linux-next: Tree for Dec 14 (security/integrity/ima/)] On 14/12/2018 (Fri 15:26) Paul Gortmaker wrote:
-
-> [Re: linux-next: Tree for Dec 14 (security/integrity/ima/)] On 14/12/2018 (Fri 14:19) Mimi Zohar wrote:
+On 12/14/2018 10:49 PM, Stephen Boyd wrote:
+> It seems that it may be possible to get to the regmap update call
+> without ever initializing this variable, so just set it to 0 to be safe.
 > 
-> > On Fri, 2018-12-14 at 08:25 -0800, Randy Dunlap wrote:
-> > > 
-> > > on i386:
-> > > 
-> > >   CC      security/integrity/ima/ima_main.o
-> > > ../security/integrity/ima/ima_main.c: In function 'ima_load_data':
-> > > ../security/integrity/ima/ima_main.c:535:3: error: implicit declaration of function 'is_module_sig_enforced' [-Werror=implicit-function-declaration]
-> > >    sig_enforce = is_module_sig_enforced();
-> > >    ^
-
-[...]
-
-> > Commit 4f83d5ea643a ("security: integrity: make ima_main explicitly
-> > non-modular") just removed module.h.
+> Cc: Marek Vasut <marek.vasut+renesas@gmail.com>
+> Cc: Alexey Firago <alexey_firago@mentor.com>
+> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Cc: linux-renesas-soc@vger.kernel.org
+> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+> ---
+>  drivers/clk/clk-versaclock5.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Yes, unfortunately the security directory has additional confusion
-> because there is name space overlap between "module" as used in Linux
-> Security Module, and "module" as in "insmod foo.ko".  The ima_main
-> is not modular, but it does use modular infrastructure to load others.
-> 
-> Fortunately this was the final commit in the series, so it can be
-> removed or reverted as per maintainer's choice.  In the meantime, I'll
-> look into why my "allyesconfig" build testing didn't pick up on this,
-> so I can close that testing gap.
+> diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
+> index 5b393e711e94..026f76276933 100644
+> --- a/drivers/clk/clk-versaclock5.c
+> +++ b/drivers/clk/clk-versaclock5.c
+> @@ -246,7 +246,7 @@ static int vc5_mux_set_parent(struct clk_hw *hw, u8 index)
+>  	struct vc5_driver_data *vc5 =
+>  		container_of(hw, struct vc5_driver_data, clk_mux);
+>  	const u8 mask = VC5_PRIM_SRC_SHDN_EN_XTAL | VC5_PRIM_SRC_SHDN_EN_CLKIN;
+> -	u8 src;
+> +	u8 src = 0;
+>  
+>  	if ((index > 1) || !vc5->clk_mux_ins)
+>  		return -EINVAL;
 
-I've confirmed that most .config result in an implicit header presence
-by looking at the CPP output.  Details below.
+Can you rather change the else { } branch in that function such that it does
 
-James, if your input branch to linux-next is strictly fast forward, here
-is a partial revert to fix up what Randy found that you can apply.
+ if (vc5->clk_mux)ins == ...)
+  ...
+ else if (...)
+  ...
++ else
++  return -EINVAL;
 
-Thanks for the report, and again - sorry for not detecting this myself.
-Paul.
---
+The last bit would assure the function would fail in case the
+clk_mux_ins == 0, which can happen if someone builds a setup without any
+clock into connected to the VC5 (which would not work hardware-vise).
 
-From 31081a8b46e84d64e2fbda8d0d82ba26d56cc468 Mon Sep 17 00:00:00 2001
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Date: Fri, 14 Dec 2018 16:48:07 -0500
-Subject: [PATCH] security: integrity: partial revert of make ima_main
- explicitly non-modular
-
-In commit 4f83d5ea643a ("security: integrity: make ima_main explicitly
-non-modular") I'd removed <linux/module.h> after assuming that the
-function is_module_sig_enforced() was an LSM function and not a core
-kernel module function.
-
-Unfortunately the typical .config selections used in build testing
-provide an implicit <linux/module.h> presence, and so normal/typical
-build testing did not immediately reveal my incorrect assumption.
-
-Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-Cc: James Morris <james.l.morris@oracle.com>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>
-Cc: linux-ima-devel@lists.sourceforge.net
-Cc: linux-security-module@vger.kernel.org
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
-
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index adaf96932237..616a88f95b92 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -21,7 +21,7 @@
- 
- #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
- 
--#include <linux/init.h>
-+#include <linux/module.h>
- #include <linux/file.h>
- #include <linux/binfmts.h>
- #include <linux/mount.h>
 -- 
-2.7.4
-
+Best regards,
+Marek Vasut
