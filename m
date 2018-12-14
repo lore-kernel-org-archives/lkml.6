@@ -4,53 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA2CEC6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:41:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11BC9C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:41:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6C1A20892
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:41:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CCD4920892
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:41:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544791298;
-	bh=oMl3LuhMErWIWciRW6PQPe4zG4HSsxoFJY7x1540ENU=;
+	s=default; t=1544791303;
+	bh=QlsG4L9x1pcYRrg/xA6qzBsnUAdVRqoxYHt0aIodvzc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=iiZFKwmNm2E9gvP96IK/b0tTMMmkI6jtdwsjuJgl3Y6dSZX5Mjw353JNSiHjbP61P
-	 xA+HNkGCFvPNVdHNOWLhRQtLMCWt5aT28TfzyDdZYMvHS+05K5vLZTfA6KdPKPKzSo
-	 DtviOVCjsNDt9PuLBDIWLuvek5nmp1RvRHApeUqg=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6C1A20892
+	b=KYveDDXbWGFCfvcINN6z6R9RPzC91kpKgrAfGksdzWH/vJnQoEGN+2xDditt2kBqQ
+	 T5r/rDXxhvuGzc4qMOD+8vmTZNWZlJmV32IgT7jjDcCzaCgP/ROzW1Qz5YEvl1IB1w
+	 F2EKcBxzyv3fo+1iS3uAvluKo0j8cAlwpzjaz1S0=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCD4920892
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729734AbeLNMDU (ORCPT
+        id S1730670AbeLNMlm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:03:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46708 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:41:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46836 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729728AbeLNMDR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:03:17 -0500
+        id S1730276AbeLNMDT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:03:19 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DB8142146E;
-        Fri, 14 Dec 2018 12:03:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6CC622146E;
+        Fri, 14 Dec 2018 12:03:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544788996;
-        bh=oMl3LuhMErWIWciRW6PQPe4zG4HSsxoFJY7x1540ENU=;
+        s=default; t=1544788998;
+        bh=QlsG4L9x1pcYRrg/xA6qzBsnUAdVRqoxYHt0aIodvzc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=e8xm7FeZc+BEJU00bb01YghT3LLfEvJgdOKOhvdzfuEW+h+QiJNJcEuCSvrcSAW4r
-         nk0VgrV/l9I+bwIt5MfXSKkao4YUEnr+V2vuLJxt52x1pj7VgVloUIgRKXEoXAQYvt
-         vcEhxPNUvuTn7XEs/i04ycZtnT91qVzA95fs6X0Y=
+        b=LZja6//e1VWZ+F9mhnPhRTOCcbwvUSiAYeZt2JLDZCMHR/AwTQRQIoCPSQ2rzHmaF
+         p/uvg+Xt4ruxkb1DiyxeTyOEojCEZi1SiA1x1eVm2hMdf90uzitO7CVbmZuqKisuAP
+         8COA+Ns27P4HICMIefhworKp/LL7e12CM/TdtZNQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        stable@vger.kernel.org, Tzung-Bi Shih <tzungbi@google.com>,
         Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 054/142] ASoC: omap-abe-twl6040: Fix missing audio card caused by deferred probing
-Date:   Fri, 14 Dec 2018 12:58:59 +0100
-Message-Id: <20181214115749.222607366@linuxfoundation.org>
+Subject: [PATCH 4.19 055/142] ASoC: dapm: Recalculate audio map forcely when card instantiated
+Date:   Fri, 14 Dec 2018 12:59:00 +0100
+Message-Id: <20181214115749.265358929@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115747.053633987@linuxfoundation.org>
 References: <20181214115747.053633987@linuxfoundation.org>
@@ -69,156 +69,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 76836fd354922ebe4798a64fda01f8dc6a8b0984 ]
+[ Upstream commit 882eab6c28d23a970ae73b7eb831b169a672d456 ]
 
-The machine driver fails to probe in next-20181113 with:
+Audio map are possible in wrong state before card->instantiated has
+been set to true.  Imaging the following examples:
 
-[    2.539093] omap-abe-twl6040 sound: ASoC: CODEC DAI twl6040-legacy not registered
-[    2.546630] omap-abe-twl6040 sound: devm_snd_soc_register_card() failed: -517
-...
-[    3.693206] omap-abe-twl6040 sound: ASoC: Both platform name/of_node are set for TWL6040
-[    3.701446] omap-abe-twl6040 sound: ASoC: failed to init link TWL6040
-[    3.708007] omap-abe-twl6040 sound: devm_snd_soc_register_card() failed: -22
-[    3.715148] omap-abe-twl6040: probe of sound failed with error -22
+time 1: at the beginning
 
-Bisect pointed to a merge commit:
-first bad commit: [0f688ab20a540aafa984c5dbd68a71debebf4d7f] Merge remote-tracking branch 'net-next/master'
+  in:-1    in:-1    in:-1    in:-1
+ out:-1   out:-1   out:-1   out:-1
+ SIGGEN        A        B      Spk
 
-and a diff between a working kernel does not reveal anything which would
-explain the change in behavior.
+time 2: after someone called snd_soc_dapm_new_widgets()
+(e.g. create_fill_widget_route_map() in sound/soc/codecs/hdac_hdmi.c)
 
-Further investigation showed that on the second try of loading fails
-because the dai_link->platform is no longer NULL and it might be pointing
-to uninitialized memory.
+   in:1     in:0     in:0     in:0
+  out:0    out:0    out:0    out:1
+ SIGGEN        A        B      Spk
 
-The fix is to move the snd_soc_dai_link and snd_soc_card inside of the
-abe_twl6040 struct, which is dynamically allocated every time the driver
-probes.
+time 3: routes added
 
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+   in:1     in:0     in:0     in:0
+  out:0    out:0    out:0    out:1
+ SIGGEN -----> A -----> B ---> Spk
+
+In the end, the path should be powered on but it did not.  At time 3,
+"in" of SIGGEN and "out" of Spk did not propagate to their neighbors
+because snd_soc_dapm_add_path() will not invalidate the paths if
+the card has not instantiated (i.e. card->instantiated is false).
+To correct the state of audio map, recalculate the whole map forcely.
+
+Signed-off-by: Tzung-Bi Shih <tzungbi@google.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/omap/omap-abe-twl6040.c | 67 +++++++++++++------------------
- 1 file changed, 29 insertions(+), 38 deletions(-)
+ sound/soc/soc-core.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/sound/soc/omap/omap-abe-twl6040.c b/sound/soc/omap/omap-abe-twl6040.c
-index d5ae9eb8c756..fed45b41f9d3 100644
---- a/sound/soc/omap/omap-abe-twl6040.c
-+++ b/sound/soc/omap/omap-abe-twl6040.c
-@@ -36,6 +36,8 @@
- #include "../codecs/twl6040.h"
- 
- struct abe_twl6040 {
-+	struct snd_soc_card card;
-+	struct snd_soc_dai_link dai_links[2];
- 	int	jack_detection;	/* board can detect jack events */
- 	int	mclk_freq;	/* MCLK frequency speed for twl6040 */
- };
-@@ -208,40 +210,10 @@ static int omap_abe_dmic_init(struct snd_soc_pcm_runtime *rtd)
- 				ARRAY_SIZE(dmic_audio_map));
- }
- 
--/* Digital audio interface glue - connects codec <--> CPU */
--static struct snd_soc_dai_link abe_twl6040_dai_links[] = {
--	{
--		.name = "TWL6040",
--		.stream_name = "TWL6040",
--		.codec_dai_name = "twl6040-legacy",
--		.codec_name = "twl6040-codec",
--		.init = omap_abe_twl6040_init,
--		.ops = &omap_abe_ops,
--	},
--	{
--		.name = "DMIC",
--		.stream_name = "DMIC Capture",
--		.codec_dai_name = "dmic-hifi",
--		.codec_name = "dmic-codec",
--		.init = omap_abe_dmic_init,
--		.ops = &omap_abe_dmic_ops,
--	},
--};
--
--/* Audio machine driver */
--static struct snd_soc_card omap_abe_card = {
--	.owner = THIS_MODULE,
--
--	.dapm_widgets = twl6040_dapm_widgets,
--	.num_dapm_widgets = ARRAY_SIZE(twl6040_dapm_widgets),
--	.dapm_routes = audio_map,
--	.num_dapm_routes = ARRAY_SIZE(audio_map),
--};
--
- static int omap_abe_probe(struct platform_device *pdev)
- {
- 	struct device_node *node = pdev->dev.of_node;
--	struct snd_soc_card *card = &omap_abe_card;
-+	struct snd_soc_card *card;
- 	struct device_node *dai_node;
- 	struct abe_twl6040 *priv;
- 	int num_links = 0;
-@@ -252,12 +224,18 @@ static int omap_abe_probe(struct platform_device *pdev)
- 		return -ENODEV;
+diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
+index 473eefe8658e..62aa320c2070 100644
+--- a/sound/soc/soc-core.c
++++ b/sound/soc/soc-core.c
+@@ -2126,6 +2126,7 @@ static int snd_soc_instantiate_card(struct snd_soc_card *card)
  	}
  
--	card->dev = &pdev->dev;
--
- 	priv = devm_kzalloc(&pdev->dev, sizeof(struct abe_twl6040), GFP_KERNEL);
- 	if (priv == NULL)
- 		return -ENOMEM;
- 
-+	card = &priv->card;
-+	card->dev = &pdev->dev;
-+	card->owner = THIS_MODULE;
-+	card->dapm_widgets = twl6040_dapm_widgets;
-+	card->num_dapm_widgets = ARRAY_SIZE(twl6040_dapm_widgets);
-+	card->dapm_routes = audio_map;
-+	card->num_dapm_routes = ARRAY_SIZE(audio_map);
-+
- 	if (snd_soc_of_parse_card_name(card, "ti,model")) {
- 		dev_err(&pdev->dev, "Card name is not provided\n");
- 		return -ENODEV;
-@@ -274,14 +252,27 @@ static int omap_abe_probe(struct platform_device *pdev)
- 		dev_err(&pdev->dev, "McPDM node is not provided\n");
- 		return -EINVAL;
- 	}
--	abe_twl6040_dai_links[0].cpu_of_node = dai_node;
--	abe_twl6040_dai_links[0].platform_of_node = dai_node;
-+
-+	priv->dai_links[0].name = "DMIC";
-+	priv->dai_links[0].stream_name = "TWL6040";
-+	priv->dai_links[0].cpu_of_node = dai_node;
-+	priv->dai_links[0].platform_of_node = dai_node;
-+	priv->dai_links[0].codec_dai_name = "twl6040-legacy";
-+	priv->dai_links[0].codec_name = "twl6040-codec";
-+	priv->dai_links[0].init = omap_abe_twl6040_init;
-+	priv->dai_links[0].ops = &omap_abe_ops;
- 
- 	dai_node = of_parse_phandle(node, "ti,dmic", 0);
- 	if (dai_node) {
- 		num_links = 2;
--		abe_twl6040_dai_links[1].cpu_of_node = dai_node;
--		abe_twl6040_dai_links[1].platform_of_node = dai_node;
-+		priv->dai_links[1].name = "TWL6040";
-+		priv->dai_links[1].stream_name = "DMIC Capture";
-+		priv->dai_links[1].cpu_of_node = dai_node;
-+		priv->dai_links[1].platform_of_node = dai_node;
-+		priv->dai_links[1].codec_dai_name = "dmic-hifi";
-+		priv->dai_links[1].codec_name = "dmic-codec";
-+		priv->dai_links[1].init = omap_abe_dmic_init;
-+		priv->dai_links[1].ops = &omap_abe_dmic_ops;
- 	} else {
- 		num_links = 1;
- 	}
-@@ -300,7 +291,7 @@ static int omap_abe_probe(struct platform_device *pdev)
- 		return -ENODEV;
- 	}
- 
--	card->dai_link = abe_twl6040_dai_links;
-+	card->dai_link = priv->dai_links;
- 	card->num_links = num_links;
- 
- 	snd_soc_card_set_drvdata(card, priv);
+ 	card->instantiated = 1;
++	dapm_mark_endpoints_dirty(card);
+ 	snd_soc_dapm_sync(&card->dapm);
+ 	mutex_unlock(&card->mutex);
+ 	mutex_unlock(&client_mutex);
 -- 
 2.19.1
 
