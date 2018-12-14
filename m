@@ -4,43 +4,45 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-11.9 required=3.0
 	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 876ECC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:55:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D04D9C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:56:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C93E2208C2
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:55:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A092206DD
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:56:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731164AbeLNUz2 (ORCPT
+        id S1731110AbeLNU4C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 15:55:28 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:57319 "EHLO
+        Fri, 14 Dec 2018 15:56:02 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:47335 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730757AbeLNUz1 (ORCPT
+        with ESMTP id S1730739AbeLNU4C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 15:55:27 -0500
+        Fri, 14 Dec 2018 15:56:02 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBEKtLTi1459199
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBEKttEj1459265
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Fri, 14 Dec 2018 12:55:21 -0800
+        Fri, 14 Dec 2018 12:55:55 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBEKtKsb1459196;
-        Fri, 14 Dec 2018 12:55:20 -0800
-Date:   Fri, 14 Dec 2018 12:55:20 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBEKttMn1459262;
+        Fri, 14 Dec 2018 12:55:55 -0800
+Date:   Fri, 14 Dec 2018 12:55:55 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-2f69l7drca427ob4km8i7kvo@git.kernel.org>
-Cc:     mingo@kernel.org, linux-kernel@vger.kernel.org,
-        adrian.hunter@intel.com, namhyung@kernel.org, jolsa@kernel.org,
-        acme@redhat.com, tglx@linutronix.de, hpa@zytor.com
-Reply-To: hpa@zytor.com, tglx@linutronix.de, acme@redhat.com,
-          jolsa@kernel.org, namhyung@kernel.org, adrian.hunter@intel.com,
-          linux-kernel@vger.kernel.org, mingo@kernel.org
+Message-ID: <tip-xzkoo0gyr56gej39ltivuh9g@git.kernel.org>
+Cc:     arjan@linux.intel.com, linux-kernel@vger.kernel.org,
+        jolsa@kernel.org, hpa@zytor.com, mingo@kernel.org,
+        tglx@linutronix.de, namhyung@kernel.org, adrian.hunter@intel.com,
+        acme@redhat.com
+Reply-To: linux-kernel@vger.kernel.org, jolsa@kernel.org,
+          arjan@linux.intel.com, hpa@zytor.com, namhyung@kernel.org,
+          tglx@linutronix.de, adrian.hunter@intel.com, mingo@kernel.org,
+          acme@redhat.com
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf help: Remove needless use of strncpy()
-Git-Commit-ID: b8990e60c7a5643185bf751cae9cd58bcb8b6474
+Subject: [tip:perf/core] perf svghelper: Fix unchecked usage of strncpy()
+Git-Commit-ID: 7d81b2ac5dfe15ff8123eb7d004529fa93c906e7
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -54,51 +56,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  b8990e60c7a5643185bf751cae9cd58bcb8b6474
-Gitweb:     https://git.kernel.org/tip/b8990e60c7a5643185bf751cae9cd58bcb8b6474
+Commit-ID:  7d81b2ac5dfe15ff8123eb7d004529fa93c906e7
+Gitweb:     https://git.kernel.org/tip/7d81b2ac5dfe15ff8123eb7d004529fa93c906e7
 Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Thu, 6 Dec 2018 11:20:21 -0300
+AuthorDate: Thu, 6 Dec 2018 11:29:48 -0300
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Thu, 6 Dec 2018 16:41:15 -0300
+CommitDate: Thu, 6 Dec 2018 16:41:29 -0300
 
-perf help: Remove needless use of strncpy()
+perf svghelper: Fix unchecked usage of strncpy()
 
-Since we make sure the destination buffer has at least strlen(orig) + 1,
-no need to do a strncpy(dest, orig, strlen(orig)), just use strcpy(dest,
-orig).
+The strncpy() function may leave the destination string buffer
+unterminated, better use strlcpy() that we have a __weak fallback
+implementation for systems without it.
 
-This silences this gcc 8.2 warning on Alpine Linux:
+In this specific case this would only happen if fgets() was buggy, as
+its man page states that it should read one less byte than the size of
+the destination buffer, so that it can put the nul byte at the end of
+it, so it would never copy 255 non-nul chars, as fgets reads into the
+orig buffer at most 254 non-nul chars and terminates it. But lets just
+switch to strlcpy to keep the original intent and silence the gcc 8.2
+warning.
 
-  In function 'add_man_viewer',
-      inlined from 'perf_help_config' at builtin-help.c:284:3:
-  builtin-help.c:192:2: error: 'strncpy' output truncated before terminating nul copying as many bytes from a string as its length [-Werror=stringop-truncation]
-    strncpy((*p)->name, name, len);
-    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  builtin-help.c: In function 'perf_help_config':
-  builtin-help.c:187:15: note: length computed here
-    size_t len = strlen(name);
-                 ^~~~~~~~~~~~
+This fixes this warning on an Alpine Linux Edge system with gcc 8.2:
+
+  In function 'cpu_model',
+      inlined from 'svg_cpu_box' at util/svghelper.c:378:2:
+  util/svghelper.c:337:5: error: 'strncpy' output may be truncated copying 255 bytes from a string of length 255 [-Werror=stringop-truncation]
+       strncpy(cpu_m, &buf[13], 255);
+       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Fixes: 078006012401 ("perf_counter tools: add in basic glue from Git")
-Link: https://lkml.kernel.org/n/tip-2f69l7drca427ob4km8i7kvo@git.kernel.org
+Cc: Arjan van de Ven <arjan@linux.intel.com>
+Fixes: f48d55ce7871 ("perf: Add a SVG helper library file")
+Link: https://lkml.kernel.org/n/tip-xzkoo0gyr56gej39ltivuh9g@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-help.c | 2 +-
+ tools/perf/util/svghelper.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/builtin-help.c b/tools/perf/builtin-help.c
-index 1c41b4eaf73c..3d29d0524a89 100644
---- a/tools/perf/builtin-help.c
-+++ b/tools/perf/builtin-help.c
-@@ -189,7 +189,7 @@ static void add_man_viewer(const char *name)
- 	while (*p)
- 		p = &((*p)->next);
- 	*p = zalloc(sizeof(**p) + len + 1);
--	strncpy((*p)->name, name, len);
-+	strcpy((*p)->name, name);
- }
- 
- static int supported_man_viewer(const char *name, size_t len)
+diff --git a/tools/perf/util/svghelper.c b/tools/perf/util/svghelper.c
+index 1cbada2dc6be..f735ee038713 100644
+--- a/tools/perf/util/svghelper.c
++++ b/tools/perf/util/svghelper.c
+@@ -334,7 +334,7 @@ static char *cpu_model(void)
+ 	if (file) {
+ 		while (fgets(buf, 255, file)) {
+ 			if (strstr(buf, "model name")) {
+-				strncpy(cpu_m, &buf[13], 255);
++				strlcpy(cpu_m, &buf[13], 255);
+ 				break;
+ 			}
+ 		}
