@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C6F8C6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:31:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB16EC6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:31:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 048D220892
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:31:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3BD120892
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:31:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544790669;
-	bh=gevDAJjBzvl81+N7ZgWAKlccE2YfNzgh65hUpZqnZpo=;
+	s=default; t=1544790680;
+	bh=r+4ouX6oVBPi2Se3O7g8lwYyP7l9jmoMzHo4WFOsRMA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=V3hFhiSxZ6Ol4+wHo89nXaZ8SdzXDXC1u1vGcpKwfhRuXbp0THsGgtpbb/W/RZ+3j
-	 WELhRPTv0oZtegNTBC3mgiTCV29+eAs1yak3sZT+TkvhvQGxpPFpGPH3ZP8XzbnD/9
-	 RujqwuWViSZEXwRJb6uydkcydYY1Y54+Nk9bmMr4=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 048D220892
+	b=Vw8Pmg0GZLMX2712KFs6foN0B57monFxwdUXE7/Efl4aeSw/ZEzBfJSlmTrQMlxOk
+	 Xj9kI/StMKF6xmtkuFnGVk6aGAnbRD3ri01oJIgLrLRJD48dFR6HPdBxW5lxoGeWIN
+	 4+9DEksvhluBi+Ef+78ZmZ8pNAb1kci8n+2zhzjE=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3BD120892
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731607AbeLNMbI (ORCPT
+        id S1731503AbeLNMJs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:31:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55672 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:09:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55492 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730041AbeLNMJz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:09:55 -0500
+        id S1731493AbeLNMJp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:09:45 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9A8402148E;
-        Fri, 14 Dec 2018 12:09:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7BB15214C4;
+        Fri, 14 Dec 2018 12:09:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789395;
-        bh=gevDAJjBzvl81+N7ZgWAKlccE2YfNzgh65hUpZqnZpo=;
+        s=default; t=1544789385;
+        bh=r+4ouX6oVBPi2Se3O7g8lwYyP7l9jmoMzHo4WFOsRMA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eG9hY1BEpE81ma1d9sbnM8WGm+V2NC4OvoJAzuoPeVQL2/wUBraPEwErx1fG2naaL
-         xUvyG9Gs+NLLkQzZwXekv6+ppvcGThBgopPPmCHV8Od5jOA2zFibLq8t9JOdrEC0QD
-         0FKnphhwiGilPQ1EZ/7PrWOM+skfNp76ghtJqODg=
+        b=seW2VF9Cc6Kb7t3weANEpqFxcDVx8Z3pRe7SagKtfZhwi/zUJAqACzjWG7n/bVA7O
+         EW5XXR1i1FCVSucF1zApuGNti6hphb2Mn6DeZ5zIEM2WTJBNN5qDONmLwng6TbNgBP
+         WEpLpARi300c3iiv+KDY/EULsovwFCuPXVjnpOaA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Jarkko Nikula <jarkko.nikula@bitmer.com>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Yunjian Wang <wangyunjian@huawei.com>,
+        Aaron Brown <aaron.f.brown@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 43/89] ASoC: omap-dmic: Add pm_qos handling to avoid overruns with CPU_IDLE
-Date:   Fri, 14 Dec 2018 12:59:56 +0100
-Message-Id: <20181214115731.799976813@linuxfoundation.org>
+Subject: [PATCH 4.14 61/89] igb: fix uninitialized variables
+Date:   Fri, 14 Dec 2018 13:00:14 +0100
+Message-Id: <20181214115732.681976290@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115729.658859279@linuxfoundation.org>
 References: <20181214115729.658859279@linuxfoundation.org>
@@ -70,61 +70,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit ffdcc3638c58d55a6fa68b6e5dfd4fb4109652eb ]
+[ Upstream commit e4c39f7926b4de355f7df75651d75003806aae09 ]
 
-We need to block sleep states which would require longer time to leave than
-the time the DMA must react to the DMA request in order to keep the FIFO
-serviced without overrun.
+This patch fixes the variable 'phy_word' may be used uninitialized.
 
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Acked-by: Jarkko Nikula <jarkko.nikula@bitmer.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Yunjian Wang <wangyunjian@huawei.com>
+Tested-by: Aaron Brown <aaron.f.brown@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/omap/omap-dmic.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/net/ethernet/intel/igb/e1000_i210.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/sound/soc/omap/omap-dmic.c b/sound/soc/omap/omap-dmic.c
-index 09db2aec12a3..776e809a8aab 100644
---- a/sound/soc/omap/omap-dmic.c
-+++ b/sound/soc/omap/omap-dmic.c
-@@ -48,6 +48,8 @@ struct omap_dmic {
- 	struct device *dev;
- 	void __iomem *io_base;
- 	struct clk *fclk;
-+	struct pm_qos_request pm_qos_req;
-+	int latency;
- 	int fclk_freq;
- 	int out_freq;
- 	int clk_div;
-@@ -124,6 +126,8 @@ static void omap_dmic_dai_shutdown(struct snd_pcm_substream *substream,
- 
- 	mutex_lock(&dmic->mutex);
- 
-+	pm_qos_remove_request(&dmic->pm_qos_req);
-+
- 	if (!dai->active)
- 		dmic->active = 0;
- 
-@@ -226,6 +230,8 @@ static int omap_dmic_dai_hw_params(struct snd_pcm_substream *substream,
- 	/* packet size is threshold * channels */
- 	dma_data = snd_soc_dai_get_dma_data(dai, substream);
- 	dma_data->maxburst = dmic->threshold * channels;
-+	dmic->latency = (OMAP_DMIC_THRES_MAX - dmic->threshold) * USEC_PER_SEC /
-+			params_rate(params);
- 
- 	return 0;
- }
-@@ -236,6 +242,9 @@ static int omap_dmic_dai_prepare(struct snd_pcm_substream *substream,
- 	struct omap_dmic *dmic = snd_soc_dai_get_drvdata(dai);
- 	u32 ctrl;
- 
-+	if (pm_qos_request_active(&dmic->pm_qos_req))
-+		pm_qos_update_request(&dmic->pm_qos_req, dmic->latency);
-+
- 	/* Configure uplink threshold */
- 	omap_dmic_write(dmic, OMAP_DMIC_FIFO_CTRL_REG, dmic->threshold);
- 
+diff --git a/drivers/net/ethernet/intel/igb/e1000_i210.c b/drivers/net/ethernet/intel/igb/e1000_i210.c
+index 07d48f2e3369..6766081f5ab9 100644
+--- a/drivers/net/ethernet/intel/igb/e1000_i210.c
++++ b/drivers/net/ethernet/intel/igb/e1000_i210.c
+@@ -862,6 +862,7 @@ s32 igb_pll_workaround_i210(struct e1000_hw *hw)
+ 		nvm_word = E1000_INVM_DEFAULT_AL;
+ 	tmp_nvm = nvm_word | E1000_INVM_PLL_WO_VAL;
+ 	igb_write_phy_reg_82580(hw, I347AT4_PAGE_SELECT, E1000_PHY_PLL_FREQ_PAGE);
++	phy_word = E1000_PHY_PLL_UNCONF;
+ 	for (i = 0; i < E1000_MAX_PLL_TRIES; i++) {
+ 		/* check current state directly from internal PHY */
+ 		igb_read_phy_reg_82580(hw, E1000_PHY_PLL_FREQ_REG, &phy_word);
 -- 
 2.19.1
 
