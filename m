@@ -2,123 +2,155 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B11D5C67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 05:21:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3174C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 05:30:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76E50208E7
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 05:21:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A1D4B20879
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 05:30:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="dW6tIIT0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76E50208E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="itN1jT9Q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1D4B20879
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727169AbeLNFVj (ORCPT
+        id S1727302AbeLNFak (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 00:21:39 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:34350 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726445AbeLNFVj (ORCPT
+        Fri, 14 Dec 2018 00:30:40 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:38852 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727127AbeLNFaj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 00:21:39 -0500
-Received: by mail-oi1-f193.google.com with SMTP id h25so3652873oig.1
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 21:21:38 -0800 (PST)
+        Fri, 14 Dec 2018 00:30:39 -0500
+Received: by mail-pl1-f193.google.com with SMTP id e5so2185117plb.5
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 21:30:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=YpIMAtZzHAdUBjBeuDaGg9PhOGPT/1ioJOjVyBPIhjQ=;
-        b=dW6tIIT02QWSryDFFdV/NJUZiXmh2OEDXleF6cKBSCepXMbmIWMx/sJiPlT4lcR/9t
-         GT307/MvhkeUubBu7JWcR3eCKOvl7aAlttqJvewJbPfiEoQUGpc4gAAsUmcncXe/eDV/
-         6s4X4qtuvrdfI0qY+u+8jxXilwspQSBi21ZAbw4rrejDn7AIkhMTHvCGkBjLJUSSCcMu
-         eabyG5QiEITp5l1Ye535prdpHdGVi1O4xZEFTWCfoUMnSQXGA3dy++SAB/fCPTSUFAx1
-         8awEunDppQLUsK3LY5Ue0KIenLzw0a0iHKZTuPrcckCBt+nPzuWddo24dHSFKu3+/fVj
-         e/xw==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=FJWMHnE+f1N7VtA5gckashrUqqP/r697ZPMLxPpbIsg=;
+        b=itN1jT9QiEXRp1GyFXciM8N7EeQyMNRoBGdaEtCRJk3uShftjASv/VktKROr5QvimA
+         OA/GZXuc5YUZlzIsLqLD9iG10cV3L1ZQ19bhY0JyWm+F0YexJKJGz/TYdA7ifqOV46V0
+         3aApOtaQzyzm04E/Ot7Uglg3FYeQtiMW1G32w=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=YpIMAtZzHAdUBjBeuDaGg9PhOGPT/1ioJOjVyBPIhjQ=;
-        b=d1bHxZb4ZHfRPdVJK3+3RfPSdagtQDqGXyAYKnVB1/AVZmyxuHJQaux0VuM7ZHJYQ6
-         KHoC4X3x9u3nTfe0eEA7E446wPGGXtE+w2NQdOgnyN4T4odUa0wkKmuMtjbS8fLHkWcZ
-         /qKfkvPrCgWk0lHgjJCzvZovn0q7fmkGFOJTxU1x/O+euKkNKQlk5fbWHx71qwD5BCMK
-         uSdOmbKahkMED+Bw/GrNcL/eXkOpbLJw12fu5YZ3lbClz1qbyUouHeoSJrZnQXHRFz/y
-         OgHw8dafkwZT5DObQfg4/h7gysN+UZ9IuuJItoNjrDa82UQUNKWjt+uZkfKzLze+PQcS
-         lh5Q==
-X-Gm-Message-State: AA+aEWbcdOVMr/bkqR0mGAyPig35iBFdcOSDLSvnh4QHHPwsGz3MgqbB
-        C8Ko7Uyhsjycc+YSz76goRKrTLQ6drcYUl3FHOaBCw==
-X-Google-Smtp-Source: AFSGD/Uha3wQbE+rV2ORNNxCuTN4I4vqZTI6b9rVxda/BSASuu2kHNbpiC8Bv8heKUrA0Iabx9c27ymNDs0H86IqJNk=
-X-Received: by 2002:aca:4307:: with SMTP id q7mr1019460oia.105.1544764897688;
- Thu, 13 Dec 2018 21:21:37 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=FJWMHnE+f1N7VtA5gckashrUqqP/r697ZPMLxPpbIsg=;
+        b=unSSrhbL6Anr0IKi47UUOH6gz/5hG5EcA8VdIJ64JFX+j98miykUy1VOzSGwymnTMG
+         i5UyHyQFclr1J0mG65OFYSnZD4uJDX9+z3jXIPEmPxi0pOFqaiahtPFJD3xotAb6Jmjc
+         EYPcqDoq4+qSaeXPBvy3bLie/tyTUnbBDTrIN/RvNzkLRECjFwIQc9HjjLzNAQngZF6X
+         qH7Mh9w1X7lqLLVB+VBbpoC675FRHJo1qncVALBtxu/bpiTho8zcLgcXA5Hj1f6WrEOY
+         c4B4L7rx9PJNvn37LNUKsq9lV7nKENAq0ykPf2OGrMLTi8TfBWggtg7sT62vc9Q9bKDI
+         B9Cw==
+X-Gm-Message-State: AA+aEWZ2IJ+Ak8w1yV7csIzgg2vhaRXt3vYEwJxXCh98z8fhAWxYJuHz
+        LvpC1tbOWUS1dZ2iNLNDKx1+uQ==
+X-Google-Smtp-Source: AFSGD/V4pGkGEfX0GXDSvbndIhFh2TW3d4fTH7f+TKUb4FaWrl8iWicTCw3VoGXYtZ6HAPGB+ypmjA==
+X-Received: by 2002:a17:902:4503:: with SMTP id m3mr1660615pld.23.1544765439082;
+        Thu, 13 Dec 2018 21:30:39 -0800 (PST)
+Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id q5sm6059436pfi.165.2018.12.13.21.30.37
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 13 Dec 2018 21:30:37 -0800 (PST)
+Date:   Thu, 13 Dec 2018 21:30:35 -0800
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     Rajendra Nayak <rnayak@codeaurora.org>, sre@kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH] power: reset: msm: Add support for download-mode control
+Message-ID: <20181214053035.GK1578@tuxbook-pro>
+References: <1531977529-23304-1-git-send-email-rnayak@codeaurora.org>
+ <20180719054200.GB30024@minitux>
+ <ca74b7f4-3e60-2f3b-3d66-ac167c913c0e@codeaurora.org>
+ <153210869376.48062.15842782379577271631@swboyd.mtv.corp.google.com>
+ <154282479571.88331.5041132574563990889@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
-References: <20181205014441.GA3045@redhat.com> <59ca5c4b-fd5b-1fc6-f891-c7986d91908e@nvidia.com>
- <7b4733be-13d3-c790-ff1b-ac51b505e9a6@nvidia.com> <20181207191620.GD3293@redhat.com>
- <3c4d46c0-aced-f96f-1bf3-725d02f11b60@nvidia.com> <20181208022445.GA7024@redhat.com>
- <20181210102846.GC29289@quack2.suse.cz> <20181212150319.GA3432@redhat.com>
- <20181212214641.GB29416@dastard> <20181212215931.GG5037@redhat.com>
- <20181213005119.GD29416@dastard> <05a68829-6e6d-b766-11b4-99e1ba4bc87b@nvidia.com>
-In-Reply-To: <05a68829-6e6d-b766-11b4-99e1ba4bc87b@nvidia.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Thu, 13 Dec 2018 21:21:26 -0800
-Message-ID: <CAPcyv4jyG3YTtghyr04wws_hcSBAmPBpnCm0tFcKgz9VwrV=ow@mail.gmail.com>
-Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
-To:     John Hubbard <jhubbard@nvidia.com>
-Cc:     david <david@fromorbit.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>,
-        John Hubbard <john.hubbard@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>, tom@talpey.com,
-        Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
-        Christoph Hellwig <hch@infradead.org>,
-        Christopher Lameter <cl@linux.com>,
-        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Michal Hocko <mhocko@kernel.org>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        rcampbell@nvidia.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <154282479571.88331.5041132574563990889@swboyd.mtv.corp.google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 13, 2018 at 7:53 PM John Hubbard <jhubbard@nvidia.com> wrote:
->
-> On 12/12/18 4:51 PM, Dave Chinner wrote:
-> > On Wed, Dec 12, 2018 at 04:59:31PM -0500, Jerome Glisse wrote:
-> >> On Thu, Dec 13, 2018 at 08:46:41AM +1100, Dave Chinner wrote:
-> >>> On Wed, Dec 12, 2018 at 10:03:20AM -0500, Jerome Glisse wrote:
-> >>>> On Mon, Dec 10, 2018 at 11:28:46AM +0100, Jan Kara wrote:
-> >>>>> On Fri 07-12-18 21:24:46, Jerome Glisse wrote:
-> >>>>> So this approach doesn't look like a win to me over using counter in struct
-> >>>>> page and I'd rather try looking into squeezing HMM public page usage of
-> >>>>> struct page so that we can fit that gup counter there as well. I know that
-> >>>>> it may be easier said than done...
-> >>>>
->
-> Agreed. After all the discussion this week, I'm thinking that the original idea
-> of a per-struct-page counter is better. Fortunately, we can do the moral equivalent
-> of that, unless I'm overlooking something: Jerome had another proposal that he
-> described, off-list, for doing that counting, and his idea avoids the problem of
-> finding space in struct page. (And in fact, when I responded yesterday, I initially
-> thought that's where he was going with this.)
->
-> So how about this hybrid solution:
->
-> 1. Stay with the basic RFC approach of using a per-page counter, but actually
-> store the counter(s) in the mappings instead of the struct page. We can use
-> !PageAnon and page_mapping to look up all the mappings, stash the dma_pinned_count
-> there. So the total pinned count is scattered across mappings. Probably still need
-> a PageDmaPinned bit.
+On Wed 21 Nov 10:26 PST 2018, Stephen Boyd wrote:
 
-How do you safely look at page->mapping from the get_user_pages_fast()
-path? You'll be racing invalidation disconnecting the page from the
-mapping.
+> Quoting Stephen Boyd (2018-07-20 10:44:53)
+> > Quoting Rajendra Nayak (2018-07-18 23:59:20)
+> > > On 7/19/2018 11:12 AM, Bjorn Andersson wrote:
+> > > > On Wed 18 Jul 22:18 PDT 2018, Rajendra Nayak wrote:
+> > > >> diff --git a/Documentation/devicetree/bindings/power/reset/msm-poweroff.txt b/Documentation/devicetree/bindings/power/reset/msm-poweroff.txt
+> > > >> index ce44ad3..9dd489f 100644
+> > > >> --- a/Documentation/devicetree/bindings/power/reset/msm-poweroff.txt
+> > > >> +++ b/Documentation/devicetree/bindings/power/reset/msm-poweroff.txt
+> > > >> @@ -8,6 +8,9 @@ settings.
+> > > >>   Required Properties:
+> > > >>   -compatible: "qcom,pshold"
+> > > >>   -reg: Specifies the physical address of the ps-hold register
+> > > >> +Optional Properties:
+> > > >> +-qcom,dload-mode: phandle to the TCSR hardware block and offset of the
+> > > >> +             download mode control register
+> > > >>   
+> > > >>   Example:
+> > > >>   
+> > > >> diff --git a/drivers/power/reset/Kconfig b/drivers/power/reset/Kconfig
+> > > >> index df58fc8..0c97e34 100644
+> > > >> --- a/drivers/power/reset/Kconfig
+> > > >> +++ b/drivers/power/reset/Kconfig
+> > > >> @@ -104,6 +104,17 @@ config POWER_RESET_MSM
+> > > >>      help
+> > > >>        Power off and restart support for Qualcomm boards.
+> > > >>   
+> > > >> +config POWER_RESET_MSM_DOWNLOAD_MODE
+> > > > 
+> > > > How about moving QCOM_SCM_DOWNLOAD_MODE_DEFAULT to
+> > > > drivers/soc/qcom/Kconfig (and removing "SCM") and referencing this in
+> > > > both drivers?
+> > > 
+> > > yes, thats possible, but I am not sure how to make the command line
+> > > option common for both. One other option I thought was if we could handle it
+> > > within the scm driver itself with an additional
+> > > binding to specify the non-secure download mode address.
+> > > something like qcom,dload-mode-ns?
+> > 
+> > Is the SCM device and driver always going to be present though? It may
+> > be better to make a TCSR platform device driver on designs that would
+> > configure the cookie with direct read/writes from Linux to break the
+> > relationship with scm entirely. Then the different configurations could
+> > flow from the DTS file either describing scm that has scm call, a
+> > special scm_writel address for TCSR, or a specific TCSR node with the
+> > address of the download mode cookie that triggers a TCSR driver to probe
+> > and register a reboot handler.
+> > 
+> 
+> Does my proposal work? I haven't seen anything new on the list since
+> this email.
+> 
+
+Afaiu the SCM device is still there, even though we don't use all the
+usual functionality.
+
+I tested on qcs404 and sdm845-mtp (LA boot chain), and they both return
+positive on:
+
+  __qcom_scm_is_call_available(dev, QCOM_SCM_SVC_IO, QCOM_SCM_IO_WRITE)
+
+So how about we change qcom_scm_set_download_mode() to do:
+
+  if (scm_call_avail(QCOM_SCM_SVC_BOOT, QCOM_SCM_SET_DLOAD_MODE))
+  	__qcom_scm_set_dload_mode()
+  else if (scm_call_avail(QCOM_SCM_SVC_IO, QCOM_SCM_IO_WRITE) && dload_mode_addr)
+  	__qcom_scm_io_writel();
+  else if (dload_mode_addr)
+  	writel()
+
+This would also mean that we can put the dload addr in the sdm845.dtsi
+and share that between LA and ATF.
+
+Regards,
+Bjorn
