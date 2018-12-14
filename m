@@ -2,154 +2,94 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6943C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 17:28:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 424EEC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 17:29:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2569206C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 17:28:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZTFSiWra"
+	by mail.kernel.org (Postfix) with ESMTP id 284222070B
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 17:29:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544808567;
+	bh=J69UGZ0QTfOA0DiHzi61NpuKOQf+o1W+E1k+UCDDr5s=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:List-ID:From;
+	b=rCtQxdWD+mIInJhqfmsuw5SLTUf1YvlpNrNm33/C1GbsVfe6oMlx7M926tf+AivmH
+	 mFy6D7T41UkFKv/jLuZbfEUVK0Vv25ZUQf/gqVOW8fPEiHuDvQqeFp58RZvQlENJOX
+	 2PQ11hOU8OcGfxyNeVtp7aupfACvXCIUnh+FTm2Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730221AbeLNR2w (ORCPT
+        id S1730367AbeLNR3Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 12:28:52 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:46102 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726662AbeLNR2v (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 12:28:51 -0500
-Received: by mail-pl1-f193.google.com with SMTP id t13so3009046ply.13
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 09:28:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=MWnPJgwsKNPqyFIyZqGRK3rRCDVyBFkQPh3SDdco/KY=;
-        b=ZTFSiWraZ6/6FMvPKaL8NuIQyVPjXCi/NYevE+kqMGDNtDxuiWvFJQXTs7Li1UP/MA
-         KcM4Gkc7Cs8+1wvBBcuJAoYtKHMewUSEl+DF98AvYWW87RGDCBA/29Nli5Zpth4sstX4
-         OyYEVMImarup0joV2lBwxHtyWmBjleWaviVU1aGLONeJLhE3kGsRw79YEJYMpEmW6at9
-         SVrAvsrbwNWQULFpu4XiRASxNnty86vNpf8wHA7Adet0EuVT23Wi6huJZjqb/ms6E6+D
-         7X37ppSTApPSGZJLsjSIFZiF+oVNBThDUl6BS1Wfla1m+qHaede2GCgBCusfmqAn4+yf
-         g7BQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=MWnPJgwsKNPqyFIyZqGRK3rRCDVyBFkQPh3SDdco/KY=;
-        b=WXQahr8oQi9EMDPvlnEEk9ma1n8cfCgjN7Gr5yV0S8D5DEelFQg0rwqkGSzgL2h+1w
-         Rovkf+7ezNdUVOsrBXeom+lu4oNlC9FUPk9VP+8qytRcLIQWwMvd4UBMDQnHpbVaqKIF
-         yJRxX+BASmtXJCpTHcdO0R2nWMQUJURvUohoNAJeoGf0JuC6nOETBakk2cFsBVJU2i5d
-         UyQC/UAPkMF8BN2e5UOvw2ngWnGQQuhfDv5Q4bp9Kj1VsyoK0GWy/y8iBCdMpm3yaoZx
-         qmcpB/qnzi0KROGC2CfqX7aA/bIoiFBkSDna967pHtyOiF8S77Yb1rum9stYaou+UurI
-         pi9g==
-X-Gm-Message-State: AA+aEWZPD+5LV3sJKcBaUANO89Jw4U6x/0obGqPDC+ZOqQcSbd/YmWiI
-        SjhVDSVq3GCtBloTX5QVfUXu5oS9
-X-Google-Smtp-Source: AFSGD/VN02xNdg0Kq/Mt5KFgrA3cI8kWCWESz/nFpp6yVvFrjHUvYHlnoUeJuzLlFP2T2twWyDzM/A==
-X-Received: by 2002:a17:902:264:: with SMTP id 91mr3705418plc.108.1544808531160;
-        Fri, 14 Dec 2018 09:28:51 -0800 (PST)
-Received: from himanshu-Vostro-3559 ([103.233.116.134])
-        by smtp.gmail.com with ESMTPSA id m67sm7325609pfm.73.2018.12.14.09.28.47
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 14 Dec 2018 09:28:50 -0800 (PST)
-Date:   Fri, 14 Dec 2018 22:58:43 +0530
-From:   Himanshu Jha <himanshujha199640@gmail.com>
-To:     Joe Perches <joe@perches.com>
-Cc:     Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>,
-        apw@canonical.com, Andrew Morton <akpm@linux-foundation.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, niklas.cassel@linaro.org
-Subject: Re: [PATCH] checkpatch: add Co-Developed-by to signature tags
-Message-ID: <20181214172843.GA18703@himanshu-Vostro-3559>
-References: <1544792494-15485-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
- <839c1d04000164e27dff9742e3efc3bcff3025b6.camel@perches.com>
- <20181214161604.GA17456@himanshu-Vostro-3559>
- <8ae5c67a5c4516a783579e449313d1d59fe3a47d.camel@perches.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8ae5c67a5c4516a783579e449313d1d59fe3a47d.camel@perches.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Fri, 14 Dec 2018 12:29:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44300 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730083AbeLNR3Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 12:29:24 -0500
+Received: from tzanussi-mobl (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BE110206C0;
+        Fri, 14 Dec 2018 17:29:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544808564;
+        bh=J69UGZ0QTfOA0DiHzi61NpuKOQf+o1W+E1k+UCDDr5s=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=cYO9za2dvTyf0uvTmjKvbHC+UaBy/dSGG6nG6yTWV0pe2SYn8DIu2XACIGd/SjbWh
+         dduhVXrwys6HWvt/l7SNfdKVScPdqqioW4xQChOcjzlKhjlHtY/0TrHYtVW1k/cGhY
+         GA6UCEU7qIy1a1oHcT8JPtpnAu2qujVJaaIcMz6w=
+Message-ID: <1544808561.10497.15.camel@kernel.org>
+Subject: Re: [PATCH v8 20/22] tracing: Use hist trigger's var_ref array to
+ destroy var_refs
+From:   Tom Zanussi <zanussi@kernel.org>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     rostedt@goodmis.org, tglx@linutronix.de, namhyung@kernel.org,
+        vedang.patel@intel.com, bigeasy@linutronix.de,
+        joel@joelfernandes.org, mathieu.desnoyers@efficios.com,
+        julia@ni.com, linux-kernel@vger.kernel.org,
+        linux-rt-users@vger.kernel.org
+Date:   Fri, 14 Dec 2018 11:29:21 -0600
+In-Reply-To: <20181215013119.dc796fd4d2d21535adb4cf6c@kernel.org>
+References: <cover.1544483272.git.tom.zanussi@linux.intel.com>
+         <4d6103ab7b4fdef81a82e2977b4005a26212a726.1544483273.git.tom.zanussi@linux.intel.com>
+         <20181215013119.dc796fd4d2d21535adb4cf6c@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.1-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 14, 2018 at 08:27:33AM -0800, Joe Perches wrote:
-> On Fri, 2018-12-14 at 21:46 +0530, Himanshu Jha wrote:
-> > On Fri, Dec 14, 2018 at 07:52:15AM -0800, Joe Perches wrote:
-> > > On Fri, 2018-12-14 at 14:01 +0100, Jorge Ramirez-Ortiz wrote:
-> > > > As per Documentation/process/submitting-patches, Co-developed-by is a
-> > > > valid signature.
-> > > > 
-> > > > This commit removes the warning.
-> > > 
-> > > Your commit message doesn't match your subject.
-> > > 
-> > > A couple variants have been documented and only
-> > > one should actually be used.
-> > > 
-> > > $ git grep -i co-developed-by Documentation/process/
-> > > Documentation/process/5.Posting.rst: - Co-developed-by: states that the patch was also created by another developer
-> > > Documentation/process/submitting-patches.rst:12) When to use Acked-by:, Cc:, and Co-Developed-by:
-> > > Documentation/process/submitting-patches.rst:A Co-Developed-by: states that the patch was also created by another developer
-> > > 
-> > > $ git log --grep="co-developed-by:" -i | \
-> > >   grep -ohiP "co-developed-by:" | sort | uniq -c | sort -rn
-> > >      80 Co-developed-by:
-> > >      40 Co-Developed-by:
-> > > 
-> > > So which should it be?
-> > > 
-> > > btw: I prefer neither as I think Signed-off-by: is sufficient.
+Hi Masami,
+
+On Sat, 2018-12-15 at 01:31 +0900, Masami Hiramatsu wrote:
+> On Mon, 10 Dec 2018 18:01:34 -0600
+> Tom Zanussi <zanussi@kernel.org> wrote:
+> 
+> > From: Tom Zanussi <tom.zanussi@linux.intel.com>
 > > 
-> > OK, but does multiple Signed-off-by: in the commits imply that
-> > the patch was created by all those developers ?
+> > Since every var ref for a trigger has an entry in the var_ref[]
+> > array,
+> > use that to destroy the var_refs, instead of piecemeal via the
+> > field
+> > expressions.
 > > 
-> > I don't think so, perhaps this was the reason to introduce
-> > Co-developed-by: tag.
+> > This allows us to avoid having to keep and treat differently
+> > separate
+> > lists for the action-related references, which future patches will
+> > remove.
 > 
-> Perhaps, but a sign-off is also a recognition that the
-> patch was passed-through by individuals
-
-Yes, Agreed!
-
-> Effectively, there's no real difference.
+> I'm not so sure, but this seems a bugfix... if so, please move this
+> at
+> the top of this series.
 > 
-> "Co-developed-by:" is just another word for "Authored-by:"
-> where multiple "Authorship" is the thing being notated.
-> 
-> Is it really important to specify things like 75% / 25%
-> authorship crediting?
 
-IDK how that ratio came up into this discussion ?
+No, none of these are bugfixes - patches 17-22 are just some additional
+cleanup that try to make the code easier to follow after Namhyung's
+comments that things were confusing here.
 
-Anyway, I saw on IIO list that a bunch of students were involved
-in driver cleaning with the help of developers from Analog Devices
-Inc who intially wrote some code snippets.
+Actually, what I should probably do is make these a separate series..
 
-And that authorship crediting for Analog Devices folks would be
-helpful distinguishing that it was not just passed-through and rather
-they spent their time on it.
-
-> I don't really care about attribution so the concept is
-> not particularly valuable to me.
-
-Well, it might not be valuable to you but it is for others and I saw
-one such example in the past during my project.
-
-At least I do care about those developers who spent a considerable
-time on IIO list guiding students aside from their mainline work.
-
-
-FYI, IIO has already +1'd for "Co-developed-by:"
-
--- 
-Himanshu Jha
-Undergraduate Student
-Department of Electronics & Communication
-Guru Tegh Bahadur Institute of Technology
+Tom
