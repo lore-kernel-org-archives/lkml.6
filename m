@@ -2,159 +2,123 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D588C67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 05:20:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B11D5C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 05:21:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CABB206BA
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 05:20:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CABB206BA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 76E50208E7
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 05:21:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="dW6tIIT0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76E50208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727082AbeLNFUS (ORCPT
+        id S1727169AbeLNFVj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 00:20:18 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52970 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726437AbeLNFUR (ORCPT
+        Fri, 14 Dec 2018 00:21:39 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:34350 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726445AbeLNFVj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 00:20:17 -0500
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBE5JK1C061940
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 00:20:16 -0500
-Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2pc39spau0-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 00:20:16 -0500
-Received: from localhost
-        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Fri, 14 Dec 2018 05:20:15 -0000
-Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
-        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 14 Dec 2018 05:20:10 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBE5K9JJ16777424
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 14 Dec 2018 05:20:09 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3D135B205F;
-        Fri, 14 Dec 2018 05:20:09 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 04BA1B2065;
-        Fri, 14 Dec 2018 05:20:08 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.85.153.1])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Fri, 14 Dec 2018 05:20:08 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 9440916C1017; Thu, 13 Dec 2018 21:20:08 -0800 (PST)
-Date:   Thu, 13 Dec 2018 21:20:08 -0800
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Alan Stern <stern@rowland.harvard.edu>
-Cc:     David Goldblatt <davidtgoldblatt@gmail.com>,
-        mathieu.desnoyers@efficios.com,
-        Florian Weimer <fweimer@redhat.com>, triegel@redhat.com,
-        libc-alpha@sourceware.org, andrea.parri@amarulasolutions.com,
-        will.deacon@arm.com, peterz@infradead.org, boqun.feng@gmail.com,
-        npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
-        luc.maranget@inria.fr, akiyks@gmail.com, dlustig@nvidia.com,
-        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Linux: Implement membarrier function
-Reply-To: paulmck@linux.ibm.com
-References: <20181214002043.GP4170@linux.ibm.com>
- <Pine.LNX.4.44L0.1812132110100.26937-100000@netrider.rowland.org>
+        Fri, 14 Dec 2018 00:21:39 -0500
+Received: by mail-oi1-f193.google.com with SMTP id h25so3652873oig.1
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 21:21:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=YpIMAtZzHAdUBjBeuDaGg9PhOGPT/1ioJOjVyBPIhjQ=;
+        b=dW6tIIT02QWSryDFFdV/NJUZiXmh2OEDXleF6cKBSCepXMbmIWMx/sJiPlT4lcR/9t
+         GT307/MvhkeUubBu7JWcR3eCKOvl7aAlttqJvewJbPfiEoQUGpc4gAAsUmcncXe/eDV/
+         6s4X4qtuvrdfI0qY+u+8jxXilwspQSBi21ZAbw4rrejDn7AIkhMTHvCGkBjLJUSSCcMu
+         eabyG5QiEITp5l1Ye535prdpHdGVi1O4xZEFTWCfoUMnSQXGA3dy++SAB/fCPTSUFAx1
+         8awEunDppQLUsK3LY5Ue0KIenLzw0a0iHKZTuPrcckCBt+nPzuWddo24dHSFKu3+/fVj
+         e/xw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YpIMAtZzHAdUBjBeuDaGg9PhOGPT/1ioJOjVyBPIhjQ=;
+        b=d1bHxZb4ZHfRPdVJK3+3RfPSdagtQDqGXyAYKnVB1/AVZmyxuHJQaux0VuM7ZHJYQ6
+         KHoC4X3x9u3nTfe0eEA7E446wPGGXtE+w2NQdOgnyN4T4odUa0wkKmuMtjbS8fLHkWcZ
+         /qKfkvPrCgWk0lHgjJCzvZovn0q7fmkGFOJTxU1x/O+euKkNKQlk5fbWHx71qwD5BCMK
+         uSdOmbKahkMED+Bw/GrNcL/eXkOpbLJw12fu5YZ3lbClz1qbyUouHeoSJrZnQXHRFz/y
+         OgHw8dafkwZT5DObQfg4/h7gysN+UZ9IuuJItoNjrDa82UQUNKWjt+uZkfKzLze+PQcS
+         lh5Q==
+X-Gm-Message-State: AA+aEWbcdOVMr/bkqR0mGAyPig35iBFdcOSDLSvnh4QHHPwsGz3MgqbB
+        C8Ko7Uyhsjycc+YSz76goRKrTLQ6drcYUl3FHOaBCw==
+X-Google-Smtp-Source: AFSGD/Uha3wQbE+rV2ORNNxCuTN4I4vqZTI6b9rVxda/BSASuu2kHNbpiC8Bv8heKUrA0Iabx9c27ymNDs0H86IqJNk=
+X-Received: by 2002:aca:4307:: with SMTP id q7mr1019460oia.105.1544764897688;
+ Thu, 13 Dec 2018 21:21:37 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.44L0.1812132110100.26937-100000@netrider.rowland.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18121405-0064-0000-0000-000003862A8E
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010223; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000271; SDB=6.01131494; UDB=6.00588040; IPR=6.00911626;
- MB=3.00024687; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-14 05:20:14
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18121405-0065-0000-0000-00003BACB171
-Message-Id: <20181214052008.GT4170@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-14_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812140048
+References: <20181205014441.GA3045@redhat.com> <59ca5c4b-fd5b-1fc6-f891-c7986d91908e@nvidia.com>
+ <7b4733be-13d3-c790-ff1b-ac51b505e9a6@nvidia.com> <20181207191620.GD3293@redhat.com>
+ <3c4d46c0-aced-f96f-1bf3-725d02f11b60@nvidia.com> <20181208022445.GA7024@redhat.com>
+ <20181210102846.GC29289@quack2.suse.cz> <20181212150319.GA3432@redhat.com>
+ <20181212214641.GB29416@dastard> <20181212215931.GG5037@redhat.com>
+ <20181213005119.GD29416@dastard> <05a68829-6e6d-b766-11b4-99e1ba4bc87b@nvidia.com>
+In-Reply-To: <05a68829-6e6d-b766-11b4-99e1ba4bc87b@nvidia.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Thu, 13 Dec 2018 21:21:26 -0800
+Message-ID: <CAPcyv4jyG3YTtghyr04wws_hcSBAmPBpnCm0tFcKgz9VwrV=ow@mail.gmail.com>
+Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     david <david@fromorbit.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>,
+        John Hubbard <john.hubbard@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>, tom@talpey.com,
+        Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
+        Christoph Hellwig <hch@infradead.org>,
+        Christopher Lameter <cl@linux.com>,
+        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Michal Hocko <mhocko@kernel.org>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        rcampbell@nvidia.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 13, 2018 at 09:26:47PM -0500, Alan Stern wrote:
-> On Thu, 13 Dec 2018, Paul E. McKenney wrote:
-> 
-> > > > A good next step would be to automatically generate random tests along
-> > > > with an automatically generated prediction, like I did for RCU a few
-> > > > years back.  I should be able to generalize my time-based cheat for RCU to
-> > > > also cover SRCU, though sys_membarrier() will require a bit more thought.
-> > > > (The time-based cheat was to have fixed duration RCU grace periods and
-> > > > RCU read-side critical sections, with the grace period duration being
-> > > > slightly longer than that of the critical sections.  The number of
-> > > > processes is of course limited by the chosen durations, but that limit
-> > > > can easily be made insanely large.)
-> > > 
-> > > Imagine that each sys_membarrier call takes a fixed duration and each 
-> > > other instruction takes slightly less (the idea being that each 
-> > > instruction is a critical section).  Instructions can be reordered 
-> > > (although not across a sys_membarrier call), but no matter how the 
-> > > reordering is done, the result is disallowed.
-> 
-> This turns out not to be right.  Instead, imagine that each 
-> sys_membarrier call takes a fixed duration, T.  Other instructions can 
-> take arbitrary amounts of time and can be reordered abitrarily, with 
-> two restrictions:
-> 
-> 	Instructions cannot be reordered past a sys_membarrier call;
-> 
-> 	If instructions A and B are reordered then the time duration
-> 	from B to A must be less than T.
-> 
-> If you prefer, you can replace the second restriction with something a 
-> little more liberal:
-> 
-> 	If A and B are reordered and A ends up executing after a 
-> 	sys_membarrier call (on any CPU) then B cannot execute before 
-> 	that sys_membarrier call.
-> 
-> Of course, this form is a consequence of the more restrictive form.
+On Thu, Dec 13, 2018 at 7:53 PM John Hubbard <jhubbard@nvidia.com> wrote:
+>
+> On 12/12/18 4:51 PM, Dave Chinner wrote:
+> > On Wed, Dec 12, 2018 at 04:59:31PM -0500, Jerome Glisse wrote:
+> >> On Thu, Dec 13, 2018 at 08:46:41AM +1100, Dave Chinner wrote:
+> >>> On Wed, Dec 12, 2018 at 10:03:20AM -0500, Jerome Glisse wrote:
+> >>>> On Mon, Dec 10, 2018 at 11:28:46AM +0100, Jan Kara wrote:
+> >>>>> On Fri 07-12-18 21:24:46, Jerome Glisse wrote:
+> >>>>> So this approach doesn't look like a win to me over using counter in struct
+> >>>>> page and I'd rather try looking into squeezing HMM public page usage of
+> >>>>> struct page so that we can fit that gup counter there as well. I know that
+> >>>>> it may be easier said than done...
+> >>>>
+>
+> Agreed. After all the discussion this week, I'm thinking that the original idea
+> of a per-struct-page counter is better. Fortunately, we can do the moral equivalent
+> of that, unless I'm overlooking something: Jerome had another proposal that he
+> described, off-list, for doing that counting, and his idea avoids the problem of
+> finding space in struct page. (And in fact, when I responded yesterday, I initially
+> thought that's where he was going with this.)
+>
+> So how about this hybrid solution:
+>
+> 1. Stay with the basic RFC approach of using a per-page counter, but actually
+> store the counter(s) in the mappings instead of the struct page. We can use
+> !PageAnon and page_mapping to look up all the mappings, stash the dma_pinned_count
+> there. So the total pinned count is scattered across mappings. Probably still need
+> a PageDmaPinned bit.
 
-Makes sense.  And the zero-size critical sections are why sys_membarrier()
-cannot be directly used for classic deferred reclamation.
-
-> > It gets a bit trickier with interleavings of different combinations
-> > of RCU, SRCU, and sys_membarrier().  Yes, your cat code very elegantly
-> > sorts this out, but my goal is to be able to explain a given example
-> > to someone.
-> 
-> I don't think you're going to be able to fit different combinations of
-> RCU, SRCU, and sys_membarrier into this picture.  How would you allow
-> tests with incorrect interleaving, such as GP - memb - RSCS - nothing,
-> while forbidding similar tests with correct interleaving?
-
-Well, no, I cannot do a simple linear scan tracking time, which is what
-the current scripts do.  I must instead find longest sequence with all
-operations of the same type (RCU, SRCU, or memb) and work out their
-worst-case timing.  If the overall effect of a given sequence is to
-go backwards in time, the result is allowed.  Otherwise eliminate that
-sequence from the cycle and repeat.  If everything is eliminated, the
-cycle is forbidden.
-
-Which can be thought of as an iterative process similar to something
-called "rcu-fence", can't it?  ;-)
-
-							Thanx, Paul
-
+How do you safely look at page->mapping from the get_user_pages_fast()
+path? You'll be racing invalidation disconnecting the page from the
+mapping.
