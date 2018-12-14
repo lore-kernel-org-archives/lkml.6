@@ -2,156 +2,68 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C04F7C67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 09:37:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D5D5C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 09:37:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F47D20672
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 09:37:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F47D20672
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id C57B820672
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 09:37:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C57B820672
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729056AbeLNJhD (ORCPT
+        id S1729102AbeLNJhh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 04:37:03 -0500
-Received: from foss.arm.com ([217.140.101.70]:47706 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726418AbeLNJhD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 04:37:03 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6AF6780D;
-        Fri, 14 Dec 2018 01:37:02 -0800 (PST)
-Received: from [10.1.197.36] (e112298-lin.cambridge.arm.com [10.1.197.36])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B9AAF3F614;
-        Fri, 14 Dec 2018 01:37:00 -0800 (PST)
-Subject: Re: [PATCH v2 1/4] KVM: arm/arm64: vgic: Do not cond_resched_lock()
- with IRQs disabled
-To:     Christoffer Dall <christoffer.dall@arm.com>
-Cc:     linux-kernel@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
-        marc.zyngier@arm.com, linux-arm-kernel@lists.infradead.org,
-        linux-rt-users@vger.kernel.org, tglx@linutronix.de,
-        rostedt@goodmis.org, bigeasy@linutronix.de, stable@vger.kernel.org
-References: <1543256807-9768-1-git-send-email-julien.thierry@arm.com>
- <1543256807-9768-2-git-send-email-julien.thierry@arm.com>
- <20181211102015.GV30263@e113682-lin.lund.arm.com>
-From:   Julien Thierry <julien.thierry@arm.com>
-Message-ID: <0573c8b2-db76-19e3-db76-5433b2e4ad0a@arm.com>
-Date:   Fri, 14 Dec 2018 09:36:59 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Fri, 14 Dec 2018 04:37:37 -0500
+Received: from mx2.suse.de ([195.135.220.15]:46150 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726418AbeLNJhg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 04:37:36 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id F3247AC24;
+        Fri, 14 Dec 2018 09:37:34 +0000 (UTC)
+Date:   Fri, 14 Dec 2018 10:37:34 +0100 (CET)
+From:   Miroslav Benes <mbenes@suse.cz>
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+cc:     Petr Mladek <pmladek@suse.com>, Jiri Kosina <jikos@kernel.org>,
+        Jason Baron <jbaron@akamai.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jessica Yu <jeyu@kernel.org>
+Subject: Re: [PATCH v14 03/11] livepatch: Consolidate klp_free functions
+In-Reply-To: <20181213223533.oucddzzhrnx7b7ov@treble>
+Message-ID: <alpine.LSU.2.21.1812141037210.450@pobox.suse.cz>
+References: <20181129094431.7801-1-pmladek@suse.com> <20181129094431.7801-4-pmladek@suse.com> <alpine.LSU.2.21.1812031542540.22317@pobox.suse.cz> <20181213223533.oucddzzhrnx7b7ov@treble>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20181211102015.GV30263@e113682-lin.lund.arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, 13 Dec 2018, Josh Poimboeuf wrote:
 
-
-On 11/12/2018 10:20, Christoffer Dall wrote:
-> On Mon, Nov 26, 2018 at 06:26:44PM +0000, Julien Thierry wrote:
->> To change the active state of an MMIO, halt is requested for all vcpus of
->> the affected guest before modifying the IRQ state. This is done by calling
->> cond_resched_lock() in vgic_mmio_change_active(). However interrupts are
->> disabled at this point and we cannot reschedule a vcpu.
->>
->> Solve this by waiting for all vcpus to be halted after emmiting the halt
->> request.
->>
->> Signed-off-by: Julien Thierry <julien.thierry@arm.com>
->> Suggested-by: Marc Zyngier <marc.zyngier@arm.com>
->> Cc: Christoffer Dall <christoffer.dall@arm.com>
->> Cc: Marc Zyngier <marc.zyngier@arm.com>
->> Cc: stable@vger.kernel.org
->> ---
->>  virt/kvm/arm/vgic/vgic-mmio.c | 36 ++++++++++++++----------------------
->>  1 file changed, 14 insertions(+), 22 deletions(-)
->>
->> diff --git a/virt/kvm/arm/vgic/vgic-mmio.c b/virt/kvm/arm/vgic/vgic-mmio.c
->> index f56ff1c..5c76a92 100644
->> --- a/virt/kvm/arm/vgic/vgic-mmio.c
->> +++ b/virt/kvm/arm/vgic/vgic-mmio.c
->> @@ -313,27 +313,6 @@ static void vgic_mmio_change_active(struct kvm_vcpu *vcpu, struct vgic_irq *irq,
->>  
->>  	spin_lock_irqsave(&irq->irq_lock, flags);
->>  
->> -	/*
->> -	 * If this virtual IRQ was written into a list register, we
->> -	 * have to make sure the CPU that runs the VCPU thread has
->> -	 * synced back the LR state to the struct vgic_irq.
->> -	 *
->> -	 * As long as the conditions below are true, we know the VCPU thread
->> -	 * may be on its way back from the guest (we kicked the VCPU thread in
->> -	 * vgic_change_active_prepare)  and still has to sync back this IRQ,
->> -	 * so we release and re-acquire the spin_lock to let the other thread
->> -	 * sync back the IRQ.
->> -	 *
->> -	 * When accessing VGIC state from user space, requester_vcpu is
->> -	 * NULL, which is fine, because we guarantee that no VCPUs are running
->> -	 * when accessing VGIC state from user space so irq->vcpu->cpu is
->> -	 * always -1.
->> -	 */
->> -	while (irq->vcpu && /* IRQ may have state in an LR somewhere */
->> -	       irq->vcpu != requester_vcpu && /* Current thread is not the VCPU thread */
->> -	       irq->vcpu->cpu != -1) /* VCPU thread is running */
->> -		cond_resched_lock(&irq->irq_lock);
->> -
->>  	if (irq->hw) {
->>  		vgic_hw_irq_change_active(vcpu, irq, active, !requester_vcpu);
->>  	} else {
->> @@ -368,8 +347,21 @@ static void vgic_mmio_change_active(struct kvm_vcpu *vcpu, struct vgic_irq *irq,
->>   */
->>  static void vgic_change_active_prepare(struct kvm_vcpu *vcpu, u32 intid)
->>  {
->> -	if (intid > VGIC_NR_PRIVATE_IRQS)
->> +	if (intid > VGIC_NR_PRIVATE_IRQS) {
->> +		struct kvm_vcpu *tmp;
->> +		int i;
->> +
->>  		kvm_arm_halt_guest(vcpu->kvm);
->> +
->> +		/* Wait for each vcpu to be halted */
->> +		kvm_for_each_vcpu(i, tmp, vcpu->kvm) {
->> +			if (tmp == vcpu)
->> +				continue;
->> +
->> +			while (tmp->cpu != -1)
->> +				cond_resched();
->> +		}
+> On Mon, Dec 03, 2018 at 03:59:57PM +0100, Miroslav Benes wrote:
+> > On Thu, 29 Nov 2018, Petr Mladek wrote:
+> > 
+> > > -static int klp_init_patch(struct klp_patch *patch)
+> > > +/* Init operations that must succeed before klp_free_patch() can be called. */
+> > > +static int klp_init_patch_before_free(struct klp_patch *patch)
+> > 
+> > There is no klp_free_patch() now, so the comment is not correct. Also I 
+> > don't know if the function name is ideal, but I don't have a better one.
 > 
-> I'm actually thinking we don't need this loop at all after the requet
-> rework which causes:
+> Yeah, I found the name of this function to be confusing.  It sounds like
+> you're initializing the patch before freeing it, which seems like an
+> obvious thing to do :-)
 > 
->  1. kvm_arm_halt_guest() to use kvm_make_all_cpus_request(kvm, KVM_REQ_SLEEP), and
->  2. KVM_REQ_SLEEP uses REQ_WAIT, and
->  3. REQ_WAIT requires the VCPU to respond to IPIs before returning, and
->  4. a VCPU thread can only respond when it enables interrupt, and
->  5. enabling interrupts when running a VCPU only happens after syncing
->     the VGIC hwstate.
-> 
-> Does that make sense?
+> How about klp_init_patch_early()?
 
-I'm not super familiar with what goes on with the vgic hwstate syncing,
-but looking at kvm_arm_halt_guest() and kvm_arch_vcpu_ioctl_run(), I
-agree with the reasoning.
+That would work for me.
 
-> It would be good if someone can validate this, but if it holds this
-> patch just becomes a nice deletion of the logic in
-> vgic-mmio_change_active.
-> 
-
-As long as running kvm_vgic_sync_hwstate() on each vcpu is all that is
-needed before we can modify the active state, I think your solution is
-definitely the way to go.
-
-Thanks,
-
--- 
-Julien Thierry
+Miroslav
