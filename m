@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E09CC67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:14:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3934DC6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:14:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E32BF214F0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:14:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E68A4214F0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:14:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544789667;
-	bh=/i5v8Erf7q3CEI+qLcPq/gV2RrGwts/Wzq824xFJhbk=;
+	s=default; t=1544789670;
+	bh=mdI3vam0vBbZGBCUaBkmDM6kz2k5JDPdNDk9PbyrU2U=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=GQjn2W72iGJ3H6A46ESbaC1oJAF4dq87MxHyk+PcRYwZMowoJxpplQLWcgLvXE9Lg
-	 Ms0R0Ad7ZUEg3ZmpuIp5i+IqVigah8TIk2cAlK6dZMjEc06NaOqCbF2U5Ndu1N1Fax
-	 9NyYIrj++623WwZlA2BqFBdd3u6D1Xwxd3ELm1VA=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E32BF214F0
+	b=lcdPvEGZWUV3LsZoWMuYoK1cnyN1PDre5vdteWVCFE9Rnq7aSBqdwdZ3HI5cUMZAL
+	 +QmXBBPAW8iWdr1Y2wE8QXMY4s86uPDleuJYxL2cl1QVDWdpko+7PCPcLePy+tFHCZ
+	 qlfc3P0CSn5yV4j6lPSFAMxIcYALVymYcc0VBz3M=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E68A4214F0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732338AbeLNMOZ (ORCPT
+        id S1732347AbeLNMO3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:14:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33992 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:14:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34052 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732323AbeLNMOW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:14:22 -0500
+        id S1732335AbeLNMOZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:14:25 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2DF4F2133F;
-        Fri, 14 Dec 2018 12:14:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D2597214F0;
+        Fri, 14 Dec 2018 12:14:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789661;
-        bh=/i5v8Erf7q3CEI+qLcPq/gV2RrGwts/Wzq824xFJhbk=;
+        s=default; t=1544789664;
+        bh=mdI3vam0vBbZGBCUaBkmDM6kz2k5JDPdNDk9PbyrU2U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Bl7fAtKzAxhnFNvKall88fFOdw/0oAGVwoLLNTbuDYNfiiJnuOwFxERgqWW3+heqE
-         rZeH07X8OkxNt4SbG4SLZujbNQ0Ab3R2VMNmE3eS5xwg7XYr/hKo+CIhhRUHjDbZrY
-         htvBUgcHMW7aIwH0UlpZJrzJwHY9CYbBNgsNLxco=
+        b=ZtDR6KtdAEwjPGfT5O3Wl2KGKUz7GFHK4Lsv4fxstYCyYgbuJZtFEkRZHSApCXlmd
+         b2B7NdGQQD8WMk65nygLebCQ/I7V4H7Q9rpFQGfi0NuZmlsr1Ph+N+5jd2DHFjQ1bJ
+         pEr6kFiJ40+pvpLGeKo4PvyJYR3D8NLLKJAS+lpk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Josh Elsasser <jelsasser@appneta.com>,
+        Andrew Bowers <andrewx.bowers@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 27/88] net: thunderx: fix NULL pointer dereference in nic_remove
-Date:   Fri, 14 Dec 2018 13:00:01 +0100
-Message-Id: <20181214115704.318348301@linuxfoundation.org>
+Subject: [PATCH 4.4 28/88] ixgbe: recognize 1000BaseLX SFP modules as 1Gbps
+Date:   Fri, 14 Dec 2018 13:00:02 +0100
+Message-Id: <20181214115704.369804274@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115702.151309521@linuxfoundation.org>
 References: <20181214115702.151309521@linuxfoundation.org>
@@ -70,80 +70,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 24a6d2dd263bc910de018c78d1148b3e33b94512 ]
+[ Upstream commit a8bf879af7b1999eba36303ce9cc60e0e7dd816c ]
 
-Fix a possible NULL pointer dereference in nic_remove routine
-removing the nicpf module if nic_probe fails.
-The issue can be triggered with the following reproducer:
+Add the two 1000BaseLX enum values to the X550's check for 1Gbps modules,
+allowing the core driver code to establish a link over this SFP type.
 
-$rmmod nicvf
-$rmmod nicpf
+This is done by the out-of-tree driver but the fix wasn't in mainline.
 
-[  521.412008] Unable to handle kernel access to user memory outside uaccess routines at virtual address 0000000000000014
-[  521.422777] Mem abort info:
-[  521.425561]   ESR = 0x96000004
-[  521.428624]   Exception class = DABT (current EL), IL = 32 bits
-[  521.434535]   SET = 0, FnV = 0
-[  521.437579]   EA = 0, S1PTW = 0
-[  521.440730] Data abort info:
-[  521.443603]   ISV = 0, ISS = 0x00000004
-[  521.447431]   CM = 0, WnR = 0
-[  521.450417] user pgtable: 4k pages, 48-bit VAs, pgdp = 0000000072a3da42
-[  521.457022] [0000000000000014] pgd=0000000000000000
-[  521.461916] Internal error: Oops: 96000004 [#1] SMP
-[  521.511801] Hardware name: GIGABYTE H270-T70/MT70-HD0, BIOS T49 02/02/2018
-[  521.518664] pstate: 80400005 (Nzcv daif +PAN -UAO)
-[  521.523451] pc : nic_remove+0x24/0x88 [nicpf]
-[  521.527808] lr : pci_device_remove+0x48/0xd8
-[  521.532066] sp : ffff000013433cc0
-[  521.535370] x29: ffff000013433cc0 x28: ffff810f6ac50000
-[  521.540672] x27: 0000000000000000 x26: 0000000000000000
-[  521.545974] x25: 0000000056000000 x24: 0000000000000015
-[  521.551274] x23: ffff8007ff89a110 x22: ffff000001667070
-[  521.556576] x21: ffff8007ffb170b0 x20: ffff8007ffb17000
-[  521.561877] x19: 0000000000000000 x18: 0000000000000025
-[  521.567178] x17: 0000000000000000 x16: 000000000000010ffc33ff98 x8 : 0000000000000000
-[  521.593683] x7 : 0000000000000000 x6 : 0000000000000001
-[  521.598983] x5 : 0000000000000002 x4 : 0000000000000003
-[  521.604284] x3 : ffff8007ffb17184 x2 : ffff8007ffb17184
-[  521.609585] x1 : ffff000001662118 x0 : ffff000008557be0
-[  521.614887] Process rmmod (pid: 1897, stack limit = 0x00000000859535c3)
-[  521.621490] Call trace:
-[  521.623928]  nic_remove+0x24/0x88 [nicpf]
-[  521.627927]  pci_device_remove+0x48/0xd8
-[  521.631847]  device_release_driver_internal+0x1b0/0x248
-[  521.637062]  driver_detach+0x50/0xc0
-[  521.640628]  bus_remove_driver+0x60/0x100
-[  521.644627]  driver_unregister+0x34/0x60
-[  521.648538]  pci_unregister_driver+0x24/0xd8
-[  521.652798]  nic_cleanup_module+0x14/0x111c [nicpf]
-[  521.657672]  __arm64_sys_delete_module+0x150/0x218
-[  521.662460]  el0_svc_handler+0x94/0x110
-[  521.666287]  el0_svc+0x8/0xc
-[  521.669160] Code: aa1e03e0 9102c295 d503201f f9404eb3 (b9401660)
-
-Fixes: 4863dea3fab0 ("net: Adding support for Cavium ThunderX network controller")
-Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: e23f33367882 ("ixgbe: Fix 1G and 10G link stability for X550EM_x SFP+”)
+Fixes: 6a14ee0cfb19 ("ixgbe: Add X550 support function pointers")
+Signed-off-by: Josh Elsasser <jelsasser@appneta.com>
+Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/cavium/thunder/nic_main.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/net/ethernet/intel/ixgbe/ixgbe_x550.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/cavium/thunder/nic_main.c b/drivers/net/ethernet/cavium/thunder/nic_main.c
-index 16baaafed26c..cbdeb54eab51 100644
---- a/drivers/net/ethernet/cavium/thunder/nic_main.c
-+++ b/drivers/net/ethernet/cavium/thunder/nic_main.c
-@@ -1090,6 +1090,9 @@ static void nic_remove(struct pci_dev *pdev)
- {
- 	struct nicpf *nic = pci_get_drvdata(pdev);
+diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_x550.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_x550.c
+index ffd2e74e5638..dcd718ce13d5 100644
+--- a/drivers/net/ethernet/intel/ixgbe/ixgbe_x550.c
++++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_x550.c
+@@ -1429,7 +1429,9 @@ static s32 ixgbe_get_link_capabilities_X550em(struct ixgbe_hw *hw,
+ 		*autoneg = false;
  
-+	if (!nic)
-+		return;
-+
- 	if (nic->flags & NIC_SRIOV_ENABLED)
- 		pci_disable_sriov(pdev);
- 
+ 		if (hw->phy.sfp_type == ixgbe_sfp_type_1g_sx_core0 ||
+-		    hw->phy.sfp_type == ixgbe_sfp_type_1g_sx_core1) {
++		    hw->phy.sfp_type == ixgbe_sfp_type_1g_sx_core1 ||
++		    hw->phy.sfp_type == ixgbe_sfp_type_1g_lx_core0 ||
++		    hw->phy.sfp_type == ixgbe_sfp_type_1g_lx_core1) {
+ 			*speed = IXGBE_LINK_SPEED_1GB_FULL;
+ 			return 0;
+ 		}
 -- 
 2.19.1
 
