@@ -2,566 +2,116 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28C80C43179
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 14:17:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11841C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 14:19:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD43320C0E
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 14:08:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DAC4E20656
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 14:18:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="goOedK9B"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730108AbeLNOI1 (ORCPT
+        id S1730006AbeLNOS7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 09:08:27 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:42326 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730090AbeLNOI1 (ORCPT
+        Fri, 14 Dec 2018 09:18:59 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:45634 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726554AbeLNOS6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 09:08:27 -0500
-Received: by mail-lf1-f68.google.com with SMTP id l10so4328016lfh.9
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 06:08:25 -0800 (PST)
+        Fri, 14 Dec 2018 09:18:58 -0500
+Received: by mail-wr1-f68.google.com with SMTP id t6so5422743wrr.12;
+        Fri, 14 Dec 2018 06:18:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=J7rqhSO8+E10MLauT7aBOEB4o/+Qd0pzjea6zP4u5FM=;
+        b=goOedK9BMIr4NGjgQw/M4Khi0c4RMF6WFqgt4p70T3wtFn9lXr4KopZywuvAXgCIJm
+         BOxrTuCUahF098aeFs0kS4IoOsAQXYBJTrvi0jq8rAUDP7iA9Kkq7qalNYBFEs3Udve7
+         640UkXi+U8dOBg6N6zci4QhS22BuLwXzfQCB8VXy3MKybgsp5D2pIMva5SXVzCuoMstN
+         7WbE/EcCqJrRAib0NtDQfcqYjDAAu5/KvYRzFnHGFW//ZMhIJNw/M/Rok+bewZAy4vRI
+         mqkiBOpg79L4Q6YCric+RrsrodOSABVHmceUlRCqN5jq0fYcWFNJJ4rMKJkvnp4XXV+B
+         by6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=8DUaZ5Ex4HCQ8rZ5UBvGBtpXo6aMcnh/fBBD7d5tU3k=;
-        b=ikukUd4bIV7dSYmTIJfD3Og+xzwoS8A2d7GLYnINlObX32/MpRttzbzFGLBPg90P+t
-         r1rOQQCcbqWgVBH0KHkjP9ra2wBs/05sEI6yCCyBS3+jOrRvAVRmcz0xqMYP6zZAM4L5
-         CwbCSPxvcN5X570YTrYbfrFLOBI91HEA/mjZJI/zo/O6jJ2G60U0HAgNxXSAThyFN5Zb
-         /6H4XriO4NFLmIMNiFEz8G4KsFp23Ga9GZvhkmcAWUfBsIxjxm7bhLMHWt309gyK86BF
-         Ku9HoiMSdyAgIdSqNi8a571AjC86bc3uJmSf4kA94eu4EdMAfIdsikHYWoCp9BJgsOVh
-         Iqpg==
-X-Gm-Message-State: AA+aEWYaHno6bhpRb3PfED/oEjWeFYeQ9JKGzmFMvHhrqrmZ3B57C4K6
-        6VhyOVbcR+TU4bi7NDEwiTCCe3m0
-X-Google-Smtp-Source: AFSGD/W/8/JrhoydYSvwxl97kTjtnwMaxI9Knd+UkWEjT/Mn1MwUKvnd97H0I8rjxdpqtZQCoZtp7Q==
-X-Received: by 2002:a19:c954:: with SMTP id z81mr1855546lff.150.1544796504177;
-        Fri, 14 Dec 2018 06:08:24 -0800 (PST)
-Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id s127sm959591lfe.8.2018.12.14.06.08.23
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=J7rqhSO8+E10MLauT7aBOEB4o/+Qd0pzjea6zP4u5FM=;
+        b=ZpDGhpRAVi9TCsFJQOPp5Hzh7SQoH4hXmHXiFeGQKuCpeokauDSosnaTv3zqZoU95v
+         HxKYxn/pcWvkAZdCccQdOvNFzay/ka+IIaUXarBp+mIccPicTiBgw1tsssMKSxVUXDj+
+         djHc2J1g4QDGZQe4jROxbxfgq5hbAwDv4f78BtDONtVx9uVI6H44l3jFnxNSGoMIZzlq
+         3gyzt89iEf7SOqx83cwa1Zb1VXzql7HGuLG6YSxN2IXeMXTI5JnCrUJuOWUvJqS+MGEW
+         YX9Yi86Mtp/OJKJPpjPklKXnghndzIDABiEG2lHdTKaYMwcNYNMjIbepoMh9RYsFuYE9
+         X1Rg==
+X-Gm-Message-State: AA+aEWYijM2JHEoj25JTSFk3ngzYryL5ar8dDrENDqf14Jip0sl3aJYz
+        719DsZEJn0u6wAfIiPOdH50=
+X-Google-Smtp-Source: AFSGD/X2jzl+quQyfbIffk95jnmRkQO6VFl2LcpPbvnJhLgIpbM4RTQ06OKvnuwkh1yzo2VE12/aLw==
+X-Received: by 2002:adf:9f10:: with SMTP id l16mr2873654wrf.206.1544797136800;
+        Fri, 14 Dec 2018 06:18:56 -0800 (PST)
+Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
+        by smtp.gmail.com with ESMTPSA id v133sm4130312wmf.19.2018.12.14.06.18.56
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 14 Dec 2018 06:08:23 -0800 (PST)
-Date:   Fri, 14 Dec 2018 16:08:12 +0200
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com
-Cc:     broonie@kernel.org, gregkh@linuxfoundation.org, rafael@kernel.org,
-        linux-kernel@vger.kernel.org, heikki.haikola@fi.rohmeurope.com,
-        mikko.mutanen@fi.rohmeurope.com
-Subject: [RFC v2] regmap: regmap-irq: Add main status register support
-Message-ID: <20181214140812.GA28723@localhost.localdomain>
+        Fri, 14 Dec 2018 06:18:56 -0800 (PST)
+Date:   Fri, 14 Dec 2018 15:18:55 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Wei Ni <wni@nvidia.com>
+Cc:     rui.zhang@intel.com, edubezval@gmail.com,
+        daniel.lezcano@linaro.org, linux-tegra@vger.kernel.org,
+        srikars@nvidia.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 1/4] thermal: tegra: remove unnecessary warnings
+Message-ID: <20181214141855.GC23379@ulmo>
+References: <1544780993-20744-1-git-send-email-wni@nvidia.com>
+ <1544780993-20744-2-git-send-email-wni@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="da4uJneut+ArUgXk"
 Content-Disposition: inline
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <1544780993-20744-2-git-send-email-wni@nvidia.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-    There is bunch of devices with multiple logical blocks which
-    can generate interrupts. It's not a rare case that the interrupt
-    reason registers are arranged so that there is own status/ack/mask
-    register for each logical block. In some devices there is also a
-    'main interrupt register(s)' which can indicate what sub blocks
-    have interrupts pending.
 
-    When such a device is connected via slow bus like i2c the main
-    part of interrupt handling latency can be caused by bus accesses.
-    On systems where it is expected that only one (or few) sub blocks
-    have active interrupts we can reduce the latency by only reading
-    the main register and those sub registers which have active
-    interrupts. Support this with regmap-irq for simple cases where
-    main register does not require acking or masking.
+--da4uJneut+ArUgXk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
----
+On Fri, Dec 14, 2018 at 05:49:50PM +0800, Wei Ni wrote:
+> Convert warnings to info as not all platforms may
+> have all the thresholds and sensors enabled.
+>=20
+> Signed-off-by: Wei Ni <wni@nvidia.com>
+> ---
+>  drivers/thermal/tegra/soctherm.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-This is draft for approach proposed by Mark here:
-http://lkml.iu.edu/hypermail/linux/kernel/1812.1/07117.html
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-Pretty untested and diff is done against tree where the level active IRQ
-support for regmap-irq was added. So please consider this just as a RFC
-introducing the concept. I will format correct and better tested patch if
-this is the preferred way to go.
+--da4uJneut+ArUgXk
+Content-Type: application/pgp-signature; name="signature.asc"
 
- drivers/base/regmap/regmap-irq.c | 276 ++++++++++++++++++++++++++++++++++++++-
- include/linux/regmap.h           |  61 +++++++++
- 2 files changed, 332 insertions(+), 5 deletions(-)
+-----BEGIN PGP SIGNATURE-----
 
-diff --git a/drivers/base/regmap/regmap-irq.c b/drivers/base/regmap/regmap-irq.c
-index eacbb807d1c6..a3517ecd6e01 100644
---- a/drivers/base/regmap/regmap-irq.c
-+++ b/drivers/base/regmap/regmap-irq.c
-@@ -35,6 +35,7 @@ struct regmap_irq_chip_data {
- 	int wake_count;
- 
- 	void *status_reg_buf;
-+	unsigned int *main_status_buf;
- 	unsigned int *status_buf;
- 	unsigned int *mask_buf;
- 	unsigned int *mask_buf_def;
-@@ -44,6 +45,8 @@ struct regmap_irq_chip_data {
- 
- 	unsigned int irq_reg_stride;
- 	unsigned int type_reg_stride;
-+
-+	struct regmap_irq_sub_irq_map *sub_irq_map;
- };
- 
- static inline const
-@@ -280,6 +283,32 @@ static const struct irq_chip regmap_irq_chip = {
- 	.irq_set_wake		= regmap_irq_set_wake,
- };
- 
-+static inline int read_sub_irq_data(struct regmap_irq_chip_data *data,
-+					   unsigned int b)
-+{
-+	const struct regmap_irq_chip *chip = data->chip;
-+	struct regmap *map = data->map;
-+	int i, ret = 0;
-+
-+	if (!data->sub_irq_map) {
-+		dev_err(map->dev, "Can't map main IRQ bit %d\n", b);
-+		ret = -EINVAL;
-+	} else {
-+		struct regmap_irq_sub_irq_map *m;
-+
-+		m = &data->sub_irq_map[b];
-+		for (i = 0; i < m->num_sub_regs; i++) {
-+			unsigned int offset = m->sub_reg_offsets[i];
-+
-+			ret = regmap_read(map, chip->status_base + offset,
-+					  &data->status_buf[offset]);
-+			if (ret)
-+				break;
-+		}
-+	}
-+	return ret;
-+}
-+
- static irqreturn_t regmap_irq_thread(int irq, void *d)
- {
- 	struct regmap_irq_chip_data *data = d;
-@@ -303,11 +332,70 @@ static irqreturn_t regmap_irq_thread(int irq, void *d)
- 	}
- 
- 	/*
--	 * Read in the statuses, using a single bulk read if possible
--	 * in order to reduce the I/O overheads.
-+	 * Read only registers with active IRQs if the chip has 'main status
-+	 * register'. Else read in the statuses, using a single bulk read if
-+	 * possible in order to reduce the I/O overheads.
- 	 */
--	if (!map->use_single_read && map->reg_stride == 1 &&
--	    data->irq_reg_stride == 1) {
-+
-+	if (chip->main_reg) {
-+		unsigned int max_main_bits;
-+		unsigned long size;
-+
-+		size = chip->num_regs * sizeof(unsigned int);
-+
-+		if (chip->main_reg->num_main_status_bits)
-+			max_main_bits = chip->main_reg->num_main_status_bits;
-+		else
-+			max_main_bits = chip->main_reg->num_main_regs * 8 *
-+					map->format.val_bytes;
-+
-+		/* Clear the status buf as we don't read all status regs */
-+		memset(data->status_buf, 0, size);
-+
-+		/* We could support bulk read for main status registers
-+		 * but I don't expect to see devices with really many main
-+		 * status registers so let's only support single reads for the
-+		 * sake of simplicity. and add bulk reads only if needed
-+		 */
-+		for (i = 0; i < chip->main_reg->num_main_regs; i++) {
-+			ret = regmap_read(map, chip->main_reg->main_status +
-+				  (i * map->reg_stride
-+				   * chip->main_reg->main_reg_stride),
-+				  &data->main_status_buf[i]);
-+			if (ret) {
-+				dev_err(map->dev,
-+					"Failed to read IRQ status %d\n",
-+					ret);
-+				goto exit;
-+			}
-+		}
-+
-+		/* Read sub registers with active IRQs */
-+		for (i = 0; i < chip->main_reg->num_main_regs; i++) {
-+			unsigned int b;
-+			unsigned int main_bit;
-+			const unsigned long mreg = data->main_status_buf[i];
-+
-+			for_each_set_bit(b, &mreg, map->format.val_bytes * 8) {
-+				main_bit = i * map->format.val_bytes * 8 + b;
-+				if (main_bit >= max_main_bits)
-+					break;
-+				ret = read_sub_irq_data(data, main_bit);
-+
-+				if (ret != 0) {
-+					dev_err(map->dev,
-+						"Failed to read IRQ status %d\n",
-+						ret);
-+					if (chip->runtime_pm)
-+						pm_runtime_put(map->dev);
-+					goto exit;
-+				}
-+			}
-+
-+		}
-+	} else if (!map->use_single_read && map->reg_stride == 1 &&
-+		   data->irq_reg_stride == 1) {
-+
- 		u8 *buf8 = data->status_reg_buf;
- 		u16 *buf16 = data->status_reg_buf;
- 		u32 *buf32 = data->status_reg_buf;
-@@ -418,6 +506,139 @@ static const struct irq_domain_ops regmap_domain_ops = {
- 	.xlate	= irq_domain_xlate_onetwocell,
- };
- 
-+
-+struct sub_irq_reg {
-+	struct list_head list;
-+	unsigned int reg_offset;
-+};
-+
-+struct main_bit_info {
-+	struct list_head sublist;
-+	unsigned int num_sub_regs;
-+};
-+
-+static int build_main_info(const struct regmap_irq_chip *chip,
-+			   struct regmap *map,
-+			   struct regmap_irq_sub_irq_map **sub_base)
-+{
-+	int i, j, k, found, max_main_bits, bits_in_reg;
-+	struct main_bit_info *m_base = NULL;
-+	struct main_bit_info *m;
-+	int ret = -ENOMEM;
-+
-+	bits_in_reg = map->format.val_bytes * 8;
-+	max_main_bits = bits_in_reg * chip->main_reg->num_main_regs;
-+
-+	*sub_base = kcalloc(max_main_bits, sizeof(**sub_base), GFP_KERNEL);
-+	if (!*sub_base)
-+		goto err_free;
-+
-+	m_base = kcalloc(max_main_bits, sizeof(*m_base), GFP_KERNEL);
-+	if (!m_base)
-+		goto err_free;
-+
-+	for (i = 0; i < max_main_bits; i++) {
-+		m = &m_base[i];
-+		INIT_LIST_HEAD(&m->sublist);
-+		for (j = 0; j < chip->num_irqs; j++) {
-+			const struct regmap_irq *irq;
-+			unsigned int main_bit;
-+			const struct regmap_irq_main_reg *m_info;
-+			struct sub_irq_reg *sr;
-+
-+			irq = &chip->irqs[j];
-+			m_info = &irq->main_reg;
-+			main_bit = m_info->reg_no * bits_in_reg +
-+				   m_info->reg_bit - 1;
-+
-+			/*
-+			 * Sanity check. If we use main reg then all of the
-+			 * IRQs must have main reg mapping
-+			 */
-+			if (!m_info->reg_bit) {
-+				dev_err(map->dev, "No main bit mapping for irq 0x%x\n",
-+					i);
-+				ret = -EINVAL;
-+				goto err_free_list;
-+			}
-+
-+			if (main_bit >= max_main_bits) {
-+				dev_err(map->dev, "Main reg out of region\n");
-+				ret = -EINVAL;
-+				goto err_free_list;
-+			}
-+			if (main_bit == i) {
-+				found = 0;
-+				list_for_each_entry(sr, &m->sublist, list) {
-+					if (sr->reg_offset == irq->reg_offset) {
-+						found = 1;
-+						break;
-+					}
-+				}
-+				if (!found) {
-+					/* Add */
-+					sr = kmalloc(sizeof(*sr), GFP_KERNEL);
-+					if (!sr)
-+						goto err_free_list;
-+					sr->reg_offset = irq->reg_offset;
-+					list_add(&sr->list, &m->sublist);
-+					m->num_sub_regs++;
-+				}
-+			}
-+		}
-+	}
-+	for (i = 0; i < max_main_bits; i++) {
-+		struct sub_irq_reg *sr;
-+		struct regmap_irq_sub_irq_map *smap;
-+
-+		m = &m_base[i];
-+		smap = &(*sub_base)[i];
-+		smap->num_sub_regs = m->num_sub_regs;
-+		smap->sub_reg_offsets = kmalloc_array(m->num_sub_regs,
-+						sizeof(smap->sub_reg_offsets),
-+						GFP_KERNEL);
-+		if (!smap->sub_reg_offsets)
-+			goto err_free_all;
-+		k = 0;
-+		list_for_each_entry(sr, &m->sublist, list) {
-+			smap->sub_reg_offsets[k] = sr->reg_offset;
-+			k++;
-+		}
-+	}
-+
-+	for (i = 0; i < max_main_bits; i++) {
-+		struct sub_irq_reg *sr, *tmp;
-+
-+		list_for_each_entry_safe(sr, tmp, &m_base[i].sublist, list) {
-+			list_del(&sr->list);
-+			kfree(sr);
-+		}
-+	}
-+	kfree(m_base);
-+
-+	return 0;
-+
-+err_free_all:
-+	for (k = 0; k <= i; k++)
-+		if ((*sub_base)[k].num_sub_regs)
-+			kfree((*sub_base)[k].sub_reg_offsets);
-+	i = max_main_bits-1;
-+err_free_list:
-+	for (k = 0; k <= i; k++) {
-+		struct sub_irq_reg *sr, *tmp;
-+
-+		list_for_each_entry_safe(sr, tmp, &m_base[k].sublist, list) {
-+			list_del(&sr->list);
-+			kfree(sr);
-+		}
-+	}
-+err_free:
-+	kfree(m_base);
-+	kfree(*sub_base);
-+
-+	return ret;
-+}
-+
- /**
-  * regmap_add_irq_chip() - Use standard regmap IRQ controller handling
-  *
-@@ -439,6 +660,7 @@ int regmap_add_irq_chip(struct regmap *map, int irq, int irq_flags,
- 			struct regmap_irq_chip_data **data)
- {
- 	struct regmap_irq_chip_data *d;
-+	struct regmap_main_status *m;
- 	int i;
- 	int ret = -ENOMEM;
- 	u32 reg;
-@@ -468,6 +690,11 @@ int regmap_add_irq_chip(struct regmap *map, int irq, int irq_flags,
- 	if (!d)
- 		return -ENOMEM;
- 
-+	m = chip->main_reg;
-+
-+	if (m && !m->num_main_regs)
-+		return -EINVAL;
-+
- 	d->status_buf = kcalloc(chip->num_regs, sizeof(unsigned int),
- 				GFP_KERNEL);
- 	if (!d->status_buf)
-@@ -489,7 +716,6 @@ int regmap_add_irq_chip(struct regmap *map, int irq, int irq_flags,
- 		if (!d->wake_buf)
- 			goto err_alloc;
- 	}
--
- 	if (chip->num_type_reg) {
- 		d->type_buf_def = kcalloc(chip->num_type_reg,
- 					sizeof(unsigned int), GFP_KERNEL);
-@@ -502,6 +728,29 @@ int regmap_add_irq_chip(struct regmap *map, int irq, int irq_flags,
- 			goto err_alloc;
- 	}
- 
-+	if (m) {
-+		if (!m->sub_reg_offsets) {
-+			struct regmap_irq_sub_irq_map *sub;
-+
-+			ret = build_main_info(chip, map, &sub);
-+			if (ret)
-+				goto err_alloc;
-+			d->sub_irq_map = sub;
-+		} else {
-+			d->sub_irq_map = m->sub_reg_offsets;
-+		}
-+
-+		if (!m->main_reg_stride)
-+			m->main_reg_stride = 1;
-+
-+		d->main_status_buf = kcalloc(m->num_main_regs,
-+					     sizeof(unsigned int),
-+					     GFP_KERNEL);
-+
-+		if (!d->main_status_buf)
-+			goto err_alloc;
-+	}
-+
- 	d->irq_chip = regmap_irq_chip;
- 	d->irq_chip.name = chip->name;
- 	d->irq = irq;
-@@ -670,6 +919,8 @@ int regmap_add_irq_chip(struct regmap *map, int irq, int irq_flags,
- err_domain:
- 	/* Should really dispose of the domain but... */
- err_alloc:
-+	kfree(d->sub_irq_map);
-+	kfree(d->main_status_buf);
- 	kfree(d->type_buf);
- 	kfree(d->type_buf_def);
- 	kfree(d->wake_buf);
-@@ -682,6 +933,17 @@ int regmap_add_irq_chip(struct regmap *map, int irq, int irq_flags,
- }
- EXPORT_SYMBOL_GPL(regmap_add_irq_chip);
- 
-+static void sub_irq_map_remove(struct regmap_irq_sub_irq_map *sub,
-+			       unsigned int bits)
-+{
-+	int i;
-+
-+	if (sub)
-+		for (i = 0; i < bits; i++)
-+			kfree(sub[i].sub_reg_offsets);
-+	kfree(sub);
-+}
-+
- /**
-  * regmap_del_irq_chip() - Stop interrupt handling for a regmap IRQ chip
-  *
-@@ -716,6 +978,10 @@ void regmap_del_irq_chip(int irq, struct regmap_irq_chip_data *d)
- 	}
- 
- 	irq_domain_remove(d->domain);
-+	if (d->sub_irq_map)
-+		sub_irq_map_remove(d->sub_irq_map,
-+				   d->map->format.val_bytes * 8);
-+	kfree(d->main_status_buf);
- 	kfree(d->type_buf);
- 	kfree(d->type_buf_def);
- 	kfree(d->wake_buf);
-diff --git a/include/linux/regmap.h b/include/linux/regmap.h
-index 6ade3ed822a2..9c8be73c834e 100644
---- a/include/linux/regmap.h
-+++ b/include/linux/regmap.h
-@@ -1109,22 +1109,75 @@ struct regmap_irq_type {
- 	unsigned int types_supported;
- };
- 
-+/*
-+ * struct regmap_irq_main_reg - Description of main IRQ status register
-+ *
-+ * @reg_offset:	Number of main status register flagging this IRQ starting from 1
-+ * @reg_bit:	Number of main register bit starting from 1.
-+ */
-+struct regmap_irq_main_reg {
-+	unsigned int reg_no;
-+	unsigned int reg_bit;
-+};
-+
- /**
-  * struct regmap_irq - Description of an IRQ for the generic regmap irq_chip.
-  *
-  * @reg_offset: Offset of the status/mask register within the bank
-  * @mask:       Mask used to flag/control the register.
-  * @type:	IRQ trigger type setting details if supported.
-+ * @main_reg:	Main status register details if supported.
-  */
- struct regmap_irq {
- 	unsigned int reg_offset;
- 	unsigned int mask;
- 	struct regmap_irq_type type;
-+	struct regmap_irq_main_reg main_reg;
- };
- 
- #define REGMAP_IRQ_REG(_irq, _off, _mask)		\
- 	[_irq] = { .reg_offset = (_off), .mask = (_mask) }
- 
-+
-+#define REGMAP_IRQ_REG_MAIN(_irq, _off, _mask, _mno, _mbit)	\
-+	[_irq] =						\
-+	{							\
-+		.reg_offset = (_off), .mask = (_mask),		\
-+		.main_reg =					\
-+		{						\
-+			.reg_no = (_mno),			\
-+			.reg_bit = (_mbit),			\
-+		},						\
-+	}
-+
-+struct regmap_irq_sub_irq_map {
-+	unsigned int num_sub_regs;
-+	unsigned int *sub_reg_offsets;
-+};
-+
-+#define REGMAP_IRQ_MAIN_REG_OFFSET(arr)				\
-+	{ .num_sub_regs = ARRAY_SIZE((arr)), .sub_reg_offsets. = &(arr)[0] }
-+
-+/**
-+ * struct regmap_irq_chip - main status register description.
-+ *
-+ * @main_status: base main status register address.
-+ *
-+ * @num_main_status_bits: Should be given to chips where number of meaningfull
-+ *		 main status bits differs from num_regs.
-+ * @sub_reg_offsets: array of mappings from main register bits to sub irq
-+ *		 registers. You should have num_main_status_bits items in array
-+ *		 if the mapping is given.
-+ * @num_main_regs: Number of 'main' irq registers.
-+ */
-+struct regmap_main_status {
-+	unsigned int main_status;
-+	unsigned int main_reg_stride;
-+	unsigned int num_main_status_bits;
-+	int num_main_regs;
-+	struct regmap_irq_sub_irq_map *sub_reg_offsets;
-+};
-+
- /**
-  * struct regmap_irq_chip - Description of a generic regmap irq_chip.
-  *
-@@ -1147,6 +1200,12 @@ struct regmap_irq {
-  * @wake_invert: Inverted wake register: cleared bits are wake enabled.
-  * @runtime_pm:  Hold a runtime PM lock on the device when accessing it.
-  *
-+ * @main_reg:	 Main status register information. For chips which have
-+ *		 interrupts arranged in separate sub-irq blocks with own IRQ
-+ *		 registers and which have a main IRQ registers indicating
-+ *		 sub-irq blocks with unhandled interrupts. Provide main status
-+ *		 register information here to avoid reading irq registers with
-+ *		 no active interrupts.
-  * @num_regs:    Number of registers in each control bank.
-  * @irqs:        Descriptors for individual IRQs.  Interrupt numbers are
-  *               assigned based on the index in the array of the interrupt.
-@@ -1183,6 +1242,8 @@ struct regmap_irq_chip {
- 	bool wake_invert:1;
- 	bool runtime_pm:1;
- 
-+	struct regmap_main_status *main_reg;
-+
- 	int num_regs;
- 
- 	const struct regmap_irq *irqs;
--- 
-2.14.3
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlwTu88ACgkQ3SOs138+
+s6HyeA/9Hbpg/h06eVIY3q7v790VEtaJDqATatMu0O+LJmOoG5E5jKRV9sCtNcs/
+BvSchLZF38VKsNwzNCNWBCvRHy6IYwRkgU6Gjdkp86ffkZuETIgmtcbp7ML+IlrN
+ezR0C/IXeEtu2kwyk2glUfvZpd7t3DF1knVlnXKl8eJNXOKW6NkGEHNCpsBwK+mh
+ERnQs2Fs//Cr6takvlI1CRVkgUiNu3Q+j3IdVL7qabUtWI5vYAZLn5ml4cds71Qe
+jnrOzbgSgN+DpTIb+J1C2pbHbHatBwTZmeJNoGr468k/OW7+jOdpLoajJMVdWMTy
+QFf2V9/nOivlIXEKPDU0TXr8eZHgw1NGX9DCMuL3/GhqFE2f8ipwlEr8YNWcJNXB
+KWKkqvy92aZfE3gX6ggEyQzNq6g+5MjNErsNQzEs1dXHChfwbXMQ1ZUYeJk/HcPs
+OwIZYJTsgWr0n8C1QT/N0LftekvXAq+CkJzH6I/ZSPb3m6n2SA/qRGfnG4HILzT4
+BASYIhHQaUw1oeVKYQp5spQYfSdFGsw3gupIwSBq/5r5d8SROeReLhAiUPQUzXfQ
+70F6YLBgv1pCcV2Jd2ovPvT58TiYL2xbdmO4mN+H2lgOu6wpu2Tiw4xR8ImzATqz
+0Kl3y3eIa80hGzl8hgUv5ahem//Emst6fGhE7N/TzM9kd9NPCNY=
+=CsGw
+-----END PGP SIGNATURE-----
 
-
--- 
-Matti Vaittinen
-ROHM Semiconductors
-
-~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
+--da4uJneut+ArUgXk--
