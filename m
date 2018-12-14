@@ -2,61 +2,55 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86802C67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:15:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F7E2C6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:15:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DFA121486
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:15:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C4B0B2148E
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:15:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544789745;
-	bh=55gdGfUIwTfy8iaJWhllaXnLOZbt9qUZ7SClwvxQYCY=;
+	s=default; t=1544789748;
+	bh=XSoNMXDI00nbjS8+aaKsX0GcUkUigxHmadMPsrtLKF0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=wZJ9O9lfHgoIVyuj4NW5WMkaCGKdlkGmpSZh5lJEyBuwjSbqe58KSvjr0P2UBskgp
-	 Jm9QMNQ+OTk3FoTPDDCfoNAB24rGMUG19qdwrZIZeeeVlbXHPpQ+A3oxq8TRPswDpG
-	 LqMOd33O9nP/dDd8sXN847z29DaQdrOriOgSnoOA=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DFA121486
+	b=h6jfmgP2SUvmqXQVxPKhKLoQLnIHV4WI60XtDNLSYW49/oA+wd0d6o18glVSmaSHL
+	 psMrqEfR53UbUtFmT2EdEHuA273u3g3Wt3V/YrUU9uXTHVQxXjdNlN+13y9nAimznO
+	 C4mV3kwhAjZ1yPF1CxsWIz87o/1YNUulp3Z1XU/I=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4B0B2148E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732620AbeLNMPn (ORCPT
+        id S1732621AbeLNMPr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:15:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35682 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:15:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35780 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732043AbeLNMPi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:15:38 -0500
+        id S1732043AbeLNMPn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:15:43 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A3F342148E;
-        Fri, 14 Dec 2018 12:15:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BEA032133F;
+        Fri, 14 Dec 2018 12:15:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789738;
-        bh=55gdGfUIwTfy8iaJWhllaXnLOZbt9qUZ7SClwvxQYCY=;
+        s=default; t=1544789743;
+        bh=XSoNMXDI00nbjS8+aaKsX0GcUkUigxHmadMPsrtLKF0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=O93HDYGqiBXnv1DlLIuhw/nYA4l25P55LT2lb94SHOHBNbVZy2XSdInRMSHR/P1wB
-         TCimBmGBMTgEc924H+QICqkTpmqV/yB3JRd/fO8pP/597kjwuo+s6DRxa0Z6nCd6df
-         I790jfyrJ1nEimakMZjRM3JA2c7TINL1WA2j8l80=
+        b=rcTwvBcdipnOGh2NqYcaN652qXTApy4o2t6pJ0JGZiaaIFWoC33u94BeRrlsPJZL0
+         a8u18vm3KDZ3HNiUX1V6QP04IGMxm8dIq/X4eTHD1DTUP1Nc2Mm40mFmV8pdsE2/rj
+         WBy7nT2Alt1T7aDte94CUnwsuL40pY7M3FdE8pos=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pan Bian <bianpan2016@163.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Junxiao Bi <junxiao.bi@oracle.com>,
-        Joseph Qi <jiangqi903@gmail.com>,
-        Changwei Ge <ge.changwei@h3c.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 38/88] ocfs2: fix potential use after free
-Date:   Fri, 14 Dec 2018 13:00:12 +0100
-Message-Id: <20181214115705.313584507@linuxfoundation.org>
+        stable@vger.kernel.org, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+        Takashi Iwai <tiwai@suse.de>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: [PATCH 4.4 40/88] ALSA: pcm: remove SNDRV_PCM_IOCTL1_INFO internal command
+Date:   Fri, 14 Dec 2018 13:00:14 +0100
+Message-Id: <20181214115705.500826753@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115702.151309521@linuxfoundation.org>
 References: <20181214115702.151309521@linuxfoundation.org>
@@ -75,47 +69,71 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 164f7e586739d07eb56af6f6d66acebb11f315c8 ]
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 
-ocfs2_get_dentry() calls iput(inode) to drop the reference count of
-inode, and if the reference count hits 0, inode is freed.  However, in
-this function, it then reads inode->i_generation, which may result in a
-use after free bug.  Move the put operation later.
+commit e11f0f90a626f93899687b1cc909ee37dd6c5809 upstream.
 
-Link: http://lkml.kernel.org/r/1543109237-110227-1-git-send-email-bianpan2016@163.com
-Fixes: 781f200cb7a("ocfs2: Remove masklog ML_EXPORT.")
-Signed-off-by: Pan Bian <bianpan2016@163.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Mark Fasheh <mark@fasheh.com>
-Cc: Joel Becker <jlbec@evilplan.org>
-Cc: Junxiao Bi <junxiao.bi@oracle.com>
-Cc: Joseph Qi <jiangqi903@gmail.com>
-Cc: Changwei Ge <ge.changwei@h3c.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Drivers can implement 'struct snd_pcm_ops.ioctl' to handle some requests
+from ALSA PCM core. These requests are internal purpose in kernel land.
+Usually common set of operations are used for it.
+
+SNDRV_PCM_IOCTL1_INFO is one of the requests. According to code comment,
+it has been obsoleted in the old days.
+
+We can see old releases in ftp.alsa-project.org. The command was firstly
+introduced in v0.5.0 release as SND_PCM_IOCTL1_INFO, to allow drivers to
+fill data of 'struct snd_pcm_channel_info' type. In v0.9.0 release,
+this was obsoleted by the other commands for ioctl(2) such as
+SNDRV_PCM_IOCTL_CHANNEL_INFO.
+
+This commit removes the long-abandoned command, bye.
+
+Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/ocfs2/export.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/sound/pcm.h     |    2 +-
+ sound/core/pcm_lib.c    |    2 --
+ sound/core/pcm_native.c |    6 +-----
+ 3 files changed, 2 insertions(+), 8 deletions(-)
 
-diff --git a/fs/ocfs2/export.c b/fs/ocfs2/export.c
-index 827fc9809bc2..3494e220b510 100644
---- a/fs/ocfs2/export.c
-+++ b/fs/ocfs2/export.c
-@@ -125,10 +125,10 @@ static struct dentry *ocfs2_get_dentry(struct super_block *sb,
+--- a/include/sound/pcm.h
++++ b/include/sound/pcm.h
+@@ -100,7 +100,7 @@ struct snd_pcm_ops {
+ #endif
  
- check_gen:
- 	if (handle->ih_generation != inode->i_generation) {
--		iput(inode);
- 		trace_ocfs2_get_dentry_generation((unsigned long long)blkno,
- 						  handle->ih_generation,
- 						  inode->i_generation);
-+		iput(inode);
- 		result = ERR_PTR(-ESTALE);
- 		goto bail;
- 	}
--- 
-2.19.1
-
+ #define SNDRV_PCM_IOCTL1_RESET		0
+-#define SNDRV_PCM_IOCTL1_INFO		1
++/* 1 is absent slot. */
+ #define SNDRV_PCM_IOCTL1_CHANNEL_INFO	2
+ #define SNDRV_PCM_IOCTL1_GSTATE		3
+ #define SNDRV_PCM_IOCTL1_FIFO_SIZE	4
+--- a/sound/core/pcm_lib.c
++++ b/sound/core/pcm_lib.c
+@@ -1849,8 +1849,6 @@ int snd_pcm_lib_ioctl(struct snd_pcm_sub
+ 		      unsigned int cmd, void *arg)
+ {
+ 	switch (cmd) {
+-	case SNDRV_PCM_IOCTL1_INFO:
+-		return 0;
+ 	case SNDRV_PCM_IOCTL1_RESET:
+ 		return snd_pcm_lib_ioctl_reset(substream, arg);
+ 	case SNDRV_PCM_IOCTL1_CHANNEL_INFO:
+--- a/sound/core/pcm_native.c
++++ b/sound/core/pcm_native.c
+@@ -214,11 +214,7 @@ int snd_pcm_info(struct snd_pcm_substrea
+ 	info->subdevices_avail = pstr->substream_count - pstr->substream_opened;
+ 	strlcpy(info->subname, substream->name, sizeof(info->subname));
+ 	runtime = substream->runtime;
+-	/* AB: FIXME!!! This is definitely nonsense */
+-	if (runtime) {
+-		info->sync = runtime->sync;
+-		substream->ops->ioctl(substream, SNDRV_PCM_IOCTL1_INFO, info);
+-	}
++
+ 	return 0;
+ }
+ 
 
 
