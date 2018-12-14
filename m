@@ -7,50 +7,51 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A486BC67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:22:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B290C6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:22:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6100F20879
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:22:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 400B220892
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:22:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544790143;
-	bh=1WRiQa++7Mn1w5ae1EeV+gv1Mnnl3P6+Rw28IUGlZ5M=;
+	s=default; t=1544790158;
+	bh=JrXn3DblxbZXFSzZ1tdofqhW0XyV8ZiLvTTAh/TyrW0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=1NLsHGmAfLk8+Zmo6wpiPvdBfZhUmB2x/vURqVNmHDScHpxdxth81J67JWpMG2KHR
-	 Khw4PJENCADXz26xEA56o/jmrb4+vA7bwraRtvUxAaixMMFA1SDu0pYSx1LQgdyp0Q
-	 TaAdiV67flpUsiRE5ARwNPAANT0XUcqf1Dvq1K+A=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6100F20879
+	b=fa+pIatXS30xCOIvIxEvp298jiO0DyCzeyJFtbMArojlstsAVA/XoRo4nGEMfkgtj
+	 SokqXb/1jVPdCHJH4IrK08yDQ3mhzY/5XUSFqYo5hGoASNfw7Krli7Ved6GAH3MEoV
+	 mPmsXiGoHIRa/b3zciAMrYZD2lKr65lcoI97fDXI=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 400B220892
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732043AbeLNMWW (ORCPT
+        id S1732258AbeLNMOE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:22:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33834 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:14:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33480 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732295AbeLNMOO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:14:14 -0500
+        id S1732230AbeLNMN5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:13:57 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 649592151B;
-        Fri, 14 Dec 2018 12:14:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 80E91214D9;
+        Fri, 14 Dec 2018 12:13:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789653;
-        bh=1WRiQa++7Mn1w5ae1EeV+gv1Mnnl3P6+Rw28IUGlZ5M=;
+        s=default; t=1544789636;
+        bh=JrXn3DblxbZXFSzZ1tdofqhW0XyV8ZiLvTTAh/TyrW0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=z1jmb2Jb71JCPOUWxqwxMvD7aAlKiw2OBHwDfPHbyECnhMVG+AKzFs9dceIv9q9MT
-         OOtgDd5TEd6Na7oS6WjUn/ntH5L9VCrPDIMHQjMEQjY1zvdON49QS/MV+jCzv25Fgy
-         NEEUlr00h6byUGh3ygmKNSOSnggSuBtmzA18wwoQ=
+        b=WJCxU0eMxgNtSObMAxe7exKh7nb7bqz1OWgJM+UTyieJzT4n++Mz6qHReKuUVuLOP
+         dVhLPdSKPfptBYgTEKJ8WZHSXr7AUXr0PCdWu4jd3c+O0nf/khzPAFBRZKwmq+loo/
+         pjqAnpHfxImz8I91dk5qSu60cFrXorb9xZMDcCEI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        stable@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Jarkko Nikula <jarkko.nikula@bitmer.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 25/88] USB: omap_udc: fix USB gadget functionality on Palm Tungsten E
-Date:   Fri, 14 Dec 2018 12:59:59 +0100
-Message-Id: <20181214115704.183262004@linuxfoundation.org>
+Subject: [PATCH 4.4 18/88] ASoC: omap-mcpdm: Add pm_qos handling to avoid under/overruns with CPU_IDLE
+Date:   Fri, 14 Dec 2018 12:59:52 +0100
+Message-Id: <20181214115703.600499851@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115702.151309521@linuxfoundation.org>
 References: <20181214115702.151309521@linuxfoundation.org>
@@ -69,30 +70,124 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 2c2322fbcab8102b8cadc09d66714700a2da42c2 ]
+[ Upstream commit 373a500e34aea97971c9d71e45edad458d3da98f ]
 
-On Palm TE nothing happens when you try to use gadget drivers and plug
-the USB cable. Fix by adding the board to the vbus sense quirk list.
+We need to block sleep states which would require longer time to leave than
+the time the DMA must react to the DMA request in order to keep the FIFO
+serviced without under of overrun.
 
-Signed-off-by: Aaro Koskinen <aaro.koskinen@iki.fi>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Acked-by: Jarkko Nikula <jarkko.nikula@bitmer.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/gadget/udc/omap_udc.c | 1 +
- 1 file changed, 1 insertion(+)
+ sound/soc/omap/omap-mcpdm.c | 43 ++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 42 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/usb/gadget/udc/omap_udc.c b/drivers/usb/gadget/udc/omap_udc.c
-index 653963459d78..d1ed92acafa3 100644
---- a/drivers/usb/gadget/udc/omap_udc.c
-+++ b/drivers/usb/gadget/udc/omap_udc.c
-@@ -2037,6 +2037,7 @@ static inline int machine_without_vbus_sense(void)
+diff --git a/sound/soc/omap/omap-mcpdm.c b/sound/soc/omap/omap-mcpdm.c
+index 8d0d45d330e7..8eb2d12b6a34 100644
+--- a/sound/soc/omap/omap-mcpdm.c
++++ b/sound/soc/omap/omap-mcpdm.c
+@@ -54,6 +54,8 @@ struct omap_mcpdm {
+ 	unsigned long phys_base;
+ 	void __iomem *io_base;
+ 	int irq;
++	struct pm_qos_request pm_qos_req;
++	int latency[2];
+ 
+ 	struct mutex mutex;
+ 
+@@ -273,6 +275,9 @@ static void omap_mcpdm_dai_shutdown(struct snd_pcm_substream *substream,
+ 				  struct snd_soc_dai *dai)
  {
- 	return machine_is_omap_innovator()
- 		|| machine_is_omap_osk()
-+		|| machine_is_omap_palmte()
- 		|| machine_is_sx1()
- 		/* No known omap7xx boards with vbus sense */
- 		|| cpu_is_omap7xx();
+ 	struct omap_mcpdm *mcpdm = snd_soc_dai_get_drvdata(dai);
++	int tx = (substream->stream == SNDRV_PCM_STREAM_PLAYBACK);
++	int stream1 = tx ? SNDRV_PCM_STREAM_PLAYBACK : SNDRV_PCM_STREAM_CAPTURE;
++	int stream2 = tx ? SNDRV_PCM_STREAM_CAPTURE : SNDRV_PCM_STREAM_PLAYBACK;
+ 
+ 	mutex_lock(&mcpdm->mutex);
+ 
+@@ -285,6 +290,14 @@ static void omap_mcpdm_dai_shutdown(struct snd_pcm_substream *substream,
+ 		}
+ 	}
+ 
++	if (mcpdm->latency[stream2])
++		pm_qos_update_request(&mcpdm->pm_qos_req,
++				      mcpdm->latency[stream2]);
++	else if (mcpdm->latency[stream1])
++		pm_qos_remove_request(&mcpdm->pm_qos_req);
++
++	mcpdm->latency[stream1] = 0;
++
+ 	mutex_unlock(&mcpdm->mutex);
+ }
+ 
+@@ -296,7 +309,7 @@ static int omap_mcpdm_dai_hw_params(struct snd_pcm_substream *substream,
+ 	int stream = substream->stream;
+ 	struct snd_dmaengine_dai_dma_data *dma_data;
+ 	u32 threshold;
+-	int channels;
++	int channels, latency;
+ 	int link_mask = 0;
+ 
+ 	channels = params_channels(params);
+@@ -336,14 +349,25 @@ static int omap_mcpdm_dai_hw_params(struct snd_pcm_substream *substream,
+ 
+ 		dma_data->maxburst =
+ 				(MCPDM_DN_THRES_MAX - threshold) * channels;
++		latency = threshold;
+ 	} else {
+ 		/* If playback is not running assume a stereo stream to come */
+ 		if (!mcpdm->config[!stream].link_mask)
+ 			mcpdm->config[!stream].link_mask = (0x3 << 3);
+ 
+ 		dma_data->maxburst = threshold * channels;
++		latency = (MCPDM_DN_THRES_MAX - threshold);
+ 	}
+ 
++	/*
++	 * The DMA must act to a DMA request within latency time (usec) to avoid
++	 * under/overflow
++	 */
++	mcpdm->latency[stream] = latency * USEC_PER_SEC / params_rate(params);
++
++	if (!mcpdm->latency[stream])
++		mcpdm->latency[stream] = 10;
++
+ 	/* Check if we need to restart McPDM with this stream */
+ 	if (mcpdm->config[stream].link_mask &&
+ 	    mcpdm->config[stream].link_mask != link_mask)
+@@ -358,6 +382,20 @@ static int omap_mcpdm_prepare(struct snd_pcm_substream *substream,
+ 				  struct snd_soc_dai *dai)
+ {
+ 	struct omap_mcpdm *mcpdm = snd_soc_dai_get_drvdata(dai);
++	struct pm_qos_request *pm_qos_req = &mcpdm->pm_qos_req;
++	int tx = (substream->stream == SNDRV_PCM_STREAM_PLAYBACK);
++	int stream1 = tx ? SNDRV_PCM_STREAM_PLAYBACK : SNDRV_PCM_STREAM_CAPTURE;
++	int stream2 = tx ? SNDRV_PCM_STREAM_CAPTURE : SNDRV_PCM_STREAM_PLAYBACK;
++	int latency = mcpdm->latency[stream2];
++
++	/* Prevent omap hardware from hitting off between FIFO fills */
++	if (!latency || mcpdm->latency[stream1] < latency)
++		latency = mcpdm->latency[stream1];
++
++	if (pm_qos_request_active(pm_qos_req))
++		pm_qos_update_request(pm_qos_req, latency);
++	else if (latency)
++		pm_qos_add_request(pm_qos_req, PM_QOS_CPU_DMA_LATENCY, latency);
+ 
+ 	if (!omap_mcpdm_active(mcpdm)) {
+ 		omap_mcpdm_start(mcpdm);
+@@ -419,6 +457,9 @@ static int omap_mcpdm_remove(struct snd_soc_dai *dai)
+ 	free_irq(mcpdm->irq, (void *)mcpdm);
+ 	pm_runtime_disable(mcpdm->dev);
+ 
++	if (pm_qos_request_active(&mcpdm->pm_qos_req))
++		pm_qos_remove_request(&mcpdm->pm_qos_req);
++
+ 	return 0;
+ }
+ 
 -- 
 2.19.1
 
