@@ -2,112 +2,84 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41694C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 21:53:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD303C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 21:53:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 840172086D
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 21:53:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0508F208C1
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 21:53:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544824406;
+	bh=mqO3YP3eHsgRkD/KZQMsIg8V+7AaFLxrKnPCGddnhbc=;
+	h=In-Reply-To:Subject:To:References:From:Cc:Date:List-ID:From;
+	b=dTP+OpQRGCKASJQ8g4GY8MS7HRsOEEPLk1yUV2INgZKMnIncvzYb/FBuKq/pqhGCc
+	 ggVUfek81INDQJYVrRkwNTGv001vemX7tjl+qNI+SS/yDGJkmFoKkeojr0YH4+S4N+
+	 I+hUN7F4ozkQB0tABwufOTbCCTXaLPvhtCCRifHI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731316AbeLNVxV (ORCPT
+        id S1731331AbeLNVxY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 16:53:21 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:56074 "EHLO mx1.redhat.com"
+        Fri, 14 Dec 2018 16:53:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49800 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731293AbeLNVxS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 16:53:18 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1731209AbeLNVxW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 16:53:22 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D2AA583F63;
-        Fri, 14 Dec 2018 21:53:17 +0000 (UTC)
-Received: from llong.com (dhcp-17-223.bos.redhat.com [10.18.17.223])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4AF7B5FCD0;
-        Fri, 14 Dec 2018 21:53:12 +0000 (UTC)
-From:   Waiman Long <longman@redhat.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-doc@vger.kernel.org,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jan Kara <jack@suse.cz>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Larry Woodman <lwoodman@redhat.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        "Wangkai (Kevin C)" <wangkai86@huawei.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Waiman Long <longman@redhat.com>
-Subject: [RESEND PATCH v4 0/3] fs/dcache: Track # of negative dentries
-Date:   Fri, 14 Dec 2018 16:53:01 -0500
-Message-Id: <1544824384-17668-1-git-send-email-longman@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Fri, 14 Dec 2018 21:53:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CA609208C3;
+        Fri, 14 Dec 2018 21:53:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544824401;
+        bh=mqO3YP3eHsgRkD/KZQMsIg8V+7AaFLxrKnPCGddnhbc=;
+        h=In-Reply-To:Subject:To:References:From:Cc:Date:From;
+        b=ipkZ8D/xEXJU6RQvm07gthzb73fYC+vXJx4N70i+C0I76369MVx+2LL9y+baclhkz
+         AQtv/Lv5p1MsDHvIPOuLVoynof99rXnCdNVqUEGdX6BuWe41tI0DkgAstMBqfFcfX6
+         89Yc6C1x6x9TUKSEMR/J/7EwItZd5dHIkeChV484=
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20181205195050.4759-5-robh@kernel.org>
+Subject: Re: [PATCH] clk: Use of_node_name_eq for node name comparisons
+To:     Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20181205195050.4759-5-robh@kernel.org>
+Message-ID: <154482440058.19322.10903668758246014018@swboyd.mtv.corp.google.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+User-Agent: alot/0.8
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Tero Kristo <t-kristo@ti.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Date:   Fri, 14 Dec 2018 13:53:20 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
- v3->v4:
-  - Drop patch 4 as it is just a minor optimization.
-  - Add a cc:stable tag to patch 1.
-  - Clean up some comments in patch 3.
+Quoting Rob Herring (2018-12-05 11:50:21)
+> Convert string compares of DT node names to use of_node_name_eq helper
+> instead. This removes direct access to the node name pointer.
+>=20
+> For instances using of_node_cmp, this has the side effect of now using
+> case sensitive comparisons. This should not matter for any FDT based
+> system which all of these are.
+>=20
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: Tero Kristo <t-kristo@ti.com>
+> Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> Cc: linux-renesas-soc@vger.kernel.org
+> Cc: linux-clk@vger.kernel.org
+> Cc: linux-omap@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
 
- v2->v3:
-  - With confirmation that the dummy array in dentry_stat structure
-    was never a replacement of a previously used field, patch 3 is now
-    reverted back to use one of dummy field as the negative dentry count
-    instead of adding a new field.
-
- v1->v2:
-  - Clarify what the new nr_dentry_negative per-cpu counter is tracking
-    and open-code the increment and decrement as suggested by Dave Chinner.
-  - Append the new nr_dentry_negative count as the 7th element of dentry-state
-    instead of replacing one of the dummy entries.
-  - Remove patch "fs/dcache: Make negative dentries easier to be
-    reclaimed" for now as I need more time to think about what
-    to do with it.
-  - Add 2 more patches to address issues found while reviewing the
-    dentry code.
-  - Add another patch to change the conditional branch of
-    nr_dentry_negative accounting to conditional move so as to reduce
-    the performance impact of the accounting code.
-
-This patchset addresses 2 issues found in the dentry code and adds a
-new nr_dentry_negative per-cpu counter to track the total number of
-negative dentries in all the LRU lists.
-
-Patch 1 fixes a bug in the accounting of nr_dentry_unused in
-shrink_dcache_sb().
-
-Patch 2 removes the ____cacheline_aligned_in_smp tag from super_block
-LRU lists.
-
-Patch 3 adds the new nr_dentry_negative per-cpu counter.
-
-Various filesystem related tests were run and no statistically
-significant changes in performance outside of the possible noise range
-was observed.
-
-Waiman Long (3):
-  fs/dcache: Fix incorrect nr_dentry_unused accounting in
-    shrink_dcache_sb()
-  fs: Don't need to put list_lru into its own cacheline
-  fs/dcache: Track & report number of negative dentries
-
- Documentation/sysctl/fs.txt | 26 ++++++++++++++++----------
- fs/dcache.c                 | 38 +++++++++++++++++++++++++++++++++-----
- include/linux/dcache.h      |  7 ++++---
- include/linux/fs.h          |  9 +++++----
- 4 files changed, 58 insertions(+), 22 deletions(-)
-
--- 
-1.8.3.1
+Applied to clk-next
 
