@@ -2,131 +2,168 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C86AC67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 10:56:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B880EC67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 11:00:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 227C520892
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 10:56:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="nCDO07p+";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="nCDO07p+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 227C520892
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 739B02080F
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 11:00:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 739B02080F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729690AbeLNK4L (ORCPT
+        id S1729505AbeLNLAQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 05:56:11 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:40460 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726344AbeLNK4H (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 05:56:07 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 6314E60722; Fri, 14 Dec 2018 10:56:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1544784966;
-        bh=S+z5IlGf4W56MziBDNM1UlA7+IR3I8jNB9kNawpKjYw=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=nCDO07p+F9eIwDt4DsqM3P9tyJuCnfaMdwnwyGc3f8kRyHfxrsQpxqC67reSMmvgQ
-         uZ4Pg7Uub7ShZP8IaljhzQIIXr8jSS/B0STaI3TxPVyopqc7lRhGj+ZhE0pb9Tg4fF
-         IIIQDHcEddB7XSntMN2v/1ANAh4eJyfAf2yZExjY=
-Received: from [10.204.79.22] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        Fri, 14 Dec 2018 06:00:16 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:41152 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726670AbeLNLAP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 06:00:15 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: mojha@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 5BE7860312;
-        Fri, 14 Dec 2018 10:56:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1544784966;
-        bh=S+z5IlGf4W56MziBDNM1UlA7+IR3I8jNB9kNawpKjYw=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=nCDO07p+F9eIwDt4DsqM3P9tyJuCnfaMdwnwyGc3f8kRyHfxrsQpxqC67reSMmvgQ
-         uZ4Pg7Uub7ShZP8IaljhzQIIXr8jSS/B0STaI3TxPVyopqc7lRhGj+ZhE0pb9Tg4fF
-         IIIQDHcEddB7XSntMN2v/1ANAh4eJyfAf2yZExjY=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5BE7860312
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=mojha@codeaurora.org
-Subject: Re: [PATCH] partitions: fix coding style
-To:     jotun9935@gmail.com, axboe@kernel.dk
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20181214101958.90690-1-jotun9935@gmail.com>
-From:   Mukesh Ojha <mojha@codeaurora.org>
-Message-ID: <3282d005-53e1-b5cd-bd14-964467639403@codeaurora.org>
-Date:   Fri, 14 Dec 2018 16:26:01 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        by mx1.redhat.com (Postfix) with ESMTPS id 0381987622;
+        Fri, 14 Dec 2018 11:00:15 +0000 (UTC)
+Received: from [10.36.112.72] (ovpn-112-72.ams2.redhat.com [10.36.112.72])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4458F5D6B3;
+        Fri, 14 Dec 2018 11:00:09 +0000 (UTC)
+Subject: Re: [PATCH V2 1/2] KVM/VMX: Check ept_pointer before flushing ept tlb
+To:     lantianyu1986@gmail.com
+Cc:     Lan Tianyu <Tianyu.Lan@microsoft.com>, rkrcmar@redhat.com,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        michael.h.kelley@microsoft.com, kys@microsoft.com,
+        vkuznets@redhat.com
+References: <20181206073437.1995-1-Tianyu.Lan@microsoft.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ uUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
+Message-ID: <eb059d1b-78c9-035d-d601-e397df292212@redhat.com>
+Date:   Fri, 14 Dec 2018 12:00:07 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-In-Reply-To: <20181214101958.90690-1-jotun9935@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20181206073437.1995-1-Tianyu.Lan@microsoft.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Fri, 14 Dec 2018 11:00:15 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Please read the guideline as well before sending patch.
+On 06/12/18 08:34, lantianyu1986@gmail.com wrote:
+> From: Lan Tianyu <Tianyu.Lan@microsoft.com>
+> 
+> This patch is to initialize ept_pointer to INVALID_PAGE and check it
+> before flushing ept tlb. If ept_pointer is invalid, bypass the flush
+> request.
+> 
+> Signed-off-by: Lan Tianyu <Tianyu.Lan@microsoft.com>
 
-you need to maintain patchset version as well, e.g: in which patchset 
-what is changed on whose comments.
+Can you explain better *why* this patch is needed?  Also, should
+vmx->ept_pointer be cleared at reset time, rather than vCPU creation?
 
+Thanks,
 
--Mukesh
+Paolo
 
-
-On 12/14/2018 3:49 PM, jotun9935@gmail.com wrote:
-> From: Sungkyung Kim <jotun9935@gmail.com>
->
-> Fix coding style of osf.c
->
-> Signed-off-by: Sungkyung Kim <jotun9935@gmail.com>
 > ---
->   block/partitions/osf.c | 10 +++++-----
->   1 file changed, 5 insertions(+), 5 deletions(-)
->
-> diff --git a/block/partitions/osf.c b/block/partitions/osf.c
-> index 4b873973d6c0..19f8e91979f0 100644
-> --- a/block/partitions/osf.c
-> +++ b/block/partitions/osf.c
-> @@ -22,7 +22,7 @@ int osf_partition(struct parsed_partitions *state)
->   	unsigned char *data;
->   	struct disklabel {
->   		__le32 d_magic;
-> -		__le16 d_type,d_subtype;
-> +		__le16 d_type, d_subtype;
->   		u8 d_typename[16];
->   		u8 d_packname[16];
->   		__le32 d_secsize;
-> @@ -50,14 +50,14 @@ int osf_partition(struct parsed_partitions *state)
->   			u8  p_frag;
->   			__le16 p_cpg;
->   		} d_partitions[MAX_OSF_PARTITIONS];
-> -	} * label;
-> -	struct d_partition * partition;
-> +	} *label;
-> +	struct d_partition *partition;
->   
->   	data = read_part_sector(state, 0, &sect);
->   	if (!data)
->   		return -1;
->   
-> -	label = (struct disklabel *) (data+64);
-> +	label = (struct disklabel *) (data + 64);
->   	partition = label->d_partitions;
->   	if (le32_to_cpu(label->d_magic) != DISKLABELMAGIC) {
->   		put_dev_sector(sect);
-> @@ -74,7 +74,7 @@ int osf_partition(struct parsed_partitions *state)
->   	}
->   	for (i = 0 ; i < npartitions; i++, partition++) {
->   		if (slot == state->limit)
-> -		        break;
-> +			break;
->   		if (le32_to_cpu(partition->p_size))
->   			put_partition(state, slot,
->   				le32_to_cpu(partition->p_offset),
+>  arch/x86/kvm/vmx.c | 13 +++++++++++--
+>  1 file changed, 11 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+> index c379d0bfdcba..6577ec8cbb0f 100644
+> --- a/arch/x86/kvm/vmx.c
+> +++ b/arch/x86/kvm/vmx.c
+> @@ -1582,11 +1582,18 @@ static int vmx_hv_remote_flush_tlb(struct kvm *kvm)
+>  	/*
+>  	 * FLUSH_GUEST_PHYSICAL_ADDRESS_SPACE hypercall needs the address of the
+>  	 * base of EPT PML4 table, strip off EPT configuration information.
+> +	 * If ept_pointer is invalid pointer, bypass the flush request.
+>  	 */
+>  	if (to_kvm_vmx(kvm)->ept_pointers_match != EPT_POINTERS_MATCH) {
+> -		kvm_for_each_vcpu(i, vcpu, kvm)
+> +		kvm_for_each_vcpu(i, vcpu, kvm) {
+> +			u64 ept_pointer = to_vmx(vcpu)->ept_pointer;
+> +
+> +			if (!VALID_PAGE(ept_pointer))
+> +				continue;
+> +
+>  			ret |= hyperv_flush_guest_mapping(
+> -				to_vmx(kvm_get_vcpu(kvm, i))->ept_pointer & PAGE_MASK);
+> +				ept_pointer & PAGE_MASK);
+> +		}
+>  	} else {
+>  		ret = hyperv_flush_guest_mapping(
+>  				to_vmx(kvm_get_vcpu(kvm, 0))->ept_pointer & PAGE_MASK);
+> @@ -11614,6 +11621,8 @@ static struct kvm_vcpu *vmx_create_vcpu(struct kvm *kvm, unsigned int id)
+>  	vmx->pi_desc.nv = POSTED_INTR_VECTOR;
+>  	vmx->pi_desc.sn = 1;
+>  
+> +	vmx->ept_pointer = INVALID_PAGE;
+> +
+>  	return &vmx->vcpu;
+>  
+>  free_vmcs:
+> 
 
