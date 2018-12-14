@@ -2,107 +2,128 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-12.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5967EC67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:37:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C6F5C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:37:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BF1521104
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:37:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D57EB208E7
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:37:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544791048;
-	bh=u3p/muIl+Jzn/TfGpNIF6v/odYWTbmVTnpVdagjyXR0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=vd6CfQZm3Mn1aEZEG39yjN4M9/eaJfTND8qWYcl/jMZAlcCasUaahteqvuBBn14bs
-	 84IdgwIKkQlhzn3BL3P1cwd2lCBxV98FJUVd1yg7xTsSeBnu7a5anyP3HaeneKD3Y3
-	 JNvYOscQWrxnoPjvfvdK39yait8YHlYEwTkqtVRI=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BF1521104
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	s=default; t=1544791060;
+	bh=iVkjg4Tr20SXVRdJ87I7ezg3KatJ54sOLNf4ZrcHV4k=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
+	b=S61IzrWgHnlScskw67tClwjirAAREqfRDcF80KOgu8M/sHeUuI/7dEdXXRa6HcTMb
+	 JolTfOZ7wPhAAWvSKEDzGRcxKTA9gV2GDab50iFCUVr/IRgGl4myGHkbDc/jLfAj0B
+	 oXPc5H6TOqqF8QQRIqbisnFP9cG47KgEqZ/lkD8U=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D57EB208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730730AbeLNMh1 (ORCPT
+        id S1730966AbeLNMhi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:37:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51338 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730891AbeLNMGU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:06:20 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DD5EC2147D;
-        Fri, 14 Dec 2018 12:06:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789179;
-        bh=u3p/muIl+Jzn/TfGpNIF6v/odYWTbmVTnpVdagjyXR0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=M3Lz+oFAGgNUVIaKeARBH42KJbU9GwOcnDceqiYou98SVQ/RQD8MbAHGKuWAVWE6f
-         FdvpJ0gbYT9ln6UjHMmCXSALwHmDlRS64QHiwN6a6gclPvxeYOaokblLSISTWNY++d
-         h1yrqOjeXEWdpiCV2w0rAdDj5cHRLe4l/6VgrIcw=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alin Nastac <alin.nastac@gmail.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 092/142] netfilter: ipv6: Preserve link scope traffic original oif
-Date:   Fri, 14 Dec 2018 12:59:37 +0100
-Message-Id: <20181214115750.732257753@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.0
-In-Reply-To: <20181214115747.053633987@linuxfoundation.org>
-References: <20181214115747.053633987@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Fri, 14 Dec 2018 07:37:38 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:57954 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730025AbeLNMhg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:37:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=PBB3Z/Toy8LXk0k7SoOpXhKnzaPZhhxwBanzLvqIMqQ=; b=W2yL96NWcmgs
+        n4Fvf9+AFkA4lj4hFeQBCIMcIZ6uYk9xZKW6fldpkbwImojaZOr1OIL+BTIsNslMosmQwLLSexrUl
+        NdoW6YAALJ+CiEff1jTX1v1TWW0xKJqGOC1LwJ45WN1eo48boF398Yft6/AJ+R8Xb1zwlNfbBppc4
+        RuXUc=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gXmia-0006j1-V5; Fri, 14 Dec 2018 12:37:25 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 938B911258A1; Fri, 14 Dec 2018 12:37:24 +0000 (GMT)
+From:   Mark Brown <broonie@kernel.org>
+To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, alsa-devel@alsa-project.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: rsnd: Add r8a774c0 support" to the asoc tree
+In-Reply-To:  <1544732406-6408-1-git-send-email-fabrizio.castro@bp.renesas.com>
 X-Patchwork-Hint: ignore
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Message-Id: <20181214123724.938B911258A1@debutante.sirena.org.uk>
+Date:   Fri, 14 Dec 2018 12:37:24 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.19-stable review patch.  If anyone has any objections, please let me know.
+The patch
 
-------------------
+   ASoC: rsnd: Add r8a774c0 support
 
-[ Upstream commit 508b09046c0f21678652fb66fd1e9959d55591d2 ]
+has been applied to the asoc tree at
 
-When ip6_route_me_harder is invoked, it resets outgoing interface of:
-  - link-local scoped packets sent by neighbor discovery
-  - multicast packets sent by MLD host
-  - multicast packets send by MLD proxy daemon that sets outgoing
-    interface through IPV6_PKTINFO ipi6_ifindex
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-Link-local and multicast packets must keep their original oif after
-ip6_route_me_harder is called.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-Signed-off-by: Alin Nastac <alin.nastac@gmail.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From ae38d267417291db40de7439f2b0b690ab615f0e Mon Sep 17 00:00:00 2001
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Date: Thu, 13 Dec 2018 20:20:06 +0000
+Subject: [PATCH] ASoC: rsnd: Add r8a774c0 support
+
+Document RZ/G2E (R8A774C0) SoC bindings.
+
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- net/ipv6/netfilter.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ Documentation/devicetree/bindings/sound/renesas,rsnd.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/net/ipv6/netfilter.c b/net/ipv6/netfilter.c
-index 5ae8e1c51079..8b075f0bc351 100644
---- a/net/ipv6/netfilter.c
-+++ b/net/ipv6/netfilter.c
-@@ -24,7 +24,8 @@ int ip6_route_me_harder(struct net *net, struct sk_buff *skb)
- 	unsigned int hh_len;
- 	struct dst_entry *dst;
- 	struct flowi6 fl6 = {
--		.flowi6_oif = sk ? sk->sk_bound_dev_if : 0,
-+		.flowi6_oif = sk && sk->sk_bound_dev_if ? sk->sk_bound_dev_if :
-+			rt6_need_strict(&iph->daddr) ? skb_dst(skb)->dev->ifindex : 0,
- 		.flowi6_mark = skb->mark,
- 		.flowi6_uid = sock_net_uid(net, sk),
- 		.daddr = iph->daddr,
+diff --git a/Documentation/devicetree/bindings/sound/renesas,rsnd.txt b/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
+index 4d19d2bd6286..648d43e1b1e9 100644
+--- a/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
++++ b/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
+@@ -267,6 +267,7 @@ Required properties:
+ 				    - "renesas,rcar_sound-r8a7744" (RZ/G1N)
+ 				    - "renesas,rcar_sound-r8a7745" (RZ/G1E)
+ 				    - "renesas,rcar_sound-r8a774a1" (RZ/G2M)
++				    - "renesas,rcar_sound-r8a774c0" (RZ/G2E)
+ 				    - "renesas,rcar_sound-r8a7778" (R-Car M1A)
+ 				    - "renesas,rcar_sound-r8a7779" (R-Car H1)
+ 				    - "renesas,rcar_sound-r8a7790" (R-Car H2)
 -- 
-2.19.1
-
-
+2.19.0.rc2
 
