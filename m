@@ -2,55 +2,55 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D277C67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:43:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17B3AC67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:43:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3302020892
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:43:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D1CBB20892
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:43:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544791419;
-	bh=NCJ7rBbWhGz+sZAHJR2WjQmVQFzShEmjGNuw6vwgqaM=;
+	s=default; t=1544791427;
+	bh=87O5TKNBxDSUtzqs6IzixB45nIraD5mu9yMETS3QvQo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=LrZCFG8qaIm1pMXz4BFi504Ni7dNSG9fcXawKMUEYMxSEaTMplRV2Snnc9jB5W8fC
-	 n5WxuKyJV3QNImemToirZPYfwLkZud5SclvLxrmvtEPVprebH/ixCKvdF8Sop7FkrH
-	 jc2Bma2RZAvlllxbLJSIaKb5+zKXCsYAaP62xzdI=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3302020892
+	b=fvSBINYvcYa/otQt2+K6NkctoyDk2oQnPLRErVg53n8tQutFpxz1qsY63OO2bKc84
+	 LcgPejYAzXmIoNJfWUI2hmFZ24nIjwT80DicArui9Xf3VFgdou7RI36euhAEq/KP9v
+	 EafThHveQsZgM0ru6V8N7R3IfWcDLZ//17NkL/SA=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1CBB20892
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730226AbeLNMnh (ORCPT
+        id S1729903AbeLNMB6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:43:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44866 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:01:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44568 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729943AbeLNMCH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:02:07 -0500
+        id S1729878AbeLNMBz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:01:55 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D33CB2145D;
-        Fri, 14 Dec 2018 12:02:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1BBF121473;
+        Fri, 14 Dec 2018 12:01:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544788927;
-        bh=NCJ7rBbWhGz+sZAHJR2WjQmVQFzShEmjGNuw6vwgqaM=;
+        s=default; t=1544788914;
+        bh=87O5TKNBxDSUtzqs6IzixB45nIraD5mu9yMETS3QvQo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LEqxnDg5W/F2VktH9Ig4cJ/gfC8u/4Cb3QSmNVFppmmDtsp6BOctK5xzvcrdLZvxx
-         dVU+oQlpC5jk3HgGr4yCti4dX6ODWhD8sZR7Uy4nFvtT0b4nfS1Mh8NuBpprZLhJKb
-         qfedPG32aBZjPYCs/xVLi8bMoONCo5vp7GqKM0Ao=
+        b=Z2DvdGk2zVCRm9EoIxgLMiE41oHQcV3F4On8q4qQv4ZPwf7UC034sy6CmFxYlSX63
+         Y82oVHIs0+hiTJAsjG1pH/9ln9T+T2+q+GUTq0AwTtwfbJfK0mvNdluPMeva5i+GJ6
+         ex5ma6riM+p/dlxLbqiYU/VaE3FgsxLrf7W1VuUc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Adam Ford <aford173@gmail.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 027/142] ARM: dts: am3517: Fix pinmuxing for CD on MMC1
-Date:   Fri, 14 Dec 2018 12:58:32 +0100
-Message-Id: <20181214115748.140545998@linuxfoundation.org>
+        stable@vger.kernel.org, Eran Ben Elisha <eranbe@mellanox.com>,
+        Tariq Toukan <tariqt@mellanox.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 007/142] net/mlx4_en: Change min MTU size to ETH_MIN_MTU
+Date:   Fri, 14 Dec 2018 12:58:12 +0100
+Message-Id: <20181214115747.344285186@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115747.053633987@linuxfoundation.org>
 References: <20181214115747.053633987@linuxfoundation.org>
@@ -69,37 +69,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit e7f4ffffa972db4820c23ff9831a6a4f3f6d8cc5 ]
+From: Eran Ben Elisha <eranbe@mellanox.com>
 
-The MMC1 is active low, not active high.  For some reason,
-this worked with different combination of U-Boot and kernels,
-but it's supposed to be active low and is currently broken.
+[ Upstream commit 24be19e47779d604d1492c114459dca9a92acf78 ]
 
-Fixes: cfaa856a2510 ("ARM: dts: am3517: Add pinmuxing, CD and
-WP for MMC1") #kernel 4.18+
+NIC driver minimal MTU size shall be set to ETH_MIN_MTU, as defined in
+the RFC791 and in the network stack. Remove old mlx4_en only define for
+it, which was set to wrong value.
 
-Signed-off-by: Adam Ford <aford173@gmail.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: b80f71f5816f ("ethernet/mellanox: use core min/max MTU checking")
+Signed-off-by: Eran Ben Elisha <eranbe@mellanox.com>
+Signed-off-by: Tariq Toukan <tariqt@mellanox.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/boot/dts/am3517-evm.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/mellanox/mlx4/en_netdev.c |    4 ++--
+ drivers/net/ethernet/mellanox/mlx4/mlx4_en.h   |    1 -
+ 2 files changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/am3517-evm.dts b/arch/arm/boot/dts/am3517-evm.dts
-index 1d158cfda15f..c45aef806870 100644
---- a/arch/arm/boot/dts/am3517-evm.dts
-+++ b/arch/arm/boot/dts/am3517-evm.dts
-@@ -227,7 +227,7 @@
- 	vmmc-supply = <&vmmc_fixed>;
- 	bus-width = <4>;
- 	wp-gpios = <&gpio4 30 GPIO_ACTIVE_HIGH>; /* gpio_126 */
--	cd-gpios = <&gpio4 31 GPIO_ACTIVE_HIGH>; /* gpio_127 */
-+	cd-gpios = <&gpio4 31 GPIO_ACTIVE_LOW>; /* gpio_127 */
- };
+--- a/drivers/net/ethernet/mellanox/mlx4/en_netdev.c
++++ b/drivers/net/ethernet/mellanox/mlx4/en_netdev.c
+@@ -3494,8 +3494,8 @@ int mlx4_en_init_netdev(struct mlx4_en_d
+ 		dev->gso_partial_features = NETIF_F_GSO_UDP_TUNNEL_CSUM;
+ 	}
  
- &mmc3 {
--- 
-2.19.1
-
+-	/* MTU range: 46 - hw-specific max */
+-	dev->min_mtu = MLX4_EN_MIN_MTU;
++	/* MTU range: 68 - hw-specific max */
++	dev->min_mtu = ETH_MIN_MTU;
+ 	dev->max_mtu = priv->max_mtu;
+ 
+ 	mdev->pndev[port] = dev;
+--- a/drivers/net/ethernet/mellanox/mlx4/mlx4_en.h
++++ b/drivers/net/ethernet/mellanox/mlx4/mlx4_en.h
+@@ -161,7 +161,6 @@
+ #define MLX4_SELFTEST_LB_MIN_MTU (MLX4_LOOPBACK_TEST_PAYLOAD + NET_IP_ALIGN + \
+ 				  ETH_HLEN + PREAMBLE_LEN)
+ 
+-#define MLX4_EN_MIN_MTU		46
+ /* VLAN_HLEN is added twice,to support skb vlan tagged with multiple
+  * headers. (For example: ETH_P_8021Q and ETH_P_8021AD).
+  */
 
 
