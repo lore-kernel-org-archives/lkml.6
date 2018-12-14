@@ -2,146 +2,98 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10A88C67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 06:33:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 255F1C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 06:43:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA60020866
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 06:33:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D10EB2086D
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 06:43:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dmgfM+BH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA60020866
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ak48fdZD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D10EB2086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727522AbeLNGd0 (ORCPT
+        id S1726919AbeLNGnI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 01:33:26 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:39538 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727054AbeLNGd0 (ORCPT
+        Fri, 14 Dec 2018 01:43:08 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:43703 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726437AbeLNGnI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 01:33:26 -0500
-Received: by mail-pg1-f194.google.com with SMTP id w6so2229063pgl.6
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 22:33:25 -0800 (PST)
+        Fri, 14 Dec 2018 01:43:08 -0500
+Received: by mail-pl1-f196.google.com with SMTP id gn14so2265253plb.10;
+        Thu, 13 Dec 2018 22:43:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=6U+wJFuXoipVhoUGdkktPfvuy5sqyOiWs46S7Vn1Em8=;
-        b=dmgfM+BHGH0BhnNzTetNjBQyC1usVuwtG3ZldihpDqo+IzcB+zWCM8w1QJErkt1eYO
-         37PgkRu3Bc/yMKqYFTAFMWZZq3KYVD5jakCV6ysoU+0g+qjfBFk0TW8yHl5qabKayeWi
-         2H8i13vBw49N4n6bYL/la72EOji0vaXwZzg4M=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=gA0jjFvqXawpO1c/FWHMHxoWZzQrmYYLnCnbfaTehzE=;
+        b=Ak48fdZDPscI3Qhx1DAK4DG/Lv8F46+49EEd8YjVksMlMauCCPTaYSBM45NGUzJeBT
+         fEj0EvnQijn9j0KNnphonzZPYmanio3BGJOlEAqDCUTKGscMeFZlwnS6ndzkbgfq441G
+         wXMhRqOcyDEOo6yrb9vYuxIuJY4t5WK+OyVsVVh1haJ3JXysr1HP6G1p2Gf+GBtuuRjd
+         xBMEDz6w9yy8o3+M+5bPFCoeQVk4RfYFr6KJIlCoi6X2si/PxuYrupKCJr0X7aW6as/X
+         baLrv5PEGH2jgqmvn2eAJEUq6LOQQL4RsB6koyaqSs9YvQVxIhUhypzkR2SIz2fgDGBt
+         8bWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=6U+wJFuXoipVhoUGdkktPfvuy5sqyOiWs46S7Vn1Em8=;
-        b=lDif9agZ89di7XvGcr23DKrGaVrASV+Armi6L0u6eja+5UXG1/rXrVG6dLvejO9tzt
-         bB3CXbym9kKPnA9tSmUezWOxcZiqs19hzH4Ol/rXRGArO34FoAoB1U7kX4/FT2BDl0tk
-         oMykcdhi83YjtdB4AinTnAu4+hXi3TNA5MXnZ3r4Ky5hjiCQs06k2qqOdYXmLdgHzN5G
-         5bLfz7XHODTgUUuobly0S6ktINIlL8nJnVnjJlqb/S2LjuNMl2/UeLCWhXlw90YZcAiR
-         FVwh8U+PueeFNc/QZVrjby4Kt1JH2ShWMIsUc4TrZxquxR82XXrGNKZzQgCKduXqq1u8
-         7WTg==
-X-Gm-Message-State: AA+aEWajvRFG1qsfRsG0XN+t5muCGJMZXNqPmOMs6ObO1t/0GQvwzoU0
-        CZBOJv3evzUE+6aVzDt0sMNCOgvi1Nc=
-X-Google-Smtp-Source: AFSGD/XwIjUnSn8D3U9Qo98W+YpT79J6Gkr1WTE8cad1idNOiv86sS6/zNSPyeIiboTT0wjJryMFuQ==
-X-Received: by 2002:a63:e20a:: with SMTP id q10mr1629746pgh.206.1544769205100;
-        Thu, 13 Dec 2018 22:33:25 -0800 (PST)
-Received: from localhost ([122.172.23.29])
-        by smtp.gmail.com with ESMTPSA id z191sm4480728pgd.74.2018.12.13.22.33.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 13 Dec 2018 22:33:23 -0800 (PST)
-Date:   Fri, 14 Dec 2018 12:03:21 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>, Pavel Machek <pavel@ucw.cz>,
-        Len Brown <len.brown@intel.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Niklas Cassel <niklas.cassel@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V3 6/6] PM / Domains: Propagate performance state updates
-Message-ID: <20181214063321.5i2hqoufw7jc3a2i@vireshk-i7>
-References: <cover.1544611890.git.viresh.kumar@linaro.org>
- <d138bd45d0eacc11ff90e27f83d8b47d692877ef.1544611890.git.viresh.kumar@linaro.org>
- <CAPDyKFpFn60O7W71v7b3fsCtmS520=GG0AQhs3GpdarVE+W--A@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPDyKFpFn60O7W71v7b3fsCtmS520=GG0AQhs3GpdarVE+W--A@mail.gmail.com>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=gA0jjFvqXawpO1c/FWHMHxoWZzQrmYYLnCnbfaTehzE=;
+        b=pGu4ch+/zvQJGeibKODI/26WKM0mJen7SDYq3BvZLzJDLEu9RYYH1ruzAmHTFtspnL
+         vSdOqQ1SEU3EEM4HR8XEBlCmSAlZqTxFzpYmyJY3JOTtHi+QMx5lT5tmT0opnWBhIN89
+         yZmBmT1+VLaw4tJTXlD41+lNG40ga5E0ukYcQOIGx164wATuBc93mcOAp1+XAhJc52t1
+         WGcyZ7oSIT0en1WyGDnlWyS2q/E0ROkimqB4t6ZKmIzbDs2jAh7zTMaiCApg4zeM2Uja
+         DkrHHqoQUWJNJOQ9QfvAv4lJcNDihul+dpfbL7fpwrUBNFcZ986C7p22q+9QET0rahwA
+         ZTwQ==
+X-Gm-Message-State: AA+aEWZEjZv9atLF7XYZR59yUEGMbJiM+AesA4aWprYaL5mBUBgv83g/
+        LrO87n4dK2cjNFh3CMzmSGE=
+X-Google-Smtp-Source: AFSGD/Uzums1zq7oRmh4e5OOMk9lMXexedYaD0dtu3Fhpcn4gwhDe8IpveS0B0EwIHtUdalwzQyNCA==
+X-Received: by 2002:a17:902:9a4c:: with SMTP id x12mr1762839plv.94.1544769787653;
+        Thu, 13 Dec 2018 22:43:07 -0800 (PST)
+Received: from localhost.localdomain (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
+        by smtp.gmail.com with ESMTPSA id e16sm5132645pfn.46.2018.12.13.22.43.06
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 13 Dec 2018 22:43:06 -0800 (PST)
+From:   frowand.list@gmail.com
+To:     robh+dt@kernel.org, Michael Bringmann <mwb@linux.vnet.ibm.com>,
+        linuxppc-dev@lists.ozlabs.org
+Cc:     Michael Ellerman <mpe@ellerman.id.au>,
+        Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
+        Thomas Falcon <tlfalcon@linux.vnet.ibm.com>,
+        Juliet Kim <minkim@us.ibm.com>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] of: phandle_cache, fix refcounts, remove stale entry
+Date:   Thu, 13 Dec 2018 22:42:49 -0800
+Message-Id: <1544769771-5468-1-git-send-email-frowand.list@gmail.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13-12-18, 16:53, Ulf Hansson wrote:
-> On Wed, 12 Dec 2018 at 11:58, Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> >  update_state:
-> > -       return _genpd_set_performance_state(genpd, state);
-> > +       return _genpd_set_performance_state(genpd, state, depth);
-> 
-> Instead of calling _genpd_set_performance_state() from here, I suggest
-> to let the caller do it. Simply return the aggregated new state, if it
-> needs to be updated - and zero if no update is needed.
-> 
-> Why? I think it may clarify and simplify the code, in regards to the
-> actual set/propagation of state changes. Another side-effect, is that
-> you should be able to avoid the forward declaration of
-> _genpd_reeval_performance_state(), which I think is nice as well.
+From: Frank Rowand <frank.rowand@sony.com>
 
-_genpd_reeval_performance_state() is currently called from 3 different
-places and with the suggested change those sites will have this diff.
+Non-overlay dynamic devicetree node removal may leave the node in
+the phandle cache.  Subsequent calls to of_find_node_by_phandle()
+will incorrectly find the stale entry.  This bug exposed the foloowing
+phandle cache refcount bug.
 
--               ret = _genpd_reeval_performance_state(master, master_state,
--                                                     depth + 1);
-+               master_state = _genpd_reeval_performance_state(master,
-+                                               master_state);
-+               ret = _genpd_set_performance_state(genpd, master_state, depth);
+The refcount of phandle_cache entries is not incremented while in
+the cache, allowing use after free error after kfree() of the
+cached entry.
 
-To be honest, I don't like it. Probably because I don't find the extra
-declaration of _genpd_reeval_performance_state() that bad. If two
-routines are always going to get called together it is worth calling
-the second one from the first one for me.
+Frank Rowand (2):
+  of: of_node_get()/of_node_put() nodes held in phandle cache
+  of: __of_detach_node() - remove node from phandle cache
 
-But anyway, I am fine with it if you are. Please let me know.
-
-> >  }
-> >
-> >  /**
-> > @@ -332,7 +407,7 @@ int dev_pm_genpd_set_performance_state(struct device *dev, unsigned int state)
-> >         prev = gpd_data->performance_state;
-> >         gpd_data->performance_state = state;
-> >
-> > -       ret = _genpd_reeval_performance_state(genpd, state);
-> > +       ret = _genpd_reeval_performance_state(genpd, state, 0);
-> >         if (ret)
-> >                 gpd_data->performance_state = prev;
-> >
-> > diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
-> > index 9ad101362aef..dd364abb649a 100644
-> > --- a/include/linux/pm_domain.h
-> > +++ b/include/linux/pm_domain.h
-> > @@ -136,6 +136,10 @@ struct gpd_link {
-> >         struct list_head master_node;
-> >         struct generic_pm_domain *slave;
-> >         struct list_head slave_node;
-> > +
-> > +       /* Sub-domain's per-master domain performance state */
-> > +       unsigned int performance_state;
-> > +       unsigned int prev_performance_state;
-> 
-> Probably a leftover from the earlier versions, please remove.
-
-No, these are still getting used.
+ drivers/of/base.c       | 99 ++++++++++++++++++++++++++++++++++++-------------
+ drivers/of/dynamic.c    |  3 ++
+ drivers/of/of_private.h |  4 ++
+ 3 files changed, 81 insertions(+), 25 deletions(-)
 
 -- 
-viresh
+Frank Rowand <frank.rowand@sony.com>
+
