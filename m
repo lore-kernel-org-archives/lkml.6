@@ -2,81 +2,119 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 118C2C43612
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 18:19:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F1ADC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 18:20:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 365192070D
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 18:19:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544811565;
-	bh=0dKUEBh8eIyY8Cb9KWx5vL9k3AQaJjyLKK3OMaK8430=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=cCfhXOnDTFt0ynSndBJnY+pg6WoXrsvB27ID8pmzBP3pt4ICzfraQWRD5LWOIUqFB
-	 mMN5gECcjAwAxHeLxEjxsHfo10IGFMMQDcnPUOej5jal9plwEtgved5lMiiCbZ1HEu
-	 HscDeRlTDvbeoIVdP9feZ8JvqOad1rQkf/IdntwU=
+	by mail.kernel.org (Postfix) with ESMTP id E2F5A206C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 18:20:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730353AbeLNSTX (ORCPT
+        id S1730457AbeLNSU5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 13:19:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60898 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728388AbeLNSTW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 13:19:22 -0500
-Received: from mail.kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 916ED206C0;
-        Fri, 14 Dec 2018 18:19:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544811563;
-        bh=0dKUEBh8eIyY8Cb9KWx5vL9k3AQaJjyLKK3OMaK8430=;
-        h=From:To:Cc:Subject:Date:From;
-        b=nYduV5MwQCbEtpjdWQhf4vQVdxxRi96fEg2bukevM68RTR/awaH1OFtHy8Z896KBE
-         vaxenkoQ3W9JOI1Dlq4r/p3lBTBkaGzUgQT8AiVWz6RQPCIPytBugeFAUN0YVoW73w
-         vRQYY5rqnCKaWLvHOM+1dysGortIW974NIFp3bpo=
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] clk fixes for v4.20-rc6
-Date:   Fri, 14 Dec 2018 10:19:21 -0800
-Message-Id: <20181214181921.99645-1-sboyd@kernel.org>
-X-Mailer: git-send-email 2.20.0.405.gbc1bbc6f85-goog
+        Fri, 14 Dec 2018 13:20:57 -0500
+Received: from relay9-d.mail.gandi.net ([217.70.183.199]:60589 "EHLO
+        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730264AbeLNSU5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 13:20:57 -0500
+X-Originating-IP: 134.134.139.75
+Received: from localhost (jfdmzpr06-ext.jf.intel.com [134.134.139.75])
+        (Authenticated sender: josh@joshtriplett.org)
+        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id 16D4EFF80A;
+        Fri, 14 Dec 2018 18:20:43 +0000 (UTC)
+Date:   Fri, 14 Dec 2018 10:20:39 -0800
+From:   Josh Triplett <josh@joshtriplett.org>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Jethro Beekman <jethro@fortanix.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "x86@kernel.org" <x86@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        "Dr . Greg Wettstein" <greg@enjellic.com>
+Subject: Re: [RFC PATCH v4 5/5] x86/vdso: Add __vdso_sgx_enter_enclave() to
+ wrap SGX enclave transitions
+Message-ID: <20181214182039.GA3883@localhost>
+References: <20181213213135.12913-1-sean.j.christopherson@intel.com>
+ <20181213213135.12913-6-sean.j.christopherson@intel.com>
+ <cda13cff-1a56-a40f-7d69-f0f1ab752f8e@fortanix.com>
+ <20181214151204.GA22063@linux.intel.com>
+ <20181214153830.GB22063@linux.intel.com>
+ <20181214170310.GC22063@linux.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181214170310.GC22063@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit 9a43be9cedd516f188e6333d3b43402386723eff:
+On Fri, Dec 14, 2018 at 09:03:11AM -0800, Sean Christopherson wrote:
+> On Fri, Dec 14, 2018 at 07:38:30AM -0800, Sean Christopherson wrote:
+> > On Fri, Dec 14, 2018 at 07:12:04AM -0800, Sean Christopherson wrote:
+> > > On Fri, Dec 14, 2018 at 09:55:49AM +0000, Jethro Beekman wrote:
+> > > > On 2018-12-14 03:01, Sean Christopherson wrote:
+> > > > >+2:	pop	%rbx
+> > > > >+	pop	%r12
+> > > > >+	pop	%r13
+> > > > >+	pop	%r14
+> > > > >+	pop	%r15
+> > > > >+	pop	%rbp
+> > > > >+	ret
+> > > > 
+> > > > x86-64 ABI requires that you call CLD here (enclave may set it).
+> > > 
+> > > Ugh.  Technically MXCSR and the x87 CW also need to be preserved.
+> > > 
+> > > What if rather than treating the enclave as hostile we require it to be
+> > > compliant with the x86-64 ABI like any other function?  That would solve
+> > > the EFLAGS.DF, MXCSR and x87 issues without adding unnecessary overhead.
+> > > And we wouldn't have to save/restore R12-R15.  It'd mean we couldn't use
+> > > the stack's red zone to hold @regs and @e, but that's poor form anyways.
+> > 
+> > Grr, except the processor crushes R12-R15, FCW and MXCSR on asynchronous
+> > exits.  But not EFLAGS.DF, that's real helpful.
+> 
+> I can think of three options that are at least somewhat reasonable:
+> 
+>   1) Save/restore MXCSR and FCW
+> 
+>      + 100% compliant with the x86-64 ABI
+>      + Callable from any code
+>      + Minimal documentation required
+>      - Restoring MXCSR/FCW is likely unnecessary 99% of the time
+>      - Slow
+> 
+>   2) Clear EFLAGS.DF but not save/restore MXCSR and FCW
+> 
+>      + Mostly compliant with the x86-64 ABI
+>      + Callable from any code that doesn't use SIMD registers
+>      - Need to document deviations from x86-64 ABI
+> 
+>   3) Require the caller to save/restore everything.
+> 
+>      + Fast
+>      + Userspace can pass all GPRs to the enclave (minus EAX, RBX and RCX)
+>      - Completely custom ABI
+>      - For all intents and purposes must be called from an assembly wrapper
+> 
+> 
+> Option (3) actually isn't all that awful.  RCX can be used to pass an
+> optional pointer to a 'struct sgx_enclave_exception' and we can still
+> return standard error codes, e.g. -EFAULT.
 
-  clk: zynqmp: Off by one in zynqmp_is_valid_clock() (2018-12-03 09:54:48 -0800)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
-
-for you to fetch changes up to 8a034aad4892baf82f8c9082f969c5ebc1143a05:
-
-  clk: qcom: qcs404: Fix gpll0_out_main parent (2018-12-10 11:31:30 -0800)
-
-----------------------------------------------------------------
-One fix for the qcom QCS404 clk driver that was merged for this release.
-It specified the wrong parent for a PLL so a part of the clk tree wasn't
-rooted correctly. This fixes it by using the right name.
-
-----------------------------------------------------------------
-Srinivas Kandagatla (1):
-      clk: qcom: qcs404: Fix gpll0_out_main parent
-
- drivers/clk/qcom/gcc-qcs404.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
--- 
-Sent by a computer through tubes
+Entering and exiting a syscall requires an assembly wrapper, and that
+doesn't seem completely unreasonable. It's an easy bit of inline
+assembly.
