@@ -2,73 +2,75 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60095C67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 10:15:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1113DC67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 10:15:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0764C2080F
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 10:15:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA74B2080F
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 10:15:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="iCYOTgFL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0764C2080F
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="HQrMDzUq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA74B2080F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729451AbeLNKPk (ORCPT
+        id S1729486AbeLNKPo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 05:15:40 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:32805 "EHLO
+        Fri, 14 Dec 2018 05:15:44 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:35170 "EHLO
         mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728829AbeLNKPj (ORCPT
+        with ESMTP id S1728829AbeLNKPm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 05:15:39 -0500
-Received: by mail-pl1-f195.google.com with SMTP id z23so2543267plo.0
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 02:15:39 -0800 (PST)
+        Fri, 14 Dec 2018 05:15:42 -0500
+Received: by mail-pl1-f195.google.com with SMTP id p8so2541962plo.2
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 02:15:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=xriaFx5+t28qBH2mZd8Es0YFEc0cKyBjyhEauROsazY=;
-        b=iCYOTgFL+8VAAyBVht3+GmArRXrVh10/vUaNJvAiTsl/OGN4VHMHOpEsg6Bqam0sVp
-         NYkqNvQg6589yBMufymhW74HHUXnULhQbnJqYY1XRuSFM+I2zmutdvc42oHQNVAZEwGR
-         g0ZNeKAk70YSwpNO6gV1floaFXzJP4wgoxGqs=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=a5kLi4xuwk7dpMQcurWuHvhYASg5acLmavueiEtTxTk=;
+        b=HQrMDzUqh3MUYQIsDHDucLjzhFpViI0N/rtfVw4d1bhzFgHCKawj+qxQCgLU/kTnPM
+         Iagdiv7rUyhq4WsM3jCFOcO4FGkEdyRWtKoUXL9p/Fvq7f2PLGQSqdoe+w3qAOJpvduE
+         bEKyAoYUWI8pFOLmUCpZZV/d87yuWc6Izqo4Q=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=xriaFx5+t28qBH2mZd8Es0YFEc0cKyBjyhEauROsazY=;
-        b=SBGu/2O9JSUAhpdSWJXNpdibI79Lw1tCp37qCJq4XhWrzKkvjOJKMpbuYgp9H13o8B
-         dOtTvpH7TGXGew/ABvPUu++xjhRDpKIlHNShrGznOgvPc8WhgcPrs0KHuSP8zYaZHpdG
-         nZLn6aXY1LOQfjHLv/dKoXFnlQmAKvG77152KcQ2zkbO+1PiJ4qrhkxBRLHFtvpFkFy+
-         xgD0Jvg68ZZUdxlfB3uwd3pYmoQY9xovACf/dybWNCL3Kxvj5kz51OJMERXDayUqr5R/
-         LEq2XSfyug1iXngyHsTFBmPLWAs4ON1Zvur2XdYGKJt8fEcYcpN8iF1Rht5gVCON5SvW
-         BUqA==
-X-Gm-Message-State: AA+aEWY9OWygtqXKP7lMkaCm9upByb+vUQnFDJ3nCMJgVuHk8UcpTXyM
-        xV1G+JjaXkAurahxh0oBBQp4hA==
-X-Google-Smtp-Source: AFSGD/WgXRx3P27+6lYqfmpRTbX9ptTaEN90H5mwVv3/DwEDOXl4LrJs0+VMhN/pMM7JH2hYii5UTA==
-X-Received: by 2002:a17:902:1126:: with SMTP id d35mr2154387pla.1.1544782538867;
-        Fri, 14 Dec 2018 02:15:38 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=a5kLi4xuwk7dpMQcurWuHvhYASg5acLmavueiEtTxTk=;
+        b=A+fEVWNOIrBHR2c9eyNO1XyNQV9Hgg/YDZpcQHQZh+wLTaqGN+y2aLuoCoeJbBKqHI
+         Uddvtiu88wbEQIk/VH9OarH7MkilO1ZYnPLdUSPsDpRL4w2dluPUhU2ezntqx1lpz7yh
+         ufvwbVtMPN9kIF6/ZbrQuv00kbdHisywMAA98s0P+k79uFhBSRhCPJk0A68zYQb6benG
+         px8Bx/UO1fb5uJNgilFrTMRprgz8ES0kMtwIP2zQ8NLGOheP7Vz+gltITMmaTCVvBxOW
+         BpXPivsnbpCwf1WLSg8VEXsrSPc5Ul+HsDWmBqbJOJAwlb9ZPi17wvV9bn9w3bQUO9H0
+         K0vQ==
+X-Gm-Message-State: AA+aEWYhXWbG+0GHipVqSUsFBVNRKxASODC5utlKE3H2qa0DBVkYKg++
+        piBGkegfi3Yvo2+CZigeaRH11A==
+X-Google-Smtp-Source: AFSGD/UDvhbg1OycFTg9wu1XyHuLfFhVFbus9c/P2VwjmxbbJ3gLL21I8CKgmOGCWC9+cykpljnLEQ==
+X-Received: by 2002:a17:902:bb98:: with SMTP id m24mr2237750pls.71.1544782541779;
+        Fri, 14 Dec 2018 02:15:41 -0800 (PST)
 Received: from localhost ([122.172.23.29])
-        by smtp.gmail.com with ESMTPSA id g190sm5104829pgc.28.2018.12.14.02.15.37
+        by smtp.gmail.com with ESMTPSA id p24sm6290090pfk.155.2018.12.14.02.15.40
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 14 Dec 2018 02:15:37 -0800 (PST)
+        Fri, 14 Dec 2018 02:15:41 -0800 (PST)
 From:   Viresh Kumar <viresh.kumar@linaro.org>
 To:     ulf.hansson@linaro.org, Rafael Wysocki <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Len Brown <len.brown@intel.com>, Nishanth Menon <nm@ti.com>,
-        Pavel Machek <pavel@ucw.cz>, Stephen Boyd <sboyd@kernel.org>,
-        Viresh Kumar <vireshk@kernel.org>
+        Kevin Hilman <khilman@kernel.org>, Pavel Machek <pavel@ucw.cz>,
+        Len Brown <len.brown@intel.com>
 Cc:     Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
         Vincent Guittot <vincent.guittot@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
         rnayak@codeaurora.org, niklas.cassel@linaro.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH V4 0/7] PM / Domains: Allow performance state propagation
-Date:   Fri, 14 Dec 2018 15:45:26 +0530
-Message-Id: <cover.1544782279.git.viresh.kumar@linaro.org>
+Subject: [PATCH V4 1/7] PM / Domains: Make genpd performance states orthogonal to the idlestates
+Date:   Fri, 14 Dec 2018 15:45:27 +0530
+Message-Id: <48a7fc66faec9ac5c157b0cadcdaeb07bfe78781.1544782279.git.viresh.kumar@linaro.org>
 X-Mailer: git-send-email 2.19.1.568.g152ad8e3369a
+In-Reply-To: <cover.1544782279.git.viresh.kumar@linaro.org>
+References: <cover.1544782279.git.viresh.kumar@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -76,76 +78,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+From: Ulf Hansson <ulf.hansson@linaro.org>
 
-This series adds performance state propagation support in genpd core.
-The propagation happens from the sub-domains to their masters. More
-details can be found in the individual commit logs.
+It's quite questionable whether genpd internally should care about if the
+corresponding PM domain for a device is powered on, as to allow setting a
+new performance state for it. The assumptions creates an unnecessary
+limitation at this point, for both consumers and providers, but more
+importantly it also makes the code more complicated.
 
-This is tested on hikey960 by faking power domains in such a way that
-the CPU devices have two power domains and both of them have the same
-master domain. The CPU device, as well as its power domains have
-"required-opps" property set and the performance requirement from the
-CPU eventually configures all the domains (2 sub-domains and 1 master).
+Therefore, let's simplify the code to allow setting a performance state, by
+invoking the ->set_performance_state() callback, no matter whether the PM
+domain is powered on or off.
 
-Based on opp/linux-next branch (which is 4.20-rc1 +
-multiple-power-domain-support-in-opp-core + some OPP fixes).
+Do note, this change means genpd providers needs to restore the performance
+state themselves during power on, via the ->power_on() callback. Moreover,
+they may also need to check that the PM domain is powered on, from their
+->set_performance_state() callback, before deciding to update the state.
 
-Rajendra has already tested the previous version of this series and so I
-have included his Tested-by for all patches.
+Tested-by: Rajendra Nayak <rnayak@codeaurora.org>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+---
+ drivers/base/power/domain.c | 19 ++++---------------
+ 1 file changed, 4 insertions(+), 15 deletions(-)
 
-V3->V4:
-- dev_pm_opp_xlate_performance_state() returns negative values on error
-  now.
-- of_get_required_opp_performance_state() is also updated to do the
-  same.
-- _genpd_set_performance_state() is not called anymore from
-  _genpd_reeval_performance_state() and we get rid of the extra
-  declaration.
-- Improved commit log in the last patch.
-- dropped an unlikely.
-
-V2->V3:
-- Include Ulf's patch (sent separately earlier) with this series.
-- The performance state update code doesn't rely anymore on the power
-  on/off state of the genpd, it sets and propagates rate in all cases.
-- That simplified a lot of code from V2 in _genpd_power_on().
-- commit logs improved for few commits.
-- s/mstate/master_state/
-- and few more minor changes.
-
-v1->V2:
-- First patch (1/5) is new and an improvement to earlier stuff.
-- Move genpd_status_on() check to _genpd_reeval_performance_state() from
-  _genpd_set_performance_state().
-- Improve dev_pm_opp_xlate_performance_state() to handle 1:1 pstate
-  mapping between genpd and its master and also to fix a problem while
-  finding the dst_table.
-- Handle pstate=0 case properly.
-
---
-viresh
-
-Ulf Hansson (1):
-  PM / Domains: Make genpd performance states orthogonal to the
-    idlestates
-
-Viresh Kumar (6):
-  OPP: Improve _find_table_of_opp_np()
-  OPP: Add dev_pm_opp_xlate_performance_state() helper
-  OPP: Don't return 0 on error from
-    of_get_required_opp_performance_state()
-  PM / Domains: Save OPP table pointer in genpd
-  PM / Domains: Factorize dev_pm_genpd_set_performance_state()
-  PM / Domains: Propagate performance state updates
-
- drivers/base/power/domain.c | 202 ++++++++++++++++++++++++++----------
- drivers/opp/core.c          |  63 +++++++++++
- drivers/opp/of.c            |  24 +++--
- include/linux/pm_domain.h   |   6 ++
- include/linux/pm_opp.h      |  13 ++-
- 5 files changed, 242 insertions(+), 66 deletions(-)
-
+diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+index 8e554e6a82a2..4a4e39d12354 100644
+--- a/drivers/base/power/domain.c
++++ b/drivers/base/power/domain.c
+@@ -311,12 +311,10 @@ int dev_pm_genpd_set_performance_state(struct device *dev, unsigned int state)
+ 	 */
+ 
+ update_state:
+-	if (genpd_status_on(genpd)) {
+-		ret = genpd->set_performance_state(genpd, state);
+-		if (ret) {
+-			gpd_data->performance_state = prev;
+-			goto unlock;
+-		}
++	ret = genpd->set_performance_state(genpd, state);
++	if (ret) {
++		gpd_data->performance_state = prev;
++		goto unlock;
+ 	}
+ 
+ 	genpd->performance_state = state;
+@@ -347,15 +345,6 @@ static int _genpd_power_on(struct generic_pm_domain *genpd, bool timed)
+ 		return ret;
+ 
+ 	elapsed_ns = ktime_to_ns(ktime_sub(ktime_get(), time_start));
+-
+-	if (unlikely(genpd->set_performance_state)) {
+-		ret = genpd->set_performance_state(genpd, genpd->performance_state);
+-		if (ret) {
+-			pr_warn("%s: Failed to set performance state %d (%d)\n",
+-				genpd->name, genpd->performance_state, ret);
+-		}
+-	}
+-
+ 	if (elapsed_ns <= genpd->states[state_idx].power_on_latency_ns)
+ 		return ret;
+ 
 -- 
 2.19.1.568.g152ad8e3369a
 
