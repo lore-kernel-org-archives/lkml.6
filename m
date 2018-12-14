@@ -2,123 +2,133 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAB4FC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 17:25:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4B46C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 17:26:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5A8E206E0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 17:25:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B42DF206E0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 17:26:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544808386;
+	bh=PJS6L8NSCiSYUEt3yNTmDAJDxfD8ZDs9nD/1xgIfAOM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=V+SkS1f2yj2BL7LeRGFk5Qc5RfyHwy0b13FE/sjexHLnMvoyI1ptrO1otN1qie/0+
+	 /whMknHbgw7fIDRWUs0x7tts5a3SZW5jlHOT2b7cyYnxl6tB/w5Yjtv0JVP7LRcu8O
+	 KzYdl4ZwDXA6YVL5H56o9SUoKWSrouGRvEYZ0eMU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730369AbeLNRZT (ORCPT
+        id S1730045AbeLNR0Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 12:25:19 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:1337 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726662AbeLNRZT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 12:25:19 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 43GcrC3357z9ty3h;
-        Fri, 14 Dec 2018 18:25:15 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id SqUqShKRkt_c; Fri, 14 Dec 2018 18:25:15 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 43GcrC2TNCz9ty3f;
-        Fri, 14 Dec 2018 18:25:15 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 02BD58B8F1;
-        Fri, 14 Dec 2018 18:25:17 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id lBQ4xbLWaXAJ; Fri, 14 Dec 2018 18:25:16 +0100 (CET)
-Received: from PO15451 (po15451.idsi0.si.c-s.fr [172.25.231.2])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id D972B8B8EB;
-        Fri, 14 Dec 2018 18:25:16 +0100 (CET)
-Subject: Re: [PATCH v2] crypto: talitos - fix ablkcipher for CONFIG_VMAP_STACK
-To:     Sasha Levin <sashal@kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-References: <7f27d91e7e78d8aac28e8b6c600fd874b7d5be9f.1544686398.git.christophe.leroy@c-s.fr>
- <20181214013937.1E29D20879@mail.kernel.org>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <cb5cabc4-5c64-3bec-f46e-8d66e2695ac1@c-s.fr>
-Date:   Fri, 14 Dec 2018 18:25:16 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
+        Fri, 14 Dec 2018 12:26:24 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:34264 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726662AbeLNR0X (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 12:26:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=bESAXOQ35DTub4pRwwGfIfPg1e8IOE8t1ASv++6AFvA=; b=diEdBEFWYpkmUQ00XShE2AoML
+        j86y5VxitAXRJ36O8Mak2DF+R+oGK3/GYd7knRQ2cWQZqT2vMebvJ0Hf294JgutW/r9KWzlZMQQh0
+        TteXcRGjOISkflLQOYUjBPv/+oMLiLI1tS1NSIqVU/K6sY9Vakh7Y2EHaI6jrFGEakv5U=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gXrEC-0007jn-Eq; Fri, 14 Dec 2018 17:26:20 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id EF64011258A2; Fri, 14 Dec 2018 17:26:19 +0000 (GMT)
+Date:   Fri, 14 Dec 2018 17:26:19 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc:     gregkh@linuxfoundation.org, rafael@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC] regmap-irq: add "main register" and level-irq support
+Message-ID: <20181214172619.GC6467@sirena.org.uk>
+References: <20181130085908.GA24983@localhost.localdomain>
+ <20181204172137.GE6809@sirena.org.uk>
+ <20181205082251.GE31204@localhost.localdomain>
+ <20181205172701.GH6205@sirena.org.uk>
+ <20181207075829.GA24940@localhost.localdomain>
+ <20181207131418.GB6510@sirena.org.uk>
+ <20181214135819.GA2735@localhost.localdomain>
 MIME-Version: 1.0
-In-Reply-To: <20181214013937.1E29D20879@mail.kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="vEao7xgI/oilGqZ+"
+Content-Disposition: inline
+In-Reply-To: <20181214135819.GA2735@localhost.localdomain>
+X-Cookie: To stay youthful, stay useful.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+--vEao7xgI/oilGqZ+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Le 14/12/2018 à 02:39, Sasha Levin a écrit :
-> Hi,
-> 
-> [This is an automated email]
-> 
-> This commit has been processed because it contains a "Fixes:" tag,
-> fixing commit: 4de9d0b547b9 crypto: talitos - Add ablkcipher algorithms.
-> 
-> The bot has tested the following trees: v4.19.9, v4.14.88, v4.9.145, v4.4.167, v3.18.129,
-> 
-> v4.19.9: Build OK!
-> v4.14.88: Failed to apply! Possible dependencies:
->      2e13ce0812c6 ("crypto: talitos - DMA map key in setkey()")
->      9a655608a468 ("crypto: talitos - simplify tests in ipsec_esp()")
->      da9de146ebd9 ("crypto: talitos - remove to_talitos_ptr_len()")
-> 
-> v4.9.145: Failed to apply! Possible dependencies:
->      2e13ce0812c6 ("crypto: talitos - DMA map key in setkey()")
->      9a655608a468 ("crypto: talitos - simplify tests in ipsec_esp()")
->      da9de146ebd9 ("crypto: talitos - remove to_talitos_ptr_len()")
-> 
-> v4.4.167: Failed to apply! Possible dependencies:
->      246a87cda070 ("crypto: talitos - move mapping helpers before IPSEC functions")
->      2e13ce0812c6 ("crypto: talitos - DMA map key in setkey()")
->      549bd8bc5987 ("crypto: talitos - Implement AEAD for SEC1 using HMAC_SNOOP_NO_AFEU")
->      6a1e8d14156d ("crypto: talitos - making mapping helpers more generic")
->      8e409fe10695 ("crypto: talitos - check return value of sg_nents_for_len")
->      9a655608a468 ("crypto: talitos - simplify tests in ipsec_esp()")
->      b096b544d6c3 ("crypto: talitos - using helpers for all talitos_ptr operations")
->      da9de146ebd9 ("crypto: talitos - remove to_talitos_ptr_len()")
->      e04a61bebc5d ("crypto: talitos - fix memory corruption on SEC2")
-> 
-> v3.18.129: Failed to apply! Possible dependencies:
->      032d197eaaea ("crypto: talitos - Refactor the sg in/out chain allocation")
->      185eb79f6a65 ("crypto: talitos - Add a helper function to clear j_extent field")
->      20ec9d814e68 ("crypto: sahara - fix spinlock initialization")
->      538caf83374c ("crypto: talitos - helper function for ptr len")
->      5a2bb93f5992 ("crypto: sahara - add support for SHA1/256")
->      5be4d4c94b1f ("crypto: replace scatterwalk_sg_next with sg_next")
->      922f9dc8d366 ("crypto: talitos - fill in talitos descriptor iaw SEC1 or SEC2+")
->      a2b35aa86eea ("crypto: talitos - remove param 'extent' in map_single_talitos_ptr()")
->      a861afbc931b ("crypto: ablkcipher - fixed style errors in ablkcipher.c")
->      aeb4c132f33d ("crypto: talitos - Convert to new AEAD interface")
->      bde9079f3cd5 ("crypto: talitos - avoid out of bound scatterlist iterator")
->      c0c3c89ae347 ("crypto: sahara - replace tasklets with kthread")
->      edc6bd698a4d ("crypto: talitos - talitos_ptr renamed ptr for more lisibility")
->      f129430dd87d ("crypto: nx - Fixing the limit number of bytes to be processed")
-> 
-> 
-> How should we proceed with this patch?
+On Fri, Dec 14, 2018 at 03:58:19PM +0200, Matti Vaittinen wrote:
+> On Fri, Dec 07, 2018 at 01:14:18PM +0000, Mark Brown wrote:
 
-I'll backport it once it is in linux tree.
+> > > Then we could have chip->no_of set for the 'main irq chip' and for those
+> > > chips we don't wan't to expose via DT. In my case I would leave no_of
+> > > unset only for the irq-chip which I created for the GPIO? Is this a
+> > > silly idea?
 
-Christophe
+> > That's worth a shot, yes - I'd need to see it fully fleshed out I think
+> > but it looks sensible (no ternery operator please).
 
-> 
-> --
-> Thanks,
-> Sasha
-> 
+> Do you think this would be benefical even if we add the 'main irq
+> support'? If so, I can generate a patch out of this. I think this would
+> really suffice for my current need - but this stops wokrking as soon as
+> more than one sub-irq-chip want's to expose interrupts via DT.
+
+Hrm, yeah.  That's a thing.  I think I'd misvisualized the DT change as
+being the other way around for some reason.
+
+> > Your idea definitely works for the current case, yes - I'm just thinking
+> > about future edge and extension cases.
+
+> I could send an example on how the driver utilizing the original RFC
+> interface would look like. I am starting to think it was not *that* bad
+> after all...
+
+That might help, yes.
+
+> > > I see your point now. But as I said, I am not sure we should add the
+> > > overhead of 'main irq bit description' for simple cases just to cover
+> > > the corner cases. Yet I can try seeing what I can come up with if you
+> > > think this is the way to go.
+
+> > If you could take a look that'd be great.
+
+> I did some experiment. I will post this as another RFC - but I am really
+> not terribly happy about it. It's complex (well, in my opinion) and I am
+> not sure the driver interface is much easier. But you can see it
+> yourself.
+
+Great, I'll take a proper look on Monday.  Thanks for putting the time
+in here!
+
+--vEao7xgI/oilGqZ+
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlwT57sACgkQJNaLcl1U
+h9DX9wf/QCOKy3++Gk7DVRrPuKNRIbAE0QJq09ub/OGPp5Roe07ivloAbpLJZSRD
+SXTFZXVzpEisAAsubHXvw6GBWm4F7DejN6HSzK/mMM3rInEpuGlKSL2je6M5JXsg
+tzs3QnqbOobgxUv4wCcKPYiahxZrNbn+2D0Rh2Eux+ZUzOdIpwS0ms7MJ+vajjzu
+prq1b7JHWb+a5t9U/MOsZH/ullFgvsx+uERL+fUipYYzKFPGPF0skJwUlbKkdr/j
+BIJVCalvczh6ZjWFAIMa8Wgku4hsN6LUxpuvpaB+hfKoRhtX4mMs3z4qJGgloIZ/
+anv/SO2q5sJjQwnHWhI9g7afd8OaMg==
+=7AXF
+-----END PGP SIGNATURE-----
+
+--vEao7xgI/oilGqZ+--
