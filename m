@@ -2,170 +2,135 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E233DC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 21:27:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F37B1C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 21:29:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D3D1206DD
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 21:27:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544822878;
-	bh=HK4EZoN/x8yhV5AMLAZsG+bi63RBmNN8mPffPJvdlSc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=1qgXyFoMqlwmvYBNZs5y75egvJm3U5K8q/CM65bpO1LuvNXcbTdlpWwkyLULzk6Yv
-	 Z8vVeRERb+qo181FF6jxwexL6Tr/DE0ZziAHLrYeSi3gYPJeYGGJ142nEBa5FeAsbS
-	 IHRiCYWiYfIouwZQt9hH0otNT1nDeMhLgfk/TS0o=
+	by mail.kernel.org (Postfix) with ESMTP id 2D74C206DD
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 21:29:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IkSUEX2Z"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731122AbeLNV14 (ORCPT
+        id S1731002AbeLNV3x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 16:27:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35844 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731002AbeLNV14 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 16:27:56 -0500
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EFA82208D6
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 21:27:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544822875;
-        bh=HK4EZoN/x8yhV5AMLAZsG+bi63RBmNN8mPffPJvdlSc=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=a6CTSq7QRqje6V8sWpr5qRD9dEjHxW8RZ5XtANKfhAKxgr8lLsf3jbRWwkZq8kfSW
-         AEzoh5NYmUR53vSJR3xT9Weh2ryTR6OZ0ifb1coL5KR0fngAdF95GuvMVeGE8vj44P
-         LTCL+wVC3oAIyRnVCv3qS5Bqn461OR5HaTqqI7bA=
-Received: by mail-wm1-f52.google.com with SMTP id c126so7114226wmh.0
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 13:27:54 -0800 (PST)
-X-Gm-Message-State: AA+aEWZ4N54pRh/8zvnTEyPGovOctAFoOjeC2w3JC+vUPWIilTbZlx5n
-        dIg9smFr+6FtNv0gbw9uHj0u5x2nKvgmlFlDTygE6w==
-X-Google-Smtp-Source: AFSGD/VCa6S8kWsf4/gFGRWDchoNqgDnv7OKewnn4rqtEdDnLAml/ahLepSPL0POfFUETlho0mjkSROrChi1ze3St4g=
-X-Received: by 2002:a1c:aa0f:: with SMTP id t15mr4382647wme.108.1544822872875;
- Fri, 14 Dec 2018 13:27:52 -0800 (PST)
+        Fri, 14 Dec 2018 16:29:53 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:38275 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730878AbeLNV3w (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 16:29:52 -0500
+Received: by mail-it1-f195.google.com with SMTP id h65so11643171ith.3;
+        Fri, 14 Dec 2018 13:29:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=XPPxeyKFREoS2GcW2/S4Arhax4A1QyvIVUlnPDl3qyM=;
+        b=IkSUEX2ZG2+OXmGjasoWEA8H5Qt7SavwQcnYY4EzUCgPK6b/q+KtgSwMksPo6m/Hqs
+         zt5ny3D4v1LoUcbxvPo1dror9OWO0Npvlnk7in+Dl/etbWf2IHlHfiIFxetvy5BK0Ijn
+         tuRGw6xTh2kTJJT2AwMS65n/yplh8PJaagjIqK5ZR8W9n5W3ztGoLpEp819ya9r+PZGJ
+         oh5egrmNqbU6Lm3MyvcU6F/prCs6C5PorYtIJL1ILCy6NIOYHTDRzRLQeF6NiAUO+Gz4
+         omC3ynnLiw6Qq1ukLbfR5U5dkLchXtJvNxPWIuy3EKHCCTR/8zTrfu0fNuGY2vLt1Hk9
+         4Vyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=XPPxeyKFREoS2GcW2/S4Arhax4A1QyvIVUlnPDl3qyM=;
+        b=gpMEmhVwJY4CogExiHDy4LG14PSXrObtHtBh+RcdINoDP8zx960b9j1DEsPiGA934x
+         9xkgVR1DyILDLBD3x3rxr0If3GhiDmMxanMsdaGVbdw5ahe/90T6HbBDGzY2nFtUXwMw
+         JhaTfmapWWXR7tkzUINnjJVfqUd8HSYQXR7pk5UtQqHhGzxJJ5mBW4vqA+90nqSHFI90
+         q2FIvrVgYno0VlYd04P+pRK7Wsras8BLKIj4+ZUXljT4/L3vfntElfqSPrRwLbvq6pxy
+         YFtkQes653xuL2fZL6dTOc67uFsyYDQRULzrzQdGcGqLjOaQ6tArwtSBqy6mJdr/ShfD
+         L41A==
+X-Gm-Message-State: AA+aEWaQULluR7DmJGYuJebwDwhj1Wrl8abZjxvgk7fdRfIo8qX972e0
+        kG8C+c0KEAUFG2H03tgUipE=
+X-Google-Smtp-Source: AFSGD/UfTLz/MxOqqJygvlIMgYovl8fsIpop1qPRtjweAUXD07pZcRWsoLWpsv+nJQF+8f9uk2o9NQ==
+X-Received: by 2002:a24:d30c:: with SMTP id n12mr4984203itg.50.1544822991358;
+        Fri, 14 Dec 2018 13:29:51 -0800 (PST)
+Received: from r2700x.localdomain (c-75-70-96-103.hsd1.co.comcast.net. [75.70.96.103])
+        by smtp.gmail.com with ESMTPSA id b192sm3084256itb.12.2018.12.14.13.29.50
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 14 Dec 2018 13:29:50 -0800 (PST)
+Date:   Fri, 14 Dec 2018 14:29:44 -0700
+From:   Jeremy Fertic <jeremyfertic@gmail.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     devel@driverdev.osuosl.org, Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        linux-iio@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Jonathan Cameron <jic23@kernel.org>
+Subject: Re: [PATCH 04/11] staging: iio: adt7316: fix handling of dac high
+ resolution option
+Message-ID: <20181214212944.GA2400@r2700x.localdomain>
+References: <20181212005503.28054-1-jeremyfertic@gmail.com>
+ <20181212005503.28054-5-jeremyfertic@gmail.com>
+ <20181212082315.GI3116@kadam>
+ <20181213220146.GA2496@r2700x.localdomain>
+ <20181214062618.GW3116@kadam>
 MIME-Version: 1.0
-References: <CALCETrXoRAibsbWa9nfbDrt0iEuebMnCMhSFg-d9W-J2g8mDjw@mail.gmail.com>
- <70bb54b2-8ed3-b5ee-c02d-6ef66c4f27eb@physik.fu-berlin.de>
- <20181213160242.GV23599@brightrain.aerifal.cx> <c8987b31-ed79-acef-a300-31ebf2c29d2e@petrovitsch.priv.at>
- <20181214161732.GY23599@brightrain.aerifal.cx> <87mup8gj1y.fsf@oldenburg2.str.redhat.com>
- <20181214165535.GZ23599@brightrain.aerifal.cx> <EC1F028D-4382-41D6-B539-A9662FD53820@amacapital.net>
- <CAHk-=wj0ejxYVV1xPfNX5YD6ZakRoSx+wQR==rFoj4J4SzLWhg@mail.gmail.com>
-In-Reply-To: <CAHk-=wj0ejxYVV1xPfNX5YD6ZakRoSx+wQR==rFoj4J4SzLWhg@mail.gmail.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Fri, 14 Dec 2018 13:27:40 -0800
-X-Gmail-Original-Message-ID: <CALCETrV2kV5cm7xJfKJ4J4VjhhypnMhfOYkOcU5w2Ps1BiMxMw@mail.gmail.com>
-Message-ID: <CALCETrV2kV5cm7xJfKJ4J4VjhhypnMhfOYkOcU5w2Ps1BiMxMw@mail.gmail.com>
-Subject: Re: Can we drop upstream Linux x32 support?
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Rich Felker <dalias@libc.org>, Florian Weimer <fweimer@redhat.com>,
-        Bernd Petrovitsch <bernd@petrovitsch.priv.at>,
-        John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-        Andrew Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Mike Frysinger <vapier@gentoo.org>,
-        "H. J. Lu" <hjl.tools@gmail.com>, x32@buildd.debian.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181214062618.GW3116@kadam>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 14, 2018 at 12:13 PM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Fri, Dec 14, 2018 at 10:58 AM Andy Lutomirski <luto@amacapital.net> wr=
-ote:
-> >
-> > Does anyone know *why* Linux=E2=80=99s x32 has __kernel_long_t defined =
-as long long?
->
-> It *needs* to be long long, since the headers are used for builds in
-> user mode using ILP32.
->
-> Since __kernel_long_t is a 64-bit (the _kernel_ is not ILP32), you
-> need to use "long long" when building in ILP32.
->
-> Obviously, it could be something like
->
->    #ifdef __KERNEL__
->     typedef long __kernel_long_t;
->    #else
->     typedef long long __kernel_long_t;
->    #endif
->
-> or similar to make it more obvious what's going on.
->
-> Or we could encourage all the uapi header files to always just use
-> explicit sizing like __u64, but some of the structures really end up
-> being "kernel long size" for sad historical reasons. Not lovely, but
-> there we are..
->
+On Fri, Dec 14, 2018 at 09:26:18AM +0300, Dan Carpenter wrote:
+> On Thu, Dec 13, 2018 at 03:01:46PM -0700, Jeremy Fertic wrote:
+> > On Wed, Dec 12, 2018 at 11:23:16AM +0300, Dan Carpenter wrote:
+> > > On Tue, Dec 11, 2018 at 05:54:56PM -0700, Jeremy Fertic wrote:
+> > > > @@ -651,10 +649,12 @@ static ssize_t adt7316_store_da_high_resolution(struct device *dev,
+> > > >  	u8 config3;
+> > > >  	int ret;
+> > > >  
+> > > > +	if (chip->id == ID_ADT7318 || chip->id == ID_ADT7519)
+> > > > +		return -EPERM;
+> > > 
+> > > return -EINVAL is more appropriate than -EPERM.
+> > > 
+> > > regards,
+> > > dan carpenter
+> > > 
+> > 
+> > I chose -EPERM because the driver uses it quite a few times in similar
+> > circumstances.
+> 
+> Yeah.  I saw that when I reviewed the later patches in this series.
+> 
+> It's really not doing it right.  -EPERM means permission checks like
+> access_ok() failed so it's not appropriate.  -EINVAL is sort of general
+> purpose for invalid commands so it's probably the correct thing.
+> 
+> > At least with this driver, -EINVAL is used when the user
+> > attempts to write data that would never be valid. -EPERM is used when
+> > either the current device settings prevent some functionality from being
+> > used, or the device never supports that functionality. This patch is the
+> > latter, that these two chip ids never support this function.
+> > 
+> > I'll change to -EINVAL in a v2 series, but I wonder if I should hold off
+> > on a separate patch for other instances in this driver since it will be
+> > undergoing a substantial refactoring.
+> 
+> Generally, you should prefer kernel standards over driver standards and
+> especially for staging.  But it doesn't matter.  When I reviewed this
+> patch, I hadn't seen that the driver was doing it like this but now I
+> know so it's fine.  We can clean it all at once later if you want.
+> 
+> regards,
+> dan carpenter
+> 
 
-This is probably water under the bridge, but I disagree with you here.
-Or rather, I agree with you in principle but I really don't like the
-way it turned out.
+I'll wait to deal with these error values since some of them might go away
+with all the changes necessary to get the driver out of staging. Thanks
+for clarifying things for me.
 
-For legacy uapi structs (and probably some new ones too, sigh), as a
-practical matter, user code is going to shove them at the C compiler,
-and the C compiler is going to interpret them in the usual way, and
-either we need a usermode translation layer or the kernel needs to
-deal with the result.
-
-It's a nice thought that, by convincing an x32 compiler that
-__kernel_long_t is 64 bits, we end up with the x32 struct being
-compatible with the native Linux struct, but it only works for structs
-where the only ABI-dependent type is long.  But the real structs in
-uapi aren't all like this.  We have struct iovec:
-
-struct iovec
-{
-        void __user *iov_base;  /* BSD uses caddr_t (1003.1g requires void =
-*) */
-        __kernel_size_t iov_len; /* Must be size_t (1003.1g) */
-};
-
-Whoops, this one looks the same on x32 and i386, but neither one of
-them match x86_64, and, just randomly grepping around a bit, I see:
-
-struct snd_hwdep_dsp_image {
-        unsigned int index;             /* W: DSP index */
-        unsigned char name[64];         /* W: ID (e.g. file name) */
-        unsigned char __user *image;    /* W: binary image */
-        size_t length;                  /* W: size of image in bytes */
-        unsigned long driver_data;      /* W: driver-specific data */
-};
-
-struct __sysctl_args {
-        int __user *name;
-        int nlen;
-        void __user *oldval;
-        size_t __user *oldlenp;
-        void __user *newval;
-        size_t newlen;
-        unsigned long __unused[4];
-};
-
-If these had been switched from "unsigned long" to __kernel_ulong_t,
-they would have had three different layouts on i386, x32, and x86_64.
-
-So now we have a situation where, if we were to make x32 work 100%,
-the whole kernel would need to recognize that there are three possible
-ABIs, not two.  And this sucks.
-
-So I think it would have been a better choice to let long be 32-bit on
-x32 and to therefore make x32 match the x86_32 "compat" layout as much
-as possible.  Sure, this would make x32 be more of a second-class
-citizen, but I think it would have worked better, had fewer bugs, and
-been more maintainable.
-
---Andy
