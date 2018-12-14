@@ -2,136 +2,131 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A802C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 15:25:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4409CC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 15:26:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64274206C2
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 15:25:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 50F33206C2
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 15:26:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729826AbeLNPZq (ORCPT
+        id S1729914AbeLNP0W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 10:25:46 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:55190 "EHLO mx1.redhat.com"
+        Fri, 14 Dec 2018 10:26:22 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:22001 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726344AbeLNPZp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 10:25:45 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8E6C8307DAA4;
-        Fri, 14 Dec 2018 15:25:44 +0000 (UTC)
-Received: from redhat.com (ovpn-125-82.rdu2.redhat.com [10.10.125.82])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4DA90101E597;
-        Fri, 14 Dec 2018 15:25:41 +0000 (UTC)
-Date:   Fri, 14 Dec 2018 10:25:38 -0500
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
-        Dan Williams <dan.j.williams@intel.com>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        John Hubbard <john.hubbard@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>, tom@talpey.com,
-        Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
-        Christoph Hellwig <hch@infradead.org>,
-        Christopher Lameter <cl@linux.com>,
-        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        rcampbell@nvidia.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "Weiny, Ira" <ira.weiny@intel.com>
-Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
-Message-ID: <20181214152538.GC3645@redhat.com>
-References: <20181212150319.GA3432@redhat.com>
- <CAPcyv4go0Xzhz8rXdfscWuXDu83BO9v8WD4upDUJWb7gKzX5OQ@mail.gmail.com>
- <20181212213005.GE5037@redhat.com>
- <CAPcyv4gJHeFjEgna1S-2uE4KxkSUgkc=e=2E5oqfoirec84C-w@mail.gmail.com>
- <20181212215348.GF5037@redhat.com>
- <20181212233703.GB2947@ziepe.ca>
- <20181213000109.GK5037@redhat.com>
- <20181213032043.GA3204@ziepe.ca>
- <20181213124325.GA3186@redhat.com>
- <20181214104125.GE8896@quack2.suse.cz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181214104125.GE8896@quack2.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Fri, 14 Dec 2018 15:25:45 +0000 (UTC)
+        id S1726344AbeLNP0W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 10:26:22 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 43GZBy6kFyz9v0GY;
+        Fri, 14 Dec 2018 16:26:18 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id aNHcfepgQfBH; Fri, 14 Dec 2018 16:26:18 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 43GZBy6CnKz9v0GS;
+        Fri, 14 Dec 2018 16:26:18 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 5DF6D8B8EA;
+        Fri, 14 Dec 2018 16:26:20 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id cYfTxl_V_xhW; Fri, 14 Dec 2018 16:26:20 +0100 (CET)
+Received: from po14163vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.2])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 4518B8B8D3;
+        Fri, 14 Dec 2018 16:26:20 +0100 (CET)
+Received: by po14163vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id 39FA771710; Fri, 14 Dec 2018 15:26:20 +0000 (UTC)
+Message-Id: <8593f7faf89812a9987d44d9ae615d64dca4d77f.1544800744.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH] lkdtm: Add a tests for NULL pointer dereference
+To:     Kees Cook <keescook@chromium.org>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date:   Fri, 14 Dec 2018 15:26:20 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 14, 2018 at 11:41:25AM +0100, Jan Kara wrote:
-> On Thu 13-12-18 07:43:25, Jerome Glisse wrote:
-> > On Wed, Dec 12, 2018 at 08:20:43PM -0700, Jason Gunthorpe wrote:
-> > > On Wed, Dec 12, 2018 at 07:01:09PM -0500, Jerome Glisse wrote:
-> > > > > Even the IOMMU idea probably doesn't work, I doubt all current
-> > > > > hardware can handle a PCI-E error TLP properly. 
-> > > > 
-> > > > What i saying is reprogram hardware to crappy page ie valid page
-> > > > dma map but that just has random content as a last resort to allow
-> > > > filesystem to reuse block. So their should be no PCIE error unless
-> > > > hardware freak out to see its page table reprogram randomly.
-> > > 
-> > > No, that isn't an option. You can't silently provide corrupted data
-> > > for RDMA to transfer out onto the network, or silently discard data
-> > > coming in!! 
-> > > 
-> > > Think of the consequences of that - I have a fileserver process and
-> > > someone does ftruncate and now my clients receive corrupted data??
-> > 
-> > This is what happens _today_ ie today someone do GUP on page file
-> > and then someone else do truncate the first GUP is effectively
-> > streaming _random_ data to network as the page does not correspond
-> > to anything anymore and once the RDMA MR goes aways and release
-> > the page the page content will be lost. So i am not changing anything
-> > here, what i proposed was to make it explicit to device driver at
-> > least that they were streaming random data. Right now this is all
-> > silent but this is what is happening wether you like it or not :)
-> 
-> I think you're making the current behaviour sound worse than it really is.
-> You are correct that currently driver can setup RDMA with some page, one
-> instant later that page can get truncated from the file and thus has no
-> association to the file anymore. That can lead to *stale* data being
-> streamed over RDMA or loss of data that are coming from RDMA. But none of
-> this is actually a security issue - no streaming of random data or memory
-> corruption. And that's all kernel cares about. It is userspace
-> responsibility to make sure file cannot be truncated if it cannot tolerate
-> stale data.
-> 
-> So your "redirect RDMA to dummy page" solution has to make sure you really
-> swap one real page for one dummy page and copy old real page contents to
-> the dummy page contents. Then it will be equivalent to the current behavior
-> and if the hardware can do the swapping, then I'm fine with such
-> solution...
+Introduce lkdtm tests for NULL pointer dereference: check
+access or exec at NULL address.
 
-Yeah sorry if i make it sounds worse than it is, from my point of view
-it is random data because it no longer match to anything but yes it is
-still correspond to the correct file data before the truncate so in that
-sense it is not random.
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ drivers/misc/lkdtm/core.c  |  2 ++
+ drivers/misc/lkdtm/lkdtm.h |  2 ++
+ drivers/misc/lkdtm/perms.c | 18 ++++++++++++++++++
+ 3 files changed, 22 insertions(+)
 
-Yes for copying the existing content to the new crappy page i said that
-at one point during the discussion to make the crappy page less crapy.
-But it seems people feels that device that do not abide by mmu notifier
-are also the device that can not be updated at _any_ time and thus that
-reprogramming their dma engine is a non starter.
+diff --git a/drivers/misc/lkdtm/core.c b/drivers/misc/lkdtm/core.c
+index bc76756b7eda..36910e1d5c09 100644
+--- a/drivers/misc/lkdtm/core.c
++++ b/drivers/misc/lkdtm/core.c
+@@ -157,7 +157,9 @@ static const struct crashtype crashtypes[] = {
+ 	CRASHTYPE(EXEC_VMALLOC),
+ 	CRASHTYPE(EXEC_RODATA),
+ 	CRASHTYPE(EXEC_USERSPACE),
++	CRASHTYPE(EXEC_NULL),
+ 	CRASHTYPE(ACCESS_USERSPACE),
++	CRASHTYPE(ACCESS_NULL),
+ 	CRASHTYPE(WRITE_RO),
+ 	CRASHTYPE(WRITE_RO_AFTER_INIT),
+ 	CRASHTYPE(WRITE_KERN),
+diff --git a/drivers/misc/lkdtm/lkdtm.h b/drivers/misc/lkdtm/lkdtm.h
+index 3c6fd327e166..b69ee004a3f7 100644
+--- a/drivers/misc/lkdtm/lkdtm.h
++++ b/drivers/misc/lkdtm/lkdtm.h
+@@ -45,7 +45,9 @@ void lkdtm_EXEC_KMALLOC(void);
+ void lkdtm_EXEC_VMALLOC(void);
+ void lkdtm_EXEC_RODATA(void);
+ void lkdtm_EXEC_USERSPACE(void);
++void lkdtm_EXEC_NULL(void);
+ void lkdtm_ACCESS_USERSPACE(void);
++void lkdtm_ACCESS_NULL(void);
+ 
+ /* lkdtm_refcount.c */
+ void lkdtm_REFCOUNT_INC_OVERFLOW(void);
+diff --git a/drivers/misc/lkdtm/perms.c b/drivers/misc/lkdtm/perms.c
+index fa54add6375a..62f76d506f04 100644
+--- a/drivers/misc/lkdtm/perms.c
++++ b/drivers/misc/lkdtm/perms.c
+@@ -164,6 +164,11 @@ void lkdtm_EXEC_USERSPACE(void)
+ 	vm_munmap(user_addr, PAGE_SIZE);
+ }
+ 
++void lkdtm_EXEC_NULL(void)
++{
++	execute_location(NULL, CODE_AS_IS);
++}
++
+ void lkdtm_ACCESS_USERSPACE(void)
+ {
+ 	unsigned long user_addr, tmp = 0;
+@@ -195,6 +200,19 @@ void lkdtm_ACCESS_USERSPACE(void)
+ 	vm_munmap(user_addr, PAGE_SIZE);
+ }
+ 
++void lkdtm_ACCESS_NULL(void)
++{
++	unsigned long tmp;
++	unsigned long *ptr = (unsigned long *)NULL;
++
++	pr_info("attempting bad read at %px\n", ptr);
++	tmp = *ptr;
++	tmp += 0xc0dec0de;
++
++	pr_info("attempting bad write at %px\n", ptr);
++	*ptr = tmp;
++}
++
+ void __init lkdtm_perms_init(void)
+ {
+ 	/* Make sure we can write to __ro_after_init values during __init */
+-- 
+2.13.3
 
-I believe the truncate and revoke issue is something that should be
-discussed sub-system by sub-system where people knows what their device
-can and can not do. I will try to write a document that explains the
-GUP pitfalls so that it can be use to explain the issue.
-
-Cheers,
-Jérôme
