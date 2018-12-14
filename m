@@ -7,56 +7,51 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 950FCC67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:18:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3CA4C6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:18:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58357214C1
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:18:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6AEFC2148E
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:18:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544789880;
-	bh=hf57ijFbCeK6wQlwKC2lj1fI+kvZlH5gjZ8lH6FtEX8=;
+	s=default; t=1544789888;
+	bh=NJHspLz/WGWcC50f9uFlHL510jE5InGCIq2y+4Y58ts=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=toJw0Cj8E9LGzZ0uq1ehndcURQAV9WdT2hKSJDzHdfngRK/c3ZlFBqFEwr/PAU3G+
-	 gWBPJS4J7AitVsDa5uqt15eOMWXjUD6hJNJhPozX7S+FW5rLeJYQwpLJ4tQ6Gl8y+c
-	 SZ8qULnofmyfYlFToEVfQaZ+9ERbe3SG1RPppCI8=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58357214C1
+	b=hwH6noSHVmLXJQRLIolROXj8M4FxpFAAJGEJlfdtI8aHa5ePnNn9iM1g9+cHJDZ+p
+	 HwwZfOh9x10AUJPsA4C6jx7LnkUhJxqUofJyFL8fz3l8R/MelTzvfTbyN1FZQjtw/R
+	 K2Y8EIt5dzgwqftyL9xQbZnq8npbJdOq4SIbEmUU=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AEFC2148E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732568AbeLNMR7 (ORCPT
+        id S1732725AbeLNMSH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:17:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37062 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:18:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36956 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732298AbeLNMQt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:16:49 -0500
+        id S1732810AbeLNMQo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:16:44 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6FC18214DB;
-        Fri, 14 Dec 2018 12:16:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A35152148E;
+        Fri, 14 Dec 2018 12:16:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789808;
-        bh=hf57ijFbCeK6wQlwKC2lj1fI+kvZlH5gjZ8lH6FtEX8=;
+        s=default; t=1544789804;
+        bh=NJHspLz/WGWcC50f9uFlHL510jE5InGCIq2y+4Y58ts=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1uz83LfbzHf7vIkPJAmswbfMRiXFDpVsO5t6XwKuFDm8ak+YVm1lXLdhFiqhODw8n
-         MVIiHZQTi5IX6bFwkEmjY0BXHDLYraBgnUeigIPQ+W51cS+iHh1hxebHZUTCG0g436
-         6nDMN2Y9Diyu2Cz9pAISBYYMj+bZNTNfWflasmg0=
+        b=uE3wLUknvHkytto3/nhXg20NqTPx/mdKwhKT5jG5tPeAjvFUfzUZXdslFVZik85E2
+         LxrOiwauJ7dpE5gcYnBoEtgw+vqU1favrTtn96a5n/+6WG+shmAMhEQ3xcRiyijc4U
+         nQKxGH8B32GEEOoITyqHI9Ahd8uv81BSKkot34yQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-arch@vger.kernel.org, Tom Lendacky <thomas.lendacky@amd.com>,
-        Kees Cook <keescook@chromium.org>,
-        kernel-hardening@lists.openwall.com,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        torvalds@linux-foundation.org, alan@linux.intel.com,
+        stable@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        "David S. Miller" <davem@davemloft.net>,
         Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.4 54/88] x86/usercopy: Replace open coded stac/clac with __uaccess_{begin, end}
-Date:   Fri, 14 Dec 2018 13:00:28 +0100
-Message-Id: <20181214115706.840772097@linuxfoundation.org>
+Subject: [PATCH 4.4 62/88] bpf: support 8-byte metafield access
+Date:   Fri, 14 Dec 2018 13:00:36 +0100
+Message-Id: <20181214115707.501910891@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115702.151309521@linuxfoundation.org>
 References: <20181214115702.151309521@linuxfoundation.org>
@@ -75,122 +70,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Williams <dan.j.williams@intel.com>
+From: Alexei Starovoitov <ast@fb.com>
 
-commit b5c4ae4f35325d520b230bab6eb3310613b72ac1 upstream.
+commit cedaf52693f02372010548c63b2e63228b959099 upstream.
 
-In preparation for converting some __uaccess_begin() instances to
-__uacess_begin_nospec(), make sure all 'from user' uaccess paths are
-using the _begin(), _end() helpers rather than open-coded stac() and
-clac().
+The verifier supported only 4-byte metafields in
+struct __sk_buff and struct xdp_md. The metafields in upcoming
+struct bpf_perf_event are 8-byte to match register width in struct pt_regs.
+Teach verifier to recognize 8-byte metafield access.
+The patch doesn't affect safety of sockets and xdp programs.
+They check for 4-byte only ctx access before these conditions are hit.
 
-No functional changes.
-
-Suggested-by: Ingo Molnar <mingo@redhat.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-arch@vger.kernel.org
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: kernel-hardening@lists.openwall.com
-Cc: gregkh@linuxfoundation.org
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: torvalds@linux-foundation.org
-Cc: alan@linux.intel.com
-Link: https://lkml.kernel.org/r/151727416438.33451.17309465232057176966.stgit@dwillia2-desk3.amr.corp.intel.com
-[bwh: Backported to 4.4:
- - Convert several more functions to use __uaccess_begin_nospec(), that
-   are just wrappers in mainline
- - Adjust context]
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Acked-by: Daniel Borkmann <daniel@iogearbox.net>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/lib/usercopy_32.c |   20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+ kernel/bpf/verifier.c |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
---- a/arch/x86/lib/usercopy_32.c
-+++ b/arch/x86/lib/usercopy_32.c
-@@ -570,12 +570,12 @@ do {									\
- unsigned long __copy_to_user_ll(void __user *to, const void *from,
- 				unsigned long n)
- {
--	stac();
-+	__uaccess_begin();
- 	if (movsl_is_ok(to, from, n))
- 		__copy_user(to, from, n);
- 	else
- 		n = __copy_user_intel(to, from, n);
--	clac();
-+	__uaccess_end();
- 	return n;
- }
- EXPORT_SYMBOL(__copy_to_user_ll);
-@@ -583,12 +583,12 @@ EXPORT_SYMBOL(__copy_to_user_ll);
- unsigned long __copy_from_user_ll(void *to, const void __user *from,
- 					unsigned long n)
- {
--	stac();
-+	__uaccess_begin();
- 	if (movsl_is_ok(to, from, n))
- 		__copy_user_zeroing(to, from, n);
- 	else
- 		n = __copy_user_zeroing_intel(to, from, n);
--	clac();
-+	__uaccess_end();
- 	return n;
- }
- EXPORT_SYMBOL(__copy_from_user_ll);
-@@ -596,13 +596,13 @@ EXPORT_SYMBOL(__copy_from_user_ll);
- unsigned long __copy_from_user_ll_nozero(void *to, const void __user *from,
- 					 unsigned long n)
- {
--	stac();
-+	__uaccess_begin();
- 	if (movsl_is_ok(to, from, n))
- 		__copy_user(to, from, n);
- 	else
- 		n = __copy_user_intel((void __user *)to,
- 				      (const void *)from, n);
--	clac();
-+	__uaccess_end();
- 	return n;
- }
- EXPORT_SYMBOL(__copy_from_user_ll_nozero);
-@@ -610,7 +610,7 @@ EXPORT_SYMBOL(__copy_from_user_ll_nozero
- unsigned long __copy_from_user_ll_nocache(void *to, const void __user *from,
- 					unsigned long n)
- {
--	stac();
-+	__uaccess_begin();
- #ifdef CONFIG_X86_INTEL_USERCOPY
- 	if (n > 64 && cpu_has_xmm2)
- 		n = __copy_user_zeroing_intel_nocache(to, from, n);
-@@ -619,7 +619,7 @@ unsigned long __copy_from_user_ll_nocach
- #else
- 	__copy_user_zeroing(to, from, n);
- #endif
--	clac();
-+	__uaccess_end();
- 	return n;
- }
- EXPORT_SYMBOL(__copy_from_user_ll_nocache);
-@@ -627,7 +627,7 @@ EXPORT_SYMBOL(__copy_from_user_ll_nocach
- unsigned long __copy_from_user_ll_nocache_nozero(void *to, const void __user *from,
- 					unsigned long n)
- {
--	stac();
-+	__uaccess_begin();
- #ifdef CONFIG_X86_INTEL_USERCOPY
- 	if (n > 64 && cpu_has_xmm2)
- 		n = __copy_user_intel_nocache(to, from, n);
-@@ -636,7 +636,7 @@ unsigned long __copy_from_user_ll_nocach
- #else
- 	__copy_user(to, from, n);
- #endif
--	clac();
-+	__uaccess_end();
- 	return n;
- }
- EXPORT_SYMBOL(__copy_from_user_ll_nocache_nozero);
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -1844,7 +1844,8 @@ static int do_check(struct verifier_env
+ 			if (err)
+ 				return err;
+ 
+-			if (BPF_SIZE(insn->code) != BPF_W) {
++			if (BPF_SIZE(insn->code) != BPF_W &&
++			    BPF_SIZE(insn->code) != BPF_DW) {
+ 				insn_idx++;
+ 				continue;
+ 			}
+@@ -2220,9 +2221,11 @@ static int convert_ctx_accesses(struct v
+ 	for (i = 0; i < insn_cnt; i++, insn++) {
+ 		u32 cnt;
+ 
+-		if (insn->code == (BPF_LDX | BPF_MEM | BPF_W))
++		if (insn->code == (BPF_LDX | BPF_MEM | BPF_W) ||
++		    insn->code == (BPF_LDX | BPF_MEM | BPF_DW))
+ 			type = BPF_READ;
+-		else if (insn->code == (BPF_STX | BPF_MEM | BPF_W))
++		else if (insn->code == (BPF_STX | BPF_MEM | BPF_W) ||
++			 insn->code == (BPF_STX | BPF_MEM | BPF_DW))
+ 			type = BPF_WRITE;
+ 		else
+ 			continue;
 
 
