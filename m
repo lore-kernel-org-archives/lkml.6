@@ -7,53 +7,50 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03B42C6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:40:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07B91C6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:40:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFFF5204FD
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:40:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C2941204FD
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:40:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544791234;
-	bh=YSec+Rm0Fxia5Fn9XFaxxBG8WAuBnbHwcipAgFPb9zI=;
+	s=default; t=1544791239;
+	bh=wMQ8xL0tHEeCC7LoyIRMHeDYSHlOBodryRp3UuUE5z8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=BnzcB/Wd1UYDVhnDXUHEaE6WOtMQbe3mIfXwxZtQz2xgqXx1ixwCDbxFETe5dxxVF
-	 BH81bW2wjtgvAEhLx2hOyM8ab8kPjTqDESMylbhAn3wnqayPwuKCwhbbkkCdlCC3Z1
-	 9d4kPH9fW5ceLVyC/lDaSF+QJrAewOE31MoBqr74=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFFF5204FD
+	b=XRiYJI+8vKAU0U1aWJCKOnXoXmatYBmXaoGZln1Kccmff2cdKOpKpfnapms3L31Tg
+	 plODvkyTl2rpU6adIbNAhW2PjVfoYUxXG3dWVK+qODc3LDl+IkYsDQvE9KhH7y70Nx
+	 rIeNxopAIul2EJskBQWXpAoRvaKFGjZteQr2dLcU=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2941204FD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730639AbeLNMkd (ORCPT
+        id S1730426AbeLNMEE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:40:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48600 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:04:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48416 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730427AbeLNMEF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:04:05 -0500
+        id S1730412AbeLNMEA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:04:00 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4B3C82146F;
-        Fri, 14 Dec 2018 12:04:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4E0242146F;
+        Fri, 14 Dec 2018 12:03:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789044;
-        bh=YSec+Rm0Fxia5Fn9XFaxxBG8WAuBnbHwcipAgFPb9zI=;
+        s=default; t=1544789039;
+        bh=wMQ8xL0tHEeCC7LoyIRMHeDYSHlOBodryRp3UuUE5z8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ybtw13mecLXGEMseuW0KRhcJXuAdOVECErlxRuFLWj1D6Yq4tgwEwKLaceAvGa6/4
-         e+9iMyZVF5HQUG/j2E3cQhxr/0daWia9AEKqkigfjpTTMUopED1lclCEQM5GEsk7en
-         pTQDvsb2TMt8sJAIW894EJ/SAKXWzLDikY3pc1g8=
+        b=iFBZPfSuRCW+llNAlZ48XlIvvlgKEk/xZm5CYnIpHvGQbIKXIxtoWf3lrnF0cjxMg
+         SrHLO0IT0GP1t+voiP9/K522k5NOqUmBfxN7zTw+OQF5e8xWnxhvv4yXiropSDRIm/
+         tHBqHC4ZeiHIQHi9wCykQbS2X1KRHz2oKEmGkRjU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sriram Periyasamy <sriramx.periyasamy@intel.com>,
-        Sanyog Kale <sanyog.r.kale@intel.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        stable@vger.kernel.org, Katsuhiro Suzuki <katsuhiro@katsuster.net>,
         Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 050/142] ASoC: Intel: Power down links before turning off display audio power
-Date:   Fri, 14 Dec 2018 12:58:55 +0100
-Message-Id: <20181214115749.061464808@linuxfoundation.org>
+Subject: [PATCH 4.19 048/142] ASoC: rockchip: add missing slave_config setting for I2S
+Date:   Fri, 14 Dec 2018 12:58:53 +0100
+Message-Id: <20181214115748.982491698@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115747.053633987@linuxfoundation.org>
 References: <20181214115747.053633987@linuxfoundation.org>
@@ -72,88 +69,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 4c10473d6ddf12ec124c9ff71a5d23bb5388478b ]
+[ Upstream commit 16a8ee4c80b45984b6de1f90a49edcf336b7c621 ]
 
-On certain platforms, Display HDMI HDA codec was not going to sleep state
-after the use when links are powered down after turning off the display
-power. As per the HW recommendation, links are powered down before turning
-off the display power to ensure that the codec goes to sleep state.
+This patch adds missing prepare_sleve_config that is needed for
+setup the DMA slave channel for I2S.
 
-This patch was updated from an earlier version submitted upstream [1]
-which conflicted with the changes merged for HDaudio codec support
-with the Intel DSP.
-
-[1] https://patchwork.kernel.org/patch/10540213/
-
-Signed-off-by: Sriram Periyasamy <sriramx.periyasamy@intel.com>
-Signed-off-by: Sanyog Kale <sanyog.r.kale@intel.com>
-Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Signed-off-by: Katsuhiro Suzuki <katsuhiro@katsuster.net>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/codecs/hdac_hdmi.c  | 11 +++++------
- sound/soc/intel/skylake/skl.c | 12 ++++++------
- 2 files changed, 11 insertions(+), 12 deletions(-)
+ sound/soc/rockchip/rockchip_pcm.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/sound/soc/codecs/hdac_hdmi.c b/sound/soc/codecs/hdac_hdmi.c
-index 7b8533abf637..b61d518f4fef 100644
---- a/sound/soc/codecs/hdac_hdmi.c
-+++ b/sound/soc/codecs/hdac_hdmi.c
-@@ -2184,11 +2184,6 @@ static int hdac_hdmi_runtime_suspend(struct device *dev)
- 	 */
- 	snd_hdac_codec_read(hdev, hdev->afg, 0,	AC_VERB_SET_POWER_STATE,
- 							AC_PWRST_D3);
--	err = snd_hdac_display_power(bus, false);
--	if (err < 0) {
--		dev_err(dev, "Cannot turn on display power on i915\n");
--		return err;
--	}
+diff --git a/sound/soc/rockchip/rockchip_pcm.c b/sound/soc/rockchip/rockchip_pcm.c
+index f77538319221..7029e0b85f9e 100644
+--- a/sound/soc/rockchip/rockchip_pcm.c
++++ b/sound/soc/rockchip/rockchip_pcm.c
+@@ -32,6 +32,7 @@ static const struct snd_pcm_hardware snd_rockchip_hardware = {
  
- 	hlink = snd_hdac_ext_bus_get_link(bus, dev_name(dev));
- 	if (!hlink) {
-@@ -2198,7 +2193,11 @@ static int hdac_hdmi_runtime_suspend(struct device *dev)
+ static const struct snd_dmaengine_pcm_config rk_dmaengine_pcm_config = {
+ 	.pcm_hardware = &snd_rockchip_hardware,
++	.prepare_slave_config = snd_dmaengine_pcm_prepare_slave_config,
+ 	.prealloc_buffer_size = 32 * 1024,
+ };
  
- 	snd_hdac_ext_bus_link_put(bus, hlink);
- 
--	return 0;
-+	err = snd_hdac_display_power(bus, false);
-+	if (err < 0)
-+		dev_err(dev, "Cannot turn off display power on i915\n");
-+
-+	return err;
- }
- 
- static int hdac_hdmi_runtime_resume(struct device *dev)
-diff --git a/sound/soc/intel/skylake/skl.c b/sound/soc/intel/skylake/skl.c
-index 1d17be0f78a0..50f16a0f6535 100644
---- a/sound/soc/intel/skylake/skl.c
-+++ b/sound/soc/intel/skylake/skl.c
-@@ -752,6 +752,12 @@ static void skl_probe_work(struct work_struct *work)
- 		}
- 	}
- 
-+	/*
-+	 * we are done probing so decrement link counts
-+	 */
-+	list_for_each_entry(hlink, &bus->hlink_list, list)
-+		snd_hdac_ext_bus_link_put(bus, hlink);
-+
- 	if (IS_ENABLED(CONFIG_SND_SOC_HDAC_HDMI)) {
- 		err = snd_hdac_display_power(bus, false);
- 		if (err < 0) {
-@@ -761,12 +767,6 @@ static void skl_probe_work(struct work_struct *work)
- 		}
- 	}
- 
--	/*
--	 * we are done probing so decrement link counts
--	 */
--	list_for_each_entry(hlink, &bus->hlink_list, list)
--		snd_hdac_ext_bus_link_put(bus, hlink);
--
- 	/* configure PM */
- 	pm_runtime_put_noidle(bus->dev);
- 	pm_runtime_allow(bus->dev);
 -- 
 2.19.1
 
