@@ -7,49 +7,53 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DBF1C6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:07:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F314C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:07:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 260FB21486
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:07:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 108A52148E
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:07:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544789225;
-	bh=+kQ//yTwFiP4gPfSmKY2AA4OmHDf9R2TflKlrrRQfho=;
+	s=default; t=1544789231;
+	bh=MKzQNlY5IjzE0/VvmRmUaPTwzw7HL2nr4DH9VKKetYs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=RkRJS6IX0f0DHR/QCtf9CjZbj1+1NfRv3LtIJalOawsHR0JuexOv9bbOhgtZ7uBg/
-	 xT8fo6XrppS7aB+jy1qgzje9UOMikcvRR8q9AAMi0BBA/ttyHyIgwySqnX5VSFUG2h
-	 93MxJNA1uvM5fcigjYG/TmFiwchVMZ1AkyMOsSac=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 260FB21486
+	b=rKMWLA1sC1ECrlzSriDIYT4vC5wXDcsRwgbIfjzPFvVmsaPfQqK4A29mJCiSmPgku
+	 VcWMLrQFAm5igTchSDZI0tDHpXm/S/6YEb6Kt/5eJU44qXZIMIeLDH3ZkUokdiiKL7
+	 raMA0PvzWcIbKD3RlThYPcc61jEYykWR/TNajyqc=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 108A52148E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731038AbeLNMHD (ORCPT
+        id S1731061AbeLNMHJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:07:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52130 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:07:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52184 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731021AbeLNMHA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:07:00 -0500
+        id S1731030AbeLNMHD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:07:03 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 473D121479;
-        Fri, 14 Dec 2018 12:06:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BE7A521486;
+        Fri, 14 Dec 2018 12:07:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789219;
-        bh=+kQ//yTwFiP4gPfSmKY2AA4OmHDf9R2TflKlrrRQfho=;
+        s=default; t=1544789222;
+        bh=MKzQNlY5IjzE0/VvmRmUaPTwzw7HL2nr4DH9VKKetYs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ad5p3y7eY9FS4ZS5/kfXMLEqUvWaSwJdFc2bcRi4W+Dqj95fmZ/WDdrZBMyjsijoe
-         3tzg5EC1ic/YVOmsHdfWx245TUsGZ8YZL84ETaRbT2rUaCQjujUUVtf9qOb5wJbzhd
-         /8BA60e4Yb/RbGWDGB0Is3elmCckfvjcwHC1J1dE=
+        b=H9hOXmYZlATQgG+tAV78CIpZ2YfLgGASO+cZPAYoVaVfUkEFEcPlcJP6F/PGaJOnC
+         bHsJMnif/a5LIc5yv9XcO0E7/wEZjZI3R1FXKFobCBl/AgGmpEpFjgZyDLoN4TpzDR
+         N5GLlFJIZMDnMH07llbjDdxu9KH2AbEnRBuCTgIw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hui Wang <hui.wang@canonical.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.19 140/142] ALSA: hda/realtek - Fix the mute LED regresion on Lenovo X1 Carbon
-Date:   Fri, 14 Dec 2018 13:00:25 +0100
-Message-Id: <20181214115752.634467032@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Mike Marciniczyn <mike.marciniszyn@intel.com>,
+        Mike Ruhl <michael.j.ruhl@intel.com>,
+        Piotr Stankiewicz <piotr.stankiewicz@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>, Stable@vger.kernel.org
+Subject: [PATCH 4.19 141/142] IB/hfi1: Fix an out-of-bounds access in get_hw_stats
+Date:   Fri, 14 Dec 2018 13:00:26 +0100
+Message-Id: <20181214115752.677270140@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115747.053633987@linuxfoundation.org>
 References: <20181214115747.053633987@linuxfoundation.org>
@@ -68,36 +72,221 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hui Wang <hui.wang@canonical.com>
+From: Piotr Stankiewicz <piotr.stankiewicz@intel.com>
 
-commit 6ba189c5c1a4bda70dc1e4826c58b0246068bb8d upstream.
+commit 36d842194a57f1b21fbc6a6875f2fa2f9a7f8679 upstream.
 
-Users reported a mute LED regression on Lenovo X1 Carbon, the root
-cause is we applied the fixup of ALC285_FIXUP_LENOVO_HEADPHONE_NOISE
-to this machine, then the machine can't apply the fixup of
-ALC269_FIXUP_THINKPAD_ACPI anymore. To fix it, we chain two fixup
-together.
+When running with KASAN, the following trace is produced:
 
-Fixes: c4cfcf6f4297 ("ALSA: hda/realtek - fix the pop noise on headphone for lenovo laptops")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Hui Wang <hui.wang@canonical.com>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+[   62.535888]
+
+==================================================================
+[   62.544930] BUG: KASAN: slab-out-of-bounds in
+gut_hw_stats+0x122/0x230 [hfi1]
+[   62.553856] Write of size 8 at addr ffff88080e8d6330 by task
+kworker/0:1/14
+
+[   62.565333] CPU: 0 PID: 14 Comm: kworker/0:1 Not tainted
+4.19.0-test-build-kasan+ #8
+[   62.575087] Hardware name: Intel Corporation S2600KPR/S2600KPR, BIOS
+SE5C610.86B.01.01.0019.101220160604 10/12/2016
+[   62.587951] Workqueue: events work_for_cpu_fn
+[   62.594050] Call Trace:
+[   62.598023]  dump_stack+0xc6/0x14c
+[   62.603089]  ? dump_stack_print_info.cold.1+0x2f/0x2f
+[   62.610041]  ? kmsg_dump_rewind_nolock+0x59/0x59
+[   62.616615]  ? get_hw_stats+0x122/0x230 [hfi1]
+[   62.622985]  print_address_description+0x6c/0x23c
+[   62.629744]  ? get_hw_stats+0x122/0x230 [hfi1]
+[   62.636108]  kasan_report.cold.6+0x241/0x308
+[   62.642365]  get_hw_stats+0x122/0x230 [hfi1]
+[   62.648703]  ? hfi1_alloc_rn+0x40/0x40 [hfi1]
+[   62.655088]  ? __kmalloc+0x110/0x240
+[   62.660695]  ? hfi1_alloc_rn+0x40/0x40 [hfi1]
+[   62.667142]  setup_hw_stats+0xd8/0x430 [ib_core]
+[   62.673972]  ? show_hfi+0x50/0x50 [hfi1]
+[   62.680026]  ib_device_register_sysfs+0x165/0x180 [ib_core]
+[   62.687995]  ib_register_device+0x5a2/0xa10 [ib_core]
+[   62.695340]  ? show_hfi+0x50/0x50 [hfi1]
+[   62.701421]  ? ib_unregister_device+0x2e0/0x2e0 [ib_core]
+[   62.709222]  ? __vmalloc_node_range+0x2d0/0x380
+[   62.716131]  ? rvt_driver_mr_init+0x11f/0x2d0 [rdmavt]
+[   62.723735]  ? vmalloc_node+0x5c/0x70
+[   62.729697]  ? rvt_driver_mr_init+0x11f/0x2d0 [rdmavt]
+[   62.737347]  ? rvt_driver_mr_init+0x1f5/0x2d0 [rdmavt]
+[   62.744998]  ? __rvt_alloc_mr+0x110/0x110 [rdmavt]
+[   62.752315]  ? rvt_rc_error+0x140/0x140 [rdmavt]
+[   62.759434]  ? rvt_vma_open+0x30/0x30 [rdmavt]
+[   62.766364]  ? mutex_unlock+0x1d/0x40
+[   62.772445]  ? kmem_cache_create_usercopy+0x15d/0x230
+[   62.780115]  rvt_register_device+0x1f6/0x360 [rdmavt]
+[   62.787823]  ? rvt_get_port_immutable+0x180/0x180 [rdmavt]
+[   62.796058]  ? __get_txreq+0x400/0x400 [hfi1]
+[   62.802969]  ? memcpy+0x34/0x50
+[   62.808611]  hfi1_register_ib_device+0xde6/0xeb0 [hfi1]
+[   62.816601]  ? hfi1_get_npkeys+0x10/0x10 [hfi1]
+[   62.823760]  ? hfi1_init+0x89f/0x9a0 [hfi1]
+[   62.830469]  ? hfi1_setup_eagerbufs+0xad0/0xad0 [hfi1]
+[   62.838204]  ? pcie_capability_clear_and_set_word+0xcd/0xe0
+[   62.846429]  ? pcie_capability_read_word+0xd0/0xd0
+[   62.853791]  ? hfi1_pcie_init+0x187/0x4b0 [hfi1]
+[   62.860958]  init_one+0x67f/0xae0 [hfi1]
+[   62.867301]  ? hfi1_init+0x9a0/0x9a0 [hfi1]
+[   62.873876]  ? wait_woken+0x130/0x130
+[   62.879860]  ? read_word_at_a_time+0xe/0x20
+[   62.886329]  ? strscpy+0x14b/0x280
+[   62.891998]  ? hfi1_init+0x9a0/0x9a0 [hfi1]
+[   62.898405]  local_pci_probe+0x70/0xd0
+[   62.904295]  ? pci_device_shutdown+0x90/0x90
+[   62.910833]  work_for_cpu_fn+0x29/0x40
+[   62.916750]  process_one_work+0x584/0x960
+[   62.922974]  ? rcu_work_rcufn+0x40/0x40
+[   62.928991]  ? __schedule+0x396/0xdc0
+[   62.934806]  ? __sched_text_start+0x8/0x8
+[   62.941020]  ? pick_next_task_fair+0x68b/0xc60
+[   62.947674]  ? run_rebalance_domains+0x260/0x260
+[   62.954471]  ? __list_add_valid+0x29/0xa0
+[   62.960607]  ? move_linked_works+0x1c7/0x230
+[   62.967077]  ?
+trace_event_raw_event_workqueue_execute_start+0x140/0x140
+[   62.976248]  ? mutex_lock+0xa6/0x100
+[   62.982029]  ? __mutex_lock_slowpath+0x10/0x10
+[   62.988795]  ? __switch_to+0x37a/0x710
+[   62.994731]  worker_thread+0x62e/0x9d0
+[   63.000602]  ? max_active_store+0xf0/0xf0
+[   63.006828]  ? __switch_to_asm+0x40/0x70
+[   63.012932]  ? __switch_to_asm+0x34/0x70
+[   63.019013]  ? __switch_to_asm+0x40/0x70
+[   63.025042]  ? __switch_to_asm+0x34/0x70
+[   63.031030]  ? __switch_to_asm+0x40/0x70
+[   63.037006]  ? __schedule+0x396/0xdc0
+[   63.042660]  ? kmem_cache_alloc_trace+0xf3/0x1f0
+[   63.049323]  ? kthread+0x59/0x1d0
+[   63.054594]  ? ret_from_fork+0x35/0x40
+[   63.060257]  ? __sched_text_start+0x8/0x8
+[   63.066212]  ? schedule+0xcf/0x250
+[   63.071529]  ? __wake_up_common+0x110/0x350
+[   63.077794]  ? __schedule+0xdc0/0xdc0
+[   63.083348]  ? wait_woken+0x130/0x130
+[   63.088963]  ? finish_task_switch+0x1f1/0x520
+[   63.095258]  ? kasan_unpoison_shadow+0x30/0x40
+[   63.101792]  ? __init_waitqueue_head+0xa0/0xd0
+[   63.108183]  ? replenish_dl_entity.cold.60+0x18/0x18
+[   63.115151]  ? _raw_spin_lock_irqsave+0x25/0x50
+[   63.121754]  ? max_active_store+0xf0/0xf0
+[   63.127753]  kthread+0x1ae/0x1d0
+[   63.132894]  ? kthread_bind+0x30/0x30
+[   63.138422]  ret_from_fork+0x35/0x40
+
+[   63.146973] Allocated by task 14:
+[   63.152077]  kasan_kmalloc+0xbf/0xe0
+[   63.157471]  __kmalloc+0x110/0x240
+[   63.162804]  init_cntrs+0x34d/0xdf0 [hfi1]
+[   63.168883]  hfi1_init_dd+0x29a3/0x2f90 [hfi1]
+[   63.175244]  init_one+0x551/0xae0 [hfi1]
+[   63.181065]  local_pci_probe+0x70/0xd0
+[   63.186759]  work_for_cpu_fn+0x29/0x40
+[   63.192310]  process_one_work+0x584/0x960
+[   63.198163]  worker_thread+0x62e/0x9d0
+[   63.203843]  kthread+0x1ae/0x1d0
+[   63.208874]  ret_from_fork+0x35/0x40
+
+[   63.217203] Freed by task 1:
+[   63.221844]  __kasan_slab_free+0x12e/0x180
+[   63.227844]  kfree+0x92/0x1a0
+[   63.232570]  single_release+0x3a/0x60
+[   63.238024]  __fput+0x1d9/0x480
+[   63.242911]  task_work_run+0x139/0x190
+[   63.248440]  exit_to_usermode_loop+0x191/0x1a0
+[   63.254814]  do_syscall_64+0x301/0x330
+[   63.260283]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+[   63.270199] The buggy address belongs to the object at
+ffff88080e8d5500
+ which belongs to the cache kmalloc-4096 of size 4096
+[   63.287247] The buggy address is located 3632 bytes inside of
+ 4096-byte region [ffff88080e8d5500, ffff88080e8d6500)
+[   63.303564] The buggy address belongs to the page:
+[   63.310447] page:ffffea00203a3400 count:1 mapcount:0
+mapping:ffff88081380e840 index:0x0 compound_mapcount: 0
+[   63.323102] flags: 0x2fffff80008100(slab|head)
+[   63.329775] raw: 002fffff80008100 0000000000000000 0000000100000001
+ffff88081380e840
+[   63.340175] raw: 0000000000000000 0000000000070007 00000001ffffffff
+0000000000000000
+[   63.350564] page dumped because: kasan: bad access detected
+
+[   63.361974] Memory state around the buggy address:
+[   63.369137]  ffff88080e8d6200: 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00
+[   63.379082]  ffff88080e8d6280: 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00
+[   63.389032] >ffff88080e8d6300: 00 00 00 00 00 00 fc fc fc fc fc fc fc
+fc fc fc
+[   63.398944]                                      ^
+[   63.406141]  ffff88080e8d6380: fc fc fc fc fc fc fc fc fc fc fc fc fc
+fc fc fc
+[   63.416109]  ffff88080e8d6400: fc fc fc fc fc fc fc fc fc fc fc fc fc
+fc fc fc
+[   63.426099]
+==================================================================
+
+The trace happens because get_hw_stats() assumes there is room in the
+memory allocated in init_cntrs() to accommodate the driver counters.
+Unfortunately, that routine only allocated space for the device
+counters.
+
+Fix by insuring the allocation has room for the additional driver
+counters.
+
+Cc: <Stable@vger.kernel.org> # v4.14+
+Fixes: b7481944b06e9 ("IB/hfi1: Show statistics counters under IB stats interface")
+Reviewed-by: Mike Marciniczyn <mike.marciniszyn@intel.com>
+Reviewed-by: Mike Ruhl <michael.j.ruhl@intel.com>
+Signed-off-by: Piotr Stankiewicz <piotr.stankiewicz@intel.com>
+Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
+Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_realtek.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/infiniband/hw/hfi1/chip.c  |    3 ++-
+ drivers/infiniband/hw/hfi1/hfi.h   |    2 ++
+ drivers/infiniband/hw/hfi1/verbs.c |    2 +-
+ 3 files changed, 5 insertions(+), 2 deletions(-)
 
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -6395,6 +6395,8 @@ static const struct hda_fixup alc269_fix
- 	[ALC285_FIXUP_LENOVO_HEADPHONE_NOISE] = {
- 		.type = HDA_FIXUP_FUNC,
- 		.v.func = alc285_fixup_invalidate_dacs,
-+		.chained = true,
-+		.chain_id = ALC269_FIXUP_THINKPAD_ACPI
- 	},
- 	[ALC295_FIXUP_HP_AUTO_MUTE] = {
- 		.type = HDA_FIXUP_FUNC,
+--- a/drivers/infiniband/hw/hfi1/chip.c
++++ b/drivers/infiniband/hw/hfi1/chip.c
+@@ -12485,7 +12485,8 @@ static int init_cntrs(struct hfi1_devdat
+ 	}
+ 
+ 	/* allocate space for the counter values */
+-	dd->cntrs = kcalloc(dd->ndevcntrs, sizeof(u64), GFP_KERNEL);
++	dd->cntrs = kcalloc(dd->ndevcntrs + num_driver_cntrs, sizeof(u64),
++			    GFP_KERNEL);
+ 	if (!dd->cntrs)
+ 		goto bail;
+ 
+--- a/drivers/infiniband/hw/hfi1/hfi.h
++++ b/drivers/infiniband/hw/hfi1/hfi.h
+@@ -154,6 +154,8 @@ struct hfi1_ib_stats {
+ extern struct hfi1_ib_stats hfi1_stats;
+ extern const struct pci_error_handlers hfi1_pci_err_handler;
+ 
++extern int num_driver_cntrs;
++
+ /*
+  * First-cut criterion for "device is active" is
+  * two thousand dwords combined Tx, Rx traffic per
+--- a/drivers/infiniband/hw/hfi1/verbs.c
++++ b/drivers/infiniband/hw/hfi1/verbs.c
+@@ -1701,7 +1701,7 @@ static const char * const driver_cntr_na
+ static DEFINE_MUTEX(cntr_names_lock); /* protects the *_cntr_names bufers */
+ static const char **dev_cntr_names;
+ static const char **port_cntr_names;
+-static int num_driver_cntrs = ARRAY_SIZE(driver_cntr_names);
++int num_driver_cntrs = ARRAY_SIZE(driver_cntr_names);
+ static int num_dev_cntrs;
+ static int num_port_cntrs;
+ static int cntr_names_initialized;
 
 
