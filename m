@@ -7,56 +7,55 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30BACC67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:06:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EA69C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:06:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9AA52148E
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:06:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 121E021479
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:06:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544789192;
-	bh=Ma7Es06WzWBLXrWIHSe5rMlhZVwbgBxz0wCmSy3ijwg=;
+	s=default; t=1544789195;
+	bh=rS5n5GehT27IPORQnonKcJSb9DyQHfRnLocOPWADnIs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=1ojd8DDqhMtiE56ejedX3Iw0wu0FZWgtmd8h43UPNAyI0Eoomt3fSBYjgctRuKWCR
-	 J3rSEsICiocMaWzfRQuV2b9MMh1Aq61wfTen0/WWpgqB3eBcKHTrJepLw5jBIsw8az
-	 iDMjfPRDPM+14Sb6XASvidb6oIVdVVNTe7IzwE7U=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9AA52148E
+	b=kbIAfe0AHtl1C0mZ7UOhw26d6qvJL+2Jf80IxcdiP6LfS5ca1RPAMx4LPsQiJmBxE
+	 EfYqdmJUMUpO0Jk13v7ZnH1c3NmFexD0VpbFOjReTv100FZtX+92NSoZTTAF475jHK
+	 UQVMrKeurEtUOHZ42F2fG/qUxpVP29AAyT4HNPHE=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 121E021479
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730939AbeLNMGa (ORCPT
+        id S1730948AbeLNMGe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:06:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51476 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:06:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51608 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730904AbeLNMG1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:06:27 -0500
+        id S1730434AbeLNMGc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:06:32 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5AC4921479;
-        Fri, 14 Dec 2018 12:06:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 895B62147D;
+        Fri, 14 Dec 2018 12:06:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789186;
-        bh=Ma7Es06WzWBLXrWIHSe5rMlhZVwbgBxz0wCmSy3ijwg=;
+        s=default; t=1544789192;
+        bh=rS5n5GehT27IPORQnonKcJSb9DyQHfRnLocOPWADnIs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=h15vUTp9E9Cmt7bUH+P29BDzoP+AJxRY+LGo/87gRVYWKq9miGw6jKQBfM3gkyFY+
-         Qlbb+Y5HYlFLOq68q7reE7tK35jaypmaVs85k8wybs59HGdHpASd8FaWXqYgS4gHMO
-         gQAc5hkLRDBHNkslfIpOd4MRPchoUfbTXtH2Ehzw=
+        b=q/F7eZGcMcKc/RXe5iFCmnzyvoX1LlG1raShUD59rPGZlqWzf//cnDR2zNBMK/Ya8
+         gCwIdTk4W4dmN6PXsZCfdxGG3VS4/wQbOkpPi4t0VXPB2p2FsK+1Zd6C5KMJfHknTP
+         hV15yZBaSOdzfyRe+RJxtZR5lyc8YLl+jZaQbNq4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Qian Cai <cai@gmx.us>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Waiman Long <longman@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Yang Shi <yang.shi@linux.alibaba.com>,
-        Arnd Bergmann <arnd@arndb.de>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Ingo Molnar <mingo@elte.hu>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 128/142] debugobjects: avoid recursive calls with kmemleak
-Date:   Fri, 14 Dec 2018 13:00:13 +0100
-Message-Id: <20181214115752.161066970@linuxfoundation.org>
+        Sasha Levin <sashal@kernel.org>,
+        Anders Roxell <anders.roxell@linaro.org>
+Subject: [PATCH 4.19 130/142] kernel/kcov.c: mark funcs in __sanitizer_cov_trace_pc() as notrace
+Date:   Fri, 14 Dec 2018 13:00:15 +0100
+Message-Id: <20181214115752.240888094@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115747.053633987@linuxfoundation.org>
 References: <20181214115747.053633987@linuxfoundation.org>
@@ -75,72 +74,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 8de456cf87ba863e028c4dd01bae44255ce3d835 ]
+[ Upstream commit 903e8ff86753e6f327bb92166a0665e4ecb8e2e7 ]
 
-CONFIG_DEBUG_OBJECTS_RCU_HEAD does not play well with kmemleak due to
-recursive calls.
+Since __sanitizer_cov_trace_pc() is marked as notrace, function calls in
+__sanitizer_cov_trace_pc() shouldn't be traced either.
+ftrace_graph_caller() gets called for each function that isn't marked
+'notrace', like canonicalize_ip().  This is the call trace from a run:
 
-fill_pool
-  kmemleak_ignore
-    make_black_object
-      put_object
-        __call_rcu (kernel/rcu/tree.c)
-          debug_rcu_head_queue
-            debug_object_activate
-              debug_object_init
-                fill_pool
-                  kmemleak_ignore
-                    make_black_object
-                      ...
+[  139.644550]  ftrace_graph_caller+0x1c/0x24
+[  139.648352]  canonicalize_ip+0x18/0x28
+[  139.652313]  __sanitizer_cov_trace_pc+0x14/0x58
+[  139.656184]  sched_clock+0x34/0x1e8
+[  139.659759]  trace_clock_local+0x40/0x88
+[  139.663722]  ftrace_push_return_trace+0x8c/0x1f0
+[  139.667767]  prepare_ftrace_return+0xa8/0x100
+[  139.671709]  ftrace_graph_caller+0x1c/0x24
 
-So add SLAB_NOLEAKTRACE to kmem_cache_create() to not register newly
-allocated debug objects at all.
+Rework so that check_kcov_mode() and canonicalize_ip() that are called
+from __sanitizer_cov_trace_pc() are also marked as notrace.
 
-Link: http://lkml.kernel.org/r/20181126165343.2339-1-cai@gmx.us
-Signed-off-by: Qian Cai <cai@gmx.us>
-Suggested-by: Catalin Marinas <catalin.marinas@arm.com>
-Acked-by: Waiman Long <longman@redhat.com>
-Acked-by: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Yang Shi <yang.shi@linux.alibaba.com>
-Cc: Arnd Bergmann <arnd@arndb.de>
+Link: http://lkml.kernel.org/r/20181128081239.18317-1-anders.roxell@linaro.org
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signen-off-by: Anders Roxell <anders.roxell@linaro.org>
+Co-developed-by: Arnd Bergmann <arnd@arndb.de>
+Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Cc: Ingo Molnar <mingo@elte.hu>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- lib/debugobjects.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ kernel/kcov.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/lib/debugobjects.c b/lib/debugobjects.c
-index 70935ed91125..14afeeb7d6ef 100644
---- a/lib/debugobjects.c
-+++ b/lib/debugobjects.c
-@@ -135,7 +135,6 @@ static void fill_pool(void)
- 		if (!new)
- 			return;
+diff --git a/kernel/kcov.c b/kernel/kcov.c
+index 3ebd09efe72a..97959d7b77e2 100644
+--- a/kernel/kcov.c
++++ b/kernel/kcov.c
+@@ -56,7 +56,7 @@ struct kcov {
+ 	struct task_struct	*t;
+ };
  
--		kmemleak_ignore(new);
- 		raw_spin_lock_irqsave(&pool_lock, flags);
- 		hlist_add_head(&new->node, &obj_pool);
- 		debug_objects_allocated++;
-@@ -1128,7 +1127,6 @@ static int __init debug_objects_replace_static_objects(void)
- 		obj = kmem_cache_zalloc(obj_cache, GFP_KERNEL);
- 		if (!obj)
- 			goto free;
--		kmemleak_ignore(obj);
- 		hlist_add_head(&obj->node, &objects);
- 	}
+-static bool check_kcov_mode(enum kcov_mode needed_mode, struct task_struct *t)
++static notrace bool check_kcov_mode(enum kcov_mode needed_mode, struct task_struct *t)
+ {
+ 	unsigned int mode;
  
-@@ -1184,7 +1182,8 @@ void __init debug_objects_mem_init(void)
+@@ -78,7 +78,7 @@ static bool check_kcov_mode(enum kcov_mode needed_mode, struct task_struct *t)
+ 	return mode == needed_mode;
+ }
  
- 	obj_cache = kmem_cache_create("debug_objects_cache",
- 				      sizeof (struct debug_obj), 0,
--				      SLAB_DEBUG_OBJECTS, NULL);
-+				      SLAB_DEBUG_OBJECTS | SLAB_NOLEAKTRACE,
-+				      NULL);
- 
- 	if (!obj_cache || debug_objects_replace_static_objects()) {
- 		debug_objects_enabled = 0;
+-static unsigned long canonicalize_ip(unsigned long ip)
++static notrace unsigned long canonicalize_ip(unsigned long ip)
+ {
+ #ifdef CONFIG_RANDOMIZE_BASE
+ 	ip -= kaslr_offset();
 -- 
 2.19.1
 
