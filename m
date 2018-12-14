@@ -2,127 +2,132 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F834C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 16:18:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4BB4C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 16:18:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 004A92070B
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 16:18:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544804296;
-	bh=opDQ6fraEdycLw9KDkAOlfQb/CxUQrBBV3z3lRLN574=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=P7i6df/POfx2VE9Ca9ImhLrNgsNZt5kRC5LMn/0J32wbpRPOUgtoJDc2EV4uv1pU3
-	 9xTI09a5YwbYwFBkcs3PnGK58AspH8r9QZB9F70UuyhFXX2CP+AkQIGzGyZRXikC5q
-	 c3xY6OvKrt9Zf/r5cUUAYddQ2/hGNXiRy1Hsl2w4=
+	by mail.kernel.org (Postfix) with ESMTP id 2081E206E0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 16:18:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="m9t8XbeY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729972AbeLNQSO (ORCPT
+        id S1729851AbeLNQSw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 11:18:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45266 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726520AbeLNQSN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 11:18:13 -0500
-Received: from devnote (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 46CA5206E0;
-        Fri, 14 Dec 2018 16:18:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544804293;
-        bh=opDQ6fraEdycLw9KDkAOlfQb/CxUQrBBV3z3lRLN574=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=OjaH0fTMn/f6K0jdPiKtnJnYjWEawCUxiscOcgRq3Cx4gE02lFnfskaOoPaZG+iku
-         bpuImNnAlzKB7EF5Wq2/i0KirI5WHRKlkuUmftdP/Xuj6boA1uccdVo0npQaEIUK/e
-         cshz0/LVNnGop36Br8viXcAkx40q+xyBoS0hVWpY=
-Date:   Sat, 15 Dec 2018 01:18:10 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Tom Zanussi <zanussi@kernel.org>
-Cc:     rostedt@goodmis.org, tglx@linutronix.de, mhiramat@kernel.org,
-        namhyung@kernel.org, vedang.patel@intel.com, bigeasy@linutronix.de,
-        joel@joelfernandes.org, mathieu.desnoyers@efficios.com,
-        julia@ni.com, linux-kernel@vger.kernel.org,
-        linux-rt-users@vger.kernel.org
-Subject: Re: [PATCH v8 12/22] tracing: Add hist trigger onchange() handler
- test case
-Message-Id: <20181215011810.61e1009d133fc1f999534d72@kernel.org>
-In-Reply-To: <86f8570a993bd8b70e7d8a0260706736b59da2ea.1544483273.git.tom.zanussi@linux.intel.com>
-References: <cover.1544483272.git.tom.zanussi@linux.intel.com>
-        <86f8570a993bd8b70e7d8a0260706736b59da2ea.1544483273.git.tom.zanussi@linux.intel.com>
-X-Mailer: Sylpheed 3.5.0 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Fri, 14 Dec 2018 11:18:52 -0500
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:42686 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727698AbeLNQSv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 11:18:51 -0500
+Received: by mail-ua1-f67.google.com with SMTP id d21so2176228uap.9
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 08:18:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=us4qfc6SvHjg9pBUCZLM1fMnyDfQbUZdTc5sp9evYpw=;
+        b=m9t8XbeYWiPp3/acOYHs5BH/NybLQm3D6FQP1BNgqc1ZqOVLWvKZe2jUSvZZprzGOK
+         A4TKF0wsxg5zOgM/8TLDzulE7nW8rUutpfOhzD2Vv7iyR1rdIu8poRDAmcwlP4ytqT/p
+         TnrsT+VuXpHsFAS2yYpYEV9B21w+iTRzhpc1Y=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=us4qfc6SvHjg9pBUCZLM1fMnyDfQbUZdTc5sp9evYpw=;
+        b=YPmJ0g9dIrhx/SuLgChLrwpnk+cibJpDJwrsSVuGUDSMDTZ+msTCpAH4n3RmI5wuhE
+         +gBq4oznh2ezcPidc5xmbfq9x1FwedzY8NRQLtgejFYg11PduQyVA73y1U9DvkNMlfak
+         5MWWQaHbkJRUSriajCagBg9BbREyj5xcvGnpP4WpYeht/q5FTrzQXY7B4tAZsQAP/t4E
+         dSzKjZ5ffdGxkriLjO3WSVAKtZfKwCaoHvXciMbpEBcOr0pjb7zqJ2KRUDBENrM2yNOZ
+         ZclqHXzVjQfEAKq49W6Dfb+cJObmeZ7kjnw/1Z53Z9YThOJ1Ls4l5K+7+KpyoJHFn24z
+         VO3Q==
+X-Gm-Message-State: AA+aEWY3HOHvtagRm5cFOPmeFjOGAULt+ZsFn608LXWKjDngYMiNJg0S
+        orAQNtGzY74fv0VWVfreoxhjZgq/Bg0=
+X-Google-Smtp-Source: AFSGD/VjmvT4Ija6eceLBHJEpFzOBQeCXml/ayT9zyocijIkc5Fj3I+di4knHRNEfoHuGGRdB2qxZA==
+X-Received: by 2002:ab0:6652:: with SMTP id b18mr1694019uaq.46.1544804329934;
+        Fri, 14 Dec 2018 08:18:49 -0800 (PST)
+Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com. [209.85.222.45])
+        by smtp.gmail.com with ESMTPSA id n15sm2252944uao.18.2018.12.14.08.18.48
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 14 Dec 2018 08:18:49 -0800 (PST)
+Received: by mail-ua1-f45.google.com with SMTP id u19so2183861uae.4
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 08:18:48 -0800 (PST)
+X-Received: by 2002:ab0:146b:: with SMTP id c40mr1586552uae.9.1544804327990;
+ Fri, 14 Dec 2018 08:18:47 -0800 (PST)
+MIME-Version: 1.0
+References: <20181127085828.17908-1-sibis@codeaurora.org> <CAD=FV=U+LHa0QpPuZhd04=WkMrrM1kBUYhkS9RqSSR6uLijbBA@mail.gmail.com>
+ <20181214045218.GJ1578@tuxbook-pro>
+In-Reply-To: <20181214045218.GJ1578@tuxbook-pro>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Fri, 14 Dec 2018 08:18:34 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=WrvRH6QpaQ67yw2MFz8RP59ozkSfQC4+OAM_8fAbGZuw@mail.gmail.com>
+Message-ID: <CAD=FV=WrvRH6QpaQ67yw2MFz8RP59ozkSfQC4+OAM_8fAbGZuw@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: qcom: sdm845: Add Q6V5 MSS node
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     sibis@codeaurora.org, Rob Herring <robh+dt@kernel.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        tsoni@codeaurora.org, clew@codeaurora.org, akdwived@codeaurora.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-remoteproc@vger.kernel.org,
+        Evan Green <evgreen@chromium.org>,
+        Brian Norris <briannorris@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 10 Dec 2018 18:01:26 -0600
-Tom Zanussi <zanussi@kernel.org> wrote:
+Hi,
 
-> From: Tom Zanussi <tom.zanussi@linux.intel.com>
-> 
-> Add a test case verifying the basic functionality of the
-> hist:onchange($var) handler.
+On Thu, Dec 13, 2018 at 8:52 PM Bjorn Andersson
+<bjorn.andersson@linaro.org> wrote:
+>
+> On Thu 13 Dec 14:17 PST 2018, Doug Anderson wrote:
+> > On Tue, Nov 27, 2018 at 12:58 AM Sibi Sankar <sibis@codeaurora.org> wrote:
+> [..]
+> > > diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> > > index 58870273dbc9..df16ee464872 100644
+> > > --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> > > +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> > > @@ -1095,6 +1095,69 @@
+> > >                         };
+> > >                 };
+> > >
+> > > +               remoteproc@4080000 {
+> > > +                       compatible = "qcom,sdm845-mss-pil";
+> > > +                       reg = <0x04080000 0x408>, <0x04180000 0x48>;
+> >
+> > s/0x04080000/0x4080000 to appease the DT folks.
+> >
+>
+> Andy requests this to be padded to 8 digits, and I've come to really
+> appreciate this as it makes sorting much easier.
+>
+> But perhaps there's a verdict on this?
 
-This looks good to me.
+Hrm.  First I've heard of that.  ...and all of the other addresses in
+this file aren't padded to 8 digits.  Ugh.  I could submit a patch to
+fix them all (I actually like them padded too) but given the current
+number of outstanding patches against sdm845.dtsi it's just going to
+cause lots of merge conflicts?
 
-Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+I thought it was general DT practice to always omit leading zeros but
+I just searched and it appears that policy only applies to unit
+addresses.  Specifically I note that in
+<https://lkml.kernel.org/r/20180111060004.9333-1-bjorn.andersson@linaro.org>
+Rob H asked you to remove the leading zero from the unit address but
+_not_ the "reg".  So I guess padding the reg to 8 digits is OK.
 
-BTW, could you sort these test patches at the end of this series?
-(or at least after 2 features? since both depends on new onchange(var) feature)
-
-Thank you,
-
-> 
-> Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
-> ---
->  .../inter-event/trigger-onchange-action-hist.tc    | 28 ++++++++++++++++++++++
->  1 file changed, 28 insertions(+)
->  create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-onchange-action-hist.tc
-> 
-> diff --git a/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-onchange-action-hist.tc b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-onchange-action-hist.tc
-> new file mode 100644
-> index 000000000000..064a284e4e75
-> --- /dev/null
-> +++ b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-onchange-action-hist.tc
-> @@ -0,0 +1,28 @@
-> +#!/bin/sh
-> +# SPDX-License-Identifier: GPL-2.0
-> +# description: event trigger - test inter-event histogram trigger onchange action
-> +
-> +fail() { #msg
-> +    echo $1
-> +    exit_fail
-> +}
-> +
-> +if [ ! -f set_event ]; then
-> +    echo "event tracing is not supported"
-> +    exit_unsupported
-> +fi
-> +
-> +grep -q "onchange(var)" README || exit_unsupported # version issue
-> +
-> +echo "Test onchange action"
-> +
-> +echo 'hist:keys=comm:newprio=prio:onchange($newprio).save(comm,prio) if comm=="ping"' >> /sys/kernel/debug/tracing/events/sched/sched_waking/trigger
-> +
-> +ping $LOCALHOST -c 3
-> +nice -n 1 ping $LOCALHOST -c 3
-> +
-> +if ! grep -q "changed:" events/sched/sched_waking/hist; then
-> +    fail "Failed to create onchange action inter-event histogram"
-> +fi
-> +
-> +exit 0
-> -- 
-> 2.14.1
-> 
+tl;dr: Sure, keep the padding the 8 digits here and eventually we can
+fix-up the other nodes when there's not so much churn to sdm845.dtsi
+(or maybe Andy can do it himself?)  Sound like a plan?
 
 
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+-Doug
