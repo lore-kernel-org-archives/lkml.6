@@ -2,178 +2,167 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C01B2C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 21:58:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01CF2C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 21:58:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE5FB208C2
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 21:58:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="DrwMNVOC";
-	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="NNRRo8KO"
+	by mail.kernel.org (Postfix) with ESMTP id 2E8CC2080F
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 21:58:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731414AbeLNV6a (ORCPT
+        id S1731428AbeLNV65 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 16:58:30 -0500
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:56788 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730987AbeLNV6a (ORCPT
+        Fri, 14 Dec 2018 16:58:57 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:50698 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730987AbeLNV64 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 16:58:30 -0500
-Received: from pps.filterd (m0001303.ppops.net [127.0.0.1])
-        by m0001303.ppops.net (8.16.0.27/8.16.0.27) with SMTP id wBELvSus008224;
-        Fri, 14 Dec 2018 13:57:38 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=facebook;
- bh=h/DScmKHnQ0tHXnmkOFx+tNgVsHO7n8i6Yxpl7bM0+U=;
- b=DrwMNVOCZlyfAhvKzHF73NkJ2bkIdUGa9Xz3JEzzKIy+Ls6qy1c2RnPFjMj2ZyUy8dSa
- PPE4mAwhPyPI/P9dCbbbVlmpRtZIrmDJjgdYTxbVzPr4nK97NL8daQmSJeWdIl8pbAa2
- fS/afRgfQlBWPL92EDLSBup5e4V2eOB4cdU= 
-Received: from maileast.thefacebook.com ([199.201.65.23])
-        by m0001303.ppops.net with ESMTP id 2pckmwr79h-8
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Fri, 14 Dec 2018 13:57:38 -0800
-Received: from frc-mbx05.TheFacebook.com (2620:10d:c0a1:f82::29) by
- frc-hub03.TheFacebook.com (2620:10d:c021:18::173) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.1.1531.3; Fri, 14 Dec 2018 13:57:21 -0800
-Received: from frc-hub06.TheFacebook.com (2620:10d:c021:18::176) by
- frc-mbx05.TheFacebook.com (2620:10d:c0a1:f82::29) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.1.1531.3; Fri, 14 Dec 2018 13:57:21 -0800
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (192.168.183.28)
- by o365-in.thefacebook.com (192.168.177.76) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1531.3
- via Frontend Transport; Fri, 14 Dec 2018 13:57:21 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector1-fb-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=h/DScmKHnQ0tHXnmkOFx+tNgVsHO7n8i6Yxpl7bM0+U=;
- b=NNRRo8KO1KfOs8pPTr1Fsv3eU1lIQ4C0R9GpgjkJ5bpM49p7VDpHoWC7BdMKlmlYpIB7QJvLHULSrgeSkp0ZpRiHyLlH0EGqihVAv0+1bv2U7a1NOnfDzsflvmYNsq3iMTxkWLaVT7AsHRswp2PRXWMdSdg03H0Q70b38fYluHI=
-Received: from BYAPR15MB2631.namprd15.prod.outlook.com (20.179.156.24) by
- BYAPR15MB3512.namprd15.prod.outlook.com (20.179.60.28) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1425.18; Fri, 14 Dec 2018 21:57:19 +0000
-Received: from BYAPR15MB2631.namprd15.prod.outlook.com
- ([fe80::990:c2e0:2a8a:25c5]) by BYAPR15MB2631.namprd15.prod.outlook.com
- ([fe80::990:c2e0:2a8a:25c5%3]) with mapi id 15.20.1425.021; Fri, 14 Dec 2018
- 21:57:19 +0000
-From:   Roman Gushchin <guro@fb.com>
-To:     Matthew Wilcox <willy@infradead.org>
-CC:     Joe Perches <joe@perches.com>, Roman Gushchin <guroan@gmail.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
+        Fri, 14 Dec 2018 16:58:56 -0500
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBELwlK9033817
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 16:58:55 -0500
+Received: from e36.co.us.ibm.com (e36.co.us.ibm.com [32.97.110.154])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2pcm2ft28d-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 16:58:55 -0500
+Received: from localhost
+        by e36.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <mwb@linux.vnet.ibm.com>;
+        Fri, 14 Dec 2018 21:58:54 -0000
+Received: from b03cxnp07029.gho.boulder.ibm.com (9.17.130.16)
+        by e36.co.us.ibm.com (192.168.1.136) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 14 Dec 2018 21:58:52 -0000
+Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
+        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBELwpHx20709458
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 14 Dec 2018 21:58:52 GMT
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DFB1D78060;
+        Fri, 14 Dec 2018 21:58:51 +0000 (GMT)
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4F1B17805E;
+        Fri, 14 Dec 2018 21:58:50 +0000 (GMT)
+Received: from oc5000245537.ibm.com (unknown [9.80.196.120])
+        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Fri, 14 Dec 2018 21:58:50 +0000 (GMT)
+Subject: Re: [PATCH v03] powerpc/mobility: Fix node detach/rename problem
+To:     Michael Ellerman <mpe@ellerman.id.au>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     devicetree@vger.kernel.org, tlfalcon@linux.vnet.ibm.com,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Kernel Team <Kernel-team@fb.com>
-Subject: Re: [RFC 2/4] mm: separate memory allocation and actual work in
- alloc_vmap_area()
-Thread-Topic: [RFC 2/4] mm: separate memory allocation and actual work in
- alloc_vmap_area()
-Thread-Index: AQHUk9fzDSxUUU4eTEmN2i0i66X5W6V+ibUAgAAYaoCAAAEwAIAAJPOA
-Date:   Fri, 14 Dec 2018 21:57:19 +0000
-Message-ID: <20181214215713.GA27488@tower.DHCP.thefacebook.com>
-References: <20181214180720.32040-1-guro@fb.com>
- <20181214180720.32040-3-guro@fb.com>
- <20181214181322.GC10600@bombadil.infradead.org>
- <0192c1984f42ad0a33e4c9aca04df90c97ebf412.camel@perches.com>
- <20181214194500.GF10600@bombadil.infradead.org>
-In-Reply-To: <20181214194500.GF10600@bombadil.infradead.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: MWHPR02CA0017.namprd02.prod.outlook.com
- (2603:10b6:300:4b::27) To BYAPR15MB2631.namprd15.prod.outlook.com
- (2603:10b6:a03:152::24)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [2620:10d:c090:200::4:3282]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BYAPR15MB3512;20:wEJdKAKMcDJl0jTYXXN1q3tKld09zaUmHxtEKjafQpy5HpoUgfEZ2QhfJ8GcvBiT+4KsxT1uQj5gQ+tNJN4gwU2ziACbNaiteyPjCf0HhMboO5dN4teqDuDcs/ihB0KXrhPpWipqmI3wp8U7nLqFj8LPmaGBBT7xBurLSsR8Wyc=
-x-ms-office365-filtering-correlation-id: 92219e0a-7e0c-46a1-cbab-08d6620f1e52
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BYAPR15MB3512;
-x-ms-traffictypediagnostic: BYAPR15MB3512:
-x-microsoft-antispam-prvs: <BYAPR15MB35129190624CD8D5E0BEFEC2BEA10@BYAPR15MB3512.namprd15.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(11241501185)(6040522)(2401047)(5005006)(8121501046)(823302103)(10201501046)(3231475)(944501520)(52105112)(3002001)(93006095)(93001095)(148016)(149066)(150057)(6041310)(20161123562045)(20161123560045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:BYAPR15MB3512;BCL:0;PCL:0;RULEID:;SRVR:BYAPR15MB3512;
-x-forefront-prvs: 08864C38AC
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(376002)(366004)(39860400002)(396003)(136003)(189003)(199004)(305945005)(105586002)(7736002)(6916009)(478600001)(2906002)(6116002)(6486002)(14454004)(229853002)(256004)(6436002)(1076002)(11346002)(6506007)(46003)(186003)(33896004)(4326008)(386003)(102836004)(486006)(6246003)(53936002)(68736007)(25786009)(446003)(9686003)(6512007)(86362001)(5660300001)(52116002)(99286004)(39060400002)(76176011)(8936002)(54906003)(316002)(8676002)(33656002)(93886005)(81166006)(71190400001)(71200400001)(81156014)(106356001)(4001150100001)(476003)(97736004)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR15MB3512;H:BYAPR15MB2631.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: 0Z1G/hhkmdLM5n/CIpMtQ0ZFuxpfSNrguTk76gwtq6mHeonW11QG6O+uWYwMv4I4Z2c2PLApxlgCSxSDVZQm79G+l1ITfsQw2sfYhPWkwNyFwfvqiFEXZktkZFNDwH//XaAsvZCCcLclawn/EEDtsUlwQMmTWkaYfLzKDon/OpajWffsFei8rz8rSdbOSKcUbrr23BDzPOYH3JGxVyfrqwoCrmtZjUKT33hqNJiMgHmzeSfE0P6sx6/bOGjuffEKVvxYFiZbJ1fPgaoh3o55CVod0+U9Hq8DHyZRCNayfywqvIeBudnTrBvmj8G8nigV
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <B16C1316E2CD244C86578D5E121C40FD@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        minkim@us.ibm.com, Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+References: <a2d46622-a957-dffe-04d1-8087bbf0f8b5@linux.vnet.ibm.com>
+ <871s6oxkdf.fsf@concordia.ellerman.id.au>
+ <CAL_Jsq+t--486MiSsHnKcVy=q2wVvJgUmtAV6Vy2WwSNKymELA@mail.gmail.com>
+ <48aa028d-b786-7704-70ff-75a6d2321474@gmail.com>
+ <877egew2ur.fsf@concordia.ellerman.id.au>
+From:   Michael Bringmann <mwb@linux.vnet.ibm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=mwb@linux.vnet.ibm.com; prefer-encrypt=mutual; keydata=
+ xsBNBFcY7GcBCADzw3en+yzo9ASFGCfldVkIg95SAMPK0myXp2XJYET3zT45uBsX/uj9/2nA
+ lBmXXeOSXnPfJ9V3vtiwcfATnWIsVt3tL6n1kqikzH9nXNxZT7MU/7gqzWZngMAWh/GJ9qyg
+ DTOZdjsvdUNUWxtiLvBo7y+reA4HjlQhwhYxxvCpXBeRoF0qDWfQ8DkneemqINzDZPwSQ7zY
+ t4F5iyN1I9GC5RNK8Y6jiKmm6bDkrrbtXPOtzXKs0J0FqWEIab/u3BDrRP3STDVPdXqViHua
+ AjEzthQbGZm0VCxI4a7XjMi99g614/qDcXZCs00GLZ/VYIE8hB9C5Q+l66S60PLjRrxnABEB
+ AAHNLU1pY2hhZWwgVy4gQnJpbmdtYW5uIDxtd2JAbGludXgudm5ldC5pYm0uY29tPsLAeAQT
+ AQIAIgUCVxjsZwIbAwYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQSEdag3dpuTI0NAf8
+ CKYTDKQLgOSjVrU2L5rM4lXaJRmQV6oidD3vIhKSnWRvPq9C29ifRG6ri20prTHAlc0vycgm
+ 41HHg0y2vsGgNXGTWC2ObemoZBI7mySXe/7Tq5mD/semGzOp0YWZ7teqrkiSR8Bw0p+LdE7K
+ QmT7tpjjvuhrtQ3RRojUYcuy1nWUsc4D+2cxsnZslsx84FUKxPbLagDgZmgBhUw/sUi40s6S
+ AkdViVCVS0WANddLIpG0cfdsV0kCae/XdjK3mRK6drFKv1z+QFjvOhc8QIkkxFD0da9w3tJj
+ oqnqHFV5gLcHO6/wizPx/NV90y6RngeBORkQiRFWxTXS4Oj9GVI/Us7ATQRXGOxnAQgAmJ5Y
+ ikTWrMWPfiveUacETyEhWVl7u8UhZcx3yy2te8O0ay7t9fYcZgIEfQPPVVus89acIXlG3wYL
+ DDPvb21OprLxi+ZJ2a0S5we+LcSWN1jByxJlbWBq+/LcMtGAOhNLpysY1gD0Y4UW/eKS+TFZ
+ 562qKC3k1dBvnV9JXCgeS1taYFxRdVAn+2DwK3nuyG/DDq/XgJ5BtmyC3MMx8CiW3POj+O+l
+ 6SedIeAfZlZ7/xhijx82g93h07VavUQRwMZgZFsqmuxBxVGiav2HB+dNvs3PFB087Pvc9OHe
+ qhajPWOP/gNLMmvBvknn1NToM9a8/E8rzcIZXoYs4RggRRYh6wARAQABwsBfBBgBAgAJBQJX
+ GOxnAhsMAAoJEEhHWoN3abky+RUH/jE08/r5QzaNKYeVhu0uVbgXu5fsxqr2cAxhf+KuwT3T
+ efhEP2alarxzUZdEh4MsG6c+X2NYLbD3cryiXxVx/7kSAJEFQJfA5P06g8NLR25Qpq9BLsN7
+ ++dxQ+CLKzSEb1X24hYAJZpOhS8ev3ii+M/XIo+olDBKuTaTgB6elrg3CaxUsVgLBJ+jbRkW
+ yQe2S5f/Ja1ThDpSSLLWLiLK/z7+gaqwhnwjQ8Z8Y9D2itJQcj4itHilwImsqwLG7SxzC0NX
+ IQ5KaAFYdRcOgwR8VhhkOIVd70ObSZU+E4pTET1WDz4o65xZ89yfose1No0+r5ht/xWOOrh8
+ 53/hcWvxHVs=
+Organization: IBM Linux Technology Center
+Date:   Fri, 14 Dec 2018 15:58:49 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 92219e0a-7e0c-46a1-cbab-08d6620f1e52
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Dec 2018 21:57:19.4899
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR15MB3512
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-14_12:,,
+In-Reply-To: <877egew2ur.fsf@concordia.ellerman.id.au>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18121421-0020-0000-0000-00000E99FBAA
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010226; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000271; SDB=6.01131827; UDB=6.00588240; IPR=6.00911958;
+ MB=3.00024694; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-14 21:58:54
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18121421-0021-0000-0000-0000640E9D8E
+Message-Id: <90fba2b5-139d-ec05-5708-0f0b656b142a@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-14_13:,,
  signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812140187
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 14, 2018 at 11:45:00AM -0800, Matthew Wilcox wrote:
-> On Fri, Dec 14, 2018 at 11:40:45AM -0800, Joe Perches wrote:
-> > On Fri, 2018-12-14 at 10:13 -0800, Matthew Wilcox wrote:
-> > > On Fri, Dec 14, 2018 at 10:07:18AM -0800, Roman Gushchin wrote:
-> > > > +/*
-> > > > + * Allocate a region of KVA of the specified size and alignment, w=
-ithin the
-> > > > + * vstart and vend.
-> > > > + */
-> > > > +static struct vmap_area *alloc_vmap_area(unsigned long size,
-> > > > +					 unsigned long align,
-> > > > +					 unsigned long vstart,
-> > > > +					 unsigned long vend,
-> > > > +					 int node, gfp_t gfp_mask)
-> > > > +{
-> > > > +	struct vmap_area *va;
-> > > > +	int ret;
-> > > > +
-> > > > +	va =3D kmalloc_node(sizeof(struct vmap_area),
-> > > > +			gfp_mask & GFP_RECLAIM_MASK, node);
-> > > > +	if (unlikely(!va))
-> > > > +		return ERR_PTR(-ENOMEM);
-> > > > +
-> > > > +	ret =3D init_vmap_area(va, size, align, vstart, vend, node, gfp_m=
-ask);
-> > > > +	if (ret) {
-> > > > +		kfree(va);
-> > > > +		return ERR_PTR(ret);
-> > > > +	}
-> > > > +
-> > > > +	return va;
-> > > >  }
-> > > > =20
-> > > > +
-> > >=20
-> > > Another spurious blank line?
-> >=20
-> > I don't think so.
-> >=20
-> > I think it is the better style to separate
-> > the error return from the normal return.
->=20
-> Umm ... this blank line changed the file from having one blank line
-> after the function to having two blank lines after the function.
->=20
+On 12/12/2018 08:57 PM, Michael Ellerman wrote:
+> Frank Rowand <frowand.list@gmail.com> writes:
+>> On 12/11/18 8:07 AM, Rob Herring wrote:
+>>> On Tue, Dec 11, 2018 at 7:29 AM Michael Ellerman <mpe@ellerman.id.au> wrote:
+> ...
+>>>> diff --git a/drivers/of/base.c b/drivers/of/base.c
+>>>> index 09692c9b32a7..d8e4534c0686 100644
+>>>> --- a/drivers/of/base.c
+>>>> +++ b/drivers/of/base.c
+>>>> @@ -1190,6 +1190,10 @@ struct device_node *of_find_node_by_phandle(phandle handle)
+>>>>                 if (phandle_cache[masked_handle] &&
+>>>>                     handle == phandle_cache[masked_handle]->phandle)
+>>>>                         np = phandle_cache[masked_handle];
+>>>> +
+>>>> +               /* If we find a detached node, remove it */
+>>>> +               if (of_node_check_flag(np, OF_DETACHED))
+>>>> +                       np = phandle_cache[masked_handle] = NULL;
+>>
+>> The bug you found exposes a couple of different issues, a little bit
+>> deeper than the proposed fix.  I'll work on a fuller fix tonight or
+>> tomorrow.
+> 
+> OK thanks.
+> 
+>>> I'm wondering if we should explicitly remove the node from the cache
+>>> when we set OF_DETACHED. Otherwise, it could be possible that the node
+>>> pointer has been freed already. Or maybe we need both?
+>>
+>> Yes, it should be explicitly removed.  I may also add in a paranoia check in
+>> of_find_node_by_phandle().
+> 
+> That seems best to me.
 
-Yes, it's an odd free line (here and above), will remove them in v2.
-Thanks!
+I agree that we should do both.
+
+> 
+> cheers
+
+Michael
+
+-- 
+Michael W. Bringmann
+Linux I/O, Networking and Security Development
+IBM Corporation
+Tie-Line  363-5196
+External: (512) 286-5196
+Cell:       (512) 466-0650
+mwb@linux.vnet.ibm.com
+
