@@ -7,52 +7,50 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 117E7C6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:43:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D277C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:43:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C88FA20892
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:43:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3302020892
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:43:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544791394;
-	bh=NjFm7mLiW5o1rE+OpVrr6zIPqwDa5YRFwMM3Nia2mXU=;
+	s=default; t=1544791419;
+	bh=NCJ7rBbWhGz+sZAHJR2WjQmVQFzShEmjGNuw6vwgqaM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ar8qtaa1fkMsv/UfRfiWYrhWoaKw4+hhdGv3G7GWgZZFgfgDAFYU6JPU1jAfMApb6
-	 etXTqtOAdXW3imERonoK6mPEbdl/f4eD8vupTa9sA4Am4G+XN7fI2exYJ4SqB6ky0j
-	 yKlkZio/D7eTEXbJDBpm+wI8dX8zvpKr+hOHKCZ8=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C88FA20892
+	b=LrZCFG8qaIm1pMXz4BFi504Ni7dNSG9fcXawKMUEYMxSEaTMplRV2Snnc9jB5W8fC
+	 n5WxuKyJV3QNImemToirZPYfwLkZud5SclvLxrmvtEPVprebH/ixCKvdF8Sop7FkrH
+	 jc2Bma2RZAvlllxbLJSIaKb5+zKXCsYAaP62xzdI=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3302020892
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730257AbeLNMnN (ORCPT
+        id S1730226AbeLNMnh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:43:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45240 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:43:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44866 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730013AbeLNMCV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:02:21 -0500
+        id S1729943AbeLNMCH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:02:07 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D0AF62146E;
-        Fri, 14 Dec 2018 12:02:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D33CB2145D;
+        Fri, 14 Dec 2018 12:02:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544788940;
-        bh=NjFm7mLiW5o1rE+OpVrr6zIPqwDa5YRFwMM3Nia2mXU=;
+        s=default; t=1544788927;
+        bh=NCJ7rBbWhGz+sZAHJR2WjQmVQFzShEmjGNuw6vwgqaM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PQmV0pBztrnEboX/YqrF6x7TgQ7BltcyhfjrTom5iy4JAnrhf3Or2m9ui8S6Vl39a
-         3OzZZ7Q6E4FFHqbW30QP0NUTyFfy16QWu2KyA/szA8SZCuZSbGcNZJVVjjfrIqwvH+
-         8XiN5vnW2YhTErD4ITUV9O8KeZYqccDlWrqYVbYI=
+        b=LEqxnDg5W/F2VktH9Ig4cJ/gfC8u/4Cb3QSmNVFppmmDtsp6BOctK5xzvcrdLZvxx
+         dVU+oQlpC5jk3HgGr4yCti4dX6ODWhD8sZR7Uy4nFvtT0b4nfS1Mh8NuBpprZLhJKb
+         qfedPG32aBZjPYCs/xVLi8bMoONCo5vp7GqKM0Ao=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Quentin Monnet <quentin.monnet@netronome.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
+        stable@vger.kernel.org, Adam Ford <aford173@gmail.com>,
+        Tony Lindgren <tony@atomide.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 032/142] tools: bpftool: prevent infinite loop in get_fdinfo()
-Date:   Fri, 14 Dec 2018 12:58:37 +0100
-Message-Id: <20181214115748.337244816@linuxfoundation.org>
+Subject: [PATCH 4.19 027/142] ARM: dts: am3517: Fix pinmuxing for CD on MMC1
+Date:   Fri, 14 Dec 2018 12:58:32 +0100
+Message-Id: <20181214115748.140545998@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115747.053633987@linuxfoundation.org>
 References: <20181214115747.053633987@linuxfoundation.org>
@@ -71,37 +69,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 53909030aa29bffe1f8490df62176c2375135652 ]
+[ Upstream commit e7f4ffffa972db4820c23ff9831a6a4f3f6d8cc5 ]
 
-Function getline() returns -1 on failure to read a line, thus creating
-an infinite loop in get_fdinfo() if the key is not found. Fix it by
-calling the function only as long as we get a strictly positive return
-value.
+The MMC1 is active low, not active high.  For some reason,
+this worked with different combination of U-Boot and kernels,
+but it's supposed to be active low and is currently broken.
 
-Found by copying the code for a key which is not always present...
+Fixes: cfaa856a2510 ("ARM: dts: am3517: Add pinmuxing, CD and
+WP for MMC1") #kernel 4.18+
 
-Fixes: 71bb428fe2c1 ("tools: bpf: add bpftool")
-Signed-off-by: Quentin Monnet <quentin.monnet@netronome.com>
-Reviewed-by: Jakub Kicinski <jakub.kicinski@netronome.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Signed-off-by: Adam Ford <aford173@gmail.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/bpf/bpftool/common.c | 2 +-
+ arch/arm/boot/dts/am3517-evm.dts | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/bpf/bpftool/common.c b/tools/bpf/bpftool/common.c
-index b3a0709ea7ed..fcaf00621102 100644
---- a/tools/bpf/bpftool/common.c
-+++ b/tools/bpf/bpftool/common.c
-@@ -304,7 +304,7 @@ char *get_fdinfo(int fd, const char *key)
- 		return NULL;
- 	}
+diff --git a/arch/arm/boot/dts/am3517-evm.dts b/arch/arm/boot/dts/am3517-evm.dts
+index 1d158cfda15f..c45aef806870 100644
+--- a/arch/arm/boot/dts/am3517-evm.dts
++++ b/arch/arm/boot/dts/am3517-evm.dts
+@@ -227,7 +227,7 @@
+ 	vmmc-supply = <&vmmc_fixed>;
+ 	bus-width = <4>;
+ 	wp-gpios = <&gpio4 30 GPIO_ACTIVE_HIGH>; /* gpio_126 */
+-	cd-gpios = <&gpio4 31 GPIO_ACTIVE_HIGH>; /* gpio_127 */
++	cd-gpios = <&gpio4 31 GPIO_ACTIVE_LOW>; /* gpio_127 */
+ };
  
--	while ((n = getline(&line, &line_n, fdi))) {
-+	while ((n = getline(&line, &line_n, fdi)) > 0) {
- 		char *value;
- 		int len;
- 
+ &mmc3 {
 -- 
 2.19.1
 
