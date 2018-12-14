@@ -7,40 +7,40 @@ X-Spam-Status: No, score=-11.9 required=3.0
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4B57C43444
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:54:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 876ECC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:55:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2CEA2208C1
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:54:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C93E2208C2
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:55:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731091AbeLNUyz (ORCPT
+        id S1731164AbeLNUz2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 15:54:55 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:55821 "EHLO
+        Fri, 14 Dec 2018 15:55:28 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:57319 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730828AbeLNUyy (ORCPT
+        with ESMTP id S1730757AbeLNUz1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 15:54:54 -0500
+        Fri, 14 Dec 2018 15:55:27 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBEKsl3a1459077
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBEKtLTi1459199
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Fri, 14 Dec 2018 12:54:47 -0800
+        Fri, 14 Dec 2018 12:55:21 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBEKslPg1459074;
-        Fri, 14 Dec 2018 12:54:47 -0800
-Date:   Fri, 14 Dec 2018 12:54:47 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBEKtKsb1459196;
+        Fri, 14 Dec 2018 12:55:20 -0800
+Date:   Fri, 14 Dec 2018 12:55:20 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-wycz66iy8dl2z3yifgqf894p@git.kernel.org>
-Cc:     mingo@kernel.org, acme@redhat.com, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, jolsa@kernel.org, namhyung@kernel.org,
-        adrian.hunter@intel.com, hpa@zytor.com
-Reply-To: hpa@zytor.com, namhyung@kernel.org, adrian.hunter@intel.com,
-          linux-kernel@vger.kernel.org, tglx@linutronix.de,
-          jolsa@kernel.org, mingo@kernel.org, acme@redhat.com
+Message-ID: <tip-2f69l7drca427ob4km8i7kvo@git.kernel.org>
+Cc:     mingo@kernel.org, linux-kernel@vger.kernel.org,
+        adrian.hunter@intel.com, namhyung@kernel.org, jolsa@kernel.org,
+        acme@redhat.com, tglx@linutronix.de, hpa@zytor.com
+Reply-To: hpa@zytor.com, tglx@linutronix.de, acme@redhat.com,
+          jolsa@kernel.org, namhyung@kernel.org, adrian.hunter@intel.com,
+          linux-kernel@vger.kernel.org, mingo@kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf header: Fix unchecked usage of strncpy()
-Git-Commit-ID: 8b3ff080ebb16abcb4766e916dc020add0f4df39
+Subject: [tip:perf/core] perf help: Remove needless use of strncpy()
+Git-Commit-ID: b8990e60c7a5643185bf751cae9cd58bcb8b6474
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -54,49 +54,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  8b3ff080ebb16abcb4766e916dc020add0f4df39
-Gitweb:     https://git.kernel.org/tip/8b3ff080ebb16abcb4766e916dc020add0f4df39
+Commit-ID:  b8990e60c7a5643185bf751cae9cd58bcb8b6474
+Gitweb:     https://git.kernel.org/tip/b8990e60c7a5643185bf751cae9cd58bcb8b6474
 Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Thu, 6 Dec 2018 11:09:46 -0300
+AuthorDate: Thu, 6 Dec 2018 11:20:21 -0300
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Thu, 6 Dec 2018 16:41:06 -0300
+CommitDate: Thu, 6 Dec 2018 16:41:15 -0300
 
-perf header: Fix unchecked usage of strncpy()
+perf help: Remove needless use of strncpy()
 
-The strncpy() function may leave the destination string buffer
-unterminated, better use strlcpy() that we have a __weak fallback
-implementation for systems without it.
+Since we make sure the destination buffer has at least strlen(orig) + 1,
+no need to do a strncpy(dest, orig, strlen(orig)), just use strcpy(dest,
+orig).
 
-This fixes this warning on an Alpine Linux Edge system with gcc 8.2:
+This silences this gcc 8.2 warning on Alpine Linux:
 
-  util/header.c: In function 'perf_event__synthesize_event_update_name':
-  util/header.c:3625:2: error: 'strncpy' output truncated before terminating nul copying as many bytes from a string as its length [-Werror=stringop-truncation]
-    strncpy(ev->data, evsel->name, len);
-    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  util/header.c:3618:15: note: length computed here
-    size_t len = strlen(evsel->name);
-                 ^~~~~~~~~~~~~~~~~~~
+  In function 'add_man_viewer',
+      inlined from 'perf_help_config' at builtin-help.c:284:3:
+  builtin-help.c:192:2: error: 'strncpy' output truncated before terminating nul copying as many bytes from a string as its length [-Werror=stringop-truncation]
+    strncpy((*p)->name, name, len);
+    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  builtin-help.c: In function 'perf_help_config':
+  builtin-help.c:187:15: note: length computed here
+    size_t len = strlen(name);
+                 ^~~~~~~~~~~~
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Fixes: a6e5281780d1 ("perf tools: Add event_update event unit type")
-Link: https://lkml.kernel.org/n/tip-wycz66iy8dl2z3yifgqf894p@git.kernel.org
+Fixes: 078006012401 ("perf_counter tools: add in basic glue from Git")
+Link: https://lkml.kernel.org/n/tip-2f69l7drca427ob4km8i7kvo@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/header.c | 2 +-
+ tools/perf/builtin-help.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
-index c87cfe6b7c96..1171d8400bf4 100644
---- a/tools/perf/util/header.c
-+++ b/tools/perf/util/header.c
-@@ -3622,7 +3622,7 @@ perf_event__synthesize_event_update_name(struct perf_tool *tool,
- 	if (ev == NULL)
- 		return -ENOMEM;
+diff --git a/tools/perf/builtin-help.c b/tools/perf/builtin-help.c
+index 1c41b4eaf73c..3d29d0524a89 100644
+--- a/tools/perf/builtin-help.c
++++ b/tools/perf/builtin-help.c
+@@ -189,7 +189,7 @@ static void add_man_viewer(const char *name)
+ 	while (*p)
+ 		p = &((*p)->next);
+ 	*p = zalloc(sizeof(**p) + len + 1);
+-	strncpy((*p)->name, name, len);
++	strcpy((*p)->name, name);
+ }
  
--	strncpy(ev->data, evsel->name, len);
-+	strlcpy(ev->data, evsel->name, len + 1);
- 	err = process(tool, (union perf_event*) ev, NULL, NULL);
- 	free(ev);
- 	return err;
+ static int supported_man_viewer(const char *name, size_t len)
