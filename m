@@ -4,59 +4,56 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DA56C6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:24:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 387E3C6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:24:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E53D020879
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:24:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F34B320892
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:24:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544790271;
-	bh=ywSiPdb7y3qGEOA3G0L8r97mpbU5vnycsg1hgKr6cMU=;
+	s=default; t=1544790288;
+	bh=0SB87O0M75B5IQMQphSeUIRxz7akZM1/3C7q+9EWfAk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=aHL8qMoaPSUN3zL4q5qi/KCfu7T9Su6Lt8MqZo5QW1kHjL4rRFovxh5EArMVvEngS
-	 PvmqDTdNJ5VuMYkmaLqjdkxDOIDGQ3WLqGKv/TMwmDN04a0XAKUkK2oKBAWy4n9oAZ
-	 iYW7Z1IN7t9HxGsz5rGRWoocfnWVhp9z5r+oMhWQ=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E53D020879
+	b=mPNVz4WjNd1In3xtwhPgbwLOHgM1okRWT8tQrhsqCnA34AwZsFlPLbmlA+m5Ier4s
+	 Whbh5c7LHGeju53PQ7uETh/5buQY/9F57G1rjIv8k5K70C4xy6PQAVbaptdVb8NXJq
+	 AXol1iYCX2RIDTYWm5ZG6i1ASP8zLOQKJwYKn5ok=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F34B320892
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731923AbeLNMYa (ORCPT
+        id S1731966AbeLNMYr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:24:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60486 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:24:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60100 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731824AbeLNMND (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:13:03 -0500
+        id S1731995AbeLNMMr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:12:47 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BB69720892;
-        Fri, 14 Dec 2018 12:13:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 48B9C214D9;
+        Fri, 14 Dec 2018 12:12:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789582;
-        bh=ywSiPdb7y3qGEOA3G0L8r97mpbU5vnycsg1hgKr6cMU=;
+        s=default; t=1544789566;
+        bh=0SB87O0M75B5IQMQphSeUIRxz7akZM1/3C7q+9EWfAk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sb2IUPKPCC/1FKfZ1Eaw3oN4UezavtOsm7XCbCrgD1nB2WPDsntnCDFkSUVmbgCEJ
-         UmTv4Mvq/0kZKRZJcrT8Sq0iHGDWD4cNHqbvZYJVVSmTWlzzFq1TTg8u44K5cPAlUX
-         SDsxsc+5U2QLENufgZHWSJMhmx//9xiMDCimnU3I=
+        b=Ln81NS/LBpXpzXkkRlSzBhX1xAc1vWfUbRFOAxBAPAt75x8F/VeSsaaPQNgLYUHVU
+         4PHkdEXl/pB3fRwv2j5VdeWg7Y2ZXaKuSY/Ik3rRwJ+jmPvZKPB4H82K8BBljackcJ
+         5Mq28szBQPqJkuBDPW0f755OBeciZUk0C/ZCMVXY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pan Bian <bianpan2016@163.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Junxiao Bi <junxiao.bi@oracle.com>,
-        Joseph Qi <jiangqi903@gmail.com>,
-        Changwei Ge <ge.changwei@h3c.com>,
+        stable@vger.kernel.org, Artem Savkov <asavkov@redhat.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 49/51] ocfs2: fix potential use after free
-Date:   Fri, 14 Dec 2018 13:00:51 +0100
-Message-Id: <20181214115717.404457127@linuxfoundation.org>
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 21/51] objtool: Fix double-free in .cold detection error path
+Date:   Fri, 14 Dec 2018 13:00:23 +0100
+Message-Id: <20181214115715.391008633@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115713.244259772@linuxfoundation.org>
 References: <20181214115713.244259772@linuxfoundation.org>
@@ -75,45 +72,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 164f7e586739d07eb56af6f6d66acebb11f315c8 ]
+[ Upstream commit 0b9301fb632f7111a3293a30cc5b20f1b82ed08d ]
 
-ocfs2_get_dentry() calls iput(inode) to drop the reference count of
-inode, and if the reference count hits 0, inode is freed.  However, in
-this function, it then reads inode->i_generation, which may result in a
-use after free bug.  Move the put operation later.
+If read_symbols() fails during second list traversal (the one dealing
+with ".cold" subfunctions) it frees the symbol, but never deletes it
+from the list/hash_table resulting in symbol being freed again in
+elf_close(). Fix it by just returning an error, leaving cleanup to
+elf_close().
 
-Link: http://lkml.kernel.org/r/1543109237-110227-1-git-send-email-bianpan2016@163.com
-Fixes: 781f200cb7a("ocfs2: Remove masklog ML_EXPORT.")
-Signed-off-by: Pan Bian <bianpan2016@163.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Mark Fasheh <mark@fasheh.com>
-Cc: Joel Becker <jlbec@evilplan.org>
-Cc: Junxiao Bi <junxiao.bi@oracle.com>
-Cc: Joseph Qi <jiangqi903@gmail.com>
-Cc: Changwei Ge <ge.changwei@h3c.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Artem Savkov <asavkov@redhat.com>
+Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Fixes: 13810435b9a7 ("objtool: Support GCC 8's cold subfunctions")
+Link: http://lkml.kernel.org/r/beac5a9b7da9e8be90223459dcbe07766ae437dd.1542736240.git.jpoimboe@redhat.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/ocfs2/export.c | 2 +-
+ tools/objtool/elf.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/ocfs2/export.c b/fs/ocfs2/export.c
-index 827fc9809bc2..3494e220b510 100644
---- a/fs/ocfs2/export.c
-+++ b/fs/ocfs2/export.c
-@@ -125,10 +125,10 @@ static struct dentry *ocfs2_get_dentry(struct super_block *sb,
+diff --git a/tools/objtool/elf.c b/tools/objtool/elf.c
+index 0d1acb704f64..3616d626991e 100644
+--- a/tools/objtool/elf.c
++++ b/tools/objtool/elf.c
+@@ -312,7 +312,7 @@ static int read_symbols(struct elf *elf)
+ 			if (!pfunc) {
+ 				WARN("%s(): can't find parent function",
+ 				     sym->name);
+-				goto err;
++				return -1;
+ 			}
  
- check_gen:
- 	if (handle->ih_generation != inode->i_generation) {
--		iput(inode);
- 		trace_ocfs2_get_dentry_generation((unsigned long long)blkno,
- 						  handle->ih_generation,
- 						  inode->i_generation);
-+		iput(inode);
- 		result = ERR_PTR(-ESTALE);
- 		goto bail;
- 	}
+ 			sym->pfunc = pfunc;
 -- 
 2.19.1
 
