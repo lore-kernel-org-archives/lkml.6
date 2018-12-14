@@ -6,69 +6,69 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FC5EC6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 09:11:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8342C67872
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 09:11:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2385720879
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 09:11:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2385720879
+	by mail.kernel.org (Postfix) with ESMTP id 8F4002086D
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 09:11:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F4002086D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729417AbeLNJLj (ORCPT
+        id S1729455AbeLNJLk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 04:11:39 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57702 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727579AbeLNJLh (ORCPT
+        Fri, 14 Dec 2018 04:11:40 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:50688 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729364AbeLNJLj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 04:11:37 -0500
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBE99ewn031435
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 04:11:36 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2pc8gbax1v-1
+        Fri, 14 Dec 2018 04:11:39 -0500
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBE9A9j9099642
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 04:11:37 -0500
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2pc9c70rja-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 04:11:35 -0500
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 04:11:37 -0500
 Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <anju@linux.vnet.ibm.com>;
-        Fri, 14 Dec 2018 09:11:33 -0000
+        Fri, 14 Dec 2018 09:11:35 -0000
 Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 14 Dec 2018 09:11:29 -0000
+        Fri, 14 Dec 2018 09:11:34 -0000
 Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBE9BSBh6357264
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBE9BXq96619530
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 14 Dec 2018 09:11:28 GMT
+        Fri, 14 Dec 2018 09:11:33 GMT
 Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A0EB84C052;
-        Fri, 14 Dec 2018 09:11:28 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 3CB534C058;
+        Fri, 14 Dec 2018 09:11:33 +0000 (GMT)
 Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9CB3E4C044;
-        Fri, 14 Dec 2018 09:11:27 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 419774C04A;
+        Fri, 14 Dec 2018 09:11:32 +0000 (GMT)
 Received: from localhost.in.ibm.com (unknown [9.124.31.22])
         by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 14 Dec 2018 09:11:27 +0000 (GMT)
+        Fri, 14 Dec 2018 09:11:32 +0000 (GMT)
 From:   Anju T Sudhakar <anju@linux.vnet.ibm.com>
 To:     mpe@ellerman.id.au, linux-kernel@vger.kernel.org
 Cc:     linuxppc-dev@lists.ozlabs.org, maddy@linux.vnet.ibm.com,
         anju@linux.vnet.ibm.com
-Subject: [PATCH v2 2/5] powerpc/perf: Rearrange setting of ldbar for thread-imc
-Date:   Fri, 14 Dec 2018 14:41:19 +0530
+Subject: [PATCH v2 4/5] powerpc/perf: Trace imc events detection and cpuhotplug
+Date:   Fri, 14 Dec 2018 14:41:21 +0530
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181214091122.20992-1-anju@linux.vnet.ibm.com>
 References: <20181214091122.20992-1-anju@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18121409-0020-0000-0000-000002F6D6D8
+x-cbid: 18121409-0016-0000-0000-000002365740
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18121409-0021-0000-0000-000021470E30
-Message-Id: <20181214091122.20992-3-anju@linux.vnet.ibm.com>
+x-cbparentid: 18121409-0017-0000-0000-0000328E9549
+Message-Id: <20181214091122.20992-5-anju@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-14_04:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
  mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1810050000 definitions=main-1812140085
@@ -77,101 +77,179 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-LDBAR holds the memory address allocated for each cpu. For thread-imc
-the mode bit (i.e bit 1) of LDBAR is set to accumulation.
-Currently, ldbar is loaded with per cpu memory address and mode set to
-accumulation at boot time.
-
-To enable trace-imc, the mode bit of ldbar should be set to 'trace'. So to
-accommodate trace-mode of IMC, reposition setting of ldbar for thread-imc
-to thread_imc_event_add(). Also reset ldbar at thread_imc_event_del().
+Patch detects trace-imc events, does memory initilizations for each online
+cpu, and registers cpuhotplug call-backs.
 
 Signed-off-by: Anju T Sudhakar <anju@linux.vnet.ibm.com>
 ---
- arch/powerpc/perf/imc-pmu.c | 28 +++++++++++++++++-----------
- 1 file changed, 17 insertions(+), 11 deletions(-)
+ arch/powerpc/perf/imc-pmu.c               | 91 +++++++++++++++++++++++
+ arch/powerpc/platforms/powernv/opal-imc.c |  3 +
+ include/linux/cpuhotplug.h                |  1 +
+ 3 files changed, 95 insertions(+)
 
 diff --git a/arch/powerpc/perf/imc-pmu.c b/arch/powerpc/perf/imc-pmu.c
-index f292a3f284f1..3bef46f8417d 100644
+index 5ca80545a849..1f09265c8fb0 100644
 --- a/arch/powerpc/perf/imc-pmu.c
 +++ b/arch/powerpc/perf/imc-pmu.c
-@@ -806,8 +806,11 @@ static int core_imc_event_init(struct perf_event *event)
+@@ -43,6 +43,10 @@ static DEFINE_PER_CPU(u64 *, thread_imc_mem);
+ static struct imc_pmu *thread_imc_pmu;
+ static int thread_imc_mem_size;
+ 
++/* Trace IMC data structures */
++static DEFINE_PER_CPU(u64 *, trace_imc_mem);
++static int trace_imc_mem_size;
++
+ static struct imc_pmu *imc_event_to_pmu(struct perf_event *event)
+ {
+ 	return container_of(event->pmu, struct imc_pmu, pmu);
+@@ -1068,6 +1072,54 @@ static void thread_imc_event_del(struct perf_event *event, int flags)
+ 	imc_event_update(event);
+ }
+ 
++/*
++ * Allocate a page of memory for each cpu, and load LDBAR with 0.
++ */
++static int trace_imc_mem_alloc(int cpu_id, int size)
++{
++	u64 *local_mem = per_cpu(trace_imc_mem, cpu_id);
++	int phys_id = cpu_to_node(cpu_id), rc = 0;
++
++	if (!local_mem) {
++		local_mem = page_address(alloc_pages_node(phys_id,
++					GFP_KERNEL | __GFP_ZERO | __GFP_THISNODE |
++					__GFP_NOWARN, get_order(size)));
++		if (!local_mem)
++			return -ENOMEM;
++		per_cpu(trace_imc_mem, cpu_id) = local_mem;
++
++		/* Initialise the counters for trace mode */
++		rc = opal_imc_counters_init(OPAL_IMC_COUNTERS_TRACE, __pa((void *)local_mem),
++					    get_hard_smp_processor_id(cpu_id));
++		if (rc) {
++			pr_info("IMC:opal init failed for trace imc\n");
++			return rc;
++		}
++	}
++
++	mtspr(SPRN_LDBAR, 0);
++	return 0;
++}
++
++static int ppc_trace_imc_cpu_online(unsigned int cpu)
++{
++	return trace_imc_mem_alloc(cpu, trace_imc_mem_size);
++}
++
++static int ppc_trace_imc_cpu_offline(unsigned int cpu)
++{
++	mtspr(SPRN_LDBAR, 0);
++	return 0;
++}
++
++static int trace_imc_cpu_init(void)
++{
++	return cpuhp_setup_state(CPUHP_AP_PERF_POWERPC_TRACE_IMC_ONLINE,
++			  "perf/powerpc/imc_trace:online",
++			  ppc_trace_imc_cpu_online,
++			  ppc_trace_imc_cpu_offline);
++}
++
+ /* update_pmu_ops : Populate the appropriate operations for "pmu" */
+ static int update_pmu_ops(struct imc_pmu *pmu)
+ {
+@@ -1189,6 +1241,17 @@ static void cleanup_all_thread_imc_memory(void)
+ 	}
+ }
+ 
++static void cleanup_all_trace_imc_memory(void)
++{
++	int i, order = get_order(trace_imc_mem_size);
++
++	for_each_online_cpu(i) {
++		if (per_cpu(trace_imc_mem, i))
++			free_pages((u64)per_cpu(trace_imc_mem, i), order);
++
++	}
++}
++
+ /* Function to free the attr_groups which are dynamically allocated */
+ static void imc_common_mem_free(struct imc_pmu *pmu_ptr)
+ {
+@@ -1230,6 +1293,11 @@ static void imc_common_cpuhp_mem_free(struct imc_pmu *pmu_ptr)
+ 		cpuhp_remove_state(CPUHP_AP_PERF_POWERPC_THREAD_IMC_ONLINE);
+ 		cleanup_all_thread_imc_memory();
+ 	}
++
++	if (pmu_ptr->domain == IMC_DOMAIN_TRACE) {
++		cpuhp_remove_state(CPUHP_AP_PERF_POWERPC_TRACE_IMC_ONLINE);
++		cleanup_all_trace_imc_memory();
++	}
  }
  
  /*
-- * Allocates a page of memory for each of the online cpus, and write the
-- * physical base address of that page to the LDBAR for that cpu.
-+ * Allocates a page of memory for each of the online cpus, and load
-+ * LDBAR with 0.
-+ * The physical base address of the page allocated for a cpu will be
-+ * written to the LDBAR for that cpu, when the thread-imc event
-+ * is added.
-  *
-  * LDBAR Register Layout:
-  *
-@@ -825,7 +828,7 @@ static int core_imc_event_init(struct perf_event *event)
-  */
- static int thread_imc_mem_alloc(int cpu_id, int size)
- {
--	u64 ldbar_value, *local_mem = per_cpu(thread_imc_mem, cpu_id);
-+	u64 *local_mem = per_cpu(thread_imc_mem, cpu_id);
- 	int nid = cpu_to_node(cpu_id);
+@@ -1312,6 +1380,21 @@ static int imc_mem_init(struct imc_pmu *pmu_ptr, struct device_node *parent,
  
- 	if (!local_mem) {
-@@ -842,9 +845,7 @@ static int thread_imc_mem_alloc(int cpu_id, int size)
- 		per_cpu(thread_imc_mem, cpu_id) = local_mem;
- 	}
- 
--	ldbar_value = ((u64)local_mem & THREAD_IMC_LDBAR_MASK) | THREAD_IMC_ENABLE;
--
--	mtspr(SPRN_LDBAR, ldbar_value);
-+	mtspr(SPRN_LDBAR, 0);
- 	return 0;
- }
- 
-@@ -995,6 +996,7 @@ static int thread_imc_event_add(struct perf_event *event, int flags)
- {
- 	int core_id;
- 	struct imc_pmu_ref *ref;
-+	u64 ldbar_value, *local_mem = per_cpu(thread_imc_mem, smp_processor_id());
- 
- 	if (flags & PERF_EF_START)
- 		imc_event_start(event, flags);
-@@ -1003,6 +1005,9 @@ static int thread_imc_event_add(struct perf_event *event, int flags)
- 		return -EINVAL;
- 
- 	core_id = smp_processor_id() / threads_per_core;
-+	ldbar_value = ((u64)local_mem & THREAD_IMC_LDBAR_MASK) | THREAD_IMC_ENABLE;
-+	mtspr(SPRN_LDBAR, ldbar_value);
+ 		thread_imc_pmu = pmu_ptr;
+ 		break;
++	case IMC_DOMAIN_TRACE:
++		/* Update the pmu name */
++		pmu_ptr->pmu.name = kasprintf(GFP_KERNEL, "%s%s", s, "_imc");
++		if (!pmu_ptr->pmu.name)
++			return -ENOMEM;
 +
- 	/*
- 	 * imc pmus are enabled only when it is used.
- 	 * See if this is triggered for the first time.
-@@ -1034,11 +1039,7 @@ static void thread_imc_event_del(struct perf_event *event, int flags)
- 	int core_id;
- 	struct imc_pmu_ref *ref;
- 
--	/*
--	 * Take a snapshot and calculate the delta and update
--	 * the event counter values.
--	 */
--	imc_event_update(event);
-+	mtspr(SPRN_LDBAR, 0);
- 
- 	core_id = smp_processor_id() / threads_per_core;
- 	ref = &core_imc_refc[core_id];
-@@ -1057,6 +1058,11 @@ static void thread_imc_event_del(struct perf_event *event, int flags)
- 		ref->refc = 0;
++		trace_imc_mem_size = pmu_ptr->counter_mem_size;
++		for_each_online_cpu(cpu) {
++			res = trace_imc_mem_alloc(cpu, trace_imc_mem_size);
++			if (res) {
++				cleanup_all_trace_imc_memory();
++				goto err;
++			}
++		}
++		break;
+ 	default:
+ 		return -EINVAL;
  	}
- 	mutex_unlock(&ref->lock);
-+	/*
-+	 * Take a snapshot and calculate the delta and update
-+	 * the event counter values.
-+	 */
-+	imc_event_update(event);
- }
+@@ -1384,6 +1467,14 @@ int init_imc_pmu(struct device_node *parent, struct imc_pmu *pmu_ptr, int pmu_id
+ 			goto err_free_mem;
+ 		}
  
- /* update_pmu_ops : Populate the appropriate operations for "pmu" */
++		break;
++	case IMC_DOMAIN_TRACE:
++		ret = trace_imc_cpu_init();
++		if (ret) {
++			cleanup_all_trace_imc_memory();
++			goto err_free_mem;
++		}
++
+ 		break;
+ 	default:
+ 		return  -EINVAL;	/* Unknown domain */
+diff --git a/arch/powerpc/platforms/powernv/opal-imc.c b/arch/powerpc/platforms/powernv/opal-imc.c
+index 58a07948c76e..dedc9ae22662 100644
+--- a/arch/powerpc/platforms/powernv/opal-imc.c
++++ b/arch/powerpc/platforms/powernv/opal-imc.c
+@@ -284,6 +284,9 @@ static int opal_imc_counters_probe(struct platform_device *pdev)
+ 		case IMC_TYPE_THREAD:
+ 			domain = IMC_DOMAIN_THREAD;
+ 			break;
++		case IMC_TYPE_TRACE:
++			domain = IMC_DOMAIN_TRACE;
++			break;
+ 		default:
+ 			pr_warn("IMC Unknown Device type \n");
+ 			domain = -1;
+diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
+index e0cd2baa8380..c471f2de878b 100644
+--- a/include/linux/cpuhotplug.h
++++ b/include/linux/cpuhotplug.h
+@@ -167,6 +167,7 @@ enum cpuhp_state {
+ 	CPUHP_AP_PERF_POWERPC_NEST_IMC_ONLINE,
+ 	CPUHP_AP_PERF_POWERPC_CORE_IMC_ONLINE,
+ 	CPUHP_AP_PERF_POWERPC_THREAD_IMC_ONLINE,
++	CPUHP_AP_PERF_POWERPC_TRACE_IMC_ONLINE,
+ 	CPUHP_AP_WATCHDOG_ONLINE,
+ 	CPUHP_AP_WORKQUEUE_ONLINE,
+ 	CPUHP_AP_RCUTREE_ONLINE,
 -- 
 2.17.1
 
