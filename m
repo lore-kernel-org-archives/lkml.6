@@ -2,133 +2,77 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADF1EC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 18:22:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B270C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 18:24:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA826206C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 18:22:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 73D97206BA
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 18:25:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="MG18kJed"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IxJhu6OA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730559AbeLNSWA (ORCPT
+        id S1730447AbeLNSY6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 13:22:00 -0500
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:13353 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728388AbeLNSWA (ORCPT
+        Fri, 14 Dec 2018 13:24:58 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:56182 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729752AbeLNSY5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 13:22:00 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c13f4c10000>; Fri, 14 Dec 2018 10:21:53 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Fri, 14 Dec 2018 10:21:59 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Fri, 14 Dec 2018 10:21:59 -0800
-Received: from HQMAIL102.nvidia.com (172.18.146.10) by HQMAIL106.nvidia.com
- (172.18.146.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 14 Dec
- 2018 18:21:59 +0000
-Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL102.nvidia.com
- (172.18.146.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
- Transport; Fri, 14 Dec 2018 18:21:59 +0000
-Received: from skomatineni-linux.nvidia.com (Not Verified[10.110.103.52]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5c13f4c70000>; Fri, 14 Dec 2018 10:21:59 -0800
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     <adrian.hunter@intel.com>, <ulf.hansson@linaro.org>,
-        <linux-mmc@vger.kernel.org>
-CC:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH V1] mmc: cqhci: DMA Configuration prior to CQE
-Date:   Fri, 14 Dec 2018 10:21:55 -0800
-Message-ID: <1544811715-23792-1-git-send-email-skomatineni@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-X-NVConfidentiality: public
+        Fri, 14 Dec 2018 13:24:57 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=wR+JE2iaCIjxwFXnmbeY7VZB8IJWu/VrAQRC+gCMdDo=; b=IxJhu6OA7NIUj/gVBPs2xZ1+t
+        PJjznIC4ou4jA2ncNWaKuWac+IoD5qkKayyMsSO4lc2Ekg6ZRC9glVBpwzTO2KqzIzZqenFk5ytuO
+        myjPO3f7H44jV/zOP6vxSdqcNfUSCPmiieYXP0embXJdfdu24zLrar8jdtF+Wjo+ZSuJiQRJquwjK
+        Y9T4q6p+u62n/pgiIBY088hLzHLw0Fwnwan9IjjEB6oBcsRQT5MP17rXdRglMBJmnkOk2UZ1JbN+G
+        rzcToT5o6Me8OlU8BLRvLmcsoNMkxIqwYwGn7AzkAf91C3sOi+DPYuvBYhkM9N4H2SaiIv8s2U49K
+        OqjijS2/Q==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gXs8q-0003IW-Nb; Fri, 14 Dec 2018 18:24:52 +0000
+Date:   Fri, 14 Dec 2018 10:24:52 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Roman Gushchin <guroan@gmail.com>
+Cc:     linux-mm@kvack.org, Alexey Dobriyan <adobriyan@gmail.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org,
+        kernel-team@fb.com, Roman Gushchin <guro@fb.com>
+Subject: Re: [RFC 1/4] mm: refactor __vunmap() to avoid duplicated call to
+ find_vm_area()
+Message-ID: <20181214182452.GD10600@bombadil.infradead.org>
+References: <20181214180720.32040-1-guro@fb.com>
+ <20181214180720.32040-2-guro@fb.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1544811714; bh=uUDoqdpD/nSQgikmY2SmsCqVimcjpnTvl6Fix1QU1BA=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         X-NVConfidentiality:MIME-Version:Content-Type;
-        b=MG18kJedSS9jPa1QSL5DxJN5qH9X8n36qNaf0T42BPortaHQ4sDAI/B620nwoE7b9
-         F2oHhKnRzGYB6NrJy9IYNDbDNxl/lIlLg2zbSNJFj6B+5NlyLNERJqbXkQGjjFIW17
-         5utMO9Ldr1VVLvpUdNX0Mec/meT8eu2F7TGFxYfm8KdqNd1dftSp50MDbb94KpK9VZ
-         G60OnqdMGCEN6G5xY29/rNDMgEXy/EdqMdhuPOXYr8OwkbAidC/EhdMX0dmvh//rvC
-         qMiyRy5BB5wJGDen4jCKS+8VsH00XyYhs8F4HMLHOcv8GWhn8XLzkvkbFCemz6CasJ
-         JV02g7eb4EpJA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181214180720.32040-2-guro@fb.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-eMMC-5.1 JESD85-B51 Spec (Section 6.6.39), mentions DMA selection
-and DMA Block size configuration on SDHCI Host need to be done
-prior to enabling Command Queue Engine.
+On Fri, Dec 14, 2018 at 10:07:17AM -0800, Roman Gushchin wrote:
+> __vunmap() calls find_vm_area() twice without an obvious reason:
+> first directly to get the area pointer, second indirectly by calling
+> remove_vm_area(), which is again searching for the area.
+> 
+> To remove this redundancy, let's split remove_vm_area() into
+> __remove_vm_area(struct vmap_area *), which performs the actual area
+> removal, and remove_vm_area(const void *addr) wrapper, which can
+> be used everywhere, where it has been used before.
+> 
+> On my test setup, I've got up to 12% speed up on vfree()'ing 1000000
+> of 4-pages vmalloc blocks.
+> 
+> Signed-off-by: Roman Gushchin <guro@fb.com>
+> Acked-by: Johannes Weiner <hannes@cmpxchg.org>
 
-This patch fixes the sequence to follow the spec.
-
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
----
- drivers/mmc/host/cqhci.c | 18 +++++++++++++++---
- 1 file changed, 15 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/mmc/host/cqhci.c b/drivers/mmc/host/cqhci.c
-index 159270e947cf..f701342e7212 100644
---- a/drivers/mmc/host/cqhci.c
-+++ b/drivers/mmc/host/cqhci.c
-@@ -248,6 +248,9 @@ static void __cqhci_enable(struct cqhci_host *cq_host)
- 		cqhci_writel(cq_host, cqcfg, CQHCI_CFG);
- 	}
- 
-+	if (cq_host->ops->enable)
-+		cq_host->ops->enable(mmc);
-+
- 	cqcfg &= ~(CQHCI_DCMD | CQHCI_TASK_DESC_SZ);
- 
- 	if (mmc->caps2 & MMC_CAP2_CQE_DCMD)
-@@ -273,9 +276,6 @@ static void __cqhci_enable(struct cqhci_host *cq_host)
- 
- 	mmc->cqe_on = true;
- 
--	if (cq_host->ops->enable)
--		cq_host->ops->enable(mmc);
--
- 	/* Ensure all writes are done before interrupts are enabled */
- 	wmb();
- 
-@@ -561,6 +561,7 @@ static int cqhci_request(struct mmc_host *mmc, struct mmc_request *mrq)
- 	int tag = cqhci_tag(mrq);
- 	struct cqhci_host *cq_host = mmc->cqe_private;
- 	unsigned long flags;
-+	u32 cqcfg = 0;
- 
- 	if (!cq_host->enabled) {
- 		pr_err("%s: cqhci: not enabled\n", mmc_hostname(mmc));
-@@ -579,8 +580,19 @@ static int cqhci_request(struct mmc_host *mmc, struct mmc_request *mrq)
- 			pr_err("%s: cqhci: CQE failed to exit halt state\n",
- 			       mmc_hostname(mmc));
- 		}
-+		/* Configuration must not be changed while enabled */
-+		cqcfg = cqhci_readl(cq_host, CQHCI_CFG);
-+		if (cqcfg & CQHCI_ENABLE) {
-+			cqcfg &= ~CQHCI_ENABLE;
-+			cqhci_writel(cq_host, cqcfg, CQHCI_CFG);
-+		}
-+
- 		if (cq_host->ops->enable)
- 			cq_host->ops->enable(mmc);
-+
-+		cqcfg |= CQHCI_ENABLE;
-+		cqhci_writel(cq_host, cqcfg, CQHCI_CFG);
-+
- 	}
- 
- 	if (mrq->data) {
--- 
-2.7.4
-
+Reviewed-by: Matthew Wilcox <willy@infradead.org>
