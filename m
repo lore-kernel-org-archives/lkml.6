@@ -2,116 +2,171 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72551C6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:42:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 802A3C6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:42:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5335208E7
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:42:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=megous.com header.i=@megous.com header.b="YKi32Jtc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5335208E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=megous.com
+	by mail.kernel.org (Postfix) with ESMTP id 4D92B20892
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:42:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D92B20892
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730408AbeLNMmO (ORCPT
+        id S1730718AbeLNMmS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:42:14 -0500
-Received: from vps.xff.cz ([195.181.215.36]:46428 "EHLO vps.xff.cz"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730196AbeLNMmM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:42:12 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=megous.com; s=mail;
-        t=1544791329; bh=okS3jNr43q2CRdJZ7mqQmQXOMY7AppBVBNBrFJwFg0k=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=YKi32Jtc/Zo4UWtOubshbFIihFEQLbAZ0bf+7ajXehamZ1K5OEwGR7wfU6phL0ztT
-         pJsuCywi1+lxMOqW57gUd45RbmLy/B+o+NdMQ+wbP4cXZumU1QnTI1XU0h1/63Vkw3
-         g+pmYmif7dbAAY/IExvY9eANzcoUnpgOEGTnIX0A=
-Date:   Fri, 14 Dec 2018 13:42:08 +0100
-From:   =?utf-8?Q?Ond=C5=99ej?= Jirman <megous@megous.com>
-To:     Chen-Yu Tsai <wens@csie.org>
-Cc:     Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-bluetooth@vger.kernel.org,
-        Loic Poulain <loic.poulain@gmail.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 00/15] ARM: sunxi: Enable Broadcom-based Bluetooth
- controllers
-Message-ID: <20181214124208.e72glckgcgbfyc4f@core.my.home>
-Mail-Followup-To: Chen-Yu Tsai <wens@csie.org>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-bluetooth@vger.kernel.org,
-        Loic Poulain <loic.poulain@gmail.com>,
-        linux-arm-kernel@lists.infradead.org
-References: <20181115093603.26729-1-wens@csie.org>
+        Fri, 14 Dec 2018 07:42:18 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:41208 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730364AbeLNMmR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:42:17 -0500
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBECdAW5021192
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 07:42:16 -0500
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2pcahj633c-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 07:42:16 -0500
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <pasic@linux.ibm.com>;
+        Fri, 14 Dec 2018 12:42:14 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 14 Dec 2018 12:42:11 -0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBECg9dk45547688
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 14 Dec 2018 12:42:09 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5AB8FAE04D;
+        Fri, 14 Dec 2018 12:42:09 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 28711AE05F;
+        Fri, 14 Dec 2018 12:42:09 +0000 (GMT)
+Received: from oc2783563651 (unknown [9.152.98.143])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri, 14 Dec 2018 12:42:09 +0000 (GMT)
+Date:   Fri, 14 Dec 2018 13:42:07 +0100
+From:   Halil Pasic <pasic@linux.ibm.com>
+To:     Cornelia Huck <cohuck@redhat.com>
+Cc:     Pierre Morel <pmorel@linux.ibm.com>, pasic@linux.vnet.ibm.com,
+        farman@linux.ibm.com, alifm@linux.ibm.com,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Subject: Re: [PATCH v3 6/6] vfio: ccw: serialize the write system calls
+In-Reply-To: <20181213163953.5b534e6b.cohuck@redhat.com>
+References: <1543408867-16465-1-git-send-email-pmorel@linux.ibm.com>
+        <1543408867-16465-7-git-send-email-pmorel@linux.ibm.com>
+        <20181213163953.5b534e6b.cohuck@redhat.com>
+Organization: IBM
+X-Mailer: Claws Mail 3.11.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181115093603.26729-1-wens@csie.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18121412-0012-0000-0000-000002D9039C
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18121412-0013-0000-0000-0000210E8EC9
+Message-Id: <20181214134207.1a6a95b9@oc2783563651>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-14_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812140114
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 15, 2018 at 05:35:48PM +0800, Chen-Yu Tsai wrote:
-> Hi everyone,
+On Thu, 13 Dec 2018 16:39:53 +0100
+Cornelia Huck <cohuck@redhat.com> wrote:
+
+> On Wed, 28 Nov 2018 13:41:07 +0100
+> Pierre Morel <pmorel@linux.ibm.com> wrote:
 > 
-> This is v2 of my Broadcom-based Bluetooth controllers on Allwinner SoC-
-> based SBCs series.
+> > When the user program is QEMU we rely on the QEMU lock to serialize
+> > the calls to the driver.
+> > 
+> > In the general case we need to make sure that two data transfer are
+> > not started at the same time.
+> > It would in the current implementation resul in a overwriting of the
+> > IO region.
+> > 
+> > We also need to make sure a clear or a halt started after a data
+> > transfer do not win the race agains the data transfer.
+> > Which would result in the data transfer being started after the
+> > halt/clear.
+> > 
+> > Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
+> > ---
+> >  drivers/s390/cio/vfio_ccw_ops.c | 17 +++++++++++++----
+> >  1 file changed, 13 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/drivers/s390/cio/vfio_ccw_ops.c b/drivers/s390/cio/vfio_ccw_ops.c
+> > index eb5b49d..b316966 100644
+> > --- a/drivers/s390/cio/vfio_ccw_ops.c
+> > +++ b/drivers/s390/cio/vfio_ccw_ops.c
+> > @@ -267,22 +267,31 @@ static ssize_t vfio_ccw_mdev_write(struct mdev_device *mdev,
+> >  {
+> >  	unsigned int index = VFIO_CCW_OFFSET_TO_INDEX(*ppos);
+> >  	struct vfio_ccw_private *private;
+> > +	static atomic_t serialize  = ATOMIC_INIT(0);
+> > +	int ret = -EINVAL;
+> > +
+> > +	if (!atomic_add_unless(&serialize, 1, 1))
+> > +		return -EBUSY;
 > 
-> Changes since v1:
+> I think that hammer is far too big: This serializes _all_ write
+> operations across _all_ devices.
 > 
->   - Collected tags
->   - Re-organize dt binding clocks and clock-names properties
->   - Simplify check for deferred probe when getting clocks
->   - Add explanation of Cubietruck's clk_out_a pinmux setting placement
->     to commit message.
->   - Add missing "uart-has-rtscts" property to Cubietruck device tree
->
-> [snip]
+> There are various cases of simultaneous writes that may happen
+> (assuming any userspace; QEMU locking will prevent some of them from
+> happening):
+> 
+> - One thread does a write for one mdev, another thread does a write for
+>   another mdev. For example, if two vcpus issue an I/O instruction on
+>   two different devices. This should be fine.
+> - One thread does a write for one mdev, another thread does a write for
+>   the same mdev. Maybe a guest has confused/no locking and is trying to
+>   do ssch on the same device from different vcpus. There, we want to
+>   exclude simultaneous writes; the desired outcome may be that one ssch
+>   gets forwarded to the hardware, and the second one either gets
+>   forwarded after processing for the first one has finished, or
+>   userspace gets an error immediately (hopefully resulting in a
+>   appropriate condition code for that second ssch in any case). Both
+>   handing the second ssch to the hardware or signaling device busy
+>   immediately are probably sane in that case.
+> - If those writes for the same device involve hsch/csch, things get
+>   more complicated. First, we have two different regions, and allowing
+>   simultaneous writes to the I/O region and to the async region should
+>   not really be a problem, so I don't think fencing should be done in
+>   the generic write handler. Second, the semantics for device busy are
+>   different: a hsch immediately after a ssch should not give device
+>   busy, and csch cannot return device busy at all.
+> 
+> I don't think we'll be able to get around some kind of "let's retry
+> sending this" logic for hsch/csch; maybe we should already do that for
+> ssch. (Like the -EINVAL logic I described in the other thread.)
+> 
+> 
 
-Hello,
+Nice write-up! I agree with the conclusion, and also with the most of
+the analysis. IMHO, to sort this out properly, we really have to think
+end-to-end (i.e. guest, userspace, vfio-ccw, backing-device). Striving
+towards an comprehensively documented the user-space facing vfio-ccw
+interface could help as well.
 
-I've tested your patch series on TBS A711 / BCM20702A1 with the following DTS:
+I hope we can figure out a good solution in the context of hsch/csch.
 
-
- /* There's the BT part of the AP6210 connected to that UART */
- &uart1 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&uart1_pins>, <&uart1_rts_cts_pins>;
-+	uart-has-rtscts;
- 	status = "okay";
-+
-+	bluetooth {
-+		compatible = "brcm,bcm20702a1";
-+		clocks = <&ac100_rtc 1>;
-+		clock-names = "lpo";
-+		vbat-supply = <&reg_vbat>;
-+		vddio-supply = <&reg_dldo1>;
-+		device-wakeup-gpios = <&pio 7 5 GPIO_ACTIVE_HIGH>; /* PH5 */
-+		host-wakeup-gpios = <&r_pio 0 5 GPIO_ACTIVE_HIGH>; /* PL5 */
-+		shutdown-gpios = <&r_pio 0 4 GPIO_ACTIVE_HIGH>; /* PL4 */
-+		max-speed = <1500000>;
-+	};
- };
+Regards,
+Halil
 
 
-And it works. :)
 
-Tested-by: Ondrej Jirman <megous@megous.com>
-
-
-Thank you and regards,
-  o.
