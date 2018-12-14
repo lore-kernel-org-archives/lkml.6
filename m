@@ -2,231 +2,150 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EB26C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 15:13:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAACFC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 15:14:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13D72206C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 15:13:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CBC25206A2
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 15:14:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VqXRPDve"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730487AbeLNPNW (ORCPT
+        id S1730302AbeLNPOx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 10:13:22 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:52878 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730198AbeLNPNW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 10:13:22 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 694FE8830E;
-        Fri, 14 Dec 2018 15:13:21 +0000 (UTC)
-Received: from redhat.com (ovpn-125-82.rdu2.redhat.com [10.10.125.82])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7960161295;
-        Fri, 14 Dec 2018 15:13:17 +0000 (UTC)
-Date:   Fri, 14 Dec 2018 10:13:15 -0500
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Jan Kara <jack@suse.cz>, John Hubbard <jhubbard@nvidia.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        John Hubbard <john.hubbard@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>, tom@talpey.com,
-        Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
-        Christoph Hellwig <hch@infradead.org>,
-        Christopher Lameter <cl@linux.com>,
-        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Michal Hocko <mhocko@kernel.org>, mike.marciniszyn@intel.com,
-        rcampbell@nvidia.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
-Message-ID: <20181214151314.GA3645@redhat.com>
-References: <20181207191620.GD3293@redhat.com>
- <3c4d46c0-aced-f96f-1bf3-725d02f11b60@nvidia.com>
- <20181208022445.GA7024@redhat.com>
- <20181210102846.GC29289@quack2.suse.cz>
- <20181212150319.GA3432@redhat.com>
- <20181212214641.GB29416@dastard>
- <20181212215931.GG5037@redhat.com>
- <20181213005119.GD29416@dastard>
- <20181213020229.GN5037@redhat.com>
- <20181214060012.GA10644@dastard>
+        Fri, 14 Dec 2018 10:14:53 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:40724 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730146AbeLNPOx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 10:14:53 -0500
+Received: by mail-wr1-f68.google.com with SMTP id p4so5764083wrt.7;
+        Fri, 14 Dec 2018 07:14:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=GroZnHYhK5WEaFeYsY94az07FFzLHHGVeLFkYbxLmHU=;
+        b=VqXRPDvevXzVtF+p1EVB05JV7QYlAIxj41j3xxEL0x0g42FMUGwwZudkaZJdmu2qcV
+         +djISuS2H9AZYEvRqmCmX1p+kQrtIEgwpIYvCC2qjVDAOwr6jUSNM8gPtjSv3I3OH+qb
+         doh/71JXynKKYr2vhmIiYcnVlVa7dDhsqRccQJr5cVdk6Z5RD4ylRS85v1tSK27+jx8p
+         rOMd2uaTxewNPYFL7cJx1QputZl5/xM3RnEhG92g7MFBlmVFJjpELb9PWS6OHQr8rWBS
+         0fpRHhS/lPGhN57rsc0fWvAgrDxGya3jscZIszf1eWOl07dJcDnDVbrT6xJqcS7Po0XH
+         ObVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=GroZnHYhK5WEaFeYsY94az07FFzLHHGVeLFkYbxLmHU=;
+        b=Fu5kFpmgoUNyvtTIUcOgcQfzGnpAAGGOpzNIMfo9OVkcKB8RDdSzsBQcb4Tzateedc
+         bcNTYK2TwlCkSHPVJzaaUr7IhH2YqU2acEz0XII27w1fDFTWQQcUwpHk6CQ91PAfFuWr
+         JWNeYCUxNPsR3kEzZw+TW5f6KZqUx8Drutw/1l0A4M6N+6VDbtukJZJnqWxcCyZFfIsn
+         A4SB4r9q00F5t3MkqFIa2i1jyf1hwsSpZ62KUvWWOgj4sRLGFLtS2PxQiJnmsG6t8vsK
+         0XTdoWBCZSNOVM3CvBV1dojnRqYnnrEkno4/MzUiULl4RiAMlNxqdkjG4MD6I/tIy6sl
+         mR/Q==
+X-Gm-Message-State: AA+aEWbggxemnGN1CMSHth3plNfUnlwnuq8h1jBxF2+vG2Rae5myKHwO
+        r6K6Zu9P25JNnkSBFjmxwCY=
+X-Google-Smtp-Source: AFSGD/UYHWARi3mbo6IYbyAczwjU1HGqq06c9g0aOBaOGdJN9ObSaAdVgq4EP0dJeMlvoDZa7InUIg==
+X-Received: by 2002:adf:8506:: with SMTP id 6mr3083464wrh.128.1544800490834;
+        Fri, 14 Dec 2018 07:14:50 -0800 (PST)
+Received: from [192.168.8.147] (225.83.136.77.rev.sfr.net. [77.136.83.225])
+        by smtp.gmail.com with ESMTPSA id x76sm10670915wmd.27.2018.12.14.07.14.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 14 Dec 2018 07:14:49 -0800 (PST)
+Subject: Re: KMSAN: uninit-value in __inet6_bind
+To:     Jon Maloy <jon.maloy@ericsson.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        Dmitry Vyukov <dvyukov@google.com>
+Cc:     "syzbot+c56449ed3652e6720f30@syzkaller.appspotmail.com" 
+        <syzbot+c56449ed3652e6720f30@syzkaller.appspotmail.com>,
+        Ying Xue <ying.xue@windriver.com>,
+        "tipc-discussion@lists.sourceforge.net" 
+        <tipc-discussion@lists.sourceforge.net>,
+        David Miller <davem@davemloft.net>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Kernel Network Developers <netdev@vger.kernel.org>,
+        "syzkaller-bugs@googlegroups.com" <syzkaller-bugs@googlegroups.com>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
+References: <0000000000001568af057cb456a8@google.com>
+ <CACT4Y+ZtAP4AVX9nARw+3PEdFL_WX3r37TAPuy=zBdZkg-0pRg@mail.gmail.com>
+ <CAM_iQpUZmbsEPAz9s1bDVHbm08+h4WE4mvoxitttDCsXMQvQ4g@mail.gmail.com>
+ <DM5PR15MB15135725A063E5370876EBA69AA10@DM5PR15MB1513.namprd15.prod.outlook.com>
+From:   Eric Dumazet <eric.dumazet@gmail.com>
+Message-ID: <2b0f7497-7842-e9c3-c7b0-1b2bf2d5ea59@gmail.com>
+Date:   Fri, 14 Dec 2018 07:14:46 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181214060012.GA10644@dastard>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Fri, 14 Dec 2018 15:13:21 +0000 (UTC)
+In-Reply-To: <DM5PR15MB15135725A063E5370876EBA69AA10@DM5PR15MB1513.namprd15.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 14, 2018 at 05:00:12PM +1100, Dave Chinner wrote:
-> On Wed, Dec 12, 2018 at 09:02:29PM -0500, Jerome Glisse wrote:
-> > On Thu, Dec 13, 2018 at 11:51:19AM +1100, Dave Chinner wrote:
-> > > On Wed, Dec 12, 2018 at 04:59:31PM -0500, Jerome Glisse wrote:
-> > > > On Thu, Dec 13, 2018 at 08:46:41AM +1100, Dave Chinner wrote:
-> > > > > On Wed, Dec 12, 2018 at 10:03:20AM -0500, Jerome Glisse wrote:
-> > > > > > On Mon, Dec 10, 2018 at 11:28:46AM +0100, Jan Kara wrote:
-> > > > > > > On Fri 07-12-18 21:24:46, Jerome Glisse wrote:
-> > > > > > > So this approach doesn't look like a win to me over using counter in struct
-> > > > > > > page and I'd rather try looking into squeezing HMM public page usage of
-> > > > > > > struct page so that we can fit that gup counter there as well. I know that
-> > > > > > > it may be easier said than done...
-> > > > > > 
-> > > > > > So i want back to the drawing board and first i would like to ascertain
-> > > > > > that we all agree on what the objectives are:
-> > > > > > 
-> > > > > >     [O1] Avoid write back from a page still being written by either a
-> > > > > >          device or some direct I/O or any other existing user of GUP.
-> > > 
-> > > IOWs, you need to mark pages being written to by a GUP as
-> > > PageWriteback, so all attempts to write the page will block on
-> > > wait_on_page_writeback() before trying to write the dirty page.
-> > 
-> > No you don't and you can't for the simple reasons is that the GUP
-> > of some device driver can last days, weeks, months, years ... so
-> > it is not something you want to do. Here is what happens today:
-> >     - user space submit directio read from a file and writing to
-> >       virtual address and the problematic case is when that virtual
-> >       address is actualy a mmap of a file itself
-> >     - kernel do GUP on the virtual address, if the page has write
-> >       permission in the CPU page table mapping then the page
-> >       refcount is incremented and the page is return to directio
-> >       kernel code that do memcpy
-> > 
-> >       It means that the page already went through page_mkwrite so
-> >       all is fine from fs point of view.
-> >       If page does not have write permission then a page fault is
-> >       triggered and page_mkwrite will happen and prep the page
-> >       accordingly
-> 
-> Yes, the short term GUP references do the right thing. They aren't
-> the issue - the problem is the long term GUP references that dirty
-> clean pages without first having called ->page_mkwrite.
-> 
-> > In the above scheme a page write back might happens after we looked
-> > up the page from the CPU page table and before directio finish with
-> > memcpy so that the page content during the write back might not be
-> > stable. This is a small window for things to go bad and i do not
-> > think we know if anybody ever experience a bug because of that.
-> > 
-> > For other GUP users the flow is the same except that device driver
-> > that keep the page around and do continuous dma to it might last
-> > days, weeks, months, years ... so for those the race window is big
-> > enough for bad things to happen. Jan have report of such bugs.
-> 
-> i.e. this case.
-> 
-> GUP faults the page, gets marked dirty, time passes, page
-> writeback occurs, it's now mapped clean, time passes, another RDMA
-> hits those pages, it calls set_page_dirty() again and things go
-> boom.
-> 
-> Basically, you are saying that the problem here is that writeback
-> of a dirty page occurred while there was an active GUP, and that
-> you want us to ....
-> 
-> > So what i am proposing to fix the above is have page_mkclean return
-> > a is_pin boolean if page is pin than the fs code use a bounce page
-> > to do the write back giving a stable bounce page. More over fs will
-> > need to keep around all buffer_head, blocks, ... ie whatever is
-> > associated with that file offset so that any latter set_page_dirty
-> > would not freak out and would not need to reallocate blocks or do
-> > anything heavy weight.
-> 
-> .... keep the dirty page pinned and never written back until the GUP
-> is released.
-
-I am sorry if i am so hard to understand but this is not what i
-have in mind. WHat i have in mind is the write back will use a
-bounce page so that the page content is stable and dma can keep
-happening to the GUPed page while write back make progress. But
-the end of write back callback should not free buffer_head or
-blocks or anything that was done by the first page_mkwrite so
-that another set_page_dirty can happens at anytime after without
-the fs code freaking out.
 
 
-> Which, quite frankly, is insanity.  The whole point of
-> ->page_mkwrite() is that we can clean file backed mapped pages at
-> any point in time and have the next write access correctly mark it
-> dirty again so it can be written back.
+On 12/14/2018 07:04 AM, Jon Maloy wrote:
 > 
-> This is *absolutely necessary* for data integrity (i.e. fsync,
-> sync(), etc) as well as filesystem management operations (e.g.
-> filesystem freeze) to work correctly and not lose data if the system
-> crashes or generate corrupt snapshots for backup or migration
-> purposes.
-
-Is keeping the result of the first page_mkwrite not doable ? Or
-at least avoiding freeing blocks and such so that we can have a
-latter lighter page_mkwrite_light that can be call by put_user_page
-
-The thing is we can not stop the DMA on some device and thus we
-can not force device do redo a GUP after a write back. Note that
-if you said that device must do that and you will not accept any-
-thing that do not do that, i am fine with that, this was what i
-advocated for in the first place, but it means that a certain
-number of device driver will have to regress from user point of
-view ie they will not be able to support GUP anymore.
-
 > 
-> > We have a separate discussion on what to do about truncate and other
-> > fs event that inherently invalidate portion of file so i do not
-> > want to complexify present discussion with those but we also have
-> > that in mind.
-> > 
-> > Do you see any fundamental issues with that ? It abides by all
-> > existing fs standard AFAICT (you have a page_mkwrite and we ask
-> > fs to keep the result of that around).
+>> -----Original Message-----
+>> From: Cong Wang <xiyou.wangcong@gmail.com>
+>> Sent: 12-Dec-18 01:17
+>> To: Dmitry Vyukov <dvyukov@google.com>
+>> Cc: syzbot+c56449ed3652e6720f30@syzkaller.appspotmail.com; Jon Maloy
+>> <jon.maloy@ericsson.com>; Ying Xue <ying.xue@windriver.com>; tipc-
+>> discussion@lists.sourceforge.net; David Miller <davem@davemloft.net>;
+>> Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>; LKML <linux-
+>> kernel@vger.kernel.org>; Linux Kernel Network Developers
+>> <netdev@vger.kernel.org>; syzkaller-bugs@googlegroups.com; Hideaki
+>> YOSHIFUJI <yoshfuji@linux-ipv6.org>
+>> Subject: Re: KMSAN: uninit-value in __inet6_bind
+>>
+>> On Tue, Dec 11, 2018 at 1:04 AM Dmitry Vyukov <dvyukov@google.com>
+>> wrote:
+>>>
+>>> On Tue, Dec 11, 2018 at 1:41 AM syzbot
+>>> <syzbot+c56449ed3652e6720f30@syzkaller.appspotmail.com> wrote:
+>>>>
+>>>> Hello,
+>>>>
+>>>> syzbot found the following crash on:
+>>>>
+>>>> HEAD commit:    3f06bda61398 kmsan: remove excessive KMSAN
+>> wrappers from a..
+>>>> git tree:       https://github.com/google/kmsan.git/master
+>>>> console output:
+>>>> https://syzkaller.appspot.com/x/log.txt?x=13ca6b05400000
+>>>> kernel config:
+>>>> https://syzkaller.appspot.com/x/.config?x=9b071100dcf8e641
+>>>> dashboard link:
+>> https://syzkaller.appspot.com/bug?extid=c56449ed3652e6720f30
+>>>> compiler:       clang version 8.0.0 (trunk 348261)
+>>>>
+>>>> Unfortunately, I don't have any reproducer for this crash yet.
+>>>>
+>>>> IMPORTANT: if you fix the bug, please add the following tag to the
+>> commit:
+>>>> Reported-by: syzbot+c56449ed3652e6720f30@syzkaller.appspotmail.com
+>>>
+>>> This looks like a bug in TIPC, +TIPC maintainers.
+>>>
+>>
+>> It looks more like udp_sock_create6() doesn't initialize
+>> udp6_addr.sin6_scope_id.
 > 
-> The fundamental issue is that ->page_mkwrite must be called on every
-> write access to a clean file backed page, not just the first one.
-> How long the GUP reference lasts is irrelevant, if the page is clean
-> and you need to dirty it, you must call ->page_mkwrite before it is
-> marked writeable and dirtied. Every. Time.
-
-I am fine with that then it is just a matter of telling device that
-do not abide by mmu notifier that they can not use GUP anymore which
-means that it will regress from user point of view. But i am ok with
-that.
-
+> Unfortunately udp_sock_create6() has no way of knowing this value, because struct udp_port_cfg is missing a field sin6_scope_id.
+> So this has to be fixed first by adding this field to the struct, and then setting it correctly in all current users.
 > 
-> > > Think ENOSPC - that has to be handled before we do the DMA, not
-> > > after. Before the DMA it is a recoverable error, after the DMA it is
-> > > data loss/corruption failure.
-> > 
-> > Yes agree and i hope that the above explaination properly explains
-> > that it would become legal to do set_page_dirty in put_user_page
-> > thanks to page_mkclean telling fs code not to recycle anything
-> > after write back finish.
-> 
-> No, page_mkclean doesn't help at all. Every time the page is dirtied
-> it may require block allocation (think COW filesystems) and so
-> ENOSPC (and block allocation) must be done /before/ the page is
-> dirtied. YOU can't just keep re-dirtying the same page and assuming
-> that the filesystem will just work with that - that's essentially
-> what the current code does with long term GUP references, and that's
-> why it's so broken.
-> 
-> /me is getting tired of explaining the same thing over and over
-> again.
 
-Sorry you feel that way, thank you for bearing with me. Like i said
-i am fine with telling GUP user that do not abibe by mmu notifier
-and thus that keep writing to page after write back that they need
-to stop even if it means breaking existing userspace.
+Do we reasons to believe values other than 0 are needed ?
 
-Cheers,
-Jérôme
+
