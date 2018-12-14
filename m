@@ -4,53 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09CFFC6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:25:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46480C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:25:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C704F20892
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:25:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C9562080F
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:25:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544790319;
-	bh=CqLMntQSb5i5rxe8x//iZt/SRmMl+XaROKACpPzesPY=;
+	s=default; t=1544790329;
+	bh=4gx8j7b6hdsQ6qKgTo5WvSMFrYX2ppNu81gp7e9UBWo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Y9mEjik7FgmF7qlsTaQyn/5z6CD6tI0KDkgr0z7hPi8y7joEl2nFvXXGsprD2DI3O
-	 RcizGDRAFLR7kh/VCkGEP/0r5MYvFfuPjepBxq6uNaXZHEBDkaFBUVrKEkaQcG2G/G
-	 uhzkL7DrumLpzTr4NZmOTmUt4x1ZtdEv0CA5NFTE=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C704F20892
+	b=q6A/xKTmEVScQEqLIJS80/d6iRtqPiII4Sq7Gv6rHKF/Bg7+5Mmp+MBDo+XTm+GKP
+	 Q5zxKgsmiQZMBZiY3AgasYATbAUCHln8xNgmM9++3R7hVycoEL/vOU7WXx8L2Q8kQ4
+	 zrGH05SS1NURH9MFTfc4YYwg4LEAU4UMrkVwUoYI=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C9562080F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731946AbeLNMMa (ORCPT
+        id S1731994AbeLNMZ0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:12:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59624 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:25:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59544 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731610AbeLNMM0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:12:26 -0500
+        id S1731931AbeLNMMY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:12:24 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A73B3214E0;
-        Fri, 14 Dec 2018 12:12:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 16DF2214F1;
+        Fri, 14 Dec 2018 12:12:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789546;
-        bh=CqLMntQSb5i5rxe8x//iZt/SRmMl+XaROKACpPzesPY=;
+        s=default; t=1544789543;
+        bh=4gx8j7b6hdsQ6qKgTo5WvSMFrYX2ppNu81gp7e9UBWo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NIAYSCO28nl687R4hRrjEajvp/urok9Lgi0HA8yPD1qFRzh1m1mI0g6rG5+6JogUI
-         7MxBKNAcldxoFtHyl45yhNrSfg0M1vG9McJUkBISnvNDE8Up21mWMQ7CFEF4i9nXSb
-         N66hjGPFTD6Hy7sSMnoqIsrNthvZltQfJ8HsplFI=
+        b=bWtx1va8NYRVmv/V4U2UFyXKdsnA8A3FqqqAGJaoybHCLbBbHDoaAfw+lRQGJ/nV8
+         3JLGi6PYIjYsVHugRPoIvB9heefj688PKaj206XMw0a9WzfSDLONV1HhwbWo9X1Ggy
+         zFM54O0iV/nfsD8rVlj8T7HTJ6vZZsxP8QdD7Rwk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yi Wang <wang.yi59@zte.com.cn>,
-        Paolo Bonzini <pbonzini@redhat.com>,
+        stable@vger.kernel.org, Thomas Richter <tmricht@linux.ibm.com>,
+        Hendrik Brueckner <brueckner@linux.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 34/51] KVM: x86: fix empty-body warnings
-Date:   Fri, 14 Dec 2018 13:00:36 +0100
-Message-Id: <20181214115716.288118539@linuxfoundation.org>
+Subject: [PATCH 4.9 16/51] s390/cpum_cf: Reject request for sampling in event initialization
+Date:   Fri, 14 Dec 2018 13:00:18 +0100
+Message-Id: <20181214115714.850743029@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115713.244259772@linuxfoundation.org>
 References: <20181214115713.244259772@linuxfoundation.org>
@@ -69,38 +70,111 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 354cb410d87314e2eda344feea84809e4261570a ]
+[ Upstream commit 613a41b0d16e617f46776a93b975a1eeea96417c ]
 
-We get the following warnings about empty statements when building
-with 'W=1':
+On s390 command perf top fails
+[root@s35lp76 perf] # ./perf top -F100000  --stdio
+   Error:
+   cycles: PMU Hardware doesn't support sampling/overflow-interrupts.
+   	Try 'perf stat'
+[root@s35lp76 perf] #
 
-arch/x86/kvm/lapic.c:632:53: warning: suggest braces around empty body in an ‘if’ statement [-Wempty-body]
-arch/x86/kvm/lapic.c:1907:42: warning: suggest braces around empty body in an ‘if’ statement [-Wempty-body]
-arch/x86/kvm/lapic.c:1936:65: warning: suggest braces around empty body in an ‘if’ statement [-Wempty-body]
-arch/x86/kvm/lapic.c:1975:44: warning: suggest braces around empty body in an ‘if’ statement [-Wempty-body]
+Using event -e rb0000 works as designed.  Event rb0000 is the event
+number of the sampling facility for basic sampling.
 
-Rework the debug helper macro to get rid of these warnings.
+During system start up the following PMUs are installed in the kernel's
+PMU list (from head to tail):
+   cpum_cf --> s390 PMU counter facility device driver
+   cpum_sf --> s390 PMU sampling facility device driver
+   uprobe
+   kprobe
+   tracepoint
+   task_clock
+   cpu_clock
 
-Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Perf top executes following functions and calls perf_event_open(2) system
+call with different parameters many times:
+
+cmd_top
+--> __cmd_top
+    --> perf_evlist__add_default
+        --> __perf_evlist__add_default
+            --> perf_evlist__new_cycles (creates event type:0 (HW)
+			    		config 0 (CPU_CYCLES)
+	        --> perf_event_attr__set_max_precise_ip
+		    Uses perf_event_open(2) to detect correct
+		    precise_ip level. Fails 3 times on s390 which is ok.
+
+Then functions cmd_top
+--> __cmd_top
+    --> perf_top__start_counters
+        -->perf_evlist__config
+	   --> perf_can_comm_exec
+               --> perf_probe_api
+	           This functions test support for the following events:
+		   "cycles:u", "instructions:u", "cpu-clock:u" using
+		   --> perf_do_probe_api
+		       --> perf_event_open_cloexec
+		           Test the close on exec flag support with
+			   perf_event_open(2).
+	               perf_do_probe_api returns true if the event is
+		       supported.
+		       The function returns true because event cpu-clock is
+		       supported by the PMU cpu_clock.
+	               This is achieved by many calls to perf_event_open(2).
+
+Function perf_top__start_counters now calls perf_evsel__open() for every
+event, which is the default event cpu_cycles (config:0) and type HARDWARE
+(type:0) which a predfined frequence of 4000.
+
+Given the above order of the PMU list, the PMU cpum_cf gets called first
+and returns 0, which indicates support for this sampling. The event is
+fully allocated in the function perf_event_open (file kernel/event/core.c
+near line 10521 and the following check fails:
+
+        event = perf_event_alloc(&attr, cpu, task, group_leader, NULL,
+		                 NULL, NULL, cgroup_fd);
+	if (IS_ERR(event)) {
+		err = PTR_ERR(event);
+		goto err_cred;
+	}
+
+        if (is_sampling_event(event)) {
+		if (event->pmu->capabilities & PERF_PMU_CAP_NO_INTERRUPT) {
+			err = -EOPNOTSUPP;
+			goto err_alloc;
+		}
+	}
+
+The check for the interrupt capabilities fails and the system call
+perf_event_open() returns -EOPNOTSUPP (-95).
+
+Add a check to return -ENODEV when sampling is requested in PMU cpum_cf.
+This allows common kernel code in the perf_event_open() system call to
+test the next PMU in above list.
+
+Fixes: 97b1198fece0 (" "s390, perf: Use common PMU interrupt disabled code")
+Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kvm/lapic.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/s390/kernel/perf_cpum_cf.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
-index 69a81a7daa24..c8630569e392 100644
---- a/arch/x86/kvm/lapic.c
-+++ b/arch/x86/kvm/lapic.c
-@@ -57,7 +57,7 @@
- #define APIC_BUS_CYCLE_NS 1
+diff --git a/arch/s390/kernel/perf_cpum_cf.c b/arch/s390/kernel/perf_cpum_cf.c
+index 037c2a253ae4..1238e7ef1170 100644
+--- a/arch/s390/kernel/perf_cpum_cf.c
++++ b/arch/s390/kernel/perf_cpum_cf.c
+@@ -344,6 +344,8 @@ static int __hw_perf_event_init(struct perf_event *event)
+ 		break;
  
- /* #define apic_debug(fmt,arg...) printk(KERN_WARNING fmt,##arg) */
--#define apic_debug(fmt, arg...)
-+#define apic_debug(fmt, arg...) do {} while (0)
- 
- /* 14 is the version for Xeon and Pentium 8.4.8*/
- #define APIC_VERSION			(0x14UL | ((KVM_APIC_LVT_NUM - 1) << 16))
+ 	case PERF_TYPE_HARDWARE:
++		if (is_sampling_event(event))	/* No sampling support */
++			return -ENOENT;
+ 		ev = attr->config;
+ 		/* Count user space (problem-state) only */
+ 		if (!attr->exclude_user && attr->exclude_kernel) {
 -- 
 2.19.1
 
