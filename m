@@ -2,766 +2,258 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B3C0C43612
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 23:55:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22535C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 23:58:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 972D220896
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 23:55:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544831713;
-	bh=5h3+qCW6w/bDxb37nFK6xB2Ys2478r2G8AoxN8cVAEM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=rcr/mmG3++YcqMq8u2OHCtFCB4N3eHiWMYOnw7RJAk1kPHEigUPJJ9D8hZMCr8JSM
-	 1grrA1Ug/ptKUpiiCERjtj6mFvM4sTEINucEBHxaahdJQ9i2E6Ju6xTjJUuAquTDDC
-	 VlDNibH91psMVjj6wbHECsmk+kHrRMXvUFatyjnk=
+	by mail.kernel.org (Postfix) with ESMTP id 317EF20896
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 23:58:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="VvqXJFUB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728567AbeLNXzM (ORCPT
+        id S1729044AbeLNX6e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 18:55:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35812 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726423AbeLNXzL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 18:55:11 -0500
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AB4BF206E0;
-        Fri, 14 Dec 2018 23:55:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544831709;
-        bh=5h3+qCW6w/bDxb37nFK6xB2Ys2478r2G8AoxN8cVAEM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=pEdWG1ht09xYeWutSC9vgn0ccWyS0VOdtYG60Ulu4vgP2bb1K+232h5dh+7sgLb/v
-         G8B9+fU81DzNXKDsLUKUj9AtumBrlC5aKmI7jOHvS1J2hhL6aBMA7a9kCqz8B7sNI4
-         JfTYB4sTMsjO5QAAN+qLhgX545QClbx3FMZOWL2U=
-Date:   Fri, 14 Dec 2018 17:55:05 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc:     linux-pci@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        Shaokun Zhang <zhangshaokun@hisilicon.com>,
-        Will Deacon <will.deacon@arm.com>, linuxarm@huawei.com,
-        Keith Busch <keith.busch@intel.com>,
-        Zhou Wang <wangzhou1@hisilicon.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        linux-arm-kernel@lists.infradead.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 2/2] PCI/portdrv Hisilicon PCIe transport layer Port
- PMU driver.
-Message-ID: <20181214235505.GI20725@google.com>
-References: <20181214131055.52253-1-Jonathan.Cameron@huawei.com>
- <20181214131055.52253-3-Jonathan.Cameron@huawei.com>
+        Fri, 14 Dec 2018 18:58:34 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:33543 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726448AbeLNX6e (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 18:58:34 -0500
+Received: by mail-pg1-f195.google.com with SMTP id z11so3395152pgu.0
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 15:58:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=android.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=NfnkaPnS1dPc1kok/jrapY3qumZ/TEy+Fb6QqCIKHFY=;
+        b=VvqXJFUBnds2LJBlY8M4+nd0eAO3PNvHeZKV2CFEPogzM73lFCMCeK9EE8NdKuWfs1
+         unmmGdM8uX/h25nsEBzWa3FxuQ9lK3nuE0GGKPFlN2SHOEFpOfdi9WYZdysX5mNKsb8P
+         X4bBVEuQ5bZIaQTbDu9g+tBq4quNjHEB5ICpVol0XXSAc9Ytk+l33nU7TkRBhOvIO+ch
+         0T2X5PaOcLu5RY4aTBg8clXvc0+0YHruZ0j+IFEM+JFnUlV3YBSlXWdIK1mq9Q4FwyD+
+         Vh/VjTz9h03/GjTqTEVkSfd6vQEU6aMNpEVc05GhXGn0u8Zv1hrZzAXdckweq2wCkIov
+         xJ6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=NfnkaPnS1dPc1kok/jrapY3qumZ/TEy+Fb6QqCIKHFY=;
+        b=VOzR5Zobf+vha2sP/x8W3yO0ArJlFTj6hUbAecEDDfUHdQvwMZuW5WhhDApfWtcXAV
+         qwIAtiUpe8TmheuI1K2wZ5WhPBPaxRMA3x9FFTQdOmmCpcxvlWgbs5sCjauC+F3Ne5lN
+         JezYLgxMRm4Koz8vjV2Ogse5Bp9+JczC99tE7DV5+CNKE+tc7CynEwo+2nLEuNODFGsf
+         RMn48GRjrX0+uSvxAfXGyc5hzoFjifTIdqSttZ3wnG36/2hK1jwYtsj6hZGa75e2urZV
+         ziFIvv84igrCURlBE3cAwYBp/ZK5o6mDF69k9b5JSNPcGLHZBcxQKv9yxBVa9P7ZUqMg
+         OjQQ==
+X-Gm-Message-State: AA+aEWZ+ctenPV5XmLZuQbmD8+BjNnHmSGaczWlGcSRZtUv6g6GWeBSU
+        q2covd7XtCZBzRKFWQoCKMvoYA==
+X-Google-Smtp-Source: AFSGD/VBnk+Q+j8wXcjvxuZqsk0J13OA0Vkwp2D+JER8mPVVIeEVRWXbfcHreUdUNkH7znKdn3C0Ew==
+X-Received: by 2002:a65:520a:: with SMTP id o10mr4611623pgp.276.1544831913022;
+        Fri, 14 Dec 2018 15:58:33 -0800 (PST)
+Received: from ava-linux2.mtv.corp.google.com ([2620:0:1000:1601:6cc0:d41d:b970:fd7])
+        by smtp.googlemail.com with ESMTPSA id q199sm12377453pfc.97.2018.12.14.15.58.31
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 14 Dec 2018 15:58:32 -0800 (PST)
+From:   Todd Kjos <tkjos@android.com>
+X-Google-Original-From: Todd Kjos <tkjos@google.com>
+To:     tkjos@google.com, gregkh@linuxfoundation.org, arve@android.com,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        maco@google.com, viro@zeniv.linux.org.uk
+Cc:     joel@joelfernandes.org, kernel-team@android.com
+Subject: [PATCH v3] binder: fix use-after-free due to ksys_close() during fdget()
+Date:   Fri, 14 Dec 2018 15:58:21 -0800
+Message-Id: <20181214235821.67558-1-tkjos@google.com>
+X-Mailer: git-send-email 2.20.0.405.gbc1bbc6f85-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181214131055.52253-3-Jonathan.Cameron@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[+cc Rafael, Len, linux-acpi, linux-kernel]
+44d8047f1d8 ("binder: use standard functions to allocate fds")
+exposed a pre-existing issue in the binder driver.
 
-Thanks a lot for working on this!  I've been hoping somebody would
-push on the PMU issue because there are some real wrinkles to work
-out.
+fdget() is used in ksys_ioctl() as a performance optimization.
+One of the rules associated with fdget() is that ksys_close() must
+not be called between the fdget() and the fdput(). There is a case
+where this requirement is not met in the binder driver which results
+in the reference count dropping to 0 when the device is still in
+use. This can result in use-after-free or other issues.
 
-On Fri, Dec 14, 2018 at 09:10:55PM +0800, Jonathan Cameron wrote:
-> The Hip08 SoCs contain relatively detailed performance units for the
-> PCIe Transport Layer at each port.
-> 
-> The support here is a subset of what will come, but is intended to
-> provide some initial basic functionality.
-> 
-> Note that there is a _lot_ more functionality in this hardware unit
-> so this is the first RFC of several.
-> 
-> RFC questions:
-> 
-> 1. There is no standard for PCIe PMUs.  However, there are things that
->    are elements of the PCIe protocol so any similar PMU is likely to
->    support them.  Do we want to have a go at some consistent naming?
+If userpace has passed a file-descriptor for the binder driver using
+a BINDER_TYPE_FDA object, then kys_close() is called on it when
+handling a binder_ioctl(BC_FREE_BUFFER) command. This violates
+the assumptions for using fdget().
 
-Is this a perf question, i.e., are you asking about the event names
-from "perf list"?  If so, I have no idea :)  But you're right that the
-events on the PCIe side are mostly defined by the PCIe spec and I
-agree it would make a lot of sense to use common names for those
-things.
+The problem is fixed by deferring the close using task_work_add(). A
+new variant of __close_fd() was created that returns a struct file
+with a reference. The fput() is deferred instead of using ksys_close().
 
-> 2. We are using an ACPI DSDT description to find what is basically a
->    platform device that is associated with a PCIe device. Is this an
->    acceptable thing to do?
+Fixes: 44d8047f1d87a ("binder: use standard functions to allocate fds")
+Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Todd Kjos <tkjos@google.com>
+---
+v2:
+- simplified code
+v3:
+- implemented Al Viro's suggestion to pass struct file instead of fd
+- added __close_fd_get_file() to close the fd, but reference the file
 
-If the PCIe device itself, e.g., a Root Port, consumes address space,
-it should have a BAR that describes it.
+ drivers/android/binder.c | 63 ++++++++++++++++++++++++++++++++++++++--
+ fs/file.c                | 29 ++++++++++++++++++
+ include/linux/fdtable.h  |  1 +
+ 3 files changed, 91 insertions(+), 2 deletions(-)
 
-If the Root Complex, which is not a PCIe device and does not have an
-architected configuration or programming model, consumes address
-space, it would make sense to describe it via ACPI in the PNP0A03
-device like other host bridge registers.
+diff --git a/drivers/android/binder.c b/drivers/android/binder.c
+index c525b164d39d2f..c4ee11d883dd93 100644
+--- a/drivers/android/binder.c
++++ b/drivers/android/binder.c
+@@ -72,6 +72,7 @@
+ #include <linux/spinlock.h>
+ #include <linux/ratelimit.h>
+ #include <linux/syscalls.h>
++#include <linux/task_work.h>
+ 
+ #include <uapi/linux/android/binder.h>
+ 
+@@ -2184,6 +2185,64 @@ static bool binder_validate_fixup(struct binder_buffer *b,
+ 	return (fixup_offset >= last_min_offset);
+ }
+ 
++/**
++ * struct binder_task_work_cb - for deferred close
++ *
++ * @twork:                callback_head for task work
++ * @fd:                   fd to close
++ *
++ * Structure to pass task work to be handled after
++ * returning from binder_ioctl() via task_work_add().
++ */
++struct binder_task_work_cb {
++	struct callback_head twork;
++	struct file *file;
++};
++
++/**
++ * binder_do_fd_close() - close list of file descriptors
++ * @twork:	callback head for task work
++ *
++ * It is not safe to call ksys_close() during the binder_ioctl()
++ * function if there is a chance that binder's own file descriptor
++ * might be closed. This is to meet the requirements for using
++ * fdget() (see comments for __fget_light()). Therefore use
++ * task_work_add() to schedule the close operation once we have
++ * returned from binder_ioctl(). This function is a callback
++ * for that mechanism and does the actual ksys_close() on the
++ * given file descriptor.
++ */
++static void binder_do_fd_close(struct callback_head *twork)
++{
++	struct binder_task_work_cb *twcb = container_of(twork,
++			struct binder_task_work_cb, twork);
++
++	fput(twcb->file);
++	kfree(twcb);
++}
++
++/**
++ * binder_deferred_fd_close() - schedule a close for the given file-descriptor
++ * @fd:		file-descriptor to close
++ *
++ * See comments in binder_do_fd_close(). This function is used to schedule
++ * a file-descriptor to be closed after returning from binder_ioctl().
++ */
++static void binder_deferred_fd_close(int fd)
++{
++	struct binder_task_work_cb *twcb;
++
++	twcb = kzalloc(sizeof(*twcb), GFP_KERNEL);
++	if (!twcb)
++		return;
++	init_task_work(&twcb->twork, binder_do_fd_close);
++	__close_fd_get_file(fd, &twcb->file);
++	if (twcb->file)
++		task_work_add(current, &twcb->twork, true);
++	else
++		kfree(twcb);
++}
++
+ static void binder_transaction_buffer_release(struct binder_proc *proc,
+ 					      struct binder_buffer *buffer,
+ 					      binder_size_t *failed_at)
+@@ -2323,7 +2382,7 @@ static void binder_transaction_buffer_release(struct binder_proc *proc,
+ 			}
+ 			fd_array = (u32 *)(parent_buffer + (uintptr_t)fda->parent_offset);
+ 			for (fd_index = 0; fd_index < fda->num_fds; fd_index++)
+-				ksys_close(fd_array[fd_index]);
++				binder_deferred_fd_close(fd_array[fd_index]);
+ 		} break;
+ 		default:
+ 			pr_err("transaction release %d bad object type %x\n",
+@@ -3942,7 +4001,7 @@ static int binder_apply_fd_fixups(struct binder_transaction *t)
+ 		} else if (ret) {
+ 			u32 *fdp = (u32 *)(t->buffer->data + fixup->offset);
+ 
+-			ksys_close(*fdp);
++			binder_deferred_fd_close(*fdp);
+ 		}
+ 		list_del(&fixup->fixup_entry);
+ 		kfree(fixup);
+diff --git a/fs/file.c b/fs/file.c
+index 7ffd6e9d103d64..8d059d8973e9fc 100644
+--- a/fs/file.c
++++ b/fs/file.c
+@@ -640,6 +640,35 @@ int __close_fd(struct files_struct *files, unsigned fd)
+ }
+ EXPORT_SYMBOL(__close_fd); /* for ksys_close() */
+ 
++/*
++ * variant of __close_fd that gets a ref on the file for later fput
++ */
++int __close_fd_get_file(unsigned int fd, struct file **res)
++{
++	struct files_struct *files = current->files;
++	struct file *file;
++	struct fdtable *fdt;
++
++	spin_lock(&files->file_lock);
++	fdt = files_fdtable(files);
++	if (fd >= fdt->max_fds)
++		goto out_unlock;
++	file = fdt->fd[fd];
++	if (!file)
++		goto out_unlock;
++	rcu_assign_pointer(fdt->fd[fd], NULL);
++	__put_unused_fd(files, fd);
++	spin_unlock(&files->file_lock);
++	get_file(file);
++	*res = file;
++	return filp_close(file, files);
++
++out_unlock:
++	spin_unlock(&files->file_lock);
++	*res = NULL;
++	return -ENOENT;
++}
++
+ void do_close_on_exec(struct files_struct *files)
+ {
+ 	unsigned i;
+diff --git a/include/linux/fdtable.h b/include/linux/fdtable.h
+index 41615f38bcff3e..f07c55ea0c22f1 100644
+--- a/include/linux/fdtable.h
++++ b/include/linux/fdtable.h
+@@ -121,6 +121,7 @@ extern void __fd_install(struct files_struct *files,
+ 		      unsigned int fd, struct file *file);
+ extern int __close_fd(struct files_struct *files,
+ 		      unsigned int fd);
++extern int __close_fd_get_file(unsigned int fd, struct file **res);
+ 
+ extern struct kmem_cache *files_cachep;
+ 
+-- 
+2.20.0.405.gbc1bbc6f85-goog
 
-From your cover letter, I think you have the latter situation, and if
-I understand correctly, you have something like this in ACPI:
-
-  PNP0A03       PCI host bridge
-    HISIxxxx    PMU registers for Root Port 00:1c.0
-    HISIxxxx    PMU registers for Root Port 00:1c.2
-
-The PNP0A03 _CRS describes the address space it consumes, which
-comprises (1) the register space that operates the bridge itself,
-e.g., sets apertures, performs PCI config accesses, etc., and
-(2) space that is converted to PCI transactions on the downstream
-side.
-
-So this feels a little strange to me because ACPI says the HISIxxxx
-devices are below the host bridge, but instead of consuming PCI
-address space, they consume part of the PNP0A03 register space.
-But maybe that makes sense in ACPI, I dunno.
-
-As far as I can tell, you don't actually need *anything* supplied by
-portdrv except the pcie_device.port, which you only use to find the
-ACPI companion device and to hang the devm_ things on.
-
-As written, hisi_pcie_pmu will bind to any Port, including Switch
-Ports as well as Root Ports.  It has a poor-man's match() built into
-hisi_pcie_pmu_probe(), which is sort of sub-optimal.  It would be
-nicer to have a real match() function run by the bus driver.  I know
-portdrv doesn't give you that, and since portdrv claims every Port
-itself, there's no good way for other drivers like this to get
-connected to Ports.
-
-Do you have a hotplug strategy yet?  PMUs in Switches below the Root
-Ports sound like a useful thing.  Since you bind to every Port, you
-will bind to hot-added Switch Ports, but unless you use ACPI hotplug,
-you won't have a chance to add ACPI companion devices for them.
-
-> Not yet fully established.
-> 
-> 1. I haven't done enough testing with high performance devices to
->    establish the 'minimum' frequency of the high resolution timer.
->    It may be that we just end up dropping some of the counters
->    because the load is too high to sample them often enough.
->    Once the basic approach is established I'll run the numbers
->    on this. These are up to Gen4x16 ports so things go pretty quick.
-> 
-> Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> ---
->  drivers/pci/pcie/Kconfig         |   9 +
->  drivers/pci/pcie/Makefile        |   2 +
->  drivers/pci/pcie/hisi_pcie_pmu.c | 528 +++++++++++++++++++++++++++++++
->  include/linux/cpuhotplug.h       |   1 +
->  4 files changed, 540 insertions(+)
-
-This looks like a nice piece of work, but I'm not sure where to put
-it.  It really doesn't feel like part of the PCI core in the sense
-that the PCI specs don't help you write it, and it doesn't provide any
-PCI services used by other parts of the kernel.  It feels more like
-just another driver for a device that happens to be on a PCI bus.
-
-Granted, it currently requires portdrv, but I think the only reason
-for that is to resolve the "multiple drivers need the same device"
-problem.  I don't think portdrv is a good solution for that.
-
-The other portdrv services (AER, hotplug, DPC, etc) are all defined in
-the spec, and they're related in strange ways like sharing interrupts.
-I would *like* to see those services moved into the PCI core directly
-so they're not *drivers*, they're just optional features like MSI,
-IOV, etc.
-
-Then the Ports would by default not have a driver bound to them and
-device-specific drivers like this could directly bind to the Port PCI
-device.
-
-Bjorn
-
-> diff --git a/drivers/pci/pcie/Kconfig b/drivers/pci/pcie/Kconfig
-> index 44742b2e1126..983783c42cf0 100644
-> --- a/drivers/pci/pcie/Kconfig
-> +++ b/drivers/pci/pcie/Kconfig
-> @@ -47,6 +47,15 @@ config PCIEAER_INJECT
->  	  gotten from:
->  	     http://www.kernel.org/pub/linux/utils/pci/aer-inject/
->  
-> +config PCIE_HISI_PMU
-> +       tristate "PCI Express Root Port Performance Monitoring for Hisilicon Hip08"
-> +       depends on PCIEPORTBUS
-> +       help
-> +	 The hisilicon Hip08 platform has root ports with integrated
-> +	 transport layer performance measurement units. These are
-> +	 exposed within the memory map, so resources must be provided
-> +	 via ACPI DSDT.
-> + 
->  #
->  # PCI Express ECRC
->  #
-> diff --git a/drivers/pci/pcie/Makefile b/drivers/pci/pcie/Makefile
-> index ab514083d5d4..67435abef29d 100644
-> --- a/drivers/pci/pcie/Makefile
-> +++ b/drivers/pci/pcie/Makefile
-> @@ -12,3 +12,5 @@ obj-$(CONFIG_PCIEAER_INJECT)	+= aer_inject.o
->  obj-$(CONFIG_PCIE_PME)		+= pme.o
->  obj-$(CONFIG_PCIE_DPC)		+= dpc.o
->  obj-$(CONFIG_PCIE_PTM)		+= ptm.o
-> +
-> +obj-$(CONFIG_PCIE_HISI_PMU)     += hisi_pcie_pmu.o
-> diff --git a/drivers/pci/pcie/hisi_pcie_pmu.c b/drivers/pci/pcie/hisi_pcie_pmu.c
-> new file mode 100644
-> index 000000000000..ddd2885a2b17
-> --- /dev/null
-> +++ b/drivers/pci/pcie/hisi_pcie_pmu.c
-> @@ -0,0 +1,528 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Provide performance monitoring for Hisilicon PCIe root ports
-> + *
-> + * Copyright (C) 2018 Hisilicon
-> + */
-> +
-> +#include <linux/acpi.h>
-> +#include <linux/bitmap.h>
-> +#include <linux/cpuhotplug.h>
-> +#include <linux/delay.h>
-> +#include <linux/device.h>
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/pci.h>
-> +#include <linux/perf_event.h>
-> +
-> +#include "portdrv.h"
-> +
-> +#define HISI_PP_TL_CNT_CTRL_REG 0x96C
-> +#define   HISI_PP_TL_CNT_CTRL_TX_FLOW_CNT_EN BIT(0)
-> +#define   HISI_PP_TL_CNT_CTRL_TX_ERR_CNT_EN BIT(1)
-> +#define   HISI_PP_TL_CNT_CTRL_TX_NAT_CPL_CNT_EN BIT(2)
-> +#define   HISI_PP_TL_CNT_CTRL_TX_FLOW_FUN_EN BIT(3)
-> +#define   HISI_PP_TL_CNT_CTRL_TX_FLOW_CNT_TIME_MASK 0xFFF0
-> +
-> +#define HISI_MAX_PERIOD(nr) (BIT_ULL(nr) - 1)
-> +
-> +#define HISI_PP_TIMER_PERIOD_NS 10000000
-> +
-> +enum hisi_pci_counts {
-> +	TX_MEM_RD,
-> +	TX_MEM_WR,
-> +	TX_CFG_RD,
-> +	TX_CFG_WR,
-> +	TX_IO_RD,
-> +	TX_IO_WR,
-> +	TX_MSG,
-> +	TX_CPL,
-> +	TX_CCIX,
-> +	TX_ATOMIC,
-> +	TX_P2P,
-> +	TX_TLP,
-> +	TX_PAYLOAD,
-> +	TX_DW,
-> +
-> +	RX_TOTAL_TLP,
-> +	RX_TOTAL_TR,
-> +	RX_DROP,
-> +	RX_POSTED,
-> +	RX_NONPOSTED,
-> +	RX_CPL,
-> +	HISI_PP_EVENTS,
-> +};
-> +
-> +static struct hisi_pcie_cnt {
-> +	u64 reg_offset;
-> +	u8 bits;
-> +} hisi_pcie_cnt_info[HISI_PP_EVENTS] = {
-> +	[TX_MEM_RD]		= { 0x908, 16 },
-> +	[TX_MEM_WR]		= { 0x90c, 16 },
-> +	[TX_CFG_RD]		= { 0x910, 16 },
-> +	[TX_CFG_WR]		= { 0x914, 16 },
-> +	[TX_IO_RD]		= { 0x918, 16 },
-> +	[TX_IO_WR]		= { 0x91C, 16 },
-> +	[TX_MSG]		= { 0x924, 16 },
-> +	[TX_CPL]		= { 0x930, 16 },
-> +	[TX_CCIX]		= { 0x934, 16 },
-> +	[TX_ATOMIC]		= { 0x938, 16 },
-> +	[TX_P2P]		= { 0x93C, 16 },
-> +	[TX_TLP]		= { 0x940, 32 },
-> +	[TX_PAYLOAD]		= { 0x944, 32 },
-> +	[TX_DW]			= { 0x948, 32 },
-> +
-> +	[RX_TOTAL_TLP]		= { 0xb38, 16 },
-> +	[RX_TOTAL_TR]		= { 0xb3c, 16 },
-> +	[RX_DROP]		= { 0xb40, 16 },
-> +	[RX_POSTED]		= { 0xb44, 16 },
-> +	[RX_NONPOSTED]		= { 0xb48, 16 },
-> +	[RX_CPL]		= { 0xb4c, 16 },
-> +};
-> +
-> +struct hisi_event_list {
-> +	struct list_head list;
-> +	struct perf_event *event;
-> +};
-> +
-> +struct hisi_pcie_pmu {
-> +	struct pmu pmu;
-> +	void __iomem *regs;
-> +	cpumask_t associated_cpus;
-> +	int on_cpu;
-> +	struct hlist_node node;
-> +	DECLARE_BITMAP(pmu_events, HISI_PP_EVENTS);
-> +	struct hisi_event_list events[HISI_PP_EVENTS];
-> +	struct hrtimer timer;
-> +	struct list_head event_list;
-> +};
-> +
-> +#define to_hisi_pcie_pmu(p) container_of((p), struct hisi_pcie_pmu, pmu)
-> +
-> +int hisi_pcie_pmu_online_cpu(unsigned int cpu, struct hlist_node *node)
-> +{
-> +	struct hisi_pcie_pmu *dev_info = hlist_entry_safe(node,
-> +							 struct hisi_pcie_pmu,
-> +							 node);
-> +
-> +	cpumask_set_cpu(cpu, &dev_info->associated_cpus);
-> +	/* If another CPU is already managing this PMU, simply return. */
-> +	if (dev_info->on_cpu != -1)
-> +		return 0;
-> +
-> +	/* Use this CPU in cpumask for event counting */
-> +	dev_info->on_cpu = cpu;
-> +
-> +	return 0;
-> +}
-> +
-> +int hisi_pcie_pmu_offline_cpu(unsigned int cpu, struct hlist_node *node)
-> +{
-> +	struct hisi_pcie_pmu *dev_info = hlist_entry_safe(node,
-> +							 struct hisi_pcie_pmu,
-> +							 node);
-> +	cpumask_t pmu_online_cpus;
-> +	unsigned int target;
-> +
-> +	if (!cpumask_test_and_clear_cpu(cpu, &dev_info->associated_cpus))
-> +		return 0;
-> +
-> +	if (dev_info->on_cpu != cpu)
-> +		return 0;
-> +
-> +	/* Give up ownership of the PMU */
-> +	dev_info->on_cpu = -1;
-> +
-> +	/* Choose a new CPU to migrate ownership of the PMU to */
-> +	cpumask_and(&pmu_online_cpus, &dev_info->associated_cpus,
-> +		    cpu_online_mask);
-> +	target = cpumask_any_but(&pmu_online_cpus, cpu);
-> +	if (target >= nr_cpu_ids)
-> +		return 0;
-> +
-> +	/* Use this CPU for event counting */
-> +	dev_info->on_cpu = target;
-> +	perf_pmu_migrate_context(&dev_info->pmu, cpu, target);
-> +
-> +	return 0;
-> +}
-> +
-> +void hisi_pcie_pmu_event_update(struct perf_event *event)
-> +{
-> +	struct hisi_pcie_pmu *dev_info = to_hisi_pcie_pmu(event->pmu);
-> +	struct hw_perf_event *hwc = &event->hw;
-> +	u64 delta, prev_raw_count, new_raw_count;
-> +	u64 offset = hisi_pcie_cnt_info[hwc->config_base].reg_offset;
-> +	u8 period = hisi_pcie_cnt_info[hwc->config_base].bits;
-> +
-> +	do {
-> +		new_raw_count = readl(dev_info->regs + offset);
-> +		prev_raw_count = local64_read(&hwc->prev_count);
-> +	} while (local64_cmpxchg(&hwc->prev_count, prev_raw_count,
-> +				 new_raw_count) != prev_raw_count);
-> +
-> +	delta = (new_raw_count - prev_raw_count) & HISI_MAX_PERIOD(period);
-> +	local64_add(delta, &event->count);
-> +}
-> +
-> +static enum hrtimer_restart event_read(struct hrtimer *timer)
-> +{
-> +	struct hisi_pcie_pmu *dev_info =
-> +		container_of(timer, struct hisi_pcie_pmu, timer);
-> +	struct hisi_event_list *hevent;
-> +
-> +	list_for_each_entry(hevent, &dev_info->event_list, list)
-> +		hisi_pcie_pmu_event_update(hevent->event);
-> +	hrtimer_forward_now(timer, HISI_PP_TIMER_PERIOD_NS);
-> +
-> +	return HRTIMER_RESTART;
-> +}
-> +
-> +int hisi_pcie_pmu_event_init(struct perf_event *event)
-> +{
-> +	struct hw_perf_event *hwc = &event->hw;
-> +	struct hisi_pcie_pmu *dev_info = to_hisi_pcie_pmu(event->pmu);
-> +
-> +	if (event->attr.type != event->pmu->type)
-> +		return -ENOENT;
-> +
-> +	if (is_sampling_event(event) || event->attach_state & PERF_ATTACH_TASK)
-> +		return -EOPNOTSUPP;
-> +
-> +	if (event->attr.exclude_user	||
-> +	    event->attr.exclude_kernel	||
-> +	    event->attr.exclude_host	||
-> +	    event->attr.exclude_guest	||
-> +	    event->attr.exclude_hv	||
-> +	    event->attr.exclude_idle)
-> +		return -EINVAL;
-> +
-> +	if (event->cpu < 0)
-> +		return -EINVAL;
-> +
-> +	hwc->idx = -1;
-> +	hwc->config_base = event->attr.config;
-> +
-> +	dev_info->events[hwc->config_base].event = event;
-> +
-> +	return 0;
-> +}
-> +
-> +void hisi_pcie_pmu_enable(struct pmu *pmu)
-> +{
-> +	struct hisi_pcie_pmu *dev_info = to_hisi_pcie_pmu(pmu);
-> +	u32 val;
-> +
-> +	if (bitmap_empty(dev_info->pmu_events, HISI_PP_EVENTS))
-> +		return;
-> +
-> +	val = readl(dev_info->regs + HISI_PP_TL_CNT_CTRL_REG);
-> +	/* Disable time period based flow counting */
-> +	val &= ~HISI_PP_TL_CNT_CTRL_TX_FLOW_CNT_TIME_MASK;
-> +	val |= HISI_PP_TL_CNT_CTRL_TX_FLOW_CNT_EN |
-> +		HISI_PP_TL_CNT_CTRL_TX_ERR_CNT_EN;
-> +	writel(val, dev_info->regs + HISI_PP_TL_CNT_CTRL_REG);
-> +}
-> +
-> +void hisi_pcie_pmu_disable(struct pmu *pmu)
-> +{
-> +	struct hisi_pcie_pmu *dev_info = to_hisi_pcie_pmu(pmu);
-> +	u32 val;
-> +	u32 new_raw_count;
-> +
-> +	new_raw_count = readl(dev_info->regs + 0x908);
-> +
-> +	val = readl(dev_info->regs + HISI_PP_TL_CNT_CTRL_REG);
-> +	val &= ~(HISI_PP_TL_CNT_CTRL_TX_FLOW_CNT_EN |
-> +		 HISI_PP_TL_CNT_CTRL_TX_ERR_CNT_EN);
-> +	writel(val, dev_info->regs + HISI_PP_TL_CNT_CTRL_REG);
-> +}
-> +
-> +void hisi_pcie_pmu_enable_event(struct perf_event *event)
-> +{
-> +	struct hisi_pcie_pmu *dev_info = to_hisi_pcie_pmu(event->pmu);
-> +	struct hw_perf_event *hwc = &event->hw;
-> +	u64 offset = hisi_pcie_cnt_info[hwc->config_base].reg_offset;
-> +
-> +	/* Register is write to clear */
-> +	local64_set(&hwc->prev_count, 0);
-> +	writel(0, dev_info->regs + offset);
-> +}
-> +
-> +void hisi_pcie_pmu_start(struct perf_event *event, int flags)
-> +{
-> +	struct hw_perf_event *hwc = &event->hw;
-> +
-> +	if (WARN_ON_ONCE(!(hwc->state & PERF_HES_STOPPED)))
-> +		return;
-> +
-> +	WARN_ON_ONCE(!(hwc->state & PERF_HES_UPTODATE));
-> +	hwc->state = 0;
-> +
-> +	hisi_pcie_pmu_enable_event(event);
-> +	perf_event_update_userpage(event);
-> +}
-> +
-> +void hisi_pcie_pmu_stop(struct perf_event *event, int flags)
-> +{
-> +	struct hw_perf_event *hwc = &event->hw;
-> +
-> +	WARN_ON_ONCE(hwc->state & PERF_HES_STOPPED);
-> +	hwc->state |= PERF_HES_STOPPED;
-> +
-> +	if (hwc->state & PERF_HES_UPTODATE)
-> +		return;
-> +
-> +	/* Read hardware counter and update the perf counter statistics */
-> +	hisi_pcie_pmu_event_update(event);
-> +	hwc->state |= PERF_HES_UPTODATE;
-> +}
-> +
-> +int hisi_pcie_pmu_add(struct perf_event *event, int flags)
-> +{
-> +	struct hisi_pcie_pmu *dev_info = to_hisi_pcie_pmu(event->pmu);
-> +	struct hw_perf_event *hwc = &event->hw;
-> +	bool prev_empty;
-> +
-> +	hwc->state = PERF_HES_STOPPED | PERF_HES_UPTODATE;
-> +	set_bit(hwc->config_base, dev_info->pmu_events);
-> +	if (flags & PERF_EF_START)
-> +		hisi_pcie_pmu_start(event, PERF_EF_RELOAD);
-> +	prev_empty = list_empty(&dev_info->event_list);
-> +	list_add(&dev_info->events[hwc->config_base].list,
-> +		 &dev_info->event_list);
-> +	if (prev_empty)
-> +		hrtimer_start(&dev_info->timer, HISI_PP_TIMER_PERIOD_NS,
-> +			      HRTIMER_MODE_REL);
-> +
-> +	return 0;
-> +}
-> +
-> +
-> +void hisi_pcie_pmu_del(struct perf_event *event, int flags)
-> +{
-> +	struct hisi_pcie_pmu *dev_info = to_hisi_pcie_pmu(event->pmu);
-> +	struct hw_perf_event *hwc = &event->hw;
-> +
-> +	list_del(&dev_info->events[hwc->config_base].list);
-> +	if (list_empty(&dev_info->event_list))
-> +		hrtimer_cancel(&dev_info->timer);
-> +	hisi_pcie_pmu_stop(event, PERF_EF_UPDATE);
-> +	clear_bit(hwc->config_base, dev_info->pmu_events);
-> +	perf_event_update_userpage(event);
-> +}
-> +
-> +ssize_t hisi_event_sysfs_show(struct device *dev,
-> +			      struct device_attribute *attr, char *page)
-> +{
-> +	struct dev_ext_attribute *eattr;
-> +
-> +	eattr = container_of(attr, struct dev_ext_attribute, attr);
-> +
-> +	return sprintf(page, "config=0x%lx\n", (unsigned long)eattr->var);
-> +}
-> +
-> +void hisi_pcie_pmu_read(struct perf_event *event)
-> +{
-> +	hisi_pcie_pmu_event_update(event);
-> +}
-> +
-> +ssize_t hisi_cpumask_sysfs_show(struct device *dev,
-> +				struct device_attribute *attr, char *buf)
-> +{
-> +	struct pmu *pmu = dev_get_drvdata(dev);
-> +	struct hisi_pcie_pmu *dev_info =
-> +		container_of(pmu, struct hisi_pcie_pmu, pmu);
-> +
-> +	return sprintf(buf, "%d\n", dev_info->on_cpu);
-> +}
-> +
-> +static DEVICE_ATTR(cpumask, 0444, hisi_cpumask_sysfs_show, NULL);
-> +
-> +static struct attribute *hisi_pcie_pmu_cpumask_attrs[] = {
-> +	&dev_attr_cpumask.attr,
-> +	NULL,
-> +};
-> +
-> +static const struct attribute_group hisi_pcie_pmu_cpumask_attr_group = {
-> +	.attrs = hisi_pcie_pmu_cpumask_attrs,
-> +};
-> +
-> +#define HISI_PP_ATTR(_name, _func, _config)			\
-> +	(&((struct dev_ext_attribute[]) {				\
-> +		{ __ATTR(_name, 0444, _func, NULL), (void *)_config }   \
-> +	})[0].attr.attr)
-> +
-> +#define HISI_PP_EVENT_ATTR(_name, _config)		\
-> +	HISI_PP_ATTR(_name, hisi_event_sysfs_show, (unsigned long)_config)
-> +
-> +static struct attribute *hisi_pcie_pmu_events_attr[] = {
-> +	HISI_PP_EVENT_ATTR(tx_mem_rd, TX_MEM_RD),
-> +	HISI_PP_EVENT_ATTR(tx_mem_wr, TX_MEM_WR),
-> +	HISI_PP_EVENT_ATTR(tx_cfg_rd, TX_CFG_RD),
-> +	HISI_PP_EVENT_ATTR(tx_cfg_wr, TX_CFG_WR),
-> +	HISI_PP_EVENT_ATTR(tx_io_rd, TX_IO_RD),
-> +	HISI_PP_EVENT_ATTR(tx_io_wr, TX_IO_WR),
-> +	HISI_PP_EVENT_ATTR(tx_msg, TX_MSG),
-> +
-> +	HISI_PP_EVENT_ATTR(tx_tlp, TX_TLP),
-> +	HISI_PP_EVENT_ATTR(tx_payload, TX_PAYLOAD),
-> +	HISI_PP_EVENT_ATTR(tx_dw, TX_DW),
-> +
-> +	HISI_PP_EVENT_ATTR(tx_cpl, TX_CPL),
-> +	HISI_PP_EVENT_ATTR(tx_ccix_tlp, TX_CCIX),
-> +	HISI_PP_EVENT_ATTR(tx_atomic_tlp, TX_ATOMIC),
-> +	HISI_PP_EVENT_ATTR(tx_p2p_tlp, TX_P2P),
-> +
-> +	HISI_PP_EVENT_ATTR(rx_tlp, RX_TOTAL_TLP),
-> +	HISI_PP_EVENT_ATTR(rx_tr_tlp, RX_TOTAL_TR),
-> +	HISI_PP_EVENT_ATTR(rx_posted_tlp, RX_POSTED),
-> +	HISI_PP_EVENT_ATTR(rx_nonposted_tlp, RX_NONPOSTED),
-> +	HISI_PP_EVENT_ATTR(rx_cpl_tlp, RX_CPL),
-> +	NULL,
-> +};
-> +
-> +static struct attribute_group hisi_pcie_pmu_events_group = {
-> +	.name = "events",
-> +	.attrs = hisi_pcie_pmu_events_attr,
-> +};
-> +
-> +static const struct attribute_group *hisi_pcie_pmu_attr_groups[] = {
-> +	&hisi_pcie_pmu_events_group,
-> +	&hisi_pcie_pmu_cpumask_attr_group,
-> +	NULL,
-> +};
-> +
-> +static int hisi_pcie_pmu_probe(struct pcie_device *dev)
-> +{
-> +	struct pci_dev *pdev = dev->port;
-> +	struct acpi_device *acpi_dev;
-> +	struct resource_entry *entry;
-> +	resource_size_t regs_start, regs_size;
-> +	struct hisi_pcie_pmu *dev_info;
-> +	struct list_head list;
-> +	char *name;
-> +	int ret;
-> +
-> +	INIT_LIST_HEAD(&list);
-> +
-> +	if (pdev->vendor != PCI_VENDOR_ID_HUAWEI)
-> +		return -ENODEV;
-> +
-> +	acpi_dev = ACPI_COMPANION(&pdev->dev);
-> +	if (!acpi_dev)
-> +		return -ENODEV;
-> +
-> +	ret = acpi_dev_get_resources(acpi_dev, &list, NULL, NULL);
-> +	if (ret < 0) {
-> +		pr_err("Failed to get PMU resources, ret=%d\n", ret);
-> +		return ret;
-> +	}
-> +	entry = list_first_entry(&list, struct resource_entry, node);
-> +	if (entry) {
-> +		regs_start = entry->res->start;
-> +		regs_size = resource_size(entry->res);
-> +		ret = 0;
-> +	} else
-> +		ret = -EINVAL;
-> +	acpi_dev_free_resource_list(&list);
-> +	if (ret)
-> +		return ret;
-> +
-> +	dev_info = devm_kzalloc(&pdev->dev, sizeof(*dev_info), GFP_KERNEL);
-> +	if (!dev_info)
-> +		return -ENOMEM;
-> +
-> +	hrtimer_init(&dev_info->timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
-> +	dev_info->timer.function = event_read;
-> +
-> +	INIT_LIST_HEAD(&dev_info->event_list);
-> +	dev_info->regs = devm_ioremap_nocache(&pdev->dev, regs_start,
-> +					      regs_size);
-> +	if (!dev_info->regs)
-> +		return -EINVAL;
-> +	name = devm_kasprintf(&pdev->dev, GFP_KERNEL, "hisi_pcie_port%04x_%02x",
-> +			      pdev->bus->number,
-> +			      PCI_SLOT(pdev->devfn));
-> +	if (!name)
-> +		return -ENOMEM;
-> +
-> +	dev_info->pmu = (struct pmu) {
-> +		.name = name,
-> +		.task_ctx_nr = perf_invalid_context,
-> +		.event_init = hisi_pcie_pmu_event_init,
-> +		.pmu_enable = hisi_pcie_pmu_enable,
-> +		.pmu_disable = hisi_pcie_pmu_disable,
-> +		.add = hisi_pcie_pmu_add,
-> +		.del = hisi_pcie_pmu_del,
-> +		.start = hisi_pcie_pmu_start,
-> +		.stop = hisi_pcie_pmu_stop,
-> +		.read = hisi_pcie_pmu_read,
-> +		.attr_groups = hisi_pcie_pmu_attr_groups,
-> +		.capabilities = PERF_PMU_CAP_NO_INTERRUPT,
-> +	};
-> +
-> +
-> +	ret = cpuhp_state_add_instance(CPUHP_AP_PERF_ARM_HISI_PCIE_PMU_ONLINE,
-> +				       &dev_info->node);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "Error %d registering hotplug;\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	ret = perf_pmu_register(&dev_info->pmu, name, -1);
-> +	if (ret) {
-> +		cpuhp_state_remove_instance(CPUHP_AP_PERF_ARM_HISI_PCIE_PMU_ONLINE,
-> +					    &dev_info->node);
-> +
-> +		return ret;
-> +	}
-> +
-> +	dev_set_drvdata(&pdev->dev, dev_info);
-> +
-> +	return 0;
-> +}
-> +
-> +static void hisi_pcie_pmu_remove(struct pcie_device *dev)
-> +{
-> +	struct hisi_pcie_pmu *dev_info = dev_get_drvdata(&dev->port->dev);
-> +
-> +	perf_pmu_unregister(&dev_info->pmu);
-> +	cpuhp_state_remove_instance(CPUHP_AP_PERF_ARM_HISI_PCIE_PMU_ONLINE,
-> +				    &dev_info->node);
-> +}
-> +
-> +static struct pcie_port_service_driver hisi_pcie_pmu = {
-> +	.name = "hisi_pcie_root_port_pmu",
-> +	.port_type = PCIE_ANY_PORT,
-> +	.service = PCIE_PORT_SERVICE_PMU,
-> +	.probe = hisi_pcie_pmu_probe,
-> +	.remove = hisi_pcie_pmu_remove,
-> +};
-> +
-> +static int __init hisi_pcie_service_init(void)
-> +{
-> +	int ret;
-> +
-> +	ret = cpuhp_setup_state_multi(CPUHP_AP_PERF_ARM_HISI_PCIE_PMU_ONLINE,
-> +				      "AP_PERF_ARM_HISI_PCIE_ONLINE",
-> +				      hisi_pcie_pmu_online_cpu,
-> +				      hisi_pcie_pmu_offline_cpu);
-> +	if (ret) {
-> +		pr_err("PCIE PMU: setup hotplug, ret = %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	pcie_port_service_register(&hisi_pcie_pmu);
-> +
-> +	return 0;
-> +}
-> +
-> +static void hisi_pcie_service_remove(void)
-> +{
-> +	pcie_port_service_unregister(&hisi_pcie_pmu);
-> +	cpuhp_remove_multi_state(CPUHP_AP_PERF_ARM_HISI_PCIE_PMU_ONLINE);
-> +}
-> +module_init(hisi_pcie_service_init);
-> +module_exit(hisi_pcie_service_remove);
-> +MODULE_LICENSE("GPL");
-> diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
-> index e0cd2baa8380..73f2bc8a7201 100644
-> --- a/include/linux/cpuhotplug.h
-> +++ b/include/linux/cpuhotplug.h
-> @@ -161,6 +161,7 @@ enum cpuhp_state {
->  	CPUHP_AP_PERF_ARM_HISI_DDRC_ONLINE,
->  	CPUHP_AP_PERF_ARM_HISI_HHA_ONLINE,
->  	CPUHP_AP_PERF_ARM_HISI_L3_ONLINE,
-> +	CPUHP_AP_PERF_ARM_HISI_PCIE_PMU_ONLINE,
->  	CPUHP_AP_PERF_ARM_L2X0_ONLINE,
->  	CPUHP_AP_PERF_ARM_QCOM_L2_ONLINE,
->  	CPUHP_AP_PERF_ARM_QCOM_L3_ONLINE,
-> -- 
-> 2.19.1
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
