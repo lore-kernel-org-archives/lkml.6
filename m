@@ -2,86 +2,396 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97B25C67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 10:35:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A261C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 10:36:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66C3E2147C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 10:35:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66C3E2147C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id 476FA20879
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 10:36:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 476FA20879
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728827AbeLNKfz (ORCPT
+        id S1729301AbeLNKgN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 05:35:55 -0500
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:44089 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726453AbeLNKfz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 05:35:55 -0500
-Received: by mail-ua1-f68.google.com with SMTP id d19so1799010uaq.11;
-        Fri, 14 Dec 2018 02:35:54 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PT2xx5bbfVQ2MI7g/SJQTQVxkF7aSevt6thEgqA/rrE=;
-        b=KLIReJXmZYYUV9OODtULCnvBcImxTKkEV16K942BNkBKD1mPTY10Vnh4CSWYISViaz
-         oGhx4CWCcmf00qTeNV3zEbhojiA0p1P/ia0LSHWbq7GE1DqqshfF0aL54EArMW5rqEAE
-         SKETcFCYnYOjp0Pew7CYYcNuqGw0z3YD2J3ribbqaAsVO3+KBqJ7efpoTgMRu/u+bdNs
-         jn8GUYFC7nyjy0nHqveSTfMZCqx7wo9zI8aNNEAiS8cRI0HVtuasz09YEnZD/KeY+FEN
-         lzsRzE6J3SX5EJ54GW0eb95cIF5V22JzKSJNlBCPtt45QnnSHLSffpLz7f7wnttquIlJ
-         PlaQ==
-X-Gm-Message-State: AA+aEWYew4Ah25tDqbe9vQCyFypGx7Iyz+SonLG9XgEvKvM8gsgO50Vv
-        6nqi5tmH9uFUC+g9r6IST7lISg+qnttnHh63vqs=
-X-Google-Smtp-Source: AFSGD/V+qYaCThRIH8kBwehaa9ybS1t4ZtY4TvQILABm60K05XzvXr5Q3QPxnLDzPedBIpj9y6KQDtvzP/qP+4QyQjw=
-X-Received: by 2002:a9f:364a:: with SMTP id s10mr977271uad.78.1544783753770;
- Fri, 14 Dec 2018 02:35:53 -0800 (PST)
+        Fri, 14 Dec 2018 05:36:13 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:47270 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726453AbeLNKgM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 05:36:12 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id F157D307DAB1;
+        Fri, 14 Dec 2018 10:36:11 +0000 (UTC)
+Received: from [10.36.112.72] (ovpn-112-72.ams2.redhat.com [10.36.112.72])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id D7B4C5C23D;
+        Fri, 14 Dec 2018 10:36:07 +0000 (UTC)
+Subject: Re: [PATCH v4] x86/hyper-v: Mark TLFS structures packed
+To:     Vitaly Kuznetsov <vkuznets@redhat.com>, kvm@vger.kernel.org
+Cc:     =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        linux-kernel@vger.kernel.org, Roman Kagan <rkagan@virtuozzo.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>, x86@kernel.org,
+        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+References: <20181212175701.18754-1-vkuznets@redhat.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ mQHhBFRCcBIBDqDGsz4K0zZun3jh+U6Z9wNGLKQ0kSFyjN38gMqU1SfP+TUNQepFHb/Gc0E2
+ CxXPkIBTvYY+ZPkoTh5xF9oS1jqI8iRLzouzF8yXs3QjQIZ2SfuCxSVwlV65jotcjD2FTN04
+ hVopm9llFijNZpVIOGUTqzM4U55sdsCcZUluWM6x4HSOdw5F5Utxfp1wOjD/v92Lrax0hjiX
+ DResHSt48q+8FrZzY+AUbkUS+Jm34qjswdrgsC5uxeVcLkBgWLmov2kMaMROT0YmFY6A3m1S
+ P/kXmHDXxhe23gKb3dgwxUTpENDBGcfEzrzilWueOeUWiOcWuFOed/C3SyijBx3Av/lbCsHU
+ Vx6pMycNTdzU1BuAroB+Y3mNEuW56Yd44jlInzG2UOwt9XjjdKkJZ1g0P9dwptwLEgTEd3Fo
+ UdhAQyRXGYO8oROiuh+RZ1lXp6AQ4ZjoyH8WLfTLf5g1EKCTc4C1sy1vQSdzIRu3rBIjAvnC
+ tGZADei1IExLqB3uzXKzZ1BZ+Z8hnt2og9hb7H0y8diYfEk2w3R7wEr+Ehk5NQsT2MPI2QBd
+ wEv1/Aj1DgUHZAHzG1QN9S8wNWQ6K9DqHZTBnI1hUlkp22zCSHK/6FwUCuYp1zcAEQEAAbQj
+ UGFvbG8gQm9uemluaSA8cGJvbnppbmlAcmVkaGF0LmNvbT6JAg0EEwECACMFAlRCcBICGwMH
+ CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRB+FRAMzTZpsbceDp9IIN6BIA0Ol7MoB15E
+ 11kRz/ewzryFY54tQlMnd4xxfH8MTQ/mm9I482YoSwPMdcWFAKnUX6Yo30tbLiNB8hzaHeRj
+ jx12K+ptqYbg+cevgOtbLAlL9kNgLLcsGqC2829jBCUTVeMSZDrzS97ole/YEez2qFpPnTV0
+ VrRWClWVfYh+JfzpXmgyhbkuwUxNFk421s4Ajp3d8nPPFUGgBG5HOxzkAm7xb1cjAuJ+oi/K
+ CHfkuN+fLZl/u3E/fw7vvOESApLU5o0icVXeakfSz0LsygEnekDbxPnE5af/9FEkXJD5EoYG
+ SEahaEtgNrR4qsyxyAGYgZlS70vkSSYJ+iT2rrwEiDlo31MzRo6Ba2FfHBSJ7lcYdPT7bbk9
+ AO3hlNMhNdUhoQv7M5HsnqZ6unvSHOKmReNaS9egAGdRN0/GPDWr9wroyJ65ZNQsHl9nXBqE
+ AukZNr5oJO5vxrYiAuuTSd6UI/xFkjtkzltG3mw5ao2bBpk/V/YuePrJsnPFHG7NhizrxttB
+ nTuOSCMo45pfHQ+XYd5K1+Cv/NzZFNWscm5htJ0HznY+oOsZvHTyGz3v91pn51dkRYN0otqr
+ bQ4tlFFuVjArBZcapSIe6NV8C4cEiSS5AQ0EVEJxcwEIAK+nUrsUz3aP2aBjIrX3a1+C+39R
+ nctpNIPcJjFJ/8WafRiwcEuLjbvJ/4kyM6K7pWUIQftl1P8Woxwb5nqL7zEFHh5I+hKS3haO
+ 5pgco//V0tWBGMKinjqntpd4U4Dl299dMBZ4rRbPvmI8rr63sCENxTnHhTECyHdGFpqSzWzy
+ 97rH68uqMpxbUeggVwYkYihZNd8xt1+lf7GWYNEO/QV8ar/qbRPG6PEfiPPHQd/sldGYavmd
+ //o6TQLSJsvJyJDt7KxulnNT8Q2X/OdEuVQsRT5glLaSAeVAABcLAEnNgmCIGkX7TnQF8a6w
+ gHGrZIR9ZCoKvDxAr7RP6mPeS9sAEQEAAYkDEgQYAQIACQUCVEJxcwIbAgEpCRB+FRAMzTZp
+ scBdIAQZAQIABgUCVEJxcwAKCRC/+9JfeMeug/SlCACl7QjRnwHo/VzENWD9G2VpUOd9eRnS
+ DZGQmPo6Mp3Wy8vL7snGFBfRseT9BevXBSkxvtOnUUV2YbyLmolAODqUGzUI8ViF339poOYN
+ i6Ffek0E19IMQ5+CilqJJ2d5ZvRfaq70LA/Ly9jmIwwX4auvXrWl99/2wCkqnWZI+PAepkcX
+ JRD4KY2fsvRi64/aoQmcxTiyyR7q3/52Sqd4EdMfj0niYJV0Xb9nt8G57Dp9v3Ox5JeWZKXS
+ krFqy1qyEIypIrqcMbtXM7LSmiQ8aJRM4ZHYbvgjChJKR4PsKNQZQlMWGUJO4nVFSkrixc9R
+ Z49uIqQK3b3ENB1QkcdMg9cxsB0Onih8zR+Wp1uDZXnz1ekto+EivLQLqvTjCCwLxxJafwKI
+ bqhQ+hGR9jF34EFur5eWt9jJGloEPVv0GgQflQaE+rRGe+3f5ZDgRe5Y/EJVNhBhKcafcbP8
+ MzmLRh3UDnYDwaeguYmxuSlMdjFL96YfhRBXs8tUw6SO9jtCgBvoOIBDCxxAJjShY4KIvEpK
+ b2hSNr8KxzelKKlSXMtB1bbHbQxiQcerAipYiChUHq1raFc3V0eOyCXK205rLtknJHhM5pfG
+ 6taABGAMvJgm/MrVILIxvBuERj1FRgcgoXtiBmLEJSb7akcrRlqe3MoPTntSTNvNzAJmfWhd
+ SvP0G1WDLolqvX0OtKMppI91AWVu72f1kolJg43wbaKpRJg1GMkKEI3H+jrrlTBrNl/8e20m
+ TElPRDKzPiowmXeZqFSS1A6Azv0TJoo9as+lWF+P4zCXt40+Zhh5hdHO38EV7vFAVG3iuay6
+ 7ToF8Uy7tgc3mdH98WQSmHcn/H5PFYk3xTP3KHB7b0FZPdFPQXBZb9+tJeZBi9gMqcjMch+Y
+ R8dmTcQRQX14bm5nXlBF7VpSOPZMR392LY7wzAvRdhz7aeIUkdO7VelaspFk2nT7wOj1Y6uL
+ nRxQlLkBDQRUQnHuAQgAx4dxXO6/Zun0eVYOnr5GRl76+2UrAAemVv9Yfn2PbDIbxXqLff7o
+ yVJIkw4WdhQIIvvtu5zH24iYjmdfbg8iWpP7NqxUQRUZJEWbx2CRwkMHtOmzQiQ2tSLjKh/c
+ HeyFH68xjeLcinR7jXMrHQK+UCEw6jqi1oeZzGvfmxarUmS0uRuffAb589AJW50kkQK9VD/9
+ QC2FJISSUDnRC0PawGSZDXhmvITJMdD4TjYrePYhSY4uuIV02v028TVAaYbIhxvDY0hUQE4r
+ 8ZbGRLn52bEzaIPgl1p/adKfeOUeMReg/CkyzQpmyB1TSk8lDMxQzCYHXAzwnGi8WU9iuE1P
+ 0wARAQABiQHzBBgBAgAJBQJUQnHuAhsMAAoJEH4VEAzNNmmxp1EOoJy0uZggJm7gZKeJ7iUp
+ eX4eqUtqelUw6gU2daz2hE/jsxsTbC/w5piHmk1H1VWDKEM4bQBTuiJ0bfo55SWsUNN+c9hh
+ IX+Y8LEe22izK3w7mRpvGcg+/ZRG4DEMHLP6JVsv5GMpoYwYOmHnplOzCXHvmdlW0i6SrMsB
+ Dl9rw4AtIa6bRwWLim1lQ6EM3PWifPrWSUPrPcw4OLSwFk0CPqC4HYv/7ZnASVkR5EERFF3+
+ 6iaaVi5OgBd81F1TCvCX2BEyIDRZLJNvX3TOd5FEN+lIrl26xecz876SvcOb5SL5SKg9/rCB
+ ufdPSjojkGFWGziHiFaYhbuI2E+NfWLJtd+ZvWAAV+O0d8vFFSvriy9enJ8kxJwhC0ECbSKF
+ Y+W1eTIhMD3aeAKY90drozWEyHhENf4l/V+Ja5vOnW+gCDQkGt2Y1lJAPPSIqZKvHzGShdh8
+ DduC0U3xYkfbGAUvbxeepjgzp0uEnBXfPTy09JGpgWbg0w91GyfT/ujKaGd4vxG2Ei+MMNDm
+ S1SMx7wu0evvQ5kT9NPzyq8R2GIhVSiAd2jioGuTjX6AZCFv3ToO53DliFMkVTecLptsXaes
+ uUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
+Message-ID: <23d5435a-8271-6f67-21ff-e8cfa65f6c34@redhat.com>
+Date:   Fri, 14 Dec 2018 11:36:05 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-References: <1544732529-7003-1-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1544732529-7003-1-git-send-email-fabrizio.castro@bp.renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 14 Dec 2018 11:35:40 +0100
-Message-ID: <CAMuHMdU_Kf11jGJB8wUfwdb6MEo=9Hp21GJp4197+BxymxbP1Q@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: mmc: renesas_sdhi: Add r8a774c0 support
-To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linux MMC List <linux-mmc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181212175701.18754-1-vkuznets@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Fri, 14 Dec 2018 10:36:12 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 13, 2018 at 9:22 PM Fabrizio Castro
-<fabrizio.castro@bp.renesas.com> wrote:
-> Document RZ/G2E (R8A774C0) SoC bindings.
->
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+On 12/12/18 18:57, Vitaly Kuznetsov wrote:
+> The TLFS structures are used for hypervisor-guest communication and must
+> exactly meet the specification.
+> 
+> Compilers can add alignment padding to structures or reorder struct members
+> for randomization and optimization, which would break the hypervisor ABI.
+> 
+> Mark the structures as packed to prevent this. 'struct hv_vp_assist_page'
+> and 'struct hv_enlightened_vmcs' need to be properly padded to support the
+> change.
+> 
+> Suggested-by: Nadav Amit <nadav.amit@gmail.com>
+> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+> Acked-by: Thomas Gleixner <tglx@linutronix.de>
+> Acked-by: Nadav Amit <nadav.amit@gmail.com>
+> Reviewed-by: Michael Kelley <mikelley@microsoft.com>
+> ---
+> - Changes since v3:
+>  - Properly pad 'struct hv_vp_assist_page' and 'struct hv_enlightened_vmcs'.
+>  - Add Michael's Reviewed-by tag.
+> 
+> - This is a follow-up to my "[PATCH v2 0/4] x86/kvm/hyper-v: Implement
+>  Direct Mode for synthetic timers" series, as suggested by Thomas I'm
+>  routing it to KVM tree to avoid merge conflicts.
+> ---
+>  arch/x86/include/asm/hyperv-tlfs.h | 57 ++++++++++++++++--------------
+>  1 file changed, 30 insertions(+), 27 deletions(-)
+> 
+> diff --git a/arch/x86/include/asm/hyperv-tlfs.h b/arch/x86/include/asm/hyperv-tlfs.h
+> index ebfed56976d2..64d2b1914d37 100644
+> --- a/arch/x86/include/asm/hyperv-tlfs.h
+> +++ b/arch/x86/include/asm/hyperv-tlfs.h
+> @@ -271,7 +271,7 @@ union hv_x64_msr_hypercall_contents {
+>  		u64 enable:1;
+>  		u64 reserved:11;
+>  		u64 guest_physical_address:52;
+> -	};
+> +	} __packed;
+>  };
+>  
+>  /*
+> @@ -283,7 +283,7 @@ struct ms_hyperv_tsc_page {
+>  	volatile u64 tsc_scale;
+>  	volatile s64 tsc_offset;
+>  	u64 reserved2[509];
+> -};
+> +}  __packed;
+>  
+>  /*
+>   * The guest OS needs to register the guest ID with the hypervisor.
+> @@ -324,7 +324,7 @@ struct hv_reenlightenment_control {
+>  	__u64 enabled:1;
+>  	__u64 reserved2:15;
+>  	__u64 target_vp:32;
+> -};
+> +}  __packed;
+>  
+>  #define HV_X64_MSR_TSC_EMULATION_CONTROL	0x40000107
+>  #define HV_X64_MSR_TSC_EMULATION_STATUS		0x40000108
+> @@ -332,12 +332,12 @@ struct hv_reenlightenment_control {
+>  struct hv_tsc_emulation_control {
+>  	__u64 enabled:1;
+>  	__u64 reserved:63;
+> -};
+> +} __packed;
+>  
+>  struct hv_tsc_emulation_status {
+>  	__u64 inprogress:1;
+>  	__u64 reserved:63;
+> -};
+> +} __packed;
+>  
+>  #define HV_X64_MSR_HYPERCALL_ENABLE		0x00000001
+>  #define HV_X64_MSR_HYPERCALL_PAGE_ADDRESS_SHIFT	12
+> @@ -409,7 +409,7 @@ typedef struct _HV_REFERENCE_TSC_PAGE {
+>  	__u32 res1;
+>  	__u64 tsc_scale;
+>  	__s64 tsc_offset;
+> -} HV_REFERENCE_TSC_PAGE, *PHV_REFERENCE_TSC_PAGE;
+> +}  __packed HV_REFERENCE_TSC_PAGE, *PHV_REFERENCE_TSC_PAGE;
+>  
+>  /* Define the number of synthetic interrupt sources. */
+>  #define HV_SYNIC_SINT_COUNT		(16)
+> @@ -466,7 +466,7 @@ union hv_message_flags {
+>  	struct {
+>  		__u8 msg_pending:1;
+>  		__u8 reserved:7;
+> -	};
+> +	} __packed;
+>  };
+>  
+>  /* Define port identifier type. */
+> @@ -475,7 +475,7 @@ union hv_port_id {
+>  	struct {
+>  		__u32 id:24;
+>  		__u32 reserved:8;
+> -	} u;
+> +	} __packed u;
+>  };
+>  
+>  /* Define synthetic interrupt controller message header. */
+> @@ -488,7 +488,7 @@ struct hv_message_header {
+>  		__u64 sender;
+>  		union hv_port_id port;
+>  	};
+> -};
+> +} __packed;
+>  
+>  /* Define synthetic interrupt controller message format. */
+>  struct hv_message {
+> @@ -496,12 +496,12 @@ struct hv_message {
+>  	union {
+>  		__u64 payload[HV_MESSAGE_PAYLOAD_QWORD_COUNT];
+>  	} u;
+> -};
+> +} __packed;
+>  
+>  /* Define the synthetic interrupt message page layout. */
+>  struct hv_message_page {
+>  	struct hv_message sint_message[HV_SYNIC_SINT_COUNT];
+> -};
+> +} __packed;
+>  
+>  /* Define timer message payload structure. */
+>  struct hv_timer_message_payload {
+> @@ -509,7 +509,7 @@ struct hv_timer_message_payload {
+>  	__u32 reserved;
+>  	__u64 expiration_time;	/* When the timer expired */
+>  	__u64 delivery_time;	/* When the message was delivered */
+> -};
+> +} __packed;
+>  
+>  /* Define virtual processor assist page structure. */
+>  struct hv_vp_assist_page {
+> @@ -518,8 +518,9 @@ struct hv_vp_assist_page {
+>  	__u64 vtl_control[2];
+>  	__u64 nested_enlightenments_control[2];
+>  	__u32 enlighten_vmentry;
+> +	__u32 padding;
+>  	__u64 current_nested_vmcs;
+> -};
+> +} __packed;
+>  
+>  struct hv_enlightened_vmcs {
+>  	u32 revision_id;
+> @@ -533,6 +534,8 @@ struct hv_enlightened_vmcs {
+>  	u16 host_gs_selector;
+>  	u16 host_tr_selector;
+>  
+> +	u16 padding16_1;
+> +
+>  	u64 host_ia32_pat;
+>  	u64 host_ia32_efer;
+>  
+> @@ -651,7 +654,7 @@ struct hv_enlightened_vmcs {
+>  	u64 ept_pointer;
+>  
+>  	u16 virtual_processor_id;
+> -	u16 padding16[3];
+> +	u16 padding16_2[3];
+>  
+>  	u64 padding64_2[5];
+>  	u64 guest_physical_address;
+> @@ -693,7 +696,7 @@ struct hv_enlightened_vmcs {
+>  		u32 nested_flush_hypercall:1;
+>  		u32 msr_bitmap:1;
+>  		u32 reserved:30;
+> -	} hv_enlightenments_control;
+> +	}  __packed hv_enlightenments_control;
+>  	u32 hv_vp_id;
+>  
+>  	u64 hv_vm_id;
+> @@ -703,7 +706,7 @@ struct hv_enlightened_vmcs {
+>  	u64 padding64_5[7];
+>  	u64 xss_exit_bitmap;
+>  	u64 padding64_6[7];
+> -};
+> +} __packed;
+>  
+>  #define HV_VMX_ENLIGHTENED_CLEAN_FIELD_NONE			0
+>  #define HV_VMX_ENLIGHTENED_CLEAN_FIELD_IO_BITMAP		BIT(0)
+> @@ -744,7 +747,7 @@ union hv_stimer_config {
+>  		u64 reserved_z0:3;
+>  		u64 sintx:4;
+>  		u64 reserved_z1:44;
+> -	};
+> +	} __packed;
+>  };
+>  
+>  
+> @@ -759,7 +762,7 @@ union hv_synic_scontrol {
+>  	struct {
+>  		u64 enable:1;
+>  		u64 reserved:63;
+> -	};
+> +	} __packed;
+>  };
+>  
+>  /* Define synthetic interrupt source. */
+> @@ -771,7 +774,7 @@ union hv_synic_sint {
+>  		u64 masked:1;
+>  		u64 auto_eoi:1;
+>  		u64 reserved2:46;
+> -	};
+> +	} __packed;
+>  };
+>  
+>  /* Define the format of the SIMP register */
+> @@ -781,7 +784,7 @@ union hv_synic_simp {
+>  		u64 simp_enabled:1;
+>  		u64 preserved:11;
+>  		u64 base_simp_gpa:52;
+> -	};
+> +	} __packed;
+>  };
+>  
+>  /* Define the format of the SIEFP register */
+> @@ -791,34 +794,34 @@ union hv_synic_siefp {
+>  		u64 siefp_enabled:1;
+>  		u64 preserved:11;
+>  		u64 base_siefp_gpa:52;
+> -	};
+> +	} __packed;
+>  };
+>  
+>  struct hv_vpset {
+>  	u64 format;
+>  	u64 valid_bank_mask;
+>  	u64 bank_contents[];
+> -};
+> +} __packed;
+>  
+>  /* HvCallSendSyntheticClusterIpi hypercall */
+>  struct hv_send_ipi {
+>  	u32 vector;
+>  	u32 reserved;
+>  	u64 cpu_mask;
+> -};
+> +} __packed;
+>  
+>  /* HvCallSendSyntheticClusterIpiEx hypercall */
+>  struct hv_send_ipi_ex {
+>  	u32 vector;
+>  	u32 reserved;
+>  	struct hv_vpset vp_set;
+> -};
+> +} __packed;
+>  
+>  /* HvFlushGuestPhysicalAddressSpace hypercalls */
+>  struct hv_guest_mapping_flush {
+>  	u64 address_space;
+>  	u64 flags;
+> -};
+> +} __packed;
+>  
+>  /* HvFlushVirtualAddressSpace, HvFlushVirtualAddressList hypercalls */
+>  struct hv_tlb_flush {
+> @@ -826,7 +829,7 @@ struct hv_tlb_flush {
+>  	u64 flags;
+>  	u64 processor_mask;
+>  	u64 gva_list[];
+> -};
+> +} __packed;
+>  
+>  /* HvFlushVirtualAddressSpaceEx, HvFlushVirtualAddressListEx hypercalls */
+>  struct hv_tlb_flush_ex {
+> @@ -834,6 +837,6 @@ struct hv_tlb_flush_ex {
+>  	u64 flags;
+>  	struct hv_vpset hv_vp_set;
+>  	u64 gva_list[];
+> -};
+> +} __packed;
+>  
+>  #endif
+> 
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Queued, thanks.  I squashed the SynIC parts into "x86/hyper-v: move
+synic/stimer control structures definitions to hyperv-tlfs.h" and kept
+the rest separate.
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Paolo
