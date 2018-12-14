@@ -2,94 +2,130 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92379C6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:44:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FB51C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:47:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C67D20892
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:44:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D1C80208E7
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:47:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="IPgZdCjK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C67D20892
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="fijZMbvl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1C80208E7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730032AbeLNMol (ORCPT
+        id S1729753AbeLNMrF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:44:41 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:37267 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729758AbeLNMok (ORCPT
+        Fri, 14 Dec 2018 07:47:05 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:53400 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729540AbeLNMrF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:44:40 -0500
-Received: by mail-wr1-f68.google.com with SMTP id s12so4872130wrt.4
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 04:44:39 -0800 (PST)
+        Fri, 14 Dec 2018 07:47:05 -0500
+Received: by mail-wm1-f66.google.com with SMTP id y1so5544838wmi.3
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 04:47:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=lPSksvhVy6YF41PEgDMAtPKdDYkNxoTk2/v3Z+Pnw3U=;
-        b=IPgZdCjKmKFBoQVpiWN/nqiADAagfCr4YRJ7XZeDQuno06TPN53DhdHjttovWz2ujt
-         ExWBEUlLl4PtEm2CYCQez+jZPIhKBmvGaz/t9QBdciSQmSV+Cu7N0+HMVZEo3j6ICGvM
-         9bFkRWUulfWnVQ37ttjXB6K50hkeml+XYJsiQ=
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=6C68f6LOTbY5zW50+uHsCmt4aeQjq/CrxPZXxwAN8NQ=;
+        b=fijZMbvljYi19+b1CHm6J87wwbtph0WtwQ+qMMSQ+EsAAfEMBJ2bdORKVQNJFZ8XQS
+         pyFs4niN/7PecQ3dPqI+BGzZSNptCjalN8ppW/v74DYGXM4B47nfHhmAVz1YfFN4OIx9
+         kx31RjBsqCII4Btkk45eqdQ5NxBG+nLy8kME0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=lPSksvhVy6YF41PEgDMAtPKdDYkNxoTk2/v3Z+Pnw3U=;
-        b=EsvtVs5teinjmi1Mc2F2V0kt66Fe0KJzWNNzbXfBW4mdVFHn0cpB+eWstvFyBP+pcs
-         Uw/MME6uO5/FyUPtN7zxFB41inhyJ2ITOv510OuO30eeX4NldzkCJnv3F6POefViHbjZ
-         B7URF8FtDS6TXzbZL8BBPtSs5hb3Qb48wWOqmI69ibziI2m7H7bnoaayuapUOvIB9DWX
-         Rjz62Zx2naaCsTCtXhgCiKntSuv1mNJmK2kSsUX/61WU9WjIxUwRvKfXNRCYmS4ee5DH
-         K6zjAGjaa1Ic09ANtYD5ucozvSuiVNa33TOynMqAz9Xv22V7089jO2xo1zIEbNOdmi9h
-         TBsA==
-X-Gm-Message-State: AA+aEWZ9JHtz6Q4aiReinXIts+iLBLfKUMHZS1M2mv5JPzK9i6KCcOD6
-        D7vZWiQZmbL/8Ulnl2F23DhWwg==
-X-Google-Smtp-Source: AFSGD/UrEmXG/9jvBX5QIEa703+4lxlYPk5e1J3cvAoqX5YeuKr8rFF+YO1LAegNxRMu+9NfzZDIVw==
-X-Received: by 2002:adf:8143:: with SMTP id 61mr2432403wrm.47.1544791478711;
-        Fri, 14 Dec 2018 04:44:38 -0800 (PST)
-Received: from [192.168.86.34] (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.googlemail.com with ESMTPSA id p14sm3618704wrt.37.2018.12.14.04.44.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 14 Dec 2018 04:44:38 -0800 (PST)
-Subject: Re: [PATCH 0/4] ASoC: qdsp6: Add support for audio over DP
-To:     Rohit kumar <rohitkr@codeaurora.org>, plai@codeaurora.org,
-        bgoswami@codeaurora.org, lgirdwood@gmail.com, broonie@kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, perex@perex.cz,
-        tiwai@suse.com, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        rohkumar@qti.qualcomm.com, asishb@codeaurora.org
-References: <1544790569-10608-1-git-send-email-rohitkr@codeaurora.org>
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <83118861-b0ca-4ea7-b68f-a4db46774618@linaro.org>
-Date:   Fri, 14 Dec 2018 12:44:37 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=6C68f6LOTbY5zW50+uHsCmt4aeQjq/CrxPZXxwAN8NQ=;
+        b=XbmmxRuVnA7VGYpzowThjmSB+VNkRJcqC1IG/EhY9MCopiuiVdvRVbd3Omt8Dr4oJc
+         P2s/8PAEOWCJSsks9PdMC2/EKgssF2+7RnhRY8XO6OaW9H49aCV9emIKl8dZLfqHhnfV
+         Kw2Y9tPcGjA6ux6PlMfSRKSfh9SwQzYzr+GH3jqrnUG3XwYpOh6erEvFu5aZ1nvbuqPC
+         aniWMT50GJ/f/NtJB9T/k4Wpyv0zYUmlH6igc6YF1iLXMq33KPkHHVnThiMGQQ98K7ke
+         eJM5fiS+jvh3XcFgg+QLbWMvwJMrkkqmYqany62tTF2ySsKgHVCqQG2bdPKvHIL3zZZR
+         GxBg==
+X-Gm-Message-State: AA+aEWbsuQUvS8Zkv0BcArKf3oEf0IkTrDcXrtPP0wiw34+dtK91+7on
+        i5ddg/sVoiTjwE/V3ZMyhgf1Jg==
+X-Google-Smtp-Source: AFSGD/VIR3Jw7mU2J/QyBHR1wltqb8+YgszkQAvG29WWyALm4mT5DSGFJsavuFtaTPLr48BFPzyHKA==
+X-Received: by 2002:a1c:1f11:: with SMTP id f17mr3068849wmf.56.1544791623506;
+        Fri, 14 Dec 2018 04:47:03 -0800 (PST)
+Received: from dell (host109-155-202-221.range109-155.btcentralplus.com. [109.155.202.221])
+        by smtp.gmail.com with ESMTPSA id c9sm6316796wmh.27.2018.12.14.04.47.02
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 14 Dec 2018 04:47:02 -0800 (PST)
+Date:   Fri, 14 Dec 2018 12:47:01 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Pascal PAILLET-LME <p.paillet@st.com>
+Cc:     "dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "wim@linux-watchdog.org" <wim@linux-watchdog.org>,
+        "linux@roeck-us.net" <linux@roeck-us.net>,
+        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
+        "benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>,
+        "eballetbo@gmail.com" <eballetbo@gmail.com>,
+        "axel.lin@ingics.com" <axel.lin@ingics.com>
+Subject: Re: [PATCH v7 0/7] Introduce STPMIC1 PMIC Driver
+Message-ID: <20181214124701.GZ4497@dell>
+References: <1543571742-17995-1-git-send-email-p.paillet@st.com>
 MIME-Version: 1.0
-In-Reply-To: <1544790569-10608-1-git-send-email-rohitkr@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1543571742-17995-1-git-send-email-p.paillet@st.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, 30 Nov 2018, Pascal PAILLET-LME wrote:
 
-
-On 14/12/2018 12:29, Rohit kumar wrote:
-> Add support for Audio over display port AFE port
+> The goal of this patch-set is to propose a driver for the STPMIC1 PMIC from 
+> STMicroelectronics. 
+> The STPMIC1 regulators supply power to an application processor as well as 
+> to external system peripherals such as DDR, Flash memories and system
+> devices. It also features onkey button input and an hardware watchdog.
+> The STPMIC1 is controlled via I2C. 
 > 
-> Rohit kumar (4):
->    ASoC: qdsp6: dt-bindings: Add q6afe display_port dt binding
->    ASoC: qdsp6: qdafe: add support for display_port_rx
->    ASoC: qdsp6: q6afe-dai: add support to Display port RX dais
->    ASoC: qdsp6: q6routing: add display_port_rx port routing
+> Main driver is drivers/mfd/stpmic1 that handle I2C regmap configuration and
+> irqchip. stpmic1_regulator, stpmic1_onkey and stpmic1_wdt need stpmic1 mfd
+> as parent.
 > 
-Nice work Rohit, All the patches look good to me!
+> STPMIC1 MFD and regulator drivers maybe mandatory at boot time.
+> 
+> Pascal Paillet (7):
+> changes in v7:
+> * rebase on regul/for-next
+> 
+>   dt-bindings: mfd: document stpmic1
+>   mfd: stpmic1: add stpmic1 driver
+>   dt-bindings: input: document stpmic1 pmic onkey
+>   input: stpmic1: add stpmic1 onkey driver
+>   dt-bindings: watchdog: document stpmic1 pmic watchdog
+>   watchdog: stpmic1: add stpmic1 watchdog driver
+>   regulator: stpmic1: fix regulator_lock usage
 
-Acked-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Could you please remove any patches which have been applied and
+[RESEND]?
+
+Also, is Dmitry planning on Acking:
+
+  dt-bindings: input: document stpmic1 pmic onkey
+
+... or is Rob's Ack enough?
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
