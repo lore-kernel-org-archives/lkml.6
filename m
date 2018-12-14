@@ -2,60 +2,54 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97EB2C6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:02:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B42BC6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:02:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E5512146F
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:02:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 416B82146E
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:02:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544788971;
-	bh=FzFZP16ho17kgrSDolqrJ7unx6SjpmR8KxC/Nlmdn64=;
+	s=default; t=1544788975;
+	bh=9qOgkAsopNh71iTv9zN7Qqusf1/Fk3JKVeNVU2+DOhI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=0PzvXlaiaEZ0i/XNeyv7F3BqDiJAx4ebRuF6OTb/Fgdwzbov4gHQNZa6fyFECH/QE
-	 bP983i+6HporvGrW3QuAbRc02jmSDaFwo2nuuXiAiBIUlw6TeaUu0PfHKmjbhGOq58
-	 LocX/MUcXZ2O3Bhsyq9huWVXBtzNGCMGwgZj25aI=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E5512146F
+	b=0f+xRwUW/kCSWT3wqeAbpVoMX/9pntdqTj2AwDatWf1qbA5xawf7L6DolipP0cScF
+	 n3fUiie5CX9dvEPfWjbOcvtA8csMgsHt/EXFDkrMmtkbpuyssyWtWurtoVHHCFllzF
+	 0lC2u4REr2PkwO4RyGqVKqMzQ+G9P8Uf73GKLlfk=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 416B82146E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730163AbeLNMCu (ORCPT
+        id S1730176AbeLNMCy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:02:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45818 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:02:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45944 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730125AbeLNMCr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:02:47 -0500
+        id S1730125AbeLNMCw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:02:52 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AC32E2145D;
-        Fri, 14 Dec 2018 12:02:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CCB5F2146E;
+        Fri, 14 Dec 2018 12:02:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544788966;
-        bh=FzFZP16ho17kgrSDolqrJ7unx6SjpmR8KxC/Nlmdn64=;
+        s=default; t=1544788971;
+        bh=9qOgkAsopNh71iTv9zN7Qqusf1/Fk3JKVeNVU2+DOhI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uDKwEPfYBZJx32d6lGT8MB6XFcVObslGCh9uJ80IXAF4yhGcgEg5BnVeiia11IatE
-         qWzN3TCM22iv403L6mA9JY9y9XBFHqMLd1TKdYBoxwudp8O00T/epe6iEWB51kQvZi
-         GQGDPd2Ipp+/n4+n+xWojtbThg8qX7vS6hujGOio=
+        b=mOJX4BS/PtCdPRHI1mdZbH1yv9/NzsBOTd10wdd17++pymn259KUy8vUoOz+Fjc4k
+         19BDicXSBufmggJ/++MtPI/+jLGe98g95lA4nqT3WA0X0ySKpURB1aOD7sOnbNOyoR
+         ibB0uD+L/vFGly/OvRnNhf6mB1XwZDer/hujGUT8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yongxin Liu <yongxin.liu@outlook.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Adam Lee <leeadamrobert@gmail.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 041/142] perf tools: Fix crash on synthesizing the unit
-Date:   Fri, 14 Dec 2018 12:58:46 +0100
-Message-Id: <20181214115748.694920023@linuxfoundation.org>
+        stable@vger.kernel.org, Sabrina Dubroca <sd@queasysnail.net>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 021/142] net: fix XPS static_key accounting
+Date:   Fri, 14 Dec 2018 12:58:26 +0100
+Message-Id: <20181214115747.901716879@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115747.053633987@linuxfoundation.org>
 References: <20181214115747.053633987@linuxfoundation.org>
@@ -74,73 +68,127 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit fb50c09e923870a358d68b0d58891bd145b8d7c7 ]
+From: Sabrina Dubroca <sd@queasysnail.net>
 
-Adam reported a record command crash for simple session like:
+[ Upstream commit 867d0ad476db89a1e8af3f297af402399a54eea5 ]
 
-  $ perf record -e cpu-clock ls
+Commit 04157469b7b8 ("net: Use static_key for XPS maps") introduced a
+static key for XPS, but the increments/decrements don't match.
 
-with following backtrace:
+First, the static key's counter is incremented once for each queue, but
+only decremented once for a whole batch of queues, leading to large
+unbalances.
 
-  Program received signal SIGSEGV, Segmentation fault.
-  3543            ev = event_update_event__new(size + 1, PERF_EVENT_UPDATE__UNIT, evsel->id[0]);
-  (gdb) bt
-  #0  perf_event__synthesize_event_update_unit
-  #1  0x000000000051e469 in perf_event__synthesize_extra_attr
-  #2  0x00000000004445cb in record__synthesize
-  #3  0x0000000000444bc5 in __cmd_record
-  ...
+Second, the xps_rxqs_needed key is decremented whenever we reset a batch
+of queues, whether they had any rxqs mapping or not, so that if we setup
+cpu-XPS on em1 and RXQS-XPS on em2, resetting the queues on em1 would
+decrement the xps_rxqs_needed key.
 
-We synthesize an update event that needs to touch the evsel id array,
-which is not defined at that time. Fix this by forcing the id allocation
-for events with their unit defined.
+This reworks the accounting scheme so that the xps_needed key is
+incremented only once for each type of XPS for all the queues on a
+device, and the xps_rxqs_needed key is incremented only once for all
+queues. This is sufficient to let us retrieve queues via
+get_xps_queue().
 
-Reflecting possible read_format ID bit in the attr tests.
+This patch introduces a new reset_xps_maps(), which reinitializes and
+frees the appropriate map (xps_rxqs_map or xps_cpus_map), and drops a
+reference to the needed keys:
+ - both xps_needed and xps_rxqs_needed, in case of rxqs maps,
+ - only xps_needed, in case of CPU maps.
 
-Reported-by: Yongxin Liu <yongxin.liu@outlook.com>
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Adam Lee <leeadamrobert@gmail.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=201477
-Fixes: bfd8f72c2778 ("perf record: Synthesize unit/scale/... in event update")
-Link: http://lkml.kernel.org/r/20181112130012.5424-1-jolsa@kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Now, we also need to call reset_xps_maps() at the end of
+__netif_set_xps_queue() when there's no active map left, for example
+when writing '00000000,00000000' to all queues' xps_rxqs setting.
+
+Fixes: 04157469b7b8 ("net: Use static_key for XPS maps")
+Signed-off-by: Sabrina Dubroca <sd@queasysnail.net>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/perf/tests/attr/base-record | 2 +-
- tools/perf/util/evsel.c           | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ net/core/dev.c |   45 ++++++++++++++++++++++++---------------------
+ 1 file changed, 24 insertions(+), 21 deletions(-)
 
-diff --git a/tools/perf/tests/attr/base-record b/tools/perf/tests/attr/base-record
-index 37940665f736..efd0157b9d22 100644
---- a/tools/perf/tests/attr/base-record
-+++ b/tools/perf/tests/attr/base-record
-@@ -9,7 +9,7 @@ size=112
- config=0
- sample_period=*
- sample_type=263
--read_format=0
-+read_format=0|4
- disabled=1
- inherit=1
- pinned=0
-diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index 03a72310315f..e7dbdcc8d465 100644
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -1088,7 +1088,7 @@ void perf_evsel__config(struct perf_evsel *evsel, struct record_opts *opts,
- 		attr->exclude_user   = 1;
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -2161,6 +2161,20 @@ static bool remove_xps_queue_cpu(struct
+ 	return active;
+ }
+ 
++static void reset_xps_maps(struct net_device *dev,
++			   struct xps_dev_maps *dev_maps,
++			   bool is_rxqs_map)
++{
++	if (is_rxqs_map) {
++		static_key_slow_dec_cpuslocked(&xps_rxqs_needed);
++		RCU_INIT_POINTER(dev->xps_rxqs_map, NULL);
++	} else {
++		RCU_INIT_POINTER(dev->xps_cpus_map, NULL);
++	}
++	static_key_slow_dec_cpuslocked(&xps_needed);
++	kfree_rcu(dev_maps, rcu);
++}
++
+ static void clean_xps_maps(struct net_device *dev, const unsigned long *mask,
+ 			   struct xps_dev_maps *dev_maps, unsigned int nr_ids,
+ 			   u16 offset, u16 count, bool is_rxqs_map)
+@@ -2172,13 +2186,8 @@ static void clean_xps_maps(struct net_de
+ 	     j < nr_ids;)
+ 		active |= remove_xps_queue_cpu(dev, dev_maps, j, offset,
+ 					       count);
+-	if (!active) {
+-		if (is_rxqs_map)
+-			RCU_INIT_POINTER(dev->xps_rxqs_map, NULL);
+-		else
+-			RCU_INIT_POINTER(dev->xps_cpus_map, NULL);
+-		kfree_rcu(dev_maps, rcu);
+-	}
++	if (!active)
++		reset_xps_maps(dev, dev_maps, is_rxqs_map);
+ 
+ 	if (!is_rxqs_map) {
+ 		for (i = offset + (count - 1); count--; i--) {
+@@ -2222,10 +2231,6 @@ static void netif_reset_xps_queues(struc
+ 		       false);
+ 
+ out_no_maps:
+-	if (static_key_enabled(&xps_rxqs_needed))
+-		static_key_slow_dec_cpuslocked(&xps_rxqs_needed);
+-
+-	static_key_slow_dec_cpuslocked(&xps_needed);
+ 	mutex_unlock(&xps_map_mutex);
+ 	cpus_read_unlock();
+ }
+@@ -2343,9 +2348,12 @@ int __netif_set_xps_queue(struct net_dev
+ 	if (!new_dev_maps)
+ 		goto out_no_new_maps;
+ 
+-	static_key_slow_inc_cpuslocked(&xps_needed);
+-	if (is_rxqs_map)
+-		static_key_slow_inc_cpuslocked(&xps_rxqs_needed);
++	if (!dev_maps) {
++		/* Increment static keys at most once per type */
++		static_key_slow_inc_cpuslocked(&xps_needed);
++		if (is_rxqs_map)
++			static_key_slow_inc_cpuslocked(&xps_rxqs_needed);
++	}
+ 
+ 	for (j = -1; j = netif_attrmask_next(j, possible_mask, nr_ids),
+ 	     j < nr_ids;) {
+@@ -2443,13 +2451,8 @@ out_no_new_maps:
  	}
  
--	if (evsel->own_cpus)
-+	if (evsel->own_cpus || evsel->unit)
- 		evsel->attr.read_format |= PERF_FORMAT_ID;
+ 	/* free map if not active */
+-	if (!active) {
+-		if (is_rxqs_map)
+-			RCU_INIT_POINTER(dev->xps_rxqs_map, NULL);
+-		else
+-			RCU_INIT_POINTER(dev->xps_cpus_map, NULL);
+-		kfree_rcu(dev_maps, rcu);
+-	}
++	if (!active)
++		reset_xps_maps(dev, dev_maps, is_rxqs_map);
  
- 	/*
--- 
-2.19.1
-
+ out_no_maps:
+ 	mutex_unlock(&xps_map_mutex);
 
 
