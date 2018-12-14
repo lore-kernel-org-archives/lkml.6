@@ -7,51 +7,56 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A3F8C67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:13:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD3F5C6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:13:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55E44214DE
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:13:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A5657214DE
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:13:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544789582;
-	bh=BHelkpDDasH1j5FgVROOeV6aE26F4/A7iwuO6OgIRK8=;
+	s=default; t=1544789586;
+	bh=i4HRo9AP6vgh9vki2wwv5B7kuWDS+R3shSEtx7Hac0Q=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=NZ6h6PEuMT5ubTa7PI2zkQv1+RQBoN2yTaGkqwWwjn8EyaF6fr6y3xXnmX7hlP4bT
-	 5DIfikJrsRsamuPNsl17spCUf9vVgfif4/ovkSezHUuGnM+kE7CEa64PlUyMqhcxWk
-	 sfAzCAKBstxkZ4HRLiW5C1hIKALh9z6qFdBu10wA=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55E44214DE
+	b=FNgs6293Djno5pisxupHHybYkJT0sIdld03JA7Q7WOimkBQA6VfxWKOcO12RL1rFh
+	 CevIusjLqBZi7PrCSSYPKyT56TzIAzo7ER0TihaC3qy8fqDOMRQxPI6Kgkpn3TzhcL
+	 F+v7KXGqdPBZ61wUrVXbIdlHB5AmQiWpgsfOZNqA=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5657214DE
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732049AbeLNMNB (ORCPT
+        id S1732059AbeLNMNF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:13:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60364 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:13:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60418 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732009AbeLNMM6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:12:58 -0500
+        id S1732038AbeLNMNA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:13:00 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C2576214F0;
-        Fri, 14 Dec 2018 12:12:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 627B8214E0;
+        Fri, 14 Dec 2018 12:12:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789577;
-        bh=BHelkpDDasH1j5FgVROOeV6aE26F4/A7iwuO6OgIRK8=;
+        s=default; t=1544789579;
+        bh=i4HRo9AP6vgh9vki2wwv5B7kuWDS+R3shSEtx7Hac0Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1N2+X+L4RncT1SqhIkj4blNRjc6mj9wIuTbEK3TP8qxCf231RZgey/fOQ/CdoL25+
-         sky6azi6ADXJGWeOAbDNQxVaL/IVzTTn5bYsKSIfCzs0PZaRoOXlpeY56Oiu0MW50H
-         kPI5s5jUQkxhmChvfxXvoIeJdebkQJR24U0VVa5E=
+        b=Wtjfii6M5eLEgXi7+6/mfYKwsSukrO4PevT+tI04X+mzR8xDgqGD6gvg9rCRJuWua
+         ey2s58YVYSF8Jd1bLu15WZVUjDAWh0NTs2OPdglxqMvEjtm6p0DdNJsZaJsv1BYqaH
+         CogBQSmc3tgQrAtviiPe8XaFGMKHU+KgKBcqMyJU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Josh Elsasser <jelsasser@appneta.com>,
-        Andrew Bowers <andrewx.bowers@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        stable@vger.kernel.org, Qian Cai <cai@gmx.us>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Waiman Long <longman@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Yang Shi <yang.shi@linux.alibaba.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 39/51] ixgbe: recognize 1000BaseLX SFP modules as 1Gbps
-Date:   Fri, 14 Dec 2018 13:00:41 +0100
-Message-Id: <20181214115716.623646214@linuxfoundation.org>
+Subject: [PATCH 4.9 48/51] debugobjects: avoid recursive calls with kmemleak
+Date:   Fri, 14 Dec 2018 13:00:50 +0100
+Message-Id: <20181214115717.349699934@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115713.244259772@linuxfoundation.org>
 References: <20181214115713.244259772@linuxfoundation.org>
@@ -70,38 +75,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit a8bf879af7b1999eba36303ce9cc60e0e7dd816c ]
+[ Upstream commit 8de456cf87ba863e028c4dd01bae44255ce3d835 ]
 
-Add the two 1000BaseLX enum values to the X550's check for 1Gbps modules,
-allowing the core driver code to establish a link over this SFP type.
+CONFIG_DEBUG_OBJECTS_RCU_HEAD does not play well with kmemleak due to
+recursive calls.
 
-This is done by the out-of-tree driver but the fix wasn't in mainline.
+fill_pool
+  kmemleak_ignore
+    make_black_object
+      put_object
+        __call_rcu (kernel/rcu/tree.c)
+          debug_rcu_head_queue
+            debug_object_activate
+              debug_object_init
+                fill_pool
+                  kmemleak_ignore
+                    make_black_object
+                      ...
 
-Fixes: e23f33367882 ("ixgbe: Fix 1G and 10G link stability for X550EM_x SFP+”)
-Fixes: 6a14ee0cfb19 ("ixgbe: Add X550 support function pointers")
-Signed-off-by: Josh Elsasser <jelsasser@appneta.com>
-Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+So add SLAB_NOLEAKTRACE to kmem_cache_create() to not register newly
+allocated debug objects at all.
+
+Link: http://lkml.kernel.org/r/20181126165343.2339-1-cai@gmx.us
+Signed-off-by: Qian Cai <cai@gmx.us>
+Suggested-by: Catalin Marinas <catalin.marinas@arm.com>
+Acked-by: Waiman Long <longman@redhat.com>
+Acked-by: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Yang Shi <yang.shi@linux.alibaba.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/intel/ixgbe/ixgbe_x550.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ lib/debugobjects.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_x550.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_x550.c
-index 77a60aa5dc7e..8466f3874a28 100644
---- a/drivers/net/ethernet/intel/ixgbe/ixgbe_x550.c
-+++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_x550.c
-@@ -1702,7 +1702,9 @@ static s32 ixgbe_get_link_capabilities_X550em(struct ixgbe_hw *hw,
- 		*autoneg = false;
+diff --git a/lib/debugobjects.c b/lib/debugobjects.c
+index 88580e8ee39e..1c43d4c5d2ab 100644
+--- a/lib/debugobjects.c
++++ b/lib/debugobjects.c
+@@ -1110,7 +1110,8 @@ void __init debug_objects_mem_init(void)
  
- 		if (hw->phy.sfp_type == ixgbe_sfp_type_1g_sx_core0 ||
--		    hw->phy.sfp_type == ixgbe_sfp_type_1g_sx_core1) {
-+		    hw->phy.sfp_type == ixgbe_sfp_type_1g_sx_core1 ||
-+		    hw->phy.sfp_type == ixgbe_sfp_type_1g_lx_core0 ||
-+		    hw->phy.sfp_type == ixgbe_sfp_type_1g_lx_core1) {
- 			*speed = IXGBE_LINK_SPEED_1GB_FULL;
- 			return 0;
- 		}
+ 	obj_cache = kmem_cache_create("debug_objects_cache",
+ 				      sizeof (struct debug_obj), 0,
+-				      SLAB_DEBUG_OBJECTS, NULL);
++				      SLAB_DEBUG_OBJECTS | SLAB_NOLEAKTRACE,
++				      NULL);
+ 
+ 	if (!obj_cache || debug_objects_replace_static_objects()) {
+ 		debug_objects_enabled = 0;
 -- 
 2.19.1
 
