@@ -2,138 +2,88 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,T_HK_NAME_DR,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 759CDC67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 10:10:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B71FAC6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 10:13:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45C9F2086D
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 10:10:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45C9F2086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 74B372080F
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 10:13:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74B372080F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729402AbeLNKKI (ORCPT
+        id S1729321AbeLNKNb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 05:10:08 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:58262 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726344AbeLNKKI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 05:10:08 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3ACFCC0495BF;
-        Fri, 14 Dec 2018 10:10:07 +0000 (UTC)
-Received: from work-vm (ovpn-117-198.ams2.redhat.com [10.36.117.198])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id B61395D6B3;
-        Fri, 14 Dec 2018 10:09:59 +0000 (UTC)
-Date:   Fri, 14 Dec 2018 10:09:57 +0000
-From:   "Dr. David Alan Gilbert" <dgilbert@redhat.com>
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        KVM list <kvm@vger.kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Stefan Hajnoczi <stefanha@redhat.com>, sweil@redhat.com,
-        Steven Whitehouse <swhiteho@redhat.com>
-Subject: Re: [PATCH 15/52] fuse: map virtio_fs DAX window BAR
-Message-ID: <20181214100956.GC2454@work-vm>
-References: <20181210171318.16998-1-vgoyal@redhat.com>
- <20181210171318.16998-16-vgoyal@redhat.com>
- <CAA9_cmdLvFqG_Us5ZoBopj2ssWzxVbyNqf4XcgmY+=D_gARWDA@mail.gmail.com>
- <20181213200936.GU2313@work-vm>
- <CAPcyv4hwPBGLkAN8MKhtti8e-=hksg+oD3CDAUY6B9uh54zBLw@mail.gmail.com>
- <20181213204052.GE4384@redhat.com>
- <20181213211819.GF4384@redhat.com>
+        Fri, 14 Dec 2018 05:13:31 -0500
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:37982 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726494AbeLNKNa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 05:13:30 -0500
+Received: by mail-ua1-f67.google.com with SMTP id p9so1803373uaa.5;
+        Fri, 14 Dec 2018 02:13:30 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=VTPTCkq3GfHZRvNIsOK9tCvyfvqbBjLPXGrP4drpZpM=;
+        b=d3UTdcMMPPx61IzYFsPvGcgtg02o35d3FcB13TrvuEihtYteJ/AiE1c5xz7d1o2Vo4
+         OvqiWW1ErcFco6nf1eOiX4hOPIlvmBdxhiBMlthgNkjK2smkvOZp9Q2aQAmsAKKhbvW6
+         bE6NLoNuO2usJsONpZVmLPBVyy2/FoAmBIPOE2q7hj6HeWXQRvYXOfx2R+WILjAiXiJr
+         liZYQVh+7VEN/NJAUc8uQX6HrRNUgxy0+ME1PuSbZqPzOF7PmouhOz1QK9d1TAOQroiZ
+         jQmaXsZIcj2ok2H7d70L8f/EwGGWsX4Wxs07eUcV6poazLytOCr+sHQSUp2Zf2Gtm85B
+         9aRg==
+X-Gm-Message-State: AA+aEWafBilHjKAeml2BJTpLfAE8WfmGb2U0FzLWsLytXhQMGOv2XqBD
+        b85hH021VT05n0yjcWndwVven2v6V/sVT8qSdC0=
+X-Google-Smtp-Source: AFSGD/WKkUmRylajwlShKIcgvVplHFX6G1W70cn8vDw3wv1VhspHLRTwr0a8+GvM+kaCcVLUEg8/nIomtGsZpe+4DRE=
+X-Received: by 2002:ab0:210e:: with SMTP id d14mr1042242ual.20.1544782409602;
+ Fri, 14 Dec 2018 02:13:29 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181213211819.GF4384@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Fri, 14 Dec 2018 10:10:07 +0000 (UTC)
+References: <1544732388-6313-1-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1544732388-6313-1-git-send-email-fabrizio.castro@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 14 Dec 2018 11:13:17 +0100
+Message-ID: <CAMuHMdWL6vm56XrKSvwW0HaTJke7JyoFrpp_6g24ci6NOWu2vg@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: thermal: rcar-thermal: add R8A774C0 support
+To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Vivek Goyal (vgoyal@redhat.com) wrote:
-> On Thu, Dec 13, 2018 at 03:40:52PM -0500, Vivek Goyal wrote:
-> > On Thu, Dec 13, 2018 at 12:15:51PM -0800, Dan Williams wrote:
-> > > On Thu, Dec 13, 2018 at 12:09 PM Dr. David Alan Gilbert
-> > > <dgilbert@redhat.com> wrote:
-> > > >
-> > > > * Dan Williams (dan.j.williams@intel.com) wrote:
-> > > > > On Mon, Dec 10, 2018 at 9:22 AM Vivek Goyal <vgoyal@redhat.com> wrote:
-> > > > > >
-> > > > > > From: Stefan Hajnoczi <stefanha@redhat.com>
-> > > > > >
-> > > > > > Experimental QEMU code introduces an MMIO BAR for mapping portions of
-> > > > > > files in the virtio-fs device.  Map this BAR so that FUSE DAX can access
-> > > > > > file contents from the host page cache.
-> > > > >
-> > > > > FUSE DAX sounds terrifying, can you explain a bit more about what this is?
-> > > >
-> > > > We've got a guest running in QEMU, it sees an emulated PCI device;
-> > > > that runs a FUSE protocol over virtio on that PCI device, but also has
-> > > > a trick where via commands sent over the virtio queue associated with that device,
-> > > > (fragments of) host files get mmap'd into the qemu virtual memory that corresponds
-> > > > to the kvm slot exposed to the guest for that bar.
-> > > >
-> > > > The guest sees those chunks in that BAR, and thus you can read/write
-> > > > to the host file by directly writing into that BAR.
-> > > 
-> > > Ok so it's all software emulated and there won't be hardware DMA
-> > > initiated by the guest to that address?
-> > 
-> > That's my understanding.
-> > 
-> > > I.e. if the host file gets
-> > > truncated / hole-punched the guest would just cause a refault and the
-> > > filesystem could fill in the block,
-> > 
-> > Right
-> > 
-> > > or the guest is expected to die if
-> > > the fault to the truncated file range results in SIGBUS.
-> > 
-> > Are you referring to the case where a file page is mapped in qemu and
-> > another guest/process trucates that page and when qemu tries to access it it
-> > will get SIGBUS. Have not tried it, will give it a try. Not sure what
-> > happens when QEMU receives SIGBUS.
-> > 
-> > Having said that, this is not different from the case of one process
-> > mapping a file and another process truncating the file and first process
-> > getting SIGBUS, right?
-> 
-> Ok, tried this and guest process hangs.
-> 
-> Stefan, dgilbert, this reminds me that we have faced this issue during
-> our testing and we decided that this will need some fixing in KVM. I
-> even put this in as part of changelog of patch with subject "fuse: Take
-> inode lock for dax inode truncation"
-> 
-> "Another problem is, if we setup a mapping in fuse_iomap_begin(), and
->  file gets truncated and dax read/write happens, KVM currently hangs.
->  It tries to fault in a page which does not exist on host (file got
->  truncated). It probably requries fixing in KVM."
-> 
-> Not sure what should happen though when qemu receives SIGBUS in this
-> case.
+On Thu, Dec 13, 2018 at 9:19 PM Fabrizio Castro
+<fabrizio.castro@bp.renesas.com> wrote:
+> Document RZ/G2E SoC (a.k.a. r8a774c0) bindings.
+>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-Yes, and I noted it in the TODO in my qemu patch posting.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-We need to figure out what we want the guest to see in this case and
-figure out how to make QEMU/kvm fix it up so that the guest doesn't
-see anything odd.
+Gr{oetje,eeting}s,
 
-Dave
+                        Geert
 
-> Thanks
-> Vivek
---
-Dr. David Alan Gilbert / dgilbert@redhat.com / Manchester, UK
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
