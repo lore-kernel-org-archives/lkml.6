@@ -4,54 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E6F2C6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:16:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9677BC6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:16:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6449721479
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:16:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 54867214AE
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:16:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544789805;
-	bh=KW8unDsOXjmywQ70y831Ybz6mgGM+mtywOrpENG4guo=;
+	s=default; t=1544789808;
+	bh=udeB+WuhxjJoPU3pilWKUKE9BlL9iGzahaFUkC42s4E=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=uD0U0OrWVFrBE1z87kDa0QddwVBAzn+eaPifJwRaLtERVakaXbNPqHeZyLYnPaY0y
-	 jRvPDi68zpYgoDO40uC3J2P1FbubHsbBTzo0A1BoCvmoH7peTciiJklPtFy8RLsO7l
-	 bmSUFuAlp67WarN0OJbXtWm7Wcldc1+Qr9k1S4sc=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6449721479
+	b=EwUsbPtJj7QsnrqOEi/np764fL+RkCMHYj9YF6grFwyYawzWghKPmb9OQ/JBHWWWz
+	 LVKqey3q+6sh7L1JYaYgu6MF6etcHaGKuN58rVrS0YCH4dAiwollFKi1HF0DKM6wby
+	 8vdVclvIrUUmcoKOpVtmbXtU85ScCeGFUKjXwTHQ=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54867214AE
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732809AbeLNMQo (ORCPT
+        id S1732820AbeLNMQr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:16:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36844 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:16:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36928 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732780AbeLNMQh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:16:37 -0500
+        id S1732801AbeLNMQn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:16:43 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DD7CE21479;
-        Fri, 14 Dec 2018 12:16:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 27C0221486;
+        Fri, 14 Dec 2018 12:16:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789796;
-        bh=KW8unDsOXjmywQ70y831Ybz6mgGM+mtywOrpENG4guo=;
+        s=default; t=1544789801;
+        bh=udeB+WuhxjJoPU3pilWKUKE9BlL9iGzahaFUkC42s4E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RpV2beNtoWNcHWXt4d4JqiAmuh3aR1DL22yPAdQmHwt2vb2hDn3NaQH2OQF+AAlxr
-         eUIIydHtSnjKYJNbIvSD2tJoBkCYeOANxlyGUn9hI+E5vqZrc5AJrUbiI+ee/fpcOn
-         3P1h3maiDsvOm9IUfGY3DxE2VSjtLM1Hx1F/51rc=
+        b=FvaZAN7BrKgEyRm1Rq5dKVLC1YlSUiPBKw8cVbKzuDJivSn12L9+YTzBqmd3j1FIm
+         VZvfehY6ULtPFpWEaYKdOJKyyWAQQCOYmazDmPo2E2V1FNVdhpqX2aCfZwgFXJuH6x
+         vIbSzIPGKO0mhGRJTpkZgNsER0ndMuEU26V+Z27w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@suse.de>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        stable@vger.kernel.org, Tom Lendacky <thomas.lendacky@amd.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
         David Woodhouse <dwmw@amazon.co.uk>,
         Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.4 59/88] x86/bugs, KVM: Extend speculation control for VIRT_SPEC_CTRL
-Date:   Fri, 14 Dec 2018 13:00:33 +0100
-Message-Id: <20181214115707.313009206@linuxfoundation.org>
+Subject: [PATCH 4.4 61/88] KVM: SVM: Implement VIRT_SPEC_CTRL support for SSBD
+Date:   Fri, 14 Dec 2018 13:00:35 +0100
+Message-Id: <20181214115707.427258423@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115702.151309521@linuxfoundation.org>
 References: <20181214115702.151309521@linuxfoundation.org>
@@ -70,100 +70,228 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Thomas Gleixner <tglx@linutronix.de>
+From: Tom Lendacky <thomas.lendacky@amd.com>
 
-commit ccbcd2674472a978b48c91c1fbfb66c0ff959f24 upstream.
+commit bc226f07dcd3c9ef0b7f6236fe356ea4a9cb4769 upstream.
 
-AMD is proposing a VIRT_SPEC_CTRL MSR to handle the Speculative Store
-Bypass Disable via MSR_AMD64_LS_CFG so that guests do not have to care
-about the bit position of the SSBD bit and thus facilitate migration.
-Also, the sibling coordination on Family 17H CPUs can only be done on
-the host.
+Expose the new virtualized architectural mechanism, VIRT_SSBD, for using
+speculative store bypass disable (SSBD) under SVM.  This will allow guests
+to use SSBD on hardware that uses non-architectural mechanisms for enabling
+SSBD.
 
-Extend x86_spec_ctrl_set_guest() and x86_spec_ctrl_restore_host() with an
-extra argument for the VIRT_SPEC_CTRL MSR.
+[ tglx: Folded the migration fixup from Paolo Bonzini ]
 
-Hand in 0 from VMX and in SVM add a new virt_spec_ctrl member to the CPU
-data structure which is going to be used in later patches for the actual
-implementation.
-
+Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Borislav Petkov <bp@suse.de>
-Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-[bwh: Backported to 4.4: This was partly applied before; apply just the
- missing bits]
 Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kvm/svm.c |   11 +++++++++--
- arch/x86/kvm/vmx.c |    5 +++--
- 2 files changed, 12 insertions(+), 4 deletions(-)
+ arch/x86/include/asm/kvm_host.h |    2 +-
+ arch/x86/kernel/cpu/common.c    |    3 ++-
+ arch/x86/kvm/cpuid.c            |   11 +++++++++--
+ arch/x86/kvm/cpuid.h            |    9 +++++++++
+ arch/x86/kvm/svm.c              |   21 +++++++++++++++++++--
+ arch/x86/kvm/vmx.c              |   18 +++++++++++++++---
+ arch/x86/kvm/x86.c              |   13 ++++---------
+ 7 files changed, 59 insertions(+), 18 deletions(-)
 
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -765,7 +765,7 @@ struct kvm_x86_ops {
+ 	int (*hardware_setup)(void);               /* __init */
+ 	void (*hardware_unsetup)(void);            /* __exit */
+ 	bool (*cpu_has_accelerated_tpr)(void);
+-	bool (*cpu_has_high_real_mode_segbase)(void);
++	bool (*has_emulated_msr)(int index);
+ 	void (*cpuid_update)(struct kvm_vcpu *vcpu);
+ 
+ 	/* Create, but do not attach this VCPU */
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -693,7 +693,8 @@ static void init_speculation_control(str
+ 	if (cpu_has(c, X86_FEATURE_INTEL_STIBP))
+ 		set_cpu_cap(c, X86_FEATURE_STIBP);
+ 
+-	if (cpu_has(c, X86_FEATURE_SPEC_CTRL_SSBD))
++	if (cpu_has(c, X86_FEATURE_SPEC_CTRL_SSBD) ||
++	    cpu_has(c, X86_FEATURE_VIRT_SSBD))
+ 		set_cpu_cap(c, X86_FEATURE_SSBD);
+ 
+ 	if (cpu_has(c, X86_FEATURE_AMD_IBRS)) {
+--- a/arch/x86/kvm/cpuid.c
++++ b/arch/x86/kvm/cpuid.c
+@@ -343,7 +343,7 @@ static inline int __do_cpuid_ent(struct
+ 
+ 	/* cpuid 0x80000008.ebx */
+ 	const u32 kvm_cpuid_8000_0008_ebx_x86_features =
+-		F(AMD_IBPB) | F(AMD_IBRS);
++		F(AMD_IBPB) | F(AMD_IBRS) | F(VIRT_SSBD);
+ 
+ 	/* cpuid 0xC0000001.edx */
+ 	const u32 kvm_supported_word5_x86_features =
+@@ -595,13 +595,20 @@ static inline int __do_cpuid_ent(struct
+ 			g_phys_as = phys_as;
+ 		entry->eax = g_phys_as | (virt_as << 8);
+ 		entry->edx = 0;
+-		/* IBRS and IBPB aren't necessarily present in hardware cpuid */
++		/*
++		 * IBRS, IBPB and VIRT_SSBD aren't necessarily present in
++		 * hardware cpuid
++		 */
+ 		if (boot_cpu_has(X86_FEATURE_AMD_IBPB))
+ 			entry->ebx |= F(AMD_IBPB);
+ 		if (boot_cpu_has(X86_FEATURE_AMD_IBRS))
+ 			entry->ebx |= F(AMD_IBRS);
++		if (boot_cpu_has(X86_FEATURE_VIRT_SSBD))
++			entry->ebx |= F(VIRT_SSBD);
+ 		entry->ebx &= kvm_cpuid_8000_0008_ebx_x86_features;
+ 		cpuid_mask(&entry->ebx, CPUID_8000_0008_EBX);
++		if (boot_cpu_has(X86_FEATURE_LS_CFG_SSBD))
++			entry->ebx |= F(VIRT_SSBD);
+ 		break;
+ 	}
+ 	case 0x80000019:
+--- a/arch/x86/kvm/cpuid.h
++++ b/arch/x86/kvm/cpuid.h
+@@ -189,6 +189,15 @@ static inline bool guest_cpuid_has_arch_
+ 	return best && (best->edx & bit(X86_FEATURE_ARCH_CAPABILITIES));
+ }
+ 
++static inline bool guest_cpuid_has_virt_ssbd(struct kvm_vcpu *vcpu)
++{
++	struct kvm_cpuid_entry2 *best;
++
++	best = kvm_find_cpuid_entry(vcpu, 0x80000008, 0);
++	return best && (best->ebx & bit(X86_FEATURE_VIRT_SSBD));
++}
++
++
+ 
+ /*
+  * NRIPS is provided through cpuidfn 0x8000000a.edx bit 3
 --- a/arch/x86/kvm/svm.c
 +++ b/arch/x86/kvm/svm.c
-@@ -149,6 +149,12 @@ struct vcpu_svm {
- 	} host;
+@@ -3102,6 +3102,13 @@ static int svm_get_msr(struct kvm_vcpu *
  
- 	u64 spec_ctrl;
-+	/*
-+	 * Contains guest-controlled bits of VIRT_SPEC_CTRL, which will be
-+	 * translated into the appropriate L2_CFG bits on the host to
-+	 * perform speculative control.
-+	 */
-+	u64 virt_spec_ctrl;
+ 		msr_info->data = svm->spec_ctrl;
+ 		break;
++	case MSR_AMD64_VIRT_SPEC_CTRL:
++		if (!msr_info->host_initiated &&
++		    !guest_cpuid_has_virt_ssbd(vcpu))
++			return 1;
++
++		msr_info->data = svm->virt_spec_ctrl;
++		break;
+ 	case MSR_IA32_UCODE_REV:
+ 		msr_info->data = 0x01000065;
+ 		break;
+@@ -3219,6 +3226,16 @@ static int svm_set_msr(struct kvm_vcpu *
+ 			break;
+ 		set_msr_interception(svm->msrpm, MSR_IA32_PRED_CMD, 0, 1);
+ 		break;
++	case MSR_AMD64_VIRT_SPEC_CTRL:
++		if (!msr->host_initiated &&
++		    !guest_cpuid_has_virt_ssbd(vcpu))
++			return 1;
++
++		if (data & ~SPEC_CTRL_SSBD)
++			return 1;
++
++		svm->virt_spec_ctrl = data;
++		break;
+ 	case MSR_STAR:
+ 		svm->vmcb->save.star = data;
+ 		break;
+@@ -4137,7 +4154,7 @@ static bool svm_cpu_has_accelerated_tpr(
+ 	return false;
+ }
  
- 	u32 *msrpm;
+-static bool svm_has_high_real_mode_segbase(void)
++static bool svm_has_emulated_msr(int index)
+ {
+ 	return true;
+ }
+@@ -4421,7 +4438,7 @@ static struct kvm_x86_ops svm_x86_ops =
+ 	.hardware_enable = svm_hardware_enable,
+ 	.hardware_disable = svm_hardware_disable,
+ 	.cpu_has_accelerated_tpr = svm_cpu_has_accelerated_tpr,
+-	.cpu_has_high_real_mode_segbase = svm_has_high_real_mode_segbase,
++	.has_emulated_msr = svm_has_emulated_msr,
  
-@@ -1146,6 +1152,7 @@ static void svm_vcpu_reset(struct kvm_vc
- 	u32 eax = 1;
- 
- 	svm->spec_ctrl = 0;
-+	svm->virt_spec_ctrl = 0;
- 
- 	if (!init_event) {
- 		svm->vcpu.arch.apic_base = APIC_DEFAULT_PHYS_BASE |
-@@ -3904,7 +3911,7 @@ static void svm_vcpu_run(struct kvm_vcpu
- 	 * is no need to worry about the conditional branch over the wrmsr
- 	 * being speculatively taken.
- 	 */
--	x86_spec_ctrl_set_guest(svm->spec_ctrl);
-+	x86_spec_ctrl_set_guest(svm->spec_ctrl, svm->virt_spec_ctrl);
- 
- 	asm volatile (
- 		"push %%" _ASM_BP "; \n\t"
-@@ -4028,7 +4035,7 @@ static void svm_vcpu_run(struct kvm_vcpu
- 	if (!msr_write_intercepted(vcpu, MSR_IA32_SPEC_CTRL))
- 		svm->spec_ctrl = native_read_msr(MSR_IA32_SPEC_CTRL);
- 
--	x86_spec_ctrl_restore_host(svm->spec_ctrl);
-+	x86_spec_ctrl_restore_host(svm->spec_ctrl, svm->virt_spec_ctrl);
- 
- 	reload_tss(vcpu);
- 
+ 	.vcpu_create = svm_create_vcpu,
+ 	.vcpu_free = svm_free_vcpu,
 --- a/arch/x86/kvm/vmx.c
 +++ b/arch/x86/kvm/vmx.c
-@@ -8658,9 +8658,10 @@ static void __noclone vmx_vcpu_run(struc
- 	 * is no need to worry about the conditional branch over the wrmsr
- 	 * being speculatively taken.
- 	 */
--	x86_spec_ctrl_set_guest(vmx->spec_ctrl);
-+	x86_spec_ctrl_set_guest(vmx->spec_ctrl, 0);
+@@ -8458,9 +8458,21 @@ static void vmx_handle_external_intr(str
+ 		local_irq_enable();
+ }
  
- 	vmx->__launched = vmx->loaded_vmcs->launched;
-+
- 	asm(
- 		/* Store host registers */
- 		"push %%" _ASM_DX "; push %%" _ASM_BP ";"
-@@ -8796,7 +8797,7 @@ static void __noclone vmx_vcpu_run(struc
- 	if (!msr_write_intercepted(vcpu, MSR_IA32_SPEC_CTRL))
- 		vmx->spec_ctrl = native_read_msr(MSR_IA32_SPEC_CTRL);
+-static bool vmx_has_high_real_mode_segbase(void)
++static bool vmx_has_emulated_msr(int index)
+ {
+-	return enable_unrestricted_guest || emulate_invalid_guest_state;
++	switch (index) {
++	case MSR_IA32_SMBASE:
++		/*
++		 * We cannot do SMM unless we can run the guest in big
++		 * real mode.
++		 */
++		return enable_unrestricted_guest || emulate_invalid_guest_state;
++	case MSR_AMD64_VIRT_SPEC_CTRL:
++		/* This is AMD only.  */
++		return false;
++	default:
++		return true;
++	}
+ }
  
--	x86_spec_ctrl_restore_host(vmx->spec_ctrl);
-+	x86_spec_ctrl_restore_host(vmx->spec_ctrl, 0);
+ static bool vmx_mpx_supported(void)
+@@ -10952,7 +10964,7 @@ static struct kvm_x86_ops vmx_x86_ops =
+ 	.hardware_enable = hardware_enable,
+ 	.hardware_disable = hardware_disable,
+ 	.cpu_has_accelerated_tpr = report_flexpriority,
+-	.cpu_has_high_real_mode_segbase = vmx_has_high_real_mode_segbase,
++	.has_emulated_msr = vmx_has_emulated_msr,
  
- 	/* Eliminate branch target predictions from guest mode */
- 	vmexit_fill_RSB();
+ 	.vcpu_create = vmx_create_vcpu,
+ 	.vcpu_free = vmx_free_vcpu,
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -985,6 +985,7 @@ static u32 emulated_msrs[] = {
+ 	MSR_IA32_MCG_STATUS,
+ 	MSR_IA32_MCG_CTL,
+ 	MSR_IA32_SMBASE,
++	MSR_AMD64_VIRT_SPEC_CTRL,
+ };
+ 
+ static unsigned num_emulated_msrs;
+@@ -2584,7 +2585,7 @@ int kvm_vm_ioctl_check_extension(struct
+ 		 * fringe case that is not enabled except via specific settings
+ 		 * of the module parameters.
+ 		 */
+-		r = kvm_x86_ops->cpu_has_high_real_mode_segbase();
++		r = kvm_x86_ops->has_emulated_msr(MSR_IA32_SMBASE);
+ 		break;
+ 	case KVM_CAP_COALESCED_MMIO:
+ 		r = KVM_COALESCED_MMIO_PAGE_OFFSET;
+@@ -4073,14 +4074,8 @@ static void kvm_init_msr_list(void)
+ 	num_msrs_to_save = j;
+ 
+ 	for (i = j = 0; i < ARRAY_SIZE(emulated_msrs); i++) {
+-		switch (emulated_msrs[i]) {
+-		case MSR_IA32_SMBASE:
+-			if (!kvm_x86_ops->cpu_has_high_real_mode_segbase())
+-				continue;
+-			break;
+-		default:
+-			break;
+-		}
++		if (!kvm_x86_ops->has_emulated_msr(emulated_msrs[i]))
++			continue;
+ 
+ 		if (j < i)
+ 			emulated_msrs[j] = emulated_msrs[i];
 
 
