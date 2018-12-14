@@ -2,98 +2,183 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D6EEC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 16:30:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0947FC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 16:31:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6B80206C2
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 16:30:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="s8ZrYbWq"
+	by mail.kernel.org (Postfix) with ESMTP id 93848206C2
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 16:31:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730111AbeLNQau (ORCPT
+        id S1730125AbeLNQbC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 11:30:50 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:36052 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729623AbeLNQat (ORCPT
+        Fri, 14 Dec 2018 11:31:02 -0500
+Received: from esgaroth.petrovitsch.at ([78.47.184.11]:3205 "EHLO
+        esgaroth.tuxoid.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730057AbeLNQbB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 11:30:49 -0500
-Received: by mail-lj1-f194.google.com with SMTP id g11-v6so5421578ljk.3
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 08:30:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:organization:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ohpVLLxzMLR6t3TyeZ9Uer7Ih+QC8diFc7ZJxZbDNVk=;
-        b=s8ZrYbWq9CUWiRO7rAZ6CvpbDWEYXqR7nJ2ZoJBvmRl4b1pXWYTviMebAJyzN1Lw+E
-         ZF6YXt5joT7NQmgGYzUY1I65B/6QXW0hAJUII2WhQ6bGcRgFWv7bM/eNhF7+8HFVnXQ5
-         7K222mQ/OtE1BA+MEPKWVWO5KXqaHLOmtz3YCRa9KfgJQVnurmn7wNAjNB9EZsRgyrFI
-         UoCGvPOnuzekBa+rJzZacNFM+B/AB61Ny/Ceh0ObNIxYBn/w4l0cTtNfiYQlmH5LLaJT
-         AWKlZs/XoHEIsu8ZY5F4yocDwjDvJRNm68HvPADIE3O/Er6BzN5iJIiNJoBzYF3p5QdS
-         9OIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=ohpVLLxzMLR6t3TyeZ9Uer7Ih+QC8diFc7ZJxZbDNVk=;
-        b=qwmGHBz+Ka0Z8ytFZRQF3lLbrYphQO+U4J6GDTKMNoLU9Wdj/aio1dPwjKz/fYWOV7
-         70qoYplZcN6EOp5OqjQMVbwOWCf34ghvxkdHMkV4LM2thF3s/Y7DIvoEQ33A5HjZ0Yl6
-         4G+N2XD6OBr+q0DTXKUFcO9egCXBDtRPgpZ31E5mje0wFGmgh7Pip+MeTnsGJ7UcYnAM
-         VYC+rgw1d7Uvp67mNVMx+e7zRTSXlsg3vRR4RvQIW6wZCvaZKnfXFdzQqQOPu0yaPZqo
-         iDRLPgMGzn1SkDFZtK23pptYUroAlR/qdFmFjPrCIO9rcNH2dsEvj58rEpyfGS9X3+ZA
-         vmcA==
-X-Gm-Message-State: AA+aEWZgOvsUDWSdQYfVgKrUWZ/ua8Lg4BeBlKORJKw99YgQswC1XWTO
-        084j3Gkp4497S52v/VjV7cvqa6VcOfo=
-X-Google-Smtp-Source: AFSGD/VRBp2bLPzcYexkVhnnKLJ380RRGYhQjYNk4aDd7NLbDQvVB7gw45g4lYE3hCDtcz1VhtK6GA==
-X-Received: by 2002:a2e:750a:: with SMTP id q10-v6mr2473793ljc.39.1544805047275;
-        Fri, 14 Dec 2018 08:30:47 -0800 (PST)
-Received: from wasted.cogentembedded.com ([31.173.84.123])
-        by smtp.gmail.com with ESMTPSA id m63-v6sm1043624lje.81.2018.12.14.08.30.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 14 Dec 2018 08:30:46 -0800 (PST)
-Subject: Re: [PATCH] dt-bindings: net: ravb: Add support for r8a774c0 SoC
-To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Chris Paterson <Chris.Paterson2@renesas.com>
-References: <1544732314-6041-1-git-send-email-fabrizio.castro@bp.renesas.com>
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Organization: Cogent Embedded
-Message-ID: <0783aaaa-b185-03bc-b027-d0ef159acda1@cogentembedded.com>
-Date:   Fri, 14 Dec 2018 19:30:44 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Fri, 14 Dec 2018 11:31:01 -0500
+Received: from [10.68.100.236] (h10-gesig.woeg.acw.at [217.116.178.11] (may be forged))
+        (authenticated bits=0)
+        by esgaroth.tuxoid.at (8.15.2/8.15.2) with ESMTPSA id wBEGTwYI003118
+        (version=TLSv1 cipher=AES128-SHA bits=128 verify=NO);
+        Fri, 14 Dec 2018 17:29:58 +0100
+Subject: Re: Can we drop upstream Linux x32 support?
+To:     Rich Felker <dalias@libc.org>
+Cc:     John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+        Andy Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Florian Weimer <fweimer@redhat.com>,
+        Mike Frysinger <vapier@gentoo.org>,
+        "H. J. Lu" <hjl.tools@gmail.com>, x32@buildd.debian.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+References: <CALCETrXoRAibsbWa9nfbDrt0iEuebMnCMhSFg-d9W-J2g8mDjw@mail.gmail.com>
+ <70bb54b2-8ed3-b5ee-c02d-6ef66c4f27eb@physik.fu-berlin.de>
+ <20181213160242.GV23599@brightrain.aerifal.cx>
+ <c8987b31-ed79-acef-a300-31ebf2c29d2e@petrovitsch.priv.at>
+ <20181214161732.GY23599@brightrain.aerifal.cx>
+From:   Bernd Petrovitsch <bernd@petrovitsch.priv.at>
+Message-ID: <dfefa4b4-f008-9e7a-491d-af3dc324d718@petrovitsch.priv.at>
+Date:   Fri, 14 Dec 2018 17:29:51 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <1544732314-6041-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20181214161732.GY23599@brightrain.aerifal.cx>
+Content-Type: multipart/mixed;
+ boundary="------------B32AFA45FC795731541F9B92"
+Content-Language: en-US
+X-DCC-URT-Metrics: esgaroth.tuxoid.at 1060; Body=17 Fuz1=17 Fuz2=17
+X-Virus-Scanned: clamav-milter 0.97 at esgaroth.tuxoid.at
+X-Virus-Status: Clean
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/13/2018 11:18 PM, Fabrizio Castro wrote:
+This is a multi-part message in MIME format.
+--------------B32AFA45FC795731541F9B92
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-> Document RZ/G2E (R8A774C0) SoC bindings.
-> 
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+On 14/12/2018 17:17, Rich Felker wrote:
+> On Fri, Dec 14, 2018 at 03:13:10PM +0100, Bernd Petrovitsch wrote:
+[..]
+>> FWIW I have
+>> ----  snip  ----
+>> #if defined __x86_64__
+>> # if defined __ILP32__		// x32
+>> #  define PRI_time_t	"lld"	// for time_t
+>> #  define PRI_nsec_t	"lld"	// for tv_nsec in struct timespec
+>> # else				// x86_64
+>> #  define PRI_time_t	"ld"	// for time_t
+>> #  define PRI_nsec_t	"ld"	// for tv_nsec in struct timespec
+>> # endif
+>> #else				// i[3-6]68
+>> # define PRI_time_t	"ld"	// for time_t
+>> # define PRI_nsec_t	"ld"	// for tv_nsec in struct timespec
+>> #endif
+>> ----  snip  ----
+>> in my userspace code for printf() and friends - I don't know how libc'=
+s
+>> react to such a patch (and I don't care for the name of the macros as
+>> long it's obviously clear for which type they are).
+>> I assume/fear we won't get additional modifiers into the relevant
+>> standards for libc types (as they are far more like pid_t, uid_t etc.)=
+=2E
+>> And casting to u/intmaxptr_t to get a defined printf()-modifier doesn'=
+t
+>> look appealing to me to "solve" such issues.
+>=20
+> This is all useless (and wrong since tv_nsec is required to have type
+> long as part of C and POSIX, regardless of ILP32-vs-LP64; that's a bug
 
-Reviewed-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Thanks. OK, I didn't know that - and 32bit is enough to represent 1E9
+(as a second won't have more nanosecs).
+Hmm, can we fix that in the x32 world?
+Sry, I'm not the expert on glibc vs ABI va syscall interface vs breakage
+there though.
 
-MBR, Sergei
+> in glibc's x32). Just do:
+>=20
+> 	printf("%jd", (intmax_t)t);
+>=20
+> Saving 2 or 3 insns (for sign or zero extension) around a call to
+> printf is not going to make any measurable difference to performance
+
+Until someone comes up with hardware with ASIC support for 1k bit int's
+and (ab)uses intmax_t for that. SCNR ....
+
+> or any significant difference to size, and it's immeasurably more
+> readable than the awful PRI* macros and the
+> adjacent-string-concatenation they rely on.
+
+One gets used to the PRI_* macros over time (and there no calculated
+format strings in my world) - and type casts are not better in my eyes ..=
+=2E
+
+MfG,
+	Bernd
+--=20
+"I dislike type abstraction if it has no real reason. And saving
+on typing is not a good reason - if your typing speed is the main
+issue when you're coding, you're doing something seriously wrong."
+    - Linus Torvalds
+
+--------------B32AFA45FC795731541F9B92
+Content-Type: application/pgp-keys;
+ name="pEpkey.asc"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: attachment;
+ filename="pEpkey.asc"
+
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+
+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3D=3D
+=3Dv2Yn
+-----END PGP PUBLIC KEY BLOCK-----
+
+--------------B32AFA45FC795731541F9B92--
