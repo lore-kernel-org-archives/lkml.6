@@ -2,143 +2,252 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABC55C67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 09:40:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9B8CC67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 09:42:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F13320672
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 09:40:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6076020866
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 09:42:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="PMSOIdvc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F13320672
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="blauWLTn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6076020866
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729144AbeLNJku (ORCPT
+        id S1729059AbeLNJmC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 04:40:50 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:38999 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726494AbeLNJkt (ORCPT
+        Fri, 14 Dec 2018 04:42:02 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:51124 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726344AbeLNJmB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 04:40:49 -0500
-Received: by mail-ed1-f66.google.com with SMTP id b14so4416240edt.6
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 01:40:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=CJbJ3b1s6OtzxlrIrNWzya1v/WchMlr8EY6HlXyl5SY=;
-        b=PMSOIdvcKQHVHgd1cDT13zzOLNah5lUY7MK+S3Zv3crrMZROCrzBv8P5rtsaNNfxwH
-         nZyaBTR8/dGmN6KomQH+pTrB1IEsGm4AdepKne61+t8+d9AGdtdyKmYoXbtT8pw2D+3d
-         d7ZbDM2HWz9NPggOxj8ktNLBdMrB+62LhMQVI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=CJbJ3b1s6OtzxlrIrNWzya1v/WchMlr8EY6HlXyl5SY=;
-        b=gpsGpLv13EDQVX3Bona8EihONRnhBjcqztSXmcxzfh6vnHQ8zjeg7b/VezIzllouD7
-         6TwCqAoWT5V9Vu2rlj1+VuwOOOQkcLna/e8Ia6le42mTCjWJ2ie0J5o+G3qhLYna+4Vx
-         8pBFoZx6zR6Nr1yRP7ocwMoOzoXD3NAt1eVS+k2sTx2nwyZlWSbwKo9TLM8YKTNKUiDG
-         Pje5yJIpLBiXzDQE9MgGHbJdvYfLIP3n1HvIphQ30SxkMHZWa4H+sg0NbaOt6rvfKOt3
-         tlVfXAfWfJ9djzFEqXsUEP5E+Hlrqyk2GogQ77LE/mbjXswuxmhYZnN4JyX7boIYfSt0
-         fp/Q==
-X-Gm-Message-State: AA+aEWauCXCXaROEk2EsHMxjc+HsUFLF/8Ra6u+HkOnxIy72RNRUbViJ
-        s8Q29MPAcdBPJV58RsbCPjJq2w==
-X-Google-Smtp-Source: AFSGD/XZDwzvLsptoakb9l+2CLM9fVxNQNm+32u2DNgjAHvHfTBa2iPNe84csjU3c+sKarQdZqx1SA==
-X-Received: by 2002:a17:906:340a:: with SMTP id c10-v6mr1978123ejb.130.1544780447871;
-        Fri, 14 Dec 2018 01:40:47 -0800 (PST)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id b9sm1474111ede.12.2018.12.14.01.40.46
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 14 Dec 2018 01:40:47 -0800 (PST)
-Date:   Fri, 14 Dec 2018 10:40:44 +0100
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Lyude Paul <lyude@redhat.com>
-Cc:     dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-        intel-gfx@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Dave Airlie <airlied@gmail.com>,
-        Harry Wentland <harry.wentland@amd.com>,
-        Jerry Zuo <Jerry.Zuo@amd.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [WIP PATCH 04/15] drm/dp_mst: Stop releasing VCPI when removing
- ports from topology
-Message-ID: <20181214094044.GQ21184@phenom.ffwll.local>
-Mail-Followup-To: Lyude Paul <lyude@redhat.com>,
-        dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-        intel-gfx@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
-        Dave Airlie <airlied@gmail.com>,
-        Harry Wentland <harry.wentland@amd.com>,
-        Jerry Zuo <Jerry.Zuo@amd.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        linux-kernel@vger.kernel.org
-References: <20181214012604.13746-1-lyude@redhat.com>
- <20181214012604.13746-5-lyude@redhat.com>
+        Fri, 14 Dec 2018 04:42:01 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id wBE9fvPB079732;
+        Fri, 14 Dec 2018 03:41:57 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1544780517;
+        bh=RgMEplXqcA7XenvE7kXXnkZ16PUgjZH6e7t4XYV6eXQ=;
+        h=Subject:To:References:CC:From:Date:In-Reply-To;
+        b=blauWLTn2sR8Hhe8+2l45RVe8UpqMO1h0FGWd8cP8Nv20/rzWycMoYFgqI14PVW4v
+         CC6vdR2nojF6de334RnPPXaKSERwH1CqWxpkzstUbqh2g7eP9EhLO+pAzBHHJxPDnA
+         I8CDZrzPFw+soXuQ5i2jRcis0aBTsmOzlCA/HuQM=
+Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wBE9fvWe000958
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 14 Dec 2018 03:41:57 -0600
+Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Fri, 14
+ Dec 2018 03:41:56 -0600
+Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Fri, 14 Dec 2018 03:41:56 -0600
+Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wBE9fsvi003151;
+        Fri, 14 Dec 2018 03:41:55 -0600
+Subject: Re: [PATCH 1/4] phy: ti: usb2: Fix logic on -EPROBE_DEFER
+To:     <kishon@ti.com>, Tony Lindgren <tony@atomide.com>
+References: <1544022206-2300-1-git-send-email-rogerq@ti.com>
+ <1544022206-2300-2-git-send-email-rogerq@ti.com>
+CC:     <robh+dt@kernel.org>, <nsekhar@ti.com>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>
+From:   Roger Quadros <rogerq@ti.com>
+Message-ID: <5C137AE2.4080803@ti.com>
+Date:   Fri, 14 Dec 2018 11:41:54 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181214012604.13746-5-lyude@redhat.com>
-X-Operating-System: Linux phenom 4.18.0-2-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1544022206-2300-2-git-send-email-rogerq@ti.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 13, 2018 at 08:25:33PM -0500, Lyude Paul wrote:
-> This has never actually worked, and isn't needed anyway: the driver's
-> always going to try to deallocate VCPI when it tears down the display
-> that the VCPI belongs to.
-> 
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
+Kishon,
 
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+On 05/12/18 17:03, Roger Quadros wrote:
+> If clk_get() returns -EPROBE_DEFER then we should just
+> return instead of falling back to old clock name.
+> 
+> Use clk_prepare_enable() and clk_disable_unprepare() instead
+> of splitting up prepare/unprepare from enable/disable.
+> 
+> Signed-off-by: Roger Quadros <rogerq@ti.com>
+
+I think you should pick this one for -next independently of the rest
+of the series as Tony's ti-sysc patches might cause this issue to trigger
+due to re-ordering of devices.
+
+
+cheers,
+-roger
 
 > ---
->  drivers/gpu/drm/drm_dp_mst_topology.c | 8 --------
->  1 file changed, 8 deletions(-)
+>  drivers/phy/ti/phy-omap-usb2.c | 88 ++++++++++++++++++++++--------------------
+>  1 file changed, 47 insertions(+), 41 deletions(-)
 > 
-> diff --git a/drivers/gpu/drm/drm_dp_mst_topology.c b/drivers/gpu/drm/drm_dp_mst_topology.c
-> index c196fb580beb..ae9d019af9f2 100644
-> --- a/drivers/gpu/drm/drm_dp_mst_topology.c
-> +++ b/drivers/gpu/drm/drm_dp_mst_topology.c
-> @@ -1084,8 +1084,6 @@ static void drm_dp_destroy_port(struct kref *kref)
->  	struct drm_dp_mst_topology_mgr *mgr = port->mgr;
+> diff --git a/drivers/phy/ti/phy-omap-usb2.c b/drivers/phy/ti/phy-omap-usb2.c
+> index fe909fd..418e7f1 100644
+> --- a/drivers/phy/ti/phy-omap-usb2.c
+> +++ b/drivers/phy/ti/phy-omap-usb2.c
+> @@ -135,9 +135,9 @@ static int omap_usb_power_on(struct phy *x)
 >  
->  	if (!port->input) {
-> -		port->vcpi.num_slots = 0;
-> -
->  		kfree(port->cached_edid);
+>  static int omap_usb2_disable_clocks(struct omap_usb *phy)
+>  {
+> -	clk_disable(phy->wkupclk);
+> +	clk_disable_unprepare(phy->wkupclk);
+>  	if (!IS_ERR(phy->optclk))
+> -		clk_disable(phy->optclk);
+> +		clk_disable_unprepare(phy->optclk);
 >  
->  		/*
-> @@ -3381,12 +3379,6 @@ static void drm_dp_destroy_connector_work(struct work_struct *work)
->  		drm_dp_port_teardown_pdt(port, port->pdt);
->  		port->pdt = DP_PEER_DEVICE_NONE;
+>  	return 0;
+>  }
+> @@ -146,14 +146,14 @@ static int omap_usb2_enable_clocks(struct omap_usb *phy)
+>  {
+>  	int ret;
 >  
-> -		if (!port->input && port->vcpi.vcpi > 0) {
-> -			drm_dp_mst_reset_vcpi_slots(mgr, port);
-> -			drm_dp_update_payload_part1(mgr);
-> -			drm_dp_mst_put_payload_id(mgr, port->vcpi.vcpi);
-> -		}
-> -
->  		drm_dp_mst_put_port_malloc(port);
->  		send_hotplug = true;
+> -	ret = clk_enable(phy->wkupclk);
+> +	ret = clk_prepare_enable(phy->wkupclk);
+>  	if (ret < 0) {
+>  		dev_err(phy->dev, "Failed to enable wkupclk %d\n", ret);
+>  		goto err0;
 >  	}
-> -- 
-> 2.19.2
+>  
+>  	if (!IS_ERR(phy->optclk)) {
+> -		ret = clk_enable(phy->optclk);
+> +		ret = clk_prepare_enable(phy->optclk);
+>  		if (ret < 0) {
+>  			dev_err(phy->dev, "Failed to enable optclk %d\n", ret);
+>  			goto err1;
+> @@ -346,63 +346,72 @@ static int omap_usb2_probe(struct platform_device *pdev)
+>  		}
+>  	}
+>  
+> -	otg->set_host		= omap_usb_set_host;
+> -	otg->set_peripheral	= omap_usb_set_peripheral;
+> -	if (phy_data->flags & OMAP_USB2_HAS_SET_VBUS)
+> -		otg->set_vbus		= omap_usb_set_vbus;
+> -	if (phy_data->flags & OMAP_USB2_HAS_START_SRP)
+> -		otg->start_srp		= omap_usb_start_srp;
+> -	otg->usb_phy		= &phy->phy;
+> -
+> -	platform_set_drvdata(pdev, phy);
+> -	pm_runtime_enable(phy->dev);
+> -
+> -	generic_phy = devm_phy_create(phy->dev, NULL, &ops);
+> -	if (IS_ERR(generic_phy)) {
+> -		pm_runtime_disable(phy->dev);
+> -		return PTR_ERR(generic_phy);
+> -	}
+> -
+> -	phy_set_drvdata(generic_phy, phy);
+> -	omap_usb_power_off(generic_phy);
+> -
+> -	phy_provider = devm_of_phy_provider_register(phy->dev,
+> -			of_phy_simple_xlate);
+> -	if (IS_ERR(phy_provider)) {
+> -		pm_runtime_disable(phy->dev);
+> -		return PTR_ERR(phy_provider);
+> -	}
+>  
+>  	phy->wkupclk = devm_clk_get(phy->dev, "wkupclk");
+>  	if (IS_ERR(phy->wkupclk)) {
+> -		dev_warn(&pdev->dev, "unable to get wkupclk, trying old name\n");
+> +		if (PTR_ERR(phy->wkupclk) == -EPROBE_DEFER)
+> +			return -EPROBE_DEFER;
+> +
+> +		dev_warn(&pdev->dev, "unable to get wkupclk %ld, trying old name\n",
+> +			 PTR_ERR(phy->wkupclk));
+>  		phy->wkupclk = devm_clk_get(phy->dev, "usb_phy_cm_clk32k");
+> +
+>  		if (IS_ERR(phy->wkupclk)) {
+> -			dev_err(&pdev->dev, "unable to get usb_phy_cm_clk32k\n");
+> -			pm_runtime_disable(phy->dev);
+> +			if (PTR_ERR(phy->wkupclk) != -EPROBE_DEFER)
+> +				dev_err(&pdev->dev, "unable to get usb_phy_cm_clk32k\n");
+>  			return PTR_ERR(phy->wkupclk);
+>  		} else {
+>  			dev_warn(&pdev->dev,
+>  				 "found usb_phy_cm_clk32k, please fix DTS\n");
+>  		}
+>  	}
+> -	clk_prepare(phy->wkupclk);
+>  
+>  	phy->optclk = devm_clk_get(phy->dev, "refclk");
+>  	if (IS_ERR(phy->optclk)) {
+> +		if (PTR_ERR(phy->optclk) == -EPROBE_DEFER)
+> +			return -EPROBE_DEFER;
+> +
+>  		dev_dbg(&pdev->dev, "unable to get refclk, trying old name\n");
+>  		phy->optclk = devm_clk_get(phy->dev, "usb_otg_ss_refclk960m");
+> +
+>  		if (IS_ERR(phy->optclk)) {
+> -			dev_dbg(&pdev->dev,
+> -				"unable to get usb_otg_ss_refclk960m\n");
+> +			if (PTR_ERR(phy->optclk) != -EPROBE_DEFER) {
+> +				dev_dbg(&pdev->dev,
+> +					"unable to get usb_otg_ss_refclk960m\n");
+> +			}
+>  		} else {
+>  			dev_warn(&pdev->dev,
+>  				 "found usb_otg_ss_refclk960m, please fix DTS\n");
+>  		}
+>  	}
+>  
+> -	if (!IS_ERR(phy->optclk))
+> -		clk_prepare(phy->optclk);
+> +	otg->set_host = omap_usb_set_host;
+> +	otg->set_peripheral = omap_usb_set_peripheral;
+> +	if (phy_data->flags & OMAP_USB2_HAS_SET_VBUS)
+> +		otg->set_vbus = omap_usb_set_vbus;
+> +	if (phy_data->flags & OMAP_USB2_HAS_START_SRP)
+> +		otg->start_srp = omap_usb_start_srp;
+> +	otg->usb_phy = &phy->phy;
+> +
+> +	platform_set_drvdata(pdev, phy);
+> +	pm_runtime_enable(phy->dev);
+> +
+> +	generic_phy = devm_phy_create(phy->dev, NULL, &ops);
+> +	if (IS_ERR(generic_phy)) {
+> +		pm_runtime_disable(phy->dev);
+> +		return PTR_ERR(generic_phy);
+> +	}
+> +
+> +	phy_set_drvdata(generic_phy, phy);
+> +	omap_usb_power_off(generic_phy);
+> +
+> +	phy_provider = devm_of_phy_provider_register(phy->dev,
+> +						     of_phy_simple_xlate);
+> +	if (IS_ERR(phy_provider)) {
+> +		pm_runtime_disable(phy->dev);
+> +		return PTR_ERR(phy_provider);
+> +	}
+> +
+>  
+>  	usb_add_phy_dev(&phy->phy);
+>  
+> @@ -413,9 +422,6 @@ static int omap_usb2_remove(struct platform_device *pdev)
+>  {
+>  	struct omap_usb	*phy = platform_get_drvdata(pdev);
+>  
+> -	clk_unprepare(phy->wkupclk);
+> -	if (!IS_ERR(phy->optclk))
+> -		clk_unprepare(phy->optclk);
+>  	usb_remove_phy(&phy->phy);
+>  	pm_runtime_disable(phy->dev);
+>  
 > 
 
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
