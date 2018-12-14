@@ -2,122 +2,124 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 165DBC43612
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 22:26:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F38EC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 22:28:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D3872080F
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 22:26:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544826366;
-	bh=nBKoQ9cdrUBb+guiM08+nrtsEAwnCDm8SNt3tRHOXDQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=DkgKAxn/1DuOGLtl/WdvzRssXmW836L/Bx/YrAsVLaZCWNnngFR4VdWUi1u/Y4+hk
-	 FInGS0XeWpT9mWpmE37tKE5JROvVKnOudFqMOEKqawdkBeru0jMHiffiILZcgzcjvI
-	 +SJKrBMxVMVnBhBPy1E6HTwjxWjOtoZB4DHOA1a8=
+	by mail.kernel.org (Postfix) with ESMTP id C6271208C1
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 22:28:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bON4sXBV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730214AbeLNW0F (ORCPT
+        id S1730136AbeLNW2B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 17:26:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60980 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729341AbeLNW0E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 17:26:04 -0500
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 46189206DD;
-        Fri, 14 Dec 2018 22:26:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544826364;
-        bh=nBKoQ9cdrUBb+guiM08+nrtsEAwnCDm8SNt3tRHOXDQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ot2tD3kIsyOF1sN9pjeYvmyv2PM4H7CT9sncBtsStDmcMcJolWRS52if/Bym8dfuL
-         M1haF2p7dMtXeSs2Bhvk57acKP/X7cavKlu1frUE3gO64bkxOQOyC9UzYWywOdVKIO
-         TedO73gYQly9jwZELx898rSgzxx+YNwsL368EUGQ=
-Date:   Fri, 14 Dec 2018 16:26:01 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Sinan Kaya <okaya@kernel.org>
-Cc:     linux-acpi@vger.kernel.org,
-        "open list:PCI SUBSYSTEM" <linux-pci@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Logan Gunthorpe <logang@deltatee.com>
-Subject: Re: [PATCH v9 6/6] PCI: Stub out pci_request_acs() when CONFIG_PCI
- is not set
-Message-ID: <20181214222601.GH20725@google.com>
-References: <20181214163319.27479-1-okaya@kernel.org>
- <20181214163319.27479-7-okaya@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181214163319.27479-7-okaya@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Fri, 14 Dec 2018 17:28:01 -0500
+Received: from mail-pl1-f202.google.com ([209.85.214.202]:49639 "EHLO
+        mail-pl1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729519AbeLNW2A (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 17:28:00 -0500
+Received: by mail-pl1-f202.google.com with SMTP id v12so4557201plp.16
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 14:28:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=tGr/AvNqZYrxR+PNUnY05GvPnHu3UCKdieTjlb/DctM=;
+        b=bON4sXBVnTvGWw8qEtmOQ/jIrf/I7NdD2OfSdoF9Rya8kTrRmIztwYRfAb0GZPWAY2
+         HL29lhjJD2DshUPw1s1uzo2XYcv8/qJF9SnE4qhJBj6yrhEAtVUYNw/dVGHgC7wa14Hw
+         xaRYTW3igrjd1Svlk7XBKJcWDwf4f0o6n68+0daId8Um01CqjNUaGvzsfoEAwe4FGT6D
+         7uRqaTgDTjRX0hWfhFu6MYnOh3wh1VvIbPnfkM8dTuSH2iufGyj4Lq8XBU70TibzrF8b
+         KmPHjxp67iDIHnriCanvdkJD7OwYR5U3SeXhbhJF31/U0nj4pVqiq0PZQC3o0YFoAD5v
+         /O+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=tGr/AvNqZYrxR+PNUnY05GvPnHu3UCKdieTjlb/DctM=;
+        b=uahBP49W+n+1UqAor+nqeHM4o3EnJh0TP3AAaetRE2gDMxow3ATbwJkVsHpmDJoxPy
+         7AWEn3ElbuWqBV6t/7RKV+62lIRAhMJCg2+yjCTYLCgOPiWKqW/bH7CEr4mm8h84ZFtQ
+         7G0xCnVQx7fpBRQc7A9hTajsHiGhIV3abTbDiao7EQITrze8OfGiiSh+S0oa4/P8kv40
+         rMfI8+QlVL62Sr2NiCM+FBQ8fuWn/rFV60yKi/Wq0fETjZevsG1T1MzxnTFJm/LIbSxp
+         5GO0Msb+CRC/GEHxlJ+sS4A8SsMBAqrBA8wVVa2HdfRiAxWU5x+R50znGvW8KIAy5FaG
+         8/lA==
+X-Gm-Message-State: AA+aEWY0r/arTnUO/PWMjs9MYWRBrnxbEMKCGEHIhmIiq56L/LOR9qjy
+        /KHt7+NxON5yKDs7nAGlK/mZafPgY+41jQzKb+rNLO+Bg/pblvvOgB61Pr0BjGHkVkFtr753nWw
+        eYr7XT7r2PC8JOguPomzFUfya8mQSjx7ooLtifxAM4fQGQbLNkEHihbTkeKNdKzjrEJtPZqWdbH
+        dBGw==
+X-Google-Smtp-Source: AFSGD/XxwzckIem+ABm6K9oMzcVEvuJpSZb4jYIt2ZLFJim9fOOX5WRh8lQ57FvUc4VEWyt3HkHSisnq43B/cU0=
+X-Received: by 2002:a63:3756:: with SMTP id g22mr2803940pgn.138.1544826479977;
+ Fri, 14 Dec 2018 14:27:59 -0800 (PST)
+Date:   Fri, 14 Dec 2018 14:27:57 -0800
+Message-Id: <20181214222757.31280-1-astrachan@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.20.0.405.gbc1bbc6f85-goog
+Subject: [PATCH] x86: vdso: Pass --eh-frame-hdr to ld
+From:   Alistair Strachan <astrachan@google.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Laura Abbott <labbott@redhat.com>, stable@vger.kernel.org,
+        Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
+        Florian Weimer <fweimer@redhat.com>,
+        "Carlos O'Donell" <carlos@redhat.com>,
+        "H. J. Lu" <hjl.tools@gmail.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[+cc Lorenzo, Robin, Logan]
+Commit 379d98ddf413 ("x86: vdso: Use $LD instead of $CC to link")
+accidentally broke unwinding from userspace, because ld would strip the
+.eh_frame sections when linking.
 
-On Fri, Dec 14, 2018 at 04:33:19PM +0000, Sinan Kaya wrote:
-> ACPI IORT table code relies on pci_request_acs() to be present. Define
-> a stub function when CONFI_PCI is not set.
+Originally, the compiler would implicitly add --eh-frame-hdr when
+invoking the linker, but when this Makefile was converted from invoking
+ld via the compiler, to invoking it directly (like vmlinux does),
+the flag was missed. (The EH_FRAME section is important for the VDSO
+shared libraries, but not for vmlinux.)
 
-This doesn't seem like the simplest approach to me, but I probably
-don't understand what's going on in IORT.
+Fix the problem by explicitly specifying --eh-frame-hdr, which restores
+parity with the old method.
 
-It looks like *all* of iort_enable_acs() (the caller of
-pci_request_acs()) is PCI-specific; at least, the whole thing is
-wrapped in a test for ACPI_IORT_NODE_PCI_ROOT_COMPLEX.  So the whole
-function could be wrapped in #ifdef CONFIG_PCI.
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=201741
+Bugzilla: https://bugzilla.redhat.com/show_bug.cgi?id=1659295
+Reported-by: Laura Abbott <labbott@redhat.com>
+Fixes: 379d98ddf413 ("x86: vdso: Use $LD instead of $CC to link")
+Cc: stable@vger.kernel.org
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: X86 ML <x86@kernel.org>
+Cc: Florian Weimer <fweimer@redhat.com>,
+Cc: Carlos O'Donell <carlos@redhat.com>,
+Cc: "H. J. Lu" <hjl.tools@gmail.com>
+Cc: Joel Fernandes <joel@joelfernandes.org>
+Cc: kernel-team@android.com
+Signed-off-by: Alistair Strachan <astrachan@google.com>
+---
+ arch/x86/entry/vdso/Makefile | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Here's the caller of iort_enable_acs():
+diff --git a/arch/x86/entry/vdso/Makefile b/arch/x86/entry/vdso/Makefile
+index 141d415a8c80..c3d7ccd25381 100644
+--- a/arch/x86/entry/vdso/Makefile
++++ b/arch/x86/entry/vdso/Makefile
+@@ -171,7 +171,8 @@ quiet_cmd_vdso = VDSO    $@
+ 		 sh $(srctree)/$(src)/checkundef.sh '$(NM)' '$@'
+ 
+ VDSO_LDFLAGS = -shared $(call ld-option, --hash-style=both) \
+-	$(call ld-option, --build-id) -Bsymbolic
++	$(call ld-option, --build-id) $(call ld-option, --eh-frame-hdr) \
++	-Bsymbolic
+ GCOV_PROFILE := n
+ 
+ #
+-- 
+2.20.0.405.gbc1bbc6f85-goog
 
-  iort_init_platform_devices
-    acs_enabled = false
-    for (i = 0; i < iort->node_count; i++) {
-      if (!acs_enabled)
-        acs_enabled = iort_enable_acs(iort_node);
-
-It seems like the acs_enabled state could be encapsulated inside
-iort_enable_acs().
-
-Today pci_request_acs() is a system-wide thing, but I don't know why
-that's the case.  Isn't it conceivable that different PCI hierarchies
-could have different ACS policies, e.g., because of P2P DMA or
-something?
-
-Bottom line, pci_request_acs() is being called from what looks like
-PCI-specific code in IORT, and it would make more sense to me to prune
-out that code in IORT than to make a stub pci_request_acs().
-
-> Signed-off-by: Sinan Kaya <okaya@kernel.org>
-> ---
->  include/linux/pci.h | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/include/linux/pci.h b/include/linux/pci.h
-> index 51a5a5217667..f0f2f55ea93c 100644
-> --- a/include/linux/pci.h
-> +++ b/include/linux/pci.h
-> @@ -2101,7 +2101,11 @@ static inline struct pci_dev *pcie_find_root_port(struct pci_dev *dev)
->  	return NULL;
->  }
->  
-> +#ifdef CONFIG_PCI
->  void pci_request_acs(void);
-> +#else
-> +static inline void pci_request_acs(void) {}
-> +#endif
->  bool pci_acs_enabled(struct pci_dev *pdev, u16 acs_flags);
->  bool pci_acs_path_enabled(struct pci_dev *start,
->  			  struct pci_dev *end, u16 acs_flags);
-> -- 
-> 2.19.0
-> 
