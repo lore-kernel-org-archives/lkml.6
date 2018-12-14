@@ -2,196 +2,163 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B53BC67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:51:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58F42C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:52:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3276208E7
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:51:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3276208E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 2993C208E7
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:52:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2993C208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729763AbeLNMvF (ORCPT
+        id S1729814AbeLNMwd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:51:05 -0500
-Received: from mail-io1-f72.google.com ([209.85.166.72]:51608 "EHLO
-        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726281AbeLNMvF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:51:05 -0500
-Received: by mail-io1-f72.google.com with SMTP id h6so4500759ioq.18
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 04:51:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=oPufeOebDa1ETFaHA+cGBvtTF3RxaHpenNIRp2iOcdc=;
-        b=sGc0tqjJDAi4QVOq/nJ3KphDMlDeUrpyPzfs7oTgmraiIM+1n7mF7ggNP92w4/0rfi
-         QbDsXpo0I0GKrPlwtXpq62UtdVFwfYFX7idhbeVvNTuRJmXxP79PLhThtgiZGNO8Hmgw
-         JWyU410Enb7EvsL7qoLxwQnEEeaIqxTkCct2RNAFqY8cXU2mF2D9RdfX+SQR6mgZ7ph+
-         Bt+1ZPcf0DRZ2BKujK7ZIrqHtxZg6Z42VGR0B9ysgKZRoh4o2TJ86eDOvVvz9hZuIXGX
-         +43GQYbQ58asTeROaj7tGxG4gXJTB1Lyk7O6eF3XTIyS6A1OaRsjwgR/5LOM9jQm7nBQ
-         D4KA==
-X-Gm-Message-State: AA+aEWbyN/eKLWIQKuG3cKEB11aads5UW3GXR+AYHY9vPrlcticuNWcl
-        7FE7U/a6bJ1JOtEwB9zJ4rgtZIWXD9o5jsQP6Tu2FrtY9BIc
-X-Google-Smtp-Source: AFSGD/Xf+AbdT7w5VLea6O9R1ww3ofjB92CKHNPgAVUJz3kUf8+TXBLk5YAonHexZMXFGWVIbWVhh8bYS5CTebz6S1q4rCvXgfgd
+        Fri, 14 Dec 2018 07:52:33 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:48660 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729465AbeLNMwc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:52:32 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 361AD308A973;
+        Fri, 14 Dec 2018 12:52:32 +0000 (UTC)
+Received: from redhat.com (ovpn-121-101.rdu2.redhat.com [10.10.121.101])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 660E65C257;
+        Fri, 14 Dec 2018 12:52:31 +0000 (UTC)
+Date:   Fri, 14 Dec 2018 07:52:30 -0500
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Jason Wang <jasowang@redhat.com>
+Cc:     kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 0/3] vhost: accelerate metadata access through
+ vmap()
+Message-ID: <20181214073709-mutt-send-email-mst@kernel.org>
+References: <20181213101022.12475-1-jasowang@redhat.com>
+ <20181213144116-mutt-send-email-mst@kernel.org>
+ <836932fc-9266-b73d-2ee5-645f399e1a54@redhat.com>
 MIME-Version: 1.0
-X-Received: by 2002:a24:ac5f:: with SMTP id m31mr2464534iti.19.1544791864023;
- Fri, 14 Dec 2018 04:51:04 -0800 (PST)
-Date:   Fri, 14 Dec 2018 04:51:04 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000004ea80b057cfae21e@google.com>
-Subject: general protection fault in watchdog
-From:   syzbot <syzbot+7713f3aa67be76b1552c@syzkaller.appspotmail.com>
-To:     akpm@linux-foundation.org, dvyukov@google.com,
-        linux-kernel@vger.kernel.org, paulmck@linux.vnet.ibm.com,
-        penguin-kernel@I-love.SAKURA.ne.jp, rafael.j.wysocki@intel.com,
-        syzkaller-bugs@googlegroups.com, vkuznets@redhat.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <836932fc-9266-b73d-2ee5-645f399e1a54@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Fri, 14 Dec 2018 12:52:32 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Fri, Dec 14, 2018 at 12:29:54PM +0800, Jason Wang wrote:
+> 
+> On 2018/12/14 上午4:12, Michael S. Tsirkin wrote:
+> > On Thu, Dec 13, 2018 at 06:10:19PM +0800, Jason Wang wrote:
+> > > Hi:
+> > > 
+> > > This series tries to access virtqueue metadata through kernel virtual
+> > > address instead of copy_user() friends since they had too much
+> > > overheads like checks, spec barriers or even hardware feature
+> > > toggling.
+> > > 
+> > > Test shows about 24% improvement on TX PPS. It should benefit other
+> > > cases as well.
+> > > 
+> > > Please review
+> > I think the idea of speeding up userspace access is a good one.
+> > However I think that moving all checks to start is way too aggressive.
+> 
+> 
+> So did packet and AF_XDP. Anyway, sharing address space and access them
+> directly is the fastest way. Performance is the major consideration for
+> people to choose backend. Compare to userspace implementation, vhost does
+> not have security advantages at any level. If vhost is still slow, people
+> will start to develop backends based on e.g AF_XDP.
+> 
 
-syzbot found the following crash on:
+Let them what's wrong with that?
 
-HEAD commit:    f5d582777bcb Merge branch 'for-linus' of git://git.kernel...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16aca143400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c8970c89a0efbb23
-dashboard link: https://syzkaller.appspot.com/bug?extid=7713f3aa67be76b1552c
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1131381b400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13bae593400000
+> > Instead, let's batch things up but let's not keep them
+> > around forever.
+> > Here are some ideas:
+> > 
+> > 
+> > 1. Disable preemption, process a small number of small packets
+> >     directly in an atomic context. This should cut latency
+> >     down significantly, the tricky part is to only do it
+> >     on a light load and disable this
+> >     for the streaming case otherwise it's unfair.
+> >     This might fail, if it does just bounce things out to
+> >     a thread.
+> 
+> 
+> I'm not sure what context you meant here. Is this for TX path of TUN? But a
+> fundamental difference is my series is targeted for extreme heavy load not
+> light one, 100% cpu for vhost is expected.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+7713f3aa67be76b1552c@syzkaller.appspotmail.com
+Interesting. You only shared a TCP RR result though.
+What's the performance gain in a heavy load case?
 
-Node 0 DMA free:15908kB min:164kB low:204kB high:244kB active_anon:0kB  
-inactive_anon:0kB active_file:0kB inactive_file:0kB unevictable:0kB  
-writepending:0kB present:15992kB managed:15908kB mlocked:0kB  
-kernel_stack:0kB pagetables:0kB bounce:0kB free_pcp:0kB local_pcp:0kB  
-free_cma:0kB
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] PREEMPT SMP KASAN
-CPU: 1 PID: 1019 Comm: khungtaskd Not tainted 4.20.0-rc6+ #150
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:check_hung_uninterruptible_tasks kernel/hung_task.c:197 [inline]
-RIP: 0010:watchdog+0x492/0x1060 kernel/hung_task.c:289
-Code: 44 89 b5 30 fe ff ff 48 c1 e8 03 4c 01 e8 48 89 85 e8 fd ff ff e9 f8  
-00 00 00 e8 29 f3 ff ff 48 8d 7b 10 48 89 f8 48 c1 e8 03 <42> 80 3c 28 00  
-0f 85 70 0a 00 00 4c 8b 73 10 bf 02 00 00 00 4c 89
-RSP: 0018:ffff8881d7b37cc8 EFLAGS: 00010202
-RAX: 01a5bfffffffff51 RBX: 0d2dfffffffffa7a RCX: ffffffff817f9259
-RDX: 0000000000000000 RSI: ffffffff817f9147 RDI: 0d2dfffffffffa8a
-xt_bpf: check failed: parse error
-RBP: ffff8881d7b37f00 R08: ffff8881d7bae140 R09: ffffed103b5e5b5f
-R10: ffffed103b5e5b5f R11: ffff8881daf2dafb R12: 00000000000003d6
-R13: dffffc0000000000 R14: 1ffff1103af66fbb R15: 00000000003fffd7
-FS:  0000000000000000(0000) GS:ffff8881daf00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f98b2d7c324 CR3: 00000001931bf000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-lowmem_reserve[]: 0 2818 6321 6321
-Node 0 DMA32 free:43812kB min:30052kB low:37564kB high:45076kB  
-active_anon:6236kB inactive_anon:0kB active_file:0kB inactive_file:80kB  
-unevictable:0kB writepending:0kB present:3129332kB managed:2888780kB  
-mlocked:0kB kernel_stack:32kB pagetables:0kB bounce:0kB free_pcp:200kB  
-local_pcp:200kB free_cma:0kB
-  kthread+0x35a/0x440 kernel/kthread.c:246
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
-Modules linked in:
-lowmem_reserve[]: 0 0 3503 3503
-Node 0 Normal free:158644kB min:37364kB low:46704kB high:56044kB  
-active_anon:4768kB inactive_anon:768kB active_file:556kB  
-inactive_file:1936kB unevictable:0kB writepending:0kB present:4718592kB  
-managed:3587816kB mlocked:0kB kernel_stack:5952kB pagetables:1172kB  
-bounce:0kB free_pcp:2416kB local_pcp:604kB free_cma:0kB
-lowmem_reserve[]: 0 0 0 0
-Node 0 DMA: 1*4kB (U) 0*8kB 0*16kB 1*32kB (U) 2*64kB (U) 1*128kB (U)  
-1*256kB (U) 0*512kB 1*1024kB (U) 1*2048kB (M) 3*4096kB (M) = 15908kB
-Node 0 DMA32: 21*4kB (UM) 19*8kB (ME) 17*16kB (UM) 15*32kB (UME) 13*64kB  
-(ME) 4*128kB (M) 3*256kB (UM) 16*512kB (UM) 12*1024kB (UME) 6*2048kB (UME)  
-2*4096kB (UM) = 44060kB
-Node 0 Normal: 366*4kB (UME) 308*8kB (UME) 615*16kB (UME) 146*32kB (UME)  
-467*64kB (UME) 43*128kB (UM) 4*256kB (UM) 2*512kB (ME) 2*1024kB (ME)  
-0*2048kB 0*4096kB = 57928kB
-Node 0 hugepages_total=0 hugepages_free=0 hugepages_surp=0  
-hugepages_size=1048576kB
-Node 0 hugepages_total=0 hugepages_free=0 hugepages_surp=0  
-hugepages_size=2048kB
-591 total pagecache pages
-0 pages in swap cache
-Swap cache stats: add 0, delete 0, find 0/0
-Free swap  = 0kB
-Total swap = 0kB
-1965979 pages RAM
-0 pages HighMem/MovableOnly
-342853 pages reserved
-0 pages cma reserved
-Unreclaimable slab info:
-Name                      Used          Total
-TIPC                       1KB          7KB
-SCTPv6                     2KB          6KB
-DCCPv6                     2KB          7KB
-DCCP                       2KB          6KB
-fib6_nodes                 0KB          4KB
-ip6_dst_cache              4KB          7KB
-RAWv6                      9KB         19KB
-UDPv6                     14KB         14KB
-TCPv6                     23KB         29KB
-nf_conntrack               0KB          3KB
-sd_ext_cdb                 0KB          3KB
-scsi_sense_cache        1056KB       1060KB
-virtio_scsi_cmd           16KB         16KB
----[ end trace 92ff4e73865c48e6 ]---
-sgpool-128                 8KB          8KB
-RIP: 0010:check_hung_uninterruptible_tasks kernel/hung_task.c:197 [inline]
-RIP: 0010:watchdog+0x492/0x1060 kernel/hung_task.c:289
-sgpool-64                  4KB          6KB
-sgpool-32                  2KB          7KB
-Code: 44 89 b5 30 fe ff ff 48 c1 e8 03 4c 01 e8 48 89 85 e8 fd ff ff e9 f8  
-00 00 00 e8 29 f3 ff ff 48 8d 7b 10 48 89 f8 48 c1 e8 03 <42> 80 3c 28 00  
-0f 85 70 0a 00 00 4c 8b 73 10 bf 02 00 00 00 4c 89
-sgpool-16                  1KB          3KB
-RSP: 0018:ffff8881d7b37cc8 EFLAGS: 00010202
-RAX: 01a5bfffffffff51 RBX: 0d2dfffffffffa7a RCX: ffffffff817f9259
-RDX: 0000000000000000 RSI: ffffffff817f9147 RDI: 0d2dfffffffffa8a
-RBP: ffff8881d7b37f00 R08: ffff8881d7bae140 R09: ffffed103b5e5b5f
-sgpool-8                   0KB          3KB
-mqueue_inode_cache          1KB          7KB
-R10: ffffed103b5e5b5f R11: ffff8881daf2dafb R12: 00000000000003d6
-R13: dffffc0000000000 R14: 1ffff1103af66fbb R15: 00000000003fffd7
-bio_post_read_ctx         14KB         15KB
-FS:  0000000000000000(0000) GS:ffff8881dae00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-bio-2                     14KB         15KB
-jfs_mp                     7KB          7KB
-nfs_commit_data            3KB          7KB
-CR2: 00000000004376a0 CR3: 000000016845e000 CR4: 00000000001406f0
-nfs_write_data            32KB         32KB
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-ext4_system_zone           0KB          3KB
+> 
+> > 
+> > 2. Switch to unsafe_put_user/unsafe_get_user,
+> >     and batch up multiple accesses.
+> 
+> 
+> As I said, unless we can batch accessing of two difference places of three
+> of avail, descriptor and used. It won't help for batching the accessing of a
+> single place like used. I'm even not sure this can be done consider the case
+> of packed virtqueue, we have a single descriptor ring.
+
+So that's one of the reasons packed should be faster. Single access
+and you get the descriptor no messy redirects. Somehow your
+benchmarking so far didn't show a gain with vhost and
+packed though - do you know what's wrong?
+
+> Batching through
+> unsafe helpers may not help in this case since it's equivalent to safe ones
+> . And This requires non trivial refactoring of vhost. And such refactoring
+> itself make give us noticeable impact (e.g it may lead regression).
+> 
+> 
+> > 
+> > 3. Allow adding a fixup point manually,
+> >     such that multiple independent get_user accesses
+> >     can get a single fixup (will allow better compiler
+> >     optimizations).
+> > 
+> 
+> So for metadata access, I don't see how you suggest here can help in the
+> case of heavy workload.
+> 
+> For data access, this may help but I've played to batch the data copy to
+> reduce SMAP/spec barriers in vhost-net but I don't see performance
+> improvement.
+> 
+> Thanks
+
+So how about we try to figure what's going on actually?
+Can you drop the barriers and show the same gain?
+E.g. vmap does not use a huge page IIRC so in fact it
+can be slower than direct access. It's not a magic
+faster way.
 
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+> 
+> > 
+> > 
+> > 
+> > > Jason Wang (3):
+> > >    vhost: generalize adding used elem
+> > >    vhost: fine grain userspace memory accessors
+> > >    vhost: access vq metadata through kernel virtual address
+> > > 
+> > >   drivers/vhost/vhost.c | 281 ++++++++++++++++++++++++++++++++++++++----
+> > >   drivers/vhost/vhost.h |  11 ++
+> > >   2 files changed, 266 insertions(+), 26 deletions(-)
+> > > 
+> > > -- 
+> > > 2.17.1
