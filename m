@@ -2,114 +2,96 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29038C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 22:50:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59876C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 22:54:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 921F7208CE
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 22:50:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B1180208C1
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 22:54:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="ObiCseUG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730837AbeLNWuM (ORCPT
+        id S1730165AbeLNWyd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 17:50:12 -0500
-Received: from zeniv.linux.org.uk ([195.92.253.2]:42064 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730255AbeLNWuM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 17:50:12 -0500
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.91 #2 (Red Hat Linux))
-        id 1gXwHU-0005Lk-Sh; Fri, 14 Dec 2018 22:50:04 +0000
-Date:   Fri, 14 Dec 2018 22:50:04 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Todd Kjos <tkjos@android.com>
-Cc:     tkjos@google.com, gregkh@linuxfoundation.org, arve@android.com,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        maco@google.com, joel@joelfernandes.org, kernel-team@android.com
-Subject: Re: [PATCH v2] binder: fix use-after-free due to ksys_close() during
- fdget()
-Message-ID: <20181214225004.GP2217@ZenIV.linux.org.uk>
-References: <20181214203815.217014-1-tkjos@google.com>
+        Fri, 14 Dec 2018 17:54:33 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:53078 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729341AbeLNWyc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 17:54:32 -0500
+Received: from zn.tnic (p200300EC2BCFEF00117646AD7F85DA05.dip0.t-ipconnect.de [IPv6:2003:ec:2bcf:ef00:1176:46ad:7f85:da05])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 91AAD1EC08EA;
+        Fri, 14 Dec 2018 23:54:30 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1544828070;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=X5QPIDGpFXvPdowA99C8HW9vrLj+xIGOPAL3LaZXfw0=;
+        b=ObiCseUG//wLZcTExpmzztCE8P/BlxtU5k4F5J3Thiptpq2vZz50TNqHTx4Ivf7dDOryGB
+        Otdm6FtJgIhtBVdE1xMTUOvkZhlMoM26XszlMsQVACzNmi9UbFn0ovGSRw0XHLNgX1yYs8
+        CN+sSeRU6oPBsL7enmh6iqsIEVhikhQ=
+Date:   Fri, 14 Dec 2018 23:54:28 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Thomas =?utf-8?Q?Sch=C3=B6bel-Theuer?= <thomas@schoebel-theuer.de>
+Cc:     Thomas Schoebel-Theuer <tst@schoebel-theuer.de>,
+        linux-kernel@vger.kernel.org, Laura Abbott <labbott@redhat.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>, Tony Luck <tony.luck@intel.com>,
+        linux-acpi@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] acpi / apei: fix NULL deref during init
+Message-ID: <20181214225428.GL11710@zn.tnic>
+References: <20181214181514.29891-1-tst@schoebel-theuer.de>
+ <20181214202406.GI11710@zn.tnic>
+ <c8d62037-4a26-e18b-51a3-73fc99e76e5b@schoebel-theuer.de>
+ <5ec69dad-7943-343b-5ced-9a962652e14c@schoebel-theuer.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20181214203815.217014-1-tkjos@google.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <5ec69dad-7943-343b-5ced-9a962652e14c@schoebel-theuer.de>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 14, 2018 at 12:38:15PM -0800, Todd Kjos wrote:
-> 44d8047f1d8 ("binder: use standard functions to allocate fds")
-> exposed a pre-existing issue in the binder driver.
-> 
-> fdget() is used in ksys_ioctl() as a performance optimization.
-> One of the rules associated with fdget() is that ksys_close() must
-> not be called between the fdget() and the fdput(). There is a case
-> where this requirement is not met in the binder driver which results
-> in the reference count dropping to 0 when the device is still in
-> use. This can result in use-after-free or other issues.
-> 
-> If userpace has passed a file-descriptor for the binder driver using
-> a BINDER_TYPE_FDA object, then kys_close() is called on it when
-> handling a binder_ioctl(BC_FREE_BUFFER) command. This violates
-> the assumptions for using fdget().
-> 
-> The problem is fixed by deferring the fd close using task_work_add()
-> so ksys_close() is called after returning from binder_ioctl().
-> 
-> Fixes: 44d8047f1d87a ("binder: use standard functions to allocate fds")
-> Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
-> Signed-off-by: Todd Kjos <tkjos@google.com>
+On Fri, Dec 14, 2018 at 11:42:01PM +0100, Thomas Schöbel-Theuer wrote:
+> Ah, I overlooked that commit e56c92565dfe2 is already providing a different
+> solution to the same problem in newer kernels _only_, as a _side_ effect
+> (not clear to me from the description, but clear from reading the code).
 
-Umm...  IMO you are making it more brittle than needed.  Descriptors
-(as in, integers serving as indices in file descriptor tables) are
-sensitive to a lot of things and generally you don't want to pass
-them around, at least not without a lot more context than you do.
+Damn, I missed the fact that this is not the upstream kernel:
 
-References to struct file are much more robust.  And frankly, ksys_close()
-is best not touched - what you want is basically a version of __close_fd()
-that would grab a reference to struct file before filp_close() and
-passed that reference to you.  Then your delayed ksys_close() would turn
-into (equally delayed) fput().
+CPU: 0 PID: 1 UID: 0 Comm: swapper/0 Not tainted 4.4.0-ui18344.004-uiabi1-infong-amd64 #1
 
-Something like
-int rip_fd(int fd, struct file **res)
-{
-	struct files_struct *files = current->files;
-        struct file *file;
-        struct fdtable *fdt;
+> So another alternative would be backporting e56c92565dfe2 to the 4.4 LTS
+> series. Also fine for me.
 
-        spin_lock(&files->file_lock);
-        fdt = files_fdtable(files);
-        if (fd >= fdt->max_fds)
-                goto out_unlock;
-        file = fdt->fd[fd];
-        if (!file)
-                goto out_unlock;
-        rcu_assign_pointer(fdt->fd[fd], NULL);
-        __put_unused_fd(files, fd);
-        spin_unlock(&files->file_lock);
-	get_file(file);
-	*res = file;
-        return filp_close(file, files);
+That looks like the right fix.
 
-out_unlock:
-        spin_unlock(&files->file_lock);
-	*res = NULL;
-	return -ENOENT;
-}
+A note for the next time: do not send a fix for a stable kernel which is
+not upstream:
 
-used as
-	error = rip_fd(fd, &file);
-	/* we are committed to arranging fput(file) now, error or not */
+From Documentation/process/stable-kernel-rules.rst:
 
-Frankly, the main objection to exporting that would be to avoid encouraging
-the "we'll just pass the number around" kind of braindamage.  In case of
-binder you are locked into that braindamage by an atrocious userland API
-design and warnings along the lines of "use that and you *will* have
-to explain yourself; yes, we will be watching" might suffice to prevent
-additional uses...
+" - It or an equivalent fix must already exist in Linus' tree (upstream)."
+
+The stable kernels track upstream so if a stable kernel has a problem,
+the first thing one needs to do is to check whether this has been fixed
+upstream and if so, to backport it. This is the case most of the time.
+In the very seldom cases where a separate fix is needed, it needs to be
+handled by asking Greg what to do. :-)
+
+Adding stable@ folks to CC to set me straight if I'm missing something.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
