@@ -7,51 +7,50 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2600C6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:37:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F9E0C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:37:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67A4C208E7
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:37:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B5A620892
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:37:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544791067;
-	bh=4uNSTqPFYf3E8AzhFPhuUL7r+4dipjkWGWXdQAH5+9o=;
+	s=default; t=1544791072;
+	bh=tab117lCgvQeIAkUNoWpTPV0buaLlzQsIH8w5PX8CZk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=R9Pxor3m5nLQvfkciP4ziVcLs18ojei5Ax4VPXhoVsTOQ6+0UAU3xh3h+HShDFYDQ
-	 tnveyNvQDPCGYOXyxAB5kWnMyp302syk/Tm9CxowSF538Ak3XjOPCZXT26133XFywz
-	 yRJSg+OAII8vDiuXQad1CjIm0+tWcvNgqNoUaPhg=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67A4C208E7
+	b=PRKrdCJvBirSGc23ZS5YWy7z2vRuZ2fbaHiAEyxwQWZkL5Ki10qludixgT8TlcwEt
+	 oofEhheKArLpK/GK7yEZV6VwLa4dcJVlZJAZNUvBBnQ+caiuR8vlYPQ2U/Tw87vM1n
+	 OM+dLSOzq5bNs/q6MPu9UdzzptvBvnuCDQdUcND4=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B5A620892
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731010AbeLNMhq (ORCPT
+        id S1730859AbeLNMGJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:37:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51238 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:06:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50980 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729950AbeLNMGP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:06:15 -0500
+        id S1730840AbeLNMGC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:06:02 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CA0CC21479;
-        Fri, 14 Dec 2018 12:06:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4C3962147D;
+        Fri, 14 Dec 2018 12:06:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789174;
-        bh=4uNSTqPFYf3E8AzhFPhuUL7r+4dipjkWGWXdQAH5+9o=;
+        s=default; t=1544789161;
+        bh=tab117lCgvQeIAkUNoWpTPV0buaLlzQsIH8w5PX8CZk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yFoSz3KzigHvtbE2ZfoBAt29d32hKBrb475EWH+o4UNux6Awn5Vw8160/HQo1hZpn
-         d1yhFh3Pqj8O6KRzLoYmpbKhiiIfgsTmJUClIUkDSfP9NIF4764++W5CAZZ1v0W85I
-         4MvCnlr9lJfflqT2Z7o6W9fM9HIbIWAM3oCU4FQ4=
+        b=LFHU018EXnn2yY3iz04LffI7dNjMkryzepDuevIF8JZf1keETQ5p2zbaD28UKh81Q
+         DGPgESJGlJcsAnueQvIqBLYy5xpvI0Hc85BTX6JJZb+9vWsFV0lQaCzmAC+CE0N6SO
+         gGw4TwTPt404SQ1/aMOcpbV81N/KTbP2Ednw88L4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 100/142] net: thunderx: fix NULL pointer dereference in nic_remove
-Date:   Fri, 14 Dec 2018 12:59:45 +0100
-Message-Id: <20181214115751.050995627@linuxfoundation.org>
+Subject: [PATCH 4.19 095/142] netfilter: nat: fix double register in masquerade modules
+Date:   Fri, 14 Dec 2018 12:59:40 +0100
+Message-Id: <20181214115750.851953421@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115747.053633987@linuxfoundation.org>
 References: <20181214115747.053633987@linuxfoundation.org>
@@ -70,80 +69,206 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 24a6d2dd263bc910de018c78d1148b3e33b94512 ]
+[ Upstream commit 095faf45e64be00bff4da2d6182dface3d69c9b7 ]
 
-Fix a possible NULL pointer dereference in nic_remove routine
-removing the nicpf module if nic_probe fails.
-The issue can be triggered with the following reproducer:
+There is a reference counter to ensure that masquerade modules register
+notifiers only once. However, the existing reference counter approach is
+not safe, test commands are:
 
-$rmmod nicvf
-$rmmod nicpf
+   while :
+   do
+   	   modprobe ip6t_MASQUERADE &
+	   modprobe nft_masq_ipv6 &
+	   modprobe -rv ip6t_MASQUERADE &
+	   modprobe -rv nft_masq_ipv6 &
+   done
 
-[  521.412008] Unable to handle kernel access to user memory outside uaccess routines at virtual address 0000000000000014
-[  521.422777] Mem abort info:
-[  521.425561]   ESR = 0x96000004
-[  521.428624]   Exception class = DABT (current EL), IL = 32 bits
-[  521.434535]   SET = 0, FnV = 0
-[  521.437579]   EA = 0, S1PTW = 0
-[  521.440730] Data abort info:
-[  521.443603]   ISV = 0, ISS = 0x00000004
-[  521.447431]   CM = 0, WnR = 0
-[  521.450417] user pgtable: 4k pages, 48-bit VAs, pgdp = 0000000072a3da42
-[  521.457022] [0000000000000014] pgd=0000000000000000
-[  521.461916] Internal error: Oops: 96000004 [#1] SMP
-[  521.511801] Hardware name: GIGABYTE H270-T70/MT70-HD0, BIOS T49 02/02/2018
-[  521.518664] pstate: 80400005 (Nzcv daif +PAN -UAO)
-[  521.523451] pc : nic_remove+0x24/0x88 [nicpf]
-[  521.527808] lr : pci_device_remove+0x48/0xd8
-[  521.532066] sp : ffff000013433cc0
-[  521.535370] x29: ffff000013433cc0 x28: ffff810f6ac50000
-[  521.540672] x27: 0000000000000000 x26: 0000000000000000
-[  521.545974] x25: 0000000056000000 x24: 0000000000000015
-[  521.551274] x23: ffff8007ff89a110 x22: ffff000001667070
-[  521.556576] x21: ffff8007ffb170b0 x20: ffff8007ffb17000
-[  521.561877] x19: 0000000000000000 x18: 0000000000000025
-[  521.567178] x17: 0000000000000000 x16: 000000000000010ffc33ff98 x8 : 0000000000000000
-[  521.593683] x7 : 0000000000000000 x6 : 0000000000000001
-[  521.598983] x5 : 0000000000000002 x4 : 0000000000000003
-[  521.604284] x3 : ffff8007ffb17184 x2 : ffff8007ffb17184
-[  521.609585] x1 : ffff000001662118 x0 : ffff000008557be0
-[  521.614887] Process rmmod (pid: 1897, stack limit = 0x00000000859535c3)
-[  521.621490] Call trace:
-[  521.623928]  nic_remove+0x24/0x88 [nicpf]
-[  521.627927]  pci_device_remove+0x48/0xd8
-[  521.631847]  device_release_driver_internal+0x1b0/0x248
-[  521.637062]  driver_detach+0x50/0xc0
-[  521.640628]  bus_remove_driver+0x60/0x100
-[  521.644627]  driver_unregister+0x34/0x60
-[  521.648538]  pci_unregister_driver+0x24/0xd8
-[  521.652798]  nic_cleanup_module+0x14/0x111c [nicpf]
-[  521.657672]  __arm64_sys_delete_module+0x150/0x218
-[  521.662460]  el0_svc_handler+0x94/0x110
-[  521.666287]  el0_svc+0x8/0xc
-[  521.669160] Code: aa1e03e0 9102c295 d503201f f9404eb3 (b9401660)
+numbers below represent the reference counter.
+--------------------------------------------------------
+CPU0        CPU1        CPU2        CPU3        CPU4
+[insmod]    [insmod]    [rmmod]     [rmmod]     [insmod]
+--------------------------------------------------------
+0->1
+register    1->2
+            returns     2->1
+			returns     1->0
+                                                0->1
+                                                register <--
+                                    unregister
+--------------------------------------------------------
 
-Fixes: 4863dea3fab0 ("net: Adding support for Cavium ThunderX network controller")
-Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+The unregistation of CPU3 should be processed before the
+registration of CPU4.
+
+In order to fix this, use a mutex instead of reference counter.
+
+splat looks like:
+[  323.869557] watchdog: BUG: soft lockup - CPU#0 stuck for 22s! [modprobe:1381]
+[  323.869574] Modules linked in: nf_tables(+) nf_nat_ipv6(-) nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 n]
+[  323.869574] irq event stamp: 194074
+[  323.898930] hardirqs last  enabled at (194073): [<ffffffff90004a0d>] trace_hardirqs_on_thunk+0x1a/0x1c
+[  323.898930] hardirqs last disabled at (194074): [<ffffffff90004a29>] trace_hardirqs_off_thunk+0x1a/0x1c
+[  323.898930] softirqs last  enabled at (182132): [<ffffffff922006ec>] __do_softirq+0x6ec/0xa3b
+[  323.898930] softirqs last disabled at (182109): [<ffffffff90193426>] irq_exit+0x1a6/0x1e0
+[  323.898930] CPU: 0 PID: 1381 Comm: modprobe Not tainted 4.20.0-rc2+ #27
+[  323.898930] RIP: 0010:raw_notifier_chain_register+0xea/0x240
+[  323.898930] Code: 3c 03 0f 8e f2 00 00 00 44 3b 6b 10 7f 4d 49 bc 00 00 00 00 00 fc ff df eb 22 48 8d 7b 10 488
+[  323.898930] RSP: 0018:ffff888101597218 EFLAGS: 00000206 ORIG_RAX: ffffffffffffff13
+[  323.898930] RAX: 0000000000000000 RBX: ffffffffc04361c0 RCX: 0000000000000000
+[  323.898930] RDX: 1ffffffff26132ae RSI: ffffffffc04aa3c0 RDI: ffffffffc04361d0
+[  323.898930] RBP: ffffffffc04361c8 R08: 0000000000000000 R09: 0000000000000001
+[  323.898930] R10: ffff8881015972b0 R11: fffffbfff26132c4 R12: dffffc0000000000
+[  323.898930] R13: 0000000000000000 R14: 1ffff110202b2e44 R15: ffffffffc04aa3c0
+[  323.898930] FS:  00007f813ed41540(0000) GS:ffff88811ae00000(0000) knlGS:0000000000000000
+[  323.898930] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  323.898930] CR2: 0000559bf2c9f120 CR3: 000000010bc80000 CR4: 00000000001006f0
+[  323.898930] Call Trace:
+[  323.898930]  ? atomic_notifier_chain_register+0x2d0/0x2d0
+[  323.898930]  ? down_read+0x150/0x150
+[  323.898930]  ? sched_clock_cpu+0x126/0x170
+[  323.898930]  ? nf_tables_core_module_init+0xe4/0xe4 [nf_tables]
+[  323.898930]  ? nf_tables_core_module_init+0xe4/0xe4 [nf_tables]
+[  323.898930]  register_netdevice_notifier+0xbb/0x790
+[  323.898930]  ? __dev_close_many+0x2d0/0x2d0
+[  323.898930]  ? __mutex_unlock_slowpath+0x17f/0x740
+[  323.898930]  ? wait_for_completion+0x710/0x710
+[  323.898930]  ? nf_tables_core_module_init+0xe4/0xe4 [nf_tables]
+[  323.898930]  ? up_write+0x6c/0x210
+[  323.898930]  ? nf_tables_core_module_init+0xe4/0xe4 [nf_tables]
+[  324.127073]  ? nf_tables_core_module_init+0xe4/0xe4 [nf_tables]
+[  324.127073]  nft_chain_filter_init+0x1e/0xe8a [nf_tables]
+[  324.127073]  nf_tables_module_init+0x37/0x92 [nf_tables]
+[ ... ]
+
+Fixes: 8dd33cc93ec9 ("netfilter: nf_nat: generalize IPv4 masquerading support for nf_tables")
+Fixes: be6b635cd674 ("netfilter: nf_nat: generalize IPv6 masquerading support for nf_tables")
+Signed-off-by: Taehee Yoo <ap420073@gmail.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/cavium/thunder/nic_main.c | 3 +++
- 1 file changed, 3 insertions(+)
+ net/ipv4/netfilter/nf_nat_masquerade_ipv4.c | 23 ++++++++++++++-------
+ net/ipv6/netfilter/nf_nat_masquerade_ipv6.c | 23 ++++++++++++++-------
+ 2 files changed, 32 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/net/ethernet/cavium/thunder/nic_main.c b/drivers/net/ethernet/cavium/thunder/nic_main.c
-index 55af04fa03a7..6c8dcb65ff03 100644
---- a/drivers/net/ethernet/cavium/thunder/nic_main.c
-+++ b/drivers/net/ethernet/cavium/thunder/nic_main.c
-@@ -1441,6 +1441,9 @@ static void nic_remove(struct pci_dev *pdev)
+diff --git a/net/ipv4/netfilter/nf_nat_masquerade_ipv4.c b/net/ipv4/netfilter/nf_nat_masquerade_ipv4.c
+index 4a7c1f207d6e..4c7fcd32f8e6 100644
+--- a/net/ipv4/netfilter/nf_nat_masquerade_ipv4.c
++++ b/net/ipv4/netfilter/nf_nat_masquerade_ipv4.c
+@@ -131,15 +131,17 @@ static struct notifier_block masq_inet_notifier = {
+ 	.notifier_call	= masq_inet_event,
+ };
+ 
+-static atomic_t masquerade_notifier_refcount = ATOMIC_INIT(0);
++static int masq_refcnt;
++static DEFINE_MUTEX(masq_mutex);
+ 
+ int nf_nat_masquerade_ipv4_register_notifier(void)
  {
- 	struct nicpf *nic = pci_get_drvdata(pdev);
+-	int ret;
++	int ret = 0;
  
-+	if (!nic)
-+		return;
++	mutex_lock(&masq_mutex);
+ 	/* check if the notifier was already set */
+-	if (atomic_inc_return(&masquerade_notifier_refcount) > 1)
+-		return 0;
++	if (++masq_refcnt > 1)
++		goto out_unlock;
+ 
+ 	/* Register for device down reports */
+ 	ret = register_netdevice_notifier(&masq_dev_notifier);
+@@ -150,22 +152,29 @@ int nf_nat_masquerade_ipv4_register_notifier(void)
+ 	if (ret)
+ 		goto err_unregister;
+ 
++	mutex_unlock(&masq_mutex);
+ 	return ret;
 +
- 	if (nic->flags & NIC_SRIOV_ENABLED)
- 		pci_disable_sriov(pdev);
+ err_unregister:
+ 	unregister_netdevice_notifier(&masq_dev_notifier);
+ err_dec:
+-	atomic_dec(&masquerade_notifier_refcount);
++	masq_refcnt--;
++out_unlock:
++	mutex_unlock(&masq_mutex);
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(nf_nat_masquerade_ipv4_register_notifier);
  
+ void nf_nat_masquerade_ipv4_unregister_notifier(void)
+ {
++	mutex_lock(&masq_mutex);
+ 	/* check if the notifier still has clients */
+-	if (atomic_dec_return(&masquerade_notifier_refcount) > 0)
+-		return;
++	if (--masq_refcnt > 0)
++		goto out_unlock;
+ 
+ 	unregister_netdevice_notifier(&masq_dev_notifier);
+ 	unregister_inetaddr_notifier(&masq_inet_notifier);
++out_unlock:
++	mutex_unlock(&masq_mutex);
+ }
+ EXPORT_SYMBOL_GPL(nf_nat_masquerade_ipv4_unregister_notifier);
+diff --git a/net/ipv6/netfilter/nf_nat_masquerade_ipv6.c b/net/ipv6/netfilter/nf_nat_masquerade_ipv6.c
+index 10012fc687b6..37b1d413c825 100644
+--- a/net/ipv6/netfilter/nf_nat_masquerade_ipv6.c
++++ b/net/ipv6/netfilter/nf_nat_masquerade_ipv6.c
+@@ -162,15 +162,17 @@ static struct notifier_block masq_inet6_notifier = {
+ 	.notifier_call	= masq_inet6_event,
+ };
+ 
+-static atomic_t masquerade_notifier_refcount = ATOMIC_INIT(0);
++static int masq_refcnt;
++static DEFINE_MUTEX(masq_mutex);
+ 
+ int nf_nat_masquerade_ipv6_register_notifier(void)
+ {
+-	int ret;
++	int ret = 0;
+ 
++	mutex_lock(&masq_mutex);
+ 	/* check if the notifier is already set */
+-	if (atomic_inc_return(&masquerade_notifier_refcount) > 1)
+-		return 0;
++	if (++masq_refcnt > 1)
++		goto out_unlock;
+ 
+ 	ret = register_netdevice_notifier(&masq_dev_notifier);
+ 	if (ret)
+@@ -180,22 +182,29 @@ int nf_nat_masquerade_ipv6_register_notifier(void)
+ 	if (ret)
+ 		goto err_unregister;
+ 
++	mutex_unlock(&masq_mutex);
+ 	return ret;
++
+ err_unregister:
+ 	unregister_netdevice_notifier(&masq_dev_notifier);
+ err_dec:
+-	atomic_dec(&masquerade_notifier_refcount);
++	masq_refcnt--;
++out_unlock:
++	mutex_unlock(&masq_mutex);
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(nf_nat_masquerade_ipv6_register_notifier);
+ 
+ void nf_nat_masquerade_ipv6_unregister_notifier(void)
+ {
++	mutex_lock(&masq_mutex);
+ 	/* check if the notifier still has clients */
+-	if (atomic_dec_return(&masquerade_notifier_refcount) > 0)
+-		return;
++	if (--masq_refcnt > 0)
++		goto out_unlock;
+ 
+ 	unregister_inet6addr_notifier(&masq_inet6_notifier);
+ 	unregister_netdevice_notifier(&masq_dev_notifier);
++out_unlock:
++	mutex_unlock(&masq_mutex);
+ }
+ EXPORT_SYMBOL_GPL(nf_nat_masquerade_ipv6_unregister_notifier);
 -- 
 2.19.1
 
