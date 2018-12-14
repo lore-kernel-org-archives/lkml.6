@@ -3,165 +3,108 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A9A8C67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 10:49:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BDA8C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 10:52:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5B6D20892
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 10:49:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5B6D20892
+	by mail.kernel.org (Postfix) with ESMTP id 4075820892
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 10:52:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4075820892
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729569AbeLNKti (ORCPT
+        id S1729348AbeLNKwV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 05:49:38 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:36998 "EHLO mx1.redhat.com"
+        Fri, 14 Dec 2018 05:52:21 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:33354 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726344AbeLNKti (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 05:49:38 -0500
+        id S1726527AbeLNKwU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 05:52:20 -0500
 Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 90E7AA6DFA;
-        Fri, 14 Dec 2018 10:49:37 +0000 (UTC)
-Received: from [10.36.112.72] (ovpn-112-72.ams2.redhat.com [10.36.112.72])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 569C226FB4;
-        Fri, 14 Dec 2018 10:49:30 +0000 (UTC)
-Subject: Re: [PATCH v2 0/7] x86/kvm/hyper-v: Implement
- KVM_GET_SUPPORTED_HV_CPUID
-To:     Vitaly Kuznetsov <vkuznets@redhat.com>, kvm@vger.kernel.org
-Cc:     =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        linux-kernel@vger.kernel.org, Roman Kagan <rkagan@virtuozzo.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>, x86@kernel.org,
-        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
-        Eduardo Habkost <ehabkost@redhat.com>
-References: <20181210172159.410-1-vkuznets@redhat.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- uUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
-Message-ID: <7a318d1c-7601-fc67-8924-971f9deb8824@redhat.com>
-Date:   Fri, 14 Dec 2018 11:49:29 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        by mx1.redhat.com (Postfix) with ESMTPS id 3CAE23154852;
+        Fri, 14 Dec 2018 10:52:20 +0000 (UTC)
+Received: from localhost.localdomain.com (unknown [10.32.181.131])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 965A726FB4;
+        Fri, 14 Dec 2018 10:52:18 +0000 (UTC)
+From:   Paolo Abeni <pabeni@redhat.com>
+To:     netdev@vger.kernel.org
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        Paul Turner <pjt@google.com>, linux-kernel@vger.kernel.org,
+        Edward Cree <ecree@solarflare.com>,
+        David Woodhouse <dwmw2@infradead.org>
+Subject: [PATCH net-next v3 0/4] net: mitigate retpoline overhead
+Date:   Fri, 14 Dec 2018 11:51:56 +0100
+Message-Id: <cover.1544784419.git.pabeni@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20181210172159.410-1-vkuznets@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Fri, 14 Dec 2018 10:49:37 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Fri, 14 Dec 2018 10:52:20 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/12/18 18:21, Vitaly Kuznetsov wrote:
-> Changes since v1:
-> - Add Michael's R-b tags.
-> - Document KVM_GET_SUPPORTED_HV_CPUID and KVM_CAP_HYPERV_CPUID.
-> - Fix error handling in kvm_vcpu_ioctl_get_hv_cpuid().
-> - Check for -E2BIG in the selftest. PATCH6 is added to support the change.
-> 
-> As suggested by Paolo, introduce new KVM_GET_SUPPORTED_HV_CPUID returning
-> all Hyper-V CPUID feature leaves, this way we won't need to add a new
-> KVM_CAP_HYPERV_* for every new Hyper-V enlightenment we implement in
-> KVM.
-> 
-> (Using the existing KVM_GET_SUPPORTED_CPUID doesn't seem to be possible:
-> Hyper-V CPUID feature leaves intersect with KVM's (e.g. 0x40000000,
-> 0x40000001) and we would probably confuse userspace in case we decide to
-> return these twice).
-> 
-> This patch series also does some housekeeping work in hyperv-tlfs.h, adds a
-> simple selftest (that's how I actually checked that the newly added ioctl
-> works) and removes recently added KVM_CAP_HYPERV_STIMER_DIRECT before it's
-> too late.
-> 
-> Vitaly Kuznetsov (7):
->   x86/hyper-v: Do some housekeeping in hyperv-tlfs.h
->   x86/hyper-v: Drop HV_X64_CONFIGURE_PROFILER definition
->   x86/kvm/hyper-v: Introduce nested_get_evmcs_version() helper
->   x86/kvm/hyper-v: Introduce KVM_GET_SUPPORTED_HV_CPUID
->   x86/kvm/hyper-v: Drop KVM_CAP_HYPERV_STIMER_DIRECT
->   KVM: selftests: implement an unchecked version of vcpu_ioctl()
->   KVM: selftests: Add hyperv_cpuid test
-> 
->  Documentation/virtual/kvm/api.txt             |  57 ++++++
->  arch/x86/include/asm/hyperv-tlfs.h            | 185 +++++++++---------
->  arch/x86/include/asm/kvm_host.h               |   1 +
->  arch/x86/kvm/hyperv.c                         | 125 +++++++++++-
->  arch/x86/kvm/hyperv.h                         |   2 +
->  arch/x86/kvm/svm.c                            |   7 +
->  arch/x86/kvm/vmx.c                            |  24 ++-
->  arch/x86/kvm/x86.c                            |  21 +-
->  include/uapi/linux/kvm.h                      |   5 +-
->  tools/testing/selftests/kvm/Makefile          |   1 +
->  .../testing/selftests/kvm/include/kvm_util.h  |   2 +
->  tools/testing/selftests/kvm/lib/kvm_util.c    |  14 +-
->  .../selftests/kvm/x86_64/hyperv_cpuid.c       | 157 +++++++++++++++
->  13 files changed, 493 insertions(+), 108 deletions(-)
->  create mode 100644 tools/testing/selftests/kvm/x86_64/hyperv_cpuid.c
-> 
+The spectre v2 counter-measures, aka retpolines, are a source of measurable
+overhead[1]. We can partially address that when the function pointer refers to
+a builtin symbol resorting to a list of tests vs well-known builtin function and
+direct calls.
 
-Queued, thanks.  I moved this above the direct EOI series so that
-KVM_CAP_HYPERV_STIMER_DIRECT need not exist at any point of the history.
+Experimental results show that replacing a single indirect call via
+retpoline with several branches and a direct call gives performance gains
+even when multiple branches are added - 5 or more, as reported in [2].
 
-Paolo
+This may lead to some uglification around the indirect calls. In netconf 2018
+Eric Dumazet described a technique to hide the most relevant part of the needed
+boilerplate with some macro help.
+
+This series is a [re-]implementation of such idea, exposing the introduced
+helpers in a new header file. They are later leveraged to avoid the indirect
+call overhead in the GRO path, when possible.
+
+Overall this gives > 10% performance improvement for UDP GRO benchmark and
+smaller but measurable for TCP syn flood.
+
+The added infra can be used in follow-up patches to cope with retpoline overhead
+in other points of the networking stack (e.g. at the qdisc layer) and possibly
+even in other subsystems.
+
+v2  -> v3:
+ - fix build error with CONFIG_IPV6=m
+
+v1  -> v2:
+ - list explicitly the builtin function names in INDIRECT_CALL_*(),
+   as suggested by Ed Cree
+ - expand the recipients list
+
+rfc -> v1:
+ - use branch prediction hints, as suggested by Eric
+
+[1] http://vger.kernel.org/netconf2018_files/PaoloAbeni_netconf2018.pdf
+[2] https://linuxplumbersconf.org/event/2/contributions/99/attachments/98/117/lpc18_paper_af_xdp_perf-v2.pdf
+
+Paolo Abeni (4):
+  indirect call wrappers: helpers to speed-up indirect calls of builtin
+  net: use indirect call wrappers at GRO network layer
+  net: use indirect call wrappers at GRO transport layer
+  udp: use indirect call wrappers for GRO socket lookup
+
+ include/linux/indirect_call_wrapper.h | 51 +++++++++++++++++++++++++++
+ include/net/inet_common.h             |  9 +++++
+ net/core/dev.c                        | 15 ++++++--
+ net/ipv4/af_inet.c                    | 13 +++++--
+ net/ipv4/tcp_offload.c                |  6 ++--
+ net/ipv4/udp_offload.c                | 15 +++++---
+ net/ipv6/ip6_offload.c                | 35 +++++++++++++++---
+ net/ipv6/tcpv6_offload.c              |  7 ++--
+ net/ipv6/udp_offload.c                |  7 ++--
+ 9 files changed, 136 insertions(+), 22 deletions(-)
+ create mode 100644 include/linux/indirect_call_wrapper.h
+
+-- 
+2.19.2
+
