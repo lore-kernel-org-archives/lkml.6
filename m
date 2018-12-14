@@ -2,148 +2,115 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AED23C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 15:18:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A67CFC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 15:18:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 943BC2070B
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 15:18:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="MnWJRCM3"
+	by mail.kernel.org (Postfix) with ESMTP id 9EAD92070B
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 15:18:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730340AbeLNPSE (ORCPT
+        id S1730383AbeLNPSH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 10:18:04 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:42667 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730059AbeLNPSD (ORCPT
+        Fri, 14 Dec 2018 10:18:07 -0500
+Received: from lithops.sigma-star.at ([195.201.40.130]:54862 "EHLO
+        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730145AbeLNPSE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 10:18:03 -0500
-Received: by mail-io1-f67.google.com with SMTP id x6so4678798ioa.9
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 07:18:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=SgR7/zvoTitAcWtzspwpFbA2pChllrGr1cdcJ907dAE=;
-        b=MnWJRCM33UxKWjgGBiFsns1d5BvTi7SYsCn0IqH8uwMe0Cn+75+E3UxGPDGMocDXFv
-         mrT1YSV8hlaTyFIl7mOtqkQM9RPhzOepRzzyZUTO37EYgGnzq0aEZvcKkwvVFZpgXeiH
-         BdmKCob79YpuDItcmlt1nGI0SJrV8RiEUesXU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=SgR7/zvoTitAcWtzspwpFbA2pChllrGr1cdcJ907dAE=;
-        b=OYhqcb4haYnPGag5WVungSkDQ9vaUlh/VG6lmZUB/cRIDVxEefBk9d5gfCiPU8bKtH
-         UPPS9xWRz9NmJQe73t6OcjayjRtwgdn+1rLmqRy0nOb9ZO8giZEpgqEaYhDDzda9tQ07
-         SlKBhCK9ogNgHSTqp3x7jOgWToAKtBYii4d689LmEQtPu0nvqMpKtA8e7QizyLiDhbDT
-         nDOocIGUpfT6oYeOu/TTL4JsHvs9AlCRFrKeeq2o4yUsAwLWb532r27UMhTwt1+51JGY
-         1yAOtaIcYyNOyXyBTRCtxlB1OosZsU3cLUb66htUqWzXUMAXJWkj/2wGMaHqhR+E8wBB
-         Ns8A==
-X-Gm-Message-State: AA+aEWbJ2U0IFA2dxtPaTfOnAkU3W0Jp3V/41hAswcMFoiwoPzZCes58
-        OXkz18N7mFqjpWaPHi4FLn1ZWiCFKhRbVKc53topcQ==
-X-Google-Smtp-Source: AFSGD/UYB3cWP8A4ZYEZ2iB+GlZvbUS8ucudzax9zn/rBltk6gWoeGoBrX2SzRYN+OKg6YYIAsjcx5vX6bxqEIg88TU=
-X-Received: by 2002:a6b:4106:: with SMTP id n6mr2794140ioa.171.1544800682682;
- Fri, 14 Dec 2018 07:18:02 -0800 (PST)
-MIME-Version: 1.0
-References: <1542101513-22010-1-git-send-email-firoz.khan@linaro.org>
-In-Reply-To: <1542101513-22010-1-git-send-email-firoz.khan@linaro.org>
-From:   Firoz Khan <firoz.khan@linaro.org>
-Date:   Fri, 14 Dec 2018 20:47:51 +0530
-Message-ID: <CALxhOngxbsYFSbK1Y0okuiTmjWEQ8Zcd4vQ0OezhXBgXH82DtA@mail.gmail.com>
-Subject: Re: [PATCH v3 0/5] alpha: system call table generation support
-To:     linux-alpha@vger.kernel.org, Richard Henderson <rth@twiddle.net>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>
-Cc:     y2038 Mailman List <y2038@lists.linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
+        Fri, 14 Dec 2018 10:18:04 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id E2D5D6083240;
+        Fri, 14 Dec 2018 16:18:01 +0100 (CET)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id 1KDpv6F4BDFH; Fri, 14 Dec 2018 16:18:01 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 1C3C6608324E;
+        Fri, 14 Dec 2018 16:18:01 +0100 (CET)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id urO14blIPsXz; Fri, 14 Dec 2018 16:18:01 +0100 (CET)
+Received: from blindfold.localnet (213-47-184-186.cable.dynamic.surfer.at [213.47.184.186])
+        by lithops.sigma-star.at (Postfix) with ESMTPSA id EF6236083240;
+        Fri, 14 Dec 2018 16:17:59 +0100 (CET)
+From:   Richard Weinberger <richard@nod.at>
+To:     David Laight <David.Laight@aculab.com>
+Cc:     'Richard Weinberger' <richard.weinberger@gmail.com>,
+        "kevin@guarana.org" <kevin@guarana.org>,
+        "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "open list:ABI/API" <linux-api@vger.kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>,
+        "fweimer@redhat.com" <fweimer@redhat.com>,
+        Mike Frysinger <vapier@gentoo.org>,
+        "H.J. Lu" <hjl.tools@gmail.com>,
+        "dalias@libc.org" <dalias@libc.org>,
+        "x32@buildd.debian.org" <x32@buildd.debian.org>,
         Arnd Bergmann <arnd@arndb.de>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+        Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: Can we drop upstream Linux x32 support?
+Date:   Fri, 14 Dec 2018 16:17:59 +0100
+Message-ID: <3143388.E8mgBzaflP@blindfold>
+In-Reply-To: <d54d7ea7c558474583dfed0d26f05ccd@AcuMS.aculab.com>
+References: <CALCETrXoRAibsbWa9nfbDrt0iEuebMnCMhSFg-d9W-J2g8mDjw@mail.gmail.com> <CAFLxGvy2sMW1nyMpxGN7xHPdUea713g89MdE3EcUNHJDCvZ3jA@mail.gmail.com> <d54d7ea7c558474583dfed0d26f05ccd@AcuMS.aculab.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Folks,
+Am Freitag, 14. Dezember 2018, 15:38:53 CET schrieb David Laight:
+> From: Richard Weinberger
+> > Sent: 13 December 2018 09:05
+> > On Thu, Dec 13, 2018 at 6:03 AM Kevin Easton <kevin@guarana.org> wrote:
+> > >
+> > > On Tue, Dec 11, 2018 at 11:29:14AM +0100, John Paul Adrian Glaubitz wrote:
+> > > ...
+> > > > I can't say anything about the syscall interface. However, what I do know
+> > > > is that the weird combination of a 32-bit userland with a 64-bit kernel
+> > > > interface is sometimes causing issues. For example, application code usually
+> > > > expects things like time_t to be 32-bit on a 32-bit system. However, this
+> > > > isn't the case for x32 which is why code fails to build.
+> > >
+> > > OpenBSD and NetBSD both have 64-bit time_t on 32-bit systems and have
+> > > had for four or five years at this point.
+> > 
+> > They can also do flag-day changes and break existing applications, Linux not.
+> 
+> Not true at all.
+> The binary compatibility in NetBSD is probably better than that in Linux
+> and goes back a long way.
+> 
+> For the time_t changes new system calls numbers were assigned where needed.
+> The system headers and libc were updated so that recompiled code would
+> use the new system calls.
+> 
+> The only real advantage that NetBSD has is that its libc (and standard
+> utilities) are released with the kernel making it much easier to get
+> applications to use the new features.
+> 
+> This was also done a very long time ago when file offsets were extended
+> to 64 bits.
+> 
+> Some of the system calls have quite a few 'compatibility' versions.
+> As well as the ones for emulations of other operating systems.
+> It has been possible to run copies of firefox compiled for Linux
+> under NetBSD.
 
-On Tue, 13 Nov 2018 at 15:02, Firoz Khan <firoz.khan@linaro.org> wrote:
->
-> The purpose of this patch series is, we can easily
-> add/modify/delete system call table support by cha-
-> nging entry in syscall.tbl file instead of manually
-> changing many files. The other goal is to unify the
-> system call table generation support implementation
-> across all the architectures.
->
-> The system call tables are in different format in
-> all architecture. It will be difficult to manually
-> add, modify or delete the system calls in the resp-
-> ective files manually. To make it easy by keeping a
-> script and which'll generate uapi header file and
-> syscall table file.
->
-> syscall.tbl contains the list of available system
-> calls along with system call number and correspond-
-> ing entry point. Add a new system call in this arch-
-> itecture will be possible by adding new entry in the
-> syscall.tbl file.
->
-> Adding a new table entry consisting of:
->         - System call number.
->         - ABI.
->         - System call name.
->         - Entry point name.
->
-> ARM, s390 and x86 architecuture does exist the sim-
-> ilar support. I leverage their implementation to
-> come up with a generic solution.
->
-> I have done the same support for work for ia64, m68k,
-> microblaze, mips, parisc, powerpc, sh, sparc and xtensa.
-> Below mentioned git repository contains more details
-> about the workflow.
->
-> https://github.com/frzkhn/system_call_table_generator/
->
-> Finally, this is the ground work to solve the Y2038
-> issue. We need to add two dozen of system calls to
-> solve Y2038 issue. So this patch series will help to
-> add new system calls easily by adding new entry in
-> the syscall.tbl.
->
-> changes since v2:
->  - changed from generic-y to generated-y in Kbuild.
->  - made changes in syscall.tbl for removing entry -
->    alpha_ni_syscall.
->
-> changes since v1:
->  - optimized/updated the syscall table generation
->    scripts.
->  - fixed all mixed indentation issues in syscall.tbl.
->  - added "comments" in syscall.tbl.
->  - enclosed __NR_sycalls macro with __KERNEL__.
->  - added missing new line.
->
-> Firoz Khan (5):
->   alpha: move __IGNORE* entries to non uapi header
->   alpha: remove CONFIG_OSF4_COMPAT flag from syscall table
->   alpha: add __NR_syscalls along with NR_SYSCALLS
->   alpha: add system call table generation support
->   alpha: generate uapi header and syscall table header files
+I stand corrected, I was under the impression that NetBSD went the same
+path as OpenBSD did. Thanks for pointing this out.
 
-Could someone review this patch series and queue it for 4.21
-through alpha tree would be great.
+Thanks,
+//richard
 
-Thanks
-Firoz
+
