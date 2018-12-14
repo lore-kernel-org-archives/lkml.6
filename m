@@ -7,50 +7,50 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4584C67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:12:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5135C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:12:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A73AA214E0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:12:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C00D214E0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:12:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544789539;
-	bh=/TkEKMjHQYcxKykKcR33gXfpqqi0RQV9+3CzYdXiYnw=;
+	s=default; t=1544789543;
+	bh=BGdZi3vKjyO+cEcTPW0BIzq/6jdOMDtCkEFgzEaXBhc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=uEHPTERFU0gw8FMhVikeO2aKh76+gkRsdr46R8Asrkz5XcLXx4mIRQ8xOdcgk6cV8
-	 y0Vhqf2kWVILhPkZViKUt+6X4LDrl9MaNxhi/aTUARjqD/81X/8ZyUkcDH/s27OBF4
-	 KNWGuRk5DnkvBBwTZ7m1CAZyQwDmhZD/I3r7Jl9w=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A73AA214E0
+	b=JmL/2qHc6wTKVbEY2SWs4qi6+kO0SNviLz6piUfozdsb/YUDhbcFBhwUTjU7mAJHi
+	 evhIzfTAwuLn4srVCk69kjX9o9kM6V3+c77ykhzXZTNycDeUNJupvXTG4jdPIsgTyW
+	 56Y1PxXl1UYTC9YlrfBArzGju3kUp8Z315cjSMms=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C00D214E0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731918AbeLNMMS (ORCPT
+        id S1731930AbeLNMMV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:12:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59374 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:12:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59344 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726670AbeLNMMQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:12:16 -0500
+        id S1731896AbeLNMMO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:12:14 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6AC5520892;
-        Fri, 14 Dec 2018 12:12:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D3559214D9;
+        Fri, 14 Dec 2018 12:12:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789535;
-        bh=/TkEKMjHQYcxKykKcR33gXfpqqi0RQV9+3CzYdXiYnw=;
+        s=default; t=1544789533;
+        bh=BGdZi3vKjyO+cEcTPW0BIzq/6jdOMDtCkEFgzEaXBhc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iJTjmrpOxCj0BKQG3BXlNNGFrcREWm/Db9wADzVImUB0cz/Jgin08lY/xiiWefpBn
-         j+ifnPAKauEkSOhTR9On2W0IAg2iXObmqTFEzfrmsPoXqZqC0dtjsHxb2aHAcXgLGD
-         vyXQO1tkdZ9xIJB23g+48ODu6geS9TrXuYH/sFVc=
+        b=tf/67tbN8IwX9X4Wmm/aaAzMZoBuexsRHONvDRe8stVwWWv9ZA4+6HYz6RDNGvYdi
+         CSUTuiPAV6nivcAtUFK9dRasXi8qTck5c4LB6ZSK89EriIL+CJdmeB0A1VOXE/NBw1
+         cORX1lULlLoTdyhSF+VYh6hSBxELM2rdPh9oPHfc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Aaro Koskinen <aaro.koskinen@iki.fi>,
         Felipe Balbi <felipe.balbi@linux.intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 31/51] USB: omap_udc: fix crashes on probe error and module removal
-Date:   Fri, 14 Dec 2018 13:00:33 +0100
-Message-Id: <20181214115716.087485165@linuxfoundation.org>
+Subject: [PATCH 4.9 30/51] USB: omap_udc: use devm_request_irq()
+Date:   Fri, 14 Dec 2018 13:00:32 +0100
+Message-Id: <20181214115716.001953655@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115713.244259772@linuxfoundation.org>
 References: <20181214115713.244259772@linuxfoundation.org>
@@ -69,112 +69,100 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 99f700366fcea1aa2fa3c49c99f371670c3c62f8 ]
+[ Upstream commit 286afdde1640d8ea8916a0f05e811441fbbf4b9d ]
 
-We currently crash if usb_add_gadget_udc_release() fails, since the
-udc->done is not initialized until in the remove function.
-Furthermore, on module removal the udc data is accessed although
-the release function is already triggered by usb_del_gadget_udc()
-early in the function.
-
-Fix by rewriting the release and remove functions, basically moving
-all the cleanup into the release function, and doing the completion
-only in the module removal case.
-
-The patch fixes omap_udc module probe with a failing gadged, and also
-allows the removal of omap_udc. Tested by running "modprobe omap_udc;
-modprobe -r omap_udc" in a loop.
+The current code fails to release the third irq on the error path
+(observed by reading the code), and we get also multiple WARNs with
+failing gadget drivers due to duplicate IRQ releases. Fix by using
+devm_request_irq().
 
 Signed-off-by: Aaro Koskinen <aaro.koskinen@iki.fi>
 Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/gadget/udc/omap_udc.c | 50 ++++++++++++-------------------
- 1 file changed, 19 insertions(+), 31 deletions(-)
+ drivers/usb/gadget/udc/omap_udc.c | 37 +++++++++----------------------
+ 1 file changed, 10 insertions(+), 27 deletions(-)
 
 diff --git a/drivers/usb/gadget/udc/omap_udc.c b/drivers/usb/gadget/udc/omap_udc.c
-index 2945408f0eec..2a23b21fe153 100644
+index a8709f9e5648..2945408f0eec 100644
 --- a/drivers/usb/gadget/udc/omap_udc.c
 +++ b/drivers/usb/gadget/udc/omap_udc.c
-@@ -2612,9 +2612,22 @@ omap_ep_setup(char *name, u8 addr, u8 type,
+@@ -2886,8 +2886,8 @@ static int omap_udc_probe(struct platform_device *pdev)
+ 		udc->clr_halt = UDC_RESET_EP;
  
- static void omap_udc_release(struct device *dev)
- {
--	complete(udc->done);
-+	pullup_disable(udc);
-+	if (!IS_ERR_OR_NULL(udc->transceiver)) {
-+		usb_put_phy(udc->transceiver);
-+		udc->transceiver = NULL;
-+	}
-+	omap_writew(0, UDC_SYSCON1);
-+	remove_proc_file();
-+	if (udc->dc_clk) {
-+		if (udc->clk_requested)
-+			omap_udc_enable_clock(0);
-+		clk_put(udc->hhc_clk);
-+		clk_put(udc->dc_clk);
-+	}
-+	if (udc->done)
-+		complete(udc->done);
- 	kfree(udc);
--	udc = NULL;
- }
- 
- static int
-@@ -2919,12 +2932,8 @@ static int omap_udc_probe(struct platform_device *pdev)
+ 	/* USB general purpose IRQ:  ep0, state changes, dma, etc */
+-	status = request_irq(pdev->resource[1].start, omap_udc_irq,
+-			0, driver_name, udc);
++	status = devm_request_irq(&pdev->dev, pdev->resource[1].start,
++				  omap_udc_irq, 0, driver_name, udc);
+ 	if (status != 0) {
+ 		ERR("can't get irq %d, err %d\n",
+ 			(int) pdev->resource[1].start, status);
+@@ -2895,20 +2895,20 @@ static int omap_udc_probe(struct platform_device *pdev)
  	}
  
+ 	/* USB "non-iso" IRQ (PIO for all but ep0) */
+-	status = request_irq(pdev->resource[2].start, omap_udc_pio_irq,
+-			0, "omap_udc pio", udc);
++	status = devm_request_irq(&pdev->dev, pdev->resource[2].start,
++				  omap_udc_pio_irq, 0, "omap_udc pio", udc);
+ 	if (status != 0) {
+ 		ERR("can't get irq %d, err %d\n",
+ 			(int) pdev->resource[2].start, status);
+-		goto cleanup2;
++		goto cleanup1;
+ 	}
+ #ifdef	USE_ISO
+-	status = request_irq(pdev->resource[3].start, omap_udc_iso_irq,
+-			0, "omap_udc iso", udc);
++	status = devm_request_irq(&pdev->dev, pdev->resource[3].start,
++				  omap_udc_iso_irq, 0, "omap_udc iso", udc);
+ 	if (status != 0) {
+ 		ERR("can't get irq %d, err %d\n",
+ 			(int) pdev->resource[3].start, status);
+-		goto cleanup3;
++		goto cleanup1;
+ 	}
+ #endif
+ 	if (cpu_is_omap16xx() || cpu_is_omap7xx()) {
+@@ -2921,22 +2921,11 @@ static int omap_udc_probe(struct platform_device *pdev)
  	create_proc_file();
--	status = usb_add_gadget_udc_release(&pdev->dev, &udc->gadget,
--			omap_udc_release);
--	if (!status)
--		return 0;
+ 	status = usb_add_gadget_udc_release(&pdev->dev, &udc->gadget,
+ 			omap_udc_release);
+-	if (status)
+-		goto cleanup4;
 -
--	remove_proc_file();
-+	return usb_add_gadget_udc_release(&pdev->dev, &udc->gadget,
-+					  omap_udc_release);
+-	return 0;
++	if (!status)
++		return 0;
  
+-cleanup4:
+ 	remove_proc_file();
+ 
+-#ifdef	USE_ISO
+-cleanup3:
+-	free_irq(pdev->resource[2].start, udc);
+-#endif
+-
+-cleanup2:
+-	free_irq(pdev->resource[1].start, udc);
+-
  cleanup1:
  	kfree(udc);
-@@ -2951,36 +2960,15 @@ static int omap_udc_remove(struct platform_device *pdev)
- {
- 	DECLARE_COMPLETION_ONSTACK(done);
+ 	udc = NULL;
+@@ -2980,12 +2969,6 @@ static int omap_udc_remove(struct platform_device *pdev)
  
--	if (!udc)
--		return -ENODEV;
+ 	remove_proc_file();
+ 
+-#ifdef	USE_ISO
+-	free_irq(pdev->resource[3].start, udc);
+-#endif
+-	free_irq(pdev->resource[2].start, udc);
+-	free_irq(pdev->resource[1].start, udc);
 -
--	usb_del_gadget_udc(&udc->gadget);
--	if (udc->driver)
--		return -EBUSY;
--
- 	udc->done = &done;
- 
--	pullup_disable(udc);
--	if (!IS_ERR_OR_NULL(udc->transceiver)) {
--		usb_put_phy(udc->transceiver);
--		udc->transceiver = NULL;
--	}
--	omap_writew(0, UDC_SYSCON1);
--
--	remove_proc_file();
-+	usb_del_gadget_udc(&udc->gadget);
- 
--	if (udc->dc_clk) {
--		if (udc->clk_requested)
--			omap_udc_enable_clock(0);
--		clk_put(udc->hhc_clk);
--		clk_put(udc->dc_clk);
--	}
-+	wait_for_completion(&done);
- 
- 	release_mem_region(pdev->resource[0].start,
- 			pdev->resource[0].end - pdev->resource[0].start + 1);
- 
--	wait_for_completion(&done);
--
- 	return 0;
- }
- 
+ 	if (udc->dc_clk) {
+ 		if (udc->clk_requested)
+ 			omap_udc_enable_clock(0);
 -- 
 2.19.1
 
