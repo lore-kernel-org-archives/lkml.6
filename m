@@ -2,101 +2,145 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-19.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B320C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 14:27:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A98DC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 14:29:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC0BD206C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 14:27:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 277F4206C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 14:29:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="m+P9d7fp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730254AbeLNO1R (ORCPT
+        id S1730100AbeLNO3d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 09:27:17 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:47704 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730058AbeLNO1R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 09:27:17 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0023E3082139;
-        Fri, 14 Dec 2018 14:27:17 +0000 (UTC)
-Received: from treble (ovpn-120-195.rdu2.redhat.com [10.10.120.195])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 53FD426FCF;
-        Fri, 14 Dec 2018 14:27:12 +0000 (UTC)
-Date:   Fri, 14 Dec 2018 08:27:10 -0600
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     Jiri Kosina <jikos@kernel.org>, Miroslav Benes <mbenes@suse.cz>,
-        Jason Baron <jbaron@akamai.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v14 05/11] livepatch: Simplify API by removing
- registration step
-Message-ID: <20181214142710.iprnzxxty5k5vqoz@treble>
-References: <20181129094431.7801-1-pmladek@suse.com>
- <20181129094431.7801-6-pmladek@suse.com>
- <20181213224625.65o77z75u4njocnp@treble>
- <20181214100232.elyqlnjyhp55acxf@pathway.suse.cz>
+        Fri, 14 Dec 2018 09:29:33 -0500
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:37634 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729722AbeLNO3c (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 09:29:32 -0500
+Received: by mail-yb1-f196.google.com with SMTP id g1so539513yba.4
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 06:29:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=T682Xoha9EerAUtioi44lxZe7JlcD8bR5bEoR0S4Lk8=;
+        b=m+P9d7fpwXaz0zdijM9JbDY95hNKxmTroJK1btlUBC3bq1K9Ky/3OsCvatcGDF4oAR
+         8morcQgKfwKwNV6oJRJoQqxaWOw1rbwF9gPnqCE68x5YpYOpXtQHs4Kk/1vHbZFL20M4
+         gpz6ZpSi2fXlHEj2/joow6EhNdA2JVxKOL0GAOG2f2wjosQ8wijTlHJZB63J/pTDB512
+         nGJAsSR2Hf84NegAD+h3K2saOZ+oC1t7ecXTuyFwxEzJOFGbgAP2wJ4huIeyQ/YL9W/Z
+         +jUS9d52P8oOhCtM8KCqmCuyGmaRlVXHE5CjiigKke0Eci0U24V20v95FgZ2LBrJ2B3J
+         NNZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=T682Xoha9EerAUtioi44lxZe7JlcD8bR5bEoR0S4Lk8=;
+        b=mOMvPyzFeQxGMqyp6j610g5TpATSieCw99GztMHOa+ubGzE7CiFYrCLLtNAHnbFd3W
+         kBPBFPFwaQtBaOvIEL+/oGjb8c6f1CSFnNCSJ5WWYbgf/e8QCLIqJZ0re/kYpLzehDwd
+         UrKpSXzv1312PORBRivuPwF6AHnG785ny4s80ARK2kGjwGggJroHdKpV53Q5xD1oDHiV
+         DKs5/nxnZPPcaPB1L7EloPkGzgnE1jp9PbVjngjL4BnRyX+dhbpAztHNQo8Lnghu1R07
+         u61jme3t++ZqYu4TspGNikzRbJtT7+dhXl7mbStnhAoVwLFzwb3F4OUvixUyzAOaz8Mu
+         kMZA==
+X-Gm-Message-State: AA+aEWYHKhjwyEJM9V5VFtk7y1xIIEdLWBUUcIJn39GWKyamZ83DToED
+        caOYQ1eb0AZEfhyK6ubMLgNwF8+Qig1siyuSJCUX0w==
+X-Google-Smtp-Source: AFSGD/XTEWm5fooeCxvBYhVhqRe3a62ENNyzPanAYxKmLuc94GbVY+keT2gUehjETPNwPIixFubcACa7NXsAispzjuU=
+X-Received: by 2002:a5b:947:: with SMTP id x7mr3130145ybq.110.1544797771070;
+ Fri, 14 Dec 2018 06:29:31 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20181214100232.elyqlnjyhp55acxf@pathway.suse.cz>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Fri, 14 Dec 2018 14:27:17 +0000 (UTC)
+References: <20181214114858.21231-1-enric.balletbo@collabora.com>
+In-Reply-To: <20181214114858.21231-1-enric.balletbo@collabora.com>
+From:   Guenter Roeck <groeck@google.com>
+Date:   Fri, 14 Dec 2018 06:29:19 -0800
+Message-ID: <CABXOdTdDNaPgBK74dcTgRDy5mJKztZ9GTGRiXDv=ZXOwauO-2A@mail.gmail.com>
+Subject: Re: [PATCH v3] MAINTAINERS: add maintainers for ChromeOS EC sub-drivers
+To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        linux-pwm@vger.kernel.org, linux-iio@vger.kernel.org,
+        alexandre.belloni@bootlin.com, linux-i2c@vger.kernel.org,
+        Guenter Roeck <groeck@chromium.org>, kernel@collabora.com,
+        linux-rtc@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>,
+        Benson Leung <bleung@chromium.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        linux-input@vger.kernel.org,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE" 
+        <devicetree@vger.kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-pm@vger.kernel.org, MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Miller <davem@davemloft.net>, mchehab+samsung@kernel.org,
+        nicolas.ferre@microchip.com,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 14, 2018 at 11:02:32AM +0100, Petr Mladek wrote:
-> On Thu 2018-12-13 16:46:25, Josh Poimboeuf wrote:
-> > Now that we can't re-enable a patch, I wonder if we really need both the
-> > 'patch->enabled' and 'klp_target_state' variables?
-> > 
-> > A patch is now always enabled, unless it's in transition, in which case
-> > its 'enabled' state is the same as 'klp_target_state'.
-> >
-> > For example I wonder if we could get rid of 'klp_target_state', since it
-> > should be the same as 'klp_transition_patch->enabled'.
-> 
-> There are some catches:
-> 
-> 1. klp_update_patch_state() can be called anywhere and anytime. We
->    would add yet another race-sensitive code if we access the flag
->    via a pointer.
+On Fri, Dec 14, 2018 at 3:49 AM Enric Balletbo i Serra
+<enric.balletbo@collabora.com> wrote:
+>
+> There are multiple ChromeOS EC sub-drivers spread in different
+> subsystems, as all of them are related to the Chrome stuff add
+> Benson and myself as a maintainers for all these sub-drivers.
+>
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> Signed-off-by: Benson Leung <bleung@chromium.org>
+> Acked-by: Wolfram Sang <wsa@the-dreams.de>
+> Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com> for iio parts.
+> Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> Acked-by: Lee Jones <lee.jones@linaro.org>
 
-True.
+Acked-by: Guenter Roeck <groeck@chromium.org>
 
-> 2. patch->enabled is bool while klp_target_state is triple state.
->    The argument is that KLP_UNDEFINED helps to catch bugs.
-> 
-> 
-> > Or alternatively we could get rid of 'patch->enabled', since it should
-> > be the same as
-> > 
-> > 	patch == klp_transition_patch ? klp_target_state : true
-> 
-> This might solve the first catch but not the 2nd one.
-
-It could WARN_ON if it's KLP_UNDEFINED when it's not supposed to be.
-
-> Not to say that it is much harder to read.
-
-We could put it in a klp_patch_enabled(patch) wrapper.
-
-> > Of course this could be a follow-on cleanup patch, which could be done
-> > in the future, so as not to hold up the merging of these patches
-> > anymore.
-> 
-> Yes, please. This is controversial, non-trivial, and can wait.
-
-No problem.
-
--- 
-Josh
+> ---
+>
+> Changes in v3:
+> - Add collected acks
+> - Use a cros[-_]ec pattern instead of list all the files.
+> - Add Guenter as a reviewer.
+>
+> Changes in v2:
+> - Fix typo in Benson email address.
+>
+>  MAINTAINERS | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index e7260191301b..437e036435d5 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -3629,6 +3629,14 @@ S:       Maintained
+>  T:     git git://git.kernel.org/pub/scm/linux/kernel/git/bleung/chrome-platform.git
+>  F:     drivers/platform/chrome/
+>
+> +CHROMEOS EC SUBDRIVERS
+> +M:     Benson Leung <bleung@chromium.org>
+> +M:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> +R:     Guenter Roeck <groeck@chromium.org>
+> +S:     Maintained
+> +N:     cros[-_]ec
+> +F:     drivers/power/supply/cros_usbpd-charger.c
+> +
+>  CIRRUS LOGIC AUDIO CODEC DRIVERS
+>  M:     Brian Austin <brian.austin@cirrus.com>
+>  M:     Paul Handrigan <Paul.Handrigan@cirrus.com>
+> --
+> 2.19.2
+>
