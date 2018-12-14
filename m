@@ -2,113 +2,129 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5E96C6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 13:28:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9D77C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 13:29:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 344B920449
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 13:28:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544794120;
-	bh=0lHuXTYBZBYmKJ2DVEh3/q+GtYWWDZvG0H0iJEz/ZEc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=EnVaBVG840V/wFmhTdG9g67KB6dWLBMqM63H00xcgwhD1WiT7LOuXj9ykTx+1yMcx
-	 iYiP7dYTfFUTjF0txwUD9nEei/7QfCQ1brWUAiWTG+7EZ5xGmXYWlHYhgo9cHmSNmm
-	 ltklPr2b1twklVR345zhqVMx1WQnuEZOO2Q0O6NQ=
+	by mail.kernel.org (Postfix) with ESMTP id 630D220578
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 13:29:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729936AbeLNN2l (ORCPT
+        id S1729940AbeLNN3V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 08:28:41 -0500
-Received: from mx2.suse.de ([195.135.220.15]:53518 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728415AbeLNN2k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 08:28:40 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 47BD9ACCA;
-        Fri, 14 Dec 2018 13:28:38 +0000 (UTC)
-Date:   Fri, 14 Dec 2018 14:28:36 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     syzbot <syzbot+7713f3aa67be76b1552c@syzkaller.appspotmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        rafael.j.wysocki@intel.com,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        vkuznets@redhat.com, Linux-MM <linux-mm@kvack.org>
-Subject: Re: general protection fault in watchdog
-Message-ID: <20181214132836.GE5343@dhcp22.suse.cz>
-References: <0000000000004ea80b057cfae21e@google.com>
- <CACT4Y+Z+AhQxf6=ecOkX1bOU5h7kMHYnR6CAhBv9eO5jQVeG3g@mail.gmail.com>
+        Fri, 14 Dec 2018 08:29:21 -0500
+Received: from ozlabs.org ([203.11.71.1]:39777 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728731AbeLNN3U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 08:29:20 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43GWbw5Rh4z9s0n;
+        Sat, 15 Dec 2018 00:29:16 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        linuxppc-dev@lists.ozlabs.org, iommu@lists.linux-foundation.org,
+        linux-mm@kvack.org, linux-arch@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 12/34] powerpc/cell: move dma direct window setup out of dma_configure
+In-Reply-To: <20181212143604.GA5137@lst.de>
+References: <20181114082314.8965-1-hch@lst.de> <20181114082314.8965-13-hch@lst.de> <871s6r3sno.fsf@concordia.ellerman.id.au> <20181212143604.GA5137@lst.de>
+Date:   Sat, 15 Dec 2018 00:29:11 +1100
+Message-ID: <87mup8uti0.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACT4Y+Z+AhQxf6=ecOkX1bOU5h7kMHYnR6CAhBv9eO5jQVeG3g@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 14-12-18 14:11:05, Dmitry Vyukov wrote:
-> On Fri, Dec 14, 2018 at 1:51 PM syzbot
-> <syzbot+7713f3aa67be76b1552c@syzkaller.appspotmail.com> wrote:
-> >
-> > Hello,
-> >
-> > syzbot found the following crash on:
-> >
-> > HEAD commit:    f5d582777bcb Merge branch 'for-linus' of git://git.kernel...
-> > git tree:       upstream
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=16aca143400000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=c8970c89a0efbb23
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=7713f3aa67be76b1552c
-> > compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1131381b400000
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13bae593400000
-> >
-> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> > Reported-by: syzbot+7713f3aa67be76b1552c@syzkaller.appspotmail.com
-> 
-> +linux-mm for memcg question
-> 
-> What the repro does is effectively just
-> setsockopt(EBT_SO_SET_ENTRIES). This eats all machine memory and
-> causes OOMs. Somehow it also caused the GPF in watchdog when it
-> iterates over task list, perhaps some scheduler code leaves a dangling
-> pointer on OOM failures.
-> 
-> But what bothers me is a different thing. syzkaller test processes are
-> sandboxed with a restrictive memcg which should prevent them from
-> eating all memory. do_replace_finish calls vmalloc, which uses
-> GFP_KERNEL, which does not include GFP_ACCOUNT (GFP_KERNEL_ACCOUNT
-> does). And page alloc seems to change memory against memcg iff
-> GFP_ACCOUNT is provided.
-> Am I missing something or vmalloc is indeed not accounted (DoS)? I see
-> some explicit uses of GFP_KERNEL_ACCOUNT, e.g. the one below, but they
-> seem to be very sparse.
-> 
-> static void *seq_buf_alloc(unsigned long size)
-> {
->      return kvmalloc(size, GFP_KERNEL_ACCOUNT);
-> }
-> 
-> Now looking at the code I also don't see how kmalloc(GFP_KERNEL) is
-> accounted... Which makes me think I am still missing something.
+Christoph Hellwig <hch@lst.de> writes:
+> On Sun, Dec 09, 2018 at 09:23:39PM +1100, Michael Ellerman wrote:
+>> Christoph Hellwig <hch@lst.de> writes:
+>> 
+>> > Configure the dma settings at device setup time, and stop playing games
+>> > with get_pci_dma_ops.  This prepares for using the common dma_configure
+>> > code later on.
+>> >
+>> > Signed-off-by: Christoph Hellwig <hch@lst.de>
+>> > ---
+>> >  arch/powerpc/platforms/cell/iommu.c | 20 +++++++++++---------
+>> >  1 file changed, 11 insertions(+), 9 deletions(-)
+>> 
+>> This one's crashing, haven't dug into why yet:
+>
+> Can you provide a gdb assembly of the exact crash site?  This looks
+> like for some odd reason the DT structures aren't fully setup by the
+> time we are probing the device, which seems odd.
 
-You are not missing anything. We do not account all allocations and you
-have to explicitly opt-in by __GFP_ACCOUNT. This is a deliberate
-decision. If the allocation is directly controlable by an untrusted user
-and the memory is associated with a process life time then this looks
-like a good usecase for __GFP_ACCOUNT. If an allocation outlives a
-process then there the flag should be considered with a great care
-because oom killer is not able to resolve the memcg pressure and so the
-limit enforcement is not effective.
--- 
-Michal Hocko
-SUSE Labs
+It's dev->of_node which is NULL.
+
+Because we were passed a platform_device which doesn't have an of_node.
+
+It's the cbe-mic device created in cell_publish_devices().
+
+I can fix that by simply checking for a NULL node, then the system boots
+but then I have no network devices, due to:
+
+  tg3 0000:00:01.0: enabling device (0140 -> 0142)
+  tg3 0000:00:01.0: DMA engine test failed, aborting
+  tg3: probe of 0000:00:01.0 failed with error -12
+  tg3 0000:00:01.1: enabling device (0140 -> 0142)
+  tg3 0000:00:01.1: DMA engine test failed, aborting
+  tg3: probe of 0000:00:01.1 failed with error -12
+
+
+I think the problem is that we don't want to set iommu_bypass_supported
+unless cell_iommu_fixed_mapping_init() succeeds.
+
+Yep. This makes it work for me on cell on top of your v5.
+
+cheers
+
+
+diff --git a/arch/powerpc/platforms/cell/iommu.c b/arch/powerpc/platforms/cell/iommu.c
+index 348a815779c1..8329fda17cc8 100644
+--- a/arch/powerpc/platforms/cell/iommu.c
++++ b/arch/powerpc/platforms/cell/iommu.c
+@@ -813,6 +813,10 @@ static u64 cell_iommu_get_fixed_address(struct device *dev)
+ 	int i, len, best, naddr, nsize, pna, range_size;
+ 
+ 	np = of_node_get(dev->of_node);
++	if (!np)
++		/* We can be called for platform devices that have no of_node */
++		goto out;
++
+ 	while (1) {
+ 		naddr = of_n_addr_cells(np);
+ 		nsize = of_n_size_cells(np);
+@@ -1065,8 +1069,11 @@ static int __init cell_iommu_init(void)
+ 	/* Setup various callbacks */
+ 	cell_pci_controller_ops.dma_dev_setup = cell_pci_dma_dev_setup;
+ 
+-	if (!iommu_fixed_disabled && cell_iommu_fixed_mapping_init() == 0)
++	if (!iommu_fixed_disabled && cell_iommu_fixed_mapping_init() == 0) {
++		cell_pci_controller_ops.iommu_bypass_supported =
++			cell_pci_iommu_bypass_supported;
+ 		goto done;
++	}
+ 
+ 	/* Create an iommu for each /axon node.  */
+ 	for_each_node_by_name(np, "axon") {
+@@ -1085,10 +1092,6 @@ static int __init cell_iommu_init(void)
+ 	}
+  done:
+ 	/* Setup default PCI iommu ops */
+-	if (!iommu_fixed_disabled) {
+-		cell_pci_controller_ops.iommu_bypass_supported =
+-				cell_pci_iommu_bypass_supported;
+-	}
+ 	set_pci_dma_ops(&dma_iommu_ops);
+ 	cell_iommu_enabled = true;
+  bail:
