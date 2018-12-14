@@ -2,82 +2,45 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87DF3C67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 09:24:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07F5BC67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 09:26:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E14720866
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 09:24:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="T+BT/Llv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E14720866
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id B25D021473
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 09:26:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B25D021473
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=virtuozzo.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728613AbeLNJY0 (ORCPT
+        id S1728779AbeLNJ0T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 04:24:26 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:40645 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726423AbeLNJY0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 04:24:26 -0500
-Received: by mail-wm1-f68.google.com with SMTP id q26so5044558wmf.5
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 01:24:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=4pz4LVo2xw/Nz9f9E3476iZ62QabH9C+7vUJFOIWiVc=;
-        b=T+BT/Llvs8hT8xsjRfn/Ajwdbj4WffLH0apUiCEHJswepABq1gg2v2ayAV8B8txqba
-         Yic9qRWyfQ053qfyqB8ibecFCt+QlvDm+1U+owkRP8SpBhh//IBWf/mq1QZQQ+ouaZiH
-         XXtyU7pVBJhRxDvEFlcLbJnfD+t7IuiRHkn+I=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=4pz4LVo2xw/Nz9f9E3476iZ62QabH9C+7vUJFOIWiVc=;
-        b=oompooJi/VI97Uf4GivcqsHPzkPSLy1rxkIfqCgYb7FEeHpZ/+ka6pCKUuFp2wka6G
-         Y81Rvi61HkN7FEIylXIaubnG87YxWRudy+cbmLk06eNMYCkoG1v8QIc58HN3JPPFL4MQ
-         9udHQBgmm72cMNTDt4el50LZFSbFffMErGxRZOkE3t4eRufF7U5CRC441r5ObJXufu1p
-         b2bZTsSYc2/7+wyH1lK3Sh0M5r03NJe0AO9SY9rqrEDdGOxLoBBPIH/sQQ7dvvQU7mAp
-         vOxzvv/Q93H0AK1dwm6JGl8KQBnufmMh+UojaxF5az5wPACYqpTyU9NEdonbH8n0u5S+
-         6ZgA==
-X-Gm-Message-State: AA+aEWbRA6R8QVOlTQFA4DmnuIb2EW89N45VKwqP2HM9BzEav2tXiQ5h
-        6vHlizSjRPVRjSiTcpWwv22fAA==
-X-Google-Smtp-Source: AFSGD/W1Q4k4ws46VynhAEscyRb7pEJtMCAvfDpTL46MiCOt2WnxmyF887PX2DkUJqD0UI57AUMwlw==
-X-Received: by 2002:a1c:68d7:: with SMTP id d206mr2421272wmc.43.1544779463856;
-        Fri, 14 Dec 2018 01:24:23 -0800 (PST)
-Received: from [192.168.0.40] (77.37.95.92.rev.sfr.net. [92.95.37.77])
-        by smtp.googlemail.com with ESMTPSA id v133sm3390933wmf.19.2018.12.14.01.24.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 14 Dec 2018 01:24:23 -0800 (PST)
-Subject: Re: [PATCH v2 2/4] RISC-V: Support per-hart timebase-frequency
-To:     Atish Patra <atish.patra@wdc.com>, linux-kernel@vger.kernel.org
-Cc:     Albert Ou <aou@eecs.berkeley.edu>, devicetree@vger.kernel.org,
-        Dmitriy Cherkasov <dmitriy@oss-tech.org>,
-        linux-riscv@lists.infradead.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Anup Patel <anup@brainfault.org>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Christoph Hellwig <hch@infradead.org>
-References: <1544742869-19980-1-git-send-email-atish.patra@wdc.com>
- <1544742869-19980-3-git-send-email-atish.patra@wdc.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <b11115c8-b194-0f73-b4ab-5d1d643790ad@linaro.org>
-Date:   Fri, 14 Dec 2018 10:24:21 +0100
+        Fri, 14 Dec 2018 04:26:19 -0500
+Received: from relay.sw.ru ([185.231.240.75]:43490 "EHLO relay.sw.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726494AbeLNJ0T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 04:26:19 -0500
+Received: from [172.16.25.169]
+        by relay.sw.ru with esmtp (Exim 4.91)
+        (envelope-from <ktkhai@virtuozzo.com>)
+        id 1gXjjV-0000SP-OA; Fri, 14 Dec 2018 12:26:09 +0300
+Subject: Re: [PATCH] mm: Reuse only-pte-mapped KSM page in do_wp_page()
+To:     Yang Shi <yang.shi@linux.alibaba.com>, akpm@linux-foundation.org,
+        kirill@shutemov.name, hughd@google.com, aarcange@redhat.com
+Cc:     christian.koenig@amd.com, imbrenda@linux.vnet.ibm.com,
+        riel@surriel.com, ying.huang@intel.com, minchan@kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+References: <154471491016.31352.1168978849911555609.stgit@localhost.localdomain>
+ <5d5bfbd2-8411-e707-1628-18bde66a6793@linux.alibaba.com>
+From:   Kirill Tkhai <ktkhai@virtuozzo.com>
+Message-ID: <a394a604-20d6-e261-1735-bc225e39f2a2@virtuozzo.com>
+Date:   Fri, 14 Dec 2018 12:26:09 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-In-Reply-To: <1544742869-19980-3-git-send-email-atish.patra@wdc.com>
+In-Reply-To: <5d5bfbd2-8411-e707-1628-18bde66a6793@linux.alibaba.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -86,104 +49,160 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14/12/2018 00:14, Atish Patra wrote:
-> Follow the updated DT specs and read the timebase-frequency
-> from the boot cpu. Keep the old DT reading as well for backward
-> compatibility. This patch is rework of old patch from Palmer.
+On 13.12.2018 22:15, Yang Shi wrote:
 > 
-> Signed-off-by: Atish Patra <atish.patra@wdc.com>
-> ---
->  arch/riscv/kernel/time.c          |  9 +--------
->  drivers/clocksource/riscv_timer.c | 31 +++++++++++++++++++++++++++++++
->  2 files changed, 32 insertions(+), 8 deletions(-)
 > 
-> diff --git a/arch/riscv/kernel/time.c b/arch/riscv/kernel/time.c
-> index 1911c8f6..225fe743 100644
-> --- a/arch/riscv/kernel/time.c
-> +++ b/arch/riscv/kernel/time.c
-> @@ -20,14 +20,7 @@ unsigned long riscv_timebase;
->  
->  void __init time_init(void)
->  {
-> -	struct device_node *cpu;
-> -	u32 prop;
-> -
-> -	cpu = of_find_node_by_path("/cpus");
-> -	if (!cpu || of_property_read_u32(cpu, "timebase-frequency", &prop))
-> -		panic(KERN_WARNING "RISC-V system with no 'timebase-frequency' in DTS\n");
-> -	riscv_timebase = prop;
-> +	timer_probe();
->  
->  	lpj_fine = riscv_timebase / HZ;
-> -	timer_probe();
->  }
-> diff --git a/drivers/clocksource/riscv_timer.c b/drivers/clocksource/riscv_timer.c
-> index 084e97dc..75262409 100644
-> --- a/drivers/clocksource/riscv_timer.c
-> +++ b/drivers/clocksource/riscv_timer.c
-> @@ -83,6 +83,35 @@ void riscv_timer_interrupt(void)
->  	evdev->event_handler(evdev);
->  }
->  
-> +static void __init riscv_timebase_frequency(struct device_node *node,
-> +					    int hartid)
-> +{
-> +	u32 timebase;
-> +
-> +	if (!of_property_read_u32(node, "timebase-frequency", &timebase))
-> +		goto check;
-> +
-> +	/*
-> +	 * As per the DT specification, timebase-frequency should be present
-> +	 * under individual cpu node. Unfortunately, there are already available
-> +	 * HiFive Unleashed devices where the timebase-frequency entry is under
-> +	 * CPUs. check under parent "cpus" node to cover those devices.
-> +	 */
-> +	if (!of_property_read_u32(node->parent, "timebase-frequency",
-> +				  &timebase))
-> +		goto check;
-> +
-> +	panic("RISC-V system with no timebase-frequency in DTS for hart [%d]\n",
-> +	      hartid);
-
-no panic in the driver code please. Alternatively use pr_err and let the
-timer-probe function spit the critical error on the console.
-
-It would be nicer to add a fixed-clock and get the rate from it.
-
-> +check:
-> +	/* RISC-V ISA specification mandates that every cpu has a timer */
-> +	if (!riscv_timebase)
-> +		riscv_timebase = timebase;
-> +	else if (riscv_timebase && riscv_timebase != timebase)
-> +		pr_warn("RISC-V system with different timebase-frequency\n");
-> +}
-> +
->  static int __init riscv_timer_init_dt(struct device_node *n)
->  {
->  	int cpuid, hartid, error;
-> @@ -90,10 +119,12 @@ static int __init riscv_timer_init_dt(struct device_node *n)
->  
->  	hartid = riscv_of_processor_hartid(n);
->  	cpuid = riscv_hartid_to_cpuid(hartid);
-> +	riscv_timebase_frequency(n, hartid);
->  
->  	if (cpuid != smp_processor_id())
->  		return 0;
-
-Somehow related to this change. Are you sure the test above makes sense?
-
-> +	/* This should be called only for boot cpu */
->  	cs = per_cpu_ptr(&riscv_clocksource, cpuid);
->  	clocksource_register_hz(cs, riscv_timebase);
->  
+> On 12/13/18 7:29 AM, Kirill Tkhai wrote:
+>> This patch adds an optimization for KSM pages almost
+>> in the same way, that we have for ordinary anonymous
+>> pages. If there is a write fault in a page, which is
+>> mapped to an only pte, and it is not related to swap
+>> cache; the page may be reused without copying its
+>> content.
+>>
+>> [Note, that we do not consider PageSwapCache() pages
+>>   at least for now, since we don't want to complicate
+>>   __get_ksm_page(), which has nice optimization based
+>>   on this (for the migration case). Currenly it is
+>>   spinning on PageSwapCache() pages, waiting for when
+>>   they have unfreezed counters (i.e., for the migration
+>>   finish). But we don't want to make it also spinning
+>>   on swap cache pages, which we try to reuse, since
+>>   there is not a very high probability to reuse them.
+>>   So, for now we do not consider PageSwapCache() pages
+>>   at all.]
+>>
+>> So, in reuse_ksm_page() we check for 1)PageSwapCache()
+>> and 2)page_stable_node(), to skip a page, which KSM
+>> is currently trying to link to stable tree. Then we
+>> do page_ref_freeze() to prohibit KSM to merge one more
+>> page into the page, we are reusing. After that, nobody
+>> can refer to the reusing page: KSM skips !PageSwapCache()
+>> pages with zero refcount; and the protection against
+>> of all other participants is the same as for reused
+>> ordinary anon pages pte lock, page lock and mmap_sem.
+>>
+>> Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+>> ---
+>>   include/linux/ksm.h |    7 +++++++
+>>   mm/ksm.c            |   25 +++++++++++++++++++++++--
+>>   mm/memory.c         |   16 ++++++++++++++--
+>>   3 files changed, 44 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/include/linux/ksm.h b/include/linux/ksm.h
+>> index 161e8164abcf..e48b1e453ff5 100644
+>> --- a/include/linux/ksm.h
+>> +++ b/include/linux/ksm.h
+>> @@ -53,6 +53,8 @@ struct page *ksm_might_need_to_copy(struct page *page,
+>>     void rmap_walk_ksm(struct page *page, struct rmap_walk_control *rwc);
+>>   void ksm_migrate_page(struct page *newpage, struct page *oldpage);
+>> +bool reuse_ksm_page(struct page *page,
+>> +            struct vm_area_struct *vma, unsigned long address);
+>>     #else  /* !CONFIG_KSM */
+>>   @@ -86,6 +88,11 @@ static inline void rmap_walk_ksm(struct page *page,
+>>   static inline void ksm_migrate_page(struct page *newpage, struct page *oldpage)
+>>   {
+>>   }
+>> +static inline bool reuse_ksm_page(struct page *page,
+>> +            struct vm_area_struct *vma, unsigned long address)
+>> +{
+>> +    return false;
+>> +}
+>>   #endif /* CONFIG_MMU */
+>>   #endif /* !CONFIG_KSM */
+>>   diff --git a/mm/ksm.c b/mm/ksm.c
+>> index 383f961e577a..fbd14264d784 100644
+>> --- a/mm/ksm.c
+>> +++ b/mm/ksm.c
+>> @@ -707,8 +707,9 @@ static struct page *__get_ksm_page(struct stable_node *stable_node,
+>>        * case this node is no longer referenced, and should be freed;
+>>        * however, it might mean that the page is under page_ref_freeze().
+>>        * The __remove_mapping() case is easy, again the node is now stale;
+>> -     * but if page is swapcache in migrate_page_move_mapping(), it might
+>> -     * still be our page, in which case it's essential to keep the node.
+>> +     * the same is in reuse_ksm_page() case; but if page is swapcache
+>> +     * in migrate_page_move_mapping(), it might still be our page,
+>> +     * in which case it's essential to keep the node.
+>>        */
+>>       while (!get_page_unless_zero(page)) {
+>>           /*
+>> @@ -2666,6 +2667,26 @@ void rmap_walk_ksm(struct page *page, struct rmap_walk_control *rwc)
+>>           goto again;
+>>   }
+>>   +bool reuse_ksm_page(struct page *page,
+>> +            struct vm_area_struct *vma,
+>> +            unsigned long address)
+>> +{
+>> +    VM_BUG_ON_PAGE(is_zero_pfn(page_to_pfn(page)), page);
+>> +    VM_BUG_ON_PAGE(!page_mapped(page), page);
+>> +    VM_BUG_ON_PAGE(!PageLocked(page), page);
+>> +
+>> +    if (PageSwapCache(page) || !page_stable_node(page))
+>> +        return false;
+>> +    /* Prohibit parallel get_ksm_page() */
+>> +    if (!page_ref_freeze(page, 1))
+>> +        return false;
+>> +
+>> +    page_move_anon_rmap(page, vma);
 > 
+> Once the mapping is changed, it is not KSM mapping anymore. It looks later get_ksm_page() would always fail on this page. Is this expected?
+
+Yes, this is the thing that the patch makes. Let's look at the actions,
+we have without the patch, when there is a writing to an only-pte-mapped
+KSM page.
+
+We enter to do_wp_page() with page_count() == 1, since KSM page is mapped
+in only pte (and we do not get extra reference to a page, when we add it
+to KSM stable tree). Then:
+
+  do_wp_page()
+    get_page(vmf->page) <- page_count() is 2
+    wp_page_copy()
+      ..
+      cow_user_page() /* Copy user page to a new one */
+      ..
+      put_page(vmf->page) <- page_count() is 1
+      put_page(vmf->page) <- page_count() is 0
+
+Second put_page() frees the page (and also zeroes page->mapping),
+and since that it's not a PageKsm() page anymore. Further
+__get_ksm_page() calls will fail on this page (since the mapping
+was zeroed), and its node will be unlinked from ksm stable tree:
+
+__get_ksm_page()
+{
+	/* page->mapping == NULL, expected_mapping != NULL */
+	if (READ_ONCE(page->mapping) != expected_mapping)
+		goto stale;
+	.......
+stale:
+	remove_node_from_stable_tree(stable_node);
+}
 
 
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+The patch optimizes do_wp_page(), and makes it to avoid the copying
+(like we have for ordinary anon pages). Since KSM page is freed anyway,
+after we dropped the last reference to it; we reuse it instead of this.
+So, the thing will now work in this way:
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+do_wp_page()
+  lock_page(vmf->page)
+  reuse_ksm_page()
+    check PageSwapCache() and page_stable_node()
+    page_ref_freeze(page, 1) <- Freeze the page to make parallel
+                                __get_ksm_page() (if any) waiting
+    page_move_anon_rmap()    <- Write new mapping, so __get_ksm_page()
+                                sees this is not a KSM page anymore,
+                                and it removes stable node.
 
+So, the result is the same, but after the patch we achieve it faster :)
+
+Also, note, that in the most probably case, do_wp_page() does not cross
+with __get_ksm_page() (the race window is very small; __get_ksm_page()
+is spinning, only when reuse_ksm_page() is between page_ref_freeze()
+and page_move_anon_rmap(), which are on neighboring lines).
+
+So, this is the idea. Please, let me know in case of something is unclear
+for you.
+
+Kirill
