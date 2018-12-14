@@ -2,113 +2,125 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AD30C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 22:36:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FDCFC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 22:36:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87FE72086D
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 22:36:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6171A208C1
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 22:36:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JhfNz3FO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730161AbeLNWgd (ORCPT
+        id S1730494AbeLNWgl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 17:36:33 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:35634 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729519AbeLNWgc (ORCPT
+        Fri, 14 Dec 2018 17:36:41 -0500
+Received: from mail-qt1-f202.google.com ([209.85.160.202]:56249 "EHLO
+        mail-qt1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730165AbeLNWgl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 17:36:32 -0500
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::bf5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id B824714E09825;
-        Fri, 14 Dec 2018 14:36:31 -0800 (PST)
-Date:   Fri, 14 Dec 2018 14:36:31 -0800 (PST)
-Message-Id: <20181214.143631.1081032057703599919.davem@davemloft.net>
-To:     salil.mehta@huawei.com
-Cc:     yisen.zhuang@huawei.com, lipeng321@huawei.com,
-        mehta.salil@opnsrc.net, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linuxarm@huawei.com
-Subject: Re: [PATCH net-next 0/6] net: hns3: Add more commands to Debugfs
- in HNS3 driver
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20181214.143046.597375776514311090.davem@davemloft.net>
-References: <20181211171330.20592-1-salil.mehta@huawei.com>
-        <20181214.143046.597375776514311090.davem@davemloft.net>
-X-Mailer: Mew version 6.8 on Emacs 26.1
+        Fri, 14 Dec 2018 17:36:41 -0500
+Received: by mail-qt1-f202.google.com with SMTP id b16so6936003qtc.22
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 14:36:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=Hpzgkb+ogGIKg/j787d6nVH8o5+QCYiKn6+Dg9Y4Tz8=;
+        b=JhfNz3FOcVMstZ3FKMfb+iXqWygEqsknFsC3o5+DZ7P1tH/7VaXpiiHHuvAaMY7v8k
+         dHIgWOsVZL+Iy+a80bCiJpVVOU/GeiVJi9dC00pfpeI9JyOMceRK+cB2yP0Z9GekHZg3
+         5NwzQnFB/EGr4FLOYWvWyxiRz3ohWbx2ukq0W0kaJudB2nwbFf+GUCIPCmplWy58hWWu
+         g76Ic4n+ndaj5AOd1bm85ISwpiaQFlj3uLTfjLB5aBJqRVJeceU4YIgcMSO6RKgT0HEP
+         wEIEnROaU63Pj3KXvUpvAKPNpYk0xLi6O7AOpvGewAP5hWeO8q7By5FhVg1a7NWRAcpr
+         oWpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=Hpzgkb+ogGIKg/j787d6nVH8o5+QCYiKn6+Dg9Y4Tz8=;
+        b=doq4pQVowGqGEBqPmaHp4nju3dc0GD5GV+O32KPpYNLopOyjqziFxVTr6Ze0oTkW2l
+         RgaE0kBw3Fpu7NpCIuDGrIKRQuIO5X+aTw/ZD2+w1HhtwmZOQioPm/9pCsjmsdEkleZv
+         SwZTnvQjmKdIKGEdOjz2bw+78bBzGdOjkbKlnp111d09j1AQ5Nc5vTM6uZ/UB8nYLtCZ
+         IHXHyGT8Y4UEo4RGc1P+t7gL3M2lAerTjIEgsWl8E8psDawMImlpe4GFjSpzDRJneSAc
+         pyFOGU6czga2UAy9IUp+lbeofMHRgTcsdMoUBYOUy03kyDvyJnVi5hpNtNy1u2t+dkMl
+         IC2A==
+X-Gm-Message-State: AA+aEWb83z2FuofvdZs3zCD1LxS17FK9tUa0SVz6QJu5ksj32g6jleW4
+        97IEZJhhnkga9p96oc8S4cWf3Govdtt4ZoxOWcnOYT9YcLaGIY/wp+A0DHa/Pkc+9t/DpuR70rn
+        oI/zVj5Gw6teb2PLukRox1khf0zbQUNPMTABCIosXgsdqcSWW73YwAgx3EW0/m1gdh1Ts3sjo3u
+        KGHw==
+X-Google-Smtp-Source: AFSGD/XjQ7sT2/5w/+3alNRLKjK1+b88wSQJkf9uVMf7sfwtFgmKI15iW5HDdfb2ArbVOD8Wi7nj2pYrRfyOOuk=
+X-Received: by 2002:a0c:9e60:: with SMTP id z32mr4798720qve.0.1544826999928;
+ Fri, 14 Dec 2018 14:36:39 -0800 (PST)
+Date:   Fri, 14 Dec 2018 14:36:37 -0800
+Message-Id: <20181214223637.35954-1-astrachan@google.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=iso-8859-7
-Content-Transfer-Encoding: base64
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 14 Dec 2018 14:36:32 -0800 (PST)
+X-Mailer: git-send-email 2.20.0.405.gbc1bbc6f85-goog
+Subject: [PATCH v2] x86: vdso: Pass --eh-frame-hdr to ld
+From:   Alistair Strachan <astrachan@google.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Florian Weimer <fweimer@redhat.com>,
+        "Carlos O'Donell" <carlos@redhat.com>,
+        "H. J. Lu" <hjl.tools@gmail.com>,
+        Laura Abbott <labbott@redhat.com>, stable@vger.kernel.org,
+        Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RnJvbTogRGF2aWQgTWlsbGVyIDxkYXZlbUBkYXZlbWxvZnQubmV0Pg0KRGF0ZTogRnJpLCAxNCBE
-ZWMgMjAxOCAxNDozMDo0NiAtMDgwMCAoUFNUKQ0KDQo+IEZyb206IFNhbGlsIE1laHRhIDxzYWxp
-bC5tZWh0YUBodWF3ZWkuY29tPg0KPiBEYXRlOiBUdWUsIDExIERlYyAyMDE4IDE3OjEzOjI0ICsw
-MDAwDQo+IA0KPj4gVGhpcyBwYXRjaC1zZXQgYWRkcyBmZXcgbW9yZSBkZWJ1Z2ZzIGNvbW1hbmRz
-IHRvIEhOUzMgRXRoZXJuZXQNCj4+IERyaXZlci4gU3VwcG9ydCBoYXMgYmVlbiBhZGRlZCB0byBx
-dWVyeSBpbmZvIHJlbGF0ZWQgdG8gYmVsb3cNCj4+IGl0ZW1zOg0KPj4gMS4gUGFja2V0IGJ1ZmZl
-ciBkZXNjcmlwdG9yICgiZWNobyBiZCBpbmZvIFtxdWV1ZSBub10gW2JkIGluZGV4XSA+IGNtZCIp
-DQo+PiAyLiBNYW5hZ2VyIHRhYmxlKCJlY2hvIGR1bXAgbW5nIHRibCA+IGNtZCIpDQo+PiAzLiBE
-Znggc3RhdHVzIHJlZ2lzdGVyKCJlY2hvIGR1bXAgcmVnIHNzdSBbcHJ0IGlkXSA+IGNtZCIpDQo+
-PiA0LiBEY2Igc3RhdHVzIHJlZ2lzdGVyKCJlY2hvIGR1bXAgcmVnIGRjYiBbcG9ydCBpZF0gPiBj
-bWQiKQ0KPj4gNS4gUXVldWUgbWFwICgiZWNobyBxdWV1ZSBtYXAgW3F1ZXVlIG5vXSA+IGNtZCIp
-DQo+PiA2LiBUbSBtYXAgKCJlY2hvIHRtIG1hcCBbcXVldWUgbm9dID4gY21kIikNCj4+IA0KPj4g
-Tk9URTogQWJvdmUgY29tbWFuZHMgYXJlICpyZWFkLW9ubHkqIGFuZCBhcmUgb25seSBpbnRlbmRl
-ZCB0bw0KPj4gcXVlcnkgdGhlIGluZm9ybWF0aW9uIGZyb20gdGhlIFNvQyhhbmQgZHVtcCBpbnNp
-ZGUgdGhlIGtlcm5lbCwNCj4+IGZvciBub3cpIGFuZCBpbiBubyB3YXkgdHJpZXMgdG8gcGVyZm9y
-bSB3cml0ZSBvcGVyYXRpb25zIGZvcg0KPj4gdGhlIHB1cnBvc2Ugb2YgY29uZmlndXJhdGlvbiBl
-dGMuDQo+IA0KPiBTZXJpZXMgYXBwbGllZC4NCg0KQWN0dWFsbHksIHJldmVydGVkLg0KDQpQbGVh
-c2UgZml4IHRoZXNlIHdhcm5pbmdzIGFuZCByZXN1Ym1pdCAod2l0aCBnY2MgdmVyc2lvbg0KImdj
-YyAoR0NDKSA4LjIuMSAyMDE4MTEwNSAoUmVkIEhhdCA4LjIuMS01KSIpOg0KDQpJbiBmaWxlIGlu
-Y2x1ZGVkIGZyb20gLi9pbmNsdWRlL2xpbnV4L2JpdG1hcC5oOjksDQogICAgICAgICAgICAgICAg
-IGZyb20gLi9pbmNsdWRlL2xpbnV4L2NwdW1hc2suaDoxMiwNCiAgICAgICAgICAgICAgICAgZnJv
-bSAuL2FyY2gveDg2L2luY2x1ZGUvYXNtL2NwdW1hc2suaDo1LA0KICAgICAgICAgICAgICAgICBm
-cm9tIC4vYXJjaC94ODYvaW5jbHVkZS9hc20vbXNyLmg6MTEsDQogICAgICAgICAgICAgICAgIGZy
-b20gLi9hcmNoL3g4Ni9pbmNsdWRlL2FzbS9wcm9jZXNzb3IuaDoyMSwNCiAgICAgICAgICAgICAg
-ICAgZnJvbSAuL2FyY2gveDg2L2luY2x1ZGUvYXNtL2NwdWZlYXR1cmUuaDo4LA0KICAgICAgICAg
-ICAgICAgICBmcm9tIC4vYXJjaC94ODYvaW5jbHVkZS9hc20vdGhyZWFkX2luZm8uaDo1MywNCiAg
-ICAgICAgICAgICAgICAgZnJvbSAuL2luY2x1ZGUvbGludXgvdGhyZWFkX2luZm8uaDozOCwNCiAg
-ICAgICAgICAgICAgICAgZnJvbSAuL2FyY2gveDg2L2luY2x1ZGUvYXNtL3ByZWVtcHQuaDo3LA0K
-ICAgICAgICAgICAgICAgICBmcm9tIC4vaW5jbHVkZS9saW51eC9wcmVlbXB0Lmg6ODEsDQogICAg
-ICAgICAgICAgICAgIGZyb20gLi9pbmNsdWRlL2xpbnV4L3NwaW5sb2NrLmg6NTEsDQogICAgICAg
-ICAgICAgICAgIGZyb20gLi9pbmNsdWRlL2xpbnV4L3dhaXQuaDo5LA0KICAgICAgICAgICAgICAg
-ICBmcm9tIC4vaW5jbHVkZS9saW51eC93YWl0X2JpdC5oOjgsDQogICAgICAgICAgICAgICAgIGZy
-b20gLi9pbmNsdWRlL2xpbnV4L2ZzLmg6NiwNCiAgICAgICAgICAgICAgICAgZnJvbSAuL2luY2x1
-ZGUvbGludXgvZGVidWdmcy5oOjE1LA0KICAgICAgICAgICAgICAgICBmcm9tIGRyaXZlcnMvbmV0
-L2V0aGVybmV0L2hpc2lsaWNvbi9obnMzL2huczNfZGVidWdmcy5jOjQ6DQpJbiBmdW5jdGlvbiCh
-c3RybmNhdKIsDQogICAgaW5saW5lZCBmcm9tIKFobnMzX2RiZ19oZWxwoiBhdCBkcml2ZXJzL25l
-dC9ldGhlcm5ldC9oaXNpbGljb24vaG5zMy9obnMzX2RlYnVnZnMuYzoyNjM6MjoNCi4vaW5jbHVk
-ZS9saW51eC9zdHJpbmcuaDozMjA6MTA6IHdhcm5pbmc6IKFfX2J1aWx0aW5fc3RybmNhdKIgc3Bl
-Y2lmaWVkIGJvdW5kIDI1NiBlcXVhbHMgZGVzdGluYXRpb24gc2l6ZSBbLVdzdHJpbmdvcC1vdmVy
-Zmxvdz1dDQogICByZXR1cm4gX19idWlsdGluX3N0cm5jYXQocCwgcSwgY291bnQpOw0KICAgICAg
-ICAgIF5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fg0KSW4gZnVuY3Rpb24goXN0cm5jYXSi
-LA0KICAgIGlubGluZWQgZnJvbSChaG5zM19kYmdfaGVscKIgYXQgZHJpdmVycy9uZXQvZXRoZXJu
-ZXQvaGlzaWxpY29uL2huczMvaG5zM19kZWJ1Z2ZzLmM6MjUyOjI6DQouL2luY2x1ZGUvbGludXgv
-c3RyaW5nLmg6MzIwOjEwOiB3YXJuaW5nOiChX19idWlsdGluX3N0cm5jYXSiIHNwZWNpZmllZCBi
-b3VuZCAyNTYgZXF1YWxzIGRlc3RpbmF0aW9uIHNpemUgWy1Xc3RyaW5nb3Atb3ZlcmZsb3c9XQ0K
-ICAgcmV0dXJuIF9fYnVpbHRpbl9zdHJuY2F0KHAsIHEsIGNvdW50KTsNCiAgICAgICAgICBefn5+
-fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn4NCkluIGZpbGUgaW5jbHVkZWQgZnJvbSAuL2luY2x1
-ZGUvbGludXgvYml0bWFwLmg6OSwNCiAgICAgICAgICAgICAgICAgZnJvbSAuL2luY2x1ZGUvbGlu
-dXgvY3B1bWFzay5oOjEyLA0KICAgICAgICAgICAgICAgICBmcm9tIC4vYXJjaC94ODYvaW5jbHVk
-ZS9hc20vY3B1bWFzay5oOjUsDQogICAgICAgICAgICAgICAgIGZyb20gLi9hcmNoL3g4Ni9pbmNs
-dWRlL2FzbS9tc3IuaDoxMSwNCiAgICAgICAgICAgICAgICAgZnJvbSAuL2FyY2gveDg2L2luY2x1
-ZGUvYXNtL3Byb2Nlc3Nvci5oOjIxLA0KICAgICAgICAgICAgICAgICBmcm9tIC4vaW5jbHVkZS9s
-aW51eC9tdXRleC5oOjE5LA0KICAgICAgICAgICAgICAgICBmcm9tIC4vaW5jbHVkZS9saW51eC9r
-ZXJuZnMuaDoxMywNCiAgICAgICAgICAgICAgICAgZnJvbSAuL2luY2x1ZGUvbGludXgvc3lzZnMu
-aDoxNiwNCiAgICAgICAgICAgICAgICAgZnJvbSAuL2luY2x1ZGUvbGludXgva29iamVjdC5oOjIw
-LA0KICAgICAgICAgICAgICAgICBmcm9tIC4vaW5jbHVkZS9saW51eC9kZXZpY2UuaDoxNiwNCiAg
-ICAgICAgICAgICAgICAgZnJvbSBkcml2ZXJzL25ldC9ldGhlcm5ldC9oaXNpbGljb24vaG5zMy9o
-bnMzcGYvaGNsZ2VfZGVidWdmcy5jOjQ6DQpJbiBmdW5jdGlvbiChc3RybmNhdKIsDQogICAgaW5s
-aW5lZCBmcm9tIKFoY2xnZV9kYmdfZHVtcF9tbmdfdGFibGWiIGF0IGRyaXZlcnMvbmV0L2V0aGVy
-bmV0L2hpc2lsaWNvbi9obnMzL2huczNwZi9oY2xnZV9kZWJ1Z2ZzLmM6Nzk1OjI6DQouL2luY2x1
-ZGUvbGludXgvc3RyaW5nLmg6MzIwOjEwOiB3YXJuaW5nOiChX19idWlsdGluX3N0cm5jYXSiIHNw
-ZWNpZmllZCBib3VuZCAyNTYgZXF1YWxzIGRlc3RpbmF0aW9uIHNpemUgWy1Xc3RyaW5nb3Atb3Zl
-cmZsb3c9XQ0KICAgcmV0dXJuIF9fYnVpbHRpbl9zdHJuY2F0KHAsIHEsIGNvdW50KTsNCiAgICAg
-ICAgICBefn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn4NCg==
+Commit 379d98ddf413 ("x86: vdso: Use $LD instead of $CC to link")
+accidentally broke unwinding from userspace, because ld would strip the
+.eh_frame sections when linking.
+
+Originally, the compiler would implicitly add --eh-frame-hdr when
+invoking the linker, but when this Makefile was converted from invoking
+ld via the compiler, to invoking it directly (like vmlinux does),
+the flag was missed. (The EH_FRAME section is important for the VDSO
+shared libraries, but not for vmlinux.)
+
+Fix the problem by explicitly specifying --eh-frame-hdr, which restores
+parity with the old method.
+
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=201741
+Bugzilla: https://bugzilla.redhat.com/show_bug.cgi?id=1659295
+Reported-by: Florian Weimer <fweimer@redhat.com>
+Reported-by: Carlos O'Donell <carlos@redhat.com>
+Reported-by: "H. J. Lu" <hjl.tools@gmail.com>
+Tested-by: Laura Abbott <labbott@redhat.com>
+Fixes: 379d98ddf413 ("x86: vdso: Use $LD instead of $CC to link")
+Cc: stable@vger.kernel.org
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: X86 ML <x86@kernel.org>
+Cc: Joel Fernandes <joel@joelfernandes.org>
+Cc: kernel-team@android.com
+Signed-off-by: Alistair Strachan <astrachan@google.com>
+---
+v2: Updated commit message, no changes to the code
+ arch/x86/entry/vdso/Makefile | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/arch/x86/entry/vdso/Makefile b/arch/x86/entry/vdso/Makefile
+index 141d415a8c80..c3d7ccd25381 100644
+--- a/arch/x86/entry/vdso/Makefile
++++ b/arch/x86/entry/vdso/Makefile
+@@ -171,7 +171,8 @@ quiet_cmd_vdso = VDSO    $@
+ 		 sh $(srctree)/$(src)/checkundef.sh '$(NM)' '$@'
+ 
+ VDSO_LDFLAGS = -shared $(call ld-option, --hash-style=both) \
+-	$(call ld-option, --build-id) -Bsymbolic
++	$(call ld-option, --build-id) $(call ld-option, --eh-frame-hdr) \
++	-Bsymbolic
+ GCOV_PROFILE := n
+ 
+ #
+-- 
+2.20.0.405.gbc1bbc6f85-goog
+
