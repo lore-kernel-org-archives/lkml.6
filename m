@@ -2,143 +2,154 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 666DAC67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 03:55:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94347C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 03:57:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 201322086D
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 03:55:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SBJ5r/+8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 201322086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 5DC1E2086D
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 03:57:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DC1E2086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727125AbeLNDzb (ORCPT
+        id S1727063AbeLND5n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 22:55:31 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:33398 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726437AbeLNDza (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 22:55:30 -0500
-Received: by mail-pf1-f196.google.com with SMTP id c123so2166037pfb.0;
-        Thu, 13 Dec 2018 19:55:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=33Ivcg+zKY4IJSFpoQuC8WL+BVd4+yqFaZLhoC52gcU=;
-        b=SBJ5r/+8Ucd7I1Er4MOSSxKGDufo5jX5ud9DtvGEeeuDeN9IvB8O8DbWca9QppOKrC
-         TwxfKWY2RjbPqRipsvKIEIJEl9vEyd0qUxVZClHBUtljQqoSoNpG4eH3gKvVuTn1hwpS
-         2MQa8CaWuFayaceex662ogdcUWBkO7XnFs6VBuHxJwAgZyeu5iOirf4FOPYN6UI/wIZn
-         AKcT3McOoTh0cnUTDM4gHzx2BOPr73k23KhmtMBkWDJP7aq0y6oyXtDjc1EtjxR5aKVx
-         PSNVLnAV+FHwLK9S9oeTSumA/xCjkMCcWJqZFOs4gOTPQyMIhx+Sx9IIY6vkc2BEsgcr
-         c+Sw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=33Ivcg+zKY4IJSFpoQuC8WL+BVd4+yqFaZLhoC52gcU=;
-        b=er85f83he9KLwzL/HexXduLTac89LdfiKVOVD0ibtO6qs91w54srczSM8TaHlJOGK2
-         yU1ZGeuFe5G27YTUXFpQ9ERlFttXmiOaDMXNG4x+BCiZP7ozXUPaBmu+/IYv89ejSFKx
-         DRdyZbiAqrCuvO7f94B72qdKCBxJIJ8PQqRT3Kkrl4D9/sCcbj330kfM66PKo6xSOmRz
-         yh8wEzZts+UDCYOV3LgkykUeIEd2wX32FBuARGR/sKpb21v7cb0WoM9HJGU8Ng0jLWSg
-         WaIGT0Axl2kRg/Xitha7YTyP/Go25/Xaj631Y4Ln3iEVb8qiBa/JxiFOeQ31cQzgCwm+
-         RreQ==
-X-Gm-Message-State: AA+aEWZffp4sI6V4DUlWYQEr+vpHp8c4Baa7HjaXmPIu5COHL+XhfNBq
-        f6JoXU/V/UgWaLxwcjjLcHc=
-X-Google-Smtp-Source: AFSGD/V+a6oN10NcSN1A0mNAEqoLZ3rEGJxrv+M+DDU2elQcy7KmDiP8TtBcEZg61e5AwnbGcZWU+A==
-X-Received: by 2002:a63:bd51:: with SMTP id d17mr1342112pgp.443.1544759729682;
-        Thu, 13 Dec 2018 19:55:29 -0800 (PST)
-Received: from localhost.localdomain ([2402:f000:1:4414:74ca:bc02:ba8b:bd9e])
-        by smtp.gmail.com with ESMTPSA id z62sm6285757pfi.4.2018.12.13.19.55.26
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 13 Dec 2018 19:55:28 -0800 (PST)
-From:   Jia-Ju Bai <baijiaju1990@gmail.com>
-To:     pizza@shaftnet.org, kvalo@codeaurora.org, davem@davemloft.net
-Cc:     linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>
-Subject: [PATCH] cw1200: Fix concurrency use-after-free bugs in cw1200_hw_scan()
-Date:   Fri, 14 Dec 2018 11:55:21 +0800
-Message-Id: <20181214035521.30388-1-baijiaju1990@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        Thu, 13 Dec 2018 22:57:43 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:32972 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726437AbeLND5m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 22:57:42 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 76B06307D852;
+        Fri, 14 Dec 2018 03:57:42 +0000 (UTC)
+Received: from [10.72.12.142] (ovpn-12-142.pek2.redhat.com [10.72.12.142])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0D23B5C1A1;
+        Fri, 14 Dec 2018 03:57:37 +0000 (UTC)
+Subject: Re: [PATCH net-next 3/3] vhost: access vq metadata through kernel
+ virtual address
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20181213101022.12475-1-jasowang@redhat.com>
+ <20181213101022.12475-4-jasowang@redhat.com>
+ <20181213102713-mutt-send-email-mst@kernel.org>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <d70c5ac1-c805-cefd-ace1-643a2e271ba0@redhat.com>
+Date:   Fri, 14 Dec 2018 11:57:35 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <20181213102713-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Fri, 14 Dec 2018 03:57:42 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The function cw1200_bss_info_changed() and cw1200_hw_scan() can be
-concurrently executed.
-The two functions both access a possible shared variable "frame.skb".
 
-This shared variable is freed by dev_kfree_skb() in cw1200_upload_beacon(), 
-which is called by cw1200_bss_info_changed(). The free operation is 
-protected by a mutex lock "priv->conf_mutex" in cw1200_bss_info_changed().
+On 2018/12/13 下午11:44, Michael S. Tsirkin wrote:
+> On Thu, Dec 13, 2018 at 06:10:22PM +0800, Jason Wang wrote:
+>> It was noticed that the copy_user() friends that was used to access
+>> virtqueue metdata tends to be very expensive for dataplane
+>> implementation like vhost since it involves lots of software check,
+>> speculation barrier, hardware feature toggling (e.g SMAP). The
+>> extra cost will be more obvious when transferring small packets.
+>>
+>> This patch tries to eliminate those overhead by pin vq metadata pages
+>> and access them through vmap(). During SET_VRING_ADDR, we will setup
+>> those mappings and memory accessors are modified to use pointers to
+>> access the metadata directly.
+>>
+>> Note, this was only done when device IOTLB is not enabled. We could
+>> use similar method to optimize it in the future.
+>>
+>> Tests shows about ~24% improvement on TX PPS when using virtio-user +
+>> vhost_net + xdp1 on TAP (CONFIG_HARDENED_USERCOPY is not enabled):
+>>
+>> Before: ~5.0Mpps
+>> After:  ~6.1Mpps
+>>
+>> Signed-off-by: Jason Wang<jasowang@redhat.com>
+>> ---
+>>   drivers/vhost/vhost.c | 178 ++++++++++++++++++++++++++++++++++++++++++
+>>   drivers/vhost/vhost.h |  11 +++
+>>   2 files changed, 189 insertions(+)
+>>
+>> diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
+>> index bafe39d2e637..1bd24203afb6 100644
+>> --- a/drivers/vhost/vhost.c
+>> +++ b/drivers/vhost/vhost.c
+>> @@ -443,6 +443,9 @@ void vhost_dev_init(struct vhost_dev *dev,
+>>   		vq->indirect = NULL;
+>>   		vq->heads = NULL;
+>>   		vq->dev = dev;
+>> +		memset(&vq->avail_ring, 0, sizeof(vq->avail_ring));
+>> +		memset(&vq->used_ring, 0, sizeof(vq->used_ring));
+>> +		memset(&vq->desc_ring, 0, sizeof(vq->desc_ring));
+>>   		mutex_init(&vq->mutex);
+>>   		vhost_vq_reset(dev, vq);
+>>   		if (vq->handle_kick)
+>> @@ -614,6 +617,102 @@ static void vhost_clear_msg(struct vhost_dev *dev)
+>>   	spin_unlock(&dev->iotlb_lock);
+>>   }
+>>   
+>> +static int vhost_init_vmap(struct vhost_vmap *map, unsigned long uaddr,
+>> +			   size_t size, int write)
+>> +{
+>> +	struct page **pages;
+>> +	int npages = DIV_ROUND_UP(size, PAGE_SIZE);
+>> +	int npinned;
+>> +	void *vaddr;
+>> +
+>> +	pages = kmalloc_array(npages, sizeof(struct page *), GFP_KERNEL);
+>> +	if (!pages)
+>> +		return -ENOMEM;
+>> +
+>> +	npinned = get_user_pages_fast(uaddr, npages, write, pages);
+>> +	if (npinned != npages)
+>> +		goto err;
+>> +
+> As I said I have doubts about the whole approach, but this
+> implementation in particular isn't a good idea
+> as it keeps the page around forever.
+> So no THP, no NUMA rebalancing,
 
-In cw1200_hw_scan(), this shared variable is accessed without the
-protection of the mutex lock "priv->conf_mutex". 
-Thus, concurrency use-after-free bugs may occur.
 
-To fix these bugs, the original calls to mutex_lock(&priv->conf_mutex) and 
-mutex_unlock(&priv->conf_mutex) are moved to the places, which can 
-protect the accesses to the shared variable.
+This is the price of all GUP users not only vhost itself. What's more 
+important, the goal is not to be left too much behind for other backends 
+like DPDK or AF_XDP (all of which are using GUP).
 
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
----
- drivers/net/wireless/st/cw1200/scan.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/net/wireless/st/cw1200/scan.c b/drivers/net/wireless/st/cw1200/scan.c
-index 67213f11acbd..0a9eac93dd01 100644
---- a/drivers/net/wireless/st/cw1200/scan.c
-+++ b/drivers/net/wireless/st/cw1200/scan.c
-@@ -78,6 +78,10 @@ int cw1200_hw_scan(struct ieee80211_hw *hw,
- 	if (req->n_ssids > WSM_SCAN_MAX_NUM_OF_SSIDS)
- 		return -EINVAL;
- 
-+	/* will be unlocked in cw1200_scan_work() */
-+	down(&priv->scan.lock);
-+	mutex_lock(&priv->conf_mutex);
-+
- 	frame.skb = ieee80211_probereq_get(hw, priv->vif->addr, NULL, 0,
- 		req->ie_len);
- 	if (!frame.skb)
-@@ -86,19 +90,15 @@ int cw1200_hw_scan(struct ieee80211_hw *hw,
- 	if (req->ie_len)
- 		skb_put_data(frame.skb, req->ie, req->ie_len);
- 
--	/* will be unlocked in cw1200_scan_work() */
--	down(&priv->scan.lock);
--	mutex_lock(&priv->conf_mutex);
--
- 	ret = wsm_set_template_frame(priv, &frame);
- 	if (!ret) {
- 		/* Host want to be the probe responder. */
- 		ret = wsm_set_probe_responder(priv, true);
- 	}
- 	if (ret) {
-+		dev_kfree_skb(frame.skb);
- 		mutex_unlock(&priv->conf_mutex);
- 		up(&priv->scan.lock);
--		dev_kfree_skb(frame.skb);
- 		return ret;
- 	}
- 
-@@ -120,10 +120,9 @@ int cw1200_hw_scan(struct ieee80211_hw *hw,
- 		++priv->scan.n_ssids;
- 	}
- 
--	mutex_unlock(&priv->conf_mutex);
--
- 	if (frame.skb)
- 		dev_kfree_skb(frame.skb);
-+	mutex_unlock(&priv->conf_mutex);
- 	queue_work(priv->workqueue, &priv->scan.work);
- 	return 0;
- }
--- 
-2.17.0
+> userspace-controlled
+> amount of memory locked up and not accounted for.
+
+
+It's pretty easy to add this since the slow path was still kept. If we 
+exceeds the limitation, we can switch back to slow path.
+
+
+>
+> Don't get me wrong it's a great patch in an ideal world.
+> But then in an ideal world no barriers smap etc are necessary at all.
+
+
+Again, this is only for metadata accessing not the data which has been 
+used for years for real use cases.
+
+For SMAP, it makes senses for the address that kernel can not forcast. 
+But it's not the case for the vhost metadata since we know the address 
+will be accessed very frequently. For speculation barrier, it helps 
+nothing for the data path of vhost which is a kthread. Packet or AF_XDP 
+benefit from accessing metadata directly, we should do it as well.
+
+Thanks
 
