@@ -2,32 +2,32 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08785C43612
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 21:57:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93A97C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 21:57:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46325208C2
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 21:57:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D32EB208C2
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 21:57:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731251AbeLNV5d (ORCPT
+        id S1731293AbeLNV5i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 16:57:33 -0500
-Received: from mga01.intel.com ([192.55.52.88]:13309 "EHLO mga01.intel.com"
+        Fri, 14 Dec 2018 16:57:38 -0500
+Received: from mga01.intel.com ([192.55.52.88]:13311 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
         id S1731020AbeLNV5d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 14 Dec 2018 16:57:33 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Dec 2018 13:57:32 -0800
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Dec 2018 13:57:33 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,354,1539673200"; 
-   d="scan'208";a="118650661"
+   d="scan'208";a="118650669"
 Received: from sjchrist-coffee.jf.intel.com ([10.54.74.154])
-  by FMSMGA003.fm.intel.com with ESMTP; 14 Dec 2018 13:57:31 -0800
+  by FMSMGA003.fm.intel.com with ESMTP; 14 Dec 2018 13:57:33 -0800
 From:   Sean Christopherson <sean.j.christopherson@intel.com>
 To:     Andy Lutomirski <luto@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -41,10 +41,12 @@ Cc:     "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
         Haitao Huang <haitao.huang@linux.intel.com>,
         Jethro Beekman <jethro@fortanix.com>,
         "Dr . Greg Wettstein" <greg@enjellic.com>
-Subject: [RFC PATCH v5 0/5] x86: Add vDSO exception fixup for SGX
-Date:   Fri, 14 Dec 2018 13:57:24 -0800
-Message-Id: <20181214215729.4221-1-sean.j.christopherson@intel.com>
+Subject: [RFC PATCH v5 2/5] x86/fault: Add helper function to sanitize error code
+Date:   Fri, 14 Dec 2018 13:57:26 -0800
+Message-Id: <20181214215729.4221-3-sean.j.christopherson@intel.com>
 X-Mailer: git-send-email 2.19.2
+In-Reply-To: <20181214215729.4221-1-sean.j.christopherson@intel.com>
+References: <20181214215729.4221-1-sean.j.christopherson@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -52,58 +54,80 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-__vdso_sgx_enter_enclave() gets another rewrite, this time to strip
-it down to the bare minimum and explicitly break compliance with the
-x86-64 ABI.  Feedback from v4 revealed that __vdso_sgx_enter_enclave()
-would need to save (a lot) more than just the non-volatile GPRs to be
-compliant with the x86-64 ABI, at which point breaking from the ABI
-completely became much more palatable.
+...to prepare for vDSO exception fixup, which will expose the error
+code to userspace and runs before set_signal_archinfo(), i.e. squashes
+the signal when fixup is successful.
 
-The non-standard ABI also solves the question of "which GPRs should be
-marshalled to/from the enclave" by getting out of the way entirely and
-letting userspace have free reign (except for RSP, which has a big ol'
-DO NOT TOUCH sign on it).
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+---
+ arch/x86/mm/fault.c | 26 ++++++++++++++------------
+ 1 file changed, 14 insertions(+), 12 deletions(-)
 
-[1] https://lkml.kernel.org/r/cda13cff-1a56-a40f-7d69-f0f1ab752f8e@fortanix.com
-
-
-v1: https://lkml.kernel.org/r/20181205232012.28920-1-sean.j.christopherson@intel.com
-v2: https://lkml.kernel.org/r/20181206221922.31012-1-sean.j.christopherson@intel.com
-v3: https://lkml.kernel.org/r/20181210232141.5425-1-sean.j.christopherson@intel.com
-v4: https://lkml.kernel.org/r/20181213213135.12913-1-sean.j.christopherson@intel.com
-v5:
-  - Strip down  __vdso_sgx_enter_enclave() so it only touches RSP and
-    GPRs that are already collateral damage of ENCLU[EENTER/ERESUME].
-  - Add a 16-byte reserved field to 'struct sgx_enclave_exception' so
-    the struct can grow in a backwards compatible fashion.
-  - Add a blurb at the end of the changelog for patch 1/5 explaining
-    why the vDSO fixup macros look different than the equivalent kernel
-    macros.
-
-Sean Christopherson (5):
-  x86/vdso: Add support for exception fixup in vDSO functions
-  x86/fault: Add helper function to sanitize error code
-  x86/fault: Attempt to fixup unhandled #PF on ENCLU before signaling
-  x86/traps: Attempt to fixup exceptions in vDSO before signaling
-  x86/vdso: Add __vdso_sgx_enter_enclave() to wrap SGX enclave
-    transitions
-
- arch/x86/entry/vdso/Makefile             |  6 +-
- arch/x86/entry/vdso/extable.c            | 37 +++++++++
- arch/x86/entry/vdso/extable.h            | 29 +++++++
- arch/x86/entry/vdso/vdso-layout.lds.S    |  9 ++-
- arch/x86/entry/vdso/vdso.lds.S           |  1 +
- arch/x86/entry/vdso/vdso2c.h             | 58 ++++++++++++--
- arch/x86/entry/vdso/vsgx_enter_enclave.S | 97 ++++++++++++++++++++++++
- arch/x86/include/asm/vdso.h              |  5 ++
- arch/x86/include/uapi/asm/sgx.h          | 18 +++++
- arch/x86/kernel/traps.c                  | 14 ++++
- arch/x86/mm/fault.c                      | 33 +++++---
- 11 files changed, 284 insertions(+), 23 deletions(-)
- create mode 100644 arch/x86/entry/vdso/extable.c
- create mode 100644 arch/x86/entry/vdso/extable.h
- create mode 100644 arch/x86/entry/vdso/vsgx_enter_enclave.S
-
+diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
+index 7e8a7558ca07..fefeb745d21d 100644
+--- a/arch/x86/mm/fault.c
++++ b/arch/x86/mm/fault.c
+@@ -719,18 +719,22 @@ pgtable_bad(struct pt_regs *regs, unsigned long error_code,
+ 	oops_end(flags, regs, sig);
+ }
+ 
+-static void set_signal_archinfo(unsigned long address,
+-				unsigned long error_code)
++static void sanitize_error_code(unsigned long address,
++				unsigned long *error_code)
+ {
+-	struct task_struct *tsk = current;
+-
+ 	/*
+ 	 * To avoid leaking information about the kernel page
+ 	 * table layout, pretend that user-mode accesses to
+ 	 * kernel addresses are always protection faults.
+ 	 */
+ 	if (address >= TASK_SIZE_MAX)
+-		error_code |= X86_PF_PROT;
++		*error_code |= X86_PF_PROT;
++}
++
++static void set_signal_archinfo(unsigned long address,
++				unsigned long error_code)
++{
++	struct task_struct *tsk = current;
+ 
+ 	tsk->thread.trap_nr = X86_TRAP_PF;
+ 	tsk->thread.error_code = error_code | X86_PF_USER;
+@@ -771,6 +775,8 @@ no_context(struct pt_regs *regs, unsigned long error_code,
+ 		 * faulting through the emulate_vsyscall() logic.
+ 		 */
+ 		if (current->thread.sig_on_uaccess_err && signal) {
++			sanitize_error_code(address, &error_code);
++
+ 			set_signal_archinfo(address, error_code);
+ 
+ 			/* XXX: hwpoison faults will set the wrong code. */
+@@ -920,13 +926,7 @@ __bad_area_nosemaphore(struct pt_regs *regs, unsigned long error_code,
+ 		if (is_errata100(regs, address))
+ 			return;
+ 
+-		/*
+-		 * To avoid leaking information about the kernel page table
+-		 * layout, pretend that user-mode accesses to kernel addresses
+-		 * are always protection faults.
+-		 */
+-		if (address >= TASK_SIZE_MAX)
+-			error_code |= X86_PF_PROT;
++		sanitize_error_code(address, &error_code);
+ 
+ 		if (likely(show_unhandled_signals))
+ 			show_signal_msg(regs, error_code, address, tsk);
+@@ -1045,6 +1045,8 @@ do_sigbus(struct pt_regs *regs, unsigned long error_code, unsigned long address,
+ 	if (is_prefetch(regs, error_code, address))
+ 		return;
+ 
++	sanitize_error_code(address, &error_code);
++
+ 	set_signal_archinfo(address, error_code);
+ 
+ #ifdef CONFIG_MEMORY_FAILURE
 -- 
 2.19.2
 
