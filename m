@@ -4,43 +4,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES,
-	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
+	UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E3F5C65BAE
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 01:35:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E385C65BAE
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 01:35:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 09D182075B
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 01:35:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09D182075B
+	by mail.kernel.org (Postfix) with ESMTP id DFB1620879
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 01:35:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFB1620879
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728919AbeLNBfs (ORCPT
+        id S1729262AbeLNBfv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 20:35:48 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:59776 "EHLO
+        Thu, 13 Dec 2018 20:35:51 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:59760 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728130AbeLNBfs (ORCPT
+        with ESMTP id S1727654AbeLNBft (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 20:35:48 -0500
+        Thu, 13 Dec 2018 20:35:49 -0500
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: koike)
-        with ESMTPSA id 9C6F5260732
-Subject: Re: [PATCH] drm: add capability DRM_CAP_ASYNC_UPDATE
-To:     Tomasz Figa <tfiga@chromium.org>
-Cc:     ville.syrjala@linux.intel.com, David Airlie <airlied@linux.ie>,
-        dnicoara@chromium.org,
+        with ESMTPSA id ACCDD27D9E2
+Subject: Re: [PATCH v2] drm/atomic: add ATOMIC_AMEND flag to the Atomic IOCTL.
+To:     Tomasz Figa <tfiga@chromium.org>, dnicoara@chromium.org,
         =?UTF-8?Q?St=c3=a9phane_Marchesin?= <marcheu@google.com>,
         Sean Paul <seanpaul@google.com>,
         Alexandros Frantzis <alexandros.frantzis@collabora.com>,
+        David Airlie <airlied@linux.ie>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         dri-devel <dri-devel@lists.freedesktop.org>,
         Gustavo Padovan <gustavo.padovan@collabora.com>,
         kernel@collabora.com
-References: <20181123215326.14274-1-helen.koike@collabora.com>
- <20181127133418.GT9144@intel.com>
- <6aa39654-6949-88b3-b949-b338d915ffd2@collabora.com>
- <CAAFQd5BczTNdwUNcx42hC=OKkgZTV9JevHetYOjfDCnEz29LpA@mail.gmail.com>
+References: <20181123215354.14540-1-helen.koike@collabora.com>
+ <CAAFQd5BHPjode=KqEHs=eNqqCe-xvsqx1ko9hQn29djFxuSWUA@mail.gmail.com>
+ <20181213090128.GB21184@phenom.ffwll.local>
 From:   Helen Koike <helen.koike@collabora.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=helen.koike@collabora.com; keydata=
@@ -117,12 +115,12 @@ Autocrypt: addr=helen.koike@collabora.com; keydata=
  KTqExWyMpMtWn/5AyzgUzTF0jSfefgg8h+IOqx4WCXI1K4myIAoRq+3i4knUAqaMo3Dnup+7
  mjQy5Di0D6HIIyW/wBOOmjKuu0lX36jk7S2WTT60ip8P0Vbe5G6Ua3M+WuOaF9cdpMGAQWv/
  xnDQvnYgIn0en5259JRXOaKKffRNEgmtBeFfz2IepskXKmB/Ibp7UxS7wUmJxv7QWAHrtQ==
-Message-ID: <0a0a35bf-69e4-8dcd-46fc-7053081480d5@collabora.com>
-Date:   Thu, 13 Dec 2018 23:35:35 -0200
+Message-ID: <f337f2d0-70b6-fa72-fc2b-7d33cd536bf5@collabora.com>
+Date:   Thu, 13 Dec 2018 23:35:33 -0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.3.0
 MIME-Version: 1.0
-In-Reply-To: <CAAFQd5BczTNdwUNcx42hC=OKkgZTV9JevHetYOjfDCnEz29LpA@mail.gmail.com>
+In-Reply-To: <20181213090128.GB21184@phenom.ffwll.local>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -131,173 +129,170 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tomasz,
+Hello,
 
-On 12/13/18 2:02 AM, Tomasz Figa wrote:
-> On Thu, Dec 6, 2018 at 1:12 AM Helen Koike <helen.koike@collabora.com> wrote:
+On 12/13/18 7:01 AM, Daniel Vetter wrote:
+> On Thu, Dec 13, 2018 at 04:43:57PM +0900, Tomasz Figa wrote:
+>> Hi Helen,
 >>
->> Hi Ville
->>
->> On 11/27/18 11:34 AM, Ville Syrjälä wrote:
->>> On Fri, Nov 23, 2018 at 07:53:26PM -0200, Helen Koike wrote:
->>>> Allow userspace to identify if the driver supports async update.
+>> On Sat, Nov 24, 2018 at 6:54 AM Helen Koike <helen.koike@collabora.com> wrote:
 >>>
->>> And what exactly is an "async update"?
+>>> This flag tells core to jump ahead the queued update if the conditions
+>>> in drm_atomic_async_check() are met. That means we are only able to do an
+>>> async update if no modeset is pending and update for the same plane is
+>>> not queued.
 >>
->> I agree we are lacking docs on this, I'll send in the next version as
->> soon as we agree on a name (please see below).
+>> First of all, thanks for the patch. Please see my comments below.
 >>
->> For reference:
->> https://lists.freedesktop.org/archives/dri-devel/2017-April/138586.html
->>
->>>
->>> I keep asking people to come up with the a better name for this, and to
->>> document what it actually means. Recently I've been think we should
->>> maybe just adopt the vulkan terminology (immediate/fifo/mailbox) to
->>> avoid introducing yet another set of names for the same thing. We'd
->>> still want to document things properly though.
->>
->> Another name it was suggested was "atomic amend", this feature basically
->> allows userspace to complement an update previously sent (i.e. its in
->> the queue and wasn't commited yet), it allows adding a plane update to
->> the next commit. So what do you think in renaming it to "atomic amend"?
-> 
-> Note that it doesn't seem to be what the code currently is doing. For
-> example, for cursor updates, it doesn't seem to be working on the
-> currently pending commit, but just directly issues an atomic async
-> update call to the planes. The code actually seems to fall back to a
-> normal sync commit, if there is an already pending commit touching the
-> same plane or including a modeset.
+>> If the description above applies (and AFAICT that's what the existing
+>> code does indeed), then this doesn't sound like "amend" to me. It
+>> sounds exactly as the kernel code calls it - "async update" or perhaps
+>> "instantaneous commit" could better describe it?
 
-It should fail as discussed at:
+There is an error in this patch (please, see below).
+Async should fail if there is no pending commit, at least is what I
+understand from the discussion at
 https://patchwork.freedesktop.org/patch/243088/
 
-There was the following code inside the drm_atomic_helper_async_check()
-in the previous patch which would fallback to a normal commit if there
-isn't any pending commit to amend:
+>>
+>>>
+>>> It uses the already in place infrastructure for async updates.
+>>>
+>>> It is useful for cursor updates and async PageFlips over the atomic
+>>> ioctl, otherwise in some cases updates may be delayed to the point the
+>>> user will notice it. Note that for now it's only enabled for cursor
+>>> planes.
+>>>
+>>> DRM_MODE_ATOMIC_AMEND should be passed to the Atomic IOCTL to use this
+>>> feature.
+>>>
+>>> Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.com>
+>>> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+>>> [updated for upstream]
+>>> Signed-off-by: Helen Koike <helen.koike@collabora.com>
+>>> ---
+>>> Hi,
+>>>
+>>> This is the second attempt to introduce the new ATOMIC_AMEND flag for atomic
+>>> operations, see the commit message for a more detailed description.
+>>>
+>>> This was tested using a small program that exercises the uAPI for easy
+>>> sanity testing. The program was created by Alexandros and modified by
+>>> Enric to test the capability flag [2].
+>>>
+>>> To test, just build the program and use the --atomic flag to use the cursor
+>>> plane with the ATOMIC_AMEND flag. E.g.
+>>>
+>>>   drm_cursor --atomic
+>>>
+>>> The test worked on a rockchip Ficus v1.1 board on top of mainline plus
+>>> the patch to update cursors asynchronously through atomic for the
+>>> drm/rockchip driver plus the DRM_CAP_ASYNC_UPDATE patch.
+>>>
+>>> Alexandros also did a proof-of-concept to use this flag and draw cursors
+>>> using atomic if possible on ozone [1].
+>>>
+>>> Thanks
+>>> Helen
+>>>
+>>> [1] https://chromium-review.googlesource.com/c/chromium/src/+/1092711
+>>> [2] https://gitlab.collabora.com/eballetbo/drm-cursor/commits/async-capability
+>>>
+>>>
+>>> Changes in v2:
+>>> - rebase tree
+>>> - do not fall back to a non-async update if if there isn't any
+>>> pending commit to amend
+>>>
+>>> Changes in v1:
+>>> - https://patchwork.freedesktop.org/patch/243088/
+>>> - Only enable it if userspace requests it.
+>>> - Only allow async update for cursor type planes.
+>>> - Rename ASYNC_UPDATE for ATOMIC_AMEND.
+>>>
+>>>  drivers/gpu/drm/drm_atomic_helper.c | 6 +++++-
+>>>  drivers/gpu/drm/drm_atomic_uapi.c   | 6 ++++++
+>>>  include/uapi/drm/drm_mode.h         | 4 +++-
+>>>  3 files changed, 14 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
+>>> index 269f1a74de38..333190c6a0a4 100644
+>>> --- a/drivers/gpu/drm/drm_atomic_helper.c
+>>> +++ b/drivers/gpu/drm/drm_atomic_helper.c
+>>> @@ -934,7 +934,7 @@ int drm_atomic_helper_check(struct drm_device *dev,
+>>>         if (ret)
+>>>                 return ret;
+>>>
+>>> -       if (state->legacy_cursor_update)
+>>> +       if (state->async_update || state->legacy_cursor_update)
+>>>                 state->async_update = !drm_atomic_helper_async_check(dev, state);
 
-+	if (!old_plane_state->commit)
-+		return -EINVAL;
+I just realized this is wrong, drm_atomic_helper_async_check() should
+return error if there is a pending old_plane_state->commit (this v2
+patch is not doing this, but v1 was), if drm_atomic_helper_async_check()
+returned because of it, then we should return error here to scale this
+failure to userspace. Make sense? Tomasz, do you agree?
 
-In the v2 of the patch https://patchwork.freedesktop.org/patch/263712/
-this got removed, but which means that async update will be enabled
-anyway. So the following code is wrong:
+>>>
+>>>         return ret;
+>>> @@ -1602,6 +1602,10 @@ int drm_atomic_helper_async_check(struct drm_device *dev,
+>>>         if (new_plane_state->fence)
+>>>                 return -EINVAL;
+>>>
+>>> +       /* Only allow async update for cursor type planes. */
+>>> +       if (plane->type != DRM_PLANE_TYPE_CURSOR)
+>>> +               return -EINVAL;
+>>> +
+>>
+>> So the existing upstream code already allowed this for any planes and
+>> we're restricting this to cursor planes only. Is this expected? No
+>> potential users that already started using this for other plane types?
+> 
+> The backend supports it for anything right now (if the driver implements
+> it, that is). We do expose it through the legacy cursor api, and the
+> legacy page_flip api, but not through atomic itself. It also has the
+> problem that the not all drivers who support the async legacy cursor mode
+> in atomic use this new infrastructure, so there's a few problems. Plus
+> semantics are very ill-defined (we'd definitely need igt testcases for
+> this stuff, especially all the new combinations with events, fences, ...).
+> 
+> I think what we'd need here to make sure we're not digging an uapi hole:
+> 
+> 1. Entirely remove the legacy_cursor_update hack. There's some patches
+> floating around, but would need to be polished.
+> 
+> 2. Make sure all drivers supporting legacy async cursor updates do through
+> the async_plane update infrastructure.
+> 
+> 3. Get the async plane update stuff merged for amdgpu. Iirc that's still
+> stuck somewhere (but I'm not 100% sure what exactly they're doing).
+> 
+> 4. Pile of igt testcases for all the new corner cases exposing this in
+> atomic opens up. Many cases we might want to simply reject it.
+> 
+> 5. Userspace. Big one I have is whether we need a flag like ALLOW_MODESET,
+> since the current code transparently falls back to vblank-synced updates
+> if async updates aren't available.
+> 
+> tldr; lots of work. Also maybe:
+> 
+> 0. Dump this todo into Documentation/gpu/todo.rst so it won't get lost.
+> 
+> Cheers, Daniel
+> 
 
--	if (state->legacy_cursor_update)
-+	if (state->async_update || state->legacy_cursor_update)
- 		state->async_update = !drm_atomic_helper_async_check(dev, state);
+Thanks Daniel for pointing those out, I'll start to take a look on them.
 
-Does it make sense? If yes I'll fix this in the next version of the
-Atomic IOCTL patch (and also those two patches should be in the same
-series, I'll send them together next time).
+> 
+>>
+>> Best regards,
+>> Tomasz
+>> _______________________________________________
+>> dri-devel mailing list
+>> dri-devel@lists.freedesktop.org
+>> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> 
 
-Thanks for pointing this out.
 
-Please let me know if you still don't agree on the name "atomic amend",
-or if I am missing something.
-
+Thanks
 Helen
-
-> 
-> Best regards,
-> Tomasz
-> 
->> Or do you suggest another name? I am not familiar with vulkan terminology.
->>
->>
->> Thanks
->> Helen
->>
->>>
->>>>
->>>> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
->>>> [prepared for upstream]
->>>> Signed-off-by: Helen Koike <helen.koike@collabora.com>
->>>>
->>>> ---
->>>> Hi,
->>>>
->>>> This patch introduces the ASYNC_UPDATE cap, which originated from the
->>>> discussion regarding DRM_MODE_ATOMIC_AMEND on [1], to allow user to
->>>> figure that async_update exists.
->>>>
->>>> This was tested using a small program that exercises the uAPI for easy
->>>> sanity testing. The program was created by Alexandros and modified by
->>>> Enric to test the capability flag [2].
->>>>
->>>> The test worked on a rockchip Ficus v1.1 board on top of mainline plus
->>>> the patch to update cursors asynchronously through atomic plus the patch
->>>> that introduces the ATOMIC_AMEND flag for the drm/rockchip driver.
->>>>
->>>> To test, just build the program and use the --atomic flag to use the cursor
->>>> plane with the ATOMIC_AMEND flag. E.g.
->>>>
->>>>   drm_cursor --atomic
->>>>
->>>> [1] https://patchwork.freedesktop.org/patch/243088/
->>>> [2] https://gitlab.collabora.com/eballetbo/drm-cursor/commits/async-capability
->>>>
->>>> Thanks
->>>> Helen
->>>>
->>>>
->>>>  drivers/gpu/drm/drm_ioctl.c | 11 +++++++++++
->>>>  include/uapi/drm/drm.h      |  1 +
->>>>  2 files changed, 12 insertions(+)
->>>>
->>>> diff --git a/drivers/gpu/drm/drm_ioctl.c b/drivers/gpu/drm/drm_ioctl.c
->>>> index 94bd872d56c4..4a7e0f874171 100644
->>>> --- a/drivers/gpu/drm/drm_ioctl.c
->>>> +++ b/drivers/gpu/drm/drm_ioctl.c
->>>> @@ -31,6 +31,7 @@
->>>>  #include <drm/drm_ioctl.h>
->>>>  #include <drm/drmP.h>
->>>>  #include <drm/drm_auth.h>
->>>> +#include <drm/drm_modeset_helper_vtables.h>
->>>>  #include "drm_legacy.h"
->>>>  #include "drm_internal.h"
->>>>  #include "drm_crtc_internal.h"
->>>> @@ -229,6 +230,7 @@ static int drm_getcap(struct drm_device *dev, void *data, struct drm_file *file_
->>>>  {
->>>>      struct drm_get_cap *req = data;
->>>>      struct drm_crtc *crtc;
->>>> +    struct drm_plane *plane;
->>>>
->>>>      req->value = 0;
->>>>
->>>> @@ -292,6 +294,15 @@ static int drm_getcap(struct drm_device *dev, void *data, struct drm_file *file_
->>>>      case DRM_CAP_CRTC_IN_VBLANK_EVENT:
->>>>              req->value = 1;
->>>>              break;
->>>> +    case DRM_CAP_ASYNC_UPDATE:
->>>> +            req->value = 1;
->>>> +            list_for_each_entry(plane, &dev->mode_config.plane_list, head) {
->>>> +                    if (!plane->helper_private->atomic_async_update) {
->>>> +                            req->value = 0;
->>>> +                            break;
->>>> +                    }
->>>> +            }
->>>> +            break;
->>>>      default:
->>>>              return -EINVAL;
->>>>      }
->>>> diff --git a/include/uapi/drm/drm.h b/include/uapi/drm/drm.h
->>>> index 300f336633f2..ff01540cbb1d 100644
->>>> --- a/include/uapi/drm/drm.h
->>>> +++ b/include/uapi/drm/drm.h
->>>> @@ -649,6 +649,7 @@ struct drm_gem_open {
->>>>  #define DRM_CAP_PAGE_FLIP_TARGET    0x11
->>>>  #define DRM_CAP_CRTC_IN_VBLANK_EVENT        0x12
->>>>  #define DRM_CAP_SYNCOBJ             0x13
->>>> +#define DRM_CAP_ASYNC_UPDATE                0x14
->>>>
->>>>  /** DRM_IOCTL_GET_CAP ioctl argument type */
->>>>  struct drm_get_cap {
->>>> --
->>>> 2.19.1
->>>>
->>>> _______________________________________________
->>>> dri-devel mailing list
->>>> dri-devel@lists.freedesktop.org
->>>> https://lists.freedesktop.org/mailman/listinfo/dri-devel
->>>
