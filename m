@@ -7,44 +7,40 @@ X-Spam-Status: No, score=-11.9 required=3.0
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8784AC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:54:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4B57C43444
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:54:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CABB7206DD
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:54:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2CEA2208C1
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:54:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731177AbeLNUyX (ORCPT
+        id S1731091AbeLNUyz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 15:54:23 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:38633 "EHLO
+        Fri, 14 Dec 2018 15:54:55 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:55821 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730734AbeLNUyV (ORCPT
+        with ESMTP id S1730828AbeLNUyy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 15:54:21 -0500
+        Fri, 14 Dec 2018 15:54:54 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBEKr0s61458643
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBEKsl3a1459077
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Fri, 14 Dec 2018 12:53:00 -0800
+        Fri, 14 Dec 2018 12:54:47 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBEKr0ji1458640;
-        Fri, 14 Dec 2018 12:53:00 -0800
-Date:   Fri, 14 Dec 2018 12:53:00 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBEKslPg1459074;
+        Fri, 14 Dec 2018 12:54:47 -0800
+Date:   Fri, 14 Dec 2018 12:54:47 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Mathieu Poirier <tipbot@zytor.com>
-Message-ID: <tip-99659fb44fdd0412d7f24bf18c7e7363aa988596@git.kernel.org>
-Cc:     mingo@kernel.org, linux-kernel@vger.kernel.org, acme@redhat.com,
-        mathieu.poirier@linaro.org, jolsa@redhat.com, peterz@infradead.org,
-        alexander.shishkin@linux.intel.com, tglx@linutronix.de,
-        hpa@zytor.com, namhyung@kernel.org
-Reply-To: alexander.shishkin@linux.intel.com, peterz@infradead.org,
-          jolsa@redhat.com, hpa@zytor.com, namhyung@kernel.org,
-          tglx@linutronix.de, linux-kernel@vger.kernel.org,
-          mingo@kernel.org, acme@redhat.com, mathieu.poirier@linaro.org
-In-Reply-To: <1543955944-10042-4-git-send-email-mathieu.poirier@linaro.org>
-References: <1543955944-10042-4-git-send-email-mathieu.poirier@linaro.org>
+From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-wycz66iy8dl2z3yifgqf894p@git.kernel.org>
+Cc:     mingo@kernel.org, acme@redhat.com, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, jolsa@kernel.org, namhyung@kernel.org,
+        adrian.hunter@intel.com, hpa@zytor.com
+Reply-To: hpa@zytor.com, namhyung@kernel.org, adrian.hunter@intel.com,
+          linux-kernel@vger.kernel.org, tglx@linutronix.de,
+          jolsa@kernel.org, mingo@kernel.org, acme@redhat.com
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf cs-etm: Add support for PTMv1.1 decoding
-Git-Commit-ID: 99659fb44fdd0412d7f24bf18c7e7363aa988596
+Subject: [tip:perf/core] perf header: Fix unchecked usage of strncpy()
+Git-Commit-ID: 8b3ff080ebb16abcb4766e916dc020add0f4df39
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -58,122 +54,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  99659fb44fdd0412d7f24bf18c7e7363aa988596
-Gitweb:     https://git.kernel.org/tip/99659fb44fdd0412d7f24bf18c7e7363aa988596
-Author:     Mathieu Poirier <mathieu.poirier@linaro.org>
-AuthorDate: Tue, 4 Dec 2018 13:39:04 -0700
+Commit-ID:  8b3ff080ebb16abcb4766e916dc020add0f4df39
+Gitweb:     https://git.kernel.org/tip/8b3ff080ebb16abcb4766e916dc020add0f4df39
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Thu, 6 Dec 2018 11:09:46 -0300
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Thu, 6 Dec 2018 14:12:35 -0300
+CommitDate: Thu, 6 Dec 2018 16:41:06 -0300
 
-perf cs-etm: Add support for PTMv1.1 decoding
+perf header: Fix unchecked usage of strncpy()
 
-This patch is re-using the mechanic set forth by ETMv3 to add support
-for PTM decoding.  Configuration for both encoding protocol is similar
-but the generated stream itself is very different, hence requiring
-special handling.
+The strncpy() function may leave the destination string buffer
+unterminated, better use strlcpy() that we have a __weak fallback
+implementation for systems without it.
 
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
+This fixes this warning on an Alpine Linux Edge system with gcc 8.2:
+
+  util/header.c: In function 'perf_event__synthesize_event_update_name':
+  util/header.c:3625:2: error: 'strncpy' output truncated before terminating nul copying as many bytes from a string as its length [-Werror=stringop-truncation]
+    strncpy(ev->data, evsel->name, len);
+    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  util/header.c:3618:15: note: length computed here
+    size_t len = strlen(evsel->name);
+                 ^~~~~~~~~~~~~~~~~~~
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: coresight@lists.linaro.org
-Cc: linux-arm-kernel@lists.infradead.org
-Link: http://lkml.kernel.org/r/1543955944-10042-4-git-send-email-mathieu.poirier@linaro.org
+Fixes: a6e5281780d1 ("perf tools: Add event_update event unit type")
+Link: https://lkml.kernel.org/n/tip-wycz66iy8dl2z3yifgqf894p@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/cs-etm-decoder/cs-etm-decoder.c | 10 ++++++++--
- tools/perf/util/cs-etm-decoder/cs-etm-decoder.h |  1 +
- tools/perf/util/cs-etm.c                        | 23 +++++++++++++++++++++--
- 3 files changed, 30 insertions(+), 4 deletions(-)
+ tools/perf/util/header.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
-index 952d1f43f3fa..0b4c8629f578 100644
---- a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
-+++ b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
-@@ -256,8 +256,11 @@ cs_etm_decoder__create_etm_packet_printer(struct cs_etm_trace_params *t_params,
+diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
+index c87cfe6b7c96..1171d8400bf4 100644
+--- a/tools/perf/util/header.c
++++ b/tools/perf/util/header.c
+@@ -3622,7 +3622,7 @@ perf_event__synthesize_event_update_name(struct perf_tool *tool,
+ 	if (ev == NULL)
+ 		return -ENOMEM;
  
- 	switch (t_params->protocol) {
- 	case CS_ETM_PROTO_ETMV3:
-+	case CS_ETM_PROTO_PTM:
- 		cs_etm_decoder__gen_etmv3_config(t_params, &config_etmv3);
--		decoder_name = OCSD_BUILTIN_DCD_ETMV3;
-+		decoder_name = (t_params->protocol == CS_ETM_PROTO_ETMV3) ?
-+							OCSD_BUILTIN_DCD_ETMV3 :
-+							OCSD_BUILTIN_DCD_PTM;
- 		trace_config = &config_etmv3;
- 		break;
- 	case CS_ETM_PROTO_ETMV4i:
-@@ -453,8 +456,11 @@ static int cs_etm_decoder__create_etm_packet_decoder(
- 
- 	switch (t_params->protocol) {
- 	case CS_ETM_PROTO_ETMV3:
-+	case CS_ETM_PROTO_PTM:
- 		cs_etm_decoder__gen_etmv3_config(t_params, &config_etmv3);
--		decoder_name = OCSD_BUILTIN_DCD_ETMV3;
-+		decoder_name = (t_params->protocol == CS_ETM_PROTO_ETMV3) ?
-+							OCSD_BUILTIN_DCD_ETMV3 :
-+							OCSD_BUILTIN_DCD_PTM;
- 		trace_config = &config_etmv3;
- 		break;
- 	case CS_ETM_PROTO_ETMV4i:
-diff --git a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h
-index 6b5525410a43..b295dd2b8292 100644
---- a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h
-+++ b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h
-@@ -96,6 +96,7 @@ enum {
- 	CS_ETM_PROTO_ETMV3 = 1,
- 	CS_ETM_PROTO_ETMV4i,
- 	CS_ETM_PROTO_ETMV4d,
-+	CS_ETM_PROTO_PTM,
- };
- 
- enum {
-diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
-index 76e509c32a28..23159c33db2a 100644
---- a/tools/perf/util/cs-etm.c
-+++ b/tools/perf/util/cs-etm.c
-@@ -83,6 +83,19 @@ static int cs_etm__update_queues(struct cs_etm_auxtrace *etm);
- static int cs_etm__process_timeless_queues(struct cs_etm_auxtrace *etm,
- 					   pid_t tid, u64 time_);
- 
-+/* PTMs ETMIDR [11:8] set to b0011 */
-+#define ETMIDR_PTM_VERSION 0x00000300
-+
-+static u32 cs_etm__get_v7_protocol_version(u32 etmidr)
-+{
-+	etmidr &= ETMIDR_PTM_VERSION;
-+
-+	if (etmidr == ETMIDR_PTM_VERSION)
-+		return CS_ETM_PROTO_PTM;
-+
-+	return CS_ETM_PROTO_ETMV3;
-+}
-+
- static void cs_etm__packet_dump(const char *pkt_string)
- {
- 	const char *color = PERF_COLOR_BLUE;
-@@ -115,7 +128,10 @@ static void cs_etm__dump_event(struct cs_etm_auxtrace *etm,
- 	t_params = zalloc(sizeof(*t_params) * etm->num_cpu);
- 	for (i = 0; i < etm->num_cpu; i++) {
- 		if (etm->metadata[i][CS_ETM_MAGIC] == __perf_cs_etmv3_magic) {
--			t_params[i].protocol = CS_ETM_PROTO_ETMV3;
-+			u32 etmidr = etm->metadata[i][CS_ETM_ETMIDR];
-+
-+			t_params[i].protocol =
-+					cs_etm__get_v7_protocol_version(etmidr);
- 			t_params[i].etmv3.reg_ctrl =
- 					etm->metadata[i][CS_ETM_ETMCR];
- 			t_params[i].etmv3.reg_trc_id =
-@@ -366,7 +382,10 @@ static struct cs_etm_queue *cs_etm__alloc_queue(struct cs_etm_auxtrace *etm,
- 
- 	for (i = 0; i < etm->num_cpu; i++) {
- 		if (etm->metadata[i][CS_ETM_MAGIC] == __perf_cs_etmv3_magic) {
--			t_params[i].protocol = CS_ETM_PROTO_ETMV3;
-+			u32 etmidr = etm->metadata[i][CS_ETM_ETMIDR];
-+
-+			t_params[i].protocol =
-+					cs_etm__get_v7_protocol_version(etmidr);
- 			t_params[i].etmv3.reg_ctrl =
- 					etm->metadata[i][CS_ETM_ETMCR];
- 			t_params[i].etmv3.reg_trc_id =
+-	strncpy(ev->data, evsel->name, len);
++	strlcpy(ev->data, evsel->name, len + 1);
+ 	err = process(tool, (union perf_event*) ev, NULL, NULL);
+ 	free(ev);
+ 	return err;
