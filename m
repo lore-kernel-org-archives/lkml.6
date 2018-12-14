@@ -2,150 +2,434 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23C96C67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:29:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A30CC67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:29:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D05A520892
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:29:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="oREBpMVy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D05A520892
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+	by mail.kernel.org (Postfix) with ESMTP id 0BD1520892
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:29:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544790569;
+	bh=hv3/7h1OXeNp7kmyj+RK53GhvYYX8ndW5G5CkktlAHY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=mux8hRk7C1nrnnnDqnPIj7vZ0m5/g5nZiujScKdd1EOorAETrRwmtIL4zxkLOc5m8
+	 SU845SmeWfa0YMxy2Ii3GCWj5Eus5Np50OIHOCiZmUXiTTMfw6fwDmnVtf7Zbwdu9g
+	 VJr65A47YgBImItC9gbqfLjH13wH3ZdNrJZ3O71c=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BD1520892
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731859AbeLNM3W (ORCPT
+        id S1731866AbeLNM32 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:29:22 -0500
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:35198 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731097AbeLNMKg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:10:36 -0500
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20181214121034euoutp02a12fe43e0182fb032b0454e1642b7f3d~wMc5xDuuw0904709047euoutp02G
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 12:10:34 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20181214121034euoutp02a12fe43e0182fb032b0454e1642b7f3d~wMc5xDuuw0904709047euoutp02G
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1544789434;
-        bh=oWzjGiqLNxmljmmSxzuyHA7ENwD0Nk3aYeIIDQ8SbEI=;
+        Fri, 14 Dec 2018 07:29:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56594 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731618AbeLNMKf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:10:35 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A2032214D9;
+        Fri, 14 Dec 2018 12:10:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544789434;
+        bh=hv3/7h1OXeNp7kmyj+RK53GhvYYX8ndW5G5CkktlAHY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oREBpMVyW3v1GKTMVVpuzsqsTrmLH+kZlxKJ6uzaQSZ4kwlHOZWxOiPiNCF2ADut3
-         wiGHwbo0X0wV8oFwRCRy1vm9kOOIu8XE2zxAz9XczraaEB39JqMNODmzsSk8bmG0l5
-         vjjbV05TPDtgC/FkXenHt64EoMf8DhBH8+Qr9ZN0=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20181214121033eucas1p285a93be22fde9770583d2a2af6f307a9~wMc42asHR1566115661eucas1p2s;
-        Fri, 14 Dec 2018 12:10:33 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 95.7D.04294.9BD931C5; Fri, 14
-        Dec 2018 12:10:33 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20181214121032eucas1p24af580721ebd6f86a4f9ddf701957ab6~wMc3_KReu1556815568eucas1p2h;
-        Fri, 14 Dec 2018 12:10:32 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20181214121032eusmtrp1fb5b974b3259c515c3b73cd7d2114a9a~wMc3uCJlG2638626386eusmtrp1T;
-        Fri, 14 Dec 2018 12:10:32 +0000 (GMT)
-X-AuditID: cbfec7f4-84fff700000010c6-19-5c139db971ce
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 00.91.04128.8BD931C5; Fri, 14
-        Dec 2018 12:10:32 +0000 (GMT)
-Received: from AMDC2034.DIGITAL.local (unknown [106.120.51.41]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20181214121031eusmtip293d22b98bffcd885ff2210de090bdb53~wMc27XV0T0091800918eusmtip2i;
-        Fri, 14 Dec 2018 12:10:31 +0000 (GMT)
-From:   Christoph Manszewski <c.manszewski@samsung.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     Christoph Manszewski <c.manszewski@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        David Airlie <airlied@linux.ie>, Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 1/6] include/drm: color_mgmt: Add enum labels
-Date:   Fri, 14 Dec 2018 13:10:16 +0100
-Message-Id: <1544789421-5265-2-git-send-email-c.manszewski@samsung.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1544789421-5265-1-git-send-email-c.manszewski@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA0VSa0hTYRj22zk7O85mx6Pph4biysAiNSn5QpMUwUN/rH4UlaRLD27kjU3N
-        W2ReKk3zBilas6A0rTTX1FyZJMs5yokXZC1MQxQvpeQ0ylRyO1r/nvd5n+d93vfjIzFay3cl
-        ZYkprDxREi8mhHh772/Dwc77jpF+uXV7kanZwEclBj0PtVa38JHu9WOARlYWCVQxXoajmS+D
-        OCqdnMfQwMALAerP/SZAqslRPhrW3CNQ9cBbHnquHROghz/acDQx2w3QWKUWoOrKWeI4zSif
-        ZTGqpkKC6fg5wWeU+lPM+G0dj3n56Bqj05gEzB11E2DMKveTtueFQbFsvCyNlfsGRwul76uM
-        WLKeSDf/KiBywCi/CNiSkDoM/4zrQBEQkjT1BMDm6kmcK5YBNBcs8iwqmjIDWJPnvO1YGMwR
-        cHwDgIbysH+Ghto63NIgqCPw89gSYcFO1B64Xt5kjcAoDR8uTK5apzpSx+DUx3qrCKe84Ju+
-        JetOIiocds73C7g0d/jJUIhZsC3FwHrNI+sgSJkE0PRVz+NEYbB1rZvgsCOc06m3zLvhh8pi
-        nDPkAWhatlxtKcoAfPe0COdUgVBlnNucRG7u5w1bNL4cHQK7eg0CCw0pe2j87mChsU1Y0V6F
-        cbQI3rpBc+p9cF6tJrZjZ8wrgMMM1HdvbD1pLYDvG41EGfCo+R/2AIAm4MKmKhLiWIV/InvF
-        RyFJUKQmxvnEJCWowObf+rChW34FNGuXegBFAvEOkbSCjqT5kjRFRkIPgCQmdhKdKXCMpEWx
-        koxMVp4UJU+NZxU9wI3ExS6iLJuJCzQVJ0lhL7NsMivf7vJIW9ccEHDaLSKm/9z0d/+hmZ1n
-        p4T2BeW68ajpEYf8rmBZh2hYtksbnqYM8gxQdYRo3vn7yNIzm107HLwqzOoN55jGA9kR0bi2
-        xMNu0C6wzRgq9TtRGqrM27PWG1s/JQ7ybF93un7Vm5Xcje+7GXd0dTmsQSTNvnwxrDitN2Po
-        bFt+n40YV0glh/ZjcoXkL2NBTvBXAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrGIsWRmVeSWpSXmKPExsVy+t/xe7o75grHGOzdqmpxa905VovecyeZ
-        LDbOWM9qcXz3UkaLK1/fs1lMuj+BxeLFvYssFv2PXzNbnD+/gd3ibNMbdotNj6+xWlzeNYfN
-        Ysb5fUwWa4/cZbdY+HEri8WDl/sZLe5OPsJoMWPySzYHIY95a6o9Nq3qZPPY/u0Bq8e8k4Ee
-        97uPM3lsXlLvcXzXLXaPvi2rGD0+b5IL4IzSsynKLy1JVcjILy6xVYo2tDDSM7S00DMysdQz
-        NDaPtTIyVdK3s0lJzcksSy3St0vQyzg6/QZzwUm2is8/WtkaGK+xdjFyckgImEi8u9jA3sXI
-        xSEksJRRYunrzUwQCRmJeWf72CBsYYk/17rYIIo+ARW92cQOkmATMJW4ffcTWJGIgLLE34mr
-        GEGKmAWOsUpMfL8KrEhYwFbi6ZllYEUsAqoSe058AlvNK+AusfP1WXaIDXISN891MoPYnAIe
-        Est2LWEEsYWAal7N/MI4gZFvASPDKkaR1NLi3PTcYiO94sTc4tK8dL3k/NxNjMA42nbs55Yd
-        jF3vgg8xCnAwKvHwHpgiFCPEmlhWXJl7iFGCg1lJhDesVThGiDclsbIqtSg/vqg0J7X4EKMp
-        0FETmaVEk/OBMZ5XEm9oamhuYWlobmxubGahJM573qAySkggPbEkNTs1tSC1CKaPiYNTqoFx
-        XpOEfuM/U5YXsZW6reVMpy44+H2/uii8Om/Sm67q5PCehtwNDRKbvRbflet/miizca/yWh6+
-        981LHEO+qq150ia9nN0vJH7eRseXca/X6rZM6rx0keeo/TZG98bdR47ty8jc1yj+1/q68wqV
-        33N5bbv8Tp/OXjG7/PPTrtC/uV0yxY0dYSeUWIozEg21mIuKEwHnrVeluQIAAA==
-X-CMS-MailID: 20181214121032eucas1p24af580721ebd6f86a4f9ddf701957ab6
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20181214121032eucas1p24af580721ebd6f86a4f9ddf701957ab6
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20181214121032eucas1p24af580721ebd6f86a4f9ddf701957ab6
-References: <1544789421-5265-1-git-send-email-c.manszewski@samsung.com>
-        <CGME20181214121032eucas1p24af580721ebd6f86a4f9ddf701957ab6@eucas1p2.samsung.com>
+        b=Wv2SgFo9NuzSZqJCq6gE76h4VniiSC2M8Qg5A1zzBc2SfuOc4lmTLWR6nw8qZLrI3
+         G1JpD6tv7GpsbSO8K8XMJpymWi6I6bOioUrsDTDJ+fw69SpKVYxNqu+OBQZPA2b6DI
+         PNOxjSzHRhUQYC3G+zHSQ1vcj4oAN/KrYeBgHo+8=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, akpm@linux-foundation.org,
+        linux-mm@kvack.org, Cong Wang <xiyou.wangcong@gmail.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Mel Gorman <mgorman@suse.de>, Michal Hocko <mhocko@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jan Kara <jack@suse.cz>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        rostedt@home.goodmis.org, Byungchul Park <byungchul.park@lge.com>,
+        Tejun Heo <tj@kernel.org>, Pavel Machek <pavel@ucw.cz>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Petr Mladek <pmladek@suse.com>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 81/89] printk: Hide console waiter logic into helpers
+Date:   Fri, 14 Dec 2018 13:00:34 +0100
+Message-Id: <20181214115733.691218749@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.0
+In-Reply-To: <20181214115729.658859279@linuxfoundation.org>
+References: <20181214115729.658859279@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Range setting makes sense for YCbCr and RGB buffers. Current
-drm_color_range enum labels suggest use with YCbCr buffers.
-Create enum labels without colorspace specification.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-Signed-off-by: Christoph Manszewski <c.manszewski@samsung.com>
+------------------
+
+[ Upstream commit c162d5b4338d72deed61aa65ed0f2f4ba2bbc8ab ]
+
+The commit ("printk: Add console owner and waiter logic to load balance
+console writes") made vprintk_emit() and console_unlock() even more
+complicated.
+
+This patch extracts the new code into 3 helper functions. They should
+help to keep it rather self-contained. It will be easier to use and
+maintain.
+
+This patch just shuffles the existing code. It does not change
+the functionality.
+
+Link: http://lkml.kernel.org/r/20180112160837.GD24497@linux.suse
+Cc: akpm@linux-foundation.org
+Cc: linux-mm@kvack.org
+Cc: Cong Wang <xiyou.wangcong@gmail.com>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Mel Gorman <mgorman@suse.de>
+Cc: Michal Hocko <mhocko@kernel.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Jan Kara <jack@suse.cz>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc: rostedt@home.goodmis.org
+Cc: Byungchul Park <byungchul.park@lge.com>
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Pavel Machek <pavel@ucw.cz>
+Cc: linux-kernel@vger.kernel.org
+Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Acked-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Signed-off-by: Petr Mladek <pmladek@suse.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/drm/drm_color_mgmt.h | 2 ++
- 1 file changed, 2 insertions(+)
+ kernel/printk/printk.c | 245 +++++++++++++++++++++++++----------------
+ 1 file changed, 148 insertions(+), 97 deletions(-)
 
-diff --git a/include/drm/drm_color_mgmt.h b/include/drm/drm_color_mgmt.h
-index 90ef9996d9a4..52f6d5221a0d 100644
---- a/include/drm/drm_color_mgmt.h
-+++ b/include/drm/drm_color_mgmt.h
-@@ -62,6 +62,8 @@ enum drm_color_range {
- 	DRM_COLOR_YCBCR_LIMITED_RANGE,
- 	DRM_COLOR_YCBCR_FULL_RANGE,
- 	DRM_COLOR_RANGE_MAX,
-+	DRM_COLOR_LIMITED_RANGE = DRM_COLOR_YCBCR_LIMITED_RANGE,
-+	DRM_COLOR_FULL_RANGE = DRM_COLOR_YCBCR_FULL_RANGE,
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index b88b402444d6..2d1c2700bd85 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -86,15 +86,8 @@ EXPORT_SYMBOL_GPL(console_drivers);
+ static struct lockdep_map console_lock_dep_map = {
+ 	.name = "console_lock"
  };
+-static struct lockdep_map console_owner_dep_map = {
+-	.name = "console_owner"
+-};
+ #endif
  
- int drm_plane_create_color_properties(struct drm_plane *plane,
+-static DEFINE_RAW_SPINLOCK(console_owner_lock);
+-static struct task_struct *console_owner;
+-static bool console_waiter;
+-
+ enum devkmsg_log_bits {
+ 	__DEVKMSG_LOG_BIT_ON = 0,
+ 	__DEVKMSG_LOG_BIT_OFF,
+@@ -1555,6 +1548,146 @@ SYSCALL_DEFINE3(syslog, int, type, char __user *, buf, int, len)
+ 	return do_syslog(type, buf, len, SYSLOG_FROM_READER);
+ }
+ 
++/*
++ * Special console_lock variants that help to reduce the risk of soft-lockups.
++ * They allow to pass console_lock to another printk() call using a busy wait.
++ */
++
++#ifdef CONFIG_LOCKDEP
++static struct lockdep_map console_owner_dep_map = {
++	.name = "console_owner"
++};
++#endif
++
++static DEFINE_RAW_SPINLOCK(console_owner_lock);
++static struct task_struct *console_owner;
++static bool console_waiter;
++
++/**
++ * console_lock_spinning_enable - mark beginning of code where another
++ *	thread might safely busy wait
++ *
++ * This basically converts console_lock into a spinlock. This marks
++ * the section where the console_lock owner can not sleep, because
++ * there may be a waiter spinning (like a spinlock). Also it must be
++ * ready to hand over the lock at the end of the section.
++ */
++static void console_lock_spinning_enable(void)
++{
++	raw_spin_lock(&console_owner_lock);
++	console_owner = current;
++	raw_spin_unlock(&console_owner_lock);
++
++	/* The waiter may spin on us after setting console_owner */
++	spin_acquire(&console_owner_dep_map, 0, 0, _THIS_IP_);
++}
++
++/**
++ * console_lock_spinning_disable_and_check - mark end of code where another
++ *	thread was able to busy wait and check if there is a waiter
++ *
++ * This is called at the end of the section where spinning is allowed.
++ * It has two functions. First, it is a signal that it is no longer
++ * safe to start busy waiting for the lock. Second, it checks if
++ * there is a busy waiter and passes the lock rights to her.
++ *
++ * Important: Callers lose the lock if there was a busy waiter.
++ *	They must not touch items synchronized by console_lock
++ *	in this case.
++ *
++ * Return: 1 if the lock rights were passed, 0 otherwise.
++ */
++static int console_lock_spinning_disable_and_check(void)
++{
++	int waiter;
++
++	raw_spin_lock(&console_owner_lock);
++	waiter = READ_ONCE(console_waiter);
++	console_owner = NULL;
++	raw_spin_unlock(&console_owner_lock);
++
++	if (!waiter) {
++		spin_release(&console_owner_dep_map, 1, _THIS_IP_);
++		return 0;
++	}
++
++	/* The waiter is now free to continue */
++	WRITE_ONCE(console_waiter, false);
++
++	spin_release(&console_owner_dep_map, 1, _THIS_IP_);
++
++	/*
++	 * Hand off console_lock to waiter. The waiter will perform
++	 * the up(). After this, the waiter is the console_lock owner.
++	 */
++	mutex_release(&console_lock_dep_map, 1, _THIS_IP_);
++	return 1;
++}
++
++/**
++ * console_trylock_spinning - try to get console_lock by busy waiting
++ *
++ * This allows to busy wait for the console_lock when the current
++ * owner is running in specially marked sections. It means that
++ * the current owner is running and cannot reschedule until it
++ * is ready to lose the lock.
++ *
++ * Return: 1 if we got the lock, 0 othrewise
++ */
++static int console_trylock_spinning(void)
++{
++	struct task_struct *owner = NULL;
++	bool waiter;
++	bool spin = false;
++	unsigned long flags;
++
++	if (console_trylock())
++		return 1;
++
++	printk_safe_enter_irqsave(flags);
++
++	raw_spin_lock(&console_owner_lock);
++	owner = READ_ONCE(console_owner);
++	waiter = READ_ONCE(console_waiter);
++	if (!waiter && owner && owner != current) {
++		WRITE_ONCE(console_waiter, true);
++		spin = true;
++	}
++	raw_spin_unlock(&console_owner_lock);
++
++	/*
++	 * If there is an active printk() writing to the
++	 * consoles, instead of having it write our data too,
++	 * see if we can offload that load from the active
++	 * printer, and do some printing ourselves.
++	 * Go into a spin only if there isn't already a waiter
++	 * spinning, and there is an active printer, and
++	 * that active printer isn't us (recursive printk?).
++	 */
++	if (!spin) {
++		printk_safe_exit_irqrestore(flags);
++		return 0;
++	}
++
++	/* We spin waiting for the owner to release us */
++	spin_acquire(&console_owner_dep_map, 0, 0, _THIS_IP_);
++	/* Owner will clear console_waiter on hand off */
++	while (READ_ONCE(console_waiter))
++		cpu_relax();
++	spin_release(&console_owner_dep_map, 1, _THIS_IP_);
++
++	printk_safe_exit_irqrestore(flags);
++	/*
++	 * The owner passed the console lock to us.
++	 * Since we did not spin on console lock, annotate
++	 * this as a trylock. Otherwise lockdep will
++	 * complain.
++	 */
++	mutex_acquire(&console_lock_dep_map, 0, 1, _THIS_IP_);
++
++	return 1;
++}
++
+ /*
+  * Call the console drivers, asking them to write out
+  * log_buf[start] to log_buf[end - 1].
+@@ -1774,56 +1907,8 @@ asmlinkage int vprintk_emit(int facility, int level,
+ 		 * semaphore.  The release will print out buffers and wake up
+ 		 * /dev/kmsg and syslog() users.
+ 		 */
+-		if (console_trylock()) {
++		if (console_trylock_spinning())
+ 			console_unlock();
+-		} else {
+-			struct task_struct *owner = NULL;
+-			bool waiter;
+-			bool spin = false;
+-
+-			printk_safe_enter_irqsave(flags);
+-
+-			raw_spin_lock(&console_owner_lock);
+-			owner = READ_ONCE(console_owner);
+-			waiter = READ_ONCE(console_waiter);
+-			if (!waiter && owner && owner != current) {
+-				WRITE_ONCE(console_waiter, true);
+-				spin = true;
+-			}
+-			raw_spin_unlock(&console_owner_lock);
+-
+-			/*
+-			 * If there is an active printk() writing to the
+-			 * consoles, instead of having it write our data too,
+-			 * see if we can offload that load from the active
+-			 * printer, and do some printing ourselves.
+-			 * Go into a spin only if there isn't already a waiter
+-			 * spinning, and there is an active printer, and
+-			 * that active printer isn't us (recursive printk?).
+-			 */
+-			if (spin) {
+-				/* We spin waiting for the owner to release us */
+-				spin_acquire(&console_owner_dep_map, 0, 0, _THIS_IP_);
+-				/* Owner will clear console_waiter on hand off */
+-				while (READ_ONCE(console_waiter))
+-					cpu_relax();
+-
+-				spin_release(&console_owner_dep_map, 1, _THIS_IP_);
+-				printk_safe_exit_irqrestore(flags);
+-
+-				/*
+-				 * The owner passed the console lock to us.
+-				 * Since we did not spin on console lock, annotate
+-				 * this as a trylock. Otherwise lockdep will
+-				 * complain.
+-				 */
+-				mutex_acquire(&console_lock_dep_map, 0, 1, _THIS_IP_);
+-				console_unlock();
+-				printk_safe_enter_irqsave(flags);
+-			}
+-			printk_safe_exit_irqrestore(flags);
+-
+-		}
+ 	}
+ 
+ 	return printed_len;
+@@ -1924,6 +2009,8 @@ static ssize_t msg_print_ext_header(char *buf, size_t size,
+ static ssize_t msg_print_ext_body(char *buf, size_t size,
+ 				  char *dict, size_t dict_len,
+ 				  char *text, size_t text_len) { return 0; }
++static void console_lock_spinning_enable(void) { }
++static int console_lock_spinning_disable_and_check(void) { return 0; }
+ static void call_console_drivers(const char *ext_text, size_t ext_len,
+ 				 const char *text, size_t len) {}
+ static size_t msg_print_text(const struct printk_log *msg,
+@@ -2210,7 +2297,6 @@ void console_unlock(void)
+ 	static u64 seen_seq;
+ 	unsigned long flags;
+ 	bool wake_klogd = false;
+-	bool waiter = false;
+ 	bool do_cond_resched, retry;
+ 
+ 	if (console_suspended) {
+@@ -2305,31 +2391,16 @@ void console_unlock(void)
+ 		 * finish. This task can not be preempted if there is a
+ 		 * waiter waiting to take over.
+ 		 */
+-		raw_spin_lock(&console_owner_lock);
+-		console_owner = current;
+-		raw_spin_unlock(&console_owner_lock);
+-
+-		/* The waiter may spin on us after setting console_owner */
+-		spin_acquire(&console_owner_dep_map, 0, 0, _THIS_IP_);
++		console_lock_spinning_enable();
+ 
+ 		stop_critical_timings();	/* don't trace print latency */
+ 		call_console_drivers(ext_text, ext_len, text, len);
+ 		start_critical_timings();
+ 
+-		raw_spin_lock(&console_owner_lock);
+-		waiter = READ_ONCE(console_waiter);
+-		console_owner = NULL;
+-		raw_spin_unlock(&console_owner_lock);
+-
+-		/*
+-		 * If there is a waiter waiting for us, then pass the
+-		 * rest of the work load over to that waiter.
+-		 */
+-		if (waiter)
+-			break;
+-
+-		/* There was no waiter, and nothing will spin on us here */
+-		spin_release(&console_owner_dep_map, 1, _THIS_IP_);
++		if (console_lock_spinning_disable_and_check()) {
++			printk_safe_exit_irqrestore(flags);
++			return;
++		}
+ 
+ 		printk_safe_exit_irqrestore(flags);
+ 
+@@ -2337,26 +2408,6 @@ void console_unlock(void)
+ 			cond_resched();
+ 	}
+ 
+-	/*
+-	 * If there is an active waiter waiting on the console_lock.
+-	 * Pass off the printing to the waiter, and the waiter
+-	 * will continue printing on its CPU, and when all writing
+-	 * has finished, the last printer will wake up klogd.
+-	 */
+-	if (waiter) {
+-		WRITE_ONCE(console_waiter, false);
+-		/* The waiter is now free to continue */
+-		spin_release(&console_owner_dep_map, 1, _THIS_IP_);
+-		/*
+-		 * Hand off console_lock to waiter. The waiter will perform
+-		 * the up(). After this, the waiter is the console_lock owner.
+-		 */
+-		mutex_release(&console_lock_dep_map, 1, _THIS_IP_);
+-		printk_safe_exit_irqrestore(flags);
+-		/* Note, if waiter is set, logbuf_lock is not held */
+-		return;
+-	}
+-
+ 	console_locked = 0;
+ 
+ 	/* Release the exclusive_console once it is used */
 -- 
-2.7.4
+2.19.1
+
+
 
