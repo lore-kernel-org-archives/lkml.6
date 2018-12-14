@@ -2,94 +2,134 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 803EDC6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 08:41:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFF0CC67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 08:42:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BC272080F
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 08:41:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BC272080F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
+	by mail.kernel.org (Postfix) with ESMTP id A730D20879
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 08:42:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="gk7mDOZg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A730D20879
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728067AbeLNIl4 (ORCPT
+        id S1728228AbeLNIm1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 03:41:56 -0500
-Received: from relmlor1.renesas.com ([210.160.252.171]:57191 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726494AbeLNIlz (ORCPT
+        Fri, 14 Dec 2018 03:42:27 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:33456 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726494AbeLNIm1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 03:41:55 -0500
-X-IronPort-AV: E=Sophos;i="5.56,352,1539615600"; 
-   d="scan'208";a="2836528"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 14 Dec 2018 17:41:53 +0900
-Received: from fabrizio-dev.ree.adwin.renesas.com (unknown [10.226.37.69])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 0C3BC4028C39;
-        Fri, 14 Dec 2018 17:41:49 +0900 (JST)
-From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Peter Rosin <peda@axentia.se>
-Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Biju Das <biju.das@bp.renesas.com>, linux-i2c@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2] dt-bindings: i2c: sh_mobile: Add r8a774c0 support
-Date:   Fri, 14 Dec 2018 08:41:47 +0000
-Message-Id: <1544776907-17845-1-git-send-email-fabrizio.castro@bp.renesas.com>
-X-Mailer: git-send-email 2.7.4
+        Fri, 14 Dec 2018 03:42:27 -0500
+Received: by mail-ed1-f65.google.com with SMTP id p6so4313655eds.0
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 00:42:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Cg21H/AtVx9QxM/1n8CvwJ2h0vn+1NQPTIfibFvaUHQ=;
+        b=gk7mDOZgloQ5cZrhH8hwWqgodfgjgb9REhpsItpV1k/mxwtyOiearzAkc/r+W9cTdy
+         tcG3kdMPzWG1MNfc4iMAbbuXU9uyIBTLbEBLx1PyvGCY0VWpr8d+GBUOWp5OjFM9Lkcm
+         JdeGoc8QEr/2IOhvnuds/wR8PgTOw1D7op5ug=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=Cg21H/AtVx9QxM/1n8CvwJ2h0vn+1NQPTIfibFvaUHQ=;
+        b=KqVH+SE6Pkaj/ad69VHdQyOfjpGY4ryX5ebR3PZcphcDJ67oSjgFP/YpdK2SQo7SWt
+         qwbaEG+bHe6wdMD0NS4mDyZW2Da+zWMmwXUM+r/wFCXaYkNx73u6jPlRz5lJUNdF1v6R
+         1y7KyF5Vyt5PVLGMtrrbdJ9ATmVsfU+JsQqv5FWfUyxuXAeSTaXlisrWlJIm1iqRJhU4
+         Rdnr57703XdNZnrLLh+MBuJRc6Z1u98SJIaw7RSJTVOUx4gXhLu0geh3xpkPzqABIZuZ
+         rrhXiDAJrA/lRwOl4bieIRaHs4mr1rT3rSxGmSitRmvkva9cpBBTSLQSwab54ReGZWQe
+         LvIg==
+X-Gm-Message-State: AA+aEWard8WXGOn5reswNHELfS731GpM96BWOlBg+uZAtmQoB9dCnHLj
+        1d2/9UD6Ptc1/bELDHuJA0MXNA==
+X-Google-Smtp-Source: AFSGD/WHoL4e8xusTFaL5pqgPUKTEcs2jZ71yyOf7anO+0ouSVz14mtCRm9FpRPifCM9DnzOET+35A==
+X-Received: by 2002:a50:f014:: with SMTP id r20mr2274508edl.144.1544776945647;
+        Fri, 14 Dec 2018 00:42:25 -0800 (PST)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id r18-v6sm701934eja.19.2018.12.14.00.42.22
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 14 Dec 2018 00:42:23 -0800 (PST)
+Date:   Fri, 14 Dec 2018 09:42:21 +0100
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Lyude Paul <lyude@redhat.com>
+Cc:     dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        intel-gfx@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dave Airlie <airlied@gmail.com>,
+        Harry Wentland <harry.wentland@amd.com>,
+        Jerry Zuo <Jerry.Zuo@amd.com>, Juston Li <juston.li@intel.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [WIP PATCH 01/15] drm/dp_mst: Remove bogus conditional in
+ drm_dp_update_payload_part1()
+Message-ID: <20181214084220.GL21184@phenom.ffwll.local>
+Mail-Followup-To: Lyude Paul <lyude@redhat.com>,
+        dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        intel-gfx@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+        Dave Airlie <airlied@gmail.com>,
+        Harry Wentland <harry.wentland@amd.com>,
+        Jerry Zuo <Jerry.Zuo@amd.com>, Juston Li <juston.li@intel.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        linux-kernel@vger.kernel.org
+References: <20181214012604.13746-1-lyude@redhat.com>
+ <20181214012604.13746-2-lyude@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181214012604.13746-2-lyude@redhat.com>
+X-Operating-System: Linux phenom 4.18.0-2-amd64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Document RZ/G2E (R8A774C0) SoC bindings.
+On Thu, Dec 13, 2018 at 08:25:30PM -0500, Lyude Paul wrote:
+> There's no reason we need this, it's just confusing looking.
+> 
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+> Cc: Juston Li <juston.li@intel.com>
+> ---
+>  drivers/gpu/drm/drm_dp_mst_topology.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/drm_dp_mst_topology.c b/drivers/gpu/drm/drm_dp_mst_topology.c
+> index ad0fb6d003be..9b1b5c9b1fa0 100644
+> --- a/drivers/gpu/drm/drm_dp_mst_topology.c
+> +++ b/drivers/gpu/drm/drm_dp_mst_topology.c
+> @@ -1896,9 +1896,7 @@ int drm_dp_update_payload_part1(struct drm_dp_mst_topology_mgr *mgr)
+>  			req_payload.num_slots = 0;
+>  		}
+>  
+> -		if (mgr->payloads[i].start_slot != req_payload.start_slot) {
+> -			mgr->payloads[i].start_slot = req_payload.start_slot;
+> -		}
+> +		mgr->payloads[i].start_slot = req_payload.start_slot;
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Entertaining!
 
----
-v1->v2:
-* Improved the style according to Peter's comment
+Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
 
- Documentation/devicetree/bindings/i2c/i2c-sh_mobile.txt | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+>  		/* work out what is required to happen with this payload */
+>  		if (mgr->payloads[i].num_slots != req_payload.num_slots) {
+>  
+> -- 
+> 2.19.2
+> 
 
-diff --git a/Documentation/devicetree/bindings/i2c/i2c-sh_mobile.txt b/Documentation/devicetree/bindings/i2c/i2c-sh_mobile.txt
-index bc876b7..202602e 100644
---- a/Documentation/devicetree/bindings/i2c/i2c-sh_mobile.txt
-+++ b/Documentation/devicetree/bindings/i2c/i2c-sh_mobile.txt
-@@ -8,6 +8,7 @@ Required properties:
- 			- "renesas,iic-r8a7744" (RZ/G1N)
- 			- "renesas,iic-r8a7745" (RZ/G1E)
- 			- "renesas,iic-r8a774a1" (RZ/G2M)
-+			- "renesas,iic-r8a774c0" (RZ/G2E)
- 			- "renesas,iic-r8a7790" (R-Car H2)
- 			- "renesas,iic-r8a7791" (R-Car M2-W)
- 			- "renesas,iic-r8a7792" (R-Car V2H)
-@@ -32,10 +33,10 @@ Required properties:
- 			When compatible with "renesas,rmobile-iic" it should
- 			be the last compatibility string listed.
- 
--			The r8a77990 (R-Car E3) controller is not
--			considered compatible with "renesas,rcar-gen3-iic"
--			or "renesas,rmobile-iic" due to the absence of
--			automatic transmission registers.
-+			The r8a77990 (R-Car E3) and r8a774c0 (RZ/G2E)
-+			controllers are not considered compatible with
-+			"renesas,rcar-gen3-iic" or "renesas,rmobile-iic"
-+			due to the absence of automatic transmission registers.
- 
- - reg             : address start and address range size of device
- - interrupts      : interrupt of device
 -- 
-2.7.4
-
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
