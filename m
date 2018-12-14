@@ -2,98 +2,144 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40204C43612
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 19:33:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D363C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 19:38:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D6982080F
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 19:33:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B48272086D
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 19:38:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="nrEokc98"
+	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="oEqzc5Ea"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730651AbeLNTdF (ORCPT
+        id S1730655AbeLNTi5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 14:33:05 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:50776 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730548AbeLNTdE (ORCPT
+        Fri, 14 Dec 2018 14:38:57 -0500
+Received: from esa2.microchip.iphmx.com ([68.232.149.84]:53488 "EHLO
+        esa2.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730548AbeLNTi4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 14:33:04 -0500
-Received: by mail-it1-f194.google.com with SMTP id z7so10556260iti.0
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 11:33:04 -0800 (PST)
+        Fri, 14 Dec 2018 14:38:56 -0500
+X-IronPort-AV: E=Sophos;i="5.56,354,1539673200"; 
+   d="scan'208";a="24229968"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 14 Dec 2018 12:38:55 -0700
+Received: from NAM05-DM3-obe.outbound.protection.outlook.com (10.10.215.89) by
+ email.microchip.com (10.10.76.107) with Microsoft SMTP Server (TLS) id
+ 14.3.352.0; Fri, 14 Dec 2018 12:38:55 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=BVMq4uJdj9GiwZS67Gsjx6en9Dve9CoCPZnQ6kVkVLQ=;
-        b=nrEokc98pvt18UbB3FYJTOC698g7Yr67c4/3MpnDsO2cFDYYS9ky3Mkp3FS5sJsJtr
-         CVAWC9RTvW9KtJdg/ba/f2515astTw2h8Ni/yXe0wPplEUezZRZtM3kdDUDo0fcfN9Vb
-         s13fvuD1uKZppb6qSkOjvvLs0EJDAobCgAvuS96YzNswDTKe4qrtVtVEapQc3nFLHJvY
-         OEBNgDKg6Yx+F8d+KJBTm47m4SBGW29C9uaTgB7AVX/ePcS4z6GcLYnY43ne+yBfqZrm
-         y1gnIg3ww5amw2Hz6squUpV6pgBu3fB294QsgJKXp4HdnOm50qCIh0YsVkD7HWicjJ+x
-         kF+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=BVMq4uJdj9GiwZS67Gsjx6en9Dve9CoCPZnQ6kVkVLQ=;
-        b=kUXYNVlTZn4uNM5swheqFXHSY3GHUmBXXmUZ9khGLpnDJ6uQgmouaqvYSH4mtf0T+w
-         vcLdUx7xlDHtvbC7GgcmlXkZydUzRiJ+NDCrd6XG5ru45mhEacb/f3fAAOSu8l6/a/jJ
-         xzs+NESRJou7MNF5RPyu8a7bZg1300vvaVGmJ9qa0DqGin5nSXj+x6qe7IN73zm0uHqI
-         S6Sg9JRxOVAf0bEm+OzSFkwxiLyeFlgzdac8JzO+GGSu5lR1qKmbez9oLPYSSKksuSdN
-         fU3eWas5uwvefeVoUxG9J9+9xrbX77MXNyK6niVTXUmfwhmouPQUEWVU/CmECg+GSES5
-         OEPA==
-X-Gm-Message-State: AA+aEWbRqzXzYM/87vxhep1ZuDqJObgHSOiTBbHu2zmDAnWV1OIKopa/
-        hZFU/qJu6U6gdVmbBeGiE+Qd4B6MYJ+3Zg==
-X-Google-Smtp-Source: AFSGD/XNDIPRnYmA/sSN2eCqrJirV4argD6D85cwmd20Y9sog8CA/YJzXtWej9Vin0kGJIIQJe5vAg==
-X-Received: by 2002:a24:ef44:: with SMTP id i65mr4156646ith.165.1544815983535;
-        Fri, 14 Dec 2018 11:33:03 -0800 (PST)
-Received: from [192.168.1.56] ([216.160.245.98])
-        by smtp.gmail.com with ESMTPSA id k64sm4131244itb.7.2018.12.14.11.33.02
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 14 Dec 2018 11:33:02 -0800 (PST)
-Subject: Re: [PATCH V14 0/3] blk-mq: refactor and fix the code of issue
- directly
-To:     Jianchao Wang <jianchao.w.wang@oracle.com>
-Cc:     ming.lei@redhat.com, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1544750900-1549-1-git-send-email-jianchao.w.wang@oracle.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <f13c2983-8e59-374f-7fd7-7158f3b71b8b@kernel.dk>
-Date:   Fri, 14 Dec 2018 12:33:01 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <1544750900-1549-1-git-send-email-jianchao.w.wang@oracle.com>
-Content-Type: text/plain; charset=utf-8
+ d=microchiptechnology.onmicrosoft.com;
+ s=selector1-microchiptechnology-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cyqT2vd0weG9Ehjt3+k83zl0bb+xa6Qb9AjCQY3sCjI=;
+ b=oEqzc5EanOEyzzOk0Q6EU3r9c4bxJcaTkMjcDMxkRRXeCsIpg6hrEM/9m6s8SiX7Nbs3c8fmYzOGmedneFH1w6lFnGAR+okwjd01r3m7pN9MBdzTao3jCvf6TrQ7r4GaYnQJhIfwOyW77VjYxWRHk1nq1c9a3HBumQMTG9zBo1k=
+Received: from BYAPR11MB2855.namprd11.prod.outlook.com (52.135.228.141) by
+ BYAPR11MB3222.namprd11.prod.outlook.com (20.177.127.215) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1425.22; Fri, 14 Dec 2018 19:38:53 +0000
+Received: from BYAPR11MB2855.namprd11.prod.outlook.com
+ ([fe80::1137:d81d:de30:c394]) by BYAPR11MB2855.namprd11.prod.outlook.com
+ ([fe80::1137:d81d:de30:c394%2]) with mapi id 15.20.1404.028; Fri, 14 Dec 2018
+ 19:38:53 +0000
+From:   <Don.Brace@microchip.com>
+To:     <mironov.ivan@gmail.com>, <linux-scsi@vger.kernel.org>
+CC:     <linux-kernel@vger.kernel.org>, <don.brace@microsemi.com>,
+        <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>,
+        <esc.storagedev@microsemi.com>
+Subject: RE: [PATCH 0/6] Add support of the HBA mode on HP Smart Array P410i
+ controllers
+Thread-Topic: [PATCH 0/6] Add support of the HBA mode on HP Smart Array P410i
+ controllers
+Thread-Index: AQHUk7AP2GWqzt2GdE2cof/UTeWSraV+oF0g
+Date:   Fri, 14 Dec 2018 19:38:52 +0000
+Message-ID: <BYAPR11MB285586623125DD1C98EE87F1E1A10@BYAPR11MB2855.namprd11.prod.outlook.com>
+References: <20181214132115.21440-1-mironov.ivan@gmail.com>
+In-Reply-To: <20181214132115.21440-1-mironov.ivan@gmail.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Don.Brace@microchip.com; 
+x-originating-ip: [216.54.225.58]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BYAPR11MB3222;6:T/Soia9UzaCI4NDVsZ8Ury9VPel+ldrqWROZ/HUGPm/Rd8iDKJ026mCliCXzHsV4Htyi1ka5mOUsb945Slz9NxNk5L7OQWaSqTOetLumBAsol+AivdumQww7Ai7DWfLOrE6saO1ac0nbT5PuugXJgVEPP4nXtcx0ZxPvUrx1SLlg94JXTciN0nCPCn9j0QvhK14H4+OcZfo6GJz3IjDn6h6ZxC4i/vupr9SgjLpCSaerBXzxmPWTxAi8hirHuBDi6J0WDJDflUBmghiSXHTngg0mGbJJfky8IE8WE/L+aQZaWHYi6s5ucYZX6eRbTqj2AVjhBu7jThwlbB+sBmaTpQCN9F1yHwT5V/LZNhU/dRzX2aRGgab/o1LBDHQ9/MlOu9Bib+QWg6GED/cXWZ2SiDshi74YMdlJIEwUzTjH5cbtkNHwlFvSiV4cjG0GmsFs0HU3lo7S10lp0jN3fP77dQ==;5:m7Cp/tml4yzrNZLq9iRq6/oE9L73MP3XpF+FCunMDvonNwYsOVf7V2MSdQvIvzil0HYVkGBaxG+K/4LUZOYwaDgom/RYAlSNYeNjMF6KUtrXGrsT3IopuTeVUI4m7hmRqhYEj19bo7XkIvD8KOmUEAyk4TTf98ZC0E9uWOeVnL8=;7:E6JuYMdZky+9GPucWU/SG0IQhTdGYbEO+hiURv/UMsm1w6mLpH5SNVKAWhQfHwpQmJ4lWuXwrcb+VkQ93nnPoKaUk8beS5gESW3cV48wHQQ9dp7szonDa1fCXKCqkPEJ/1+lKcV62np8EtxY5RvLug==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 374500bb-e22f-4d7f-d590-08d661fbc789
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BYAPR11MB3222;
+x-ms-traffictypediagnostic: BYAPR11MB3222:
+x-microsoft-antispam-prvs: <BYAPR11MB3222729D096E858CA2D965FBE1A10@BYAPR11MB3222.namprd11.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(3230021)(999002)(6040522)(2401047)(8121501046)(5005006)(3002001)(93006095)(93001095)(3231475)(944501520)(52105112)(10201501046)(148016)(149066)(150057)(6041310)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123558120)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:BYAPR11MB3222;BCL:0;PCL:0;RULEID:;SRVR:BYAPR11MB3222;
+x-forefront-prvs: 08864C38AC
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(136003)(39860400002)(396003)(346002)(376002)(199004)(189003)(13464003)(2501003)(55016002)(305945005)(97736004)(316002)(6306002)(486006)(54906003)(25786009)(110136005)(81156014)(99286004)(74316002)(86362001)(5660300001)(9686003)(8676002)(71190400001)(71200400001)(476003)(6436002)(2906002)(229853002)(7736002)(68736007)(14444005)(256004)(446003)(6116002)(4326008)(7696005)(39060400002)(11346002)(81166006)(3846002)(6246003)(8936002)(66066001)(14454004)(76176011)(53936002)(33656002)(106356001)(53546011)(102836004)(72206003)(478600001)(26005)(105586002)(966005)(186003)(6506007);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR11MB3222;H:BYAPR11MB2855.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microchip.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: 1zsy5Aqsd7zX4pUilfzWCeWr+LzXWODFgIhxnoaTllQzwnLiGrKNECEi0xWzOeMvCeCsMyYOIKs8PaJmjPeR3pmtV7X0Or42UL0EFX3sNasOvdkdWWZd3NzLDpS87tFfykVFvZwypoJGhoPGHRdgw8MEzAZiesEMwgyFNMzIrOmpF+BjsaENeL72TvZlcT0hBpiiHDbrd5YGgKdX70Ovn8VyFIDynvXPJ1NPGSrkNlz79zkir8yHWPOiCx1/30WQIdU1822m8euz1qu3VvK5mgYRTxyIqez9TFwLJJaUa7hn0HzWYPH2ocp2Xtix4BP8
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-Network-Message-Id: 374500bb-e22f-4d7f-d590-08d661fbc789
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Dec 2018 19:38:53.0638
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR11MB3222
+X-OriginatorOrg: microchip.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/13/18 6:28 PM, Jianchao Wang wrote:
-> Hi Jens
-> 
-> After commit c616cbee ( blk-mq: punt failed direct issue to dispatch
-> list ), we always insert request to hctx dispatch list whenever get a
-> BLK_STS_RESOURCE or BLK_STS_DEV_RESOURCE, this is overkill and will
-> harm the merging. We just need to do that for the requests that has
-> been through .queue_rq.
-> 
-> This patch set fixes the issue above and refactors the code of issue
-> request directly to unify the interface and make the code clearer and
-> more readable.
-> 
-> Please consider this patchset for 4.21.
+-----Original Message-----
+From: linux-scsi-owner@vger.kernel.org [mailto:linux-scsi-owner@vger.kernel=
+.org] On Behalf Of Ivan Mironov
+Sent: Friday, December 14, 2018 7:21 AM
+To: linux-scsi@vger.kernel.org; mironov.ivan@gmail.com
+Cc: linux-kernel@vger.kernel.org; Don Brace <don.brace@microsemi.com>; Jame=
+s E.J. Bottomley <jejb@linux.vnet.ibm.com>; Martin K. Petersen <martin.pete=
+rsen@oracle.com>; esc.storagedev@microsemi.com
+Subject: [PATCH 0/6] Add support of the HBA mode on HP Smart Array P410i co=
+ntrollers
 
-Applied, thanks Jianchao.
+This series of patches adds support of the HBA mode on HP Smart Array P410i=
+ RAID controllers.
 
--- 
-Jens Axboe
+This is not guaranteed to be correct as I do not have any access to documen=
+tation on these controllers. However, this works fine for me on hardware th=
+at I have. Also, these changes successfully passes blktests[1] and xfstests=
+[2].
+
+To make sure that this new functionality does not break anything, it is dis=
+abled by default and may be enabled only manually using new module paramete=
+r.
+
+[1] https://github.com/osandov/blktests
+[2] https://git.kernel.org/pub/scm/fs/xfs/xfstests-dev.git
+
+Ivan Mironov (6):
+  scsi: hpsa: Add function to check if device is a disk or a zoned
+    device
+  scsi: hpsa: Support HBA mode on HP Smart Array P410i controllers
+  scsi: hpsa: Add/mask existing devices on rescan if visibility changes
+  scsi: hpsa: Ignore HBA flag from NVRAM if logical devices exist
+  scsi: hpsa: Name more fields in "struct bmic_identify_controller"
+  scsi: hpsa: Do not use HBA flag from NVRAM if HBA is not supported
+
+ drivers/scsi/hpsa.c     | 145 ++++++++++++++++++++++++++++++++++++----
+ drivers/scsi/hpsa.h     |   3 +
+ drivers/scsi/hpsa_cmd.h | 113 ++++++++++++++++++++++++++++++-
+ 3 files changed, 244 insertions(+), 17 deletions(-)
+
+--
+2.19.2
+
+NAKing this series.
+- The P410 controllers do not fully support HBA mode and we do not support =
+adding it to the hpsa driver.
 
