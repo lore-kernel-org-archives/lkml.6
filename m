@@ -2,272 +2,113 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0FEBC67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 13:22:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5C0DC67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 13:27:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B23A206A4
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 13:22:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gyt1IeDK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B23A206A4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
-Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 2A6F12168C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 13:27:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730079AbeLNNW5 (ORCPT
+        id S1729853AbeLNN0M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 08:22:57 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:45199 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729923AbeLNNW0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 08:22:26 -0500
-Received: by mail-lj1-f195.google.com with SMTP id s5-v6so4854893ljd.12;
-        Fri, 14 Dec 2018 05:22:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Sdvan8lmUD1rlPpiah9NeOqv+lAZYCm82gAAtH1UoSA=;
-        b=gyt1IeDKZiteZLbY4cDCvHiymE9xVd8otwaZfuSY/MAWievrpiJQZxnfwj7dvBtosO
-         HVHbxVd9st3VvdNH2hD1sWvk9q6O8JdKCh/Fc77PdwR5Lqz5ksJWyxYJh767GvBnMsID
-         lXFBT0pPUWVsAFuPfpHkZoG8M9rP6Ovr7rkMYjVeUjxqYdyt15pTm7q65+ipUytPu6BB
-         FWpTa1O9HyDcLKS5Dcm4XJXONY9TD9hYiiPWt8LFayarxsEkygW+1M18kala5VPg6xyZ
-         2ykDlPWPif1cpSfqJd4NJOWf32EjlYTDyscNYXcv7fpAuK+JlcHVbHoafre2dzPqGF27
-         F2pw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Sdvan8lmUD1rlPpiah9NeOqv+lAZYCm82gAAtH1UoSA=;
-        b=Haz67Co9cXIPDmQWoGCAtaPLW7G08wJ8DyWXCv4b8uCjBr0WnMy21GLMWWX53xiqtf
-         SSJ2iGr5W7qmAClTMARN4WtAts5LbKXFX9++Oor20HVraETHA9ISA6fpFTC8FSiEXcqM
-         lmHS9H0nHe7/IrV8F0JyEjHUYIhJkpHWGo9ZUf56iTzD+etcCL6tf3JhmfEosu68D3rO
-         P/0tb3YJnymgiJEMuvRfcHZUJJu6EjHEdAMMB8Z96fDbyqYcDWuk1NtiW4P0VErvB6DX
-         jUKVKLyq8ZhYPm+ckmFp9jSmLb3iW3E6pbQX8UCL1JDnPWmsKS//NThsO5g7XsXs0bvb
-         HeLA==
-X-Gm-Message-State: AA+aEWb2rsPt7d36d6HJjQqiAcSCVd3smqLp8o+6Ypc2BrpaP8o+3+VV
-        eEtrQQS3ECL3h5sa8HOF2CIQW59erdSBaNQI
-X-Google-Smtp-Source: AFSGD/Uj4RHtlbDdG8bJw6k08Ub/w6u1doNQH3I2lvhRwdEKp8zeDILxqOAiEtlgzB/pkCFcEkCuRg==
-X-Received: by 2002:a2e:2281:: with SMTP id i123-v6mr1643078lji.154.1544793743428;
-        Fri, 14 Dec 2018 05:22:23 -0800 (PST)
-Received: from localhost.localdomain (pool-109-191-228-208.is74.ru. [109.191.228.208])
-        by smtp.gmail.com with ESMTPSA id u79-v6sm944101lje.36.2018.12.14.05.22.22
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 14 Dec 2018 05:22:23 -0800 (PST)
-From:   Ivan Mironov <mironov.ivan@gmail.com>
-To:     linux-scsi@vger.kernel.org, mironov.ivan@gmail.com
+        Fri, 14 Dec 2018 08:26:12 -0500
+Received: from mx2.suse.de ([195.135.220.15]:53184 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726670AbeLNN0M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 08:26:12 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 9EDF7ACCA;
+        Fri, 14 Dec 2018 13:26:09 +0000 (UTC)
+Subject: Re: [PATCH 1/6] scsi: hpsa: Add function to check if device is a disk
+ or a zoned device
+To:     Ivan Mironov <mironov.ivan@gmail.com>, linux-scsi@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, Don Brace <don.brace@microsemi.com>,
         "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>,
         esc.storagedev@microsemi.com
-Subject: [PATCH 2/6] scsi: hpsa: Support HBA mode on HP Smart Array P410i controllers
-Date:   Fri, 14 Dec 2018 18:21:11 +0500
-Message-Id: <20181214132115.21440-3-mironov.ivan@gmail.com>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20181214132115.21440-1-mironov.ivan@gmail.com>
 References: <20181214132115.21440-1-mironov.ivan@gmail.com>
+ <20181214132115.21440-2-mironov.ivan@gmail.com>
+From:   Johannes Thumshirn <jthumshirn@suse.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jthumshirn@suse.de; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <84336dbc-7fe9-0ce0-40c6-174c5cd3d329@suse.de>
+Date:   Fri, 14 Dec 2018 14:26:09 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
+In-Reply-To: <20181214132115.21440-2-mironov.ivan@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch is based on code from the 316b221, most of which was removed by
-the b9092b7.
-
-Originally, HBA mode on these controllers was supported only on
-Itanium-based HP Integrity servers running HP-UX. Tool for switching
-between RAID and HBA modes existed only in form of EFI binary for
-ia64 architecture: saupdate.efi[1]. However, I guessed how to overwrite the
-corresponding flags field in controller's NVRAM, and was able to
-reimplement RAID/HBA mode switching tool for Linux[2].
-
-This change was successfully tested using blktests[3] and xfstests[4] on
-my hardware, with embedded P410i controller (PCI ID: 103c:3245, board
-ID: 0x3245103c) with firmware version 6.64.
-
-This may work with some other controllers, but it is not tested
-(because I do not have the hardware) and it may be very dangerous. That is
-why this functionality is disabled by default and may be enabled only
-manually using the new module parameter.
-
-[1] https://support.hpe.com/hpsc/swd/public/detail?swItemId=MTX_0b76aec489764aea9802a6d27b
-[2] https://github.com/im-0/hpsahba
-[3] https://github.com/osandov/blktests
-[4] https://git.kernel.org/pub/scm/fs/xfs/xfstests-dev.git
-
-Signed-off-by: Ivan Mironov <mironov.ivan@gmail.com>
----
- drivers/scsi/hpsa.c | 98 +++++++++++++++++++++++++++++++++++++++++++--
- drivers/scsi/hpsa.h |  3 ++
- 2 files changed, 97 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/scsi/hpsa.c b/drivers/scsi/hpsa.c
-index fc06b790f16b..ee3d7c722a63 100644
---- a/drivers/scsi/hpsa.c
-+++ b/drivers/scsi/hpsa.c
-@@ -88,6 +88,11 @@ module_param(hpsa_simple_mode, int, S_IRUGO|S_IWUSR);
- MODULE_PARM_DESC(hpsa_simple_mode,
- 	"Use 'simple mode' rather than 'performant mode'");
- 
-+static bool hpsa_use_nvram_hba_flag;
-+module_param(hpsa_use_nvram_hba_flag, bool, 0444);
-+MODULE_PARM_DESC(hpsa_use_nvram_hba_flag,
-+	"Use flag from NVRAM to enable HBA mode");
-+
- /* define the PCI info for the cards we can control */
- static const struct pci_device_id hpsa_pci_device_id[] = {
- 	{PCI_VENDOR_ID_HP,     PCI_DEVICE_ID_HP_CISSE,     0x103C, 0x3241},
-@@ -3039,6 +3044,37 @@ static int hpsa_scsi_do_inquiry(struct ctlr_info *h, unsigned char *scsi3addr,
- 	return rc;
- }
- 
-+static int hpsa_bmic_ctrl_mode_sense(struct ctlr_info *h,
-+	struct bmic_controller_parameters *buf)
-+{
-+	int rc = IO_OK;
-+	struct CommandList *c;
-+	struct ErrorInfo *ei;
-+
-+	c = cmd_alloc(h);
-+
-+	if (fill_cmd(c, BMIC_SENSE_CONTROLLER_PARAMETERS, h, buf, sizeof(*buf),
-+			0, RAID_CTLR_LUNID, TYPE_CMD)) {
-+		rc = -1;
-+		goto out;
-+	}
-+
-+	rc = hpsa_scsi_do_simple_cmd_with_retry(h, c, PCI_DMA_FROMDEVICE,
-+		NO_TIMEOUT);
-+	if (rc)
-+		goto out;
-+
-+	ei = c->err_info;
-+	if (ei->CommandStatus != 0 && ei->CommandStatus != CMD_DATA_UNDERRUN) {
-+		hpsa_scsi_interpret_error(h, c);
-+		rc = -1;
-+	}
-+
-+out:
-+	cmd_free(h, c);
-+	return rc;
-+}
-+
- static int hpsa_send_reset(struct ctlr_info *h, unsigned char *scsi3addr,
- 	u8 reset_type, int reply_queue)
- {
-@@ -4296,6 +4332,50 @@ static bool hpsa_skip_device(struct ctlr_info *h, u8 *lunaddrbytes,
- 	return false;
- }
- 
-+static int hpsa_nvram_hba_flag_enabled(struct ctlr_info *h, bool *flag_enabled)
-+{
-+	int rc;
-+	struct bmic_controller_parameters *ctlr_params;
-+
-+	ctlr_params = kzalloc(sizeof(*ctlr_params), GFP_KERNEL);
-+	if (!ctlr_params) {
-+		rc = -ENOMEM;
-+		goto out;
-+	}
-+
-+	rc = hpsa_bmic_ctrl_mode_sense(h, ctlr_params);
-+	if (rc)
-+		goto out;
-+
-+	*flag_enabled = ctlr_params->nvram_flags & HPSA_NVRAM_FLAG_HBA;
-+
-+out:
-+	kfree(ctlr_params);
-+	return rc;
-+}
-+
-+static int hpsa_update_nvram_hba_mode(struct ctlr_info *h)
-+{
-+	int rc;
-+	bool flag_enabled;
-+
-+	if (!hpsa_use_nvram_hba_flag)
-+		return 0;
-+
-+	rc = hpsa_nvram_hba_flag_enabled(h, &flag_enabled);
-+	if (rc == -ENOMEM)
-+		dev_warn(&h->pdev->dev, "Out of memory.\n");
-+	if (rc)
-+		return rc;
-+
-+	dev_info(&h->pdev->dev, "NVRAM HBA flag: %s\n",
-+		flag_enabled ? "enabled" : "disabled");
-+
-+	h->nvram_hba_mode_enabled = flag_enabled;
-+
-+	return 0;
-+}
-+
- static void hpsa_update_scsi_devices(struct ctlr_info *h)
- {
- 	/* the idea here is we could get notified
-@@ -4352,6 +4432,11 @@ static void hpsa_update_scsi_devices(struct ctlr_info *h)
- 			__func__);
- 	}
- 
-+	if (hpsa_update_nvram_hba_mode(h)) {
-+		h->drv_req_rescan = 1;
-+		goto out;
-+	}
-+
- 	/* We might see up to the maximum number of logical and physical disks
- 	 * plus external target devices, and a device for the local RAID
- 	 * controller.
-@@ -4437,11 +4522,16 @@ static void hpsa_update_scsi_devices(struct ctlr_info *h)
- 		 * Expose all devices except for physical devices that
- 		 * are masked.
- 		 */
--		if (MASKED_DEVICE(lunaddrbytes) && this_device->physical_device)
--			this_device->expose_device = 0;
--		else
-+		if (MASKED_DEVICE(lunaddrbytes) &&
-+				this_device->physical_device) {
-+			if (is_disk_or_zbc(this_device) &&
-+					h->nvram_hba_mode_enabled)
-+				this_device->expose_device = 1;
-+			else
-+				this_device->expose_device = 0;
-+		} else {
- 			this_device->expose_device = 1;
--
-+		}
- 
- 		/*
- 		 * Get the SAS address for physical devices that are exposed.
-diff --git a/drivers/scsi/hpsa.h b/drivers/scsi/hpsa.h
-index 59e023696fff..5b508f270520 100644
---- a/drivers/scsi/hpsa.h
-+++ b/drivers/scsi/hpsa.h
-@@ -158,6 +158,8 @@ struct bmic_controller_parameters {
- };
- #pragma pack()
- 
-+#define HPSA_NVRAM_FLAG_HBA (1 << 3)
-+
- struct ctlr_info {
- 	unsigned int *reply_map;
- 	int	ctlr;
-@@ -182,6 +184,7 @@ struct ctlr_info {
- 	unsigned int msix_vectors;
- 	int intr_mode; /* either PERF_MODE_INT or SIMPLE_MODE_INT */
- 	struct access_method access;
-+	bool nvram_hba_mode_enabled;
- 
- 	/* queue and queue Info */
- 	unsigned int Qdepth;
+Looks good,
+Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
 -- 
-2.19.2
-
+Johannes Thumshirn                            SUSE Labs Filesystems
+jthumshirn@suse.de                                +49 911 74053 689
+SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
+Key fingerprint = EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
