@@ -2,130 +2,143 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11356C67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 09:40:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABC55C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 09:40:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D169A20672
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 09:40:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D169A20672
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 6F13320672
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 09:40:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="PMSOIdvc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F13320672
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729080AbeLNJkU (ORCPT
+        id S1729144AbeLNJku (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 04:40:20 -0500
-Received: from mx2.suse.de ([195.135.220.15]:46490 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726494AbeLNJkU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 04:40:20 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 8C5CBACBC;
-        Fri, 14 Dec 2018 09:40:17 +0000 (UTC)
-Date:   Fri, 14 Dec 2018 10:40:16 +0100
-From:   Petr Mladek <pmladek@suse.com>
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-Cc:     Joe Lawrence <joe.lawrence@redhat.com>,
-        Miroslav Benes <mbenes@suse.cz>,
-        Jiri Kosina <jikos@kernel.org>,
-        Jason Baron <jbaron@akamai.com>,
-        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v14 05/11] livepatch: Simplify API by removing
- registration step
-Message-ID: <20181214094016.fojfsaxwfkikiw7g@pathway.suse.cz>
-References: <20181129094431.7801-1-pmladek@suse.com>
- <20181129094431.7801-6-pmladek@suse.com>
- <20181205193253.mhlqj37r4o6ukkhp@redhat.com>
- <20181206082814.uyzjw2q4avknhswd@pathway.suse.cz>
- <alpine.LSU.2.21.1812061019500.17628@pobox.suse.cz>
- <20181206101423.3nps4tgyg45jwofj@pathway.suse.cz>
- <22937554-9c7c-ed9a-0f8d-70aa6e81b25d@redhat.com>
- <20181213222959.5fbc6iy2vqwr4wxd@treble>
+        Fri, 14 Dec 2018 04:40:50 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:38999 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726494AbeLNJkt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 04:40:49 -0500
+Received: by mail-ed1-f66.google.com with SMTP id b14so4416240edt.6
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 01:40:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=CJbJ3b1s6OtzxlrIrNWzya1v/WchMlr8EY6HlXyl5SY=;
+        b=PMSOIdvcKQHVHgd1cDT13zzOLNah5lUY7MK+S3Zv3crrMZROCrzBv8P5rtsaNNfxwH
+         nZyaBTR8/dGmN6KomQH+pTrB1IEsGm4AdepKne61+t8+d9AGdtdyKmYoXbtT8pw2D+3d
+         d7ZbDM2HWz9NPggOxj8ktNLBdMrB+62LhMQVI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=CJbJ3b1s6OtzxlrIrNWzya1v/WchMlr8EY6HlXyl5SY=;
+        b=gpsGpLv13EDQVX3Bona8EihONRnhBjcqztSXmcxzfh6vnHQ8zjeg7b/VezIzllouD7
+         6TwCqAoWT5V9Vu2rlj1+VuwOOOQkcLna/e8Ia6le42mTCjWJ2ie0J5o+G3qhLYna+4Vx
+         8pBFoZx6zR6Nr1yRP7ocwMoOzoXD3NAt1eVS+k2sTx2nwyZlWSbwKo9TLM8YKTNKUiDG
+         Pje5yJIpLBiXzDQE9MgGHbJdvYfLIP3n1HvIphQ30SxkMHZWa4H+sg0NbaOt6rvfKOt3
+         tlVfXAfWfJ9djzFEqXsUEP5E+Hlrqyk2GogQ77LE/mbjXswuxmhYZnN4JyX7boIYfSt0
+         fp/Q==
+X-Gm-Message-State: AA+aEWauCXCXaROEk2EsHMxjc+HsUFLF/8Ra6u+HkOnxIy72RNRUbViJ
+        s8Q29MPAcdBPJV58RsbCPjJq2w==
+X-Google-Smtp-Source: AFSGD/XZDwzvLsptoakb9l+2CLM9fVxNQNm+32u2DNgjAHvHfTBa2iPNe84csjU3c+sKarQdZqx1SA==
+X-Received: by 2002:a17:906:340a:: with SMTP id c10-v6mr1978123ejb.130.1544780447871;
+        Fri, 14 Dec 2018 01:40:47 -0800 (PST)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id b9sm1474111ede.12.2018.12.14.01.40.46
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 14 Dec 2018 01:40:47 -0800 (PST)
+Date:   Fri, 14 Dec 2018 10:40:44 +0100
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Lyude Paul <lyude@redhat.com>
+Cc:     dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        intel-gfx@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Dave Airlie <airlied@gmail.com>,
+        Harry Wentland <harry.wentland@amd.com>,
+        Jerry Zuo <Jerry.Zuo@amd.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [WIP PATCH 04/15] drm/dp_mst: Stop releasing VCPI when removing
+ ports from topology
+Message-ID: <20181214094044.GQ21184@phenom.ffwll.local>
+Mail-Followup-To: Lyude Paul <lyude@redhat.com>,
+        dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        intel-gfx@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+        Dave Airlie <airlied@gmail.com>,
+        Harry Wentland <harry.wentland@amd.com>,
+        Jerry Zuo <Jerry.Zuo@amd.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        linux-kernel@vger.kernel.org
+References: <20181214012604.13746-1-lyude@redhat.com>
+ <20181214012604.13746-5-lyude@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181213222959.5fbc6iy2vqwr4wxd@treble>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <20181214012604.13746-5-lyude@redhat.com>
+X-Operating-System: Linux phenom 4.18.0-2-amd64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 2018-12-13 16:29:59, Josh Poimboeuf wrote:
-> On Thu, Dec 06, 2018 at 09:36:06AM -0500, Joe Lawrence wrote:
-> > On 12/06/2018 05:14 AM, Petr Mladek wrote:
-> > > On Thu 2018-12-06 10:23:40, Miroslav Benes wrote:
-> > >> On Thu, 6 Dec 2018, Petr Mladek wrote:
-> > >>
-> > >>> On Wed 2018-12-05 14:32:53, Joe Lawrence wrote:
-> > >>>>> diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
-> > >>>>> index 972520144713..e01dfa3b58d2 100644
-> > >>>>> --- a/kernel/livepatch/core.c
-> > >>>>> +++ b/kernel/livepatch/core.c
-> > >>>>> @@ -45,7 +45,7 @@
-> > >>>>>   */
-> > >>>>>  DEFINE_MUTEX(klp_mutex);
-> > >>>>>  
-> > >>>>> -/* Registered patches */
-> > >>>>> +/* Actively used patches. */
-> > >>>>>  LIST_HEAD(klp_patches);
-> > >>>>
-> > >>>> By itself, this comment makes me wonder if there are un-active and/or
-> > >>>> un-used patches that I need to worry about.  After this patchset,
-> > >>>> klp_patches will include patches that have been enabled and those that
-> > >>>> have been replaced, but the replacement transition is still in progress.  
-> > >>>>
-> > >>>> If that sounds accurate, how about adding to the comment:
-> > >>>>
-> > >>>> /* Actively used patches: enabled or replaced and awaiting transition */
-> > >>>
-> > >>> The replaced patches are not in the list. This is why I used the word
-> > >>> "actively".
-> > >>
-> > 
-> > After writing out my suggestion I realized that's why you chose
-> > "actively" and almost erased my comment.  I think the extra text would
-> > help a fresh reader of the code, so ...
-> > 
-> > >> The replaced patches are removed in klp_discard_replaced_patches(), which 
-> > >> is called from klp_complete_transition(). Joe is right. The patches are in 
-> > >> the list if a transition is still in progress.
-> > > 
-> > > These are patches that are being replaced. The replaced (after the
-> > >  transition finishes) are not in the list.
-> > > 
-> > > By other word, Joe's text could be understand that replaced patches
-> > > will never get removed from the list.
-> > >
-> > > So, is the text below acceptable?
-> > > 
-> > > /*
-> > >  * Actively used patches: enabled or in transition. Note that replaced
-> > >  * or disabled patches are not listed even though the related kernel
-> > >  * module still can be loaded.
-> > >  */
-> > 
-> > Yes this works and is more accurate than my original suggestion.
+On Thu, Dec 13, 2018 at 08:25:33PM -0500, Lyude Paul wrote:
+> This has never actually worked, and isn't needed anyway: the driver's
+> always going to try to deallocate VCPI when it tears down the display
+> that the VCPI belongs to.
 > 
-> >From my perspective, no comment is needed at all, and _any_ comment just
-> serves to add confusion -- including the above one.  But maybe that's
-> because I already know that disabled and replace patches get discarded.
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
 
-Exactly. If I saw this code for the first time, I would find this
-comment useful.
+Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
 
-I often miss these top-level descriptions because they help to
-get the picture about the code design.
+> ---
+>  drivers/gpu/drm/drm_dp_mst_topology.c | 8 --------
+>  1 file changed, 8 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/drm_dp_mst_topology.c b/drivers/gpu/drm/drm_dp_mst_topology.c
+> index c196fb580beb..ae9d019af9f2 100644
+> --- a/drivers/gpu/drm/drm_dp_mst_topology.c
+> +++ b/drivers/gpu/drm/drm_dp_mst_topology.c
+> @@ -1084,8 +1084,6 @@ static void drm_dp_destroy_port(struct kref *kref)
+>  	struct drm_dp_mst_topology_mgr *mgr = port->mgr;
+>  
+>  	if (!port->input) {
+> -		port->vcpi.num_slots = 0;
+> -
+>  		kfree(port->cached_edid);
+>  
+>  		/*
+> @@ -3381,12 +3379,6 @@ static void drm_dp_destroy_connector_work(struct work_struct *work)
+>  		drm_dp_port_teardown_pdt(port, port->pdt);
+>  		port->pdt = DP_PEER_DEVICE_NONE;
+>  
+> -		if (!port->input && port->vcpi.vcpi > 0) {
+> -			drm_dp_mst_reset_vcpi_slots(mgr, port);
+> -			drm_dp_update_payload_part1(mgr);
+> -			drm_dp_mst_put_payload_id(mgr, port->vcpi.vcpi);
+> -		}
+> -
+>  		drm_dp_mst_put_port_malloc(port);
+>  		send_hotplug = true;
+>  	}
+> -- 
+> 2.19.2
+> 
 
-Finally, the usage of the list has similar complexity as
-the use of klp_mutex. There mutex has even longer comment.
-
-I will use the longer text if you are not strictly against.
-
-Best Regrds,
-Petr
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
