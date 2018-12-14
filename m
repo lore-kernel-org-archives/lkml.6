@@ -7,52 +7,51 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F119C67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:39:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 944D0C6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:39:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4608E20892
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:39:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A23D20892
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:39:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544791156;
-	bh=UZ4W0Io4q0Btk0t5gSOp3ArpXWDMUdI8OcVvFYfUs2w=;
+	s=default; t=1544791163;
+	bh=7Sa1VPahd8a6Xp1wgb3m1D8REU58OfnfV4SUCME38iw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=f9fuUbXneg49ZzO7d0/rsrcQ/YrPvmJPD7D6CG9is6pI1N4Lq3v1oK4+NEjj1sIV1
-	 BULKO271BKCTjjO4uuf3Tdjdrp5gY+F3cRECCzU+CcmS93l0oA7lSHspPT7jkkHKA+
-	 zF5z1DEZA3JKnjvvQ8rRnGO5ONYRik7+cVIiFtSc=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4608E20892
+	b=TY09EnI9T21mRUgWcxuNAx21sOTMRRf0s7YRygR29Vevk6ZFxtVwq4dci4ul267VZ
+	 Ks4xhvUN1PMa4WWUyu/WzuvxXr9sgNs5a/w3g9DIFj6URTy4EDodq/5HL1wB17c9j0
+	 7OiVxnDaTJFBFk9X2IkgmiPmv04+tg//YyOOXhgI=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A23D20892
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730144AbeLNMFF (ORCPT
+        id S1730615AbeLNMjW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:05:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49796 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:39:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49758 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729855AbeLNMFC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:05:02 -0500
+        id S1730564AbeLNME7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:04:59 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0B1252148E;
-        Fri, 14 Dec 2018 12:05:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8840F21486;
+        Fri, 14 Dec 2018 12:04:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789101;
-        bh=UZ4W0Io4q0Btk0t5gSOp3ArpXWDMUdI8OcVvFYfUs2w=;
+        s=default; t=1544789099;
+        bh=7Sa1VPahd8a6Xp1wgb3m1D8REU58OfnfV4SUCME38iw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sbKVqywwDWRqWOvVrFhU9zyJzoNpSPo5rqRuhAI9MTUITNGePGCcAHoA1CIIFLB/i
-         0xGmDz+UcJDG7a8LIItK8bs3JFk2IN89Tk/+/qobS/XY8Qjp5BHsVhWdYQAnHK5Asz
-         Dhe0ysX0inMEFPvpOeTXRpsg3cOOOCDKoJ+M6lxA=
+        b=RRINOetlxgddW3tXFUnKiRgZzwSJ/Kve+KBHMbZt2Tj4+8sl69f5ye0pvfRnHcRTe
+         zUQ1o7DVR8WGPAywho1hiD5LuvGKQfZxqOKzyEqd/4vwWKLunfNACzgtXRKwjWqBXW
+         ysIUzXmy+f2MV6YSlCTXJ2gAkxRAjyol/CqFdL1g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Parav Pandit <parav@mellanox.com>,
-        Mark Bloch <markb@mellanox.com>,
+        stable@vger.kernel.org, Majd Dibbiny <majd@mellanox.com>,
         Leon Romanovsky <leonro@mellanox.com>,
         Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 072/142] RDMA/core: Add GIDs while changing MAC addr only for registered ndev
-Date:   Fri, 14 Dec 2018 12:59:17 +0100
-Message-Id: <20181214115749.943982347@linuxfoundation.org>
+Subject: [PATCH 4.19 071/142] RDMA/mlx5: Fix fence type for IB_WR_LOCAL_INV WR
+Date:   Fri, 14 Dec 2018 12:59:16 +0100
+Message-Id: <20181214115749.903324049@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115747.053633987@linuxfoundation.org>
 References: <20181214115747.053633987@linuxfoundation.org>
@@ -71,55 +70,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit d52ef88a9f4be523425730da3239cf87bee936da ]
+[ Upstream commit 074fca3a18e7e1e0d4d7dcc9d7badc43b90232f4 ]
 
-Currently when MAC address is changed, regardless of the netdev reg_state,
-GID entries are removed and added to reflect the new MAC address and new
-default GID entries.
+Currently, for IB_WR_LOCAL_INV WR, when the next fence is None, the
+current fence will be SMALL instead of Normal Fence.
 
-When a bonding device is used and the underlying PCI device is removed
-several netdevice events are generated. Two events of the interest are
-CHANGEADDR and UNREGISTER event on lower(slave) netdevice of the bond
-netdevice.
+Without this patch krping doesn't work on CX-5 devices and throws
+following error:
 
-Sometimes CHANGEADDR event is generated when netdev state is
-UNREGISTERING (after UNREGISTER event is generated). In this scenario, GID
-entries for default GIDs are added and never deleted because GID entries
-are deleted only when netdev state is < UNREGISTERED.
+The error messages are from CX5 driver are: (from server side)
+[ 710.434014] mlx5_0:dump_cqe:278:(pid 2712): dump error cqe
+[ 710.434016] 00000000 00000000 00000000 00000000
+[ 710.434016] 00000000 00000000 00000000 00000000
+[ 710.434017] 00000000 00000000 00000000 00000000
+[ 710.434018] 00000000 93003204 100000b8 000524d2
+[ 710.434019] krping: cq completion failed with wr_id 0 status 4 opcode 128 vender_err 32
 
-This leads to non zero reference count on the netdevice. Due to this, PCI
-device unbind operation is getting stuck.
+Fixed the logic to set the correct fence type.
 
-To avoid it, when changing mac address, add GID entries only if netdev is
-in REGISTERED state.
-
-Fixes: 03db3a2d81e6 ("IB/core: Add RoCE GID table management")
-Signed-off-by: Parav Pandit <parav@mellanox.com>
-Reviewed-by: Mark Bloch <markb@mellanox.com>
+Fixes: 6e8484c5cf07 ("RDMA/mlx5: set UMR wqe fence according to HCA cap")
+Signed-off-by: Majd Dibbiny <majd@mellanox.com>
 Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
 Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/core/roce_gid_mgmt.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/infiniband/hw/mlx5/qp.c | 19 ++++++++++---------
+ 1 file changed, 10 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/infiniband/core/roce_gid_mgmt.c b/drivers/infiniband/core/roce_gid_mgmt.c
-index ee366199b169..25d43c8f1c2a 100644
---- a/drivers/infiniband/core/roce_gid_mgmt.c
-+++ b/drivers/infiniband/core/roce_gid_mgmt.c
-@@ -767,8 +767,10 @@ static int netdevice_event(struct notifier_block *this, unsigned long event,
+diff --git a/drivers/infiniband/hw/mlx5/qp.c b/drivers/infiniband/hw/mlx5/qp.c
+index d53d954ac8af..183fe5c8ceb7 100644
+--- a/drivers/infiniband/hw/mlx5/qp.c
++++ b/drivers/infiniband/hw/mlx5/qp.c
+@@ -4413,17 +4413,18 @@ static int _mlx5_ib_post_send(struct ib_qp *ibqp, const struct ib_send_wr *wr,
+ 			goto out;
+ 		}
  
- 	case NETDEV_CHANGEADDR:
- 		cmds[0] = netdev_del_cmd;
--		cmds[1] = add_default_gid_cmd;
--		cmds[2] = add_cmd;
-+		if (ndev->reg_state == NETREG_REGISTERED) {
-+			cmds[1] = add_default_gid_cmd;
-+			cmds[2] = add_cmd;
-+		}
- 		break;
+-		if (wr->opcode == IB_WR_LOCAL_INV ||
+-		    wr->opcode == IB_WR_REG_MR) {
++		if (wr->opcode == IB_WR_REG_MR) {
+ 			fence = dev->umr_fence;
+ 			next_fence = MLX5_FENCE_MODE_INITIATOR_SMALL;
+-		} else if (wr->send_flags & IB_SEND_FENCE) {
+-			if (qp->next_fence)
+-				fence = MLX5_FENCE_MODE_SMALL_AND_FENCE;
+-			else
+-				fence = MLX5_FENCE_MODE_FENCE;
+-		} else {
+-			fence = qp->next_fence;
++		} else  {
++			if (wr->send_flags & IB_SEND_FENCE) {
++				if (qp->next_fence)
++					fence = MLX5_FENCE_MODE_SMALL_AND_FENCE;
++				else
++					fence = MLX5_FENCE_MODE_FENCE;
++			} else {
++				fence = qp->next_fence;
++			}
+ 		}
  
- 	case NETDEV_CHANGEUPPER:
+ 		switch (ibqp->qp_type) {
 -- 
 2.19.1
 
