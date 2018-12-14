@@ -7,50 +7,50 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5135C67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:12:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8388AC67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:12:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C00D214E0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:12:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 40217214DE
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:12:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544789543;
-	bh=BGdZi3vKjyO+cEcTPW0BIzq/6jdOMDtCkEFgzEaXBhc=;
+	s=default; t=1544789547;
+	bh=Zqi3CY3vtfXm5EFCDzvc+MXX9gE/gdIh9ewkJsjYWSM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=JmL/2qHc6wTKVbEY2SWs4qi6+kO0SNviLz6piUfozdsb/YUDhbcFBhwUTjU7mAJHi
-	 evhIzfTAwuLn4srVCk69kjX9o9kM6V3+c77ykhzXZTNycDeUNJupvXTG4jdPIsgTyW
-	 56Y1PxXl1UYTC9YlrfBArzGju3kUp8Z315cjSMms=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C00D214E0
+	b=2lYhVvDYJcWqdkcRSdM8nFQvWFZQR6y59+smCBYV14S7hqyO2lXjcd7LUoOn2sURN
+	 7VSp3gCvnR5FqCMZBDQGlDoIBQzbGgyJpmlXS72Llip7b/SJsOLv/VwGbYmndpecUF
+	 9XAJLKxPqYEnxFGyCePCPBbRj4tJEMvAHtAOQofo=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40217214DE
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731930AbeLNMMV (ORCPT
+        id S1731530AbeLNMM0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:12:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59344 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:12:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59494 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731896AbeLNMMO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:12:14 -0500
+        id S1731926AbeLNMMV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:12:21 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D3559214D9;
-        Fri, 14 Dec 2018 12:12:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6FD6C214F0;
+        Fri, 14 Dec 2018 12:12:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789533;
-        bh=BGdZi3vKjyO+cEcTPW0BIzq/6jdOMDtCkEFgzEaXBhc=;
+        s=default; t=1544789540;
+        bh=Zqi3CY3vtfXm5EFCDzvc+MXX9gE/gdIh9ewkJsjYWSM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tf/67tbN8IwX9X4Wmm/aaAzMZoBuexsRHONvDRe8stVwWWv9ZA4+6HYz6RDNGvYdi
-         CSUTuiPAV6nivcAtUFK9dRasXi8qTck5c4LB6ZSK89EriIL+CJdmeB0A1VOXE/NBw1
-         cORX1lULlLoTdyhSF+VYh6hSBxELM2rdPh9oPHfc=
+        b=aTVhVEEsk0ezrAUaB+jKcOAQwABbPwcp+8V9G2kCQLyN5eXUptdvPRhWBCOJhc0u4
+         iTOvbK7orff25+Op206+VE414bSi2gbwjcSEEsYvLDz/qXnHilA7iZm9w9wwD70t/o
+         FH41WdeOWNTJUEiF/MFafxAozDSefgGV+oQ6uEeA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Aaro Koskinen <aaro.koskinen@iki.fi>,
         Felipe Balbi <felipe.balbi@linux.intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 30/51] USB: omap_udc: use devm_request_irq()
-Date:   Fri, 14 Dec 2018 13:00:32 +0100
-Message-Id: <20181214115716.001953655@linuxfoundation.org>
+Subject: [PATCH 4.9 33/51] USB: omap_udc: fix USB gadget functionality on Palm Tungsten E
+Date:   Fri, 14 Dec 2018 13:00:35 +0100
+Message-Id: <20181214115716.236937691@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115713.244259772@linuxfoundation.org>
 References: <20181214115713.244259772@linuxfoundation.org>
@@ -69,100 +69,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 286afdde1640d8ea8916a0f05e811441fbbf4b9d ]
+[ Upstream commit 2c2322fbcab8102b8cadc09d66714700a2da42c2 ]
 
-The current code fails to release the third irq on the error path
-(observed by reading the code), and we get also multiple WARNs with
-failing gadget drivers due to duplicate IRQ releases. Fix by using
-devm_request_irq().
+On Palm TE nothing happens when you try to use gadget drivers and plug
+the USB cable. Fix by adding the board to the vbus sense quirk list.
 
 Signed-off-by: Aaro Koskinen <aaro.koskinen@iki.fi>
 Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/gadget/udc/omap_udc.c | 37 +++++++++----------------------
- 1 file changed, 10 insertions(+), 27 deletions(-)
+ drivers/usb/gadget/udc/omap_udc.c | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/drivers/usb/gadget/udc/omap_udc.c b/drivers/usb/gadget/udc/omap_udc.c
-index a8709f9e5648..2945408f0eec 100644
+index 8f044caa8ad4..9eed4947aad8 100644
 --- a/drivers/usb/gadget/udc/omap_udc.c
 +++ b/drivers/usb/gadget/udc/omap_udc.c
-@@ -2886,8 +2886,8 @@ static int omap_udc_probe(struct platform_device *pdev)
- 		udc->clr_halt = UDC_RESET_EP;
- 
- 	/* USB general purpose IRQ:  ep0, state changes, dma, etc */
--	status = request_irq(pdev->resource[1].start, omap_udc_irq,
--			0, driver_name, udc);
-+	status = devm_request_irq(&pdev->dev, pdev->resource[1].start,
-+				  omap_udc_irq, 0, driver_name, udc);
- 	if (status != 0) {
- 		ERR("can't get irq %d, err %d\n",
- 			(int) pdev->resource[1].start, status);
-@@ -2895,20 +2895,20 @@ static int omap_udc_probe(struct platform_device *pdev)
- 	}
- 
- 	/* USB "non-iso" IRQ (PIO for all but ep0) */
--	status = request_irq(pdev->resource[2].start, omap_udc_pio_irq,
--			0, "omap_udc pio", udc);
-+	status = devm_request_irq(&pdev->dev, pdev->resource[2].start,
-+				  omap_udc_pio_irq, 0, "omap_udc pio", udc);
- 	if (status != 0) {
- 		ERR("can't get irq %d, err %d\n",
- 			(int) pdev->resource[2].start, status);
--		goto cleanup2;
-+		goto cleanup1;
- 	}
- #ifdef	USE_ISO
--	status = request_irq(pdev->resource[3].start, omap_udc_iso_irq,
--			0, "omap_udc iso", udc);
-+	status = devm_request_irq(&pdev->dev, pdev->resource[3].start,
-+				  omap_udc_iso_irq, 0, "omap_udc iso", udc);
- 	if (status != 0) {
- 		ERR("can't get irq %d, err %d\n",
- 			(int) pdev->resource[3].start, status);
--		goto cleanup3;
-+		goto cleanup1;
- 	}
- #endif
- 	if (cpu_is_omap16xx() || cpu_is_omap7xx()) {
-@@ -2921,22 +2921,11 @@ static int omap_udc_probe(struct platform_device *pdev)
- 	create_proc_file();
- 	status = usb_add_gadget_udc_release(&pdev->dev, &udc->gadget,
- 			omap_udc_release);
--	if (status)
--		goto cleanup4;
--
--	return 0;
-+	if (!status)
-+		return 0;
- 
--cleanup4:
- 	remove_proc_file();
- 
--#ifdef	USE_ISO
--cleanup3:
--	free_irq(pdev->resource[2].start, udc);
--#endif
--
--cleanup2:
--	free_irq(pdev->resource[1].start, udc);
--
- cleanup1:
- 	kfree(udc);
- 	udc = NULL;
-@@ -2980,12 +2969,6 @@ static int omap_udc_remove(struct platform_device *pdev)
- 
- 	remove_proc_file();
- 
--#ifdef	USE_ISO
--	free_irq(pdev->resource[3].start, udc);
--#endif
--	free_irq(pdev->resource[2].start, udc);
--	free_irq(pdev->resource[1].start, udc);
--
- 	if (udc->dc_clk) {
- 		if (udc->clk_requested)
- 			omap_udc_enable_clock(0);
+@@ -2037,6 +2037,7 @@ static inline int machine_without_vbus_sense(void)
+ {
+ 	return machine_is_omap_innovator()
+ 		|| machine_is_omap_osk()
++		|| machine_is_omap_palmte()
+ 		|| machine_is_sx1()
+ 		/* No known omap7xx boards with vbus sense */
+ 		|| cpu_is_omap7xx();
 -- 
 2.19.1
 
