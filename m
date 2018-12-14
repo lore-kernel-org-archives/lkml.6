@@ -4,53 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24987C67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:08:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9C1AC6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:08:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2819214AE
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:08:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6CE70214D9
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:08:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544789309;
-	bh=cQxKmZ9A9L43FZLsrUWRtM9U+6bHK0cg66yYnmWFW50=;
+	s=default; t=1544789312;
+	bh=DJuJpRRTpFkuh+0WmvBMYsbOU9wtmdnZKrofnAKAfmw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=LmJgLLcAtYtvZaevqOYE47uRNulAiPjVgz6TpJVyeccEuzUDhjkQFtoxYfHJADH3e
-	 dAcFeeV1RniD7e4n3ACWM0Xl43ynL6LWEBBppBwM/BLV750IZk/eC6/Cms4PpCOgu7
-	 Xy/WBCnG8Om429V2k19KwN5SM2QXHXV1mLekPXCE=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2819214AE
+	b=Q69GyXcTJH/5Cw2+BXJnbPCly179NmaNadVzO2dYCCN+bHJm9RyQTao3ILj9SjVPz
+	 PnVL6phxX+eiFv+YS3EUaIi3SzSEL4uehwTqG1g3Lb8G6wzuUjxTgYXRajsviLia07
+	 Lr5PsrXsLfZ8cs6Y0O7YN1zvusPAkSO5E/J77pEE=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CE70214D9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731271AbeLNMI1 (ORCPT
+        id S1730550AbeLNMIa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:08:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53712 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:08:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53860 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731246AbeLNMIS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:08:18 -0500
+        id S1731259AbeLNMIZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:08:25 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8F4F3214C4;
-        Fri, 14 Dec 2018 12:08:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8B6D4214AE;
+        Fri, 14 Dec 2018 12:08:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789297;
-        bh=cQxKmZ9A9L43FZLsrUWRtM9U+6bHK0cg66yYnmWFW50=;
+        s=default; t=1544789305;
+        bh=DJuJpRRTpFkuh+0WmvBMYsbOU9wtmdnZKrofnAKAfmw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sh2PWGG1trvxlmJ4gssB8OiTyQyN3RoTfWO5yqsnOhn7uWwhM0wJeETI4GvoLsvOV
-         aYfMxsxUO+X6ys6+WrRyGX5ZLBCVlr7PUSAhcFgxupZbCj4mDHtVfjLtguU2tWjWwO
-         PR07ceZM41xOsCcZpbzNplAz9RKQRsCh0SbL49ks=
+        b=1k7Ti2JlpQGsayPUcuhE8Pfs7XYxknnaAUYEp9Gs6ZV2GIOggasM0b87K951coLEH
+         dWJMVX/q+tueoGvNKvlAXlVO0uFTWB/m69jbfohZds/JPXu1hsJahqOtIRy0YeVJlU
+         +FI43/VgJFi7YTRT0M2S3O+UKn88LiGsbQREgRn8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 28/89] ASoC: omap-abe-twl6040: Fix missing audio card caused by deferred probing
-Date:   Fri, 14 Dec 2018 12:59:41 +0100
-Message-Id: <20181214115731.077087074@linuxfoundation.org>
+Subject: [PATCH 4.14 31/89] netfilter: xt_hashlimit: fix a possible memory leak in htable_create()
+Date:   Fri, 14 Dec 2018 12:59:44 +0100
+Message-Id: <20181214115731.228742419@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115729.658859279@linuxfoundation.org>
 References: <20181214115729.658859279@linuxfoundation.org>
@@ -69,156 +69,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 76836fd354922ebe4798a64fda01f8dc6a8b0984 ]
+[ Upstream commit b4e955e9f372035361fbc6f07b21fe2cc6a5be4a ]
 
-The machine driver fails to probe in next-20181113 with:
+In the htable_create(), hinfo is allocated by vmalloc()
+So that if error occurred, hinfo should be freed.
 
-[    2.539093] omap-abe-twl6040 sound: ASoC: CODEC DAI twl6040-legacy not registered
-[    2.546630] omap-abe-twl6040 sound: devm_snd_soc_register_card() failed: -517
-...
-[    3.693206] omap-abe-twl6040 sound: ASoC: Both platform name/of_node are set for TWL6040
-[    3.701446] omap-abe-twl6040 sound: ASoC: failed to init link TWL6040
-[    3.708007] omap-abe-twl6040 sound: devm_snd_soc_register_card() failed: -22
-[    3.715148] omap-abe-twl6040: probe of sound failed with error -22
-
-Bisect pointed to a merge commit:
-first bad commit: [0f688ab20a540aafa984c5dbd68a71debebf4d7f] Merge remote-tracking branch 'net-next/master'
-
-and a diff between a working kernel does not reveal anything which would
-explain the change in behavior.
-
-Further investigation showed that on the second try of loading fails
-because the dai_link->platform is no longer NULL and it might be pointing
-to uninitialized memory.
-
-The fix is to move the snd_soc_dai_link and snd_soc_card inside of the
-abe_twl6040 struct, which is dynamically allocated every time the driver
-probes.
-
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: 11d5f15723c9 ("netfilter: xt_hashlimit: Create revision 2 to support higher pps rates")
+Signed-off-by: Taehee Yoo <ap420073@gmail.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/omap/omap-abe-twl6040.c | 67 +++++++++++++------------------
- 1 file changed, 29 insertions(+), 38 deletions(-)
+ net/netfilter/xt_hashlimit.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-diff --git a/sound/soc/omap/omap-abe-twl6040.c b/sound/soc/omap/omap-abe-twl6040.c
-index 614b18d2f631..6fd143799534 100644
---- a/sound/soc/omap/omap-abe-twl6040.c
-+++ b/sound/soc/omap/omap-abe-twl6040.c
-@@ -36,6 +36,8 @@
- #include "../codecs/twl6040.h"
+diff --git a/net/netfilter/xt_hashlimit.c b/net/netfilter/xt_hashlimit.c
+index 0c034597b9b8..fe8e8a1622b5 100644
+--- a/net/netfilter/xt_hashlimit.c
++++ b/net/netfilter/xt_hashlimit.c
+@@ -295,9 +295,10 @@ static int htable_create(struct net *net, struct hashlimit_cfg3 *cfg,
  
- struct abe_twl6040 {
-+	struct snd_soc_card card;
-+	struct snd_soc_dai_link dai_links[2];
- 	int	jack_detection;	/* board can detect jack events */
- 	int	mclk_freq;	/* MCLK frequency speed for twl6040 */
- };
-@@ -208,40 +210,10 @@ static int omap_abe_dmic_init(struct snd_soc_pcm_runtime *rtd)
- 				ARRAY_SIZE(dmic_audio_map));
- }
- 
--/* Digital audio interface glue - connects codec <--> CPU */
--static struct snd_soc_dai_link abe_twl6040_dai_links[] = {
--	{
--		.name = "TWL6040",
--		.stream_name = "TWL6040",
--		.codec_dai_name = "twl6040-legacy",
--		.codec_name = "twl6040-codec",
--		.init = omap_abe_twl6040_init,
--		.ops = &omap_abe_ops,
--	},
--	{
--		.name = "DMIC",
--		.stream_name = "DMIC Capture",
--		.codec_dai_name = "dmic-hifi",
--		.codec_name = "dmic-codec",
--		.init = omap_abe_dmic_init,
--		.ops = &omap_abe_dmic_ops,
--	},
--};
+ 	/* copy match config into hashtable config */
+ 	ret = cfg_copy(&hinfo->cfg, (void *)cfg, 3);
 -
--/* Audio machine driver */
--static struct snd_soc_card omap_abe_card = {
--	.owner = THIS_MODULE,
+-	if (ret)
++	if (ret) {
++		vfree(hinfo);
+ 		return ret;
++	}
+ 
+ 	hinfo->cfg.size = size;
+ 	if (hinfo->cfg.max == 0)
+@@ -814,7 +815,6 @@ hashlimit_mt_v1(const struct sk_buff *skb, struct xt_action_param *par)
+ 	int ret;
+ 
+ 	ret = cfg_copy(&cfg, (void *)&info->cfg, 1);
 -
--	.dapm_widgets = twl6040_dapm_widgets,
--	.num_dapm_widgets = ARRAY_SIZE(twl6040_dapm_widgets),
--	.dapm_routes = audio_map,
--	.num_dapm_routes = ARRAY_SIZE(audio_map),
--};
+ 	if (ret)
+ 		return ret;
+ 
+@@ -830,7 +830,6 @@ hashlimit_mt_v2(const struct sk_buff *skb, struct xt_action_param *par)
+ 	int ret;
+ 
+ 	ret = cfg_copy(&cfg, (void *)&info->cfg, 2);
 -
- static int omap_abe_probe(struct platform_device *pdev)
- {
- 	struct device_node *node = pdev->dev.of_node;
--	struct snd_soc_card *card = &omap_abe_card;
-+	struct snd_soc_card *card;
- 	struct device_node *dai_node;
- 	struct abe_twl6040 *priv;
- 	int num_links = 0;
-@@ -252,12 +224,18 @@ static int omap_abe_probe(struct platform_device *pdev)
- 		return -ENODEV;
- 	}
+ 	if (ret)
+ 		return ret;
  
--	card->dev = &pdev->dev;
+@@ -920,7 +919,6 @@ static int hashlimit_mt_check_v1(const struct xt_mtchk_param *par)
+ 		return ret;
+ 
+ 	ret = cfg_copy(&cfg, (void *)&info->cfg, 1);
 -
- 	priv = devm_kzalloc(&pdev->dev, sizeof(struct abe_twl6040), GFP_KERNEL);
- 	if (priv == NULL)
- 		return -ENOMEM;
+ 	if (ret)
+ 		return ret;
  
-+	card = &priv->card;
-+	card->dev = &pdev->dev;
-+	card->owner = THIS_MODULE;
-+	card->dapm_widgets = twl6040_dapm_widgets;
-+	card->num_dapm_widgets = ARRAY_SIZE(twl6040_dapm_widgets);
-+	card->dapm_routes = audio_map;
-+	card->num_dapm_routes = ARRAY_SIZE(audio_map);
-+
- 	if (snd_soc_of_parse_card_name(card, "ti,model")) {
- 		dev_err(&pdev->dev, "Card name is not provided\n");
- 		return -ENODEV;
-@@ -274,14 +252,27 @@ static int omap_abe_probe(struct platform_device *pdev)
- 		dev_err(&pdev->dev, "McPDM node is not provided\n");
- 		return -EINVAL;
- 	}
--	abe_twl6040_dai_links[0].cpu_of_node = dai_node;
--	abe_twl6040_dai_links[0].platform_of_node = dai_node;
-+
-+	priv->dai_links[0].name = "DMIC";
-+	priv->dai_links[0].stream_name = "TWL6040";
-+	priv->dai_links[0].cpu_of_node = dai_node;
-+	priv->dai_links[0].platform_of_node = dai_node;
-+	priv->dai_links[0].codec_dai_name = "twl6040-legacy";
-+	priv->dai_links[0].codec_name = "twl6040-codec";
-+	priv->dai_links[0].init = omap_abe_twl6040_init;
-+	priv->dai_links[0].ops = &omap_abe_ops;
+@@ -939,7 +937,6 @@ static int hashlimit_mt_check_v2(const struct xt_mtchk_param *par)
+ 		return ret;
  
- 	dai_node = of_parse_phandle(node, "ti,dmic", 0);
- 	if (dai_node) {
- 		num_links = 2;
--		abe_twl6040_dai_links[1].cpu_of_node = dai_node;
--		abe_twl6040_dai_links[1].platform_of_node = dai_node;
-+		priv->dai_links[1].name = "TWL6040";
-+		priv->dai_links[1].stream_name = "DMIC Capture";
-+		priv->dai_links[1].cpu_of_node = dai_node;
-+		priv->dai_links[1].platform_of_node = dai_node;
-+		priv->dai_links[1].codec_dai_name = "dmic-hifi";
-+		priv->dai_links[1].codec_name = "dmic-codec";
-+		priv->dai_links[1].init = omap_abe_dmic_init;
-+		priv->dai_links[1].ops = &omap_abe_dmic_ops;
- 	} else {
- 		num_links = 1;
- 	}
-@@ -300,7 +291,7 @@ static int omap_abe_probe(struct platform_device *pdev)
- 		return -ENODEV;
- 	}
+ 	ret = cfg_copy(&cfg, (void *)&info->cfg, 2);
+-
+ 	if (ret)
+ 		return ret;
  
--	card->dai_link = abe_twl6040_dai_links;
-+	card->dai_link = priv->dai_links;
- 	card->num_links = num_links;
- 
- 	snd_soc_card_set_drvdata(card, priv);
 -- 
 2.19.1
 
