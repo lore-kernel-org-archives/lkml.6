@@ -7,51 +7,50 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AF4EC67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:14:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 077F4C6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:14:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42342214F1
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:14:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C30D3214F0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:14:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544789688;
-	bh=1IQWvINSnpy9bfMkDdnffb/7BKMA5vnaXxeXJU30KRk=;
+	s=default; t=1544789691;
+	bh=8gSfu1FfUKe2hW003MlIabwGJdFCeMZY7mrsns3IM+U=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=lTR3wiTsBzDVZRkWr3/GNtXwD/ImDSfbLWjCrkSTw/RlJA5ZGbSVY0rCbWkqdSVWp
-	 Qryz5H0pq/31uPbY1JtoX/LUrC7QdXX1kSCu5pdNlZSA1j4SMnstPmtFRl3JHVN3F4
-	 FwAVJD12r6faIlThNlAcjyf+NueUIUqyx79b+psQ=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42342214F1
+	b=ZlsQKRNdERbw+kVKZryrMeyoRKDLrWkS1KAzW2SlnIU1FWjRAu2ezqAWE0mX6nxht
+	 YyIADIFp2P46eB4hz3wqSZ/O0S5fJmDFo0BmGWTTCGbnRhtlZ9A7PYiPw2q94Purb5
+	 m0HHzrXMtUDzGAw6DsxUTVNOryU/cwRq+vJZ64V0=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C30D3214F0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732423AbeLNMOr (ORCPT
+        id S1732439AbeLNMOu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:14:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34464 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:14:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34548 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732115AbeLNMOn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:14:43 -0500
+        id S1732422AbeLNMOr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:14:47 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9B199214F1;
-        Fri, 14 Dec 2018 12:14:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9F8F52133F;
+        Fri, 14 Dec 2018 12:14:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789682;
-        bh=1IQWvINSnpy9bfMkDdnffb/7BKMA5vnaXxeXJU30KRk=;
+        s=default; t=1544789687;
+        bh=8gSfu1FfUKe2hW003MlIabwGJdFCeMZY7mrsns3IM+U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ojztsi5u1LztZH5pOVaHW0Y4KRFo8yJLF+1aSnLruL3OpEPyeRgbXVfY9iQP4mPGU
-         qjTYqSEp73vv93cJzoHErrv9Y6l2pM6V4/a7sRm4odhk9667PdnwzF+gF/VckN0qbh
-         6clEdswQZbcjFttKsX1eb6gqoA1DZNHam14Xop/Q=
+        b=sQ5jXzGrzIVdJHrca3mIYRHAGGyZbPx0tuZ1QpTLSlGL3epXBpK2hZpiR/tDe8saQ
+         CTcZzA7zihjK6pU3nujFZOAHSuY50H3WOZip/vLiYZ9UIFuAMsS6NGl1Vu/otJNY5J
+         4YT7n9VVIv8yk7g8EjALmQBcP4Gzau5KkYPcCLGI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Richter <tmricht@linux.ibm.com>,
-        Hendrik Brueckner <brueckner@linux.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        stable@vger.kernel.org, Tzung-Bi Shih <tzungbi@google.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 13/88] s390/cpum_cf: Reject request for sampling in event initialization
-Date:   Fri, 14 Dec 2018 12:59:47 +0100
-Message-Id: <20181214115703.242290128@linuxfoundation.org>
+Subject: [PATCH 4.4 15/88] ASoC: dapm: Recalculate audio map forcely when card instantiated
+Date:   Fri, 14 Dec 2018 12:59:49 +0100
+Message-Id: <20181214115703.411783905@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115702.151309521@linuxfoundation.org>
 References: <20181214115702.151309521@linuxfoundation.org>
@@ -70,111 +69,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 613a41b0d16e617f46776a93b975a1eeea96417c ]
+[ Upstream commit 882eab6c28d23a970ae73b7eb831b169a672d456 ]
 
-On s390 command perf top fails
-[root@s35lp76 perf] # ./perf top -F100000  --stdio
-   Error:
-   cycles: PMU Hardware doesn't support sampling/overflow-interrupts.
-   	Try 'perf stat'
-[root@s35lp76 perf] #
+Audio map are possible in wrong state before card->instantiated has
+been set to true.  Imaging the following examples:
 
-Using event -e rb0000 works as designed.  Event rb0000 is the event
-number of the sampling facility for basic sampling.
+time 1: at the beginning
 
-During system start up the following PMUs are installed in the kernel's
-PMU list (from head to tail):
-   cpum_cf --> s390 PMU counter facility device driver
-   cpum_sf --> s390 PMU sampling facility device driver
-   uprobe
-   kprobe
-   tracepoint
-   task_clock
-   cpu_clock
+  in:-1    in:-1    in:-1    in:-1
+ out:-1   out:-1   out:-1   out:-1
+ SIGGEN        A        B      Spk
 
-Perf top executes following functions and calls perf_event_open(2) system
-call with different parameters many times:
+time 2: after someone called snd_soc_dapm_new_widgets()
+(e.g. create_fill_widget_route_map() in sound/soc/codecs/hdac_hdmi.c)
 
-cmd_top
---> __cmd_top
-    --> perf_evlist__add_default
-        --> __perf_evlist__add_default
-            --> perf_evlist__new_cycles (creates event type:0 (HW)
-			    		config 0 (CPU_CYCLES)
-	        --> perf_event_attr__set_max_precise_ip
-		    Uses perf_event_open(2) to detect correct
-		    precise_ip level. Fails 3 times on s390 which is ok.
+   in:1     in:0     in:0     in:0
+  out:0    out:0    out:0    out:1
+ SIGGEN        A        B      Spk
 
-Then functions cmd_top
---> __cmd_top
-    --> perf_top__start_counters
-        -->perf_evlist__config
-	   --> perf_can_comm_exec
-               --> perf_probe_api
-	           This functions test support for the following events:
-		   "cycles:u", "instructions:u", "cpu-clock:u" using
-		   --> perf_do_probe_api
-		       --> perf_event_open_cloexec
-		           Test the close on exec flag support with
-			   perf_event_open(2).
-	               perf_do_probe_api returns true if the event is
-		       supported.
-		       The function returns true because event cpu-clock is
-		       supported by the PMU cpu_clock.
-	               This is achieved by many calls to perf_event_open(2).
+time 3: routes added
 
-Function perf_top__start_counters now calls perf_evsel__open() for every
-event, which is the default event cpu_cycles (config:0) and type HARDWARE
-(type:0) which a predfined frequence of 4000.
+   in:1     in:0     in:0     in:0
+  out:0    out:0    out:0    out:1
+ SIGGEN -----> A -----> B ---> Spk
 
-Given the above order of the PMU list, the PMU cpum_cf gets called first
-and returns 0, which indicates support for this sampling. The event is
-fully allocated in the function perf_event_open (file kernel/event/core.c
-near line 10521 and the following check fails:
+In the end, the path should be powered on but it did not.  At time 3,
+"in" of SIGGEN and "out" of Spk did not propagate to their neighbors
+because snd_soc_dapm_add_path() will not invalidate the paths if
+the card has not instantiated (i.e. card->instantiated is false).
+To correct the state of audio map, recalculate the whole map forcely.
 
-        event = perf_event_alloc(&attr, cpu, task, group_leader, NULL,
-		                 NULL, NULL, cgroup_fd);
-	if (IS_ERR(event)) {
-		err = PTR_ERR(event);
-		goto err_cred;
-	}
-
-        if (is_sampling_event(event)) {
-		if (event->pmu->capabilities & PERF_PMU_CAP_NO_INTERRUPT) {
-			err = -EOPNOTSUPP;
-			goto err_alloc;
-		}
-	}
-
-The check for the interrupt capabilities fails and the system call
-perf_event_open() returns -EOPNOTSUPP (-95).
-
-Add a check to return -ENODEV when sampling is requested in PMU cpum_cf.
-This allows common kernel code in the perf_event_open() system call to
-test the next PMU in above list.
-
-Fixes: 97b1198fece0 (" "s390, perf: Use common PMU interrupt disabled code")
-Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
-Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Signed-off-by: Tzung-Bi Shih <tzungbi@google.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/s390/kernel/perf_cpum_cf.c | 2 ++
- 1 file changed, 2 insertions(+)
+ sound/soc/soc-core.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/s390/kernel/perf_cpum_cf.c b/arch/s390/kernel/perf_cpum_cf.c
-index 929c147e07b4..1b69bfdf59f9 100644
---- a/arch/s390/kernel/perf_cpum_cf.c
-+++ b/arch/s390/kernel/perf_cpum_cf.c
-@@ -344,6 +344,8 @@ static int __hw_perf_event_init(struct perf_event *event)
- 		break;
+diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
+index fa6b74a304a7..b927f9c81d92 100644
+--- a/sound/soc/soc-core.c
++++ b/sound/soc/soc-core.c
+@@ -1711,6 +1711,7 @@ static int snd_soc_instantiate_card(struct snd_soc_card *card)
+ 	}
  
- 	case PERF_TYPE_HARDWARE:
-+		if (is_sampling_event(event))	/* No sampling support */
-+			return -ENOENT;
- 		ev = attr->config;
- 		/* Count user space (problem-state) only */
- 		if (!attr->exclude_user && attr->exclude_kernel) {
+ 	card->instantiated = 1;
++	dapm_mark_endpoints_dirty(card);
+ 	snd_soc_dapm_sync(&card->dapm);
+ 	mutex_unlock(&card->mutex);
+ 	mutex_unlock(&client_mutex);
 -- 
 2.19.1
 
