@@ -2,220 +2,63 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A81AC43612
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 21:18:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99FB2C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 21:20:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3F7C208C2
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 21:18:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544822281;
-	bh=lQky5Fc9+McusqLTfJqtGAk3i2Vz2V/gXQ5CJIRSHTA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=GIwW6S/Sck2KDf1V+ea2M/4uSpTjigh7r700NX57bpimOu9bIoX51PjFnpV+CL4UW
-	 l1waXbz6egnR6G6iW8QYhJGIrDStxWgzlq5QwkvIR8MUfxajRmGLztl8EOjP3IkC88
-	 6nbqBIzZJ82Y1mufnlwis1Ozfo3ABuqMrKtbTQ5c=
+	by mail.kernel.org (Postfix) with ESMTP id CF6D4208C1
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 21:20:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730942AbeLNVSA (ORCPT
+        id S1730982AbeLNVUq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 16:18:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59514 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730734AbeLNVSA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 16:18:00 -0500
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0D9502080F;
-        Fri, 14 Dec 2018 21:17:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544822279;
-        bh=lQky5Fc9+McusqLTfJqtGAk3i2Vz2V/gXQ5CJIRSHTA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=y1S5diSvT6U0Cddpb5MDlQ7p2ZH3upL3x2Qo23hipiNWln9YKFXOpXnISspxuWtls
-         kPYgaQ97YUPQo6beCCMx+cBH+G6HLrpVZWPoWoMav2DYFgvdkjji4Js2p4DWVPq4UF
-         uStu0EpAOHDw697KGFUI7RByAvYTT/MttZEu97Gc=
-Date:   Fri, 14 Dec 2018 15:17:57 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     iommu@lists.linux-foundation.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jesper Dangaard Brouer <brouer@redhat.com>,
-        Tariq Toukan <tariqt@mellanox.com>,
-        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
-        Toke =?iso-8859-1?Q?H=F8iland-J=F8rgensen?= <toke@toke.dk>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Jonathan Derrick <jonathan.derrick@intel.com>,
-        linux-pci@vger.kernel.org, linux-ia64@vger.kernel.org,
-        x86@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 14/15] vmd: use the proper dma_* APIs instead of direct
- methods calls
-Message-ID: <20181214211757.GF20725@google.com>
-References: <20181207190720.18517-1-hch@lst.de>
- <20181207190720.18517-15-hch@lst.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181207190720.18517-15-hch@lst.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Fri, 14 Dec 2018 16:20:46 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:33822 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730734AbeLNVUp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 16:20:45 -0500
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::bf5])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 4BFAE14E088C5;
+        Fri, 14 Dec 2018 13:20:45 -0800 (PST)
+Date:   Fri, 14 Dec 2018 13:20:44 -0800 (PST)
+Message-Id: <20181214.132044.183096780468259380.davem@davemloft.net>
+To:     arnd@arndb.de
+Cc:     yisen.zhuang@huawei.com, salil.mehta@huawei.com,
+        lipeng321@huawei.com, tanhuazhong@huawei.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] hns3: prevent building without CONFIG_INET
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20181210204448.2338398-1-arnd@arndb.de>
+References: <20181210204448.2338398-1-arnd@arndb.de>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 14 Dec 2018 13:20:45 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Conventional spelling in subject is
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Mon, 10 Dec 2018 21:44:34 +0100
 
-  PCI: vmd: Use dma_* APIs instead of direct method calls
-
-On Fri, Dec 07, 2018 at 11:07:19AM -0800, Christoph Hellwig wrote:
-> With the bypass support for the direct mapping we might not always have
-> methods to call, so use the proper APIs instead.  The only downside is
-> that we will create two dma-debug entries for each mapping if
-> CONFIG_DMA_DEBUG is enabled.
+> We now get a link failure when CONFIG_INET is disabled, since
+> tcp_gro_complete is unavailable:
 > 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-
-You cc'd the VMD maintainers already, and I have no objection to this
-from a PCI core point of view, so:
-
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>
-
-> ---
->  drivers/pci/controller/vmd.c | 42 +++++++++++++++---------------------
->  1 file changed, 17 insertions(+), 25 deletions(-)
+> drivers/net/ethernet/hisilicon/hns3/hns3_enet.o: In function `hns3_set_gro_param':
+> hns3_enet.c:(.text+0x230c): undefined reference to `tcp_gro_complete'
 > 
-> diff --git a/drivers/pci/controller/vmd.c b/drivers/pci/controller/vmd.c
-> index 98ce79eac128..3890812cdf87 100644
-> --- a/drivers/pci/controller/vmd.c
-> +++ b/drivers/pci/controller/vmd.c
-> @@ -307,39 +307,32 @@ static struct device *to_vmd_dev(struct device *dev)
->  	return &vmd->dev->dev;
->  }
->  
-> -static const struct dma_map_ops *vmd_dma_ops(struct device *dev)
-> -{
-> -	return get_dma_ops(to_vmd_dev(dev));
-> -}
-> -
->  static void *vmd_alloc(struct device *dev, size_t size, dma_addr_t *addr,
->  		       gfp_t flag, unsigned long attrs)
->  {
-> -	return vmd_dma_ops(dev)->alloc(to_vmd_dev(dev), size, addr, flag,
-> -				       attrs);
-> +	return dma_alloc_attrs(to_vmd_dev(dev), size, addr, flag, attrs);
->  }
->  
->  static void vmd_free(struct device *dev, size_t size, void *vaddr,
->  		     dma_addr_t addr, unsigned long attrs)
->  {
-> -	return vmd_dma_ops(dev)->free(to_vmd_dev(dev), size, vaddr, addr,
-> -				      attrs);
-> +	return dma_free_attrs(to_vmd_dev(dev), size, vaddr, addr, attrs);
->  }
->  
->  static int vmd_mmap(struct device *dev, struct vm_area_struct *vma,
->  		    void *cpu_addr, dma_addr_t addr, size_t size,
->  		    unsigned long attrs)
->  {
-> -	return vmd_dma_ops(dev)->mmap(to_vmd_dev(dev), vma, cpu_addr, addr,
-> -				      size, attrs);
-> +	return dma_mmap_attrs(to_vmd_dev(dev), vma, cpu_addr, addr, size,
-> +			attrs);
->  }
->  
->  static int vmd_get_sgtable(struct device *dev, struct sg_table *sgt,
->  			   void *cpu_addr, dma_addr_t addr, size_t size,
->  			   unsigned long attrs)
->  {
-> -	return vmd_dma_ops(dev)->get_sgtable(to_vmd_dev(dev), sgt, cpu_addr,
-> -					     addr, size, attrs);
-> +	return dma_get_sgtable_attrs(to_vmd_dev(dev), sgt, cpu_addr, addr, size,
-> +			attrs);
->  }
->  
->  static dma_addr_t vmd_map_page(struct device *dev, struct page *page,
-> @@ -347,61 +340,60 @@ static dma_addr_t vmd_map_page(struct device *dev, struct page *page,
->  			       enum dma_data_direction dir,
->  			       unsigned long attrs)
->  {
-> -	return vmd_dma_ops(dev)->map_page(to_vmd_dev(dev), page, offset, size,
-> -					  dir, attrs);
-> +	return dma_map_page_attrs(to_vmd_dev(dev), page, offset, size, dir,
-> +			attrs);
->  }
->  
->  static void vmd_unmap_page(struct device *dev, dma_addr_t addr, size_t size,
->  			   enum dma_data_direction dir, unsigned long attrs)
->  {
-> -	vmd_dma_ops(dev)->unmap_page(to_vmd_dev(dev), addr, size, dir, attrs);
-> +	dma_unmap_page_attrs(to_vmd_dev(dev), addr, size, dir, attrs);
->  }
->  
->  static int vmd_map_sg(struct device *dev, struct scatterlist *sg, int nents,
->  		      enum dma_data_direction dir, unsigned long attrs)
->  {
-> -	return vmd_dma_ops(dev)->map_sg(to_vmd_dev(dev), sg, nents, dir, attrs);
-> +	return dma_map_sg_attrs(to_vmd_dev(dev), sg, nents, dir, attrs);
->  }
->  
->  static void vmd_unmap_sg(struct device *dev, struct scatterlist *sg, int nents,
->  			 enum dma_data_direction dir, unsigned long attrs)
->  {
-> -	vmd_dma_ops(dev)->unmap_sg(to_vmd_dev(dev), sg, nents, dir, attrs);
-> +	dma_unmap_sg_attrs(to_vmd_dev(dev), sg, nents, dir, attrs);
->  }
->  
->  static void vmd_sync_single_for_cpu(struct device *dev, dma_addr_t addr,
->  				    size_t size, enum dma_data_direction dir)
->  {
-> -	vmd_dma_ops(dev)->sync_single_for_cpu(to_vmd_dev(dev), addr, size, dir);
-> +	dma_sync_single_for_cpu(to_vmd_dev(dev), addr, size, dir);
->  }
->  
->  static void vmd_sync_single_for_device(struct device *dev, dma_addr_t addr,
->  				       size_t size, enum dma_data_direction dir)
->  {
-> -	vmd_dma_ops(dev)->sync_single_for_device(to_vmd_dev(dev), addr, size,
-> -						 dir);
-> +	dma_sync_single_for_device(to_vmd_dev(dev), addr, size, dir);
->  }
->  
->  static void vmd_sync_sg_for_cpu(struct device *dev, struct scatterlist *sg,
->  				int nents, enum dma_data_direction dir)
->  {
-> -	vmd_dma_ops(dev)->sync_sg_for_cpu(to_vmd_dev(dev), sg, nents, dir);
-> +	dma_sync_sg_for_cpu(to_vmd_dev(dev), sg, nents, dir);
->  }
->  
->  static void vmd_sync_sg_for_device(struct device *dev, struct scatterlist *sg,
->  				   int nents, enum dma_data_direction dir)
->  {
-> -	vmd_dma_ops(dev)->sync_sg_for_device(to_vmd_dev(dev), sg, nents, dir);
-> +	dma_sync_sg_for_device(to_vmd_dev(dev), sg, nents, dir);
->  }
->  
->  static int vmd_dma_supported(struct device *dev, u64 mask)
->  {
-> -	return vmd_dma_ops(dev)->dma_supported(to_vmd_dev(dev), mask);
-> +	return dma_supported(to_vmd_dev(dev), mask);
->  }
->  
->  static u64 vmd_get_required_mask(struct device *dev)
->  {
-> -	return vmd_dma_ops(dev)->get_required_mask(to_vmd_dev(dev));
-> +	return dma_get_required_mask(to_vmd_dev(dev));
->  }
->  
->  static void vmd_teardown_dma_ops(struct vmd_dev *vmd)
-> -- 
-> 2.19.1
+> Add an explicit CONFIG_INET dependency here to avoid the broken
+> configuration.
 > 
+> Fixes: a6d53b97a2e7 ("net: hns3: Adds GRO params to SKB for the stack")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+
+Applied.
