@@ -2,225 +2,80 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F479C6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:24:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F04DAC6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:24:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C4FE20879
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:24:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544790294;
-	bh=u92rlPul16IER3UlZBGxGOwdKR4ae+C96SjJp+UpjRA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Bc5MkNzuY09N8qix8Rmra7SRR1nx8FiSryHOOrss/n9NU5fyxxn5v5eQtx+8r9e82
-	 jO1xRv+Ujo2ZOu22nf8+xbbSzfnygLkyC68b+5a+731jC3NYwC2ED/eWdRVvd/Eyi/
-	 HBF+VxTZtQ/uMUv0RlD8PXyz5uTNg8yS9o+ooScw=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C4FE20879
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id C233920879
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:24:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C233920879
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sntech.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731787AbeLNMMm (ORCPT
+        id S1731968AbeLNMMg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:12:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59898 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:12:36 -0500
+Received: from gloria.sntech.de ([185.11.138.130]:38342 "EHLO gloria.sntech.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731731AbeLNMMj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:12:39 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 60813214D9;
-        Fri, 14 Dec 2018 12:12:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789558;
-        bh=u92rlPul16IER3UlZBGxGOwdKR4ae+C96SjJp+UpjRA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TnoxKX+IROA7097Ocz2gfXdZ1+wkuFz5x5GI7YVKkKp6CDxcfFG3di8jky0Htguf5
-         wNuZKVfkIquQhnqZtCl2/zJx4geqy8prbH3YM/jV11j22gzFSdMWKZfwPEfuXOg5MS
-         hKZDXaLUOetrpOxW2ykqc+x+BEfpCSxOqtDG49eM=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 18/51] ASoC: omap-abe-twl6040: Fix missing audio card caused by deferred probing
-Date:   Fri, 14 Dec 2018 13:00:20 +0100
-Message-Id: <20181214115715.060186373@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.0
-In-Reply-To: <20181214115713.244259772@linuxfoundation.org>
-References: <20181214115713.244259772@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        id S1731938AbeLNMMf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:12:35 -0500
+Received: from wf0848.dip.tu-dresden.de ([141.76.183.80] helo=phil.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1gXmKO-0006V2-GU; Fri, 14 Dec 2018 13:12:24 +0100
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     architt@codeaurora.org, a.hajda@samsung.com,
+        Laurent.pinchart@ideasonboard.com,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Sandy Huang <hjc@rock-chips.com>, maxime.ripard@bootlin.com,
+        dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Nickey Yang <nickey.yang@rock-chips.com>,
+        Huicong Xu <xhc@rock-chips.com>
+Subject: Re: [PATCH RFC v2 1/8] drm/bridge: dw-hdmi: Add SCDC and TMDS Scrambling support
+Date:   Fri, 14 Dec 2018 13:12:23 +0100
+Message-ID: <2505786.uGvT2qSv2r@phil>
+In-Reply-To: <20181130134301.17963-2-narmstrong@baylibre.com>
+References: <20181130134301.17963-1-narmstrong@baylibre.com> <20181130134301.17963-2-narmstrong@baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+Am Freitag, 30. November 2018, 14:42:54 CET schrieb Neil Armstrong:
+> Add support for SCDC Setup for TMDS Clock > 3.4GHz and enable TMDS
+> Scrambling when supported or mandatory.
+> 
+> This patch also adds an helper to setup the control bit to support
+> the high TMDS Bit Period/TMDS Clock-Period Ratio as required with
+> TMDS Clock > 3.4GHz for HDMI2.0 3840x2160@60/50 modes.
+> 
+> These changes were based on work done by Huicong Xu <xhc@rock-chips.com>
+> and Nickey Yang <nickey.yang@rock-chips.com> to support HDMI2.0 modes
+> on the Rockchip 4.4 BSP kernel at [1]
+> 
+> [1] https://github.com/rockchip-linux/kernel/tree/release-4.4
+> 
+> Cc: Nickey Yang <nickey.yang@rock-chips.com>
+> Cc: Huicong Xu <xhc@rock-chips.com>
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 
-------------------
+sorry this took a bit longer, but I can confirm that the 4 relevant
+patches (1, 4, 5, 6) at least still provide 1080p hdmi output on
+rk3288 (with internal hdmiphy) and rk3328 (with external innosilicon
+hdmiphy). I don't know how to test newly added features, but at
+least the patches don't seem to break existing users, so
 
-[ Upstream commit 76836fd354922ebe4798a64fda01f8dc6a8b0984 ]
-
-The machine driver fails to probe in next-20181113 with:
-
-[    2.539093] omap-abe-twl6040 sound: ASoC: CODEC DAI twl6040-legacy not registered
-[    2.546630] omap-abe-twl6040 sound: devm_snd_soc_register_card() failed: -517
-...
-[    3.693206] omap-abe-twl6040 sound: ASoC: Both platform name/of_node are set for TWL6040
-[    3.701446] omap-abe-twl6040 sound: ASoC: failed to init link TWL6040
-[    3.708007] omap-abe-twl6040 sound: devm_snd_soc_register_card() failed: -22
-[    3.715148] omap-abe-twl6040: probe of sound failed with error -22
-
-Bisect pointed to a merge commit:
-first bad commit: [0f688ab20a540aafa984c5dbd68a71debebf4d7f] Merge remote-tracking branch 'net-next/master'
-
-and a diff between a working kernel does not reveal anything which would
-explain the change in behavior.
-
-Further investigation showed that on the second try of loading fails
-because the dai_link->platform is no longer NULL and it might be pointing
-to uninitialized memory.
-
-The fix is to move the snd_soc_dai_link and snd_soc_card inside of the
-abe_twl6040 struct, which is dynamically allocated every time the driver
-probes.
-
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- sound/soc/omap/omap-abe-twl6040.c | 67 +++++++++++++------------------
- 1 file changed, 29 insertions(+), 38 deletions(-)
-
-diff --git a/sound/soc/omap/omap-abe-twl6040.c b/sound/soc/omap/omap-abe-twl6040.c
-index 89fe95e877db..07af30017b48 100644
---- a/sound/soc/omap/omap-abe-twl6040.c
-+++ b/sound/soc/omap/omap-abe-twl6040.c
-@@ -36,6 +36,8 @@
- #include "../codecs/twl6040.h"
- 
- struct abe_twl6040 {
-+	struct snd_soc_card card;
-+	struct snd_soc_dai_link dai_links[2];
- 	int	jack_detection;	/* board can detect jack events */
- 	int	mclk_freq;	/* MCLK frequency speed for twl6040 */
- };
-@@ -208,40 +210,10 @@ static int omap_abe_dmic_init(struct snd_soc_pcm_runtime *rtd)
- 				ARRAY_SIZE(dmic_audio_map));
- }
- 
--/* Digital audio interface glue - connects codec <--> CPU */
--static struct snd_soc_dai_link abe_twl6040_dai_links[] = {
--	{
--		.name = "TWL6040",
--		.stream_name = "TWL6040",
--		.codec_dai_name = "twl6040-legacy",
--		.codec_name = "twl6040-codec",
--		.init = omap_abe_twl6040_init,
--		.ops = &omap_abe_ops,
--	},
--	{
--		.name = "DMIC",
--		.stream_name = "DMIC Capture",
--		.codec_dai_name = "dmic-hifi",
--		.codec_name = "dmic-codec",
--		.init = omap_abe_dmic_init,
--		.ops = &omap_abe_dmic_ops,
--	},
--};
--
--/* Audio machine driver */
--static struct snd_soc_card omap_abe_card = {
--	.owner = THIS_MODULE,
--
--	.dapm_widgets = twl6040_dapm_widgets,
--	.num_dapm_widgets = ARRAY_SIZE(twl6040_dapm_widgets),
--	.dapm_routes = audio_map,
--	.num_dapm_routes = ARRAY_SIZE(audio_map),
--};
--
- static int omap_abe_probe(struct platform_device *pdev)
- {
- 	struct device_node *node = pdev->dev.of_node;
--	struct snd_soc_card *card = &omap_abe_card;
-+	struct snd_soc_card *card;
- 	struct device_node *dai_node;
- 	struct abe_twl6040 *priv;
- 	int num_links = 0;
-@@ -252,12 +224,18 @@ static int omap_abe_probe(struct platform_device *pdev)
- 		return -ENODEV;
- 	}
- 
--	card->dev = &pdev->dev;
--
- 	priv = devm_kzalloc(&pdev->dev, sizeof(struct abe_twl6040), GFP_KERNEL);
- 	if (priv == NULL)
- 		return -ENOMEM;
- 
-+	card = &priv->card;
-+	card->dev = &pdev->dev;
-+	card->owner = THIS_MODULE;
-+	card->dapm_widgets = twl6040_dapm_widgets;
-+	card->num_dapm_widgets = ARRAY_SIZE(twl6040_dapm_widgets);
-+	card->dapm_routes = audio_map;
-+	card->num_dapm_routes = ARRAY_SIZE(audio_map);
-+
- 	if (snd_soc_of_parse_card_name(card, "ti,model")) {
- 		dev_err(&pdev->dev, "Card name is not provided\n");
- 		return -ENODEV;
-@@ -274,14 +252,27 @@ static int omap_abe_probe(struct platform_device *pdev)
- 		dev_err(&pdev->dev, "McPDM node is not provided\n");
- 		return -EINVAL;
- 	}
--	abe_twl6040_dai_links[0].cpu_of_node = dai_node;
--	abe_twl6040_dai_links[0].platform_of_node = dai_node;
-+
-+	priv->dai_links[0].name = "DMIC";
-+	priv->dai_links[0].stream_name = "TWL6040";
-+	priv->dai_links[0].cpu_of_node = dai_node;
-+	priv->dai_links[0].platform_of_node = dai_node;
-+	priv->dai_links[0].codec_dai_name = "twl6040-legacy";
-+	priv->dai_links[0].codec_name = "twl6040-codec";
-+	priv->dai_links[0].init = omap_abe_twl6040_init;
-+	priv->dai_links[0].ops = &omap_abe_ops;
- 
- 	dai_node = of_parse_phandle(node, "ti,dmic", 0);
- 	if (dai_node) {
- 		num_links = 2;
--		abe_twl6040_dai_links[1].cpu_of_node = dai_node;
--		abe_twl6040_dai_links[1].platform_of_node = dai_node;
-+		priv->dai_links[1].name = "TWL6040";
-+		priv->dai_links[1].stream_name = "DMIC Capture";
-+		priv->dai_links[1].cpu_of_node = dai_node;
-+		priv->dai_links[1].platform_of_node = dai_node;
-+		priv->dai_links[1].codec_dai_name = "dmic-hifi";
-+		priv->dai_links[1].codec_name = "dmic-codec";
-+		priv->dai_links[1].init = omap_abe_dmic_init;
-+		priv->dai_links[1].ops = &omap_abe_dmic_ops;
- 	} else {
- 		num_links = 1;
- 	}
-@@ -300,7 +291,7 @@ static int omap_abe_probe(struct platform_device *pdev)
- 		return -ENODEV;
- 	}
- 
--	card->dai_link = abe_twl6040_dai_links;
-+	card->dai_link = priv->dai_links;
- 	card->num_links = num_links;
- 
- 	snd_soc_card_set_drvdata(card, priv);
--- 
-2.19.1
+on rk3288 and rk3328
+Tested-by: Heiko Stuebner <heiko@sntech.de>
 
 
 
