@@ -2,250 +2,125 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E481FC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 16:46:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2B5CC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 16:47:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 81C17206C2
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 16:46:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bHhcPYUw"
+	by mail.kernel.org (Postfix) with ESMTP id 85616206C2
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 16:47:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729996AbeLNQqi (ORCPT
+        id S1730053AbeLNQrx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 11:46:38 -0500
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:37357 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729409AbeLNQqi (ORCPT
+        Fri, 14 Dec 2018 11:47:53 -0500
+Received: from gateway24.websitewelcome.com ([192.185.50.252]:34141 "EHLO
+        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729612AbeLNQrx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 11:46:38 -0500
-Received: by mail-yw1-f67.google.com with SMTP id h193so2538953ywc.4
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 08:46:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Zm7h0/w1ttFLUS/6AK66YZHsBfI+p9pvmmurz0CNelQ=;
-        b=bHhcPYUwDdIKmIFXiRRj2f5n8veoddZBWlnr5omnwWcGpCvGmXMYxvmDh5DhbSVcfb
-         eByw9XNVW74s0uLZptlKfiDK/EF7Rh0vpoBUT71KHwfsfKDLOBTpAT7bcu7Dahm0eDJr
-         8PpN2vQv4uLwHcNaPk/DfB4knffWEBhGJALXo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Zm7h0/w1ttFLUS/6AK66YZHsBfI+p9pvmmurz0CNelQ=;
-        b=mjlp/vijMFrI4/SUyee/mtLmFCZ2gMjyYHWrJw78Tz1MeWWLILcvNM9AjvWT1IHonP
-         I6PIeNNh2zod8I7LUro5fwwKPcra7CbCH7ynyFgQw4LMDRre+K7eKo5NUIy+DLqpuCTR
-         IpIBDe1sKIhoz7w5xweFw543RWB9mnfD0Ir2Lr0r/XWUOqaGVCIk15EvCy94stUxbzz4
-         s20DV0ix7HkvdwWSld2CLedwaaTSe17ZaU/EnVce102PpjJ8+9zH/Mg3xHrfB1vyaB0m
-         Hmq63bxdBvmYwDEUrs7mdAcLvbbAzc3QfrK55hSxkzfBsvBvfM7i7COJ+AQwzg26R3VN
-         sZbg==
-X-Gm-Message-State: AA+aEWbzLTfP+zPx1LuSLXpLlBIAIcOeUtSaUJvt2izKYbHo9LKxFwAi
-        oXh4vkExPTKztXIVFjYbM93zFUoDeIU=
-X-Google-Smtp-Source: AFSGD/WqmduTJeGJ9DL8uUt7SvD/WaSIFqn+byrdIJR0WSem2UQX/e0YpcQsPc/QvfU51E/Xle4RaA==
-X-Received: by 2002:a81:11d5:: with SMTP id 204mr3790372ywr.287.1544805996256;
-        Fri, 14 Dec 2018 08:46:36 -0800 (PST)
-Received: from mail-yw1-f53.google.com (mail-yw1-f53.google.com. [209.85.161.53])
-        by smtp.gmail.com with ESMTPSA id j134sm1772865ywb.91.2018.12.14.08.46.34
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 14 Dec 2018 08:46:35 -0800 (PST)
-Received: by mail-yw1-f53.google.com with SMTP id n21so1497697ywd.10
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 08:46:34 -0800 (PST)
-X-Received: by 2002:a81:2890:: with SMTP id o138mr3962790ywo.168.1544805994386;
- Fri, 14 Dec 2018 08:46:34 -0800 (PST)
+        Fri, 14 Dec 2018 11:47:53 -0500
+Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
+        by gateway24.websitewelcome.com (Postfix) with ESMTP id 2CD94E8D4
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 10:47:52 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id XqcygtFpk2qH7Xqcygczgz; Fri, 14 Dec 2018 10:47:52 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.131.212] (port=48852 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gXqcd-002K7q-8o; Fri, 14 Dec 2018 10:47:51 -0600
+Date:   Fri, 14 Dec 2018 10:47:29 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Sathya Prakash <sathya.prakash@broadcom.com>,
+        Chaitra P B <chaitra.basappa@broadcom.com>,
+        Suganath Prabu Subramani 
+        <suganath-prabu.subramani@broadcom.com>
+Cc:     MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] scsi: mptfusion: Fix potential Spectre v1 vulnerabilities
+Message-ID: <20181214164729.GA23188@embeddedor>
 MIME-Version: 1.0
-References: <BLUPR13MB0289EFEB79833470EE62F48EDFD10@BLUPR13MB0289.namprd13.prod.outlook.com>
- <20181128135242.gy3avmbp2pdmjaka@twin.jikos.cz> <5C0654EE.5040001@oberhumer.com>
- <SN1PR13MB030484F09EE8A00DB094CDFADFA80@SN1PR13MB0304.namprd13.prod.outlook.com>
- <5C093A30.4020705@oberhumer.com> <BLUPR13MB0289EC81589A10E95912675FDFA70@BLUPR13MB0289.namprd13.prod.outlook.com>
- <5C110083.8060502@oberhumer.com> <CAFLxGvzj=P2FY6w7CBYztsUjJ5Td53zCzGa_FUjrfxA94cmSgA@mail.gmail.com>
-In-Reply-To: <CAFLxGvzj=P2FY6w7CBYztsUjJ5Td53zCzGa_FUjrfxA94cmSgA@mail.gmail.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Fri, 14 Dec 2018 08:46:20 -0800
-X-Gmail-Original-Message-ID: <CAGXu5jLR06ti_xhC8OODbF8m+Tsf6a0ebJLBe8KLcC+csG_i=w@mail.gmail.com>
-Message-ID: <CAGXu5jLR06ti_xhC8OODbF8m+Tsf6a0ebJLBe8KLcC+csG_i=w@mail.gmail.com>
-Subject: Re: [PATCH v2] lzo: fix ip overrun during compress.
-To:     richard -rw- weinberger <richard.weinberger@gmail.com>
-Cc:     markus@oberhumer.com, liyueyi@live.com, dsterba@suse.cz,
-        Greg KH <gregkh@linuxfoundation.org>, Willy Tarreau <w@1wt.eu>,
-        Don Bailey <donb@securitymouse.com>,
-        Jiri Kosina <jikos@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.131.212
+X-Source-L: No
+X-Exim-ID: 1gXqcd-002K7q-8o
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.131.212]:48852
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 6
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 14, 2018 at 5:56 AM Richard Weinberger
-<richard.weinberger@gmail.com> wrote:
->
-> [CC'ing Kees]
->
-> On Wed, Dec 12, 2018 at 1:37 PM Markus F.X.J. Oberhumer
-> <markus@oberhumer.com> wrote:
-> >
-> > I still claim that (0xfffffffffffff000, 4096) is not a valid C "pointer
-> > to an object" according to the C standard - please see my reply below.
-> >
-> > And I thought ASLR was introduced to improve security and not to create
-> > new security problems - someone from the ASLR team has to comment on this.
-> >
-> > Cheers,
-> > Markus
-> >
-> >
-> > On 2018-12-12 06:21, Yueyi Li wrote:
-> > > Hi Markus,
-> > >
-> > > OK, thanks. I`ll change it in v3.
-> > >
-> > > Thanks,
-> > > Yueyi
-> > >
-> > > On 2018/12/6 23:03, Markus F.X.J. Oberhumer wrote:
-> > >> Hi Yueyi,
-> > >>
-> > >> yes, my LZO patch works for all cases.
-> > >>
-> > >> The reason behind the issue in the first place is that if KASLR
-> > >> includes the very last page 0xfffffffffffff000 then we do not have a
-> > >> valid C "pointer to an object" anymore because of address wraparound.
-> > >>
-> > >> Unrelated to my patch I'd argue that KASLR should *NOT* include the
-> > >> very last page - indeed that might cause similar wraparound problems
-> > >> in lots of code.
-> > >>
-> > >> Eg, look at this simple clear_memory() implementation:
-> > >>
-> > >> void clear_memory(char *p, size_t len) {
-> > >>          char *end = p + len;
-> > >>          while (p < end)
-> > >>                  *p++= 0;
-> > >> }
-> > >>
-> > >> Valid code like this will fail horribly when (p, len) is the very
-> > >> last virtual page (because end will be the NULL pointer in this case).
-> > >>
-> > >> Cheers,
-> > >> Markus
-> > >>
-> > >>
-> > >>
-> > >> On 2018-12-05 04:07, Yueyi Li wrote:
-> > >>> Hi Markus,
-> > >>>
-> > >>> Thanks for your review.
-> > >>>
-> > >>> On 2018/12/4 18:20, Markus F.X.J. Oberhumer wrote:
-> > >>>> Hi,
-> > >>>>
-> > >>>> I don't think that address space wraparound is legal in C, but I
-> > >>>> understand that we are in kernel land and if you really want to
-> > >>>> compress the last virtual page 0xfffffffffffff000 the following
-> > >>>> small patch should fix that dubious case.
-> > >>> I guess the VA 0xfffffffffffff000 is available because KASLR be
-> > >>> enabled. For this case we can see:
+karg.hdr.id and port are indirectly controlled by user-space, hence leading
+to a potential exploitation of the Spectre variant 1 vulnerability.
 
-This is a weird case: I would expect the top 4k to be unmapped to
-leave room of ERR_PTR, etc.
+This issue was detected with the help of Smatch:
 
-> > >>>
-> > >>> crash> kmem 0xfffffffffffff000
-> > >>>         PAGE               PHYSICAL      MAPPING       INDEX CNT FLAGS
-> > >>> ffffffbfffffffc0        1fffff000 ffffffff1655ecb9  7181fd5  2
-> > >>> 8000000000064209 locked,uptodate,owner_priv_1,writeback,reclaim,swapbacked
-> > >>>
-> > >>>> This also avoids slowing down the the hot path of the compression
-> > >>>> core function.
-> > >>>>
-> > >>>> Cheers,
-> > >>>> Markus
-> > >>>>
-> > >>>>
-> > >>>>
-> > >>>> diff --git a/lib/lzo/lzo1x_compress.c b/lib/lzo/lzo1x_compress.c
-> > >>>> index 236eb21167b5..959dec45f6fe 100644
-> > >>>> --- a/lib/lzo/lzo1x_compress.c
-> > >>>> +++ b/lib/lzo/lzo1x_compress.c
-> > >>>> @@ -224,8 +224,8 @@ int lzo1x_1_compress(const unsigned char *in, size_t in_len,
-> > >>>>
-> > >>>>           while (l > 20) {
-> > >>>>                   size_t ll = l <= (M4_MAX_OFFSET + 1) ? l : (M4_MAX_OFFSET + 1);
-> > >>>> -               uintptr_t ll_end = (uintptr_t) ip + ll;
-> > >>>> -               if ((ll_end + ((t + ll) >> 5)) <= ll_end)
-> > >>>> +               // check for address space wraparound
-> > >>>> +               if (((uintptr_t) ip + ll + ((t + ll) >> 5)) <= (uintptr_t) ip)
-> > >>>>                           break;
+drivers/message/fusion/mptctl.c:1360 mptctl_getiocinfo() warn: potential spectre issue 'ioc->pfacts' [r]
+drivers/message/fusion/mptctl.c:2788 mptctl_hp_targetinfo() warn: potential spectre issue 'hd->sel_timeout' [r] (local cap)
 
-Please just use the standard add overflow checks from the kernel. See
-include/linux/overflow.h
+Fix this by sanitizing  both karg.hdr.id and port before using them to
+index ioc->pfacts and hd->sel_timeout.
 
-Specifically, check_add_overflow(operand1, operand2, &result). I
-assume something like:
+Notice that given that speculation windows are large, the policy is
+to kill the speculation on the first load and not worry if it can be
+completed with a dependent load/store [1].
 
-if (check_add_overflow(ip, ll, &ll_end))
-   freak_out();
+[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
 
-?
+Cc: stable@vger.kernel.org
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/message/fusion/mptctl.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-> > >>>>                   BUILD_BUG_ON(D_SIZE * sizeof(lzo_dict_t) > LZO1X_1_MEM_COMPRESS);
-> > >>>>                   memset(wrkmem, 0, D_SIZE * sizeof(lzo_dict_t));
-> > >>> I parsed panic ramdump and loaded CPU register values,  can see:
-> > >>>
-> > >>> -000|lzo1x_1_do_compress(
-> > >>>       |    in = 0xFFFFFFFFFFFFF000,
-> > >>>       |  ?,
-> > >>>       |    out = 0xFFFFFFFF2E2EE000,
-> > >>>       |    out_len = 0xFFFFFF801CAA3510,
-> > >>>       |  ?,
-> > >>>       |    wrkmem = 0xFFFFFFFF4EBC0000)
-> > >>>       |  dict = 0xFFFFFFFF4EBC0000
-> > >>>       |  op = 0x1
-> > >>>       |  ip = 0x9
-> > >>>       |  ii = 0x9
-> > >>>       |  in_end = 0x0
-> > >>>       |  ip_end = 0xFFFFFFFFFFFFFFEC
-> > >>>       |  m_len = 0
-> > >>>       |  m_off = 1922
-> > >>> -001|lzo1x_1_compress(
-> > >>>       |    in = 0xFFFFFFFFFFFFF000,
-> > >>>       |    in_len = 0,
-> > >>>       |    out = 0xFFFFFFFF2E2EE000,
-> > >>>       |    out_len = 0x00000001616FB7D0,
-> > >>>       |    wrkmem = 0xFFFFFFFF4EBC0000)
-> > >>>       |  ip = 0xFFFFFFFFFFFFF000
-> > >>>       |  op = 0xFFFFFFFF2E2EE000
-> > >>>       |  l = 4096
-> > >>>       |  t = 0
-> > >>>       |  ll = 4096
-> > >>>
-> > >>> ll = l = in_len = 4096 in lzo1x_1_compress,  so your patch is working
-> > >>> for this panic case, but, I`m
-> > >>> not sure, is it possible that in = 0xFFFFFFFFFFFFF000 and  in_len < 4096?
-> > >>>
-> > >>>
-> > >>> Thanks,
-> > >>> Yueyi
-> > >>>
-> > >
-> > >
-> >
-> > --
-> > Markus Oberhumer, <markus@oberhumer.com>, http://www.oberhumer.com/
->
->
->
-> --
-> Thanks,
-> //richard
-
-
-
+diff --git a/drivers/message/fusion/mptctl.c b/drivers/message/fusion/mptctl.c
+index 8d22d6134a89..f6c1311ae86f 100644
+--- a/drivers/message/fusion/mptctl.c
++++ b/drivers/message/fusion/mptctl.c
+@@ -66,6 +66,8 @@
+ #include <scsi/scsi_host.h>
+ #include <scsi/scsi_tcq.h>
+ 
++#include <linux/nospec.h>
++
+ #define COPYRIGHT	"Copyright (c) 1999-2008 LSI Corporation"
+ #define MODULEAUTHOR	"LSI Corporation"
+ #include "mptbase.h"
+@@ -1306,7 +1308,7 @@ mptctl_getiocinfo (unsigned long arg, unsigned int data_size)
+ 		kfree(karg);
+ 		return -EINVAL;
+ 	}
+-	port = karg->hdr.port;
++	port = array_index_nospec(karg->hdr.port, 2);
+ 
+ 	karg->port = port;
+ 	pdev = (struct pci_dev *) ioc->pcidev;
+@@ -2689,6 +2691,7 @@ mptctl_hp_targetinfo(unsigned long arg)
+ 	}
+ 	if (karg.hdr.id >= MPT_MAX_FC_DEVICES)
+ 		return -EINVAL;
++	karg.hdr.id = array_index_nospec(karg.hdr.id, MPT_MAX_FC_DEVICES);
+ 	dctlprintk(ioc, printk(MYIOC_s_DEBUG_FMT "mptctl_hp_targetinfo called.\n",
+ 	    ioc->name));
+ 
 -- 
-Kees Cook
+2.19.2
+
