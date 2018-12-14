@@ -6,24 +6,24 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6880C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 23:03:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B022C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 23:03:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24657208C1
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 23:03:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EBCD420675
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 23:03:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730834AbeLNXD3 (ORCPT
+        id S1730866AbeLNXDe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 18:03:29 -0500
-Received: from outbound-smtp16.blacknight.com ([46.22.139.233]:34219 "EHLO
-        outbound-smtp16.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730694AbeLNXDO (ORCPT
+        Fri, 14 Dec 2018 18:03:34 -0500
+Received: from outbound-smtp12.blacknight.com ([46.22.139.17]:42127 "EHLO
+        outbound-smtp12.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730023AbeLNXDO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 14 Dec 2018 18:03:14 -0500
 Received: from mail.blacknight.com (pemlinmail01.blacknight.ie [81.17.254.10])
-        by outbound-smtp16.blacknight.com (Postfix) with ESMTPS id 137711C20B0
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 23:03:13 +0000 (GMT)
-Received: (qmail 31313 invoked from network); 14 Dec 2018 23:03:12 -0000
+        by outbound-smtp12.blacknight.com (Postfix) with ESMTPS id 8CA061C2081
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 23:03:12 +0000 (GMT)
+Received: (qmail 31280 invoked from network); 14 Dec 2018 23:03:12 -0000
 Received: from unknown (HELO stampy.163woodhaven.lan) (mgorman@techsingularity.net@[37.228.245.71])
   by 81.17.254.9 with ESMTPA; 14 Dec 2018 23:03:12 -0000
 From:   Mel Gorman <mgorman@techsingularity.net>
@@ -35,9 +35,9 @@ Cc:     David Rientjes <rientjes@google.com>,
         kirill@shutemov.name, Andrew Morton <akpm@linux-foundation.org>,
         Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
         Mel Gorman <mgorman@techsingularity.net>
-Subject: [PATCH 09/14] mm, compaction: Ignore the fragmentation avoidance boost for isolation and compaction
-Date:   Fri, 14 Dec 2018 23:03:05 +0000
-Message-Id: <20181214230310.572-10-mgorman@techsingularity.net>
+Subject: [PATCH 07/14] mm, compaction: Always finish scanning of a full pageblock
+Date:   Fri, 14 Dec 2018 23:03:03 +0000
+Message-Id: <20181214230310.572-8-mgorman@techsingularity.net>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20181214230310.572-1-mgorman@techsingularity.net>
 References: <20181214230310.572-1-mgorman@techsingularity.net>
@@ -46,48 +46,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When pageblocks get fragmented, watermarks are artifically boosted to pages
-are reclaimed to avoid further fragmentation events. However, compaction
-is often either fragmentation-neutral or moving movable pages away from
-unmovable/reclaimable pages. As the actual watermarks are preserved,
-allow compaction to ignore the boost factor.
+When compaction is finishing, it uses a flag to ensure the pageblock is
+complete.  However, in general it makes sense to always complete migration
+of a pageblock. Minimally, skip information is based on a pageblock and
+partially scanned pageblocks may incur more scanning in the future. The
+pageblock skip handling also becomes more strict later in the series and
+the hint is more useful if a complete pageblock was always scanned.
 
-1-socket thpscale
-                                    4.20.0-rc6             4.20.0-rc6
-                               finishscan-v1r4           noboost-v1r4
-Amean     fault-both-1         0.00 (   0.00%)        0.00 *   0.00%*
-Amean     fault-both-3      3849.90 (   0.00%)     3753.53 (   2.50%)
-Amean     fault-both-5      5054.13 (   0.00%)     5396.32 (  -6.77%)
-Amean     fault-both-7      7061.77 (   0.00%)     7393.46 (  -4.70%)
-Amean     fault-both-12    11560.59 (   0.00%)    12155.50 (  -5.15%)
-Amean     fault-both-18    16120.15 (   0.00%)    16445.96 (  -2.02%)
-Amean     fault-both-24    19804.31 (   0.00%)    20465.03 (  -3.34%)
-Amean     fault-both-30    25018.73 (   0.00%)    20813.54 *  16.81%*
-Amean     fault-both-32    24380.19 (   0.00%)    22384.02 (   8.19%)
-
-The impact on the scan rates is a mixed bag because this patch is very
-sensitive to timing and whether the boost was active or not. However,
-detailed tracing indicated that failure of migration due to a premature
-ENOMEM triggered by watermark checks were eliminated.
+The impact here is potentially on latencies as more scanning is done
+but it's not a consistent win or loss as the scanning is not always a
+high percentage of the pageblock and sometimes it is offset by future
+reductions in scanning. Hence, the results are not presented this time as
+it's a mix of gains/losses without any clear pattern. However, completing
+scanning of the pageblock is important for later patches.
 
 Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
 ---
- mm/page_alloc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ mm/compaction.c | 19 ++++++++-----------
+ mm/internal.h   |  1 -
+ 2 files changed, 8 insertions(+), 12 deletions(-)
 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 80535cd55a92..c7b80e62bfd9 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -3043,7 +3043,7 @@ int __isolate_free_page(struct page *page, unsigned int order)
- 		 * watermark, because we already know our high-order page
- 		 * exists.
- 		 */
--		watermark = min_wmark_pages(zone) + (1UL << order);
-+		watermark = zone->_watermark[WMARK_MIN] + (1UL << order);
- 		if (!zone_watermark_ok(zone, 0, watermark, 0, ALLOC_CMA))
- 			return 0;
+diff --git a/mm/compaction.c b/mm/compaction.c
+index 8134dba47584..4f51435c645a 100644
+--- a/mm/compaction.c
++++ b/mm/compaction.c
+@@ -1338,16 +1338,14 @@ static enum compact_result __compact_finished(struct compact_control *cc)
+ 	if (is_via_compact_memory(cc->order))
+ 		return COMPACT_CONTINUE;
  
+-	if (cc->finishing_block) {
+-		/*
+-		 * We have finished the pageblock, but better check again that
+-		 * we really succeeded.
+-		 */
+-		if (IS_ALIGNED(cc->migrate_pfn, pageblock_nr_pages))
+-			cc->finishing_block = false;
+-		else
+-			return COMPACT_CONTINUE;
+-	}
++	/*
++	 * Always finish scanning a pageblock to reduce the possibility of
++	 * fallbacks in the future. This is particularly important when
++	 * migration source is unmovable/reclaimable but it's not worth
++	 * special casing.
++	 */
++	if (!IS_ALIGNED(cc->migrate_pfn, pageblock_nr_pages))
++		return COMPACT_CONTINUE;
+ 
+ 	/* Direct compactor: Is a suitable page free? */
+ 	for (order = cc->order; order < MAX_ORDER; order++) {
+@@ -1389,7 +1387,6 @@ static enum compact_result __compact_finished(struct compact_control *cc)
+ 				return COMPACT_SUCCESS;
+ 			}
+ 
+-			cc->finishing_block = true;
+ 			return COMPACT_CONTINUE;
+ 		}
+ 	}
+diff --git a/mm/internal.h b/mm/internal.h
+index f40d06d70683..9b32f4cab0ae 100644
+--- a/mm/internal.h
++++ b/mm/internal.h
+@@ -203,7 +203,6 @@ struct compact_control {
+ 	bool direct_compaction;		/* False from kcompactd or /proc/... */
+ 	bool whole_zone;		/* Whole zone should/has been scanned */
+ 	bool contended;			/* Signal lock or sched contention */
+-	bool finishing_block;		/* Finishing current pageblock */
+ };
+ 
+ unsigned long
 -- 
 2.16.4
 
