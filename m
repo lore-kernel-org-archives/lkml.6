@@ -2,129 +2,194 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FE4DC67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 13:36:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54911C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 13:38:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C103F20643
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 13:36:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UVznxn6o"
+	by mail.kernel.org (Postfix) with ESMTP id EB84C20643
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 13:38:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729918AbeLNNgl (ORCPT
+        id S1729927AbeLNNiG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 08:36:41 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:35227 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726554AbeLNNgk (ORCPT
+        Fri, 14 Dec 2018 08:38:06 -0500
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:37864 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729465AbeLNNiF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 08:36:40 -0500
-Received: by mail-wr1-f68.google.com with SMTP id 96so5472476wrb.2;
-        Fri, 14 Dec 2018 05:36:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=pC1BwrKhI6S1WVsqkTH4TSPTqrje5huAZF08J04RsMc=;
-        b=UVznxn6oQw4zl8PzxCZAktAa8Ssrcjbk8CcjPLqWmHfefYTmHoiQ8QgPMOkgaUPLzT
-         D0TwJ4pejYx9cfOCGqQlD5pR2Ipw8u4s/p0/SVAkdYiZzf3rhLI8P/JDSIH5Khrigu5+
-         cUTIW6ZaJAUijh1wxpt9kq8cxhnFKUsWFxVkewlLEBSk6vXIFpUp+JyBUmXl4Ss7E/vt
-         2xAbLKj7k5Mx/2dCTDSGwEt2BCrX8EPP2wzmau1Ymd8Wm9t5hfh/lZu0eKzIkcaEmct/
-         U46ewAvmengS/4oiuLUXUTogB3e2INqRO8iVOxtQlUbsJ+2y2m9thIMIinoYkuJDAHfM
-         LyZg==
+        Fri, 14 Dec 2018 08:38:05 -0500
+Received: by mail-qk1-f195.google.com with SMTP id g125so3001619qke.4
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 05:38:04 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=pC1BwrKhI6S1WVsqkTH4TSPTqrje5huAZF08J04RsMc=;
-        b=gva4Fk9GwE1Ur5sxwGrimusiQN+XOiuUS+2rlaCWyg1aIONorwYxSD95fJlZygnl+m
-         pMTP32yn1JLTBlfXOOKlky9K6LoOafcvNbB36a4Wyen3PgCX4jQ1gWW7xgQ2MbciV6Tq
-         DVZOUzd39GMs8Az4CWGkAAUf0kxGSMXsnWGSprf8AMzyOve2SgRweZnZomudqCwfT99Z
-         Xrz5kfiTwpbVtYnG7u1zJU1yJvyrlbdVET6MafqSOynxvaew3vuWw4/nyDgm9KuZnegJ
-         cgRA/nS2dClO+tPU9pdTc1Xj322GthKy4ym6v5cBdblEUC7zgADGl6vzSPtI67Yt/rSW
-         JQjA==
-X-Gm-Message-State: AA+aEWadxKzVo8WA6J/aHRM9+ThhYdvSej971Cw9xIda4AZEmUaeLHXB
-        ADNDAilIgUsD4uRL5+xuRNs=
-X-Google-Smtp-Source: AFSGD/XI09JurqmxrCnthuZl+9ZYUPFDgnkLF7ZB2RianE5K0xPF+Ef/9D5aK4tt8oOEfQEjrc0N/Q==
-X-Received: by 2002:adf:e608:: with SMTP id p8mr2674964wrm.166.1544794598565;
-        Fri, 14 Dec 2018 05:36:38 -0800 (PST)
-Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
-        by smtp.gmail.com with ESMTPSA id t18sm3451645wmt.35.2018.12.14.05.36.37
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 14 Dec 2018 05:36:37 -0800 (PST)
-Date:   Fri, 14 Dec 2018 14:36:36 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-tegra@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 3/5] gpio: tegra186: Rename flow variable to type
-Message-ID: <20181214133636.GA23379@ulmo>
-References: <20181129170312.23625-1-thierry.reding@gmail.com>
- <20181129170312.23625-4-thierry.reding@gmail.com>
- <CACRpkdbuRJ+UAoZkZNtWNzrF2+_0h-ibkTaDXWcPe70yJCx+5w@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=QUVAg2Ax7nILc1ZQj4+Tg6FHQWQrVG8S8WRiii29Y74=;
+        b=omn0G12Wp01Sq9I/XpHiXSi7CU6F9e6+4m80vxV2Ve3V2spRKJnjT0EvaLPB4byTaw
+         Y1jgQIshuhPhvcdUQVPnbthT2DOJLedw0gBhlL/1xMtW7Xg/E0fUDswxBRt0mZVA8evb
+         xRpleqBrN5SNDyaqMHTXC/Xxae5coMVQGeqJKmGNND/ohyI30tye7lZ6UQte6RYQ1+Fy
+         kehp4eoCwvLZlviP3m1f8ydruw5F9CHbRX885goTm7z898SRe92s05RQkfVsM6WGoqvx
+         pxk1NbHKLcMLzJDrF3hiGThVfhcw03yu7Bcza/yl+LGDWrfpArmBTy1NGUejvMjh6lhF
+         f5qA==
+X-Gm-Message-State: AA+aEWatXlO+oFWubVMblQj/ezrEx//1ND5U9gtLDvziw0FyKHwP2Gkq
+        11o/roDIE/RYkTPQ+9L7D0F7vA/Tp9owWQbE8d0tnQ==
+X-Google-Smtp-Source: AFSGD/WUebGg1iPOAeFdKKoOCd+aBtLC/5cYlPzJn7wcrkM9nT4K0NQYAKU55mFf3PLng7hoyo6cWMEjsBpuCHj/Raw=
+X-Received: by 2002:a37:b2c2:: with SMTP id b185mr2515368qkf.194.1544794684335;
+ Fri, 14 Dec 2018 05:38:04 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="Q68bSM7Ycu6FN28Q"
-Content-Disposition: inline
-In-Reply-To: <CACRpkdbuRJ+UAoZkZNtWNzrF2+_0h-ibkTaDXWcPe70yJCx+5w@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20181201190153.GB4995@arks.localdomain> <20181214080700.GA4189@rocks>
+ <CAO-hwJJRuBbHKCmW4vcmjdDkNEF0==wuLC5ymSkw8mOHnkdwwQ@mail.gmail.com> <20181214133409.GB4189@rocks>
+In-Reply-To: <20181214133409.GB4189@rocks>
+From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Date:   Fri, 14 Dec 2018 14:37:52 +0100
+Message-ID: <CAO-hwJJsE0eFqYb8A9qFqohy6vXj4EB9qJ3myB_PPzbDa=Jo3Q@mail.gmail.com>
+Subject: Re: [PATCH] HID: asus: Add support for the ASUS T101HA keyboard dock
+To:     kernelrocks@gmail.com
+Cc:     Jiri Kosina <jikos@kernel.org>,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>, mbrugger@suse.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---Q68bSM7Ycu6FN28Q
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Dec 14, 2018 at 02:34:43PM +0100, Linus Walleij wrote:
-> On Thu, Nov 29, 2018 at 6:03 PM Thierry Reding <thierry.reding@gmail.com>=
- wrote:
->=20
-> > From: Thierry Reding <treding@nvidia.com>
+On Fri, Dec 14, 2018 at 2:34 PM Aleix Roca Nonell <kernelrocks@gmail.com> wrote:
+>
+> Hi Benjamin! :D
+>
+> On Fri, Dec 14, 2018 at 09:25:20AM +0100, Benjamin Tissoires wrote:
+> > Hi Aleix,
 > >
-> > The IRQ core code refers to the interrupt type by that name, whereas the
-> > term flow is almost never used. Some GPIO controllers use the term
-> > flow_type, but it is most consistent to just go with the IRQ core
-> > terminology.
+> > On Fri, Dec 14, 2018 at 9:07 AM Aleix Roca Nonell <kernelrocks@gmail.com> wrote:
+> > >
+> > > Kind remminder ping :)
 > >
-> > Signed-off-by: Thierry Reding <treding@nvidia.com>
->=20
-> Patch applied.
->=20
-> No need to wait for genirq or other changes to apply this.
+> > Hehe, I have seen the patch floating by and realized I would need more
+> > than 2 minutes to answer it so it fell a little bit behind in my TODO
+> > list.
+> >
+> > Let's try to work on this now.
+> >
+> > >
+> > > I'm also adding my fellow Matthias in CC
+> > >
+> > > On Sat, Dec 01, 2018 at 08:01:53PM +0100, Aleix Roca Nonell wrote:
+> > > > The ASUS T101HA keyboard dock generates HID events using the ASUS vendor
+> > > > specific UsagePage 0xff31. In consequence, some multimedia keys such as
+> > > > brightness up and down are not working with hid-generic.
+> > > >
+> > > > This commit adds the T101HA dock into the supported device list of the
+> > > > hid-asus driver. It also prevents the dock's integrated touchpad to be
+> > > > bound with hid-asus given that it is already working fine with
+> > > > hid-multitouch.
+> > > >
+> > > > Signed-off-by: Aleix Roca Nonell <kernelrocks@gmail.com>
+> > > > ---
+> > > >
+> > > > This is my very first kernel patch done in my free time (be aware of the
+> > > > newbie!!) so please, let me know if I can improve anything and I will
+> > > > happily do it :)
+> > > >
+> > > >  drivers/hid/hid-asus.c | 12 ++++++++++++
+> > > >  drivers/hid/hid-ids.h  |  1 +
+> > > >  2 files changed, 13 insertions(+)
+> > > >
+> > > > diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
+> > > > index ab8bd40a77ed..d8b55dca97c6 100644
+> > > > --- a/drivers/hid/hid-asus.c
+> > > > +++ b/drivers/hid/hid-asus.c
+> > > > @@ -42,6 +42,7 @@ MODULE_AUTHOR("Frederik Wenigwieser <frederik.wenigwieser@gmail.com>");
+> > > >  MODULE_DESCRIPTION("Asus HID Keyboard and TouchPad");
+> > > >
+> > > >  #define T100_TPAD_INTF 2
+> > > > +#define T101HA_TPAD_INTF 2
+> > > >
+> > > >  #define T100CHI_MOUSE_REPORT_ID 0x06
+> > > >  #define FEATURE_REPORT_ID 0x0d
+> > > > @@ -70,6 +71,7 @@ MODULE_DESCRIPTION("Asus HID Keyboard and TouchPad");
+> > > >  #define QUIRK_T100_KEYBOARD          BIT(6)
+> > > >  #define QUIRK_T100CHI                        BIT(7)
+> > > >  #define QUIRK_G752_KEYBOARD          BIT(8)
+> > > > +#define QUIRK_T101HA_DOCK            BIT(9)
+> > > >
+> > > >  #define I2C_KEYBOARD_QUIRKS                  (QUIRK_FIX_NOTEBOOK_REPORT | \
+> > > >                                                QUIRK_NO_INIT_REPORTS | \
+> > > > @@ -649,6 +651,14 @@ static int asus_probe(struct hid_device *hdev, const struct hid_device_id *id)
+> > > >       int ret;
+> > > >       struct asus_drvdata *drvdata;
+> > > >
+> > > > +     if (id->driver_data & QUIRK_T101HA_DOCK) {
+> > > > +             struct usb_interface *intf = to_usb_interface(hdev->dev.parent);
+> >
+> > I know the hid-asus driver already does this for the other devices,
+> > but it would be nice not to. USB is part of the low level transport
+> > and HID drivers should have no reasons to assume the USB driver is
+> > used and that it will stay forever.
+> >
+> > What I ask when we have such a case is to check on the report
+> > descriptor to see if there is anything we could use in it (usually the
+> > application) to skip this HID interface.
+> >
+> > Besides that, there is not much more to say.
+>
+> Great I will do that!
+>
+> > For having a look at the report descriptor, you can either use printk
+> > in the kernel, or use hid-recorder as root in
+> > https://gitlab.freedesktop.org/libevdev/hid-tools.
+>
+> Regarding the descriptor, shouldn't be ok to check
+> /sys/kernel/debug/hid/<dev>/rdesc ?
 
-The genirq patch was acked by both Thomas and Marc. Were you waiting for
-anything else on the rest of this series?
+Yep, that works too. I knew there was an other way from the kernel but
+couldn't remember it :)
 
-Thierry
+I am more used to hid-recorder as it agregates everything in a more
+compact way and you can then replay the traces with hid-replay.
 
---Q68bSM7Ycu6FN28Q
-Content-Type: application/pgp-signature; name="signature.asc"
+Cheers,
+Benjamin
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlwTseEACgkQ3SOs138+
-s6F0RRAAkBNay38yWFL3Omkl0uK0DU9odZW3Zn2R+bLQd3M1aAl891/gRC9SUOeR
-UGaPR/4s/vmsTj+wQRZbCI/h+Q9B3MWND73H7Myz7Eoa5MbByge0jt8xfTD+7Eii
-8ZzbS3vMq7WvDW4fXr4Zoo27p+Ll5fr3QDpCiT+3A6+XhAbnTws1/+eu8Y4WUSJl
-bD7w2jZ3BZe+ATLeDsz5RowBIYACxms92jrNke2VF2/nnUx270ezYojje1BnDPHx
-R7S9RTkSPKQbOSvwGaFXA35gu48SWjj6xFMFXTCZaabSby9FEx04Ro4j2luTZY1h
-m/3zajkLpxG+/VAbxOyXZrLOm9OSh3C049HIgYRtjLbE2Qsp9rMZnOunfI0wHilB
-hMkZv3Rti3ooofOVeAQBtyFLKjaYlQtd9o/wU8y1T/nxeFf0imcUZsCGNw+KB8kG
-lTrfGz2ML24xA62fiV+CP/goA7WNFH9MfXEEutxLK2WTZwX6wXsoMk3gY+PiahZY
-OMNXS1RI6G+/oSn+BT4a9C+bTQxC5rKROVN5XLHsj18030ZF/ugutEHy/y1m/LD5
-7v9inda5sdLlDeuckW0pighzujO3DDusebkN4rcHb1WGEnTzz+lrC7gU6zrTHTSJ
-tdvwZBQkMvTxzWzRhrg7Va0UhRM8+/EwxHc+t+VI+o/Zoh2FNM8=
-=8+uw
------END PGP SIGNATURE-----
-
---Q68bSM7Ycu6FN28Q--
+>
+> Thank you!
+>
+> >
+> > Cheers,
+> > Benjamin
+> >
+> > > > +
+> > > > +             /* use hid-multitouch for T101HA touchpad */
+> > > > +             if (intf->altsetting->desc.bInterfaceNumber == T101HA_TPAD_INTF)
+> > > > +                     return -ENODEV;
+> > > > +     }
+> > > > +
+> > > >       drvdata = devm_kzalloc(&hdev->dev, sizeof(*drvdata), GFP_KERNEL);
+> > > >       if (drvdata == NULL) {
+> > > >               hid_err(hdev, "Can't alloc Asus descriptor\n");
+> > > > @@ -830,6 +840,8 @@ static const struct hid_device_id asus_devices[] = {
+> > > >       { HID_USB_DEVICE(USB_VENDOR_ID_ASUSTEK,
+> > > >               USB_DEVICE_ID_ASUSTEK_T100TAF_KEYBOARD),
+> > > >         QUIRK_T100_KEYBOARD | QUIRK_NO_CONSUMER_USAGES },
+> > > > +     { HID_USB_DEVICE(USB_VENDOR_ID_ASUSTEK,
+> > > > +             USB_DEVICE_ID_ASUSTEK_T101HA_KEYBOARD), QUIRK_T101HA_DOCK },
+> > > >       { HID_USB_DEVICE(USB_VENDOR_ID_CHICONY, USB_DEVICE_ID_ASUS_AK1D) },
+> > > >       { HID_USB_DEVICE(USB_VENDOR_ID_TURBOX, USB_DEVICE_ID_ASUS_MD_5110) },
+> > > >       { HID_USB_DEVICE(USB_VENDOR_ID_JESS, USB_DEVICE_ID_ASUS_MD_5112) },
+> > > > diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
+> > > > index 4206428c0ba2..f1eee2778b70 100644
+> > > > --- a/drivers/hid/hid-ids.h
+> > > > +++ b/drivers/hid/hid-ids.h
+> > > > @@ -184,6 +184,7 @@
+> > > >  #define USB_DEVICE_ID_ASUSTEK_T100TA_KEYBOARD        0x17e0
+> > > >  #define USB_DEVICE_ID_ASUSTEK_T100TAF_KEYBOARD       0x1807
+> > > >  #define USB_DEVICE_ID_ASUSTEK_T100CHI_KEYBOARD       0x8502
+> > > > +#define USB_DEVICE_ID_ASUSTEK_T101HA_KEYBOARD        0x183d
+> > > >  #define USB_DEVICE_ID_ASUSTEK_T304_KEYBOARD  0x184a
+> > > >  #define USB_DEVICE_ID_ASUSTEK_I2C_KEYBOARD   0x8585
+> > > >  #define USB_DEVICE_ID_ASUSTEK_I2C_TOUCHPAD   0x0101
+> > > > --
+> > > > 2.19.2
+> > > >
