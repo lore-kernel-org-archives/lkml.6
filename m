@@ -7,50 +7,51 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7266FC6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:04:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B41EAC6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:05:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A2842148E
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:04:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 704DE214AE
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:05:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544789097;
-	bh=NKIlcCtcJSna1lPcLdO86HJt13VRN3oMTVYTVR3sCaU=;
+	s=default; t=1544789102;
+	bh=TsJtzxdF4wEBNtBIdJfxWIupsotyFWexn3/I/+niUvc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=stLFR6s9zEKeUeHiG4lNXtshGDjTO1T2XTF/cKiM1i+MyOevoSAehyQvF7j40scsj
-	 WOD1B/sdgYYB6Rm5u8yT77ynQIGZb6abZPy1qkTwq9UAxaFw+RQjr2c2blBoi+8B3Q
-	 54gfFiOdmyWQCgwiRnCiWLZqySbHI+8T3OM3Rmb0=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A2842148E
+	b=AdOvNJ2zoiHVYAqYNfr2LYzWPRJn0Jn5REIXL6+8gF/gbbIIVjZT/ScT9DzEf/PsJ
+	 LzUx45vGJS/lbv0QZmdxPl94BsT43TTMXegtSidSDlJO4rsurkYbMN48/5jYw3pGed
+	 bRzCSYk5h5f5LwFu5/pKgTfa6eeTwKrAsPlja6DE=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 704DE214AE
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730602AbeLNMEz (ORCPT
+        id S1730611AbeLNMFA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:04:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49598 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:05:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49694 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730564AbeLNMEw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:04:52 -0500
+        id S1730158AbeLNME5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:04:57 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A02C221486;
-        Fri, 14 Dec 2018 12:04:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D1E0921479;
+        Fri, 14 Dec 2018 12:04:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789091;
-        bh=NKIlcCtcJSna1lPcLdO86HJt13VRN3oMTVYTVR3sCaU=;
+        s=default; t=1544789096;
+        bh=TsJtzxdF4wEBNtBIdJfxWIupsotyFWexn3/I/+niUvc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PpOJBv8fIi5WhbY0PfSOC2nh9j6G6d/cttxjk2/tzHjU3SlPDeveULuFYDX09DLTX
-         n4HH63bvHmrjUzXOu2UyMN6yBgyr4SzSdT3CKY1jl8Ghsv3cMgrhMeYpJmTl84Sh2g
-         jVQDoPjqBmeECn3+xI3ILw/jMUY8J2FkQ4XJyyWM=
+        b=ftXzBGFSWyENSeKctd/giesAORFeCnyoLIQ0qma8Mm+4l2E9S6hussDKoE7vNnIb1
+         0HHKF/9CXLTC+8LHCBOujyb5rT1dySK5nPyf+scftolEY1vYCrz84+AdUmXMEoBt/7
+         wCp64eRk8pguCyx4mxK0oA3bw4H0qpi6o0o60h/U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        stable@vger.kernel.org, Robbie Ko <robbieko@synology.com>,
+        Filipe Manana <fdmanana@suse.com>,
+        David Sterba <dsterba@suse.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 090/142] thunderbolt: Prevent root port runtime suspend during NVM upgrade
-Date:   Fri, 14 Dec 2018 12:59:35 +0100
-Message-Id: <20181214115750.652229713@linuxfoundation.org>
+Subject: [PATCH 4.19 070/142] Btrfs: send, fix infinite loop due to directory rename dependencies
+Date:   Fri, 14 Dec 2018 12:59:15 +0100
+Message-Id: <20181214115749.857248862@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115747.053633987@linuxfoundation.org>
 References: <20181214115747.053633987@linuxfoundation.org>
@@ -69,92 +70,198 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 1830b6eeda1fed42d85f2388f79c926331a9b2d0 ]
+[ Upstream commit a4390aee72713d9e73f1132bcdeb17d72fbbf974 ]
 
-During NVM upgrade process the host router is hot-removed for a short
-while. During this time it is possible that the root port is moved into
-D3cold which would be fine if the root port could trigger PME on itself.
-However, many systems actually do not implement it so what happens is
-that the root port goes into D3cold and never wakes up unless userspace
-does PCI config space access, such as running 'lscpi'.
+When doing an incremental send, due to the need of delaying directory move
+(rename) operations we can end up in infinite loop at
+apply_children_dir_moves().
 
-For this reason we explicitly prevent the root port from runtime
-suspending during NVM upgrade.
+An example scenario that triggers this problem is described below, where
+directory names correspond to the numbers of their respective inodes.
 
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Parent snapshot:
+
+ .
+ |--- 261/
+       |--- 271/
+             |--- 266/
+                   |--- 259/
+                   |--- 260/
+                   |     |--- 267
+                   |
+                   |--- 264/
+                   |     |--- 258/
+                   |           |--- 257/
+                   |
+                   |--- 265/
+                   |--- 268/
+                   |--- 269/
+                   |     |--- 262/
+                   |
+                   |--- 270/
+                   |--- 272/
+                   |     |--- 263/
+                   |     |--- 275/
+                   |
+                   |--- 274/
+                         |--- 273/
+
+Send snapshot:
+
+ .
+ |-- 275/
+      |-- 274/
+           |-- 273/
+                |-- 262/
+                     |-- 269/
+                          |-- 258/
+                               |-- 271/
+                                    |-- 268/
+                                         |-- 267/
+                                              |-- 270/
+                                                   |-- 259/
+                                                   |    |-- 265/
+                                                   |
+                                                   |-- 272/
+                                                        |-- 257/
+                                                             |-- 260/
+                                                             |-- 264/
+                                                                  |-- 263/
+                                                                       |-- 261/
+                                                                            |-- 266/
+
+When processing inode 257 we delay its move (rename) operation because its
+new parent in the send snapshot, inode 272, was not yet processed. Then
+when processing inode 272, we delay the move operation for that inode
+because inode 274 is its ancestor in the send snapshot. Finally we delay
+the move operation for inode 274 when processing it because inode 275 is
+its new parent in the send snapshot and was not yet moved.
+
+When finishing processing inode 275, we start to do the move operations
+that were previously delayed (at apply_children_dir_moves()), resulting in
+the following iterations:
+
+1) We issue the move operation for inode 274;
+
+2) Because inode 262 depended on the move operation of inode 274 (it was
+   delayed because 274 is its ancestor in the send snapshot), we issue the
+   move operation for inode 262;
+
+3) We issue the move operation for inode 272, because it was delayed by
+   inode 274 too (ancestor of 272 in the send snapshot);
+
+4) We issue the move operation for inode 269 (it was delayed by 262);
+
+5) We issue the move operation for inode 257 (it was delayed by 272);
+
+6) We issue the move operation for inode 260 (it was delayed by 272);
+
+7) We issue the move operation for inode 258 (it was delayed by 269);
+
+8) We issue the move operation for inode 264 (it was delayed by 257);
+
+9) We issue the move operation for inode 271 (it was delayed by 258);
+
+10) We issue the move operation for inode 263 (it was delayed by 264);
+
+11) We issue the move operation for inode 268 (it was delayed by 271);
+
+12) We verify if we can issue the move operation for inode 270 (it was
+    delayed by 271). We detect a path loop in the current state, because
+    inode 267 needs to be moved first before we can issue the move
+    operation for inode 270. So we delay again the move operation for
+    inode 270, this time we will attempt to do it after inode 267 is
+    moved;
+
+13) We issue the move operation for inode 261 (it was delayed by 263);
+
+14) We verify if we can issue the move operation for inode 266 (it was
+    delayed by 263). We detect a path loop in the current state, because
+    inode 270 needs to be moved first before we can issue the move
+    operation for inode 266. So we delay again the move operation for
+    inode 266, this time we will attempt to do it after inode 270 is
+    moved (its move operation was delayed in step 12);
+
+15) We issue the move operation for inode 267 (it was delayed by 268);
+
+16) We verify if we can issue the move operation for inode 266 (it was
+    delayed by 270). We detect a path loop in the current state, because
+    inode 270 needs to be moved first before we can issue the move
+    operation for inode 266. So we delay again the move operation for
+    inode 266, this time we will attempt to do it after inode 270 is
+    moved (its move operation was delayed in step 12). So here we added
+    again the same delayed move operation that we added in step 14;
+
+17) We attempt again to see if we can issue the move operation for inode
+    266, and as in step 16, we realize we can not due to a path loop in
+    the current state due to a dependency on inode 270. Again we delay
+    inode's 266 rename to happen after inode's 270 move operation, adding
+    the same dependency to the empty stack that we did in steps 14 and 16.
+    The next iteration will pick the same move dependency on the stack
+    (the only entry) and realize again there is still a path loop and then
+    again the same dependency to the stack, over and over, resulting in
+    an infinite loop.
+
+So fix this by preventing adding the same move dependency entries to the
+stack by removing each pending move record from the red black tree of
+pending moves. This way the next call to get_pending_dir_moves() will
+not return anything for the current parent inode.
+
+A test case for fstests, with this reproducer, follows soon.
+
+Signed-off-by: Robbie Ko <robbieko@synology.com>
+Reviewed-by: Filipe Manana <fdmanana@suse.com>
+[Wrote changelog with example and more clear explanation]
+Signed-off-by: Filipe Manana <fdmanana@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/thunderbolt/switch.c | 40 ++++++++++++++++++++++++++++++++++--
- 1 file changed, 38 insertions(+), 2 deletions(-)
+ fs/btrfs/send.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/thunderbolt/switch.c b/drivers/thunderbolt/switch.c
-index 7442bc4c6433..dd9ae6f5d19c 100644
---- a/drivers/thunderbolt/switch.c
-+++ b/drivers/thunderbolt/switch.c
-@@ -864,6 +864,30 @@ static ssize_t key_store(struct device *dev, struct device_attribute *attr,
+diff --git a/fs/btrfs/send.c b/fs/btrfs/send.c
+index ba8950bfd9c7..84cb6e5ef36c 100644
+--- a/fs/btrfs/send.c
++++ b/fs/btrfs/send.c
+@@ -3344,7 +3344,8 @@ static void free_pending_move(struct send_ctx *sctx, struct pending_dir_move *m)
+ 	kfree(m);
  }
- static DEVICE_ATTR(key, 0600, key_show, key_store);
  
-+static void nvm_authenticate_start(struct tb_switch *sw)
-+{
-+	struct pci_dev *root_port;
-+
-+	/*
-+	 * During host router NVM upgrade we should not allow root port to
-+	 * go into D3cold because some root ports cannot trigger PME
-+	 * itself. To be on the safe side keep the root port in D0 during
-+	 * the whole upgrade process.
-+	 */
-+	root_port = pci_find_pcie_root_port(sw->tb->nhi->pdev);
-+	if (root_port)
-+		pm_runtime_get_noresume(&root_port->dev);
-+}
-+
-+static void nvm_authenticate_complete(struct tb_switch *sw)
-+{
-+	struct pci_dev *root_port;
-+
-+	root_port = pci_find_pcie_root_port(sw->tb->nhi->pdev);
-+	if (root_port)
-+		pm_runtime_put(&root_port->dev);
-+}
-+
- static ssize_t nvm_authenticate_show(struct device *dev,
- 	struct device_attribute *attr, char *buf)
+-static void tail_append_pending_moves(struct pending_dir_move *moves,
++static void tail_append_pending_moves(struct send_ctx *sctx,
++				      struct pending_dir_move *moves,
+ 				      struct list_head *stack)
  {
-@@ -913,10 +937,18 @@ static ssize_t nvm_authenticate_store(struct device *dev,
- 
- 		sw->nvm->authenticating = true;
- 
--		if (!tb_route(sw))
-+		if (!tb_route(sw)) {
-+			/*
-+			 * Keep root port from suspending as long as the
-+			 * NVM upgrade process is running.
-+			 */
-+			nvm_authenticate_start(sw);
- 			ret = nvm_authenticate_host(sw);
--		else
-+			if (ret)
-+				nvm_authenticate_complete(sw);
-+		} else {
- 			ret = nvm_authenticate_device(sw);
-+		}
- 		pm_runtime_mark_last_busy(&sw->dev);
- 		pm_runtime_put_autosuspend(&sw->dev);
+ 	if (list_empty(&moves->list)) {
+@@ -3355,6 +3356,10 @@ static void tail_append_pending_moves(struct pending_dir_move *moves,
+ 		list_add_tail(&moves->list, stack);
+ 		list_splice_tail(&list, stack);
  	}
-@@ -1336,6 +1368,10 @@ static int tb_switch_add_dma_port(struct tb_switch *sw)
- 	if (ret <= 0)
- 		return ret;
++	if (!RB_EMPTY_NODE(&moves->node)) {
++		rb_erase(&moves->node, &sctx->pending_dir_moves);
++		RB_CLEAR_NODE(&moves->node);
++	}
+ }
  
-+	/* Now we can allow root port to suspend again */
-+	if (!tb_route(sw))
-+		nvm_authenticate_complete(sw);
-+
- 	if (status) {
- 		tb_sw_info(sw, "switch flash authentication failed\n");
- 		tb_switch_set_uuid(sw);
+ static int apply_children_dir_moves(struct send_ctx *sctx)
+@@ -3369,7 +3374,7 @@ static int apply_children_dir_moves(struct send_ctx *sctx)
+ 		return 0;
+ 
+ 	INIT_LIST_HEAD(&stack);
+-	tail_append_pending_moves(pm, &stack);
++	tail_append_pending_moves(sctx, pm, &stack);
+ 
+ 	while (!list_empty(&stack)) {
+ 		pm = list_first_entry(&stack, struct pending_dir_move, list);
+@@ -3380,7 +3385,7 @@ static int apply_children_dir_moves(struct send_ctx *sctx)
+ 			goto out;
+ 		pm = get_pending_dir_moves(sctx, parent_ino);
+ 		if (pm)
+-			tail_append_pending_moves(pm, &stack);
++			tail_append_pending_moves(sctx, pm, &stack);
+ 	}
+ 	return 0;
+ 
 -- 
 2.19.1
 
