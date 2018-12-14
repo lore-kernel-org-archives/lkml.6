@@ -2,153 +2,215 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFD28C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 18:43:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BB90C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 18:43:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C45320879
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 18:43:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C4D77206E0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 18:43:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730580AbeLNSn3 (ORCPT
+        id S1730628AbeLNSnz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 13:43:29 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:37624 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729707AbeLNSn3 (ORCPT
+        Fri, 14 Dec 2018 13:43:55 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45960 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730410AbeLNSnz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 13:43:29 -0500
-Received: by mail-qk1-f196.google.com with SMTP id g125so3600164qke.4
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 10:43:28 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:cc:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ylV7QyH6JnFYmxIaNg0zTOiOeUel+cX6NExnJZKmEcE=;
-        b=qJ/vMnUyNfgaKLlvhFtJcbBwDzjtyobOZyUSOG5Qxgq35O7w/GfcC6ge4LI5+HkJ60
-         GjH2QjXJjYHwFhpsZxahT1qV5Z/9PIGj1tYic77+fQ4yJIBzaJVdI+h6bBFL3XsPpgXA
-         +UFguRKZIZcnJ/nl989y3wN80Cp/dSqynTORKL3Xp1+ks6DHGRXnt4UklaVhWvMIZh2c
-         wPzqzZlmlmEarvJQwQuXrYHfVw8P/mOZKKcXwCO+UfHDvRP80qLC9Tu4T38b6yEJcf6m
-         qC6/nMXcarHjR9z7CF63hd2C0meWe3VLS+RU/XWrE92P0oQoGwenSYyz4DZ02FNwaUCm
-         PFQQ==
-X-Gm-Message-State: AA+aEWbhYVXwOHH9AqIg/LA2nU9blFpRl1rfXfnh8emauC4MIghsbzTU
-        odZ5ZYfCBegvqK4oJRFKzGFtuw==
-X-Google-Smtp-Source: AFSGD/XHVTQX0x1X+fhmlBY8xZvTt7uI7Xf8JPjG6lMv2fc+veP9QumC3qD2u06zDnllGEInW4JQ6A==
-X-Received: by 2002:a37:a0c3:: with SMTP id j186mr3870995qke.18.1544813007976;
-        Fri, 14 Dec 2018 10:43:27 -0800 (PST)
-Received: from ?IPv6:2601:602:9802:a8dc::c5f1? ([2601:602:9802:a8dc::c5f1])
-        by smtp.gmail.com with ESMTPSA id r5sm1746540qke.33.2018.12.14.10.43.26
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 14 Dec 2018 10:43:27 -0800 (PST)
-Subject: Re: [PATCH] acpi / apei: fix NULL deref during init
-To:     Thomas Schoebel-Theuer <tst@schoebel-theuer.de>,
-        linux-kernel@vger.kernel.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>, Tony Luck <tony.luck@intel.com>,
-        Borislav Petkov <bp@alien8.de>
-References: <20181214181514.29891-1-tst@schoebel-theuer.de>
-Cc:     linux-acpi@vger.kernel.org
-From:   Laura Abbott <labbott@redhat.com>
-Message-ID: <641b4a9d-4eb8-5ba2-ac3b-bd0dd25fb7a6@redhat.com>
-Date:   Fri, 14 Dec 2018 10:43:25 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Fri, 14 Dec 2018 13:43:55 -0500
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBEIY0uC011281
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 13:43:52 -0500
+Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2pcftmx6wc-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 13:43:51 -0500
+Received: from localhost
+        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Fri, 14 Dec 2018 18:43:50 -0000
+Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
+        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 14 Dec 2018 18:43:45 -0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBEIhigj8847390
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 14 Dec 2018 18:43:44 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B43CEB2065;
+        Fri, 14 Dec 2018 18:43:44 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 85BB0B205F;
+        Fri, 14 Dec 2018 18:43:44 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.85.153.1])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Fri, 14 Dec 2018 18:43:44 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id A3C6E16C2C26; Fri, 14 Dec 2018 10:43:44 -0800 (PST)
+Date:   Fri, 14 Dec 2018 10:43:44 -0800
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Alan Stern <stern@rowland.harvard.edu>
+Cc:     David Goldblatt <davidtgoldblatt@gmail.com>,
+        mathieu.desnoyers@efficios.com,
+        Florian Weimer <fweimer@redhat.com>, triegel@redhat.com,
+        libc-alpha@sourceware.org, andrea.parri@amarulasolutions.com,
+        will.deacon@arm.com, peterz@infradead.org, boqun.feng@gmail.com,
+        npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
+        luc.maranget@inria.fr, akiyks@gmail.com, dlustig@nvidia.com,
+        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Linux: Implement membarrier function
+Reply-To: paulmck@linux.ibm.com
+References: <20181214002043.GP4170@linux.ibm.com>
+ <Pine.LNX.4.44L0.1812141013070.1570-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-In-Reply-To: <20181214181514.29891-1-tst@schoebel-theuer.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Pine.LNX.4.44L0.1812141013070.1570-100000@iolanthe.rowland.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18121418-0052-0000-0000-00000367665F
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010225; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000271; SDB=6.01131762; UDB=6.00588201; IPR=6.00911893;
+ MB=3.00024692; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-14 18:43:49
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18121418-0053-0000-0000-00005F1BBC80
+Message-Id: <20181214184344.GW4170@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-14_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=936 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812140159
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-(adding some more people, please remember to run get_maintainer.pl
-to get the full list in the future)
-On 12/14/18 10:15 AM, Thomas Schoebel-Theuer wrote:
-> Since commit commit d91525eb8ee6 ("ACPI, EINJ: Enhance error injection
-> tolerance level"), starting with kernel 4.0, the following happens during
-> boot of a specific old hardware:
+On Fri, Dec 14, 2018 at 10:31:51AM -0500, Alan Stern wrote:
+> On Thu, 13 Dec 2018, Paul E. McKenney wrote:
 > 
-> APEI: Can not request [mem 0x0009c2f2-0x0009c2fc] for APEI ERST registers
-> BUG: unable to handle kernel NULL pointer dereference at           (null)
-> IP: [<ffffffff81343d8e>] __list_del_entry+0x5c/0x98
-> PGD 0
-> Oops: 0000 [#1] SMP
-> Modules linked in:
-> CPU: 0 PID: 1 UID: 0 Comm: swapper/0 Not tainted 4.4.0-ui18344.004-uiabi1-infong-amd64 #1
-> Hardware name: IBM IBM eServer BladeCenter HS12 -[8028Z5S]-/Server Blade, BIOS -[N1E150AUS-1.11]- 11/04/2010
-> task: ffff88021fe4e040 ti: ffff88021fe7c000 task.ti: ffff88021fe7c000
-> RIP: 0010:[<ffffffff81343d8e>]  [<ffffffff81343d8e>] __list_del_entry+0x5c/0x98
-> RSP: 0000:ffff88021fe7fd18  EFLAGS: 00010207
-> RAX: 0000000000000000 RBX: ffff88021fe7fde0 RCX: ffff88021fe7fde0
-> RDX: ffffffff819bd040 RSI: dead000000000200 RDI: ffff88021fe7fde0
-> RBP: ffff88021fe7fd18 R08: 0000000000000000 R09: 0000000000000000
-> R10: ffffffff816ce240 R11: 0000000000000001 R12: ffffffff819bd040
-> R13: ffff88021fe7fda0 R14: ffff88021d2cd840 R15: 0000000000000000
-> FS:  0000000000000000(0000) GS:ffff88022fc00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000000000000000 CR3: 00000000019b6000 CR4: 0000000000040670
-> Stack:
->   ffff88021fe7fd30 ffffffff81343dd7 ffff88021fe7fde0 ffff88021fe7fd58
->   ffffffff813931c0 ffff88021fe7fda0 ffff88021fe7fe00 ffff88021d2cd840
->   ffff88021fe7fd70 ffffffff813931e5 00000000ffffffea ffff88021fe7fdf0
-> Call Trace:
->   [<ffffffff81343dd7>] list_del+0xd/0x25
->   [<ffffffff813931c0>] apei_res_clean+0x1f/0x37
->   [<ffffffff813931e5>] apei_resources_fini+0xd/0x19
->   [<ffffffff81393948>] apei_resources_request+0x24f/0x268
->   [<ffffffff8139301d>] ? apei_exec_for_each_entry+0x77/0x8e
->   [<ffffffff81b0f729>] ? setup_erst_disable+0x12/0x12
->   [<ffffffff81b0f816>] erst_init+0xed/0x2ca
->   [<ffffffff810003b2>] ? do_one_initcall+0x8c/0x174
->   [<ffffffff81b0f729>] ? setup_erst_disable+0x12/0x12
->   [<ffffffff81b0f729>] ? setup_erst_disable+0x12/0x12
->   [<ffffffff8100040f>] do_one_initcall+0xe9/0x174
->   [<ffffffff8105df00>] ? parse_args+0x161/0x296
->   [<ffffffff81ad6070>] kernel_init_freeable+0x169/0x1f6
->   [<ffffffff81ad579b>] ? do_early_param+0x88/0x88
->   [<ffffffff81663202>] ? rest_init+0x79/0x79
->   [<ffffffff8166320b>] kernel_init+0x9/0xd5
->   [<ffffffff816683f5>] ret_from_fork+0x55/0x80
->   [<ffffffff81663202>] ? rest_init+0x79/0x79
-> Code: 02 00 00 00 00 ad de 48 39 f0 75 1f 49 89 c0 48 c7 c2 38 de 8e 81 be 38 00 00 00 48 c7 c7 13 dd 8e 81 31 c0 e8 94 36 d0 ff eb 3a <48> 8b 30 48 39 fe 74 11 49 89 f0 48 c7 c2 6c de 8e 81 be 3b 00
-> RIP  [<ffffffff81343d8e>] __list_del_entry+0x5c/0x98
->   RSP <ffff88021fe7fd18>
-> CR2: 0000000000000000
-> ---[ end trace 3610e544cef27e81 ]---
-> Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000009
+> > > > I guess that I still haven't gotten over being a bit surprised that the
+> > > > RCU counting rule also applies to sys_membarrier().  ;-)
+> > > 
+> > > Why not?  They are both synchronization mechanisms with heavy-weight
+> > > write sides and light-weight read sides, and most importantly, they
+> > > provide the same Guarantee.
+> > 
+> > True, but I do feel the need to poke at it.
+> > 
+> > The zero-size sys_membarrier() read-side critical sections do make
+> > things act a bit differently, for example, interchanging the accesses
+> > in an RCU read-side critical section has no effect, while doing so in
+> > a sys_membarrier() reader can cause the result to be allowed.  One key
+> > point is that everything before the end of a read-side critical section
+> > of any type is ordered before any later grace period of that same type,
+> > and vice versa.
+> > 
+> > This is why reordering accesses matters for sys_membarrier() readers but
+> > not for RCU and SRCU readers -- in the case of RCU and SRCU readers,
+> > the accesses are inside the read-side critical section, while for
+> > sys_membarrier() readers, the read-side critical sections don't have
+> > an inside.  So yes, ordering also matters in the case of SRCU and
+> > RCU readers for accesses outside of the read-side critical sections.
+> > The reason sys_membarrier() seems surprising to me isn't because it is
+> > any different in theoretical structure, but rather because the practice
+> > is to put RCU and SRCU read-side accesses inside a read-side critical
+> > sections, which is impossible for sys_membarrier().
 > 
-> Reason is a conditional initialization of variable arch_res, which happens
-> only under a specific precondition. When the condition is false, the
-> variable remains uninitialized.
+> RCU and sys_membarrier are more similar than you might think at first.  
+> For one thing, if there were primitives for blocking and unblocking
+> reception of IPIs, those primitives would delimit critical sections for
+> sys_membarrier.  (Maybe such things do exist; I wouldn't know.)
+
+Within the kernel of course local_irq_disable() and friends.  In
+userspace, there have been proposals to make the IPI handler interact
+with rseq or equivalent, which would have a roughly similar effect.
+
+> For another, the way we model RCU isn't fully accurate for the Linux
+> kernel, as you know.  Since individual instructions cannot be
+> preempted, each instruction is a tiny read-side critical section.
+> Thus, litmus tests like this one:
 > 
-> This may later trigger a splat, e.g. when some error path is taken.
+> 	P0			P1
+> 	Wa=1			Wb=1
+> 	synchronize_rcu()	Ra=0
+> 	Rb=0
 > 
-> Solution: do the initialisation unconditionally. Also as a safeguard.
+> actually are forbidden in the kernel (provided P1 isn't part of the
+> idle loop!), even though the LKMM allows them.  However, it wouldn't
+> be forbidden if the accesses in P1 were swapped -- just like with
+> sys_membarrier.
+
+And that P1 isn't executing on a CPU that RCU believes to be offline,
+but yes.
+
+But this is an implementation choice, and SRCU makes a different choice,
+which would allow the litmus test shown above.  And it would be good to
+keep this freedom for the implementation, in other words, this difference
+is a good thing, so let's please keep it.  ;-)
+
+> Put these two observations together and you see that sys_membarrier is
+> almost exactly the same as RCU without explicit read-side critical
+> sections. Perhaps this isn't surprising, given that the initial
+> implementation of sys_membarrier() was pretty much the same as
+> synchronize_rcu().
+
+Heh!  The initial implementation in the Linux kernel was exactly
+synchronize_sched().  ;-)
+
+I would say that sys_membarrier() has zero-sized read-side critical
+sections, either comprising a single instruction (as is the case for
+synchronize_sched(), actually), preempt-disable regions of code
+(which are irrelevant to userspace execution), or the spaces between
+consecutive pairs of instructions (as is the case for the newer
+IPI-based implementation).
+
+The model picks the single-instruction option, and I haven't yet found
+a problem with this -- which is no surprise given that, as you say,
+an actual implementation makes this same choice.
+
+> > The other thing that took some time to get used to is the possibility
+> > of long delays during sys_membarrier() execution, allowing significant
+> > execution and reordering between different CPUs' IPIs.  This was key
+> > to my understanding of the six-process example, and probably needs to
+> > be clearly called out, including in an example or two.
 > 
-> Fixes: d91525eb8ee6a622ce476955fe1a2530ade87c83
-> Signed-off-by: Thomas Schoebel-Theuer <tst@schoebel-theuer.de>
-> ---
->   drivers/acpi/apei/apei-base.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+> In all the examples I'm aware of, no more than one of the IPIs
+> generated by each sys_membarrier call really matters.  (Of course,
+> there's no way to know in advance which one it will be, so you have to
+> send an IPI to every CPU.)  The execution delays and reordering
+> between different CPUs' IPIs don't appear to be significant.
+
+Well, there are litmus tests that are allowed in which the allowed
+execution is more easily explained in terms of delays between different
+CPUs' IPIs, so it seems worth keeping track of.
+
+There might be a litmus test that can tell the difference between
+simultaneous and non-simultaneous IPIs, but I cannot immediately think of
+one that matters.  Might be a failure of imagination on my part, though.
+
+> > The interleaving restrictions are straightforward for me, but the
+> > fixed-time approach does have some interesting cross-talk potential
+> > between sys_membarrier() and RCU read-side critical sections whose
+> > accesses have been reversed.  I don't believe that it is possible to
+> > leverage this "order the other guy's read-side critical sections" effect
+> > in the general case, but I could be missing something.
 > 
-> diff --git a/drivers/acpi/apei/apei-base.c b/drivers/acpi/apei/apei-base.c
-> index da370e1d31f4..ef931b8a0b11 100644
-> --- a/drivers/acpi/apei/apei-base.c
-> +++ b/drivers/acpi/apei/apei-base.c
-> @@ -494,8 +494,8 @@ int apei_resources_request(struct apei_resources *resources,
->   	if (rc)
->   		goto nvs_res_fini;
->   
-> +	apei_resources_init(&arch_res);
->   	if (arch_apei_filter_addr) {
-> -		apei_resources_init(&arch_res);
->   		rc = apei_get_arch_resources(&arch_res);
->   		if (rc)
->   			goto arch_res_fini;
+> I regard the fixed-time approach as nothing more than a heuristic
+> aid.  It's not an accurate explaination of what's really going on.
+
+Agreed, albeit a useful heuristic aid in scripts generating litmus tests.
+
+							Thanx, Paul
+
+> > If you are claiming that I am worrying unnecessarily, you are probably
+> > right.  But if I didn't worry unnecessarily, RCU wouldn't work at all!  ;-)
+> 
+> Alan
 > 
 
