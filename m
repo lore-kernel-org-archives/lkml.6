@@ -2,96 +2,117 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4736C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 21:39:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E94F4C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 21:39:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D13EF208C1
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 21:39:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 32E79206DD
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 21:39:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730994AbeLNVjf (ORCPT
+        id S1731111AbeLNVjl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 16:39:35 -0500
-Received: from iolanthe.rowland.org ([192.131.102.54]:60414 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1730887AbeLNVjf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 16:39:35 -0500
-Received: (qmail 6090 invoked by uid 2102); 14 Dec 2018 16:39:34 -0500
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 14 Dec 2018 16:39:34 -0500
-Date:   Fri, 14 Dec 2018 16:39:34 -0500 (EST)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
-cc:     David Goldblatt <davidtgoldblatt@gmail.com>,
-        <mathieu.desnoyers@efficios.com>,
-        Florian Weimer <fweimer@redhat.com>, <triegel@redhat.com>,
-        <libc-alpha@sourceware.org>, <andrea.parri@amarulasolutions.com>,
-        <will.deacon@arm.com>, <peterz@infradead.org>,
-        <boqun.feng@gmail.com>, <npiggin@gmail.com>, <dhowells@redhat.com>,
-        <j.alglave@ucl.ac.uk>, <luc.maranget@inria.fr>, <akiyks@gmail.com>,
-        <dlustig@nvidia.com>, <linux-arch@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] Linux: Implement membarrier function
-In-Reply-To: <20181214184344.GW4170@linux.ibm.com>
-Message-ID: <Pine.LNX.4.44L0.1812141404450.1570-100000@iolanthe.rowland.org>
+        Fri, 14 Dec 2018 16:39:41 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:47878 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730887AbeLNVjl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 16:39:41 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E465540258;
+        Fri, 14 Dec 2018 21:39:40 +0000 (UTC)
+Received: from jlaw-desktop.bos.csb (dhcp-17-208.bos.redhat.com [10.18.17.208])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1859D608E0;
+        Fri, 14 Dec 2018 21:39:40 +0000 (UTC)
+Subject: Re: [PATCH 2/2] livepatch: check kzalloc return values
+To:     Nicholas Mc Guire <hofrat@osadl.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     Jessica Yu <jeyu@kernel.org>, Jiri Kosina <jikos@kernel.org>,
+        Miroslav Benes <mbenes@suse.cz>,
+        Petr Mladek <pmladek@suse.com>, live-patching@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1544806570-21299-1-git-send-email-hofrat@osadl.org>
+ <1544806570-21299-2-git-send-email-hofrat@osadl.org>
+From:   Joe Lawrence <joe.lawrence@redhat.com>
+Organization: Red Hat
+Message-ID: <cc9d25f4-fc3b-f399-654b-9de09689acc5@redhat.com>
+Date:   Fri, 14 Dec 2018 16:39:39 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+In-Reply-To: <1544806570-21299-2-git-send-email-hofrat@osadl.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Fri, 14 Dec 2018 21:39:41 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 14 Dec 2018, Paul E. McKenney wrote:
-
-> I would say that sys_membarrier() has zero-sized read-side critical
-> sections, either comprising a single instruction (as is the case for
-> synchronize_sched(), actually), preempt-disable regions of code
-> (which are irrelevant to userspace execution), or the spaces between
-> consecutive pairs of instructions (as is the case for the newer
-> IPI-based implementation).
+On 12/14/2018 11:56 AM, Nicholas Mc Guire wrote:
+> kzalloc() return should always be checked - notably in example code
+> where this may be seen as reference. On failure of allocation in
+> livepatch_fix1_dummy_alloc() respectively dummy_alloc() previous
+> allocation is freed (thanks to Petr Mladek <pmladek@suse.com> for
+> catching this) and NULL returned.
 > 
-> The model picks the single-instruction option, and I haven't yet found
-> a problem with this -- which is no surprise given that, as you say,
-> an actual implementation makes this same choice.
-
-I believe that for RCU tests the LKMM gives the same results for
-length-zero critical sections interspersed between all the instructions
-and length-one critical sections surrounding all instructions (except
-synchronize_rcu).  But the proof is tricky and I haven't checked it
-carefully.
-
-> > > The other thing that took some time to get used to is the possibility
-> > > of long delays during sys_membarrier() execution, allowing significant
-> > > execution and reordering between different CPUs' IPIs.  This was key
-> > > to my understanding of the six-process example, and probably needs to
-> > > be clearly called out, including in an example or two.
-> > 
-> > In all the examples I'm aware of, no more than one of the IPIs
-> > generated by each sys_membarrier call really matters.  (Of course,
-> > there's no way to know in advance which one it will be, so you have to
-> > send an IPI to every CPU.)  The execution delays and reordering
-> > between different CPUs' IPIs don't appear to be significant.
+> Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+> Fixes: 439e7271dc2b ("livepatch: introduce shadow variable API")
+> ---
 > 
-> Well, there are litmus tests that are allowed in which the allowed
-> execution is more easily explained in terms of delays between different
-> CPUs' IPIs, so it seems worth keeping track of.
+> Problem located with an experimental coccinelle script
 > 
-> There might be a litmus test that can tell the difference between
-> simultaneous and non-simultaneous IPIs, but I cannot immediately think of
-> one that matters.  Might be a failure of imagination on my part, though.
+> Patch was compile tested with: x86_64_defconfig + FTRACE=y
+> FUNCTION_TRACER=y, EXPERT=y, LATENCYTOP=y, SAMPLES=y,
+> SAMPLE_LIVEPATCH=y
+> 
+> Patch is against 4.20-rc6 (localversion-next is next-20181214)
+> on top of 0001-livepatch-fix-non-static-warnings.patch 
+> 
+>  samples/livepatch/livepatch-shadow-fix1.c | 5 +++++
+>  samples/livepatch/livepatch-shadow-mod.c  | 4 ++++
+>  2 files changed, 9 insertions(+)
+> 
+> diff --git a/samples/livepatch/livepatch-shadow-fix1.c b/samples/livepatch/livepatch-shadow-fix1.c
+> index eaab10f..1974eb5 100644
+> --- a/samples/livepatch/livepatch-shadow-fix1.c
+> +++ b/samples/livepatch/livepatch-shadow-fix1.c
+> @@ -89,6 +89,11 @@ static __noclone struct dummy *livepatch_fix1_dummy_alloc(void)
+>  	 * pointer to handle resource release.
+>  	 */
+>  	leak = kzalloc(sizeof(int), GFP_KERNEL);
+> +	if (!leak) {
+> +		kfree(d);
+> +		return NULL;
+> +	}
+> +
+>  	klp_shadow_alloc(d, SV_LEAK, sizeof(leak), GFP_KERNEL,
+>  			 shadow_leak_ctor, leak);
+>  
+> diff --git a/samples/livepatch/livepatch-shadow-mod.c b/samples/livepatch/livepatch-shadow-mod.c
+> index dc69da0..b4ece36 100644
+> --- a/samples/livepatch/livepatch-shadow-mod.c
+> +++ b/samples/livepatch/livepatch-shadow-mod.c
+> @@ -123,6 +123,10 @@ static __noclone noinline struct dummy *dummy_alloc(void)
+>  
+>  	/* Oops, forgot to save leak! */
+>  	leak = kzalloc(sizeof(int), GFP_KERNEL);
+> +	if (!leak) {
+> +		kfree(d);
+> +		return NULL;
+> +	}
+>  
+>  	pr_info("%s: dummy @ %p, expires @ %lx\n",
+>  		__func__, d, d->jiffies_expire);
+> 
 
-	P0	P1	P2
-	Wc=1	[mb01]	Rb=1
-	memb	Wa=1	Rc=0
-	Ra=0	Wb=1	[mb02]
+Patch v2 2/2 looks good, thanks for combining.
 
-The IPIs have to appear in the positions shown, which means they cannot
-be simultaneous.  The test is allowed because P2's reads can be
-reordered.
+Acked-by: Joe Lawrence <joe.lawrence@redhat.com>
 
-Alan
-
+-- Joe
