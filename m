@@ -2,179 +2,187 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E7AFC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 14:15:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39E22C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 14:15:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5AF72206C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 14:15:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E4146206C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 14:15:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=poorly.run header.i=@poorly.run header.b="ICwF57aN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730130AbeLNOPH (ORCPT
+        id S1730122AbeLNOPm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 09:15:07 -0500
-Received: from esgaroth.petrovitsch.at ([78.47.184.11]:2732 "EHLO
-        esgaroth.tuxoid.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726554AbeLNOPH (ORCPT
+        Fri, 14 Dec 2018 09:15:42 -0500
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:42098 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729890AbeLNOPm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 09:15:07 -0500
-Received: from [10.68.100.236] (h10-gesig.woeg.acw.at [217.116.178.11] (may be forged))
-        (authenticated bits=0)
-        by esgaroth.tuxoid.at (8.15.2/8.15.2) with ESMTPSA id wBEEDHuR001286
-        (version=TLSv1 cipher=AES128-SHA bits=128 verify=NO);
-        Fri, 14 Dec 2018 15:13:18 +0100
-Subject: Re: Can we drop upstream Linux x32 support?
-To:     Rich Felker <dalias@libc.org>,
-        John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-Cc:     Andy Lutomirski <luto@kernel.org>, X86 ML <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Florian Weimer <fweimer@redhat.com>,
-        Mike Frysinger <vapier@gentoo.org>,
-        "H. J. Lu" <hjl.tools@gmail.com>, x32@buildd.debian.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-References: <CALCETrXoRAibsbWa9nfbDrt0iEuebMnCMhSFg-d9W-J2g8mDjw@mail.gmail.com>
- <70bb54b2-8ed3-b5ee-c02d-6ef66c4f27eb@physik.fu-berlin.de>
- <20181213160242.GV23599@brightrain.aerifal.cx>
-From:   Bernd Petrovitsch <bernd@petrovitsch.priv.at>
-Message-ID: <c8987b31-ed79-acef-a300-31ebf2c29d2e@petrovitsch.priv.at>
-Date:   Fri, 14 Dec 2018 15:13:10 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Fri, 14 Dec 2018 09:15:42 -0500
+Received: by mail-yw1-f67.google.com with SMTP id x2so2318693ywc.9
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 06:15:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=poorly.run; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=QGILX5ZO5eZc/l5EQU1PR2qLPMBe3eqixLTUZdadH/k=;
+        b=ICwF57aNe2VbdRONM2zz7YqgFA4eLVjHyw5W8mG80Q0Kmy/ofC81ra7vaLiB4837HA
+         w4g41KH5V736OkbIxnIxmPKsjCEVudzZ32mlvLbai4HESWlwTJoy0WMB13tJQds7JNy2
+         zBE3Wy5y5va3SDrr96LZCv8fqEiotOqtcPAhHscdsIv76PlpvGuG7ivT/1q23GBm9o7+
+         g4k2Yj5UcbHIdR1hZH3Q5SOH0pdEZ1GyoCtkvnNQ9a6jBZ1loJjhR9SLR/Tsf1GC0M5G
+         9eaQDSbtaF9pTU5ej6O+ktKMcm8ojI/7xxQQn41RoQjJsge1jyvf0sWDPPtWofVlNwSH
+         3CWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=QGILX5ZO5eZc/l5EQU1PR2qLPMBe3eqixLTUZdadH/k=;
+        b=jYTEHeN6B7Q5COdj9qdi45HZh1cnOFOb+b9T1WzxRbJxlpLzr2qVrAaR4xHV6rN5At
+         /P3b5u4Ts/oRu142SMisX7DaOngsi2+gccK2s6DmJi4zG1XO5tOw+iiXZlGp1stkdLE7
+         ql2/NuAi9X78zZIId3ANlbenp4gRbqqFYZxKxG4C1Hg91lOSeteZWR9NdtfzF/ffqw5v
+         7ozufAVMPsbStzDCAlRY1dF5fEjOAItCq+2mvkrnFzeBAz7ENwdD58dTrKbFvwj3+BuM
+         CS2mRh26V/WWcJpRTN4f9jMtMhc4jC/K/1InueO1ShxH2OgWit/D9l4ab6kehMT1I4cI
+         7PSA==
+X-Gm-Message-State: AA+aEWZbbbJgHFmJGGnIXu9WUGenWlYTHo8R9Pkq+iMt4SsyfMMIRDT/
+        RYvoOilTdKd8diErGV7i6IDyRbnRJ4FGMw==
+X-Google-Smtp-Source: AFSGD/WPMHi4sx0LCASWAZa4KCSVJGgKlSQU+XCbWcBhaE5soDKWSJ6L7iTBk1nkyFT3YlOrXZH2jw==
+X-Received: by 2002:a81:7c04:: with SMTP id x4mr3146142ywc.264.1544796941192;
+        Fri, 14 Dec 2018 06:15:41 -0800 (PST)
+Received: from localhost ([2620:0:1013:11:ad55:b1db:adfe:3b9f])
+        by smtp.gmail.com with ESMTPSA id a65sm460127ywa.84.2018.12.14.06.15.40
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 14 Dec 2018 06:15:40 -0800 (PST)
+Date:   Fri, 14 Dec 2018 09:15:39 -0500
+From:   Sean Paul <sean@poorly.run>
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Sean Paul <sean@poorly.run>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        TL Lim <tllim@pine64.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        linux-amarula@amarulasolutions.com
+Subject: Re: [PATCH v2 11/12] drm/panel: Add Feiyang FY07024DI26A30-D
+ MIPI-DSI LCD panel
+Message-ID: <20181214141539.GN154160@art_vandelay>
+References: <20181116163916.29621-1-jagan@amarulasolutions.com>
+ <20181116163916.29621-12-jagan@amarulasolutions.com>
+ <20181213150736.GL154160@art_vandelay>
+ <CAMty3ZAv1dHCRCShXYbxqMm4wV9WGDpAKPji+3G21eWq34ODaA@mail.gmail.com>
+ <20181213194804.GM154160@art_vandelay>
+ <CAMty3ZCkGudTL9NLnWjTPD8+xqEzY2d0oLN9x=64Hk8MzKTM5g@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20181213160242.GV23599@brightrain.aerifal.cx>
-Content-Type: multipart/mixed;
- boundary="------------544822C287D28255C7136853"
-Content-Language: en-US
-X-DCC-URT-Metrics: esgaroth.tuxoid.at 1060; Body=17 Fuz1=17 Fuz2=17
-X-Virus-Scanned: clamav-milter 0.97 at esgaroth.tuxoid.at
-X-Virus-Status: Clean
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMty3ZCkGudTL9NLnWjTPD8+xqEzY2d0oLN9x=64Hk8MzKTM5g@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------544822C287D28255C7136853
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+On Fri, Dec 14, 2018 at 04:35:11PM +0530, Jagan Teki wrote:
+> On Fri, Dec 14, 2018 at 1:25 AM Sean Paul <sean@poorly.run> wrote:
+> >
+> > On Fri, Dec 14, 2018 at 12:56:03AM +0530, Jagan Teki wrote:
+> > > On Thu, Dec 13, 2018 at 8:37 PM Sean Paul <sean@poorly.run> wrote:
+> > > >
+> > > > On Fri, Nov 16, 2018 at 10:09:15PM +0530, Jagan Teki wrote:
+> > > > > Feiyang FY07024DI26A30-D is 1024x600, 4-lane MIPI-DSI LCD panel.
+> > > > >
+> > > > > Add panel driver for it.
+> > > > >
+> > > > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> > > > > ---
+> > > > >  MAINTAINERS                                   |   6 +
+> > > > >  drivers/gpu/drm/panel/Kconfig                 |   9 +
+> > > > >  drivers/gpu/drm/panel/Makefile                |   1 +
+> > > > >  .../drm/panel/panel-feiyang-fy07024di26a30d.c | 286 ++++++++++++++++++
+> > > > >  4 files changed, 302 insertions(+)
+> > > > >  create mode 100644 drivers/gpu/drm/panel/panel-feiyang-fy07024di26a30d.c
+> > > > >
+> >
+> > /snip
+> >
+> > > > > diff --git a/drivers/gpu/drm/panel/panel-feiyang-fy07024di26a30d.c b/drivers/gpu/drm/panel/panel-feiyang-fy07024di26a30d.c
+> > > > > new file mode 100644
+> > > > > index 000000000000..a4b46bd8fdbe
+> > > > > --- /dev/null
+> > > > > +++ b/drivers/gpu/drm/panel/panel-feiyang-fy07024di26a30d.c
+> >
+> > /snip
+> >
+> > > > > +static int feiyang_prepare(struct drm_panel *panel)
+> > > > > +{
+> > > > > +     struct feiyang *ctx = panel_to_feiyang(panel);
+> > > > > +     struct mipi_dsi_device *dsi = ctx->dsi;
+> > > > > +     unsigned int i;
+> > > > > +     int ret;
+> > > > > +
+> > > > > +     ret = regulator_enable(ctx->dvdd);
+> > > > > +     if (ret)
+> > > > > +             return ret;
+> > > > > +
+> > > > > +     msleep(100);
+> > > >
+> > > > nit: You should do your best to correlate the sleeps with the timing parameters
+> > > > from the datasheet with a comment.
+> > > >
+> > > > ie:
+> > > >         /* T1: > 100ms */
+> > > >         msleep(100);
+> > >
+> > > Sorry, what does this mean?
+> >
+> > On page 9 of the datasheet you sent me [1], it has the delays required to safely
+> > power up the panel. This delay is the time between dvdd going high and avdd
+> > going high. On the figure in the datasheet, this would be T2 (T1 is dvdd rise
+> 
+> time between dvdd going high and avdd going high is T1 + T3 right?
+> 
+> T2 > 0ms
+> T3 > 20ms
+> 
+> In this case the delay can be msleep(20) ?
 
-On 13/12/2018 17:02, Rich Felker wrote:
-> On Tue, Dec 11, 2018 at 11:29:14AM +0100, John Paul Adrian Glaubitz wro=
-te:
->> I can't say anything about the syscall interface. However, what I do k=
-now
->> is that the weird combination of a 32-bit userland with a 64-bit kerne=
-l
->> interface is sometimes causing issues. For example, application code u=
-sually
->> expects things like time_t to be 32-bit on a 32-bit system. However, t=
-his
+Hmm, yeah, I didn't notice that T3 was > 20ms, that's kind of confusing. So I
+think you're right, this should be T2 + T3 > 20ms (T1 is covered in the
+regulator_enable of dvdd).
 
-IMHO this just historically grown (as in "it has been forever that way"
-- it sounds way better in Viennese dialect though;-).
+> 
+> > time and should be handled in the regulator subsystem (iirc)). Also according to
+> > the datasheet, T2 just needs to be > 0, so you don't even need this delay. You
+> > could replace this with a comment like:
+> >
+> >         /* T1 (dvdd rise time) + T2 (dvdd->avdd) > 0 */
+> >
+> > So for all of the msleeps below you should get the delays from the datasheet and
+> > add a comment referencing them.
+> 
+> T5 and T6 are delay between avdd to reset enable it can be 10 + 10
+> =&gt; 20ms and finally T12 which is 200 after reset.
+> 
+> What about the delay between resets, I need to understand it a bit.
 
->> isn't the case for x32 which is why code fails to build.
->=20
-> I don't see any basis for this claim about expecting time_t to be
-> 32-bit. I've encountered some programs that "implicitly assume" this
-> by virtue of assuming they can cast time_t to long to print it, or
-> similar. IIRC this was an issue in busybox at one point; I'm not sure
-> if it's been fixed. But any software that runs on non-Linux unices has
-> long been corrected. If not, 2038 is sufficiently close that catching
-> and correcting any such remaining bugs is more useful than covering
-> them up and making the broken code work as expected.
+These are usually accounted for at the end of disable. Take a look at the sleep
+parameters in panel-simple for an example.
 
-Yup, unconditionally providing 64bit
-time_t/timespec/timeval/...-equivalents with libc and syscall support
-also for 32bit architectures (and deprecating all 32bit versions) should
-be the way to go.
+Sean
 
-FWIW I have
-----  snip  ----
-#if defined __x86_64__
-# if defined __ILP32__		// x32
-#  define PRI_time_t	"lld"	// for time_t
-#  define PRI_nsec_t	"lld"	// for tv_nsec in struct timespec
-# else				// x86_64
-#  define PRI_time_t	"ld"	// for time_t
-#  define PRI_nsec_t	"ld"	// for tv_nsec in struct timespec
-# endif
-#else				// i[3-6]68
-# define PRI_time_t	"ld"	// for time_t
-# define PRI_nsec_t	"ld"	// for tv_nsec in struct timespec
-#endif
-----  snip  ----
-in my userspace code for printf() and friends - I don't know how libc's
-react to such a patch (and I don't care for the name of the macros as
-long it's obviously clear for which type they are).
-I assume/fear we won't get additional modifiers into the relevant
-standards for libc types (as they are far more like pid_t, uid_t etc.).
-And casting to u/intmaxptr_t to get a defined printf()-modifier doesn't
-look appealing to me to "solve" such issues.
-
-MfG,
-	Bernd
---=20
-"I dislike type abstraction if it has no real reason. And saving
-on typing is not a good reason - if your typing speed is the main
-issue when you're coding, you're doing something seriously wrong."
-    - Linus Torvalds
-
---------------544822C287D28255C7136853
-Content-Type: application/pgp-keys;
- name="pEpkey.asc"
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: attachment;
- filename="pEpkey.asc"
-
------BEGIN PGP PUBLIC KEY BLOCK-----
-
-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3D=3D
-=3Dv2Yn
------END PGP PUBLIC KEY BLOCK-----
-
---------------544822C287D28255C7136853--
+-- 
+Sean Paul, Software Engineer, Google / Chromium OS
