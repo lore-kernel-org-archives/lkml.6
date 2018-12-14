@@ -7,50 +7,50 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF68DC67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:09:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A3BDC6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:09:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 853782148E
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:09:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE7A9214AE
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:09:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544789347;
-	bh=ur/ktd4gcC+cXWxuT76veWkRBqKUPxPxHXuTfnDsFsI=;
+	s=default; t=1544789350;
+	bh=+h2t07JGPZ7gUYYpxbqrNuTVz7dJzE33rJUrzM2JTAA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=HUdt8Q/wwa+Aw+7VUoL0bp24Gji2twjS8zfpx0WEzG3p/qbNyG0Jf+W9dtdRUICEJ
-	 pkqn7t5NxT4YOjrZMUDtk6a9HTadvC4zXcho0NovdS5CfkdQXuH46UGbpJangyiKXP
-	 Y0FSZKld/3sOEYRRB1Mu9wneFhKDCyv9hMOWbWxM=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 853782148E
+	b=CvhMhpjsbGgaUaw19PoTNDzVHDAA8QZ/oE2dyCwW5MX0TRJhyBs5w9O2HWV9pkmk3
+	 GHEeDRn+fXLc9+R7a6zlCI7q79bLTW97n2b3t1uOxESHDOmmqzwfBMDGvnp7trDQ+z
+	 QVjcYqlZwm10jatPklik3KHkDnX9AblWXLtZMD1Y=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE7A9214AE
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731393AbeLNMJG (ORCPT
+        id S1731404AbeLNMJJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:09:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54582 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:09:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54678 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731376AbeLNMJA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:09:00 -0500
+        id S1731008AbeLNMJE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:09:04 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 568352148E;
-        Fri, 14 Dec 2018 12:08:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 568FE2147D;
+        Fri, 14 Dec 2018 12:09:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789338;
-        bh=ur/ktd4gcC+cXWxuT76veWkRBqKUPxPxHXuTfnDsFsI=;
+        s=default; t=1544789343;
+        bh=+h2t07JGPZ7gUYYpxbqrNuTVz7dJzE33rJUrzM2JTAA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=b82rqof/yOg/YWvh6+pCZ70Wb7GDgLRIIgtKxoMPsXvhPhsRe+UAi0aP1Rr2tPRis
-         Or9Sb7oKQT0xP4c+7rrGO3jiDkRk8MmOfttedn42LuoxmHTXDDrabB5OugCx8XILYT
-         sQd5Ftt1aynTM/kuvBTnfqUazNpfwvyAC+JeeC8A=
+        b=f1f3VhupuXxIjIPIxXQ2Pig3O6zIdCapA2DrfKm1abe9nv1165zRF8ZuJ1JLUByvK
+         SSQMHDK1xHEhEfqg8iJSGdv3IYBlhsgFvzLWYmV4yRiLrzfPn/hpNUp0ZhDdACV/ua
+         hGr1qdD7RHAfFnG7K3/h5a1XZ6dBEfp6IsvtQ0yA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Florian Westphal <fw@strlen.de>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
+        stable@vger.kernel.org, Nicolin Chen <nicoleotsuka@gmail.com>,
+        Guenter Roeck <linux@roeck-us.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 22/89] selftests: add script to stress-test nft packet path vs. control plane
-Date:   Fri, 14 Dec 2018 12:59:35 +0100
-Message-Id: <20181214115730.768087700@linuxfoundation.org>
+Subject: [PATCH 4.14 24/89] hwmon (ina2xx) Fix NULL id pointer in probe()
+Date:   Fri, 14 Dec 2018 12:59:37 +0100
+Message-Id: <20181214115730.884160101@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115729.658859279@linuxfoundation.org>
 References: <20181214115729.658859279@linuxfoundation.org>
@@ -69,147 +69,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 25d8bcedbf4329895dbaf9dd67baa6f18dad918c ]
+[ Upstream commit 70df9ebbd82c794ddfbb49d45b337f18d5588dc2 ]
 
-Start flood ping for each cpu while loading/flushing rulesets to make
-sure we do not access already-free'd rules from nf_tables evaluation loop.
+When using DT configurations, the id pointer might turn out to
+be NULL. Then the driver encounters NULL pointer access:
 
-Also add this to TARGETS so 'make run_tests' in selftest dir runs it
-automatically.
+  Unable to handle kernel read from unreadable memory at vaddr 00000018
+  [...]
+  PC is at ina2xx_probe+0x114/0x200
+  LR is at ina2xx_probe+0x10c/0x200
+  [...]
+  Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000b
 
-This would have caught the bug fixed in previous change
-("netfilter: nf_tables: do not skip inactive chains during generation update")
-sooner.
+The reason is that i2c core returns the id pointer by matching
+id_table with client->name, while the client->name is actually
+using the name from the first string in the DT compatible list,
+not the best one. So i2c core would fail to match the id_table
+if the best matched compatible string isn't the first one, and
+then would return a NULL id pointer.
 
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+This probably should be fixed in i2c core. But it doesn't hurt
+to make the driver robust. So this patch fixes it by using the
+"chip" that's added to unify both DT and non-DT configurations.
+
+Additionally, since id pointer could be null, so as id->name:
+  ina2xx 10-0047: power monitor (null) (Rshunt = 1000 uOhm)
+  ina2xx 10-0048: power monitor (null) (Rshunt = 10000 uOhm)
+
+So this patch also fixes NULL name pointer, using client->name
+to play safe and to align with hwmon->name.
+
+Fixes: bd0ddd4d0883 ("hwmon: (ina2xx) Add OF device ID table")
+Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/testing/selftests/Makefile              |  1 +
- tools/testing/selftests/netfilter/Makefile    |  6 ++
- tools/testing/selftests/netfilter/config      |  2 +
- .../selftests/netfilter/nft_trans_stress.sh   | 78 +++++++++++++++++++
- 4 files changed, 87 insertions(+)
- create mode 100644 tools/testing/selftests/netfilter/Makefile
- create mode 100644 tools/testing/selftests/netfilter/config
- create mode 100755 tools/testing/selftests/netfilter/nft_trans_stress.sh
+ drivers/hwmon/ina2xx.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
-index ea300e7818a7..10b89f5b9af7 100644
---- a/tools/testing/selftests/Makefile
-+++ b/tools/testing/selftests/Makefile
-@@ -20,6 +20,7 @@ TARGETS += memory-hotplug
- TARGETS += mount
- TARGETS += mqueue
- TARGETS += net
-+TARGETS += netfilter
- TARGETS += nsfs
- TARGETS += powerpc
- TARGETS += pstore
-diff --git a/tools/testing/selftests/netfilter/Makefile b/tools/testing/selftests/netfilter/Makefile
-new file mode 100644
-index 000000000000..47ed6cef93fb
---- /dev/null
-+++ b/tools/testing/selftests/netfilter/Makefile
-@@ -0,0 +1,6 @@
-+# SPDX-License-Identifier: GPL-2.0
-+# Makefile for netfilter selftests
-+
-+TEST_PROGS := nft_trans_stress.sh
-+
-+include ../lib.mk
-diff --git a/tools/testing/selftests/netfilter/config b/tools/testing/selftests/netfilter/config
-new file mode 100644
-index 000000000000..1017313e41a8
---- /dev/null
-+++ b/tools/testing/selftests/netfilter/config
-@@ -0,0 +1,2 @@
-+CONFIG_NET_NS=y
-+NF_TABLES_INET=y
-diff --git a/tools/testing/selftests/netfilter/nft_trans_stress.sh b/tools/testing/selftests/netfilter/nft_trans_stress.sh
-new file mode 100755
-index 000000000000..f1affd12c4b1
---- /dev/null
-+++ b/tools/testing/selftests/netfilter/nft_trans_stress.sh
-@@ -0,0 +1,78 @@
-+#!/bin/bash
-+#
-+# This test is for stress-testing the nf_tables config plane path vs.
-+# packet path processing: Make sure we never release rules that are
-+# still visible to other cpus.
-+#
-+# set -e
-+
-+# Kselftest framework requirement - SKIP code is 4.
-+ksft_skip=4
-+
-+testns=testns1
-+tables="foo bar baz quux"
-+
-+nft --version > /dev/null 2>&1
-+if [ $? -ne 0 ];then
-+	echo "SKIP: Could not run test without nft tool"
-+	exit $ksft_skip
-+fi
-+
-+ip -Version > /dev/null 2>&1
-+if [ $? -ne 0 ];then
-+	echo "SKIP: Could not run test without ip tool"
-+	exit $ksft_skip
-+fi
-+
-+tmp=$(mktemp)
-+
-+for table in $tables; do
-+	echo add table inet "$table" >> "$tmp"
-+	echo flush table inet "$table" >> "$tmp"
-+
-+	echo "add chain inet $table INPUT { type filter hook input priority 0; }" >> "$tmp"
-+	echo "add chain inet $table OUTPUT { type filter hook output priority 0; }" >> "$tmp"
-+	for c in $(seq 1 400); do
-+		chain=$(printf "chain%03u" "$c")
-+		echo "add chain inet $table $chain" >> "$tmp"
-+	done
-+
-+	for c in $(seq 1 400); do
-+		chain=$(printf "chain%03u" "$c")
-+		for BASE in INPUT OUTPUT; do
-+			echo "add rule inet $table $BASE counter jump $chain" >> "$tmp"
-+		done
-+		echo "add rule inet $table $chain counter return" >> "$tmp"
-+	done
-+done
-+
-+ip netns add "$testns"
-+ip -netns "$testns" link set lo up
-+
-+lscpu | grep ^CPU\(s\): | ( read cpu cpunum ;
-+cpunum=$((cpunum-1))
-+for i in $(seq 0 $cpunum);do
-+	mask=$(printf 0x%x $((1<<$i)))
-+        ip netns exec "$testns" taskset $mask ping -4 127.0.0.1 -fq > /dev/null &
-+        ip netns exec "$testns" taskset $mask ping -6 ::1 -fq > /dev/null &
-+done)
-+
-+sleep 1
-+
-+for i in $(seq 1 10) ; do ip netns exec "$testns" nft -f "$tmp" & done
-+
-+for table in $tables;do
-+	randsleep=$((RANDOM%10))
-+	sleep $randsleep
-+	ip netns exec "$testns" nft delete table inet $table 2>/dev/null
-+done
-+
-+randsleep=$((RANDOM%10))
-+sleep $randsleep
-+
-+pkill -9 ping
-+
-+wait
-+
-+rm -f "$tmp"
-+ip netns del "$testns"
+diff --git a/drivers/hwmon/ina2xx.c b/drivers/hwmon/ina2xx.c
+index 71d3445ba869..c2252cf452f5 100644
+--- a/drivers/hwmon/ina2xx.c
++++ b/drivers/hwmon/ina2xx.c
+@@ -491,7 +491,7 @@ static int ina2xx_probe(struct i2c_client *client,
+ 	}
+ 
+ 	data->groups[group++] = &ina2xx_group;
+-	if (id->driver_data == ina226)
++	if (chip == ina226)
+ 		data->groups[group++] = &ina226_group;
+ 
+ 	hwmon_dev = devm_hwmon_device_register_with_groups(dev, client->name,
+@@ -500,7 +500,7 @@ static int ina2xx_probe(struct i2c_client *client,
+ 		return PTR_ERR(hwmon_dev);
+ 
+ 	dev_info(dev, "power monitor %s (Rshunt = %li uOhm)\n",
+-		 id->name, data->rshunt);
++		 client->name, data->rshunt);
+ 
+ 	return 0;
+ }
 -- 
 2.19.1
 
