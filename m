@@ -2,101 +2,70 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5CFDC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 16:27:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51C42C43612
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 16:27:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E236206C2
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 16:27:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF6D1206C2
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 16:27:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="gKlefXV+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729792AbeLNQ1i (ORCPT
+        id S1730016AbeLNQ1x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 11:27:38 -0500
-Received: from smtprelay0039.hostedemail.com ([216.40.44.39]:39646 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728731AbeLNQ1i (ORCPT
+        Fri, 14 Dec 2018 11:27:53 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:36323 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729862AbeLNQ1x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 11:27:38 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay03.hostedemail.com (Postfix) with ESMTP id 44C51837F27F;
-        Fri, 14 Dec 2018 16:27:36 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: week04_7c675ea555646
-X-Filterd-Recvd-Size: 2922
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf03.hostedemail.com (Postfix) with ESMTPA;
-        Fri, 14 Dec 2018 16:27:34 +0000 (UTC)
-Message-ID: <8ae5c67a5c4516a783579e449313d1d59fe3a47d.camel@perches.com>
-Subject: Re: [PATCH] checkpatch: add Co-Developed-by to signature tags
-From:   Joe Perches <joe@perches.com>
-To:     Himanshu Jha <himanshujha199640@gmail.com>
-Cc:     Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>,
-        apw@canonical.com, Andrew Morton <akpm@linux-foundation.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, niklas.cassel@linaro.org
-Date:   Fri, 14 Dec 2018 08:27:33 -0800
-In-Reply-To: <20181214161604.GA17456@himanshu-Vostro-3559>
-References: <1544792494-15485-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
-         <839c1d04000164e27dff9742e3efc3bcff3025b6.camel@perches.com>
-         <20181214161604.GA17456@himanshu-Vostro-3559>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.1-1build1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Fri, 14 Dec 2018 11:27:53 -0500
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 2DE5125B75B;
+        Sat, 15 Dec 2018 03:27:50 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
+        t=1544804870; bh=74z4HWacQbb9o0MvBEcqOYNNpRJaZQdajPfxa6MrK8o=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=gKlefXV+9PPYoFKMu8xv/KYLm9EIgEBvPPHPrkPw4Vll3xTmiTESez2lGroFO5ScS
+         wIiTb+Dmkux2111Vw7/5WcWpCgUI53c9VPSJgLuBxQ6yoLdP6o9Ok49LIhJUYyAoUN
+         ScTBF9w1G/4u3+w939UkXnwujw5rUdPQ6qoECxGU=
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id 7303B9403C3; Fri, 14 Dec 2018 17:27:48 +0100 (CET)
+Date:   Fri, 14 Dec 2018 17:27:48 +0100
+From:   Simon Horman <horms@verge.net.au>
+To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] i2c: sh_mobile: Add support for r8a774c0 (RZ/G2E)
+Message-ID: <20181214162748.dt2ntmw5qn4j5q24@verge.net.au>
+References: <1544732554-7140-1-git-send-email-fabrizio.castro@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1544732554-7140-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-12-14 at 21:46 +0530, Himanshu Jha wrote:
-> On Fri, Dec 14, 2018 at 07:52:15AM -0800, Joe Perches wrote:
-> > On Fri, 2018-12-14 at 14:01 +0100, Jorge Ramirez-Ortiz wrote:
-> > > As per Documentation/process/submitting-patches, Co-developed-by is a
-> > > valid signature.
-> > > 
-> > > This commit removes the warning.
-> > 
-> > Your commit message doesn't match your subject.
-> > 
-> > A couple variants have been documented and only
-> > one should actually be used.
-> > 
-> > $ git grep -i co-developed-by Documentation/process/
-> > Documentation/process/5.Posting.rst: - Co-developed-by: states that the patch was also created by another developer
-> > Documentation/process/submitting-patches.rst:12) When to use Acked-by:, Cc:, and Co-Developed-by:
-> > Documentation/process/submitting-patches.rst:A Co-Developed-by: states that the patch was also created by another developer
-> > 
-> > $ git log --grep="co-developed-by:" -i | \
-> >   grep -ohiP "co-developed-by:" | sort | uniq -c | sort -rn
-> >      80 Co-developed-by:
-> >      40 Co-Developed-by:
-> > 
-> > So which should it be?
-> > 
-> > btw: I prefer neither as I think Signed-off-by: is sufficient.
+On Thu, Dec 13, 2018 at 08:22:34PM +0000, Fabrizio Castro wrote:
+> Similarly to R-Car E3, RZ/G2E doesn't come with automatic
+> transmission registers, as such it is not considered compatible
+> with the existing fallback bindings.
 > 
-> OK, but does multiple Signed-off-by: in the commits imply that
-> the patch was created by all those developers ?
+> Add SoC specific binding compatibility to allow for later
+> support for automatic transmission.
 > 
-> I don't think so, perhaps this was the reason to introduce
-> Co-developed-by: tag.
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-Perhaps, but a sign-off is also a recognition that the
-patch was passed-through by individuals
-
-Effectively, there's no real difference.
-
-"Co-developed-by:" is just another word for "Authored-by:"
-where multiple "Authorship" is the thing being notated.
-
-Is it really important to specify things like 75% / 25%
-authorship crediting?
-
-I don't really care about attribution so the concept is
-not particularly valuable to me.
-
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
