@@ -2,101 +2,95 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CD6CC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 16:13:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37A35C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 16:13:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A14B52070D
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 16:13:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9FBDB2070B
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 16:13:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544804029;
+	bh=uxQ/GGsP60h8mW67Wmesep32qK4uKhmUVbl/0OtFLRA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=CXxA/0jSfxLwryu8irxqR6yheG/K/Y0SHkYfNa2x8kpWW9LjYILzGKfFbDmERKl5M
+	 AAjzC9sR9xnu6et7otdAyxmYllAVcN9psEV1JMBDYTJLBtxO4TXIUVTA8MHGkm8UaB
+	 kgRcs9fiMOn64tfu4zc5WoFCfTzlcaRz47wpfh6Q=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729697AbeLNQNd (ORCPT
+        id S1729795AbeLNQNr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 11:13:33 -0500
-Received: from 216-12-86-13.cv.mvl.ntelos.net ([216.12.86.13]:58994 "EHLO
-        brightrain.aerifal.cx" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726520AbeLNQNd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 11:13:33 -0500
-Received: from dalias by brightrain.aerifal.cx with local (Exim 3.15 #2)
-        id 1gXq5X-0004dk-00; Fri, 14 Dec 2018 16:13:19 +0000
-Date:   Fri, 14 Dec 2018 11:13:19 -0500
-From:   Rich Felker <dalias@libc.org>
-To:     Florian Weimer <fweimer@redhat.com>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Andy Lutomirski <luto@kernel.org>, tg@mirbsd.de,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Mike Frysinger <vapier@gentoo.org>,
-        "H. J. Lu" <hjl.tools@gmail.com>, x32@buildd.debian.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Will Deacon <will.deacon@arm.com>
-Subject: Re: Can we drop upstream Linux x32 support?
-Message-ID: <20181214161319.GX23599@brightrain.aerifal.cx>
-References: <CALCETrXf0rmadycxmpGxd41qP9X+PAjyGHTwbGhKyp6oMKMRrA@mail.gmail.com>
- <Pine.BSM.4.64L.1812120231410.21176@herc.mirbsd.org>
- <CALCETrUYn=S=hmJ0tKdm2LoSgkWchY2_65sH7hJZp7wfS30giw@mail.gmail.com>
- <20181212165237.GT23599@brightrain.aerifal.cx>
- <CALCETrV6+YAazq7vY_aR=4kXc4ykXb1Se7hgvHeEVJtbZ91=Qg@mail.gmail.com>
- <20181213124025.bczxzj6ez34joo6v@localhost>
- <20181213155744.GU23599@brightrain.aerifal.cx>
- <87o99pl8es.fsf@oldenburg2.str.redhat.com>
- <20181213162828.GW23599@brightrain.aerifal.cx>
- <875zvwibbp.fsf@oldenburg2.str.redhat.com>
+        Fri, 14 Dec 2018 11:13:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44172 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726520AbeLNQNr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 11:13:47 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B89D5206E0;
+        Fri, 14 Dec 2018 16:13:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544804027;
+        bh=uxQ/GGsP60h8mW67Wmesep32qK4uKhmUVbl/0OtFLRA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=okr24d4oGkXwnumP9AaTMM8U7dwSLpWwX402yhOdt7/dlkTzYqRobEMVr1MFndCBd
+         HB+WEWiE7ZHShLwCA+bcPNnXXb5LwFHsX2Ni8cd/aPWyQkIgGuFsZXwk+PPHEI/CjN
+         ZToqK9UbI1c99jz9XlZ5PxOlCxLMIN76i0eAy4fA=
+Date:   Fri, 14 Dec 2018 17:13:44 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Joe Perches <joe@perches.com>
+Cc:     Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>,
+        apw@canonical.com, Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, niklas.cassel@linaro.org
+Subject: Re: [PATCH] checkpatch: add Co-Developed-by to signature tags
+Message-ID: <20181214161344.GA10654@kroah.com>
+References: <1544792494-15485-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
+ <839c1d04000164e27dff9742e3efc3bcff3025b6.camel@perches.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <875zvwibbp.fsf@oldenburg2.str.redhat.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <839c1d04000164e27dff9742e3efc3bcff3025b6.camel@perches.com>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 14, 2018 at 12:42:34PM +0100, Florian Weimer wrote:
-> * Rich Felker:
+On Fri, Dec 14, 2018 at 07:52:15AM -0800, Joe Perches wrote:
+> On Fri, 2018-12-14 at 14:01 +0100, Jorge Ramirez-Ortiz wrote:
+> > As per Documentation/process/submitting-patches, Co-developed-by is a
+> > valid signature.
+> > 
+> > This commit removes the warning.
 > 
-> > On Thu, Dec 13, 2018 at 05:04:59PM +0100, Florian Weimer wrote:
-> >> * Rich Felker:
-> >> 
-> >> >> If the compiler can handle the zeroing, that would be great, though not
-> >> >> sure how (some __attribute__((zero)) which generates a type constructor
-> >> >> for such structure; it kind of departs from what the C language offers).
-> >> >
-> >> > The compiler fundamentally can't. At the very least it would require
-> >> > effective type tracking, which requires shadow memory and is even more
-> >> > controversial than -fstrict-aliasing (because in a sense it's a
-> >> > stronger version thereof).
-> >> 
-> >> It's possible to do it with the right types.  See _Bool on 32-bit Darwin
-> >> PowerPC for an example, which is four bytes instead of the usual one.
-> >> 
-> >> Similarly, we could have integer types with trap representations.
-> >> Whether it is a good idea is a different matter, but the amount of
-> >> compiler magic required is actually limited.
-> >
-> > If you do this you just have LP64 with value range restricted to
-> > 32-bit.
+> Your commit message doesn't match your subject.
 > 
-> You have to a type different from long int for the relevant struct
-> fields.  This type would have zero padding.
+> A couple variants have been documented and only
+> one should actually be used.
+> 
+> $ git grep -i co-developed-by Documentation/process/
+> Documentation/process/5.Posting.rst: - Co-developed-by: states that the patch was also created by another developer
+> Documentation/process/submitting-patches.rst:12) When to use Acked-by:, Cc:, and Co-Developed-by:
+> Documentation/process/submitting-patches.rst:A Co-Developed-by: states that the patch was also created by another developer
+> 
+> $ git log --grep="co-developed-by:" -i | \
+>   grep -ohiP "co-developed-by:" | sort | uniq -c | sort -rn
+>      80 Co-developed-by:
+>      40 Co-Developed-by:
+> 
+> So which should it be?
 
-Just upthread (Message-ID: <20181212165237.GT23599@brightrain.aerifal.cx>)
-I explained why this does not work:
+"Co-developed-by:" please.
 
->>> If on the other hand you tried to make just some pointers "wide
->>> pointers", you'd also be completely breaking the specified API
->>> contracts of standard interfaces. For example in struct iovec's
->>> iov_base, &foo->iov_base is no longer a valid pointer to an object of
->>> type void* that you can pass to interfaces expecting void**. Sloppy
->>> misunderstandings like what you're making now are exactly why x32 is
->>> already broken and buggy (&foo->tv_nsec already has wrong type for
->>> struct timespec foo).
+Yeah, I wrote the original one wrong here, sorry.
 
-Rich
+> btw: I prefer neither as I think Signed-off-by: is sufficient.
+
+Nope, sorry, it is not, we need something like this which is why it was
+added.
+
+thanks,
+
+greg k-h
