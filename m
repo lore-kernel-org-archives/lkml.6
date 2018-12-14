@@ -2,124 +2,133 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F38EC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 22:28:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D12C6C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 22:28:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6271208C1
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 22:28:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bON4sXBV"
+	by mail.kernel.org (Postfix) with ESMTP id 34FF32086D
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 22:28:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730136AbeLNW2B (ORCPT
+        id S1730322AbeLNW2d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 17:28:01 -0500
-Received: from mail-pl1-f202.google.com ([209.85.214.202]:49639 "EHLO
-        mail-pl1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729519AbeLNW2A (ORCPT
+        Fri, 14 Dec 2018 17:28:33 -0500
+Received: from mail1.windriver.com ([147.11.146.13]:33048 "EHLO
+        mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729519AbeLNW2d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 17:28:00 -0500
-Received: by mail-pl1-f202.google.com with SMTP id v12so4557201plp.16
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 14:28:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=tGr/AvNqZYrxR+PNUnY05GvPnHu3UCKdieTjlb/DctM=;
-        b=bON4sXBVnTvGWw8qEtmOQ/jIrf/I7NdD2OfSdoF9Rya8kTrRmIztwYRfAb0GZPWAY2
-         HL29lhjJD2DshUPw1s1uzo2XYcv8/qJF9SnE4qhJBj6yrhEAtVUYNw/dVGHgC7wa14Hw
-         xaRYTW3igrjd1Svlk7XBKJcWDwf4f0o6n68+0daId8Um01CqjNUaGvzsfoEAwe4FGT6D
-         7uRqaTgDTjRX0hWfhFu6MYnOh3wh1VvIbPnfkM8dTuSH2iufGyj4Lq8XBU70TibzrF8b
-         KmPHjxp67iDIHnriCanvdkJD7OwYR5U3SeXhbhJF31/U0nj4pVqiq0PZQC3o0YFoAD5v
-         /O+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=tGr/AvNqZYrxR+PNUnY05GvPnHu3UCKdieTjlb/DctM=;
-        b=uahBP49W+n+1UqAor+nqeHM4o3EnJh0TP3AAaetRE2gDMxow3ATbwJkVsHpmDJoxPy
-         7AWEn3ElbuWqBV6t/7RKV+62lIRAhMJCg2+yjCTYLCgOPiWKqW/bH7CEr4mm8h84ZFtQ
-         7G0xCnVQx7fpBRQc7A9hTajsHiGhIV3abTbDiao7EQITrze8OfGiiSh+S0oa4/P8kv40
-         rMfI8+QlVL62Sr2NiCM+FBQ8fuWn/rFV60yKi/Wq0fETjZevsG1T1MzxnTFJm/LIbSxp
-         5GO0Msb+CRC/GEHxlJ+sS4A8SsMBAqrBA8wVVa2HdfRiAxWU5x+R50znGvW8KIAy5FaG
-         8/lA==
-X-Gm-Message-State: AA+aEWY0r/arTnUO/PWMjs9MYWRBrnxbEMKCGEHIhmIiq56L/LOR9qjy
-        /KHt7+NxON5yKDs7nAGlK/mZafPgY+41jQzKb+rNLO+Bg/pblvvOgB61Pr0BjGHkVkFtr753nWw
-        eYr7XT7r2PC8JOguPomzFUfya8mQSjx7ooLtifxAM4fQGQbLNkEHihbTkeKNdKzjrEJtPZqWdbH
-        dBGw==
-X-Google-Smtp-Source: AFSGD/XxwzckIem+ABm6K9oMzcVEvuJpSZb4jYIt2ZLFJim9fOOX5WRh8lQ57FvUc4VEWyt3HkHSisnq43B/cU0=
-X-Received: by 2002:a63:3756:: with SMTP id g22mr2803940pgn.138.1544826479977;
- Fri, 14 Dec 2018 14:27:59 -0800 (PST)
-Date:   Fri, 14 Dec 2018 14:27:57 -0800
-Message-Id: <20181214222757.31280-1-astrachan@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.20.0.405.gbc1bbc6f85-goog
-Subject: [PATCH] x86: vdso: Pass --eh-frame-hdr to ld
-From:   Alistair Strachan <astrachan@google.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Laura Abbott <labbott@redhat.com>, stable@vger.kernel.org,
-        Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
-        Florian Weimer <fweimer@redhat.com>,
-        "Carlos O'Donell" <carlos@redhat.com>,
-        "H. J. Lu" <hjl.tools@gmail.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 14 Dec 2018 17:28:33 -0500
+Received: from ALA-HCA.corp.ad.wrs.com ([147.11.189.40])
+        by mail1.windriver.com (8.15.2/8.15.1) with ESMTPS id wBEMS32X002135
+        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
+        Fri, 14 Dec 2018 14:28:03 -0800 (PST)
+Received: from yow-pgortmak-d1.corp.ad.wrs.com (128.224.56.57) by
+ ALA-HCA.corp.ad.wrs.com (147.11.189.40) with Microsoft SMTP Server id
+ 14.3.408.0; Fri, 14 Dec 2018 14:28:03 -0800
+Received: by yow-pgortmak-d1.corp.ad.wrs.com (Postfix, from userid 1000)        id
+ 8D95A2E0804; Fri, 14 Dec 2018 17:28:02 -0500 (EST)
+Date:   Fri, 14 Dec 2018 17:28:02 -0500
+From:   Paul Gortmaker <paul.gortmaker@windriver.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>, James Morris <jmorris@namei.org>
+CC:     Randy Dunlap <rdunlap@infradead.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        <linux-integrity@vger.kernel.org>, James Morris <jmorris@namei.org>
+Subject: Re: linux-next: Tree for Dec 14 (security/integrity/ima/)
+Message-ID: <20181214222802.GP11670@windriver.com>
+References: <20181214181826.5775b958@canb.auug.org.au>
+ <8205aafb-bbc1-2196-17d9-e70e9ac56c2e@infradead.org>
+ <1544815174.3681.16.camel@linux.ibm.com>
+ <20181214202650.GO11670@windriver.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20181214202650.GO11670@windriver.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 379d98ddf413 ("x86: vdso: Use $LD instead of $CC to link")
-accidentally broke unwinding from userspace, because ld would strip the
-.eh_frame sections when linking.
+[Re: linux-next: Tree for Dec 14 (security/integrity/ima/)] On 14/12/2018 (Fri 15:26) Paul Gortmaker wrote:
 
-Originally, the compiler would implicitly add --eh-frame-hdr when
-invoking the linker, but when this Makefile was converted from invoking
-ld via the compiler, to invoking it directly (like vmlinux does),
-the flag was missed. (The EH_FRAME section is important for the VDSO
-shared libraries, but not for vmlinux.)
+> [Re: linux-next: Tree for Dec 14 (security/integrity/ima/)] On 14/12/2018 (Fri 14:19) Mimi Zohar wrote:
+> 
+> > On Fri, 2018-12-14 at 08:25 -0800, Randy Dunlap wrote:
+> > > 
+> > > on i386:
+> > > 
+> > >   CC      security/integrity/ima/ima_main.o
+> > > ../security/integrity/ima/ima_main.c: In function 'ima_load_data':
+> > > ../security/integrity/ima/ima_main.c:535:3: error: implicit declaration of function 'is_module_sig_enforced' [-Werror=implicit-function-declaration]
+> > >    sig_enforce = is_module_sig_enforced();
+> > >    ^
 
-Fix the problem by explicitly specifying --eh-frame-hdr, which restores
-parity with the old method.
+[...]
 
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=201741
-Bugzilla: https://bugzilla.redhat.com/show_bug.cgi?id=1659295
-Reported-by: Laura Abbott <labbott@redhat.com>
-Fixes: 379d98ddf413 ("x86: vdso: Use $LD instead of $CC to link")
-Cc: stable@vger.kernel.org
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: X86 ML <x86@kernel.org>
-Cc: Florian Weimer <fweimer@redhat.com>,
-Cc: Carlos O'Donell <carlos@redhat.com>,
-Cc: "H. J. Lu" <hjl.tools@gmail.com>
-Cc: Joel Fernandes <joel@joelfernandes.org>
-Cc: kernel-team@android.com
-Signed-off-by: Alistair Strachan <astrachan@google.com>
----
- arch/x86/entry/vdso/Makefile | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+> > Commit 4f83d5ea643a ("security: integrity: make ima_main explicitly
+> > non-modular") just removed module.h.
+> 
+> Yes, unfortunately the security directory has additional confusion
+> because there is name space overlap between "module" as used in Linux
+> Security Module, and "module" as in "insmod foo.ko".  The ima_main
+> is not modular, but it does use modular infrastructure to load others.
+> 
+> Fortunately this was the final commit in the series, so it can be
+> removed or reverted as per maintainer's choice.  In the meantime, I'll
+> look into why my "allyesconfig" build testing didn't pick up on this,
+> so I can close that testing gap.
 
-diff --git a/arch/x86/entry/vdso/Makefile b/arch/x86/entry/vdso/Makefile
-index 141d415a8c80..c3d7ccd25381 100644
---- a/arch/x86/entry/vdso/Makefile
-+++ b/arch/x86/entry/vdso/Makefile
-@@ -171,7 +171,8 @@ quiet_cmd_vdso = VDSO    $@
- 		 sh $(srctree)/$(src)/checkundef.sh '$(NM)' '$@'
+I've confirmed that most .config result in an implicit header presence
+by looking at the CPP output.  Details below.
+
+James, if your input branch to linux-next is strictly fast forward, here
+is a partial revert to fix up what Randy found that you can apply.
+
+Thanks for the report, and again - sorry for not detecting this myself.
+Paul.
+--
+
+From 31081a8b46e84d64e2fbda8d0d82ba26d56cc468 Mon Sep 17 00:00:00 2001
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Date: Fri, 14 Dec 2018 16:48:07 -0500
+Subject: [PATCH] security: integrity: partial revert of make ima_main
+ explicitly non-modular
+
+In commit 4f83d5ea643a ("security: integrity: make ima_main explicitly
+non-modular") I'd removed <linux/module.h> after assuming that the
+function is_module_sig_enforced() was an LSM function and not a core
+kernel module function.
+
+Unfortunately the typical .config selections used in build testing
+provide an implicit <linux/module.h> presence, and so normal/typical
+build testing did not immediately reveal my incorrect assumption.
+
+Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>
+Cc: Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Cc: James Morris <james.l.morris@oracle.com>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: linux-ima-devel@lists.sourceforge.net
+Cc: linux-security-module@vger.kernel.org
+Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index adaf96932237..616a88f95b92 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -21,7 +21,7 @@
  
- VDSO_LDFLAGS = -shared $(call ld-option, --hash-style=both) \
--	$(call ld-option, --build-id) -Bsymbolic
-+	$(call ld-option, --build-id) $(call ld-option, --eh-frame-hdr) \
-+	-Bsymbolic
- GCOV_PROFILE := n
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
  
- #
+-#include <linux/init.h>
++#include <linux/module.h>
+ #include <linux/file.h>
+ #include <linux/binfmts.h>
+ #include <linux/mount.h>
 -- 
-2.20.0.405.gbc1bbc6f85-goog
+2.7.4
 
