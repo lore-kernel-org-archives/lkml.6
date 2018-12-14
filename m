@@ -2,133 +2,127 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD80CC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 14:26:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65902C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 14:27:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02F0020656
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 14:26:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84763206BA
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 14:27:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730204AbeLNO0p (ORCPT
+        id S1730227AbeLNO1K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 09:26:45 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:49553 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729758AbeLNO0o (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 09:26:44 -0500
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gXoQB-00047i-3n; Fri, 14 Dec 2018 15:26:31 +0100
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gXoQ8-0005E4-4I; Fri, 14 Dec 2018 15:26:28 +0100
-Date:   Fri, 14 Dec 2018 15:26:28 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>
-Cc:     Paul Cercueil <paul@crapouillou.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ralf Baechle <ralf@linux-mips.org>, paul.burton@mips.com,
-        James Hogan <jhogan@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Mathieu Malaterre <malat@debian.org>, ezequiel@collabora.co.uk,
-        prasannatsmkumar@gmail.com, linux-pwm@vger.kernel.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>,
-        linux-mips@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-clk <linux-clk@vger.kernel.org>, od@zcrc.me
-Subject: Re: [PATCH v8 15/26] pwm: jz4740: Add support for the JZ4725B
-Message-ID: <20181214142628.zwi4hadrju53z6f3@pengutronix.de>
-References: <20181212220922.18759-1-paul@crapouillou.net>
- <20181212220922.18759-16-paul@crapouillou.net>
- <20181213092409.ml4wpnzow2nnszkd@pengutronix.de>
- <1544709795.18952.1@crapouillou.net>
- <20181213204219.onem3q6dcmakusl2@pengutronix.de>
- <CACRpkdbABtDgwKai=8Pfji7qVb-XHsX8pDsuDdS5hhg7qEN0Bw@mail.gmail.com>
+        Fri, 14 Dec 2018 09:27:10 -0500
+Received: from mx2.suse.de ([195.135.220.15]:33702 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730058AbeLNO1K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 09:27:10 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 2FBBCAE10;
+        Fri, 14 Dec 2018 14:27:07 +0000 (UTC)
+Subject: Re: [PATCH] mm/page_alloc.c: Allow error injection
+To:     Benjamin Poirier <bpoirier@suse.com>, linux-mm@kvack.org
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Pavel Tatashin <pavel.tatashin@microsoft.com>,
+        Oscar Salvador <osalvador@suse.de>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+References: <20181214074330.18917-1-bpoirier@suse.com>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Openpgp: preference=signencrypt
+Message-ID: <f9dd5000-f83a-a102-2695-362e93fdfdea@suse.cz>
+Date:   Fri, 14 Dec 2018 15:24:06 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACRpkdbABtDgwKai=8Pfji7qVb-XHsX8pDsuDdS5hhg7qEN0Bw@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <20181214074330.18917-1-bpoirier@suse.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On 12/14/18 8:43 AM, Benjamin Poirier wrote:
+> Model call chain after should_failslab(). Likewise, we can now use a kprobe
+> to override the return value of should_fail_alloc_page() and inject
+> allocation failures into alloc_page*().
 
-On Fri, Dec 14, 2018 at 02:50:20PM +0100, Linus Walleij wrote:
-> On Thu, Dec 13, 2018 at 9:42 PM Uwe Kleine-König
-> <u.kleine-koenig@pengutronix.de> wrote:
-> > [Adding Linus Walleij to Cc:]
-> > On Thu, Dec 13, 2018 at 03:03:15PM +0100, Paul Cercueil wrote:
-> > > Le jeu. 13 déc. 2018 à 10:24, Uwe Kleine-König
-> > > <u.kleine-koenig@pengutronix.de> a écrit :
-> > > > On Wed, Dec 12, 2018 at 11:09:10PM +0100, Paul Cercueil wrote:
-> > > > >  The PWM in the JZ4725B works the same as in the JZ4740, except that
-> > > > > it
-> > > > >  only has 6 channels available instead of 8.
-> > > >
-> > > > this driver is probed only from device tree? If yes, it might be
-> > > > sensible to specify the number of PWMs there and get it from there.
-> > > > There doesn't seem to be a generic binding for that, but there are
-> > > > several drivers that could benefit from it. (This is a bigger project
-> > > > though and shouldn't stop your patch. Still more as it already got
-> > > > Thierry's ack.)
-> > >
-> > > I think there needs to be a proper guideline, as there doesn't seem to be
-> > > a consensus about this. I learned from emails with Rob and Linus (Walleij)
-> > > that I should not have in devicetree what I can deduce from the compatible
-> > > string.
-> >
-> > I understood them a bit differently. It is ok to deduce things from the
-> > compatible string. But if you define a generic property (say) "num-pwms"
-> > that is used uniformly in most bindings this is ok, too. (And then the
-> > two different devices could use the same compatible.)
-> >
-> > An upside of the generic "num-pwms" property is that the pwm core could
-> > sanity check pwm phandles before passing them to the hardware drivers.
+I'd be more explicit about both the advantages and disadvantages, as we
+discussed internally. E.g. something along:
+
+This will allow injecting allocation failures using the BCC tools even
+without building kernel with CONFIG_FAIL_PAGE_ALLOC and booting it with
+a fail_page_alloc= parameter, which incurs some overhead even when
+failures are not being injected. On the other hand, this patch adds an
+unconditional call to should_fail_alloc_page() from page allocation
+hotpath. That overhead should be rather negligible with
+CONFIG_FAIL_PAGE_ALLOC=n when there's no kprobe attached, though.
+
+> Signed-off-by: Benjamin Poirier <bpoirier@suse.com>
+
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
+
+> ---
+>  include/asm-generic/error-injection.h |  1 +
+>  mm/page_alloc.c                       | 10 ++++++++--
+>  2 files changed, 9 insertions(+), 2 deletions(-)
 > 
-> I don't know if this helps, but in GPIO we have "ngpios" which is
-> used to augment an existing block as to the number of lines actually
-> used with it.
+> diff --git a/include/asm-generic/error-injection.h b/include/asm-generic/error-injection.h
+> index 296c65442f00..95a159a4137f 100644
+> --- a/include/asm-generic/error-injection.h
+> +++ b/include/asm-generic/error-injection.h
+> @@ -8,6 +8,7 @@ enum {
+>  	EI_ETYPE_NULL,		/* Return NULL if failure */
+>  	EI_ETYPE_ERRNO,		/* Return -ERRNO if failure */
+>  	EI_ETYPE_ERRNO_NULL,	/* Return -ERRNO or NULL if failure */
+> +	EI_ETYPE_TRUE,		/* Return true if failure */
+>  };
+>  
+>  struct error_injection_entry {
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index 2ec9cc407216..64861d79dc2d 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -3053,7 +3053,7 @@ static int __init setup_fail_page_alloc(char *str)
+>  }
+>  __setup("fail_page_alloc=", setup_fail_page_alloc);
+>  
+> -static bool should_fail_alloc_page(gfp_t gfp_mask, unsigned int order)
+> +static bool __should_fail_alloc_page(gfp_t gfp_mask, unsigned int order)
+>  {
+>  	if (order < fail_page_alloc.min_order)
+>  		return false;
+> @@ -3103,13 +3103,19 @@ late_initcall(fail_page_alloc_debugfs);
+>  
+>  #else /* CONFIG_FAIL_PAGE_ALLOC */
+>  
+> -static inline bool should_fail_alloc_page(gfp_t gfp_mask, unsigned int order)
+> +static inline bool __should_fail_alloc_page(gfp_t gfp_mask, unsigned int order)
+>  {
+>  	return false;
+>  }
+>  
+>  #endif /* CONFIG_FAIL_PAGE_ALLOC */
+>  
+> +static noinline bool should_fail_alloc_page(gfp_t gfp_mask, unsigned int order)
+> +{
+> +	return __should_fail_alloc_page(gfp_mask, order);
+> +}
+> +ALLOW_ERROR_INJECTION(should_fail_alloc_page, TRUE);
+> +
+>  /*
+>   * Return true if free base pages are above 'mark'. For high-order checks it
+>   * will return true of the order-0 watermark is reached and there is at least
 > 
-> The typical case is that an ASIC engineer synthesize a block for
-> 32 GPIOs but only 12 of them are routed to external pads. So
-> we augment the behaviour of that driver to only use 12 of the
-> 32 lines.
-> 
-> I guess using the remaining 20 lines "works" in a sense but they
-> have no practical use and will just bias electrons in the silicon
-> for no use.
 
-This looks very similar to the case under discussion.
- 
-> So if the PWM case is something similar, then by all means add
-> num-pwms.
-
-.. or "npwms" to use the same nomenclature as the gpio binding?
-
-Best regards
-Uwe
-
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
