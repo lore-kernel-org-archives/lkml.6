@@ -2,213 +2,158 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90303C43612
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 18:44:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17C10C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 18:45:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1E48206DD
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 18:44:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 65BE7206E0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 18:45:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="xbkk6Bz4"
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="T89eYwSS";
+	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="Wo3/baEf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730645AbeLNSoO (ORCPT
+        id S1730662AbeLNSpF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 13:44:14 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:34853 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730410AbeLNSoO (ORCPT
+        Fri, 14 Dec 2018 13:45:05 -0500
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:50732 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730551AbeLNSpF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 13:44:14 -0500
-Received: by mail-pf1-f193.google.com with SMTP id z9so3246142pfi.2
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 10:44:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=UgS6J86CMwYvBNmo4VnoSUzznIzimIMiXT751GNxMWo=;
-        b=xbkk6Bz4KAft7vG8FXpGtekFbLN0kS+YYIsE9hYWlfX8MHBZvO2sMZSgUy26xyvi3t
-         mAngJIEs2M2yLKSlsGRxM9UyEJpyDfw9DJsnFcN3nulJmfPfB9P84D1k19ASXmxZpisx
-         1V9dw27bwboAJxqCG4aJcVR6NFbwvfzeupnIv3mlNOiGbge8BvR2kojexieRqMydVSkK
-         LRj5mJyQwCfsKHnlMPGKiMCY4bJ1EXfFQTzxN8JCEx0NZeX8qoHsjcAqZinIJUEZZJNb
-         J0UzVlLP87xWTkXMigvBuI4FaLR6luhEdib/9Y32nriMY1yJHbiXl46brX4nE5+CzpYw
-         DbEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=UgS6J86CMwYvBNmo4VnoSUzznIzimIMiXT751GNxMWo=;
-        b=gq/pT0GI2n/OtskBPhmo09CTs27zlWDYZcEacZ2Z3baWu9Mp1BZeyuaDQyq10NVJpR
-         5XU4b5KFSn/2BMVERhADwXJ0UGC/NnlYUNn5+gSWXSskiIGiCkl2OQBMZQl+dPmsH1fe
-         rSDvrS/vWAKHMT84vcV1NbjIXtcyDaipDK6DcW5SkJYNHxnCy593zP6H+gqHEK70DodR
-         +EBj/QcQpDgClDIA1zilElmaNMnKs2k9SgjlRjblc7tYIb3bcBUDfao1hb1+7ZehY44N
-         29kEhcKDJbsJLr493xL3WnHs5t0tIbG2KHPBDPeh4r99ByzsqW1mv/zNp7yw137LdAEn
-         KJ6A==
-X-Gm-Message-State: AA+aEWa/tL9tHSCghCrypij8g7Ei4gP8vNfJSyBfqaqIei5Dnppf6pb7
-        izXGJKSQZBhgx32DbkVu3e/jRg==
-X-Google-Smtp-Source: AFSGD/Ubz6PIlicz+j8UpM2HvGEBHf99bjaHpPYoQlj3mJbCYU20E9PvyVQxbyrXhKpfD9h8KMAQAQ==
-X-Received: by 2002:a63:4706:: with SMTP id u6mr3470678pga.95.1544813052931;
-        Fri, 14 Dec 2018 10:44:12 -0800 (PST)
-Received: from ?IPv6:2600:1010:b040:6acb:bdde:f4f9:c60e:340a? ([2600:1010:b040:6acb:bdde:f4f9:c60e:340a])
-        by smtp.gmail.com with ESMTPSA id f67sm15374004pff.29.2018.12.14.10.44.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 14 Dec 2018 10:44:12 -0800 (PST)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
-Subject: Re: [RFC PATCH v4 5/5] x86/vdso: Add __vdso_sgx_enter_enclave() to wrap SGX enclave transitions
-From:   Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (16B92)
-In-Reply-To: <20181214170310.GC22063@linux.intel.com>
-Date:   Fri, 14 Dec 2018 10:44:10 -0800
-Cc:     Jethro Beekman <jethro@fortanix.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "x86@kernel.org" <x86@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
+        Fri, 14 Dec 2018 13:45:05 -0500
+Received: from pps.filterd (m0001303.ppops.net [127.0.0.1])
+        by m0001303.ppops.net (8.16.0.27/8.16.0.27) with SMTP id wBEId1jg024328;
+        Fri, 14 Dec 2018 10:44:26 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=facebook;
+ bh=rVnsgm8dNnV62+/Hi195se0WYqwvl6MXewvAPclDQ2A=;
+ b=T89eYwSSH4qmfd2VZsAA3vqmkhNjIHEaLjX9aqtbNVcQtgeCFeQUC66C/7qpuVD46/yg
+ uxj9XOvMeQZmPWKOQyY1C86yhJsWwoMsyZJvEhKcoXY7qcdS5Ez4f/LoKkGdq99Ar0/f
+ MNvC9LcJegCR+/PnbWkIis/3tBKj0Nng8do= 
+Received: from maileast.thefacebook.com ([199.201.65.23])
+        by m0001303.ppops.net with ESMTP id 2pcf3urn2n-8
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Fri, 14 Dec 2018 10:44:25 -0800
+Received: from frc-mbx04.TheFacebook.com (2620:10d:c0a1:f82::28) by
+ frc-hub05.TheFacebook.com (2620:10d:c021:18::175) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1531.3; Fri, 14 Dec 2018 10:42:53 -0800
+Received: from frc-hub02.TheFacebook.com (2620:10d:c021:18::172) by
+ frc-mbx04.TheFacebook.com (2620:10d:c0a1:f82::28) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1531.3; Fri, 14 Dec 2018 10:42:53 -0800
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (192.168.183.28)
+ by o365-in.thefacebook.com (192.168.177.72) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1531.3
+ via Frontend Transport; Fri, 14 Dec 2018 10:42:52 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector1-fb-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rVnsgm8dNnV62+/Hi195se0WYqwvl6MXewvAPclDQ2A=;
+ b=Wo3/baEfTwZl8yHA8Cmvp2/aGEmDEb2hfp96ZCytFM/NslnOMLlytCs6PFz+YNj2uhygLt+WsL4vLexPaHTQJqIFNvc29h6z/4kyKd/yai8p7Fkr9LwA8+ERQLyRODFXLorQLaeBwYuytaK5nzVTuNbXQwMGcbYOTpgm+xLP07I=
+Received: from BYAPR15MB2631.namprd15.prod.outlook.com (20.179.156.24) by
+ BYAPR15MB2486.namprd15.prod.outlook.com (52.135.198.157) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1425.19; Fri, 14 Dec 2018 18:42:51 +0000
+Received: from BYAPR15MB2631.namprd15.prod.outlook.com
+ ([fe80::990:c2e0:2a8a:25c5]) by BYAPR15MB2631.namprd15.prod.outlook.com
+ ([fe80::990:c2e0:2a8a:25c5%3]) with mapi id 15.20.1425.021; Fri, 14 Dec 2018
+ 18:42:50 +0000
+From:   Roman Gushchin <guro@fb.com>
+To:     Matthew Wilcox <willy@infradead.org>
+CC:     Roman Gushchin <guroan@gmail.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        "Dr . Greg Wettstein" <greg@enjellic.com>
+        Kernel Team <Kernel-team@fb.com>
+Subject: Re: [RFC 4/4] mm: show number of vmalloc pages in /proc/meminfo
+Thread-Topic: [RFC 4/4] mm: show number of vmalloc pages in /proc/meminfo
+Thread-Index: AQHUk9fwHbb0L9+OPECvwJSLy1gAbKV+jhgAgAAD1AA=
+Date:   Fri, 14 Dec 2018 18:42:50 +0000
+Message-ID: <20181214184244.GA5196@castle.DHCP.thefacebook.com>
+References: <20181214180720.32040-1-guro@fb.com>
+ <20181214180720.32040-5-guro@fb.com>
+ <20181214182904.GE10600@bombadil.infradead.org>
+In-Reply-To: <20181214182904.GE10600@bombadil.infradead.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: CO2PR04CA0165.namprd04.prod.outlook.com
+ (2603:10b6:104:4::19) To BYAPR15MB2631.namprd15.prod.outlook.com
+ (2603:10b6:a03:152::24)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [2620:10d:c090:200::6:bff6]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BYAPR15MB2486;20:FxCsvYH0lYKgYp/pdwPHbZMuTRArvcHnFKi3fdI7HYH2KE9uSuBff6OoqGOpX0H4vOklV8DCgEq7XtaqxpO9h68yONV60Qb81kMpqvUHAp3ZF8KJcnEF72tqlvdF9vKSVr2evekxvrFhhadki8I93nNPNS0r7x5qhxpgqKpy018=
+x-ms-office365-filtering-correlation-id: e4e3c4a9-93a1-47c4-f1fd-08d661f3f331
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BYAPR15MB2486;
+x-ms-traffictypediagnostic: BYAPR15MB2486:
+x-microsoft-antispam-prvs: <BYAPR15MB24866637A3936D7E2C0BC158BEA10@BYAPR15MB2486.namprd15.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(11241501185)(6040522)(2401047)(8121501046)(5005006)(823302103)(10201501046)(3002001)(3231475)(944501520)(52105112)(93006095)(93001095)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(20161123558120)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:BYAPR15MB2486;BCL:0;PCL:0;RULEID:;SRVR:BYAPR15MB2486;
+x-forefront-prvs: 08864C38AC
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(136003)(39860400002)(346002)(376002)(396003)(189003)(199004)(6306002)(53936002)(305945005)(33656002)(9686003)(6512007)(52116002)(229853002)(7736002)(6246003)(6916009)(2906002)(102836004)(476003)(33896004)(11346002)(446003)(966005)(8936002)(8676002)(106356001)(105586002)(486006)(81166006)(81156014)(14454004)(186003)(76176011)(99286004)(5660300001)(39060400002)(386003)(6506007)(4326008)(25786009)(1076002)(14444005)(256004)(6116002)(86362001)(46003)(97736004)(316002)(71200400001)(54906003)(71190400001)(6486002)(478600001)(68736007)(6436002)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR15MB2486;H:BYAPR15MB2631.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: 3UTtQ8h5c+QF+HpNsCYyBO3tAVqQ7L+dKWVh0zel4eecqsLdWfVNADguth6AgFgo0wfn17EJt0BIKiPMUGVhf3z/hw5OXBtnyh8h1W2BqKxNiSGa+1V2/B2yGy9NzU+ToSzSCqEZ1ieO9XdYjlGuPRlFlmImGa4JdZmg86Dau8d7nZPpvNhtwoXm0U2P4C8+SYxQ0VwoZ6A58ZgTI4yAKQAqmDdTpqFvM9mb0bMGiGeAR0g3ScxBPPZW49HZrSFLPnD4nG4iw1bYW3T/lHCBwXcXhPel9LI6dD5CNSaxkPc3hG23m/DjN8x1os82LrrZ
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <E8AD0CC77F4BD34387B5096E9F03B38D@namprd15.prod.outlook.com>
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <90D05734-1583-4306-A9A4-18E4A1390F3B@amacapital.net>
-References: <20181213213135.12913-1-sean.j.christopherson@intel.com> <20181213213135.12913-6-sean.j.christopherson@intel.com> <cda13cff-1a56-a40f-7d69-f0f1ab752f8e@fortanix.com> <20181214151204.GA22063@linux.intel.com> <20181214153830.GB22063@linux.intel.com> <20181214170310.GC22063@linux.intel.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-Network-Message-Id: e4e3c4a9-93a1-47c4-f1fd-08d661f3f331
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Dec 2018 18:42:50.7369
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR15MB2486
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-14_10:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Dec 14, 2018 at 10:29:04AM -0800, Matthew Wilcox wrote:
+> On Fri, Dec 14, 2018 at 10:07:20AM -0800, Roman Gushchin wrote:
+> > Vmalloc() is getting more and more used these days (kernel stacks,
+> > bpf and percpu allocator are new top users), and the total %
+> > of memory consumed by vmalloc() can be pretty significant
+> > and changes dynamically.
+> >=20
+> > /proc/meminfo is the best place to display this information:
+> > its top goal is to show top consumers of the memory.
+> >=20
+> > Since the VmallocUsed field in /proc/meminfo is not in use
+> > for quite a long time (it has been defined to 0 by the
+> > commit a5ad88ce8c7f ("mm: get rid of 'vmalloc_info' from
+> > /proc/meminfo")), let's reuse it for showing the actual
+> > physical memory consumption of vmalloc().
+>=20
+> Do you see significant contention on nr_vmalloc_pages?  Also, if it's
+> just an atomic_long_t, is it worth having an accessor for it?  And if
+> it is worth having an accessor for it, then it can be static.
 
-
-> On Dec 14, 2018, at 9:03 AM, Sean Christopherson <sean.j.christopherson@in=
-tel.com> wrote:
->=20
->> On Fri, Dec 14, 2018 at 07:38:30AM -0800, Sean Christopherson wrote:
->>> On Fri, Dec 14, 2018 at 07:12:04AM -0800, Sean Christopherson wrote:
->>>> On Fri, Dec 14, 2018 at 09:55:49AM +0000, Jethro Beekman wrote:
->>>>> On 2018-12-14 03:01, Sean Christopherson wrote:
->>>>> +2:    pop    %rbx
->>>>> +    pop    %r12
->>>>> +    pop    %r13
->>>>> +    pop    %r14
->>>>> +    pop    %r15
->>>>> +    pop    %rbp
->>>>> +    ret
->>>>=20
->>>> x86-64 ABI requires that you call CLD here (enclave may set it).
->>>=20
->>> Ugh.  Technically MXCSR and the x87 CW also need to be preserved.
->>>=20
->>> What if rather than treating the enclave as hostile we require it to be
->>> compliant with the x86-64 ABI like any other function?  That would solve=
-
->>> the EFLAGS.DF, MXCSR and x87 issues without adding unnecessary overhead.=
-
->>> And we wouldn't have to save/restore R12-R15.  It'd mean we couldn't use=
-
->>> the stack's red zone to hold @regs and @e, but that's poor form anyways.=
-
->>=20
->> Grr, except the processor crushes R12-R15, FCW and MXCSR on asynchronous
->> exits.  But not EFLAGS.DF, that's real helpful.
->=20
-> I can think of three options that are at least somewhat reasonable:
->=20
->  1) Save/restore MXCSR and FCW
->=20
->     + 100% compliant with the x86-64 ABI
->     + Callable from any code
->     + Minimal documentation required
->     - Restoring MXCSR/FCW is likely unnecessary 99% of the time
->     - Slow
->=20
->  2) Clear EFLAGS.DF but not save/restore MXCSR and FCW
->=20
->     + Mostly compliant with the x86-64 ABI
->     + Callable from any code that doesn't use SIMD registers
->     - Need to document deviations from x86-64 ABI
->=20
->  3) Require the caller to save/restore everything.
->=20
->     + Fast
->     + Userspace can pass all GPRs to the enclave (minus EAX, RBX and RCX)
->     - Completely custom ABI
->     - For all intents and purposes must be called from an assembly wrapper=
+Not really, so I decided that per-cpu counter is an overkill
+right now; but we can easily switch over once we'll notice any contention.
+Will add static.
 
 >=20
-> Option (3) actually isn't all that awful.  RCX can be used to pass an
-> optional pointer to a 'struct sgx_enclave_exception' and we can still
-> return standard error codes, e.g. -EFAULT.
+> Also, I seem to be missing 3/4.
+>=20
 
-I like 3, but:
+Hm, https://lkml.org/lkml/2018/12/14/1048 ?
 
->=20
-> E.g.:
->=20
-> /**
-> * __vdso_sgx_enter_enclave() - Enter an SGX enclave
-> *
-> * %eax:    ENCLU leaf, must be EENTER or ERESUME
-> * %rbx:    TCS, must be non-NULL
-> * %rcx:    Optional pointer to 'struct sgx_enclave_exception'
-> *
-> * Return:
-> *  0 on a clean entry/exit to/from the enclave
-> *  -EINVAL if ENCLU leaf is not allowed or if TCS is NULL
-> *  -EFAULT if ENCLU or the enclave faults
-> */
-> ENTRY(__vdso_sgx_enter_enclave)
->    /* EENTER <=3D leaf <=3D ERESUME */
->    cmp    $0x2, %eax
->    jb    bad_input
->=20
->    cmp    $0x3, %eax
->    ja    bad_input
->=20
->    /* TCS must be non-NULL */
->    test    %rbx, %rbx
->    je    bad_input
->=20
->    /* save @exception pointer */
->    push    %rcx
->=20
->    /* load leaf, TCS and AEP for ENCLU */
->    lea    1f(%rip),  %rcx
-> 1:    enclu
->=20
->    add    0x8, %rsp
->    xor    %eax, %eax
->    ret
->=20
-> bad_input:
->    mov     $(-EINVAL), %rax
->    ret
->=20
-> .pushsection .fixup, "ax"
-> 2:    pop    %rcx   =20
->    test    %rcx, %rcx
->    je    3f
->=20
->    mov    %eax, EX_LEAF(%rcx)
->    mov    %di,  EX_TRAPNR(%rcx)
->    mov    %si,  EX_ERROR_CODE(%rcx)
->    mov    %rdx, EX_ADDRESS(%rcx)
-> 3:    mov     $(-EFAULT), %rax
->    ret
-
-I=E2=80=99m not totally sold on -EFAULT as the error code.  That usually ind=
-icates a bad pointer.  I=E2=80=99m not sure I have a better suggestion.
-
-> .popsection
->=20
-> _ASM_VDSO_EXTABLE_HANDLE(1b, 3b)
->=20
-> ENDPROC(__vdso_sgx_enter_enclave)
+Thanks!
