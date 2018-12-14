@@ -2,163 +2,116 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58F42C67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:52:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9350C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:53:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2993C208E7
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:52:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2993C208E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id AD7102133F
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:53:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544792038;
+	bh=Ti3RnVhaAJbxhs+XP+FgSFV9+BKdeOBemVe96cWWCK0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=Ns6NsBkcraT7FjUC2JrGjnjjmhZ9/1qtG6Vj0AJtaFHQvsPwWdFSk0BBoN41XnL+4
+	 tnepa2jXWEbyxZH6IHWppFW5tzL64jzskyJmdFOp1WPQ8s2FKO6fsOSZrdR+eL8lod
+	 87wvKH402ZXGg7BZruUh2VYh8CNQqDqINNyhxv2k=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD7102133F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729814AbeLNMwd (ORCPT
+        id S1729835AbeLNMx5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:52:33 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:48660 "EHLO mx1.redhat.com"
+        Fri, 14 Dec 2018 07:53:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34462 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729465AbeLNMwc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:52:32 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726281AbeLNMx4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:53:56 -0500
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 361AD308A973;
-        Fri, 14 Dec 2018 12:52:32 +0000 (UTC)
-Received: from redhat.com (ovpn-121-101.rdu2.redhat.com [10.10.121.101])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 660E65C257;
-        Fri, 14 Dec 2018 12:52:31 +0000 (UTC)
-Date:   Fri, 14 Dec 2018 07:52:30 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 0/3] vhost: accelerate metadata access through
- vmap()
-Message-ID: <20181214073709-mutt-send-email-mst@kernel.org>
-References: <20181213101022.12475-1-jasowang@redhat.com>
- <20181213144116-mutt-send-email-mst@kernel.org>
- <836932fc-9266-b73d-2ee5-645f399e1a54@redhat.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id CB49B2145D
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 12:53:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544792036;
+        bh=Ti3RnVhaAJbxhs+XP+FgSFV9+BKdeOBemVe96cWWCK0=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=aeZ+t5hGS4Ny+DqQK0QLGttPqZmIq2loS+3+DNqC21mRD3i2jkcWUo7yArhjiOKZQ
+         wUa9cqkK3v+KeyaFpT/sxOWDuxVV7FnI1gpWkeMPfksLH/LJ00wpQRiFH8shl2Quy3
+         218nkqmA63ZPy6ntPrf7S8Mg9k33yYYkpKLTvGLs=
+Received: by mail-qk1-f182.google.com with SMTP id o89so3157250qko.0
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 04:53:55 -0800 (PST)
+X-Gm-Message-State: AA+aEWaaC+HSE8TnNpQagC+ZmGSsXnM9Bk+9iKV+To3imUSkJbM5uMoA
+        wKtfCcHii9Z5rfJUqQhx7p2B00hpVJb005RFveQ=
+X-Google-Smtp-Source: AFSGD/VyvvIejuyMeVGdbudmeVgjpDJMZdGlmgRJcpCC+GohqjnGSb2i3GDne1/9opf8IycIwMkTB0eTAigQUiGp1v4=
+X-Received: by 2002:a37:f706:: with SMTP id q6mr2314341qkj.96.1544792034950;
+ Fri, 14 Dec 2018 04:53:54 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <836932fc-9266-b73d-2ee5-645f399e1a54@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Fri, 14 Dec 2018 12:52:32 +0000 (UTC)
+References: <20181102111248.GA19135@chelsio.com>
+In-Reply-To: <20181102111248.GA19135@chelsio.com>
+From:   Josh Boyer <jwboyer@kernel.org>
+Date:   Fri, 14 Dec 2018 07:53:43 -0500
+X-Gmail-Original-Message-ID: <CA+5PVA6a9Gm71QY-ifntaXzOZH5rkDOBYia1nFVkFruC-EDvqw@mail.gmail.com>
+Message-ID: <CA+5PVA6a9Gm71QY-ifntaXzOZH5rkDOBYia1nFVkFruC-EDvqw@mail.gmail.com>
+Subject: Re: pull request: linux-firmware: update cxgb4 firmware
+To:     Ganesh Goudar <ganeshgr@chelsio.com>
+Cc:     Linux Firmware <linux-firmware@kernel.org>,
+        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>,
+        nirranjan@chelsio.com, dt@chelsio.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 14, 2018 at 12:29:54PM +0800, Jason Wang wrote:
-> 
-> On 2018/12/14 上午4:12, Michael S. Tsirkin wrote:
-> > On Thu, Dec 13, 2018 at 06:10:19PM +0800, Jason Wang wrote:
-> > > Hi:
-> > > 
-> > > This series tries to access virtqueue metadata through kernel virtual
-> > > address instead of copy_user() friends since they had too much
-> > > overheads like checks, spec barriers or even hardware feature
-> > > toggling.
-> > > 
-> > > Test shows about 24% improvement on TX PPS. It should benefit other
-> > > cases as well.
-> > > 
-> > > Please review
-> > I think the idea of speeding up userspace access is a good one.
-> > However I think that moving all checks to start is way too aggressive.
-> 
-> 
-> So did packet and AF_XDP. Anyway, sharing address space and access them
-> directly is the fastest way. Performance is the major consideration for
-> people to choose backend. Compare to userspace implementation, vhost does
-> not have security advantages at any level. If vhost is still slow, people
-> will start to develop backends based on e.g AF_XDP.
-> 
-
-Let them what's wrong with that?
-
-> > Instead, let's batch things up but let's not keep them
-> > around forever.
-> > Here are some ideas:
-> > 
-> > 
-> > 1. Disable preemption, process a small number of small packets
-> >     directly in an atomic context. This should cut latency
-> >     down significantly, the tricky part is to only do it
-> >     on a light load and disable this
-> >     for the streaming case otherwise it's unfair.
-> >     This might fail, if it does just bounce things out to
-> >     a thread.
-> 
-> 
-> I'm not sure what context you meant here. Is this for TX path of TUN? But a
-> fundamental difference is my series is targeted for extreme heavy load not
-> light one, 100% cpu for vhost is expected.
-
-Interesting. You only shared a TCP RR result though.
-What's the performance gain in a heavy load case?
-
-> 
-> > 
-> > 2. Switch to unsafe_put_user/unsafe_get_user,
-> >     and batch up multiple accesses.
-> 
-> 
-> As I said, unless we can batch accessing of two difference places of three
-> of avail, descriptor and used. It won't help for batching the accessing of a
-> single place like used. I'm even not sure this can be done consider the case
-> of packed virtqueue, we have a single descriptor ring.
-
-So that's one of the reasons packed should be faster. Single access
-and you get the descriptor no messy redirects. Somehow your
-benchmarking so far didn't show a gain with vhost and
-packed though - do you know what's wrong?
-
-> Batching through
-> unsafe helpers may not help in this case since it's equivalent to safe ones
-> . And This requires non trivial refactoring of vhost. And such refactoring
-> itself make give us noticeable impact (e.g it may lead regression).
-> 
-> 
-> > 
-> > 3. Allow adding a fixup point manually,
-> >     such that multiple independent get_user accesses
-> >     can get a single fixup (will allow better compiler
-> >     optimizations).
-> > 
-> 
-> So for metadata access, I don't see how you suggest here can help in the
-> case of heavy workload.
-> 
-> For data access, this may help but I've played to batch the data copy to
-> reduce SMAP/spec barriers in vhost-net but I don't see performance
-> improvement.
-> 
+On Fri, Nov 2, 2018 at 7:56 AM Ganesh Goudar <ganeshgr@chelsio.com> wrote:
+>
+> Hi,
+>
+> Kindly pull the new firmware from the following URL.
+> git://git.chelsio.net/pub/git/linux-firmware.git for-upstream
+>
 > Thanks
+> Ganesh
+>
+> The following changes since commit 1baa34868b2c0a004dc595b20678145e3fff83e7:
+>
+>   Merge branch 'nxp_mc' of https://github.com/NXP/linux-firmware (2018-10-26 08:13:19 -0400)
+>
+> are available in the git repository at:
+>
+>
+>   git://git.chelsio.net/pub/git/linux-firmware.git for-upstream
+>
+> for you to fetch changes up to e7cdec460311a76e4f99e6bed763628af5fc2208:
+>
+>   cxgb4: update firmware to revision 1.21.5.0 (2018-11-02 03:38:38 -0700)
+>
+> ----------------------------------------------------------------
+> Ganesh Goudar (1):
+>       cxgb4: update firmware to revision 1.21.5.0
+>
+>  WHENCE                  |  12 ++++++------
+>  cxgb4/t4fw-1.20.8.0.bin | Bin 559616 -> 0 bytes
+>  cxgb4/t4fw-1.21.5.0.bin | Bin 0 -> 561664 bytes
+>  cxgb4/t4fw.bin          |   2 +-
+>  cxgb4/t5fw-1.20.8.0.bin | Bin 646144 -> 0 bytes
+>  cxgb4/t5fw-1.21.5.0.bin | Bin 0 -> 648704 bytes
+>  cxgb4/t5fw.bin          |   2 +-
+>  cxgb4/t6fw-1.20.8.0.bin | Bin 692736 -> 0 bytes
+>  cxgb4/t6fw-1.21.5.0.bin | Bin 0 -> 695296 bytes
+>  cxgb4/t6fw.bin          |   2 +-
+>  10 files changed, 9 insertions(+), 9 deletions(-)
+>  delete mode 100644 cxgb4/t4fw-1.20.8.0.bin
+>  create mode 100644 cxgb4/t4fw-1.21.5.0.bin
+>  delete mode 100644 cxgb4/t5fw-1.20.8.0.bin
+>  create mode 100644 cxgb4/t5fw-1.21.5.0.bin
+>  delete mode 100644 cxgb4/t6fw-1.20.8.0.bin
+>  create mode 100644 cxgb4/t6fw-1.21.5.0.bin
 
-So how about we try to figure what's going on actually?
-Can you drop the barriers and show the same gain?
-E.g. vmap does not use a huge page IIRC so in fact it
-can be slower than direct access. It's not a magic
-faster way.
+Pulled and pushed out.  Apologies for the large delay.
 
-
-
-> 
-> > 
-> > 
-> > 
-> > > Jason Wang (3):
-> > >    vhost: generalize adding used elem
-> > >    vhost: fine grain userspace memory accessors
-> > >    vhost: access vq metadata through kernel virtual address
-> > > 
-> > >   drivers/vhost/vhost.c | 281 ++++++++++++++++++++++++++++++++++++++----
-> > >   drivers/vhost/vhost.h |  11 ++
-> > >   2 files changed, 266 insertions(+), 26 deletions(-)
-> > > 
-> > > -- 
-> > > 2.17.1
+josh
