@@ -2,125 +2,113 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8665C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 15:53:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE7C0C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 15:53:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 160D3206DD
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 15:53:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C987206DD
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 15:53:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="DTp6HEqF"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PFOzxJ+e"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729148AbeLNPxV (ORCPT
+        id S1729420AbeLNPx1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 10:53:21 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:36104 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726662AbeLNPxV (ORCPT
+        Fri, 14 Dec 2018 10:53:27 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:35755 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729163AbeLNPx0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 10:53:21 -0500
-Received: by mail-wm1-f68.google.com with SMTP id a18so6294894wmj.1
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 07:53:20 -0800 (PST)
+        Fri, 14 Dec 2018 10:53:26 -0500
+Received: by mail-lj1-f196.google.com with SMTP id x85-v6so5322884ljb.2;
+        Fri, 14 Dec 2018 07:53:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:mime-version:content-transfer-encoding:in-reply-to
-         :references:subject:to:from:cc;
-        bh=YvkNmTV6SriyirEOqoFl5h3mfuoW6KRK41aAR/ktIgw=;
-        b=DTp6HEqFOtaLGaXsu9b1Z8LrwHFpsgFt++7O0r8scwZ6umI/uSb3GglSzAr0t2wa6b
-         eA7nNn/BFDurhKunQZ8S67pfZZ+CaGXgdaF8ByzdRqBjWoYSZqw2ww3J/GkgAA+QKUEJ
-         NGQwwS/mDdQ4/0moz0oFJEuNPNmopU8GaxGaUHwCfz0HCUAtP6rTcC5BiNEfVYzkDCHZ
-         f5NZ3nG6nogzzI/R4wyCLEVUmTm8dMVS5D96ELyWYilfau4SfLMsgzgmgpRYsofhJYSI
-         wQ/+LdaAVOlpKiPh4w/Ng/yX5uz0z/aumoNjQaSwmjPqs9KAbMV93gnp1NnGEyo2/287
-         Z2oA==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=OyJ4RQ0X3eoqBPBE2jbg+TcjQOt/Jyg81FHlkEqZdT4=;
+        b=PFOzxJ+eDu9/r65ABdMqU7Q24SxdY4Bwpj7WBNLJtpguxlNhtWtt9osOjv2i1WfEii
+         riMgDEvVU4DJbv61iX0REbLxtTtoYHsxHcPVEahmMk06xxT9+bZddaJm257FggIHZkhV
+         35TUjA1AflmXvRftJhb6zAEasHT0gTzt7vhHbZ3cCbEpFwJbwO4bfT6sq28cX3nSN5a4
+         UZHkx5HrnScNIZJ6fy1DhhYwLajr7I9CV1JIXxzNrwzQ0iQf/lAVm6rVit19NseUSNYa
+         IlO6P3RPicI5YBEAkbtRmnJeDGAX8wSA8CZ0o5XmOnVQWPLJNkfkOg83QD/0kWYXuyjg
+         TrEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:in-reply-to:references:subject:to:from:cc;
-        bh=YvkNmTV6SriyirEOqoFl5h3mfuoW6KRK41aAR/ktIgw=;
-        b=cN/Q8FrZE/jRHz312nI6FS3mZx3H9aMzQMX0LPa3bZ8ij6jEvQye0ju7Ua0i6YAuzj
-         3NlD5RJdSZbpaVdTBWnZf9f0kTUn9n6Vi20BlUjIkhLz2ZrmdfHR4tYMklislLVBKFZI
-         46H0pPkKJxQ+Xk+3vinvDmmEaUJXuh1Ls7H2j5/Ex88zMxYGk4xwdm+cSVXhDR7TUGtp
-         x7IHIbNeb2yfUCP+osWsbXHLx+b1DjrpeaUZQx0awMUbreQZVopGYsrYpUZyZj3m3LyN
-         BfAk4eSEkpyYOLo9kirEFID5Or8r+ZBUOk2v3HR625hOxHmxaK9th/Q1fKbX36i+1Gfl
-         M9gw==
-X-Gm-Message-State: AA+aEWbO1W//lrRrlfp9F/tA2aPZ98tiP3cwqtu0lzzseyv7jS5zCoLj
-        OuX6kZd3iRs8JZ9OGFdge8j0NA==
-X-Google-Smtp-Source: AFSGD/W9mEjEOAs8e94utyQc9PC6xnzUQzT6bbhnVEuD2fLbFHHcpSxZ4EnyAQqI9a/Q5ProiFtssw==
-X-Received: by 2002:a1c:3ed0:: with SMTP id l199mr3634153wma.34.1544802799377;
-        Fri, 14 Dec 2018 07:53:19 -0800 (PST)
-Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
-        by smtp.gmail.com with ESMTPSA id j202sm9359312wmf.15.2018.12.14.07.53.17
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 14 Dec 2018 07:53:18 -0800 (PST)
-Message-ID: <5c13d1ee.1c69fb81.3356f.4fab@mx.google.com>
-Date:   Fri, 14 Dec 2018 07:53:18 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=OyJ4RQ0X3eoqBPBE2jbg+TcjQOt/Jyg81FHlkEqZdT4=;
+        b=i76AMafE/AHsZGNBc6PgzG3TnBvZAjnoD1CSnzhjcblZwLFy5L3/qq67elfCXp/TQ8
+         czXK/WENTIZC3Afxj+XiD+XO9J9NcP2Kp3RNK82QiE9nmQOd6B9rsa0VVvHndMj3l0OF
+         Vrt0hbKaTnQy46VUlUDCAWqJuOJ/02DgOIYGW14nGjxGdYUiSz0hyzmuSlzLK9rkbDBU
+         JUfJ3RXCzk1dq5LgASRr3n2kv7SpAx1VXOgMZx704QHS4v/QzKXrA/QUEWls6sCXHB/h
+         1KBlCjiOHF32ybsr3bdMngLXziT0mIEW3RI6rplKq+0cKOJzd8o1BPjTziu6QZAGLtTV
+         yC5Q==
+X-Gm-Message-State: AA+aEWbXx5jzv6sXiT48Jd7X1jouTTDf5+tIc9C1jm6KGgnrbb/yKlVS
+        99j61EX8UHIyuk7Ux0evX008DMagbUQBk4WXSPv+1PFzlEu4eg==
+X-Google-Smtp-Source: AFSGD/WtZNno83QXoGAMKjTfjF5oHC3t/d2E2Or+a2gV3u2UDxeOxZ5hkejC5RlZayMBuyl89g2i1ZIhkw1eVOeExFk=
+X-Received: by 2002:a2e:3603:: with SMTP id d3-v6mr2173949lja.46.1544802804145;
+ Fri, 14 Dec 2018 07:53:24 -0800 (PST)
 MIME-Version: 1.0
+References: <20181209155602.GA8414@syn-yoga530> <20181211210159.to6okhbaqpymoax5@ninjato>
+In-Reply-To: <20181211210159.to6okhbaqpymoax5@ninjato>
+From:   Elie Morisse <syniurge@gmail.com>
+Date:   Fri, 14 Dec 2018 12:53:12 -0300
+Message-ID: <CAC_JBqqo5joUKBz1s7m0ccw0OXxqk57aiY93UEV4inumug6hBg@mail.gmail.com>
+Subject: Re: [PATCH v13] i2c: Add drivers for the AMD PCIe MP2 I2C controller
+To:     Wolfram Sang <wsa@the-dreams.de>
+Cc:     linux-i2c@vger.kernel.org, helgaas@kernel.org,
+        Nehal-bakulchandra.Shah@amd.com, Shyam-sundar.S-k@amd.com,
+        sandeep.singh@amd.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Tree: stable-rc
-X-Kernelci-Kernel: v4.9.145-51-gf9ce7a5debd5
-X-Kernelci-Report-Type: boot
-X-Kernelci-Branch: linux-4.9.y
-In-Reply-To: <20181214115713.244259772@linuxfoundation.org>
-References: <20181214115713.244259772@linuxfoundation.org>
-Subject: Re: [PATCH 4.9 00/51] 4.9.146-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-From:   "kernelci.org bot" <bot@kernelci.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-stable-rc/linux-4.9.y boot: 104 boots: 0 failed, 101 passed with 1 offline,=
- 1 untried/unknown, 1 conflict (v4.9.145-51-gf9ce7a5debd5)
+Hi,
 
-Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
--4.9.y/kernel/v4.9.145-51-gf9ce7a5debd5/
-Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.9.y=
-/kernel/v4.9.145-51-gf9ce7a5debd5/
+Having the patch reviewed by Nehal Shah would be great. While waiting
+to hear from him, he voiced some concerns in the v10 thread:
+https://lkml.org/lkml/2018/11/27/62
+The _DEP hint was removed in v12. Regarding AMD's intention of having
+two drivers, there are still two drivers, just within the same module.
+And the comment about where the DMA mapping code should be is minor
+and it's trivial to move it back if AMD plans to expand the platform
+driver.
 
-Tree: stable-rc
-Branch: linux-4.9.y
-Git Describe: v4.9.145-51-gf9ce7a5debd5
-Git Commit: f9ce7a5debd5bc3267eedb2f1e7a91ecee79461c
-Git URL: http://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git
-Tested: 49 unique boards, 21 SoC families, 13 builds out of 193
+Noone reported any issue since v11, I'm done improving the drivers
+unless it's necessary in order to get it accepted upstream. Please let
+me know if I still have to change something to get it merged.
 
-Boot Regressions Detected:
+Elie Morisse
 
-arm:
-
-    exynos_defconfig:
-        exynos5422-odroidxu3:
-            lab-baylibre: new failure (last pass: v4.9.145)
-
-Offline Platforms:
-
-arm:
-
-    multi_v7_defconfig:
-        stih410-b2120: 1 offline lab
-
-Conflicting Boot Failure Detected: (These likely are not failures as other =
-labs are reporting PASS. Needs review.)
-
-arm:
-
-    exynos_defconfig:
-        exynos5422-odroidxu3:
-            lab-baylibre: FAIL
-            lab-collabora: PASS
-
----
-For more info write to <info@kernelci.org>
+Le mar. 11 d=C3=A9c. 2018 =C3=A0 18:02, Wolfram Sang <wsa@the-dreams.de> a =
+=C3=A9crit :
+>
+> On Sun, Dec 09, 2018 at 12:56:02PM -0300, Elie Morisse wrote:
+> > MP2 controllers have two separate busses, so may accommodate up to two =
+I2C
+> > adapters. Those adapters are listed in the ACPI namespace with the
+> > "AMDI0011" HID, and probed by a platform driver.
+> >
+> > Communication with the MP2 takes place through iomapped registers, or
+> > through DMA for more than 32 bytes transfers.
+> >
+> > This is major rework of the patch submitted by Nehal-bakulchandra Shah =
+from
+> > AMD (https://patchwork.kernel.org/patch/10597369/).
+> >
+> > Most of the event handling of v3 was rewritten to make it work with mor=
+e
+> > than one bus (e.g on Ryzen-based Lenovo Yoga 530), and this version
+> > contains many other improvements.
+> >
+> > Signed-off-by: Elie Morisse <syniurge@gmail.com>
+>
+> Nehal Shah, are you happy with this driver from your side?
+>
