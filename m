@@ -2,204 +2,169 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75221C6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:34:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D581C6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:34:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32C4520892
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:34:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544790889;
-	bh=NoZJ1UwbR1nblopCl+ospNAAbnLSy/eVRKAfZjkgU/Y=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=NxxDawg0wN+Lg5R4v3Q6RrBjb215TL1n6ajnGpMofyCUujvYd73cy4hP7Kx/1J5mo
-	 4V2se7AY539PSIcAIJyTiALW3HvSMXkhZjU8Ensuza1MSttD4ihMQvSCeOXMz44OkP
-	 tsYwHaWyAJ2wbi/yIkodQSqB6SUcNLRxVVJPNcv4=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32C4520892
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 441A520892
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:34:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 441A520892
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731386AbeLNMer (ORCPT
+        id S1731452AbeLNMex (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:34:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53080 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731157AbeLNMHo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:07:44 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6FA00214AE;
-        Fri, 14 Dec 2018 12:07:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789262;
-        bh=NoZJ1UwbR1nblopCl+ospNAAbnLSy/eVRKAfZjkgU/Y=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zTEJfuh7G3Tdygv/An/QS0uNaeBiRXMmlVO0aVZuh2AN3NEalcdMH+Dq+9SNplEQQ
-         o3n2tG3vkHXk+GpbmCTGLoWm81kE6pUsLrAFgOrVkRABo+0DAF3eDYg7mh+0PHzQoe
-         xIBMfl0s/tQWF4G5EnrQuRX8FbH1hUOil+kTT4GE=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jianlin Shi <jishi@redhat.com>,
-        Stefano Brivio <sbrivio@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 02/89] ipv6: Check available headroom in ip6_xmit() even without options
-Date:   Fri, 14 Dec 2018 12:59:15 +0100
-Message-Id: <20181214115729.790925682@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.0
-In-Reply-To: <20181214115729.658859279@linuxfoundation.org>
-References: <20181214115729.658859279@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        Fri, 14 Dec 2018 07:34:53 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:51034 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731336AbeLNMeq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:34:46 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8B412EBD;
+        Fri, 14 Dec 2018 04:34:45 -0800 (PST)
+Received: from [10.37.12.200] (unknown [10.37.12.200])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DFCDF3F575;
+        Fri, 14 Dec 2018 04:34:36 -0800 (PST)
+Subject: Re: [PATCH v13 19/25] kasan: add hooks implementation for tag-based
+ mode
+To:     Andrey Konovalov <andreyknvl@google.com>
+Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Christoph Lameter <cl@linux.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Dave Martin <dave.martin@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Paul Lawrence <paullawrence@google.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-sparse@vger.kernel.org,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Vishwath Mohan <vishwath@google.com>,
+        Chintan Pandya <cpandya@codeaurora.org>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Jann Horn <jannh@google.com>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Kostya Serebryany <kcc@google.com>,
+        Mark Brand <markbrand@google.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Evgenii Stepanov <eugenis@google.com>
+References: <cover.1544099024.git.andreyknvl@google.com>
+ <bda78069e3b8422039794050ddcb2d53d053ed41.1544099024.git.andreyknvl@google.com>
+ <2bf7415e-2724-b3c3-9571-20c8b6d43b92@arm.com>
+ <CAAeHK+xc6R_p26-tu--9W1L1PvUAFb70J23ByiEukKz3uVC3EQ@mail.gmail.com>
+From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
+Message-ID: <b99b331d-22ca-b9db-8677-4896c427ef10@arm.com>
+Date:   Fri, 14 Dec 2018 12:35:38 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAAeHK+xc6R_p26-tu--9W1L1PvUAFb70J23ByiEukKz3uVC3EQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+On 12/12/18 3:04 PM, Andrey Konovalov wrote:
+> On Tue, Dec 11, 2018 at 5:22 PM Vincenzo Frascino
+> <vincenzo.frascino@arm.com> wrote:
+>>
+>> Hi Andrey,
+>>
+>> On 06/12/2018 12:24, Andrey Konovalov wrote:
+>>> This commit adds tag-based KASAN specific hooks implementation and
+>>> adjusts common generic and tag-based KASAN ones.
+>>>
+>>> 1. When a new slab cache is created, tag-based KASAN rounds up the size of
+>>>    the objects in this cache to KASAN_SHADOW_SCALE_SIZE (== 16).
+>>>
+>>> 2. On each kmalloc tag-based KASAN generates a random tag, sets the shadow
+>>>    memory, that corresponds to this object to this tag, and embeds this
+>>>    tag value into the top byte of the returned pointer.
+>>>
+>>> 3. On each kfree tag-based KASAN poisons the shadow memory with a random
+>>>    tag to allow detection of use-after-free bugs.
+>>>
+>>> The rest of the logic of the hook implementation is very much similar to
+>>> the one provided by generic KASAN. Tag-based KASAN saves allocation and
+>>> free stack metadata to the slab object the same way generic KASAN does.
+>>>
+>>> Reviewed-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+>>> Reviewed-by: Dmitry Vyukov <dvyukov@google.com>
+>>> Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
+>>> ---
+>>>  mm/kasan/common.c | 116 ++++++++++++++++++++++++++++++++++++++--------
+>>>  mm/kasan/kasan.h  |   8 ++++
+>>>  mm/kasan/tags.c   |  48 +++++++++++++++++++
+>>>  3 files changed, 153 insertions(+), 19 deletions(-)
+>>>
+>>
+>>
+>> [...]
+>>
+>>> @@ -265,6 +290,8 @@ void kasan_cache_create(struct kmem_cache *cache, unsigned int *size,
+>>>               return;
+>>>       }
+>>>
+>>> +     cache->align = round_up(cache->align, KASAN_SHADOW_SCALE_SIZE);
+>>> +
+>>
+>> Did you consider to set ARCH_SLAB_MINALIGN instead of this round up?
+> 
+> I didn't know about this macro. Looks like we can use it to do the
+> same thing. Do you think it's a better solution to redefine
+> ARCH_SLAB_MINALIGN to KASAN_SHADOW_SCALE_SIZE for arm64 when tag-based
+> KASAN is enabled instead of adjusting cache->align in
+> kasan_cache_create?
+>
 
-------------------
+Yes, I think it is better because in this way we do not need to add extra code
+to do the rounding.
 
-From: Stefano Brivio <sbrivio@redhat.com>
+Curiosity, did you try your patches with SLUB red zoning enabled?
+Since the area used for the Redzone is just after the payload, aligning the
+object_size independently from the allocator could have side effects, at least
+if I understand well how the mechanism works.
 
-[ Upstream commit 66033f47ca60294a95fc85ec3a3cc909dab7b765 ]
+Setting ARCH_SLAB_MINALIGN should avoid this as well.
 
-Even if we send an IPv6 packet without options, MAX_HEADER might not be
-enough to account for the additional headroom required by alignment of
-hardware headers.
+What do you think?
 
-On a configuration without HYPERV_NET, WLAN, AX25, and with IPV6_TUNNEL,
-sending short SCTP packets over IPv4 over L2TP over IPv6, we start with
-100 bytes of allocated headroom in sctp_packet_transmit(), end up with 54
-bytes after l2tp_xmit_skb(), and 14 bytes in ip6_finish_output2().
+>>
+>> --
+>> Regards,
+>> Vincenzo
+>>
+>> --
+>> You received this message because you are subscribed to the Google Groups "kasan-dev" group.
+>> To unsubscribe from this group and stop receiving emails from it, send an email to kasan-dev+unsubscribe@googlegroups.com.
+>> To post to this group, send email to kasan-dev@googlegroups.com.
+>> To view this discussion on the web visit https://groups.google.com/d/msgid/kasan-dev/2bf7415e-2724-b3c3-9571-20c8b6d43b92%40arm.com.
+>> For more options, visit https://groups.google.com/d/optout.
 
-Those would be enough to append our 14 bytes header, but we're going to
-align that to 16 bytes, and write 2 bytes out of the allocated slab in
-neigh_hh_output().
-
-KASan says:
-
-[  264.967848] ==================================================================
-[  264.967861] BUG: KASAN: slab-out-of-bounds in ip6_finish_output2+0x1aec/0x1c70
-[  264.967866] Write of size 16 at addr 000000006af1c7fe by task netperf/6201
-[  264.967870]
-[  264.967876] CPU: 0 PID: 6201 Comm: netperf Not tainted 4.20.0-rc4+ #1
-[  264.967881] Hardware name: IBM 2827 H43 400 (z/VM 6.4.0)
-[  264.967887] Call Trace:
-[  264.967896] ([<00000000001347d6>] show_stack+0x56/0xa0)
-[  264.967903]  [<00000000017e379c>] dump_stack+0x23c/0x290
-[  264.967912]  [<00000000007bc594>] print_address_description+0xf4/0x290
-[  264.967919]  [<00000000007bc8fc>] kasan_report+0x13c/0x240
-[  264.967927]  [<000000000162f5e4>] ip6_finish_output2+0x1aec/0x1c70
-[  264.967935]  [<000000000163f890>] ip6_finish_output+0x430/0x7f0
-[  264.967943]  [<000000000163fe44>] ip6_output+0x1f4/0x580
-[  264.967953]  [<000000000163882a>] ip6_xmit+0xfea/0x1ce8
-[  264.967963]  [<00000000017396e2>] inet6_csk_xmit+0x282/0x3f8
-[  264.968033]  [<000003ff805fb0ba>] l2tp_xmit_skb+0xe02/0x13e0 [l2tp_core]
-[  264.968037]  [<000003ff80631192>] l2tp_eth_dev_xmit+0xda/0x150 [l2tp_eth]
-[  264.968041]  [<0000000001220020>] dev_hard_start_xmit+0x268/0x928
-[  264.968069]  [<0000000001330e8e>] sch_direct_xmit+0x7ae/0x1350
-[  264.968071]  [<000000000122359c>] __dev_queue_xmit+0x2b7c/0x3478
-[  264.968075]  [<00000000013d2862>] ip_finish_output2+0xce2/0x11a0
-[  264.968078]  [<00000000013d9b14>] ip_finish_output+0x56c/0x8c8
-[  264.968081]  [<00000000013ddd1e>] ip_output+0x226/0x4c0
-[  264.968083]  [<00000000013dbd6c>] __ip_queue_xmit+0x894/0x1938
-[  264.968100]  [<000003ff80bc3a5c>] sctp_packet_transmit+0x29d4/0x3648 [sctp]
-[  264.968116]  [<000003ff80b7bf68>] sctp_outq_flush_ctrl.constprop.5+0x8d0/0xe50 [sctp]
-[  264.968131]  [<000003ff80b7c716>] sctp_outq_flush+0x22e/0x7d8 [sctp]
-[  264.968146]  [<000003ff80b35c68>] sctp_cmd_interpreter.isra.16+0x530/0x6800 [sctp]
-[  264.968161]  [<000003ff80b3410a>] sctp_do_sm+0x222/0x648 [sctp]
-[  264.968177]  [<000003ff80bbddac>] sctp_primitive_ASSOCIATE+0xbc/0xf8 [sctp]
-[  264.968192]  [<000003ff80b93328>] __sctp_connect+0x830/0xc20 [sctp]
-[  264.968208]  [<000003ff80bb11ce>] sctp_inet_connect+0x2e6/0x378 [sctp]
-[  264.968212]  [<0000000001197942>] __sys_connect+0x21a/0x450
-[  264.968215]  [<000000000119aff8>] sys_socketcall+0x3d0/0xb08
-[  264.968218]  [<000000000184ea7a>] system_call+0x2a2/0x2c0
-
-[...]
-
-Just like ip_finish_output2() does for IPv4, check that we have enough
-headroom in ip6_xmit(), and reallocate it if we don't.
-
-This issue is older than git history.
-
-Reported-by: Jianlin Shi <jishi@redhat.com>
-Signed-off-by: Stefano Brivio <sbrivio@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/ipv6/ip6_output.c |   42 +++++++++++++++++++++---------------------
- 1 file changed, 21 insertions(+), 21 deletions(-)
-
---- a/net/ipv6/ip6_output.c
-+++ b/net/ipv6/ip6_output.c
-@@ -195,37 +195,37 @@ int ip6_xmit(const struct sock *sk, stru
- 	const struct ipv6_pinfo *np = inet6_sk(sk);
- 	struct in6_addr *first_hop = &fl6->daddr;
- 	struct dst_entry *dst = skb_dst(skb);
-+	unsigned int head_room;
- 	struct ipv6hdr *hdr;
- 	u8  proto = fl6->flowi6_proto;
- 	int seg_len = skb->len;
- 	int hlimit = -1;
- 	u32 mtu;
- 
--	if (opt) {
--		unsigned int head_room;
--
--		/* First: exthdrs may take lots of space (~8K for now)
--		   MAX_HEADER is not enough.
--		 */
--		head_room = opt->opt_nflen + opt->opt_flen;
--		seg_len += head_room;
--		head_room += sizeof(struct ipv6hdr) + LL_RESERVED_SPACE(dst->dev);
-+	head_room = sizeof(struct ipv6hdr) + LL_RESERVED_SPACE(dst->dev);
-+	if (opt)
-+		head_room += opt->opt_nflen + opt->opt_flen;
- 
--		if (skb_headroom(skb) < head_room) {
--			struct sk_buff *skb2 = skb_realloc_headroom(skb, head_room);
--			if (!skb2) {
--				IP6_INC_STATS(net, ip6_dst_idev(skb_dst(skb)),
--					      IPSTATS_MIB_OUTDISCARDS);
--				kfree_skb(skb);
--				return -ENOBUFS;
--			}
--			if (skb->sk)
--				skb_set_owner_w(skb2, skb->sk);
--			consume_skb(skb);
--			skb = skb2;
-+	if (unlikely(skb_headroom(skb) < head_room)) {
-+		struct sk_buff *skb2 = skb_realloc_headroom(skb, head_room);
-+		if (!skb2) {
-+			IP6_INC_STATS(net, ip6_dst_idev(skb_dst(skb)),
-+				      IPSTATS_MIB_OUTDISCARDS);
-+			kfree_skb(skb);
-+			return -ENOBUFS;
- 		}
-+		if (skb->sk)
-+			skb_set_owner_w(skb2, skb->sk);
-+		consume_skb(skb);
-+		skb = skb2;
-+	}
-+
-+	if (opt) {
-+		seg_len += opt->opt_nflen + opt->opt_flen;
-+
- 		if (opt->opt_flen)
- 			ipv6_push_frag_opts(skb, opt, &proto);
-+
- 		if (opt->opt_nflen)
- 			ipv6_push_nfrag_opts(skb, opt, &proto, &first_hop,
- 					     &fl6->saddr);
-
-
+-- 
+Regards,
+Vincenzo
