@@ -2,166 +2,196 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95FCAC67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:49:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B53BC67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:51:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5885520892
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:49:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544791782;
-	bh=Tf8m/u9+0QYRBSNpngiEO7kWKu7juI8bAVGkQQ0cutY=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=mQ4wpjfuv5hp/tZsS4CIlKTVE39Sk0sSd509WeSfNcUXck+xM8APiiLdtDmjX60h4
-	 6rSGqwKFzcFxhOVrkGNLci1Kf497wJDYURiZMod+7p0Vx2Lc+gy7PFTyqnvvBmBzrE
-	 DN+lZvEs8yzhbQHqPT1zKLvhchK8u3vY4xz6Mb/o=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5885520892
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id D3276208E7
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:51:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3276208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729869AbeLNMtl (ORCPT
+        id S1729763AbeLNMvF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:49:41 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49792 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728881AbeLNMt1 (ORCPT
+        Fri, 14 Dec 2018 07:51:05 -0500
+Received: from mail-io1-f72.google.com ([209.85.166.72]:51608 "EHLO
+        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726281AbeLNMvF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:49:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=QDmc+Cb9tIkN8TVkY1t4mg+OrNzAXxc1QBo/XAVUtVc=; b=sEwo1hja7Iom
-        rFeliiWurMPs2s9uRDp2ZddYyJlI69GMSoIZzQFW45eff/BBaS0dU6XDjSmJ2rEQFg/MntW/6UxYj
-        Q0exEmQtQWwiIOYwbhYguVTo0+RGYteICzjh2YMwZMv2OH/B6nBMZHYRbUsRuxhCA2ku/J42/ti2j
-        IF/KM=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gXmu7-0006m6-6k; Fri, 14 Dec 2018 12:49:19 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id DFE7A11258A2; Fri, 14 Dec 2018 12:49:18 +0000 (GMT)
-From:   Mark Brown <broonie@kernel.org>
-To:     Rohit kumar <rohitkr@codeaurora.org>
-Cc:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Mark Brown <broonie@kernel.org>, plai@codeaurora.org,
-        bgoswami@codeaurora.org, lgirdwood@gmail.com, broonie@kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, perex@perex.cz,
-        tiwai@suse.com, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        rohkumar@qti.qualcomm.com, srinivas.kandagatla@linaro.org,
-        asishb@codeaurora.org, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: qdsp6: q6afe-dai: add support to Display port RX dais" to the asoc tree
-In-Reply-To:  <1544790569-10608-4-git-send-email-rohitkr@codeaurora.org>
-X-Patchwork-Hint: ignore
-Message-Id: <20181214124918.DFE7A11258A2@debutante.sirena.org.uk>
-Date:   Fri, 14 Dec 2018 12:49:18 +0000 (GMT)
+        Fri, 14 Dec 2018 07:51:05 -0500
+Received: by mail-io1-f72.google.com with SMTP id h6so4500759ioq.18
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 04:51:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=oPufeOebDa1ETFaHA+cGBvtTF3RxaHpenNIRp2iOcdc=;
+        b=sGc0tqjJDAi4QVOq/nJ3KphDMlDeUrpyPzfs7oTgmraiIM+1n7mF7ggNP92w4/0rfi
+         QbDsXpo0I0GKrPlwtXpq62UtdVFwfYFX7idhbeVvNTuRJmXxP79PLhThtgiZGNO8Hmgw
+         JWyU410Enb7EvsL7qoLxwQnEEeaIqxTkCct2RNAFqY8cXU2mF2D9RdfX+SQR6mgZ7ph+
+         Bt+1ZPcf0DRZ2BKujK7ZIrqHtxZg6Z42VGR0B9ysgKZRoh4o2TJ86eDOvVvz9hZuIXGX
+         +43GQYbQ58asTeROaj7tGxG4gXJTB1Lyk7O6eF3XTIyS6A1OaRsjwgR/5LOM9jQm7nBQ
+         D4KA==
+X-Gm-Message-State: AA+aEWbyN/eKLWIQKuG3cKEB11aads5UW3GXR+AYHY9vPrlcticuNWcl
+        7FE7U/a6bJ1JOtEwB9zJ4rgtZIWXD9o5jsQP6Tu2FrtY9BIc
+X-Google-Smtp-Source: AFSGD/Xf+AbdT7w5VLea6O9R1ww3ofjB92CKHNPgAVUJz3kUf8+TXBLk5YAonHexZMXFGWVIbWVhh8bYS5CTebz6S1q4rCvXgfgd
+MIME-Version: 1.0
+X-Received: by 2002:a24:ac5f:: with SMTP id m31mr2464534iti.19.1544791864023;
+ Fri, 14 Dec 2018 04:51:04 -0800 (PST)
+Date:   Fri, 14 Dec 2018 04:51:04 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000004ea80b057cfae21e@google.com>
+Subject: general protection fault in watchdog
+From:   syzbot <syzbot+7713f3aa67be76b1552c@syzkaller.appspotmail.com>
+To:     akpm@linux-foundation.org, dvyukov@google.com,
+        linux-kernel@vger.kernel.org, paulmck@linux.vnet.ibm.com,
+        penguin-kernel@I-love.SAKURA.ne.jp, rafael.j.wysocki@intel.com,
+        syzkaller-bugs@googlegroups.com, vkuznets@redhat.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+Hello,
 
-   ASoC: qdsp6: q6afe-dai: add support to Display port RX dais
+syzbot found the following crash on:
 
-has been applied to the asoc tree at
+HEAD commit:    f5d582777bcb Merge branch 'for-linus' of git://git.kernel...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=16aca143400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c8970c89a0efbb23
+dashboard link: https://syzkaller.appspot.com/bug?extid=7713f3aa67be76b1552c
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1131381b400000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13bae593400000
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+7713f3aa67be76b1552c@syzkaller.appspotmail.com
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+Node 0 DMA free:15908kB min:164kB low:204kB high:244kB active_anon:0kB  
+inactive_anon:0kB active_file:0kB inactive_file:0kB unevictable:0kB  
+writepending:0kB present:15992kB managed:15908kB mlocked:0kB  
+kernel_stack:0kB pagetables:0kB bounce:0kB free_pcp:0kB local_pcp:0kB  
+free_cma:0kB
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] PREEMPT SMP KASAN
+CPU: 1 PID: 1019 Comm: khungtaskd Not tainted 4.20.0-rc6+ #150
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:check_hung_uninterruptible_tasks kernel/hung_task.c:197 [inline]
+RIP: 0010:watchdog+0x492/0x1060 kernel/hung_task.c:289
+Code: 44 89 b5 30 fe ff ff 48 c1 e8 03 4c 01 e8 48 89 85 e8 fd ff ff e9 f8  
+00 00 00 e8 29 f3 ff ff 48 8d 7b 10 48 89 f8 48 c1 e8 03 <42> 80 3c 28 00  
+0f 85 70 0a 00 00 4c 8b 73 10 bf 02 00 00 00 4c 89
+RSP: 0018:ffff8881d7b37cc8 EFLAGS: 00010202
+RAX: 01a5bfffffffff51 RBX: 0d2dfffffffffa7a RCX: ffffffff817f9259
+RDX: 0000000000000000 RSI: ffffffff817f9147 RDI: 0d2dfffffffffa8a
+xt_bpf: check failed: parse error
+RBP: ffff8881d7b37f00 R08: ffff8881d7bae140 R09: ffffed103b5e5b5f
+R10: ffffed103b5e5b5f R11: ffff8881daf2dafb R12: 00000000000003d6
+R13: dffffc0000000000 R14: 1ffff1103af66fbb R15: 00000000003fffd7
+FS:  0000000000000000(0000) GS:ffff8881daf00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f98b2d7c324 CR3: 00000001931bf000 CR4: 00000000001406e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+lowmem_reserve[]: 0 2818 6321 6321
+Node 0 DMA32 free:43812kB min:30052kB low:37564kB high:45076kB  
+active_anon:6236kB inactive_anon:0kB active_file:0kB inactive_file:80kB  
+unevictable:0kB writepending:0kB present:3129332kB managed:2888780kB  
+mlocked:0kB kernel_stack:32kB pagetables:0kB bounce:0kB free_pcp:200kB  
+local_pcp:200kB free_cma:0kB
+  kthread+0x35a/0x440 kernel/kthread.c:246
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
+Modules linked in:
+lowmem_reserve[]: 0 0 3503 3503
+Node 0 Normal free:158644kB min:37364kB low:46704kB high:56044kB  
+active_anon:4768kB inactive_anon:768kB active_file:556kB  
+inactive_file:1936kB unevictable:0kB writepending:0kB present:4718592kB  
+managed:3587816kB mlocked:0kB kernel_stack:5952kB pagetables:1172kB  
+bounce:0kB free_pcp:2416kB local_pcp:604kB free_cma:0kB
+lowmem_reserve[]: 0 0 0 0
+Node 0 DMA: 1*4kB (U) 0*8kB 0*16kB 1*32kB (U) 2*64kB (U) 1*128kB (U)  
+1*256kB (U) 0*512kB 1*1024kB (U) 1*2048kB (M) 3*4096kB (M) = 15908kB
+Node 0 DMA32: 21*4kB (UM) 19*8kB (ME) 17*16kB (UM) 15*32kB (UME) 13*64kB  
+(ME) 4*128kB (M) 3*256kB (UM) 16*512kB (UM) 12*1024kB (UME) 6*2048kB (UME)  
+2*4096kB (UM) = 44060kB
+Node 0 Normal: 366*4kB (UME) 308*8kB (UME) 615*16kB (UME) 146*32kB (UME)  
+467*64kB (UME) 43*128kB (UM) 4*256kB (UM) 2*512kB (ME) 2*1024kB (ME)  
+0*2048kB 0*4096kB = 57928kB
+Node 0 hugepages_total=0 hugepages_free=0 hugepages_surp=0  
+hugepages_size=1048576kB
+Node 0 hugepages_total=0 hugepages_free=0 hugepages_surp=0  
+hugepages_size=2048kB
+591 total pagecache pages
+0 pages in swap cache
+Swap cache stats: add 0, delete 0, find 0/0
+Free swap  = 0kB
+Total swap = 0kB
+1965979 pages RAM
+0 pages HighMem/MovableOnly
+342853 pages reserved
+0 pages cma reserved
+Unreclaimable slab info:
+Name                      Used          Total
+TIPC                       1KB          7KB
+SCTPv6                     2KB          6KB
+DCCPv6                     2KB          7KB
+DCCP                       2KB          6KB
+fib6_nodes                 0KB          4KB
+ip6_dst_cache              4KB          7KB
+RAWv6                      9KB         19KB
+UDPv6                     14KB         14KB
+TCPv6                     23KB         29KB
+nf_conntrack               0KB          3KB
+sd_ext_cdb                 0KB          3KB
+scsi_sense_cache        1056KB       1060KB
+virtio_scsi_cmd           16KB         16KB
+---[ end trace 92ff4e73865c48e6 ]---
+sgpool-128                 8KB          8KB
+RIP: 0010:check_hung_uninterruptible_tasks kernel/hung_task.c:197 [inline]
+RIP: 0010:watchdog+0x492/0x1060 kernel/hung_task.c:289
+sgpool-64                  4KB          6KB
+sgpool-32                  2KB          7KB
+Code: 44 89 b5 30 fe ff ff 48 c1 e8 03 4c 01 e8 48 89 85 e8 fd ff ff e9 f8  
+00 00 00 e8 29 f3 ff ff 48 8d 7b 10 48 89 f8 48 c1 e8 03 <42> 80 3c 28 00  
+0f 85 70 0a 00 00 4c 8b 73 10 bf 02 00 00 00 4c 89
+sgpool-16                  1KB          3KB
+RSP: 0018:ffff8881d7b37cc8 EFLAGS: 00010202
+RAX: 01a5bfffffffff51 RBX: 0d2dfffffffffa7a RCX: ffffffff817f9259
+RDX: 0000000000000000 RSI: ffffffff817f9147 RDI: 0d2dfffffffffa8a
+RBP: ffff8881d7b37f00 R08: ffff8881d7bae140 R09: ffffed103b5e5b5f
+sgpool-8                   0KB          3KB
+mqueue_inode_cache          1KB          7KB
+R10: ffffed103b5e5b5f R11: ffff8881daf2dafb R12: 00000000000003d6
+R13: dffffc0000000000 R14: 1ffff1103af66fbb R15: 00000000003fffd7
+bio_post_read_ctx         14KB         15KB
+FS:  0000000000000000(0000) GS:ffff8881dae00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+bio-2                     14KB         15KB
+jfs_mp                     7KB          7KB
+nfs_commit_data            3KB          7KB
+CR2: 00000000004376a0 CR3: 000000016845e000 CR4: 00000000001406f0
+nfs_write_data            32KB         32KB
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+ext4_system_zone           0KB          3KB
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 32d2c61ba05944aa1e61d186611310dd911e1703 Mon Sep 17 00:00:00 2001
-From: Rohit kumar <rohitkr@codeaurora.org>
-Date: Fri, 14 Dec 2018 17:59:28 +0530
-Subject: [PATCH] ASoC: qdsp6: q6afe-dai: add support to Display port RX dais
-
-This patch adds support of AFE DAI for Display_port_rx port.
-
-Signed-off-by: Rohit kumar <rohitkr@codeaurora.org>
-Acked-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/qcom/qdsp6/q6afe-dai.c | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/sound/soc/qcom/qdsp6/q6afe-dai.c b/sound/soc/qcom/qdsp6/q6afe-dai.c
-index bfc3bbf1d4de..dc645ba4d8d0 100644
---- a/sound/soc/qcom/qdsp6/q6afe-dai.c
-+++ b/sound/soc/qcom/qdsp6/q6afe-dai.c
-@@ -341,6 +341,7 @@ static int q6afe_dai_prepare(struct snd_pcm_substream *substream,
- 
- 	switch (dai->id) {
- 	case HDMI_RX:
-+	case DISPLAY_PORT_RX:
- 		q6afe_hdmi_port_prepare(dai_data->port[dai->id],
- 					&dai_data->port_config[dai->id].hdmi);
- 		break;
-@@ -445,6 +446,7 @@ static int q6afe_mi2s_set_sysclk(struct snd_soc_dai *dai,
- 
- static const struct snd_soc_dapm_route q6afe_dapm_routes[] = {
- 	{"HDMI Playback", NULL, "HDMI_RX"},
-+	{"Display Port Playback", NULL, "DISPLAY_PORT_RX"},
- 	{"Slimbus1 Playback", NULL, "SLIMBUS_1_RX"},
- 	{"Slimbus2 Playback", NULL, "SLIMBUS_2_RX"},
- 	{"Slimbus3 Playback", NULL, "SLIMBUS_3_RX"},
-@@ -1090,6 +1092,25 @@ static struct snd_soc_dai_driver q6afe_dais[] = {
- 	Q6AFE_TDM_CAP_DAI("Quinary", 5, QUINARY_TDM_TX_5),
- 	Q6AFE_TDM_CAP_DAI("Quinary", 6, QUINARY_TDM_TX_6),
- 	Q6AFE_TDM_CAP_DAI("Quinary", 7, QUINARY_TDM_TX_7),
-+	{
-+		.playback = {
-+			.stream_name = "Display Port Playback",
-+			.rates = SNDRV_PCM_RATE_48000 |
-+				 SNDRV_PCM_RATE_96000 |
-+				 SNDRV_PCM_RATE_192000,
-+			.formats = SNDRV_PCM_FMTBIT_S16_LE |
-+				   SNDRV_PCM_FMTBIT_S24_LE,
-+			.channels_min = 2,
-+			.channels_max = 8,
-+			.rate_max =     192000,
-+			.rate_min =	48000,
-+		},
-+		.ops = &q6hdmi_ops,
-+		.id = DISPLAY_PORT_RX,
-+		.name = "DISPLAY_PORT",
-+		.probe = msm_dai_q6_dai_probe,
-+		.remove = msm_dai_q6_dai_remove,
-+	},
- };
- 
- static int q6afe_of_xlate_dai_name(struct snd_soc_component *component,
-@@ -1311,6 +1332,7 @@ static const struct snd_soc_dapm_widget q6afe_dai_widgets[] = {
- 						0, 0, 0, 0),
- 	SND_SOC_DAPM_AIF_OUT("QUIN_TDM_TX_7", NULL,
- 						0, 0, 0, 0),
-+	SND_SOC_DAPM_AIF_OUT("DISPLAY_PORT_RX", "NULL", 0, 0, 0, 0),
- };
- 
- static const struct snd_soc_component_driver q6afe_dai_component = {
--- 
-2.19.0.rc2
-
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
