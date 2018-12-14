@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-11.9 required=3.0
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3C70C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:21:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E002C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:21:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5406D2086D
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:21:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E0F7C208C1
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:21:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730800AbeLNUVH (ORCPT
+        id S1730807AbeLNUVd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 15:21:07 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:58497 "EHLO
+        Fri, 14 Dec 2018 15:21:33 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:60603 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730733AbeLNUVH (ORCPT
+        with ESMTP id S1730709AbeLNUVc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 15:21:07 -0500
+        Fri, 14 Dec 2018 15:21:32 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBEKKfpL1450887
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBEKLGJ41451135
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Fri, 14 Dec 2018 12:20:41 -0800
+        Fri, 14 Dec 2018 12:21:16 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBEKKfHP1450884;
-        Fri, 14 Dec 2018 12:20:41 -0800
-Date:   Fri, 14 Dec 2018 12:20:41 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBEKLGjU1451132;
+        Fri, 14 Dec 2018 12:21:16 -0800
+Date:   Fri, 14 Dec 2018 12:21:16 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Eric Saint-Etienne <tipbot@zytor.com>
-Message-ID: <tip-97dfc3423ca701212802a02994d1ec3e688f4891@git.kernel.org>
-Cc:     alexander.shishkin@linux.intel.com, linux-kernel@vger.kernel.org,
-        namhyung@kernel.org, peterz@infradead.org, tglx@linutronix.de,
-        jolsa@kernel.org, eric.saint.etienne@oracle.com,
-        eric.saintetienne@gmail.com, hpa@zytor.com, acme@redhat.com,
-        mingo@kernel.org
-Reply-To: eric.saintetienne@gmail.com, hpa@zytor.com, acme@redhat.com,
-          mingo@kernel.org, linux-kernel@vger.kernel.org,
-          alexander.shishkin@linux.intel.com, namhyung@kernel.org,
-          peterz@infradead.org, tglx@linutronix.de, jolsa@kernel.org,
-          eric.saint.etienne@oracle.com
-In-Reply-To: <1542969759-24346-1-git-send-email-eric.saint.etienne@oracle.com>
-References: <1542969759-24346-1-git-send-email-eric.saint.etienne@oracle.com>
+From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-vcz4ufzdon7cwy8dm2ua53xk@git.kernel.org>
+Cc:     wangnan0@huawei.com, dsahern@gmail.com, adrian.hunter@intel.com,
+        tglx@linutronix.de, mingo@kernel.org, linux-kernel@vger.kernel.org,
+        namhyung@kernel.org, mathieu.poirier@linaro.org,
+        ak@linux.intel.com, leo.yan@linaro.org, davem@davemloft.net,
+        hpa@zytor.com, acme@redhat.com, jolsa@redhat.com
+Reply-To: dsahern@gmail.com, adrian.hunter@intel.com, tglx@linutronix.de,
+          wangnan0@huawei.com, davem@davemloft.net, mingo@kernel.org,
+          linux-kernel@vger.kernel.org, leo.yan@linaro.org,
+          ak@linux.intel.com, mathieu.poirier@linaro.org,
+          namhyung@kernel.org, hpa@zytor.com, acme@redhat.com,
+          jolsa@redhat.com
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf map: Remove extra indirection from map__find()
-Git-Commit-ID: 97dfc3423ca701212802a02994d1ec3e688f4891
+Subject: [tip:perf/core] perf env: Also consider env->arch == NULL as local
+ operation
+Git-Commit-ID: ea75be393677d60dd64b976f8fc91763537b13c7
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -60,57 +60,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  97dfc3423ca701212802a02994d1ec3e688f4891
-Gitweb:     https://git.kernel.org/tip/97dfc3423ca701212802a02994d1ec3e688f4891
-Author:     Eric Saint-Etienne <eric.saint.etienne@oracle.com>
-AuthorDate: Fri, 23 Nov 2018 02:42:39 -0800
+Commit-ID:  ea75be393677d60dd64b976f8fc91763537b13c7
+Gitweb:     https://git.kernel.org/tip/ea75be393677d60dd64b976f8fc91763537b13c7
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Tue, 27 Nov 2018 11:45:49 -0300
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Thu, 29 Nov 2018 20:42:46 -0300
+CommitDate: Thu, 29 Nov 2018 20:42:47 -0300
 
-perf map: Remove extra indirection from map__find()
+perf env: Also consider env->arch == NULL as local operation
 
-A double pointer is used in map__find() where a single pointer is enough
-because the function doesn't affect the rbtree and the rbtree is locked.
+We'll set a new machine field based on env->arch, which for live mode,
+like with 'perf top' means we need to use uname() to figure the name of
+the arch, fix perf_env__arch() to consider both (env == NULL) and
+(env->arch == NULL) as local operation.
 
-Signed-off-by: Eric Saint-Etienne <eric.saint.etienne@oracle.com>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Eric Saint-Etienne <eric.saintetienne@gmail.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: David S. Miller <davem@davemloft.net>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Leo Yan <leo.yan@linaro.org>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/1542969759-24346-1-git-send-email-eric.saint.etienne@oracle.com
+Cc: Wang Nan <wangnan0@huawei.com>
+Cc: stable@vger.kernel.org # 4.19
+Link: https://lkml.kernel.org/n/tip-vcz4ufzdon7cwy8dm2ua53xk@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/map.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+ tools/perf/util/env.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/util/map.c b/tools/perf/util/map.c
-index 781eed8e3265..a0d58b4d9c32 100644
---- a/tools/perf/util/map.c
-+++ b/tools/perf/util/map.c
-@@ -873,19 +873,18 @@ void maps__remove(struct maps *maps, struct map *map)
+diff --git a/tools/perf/util/env.c b/tools/perf/util/env.c
+index 59f38c7693f8..4c23779e271a 100644
+--- a/tools/perf/util/env.c
++++ b/tools/perf/util/env.c
+@@ -166,7 +166,7 @@ const char *perf_env__arch(struct perf_env *env)
+ 	struct utsname uts;
+ 	char *arch_name;
  
- struct map *maps__find(struct maps *maps, u64 ip)
- {
--	struct rb_node **p, *parent = NULL;
-+	struct rb_node *p;
- 	struct map *m;
- 
- 	down_read(&maps->lock);
- 
--	p = &maps->entries.rb_node;
--	while (*p != NULL) {
--		parent = *p;
--		m = rb_entry(parent, struct map, rb_node);
-+	p = maps->entries.rb_node;
-+	while (p != NULL) {
-+		m = rb_entry(p, struct map, rb_node);
- 		if (ip < m->start)
--			p = &(*p)->rb_left;
-+			p = p->rb_left;
- 		else if (ip >= m->end)
--			p = &(*p)->rb_right;
-+			p = p->rb_right;
- 		else
- 			goto out;
- 	}
+-	if (!env) { /* Assume local operation */
++	if (!env || !env->arch) { /* Assume local operation */
+ 		if (uname(&uts) < 0)
+ 			return NULL;
+ 		arch_name = uts.machine;
