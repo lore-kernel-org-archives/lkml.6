@@ -2,64 +2,96 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24179C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 21:37:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4736C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 21:39:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D514208C1
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 21:37:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D13EF208C1
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 21:39:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731216AbeLNVg7 (ORCPT
+        id S1730994AbeLNVjf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 16:36:59 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:34376 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730758AbeLNVg6 (ORCPT
+        Fri, 14 Dec 2018 16:39:35 -0500
+Received: from iolanthe.rowland.org ([192.131.102.54]:60414 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1730887AbeLNVjf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 16:36:58 -0500
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::bf5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id BFB2714DF1CB4;
-        Fri, 14 Dec 2018 13:36:57 -0800 (PST)
-Date:   Fri, 14 Dec 2018 13:36:57 -0800 (PST)
-Message-Id: <20181214.133657.253891930157421703.davem@davemloft.net>
-To:     wen.yang99@zte.com.cn
-Cc:     tlfalcon@linux.ibm.com, jallen@linux.ibm.com,
-        benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au,
-        netdev@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, cheng.shengyu@zte.com.cn
-Subject: Re: [PATCH] net/ibmvnic: Remove tests of member address
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20181211042046.64810-1-wen.yang99@zte.com.cn>
-References: <20181211042046.64810-1-wen.yang99@zte.com.cn>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 14 Dec 2018 13:36:58 -0800 (PST)
+        Fri, 14 Dec 2018 16:39:35 -0500
+Received: (qmail 6090 invoked by uid 2102); 14 Dec 2018 16:39:34 -0500
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 14 Dec 2018 16:39:34 -0500
+Date:   Fri, 14 Dec 2018 16:39:34 -0500 (EST)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
+cc:     David Goldblatt <davidtgoldblatt@gmail.com>,
+        <mathieu.desnoyers@efficios.com>,
+        Florian Weimer <fweimer@redhat.com>, <triegel@redhat.com>,
+        <libc-alpha@sourceware.org>, <andrea.parri@amarulasolutions.com>,
+        <will.deacon@arm.com>, <peterz@infradead.org>,
+        <boqun.feng@gmail.com>, <npiggin@gmail.com>, <dhowells@redhat.com>,
+        <j.alglave@ucl.ac.uk>, <luc.maranget@inria.fr>, <akiyks@gmail.com>,
+        <dlustig@nvidia.com>, <linux-arch@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] Linux: Implement membarrier function
+In-Reply-To: <20181214184344.GW4170@linux.ibm.com>
+Message-ID: <Pine.LNX.4.44L0.1812141404450.1570-100000@iolanthe.rowland.org>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wen Yang <wen.yang99@zte.com.cn>
-Date: Tue, 11 Dec 2018 12:20:46 +0800
+On Fri, 14 Dec 2018, Paul E. McKenney wrote:
 
-> The driver was checking for non-NULL address.
-> - adapter->napi[i]
+> I would say that sys_membarrier() has zero-sized read-side critical
+> sections, either comprising a single instruction (as is the case for
+> synchronize_sched(), actually), preempt-disable regions of code
+> (which are irrelevant to userspace execution), or the spaces between
+> consecutive pairs of instructions (as is the case for the newer
+> IPI-based implementation).
 > 
-> This is pointless as these will be always non-NULL, since the
-> 'dapter->napi' is allocated in init_napi().
-> It is safe to get rid of useless checks for addresses to fix the
-> coccinelle warning:
->>>drivers/net/ethernet/ibm/ibmvnic.c: test of a variable/field address
-> Since such statements always return true, they are redundant.
-> 
-> Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+> The model picks the single-instruction option, and I haven't yet found
+> a problem with this -- which is no surprise given that, as you say,
+> an actual implementation makes this same choice.
 
-Applied.
+I believe that for RCU tests the LKMM gives the same results for
+length-zero critical sections interspersed between all the instructions
+and length-one critical sections surrounding all instructions (except
+synchronize_rcu).  But the proof is tricky and I haven't checked it
+carefully.
+
+> > > The other thing that took some time to get used to is the possibility
+> > > of long delays during sys_membarrier() execution, allowing significant
+> > > execution and reordering between different CPUs' IPIs.  This was key
+> > > to my understanding of the six-process example, and probably needs to
+> > > be clearly called out, including in an example or two.
+> > 
+> > In all the examples I'm aware of, no more than one of the IPIs
+> > generated by each sys_membarrier call really matters.  (Of course,
+> > there's no way to know in advance which one it will be, so you have to
+> > send an IPI to every CPU.)  The execution delays and reordering
+> > between different CPUs' IPIs don't appear to be significant.
+> 
+> Well, there are litmus tests that are allowed in which the allowed
+> execution is more easily explained in terms of delays between different
+> CPUs' IPIs, so it seems worth keeping track of.
+> 
+> There might be a litmus test that can tell the difference between
+> simultaneous and non-simultaneous IPIs, but I cannot immediately think of
+> one that matters.  Might be a failure of imagination on my part, though.
+
+	P0	P1	P2
+	Wc=1	[mb01]	Rb=1
+	memb	Wa=1	Rc=0
+	Ra=0	Wb=1	[mb02]
+
+The IPIs have to appear in the positions shown, which means they cannot
+be simultaneous.  The test is allowed because P2's reads can be
+reordered.
+
+Alan
+
