@@ -4,53 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48AC6C67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:08:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DAB1C6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:08:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F7E72147D
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:08:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 347812148E
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:08:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544789333;
-	bh=2oHKwM7i37Hy9NNs/lxriRkdAQeGiWHoKS5QMxLyQAA=;
+	s=default; t=1544789336;
+	bh=wlH9wEAogOx78rs8iYGXkonzD4rtn8Uet06PpgyZPbI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=P8AVoF08mQdJufdKv4S65FzoHdUvjSVIl2KVO5XksCY92nq65f9cYY3Eto/skRKO6
-	 b7ZHAsJOvkKC1C+i27fVt6HoFVUPC7WcjB2THR0KsQqPTC2LpnY+1XJD8tIwsiId+R
-	 1GPc7wnMr1LPYucuHYq3O6k1bWgei4vy180Y35vM=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F7E72147D
+	b=z23l5pE+Pn71TBWg+IS2tTV7cqlw+Hdh626hHmln0lmEqm1b+iwsYmPus9Ypmekos
+	 wh+e0aIF5fZZ7PHjnx66GnJjcSokpwGv6vpRblR4Pxhdmg7oSiwS8WSiPxS6x0nJop
+	 yrMBvLkSnoj4LtvFDI0m0KQM1EYHYwpRME6NI+yA=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 347812148E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731359AbeLNMIv (ORCPT
+        id S1731370AbeLNMIy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:08:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54352 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:08:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54418 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731003AbeLNMIt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:08:49 -0500
+        id S1730560AbeLNMIv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:08:51 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 105092148E;
-        Fri, 14 Dec 2018 12:08:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ABCED2147D;
+        Fri, 14 Dec 2018 12:08:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789328;
-        bh=2oHKwM7i37Hy9NNs/lxriRkdAQeGiWHoKS5QMxLyQAA=;
+        s=default; t=1544789331;
+        bh=wlH9wEAogOx78rs8iYGXkonzD4rtn8Uet06PpgyZPbI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tShqOuCS+535KYrMasS31aG1Ehwtg88kOW3mG8VXNr6rbKGN85lS4nvAmkQ/ozasQ
-         G6ck2KGcxUh4pUa93JO2J8DTD2ITkVDAmCXnay5ZBnw1avydAb9bGCJZI0PBbVCS4i
-         +vzsOdZheTpRHt+A7WD5SQes6F7xlEhe2jP8plsY=
+        b=ty8wFIrGVdpLVgRvC/iOTie+VFuAzfxcZlRuPFkQogkr4+YdyRZlQxVo08qSCTlGi
+         qdR735xJxrjNTnB2Km0aOgNovEmqu+r2ySBi7D0DX1dxl5eZBpwuvo6XGSsxCvoDMs
+         sLXRi2Ci30eatFd72nRYJsP/oolAcyMW92ntJ8rA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        stable@vger.kernel.org, Adam Ford <aford173@gmail.com>,
+        Tony Lindgren <tony@atomide.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 18/89] staging: rtl8723bs: Fix the return value in case of error in rtw_wx_read32()
-Date:   Fri, 14 Dec 2018 12:59:31 +0100
-Message-Id: <20181214115730.576372263@linuxfoundation.org>
+Subject: [PATCH 4.14 19/89] ARM: dts: logicpd-somlv: Fix interrupt on mmc3_dat1
+Date:   Fri, 14 Dec 2018 12:59:32 +0100
+Message-Id: <20181214115730.623479854@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115729.658859279@linuxfoundation.org>
 References: <20181214115729.658859279@linuxfoundation.org>
@@ -69,34 +69,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit c3e43d8b958bd6849817393483e805d8638a8ab7 ]
+[ Upstream commit 3d8b804bc528d3720ec0c39c212af92dafaf6e84 ]
 
-We return 0 unconditionally in 'rtw_wx_read32()'.
-However, 'ret' is set to some error codes in several error handling paths.
+The interrupt on mmc3_dat1 is wrong which prevents this from
+appearing in /proc/interrupts.
 
-Return 'ret' instead to propagate the error code.
+Fixes: ab8dd3aed011 ("ARM: DTS: Add minimal Support for Logic PD
+DM3730 SOM-LV") #Kernel 4.9+
 
-Fixes: 554c0a3abf216 ("staging: Add rtl8723bs sdio wifi driver")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Adam Ford <aford173@gmail.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/staging/rtl8723bs/os_dep/ioctl_linux.c | 2 +-
+ arch/arm/boot/dts/logicpd-som-lv.dtsi | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c b/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
-index d5e5f830f2a1..1b61da61690b 100644
---- a/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
-+++ b/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
-@@ -2383,7 +2383,7 @@ static int rtw_wx_read32(struct net_device *dev,
- exit:
- 	kfree(ptmp);
+diff --git a/arch/arm/boot/dts/logicpd-som-lv.dtsi b/arch/arm/boot/dts/logicpd-som-lv.dtsi
+index c335b923753a..a7883676f675 100644
+--- a/arch/arm/boot/dts/logicpd-som-lv.dtsi
++++ b/arch/arm/boot/dts/logicpd-som-lv.dtsi
+@@ -123,7 +123,7 @@
+ };
  
--	return 0;
-+	return ret;
- }
- 
- static int rtw_wx_write32(struct net_device *dev,
+ &mmc3 {
+-	interrupts-extended = <&intc 94 &omap3_pmx_core2 0x46>;
++	interrupts-extended = <&intc 94 &omap3_pmx_core 0x136>;
+ 	pinctrl-0 = <&mmc3_pins &wl127x_gpio>;
+ 	pinctrl-names = "default";
+ 	vmmc-supply = <&wl12xx_vmmc>;
 -- 
 2.19.1
 
