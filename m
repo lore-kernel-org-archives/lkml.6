@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74689C67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:01:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 081E8C6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:01:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C8862146F
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:01:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B6FE521479
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:01:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544788909;
-	bh=WZDayLfETHJhfdrZqdHI3yMJrTPemdFOSg/CvcMmYe8=;
+	s=default; t=1544788913;
+	bh=jh98IrJeF6sQXw6cmFtGw1rkNoLgo1ZGaFWwsAC16F0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=B3PWiRrD78EVpySBgx1/wENub//HX/lQFbl+39Vx71siWXTHsSHhPyybuBESTJkpb
-	 rqQcMD0z2GwWBuX5DNchUd3i6epdx1ibR0CObZPfuXgxotdOI9ScLvzvd2dktvzrgR
-	 Yh5cOqDnHlGo50SjgrlHOVFTg2jyHVkfcGB7pq48=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C8862146F
+	b=Jx6NxnrX1jM10H1YemEyPv3AQIJTLarCszWL91Vnfpn2TAWiS1ImGN0BgeAv+cbtI
+	 LMtDNPjdJ/dRqDSrSrlO80P/R5BOzv31jzsTs5BRLCIZYbKkKcTZcEkEMJgTRcx/eP
+	 xl6xOjbcG0opTyqgaeb4OdP0HiBwd/3ANp7+bpHc=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6FE521479
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729850AbeLNMBs (ORCPT
+        id S1729866AbeLNMBw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:01:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44320 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:01:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44456 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729805AbeLNMBp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:01:45 -0500
+        id S1729649AbeLNMBu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:01:50 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D94982146F;
-        Fri, 14 Dec 2018 12:01:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0104D2146E;
+        Fri, 14 Dec 2018 12:01:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544788904;
-        bh=WZDayLfETHJhfdrZqdHI3yMJrTPemdFOSg/CvcMmYe8=;
+        s=default; t=1544788909;
+        bh=jh98IrJeF6sQXw6cmFtGw1rkNoLgo1ZGaFWwsAC16F0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nlhLiN36NPwDJFZbAOqmQzf1H21WkSdki2tOps484e3qWjqw1agN+i1G5wmUDyLzv
-         EeRTqaZ5OhEmHiSB1mxkyFCSkQ8BASkaDXrDhwtsHt3dILtSCWnbUf6VbYkNiVAKlh
-         OOv0/rHahlwYty7xkNvOM+bsaBQD6rq5ZF6iINmU=
+        b=MpHqE+6G6f3Fn/f+RQL34Vc3nZ/LeE3ViKIP4+/Pr73rxoDAMvDh5dwE4yEbLezSu
+         QLJPx4gkg0DCsN3yoWAyOzHFZK/iWDCOwzj6aBFInd6k/aVsVuUUarK57Y11nyKA/W
+         1fTV50hrW0iG+ogoO7g02KVa4+6gZ9ydN17hK9cc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stefano Brivio <sbrivio@redhat.com>,
+        stable@vger.kernel.org, Su Yanjun <suyj.fnst@cn.fujitsu.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 003/142] neighbour: Avoid writing before skb->head in neigh_hh_output()
-Date:   Fri, 14 Dec 2018 12:58:08 +0100
-Message-Id: <20181214115747.193957366@linuxfoundation.org>
+Subject: [PATCH 4.19 005/142] net: 8139cp: fix a BUG triggered by changing mtu with network traffic
+Date:   Fri, 14 Dec 2018 12:58:10 +0100
+Message-Id: <20181214115747.269668359@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115747.053633987@linuxfoundation.org>
 References: <20181214115747.053633987@linuxfoundation.org>
@@ -68,87 +68,143 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stefano Brivio <sbrivio@redhat.com>
+From: Su Yanjun <suyj.fnst@cn.fujitsu.com>
 
-[ Upstream commit e6ac64d4c4d095085d7dd71cbd05704ac99829b2 ]
+[ Upstream commit a5d4a89245ead1f37ed135213653c5beebea4237 ]
 
-While skb_push() makes the kernel panic if the skb headroom is less than
-the unaligned hardware header size, it will proceed normally in case we
-copy more than that because of alignment, and we'll silently corrupt
-adjacent slabs.
+When changing mtu many times with traffic, a bug is triggered:
 
-In the case fixed by the previous patch,
-"ipv6: Check available headroom in ip6_xmit() even without options", we
-end up in neigh_hh_output() with 14 bytes headroom, 14 bytes hardware
-header and write 16 bytes, starting 2 bytes before the allocated buffer.
+[ 1035.684037] kernel BUG at lib/dynamic_queue_limits.c:26!
+[ 1035.684042] invalid opcode: 0000 [#1] SMP
+[ 1035.684049] Modules linked in: loop binfmt_misc 8139cp(OE) macsec
+tcp_diag udp_diag inet_diag unix_diag af_packet_diag netlink_diag tcp_lp
+fuse uinput xt_CHECKSUM iptable_mangle ipt_MASQUERADE
+nf_nat_masquerade_ipv4 iptable_nat nf_nat_ipv4 nf_nat nf_conntrack_ipv4
+nf_defrag_ipv4 xt_conntrack nf_conntrack ipt_REJECT nf_reject_ipv4 tun
+bridge stp llc ebtable_filter ebtables ip6table_filter devlink
+ip6_tables iptable_filter sunrpc snd_hda_codec_generic snd_hda_intel
+snd_hda_codec snd_hda_core snd_hwdep ppdev snd_seq iosf_mbi crc32_pclmul
+parport_pc snd_seq_device ghash_clmulni_intel parport snd_pcm
+aesni_intel joydev lrw snd_timer virtio_balloon sg gf128mul glue_helper
+ablk_helper cryptd snd soundcore i2c_piix4 pcspkr ip_tables xfs
+libcrc32c sr_mod sd_mod cdrom crc_t10dif crct10dif_generic ata_generic
+[ 1035.684102]  pata_acpi virtio_console qxl drm_kms_helper syscopyarea
+sysfillrect sysimgblt floppy fb_sys_fops crct10dif_pclmul
+crct10dif_common ttm crc32c_intel serio_raw ata_piix drm libata 8139too
+virtio_pci drm_panel_orientation_quirks virtio_ring virtio mii dm_mirror
+dm_region_hash dm_log dm_mod [last unloaded: 8139cp]
+[ 1035.684132] CPU: 9 PID: 25140 Comm: if-mtu-change Kdump: loaded
+Tainted: G           OE  ------------ T 3.10.0-957.el7.x86_64 #1
+[ 1035.684134] Hardware name: Red Hat KVM, BIOS 0.5.1 01/01/2011
+[ 1035.684136] task: ffff8f59b1f5a080 ti: ffff8f5a2e32c000 task.ti:
+ffff8f5a2e32c000
+[ 1035.684149] RIP: 0010:[<ffffffffba3a40d0>]  [<ffffffffba3a40d0>]
+dql_completed+0x180/0x190
+[ 1035.684162] RSP: 0000:ffff8f5a75483e50  EFLAGS: 00010093
+[ 1035.684162] RAX: 00000000000000c2 RBX: ffff8f5a6f91c000 RCX:
+0000000000000000
+[ 1035.684162] RDX: 0000000000000000 RSI: 0000000000000184 RDI:
+ffff8f599fea3ec0
+[ 1035.684162] RBP: ffff8f5a75483ea8 R08: 00000000000000c2 R09:
+0000000000000000
+[ 1035.684162] R10: 00000000000616ef R11: ffff8f5a75483b56 R12:
+ffff8f599fea3e00
+[ 1035.684162] R13: 0000000000000001 R14: 0000000000000000 R15:
+0000000000000184
+[ 1035.684162] FS:  00007fa8434de740(0000) GS:ffff8f5a75480000(0000)
+knlGS:0000000000000000
+[ 1035.684162] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[ 1035.684162] CR2: 00000000004305d0 CR3: 000000024eb66000 CR4:
+00000000001406e0
+[ 1035.684162] Call Trace:
+[ 1035.684162]  <IRQ>
+[ 1035.684162]  [<ffffffffc08cbaf8>] ? cp_interrupt+0x478/0x580 [8139cp]
+[ 1035.684162]  [<ffffffffba14a294>]
+__handle_irq_event_percpu+0x44/0x1c0
+[ 1035.684162]  [<ffffffffba14a442>] handle_irq_event_percpu+0x32/0x80
+[ 1035.684162]  [<ffffffffba14a4cc>] handle_irq_event+0x3c/0x60
+[ 1035.684162]  [<ffffffffba14db29>] handle_fasteoi_irq+0x59/0x110
+[ 1035.684162]  [<ffffffffba02e554>] handle_irq+0xe4/0x1a0
+[ 1035.684162]  [<ffffffffba7795dd>] do_IRQ+0x4d/0xf0
+[ 1035.684162]  [<ffffffffba76b362>] common_interrupt+0x162/0x162
+[ 1035.684162]  <EOI>
+[ 1035.684162]  [<ffffffffba0c2ae4>] ? __wake_up_bit+0x24/0x70
+[ 1035.684162]  [<ffffffffba1e46f5>] ? do_set_pte+0xd5/0x120
+[ 1035.684162]  [<ffffffffba1b64fb>] unlock_page+0x2b/0x30
+[ 1035.684162]  [<ffffffffba1e4879>] do_read_fault.isra.61+0x139/0x1b0
+[ 1035.684162]  [<ffffffffba1e9134>] handle_pte_fault+0x2f4/0xd10
+[ 1035.684162]  [<ffffffffba1ebc6d>] handle_mm_fault+0x39d/0x9b0
+[ 1035.684162]  [<ffffffffba76f5e3>] __do_page_fault+0x203/0x500
+[ 1035.684162]  [<ffffffffba76f9c6>] trace_do_page_fault+0x56/0x150
+[ 1035.684162]  [<ffffffffba76ef42>] do_async_page_fault+0x22/0xf0
+[ 1035.684162]  [<ffffffffba76b788>] async_page_fault+0x28/0x30
+[ 1035.684162] Code: 54 c7 47 54 ff ff ff ff 44 0f 49 ce 48 8b 35 48 2f
+9c 00 48 89 77 58 e9 fe fe ff ff 0f 1f 80 00 00 00 00 41 89 d1 e9 ef fe
+ff ff <0f> 0b 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 55 8d 42 ff 48
+[ 1035.684162] RIP  [<ffffffffba3a40d0>] dql_completed+0x180/0x190
+[ 1035.684162]  RSP <ffff8f5a75483e50>
 
-Always check we're not writing before skb->head and, if the headroom is
-not enough, warn and drop the packet.
+It's not the same as in 7fe0ee09 patch described.
+As 8139cp uses shared irq mode, other device irq will trigger
+cp_interrupt to execute.
 
-v2:
- - instead of panicking with BUG_ON(), WARN_ON_ONCE() and drop the packet
-   (Eric Dumazet)
- - if we avoid the panic, though, we need to explicitly check the headroom
-   before the memcpy(), otherwise we'll have corrupted slabs on a running
-   kernel, after we warn
- - use __skb_push() instead of skb_push(), as the headroom check is
-   already implemented here explicitly (Eric Dumazet)
+cp_change_mtu
+ -> cp_close
+ -> cp_open
 
-Signed-off-by: Stefano Brivio <sbrivio@redhat.com>
+In cp_close routine  just before free_irq(), some interrupt may occur.
+In my environment, cp_interrupt exectutes and IntrStatus is 0x4,
+exactly TxOk. That will cause cp_tx to wake device queue.
+
+As device queue is started, cp_start_xmit and cp_open will run at same
+time which will cause kernel BUG.
+
+For example:
+[#] for tx descriptor
+
+At start:
+
+[#][#][#]
+num_queued=3
+
+After cp_init_hw->cp_start_hw->netdev_reset_queue:
+
+[#][#][#]
+num_queued=0
+
+When 8139cp starts to work then cp_tx will check
+num_queued mismatchs the complete_bytes.
+
+The patch will check IntrMask before check IntrStatus in cp_interrupt.
+When 8139cp interrupt is disabled, just return.
+
+Signed-off-by: Su Yanjun <suyj.fnst@cn.fujitsu.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/net/neighbour.h |   28 +++++++++++++++++++++++-----
- 1 file changed, 23 insertions(+), 5 deletions(-)
+ drivers/net/ethernet/realtek/8139cp.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/include/net/neighbour.h
-+++ b/include/net/neighbour.h
-@@ -453,6 +453,7 @@ static inline int neigh_hh_bridge(struct
+--- a/drivers/net/ethernet/realtek/8139cp.c
++++ b/drivers/net/ethernet/realtek/8139cp.c
+@@ -571,6 +571,7 @@ static irqreturn_t cp_interrupt (int irq
+ 	struct cp_private *cp;
+ 	int handled = 0;
+ 	u16 status;
++	u16 mask;
  
- static inline int neigh_hh_output(const struct hh_cache *hh, struct sk_buff *skb)
- {
-+	unsigned int hh_alen = 0;
- 	unsigned int seq;
- 	unsigned int hh_len;
+ 	if (unlikely(dev == NULL))
+ 		return IRQ_NONE;
+@@ -578,6 +579,10 @@ static irqreturn_t cp_interrupt (int irq
  
-@@ -460,16 +461,33 @@ static inline int neigh_hh_output(const
- 		seq = read_seqbegin(&hh->hh_lock);
- 		hh_len = hh->hh_len;
- 		if (likely(hh_len <= HH_DATA_MOD)) {
--			/* this is inlined by gcc */
--			memcpy(skb->data - HH_DATA_MOD, hh->hh_data, HH_DATA_MOD);
-+			hh_alen = HH_DATA_MOD;
+ 	spin_lock(&cp->lock);
+ 
++	mask = cpr16(IntrMask);
++	if (!mask)
++		goto out_unlock;
 +
-+			/* skb_push() would proceed silently if we have room for
-+			 * the unaligned size but not for the aligned size:
-+			 * check headroom explicitly.
-+			 */
-+			if (likely(skb_headroom(skb) >= HH_DATA_MOD)) {
-+				/* this is inlined by gcc */
-+				memcpy(skb->data - HH_DATA_MOD, hh->hh_data,
-+				       HH_DATA_MOD);
-+			}
- 		} else {
--			unsigned int hh_alen = HH_DATA_ALIGN(hh_len);
-+			hh_alen = HH_DATA_ALIGN(hh_len);
- 
--			memcpy(skb->data - hh_alen, hh->hh_data, hh_alen);
-+			if (likely(skb_headroom(skb) >= hh_alen)) {
-+				memcpy(skb->data - hh_alen, hh->hh_data,
-+				       hh_alen);
-+			}
- 		}
- 	} while (read_seqretry(&hh->hh_lock, seq));
- 
--	skb_push(skb, hh_len);
-+	if (WARN_ON_ONCE(skb_headroom(skb) < hh_alen)) {
-+		kfree_skb(skb);
-+		return NET_XMIT_DROP;
-+	}
-+
-+	__skb_push(skb, hh_len);
- 	return dev_queue_xmit(skb);
- }
- 
+ 	status = cpr16(IntrStatus);
+ 	if (!status || (status == 0xFFFF))
+ 		goto out_unlock;
 
 
