@@ -2,129 +2,225 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7288C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 15:31:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C38EEC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 15:32:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D428B206E0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 15:31:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5A20206DD
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 15:32:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="enAhfLxQ";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="LQ2h2gPo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729614AbeLNPbx (ORCPT
+        id S1729117AbeLNPcW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 10:31:53 -0500
-Received: from iolanthe.rowland.org ([192.131.102.54]:59498 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1727361AbeLNPbw (ORCPT
+        Fri, 14 Dec 2018 10:32:22 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:35294 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726494AbeLNPcW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 10:31:52 -0500
-Received: (qmail 3022 invoked by uid 2102); 14 Dec 2018 10:31:51 -0500
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 14 Dec 2018 10:31:51 -0500
-Date:   Fri, 14 Dec 2018 10:31:51 -0500 (EST)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
-cc:     David Goldblatt <davidtgoldblatt@gmail.com>,
-        <mathieu.desnoyers@efficios.com>,
-        Florian Weimer <fweimer@redhat.com>, <triegel@redhat.com>,
-        <libc-alpha@sourceware.org>, <andrea.parri@amarulasolutions.com>,
-        <will.deacon@arm.com>, <peterz@infradead.org>,
-        <boqun.feng@gmail.com>, <npiggin@gmail.com>, <dhowells@redhat.com>,
-        <j.alglave@ucl.ac.uk>, <luc.maranget@inria.fr>, <akiyks@gmail.com>,
-        <dlustig@nvidia.com>, <linux-arch@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] Linux: Implement membarrier function
-In-Reply-To: <20181214002043.GP4170@linux.ibm.com>
-Message-ID: <Pine.LNX.4.44L0.1812141013070.1570-100000@iolanthe.rowland.org>
+        Fri, 14 Dec 2018 10:32:22 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 213F760779; Fri, 14 Dec 2018 15:32:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1544801541;
+        bh=OZBZ4pBR/w/wahCbosI0e4qsADs4/Qs3UYYjaMumFU0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=enAhfLxQOt0aACbLYAbLqr2ywwRNO6qveshc04ON92bZNSztjFa64LimpVZGWCPuz
+         50OQ2h+qmaJ3Nuu+myCjmPnwdUcYTpkDyh1VDKmaXWJxgnAWBGc3HTl2yOzKUJ71lO
+         93w78tTdXK7SPRSmCXJK0JYO+N0numYJOHYIylao=
+Received: from jcrouse-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: jcrouse@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 53FC06071B;
+        Fri, 14 Dec 2018 15:32:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1544801540;
+        bh=OZBZ4pBR/w/wahCbosI0e4qsADs4/Qs3UYYjaMumFU0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=LQ2h2gPokG2f8TkcRzH8KTMh6/aK1EzygHhcFfbZiyyRuRZaPqSFGfNKSwpfHvo/z
+         EoyKWFzbPW5JYxGYFjkpGZ8OeDRSQG4OwRnvwFNFd3b80ZAg9ig0sj+cDdLWyCmdNy
+         bvpPW2BKHY8H3ZIEgACRlc9+bmGNhNCjDLSjyjsQ=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 53FC06071B
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jcrouse@codeaurora.org
+Date:   Fri, 14 Dec 2018 08:32:17 -0700
+From:   Jordan Crouse <jcrouse@codeaurora.org>
+To:     Jayant Shekhar <jshekhar@codeaurora.org>
+Cc:     dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, abhinavk@codeaurora.org,
+        robdclark@gmail.com, nganji@codeaurora.org, seanpaul@chromium.org,
+        hoegsberg@chromium.org, jsanka@codeaurora.org,
+        chandanu@codeaurora.org
+Subject: Re: [Freedreno] [DPU PATCH] drm/msm/dpu: Clean up dpu hw interrupts
+Message-ID: <20181214153217.GC29770@jcrouse-lnx.qualcomm.com>
+Mail-Followup-To: Jayant Shekhar <jshekhar@codeaurora.org>,
+        dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, abhinavk@codeaurora.org,
+        robdclark@gmail.com, nganji@codeaurora.org, seanpaul@chromium.org,
+        hoegsberg@chromium.org, jsanka@codeaurora.org,
+        chandanu@codeaurora.org
+References: <1544777352-11455-1-git-send-email-jshekhar@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1544777352-11455-1-git-send-email-jshekhar@codeaurora.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 13 Dec 2018, Paul E. McKenney wrote:
-
-> > > I guess that I still haven't gotten over being a bit surprised that the
-> > > RCU counting rule also applies to sys_membarrier().  ;-)
-> > 
-> > Why not?  They are both synchronization mechanisms with heavy-weight
-> > write sides and light-weight read sides, and most importantly, they
-> > provide the same Guarantee.
+On Fri, Dec 14, 2018 at 02:19:12PM +0530, Jayant Shekhar wrote:
+> Remove unused functions and macros from dpu hw interrupts
+> file.
 > 
-> True, but I do feel the need to poke at it.
+> Signed-off-by: Jayant Shekhar <jshekhar@codeaurora.org>
+> ---
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_interrupts.c | 30 --------------------
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_interrupts.h | 34 -----------------------
+>  2 files changed, 64 deletions(-)
 > 
-> The zero-size sys_membarrier() read-side critical sections do make
-> things act a bit differently, for example, interchanging the accesses
-> in an RCU read-side critical section has no effect, while doing so in
-> a sys_membarrier() reader can cause the result to be allowed.  One key
-> point is that everything before the end of a read-side critical section
-> of any type is ordered before any later grace period of that same type,
-> and vice versa.
-> 
-> This is why reordering accesses matters for sys_membarrier() readers but
-> not for RCU and SRCU readers -- in the case of RCU and SRCU readers,
-> the accesses are inside the read-side critical section, while for
-> sys_membarrier() readers, the read-side critical sections don't have
-> an inside.  So yes, ordering also matters in the case of SRCU and
-> RCU readers for accesses outside of the read-side critical sections.
-> The reason sys_membarrier() seems surprising to me isn't because it is
-> any different in theoretical structure, but rather because the practice
-> is to put RCU and SRCU read-side accesses inside a read-side critical
-> sections, which is impossible for sys_membarrier().
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_interrupts.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_interrupts.c
+> index c0b7f00..0f70cee 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_interrupts.c
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_interrupts.c
+> @@ -170,10 +170,6 @@
+>  /**
+>   * AD4 interrupt status bit definitions
+>   */
+> -#define DPU_INTR_BRIGHTPR_UPDATED BIT(4)
+> -#define DPU_INTR_DARKENH_UPDATED BIT(3)
+> -#define DPU_INTR_STREN_OUTROI_UPDATED BIT(2)
+> -#define DPU_INTR_STREN_INROI_UPDATED BIT(1)
+>  #define DPU_INTR_BACKLIGHT_UPDATED BIT(0)
+>  /**
+>   * struct dpu_intr_reg - array of DPU register sets
+> @@ -782,18 +778,6 @@ static int dpu_hw_intr_irqidx_lookup(enum dpu_intr_type intr_type,
+>  	return -EINVAL;
+>  }
+>  
+> -static void dpu_hw_intr_set_mask(struct dpu_hw_intr *intr, uint32_t reg_off,
+> -		uint32_t mask)
+> -{
+> -	if (!intr)
+> -		return;
+> -
+> -	DPU_REG_WRITE(&intr->hw, reg_off, mask);
+> -
+> -	/* ensure register writes go through */
+> -	wmb();
+> -}
+> -
+>  static void dpu_hw_intr_dispatch_irq(struct dpu_hw_intr *intr,
+>  		void (*cbfunc)(void *, int),
+>  		void *arg)
+> @@ -1004,18 +988,6 @@ static int dpu_hw_intr_disable_irqs(struct dpu_hw_intr *intr)
+>  	return 0;
+>  }
+>  
+> -static int dpu_hw_intr_get_valid_interrupts(struct dpu_hw_intr *intr,
+> -		uint32_t *mask)
+> -{
+> -	if (!intr || !mask)
+> -		return -EINVAL;
+> -
+> -	*mask = IRQ_SOURCE_MDP | IRQ_SOURCE_DSI0 | IRQ_SOURCE_DSI1
+> -		| IRQ_SOURCE_HDMI | IRQ_SOURCE_EDP;
+> -
+> -	return 0;
+> -}
+> -
+>  static void dpu_hw_intr_get_interrupt_statuses(struct dpu_hw_intr *intr)
+>  {
+>  	int i;
+> @@ -1113,14 +1085,12 @@ static u32 dpu_hw_intr_get_interrupt_status(struct dpu_hw_intr *intr,
+>  
+>  static void __setup_intr_ops(struct dpu_hw_intr_ops *ops)
+>  {
+> -	ops->set_mask = dpu_hw_intr_set_mask;
+>  	ops->irq_idx_lookup = dpu_hw_intr_irqidx_lookup;
+>  	ops->enable_irq = dpu_hw_intr_enable_irq;
+>  	ops->disable_irq = dpu_hw_intr_disable_irq;
+>  	ops->dispatch_irqs = dpu_hw_intr_dispatch_irq;
+>  	ops->clear_all_irqs = dpu_hw_intr_clear_irqs;
+>  	ops->disable_all_irqs = dpu_hw_intr_disable_irqs;
+> -	ops->get_valid_interrupts = dpu_hw_intr_get_valid_interrupts;
+>  	ops->get_interrupt_statuses = dpu_hw_intr_get_interrupt_statuses;
+>  	ops->clear_interrupt_status = dpu_hw_intr_clear_interrupt_status;
 
-RCU and sys_membarrier are more similar than you might think at first.  
-For one thing, if there were primitives for blocking and unblocking
-reception of IPIs, those primitives would delimit critical sections for
-sys_membarrier.  (Maybe such things do exist; I wouldn't know.)
+I think you can zap clear_interrupt_status too.  Other than that, this looks
+real good. Lots of nice negative lines.
 
-For another, the way we model RCU isn't fully accurate for the Linux
-kernel, as you know.  Since individual instructions cannot be
-preempted, each instruction is a tiny read-side critical section.
-Thus, litmus tests like this one:
 
-	P0			P1
-	Wa=1			Wb=1
-	synchronize_rcu()	Ra=0
-	Rb=0
+>  	ops->clear_intr_status_nolock = dpu_hw_intr_clear_intr_status_nolock;
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_interrupts.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_interrupts.h
+> index 61e4cba..985f873 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_interrupts.h
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_interrupts.h
+> @@ -20,13 +20,6 @@
+>  #include "dpu_hw_util.h"
+>  #include "dpu_hw_mdss.h"
+>  
+> -#define IRQ_SOURCE_MDP		BIT(0)
+> -#define IRQ_SOURCE_DSI0		BIT(4)
+> -#define IRQ_SOURCE_DSI1		BIT(5)
+> -#define IRQ_SOURCE_HDMI		BIT(8)
+> -#define IRQ_SOURCE_EDP		BIT(12)
+> -#define IRQ_SOURCE_MHL		BIT(16)
+> -
+>  /**
+>   * dpu_intr_type - HW Interrupt Type
+>   * @DPU_IRQ_TYPE_WB_ROT_COMP:		WB rotator done
+> @@ -96,18 +89,6 @@ enum dpu_intr_type {
+>   */
+>  struct dpu_hw_intr_ops {
+>  	/**
+> -	 * set_mask - Programs the given interrupt register with the
+> -	 *            given interrupt mask. Register value will get overwritten.
+> -	 * @intr:	HW interrupt handle
+> -	 * @reg_off:	MDSS HW register offset
+> -	 * @irqmask:	IRQ mask value
+> -	 */
+> -	void (*set_mask)(
+> -			struct dpu_hw_intr *intr,
+> -			uint32_t reg,
+> -			uint32_t irqmask);
+> -
+> -	/**
+>  	 * irq_idx_lookup - Lookup IRQ index on the HW interrupt type
+>  	 *                 Used for all irq related ops
+>  	 * @intr_type:		Interrupt type defined in dpu_intr_type
+> @@ -206,21 +187,6 @@ struct dpu_hw_intr_ops {
+>  			struct dpu_hw_intr *intr,
+>  			int irq_idx,
+>  			bool clear);
+> -
+> -	/**
+> -	 * get_valid_interrupts - Gets a mask of all valid interrupt sources
+> -	 *                        within DPU. These are actually status bits
+> -	 *                        within interrupt registers that specify the
+> -	 *                        source of the interrupt in IRQs. For example,
+> -	 *                        valid interrupt sources can be MDP, DSI,
+> -	 *                        HDMI etc.
+> -	 * @intr:	HW interrupt handle
+> -	 * @mask:	Returning the interrupt source MASK
+> -	 * @return:	0 for success, otherwise failure
+> -	 */
+> -	int (*get_valid_interrupts)(
+> -			struct dpu_hw_intr *intr,
+> -			uint32_t *mask);
+>  };
+>  
+>  /**
 
-actually are forbidden in the kernel (provided P1 isn't part of the
-idle loop!), even though the LKMM allows them.  However, it wouldn't
-be forbidden if the accesses in P1 were swapped -- just like with
-sys_membarrier.
-
-Put these two observations together and you see that sys_membarrier is
-almost exactly the same as RCU without explicit read-side critical
-sections. Perhaps this isn't surprising, given that the initial
-implementation of sys_membarrier() was pretty much the same as
-synchronize_rcu().
-
-> The other thing that took some time to get used to is the possibility
-> of long delays during sys_membarrier() execution, allowing significant
-> execution and reordering between different CPUs' IPIs.  This was key
-> to my understanding of the six-process example, and probably needs to
-> be clearly called out, including in an example or two.
-
-In all the examples I'm aware of, no more than one of the IPIs
-generated by each sys_membarrier call really matters.  (Of course,
-there's no way to know in advance which one it will be, so you have to
-send an IPI to every CPU.)  The execution delays and reordering
-between different CPUs' IPIs don't appear to be significant.
-
-> The interleaving restrictions are straightforward for me, but the
-> fixed-time approach does have some interesting cross-talk potential
-> between sys_membarrier() and RCU read-side critical sections whose
-> accesses have been reversed.  I don't believe that it is possible to
-> leverage this "order the other guy's read-side critical sections" effect
-> in the general case, but I could be missing something.
-
-I regard the fixed-time approach as nothing more than a heuristic
-aid.  It's not an accurate explaination of what's really going on.
-
-> If you are claiming that I am worrying unnecessarily, you are probably
-> right.  But if I didn't worry unnecessarily, RCU wouldn't work at all!  ;-)
-
-Alan
-
+-- 
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
