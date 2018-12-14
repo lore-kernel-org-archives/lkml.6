@@ -7,50 +7,51 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37827C67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:40:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E841C6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:40:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0B7220892
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:40:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0614B20892
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:40:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544791219;
-	bh=kLZA94f7c6zqNxthL6E9l9CBKAyx+HI3FzqfOFUjCdQ=;
+	s=default; t=1544791220;
+	bh=RZnFNtdNTeexfCxuachR9pmsCk7+cs89Psly2Xirs+8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=XtfwNyyNVCWLuzwHGpGllSkU8qrVb6sMldCVQdzZtcS70D5CpCnIVyKUaGZaE8Jd3
-	 dDEu5Zgokbe73TyVakcIzTow6bdpx+3dW/i5VfR/tOhawhHdGAh5KqBQnPjf0oIDfQ
-	 zg8SRC1M4Qc8zS7Mk1XHfGo0ZeZTUDBhUJxWqdQs=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0B7220892
+	b=L0zFapg+We9iUGCV9xnWCG6frqdFRF9ZVPwskAym6FxhBnAhRnsw9hiNSEGba/VVU
+	 KW8fEQ0Ekms93G//5DfrjQKOgkjEyUIGX8wKI4WKhrzUp9fWdwSfWj8P0p0ashlmzr
+	 IJlUVPhg6XaNc8B1awgqAY5Hf4NFCqV/8bbAYjsA=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0614B20892
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730462AbeLNMEO (ORCPT
+        id S1730749AbeLNMkS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:04:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48744 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:40:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48900 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730448AbeLNMEL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:04:11 -0500
+        id S1730463AbeLNMEP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:04:15 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 721A02146F;
-        Fri, 14 Dec 2018 12:04:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 822262146F;
+        Fri, 14 Dec 2018 12:04:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789049;
-        bh=kLZA94f7c6zqNxthL6E9l9CBKAyx+HI3FzqfOFUjCdQ=;
+        s=default; t=1544789055;
+        bh=RZnFNtdNTeexfCxuachR9pmsCk7+cs89Psly2Xirs+8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=D04jjipO8OFiBdHm2qpK5+oSCZXm8b8c76I1Bm0B+QncTfERFBktbhJ8jNd15v3Wg
-         KeCxGPp8oozsN1BTwK9sYYvsVtKURZDb/Lcnp2Qj1MOXEfIAA6mpwlYC4NWjKXd6+l
-         wTBx4fZiYstYHgAmZtZIt3nyCMHsgZUo5cWVjVzQ=
+        b=0AyNd8zkHmJQnkkJtVKes/Hzix43M5cnVjbUAnXmqc/FjURv3l6BaOcNqznSnjaCT
+         nvmYX5jWiYzsZczlR+xa28QuOziBTfKXmRz6rQ3iBJav7l7wGAWWl+E6NJKeR2yj1H
+         C5PqC+evw9isDFkqSceZ8dsYhIPa4qn9P9LxAHYU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
+        stable@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Jarkko Nikula <jarkko.nikula@bitmer.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 042/142] netfilter: xt_RATEEST: remove netns exit routine
-Date:   Fri, 14 Dec 2018 12:58:47 +0100
-Message-Id: <20181214115748.734358667@linuxfoundation.org>
+Subject: [PATCH 4.19 077/142] ASoC: omap-mcbsp: Fix latency value calculation for pm_qos
+Date:   Fri, 14 Dec 2018 12:59:22 +0100
+Message-Id: <20181214115750.145092847@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115747.053633987@linuxfoundation.org>
 References: <20181214115747.053633987@linuxfoundation.org>
@@ -69,91 +70,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 0fbcc5b568edab7d848b7c7fa66d44ffbd4133c0 ]
+[ Upstream commit dd2f52d8991af9fe0928d59ec502ba52be7bc38d ]
 
-xt_rateest_net_exit() was added to check whether rules are flushed
-successfully. but ->net_exit() callback is called earlier than
-->destroy() callback.
-So that ->net_exit() callback can't check that.
+The latency number is in usec for the pm_qos. Correct the calculation to
+give us the time in usec
 
-test commands:
-   %ip netns add vm1
-   %ip netns exec vm1 iptables -t mangle -I PREROUTING -p udp \
-	   --dport 1111 -j RATEEST --rateest-name ap \
-	   --rateest-interval 250ms --rateest-ewma 0.5s
-   %ip netns del vm1
-
-splat looks like:
-[  668.813518] WARNING: CPU: 0 PID: 87 at net/netfilter/xt_RATEEST.c:210 xt_rateest_net_exit+0x210/0x340 [xt_RATEEST]
-[  668.813518] Modules linked in: xt_RATEEST xt_tcpudp iptable_mangle bpfilter ip_tables x_tables
-[  668.813518] CPU: 0 PID: 87 Comm: kworker/u4:2 Not tainted 4.19.0-rc7+ #21
-[  668.813518] Workqueue: netns cleanup_net
-[  668.813518] RIP: 0010:xt_rateest_net_exit+0x210/0x340 [xt_RATEEST]
-[  668.813518] Code: 00 48 8b 85 30 ff ff ff 4c 8b 23 80 38 00 0f 85 24 01 00 00 48 8b 85 30 ff ff ff 4d 85 e4 4c 89 a5 58 ff ff ff c6 00 f8 74 b2 <0f> 0b 48 83 c3 08 4c 39 f3 75 b0 48 b8 00 00 00 00 00 fc ff df 49
-[  668.813518] RSP: 0018:ffff8801156c73f8 EFLAGS: 00010282
-[  668.813518] RAX: ffffed0022ad8e85 RBX: ffff880118928e98 RCX: 5db8012a00000000
-[  668.813518] RDX: ffff8801156c7428 RSI: 00000000cb1d185f RDI: ffff880115663b74
-[  668.813518] RBP: ffff8801156c74d0 R08: ffff8801156633c0 R09: 1ffff100236440be
-[  668.813518] R10: 0000000000000001 R11: ffffed002367d852 R12: ffff880115142b08
-[  668.813518] R13: 1ffff10022ad8e81 R14: ffff880118928ea8 R15: dffffc0000000000
-[  668.813518] FS:  0000000000000000(0000) GS:ffff88011b200000(0000) knlGS:0000000000000000
-[  668.813518] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  668.813518] CR2: 0000563aa69f4f28 CR3: 0000000105a16000 CR4: 00000000001006f0
-[  668.813518] Call Trace:
-[  668.813518]  ? unregister_netdevice_many+0xe0/0xe0
-[  668.813518]  ? xt_rateest_net_init+0x2c0/0x2c0 [xt_RATEEST]
-[  668.813518]  ? default_device_exit+0x1ca/0x270
-[  668.813518]  ? remove_proc_entry+0x1cd/0x390
-[  668.813518]  ? dev_change_net_namespace+0xd00/0xd00
-[  668.813518]  ? __init_waitqueue_head+0x130/0x130
-[  668.813518]  ops_exit_list.isra.10+0x94/0x140
-[  668.813518]  cleanup_net+0x45b/0x900
-[  668.813518]  ? net_drop_ns+0x110/0x110
-[  668.813518]  ? swapgs_restore_regs_and_return_to_usermode+0x3c/0x80
-[  668.813518]  ? save_trace+0x300/0x300
-[  668.813518]  ? lock_acquire+0x196/0x470
-[  668.813518]  ? lock_acquire+0x196/0x470
-[  668.813518]  ? process_one_work+0xb60/0x1de0
-[  668.813518]  ? _raw_spin_unlock_irq+0x29/0x40
-[  668.813518]  ? _raw_spin_unlock_irq+0x29/0x40
-[  668.813518]  ? __lock_acquire+0x4500/0x4500
-[  668.813518]  ? __lock_is_held+0xb4/0x140
-[  668.813518]  process_one_work+0xc13/0x1de0
-[  668.813518]  ? pwq_dec_nr_in_flight+0x3c0/0x3c0
-[  668.813518]  ? set_load_weight+0x270/0x270
-[ ... ]
-
-Fixes: 3427b2ab63fa ("netfilter: make xt_rateest hash table per net")
-Signed-off-by: Taehee Yoo <ap420073@gmail.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Acked-by: Jarkko Nikula <jarkko.nikula@bitmer.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/netfilter/xt_RATEEST.c | 10 ----------
- 1 file changed, 10 deletions(-)
+ sound/soc/omap/omap-mcbsp.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/net/netfilter/xt_RATEEST.c b/net/netfilter/xt_RATEEST.c
-index dec843cadf46..9e05c86ba5c4 100644
---- a/net/netfilter/xt_RATEEST.c
-+++ b/net/netfilter/xt_RATEEST.c
-@@ -201,18 +201,8 @@ static __net_init int xt_rateest_net_init(struct net *net)
- 	return 0;
- }
+diff --git a/sound/soc/omap/omap-mcbsp.c b/sound/soc/omap/omap-mcbsp.c
+index d0ebb6b9bfac..2d6decbfc99e 100644
+--- a/sound/soc/omap/omap-mcbsp.c
++++ b/sound/soc/omap/omap-mcbsp.c
+@@ -308,9 +308,9 @@ static int omap_mcbsp_dai_hw_params(struct snd_pcm_substream *substream,
+ 			pkt_size = channels;
+ 		}
  
--static void __net_exit xt_rateest_net_exit(struct net *net)
--{
--	struct xt_rateest_net *xn = net_generic(net, xt_rateest_id);
--	int i;
+-		latency = ((((buffer_size - pkt_size) / channels) * 1000)
+-				 / (params->rate_num / params->rate_den));
 -
--	for (i = 0; i < ARRAY_SIZE(xn->hash); i++)
--		WARN_ON_ONCE(!hlist_empty(&xn->hash[i]));
--}
--
- static struct pernet_operations xt_rateest_net_ops = {
- 	.init = xt_rateest_net_init,
--	.exit = xt_rateest_net_exit,
- 	.id   = &xt_rateest_id,
- 	.size = sizeof(struct xt_rateest_net),
- };
++		latency = (buffer_size - pkt_size) / channels;
++		latency = latency * USEC_PER_SEC /
++			  (params->rate_num / params->rate_den);
+ 		mcbsp->latency[substream->stream] = latency;
+ 
+ 		omap_mcbsp_set_threshold(substream, pkt_size);
 -- 
 2.19.1
 
