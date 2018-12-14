@@ -2,38 +2,43 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 961B9C67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 10:53:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EAE9C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 10:55:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59EEA2147C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 10:53:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59EEA2147C
+	by mail.kernel.org (Postfix) with ESMTP id 193FF20892
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 10:55:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 193FF20892
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729702AbeLNKxm (ORCPT
+        id S1729537AbeLNKzW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 05:53:42 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:52682 "EHLO mx1.redhat.com"
+        Fri, 14 Dec 2018 05:55:22 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:53300 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726344AbeLNKxl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 05:53:41 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        id S1726344AbeLNKzW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 05:55:22 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 57D59307DAA2;
-        Fri, 14 Dec 2018 10:53:41 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9CB93BDC1;
+        Fri, 14 Dec 2018 10:55:21 +0000 (UTC)
 Received: from [10.36.112.72] (ovpn-112-72.ams2.redhat.com [10.36.112.72])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 62BA6103BAAD;
-        Fri, 14 Dec 2018 10:53:39 +0000 (UTC)
-Subject: Re: [PATCH v2 0/2] x86/kvm/hyper-v: Direct Mode stimers fixes
-To:     Vitaly Kuznetsov <vkuznets@redhat.com>, kvm@vger.kernel.org
-Cc:     =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        linux-kernel@vger.kernel.org, Roman Kagan <rkagan@virtuozzo.com>
-References: <20181212165017.13278-1-vkuznets@redhat.com>
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8EB3926577;
+        Fri, 14 Dec 2018 10:55:18 +0000 (UTC)
+Subject: Re: [PATCH] kvm: x86: Report STIBP on GET_SUPPORTED_CPUID
+To:     Eduardo Habkost <ehabkost@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        kvm@vger.kernel.org
+Cc:     Jim Mattson <jmattson@google.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org,
+        KarimAllah Ahmed <karahmed@amazon.de>,
+        David Woodhouse <dwmw2@infradead.org>
+References: <20181205191956.31480-1-ehabkost@redhat.com>
 From:   Paolo Bonzini <pbonzini@redhat.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
@@ -91,39 +96,60 @@ Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
  DduC0U3xYkfbGAUvbxeepjgzp0uEnBXfPTy09JGpgWbg0w91GyfT/ujKaGd4vxG2Ei+MMNDm
  S1SMx7wu0evvQ5kT9NPzyq8R2GIhVSiAd2jioGuTjX6AZCFv3ToO53DliFMkVTecLptsXaes
  uUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
-Message-ID: <4e126f47-88aa-9d32-daaa-de1e4363cff7@redhat.com>
-Date:   Fri, 14 Dec 2018 11:53:37 +0100
+Message-ID: <66796b4a-f5be-baeb-07ea-db95764e4bab@redhat.com>
+Date:   Fri, 14 Dec 2018 11:55:16 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.3.1
 MIME-Version: 1.0
-In-Reply-To: <20181212165017.13278-1-vkuznets@redhat.com>
+In-Reply-To: <20181205191956.31480-1-ehabkost@redhat.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Fri, 14 Dec 2018 10:53:41 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Fri, 14 Dec 2018 10:55:21 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/12/18 17:50, Vitaly Kuznetsov wrote:
-> Changes in v2:
-> - PATCH2 added [Roman Kagan]
+On 05/12/18 20:19, Eduardo Habkost wrote:
+> Months ago, we have added code to allow direct access to MSR_IA32_SPEC_CTRL
+> to the guest, which makes STIBP available to guests.  This was implemented
+> by commits d28b387fb74d ("KVM/VMX: Allow direct access to
+> MSR_IA32_SPEC_CTRL") and b2ac58f90540 ("KVM/SVM: Allow direct access to
+> MSR_IA32_SPEC_CTRL").
 > 
-> This is a follow-up to my "x86/kvm/hyper-v: direct mode for synthetic
-> timers" series. Roman identified a couple of issues with the patchset:
-> we don't check that the supplied APIC vector is valid and we care about
-> EOI for nothing. These can be merged with the original patch implementing
-> direct mode stimers or just put on top.
+> However, we never updated GET_SUPPORTED_CPUID to let userspace know that
+> STIBP can be enabled in CPUID.  Fix that by updating
+> kvm_cpuid_8000_0008_ebx_x86_features and kvm_cpuid_7_0_edx_x86_features.
 > 
-> Vitaly Kuznetsov (2):
->   x86/hyper-v: Stop caring about EOI for direct stimers
->   x86/kvm/hyper-v: disallow setting illegal vectors for direct mode
->     stimers
+> Signed-off-by: Eduardo Habkost <ehabkost@redhat.com>
+> ---
+>  arch/x86/kvm/cpuid.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
->  arch/x86/kvm/hyperv.c | 41 ++++++++---------------------------------
->  1 file changed, 8 insertions(+), 33 deletions(-)
+> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+> index 7bcfa61375c0..cc6dd65828a4 100644
+> --- a/arch/x86/kvm/cpuid.c
+> +++ b/arch/x86/kvm/cpuid.c
+> @@ -381,7 +381,7 @@ static inline int __do_cpuid_ent(struct kvm_cpuid_entry2 *entry, u32 function,
+>  	/* cpuid 0x80000008.ebx */
+>  	const u32 kvm_cpuid_8000_0008_ebx_x86_features =
+>  		F(AMD_IBPB) | F(AMD_IBRS) | F(AMD_SSBD) | F(VIRT_SSBD) |
+> -		F(AMD_SSB_NO);
+> +		F(AMD_SSB_NO) | F(AMD_STIBP);
+>  
+>  	/* cpuid 0xC0000001.edx */
+>  	const u32 kvm_cpuid_C000_0001_edx_x86_features =
+> @@ -411,7 +411,7 @@ static inline int __do_cpuid_ent(struct kvm_cpuid_entry2 *entry, u32 function,
+>  	/* cpuid 7.0.edx*/
+>  	const u32 kvm_cpuid_7_0_edx_x86_features =
+>  		F(AVX512_4VNNIW) | F(AVX512_4FMAPS) | F(SPEC_CTRL) |
+> -		F(SPEC_CTRL_SSBD) | F(ARCH_CAPABILITIES);
+> +		F(SPEC_CTRL_SSBD) | F(ARCH_CAPABILITIES) | F(INTEL_STIBP);
+>  
+>  	/* all calls to cpuid_count() should be made on the same cpu */
+>  	get_cpu();
 > 
 
 Queued, thanks.
