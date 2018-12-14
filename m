@@ -2,64 +2,57 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF94FC67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:13:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE691C6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:13:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A520920892
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:13:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 850E9214D9
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:13:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544789614;
-	bh=wbN8ZAMfKRTCchSqS2d0nRdYPouYi3cQ+3GTbK4OToY=;
+	s=default; t=1544789622;
+	bh=TJBd7gHPTwNtNCw71Dl2JUIo7X2RhRAKHcEAbs/p5Cw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=q4oet8JzjeZEe1zB0pd5mSymbcS25fhP0tzcNli8dbY6XK2TSlSwFnsHhUtkrjARM
-	 SfzHW+qsfmlynRNZKFy4dLO9DS50vX62f9IriXfeMqxCEdmH24/XsW78DndJg8HXo5
-	 /kzKmtj0yi6oCTpF8am0INfsri9RSgxcUb4QfXro=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A520920892
+	b=LYHrGyAZ6WnOAzFMhXRBNQFhSugr2z7EqmNX7H2PvM5D+IHtzGcN0ffauNd2p6N11
+	 ipAoCE9dioWtcKsODBj/cGaDp7RRpRFnThML7M0bdBXmD0AsRwqRoVFfy27gROesmT
+	 EZHCYvB2DSxEY0YTz5b6E/f1+XqBZj7d1L+ra9s8=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 850E9214D9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732143AbeLNMNc (ORCPT
+        id S1732180AbeLNMNl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:13:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60988 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:13:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33076 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732106AbeLNMNX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:13:23 -0500
+        id S1731508AbeLNMNj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:13:39 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 636B420892;
-        Fri, 14 Dec 2018 12:13:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B3DB32133F;
+        Fri, 14 Dec 2018 12:13:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789602;
-        bh=wbN8ZAMfKRTCchSqS2d0nRdYPouYi3cQ+3GTbK4OToY=;
+        s=default; t=1544789618;
+        bh=TJBd7gHPTwNtNCw71Dl2JUIo7X2RhRAKHcEAbs/p5Cw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MCIIrlIq0Py+gZJbenrIZKqIg7sAu9RnWM8K7j4i1vP3a6sKwAL1jfZUX4NN4xMeL
-         KK+CY9xv4BWH+HHT6vNQ/2goWlLAPwOtgELIK4rNJaG3e2h4CLGhAu7eSUz8upDKf+
-         /C9fSby++OL6GzIVi3ZhHuMU9WCk3xsF3B8hbca4=
+        b=o751UKZtrR/t2xOY2xCzuhDokvVY5C18o/uIXG//SjMUV934iX2PE3XoEcejfFnCb
+         SnbDNOBWxK+MOot/LHvRy3erkYoIkc8ZjAF+ljpoVDPYZakuTVkB+pqL7jUTyTmA5m
+         H4lEQbDStwBbWHb7Ggudt39Xo+rJc98/yBBEcZpc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Larry Chen <lchen@suse.com>,
-        Changwei Ge <ge.changwei@h3c.com>,
-        Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Junxiao Bi <junxiao.bi@oracle.com>,
-        Joseph Qi <jiangqi903@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 45/51] ocfs2: fix deadlock caused by ocfs2_defrag_extent()
-Date:   Fri, 14 Dec 2018 13:00:47 +0100
-Message-Id: <20181214115717.119288312@linuxfoundation.org>
+        stable@vger.kernel.org, Heiner Kallweit <hkallweit1@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 03/88] net: phy: dont allow __set_phy_supported to add unsupported modes
+Date:   Fri, 14 Dec 2018 12:59:37 +0100
+Message-Id: <20181214115702.355894202@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
-In-Reply-To: <20181214115713.244259772@linuxfoundation.org>
-References: <20181214115713.244259772@linuxfoundation.org>
+In-Reply-To: <20181214115702.151309521@linuxfoundation.org>
+References: <20181214115702.151309521@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -71,151 +64,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-[ Upstream commit e21e57445a64598b29a6f629688f9b9a39e7242a ]
+From: Heiner Kallweit <hkallweit1@gmail.com>
 
-ocfs2_defrag_extent may fall into deadlock.
+[ Upstream commit d2a36971ef595069b7a600d1144c2e0881a930a1 ]
 
-ocfs2_ioctl_move_extents
-    ocfs2_ioctl_move_extents
-      ocfs2_move_extents
-        ocfs2_defrag_extent
-          ocfs2_lock_allocators_move_extents
+Currently __set_phy_supported allows to add modes w/o checking whether
+the PHY supports them. This is wrong, it should never add modes but
+only remove modes we don't want to support.
 
-            ocfs2_reserve_clusters
-              inode_lock GLOBAL_BITMAP_SYSTEM_INODE
+The commit marked as fixed didn't do anything wrong, it just copied
+existing functionality to the helper which is being fixed now.
 
-	  __ocfs2_flush_truncate_log
-              inode_lock GLOBAL_BITMAP_SYSTEM_INODE
-
-As backtrace shows above, ocfs2_reserve_clusters() will call inode_lock
-against the global bitmap if local allocator has not sufficient cluters.
-Once global bitmap could meet the demand, ocfs2_reserve_cluster will
-return success with global bitmap locked.
-
-After ocfs2_reserve_cluster(), if truncate log is full,
-__ocfs2_flush_truncate_log() will definitely fall into deadlock because
-it needs to inode_lock global bitmap, which has already been locked.
-
-To fix this bug, we could remove from
-ocfs2_lock_allocators_move_extents() the code which intends to lock
-global allocator, and put the removed code after
-__ocfs2_flush_truncate_log().
-
-ocfs2_lock_allocators_move_extents() is referred by 2 places, one is
-here, the other does not need the data allocator context, which means
-this patch does not affect the caller so far.
-
-Link: http://lkml.kernel.org/r/20181101071422.14470-1-lchen@suse.com
-Signed-off-by: Larry Chen <lchen@suse.com>
-Reviewed-by: Changwei Ge <ge.changwei@h3c.com>
-Cc: Mark Fasheh <mark@fasheh.com>
-Cc: Joel Becker <jlbec@evilplan.org>
-Cc: Junxiao Bi <junxiao.bi@oracle.com>
-Cc: Joseph Qi <jiangqi903@gmail.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: f3a6bd393c2c ("phylib: Add phy_set_max_speed helper")
+Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/ocfs2/move_extents.c | 47 +++++++++++++++++++++++------------------
- 1 file changed, 26 insertions(+), 21 deletions(-)
+ drivers/net/phy/phy_device.c |   19 ++++++++-----------
+ 1 file changed, 8 insertions(+), 11 deletions(-)
 
-diff --git a/fs/ocfs2/move_extents.c b/fs/ocfs2/move_extents.c
-index 4e8f32eb0bdb..c179afd0051a 100644
---- a/fs/ocfs2/move_extents.c
-+++ b/fs/ocfs2/move_extents.c
-@@ -156,18 +156,14 @@ static int __ocfs2_move_extent(handle_t *handle,
- }
+--- a/drivers/net/phy/phy_device.c
++++ b/drivers/net/phy/phy_device.c
+@@ -1265,20 +1265,17 @@ static int gen10g_resume(struct phy_devi
  
- /*
-- * lock allocators, and reserving appropriate number of bits for
-- * meta blocks and data clusters.
-- *
-- * in some cases, we don't need to reserve clusters, just let data_ac
-- * be NULL.
-+ * lock allocator, and reserve appropriate number of bits for
-+ * meta blocks.
-  */
--static int ocfs2_lock_allocators_move_extents(struct inode *inode,
-+static int ocfs2_lock_meta_allocator_move_extents(struct inode *inode,
- 					struct ocfs2_extent_tree *et,
- 					u32 clusters_to_move,
- 					u32 extents_to_split,
- 					struct ocfs2_alloc_context **meta_ac,
--					struct ocfs2_alloc_context **data_ac,
- 					int extra_blocks,
- 					int *credits)
+ static int __set_phy_supported(struct phy_device *phydev, u32 max_speed)
  {
-@@ -192,13 +188,6 @@ static int ocfs2_lock_allocators_move_extents(struct inode *inode,
- 		goto out;
+-	phydev->supported &= ~(PHY_1000BT_FEATURES | PHY_100BT_FEATURES |
+-			       PHY_10BT_FEATURES);
+-
+ 	switch (max_speed) {
+-	default:
+-		return -ENOTSUPP;
+-	case SPEED_1000:
+-		phydev->supported |= PHY_1000BT_FEATURES;
++	case SPEED_10:
++		phydev->supported &= ~PHY_100BT_FEATURES;
+ 		/* fall through */
+ 	case SPEED_100:
+-		phydev->supported |= PHY_100BT_FEATURES;
+-		/* fall through */
+-	case SPEED_10:
+-		phydev->supported |= PHY_10BT_FEATURES;
++		phydev->supported &= ~PHY_1000BT_FEATURES;
++		break;
++	case SPEED_1000:
++		break;
++	default:
++		return -ENOTSUPP;
  	}
  
--	if (data_ac) {
--		ret = ocfs2_reserve_clusters(osb, clusters_to_move, data_ac);
--		if (ret) {
--			mlog_errno(ret);
--			goto out;
--		}
--	}
- 
- 	*credits += ocfs2_calc_extend_credits(osb->sb, et->et_root_el);
- 
-@@ -260,10 +249,10 @@ static int ocfs2_defrag_extent(struct ocfs2_move_extents_context *context,
- 		}
- 	}
- 
--	ret = ocfs2_lock_allocators_move_extents(inode, &context->et, *len, 1,
--						 &context->meta_ac,
--						 &context->data_ac,
--						 extra_blocks, &credits);
-+	ret = ocfs2_lock_meta_allocator_move_extents(inode, &context->et,
-+						*len, 1,
-+						&context->meta_ac,
-+						extra_blocks, &credits);
- 	if (ret) {
- 		mlog_errno(ret);
- 		goto out;
-@@ -286,6 +275,21 @@ static int ocfs2_defrag_extent(struct ocfs2_move_extents_context *context,
- 		}
- 	}
- 
-+	/*
-+	 * Make sure ocfs2_reserve_cluster is called after
-+	 * __ocfs2_flush_truncate_log, otherwise, dead lock may happen.
-+	 *
-+	 * If ocfs2_reserve_cluster is called
-+	 * before __ocfs2_flush_truncate_log, dead lock on global bitmap
-+	 * may happen.
-+	 *
-+	 */
-+	ret = ocfs2_reserve_clusters(osb, *len, &context->data_ac);
-+	if (ret) {
-+		mlog_errno(ret);
-+		goto out_unlock_mutex;
-+	}
-+
- 	handle = ocfs2_start_trans(osb, credits);
- 	if (IS_ERR(handle)) {
- 		ret = PTR_ERR(handle);
-@@ -606,9 +610,10 @@ static int ocfs2_move_extent(struct ocfs2_move_extents_context *context,
- 		}
- 	}
- 
--	ret = ocfs2_lock_allocators_move_extents(inode, &context->et, len, 1,
--						 &context->meta_ac,
--						 NULL, extra_blocks, &credits);
-+	ret = ocfs2_lock_meta_allocator_move_extents(inode, &context->et,
-+						len, 1,
-+						&context->meta_ac,
-+						extra_blocks, &credits);
- 	if (ret) {
- 		mlog_errno(ret);
- 		goto out;
--- 
-2.19.1
-
+ 	return 0;
 
 
