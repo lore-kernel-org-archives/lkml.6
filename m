@@ -2,144 +2,126 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01137C43177
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 14:12:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA7FCC43613
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 14:12:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF71E206C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 13:54:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544795662;
-	bh=wBZqVnn0WTakeveexYJmIdK86FMFoZHd7QAbOV89T50=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=xgpX3rjZNi75RDdNLgcfag1IKFHYi5sNJhHYeHn3ow9qGrHdRt6flZMMN9PTcbC5I
-	 j387DjZwsuAaAXZisZdEEDL8wsnVYHPSTPLbK8PAEoaQ6SOUG0TeAWbFCrVQqu695+
-	 tuG/XiHLQIW5ZQi/wj9zEVoRp3PUjOGO0NrgUryA=
+	by mail.kernel.org (Postfix) with ESMTP id 71B812070C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 13:56:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729950AbeLNNyX (ORCPT
+        id S1730048AbeLNN4B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 08:54:23 -0500
-Received: from mx2.suse.de ([195.135.220.15]:57164 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729698AbeLNNyW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 08:54:22 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 3342BAE4D;
-        Fri, 14 Dec 2018 13:54:20 +0000 (UTC)
-Date:   Fri, 14 Dec 2018 14:54:19 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     syzbot <syzbot+7713f3aa67be76b1552c@syzkaller.appspotmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        rafael.j.wysocki@intel.com,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        vkuznets@redhat.com, Linux-MM <linux-mm@kvack.org>
-Subject: Re: general protection fault in watchdog
-Message-ID: <20181214135419.GG5343@dhcp22.suse.cz>
-References: <0000000000004ea80b057cfae21e@google.com>
- <CACT4Y+Z+AhQxf6=ecOkX1bOU5h7kMHYnR6CAhBv9eO5jQVeG3g@mail.gmail.com>
- <20181214132836.GE5343@dhcp22.suse.cz>
- <CACT4Y+aXFXnObgC-7NVe87-1bbqs2oNBBXe2mrfshLKnFqkTGA@mail.gmail.com>
+        Fri, 14 Dec 2018 08:56:01 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52186 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729709AbeLNN4A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 08:56:00 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B233780D;
+        Fri, 14 Dec 2018 05:55:59 -0800 (PST)
+Received: from [10.1.196.105] (eglon.cambridge.arm.com [10.1.196.105])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AAD653F575;
+        Fri, 14 Dec 2018 05:55:57 -0800 (PST)
+Subject: Re: [RFC RESEND PATCH] kvm: arm64: export memory error recovery
+ capability to user space
+To:     Dongjiu Geng <gengdongjiu@huawei.com>
+References: <1544782537-13377-1-git-send-email-gengdongjiu@huawei.com>
+From:   James Morse <james.morse@arm.com>
+Cc:     peter.maydell@linaro.org, rkrcmar@redhat.com, corbet@lwn.net,
+        christoffer.dall@arm.com, marc.zyngier@arm.com,
+        catalin.marinas@arm.com, will.deacon@arm.com, kvm@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Message-ID: <f252e4ca-cdc2-bc42-32a6-5dae7dee51ee@arm.com>
+Date:   Fri, 14 Dec 2018 13:55:55 +0000
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACT4Y+aXFXnObgC-7NVe87-1bbqs2oNBBXe2mrfshLKnFqkTGA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1544782537-13377-1-git-send-email-gengdongjiu@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 14-12-18 14:42:33, Dmitry Vyukov wrote:
-> On Fri, Dec 14, 2018 at 2:28 PM Michal Hocko <mhocko@kernel.org> wrote:
-> >
-> > On Fri 14-12-18 14:11:05, Dmitry Vyukov wrote:
-> > > On Fri, Dec 14, 2018 at 1:51 PM syzbot
-> > > <syzbot+7713f3aa67be76b1552c@syzkaller.appspotmail.com> wrote:
-> > > >
-> > > > Hello,
-> > > >
-> > > > syzbot found the following crash on:
-> > > >
-> > > > HEAD commit:    f5d582777bcb Merge branch 'for-linus' of git://git.kernel...
-> > > > git tree:       upstream
-> > > > console output: https://syzkaller.appspot.com/x/log.txt?x=16aca143400000
-> > > > kernel config:  https://syzkaller.appspot.com/x/.config?x=c8970c89a0efbb23
-> > > > dashboard link: https://syzkaller.appspot.com/bug?extid=7713f3aa67be76b1552c
-> > > > compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> > > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1131381b400000
-> > > > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13bae593400000
-> > > >
-> > > > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> > > > Reported-by: syzbot+7713f3aa67be76b1552c@syzkaller.appspotmail.com
-> > >
-> > > +linux-mm for memcg question
-> > >
-> > > What the repro does is effectively just
-> > > setsockopt(EBT_SO_SET_ENTRIES). This eats all machine memory and
-> > > causes OOMs. Somehow it also caused the GPF in watchdog when it
-> > > iterates over task list, perhaps some scheduler code leaves a dangling
-> > > pointer on OOM failures.
-> > >
-> > > But what bothers me is a different thing. syzkaller test processes are
-> > > sandboxed with a restrictive memcg which should prevent them from
-> > > eating all memory. do_replace_finish calls vmalloc, which uses
-> > > GFP_KERNEL, which does not include GFP_ACCOUNT (GFP_KERNEL_ACCOUNT
-> > > does). And page alloc seems to change memory against memcg iff
-> > > GFP_ACCOUNT is provided.
-> > > Am I missing something or vmalloc is indeed not accounted (DoS)? I see
-> > > some explicit uses of GFP_KERNEL_ACCOUNT, e.g. the one below, but they
-> > > seem to be very sparse.
-> > >
-> > > static void *seq_buf_alloc(unsigned long size)
-> > > {
-> > >      return kvmalloc(size, GFP_KERNEL_ACCOUNT);
-> > > }
-> > >
-> > > Now looking at the code I also don't see how kmalloc(GFP_KERNEL) is
-> > > accounted... Which makes me think I am still missing something.
-> >
-> > You are not missing anything. We do not account all allocations and you
-> > have to explicitly opt-in by __GFP_ACCOUNT. This is a deliberate
-> > decision. If the allocation is directly controlable by an untrusted user
-> > and the memory is associated with a process life time then this looks
-> > like a good usecase for __GFP_ACCOUNT. If an allocation outlives a
-> > process then there the flag should be considered with a great care
-> > because oom killer is not able to resolve the memcg pressure and so the
-> > limit enforcement is not effective.
-> 
-> Interesting.
-> I understand that namespaces, memcg's and processes (maybe even
-> threads) can have arbitrary overlapping. But I naively thought that in
-> canonical hierarchical cases it should all somehow work.
-> Question 1: is there some other, stricter sandboxing mechanism?
+Hi Dongjiu Geng,
 
-I do not think so
+On 14/12/2018 10:15, Dongjiu Geng wrote:
+> When user space do memory recovery, it will check whether KVM and
+> guest support the error recovery, only when both of them support,
+> user space will do the error recovery. This patch exports this
+> capability of KVM to user space.
 
-> We try
-> to sandbox syzkaller processes with everything available , because
-> these OOMs usually leads either to dead machines or hang/stall false
-> positives, which are nasty.
+I can understand user-space only wanting to do the work if host and guest
+support the feature. But 'error recovery' isn't a KVM feature, its a Linux
+kernel feature.
 
-Which is a useful test on its own. If you are able to trigger the global
-OOM from a restricted environment then you have a good candidate to
-consider a new __GFP_ACCOUNT user.
+KVM will send it's user-space a SIGBUS with MCEERR code whenever its trying to
+map a page at stage2 that the kernel-mm code refuses this because its poisoned.
+(e.g. check_user_page_hwpoison(), get_user_pages() returns -EHWPOISON)
 
-> Question 2: this is a simple DoS vector, right? If I put a container
-> into a 1MB memcg, it can still eat arbitrary amount of non-pagable
-> kernel memory?
+This is exactly the same as happens to a normal user-space process.
 
-As I've said. If there is a direct vector to allocated an unbounded
-amount of memory from the userspace (trusted users aside) then yes this
-sounds like a DoS to me.
+I think you really want to know if the host kernel was built with
+CONFIG_MEMORY_FAILURE. The not-at-all-portable way to tell this from user-space
+is the presence of /proc/sys/vm/memory_failure_* files.
+(It looks like the prctl():PR_MCE_KILL/PR_MCE_KILL_GET options silently update
+an ignored policy if the kernel isn't built with CONFIG_MEMORY_FAILURE, so they
+aren't helpful)
 
--- 
-Michal Hocko
-SUSE Labs
+
+> diff --git a/Documentation/virtual/kvm/api.txt b/Documentation/virtual/kvm/api.txt
+> index cd209f7..241e2e2 100644
+> --- a/Documentation/virtual/kvm/api.txt
+> +++ b/Documentation/virtual/kvm/api.txt
+> @@ -4895,3 +4895,12 @@ Architectures: x86
+>  This capability indicates that KVM supports paravirtualized Hyper-V IPI send
+>  hypercalls:
+>  HvCallSendSyntheticClusterIpi, HvCallSendSyntheticClusterIpiEx.
+> +
+> +8.21 KVM_CAP_ARM_MEMORY_ERROR_RECOVERY
+> +
+> +Architectures: arm, arm64
+> +
+> +This capability indicates that guest memory error can be detected by the KVM which
+> +supports the error recovery.
+
+KVM doesn't detect these errors.
+The hardware detects them and notifies the OS via one of a number of mechanisms.
+This gets plumbed into memory_failure(), which sets a flag that the mm code uses
+to prevent the page being used again.
+
+KVM is only involved when it tries to map a page at stage2 and the mm code
+rejects it with -EHWPOISON. This is the same as the architectures
+do_page_fault() checking for (fault & VM_FAULT_HWPOISON) out of
+handle_mm_fault(). We don't have a KVM cap for this, nor do we need one.
+
+
+> diff --git a/arch/arm64/kvm/reset.c b/arch/arm64/kvm/reset.c
+> index b72a3dd..90d1d9a 100644
+> --- a/arch/arm64/kvm/reset.c
+> +++ b/arch/arm64/kvm/reset.c
+> @@ -82,6 +82,7 @@ int kvm_arch_vm_ioctl_check_extension(struct kvm *kvm, long ext)
+>  		r = kvm_arm_support_pmu_v3();
+>  		break;
+>  	case KVM_CAP_ARM_INJECT_SERROR_ESR:
+> +	case KVM_CAP_ARM_MEMORY_ERROR_RECOVERY:
+>  		r = cpus_have_const_cap(ARM64_HAS_RAS_EXTN);
+>  		break;
+
+The CPU RAS Extensions are not at all relevant here. It is perfectly possible to
+support memory-failure without them, AMD-Seattle and APM-X-Gene do this. These
+systems would report not-supported here, but the kernel does support this stuff.
+Just because the CPU supports this, doesn't mean the kernel was built with
+CONFIG_MEMORY_FAILURE. The CPU reports may be ignored, or upgraded to SIGKILL.
+
+
+
+Thanks,
+
+James
