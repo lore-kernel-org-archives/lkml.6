@@ -7,67 +7,67 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 038DDC67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 13:22:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A6A6C6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 13:22:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B999D23FD6
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 13:22:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D3C02053B
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 13:22:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hkRfxKsM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B999D23FD6
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BUUTNUlG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D3C02053B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729961AbeLNNW1 (ORCPT
+        id S1729986AbeLNNWa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 08:22:27 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:45111 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729641AbeLNNWY (ORCPT
+        Fri, 14 Dec 2018 08:22:30 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:37871 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729940AbeLNNW1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 08:22:24 -0500
-Received: by mail-lf1-f68.google.com with SMTP id b20so4224896lfa.12;
-        Fri, 14 Dec 2018 05:22:22 -0800 (PST)
+        Fri, 14 Dec 2018 08:22:27 -0500
+Received: by mail-lj1-f194.google.com with SMTP id e5-v6so4886369lja.4;
+        Fri, 14 Dec 2018 05:22:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=4KVQAMYtSk3kTC8WUhk9uJTZ+iHzEPKOa2DOw3MKqAw=;
-        b=hkRfxKsM1mpK6uF+LIOJZQXQdEh6bAgVtoczOPFH8HDy3POU4V/o77NyHerSnCDnpB
-         zDy2JsGyiW7+/dbkojQIHh23cOD/thplXG5Vkuwy5Yudph+0Jm9QBTIyJ3LCI9ZoFQKU
-         Ia9OLBB4MkZigrvd9lZO254NdXtFScPnq1ISt92AOj41omxMZHLXYbf5pseD/wt8pJC9
-         acW5xATBLymdR8aKLFlEGeW02rFSXZxumo8+OGBJRa3oNwNx60Fdcp0ySSeCz353gsFW
-         1Qboam3z5jcG5fg6RQcKoXtoMNEiwkpmuFHa1dJUazNHXjuJmO6JgPKotmrdsMAhFGjR
-         IPdw==
+        bh=5tHOV+8kWpRLL2iyRBk9ZOn14M/aMT7Ov6uIuXi0Hdo=;
+        b=BUUTNUlGnOQwaX0sfVz7lTMuSyk9DFdxFtPFOd+avXsvDZGchILwzFHYJA+8BKUcF9
+         KbBuyoySvTnOAqyeEqNxyV0YBPtT8ikFDstPJsfb9HYbVIW9mjmikW1dMM+OKiXnaW6t
+         Wp6My9BsAufTfjI8TNu7viDdc9uG98CEyMia/Isuo+Z/gF+JNGpTNhvqqyuxIhZLxmXR
+         g2gbYnNHg1lTh5ZVFp687Ad8pUIR5nnfUcio8TtcWnvVzdRRCWsaVzHcuB5YCcD8chJk
+         Ii5KBP5/rMnnuFDPZh20GmtIy+QHvhjAbhLuV1OscAzSaVnbqcET5GDHcN22h0oUE/j2
+         4F8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=4KVQAMYtSk3kTC8WUhk9uJTZ+iHzEPKOa2DOw3MKqAw=;
-        b=H9+kNNdSLEV5DzNQLby1ldHFY7VlB6hXqyWvOsJW5iWFAJjMPS+RlODF5BWYoGUGI3
-         0IO6cjbgVY+GHzWBILC/HMv0Zd6WbAtiPsyA3/FDTfaPGAzdURciw7UmbLuSaYd/Xig5
-         bclk32Y3OiveAXRXVXcSsXhHakIL0yS3r+PjqVguPVs80iS8rzSqscRXJj4xDId4i+4c
-         Ap39T9wHGw6TQhpVZoCyrJ/xUQNXtFjczpMKZdXNmlkpeggzgO0LHQIcSsp0nM+6jR1I
-         rHh4WUTaERlfyFqTdBjsVboEOElJygs/IUaNRw4rJGnGBNzruGj414xdFZm7fJuQxibA
-         UBFg==
-X-Gm-Message-State: AA+aEWZmTpX7M0Gdm7IWUKfYSuRlZa/GuWdRgJu2PjxsACrP0dvFbezQ
-        0ZimQCg34AfvIQLmGCD5UWT/V24r9OinbgYY
-X-Google-Smtp-Source: AFSGD/VSJMS/sJg8k9EHGpxVbOa1MrN5P4dykUHL2wh6wQf27U+Gn9DvrxPXpaDrUqrm/MctUvjHew==
-X-Received: by 2002:a19:9653:: with SMTP id y80mr1828139lfd.66.1544793741773;
-        Fri, 14 Dec 2018 05:22:21 -0800 (PST)
+        bh=5tHOV+8kWpRLL2iyRBk9ZOn14M/aMT7Ov6uIuXi0Hdo=;
+        b=tOs5D8SqHBxqvJDBlgmoOhLl4Ac0AymFfTJSlhtHYsQwHowI+doNOIGpmjWoEyhCC+
+         Xlm6OQab7gy8CABrGdBod7yK5qKoYthe/O/rO4h019Egk7B/Ebr02P8w6Bq9G+GysrMw
+         rml6yZiMEShFdqgaSMIslI6HX8G8nb+4l+oc8QSEcTtk12BBIpZWq2XY+Uqk4o3/f5gc
+         RXGOhJk1kErRC8bxS4G9oWNA/regdO1c+bParqgfTiWKx6fc7Wz17ru94J169MEvfOQ6
+         dfTyehi1UtiQAOGpdFQUYrdVJlJ4BF5gqXbbRNlKBl9l0MaQu0H4kJnBD901w/hj8VUu
+         nzrQ==
+X-Gm-Message-State: AA+aEWb02ZIScHeD9i0+GIUSqj1tocNb14oI7HWZUXRIaZGFO4TsEWcH
+        PYLpohg0sZjS5tgMvR7b0yAoU2sH7wS7RLXu
+X-Google-Smtp-Source: AFSGD/XnzVpBH4SWx+RNX51AtdhI9gMFPqIxt/K0mXZqzut6A+FN3hQV7PDUtD9Qcnjeds2ccKKBBg==
+X-Received: by 2002:a2e:4299:: with SMTP id h25-v6mr1767781ljf.5.1544793745065;
+        Fri, 14 Dec 2018 05:22:25 -0800 (PST)
 Received: from localhost.localdomain (pool-109-191-228-208.is74.ru. [109.191.228.208])
-        by smtp.gmail.com with ESMTPSA id u79-v6sm944101lje.36.2018.12.14.05.22.20
+        by smtp.gmail.com with ESMTPSA id u79-v6sm944101lje.36.2018.12.14.05.22.24
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 14 Dec 2018 05:22:21 -0800 (PST)
+        Fri, 14 Dec 2018 05:22:24 -0800 (PST)
 From:   Ivan Mironov <mironov.ivan@gmail.com>
 To:     linux-scsi@vger.kernel.org, mironov.ivan@gmail.com
 Cc:     linux-kernel@vger.kernel.org, Don Brace <don.brace@microsemi.com>,
         "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>,
         esc.storagedev@microsemi.com
-Subject: [PATCH 1/6] scsi: hpsa: Add function to check if device is a disk or a zoned device
-Date:   Fri, 14 Dec 2018 18:21:10 +0500
-Message-Id: <20181214132115.21440-2-mironov.ivan@gmail.com>
+Subject: [PATCH 3/6] scsi: hpsa: Add/mask existing devices on rescan if visibility changes
+Date:   Fri, 14 Dec 2018 18:21:12 +0500
+Message-Id: <20181214132115.21440-4-mironov.ivan@gmail.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181214132115.21440-1-mironov.ivan@gmail.com>
 References: <20181214132115.21440-1-mironov.ivan@gmail.com>
@@ -78,81 +78,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This check is used multiple times within the driver. New function makes
-conditional statements a bit shorter and more readable.
+Controller may be switched between RAID and HBA modes even without a
+reboot.
+
+When changing to HBA mode, it does some internal reset magic and
+automatically removes any configured RAID arrays. Without this patch,
+driver successfully detects disappearance of logical arrays, but does
+not expose any physical disks.
 
 Signed-off-by: Ivan Mironov <mironov.ivan@gmail.com>
 ---
- drivers/scsi/hpsa.c | 21 +++++++++++----------
- 1 file changed, 11 insertions(+), 10 deletions(-)
+ drivers/scsi/hpsa.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
 diff --git a/drivers/scsi/hpsa.c b/drivers/scsi/hpsa.c
-index c9cccf35e9d7..fc06b790f16b 100644
+index ee3d7c722a63..60f1f7949d8d 100644
 --- a/drivers/scsi/hpsa.c
 +++ b/drivers/scsi/hpsa.c
-@@ -768,6 +768,11 @@ static ssize_t sas_address_show(struct device *dev,
- 	return snprintf(buf, PAGE_SIZE, "0x%016llx\n", sas_address);
+@@ -1541,6 +1541,14 @@ static inline int device_updated(struct hpsa_scsi_dev_t *dev1,
+ 	return 0;
  }
  
-+static inline bool is_disk_or_zbc(const struct hpsa_scsi_dev_t *hdev)
++static inline bool device_expose_changed(struct hpsa_scsi_dev_t *dev1,
++	struct hpsa_scsi_dev_t *dev2)
 +{
-+	return hdev->devtype == TYPE_DISK || hdev->devtype == TYPE_ZBC;
++	if (dev1->expose_device != dev2->expose_device)
++		return true;
++	return false;
 +}
 +
- static ssize_t host_show_hp_ssd_smart_path_enabled(struct device *dev,
- 	     struct device_attribute *attr, char *buf)
- {
-@@ -788,7 +793,7 @@ static ssize_t host_show_hp_ssd_smart_path_enabled(struct device *dev,
- 	offload_enabled = hdev->offload_enabled;
- 	spin_unlock_irqrestore(&h->lock, flags);
- 
--	if (hdev->devtype == TYPE_DISK || hdev->devtype == TYPE_ZBC)
-+	if (is_disk_or_zbc(hdev))
- 		return snprintf(buf, 20, "%d\n", offload_enabled);
- 	else
- 		return snprintf(buf, 40, "%s\n",
-@@ -855,8 +860,7 @@ static ssize_t path_info_show(struct device *dev,
- 				PAGE_SIZE - output_len,
- 				"PORT: %.2s ",
- 				phys_connector);
--		if ((hdev->devtype == TYPE_DISK || hdev->devtype == TYPE_ZBC) &&
--			hdev->expose_device) {
-+		if (is_disk_or_zbc(hdev) && hdev->expose_device) {
- 			if (box == 0 || box == 0xFF) {
- 				output_len += scnprintf(buf + output_len,
- 					PAGE_SIZE - output_len,
-@@ -1715,8 +1719,7 @@ static void hpsa_figure_phys_disk_ptrs(struct ctlr_info *h,
- 		for (j = 0; j < ndevices; j++) {
- 			if (dev[j] == NULL)
- 				continue;
--			if (dev[j]->devtype != TYPE_DISK &&
--			    dev[j]->devtype != TYPE_ZBC)
-+			if (!is_disk_or_zbc(dev[j]))
- 				continue;
- 			if (is_logical_device(dev[j]))
- 				continue;
-@@ -1770,8 +1773,7 @@ static void hpsa_update_log_drive_phys_drive_ptrs(struct ctlr_info *h,
- 	for (i = 0; i < ndevices; i++) {
- 		if (dev[i] == NULL)
- 			continue;
--		if (dev[i]->devtype != TYPE_DISK &&
--		    dev[i]->devtype != TYPE_ZBC)
-+		if (!is_disk_or_zbc(dev[i]))
- 			continue;
- 		if (!is_logical_device(dev[i]))
- 			continue;
-@@ -3965,9 +3967,8 @@ static int hpsa_update_device_info(struct ctlr_info *h,
- 			scsi_device_type(this_device->devtype),
- 			this_device->model);
- 
--	if ((this_device->devtype == TYPE_DISK ||
--		this_device->devtype == TYPE_ZBC) &&
--		is_logical_dev_addr_mode(scsi3addr)) {
-+	if (is_disk_or_zbc(this_device) &&
-+			is_logical_dev_addr_mode(scsi3addr)) {
- 		unsigned char volume_offline;
- 
- 		hpsa_get_raid_level(h, scsi3addr, &this_device->raid_level);
+ /* Find needle in haystack.  If exact match found, return DEVICE_SAME,
+  * and return needle location in *index.  If scsi3addr matches, but not
+  * vendor, model, serial num, etc. return DEVICE_CHANGED, and return needle
+@@ -1569,6 +1577,8 @@ static int hpsa_scsi_find_entry(struct hpsa_scsi_dev_t *needle,
+ 			if (device_is_the_same(needle, haystack[i])) {
+ 				if (device_updated(needle, haystack[i]))
+ 					return DEVICE_UPDATED;
++				if (device_expose_changed(needle, haystack[i]))
++					return DEVICE_CHANGED;
+ 				return DEVICE_SAME;
+ 			} else {
+ 				/* Keep offline devices offline */
 -- 
 2.19.2
 
