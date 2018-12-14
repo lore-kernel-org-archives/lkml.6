@@ -2,84 +2,90 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EB16C67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 07:24:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9A98C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 07:36:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 642F22080F
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 07:24:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="K8EIzMfC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 642F22080F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 982702054F
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 07:36:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 982702054F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727411AbeLNHYI (ORCPT
+        id S1727187AbeLNHgL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 02:24:08 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:44413 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726437AbeLNHYF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 02:24:05 -0500
-Received: by mail-io1-f66.google.com with SMTP id r200so3704017iod.11
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 23:24:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=upTfiP7iEd12IBycGzRmU4Z0acUxwmT5c1yFIwWuYd0=;
-        b=K8EIzMfCOqFIj4GuH6k/sz4MW9JRkeMr3UaFHSBl2LOp9dRwjtVZstHRthKyikRRVq
-         0QktT3jOQssB0Zk378XLCZ3CJnXLu2sM951yv3AlSQZkjJ1lRlcUkfH73z3bgUSj82Ab
-         zdhjaXH9NlfNt+QoLb6FnUywZYJWX1l+VX76A=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=upTfiP7iEd12IBycGzRmU4Z0acUxwmT5c1yFIwWuYd0=;
-        b=EJ+rsmC+nMMdaxOJRsFdCa87ROMO7PgIgJQkyU7igVHfZHzwK0kQbUhV6ZREE7hp4O
-         /Ui6UPUrZ5FdQ10t1OhDH9T66EkLM654gl8fLJ5dT1ebE4XFhPqhJh315hzRt4pVkmix
-         3gxwB//BdttAfz/YobRbGeEAGEi5z9yVQALIhouXnasbER1fUDzfPBJ9RuyZftcGtYOP
-         x8ZMyXTOSVTkllI9vzKNB0d51t9zNu3NlPS5Ou8IBp4kcv7b2WxJIvMvuiqchPSv3Ps1
-         lcUwifSeL5mdvGTy+DJpAG79NXbv4VJs1ahmqdoMXLNPwk9NDpaMz42uyg/R5BE2Wg1K
-         QvmQ==
-X-Gm-Message-State: AA+aEWZ4X1t7W/SMwvLsjf13IFFwKRwsxpMex4HkJqzGx2efz+6W0xpc
-        8sZAQsqx5y+Ss4wn+50ac0/8W/9nX7XJ+UQsorzO/g==
-X-Google-Smtp-Source: AFSGD/VNPhGUiANhgaIurvr9PdLT4FkdhdolieAqsX3nm31QvPxPs+KqsSAdSwf4SoDP+88TkPqB13+n3j+cCz7av/8=
-X-Received: by 2002:a5e:cb0b:: with SMTP id p11mr1696773iom.60.1544772245087;
- Thu, 13 Dec 2018 23:24:05 -0800 (PST)
+        Fri, 14 Dec 2018 02:36:11 -0500
+Received: from mga18.intel.com ([134.134.136.126]:49929 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726437AbeLNHgL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 02:36:11 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Dec 2018 23:36:10 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,352,1539673200"; 
+   d="scan'208";a="110321685"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.130]) ([10.237.72.130])
+  by orsmga003.jf.intel.com with ESMTP; 13 Dec 2018 23:36:08 -0800
+Subject: Re: [PATCH V1] mmc: sdhci: Fix sdhci_do_enable_v4_mode
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        ulf.hansson@linaro.org, linux-mmc@vger.kernel.org
+Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1544733246-11678-1-git-send-email-skomatineni@nvidia.com>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <3c980500-77d8-c8a7-ce7a-31eb8df1b17a@intel.com>
+Date:   Fri, 14 Dec 2018 09:34:27 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-References: <20181213052259.56352-1-cai@lca.pw> <20181214040819.58625-1-cai@lca.pw>
-In-Reply-To: <20181214040819.58625-1-cai@lca.pw>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Fri, 14 Dec 2018 08:23:54 +0100
-Message-ID: <CAKv+Gu80cxx6L3KYyYnsyjbrWN6iTp76jcdBio27b_h+dAzaHw@mail.gmail.com>
-Subject: Re: [PATCH v2] arm64: invalidate TLB just before turning MMU on
-To:     Qian Cai <cai@lca.pw>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        James Morse <james.morse@arm.com>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Kexec Mailing List <kexec@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1544733246-11678-1-git-send-email-skomatineni@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 14 Dec 2018 at 05:08, Qian Cai <cai@lca.pw> wrote:
-> Also tried to move the local TLB flush part around a bit inside
-> __cpu_setup(), although it did complete kdump some times, it did trigger
-> "Synchronous Exception" in EFI after a cold-reboot fairly often that
-> seems no way to recover remotely without reinstalling the OS.
+On 13/12/18 10:34 PM, Sowjanya Komatineni wrote:
+> V4_MODE is Bit-15 of SDHCI_HOST_CONTROL2 register.
+> Need to perform word access to this register.
+> 
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 
-This doesn't make any sense to me. If the system gets into a weird
-state out of cold reboot, how could this code be the culprit? Please
-check your firmware, and try to reproduce the issue on a system that
-doesn't have such defects.
+Fixes: b3f80b434f726 ("mmc: sdhci: Add sd host v4 mode")
+
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+
+> ---
+>  drivers/mmc/host/sdhci.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+> index 99bdae53fa2e..fde984d10619 100644
+> --- a/drivers/mmc/host/sdhci.c
+> +++ b/drivers/mmc/host/sdhci.c
+> @@ -127,12 +127,12 @@ static void sdhci_do_enable_v4_mode(struct sdhci_host *host)
+>  {
+>  	u16 ctrl2;
+>  
+> -	ctrl2 = sdhci_readb(host, SDHCI_HOST_CONTROL2);
+> +	ctrl2 = sdhci_readw(host, SDHCI_HOST_CONTROL2);
+>  	if (ctrl2 & SDHCI_CTRL_V4_MODE)
+>  		return;
+>  
+>  	ctrl2 |= SDHCI_CTRL_V4_MODE;
+> -	sdhci_writeb(host, ctrl2, SDHCI_HOST_CONTROL);
+> +	sdhci_writew(host, ctrl2, SDHCI_HOST_CONTROL2);
+>  }
+>  
+>  /*
+> 
+
