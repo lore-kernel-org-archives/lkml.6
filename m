@@ -2,126 +2,175 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42C0FC67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 13:16:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED739C67872
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 13:17:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFC2F2086E
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 13:16:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=stwm.de header.i=@stwm.de header.b="MlTN2WyV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFC2F2086E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=stwm.de
+	by mail.kernel.org (Postfix) with ESMTP id B00FD23685
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 13:17:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544793478;
+	bh=MCpYMuSme3tyzlzxVQvpdub+TdtnV8NMApqOjQnCuzs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=WAo2oV+mEQLrSqmTnewq3mwZbmIl1+Adl9paAKVBllzuTpWvTrp8pLbx19zew8Kwa
+	 N0g5bu8UAVASZze+h5TGm1f7sYAd4/7fvV00yzd9wCSR7wCMPZrrvLvvaDaihSt/CT
+	 oA8M0k5I4+/HnwYY0zxE2vG7Y7T715EK5K9u/j+0=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B00FD23685
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729913AbeLNNQ3 (ORCPT
+        id S1729926AbeLNNR5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 08:16:29 -0500
-Received: from dresden.studentenwerk.mhn.de ([141.84.225.229]:41754 "EHLO
-        email.studentenwerk.mhn.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729641AbeLNNQ1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 08:16:27 -0500
-X-Greylist: delayed 320 seconds by postgrey-1.27 at vger.kernel.org; Fri, 14 Dec 2018 08:16:26 EST
-Received: from mailhub.studentenwerk.mhn.de (mailhub.studentenwerk.mhn.de [127.0.0.1])
-        by email.studentenwerk.mhn.de (Postfix) with ESMTP id 43GWBx5ZpFzRhS8;
-        Fri, 14 Dec 2018 14:11:05 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=stwm.de;
-        s=stwm-20170627; t=1544793065;
-        bh=QDppt8pJ9WfCvUfKYqviGV1VHqdZmnZK81Qt+pqzK3A=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MlTN2WyV2Wuduph3IaQ9mugzJzuTgFYKA4hDhBi4k2xUBDiYJm5+N15NTPABRTpF8
-         eM9nqkyA0jT39dz4R+Zpa/1gr/v8bUBKFkbmfw5S3e3chGd8GkYM94F9gFUuqFmUDF
-         kzxs8aKaOygGBciH4nhkZeY/jpO7KPxJJGQIaqTTLOeL0D/VfUdb4OKowAA5VTSYjF
-         E+MRVXoocM/4hJkp6M34ajLlaZdjYK3VuDuX5ShpzdE8ePOssSusJZj/gMbMmx3gl8
-         VBoItNYGqDHOo4eAkrDLwgiTruh0pQQ59iEr8a5y7zjvuqrpImQVuw3DR4pr2/mtjr
-         dmkH5ou67ASBQ==
-From:   Wolfgang Walter <linux@stwm.de>
-To:     Florian Westphal <fw@strlen.de>
-Cc:     David Miller <davem@davemloft.net>, herbert@gondor.apana.org.au,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        steffen.klassert@secunet.com
-Subject: Re: INFO: rcu detected stall in xfrm_hash_rebuild
-Date:   Fri, 14 Dec 2018 14:11:05 +0100
-Message-ID: <2559562.n5nkmlqv4s@stwm.de>
-User-Agent: KMail/4.14.3 (Linux/4.18.12-041812-generic; KDE/4.14.13; x86_64; ; )
-In-Reply-To: <20181210.095856.580441946779980596.davem@davemloft.net>
-References: <00000000000075fe86057ca6367e@google.com> <20181210124724.iuver2va3yjdsokf@breakpoint.cc> <20181210.095856.580441946779980596.davem@davemloft.net>
+        Fri, 14 Dec 2018 08:17:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49060 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729706AbeLNNR5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 08:17:57 -0500
+Received: from earth.universe (host-091-097-030-218.ewe-ip-backbone.de [91.97.30.218])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2DE1A22846;
+        Fri, 14 Dec 2018 13:17:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544793475;
+        bh=MCpYMuSme3tyzlzxVQvpdub+TdtnV8NMApqOjQnCuzs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=VWvOx8oL5J0oO1ZD2roI3aTINmmq5lB9Xe4Tilq+4iUNi/yOi7SsLLl0Vftrc24qa
+         U2jl9q4m2Uxo1biuiM4++y1FF2rIxct/9P6Y+JyV5Qe+Mq3Y0+pcpRVGqVwWmzF6SB
+         zu3xvEYTIHmuOPuo99rVo7PaDQe7k8Sd+L0sVv3s=
+Received: by earth.universe (Postfix, from userid 1000)
+        id AFE6A3C08A4; Fri, 14 Dec 2018 14:17:52 +0100 (CET)
+Date:   Fri, 14 Dec 2018 14:17:52 +0100
+From:   Sebastian Reichel <sre@kernel.org>
+To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        linux-pwm@vger.kernel.org, linux-iio@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-i2c@vger.kernel.org, groeck@chromium.org,
+        kernel@collabora.com, linux-rtc@vger.kernel.org,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Benson Leung <bleung@chromium.org>,
+        linux-input@vger.kernel.org,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        devicetree@vger.kernel.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-pm@vger.kernel.org, MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Gr eg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH v3] MAINTAINERS: add maintainers for ChromeOS EC
+ sub-drivers
+Message-ID: <20181214131752.3qfdbxk6z3hkp7cp@earth.universe>
+References: <20181214114858.21231-1-enric.balletbo@collabora.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="lgqwv4ykv6pafxpf"
+Content-Disposition: inline
+In-Reply-To: <20181214114858.21231-1-enric.balletbo@collabora.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Montag, 10. Dezember 2018, 09:58:56 schrieb David Miller:
-> From: Florian Westphal <fw@strlen.de>
-> Date: Mon, 10 Dec 2018 13:47:24 +0100
+
+--lgqwv4ykv6pafxpf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi,
+
+On Fri, Dec 14, 2018 at 12:48:58PM +0100, Enric Balletbo i Serra wrote:
+> There are multiple ChromeOS EC sub-drivers spread in different
+> subsystems, as all of them are related to the Chrome stuff add
+> Benson and myself as a maintainers for all these sub-drivers.
 >=20
-> > After recent tree conversion, we could probably make the exact poli=
-cies
-> > part of the 'inexact tree' (which would be renamed to 'policy tree'=
- or
-> > some such).
-> >=20
-> > Special-casing the exact policies made a lot of sense when we had
-> > a single list for the inexact policies (to keep its length down).
-> >=20
-> > But now I think we could try to unify all of this and only maintain=
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> Signed-off-by: Benson Leung <bleung@chromium.org>
+> Acked-by: Wolfram Sang <wsa@the-dreams.de>
+> Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com> for iio parts.
+> Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> Acked-by: Lee Jones <lee.jones@linaro.org>
+> ---
 
-> > the existing tree-based storage.
-> >=20
-> > Would also remove the need to do lookups in two different
-> > data structures (bydst-hash-then-inexact-tree).
-> >=20
-> > What do you think?
+Acked-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+
+-- Sebastian
+
 >=20
-> I think this makes a lot of sense.
+> Changes in v3:
+> - Add collected acks
+> - Use a cros[-_]ec pattern instead of list all the files.
+> - Add Guenter as a reviewer.
+>=20
+> Changes in v2:
+> - Fix typo in Benson email address.
+>=20
+>  MAINTAINERS | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+>=20
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index e7260191301b..437e036435d5 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -3629,6 +3629,14 @@ S:	Maintained
+>  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/bleung/chrome-platf=
+orm.git
+>  F:	drivers/platform/chrome/
+> =20
+> +CHROMEOS EC SUBDRIVERS
+> +M:	Benson Leung <bleung@chromium.org>
+> +M:	Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> +R:	Guenter Roeck <groeck@chromium.org>
+> +S:	Maintained
+> +N:	cros[-_]ec
+> +F:	drivers/power/supply/cros_usbpd-charger.c
+> +
+>  CIRRUS LOGIC AUDIO CODEC DRIVERS
+>  M:	Brian Austin <brian.austin@cirrus.com>
+>  M:	Paul Handrigan <Paul.Handrigan@cirrus.com>
+> --=20
+> 2.19.2
+>=20
+>=20
+> --=20
+> To unsubscribe, send mail to kernel-unsubscribe@lists.collabora.co.uk.
 
-Sites mainly using tunnel mode this certainly makes sense.
+--lgqwv4ykv6pafxpf
+Content-Type: application/pgp-signature; name="signature.asc"
 
-I'm not so sure for transport mode. With transport mode the netmask usu=
-ally is=20
-/32 or /128, respectively (there may also be trap-rules). So a site onl=
-y using=20
-transport mode (road warrior scenario, for example) may see a large=20
-performance regression if this is changed. They may do not have many en=
-tries=20
-in the inexact list if any at all.
+-----BEGIN PGP SIGNATURE-----
 
-Maybe there are a lot more transport mode users than tunnel mode users,=
- this=20
-would explain why the removal of the flowcache did not hit that many pe=
-ople.
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlwTrX0ACgkQ2O7X88g7
++pp/yxAAgDkNnwL/12ET+OUIaYGlUvknCfQAjrIMeEQkOj/cNanVPk5rHbr+xsSt
+ssO7WNBlyl45qUtUsQtGew2iSCIrn5LwWUb9rxiGpdEpLwx0nna1ZRIcN+lY/VOp
+OtcoXftkfJq/b5b8Dc553TqbpHCRSTjJQmnbDaWwSLQwOGjezAa6Bu3BllnaRKEl
+3XYwTmIy2Xfic/ONL7dHJT0+RSBbjrkVqNLg+4/Dtg9Nq5wfsik/XwGeDjc8ilYC
+urGFnqAQF61nU53KCbekcAYhtGxBdMqGqZxnd63pFCgqzQwWpRHDtCkFj4aEVaJJ
+kM1c8nVshjs/1+/6Ptlbej/2iTWK5dc5exkHFjin9UDhdXT0ypx8HnBQpVb5qOzA
+kW5t+BJA+yQG4TEKOrCbJRkYF5Zxg2XIjkJf2nl0jo+TAmQRrG+RS8nh3/3S/x0F
+ahjSjdNFIRoqsTwS82tNJ+r/Y8RkVaPNcFG7v4zBuZ0xmXYWaqhFnVyHmbeOv9ot
+jFQNT0MhLYA56t76YWfJheElTKwi1BkJwPsduXfYsl144zsWTJkQzKTG+r/R0BSG
+UZ6M2axDAosv4XFG3Zc43yRkrxaBMVIo2q3P703B2cdAQIxkSdCpPAQZU1q1DZcF
+AuoH4VcsHpCcomhjpoa2RWLKNMokC5vMiCuLLdgDJhXafuZdbLk=
+=7DkH
+-----END PGP SIGNATURE-----
 
-We do not use transport mode, so I'm not familiar how strongswan for ex=
-ample=20
-handles that. I think that since 5.3 or so strongwans allows a catch ru=
-le=20
-(inexact) and then inserts exact policy rules on the fly. But I don't k=
-now for=20
-sure. There are a lot of tests on strongswan for different scenarios wh=
-ich=20
-also demonstrate how policy and state table finally will look like on a=
-ll=20
-hosts.
-
-Here is one with such a scenario (transport mode trap policy on a gatew=
-ay,=20
-three road warriors):
-
-https://www.strongswan.org/testing/testresults/ikev2/trap-any/
-
-So I would try to find users who are heavy users of transport mode and =
-see how=20
-this change would impact there performance.
-
-Regards,
---=20
-Wolfgang Walter
-Studentenwerk M=FCnchen
-Anstalt des =F6ffentlichen Rechts
+--lgqwv4ykv6pafxpf--
