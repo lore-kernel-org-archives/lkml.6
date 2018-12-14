@@ -7,162 +7,180 @@ X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7F8FC67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 08:09:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1DB3C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 08:12:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 908D62080F
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 08:09:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 356992054F
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 08:12:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="aGWtcngM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 908D62080F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="ol5LUrUh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 356992054F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727678AbeLNIJf (ORCPT
+        id S1727393AbeLNIMD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 03:09:35 -0500
-Received: from esa3.microchip.iphmx.com ([68.232.153.233]:23934 "EHLO
-        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726494AbeLNIJe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 03:09:34 -0500
-X-IronPort-AV: E=Sophos;i="5.56,352,1539673200"; 
-   d="scan'208";a="24357411"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 14 Dec 2018 01:09:34 -0700
-Received: from NAM04-CO1-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.76.106) with Microsoft SMTP Server (TLS) id
- 14.3.352.0; Fri, 14 Dec 2018 01:09:33 -0700
+        Fri, 14 Dec 2018 03:12:03 -0500
+Received: from mail-eopbgr1410119.outbound.protection.outlook.com ([40.107.141.119]:44128
+        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726533AbeLNIMB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 03:12:01 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector1-microchiptechnology-onmicrosoft-com;
+ d=renesasgroup.onmicrosoft.com; s=selector1-bp-renesas-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2vB4P2Yn0FtcDcsCE9J90vgcEMLM/4zwQQu3LM7UsWs=;
- b=aGWtcngMAFYmjyaWZpgHX45g2b8EGuecOHlfmDQ4Oq0ppi8amMtzQzZjwmOc5Yi08ph0m8Kd2un872tfC4CL8T+uMPevv5SSdWrw3r9Nv8prMjSP0N6LiSaGdDEK+7xoJafqruHx22GBU/i92c0S0noa/qbNNkXlUDaDKVt/QB8=
-Received: from BN6PR1101MB2243.namprd11.prod.outlook.com (10.174.113.19) by
- BN6PR1101MB2244.namprd11.prod.outlook.com (10.174.113.20) with Microsoft SMTP
+ bh=G4D8rpy2y6A/UM4t0BJDU8iS7gB8rexyqupU3CZbKbs=;
+ b=ol5LUrUhtk9fL/s+94IpRzb/DM4A8+PQujBhH30V2EF/fP09fuOsM6zAEOgdGxvRRlPeot/1oZohVXKSHcZB4inFori+QhCfAPGtaBY2Q4rQEKj7MG/661jfLM9vKpcucveCGJHLIC/9Nz8wo/D37BhVa6qMqKv5cWXVh7w2LqE=
+Received: from TYXPR01MB1775.jpnprd01.prod.outlook.com (52.133.168.140) by
+ TYXPR01MB1629.jpnprd01.prod.outlook.com (52.133.167.16) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1404.22; Fri, 14 Dec 2018 08:09:31 +0000
-Received: from BN6PR1101MB2243.namprd11.prod.outlook.com
- ([fe80::1dae:74d9:ffd2:7838]) by BN6PR1101MB2243.namprd11.prod.outlook.com
- ([fe80::1dae:74d9:ffd2:7838%3]) with mapi id 15.20.1425.021; Fri, 14 Dec 2018
- 08:09:31 +0000
-From:   <Andrei.Stefanescu@microchip.com>
-To:     <broonie@kernel.org>, <lgirdwood@gmail.com>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <Cristian.Birsan@microchip.com>,
-        <Nicolas.Ferre@microchip.com>, <Andrei.Stefanescu@microchip.com>
-Subject: [PATCH v2] regulator: mcp16502: add support for suspend
-Thread-Topic: [PATCH v2] regulator: mcp16502: add support for suspend
-Thread-Index: AQHUk4RXn4oajSHRJEWrNiEHEZjYSQ==
-Date:   Fri, 14 Dec 2018 08:09:31 +0000
-Message-ID: <1544774961-6951-1-git-send-email-andrei.stefanescu@microchip.com>
-Accept-Language: en-US
+ 15.20.1404.22; Fri, 14 Dec 2018 08:11:56 +0000
+Received: from TYXPR01MB1775.jpnprd01.prod.outlook.com
+ ([fe80::64fb:82d3:31d2:1a12]) by TYXPR01MB1775.jpnprd01.prod.outlook.com
+ ([fe80::64fb:82d3:31d2:1a12%2]) with mapi id 15.20.1425.021; Fri, 14 Dec 2018
+ 08:11:56 +0000
+From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+CC:     David Airlie <airlied@linux.ie>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>
+Subject: RE: [PATCH] drm: rcar-du: lvds: add R8A774C0 support
+Thread-Topic: [PATCH] drm: rcar-du: lvds: add R8A774C0 support
+Thread-Index: AQHUkyG9PM5JudpEokOEN6UKbQHSxaV9MfiAgACw9cA=
+Date:   Fri, 14 Dec 2018 08:11:55 +0000
+Message-ID: <TYXPR01MB177586488BBE3A0995E68F5EC0A10@TYXPR01MB1775.jpnprd01.prod.outlook.com>
+References: <1544732616-7322-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <19818144.G1rqBgM4ba@avalon>
+In-Reply-To: <19818144.G1rqBgM4ba@avalon>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-clientproxiedby: VI1PR0901CA0106.eurprd09.prod.outlook.com
- (2603:10a6:800:7e::32) To BN6PR1101MB2243.namprd11.prod.outlook.com
- (2603:10b6:405:52::19)
 authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Andrei.Stefanescu@microchip.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [94.177.32.154]
+ smtp.mailfrom=fabrizio.castro@bp.renesas.com; 
+x-originating-ip: [193.141.220.21]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BN6PR1101MB2244;6:Wjzyuba6nyw1GxCCnpIEwbSA+VzDZ+YKqvv3kfjJazrMGqF2R4lO+8DOMSrYv5e8wU6p7P39Y1oRlZs2dGr6PzGNHpNmUS2yXRwbm5ElEtsUheC0Q0MiB9OoN7e0BWpln8EuJUYzJ4tK+55E6i67o7Do+Mo4eXSCb2k2R+b90wxH6QfiFi4HSWPDkpwSYoMkXTkq36kXO7b33sJqViejeAF+N5PsIeRkmPEWN1i6e6LRMwhlRqiHICfD8dCRTU4l9SWP0W6q87h6h6ME6U4Ge0ylVjXCywORGd82WCG7pIuc8VHkBwze0rmPNhBfIC7dcXWqXlh3pY158QcDZIU7W2ln+Otlz0mKKxNZQG4yTVbg9/kdfBV5QZPTvo8GznOhB+37PwryC7MElVEJZo43Wjg2Y0ARUlDCtSrLqUFba/o3hN1QlUKHV4BcBwRN66mKx5AcmYQR0A08N0CjO2rQeg==;5:eRnzcC4d6vIanuqyF0vf+gMMnK+0UDVoFvWFl1SqpN/DkUMG9FB59DsZavGehA3jPOGsMu+sM/8Tx9c7IA+0rVBWUARs6v091Ok7Sgn1g5jW7N6V5Y/ZX2ixqhGAws5Kbgoz+1ghzzlWWABrFa91WCt++fdk4AkjtSm+e6l1s+I=;7:NEO48ietlI41sIOp0dwbCW7+0qPXW+IzxKhUA5ZF9iO+Ag+Cw4thiehziC2MLwagBGoJ/Xtx0Or1r4xkyF0bZGQzCDrBDMHd1b7zKxWHQdm3OjT97gJWY6LvWeOXKPIYl/EVLF/eWui5xS0PNrc2BQ==
-x-ms-office365-filtering-correlation-id: e84ed2c8-b4da-4467-38a9-08d6619b79b7
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BN6PR1101MB2244;
-x-ms-traffictypediagnostic: BN6PR1101MB2244:
-x-microsoft-antispam-prvs: <BN6PR1101MB22444DABB5270378C1A599D5EDA10@BN6PR1101MB2244.namprd11.prod.outlook.com>
+x-microsoft-exchange-diagnostics: 1;TYXPR01MB1629;20:xpUBmtmYbUaYoIzDJvzlXkzQazKDA5q9ErhLW9uFJUSTXRpKQngFJTCqzUgX6OJwRJ1jHzReFqIHThK29Qu9E0lRrJpIyVgLOjLD7VJpLeXfcvhssYX7yJjXY4DZgR5wvtpUGME7bP/jSWSkFrG+p6Khnwtmx8VDhCceHFwEBHM=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-ms-office365-filtering-correlation-id: 63eb6537-f758-48c7-ec60-08d6619bd039
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:TYXPR01MB1629;
+x-ms-traffictypediagnostic: TYXPR01MB1629:
+x-microsoft-antispam-prvs: <TYXPR01MB16299A59525BF3111A8404FDC0A10@TYXPR01MB1629.jpnprd01.prod.outlook.com>
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(3230021)(999002)(6040522)(2401047)(5005006)(8121501046)(3231475)(944501520)(52105112)(10201501046)(3002001)(93006095)(93001095)(148016)(149066)(150057)(6041310)(20161123558120)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:BN6PR1101MB2244;BCL:0;PCL:0;RULEID:;SRVR:BN6PR1101MB2244;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(6040522)(2401047)(8121501046)(5005006)(3231475)(944501520)(52105112)(3002001)(93006095)(93001095)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123560045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:TYXPR01MB1629;BCL:0;PCL:0;RULEID:;SRVR:TYXPR01MB1629;
 x-forefront-prvs: 08864C38AC
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(979002)(346002)(376002)(136003)(396003)(366004)(39860400002)(189003)(199004)(72206003)(86362001)(107886003)(39060400002)(6116002)(52116002)(6436002)(3846002)(14444005)(256004)(478600001)(305945005)(81156014)(7736002)(71190400001)(6506007)(102836004)(386003)(6512007)(6486002)(71200400001)(186003)(66066001)(8676002)(2616005)(476003)(25786009)(26005)(81166006)(105586002)(14454004)(68736007)(54906003)(2906002)(15650500001)(110136005)(99286004)(5660300001)(106356001)(4326008)(53936002)(8936002)(316002)(2501003)(97736004)(486006)(36756003)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR1101MB2244;H:BN6PR1101MB2243.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microchip.com does not designate
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(346002)(396003)(376002)(39860400002)(366004)(13464003)(189003)(199004)(76176011)(106356001)(102836004)(26005)(256004)(10126004)(4326008)(3846002)(5660300001)(54906003)(86362001)(6916009)(71190400001)(186003)(229853002)(2906002)(6116002)(71200400001)(6306002)(81156014)(9686003)(7696005)(8676002)(53546011)(44832011)(81166006)(486006)(105586002)(6506007)(345774005)(55016002)(316002)(14454004)(8936002)(478600001)(99286004)(33656002)(6436002)(107886003)(6246003)(53936002)(74316002)(97736004)(446003)(11346002)(66066001)(25786009)(305945005)(68736007)(7736002)(476003);DIR:OUT;SFP:1102;SCL:1;SRVR:TYXPR01MB1629;H:TYXPR01MB1775.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:0;
+received-spf: None (protection.outlook.com: bp.renesas.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: i9a6HlaSPIlb//sD68Lfu5Cer4hbz3RtPnsKtiNKdBaWYnoPoYGbUi9qIPXcUGnlRGRQW5u495fEoqmtGemIXU/q/nhk4FiCQ1iOY6A29wOPRBVD5grESe2VuPhhWhaIFImpzcqxSkarUEOeIzNaBSqyAuOaox7EhlZYaQr/IxabZDQ0TxacylCAa8cOxr87W7gOYu03kZ1C20F7pT5rVCFNFhrO9EkhPHL2JAQyQtUK4n0/HGBe7zFYdr4DwJqQhdImQYLa/uJtSJ0mrsgsElRc598tSygPlJDk/iF96cAOuMck0cs1Vp/UWSMUBXvh
+x-microsoft-antispam-message-info: q2NoKNJIa49AwrUUwf6nWIkoqsNCUy+83wqODsINLPzOpwJTtgdlMaSvXrOjGGJlumONN9oje7NxF11CkyvSrDE4ZzE+7J4JMqI8xjQIkFccbsF3mx5EH0ZETf0HF4mGUQWLAtADlk1St7gl4IdVGWn27dx4FlOeqlGAzRUaf7GGypIgVSiSSLo1+O+4UZgNV2AbJYkXZ9ye6flusnxnWB5uwy/2vIfyu703YZLULNFrVrEG6IXDm+Vqp5how6f0qJqkDsJtssfZJWIs8UtWyODftZfNfzDPs4IQ5VVOsDV8uVYGw+a+x/g7N2Af1AbM
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: e84ed2c8-b4da-4467-38a9-08d6619b79b7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Dec 2018 08:09:31.5629
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 63eb6537-f758-48c7-ec60-08d6619bd039
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Dec 2018 08:11:55.8994
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR1101MB2244
-X-OriginatorOrg: microchip.com
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYXPR01MB1629
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds support for entering/resuming suspend states.
-It does this by setting the LPM pin of the PMIC.
+Hi Laurent,
 
-When suspending the PMIC will enter the Low-power mode
-when the LPM pin will be set to high. If the suspend target state
-is suspend-to-mem, the PMIC will transition to Hibernate mode,
-otherwise, if it is standby, it will remain in Low-power mode.
+> -----Original Message-----
+> From: linux-renesas-soc-owner@vger.kernel.org <linux-renesas-soc-owner@vg=
+er.kernel.org> On Behalf Of Laurent Pinchart
+> Sent: 13 December 2018 21:38
+> To: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Cc: David Airlie <airlied@linux.ie>; Kieran Bingham <kieran.bingham+renes=
+as@ideasonboard.com>; dri-devel@lists.freedesktop.org;
+> linux-renesas-soc@vger.kernel.org; linux-kernel@vger.kernel.org; Simon Ho=
+rman <horms@verge.net.au>; Geert Uytterhoeven
+> <geert+renesas@glider.be>; Chris Paterson <Chris.Paterson2@renesas.com>; =
+Biju Das <biju.das@bp.renesas.com>
+> Subject: Re: [PATCH] drm: rcar-du: lvds: add R8A774C0 support
+>
+> Hi Fabrizio,
+>
+> Thank you for the patch.
+>
+> On Thursday, 13 December 2018 22:23:36 EET Fabrizio Castro wrote:
+> > The LVDS implementation on the RZ/G2E (a.k.a. R8A774C0) is very similar
+> > to the one found on R-Car E3 (a.k.a. R8A77990), therefore add RZ/G2E
+> > LVDS support to the LVDS encoder driver in a similar fashion to what
+>
+> s/what/what is/
+>
+> > done for R-Car E3.
+> >
+> > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+>
+> and applied to my tree with the above fix.
 
-Signed-off-by: Andrei Stefanescu <andrei.stefanescu@microchip.com>
----
- drivers/regulator/mcp16502.c | 34 ++++++++++++++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
+Thank you for fixing.
 
-diff --git a/drivers/regulator/mcp16502.c b/drivers/regulator/mcp16502.c
-index 7cbc96f..25d7b43 100644
---- a/drivers/regulator/mcp16502.c
-+++ b/drivers/regulator/mcp16502.c
-@@ -497,6 +497,37 @@ static int mcp16502_probe(struct i2c_client *client,
- 	return 0;
- }
-=20
-+#ifdef CONFIG_SUSPEND
-+static int mcp16502_suspend_noirq(struct device *dev)
-+{
-+	struct i2c_client *client =3D to_i2c_client(dev);
-+	struct mcp16502 *mcp =3D i2c_get_clientdata(client);
-+
-+	mcp16502_gpio_set_mode(mcp, MCP16502_OPMODE_LPM);
-+
-+	return 0;
-+}
-+
-+static int mcp16502_resume_noirq(struct device *dev)
-+{
-+	struct i2c_client *client =3D to_i2c_client(dev);
-+	struct mcp16502 *mcp =3D i2c_get_clientdata(client);
-+
-+	mcp16502_gpio_set_mode(mcp, MCP16502_OPMODE_ACTIVE);
-+
-+	return 0;
-+}
-+#else /* !CONFIG_SUSPEND */
-+#define mcp16502_suspend NULL
-+#define mcp16502_resume NULL
-+#endif /* !CONFIG_SUSPEND */
-+
-+#ifdef CONFIG_PM
-+static const struct dev_pm_ops mcp16502_pm_ops =3D {
-+	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(mcp16502_suspend_noirq,
-+				     mcp16502_resume_noirq)
-+};
-+#endif
- static const struct i2c_device_id mcp16502_i2c_id[] =3D {
- 	{ "mcp16502", 0 },
- 	{ }
-@@ -508,6 +539,9 @@ static struct i2c_driver mcp16502_drv =3D {
- 	.driver		=3D {
- 		.name	=3D "mcp16502-regulator",
- 		.of_match_table	=3D of_match_ptr(mcp16502_ids),
-+#ifdef CONFIG_PM
-+		.pm =3D &mcp16502_pm_ops,
-+#endif
- 	},
- 	.id_table	=3D mcp16502_i2c_id,
- };
---=20
-2.7.4
+Fab
 
+>
+> > ---
+> >  drivers/gpu/drm/rcar-du/rcar_lvds.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> >
+> > diff --git a/drivers/gpu/drm/rcar-du/rcar_lvds.c
+> > b/drivers/gpu/drm/rcar-du/rcar_lvds.c index 173d7ad..329dfca 100644
+> > --- a/drivers/gpu/drm/rcar-du/rcar_lvds.c
+> > +++ b/drivers/gpu/drm/rcar-du/rcar_lvds.c
+> > @@ -785,6 +785,7 @@ static const struct rcar_lvds_device_info
+> > rcar_lvds_r8a77995_info =3D {
+> >
+> >  static const struct of_device_id rcar_lvds_of_table[] =3D {
+> >  { .compatible =3D "renesas,r8a7743-lvds", .data =3D &rcar_lvds_gen2_in=
+fo },
+> > +{ .compatible =3D "renesas,r8a774c0-lvds", .data =3D &rcar_lvds_r8a779=
+90_info
+> > }, { .compatible =3D "renesas,r8a7790-lvds", .data =3D &rcar_lvds_r8a77=
+90_info
+> > }, { .compatible =3D "renesas,r8a7791-lvds", .data =3D &rcar_lvds_gen2_=
+info },
+> > { .compatible =3D "renesas,r8a7793-lvds", .data =3D &rcar_lvds_gen2_inf=
+o },
+>
+>
+> --
+> Regards,
+>
+> Laurent Pinchart
+>
+>
+
+
+
+[https://www2.renesas.eu/media/email/unicef.jpg]
+
+This Christmas, instead of sending out cards, Renesas Electronics Europe ha=
+ve decided to support Unicef with a donation. For further details click her=
+e<https://www.unicef.org/> to find out about the valuable work they do, hel=
+ping children all over the world.
+We would like to take this opportunity to wish you a Merry Christmas and a =
+prosperous New Year.
+
+
+
+Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, B=
+uckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered=
+ No. 04586709.
