@@ -2,79 +2,87 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CAA8C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 21:48:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6FD5C43444
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 21:50:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0CE92086D
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 21:48:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D86E9208C1
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 21:50:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544824203;
+	bh=KJ4xo3XlylGcEUsVeQVGwT3irBkYd0CC/9e7cbPK/ns=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=UF7Ww7/su0HJ2ClanIV3sxKiQtMNe1KE4A27WL7P3RnmA53sTJCGsjBpQ/IK06Hmu
+	 omwFsifNZhXn/fV0i8s1DbMthVeTc+RAdzchpJs3FhiPJVtvSez4ZjRTlcfIXQBx5b
+	 sgxEiZYCzgvnB12V666dpO1MVDzO0ipOq/sBTmpE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731132AbeLNVsE (ORCPT
+        id S1731133AbeLNVuB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 16:48:04 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:34499 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730734AbeLNVsD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 16:48:03 -0500
-Received: by mail-qt1-f195.google.com with SMTP id r14so7917371qtp.1
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 13:48:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:cc:from:subject:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=4StXW58yzpthNc1xin79Mx1mpOs8TeTw8hd0yZ43/TE=;
-        b=lO2xgVAf5shDeb4B9FNF9Gtq9XWpc5fGxTJKsWi9VoEvT50IHJD7Hndl8TDOjYfk8h
-         0rwGOT9NjdRUb1TKVKt1avjjTC6aXXzQLyWAv5KU3io5wT6sByFqyT1c0KeCbMQZaI0Q
-         urvO0ei16QoYHHaO/pP/tbaVwqCItyc8b4r+fXfPDxCYMNUlmwH1RmUMbsQj8f8kvXFw
-         MK034P9Cpdo3z0Wd2BvWn1Uvl0dA8G3sf2E1YmEz/jxwS7dznpWk3In+GJHDm4e/Fcpj
-         SaIDUmRit770bxthztguJVxtq8TWQqefhCPJJwgUarW9F5NhLKaa8vjlvXEDx14lGyyF
-         H1zA==
-X-Gm-Message-State: AA+aEWZFrJOzXZywJ76+MVxh1q6dBfn7HAN+fXFm/HhkKs0TFEsZlZAH
-        WusKNbSqB6mNgXdqmPnx+Lu6Rb3H97c=
-X-Google-Smtp-Source: AFSGD/WLI+X7DPHXoRKsQ5AeCi0kCa+f77ztV1lWzOYd/gzxN2kCnt2DerMwX3sXhHxNWVHuHPdfIQ==
-X-Received: by 2002:aed:25a6:: with SMTP id x35mr4634856qtc.228.1544824082975;
-        Fri, 14 Dec 2018 13:48:02 -0800 (PST)
-Received: from ?IPv6:2601:602:9802:a8dc::c5f1? ([2601:602:9802:a8dc::c5f1])
-        by smtp.gmail.com with ESMTPSA id x49sm4606245qta.89.2018.12.14.13.48.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 14 Dec 2018 13:48:02 -0800 (PST)
-To:     Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Alistair Strachan <astrachan@google.com>
-Cc:     "H. Peter Anvin" <hpa@zytor.com>, kernel-team@android.com,
-        joel@joelfernandes.org, X86 ML <x86@kernel.org>,
-        linux-kernel@vger.kernel.org, Florian Weimer <fweimer@redhat.com>,
-        Carlos O'Donell <carlos@redhat.com>,
-        "H. J. Lu" <hjl.tools@gmail.com>
-From:   Laura Abbott <labbott@redhat.com>
-Subject: Unwinding regression with 379d98ddf413 ("x86: vdso: Use $LD instead
- of $CC to link")
-Message-ID: <9aa7b39c-707e-c87a-ad4c-f54ff08e3172@redhat.com>
-Date:   Fri, 14 Dec 2018 13:48:00 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Fri, 14 Dec 2018 16:50:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48004 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730734AbeLNVuB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 16:50:01 -0500
+Received: from mail.kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DDADA2086D;
+        Fri, 14 Dec 2018 21:50:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544824201;
+        bh=KJ4xo3XlylGcEUsVeQVGwT3irBkYd0CC/9e7cbPK/ns=;
+        h=From:To:Cc:Subject:Date:From;
+        b=BC8ANbEO0TGcULe7/GOfYrEyPSVxhYRd8L9Q7pIsBNrzv91GfNBzJxRPoHJT175rz
+         bcbMeYRtA/TJua+P6yV33G1gW9PPZD3nanL43IF4Ft9iOYUaosw/i41jateWl8X/OY
+         aGUtWwyWQihtQvJvI9NTkXVzs+u/ieq/OSpAYFMU=
+From:   Stephen Boyd <sboyd@kernel.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Alexey Firago <alexey_firago@mentor.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH] clk: vc5: Initialize src in vc5_mux_set_parent()
+Date:   Fri, 14 Dec 2018 13:49:59 -0800
+Message-Id: <20181214214959.162744-1-sboyd@kernel.org>
+X-Mailer: git-send-email 2.20.0.405.gbc1bbc6f85-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+It seems that it may be possible to get to the regmap update call
+without ever initializing this variable, so just set it to 0 to be safe.
 
-There are two reports of a regression with unwinding with
-379d98ddf413 ("x86: vdso: Use $LD instead of $CC to link")
+Cc: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Alexey Firago <alexey_firago@mentor.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+---
+ drivers/clk/clk-versaclock5.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-https://bugzilla.kernel.org/show_bug.cgi?id=201741
-https://bugzilla.redhat.com/show_bug.cgi?id=1659295
+diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
+index 5b393e711e94..026f76276933 100644
+--- a/drivers/clk/clk-versaclock5.c
++++ b/drivers/clk/clk-versaclock5.c
+@@ -246,7 +246,7 @@ static int vc5_mux_set_parent(struct clk_hw *hw, u8 index)
+ 	struct vc5_driver_data *vc5 =
+ 		container_of(hw, struct vc5_driver_data, clk_mux);
+ 	const u8 mask = VC5_PRIM_SRC_SHDN_EN_XTAL | VC5_PRIM_SRC_SHDN_EN_CLKIN;
+-	u8 src;
++	u8 src = 0;
+ 
+ 	if ((index > 1) || !vc5->clk_mux_ins)
+ 		return -EINVAL;
+-- 
+Sent by a computer through tubes
 
-It looks like the unwinding information has been
-stripped out. Any ideas?
-
-Thanks,
-Laura
