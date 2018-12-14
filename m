@@ -2,144 +2,118 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 436A7C43612
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 18:06:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B868AC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 18:07:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6ED1A206DD
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 18:06:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E304D206DD
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 18:07:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=konsulko.com header.i=@konsulko.com header.b="Ce+liFcy"
+	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="MDpAD2yc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730433AbeLNSGw (ORCPT
+        id S1730472AbeLNSHA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 13:06:52 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:34843 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729619AbeLNSGv (ORCPT
+        Fri, 14 Dec 2018 13:07:00 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:40688 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729752AbeLNSG7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 13:06:51 -0500
-Received: by mail-pg1-f196.google.com with SMTP id s198so3045548pgs.2
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 10:06:50 -0800 (PST)
+        Fri, 14 Dec 2018 13:06:59 -0500
+Received: by mail-ed1-f68.google.com with SMTP id d3so5657669edx.7
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 10:06:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=konsulko.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=cy4O51U6sVKnzFN/6ke4qYh7v4hI4QhoyMWNCm0wQE8=;
-        b=Ce+liFcy4uFeF0BWhPZ3BY+DUPR2jfXXz+X54VAidhl/1FjP8KzSPRrZrwaooTDFTw
-         T9q8do3gOhXpAqCqms0pVviqvegPiUfggWGsaB29abh0f1OnAi+12r3nJ8khy7h9nOP1
-         zBkDVF9Q1qACOHJrswLmPCFyrs58XLXOlJZkM=
+        d=arista.com; s=googlenew;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=fyO1+rvO4ZQjIrQnFJKpU15GjzUp5SBrPC/B8cK2XEY=;
+        b=MDpAD2ycZNTcJgySxaDNjB8qxOzBmp6YwTF6cpN61bfqHPZb4k1gQzAjf9CZ8dQC+z
+         zlXb/mIdvTWpLFIefx7b8h7ZOVvHdFxNaaVr66RXoFo3bpB5+8om9e3SFYUkZ5yFh96S
+         xd/ReV7U3oN23tuHXp6iWV49kpyDr6GD/H4D9mERkOKFdKho5EBactoWeZoRS0UfQadz
+         8NJVpp4IuWnqVXdJT1CPe6O5Bi6crtrTwt4i5WPXD5+anSdW2dKpvjKFgHiP0c/nXcRn
+         aDXT8Sdf22R9AWBXquBa2l8z5apeqkVmt15ra7LWq1AHvSJGJgihFUv8oVndm5IxJzJ4
+         MMkQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=cy4O51U6sVKnzFN/6ke4qYh7v4hI4QhoyMWNCm0wQE8=;
-        b=llIF+6WCytH2PrsvycCKUDlS8L1CwTHjlXH4R0QfIehwLYqah+V5YijoKsqcTMlhBN
-         HL/M1RRWmEHorxSZ3W9ry3mtQIrWfZky/+Im37kl3J+F8y/FRNmFAmXdLSY7QtEYn8A9
-         qflx4pF6ND28C1LEwR5D7J1XtV+RzrTKn8vIxHumHktgGCh5q+VlNmOGkWhvn2d0DHK5
-         kjoImwQYdeACd+GEjlM5UyKE7G4zLV+G+swZLxhgeetHMNypf7jtiypnXgDvwiY7pNuA
-         TDc077N4cOQLRET42g9BFMH7FqlqLmxCr0Mrxcg+2diD4OfLXdsNI6f6JY2vL9BlJdLb
-         nF+Q==
-X-Gm-Message-State: AA+aEWatfppSufQT7QddbLmGQjEph0eb934hCHFbAh6u4Gfq6wAirPNe
-        xfcgMp3ZWMu7taXBjxtsfdkgFjbldgMtfvXm4VGzqg==
-X-Google-Smtp-Source: AFSGD/VwXC07Np+ksEj4O63MNPhb9c34xg941XA1sn9LbtLqy8amjMUw6my12ndaji/CrsncVt8QnEmjJLHdnTARn+0=
-X-Received: by 2002:a63:8043:: with SMTP id j64mr3622647pgd.405.1544810810547;
- Fri, 14 Dec 2018 10:06:50 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=fyO1+rvO4ZQjIrQnFJKpU15GjzUp5SBrPC/B8cK2XEY=;
+        b=oBBb4SfzlaDeXjtvL5DMw7ZDPr0hwU79rZ2auwvy9Zr20r15ZmGS2uOBvq6ophe218
+         odZOg6D0H62DWANHphOmHqLxQIx64ZyzSDhKHB5NwdRgdqgXu7i0w5ZELHEJJmHyQ4SH
+         BQoz2Qd2YiLLQDTaIwLbIEygNsJJ3zZEOuiO3Nz8CRpYc/CKbHTQh227cxR+sdQmo7+m
+         plV00LsfFAm4q4OfqkpuVOriiRgYUwb/3kmoo5KnVNhSmyItvi//EwND5wgoWMbeN5Cg
+         0RVOHn7YVK2wcT9EAGiz+/NsTjC/44usQO5MovgnUKYeEj62b8cweJytzg/bRMtJ1Df8
+         VSaA==
+X-Gm-Message-State: AA+aEWYpmWYhf5zgKEbzcae/eHCCPHuFk416gKK+15U9bRoZaMk8Parq
+        QzHwGt82VRHL4BlRnkJ5QQGfSA==
+X-Google-Smtp-Source: AFSGD/UHBPHFciLDIK3dg1Skuv65EuNu3DVvQbrQ2UEZkiIfE7GJUJmwv2xXIllhtxWQFie7ZRy6xQ==
+X-Received: by 2002:aa7:c0d0:: with SMTP id j16mr3790146edp.173.1544810818018;
+        Fri, 14 Dec 2018 10:06:58 -0800 (PST)
+Received: from [10.83.36.153] ([217.173.96.166])
+        by smtp.gmail.com with ESMTPSA id d8-v6sm870177ejy.34.2018.12.14.10.06.56
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 14 Dec 2018 10:06:57 -0800 (PST)
+Subject: Re: [PATCH] debugobjects: Move printk out of db lock critical
+ sections
+To:     Waiman Long <longman@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Yang Shi <yang.shi@linux.alibaba.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+References: <1544653694-27873-1-git-send-email-longman@redhat.com>
+ <9cb1526a-e82f-dfa7-4b3c-5ea911a8d476@arista.com>
+ <c06a5233-0566-e391-6fc6-4ff6122c265c@redhat.com>
+From:   Dmitry Safonov <dima@arista.com>
+Message-ID: <bae90b7f-0b1e-e5d9-d9e2-509b50612427@arista.com>
+Date:   Fri, 14 Dec 2018 18:06:56 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-References: <20181213144323.24820-2-andreas.brauchli@sensirion.com>
-In-Reply-To: <20181213144323.24820-2-andreas.brauchli@sensirion.com>
-From:   Matt Ranostay <matt.ranostay@konsulko.com>
-Date:   Fri, 14 Dec 2018 10:06:39 -0800
-Message-ID: <CAJCx=g=ut+mWUfW=H3AorQiWXSpSd_GgyzV1F4CBatSKhh6qHA@mail.gmail.com>
-Subject: Re: [PATCH v3 1/3] iio: Add modifiers for ethanol and H2 gases
-To:     Andreas Brauchli <a.brauchli@elementarea.net>
-Cc:     Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
-        Andreas Brauchli <andreas.brauchli@sensirion.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <c06a5233-0566-e391-6fc6-4ff6122c265c@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 13, 2018 at 6:44 AM Andreas Brauchli
-<a.brauchli@elementarea.net> wrote:
->
-> Add ethanol and H2 gas modifiers:
-> * IIO_MOD_ETHANOL
+On 12/13/18 10:10 PM, Waiman Long wrote:
+> The bucket lock is for protecting the insertion and deletion of
+> debug_obj to/from the bucket list as well as searching within the bucket
+> list. It has nothing to do with the life time of the debug_obj itself.
 
-Was going to ask why this wasn't a chemical formula like the rest of
-the modifiers, but C2H6O would be a bit wordy/unclear :).
+The bucket lock also protects lookups on a bucket.
 
-> * IIO_MOD_H2
->
+1. Imagine, you have object in ODEBUG_STATE_DESTROYED.
+If you will try debug_object_activate() with this patch, it will debug
+print object outside of bucket lock, which means that
+debug_check_no_obj_freed() may concurrently fixup/free object and
+meta-data on another CPU.
 
-Acked-by: Matt Ranostay <matt.ranostay@konsulko.com>
+I don't see this state is being used in many places around the kernel,
+except selftest and i915 driver.
 
-> Signed-off-by: Andreas Brauchli <andreas.brauchli@sensirion.com>
-> ---
->  Documentation/ABI/testing/sysfs-bus-iio | 4 ++++
->  include/uapi/linux/iio/types.h          | 2 ++
->  tools/iio/iio_event_monitor.c           | 4 ++++
->  3 files changed, 10 insertions(+)
->
-> diff --git a/Documentation/ABI/testing/sysfs-bus-iio b/Documentation/ABI/testing/sysfs-bus-iio
-> index 8127a08e366d..6d64521bf565 100644
-> --- a/Documentation/ABI/testing/sysfs-bus-iio
-> +++ b/Documentation/ABI/testing/sysfs-bus-iio
-> @@ -1554,6 +1554,10 @@ What:            /sys/bus/iio/devices/iio:deviceX/in_concentration_raw
->  What:          /sys/bus/iio/devices/iio:deviceX/in_concentrationX_raw
->  What:          /sys/bus/iio/devices/iio:deviceX/in_concentration_co2_raw
->  What:          /sys/bus/iio/devices/iio:deviceX/in_concentrationX_co2_raw
-> +What:          /sys/bus/iio/devices/iio:deviceX/in_concentration_ethanol_raw
-> +What:          /sys/bus/iio/devices/iio:deviceX/in_concentrationX_ethanol_raw
-> +What:          /sys/bus/iio/devices/iio:deviceX/in_concentration_h2_raw
-> +What:          /sys/bus/iio/devices/iio:deviceX/in_concentrationX_h2_raw
->  What:          /sys/bus/iio/devices/iio:deviceX/in_concentration_voc_raw
->  What:          /sys/bus/iio/devices/iio:deviceX/in_concentrationX_voc_raw
->  KernelVersion: 4.3
-> diff --git a/include/uapi/linux/iio/types.h b/include/uapi/linux/iio/types.h
-> index 92baabc103ac..04a6649fa442 100644
-> --- a/include/uapi/linux/iio/types.h
-> +++ b/include/uapi/linux/iio/types.h
-> @@ -87,6 +87,8 @@ enum iio_modifier {
->         IIO_MOD_VOC,
->         IIO_MOD_LIGHT_UV,
->         IIO_MOD_LIGHT_DUV,
-> +       IIO_MOD_ETHANOL,
-> +       IIO_MOD_H2,
->  };
->
->  enum iio_event_type {
-> diff --git a/tools/iio/iio_event_monitor.c b/tools/iio/iio_event_monitor.c
-> index ac2de6b7e89f..f29c885f4b28 100644
-> --- a/tools/iio/iio_event_monitor.c
-> +++ b/tools/iio/iio_event_monitor.c
-> @@ -114,6 +114,8 @@ static const char * const iio_modifier_names[] = {
->         [IIO_MOD_I] = "i",
->         [IIO_MOD_Q] = "q",
->         [IIO_MOD_CO2] = "co2",
-> +       [IIO_MOD_ETHANOL] = "ethanol",
-> +       [IIO_MOD_H2] = "h2",
->         [IIO_MOD_VOC] = "voc",
->  };
->
-> @@ -199,6 +201,8 @@ static bool event_is_known(struct iio_event_data *event)
->         case IIO_MOD_I:
->         case IIO_MOD_Q:
->         case IIO_MOD_CO2:
-> +       case IIO_MOD_ETHANOL:
-> +       case IIO_MOD_H2:
->         case IIO_MOD_VOC:
->                 break;
->         default:
-> --
-> 2.17.1
->
+2. If you try to deactivate already non-active object - you will have
+debug print outside of bucket lock. The other CPU can fixup/free page
+with this object concurrently.
+
+(before your patch the lookup would fail and no printing)
+
+So, I might be mistaken, I'm mostly worried about dereferencing the
+descriptor inside of the object during printing.
+And in my opinion, i.e., there was a reason to save `descr` before
+releasing the bucket lock here:
+https://elixir.bootlin.com/linux/latest/source/lib/debugobjects.c#L789
+
+Anyway, I see that your patch is already in -mm tree and Thomas seems to
+be fine with the change so whatever %)
+
+Thanks,
+          Dima
