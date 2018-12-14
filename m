@@ -6,49 +6,52 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70CC9C67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:23:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26098C6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:23:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3463220879
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:23:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D5D86208E7
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:23:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544790186;
-	bh=/KQr6O95+oxwhZkYPhoys3D3RR9Lzrmcbegtxu7sReY=;
+	s=default; t=1544790193;
+	bh=Tte3zwZDmEjK4lyGW/zZiTx8qwMLgV+LAt02laHAAqg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=UCXDJ86M8rftBCTN8sWRxc21D2dE1ggmUOAz4tBBv6gxBTA9ANWyXCokagvh/jXXN
-	 iwLRCtiizIWTD8wuMPxNDgUGhSeRKd2SciTafjm2j292h4IDHIghLzMMOM94JJ8JnA
-	 0LDMyE+n/FhNjDwnTLoJS4qmcG4HCWKJ4ISLB7Nk=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3463220879
+	b=MDH6Q6xuJqYMtu6LyGipqCa3EUlMaE5Zn/ZeBRRl0cQr6N4S0FbCxlUYuuZj4M43t
+	 aGAPr6WxGA089aD2qKtHVQqM75KFgSGS7/RnSpJcJNbdTp3k54+nm6+H9DUL6bz+Lv
+	 95VRW4JA8zDrzm8KxyMV8iNdRhniMW8QKBiV3+hM=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5D86208E7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732244AbeLNMXE (ORCPT
+        id S1732207AbeLNMNs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:23:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33344 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:13:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33186 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731934AbeLNMNw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:13:52 -0500
+        id S1732189AbeLNMNo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:13:44 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7FE2920892;
-        Fri, 14 Dec 2018 12:13:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B80B0214E0;
+        Fri, 14 Dec 2018 12:13:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789631;
-        bh=/KQr6O95+oxwhZkYPhoys3D3RR9Lzrmcbegtxu7sReY=;
+        s=default; t=1544789623;
+        bh=Tte3zwZDmEjK4lyGW/zZiTx8qwMLgV+LAt02laHAAqg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=a2wln5L3CFy9K0rbZ+ypznDpBUgE9hXoR41BQKPCdhlWcEeWGOv/tviXBXL6Q6XFS
-         NX10E7T+3zk9veMUNhL8k4allZex245yaCicuGU+xKq6IJMUlh722MCJUMDvwZvnRw
-         JRtp8gBetKGrlLfjDuak+YVCnbrcgYlTTE0TFIaw=
+        b=W5B3ftFqKg8tP+wCPqsJD0tyie/duiQh8zw3hnNZbSOWzi6d85LBk3RrtuMV/UnM+
+         CWDx6xPefS30ZNlIHd+SFU2VKR1wgyNpvRkkLdnmlq07S84vlW5PQtgiPi/5TKyCrw
+         FjljauZX5LOfIPeFLj5tZsUENVa45BqScY0qcAJ8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stefano Brivio <sbrivio@redhat.com>,
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Ido Schimmel <idosch@mellanox.com>,
+        David Ahern <dsahern@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 08/88] neighbour: Avoid writing before skb->head in neigh_hh_output()
-Date:   Fri, 14 Dec 2018 12:59:42 +0100
-Message-Id: <20181214115702.774030045@linuxfoundation.org>
+Subject: [PATCH 4.4 05/88] rtnetlink: ndo_dflt_fdb_dump() only work for ARPHRD_ETHER devices
+Date:   Fri, 14 Dec 2018 12:59:39 +0100
+Message-Id: <20181214115702.506862756@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115702.151309521@linuxfoundation.org>
 References: <20181214115702.151309521@linuxfoundation.org>
@@ -67,87 +70,152 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stefano Brivio <sbrivio@redhat.com>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit e6ac64d4c4d095085d7dd71cbd05704ac99829b2 ]
+[ Upstream commit 688838934c231bb08f46db687e57f6d8bf82709c ]
 
-While skb_push() makes the kernel panic if the skb headroom is less than
-the unaligned hardware header size, it will proceed normally in case we
-copy more than that because of alignment, and we'll silently corrupt
-adjacent slabs.
+kmsan was able to trigger a kernel-infoleak using a gre device [1]
 
-In the case fixed by the previous patch,
-"ipv6: Check available headroom in ip6_xmit() even without options", we
-end up in neigh_hh_output() with 14 bytes headroom, 14 bytes hardware
-header and write 16 bytes, starting 2 bytes before the allocated buffer.
+nlmsg_populate_fdb_fill() has a hard coded assumption
+that dev->addr_len is ETH_ALEN, as normally guaranteed
+for ARPHRD_ETHER devices.
 
-Always check we're not writing before skb->head and, if the headroom is
-not enough, warn and drop the packet.
+A similar issue was fixed recently in commit da71577545a5
+("rtnetlink: Disallow FDB configuration for non-Ethernet device")
 
-v2:
- - instead of panicking with BUG_ON(), WARN_ON_ONCE() and drop the packet
-   (Eric Dumazet)
- - if we avoid the panic, though, we need to explicitly check the headroom
-   before the memcpy(), otherwise we'll have corrupted slabs on a running
-   kernel, after we warn
- - use __skb_push() instead of skb_push(), as the headroom check is
-   already implemented here explicitly (Eric Dumazet)
+[1]
+BUG: KMSAN: kernel-infoleak in copyout lib/iov_iter.c:143 [inline]
+BUG: KMSAN: kernel-infoleak in _copy_to_iter+0x4c0/0x2700 lib/iov_iter.c:576
+CPU: 0 PID: 6697 Comm: syz-executor310 Not tainted 4.20.0-rc3+ #95
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x32d/0x480 lib/dump_stack.c:113
+ kmsan_report+0x12c/0x290 mm/kmsan/kmsan.c:683
+ kmsan_internal_check_memory+0x32a/0xa50 mm/kmsan/kmsan.c:743
+ kmsan_copy_to_user+0x78/0xd0 mm/kmsan/kmsan_hooks.c:634
+ copyout lib/iov_iter.c:143 [inline]
+ _copy_to_iter+0x4c0/0x2700 lib/iov_iter.c:576
+ copy_to_iter include/linux/uio.h:143 [inline]
+ skb_copy_datagram_iter+0x4e2/0x1070 net/core/datagram.c:431
+ skb_copy_datagram_msg include/linux/skbuff.h:3316 [inline]
+ netlink_recvmsg+0x6f9/0x19d0 net/netlink/af_netlink.c:1975
+ sock_recvmsg_nosec net/socket.c:794 [inline]
+ sock_recvmsg+0x1d1/0x230 net/socket.c:801
+ ___sys_recvmsg+0x444/0xae0 net/socket.c:2278
+ __sys_recvmsg net/socket.c:2327 [inline]
+ __do_sys_recvmsg net/socket.c:2337 [inline]
+ __se_sys_recvmsg+0x2fa/0x450 net/socket.c:2334
+ __x64_sys_recvmsg+0x4a/0x70 net/socket.c:2334
+ do_syscall_64+0xcf/0x110 arch/x86/entry/common.c:291
+ entry_SYSCALL_64_after_hwframe+0x63/0xe7
+RIP: 0033:0x441119
+Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 db 0a fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007fffc7f008a8 EFLAGS: 00000207 ORIG_RAX: 000000000000002f
+RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 0000000000441119
+RDX: 0000000000000040 RSI: 00000000200005c0 RDI: 0000000000000003
+RBP: 00000000006cc018 R08: 0000000000000100 R09: 0000000000000100
+R10: 0000000000000100 R11: 0000000000000207 R12: 0000000000402080
+R13: 0000000000402110 R14: 0000000000000000 R15: 0000000000000000
 
-Signed-off-by: Stefano Brivio <sbrivio@redhat.com>
+Uninit was stored to memory at:
+ kmsan_save_stack_with_flags mm/kmsan/kmsan.c:246 [inline]
+ kmsan_save_stack mm/kmsan/kmsan.c:261 [inline]
+ kmsan_internal_chain_origin+0x13d/0x240 mm/kmsan/kmsan.c:469
+ kmsan_memcpy_memmove_metadata+0x1a9/0xf70 mm/kmsan/kmsan.c:344
+ kmsan_memcpy_metadata+0xb/0x10 mm/kmsan/kmsan.c:362
+ __msan_memcpy+0x61/0x70 mm/kmsan/kmsan_instr.c:162
+ __nla_put lib/nlattr.c:744 [inline]
+ nla_put+0x20a/0x2d0 lib/nlattr.c:802
+ nlmsg_populate_fdb_fill+0x444/0x810 net/core/rtnetlink.c:3466
+ nlmsg_populate_fdb net/core/rtnetlink.c:3775 [inline]
+ ndo_dflt_fdb_dump+0x73a/0x960 net/core/rtnetlink.c:3807
+ rtnl_fdb_dump+0x1318/0x1cb0 net/core/rtnetlink.c:3979
+ netlink_dump+0xc79/0x1c90 net/netlink/af_netlink.c:2244
+ __netlink_dump_start+0x10c4/0x11d0 net/netlink/af_netlink.c:2352
+ netlink_dump_start include/linux/netlink.h:216 [inline]
+ rtnetlink_rcv_msg+0x141b/0x1540 net/core/rtnetlink.c:4910
+ netlink_rcv_skb+0x394/0x640 net/netlink/af_netlink.c:2477
+ rtnetlink_rcv+0x50/0x60 net/core/rtnetlink.c:4965
+ netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
+ netlink_unicast+0x1699/0x1740 net/netlink/af_netlink.c:1336
+ netlink_sendmsg+0x13c7/0x1440 net/netlink/af_netlink.c:1917
+ sock_sendmsg_nosec net/socket.c:621 [inline]
+ sock_sendmsg net/socket.c:631 [inline]
+ ___sys_sendmsg+0xe3b/0x1240 net/socket.c:2116
+ __sys_sendmsg net/socket.c:2154 [inline]
+ __do_sys_sendmsg net/socket.c:2163 [inline]
+ __se_sys_sendmsg+0x305/0x460 net/socket.c:2161
+ __x64_sys_sendmsg+0x4a/0x70 net/socket.c:2161
+ do_syscall_64+0xcf/0x110 arch/x86/entry/common.c:291
+ entry_SYSCALL_64_after_hwframe+0x63/0xe7
+
+Uninit was created at:
+ kmsan_save_stack_with_flags mm/kmsan/kmsan.c:246 [inline]
+ kmsan_internal_poison_shadow+0x6d/0x130 mm/kmsan/kmsan.c:170
+ kmsan_kmalloc+0xa1/0x100 mm/kmsan/kmsan_hooks.c:186
+ __kmalloc+0x14c/0x4d0 mm/slub.c:3825
+ kmalloc include/linux/slab.h:551 [inline]
+ __hw_addr_create_ex net/core/dev_addr_lists.c:34 [inline]
+ __hw_addr_add_ex net/core/dev_addr_lists.c:80 [inline]
+ __dev_mc_add+0x357/0x8a0 net/core/dev_addr_lists.c:670
+ dev_mc_add+0x6d/0x80 net/core/dev_addr_lists.c:687
+ ip_mc_filter_add net/ipv4/igmp.c:1128 [inline]
+ igmp_group_added+0x4d4/0xb80 net/ipv4/igmp.c:1311
+ __ip_mc_inc_group+0xea9/0xf70 net/ipv4/igmp.c:1444
+ ip_mc_inc_group net/ipv4/igmp.c:1453 [inline]
+ ip_mc_up+0x1c3/0x400 net/ipv4/igmp.c:1775
+ inetdev_event+0x1d03/0x1d80 net/ipv4/devinet.c:1522
+ notifier_call_chain kernel/notifier.c:93 [inline]
+ __raw_notifier_call_chain kernel/notifier.c:394 [inline]
+ raw_notifier_call_chain+0x13d/0x240 kernel/notifier.c:401
+ __dev_notify_flags+0x3da/0x860 net/core/dev.c:1733
+ dev_change_flags+0x1ac/0x230 net/core/dev.c:7569
+ do_setlink+0x165f/0x5ea0 net/core/rtnetlink.c:2492
+ rtnl_newlink+0x2ad7/0x35a0 net/core/rtnetlink.c:3111
+ rtnetlink_rcv_msg+0x1148/0x1540 net/core/rtnetlink.c:4947
+ netlink_rcv_skb+0x394/0x640 net/netlink/af_netlink.c:2477
+ rtnetlink_rcv+0x50/0x60 net/core/rtnetlink.c:4965
+ netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
+ netlink_unicast+0x1699/0x1740 net/netlink/af_netlink.c:1336
+ netlink_sendmsg+0x13c7/0x1440 net/netlink/af_netlink.c:1917
+ sock_sendmsg_nosec net/socket.c:621 [inline]
+ sock_sendmsg net/socket.c:631 [inline]
+ ___sys_sendmsg+0xe3b/0x1240 net/socket.c:2116
+ __sys_sendmsg net/socket.c:2154 [inline]
+ __do_sys_sendmsg net/socket.c:2163 [inline]
+ __se_sys_sendmsg+0x305/0x460 net/socket.c:2161
+ __x64_sys_sendmsg+0x4a/0x70 net/socket.c:2161
+ do_syscall_64+0xcf/0x110 arch/x86/entry/common.c:291
+ entry_SYSCALL_64_after_hwframe+0x63/0xe7
+
+Bytes 36-37 of 105 are uninitialized
+Memory access of size 105 starts at ffff88819686c000
+Data copied to user address 0000000020000380
+
+Fixes: d83b06036048 ("net: add fdb generic dump routine")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Cc: John Fastabend <john.fastabend@gmail.com>
+Cc: Ido Schimmel <idosch@mellanox.com>
+Cc: David Ahern <dsahern@gmail.com>
+Reviewed-by: Ido Schimmel <idosch@mellanox.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/net/neighbour.h |   28 +++++++++++++++++++++++-----
- 1 file changed, 23 insertions(+), 5 deletions(-)
+ net/core/rtnetlink.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/include/net/neighbour.h
-+++ b/include/net/neighbour.h
-@@ -448,6 +448,7 @@ static inline int neigh_hh_bridge(struct
- 
- static inline int neigh_hh_output(const struct hh_cache *hh, struct sk_buff *skb)
+--- a/net/core/rtnetlink.c
++++ b/net/core/rtnetlink.c
+@@ -2931,6 +2931,9 @@ int ndo_dflt_fdb_dump(struct sk_buff *sk
  {
-+	unsigned int hh_alen = 0;
- 	unsigned int seq;
- 	int hh_len;
+ 	int err;
  
-@@ -455,16 +456,33 @@ static inline int neigh_hh_output(const
- 		seq = read_seqbegin(&hh->hh_lock);
- 		hh_len = hh->hh_len;
- 		if (likely(hh_len <= HH_DATA_MOD)) {
--			/* this is inlined by gcc */
--			memcpy(skb->data - HH_DATA_MOD, hh->hh_data, HH_DATA_MOD);
-+			hh_alen = HH_DATA_MOD;
++	if (dev->type != ARPHRD_ETHER)
++		return -EINVAL;
 +
-+			/* skb_push() would proceed silently if we have room for
-+			 * the unaligned size but not for the aligned size:
-+			 * check headroom explicitly.
-+			 */
-+			if (likely(skb_headroom(skb) >= HH_DATA_MOD)) {
-+				/* this is inlined by gcc */
-+				memcpy(skb->data - HH_DATA_MOD, hh->hh_data,
-+				       HH_DATA_MOD);
-+			}
- 		} else {
--			int hh_alen = HH_DATA_ALIGN(hh_len);
-+			hh_alen = HH_DATA_ALIGN(hh_len);
- 
--			memcpy(skb->data - hh_alen, hh->hh_data, hh_alen);
-+			if (likely(skb_headroom(skb) >= hh_alen)) {
-+				memcpy(skb->data - hh_alen, hh->hh_data,
-+				       hh_alen);
-+			}
- 		}
- 	} while (read_seqretry(&hh->hh_lock, seq));
- 
--	skb_push(skb, hh_len);
-+	if (WARN_ON_ONCE(skb_headroom(skb) < hh_alen)) {
-+		kfree_skb(skb);
-+		return NET_XMIT_DROP;
-+	}
-+
-+	__skb_push(skb, hh_len);
- 	return dev_queue_xmit(skb);
- }
- 
+ 	netif_addr_lock_bh(dev);
+ 	err = nlmsg_populate_fdb(skb, cb, dev, &idx, &dev->uc);
+ 	if (err)
 
 
