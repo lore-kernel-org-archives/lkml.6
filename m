@@ -4,53 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94056C6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:03:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE3F3C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:03:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 581B32145D
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:03:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 86B7B2147C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:03:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544788992;
-	bh=x05QPOkeMbWI+8929MlJ3Qao7/3b6Y/SCZb7YJ9pjSs=;
+	s=default; t=1544788996;
+	bh=LOashIrlZsoct0ocmmwsyW66vpJghMvW7gXI0yKha60=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=kSgIprDJnldPSsAfMe5WiWCHbcMLIfPEmfkLn/aWF1gKh2u5HSHwQWI/FurPCwpnH
-	 WECN01iRMQsmGOAnxzsQKozxatqImUKVJHsiurT6xBGUK04cTO4ajgC/b7ihC1qcb0
-	 PXZrS5rHVUXXn0NZvklC1S57128gyo7YXVPlPsWs=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 581B32145D
+	b=gs0ZxvhH5y8BKclKaxKzTtjA57+C5l29NFq0mFdHyTTWgxN6CyFkoTF+0edla/XyT
+	 6UdJmz/kPZHPEf/oUv6UfDIGx0p/9nU3PTRRbE7QePEGLoT//2ZbkeWRbffIlEbG8A
+	 TIouvm7huhVbhImhdu3h3O8EJC5WpMAym4ZOst8I=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86B7B2147C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730256AbeLNMDL (ORCPT
+        id S1730267AbeLNMDP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:03:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46308 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:03:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46528 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730225AbeLNMDE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:03:04 -0500
+        id S1729783AbeLNMDM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:03:12 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7EB3E2147C;
-        Fri, 14 Dec 2018 12:03:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F2D052146E;
+        Fri, 14 Dec 2018 12:03:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544788984;
-        bh=x05QPOkeMbWI+8929MlJ3Qao7/3b6Y/SCZb7YJ9pjSs=;
+        s=default; t=1544788991;
+        bh=LOashIrlZsoct0ocmmwsyW66vpJghMvW7gXI0yKha60=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ht3ONO2ikSbAPsjxv9sJrZ9Dz6hycgPUV3ySk+DgFaTUcNWc4jPz8jvVB2la/ftQX
-         jR7pXVWasokf5FbuNlamjCm/L9ep/UXSQVqh1zalQw9MiBNUk89Ncs4VPS6guriem1
-         ybYHFM+DlVmHfTCHPzxyhR2NF5iJRzwaYqWSnlMU=
+        b=cAzYYWXdjgd7usEe0QX/kRD3Te4nFUQvSV6EsNj/VlI5N6fjWTVQI7AFSZEKxRumX
+         zAo7T574Xlom4OjwCsZLmAQOqPsg9mhlxfxL5MlK+HFHBuvpmXlkg9vX+CLLWIePUO
+         MS379LTsi3nglCHtpsGPjv4a6LGOTMhl3uJqDHP8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        stable@vger.kernel.org, Thomas Richter <tmricht@linux.ibm.com>,
+        Hendrik Brueckner <brueckner@linux.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 026/142] staging: rtl8723bs: Fix the return value in case of error in rtw_wx_read32()
-Date:   Fri, 14 Dec 2018 12:58:31 +0100
-Message-Id: <20181214115748.101167160@linuxfoundation.org>
+Subject: [PATCH 4.19 052/142] s390/cpum_cf: Reject request for sampling in event initialization
+Date:   Fri, 14 Dec 2018 12:58:57 +0100
+Message-Id: <20181214115749.142962601@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115747.053633987@linuxfoundation.org>
 References: <20181214115747.053633987@linuxfoundation.org>
@@ -69,34 +70,111 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit c3e43d8b958bd6849817393483e805d8638a8ab7 ]
+[ Upstream commit 613a41b0d16e617f46776a93b975a1eeea96417c ]
 
-We return 0 unconditionally in 'rtw_wx_read32()'.
-However, 'ret' is set to some error codes in several error handling paths.
+On s390 command perf top fails
+[root@s35lp76 perf] # ./perf top -F100000  --stdio
+   Error:
+   cycles: PMU Hardware doesn't support sampling/overflow-interrupts.
+   	Try 'perf stat'
+[root@s35lp76 perf] #
 
-Return 'ret' instead to propagate the error code.
+Using event -e rb0000 works as designed.  Event rb0000 is the event
+number of the sampling facility for basic sampling.
 
-Fixes: 554c0a3abf216 ("staging: Add rtl8723bs sdio wifi driver")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+During system start up the following PMUs are installed in the kernel's
+PMU list (from head to tail):
+   cpum_cf --> s390 PMU counter facility device driver
+   cpum_sf --> s390 PMU sampling facility device driver
+   uprobe
+   kprobe
+   tracepoint
+   task_clock
+   cpu_clock
+
+Perf top executes following functions and calls perf_event_open(2) system
+call with different parameters many times:
+
+cmd_top
+--> __cmd_top
+    --> perf_evlist__add_default
+        --> __perf_evlist__add_default
+            --> perf_evlist__new_cycles (creates event type:0 (HW)
+			    		config 0 (CPU_CYCLES)
+	        --> perf_event_attr__set_max_precise_ip
+		    Uses perf_event_open(2) to detect correct
+		    precise_ip level. Fails 3 times on s390 which is ok.
+
+Then functions cmd_top
+--> __cmd_top
+    --> perf_top__start_counters
+        -->perf_evlist__config
+	   --> perf_can_comm_exec
+               --> perf_probe_api
+	           This functions test support for the following events:
+		   "cycles:u", "instructions:u", "cpu-clock:u" using
+		   --> perf_do_probe_api
+		       --> perf_event_open_cloexec
+		           Test the close on exec flag support with
+			   perf_event_open(2).
+	               perf_do_probe_api returns true if the event is
+		       supported.
+		       The function returns true because event cpu-clock is
+		       supported by the PMU cpu_clock.
+	               This is achieved by many calls to perf_event_open(2).
+
+Function perf_top__start_counters now calls perf_evsel__open() for every
+event, which is the default event cpu_cycles (config:0) and type HARDWARE
+(type:0) which a predfined frequence of 4000.
+
+Given the above order of the PMU list, the PMU cpum_cf gets called first
+and returns 0, which indicates support for this sampling. The event is
+fully allocated in the function perf_event_open (file kernel/event/core.c
+near line 10521 and the following check fails:
+
+        event = perf_event_alloc(&attr, cpu, task, group_leader, NULL,
+		                 NULL, NULL, cgroup_fd);
+	if (IS_ERR(event)) {
+		err = PTR_ERR(event);
+		goto err_cred;
+	}
+
+        if (is_sampling_event(event)) {
+		if (event->pmu->capabilities & PERF_PMU_CAP_NO_INTERRUPT) {
+			err = -EOPNOTSUPP;
+			goto err_alloc;
+		}
+	}
+
+The check for the interrupt capabilities fails and the system call
+perf_event_open() returns -EOPNOTSUPP (-95).
+
+Add a check to return -ENODEV when sampling is requested in PMU cpum_cf.
+This allows common kernel code in the perf_event_open() system call to
+test the next PMU in above list.
+
+Fixes: 97b1198fece0 (" "s390, perf: Use common PMU interrupt disabled code")
+Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/staging/rtl8723bs/os_dep/ioctl_linux.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/s390/kernel/perf_cpum_cf.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c b/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
-index c38298d960ff..4f120e72c7d2 100644
---- a/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
-+++ b/drivers/staging/rtl8723bs/os_dep/ioctl_linux.c
-@@ -2289,7 +2289,7 @@ static int rtw_wx_read32(struct net_device *dev,
- exit:
- 	kfree(ptmp);
+diff --git a/arch/s390/kernel/perf_cpum_cf.c b/arch/s390/kernel/perf_cpum_cf.c
+index 74091fd3101e..d5523adeddbf 100644
+--- a/arch/s390/kernel/perf_cpum_cf.c
++++ b/arch/s390/kernel/perf_cpum_cf.c
+@@ -346,6 +346,8 @@ static int __hw_perf_event_init(struct perf_event *event)
+ 		break;
  
--	return 0;
-+	return ret;
- }
- 
- static int rtw_wx_write32(struct net_device *dev,
+ 	case PERF_TYPE_HARDWARE:
++		if (is_sampling_event(event))	/* No sampling support */
++			return -ENOENT;
+ 		ev = attr->config;
+ 		/* Count user space (problem-state) only */
+ 		if (!attr->exclude_user && attr->exclude_kernel) {
 -- 
 2.19.1
 
