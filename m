@@ -7,41 +7,41 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4250CC6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:12:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F8A7C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:12:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3208214E0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:12:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C7318214E0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:12:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544789526;
-	bh=Xn6/fW8xGdbFVdMAP91QURkQXJGbz5fAdZm8cZQoiqw=;
+	s=default; t=1544789528;
+	bh=snNygx0yQ4b/98PL0fu68+xXvJMYFsJg/QzyRsnBhSA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ndXJRFVm8GQ4rQ2GMG136ihOnRdG339k22mqVD3DEkhsJUXdJO4urY4jJoHUYzBeR
-	 lemcdqmfwV/bL6+P2lQAFn547jBgOEi6bjuEI4Uo/dbNifc40ZHMFvUGV9KGLuQqUL
-	 E6L9LTHZetubm2payNcInIjFjVQFCcC0LW6+/Eno=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3208214E0
+	b=ECNqb6cwNwzg7+S5zCvGS8JO9UXlHlJDhG2YDVPwrlq3+aQ66pVuiD4CDfReg+CrM
+	 yceKtQkkQUpk3TzEgtA8vMnRENlY0v7kRZ0DX39CKy4TZH9Vmtu+YcmdmQKPUYZcNr
+	 4MNcvB13nEyNDsllEtyNiEkl/8NTF+7cXviKGkQM=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7318214E0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731881AbeLNMME (ORCPT
+        id S1731888AbeLNMMH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:12:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59012 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:12:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59070 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731869AbeLNMMB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:12:01 -0500
+        id S1731873AbeLNMMD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:12:03 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1B66621104;
-        Fri, 14 Dec 2018 12:11:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A579F21473;
+        Fri, 14 Dec 2018 12:12:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789520;
-        bh=Xn6/fW8xGdbFVdMAP91QURkQXJGbz5fAdZm8cZQoiqw=;
+        s=default; t=1544789523;
+        bh=snNygx0yQ4b/98PL0fu68+xXvJMYFsJg/QzyRsnBhSA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=axF9arEQJ8fY72vEf1kjCfsSlukgzPaa/KdPUqUsqK10YfQrhZReML4MXLcvP7TOc
-         CevZbRSZmYVR+QP7nd/fX8EbeeyFrBaz9TodeSeO9BYXj2XIDeYUUHHmRmoMJ8Y7jC
-         NWao4FyEBG8j0WV9IeYYaMsQ4bN8kD8Rt+GTjcwo=
+        b=d9oerIbPSQStfDD4bb71gmCY+FT7KbY1mR4YbBGn+Eny2k6chSZ8MifNHt+NZx5C9
+         sX+V4xFn/t+LpcaeyfIeSuJVDAvO3oJCiLjgUUV9jKaKyOocwRowghqDshE47geRFa
+         ifolYZEYoC5GNgnRBPDwvZidF8Nxn1WtEk5U0Rsc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -49,9 +49,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Jarkko Nikula <jarkko.nikula@bitmer.com>,
         Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 25/51] ASoC: omap-mcpdm: Add pm_qos handling to avoid under/overruns with CPU_IDLE
-Date:   Fri, 14 Dec 2018 13:00:27 +0100
-Message-Id: <20181214115715.647550208@linuxfoundation.org>
+Subject: [PATCH 4.9 26/51] ASoC: omap-dmic: Add pm_qos handling to avoid overruns with CPU_IDLE
+Date:   Fri, 14 Dec 2018 13:00:28 +0100
+Message-Id: <20181214115715.721357954@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115713.244259772@linuxfoundation.org>
 References: <20181214115713.244259772@linuxfoundation.org>
@@ -70,123 +70,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 373a500e34aea97971c9d71e45edad458d3da98f ]
+[ Upstream commit ffdcc3638c58d55a6fa68b6e5dfd4fb4109652eb ]
 
 We need to block sleep states which would require longer time to leave than
 the time the DMA must react to the DMA request in order to keep the FIFO
-serviced without under of overrun.
+serviced without overrun.
 
 Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
 Acked-by: Jarkko Nikula <jarkko.nikula@bitmer.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/omap/omap-mcpdm.c | 43 ++++++++++++++++++++++++++++++++++++-
- 1 file changed, 42 insertions(+), 1 deletion(-)
+ sound/soc/omap/omap-dmic.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/sound/soc/omap/omap-mcpdm.c b/sound/soc/omap/omap-mcpdm.c
-index 64609c77a79d..44ffeb71cd1d 100644
---- a/sound/soc/omap/omap-mcpdm.c
-+++ b/sound/soc/omap/omap-mcpdm.c
-@@ -54,6 +54,8 @@ struct omap_mcpdm {
- 	unsigned long phys_base;
+diff --git a/sound/soc/omap/omap-dmic.c b/sound/soc/omap/omap-dmic.c
+index 09db2aec12a3..776e809a8aab 100644
+--- a/sound/soc/omap/omap-dmic.c
++++ b/sound/soc/omap/omap-dmic.c
+@@ -48,6 +48,8 @@ struct omap_dmic {
+ 	struct device *dev;
  	void __iomem *io_base;
- 	int irq;
+ 	struct clk *fclk;
 +	struct pm_qos_request pm_qos_req;
-+	int latency[2];
++	int latency;
+ 	int fclk_freq;
+ 	int out_freq;
+ 	int clk_div;
+@@ -124,6 +126,8 @@ static void omap_dmic_dai_shutdown(struct snd_pcm_substream *substream,
  
- 	struct mutex mutex;
+ 	mutex_lock(&dmic->mutex);
  
-@@ -277,6 +279,9 @@ static void omap_mcpdm_dai_shutdown(struct snd_pcm_substream *substream,
- 				  struct snd_soc_dai *dai)
- {
- 	struct omap_mcpdm *mcpdm = snd_soc_dai_get_drvdata(dai);
-+	int tx = (substream->stream == SNDRV_PCM_STREAM_PLAYBACK);
-+	int stream1 = tx ? SNDRV_PCM_STREAM_PLAYBACK : SNDRV_PCM_STREAM_CAPTURE;
-+	int stream2 = tx ? SNDRV_PCM_STREAM_CAPTURE : SNDRV_PCM_STREAM_PLAYBACK;
- 
- 	mutex_lock(&mcpdm->mutex);
- 
-@@ -289,6 +294,14 @@ static void omap_mcpdm_dai_shutdown(struct snd_pcm_substream *substream,
- 		}
- 	}
- 
-+	if (mcpdm->latency[stream2])
-+		pm_qos_update_request(&mcpdm->pm_qos_req,
-+				      mcpdm->latency[stream2]);
-+	else if (mcpdm->latency[stream1])
-+		pm_qos_remove_request(&mcpdm->pm_qos_req);
++	pm_qos_remove_request(&dmic->pm_qos_req);
 +
-+	mcpdm->latency[stream1] = 0;
-+
- 	mutex_unlock(&mcpdm->mutex);
- }
+ 	if (!dai->active)
+ 		dmic->active = 0;
  
-@@ -300,7 +313,7 @@ static int omap_mcpdm_dai_hw_params(struct snd_pcm_substream *substream,
- 	int stream = substream->stream;
- 	struct snd_dmaengine_dai_dma_data *dma_data;
- 	u32 threshold;
--	int channels;
-+	int channels, latency;
- 	int link_mask = 0;
+@@ -226,6 +230,8 @@ static int omap_dmic_dai_hw_params(struct snd_pcm_substream *substream,
+ 	/* packet size is threshold * channels */
+ 	dma_data = snd_soc_dai_get_dma_data(dai, substream);
+ 	dma_data->maxburst = dmic->threshold * channels;
++	dmic->latency = (OMAP_DMIC_THRES_MAX - dmic->threshold) * USEC_PER_SEC /
++			params_rate(params);
  
- 	channels = params_channels(params);
-@@ -340,14 +353,25 @@ static int omap_mcpdm_dai_hw_params(struct snd_pcm_substream *substream,
- 
- 		dma_data->maxburst =
- 				(MCPDM_DN_THRES_MAX - threshold) * channels;
-+		latency = threshold;
- 	} else {
- 		/* If playback is not running assume a stereo stream to come */
- 		if (!mcpdm->config[!stream].link_mask)
- 			mcpdm->config[!stream].link_mask = (0x3 << 3);
- 
- 		dma_data->maxburst = threshold * channels;
-+		latency = (MCPDM_DN_THRES_MAX - threshold);
- 	}
- 
-+	/*
-+	 * The DMA must act to a DMA request within latency time (usec) to avoid
-+	 * under/overflow
-+	 */
-+	mcpdm->latency[stream] = latency * USEC_PER_SEC / params_rate(params);
-+
-+	if (!mcpdm->latency[stream])
-+		mcpdm->latency[stream] = 10;
-+
- 	/* Check if we need to restart McPDM with this stream */
- 	if (mcpdm->config[stream].link_mask &&
- 	    mcpdm->config[stream].link_mask != link_mask)
-@@ -362,6 +386,20 @@ static int omap_mcpdm_prepare(struct snd_pcm_substream *substream,
- 				  struct snd_soc_dai *dai)
- {
- 	struct omap_mcpdm *mcpdm = snd_soc_dai_get_drvdata(dai);
-+	struct pm_qos_request *pm_qos_req = &mcpdm->pm_qos_req;
-+	int tx = (substream->stream == SNDRV_PCM_STREAM_PLAYBACK);
-+	int stream1 = tx ? SNDRV_PCM_STREAM_PLAYBACK : SNDRV_PCM_STREAM_CAPTURE;
-+	int stream2 = tx ? SNDRV_PCM_STREAM_CAPTURE : SNDRV_PCM_STREAM_PLAYBACK;
-+	int latency = mcpdm->latency[stream2];
-+
-+	/* Prevent omap hardware from hitting off between FIFO fills */
-+	if (!latency || mcpdm->latency[stream1] < latency)
-+		latency = mcpdm->latency[stream1];
-+
-+	if (pm_qos_request_active(pm_qos_req))
-+		pm_qos_update_request(pm_qos_req, latency);
-+	else if (latency)
-+		pm_qos_add_request(pm_qos_req, PM_QOS_CPU_DMA_LATENCY, latency);
- 
- 	if (!omap_mcpdm_active(mcpdm)) {
- 		omap_mcpdm_start(mcpdm);
-@@ -423,6 +461,9 @@ static int omap_mcpdm_remove(struct snd_soc_dai *dai)
- 	free_irq(mcpdm->irq, (void *)mcpdm);
- 	pm_runtime_disable(mcpdm->dev);
- 
-+	if (pm_qos_request_active(&mcpdm->pm_qos_req))
-+		pm_qos_remove_request(&mcpdm->pm_qos_req);
-+
  	return 0;
  }
+@@ -236,6 +242,9 @@ static int omap_dmic_dai_prepare(struct snd_pcm_substream *substream,
+ 	struct omap_dmic *dmic = snd_soc_dai_get_drvdata(dai);
+ 	u32 ctrl;
+ 
++	if (pm_qos_request_active(&dmic->pm_qos_req))
++		pm_qos_update_request(&dmic->pm_qos_req, dmic->latency);
++
+ 	/* Configure uplink threshold */
+ 	omap_dmic_write(dmic, OMAP_DMIC_FIFO_CTRL_REG, dmic->threshold);
  
 -- 
 2.19.1
