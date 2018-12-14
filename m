@@ -2,84 +2,87 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B1CEC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 16:29:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE94AC43612
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 16:29:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F678206E0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 16:29:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=6wind-com.20150623.gappssmtp.com header.i=@6wind-com.20150623.gappssmtp.com header.b="unIdA6Rd"
+	by mail.kernel.org (Postfix) with ESMTP id 6C595206E0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 16:29:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544804987;
+	bh=4vNHedYSvUHYn4EQJGz2bDRcOwfuYlyvLs21kNJCSZ4=;
+	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
+	b=ILkeO/cNhRS4nTArzoOB0pJM78EizGP0GdLQtxK1b3wgqPjXtM0QfDuEH/f4lcRj5
+	 Um52z/ogD7r1XC/IwT+Z/XfVXXPQedPQOLtOoIchE+hCsYkOgHKrnBumd+YzsCidW0
+	 JdvVJUbqqMRyjhlWGSuPN9BH3XESY8A7yC1/5HA4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730000AbeLNQ3U (ORCPT
+        id S1730013AbeLNQ3p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 11:29:20 -0500
-Received: from mail-lj1-f176.google.com ([209.85.208.176]:35623 "EHLO
-        mail-lj1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729551AbeLNQ3T (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 11:29:19 -0500
-Received: by mail-lj1-f176.google.com with SMTP id x85-v6so5423112ljb.2
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 08:29:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=6wind-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=eSq5K7RDF9p4Zm0i/lxeURSsZydJRi/wcIz+onr3gvc=;
-        b=unIdA6RdA2S4EDqxR0pQMdcTPVBNaS7p+lzhDIUWy5QNsupR2NNNlX2Bq2r8A+eMRM
-         S1/PA34IaviNnEbeA492Fcranf0TQnilGu3eGDEO5rLjvuwB92KvkBv1OI0HnhoGzLVF
-         bBX3lSKebR5zLQSfOieTbnvzrg8XX0ghJp/KLs2TmdX7xh5zLv2pLJ66tZLyv45hjKsk
-         Tqdsh27Z7kY5FvJr1ppniyxqYlFGFsscN70ErbH5U0XFm3XLy/aAhx99JsQdm1avSOiT
-         XC4nGuQUmw1RluwfiVyAXJW2bCC+oVvL7tyqz+GVlwe22YQUk0ZdZRP3J6ayd+ru7JZX
-         56og==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=eSq5K7RDF9p4Zm0i/lxeURSsZydJRi/wcIz+onr3gvc=;
-        b=GxMC7jHnbOWZg2zsBEsEkjNA1TzyBIdKbiNj/+HTP9JvWCmeKaHX36YVnXkNTXuQxS
-         v4HUqcBy4IBGlKJZkrO97RJVjmlqmcHyXSIAHLee3DuSNfjbG7WeRxlWBQWhf3iQnvrw
-         RNEPpKzSq0WiuAYVi55THrUaH/ah1NR3kB0YdCw/00m+CpZeY2+S97ry4bh4MR4971E1
-         UqSbW7LyjkFEm9msspsYYkIzvjV7jphVCjRFz+8nnGOM1BP0d1P4m/nhEUzJxZqB8OaF
-         5K8wOd4X8SkUgwVEfcEOii3uIqgIWrlvLqZf7vjoBmlkV2wfzRdtupP31kXpq6dTSWFw
-         9LRw==
-X-Gm-Message-State: AA+aEWbG0J7jfuUDS8ox+bTEhw5IDcy4XjKROoIH8FaFwIEs2IyoUNnx
-        5Rq6vGwRF3UX5wDfX8Zfm0hzyRCp9gRXyElW2QWEHA==
-X-Google-Smtp-Source: AFSGD/VmkbD9puuKOlI36GZRU3G7YC8lGQwsJm5ZeqXW+ix3FiRaY3444l4YL/z/idM8nsl10WQ7hjrHVLLJXSNlH34=
-X-Received: by 2002:a2e:8643:: with SMTP id i3-v6mr1941987ljj.43.1544804957349;
- Fri, 14 Dec 2018 08:29:17 -0800 (PST)
+        Fri, 14 Dec 2018 11:29:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51320 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729551AbeLNQ3p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 11:29:45 -0500
+Received: from [192.168.0.109] (cpe-174-109-247-98.nc.res.rr.com [174.109.247.98])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AE98A206C2;
+        Fri, 14 Dec 2018 16:29:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544804985;
+        bh=4vNHedYSvUHYn4EQJGz2bDRcOwfuYlyvLs21kNJCSZ4=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=1/26zYzQed48i3ECAJ0dKvXzVW/Qs8pUpB2RWpANdPF5TnEH4wx0K/zZrRqQA5esa
+         MFeotr7zRZmW6hpsQasyXp3sWS+LVpwUTOXW610t6/c+sl/SvCw6umzEfmdtj6I9Y2
+         TncMf+o2gyjQs6t8E3b5qlYic1+ionTcU0W/f6mo=
+Subject: Re: [PATCH v8 3/4] PCI/ACPI: Allow ACPI to be built without
+ CONFIG_PCI set
+To:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>
+Cc:     ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Robert Moore <robert.moore@intel.com>,
+        "Schmauss, Erik" <erik.schmauss@intel.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Jan Kiszka <jan.kiszka@siemens.com>, otavio.pontes@intel.com,
+        ckoenig.leichtzumerken@gmail.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux PCI <linux-pci@vger.kernel.org>, devel@acpica.org
+References: <20181214031252.28707-1-okaya@kernel.org>
+ <20181214031252.28707-4-okaya@kernel.org>
+ <CAJZ5v0j6u=E5xY-a=_D8wO5u=GOX9of3sG572pMSW+eB_e58Ow@mail.gmail.com>
+From:   Sinan Kaya <okaya@kernel.org>
+Message-ID: <578bb84f-ab1d-7e44-a6e1-7b0ff51c743a@kernel.org>
+Date:   Fri, 14 Dec 2018 11:29:42 -0500
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-References: <00000000000075fe86057ca6367e@google.com> <20181210124724.iuver2va3yjdsokf@breakpoint.cc>
- <20181210.095856.580441946779980596.davem@davemloft.net> <2559562.n5nkmlqv4s@stwm.de>
- <20181214143532.43zgy2hwkdskwfn2@breakpoint.cc> <CADdy8HpgzxLB-6QA+D5JfvhJmjyFUoFM1fQfz0rFAO6LEvRBAQ@mail.gmail.com>
- <20181214162333.utlut746n3butkuf@breakpoint.cc>
-In-Reply-To: <20181214162333.utlut746n3butkuf@breakpoint.cc>
-From:   Christophe Gouault <christophe.gouault@6wind.com>
-Date:   Fri, 14 Dec 2018 17:28:47 +0100
-Message-ID: <CADdy8HpctPiaYTEMC48x8f1OYKwPm7Tx_NLktn2GWYFH+y+tAg@mail.gmail.com>
-Subject: Re: INFO: rcu detected stall in xfrm_hash_rebuild
-To:     Florian Westphal <fw@strlen.de>
-Cc:     Wolfgang Walter <linux@stwm.de>,
-        David Miller <davem@davemloft.net>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        Steffen Klassert <steffen.klassert@secunet.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CAJZ5v0j6u=E5xY-a=_D8wO5u=GOX9of3sG572pMSW+eB_e58Ow@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Le ven. 14 d=C3=A9c. 2018 =C3=A0 17:23, Florian Westphal <fw@strlen.de> a =
-=C3=A9crit :
-> I won't send a patch to remove your work, at least not at this time.
->
-> In case I'd do this removal (thresholds, hash table, or both)
-> i will make these tests to see how large the impact is.
+On 12/14/2018 4:19 AM, Rafael J. Wysocki wrote:
+> On Fri, Dec 14, 2018 at 4:13 AM Sinan Kaya<okaya@kernel.org>  wrote:
+>> We are compiling PCI code today for systems with ACPI and no PCI
+>> device present. Remove the useless code and reduce the tight
+>> dependency.
+>>
+>> Signed-off-by: Sinan Kaya<okaya@kernel.org>
+> Bjorn, any objections here?
+> 
 
-Perfect, thanks
-Christophe
+Found a breakage in arm64 build without CONFIG_PCI. I'll post a new version
+soon.
