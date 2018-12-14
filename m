@@ -2,158 +2,133 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17C10C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 18:45:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E66EEC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 18:49:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65BE7206E0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 18:45:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B6A9206DD
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 18:49:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="T89eYwSS";
-	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="Wo3/baEf"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MFFm8mv2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730662AbeLNSpF (ORCPT
+        id S1730585AbeLNStx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 13:45:05 -0500
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:50732 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730551AbeLNSpF (ORCPT
+        Fri, 14 Dec 2018 13:49:53 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:38446 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730405AbeLNStw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 13:45:05 -0500
-Received: from pps.filterd (m0001303.ppops.net [127.0.0.1])
-        by m0001303.ppops.net (8.16.0.27/8.16.0.27) with SMTP id wBEId1jg024328;
-        Fri, 14 Dec 2018 10:44:26 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=facebook;
- bh=rVnsgm8dNnV62+/Hi195se0WYqwvl6MXewvAPclDQ2A=;
- b=T89eYwSSH4qmfd2VZsAA3vqmkhNjIHEaLjX9aqtbNVcQtgeCFeQUC66C/7qpuVD46/yg
- uxj9XOvMeQZmPWKOQyY1C86yhJsWwoMsyZJvEhKcoXY7qcdS5Ez4f/LoKkGdq99Ar0/f
- MNvC9LcJegCR+/PnbWkIis/3tBKj0Nng8do= 
-Received: from maileast.thefacebook.com ([199.201.65.23])
-        by m0001303.ppops.net with ESMTP id 2pcf3urn2n-8
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Fri, 14 Dec 2018 10:44:25 -0800
-Received: from frc-mbx04.TheFacebook.com (2620:10d:c0a1:f82::28) by
- frc-hub05.TheFacebook.com (2620:10d:c021:18::175) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.1.1531.3; Fri, 14 Dec 2018 10:42:53 -0800
-Received: from frc-hub02.TheFacebook.com (2620:10d:c021:18::172) by
- frc-mbx04.TheFacebook.com (2620:10d:c0a1:f82::28) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.1.1531.3; Fri, 14 Dec 2018 10:42:53 -0800
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (192.168.183.28)
- by o365-in.thefacebook.com (192.168.177.72) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1531.3
- via Frontend Transport; Fri, 14 Dec 2018 10:42:52 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector1-fb-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rVnsgm8dNnV62+/Hi195se0WYqwvl6MXewvAPclDQ2A=;
- b=Wo3/baEfTwZl8yHA8Cmvp2/aGEmDEb2hfp96ZCytFM/NslnOMLlytCs6PFz+YNj2uhygLt+WsL4vLexPaHTQJqIFNvc29h6z/4kyKd/yai8p7Fkr9LwA8+ERQLyRODFXLorQLaeBwYuytaK5nzVTuNbXQwMGcbYOTpgm+xLP07I=
-Received: from BYAPR15MB2631.namprd15.prod.outlook.com (20.179.156.24) by
- BYAPR15MB2486.namprd15.prod.outlook.com (52.135.198.157) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1425.19; Fri, 14 Dec 2018 18:42:51 +0000
-Received: from BYAPR15MB2631.namprd15.prod.outlook.com
- ([fe80::990:c2e0:2a8a:25c5]) by BYAPR15MB2631.namprd15.prod.outlook.com
- ([fe80::990:c2e0:2a8a:25c5%3]) with mapi id 15.20.1425.021; Fri, 14 Dec 2018
- 18:42:50 +0000
-From:   Roman Gushchin <guro@fb.com>
-To:     Matthew Wilcox <willy@infradead.org>
-CC:     Roman Gushchin <guroan@gmail.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Kernel Team <Kernel-team@fb.com>
-Subject: Re: [RFC 4/4] mm: show number of vmalloc pages in /proc/meminfo
-Thread-Topic: [RFC 4/4] mm: show number of vmalloc pages in /proc/meminfo
-Thread-Index: AQHUk9fwHbb0L9+OPECvwJSLy1gAbKV+jhgAgAAD1AA=
-Date:   Fri, 14 Dec 2018 18:42:50 +0000
-Message-ID: <20181214184244.GA5196@castle.DHCP.thefacebook.com>
-References: <20181214180720.32040-1-guro@fb.com>
- <20181214180720.32040-5-guro@fb.com>
- <20181214182904.GE10600@bombadil.infradead.org>
-In-Reply-To: <20181214182904.GE10600@bombadil.infradead.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: CO2PR04CA0165.namprd04.prod.outlook.com
- (2603:10b6:104:4::19) To BYAPR15MB2631.namprd15.prod.outlook.com
- (2603:10b6:a03:152::24)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [2620:10d:c090:200::6:bff6]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BYAPR15MB2486;20:FxCsvYH0lYKgYp/pdwPHbZMuTRArvcHnFKi3fdI7HYH2KE9uSuBff6OoqGOpX0H4vOklV8DCgEq7XtaqxpO9h68yONV60Qb81kMpqvUHAp3ZF8KJcnEF72tqlvdF9vKSVr2evekxvrFhhadki8I93nNPNS0r7x5qhxpgqKpy018=
-x-ms-office365-filtering-correlation-id: e4e3c4a9-93a1-47c4-f1fd-08d661f3f331
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BYAPR15MB2486;
-x-ms-traffictypediagnostic: BYAPR15MB2486:
-x-microsoft-antispam-prvs: <BYAPR15MB24866637A3936D7E2C0BC158BEA10@BYAPR15MB2486.namprd15.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(11241501185)(6040522)(2401047)(8121501046)(5005006)(823302103)(10201501046)(3002001)(3231475)(944501520)(52105112)(93006095)(93001095)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(20161123558120)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:BYAPR15MB2486;BCL:0;PCL:0;RULEID:;SRVR:BYAPR15MB2486;
-x-forefront-prvs: 08864C38AC
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(136003)(39860400002)(346002)(376002)(396003)(189003)(199004)(6306002)(53936002)(305945005)(33656002)(9686003)(6512007)(52116002)(229853002)(7736002)(6246003)(6916009)(2906002)(102836004)(476003)(33896004)(11346002)(446003)(966005)(8936002)(8676002)(106356001)(105586002)(486006)(81166006)(81156014)(14454004)(186003)(76176011)(99286004)(5660300001)(39060400002)(386003)(6506007)(4326008)(25786009)(1076002)(14444005)(256004)(6116002)(86362001)(46003)(97736004)(316002)(71200400001)(54906003)(71190400001)(6486002)(478600001)(68736007)(6436002)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR15MB2486;H:BYAPR15MB2631.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: 3UTtQ8h5c+QF+HpNsCYyBO3tAVqQ7L+dKWVh0zel4eecqsLdWfVNADguth6AgFgo0wfn17EJt0BIKiPMUGVhf3z/hw5OXBtnyh8h1W2BqKxNiSGa+1V2/B2yGy9NzU+ToSzSCqEZ1ieO9XdYjlGuPRlFlmImGa4JdZmg86Dau8d7nZPpvNhtwoXm0U2P4C8+SYxQ0VwoZ6A58ZgTI4yAKQAqmDdTpqFvM9mb0bMGiGeAR0g3ScxBPPZW49HZrSFLPnD4nG4iw1bYW3T/lHCBwXcXhPel9LI6dD5CNSaxkPc3hG23m/DjN8x1os82LrrZ
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <E8AD0CC77F4BD34387B5096E9F03B38D@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Fri, 14 Dec 2018 13:49:52 -0500
+Received: by mail-wm1-f65.google.com with SMTP id m22so6805775wml.3;
+        Fri, 14 Dec 2018 10:49:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=20AI8Vd+lVCP42bKmvXJ3gL8wdv8rTxtjbblEkhbpk0=;
+        b=MFFm8mv2mo/bteYJiFNUPdQSh7+EBrIgLL8nsY8ziFsATqxjdIXd0KBx1Du8vOY5vt
+         aZ0M1g+QyH9/Dvc1+WFGUAkgjodrBCoFNpqh6WeGyVps2X1NslFRToxjqUCVwqlrGcoN
+         eZqCgKvDhJCoS5YUe/8Y7urxHS2z17VImicjiyNxgGmX5+mMdLBh1iRK/12lZxu8Mbal
+         q06WpiU2qvJbpLFoS28Vr2JA0uQ7MNReknchCMrFLioR799ce4n7lUmC5s0/ao7QcdSs
+         4jvRyxEtj9+yDu00Z46n7cgd4ELES2HiDIJAoxpCOZHWIZa24o5szkcAqv8gX/tmX5nT
+         SNFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=20AI8Vd+lVCP42bKmvXJ3gL8wdv8rTxtjbblEkhbpk0=;
+        b=RFvD8FIXtUyIy3an1sbZTZCZeBZGIjniInr2upbJxii7EDUlXHFUsHkyEZjOlPMpei
+         otMbMxIjyfQNWFOArhXClM9ViIuDXfp1efpDVsvCLXGTd0N23v+0gGfPlVC1McNao+UP
+         es6xZkKGBojjB2cjOEKPMrhD6nFhjh8lWjbEn25LUh8/hAcsQ2bUJYK7u34vx8XDSxrE
+         pCeNSymoX4CwzNbO8ykxXEYxH4AQFNWXdez73aQwu4vqlYnYLdX7eL/gTuNEFb3VB+lD
+         ieRx6cSEG1cvPOkYXS+KEcxl4BjkDHn8Cy5R+HgJ+Zn1pJE6+rSZsQGWkFlxsYyhI8IL
+         a8sg==
+X-Gm-Message-State: AA+aEWbe6/x+/OgwBGeWDLxbw3oNeeYImxHaVvjHlwngsuW/p5A2Q9DT
+        8jfRqb/iQgH1kcmp1/tOygLvd2K+O9o=
+X-Google-Smtp-Source: AFSGD/UooTmHuEnZdBtlTThuweaAa+boXzQ8X/vmFRgH0oM940digBq0YjWqagU7/z/Sj8cQ5nEoWg==
+X-Received: by 2002:a1c:9ed7:: with SMTP id h206mr3958405wme.28.1544813389551;
+        Fri, 14 Dec 2018 10:49:49 -0800 (PST)
+Received: from [192.168.1.34] (57.red-95-122-219.staticip.rima-tde.net. [95.122.219.57])
+        by smtp.gmail.com with ESMTPSA id c7sm10308745wre.64.2018.12.14.10.49.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 14 Dec 2018 10:49:48 -0800 (PST)
+Subject: Re: [PATCH] quota: Lock s_umount in exclusive mode for
+ Q_XQUOTA{ON,OFF} quotactls.
+To:     Jan Kara <jack@suse.cz>
+Cc:     Jan Kara <jack@suse.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
+References: <1ad62e88-7784-6de8-c03d-01295375e315@gmail.com>
+ <20181214095613.GD8896@quack2.suse.cz>
+From:   Javier Barrio <javier.barrio.mart@gmail.com>
+Message-ID: <8850e693-5f4d-4582-3bcd-f3a2bf3144c8@gmail.com>
+Date:   Fri, 14 Dec 2018 19:49:47 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: e4e3c4a9-93a1-47c4-f1fd-08d661f3f331
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Dec 2018 18:42:50.7369
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR15MB2486
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-14_10:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+In-Reply-To: <20181214095613.GD8896@quack2.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 14, 2018 at 10:29:04AM -0800, Matthew Wilcox wrote:
-> On Fri, Dec 14, 2018 at 10:07:20AM -0800, Roman Gushchin wrote:
-> > Vmalloc() is getting more and more used these days (kernel stacks,
-> > bpf and percpu allocator are new top users), and the total %
-> > of memory consumed by vmalloc() can be pretty significant
-> > and changes dynamically.
-> >=20
-> > /proc/meminfo is the best place to display this information:
-> > its top goal is to show top consumers of the memory.
-> >=20
-> > Since the VmallocUsed field in /proc/meminfo is not in use
-> > for quite a long time (it has been defined to 0 by the
-> > commit a5ad88ce8c7f ("mm: get rid of 'vmalloc_info' from
-> > /proc/meminfo")), let's reuse it for showing the actual
-> > physical memory consumption of vmalloc().
->=20
-> Do you see significant contention on nr_vmalloc_pages?  Also, if it's
-> just an atomic_long_t, is it worth having an accessor for it?  And if
-> it is worth having an accessor for it, then it can be static.
+El 14/12/18 a las 10:56, Jan Kara escribió:
 
-Not really, so I decided that per-cpu counter is an overkill
-right now; but we can easily switch over once we'll notice any contention.
-Will add static.
+Hi,
+>> This patch locks the superblock ->s_umount sem. in exclusive mode for all Q_XQUOTAON/OFF
+>> quotactls too in addition to Q_QUOTAON/OFF.
+> Thanks for the patch! It looks good to me but let me run it past XFS
+> people. Looking at XFS code they definitely do not *need* s_umount in
+> exclusive mode for Q_XQUOTAON/OFF (they have their private mutex for
+> the exclusion). Shared mode they currently get is enough for them. But
+> exclusive mode is fine for them as well AFAICT and it would be easier if
+> all quota backends had the same locking rules wrt VFS locks. XFS guys, any
+> objections to switching Q_XQUOTAON/OFF handlers from having s_umount locked
+> for read to having it locked exclusive?
+Thanks, great! I agree.
 
->=20
-> Also, I seem to be missing 3/4.
->=20
+FWIW, XFS as of now *can* be called while holding s_umount exclusive with the
+generic quotactl(Q_QUOTAON/OFF) commands, even though that code path is probably
+not exercised in practice (from a quick look xfs-tests/xfs_quota etc always
+use the Q_X* variants).
 
-Hm, https://lkml.org/lkml/2018/12/14/1048 ?
+> 								Honza
+>
+>> AFAICT, other than ext4, only xfs and ocfs2 are affected by this change.
+>> The VFS will now call in xfs_quota_* functions with s_umount held, which wasn't the case
+>> before. This looks good to me but I can not say for sure. Ext4 and ocfs2 where already
+>> beeing called with s_umount exclusive via quota_quotaon/off which is basically the same.
+>>
+>> Signed-off-by: Javier Barrio <javier.barrio.mart@gmail.com>
+>> ---
+>>
+>> [ I'm not familiar with this code, please excuse me if this is not the right fix ]
+>>
+>>  fs/quota/quota.c | 3 ++-
+>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/fs/quota/quota.c b/fs/quota/quota.c
+>> index f0cbf58ad4da..fd5dd806f1b9 100644
+>> --- a/fs/quota/quota.c
+>> +++ b/fs/quota/quota.c
+>> @@ -791,7 +791,8 @@ static int quotactl_cmd_write(int cmd)
+>>  /* Return true if quotactl command is manipulating quota on/off state */
+>>  static bool quotactl_cmd_onoff(int cmd)
+>>  {
+>> -	return (cmd == Q_QUOTAON) || (cmd == Q_QUOTAOFF);
+>> +	return (cmd == Q_QUOTAON) || (cmd == Q_QUOTAOFF) ||
+>> +		 (cmd == Q_XQUOTAON) || (cmd == Q_XQUOTAOFF);
+>>  }
+>>  
+>>  /*
+>> -- 2.17.1
+>>
+>>
 
-Thanks!
