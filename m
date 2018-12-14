@@ -2,238 +2,121 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E6DBC67873
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 09:20:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13312C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 09:22:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CCB0A2086D
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 09:20:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544779216;
-	bh=Mp65Htn8J9InEyTe5+3OhboESTrSYBGvbGZ5FrBNvVc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=SRXMo/t7jWd8O82JCn4/DKegAYNEi9KJ0K1+BH3mJshgRGDoIZNIO5YEs/NG822k+
-	 KGIMVyxRTjUolf2YINM6CBxF7Fqu24N152Od9LKwnFcaH5fottLckQ+MT9N97e21Ex
-	 Kq5QqXVFicHRjxLEF/1cNJ/wgYXzsM2UrgY4Dhgc=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCB0A2086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id CFAD320866
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 09:22:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFAD320866
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728947AbeLNJUD (ORCPT
+        id S1728556AbeLNJWW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 04:20:03 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:42878 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726423AbeLNJUC (ORCPT
+        Fri, 14 Dec 2018 04:22:22 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:53765 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726423AbeLNJWW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 04:20:02 -0500
-Received: by mail-ot1-f65.google.com with SMTP id v23so4750263otk.9;
-        Fri, 14 Dec 2018 01:20:01 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=WIYMtAbdU102H0wEndPmm82LcnnOLMm9vKg3xUSl1vk=;
-        b=W1QfJwbMFGYXs0WPUxC1uVK1zwuYVU7ICCQzdpHQ2I7LtLedG6IB7jIx6GZsdlKl+r
-         +x+N1k7gHqIvHh7oo+cy3M0yDBZCKymomq4E4svoixz4hPr1PAGYGn0Qnnle3P74FnDg
-         d+3O9HJ7SG1jnyFtbRYHD/QE+gkfnf32RJ2gU2YS+eXvd3jQowXShJGcEm/Vd6zgDxgd
-         rxjtsLXJoKU+WABl2Oj4XyVGi/5LBcnGI3YWkfjaOBiI/pn/PCSx7CsiPCY6uOMSG0vb
-         BGHfACsC00SlklQWWVwuAbsxQPWOXtIolQ2LH2ZYovTlzCF3nvM/KZvnS7W6Yjx8VYVg
-         nN1g==
-X-Gm-Message-State: AA+aEWZzApjrPTjhinrQvtARa/sCdBhjHEqc4igytc6L79HEgYwTkOkA
-        c4UiDjNkvCg5dovBec0L+IlYZkhaamGF+16eu9I=
-X-Google-Smtp-Source: AFSGD/X8T39PyAXkT7sDKdmVEG1OVP+UzewzLT4a3Zj/zGi/fxZCAb4sr6/SSTNO+cEI0u9p54jIay5VLVN6aHAFIT0=
-X-Received: by 2002:a9d:2062:: with SMTP id n89mr1442028ota.244.1544779201114;
- Fri, 14 Dec 2018 01:20:01 -0800 (PST)
-MIME-Version: 1.0
-References: <20181214031252.28707-1-okaya@kernel.org> <20181214031252.28707-4-okaya@kernel.org>
-In-Reply-To: <20181214031252.28707-4-okaya@kernel.org>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Fri, 14 Dec 2018 10:19:48 +0100
-Message-ID: <CAJZ5v0j6u=E5xY-a=_D8wO5u=GOX9of3sG572pMSW+eB_e58Ow@mail.gmail.com>
-Subject: Re: [PATCH v8 3/4] PCI/ACPI: Allow ACPI to be built without
- CONFIG_PCI set
-To:     okaya@kernel.org, Bjorn Helgaas <bhelgaas@google.com>
-Cc:     ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Robert Moore <robert.moore@intel.com>,
-        "Schmauss, Erik" <erik.schmauss@intel.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Jan Kiszka <jan.kiszka@siemens.com>, otavio.pontes@intel.com,
-        ckoenig.leichtzumerken@gmail.com,
+        Fri, 14 Dec 2018 04:22:22 -0500
+Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <l.stach@pengutronix.de>)
+        id 1gXjfg-00007T-GT; Fri, 14 Dec 2018 10:22:12 +0100
+Message-ID: <1544779331.3137.36.camel@pengutronix.de>
+Subject: Re: [PATCH 1/3] arm64: Remove CONFIG_SOC_IMX8MQ and use ARCH_MXC
+ instead
+From:   Lucas Stach <l.stach@pengutronix.de>
+To:     Shawn Guo <shawnguo@kernel.org>, Abel Vesa <abel.vesa@nxp.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Olof Johansson <olof@lixom.net>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux PCI <linux-pci@vger.kernel.org>, devel@acpica.org
+        dl-linux-imx <linux-imx@nxp.com>, Rob Herring <robh@kernel.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>
+Date:   Fri, 14 Dec 2018 10:22:11 +0100
+In-Reply-To: <20181214011207.GB13243@dragon>
+References: <1544707047-4417-1-git-send-email-abel.vesa@nxp.com>
+         <1544707047-4417-2-git-send-email-abel.vesa@nxp.com>
+         <1544711727.3137.32.camel@pengutronix.de>
+         <20181213145149.6hyyhi6hxdzvikl4@fsr-ub1664-175>
+         <20181214011207.GB13243@dragon>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 14, 2018 at 4:13 AM Sinan Kaya <okaya@kernel.org> wrote:
->
-> We are compiling PCI code today for systems with ACPI and no PCI
-> device present. Remove the useless code and reduce the tight
-> dependency.
->
-> Signed-off-by: Sinan Kaya <okaya@kernel.org>
+Hi Shawn,
 
-Bjorn, any objections here?
+Am Freitag, den 14.12.2018, 09:12 +0800 schrieb Shawn Guo:
+> On Thu, Dec 13, 2018 at 02:51:50PM +0000, Abel Vesa wrote:
+> ...
+> > > > diff --git a/arch/arm64/Kconfig.platforms
+> > > > b/arch/arm64/Kconfig.platforms
+> > > > index 7e1545a..318dbb9 100644
+> > > > --- a/arch/arm64/Kconfig.platforms
+> > > > +++ b/arch/arm64/Kconfig.platforms
+> > > > @@ -148,14 +148,6 @@ config ARCH_MXC
+> > > > > > > >  	  This enables support for the ARMv8 based SoCs in the
+> > > > > > > >  	  NXP i.MX family.
+> > > >  
+> > > > -config SOC_IMX8MQ
+> > > > > > > > -	bool "i.MX8MQ support"
+> > > > > > > > -	depends on ARCH_MXC
+> > > > > > > > -	select ARM64_ERRATUM_843419
+> > > > > > > > -	select ARM64_ERRATUM_845719
+> > > > > > > > -	help
+> > > > > > > > -	  This enables support for the i.MX8MQ SoC.
+> > > > -
+> > > 
+> > > NACK on this one. Having a single place where stuff that is absolutely
+> > > critical for proper SoC operation can be selected is very useful and
+> > > avoids hard to debug issues due to slightly wrong configs in the long
+> > > run.
+> > 
+> > As mentioned in the cover letter, please ignore this patch set entirely.
+> > The ARCH_MXC is actually used on arm32 too, so it won't work.
+> > 
+> > I'm working on a patchset that will add the Kconfig into 
+> > drivers/clk/imx/ and in it will add CLK_IMX8MQ. That will
+> > fix the clock dependency since the CLK_IMX8MQ will depend on
+> > ARCH_MXC and ARM64. I believe the CLK_IMX8QXP will follow
+> > the same pattern.
+> > 
+> > As for the SOC_IMX8MQ, all the other vendors have one single
+> > config for all the arm64 platforms. TBH, to control every SoC
+> > independently it's a little bit of an overkill.
+> 
+> Lucas,
+> 
+> We are still waiting for further comments from Olof [1].  But it sounds
+> like SoC specific option is not welcomed on ARM64.
 
-> ---
->  arch/x86/include/asm/pci_x86.h | 7 +++++++
->  drivers/acpi/Kconfig           | 1 -
->  drivers/acpi/Makefile          | 2 +-
->  drivers/acpi/internal.h        | 5 +++++
->  drivers/pci/Makefile           | 2 +-
->  include/acpi/acpi_drivers.h    | 7 +++++++
->  include/linux/acpi.h           | 7 +++++++
->  include/linux/pci.h            | 4 ++++
->  8 files changed, 32 insertions(+), 3 deletions(-)
->
-> diff --git a/arch/x86/include/asm/pci_x86.h b/arch/x86/include/asm/pci_x86.h
-> index 959d618dbb17..73bb404f4d2a 100644
-> --- a/arch/x86/include/asm/pci_x86.h
-> +++ b/arch/x86/include/asm/pci_x86.h
-> @@ -121,7 +121,14 @@ extern void __init dmi_check_pciprobe(void);
->  extern void __init dmi_check_skip_isa_align(void);
->
->  /* some common used subsys_initcalls */
-> +#ifdef CONFIG_PCI
->  extern int __init pci_acpi_init(void);
-> +#else
-> +static inline int  __init pci_acpi_init(void)
-> +{
-> +       return -EINVAL;
-> +}
-> +#endif
->  extern void __init pcibios_irq_init(void);
->  extern int __init pcibios_init(void);
->  extern int pci_legacy_init(void);
-> diff --git a/drivers/acpi/Kconfig b/drivers/acpi/Kconfig
-> index 7cea769c37df..a0abcb3bd673 100644
-> --- a/drivers/acpi/Kconfig
-> +++ b/drivers/acpi/Kconfig
-> @@ -9,7 +9,6 @@ config ARCH_SUPPORTS_ACPI
->  menuconfig ACPI
->         bool "ACPI (Advanced Configuration and Power Interface) Support"
->         depends on ARCH_SUPPORTS_ACPI
-> -       depends on PCI
->         select PNP
->         default y if X86
->         help
-> diff --git a/drivers/acpi/Makefile b/drivers/acpi/Makefile
-> index edc039313cd6..7c6afc111d76 100644
-> --- a/drivers/acpi/Makefile
-> +++ b/drivers/acpi/Makefile
-> @@ -39,7 +39,7 @@ acpi-y                                += processor_core.o
->  acpi-$(CONFIG_ARCH_MIGHT_HAVE_ACPI_PDC) += processor_pdc.o
->  acpi-y                         += ec.o
->  acpi-$(CONFIG_ACPI_DOCK)       += dock.o
-> -acpi-y                         += pci_root.o pci_link.o pci_irq.o
-> +acpi-$(CONFIG_PCI)             += pci_root.o pci_link.o pci_irq.o
->  obj-$(CONFIG_ACPI_MCFG)                += pci_mcfg.o
->  acpi-y                         += acpi_lpss.o acpi_apd.o
->  acpi-y                         += acpi_platform.o
-> diff --git a/drivers/acpi/internal.h b/drivers/acpi/internal.h
-> index 530a3f675490..b7060dae2789 100644
-> --- a/drivers/acpi/internal.h
-> +++ b/drivers/acpi/internal.h
-> @@ -25,8 +25,13 @@ int acpi_osi_init(void);
->  acpi_status acpi_os_initialize1(void);
->  void init_acpi_device_notify(void);
->  int acpi_scan_init(void);
-> +#ifdef CONFIG_PCI
->  void acpi_pci_root_init(void);
->  void acpi_pci_link_init(void);
-> +#else
-> +static inline void acpi_pci_root_init(void) {}
-> +static inline void acpi_pci_link_init(void) {}
-> +#endif
->  void acpi_processor_init(void);
->  void acpi_platform_init(void);
->  void acpi_pnp_init(void);
-> diff --git a/drivers/pci/Makefile b/drivers/pci/Makefile
-> index f2bda77a2df1..657d642fcc67 100644
-> --- a/drivers/pci/Makefile
-> +++ b/drivers/pci/Makefile
-> @@ -11,6 +11,7 @@ ifdef CONFIG_PCI
->  obj-$(CONFIG_PROC_FS)          += proc.o
->  obj-$(CONFIG_SYSFS)            += slot.o
->  obj-$(CONFIG_OF)               += of.o
-> +obj-$(CONFIG_ACPI)             += pci-acpi.o
->  endif
->
->  obj-$(CONFIG_PCI_QUIRKS)       += quirks.o
-> @@ -20,7 +21,6 @@ obj-$(CONFIG_PCI_MSI)         += msi.o
->  obj-$(CONFIG_PCI_ATS)          += ats.o
->  obj-$(CONFIG_PCI_IOV)          += iov.o
->  obj-$(CONFIG_PCI_BRIDGE_EMUL)  += pci-bridge-emul.o
-> -obj-$(CONFIG_ACPI)             += pci-acpi.o
->  obj-$(CONFIG_PCI_LABEL)                += pci-label.o
->  obj-$(CONFIG_X86_INTEL_MID)    += pci-mid.o
->  obj-$(CONFIG_PCI_SYSCALL)      += syscall.o
-> diff --git a/include/acpi/acpi_drivers.h b/include/acpi/acpi_drivers.h
-> index 14499757338f..de1804aeaf69 100644
-> --- a/include/acpi/acpi_drivers.h
-> +++ b/include/acpi/acpi_drivers.h
-> @@ -88,7 +88,14 @@ int acpi_pci_link_free_irq(acpi_handle handle);
->
->  struct pci_bus;
->
-> +#ifdef CONFIG_PCI
->  struct pci_dev *acpi_get_pci_dev(acpi_handle);
-> +#else
-> +static inline struct pci_dev *acpi_get_pci_dev(acpi_handle handle)
-> +{
-> +       return NULL;
-> +}
-> +#endif
->
->  /* Arch-defined function to add a bus to the system */
->
-> diff --git a/include/linux/acpi.h b/include/linux/acpi.h
-> index ed80f147bd50..eb1fdf4c196a 100644
-> --- a/include/linux/acpi.h
-> +++ b/include/linux/acpi.h
-> @@ -340,7 +340,14 @@ struct pci_dev;
->  int acpi_pci_irq_enable (struct pci_dev *dev);
->  void acpi_penalize_isa_irq(int irq, int active);
->  bool acpi_isa_irq_available(int irq);
-> +#ifdef CONFIG_PCI
->  void acpi_penalize_sci_irq(int irq, int trigger, int polarity);
-> +#else
-> +static inline void acpi_penalize_sci_irq(int irq, int trigger,
-> +                                       int polarity)
-> +{
-> +}
-> +#endif
->  void acpi_pci_irq_disable (struct pci_dev *dev);
->
->  extern int ec_read(u8 addr, u8 *val);
-> diff --git a/include/linux/pci.h b/include/linux/pci.h
-> index 11c71c4ecf75..51a5a5217667 100644
-> --- a/include/linux/pci.h
-> +++ b/include/linux/pci.h
-> @@ -1960,7 +1960,11 @@ int pcibios_set_pcie_reset_state(struct pci_dev *dev,
->                                  enum pcie_reset_state state);
->  int pcibios_add_device(struct pci_dev *dev);
->  void pcibios_release_device(struct pci_dev *dev);
-> +#ifdef CONFIG_PCI
->  void pcibios_penalize_isa_irq(int irq, int active);
-> +#else
-> +static inline void pcibios_penalize_isa_irq(int irq, int active) {}
-> +#endif
->  int pcibios_alloc_irq(struct pci_dev *dev);
->  void pcibios_free_irq(struct pci_dev *dev);
->  resource_size_t pcibios_default_alignment(void);
-> --
-> 2.19.0
->
+While I personally would prefer to keep the SoC options, I see that we
+need to align with the judgment of the arm-soc maintainers.
+
+But at the very least we should keep the select for vital system
+workarounds. They need to move to the arch Kconfig symbol in that case
+and might select stuff that isn't needed on each of the i.MX8 SoCs. But
+better enabling more workaround and drivers than necessary than having
+hard to debug system failures in the future.
+
+Regards,
+Lucas
