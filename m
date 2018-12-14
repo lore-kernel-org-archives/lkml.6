@@ -7,49 +7,50 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62E94C67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:06:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF3CEC6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:07:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 261082147D
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:06:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 94A0721479
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:07:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544789216;
-	bh=MQcXO5f6F2Vc7NG1VKTPDo5vSNP3vnj4BbMgHe4uZqM=;
+	s=default; t=1544789221;
+	bh=rgkShTxoicZXUSZZD+KQMeEUBJld1D5BDdR+aC7DTzk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=K4nO5/zx9OszCHV1ePkyjwTh2QOrsowBY971Z04heeOwM7A6wJSTcmSqIxKmUQObF
-	 5xPat1+UmsQ4NNaHfigJHuNDRDdR5LLk18Hj/5CyWJELlgJB0fFHxDJTP9JaNqZ4gc
-	 +UXR/xJo45pYl5tLFLRvvTlsLl60MvI7gRJfd9Zw=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 261082147D
+	b=jvockoFg5tOWME/BJp1rQVK5ecJxcTBVfkHENoh5B7U9nXsDw9iwDH7DvP6GMVHmx
+	 vuVsMPxB1v4Rg1XEf8mkLTyiluTdOT/QonjNsRgRBJ7NmOS9meXtmgYpsHPfTOi4b+
+	 IhSYiz4WaGzLHbpXdxds4IQoVd70ch3Ql6Iv0rRA=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94A0721479
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730490AbeLNMGy (ORCPT
+        id S1731027AbeLNMHA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:06:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51940 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:07:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52102 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730985AbeLNMGr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:06:47 -0500
+        id S1730313AbeLNMG5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:06:57 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7B8902148E;
-        Fri, 14 Dec 2018 12:06:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C5EA921479;
+        Fri, 14 Dec 2018 12:06:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789207;
-        bh=MQcXO5f6F2Vc7NG1VKTPDo5vSNP3vnj4BbMgHe4uZqM=;
+        s=default; t=1544789217;
+        bh=rgkShTxoicZXUSZZD+KQMeEUBJld1D5BDdR+aC7DTzk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=b++vRiPjYBKETr9lhjvFrlg7H35GpXscnxJLXk48asoT0Bz0nKkqvxD7ard8tuMZ7
-         YZIpBmVd4j8JlP7qkPKJrX4aivV5b40L3gGm3ahnd2qvURZUVDIyWPO9ACMepFyCg0
-         9RiVcdP6IPvCPqcta1XCGRLN8bKhCBacfz0CZtGk=
+        b=nTXb2PZRBWWwMSNOfWK2Fh8GkaLWlmVPvcBOwePk0sVvIs2e8MUdj17LvZ8gZHVtS
+         F75VtiUy4cfYY1iBBmPW/vQjo6IKpNCx8URzccvmInLlB5jh8ZBF6gCR/l6qyltZd8
+         xvof0zsRXxFJ2VbFJOcOLpfv9ilBoPfzoAPHlBQ0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kailang Yang <kailang@realtek.com>,
+        stable@vger.kernel.org, Daniel Drake <drake@endlessm.com>,
+        Jian-Hong Pan <jian-hong@endlessm.com>,
         Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.19 136/142] ALSA: hda/realtek - Fixed headphone issue for ALC700
-Date:   Fri, 14 Dec 2018 13:00:21 +0100
-Message-Id: <20181214115752.478049470@linuxfoundation.org>
+Subject: [PATCH 4.19 139/142] ALSA: hda/realtek: Enable audio jacks of ASUS UX433FN/UX333FA with ALC294
+Date:   Fri, 14 Dec 2018 13:00:24 +0100
+Message-Id: <20181214115752.596932657@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115747.053633987@linuxfoundation.org>
 References: <20181214115747.053633987@linuxfoundation.org>
@@ -68,80 +69,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kailang Yang <kailang@realtek.com>
+From: Jian-Hong Pan <jian-hong@endlessm.com>
 
-commit bde1a7459623a66c2abec4d0a841e4b06cc88d9a upstream.
+commit 0bea4cc8383519f78f3f74caca7bdebdfb346d3b upstream.
 
-If it plugged headphone or headset into the jack, then
-do the reboot, it will have a chance to cause headphone no sound.
-It just need to run the headphone mode procedure after boot time.
-The issue will be fixed.
-It also suitable for ALC234 ALC274 and ALC294.
+The ASUS UX433FN and UX333FA with ALC294 cannot detect the headset MIC
+and output through the internal speaker and the headphone until
+ALC294_FIXUP_ASUS_SPK and ALC294_FIXUP_ASUS_HEADSET_MIC quirk applied.
 
-Signed-off-by: Kailang Yang <kailang@realtek.com>
+Signed-off-by: Daniel Drake <drake@endlessm.com>
+Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_realtek.c |   33 +++++++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+ sound/pci/hda/patch_realtek.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
 --- a/sound/pci/hda/patch_realtek.c
 +++ b/sound/pci/hda/patch_realtek.c
-@@ -7227,6 +7227,37 @@ static void alc269_fill_coef(struct hda_
- 	alc_update_coef_idx(codec, 0x4, 0, 1<<11);
- }
- 
-+static void alc294_hp_init(struct hda_codec *codec)
-+{
-+	struct alc_spec *spec = codec->spec;
-+	hda_nid_t hp_pin = spec->gen.autocfg.hp_pins[0];
-+	int i, val;
-+
-+	if (!hp_pin)
-+		return;
-+
-+	snd_hda_codec_write(codec, hp_pin, 0,
-+			    AC_VERB_SET_AMP_GAIN_MUTE, AMP_OUT_MUTE);
-+
-+	msleep(100);
-+
-+	snd_hda_codec_write(codec, hp_pin, 0,
-+			    AC_VERB_SET_PIN_WIDGET_CONTROL, 0x0);
-+
-+	alc_update_coef_idx(codec, 0x6f, 0x000f, 0);/* Set HP depop to manual mode */
-+	alc_update_coefex_idx(codec, 0x58, 0x00, 0x8000, 0x8000); /* HP depop procedure start */
-+
-+	/* Wait for depop procedure finish  */
-+	val = alc_read_coefex_idx(codec, 0x58, 0x01);
-+	for (i = 0; i < 20 && val & 0x0080; i++) {
-+		msleep(50);
-+		val = alc_read_coefex_idx(codec, 0x58, 0x01);
-+	}
-+	/* Set HP depop to auto mode */
-+	alc_update_coef_idx(codec, 0x6f, 0x000f, 0x000b);
-+	msleep(50);
-+}
-+
- /*
-  */
- static int patch_alc269(struct hda_codec *codec)
-@@ -7352,6 +7383,7 @@ static int patch_alc269(struct hda_codec
- 		spec->codec_variant = ALC269_TYPE_ALC294;
- 		spec->gen.mixer_nid = 0; /* ALC2x4 does not have any loopback mixer path */
- 		alc_update_coef_idx(codec, 0x6b, 0x0018, (1<<4) | (1<<3)); /* UAJ MIC Vref control by verb */
-+		alc294_hp_init(codec);
- 		break;
- 	case 0x10ec0300:
- 		spec->codec_variant = ALC269_TYPE_ALC300;
-@@ -7363,6 +7395,7 @@ static int patch_alc269(struct hda_codec
- 		spec->codec_variant = ALC269_TYPE_ALC700;
- 		spec->gen.mixer_nid = 0; /* ALC700 does not have any loopback mixer path */
- 		alc_update_coef_idx(codec, 0x4a, 1 << 15, 0); /* Combo jack auto trigger control */
-+		alc294_hp_init(codec);
- 		break;
- 
- 	}
+@@ -7193,6 +7193,10 @@ static const struct snd_hda_pin_quirk al
+ 		{0x14, 0x90170110},
+ 		{0x1b, 0x90a70130},
+ 		{0x21, 0x04211020}),
++	SND_HDA_PIN_QUIRK(0x10ec0294, 0x1043, "ASUS", ALC294_FIXUP_ASUS_SPK,
++		{0x12, 0x90a60130},
++		{0x17, 0x90170110},
++		{0x21, 0x04211020}),
+ 	SND_HDA_PIN_QUIRK(0x10ec0295, 0x1028, "Dell", ALC269_FIXUP_DELL1_MIC_NO_PRESENCE,
+ 		ALC295_STANDARD_PINS,
+ 		{0x17, 0x21014020},
 
 
