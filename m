@@ -2,225 +2,91 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 861D2C67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 06:27:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EC4EC67872
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 06:27:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E3D820645
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 06:27:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E3D820645
+	by mail.kernel.org (Postfix) with ESMTP id D37C220645
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 06:27:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D37C220645
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727212AbeLNG1m (ORCPT
+        id S1727271AbeLNG1n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 01:27:42 -0500
+        Fri, 14 Dec 2018 01:27:43 -0500
 Received: from mga07.intel.com ([134.134.136.100]:52223 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726437AbeLNG1l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 01:27:41 -0500
+        id S1726437AbeLNG1m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 01:27:42 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Dec 2018 22:27:40 -0800
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Dec 2018 22:27:42 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,351,1539673200"; 
-   d="scan'208";a="125840790"
+   d="scan'208";a="125840795"
 Received: from yhuang-mobile.sh.intel.com ([10.239.197.226])
-  by fmsmga002.fm.intel.com with ESMTP; 13 Dec 2018 22:27:37 -0800
+  by fmsmga002.fm.intel.com with ESMTP; 13 Dec 2018 22:27:40 -0800
 From:   Huang Ying <ying.huang@intel.com>
 To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         Huang Ying <ying.huang@intel.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Shaohua Li <shli@kernel.org>, Hugh Dickins <hughd@google.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Rik van Riel <riel@redhat.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Zi Yan <zi.yan@cs.rutgers.edu>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>
-Subject: [PATCH -V9 00/21] swap: Swapout/swapin THP in one piece
-Date:   Fri, 14 Dec 2018 14:27:33 +0800
-Message-Id: <20181214062754.13723-1-ying.huang@intel.com>
+        Vineeth Remanan Pillai <vpillai@digitalocean.com>,
+        Kelley Nielsen <kelleynnn@gmail.com>,
+        Rik van Riel <riel@surriel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Hugh Dickins <hughd@google.com>
+Subject: [PATCH -V9 01/21] swap: Deal with PTE mapped THP when unuse PTE
+Date:   Fri, 14 Dec 2018 14:27:34 +0800
+Message-Id: <20181214062754.13723-2-ying.huang@intel.com>
 X-Mailer: git-send-email 2.18.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181214062754.13723-1-ying.huang@intel.com>
+References: <20181214062754.13723-1-ying.huang@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Andrew, could you help me to check whether the overall design is
-reasonable?
+A PTE swap entry may map to a normal swap slot inside a huge swap
+cluster.  To free the huge swap cluster and the corresponding
+THP (transparent huge page), all PTE swap entry mappings need to be
+unmapped.  The original implementation only checks current PTE swap
+entry mapping, this is fixed via calling try_to_free_swap() instead,
+which will check all PTE swap mappings inside the huge swap cluster.
 
-Hi, Hugh, Shaohua, Minchan and Rik, could you help me to review the
-swap part of the patchset?  Especially [02/21], [03/21], [04/21],
-[05/21], [06/21], [07/21], [08/21], [09/21], [10/21], [11/21],
-[12/21], [20/21], [21/21].
+This fix could be folded into the patch: mm, swap: rid swapoff of
+quadratic complexity in -mm patchset.
 
-Hi, Andrea and Kirill, could you help me to review the THP part of the
-patchset?  Especially [01/21], [07/21], [09/21], [11/21], [13/21],
-[15/21], [16/21], [17/21], [18/21], [19/21], [20/21].
+Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
+Cc: Vineeth Remanan Pillai <vpillai@digitalocean.com>
+Cc: Kelley Nielsen <kelleynnn@gmail.com>
+Cc: Rik van Riel <riel@surriel.com>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Hugh Dickins <hughd@google.com>
+---
+ mm/swapfile.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Hi, Johannes and Michal, could you help me to review the cgroup part
-of the patchset?  Especially [14/21].
+diff --git a/mm/swapfile.c b/mm/swapfile.c
+index 7464d0a92869..9e6da494781f 100644
+--- a/mm/swapfile.c
++++ b/mm/swapfile.c
+@@ -1921,10 +1921,8 @@ static int unuse_pte_range(struct vm_area_struct *vma, pmd_t *pmd,
+ 			goto out;
+ 		}
+ 
+-		if (PageSwapCache(page) && (swap_count(*swap_map) == 0))
+-			delete_from_swap_cache(compound_head(page));
++		try_to_free_swap(page);
+ 
+-		SetPageDirty(page);
+ 		unlock_page(page);
+ 		put_page(page);
+ 
+-- 
+2.18.1
 
-And for all, Any comment is welcome!
-
-This patchset is based on the 2018-12-10 head of mmotm/master.
-
-This is the final step of THP (Transparent Huge Page) swap
-optimization.  After the first and second step, the splitting huge
-page is delayed from almost the first step of swapout to after swapout
-has been finished.  In this step, we avoid splitting THP for swapout
-and swapout/swapin the THP in one piece.
-
-We tested the patchset with vm-scalability benchmark swap-w-seq test
-case, with 16 processes.  The test case forks 16 processes.  Each
-process allocates large anonymous memory range, and writes it from
-begin to end for 8 rounds.  The first round will swapout, while the
-remaining rounds will swapin and swapout.  The test is done on a Xeon
-E5 v3 system, the swap device used is a RAM simulated PMEM (persistent
-memory) device.  The test result is as follow,
-
-            base                  optimized
----------------- -------------------------- 
-         %stddev     %change         %stddev
-             \          |                \  
-   1417897 ±  2%    +992.8%   15494673        vm-scalability.throughput
-   1020489 ±  4%   +1091.2%   12156349        vmstat.swap.si
-   1255093 ±  3%    +940.3%   13056114        vmstat.swap.so
-   1259769 ±  7%   +1818.3%   24166779        meminfo.AnonHugePages
-  28021761           -10.7%   25018848 ±  2%  meminfo.AnonPages
-  64080064 ±  4%     -95.6%    2787565 ± 33%  interrupts.CAL:Function_call_interrupts
-     13.91 ±  5%     -13.8        0.10 ± 27%  perf-profile.children.cycles-pp.native_queued_spin_lock_slowpath
-
-Where, the score of benchmark (bytes written per second) improved
-992.8%.  The swapout/swapin throughput improved 1008% (from about
-2.17GB/s to 24.04GB/s).  The performance difference is huge.  In base
-kernel, for the first round of writing, the THP is swapout and split,
-so in the remaining rounds, there is only normal page swapin and
-swapout.  While in optimized kernel, the THP is kept after first
-swapout, so THP swapin and swapout is used in the remaining rounds.
-This shows the key benefit to swapout/swapin THP in one piece, the THP
-will be kept instead of being split.  meminfo information verified
-this, in base kernel only 4.5% of anonymous page are THP during the
-test, while in optimized kernel, that is 96.6%.  The TLB flushing IPI
-(represented as interrupts.CAL:Function_call_interrupts) reduced
-95.6%, while cycles for spinlock reduced from 13.9% to 0.1%.  These
-are performance benefit of THP swapout/swapin too.
-
-Below is the description for all steps of THP swap optimization.
-
-Recently, the performance of the storage devices improved so fast that
-we cannot saturate the disk bandwidth with single logical CPU when do
-page swapping even on a high-end server machine.  Because the
-performance of the storage device improved faster than that of single
-logical CPU.  And it seems that the trend will not change in the near
-future.  On the other hand, the THP becomes more and more popular
-because of increased memory size.  So it becomes necessary to optimize
-THP swap performance.
-
-The advantages to swapout/swapin a THP in one piece include:
-
-- Batch various swap operations for the THP.  Many operations need to
-  be done once per THP instead of per normal page, for example,
-  allocating/freeing the swap space, writing/reading the swap space,
-  flushing TLB, page fault, etc.  This will improve the performance of
-  the THP swap greatly.
-
-- The THP swap space read/write will be large sequential IO (2M on
-  x86_64).  It is particularly helpful for the swapin, which are
-  usually 4k random IO.  This will improve the performance of the THP
-  swap too.
-
-- It will help the memory fragmentation, especially when the THP is
-  heavily used by the applications.  The THP order pages will be free
-  up after THP swapout.
-
-- It will improve the THP utilization on the system with the swap
-  turned on.  Because the speed for khugepaged to collapse the normal
-  pages into the THP is quite slow.  After the THP is split during the
-  swapout, it will take quite long time for the normal pages to
-  collapse back into the THP after being swapin.  The high THP
-  utilization helps the efficiency of the page based memory management
-  too.
-
-There are some concerns regarding THP swapin, mainly because possible
-enlarged read/write IO size (for swapout/swapin) may put more overhead
-on the storage device.  To deal with that, the THP swapin is turned on
-only when necessary.  A new sysfs interface:
-/sys/kernel/mm/transparent_hugepage/swapin_enabled is added to
-configure it.  It uses "always/never/madvise" logic, to be turned on
-globally, turned off globally, or turned on only for VMA with
-MADV_HUGEPAGE, etc.
-GE, etc.
-
-Changelog
----------
-
-V9:
-
-- Rebased on 12/10 HEAD of mmotm/master
-
-- Revise the thp swapoff support because of general swapoff changes
-
-V8:
-
-- Rebased on 11/29 HEAD of mmotm/master
-
-- Fixed one swapoff bug reported by Daniel, Thanks!
-
-V7:
-
-- Rebased on 11/16 HEAD of mmotm/master
-
-- Fix some address alignment bugs reported by Daniel, Thanks!
-
-V6:
-
-- Rebased on 10/3 HEAD of mmotm/master
-
-- Added return value checking in swap_duplicate() per Daniel's comments
-
-v5:
-
-- Rebased on 9/20 HEAD of mmotm/master
-
-- Merged the swap operations implementation for the huge and the
-  normal swap entries when possible
-
-- Added more code comments to improve code readability
-
-- Changed function parameter style to avoid to use Boolean parameter
-  as much as possible
-
-- Fixed a deadlock issue in do_huge_pmd_swap_page(), thanks 0-Day and sparse
-
-v4:
-
-- Rebased on 6/14 HEAD of mmotm/master
-
-- Fixed one build bug and several coding style issues, Thanks Daniel Jordon
-
-v3:
-
-- Rebased on 5/18 HEAD of mmotm/master
-
-- Fixed a build bug, Thanks 0-Day!
-
-v2:
-
-- Fixed several build bugs, Thanks 0-Day!
-
-- Improved documentation as suggested by Randy Dunlap.
-
-- Fixed several bugs in reading huge swap cluster
