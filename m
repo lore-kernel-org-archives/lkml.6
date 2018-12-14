@@ -2,141 +2,180 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0558CC6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 06:01:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF5FDC67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 06:11:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD6212075B
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 06:01:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 78B9E20811
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 06:11:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="ohs3actc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD6212075B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="J3fO6h/1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78B9E20811
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727165AbeLNGBJ (ORCPT
+        id S1726777AbeLNGLM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 01:01:09 -0500
-Received: from mail-eopbgr1320108.outbound.protection.outlook.com ([40.107.132.108]:6327
-        "EHLO APC01-PU1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726480AbeLNGBI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 01:01:08 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=r61iIRUJpMxT4Jb1YOnr0Lo7bb/bn7LyMWs4nnWTOWk=;
- b=ohs3actcbLpF7KJXvI5IcNpzOkArYUl/izK5luH6Hbf28T7qN+IPpDlf1ULpERgyv1JQbgeRWNZmwnLf6u5GLXFLsvVekdHVKzuwl0i6XyTzN/IUNNjyIMVMHF57yH2g4+GURj+3f2nhvJPrRoEBTSvzlwAZXrj3jRSJg+0vCK8=
-Received: from TY2PR01MB2297.jpnprd01.prod.outlook.com (52.133.184.14) by
- TY2PR01MB3465.jpnprd01.prod.outlook.com (20.178.143.206) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1425.20; Fri, 14 Dec 2018 06:01:03 +0000
-Received: from TY2PR01MB2297.jpnprd01.prod.outlook.com
- ([fe80::9545:5575:a99a:a145]) by TY2PR01MB2297.jpnprd01.prod.outlook.com
- ([fe80::9545:5575:a99a:a145%3]) with mapi id 15.20.1404.026; Fri, 14 Dec 2018
- 06:01:02 +0000
-From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-CC:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH] dt-bindings: usb: renesas_usbhs: Add r8a774c0 support
-Thread-Topic: [PATCH] dt-bindings: usb: renesas_usbhs: Add r8a774c0 support
-Thread-Index: AQHUkyFmr2EcM9KjM0adGPwSzv5FHaV9vTAw
-Date:   Fri, 14 Dec 2018 06:01:01 +0000
-Message-ID: <TY2PR01MB2297D670A9D3B8D4B5BC0389D8A10@TY2PR01MB2297.jpnprd01.prod.outlook.com>
-References: <1544732463-6685-1-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1544732463-6685-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=yoshihiro.shimoda.uh@renesas.com; 
-x-originating-ip: [118.238.235.108]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;TY2PR01MB3465;20:XrTq+6GbncoSJoX5FL9xuil7clESTK3JXM0HeV7VABCD1pCz2W1yJEquXAUYZ4z8WDCSXoRQnoqHCn/KPh/lnFaF8IW8NbF9TDvd4OJPp7eWI8XUkXwcIuW1um7rU1pouSkLaFEW+B5QDF9xqQeddzQRg11bnmhQvA/3wXuJIAM=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
-x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10019020)(979002)(376002)(396003)(346002)(39860400002)(136003)(366004)(189003)(199004)(8676002)(6116002)(11346002)(446003)(71190400001)(71200400001)(66066001)(6436002)(102836004)(6506007)(476003)(229853002)(97736004)(8936002)(54906003)(81166006)(110136005)(81156014)(76176011)(86362001)(106356001)(7736002)(33656002)(99286004)(25786009)(316002)(68736007)(478600001)(9686003)(256004)(7696005)(486006)(186003)(26005)(5660300001)(2906002)(345774005)(4326008)(53936002)(14454004)(305945005)(74316002)(3846002)(105586002)(6246003)(55016002)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1102;SCL:1;SRVR:TY2PR01MB3465;H:TY2PR01MB2297.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-ms-office365-filtering-correlation-id: 8f0b5273-bbfc-4f33-5d13-08d6618986e8
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:TY2PR01MB3465;
-x-ms-traffictypediagnostic: TY2PR01MB3465:
-x-microsoft-antispam-prvs: <TY2PR01MB346577126D2D14DF96A729B8D8A10@TY2PR01MB3465.jpnprd01.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3002001)(3231475)(944501520)(52105112)(6055026)(148016)(149066)(150057)(6041310)(20161123564045)(20161123558120)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:TY2PR01MB3465;BCL:0;PCL:0;RULEID:;SRVR:TY2PR01MB3465;
-x-forefront-prvs: 08864C38AC
-received-spf: None (protection.outlook.com: renesas.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: Wx/BxuR3JTvs8L/tNltTYeWs0DRlY3vdoPmIGqJWHmXeePWUUC91PvST2Wxs6+g0OowLut8A+kPpuedlSbGLh8VtK2LuH0RAXxgfCXabJLC792AfTW+K9uLSp7YdRqMf9mMskxMvtSNlgSSjncsTbcYZpGAqX1OxAfeQi+1SQQUiXG0rpjHHJTwXxG7TyHP9Ucida9DUy3RnOGqz2yjLcXRuPGt3gl8cT+DurvSHCEQpAG3UHkM1o/vHq4s/yVA7E3bCUMg7+DDljsoPldELcB85eb0f1F5FBZMejPBFgIrQ7BdCIHXcnq6A3TntJK5Y
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Fri, 14 Dec 2018 01:11:12 -0500
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:2031 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726437AbeLNGLM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 01:11:12 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c13497a0000>; Thu, 13 Dec 2018 22:11:06 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Thu, 13 Dec 2018 22:11:10 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Thu, 13 Dec 2018 22:11:10 -0800
+Received: from [10.2.165.33] (10.124.1.5) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 14 Dec
+ 2018 06:11:09 +0000
+Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
+To:     Dan Williams <dan.j.williams@intel.com>
+CC:     david <david@fromorbit.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>,
+        John Hubbard <john.hubbard@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>, <tom@talpey.com>,
+        Al Viro <viro@zeniv.linux.org.uk>, <benve@cisco.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Christopher Lameter <cl@linux.com>,
+        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Michal Hocko <mhocko@kernel.org>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        <rcampbell@nvidia.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <20181205014441.GA3045@redhat.com>
+ <59ca5c4b-fd5b-1fc6-f891-c7986d91908e@nvidia.com>
+ <7b4733be-13d3-c790-ff1b-ac51b505e9a6@nvidia.com>
+ <20181207191620.GD3293@redhat.com>
+ <3c4d46c0-aced-f96f-1bf3-725d02f11b60@nvidia.com>
+ <20181208022445.GA7024@redhat.com> <20181210102846.GC29289@quack2.suse.cz>
+ <20181212150319.GA3432@redhat.com> <20181212214641.GB29416@dastard>
+ <20181212215931.GG5037@redhat.com> <20181213005119.GD29416@dastard>
+ <05a68829-6e6d-b766-11b4-99e1ba4bc87b@nvidia.com>
+ <CAPcyv4jyG3YTtghyr04wws_hcSBAmPBpnCm0tFcKgz9VwrV=ow@mail.gmail.com>
+X-Nvconfidentiality: public
+From:   John Hubbard <jhubbard@nvidia.com>
+Message-ID: <01cf4e0c-b2d6-225a-3ee9-ef0f7e53684d@nvidia.com>
+Date:   Thu, 13 Dec 2018 22:11:09 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.2
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8f0b5273-bbfc-4f33-5d13-08d6618986e8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Dec 2018 06:01:01.9730
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY2PR01MB3465
+In-Reply-To: <CAPcyv4jyG3YTtghyr04wws_hcSBAmPBpnCm0tFcKgz9VwrV=ow@mail.gmail.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1544767866; bh=3roK0BAdzgYQiQn9d0BqJeStW+P5dCiTlX8qWoU1U9k=;
+        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=J3fO6h/1K1WO7Q31HlBmRhlQZ2aE71HrBGCMmK3hrARMtaclfTnE07+E7SVZntleg
+         5tZCYxa75uwPnkF0UF+cSdUgvKlxYPUT5rhdQlHOmZHC4RmLxeC6hD/fsh8QBV5pLc
+         17DSQxnkppWso6fdmISHJPap3oku6OCfsqMtr6x65PctR/sHtvCOyr17cjalZeXvcr
+         4YDqLvkkZMSNiV60dQD6E2ubHu3/rxIPwEoKMklPIaaL3W5ugD5RDj0r0TSq8E3pQh
+         LO9OkgRZFGB1d0A2Fq5+nKDtlPFI1U0xo3Q8KVqO0vMbGJ00lZSiGgGcPDdZOuHUsg
+         TTokJtlfLPCjw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Fabrizio,
+On 12/13/18 9:21 PM, Dan Williams wrote:
+> On Thu, Dec 13, 2018 at 7:53 PM John Hubbard <jhubbard@nvidia.com> wrote:
+>>
+>> On 12/12/18 4:51 PM, Dave Chinner wrote:
+>>> On Wed, Dec 12, 2018 at 04:59:31PM -0500, Jerome Glisse wrote:
+>>>> On Thu, Dec 13, 2018 at 08:46:41AM +1100, Dave Chinner wrote:
+>>>>> On Wed, Dec 12, 2018 at 10:03:20AM -0500, Jerome Glisse wrote:
+>>>>>> On Mon, Dec 10, 2018 at 11:28:46AM +0100, Jan Kara wrote:
+>>>>>>> On Fri 07-12-18 21:24:46, Jerome Glisse wrote:
+>>>>>>> So this approach doesn't look like a win to me over using counter in struct
+>>>>>>> page and I'd rather try looking into squeezing HMM public page usage of
+>>>>>>> struct page so that we can fit that gup counter there as well. I know that
+>>>>>>> it may be easier said than done...
+>>>>>>
+>>
+>> Agreed. After all the discussion this week, I'm thinking that the original idea
+>> of a per-struct-page counter is better. Fortunately, we can do the moral equivalent
+>> of that, unless I'm overlooking something: Jerome had another proposal that he
+>> described, off-list, for doing that counting, and his idea avoids the problem of
+>> finding space in struct page. (And in fact, when I responded yesterday, I initially
+>> thought that's where he was going with this.)
+>>
+>> So how about this hybrid solution:
+>>
+>> 1. Stay with the basic RFC approach of using a per-page counter, but actually
+>> store the counter(s) in the mappings instead of the struct page. We can use
+>> !PageAnon and page_mapping to look up all the mappings, stash the dma_pinned_count
+>> there. So the total pinned count is scattered across mappings. Probably still need
+>> a PageDmaPinned bit.
+> 
+> How do you safely look at page->mapping from the get_user_pages_fast()
+> path? You'll be racing invalidation disconnecting the page from the
+> mapping.
+> 
 
-> From: Fabrizio Castro, Sent: Friday, December 14, 2018 5:21 AM
->=20
-> Document RZ/G2E (R8A774C0) SoC bindings.
->=20
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+I don't have an answer for that, so maybe the page->mapping idea is dead already. 
 
-Thank you for the patch!
+So in that case, there is still one more way to do all of this, which is to
+combine ZONE_DEVICE, HMM, and gup/dma information in a per-page struct, and get
+there via basically page->private, more or less like this:
 
-Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+index 5ed8f6292a53..13f651bb5cc1 100644
+--- a/include/linux/mm_types.h
++++ b/include/linux/mm_types.h
+@@ -67,6 +67,13 @@ struct hmm;
+ #define _struct_page_alignment
+ #endif
+ 
++struct page_aux {
++       struct dev_pagemap *pgmap;
++       unsigned long hmm_data;
++       unsigned long private;
++       atomic_t dma_pinned_count;
++};
++
+ struct page {
+        unsigned long flags;            /* Atomic flags, some possibly
+                                         * updated asynchronously */
+@@ -149,11 +156,13 @@ struct page {
+                        spinlock_t ptl;
+ #endif
+                };
+-               struct {        /* ZONE_DEVICE pages */
++               struct {        /* ZONE_DEVICE, HMM or get_user_pages() pages */
+                        /** @pgmap: Points to the hosting device page map. */
+-                       struct dev_pagemap *pgmap;
+-                       unsigned long hmm_data;
+-                       unsigned long _zd_pad_1;        /* uses mapping */
++                       unsigned long _zd_pad_1;        /* LRU */
++                       unsigned long _zd_pad_2;        /* LRU */
++                       unsigned long _zd_pad_3;        /* mapping */
++                       unsigned long _zd_pad_4;        /* index */
++                       struct page_aux *aux;           /* private */
+                };
+ 
+                /** @rcu_head: You can use this to free a page by RCU. */
 
-By the way, I'm not sure, but I'm wondering that we need to add
-.compatible renesas,usbhs-r8a774c0 with .data USBHS_TYPE_RCAR_GEN3_WITH_PLL
-like r8a77990 to the drivers/usb/renesas_usbhs/common.c.
-What do you think?
+...is there any appetite for that approach?
 
-Best regards,
-Yoshihiro Shimoda
-
-> ---
->  Documentation/devicetree/bindings/usb/renesas_usbhs.txt | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/usb/renesas_usbhs.txt
-> b/Documentation/devicetree/bindings/usb/renesas_usbhs.txt
-> index 90719f5..d93b6a1 100644
-> --- a/Documentation/devicetree/bindings/usb/renesas_usbhs.txt
-> +++ b/Documentation/devicetree/bindings/usb/renesas_usbhs.txt
-> @@ -7,6 +7,7 @@ Required properties:
->  	- "renesas,usbhs-r8a7744" for r8a7744 (RZ/G1N) compatible device
->  	- "renesas,usbhs-r8a7745" for r8a7745 (RZ/G1E) compatible device
->  	- "renesas,usbhs-r8a774a1" for r8a774a1 (RZ/G2M) compatible device
-> +	- "renesas,usbhs-r8a774c0" for r8a774c0 (RZ/G2E) compatible device
->  	- "renesas,usbhs-r8a7790" for r8a7790 (R-Car H2) compatible device
->  	- "renesas,usbhs-r8a7791" for r8a7791 (R-Car M2-W) compatible device
->  	- "renesas,usbhs-r8a7792" for r8a7792 (R-Car V2H) compatible device
-> --
-> 2.7.4
-
+-- 
+thanks,
+John Hubbard
+NVIDIA
