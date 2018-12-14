@@ -2,84 +2,106 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D425C67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 13:34:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17BD5C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 13:35:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C8B120643
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 13:34:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="MZobD+rY"
+	by mail.kernel.org (Postfix) with ESMTP id ABC5A20643
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 13:35:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729954AbeLNNe5 (ORCPT
+        id S1729964AbeLNNfn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 08:34:57 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:41466 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726554AbeLNNe5 (ORCPT
+        Fri, 14 Dec 2018 08:35:43 -0500
+Received: from lithops.sigma-star.at ([195.201.40.130]:52702 "EHLO
+        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726554AbeLNNfn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 08:34:57 -0500
-Received: by mail-lf1-f68.google.com with SMTP id c16so4260897lfj.8
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 05:34:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=r61N4PE69wRKahV5/6F2/1K+6Lo+o/EPZs1j9+mQGs8=;
-        b=MZobD+rYDRGuLK5pH+NclyApdW5SC9HzyqJGaE8liMZoZgtY0A4FSWgDap9E6u5EmF
-         W8eYLd5siKIyAZKHU1vqHpad7sr2T4GClqF3aNR+8cMrbZ6Q+kQA/6U1bqd95KNm0zLk
-         ILRwftGGnqgdZe6QzZz/nRwtnFMespfcs95mA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=r61N4PE69wRKahV5/6F2/1K+6Lo+o/EPZs1j9+mQGs8=;
-        b=LEc/qn8Ah/97W24RrSwasIgc2B5OhlL+YpFlW7/yOgQlvJp5/HKGRDvIQKZQLGM3/N
-         GZs23Tt/pubpm6Ws1Oj9UhX6O8UPlTbVfqT/ZHz2EOZ6RYchQ/OBpewfGyAhkJBeP0Hz
-         nHVtKNk4IgttQ7snbh9d3cwLYbEn116nPhY5FZlmUVcdiPdqWU1jEIFP85rAAIWXcrdC
-         wjtFJpkcqsN9PYzDHAJCotzJ+J1flqa/IoorBnTQeE2rDV6kc3uPMG14OP6kSsJvmTB8
-         AOvzrIzLKODOV9QSAm60mInJscAHm+EYSbmi1gecC35OcwV0T1lLn9L1VpG10WtryF8J
-         Bktw==
-X-Gm-Message-State: AA+aEWajbveZR5cKAgaUpQ/uU1B+2nKyAmg2XKrXaMVFzSTCNNWT0ol9
-        rrndiCNQQSJE2o+pfO5DPWTghoEBQV6u6+r+qJRlrw==
-X-Google-Smtp-Source: AFSGD/W8LiLzZxnviYjj3LSdljy0KMxxnsM95gN+ZSIoSTP4KhuCMi5LTaCjOYXPxZbgyz/b6tIyrtgEliuUspaLL1I=
-X-Received: by 2002:a19:4849:: with SMTP id v70mr1816392lfa.62.1544794494911;
- Fri, 14 Dec 2018 05:34:54 -0800 (PST)
+        Fri, 14 Dec 2018 08:35:43 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 9F60B6083258;
+        Fri, 14 Dec 2018 14:35:40 +0100 (CET)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id cwxB-2hDAHgk; Fri, 14 Dec 2018 14:35:40 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 381BA6083257;
+        Fri, 14 Dec 2018 14:35:40 +0100 (CET)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id hJmSI9uqdjDk; Fri, 14 Dec 2018 14:35:40 +0100 (CET)
+Received: from blindfold.localnet (213-47-184-186.cable.dynamic.surfer.at [213.47.184.186])
+        by lithops.sigma-star.at (Postfix) with ESMTPSA id C7CFB6083243;
+        Fri, 14 Dec 2018 14:35:38 +0100 (CET)
+From:   Richard Weinberger <richard@nod.at>
+To:     Gao Xiang <hsiangkao@aol.com>,
+        Artem Bityutskiy <dedekind1@gmail.com>
+Cc:     zhangjun <openzhangj@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Darrick J . Wong" <darrick.wong@oracle.com>, hch@lst.de,
+        bfoster@redhat.com, Dave Chinner <david@fromorbit.com>,
+        akpm@linux-foundation.org, kirill.shutemov@linux.intel.com,
+        mhocko@suse.com, n-horiguchi@ah.jp.nec.com,
+        mgorman@techsingularity.net, aarcange@redhat.com,
+        willy@infradead.org, linux@dominikbrodowski.net,
+        linux-mm@kvack.org, Gao Xiang <gaoxiang25@huawei.com>
+Subject: Re: [PATCH] fix page_count in ->iomap_migrate_page()
+Date:   Fri, 14 Dec 2018 14:35:38 +0100
+Message-ID: <5520068.cAKZ7BqcUI@blindfold>
+In-Reply-To: <2b19b3c4-2bc4-15fa-15cc-27a13e5c7af1@aol.com>
+References: <1544766961-3492-1-git-send-email-openzhangj@gmail.com> <1618433.IpySj692Hd@blindfold> <2b19b3c4-2bc4-15fa-15cc-27a13e5c7af1@aol.com>
 MIME-Version: 1.0
-References: <20181129170312.23625-1-thierry.reding@gmail.com> <20181129170312.23625-4-thierry.reding@gmail.com>
-In-Reply-To: <20181129170312.23625-4-thierry.reding@gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 14 Dec 2018 14:34:43 +0100
-Message-ID: <CACRpkdbuRJ+UAoZkZNtWNzrF2+_0h-ibkTaDXWcPe70yJCx+5w@mail.gmail.com>
-Subject: Re: [PATCH v2 3/5] gpio: tegra186: Rename flow variable to type
-To:     "thierry.reding@gmail.com" <thierry.reding@gmail.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-tegra@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 29, 2018 at 6:03 PM Thierry Reding <thierry.reding@gmail.com> wrote:
+Am Freitag, 14. Dezember 2018, 13:26:28 CET schrieb Gao Xiang:
+> Hi Richard,
+> 
+> On 2018/12/14 19:25, Richard Weinberger wrote:
+> > This is the third place which needs this workaround.
+> > UBIFS, F2FS, and now iomap.
+> > 
+> > I agree with Dave that nobody can assume that PG_private implies an additional
+> > page reference.
+> > But page migration does that. Including parts of the write back code.
+> 
+> It seems that it's clearly documented in
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/include/linux/mm.h#n780
+> 
+>  * A pagecache page contains an opaque `private' member, which belongs to the
+>  * page's address_space. Usually, this is the address of a circular list of
+>  * the page's disk buffers. PG_private must be set to tell the VM to call
+>  * into the filesystem to release these pages.
+>  *
+>  * A page may belong to an inode's memory mapping. In this case, page->mapping
+>  * is the pointer to the inode, and page->index is the file offset of the page,
+>  * in units of PAGE_SIZE.
+>  *
+>  * If pagecache pages are not associated with an inode, they are said to be
+>  * anonymous pages. These may become associated with the swapcache, and in that
+>  * case PG_swapcache is set, and page->private is an offset into the swapcache.
+>  *
+>  * In either case (swapcache or inode backed), the pagecache itself holds one
+>  * reference to the page. Setting PG_private should also increment the
+>  * refcount. The each user mapping also has a reference to the page.
+> 
+> and when I looked into that, I found
+> https://lore.kernel.org/lkml/3CB3CA93.D141680B@zip.com.au/
 
-> From: Thierry Reding <treding@nvidia.com>
->
-> The IRQ core code refers to the interrupt type by that name, whereas the
-> term flow is almost never used. Some GPIO controllers use the term
-> flow_type, but it is most consistent to just go with the IRQ core
-> terminology.
->
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
+Hmm, in case of UBIFS it seems easy. We can add a get/put_page() around setting/clearing
+the flag.
+I did that now and so far none of my tests exploded.
 
-Patch applied.
+Artem, do you remember why UBIFS never raised the page counter when setting PG_private?
 
-No need to wait for genirq or other changes to apply this.
+Thanks,
+//richard
 
-Yours,
-Linus Walleij
+
