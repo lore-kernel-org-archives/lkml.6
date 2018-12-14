@@ -7,42 +7,47 @@ X-Spam-Status: No, score=-11.9 required=3.0
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4207CC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:25:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53C8EC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:26:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACC16208C1
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:25:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 96EE92086D
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:26:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730795AbeLNUZb (ORCPT
+        id S1730801AbeLNU0s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 15:25:31 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:58323 "EHLO
+        Fri, 14 Dec 2018 15:26:48 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:42765 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730123AbeLNUZa (ORCPT
+        with ESMTP id S1730123AbeLNU0s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 15:25:30 -0500
+        Fri, 14 Dec 2018 15:26:48 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBEKPNkD1453236
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBEKPxwa1453282
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Fri, 14 Dec 2018 12:25:23 -0800
+        Fri, 14 Dec 2018 12:25:59 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBEKPNv11453233;
-        Fri, 14 Dec 2018 12:25:23 -0800
-Date:   Fri, 14 Dec 2018 12:25:23 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBEKPweb1453279;
+        Fri, 14 Dec 2018 12:25:58 -0800
+Date:   Fri, 14 Dec 2018 12:25:58 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Adrian Hunter <tipbot@zytor.com>
-Message-ID: <tip-3ebeae6efafd92bd21f600a6300a6492c525d39a@git.kernel.org>
-Cc:     jolsa@redhat.com, adrian.hunter@intel.com, acme@redhat.com,
-        mingo@kernel.org, tglx@linutronix.de, hpa@zytor.com,
-        linux-kernel@vger.kernel.org
-Reply-To: jolsa@redhat.com, hpa@zytor.com, linux-kernel@vger.kernel.org,
-          tglx@linutronix.de, mingo@kernel.org, acme@redhat.com,
-          adrian.hunter@intel.com
-In-Reply-To: <20181122140456.16817-1-adrian.hunter@intel.com>
-References: <20181122140456.16817-1-adrian.hunter@intel.com>
+From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-tlt97p066zyhzqhl5jt86og7@git.kernel.org>
+Cc:     acme@redhat.com, alexander.shishkin@linux.intel.com,
+        peterz@infradead.org, namhyung@kernel.org, julia.lawall@lip6.fr,
+        linux-kernel@vger.kernel.org, jolsa@kernel.org, dsahern@gmail.com,
+        tglx@linutronix.de, hpa@zytor.com, wangnan0@huawei.com,
+        mingo@kernel.org, adrian.hunter@intel.com,
+        yellowriver2010@hotmail.com, dhowells@redhat.com
+Reply-To: adrian.hunter@intel.com, yellowriver2010@hotmail.com,
+          dhowells@redhat.com, wangnan0@huawei.com, mingo@kernel.org,
+          linux-kernel@vger.kernel.org, jolsa@kernel.org,
+          dsahern@gmail.com, tglx@linutronix.de, hpa@zytor.com,
+          acme@redhat.com, alexander.shishkin@linux.intel.com,
+          peterz@infradead.org, namhyung@kernel.org, julia.lawall@lip6.fr
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf test: Fix perf_event_attr test failure
-Git-Commit-ID: 3ebeae6efafd92bd21f600a6300a6492c525d39a
+Subject: [tip:perf/core] tools include: Adopt ERR_CAST() from the kernel
+ err.h header
+Git-Commit-ID: c4838c7bad14c3cf6c779c24794044bc48b53002
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -56,47 +61,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  3ebeae6efafd92bd21f600a6300a6492c525d39a
-Gitweb:     https://git.kernel.org/tip/3ebeae6efafd92bd21f600a6300a6492c525d39a
-Author:     Adrian Hunter <adrian.hunter@intel.com>
-AuthorDate: Thu, 22 Nov 2018 16:04:56 +0200
+Commit-ID:  c4838c7bad14c3cf6c779c24794044bc48b53002
+Gitweb:     https://git.kernel.org/tip/c4838c7bad14c3cf6c779c24794044bc48b53002
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Tue, 27 Nov 2018 09:56:55 -0300
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Thu, 29 Nov 2018 20:42:48 -0300
 
-perf test: Fix perf_event_attr test failure
+tools include: Adopt ERR_CAST() from the kernel err.h header
 
-Fix inconsistent use of tabs and spaces error:
+Add ERR_CAST(), so that tools can use it, just like the kernel.
 
-  # perf test 16 -v
-  16: Setup struct perf_event_attr                          :
-  --- start ---
-  test child forked, pid 20224
-    File "/usr/libexec/perf-core/tests/attr.py", line 119
-      log.warning("expected %s=%s, got %s" % (t, self[t], other[t]))
-                                                                 ^
-  TabError: inconsistent use of tabs and spaces in indentation
-  test child finished with -1
-  ---- end ----
-  Setup struct perf_event_attr: FAILED!
+This addresses coccinelle checks that are being performed to tools/ in
+addition to kernel sources, so lets add this to cover that and to get
+tools code closer to kernel coding standards.
 
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Link: http://lkml.kernel.org/r/20181122140456.16817-1-adrian.hunter@intel.com
+This originally was introduced in the kernel headers in this cset:
+
+  d1bc8e954452 ("Add an ERR_CAST() function to complement ERR_PTR and co.")
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: David Howells <dhowells@redhat.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Julia Lawall <julia.lawall@lip6.fr>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Wang Nan <wangnan0@huawei.com>
+Cc: Wen Yang <yellowriver2010@hotmail.com>
+Cc: zhong.weidong@zte.com.cn
+Link: https://lkml.kernel.org/n/tip-tlt97p066zyhzqhl5jt86og7@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/tests/attr.py | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/include/linux/err.h | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/tools/perf/tests/attr.py b/tools/perf/tests/attr.py
-index ff9b60b99f52..44090a9a19f3 100644
---- a/tools/perf/tests/attr.py
-+++ b/tools/perf/tests/attr.py
-@@ -116,7 +116,7 @@ class Event(dict):
-             if not self.has_key(t) or not other.has_key(t):
-                 continue
-             if not data_equal(self[t], other[t]):
--		log.warning("expected %s=%s, got %s" % (t, self[t], other[t]))
-+                log.warning("expected %s=%s, got %s" % (t, self[t], other[t]))
- 
- # Test file description needs to have following sections:
- # [config]
+diff --git a/tools/include/linux/err.h b/tools/include/linux/err.h
+index 094649667bae..2f5a12b88a86 100644
+--- a/tools/include/linux/err.h
++++ b/tools/include/linux/err.h
+@@ -59,4 +59,17 @@ static inline int __must_check PTR_ERR_OR_ZERO(__force const void *ptr)
+ 	else
+ 		return 0;
+ }
++
++/**
++ * ERR_CAST - Explicitly cast an error-valued pointer to another pointer type
++ * @ptr: The pointer to cast.
++ *
++ * Explicitly cast an error-valued pointer to another pointer type in such a
++ * way as to make it clear that's what's going on.
++ */
++static inline void * __must_check ERR_CAST(__force const void *ptr)
++{
++	/* cast away the const */
++	return (void *) ptr;
++}
+ #endif /* _LINUX_ERR_H */
