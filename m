@@ -7,54 +7,56 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DAA6C6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:10:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5075DC6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:10:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DFEA2214C4
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:10:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 16A352133F
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:10:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544789426;
-	bh=38dU37KPweIhlzE/wEcAO1Dwymrjnb59yAp9J2nMHHY=;
+	s=default; t=1544789431;
+	bh=iqaYgmRMF0wZBLQDhaHrmCFen7HDfd9wWlMW4oVP9Xg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ui1DbJBTw6g9Ten2gtK66kQoaaUiVcRq/5WdFIzBpXmKT9rkJ0ZklbwuRqBXHrVfH
-	 XrWIpBWGgauc6XJ2wv0ULdoNMh+r9PXfuNZmj2BL+WpADWEGkd8+fB2A4cHlfOVtMP
-	 Efn+W+50zBxj7cv04+VGG+jMzqucyzYmdmWRsTPg=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFEA2214C4
+	b=AmbDpdMbxy6f2hX5CTUgTcmFplpY9C7V7hZgwulNhNLUO4JKpDKxCWrkVnVJXcV4T
+	 NFM6WLLE7SmHo291d/pLZ2HEVt5sFJAarRlizgM6LL+3wIdYtKgwor466FCTOo/AAN
+	 iQQszDRHUsigoZy2Lyre/SA+wkJ8AHo3qjOZ4XlU=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16A352133F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731593AbeLNMKY (ORCPT
+        id S1731612AbeLNMK3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:10:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56190 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:10:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56362 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730990AbeLNMKW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:10:22 -0500
+        id S1731085AbeLNMK1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:10:27 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D2F10214C4;
-        Fri, 14 Dec 2018 12:10:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 12EF72146D;
+        Fri, 14 Dec 2018 12:10:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789421;
-        bh=38dU37KPweIhlzE/wEcAO1Dwymrjnb59yAp9J2nMHHY=;
+        s=default; t=1544789426;
+        bh=iqaYgmRMF0wZBLQDhaHrmCFen7HDfd9wWlMW4oVP9Xg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oN46KmcRWlwFWp/7Si3u9E2EAZesoKUTlkr+9AvNevmPDFpXxYuRqo1Fes7HsKOTF
-         0sQ4HfvdttQ/r4+seIyMxWhpdbv8DflU8/9athG9mdjKJwL7VTGKDcuRHbUVy4XkiN
-         Tc2b9OCmXa4fxarRsFMCWtlI6d8Wa+UtEhthw/C8=
+        b=GSrCxZJTWVOAlLPD1Z/DE88w1Ep3XXfWOZwIWZiyQvb/z9Qn9yo0rD+wCxrPEg6nm
+         Q+xDaszFexRbNPElI/mkzm7tKSoeaktiioAOZr+VS205Rb2vS5mTJNAcjOZqeQl0YD
+         bg/lEiJzMOL6/c3DtCmDch39bMZsGlShJ8kjeIEg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Pan Bian <bianpan2016@163.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        "Ernesto A. Fernandez" <ernesto.mnd.fernandez@gmail.com>,
-        Joe Perches <joe@perches.com>,
-        Viacheslav Dubeyko <slava@dubeyko.com>,
+        Mark Fasheh <mark@fasheh.com>,
+        Joel Becker <jlbec@evilplan.org>,
+        Junxiao Bi <junxiao.bi@oracle.com>,
+        Joseph Qi <jiangqi903@gmail.com>,
+        Changwei Ge <ge.changwei@h3c.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 76/89] hfsplus: do not free node before using
-Date:   Fri, 14 Dec 2018 13:00:29 +0100
-Message-Id: <20181214115733.442862941@linuxfoundation.org>
+Subject: [PATCH 4.14 78/89] ocfs2: fix potential use after free
+Date:   Fri, 14 Dec 2018 13:00:31 +0100
+Message-Id: <20181214115733.547997569@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115729.658859279@linuxfoundation.org>
 References: <20181214115729.658859279@linuxfoundation.org>
@@ -73,47 +75,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit c7d7d620dcbd2a1c595092280ca943f2fced7bbd ]
+[ Upstream commit 164f7e586739d07eb56af6f6d66acebb11f315c8 ]
 
-hfs_bmap_free() frees node via hfs_bnode_put(node).  However it then
-reads node->this when dumping error message on an error path, which may
-result in a use-after-free bug.  This patch frees node only when it is
-never used.
+ocfs2_get_dentry() calls iput(inode) to drop the reference count of
+inode, and if the reference count hits 0, inode is freed.  However, in
+this function, it then reads inode->i_generation, which may result in a
+use after free bug.  Move the put operation later.
 
-Link: http://lkml.kernel.org/r/1543053441-66942-1-git-send-email-bianpan2016@163.com
+Link: http://lkml.kernel.org/r/1543109237-110227-1-git-send-email-bianpan2016@163.com
+Fixes: 781f200cb7a("ocfs2: Remove masklog ML_EXPORT.")
 Signed-off-by: Pan Bian <bianpan2016@163.com>
 Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Ernesto A. Fernandez <ernesto.mnd.fernandez@gmail.com>
-Cc: Joe Perches <joe@perches.com>
-Cc: Viacheslav Dubeyko <slava@dubeyko.com>
+Cc: Mark Fasheh <mark@fasheh.com>
+Cc: Joel Becker <jlbec@evilplan.org>
+Cc: Junxiao Bi <junxiao.bi@oracle.com>
+Cc: Joseph Qi <jiangqi903@gmail.com>
+Cc: Changwei Ge <ge.changwei@h3c.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/hfsplus/btree.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fs/ocfs2/export.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/hfsplus/btree.c b/fs/hfsplus/btree.c
-index de14b2b6881b..3de3bc4918b5 100644
---- a/fs/hfsplus/btree.c
-+++ b/fs/hfsplus/btree.c
-@@ -454,14 +454,15 @@ void hfs_bmap_free(struct hfs_bnode *node)
+diff --git a/fs/ocfs2/export.c b/fs/ocfs2/export.c
+index 9f88188060db..4bf8d5854b27 100644
+--- a/fs/ocfs2/export.c
++++ b/fs/ocfs2/export.c
+@@ -125,10 +125,10 @@ static struct dentry *ocfs2_get_dentry(struct super_block *sb,
  
- 		nidx -= len * 8;
- 		i = node->next;
--		hfs_bnode_put(node);
- 		if (!i) {
- 			/* panic */;
- 			pr_crit("unable to free bnode %u. "
- 					"bmap not found!\n",
- 				node->this);
-+			hfs_bnode_put(node);
- 			return;
- 		}
-+		hfs_bnode_put(node);
- 		node = hfs_bnode_find(tree, i);
- 		if (IS_ERR(node))
- 			return;
+ check_gen:
+ 	if (handle->ih_generation != inode->i_generation) {
+-		iput(inode);
+ 		trace_ocfs2_get_dentry_generation((unsigned long long)blkno,
+ 						  handle->ih_generation,
+ 						  inode->i_generation);
++		iput(inode);
+ 		result = ERR_PTR(-ESTALE);
+ 		goto bail;
+ 	}
 -- 
 2.19.1
 
