@@ -2,55 +2,55 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE385C67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:36:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C15C8C6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:36:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86864208E7
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:36:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 896C120892
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:36:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544790970;
-	bh=wtOrfaiS4ZyYwdX9KgFG5X1vDXQrt5cz0lgk/Rj4W90=;
+	s=default; t=1544790972;
+	bh=xIyqiv1hYLocp3nrjhnP9L4qJjRtd1GCTvZdxP/j/XQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=wDYQDwjP3gVYG/av9f6Icc8/sdROA3X13coWhpRalnvO31OjsQOnIFyBXfG94QWl+
-	 81yIgUBeRyn5Q7+sA+Qjxal+J08V+fdPNhuB4E+OoSixrepdiWpPCw73PbfgALmkpz
-	 tl0CUkXtz0FUVlUJeRKYar5bdMh6jAa82YjluyOA=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86864208E7
+	b=gRDP+FTIBmMRkpr5+EgIWU2QrnWgc9db+hr27A0zsl9phJsrwLWcVj0fc3/rL/Us2
+	 vw/mk46ypaFttpxqH07dsDFgZQm775zmKrFLzexnufMoMD24RgFXSLjppjBU1W1P/o
+	 R7zERLak4NOdHG6UbMME6Rfw8XKr8r4Rx0WmWp/s=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 896C120892
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730997AbeLNMGx (ORCPT
+        id S1730818AbeLNMgL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:06:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51972 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:36:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52024 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730251AbeLNMGu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:06:50 -0500
+        id S1730524AbeLNMGw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:06:52 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 103EA21479;
-        Fri, 14 Dec 2018 12:06:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A0B9421479;
+        Fri, 14 Dec 2018 12:06:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789209;
-        bh=wtOrfaiS4ZyYwdX9KgFG5X1vDXQrt5cz0lgk/Rj4W90=;
+        s=default; t=1544789212;
+        bh=xIyqiv1hYLocp3nrjhnP9L4qJjRtd1GCTvZdxP/j/XQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ElN7rpnpKFQEpvBJEH7exuDwAi/dtf0BrpeYUvSl2bNJbsv/YS0gGd0ooDPRkfmsW
-         jevaiPWeNcmOwVP3rjAbMmaFEfczvsC0fkDlfT+UCHQcRQduc2ojZKlOd8bZXigxY3
-         /Pwl+55bDuDiZvKuoJ95aDzKGejZkVNuEbFb1vaQ=
+        b=yI+9FS3+ifxEbHyD8txmwsE/ysjUZULqCz8+21w/SSXgg0xlUStp3tt9aA160dGMO
+         hNBckqzmU+t8B8+Ddwo4GQ0f8ssqKKhSiFOZevrK+A/Kmv3ECdNOZ9afh39Gs43NK2
+         HqyAH/zsifPINjXdyEwz+JngcEiXnwF2t1Wmgn0U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
-        David Howells <dhowells@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 119/142] fscache, cachefiles: remove redundant variable cache
-Date:   Fri, 14 Dec 2018 13:00:04 +0100
-Message-Id: <20181214115751.792048911@linuxfoundation.org>
+        stable@vger.kernel.org, Jian-Hong Pan <jian-hong@endlessm.com>,
+        Daniel Drake <drake@endlessm.com>,
+        Chris Chiu <chiu@endlessm.com>, Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.19 137/142] ALSA: hda/realtek: ALC294 mic and headset-mode fixups for ASUS X542UN
+Date:   Fri, 14 Dec 2018 13:00:22 +0100
+Message-Id: <20181214115752.519506077@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115747.053633987@linuxfoundation.org>
 References: <20181214115747.053633987@linuxfoundation.org>
@@ -69,39 +69,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 31ffa563833576bd49a8bf53120568312755e6e2 ]
+From: Chris Chiu <chiu@endlessm.com>
 
-Variable 'cache' is being assigned but is never used hence it is
-redundant and can be removed.
+commit d8ae458eeca9ed686e09a1b894867cb91fc4c1cb upstream.
 
-Cleans up clang warning:
-warning: variable 'cache' set but not used [-Wunused-but-set-variable]
+The known ALC256_FIXUP_ASUS_MIC fixup can fix the headphone jack
+sensing and enable use of the internal microphone on this laptop
+X542UN. However, it's ALC294 so create a new fixup named
+ALC294_FIXUP_ASUS_MIC to avoid confusion.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
+Signed-off-by: Daniel Drake <drake@endlessm.com>
+Signed-off-by: Chris Chiu <chiu@endlessm.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- fs/cachefiles/rdwr.c | 3 ---
- 1 file changed, 3 deletions(-)
+ sound/pci/hda/patch_realtek.c |   15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-diff --git a/fs/cachefiles/rdwr.c b/fs/cachefiles/rdwr.c
-index db233588a69a..8a577409d030 100644
---- a/fs/cachefiles/rdwr.c
-+++ b/fs/cachefiles/rdwr.c
-@@ -968,11 +968,8 @@ void cachefiles_uncache_page(struct fscache_object *_object, struct page *page)
- 	__releases(&object->fscache.cookie->lock)
- {
- 	struct cachefiles_object *object;
--	struct cachefiles_cache *cache;
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -5520,6 +5520,7 @@ enum {
+ 	ALC285_FIXUP_LENOVO_HEADPHONE_NOISE,
+ 	ALC295_FIXUP_HP_AUTO_MUTE,
+ 	ALC286_FIXUP_ACER_AIO_MIC_NO_PRESENCE,
++	ALC294_FIXUP_ASUS_MIC,
+ };
  
- 	object = container_of(_object, struct cachefiles_object, fscache);
--	cache = container_of(object->fscache.cache,
--			     struct cachefiles_cache, cache);
+ static const struct hda_fixup alc269_fixups[] = {
+@@ -6406,6 +6407,16 @@ static const struct hda_fixup alc269_fix
+ 		.chained = true,
+ 		.chain_id = ALC269_FIXUP_HEADSET_MIC
+ 	},
++	[ALC294_FIXUP_ASUS_MIC] = {
++		.type = HDA_FIXUP_PINS,
++		.v.pins = (const struct hda_pintbl[]) {
++			{ 0x13, 0x90a60160 }, /* use as internal mic */
++			{ 0x19, 0x04a11120 }, /* use as headset mic, without its own jack detect */
++			{ }
++		},
++		.chained = true,
++		.chain_id = ALC269_FIXUP_HEADSET_MODE_NO_HP_MIC
++	},
+ };
  
- 	_enter("%p,{%lu}", object, page->index);
- 
--- 
-2.19.1
-
+ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
+@@ -7155,6 +7166,10 @@ static const struct snd_hda_pin_quirk al
+ 	SND_HDA_PIN_QUIRK(0x10ec0293, 0x1028, "Dell", ALC293_FIXUP_DELL1_MIC_NO_PRESENCE,
+ 		ALC292_STANDARD_PINS,
+ 		{0x13, 0x90a60140}),
++	SND_HDA_PIN_QUIRK(0x10ec0294, 0x1043, "ASUS", ALC294_FIXUP_ASUS_MIC,
++		{0x14, 0x90170110},
++		{0x1b, 0x90a70130},
++		{0x21, 0x04211020}),
+ 	SND_HDA_PIN_QUIRK(0x10ec0295, 0x1028, "Dell", ALC269_FIXUP_DELL1_MIC_NO_PRESENCE,
+ 		ALC295_STANDARD_PINS,
+ 		{0x17, 0x21014020},
 
 
