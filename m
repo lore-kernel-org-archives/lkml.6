@@ -2,137 +2,317 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 760B1C67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 08:59:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50B50C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 09:00:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39EFB2146E
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 08:59:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 01CB020879
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 09:00:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="lLY4YgvN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39EFB2146E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="JHRCyVyk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01CB020879
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728641AbeLNI67 (ORCPT
+        id S1728759AbeLNJAN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 03:58:59 -0500
-Received: from mail-eopbgr1320105.outbound.protection.outlook.com ([40.107.132.105]:25371
-        "EHLO APC01-PU1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726520AbeLNI66 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 03:58:58 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=F2DU4BLQM6n420EASBkt91zHh42RwAsUexPUfw9S0Lk=;
- b=lLY4YgvNvQB64CfE6UYI5pDUdPZrKmP5EH/Y8vDOqL2Sh210+SPcbGmJNvxvGl2WPEeza+zsnXv6opKUwbKUYjPkawgNr8ubntgrXgiIqB5jXkDshDQ0Dc+2Vyj/0HEF0J0gACZdK66oR7DWWyiIh/xDxpFD9vl2d4jt1BUpxv4=
-Received: from TY2PR01MB2297.jpnprd01.prod.outlook.com (52.133.184.14) by
- TY2PR01MB4601.jpnprd01.prod.outlook.com (20.179.169.148) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1404.22; Fri, 14 Dec 2018 08:58:50 +0000
-Received: from TY2PR01MB2297.jpnprd01.prod.outlook.com
- ([fe80::9545:5575:a99a:a145]) by TY2PR01MB2297.jpnprd01.prod.outlook.com
- ([fe80::9545:5575:a99a:a145%3]) with mapi id 15.20.1404.026; Fri, 14 Dec 2018
- 08:58:49 +0000
-From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-CC:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Fri, 14 Dec 2018 04:00:13 -0500
+Received: from smtprelay4.synopsys.com ([198.182.47.9]:41924 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726520AbeLNJAN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 04:00:13 -0500
+Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id 7D2E124E0CC4;
+        Fri, 14 Dec 2018 01:00:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1544778012; bh=Yov25yBRSjql4lXswwk/S4S4ZKVP86adMcRjZi3pCxU=;
+        h=From:To:CC:Subject:Date:References:From;
+        b=JHRCyVykhyz3QwRyGVE6zWag/Ps/GSDPEJQr6cZFwGj4nywlkhtYXAyqQcIQclZ6Q
+         2EYtq7nVrpmHk9d3oJdj0FTshliTUkxiB2BPagO9x4R7iGj8JuFtg88G5lkFiqwo/3
+         lyHPprqLwusTjY39YjtvVldihX7topOE7CDgWCS1a7at/oZNxk7+V7AogWApy35j5W
+         z6OaGBDQUzSiY+gWHMVR4XONpEQRztwLUeIEUyr6/SoL8MwiXB4wrtIvCJcnZZDPRJ
+         zF9TLr+qi4wDbpjBm+2bCGi9LAgaIu7FoBFt5DLer9y6Tad1NpaALtHEv6TK+xWtcW
+         YyZwEmUhxyCKw==
+Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 3FB2038D7;
+        Fri, 14 Dec 2018 01:00:12 -0800 (PST)
+Received: from AM04WEHTCB.internal.synopsys.com (10.116.16.192) by
+ US01WEHTC3.internal.synopsys.com (10.15.84.232) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Fri, 14 Dec 2018 01:00:11 -0800
+Received: from AM04WEMBXA.internal.synopsys.com ([fe80::79c3:55f2:1f20:5bf4])
+ by am04wehtcb.internal.synopsys.com ([::1]) with mapi id 14.03.0415.000; Fri,
+ 14 Dec 2018 13:00:09 +0400
+From:   Minas Harutyunyan <minas.harutyunyan@synopsys.com>
+To:     John Keeping <john@metanate.com>,
+        Minas Harutyunyan <minas.harutyunyan@synopsys.com>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH] usb: gadget: udc: renesas_usb3: Add bindings for r8a774c0
-Thread-Topic: [PATCH] usb: gadget: udc: renesas_usb3: Add bindings for
- r8a774c0
-Thread-Index: AQHUkyGWqRH5TcjXZE2Sn2q0YFRPWKV97/vw
-Date:   Fri, 14 Dec 2018 08:58:49 +0000
-Message-ID: <TY2PR01MB22979B32566BCD1614272A2ED8A10@TY2PR01MB2297.jpnprd01.prod.outlook.com>
-References: <1544732538-7049-1-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1544732538-7049-1-git-send-email-fabrizio.castro@bp.renesas.com>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
+        "arthur.petrosyan@synopsys.com" <arthur.petrosyan@synopsys.com>
+Subject: Re: [PATCH] usb: dwc2: gadget: fix ISOC frame overflow handling
+Thread-Topic: [PATCH] usb: dwc2: gadget: fix ISOC frame overflow handling
+Thread-Index: AQHUatZW7CBOg1jSlEOevZqXY6bG3Q==
+Date:   Fri, 14 Dec 2018 09:00:08 +0000
+Message-ID: <410670D7E743164D87FA6160E7907A56013A7BAB28@am04wembxa.internal.synopsys.com>
+References: <20181023134355.29829-1-john@metanate.com>
+ <410670D7E743164D87FA6160E7907A56013A79E7CE@am04wembxa.internal.synopsys.com>
+ <20181108173654.118f9e3e@donbot>
+ <410670D7E743164D87FA6160E7907A56013A7A0F2B@am04wembxa.internal.synopsys.com>
+ <410670D7E743164D87FA6160E7907A56013A7A12C1@am04wembxa.internal.synopsys.com>
+ <20181109184246.33cb4487@donbot>
+ <410670D7E743164D87FA6160E7907A56013A7A27D7@am04wembxa.internal.synopsys.com>
+ <20181112224626.6b44568a@donbot>
+Accept-Language: en-US
+Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=yoshihiro.shimoda.uh@renesas.com; 
-x-originating-ip: [118.238.235.108]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;TY2PR01MB4601;20:6Cx2w2JNrAExBaqIZE8C2DqPWo4VqKAuiptAu/bEC2cz71tD5rw0JxSXpUvSvj3vATS0C29RwzmoGifCO+IiWuKB7lcGbQCywZnRTySqCgN+Fsd2AaE7KhVOhmEiMpIAXlSI2a/eyaTAtv1wayK3dXRm1hHYVNa+oTBTfoO13Ls=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
-x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10019020)(376002)(346002)(39860400002)(136003)(396003)(366004)(189003)(199004)(14454004)(81166006)(8676002)(7736002)(229853002)(8936002)(81156014)(478600001)(6116002)(2906002)(54906003)(55016002)(53936002)(316002)(9686003)(3846002)(25786009)(5660300001)(110136005)(4326008)(105586002)(345774005)(6436002)(6246003)(99286004)(305945005)(68736007)(186003)(26005)(76176011)(7696005)(102836004)(97736004)(486006)(446003)(66066001)(6506007)(33656002)(256004)(11346002)(476003)(71200400001)(74316002)(106356001)(86362001)(71190400001)(138113003)(98903001);DIR:OUT;SFP:1102;SCL:1;SRVR:TY2PR01MB4601;H:TY2PR01MB2297.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-ms-office365-filtering-correlation-id: 1b47882b-a2d4-4617-3a0a-08d661a25d15
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:TY2PR01MB4601;
-x-ms-traffictypediagnostic: TY2PR01MB4601:
-x-microsoft-antispam-prvs: <TY2PR01MB460164829D73E610E9C3F074D8A10@TY2PR01MB4601.jpnprd01.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(6040522)(2401047)(8121501046)(5005006)(3002001)(3231475)(944501520)(52105112)(10201501046)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:TY2PR01MB4601;BCL:0;PCL:0;RULEID:;SRVR:TY2PR01MB4601;
-x-forefront-prvs: 08864C38AC
-received-spf: None (protection.outlook.com: renesas.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: lmb81o1aObGKObc3ROt3SKrCM0UHXsPwkuNJ7Zg85YT3oxWKRPukvaOYGMdr+q6y6Z3AohgbteKj+Asxhe/Jf7Ih++IW/vUfTOWiv5eYaDQqPMEev5gFMcNtNlyOl+sfkH3zF35MwbLMpEYTuo+kcr8h9wn2i21lUKwLiJC3ZwLXa9OFAO4uEiQ0PLbdQJk0FdShKaOZ44vsb8Lnpl3g7rFUFjWnGl24h7/rmzPr9EGDoiU528IrcFtxMLuVQaO+EEgQUrZhwQlG69q6kWgMLE2me3tEnQDSHUy0UZ4/wO4cbTkhnwHSJd8uTp7ArXRV
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
+x-originating-ip: [10.116.70.132]
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1b47882b-a2d4-4617-3a0a-08d661a25d15
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Dec 2018 08:58:49.2522
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY2PR01MB4601
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Fabrizio,
-
-> From: Fabrizio Castro, Sent: Friday, December 14, 2018 5:22 AM
->=20
-> Document RZ/G2E (R8A774C0) SoC bindings.
->=20
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-
-Thank you for the patch!
-
-Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-
-Best regards,
-Yoshihiro Shimoda
-
-> ---
->  Documentation/devicetree/bindings/usb/renesas_usb3.txt | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/usb/renesas_usb3.txt
-> b/Documentation/devicetree/bindings/usb/renesas_usb3.txt
-> index d366555..35039e7 100644
-> --- a/Documentation/devicetree/bindings/usb/renesas_usb3.txt
-> +++ b/Documentation/devicetree/bindings/usb/renesas_usb3.txt
-> @@ -3,6 +3,7 @@ Renesas Electronics USB3.0 Peripheral driver
->  Required properties:
->    - compatible: Must contain one of the following:
->  	- "renesas,r8a774a1-usb3-peri"
-> +	- "renesas,r8a774c0-usb3-peri"
->  	- "renesas,r8a7795-usb3-peri"
->  	- "renesas,r8a7796-usb3-peri"
->  	- "renesas,r8a77965-usb3-peri"
-> --
-> 2.7.4
-
+Hi John,=0A=
+=0A=
+On 11/13/2018 2:46 AM, John Keeping wrote:=0A=
+> Hi Minas,=0A=
+> =0A=
+> On Mon, 12 Nov 2018 08:53:36 +0000=0A=
+> Minas Harutyunyan <minas.harutyunyan@synopsys.com> wrote:=0A=
+>> On 11/9/2018 10:43 PM, John Keeping wrote:=0A=
+>>> On Fri, 9 Nov 2018 14:36:36 +0000=0A=
+>>> Minas Harutyunyan <minas.harutyunyan@synopsys.com> wrote:=0A=
+>>>    =0A=
+>>>> On 11/9/2018 12:43 PM, Minas Harutyunyan wrote:=0A=
+>>>>> Hi John,=0A=
+>>>>>=0A=
+>>>>> On 11/8/2018 9:37 PM, John Keeping wrote:=0A=
+>>>>>> Hi Minas,=0A=
+>>>>>>=0A=
+>>>>>> On Mon, 5 Nov 2018 08:28:07 +0000=0A=
+>>>>>> Minas Harutyunyan <minas.harutyunyan@synopsys.com> wrote:=0A=
+>>>>>>   =0A=
+>>>>>>> On 10/23/2018 5:43 PM, John Keeping wrote:=0A=
+>>>>>>>> By clearing the overrun flag as soon as the target frame is=0A=
+>>>>>>>> next incremented, we can end up incrementing the target frame=0A=
+>>>>>>>> more than expected in dwc2_gadget_handle_ep_disabled() when the=0A=
+>>>>>>>> endpoint's interval is greater than 1.  This happens if the=0A=
+>>>>>>>> target frame has just wrapped at the point when the endpoint is=0A=
+>>>>>>>> disabled and the frame number has not yet done so.=0A=
+>>>>>>>>=0A=
+>>>>>>>> Instead, wait until the frame number also wraps and then clear=0A=
+>>>>>>>> the overrun flag.=0A=
+>>>>>>>>=0A=
+>>>>>>>> Signed-off-by: John Keeping <john@metanate.com>=0A=
+>>>>>>>> ---=0A=
+>>>>>>>>       drivers/usb/dwc2/gadget.c | 2 +-=0A=
+>>>>>>>>       1 file changed, 1 insertion(+), 1 deletion(-)=0A=
+>>>>>>>>=0A=
+>>>>>>>> diff --git a/drivers/usb/dwc2/gadget.c=0A=
+>>>>>>>> b/drivers/usb/dwc2/gadget.c index 2d6d2c8244de..8da2c052dfa1=0A=
+>>>>>>>> 100644 --- a/drivers/usb/dwc2/gadget.c=0A=
+>>>>>>>> +++ b/drivers/usb/dwc2/gadget.c=0A=
+>>>>>>>> @@ -117,7 +117,7 @@ static inline void=0A=
+>>>>>>>> dwc2_gadget_incr_frame_num(struct dwc2_hsotg_ep *hs_ep) if=0A=
+>>>>>>>> (hs_ep->target_frame > DSTS_SOFFN_LIMIT)=0A=
+>>>>>>>> { hs_ep->frame_overrun =3D true; hs_ep->target_frame &=3D=0A=
+>>>>>>>> DSTS_SOFFN_LIMIT;=0A=
+>>>>>>>> -	} else {=0A=
+>>>>>>>> +	} else if (hs_ep->parent->frame_number <=0A=
+>>>>>>>> hs_ep->target_frame) { hs_ep->frame_overrun =3D false;=0A=
+>>>>>>>>       	}=0A=
+>>>>>>>>       }=0A=
+>>>>>>>>         =0A=
+>>>>>>> Did you tested mentioned by you scenario? If you see issue can=0A=
+>>>>>>> you provide debug log and point the issue line in the log.=0A=
+>>>>>>=0A=
+>>>>>> It only reproduces very occasionally so it's difficult to capture=0A=
+>>>>>> a full debug log containing the error.=0A=
+>>>>>>=0A=
+>>>>>> I applied this patch to capture logging specifically around this=0A=
+>>>>>> scenario:=0A=
+>>>>>>   =0A=
+>>>>>> -- >8 --=0A=
+>>>>>> diff --git a/drivers/usb/dwc2/gadget.c=0A=
+>>>>>> b/drivers/usb/dwc2/gadget.c index 220c0f9b89b0..3770b9d3b523=0A=
+>>>>>> 100644 --- a/drivers/usb/dwc2/gadget.c=0A=
+>>>>>> +++ b/drivers/usb/dwc2/gadget.c=0A=
+>>>>>> @@ -2722,13 +2722,20 @@ static void=0A=
+>>>>>> dwc2_gadget_handle_ep_disabled(struct dwc2_hsotg_ep *hs_ep) }=0A=
+>>>>>>      =0A=
+>>>>>>             do {=0A=
+>>>>>> +               unsigned int target_frame =3D hs_ep->target_frame;=
+=0A=
+>>>>>> +               bool frame_overrun =3D hs_ep->frame_overrun;=0A=
+>>>>>> +=0A=
+>>>>>>                     hs_req =3D get_ep_head(hs_ep);=0A=
+>>>>>>                     if (hs_req)=0A=
+>>>>>>                             dwc2_hsotg_complete_request(hsotg,=0A=
+>>>>>> hs_ep, hs_req, -ENODATA);=0A=
+>>>>>> +=0A=
+>>>>>>                     dwc2_gadget_incr_frame_num(hs_ep);=0A=
+>>>>>>                     /* Update current frame number value. */=0A=
+>>>>>>                     hsotg->frame_number =3D=0A=
+>>>>>> dwc2_hsotg_read_frameno(hsotg); +=0A=
+>>>>>> +               dev_warn(hsotg->dev, "%s: expiring request=0A=
+>>>>>> frame_number=3D0x%04x target_frame=3D0x%04x overrun=3D%u\n",=0A=
+>>>>>> +                        __func__, hsotg->frame_number,=0A=
+>>>>>> target_frame, frame_overrun); } while=0A=
+>>>>>> (dwc2_gadget_target_frame_elapsed(hs_ep));=0A=
+>>>>>>             dwc2_gadget_start_next_request(hs_ep);=0A=
+>>>>>> -- 8< --=0A=
+>>>>>>   =0A=
+>>>>> According above patch in debug log should be printed overrun flag=0A=
+>>>>> also. Could you please resend log with this flag.=0A=
+>>>=0A=
+>>> D'oh!  I included a log from an earlier version before I added the=0A=
+>>> overrun flag.=0A=
+>>>    =0A=
+>>>> One more request. Please add EP number to debug print.=0A=
+>>>=0A=
+>>> Here's an updated log:=0A=
+>>>    =0A=
+>>> -- >8 --=0A=
+>>> [  264.926385] dwc2 ff580000.usb: dwc2_gadget_handle_ep_disabled:=0A=
+>>> expiring request ep=3D2 frame_number=3D0x2161 target_frame=3D0x2168=0A=
+>>> overrun=3D0 [  265.905413] dwc2 ff580000.usb:=0A=
+>>> dwc2_gadget_handle_ep_disabled: expiring request ep=3D2=0A=
+>>> frame_number=3D0x3ff9 target_frame=3D0x0008 overrun=3D0 [  265.905421]=
+=0A=
+>>> dwc2 ff580000.usb: dwc2_gadget_handle_ep_disabled: expiring request=0A=
+>>> ep=3D2 frame_number=3D0x3ff9 target_frame=3D0x0010 overrun=3D0=0A=
+>>> [  265.905427] dwc2 ff580000.usb: dwc2_gadget_handle_ep_disabled:=0A=
+>>> expiring request ep=3D2 frame_number=3D0x3ff9 target_frame=3D0x0018=0A=
+>>> overrun=3D0 [  265.905432] dwc2 ff580000.usb:=0A=
+>>> dwc2_gadget_handle_ep_disabled: expiring request ep=3D2=0A=
+>>> frame_number=3D0x3ff9 target_frame=3D0x0020 overrun=3D0 [  265.905438]=
+=0A=
+>>> dwc2 ff580000.usb: dwc2_gadget_handle_ep_disabled: expiring request=0A=
+>>> ep=3D2 frame_number=3D0x3ff9 target_frame=3D0x0028 overrun=3D0=0A=
+>>> [  265.905443] dwc2 ff580000.usb: dwc2_gadget_handle_ep_disabled:=0A=
+>>> expiring request ep=3D2 frame_number=3D0x3ff9 target_frame=3D0x0030=0A=
+>>> overrun=3D0 [  265.905448] dwc2 ff580000.usb:=0A=
+>>> dwc2_gadget_handle_ep_disabled: expiring request ep=3D2=0A=
+>>> frame_number=3D0x3ff9 target_frame=3D0x0038 overrun=3D0 [  265.905454]=
+=0A=
+>>> dwc2 ff580000.usb: dwc2_gadget_handle_ep_disabled: expiring request=0A=
+>>> ep=3D2 frame_number=3D0x3ff9 target_frame=3D0x0040 overrun=3D0=0A=
+>>> [  265.905459] dwc2 ff580000.usb: dwc2_gadget_handle_ep_disabled:=0A=
+>>> expiring request ep=3D2 frame_number=3D0x3ff9 target_frame=3D0x0048=0A=
+>>> overrun=3D0 -- 8< --=0A=
+>>>=0A=
+>>> Once again there is an initial failure before it enters the failure=0A=
+>>> mode my patch is trying to address.  This seems to be consistent,=0A=
+>>> so it may be important, but there is ~80ms before the failure=0A=
+>>> starts.=0A=
+>>>>>> This was on v4.19 with an additional patch to disable descriptor=0A=
+>>>>>> DMA because that seems to be causing problems on RK3288 although=0A=
+>>>>>> I haven't figured out exactly why it's a problem.=0A=
+>>>>>=0A=
+>>>>> In which mode you run tests Slave or Buffer DMA?=0A=
+>>>=0A=
+>>> Buffer DMA but with descriptor DMA forced off (g_dma=3D1,=0A=
+>>> g_dma_desc=3D0).=0A=
+>>>=0A=
+>>> For the record, my test case is the standard UAC2 gadget with:=0A=
+>>>=0A=
+>>> 	c_srate =3D p_srate =3D 44100=0A=
+>>> 	c_ssize =3D p_ssize =3D 4=0A=
+>>> 	c_chmask =3D 0xf=0A=
+>>> 	p_chmask =3D 3=0A=
+>>>=0A=
+>>> and it seems that the failure only triggers when using arecord to=0A=
+>>> capture from the gadget interface (this is with a host program both=0A=
+>>> streaming in both directions over the USB connection); I suspect=0A=
+>>> that actually it just makes it more likely because there is more=0A=
+>>> work done in the completion handler, but I haven't seen the failure=0A=
+>>> without arecord running.=0A=
+>>>=0A=
+>>>=0A=
+>>> Regards,=0A=
+>>> John=0A=
+>>>    =0A=
+>> I think cause of issue not in dwc2_gadget_target_frame_elapsed()=0A=
+>> function, but in do-while loop in dwc2_gadget_handle_ep_disabled().=0A=
+>> Could you please try below patch:=0A=
+>>=0A=
+>> diff --git a/drivers/usb/dwc2/gadget.c b/drivers/usb/dwc2/gadget.c=0A=
+>> index 8eb25e3597b0..4ad869853bfa 100644=0A=
+>> --- a/drivers/usb/dwc2/gadget.c=0A=
+>> +++ b/drivers/usb/dwc2/gadget.c=0A=
+>> @@ -2762,8 +2762,11 @@ static void=0A=
+>> dwc2_gadget_handle_ep_disabled(struct dwc2_hsotg_ep *hs_ep)=0A=
+>>=0A=
+>>           do {=0A=
+>>                   hs_req =3D get_ep_head(hs_ep);=0A=
+>> -               if (hs_req)=0A=
+>> -                       dwc2_hsotg_complete_request(hsotg, hs_ep,=0A=
+>> hs_req,=0A=
+>> +               if (!hs_req) {=0A=
+>> +                       dev_warn(hsotg->dev, "%s: ISOC EP queue=0A=
+>> empty\n", __func__);=0A=
+>> +                       return;=0A=
+>> +               }=0A=
+>> +               dwc2_hsotg_complete_request(hsotg, hs_ep, hs_req,=0A=
+>>                                                       -ENODATA);=0A=
+>>                   dwc2_gadget_incr_frame_num(hs_ep);=0A=
+>>                   /* Update current frame number value. */=0A=
+> =0A=
+> I don't see any difference after applying this patch, and the new=0A=
+> dev_warn message does not appear.=0A=
+> =0A=
+> I think what happens is that dwc2_hsotg_complete_request() completes the=
+=0A=
+> outstanding request and the completion handler (in this case=0A=
+> u_audio_iso_complete) enqueues a new request, so the queue is never=0A=
+> empty.=0A=
+=0A=
+First of all, sorry for delayed answer.=0A=
+Looks like similar issue seen by Andrzej Pietrasiewicz =0A=
+<andrzej.p@samsung.com>: "dwc2 isochronous transfers issues". Same =0A=
+feedback provided to Andrzej.=0A=
+=0A=
+I run tests on 4.20.0-rc4 in DDMA. By default IN ISOC traffic failed =0A=
+because of BNA interrupts. It's happen because UAC2 requests count set =0A=
+by default to 2. Our core and driver can't work in DDMA with descriptor =0A=
+list length equal to 2. It's not possible on time prepare next =0A=
+descriptors to avoid BNA interrupt.=0A=
+=0A=
+By changing UAC2_DEF_REQ_NUM to 4 all audio gadget tests passed smoothly.=
+=0A=
+Could you please apply this patch and run tests in DDMA mode:=0A=
+=0A=
+diff --git a/drivers/usb/gadget/function/u_uac2.h =0A=
+b/drivers/usb/gadget/function/u_uac2.h=0A=
+index 8362ee572e1e..5e649259ab76 100644=0A=
+--- a/drivers/usb/gadget/function/u_uac2.h=0A=
++++ b/drivers/usb/gadget/function/u_uac2.h=0A=
+@@ -21,7 +21,7 @@=0A=
+  #define UAC2_DEF_CCHMASK 0x3=0A=
+  #define UAC2_DEF_CSRATE 64000=0A=
+  #define UAC2_DEF_CSSIZE 2=0A=
+-#define UAC2_DEF_REQ_NUM 2=0A=
++#define UAC2_DEF_REQ_NUM 4=0A=
+=0A=
+  struct f_uac2_opts {=0A=
+         struct usb_function_instance    func_inst;=0A=
+=0A=
+=0A=
+If it will OK on your side also then will switch to BDMA mode and debug.=0A=
+=0A=
+Thanks,=0A=
+Minas=0A=
+> =0A=
+> =0A=
+> Regards,=0A=
+> John=0A=
+> =0A=
+=0A=
