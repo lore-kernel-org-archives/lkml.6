@@ -2,215 +2,213 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BB90C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 18:43:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90303C43612
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 18:44:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4D77206E0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 18:43:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1E48206DD
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 18:44:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="xbkk6Bz4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730628AbeLNSnz (ORCPT
+        id S1730645AbeLNSoO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 13:43:55 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45960 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730410AbeLNSnz (ORCPT
+        Fri, 14 Dec 2018 13:44:14 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:34853 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730410AbeLNSoO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 13:43:55 -0500
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBEIY0uC011281
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 13:43:52 -0500
-Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2pcftmx6wc-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 13:43:51 -0500
-Received: from localhost
-        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Fri, 14 Dec 2018 18:43:50 -0000
-Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
-        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 14 Dec 2018 18:43:45 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBEIhigj8847390
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 14 Dec 2018 18:43:44 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B43CEB2065;
-        Fri, 14 Dec 2018 18:43:44 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 85BB0B205F;
-        Fri, 14 Dec 2018 18:43:44 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.85.153.1])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Fri, 14 Dec 2018 18:43:44 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id A3C6E16C2C26; Fri, 14 Dec 2018 10:43:44 -0800 (PST)
-Date:   Fri, 14 Dec 2018 10:43:44 -0800
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Alan Stern <stern@rowland.harvard.edu>
-Cc:     David Goldblatt <davidtgoldblatt@gmail.com>,
-        mathieu.desnoyers@efficios.com,
-        Florian Weimer <fweimer@redhat.com>, triegel@redhat.com,
-        libc-alpha@sourceware.org, andrea.parri@amarulasolutions.com,
-        will.deacon@arm.com, peterz@infradead.org, boqun.feng@gmail.com,
-        npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
-        luc.maranget@inria.fr, akiyks@gmail.com, dlustig@nvidia.com,
-        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Linux: Implement membarrier function
-Reply-To: paulmck@linux.ibm.com
-References: <20181214002043.GP4170@linux.ibm.com>
- <Pine.LNX.4.44L0.1812141013070.1570-100000@iolanthe.rowland.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.44L0.1812141013070.1570-100000@iolanthe.rowland.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18121418-0052-0000-0000-00000367665F
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010225; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000271; SDB=6.01131762; UDB=6.00588201; IPR=6.00911893;
- MB=3.00024692; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-14 18:43:49
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18121418-0053-0000-0000-00005F1BBC80
-Message-Id: <20181214184344.GW4170@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-14_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=936 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812140159
+        Fri, 14 Dec 2018 13:44:14 -0500
+Received: by mail-pf1-f193.google.com with SMTP id z9so3246142pfi.2
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 10:44:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=UgS6J86CMwYvBNmo4VnoSUzznIzimIMiXT751GNxMWo=;
+        b=xbkk6Bz4KAft7vG8FXpGtekFbLN0kS+YYIsE9hYWlfX8MHBZvO2sMZSgUy26xyvi3t
+         mAngJIEs2M2yLKSlsGRxM9UyEJpyDfw9DJsnFcN3nulJmfPfB9P84D1k19ASXmxZpisx
+         1V9dw27bwboAJxqCG4aJcVR6NFbwvfzeupnIv3mlNOiGbge8BvR2kojexieRqMydVSkK
+         LRj5mJyQwCfsKHnlMPGKiMCY4bJ1EXfFQTzxN8JCEx0NZeX8qoHsjcAqZinIJUEZZJNb
+         J0UzVlLP87xWTkXMigvBuI4FaLR6luhEdib/9Y32nriMY1yJHbiXl46brX4nE5+CzpYw
+         DbEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=UgS6J86CMwYvBNmo4VnoSUzznIzimIMiXT751GNxMWo=;
+        b=gq/pT0GI2n/OtskBPhmo09CTs27zlWDYZcEacZ2Z3baWu9Mp1BZeyuaDQyq10NVJpR
+         5XU4b5KFSn/2BMVERhADwXJ0UGC/NnlYUNn5+gSWXSskiIGiCkl2OQBMZQl+dPmsH1fe
+         rSDvrS/vWAKHMT84vcV1NbjIXtcyDaipDK6DcW5SkJYNHxnCy593zP6H+gqHEK70DodR
+         +EBj/QcQpDgClDIA1zilElmaNMnKs2k9SgjlRjblc7tYIb3bcBUDfao1hb1+7ZehY44N
+         29kEhcKDJbsJLr493xL3WnHs5t0tIbG2KHPBDPeh4r99ByzsqW1mv/zNp7yw137LdAEn
+         KJ6A==
+X-Gm-Message-State: AA+aEWa/tL9tHSCghCrypij8g7Ei4gP8vNfJSyBfqaqIei5Dnppf6pb7
+        izXGJKSQZBhgx32DbkVu3e/jRg==
+X-Google-Smtp-Source: AFSGD/Ubz6PIlicz+j8UpM2HvGEBHf99bjaHpPYoQlj3mJbCYU20E9PvyVQxbyrXhKpfD9h8KMAQAQ==
+X-Received: by 2002:a63:4706:: with SMTP id u6mr3470678pga.95.1544813052931;
+        Fri, 14 Dec 2018 10:44:12 -0800 (PST)
+Received: from ?IPv6:2600:1010:b040:6acb:bdde:f4f9:c60e:340a? ([2600:1010:b040:6acb:bdde:f4f9:c60e:340a])
+        by smtp.gmail.com with ESMTPSA id f67sm15374004pff.29.2018.12.14.10.44.11
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 14 Dec 2018 10:44:12 -0800 (PST)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (1.0)
+Subject: Re: [RFC PATCH v4 5/5] x86/vdso: Add __vdso_sgx_enter_enclave() to wrap SGX enclave transitions
+From:   Andy Lutomirski <luto@amacapital.net>
+X-Mailer: iPhone Mail (16B92)
+In-Reply-To: <20181214170310.GC22063@linux.intel.com>
+Date:   Fri, 14 Dec 2018 10:44:10 -0800
+Cc:     Jethro Beekman <jethro@fortanix.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "x86@kernel.org" <x86@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        "Dr . Greg Wettstein" <greg@enjellic.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <90D05734-1583-4306-A9A4-18E4A1390F3B@amacapital.net>
+References: <20181213213135.12913-1-sean.j.christopherson@intel.com> <20181213213135.12913-6-sean.j.christopherson@intel.com> <cda13cff-1a56-a40f-7d69-f0f1ab752f8e@fortanix.com> <20181214151204.GA22063@linux.intel.com> <20181214153830.GB22063@linux.intel.com> <20181214170310.GC22063@linux.intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 14, 2018 at 10:31:51AM -0500, Alan Stern wrote:
-> On Thu, 13 Dec 2018, Paul E. McKenney wrote:
-> 
-> > > > I guess that I still haven't gotten over being a bit surprised that the
-> > > > RCU counting rule also applies to sys_membarrier().  ;-)
-> > > 
-> > > Why not?  They are both synchronization mechanisms with heavy-weight
-> > > write sides and light-weight read sides, and most importantly, they
-> > > provide the same Guarantee.
-> > 
-> > True, but I do feel the need to poke at it.
-> > 
-> > The zero-size sys_membarrier() read-side critical sections do make
-> > things act a bit differently, for example, interchanging the accesses
-> > in an RCU read-side critical section has no effect, while doing so in
-> > a sys_membarrier() reader can cause the result to be allowed.  One key
-> > point is that everything before the end of a read-side critical section
-> > of any type is ordered before any later grace period of that same type,
-> > and vice versa.
-> > 
-> > This is why reordering accesses matters for sys_membarrier() readers but
-> > not for RCU and SRCU readers -- in the case of RCU and SRCU readers,
-> > the accesses are inside the read-side critical section, while for
-> > sys_membarrier() readers, the read-side critical sections don't have
-> > an inside.  So yes, ordering also matters in the case of SRCU and
-> > RCU readers for accesses outside of the read-side critical sections.
-> > The reason sys_membarrier() seems surprising to me isn't because it is
-> > any different in theoretical structure, but rather because the practice
-> > is to put RCU and SRCU read-side accesses inside a read-side critical
-> > sections, which is impossible for sys_membarrier().
-> 
-> RCU and sys_membarrier are more similar than you might think at first.  
-> For one thing, if there were primitives for blocking and unblocking
-> reception of IPIs, those primitives would delimit critical sections for
-> sys_membarrier.  (Maybe such things do exist; I wouldn't know.)
 
-Within the kernel of course local_irq_disable() and friends.  In
-userspace, there have been proposals to make the IPI handler interact
-with rseq or equivalent, which would have a roughly similar effect.
 
-> For another, the way we model RCU isn't fully accurate for the Linux
-> kernel, as you know.  Since individual instructions cannot be
-> preempted, each instruction is a tiny read-side critical section.
-> Thus, litmus tests like this one:
-> 
-> 	P0			P1
-> 	Wa=1			Wb=1
-> 	synchronize_rcu()	Ra=0
-> 	Rb=0
-> 
-> actually are forbidden in the kernel (provided P1 isn't part of the
-> idle loop!), even though the LKMM allows them.  However, it wouldn't
-> be forbidden if the accesses in P1 were swapped -- just like with
-> sys_membarrier.
+> On Dec 14, 2018, at 9:03 AM, Sean Christopherson <sean.j.christopherson@in=
+tel.com> wrote:
+>=20
+>> On Fri, Dec 14, 2018 at 07:38:30AM -0800, Sean Christopherson wrote:
+>>> On Fri, Dec 14, 2018 at 07:12:04AM -0800, Sean Christopherson wrote:
+>>>> On Fri, Dec 14, 2018 at 09:55:49AM +0000, Jethro Beekman wrote:
+>>>>> On 2018-12-14 03:01, Sean Christopherson wrote:
+>>>>> +2:    pop    %rbx
+>>>>> +    pop    %r12
+>>>>> +    pop    %r13
+>>>>> +    pop    %r14
+>>>>> +    pop    %r15
+>>>>> +    pop    %rbp
+>>>>> +    ret
+>>>>=20
+>>>> x86-64 ABI requires that you call CLD here (enclave may set it).
+>>>=20
+>>> Ugh.  Technically MXCSR and the x87 CW also need to be preserved.
+>>>=20
+>>> What if rather than treating the enclave as hostile we require it to be
+>>> compliant with the x86-64 ABI like any other function?  That would solve=
 
-And that P1 isn't executing on a CPU that RCU believes to be offline,
-but yes.
+>>> the EFLAGS.DF, MXCSR and x87 issues without adding unnecessary overhead.=
 
-But this is an implementation choice, and SRCU makes a different choice,
-which would allow the litmus test shown above.  And it would be good to
-keep this freedom for the implementation, in other words, this difference
-is a good thing, so let's please keep it.  ;-)
+>>> And we wouldn't have to save/restore R12-R15.  It'd mean we couldn't use=
 
-> Put these two observations together and you see that sys_membarrier is
-> almost exactly the same as RCU without explicit read-side critical
-> sections. Perhaps this isn't surprising, given that the initial
-> implementation of sys_membarrier() was pretty much the same as
-> synchronize_rcu().
+>>> the stack's red zone to hold @regs and @e, but that's poor form anyways.=
 
-Heh!  The initial implementation in the Linux kernel was exactly
-synchronize_sched().  ;-)
+>>=20
+>> Grr, except the processor crushes R12-R15, FCW and MXCSR on asynchronous
+>> exits.  But not EFLAGS.DF, that's real helpful.
+>=20
+> I can think of three options that are at least somewhat reasonable:
+>=20
+>  1) Save/restore MXCSR and FCW
+>=20
+>     + 100% compliant with the x86-64 ABI
+>     + Callable from any code
+>     + Minimal documentation required
+>     - Restoring MXCSR/FCW is likely unnecessary 99% of the time
+>     - Slow
+>=20
+>  2) Clear EFLAGS.DF but not save/restore MXCSR and FCW
+>=20
+>     + Mostly compliant with the x86-64 ABI
+>     + Callable from any code that doesn't use SIMD registers
+>     - Need to document deviations from x86-64 ABI
+>=20
+>  3) Require the caller to save/restore everything.
+>=20
+>     + Fast
+>     + Userspace can pass all GPRs to the enclave (minus EAX, RBX and RCX)
+>     - Completely custom ABI
+>     - For all intents and purposes must be called from an assembly wrapper=
 
-I would say that sys_membarrier() has zero-sized read-side critical
-sections, either comprising a single instruction (as is the case for
-synchronize_sched(), actually), preempt-disable regions of code
-(which are irrelevant to userspace execution), or the spaces between
-consecutive pairs of instructions (as is the case for the newer
-IPI-based implementation).
+>=20
+> Option (3) actually isn't all that awful.  RCX can be used to pass an
+> optional pointer to a 'struct sgx_enclave_exception' and we can still
+> return standard error codes, e.g. -EFAULT.
 
-The model picks the single-instruction option, and I haven't yet found
-a problem with this -- which is no surprise given that, as you say,
-an actual implementation makes this same choice.
+I like 3, but:
 
-> > The other thing that took some time to get used to is the possibility
-> > of long delays during sys_membarrier() execution, allowing significant
-> > execution and reordering between different CPUs' IPIs.  This was key
-> > to my understanding of the six-process example, and probably needs to
-> > be clearly called out, including in an example or two.
-> 
-> In all the examples I'm aware of, no more than one of the IPIs
-> generated by each sys_membarrier call really matters.  (Of course,
-> there's no way to know in advance which one it will be, so you have to
-> send an IPI to every CPU.)  The execution delays and reordering
-> between different CPUs' IPIs don't appear to be significant.
+>=20
+> E.g.:
+>=20
+> /**
+> * __vdso_sgx_enter_enclave() - Enter an SGX enclave
+> *
+> * %eax:    ENCLU leaf, must be EENTER or ERESUME
+> * %rbx:    TCS, must be non-NULL
+> * %rcx:    Optional pointer to 'struct sgx_enclave_exception'
+> *
+> * Return:
+> *  0 on a clean entry/exit to/from the enclave
+> *  -EINVAL if ENCLU leaf is not allowed or if TCS is NULL
+> *  -EFAULT if ENCLU or the enclave faults
+> */
+> ENTRY(__vdso_sgx_enter_enclave)
+>    /* EENTER <=3D leaf <=3D ERESUME */
+>    cmp    $0x2, %eax
+>    jb    bad_input
+>=20
+>    cmp    $0x3, %eax
+>    ja    bad_input
+>=20
+>    /* TCS must be non-NULL */
+>    test    %rbx, %rbx
+>    je    bad_input
+>=20
+>    /* save @exception pointer */
+>    push    %rcx
+>=20
+>    /* load leaf, TCS and AEP for ENCLU */
+>    lea    1f(%rip),  %rcx
+> 1:    enclu
+>=20
+>    add    0x8, %rsp
+>    xor    %eax, %eax
+>    ret
+>=20
+> bad_input:
+>    mov     $(-EINVAL), %rax
+>    ret
+>=20
+> .pushsection .fixup, "ax"
+> 2:    pop    %rcx   =20
+>    test    %rcx, %rcx
+>    je    3f
+>=20
+>    mov    %eax, EX_LEAF(%rcx)
+>    mov    %di,  EX_TRAPNR(%rcx)
+>    mov    %si,  EX_ERROR_CODE(%rcx)
+>    mov    %rdx, EX_ADDRESS(%rcx)
+> 3:    mov     $(-EFAULT), %rax
+>    ret
 
-Well, there are litmus tests that are allowed in which the allowed
-execution is more easily explained in terms of delays between different
-CPUs' IPIs, so it seems worth keeping track of.
+I=E2=80=99m not totally sold on -EFAULT as the error code.  That usually ind=
+icates a bad pointer.  I=E2=80=99m not sure I have a better suggestion.
 
-There might be a litmus test that can tell the difference between
-simultaneous and non-simultaneous IPIs, but I cannot immediately think of
-one that matters.  Might be a failure of imagination on my part, though.
-
-> > The interleaving restrictions are straightforward for me, but the
-> > fixed-time approach does have some interesting cross-talk potential
-> > between sys_membarrier() and RCU read-side critical sections whose
-> > accesses have been reversed.  I don't believe that it is possible to
-> > leverage this "order the other guy's read-side critical sections" effect
-> > in the general case, but I could be missing something.
-> 
-> I regard the fixed-time approach as nothing more than a heuristic
-> aid.  It's not an accurate explaination of what's really going on.
-
-Agreed, albeit a useful heuristic aid in scripts generating litmus tests.
-
-							Thanx, Paul
-
-> > If you are claiming that I am worrying unnecessarily, you are probably
-> > right.  But if I didn't worry unnecessarily, RCU wouldn't work at all!  ;-)
-> 
-> Alan
-> 
-
+> .popsection
+>=20
+> _ASM_VDSO_EXTABLE_HANDLE(1b, 3b)
+>=20
+> ENDPROC(__vdso_sgx_enter_enclave)
