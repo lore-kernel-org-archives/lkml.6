@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EA69C67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:06:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A386C6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:06:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 121E021479
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:06:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D25D82147D
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:06:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544789195;
-	bh=rS5n5GehT27IPORQnonKcJSb9DyQHfRnLocOPWADnIs=;
+	s=default; t=1544789198;
+	bh=8ZJHuDY+b7OObQPRfemSvLrU4JxH6zqO1p0d1btbU2o=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=kbIAfe0AHtl1C0mZ7UOhw26d6qvJL+2Jf80IxcdiP6LfS5ca1RPAMx4LPsQiJmBxE
-	 EfYqdmJUMUpO0Jk13v7ZnH1c3NmFexD0VpbFOjReTv100FZtX+92NSoZTTAF475jHK
-	 UQVMrKeurEtUOHZ42F2fG/qUxpVP29AAyT4HNPHE=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 121E021479
+	b=pnPn8jzWes4h2ro3DaTMpTZ0m7bVSgziKCpkJEn4iyKBvhqG1PUczpGw2J+OEcXJp
+	 LJyFsW7Sps5Q8UePhsb5PiDVQ0Re3l4hNvSF9js2LoNyO6FpJhW1WSGkFaT9zMhaOJ
+	 n0WTQsjg8JKq87Ne2oQIXXtHrCOTR633nVt/VNVA=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D25D82147D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730948AbeLNMGe (ORCPT
+        id S1730960AbeLNMGi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:06:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51608 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:06:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51650 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730434AbeLNMGc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:06:32 -0500
+        id S1730434AbeLNMGg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:06:36 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 895B62147D;
-        Fri, 14 Dec 2018 12:06:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E10E721486;
+        Fri, 14 Dec 2018 12:06:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789192;
-        bh=rS5n5GehT27IPORQnonKcJSb9DyQHfRnLocOPWADnIs=;
+        s=default; t=1544789194;
+        bh=8ZJHuDY+b7OObQPRfemSvLrU4JxH6zqO1p0d1btbU2o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=q/F7eZGcMcKc/RXe5iFCmnzyvoX1LlG1raShUD59rPGZlqWzf//cnDR2zNBMK/Ya8
-         gCwIdTk4W4dmN6PXsZCfdxGG3VS4/wQbOkpPi4t0VXPB2p2FsK+1Zd6C5KMJfHknTP
-         hV15yZBaSOdzfyRe+RJxtZR5lyc8YLl+jZaQbNq4=
+        b=xj6xXGbKG8HPtxgXfA1dehWs9O/9zH9YKziWMow+t7rHdvdBeZHQqSn0cQKnOnhlr
+         NL3TOsP/3ZN2InU7/K7X6Lge/GU9suo8aiaBGKVXi5om0tleU5wwBBMdT4i1vqWEt0
+         cwN022IFsNsR4BR8facLL7i9h5cNrAlOwY3DtOF8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Ingo Molnar <mingo@elte.hu>,
+        stable@vger.kernel.org, Li Zhijian <lizhijian@cn.fujitsu.com>,
+        Philip Li <philip.li@intel.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Li Zhijian <zhijianx.li@intel.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>,
-        Anders Roxell <anders.roxell@linaro.org>
-Subject: [PATCH 4.19 130/142] kernel/kcov.c: mark funcs in __sanitizer_cov_trace_pc() as notrace
-Date:   Fri, 14 Dec 2018 13:00:15 +0100
-Message-Id: <20181214115752.240888094@linuxfoundation.org>
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 131/142] initramfs: clean old path before creating a hardlink
+Date:   Fri, 14 Dec 2018 13:00:16 +0100
+Message-Id: <20181214115752.281723541@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115747.053633987@linuxfoundation.org>
 References: <20181214115747.053633987@linuxfoundation.org>
@@ -74,61 +74,109 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 903e8ff86753e6f327bb92166a0665e4ecb8e2e7 ]
+[ Upstream commit 7c0950d455d6ab610d2990a13120f935b75abf2c ]
 
-Since __sanitizer_cov_trace_pc() is marked as notrace, function calls in
-__sanitizer_cov_trace_pc() shouldn't be traced either.
-ftrace_graph_caller() gets called for each function that isn't marked
-'notrace', like canonicalize_ip().  This is the call trace from a run:
+sys_link() can fail due to the new path already existing.  This case
+ofen occurs when we use a concated initrd, for example:
 
-[  139.644550]  ftrace_graph_caller+0x1c/0x24
-[  139.648352]  canonicalize_ip+0x18/0x28
-[  139.652313]  __sanitizer_cov_trace_pc+0x14/0x58
-[  139.656184]  sched_clock+0x34/0x1e8
-[  139.659759]  trace_clock_local+0x40/0x88
-[  139.663722]  ftrace_push_return_trace+0x8c/0x1f0
-[  139.667767]  prepare_ftrace_return+0xa8/0x100
-[  139.671709]  ftrace_graph_caller+0x1c/0x24
+1) prepare a basic rootfs, it contains a regular files rc.local
+lizhijian@:~/yocto-tiny-i386-2016-04-22$ cat etc/rc.local
+ #!/bin/sh
+ echo "Running /etc/rc.local..."
+yocto-tiny-i386-2016-04-22$ find . | sed 's,^\./,,' | cpio -o -H newc | gzip -n -9 >../rootfs.cgz
 
-Rework so that check_kcov_mode() and canonicalize_ip() that are called
-from __sanitizer_cov_trace_pc() are also marked as notrace.
+2) create a extra initrd which also includes a etc/rc.local
+lizhijian@:~/lkp-x86_64/etc$ echo "append initrd" >rc.local
+lizhijian@:~/lkp/lkp-x86_64/etc$ cat rc.local
+append initrd
+lizhijian@:~/lkp/lkp-x86_64/etc$ ln rc.local rc.local.hardlink
+append initrd
+lizhijian@:~/lkp/lkp-x86_64/etc$ stat rc.local rc.local.hardlink
+  File: 'rc.local'
+  Size: 14        	Blocks: 8          IO Block: 4096   regular file
+Device: 801h/2049d	Inode: 11296086    Links: 2
+Access: (0664/-rw-rw-r--)  Uid: ( 1002/lizhijian)   Gid: ( 1002/lizhijian)
+Access: 2018-11-15 16:08:28.654464815 +0800
+Modify: 2018-11-15 16:07:57.514903210 +0800
+Change: 2018-11-15 16:08:24.180228872 +0800
+ Birth: -
+  File: 'rc.local.hardlink'
+  Size: 14        	Blocks: 8          IO Block: 4096   regular file
+Device: 801h/2049d	Inode: 11296086    Links: 2
+Access: (0664/-rw-rw-r--)  Uid: ( 1002/lizhijian)   Gid: ( 1002/lizhijian)
+Access: 2018-11-15 16:08:28.654464815 +0800
+Modify: 2018-11-15 16:07:57.514903210 +0800
+Change: 2018-11-15 16:08:24.180228872 +0800
+ Birth: -
 
-Link: http://lkml.kernel.org/r/20181128081239.18317-1-anders.roxell@linaro.org
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signen-off-by: Anders Roxell <anders.roxell@linaro.org>
-Co-developed-by: Arnd Bergmann <arnd@arndb.de>
-Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Cc: Ingo Molnar <mingo@elte.hu>
+lizhijian@:~/lkp/lkp-x86_64$ find . | sed 's,^\./,,' | cpio -o -H newc | gzip -n -9 >../rc-local.cgz
+lizhijian@:~/lkp/lkp-x86_64$ gzip -dc ../rc-local.cgz | cpio -t
+.
+etc
+etc/rc.local.hardlink <<< it will be extracted first at this initrd
+etc/rc.local
+
+3) concate 2 initrds and boot
+lizhijian@:~/lkp$ cat rootfs.cgz rc-local.cgz >concate-initrd.cgz
+lizhijian@:~/lkp$ qemu-system-x86_64 -nographic -enable-kvm -cpu host -smp 1 -m 1024 -kernel ~/lkp/linux/arch/x86/boot/bzImage -append "console=ttyS0 earlyprint=ttyS0 ignore_loglevel" -initrd ./concate-initr.cgz -serial stdio -nodefaults
+
+In this case, sys_link(2) will fail and return -EEXIST, so we can only get
+the rc.local at rootfs.cgz instead of rc-local.cgz
+
+[akpm@linux-foundation.org: move code to avoid forward declaration]
+Link: http://lkml.kernel.org/r/1542352368-13299-1-git-send-email-lizhijian@cn.fujitsu.com
+Signed-off-by: Li Zhijian <lizhijian@cn.fujitsu.com>
+Cc: Philip Li <philip.li@intel.com>
+Cc: Dominik Brodowski <linux@dominikbrodowski.net>
+Cc: Li Zhijian <zhijianx.li@intel.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/kcov.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ init/initramfs.c | 22 ++++++++++++----------
+ 1 file changed, 12 insertions(+), 10 deletions(-)
 
-diff --git a/kernel/kcov.c b/kernel/kcov.c
-index 3ebd09efe72a..97959d7b77e2 100644
---- a/kernel/kcov.c
-+++ b/kernel/kcov.c
-@@ -56,7 +56,7 @@ struct kcov {
- 	struct task_struct	*t;
- };
- 
--static bool check_kcov_mode(enum kcov_mode needed_mode, struct task_struct *t)
-+static notrace bool check_kcov_mode(enum kcov_mode needed_mode, struct task_struct *t)
- {
- 	unsigned int mode;
- 
-@@ -78,7 +78,7 @@ static bool check_kcov_mode(enum kcov_mode needed_mode, struct task_struct *t)
- 	return mode == needed_mode;
+diff --git a/init/initramfs.c b/init/initramfs.c
+index 640557788026..f6f4a1e4cd54 100644
+--- a/init/initramfs.c
++++ b/init/initramfs.c
+@@ -291,16 +291,6 @@ static int __init do_reset(void)
+ 	return 1;
  }
  
--static unsigned long canonicalize_ip(unsigned long ip)
-+static notrace unsigned long canonicalize_ip(unsigned long ip)
+-static int __init maybe_link(void)
+-{
+-	if (nlink >= 2) {
+-		char *old = find_link(major, minor, ino, mode, collected);
+-		if (old)
+-			return (ksys_link(old, collected) < 0) ? -1 : 1;
+-	}
+-	return 0;
+-}
+-
+ static void __init clean_path(char *path, umode_t fmode)
  {
- #ifdef CONFIG_RANDOMIZE_BASE
- 	ip -= kaslr_offset();
+ 	struct kstat st;
+@@ -313,6 +303,18 @@ static void __init clean_path(char *path, umode_t fmode)
+ 	}
+ }
+ 
++static int __init maybe_link(void)
++{
++	if (nlink >= 2) {
++		char *old = find_link(major, minor, ino, mode, collected);
++		if (old) {
++			clean_path(collected, 0);
++			return (ksys_link(old, collected) < 0) ? -1 : 1;
++		}
++	}
++	return 0;
++}
++
+ static __initdata int wfd;
+ 
+ static int __init do_name(void)
 -- 
 2.19.1
 
