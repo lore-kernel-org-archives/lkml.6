@@ -2,166 +2,58 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B1F8C6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 08:45:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8DFBC67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 08:46:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2CFF32080F
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 08:45:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CFF32080F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
+	by mail.kernel.org (Postfix) with ESMTP id 5E3A12080F
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 08:46:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E3A12080F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727999AbeLNIpf (ORCPT
+        id S1728705AbeLNIqx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 03:45:35 -0500
-Received: from out1.zte.com.cn ([202.103.147.172]:53916 "EHLO mxct.zte.com.cn"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727256AbeLNIpf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 03:45:35 -0500
-Received: from mse01.zte.com.cn (unknown [10.30.3.20])
-        by Forcepoint Email with ESMTPS id 2D16EE1F593223E19252;
-        Fri, 14 Dec 2018 16:45:33 +0800 (CST)
-Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse01.zte.com.cn with ESMTP id wBE8jCRb022915;
-        Fri, 14 Dec 2018 16:45:12 +0800 (GMT-8)
-        (envelope-from peng.hao2@zte.com.cn)
-Received: from localhost.localdomain.localdomain ([10.74.120.59])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2018121416455105-16718675 ;
-          Fri, 14 Dec 2018 16:45:51 +0800 
-From:   Peng Hao <peng.hao2@zte.com.cn>
-To:     gregkh@linuxfoundation.org, arnd@arndb.de,
-        andy.shevchenko@gmail.com
-Cc:     linux-kernel@vger.kernel.org, Peng Hao <peng.hao2@zte.com.cn>
-Subject: [PATCH 2/3]  misc/pvpanic : add pci interface for pvpanic
-Date:   Fri, 14 Dec 2018 17:06:50 +0800
-Message-Id: <1544778411-121925-2-git-send-email-peng.hao2@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1544778411-121925-1-git-send-email-peng.hao2@zte.com.cn>
-References: <1544778411-121925-1-git-send-email-peng.hao2@zte.com.cn>
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2018-12-14 16:45:51,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2018-12-14 16:44:57,
-        Serialize complete at 2018-12-14 16:44:57
-X-MAIL: mse01.zte.com.cn wBE8jCRb022915
+        Fri, 14 Dec 2018 03:46:53 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:48727 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726494AbeLNIqw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 03:46:52 -0500
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1gXj7I-0003ad-Im; Fri, 14 Dec 2018 09:46:40 +0100
+Date:   Fri, 14 Dec 2018 09:46:40 +0100
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     Benjamin Bouvier <benjamin.bouvier@nokia.com>
+Cc:     mingo@redhat.com, peterz@infradead.org, rostedt@goodmis.org,
+        u.kleine-koenig@pengutronix.de, pkondeti@codeaurora.org,
+        alexander.sverdlin@nokia.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sched/debug: Add tracepoint for RT throttling
+Message-ID: <20181214084639.f4jnunlalkx2hkz6@linutronix.de>
+References: <20181214082741.8507-1-benjamin.bouvier@nokia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20181214082741.8507-1-benjamin.bouvier@nokia.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Support pvpanic as a pci device in guest kernel.
+On 2018-12-14 10:27:41 [+0200], Benjamin Bouvier wrote:
+> As there is currently no information on which RT task is throttled, add a
+> new tracepoint for debug purpose. By the way improve printk debugging
+> message by adding task name, pid and cpu for which the throttle has been
+> executed.
 
-Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
----
- drivers/misc/pvpanic.c | 67 ++++++++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 65 insertions(+), 2 deletions(-)
+Throttling is for _all_ RT class applications. The task you print might
+be innocent and getting the blame. The interesting part is to see all
+the RT tasks (not sure about DL) since the last time, the timer was
+started on the CPU.
 
-diff --git a/drivers/misc/pvpanic.c b/drivers/misc/pvpanic.c
-index f84ed30..1fae67e 100644
---- a/drivers/misc/pvpanic.c
-+++ b/drivers/misc/pvpanic.c
-@@ -13,11 +13,14 @@
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
-+#include <linux/pci.h>
- #include <linux/platform_device.h>
- #include <linux/types.h>
- 
- static void __iomem *base;
- 
-+#define PCI_VENDOR_ID_REDHAT             0x1b36
-+#define PCI_DEVICE_ID_REDHAT_PVPANIC     0x0101
- #define PVPANIC_PANICKED        (1 << 0)
- 
- MODULE_AUTHOR("Hu Tao <hutao@cn.fujitsu.com>");
-@@ -172,12 +175,71 @@ static int pvpanic_mmio_remove(struct platform_device *pdev)
- 	.remove = pvpanic_mmio_remove,
- };
- 
-+#ifdef CONFIG_PCI
-+static const struct pci_device_id pvpanic_pci_id_tbl[]  = {
-+	{ PCI_DEVICE(PCI_VENDOR_ID_REDHAT, PCI_DEVICE_ID_REDHAT_PVPANIC),},
-+	{}
-+};
-+
-+static int pvpanic_pci_probe(struct pci_dev *pdev,
-+			     const struct pci_device_id *ent)
-+{
-+	int err;
-+
-+	err = pci_enable_device(pdev);
-+	if (err)
-+		return err;
-+	if (pci_request_region(pdev, 0, "pvpanic-pci"))
-+		goto disable;
-+
-+	base = pci_ioremap_bar(pdev, 0);
-+	if (!base)
-+		goto release;
-+
-+	atomic_notifier_chain_register(&panic_notifier_list,
-+				       &pvpanic_panic_nb);
-+	return 0;
-+
-+release:
-+	pci_release_region(pdev, 0);
-+disable:
-+	pci_disable_device(pdev);
-+
-+	return -ENODEV;
-+}
-+
-+static void pvpanic_pci_remove(struct pci_dev *pdev)
-+{
-+	atomic_notifier_chain_unregister(&panic_notifier_list,
-+					 &pvpanic_panic_nb);
-+	iounmap(base);
-+	pci_release_region(pdev, 0);
-+	pci_disable_device(pdev);
-+}
-+
-+static struct pci_driver pvpanic_pci_driver = {
-+	.name =         "pvpanic-pci",
-+	.id_table =     pvpanic_pci_id_tbl,
-+	.probe =        pvpanic_pci_probe,
-+	.remove =       pvpanic_pci_remove,
-+};
-+
-+#endif /* CONFIG_PCI */
-+
- static int __init pvpanic_mmio_init(void)
- {
-+	int r1, r2;
-+
- 	if (acpi_disabled)
--		return platform_driver_register(&pvpanic_mmio_driver);
-+		r1 = platform_driver_register(&pvpanic_mmio_driver);
-+	else
-+		r1 = pvpanic_register_acpi_driver();
-+	r2 = pci_register_driver(&pvpanic_pci_driver);
-+
-+	if (r1 && r2) /* all drivers register failed */
-+		return 1;
- 	else
--		return pvpanic_register_acpi_driver();
-+		return 0;
- }
- 
- static void __exit pvpanic_mmio_exit(void)
-@@ -186,6 +248,7 @@ static void __exit pvpanic_mmio_exit(void)
- 		platform_driver_unregister(&pvpanic_mmio_driver);
- 	else
- 		pvpanic_unregister_acpi_driver();
-+	pci_unregister_driver(&pvpanic_pci_driver);
- }
- 
- module_init(pvpanic_mmio_init);
--- 
-1.8.3.1
-
+Sebastian
