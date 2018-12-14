@@ -7,51 +7,49 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C00C0C67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:17:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22616C6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:17:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 797F7214C1
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:17:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD969214C1
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:17:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544789842;
-	bh=/zYAUydvZCGxS2JI+zBkTFGexjL3wehh2gDCEUjyzOA=;
+	s=default; t=1544789847;
+	bh=jpizETr2XFATKkxFtJvQcQfCAbR0VKmDVH42n8T2AKk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=abcaosz27C1+yyDem650uOhPG5Rz2yGZFdA7h2JQJR9dB7LMRelAQ+CglEwEaGisX
-	 v0moEBX4Nm/qQ2MOrF4/V82WT8LXpnrxuOrQ+wqC2DQIOLh7rFQcV8jNPjzSsQF2Oe
-	 pjyeJu2MDQzVgXud7OQc8NMGttgCVLb4CIg833O4=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 797F7214C1
+	b=fcR1nsBIgM72SZqF/F//bKELxqobkPx8Fn7iAp/ww3g0bgm6E4WgdiWQ+XhQ5riO8
+	 87SmVuArX1ljnLdKfZuZ6fQSP/mi9ej/TZPz6x0YYBkUroVQHcv8JkVl3ZHzSH0MFv
+	 9qxqTemazs4/c8f6yfyejgCqzQ3MeiRG6ibzlNXk=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD969214C1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732916AbeLNMRV (ORCPT
+        id S1732904AbeLNMRT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:17:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37654 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:17:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37596 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732895AbeLNMRS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:17:18 -0500
+        id S1732894AbeLNMRQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:17:16 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 10187214DB;
-        Fri, 14 Dec 2018 12:17:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 809D62133F;
+        Fri, 14 Dec 2018 12:17:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789837;
-        bh=/zYAUydvZCGxS2JI+zBkTFGexjL3wehh2gDCEUjyzOA=;
+        s=default; t=1544789835;
+        bh=jpizETr2XFATKkxFtJvQcQfCAbR0VKmDVH42n8T2AKk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=E2K6l2fmSZUGFpRjsIEWC8/fH8MgCX9Z225LQ0oh9rtyAFneysptAONRK84BGNEDU
-         h0oSa5xLXwsK87bjXAQw7MLcXch48oFOAHRdhFHKOe/fIOLAFa/UE8F33aht5T8Qww
-         l7ulIX6g+H+HGJhdA5O9P2W4ZActWqLIXIBppqYQ=
+        b=xcNupi1YXzwMew5+qK8YcMFak9UdnAMV0ERTLyWXe4Jb6FKl5P0cc9Ty+QGKaxdLg
+         0DEcZPqFRY7rhLXTm2Ti95xTqXmKgDIESdzJnKnr++l52Hw867QtAuGxKVfwCswtxS
+         hQ6hKs/2GH/o1gL6z6EhU5avpc/VQLSCskvi7by8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lorenzo Stoakes <lstoakes@gmail.com>,
-        Michal Hocko <mhocko@suse.com>, Jan Kara <jack@suse.cz>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.4 78/88] mm: replace get_vaddr_frames() write/force parameters with gup_flags
-Date:   Fri, 14 Dec 2018 13:00:52 +0100
-Message-Id: <20181214115708.555102118@linuxfoundation.org>
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 87/88] rocker: fix rocker_tlv_put_* functions for KASAN
+Date:   Fri, 14 Dec 2018 13:01:01 +0100
+Message-Id: <20181214115709.471581903@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115702.151309521@linuxfoundation.org>
 References: <20181214115702.151309521@linuxfoundation.org>
@@ -70,123 +68,88 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lorenzo Stoakes <lstoakes@gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-commit 7f23b3504a0df63b724180262c5f3f117f21bcae upstream.
+commit 6098d7ddd62f532f80ee2a4b01aca500a8e4e9e4 upstream.
 
-This removes the 'write' and 'force' from get_vaddr_frames() and
-replaces them with 'gup_flags' to make the use of FOLL_FORCE explicit in
-callers as use of this flag can result in surprising behaviour (and
-hence bugs) within the mm subsystem.
+Inlining these functions creates lots of stack variables that each take
+64 bytes when KASAN is enabled, leading to this warning about potential
+stack overflow:
 
-Signed-off-by: Lorenzo Stoakes <lstoakes@gmail.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+drivers/net/ethernet/rocker/rocker_ofdpa.c: In function 'ofdpa_cmd_flow_tbl_add':
+drivers/net/ethernet/rocker/rocker_ofdpa.c:621:1: error: the frame size of 2752 bytes is larger than 1536 bytes [-Werror=frame-larger-than=]
+
+gcc-8 can now consolidate the stack slots itself, but on older versions
+we get the same behavior by using a temporary variable that holds a
+copy of the inline function argument.
+
+Cc: stable@vger.kernel.org
+Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=81715
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/gpu/drm/exynos/exynos_drm_g2d.c    |    3 ++-
- drivers/media/platform/omap/omap_vout.c    |    2 +-
- drivers/media/v4l2-core/videobuf2-memops.c |    6 +++++-
- include/linux/mm.h                         |    2 +-
- mm/frame_vector.c                          |   13 ++-----------
- 5 files changed, 11 insertions(+), 15 deletions(-)
 
---- a/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-@@ -471,7 +471,8 @@ static dma_addr_t *g2d_userptr_get_dma_a
- 		goto err_free;
- 	}
- 
--	ret = get_vaddr_frames(start, npages, true, true, g2d_userptr->vec);
-+	ret = get_vaddr_frames(start, npages, FOLL_FORCE | FOLL_WRITE,
-+		g2d_userptr->vec);
- 	if (ret != npages) {
- 		DRM_ERROR("failed to get user pages from userptr.\n");
- 		if (ret < 0)
---- a/drivers/media/platform/omap/omap_vout.c
-+++ b/drivers/media/platform/omap/omap_vout.c
-@@ -214,7 +214,7 @@ static int omap_vout_get_userptr(struct
- 	if (!vec)
- 		return -ENOMEM;
- 
--	ret = get_vaddr_frames(virtp, 1, true, false, vec);
-+	ret = get_vaddr_frames(virtp, 1, FOLL_WRITE, vec);
- 	if (ret != 1) {
- 		frame_vector_destroy(vec);
- 		return -EINVAL;
---- a/drivers/media/v4l2-core/videobuf2-memops.c
-+++ b/drivers/media/v4l2-core/videobuf2-memops.c
-@@ -42,6 +42,10 @@ struct frame_vector *vb2_create_framevec
- 	unsigned long first, last;
- 	unsigned long nr;
- 	struct frame_vector *vec;
-+	unsigned int flags = FOLL_FORCE;
-+
-+	if (write)
-+		flags |= FOLL_WRITE;
- 
- 	first = start >> PAGE_SHIFT;
- 	last = (start + length - 1) >> PAGE_SHIFT;
-@@ -49,7 +53,7 @@ struct frame_vector *vb2_create_framevec
- 	vec = frame_vector_create(nr);
- 	if (!vec)
- 		return ERR_PTR(-ENOMEM);
--	ret = get_vaddr_frames(start & PAGE_MASK, nr, write, true, vec);
-+	ret = get_vaddr_frames(start & PAGE_MASK, nr, flags, vec);
- 	if (ret < 0)
- 		goto out_destroy;
- 	/* We accept only complete set of PFNs */
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -1227,7 +1227,7 @@ struct frame_vector {
- struct frame_vector *frame_vector_create(unsigned int nr_frames);
- void frame_vector_destroy(struct frame_vector *vec);
- int get_vaddr_frames(unsigned long start, unsigned int nr_pfns,
--		     bool write, bool force, struct frame_vector *vec);
-+		     unsigned int gup_flags, struct frame_vector *vec);
- void put_vaddr_frames(struct frame_vector *vec);
- int frame_vector_to_pages(struct frame_vector *vec);
- void frame_vector_to_pfns(struct frame_vector *vec);
---- a/mm/frame_vector.c
-+++ b/mm/frame_vector.c
-@@ -11,10 +11,7 @@
-  * get_vaddr_frames() - map virtual addresses to pfns
-  * @start:	starting user address
-  * @nr_frames:	number of pages / pfns from start to map
-- * @write:	whether pages will be written to by the caller
-- * @force:	whether to force write access even if user mapping is
-- *		readonly. See description of the same argument of
--		get_user_pages().
-+ * @gup_flags:	flags modifying lookup behaviour
-  * @vec:	structure which receives pages / pfns of the addresses mapped.
-  *		It should have space for at least nr_frames entries.
-  *
-@@ -34,23 +31,17 @@
-  * This function takes care of grabbing mmap_sem as necessary.
-  */
- int get_vaddr_frames(unsigned long start, unsigned int nr_frames,
--		     bool write, bool force, struct frame_vector *vec)
-+		     unsigned int gup_flags, struct frame_vector *vec)
+---
+ drivers/net/ethernet/rocker/rocker.c |   24 ++++++++++++++++++------
+ 1 file changed, 18 insertions(+), 6 deletions(-)
+
+--- a/drivers/net/ethernet/rocker/rocker.c
++++ b/drivers/net/ethernet/rocker/rocker.c
+@@ -821,37 +821,49 @@ static int rocker_tlv_put(struct rocker_
+ static int rocker_tlv_put_u8(struct rocker_desc_info *desc_info,
+ 			     int attrtype, u8 value)
  {
- 	struct mm_struct *mm = current->mm;
- 	struct vm_area_struct *vma;
- 	int ret = 0;
- 	int err;
- 	int locked;
--	unsigned int gup_flags = 0;
+-	return rocker_tlv_put(desc_info, attrtype, sizeof(u8), &value);
++	u8 tmp = value; /* work around GCC PR81715 */
++
++	return rocker_tlv_put(desc_info, attrtype, sizeof(u8), &tmp);
+ }
  
- 	if (nr_frames == 0)
- 		return 0;
+ static int rocker_tlv_put_u16(struct rocker_desc_info *desc_info,
+ 			      int attrtype, u16 value)
+ {
+-	return rocker_tlv_put(desc_info, attrtype, sizeof(u16), &value);
++	u16 tmp = value;
++
++	return rocker_tlv_put(desc_info, attrtype, sizeof(u16), &tmp);
+ }
  
--	if (write)
--		gup_flags |= FOLL_WRITE;
--	if (force)
--		gup_flags |= FOLL_FORCE;
--
- 	if (WARN_ON_ONCE(nr_frames > vec->nr_allocated))
- 		nr_frames = vec->nr_allocated;
+ static int rocker_tlv_put_be16(struct rocker_desc_info *desc_info,
+ 			       int attrtype, __be16 value)
+ {
+-	return rocker_tlv_put(desc_info, attrtype, sizeof(__be16), &value);
++	__be16 tmp = value;
++
++	return rocker_tlv_put(desc_info, attrtype, sizeof(__be16), &tmp);
+ }
  
+ static int rocker_tlv_put_u32(struct rocker_desc_info *desc_info,
+ 			      int attrtype, u32 value)
+ {
+-	return rocker_tlv_put(desc_info, attrtype, sizeof(u32), &value);
++	u32 tmp = value;
++
++	return rocker_tlv_put(desc_info, attrtype, sizeof(u32), &tmp);
+ }
+ 
+ static int rocker_tlv_put_be32(struct rocker_desc_info *desc_info,
+ 			       int attrtype, __be32 value)
+ {
+-	return rocker_tlv_put(desc_info, attrtype, sizeof(__be32), &value);
++	__be32 tmp = value;
++
++	return rocker_tlv_put(desc_info, attrtype, sizeof(__be32), &tmp);
+ }
+ 
+ static int rocker_tlv_put_u64(struct rocker_desc_info *desc_info,
+ 			      int attrtype, u64 value)
+ {
+-	return rocker_tlv_put(desc_info, attrtype, sizeof(u64), &value);
++	u64 tmp = value;
++
++	return rocker_tlv_put(desc_info, attrtype, sizeof(u64), &tmp);
+ }
+ 
+ static struct rocker_tlv *
 
 
