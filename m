@@ -6,49 +6,66 @@ X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C74FC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 16:42:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC416C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 16:45:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DBA9C20643
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 16:42:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F24A206C2
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 16:45:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730042AbeLNQmg (ORCPT
+        id S1729983AbeLNQpa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 11:42:36 -0500
-Received: from verein.lst.de ([213.95.11.211]:48539 "EHLO newverein.lst.de"
+        Fri, 14 Dec 2018 11:45:30 -0500
+Received: from verein.lst.de ([213.95.11.211]:48558 "EHLO newverein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729465AbeLNQmf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 11:42:35 -0500
+        id S1729465AbeLNQpa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 11:45:30 -0500
 Received: by newverein.lst.de (Postfix, from userid 2407)
-        id 15F1368DF5; Fri, 14 Dec 2018 17:42:34 +0100 (CET)
-Date:   Fri, 14 Dec 2018 17:42:33 +0100
+        id 0745568DF1; Fri, 14 Dec 2018 17:45:29 +0100 (CET)
+Date:   Fri, 14 Dec 2018 17:45:28 +0100
 From:   Christoph Hellwig <hch@lst.de>
-To:     Michael Ellerman <mpe@ellerman.id.au>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+To:     Christian Zigotzky <chzigotzky@xenosoft.de>
+Cc:     Christoph Hellwig <hch@lst.de>, linux-arch@vger.kernel.org,
+        Darren Stevens <darren@stevens-zone.net>,
+        linux-kernel@vger.kernel.org, Julian Margetson <runaway@candw.ms>,
+        linux-mm@kvack.org, iommu@lists.linux-foundation.org,
         Paul Mackerras <paulus@samba.org>,
-        linuxppc-dev@lists.ozlabs.org, iommu@lists.linux-foundation.org,
-        linux-mm@kvack.org, linux-arch@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 12/34] powerpc/cell: move dma direct window setup out
- of dma_configure
-Message-ID: <20181214164233.GA27074@lst.de>
-References: <20181114082314.8965-1-hch@lst.de> <20181114082314.8965-13-hch@lst.de> <871s6r3sno.fsf@concordia.ellerman.id.au> <20181212143604.GA5137@lst.de> <87mup8uti0.fsf@concordia.ellerman.id.au>
+        Olof Johansson <olof@lixom.net>, linuxppc-dev@lists.ozlabs.org
+Subject: Re: use generic DMA mapping code in powerpc V4
+Message-ID: <20181214164528.GB27074@lst.de>
+References: <2242B4B2-6311-492E-BFF9-6740E36EC6D4@xenosoft.de> <84558d7f-5a7f-5219-0c3a-045e6b4c494f@xenosoft.de> <20181213091021.GA2106@lst.de> <835bd119-081e-a5ea-1899-189d439c83d6@xenosoft.de> <76bc684a-b4d2-1d26-f18d-f5c9ba65978c@xenosoft.de> <20181213112511.GA4574@lst.de> <e109de27-f4af-147d-dc0e-067c8bafb29b@xenosoft.de> <ad5a5a8a-d232-d523-a6f7-e9377fc3857b@xenosoft.de> <e60d6ca3-860c-f01d-8860-c5e022ec7179@xenosoft.de> <008c981e-bdd2-21a7-f5f7-c57e4850ae9a@xenosoft.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <87mup8uti0.fsf@concordia.ellerman.id.au>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <008c981e-bdd2-21a7-f5f7-c57e4850ae9a@xenosoft.de>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Dec 15, 2018 at 12:29:11AM +1100, Michael Ellerman wrote:
-> I think the problem is that we don't want to set iommu_bypass_supported
-> unless cell_iommu_fixed_mapping_init() succeeds.
-> 
-> Yep. This makes it work for me on cell on top of your v5.
+On Fri, Dec 14, 2018 at 01:00:26PM +0100, Christian Zigotzky wrote:
+> On 12 December 2018 at 3:15PM, Christoph Hellwig wrote:
+> > Thanks for bisecting.  I've spent some time going over the conversion
+> > but can't really pinpoint it.  I have three little patches that switch
+> > parts of the code to the generic version.  This is on top of the
+> > last good commmit (977706f9755d2d697aa6f45b4f9f0e07516efeda).
+> >
+> > Can you check with whіch one things stop working?
+>
+> Hello Christoph,
+>
+> Great news! All your patches work!
 
-Thanks, this looks good.  I've folded it with the slight change of moving
-the iommu_bypass_supported setup into cell_iommu_fixed_mapping_init.
+No so great because that means I still have no idea what broke..
+
+> I tested all your patches (including the patch '0004-alloc-free.patch' 
+> today) and the PASEMI onboard ethernet works and the P5020 board boots 
+> without any problems. Thank you for your work!
+> I have a few days off. That means, I will work less and only for the A-EON 
+> first level Linux support. I can test again on Thursday next week.
+
+Enjoy your days off!
+
+I think I'll need to prepare something new that is better bisectable,
+and use that opportunity to reason about the changes a little more.
