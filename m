@@ -4,47 +4,45 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-11.9 required=3.0
 	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7685C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:27:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3722C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:27:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 497972080F
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:27:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 495272080F
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:27:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730840AbeLNU1m (ORCPT
+        id S1730858AbeLNU1w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 15:27:42 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:40131 "EHLO
+        Fri, 14 Dec 2018 15:27:52 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:59525 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730694AbeLNU1m (ORCPT
+        with ESMTP id S1730832AbeLNU1w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 15:27:42 -0500
+        Fri, 14 Dec 2018 15:27:52 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBEKRApT1453585
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBEKRjWn1453642
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Fri, 14 Dec 2018 12:27:10 -0800
+        Fri, 14 Dec 2018 12:27:45 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBEKR9h61453582;
-        Fri, 14 Dec 2018 12:27:09 -0800
-Date:   Fri, 14 Dec 2018 12:27:09 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBEKRjBS1453638;
+        Fri, 14 Dec 2018 12:27:45 -0800
+Date:   Fri, 14 Dec 2018 12:27:45 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-x52mx1ybq8128rtg9hjrj5qk@git.kernel.org>
-Cc:     hpa@zytor.com, jolsa@kernel.org, wangnan0@huawei.com,
-        tglx@linutronix.de, acme@redhat.com, daniel@iogearbox.net,
-        ibobrik@gmail.com, adrian.hunter@intel.com, dsahern@gmail.com,
-        linux-kernel@vger.kernel.org, mingo@kernel.org,
-        namhyung@kernel.org, davem@davemloft.net, ast@kernel.org
-Reply-To: namhyung@kernel.org, ast@kernel.org, davem@davemloft.net,
-          mingo@kernel.org, linux-kernel@vger.kernel.org,
-          dsahern@gmail.com, adrian.hunter@intel.com, ibobrik@gmail.com,
-          daniel@iogearbox.net, acme@redhat.com, tglx@linutronix.de,
-          wangnan0@huawei.com, hpa@zytor.com, jolsa@kernel.org
+From:   tip-bot for Adrian Hunter <tipbot@zytor.com>
+Message-ID: <tip-932d0166b1dbc2a631ac718615efc4917412ecf3@git.kernel.org>
+Cc:     jolsa@redhat.com, adrian.hunter@intel.com, tglx@linutronix.de,
+        hpa@zytor.com, acme@redhat.com, linux-kernel@vger.kernel.org,
+        mingo@kernel.org
+Reply-To: acme@redhat.com, linux-kernel@vger.kernel.org, mingo@kernel.org,
+          adrian.hunter@intel.com, hpa@zytor.com, tglx@linutronix.de,
+          jolsa@redhat.com
+In-Reply-To: <b7c5b4e5-9497-10e5-fd43-5f3e4a0fe51d@intel.com>
+References: <b7c5b4e5-9497-10e5-fd43-5f3e4a0fe51d@intel.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf top: Allow passing a kallsyms file
-Git-Commit-ID: 5f71b002bbc6d73b875f250db9a8093feac0d1cc
+Subject: [tip:perf/core] perf intel-pt: Fix error with config term "pt=0"
+Git-Commit-ID: 932d0166b1dbc2a631ac718615efc4917412ecf3
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -58,63 +56,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  5f71b002bbc6d73b875f250db9a8093feac0d1cc
-Gitweb:     https://git.kernel.org/tip/5f71b002bbc6d73b875f250db9a8093feac0d1cc
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Tue, 27 Nov 2018 10:31:03 -0300
+Commit-ID:  932d0166b1dbc2a631ac718615efc4917412ecf3
+Gitweb:     https://git.kernel.org/tip/932d0166b1dbc2a631ac718615efc4917412ecf3
+Author:     Adrian Hunter <adrian.hunter@intel.com>
+AuthorDate: Mon, 26 Nov 2018 14:12:52 +0200
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Thu, 29 Nov 2018 20:42:49 -0300
 
-perf top: Allow passing a kallsyms file
+perf intel-pt: Fix error with config term "pt=0"
 
-This basically replicates what was done for 'perf report' in:
+Users should never use 'pt=0', but if they do it may give a meaningless
+error:
 
-   b226a5a72901 ("perf report: Allow user to specify path to kallsyms file")
+	$ perf record -e intel_pt/pt=0/u uname
+	Error:
+	The sys_perf_event_open() syscall returned with 22 (Invalid argument) for
+	event (intel_pt/pt=0/u).
 
-This should help with resolving eBPF symbols, that are in kallsyms but,
-of course, not in vmlinux.
+Fix that by forcing 'pt=1'.
 
-Reported-by: Ivan Babrou <ibobrik@gmail.com>
-Tested-by: Ivan Babrou <ibobrik@gmail.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Alexei Starovoitov <ast@kernel.org>
-Cc: Daniel Borkmann <daniel@iogearbox.net>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: David S. Miller <davem@davemloft.net>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-x52mx1ybq8128rtg9hjrj5qk@git.kernel.org
+Committer testing:
+
+  # perf record -e intel_pt/pt=0/u uname
+  Error:
+  The sys_perf_event_open() syscall returned with 22 (Invalid argument) for event (intel_pt/pt=0/u).
+  /bin/dmesg | grep -i perf may provide additional information.
+
+  # perf record -e intel_pt/pt=0/u uname
+  pt=0 doesn't make sense, forcing pt=1
+  Linux
+  [ perf record: Woken up 1 times to write data ]
+  [ perf record: Captured and wrote 0.020 MB perf.data ]
+  #
+
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Link: http://lkml.kernel.org/r/b7c5b4e5-9497-10e5-fd43-5f3e4a0fe51d@intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/Documentation/perf-top.txt | 3 +++
- tools/perf/builtin-top.c              | 2 ++
- 2 files changed, 5 insertions(+)
+ tools/perf/arch/x86/util/intel-pt.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/tools/perf/Documentation/perf-top.txt b/tools/perf/Documentation/perf-top.txt
-index 808b664343c9..44d89fb9c788 100644
---- a/tools/perf/Documentation/perf-top.txt
-+++ b/tools/perf/Documentation/perf-top.txt
-@@ -70,6 +70,9 @@ Default is to monitor all CPUS.
- --ignore-vmlinux::
- 	Ignore vmlinux files.
+diff --git a/tools/perf/arch/x86/util/intel-pt.c b/tools/perf/arch/x86/util/intel-pt.c
+index db0ba8caf5a2..ba8ecaf52200 100644
+--- a/tools/perf/arch/x86/util/intel-pt.c
++++ b/tools/perf/arch/x86/util/intel-pt.c
+@@ -524,10 +524,21 @@ static int intel_pt_validate_config(struct perf_pmu *intel_pt_pmu,
+ 				    struct perf_evsel *evsel)
+ {
+ 	int err;
++	char c;
  
-+--kallsyms=<file>::
-+	kallsyms pathname
+ 	if (!evsel)
+ 		return 0;
+ 
++	/*
++	 * If supported, force pass-through config term (pt=1) even if user
++	 * sets pt=0, which avoids senseless kernel errors.
++	 */
++	if (perf_pmu__scan_file(intel_pt_pmu, "format/pt", "%c", &c) == 1 &&
++	    !(evsel->attr.config & 1)) {
++		pr_warning("pt=0 doesn't make sense, forcing pt=1\n");
++		evsel->attr.config |= 1;
++	}
 +
- -m <pages>::
- --mmap-pages=<pages>::
- 	Number of mmap data pages (must be a power of two) or size
-diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
-index aa0c73e57924..1252d1759064 100644
---- a/tools/perf/builtin-top.c
-+++ b/tools/perf/builtin-top.c
-@@ -1289,6 +1289,8 @@ int cmd_top(int argc, const char **argv)
- 		   "file", "vmlinux pathname"),
- 	OPT_BOOLEAN(0, "ignore-vmlinux", &symbol_conf.ignore_vmlinux,
- 		    "don't load vmlinux even if found"),
-+	OPT_STRING(0, "kallsyms", &symbol_conf.kallsyms_name,
-+		   "file", "kallsyms pathname"),
- 	OPT_BOOLEAN('K', "hide_kernel_symbols", &top.hide_kernel_symbols,
- 		    "hide kernel symbols"),
- 	OPT_CALLBACK('m', "mmap-pages", &opts->mmap_pages, "pages",
+ 	err = intel_pt_val_config_term(intel_pt_pmu, "caps/cycle_thresholds",
+ 				       "cyc_thresh", "caps/psb_cyc",
+ 				       evsel->attr.config);
