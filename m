@@ -7,50 +7,50 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B0C6C6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:39:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D147FC67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:40:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3EABD208E7
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:39:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 966D820892
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:40:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544791195;
-	bh=LwP+HwqOlPtRhKovui74kDuDX5Ne3qFCW0Z7Dp5j1sU=;
+	s=default; t=1544791202;
+	bh=fsL5r1c7+05fCk1Wbdfmzt1PnC526txupe5XiyhnKCA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=obz6dWfuUNY2NUTn+OAgi8bfeqBiUbsERGDRQ6IFhXWtvpYrSpXaSd49rcX8wYpwM
-	 lBsup8Bn5UpBCYrfv/Se1Qnch4EFZ3QrY1q72RSZZ4ZQwuachxF1boJcohao5ICXEe
-	 peZGUyepavqevy1blifwUSnhwPoN2uUOqJUr/7X4=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EABD208E7
+	b=owt8J/BlciHEC8RX4USoOUaI3RelznMVVkpGNHcmmljwy1UU4MijpEDjP32I5I34F
+	 PdRcwOCBFu/9dHwu+pyGaG+LKy3otXpMyZo/bxo57+S1D/mfGD/6gT3fdq7jhS+ohU
+	 7UhAG1XJio6VEflaTLx6/iSAxhuCfCisFwjQ16go=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 966D820892
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730741AbeLNMjy (ORCPT
+        id S1729499AbeLNMEc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:39:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49330 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:04:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49214 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729925AbeLNMEg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:04:36 -0500
+        id S1730494AbeLNMEa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:04:30 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E6B29214C1;
-        Fri, 14 Dec 2018 12:04:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D017D21479;
+        Fri, 14 Dec 2018 12:04:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789075;
-        bh=LwP+HwqOlPtRhKovui74kDuDX5Ne3qFCW0Z7Dp5j1sU=;
+        s=default; t=1544789070;
+        bh=fsL5r1c7+05fCk1Wbdfmzt1PnC526txupe5XiyhnKCA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tzmTUkiVfaBvu2tfngI3Ssh/ESOb1F3+qg5pqaUFGgAZ5hcGDYS2Q5WHjE4k4OIm9
-         LuGsSUdiZq+zIIOZB2ZHC1lpxzJTDUslo7EPMEVylJjdZUKRwmAwr6djKxA/lFwHtD
-         GUE+DgX5AQkjVMptA80JkFQLQ71OTTKTiBUZAsb0=
+        b=H0MHGJ2twbMj2fw5KGjQojCQx+9w5FgcX3/81zpBoKl3iNd7Br9ppvHfcYYnYAPR3
+         mrk2ygqkQiYyTfrRxZYjJH7ZeTXSLdL305ksn+cHa9lrHCSShUuwx85RCygNzgXqNp
+         jyQdE0SiYyjby20qBUenX130lt1vE2L99Kjmpkw8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 085/142] USB: omap_udc: use devm_request_irq()
-Date:   Fri, 14 Dec 2018 12:59:30 +0100
-Message-Id: <20181214115750.459140613@linuxfoundation.org>
+Subject: [PATCH 4.19 083/142] fsi: master-ast-cf: select GENERIC_ALLOCATOR
+Date:   Fri, 14 Dec 2018 12:59:28 +0100
+Message-Id: <20181214115750.382850192@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115747.053633987@linuxfoundation.org>
 References: <20181214115747.053633987@linuxfoundation.org>
@@ -69,100 +69,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 286afdde1640d8ea8916a0f05e811441fbbf4b9d ]
+[ Upstream commit 64999fa7aa2c076ec6d05aee481f11f5296ceb8c ]
 
-The current code fails to release the third irq on the error path
-(observed by reading the code), and we get also multiple WARNs with
-failing gadget drivers due to duplicate IRQ releases. Fix by using
-devm_request_irq().
+In randconfig builds without CONFIG_GENERIC_ALLOCATOR, this driver
+fails to link:
 
-Signed-off-by: Aaro Koskinen <aaro.koskinen@iki.fi>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+ERROR: "gen_pool_alloc_algo" [drivers/fsi/fsi-master-ast-cf.ko] undefined!
+ERROR: "gen_pool_fixed_alloc" [drivers/fsi/fsi-master-ast-cf.ko] undefined!
+ERROR: "of_gen_pool_get" [drivers/fsi/fsi-master-ast-cf.ko] undefined!
+ERROR: "gen_pool_free" [drivers/fsi/fsi-master-ast-cf.ko] undefined!
+
+Select the dependency as all other users do.
+
+Fixes: 6a794a27daca ("fsi: master-ast-cf: Add new FSI master using Aspeed ColdFire")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/gadget/udc/omap_udc.c | 37 +++++++++----------------------
- 1 file changed, 10 insertions(+), 27 deletions(-)
+ drivers/fsi/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/usb/gadget/udc/omap_udc.c b/drivers/usb/gadget/udc/omap_udc.c
-index 3a16431da321..1c77218c82af 100644
---- a/drivers/usb/gadget/udc/omap_udc.c
-+++ b/drivers/usb/gadget/udc/omap_udc.c
-@@ -2867,8 +2867,8 @@ static int omap_udc_probe(struct platform_device *pdev)
- 		udc->clr_halt = UDC_RESET_EP;
- 
- 	/* USB general purpose IRQ:  ep0, state changes, dma, etc */
--	status = request_irq(pdev->resource[1].start, omap_udc_irq,
--			0, driver_name, udc);
-+	status = devm_request_irq(&pdev->dev, pdev->resource[1].start,
-+				  omap_udc_irq, 0, driver_name, udc);
- 	if (status != 0) {
- 		ERR("can't get irq %d, err %d\n",
- 			(int) pdev->resource[1].start, status);
-@@ -2876,20 +2876,20 @@ static int omap_udc_probe(struct platform_device *pdev)
- 	}
- 
- 	/* USB "non-iso" IRQ (PIO for all but ep0) */
--	status = request_irq(pdev->resource[2].start, omap_udc_pio_irq,
--			0, "omap_udc pio", udc);
-+	status = devm_request_irq(&pdev->dev, pdev->resource[2].start,
-+				  omap_udc_pio_irq, 0, "omap_udc pio", udc);
- 	if (status != 0) {
- 		ERR("can't get irq %d, err %d\n",
- 			(int) pdev->resource[2].start, status);
--		goto cleanup2;
-+		goto cleanup1;
- 	}
- #ifdef	USE_ISO
--	status = request_irq(pdev->resource[3].start, omap_udc_iso_irq,
--			0, "omap_udc iso", udc);
-+	status = devm_request_irq(&pdev->dev, pdev->resource[3].start,
-+				  omap_udc_iso_irq, 0, "omap_udc iso", udc);
- 	if (status != 0) {
- 		ERR("can't get irq %d, err %d\n",
- 			(int) pdev->resource[3].start, status);
--		goto cleanup3;
-+		goto cleanup1;
- 	}
- #endif
- 	if (cpu_is_omap16xx() || cpu_is_omap7xx()) {
-@@ -2902,22 +2902,11 @@ static int omap_udc_probe(struct platform_device *pdev)
- 	create_proc_file();
- 	status = usb_add_gadget_udc_release(&pdev->dev, &udc->gadget,
- 			omap_udc_release);
--	if (status)
--		goto cleanup4;
--
--	return 0;
-+	if (!status)
-+		return 0;
- 
--cleanup4:
- 	remove_proc_file();
- 
--#ifdef	USE_ISO
--cleanup3:
--	free_irq(pdev->resource[2].start, udc);
--#endif
--
--cleanup2:
--	free_irq(pdev->resource[1].start, udc);
--
- cleanup1:
- 	kfree(udc);
- 	udc = NULL;
-@@ -2961,12 +2950,6 @@ static int omap_udc_remove(struct platform_device *pdev)
- 
- 	remove_proc_file();
- 
--#ifdef	USE_ISO
--	free_irq(pdev->resource[3].start, udc);
--#endif
--	free_irq(pdev->resource[2].start, udc);
--	free_irq(pdev->resource[1].start, udc);
--
- 	if (udc->dc_clk) {
- 		if (udc->clk_requested)
- 			omap_udc_enable_clock(0);
+diff --git a/drivers/fsi/Kconfig b/drivers/fsi/Kconfig
+index af3a20dd5aa4..99c99a5d57fe 100644
+--- a/drivers/fsi/Kconfig
++++ b/drivers/fsi/Kconfig
+@@ -46,6 +46,7 @@ config FSI_MASTER_AST_CF
+ 	tristate "FSI master based on Aspeed ColdFire coprocessor"
+ 	depends on GPIOLIB
+ 	depends on GPIO_ASPEED
++	select GENERIC_ALLOCATOR
+ 	---help---
+ 	This option enables a FSI master using the AST2400 and AST2500 GPIO
+ 	lines driven by the internal ColdFire coprocessor. This requires
 -- 
 2.19.1
 
