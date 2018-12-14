@@ -1,100 +1,99 @@
-Return-Path: <SRS0=yjy/=OW=vger.kernel.org=linux-kernel-owner@kernel.org>
+Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 867FEC65BAE
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 23:42:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A42E3C65BAE
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 00:04:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C6C120645
-	for <linux-kernel@archiver.kernel.org>; Thu, 13 Dec 2018 23:42:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 66F5D20892
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 00:04:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="CB9SK2X9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C6C120645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paul-moore.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="oR136Qp5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66F5D20892
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728716AbeLMXmZ (ORCPT
+        id S1728487AbeLNAEt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 18:42:25 -0500
-Received: from mail-lf1-f54.google.com ([209.85.167.54]:44902 "EHLO
-        mail-lf1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726254AbeLMXmY (ORCPT
+        Thu, 13 Dec 2018 19:04:49 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:55116 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726254AbeLNAEs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 18:42:24 -0500
-Received: by mail-lf1-f54.google.com with SMTP id z13so2893382lfe.11
-        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 15:42:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fFwwiYBrF05Vdjf6a+0SAipQPTvZMQ8dIrHth/Gsh68=;
-        b=CB9SK2X93sNhodccVZoa888beartu/q5zvd7SFfgV94B59yQipLV3EBH/eoE5t9i1d
-         BIH4jV3lOAwTgRLbqtwolC6iy/aRw7xPr2AcQjwKSG8q6egAvqTdJLtabXIhErKnnA+y
-         jPCs2MVEMI2zMvjnDuSe+MrN5uh3TJtgwQnvHpoCQeMNcLgSPsuWNl1TkQb7K5+ydPjl
-         DP81NknAFcoyiH1V4N791UH3yghgUw3evrUSYP2h4PAbTu0e3qh16iocFacmuXtHeayu
-         KGUFB1e87fOADF1dWyz0iAlfkAzVLV2rpAcjJ+5q5NBInVqppA9upn/NfqM/6zUEInH8
-         /7gA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fFwwiYBrF05Vdjf6a+0SAipQPTvZMQ8dIrHth/Gsh68=;
-        b=TSur3JRYRBGh4qCW8EKN1Rlmv7nemChq24n6g2OEaInpSn53YKLc0MNaPpByp6rk05
-         DEDH4cA3FGfxFdLzpKoL99pueTABKZ5A21KIms1820gAsACP1U/AqHdYt1N0JDX3q4V/
-         yOjVKZYQ5/JOoY2zuk2GhfHquEphQ8DRtiaHoe9jNlF0cyj4LqAIgh5SDetijjuDBILS
-         qpmJEJ1mTApIf/YtI1/w/iIuMPbEG9DmZQIdG6ZOo5tRy9wae2R4hX0MSWMSi3wF0Wyp
-         2ISL5V7tzA7XASvs0b6qlT6XbNDjbuFCJdxHTT/9FYot5tz43nNEamFv/x8H8xbAf7Os
-         P6DA==
-X-Gm-Message-State: AA+aEWafHf9SFUuoefteVcWrOuUQGS2pExD8ylvmaNgvxNWd7K+svS3k
-        MPZ7/xbmPBtMOxeoWKbfANVNoT2V5/9I1poAgH0qjwidLA==
-X-Google-Smtp-Source: AFSGD/XCkYFqMxNdoRL/ahBwWL+OYroiQOgyPFpl9xP++lq3T6xU3OCSw32k6XWcP/OZW7N7KOviElQ7iWCsI20d8Kc=
-X-Received: by 2002:a19:40cc:: with SMTP id n195mr423713lfa.40.1544744542365;
- Thu, 13 Dec 2018 15:42:22 -0800 (PST)
+        Thu, 13 Dec 2018 19:04:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=H5UX7a2c8B0JHLFH/TVStPQkI1cjAmdqx4cJBvqu2F8=; b=oR136Qp59h/czJsUjyM+GK5FG6
+        SCGGRCiurez7peDXLXJWgYGVYqYJrN/itaLsgM8UYplFH0m5fFYXsyQVgJPmyx0EDMAUR5AajyeBx
+        3ELRfp/7QPw0D/kAm8tz4vhen6ivKN33uthlpLuX4/fDC+ftUfbP/vePo8S0x3oClbqO5xZxEVN0d
+        b/4AqnHqGIc7+bO85iThEpn8tUQH0ES6FStvybc+Yk+jpEGuvfl7jnCZQutc5s7EQdz2nlpkBNTqD
+        b/dkbPuxAM5oyg2Njs5ECoAM/PdfGi4uFUcerLldnCxRNg7UVPqpxgxkjbmJcK8/Mlo1s0aZFJ2Zq
+        nyGbW4Aw==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gXayG-0002uG-2b; Fri, 14 Dec 2018 00:04:48 +0000
+Date:   Thu, 13 Dec 2018 16:04:47 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org
+Subject: [GIT PULL] XArray for 4.20-rc7
+Message-ID: <20181214000447.GT6830@bombadil.infradead.org>
 MIME-Version: 1.0
-References: <20181209062502.16308-1-yuehaibing@huawei.com>
-In-Reply-To: <20181209062502.16308-1-yuehaibing@huawei.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 13 Dec 2018 18:42:10 -0500
-Message-ID: <CAHC9VhSCnZ4HfqA5ZR3xEzrofGZobLhbHr_N2OftkzW=Z6Q_YQ@mail.gmail.com>
-Subject: Re: [PATCH -next] audit: remove duplicated include from audit.c
-To:     yuehaibing@huawei.com
-Cc:     Eric Paris <eparis@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-audit@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Dec 9, 2018 at 1:25 AM YueHaibing <yuehaibing@huawei.com> wrote:
-> Remove duplicated include.
->
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  kernel/audit.c | 1 -
->  1 file changed, 1 deletion(-)
->
-> diff --git a/kernel/audit.c b/kernel/audit.c
-> index a0a4544..632d360 100644
-> --- a/kernel/audit.c
-> +++ b/kernel/audit.c
-> @@ -60,7 +60,6 @@
->  #include <linux/mutex.h>
->  #include <linux/gfp.h>
->  #include <linux/pid.h>
-> -#include <linux/slab.h>
 
-As discussed previously, I don't want to remove header files whose
-declarations are used in the source file.  While it may be true that
-slab.h is included in one of the previously included header files, I
-like leaving it as an explicit include to help document the dependency
-and protect us from changes in the other header files.
+(hope I did the git tag correctly this time)
 
---
-paul moore
-www.paul-moore.com
+The following changes since commit cf76c364a1e1e5224af80edf70a1e3023e1fcf8c:
+
+  Merge tag 'scsi-fixes' of git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi (2018-12-05 17:06:31 -0800)
+
+are available in the Git repository at:
+
+  git://git.infradead.org/users/willy/linux-dax.git tags/xarray-4.20-rc7
+
+for you to fetch changes up to 48483614de97c4f5219abeda630e62b2bebdce62:
+
+  XArray: Fix xa_alloc when id exceeds max (2018-12-13 14:07:33 -0500)
+
+----------------------------------------------------------------
+XArray updates for 4.20-rc7
+
+Two bugfixes, each with test-suite updates, two improvements to the
+test-suite without associated bugs, and one patch adding a missing API.
+
+----------------------------------------------------------------
+Matthew Wilcox (5):
+      radix tree: Don't return retry entries from lookup
+      XArray: Add xa_cmpxchg_irq and xa_cmpxchg_bh
+      XArray tests: Handle larger indices more elegantly
+      XArray tests: Check iterating over multiorder entries
+      XArray: Fix xa_alloc when id exceeds max
+
+ Documentation/core-api/xarray.rst      |   5 +-
+ include/linux/xarray.h                 |  54 ++++++++++++
+ lib/radix-tree.c                       |   4 +-
+ lib/test_xarray.c                      | 155 ++++++++++++++++++++++++---------
+ lib/xarray.c                           |   8 +-
+ mm/shmem.c                             |   4 +-
+ tools/testing/radix-tree/Makefile      |   1 +
+ tools/testing/radix-tree/main.c        |   1 +
+ tools/testing/radix-tree/regression.h  |   1 +
+ tools/testing/radix-tree/regression4.c |  79 +++++++++++++++++
+ 10 files changed, 258 insertions(+), 54 deletions(-)
+ create mode 100644 tools/testing/radix-tree/regression4.c
+
