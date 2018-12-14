@@ -2,249 +2,1413 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FORGED_MUA_MOZILLA,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37C2EC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 17:03:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAB2AC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 17:09:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD719206BA
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 17:03:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 881FA206DD
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 17:09:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=jcline.org header.i=@jcline.org header.b="UZ/nhB+6";
-	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="CxOZL6As"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="T9XY+k7N"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730229AbeLNRDY (ORCPT
+        id S1729912AbeLNRJT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 12:03:24 -0500
-Received: from a8-62.smtp-out.amazonses.com ([54.240.8.62]:60506 "EHLO
-        a8-62.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729409AbeLNRDY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 12:03:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-        s=jdcmspyxk3papgv75oy2heb62hybqlxr; d=jcline.org; t=1544807002;
-        h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:In-Reply-To:Content-Type:Content-Transfer-Encoding;
-        bh=1fpTGc2ZiANBHJ0RVybG6CQqXUXCwvdhwqbmeNm/NH0=;
-        b=UZ/nhB+6tQkb2XmrvMiFLwIHydRfIFI/OZJaoghpO0xUv+whdLhb3mbVAso1o6E9
-        uk4QXtEogIOQ603uFiYb9OdKCYL8DtLGEsotPUyjHiF5yAR/lGxViiV4itCLbDZuECp
-        uHz3xfdtMUIt1wD/H+lLTL2cYAkAsw68RYmKoKy8=
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-        s=ug7nbtf4gccmlpwj322ax3p6ow6yfsug; d=amazonses.com; t=1544807002;
-        h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID;
-        bh=1fpTGc2ZiANBHJ0RVybG6CQqXUXCwvdhwqbmeNm/NH0=;
-        b=CxOZL6As1fca3I08jXQB+EkUHsHF4BJdnidaA89Kq8j1kBiqD2RwS0Yz5Tzm8aB7
-        itSat14+JmoWWzpau9M1Cw73GjkpFGmZppLxbs2QxatW2zN1Z706bEF4r973fiTzdjI
-        w3/e4QWutWLHtYZKuDwWDM1j12F7Re9v+0ldFPF4=
-X-Virus-Scanned: amavisd-new at jcline.org
-Subject: Re: [PATCH 4.19 061/110] ACPICA: AML interpreter: add region
- addresses in global list during initialization
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     stable@vger.kernel.org, Jean-Marc Lenoir <archlinux@jihemel.com>,
-        Erik Schmauss <erik.schmauss@intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Jean Delvare <jdelvare@suse.de>,
-        Michael J Gruber <mjg@fedoraproject.org>
-References: <20181129135921.231283053@linuxfoundation.org>
- <20181129135923.722829835@linuxfoundation.org>
-From:   Jeremy Cline <jeremy@jcline.org>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jeremy@jcline.org; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <01000167adac3130-02698b6b-48d9-4496-9ce5-ee5316f5f82c-000000@email.amazonses.com>
-Date:   Fri, 14 Dec 2018 17:03:22 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
-MIME-Version: 1.0
-In-Reply-To: <20181129135923.722829835@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8
+        Fri, 14 Dec 2018 12:09:19 -0500
+Received: from mail-eopbgr50061.outbound.protection.outlook.com ([40.107.5.61]:22176
+        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729660AbeLNRJS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 12:09:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YX6sSWJyuEqOqLNvzzZ15ET9xbMjBlcztLHaP3RBnFw=;
+ b=T9XY+k7N1LOkb8wXRRl3Tb9lBKbPC+ePSZa1vJ1flyo1S2fDxh/rwSFBpHxaRLTXuONEYpxbr2vlCG6HLiFdpPmFZ1AbrCFaKIFOcGsrh3zKlcXX5/gUi8h5MLVDac2w48FDNNO4AnkfnLxHLKPSMY6B5gT6YIvVxLtIzwKFD4s=
+Received: from AM6PR04MB4967.eurprd04.prod.outlook.com (20.177.33.210) by
+ AM6PR04MB5000.eurprd04.prod.outlook.com (20.177.33.219) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1425.22; Fri, 14 Dec 2018 17:05:57 +0000
+Received: from AM6PR04MB4967.eurprd04.prod.outlook.com
+ ([fe80::6d78:7790:9368:1d1a]) by AM6PR04MB4967.eurprd04.prod.outlook.com
+ ([fe80::6d78:7790:9368:1d1a%3]) with mapi id 15.20.1404.028; Fri, 14 Dec 2018
+ 17:05:57 +0000
+From:   Han Xu <han.xu@nxp.com>
+To:     Schrempf Frieder <frieder.schrempf@kontron.de>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "boris.brezillon@bootlin.com" <boris.brezillon@bootlin.com>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        Marek Vasut <marek.vasut@gmail.com>
+CC:     "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "richard@nod.at" <richard@nod.at>,
+        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        David Wolfe <david.wolfe@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Prabhakar Kushwaha <prabhakar.kushwaha@nxp.com>,
+        Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v7 6/9] mtd: fsl-quadspi: Remove the driver as it was
+ replaced by spi-fsl-qspi.c
+Thread-Topic: [PATCH v7 6/9] mtd: fsl-quadspi: Remove the driver as it was
+ replaced by spi-fsl-qspi.c
+Thread-Index: AQHUi9vOs+GcfPoJHkiTyVijtyNK5aV+hnXQ
+Date:   Fri, 14 Dec 2018 17:05:57 +0000
+Message-ID: <AM6PR04MB4967BAB55BD46A335C27383097A10@AM6PR04MB4967.eurprd04.prod.outlook.com>
+References: <1543932685-15011-1-git-send-email-frieder.schrempf@kontron.de>
+ <1543932685-15011-7-git-send-email-frieder.schrempf@kontron.de>
+In-Reply-To: <1543932685-15011-7-git-send-email-frieder.schrempf@kontron.de>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-SES-Outgoing: 2018.12.14-54.240.8.62
-Feedback-ID: 1.us-east-1.z18Isoc/FaoPOvCyJyi1mnTt8STwoRuibXVNoUcvG6g=:AmazonSES
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is ) smtp.mailfrom=han.xu@nxp.com; 
+x-originating-ip: [64.157.242.222]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM6PR04MB5000;6:TvvYZ6OEhP45dcjrPiO7/eWvhmHqJVhuPmfhp+DHye1dxvnIOIjp6Hr/IUlMPO0Eij51tL6CHpFdAFMP/vQ7Ks9aSAfrYzcSxJEVOonGeDucQV9Vm36cS6gUyni65A8Bq7R3B+RRPiL1DIz7eOVU48U9UYC/4rSoOoHGrSP7VLjbpWr6D81G3lVQL2kLtWOoelv4FOHaOWtH6YA2+gWxubEXGJ9G3nN1vE0mBCkdPlIQlpN+oHNZ+yWO6c3Si2gAZT0Gho1NQ5XDJwetrDmfBODEGXClaJ6fRNwJ6kmkXXmy+6enYchFQcMVBXO7QUw5bHSpfHOMHqAhRif8t1g2GPiRn2a95wV2NY41uRYcCG9OV9wgn+xvqFuiOCMhkt4I85RiLE54JRzIUQ0lofBsfTCc/U4zV5xADPjRURnQ4IbWOkEYM+Fran0aS3giUO9vEDyCcb1Ixz7wVK7VZOjwtg==;5:gjV/N0LdD3slpz7El/uh2myAC3mOcLmVuR202ZCEtlYomv5JLoJAdMgZup5x98QoZCkvn77qxBRdATi6E6RcHcu0S6tNkiEt4VoDSooXX0ZaYsYobuT43rTtY+woOebCmjEGE21mf3Fvx1284TmOEuufUxGw1y1pvDxdxenNChQ=;7:qkUQ4d+6EqIN0GikArdwq7GCXiIdv321pmvmOHLXtx+tFruuB5Jvl7ApuTz4DkCNEm9rCvv8+xvwobaB7Iy3QWBpFk5KpnQTyNRrg/smLO/FCM60Q4ee7sVng16XwLF+609RGlxxakXFvSfslHHJJA==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: b6c468a5-b0bc-4900-2d6e-08d661e66a96
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM6PR04MB5000;
+x-ms-traffictypediagnostic: AM6PR04MB5000:
+x-microsoft-antispam-prvs: <AM6PR04MB5000E199D6378D9A90DDDE7297A10@AM6PR04MB5000.eurprd04.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(6040522)(2401047)(8121501046)(5005006)(3231475)(944501520)(52105112)(93006095)(93001095)(3002001)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:AM6PR04MB5000;BCL:0;PCL:0;RULEID:;SRVR:AM6PR04MB5000;
+x-forefront-prvs: 08864C38AC
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(396003)(376002)(346002)(39860400002)(136003)(13464003)(189003)(199004)(54906003)(229853002)(110136005)(97736004)(53946003)(6116002)(68736007)(9686003)(7416002)(316002)(66066001)(5660300001)(4326008)(25786009)(53936002)(2201001)(2501003)(575784001)(86362001)(39060400002)(99286004)(6246003)(14444005)(446003)(11346002)(256004)(476003)(105586002)(106356001)(44832011)(2906002)(186003)(14454004)(33656002)(8936002)(81166006)(81156014)(26005)(478600001)(8676002)(4744004)(55016002)(6436002)(71190400001)(71200400001)(305945005)(74316002)(7696005)(7736002)(76176011)(486006)(53546011)(102836004)(3846002)(6506007)(2004002)(579004)(559001)(569006);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR04MB5000;H:AM6PR04MB4967.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: qRAI1FmcSG2sbJRrY7Y1pcTfaQyTMK3uVqluzOhHwu3R1Qdp2Oi677z+0RdtWurovNNGEa4dru5vH00oxM70OQEyGS1qjTvpAaLYfQlxTk0B5ZcSgEf1dpljXoZrDMs7U4q0H0NlsZ6pd9jM37PNzuIzNjfCUzuRUm/z15wklAMYH1t7jOyFvMO/nHEO60veVUXl5b42h1EjV5bfNtyAOTSYHHJ7qT5kmJ8aiKada9iHVfLR2lPZMW7wfIQ8FF0jPCZJozdJ8TwYzAFNJoK7g9KSxPRQCbPdUqBpasmwL8UvwCOTXUw6MlbfmPvsJ3nJ
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b6c468a5-b0bc-4900-2d6e-08d661e66a96
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Dec 2018 17:05:57.7042
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR04MB5000
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi folks,
 
-On 11/29/18 9:12 AM, Greg Kroah-Hartman wrote:
-> 4.19-stable review patch.  If anyone has any objections, please let me know.
-> 
-> ------------------
-> 
-> From: Erik Schmauss <erik.schmauss@intel.com>
-> 
-> commit 4abb951b73ff0a8a979113ef185651aa3c8da19b upstream.
-> 
-> The table load process omitted adding the operation region address
-> range to the global list. This omission is problematic because the OS
-> queries the global list to check for address range conflicts before
-> deciding which drivers to load. This commit may result in warning
-> messages that look like the following:
-> 
-> [    7.871761] ACPI Warning: system_IO range 0x00000428-0x0000042F conflicts with op_region 0x00000400-0x0000047F (\PMIO) (20180531/utaddress-213)
-> [    7.871769] ACPI: If an ACPI driver is available for this device, you should use it instead of the native driver
-> 
-> However, these messages do not signify regressions. It is a result of
-> properly adding address ranges within the global address list>
-> Link: https://bugzilla.kernel.org/show_bug.cgi?id=200011
-> Tested-by: Jean-Marc Lenoir <archlinux@jihemel.com>
-> Signed-off-by: Erik Schmauss <erik.schmauss@intel.com>
-> Cc: All applicable <stable@vger.kernel.org>
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> Cc: Jean Delvare <jdelvare@suse.de>
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> 
+
+> -----Original Message-----
+> From: Schrempf Frieder <frieder.schrempf@kontron.de>
+> Sent: Tuesday, December 4, 2018 8:15 AM
+> To: linux-mtd@lists.infradead.org; boris.brezillon@bootlin.com; linux-
+> spi@vger.kernel.org; Marek Vasut <marek.vasut@gmail.com>
+> Cc: dwmw2@infradead.org; computersforpeace@gmail.com;
+> richard@nod.at; miquel.raynal@bootlin.com; broonie@kernel.org; David
+> Wolfe <david.wolfe@nxp.com>; Fabio Estevam <fabio.estevam@nxp.com>;
+> Prabhakar Kushwaha <prabhakar.kushwaha@nxp.com>; Yogesh Narayan
+> Gaur <yogeshnarayan.gaur@nxp.com>; Han Xu <han.xu@nxp.com>;
+> shawnguo@kernel.org; Schrempf Frieder <frieder.schrempf@kontron.de>;
+> linux-kernel@vger.kernel.org
+> Subject: [PATCH v7 6/9] mtd: fsl-quadspi: Remove the driver as it was
+> replaced by spi-fsl-qspi.c
+>=20
+> From: Frieder Schrempf <frieder.schrempf@kontron.de>
+>=20
+> There's a new driver using the SPI memory interface of the SPI framework =
+at
+> spi/spi-fsl-qspi.c, which can be used together with m25p80.c to replace t=
+he
+> functionality of this SPI NOR driver.
+>=20
+> The new driver is already in use and this code is not compiled anymore, s=
+o
+> let's remove it.
+>=20
+> Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
 > ---
->  drivers/acpi/acpica/dsopcode.c |    4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> --- a/drivers/acpi/acpica/dsopcode.c
-> +++ b/drivers/acpi/acpica/dsopcode.c
-> @@ -417,6 +417,10 @@ acpi_ds_eval_region_operands(struct acpi
->  			  ACPI_FORMAT_UINT64(obj_desc->region.address),
->  			  obj_desc->region.length));
->  
-> +	status = acpi_ut_add_address_range(obj_desc->region.space_id,
-> +					   obj_desc->region.address,
-> +					   obj_desc->region.length, node);
-> +
->  	/* Now the address and length are valid for this opregion */
->  
->  	obj_desc->region.flags |= AOPOBJ_DATA_VALID;
-> 
->
-Fedora has received a couple of reports[0] of boot failures on v4.19
-kernels:
+>  drivers/mtd/spi-nor/fsl-quadspi.c | 1224 -------------------------------=
+-
+>  1 file changed, 1224 deletions(-)
+>=20
+> diff --git a/drivers/mtd/spi-nor/fsl-quadspi.c b/drivers/mtd/spi-nor/fsl-
+> quadspi.c
+> deleted file mode 100644
+> index 1ff3430..0000000
+> --- a/drivers/mtd/spi-nor/fsl-quadspi.c
+> +++ /dev/null
+> @@ -1,1224 +0,0 @@
+> -/*
+> - * Freescale QuadSPI driver.
+> - *
+> - * Copyright (C) 2013 Freescale Semiconductor, Inc.
+> - *
+> - * This program is free software; you can redistribute it and/or modify
+> - * it under the terms of the GNU General Public License as published by
+> - * the Free Software Foundation; either version 2 of the License, or
+> - * (at your option) any later version.
+> - */
+> -#include <linux/kernel.h>
+> -#include <linux/module.h>
+> -#include <linux/interrupt.h>
+> -#include <linux/errno.h>
+> -#include <linux/platform_device.h>
+> -#include <linux/sched.h>
+> -#include <linux/delay.h>
+> -#include <linux/io.h>
+> -#include <linux/clk.h>
+> -#include <linux/err.h>
+> -#include <linux/of.h>
+> -#include <linux/of_device.h>
+> -#include <linux/timer.h>
+> -#include <linux/jiffies.h>
+> -#include <linux/completion.h>
+> -#include <linux/mtd/mtd.h>
+> -#include <linux/mtd/partitions.h>
+> -#include <linux/mtd/spi-nor.h>
+> -#include <linux/mutex.h>
+> -#include <linux/pm_qos.h>
+> -#include <linux/sizes.h>
+> -
+> -/* Controller needs driver to swap endian */
+> -#define QUADSPI_QUIRK_SWAP_ENDIAN	(1 << 0)
+> -/* Controller needs 4x internal clock */
+> -#define QUADSPI_QUIRK_4X_INT_CLK	(1 << 1)
+> -/*
+> - * TKT253890, Controller needs driver to fill txfifo till 16 byte to
+> - * trigger data transfer even though extern data will not transferred.
+> - */
+> -#define QUADSPI_QUIRK_TKT253890		(1 << 2)
+> -/* Controller cannot wake up from wait mode, TKT245618 */
+> -#define QUADSPI_QUIRK_TKT245618         (1 << 3)
+> -
+> -/* The registers */
+> -#define QUADSPI_MCR			0x00
+> -#define QUADSPI_MCR_RESERVED_SHIFT	16
+> -#define QUADSPI_MCR_RESERVED_MASK	(0xF <<
+> QUADSPI_MCR_RESERVED_SHIFT)
+> -#define QUADSPI_MCR_MDIS_SHIFT		14
+> -#define QUADSPI_MCR_MDIS_MASK		(1 <<
+> QUADSPI_MCR_MDIS_SHIFT)
+> -#define QUADSPI_MCR_CLR_TXF_SHIFT	11
+> -#define QUADSPI_MCR_CLR_TXF_MASK	(1 <<
+> QUADSPI_MCR_CLR_TXF_SHIFT)
+> -#define QUADSPI_MCR_CLR_RXF_SHIFT	10
+> -#define QUADSPI_MCR_CLR_RXF_MASK	(1 <<
+> QUADSPI_MCR_CLR_RXF_SHIFT)
+> -#define QUADSPI_MCR_DDR_EN_SHIFT	7
+> -#define QUADSPI_MCR_DDR_EN_MASK		(1 <<
+> QUADSPI_MCR_DDR_EN_SHIFT)
+> -#define QUADSPI_MCR_END_CFG_SHIFT	2
+> -#define QUADSPI_MCR_END_CFG_MASK	(3 <<
+> QUADSPI_MCR_END_CFG_SHIFT)
+> -#define QUADSPI_MCR_SWRSTHD_SHIFT	1
+> -#define QUADSPI_MCR_SWRSTHD_MASK	(1 <<
+> QUADSPI_MCR_SWRSTHD_SHIFT)
+> -#define QUADSPI_MCR_SWRSTSD_SHIFT	0
+> -#define QUADSPI_MCR_SWRSTSD_MASK	(1 <<
+> QUADSPI_MCR_SWRSTSD_SHIFT)
+> -
+> -#define QUADSPI_IPCR			0x08
+> -#define QUADSPI_IPCR_SEQID_SHIFT	24
+> -#define QUADSPI_IPCR_SEQID_MASK		(0xF <<
+> QUADSPI_IPCR_SEQID_SHIFT)
+> -
+> -#define QUADSPI_BUF0CR			0x10
+> -#define QUADSPI_BUF1CR			0x14
+> -#define QUADSPI_BUF2CR			0x18
+> -#define QUADSPI_BUFXCR_INVALID_MSTRID	0xe
+> -
+> -#define QUADSPI_BUF3CR			0x1c
+> -#define QUADSPI_BUF3CR_ALLMST_SHIFT	31
+> -#define QUADSPI_BUF3CR_ALLMST_MASK	(1 <<
+> QUADSPI_BUF3CR_ALLMST_SHIFT)
+> -#define QUADSPI_BUF3CR_ADATSZ_SHIFT		8
+> -#define QUADSPI_BUF3CR_ADATSZ_MASK	(0xFF <<
+> QUADSPI_BUF3CR_ADATSZ_SHIFT)
+> -
+> -#define QUADSPI_BFGENCR			0x20
+> -#define QUADSPI_BFGENCR_PAR_EN_SHIFT	16
+> -#define QUADSPI_BFGENCR_PAR_EN_MASK	(1 <<
+> (QUADSPI_BFGENCR_PAR_EN_SHIFT))
+> -#define QUADSPI_BFGENCR_SEQID_SHIFT	12
+> -#define QUADSPI_BFGENCR_SEQID_MASK	(0xF <<
+> QUADSPI_BFGENCR_SEQID_SHIFT)
+> -
+> -#define QUADSPI_BUF0IND			0x30
+> -#define QUADSPI_BUF1IND			0x34
+> -#define QUADSPI_BUF2IND			0x38
+> -#define QUADSPI_SFAR			0x100
+> -
+> -#define QUADSPI_SMPR			0x108
+> -#define QUADSPI_SMPR_DDRSMP_SHIFT	16
+> -#define QUADSPI_SMPR_DDRSMP_MASK	(7 <<
+> QUADSPI_SMPR_DDRSMP_SHIFT)
+> -#define QUADSPI_SMPR_FSDLY_SHIFT	6
+> -#define QUADSPI_SMPR_FSDLY_MASK		(1 <<
+> QUADSPI_SMPR_FSDLY_SHIFT)
+> -#define QUADSPI_SMPR_FSPHS_SHIFT	5
+> -#define QUADSPI_SMPR_FSPHS_MASK		(1 <<
+> QUADSPI_SMPR_FSPHS_SHIFT)
+> -#define QUADSPI_SMPR_HSENA_SHIFT	0
+> -#define QUADSPI_SMPR_HSENA_MASK		(1 <<
+> QUADSPI_SMPR_HSENA_SHIFT)
+> -
+> -#define QUADSPI_RBSR			0x10c
+> -#define QUADSPI_RBSR_RDBFL_SHIFT	8
+> -#define QUADSPI_RBSR_RDBFL_MASK		(0x3F <<
+> QUADSPI_RBSR_RDBFL_SHIFT)
+> -
+> -#define QUADSPI_RBCT			0x110
+> -#define QUADSPI_RBCT_WMRK_MASK		0x1F
+> -#define QUADSPI_RBCT_RXBRD_SHIFT	8
+> -#define QUADSPI_RBCT_RXBRD_USEIPS	(0x1 <<
+> QUADSPI_RBCT_RXBRD_SHIFT)
+> -
+> -#define QUADSPI_TBSR			0x150
+> -#define QUADSPI_TBDR			0x154
+> -#define QUADSPI_SR			0x15c
+> -#define QUADSPI_SR_IP_ACC_SHIFT		1
+> -#define QUADSPI_SR_IP_ACC_MASK		(0x1 <<
+> QUADSPI_SR_IP_ACC_SHIFT)
+> -#define QUADSPI_SR_AHB_ACC_SHIFT	2
+> -#define QUADSPI_SR_AHB_ACC_MASK		(0x1 <<
+> QUADSPI_SR_AHB_ACC_SHIFT)
+> -
+> -#define QUADSPI_FR			0x160
+> -#define QUADSPI_FR_TFF_MASK		0x1
+> -
+> -#define QUADSPI_SFA1AD			0x180
+> -#define QUADSPI_SFA2AD			0x184
+> -#define QUADSPI_SFB1AD			0x188
+> -#define QUADSPI_SFB2AD			0x18c
+> -#define QUADSPI_RBDR			0x200
+> -
+> -#define QUADSPI_LUTKEY			0x300
+> -#define QUADSPI_LUTKEY_VALUE		0x5AF05AF0
+> -
+> -#define QUADSPI_LCKCR			0x304
+> -#define QUADSPI_LCKER_LOCK		0x1
+> -#define QUADSPI_LCKER_UNLOCK		0x2
+> -
+> -#define QUADSPI_RSER			0x164
+> -#define QUADSPI_RSER_TFIE		(0x1 << 0)
+> -
+> -#define QUADSPI_LUT_BASE		0x310
+> -
+> -/*
+> - * The definition of the LUT register shows below:
+> - *
+> - *  ---------------------------------------------------
+> - *  | INSTR1 | PAD1 | OPRND1 | INSTR0 | PAD0 | OPRND0 |
+> - *  ---------------------------------------------------
+> - */
+> -#define OPRND0_SHIFT		0
+> -#define PAD0_SHIFT		8
+> -#define INSTR0_SHIFT		10
+> -#define OPRND1_SHIFT		16
+> -
+> -/* Instruction set for the LUT register. */
+> -#define LUT_STOP		0
+> -#define LUT_CMD			1
+> -#define LUT_ADDR		2
+> -#define LUT_DUMMY		3
+> -#define LUT_MODE		4
+> -#define LUT_MODE2		5
+> -#define LUT_MODE4		6
+> -#define LUT_FSL_READ		7
+> -#define LUT_FSL_WRITE		8
+> -#define LUT_JMP_ON_CS		9
+> -#define LUT_ADDR_DDR		10
+> -#define LUT_MODE_DDR		11
+> -#define LUT_MODE2_DDR		12
+> -#define LUT_MODE4_DDR		13
+> -#define LUT_FSL_READ_DDR		14
+> -#define LUT_FSL_WRITE_DDR		15
+> -#define LUT_DATA_LEARN		16
+> -
+> -/*
+> - * The PAD definitions for LUT register.
+> - *
+> - * The pad stands for the lines number of IO[0:3].
+> - * For example, the Quad read need four IO lines, so you should
+> - * set LUT_PAD4 which means we use four IO lines.
+> - */
+> -#define LUT_PAD1		0
+> -#define LUT_PAD2		1
+> -#define LUT_PAD4		2
+> -
+> -/* Oprands for the LUT register. */
+> -#define ADDR24BIT		0x18
+> -#define ADDR32BIT		0x20
+> -
+> -/* Macros for constructing the LUT register. */
+> -#define LUT0(ins, pad, opr)						\
+> -		(((opr) << OPRND0_SHIFT) | ((LUT_##pad) << PAD0_SHIFT) | \
+> -		((LUT_##ins) << INSTR0_SHIFT))
+> -
+> -#define LUT1(ins, pad, opr)	(LUT0(ins, pad, opr) << OPRND1_SHIFT)
+> -
+> -/* other macros for LUT register. */
+> -#define QUADSPI_LUT(x)          (QUADSPI_LUT_BASE + (x) * 4)
+> -#define QUADSPI_LUT_NUM		64
+> -
+> -/* SEQID -- we can have 16 seqids at most. */
+> -#define SEQID_READ		0
+> -#define SEQID_WREN		1
+> -#define SEQID_WRDI		2
+> -#define SEQID_RDSR		3
+> -#define SEQID_SE		4
+> -#define SEQID_CHIP_ERASE	5
+> -#define SEQID_PP		6
+> -#define SEQID_RDID		7
+> -#define SEQID_WRSR		8
+> -#define SEQID_RDCR		9
+> -#define SEQID_EN4B		10
+> -#define SEQID_BRWR		11
+> -
+> -#define QUADSPI_MIN_IOMAP SZ_4M
+> -
+> -enum fsl_qspi_devtype {
+> -	FSL_QUADSPI_VYBRID,
+> -	FSL_QUADSPI_IMX6SX,
+> -	FSL_QUADSPI_IMX7D,
+> -	FSL_QUADSPI_IMX6UL,
+> -	FSL_QUADSPI_LS1021A,
+> -	FSL_QUADSPI_LS2080A,
+> -};
+> -
+> -struct fsl_qspi_devtype_data {
+> -	enum fsl_qspi_devtype devtype;
+> -	int rxfifo;
+> -	int txfifo;
+> -	int ahb_buf_size;
+> -	int driver_data;
+> -};
+> -
+> -static const struct fsl_qspi_devtype_data vybrid_data =3D {
+> -	.devtype =3D FSL_QUADSPI_VYBRID,
+> -	.rxfifo =3D 128,
+> -	.txfifo =3D 64,
+> -	.ahb_buf_size =3D 1024,
+> -	.driver_data =3D QUADSPI_QUIRK_SWAP_ENDIAN,
+> -};
+> -
+> -static const struct fsl_qspi_devtype_data imx6sx_data =3D {
+> -	.devtype =3D FSL_QUADSPI_IMX6SX,
+> -	.rxfifo =3D 128,
+> -	.txfifo =3D 512,
+> -	.ahb_buf_size =3D 1024,
+> -	.driver_data =3D QUADSPI_QUIRK_4X_INT_CLK
+> -		       | QUADSPI_QUIRK_TKT245618,
+> -};
+> -
+> -static const struct fsl_qspi_devtype_data imx7d_data =3D {
+> -	.devtype =3D FSL_QUADSPI_IMX7D,
+> -	.rxfifo =3D 512,
+> -	.txfifo =3D 512,
+> -	.ahb_buf_size =3D 1024,
+> -	.driver_data =3D QUADSPI_QUIRK_TKT253890
+> -		       | QUADSPI_QUIRK_4X_INT_CLK,
+> -};
+> -
+> -static const struct fsl_qspi_devtype_data imx6ul_data =3D {
+> -	.devtype =3D FSL_QUADSPI_IMX6UL,
+> -	.rxfifo =3D 128,
+> -	.txfifo =3D 512,
+> -	.ahb_buf_size =3D 1024,
+> -	.driver_data =3D QUADSPI_QUIRK_TKT253890
+> -		       | QUADSPI_QUIRK_4X_INT_CLK,
+> -};
+> -
+> -static struct fsl_qspi_devtype_data ls1021a_data =3D {
+> -	.devtype =3D FSL_QUADSPI_LS1021A,
+> -	.rxfifo =3D 128,
+> -	.txfifo =3D 64,
+> -	.ahb_buf_size =3D 1024,
+> -	.driver_data =3D 0,
+> -};
+> -
+> -static const struct fsl_qspi_devtype_data ls2080a_data =3D {
+> -	.devtype =3D FSL_QUADSPI_LS2080A,
+> -	.rxfifo =3D 128,
+> -	.txfifo =3D 64,
+> -	.ahb_buf_size =3D 1024,
+> -	.driver_data =3D QUADSPI_QUIRK_TKT253890,
+> -};
+> -
+> -
+> -#define FSL_QSPI_MAX_CHIP	4
+> -struct fsl_qspi {
+> -	struct spi_nor nor[FSL_QSPI_MAX_CHIP];
+> -	void __iomem *iobase;
+> -	void __iomem *ahb_addr;
+> -	u32 memmap_phy;
+> -	u32 memmap_offs;
+> -	u32 memmap_len;
+> -	struct clk *clk, *clk_en;
+> -	struct device *dev;
+> -	struct completion c;
+> -	const struct fsl_qspi_devtype_data *devtype_data;
+> -	u32 nor_size;
+> -	u32 nor_num;
+> -	u32 clk_rate;
+> -	unsigned int chip_base_addr; /* We may support two chips. */
+> -	bool has_second_chip;
+> -	bool big_endian;
+> -	struct mutex lock;
+> -	struct pm_qos_request pm_qos_req;
+> -};
+> -
+> -static inline int needs_swap_endian(struct fsl_qspi *q) -{
+> -	return q->devtype_data->driver_data &
+> QUADSPI_QUIRK_SWAP_ENDIAN;
+> -}
+> -
+> -static inline int needs_4x_clock(struct fsl_qspi *q) -{
+> -	return q->devtype_data->driver_data &
+> QUADSPI_QUIRK_4X_INT_CLK;
+> -}
+> -
+> -static inline int needs_fill_txfifo(struct fsl_qspi *q) -{
+> -	return q->devtype_data->driver_data & QUADSPI_QUIRK_TKT253890;
+> -}
+> -
+> -static inline int needs_wakeup_wait_mode(struct fsl_qspi *q) -{
+> -	return q->devtype_data->driver_data & QUADSPI_QUIRK_TKT245618;
+> -}
+> -
+> -/*
+> - * R/W functions for big- or little-endian registers:
+> - * The qSPI controller's endian is independent of the CPU core's endian.
+> - * So far, although the CPU core is little-endian but the qSPI have two
+> - * versions for big-endian and little-endian.
+> - */
+> -static void qspi_writel(struct fsl_qspi *q, u32 val, void __iomem *addr)=
+ -{
+> -	if (q->big_endian)
+> -		iowrite32be(val, addr);
+> -	else
+> -		iowrite32(val, addr);
+> -}
+> -
+> -static u32 qspi_readl(struct fsl_qspi *q, void __iomem *addr) -{
+> -	if (q->big_endian)
+> -		return ioread32be(addr);
+> -	else
+> -		return ioread32(addr);
+> -}
+> -
+> -/*
+> - * An IC bug makes us to re-arrange the 32-bit data.
+> - * The following chips, such as IMX6SLX, have fixed this bug.
+> - */
+> -static inline u32 fsl_qspi_endian_xchg(struct fsl_qspi *q, u32 a) -{
+> -	return needs_swap_endian(q) ? __swab32(a) : a;
+> -}
+> -
+> -static inline void fsl_qspi_unlock_lut(struct fsl_qspi *q) -{
+> -	qspi_writel(q, QUADSPI_LUTKEY_VALUE, q->iobase +
+> QUADSPI_LUTKEY);
+> -	qspi_writel(q, QUADSPI_LCKER_UNLOCK, q->iobase +
+> QUADSPI_LCKCR);
+> -}
+> -
+> -static inline void fsl_qspi_lock_lut(struct fsl_qspi *q) -{
+> -	qspi_writel(q, QUADSPI_LUTKEY_VALUE, q->iobase +
+> QUADSPI_LUTKEY);
+> -	qspi_writel(q, QUADSPI_LCKER_LOCK, q->iobase + QUADSPI_LCKCR);
+> -}
+> -
+> -static irqreturn_t fsl_qspi_irq_handler(int irq, void *dev_id) -{
+> -	struct fsl_qspi *q =3D dev_id;
+> -	u32 reg;
+> -
+> -	/* clear interrupt */
+> -	reg =3D qspi_readl(q, q->iobase + QUADSPI_FR);
+> -	qspi_writel(q, reg, q->iobase + QUADSPI_FR);
+> -
+> -	if (reg & QUADSPI_FR_TFF_MASK)
+> -		complete(&q->c);
+> -
+> -	dev_dbg(q->dev, "QUADSPI_FR : 0x%.8x:0x%.8x\n", q-
+> >chip_base_addr, reg);
+> -	return IRQ_HANDLED;
+> -}
+> -
+> -static void fsl_qspi_init_lut(struct fsl_qspi *q) -{
+> -	void __iomem *base =3D q->iobase;
+> -	int rxfifo =3D q->devtype_data->rxfifo;
+> -	u32 lut_base;
+> -	int i;
+> -
+> -	struct spi_nor *nor =3D &q->nor[0];
+> -	u8 addrlen =3D (nor->addr_width =3D=3D 3) ? ADDR24BIT : ADDR32BIT;
+> -	u8 read_op =3D nor->read_opcode;
+> -	u8 read_dm =3D nor->read_dummy;
+> -
+> -	fsl_qspi_unlock_lut(q);
+> -
+> -	/* Clear all the LUT table */
+> -	for (i =3D 0; i < QUADSPI_LUT_NUM; i++)
+> -		qspi_writel(q, 0, base + QUADSPI_LUT_BASE + i * 4);
+> -
+> -	/* Read */
+> -	lut_base =3D SEQID_READ * 4;
+> -
+> -	qspi_writel(q, LUT0(CMD, PAD1, read_op) | LUT1(ADDR, PAD1,
+> addrlen),
+> -			base + QUADSPI_LUT(lut_base));
+> -	qspi_writel(q, LUT0(DUMMY, PAD1, read_dm) |
+> -		    LUT1(FSL_READ, PAD4, rxfifo),
+> -			base + QUADSPI_LUT(lut_base + 1));
+> -
+> -	/* Write enable */
+> -	lut_base =3D SEQID_WREN * 4;
+> -	qspi_writel(q, LUT0(CMD, PAD1, SPINOR_OP_WREN),
+> -			base + QUADSPI_LUT(lut_base));
+> -
+> -	/* Page Program */
+> -	lut_base =3D SEQID_PP * 4;
+> -
+> -	qspi_writel(q, LUT0(CMD, PAD1, nor->program_opcode) |
+> -		    LUT1(ADDR, PAD1, addrlen),
+> -			base + QUADSPI_LUT(lut_base));
+> -	qspi_writel(q, LUT0(FSL_WRITE, PAD1, 0),
+> -			base + QUADSPI_LUT(lut_base + 1));
+> -
+> -	/* Read Status */
+> -	lut_base =3D SEQID_RDSR * 4;
+> -	qspi_writel(q, LUT0(CMD, PAD1, SPINOR_OP_RDSR) |
+> -			LUT1(FSL_READ, PAD1, 0x1),
+> -			base + QUADSPI_LUT(lut_base));
+> -
+> -	/* Erase a sector */
+> -	lut_base =3D SEQID_SE * 4;
+> -
+> -	qspi_writel(q, LUT0(CMD, PAD1, nor->erase_opcode) |
+> -		    LUT1(ADDR, PAD1, addrlen),
+> -			base + QUADSPI_LUT(lut_base));
+> -
+> -	/* Erase the whole chip */
+> -	lut_base =3D SEQID_CHIP_ERASE * 4;
+> -	qspi_writel(q, LUT0(CMD, PAD1, SPINOR_OP_CHIP_ERASE),
+> -			base + QUADSPI_LUT(lut_base));
+> -
+> -	/* READ ID */
+> -	lut_base =3D SEQID_RDID * 4;
+> -	qspi_writel(q, LUT0(CMD, PAD1, SPINOR_OP_RDID) |
+> -			LUT1(FSL_READ, PAD1, 0x8),
+> -			base + QUADSPI_LUT(lut_base));
+> -
+> -	/* Write Register */
+> -	lut_base =3D SEQID_WRSR * 4;
+> -	qspi_writel(q, LUT0(CMD, PAD1, SPINOR_OP_WRSR) |
+> -			LUT1(FSL_WRITE, PAD1, 0x2),
+> -			base + QUADSPI_LUT(lut_base));
+> -
+> -	/* Read Configuration Register */
+> -	lut_base =3D SEQID_RDCR * 4;
+> -	qspi_writel(q, LUT0(CMD, PAD1, SPINOR_OP_RDCR) |
+> -			LUT1(FSL_READ, PAD1, 0x1),
+> -			base + QUADSPI_LUT(lut_base));
+> -
+> -	/* Write disable */
+> -	lut_base =3D SEQID_WRDI * 4;
+> -	qspi_writel(q, LUT0(CMD, PAD1, SPINOR_OP_WRDI),
+> -			base + QUADSPI_LUT(lut_base));
+> -
+> -	/* Enter 4 Byte Mode (Micron) */
+> -	lut_base =3D SEQID_EN4B * 4;
+> -	qspi_writel(q, LUT0(CMD, PAD1, SPINOR_OP_EN4B),
+> -			base + QUADSPI_LUT(lut_base));
+> -
+> -	/* Enter 4 Byte Mode (Spansion) */
+> -	lut_base =3D SEQID_BRWR * 4;
+> -	qspi_writel(q, LUT0(CMD, PAD1, SPINOR_OP_BRWR),
+> -			base + QUADSPI_LUT(lut_base));
+> -
+> -	fsl_qspi_lock_lut(q);
+> -}
+> -
+> -/* Get the SEQID for the command */
+> -static int fsl_qspi_get_seqid(struct fsl_qspi *q, u8 cmd) -{
+> -	switch (cmd) {
+> -	case SPINOR_OP_READ_1_1_4:
+> -	case SPINOR_OP_READ_1_1_4_4B:
+> -		return SEQID_READ;
+> -	case SPINOR_OP_WREN:
+> -		return SEQID_WREN;
+> -	case SPINOR_OP_WRDI:
+> -		return SEQID_WRDI;
+> -	case SPINOR_OP_RDSR:
+> -		return SEQID_RDSR;
+> -	case SPINOR_OP_SE:
+> -		return SEQID_SE;
+> -	case SPINOR_OP_CHIP_ERASE:
+> -		return SEQID_CHIP_ERASE;
+> -	case SPINOR_OP_PP:
+> -		return SEQID_PP;
+> -	case SPINOR_OP_RDID:
+> -		return SEQID_RDID;
+> -	case SPINOR_OP_WRSR:
+> -		return SEQID_WRSR;
+> -	case SPINOR_OP_RDCR:
+> -		return SEQID_RDCR;
+> -	case SPINOR_OP_EN4B:
+> -		return SEQID_EN4B;
+> -	case SPINOR_OP_BRWR:
+> -		return SEQID_BRWR;
+> -	default:
+> -		if (cmd =3D=3D q->nor[0].erase_opcode)
+> -			return SEQID_SE;
+> -		dev_err(q->dev, "Unsupported cmd 0x%.2x\n", cmd);
+> -		break;
+> -	}
+> -	return -EINVAL;
+> -}
+> -
+> -static int
+> -fsl_qspi_runcmd(struct fsl_qspi *q, u8 cmd, unsigned int addr, int len) =
+-{
+> -	void __iomem *base =3D q->iobase;
+> -	int seqid;
+> -	u32 reg, reg2;
+> -	int err;
+> -
+> -	init_completion(&q->c);
+> -	dev_dbg(q->dev, "to 0x%.8x:0x%.8x, len:%d, cmd:%.2x\n",
+> -			q->chip_base_addr, addr, len, cmd);
+> -
+> -	/* save the reg */
+> -	reg =3D qspi_readl(q, base + QUADSPI_MCR);
+> -
+> -	qspi_writel(q, q->memmap_phy + q->chip_base_addr + addr,
+> -			base + QUADSPI_SFAR);
+> -	qspi_writel(q, QUADSPI_RBCT_WMRK_MASK |
+> QUADSPI_RBCT_RXBRD_USEIPS,
+> -			base + QUADSPI_RBCT);
+> -	qspi_writel(q, reg | QUADSPI_MCR_CLR_RXF_MASK, base +
+> QUADSPI_MCR);
+> -
+> -	do {
+> -		reg2 =3D qspi_readl(q, base + QUADSPI_SR);
+> -		if (reg2 & (QUADSPI_SR_IP_ACC_MASK |
+> QUADSPI_SR_AHB_ACC_MASK)) {
+> -			udelay(1);
+> -			dev_dbg(q->dev, "The controller is busy, 0x%x\n",
+> reg2);
+> -			continue;
+> -		}
+> -		break;
+> -	} while (1);
+> -
+> -	/* trigger the LUT now */
+> -	seqid =3D fsl_qspi_get_seqid(q, cmd);
+> -	if (seqid < 0)
+> -		return seqid;
+> -
+> -	qspi_writel(q, (seqid << QUADSPI_IPCR_SEQID_SHIFT) | len,
+> -			base + QUADSPI_IPCR);
+> -
+> -	/* Wait for the interrupt. */
+> -	if (!wait_for_completion_timeout(&q->c, msecs_to_jiffies(1000))) {
+> -		dev_err(q->dev,
+> -			"cmd 0x%.2x timeout, addr@%.8x, FR:0x%.8x,
+> SR:0x%.8x\n",
+> -			cmd, addr, qspi_readl(q, base + QUADSPI_FR),
+> -			qspi_readl(q, base + QUADSPI_SR));
+> -		err =3D -ETIMEDOUT;
+> -	} else {
+> -		err =3D 0;
+> -	}
+> -
+> -	/* restore the MCR */
+> -	qspi_writel(q, reg, base + QUADSPI_MCR);
+> -
+> -	return err;
+> -}
+> -
+> -/* Read out the data from the QUADSPI_RBDR buffer registers. */ -static
+> void fsl_qspi_read_data(struct fsl_qspi *q, int len, u8 *rxbuf) -{
+> -	u32 tmp;
+> -	int i =3D 0;
+> -
+> -	while (len > 0) {
+> -		tmp =3D qspi_readl(q, q->iobase + QUADSPI_RBDR + i * 4);
+> -		tmp =3D fsl_qspi_endian_xchg(q, tmp);
+> -		dev_dbg(q->dev, "chip addr:0x%.8x, rcv:0x%.8x\n",
+> -				q->chip_base_addr, tmp);
+> -
+> -		if (len >=3D 4) {
+> -			*((u32 *)rxbuf) =3D tmp;
+> -			rxbuf +=3D 4;
+> -		} else {
+> -			memcpy(rxbuf, &tmp, len);
+> -			break;
+> -		}
+> -
+> -		len -=3D 4;
+> -		i++;
+> -	}
+> -}
+> -
+> -/*
+> - * If we have changed the content of the flash by writing or erasing,
+> - * we need to invalidate the AHB buffer. If we do not do so, we may read
+> out
+> - * the wrong data. The spec tells us reset the AHB domain and Serial Fla=
+sh
+> - * domain at the same time.
+> - */
+> -static inline void fsl_qspi_invalid(struct fsl_qspi *q) -{
+> -	u32 reg;
+> -
+> -	reg =3D qspi_readl(q, q->iobase + QUADSPI_MCR);
+> -	reg |=3D QUADSPI_MCR_SWRSTHD_MASK |
+> QUADSPI_MCR_SWRSTSD_MASK;
+> -	qspi_writel(q, reg, q->iobase + QUADSPI_MCR);
+> -
+> -	/*
+> -	 * The minimum delay : 1 AHB + 2 SFCK clocks.
+> -	 * Delay 1 us is enough.
+> -	 */
+> -	udelay(1);
+> -
+> -	reg &=3D ~(QUADSPI_MCR_SWRSTHD_MASK |
+> QUADSPI_MCR_SWRSTSD_MASK);
+> -	qspi_writel(q, reg, q->iobase + QUADSPI_MCR);
+> -}
+> -
+> -static ssize_t fsl_qspi_nor_write(struct fsl_qspi *q, struct spi_nor *no=
+r,
+> -				u8 opcode, unsigned int to, u32 *txbuf,
+> -				unsigned count)
+> -{
+> -	int ret, i, j;
+> -	u32 tmp;
+> -
+> -	dev_dbg(q->dev, "to 0x%.8x:0x%.8x, len : %d\n",
+> -		q->chip_base_addr, to, count);
+> -
+> -	/* clear the TX FIFO. */
+> -	tmp =3D qspi_readl(q, q->iobase + QUADSPI_MCR);
+> -	qspi_writel(q, tmp | QUADSPI_MCR_CLR_TXF_MASK, q->iobase +
+> QUADSPI_MCR);
+> -
+> -	/* fill the TX data to the FIFO */
+> -	for (j =3D 0, i =3D ((count + 3) / 4); j < i; j++) {
+> -		tmp =3D fsl_qspi_endian_xchg(q, *txbuf);
+> -		qspi_writel(q, tmp, q->iobase + QUADSPI_TBDR);
+> -		txbuf++;
+> -	}
+> -
+> -	/* fill the TXFIFO upto 16 bytes for i.MX7d */
+> -	if (needs_fill_txfifo(q))
+> -		for (; i < 4; i++)
+> -			qspi_writel(q, tmp, q->iobase + QUADSPI_TBDR);
+> -
+> -	/* Trigger it */
+> -	ret =3D fsl_qspi_runcmd(q, opcode, to, count);
+> -
+> -	if (ret =3D=3D 0)
+> -		return count;
+> -
+> -	return ret;
+> -}
+> -
+> -static void fsl_qspi_set_map_addr(struct fsl_qspi *q) -{
+> -	int nor_size =3D q->nor_size;
+> -	void __iomem *base =3D q->iobase;
+> -
+> -	qspi_writel(q, nor_size + q->memmap_phy, base +
+> QUADSPI_SFA1AD);
+> -	qspi_writel(q, nor_size * 2 + q->memmap_phy, base +
+> QUADSPI_SFA2AD);
+> -	qspi_writel(q, nor_size * 3 + q->memmap_phy, base +
+> QUADSPI_SFB1AD);
+> -	qspi_writel(q, nor_size * 4 + q->memmap_phy, base +
+> QUADSPI_SFB2AD);
+> -}
+> -
+> -/*
+> - * There are two different ways to read out the data from the flash:
+> - *  the "IP Command Read" and the "AHB Command Read".
+> - *
+> - * The IC guy suggests we use the "AHB Command Read" which is faster
+> - * then the "IP Command Read". (What's more is that there is a bug in
+> - * the "IP Command Read" in the Vybrid.)
+> - *
+> - * After we set up the registers for the "AHB Command Read", we can use
+> - * the memcpy to read the data directly. A "missed" access to the buffer
+> - * causes the controller to clear the buffer, and use the sequence point=
+ed
+> - * by the QUADSPI_BFGENCR[SEQID] to initiate a read from the flash.
+> - */
+> -static int fsl_qspi_init_ahb_read(struct fsl_qspi *q) -{
+> -	void __iomem *base =3D q->iobase;
+> -	int seqid;
+> -
+> -	/* AHB configuration for access buffer 0/1/2 .*/
+> -	qspi_writel(q, QUADSPI_BUFXCR_INVALID_MSTRID, base +
+> QUADSPI_BUF0CR);
+> -	qspi_writel(q, QUADSPI_BUFXCR_INVALID_MSTRID, base +
+> QUADSPI_BUF1CR);
+> -	qspi_writel(q, QUADSPI_BUFXCR_INVALID_MSTRID, base +
+> QUADSPI_BUF2CR);
+> -	/*
+> -	 * Set ADATSZ with the maximum AHB buffer size to improve the
+> -	 * read performance.
+> -	 */
+> -	qspi_writel(q, QUADSPI_BUF3CR_ALLMST_MASK |
+> -			((q->devtype_data->ahb_buf_size / 8)
+> -			<< QUADSPI_BUF3CR_ADATSZ_SHIFT),
+> -			base + QUADSPI_BUF3CR);
+> -
+> -	/* We only use the buffer3 */
+> -	qspi_writel(q, 0, base + QUADSPI_BUF0IND);
+> -	qspi_writel(q, 0, base + QUADSPI_BUF1IND);
+> -	qspi_writel(q, 0, base + QUADSPI_BUF2IND);
+> -
+> -	/* Set the default lut sequence for AHB Read. */
+> -	seqid =3D fsl_qspi_get_seqid(q, q->nor[0].read_opcode);
+> -	if (seqid < 0)
+> -		return seqid;
+> -
+> -	qspi_writel(q, seqid << QUADSPI_BFGENCR_SEQID_SHIFT,
+> -		q->iobase + QUADSPI_BFGENCR);
+> -
+> -	return 0;
+> -}
+> -
+> -/* This function was used to prepare and enable QSPI clock */ -static in=
+t
+> fsl_qspi_clk_prep_enable(struct fsl_qspi *q) -{
+> -	int ret;
+> -
+> -	ret =3D clk_prepare_enable(q->clk_en);
+> -	if (ret)
+> -		return ret;
+> -
+> -	ret =3D clk_prepare_enable(q->clk);
+> -	if (ret) {
+> -		clk_disable_unprepare(q->clk_en);
+> -		return ret;
+> -	}
+> -
+> -	if (needs_wakeup_wait_mode(q))
+> -		pm_qos_add_request(&q->pm_qos_req,
+> PM_QOS_CPU_DMA_LATENCY, 0);
+> -
+> -	return 0;
+> -}
+> -
+> -/* This function was used to disable and unprepare QSPI clock */ -static=
+ void
+> fsl_qspi_clk_disable_unprep(struct fsl_qspi *q) -{
+> -	if (needs_wakeup_wait_mode(q))
+> -		pm_qos_remove_request(&q->pm_qos_req);
+> -
+> -	clk_disable_unprepare(q->clk);
+> -	clk_disable_unprepare(q->clk_en);
+> -
+> -}
+> -
+> -/* We use this function to do some basic init for spi_nor_scan(). */ -st=
+atic int
+> fsl_qspi_nor_setup(struct fsl_qspi *q) -{
+> -	void __iomem *base =3D q->iobase;
+> -	u32 reg;
+> -	int ret;
+> -
+> -	/* disable and unprepare clock to avoid glitch pass to controller */
+> -	fsl_qspi_clk_disable_unprep(q);
+> -
+> -	/* the default frequency, we will change it in the future. */
+> -	ret =3D clk_set_rate(q->clk, 66000000);
+> -	if (ret)
+> -		return ret;
+> -
+> -	ret =3D fsl_qspi_clk_prep_enable(q);
+> -	if (ret)
+> -		return ret;
+> -
+> -	/* Reset the module */
+> -	qspi_writel(q, QUADSPI_MCR_SWRSTSD_MASK |
+> QUADSPI_MCR_SWRSTHD_MASK,
+> -		base + QUADSPI_MCR);
+> -	udelay(1);
+> -
+> -	/* Init the LUT table. */
+> -	fsl_qspi_init_lut(q);
+> -
+> -	/* Disable the module */
+> -	qspi_writel(q, QUADSPI_MCR_MDIS_MASK |
+> QUADSPI_MCR_RESERVED_MASK,
+> -			base + QUADSPI_MCR);
+> -
+> -	reg =3D qspi_readl(q, base + QUADSPI_SMPR);
+> -	qspi_writel(q, reg & ~(QUADSPI_SMPR_FSDLY_MASK
+> -			| QUADSPI_SMPR_FSPHS_MASK
+> -			| QUADSPI_SMPR_HSENA_MASK
+> -			| QUADSPI_SMPR_DDRSMP_MASK), base +
+> QUADSPI_SMPR);
+> -
+> -	/* Enable the module */
+> -	qspi_writel(q, QUADSPI_MCR_RESERVED_MASK |
+> QUADSPI_MCR_END_CFG_MASK,
+> -			base + QUADSPI_MCR);
+> -
+> -	/* clear all interrupt status */
+> -	qspi_writel(q, 0xffffffff, q->iobase + QUADSPI_FR);
+> -
+> -	/* enable the interrupt */
+> -	qspi_writel(q, QUADSPI_RSER_TFIE, q->iobase + QUADSPI_RSER);
+> -
+> -	return 0;
+> -}
+> -
+> -static int fsl_qspi_nor_setup_last(struct fsl_qspi *q) -{
+> -	unsigned long rate =3D q->clk_rate;
+> -	int ret;
+> -
+> -	if (needs_4x_clock(q))
+> -		rate *=3D 4;
+> -
+> -	/* disable and unprepare clock to avoid glitch pass to controller */
+> -	fsl_qspi_clk_disable_unprep(q);
+> -
+> -	ret =3D clk_set_rate(q->clk, rate);
+> -	if (ret)
+> -		return ret;
+> -
+> -	ret =3D fsl_qspi_clk_prep_enable(q);
+> -	if (ret)
+> -		return ret;
+> -
+> -	/* Init the LUT table again. */
+> -	fsl_qspi_init_lut(q);
+> -
+> -	/* Init for AHB read */
+> -	return fsl_qspi_init_ahb_read(q);
+> -}
+> -
+> -static const struct of_device_id fsl_qspi_dt_ids[] =3D {
+> -	{ .compatible =3D "fsl,vf610-qspi", .data =3D &vybrid_data, },
+> -	{ .compatible =3D "fsl,imx6sx-qspi", .data =3D &imx6sx_data, },
+> -	{ .compatible =3D "fsl,imx7d-qspi", .data =3D &imx7d_data, },
+> -	{ .compatible =3D "fsl,imx6ul-qspi", .data =3D &imx6ul_data, },
+> -	{ .compatible =3D "fsl,ls1021a-qspi", .data =3D (void *)&ls1021a_data, =
+},
+> -	{ .compatible =3D "fsl,ls2080a-qspi", .data =3D &ls2080a_data, },
+> -	{ /* sentinel */ }
+> -};
+> -MODULE_DEVICE_TABLE(of, fsl_qspi_dt_ids);
+> -
+> -static void fsl_qspi_set_base_addr(struct fsl_qspi *q, struct spi_nor *n=
+or) -{
+> -	q->chip_base_addr =3D q->nor_size * (nor - q->nor);
+> -}
+> -
+> -static int fsl_qspi_read_reg(struct spi_nor *nor, u8 opcode, u8 *buf, in=
+t len)
+> -{
+> -	int ret;
+> -	struct fsl_qspi *q =3D nor->priv;
+> -
+> -	ret =3D fsl_qspi_runcmd(q, opcode, 0, len);
+> -	if (ret)
+> -		return ret;
+> -
+> -	fsl_qspi_read_data(q, len, buf);
+> -	return 0;
+> -}
+> -
+> -static int fsl_qspi_write_reg(struct spi_nor *nor, u8 opcode, u8 *buf, i=
+nt len)
+> -{
+> -	struct fsl_qspi *q =3D nor->priv;
+> -	int ret;
+> -
+> -	if (!buf) {
+> -		ret =3D fsl_qspi_runcmd(q, opcode, 0, 1);
+> -		if (ret)
+> -			return ret;
+> -
+> -		if (opcode =3D=3D SPINOR_OP_CHIP_ERASE)
+> -			fsl_qspi_invalid(q);
+> -
+> -	} else if (len > 0) {
+> -		ret =3D fsl_qspi_nor_write(q, nor, opcode, 0,
+> -					(u32 *)buf, len);
+> -		if (ret > 0)
+> -			return 0;
+> -	} else {
+> -		dev_err(q->dev, "invalid cmd %d\n", opcode);
+> -		ret =3D -EINVAL;
+> -	}
+> -
+> -	return ret;
+> -}
+> -
+> -static ssize_t fsl_qspi_write(struct spi_nor *nor, loff_t to,
+> -			      size_t len, const u_char *buf)
+> -{
+> -	struct fsl_qspi *q =3D nor->priv;
+> -	ssize_t ret =3D fsl_qspi_nor_write(q, nor, nor->program_opcode, to,
+> -					 (u32 *)buf, len);
+> -
+> -	/* invalid the data in the AHB buffer. */
+> -	fsl_qspi_invalid(q);
+> -	return ret;
+> -}
+> -
+> -static ssize_t fsl_qspi_read(struct spi_nor *nor, loff_t from,
+> -			     size_t len, u_char *buf)
+> -{
+> -	struct fsl_qspi *q =3D nor->priv;
+> -	u8 cmd =3D nor->read_opcode;
+> -
+> -	/* if necessary,ioremap buffer before AHB read, */
+> -	if (!q->ahb_addr) {
+> -		q->memmap_offs =3D q->chip_base_addr + from;
+> -		q->memmap_len =3D len > QUADSPI_MIN_IOMAP ? len :
+> QUADSPI_MIN_IOMAP;
+> -
+> -		q->ahb_addr =3D ioremap_nocache(
+> -				q->memmap_phy + q->memmap_offs,
+> -				q->memmap_len);
+> -		if (!q->ahb_addr) {
+> -			dev_err(q->dev, "ioremap failed\n");
+> -			return -ENOMEM;
+> -		}
+> -	/* ioremap if the data requested is out of range */
+> -	} else if (q->chip_base_addr + from < q->memmap_offs
+> -			|| q->chip_base_addr + from + len >
+> -			q->memmap_offs + q->memmap_len) {
+> -		iounmap(q->ahb_addr);
+> -
+> -		q->memmap_offs =3D q->chip_base_addr + from;
+> -		q->memmap_len =3D len > QUADSPI_MIN_IOMAP ? len :
+> QUADSPI_MIN_IOMAP;
+> -		q->ahb_addr =3D ioremap_nocache(
+> -				q->memmap_phy + q->memmap_offs,
+> -				q->memmap_len);
+> -		if (!q->ahb_addr) {
+> -			dev_err(q->dev, "ioremap failed\n");
+> -			return -ENOMEM;
+> -		}
+> -	}
+> -
+> -	dev_dbg(q->dev, "cmd [%x],read from %p, len:%zd\n",
+> -		cmd, q->ahb_addr + q->chip_base_addr + from - q-
+> >memmap_offs,
+> -		len);
+> -
+> -	/* Read out the data directly from the AHB buffer.*/
+> -	memcpy(buf, q->ahb_addr + q->chip_base_addr + from - q-
+> >memmap_offs,
+> -		len);
+> -
+> -	return len;
+> -}
+> -
+> -static int fsl_qspi_erase(struct spi_nor *nor, loff_t offs) -{
+> -	struct fsl_qspi *q =3D nor->priv;
+> -	int ret;
+> -
+> -	dev_dbg(nor->dev, "%dKiB at 0x%08x:0x%08x\n",
+> -		nor->mtd.erasesize / 1024, q->chip_base_addr, (u32)offs);
+> -
+> -	ret =3D fsl_qspi_runcmd(q, nor->erase_opcode, offs, 0);
+> -	if (ret)
+> -		return ret;
+> -
+> -	fsl_qspi_invalid(q);
+> -	return 0;
+> -}
+> -
+> -static int fsl_qspi_prep(struct spi_nor *nor, enum spi_nor_ops ops) -{
+> -	struct fsl_qspi *q =3D nor->priv;
+> -	int ret;
+> -
+> -	mutex_lock(&q->lock);
+> -
+> -	ret =3D fsl_qspi_clk_prep_enable(q);
+> -	if (ret)
+> -		goto err_mutex;
+> -
+> -	fsl_qspi_set_base_addr(q, nor);
+> -	return 0;
+> -
+> -err_mutex:
+> -	mutex_unlock(&q->lock);
+> -	return ret;
+> -}
+> -
+> -static void fsl_qspi_unprep(struct spi_nor *nor, enum spi_nor_ops ops) -=
+{
+> -	struct fsl_qspi *q =3D nor->priv;
+> -
+> -	fsl_qspi_clk_disable_unprep(q);
+> -	mutex_unlock(&q->lock);
+> -}
+> -
+> -static int fsl_qspi_probe(struct platform_device *pdev) -{
+> -	const struct spi_nor_hwcaps hwcaps =3D {
+> -		.mask =3D SNOR_HWCAPS_READ_1_1_4 |
+> -			SNOR_HWCAPS_PP,
+> -	};
+> -	struct device_node *np =3D pdev->dev.of_node;
+> -	struct device *dev =3D &pdev->dev;
+> -	struct fsl_qspi *q;
+> -	struct resource *res;
+> -	struct spi_nor *nor;
+> -	struct mtd_info *mtd;
+> -	int ret, i =3D 0;
+> -
+> -	q =3D devm_kzalloc(dev, sizeof(*q), GFP_KERNEL);
+> -	if (!q)
+> -		return -ENOMEM;
+> -
+> -	q->nor_num =3D of_get_child_count(dev->of_node);
+> -	if (!q->nor_num || q->nor_num > FSL_QSPI_MAX_CHIP)
+> -		return -ENODEV;
+> -
+> -	q->dev =3D dev;
+> -	q->devtype_data =3D of_device_get_match_data(dev);
+> -	if (!q->devtype_data)
+> -		return -ENODEV;
+> -	platform_set_drvdata(pdev, q);
+> -
+> -	/* find the resources */
+> -	res =3D platform_get_resource_byname(pdev, IORESOURCE_MEM,
+> "QuadSPI");
+> -	q->iobase =3D devm_ioremap_resource(dev, res);
+> -	if (IS_ERR(q->iobase))
+> -		return PTR_ERR(q->iobase);
+> -
+> -	q->big_endian =3D of_property_read_bool(np, "big-endian");
+> -	res =3D platform_get_resource_byname(pdev, IORESOURCE_MEM,
+> -					"QuadSPI-memory");
+> -	if (!devm_request_mem_region(dev, res->start, resource_size(res),
+> -				     res->name)) {
+> -		dev_err(dev, "can't request region for resource %pR\n", res);
+> -		return -EBUSY;
+> -	}
+> -
+> -	q->memmap_phy =3D res->start;
+> -
+> -	/* find the clocks */
+> -	q->clk_en =3D devm_clk_get(dev, "qspi_en");
+> -	if (IS_ERR(q->clk_en))
+> -		return PTR_ERR(q->clk_en);
+> -
+> -	q->clk =3D devm_clk_get(dev, "qspi");
+> -	if (IS_ERR(q->clk))
+> -		return PTR_ERR(q->clk);
+> -
+> -	ret =3D fsl_qspi_clk_prep_enable(q);
+> -	if (ret) {
+> -		dev_err(dev, "can not enable the clock\n");
+> -		goto clk_failed;
+> -	}
+> -
+> -	/* find the irq */
+> -	ret =3D platform_get_irq(pdev, 0);
+> -	if (ret < 0) {
+> -		dev_err(dev, "failed to get the irq: %d\n", ret);
+> -		goto irq_failed;
+> -	}
+> -
+> -	ret =3D devm_request_irq(dev, ret,
+> -			fsl_qspi_irq_handler, 0, pdev->name, q);
+> -	if (ret) {
+> -		dev_err(dev, "failed to request irq: %d\n", ret);
+> -		goto irq_failed;
+> -	}
+> -
+> -	ret =3D fsl_qspi_nor_setup(q);
+> -	if (ret)
+> -		goto irq_failed;
+> -
+> -	if (of_get_property(np, "fsl,qspi-has-second-chip", NULL))
+> -		q->has_second_chip =3D true;
+> -
+> -	mutex_init(&q->lock);
+> -
+> -	/* iterate the subnodes. */
+> -	for_each_available_child_of_node(dev->of_node, np) {
+> -		/* skip the holes */
+> -		if (!q->has_second_chip)
+> -			i *=3D 2;
+> -
+> -		nor =3D &q->nor[i];
+> -		mtd =3D &nor->mtd;
+> -
+> -		nor->dev =3D dev;
+> -		spi_nor_set_flash_node(nor, np);
+> -		nor->priv =3D q;
+> -
+> -		if (q->nor_num > 1 && !mtd->name) {
+> -			int spiflash_idx;
+> -
+> -			ret =3D of_property_read_u32(np, "reg", &spiflash_idx);
+> -			if (!ret) {
+> -				mtd->name =3D devm_kasprintf(dev,
+> GFP_KERNEL,
+> -							   "%s-%d",
+> -							   dev_name(dev),
+> -							   spiflash_idx);
+> -				if (!mtd->name) {
+> -					ret =3D -ENOMEM;
+> -					goto mutex_failed;
+> -				}
+> -			} else {
+> -				dev_warn(dev, "reg property is missing\n");
+> -			}
+> -		}
+> -
+> -		/* fill the hooks */
+> -		nor->read_reg =3D fsl_qspi_read_reg;
+> -		nor->write_reg =3D fsl_qspi_write_reg;
+> -		nor->read =3D fsl_qspi_read;
+> -		nor->write =3D fsl_qspi_write;
+> -		nor->erase =3D fsl_qspi_erase;
+> -
+> -		nor->prepare =3D fsl_qspi_prep;
+> -		nor->unprepare =3D fsl_qspi_unprep;
+> -
+> -		ret =3D of_property_read_u32(np, "spi-max-frequency",
+> -				&q->clk_rate);
+> -		if (ret < 0)
+> -			goto mutex_failed;
+> -
+> -		/* set the chip address for READID */
+> -		fsl_qspi_set_base_addr(q, nor);
+> -
+> -		ret =3D spi_nor_scan(nor, NULL, &hwcaps);
+> -		if (ret)
+> -			goto mutex_failed;
+> -
+> -		ret =3D mtd_device_register(mtd, NULL, 0);
+> -		if (ret)
+> -			goto mutex_failed;
+> -
+> -		/* Set the correct NOR size now. */
+> -		if (q->nor_size =3D=3D 0) {
+> -			q->nor_size =3D mtd->size;
+> -
+> -			/* Map the SPI NOR to accessiable address */
+> -			fsl_qspi_set_map_addr(q);
+> -		}
+> -
+> -		/*
+> -		 * The TX FIFO is 64 bytes in the Vybrid, but the Page Program
+> -		 * may writes 265 bytes per time. The write is working in the
+> -		 * unit of the TX FIFO, not in the unit of the SPI NOR's page
+> -		 * size.
+> -		 *
+> -		 * So shrink the spi_nor->page_size if it is larger then the
+> -		 * TX FIFO.
+> -		 */
+> -		if (nor->page_size > q->devtype_data->txfifo)
+> -			nor->page_size =3D q->devtype_data->txfifo;
+> -
+> -		i++;
+> -	}
+> -
+> -	/* finish the rest init. */
+> -	ret =3D fsl_qspi_nor_setup_last(q);
+> -	if (ret)
+> -		goto last_init_failed;
+> -
+> -	fsl_qspi_clk_disable_unprep(q);
+> -	return 0;
+> -
+> -last_init_failed:
+> -	for (i =3D 0; i < q->nor_num; i++) {
+> -		/* skip the holes */
+> -		if (!q->has_second_chip)
+> -			i *=3D 2;
+> -		mtd_device_unregister(&q->nor[i].mtd);
+> -	}
+> -mutex_failed:
+> -	mutex_destroy(&q->lock);
+> -irq_failed:
+> -	fsl_qspi_clk_disable_unprep(q);
+> -clk_failed:
+> -	dev_err(dev, "Freescale QuadSPI probe failed\n");
+> -	return ret;
+> -}
+> -
+> -static int fsl_qspi_remove(struct platform_device *pdev) -{
+> -	struct fsl_qspi *q =3D platform_get_drvdata(pdev);
+> -	int i;
+> -
+> -	for (i =3D 0; i < q->nor_num; i++) {
+> -		/* skip the holes */
+> -		if (!q->has_second_chip)
+> -			i *=3D 2;
+> -		mtd_device_unregister(&q->nor[i].mtd);
+> -	}
+> -
+> -	/* disable the hardware */
+> -	qspi_writel(q, QUADSPI_MCR_MDIS_MASK, q->iobase +
+> QUADSPI_MCR);
+> -	qspi_writel(q, 0x0, q->iobase + QUADSPI_RSER);
+> -
+> -	mutex_destroy(&q->lock);
+> -
+> -	if (q->ahb_addr)
+> -		iounmap(q->ahb_addr);
+> -
+> -	return 0;
+> -}
+> -
+> -static int fsl_qspi_suspend(struct platform_device *pdev, pm_message_t
+> state) -{
+> -	return 0;
+> -}
+> -
+> -static int fsl_qspi_resume(struct platform_device *pdev) -{
+> -	int ret;
+> -	struct fsl_qspi *q =3D platform_get_drvdata(pdev);
+> -
+> -	ret =3D fsl_qspi_clk_prep_enable(q);
+> -	if (ret)
+> -		return ret;
+> -
+> -	fsl_qspi_nor_setup(q);
+> -	fsl_qspi_set_map_addr(q);
+> -	fsl_qspi_nor_setup_last(q);
+> -
+> -	fsl_qspi_clk_disable_unprep(q);
+> -
+> -	return 0;
+> -}
+> -
+> -static struct platform_driver fsl_qspi_driver =3D {
+> -	.driver =3D {
+> -		.name	=3D "fsl-quadspi",
+> -		.of_match_table =3D fsl_qspi_dt_ids,
+> -	},
+> -	.probe          =3D fsl_qspi_probe,
+> -	.remove		=3D fsl_qspi_remove,
+> -	.suspend	=3D fsl_qspi_suspend,
+> -	.resume		=3D fsl_qspi_resume,
+> -};
+> -module_platform_driver(fsl_qspi_driver);
+> -
+> -MODULE_DESCRIPTION("Freescale QuadSPI Controller Driver"); -
+> MODULE_AUTHOR("Freescale Semiconductor Inc."); -MODULE_LICENSE("GPL
+> v2");
+> --
+> 2.7.4
 
-kernel: BUG: unable to handle kernel paging request at 00000036000000b6
-kernel: PGD 0 P4D 0
-kernel: Oops: 0000 [#1] SMP NOPTI
-kernel: CPU: 0 PID: 108 Comm: kworker/0:3 Not tainted
-4.19.8-300.fc29.x86_64 #1
-kernel: Hardware name: Hewlett-Packard HP Compaq 6715b/30C2, BIOS 68YTT
-Ver. F.07 07/16/2007
-kernel: Workqueue: events work_for_cpu_fn
-kernel: RIP: 0010:acpi_ns_build_normalized_path+0x76/0x108
-kernel: Code: 31 c0 48 85 ff 74 de 31 d2 49 89 f8 31 c0 4c 39 05 ff 5b
-57 01 74 61 4c 39 c7 74 0e 39 c2 76 08 41 89 c1 42 c6 04 0e 2e ff c0
-<45> 8b 48 0c 41 89 ca 44 89 4c 24 04 45 31 c9 46 8a 5c 0c 07 45 84
-kernel: RSP: 0018:ffffb68740a1fce0 EFLAGS: 00010207
-kernel: RAX: 000000000000000a RBX: 0000000000000001 RCX: 0000000000000001
-kernel: RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff9dd2360e7168
-kernel: RBP: 0000000000000000 R08: 00000036000000aa R09: fffffffffffffffc
-kernel: R10: 0000000000000000 R11: 00000000000000d2 R12: 0000000000008200
-kernel: R13: ffff9dd2360e7168 R14: ffff9dd2706980c0 R15: 0000000000000001
-kernel: FS:  0000000000000000(0000) GS:ffff9dd275c00000(0000)
-knlGS:0000000000000000
-kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-kernel: CR2: 00000036000000b6 CR3: 000000007137e000 CR4: 00000000000006f0
-kernel: Call Trace:
-kernel:  acpi_ns_get_normalized_pathname+0x1f/0x6d
-kernel:  acpi_ut_check_address_range+0x8f/0x118
-kernel:  acpi_check_address_range+0x40/0x59
-kernel:  acpi_check_resource_conflict+0x3a/0x50
-kernel:  acpi_check_region+0x61/0x80
-kernel:  piix4_probe+0x144/0x658 [i2c_piix4]
-kernel:  local_pci_probe+0x41/0x90
-kernel:  work_for_cpu_fn+0x16/0x20
-kernel:  process_one_work+0x1a1/0x3a0
-kernel:  worker_thread+0x30/0x380
-kernel:  ? pwq_unbound_release_workfn+0xd0/0xd0
-kernel:  kthread+0x112/0x130
-kernel:  ? kthread_create_worker_on_cpu+0x70/0x70
-kernel:  ret_from_fork+0x35/0x40
-kernel: Modules linked in: i2c_piix4(+) parport_pc wmi tpm_infineon
-parport ssb hp_accel lis3lv02d mmc_core input_polldev video radeon
-i2c_algo_bit drm_kms_helper ttm drm firewire_ohci firewire_core
-ata_generic serio_raw pata_acpi yenta_socket crc_itu_t pata_atiixp
-kernel: CR2: 00000036000000b6
-kernel: ---[ end trace 9c88eedaaeca7db0 ]---
+Acked-by: Han Xu <han.xu@nxp.com>
+Tested-by: Han Xu <han.xu@nxp.com>
 
-I reverted this patch on v4.19.8 and at least one user (Michael, Cc'd)
-reported that fixed the regression.
-
-This patch appears to have been included in v4.19.2 (commit
-22083c028d0b), reverted in v4.19.3 (commit 8ef305fbc50d), and finally
-included again here in v4.19.6 (commit 87403e35bc56). I couldn't find
-a discussion about bringing it back, so maybe it happened accidentally?
-
-[0] https://bugzilla.redhat.com/show_bug.cgi?id=1659225
-
-Thanks,
-Jeremy
