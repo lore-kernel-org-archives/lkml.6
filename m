@@ -7,50 +7,51 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D519C6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:19:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 442F2C6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:19:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D67072133F
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:19:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0BB9A2133F
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:19:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544789973;
-	bh=tdAYjcwV+RRZH+GLbGf72zdMqd6KGumyuZoZEKo/Yu0=;
+	s=default; t=1544789985;
+	bh=t75Jcd4Wz8tnb2tPUBT/NfzroOV0f4XScYArbR+riSc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=tx/jWVg70AYjTD2hctLt72NrtARXO5J3UhOBtxaivKZ9EfFZxcfCPlpO6IRg+FI7h
-	 Zp1SRPnrcg2O9bGIr4ZhCsqQm9iRNWs+hVEPNJibtBJP7b2+xYiDKEPtrWmxodAXKh
-	 veI6dGXuOQWMWR4SHhxoyq9yjyNh17Io9+5hRrtU=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D67072133F
+	b=PXXKxYNN3tJ2fuFIh54XAr64LKfmIkVTpgIRcbXZHtnW9zDy0HkXhCj1Cizx9U+dj
+	 iUuR4ovznkR6iXsDw0s/aLqsXHX/Z18qGDjTnnQGTgMOus74Ar6DisW3sfGyA8gO5P
+	 mH4Vty3wellH35bE/2pWbdO8YeyuGBWFfKWS+OBA=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BB9A2133F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732801AbeLNMTb (ORCPT
+        id S1732533AbeLNMTn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:19:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35870 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:19:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35718 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732633AbeLNMPt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:15:49 -0500
+        id S1732612AbeLNMPl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:15:41 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C24D721486;
-        Fri, 14 Dec 2018 12:15:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4553D214AE;
+        Fri, 14 Dec 2018 12:15:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789748;
-        bh=tdAYjcwV+RRZH+GLbGf72zdMqd6KGumyuZoZEKo/Yu0=;
+        s=default; t=1544789740;
+        bh=t75Jcd4Wz8tnb2tPUBT/NfzroOV0f4XScYArbR+riSc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sNevtD7dYEC660jdIoVi9V3W1vLJl46S1S8NIIESbvnIInHKYoB2/uKYayTiZOrFI
-         ZufFDQC1G1lo2Up4PEj6lXAPvq51i+iz3gx1DldB1cy2o5Y/DLCy3TFBQI15caYz6a
-         90pMpa8WUKl87w//zK0e0epw89LDPTDdCNJCJJ+0=
+        b=KSb+XT0ciZjCZM6/nV6K15CJnz5H9tjZ5ELX4IUfL+xCzFT6K5cb4/K492vFSCAGr
+         BEw4WqKzbpzZcAwbepqVzUwOR8+owzz8RcT8pPRNqvWDdSfq6SXPpTKuTmQVA6qUyF
+         /KGeZkHAtuFRusqNIEgE+ml/28JzLvJcHcnj3DOo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, NeilBrown <neilb@suse.com>,
-        David Howells <dhowells@redhat.com>,
+        stable@vger.kernel.org, Stefan Hajnoczi <stefanha@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 32/88] fscache: fix race between enablement and dropping of object
-Date:   Fri, 14 Dec 2018 13:00:06 +0100
-Message-Id: <20181214115704.790693902@linuxfoundation.org>
+Subject: [PATCH 4.4 39/88] pstore: Convert console write to use ->write_buf
+Date:   Fri, 14 Dec 2018 13:00:13 +0100
+Message-Id: <20181214115705.420157175@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115702.151309521@linuxfoundation.org>
 References: <20181214115702.151309521@linuxfoundation.org>
@@ -69,72 +70,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit c5a94f434c82529afda290df3235e4d85873c5b4 ]
+[ Upstream commit 70ad35db3321a6d129245979de4ac9d06eed897c ]
 
-It was observed that a process blocked indefintely in
-__fscache_read_or_alloc_page(), waiting for FSCACHE_COOKIE_LOOKING_UP
-to be cleared via fscache_wait_for_deferred_lookup().
+Maybe I'm missing something, but I don't know why it needs to copy the
+input buffer to psinfo->buf and then write.  Instead we can write the
+input buffer directly.  The only implementation that supports console
+message (i.e. ramoops) already does it for ftrace messages.
 
-At this time, ->backing_objects was empty, which would normaly prevent
-__fscache_read_or_alloc_page() from getting to the point of waiting.
-This implies that ->backing_objects was cleared *after*
-__fscache_read_or_alloc_page was was entered.
+For the upcoming virtio backend driver, it needs to protect psinfo->buf
+overwritten from console messages.  If it could use ->write_buf method
+instead of ->write, the problem will be solved easily.
 
-When an object is "killed" and then "dropped",
-FSCACHE_COOKIE_LOOKING_UP is cleared in fscache_lookup_failure(), then
-KILL_OBJECT and DROP_OBJECT are "called" and only in DROP_OBJECT is
-->backing_objects cleared.  This leaves a window where
-something else can set FSCACHE_COOKIE_LOOKING_UP and
-__fscache_read_or_alloc_page() can start waiting, before
-->backing_objects is cleared
-
-There is some uncertainty in this analysis, but it seems to be fit the
-observations.  Adding the wake in this patch will be handled correctly
-by __fscache_read_or_alloc_page(), as it checks if ->backing_objects
-is empty again, after waiting.
-
-Customer which reported the hang, also report that the hang cannot be
-reproduced with this fix.
-
-The backtrace for the blocked process looked like:
-
-PID: 29360  TASK: ffff881ff2ac0f80  CPU: 3   COMMAND: "zsh"
- #0 [ffff881ff43efbf8] schedule at ffffffff815e56f1
- #1 [ffff881ff43efc58] bit_wait at ffffffff815e64ed
- #2 [ffff881ff43efc68] __wait_on_bit at ffffffff815e61b8
- #3 [ffff881ff43efca0] out_of_line_wait_on_bit at ffffffff815e625e
- #4 [ffff881ff43efd08] fscache_wait_for_deferred_lookup at ffffffffa04f2e8f [fscache]
- #5 [ffff881ff43efd18] __fscache_read_or_alloc_page at ffffffffa04f2ffe [fscache]
- #6 [ffff881ff43efd58] __nfs_readpage_from_fscache at ffffffffa0679668 [nfs]
- #7 [ffff881ff43efd78] nfs_readpage at ffffffffa067092b [nfs]
- #8 [ffff881ff43efda0] generic_file_read_iter at ffffffff81187a73
- #9 [ffff881ff43efe50] nfs_file_read at ffffffffa066544b [nfs]
-#10 [ffff881ff43efe70] __vfs_read at ffffffff811fc756
-#11 [ffff881ff43efee8] vfs_read at ffffffff811fccfa
-#12 [ffff881ff43eff18] sys_read at ffffffff811fda62
-#13 [ffff881ff43eff50] entry_SYSCALL_64_fastpath at ffffffff815e986e
-
-Signed-off-by: NeilBrown <neilb@suse.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
+Cc: Stefan Hajnoczi <stefanha@redhat.com>
+Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+Signed-off-by: Kees Cook <keescook@chromium.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/fscache/object.c | 3 +++
- 1 file changed, 3 insertions(+)
+ fs/pstore/platform.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/fscache/object.c b/fs/fscache/object.c
-index 7a182c87f378..ab1d7f35f6c2 100644
---- a/fs/fscache/object.c
-+++ b/fs/fscache/object.c
-@@ -715,6 +715,9 @@ static const struct fscache_state *fscache_drop_object(struct fscache_object *ob
- 
- 	if (awaken)
- 		wake_up_bit(&cookie->flags, FSCACHE_COOKIE_INVALIDATING);
-+	if (test_and_clear_bit(FSCACHE_COOKIE_LOOKING_UP, &cookie->flags))
-+		wake_up_bit(&cookie->flags, FSCACHE_COOKIE_LOOKING_UP);
-+
- 
- 	/* Prevent a race with our last child, which has to signal EV_CLEARED
- 	 * before dropping our spinlock.
+diff --git a/fs/pstore/platform.c b/fs/pstore/platform.c
+index 588461bb2dd4..e97e7d74e134 100644
+--- a/fs/pstore/platform.c
++++ b/fs/pstore/platform.c
+@@ -392,8 +392,8 @@ static void pstore_console_write(struct console *con, const char *s, unsigned c)
+ 		} else {
+ 			spin_lock_irqsave(&psinfo->buf_lock, flags);
+ 		}
+-		memcpy(psinfo->buf, s, c);
+-		psinfo->write(PSTORE_TYPE_CONSOLE, 0, &id, 0, 0, 0, c, psinfo);
++		psinfo->write_buf(PSTORE_TYPE_CONSOLE, 0, &id, 0,
++				  s, 0, c, psinfo);
+ 		spin_unlock_irqrestore(&psinfo->buf_lock, flags);
+ 		s += c;
+ 		c = e - s;
 -- 
 2.19.1
 
