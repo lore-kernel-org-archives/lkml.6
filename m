@@ -2,55 +2,61 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BCAAC6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:24:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DA56C6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:24:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4188221473
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:24:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E53D020879
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:24:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544790261;
-	bh=SFyOMnrpJRRej8iGYJzSEjQkNY17opt/5SqP/mn+BNg=;
+	s=default; t=1544790271;
+	bh=ywSiPdb7y3qGEOA3G0L8r97mpbU5vnycsg1hgKr6cMU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=mTENImgmXuYYTyMX1PVLRVSUo+DYPn1jYU+GELc7G1jE5NYB0p5fQZW4HIF+yXSi6
-	 iBhl14J9lmPj+8KyPiCL4sQbFCsFvr+sellzH0hhTABwtYueX5XsYqXNVUBXeKe1Oo
-	 ypzs58yT29RHoiZ7QQqhIwtuLMW42sSPcDm/nZF8=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4188221473
+	b=aHL8qMoaPSUN3zL4q5qi/KCfu7T9Su6Lt8MqZo5QW1kHjL4rRFovxh5EArMVvEngS
+	 PvmqDTdNJ5VuMYkmaLqjdkxDOIDGQ3WLqGKv/TMwmDN04a0XAKUkK2oKBAWy4n9oAZ
+	 iYW7Z1IN7t9HxGsz5rGRWoocfnWVhp9z5r+oMhWQ=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E53D020879
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732069AbeLNMNJ (ORCPT
+        id S1731923AbeLNMYa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:13:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60556 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:24:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60486 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732052AbeLNMNF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:13:05 -0500
+        id S1731824AbeLNMND (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:13:03 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7D67A2133F;
-        Fri, 14 Dec 2018 12:13:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BB69720892;
+        Fri, 14 Dec 2018 12:13:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789585;
-        bh=SFyOMnrpJRRej8iGYJzSEjQkNY17opt/5SqP/mn+BNg=;
+        s=default; t=1544789582;
+        bh=ywSiPdb7y3qGEOA3G0L8r97mpbU5vnycsg1hgKr6cMU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RdDEziSsPIUF8Jk3QG/+uIzzxl9VRhW3bj2vC/PQHldNXGkVm7NoJaWlvcaGW+S7u
-         CKFPEvvK90b3kexlAz8Ld72V18VHSTQaueFpSYKLe41Cr2nGSnxt8OCHmxkaJiGdP5
-         g4pkQ3mF5FHDYKiw7H3q/Wv/v86XddPLB7fiRVX4=
+        b=sb2IUPKPCC/1FKfZ1Eaw3oN4UezavtOsm7XCbCrgD1nB2WPDsntnCDFkSUVmbgCEJ
+         UmTv4Mvq/0kZKRZJcrT8Sq0iHGDWD4cNHqbvZYJVVSmTWlzzFq1TTg8u44K5cPAlUX
+         SDsxsc+5U2QLENufgZHWSJMhmx//9xiMDCimnU3I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stefan Hajnoczi <stefanha@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
+        stable@vger.kernel.org, Pan Bian <bianpan2016@163.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mark Fasheh <mark@fasheh.com>,
+        Joel Becker <jlbec@evilplan.org>,
+        Junxiao Bi <junxiao.bi@oracle.com>,
+        Joseph Qi <jiangqi903@gmail.com>,
+        Changwei Ge <ge.changwei@h3c.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 50/51] pstore: Convert console write to use ->write_buf
-Date:   Fri, 14 Dec 2018 13:00:52 +0100
-Message-Id: <20181214115717.488579918@linuxfoundation.org>
+Subject: [PATCH 4.9 49/51] ocfs2: fix potential use after free
+Date:   Fri, 14 Dec 2018 13:00:51 +0100
+Message-Id: <20181214115717.404457127@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115713.244259772@linuxfoundation.org>
 References: <20181214115713.244259772@linuxfoundation.org>
@@ -69,37 +75,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 70ad35db3321a6d129245979de4ac9d06eed897c ]
+[ Upstream commit 164f7e586739d07eb56af6f6d66acebb11f315c8 ]
 
-Maybe I'm missing something, but I don't know why it needs to copy the
-input buffer to psinfo->buf and then write.  Instead we can write the
-input buffer directly.  The only implementation that supports console
-message (i.e. ramoops) already does it for ftrace messages.
+ocfs2_get_dentry() calls iput(inode) to drop the reference count of
+inode, and if the reference count hits 0, inode is freed.  However, in
+this function, it then reads inode->i_generation, which may result in a
+use after free bug.  Move the put operation later.
 
-For the upcoming virtio backend driver, it needs to protect psinfo->buf
-overwritten from console messages.  If it could use ->write_buf method
-instead of ->write, the problem will be solved easily.
-
-Cc: Stefan Hajnoczi <stefanha@redhat.com>
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-Signed-off-by: Kees Cook <keescook@chromium.org>
+Link: http://lkml.kernel.org/r/1543109237-110227-1-git-send-email-bianpan2016@163.com
+Fixes: 781f200cb7a("ocfs2: Remove masklog ML_EXPORT.")
+Signed-off-by: Pan Bian <bianpan2016@163.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Mark Fasheh <mark@fasheh.com>
+Cc: Joel Becker <jlbec@evilplan.org>
+Cc: Junxiao Bi <junxiao.bi@oracle.com>
+Cc: Joseph Qi <jiangqi903@gmail.com>
+Cc: Changwei Ge <ge.changwei@h3c.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/pstore/platform.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/ocfs2/export.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/pstore/platform.c
-+++ b/fs/pstore/platform.c
-@@ -584,8 +584,8 @@ static void pstore_console_write(struct
- 		} else {
- 			spin_lock_irqsave(&psinfo->buf_lock, flags);
- 		}
--		memcpy(psinfo->buf, s, c);
--		psinfo->write(PSTORE_TYPE_CONSOLE, 0, &id, 0, 0, 0, c, psinfo);
-+		psinfo->write_buf(PSTORE_TYPE_CONSOLE, 0, &id, 0,
-+				  s, 0, c, psinfo);
- 		spin_unlock_irqrestore(&psinfo->buf_lock, flags);
- 		s += c;
- 		c = e - s;
+diff --git a/fs/ocfs2/export.c b/fs/ocfs2/export.c
+index 827fc9809bc2..3494e220b510 100644
+--- a/fs/ocfs2/export.c
++++ b/fs/ocfs2/export.c
+@@ -125,10 +125,10 @@ static struct dentry *ocfs2_get_dentry(struct super_block *sb,
+ 
+ check_gen:
+ 	if (handle->ih_generation != inode->i_generation) {
+-		iput(inode);
+ 		trace_ocfs2_get_dentry_generation((unsigned long long)blkno,
+ 						  handle->ih_generation,
+ 						  inode->i_generation);
++		iput(inode);
+ 		result = ERR_PTR(-ESTALE);
+ 		goto bail;
+ 	}
+-- 
+2.19.1
+
 
 
