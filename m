@@ -7,50 +7,50 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4841CC67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:09:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF68DC67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:09:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B00B214C4
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:09:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 853782148E
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:09:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544789344;
-	bh=nxLt1qhzdrOos9KEybKJSv/2Mw0VmNxL0QbE+NoW2Fg=;
+	s=default; t=1544789347;
+	bh=ur/ktd4gcC+cXWxuT76veWkRBqKUPxPxHXuTfnDsFsI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=mczuZ6f6FWoGbNwYQIGKDO+dNsq1fYHnbi/6btlDJoGe1+oJLQK/HIGuOULN3OleA
-	 3aKdFiz2w9lWRkcfxZU1l8TB7JATdw6iEkf8nfkRAoThj8ZCXaJzHz6TzcCSRT1B1m
-	 1lankxXz48hCXmQD1cc40aGrIoTpd/kg7zLC6QyE=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B00B214C4
+	b=HUdt8Q/wwa+Aw+7VUoL0bp24Gji2twjS8zfpx0WEzG3p/qbNyG0Jf+W9dtdRUICEJ
+	 pkqn7t5NxT4YOjrZMUDtk6a9HTadvC4zXcho0NovdS5CfkdQXuH46UGbpJangyiKXP
+	 Y0FSZKld/3sOEYRRB1Mu9wneFhKDCyv9hMOWbWxM=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 853782148E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731390AbeLNMJC (ORCPT
+        id S1731393AbeLNMJG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:09:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54524 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:09:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54582 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730560AbeLNMI4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:08:56 -0500
+        id S1731376AbeLNMJA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:09:00 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CE6682147D;
-        Fri, 14 Dec 2018 12:08:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 568352148E;
+        Fri, 14 Dec 2018 12:08:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789336;
-        bh=nxLt1qhzdrOos9KEybKJSv/2Mw0VmNxL0QbE+NoW2Fg=;
+        s=default; t=1544789338;
+        bh=ur/ktd4gcC+cXWxuT76veWkRBqKUPxPxHXuTfnDsFsI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jWDRScGXtKF8jlUuvc/oB2f+3cGGI/3Ty7VT4HvFu2odT4/ktfXQSQrlC5S41LFKZ
-         M029wkgOXtCLXqM9qbAw+M7LnQPprHCj2qqGW+tWDKsh2VBjdqSeXYPW41B9SVXqdV
-         4lDFaic/XB5+He1IYxylLcao6qeB9La/c0RZqdYk=
+        b=b82rqof/yOg/YWvh6+pCZ70Wb7GDgLRIIgtKxoMPsXvhPhsRe+UAi0aP1Rr2tPRis
+         Or9Sb7oKQT0xP4c+7rrGO3jiDkRk8MmOfttedn42LuoxmHTXDDrabB5OugCx8XILYT
+         sQd5Ftt1aynTM/kuvBTnfqUazNpfwvyAC+JeeC8A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
+        stable@vger.kernel.org, Florian Westphal <fw@strlen.de>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 21/89] sysv: return err instead of 0 in __sysv_write_inode
-Date:   Fri, 14 Dec 2018 12:59:34 +0100
-Message-Id: <20181214115730.721891833@linuxfoundation.org>
+Subject: [PATCH 4.14 22/89] selftests: add script to stress-test nft packet path vs. control plane
+Date:   Fri, 14 Dec 2018 12:59:35 +0100
+Message-Id: <20181214115730.768087700@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115729.658859279@linuxfoundation.org>
 References: <20181214115729.658859279@linuxfoundation.org>
@@ -69,37 +69,147 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit c4b7d1ba7d263b74bb72e9325262a67139605cde ]
+[ Upstream commit 25d8bcedbf4329895dbaf9dd67baa6f18dad918c ]
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+Start flood ping for each cpu while loading/flushing rulesets to make
+sure we do not access already-free'd rules from nf_tables evaluation loop.
 
-fs/sysv/inode.c: In function '__sysv_write_inode':
-fs/sysv/inode.c:239:6: warning:
- variable 'err' set but not used [-Wunused-but-set-variable]
+Also add this to TARGETS so 'make run_tests' in selftest dir runs it
+automatically.
 
-__sysv_write_inode should return 'err' instead of 0
+This would have caught the bug fixed in previous change
+("netfilter: nf_tables: do not skip inactive chains during generation update")
+sooner.
 
-Fixes: 05459ca81ac3 ("repair sysv_write_inode(), switch sysv to simple_fsync()")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/sysv/inode.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/testing/selftests/Makefile              |  1 +
+ tools/testing/selftests/netfilter/Makefile    |  6 ++
+ tools/testing/selftests/netfilter/config      |  2 +
+ .../selftests/netfilter/nft_trans_stress.sh   | 78 +++++++++++++++++++
+ 4 files changed, 87 insertions(+)
+ create mode 100644 tools/testing/selftests/netfilter/Makefile
+ create mode 100644 tools/testing/selftests/netfilter/config
+ create mode 100755 tools/testing/selftests/netfilter/nft_trans_stress.sh
 
-diff --git a/fs/sysv/inode.c b/fs/sysv/inode.c
-index 3c47b7d5d4cf..9e0874d1524c 100644
---- a/fs/sysv/inode.c
-+++ b/fs/sysv/inode.c
-@@ -275,7 +275,7 @@ static int __sysv_write_inode(struct inode *inode, int wait)
-                 }
-         }
- 	brelse(bh);
--	return 0;
-+	return err;
- }
- 
- int sysv_write_inode(struct inode *inode, struct writeback_control *wbc)
+diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
+index ea300e7818a7..10b89f5b9af7 100644
+--- a/tools/testing/selftests/Makefile
++++ b/tools/testing/selftests/Makefile
+@@ -20,6 +20,7 @@ TARGETS += memory-hotplug
+ TARGETS += mount
+ TARGETS += mqueue
+ TARGETS += net
++TARGETS += netfilter
+ TARGETS += nsfs
+ TARGETS += powerpc
+ TARGETS += pstore
+diff --git a/tools/testing/selftests/netfilter/Makefile b/tools/testing/selftests/netfilter/Makefile
+new file mode 100644
+index 000000000000..47ed6cef93fb
+--- /dev/null
++++ b/tools/testing/selftests/netfilter/Makefile
+@@ -0,0 +1,6 @@
++# SPDX-License-Identifier: GPL-2.0
++# Makefile for netfilter selftests
++
++TEST_PROGS := nft_trans_stress.sh
++
++include ../lib.mk
+diff --git a/tools/testing/selftests/netfilter/config b/tools/testing/selftests/netfilter/config
+new file mode 100644
+index 000000000000..1017313e41a8
+--- /dev/null
++++ b/tools/testing/selftests/netfilter/config
+@@ -0,0 +1,2 @@
++CONFIG_NET_NS=y
++NF_TABLES_INET=y
+diff --git a/tools/testing/selftests/netfilter/nft_trans_stress.sh b/tools/testing/selftests/netfilter/nft_trans_stress.sh
+new file mode 100755
+index 000000000000..f1affd12c4b1
+--- /dev/null
++++ b/tools/testing/selftests/netfilter/nft_trans_stress.sh
+@@ -0,0 +1,78 @@
++#!/bin/bash
++#
++# This test is for stress-testing the nf_tables config plane path vs.
++# packet path processing: Make sure we never release rules that are
++# still visible to other cpus.
++#
++# set -e
++
++# Kselftest framework requirement - SKIP code is 4.
++ksft_skip=4
++
++testns=testns1
++tables="foo bar baz quux"
++
++nft --version > /dev/null 2>&1
++if [ $? -ne 0 ];then
++	echo "SKIP: Could not run test without nft tool"
++	exit $ksft_skip
++fi
++
++ip -Version > /dev/null 2>&1
++if [ $? -ne 0 ];then
++	echo "SKIP: Could not run test without ip tool"
++	exit $ksft_skip
++fi
++
++tmp=$(mktemp)
++
++for table in $tables; do
++	echo add table inet "$table" >> "$tmp"
++	echo flush table inet "$table" >> "$tmp"
++
++	echo "add chain inet $table INPUT { type filter hook input priority 0; }" >> "$tmp"
++	echo "add chain inet $table OUTPUT { type filter hook output priority 0; }" >> "$tmp"
++	for c in $(seq 1 400); do
++		chain=$(printf "chain%03u" "$c")
++		echo "add chain inet $table $chain" >> "$tmp"
++	done
++
++	for c in $(seq 1 400); do
++		chain=$(printf "chain%03u" "$c")
++		for BASE in INPUT OUTPUT; do
++			echo "add rule inet $table $BASE counter jump $chain" >> "$tmp"
++		done
++		echo "add rule inet $table $chain counter return" >> "$tmp"
++	done
++done
++
++ip netns add "$testns"
++ip -netns "$testns" link set lo up
++
++lscpu | grep ^CPU\(s\): | ( read cpu cpunum ;
++cpunum=$((cpunum-1))
++for i in $(seq 0 $cpunum);do
++	mask=$(printf 0x%x $((1<<$i)))
++        ip netns exec "$testns" taskset $mask ping -4 127.0.0.1 -fq > /dev/null &
++        ip netns exec "$testns" taskset $mask ping -6 ::1 -fq > /dev/null &
++done)
++
++sleep 1
++
++for i in $(seq 1 10) ; do ip netns exec "$testns" nft -f "$tmp" & done
++
++for table in $tables;do
++	randsleep=$((RANDOM%10))
++	sleep $randsleep
++	ip netns exec "$testns" nft delete table inet $table 2>/dev/null
++done
++
++randsleep=$((RANDOM%10))
++sleep $randsleep
++
++pkill -9 ping
++
++wait
++
++rm -f "$tmp"
++ip netns del "$testns"
 -- 
 2.19.1
 
