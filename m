@@ -6,56 +6,49 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C09EC6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:06:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC376C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:06:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5FF4B21479
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:06:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9197C21486
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:06:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544789206;
-	bh=ZE7nbhjTofNuXNdZQ7JCeevw9+3jJetsPmwLZJw7sXs=;
+	s=default; t=1544789209;
+	bh=N0CWDW7V7bhu2+zhcIYgw915OzEQrA/J/7TLfYClBA0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=pOF96DVb2HEA9aZwVhNvtJrD0JV0EBWeiHkBgYhha/oRLe5wpw6MgW4zAPMbf0rEQ
-	 VjygU0oWa/KQp31snjzFq5I89q2sGFhc6m5J8/qZAMtyesSVe06T9udmdtnA7VFauA
-	 lZZzDFr+TN+MwpmRBXp0alBFwKmO8Dkcae9Hzdkg=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FF4B21479
+	b=E2Vaors5QyruVh42i7KRhHa+5eHPRIcS85CkVvFvnmxZXmKdHbGGYb2y46YkmvLSx
+	 BvO6wFrTAbP45hz1OLDms7wBjC8ZlNN/kY4r3GR8BpAV3aIkUW4onrhvpH5by5mSqX
+	 zpz/KXJvXTnW0hHZRw6ocTws4xP2FYPIIBIwKP38=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9197C21486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730981AbeLNMGp (ORCPT
+        id S1730989AbeLNMGs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:06:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51712 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:06:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51890 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730953AbeLNMGh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:06:37 -0500
+        id S1730977AbeLNMGp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:06:45 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4497B21479;
-        Fri, 14 Dec 2018 12:06:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E1C3621486;
+        Fri, 14 Dec 2018 12:06:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789196;
-        bh=ZE7nbhjTofNuXNdZQ7JCeevw9+3jJetsPmwLZJw7sXs=;
+        s=default; t=1544789204;
+        bh=N0CWDW7V7bhu2+zhcIYgw915OzEQrA/J/7TLfYClBA0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aPmbNpfWIwn9ovSU6izlXREwMg6xFT7TlW3ZGTHIguPUVHDI8m+5HGUTbfZPBSRuX
-         sV8YAqX+NUCmi3sb/vuHp4Es+O6BOhuMOGAjs3jXt06ya3QN01vtykg+eo8LORQU1n
-         2AKHm9+7BKS/Pwylh+ENSinnHqJyJG4cjqMSAcVo=
+        b=wVsaZ3vch4l/AywxpNfHbgRqdS/kY8qtQQeAKJexZ/ucxRxhs76iJJO1pljyMXbDX
+         lZB5/Qz7qP+U4XddBKVBLKa4nDeqEYJUOQUzHalV7MX7i6goZlh6LIckwfzJSY5VEi
+         Vp9uTv1GOA2mne8R+pikHG92H7uYTpsozw/Oqi2c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pan Bian <bianpan2016@163.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Junxiao Bi <junxiao.bi@oracle.com>,
-        Joseph Qi <jiangqi903@gmail.com>,
-        Changwei Ge <ge.changwei@h3c.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 132/142] ocfs2: fix potential use after free
-Date:   Fri, 14 Dec 2018 13:00:17 +0100
-Message-Id: <20181214115752.319078972@linuxfoundation.org>
+        stable@vger.kernel.org, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.19 135/142] ALSA: fireface: fix reference to wrong register for clock configuration
+Date:   Fri, 14 Dec 2018 13:00:20 +0100
+Message-Id: <20181214115752.433931882@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115747.053633987@linuxfoundation.org>
 References: <20181214115747.053633987@linuxfoundation.org>
@@ -74,42 +67,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 164f7e586739d07eb56af6f6d66acebb11f315c8 ]
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 
-ocfs2_get_dentry() calls iput(inode) to drop the reference count of
-inode, and if the reference count hits 0, inode is freed.  However, in
-this function, it then reads inode->i_generation, which may result in a
-use after free bug.  Move the put operation later.
+commit fa9c98e4b975bb3192ed6af09d9fa282ed3cd8a0 upstream.
 
-Link: http://lkml.kernel.org/r/1543109237-110227-1-git-send-email-bianpan2016@163.com
-Fixes: 781f200cb7a("ocfs2: Remove masklog ML_EXPORT.")
-Signed-off-by: Pan Bian <bianpan2016@163.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Mark Fasheh <mark@fasheh.com>
-Cc: Joel Becker <jlbec@evilplan.org>
-Cc: Junxiao Bi <junxiao.bi@oracle.com>
-Cc: Joseph Qi <jiangqi903@gmail.com>
-Cc: Changwei Ge <ge.changwei@h3c.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+In an initial commit, 'SYNC_STATUS' register is referred to get
+clock configuration, however this is wrong, according to my local
+note at hand for reverse-engineering about packet dump. It should
+be 'CLOCK_CONFIG' register. Actually, ff400_dump_clock_config()
+is correctly programmed.
+
+This commit fixes the bug.
+
+Cc: <stable@vger.kernel.org> # v4.12+
+Fixes: 76fdb3a9e13a ('ALSA: fireface: add support for Fireface 400')
+Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- fs/ocfs2/export.c |    2 +-
+ sound/firewire/fireface/ff-protocol-ff400.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/ocfs2/export.c
-+++ b/fs/ocfs2/export.c
-@@ -125,10 +125,10 @@ check_err:
+--- a/sound/firewire/fireface/ff-protocol-ff400.c
++++ b/sound/firewire/fireface/ff-protocol-ff400.c
+@@ -30,7 +30,7 @@ static int ff400_get_clock(struct snd_ff
+ 	int err;
  
- check_gen:
- 	if (handle->ih_generation != inode->i_generation) {
--		iput(inode);
- 		trace_ocfs2_get_dentry_generation((unsigned long long)blkno,
- 						  handle->ih_generation,
- 						  inode->i_generation);
-+		iput(inode);
- 		result = ERR_PTR(-ESTALE);
- 		goto bail;
- 	}
+ 	err = snd_fw_transaction(ff->unit, TCODE_READ_QUADLET_REQUEST,
+-				 FF400_SYNC_STATUS, &reg, sizeof(reg), 0);
++				 FF400_CLOCK_CONFIG, &reg, sizeof(reg), 0);
+ 	if (err < 0)
+ 		return err;
+ 	data = le32_to_cpu(reg);
 
 
