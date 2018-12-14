@@ -2,69 +2,98 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F88AC43612
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 17:45:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FAF0C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 17:46:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3502B206BA
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 17:45:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F55120811
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 17:46:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544809519;
-	bh=Hv7iIBiYB+jkUfP+u9UuyrpzksifoED+x6Q/no9olNs=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=GTGLEEBHaM+d1uQiJTQf82KLEm2V9C9GtVuugAn/Zgz4q8L7sBkgWJPYsnuZ9HGyO
-	 0G1SaMYE9R22jGxlhKGCW560b22XwSqvS1jrGA6/aqa2VLpZJNclNxu1Di6P3mhPSt
-	 8Olk5xSWqVnxu40dg/U2GzTGZH8E9h6jYx9bnTzg=
+	s=default; t=1544809577;
+	bh=PUD9WQCP8s1l7G3dhRROEuwEXKvA+VuOZmaG62FMnS0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=NyUsi/gEUyXbY9F4WZApxpROR6qRlZMzaENgLq0aKPFvHfQcNpm+6hZF8gmJIUbEE
+	 HvuhoEKAI3ijj2eLaS+0/rQ2GuFJvqcIeTsgAVzJN+gIH8N0sFV9+QjuYOH68gNv0K
+	 J5sk+d3vi2MwUUKcTnoWDkYxDa5pAqlCXYhJB3+o=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730531AbeLNRpR (ORCPT
+        id S1730464AbeLNRqP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 12:45:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47772 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 12:46:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48792 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729508AbeLNRpB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 12:45:01 -0500
-Subject: Re: [GIT PULL] pin control fixes for v4.20
+        id S1729341AbeLNRqO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 12:46:14 -0500
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2A0BD206BA;
+        Fri, 14 Dec 2018 17:46:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544809502;
-        bh=Hv7iIBiYB+jkUfP+u9UuyrpzksifoED+x6Q/no9olNs=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=rcH6RH+UrUZJem+4cFiissAtaQgh15FmxI4GlwZW3Yu5EdQTmEDain0Hi+UT5vGDd
-         bDGXPs91rwJxrrh9DIytUiG+23hEMD0My0nacraliVn/eVh5lYT9HtgXbYWhAIjPV+
-         roKLvoYvZ1rmk65oVjHncSwAYdJFLnD71N5jzIrQ=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <CACRpkdZqeKmrMr7SsAzZHCLM+z4=eyz2XhjYFdhJJLaFDH84zQ@mail.gmail.com>
-References: <CACRpkdZqeKmrMr7SsAzZHCLM+z4=eyz2XhjYFdhJJLaFDH84zQ@mail.gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CACRpkdZqeKmrMr7SsAzZHCLM+z4=eyz2XhjYFdhJJLaFDH84zQ@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
- tags/pinctrl-v4.20-3
-X-PR-Tracked-Commit-Id: 478b6767ad26ab86d9ecc341027dd09a87b1f997
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 7fb5f5d3738c3a3ed7a3a8685266bc88dc69fbbd
-Message-Id: <20181214174502.32554.75348.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
-Date:   Fri, 14 Dec 2018 17:45:02 +0000
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
+        s=default; t=1544809575;
+        bh=PUD9WQCP8s1l7G3dhRROEuwEXKvA+VuOZmaG62FMnS0=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=IBD6YTby/nlmYJNiiboQlzEJ9r7D7y1wVc1McCWV+48igW4JxZR+hJkhfftyYQplT
+         LxLjvaTWJlGx3auKPD6Scxu308vaUimLwtm+xaPPooqCPgTG4mcH1YRlbwfq4RFp56
+         JqNtGFd4jOgE7EtyBNJsJNv9/NRm9YRRuP94qepw=
+Received: by mail-qt1-f176.google.com with SMTP id y20so7053473qtm.13;
+        Fri, 14 Dec 2018 09:46:13 -0800 (PST)
+X-Gm-Message-State: AA+aEWZOQFAz2BLv/h1L6Pl3lBW5oB18l8nQKNa1UUm3OvAegOs1Hfiz
+        c3hG7snhz8HHnFBxUR5XJK7uSaYLS9djYXBmDg==
+X-Google-Smtp-Source: AFSGD/VZ3ixoqhZC16GRfItol+dMpWfXxWQ9riM3srypdETaJTipM0JC82oeXg6685o+kr/crpHIJLUQpiNbObFxYjw=
+X-Received: by 2002:aed:29a6:: with SMTP id o35mr3701840qtd.257.1544809573229;
+ Fri, 14 Dec 2018 09:46:13 -0800 (PST)
+MIME-Version: 1.0
+References: <20181211131451.52832-1-heikki.krogerus@linux.intel.com>
+ <20181211131451.52832-4-heikki.krogerus@linux.intel.com> <CAJZ5v0hvGL8DnxFAtp3NiuT7ubTBuoKbTzbD9UaZYNpgZLiWaQ@mail.gmail.com>
+In-Reply-To: <CAJZ5v0hvGL8DnxFAtp3NiuT7ubTBuoKbTzbD9UaZYNpgZLiWaQ@mail.gmail.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Fri, 14 Dec 2018 11:46:02 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqLn3dbt-8Hjoja5AJip7FxLoWLAh0Cuk1eqE3Z8RiaO1A@mail.gmail.com>
+Message-ID: <CAL_JsqLn3dbt-8Hjoja5AJip7FxLoWLAh0Cuk1eqE3Z8RiaO1A@mail.gmail.com>
+Subject: Re: [PATCH v6 3/3] of/property: Add of_fwnode_name()
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-acpi@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Fri, 14 Dec 2018 09:12:57 +0100:
+On Fri, Dec 14, 2018 at 3:36 AM Rafael J. Wysocki <rafael@kernel.org> wrote:
+>
+> On Tue, Dec 11, 2018 at 2:15 PM Heikki Krogerus
+> <heikki.krogerus@linux.intel.com> wrote:
+> >
+> > This implements get_name fwnode op for DT.
+> >
+> > Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+>
+> Rob, any objections here?
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git tags/pinctrl-v4.20-3
+Yes, what I said in v5.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/7fb5f5d3738c3a3ed7a3a8685266bc88dc69fbbd
+At one point this series had a user which was finding a matching node
+by name. Now there is no user, so I can't really say whether this API
+makes sense or not.
 
-Thank you!
+There's generally only 2 uses for 'name' at least for DT. The first is
+node matching by name. ICYMI, every case of that in the tree is now
+replaced with of_node_name_eq(). Now the details of matching by node
+name are contained within the DT API. The 2nd use of node names is
+just informational purposes or to fill some other structure's name
+string (e.g. struct resource). In these cases, device_node.full_name
+can be used. The only difference is full_name includes the unit
+address ('@1234' part) if there is one. For these uses, the kernel
+shouldn't generally care what the name actually is, but that's not
+really enforceable.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+Rob
