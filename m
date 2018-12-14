@@ -7,50 +7,50 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF54AC6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:25:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B8E9C6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:25:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 921DA20879
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:25:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 434C02080F
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:25:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544790338;
-	bh=+XMpdV74CbGtc+pioc7TMg416GzGI2CoHPaIK51zUaI=;
+	s=default; t=1544790348;
+	bh=BjX0dgq1/iREoFjAtcR2RH70gn2C5UICXJgp43/uSOQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=2Bz5eCf0h05YSImnr43HfBjQBqaYFswyo+r0cOgNltFLUIJ53SZlU29UU+QH5rz11
-	 lbIAm+rqJH5xYKe9QgE/kVF1tHH4SB5VYQRmmDz+ZItPiSzR1oLwFbJ778s09/INAP
-	 Ith/x21sktAf+lk+4MhZiwR5YIU9L4lUiFQmYKCg=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 921DA20879
+	b=H/FRwEZZdsxBDnyC8VBoqW0I+uKFnL3Na4KF2QZfeyP3itaTDvALX5iDGdx+2lze7
+	 wSa/BIVQXER0AcpYCq+muTMWtHxGfDk59WH94e12O//St3GwYhKD9xilQxrfsEYi3X
+	 Vt1r9CynqnptanwirySU3Hh4NuCzHcGp/63VKqsw=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 434C02080F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732101AbeLNMZg (ORCPT
+        id S1731894AbeLNMMN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:25:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59438 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:12:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59130 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731915AbeLNMMT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:12:19 -0500
+        id S1731885AbeLNMMG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:12:06 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E7B63214DE;
-        Fri, 14 Dec 2018 12:12:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 52798214D9;
+        Fri, 14 Dec 2018 12:12:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789538;
-        bh=+XMpdV74CbGtc+pioc7TMg416GzGI2CoHPaIK51zUaI=;
+        s=default; t=1544789525;
+        bh=BjX0dgq1/iREoFjAtcR2RH70gn2C5UICXJgp43/uSOQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HMJ1vSN2O4KB2KYC+DL6ZJPgZ/6qq01R54nk9j67JJFGHgQKineGsAHNiBQV43iiN
-         gVQbOeilndZSNgwEH+/7kQh6/zCJflPT8/81aPP6xyz1vI6Qpzgo08DGKRCK1zZbvI
-         amLDhm7QSGrTESK6UVSOU1+eiN9AD3EPVe+Bb618=
+        b=MplccDDlm3I+IX/PLXs10k1IG4JqG5xd9Vkwyq3hJ5ZWIdEjaEDJMWskMFa4p5s7W
+         HodSzEWS4KS+lqsW1fxvdZcPpY7sNB1yGlcxtMlWJm1rrCdeAh3hTCiTlrP9FmCqvp
+         j8XKvyaKlZSwsciDzN2rK9c/KFjsiMkYfhTljius=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        stable@vger.kernel.org, Pan Bian <bianpan2016@163.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 32/51] USB: omap_udc: fix omap_udc_start() on 15xx machines
-Date:   Fri, 14 Dec 2018 13:00:34 +0100
-Message-Id: <20181214115716.181319045@linuxfoundation.org>
+Subject: [PATCH 4.9 27/51] exportfs: do not read dentry after free
+Date:   Fri, 14 Dec 2018 13:00:29 +0100
+Message-Id: <20181214115715.773029553@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115713.244259772@linuxfoundation.org>
 References: <20181214115713.244259772@linuxfoundation.org>
@@ -69,39 +69,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 6ca6695f576b8453fe68865e84d25946d63b10ad ]
+[ Upstream commit 2084ac6c505a58f7efdec13eba633c6aaa085ca5 ]
 
-On OMAP 15xx machines there are no transceivers, and omap_udc_start()
-always fails as it forgot to adjust the default return value.
+The function dentry_connected calls dput(dentry) to drop the previously
+acquired reference to dentry. In this case, dentry can be released.
+After that, IS_ROOT(dentry) checks the condition
+(dentry == dentry->d_parent), which may result in a use-after-free bug.
+This patch directly compares dentry with its parent obtained before
+dropping the reference.
 
-Signed-off-by: Aaro Koskinen <aaro.koskinen@iki.fi>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Fixes: a056cc8934c("exportfs: stop retrying once we race with
+rename/remove")
+
+Signed-off-by: Pan Bian <bianpan2016@163.com>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/gadget/udc/omap_udc.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fs/exportfs/expfs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/usb/gadget/udc/omap_udc.c b/drivers/usb/gadget/udc/omap_udc.c
-index 2a23b21fe153..8f044caa8ad4 100644
---- a/drivers/usb/gadget/udc/omap_udc.c
-+++ b/drivers/usb/gadget/udc/omap_udc.c
-@@ -2045,7 +2045,7 @@ static inline int machine_without_vbus_sense(void)
- static int omap_udc_start(struct usb_gadget *g,
- 		struct usb_gadget_driver *driver)
- {
--	int		status = -ENODEV;
-+	int		status;
- 	struct omap_ep	*ep;
- 	unsigned long	flags;
+diff --git a/fs/exportfs/expfs.c b/fs/exportfs/expfs.c
+index a4b531be9168..7a7bba7c2328 100644
+--- a/fs/exportfs/expfs.c
++++ b/fs/exportfs/expfs.c
+@@ -76,7 +76,7 @@ static bool dentry_connected(struct dentry *dentry)
+ 		struct dentry *parent = dget_parent(dentry);
  
-@@ -2083,6 +2083,7 @@ static int omap_udc_start(struct usb_gadget *g,
- 			goto done;
+ 		dput(dentry);
+-		if (IS_ROOT(dentry)) {
++		if (dentry == parent) {
+ 			dput(parent);
+ 			return false;
  		}
- 	} else {
-+		status = 0;
- 		if (can_pullup(udc))
- 			pullup_enable(udc);
- 		else
 -- 
 2.19.1
 
