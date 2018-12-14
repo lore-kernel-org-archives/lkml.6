@@ -2,158 +2,146 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D978C67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 06:32:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10A88C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 06:33:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6211620645
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 06:32:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6211620645
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id CA60020866
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 06:33:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dmgfM+BH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA60020866
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727317AbeLNGca (ORCPT
+        id S1727522AbeLNGd0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 01:32:30 -0500
-Received: from Mailgw01.mediatek.com ([1.203.163.78]:3487 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726437AbeLNGc3 (ORCPT
+        Fri, 14 Dec 2018 01:33:26 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:39538 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727054AbeLNGd0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 01:32:29 -0500
-X-UUID: 04ba7c9394e94bc79d2980f6c84ff657-20181214
-X-UUID: 04ba7c9394e94bc79d2980f6c84ff657-20181214
-Received: from mtkcas36.mediatek.inc [(172.27.4.250)] by mailgw01.mediatek.com
-        (envelope-from <biao.huang@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 39259241; Fri, 14 Dec 2018 14:32:18 +0800
-Received: from MTKCAS32.mediatek.inc (172.27.4.184) by MTKMBS31N1.mediatek.inc
- (172.27.4.69) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 14 Dec
- 2018 14:32:17 +0800
-Received: from [10.17.3.153] (10.17.3.153) by MTKCAS32.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Fri, 14 Dec 2018 14:32:16 +0800
-Message-ID: <1544769136.24219.175.camel@mhfsdcap03>
-Subject: Re: [v7, PATCH 1/2] net:stmmac: dwmac-mediatek: add support for
- mt2712
-From:   biao huang <biao.huang@mediatek.com>
-To:     Florian Fainelli <f.fainelli@gmail.com>
-CC:     Andrew Lunn <andrew@lunn.ch>, <mark.rutland@arm.com>,
-        <devicetree@vger.kernel.org>, <nelson.chang@mediatek.com>,
-        <netdev@vger.kernel.org>, <liguo.zhang@mediatek.com>,
-        <joabreu@synopsys.com>, <linux-kernel@vger.kernel.org>,
-        <matthias.bgg@gmail.com>, <robh+dt@kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <honghui.zhang@mediatek.com>,
-        <yt.shen@mediatek.com>, <davem@davemloft.net>,
-        <linux-arm-kernel@lists.infradead.org>
-Date:   Fri, 14 Dec 2018 14:32:16 +0800
-In-Reply-To: <f3427cac-88b2-1464-8f92-4692a7125674@gmail.com>
-References: <1544666173-5121-1-git-send-email-biao.huang@mediatek.com>
-         <1544666173-5121-2-git-send-email-biao.huang@mediatek.com>
-         <20181213123346.GF1605@lunn.ch> <1544756477.24219.164.camel@mhfsdcap03>
-         <f3427cac-88b2-1464-8f92-4692a7125674@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 8bit
+        Fri, 14 Dec 2018 01:33:26 -0500
+Received: by mail-pg1-f194.google.com with SMTP id w6so2229063pgl.6
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 22:33:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=6U+wJFuXoipVhoUGdkktPfvuy5sqyOiWs46S7Vn1Em8=;
+        b=dmgfM+BHGH0BhnNzTetNjBQyC1usVuwtG3ZldihpDqo+IzcB+zWCM8w1QJErkt1eYO
+         37PgkRu3Bc/yMKqYFTAFMWZZq3KYVD5jakCV6ysoU+0g+qjfBFk0TW8yHl5qabKayeWi
+         2H8i13vBw49N4n6bYL/la72EOji0vaXwZzg4M=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=6U+wJFuXoipVhoUGdkktPfvuy5sqyOiWs46S7Vn1Em8=;
+        b=lDif9agZ89di7XvGcr23DKrGaVrASV+Armi6L0u6eja+5UXG1/rXrVG6dLvejO9tzt
+         bB3CXbym9kKPnA9tSmUezWOxcZiqs19hzH4Ol/rXRGArO34FoAoB1U7kX4/FT2BDl0tk
+         oMykcdhi83YjtdB4AinTnAu4+hXi3TNA5MXnZ3r4Ky5hjiCQs06k2qqOdYXmLdgHzN5G
+         5bLfz7XHODTgUUuobly0S6ktINIlL8nJnVnjJlqb/S2LjuNMl2/UeLCWhXlw90YZcAiR
+         FVwh8U+PueeFNc/QZVrjby4Kt1JH2ShWMIsUc4TrZxquxR82XXrGNKZzQgCKduXqq1u8
+         7WTg==
+X-Gm-Message-State: AA+aEWajvRFG1qsfRsG0XN+t5muCGJMZXNqPmOMs6ObO1t/0GQvwzoU0
+        CZBOJv3evzUE+6aVzDt0sMNCOgvi1Nc=
+X-Google-Smtp-Source: AFSGD/XwIjUnSn8D3U9Qo98W+YpT79J6Gkr1WTE8cad1idNOiv86sS6/zNSPyeIiboTT0wjJryMFuQ==
+X-Received: by 2002:a63:e20a:: with SMTP id q10mr1629746pgh.206.1544769205100;
+        Thu, 13 Dec 2018 22:33:25 -0800 (PST)
+Received: from localhost ([122.172.23.29])
+        by smtp.gmail.com with ESMTPSA id z191sm4480728pgd.74.2018.12.13.22.33.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 13 Dec 2018 22:33:23 -0800 (PST)
+Date:   Fri, 14 Dec 2018 12:03:21 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>, Pavel Machek <pavel@ucw.cz>,
+        Len Brown <len.brown@intel.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Niklas Cassel <niklas.cassel@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH V3 6/6] PM / Domains: Propagate performance state updates
+Message-ID: <20181214063321.5i2hqoufw7jc3a2i@vireshk-i7>
+References: <cover.1544611890.git.viresh.kumar@linaro.org>
+ <d138bd45d0eacc11ff90e27f83d8b47d692877ef.1544611890.git.viresh.kumar@linaro.org>
+ <CAPDyKFpFn60O7W71v7b3fsCtmS520=GG0AQhs3GpdarVE+W--A@mail.gmail.com>
 MIME-Version: 1.0
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPDyKFpFn60O7W71v7b3fsCtmS520=GG0AQhs3GpdarVE+W--A@mail.gmail.com>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Florian,
-	Thanks for your comments.
-
-On Thu, 2018-12-13 at 21:11 -0800, Florian Fainelli wrote:
-> Le 12/13/18 à 7:01 PM, biao huang a écrit :
-> > Dear Andrew,
-> > 	Thanks for your comments.
-> > 
-> > On Thu, 2018-12-13 at 13:33 +0100, Andrew Lunn wrote:
-> >> Hi Biao
-> >>
-> >>> +	case PHY_INTERFACE_MODE_RGMII:
-> >>> +		/* the PHY is not responsible for inserting any internal
-> >>> +		 * delay by itself in PHY_INTERFACE_MODE_RGMII case,
-> >>> +		 * so Ethernet MAC will insert delays for both transmit
-> >>> +		 * and receive path here.
-> >>> +		 */
-> >>
-> >> What if the PCB designed has decided to do a kink in the clock to add
-> >> the delays? I don't think any of these delays should depend on the PHY
-> >> interface mode. It is up to the device tree writer to set both the PHY
-> >> delay and the MAC delay, based on knowledge of the board, including
-> >> any kicks in the tracks. The driver should then do what it is told.
-> >>
-> > Originally, we recommend equal trace length on PCB, which means that
-> > RGMII delay by PCB traces is not recommended. so only PHY/MAC delay is
-> > taken into account in the transmit/receive path.
-> > 
-> > as you described above, maybe the equal PCB trace length assumption is
-> > not reasonable, and we'll only handle MAC delay-ps in our driver based
-> > on the device tree information no matter which rgmii is selected.
+On 13-12-18, 16:53, Ulf Hansson wrote:
+> On Wed, 12 Dec 2018 at 11:58, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> >  update_state:
+> > -       return _genpd_set_performance_state(genpd, state);
+> > +       return _genpd_set_performance_state(genpd, state, depth);
 > 
-> Expecting identical PCB traces is something that is hard to enforce with
-> external customers, for internal reference boards, absolutely they
-> should have those traces of equal length.
+> Instead of calling _genpd_set_performance_state() from here, I suggest
+> to let the caller do it. Simply return the aggregated new state, if it
+> needs to be updated - and zero if no update is needed.
 > 
-yes, we'll set the corresponding register based on the
-tx-delay-ps/rx-delay-ps in device tree for rgmii interface.
-the PHY_INTERFACE_MODE_RGMII/-RXID/-TXID/-ID share the same flow in
-Ethernet driver.
+> Why? I think it may clarify and simplify the code, in regards to the
+> actual set/propagation of state changes. Another side-effect, is that
+> you should be able to avoid the forward declaration of
+> _genpd_reeval_performance_state(), which I think is nice as well.
 
-A new patch will be sent to fix this issue.
-> > 
-> > Since David already applied this patch, I'll send another patch to fix
-> > this issue.
-> >>> +	if (!of_property_read_u32(plat->np, "mediatek,tx-delay-ps", &tx_delay_ps)) {
-> >>> +		if (tx_delay_ps < plat->variant->tx_delay_max) {
-> >>> +			mac_delay->tx_delay = tx_delay_ps;
-> >>> +		} else {
-> >>> +			dev_err(plat->dev, "Invalid TX clock delay: %dps\n", tx_delay_ps);
-> >>> +			return -EINVAL;
-> >>> +		}
-> >>> +	}
-> >>> +
-> >>> +	if (!of_property_read_u32(plat->np, "mediatek,rx-delay-ps", &rx_delay_ps)) {
-> >>> +		if (rx_delay_ps < plat->variant->rx_delay_max) {
-> >>> +			mac_delay->rx_delay = rx_delay_ps;
-> >>> +		} else {
-> >>> +			dev_err(plat->dev, "Invalid RX clock delay: %dps\n", rx_delay_ps);
-> >>> +			return -EINVAL;
-> >>> +		}
-> >>> +	}
-> >>> +
-> >>> +	mac_delay->tx_inv = of_property_read_bool(plat->np, "mediatek,txc-inverse");
-> >>> +	mac_delay->rx_inv = of_property_read_bool(plat->np, "mediatek,rxc-inverse");
-> >>> +	mac_delay->fine_tune = of_property_read_bool(plat->np, "mediatek,fine-tune");
-> >>
-> >> Why is fine tune needed? If the requested delay can be done using fine
-> >> tune, it should use fine tune. If not, it should use rough tune. The
-> >> driver can work this out itself.
-> > 
-> > find tune here represents a more accurate delay circuit than coarse
-> > tune, and it's a parallel circuit of coarse tune.
-> > For most delay, both fine and coarse tune can meet the requirement.
-> > It's up to the user to select which one.
-> > 
-> > But only one of them can work at the same time, so we need a switch
-> > flag(fine_tune here) to indicate which one is valid.
-> > Driver can hardly work out which one is working according to delay-ps.
-> > 
-> > Please correct me if any misunderstanding.
+_genpd_reeval_performance_state() is currently called from 3 different
+places and with the suggested change those sites will have this diff.
+
+-               ret = _genpd_reeval_performance_state(master, master_state,
+-                                                     depth + 1);
++               master_state = _genpd_reeval_performance_state(master,
++                                               master_state);
++               ret = _genpd_set_performance_state(genpd, master_state, depth);
+
+To be honest, I don't like it. Probably because I don't find the extra
+declaration of _genpd_reeval_performance_state() that bad. If two
+routines are always going to get called together it is worth calling
+the second one from the first one for me.
+
+But anyway, I am fine with it if you are. Please let me know.
+
+> >  }
+> >
+> >  /**
+> > @@ -332,7 +407,7 @@ int dev_pm_genpd_set_performance_state(struct device *dev, unsigned int state)
+> >         prev = gpd_data->performance_state;
+> >         gpd_data->performance_state = state;
+> >
+> > -       ret = _genpd_reeval_performance_state(genpd, state);
+> > +       ret = _genpd_reeval_performance_state(genpd, state, 0);
+> >         if (ret)
+> >                 gpd_data->performance_state = prev;
+> >
+> > diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
+> > index 9ad101362aef..dd364abb649a 100644
+> > --- a/include/linux/pm_domain.h
+> > +++ b/include/linux/pm_domain.h
+> > @@ -136,6 +136,10 @@ struct gpd_link {
+> >         struct list_head master_node;
+> >         struct generic_pm_domain *slave;
+> >         struct list_head slave_node;
+> > +
+> > +       /* Sub-domain's per-master domain performance state */
+> > +       unsigned int performance_state;
+> > +       unsigned int prev_performance_state;
 > 
-> You are giving a lot of options for users of this Ethernet controller to
-> shoot themselves in the feet and spend a good amount of time debugging
-> why their RGMII connection is not reliable or have timing violations.
-yes, since fine tune is more accurate, and can meet customer's
-requirement, we'll remove the 'fine-tune' property in device tree,
-enable fine-tune circuit by default in Ethernet driver, and abandon the
-coarse delay mechanism. so customer will not be confused by the options.
+> Probably a leftover from the earlier versions, please remove.
 
-I'll send a new patch to fix this issue.
+No, these are still getting used.
 
-
+-- 
+viresh
