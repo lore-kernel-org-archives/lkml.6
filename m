@@ -7,43 +7,46 @@ X-Spam-Status: No, score=-11.9 required=3.0
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12ACBC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:20:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3C70C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:21:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8825F2086D
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:20:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5406D2086D
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:21:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730785AbeLNUUq (ORCPT
+        id S1730800AbeLNUVH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 15:20:46 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:60891 "EHLO
+        Fri, 14 Dec 2018 15:21:07 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:58497 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729808AbeLNUUp (ORCPT
+        with ESMTP id S1730733AbeLNUVH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 15:20:45 -0500
+        Fri, 14 Dec 2018 15:21:07 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBEKK7Zk1450800
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBEKKfpL1450887
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Fri, 14 Dec 2018 12:20:07 -0800
+        Fri, 14 Dec 2018 12:20:41 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBEKK7G01450796;
-        Fri, 14 Dec 2018 12:20:07 -0800
-Date:   Fri, 14 Dec 2018 12:20:07 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBEKKfHP1450884;
+        Fri, 14 Dec 2018 12:20:41 -0800
+Date:   Fri, 14 Dec 2018 12:20:41 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Stephane Eranian <tipbot@zytor.com>
-Message-ID: <tip-fd0046c4b95f11ff7abe85ba959b3245accfa68a@git.kernel.org>
-Cc:     tglx@linutronix.de, peterz@infradead.org, hpa@zytor.com,
-        mingo@kernel.org, linux-kernel@vger.kernel.org, eranian@google.com,
-        jolsa@kernel.org, acme@redhat.com
-Reply-To: hpa@zytor.com, mingo@kernel.org, linux-kernel@vger.kernel.org,
-          jolsa@kernel.org, acme@redhat.com, eranian@google.com,
-          tglx@linutronix.de, peterz@infradead.org
-In-Reply-To: <1541587845-9150-1-git-send-email-eranian@google.com>
-References: <1541587845-9150-1-git-send-email-eranian@google.com>
+From:   tip-bot for Eric Saint-Etienne <tipbot@zytor.com>
+Message-ID: <tip-97dfc3423ca701212802a02994d1ec3e688f4891@git.kernel.org>
+Cc:     alexander.shishkin@linux.intel.com, linux-kernel@vger.kernel.org,
+        namhyung@kernel.org, peterz@infradead.org, tglx@linutronix.de,
+        jolsa@kernel.org, eric.saint.etienne@oracle.com,
+        eric.saintetienne@gmail.com, hpa@zytor.com, acme@redhat.com,
+        mingo@kernel.org
+Reply-To: eric.saintetienne@gmail.com, hpa@zytor.com, acme@redhat.com,
+          mingo@kernel.org, linux-kernel@vger.kernel.org,
+          alexander.shishkin@linux.intel.com, namhyung@kernel.org,
+          peterz@infradead.org, tglx@linutronix.de, jolsa@kernel.org,
+          eric.saint.etienne@oracle.com
+In-Reply-To: <1542969759-24346-1-git-send-email-eric.saint.etienne@oracle.com>
+References: <1542969759-24346-1-git-send-email-eric.saint.etienne@oracle.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf stat: Fix CSV mode column output for
- non-cgroup events
-Git-Commit-ID: fd0046c4b95f11ff7abe85ba959b3245accfa68a
+Subject: [tip:perf/core] perf map: Remove extra indirection from map__find()
+Git-Commit-ID: 97dfc3423ca701212802a02994d1ec3e688f4891
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -57,98 +60,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  fd0046c4b95f11ff7abe85ba959b3245accfa68a
-Gitweb:     https://git.kernel.org/tip/fd0046c4b95f11ff7abe85ba959b3245accfa68a
-Author:     Stephane Eranian <eranian@google.com>
-AuthorDate: Wed, 7 Nov 2018 02:50:45 -0800
+Commit-ID:  97dfc3423ca701212802a02994d1ec3e688f4891
+Gitweb:     https://git.kernel.org/tip/97dfc3423ca701212802a02994d1ec3e688f4891
+Author:     Eric Saint-Etienne <eric.saint.etienne@oracle.com>
+AuthorDate: Fri, 23 Nov 2018 02:42:39 -0800
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Thu, 29 Nov 2018 20:42:46 -0300
 
-perf stat: Fix CSV mode column output for non-cgroup events
+perf map: Remove extra indirection from map__find()
 
-When using the -x option, perf stat prints CSV-style output with one
-event per line.  For each event, it prints the count, the unit, the
-event name, the cgroup, and a bunch of other event specific fields (such
-as insn per cycles).
+A double pointer is used in map__find() where a single pointer is enough
+because the function doesn't affect the rbtree and the rbtree is locked.
 
-When you use CSV-style mode, you expect a normalized output where each
-event is printed with the same number of fields regardless of what it is
-so it can easily be imported into a spreadsheet or parsed.
-
-For instance, if an event does not have a unit, then print an empty
-field for it.
-
-Although this approach was implemented for the unit, it was not for the
-cgroup.
-
-When mixing cgroup and non-cgroup events, then non-cgroup events would
-not show an empty field, instead the next field was printed, make
-columns not line up correctly.
-
-This patch fixes the cgroup output issues by forcing an empty field
-for non-cgroup events as soon as one event has cgroup.
-
-Before:
-
-  <not counted> @ @cycles @foo    @ 0    @100.00@@
-  2531614       @ @cycles @6420922@100.00@    @
-
-foo cgroup lines up with time_running!
-
-After:
-
-  <not counted> @ @cycles @foo @0       @100.00@@
-  2594834       @ @cycles @    @5287372 @100.00@@
-
-Fields line up.
-
-Signed-off-by: Stephane Eranian <eranian@google.com>
+Signed-off-by: Eric Saint-Etienne <eric.saint.etienne@oracle.com>
 Acked-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Eric Saint-Etienne <eric.saintetienne@gmail.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/1541587845-9150-1-git-send-email-eranian@google.com
+Link: http://lkml.kernel.org/r/1542969759-24346-1-git-send-email-eric.saint.etienne@oracle.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/stat-display.c | 16 +++++++++++-----
- 1 file changed, 11 insertions(+), 5 deletions(-)
+ tools/perf/util/map.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
-diff --git a/tools/perf/util/stat-display.c b/tools/perf/util/stat-display.c
-index e7b4c44ebb62..665ee374fc01 100644
---- a/tools/perf/util/stat-display.c
-+++ b/tools/perf/util/stat-display.c
-@@ -59,6 +59,15 @@ static void print_noise(struct perf_stat_config *config,
- 	print_noise_pct(config, stddev_stats(&ps->res_stats[0]), avg);
- }
+diff --git a/tools/perf/util/map.c b/tools/perf/util/map.c
+index 781eed8e3265..a0d58b4d9c32 100644
+--- a/tools/perf/util/map.c
++++ b/tools/perf/util/map.c
+@@ -873,19 +873,18 @@ void maps__remove(struct maps *maps, struct map *map)
  
-+static void print_cgroup(struct perf_stat_config *config, struct perf_evsel *evsel)
-+{
-+	if (nr_cgroups) {
-+		const char *cgrp_name = evsel->cgrp ? evsel->cgrp->name  : "";
-+		fprintf(config->output, "%s%s", config->csv_sep, cgrp_name);
-+	}
-+}
-+
-+
- static void aggr_printout(struct perf_stat_config *config,
- 			  struct perf_evsel *evsel, int id, int nr)
+ struct map *maps__find(struct maps *maps, u64 ip)
  {
-@@ -336,8 +345,7 @@ static void abs_printout(struct perf_stat_config *config,
+-	struct rb_node **p, *parent = NULL;
++	struct rb_node *p;
+ 	struct map *m;
  
- 	fprintf(output, "%-*s", config->csv_output ? 0 : 25, perf_evsel__name(evsel));
+ 	down_read(&maps->lock);
  
--	if (evsel->cgrp)
--		fprintf(output, "%s%s", config->csv_sep, evsel->cgrp->name);
-+	print_cgroup(config, evsel);
- }
- 
- static bool is_mixed_hw_group(struct perf_evsel *counter)
-@@ -431,9 +439,7 @@ static void printout(struct perf_stat_config *config, int id, int nr,
- 			config->csv_output ? 0 : -25,
- 			perf_evsel__name(counter));
- 
--		if (counter->cgrp)
--			fprintf(config->output, "%s%s",
--				config->csv_sep, counter->cgrp->name);
-+		print_cgroup(config, counter);
- 
- 		if (!config->csv_output)
- 			pm(config, &os, NULL, NULL, "", 0);
+-	p = &maps->entries.rb_node;
+-	while (*p != NULL) {
+-		parent = *p;
+-		m = rb_entry(parent, struct map, rb_node);
++	p = maps->entries.rb_node;
++	while (p != NULL) {
++		m = rb_entry(p, struct map, rb_node);
+ 		if (ip < m->start)
+-			p = &(*p)->rb_left;
++			p = p->rb_left;
+ 		else if (ip >= m->end)
+-			p = &(*p)->rb_right;
++			p = p->rb_right;
+ 		else
+ 			goto out;
+ 	}
