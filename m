@@ -4,105 +4,86 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2949C43387
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E798BC43444
 	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 14:13:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 393912098A
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 14:12:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C035E206C2
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 13:55:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tWR+VrTq"
+	dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b="AfneyMFv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730052AbeLNOMA (ORCPT
+        id S1730014AbeLNNzS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 09:12:00 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:35857 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726554AbeLNOL7 (ORCPT
+        Fri, 14 Dec 2018 08:55:18 -0500
+Received: from sonic310-12.consmr.mail.ir2.yahoo.com ([77.238.177.33]:36523
+        "EHLO sonic310-12.consmr.mail.ir2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729977AbeLNNzS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 09:11:59 -0500
-Received: by mail-ed1-f67.google.com with SMTP id f23so5077743edb.3;
-        Fri, 14 Dec 2018 06:11:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=lOHfZAhHLVpxi/tMQLzkDV/TIgSG0ZS7mbtAEjInM2A=;
-        b=tWR+VrTqybd0uVGRyW5uPuxi/51ijeGmBVaN8Uq/9XdIydPiX8MYkJKaikuzX+Q+If
-         VD7ve2GvuSGiuo80t/SvbOZ3C5HCOxcXIhMfIkG8Luq32ead3eYDfVcAELiT351DK80p
-         MO32VvUH1UipcKwMFeVCLmyDsLeBr58EDus9LcnbyHGAY+iJQmuGpqFCM65y77abuSyx
-         2Q1FG1n/YXZuiWFsrFDXoVCcEBhhVWUcQavqqPua6S7S5MwW5S36Br11VYV4CLTb+gNQ
-         eM1osuJUdqzCKi8aPizB4ihPNMUHXahAgrSyjzXCt35B2N6XNVHavNDooGcXlxOt2HqO
-         11Tg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lOHfZAhHLVpxi/tMQLzkDV/TIgSG0ZS7mbtAEjInM2A=;
-        b=tUL22A1VAHJcYobfzYF2sbnarzn7XqtxhEtIsg4GUPYelXmHpFKswcdW0a4IaJcHrz
-         oIZgCACkoD1hV4fIZeavn8POQvnJbwsKiHbGoLNxHL1t+Gbqk6oQqmaJVPTqwOb5nn+B
-         7AafEhVC2CNOoWccUGs4Lp3zBbdFd0TbyzwpPwTucmnnzDWLEvMxxyh0O6mLI67T0S7E
-         /nzSlDEOp3OFd3zsKJjMqYo5pXdmtCeTZHw6v6+rf/8sUjiGj64H9kxl7KW2mJMCC5o+
-         De1TJSPgk6OM4i0E3fwnVMwy7rfaNU+i/CJ6dPuKsViOKlWmHrcSF2ztilc67MXHozV7
-         d/kQ==
-X-Gm-Message-State: AA+aEWa6g0URqG6nUeD2CeAtcr6kzGgep48IyU66QcQw0VR3VkJKe2gs
-        2UKj5ifzQHRA0HNZw9XlHQoStiln8YtSBqXEEu0=
-X-Google-Smtp-Source: AFSGD/XeDodsmoR5pS6Lgq1o5XT4tgeJBwzJcbyfjFmTcDcnx3zYZA19TxkEbnmtjSqc862ho+XTYebzeK1KH4SjPMs=
-X-Received: by 2002:aa7:d9d6:: with SMTP id v22mr3139376eds.265.1544796717889;
- Fri, 14 Dec 2018 06:11:57 -0800 (PST)
+        Fri, 14 Dec 2018 08:55:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1544795715; bh=MhPoqHYigalcZdTXSv8Ril2mdAJpVwAjyHc/4sg76uM=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=AfneyMFvQ5AP0Ax+kQALdvx15bF5zJnKawgl+zmuqIElF4H2tyx9mQZvN43ahNwW7Ldj1+r46ln/BWe9n19rIxMOdug0lqMpE1/nOhHeYwwxa0Xa8ufDLRPf2DM0Xf3tjvWIoJGF1bfLuas42BIk8KtCNa5Zv1bSWVoXIpIqDfC4wBzT5N9z5dexdwq3fgZv4b2afGzzB8OXt0Vz8E3LSaHgHJ8wuua0beNuORUKq7+VxvVPrePrGBFXinzz8k288JfvrPAZUO0yCLvvw1O4lTYBwaB0pITphgp5vsuNuPgsFReP49XfwG6bkfoo9GLHYAOFKCUkZ4sqf006ieHrUg==
+X-YMail-OSG: rLmJGfYVM1m1GSE02Q1jdz2wqH6_.i3FnRdNrenssd_Yzb3Jt9Pu_cEJmrHQJ5B
+ T1iYiFpWZZ9eqotfsb0b5FmQVW6yW04SmaBDcLL2VmtaDIYneUlglet.Vb.Z1vhlVDLK_nVoHEgO
+ iFsgrMH62rE6t5ML70CLYZeo4oUPAtC1tzHy7YDFcCbaFJ8W3VBCnvKCAk9mnWaYfsXq7vqCuMxn
+ pqVc_HRq.ttb23lcXeU0J0CFlbEyRsjtH5EE0JX3E1VSLVP4G_TLyBTsbR6xaOqGmhQqkyZcn5UD
+ b.pFcuCbU5g.48JG4HNzYaysEJqzUM6So2tE8cBmZX7aams_nRkWtqhSzY1piEHhIjKN0m97x6VN
+ qLx2ePPWNQlhfhwk9ZYNY5dCL7Iko4c4aEisukLQE1yD4iBouyGzXOzUZ126HPRj2qMlwGXeI_C5
+ RM7L0nle9gaynHBZYBZFhYabcHa3blBQf9wg8YM_qa5AH4EnxAGK7Fs88naK5oYzWNFzWvZ45cSN
+ kENGKmWW5ZTRzD3Sb6SlraJ_mTzsCrxZNgE.Ws5qB7N7M3WKYfj9.ImCsop0e2mR18uET2M3Wqnp
+ Q4CLUh5pwhvS28.Sbx5IqQkInTGMp6qyqj9rYyXaOUO2rNmcts9DNZkR_8UBjCPAJv0AwyCrS2Js
+ FrChjrpsjcRLxjwMYHbpUoJonzakcJXvG7YPjLBOTlDbt.bKnq.vV8XMPm77.EDd1DKerXCDgb3T
+ ZxeCDzeKMj16l.e5gCb7w3cMO8ZJZy0w6Y_8snwe15xEsXB15sHsogcECkUjGUNRMhNZE5wF8Dxe
+ JZ.dG0EjEPZFIf3WqU1k.8j2xh75g1My4In9gJaPM4kM_TeB4b.Ex1a526qAI7sp2H4daVOBrjIW
+ Zp9HVlpsRdFGA2S0DSzd5RulFFxGT94xMJbcqT3Rhp4LB_pU0pj530lEncp7.R2HfBlvPlnx7dNX
+ OmwwCaNtf2AzcDWK1L1ud_5_1SR3DF2WMvSSxbbGj1N4MOYBYWkL2VrOSgGWBY7XrR0tQH0ViwtW
+ Jr8tbwuFQyW9wwpCwCPtp3V_64jiZLshZWfmhn5.laGHG1hwjMi9BuQb89mtd
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic310.consmr.mail.ir2.yahoo.com with HTTP; Fri, 14 Dec 2018 13:55:15 +0000
+Received: from 125.120.80.114 (EHLO [10.1.1.220]) ([125.120.80.114])
+          by smtp407.mail.ir2.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 221acda4e404574648acb715c33f577b;
+          Fri, 14 Dec 2018 13:55:12 +0000 (UTC)
+Subject: Re: [PATCH] fix page_count in ->iomap_migrate_page()
+To:     Richard Weinberger <richard@nod.at>
+Cc:     Artem Bityutskiy <dedekind1@gmail.com>,
+        zhangjun <openzhangj@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Darrick J . Wong" <darrick.wong@oracle.com>, hch@lst.de,
+        bfoster@redhat.com, Dave Chinner <david@fromorbit.com>,
+        akpm@linux-foundation.org, kirill.shutemov@linux.intel.com,
+        mhocko@suse.com, n-horiguchi@ah.jp.nec.com,
+        mgorman@techsingularity.net, aarcange@redhat.com,
+        willy@infradead.org, linux@dominikbrodowski.net,
+        linux-mm@kvack.org, Gao Xiang <gaoxiang25@huawei.com>
+References: <1544766961-3492-1-git-send-email-openzhangj@gmail.com>
+ <1618433.IpySj692Hd@blindfold> <2b19b3c4-2bc4-15fa-15cc-27a13e5c7af1@aol.com>
+ <5520068.cAKZ7BqcUI@blindfold>
+From:   Gao Xiang <hsiangkao@aol.com>
+Message-ID: <d18a4e12-c062-0c6c-52e4-83d5e2a14da5@aol.com>
+Date:   Fri, 14 Dec 2018 21:55:01 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-References: <1544717789-27388-1-git-send-email-abel.vesa@nxp.com>
- <CAEnQRZC+frwbcdA657v5SB_u1z=FaOFOFrQxuNXsWNrDgnPzGA@mail.gmail.com>
- <AM0PR04MB4211C143F6BEDD5716E746AA80A00@AM0PR04MB4211.eurprd04.prod.outlook.com>
- <20181214010101.GA13243@dragon>
-In-Reply-To: <20181214010101.GA13243@dragon>
-From:   Daniel Baluta <daniel.baluta@gmail.com>
-Date:   Fri, 14 Dec 2018 16:11:45 +0200
-Message-ID: <CAEnQRZB_fEeASWsBye0HSn=tUBe31DugO42f3Z1GNYR4PNHXWQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: imx: Make the i.MX8MQ CCM clock driver CLK_IMX8MQ dependant
-To:     Shawn Guo <shawnguo@kernel.org>
-Cc:     Aisheng Dong <aisheng.dong@nxp.com>, Abel Vesa <abel.vesa@nxp.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "olof@lixom.net" <olof@lixom.net>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "l.stach@pengutronix.de" <l.stach@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <5520068.cAKZ7BqcUI@blindfold>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 14, 2018 at 3:02 AM Shawn Guo <shawnguo@kernel.org> wrote:
->
-> On Thu, Dec 13, 2018 at 04:51:18PM +0000, Aisheng Dong wrote:
-> > [...]
-> >
-> > > > --- a/drivers/clk/imx/Makefile
-> > > > +++ b/drivers/clk/imx/Makefile
-> > > > @@ -34,5 +34,6 @@ obj-$(CONFIG_SOC_IMX6SX) += clk-imx6sx.o
-> > > >  obj-$(CONFIG_SOC_IMX6UL) += clk-imx6ul.o
-> > > >  obj-$(CONFIG_SOC_IMX7D)  += clk-imx7d.o
-> > > >  obj-$(CONFIG_SOC_IMX7ULP) += clk-imx7ulp.o
-> > > > -obj-$(CONFIG_SOC_IMX8MQ) += clk-imx8mq.o
-> > > >  obj-$(CONFIG_SOC_VF610)  += clk-vf610.o
-> > > > +
-> > > > +obj-$(CONFIG_CLK_IMX8MQ) += clk-imx8mq.o
-> > >
-> > > Nit: Do we want to keep CONFIG_ sorted?
-> >
-> > IMHO It might be okay to make MX8 (ARM64) a new group to start
-> > To get a clear separation. (Slightly not sorted due to VF610)
-> > Anyway, it leaves to Stephen to make the judge.
->
-> I think Daniel is suggesting that we put CONFIG_CLK_IMX8MQ prior to
-> CONFIG_SOC_IMX1, so that all CONFIG_CLK_xxx options go before
-> CONFIG_SOC_xxx and the list is still naturally alphabetically sorted.
+Hi Richard,
 
-Yes, that's correct.
+On 2018/12/14 21:35, Richard Weinberger wrote:
+> Hmm, in case of UBIFS it seems easy. We can add a get/put_page() around setting/clearing
+> the flag.
+> I did that now and so far none of my tests exploded.
+
+Yes, many existed codes are based on this restriction in order to be freeable race-free.
+and that's it since PG_Private was once introduced at first by Andrew Morton in 2002
+for many Linux versions....and it's not bad I think... :)
+
+Thanks,
+Gao Xiang
