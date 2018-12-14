@@ -2,764 +2,222 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AC66C67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 05:10:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDC7FC67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 05:12:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DFCA4206BA
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 05:10:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFCA4206BA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id A8EA6206BA
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 05:12:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RgpSHsyN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8EA6206BA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726896AbeLNFK0 (ORCPT
+        id S1727137AbeLNFMA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 00:10:26 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60832 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726437AbeLNFK0 (ORCPT
+        Fri, 14 Dec 2018 00:12:00 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:46829 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726437AbeLNFL7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 00:10:26 -0500
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBE59XP2127424
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 00:10:20 -0500
-Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2pbyr3e27s-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 00:10:20 -0500
-Received: from localhost
-        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Fri, 14 Dec 2018 05:10:18 -0000
-Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
-        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 14 Dec 2018 05:10:13 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBE5ACkL24379614
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 14 Dec 2018 05:10:13 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BF95FB2067;
-        Fri, 14 Dec 2018 05:10:12 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 73887B206E;
-        Fri, 14 Dec 2018 05:10:12 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.85.153.1])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Fri, 14 Dec 2018 05:10:12 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 0BC2616C5F34; Thu, 13 Dec 2018 21:10:12 -0800 (PST)
-Date:   Thu, 13 Dec 2018 21:10:12 -0800
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     "He, Bo" <bo.he@intel.com>
-Cc:     "Zhang, Jun" <jun.zhang@intel.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "josh@joshtriplett.org" <josh@joshtriplett.org>,
-        "mathieu.desnoyers@efficios.com" <mathieu.desnoyers@efficios.com>,
-        "jiangshanlai@gmail.com" <jiangshanlai@gmail.com>,
-        "Xiao, Jin" <jin.xiao@intel.com>,
-        "Zhang, Yanmin" <yanmin.zhang@intel.com>,
-        "Bai, Jie A" <jie.a.bai@intel.com>,
-        "Sun, Yi J" <yi.j.sun@intel.com>
-Subject: Re: rcu_preempt caused oom
-Reply-To: paulmck@linux.ibm.com
-References: <20181213001214.GE4170@linux.ibm.com>
- <88DC34334CA3444C85D647DBFA962C2735AD5F77@SHSMSX104.ccr.corp.intel.com>
- <20181213024234.GF4170@linux.ibm.com>
- <88DC34334CA3444C85D647DBFA962C2735AD5F9E@SHSMSX104.ccr.corp.intel.com>
- <20181213044020.GA19765@linux.ibm.com>
- <CD6925E8781EFD4D8E11882D20FC406D52A197EC@SHSMSX104.ccr.corp.intel.com>
- <20181213181136.GL4170@linux.ibm.com>
- <CD6925E8781EFD4D8E11882D20FC406D52A198C7@SHSMSX104.ccr.corp.intel.com>
- <20181214021527.GR4170@linux.ibm.com>
- <CD6925E8781EFD4D8E11882D20FC406D52A19939@SHSMSX104.ccr.corp.intel.com>
+        Fri, 14 Dec 2018 00:11:59 -0500
+Received: by mail-ot1-f67.google.com with SMTP id w25so4256417otm.13;
+        Thu, 13 Dec 2018 21:11:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=n8doylIzi8abXLgg/31g00Bs9s7hcD79O8dvOGYekzs=;
+        b=RgpSHsyNSHGxp5yz+L4KTekjL0kvkx42OSw+5GZJs7hmsZ3xgY11Mcq8KgLzGMDzpe
+         2TbgMwKR3XhRleSLa8qKFp9wRFsAiLn/xHEyQKeJ1wMcFA9m70QsM27PStP7N5dyVjRA
+         YGwCijfDJu6lE+Z+qRk48KsV6syyjduGmuOmr9wTzhNNbIwnuRMVOx5KvJyzosjcCHQv
+         liR07ELm2v60LyBiM0APNV/rpsHYbTiGVf1k4or74xIIzTTTFRlqZSghOhvfSkXRMr03
+         Z6BraFFgCXm9RYUPYBE3pxu4Ty3JJ7JijcZD+weC+4SHxEPUQ30w8NAtasW5fRgPuTe/
+         9IhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=n8doylIzi8abXLgg/31g00Bs9s7hcD79O8dvOGYekzs=;
+        b=g0rERZFpl5B9voIGRlMuoKxywL4aytKO2FV4xrIFGNr4XRyrVX1pTZEUlwx+lOjgQb
+         L8nx+PG/8LHyK15ig1y2G95mdTKbmq/e6cUgKxUYuZTmghTA7v2YhPmnsybIBmnBpHHK
+         VMDfSSg8yAA6vGhlCDXGHrcqERC6q/jW14eo5vaeOGqpofN8Oo6QA2PnstYu44mAt9Yc
+         aNxBLEH4/OiWdGzt+dRWiiGD4TG2J6/ySvjxMw9sMbJG2BIDrcVCvKpTUwlRo0RzrvJF
+         KcmIKXX2vSvLlJ7iYKJt611nT+K4CiW58HOAWJcT2cGTb0TE995IgT13BcG3IoPdAjgM
+         f2JA==
+X-Gm-Message-State: AA+aEWbrVSU/sI+y5ITtKwGhcRR2FRYj2p4H/68ui2Ie58tZUajTw+Fz
+        DlG87hlXANjWFkt3ID9KUUk=
+X-Google-Smtp-Source: AFSGD/VrtvKCcU1Uw91jr/5thS8AaF5ULQm/x5k3eVsMld/gFAKvJVSFrWdv2GfdUykZQ7rpEXAYSg==
+X-Received: by 2002:a9d:1715:: with SMTP id i21mr1080464ota.149.1544764318351;
+        Thu, 13 Dec 2018 21:11:58 -0800 (PST)
+Received: from [192.168.1.2] (ip68-228-73-187.oc.oc.cox.net. [68.228.73.187])
+        by smtp.googlemail.com with ESMTPSA id r184sm1833286oif.56.2018.12.13.21.11.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 13 Dec 2018 21:11:57 -0800 (PST)
+Subject: Re: [v7, PATCH 1/2] net:stmmac: dwmac-mediatek: add support for
+ mt2712
+To:     biao huang <biao.huang@mediatek.com>, Andrew Lunn <andrew@lunn.ch>
+Cc:     mark.rutland@arm.com, devicetree@vger.kernel.org,
+        nelson.chang@mediatek.com, netdev@vger.kernel.org,
+        liguo.zhang@mediatek.com, joabreu@synopsys.com,
+        linux-kernel@vger.kernel.org, matthias.bgg@gmail.com,
+        robh+dt@kernel.org, linux-mediatek@lists.infradead.org,
+        honghui.zhang@mediatek.com, yt.shen@mediatek.com,
+        davem@davemloft.net, linux-arm-kernel@lists.infradead.org
+References: <1544666173-5121-1-git-send-email-biao.huang@mediatek.com>
+ <1544666173-5121-2-git-send-email-biao.huang@mediatek.com>
+ <20181213123346.GF1605@lunn.ch> <1544756477.24219.164.camel@mhfsdcap03>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
+ mQGiBEjPuBIRBACW9MxSJU9fvEOCTnRNqG/13rAGsj+vJqontvoDSNxRgmafP8d3nesnqPyR
+ xGlkaOSDuu09rxuW+69Y2f1TzjFuGpBk4ysWOR85O2Nx8AJ6fYGCoeTbovrNlGT1M9obSFGQ
+ X3IzRnWoqlfudjTO5TKoqkbOgpYqIo5n1QbEjCCwCwCg3DOH/4ug2AUUlcIT9/l3pGvoRJ0E
+ AICDzi3l7pmC5IWn2n1mvP5247urtHFs/uusE827DDj3K8Upn2vYiOFMBhGsxAk6YKV6IP0d
+ ZdWX6fqkJJlu9cSDvWtO1hXeHIfQIE/xcqvlRH783KrihLcsmnBqOiS6rJDO2x1eAgC8meAX
+ SAgsrBhcgGl2Rl5gh/jkeA5ykwbxA/9u1eEuL70Qzt5APJmqVXR+kWvrqdBVPoUNy/tQ8mYc
+ nzJJ63ng3tHhnwHXZOu8hL4nqwlYHRa9eeglXYhBqja4ZvIvCEqSmEukfivk+DlIgVoOAJbh
+ qIWgvr3SIEuR6ayY3f5j0f2ejUMYlYYnKdiHXFlF9uXm1ELrb0YX4GMHz7QnRmxvcmlhbiBG
+ YWluZWxsaSA8Zi5mYWluZWxsaUBnbWFpbC5jb20+iGYEExECACYCGyMGCwkIBwMCBBUCCAME
+ FgIDAQIeAQIXgAUCVF/S8QUJHlwd3wAKCRBhV5kVtWN2DvCVAJ4u4/bPF4P3jxb4qEY8I2gS
+ 6hG0gACffNWlqJ2T4wSSn+3o7CCZNd7SLSC5BA0ESM+4EhAQAL/o09boR9D3Vk1Tt7+gpYr3
+ WQ6hgYVON905q2ndEoA2J0dQxJNRw3snabHDDzQBAcqOvdi7YidfBVdKi0wxHhSuRBfuOppu
+ pdXkb7zxuPQuSveCLqqZWRQ+Cc2QgF7SBqgznbe6Ngout5qXY5Dcagk9LqFNGhJQzUGHAsIs
+ hap1f0B1PoUyUNeEInV98D8Xd/edM3mhO9nRpUXRK9Bvt4iEZUXGuVtZLT52nK6Wv2EZ1TiT
+ OiqZlf1P+vxYLBx9eKmabPdm3yjalhY8yr1S1vL0gSA/C6W1o/TowdieF1rWN/MYHlkpyj9c
+ Rpc281gAO0AP3V1G00YzBEdYyi0gaJbCEQnq8Vz1vDXFxHzyhgGz7umBsVKmYwZgA8DrrB0M
+ oaP35wuGR3RJcaG30AnJpEDkBYHznI2apxdcuTPOHZyEilIRrBGzDwGtAhldzlBoBwE3Z3MY
+ 31TOpACu1ZpNOMysZ6xiE35pWkwc0KYm4hJA5GFfmWSN6DniimW3pmdDIiw4Ifcx8b3mFrRO
+ BbDIW13E51j9RjbO/nAaK9ndZ5LRO1B/8Fwat7bLzmsCiEXOJY7NNpIEpkoNoEUfCcZwmLrU
+ +eOTPzaF6drw6ayewEi5yzPg3TAT6FV3oBsNg3xlwU0gPK3v6gYPX5w9+ovPZ1/qqNfOrbsE
+ FRuiSVsZQ5s3AAMFD/9XjlnnVDh9GX/r/6hjmr4U9tEsM+VQXaVXqZuHKaSmojOLUCP/YVQo
+ 7IiYaNssCS4FCPe4yrL4FJJfJAsbeyDykMN7wAnBcOkbZ9BPJPNCbqU6dowLOiy8AuTYQ48m
+ vIyQ4Ijnb6GTrtxIUDQeOBNuQC/gyyx3nbL/lVlHbxr4tb6YkhkO6shjXhQh7nQb33FjGO4P
+ WU11Nr9i/qoV8QCo12MQEo244RRA6VMud06y/E449rWZFSTwGqb0FS0seTcYNvxt8PB2izX+
+ HZA8SL54j479ubxhfuoTu5nXdtFYFj5Lj5x34LKPx7MpgAmj0H7SDhpFWF2FzcC1bjiW9mjW
+ HaKaX23Awt97AqQZXegbfkJwX2Y53ufq8Np3e1542lh3/mpiGSilCsaTahEGrHK+lIusl6mz
+ Joil+u3k01ofvJMK0ZdzGUZ/aPMZ16LofjFA+MNxWrZFrkYmiGdv+LG45zSlZyIvzSiG2lKy
+ kuVag+IijCIom78P9jRtB1q1Q5lwZp2TLAJlz92DmFwBg1hyFzwDADjZ2nrDxKUiybXIgZp9
+ aU2d++ptEGCVJOfEW4qpWCCLPbOT7XBr+g/4H3qWbs3j/cDDq7LuVYIe+wchy/iXEJaQVeTC
+ y5arMQorqTFWlEOgRA8OP47L9knl9i4xuR0euV6DChDrguup2aJVU4hPBBgRAgAPAhsMBQJU
+ X9LxBQkeXB3fAAoJEGFXmRW1Y3YOj4UAn3nrFLPZekMeqX5aD/aq/dsbXSfyAKC45Go0YyxV
+ HGuUuzv+GKZ6nsysJ7kCDQRXG8fwARAA6q/pqBi5PjHcOAUgk2/2LR5LjjesK50bCaD4JuNc
+ YDhFR7Vs108diBtsho3w8WRd9viOqDrhLJTroVckkk74OY8r+3t1E0Dd4wHWHQZsAeUvOwDM
+ PQMqTUBFuMi6ydzTZpFA2wBR9x6ofl8Ax+zaGBcFrRlQnhsuXLnM1uuvS39+pmzIjasZBP2H
+ UPk5ifigXcpelKmj6iskP3c8QN6x6GjUSmYx+xUfs/GNVSU1XOZn61wgPDbgINJd/THGdqiO
+ iJxCLuTMqlSsmh1+E1dSdfYkCb93R/0ZHvMKWlAx7MnaFgBfsG8FqNtZu3PCLfizyVYYjXbV
+ WO1A23riZKqwrSJAATo5iTS65BuYxrFsFNPrf7TitM8E76BEBZk0OZBvZxMuOs6Z1qI8YKVK
+ UrHVGFq3NbuPWCdRul9SX3VfOunr9Gv0GABnJ0ET+K7nspax0xqq7zgnM71QEaiaH17IFYGS
+ sG34V7Wo3vyQzsk7qLf9Ajno0DhJ+VX43g8+AjxOMNVrGCt9RNXSBVpyv2AMTlWCdJ5KI6V4
+ KEzWM4HJm7QlNKE6RPoBxJVbSQLPd9St3h7mxLcne4l7NK9eNgNnneT7QZL8fL//s9K8Ns1W
+ t60uQNYvbhKDG7+/yLcmJgjF74XkGvxCmTA1rW2bsUriM533nG9gAOUFQjURkwI8jvMAEQEA
+ AYkCaAQYEQIACQUCVxvH8AIbAgIpCRBhV5kVtWN2DsFdIAQZAQIABgUCVxvH8AAKCRCH0Jac
+ RAcHBIkHD/9nmfog7X2ZXMzL9ktT++7x+W/QBrSTCTmq8PK+69+INN1ZDOrY8uz6htfTLV9+
+ e2W6G8/7zIvODuHk7r+yQ585XbplgP0V5Xc8iBHdBgXbqnY5zBrcH+Q/oQ2STalEvaGHqNoD
+ UGyLQ/fiKoLZTPMur57Fy1c9rTuKiSdMgnT0FPfWVDfpR2Ds0gpqWePlRuRGOoCln5GnREA/
+ 2MW2rWf+CO9kbIR+66j8b4RUJqIK3dWn9xbENh/aqxfonGTCZQ2zC4sLd25DQA4w1itPo+f5
+ V/SQxuhnlQkTOCdJ7b/mby/pNRz1lsLkjnXueLILj7gNjwTabZXYtL16z24qkDTI1x3g98R/
+ xunb3/fQwR8FY5/zRvXJq5us/nLvIvOmVwZFkwXc+AF+LSIajqQz9XbXeIP/BDjlBNXRZNdo
+ dVuSU51ENcMcilPr2EUnqEAqeczsCGpnvRCLfVQeSZr2L9N4svNhhfPOEscYhhpHTh0VPyxI
+ pPBNKq+byuYPMyk3nj814NKhImK0O4gTyCK9b+gZAVvQcYAXvSouCnTZeJRrNHJFTgTgu6E0
+ caxTGgc5zzQHeX67eMzrGomG3ZnIxmd1sAbgvJUDaD2GrYlulfwGWwWyTNbWRvMighVdPkSF
+ 6XFgQaosWxkV0OELLy2N485YrTr2Uq64VKyxpncLh50e2RnyAJ9qfUATKC9NgZjRvBztfqy4
+ a9BQwACgnzGuH1BVeT2J0Ra+ZYgkx7DaPR0=
+Message-ID: <f3427cac-88b2-1464-8f92-4692a7125674@gmail.com>
+Date:   Thu, 13 Dec 2018 21:11:54 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CD6925E8781EFD4D8E11882D20FC406D52A19939@SHSMSX104.ccr.corp.intel.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18121405-0052-0000-0000-000003671449
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010222; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000271; SDB=6.01131491; UDB=6.00588038; IPR=6.00911622;
- MB=3.00024687; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-14 05:10:17
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18121405-0053-0000-0000-00005F19DC80
-Message-Id: <20181214051011.GS4170@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-14_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812140046
+In-Reply-To: <1544756477.24219.164.camel@mhfsdcap03>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 14, 2018 at 02:40:50AM +0000, He, Bo wrote:
-> another experiment we have done with the enclosed debug patch, and also have more rcu trace event enable but without CONFIG_RCU_BOOST config, we don't reproduce the issue after 90 Hours until now on 10 boards(the issue should reproduce on one night per previous experience).
-
-That certainly supports the hypothesis that a wakeup is either not
-being sent or is being lost.  Your patch is great for debugging (thank
-you!), but the real solution of course needs to avoid the extra wakeups,
-especially on battery-powered systems.
-
-One suggested change below, to get rid of potential false positives.
-
-> the purposes are to capture the more rcu event trace close to the issue happen, because I check the __wait_rcu_gp is not always in running, so we think even it trigger the panic for 3s timeout, the issue is already happened before 3s.
-
-Agreed, it would be really good to have trace information from the cause.
-In the case you sent yesterday, it would be good to have trace information
-from 308.256 seconds prior to the sysrq-v, for example, by collecting the
-same event traces you did a few days ago.  It would also be good to know
-whether the scheduler tick is providing interrupts, and if so, why
-rcu_check_gp_start_stall() isn't being invoked.  ;-)
-
-If collecting this information with your setup is not feasible (for
-example, you might need a large trace buffer to capture five minutes
-of traces), please let me know and I can provide additional debug
-code.  Or you could add "rcu_ftrace_dump(DUMP_ALL);" just before the
-"show_rcu_gp_kthreads();" in your patch below.
-
-> And Actually the rsp->gp_flags = 1, but RCU_GP_WAIT_GPS(1) ->state: 0x402, it means the kthread is not schedule for 300s but the RCU_GP_FLAG_INIT is set. What's your ideas? 
-
-The most likely possibility is that my analysis below is confused and
-there really is some way that the code can set the RCU_GP_FLAG_INIT
-bit without later doing a wakeup.  The trace data above could help
-unconfuse me.
-
-								Thanx, Paul
-
-> ---------------------------------------------------------------------------------------------------------------------------------
-> -			swait_event_idle_exclusive(rsp->gp_wq, READ_ONCE(rsp->gp_flags) &
-> -						     RCU_GP_FLAG_INIT);
-> +			if (current->pid != rcu_preempt_pid) {
-> +				swait_event_idle_exclusive(rsp->gp_wq, READ_ONCE(rsp->gp_flags) &
-> +						RCU_GP_FLAG_INIT);
-> +			} else {
-
-wait_again:
-
-> +				ret = swait_event_idle_timeout_exclusive(rsp->gp_wq, READ_ONCE(rsp->gp_flags) &
-> +						RCU_GP_FLAG_INIT, 2*HZ);
-> +
-> +				if(!ret) {
-
-This would avoid complaining if RCU was legitimately idle for a long time:
-
-				if(!ret && !READ_ONCE(rsp->gp_flags)) {
-					rcu_ftrace_dump(DUMP_ALL);
-					show_rcu_gp_kthreads();
-					panic("hung_task: blocked in rcu_gp_kthread init");
-				} else if (!ret) {
-					goto wait_again;
-				}
-
-> +					show_rcu_gp_kthreads();
-> +					panic("hung_task: blocked in rcu_gp_kthread init");
-> +				}
-> +			}
-> --------------------------------------------------------------------------------------
-> -----Original Message-----
-> From: Paul E. McKenney <paulmck@linux.ibm.com> 
-> Sent: Friday, December 14, 2018 10:15 AM
-> To: He, Bo <bo.he@intel.com>
-> Cc: Zhang, Jun <jun.zhang@intel.com>; Steven Rostedt <rostedt@goodmis.org>; linux-kernel@vger.kernel.org; josh@joshtriplett.org; mathieu.desnoyers@efficios.com; jiangshanlai@gmail.com; Xiao, Jin <jin.xiao@intel.com>; Zhang, Yanmin <yanmin.zhang@intel.com>; Bai, Jie A <jie.a.bai@intel.com>; Sun, Yi J <yi.j.sun@intel.com>
-> Subject: Re: rcu_preempt caused oom
+Le 12/13/18 à 7:01 PM, biao huang a écrit :
+> Dear Andrew,
+> 	Thanks for your comments.
 > 
-> On Fri, Dec 14, 2018 at 01:30:04AM +0000, He, Bo wrote:
-> > as you mentioned CONFIG_FAST_NO_HZ, do you mean CONFIG_RCU_FAST_NO_HZ? I double checked there is no FAST_NO_HZ in .config:
+> On Thu, 2018-12-13 at 13:33 +0100, Andrew Lunn wrote:
+>> Hi Biao
+>>
+>>> +	case PHY_INTERFACE_MODE_RGMII:
+>>> +		/* the PHY is not responsible for inserting any internal
+>>> +		 * delay by itself in PHY_INTERFACE_MODE_RGMII case,
+>>> +		 * so Ethernet MAC will insert delays for both transmit
+>>> +		 * and receive path here.
+>>> +		 */
+>>
+>> What if the PCB designed has decided to do a kink in the clock to add
+>> the delays? I don't think any of these delays should depend on the PHY
+>> interface mode. It is up to the device tree writer to set both the PHY
+>> delay and the MAC delay, based on knowledge of the board, including
+>> any kicks in the tracks. The driver should then do what it is told.
+>>
+> Originally, we recommend equal trace length on PCB, which means that
+> RGMII delay by PCB traces is not recommended. so only PHY/MAC delay is
+> taken into account in the transmit/receive path.
 > 
-> Yes, you are correct, CONFIG_RCU_FAST_NO_HZ.  OK, you do not have it set, which means several code paths can be ignored.  Also CONFIG_HZ=1000, so
-> 300 second delay.
-> 
-> 							Thanx, Paul
-> 
-> > Here is the grep from .config:
-> > egrep "HZ|RCU" .config
-> > CONFIG_NO_HZ_COMMON=y
-> > # CONFIG_HZ_PERIODIC is not set
-> > CONFIG_NO_HZ_IDLE=y
-> > # CONFIG_NO_HZ_FULL is not set
-> > CONFIG_NO_HZ=y
-> > # RCU Subsystem
-> > CONFIG_PREEMPT_RCU=y
-> > # CONFIG_RCU_EXPERT is not set
-> > CONFIG_SRCU=y
-> > CONFIG_TREE_SRCU=y
-> > CONFIG_TASKS_RCU=y
-> > CONFIG_RCU_STALL_COMMON=y
-> > CONFIG_RCU_NEED_SEGCBLIST=y
-> > # CONFIG_HZ_100 is not set
-> > # CONFIG_HZ_250 is not set
-> > # CONFIG_HZ_300 is not set
-> > CONFIG_HZ_1000=y
-> > CONFIG_HZ=1000
-> > # CONFIG_MACHZ_WDT is not set
-> > # RCU Debugging
-> > CONFIG_PROVE_RCU=y
-> > CONFIG_RCU_PERF_TEST=m
-> > CONFIG_RCU_TORTURE_TEST=m
-> > CONFIG_RCU_CPU_STALL_TIMEOUT=7
-> > CONFIG_RCU_TRACE=y
-> > CONFIG_RCU_EQS_DEBUG=y
-> > 
-> > -----Original Message-----
-> > From: Paul E. McKenney <paulmck@linux.ibm.com>
-> > Sent: Friday, December 14, 2018 2:12 AM
-> > To: He, Bo <bo.he@intel.com>
-> > Cc: Zhang, Jun <jun.zhang@intel.com>; Steven Rostedt 
-> > <rostedt@goodmis.org>; linux-kernel@vger.kernel.org; 
-> > josh@joshtriplett.org; mathieu.desnoyers@efficios.com; 
-> > jiangshanlai@gmail.com; Xiao, Jin <jin.xiao@intel.com>; Zhang, Yanmin 
-> > <yanmin.zhang@intel.com>; Bai, Jie A <jie.a.bai@intel.com>; Sun, Yi J 
-> > <yi.j.sun@intel.com>
-> > Subject: Re: rcu_preempt caused oom
-> > 
-> > On Thu, Dec 13, 2018 at 03:26:08PM +0000, He, Bo wrote:
-> > > one of the board reproduce the issue with the show_rcu_gp_kthreads(), I also enclosed the logs as attachment.
-> > > 
-> > > [17818.936032] rcu: rcu_preempt: wait state: RCU_GP_WAIT_GPS(1) ->state: 0x402 delta ->gp_activity 308257 ->gp_req_activity 308256 ->gp_wake_time 308258 ->gp_wake_seq       21808189 ->gp_seq 21808192 ->gp_seq_needed 21808196 ->gp_flags 0x1
-> > 
-> > This is quite helpful, thank you!
-> > 
-> > The "RCU lockdep checking is enabled" says that CONFIG_PROVE_RCU=y, which is good.  The "RCU_GP_WAIT_GPS(1)" means that the rcu_preempt task is waiting for a new grace-period request.  The "->state: 0x402" means that it is sleeping, neither running nor in the process of waking up.
-> > The "delta ->gp_activity 308257 ->gp_req_activity 308256 ->gp_wake_time 308258" means that it has been more than 300,000 jiffies since the rcu_preempt task did anything or was requested to do anything.
-> > 
-> > The "->gp_wake_seq 21808189 ->gp_seq 21808192" says that the last attempt to awaken the rcu_preempt task happened during the last grace period.
-> > The "->gp_seq_needed 21808196 ->gp_flags 0x1" nevertheless says that someone requested a new grace period.  So if the rcu_preempt task were to wake up, it would process the new grace period.  Note again also the ->gp_req_activity 308256, which indicates that ->gp_flags was set more than 300,000 jiffies ago, just after the last recorded activity of the rcu_preempt task.
-> > 
-> > But this is exactly the situation that rcu_check_gp_start_stall() is designed to warn about (and does warn about for me when I comment out the wakeup code).  So why is rcu_check_gp_start_stall() not being called?  Here are a couple of possibilities:
-> > 
-> > 1.	Because rcu_check_gp_start_stall() is only ever invoked from
-> > 	RCU_SOFTIRQ, it is possible that softirqs are stalled for
-> > 	whatever reason.
-> > 
-> > 2.	Because RCU_SOFTIRQ is invoked primarily from the scheduler-clock
-> > 	interrupt handler, it is possible that the scheduler tick has
-> > 	somehow been disabled.  Traces from earlier runs showed a great
-> > 	deal of RCU callbacks queued, which would have caused RCU to
-> > 	refuse to allow the scheduler tick to be disabled, even if the
-> > 	corresponding CPU was idle.
-> > 
-> > 3.	You have CONFIG_FAST_NO_HZ=y (which you probably do, given
-> > 	that you are building for a battery-powered device) and all of the
-> > 	CPU's callbacks are lazy.  Except that your earlier traces showed
-> > 	lots of non-lazy callbacks.  Besides, even if all callbacks were
-> > 	lazy, there would still be a scheduling-clock interrupt every
-> > 	six seconds, and there are quite a few six-second intervals
-> > 	in a two-minute watchdog timeout.
-> > 
-> > 	But if we cannot find the problem quickly, I will likely ask
-> > 	you to try reproducing with CONFIG_FAST_NO_HZ=n.  This could
-> > 	be thought of as bisecting the RCU code looking for the bug.
-> > 
-> > The first two of these seem unlikely given that the watchdog timer was still firing.  Still, I don't see how 300,000 jiffies elapsed with a grace period requested and not started otherwise.  Could you please check?
-> > One way to do so would be to enable ftrace on rcu_check_callbacks(), __rcu_process_callbacks(), and rcu_check_gp_start_stall().  It might be necessary to no-inline rcu_check_gp_start_stall().  You might have better ways to collect this information.
-> > 
-> > Without this information, the only workaround patch I can give you will degrade battery lifetime, which might not be what you want.
-> > 
-> > You do have a lockdep complaint early at boot.  Although I don't immediately see how this self-deadlock would affect RCU, please do get it fixed.  Sometimes the consequences of this sort of deadlock can propagate to unexepected places.
-> > 
-> > Regardless of why rcu_check_gp_start_stall() failed to complain, it looks like this was set after the rcu_preempt task slept for the last time, and so there should have been a wakeup the last time that ->gp_flags was set.  Perhaps there is some code path that drops the wakeup.
-> > I did check this in current -rcu, but you are instead running v4.19, so I should also check there.
-> > 
-> > The ->gp_flags has its RCU_GP_FLAG_INIT bit set in rcu_start_this_gp() and in rcu_gp_cleanup().  We can eliminate rcu_gp_cleanup() from consideration because only the rcu_preempt task will execute that code, and we know that this task was asleep at the last time this bit was set.
-> > Now rcu_start_this_gp() returns a flag indicating whether or not a wakeup is needed, and the caller must do the wakeup once it is safe to do so, that is, after the various rcu_node locks have been released (doing a wakeup while holding any of those locks results in deadlock).
-> > 
-> > The following functions invoke rcu_start_this_gp: rcu_accelerate_cbs() and rcu_nocb_wait_gp().  We can eliminate rcu_nocb_wait_gp() because you are building with CONFIG_RCU_NOCB_CPU=n.  Then rcu_accelerate_cbs() is invoked from:
-> > 
-> > o	rcu_accelerate_cbs_unlocked(), which does the following, thus
-> > 	properly awakening the rcu_preempt task when needed:
-> > 
-> > 	needwake = rcu_accelerate_cbs(rsp, rnp, rdp);
-> > 	raw_spin_unlock_rcu_node(rnp); /* irqs remain disabled. */
-> > 	if (needwake)
-> > 		rcu_gp_kthread_wake(rsp);
-> > 
-> > o	rcu_advance_cbs(), which returns the value returned by
-> > 	rcu_accelerate_cbs(), thus pushing the problem off to its
-> > 	callers, which are called out below.
-> > 
-> > o	__note_gp_changes(), which also returns the value returned by
-> > 	rcu_accelerate_cbs(), thus pushing the problem off to its callers,
-> > 	which are called out below.
-> > 
-> > o	rcu_gp_cleanup(), which is only ever invoked by RCU grace-period
-> > 	kthreads such as the rcu_preempt task.	Therefore, this function
-> > 	never needs to awaken the rcu_preempt task, because the fact
-> > 	that this function is executing means that this task is already
-> > 	awake.	(Also, as noted above, we can eliminate this code from
-> > 	consideration because this task is known to have been sleeping
-> > 	at the last time that the RCU_GP_FLAG_INIT bit was set.)
-> > 
-> > o	rcu_report_qs_rdp(), which does the following, thus properly
-> > 	awakening the rcu_preempt task when needed:
-> > 
-> > 		needwake = rcu_accelerate_cbs(rsp, rnp, rdp);
-> > 
-> > 		rcu_report_qs_rnp(mask, rsp, rnp, rnp->gp_seq, flags);
-> > 		/* ^^^ Released rnp->lock */
-> > 		if (needwake)
-> > 			rcu_gp_kthread_wake(rsp);
-> > 
-> > o	rcu_prepare_for_idle(), which does the following, thus properly
-> > 	awakening the rcu_preempt task when needed:
-> > 
-> > 		needwake = rcu_accelerate_cbs(rsp, rnp, rdp);
-> > 		raw_spin_unlock_rcu_node(rnp); /* irqs remain disabled. */
-> > 		if (needwake)
-> > 			rcu_gp_kthread_wake(rsp);
-> > 
-> > Now for rcu_advance_cbs():
-> > 
-> > o	__note_gp_changes(), which which also returns the value returned
-> > 	by rcu_advance_cbs(), thus pushing the problem off to its callers,
-> > 	which are called out below.
-> > 
-> > o	rcu_migrate_callbacks(), which does the following, thus properly
-> > 	awakening the rcu_preempt task when needed:
-> > 
-> > 	needwake = rcu_advance_cbs(rsp, rnp_root, rdp) ||
-> > 		   rcu_advance_cbs(rsp, rnp_root, my_rdp);
-> > 	rcu_segcblist_merge(&my_rdp->cblist, &rdp->cblist);
-> > 	WARN_ON_ONCE(rcu_segcblist_empty(&my_rdp->cblist) !=
-> > 		     !rcu_segcblist_n_cbs(&my_rdp->cblist));
-> > 	raw_spin_unlock_irqrestore_rcu_node(rnp_root, flags);
-> > 	if (needwake)
-> > 		rcu_gp_kthread_wake(rsp);
-> > 
-> > Now for __note_gp_changes():
-> > 
-> > o	note_gp_changes(), which does the following, thus properly
-> > 	awakening the rcu_preempt task when needed:
-> > 
-> > 	needwake = __note_gp_changes(rsp, rnp, rdp);
-> > 	raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
-> > 	if (needwake)
-> > 		rcu_gp_kthread_wake(rsp);
-> > 
-> > o	rcu_gp_init() which is only ever invoked by RCU grace-period
-> > 	kthreads such as the rcu_preempt task, which makes wakeups
-> > 	unnecessary, just as for rcu_gp_cleanup() above.
-> > 
-> > o	rcu_gp_cleanup(), ditto.
-> > 
-> > So I am not seeing how I am losing a wakeup, but please do feel free to double-check my analysis.  One way to do that is using event tracing.
-> > 
-> > 							Thanx, Paul
-> > 
-> > ----------------------------------------------------------------------
-> > --
-> > lockdep complaint:
-> > ----------------------------------------------------------------------
-> > --
-> > 
-> > [    2.895507] ======================================================
-> > [    2.895511] WARNING: possible circular locking dependency detected
-> > [    2.895517] 4.19.5-quilt-2e5dc0ac-g4d59bbd0fd1a #1 Tainted: G     U           
-> > [    2.895521] ------------------------------------------------------
-> > [    2.895525] earlyEvs/1839 is trying to acquire lock:
-> > [    2.895530] 00000000ff344115 (&asd->mutex){+.+.}, at: ipu_isys_subdev_get_ffmt+0x32/0x90
-> > [    2.895546] 
-> > [    2.895546] but task is already holding lock:
-> > [    2.895550] 0000000069562e72 (&mdev->graph_mutex){+.+.}, at: media_pipeline_start+0x28/0x50
-> > [    2.895561] 
-> > [    2.895561] which lock already depends on the new lock.
-> > [    2.895561] 
-> > [    2.895566] 
-> > [    2.895566] the existing dependency chain (in reverse order) is:
-> > [    2.895570] 
-> > [    2.895570] -> #1 (&mdev->graph_mutex){+.+.}:
-> > [    2.895583]        __mutex_lock+0x80/0x9a0
-> > [    2.895588]        mutex_lock_nested+0x1b/0x20
-> > [    2.895593]        media_device_register_entity+0x92/0x1e0
-> > [    2.895598]        v4l2_device_register_subdev+0xc2/0x1b0
-> > [    2.895604]        ipu_isys_csi2_init+0x22c/0x520
-> > [    2.895608]        isys_probe+0x6cb/0xed0
-> > [    2.895613]        ipu_bus_probe+0xfd/0x2e0
-> > [    2.895620]        really_probe+0x268/0x3d0
-> > [    2.895625]        driver_probe_device+0x11a/0x130
-> > [    2.895630]        __device_attach_driver+0x86/0x100
-> > [    2.895635]        bus_for_each_drv+0x6e/0xb0
-> > [    2.895640]        __device_attach+0xdf/0x160
-> > [    2.895645]        device_initial_probe+0x13/0x20
-> > [    2.895650]        bus_probe_device+0xa6/0xc0
-> > [    2.895655]        deferred_probe_work_func+0x88/0xe0
-> > [    2.895661]        process_one_work+0x220/0x5c0
-> > [    2.895665]        worker_thread+0x1da/0x3b0
-> > [    2.895670]        kthread+0x12c/0x150
-> > [    2.895675]        ret_from_fork+0x3a/0x50
-> > [    2.895678] 
-> > [    2.895678] -> #0 (&asd->mutex){+.+.}:
-> > [    2.895688]        lock_acquire+0x95/0x1a0
-> > [    2.895693]        __mutex_lock+0x80/0x9a0
-> > [    2.895698]        mutex_lock_nested+0x1b/0x20
-> > [    2.895703]        ipu_isys_subdev_get_ffmt+0x32/0x90
-> > [    2.895708]        ipu_isys_csi2_get_fmt+0x14/0x30
-> > [    2.895713]        v4l2_subdev_link_validate_get_format.isra.6+0x52/0x80
-> > [    2.895718]        v4l2_subdev_link_validate_one+0x67/0x120
-> > [    2.895723]        v4l2_subdev_link_validate+0x246/0x490
-> > [    2.895728]        csi2_link_validate+0xc6/0x220
-> > [    2.895733]        __media_pipeline_start+0x15b/0x2f0
-> > [    2.895738]        media_pipeline_start+0x33/0x50
-> > [    2.895743]        ipu_isys_video_prepare_streaming+0x1e0/0x610
-> > [    2.895748]        start_streaming+0x186/0x3a0
-> > [    2.895753]        vb2_start_streaming+0x6d/0x130
-> > [    2.895758]        vb2_core_streamon+0x108/0x140
-> > [    2.895762]        vb2_streamon+0x29/0x50
-> > [    2.895767]        vb2_ioctl_streamon+0x42/0x50
-> > [    2.895772]        v4l_streamon+0x20/0x30
-> > [    2.895776]        __video_do_ioctl+0x1af/0x3c0
-> > [    2.895781]        video_usercopy+0x27e/0x7e0
-> > [    2.895785]        video_ioctl2+0x15/0x20
-> > [    2.895789]        v4l2_ioctl+0x49/0x50
-> > [    2.895794]        do_video_ioctl+0x93c/0x2360
-> > [    2.895799]        v4l2_compat_ioctl32+0x93/0xe0
-> > [    2.895806]        __ia32_compat_sys_ioctl+0x73a/0x1c90
-> > [    2.895813]        do_fast_syscall_32+0x9a/0x2d6
-> > [    2.895818]        entry_SYSENTER_compat+0x6d/0x7c
-> > [    2.895821] 
-> > [    2.895821] other info that might help us debug this:
-> > [    2.895821] 
-> > [    2.895826]  Possible unsafe locking scenario:
-> > [    2.895826] 
-> > [    2.895830]        CPU0                    CPU1
-> > [    2.895833]        ----                    ----
-> > [    2.895836]   lock(&mdev->graph_mutex);
-> > [    2.895842]                                lock(&asd->mutex);
-> > [    2.895847]                                lock(&mdev->graph_mutex);
-> > [    2.895852]   lock(&asd->mutex);
-> > [    2.895857] 
-> > [    2.895857]  *** DEADLOCK ***
-> > [    2.895857] 
-> > [    2.895863] 3 locks held by earlyEvs/1839:
-> > [    2.895866]  #0: 00000000ed860090 (&av->mutex){+.+.}, at: __video_do_ioctl+0xbf/0x3c0
-> > [    2.895876]  #1: 000000000cb253e7 (&isys->stream_mutex){+.+.}, at: start_streaming+0x5c/0x3a0
-> > [    2.895886]  #2: 0000000069562e72 (&mdev->graph_mutex){+.+.}, at: media_pipeline_start+0x28/0x50
-> > [    2.895896] 
-> > [    2.895896] stack backtrace:
-> > [    2.895903] CPU: 0 PID: 1839 Comm: earlyEvs Tainted: G     U            4.19.5-quilt-2e5dc0ac-g4d59bbd0fd1a #1
-> > [    2.895907] Call Trace:
-> > [    2.895915]  dump_stack+0x70/0xa5
-> > [    2.895921]  print_circular_bug.isra.35+0x1d8/0x1e6
-> > [    2.895927]  __lock_acquire+0x1284/0x1340
-> > [    2.895931]  ? __lock_acquire+0x2b5/0x1340
-> > [    2.895940]  lock_acquire+0x95/0x1a0
-> > [    2.895945]  ? lock_acquire+0x95/0x1a0
-> > [    2.895950]  ? ipu_isys_subdev_get_ffmt+0x32/0x90
-> > [    2.895956]  ? ipu_isys_subdev_get_ffmt+0x32/0x90
-> > [    2.895961]  __mutex_lock+0x80/0x9a0
-> > [    2.895966]  ? ipu_isys_subdev_get_ffmt+0x32/0x90
-> > [    2.895971]  ? crlmodule_get_format+0x43/0x50
-> > [    2.895979]  mutex_lock_nested+0x1b/0x20
-> > [    2.895984]  ? mutex_lock_nested+0x1b/0x20
-> > [    2.895989]  ipu_isys_subdev_get_ffmt+0x32/0x90
-> > [    2.895995]  ipu_isys_csi2_get_fmt+0x14/0x30
-> > [    2.896001]  v4l2_subdev_link_validate_get_format.isra.6+0x52/0x80
-> > [    2.896006]  v4l2_subdev_link_validate_one+0x67/0x120
-> > [    2.896011]  ? crlmodule_get_format+0x2a/0x50
-> > [    2.896018]  ? find_held_lock+0x35/0xa0
-> > [    2.896023]  ? crlmodule_get_format+0x43/0x50
-> > [    2.896030]  v4l2_subdev_link_validate+0x246/0x490
-> > [    2.896035]  ? __mutex_unlock_slowpath+0x58/0x2f0
-> > [    2.896042]  ? mutex_unlock+0x12/0x20
-> > [    2.896046]  ? crlmodule_get_format+0x43/0x50
-> > [    2.896052]  ? v4l2_subdev_link_validate_get_format.isra.6+0x52/0x80
-> > [    2.896057]  ? v4l2_subdev_link_validate_one+0x67/0x120
-> > [    2.896065]  ? __is_insn_slot_addr+0xad/0x120
-> > [    2.896070]  ? kernel_text_address+0xc4/0x100
-> > [    2.896078]  ? v4l2_subdev_link_validate+0x246/0x490
-> > [    2.896085]  ? kernel_text_address+0xc4/0x100
-> > [    2.896092]  ? __lock_acquire+0x1106/0x1340
-> > [    2.896096]  ? __lock_acquire+0x1169/0x1340
-> > [    2.896103]  csi2_link_validate+0xc6/0x220
-> > [    2.896110]  ? __lock_is_held+0x5a/0xa0
-> > [    2.896115]  ? mark_held_locks+0x58/0x80
-> > [    2.896122]  ? __kmalloc+0x207/0x2e0
-> > [    2.896127]  ? __lock_is_held+0x5a/0xa0
-> > [    2.896134]  ? rcu_read_lock_sched_held+0x81/0x90
-> > [    2.896139]  ? __kmalloc+0x2a3/0x2e0
-> > [    2.896144]  ? media_pipeline_start+0x28/0x50
-> > [    2.896150]  ? __media_entity_enum_init+0x33/0x70
-> > [    2.896155]  ? csi2_has_route+0x18/0x20
-> > [    2.896160]  ? media_graph_walk_next.part.9+0xac/0x290
-> > [    2.896166]  __media_pipeline_start+0x15b/0x2f0
-> > [    2.896173]  ? rcu_read_lock_sched_held+0x81/0x90
-> > [    2.896179]  media_pipeline_start+0x33/0x50
-> > [    2.896186]  ipu_isys_video_prepare_streaming+0x1e0/0x610
-> > [    2.896191]  ? __lock_acquire+0x132e/0x1340
-> > [    2.896198]  ? __lock_acquire+0x2b5/0x1340
-> > [    2.896204]  ? lock_acquire+0x95/0x1a0
-> > [    2.896209]  ? start_streaming+0x5c/0x3a0
-> > [    2.896215]  ? start_streaming+0x5c/0x3a0
-> > [    2.896221]  ? __mutex_lock+0x391/0x9a0
-> > [    2.896226]  ? v4l_enable_media_source+0x2d/0x70
-> > [    2.896233]  ? find_held_lock+0x35/0xa0
-> > [    2.896238]  ? v4l_enable_media_source+0x57/0x70
-> > [    2.896245]  start_streaming+0x186/0x3a0
-> > [    2.896250]  ? __mutex_unlock_slowpath+0x58/0x2f0
-> > [    2.896257]  vb2_start_streaming+0x6d/0x130
-> > [    2.896262]  ? vb2_start_streaming+0x6d/0x130
-> > [    2.896267]  vb2_core_streamon+0x108/0x140
-> > [    2.896273]  vb2_streamon+0x29/0x50
-> > [    2.896278]  vb2_ioctl_streamon+0x42/0x50
-> > [    2.896284]  v4l_streamon+0x20/0x30
-> > [    2.896288]  __video_do_ioctl+0x1af/0x3c0
-> > [    2.896296]  ? __might_fault+0x85/0x90
-> > [    2.896302]  video_usercopy+0x27e/0x7e0
-> > [    2.896307]  ? copy_overflow+0x20/0x20
-> > [    2.896313]  ? find_held_lock+0x35/0xa0
-> > [    2.896319]  ? __might_fault+0x3e/0x90
-> > [    2.896325]  video_ioctl2+0x15/0x20
-> > [    2.896330]  v4l2_ioctl+0x49/0x50
-> > [    2.896335]  do_video_ioctl+0x93c/0x2360
-> > [    2.896343]  v4l2_compat_ioctl32+0x93/0xe0
-> > [    2.896349]  __ia32_compat_sys_ioctl+0x73a/0x1c90
-> > [    2.896354]  ? lockdep_hardirqs_on+0xef/0x180
-> > [    2.896359]  ? do_fast_syscall_32+0x3b/0x2d6
-> > [    2.896364]  do_fast_syscall_32+0x9a/0x2d6
-> > [    2.896370]  entry_SYSENTER_compat+0x6d/0x7c
-> > [    2.896377] RIP: 0023:0xf7e79b79
-> > [    2.896382] Code: 85 d2 74 02 89 0a 5b 5d c3 8b 04 24 c3 8b 0c 24 c3 8b 1c 24 c3 90 90 90 90 90 90 90 90 90 90 90 90 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 eb 0d 90 90 90 90 90 90 90 90 90 90 90 90
-> > [    2.896387] RSP: 002b:00000000f76816bc EFLAGS: 00000292 ORIG_RAX: 0000000000000036
-> > [    2.896393] RAX: ffffffffffffffda RBX: 000000000000000e RCX: 0000000040045612
-> > [    2.896396] RDX: 00000000f768172c RSI: 00000000f7d42d9c RDI: 00000000f768172c
-> > [    2.896400] RBP: 00000000f7681708 R08: 0000000000000000 R09: 0000000000000000
-> > [    2.896404] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
-> > [    2.896408] R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
-> > 
-> > ----------------------------------------------------------------------
-> > --
-> > 
-> > > [17818.936039] rcu:     rcu_node 0:3 ->gp_seq 21808192 ->gp_seq_needed 21808196
-> > > [17818.936048] rcu: rcu_sched: wait state: RCU_GP_WAIT_GPS(1) ->state: 0x402 delta ->gp_activity 101730 ->gp_req_activity 101732 ->gp_wake_time 101730 ->gp_wake_seq 1357 -  >gp_seq 1360 ->gp_seq_needed 1360 ->gp_flags 0x0                                                                                                                             
-> > > [17818.936056] rcu: rcu_bh: wait state: RCU_GP_WAIT_GPS(1) ->state: 0x402 delta ->gp_activity 4312486108 ->gp_req_activity 4312486108 ->gp_wake_time 4312486108 -            >gp_wake_seq 0 ->gp_seq -1200 ->gp_seq_needed -1200 ->gp_flags 0x0
-> > > 
-> > > -----Original Message-----
-> > > From: Paul E. McKenney <paulmck@linux.ibm.com>
-> > > Sent: Thursday, December 13, 2018 12:40 PM
-> > > To: Zhang, Jun <jun.zhang@intel.com>
-> > > Cc: He, Bo <bo.he@intel.com>; Steven Rostedt <rostedt@goodmis.org>; 
-> > > linux-kernel@vger.kernel.org; josh@joshtriplett.org; 
-> > > mathieu.desnoyers@efficios.com; jiangshanlai@gmail.com; Xiao, Jin 
-> > > <jin.xiao@intel.com>; Zhang, Yanmin <yanmin.zhang@intel.com>; Bai, 
-> > > Jie A <jie.a.bai@intel.com>; Sun, Yi J <yi.j.sun@intel.com>
-> > > Subject: Re: rcu_preempt caused oom
-> > > 
-> > > On Thu, Dec 13, 2018 at 03:28:46AM +0000, Zhang, Jun wrote:
-> > > > Ok, we will test it, thanks!
-> > > 
-> > > But please also try the sysrq-y with the earlier patch after a hang!
-> > > 
-> > > 							Thanx, Paul
-> > > 
-> > > > -----Original Message-----
-> > > > From: Paul E. McKenney [mailto:paulmck@linux.ibm.com]
-> > > > Sent: Thursday, December 13, 2018 10:43
-> > > > To: Zhang, Jun <jun.zhang@intel.com>
-> > > > Cc: He, Bo <bo.he@intel.com>; Steven Rostedt 
-> > > > <rostedt@goodmis.org>; linux-kernel@vger.kernel.org; 
-> > > > josh@joshtriplett.org; mathieu.desnoyers@efficios.com; 
-> > > > jiangshanlai@gmail.com; Xiao, Jin <jin.xiao@intel.com>; Zhang, 
-> > > > Yanmin <yanmin.zhang@intel.com>; Bai, Jie A <jie.a.bai@intel.com>; 
-> > > > Sun, Yi J <yi.j.sun@intel.com>
-> > > > Subject: Re: rcu_preempt caused oom
-> > > > 
-> > > > On Thu, Dec 13, 2018 at 02:11:35AM +0000, Zhang, Jun wrote:
-> > > > > Hello, Paul
-> > > > > 
-> > > > > I think the next patch is better.
-> > > > > Because ULONG_CMP_GE could cause double write, which has risk that write back old value.
-> > > > > Please help review.
-> > > > > I don't test it. If you agree, we will test it.
-> > > > 
-> > > > Just to make sure that I understand, you are worried about something like the following, correct?
-> > > > 
-> > > > o	__note_gp_changes() compares rnp->gp_seq_needed and rdp->gp_seq_needed
-> > > > 	and finds them equal.
-> > > > 
-> > > > o	At just this time something like rcu_start_this_gp() assigns a new
-> > > > 	(larger) value to rdp->gp_seq_needed.
-> > > > 
-> > > > o	Then __note_gp_changes() overwrites rdp->gp_seq_needed with the
-> > > > 	old value.
-> > > > 
-> > > > This cannot happen because __note_gp_changes() runs with interrupts disabled on the CPU corresponding to the rcu_data structure referenced by the rdp pointer.  So there is no way for rcu_start_this_gp() to be invoked on the same CPU during this "if" statement.
-> > > > 
-> > > > Of course, there could be bugs.  For example:
-> > > > 
-> > > > o	__note_gp_changes() might be called on a different CPU than that
-> > > > 	corresponding to rdp.  You can check this with something like:
-> > > > 
-> > > > 	WARN_ON_ONCE(rdp->cpu != smp_processor_id());
-> > > > 
-> > > > o	The same things could happen with rcu_start_this_gp(), and the
-> > > > 	above WARN_ON_ONCE() would work there as well.
-> > > > 
-> > > > o	rcutree_prepare_cpu() is a special case, but is irrelevant unless
-> > > > 	you are doing CPU-hotplug operations.  (It can run on a CPU other
-> > > > 	than rdp->cpu, but only at times when rdp->cpu is offline.)
-> > > > 
-> > > > o	Interrupts might not really be disabled.
-> > > > 
-> > > > That said, your patch could reduce overhead slightly, given that the two values will be equal much of the time.  So it might be worth testing just for that reason.
-> > > > 
-> > > > So why not just test it anyway?  If it makes the bug go away, I 
-> > > > will be surprised, but it would not be the first surprise for me.  
-> > > > ;-)
-> > > > 
-> > > > 							Thanx, Paul
-> > > > 
-> > > > > Thanks!
-> > > > > 
-> > > > > 
-> > > > > diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c index 
-> > > > > 0b760c1..c00f34e 100644
-> > > > > --- a/kernel/rcu/tree.c
-> > > > > +++ b/kernel/rcu/tree.c
-> > > > > @@ -1849,7 +1849,7 @@ static bool __note_gp_changes(struct rcu_state *rsp, struct rcu_node *rnp,
-> > > > >                 zero_cpu_stall_ticks(rdp);
-> > > > >         }
-> > > > >         rdp->gp_seq = rnp->gp_seq;  /* Remember new grace-period state. */
-> > > > > -       if (ULONG_CMP_GE(rnp->gp_seq_needed, rdp->gp_seq_needed) || rdp->gpwrap)
-> > > > > +       if (ULONG_CMP_LT(rdp->gp_seq_needed, rnp->gp_seq_needed)
-> > > > > + ||
-> > > > > + rdp->gpwrap)
-> > > > >                 rdp->gp_seq_needed = rnp->gp_seq_needed;
-> > > > >         WRITE_ONCE(rdp->gpwrap, false);
-> > > > >         rcu_gpnum_ovf(rnp, rdp);
-> > > > > 
-> > > > > 
-> > > > > -----Original Message-----
-> > > > > From: Paul E. McKenney [mailto:paulmck@linux.ibm.com]
-> > > > > Sent: Thursday, December 13, 2018 08:12
-> > > > > To: He, Bo <bo.he@intel.com>
-> > > > > Cc: Steven Rostedt <rostedt@goodmis.org>; 
-> > > > > linux-kernel@vger.kernel.org; josh@joshtriplett.org; 
-> > > > > mathieu.desnoyers@efficios.com; jiangshanlai@gmail.com; Zhang, 
-> > > > > Jun <jun.zhang@intel.com>; Xiao, Jin <jin.xiao@intel.com>; 
-> > > > > Zhang, Yanmin <yanmin.zhang@intel.com>; Bai, Jie A 
-> > > > > <jie.a.bai@intel.com>; Sun, Yi J <yi.j.sun@intel.com>
-> > > > > Subject: Re: rcu_preempt caused oom
-> > > > > 
-> > > > > On Wed, Dec 12, 2018 at 11:13:22PM +0000, He, Bo wrote:
-> > > > > > I don't see the rcutree.sysrq_rcu parameter in v4.19 kernel, I also checked the latest kernel and the latest tag v4.20-rc6, not see the sysrq_rcu.
-> > > > > > Please correct me if I have something wrong.
-> > > > > 
-> > > > > That would be because I sent you the wrong patch, apologies!  
-> > > > > :-/
-> > > > > 
-> > > > > Please instead see the one below, which does add sysrq_rcu.
-> > > > > 
-> > > > > 							Thanx, Paul
-> > > > > 
-> > > > > > -----Original Message-----
-> > > > > > From: Paul E. McKenney <paulmck@linux.ibm.com>
-> > > > > > Sent: Thursday, December 13, 2018 5:03 AM
-> > > > > > To: He, Bo <bo.he@intel.com>
-> > > > > > Cc: Steven Rostedt <rostedt@goodmis.org>; 
-> > > > > > linux-kernel@vger.kernel.org; josh@joshtriplett.org; 
-> > > > > > mathieu.desnoyers@efficios.com; jiangshanlai@gmail.com; Zhang, 
-> > > > > > Jun <jun.zhang@intel.com>; Xiao, Jin <jin.xiao@intel.com>; 
-> > > > > > Zhang, Yanmin <yanmin.zhang@intel.com>; Bai, Jie A 
-> > > > > > <jie.a.bai@intel.com>
-> > > > > > Subject: Re: rcu_preempt caused oom
-> > > > > > 
-> > > > > > On Wed, Dec 12, 2018 at 07:42:24AM -0800, Paul E. McKenney wrote:
-> > > > > > > On Wed, Dec 12, 2018 at 01:21:33PM +0000, He, Bo wrote:
-> > > > > > > > we reproduce on two boards, but I still not see the show_rcu_gp_kthreads() dump logs, it seems the patch can't catch the scenario.
-> > > > > > > > I double confirmed the CONFIG_PROVE_RCU=y is enabled in the config as it's extracted from the /proc/config.gz.
-> > > > > > > 
-> > > > > > > Strange.
-> > > > > > > 
-> > > > > > > Are the systems responsive to sysrq keys once failure occurs?  
-> > > > > > > If so, I will provide you a sysrq-R or some such to dump out the RCU state.
-> > > > > > 
-> > > > > > Or, as it turns out, sysrq-y if booting with rcutree.sysrq_rcu=1 using the patch below.  Only lightly tested.
-> > > > > 
-> > > > > ----------------------------------------------------------------
-> > > > > --
-> > > > > --
-> > > > > --
-> > > > > --
-> > > > > 
-> > > > > commit 04b6245c8458e8725f4169e62912c1fadfdf8141
-> > > > > Author: Paul E. McKenney <paulmck@linux.ibm.com>
-> > > > > Date:   Wed Dec 12 16:10:09 2018 -0800
-> > > > > 
-> > > > >     rcu: Add sysrq rcu_node-dump capability
-> > > > >     
-> > > > >     Backported from v4.21/v5.0
-> > > > >     
-> > > > >     Life is hard if RCU manages to get stuck without triggering RCU CPU
-> > > > >     stall warnings or triggering the rcu_check_gp_start_stall() checks
-> > > > >     for failing to start a grace period.  This commit therefore adds a
-> > > > >     boot-time-selectable sysrq key (commandeering "y") that allows manually
-> > > > >     dumping Tree RCU state.  The new rcutree.sysrq_rcu kernel boot parameter
-> > > > >     must be set for this sysrq to be available.
-> > > > >     
-> > > > >     Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
-> > > > > 
-> > > > > diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c index
-> > > > > 0b760c1369f7..e9392a9d6291 100644
-> > > > > --- a/kernel/rcu/tree.c
-> > > > > +++ b/kernel/rcu/tree.c
-> > > > > @@ -61,6 +61,7 @@
-> > > > >  #include <linux/trace_events.h>  #include <linux/suspend.h>  
-> > > > > #include <linux/ftrace.h>
-> > > > > +#include <linux/sysrq.h>
-> > > > >  
-> > > > >  #include "tree.h"
-> > > > >  #include "rcu.h"
-> > > > > @@ -128,6 +129,9 @@ int num_rcu_lvl[] = NUM_RCU_LVL_INIT;  int 
-> > > > > rcu_num_nodes __read_mostly = NUM_RCU_NODES; /* Total # 
-> > > > > rcu_nodes in use. */
-> > > > >  /* panic() on RCU Stall sysctl. */  int 
-> > > > > sysctl_panic_on_rcu_stall __read_mostly;
-> > > > > +/* Commandeer a sysrq key to dump RCU's tree. */ static bool 
-> > > > > +sysrq_rcu; module_param(sysrq_rcu, bool, 0444);
-> > > > >  
-> > > > >  /*
-> > > > >   * The rcu_scheduler_active variable is initialized to the 
-> > > > > value @@
-> > > > > -662,6 +666,27 @@ void show_rcu_gp_kthreads(void)  } 
-> > > > > EXPORT_SYMBOL_GPL(show_rcu_gp_kthreads);
-> > > > >  
-> > > > > +/* Dump grace-period-request information due to commandeered sysrq. 
-> > > > > +*/ static void sysrq_show_rcu(int key) {
-> > > > > +	show_rcu_gp_kthreads();
-> > > > > +}
-> > > > > +
-> > > > > +static struct sysrq_key_op sysrq_rcudump_op = {
-> > > > > +	.handler = sysrq_show_rcu,
-> > > > > +	.help_msg = "show-rcu(y)",
-> > > > > +	.action_msg = "Show RCU tree",
-> > > > > +	.enable_mask = SYSRQ_ENABLE_DUMP, };
-> > > > > +
-> > > > > +static int __init rcu_sysrq_init(void) {
-> > > > > +	if (sysrq_rcu)
-> > > > > +		return register_sysrq_key('y', &sysrq_rcudump_op);
-> > > > > +	return 0;
-> > > > > +}
-> > > > > +early_initcall(rcu_sysrq_init);
-> > > > > +
-> > > > >  /*
-> > > > >   * Send along grace-period-related data for rcutorture diagnostics.
-> > > > >   */
-> > > > > 
-> > > > 
-> > > 
-> > 
-> > 
-> 
+> as you described above, maybe the equal PCB trace length assumption is
+> not reasonable, and we'll only handle MAC delay-ps in our driver based
+> on the device tree information no matter which rgmii is selected.
 
+Expecting identical PCB traces is something that is hard to enforce with
+external customers, for internal reference boards, absolutely they
+should have those traces of equal length.
 
+> 
+> Since David already applied this patch, I'll send another patch to fix
+> this issue.
+>>> +	if (!of_property_read_u32(plat->np, "mediatek,tx-delay-ps", &tx_delay_ps)) {
+>>> +		if (tx_delay_ps < plat->variant->tx_delay_max) {
+>>> +			mac_delay->tx_delay = tx_delay_ps;
+>>> +		} else {
+>>> +			dev_err(plat->dev, "Invalid TX clock delay: %dps\n", tx_delay_ps);
+>>> +			return -EINVAL;
+>>> +		}
+>>> +	}
+>>> +
+>>> +	if (!of_property_read_u32(plat->np, "mediatek,rx-delay-ps", &rx_delay_ps)) {
+>>> +		if (rx_delay_ps < plat->variant->rx_delay_max) {
+>>> +			mac_delay->rx_delay = rx_delay_ps;
+>>> +		} else {
+>>> +			dev_err(plat->dev, "Invalid RX clock delay: %dps\n", rx_delay_ps);
+>>> +			return -EINVAL;
+>>> +		}
+>>> +	}
+>>> +
+>>> +	mac_delay->tx_inv = of_property_read_bool(plat->np, "mediatek,txc-inverse");
+>>> +	mac_delay->rx_inv = of_property_read_bool(plat->np, "mediatek,rxc-inverse");
+>>> +	mac_delay->fine_tune = of_property_read_bool(plat->np, "mediatek,fine-tune");
+>>
+>> Why is fine tune needed? If the requested delay can be done using fine
+>> tune, it should use fine tune. If not, it should use rough tune. The
+>> driver can work this out itself.
+> 
+> find tune here represents a more accurate delay circuit than coarse
+> tune, and it's a parallel circuit of coarse tune.
+> For most delay, both fine and coarse tune can meet the requirement.
+> It's up to the user to select which one.
+> 
+> But only one of them can work at the same time, so we need a switch
+> flag(fine_tune here) to indicate which one is valid.
+> Driver can hardly work out which one is working according to delay-ps.
+> 
+> Please correct me if any misunderstanding.
+
+You are giving a lot of options for users of this Ethernet controller to
+shoot themselves in the feet and spend a good amount of time debugging
+why their RGMII connection is not reliable or have timing violations.
+-- 
+Florian
