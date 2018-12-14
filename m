@@ -2,113 +2,156 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.9 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EA24C43612
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:59:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1646EC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 21:01:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2EF1208C1
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:59:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544821173;
-	bh=QIyRYcDS8dvfL8d9WoHeQ5SoQird6ZVQTKa3VcZN68M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=xMP1Rtyps7DzmGAl3r9gnNfs1cJ8W6HEX39Bt5ZvLMq5Jn4iuX+j0e7Wie2LdXCnE
-	 tryaa0AB/CvHg3f+zFQdL2CXz1eB0K7SJC2wkK/ef1OQGhN2OBGUhmwHsuv2T3N4Es
-	 d1uk+AEZzPCawIQVdGQaWQCMEFntoSJtnzaBDQjk=
+	by mail.kernel.org (Postfix) with ESMTP id 50529208CE
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 21:01:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731221AbeLNU7b (ORCPT
+        id S1731068AbeLNVBV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 15:59:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52204 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730757AbeLNU7a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 15:59:30 -0500
-Received: from linux-8ccs (ip5f5adea1.dynamic.kabel-deutschland.de [95.90.222.161])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0399B2086D;
-        Fri, 14 Dec 2018 20:59:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544821170;
-        bh=QIyRYcDS8dvfL8d9WoHeQ5SoQird6ZVQTKa3VcZN68M=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=g8YEMqbYWYKeWuKqXyZQ8WixEa2VEPiQ4Z+TIj6eQRi13XxmpZEJKn9NpaYWgltNv
-         3sqBnyhFDMNc6QRmAF0RmX7/t9byJgl1Z6aG7lRa7P9VQwYk4J8jXEVGJY2GzrkhrH
-         rU+PLBE0xObwAKO6zoDrFGuIi9Te2vMbMgj6Qnvs=
-Date:   Fri, 14 Dec 2018 21:59:25 +0100
-From:   Jessica Yu <jeyu@kernel.org>
-To:     Vincent Whitchurch <vincent.whitchurch@axis.com>
-Cc:     linux@armlinux.org.uk, dave.martin@arm.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Vincent Whitchurch <rabinv@axis.com>,
-        Miroslav Benes <mbenes@suse.cz>
-Subject: Re: [PATCH v6 modules-next 1/2] module: Overwrite st_size instead of
- st_info
-Message-ID: <20181214205925.GA9656@linux-8ccs>
-References: <20181214160555.9980-1-vincent.whitchurch@axis.com>
+        Fri, 14 Dec 2018 16:01:21 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:47743 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730906AbeLNVBV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 16:01:21 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBEKxwnb1459988
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Fri, 14 Dec 2018 12:59:58 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBEKxwTo1459985;
+        Fri, 14 Dec 2018 12:59:58 -0800
+Date:   Fri, 14 Dec 2018 12:59:58 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Eugeniy Paltsev <tipbot@zytor.com>
+Message-ID: <tip-c6934c91ba76438e4d641209dff32cbfdcaff9a2@git.kernel.org>
+Cc:     jolsa@redhat.com, acme@redhat.com, peterz@infradead.org,
+        vineet.gupta1@synopsys.com, mingo@kernel.org, namhyung@kernel.org,
+        Eugeniy.Paltsev@synopsys.com, tglx@linutronix.de, hpa@zytor.com,
+        alexander.shishkin@linux.intel.com, linux-kernel@vger.kernel.org,
+        alexey.brodkin@synopsys.com
+Reply-To: alexey.brodkin@synopsys.com, linux-kernel@vger.kernel.org,
+          alexander.shishkin@linux.intel.com, tglx@linutronix.de,
+          hpa@zytor.com, namhyung@kernel.org, Eugeniy.Paltsev@synopsys.com,
+          peterz@infradead.org, vineet.gupta1@synopsys.com,
+          mingo@kernel.org, jolsa@redhat.com, acme@redhat.com
+In-Reply-To: <20181204175118.25232-1-Eugeniy.Paltsev@synopsys.com>
+References: <20181204175118.25232-1-Eugeniy.Paltsev@synopsys.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf annotate: Introduce basic support for ARC
+Git-Commit-ID: c6934c91ba76438e4d641209dff32cbfdcaff9a2
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20181214160555.9980-1-vincent.whitchurch@axis.com>
-X-OS:   Linux linux-8ccs 4.12.14-lp150.12.22-default x86_64
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+++ Vincent Whitchurch [14/12/18 17:05 +0100]:
->st_info is currently overwritten after relocation and used to store the
->elf_type().  However, we're going to need it fix kallsyms on ARM's
->Thumb-2 kernels, so preserve st_info and overwrite the st_size field
->instead.  st_size is neither used by the module core nor by any
->architecture.
->
->Reviewed-by: Miroslav Benes <mbenes@suse.cz>
->Reviewed-by: Dave Martin <Dave.Martin@arm.com>
->Signed-off-by: Vincent Whitchurch <vincent.whitchurch@axis.com>
+Commit-ID:  c6934c91ba76438e4d641209dff32cbfdcaff9a2
+Gitweb:     https://git.kernel.org/tip/c6934c91ba76438e4d641209dff32cbfdcaff9a2
+Author:     Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+AuthorDate: Tue, 4 Dec 2018 20:51:18 +0300
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Thu, 6 Dec 2018 16:43:27 -0300
 
-Applied both. (Thanks for rebasing!)
+perf annotate: Introduce basic support for ARC
 
-Thanks,
+Introduce basic 'perf annotate' support for ARC to be able to use
+anotation via stdio interface.
 
-Jessica
+Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Alexey Brodkin <alexey.brodkin@synopsys.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: linux-snps-arc@lists.infradead.org
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Vineet Gupta <vineet.gupta1@synopsys.com>
+Link: http://lkml.kernel.org/r/20181204175118.25232-1-Eugeniy.Paltsev@synopsys.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/arch/arc/annotate/instructions.c |  9 +++++++++
+ tools/perf/arch/common.c                    | 11 ++++++++++-
+ tools/perf/util/annotate.c                  |  5 +++++
+ 3 files changed, 24 insertions(+), 1 deletion(-)
 
->---
->v6: Add Miroslav Benes' Reviewed-by
->v5: Add Dave Martin's Reviewed-by
->v4: Split out to separate patch.  Use st_size instead of st_other.
->v1-v3: See PATCH 2/2
->
-> kernel/module.c | 4 ++--
-> 1 file changed, 2 insertions(+), 2 deletions(-)
->
->diff --git a/kernel/module.c b/kernel/module.c
->index 1b5edf78694c..b36ff8a3d562 100644
->--- a/kernel/module.c
->+++ b/kernel/module.c
->@@ -2684,7 +2684,7 @@ static void add_kallsyms(struct module *mod, const struct load_info *info)
->
-> 	/* Set types up while we still have access to sections. */
-> 	for (i = 0; i < mod->kallsyms->num_symtab; i++)
->-		mod->kallsyms->symtab[i].st_info
->+		mod->kallsyms->symtab[i].st_size
-> 			= elf_type(&mod->kallsyms->symtab[i], info);
->
-> 	/* Now populate the cut down core kallsyms for after init. */
->@@ -4070,7 +4070,7 @@ int module_get_kallsym(unsigned int symnum, unsigned long *value, char *type,
-> 		kallsyms = rcu_dereference_sched(mod->kallsyms);
-> 		if (symnum < kallsyms->num_symtab) {
-> 			*value = kallsyms->symtab[symnum].st_value;
->-			*type = kallsyms->symtab[symnum].st_info;
->+			*type = kallsyms->symtab[symnum].st_size;
-> 			strlcpy(name, kallsyms_symbol_name(kallsyms, symnum), KSYM_NAME_LEN);
-> 			strlcpy(module_name, mod->name, MODULE_NAME_LEN);
-> 			*exported = is_exported(name, *value, mod);
->-- 
->2.11.0
->
+diff --git a/tools/perf/arch/arc/annotate/instructions.c b/tools/perf/arch/arc/annotate/instructions.c
+new file mode 100644
+index 000000000000..2f00e995c7e3
+--- /dev/null
++++ b/tools/perf/arch/arc/annotate/instructions.c
+@@ -0,0 +1,9 @@
++// SPDX-License-Identifier: GPL-2.0
++#include <linux/compiler.h>
++
++static int arc__annotate_init(struct arch *arch, char *cpuid __maybe_unused)
++{
++	arch->initialized = true;
++	arch->objdump.comment_char = ';';
++	return 0;
++}
+diff --git a/tools/perf/arch/common.c b/tools/perf/arch/common.c
+index 5f69fd0b745a..f3824ca7c20b 100644
+--- a/tools/perf/arch/common.c
++++ b/tools/perf/arch/common.c
+@@ -5,6 +5,13 @@
+ #include "../util/util.h"
+ #include "../util/debug.h"
+ 
++const char *const arc_triplets[] = {
++	"arc-linux-",
++	"arc-snps-linux-uclibc-",
++	"arc-snps-linux-gnu-",
++	NULL
++};
++
+ const char *const arm_triplets[] = {
+ 	"arm-eabi-",
+ 	"arm-linux-androideabi-",
+@@ -147,7 +154,9 @@ static int perf_env__lookup_binutils_path(struct perf_env *env,
+ 		zfree(&buf);
+ 	}
+ 
+-	if (!strcmp(arch, "arm"))
++	if (!strcmp(arch, "arc"))
++		path_list = arc_triplets;
++	else if (!strcmp(arch, "arm"))
+ 		path_list = arm_triplets;
+ 	else if (!strcmp(arch, "arm64"))
+ 		path_list = arm64_triplets;
+diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
+index 51d291b0b81f..ac9805e0bc76 100644
+--- a/tools/perf/util/annotate.c
++++ b/tools/perf/util/annotate.c
+@@ -134,6 +134,7 @@ static int arch__associate_ins_ops(struct arch* arch, const char *name, struct i
+ 	return 0;
+ }
+ 
++#include "arch/arc/annotate/instructions.c"
+ #include "arch/arm/annotate/instructions.c"
+ #include "arch/arm64/annotate/instructions.c"
+ #include "arch/x86/annotate/instructions.c"
+@@ -142,6 +143,10 @@ static int arch__associate_ins_ops(struct arch* arch, const char *name, struct i
+ #include "arch/sparc/annotate/instructions.c"
+ 
+ static struct arch architectures[] = {
++	{
++		.name = "arc",
++		.init = arc__annotate_init,
++	},
+ 	{
+ 		.name = "arm",
+ 		.init = arm__annotate_init,
