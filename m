@@ -7,52 +7,51 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56400C67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:31:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DCECC67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:31:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18F4F20892
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:31:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6196A208E7
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:31:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544790688;
-	bh=mjchHDLhIi21CM8SBQVto3Z+iDaMXCcy/GCRgBM/KYI=;
+	s=default; t=1544790695;
+	bh=N6xNbPJkHGiE+BXDBvqhihdOFrAA4H76g/r9l4KMMCo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=AUMgFvXx+u8mWHg6waDbhEd133hbMEQMChmmHv+XoqQLDrzsFlWSKh3hJrfSblVfn
-	 xBqCF56Zb8Xau7rACjmUPKHED+OM4vAY4V/LC3OPatFUeJdw2IAg+maj4Erk/sHFzv
-	 svSzEVPv7lw8nANojAO5C8U3+Q+YdeYKlKxI0zIk=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18F4F20892
+	b=aZwMr0SayiaQd/uuB1cb9mwi+XUtUg4752xfCvMLCZjg7GbRws+Amv49bYzJaM9aY
+	 zFPrNVzlnmoxo3vcQSZg3F9jqWdLjcEjSw3lze7++BeA97CjTMVC/KFGY34Rx4LlMz
+	 goteefUkow009Et6vQhcWuZNOsHJOCnpQI29efzA=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6196A208E7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731385AbeLNMb1 (ORCPT
+        id S1731611AbeLNMbe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:31:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55446 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:31:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55358 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730924AbeLNMJn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:09:43 -0500
+        id S1730321AbeLNMJi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:09:38 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E1E78214C4;
-        Fri, 14 Dec 2018 12:09:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D55C5214AE;
+        Fri, 14 Dec 2018 12:09:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789382;
-        bh=mjchHDLhIi21CM8SBQVto3Z+iDaMXCcy/GCRgBM/KYI=;
+        s=default; t=1544789377;
+        bh=N6xNbPJkHGiE+BXDBvqhihdOFrAA4H76g/r9l4KMMCo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Eo2m0ycsYpUiSJzsnuFKPic2q2CBAbO8JjbNXPxR5k0hnKXoCCoPn8VDYZc3osAXn
-         J1Z2sLD/rL0VWs4MipkJ8cZAh4dbmHao293fKJ1H9J+gGYxElnIzTDaOw5n05hWfgn
-         i91WBozCB8WR5Uh5vuNFvek2c7dTENIBSjNfgGEs=
+        b=JpNTEn/sQxODp1Ke1Nkhjy9mRaDGs61r8G/+Q84qvanMeFlzm3qgw1i4GOMCWeXX+
+         0CVvpxLFtPzyhOOOk3/yTnBCrlKCqCF8shxR0tPOTRuohl+GqHFl8RcNYkWcTlRXVo
+         vG0MUlOblv0SDAkHrKyg5vsCro1Mpw8FZ5tW/TJg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Axtens <dja@axtens.net>,
-        Shantanu Goel <sgoel01@yahoo.com>,
-        Kiran Kumar Modukuri <kiran.modukuri@gmail.com>,
-        David Howells <dhowells@redhat.com>,
+        stable@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Jarkko Nikula <jarkko.nikula@bitmer.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 60/89] cachefiles: Fix page leak in cachefiles_read_backing_file while vmscan is active
-Date:   Fri, 14 Dec 2018 13:00:13 +0100
-Message-Id: <20181214115732.637232860@linuxfoundation.org>
+Subject: [PATCH 4.14 41/89] ASoC: omap-mcbsp: Fix latency value calculation for pm_qos
+Date:   Fri, 14 Dec 2018 12:59:54 +0100
+Message-Id: <20181214115731.705664076@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115729.658859279@linuxfoundation.org>
 References: <20181214115729.658859279@linuxfoundation.org>
@@ -71,84 +70,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 9a24ce5b66f9c8190d63b15f4473600db4935f1f ]
+[ Upstream commit dd2f52d8991af9fe0928d59ec502ba52be7bc38d ]
 
-[Description]
+The latency number is in usec for the pm_qos. Correct the calculation to
+give us the time in usec
 
-In a heavily loaded system where the system pagecache is nearing memory
-limits and fscache is enabled, pages can be leaked by fscache while trying
-read pages from cachefiles backend.  This can happen because two
-applications can be reading same page from a single mount, two threads can
-be trying to read the backing page at same time.  This results in one of
-the threads finding that a page for the backing file or netfs file is
-already in the radix tree.  During the error handling cachefiles does not
-clean up the reference on backing page, leading to page leak.
-
-[Fix]
-The fix is straightforward, to decrement the reference when error is
-encountered.
-
-  [dhowells: Note that I've removed the clearance and put of newpage as
-   they aren't attested in the commit message and don't appear to actually
-   achieve anything since a new page is only allocated is newpage!=NULL and
-   any residual new page is cleared before returning.]
-
-[Testing]
-I have tested the fix using following method for 12+ hrs.
-
-1) mkdir -p /mnt/nfs ; mount -o vers=3,fsc <server_ip>:/export /mnt/nfs
-2) create 10000 files of 2.8MB in a NFS mount.
-3) start a thread to simulate heavy VM presssure
-   (while true ; do echo 3 > /proc/sys/vm/drop_caches ; sleep 1 ; done)&
-4) start multiple parallel reader for data set at same time
-   find /mnt/nfs -type f | xargs -P 80 cat > /dev/null &
-   find /mnt/nfs -type f | xargs -P 80 cat > /dev/null &
-   find /mnt/nfs -type f | xargs -P 80 cat > /dev/null &
-   ..
-   ..
-   find /mnt/nfs -type f | xargs -P 80 cat > /dev/null &
-   find /mnt/nfs -type f | xargs -P 80 cat > /dev/null &
-5) finally check using cat /proc/fs/fscache/stats | grep -i pages ;
-   free -h , cat /proc/meminfo and page-types -r -b lru
-   to ensure all pages are freed.
-
-Reviewed-by: Daniel Axtens <dja@axtens.net>
-Signed-off-by: Shantanu Goel <sgoel01@yahoo.com>
-Signed-off-by: Kiran Kumar Modukuri <kiran.modukuri@gmail.com>
-[dja: forward ported to current upstream]
-Signed-off-by: Daniel Axtens <dja@axtens.net>
-Signed-off-by: David Howells <dhowells@redhat.com>
+Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Acked-by: Jarkko Nikula <jarkko.nikula@bitmer.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/cachefiles/rdwr.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ sound/soc/omap/omap-mcbsp.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/fs/cachefiles/rdwr.c b/fs/cachefiles/rdwr.c
-index 199eb396a1bb..54379cf7db7f 100644
---- a/fs/cachefiles/rdwr.c
-+++ b/fs/cachefiles/rdwr.c
-@@ -537,7 +537,10 @@ static int cachefiles_read_backing_file(struct cachefiles_object *object,
- 					    netpage->index, cachefiles_gfp);
- 		if (ret < 0) {
- 			if (ret == -EEXIST) {
-+				put_page(backpage);
-+				backpage = NULL;
- 				put_page(netpage);
-+				netpage = NULL;
- 				fscache_retrieval_complete(op, 1);
- 				continue;
- 			}
-@@ -610,7 +613,10 @@ static int cachefiles_read_backing_file(struct cachefiles_object *object,
- 					    netpage->index, cachefiles_gfp);
- 		if (ret < 0) {
- 			if (ret == -EEXIST) {
-+				put_page(backpage);
-+				backpage = NULL;
- 				put_page(netpage);
-+				netpage = NULL;
- 				fscache_retrieval_complete(op, 1);
- 				continue;
- 			}
+diff --git a/sound/soc/omap/omap-mcbsp.c b/sound/soc/omap/omap-mcbsp.c
+index 6b40bdbef336..47c2ed5ca492 100644
+--- a/sound/soc/omap/omap-mcbsp.c
++++ b/sound/soc/omap/omap-mcbsp.c
+@@ -308,9 +308,9 @@ static int omap_mcbsp_dai_hw_params(struct snd_pcm_substream *substream,
+ 			pkt_size = channels;
+ 		}
+ 
+-		latency = ((((buffer_size - pkt_size) / channels) * 1000)
+-				 / (params->rate_num / params->rate_den));
+-
++		latency = (buffer_size - pkt_size) / channels;
++		latency = latency * USEC_PER_SEC /
++			  (params->rate_num / params->rate_den);
+ 		mcbsp->latency[substream->stream] = latency;
+ 
+ 		omap_mcbsp_set_threshold(substream, pkt_size);
 -- 
 2.19.1
 
