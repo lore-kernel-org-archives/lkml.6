@@ -6,55 +6,52 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B71FAC6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 10:13:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52C5BC6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 10:14:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74B372080F
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 10:13:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74B372080F
+	by mail.kernel.org (Postfix) with ESMTP id 167822080F
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 10:14:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 167822080F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729321AbeLNKNb (ORCPT
+        id S1729372AbeLNKOp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 05:13:31 -0500
-Received: from mail-ua1-f67.google.com ([209.85.222.67]:37982 "EHLO
-        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726494AbeLNKNa (ORCPT
+        Fri, 14 Dec 2018 05:14:45 -0500
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:34990 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728269AbeLNKOo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 05:13:30 -0500
-Received: by mail-ua1-f67.google.com with SMTP id p9so1803373uaa.5;
-        Fri, 14 Dec 2018 02:13:30 -0800 (PST)
+        Fri, 14 Dec 2018 05:14:44 -0500
+Received: by mail-vs1-f67.google.com with SMTP id e7so3054954vsc.2;
+        Fri, 14 Dec 2018 02:14:43 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=VTPTCkq3GfHZRvNIsOK9tCvyfvqbBjLPXGrP4drpZpM=;
-        b=d3UTdcMMPPx61IzYFsPvGcgtg02o35d3FcB13TrvuEihtYteJ/AiE1c5xz7d1o2Vo4
-         OvqiWW1ErcFco6nf1eOiX4hOPIlvmBdxhiBMlthgNkjK2smkvOZp9Q2aQAmsAKKhbvW6
-         bE6NLoNuO2usJsONpZVmLPBVyy2/FoAmBIPOE2q7hj6HeWXQRvYXOfx2R+WILjAiXiJr
-         liZYQVh+7VEN/NJAUc8uQX6HrRNUgxy0+ME1PuSbZqPzOF7PmouhOz1QK9d1TAOQroiZ
-         jQmaXsZIcj2ok2H7d70L8f/EwGGWsX4Wxs07eUcV6poazLytOCr+sHQSUp2Zf2Gtm85B
-         9aRg==
-X-Gm-Message-State: AA+aEWafBilHjKAeml2BJTpLfAE8WfmGb2U0FzLWsLytXhQMGOv2XqBD
-        b85hH021VT05n0yjcWndwVven2v6V/sVT8qSdC0=
-X-Google-Smtp-Source: AFSGD/WKkUmRylajwlShKIcgvVplHFX6G1W70cn8vDw3wv1VhspHLRTwr0a8+GvM+kaCcVLUEg8/nIomtGsZpe+4DRE=
-X-Received: by 2002:ab0:210e:: with SMTP id d14mr1042242ual.20.1544782409602;
- Fri, 14 Dec 2018 02:13:29 -0800 (PST)
+        bh=4Kxxzl240bHwfHlkHEvEpqlLBZyTLpnPYvupEh+6LRw=;
+        b=sDoxBEtST4XgDZ7TFC9DxKvCOW6NonsKnLpeJMKfP3IbkdCeWrksV4nEMPUajFUQnT
+         VfBJuc5cey+zeSaGlWdkamR/ao8GCswq5REBOwftP7dapW4fhyevIrU4GhrGN5wCruzt
+         LaRMt0KMq8a4Xx3dsn02FT7qhUifE/htts/10sTOqrqM0/C1o3eOyBU/0H3PGH6HIrIN
+         nTKgTzefqOT+QJm/oh7+vgsiPz5hJ49xCD5zQSSm1Sf9uI1MRRtLE0Ora9arIfo3EFrD
+         /zex6FujHLUxpu4yDYrMQcgKcyqWlmoa+pxcH1bHBnGnAjXqqZuQs6EEl8iME03+Chi7
+         wWhQ==
+X-Gm-Message-State: AA+aEWYDLnJjVgohQeSNdTN3+dWl12EgNzbkZqc4eOwjB/4mB4MT2zoC
+        jJRQi1hzknT3GNs1hkQX570Z1MK6MJYczUdcE5o=
+X-Google-Smtp-Source: AFSGD/VRQZmHmLPgA/CMW9YPI1p28fphnHHWe4f1N1RRGCwgyaP2hknRFOT1XA/dPKZnefMbuX65cSd4r4BTxSBBQZo=
+X-Received: by 2002:a67:f43:: with SMTP id 64mr1013565vsp.166.1544782483370;
+ Fri, 14 Dec 2018 02:14:43 -0800 (PST)
 MIME-Version: 1.0
-References: <1544732388-6313-1-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1544732388-6313-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1544732397-6361-1-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1544732397-6361-1-git-send-email-fabrizio.castro@bp.renesas.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 14 Dec 2018 11:13:17 +0100
-Message-ID: <CAMuHMdWL6vm56XrKSvwW0HaTJke7JyoFrpp_6g24ci6NOWu2vg@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: thermal: rcar-thermal: add R8A774C0 support
+Date:   Fri, 14 Dec 2018 11:14:31 +0100
+Message-ID: <CAMuHMdVxQmwptcM_xKAJ0mPQ+yKSOO2Vf3i2YrYzvSDwA5Ko6g@mail.gmail.com>
+Subject: Re: [PATCH] spi: sh-msiof: Add r8a774c0 support
 To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
+Cc:     Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
         "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
         <devicetree@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
@@ -69,9 +66,9 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 13, 2018 at 9:19 PM Fabrizio Castro
+On Thu, Dec 13, 2018 at 9:20 PM Fabrizio Castro
 <fabrizio.castro@bp.renesas.com> wrote:
-> Document RZ/G2E SoC (a.k.a. r8a774c0) bindings.
+> Document RZ/G2E (R8A774C0) SoC bindings.
 >
 > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
