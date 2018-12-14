@@ -7,49 +7,50 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6030C6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:23:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04F30C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:23:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 621B820879
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:23:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BF24520879
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:23:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544790209;
-	bh=FK6aKdmJAOJ2sHJKZ0bSTTMVuhj42ytiRt3JhwDRIjk=;
+	s=default; t=1544790213;
+	bh=ZiL7w9NdJgKoIpb2b/nBPsO4R+e28m9fUBAcL4F6zQg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=R0LqfmJbBRErBX3OrVytq0xzN2z082CjysH1PeKiuHXFn1XfRR+T/HHbFnDVnoL7D
-	 iGPFR2R/23zjjXvEs7P/CNY+liC1IR9RFUEcbkg0dieawMfDCitFUzehBIcvsZEirU
-	 MhyWtcAajVHzqOI+C2Usoi2vJGo3VGvlKNGeld78=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 621B820879
+	b=I/nfud7qS99H/swYqgAheMa+/+v1dvdMhDTbmVGq9rIM0fry/lU0bCd0wjJ/Fd9oA
+	 WINKHjZ034//FgZbCNbUgifILziOnJSSudTnxA5q4FeZaudSu/GMW0XMBYaOThhuH4
+	 +Hbaeb1wwbfwlg1C/8aEud6/6V5OTP/CpxJsZCUA=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF24520879
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732169AbeLNMNk (ORCPT
+        id S1731716AbeLNMNi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:13:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33044 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:13:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32984 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732148AbeLNMNg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:13:36 -0500
+        id S1732106AbeLNMNe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:13:34 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1E5CF20892;
-        Fri, 14 Dec 2018 12:13:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 793D82133F;
+        Fri, 14 Dec 2018 12:13:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789615;
-        bh=FK6aKdmJAOJ2sHJKZ0bSTTMVuhj42ytiRt3JhwDRIjk=;
+        s=default; t=1544789612;
+        bh=ZiL7w9NdJgKoIpb2b/nBPsO4R+e28m9fUBAcL4F6zQg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lBSQ3nmySyWJRphf51kQdpRsETnsA6tMULytXBovpRVzWEE6GFqqKYJG8qMF6Yj58
-         KExr+L5TiASA4RMyms3blh9ZRNBX9zlZ4mGpKR4URWdepIND2dfid+F0wkA7BECWis
-         C+XeAlcXJk+IIPQ9wB3AeUZOTHw3ZOILFTYF8PBI=
+        b=1/GLrYBwYu1ceSFYj/Xw8sBDajqTu4wxyfF3HM2HNX1aKHjsVhw9GvFKeYb1d3pAQ
+         fwLXkQ5GKNJ1OVqEbm1yOyx4oq3iXROzlb1q0nsxaL1A7i4OQhtpw4/HGA8Bq8F7nb
+         bTJoeq33ctJwq9njnQKYq5xHCkPXcHm0ejPfkW8s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Su Yanjun <suyj.fnst@cn.fujitsu.com>,
+        stable@vger.kernel.org, Jianlin Shi <jishi@redhat.com>,
+        Stefano Brivio <sbrivio@redhat.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 02/88] net: 8139cp: fix a BUG triggered by changing mtu with network traffic
-Date:   Fri, 14 Dec 2018 12:59:36 +0100
-Message-Id: <20181214115702.266515306@linuxfoundation.org>
+Subject: [PATCH 4.4 01/88] ipv6: Check available headroom in ip6_xmit() even without options
+Date:   Fri, 14 Dec 2018 12:59:35 +0100
+Message-Id: <20181214115702.205273655@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115702.151309521@linuxfoundation.org>
 References: <20181214115702.151309521@linuxfoundation.org>
@@ -68,143 +69,137 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Su Yanjun <suyj.fnst@cn.fujitsu.com>
+From: Stefano Brivio <sbrivio@redhat.com>
 
-[ Upstream commit a5d4a89245ead1f37ed135213653c5beebea4237 ]
+[ Upstream commit 66033f47ca60294a95fc85ec3a3cc909dab7b765 ]
 
-When changing mtu many times with traffic, a bug is triggered:
+Even if we send an IPv6 packet without options, MAX_HEADER might not be
+enough to account for the additional headroom required by alignment of
+hardware headers.
 
-[ 1035.684037] kernel BUG at lib/dynamic_queue_limits.c:26!
-[ 1035.684042] invalid opcode: 0000 [#1] SMP
-[ 1035.684049] Modules linked in: loop binfmt_misc 8139cp(OE) macsec
-tcp_diag udp_diag inet_diag unix_diag af_packet_diag netlink_diag tcp_lp
-fuse uinput xt_CHECKSUM iptable_mangle ipt_MASQUERADE
-nf_nat_masquerade_ipv4 iptable_nat nf_nat_ipv4 nf_nat nf_conntrack_ipv4
-nf_defrag_ipv4 xt_conntrack nf_conntrack ipt_REJECT nf_reject_ipv4 tun
-bridge stp llc ebtable_filter ebtables ip6table_filter devlink
-ip6_tables iptable_filter sunrpc snd_hda_codec_generic snd_hda_intel
-snd_hda_codec snd_hda_core snd_hwdep ppdev snd_seq iosf_mbi crc32_pclmul
-parport_pc snd_seq_device ghash_clmulni_intel parport snd_pcm
-aesni_intel joydev lrw snd_timer virtio_balloon sg gf128mul glue_helper
-ablk_helper cryptd snd soundcore i2c_piix4 pcspkr ip_tables xfs
-libcrc32c sr_mod sd_mod cdrom crc_t10dif crct10dif_generic ata_generic
-[ 1035.684102]  pata_acpi virtio_console qxl drm_kms_helper syscopyarea
-sysfillrect sysimgblt floppy fb_sys_fops crct10dif_pclmul
-crct10dif_common ttm crc32c_intel serio_raw ata_piix drm libata 8139too
-virtio_pci drm_panel_orientation_quirks virtio_ring virtio mii dm_mirror
-dm_region_hash dm_log dm_mod [last unloaded: 8139cp]
-[ 1035.684132] CPU: 9 PID: 25140 Comm: if-mtu-change Kdump: loaded
-Tainted: G           OE  ------------ T 3.10.0-957.el7.x86_64 #1
-[ 1035.684134] Hardware name: Red Hat KVM, BIOS 0.5.1 01/01/2011
-[ 1035.684136] task: ffff8f59b1f5a080 ti: ffff8f5a2e32c000 task.ti:
-ffff8f5a2e32c000
-[ 1035.684149] RIP: 0010:[<ffffffffba3a40d0>]  [<ffffffffba3a40d0>]
-dql_completed+0x180/0x190
-[ 1035.684162] RSP: 0000:ffff8f5a75483e50  EFLAGS: 00010093
-[ 1035.684162] RAX: 00000000000000c2 RBX: ffff8f5a6f91c000 RCX:
-0000000000000000
-[ 1035.684162] RDX: 0000000000000000 RSI: 0000000000000184 RDI:
-ffff8f599fea3ec0
-[ 1035.684162] RBP: ffff8f5a75483ea8 R08: 00000000000000c2 R09:
-0000000000000000
-[ 1035.684162] R10: 00000000000616ef R11: ffff8f5a75483b56 R12:
-ffff8f599fea3e00
-[ 1035.684162] R13: 0000000000000001 R14: 0000000000000000 R15:
-0000000000000184
-[ 1035.684162] FS:  00007fa8434de740(0000) GS:ffff8f5a75480000(0000)
-knlGS:0000000000000000
-[ 1035.684162] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[ 1035.684162] CR2: 00000000004305d0 CR3: 000000024eb66000 CR4:
-00000000001406e0
-[ 1035.684162] Call Trace:
-[ 1035.684162]  <IRQ>
-[ 1035.684162]  [<ffffffffc08cbaf8>] ? cp_interrupt+0x478/0x580 [8139cp]
-[ 1035.684162]  [<ffffffffba14a294>]
-__handle_irq_event_percpu+0x44/0x1c0
-[ 1035.684162]  [<ffffffffba14a442>] handle_irq_event_percpu+0x32/0x80
-[ 1035.684162]  [<ffffffffba14a4cc>] handle_irq_event+0x3c/0x60
-[ 1035.684162]  [<ffffffffba14db29>] handle_fasteoi_irq+0x59/0x110
-[ 1035.684162]  [<ffffffffba02e554>] handle_irq+0xe4/0x1a0
-[ 1035.684162]  [<ffffffffba7795dd>] do_IRQ+0x4d/0xf0
-[ 1035.684162]  [<ffffffffba76b362>] common_interrupt+0x162/0x162
-[ 1035.684162]  <EOI>
-[ 1035.684162]  [<ffffffffba0c2ae4>] ? __wake_up_bit+0x24/0x70
-[ 1035.684162]  [<ffffffffba1e46f5>] ? do_set_pte+0xd5/0x120
-[ 1035.684162]  [<ffffffffba1b64fb>] unlock_page+0x2b/0x30
-[ 1035.684162]  [<ffffffffba1e4879>] do_read_fault.isra.61+0x139/0x1b0
-[ 1035.684162]  [<ffffffffba1e9134>] handle_pte_fault+0x2f4/0xd10
-[ 1035.684162]  [<ffffffffba1ebc6d>] handle_mm_fault+0x39d/0x9b0
-[ 1035.684162]  [<ffffffffba76f5e3>] __do_page_fault+0x203/0x500
-[ 1035.684162]  [<ffffffffba76f9c6>] trace_do_page_fault+0x56/0x150
-[ 1035.684162]  [<ffffffffba76ef42>] do_async_page_fault+0x22/0xf0
-[ 1035.684162]  [<ffffffffba76b788>] async_page_fault+0x28/0x30
-[ 1035.684162] Code: 54 c7 47 54 ff ff ff ff 44 0f 49 ce 48 8b 35 48 2f
-9c 00 48 89 77 58 e9 fe fe ff ff 0f 1f 80 00 00 00 00 41 89 d1 e9 ef fe
-ff ff <0f> 0b 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 55 8d 42 ff 48
-[ 1035.684162] RIP  [<ffffffffba3a40d0>] dql_completed+0x180/0x190
-[ 1035.684162]  RSP <ffff8f5a75483e50>
+On a configuration without HYPERV_NET, WLAN, AX25, and with IPV6_TUNNEL,
+sending short SCTP packets over IPv4 over L2TP over IPv6, we start with
+100 bytes of allocated headroom in sctp_packet_transmit(), end up with 54
+bytes after l2tp_xmit_skb(), and 14 bytes in ip6_finish_output2().
 
-It's not the same as in 7fe0ee09 patch described.
-As 8139cp uses shared irq mode, other device irq will trigger
-cp_interrupt to execute.
+Those would be enough to append our 14 bytes header, but we're going to
+align that to 16 bytes, and write 2 bytes out of the allocated slab in
+neigh_hh_output().
 
-cp_change_mtu
- -> cp_close
- -> cp_open
+KASan says:
 
-In cp_close routine  just before free_irq(), some interrupt may occur.
-In my environment, cp_interrupt exectutes and IntrStatus is 0x4,
-exactly TxOk. That will cause cp_tx to wake device queue.
+[  264.967848] ==================================================================
+[  264.967861] BUG: KASAN: slab-out-of-bounds in ip6_finish_output2+0x1aec/0x1c70
+[  264.967866] Write of size 16 at addr 000000006af1c7fe by task netperf/6201
+[  264.967870]
+[  264.967876] CPU: 0 PID: 6201 Comm: netperf Not tainted 4.20.0-rc4+ #1
+[  264.967881] Hardware name: IBM 2827 H43 400 (z/VM 6.4.0)
+[  264.967887] Call Trace:
+[  264.967896] ([<00000000001347d6>] show_stack+0x56/0xa0)
+[  264.967903]  [<00000000017e379c>] dump_stack+0x23c/0x290
+[  264.967912]  [<00000000007bc594>] print_address_description+0xf4/0x290
+[  264.967919]  [<00000000007bc8fc>] kasan_report+0x13c/0x240
+[  264.967927]  [<000000000162f5e4>] ip6_finish_output2+0x1aec/0x1c70
+[  264.967935]  [<000000000163f890>] ip6_finish_output+0x430/0x7f0
+[  264.967943]  [<000000000163fe44>] ip6_output+0x1f4/0x580
+[  264.967953]  [<000000000163882a>] ip6_xmit+0xfea/0x1ce8
+[  264.967963]  [<00000000017396e2>] inet6_csk_xmit+0x282/0x3f8
+[  264.968033]  [<000003ff805fb0ba>] l2tp_xmit_skb+0xe02/0x13e0 [l2tp_core]
+[  264.968037]  [<000003ff80631192>] l2tp_eth_dev_xmit+0xda/0x150 [l2tp_eth]
+[  264.968041]  [<0000000001220020>] dev_hard_start_xmit+0x268/0x928
+[  264.968069]  [<0000000001330e8e>] sch_direct_xmit+0x7ae/0x1350
+[  264.968071]  [<000000000122359c>] __dev_queue_xmit+0x2b7c/0x3478
+[  264.968075]  [<00000000013d2862>] ip_finish_output2+0xce2/0x11a0
+[  264.968078]  [<00000000013d9b14>] ip_finish_output+0x56c/0x8c8
+[  264.968081]  [<00000000013ddd1e>] ip_output+0x226/0x4c0
+[  264.968083]  [<00000000013dbd6c>] __ip_queue_xmit+0x894/0x1938
+[  264.968100]  [<000003ff80bc3a5c>] sctp_packet_transmit+0x29d4/0x3648 [sctp]
+[  264.968116]  [<000003ff80b7bf68>] sctp_outq_flush_ctrl.constprop.5+0x8d0/0xe50 [sctp]
+[  264.968131]  [<000003ff80b7c716>] sctp_outq_flush+0x22e/0x7d8 [sctp]
+[  264.968146]  [<000003ff80b35c68>] sctp_cmd_interpreter.isra.16+0x530/0x6800 [sctp]
+[  264.968161]  [<000003ff80b3410a>] sctp_do_sm+0x222/0x648 [sctp]
+[  264.968177]  [<000003ff80bbddac>] sctp_primitive_ASSOCIATE+0xbc/0xf8 [sctp]
+[  264.968192]  [<000003ff80b93328>] __sctp_connect+0x830/0xc20 [sctp]
+[  264.968208]  [<000003ff80bb11ce>] sctp_inet_connect+0x2e6/0x378 [sctp]
+[  264.968212]  [<0000000001197942>] __sys_connect+0x21a/0x450
+[  264.968215]  [<000000000119aff8>] sys_socketcall+0x3d0/0xb08
+[  264.968218]  [<000000000184ea7a>] system_call+0x2a2/0x2c0
 
-As device queue is started, cp_start_xmit and cp_open will run at same
-time which will cause kernel BUG.
+[...]
 
-For example:
-[#] for tx descriptor
+Just like ip_finish_output2() does for IPv4, check that we have enough
+headroom in ip6_xmit(), and reallocate it if we don't.
 
-At start:
+This issue is older than git history.
 
-[#][#][#]
-num_queued=3
-
-After cp_init_hw->cp_start_hw->netdev_reset_queue:
-
-[#][#][#]
-num_queued=0
-
-When 8139cp starts to work then cp_tx will check
-num_queued mismatchs the complete_bytes.
-
-The patch will check IntrMask before check IntrStatus in cp_interrupt.
-When 8139cp interrupt is disabled, just return.
-
-Signed-off-by: Su Yanjun <suyj.fnst@cn.fujitsu.com>
+Reported-by: Jianlin Shi <jishi@redhat.com>
+Signed-off-by: Stefano Brivio <sbrivio@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/realtek/8139cp.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ net/ipv6/ip6_output.c |   42 +++++++++++++++++++++---------------------
+ 1 file changed, 21 insertions(+), 21 deletions(-)
 
---- a/drivers/net/ethernet/realtek/8139cp.c
-+++ b/drivers/net/ethernet/realtek/8139cp.c
-@@ -578,6 +578,7 @@ static irqreturn_t cp_interrupt (int irq
- 	struct cp_private *cp;
- 	int handled = 0;
- 	u16 status;
-+	u16 mask;
+--- a/net/ipv6/ip6_output.c
++++ b/net/ipv6/ip6_output.c
+@@ -169,37 +169,37 @@ int ip6_xmit(const struct sock *sk, stru
+ 	const struct ipv6_pinfo *np = inet6_sk(sk);
+ 	struct in6_addr *first_hop = &fl6->daddr;
+ 	struct dst_entry *dst = skb_dst(skb);
++	unsigned int head_room;
+ 	struct ipv6hdr *hdr;
+ 	u8  proto = fl6->flowi6_proto;
+ 	int seg_len = skb->len;
+ 	int hlimit = -1;
+ 	u32 mtu;
  
- 	if (unlikely(dev == NULL))
- 		return IRQ_NONE;
-@@ -585,6 +586,10 @@ static irqreturn_t cp_interrupt (int irq
+-	if (opt) {
+-		unsigned int head_room;
+-
+-		/* First: exthdrs may take lots of space (~8K for now)
+-		   MAX_HEADER is not enough.
+-		 */
+-		head_room = opt->opt_nflen + opt->opt_flen;
+-		seg_len += head_room;
+-		head_room += sizeof(struct ipv6hdr) + LL_RESERVED_SPACE(dst->dev);
++	head_room = sizeof(struct ipv6hdr) + LL_RESERVED_SPACE(dst->dev);
++	if (opt)
++		head_room += opt->opt_nflen + opt->opt_flen;
  
- 	spin_lock(&cp->lock);
- 
-+	mask = cpr16(IntrMask);
-+	if (!mask)
-+		goto out_unlock;
+-		if (skb_headroom(skb) < head_room) {
+-			struct sk_buff *skb2 = skb_realloc_headroom(skb, head_room);
+-			if (!skb2) {
+-				IP6_INC_STATS(net, ip6_dst_idev(skb_dst(skb)),
+-					      IPSTATS_MIB_OUTDISCARDS);
+-				kfree_skb(skb);
+-				return -ENOBUFS;
+-			}
+-			if (skb->sk)
+-				skb_set_owner_w(skb2, skb->sk);
+-			consume_skb(skb);
+-			skb = skb2;
++	if (unlikely(skb_headroom(skb) < head_room)) {
++		struct sk_buff *skb2 = skb_realloc_headroom(skb, head_room);
++		if (!skb2) {
++			IP6_INC_STATS(net, ip6_dst_idev(skb_dst(skb)),
++				      IPSTATS_MIB_OUTDISCARDS);
++			kfree_skb(skb);
++			return -ENOBUFS;
+ 		}
++		if (skb->sk)
++			skb_set_owner_w(skb2, skb->sk);
++		consume_skb(skb);
++		skb = skb2;
++	}
 +
- 	status = cpr16(IntrStatus);
- 	if (!status || (status == 0xFFFF))
- 		goto out_unlock;
++	if (opt) {
++		seg_len += opt->opt_nflen + opt->opt_flen;
++
+ 		if (opt->opt_flen)
+ 			ipv6_push_frag_opts(skb, opt, &proto);
++
+ 		if (opt->opt_nflen)
+ 			ipv6_push_nfrag_opts(skb, opt, &proto, &first_hop);
+ 	}
 
 
