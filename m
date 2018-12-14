@@ -2,124 +2,138 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-11.9 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45597C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 21:01:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DF32C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 21:01:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FFFE2086D
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 21:01:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58AB82086D
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 21:01:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731150AbeLNVBf (ORCPT
+        id S1731225AbeLNVBk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 16:01:35 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44068 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731063AbeLNVBf (ORCPT
+        Fri, 14 Dec 2018 16:01:40 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:47099 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731063AbeLNVBi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 16:01:35 -0500
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBEKs69w040299
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 16:01:34 -0500
-Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2pchv3nh1f-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 16:01:33 -0500
-Received: from localhost
-        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Fri, 14 Dec 2018 21:01:31 -0000
-Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
-        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 14 Dec 2018 21:01:27 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBEL1QvB20906104
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 14 Dec 2018 21:01:26 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 43241B2064;
-        Fri, 14 Dec 2018 21:01:26 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 16A3AB2067;
-        Fri, 14 Dec 2018 21:01:25 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.85.153.1])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Fri, 14 Dec 2018 21:01:25 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 48E1B16C2C26; Fri, 14 Dec 2018 13:01:26 -0800 (PST)
-Date:   Fri, 14 Dec 2018 13:01:26 -0800
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kernel/hung_task.c: Break RCU locks based on jiffies.
-Reply-To: paulmck@linux.ibm.com
-References: <1544800658-11423-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
- <20181214123111.266cae10f71ea6b277d634c6@linux-foundation.org>
+        Fri, 14 Dec 2018 16:01:38 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBEL18eP1460337
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Fri, 14 Dec 2018 13:01:08 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBEL18Aj1460334;
+        Fri, 14 Dec 2018 13:01:08 -0800
+Date:   Fri, 14 Dec 2018 13:01:08 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
+Message-ID: <tip-b2595c9b1e5ad11db05c6767e6d00cd03d76c96e@git.kernel.org>
+Cc:     ldv@altlinux.org, peterz@infradead.org, rostedt@goodmis.org,
+        fweisbec@gmail.com, acme@redhat.com, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, namhyung@kernel.org, jolsa@kernel.org,
+        hpa@zytor.com, mingo@kernel.org, lclaudio@uudg.org,
+        alexander.shishkin@linux.intel.com, esyr@redhat.com
+Reply-To: alexander.shishkin@linux.intel.com, esyr@redhat.com,
+          acme@redhat.com, linux-kernel@vger.kernel.org,
+          fweisbec@gmail.com, rostedt@goodmis.org, peterz@infradead.org,
+          ldv@altlinux.org, lclaudio@uudg.org, hpa@zytor.com,
+          mingo@kernel.org, jolsa@kernel.org, namhyung@kernel.org,
+          tglx@linutronix.de
+In-Reply-To: <20181205160509.1168-8-jolsa@kernel.org>
+References: <20181205160509.1168-8-jolsa@kernel.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf trace: Move event delivery to a new
+ deliver_event() function
+Git-Commit-ID: b2595c9b1e5ad11db05c6767e6d00cd03d76c96e
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20181214123111.266cae10f71ea6b277d634c6@linux-foundation.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18121421-0052-0000-0000-0000036773E4
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010225; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000271; SDB=6.01131808; UDB=6.00588228; IPR=6.00911939;
- MB=3.00024694; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-14 21:01:30
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18121421-0053-0000-0000-00005F1C2EBF
-Message-Id: <20181214210126.GX4170@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-14_12:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=836 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812140177
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 14, 2018 at 12:31:11PM -0800, Andrew Morton wrote:
-> On Sat, 15 Dec 2018 00:17:38 +0900 Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp> wrote:
-> 
-> > check_hung_uninterruptible_tasks() is currently calling rcu_lock_break()
-> > for every 1024 threads. But check_hung_task() is very slow if printk()
-> > was called, and is very fast otherwise. If many threads within some 1024
-> > threads called printk(), the RCU grace period might be extended enough
-> > to trigger RCU stall warnings. Therefore, calling rcu_lock_break() for
-> > every some fixed jiffies will be safer.
-> > 
-> > --- a/kernel/hung_task.c
-> > +++ b/kernel/hung_task.c
-> > @@ -34,7 +34,7 @@
-> >   * is disabled during the critical section. It also controls the size of
-> >   * the RCU grace period. So it needs to be upper-bound.
-> >   */
-> > -#define HUNG_TASK_BATCHING 1024
-> > +#define HUNG_TASK_LOCK_BREAK (HZ / 10)
-> 
-> This won't work correctly if rcu_cpu_stall_timeout is set to something
-> stupidly small.  Perhaps is would be better to make this code aware of
-> the current rcu_cpu_stall_timeout setting?
+Commit-ID:  b2595c9b1e5ad11db05c6767e6d00cd03d76c96e
+Gitweb:     https://git.kernel.org/tip/b2595c9b1e5ad11db05c6767e6d00cd03d76c96e
+Author:     Jiri Olsa <jolsa@kernel.org>
+AuthorDate: Wed, 5 Dec 2018 17:05:08 +0100
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Thu, 6 Dec 2018 16:43:28 -0300
 
-Good point.
+perf trace: Move event delivery to a new deliver_event() function
 
-However, the reason that I wasn't worried because any settings of
-rcu_cpu_stall_timeout less than 3 seconds are cheerfully bumped up to
-3 seconds, so we have a safety factor of 30 as things stand.
+Mov event delivery code to a new trace__deliver_event() function, so
+it's easier to add ordered delivery coming in the following patches.
 
-I could export the minimum, though, if that would be helpful.
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Dmitry Levin <ldv@altlinux.org>
+Cc: Eugene Syromiatnikov <esyr@redhat.com>
+Cc: Frederic Weisbecker <fweisbec@gmail.com>
+Cc: Luis Cláudio Gonçalves <lclaudio@uudg.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/20181205160509.1168-8-jolsa@kernel.org
+[ Add trace__ prefix to the deliver_event method ]
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/builtin-trace.c | 25 ++++++++++++++++---------
+ 1 file changed, 16 insertions(+), 9 deletions(-)
 
-							Thanx, Paul
-
+diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+index 98aff12af9e6..3b6b1fecf2bb 100644
+--- a/tools/perf/builtin-trace.c
++++ b/tools/perf/builtin-trace.c
+@@ -2637,6 +2637,21 @@ static int trace__set_filter_pids(struct trace *trace)
+ 	return err;
+ }
+ 
++static int trace__deliver_event(struct trace *trace, union perf_event *event)
++{
++	struct perf_evlist *evlist = trace->evlist;
++	struct perf_sample sample;
++	int err;
++
++	err = perf_evlist__parse_sample(evlist, event, &sample);
++	if (err)
++		fprintf(trace->output, "Can't parse sample, err = %d, skipping...\n", err);
++	else
++		trace__handle_event(trace, event, &sample);
++
++	return 0;
++}
++
+ static int trace__run(struct trace *trace, int argc, const char **argv)
+ {
+ 	struct perf_evlist *evlist = trace->evlist;
+@@ -2802,18 +2817,10 @@ again:
+ 			continue;
+ 
+ 		while ((event = perf_mmap__read_event(md)) != NULL) {
+-			struct perf_sample sample;
+-
+ 			++trace->nr_events;
+ 
+-			err = perf_evlist__parse_sample(evlist, event, &sample);
+-			if (err) {
+-				fprintf(trace->output, "Can't parse sample, err = %d, skipping...\n", err);
+-				goto next_event;
+-			}
++			trace__deliver_event(trace, event);
+ 
+-			trace__handle_event(trace, event, &sample);
+-next_event:
+ 			perf_mmap__consume(md);
+ 
+ 			if (interrupted)
