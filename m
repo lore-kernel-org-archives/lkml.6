@@ -2,84 +2,101 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26146C6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 03:40:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10AFEC67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 03:41:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E06A62080F
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 03:40:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E06A62080F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id C66962080F
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 03:41:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C66962080F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mail.parknet.co.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726781AbeLNDkk (ORCPT
+        id S1727040AbeLNDlS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 22:40:40 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:41383 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726437AbeLNDkk (ORCPT
+        Thu, 13 Dec 2018 22:41:18 -0500
+Received: from mail.parknet.co.jp ([210.171.160.6]:42514 "EHLO
+        mail.parknet.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726437AbeLNDlS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 22:40:40 -0500
-X-UUID: abf5d5041799410788990da60a97c93a-20181214
-X-UUID: abf5d5041799410788990da60a97c93a-20181214
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
-        (envelope-from <honghui.zhang@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1912547139; Fri, 14 Dec 2018 11:40:34 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Fri, 14 Dec 2018 11:40:33 +0800
-Received: from localhost.localdomain (10.17.3.153) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Fri, 14 Dec 2018 11:40:32 +0800
-From:   <honghui.zhang@mediatek.com>
-To:     <lorenzo.pieralisi@arm.com>, <bhelgaas@google.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-pci@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <ryder.lee@mediatek.com>,
-        <matthias.bgg@gmail.com>
-CC:     <rafael.j.wysocki@intel.com>, <fred@fredlawl.com>,
-        <poza@codeaurora.org>, <youlin.pei@mediatek.com>,
-        <jianjun.wang@mediatek.com>,
-        Honghui Zhang <honghui.zhang@mediatek.com>
-Subject: [RFC PATCH] PCI/portdrv: Support for subtractive decode bridge
-Date:   Fri, 14 Dec 2018 11:40:29 +0800
-Message-ID: <1544758829-10327-1-git-send-email-honghui.zhang@mediatek.com>
-X-Mailer: git-send-email 2.6.4
+        Thu, 13 Dec 2018 22:41:18 -0500
+Received: from ibmpc.myhome.or.jp (server.parknet.ne.jp [210.171.168.39])
+        by mail.parknet.co.jp (Postfix) with ESMTPSA id 085F4161688;
+        Fri, 14 Dec 2018 12:41:17 +0900 (JST)
+Received: from devron.myhome.or.jp (foobar@devron.myhome.or.jp [192.168.0.3])
+        by ibmpc.myhome.or.jp (8.15.2/8.15.2/Debian-12) with ESMTPS id wBE3fFnY019587
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+        Fri, 14 Dec 2018 12:41:16 +0900
+Received: from devron.myhome.or.jp (foobar@localhost [127.0.0.1])
+        by devron.myhome.or.jp (8.15.2/8.15.2/Debian-12) with ESMTPS id wBE3fFTa018938
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+        Fri, 14 Dec 2018 12:41:15 +0900
+Received: (from hirofumi@localhost)
+        by devron.myhome.or.jp (8.15.2/8.15.2/Submit) id wBE3fFMT018937;
+        Fri, 14 Dec 2018 12:41:15 +0900
+From:   OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+To:     Matteo Croce <mcroce@redhat.com>
+Cc:     Timothy Redaelli <tredaelli@redhat.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] vfat: don't read garbage after last dirent
+References: <20181207013410.7050-1-mcroce@redhat.com>
+Date:   Fri, 14 Dec 2018 12:41:15 +0900
+In-Reply-To: <20181207013410.7050-1-mcroce@redhat.com> (Matteo Croce's message
+        of "Fri, 7 Dec 2018 02:34:10 +0100")
+Message-ID: <87lg4sdbc4.fsf@mail.parknet.co.jp>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.0.50 (gnu/linux)
 MIME-Version: 1.0
 Content-Type: text/plain
-X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Honghui Zhang <honghui.zhang@mediatek.com>
+Matteo Croce <mcroce@redhat.com> writes:
 
-The Class Code for subtractive decode PCI-to-PCI bridge is 060401h,
-change the class_mask values to make portdrv support this type bridge.
+> The FAT32 File System Specification[1] states:
+>
+>     If DIR_Name[0] == 0x00, then the directory entry is free, and there
+>     are no allocated directory entries after this one.
+>
+>     The special 0 value, indicates to FAT file system driver code that
+>     the rest of the entries in this directory do notneed to be examined
+>     because they are all free.
+>
+> This is not enforced by Linux, and is possible to read garbage if
+> not all the dirents after the last one are filled with zeroes.
+>
+> [1] http://download.microsoft.com/download/1/6/1/161ba512-40e2-4cc9-843a-923143f3456c/fatgen103.doc
+>
+> Reported-by: Timothy Redaelli <tredaelli@redhat.com>
+> Signed-off-by: Matteo Croce <mcroce@redhat.com>
 
-Signed-off-by: Honghui Zhang <honghui.zhang@mediatek.com>
----
- drivers/pci/pcie/portdrv_pci.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I know this spec. But name[0] == 0 means - the rest of the entries in
+this directory must be 0. Otherwise, overwriting zeroed entry by adding
+new dir entry, then shows garbage as dir entry. So "stop at zero" is
+just a optimization.
 
-diff --git a/drivers/pci/pcie/portdrv_pci.c b/drivers/pci/pcie/portdrv_pci.c
-index eef22dc..86926ea 100644
---- a/drivers/pci/pcie/portdrv_pci.c
-+++ b/drivers/pci/pcie/portdrv_pci.c
-@@ -179,7 +179,7 @@ static void pcie_portdrv_err_resume(struct pci_dev *dev)
-  */
- static const struct pci_device_id port_pci_ids[] = { {
- 	/* handle any PCI-Express port */
--	PCI_DEVICE_CLASS(((PCI_CLASS_BRIDGE_PCI << 8) | 0x00), ~0),
-+	PCI_DEVICE_CLASS(((PCI_CLASS_BRIDGE_PCI << 8) | 0x00), ~0x01),
- 	}, { /* end: all zeroes */ }
- };
- 
+On other hand, I know there is buggy formatters don't clear that
+garbage, and uses it on read-only storage area. 
+
+So I will agree to supporting "stop at zero" though (and keep assuming
+dir is initialized with zero clear. i.e. don't add tricky workaround to
+support buggy formatters.), the implementation should handle it for
+whole path, not only readdir().
+
+E.g. I recall lookup, dir empty check path, and maybe there are others I
+can't recall immediately.
+
+>  get_new:
+> -	if (fat_get_entry(inode, &cpos, &bh, &de) == -1)
+> +	if (fat_get_entry(inode, &cpos, &bh, &de) == -1 || !de->name[0])
+>  		goto end_of_dir;
+>  parse_record:
+>  	nr_slots = 0;
+
+Thanks.
 -- 
-2.6.4
-
+OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
