@@ -2,102 +2,131 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.9 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43074C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:58:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0538C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:58:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7180B2086D
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:58:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dJWHLX2F"
+	by mail.kernel.org (Postfix) with ESMTP id 1C563208CE
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:58:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731161AbeLNU6J (ORCPT
+        id S1731202AbeLNU6U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 15:58:09 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:33024 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730757AbeLNU6I (ORCPT
+        Fri, 14 Dec 2018 15:58:20 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:57045 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730757AbeLNU6U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 15:58:08 -0500
-Received: by mail-pl1-f194.google.com with SMTP id z23so3263982plo.0;
-        Fri, 14 Dec 2018 12:58:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=nKn9yheUmyYNGOHtNqDCelwebCWGHkX+/pUrK3UVzM8=;
-        b=dJWHLX2FpXTq8S4acSufbNHvMbzNb4p0GG6Ed48izfhGWPWK1oHzmm8ZsDxs92mGMr
-         Jj+KmxM6oHj65FRaPcjYCEXWmPEZwVItcSv5BrVbNez6Zh8gKYim3rjY/axju+3hpiSH
-         Yg6dvx5VFq6l2JoQ+/7iuXK5snmBD/d0LeaxpLW8oG9haHl3SFjjCA1y/AqiHj1KAXYT
-         yDGnPdJvTTsi3kTlTpmBfvmwpa7ffYfvz8qXU+tiDsgDGRM2lGRktS2mutv93noIxov6
-         Kzbv66EznoQNG1OuQbehQN2RNUhNCyJvNksg0WiTQYc+ddxLNBBQRav29G1IVJ0uPxpu
-         NCJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=nKn9yheUmyYNGOHtNqDCelwebCWGHkX+/pUrK3UVzM8=;
-        b=LRk2kd4dTt9yNvn4cH52enPztxNRpeI8fap2dovdheAhTTcuvxq+GHS6/0/EQcg+zL
-         XQE1I5O8eUhAUR4IhDJ+PAk26yMLA7kfP1omlJG576IvkamVMhGsEgLe+lh1HFCDfWL+
-         eQxzYOt6+z6XbHRpzazApkhG9cauw2qraka5BcBuryGLfFfUpKmEU0aAv6tmmOlUZM5A
-         cwDCfddFmmTIjI1vwTHqCNVwYolJHc2ujDlrR3FquLk+aodPb/MW7aDCY6AI5ZUaBl/O
-         J8/2S3dzngWrvu+Je8s6pGxr7aGFyv9dNDSMV8ak99uYvJbXAEahEqVI9x97GQ1qi8vE
-         lvvg==
-X-Gm-Message-State: AA+aEWYb6Qydz4jxoqna6ZlKfUtIYLHekJR/Nw1qqIgWPCgl1U8GEh+8
-        gEigVfZBFljPOljFjbiRQNc=
-X-Google-Smtp-Source: AFSGD/VLOh89EnSalpSeo0xal3qwzpwuPo4L7brqqgRwlMOJJEBw6LlplkSXuEYB80SMB6owLwlrWw==
-X-Received: by 2002:a17:902:29ab:: with SMTP id h40mr4239467plb.238.1544821087915;
-        Fri, 14 Dec 2018 12:58:07 -0800 (PST)
-Received: from himanshu-Vostro-3559 ([103.233.116.134])
-        by smtp.gmail.com with ESMTPSA id a10sm7108659pfi.138.2018.12.14.12.58.04
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 14 Dec 2018 12:58:07 -0800 (PST)
-Date:   Sat, 15 Dec 2018 02:28:00 +0530
-From:   Himanshu Jha <himanshujha199640@gmail.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>,
-        joe@perches.com, gregkh@linuxfoundation.org, apw@canonical.com,
-        linux-kernel@vger.kernel.org, niklas.cassel@linaro.org,
-        corbet@lwn.net, linux-doc@vger.kernel.org
-Subject: Re: [PATCH 2/2] checkpatch: add Co-developed-by to signature tags
-Message-ID: <20181214205800.GA22639@himanshu-Vostro-3559>
-References: <1544808928-20002-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
- <1544808928-20002-3-git-send-email-jorge.ramirez-ortiz@linaro.org>
- <20181214121634.1157f2302c8ba1825fc03ad2@linux-foundation.org>
+        Fri, 14 Dec 2018 15:58:20 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBEKwCvo1459791
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Fri, 14 Dec 2018 12:58:12 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBEKwCak1459788;
+        Fri, 14 Dec 2018 12:58:12 -0800
+Date:   Fri, 14 Dec 2018 12:58:12 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Andi Kleen <tipbot@zytor.com>
+Message-ID: <tip-f24bf0aedcd1ee10fba2f1d7a6139969344afbb6@git.kernel.org>
+Cc:     tglx@linutronix.de, linux-kernel@vger.kernel.org, mingo@kernel.org,
+        jolsa@kernel.org, acme@redhat.com, ak@linux.intel.com,
+        hpa@zytor.com
+Reply-To: hpa@zytor.com, ak@linux.intel.com, acme@redhat.com,
+          jolsa@kernel.org, mingo@kernel.org, linux-kernel@vger.kernel.org,
+          tglx@linutronix.de
+In-Reply-To: <20181120050635.4215-1-andi@firstfloor.org>
+References: <20181120050635.4215-1-andi@firstfloor.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf vendor events intel: Fix
+ Load_Miss_Real_Latency on SKL/SKX
+Git-Commit-ID: f24bf0aedcd1ee10fba2f1d7a6139969344afbb6
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20181214121634.1157f2302c8ba1825fc03ad2@linux-foundation.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 14, 2018 at 12:16:34PM -0800, Andrew Morton wrote:
-> On Fri, 14 Dec 2018 18:35:28 +0100 Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org> wrote:
-> 
-> > As per Documentation/process/submitting-patches, Co-developed-by is a
-> > valid signature.
-> > 
-> 
-> I'm with Joe - I find this tag kinda useless and duplicative.  But whatever.
+Commit-ID:  f24bf0aedcd1ee10fba2f1d7a6139969344afbb6
+Gitweb:     https://git.kernel.org/tip/f24bf0aedcd1ee10fba2f1d7a6139969344afbb6
+Author:     Andi Kleen <ak@linux.intel.com>
+AuthorDate: Mon, 19 Nov 2018 21:06:35 -0800
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Thu, 6 Dec 2018 16:43:27 -0300
 
-I'm fine either way, just the problem is:
+perf vendor events intel: Fix Load_Miss_Real_Latency on SKL/SKX
 
-	Co-developed-by Vs Co-Developed-by
+Fix incorrect event names for the Load_Miss_Real_Latency metric for
+Skylake and Skylake Server.
 
-with checkpatch spitting out that it is not a valid signature.
+Fixes https://github.com/andikleen/pmu-tools/issues/158
 
-In the end, I can completely remove the tag from docs if it is useless
-and duplicative.
+Before:
 
--- 
-Himanshu Jha
-Undergraduate Student
-Department of Electronics & Communication
-Guru Tegh Bahadur Institute of Technology
+  % perf stat -M Load_Miss_Real_Latency true
+  event syntax error: '..ss.pending,mem_load_retired.l1_miss_ps,mem_load_retired.fb_hit_ps}:W'
+                                    \___ parser error
+
+   Usage: perf stat [<options>] [<command>]
+
+      -M, --metrics <metric/metric group list>
+                            monitor specified metrics or metric groups (separated by ,)
+
+After:
+
+  % perf stat -M Load_Miss_Real_Latency true
+
+   Performance counter stats for 'true':
+
+             279,204      l1d_pend_miss.pending     #     14.0 Load_Miss_Real_Latency
+               4,784      mem_load_uops_retired.l1_miss
+              15,188      mem_load_uops_retired.hit_lfb
+
+         0.000899640 seconds time elapsed
+
+Signed-off-by: Andi Kleen <ak@linux.intel.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Link: http://lkml.kernel.org/r/20181120050635.4215-1-andi@firstfloor.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/pmu-events/arch/x86/skylake/skl-metrics.json  | 2 +-
+ tools/perf/pmu-events/arch/x86/skylakex/skx-metrics.json | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/tools/perf/pmu-events/arch/x86/skylake/skl-metrics.json b/tools/perf/pmu-events/arch/x86/skylake/skl-metrics.json
+index 36c903faed0b..71e9737f4614 100644
+--- a/tools/perf/pmu-events/arch/x86/skylake/skl-metrics.json
++++ b/tools/perf/pmu-events/arch/x86/skylake/skl-metrics.json
+@@ -73,7 +73,7 @@
+     },
+     {
+         "BriefDescription": "Actual Average Latency for L1 data-cache miss demand loads",
+-        "MetricExpr": "L1D_PEND_MISS.PENDING / ( MEM_LOAD_RETIRED.L1_MISS_PS + MEM_LOAD_RETIRED.FB_HIT_PS )",
++        "MetricExpr": "L1D_PEND_MISS.PENDING / ( MEM_LOAD_RETIRED.L1_MISS + MEM_LOAD_RETIRED.FB_HIT )",
+         "MetricGroup": "Memory_Bound;Memory_Lat",
+         "MetricName": "Load_Miss_Real_Latency"
+     },
+diff --git a/tools/perf/pmu-events/arch/x86/skylakex/skx-metrics.json b/tools/perf/pmu-events/arch/x86/skylakex/skx-metrics.json
+index 36c903faed0b..71e9737f4614 100644
+--- a/tools/perf/pmu-events/arch/x86/skylakex/skx-metrics.json
++++ b/tools/perf/pmu-events/arch/x86/skylakex/skx-metrics.json
+@@ -73,7 +73,7 @@
+     },
+     {
+         "BriefDescription": "Actual Average Latency for L1 data-cache miss demand loads",
+-        "MetricExpr": "L1D_PEND_MISS.PENDING / ( MEM_LOAD_RETIRED.L1_MISS_PS + MEM_LOAD_RETIRED.FB_HIT_PS )",
++        "MetricExpr": "L1D_PEND_MISS.PENDING / ( MEM_LOAD_RETIRED.L1_MISS + MEM_LOAD_RETIRED.FB_HIT )",
+         "MetricGroup": "Memory_Bound;Memory_Lat",
+         "MetricName": "Load_Miss_Real_Latency"
+     },
