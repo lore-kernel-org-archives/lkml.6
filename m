@@ -7,50 +7,50 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93E7FC6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:14:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A4C1C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:14:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BBC2214F0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:14:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 44D6F2133F
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:14:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544789681;
-	bh=ysLGjNstYE1yTf0QwlRrwaXEeJ/CTKZ6VvXcNSOEAoU=;
+	s=default; t=1544789685;
+	bh=7Hw+5PxxPtrE3D/bmcRc5wN1C4SbqRBBPiIE5pLTLxw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ZS4ech2OUgwK2LoEuqg5mCYC6K8nUQ2fKF0dMlnZwvVIo7i3r+qJZHIcZEWRLe5XS
-	 ECdgPPaXAYyzag5YwLEcx8oZwg2K5gwDnz5ctbL1FsYHfVNCfRSvkFp1Sdcp0OzwTK
-	 LFwphhFwU+O7tUr+d+/JsnJ5VaFussew2dlpF/8E=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BBC2214F0
+	b=bcY80VAQkgQeA5liB8UjFzPcJ8j4DDHqoumQJu2Xg6oNKE++UcGKF9oqUTla3IAU6
+	 PgRX5YB6nhuQ0YDybYaq9wHxpvc4vB+ofFmcAexkcLeFHrh1LX1nE4r6BbwDsm4psg
+	 bz0qWrkNOpcCjHSK+57+SMhSJJtmd4k3wEng1oaA=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44D6F2133F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732399AbeLNMOk (ORCPT
+        id S1732409AbeLNMOo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:14:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34336 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:14:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34392 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732375AbeLNMOh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:14:37 -0500
+        id S1732122AbeLNMOj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:14:39 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7BF842133F;
-        Fri, 14 Dec 2018 12:14:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0D9252133F;
+        Fri, 14 Dec 2018 12:14:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789677;
-        bh=ysLGjNstYE1yTf0QwlRrwaXEeJ/CTKZ6VvXcNSOEAoU=;
+        s=default; t=1544789679;
+        bh=7Hw+5PxxPtrE3D/bmcRc5wN1C4SbqRBBPiIE5pLTLxw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0ftHR//hDwH0OMZl5BzQaIk3JNaApjWT94Z1lGiKUvRazL8IDNVQGW4920WeH3Ca1
-         MeHoTSSekuHY9gyNlpCLTG7aJgjgG0z1D8POg1XNy6WcVtQ8T78V4UBGbn77XK9wNC
-         lDRKx3ZaUfiRZJRxaXgCvhCPVK2ry0Z1n6HZgJIk=
+        b=f1R6YR1Csb0by0wB+XhSYIkHjqBRol7GAaG79C13BMwgs12Ac+WpX9GTHKj2MhsPu
+         wlUqUf0RgKuPNASrrQKu0YZdSL5QNiF0rFIls6oajTBQwDwSyOUkmXjHfCPzyRuvow
+         XYfNHj/F0c46b8V/xAzxDXKdW3wK576sjsNKyPiA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Janusz Krzysztofik <jmkrzyszt@gmail.com>,
-        Tony Lindgren <tony@atomide.com>,
+        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 11/88] ARM: OMAP1: ams-delta: Fix possible use of uninitialized field
-Date:   Fri, 14 Dec 2018 12:59:45 +0100
-Message-Id: <20181214115703.090857218@linuxfoundation.org>
+Subject: [PATCH 4.4 12/88] sysv: return err instead of 0 in __sysv_write_inode
+Date:   Fri, 14 Dec 2018 12:59:46 +0100
+Message-Id: <20181214115703.150853292@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115702.151309521@linuxfoundation.org>
 References: <20181214115702.151309521@linuxfoundation.org>
@@ -69,38 +69,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit cec83ff1241ec98113a19385ea9e9cfa9aa4125b ]
+[ Upstream commit c4b7d1ba7d263b74bb72e9325262a67139605cde ]
 
-While playing with initialization order of modem device, it has been
-discovered that under some circumstances (early console init, I
-believe) its .pm() callback may be called before the
-uart_port->private_data pointer is initialized from
-plat_serial8250_port->private_data, resulting in NULL pointer
-dereference.  Fix it by checking for uninitialized pointer before using
-it in modem_pm().
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Fixes: aabf31737a6a ("ARM: OMAP1: ams-delta: update the modem to use regulator API")
-Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+fs/sysv/inode.c: In function '__sysv_write_inode':
+fs/sysv/inode.c:239:6: warning:
+ variable 'err' set but not used [-Wunused-but-set-variable]
+
+__sysv_write_inode should return 'err' instead of 0
+
+Fixes: 05459ca81ac3 ("repair sysv_write_inode(), switch sysv to simple_fsync()")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/mach-omap1/board-ams-delta.c | 3 +++
- 1 file changed, 3 insertions(+)
+ fs/sysv/inode.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-omap1/board-ams-delta.c b/arch/arm/mach-omap1/board-ams-delta.c
-index a95499ea8706..fa1d41edce68 100644
---- a/arch/arm/mach-omap1/board-ams-delta.c
-+++ b/arch/arm/mach-omap1/board-ams-delta.c
-@@ -511,6 +511,9 @@ static void modem_pm(struct uart_port *port, unsigned int state, unsigned old)
- {
- 	struct modem_private_data *priv = port->private_data;
+diff --git a/fs/sysv/inode.c b/fs/sysv/inode.c
+index 02fa1dcc5969..29f5b2e589a1 100644
+--- a/fs/sysv/inode.c
++++ b/fs/sysv/inode.c
+@@ -275,7 +275,7 @@ static int __sysv_write_inode(struct inode *inode, int wait)
+                 }
+         }
+ 	brelse(bh);
+-	return 0;
++	return err;
+ }
  
-+	if (!priv)
-+		return;
-+
- 	if (IS_ERR(priv->regulator))
- 		return;
- 
+ int sysv_write_inode(struct inode *inode, struct writeback_control *wbc)
 -- 
 2.19.1
 
