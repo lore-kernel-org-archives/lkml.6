@@ -7,55 +7,56 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAF55C67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:07:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DEDBC67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:07:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 725F5214C1
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:07:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 488E8214AE
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:07:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544789236;
-	bh=Zs1RgRxu20lBi7Ta1dfkWJ2ExyMXLJPCDavy9ULf3cg=;
+	s=default; t=1544789240;
+	bh=Xs5zmi6onLYCyySaHHaeBQOjeSGc0vontuuUDhDZ8Hs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=y+3yB2hPA0OOvtC1PK5eNC63F+eA2XUccLJqxr5Uw8xmAMhgCh1f0KZ11dqM5xtjD
-	 2uVJ6MzWGNRZRvMcQSmkoYD1eFvTvrMQkiDV9lRajRHbZxWVSRYvPBYnlpS3cTQThw
-	 6CUeIN8GeU38mQqj/fYNzqm1KCAv2Zfw/wMydOWM=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 725F5214C1
+	b=jn5DUfdJvT1cglhf6v5akTMv6nvlhGtki+EHfZodXzY35t9Wr4KE29VeilLAcHmEH
+	 +A5cIhQxMgNvLTe+D7LTLPlTFEw5VfjrJaoiOVJqQcfVWe5RwzL2yObmIDoJi+OPhu
+	 OJYK/7Kf+40rp5BPPenG9KeEnKiSBaNOSyhIzTPM=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 488E8214AE
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731081AbeLNMHP (ORCPT
+        id S1731089AbeLNMHT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:07:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52390 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:07:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52452 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731065AbeLNMHN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:07:13 -0500
+        id S1731077AbeLNMHP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:07:15 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CFD6A214AE;
-        Fri, 14 Dec 2018 12:07:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 550482148E;
+        Fri, 14 Dec 2018 12:07:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789232;
-        bh=Zs1RgRxu20lBi7Ta1dfkWJ2ExyMXLJPCDavy9ULf3cg=;
+        s=default; t=1544789234;
+        bh=Xs5zmi6onLYCyySaHHaeBQOjeSGc0vontuuUDhDZ8Hs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ceZVJtrAlPaIHGpNeccUdoX/oS4ehIxS9HWOAV1aYIoDvNKSXV4Ai6bWpkpJy7120
-         VAWu2pTvGS99ZyoNO457l3cQONokKYExVI7JZr+wTDWjiWaB8Z1H9kDEYIhT+Zlfex
-         50bCmkK+YNOFXPy7zqjAUW4LgOaYLe3TKMqEc48E=
+        b=X4i2AHk7BAg2Bw5YGwgiBk77AbrRCqERtODWQCYptOb7wWb3CBy/QjcoUyrmcayi/
+         SlvsTufk0w+/RdJ1WRs/4+ZpybkUGtOP+SsDGwHqOqSBVVXronYa3JWznq1tEw0Ji/
+         +MRYZzcaqfeDTQMywMwGmR+0g7wRv5LpXttDVGDI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Patrick Bellasi <patrick.bellasi@arm.com>,
-        Hanjun Guo <hanjun.guo@linaro.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
+        stable@vger.kernel.org, Larry Chen <lchen@suse.com>,
+        Changwei Ge <ge.changwei@h3c.com>,
+        Mark Fasheh <mark@fasheh.com>,
+        Joel Becker <jlbec@evilplan.org>,
+        Junxiao Bi <junxiao.bi@oracle.com>,
+        Joseph Qi <jiangqi903@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 123/142] ACPI/IORT: Fix iort_get_platform_device_domain() uninitialized pointer value
-Date:   Fri, 14 Dec 2018 13:00:08 +0100
-Message-Id: <20181214115751.954096793@linuxfoundation.org>
+Subject: [PATCH 4.19 124/142] ocfs2: fix deadlock caused by ocfs2_defrag_extent()
+Date:   Fri, 14 Dec 2018 13:00:09 +0100
+Message-Id: <20181214115751.993293054@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115747.053633987@linuxfoundation.org>
 References: <20181214115747.053633987@linuxfoundation.org>
@@ -74,51 +75,145 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit ea2412dc21cc790335d319181dddc43682aef164 ]
+[ Upstream commit e21e57445a64598b29a6f629688f9b9a39e7242a ]
 
-Running the Clang static analyzer on IORT code detected the following
-error:
+ocfs2_defrag_extent may fall into deadlock.
 
-Logic error: Branch condition evaluates to a garbage value
+ocfs2_ioctl_move_extents
+    ocfs2_ioctl_move_extents
+      ocfs2_move_extents
+        ocfs2_defrag_extent
+          ocfs2_lock_allocators_move_extents
 
-in
+            ocfs2_reserve_clusters
+              inode_lock GLOBAL_BITMAP_SYSTEM_INODE
 
-iort_get_platform_device_domain()
+	  __ocfs2_flush_truncate_log
+              inode_lock GLOBAL_BITMAP_SYSTEM_INODE
 
-If the named component associated with a given device has no IORT
-mappings, iort_get_platform_device_domain() exits its MSI mapping loop
-with msi_parent pointer containing garbage, which can lead to erroneous
-code path execution.
+As backtrace shows above, ocfs2_reserve_clusters() will call inode_lock
+against the global bitmap if local allocator has not sufficient cluters.
+Once global bitmap could meet the demand, ocfs2_reserve_cluster will
+return success with global bitmap locked.
 
-Initialize the msi_parent pointer, fixing the bug.
+After ocfs2_reserve_cluster(), if truncate log is full,
+__ocfs2_flush_truncate_log() will definitely fall into deadlock because
+it needs to inode_lock global bitmap, which has already been locked.
 
-Fixes: d4f54a186667 ("ACPI: platform: setup MSI domain for ACPI based
-platform device")
-Reported-by: Patrick Bellasi <patrick.bellasi@arm.com>
-Reviewed-by: Hanjun Guo <hanjun.guo@linaro.org>
-Acked-by: Will Deacon <will.deacon@arm.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+To fix this bug, we could remove from
+ocfs2_lock_allocators_move_extents() the code which intends to lock
+global allocator, and put the removed code after
+__ocfs2_flush_truncate_log().
+
+ocfs2_lock_allocators_move_extents() is referred by 2 places, one is
+here, the other does not need the data allocator context, which means
+this patch does not affect the caller so far.
+
+Link: http://lkml.kernel.org/r/20181101071422.14470-1-lchen@suse.com
+Signed-off-by: Larry Chen <lchen@suse.com>
+Reviewed-by: Changwei Ge <ge.changwei@h3c.com>
+Cc: Mark Fasheh <mark@fasheh.com>
+Cc: Joel Becker <jlbec@evilplan.org>
+Cc: Junxiao Bi <junxiao.bi@oracle.com>
+Cc: Joseph Qi <jiangqi903@gmail.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/acpi/arm64/iort.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/ocfs2/move_extents.c | 47 +++++++++++++++++++++++------------------
+ 1 file changed, 26 insertions(+), 21 deletions(-)
 
-diff --git a/drivers/acpi/arm64/iort.c b/drivers/acpi/arm64/iort.c
-index 08f26db2da7e..e938576e58cb 100644
---- a/drivers/acpi/arm64/iort.c
-+++ b/drivers/acpi/arm64/iort.c
-@@ -700,7 +700,7 @@ static void iort_set_device_domain(struct device *dev,
+diff --git a/fs/ocfs2/move_extents.c b/fs/ocfs2/move_extents.c
+index 7eb3b0a6347e..f55f82ca3425 100644
+--- a/fs/ocfs2/move_extents.c
++++ b/fs/ocfs2/move_extents.c
+@@ -156,18 +156,14 @@ static int __ocfs2_move_extent(handle_t *handle,
+ }
+ 
+ /*
+- * lock allocators, and reserving appropriate number of bits for
+- * meta blocks and data clusters.
+- *
+- * in some cases, we don't need to reserve clusters, just let data_ac
+- * be NULL.
++ * lock allocator, and reserve appropriate number of bits for
++ * meta blocks.
   */
- static struct irq_domain *iort_get_platform_device_domain(struct device *dev)
+-static int ocfs2_lock_allocators_move_extents(struct inode *inode,
++static int ocfs2_lock_meta_allocator_move_extents(struct inode *inode,
+ 					struct ocfs2_extent_tree *et,
+ 					u32 clusters_to_move,
+ 					u32 extents_to_split,
+ 					struct ocfs2_alloc_context **meta_ac,
+-					struct ocfs2_alloc_context **data_ac,
+ 					int extra_blocks,
+ 					int *credits)
  {
--	struct acpi_iort_node *node, *msi_parent;
-+	struct acpi_iort_node *node, *msi_parent = NULL;
- 	struct fwnode_handle *iort_fwnode;
- 	struct acpi_iort_its_group *its;
- 	int i;
+@@ -192,13 +188,6 @@ static int ocfs2_lock_allocators_move_extents(struct inode *inode,
+ 		goto out;
+ 	}
+ 
+-	if (data_ac) {
+-		ret = ocfs2_reserve_clusters(osb, clusters_to_move, data_ac);
+-		if (ret) {
+-			mlog_errno(ret);
+-			goto out;
+-		}
+-	}
+ 
+ 	*credits += ocfs2_calc_extend_credits(osb->sb, et->et_root_el);
+ 
+@@ -257,10 +246,10 @@ static int ocfs2_defrag_extent(struct ocfs2_move_extents_context *context,
+ 		}
+ 	}
+ 
+-	ret = ocfs2_lock_allocators_move_extents(inode, &context->et, *len, 1,
+-						 &context->meta_ac,
+-						 &context->data_ac,
+-						 extra_blocks, &credits);
++	ret = ocfs2_lock_meta_allocator_move_extents(inode, &context->et,
++						*len, 1,
++						&context->meta_ac,
++						extra_blocks, &credits);
+ 	if (ret) {
+ 		mlog_errno(ret);
+ 		goto out;
+@@ -283,6 +272,21 @@ static int ocfs2_defrag_extent(struct ocfs2_move_extents_context *context,
+ 		}
+ 	}
+ 
++	/*
++	 * Make sure ocfs2_reserve_cluster is called after
++	 * __ocfs2_flush_truncate_log, otherwise, dead lock may happen.
++	 *
++	 * If ocfs2_reserve_cluster is called
++	 * before __ocfs2_flush_truncate_log, dead lock on global bitmap
++	 * may happen.
++	 *
++	 */
++	ret = ocfs2_reserve_clusters(osb, *len, &context->data_ac);
++	if (ret) {
++		mlog_errno(ret);
++		goto out_unlock_mutex;
++	}
++
+ 	handle = ocfs2_start_trans(osb, credits);
+ 	if (IS_ERR(handle)) {
+ 		ret = PTR_ERR(handle);
+@@ -600,9 +604,10 @@ static int ocfs2_move_extent(struct ocfs2_move_extents_context *context,
+ 		}
+ 	}
+ 
+-	ret = ocfs2_lock_allocators_move_extents(inode, &context->et, len, 1,
+-						 &context->meta_ac,
+-						 NULL, extra_blocks, &credits);
++	ret = ocfs2_lock_meta_allocator_move_extents(inode, &context->et,
++						len, 1,
++						&context->meta_ac,
++						extra_blocks, &credits);
+ 	if (ret) {
+ 		mlog_errno(ret);
+ 		goto out;
 -- 
 2.19.1
 
