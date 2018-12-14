@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E1DDC6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 10:52:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA3ADC6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 10:52:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5AB1920892
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 10:52:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5AB1920892
+	by mail.kernel.org (Postfix) with ESMTP id 9042220892
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 10:52:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9042220892
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729680AbeLNKw0 (ORCPT
+        id S1729618AbeLNKwY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 05:52:26 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:48490 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729465AbeLNKwY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 14 Dec 2018 05:52:24 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:49692 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726527AbeLNKwW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 05:52:22 -0500
 Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A06BD624D4;
-        Fri, 14 Dec 2018 10:52:23 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id E80AE307EA84;
+        Fri, 14 Dec 2018 10:52:21 +0000 (UTC)
 Received: from localhost.localdomain.com (unknown [10.32.181.131])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3621026FA9;
-        Fri, 14 Dec 2018 10:52:22 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 7C08B26FA9;
+        Fri, 14 Dec 2018 10:52:20 +0000 (UTC)
 From:   Paolo Abeni <pabeni@redhat.com>
 To:     netdev@vger.kernel.org
 Cc:     "David S. Miller" <davem@davemloft.net>,
@@ -37,127 +37,98 @@ Cc:     "David S. Miller" <davem@davemloft.net>,
         Paul Turner <pjt@google.com>, linux-kernel@vger.kernel.org,
         Edward Cree <ecree@solarflare.com>,
         David Woodhouse <dwmw2@infradead.org>
-Subject: [PATCH net-next v3 2/4] net: use indirect call wrappers at GRO network layer
-Date:   Fri, 14 Dec 2018 11:51:58 +0100
-Message-Id: <474aeb75910dd195d9f11cfd27e5afbc666caf52.1544784419.git.pabeni@redhat.com>
+Subject: [PATCH net-next v3 1/4] indirect call wrappers: helpers to speed-up indirect calls of builtin
+Date:   Fri, 14 Dec 2018 11:51:57 +0100
+Message-Id: <645eb0fcfe12b7765d2a27025b1806247649f783.1544784419.git.pabeni@redhat.com>
 In-Reply-To: <cover.1544784419.git.pabeni@redhat.com>
 References: <cover.1544784419.git.pabeni@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Fri, 14 Dec 2018 10:52:23 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Fri, 14 Dec 2018 10:52:22 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This avoids an indirect calls for L3 GRO receive path, both
-for ipv4 and ipv6, if the latter is not compiled as a module.
+This header define a bunch of helpers that allow avoiding the
+retpoline overhead when calling builtin functions via function pointers.
+It boils down to explicitly comparing the function pointers to
+known builtin functions and eventually invoke directly the latter.
 
-Note that when IPv6 is compiled as builtin, it will be checked first,
-so we have a single additional compare for the more common path.
+The macros defined here implement the boilerplate for the above schema
+and will be used by the next patches.
 
-v1 -> v2:
- - adapted to INDIRECT_CALL_ changes
+rfc -> v1:
+ - use branch prediction hint, as suggested by Eric
+v1  -> v2:
+ - list explicitly the builtin function names in INDIRECT_CALL_*(),
+   as suggested by Ed Cree
 
+Suggested-by: Eric Dumazet <edumazet@google.com>
 Signed-off-by: Paolo Abeni <pabeni@redhat.com>
 ---
- include/net/inet_common.h |  2 ++
- net/core/dev.c            | 15 +++++++++++++--
- net/ipv6/ip6_offload.c    |  6 +++---
- 3 files changed, 18 insertions(+), 5 deletions(-)
+ include/linux/indirect_call_wrapper.h | 51 +++++++++++++++++++++++++++
+ 1 file changed, 51 insertions(+)
+ create mode 100644 include/linux/indirect_call_wrapper.h
 
-diff --git a/include/net/inet_common.h b/include/net/inet_common.h
-index 3ca969cbd161..56e7592811ea 100644
---- a/include/net/inet_common.h
-+++ b/include/net/inet_common.h
-@@ -2,6 +2,8 @@
- #ifndef _INET_COMMON_H
- #define _INET_COMMON_H
- 
-+#include <linux/indirect_call_wrapper.h>
+diff --git a/include/linux/indirect_call_wrapper.h b/include/linux/indirect_call_wrapper.h
+new file mode 100644
+index 000000000000..7c8b7f4948af
+--- /dev/null
++++ b/include/linux/indirect_call_wrapper.h
+@@ -0,0 +1,51 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _LINUX_INDIRECT_CALL_WRAPPER_H
++#define _LINUX_INDIRECT_CALL_WRAPPER_H
 +
- extern const struct proto_ops inet_stream_ops;
- extern const struct proto_ops inet_dgram_ops;
- 
-diff --git a/net/core/dev.c b/net/core/dev.c
-index ed9aa4a91f1f..1b5a4410be0e 100644
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -145,6 +145,7 @@
- #include <linux/sctp.h>
- #include <net/udp_tunnel.h>
- #include <linux/net_namespace.h>
-+#include <linux/indirect_call_wrapper.h>
- 
- #include "net-sysfs.h"
- 
-@@ -5338,6 +5339,8 @@ static void flush_all_backlogs(void)
- 	put_online_cpus();
- }
- 
-+INDIRECT_CALLABLE_DECLARE(int inet_gro_complete(struct sk_buff *, int));
-+INDIRECT_CALLABLE_DECLARE(int ipv6_gro_complete(struct sk_buff *, int));
- static int napi_gro_complete(struct sk_buff *skb)
- {
- 	struct packet_offload *ptype;
-@@ -5357,7 +5360,9 @@ static int napi_gro_complete(struct sk_buff *skb)
- 		if (ptype->type != type || !ptype->callbacks.gro_complete)
- 			continue;
- 
--		err = ptype->callbacks.gro_complete(skb, 0);
-+		err = INDIRECT_CALL_INET(ptype->callbacks.gro_complete,
-+					 ipv6_gro_complete, inet_gro_complete,
-+					 skb, 0);
- 		break;
- 	}
- 	rcu_read_unlock();
-@@ -5504,6 +5509,10 @@ static void gro_flush_oldest(struct list_head *head)
- 	napi_gro_complete(oldest);
- }
- 
-+INDIRECT_CALLABLE_DECLARE(struct sk_buff *inet_gro_receive(struct list_head *,
-+							   struct sk_buff *));
-+INDIRECT_CALLABLE_DECLARE(struct sk_buff *ipv6_gro_receive(struct list_head *,
-+							   struct sk_buff *));
- static enum gro_result dev_gro_receive(struct napi_struct *napi, struct sk_buff *skb)
- {
- 	u32 hash = skb_get_hash_raw(skb) & (GRO_HASH_BUCKETS - 1);
-@@ -5553,7 +5562,9 @@ static enum gro_result dev_gro_receive(struct napi_struct *napi, struct sk_buff
- 			NAPI_GRO_CB(skb)->csum_valid = 0;
- 		}
- 
--		pp = ptype->callbacks.gro_receive(gro_head, skb);
-+		pp = INDIRECT_CALL_INET(ptype->callbacks.gro_receive,
-+					ipv6_gro_receive, inet_gro_receive,
-+					gro_head, skb);
- 		break;
- 	}
- 	rcu_read_unlock();
-diff --git a/net/ipv6/ip6_offload.c b/net/ipv6/ip6_offload.c
-index 70f525c33cb6..ff8b484d2258 100644
---- a/net/ipv6/ip6_offload.c
-+++ b/net/ipv6/ip6_offload.c
-@@ -164,8 +164,8 @@ static int ipv6_exthdrs_len(struct ipv6hdr *iph,
- 	return len;
- }
- 
--static struct sk_buff *ipv6_gro_receive(struct list_head *head,
--					struct sk_buff *skb)
-+INDIRECT_CALLABLE_SCOPE struct sk_buff *ipv6_gro_receive(struct list_head *head,
-+							 struct sk_buff *skb)
- {
- 	const struct net_offload *ops;
- 	struct sk_buff *pp = NULL;
-@@ -301,7 +301,7 @@ static struct sk_buff *ip4ip6_gro_receive(struct list_head *head,
- 	return inet_gro_receive(head, skb);
- }
- 
--static int ipv6_gro_complete(struct sk_buff *skb, int nhoff)
-+INDIRECT_CALLABLE_SCOPE int ipv6_gro_complete(struct sk_buff *skb, int nhoff)
- {
- 	const struct net_offload *ops;
- 	struct ipv6hdr *iph = (struct ipv6hdr *)(skb->data + nhoff);
++#ifdef CONFIG_RETPOLINE
++
++/*
++ * INDIRECT_CALL_$NR - wrapper for indirect calls with $NR known builtin
++ *  @f: function pointer
++ *  @f$NR: builtin functions names, up to $NR of them
++ *  @__VA_ARGS__: arguments for @f
++ *
++ * Avoid retpoline overhead for known builtin, checking @f vs each of them and
++ * eventually invoking directly the builtin function. The functions are check
++ * in the given order. Fallback to the indirect call.
++ */
++#define INDIRECT_CALL_1(f, f1, ...)					\
++	({								\
++		likely(f == f1) ? f1(__VA_ARGS__) : f(__VA_ARGS__);	\
++	})
++#define INDIRECT_CALL_2(f, f2, f1, ...)					\
++	({								\
++		likely(f == f2) ? f2(__VA_ARGS__) :			\
++				  INDIRECT_CALL_1(f, f1, __VA_ARGS__);	\
++	})
++
++#define INDIRECT_CALLABLE_DECLARE(f)	f
++#define INDIRECT_CALLABLE_SCOPE
++
++#else
++#define INDIRECT_CALL_1(f, name, ...) f(__VA_ARGS__)
++#define INDIRECT_CALL_2(f, name, ...) f(__VA_ARGS__)
++#define INDIRECT_CALLABLE_DECLARE(f)
++#define INDIRECT_CALLABLE_SCOPE		static
++#endif
++
++/*
++ * We can use INDIRECT_CALL_$NR for ipv6 related functions only if ipv6 is
++ * builtin, this macro simplify dealing with indirect calls with only ipv4/ipv6
++ * alternatives
++ */
++#if IS_BUILTIN(CONFIG_IPV6)
++#define INDIRECT_CALL_INET(f, f2, f1, ...) \
++	INDIRECT_CALL_2(f, f2, f1, __VA_ARGS__)
++#elif IS_ENABLED(CONFIG_INET)
++#define INDIRECT_CALL_INET(f, f2, f1, ...) INDIRECT_CALL_1(f, f1, __VA_ARGS__)
++#else
++#define INDIRECT_CALL_INET(f, f2, f1, ...) f(__VA_ARGS__)
++#endif
++
++#endif
 -- 
 2.19.2
 
