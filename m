@@ -2,305 +2,894 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,T_MIXED_ES,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 690A8C67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 02:35:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AB8AC65BAE
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 02:40:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FE552086D
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 02:35:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Xa6YipLM";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="oJbDm7wI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FE552086D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id A1B1420870
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 02:40:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1B1420870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729079AbeLNCfP (ORCPT
+        id S1726599AbeLNCkz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 21:35:15 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:42148 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728612AbeLNCfO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 21:35:14 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id F1CF3601E7; Fri, 14 Dec 2018 02:35:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1544754913;
-        bh=cPTLGuUz/rlnX/opxzjZU9PlCopro2P+r+cJw+D4btE=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Xa6YipLMYK3LCTb2UeG5uOt2axihHW/L5MDMYbKQlobowHV+osm7N5NEGLIpimif5
-         gm8l1WaSn7LNYHqrdVr3pS/a773tHUMws7cfYFc2fVBAOMiOitOz6M0PolrTXQk8cx
-         IIHuZBgdUgC7NVfRyF642E9EVDdRMBZp47wQZFkU=
-Received: from davidai-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: daidavid1@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 62567600E2;
-        Fri, 14 Dec 2018 02:35:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1544754911;
-        bh=cPTLGuUz/rlnX/opxzjZU9PlCopro2P+r+cJw+D4btE=;
-        h=From:To:Cc:Subject:Date:From;
-        b=oJbDm7wI0IG9Q4LzuE+6rzhzf/KrecJb8vRt1n3ZYsnbon1yRIf5vE21y9njobpGq
-         z3NbGRRkRto0aR84CkthvneWUTtB24Y1YtnTJ2vx1e7/ZaAiivbCttwwU1LbdTJiEc
-         +Y44Kc7qd4rNFe/LXIrfZrat4KPMIVIN4aoguI9g=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 62567600E2
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=daidavid1@codeaurora.org
-From:   David Dai <daidavid1@codeaurora.org>
-To:     sboyd@kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Cc:     David Dai <daidavid1@codeaurora.org>, georgi.djakov@linaro.org,
-        bjorn.andersson@linaro.org, evgreen@google.com,
-        tdas@codeaurora.org, elder@linaro.org
-Subject: [PATCH v1] clk: qcom: clk-rpmh: Add IPA clock support
-Date:   Thu, 13 Dec 2018 18:35:04 -0800
-Message-Id: <1544754904-18951-1-git-send-email-daidavid1@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        Thu, 13 Dec 2018 21:40:55 -0500
+Received: from mga12.intel.com ([192.55.52.136]:25006 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726355AbeLNCky (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 21:40:54 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Dec 2018 18:40:53 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,351,1539673200"; 
+   d="scan'208,223";a="125793116"
+Received: from fmsmsx103.amr.corp.intel.com ([10.18.124.201])
+  by fmsmga002.fm.intel.com with ESMTP; 13 Dec 2018 18:40:53 -0800
+Received: from fmsmsx153.amr.corp.intel.com (10.18.125.6) by
+ FMSMSX103.amr.corp.intel.com (10.18.124.201) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Thu, 13 Dec 2018 18:40:53 -0800
+Received: from shsmsx151.ccr.corp.intel.com (10.239.6.50) by
+ FMSMSX153.amr.corp.intel.com (10.18.125.6) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Thu, 13 Dec 2018 18:40:52 -0800
+Received: from shsmsx104.ccr.corp.intel.com ([169.254.5.203]) by
+ SHSMSX151.ccr.corp.intel.com ([169.254.3.210]) with mapi id 14.03.0415.000;
+ Fri, 14 Dec 2018 10:40:50 +0800
+From:   "He, Bo" <bo.he@intel.com>
+To:     "paulmck@linux.ibm.com" <paulmck@linux.ibm.com>
+CC:     "Zhang, Jun" <jun.zhang@intel.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "josh@joshtriplett.org" <josh@joshtriplett.org>,
+        "mathieu.desnoyers@efficios.com" <mathieu.desnoyers@efficios.com>,
+        "jiangshanlai@gmail.com" <jiangshanlai@gmail.com>,
+        "Xiao, Jin" <jin.xiao@intel.com>,
+        "Zhang, Yanmin" <yanmin.zhang@intel.com>,
+        "Bai, Jie A" <jie.a.bai@intel.com>,
+        "Sun, Yi J" <yi.j.sun@intel.com>
+Subject: RE: rcu_preempt caused oom
+Thread-Topic: rcu_preempt caused oom
+Thread-Index: AdSHvQIr70OYynHSTxKgLAvVXX+0Zv//yKOAgAAWeAD//li4UIADPhuAgAAJSYD//3lRYIAAoJ4A//tcRfABJU8zAP/+T9Nw//xa4AD/91m7QP/uoBSA/9vB3nD/t3F+AP9tcGAw/tr6woD9snCZgPtjpC6Q9sakFQDtjQLogNsYI6iwtjC+vgDsYEklwNjA58YAsYF15gDjAkI/QMYE+T8AjAlMjtCYExULALAllyhg4EugVwDAlgeBUIEsZYUAglfLUqCEsA8sgIlflLnw
+Date:   Fri, 14 Dec 2018 02:40:50 +0000
+Message-ID: <CD6925E8781EFD4D8E11882D20FC406D52A19939@SHSMSX104.ccr.corp.intel.com>
+References: <20181212210316.GA14777@linux.ibm.com>
+ <CD6925E8781EFD4D8E11882D20FC406D52A193C3@SHSMSX104.ccr.corp.intel.com>
+ <20181213001214.GE4170@linux.ibm.com>
+ <88DC34334CA3444C85D647DBFA962C2735AD5F77@SHSMSX104.ccr.corp.intel.com>
+ <20181213024234.GF4170@linux.ibm.com>
+ <88DC34334CA3444C85D647DBFA962C2735AD5F9E@SHSMSX104.ccr.corp.intel.com>
+ <20181213044020.GA19765@linux.ibm.com>
+ <CD6925E8781EFD4D8E11882D20FC406D52A197EC@SHSMSX104.ccr.corp.intel.com>
+ <20181213181136.GL4170@linux.ibm.com>
+ <CD6925E8781EFD4D8E11882D20FC406D52A198C7@SHSMSX104.ccr.corp.intel.com>
+ <20181214021527.GR4170@linux.ibm.com>
+In-Reply-To: <20181214021527.GR4170@linux.ibm.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: yes
+X-MS-TNEF-Correlator: 
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNGMxYTgyYjUtZDAzZS00ZmNhLThjOTAtZmQ3Y2E0MDNlNmJjIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoid3llaVdBZnFwc2hReWNwZG5lRzBZY1ZTT0s5UkVvNThGTm8wajFzZnZLRStUMjZQQTY0Z0g4enNGVVpkNVJoOCJ9
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: multipart/mixed;
+        boundary="_002_CD6925E8781EFD4D8E11882D20FC406D52A19939SHSMSX104ccrcor_"
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current clk-rpmh driver only supports on and off RPMh clock resources,
-let's extend the current driver by add support for clocks that are managed
-by a different type of RPMh resource known as Bus Clock Manager(BCM).
-The BCM is a configurable shared resource aggregator that scales performance
-based on a preset of frequency points. The Qualcomm IP Accelerator (IPA) clock
-is an example of a resource that is managed by the BCM and this a requirement
-from the IPA driver in order to scale its core clock.
+--_002_CD6925E8781EFD4D8E11882D20FC406D52A19939SHSMSX104ccrcor_
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: David Dai <daidavid1@codeaurora.org>
----
- drivers/clk/qcom/clk-rpmh.c           | 141 ++++++++++++++++++++++++++++++++++
- include/dt-bindings/clock/qcom,rpmh.h |   1 +
- 2 files changed, 142 insertions(+)
+another experiment we have done with the enclosed debug patch, and also hav=
+e more rcu trace event enable but without CONFIG_RCU_BOOST config, we don't=
+ reproduce the issue after 90 Hours until now on 10 boards(the issue should=
+ reproduce on one night per previous experience).
 
-diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
-index 9f4fc77..ee78c4b 100644
---- a/drivers/clk/qcom/clk-rpmh.c
-+++ b/drivers/clk/qcom/clk-rpmh.c
-@@ -18,6 +18,31 @@
- #define CLK_RPMH_ARC_EN_OFFSET		0
- #define CLK_RPMH_VRM_EN_OFFSET		4
- 
-+#define BCM_TCS_CMD_COMMIT_MASK		0x40000000
-+#define BCM_TCS_CMD_VALID_SHIFT		29
-+#define BCM_TCS_CMD_VOTE_MASK		0x3fff
-+#define BCM_TCS_CMD_VOTE_SHIFT		0
-+
-+#define BCM_TCS_CMD(valid, vote)				\
-+	(BCM_TCS_CMD_COMMIT_MASK |				\
-+	((valid) << BCM_TCS_CMD_VALID_SHIFT) |			\
-+	((cpu_to_le32(vote) &					\
-+	BCM_TCS_CMD_VOTE_MASK) << BCM_TCS_CMD_VOTE_SHIFT))
-+
-+/**
-+ * struct bcm_db - Auxiliary data pertaining to each Bus Clock Manager(BCM)
-+ * @unit: divisor used to convert Hz value to an RPMh msg
-+ * @width: multiplier used to convert Hz value to an RPMh msg
-+ * @vcd: virtual clock domain that this bcm belongs to
-+ * @reserved: reserved to pad the struct
-+ */
-+struct bcm_db {
-+	__le32 unit;
-+	__le16 width;
-+	u8 vcd;
-+	u8 reserved;
-+};
-+
- /**
-  * struct clk_rpmh - individual rpmh clock data structure
-  * @hw:			handle between common and hardware-specific interfaces
-@@ -29,6 +54,7 @@
-  * @aggr_state:		rpmh clock aggregated state
-  * @last_sent_aggr_state: rpmh clock last aggr state sent to RPMh
-  * @valid_state_mask:	mask to determine the state of the rpmh clock
-+ * @aux_data:		data specific to the bcm rpmh resource
-  * @dev:		device to which it is attached
-  * @peer:		pointer to the clock rpmh sibling
-  */
-@@ -42,6 +68,7 @@ struct clk_rpmh {
- 	u32 aggr_state;
- 	u32 last_sent_aggr_state;
- 	u32 valid_state_mask;
-+	u32 unit;
- 	struct device *dev;
- 	struct clk_rpmh *peer;
- };
-@@ -98,6 +125,17 @@ struct clk_rpmh_desc {
- 	__DEFINE_CLK_RPMH(_platform, _name, _name_active, _res_name,	\
- 			  CLK_RPMH_VRM_EN_OFFSET, 1, _div)
- 
-+#define DEFINE_CLK_RPMH_BCM(_platform, _name, _res_name)		\
-+	static struct clk_rpmh _platform##_##_name = {			\
-+		.res_name = _res_name,					\
-+		.valid_state_mask = BIT(RPMH_ACTIVE_ONLY_STATE),	\
-+		.div = 1,						\
-+		.hw.init = &(struct clk_init_data){			\
-+			.ops = &clk_rpmh_bcm_ops,			\
-+			.name = #_name,					\
-+		},							\
-+	}
-+
- static inline struct clk_rpmh *to_clk_rpmh(struct clk_hw *_hw)
- {
- 	return container_of(_hw, struct clk_rpmh, hw);
-@@ -210,6 +248,91 @@ static unsigned long clk_rpmh_recalc_rate(struct clk_hw *hw,
- 	.recalc_rate	= clk_rpmh_recalc_rate,
- };
- 
-+static int clk_rpmh_bcm_send_cmd(struct clk_rpmh *c, bool enable)
-+{
-+	struct tcs_cmd cmd = { 0 };
-+	u32 cmd_state;
-+	int ret;
-+
-+	mutex_lock(&rpmh_clk_lock);
-+
-+	cmd_state = enable ? (c->aggr_state ? c->aggr_state : 1) : 0;
-+
-+	if (c->last_sent_aggr_state == cmd_state)
-+		return 0;
-+
-+	cmd.addr = c->res_addr;
-+	cmd.data = BCM_TCS_CMD(enable, cmd_state);
-+
-+	ret = rpmh_write_async(c->dev, RPMH_ACTIVE_ONLY_STATE, &cmd, 1);
-+	if (ret) {
-+		dev_err(c->dev, "set active state of %s failed: (%d)\n",
-+			c->res_name, ret);
-+		return ret;
-+	}
-+
-+	c->last_sent_aggr_state = cmd_state;
-+
-+	mutex_unlock(&rpmh_clk_lock);
-+
-+	return 0;
-+}
-+
-+static int clk_rpmh_bcm_prepare(struct clk_hw *hw)
-+{
-+	struct clk_rpmh *c = to_clk_rpmh(hw);
-+	int ret;
-+
-+	ret = clk_rpmh_bcm_send_cmd(c, true);
-+
-+	return ret;
-+};
-+
-+static void clk_rpmh_bcm_unprepare(struct clk_hw *hw)
-+{
-+	struct clk_rpmh *c = to_clk_rpmh(hw);
-+
-+	clk_rpmh_bcm_send_cmd(c, false);
-+};
-+
-+static int clk_rpmh_bcm_set_rate(struct clk_hw *hw, unsigned long rate,
-+				 unsigned long parent_rate)
-+{
-+	struct clk_rpmh *c = to_clk_rpmh(hw);
-+
-+	c->aggr_state = rate / c->unit;
-+	/*
-+	 * Since any non-zero value sent to hw would result in enabling the
-+	 * clock, only send the value if the clock has already been prepared.
-+	 */
-+	if (clk_hw_is_prepared(hw))
-+		clk_rpmh_bcm_send_cmd(c, true);
-+
-+	return 0;
-+};
-+
-+static long clk_rpmh_round_rate(struct clk_hw *hw, unsigned long rate,
-+				unsigned long *parent_rate)
-+{
-+	return rate;
-+}
-+
-+static unsigned long clk_rpmh_bcm_recalc_rate(struct clk_hw *hw,
-+					unsigned long prate)
-+{
-+	struct clk_rpmh *c = to_clk_rpmh(hw);
-+
-+	return c->aggr_state * c->unit;
-+}
-+
-+static const struct clk_ops clk_rpmh_bcm_ops = {
-+	.prepare	= clk_rpmh_bcm_prepare,
-+	.unprepare	= clk_rpmh_bcm_unprepare,
-+	.set_rate	= clk_rpmh_bcm_set_rate,
-+	.round_rate	= clk_rpmh_round_rate,
-+	.recalc_rate	= clk_rpmh_bcm_recalc_rate,
-+};
-+
- /* Resource name must match resource id present in cmd-db. */
- DEFINE_CLK_RPMH_ARC(sdm845, bi_tcxo, bi_tcxo_ao, "xo.lvl", 0x3, 2);
- DEFINE_CLK_RPMH_VRM(sdm845, ln_bb_clk2, ln_bb_clk2_ao, "lnbclka2", 2);
-@@ -217,6 +340,7 @@ static unsigned long clk_rpmh_recalc_rate(struct clk_hw *hw,
- DEFINE_CLK_RPMH_VRM(sdm845, rf_clk1, rf_clk1_ao, "rfclka1", 1);
- DEFINE_CLK_RPMH_VRM(sdm845, rf_clk2, rf_clk2_ao, "rfclka2", 1);
- DEFINE_CLK_RPMH_VRM(sdm845, rf_clk3, rf_clk3_ao, "rfclka3", 1);
-+DEFINE_CLK_RPMH_BCM(sdm845, ipa, "IP0");
- 
- static struct clk_hw *sdm845_rpmh_clocks[] = {
- 	[RPMH_CXO_CLK]		= &sdm845_bi_tcxo.hw,
-@@ -231,6 +355,7 @@ static unsigned long clk_rpmh_recalc_rate(struct clk_hw *hw,
- 	[RPMH_RF_CLK2_A]	= &sdm845_rf_clk2_ao.hw,
- 	[RPMH_RF_CLK3]		= &sdm845_rf_clk3.hw,
- 	[RPMH_RF_CLK3_A]	= &sdm845_rf_clk3_ao.hw,
-+	[RPMH_IPA_CLK]		= &sdm845_ipa.hw,
- };
- 
- static const struct clk_rpmh_desc clk_rpmh_sdm845 = {
-@@ -267,6 +392,8 @@ static int clk_rpmh_probe(struct platform_device *pdev)
- 
- 	for (i = 0; i < desc->num_clks; i++) {
- 		u32 res_addr;
-+		size_t aux_data_len;
-+		const struct bcm_db *data;
- 
- 		rpmh_clk = to_clk_rpmh(hw_clks[i]);
- 		res_addr = cmd_db_read_addr(rpmh_clk->res_name);
-@@ -275,6 +402,20 @@ static int clk_rpmh_probe(struct platform_device *pdev)
- 				rpmh_clk->res_name);
- 			return -ENODEV;
- 		}
-+
-+		data = cmd_db_read_aux_data(rpmh_clk->res_name, &aux_data_len);
-+		if (IS_ERR(data)) {
-+			ret = PTR_ERR(data);
-+			dev_err(&pdev->dev,
-+				"error reading RPMh aux data for %s (%d)\n",
-+				rpmh_clk->res_name, ret);
-+				return ret;
-+		}
-+
-+		/* Convert unit from Khz to Hz */
-+		if (aux_data_len == sizeof(*data))
-+			rpmh_clk->unit = le32_to_cpu(data->unit) * 1000ULL;
-+
- 		rpmh_clk->res_addr += res_addr;
- 		rpmh_clk->dev = &pdev->dev;
- 
-diff --git a/include/dt-bindings/clock/qcom,rpmh.h b/include/dt-bindings/clock/qcom,rpmh.h
-index f48fbd6..edcab3f 100644
---- a/include/dt-bindings/clock/qcom,rpmh.h
-+++ b/include/dt-bindings/clock/qcom,rpmh.h
-@@ -18,5 +18,6 @@
- #define RPMH_RF_CLK2_A				9
- #define RPMH_RF_CLK3				10
- #define RPMH_RF_CLK3_A				11
-+#define RPMH_IPA_CLK				12
- 
- #endif
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+the purposes are to capture the more rcu event trace close to the issue hap=
+pen, because I check the __wait_rcu_gp is not always in running, so we thin=
+k even it trigger the panic for 3s timeout, the issue is already happened b=
+efore 3s.
 
+And Actually the rsp->gp_flags =3D 1, but RCU_GP_WAIT_GPS(1) ->state: 0x402=
+, it means the kthread is not schedule for 300s but the RCU_GP_FLAG_INIT is=
+ set. What's your ideas?=20
+---------------------------------------------------------------------------=
+------------------------------------------------------
+-			swait_event_idle_exclusive(rsp->gp_wq, READ_ONCE(rsp->gp_flags) &
+-						     RCU_GP_FLAG_INIT);
++			if (current->pid !=3D rcu_preempt_pid) {
++				swait_event_idle_exclusive(rsp->gp_wq, READ_ONCE(rsp->gp_flags) &
++						RCU_GP_FLAG_INIT);
++			} else {
++				ret =3D swait_event_idle_timeout_exclusive(rsp->gp_wq, READ_ONCE(rsp->=
+gp_flags) &
++						RCU_GP_FLAG_INIT, 2*HZ);
++
++				if(!ret) {
++					show_rcu_gp_kthreads();
++					panic("hung_task: blocked in rcu_gp_kthread init");
++				}
++			}
+---------------------------------------------------------------------------=
+-----------
+-----Original Message-----
+From: Paul E. McKenney <paulmck@linux.ibm.com>=20
+Sent: Friday, December 14, 2018 10:15 AM
+To: He, Bo <bo.he@intel.com>
+Cc: Zhang, Jun <jun.zhang@intel.com>; Steven Rostedt <rostedt@goodmis.org>;=
+ linux-kernel@vger.kernel.org; josh@joshtriplett.org; mathieu.desnoyers@eff=
+icios.com; jiangshanlai@gmail.com; Xiao, Jin <jin.xiao@intel.com>; Zhang, Y=
+anmin <yanmin.zhang@intel.com>; Bai, Jie A <jie.a.bai@intel.com>; Sun, Yi J=
+ <yi.j.sun@intel.com>
+Subject: Re: rcu_preempt caused oom
+
+On Fri, Dec 14, 2018 at 01:30:04AM +0000, He, Bo wrote:
+> as you mentioned CONFIG_FAST_NO_HZ, do you mean CONFIG_RCU_FAST_NO_HZ? I =
+double checked there is no FAST_NO_HZ in .config:
+
+Yes, you are correct, CONFIG_RCU_FAST_NO_HZ.  OK, you do not have it set, w=
+hich means several code paths can be ignored.  Also CONFIG_HZ=3D1000, so
+300 second delay.
+
+							Thanx, Paul
+
+> Here is the grep from .config:
+> egrep "HZ|RCU" .config
+> CONFIG_NO_HZ_COMMON=3Dy
+> # CONFIG_HZ_PERIODIC is not set
+> CONFIG_NO_HZ_IDLE=3Dy
+> # CONFIG_NO_HZ_FULL is not set
+> CONFIG_NO_HZ=3Dy
+> # RCU Subsystem
+> CONFIG_PREEMPT_RCU=3Dy
+> # CONFIG_RCU_EXPERT is not set
+> CONFIG_SRCU=3Dy
+> CONFIG_TREE_SRCU=3Dy
+> CONFIG_TASKS_RCU=3Dy
+> CONFIG_RCU_STALL_COMMON=3Dy
+> CONFIG_RCU_NEED_SEGCBLIST=3Dy
+> # CONFIG_HZ_100 is not set
+> # CONFIG_HZ_250 is not set
+> # CONFIG_HZ_300 is not set
+> CONFIG_HZ_1000=3Dy
+> CONFIG_HZ=3D1000
+> # CONFIG_MACHZ_WDT is not set
+> # RCU Debugging
+> CONFIG_PROVE_RCU=3Dy
+> CONFIG_RCU_PERF_TEST=3Dm
+> CONFIG_RCU_TORTURE_TEST=3Dm
+> CONFIG_RCU_CPU_STALL_TIMEOUT=3D7
+> CONFIG_RCU_TRACE=3Dy
+> CONFIG_RCU_EQS_DEBUG=3Dy
+>=20
+> -----Original Message-----
+> From: Paul E. McKenney <paulmck@linux.ibm.com>
+> Sent: Friday, December 14, 2018 2:12 AM
+> To: He, Bo <bo.he@intel.com>
+> Cc: Zhang, Jun <jun.zhang@intel.com>; Steven Rostedt=20
+> <rostedt@goodmis.org>; linux-kernel@vger.kernel.org;=20
+> josh@joshtriplett.org; mathieu.desnoyers@efficios.com;=20
+> jiangshanlai@gmail.com; Xiao, Jin <jin.xiao@intel.com>; Zhang, Yanmin=20
+> <yanmin.zhang@intel.com>; Bai, Jie A <jie.a.bai@intel.com>; Sun, Yi J=20
+> <yi.j.sun@intel.com>
+> Subject: Re: rcu_preempt caused oom
+>=20
+> On Thu, Dec 13, 2018 at 03:26:08PM +0000, He, Bo wrote:
+> > one of the board reproduce the issue with the show_rcu_gp_kthreads(), I=
+ also enclosed the logs as attachment.
+> >=20
+> > [17818.936032] rcu: rcu_preempt: wait state: RCU_GP_WAIT_GPS(1) ->state=
+: 0x402 delta ->gp_activity 308257 ->gp_req_activity 308256 ->gp_wake_time =
+308258 ->gp_wake_seq       21808189 ->gp_seq 21808192 ->gp_seq_needed 21808=
+196 ->gp_flags 0x1
+>=20
+> This is quite helpful, thank you!
+>=20
+> The "RCU lockdep checking is enabled" says that CONFIG_PROVE_RCU=3Dy, whi=
+ch is good.  The "RCU_GP_WAIT_GPS(1)" means that the rcu_preempt task is wa=
+iting for a new grace-period request.  The "->state: 0x402" means that it i=
+s sleeping, neither running nor in the process of waking up.
+> The "delta ->gp_activity 308257 ->gp_req_activity 308256 ->gp_wake_time 3=
+08258" means that it has been more than 300,000 jiffies since the rcu_preem=
+pt task did anything or was requested to do anything.
+>=20
+> The "->gp_wake_seq 21808189 ->gp_seq 21808192" says that the last attempt=
+ to awaken the rcu_preempt task happened during the last grace period.
+> The "->gp_seq_needed 21808196 ->gp_flags 0x1" nevertheless says that some=
+one requested a new grace period.  So if the rcu_preempt task were to wake =
+up, it would process the new grace period.  Note again also the ->gp_req_ac=
+tivity 308256, which indicates that ->gp_flags was set more than 300,000 ji=
+ffies ago, just after the last recorded activity of the rcu_preempt task.
+>=20
+> But this is exactly the situation that rcu_check_gp_start_stall() is desi=
+gned to warn about (and does warn about for me when I comment out the wakeu=
+p code).  So why is rcu_check_gp_start_stall() not being called?  Here are =
+a couple of possibilities:
+>=20
+> 1.	Because rcu_check_gp_start_stall() is only ever invoked from
+> 	RCU_SOFTIRQ, it is possible that softirqs are stalled for
+> 	whatever reason.
+>=20
+> 2.	Because RCU_SOFTIRQ is invoked primarily from the scheduler-clock
+> 	interrupt handler, it is possible that the scheduler tick has
+> 	somehow been disabled.  Traces from earlier runs showed a great
+> 	deal of RCU callbacks queued, which would have caused RCU to
+> 	refuse to allow the scheduler tick to be disabled, even if the
+> 	corresponding CPU was idle.
+>=20
+> 3.	You have CONFIG_FAST_NO_HZ=3Dy (which you probably do, given
+> 	that you are building for a battery-powered device) and all of the
+> 	CPU's callbacks are lazy.  Except that your earlier traces showed
+> 	lots of non-lazy callbacks.  Besides, even if all callbacks were
+> 	lazy, there would still be a scheduling-clock interrupt every
+> 	six seconds, and there are quite a few six-second intervals
+> 	in a two-minute watchdog timeout.
+>=20
+> 	But if we cannot find the problem quickly, I will likely ask
+> 	you to try reproducing with CONFIG_FAST_NO_HZ=3Dn.  This could
+> 	be thought of as bisecting the RCU code looking for the bug.
+>=20
+> The first two of these seem unlikely given that the watchdog timer was st=
+ill firing.  Still, I don't see how 300,000 jiffies elapsed with a grace pe=
+riod requested and not started otherwise.  Could you please check?
+> One way to do so would be to enable ftrace on rcu_check_callbacks(), __rc=
+u_process_callbacks(), and rcu_check_gp_start_stall().  It might be necessa=
+ry to no-inline rcu_check_gp_start_stall().  You might have better ways to =
+collect this information.
+>=20
+> Without this information, the only workaround patch I can give you will d=
+egrade battery lifetime, which might not be what you want.
+>=20
+> You do have a lockdep complaint early at boot.  Although I don't immediat=
+ely see how this self-deadlock would affect RCU, please do get it fixed.  S=
+ometimes the consequences of this sort of deadlock can propagate to unexepe=
+cted places.
+>=20
+> Regardless of why rcu_check_gp_start_stall() failed to complain, it looks=
+ like this was set after the rcu_preempt task slept for the last time, and =
+so there should have been a wakeup the last time that ->gp_flags was set.  =
+Perhaps there is some code path that drops the wakeup.
+> I did check this in current -rcu, but you are instead running v4.19, so I=
+ should also check there.
+>=20
+> The ->gp_flags has its RCU_GP_FLAG_INIT bit set in rcu_start_this_gp() an=
+d in rcu_gp_cleanup().  We can eliminate rcu_gp_cleanup() from consideratio=
+n because only the rcu_preempt task will execute that code, and we know tha=
+t this task was asleep at the last time this bit was set.
+> Now rcu_start_this_gp() returns a flag indicating whether or not a wakeup=
+ is needed, and the caller must do the wakeup once it is safe to do so, tha=
+t is, after the various rcu_node locks have been released (doing a wakeup w=
+hile holding any of those locks results in deadlock).
+>=20
+> The following functions invoke rcu_start_this_gp: rcu_accelerate_cbs() an=
+d rcu_nocb_wait_gp().  We can eliminate rcu_nocb_wait_gp() because you are =
+building with CONFIG_RCU_NOCB_CPU=3Dn.  Then rcu_accelerate_cbs() is invoke=
+d from:
+>=20
+> o	rcu_accelerate_cbs_unlocked(), which does the following, thus
+> 	properly awakening the rcu_preempt task when needed:
+>=20
+> 	needwake =3D rcu_accelerate_cbs(rsp, rnp, rdp);
+> 	raw_spin_unlock_rcu_node(rnp); /* irqs remain disabled. */
+> 	if (needwake)
+> 		rcu_gp_kthread_wake(rsp);
+>=20
+> o	rcu_advance_cbs(), which returns the value returned by
+> 	rcu_accelerate_cbs(), thus pushing the problem off to its
+> 	callers, which are called out below.
+>=20
+> o	__note_gp_changes(), which also returns the value returned by
+> 	rcu_accelerate_cbs(), thus pushing the problem off to its callers,
+> 	which are called out below.
+>=20
+> o	rcu_gp_cleanup(), which is only ever invoked by RCU grace-period
+> 	kthreads such as the rcu_preempt task.	Therefore, this function
+> 	never needs to awaken the rcu_preempt task, because the fact
+> 	that this function is executing means that this task is already
+> 	awake.	(Also, as noted above, we can eliminate this code from
+> 	consideration because this task is known to have been sleeping
+> 	at the last time that the RCU_GP_FLAG_INIT bit was set.)
+>=20
+> o	rcu_report_qs_rdp(), which does the following, thus properly
+> 	awakening the rcu_preempt task when needed:
+>=20
+> 		needwake =3D rcu_accelerate_cbs(rsp, rnp, rdp);
+>=20
+> 		rcu_report_qs_rnp(mask, rsp, rnp, rnp->gp_seq, flags);
+> 		/* ^^^ Released rnp->lock */
+> 		if (needwake)
+> 			rcu_gp_kthread_wake(rsp);
+>=20
+> o	rcu_prepare_for_idle(), which does the following, thus properly
+> 	awakening the rcu_preempt task when needed:
+>=20
+> 		needwake =3D rcu_accelerate_cbs(rsp, rnp, rdp);
+> 		raw_spin_unlock_rcu_node(rnp); /* irqs remain disabled. */
+> 		if (needwake)
+> 			rcu_gp_kthread_wake(rsp);
+>=20
+> Now for rcu_advance_cbs():
+>=20
+> o	__note_gp_changes(), which which also returns the value returned
+> 	by rcu_advance_cbs(), thus pushing the problem off to its callers,
+> 	which are called out below.
+>=20
+> o	rcu_migrate_callbacks(), which does the following, thus properly
+> 	awakening the rcu_preempt task when needed:
+>=20
+> 	needwake =3D rcu_advance_cbs(rsp, rnp_root, rdp) ||
+> 		   rcu_advance_cbs(rsp, rnp_root, my_rdp);
+> 	rcu_segcblist_merge(&my_rdp->cblist, &rdp->cblist);
+> 	WARN_ON_ONCE(rcu_segcblist_empty(&my_rdp->cblist) !=3D
+> 		     !rcu_segcblist_n_cbs(&my_rdp->cblist));
+> 	raw_spin_unlock_irqrestore_rcu_node(rnp_root, flags);
+> 	if (needwake)
+> 		rcu_gp_kthread_wake(rsp);
+>=20
+> Now for __note_gp_changes():
+>=20
+> o	note_gp_changes(), which does the following, thus properly
+> 	awakening the rcu_preempt task when needed:
+>=20
+> 	needwake =3D __note_gp_changes(rsp, rnp, rdp);
+> 	raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
+> 	if (needwake)
+> 		rcu_gp_kthread_wake(rsp);
+>=20
+> o	rcu_gp_init() which is only ever invoked by RCU grace-period
+> 	kthreads such as the rcu_preempt task, which makes wakeups
+> 	unnecessary, just as for rcu_gp_cleanup() above.
+>=20
+> o	rcu_gp_cleanup(), ditto.
+>=20
+> So I am not seeing how I am losing a wakeup, but please do feel free to d=
+ouble-check my analysis.  One way to do that is using event tracing.
+>=20
+> 							Thanx, Paul
+>=20
+> ----------------------------------------------------------------------
+> --
+> lockdep complaint:
+> ----------------------------------------------------------------------
+> --
+>=20
+> [    2.895507] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> [    2.895511] WARNING: possible circular locking dependency detected
+> [    2.895517] 4.19.5-quilt-2e5dc0ac-g4d59bbd0fd1a #1 Tainted: G     U   =
+       =20
+> [    2.895521] ------------------------------------------------------
+> [    2.895525] earlyEvs/1839 is trying to acquire lock:
+> [    2.895530] 00000000ff344115 (&asd->mutex){+.+.}, at: ipu_isys_subdev_=
+get_ffmt+0x32/0x90
+> [    2.895546]=20
+> [    2.895546] but task is already holding lock:
+> [    2.895550] 0000000069562e72 (&mdev->graph_mutex){+.+.}, at: media_pip=
+eline_start+0x28/0x50
+> [    2.895561]=20
+> [    2.895561] which lock already depends on the new lock.
+> [    2.895561]=20
+> [    2.895566]=20
+> [    2.895566] the existing dependency chain (in reverse order) is:
+> [    2.895570]=20
+> [    2.895570] -> #1 (&mdev->graph_mutex){+.+.}:
+> [    2.895583]        __mutex_lock+0x80/0x9a0
+> [    2.895588]        mutex_lock_nested+0x1b/0x20
+> [    2.895593]        media_device_register_entity+0x92/0x1e0
+> [    2.895598]        v4l2_device_register_subdev+0xc2/0x1b0
+> [    2.895604]        ipu_isys_csi2_init+0x22c/0x520
+> [    2.895608]        isys_probe+0x6cb/0xed0
+> [    2.895613]        ipu_bus_probe+0xfd/0x2e0
+> [    2.895620]        really_probe+0x268/0x3d0
+> [    2.895625]        driver_probe_device+0x11a/0x130
+> [    2.895630]        __device_attach_driver+0x86/0x100
+> [    2.895635]        bus_for_each_drv+0x6e/0xb0
+> [    2.895640]        __device_attach+0xdf/0x160
+> [    2.895645]        device_initial_probe+0x13/0x20
+> [    2.895650]        bus_probe_device+0xa6/0xc0
+> [    2.895655]        deferred_probe_work_func+0x88/0xe0
+> [    2.895661]        process_one_work+0x220/0x5c0
+> [    2.895665]        worker_thread+0x1da/0x3b0
+> [    2.895670]        kthread+0x12c/0x150
+> [    2.895675]        ret_from_fork+0x3a/0x50
+> [    2.895678]=20
+> [    2.895678] -> #0 (&asd->mutex){+.+.}:
+> [    2.895688]        lock_acquire+0x95/0x1a0
+> [    2.895693]        __mutex_lock+0x80/0x9a0
+> [    2.895698]        mutex_lock_nested+0x1b/0x20
+> [    2.895703]        ipu_isys_subdev_get_ffmt+0x32/0x90
+> [    2.895708]        ipu_isys_csi2_get_fmt+0x14/0x30
+> [    2.895713]        v4l2_subdev_link_validate_get_format.isra.6+0x52/0x=
+80
+> [    2.895718]        v4l2_subdev_link_validate_one+0x67/0x120
+> [    2.895723]        v4l2_subdev_link_validate+0x246/0x490
+> [    2.895728]        csi2_link_validate+0xc6/0x220
+> [    2.895733]        __media_pipeline_start+0x15b/0x2f0
+> [    2.895738]        media_pipeline_start+0x33/0x50
+> [    2.895743]        ipu_isys_video_prepare_streaming+0x1e0/0x610
+> [    2.895748]        start_streaming+0x186/0x3a0
+> [    2.895753]        vb2_start_streaming+0x6d/0x130
+> [    2.895758]        vb2_core_streamon+0x108/0x140
+> [    2.895762]        vb2_streamon+0x29/0x50
+> [    2.895767]        vb2_ioctl_streamon+0x42/0x50
+> [    2.895772]        v4l_streamon+0x20/0x30
+> [    2.895776]        __video_do_ioctl+0x1af/0x3c0
+> [    2.895781]        video_usercopy+0x27e/0x7e0
+> [    2.895785]        video_ioctl2+0x15/0x20
+> [    2.895789]        v4l2_ioctl+0x49/0x50
+> [    2.895794]        do_video_ioctl+0x93c/0x2360
+> [    2.895799]        v4l2_compat_ioctl32+0x93/0xe0
+> [    2.895806]        __ia32_compat_sys_ioctl+0x73a/0x1c90
+> [    2.895813]        do_fast_syscall_32+0x9a/0x2d6
+> [    2.895818]        entry_SYSENTER_compat+0x6d/0x7c
+> [    2.895821]=20
+> [    2.895821] other info that might help us debug this:
+> [    2.895821]=20
+> [    2.895826]  Possible unsafe locking scenario:
+> [    2.895826]=20
+> [    2.895830]        CPU0                    CPU1
+> [    2.895833]        ----                    ----
+> [    2.895836]   lock(&mdev->graph_mutex);
+> [    2.895842]                                lock(&asd->mutex);
+> [    2.895847]                                lock(&mdev->graph_mutex);
+> [    2.895852]   lock(&asd->mutex);
+> [    2.895857]=20
+> [    2.895857]  *** DEADLOCK ***
+> [    2.895857]=20
+> [    2.895863] 3 locks held by earlyEvs/1839:
+> [    2.895866]  #0: 00000000ed860090 (&av->mutex){+.+.}, at: __video_do_i=
+octl+0xbf/0x3c0
+> [    2.895876]  #1: 000000000cb253e7 (&isys->stream_mutex){+.+.}, at: sta=
+rt_streaming+0x5c/0x3a0
+> [    2.895886]  #2: 0000000069562e72 (&mdev->graph_mutex){+.+.}, at: medi=
+a_pipeline_start+0x28/0x50
+> [    2.895896]=20
+> [    2.895896] stack backtrace:
+> [    2.895903] CPU: 0 PID: 1839 Comm: earlyEvs Tainted: G     U          =
+  4.19.5-quilt-2e5dc0ac-g4d59bbd0fd1a #1
+> [    2.895907] Call Trace:
+> [    2.895915]  dump_stack+0x70/0xa5
+> [    2.895921]  print_circular_bug.isra.35+0x1d8/0x1e6
+> [    2.895927]  __lock_acquire+0x1284/0x1340
+> [    2.895931]  ? __lock_acquire+0x2b5/0x1340
+> [    2.895940]  lock_acquire+0x95/0x1a0
+> [    2.895945]  ? lock_acquire+0x95/0x1a0
+> [    2.895950]  ? ipu_isys_subdev_get_ffmt+0x32/0x90
+> [    2.895956]  ? ipu_isys_subdev_get_ffmt+0x32/0x90
+> [    2.895961]  __mutex_lock+0x80/0x9a0
+> [    2.895966]  ? ipu_isys_subdev_get_ffmt+0x32/0x90
+> [    2.895971]  ? crlmodule_get_format+0x43/0x50
+> [    2.895979]  mutex_lock_nested+0x1b/0x20
+> [    2.895984]  ? mutex_lock_nested+0x1b/0x20
+> [    2.895989]  ipu_isys_subdev_get_ffmt+0x32/0x90
+> [    2.895995]  ipu_isys_csi2_get_fmt+0x14/0x30
+> [    2.896001]  v4l2_subdev_link_validate_get_format.isra.6+0x52/0x80
+> [    2.896006]  v4l2_subdev_link_validate_one+0x67/0x120
+> [    2.896011]  ? crlmodule_get_format+0x2a/0x50
+> [    2.896018]  ? find_held_lock+0x35/0xa0
+> [    2.896023]  ? crlmodule_get_format+0x43/0x50
+> [    2.896030]  v4l2_subdev_link_validate+0x246/0x490
+> [    2.896035]  ? __mutex_unlock_slowpath+0x58/0x2f0
+> [    2.896042]  ? mutex_unlock+0x12/0x20
+> [    2.896046]  ? crlmodule_get_format+0x43/0x50
+> [    2.896052]  ? v4l2_subdev_link_validate_get_format.isra.6+0x52/0x80
+> [    2.896057]  ? v4l2_subdev_link_validate_one+0x67/0x120
+> [    2.896065]  ? __is_insn_slot_addr+0xad/0x120
+> [    2.896070]  ? kernel_text_address+0xc4/0x100
+> [    2.896078]  ? v4l2_subdev_link_validate+0x246/0x490
+> [    2.896085]  ? kernel_text_address+0xc4/0x100
+> [    2.896092]  ? __lock_acquire+0x1106/0x1340
+> [    2.896096]  ? __lock_acquire+0x1169/0x1340
+> [    2.896103]  csi2_link_validate+0xc6/0x220
+> [    2.896110]  ? __lock_is_held+0x5a/0xa0
+> [    2.896115]  ? mark_held_locks+0x58/0x80
+> [    2.896122]  ? __kmalloc+0x207/0x2e0
+> [    2.896127]  ? __lock_is_held+0x5a/0xa0
+> [    2.896134]  ? rcu_read_lock_sched_held+0x81/0x90
+> [    2.896139]  ? __kmalloc+0x2a3/0x2e0
+> [    2.896144]  ? media_pipeline_start+0x28/0x50
+> [    2.896150]  ? __media_entity_enum_init+0x33/0x70
+> [    2.896155]  ? csi2_has_route+0x18/0x20
+> [    2.896160]  ? media_graph_walk_next.part.9+0xac/0x290
+> [    2.896166]  __media_pipeline_start+0x15b/0x2f0
+> [    2.896173]  ? rcu_read_lock_sched_held+0x81/0x90
+> [    2.896179]  media_pipeline_start+0x33/0x50
+> [    2.896186]  ipu_isys_video_prepare_streaming+0x1e0/0x610
+> [    2.896191]  ? __lock_acquire+0x132e/0x1340
+> [    2.896198]  ? __lock_acquire+0x2b5/0x1340
+> [    2.896204]  ? lock_acquire+0x95/0x1a0
+> [    2.896209]  ? start_streaming+0x5c/0x3a0
+> [    2.896215]  ? start_streaming+0x5c/0x3a0
+> [    2.896221]  ? __mutex_lock+0x391/0x9a0
+> [    2.896226]  ? v4l_enable_media_source+0x2d/0x70
+> [    2.896233]  ? find_held_lock+0x35/0xa0
+> [    2.896238]  ? v4l_enable_media_source+0x57/0x70
+> [    2.896245]  start_streaming+0x186/0x3a0
+> [    2.896250]  ? __mutex_unlock_slowpath+0x58/0x2f0
+> [    2.896257]  vb2_start_streaming+0x6d/0x130
+> [    2.896262]  ? vb2_start_streaming+0x6d/0x130
+> [    2.896267]  vb2_core_streamon+0x108/0x140
+> [    2.896273]  vb2_streamon+0x29/0x50
+> [    2.896278]  vb2_ioctl_streamon+0x42/0x50
+> [    2.896284]  v4l_streamon+0x20/0x30
+> [    2.896288]  __video_do_ioctl+0x1af/0x3c0
+> [    2.896296]  ? __might_fault+0x85/0x90
+> [    2.896302]  video_usercopy+0x27e/0x7e0
+> [    2.896307]  ? copy_overflow+0x20/0x20
+> [    2.896313]  ? find_held_lock+0x35/0xa0
+> [    2.896319]  ? __might_fault+0x3e/0x90
+> [    2.896325]  video_ioctl2+0x15/0x20
+> [    2.896330]  v4l2_ioctl+0x49/0x50
+> [    2.896335]  do_video_ioctl+0x93c/0x2360
+> [    2.896343]  v4l2_compat_ioctl32+0x93/0xe0
+> [    2.896349]  __ia32_compat_sys_ioctl+0x73a/0x1c90
+> [    2.896354]  ? lockdep_hardirqs_on+0xef/0x180
+> [    2.896359]  ? do_fast_syscall_32+0x3b/0x2d6
+> [    2.896364]  do_fast_syscall_32+0x9a/0x2d6
+> [    2.896370]  entry_SYSENTER_compat+0x6d/0x7c
+> [    2.896377] RIP: 0023:0xf7e79b79
+> [    2.896382] Code: 85 d2 74 02 89 0a 5b 5d c3 8b 04 24 c3 8b 0c 24 c3 8=
+b 1c 24 c3 90 90 90 90 90 90 90 90 90 90 90 90 51 52 55 89 e5 0f 34 cd 80 <=
+5d> 5a 59 c3 90 90 90 90 eb 0d 90 90 90 90 90 90 90 90 90 90 90 90
+> [    2.896387] RSP: 002b:00000000f76816bc EFLAGS: 00000292 ORIG_RAX: 0000=
+000000000036
+> [    2.896393] RAX: ffffffffffffffda RBX: 000000000000000e RCX: 000000004=
+0045612
+> [    2.896396] RDX: 00000000f768172c RSI: 00000000f7d42d9c RDI: 00000000f=
+768172c
+> [    2.896400] RBP: 00000000f7681708 R08: 0000000000000000 R09: 000000000=
+0000000
+> [    2.896404] R10: 0000000000000000 R11: 0000000000000000 R12: 000000000=
+0000000
+> [    2.896408] R13: 0000000000000000 R14: 0000000000000000 R15: 000000000=
+0000000
+>=20
+> ----------------------------------------------------------------------
+> --
+>=20
+> > [17818.936039] rcu:     rcu_node 0:3 ->gp_seq 21808192 ->gp_seq_needed =
+21808196
+> > [17818.936048] rcu: rcu_sched: wait state: RCU_GP_WAIT_GPS(1) ->state: =
+0x402 delta ->gp_activity 101730 ->gp_req_activity 101732 ->gp_wake_time 10=
+1730 ->gp_wake_seq 1357 -  >gp_seq 1360 ->gp_seq_needed 1360 ->gp_flags 0x0=
+                                                                           =
+                                                 =20
+> > [17818.936056] rcu: rcu_bh: wait state: RCU_GP_WAIT_GPS(1) ->state: 0x4=
+02 delta ->gp_activity 4312486108 ->gp_req_activity 4312486108 ->gp_wake_ti=
+me 4312486108 -            >gp_wake_seq 0 ->gp_seq -1200 ->gp_seq_needed -1=
+200 ->gp_flags 0x0
+> >=20
+> > -----Original Message-----
+> > From: Paul E. McKenney <paulmck@linux.ibm.com>
+> > Sent: Thursday, December 13, 2018 12:40 PM
+> > To: Zhang, Jun <jun.zhang@intel.com>
+> > Cc: He, Bo <bo.he@intel.com>; Steven Rostedt <rostedt@goodmis.org>;=20
+> > linux-kernel@vger.kernel.org; josh@joshtriplett.org;=20
+> > mathieu.desnoyers@efficios.com; jiangshanlai@gmail.com; Xiao, Jin=20
+> > <jin.xiao@intel.com>; Zhang, Yanmin <yanmin.zhang@intel.com>; Bai,=20
+> > Jie A <jie.a.bai@intel.com>; Sun, Yi J <yi.j.sun@intel.com>
+> > Subject: Re: rcu_preempt caused oom
+> >=20
+> > On Thu, Dec 13, 2018 at 03:28:46AM +0000, Zhang, Jun wrote:
+> > > Ok, we will test it, thanks!
+> >=20
+> > But please also try the sysrq-y with the earlier patch after a hang!
+> >=20
+> > 							Thanx, Paul
+> >=20
+> > > -----Original Message-----
+> > > From: Paul E. McKenney [mailto:paulmck@linux.ibm.com]
+> > > Sent: Thursday, December 13, 2018 10:43
+> > > To: Zhang, Jun <jun.zhang@intel.com>
+> > > Cc: He, Bo <bo.he@intel.com>; Steven Rostedt=20
+> > > <rostedt@goodmis.org>; linux-kernel@vger.kernel.org;=20
+> > > josh@joshtriplett.org; mathieu.desnoyers@efficios.com;=20
+> > > jiangshanlai@gmail.com; Xiao, Jin <jin.xiao@intel.com>; Zhang,=20
+> > > Yanmin <yanmin.zhang@intel.com>; Bai, Jie A <jie.a.bai@intel.com>;=20
+> > > Sun, Yi J <yi.j.sun@intel.com>
+> > > Subject: Re: rcu_preempt caused oom
+> > >=20
+> > > On Thu, Dec 13, 2018 at 02:11:35AM +0000, Zhang, Jun wrote:
+> > > > Hello, Paul
+> > > >=20
+> > > > I think the next patch is better.
+> > > > Because ULONG_CMP_GE could cause double write, which has risk that =
+write back old value.
+> > > > Please help review.
+> > > > I don't test it. If you agree, we will test it.
+> > >=20
+> > > Just to make sure that I understand, you are worried about something =
+like the following, correct?
+> > >=20
+> > > o	__note_gp_changes() compares rnp->gp_seq_needed and rdp->gp_seq_nee=
+ded
+> > > 	and finds them equal.
+> > >=20
+> > > o	At just this time something like rcu_start_this_gp() assigns a new
+> > > 	(larger) value to rdp->gp_seq_needed.
+> > >=20
+> > > o	Then __note_gp_changes() overwrites rdp->gp_seq_needed with the
+> > > 	old value.
+> > >=20
+> > > This cannot happen because __note_gp_changes() runs with interrupts d=
+isabled on the CPU corresponding to the rcu_data structure referenced by th=
+e rdp pointer.  So there is no way for rcu_start_this_gp() to be invoked on=
+ the same CPU during this "if" statement.
+> > >=20
+> > > Of course, there could be bugs.  For example:
+> > >=20
+> > > o	__note_gp_changes() might be called on a different CPU than that
+> > > 	corresponding to rdp.  You can check this with something like:
+> > >=20
+> > > 	WARN_ON_ONCE(rdp->cpu !=3D smp_processor_id());
+> > >=20
+> > > o	The same things could happen with rcu_start_this_gp(), and the
+> > > 	above WARN_ON_ONCE() would work there as well.
+> > >=20
+> > > o	rcutree_prepare_cpu() is a special case, but is irrelevant unless
+> > > 	you are doing CPU-hotplug operations.  (It can run on a CPU other
+> > > 	than rdp->cpu, but only at times when rdp->cpu is offline.)
+> > >=20
+> > > o	Interrupts might not really be disabled.
+> > >=20
+> > > That said, your patch could reduce overhead slightly, given that the =
+two values will be equal much of the time.  So it might be worth testing ju=
+st for that reason.
+> > >=20
+> > > So why not just test it anyway?  If it makes the bug go away, I=20
+> > > will be surprised, but it would not be the first surprise for me. =20
+> > > ;-)
+> > >=20
+> > > 							Thanx, Paul
+> > >=20
+> > > > Thanks!
+> > > >=20
+> > > >=20
+> > > > diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c index=20
+> > > > 0b760c1..c00f34e 100644
+> > > > --- a/kernel/rcu/tree.c
+> > > > +++ b/kernel/rcu/tree.c
+> > > > @@ -1849,7 +1849,7 @@ static bool __note_gp_changes(struct rcu_stat=
+e *rsp, struct rcu_node *rnp,
+> > > >                 zero_cpu_stall_ticks(rdp);
+> > > >         }
+> > > >         rdp->gp_seq =3D rnp->gp_seq;  /* Remember new grace-period =
+state. */
+> > > > -       if (ULONG_CMP_GE(rnp->gp_seq_needed, rdp->gp_seq_needed) ||=
+ rdp->gpwrap)
+> > > > +       if (ULONG_CMP_LT(rdp->gp_seq_needed, rnp->gp_seq_needed)
+> > > > + ||
+> > > > + rdp->gpwrap)
+> > > >                 rdp->gp_seq_needed =3D rnp->gp_seq_needed;
+> > > >         WRITE_ONCE(rdp->gpwrap, false);
+> > > >         rcu_gpnum_ovf(rnp, rdp);
+> > > >=20
+> > > >=20
+> > > > -----Original Message-----
+> > > > From: Paul E. McKenney [mailto:paulmck@linux.ibm.com]
+> > > > Sent: Thursday, December 13, 2018 08:12
+> > > > To: He, Bo <bo.he@intel.com>
+> > > > Cc: Steven Rostedt <rostedt@goodmis.org>;=20
+> > > > linux-kernel@vger.kernel.org; josh@joshtriplett.org;=20
+> > > > mathieu.desnoyers@efficios.com; jiangshanlai@gmail.com; Zhang,=20
+> > > > Jun <jun.zhang@intel.com>; Xiao, Jin <jin.xiao@intel.com>;=20
+> > > > Zhang, Yanmin <yanmin.zhang@intel.com>; Bai, Jie A=20
+> > > > <jie.a.bai@intel.com>; Sun, Yi J <yi.j.sun@intel.com>
+> > > > Subject: Re: rcu_preempt caused oom
+> > > >=20
+> > > > On Wed, Dec 12, 2018 at 11:13:22PM +0000, He, Bo wrote:
+> > > > > I don't see the rcutree.sysrq_rcu parameter in v4.19 kernel, I al=
+so checked the latest kernel and the latest tag v4.20-rc6, not see the sysr=
+q_rcu.
+> > > > > Please correct me if I have something wrong.
+> > > >=20
+> > > > That would be because I sent you the wrong patch, apologies! =20
+> > > > :-/
+> > > >=20
+> > > > Please instead see the one below, which does add sysrq_rcu.
+> > > >=20
+> > > > 							Thanx, Paul
+> > > >=20
+> > > > > -----Original Message-----
+> > > > > From: Paul E. McKenney <paulmck@linux.ibm.com>
+> > > > > Sent: Thursday, December 13, 2018 5:03 AM
+> > > > > To: He, Bo <bo.he@intel.com>
+> > > > > Cc: Steven Rostedt <rostedt@goodmis.org>;=20
+> > > > > linux-kernel@vger.kernel.org; josh@joshtriplett.org;=20
+> > > > > mathieu.desnoyers@efficios.com; jiangshanlai@gmail.com; Zhang,=20
+> > > > > Jun <jun.zhang@intel.com>; Xiao, Jin <jin.xiao@intel.com>;=20
+> > > > > Zhang, Yanmin <yanmin.zhang@intel.com>; Bai, Jie A=20
+> > > > > <jie.a.bai@intel.com>
+> > > > > Subject: Re: rcu_preempt caused oom
+> > > > >=20
+> > > > > On Wed, Dec 12, 2018 at 07:42:24AM -0800, Paul E. McKenney wrote:
+> > > > > > On Wed, Dec 12, 2018 at 01:21:33PM +0000, He, Bo wrote:
+> > > > > > > we reproduce on two boards, but I still not see the show_rcu_=
+gp_kthreads() dump logs, it seems the patch can't catch the scenario.
+> > > > > > > I double confirmed the CONFIG_PROVE_RCU=3Dy is enabled in the=
+ config as it's extracted from the /proc/config.gz.
+> > > > > >=20
+> > > > > > Strange.
+> > > > > >=20
+> > > > > > Are the systems responsive to sysrq keys once failure occurs? =
+=20
+> > > > > > If so, I will provide you a sysrq-R or some such to dump out th=
+e RCU state.
+> > > > >=20
+> > > > > Or, as it turns out, sysrq-y if booting with rcutree.sysrq_rcu=3D=
+1 using the patch below.  Only lightly tested.
+> > > >=20
+> > > > ----------------------------------------------------------------
+> > > > --
+> > > > --
+> > > > --
+> > > > --
+> > > >=20
+> > > > commit 04b6245c8458e8725f4169e62912c1fadfdf8141
+> > > > Author: Paul E. McKenney <paulmck@linux.ibm.com>
+> > > > Date:   Wed Dec 12 16:10:09 2018 -0800
+> > > >=20
+> > > >     rcu: Add sysrq rcu_node-dump capability
+> > > >    =20
+> > > >     Backported from v4.21/v5.0
+> > > >    =20
+> > > >     Life is hard if RCU manages to get stuck without triggering RCU=
+ CPU
+> > > >     stall warnings or triggering the rcu_check_gp_start_stall() che=
+cks
+> > > >     for failing to start a grace period.  This commit therefore add=
+s a
+> > > >     boot-time-selectable sysrq key (commandeering "y") that allows =
+manually
+> > > >     dumping Tree RCU state.  The new rcutree.sysrq_rcu kernel boot =
+parameter
+> > > >     must be set for this sysrq to be available.
+> > > >    =20
+> > > >     Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
+> > > >=20
+> > > > diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c index
+> > > > 0b760c1369f7..e9392a9d6291 100644
+> > > > --- a/kernel/rcu/tree.c
+> > > > +++ b/kernel/rcu/tree.c
+> > > > @@ -61,6 +61,7 @@
+> > > >  #include <linux/trace_events.h>  #include <linux/suspend.h> =20
+> > > > #include <linux/ftrace.h>
+> > > > +#include <linux/sysrq.h>
+> > > > =20
+> > > >  #include "tree.h"
+> > > >  #include "rcu.h"
+> > > > @@ -128,6 +129,9 @@ int num_rcu_lvl[] =3D NUM_RCU_LVL_INIT;  int=20
+> > > > rcu_num_nodes __read_mostly =3D NUM_RCU_NODES; /* Total #=20
+> > > > rcu_nodes in use. */
+> > > >  /* panic() on RCU Stall sysctl. */  int=20
+> > > > sysctl_panic_on_rcu_stall __read_mostly;
+> > > > +/* Commandeer a sysrq key to dump RCU's tree. */ static bool=20
+> > > > +sysrq_rcu; module_param(sysrq_rcu, bool, 0444);
+> > > > =20
+> > > >  /*
+> > > >   * The rcu_scheduler_active variable is initialized to the=20
+> > > > value @@
+> > > > -662,6 +666,27 @@ void show_rcu_gp_kthreads(void)  }=20
+> > > > EXPORT_SYMBOL_GPL(show_rcu_gp_kthreads);
+> > > > =20
+> > > > +/* Dump grace-period-request information due to commandeered sysrq=
+.=20
+> > > > +*/ static void sysrq_show_rcu(int key) {
+> > > > +	show_rcu_gp_kthreads();
+> > > > +}
+> > > > +
+> > > > +static struct sysrq_key_op sysrq_rcudump_op =3D {
+> > > > +	.handler =3D sysrq_show_rcu,
+> > > > +	.help_msg =3D "show-rcu(y)",
+> > > > +	.action_msg =3D "Show RCU tree",
+> > > > +	.enable_mask =3D SYSRQ_ENABLE_DUMP, };
+> > > > +
+> > > > +static int __init rcu_sysrq_init(void) {
+> > > > +	if (sysrq_rcu)
+> > > > +		return register_sysrq_key('y', &sysrq_rcudump_op);
+> > > > +	return 0;
+> > > > +}
+> > > > +early_initcall(rcu_sysrq_init);
+> > > > +
+> > > >  /*
+> > > >   * Send along grace-period-related data for rcutorture diagnostics=
+.
+> > > >   */
+> > > >=20
+> > >=20
+> >=20
+>=20
+>=20
+
+
+--_002_CD6925E8781EFD4D8E11882D20FC406D52A19939SHSMSX104ccrcor_
+Content-Type: application/octet-stream;
+	name="0001-rcu-detect-the-preempt_rcu-hang.patch"
+Content-Description: 0001-rcu-detect-the-preempt_rcu-hang.patch
+Content-Disposition: attachment;
+	filename="0001-rcu-detect-the-preempt_rcu-hang.patch"; size=3741;
+	creation-date="Fri, 14 Dec 2018 02:31:55 GMT";
+	modification-date="Fri, 14 Dec 2018 02:31:55 GMT"
+Content-Transfer-Encoding: base64
+
+RnJvbSBlZTM0NzA5ZjRkMjZlNjU3NThiODUxOTg1ZjBhMDMwYmYyZmVkOTA0IE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiAiaGUsIGJvIiA8Ym8uaGVAaW50ZWwuY29tPgpEYXRlOiBTdW4s
+IDkgRGVjIDIwMTggMTg6MTE6MzMgKzA4MDAKU3ViamVjdDogW1BBVENIXSByY3U6IGRldGVjdCB0
+aGUgcHJlZW1wdF9yY3UgaGFuZwoKQ2hhbmdlLUlkOiBJMmMwNTlmZmU3ZDhiM2VmOGFiNWYyY2Iy
+NDZkZmYyNGE3Mjk1NTVmMQpUcmFja2VkLU9uOgpTaWduZWQtb2ZmLWJ5OiBoZSwgYm8gPGJvLmhl
+QGludGVsLmNvbT4KLS0tCiBrZXJuZWwvcmN1L3RyZWUuYyAgIHwgMzQgKysrKysrKysrKysrKysr
+KysrKysrKysrKysrKy0tLS0tLQoga2VybmVsL3JjdS91cGRhdGUuYyB8ICA0ICsrKy0KIDIgZmls
+ZXMgY2hhbmdlZCwgMzEgaW5zZXJ0aW9ucygrKSwgNyBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQg
+YS9rZXJuZWwvcmN1L3RyZWUuYyBiL2tlcm5lbC9yY3UvdHJlZS5jCmluZGV4IDBiNzYwYzEuLmRm
+NTk1MDcgMTAwNjQ0Ci0tLSBhL2tlcm5lbC9yY3UvdHJlZS5jCisrKyBiL2tlcm5lbC9yY3UvdHJl
+ZS5jCkBAIC02MSw2ICs2MSw3IEBACiAjaW5jbHVkZSA8bGludXgvdHJhY2VfZXZlbnRzLmg+CiAj
+aW5jbHVkZSA8bGludXgvc3VzcGVuZC5oPgogI2luY2x1ZGUgPGxpbnV4L2Z0cmFjZS5oPgorI2lu
+Y2x1ZGUgPGxpbnV4L3NjaGVkL2Nsb2NrLmg+CiAKICNpbmNsdWRlICJ0cmVlLmgiCiAjaW5jbHVk
+ZSAicmN1LmgiCkBAIC02MzcsMTEgKzYzOCwxMyBAQCB2b2lkIHNob3dfcmN1X2dwX2t0aHJlYWRz
+KHZvaWQpCiAJc3RydWN0IHJjdV9zdGF0ZSAqcnNwOwogCiAJZm9yX2VhY2hfcmN1X2ZsYXZvcihy
+c3ApIHsKLQkJcHJfaW5mbygiJXM6IHdhaXQgc3RhdGU6ICVkIC0+c3RhdGU6ICUjbHhcbiIsCi0J
+CQlyc3AtPm5hbWUsIHJzcC0+Z3Bfc3RhdGUsIHJzcC0+Z3Bfa3RocmVhZC0+c3RhdGUpOworCQlw
+cl9pbmZvKCIlczogd2FpdCBzdGF0ZTogJWQgLT5zdGF0ZTogJSNseCBncF9mbGFnczogJWQgcnNw
+OiBncF9zZXEgPSAlbHVcbiIsCisJCQlyc3AtPm5hbWUsIHJzcC0+Z3Bfc3RhdGUsIHJzcC0+Z3Bf
+a3RocmVhZC0+c3RhdGUsIHJzcC0+Z3BfZmxhZ3MsIHJzcC0+Z3Bfc2VxKTsKIAkJcmN1X2Zvcl9l
+YWNoX25vZGVfYnJlYWR0aF9maXJzdChyc3AsIHJucCkgewotCQkJaWYgKFVMT05HX0NNUF9HRShy
+c3AtPmdwX3NlcSwgcm5wLT5ncF9zZXFfbmVlZGVkKSkKKwkJCWlmIChVTE9OR19DTVBfR0UocnNw
+LT5ncF9zZXEsIHJucC0+Z3Bfc2VxX25lZWRlZCkpIHsKKwkJCQlwcl9pbmZvKCJcdHJzcC0+Z3Bf
+c2VxICVsdSBpcyBnZSBybnAtPmdwX3NlcV9uZWVkZWQgJWx1XG4iLCByc3AtPmdwX3NlcSwgcm5w
+LT5ncF9zZXFfbmVlZGVkKTsKIAkJCQljb250aW51ZTsKKwkJCX0KIAkJCXByX2luZm8oIlx0cmN1
+X25vZGUgJWQ6JWQgLT5ncF9zZXEgJWx1IC0+Z3Bfc2VxX25lZWRlZCAlbHVcbiIsCiAJCQkJcm5w
+LT5ncnBsbywgcm5wLT5ncnBoaSwgcm5wLT5ncF9zZXEsCiAJCQkJcm5wLT5ncF9zZXFfbmVlZGVk
+KTsKQEAgLTY1MSw4ICs2NTQsMTEgQEAgdm9pZCBzaG93X3JjdV9ncF9rdGhyZWFkcyh2b2lkKQog
+CQkJCXJkcCA9IHBlcl9jcHVfcHRyKHJzcC0+cmRhLCBjcHUpOwogCQkJCWlmIChyZHAtPmdwd3Jh
+cCB8fAogCQkJCSAgICBVTE9OR19DTVBfR0UocnNwLT5ncF9zZXEsCi0JCQkJCQkgcmRwLT5ncF9z
+ZXFfbmVlZGVkKSkKKwkJCQkJCSByZHAtPmdwX3NlcV9uZWVkZWQpKSB7CisJCQkJCXByX2luZm8o
+Ilx0Y3B1ICVkIHJkcC0+Z3B3cmFwID0gJWQgcnNwLT5ncF9zZXEgJWx1IGlzIGdlIHJkcC0+Z3Bf
+c2VxX25lZWRlZCAlbHVcbiIsCisJCQkJCQkJY3B1LCByZHAtPmdwd3JhcCwgcnNwLT5ncF9zZXEs
+IHJkcC0+Z3Bfc2VxX25lZWRlZCk7CiAJCQkJCWNvbnRpbnVlOworCQkJCX0KIAkJCQlwcl9pbmZv
+KCJcdGNwdSAlZCAtPmdwX3NlcV9uZWVkZWQgJWx1XG4iLAogCQkJCQljcHUsIHJkcC0+Z3Bfc2Vx
+X25lZWRlZCk7CiAJCQl9CkBAIC0yMTUzLDggKzIxNTksMTMgQEAgc3RhdGljIGludCBfX25vcmV0
+dXJuIHJjdV9ncF9rdGhyZWFkKHZvaWQgKmFyZykKIAlpbnQgcmV0OwogCXN0cnVjdCByY3Vfc3Rh
+dGUgKnJzcCA9IGFyZzsKIAlzdHJ1Y3QgcmN1X25vZGUgKnJucCA9IHJjdV9nZXRfcm9vdChyc3Ap
+OworCXBpZF90IHJjdV9wcmVlbXB0X3BpZDsKIAogCXJjdV9iaW5kX2dwX2t0aHJlYWQoKTsKKwlp
+Zighc3RyY21wKHJzcC0+bmFtZSwgInJjdV9wcmVlbXB0IikpIHsKKwkJcmN1X3ByZWVtcHRfcGlk
+ID0gcnNwLT5ncF9rdGhyZWFkLT5waWQ7CisJfQorCiAJZm9yICg7OykgewogCiAJCS8qIEhhbmRs
+ZSBncmFjZS1wZXJpb2Qgc3RhcnQuICovCkBAIC0yMTYzLDggKzIxNzQsMTkgQEAgc3RhdGljIGlu
+dCBfX25vcmV0dXJuIHJjdV9ncF9rdGhyZWFkKHZvaWQgKmFyZykKIAkJCQkJICAgICAgIFJFQURf
+T05DRShyc3AtPmdwX3NlcSksCiAJCQkJCSAgICAgICBUUFMoInJlcXdhaXQiKSk7CiAJCQlyc3At
+PmdwX3N0YXRlID0gUkNVX0dQX1dBSVRfR1BTOwotCQkJc3dhaXRfZXZlbnRfaWRsZV9leGNsdXNp
+dmUocnNwLT5ncF93cSwgUkVBRF9PTkNFKHJzcC0+Z3BfZmxhZ3MpICYKLQkJCQkJCSAgICAgUkNV
+X0dQX0ZMQUdfSU5JVCk7CisJCQlpZiAoY3VycmVudC0+cGlkICE9IHJjdV9wcmVlbXB0X3BpZCkg
+eworCQkJCXN3YWl0X2V2ZW50X2lkbGVfZXhjbHVzaXZlKHJzcC0+Z3Bfd3EsIFJFQURfT05DRShy
+c3AtPmdwX2ZsYWdzKSAmCisJCQkJCQlSQ1VfR1BfRkxBR19JTklUKTsKKwkJCX0gZWxzZSB7CisJ
+CQkJcmV0ID0gc3dhaXRfZXZlbnRfaWRsZV90aW1lb3V0X2V4Y2x1c2l2ZShyc3AtPmdwX3dxLCBS
+RUFEX09OQ0UocnNwLT5ncF9mbGFncykgJgorCQkJCQkJUkNVX0dQX0ZMQUdfSU5JVCwgMipIWik7
+CisKKwkJCQlpZighcmV0KSB7CisJCQkJCXNob3dfcmN1X2dwX2t0aHJlYWRzKCk7CisJCQkJCXBh
+bmljKCJodW5nX3Rhc2s6IGJsb2NrZWQgaW4gcmN1X2dwX2t0aHJlYWQgaW5pdCIpOworCQkJCX0K
+KwkJCX0KKwogCQkJcnNwLT5ncF9zdGF0ZSA9IFJDVV9HUF9ET05FX0dQUzsKIAkJCS8qIExvY2tp
+bmcgcHJvdmlkZXMgbmVlZGVkIG1lbW9yeSBiYXJyaWVyLiAqLwogCQkJaWYgKHJjdV9ncF9pbml0
+KHJzcCkpCmRpZmYgLS1naXQgYS9rZXJuZWwvcmN1L3VwZGF0ZS5jIGIva2VybmVsL3JjdS91cGRh
+dGUuYwppbmRleCA4MWRiODgyLi42M2Y3NjFhIDEwMDY0NAotLS0gYS9rZXJuZWwvcmN1L3VwZGF0
+ZS5jCisrKyBiL2tlcm5lbC9yY3UvdXBkYXRlLmMKQEAgLTM2NCw4ICszNjQsMTAgQEAgdm9pZCBf
+X3dhaXRfcmN1X2dwKGJvb2wgY2hlY2t0aW55LCBpbnQgbiwgY2FsbF9yY3VfZnVuY190ICpjcmN1
+X2FycmF5LAogCQkJCWJyZWFrOwogCQlpZiAoaiA9PSBpKSB7CiAJCQl0cmFjZV9wcmludGsoImJv
+Ym86IHN0YXJ0IHdhaXQgZm9yIHJjdSBncFxuIik7Ci0JCQlpZighd2FpdF9mb3JfY29tcGxldGlv
+bl90aW1lb3V0KCZyc19hcnJheVtpXS5jb21wbGV0aW9uLCAzKkhaKSkKKwkJCWlmKCF3YWl0X2Zv
+cl9jb21wbGV0aW9uX3RpbWVvdXQoJnJzX2FycmF5W2ldLmNvbXBsZXRpb24sIDIqSFopKSB7CisJ
+CQkJc2hvd19yY3VfZ3Bfa3RocmVhZHMoKTsKIAkJCQlwYW5pYygiaHVuZ190YXNrOiBibG9ja2Vk
+IHRhc2tzIGluIHJjdSIpOworCQkJfQogCQkJdHJhY2VfcHJpbnRrKCJib2JvOiBmaW5pc2ggd2Fp
+dCBmb3IgcmN1IGdwXG4iKTsKIAogCQl9Ci0tIAoyLjcuNAoK
+
+--_002_CD6925E8781EFD4D8E11882D20FC406D52A19939SHSMSX104ccrcor_--
