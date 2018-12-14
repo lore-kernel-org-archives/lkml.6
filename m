@@ -2,138 +2,92 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.9 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BE6DC67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 13:01:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFB80C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 13:01:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A73A208E7
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 13:01:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A73A208E7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 94C15208E7
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 13:01:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Rf7XRa3G"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94C15208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729742AbeLNNBH (ORCPT
+        id S1729786AbeLNNBn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 08:01:07 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:55514 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729641AbeLNNBH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 08:01:07 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id C0965207B8; Fri, 14 Dec 2018 14:01:04 +0100 (CET)
-Received: from qschulz (aaubervilliers-681-1-89-7.w90-88.abo.wanadoo.fr [90.88.30.7])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 87A482074D;
-        Fri, 14 Dec 2018 14:01:04 +0100 (CET)
-Date:   Fri, 14 Dec 2018 14:01:04 +0100
-From:   Quentin Schulz <quentin.schulz@bootlin.com>
-To:     Josh Boyer <jwboyer@kernel.org>
-Cc:     thomas.petazzoni@bootlin.com, alexandre.belloni@bootlin.com,
-        antoine.tenart@bootlin.com, allan.nielsen@microchip.com,
-        steen.hegelund@microchip.com,
-        Linux Firmware <linux-firmware@kernel.org>,
-        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>
-Subject: Re: [GIT PULL firmware] microchip: add firmware for VSC8574 and
- VSC8584 Ethernet PHYs
-Message-ID: <20181214130103.hfojveu346ogrc6k@qschulz>
-References: <20181206103348.m7dtld3hccuhfeuf@qschulz>
- <CA+5PVA5NViTUECEfrw3SqjUUx=qSoQJr6EQvvZ_Liv+B+aYr6Q@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="dzjir3orkhpssdfg"
-Content-Disposition: inline
-In-Reply-To: <CA+5PVA5NViTUECEfrw3SqjUUx=qSoQJr6EQvvZ_Liv+B+aYr6Q@mail.gmail.com>
-User-Agent: NeoMutt/20171215
+        Fri, 14 Dec 2018 08:01:43 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:45084 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726281AbeLNNBn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 08:01:43 -0500
+Received: by mail-wr1-f67.google.com with SMTP id t6so5181167wrr.12
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 05:01:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=eR9uYqeuJyN5e2VWkmKkgWCJntXUaglKsOhKlriosWo=;
+        b=Rf7XRa3GMBHzFXpiAS+HwX7psrhGETZdyMwNipBZV3J5STZ1TffpXLIBB0atoJKa9w
+         x5GjVVpIBmxQZ0xdjb0JjEF6Y3yEk30Va0altB4h7vq4u/wuLDis7esaQEKpKN0yevFB
+         asfcfCuIwRXnTW786JemsYQjQiP+HE+JE9A2I=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=eR9uYqeuJyN5e2VWkmKkgWCJntXUaglKsOhKlriosWo=;
+        b=Cu8fNY2DxfMoK8Vhh2r+KB0SvK4ZQZm6cl4rlR73C/yI8KYN8s5D9EUDeKkxCO/EFf
+         ceSTPBkUyuYtnhYIlSUdOB+3JikI8Ui1EEuuXSTH/ea6UkUpQP6g/ZDP+fp0UesBmRGX
+         kHHIpcWGpudceCkgbK12g/K5+Yt5MkCIsyzktSkIQJ8K+MqXWFKJbpyKAes8q69llISV
+         dQPNZAnlOX2n4G9DbGxCnxxu4GaiSkqygPsNqtPewADY5TXicN2xk0vsvcNQa1jmYA1r
+         Ny3EHTaE41qHGzZVlVuwbEsZL2xwixDfgkD6nA5EAl/KLBBE2RH777mlqT/M1ZZmz8YX
+         VQ0Q==
+X-Gm-Message-State: AA+aEWbtAS3M75WZ2qExWFJVnzK1tja/IsoHiUQYkU3s5m7BrCgIcvQS
+        BqH1lBllnJ77NGYwc6whPE2Y8w==
+X-Google-Smtp-Source: AFSGD/VTZqf1KBanPmidoIlQjAz+GUlT/Mfe6U0a4UzF08efXzsTgMMNC6r+kWjkeiTzEmBF4s56HA==
+X-Received: by 2002:adf:900f:: with SMTP id h15mr2551854wrh.18.1544792497967;
+        Fri, 14 Dec 2018 05:01:37 -0800 (PST)
+Received: from localhost.localdomain (58.red-81-47-145.staticip.rima-tde.net. [81.47.145.58])
+        by smtp.gmail.com with ESMTPSA id y34sm11597078wrd.68.2018.12.14.05.01.36
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 14 Dec 2018 05:01:37 -0800 (PST)
+From:   Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+To:     jorge.ramirez-ortiz@linaro.org, apw@canonical.com, joe@perches.com
+Cc:     linux-kernel@vger.kernel.org, niklas.cassel@linaro.org
+Subject: [PATCH] checkpatch: add Co-Developed-by to signature tags
+Date:   Fri, 14 Dec 2018 14:01:34 +0100
+Message-Id: <1544792494-15485-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+As per Documentation/process/submitting-patches, Co-developed-by is a
+valid signature.
 
---dzjir3orkhpssdfg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This commit removes the warning.
 
-Hi Josh,
+Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+---
+ scripts/checkpatch.pl | 1 +
+ 1 file changed, 1 insertion(+)
 
-On Fri, Dec 14, 2018 at 07:57:37AM -0500, Josh Boyer wrote:
-> On Thu, Dec 6, 2018 at 5:34 AM Quentin Schulz
-> <quentin.schulz@bootlin.com> wrote:
-> >
-> > Hi all,
-> >
-> > Both VSC8574 and VSC8584 Ethernet PHYs require a firmware patch to be
-> > applied before making use of them.
-> >
-> > This adds the firmware for each of them.
-> >
-> > The Linux driver using the firmwares is already in Torvalds' tree:
-> > [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/=
-commit/?id=3Da5afc1678044a3eea48f0295ae7bc2b13d59b128
-> > [2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/=
-commit/?id=3D00d70d8e0e7811ed8acba24e04b9f193c3b84beb
-> >
-> > Thanks,
-> > Quentin
-> >
-> > The following changes since commit 1baa34868b2c0a004dc595b20678145e3fff=
-83e7:
-> >
-> >   Merge branch 'nxp_mc' of https://github.com/NXP/linux-firmware (2018-=
-10-26 08:13:19 -0400)
-> >
-> > are available in the Git repository at:
-> >
-> >   https://github.com/QSchulz/linux-firmware MSCC-PHYs
-> >
-> > for you to fetch changes up to 57d49d580af5c67d7f725dda75aa71cb94505514:
-> >
-> >   microchip: add firmware for VSC8574 and VSC8584 Ethernet PHYs (2018-1=
-2-06 11:02:51 +0100)
-> >
-> > ----------------------------------------------------------------
-> > Quentin Schulz (1):
-> >       microchip: add firmware for VSC8574 and VSC8584 Ethernet PHYs
-> >
-> >  LICENCE.microchip                            |  40 +++++++++++++++++++=
-+++++++++++++++++++++
-> >  WHENCE                                       |   9 +++++++++
-> >  microchip/mscc_vsc8574_revb_int8051_29e8.bin | Bin 0 -> 1655 bytes
-> >  microchip/mscc_vsc8584_revb_int8051_fb48.bin | Bin 0 -> 92 bytes
-> >  4 files changed, 49 insertions(+)
-> >  create mode 100644 LICENCE.microchip
-> >  create mode 100644 microchip/mscc_vsc8574_revb_int8051_29e8.bin
-> >  create mode 100644 microchip/mscc_vsc8584_revb_int8051_fb48.bin
->=20
-> Pulled and pushed out.
->=20
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index 93e84c9..cab515f 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -468,6 +468,7 @@ our $logFunctions = qr{(?x:
+ 
+ our $signature_tags = qr{(?xi:
+ 	Signed-off-by:|
++	Co-Developed-by:|
+ 	Acked-by:|
+ 	Tested-by:|
+ 	Reviewed-by:|
+-- 
+2.7.4
 
-Thank you!
-
-Quentin
-
---dzjir3orkhpssdfg
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEXeEYjDsJh38OoyMzhLiadT7g8aMFAlwTqY8ACgkQhLiadT7g
-8aMX7A//XygYvOFlWBx2V/D2pcschuiVIDIdZLe8K2X9IzG2rjICfxIskXmYsoIp
-yQ7em36wwN6TEXTRlSn/kCSPg855ou7It1P4xl9O44KsCrIU4g+X4aLqQg3C3S+5
-ly5TH5VwZbLump/irsyMm8pVFosCrgdFLkOr+Fpwov78nsrId75GgSGtd2OTEweJ
-skrOtflbwy7Y6ILxrw3MgPTOi71KAzmE1qAUAifHx0nQJ5oyk118qMYsOV+kJnfl
-ziOFbPBHPt7xYqVzKXjt5cA/2SS39Xe7kNIXpwdg0ns/U9brtVOGGr1LKC4+iiba
-O0SS3TgdFZsYdgsc4d9Ieg2ReSy6ajglPecfqkTxQhQ/ZU9Y8nLmatQCO1gfbrHW
-RUZZAnQObexynOUw0s2HXGbvbccVuui72l17aL+0RfrkXrf3xfzWufyqOkV2aNF0
-DyXL7J4NHlOD9jNn3VbSfm40MppaUdxD5o2chPIvzlxQK3/xGArQsYD7ztsWNWYB
-LbE3yl/VYnSZVutsIzveAp1JHGZEVQhilo3gyh5cyb24IkXa2OjGGqnyLn/ziZn6
-TXK4XFTWe7O/fZ87IqWas/v03jg+BEBBsOgtqj1SE9PK09nIh+15ByPDLGaCMzVp
-CGW+d6DR709Qfhhlj/V1WRXqb4uC+CYgXUhPjv2uIUm27vSQYrU=
-=RNXz
------END PGP SIGNATURE-----
-
---dzjir3orkhpssdfg--
