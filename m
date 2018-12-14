@@ -2,103 +2,84 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FB1EC65BAE
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 00:05:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3192C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 00:06:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 628F82086D
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 00:05:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544745928;
-	bh=sMND/x7hKAb5z66ZliYJ5py8rFZ5Dys/023i38ACwRk=;
-	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
-	b=k4wIwFWMWFUb87jDpa/k+uF/ZYMETY4t3SC8xdO2Wxydo4ox+617ne4jVVOzhtF7d
-	 YlBt7AsMs5Lts0cq9F3oir5QmkWb7AEnsEXMwuAHl0EZObi6Hijcg75gjFpOE+FiVa
-	 lsx9BfdwUa/G16HzIWMMsKTOU7dcnJKzMFXgBCf4=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 628F82086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id C070520672
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 00:06:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C070520672
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728687AbeLNAF1 (ORCPT
+        id S1728844AbeLNAGm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 19:05:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34218 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726254AbeLNAF0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 19:05:26 -0500
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 36B7E20870;
-        Thu, 13 Dec 2018 23:56:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544745416;
-        bh=sMND/x7hKAb5z66ZliYJ5py8rFZ5Dys/023i38ACwRk=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=hF2hKORxr5rcjdZf1IuEe59rRLTyC6ol07NHo4FOsiBhxtGj5C90pMoWHuYTNL7BS
-         moVwoEaDplhHG50ulxYzKm2R4t2qYN4FwY8ZzON1hI5captZJSms5XlMPPa3hoWZ/4
-         MgBgzE8b45+OOqc7fnDoZWBWCUqyzOv/MD1/lQJo=
-Subject: Re: [PATCH] selftests: Fix test errors related to lib.mk khdr target
-To:     Paolo Bonzini <pbonzini@redhat.com>, tglx@linutronix.de,
-        mingo@redhat.com, peterz@infradead.org, dvhart@infradead.org,
-        bamv2005@gmail.com, brgl@bgdev.pl, fathi.boudra@linaro.org,
-        anders.roxell@linaro.org, daniel.diaz@linaro.org,
-        pintu.ping@gmail.com, drjones@redhat.com, hofsass@google.com,
-        peterx@redhat.com, peng.hao2@zte.com.cn, wei@redhat.com,
-        davem@davemloft.net, dcaratti@redhat.com,
-        akpm@linux-foundation.org, mhocko@suse.com, khalid.aziz@oracle.com,
-        mpe@ellerman.id.au, aneesh.kumar@linux.vnet.ibm.com,
-        dima@arista.com
-Cc:     linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, stable@vger.kernel.org,
-        shuah <shuah@kernel.org>
-References: <20181213200011.10779-1-shuah@kernel.org>
- <623cdf7b-fc3c-2a93-c61a-a043e3d7f75b@redhat.com>
- <25593aa4-a2a7-6567-11f2-b702b6e5563c@kernel.org>
- <f4dddfa8-1493-5fd5-58a9-ea6ff2b25f9c@redhat.com>
-From:   shuah <shuah@kernel.org>
-Message-ID: <b6ed53db-981e-9d9b-8838-fcd7773e7f42@kernel.org>
-Date:   Thu, 13 Dec 2018 16:56:54 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <f4dddfa8-1493-5fd5-58a9-ea6ff2b25f9c@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Thu, 13 Dec 2018 19:06:42 -0500
+Received: from relmlor1.renesas.com ([210.160.252.171]:16845 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727042AbeLNAGl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 19:06:41 -0500
+Date:   14 Dec 2018 09:01:38 +0900
+X-IronPort-AV: E=Sophos;i="5.56,350,1539615600"; 
+   d="scan'208";a="2776575"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 14 Dec 2018 09:01:38 +0900
+Received: from morimoto-PC.renesas.com (unknown [10.166.18.140])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 9B160412FDBA;
+        Fri, 14 Dec 2018 09:01:38 +0900 (JST)
+Message-ID: <87va3x7zoq.wl-kuninori.morimoto.gx@renesas.com>
+From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, <alsa-devel@alsa-project.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH] ASoC: rsnd: Add r8a774c0 support
+In-Reply-To: <1544732406-6408-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1544732406-6408-1-git-send-email-fabrizio.castro@bp.renesas.com>
+User-Agent: Wanderlust/2.15.9 Emacs/24.5 Mule/6.0
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/13/18 4:40 PM, Paolo Bonzini wrote:
-> On 13/12/18 23:50, shuah wrote:
->>>
->>> Looks good.  Could you please provide a topic branch so that we can
->>> avoid conflicts between our trees at the next merge window.
->>>
->>
->> Thanks. The topic branch is
->>
->> git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest.git next
->>
->> I will apply it in a day or two to get ready for the merge window.
-> 
-> There are already other patches in that branch; a topic branch only
-> includes this one on top of Linus's tree, so that it is independent from
-> other changes being made in both your and my tree.
-> 
-> You should create a new branch in linux-kselftest.git, pull it into
-> next, and tell me the name so that I can pull the same branch into kvm.git.
-> 
 
-You can find just this patch on top of 4.20-rc6 in
+Hi Fabrizio
 
-git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest.git 
-khdr_fix topic branch.
+> Document RZ/G2E (R8A774C0) SoC bindings.
+> 
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> ---
 
-thanks,
--- Shuah
+Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+
+>  Documentation/devicetree/bindings/sound/renesas,rsnd.txt | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/sound/renesas,rsnd.txt b/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
+> index d92b705..f93f56a 100644
+> --- a/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
+> +++ b/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
+> @@ -346,6 +346,7 @@ Required properties:
+>  				    - "renesas,rcar_sound-r8a7744" (RZ/G1N)
+>  				    - "renesas,rcar_sound-r8a7745" (RZ/G1E)
+>  				    - "renesas,rcar_sound-r8a774a1" (RZ/G2M)
+> +				    - "renesas,rcar_sound-r8a774c0" (RZ/G2E)
+>  				    - "renesas,rcar_sound-r8a7778" (R-Car M1A)
+>  				    - "renesas,rcar_sound-r8a7779" (R-Car H1)
+>  				    - "renesas,rcar_sound-r8a7790" (R-Car H2)
+> -- 
+> 2.7.4
+> 
