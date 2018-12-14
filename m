@@ -2,198 +2,141 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AE63C67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 06:00:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0558CC6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 06:01:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0842120866
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 06:00:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0842120866
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fromorbit.com
+	by mail.kernel.org (Postfix) with ESMTP id BD6212075B
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 06:01:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="ohs3actc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD6212075B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726980AbeLNGAU (ORCPT
+        id S1727165AbeLNGBJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 01:00:20 -0500
-Received: from ipmail07.adl2.internode.on.net ([150.101.137.131]:52878 "EHLO
-        ipmail07.adl2.internode.on.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726437AbeLNGAT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 01:00:19 -0500
-Received: from ppp59-167-129-252.static.internode.on.net (HELO dastard) ([59.167.129.252])
-  by ipmail07.adl2.internode.on.net with ESMTP; 14 Dec 2018 16:30:14 +1030
-Received: from dave by dastard with local (Exim 4.80)
-        (envelope-from <david@fromorbit.com>)
-        id 1gXgWC-0002pA-Tz; Fri, 14 Dec 2018 17:00:12 +1100
-Date:   Fri, 14 Dec 2018 17:00:12 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Jerome Glisse <jglisse@redhat.com>
-Cc:     Jan Kara <jack@suse.cz>, John Hubbard <jhubbard@nvidia.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        John Hubbard <john.hubbard@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>, tom@talpey.com,
-        Al Viro <viro@zeniv.linux.org.uk>, benve@cisco.com,
-        Christoph Hellwig <hch@infradead.org>,
-        Christopher Lameter <cl@linux.com>,
-        "Dalessandro, Dennis" <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Michal Hocko <mhocko@kernel.org>, mike.marciniszyn@intel.com,
-        rcampbell@nvidia.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] mm: introduce put_user_page*(), placeholder versions
-Message-ID: <20181214060012.GA10644@dastard>
-References: <7b4733be-13d3-c790-ff1b-ac51b505e9a6@nvidia.com>
- <20181207191620.GD3293@redhat.com>
- <3c4d46c0-aced-f96f-1bf3-725d02f11b60@nvidia.com>
- <20181208022445.GA7024@redhat.com>
- <20181210102846.GC29289@quack2.suse.cz>
- <20181212150319.GA3432@redhat.com>
- <20181212214641.GB29416@dastard>
- <20181212215931.GG5037@redhat.com>
- <20181213005119.GD29416@dastard>
- <20181213020229.GN5037@redhat.com>
+        Fri, 14 Dec 2018 01:01:09 -0500
+Received: from mail-eopbgr1320108.outbound.protection.outlook.com ([40.107.132.108]:6327
+        "EHLO APC01-PU1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726480AbeLNGBI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 01:01:08 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=r61iIRUJpMxT4Jb1YOnr0Lo7bb/bn7LyMWs4nnWTOWk=;
+ b=ohs3actcbLpF7KJXvI5IcNpzOkArYUl/izK5luH6Hbf28T7qN+IPpDlf1ULpERgyv1JQbgeRWNZmwnLf6u5GLXFLsvVekdHVKzuwl0i6XyTzN/IUNNjyIMVMHF57yH2g4+GURj+3f2nhvJPrRoEBTSvzlwAZXrj3jRSJg+0vCK8=
+Received: from TY2PR01MB2297.jpnprd01.prod.outlook.com (52.133.184.14) by
+ TY2PR01MB3465.jpnprd01.prod.outlook.com (20.178.143.206) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1425.20; Fri, 14 Dec 2018 06:01:03 +0000
+Received: from TY2PR01MB2297.jpnprd01.prod.outlook.com
+ ([fe80::9545:5575:a99a:a145]) by TY2PR01MB2297.jpnprd01.prod.outlook.com
+ ([fe80::9545:5575:a99a:a145%3]) with mapi id 15.20.1404.026; Fri, 14 Dec 2018
+ 06:01:02 +0000
+From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+CC:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH] dt-bindings: usb: renesas_usbhs: Add r8a774c0 support
+Thread-Topic: [PATCH] dt-bindings: usb: renesas_usbhs: Add r8a774c0 support
+Thread-Index: AQHUkyFmr2EcM9KjM0adGPwSzv5FHaV9vTAw
+Date:   Fri, 14 Dec 2018 06:01:01 +0000
+Message-ID: <TY2PR01MB2297D670A9D3B8D4B5BC0389D8A10@TY2PR01MB2297.jpnprd01.prod.outlook.com>
+References: <1544732463-6685-1-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1544732463-6685-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=yoshihiro.shimoda.uh@renesas.com; 
+x-originating-ip: [118.238.235.108]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;TY2PR01MB3465;20:XrTq+6GbncoSJoX5FL9xuil7clESTK3JXM0HeV7VABCD1pCz2W1yJEquXAUYZ4z8WDCSXoRQnoqHCn/KPh/lnFaF8IW8NbF9TDvd4OJPp7eWI8XUkXwcIuW1um7rU1pouSkLaFEW+B5QDF9xqQeddzQRg11bnmhQvA/3wXuJIAM=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10019020)(979002)(376002)(396003)(346002)(39860400002)(136003)(366004)(189003)(199004)(8676002)(6116002)(11346002)(446003)(71190400001)(71200400001)(66066001)(6436002)(102836004)(6506007)(476003)(229853002)(97736004)(8936002)(54906003)(81166006)(110136005)(81156014)(76176011)(86362001)(106356001)(7736002)(33656002)(99286004)(25786009)(316002)(68736007)(478600001)(9686003)(256004)(7696005)(486006)(186003)(26005)(5660300001)(2906002)(345774005)(4326008)(53936002)(14454004)(305945005)(74316002)(3846002)(105586002)(6246003)(55016002)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1102;SCL:1;SRVR:TY2PR01MB3465;H:TY2PR01MB2297.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-ms-office365-filtering-correlation-id: 8f0b5273-bbfc-4f33-5d13-08d6618986e8
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:TY2PR01MB3465;
+x-ms-traffictypediagnostic: TY2PR01MB3465:
+x-microsoft-antispam-prvs: <TY2PR01MB346577126D2D14DF96A729B8D8A10@TY2PR01MB3465.jpnprd01.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3002001)(3231475)(944501520)(52105112)(6055026)(148016)(149066)(150057)(6041310)(20161123564045)(20161123558120)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:TY2PR01MB3465;BCL:0;PCL:0;RULEID:;SRVR:TY2PR01MB3465;
+x-forefront-prvs: 08864C38AC
+received-spf: None (protection.outlook.com: renesas.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: Wx/BxuR3JTvs8L/tNltTYeWs0DRlY3vdoPmIGqJWHmXeePWUUC91PvST2Wxs6+g0OowLut8A+kPpuedlSbGLh8VtK2LuH0RAXxgfCXabJLC792AfTW+K9uLSp7YdRqMf9mMskxMvtSNlgSSjncsTbcYZpGAqX1OxAfeQi+1SQQUiXG0rpjHHJTwXxG7TyHP9Ucida9DUy3RnOGqz2yjLcXRuPGt3gl8cT+DurvSHCEQpAG3UHkM1o/vHq4s/yVA7E3bCUMg7+DDljsoPldELcB85eb0f1F5FBZMejPBFgIrQ7BdCIHXcnq6A3TntJK5Y
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181213020229.GN5037@redhat.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8f0b5273-bbfc-4f33-5d13-08d6618986e8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Dec 2018 06:01:01.9730
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY2PR01MB3465
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Dec 12, 2018 at 09:02:29PM -0500, Jerome Glisse wrote:
-> On Thu, Dec 13, 2018 at 11:51:19AM +1100, Dave Chinner wrote:
-> > On Wed, Dec 12, 2018 at 04:59:31PM -0500, Jerome Glisse wrote:
-> > > On Thu, Dec 13, 2018 at 08:46:41AM +1100, Dave Chinner wrote:
-> > > > On Wed, Dec 12, 2018 at 10:03:20AM -0500, Jerome Glisse wrote:
-> > > > > On Mon, Dec 10, 2018 at 11:28:46AM +0100, Jan Kara wrote:
-> > > > > > On Fri 07-12-18 21:24:46, Jerome Glisse wrote:
-> > > > > > So this approach doesn't look like a win to me over using counter in struct
-> > > > > > page and I'd rather try looking into squeezing HMM public page usage of
-> > > > > > struct page so that we can fit that gup counter there as well. I know that
-> > > > > > it may be easier said than done...
-> > > > > 
-> > > > > So i want back to the drawing board and first i would like to ascertain
-> > > > > that we all agree on what the objectives are:
-> > > > > 
-> > > > >     [O1] Avoid write back from a page still being written by either a
-> > > > >          device or some direct I/O or any other existing user of GUP.
-> > 
-> > IOWs, you need to mark pages being written to by a GUP as
-> > PageWriteback, so all attempts to write the page will block on
-> > wait_on_page_writeback() before trying to write the dirty page.
-> 
-> No you don't and you can't for the simple reasons is that the GUP
-> of some device driver can last days, weeks, months, years ... so
-> it is not something you want to do. Here is what happens today:
->     - user space submit directio read from a file and writing to
->       virtual address and the problematic case is when that virtual
->       address is actualy a mmap of a file itself
->     - kernel do GUP on the virtual address, if the page has write
->       permission in the CPU page table mapping then the page
->       refcount is incremented and the page is return to directio
->       kernel code that do memcpy
-> 
->       It means that the page already went through page_mkwrite so
->       all is fine from fs point of view.
->       If page does not have write permission then a page fault is
->       triggered and page_mkwrite will happen and prep the page
->       accordingly
+Hi Fabrizio,
 
-Yes, the short term GUP references do the right thing. They aren't
-the issue - the problem is the long term GUP references that dirty
-clean pages without first having called ->page_mkwrite.
+> From: Fabrizio Castro, Sent: Friday, December 14, 2018 5:21 AM
+>=20
+> Document RZ/G2E (R8A774C0) SoC bindings.
+>=20
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-> In the above scheme a page write back might happens after we looked
-> up the page from the CPU page table and before directio finish with
-> memcpy so that the page content during the write back might not be
-> stable. This is a small window for things to go bad and i do not
-> think we know if anybody ever experience a bug because of that.
-> 
-> For other GUP users the flow is the same except that device driver
-> that keep the page around and do continuous dma to it might last
-> days, weeks, months, years ... so for those the race window is big
-> enough for bad things to happen. Jan have report of such bugs.
+Thank you for the patch!
 
-i.e. this case.
+Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-GUP faults the page, gets marked dirty, time passes, page
-writeback occurs, it's now mapped clean, time passes, another RDMA
-hits those pages, it calls set_page_dirty() again and things go
-boom.
+By the way, I'm not sure, but I'm wondering that we need to add
+.compatible renesas,usbhs-r8a774c0 with .data USBHS_TYPE_RCAR_GEN3_WITH_PLL
+like r8a77990 to the drivers/usb/renesas_usbhs/common.c.
+What do you think?
 
-Basically, you are saying that the problem here is that writeback
-of a dirty page occurred while there was an active GUP, and that
-you want us to ....
+Best regards,
+Yoshihiro Shimoda
 
-> So what i am proposing to fix the above is have page_mkclean return
-> a is_pin boolean if page is pin than the fs code use a bounce page
-> to do the write back giving a stable bounce page. More over fs will
-> need to keep around all buffer_head, blocks, ... ie whatever is
-> associated with that file offset so that any latter set_page_dirty
-> would not freak out and would not need to reallocate blocks or do
-> anything heavy weight.
+> ---
+>  Documentation/devicetree/bindings/usb/renesas_usbhs.txt | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/usb/renesas_usbhs.txt
+> b/Documentation/devicetree/bindings/usb/renesas_usbhs.txt
+> index 90719f5..d93b6a1 100644
+> --- a/Documentation/devicetree/bindings/usb/renesas_usbhs.txt
+> +++ b/Documentation/devicetree/bindings/usb/renesas_usbhs.txt
+> @@ -7,6 +7,7 @@ Required properties:
+>  	- "renesas,usbhs-r8a7744" for r8a7744 (RZ/G1N) compatible device
+>  	- "renesas,usbhs-r8a7745" for r8a7745 (RZ/G1E) compatible device
+>  	- "renesas,usbhs-r8a774a1" for r8a774a1 (RZ/G2M) compatible device
+> +	- "renesas,usbhs-r8a774c0" for r8a774c0 (RZ/G2E) compatible device
+>  	- "renesas,usbhs-r8a7790" for r8a7790 (R-Car H2) compatible device
+>  	- "renesas,usbhs-r8a7791" for r8a7791 (R-Car M2-W) compatible device
+>  	- "renesas,usbhs-r8a7792" for r8a7792 (R-Car V2H) compatible device
+> --
+> 2.7.4
 
-.... keep the dirty page pinned and never written back until the GUP
-is released.
-
-Which, quite frankly, is insanity.  The whole point of
-->page_mkwrite() is that we can clean file backed mapped pages at
-any point in time and have the next write access correctly mark it
-dirty again so it can be written back.
-
-This is *absolutely necessary* for data integrity (i.e. fsync,
-sync(), etc) as well as filesystem management operations (e.g.
-filesystem freeze) to work correctly and not lose data if the system
-crashes or generate corrupt snapshots for backup or migration
-purposes.
-
-> We have a separate discussion on what to do about truncate and other
-> fs event that inherently invalidate portion of file so i do not
-> want to complexify present discussion with those but we also have
-> that in mind.
-> 
-> Do you see any fundamental issues with that ? It abides by all
-> existing fs standard AFAICT (you have a page_mkwrite and we ask
-> fs to keep the result of that around).
-
-The fundamental issue is that ->page_mkwrite must be called on every
-write access to a clean file backed page, not just the first one.
-How long the GUP reference lasts is irrelevant, if the page is clean
-and you need to dirty it, you must call ->page_mkwrite before it is
-marked writeable and dirtied. Every. Time.
-
-> > Think ENOSPC - that has to be handled before we do the DMA, not
-> > after. Before the DMA it is a recoverable error, after the DMA it is
-> > data loss/corruption failure.
-> 
-> Yes agree and i hope that the above explaination properly explains
-> that it would become legal to do set_page_dirty in put_user_page
-> thanks to page_mkclean telling fs code not to recycle anything
-> after write back finish.
-
-No, page_mkclean doesn't help at all. Every time the page is dirtied
-it may require block allocation (think COW filesystems) and so
-ENOSPC (and block allocation) must be done /before/ the page is
-dirtied. YOU can't just keep re-dirtying the same page and assuming
-that the filesystem will just work with that - that's essentially
-what the current code does with long term GUP references, and that's
-why it's so broken.
-
-/me is getting tired of explaining the same thing over and over
-again.
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
