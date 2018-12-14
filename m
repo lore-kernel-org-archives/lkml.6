@@ -6,53 +6,53 @@ X-Spam-Status: No, score=-8.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F913C65BAE
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 01:31:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DF75C65BAE
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 01:32:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5EAB62075B
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 01:31:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5EAB62075B
+	by mail.kernel.org (Postfix) with ESMTP id 29CE42075B
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 01:32:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29CE42075B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728956AbeLNBbg (ORCPT
+        id S1729000AbeLNBc5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 20:31:36 -0500
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:27661 "EHLO
+        Thu, 13 Dec 2018 20:32:57 -0500
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:21862 "EHLO
         heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727654AbeLNBbg (ORCPT
+        with ESMTP id S1727654AbeLNBc4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 20:31:36 -0500
+        Thu, 13 Dec 2018 20:32:56 -0500
 X-IronPort-AV: E=Sophos;i="5.56,350,1539619200"; 
-   d="scan'208";a="49732894"
+   d="scan'208";a="49732996"
 Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 14 Dec 2018 09:31:34 +0800
+  by heian.cn.fujitsu.com with ESMTP; 14 Dec 2018 09:32:54 +0800
 Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
-        by cn.fujitsu.com (Postfix) with ESMTP id 7947B4B734CC;
-        Fri, 14 Dec 2018 09:31:30 +0800 (CST)
+        by cn.fujitsu.com (Postfix) with ESMTP id C1E5C4B7349D;
+        Fri, 14 Dec 2018 09:32:50 +0800 (CST)
 Received: from localhost.localdomain (10.167.225.56) by
  G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Fri, 14 Dec 2018 09:31:29 +0800
-Date:   Fri, 14 Dec 2018 09:31:05 +0800
+ (TLS) id 14.3.408.0; Fri, 14 Dec 2018 09:32:49 +0800
+Date:   Fri, 14 Dec 2018 09:32:25 +0800
 From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
-To:     Borislav Petkov <bp@alien8.de>
-CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
+To:     Masayoshi Mizuma <msys.mizuma@gmail.com>
+CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>, <bp@alien8.de>,
         <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>,
-        <keescook@chromium.org>, <bhe@redhat.com>, <msys.mizuma@gmail.com>,
+        <keescook@chromium.org>, <bhe@redhat.com>,
         <indou.takao@jp.fujitsu.com>, <caoj.fnst@cn.fujitsu.com>
 Subject: Re: [PATCH v13 2/6] x86/boot: Introduce get_acpi_rsdp() to parse
  RSDP in cmdline from KEXEC
-Message-ID: <20181214013105.GC24409@localhost.localdomain>
+Message-ID: <20181214013225.GD24409@localhost.localdomain>
 References: <20181212031053.1815-1-fanc.fnst@cn.fujitsu.com>
  <20181212031053.1815-3-fanc.fnst@cn.fujitsu.com>
- <20181213194230.GF25287@zn.tnic>
+ <20181213192529.yjklliaxy4tk4kck@gabell>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20181213194230.GF25287@zn.tnic>
+In-Reply-To: <20181213192529.yjklliaxy4tk4kck@gabell>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 X-Originating-IP: [10.167.225.56]
-X-yoursite-MailScanner-ID: 7947B4B734CC.ABAB5
+X-yoursite-MailScanner-ID: C1E5C4B7349D.ACF58
 X-yoursite-MailScanner: Found to be clean
 X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
@@ -60,7 +60,14 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 13, 2018 at 08:42:30PM +0100, Borislav Petkov wrote:
+On Thu, Dec 13, 2018 at 02:25:30PM -0500, Masayoshi Mizuma wrote:
+>Hi Chao,
+>
+>Great work! Let me say some trivial comments.
+
+Thanks for your help, any comments will be welcome.
+
+>
 >On Wed, Dec 12, 2018 at 11:10:49AM +0800, Chao Fan wrote:
 >> Memory information in SRAT is necessary to fix the conflict between
 >> KASLR and memory-hotremove.
@@ -94,42 +101,14 @@ On Thu, Dec 13, 2018 at 08:42:30PM +0100, Borislav Petkov wrote:
 >>  	depends on RANDOMIZE_BASE || (X86_32 && RELOCATABLE)
 >>  
 >> +config EARLY_PARSE_RSDP
->
->That should be EARLY_SRAT_PARSE or so
->
 >> +	bool "Parse RSDP pointer on compressed period for KASLR"
->
->and that should be
->
->	bool "Early SRAT table parsing"
->
 >> +	def_bool y
 >> +	depends on RANDOMIZE_BASE && MEMORY_HOTREMOVE
 >> +	help
 >> +	  This option parses RSDP in compressed period. Works
->
->do s/compressed period/compressed stage/g
->
->I think "compressed stage" or "compressed boot stage" is more precise.
->
 >> +	  for KASLR to get memory information from SRAT table and choose
 >> +	  immovable memory to extract kernel.
 >> +	  Say Y if you want to use both KASLR and memory-hotremove.
->
->This help text needs to explain what the functionality is for. "This
->option parses RSDP in compressed period" doesn't tell a whole lot to the
->normal user wondering whether she should enable this or not. You need to
->explain whether people would need this or not so should start along the
->lines of:
->
->"This option enables early SRAT parsing so that memory hot remove ranges do not
->overlap with KASLR chosen ranges..."
->
->Basically, the "***Background" in your 0th message.
->
-
-Thanks, I will rewrite this part.
-
 >> +
 >>  config PHYSICAL_ALIGN
 >>  	hex "Alignment value to which kernel should be aligned"
@@ -161,48 +140,29 @@ Thanks, I will rewrite this part.
 >> +	unsigned long long res;
 >> +	int len = 0;
 >> +	char val[MAX_ADDRESS_LENGTH+1];
->
->Please sort function local variables declaration in a reverse christmas
->tree order:
->
->	<type A> longest_variable_name;
->	<type B> shorter_var_name;
->	<type C> even_shorter;
->	<type D> i;
-
-I will change the position and check other places like this.
-
->
 >> +
+>
 >> +	len = cmdline_find_option("acpi_rsdp", val, MAX_ADDRESS_LENGTH+1);
 >
->That MAX_ADDRESS_LENGTH define is used only here, right? So put it at
->the top in this file - no need to have it in a header.
+>sizeof() is better here.
+>
+>	len = cmdline_find_option("acpi_rsdp", val, sizeof(var));
 >
 >> +	if (len > 0) {
 >> +		val[len] = 0;
+>
+>'\0' should be fine here not 0.
+>
+>		val[len] = '\0';
+Will change it.
+
+Thanks,
+Chao Fan
+>
 >> +		return (acpi_physical_address)kstrtoull(val, 16, &res);
 >> +	}
 >> +	return 0;
 >> +#endif
->
->Those two lines need to be the other way around:
->
->#endif
->	return 0;
->
->because in the !CONFIG_KEXEC case that function won't return anything.
->gcc is smart enough to optimize that function away so that there's no
->build error but still.
->
->Ditto for efi_get_rsdp_addr() in your next patch.
-
-Yes, I will change all places like this.
-
-Thanks,
-Chao Fan
-
->
 >> +}
 >> diff --git a/arch/x86/boot/compressed/misc.h b/arch/x86/boot/compressed/misc.h
 >> index a1d5918765f3..72fcfbfec3c6 100644
@@ -219,14 +179,9 @@ Chao Fan
 >> +#define MAX_ADDRESS_LENGTH 18
 >> +#endif
 >> -- 
->
->Yeah, just put that define in acpi.c.
->
->-- 
->Regards/Gruss,
->    Boris.
->
->Good mailing practices for 400: avoid top-posting and trim the reply.
+>> 2.19.2
+>> 
+>> 
 >
 >
 
