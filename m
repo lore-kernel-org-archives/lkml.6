@@ -2,76 +2,101 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIM_ADSP_ALL,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-11.9 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1EB4C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:54:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D185AC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:54:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9F42206DD
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:54:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=plaes.org header.i=@plaes.org header.b="cbtNFfQ5"
+	by mail.kernel.org (Postfix) with ESMTP id 1DF1E206DD
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:54:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731119AbeLNUyO (ORCPT
+        id S1731139AbeLNUyT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 15:54:14 -0500
-Received: from plaes.org ([188.166.43.21]:47226 "EHLO plaes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730757AbeLNUyN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 15:54:13 -0500
-Received: from localhost (85.253.152.156.cable.starman.ee [85.253.152.156])
-        by plaes.org (Postfix) with ESMTPSA id C4BC340673;
-        Fri, 14 Dec 2018 20:54:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=plaes.org; s=mail;
-        t=1544820851; bh=WXVd6MN1CaPvZ6RjtN5Jd1UpIipSyBs++cIK4VDQ6KQ=;
-        h=From:To:Cc:Subject:Date:From;
-        b=cbtNFfQ5jjqYNH6nJ4pJxuK6xTFH3rS4ACBOU/L29WODRFWF3dbyJI9SZdcYSTaRV
-         0fzodvXExkOGuYO7Cm9FhqVLhr/iAc4TssZV0Tw+Kw5FxFLuMW4bRcLb8bA1Owjvnt
-         ZdV0IS+SwKvWB4UaTft5MMT7AupjiQqEcCfRhnl02GMbzpcamtdYzAguWEWsVQR6sG
-         oxd06Jgd7MFtS8H4B8WTTKOWk+Dey58p7RTnfAGXIghXEhubeR/L1scgEbsdjNwyCe
-         2MP9V3rwdYomJIB+hUi6vtbh7h5slDg4O71SWR2dOHk0iLVkh+rUUMYVbOk1G2866p
-         EYP40lWTN9fqg==
-From:   Priit Laes <plaes@plaes.org>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Cc:     Priit Laes <plaes@plaes.org>
-Subject: [PATCH] regulator: axp20x: fix set_ramp_delay for AXP209/dcdc2
-Date:   Fri, 14 Dec 2018 22:54:07 +0200
-Message-Id: <20181214205407.31695-1-plaes@plaes.org>
-X-Mailer: git-send-email 2.19.2
+        Fri, 14 Dec 2018 15:54:19 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:39879 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730734AbeLNUyS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 15:54:18 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBEKsCTl1458979
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Fri, 14 Dec 2018 12:54:12 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBEKsB741458976;
+        Fri, 14 Dec 2018 12:54:11 -0800
+Date:   Fri, 14 Dec 2018 12:54:11 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-fiikh5nay70bv4zskw2aa858@git.kernel.org>
+Cc:     namhyung@kernel.org, mingo@kernel.org, jolsa@kernel.org,
+        adrian.hunter@intel.com, acme@redhat.com, hpa@zytor.com,
+        tglx@linutronix.de, linux-kernel@vger.kernel.org
+Reply-To: jolsa@kernel.org, mingo@kernel.org, namhyung@kernel.org,
+          acme@redhat.com, adrian.hunter@intel.com, tglx@linutronix.de,
+          hpa@zytor.com, linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf header: Fix unchecked usage of strncpy()
+Git-Commit-ID: 7473d42ba08f9ed4c1d7a8e72e2ad1fcd0135155
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Initial commit of set_ramp_delay feature was missing an assignment which
-should have populated slew_rate table for dcdc2 regulator. Add it.
+Commit-ID:  7473d42ba08f9ed4c1d7a8e72e2ad1fcd0135155
+Gitweb:     https://git.kernel.org/tip/7473d42ba08f9ed4c1d7a8e72e2ad1fcd0135155
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Thu, 6 Dec 2018 11:02:57 -0300
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Thu, 6 Dec 2018 16:39:15 -0300
 
-Fixes: d29f54df8b16 ("regulator: axp20x: add support for set_ramp_delay for AXP209")
+perf header: Fix unchecked usage of strncpy()
 
-Signed-off-by: Priit Laes <plaes@plaes.org>
+The strncpy() function may leave the destination string buffer
+unterminated, better use strlcpy() that we have a __weak fallback
+implementation for systems without it.
+
+This fixes this warning on an Alpine Linux Edge system with gcc 8.2:
+
+  util/header.c: In function 'perf_event__synthesize_event_update_unit':
+  util/header.c:3586:2: error: 'strncpy' output truncated before terminating nul copying as many bytes from a string as its length [-Werror=stringop-truncation]
+    strncpy(ev->data, evsel->unit, size);
+    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  util/header.c:3579:16: note: length computed here
+    size_t size = strlen(evsel->unit);
+                  ^~~~~~~~~~~~~~~~~~~
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Fixes: a6e5281780d1 ("perf tools: Add event_update event unit type")
+Link: https://lkml.kernel.org/n/tip-fiikh5nay70bv4zskw2aa858@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- drivers/regulator/axp20x-regulator.c | 1 +
- 1 file changed, 1 insertion(+)
+ tools/perf/util/header.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/regulator/axp20x-regulator.c b/drivers/regulator/axp20x-regulator.c
-index e8a895b81c90..48af859fd053 100644
---- a/drivers/regulator/axp20x-regulator.c
-+++ b/drivers/regulator/axp20x-regulator.c
-@@ -378,6 +378,7 @@ static int axp20x_set_ramp_delay(struct regulator_dev *rdev, int ramp)
- 	switch (axp20x->variant) {
- 	case AXP209_ID:
- 		if (desc->id == AXP20X_DCDC2) {
-+			slew_rates = axp209_dcdc2_ldo3_slew_rates;
- 			rate_count = ARRAY_SIZE(axp209_dcdc2_ldo3_slew_rates);
- 			reg = AXP20X_DCDC2_LDO3_V_RAMP;
- 			mask = AXP20X_DCDC2_LDO3_V_RAMP_DCDC2_RATE_MASK |
--- 
-2.11.0
-
+diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
+index 4a64739c67e7..c87cfe6b7c96 100644
+--- a/tools/perf/util/header.c
++++ b/tools/perf/util/header.c
+@@ -3583,7 +3583,7 @@ perf_event__synthesize_event_update_unit(struct perf_tool *tool,
+ 	if (ev == NULL)
+ 		return -ENOMEM;
+ 
+-	strncpy(ev->data, evsel->unit, size);
++	strlcpy(ev->data, evsel->unit, size + 1);
+ 	err = process(tool, (union perf_event *)ev, NULL, NULL);
+ 	free(ev);
+ 	return err;
