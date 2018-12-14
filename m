@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4867BC67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 01:26:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11A61C65BAE
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 01:27:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11A812075B
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 01:26:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11A812075B
+	by mail.kernel.org (Postfix) with ESMTP id D4FDE2075B
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 01:27:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4FDE2075B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729515AbeLNB0y (ORCPT
+        id S1729573AbeLNB1D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 20:26:54 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:48056 "EHLO mx1.redhat.com"
+        Thu, 13 Dec 2018 20:27:03 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:60990 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727901AbeLNB0v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 20:26:51 -0500
+        id S1729014AbeLNB1A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 20:27:00 -0500
 Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6514D4ACD6;
-        Fri, 14 Dec 2018 01:26:51 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6D259307D922;
+        Fri, 14 Dec 2018 01:27:00 +0000 (UTC)
 Received: from malachite.bss.redhat.com (dhcp-10-20-1-11.bss.redhat.com [10.20.1.11])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id DEB756012B;
-        Fri, 14 Dec 2018 01:26:49 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 45A6B6012B;
+        Fri, 14 Dec 2018 01:26:53 +0000 (UTC)
 From:   Lyude Paul <lyude@redhat.com>
 To:     dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
         intel-gfx@lists.freedesktop.org, amd-gfx@lists.freedesktop.org
@@ -41,65 +41,69 @@ Cc:     Daniel Vetter <daniel@ffwll.ch>, Dave Airlie <airlied@gmail.com>,
         Karol Herbst <karolherbst@gmail.com>,
         Ilia Mirkin <imirkin@alum.mit.edu>,
         linux-kernel@vger.kernel.org
-Subject: [WIP PATCH 08/15] drm/nouveau: Remove unnecessary VCPI checks in nv50_msto_cleanup()
-Date:   Thu, 13 Dec 2018 20:25:37 -0500
-Message-Id: <20181214012604.13746-9-lyude@redhat.com>
+Subject: [WIP PATCH 09/15] drm/nouveau: Fix potential use-after-frees for MSTCs
+Date:   Thu, 13 Dec 2018 20:25:38 -0500
+Message-Id: <20181214012604.13746-10-lyude@redhat.com>
 In-Reply-To: <20181214012604.13746-1-lyude@redhat.com>
 References: <20181214012604.13746-1-lyude@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Fri, 14 Dec 2018 01:26:51 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Fri, 14 Dec 2018 01:27:00 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is no need to look at the port's VCPI allocation before calling
-drm_dp_mst_deallocate_vcpi(), as we already have msto->disabled to let
-us avoid cleaning up an msto more then once. The DP MST core will never
-call drm_dp_mst_deallocate_vcpi() on it's own, which is presumably what
-these checks are meant to protect against.
+Now that we finally have a sane way to keep port allocations around, use
+it to fix the potential unchecked ->port accesses that nouveau makes by
+making sure we keep the mst port allocated for as long as it's
+drm_connector is accessible.
 
-More importantly though, we're about to stop clearing mstc->port in the
-next commit, which means if we could potentially hit a use-after-free
-error if we tried to check mstc->port->vcpi here. So to make life easier
-for anyone who bisects this code in the future, use msto->disabled
-instead to check whether or not we need to deallocate VCPI instead.
+Additionally, now that we've guaranteed that mstc->port is allocated for
+as long as we keep mstc around we can remove the connector registration
+checks for codepaths which release payloads, allowing us to release
+payloads on active topologies properly. These registration checks were
+only required before in order to avoid situations where mstc->port could
+technically be pointing at freed memory.
 
 Signed-off-by: Lyude Paul <lyude@redhat.com>
 ---
- drivers/gpu/drm/nouveau/dispnv50/disp.c | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+ drivers/gpu/drm/nouveau/dispnv50/disp.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
 diff --git a/drivers/gpu/drm/nouveau/dispnv50/disp.c b/drivers/gpu/drm/nouveau/dispnv50/disp.c
-index 641252208e67..0f7d72518604 100644
+index 0f7d72518604..982054bbcc8b 100644
 --- a/drivers/gpu/drm/nouveau/dispnv50/disp.c
 +++ b/drivers/gpu/drm/nouveau/dispnv50/disp.c
-@@ -704,14 +704,17 @@ nv50_msto_cleanup(struct nv50_msto *msto)
- 	struct nv50_mstc *mstc = msto->mstc;
- 	struct nv50_mstm *mstm = mstc->mstm;
- 
-+	if (!msto->disabled)
-+		return;
+@@ -964,7 +964,11 @@ static void
+ nv50_mstc_destroy(struct drm_connector *connector)
+ {
+ 	struct nv50_mstc *mstc = nv50_mstc(connector);
 +
- 	NV_ATOMIC(drm, "%s: msto cleanup\n", msto->encoder.name);
--	if (mstc->port && mstc->port->vcpi.vcpi > 0 && !nv50_msto_payload(msto))
-+
+ 	drm_connector_cleanup(&mstc->connector);
 +	if (mstc->port)
- 		drm_dp_mst_deallocate_vcpi(&mstm->mgr, mstc->port);
--	if (msto->disabled) {
--		msto->mstc = NULL;
--		msto->head = NULL;
--		msto->disabled = false;
--	}
++		drm_dp_mst_put_port_malloc(mstc->port);
 +
-+	msto->mstc = NULL;
-+	msto->head = NULL;
-+	msto->disabled = false;
+ 	kfree(mstc);
  }
  
- static void
+@@ -1012,6 +1016,7 @@ nv50_mstc_new(struct nv50_mstm *mstm, struct drm_dp_mst_port *port,
+ 	drm_object_attach_property(&mstc->connector.base, dev->mode_config.path_property, 0);
+ 	drm_object_attach_property(&mstc->connector.base, dev->mode_config.tile_property, 0);
+ 	drm_connector_set_path_property(&mstc->connector, path);
++	drm_dp_mst_get_port_malloc(port);
+ 	return 0;
+ }
+ 
+@@ -1077,6 +1082,7 @@ nv50_mstm_destroy_connector(struct drm_dp_mst_topology_mgr *mgr,
+ 	drm_fb_helper_remove_one_connector(&drm->fbcon->helper, &mstc->connector);
+ 
+ 	drm_modeset_lock(&drm->dev->mode_config.connection_mutex, NULL);
++	drm_dp_mst_put_port_malloc(mstc->port);
+ 	mstc->port = NULL;
+ 	drm_modeset_unlock(&drm->dev->mode_config.connection_mutex);
+ 
 -- 
 2.19.2
 
