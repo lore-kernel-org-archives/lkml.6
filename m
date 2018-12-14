@@ -7,43 +7,47 @@ X-Spam-Status: No, score=-11.9 required=3.0
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0538C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:58:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA7D5C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:59:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C563208CE
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:58:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 036D7208C1
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:59:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731202AbeLNU6U (ORCPT
+        id S1731121AbeLNU7J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 15:58:20 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:57045 "EHLO
+        Fri, 14 Dec 2018 15:59:09 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:60709 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730757AbeLNU6U (ORCPT
+        with ESMTP id S1730757AbeLNU7I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 15:58:20 -0500
+        Fri, 14 Dec 2018 15:59:08 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBEKwCvo1459791
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBEKwmiU1459862
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Fri, 14 Dec 2018 12:58:12 -0800
+        Fri, 14 Dec 2018 12:58:48 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBEKwCak1459788;
-        Fri, 14 Dec 2018 12:58:12 -0800
-Date:   Fri, 14 Dec 2018 12:58:12 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBEKwmaf1459859;
+        Fri, 14 Dec 2018 12:58:48 -0800
+Date:   Fri, 14 Dec 2018 12:58:48 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Andi Kleen <tipbot@zytor.com>
-Message-ID: <tip-f24bf0aedcd1ee10fba2f1d7a6139969344afbb6@git.kernel.org>
-Cc:     tglx@linutronix.de, linux-kernel@vger.kernel.org, mingo@kernel.org,
-        jolsa@kernel.org, acme@redhat.com, ak@linux.intel.com,
-        hpa@zytor.com
-Reply-To: hpa@zytor.com, ak@linux.intel.com, acme@redhat.com,
-          jolsa@kernel.org, mingo@kernel.org, linux-kernel@vger.kernel.org,
-          tglx@linutronix.de
-In-Reply-To: <20181120050635.4215-1-andi@firstfloor.org>
-References: <20181120050635.4215-1-andi@firstfloor.org>
+From:   tip-bot for Alexey Budankov <tipbot@zytor.com>
+Message-ID: <tip-c713acc7090b32ca1c157f6528d607a087e807a8@git.kernel.org>
+Cc:     ak@linux.intel.com, jolsa@redhat.com,
+        alexander.shishkin@linux.intel.com, peterz@infradead.org,
+        acme@redhat.com, hpa@zytor.com, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org, namhyung@kernel.org,
+        mingo@kernel.org, alexey.budankov@linux.intel.com
+Reply-To: tglx@linutronix.de, hpa@zytor.com, acme@redhat.com,
+          alexey.budankov@linux.intel.com, mingo@kernel.org,
+          namhyung@kernel.org, linux-kernel@vger.kernel.org,
+          ak@linux.intel.com, peterz@infradead.org,
+          alexander.shishkin@linux.intel.com, jolsa@redhat.com
+In-Reply-To: <e5d3154e-1583-83bb-9527-28ddbc6dbf9d@linux.intel.com>
+References: <e5d3154e-1583-83bb-9527-28ddbc6dbf9d@linux.intel.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf vendor events intel: Fix
- Load_Miss_Real_Latency on SKL/SKX
-Git-Commit-ID: f24bf0aedcd1ee10fba2f1d7a6139969344afbb6
+Subject: [tip:perf/core] perf record: Fix memory leak on AIO objects
+ deallocation
+Git-Commit-ID: c713acc7090b32ca1c157f6528d607a087e807a8
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -57,76 +61,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  f24bf0aedcd1ee10fba2f1d7a6139969344afbb6
-Gitweb:     https://git.kernel.org/tip/f24bf0aedcd1ee10fba2f1d7a6139969344afbb6
-Author:     Andi Kleen <ak@linux.intel.com>
-AuthorDate: Mon, 19 Nov 2018 21:06:35 -0800
+Commit-ID:  c713acc7090b32ca1c157f6528d607a087e807a8
+Gitweb:     https://git.kernel.org/tip/c713acc7090b32ca1c157f6528d607a087e807a8
+Author:     Alexey Budankov <alexey.budankov@linux.intel.com>
+AuthorDate: Wed, 5 Dec 2018 20:19:41 +0300
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Thu, 6 Dec 2018 16:43:27 -0300
 
-perf vendor events intel: Fix Load_Miss_Real_Latency on SKL/SKX
+perf record: Fix memory leak on AIO objects deallocation
 
-Fix incorrect event names for the Load_Miss_Real_Latency metric for
-Skylake and Skylake Server.
+Sending a part which was missed between v12 and v13 of the patch set
+introducing AIO trace streaming for perf record mode.
 
-Fixes https://github.com/andikleen/pmu-tools/issues/158
+The part is essential to avoid memory leakage during deallocation of AIO
+related trace data buffers.
 
-Before:
-
-  % perf stat -M Load_Miss_Real_Latency true
-  event syntax error: '..ss.pending,mem_load_retired.l1_miss_ps,mem_load_retired.fb_hit_ps}:W'
-                                    \___ parser error
-
-   Usage: perf stat [<options>] [<command>]
-
-      -M, --metrics <metric/metric group list>
-                            monitor specified metrics or metric groups (separated by ,)
-
-After:
-
-  % perf stat -M Load_Miss_Real_Latency true
-
-   Performance counter stats for 'true':
-
-             279,204      l1d_pend_miss.pending     #     14.0 Load_Miss_Real_Latency
-               4,784      mem_load_uops_retired.l1_miss
-              15,188      mem_load_uops_retired.hit_lfb
-
-         0.000899640 seconds time elapsed
-
-Signed-off-by: Andi Kleen <ak@linux.intel.com>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Link: http://lkml.kernel.org/r/20181120050635.4215-1-andi@firstfloor.org
+Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/e5d3154e-1583-83bb-9527-28ddbc6dbf9d@linux.intel.com
+[ No need to test for NULL before calling zfree() ]
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/pmu-events/arch/x86/skylake/skl-metrics.json  | 2 +-
- tools/perf/pmu-events/arch/x86/skylakex/skx-metrics.json | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ tools/perf/util/mmap.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/tools/perf/pmu-events/arch/x86/skylake/skl-metrics.json b/tools/perf/pmu-events/arch/x86/skylake/skl-metrics.json
-index 36c903faed0b..71e9737f4614 100644
---- a/tools/perf/pmu-events/arch/x86/skylake/skl-metrics.json
-+++ b/tools/perf/pmu-events/arch/x86/skylake/skl-metrics.json
-@@ -73,7 +73,7 @@
-     },
-     {
-         "BriefDescription": "Actual Average Latency for L1 data-cache miss demand loads",
--        "MetricExpr": "L1D_PEND_MISS.PENDING / ( MEM_LOAD_RETIRED.L1_MISS_PS + MEM_LOAD_RETIRED.FB_HIT_PS )",
-+        "MetricExpr": "L1D_PEND_MISS.PENDING / ( MEM_LOAD_RETIRED.L1_MISS + MEM_LOAD_RETIRED.FB_HIT )",
-         "MetricGroup": "Memory_Bound;Memory_Lat",
-         "MetricName": "Load_Miss_Real_Latency"
-     },
-diff --git a/tools/perf/pmu-events/arch/x86/skylakex/skx-metrics.json b/tools/perf/pmu-events/arch/x86/skylakex/skx-metrics.json
-index 36c903faed0b..71e9737f4614 100644
---- a/tools/perf/pmu-events/arch/x86/skylakex/skx-metrics.json
-+++ b/tools/perf/pmu-events/arch/x86/skylakex/skx-metrics.json
-@@ -73,7 +73,7 @@
-     },
-     {
-         "BriefDescription": "Actual Average Latency for L1 data-cache miss demand loads",
--        "MetricExpr": "L1D_PEND_MISS.PENDING / ( MEM_LOAD_RETIRED.L1_MISS_PS + MEM_LOAD_RETIRED.FB_HIT_PS )",
-+        "MetricExpr": "L1D_PEND_MISS.PENDING / ( MEM_LOAD_RETIRED.L1_MISS + MEM_LOAD_RETIRED.FB_HIT )",
-         "MetricGroup": "Memory_Bound;Memory_Lat",
-         "MetricName": "Load_Miss_Real_Latency"
-     },
+diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
+index ab30555d2afc..8fc39311a30d 100644
+--- a/tools/perf/util/mmap.c
++++ b/tools/perf/util/mmap.c
+@@ -207,8 +207,14 @@ static int perf_mmap__aio_mmap(struct perf_mmap *map, struct mmap_params *mp)
+ 
+ static void perf_mmap__aio_munmap(struct perf_mmap *map)
+ {
++	int i;
++
++	for (i = 0; i < map->aio.nr_cblocks; ++i)
++		zfree(&map->aio.data[i]);
+ 	if (map->aio.data)
+ 		zfree(&map->aio.data);
++	zfree(&map->aio.cblocks);
++	zfree(&map->aio.aiocb);
+ }
+ 
+ int perf_mmap__aio_push(struct perf_mmap *md, void *to, int idx,
