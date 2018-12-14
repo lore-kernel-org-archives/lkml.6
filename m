@@ -2,102 +2,101 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4557FC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 16:26:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5CFDC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 16:27:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB481206C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 16:26:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fMveJwuQ"
+	by mail.kernel.org (Postfix) with ESMTP id 5E236206C2
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 16:27:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730007AbeLNQZ7 (ORCPT
+        id S1729792AbeLNQ1i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 11:25:59 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:37792 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727795AbeLNQZ7 (ORCPT
+        Fri, 14 Dec 2018 11:27:38 -0500
+Received: from smtprelay0039.hostedemail.com ([216.40.44.39]:39646 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728731AbeLNQ1i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 11:25:59 -0500
-Received: by mail-pg1-f195.google.com with SMTP id c25so1411826pgb.4
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 08:25:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=auJ2MTk7EZKLOsUnsyjRa1m7vXiPuPt8P7ZcyYGGGBA=;
-        b=fMveJwuQs9VhWJDkjORyvxaDHiZ4BJmO0xxfE+FtU7vQLyvDImy4NX/AupGrr9ZTEF
-         m6nz0zDh46oe11DkYOrpiaLYdC0XZpFsRTA/g9E0892UfB9PFo0CxsJszfKqUpX1VK2g
-         YofevDhQdogCFEoNPcuQG9zA5uY67n8WrtK8c=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=auJ2MTk7EZKLOsUnsyjRa1m7vXiPuPt8P7ZcyYGGGBA=;
-        b=edxZrlC0f9McNtdgCyH8fmSetHMNBs2bZY/+ubL4QztwiUfLGsJ71vEd4Bwbm+lfRm
-         wq5Dfgx9txeYJgnhQGlqjGacTQIqda6W9FoFdSVFOkPGGui7evotHWJyb3yWV8bUG7um
-         yvq+vG/KckwhQaiSqrStNOV9aJN0dfWkJX5e4t7ja+LERgybNwTZ/OiEwGi3tqFriDE/
-         VWBVu+BMletiHW1jpO5rM8E45Rog2x+qYgrYBvoG3FScpfQA/SyM9fldTRNS8wp+0NlV
-         Ix48Cq0iJrOPnaXWY9HVc1LbFRo6Qs1qGNFHhfxH9xGe6R3LHcZDIrE9izD9bvCcbDHm
-         EgLQ==
-X-Gm-Message-State: AA+aEWZ9jvnEeSRNTkI8AZtixHV74oiznFf7mMQ5xjMv+IYfJ5trtXPw
-        3coV7qFV3xLItF7iaATSzLdpqw==
-X-Google-Smtp-Source: AFSGD/UX2DpXKzjtY3ZBSIIFBgFRV7STb5/B5J3Gs1kAfuJPfLUm9P3GcRhsI/pgCyD4IdQbZkqPEQ==
-X-Received: by 2002:a63:a84a:: with SMTP id i10mr3311037pgp.263.1544804758702;
-        Fri, 14 Dec 2018 08:25:58 -0800 (PST)
-Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id o8sm11180693pfa.42.2018.12.14.08.25.57
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 14 Dec 2018 08:25:57 -0800 (PST)
-Date:   Fri, 14 Dec 2018 08:25:56 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     James Morris <jmorris@namei.org>
-Cc:     linux-kernel@vger.kernel.org, Tycho Andersen <tycho@tycho.ws>
-Subject: [GIT PULL] seccomp updates for next (part2)
-Message-ID: <20181214162556.GA7944@beast>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+        Fri, 14 Dec 2018 11:27:38 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay03.hostedemail.com (Postfix) with ESMTP id 44C51837F27F;
+        Fri, 14 Dec 2018 16:27:36 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: week04_7c675ea555646
+X-Filterd-Recvd-Size: 2922
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf03.hostedemail.com (Postfix) with ESMTPA;
+        Fri, 14 Dec 2018 16:27:34 +0000 (UTC)
+Message-ID: <8ae5c67a5c4516a783579e449313d1d59fe3a47d.camel@perches.com>
+Subject: Re: [PATCH] checkpatch: add Co-Developed-by to signature tags
+From:   Joe Perches <joe@perches.com>
+To:     Himanshu Jha <himanshujha199640@gmail.com>
+Cc:     Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>,
+        apw@canonical.com, Andrew Morton <akpm@linux-foundation.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, niklas.cassel@linaro.org
+Date:   Fri, 14 Dec 2018 08:27:33 -0800
+In-Reply-To: <20181214161604.GA17456@himanshu-Vostro-3559>
+References: <1544792494-15485-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
+         <839c1d04000164e27dff9742e3efc3bcff3025b6.camel@perches.com>
+         <20181214161604.GA17456@himanshu-Vostro-3559>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.1-1build1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, 2018-12-14 at 21:46 +0530, Himanshu Jha wrote:
+> On Fri, Dec 14, 2018 at 07:52:15AM -0800, Joe Perches wrote:
+> > On Fri, 2018-12-14 at 14:01 +0100, Jorge Ramirez-Ortiz wrote:
+> > > As per Documentation/process/submitting-patches, Co-developed-by is a
+> > > valid signature.
+> > > 
+> > > This commit removes the warning.
+> > 
+> > Your commit message doesn't match your subject.
+> > 
+> > A couple variants have been documented and only
+> > one should actually be used.
+> > 
+> > $ git grep -i co-developed-by Documentation/process/
+> > Documentation/process/5.Posting.rst: - Co-developed-by: states that the patch was also created by another developer
+> > Documentation/process/submitting-patches.rst:12) When to use Acked-by:, Cc:, and Co-Developed-by:
+> > Documentation/process/submitting-patches.rst:A Co-Developed-by: states that the patch was also created by another developer
+> > 
+> > $ git log --grep="co-developed-by:" -i | \
+> >   grep -ohiP "co-developed-by:" | sort | uniq -c | sort -rn
+> >      80 Co-developed-by:
+> >      40 Co-Developed-by:
+> > 
+> > So which should it be?
+> > 
+> > btw: I prefer neither as I think Signed-off-by: is sufficient.
+> 
+> OK, but does multiple Signed-off-by: in the commits imply that
+> the patch was created by all those developers ?
+> 
+> I don't think so, perhaps this was the reason to introduce
+> Co-developed-by: tag.
 
-Hi James,
+Perhaps, but a sign-off is also a recognition that the
+patch was passed-through by individuals
 
-Please pull these seccomp fixes for -next.
+Effectively, there's no real difference.
 
-Thanks!
+"Co-developed-by:" is just another word for "Authored-by:"
+where multiple "Authorship" is the thing being notated.
 
--Kees
+Is it really important to specify things like 75% / 25%
+authorship crediting?
 
-The following changes since commit fec7b6690541b8128663a13c9586b1daf42b0a6c:
+I don't really care about attribution so the concept is
+not particularly valuable to me.
 
-  samples: add an example of seccomp user trap (2018-12-11 16:32:11 -0800)
 
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git tags/seccomp-next-part2
-
-for you to fetch changes up to 4fc96ee9085d39ceeaa7b60cd475d0a474e7062f:
-
-  seccomp, s390: fix build for syscall type change (2018-12-13 16:51:01 -0800)
-
-----------------------------------------------------------------
-seccomp fixes for sparse warnings and s390 build (Tycho)
-
-----------------------------------------------------------------
-Tycho Andersen (2):
-      seccomp: fix poor type promotion
-      seccomp, s390: fix build for syscall type change
-
- arch/s390/kernel/compat_wrapper.c | 2 +-
- kernel/seccomp.c                  | 3 +--
- 2 files changed, 2 insertions(+), 3 deletions(-)
-
--- 
-Kees Cook
