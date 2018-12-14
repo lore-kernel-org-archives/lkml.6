@@ -7,52 +7,50 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E0C7C6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:14:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B89DAC6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:14:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D068D21508
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:14:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F6E7214DE
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:14:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544789647;
-	bh=E3oorWNOlYDLc1kVSFU3vmYZjJsfQQUVHfMqG2SUYZM=;
+	s=default; t=1544789651;
+	bh=WoRxcNLYpd4Uw8htAFhMVXgsMYfr1ONTOn6jCW5Yx0g=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=S8W3sr2VK24BjzNt28ptjSWE4o7goaef5EFjMIc3aGkjZ6Rwwmx8hHGfUHM/zurUP
-	 r9W9sHJZae23Ym3MOGHOibC6dlmzHZ+DZmqD3L/HtmeBotIQSi0Y+///JCzoFngj/+
-	 SqiTrS1pz6qenfDwjNLLgL7Dd3dDxNvqF2w/8sqw=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D068D21508
+	b=Q1RjBpwgF5nQFkim/HNX2gdhqJIZN9zefRAxm+YywkyoE9Wg9cQo2bXnl7UJ8AejV
+	 US0SP0u8YOuccOUwAAleH+SGkKqF/SC3AauqRAkoQZNZo462X4aH7kEyQyDU5rb1+i
+	 a347H1cl6H56ISswWD+iOGpS7un1RfrQK7vFLlbQ=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F6E7214DE
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732007AbeLNMOG (ORCPT
+        id S1732280AbeLNMOK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:14:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33622 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:14:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33658 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730579AbeLNMOE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:14:04 -0500
+        id S1730579AbeLNMOH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:14:07 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0522C214F0;
-        Fri, 14 Dec 2018 12:14:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8D213214F1;
+        Fri, 14 Dec 2018 12:14:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789643;
-        bh=E3oorWNOlYDLc1kVSFU3vmYZjJsfQQUVHfMqG2SUYZM=;
+        s=default; t=1544789646;
+        bh=WoRxcNLYpd4Uw8htAFhMVXgsMYfr1ONTOn6jCW5Yx0g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BNWgYrhyxXvSzB/tdMQO+TxecbbuhTiunlygICh+4RUbBxE4GHBKVTr3Gv4VhBJC6
-         CDoA0KKiV1VpJy03Xg96/iCVSMjN3SYhvghZH7oVG4RawSOiUH0ZQWH8m19i5ZbRys
-         I5kYRci7rBA+zVq5NNmysRpTl35nYLcXuzH8oafA=
+        b=Qracclw+hB5QNB1GQaJ1w/wfFi8paimpAVPNV87SUOD94AKx9LbZyOLfHzIgYFL9X
+         OvWIhc7FXVUlX/fHRuW+R28Cv+TicN5bHOJzrWbWk3UlF1N3BFSUu2sVcQ1DNiBbVp
+         TOAQfI2pVeisr4VhtS6o7uV/JhnC3HSDCKpCs7X0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+1ec5c5ec949c4adaa0c4@syzkaller.appspotmail.com,
-        Martynas Pumputis <m@lambda.lt>,
-        Daniel Borkmann <daniel@iogearbox.net>,
+        stable@vger.kernel.org, Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 21/88] bpf: fix check of allowed specifiers in bpf_trace_printk
-Date:   Fri, 14 Dec 2018 12:59:55 +0100
-Message-Id: <20181214115703.888579559@linuxfoundation.org>
+Subject: [PATCH 4.4 22/88] USB: omap_udc: use devm_request_irq()
+Date:   Fri, 14 Dec 2018 12:59:56 +0100
+Message-Id: <20181214115703.977504001@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115702.151309521@linuxfoundation.org>
 References: <20181214115702.151309521@linuxfoundation.org>
@@ -71,42 +69,100 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 1efb6ee3edea57f57f9fb05dba8dcb3f7333f61f ]
+[ Upstream commit 286afdde1640d8ea8916a0f05e811441fbbf4b9d ]
 
-A format string consisting of "%p" or "%s" followed by an invalid
-specifier (e.g. "%p%\n" or "%s%") could pass the check which
-would make format_decode (lib/vsprintf.c) to warn.
+The current code fails to release the third irq on the error path
+(observed by reading the code), and we get also multiple WARNs with
+failing gadget drivers due to duplicate IRQ releases. Fix by using
+devm_request_irq().
 
-Fixes: 9c959c863f82 ("tracing: Allow BPF programs to call bpf_trace_printk()")
-Reported-by: syzbot+1ec5c5ec949c4adaa0c4@syzkaller.appspotmail.com
-Signed-off-by: Martynas Pumputis <m@lambda.lt>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Signed-off-by: Aaro Koskinen <aaro.koskinen@iki.fi>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/trace/bpf_trace.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/usb/gadget/udc/omap_udc.c | 37 +++++++++----------------------
+ 1 file changed, 10 insertions(+), 27 deletions(-)
 
-diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
-index 4228fd3682c3..3dd40c736067 100644
---- a/kernel/trace/bpf_trace.c
-+++ b/kernel/trace/bpf_trace.c
-@@ -119,11 +119,13 @@ static u64 bpf_trace_printk(u64 r1, u64 fmt_size, u64 r3, u64 r4, u64 r5)
- 			i++;
- 		} else if (fmt[i] == 'p' || fmt[i] == 's') {
- 			mod[fmt_cnt]++;
--			i++;
--			if (!isspace(fmt[i]) && !ispunct(fmt[i]) && fmt[i] != 0)
-+			/* disallow any further format extensions */
-+			if (fmt[i + 1] != 0 &&
-+			    !isspace(fmt[i + 1]) &&
-+			    !ispunct(fmt[i + 1]))
- 				return -EINVAL;
- 			fmt_cnt++;
--			if (fmt[i - 1] == 's') {
-+			if (fmt[i] == 's') {
- 				if (str_seen)
- 					/* allow only one '%s' per fmt string */
- 					return -EINVAL;
+diff --git a/drivers/usb/gadget/udc/omap_udc.c b/drivers/usb/gadget/udc/omap_udc.c
+index 9b7d39484ed3..b25eac2dcaf8 100644
+--- a/drivers/usb/gadget/udc/omap_udc.c
++++ b/drivers/usb/gadget/udc/omap_udc.c
+@@ -2886,8 +2886,8 @@ static int omap_udc_probe(struct platform_device *pdev)
+ 		udc->clr_halt = UDC_RESET_EP;
+ 
+ 	/* USB general purpose IRQ:  ep0, state changes, dma, etc */
+-	status = request_irq(pdev->resource[1].start, omap_udc_irq,
+-			0, driver_name, udc);
++	status = devm_request_irq(&pdev->dev, pdev->resource[1].start,
++				  omap_udc_irq, 0, driver_name, udc);
+ 	if (status != 0) {
+ 		ERR("can't get irq %d, err %d\n",
+ 			(int) pdev->resource[1].start, status);
+@@ -2895,20 +2895,20 @@ static int omap_udc_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	/* USB "non-iso" IRQ (PIO for all but ep0) */
+-	status = request_irq(pdev->resource[2].start, omap_udc_pio_irq,
+-			0, "omap_udc pio", udc);
++	status = devm_request_irq(&pdev->dev, pdev->resource[2].start,
++				  omap_udc_pio_irq, 0, "omap_udc pio", udc);
+ 	if (status != 0) {
+ 		ERR("can't get irq %d, err %d\n",
+ 			(int) pdev->resource[2].start, status);
+-		goto cleanup2;
++		goto cleanup1;
+ 	}
+ #ifdef	USE_ISO
+-	status = request_irq(pdev->resource[3].start, omap_udc_iso_irq,
+-			0, "omap_udc iso", udc);
++	status = devm_request_irq(&pdev->dev, pdev->resource[3].start,
++				  omap_udc_iso_irq, 0, "omap_udc iso", udc);
+ 	if (status != 0) {
+ 		ERR("can't get irq %d, err %d\n",
+ 			(int) pdev->resource[3].start, status);
+-		goto cleanup3;
++		goto cleanup1;
+ 	}
+ #endif
+ 	if (cpu_is_omap16xx() || cpu_is_omap7xx()) {
+@@ -2921,22 +2921,11 @@ static int omap_udc_probe(struct platform_device *pdev)
+ 	create_proc_file();
+ 	status = usb_add_gadget_udc_release(&pdev->dev, &udc->gadget,
+ 			omap_udc_release);
+-	if (status)
+-		goto cleanup4;
+-
+-	return 0;
++	if (!status)
++		return 0;
+ 
+-cleanup4:
+ 	remove_proc_file();
+ 
+-#ifdef	USE_ISO
+-cleanup3:
+-	free_irq(pdev->resource[2].start, udc);
+-#endif
+-
+-cleanup2:
+-	free_irq(pdev->resource[1].start, udc);
+-
+ cleanup1:
+ 	kfree(udc);
+ 	udc = NULL;
+@@ -2980,12 +2969,6 @@ static int omap_udc_remove(struct platform_device *pdev)
+ 
+ 	remove_proc_file();
+ 
+-#ifdef	USE_ISO
+-	free_irq(pdev->resource[3].start, udc);
+-#endif
+-	free_irq(pdev->resource[2].start, udc);
+-	free_irq(pdev->resource[1].start, udc);
+-
+ 	if (udc->dc_clk) {
+ 		if (udc->clk_requested)
+ 			omap_udc_enable_clock(0);
 -- 
 2.19.1
 
