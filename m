@@ -2,61 +2,52 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5075DC6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:10:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 151A2C6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:10:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16A352133F
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:10:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D0613214DE
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:10:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544789431;
-	bh=iqaYgmRMF0wZBLQDhaHrmCFen7HDfd9wWlMW4oVP9Xg=;
+	s=default; t=1544789433;
+	bh=H5Wxyz92SFTDvvKbKcK3/atOP/sXOPfLcws+6nQqJ3Y=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=AmbDpdMbxy6f2hX5CTUgTcmFplpY9C7V7hZgwulNhNLUO4JKpDKxCWrkVnVJXcV4T
-	 NFM6WLLE7SmHo291d/pLZ2HEVt5sFJAarRlizgM6LL+3wIdYtKgwor466FCTOo/AAN
-	 iQQszDRHUsigoZy2Lyre/SA+wkJ8AHo3qjOZ4XlU=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16A352133F
+	b=aCDB46JDmGKGMMv7T6wJBmIFcIlAhxeqpac2gsQMZIqBbYJswJgP8+b4oxzDoMyVI
+	 +tjdiBHmHwT0rVEcGYRiKlgA8bKE4bQTIbxfabN+7iBD9rv+iTuegLFGpTMBB6KUWC
+	 x91x9K7rB9lcUox0jChipp9JtrVSBkLke/prvLuo=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0613214DE
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731612AbeLNMK3 (ORCPT
+        id S1731616AbeLNMKc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:10:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56362 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:10:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56416 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731085AbeLNMK1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:10:27 -0500
+        id S1731610AbeLNMK3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:10:29 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 12EF72146D;
-        Fri, 14 Dec 2018 12:10:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 994502133F;
+        Fri, 14 Dec 2018 12:10:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789426;
-        bh=iqaYgmRMF0wZBLQDhaHrmCFen7HDfd9wWlMW4oVP9Xg=;
+        s=default; t=1544789429;
+        bh=H5Wxyz92SFTDvvKbKcK3/atOP/sXOPfLcws+6nQqJ3Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GSrCxZJTWVOAlLPD1Z/DE88w1Ep3XXfWOZwIWZiyQvb/z9Qn9yo0rD+wCxrPEg6nm
-         Q+xDaszFexRbNPElI/mkzm7tKSoeaktiioAOZr+VS205Rb2vS5mTJNAcjOZqeQl0YD
-         bg/lEiJzMOL6/c3DtCmDch39bMZsGlShJ8kjeIEg=
+        b=KdN2J8Wvockt4Rk0NTYUAOXOa1cMcWOJ6rU5PrqWjKQHNEnfaQ8tTwtUXblBR6A2D
+         BXfLjt/VSurqD/uetKNII+5i90HBYDgrQmU/x/GT2lKptO0NbzCjUk4QDMFZjNRrlL
+         3vgIaCm0RthoHFhpz+fXEmxiDlwey5msEaE9RblY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pan Bian <bianpan2016@163.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Junxiao Bi <junxiao.bi@oracle.com>,
-        Joseph Qi <jiangqi903@gmail.com>,
-        Changwei Ge <ge.changwei@h3c.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 78/89] ocfs2: fix potential use after free
-Date:   Fri, 14 Dec 2018 13:00:31 +0100
-Message-Id: <20181214115733.547997569@linuxfoundation.org>
+        stable@vger.kernel.org
+Subject: [PATCH 4.14 79/89] Revert "printk: Never set console_may_schedule in console_trylock()"
+Date:   Fri, 14 Dec 2018 13:00:32 +0100
+Message-Id: <20181214115733.594242985@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115729.658859279@linuxfoundation.org>
 References: <20181214115729.658859279@linuxfoundation.org>
@@ -75,45 +66,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 164f7e586739d07eb56af6f6d66acebb11f315c8 ]
+This reverts commit c9b8d580b3fb0ab65d37c372aef19a318fda3199.
 
-ocfs2_get_dentry() calls iput(inode) to drop the reference count of
-inode, and if the reference count hits 0, inode is freed.  However, in
-this function, it then reads inode->i_generation, which may result in a
-use after free bug.  Move the put operation later.
-
-Link: http://lkml.kernel.org/r/1543109237-110227-1-git-send-email-bianpan2016@163.com
-Fixes: 781f200cb7a("ocfs2: Remove masklog ML_EXPORT.")
-Signed-off-by: Pan Bian <bianpan2016@163.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Mark Fasheh <mark@fasheh.com>
-Cc: Joel Becker <jlbec@evilplan.org>
-Cc: Junxiao Bi <junxiao.bi@oracle.com>
-Cc: Joseph Qi <jiangqi903@gmail.com>
-Cc: Changwei Ge <ge.changwei@h3c.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+This is just a technical revert to make the printk fix apply cleanly,
+this patch will be re-picked in about 3 commits.
 ---
- fs/ocfs2/export.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/printk/printk.c | 22 ++++++++++++++--------
+ 1 file changed, 14 insertions(+), 8 deletions(-)
 
-diff --git a/fs/ocfs2/export.c b/fs/ocfs2/export.c
-index 9f88188060db..4bf8d5854b27 100644
---- a/fs/ocfs2/export.c
-+++ b/fs/ocfs2/export.c
-@@ -125,10 +125,10 @@ static struct dentry *ocfs2_get_dentry(struct super_block *sb,
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index a9cf2e15f6a3..7161312593dd 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -1762,12 +1762,6 @@ asmlinkage int vprintk_emit(int facility, int level,
  
- check_gen:
- 	if (handle->ih_generation != inode->i_generation) {
--		iput(inode);
- 		trace_ocfs2_get_dentry_generation((unsigned long long)blkno,
- 						  handle->ih_generation,
- 						  inode->i_generation);
-+		iput(inode);
- 		result = ERR_PTR(-ESTALE);
- 		goto bail;
+ 	/* If called from the scheduler, we can not call up(). */
+ 	if (!in_sched) {
+-		/*
+-		 * Disable preemption to avoid being preempted while holding
+-		 * console_sem which would prevent anyone from printing to
+-		 * console
+-		 */
+-		preempt_disable();
+ 		/*
+ 		 * Try to acquire and then immediately release the console
+ 		 * semaphore.  The release will print out buffers and wake up
+@@ -1775,7 +1769,6 @@ asmlinkage int vprintk_emit(int facility, int level,
+ 		 */
+ 		if (console_trylock())
+ 			console_unlock();
+-		preempt_enable();
  	}
+ 
+ 	return printed_len;
+@@ -2090,7 +2083,20 @@ int console_trylock(void)
+ 		return 0;
+ 	}
+ 	console_locked = 1;
+-	console_may_schedule = 0;
++	/*
++	 * When PREEMPT_COUNT disabled we can't reliably detect if it's
++	 * safe to schedule (e.g. calling printk while holding a spin_lock),
++	 * because preempt_disable()/preempt_enable() are just barriers there
++	 * and preempt_count() is always 0.
++	 *
++	 * RCU read sections have a separate preemption counter when
++	 * PREEMPT_RCU enabled thus we must take extra care and check
++	 * rcu_preempt_depth(), otherwise RCU read sections modify
++	 * preempt_count().
++	 */
++	console_may_schedule = !oops_in_progress &&
++			preemptible() &&
++			!rcu_preempt_depth();
+ 	return 1;
+ }
+ EXPORT_SYMBOL(console_trylock);
 -- 
 2.19.1
 
