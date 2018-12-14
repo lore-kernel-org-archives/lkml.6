@@ -2,318 +2,66 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37EA4C43612
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 21:34:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 605A4C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 21:35:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6DF93208C3
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 21:34:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 90533206DD
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 21:35:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731101AbeLNVe6 (ORCPT
+        id S1731156AbeLNVfs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 16:34:58 -0500
-Received: from mga07.intel.com ([134.134.136.100]:9088 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730878AbeLNVe5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 16:34:57 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Dec 2018 13:34:55 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,354,1539673200"; 
-   d="p7s'?scan'208";a="118924747"
-Received: from orsmsx105.amr.corp.intel.com ([10.22.225.132])
-  by orsmga001.jf.intel.com with ESMTP; 14 Dec 2018 13:34:55 -0800
-Received: from orsmsx153.amr.corp.intel.com (10.22.226.247) by
- ORSMSX105.amr.corp.intel.com (10.22.225.132) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Fri, 14 Dec 2018 13:34:54 -0800
-Received: from orsmsx101.amr.corp.intel.com ([169.254.8.175]) by
- ORSMSX153.amr.corp.intel.com ([169.254.12.130]) with mapi id 14.03.0415.000;
- Fri, 14 Dec 2018 13:34:53 -0800
-From:   "Derrick, Jonathan" <jonathan.derrick@intel.com>
-To:     "hch@lst.de" <hch@lst.de>,
-        "helgaas@kernel.org" <helgaas@kernel.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        "brouer@redhat.com" <brouer@redhat.com>,
-        "Yu, Fenghua" <fenghua.yu@intel.com>,
-        "tariqt@mellanox.com" <tariqt@mellanox.com>,
-        "toke@toke.dk" <toke@toke.dk>,
-        "konrad.wilk@oracle.com" <konrad.wilk@oracle.com>,
-        "m.szyprowski@samsung.com" <m.szyprowski@samsung.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-ia64@vger.kernel.org" <linux-ia64@vger.kernel.org>,
-        "robin.murphy@arm.com" <robin.murphy@arm.com>,
-        "ilias.apalodimas@linaro.org" <ilias.apalodimas@linaro.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "Luck, Tony" <tony.luck@intel.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "Busch, Keith" <keith.busch@intel.com>
-Subject: Re: [PATCH 14/15] vmd: use the proper dma_* APIs instead of direct
- methods calls
-Thread-Topic: [PATCH 14/15] vmd: use the proper dma_* APIs instead of direct
- methods calls
-Thread-Index: AQHUjmBQlqeNmEF7qEicnNw1RGZ9vaV/TlOAgAAEqIA=
-Date:   Fri, 14 Dec 2018 21:34:52 +0000
-Message-ID: <1544823277.19764.1.camel@intel.com>
-References: <20181207190720.18517-1-hch@lst.de>
-         <20181207190720.18517-15-hch@lst.de> <20181214211757.GF20725@google.com>
-In-Reply-To: <20181214211757.GF20725@google.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: yes
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.255.1.92]
-Content-Type: multipart/signed; micalg=sha-1;
-        protocol="application/x-pkcs7-signature"; boundary="=-9E1D7a0ir8jkFqgEIfO9"
-MIME-Version: 1.0
+        Fri, 14 Dec 2018 16:35:48 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:34194 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730854AbeLNVfs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 16:35:48 -0500
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::bf5])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 3E03414E088D1;
+        Fri, 14 Dec 2018 13:35:47 -0800 (PST)
+Date:   Fri, 14 Dec 2018 13:35:46 -0800 (PST)
+Message-Id: <20181214.133546.2181294450034085842.davem@davemloft.net>
+To:     natechancellor@gmail.com
+Cc:     isubramanian@apm.com, kchudgar@apm.com, qnguyen@apm.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drivers: net: xgene: Remove unnecessary forward
+ declarations
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20181211042030.13712-1-natechancellor@gmail.com>
+References: <20181211042030.13712-1-natechancellor@gmail.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 14 Dec 2018 13:35:47 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-9E1D7a0ir8jkFqgEIfO9
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+From: Nathan Chancellor <natechancellor@gmail.com>
+Date: Mon, 10 Dec 2018 21:20:30 -0700
 
-Looks good to me
-Thanks Christoph
+> Clang warns:
+> 
+> drivers/net/ethernet/apm/xgene/xgene_enet_main.c:33:36: warning:
+> tentative array definition assumed to have one element
+> static const struct acpi_device_id xgene_enet_acpi_match[];
+>                                    ^
+> 1 warning generated.
+> 
+> Both xgene_enet_acpi_match and xgene_enet_of_match are defined before
+> their uses at the bottom of the file so this is unnecessary. When
+> CONFIG_ACPI is disabled, ACPI_PTR becomes NULL so xgene_enet_acpi_match
+> doesn't need to be defined.
+> 
+> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 
-Acked-by: Jon Derrick <jonathan.derrick@intel.com>
-
-On Fri, 2018-12-14 at 15:17 -0600, Bjorn Helgaas wrote:
-> Conventional spelling in subject is
->=20
->   PCI: vmd: Use dma_* APIs instead of direct method calls
->=20
-> On Fri, Dec 07, 2018 at 11:07:19AM -0800, Christoph Hellwig wrote:
-> > With the bypass support for the direct mapping we might not always have
-> > methods to call, so use the proper APIs instead.  The only downside is
-> > that we will create two dma-debug entries for each mapping if
-> > CONFIG_DMA_DEBUG is enabled.
-> >=20
-> > Signed-off-by: Christoph Hellwig <hch@lst.de>
->=20
-> You cc'd the VMD maintainers already, and I have no objection to this
-> from a PCI core point of view, so:
->=20
-> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
->=20
-> > ---
-> >  drivers/pci/controller/vmd.c | 42 +++++++++++++++---------------------
-> >  1 file changed, 17 insertions(+), 25 deletions(-)
-> >=20
-> > diff --git a/drivers/pci/controller/vmd.c b/drivers/pci/controller/vmd.=
-c
-> > index 98ce79eac128..3890812cdf87 100644
-> > --- a/drivers/pci/controller/vmd.c
-> > +++ b/drivers/pci/controller/vmd.c
-> > @@ -307,39 +307,32 @@ static struct device *to_vmd_dev(struct device *d=
-ev)
-> >  	return &vmd->dev->dev;
-> >  }
-> > =20
-> > -static const struct dma_map_ops *vmd_dma_ops(struct device *dev)
-> > -{
-> > -	return get_dma_ops(to_vmd_dev(dev));
-> > -}
-> > -
-> >  static void *vmd_alloc(struct device *dev, size_t size, dma_addr_t *ad=
-dr,
-> >  		       gfp_t flag, unsigned long attrs)
-> >  {
-> > -	return vmd_dma_ops(dev)->alloc(to_vmd_dev(dev), size, addr, flag,
-> > -				       attrs);
-> > +	return dma_alloc_attrs(to_vmd_dev(dev), size, addr, flag, attrs);
-> >  }
-> > =20
-> >  static void vmd_free(struct device *dev, size_t size, void *vaddr,
-> >  		     dma_addr_t addr, unsigned long attrs)
-> >  {
-> > -	return vmd_dma_ops(dev)->free(to_vmd_dev(dev), size, vaddr, addr,
-> > -				      attrs);
-> > +	return dma_free_attrs(to_vmd_dev(dev), size, vaddr, addr, attrs);
-> >  }
-> > =20
-> >  static int vmd_mmap(struct device *dev, struct vm_area_struct *vma,
-> >  		    void *cpu_addr, dma_addr_t addr, size_t size,
-> >  		    unsigned long attrs)
-> >  {
-> > -	return vmd_dma_ops(dev)->mmap(to_vmd_dev(dev), vma, cpu_addr, addr,
-> > -				      size, attrs);
-> > +	return dma_mmap_attrs(to_vmd_dev(dev), vma, cpu_addr, addr, size,
-> > +			attrs);
-> >  }
-> > =20
-> >  static int vmd_get_sgtable(struct device *dev, struct sg_table *sgt,
-> >  			   void *cpu_addr, dma_addr_t addr, size_t size,
-> >  			   unsigned long attrs)
-> >  {
-> > -	return vmd_dma_ops(dev)->get_sgtable(to_vmd_dev(dev), sgt, cpu_addr,
-> > -					     addr, size, attrs);
-> > +	return dma_get_sgtable_attrs(to_vmd_dev(dev), sgt, cpu_addr, addr, si=
-ze,
-> > +			attrs);
-> >  }
-> > =20
-> >  static dma_addr_t vmd_map_page(struct device *dev, struct page *page,
-> > @@ -347,61 +340,60 @@ static dma_addr_t vmd_map_page(struct device *dev=
-, struct page *page,
-> >  			       enum dma_data_direction dir,
-> >  			       unsigned long attrs)
-> >  {
-> > -	return vmd_dma_ops(dev)->map_page(to_vmd_dev(dev), page, offset, size=
-,
-> > -					  dir, attrs);
-> > +	return dma_map_page_attrs(to_vmd_dev(dev), page, offset, size, dir,
-> > +			attrs);
-> >  }
-> > =20
-> >  static void vmd_unmap_page(struct device *dev, dma_addr_t addr, size_t=
- size,
-> >  			   enum dma_data_direction dir, unsigned long attrs)
-> >  {
-> > -	vmd_dma_ops(dev)->unmap_page(to_vmd_dev(dev), addr, size, dir, attrs)=
-;
-> > +	dma_unmap_page_attrs(to_vmd_dev(dev), addr, size, dir, attrs);
-> >  }
-> > =20
-> >  static int vmd_map_sg(struct device *dev, struct scatterlist *sg, int =
-nents,
-> >  		      enum dma_data_direction dir, unsigned long attrs)
-> >  {
-> > -	return vmd_dma_ops(dev)->map_sg(to_vmd_dev(dev), sg, nents, dir, attr=
-s);
-> > +	return dma_map_sg_attrs(to_vmd_dev(dev), sg, nents, dir, attrs);
-> >  }
-> > =20
-> >  static void vmd_unmap_sg(struct device *dev, struct scatterlist *sg, i=
-nt nents,
-> >  			 enum dma_data_direction dir, unsigned long attrs)
-> >  {
-> > -	vmd_dma_ops(dev)->unmap_sg(to_vmd_dev(dev), sg, nents, dir, attrs);
-> > +	dma_unmap_sg_attrs(to_vmd_dev(dev), sg, nents, dir, attrs);
-> >  }
-> > =20
-> >  static void vmd_sync_single_for_cpu(struct device *dev, dma_addr_t add=
-r,
-> >  				    size_t size, enum dma_data_direction dir)
-> >  {
-> > -	vmd_dma_ops(dev)->sync_single_for_cpu(to_vmd_dev(dev), addr, size, di=
-r);
-> > +	dma_sync_single_for_cpu(to_vmd_dev(dev), addr, size, dir);
-> >  }
-> > =20
-> >  static void vmd_sync_single_for_device(struct device *dev, dma_addr_t =
-addr,
-> >  				       size_t size, enum dma_data_direction dir)
-> >  {
-> > -	vmd_dma_ops(dev)->sync_single_for_device(to_vmd_dev(dev), addr, size,
-> > -						 dir);
-> > +	dma_sync_single_for_device(to_vmd_dev(dev), addr, size, dir);
-> >  }
-> > =20
-> >  static void vmd_sync_sg_for_cpu(struct device *dev, struct scatterlist=
- *sg,
-> >  				int nents, enum dma_data_direction dir)
-> >  {
-> > -	vmd_dma_ops(dev)->sync_sg_for_cpu(to_vmd_dev(dev), sg, nents, dir);
-> > +	dma_sync_sg_for_cpu(to_vmd_dev(dev), sg, nents, dir);
-> >  }
-> > =20
-> >  static void vmd_sync_sg_for_device(struct device *dev, struct scatterl=
-ist *sg,
-> >  				   int nents, enum dma_data_direction dir)
-> >  {
-> > -	vmd_dma_ops(dev)->sync_sg_for_device(to_vmd_dev(dev), sg, nents, dir)=
-;
-> > +	dma_sync_sg_for_device(to_vmd_dev(dev), sg, nents, dir);
-> >  }
-> > =20
-> >  static int vmd_dma_supported(struct device *dev, u64 mask)
-> >  {
-> > -	return vmd_dma_ops(dev)->dma_supported(to_vmd_dev(dev), mask);
-> > +	return dma_supported(to_vmd_dev(dev), mask);
-> >  }
-> > =20
-> >  static u64 vmd_get_required_mask(struct device *dev)
-> >  {
-> > -	return vmd_dma_ops(dev)->get_required_mask(to_vmd_dev(dev));
-> > +	return dma_get_required_mask(to_vmd_dev(dev));
-> >  }
-> > =20
-> >  static void vmd_teardown_dma_ops(struct vmd_dev *vmd)
-> > --=20
-> > 2.19.1
-> >=20
---=-9E1D7a0ir8jkFqgEIfO9
-Content-Type: application/x-pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
-
-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
-PNauajAtxgRKfqfSMb+IcL/VXiPtVZOxVq+CTZeDJkaEmn/79vg8OYxpR+YhFF+tGlKf/Zc4id1P
-AgMBAAGjggI3MIICMzAdBgNVHQ4EFgQU4oawcWXM1cPGdwGcIszDfjORVZAwHwYDVR0jBBgwFoAU
-HmkqtNwo/kcYTiELP7ysES/wmPUwZQYDVR0fBF4wXDBaoFigVoZUaHR0cDovL3d3dy5pbnRlbC5j
-b20vcmVwb3NpdG9yeS9DUkwvSW50ZWwlMjBFeHRlcm5hbCUyMEJhc2ljJTIwSXNzdWluZyUyMENB
-JTIwNEEuY3JsMIGfBggrBgEFBQcBAQSBkjCBjzBpBggrBgEFBQcwAoZdaHR0cDovL3d3dy5pbnRl
-bC5jb20vcmVwb3NpdG9yeS9jZXJ0aWZpY2F0ZXMvSW50ZWwlMjBFeHRlcm5hbCUyMEJhc2ljJTIw
-SXNzdWluZyUyMENBJTIwNEEuY3J0MCIGCCsGAQUFBzABhhZodHRwOi8vb2NzcC5pbnRlbC5jb20v
-MAsGA1UdDwQEAwIHgDA8BgkrBgEEAYI3FQcELzAtBiUrBgEEAYI3FQiGw4x1hJnlUYP9gSiFjp9T
-gpHACWeB3r05lfBDAgFkAgEJMB8GA1UdJQQYMBYGCCsGAQUFBwMEBgorBgEEAYI3CgMMMCkGCSsG
-AQQBgjcVCgQcMBowCgYIKwYBBQUHAwQwDAYKKwYBBAGCNwoDDDBRBgNVHREESjBIoCoGCisGAQQB
-gjcUAgOgHAwaam9uYXRoYW4uZGVycmlja0BpbnRlbC5jb22BGmpvbmF0aGFuLmRlcnJpY2tAaW50
-ZWwuY29tMA0GCSqGSIb3DQEBBQUAA4IBAQBxGkHe05DNpYel4b9WbbyQqD1G6y6YA6C93TjKULZi
-p8+gO1LL096ixD44+frVm3jtXMikoadRHQJmBJdzsCywNE1KgtrYF0k4zRWr7a28nyfGgQe4UHHD
-7ARyZFeGd7AKSQ1y4/LU57I2Aw2HKx9/PXavv1JXjjO2/bqTfnZDJTQmOQ0nvlO3/gvbbABxZHqz
-NtfHZsQWS7s+Elk2xGUQ0Po2pMCQoaPo9R96mm+84UP9q3OvSqMoaZwfzoUeAx2wGJYl0h3S+ABr
-CPVfCgq9qnmVCn5DyHWE3V/BRjJCoILLBLxAxnmSdH4pF6wJ6pYRLEw9qoyNhpzGUIJU/Lk1MYIC
-FzCCAhMCAQEwgZAweTELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRQwEgYDVQQHEwtTYW50YSBD
-bGFyYTEaMBgGA1UEChMRSW50ZWwgQ29ycG9yYXRpb24xKzApBgNVBAMTIkludGVsIEV4dGVybmFs
-IEJhc2ljIElzc3VpbmcgQ0EgNEECEzMAAMamAkocC+WQNPgAAAAAxqYwCQYFKw4DAhoFAKBdMBgG
-CSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTE4MTIxNDIxMzQzN1owIwYJ
-KoZIhvcNAQkEMRYEFK7zC/uHskddgHFj61MTCip8FKViMA0GCSqGSIb3DQEBAQUABIIBAJzKQJAe
-2tvDuvtNXIvTKMqBHNncZjrGPda2y86cWqiDaQj+f+bJDfmE/I2ns1X/x93TXscn7K63zEfpuZWp
-sFoZEl2grOPxeiNQ327E8NXBgUQY+JAbWCRpn3BXC3McSJlaVIihVHvBkafsrN18qHzdgSeewlbL
-3lWJtC8VFQwsZjg21OZVuibrDo+8VZijh7F0arfHfzcKyGyxCK/UHNeMooM2FK5W83AakV2EA6lz
-WNirX2RxXqQyDcpkvvHT1nP+MZf9vzerqc81YFQpR/qYuVLsyffVPJclFseCql0fixQi4y5Sbsvs
-C/NHHvl2wmD3/J1CYwaeCk0rwvRItrgAAAAAAAA=
-
-
---=-9E1D7a0ir8jkFqgEIfO9--
+Applied.
