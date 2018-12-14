@@ -7,51 +7,52 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 944D0C6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:39:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF2EFC6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:39:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A23D20892
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:39:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 95A4E20892
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:39:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544791163;
-	bh=7Sa1VPahd8a6Xp1wgb3m1D8REU58OfnfV4SUCME38iw=;
+	s=default; t=1544791170;
+	bh=K4/WqC6Q+KFiktkEw3J88qEihPuUGsOHYGqffh6iDAQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=TY09EnI9T21mRUgWcxuNAx21sOTMRRf0s7YRygR29Vevk6ZFxtVwq4dci4ul267VZ
-	 Ks4xhvUN1PMa4WWUyu/WzuvxXr9sgNs5a/w3g9DIFj6URTy4EDodq/5HL1wB17c9j0
-	 7OiVxnDaTJFBFk9X2IkgmiPmv04+tg//YyOOXhgI=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A23D20892
+	b=doJpfwHuoshx3aglReGU3scgZ8d4uFgicdI+BSQUZ8hPRHbzBWbuyOu7PDgrbAhCl
+	 cdrWpUioj2dnR5hCL2PJfvr8wdzf24TH8DZjLsGVNSDw9G1NQclYBwBNI17/SG7JjW
+	 t2i63+GgPjIjyvCfXF+4IkLJ0cW4eYtKcHSgwlTc=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95A4E20892
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730615AbeLNMjW (ORCPT
+        id S1730769AbeLNMj3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:39:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49758 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:39:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49654 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730564AbeLNME7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:04:59 -0500
+        id S1730591AbeLNMEy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:04:54 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8840F21486;
-        Fri, 14 Dec 2018 12:04:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 44BC221479;
+        Fri, 14 Dec 2018 12:04:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789099;
-        bh=7Sa1VPahd8a6Xp1wgb3m1D8REU58OfnfV4SUCME38iw=;
+        s=default; t=1544789093;
+        bh=K4/WqC6Q+KFiktkEw3J88qEihPuUGsOHYGqffh6iDAQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RRINOetlxgddW3tXFUnKiRgZzwSJ/Kve+KBHMbZt2Tj4+8sl69f5ye0pvfRnHcRTe
-         zUQ1o7DVR8WGPAywho1hiD5LuvGKQfZxqOKzyEqd/4vwWKLunfNACzgtXRKwjWqBXW
-         ysIUzXmy+f2MV6YSlCTXJ2gAkxRAjyol/CqFdL1g=
+        b=kEg75JYsWqFJWVsG3jS4+HS+S6qxLvujc3H5rHDozlVKBy/qmKVEaiDBrH668Tsba
+         qgpwFuLwJjMHDH7+dVxaPInKaqDr4h8UWIqvxwUXiEk7rU7zm4RYM+vjGVl2+t/0WX
+         N+0aLvjY1NUTsKXHkhI1Tw+P85JRccl/PPuVKQvI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Majd Dibbiny <majd@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+        stable@vger.kernel.org,
+        Christian Hewitt <christianshewitt@gmail.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Sean Paul <seanpaul@chromium.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 071/142] RDMA/mlx5: Fix fence type for IB_WR_LOCAL_INV WR
-Date:   Fri, 14 Dec 2018 12:59:16 +0100
-Message-Id: <20181214115749.903324049@linuxfoundation.org>
+Subject: [PATCH 4.19 091/142] drm/meson: add support for 1080p25 mode
+Date:   Fri, 14 Dec 2018 12:59:36 +0100
+Message-Id: <20181214115750.694289723@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115747.053633987@linuxfoundation.org>
 References: <20181214115747.053633987@linuxfoundation.org>
@@ -70,65 +71,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 074fca3a18e7e1e0d4d7dcc9d7badc43b90232f4 ]
+[ Upstream commit 31e1ab494559fb46de304cc6c2aed1528f94b298 ]
 
-Currently, for IB_WR_LOCAL_INV WR, when the next fence is None, the
-current fence will be SMALL instead of Normal Fence.
+This essential mode for PAL users is missing, so add it.
 
-Without this patch krping doesn't work on CX-5 devices and throws
-following error:
-
-The error messages are from CX5 driver are: (from server side)
-[ 710.434014] mlx5_0:dump_cqe:278:(pid 2712): dump error cqe
-[ 710.434016] 00000000 00000000 00000000 00000000
-[ 710.434016] 00000000 00000000 00000000 00000000
-[ 710.434017] 00000000 00000000 00000000 00000000
-[ 710.434018] 00000000 93003204 100000b8 000524d2
-[ 710.434019] krping: cq completion failed with wr_id 0 status 4 opcode 128 vender_err 32
-
-Fixed the logic to set the correct fence type.
-
-Fixes: 6e8484c5cf07 ("RDMA/mlx5: set UMR wqe fence according to HCA cap")
-Signed-off-by: Majd Dibbiny <majd@mellanox.com>
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Fixes: 335e3713afb87 ("drm/meson: Add support for HDMI venc modes and settings")
+Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
+Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/1542793169-13008-1-git-send-email-christianshewitt@gmail.com
+Signed-off-by: Sean Paul <seanpaul@chromium.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/hw/mlx5/qp.c | 19 ++++++++++---------
- 1 file changed, 10 insertions(+), 9 deletions(-)
+ drivers/gpu/drm/meson/meson_venc.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/infiniband/hw/mlx5/qp.c b/drivers/infiniband/hw/mlx5/qp.c
-index d53d954ac8af..183fe5c8ceb7 100644
---- a/drivers/infiniband/hw/mlx5/qp.c
-+++ b/drivers/infiniband/hw/mlx5/qp.c
-@@ -4413,17 +4413,18 @@ static int _mlx5_ib_post_send(struct ib_qp *ibqp, const struct ib_send_wr *wr,
- 			goto out;
- 		}
- 
--		if (wr->opcode == IB_WR_LOCAL_INV ||
--		    wr->opcode == IB_WR_REG_MR) {
-+		if (wr->opcode == IB_WR_REG_MR) {
- 			fence = dev->umr_fence;
- 			next_fence = MLX5_FENCE_MODE_INITIATOR_SMALL;
--		} else if (wr->send_flags & IB_SEND_FENCE) {
--			if (qp->next_fence)
--				fence = MLX5_FENCE_MODE_SMALL_AND_FENCE;
--			else
--				fence = MLX5_FENCE_MODE_FENCE;
--		} else {
--			fence = qp->next_fence;
-+		} else  {
-+			if (wr->send_flags & IB_SEND_FENCE) {
-+				if (qp->next_fence)
-+					fence = MLX5_FENCE_MODE_SMALL_AND_FENCE;
-+				else
-+					fence = MLX5_FENCE_MODE_FENCE;
-+			} else {
-+				fence = qp->next_fence;
-+			}
- 		}
- 
- 		switch (ibqp->qp_type) {
+diff --git a/drivers/gpu/drm/meson/meson_venc.c b/drivers/gpu/drm/meson/meson_venc.c
+index 14aac661f38b..7a3a6ed9f27b 100644
+--- a/drivers/gpu/drm/meson/meson_venc.c
++++ b/drivers/gpu/drm/meson/meson_venc.c
+@@ -715,6 +715,7 @@ struct meson_hdmi_venc_vic_mode {
+ 	{ 5, &meson_hdmi_encp_mode_1080i60 },
+ 	{ 20, &meson_hdmi_encp_mode_1080i50 },
+ 	{ 32, &meson_hdmi_encp_mode_1080p24 },
++	{ 33, &meson_hdmi_encp_mode_1080p50 },
+ 	{ 34, &meson_hdmi_encp_mode_1080p30 },
+ 	{ 31, &meson_hdmi_encp_mode_1080p50 },
+ 	{ 16, &meson_hdmi_encp_mode_1080p60 },
 -- 
 2.19.1
 
