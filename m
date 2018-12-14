@@ -7,50 +7,51 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E262EC6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:12:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A49D6C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:12:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C49A214E0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:12:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 61BA5214E0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:12:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544789565;
-	bh=ylrJRX0SkUAu9egZLviKtXTf8miNJfxQ1yQCzTCsyKM=;
+	s=default; t=1544789570;
+	bh=htANuAWMWOIIE8+dLp29M+hBE29xTwgc5JjF6H4jVco=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=dVy7lJb0z1QDOVX9buZyFeO7JKFdtLEJrRNPFMLs+RZGZtEn7T6dn2Xd+B1M0G3/1
-	 q3cTjgbx4CdFISnsgpS78xQUB4ZiYSL4UUV8FEFA85NX7ntNmwcQLFtlVtmwpPcVfb
-	 ZWUqdhAaguzPBOuKq2Uu1AlnOKUrBYonOtrd1iKU=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C49A214E0
+	b=iY/KG1F8lqJReNsm7Zv/GhsQrkvL1E85pRVrf61mL3zuOXW7ukxumfpjsZXnrJPFd
+	 n9FYaWuZGYK0pvzV26vFaz2yqC9EnJNpPfyGLFMt9inomFbL38RdmMuCJnhiKycG7f
+	 ugyW7T/T49UNCZRPkOuVcZzD1LqpmyEMMW4iqChk=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61BA5214E0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731993AbeLNMMo (ORCPT
+        id S1731999AbeLNMMt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:12:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59940 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:12:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60028 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731980AbeLNMMm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:12:42 -0500
+        id S1731653AbeLNMMo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:12:44 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E5D35214D9;
-        Fri, 14 Dec 2018 12:12:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BC690214DE;
+        Fri, 14 Dec 2018 12:12:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789561;
-        bh=ylrJRX0SkUAu9egZLviKtXTf8miNJfxQ1yQCzTCsyKM=;
+        s=default; t=1544789564;
+        bh=htANuAWMWOIIE8+dLp29M+hBE29xTwgc5JjF6H4jVco=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=R3TVGEQIA9d8/Lb1J7wjayiQpwWZXfLyscIOipzo63jY9wE+FKBMb2S+xKXbN7X1x
-         qvOEIqWhbLP3VGC4UNAg7tAvWj8rRSXwXp/rt52jpMAZ8lqV6/bTYeOtG8rsggv8EH
-         Gj12Soo6unhnA28uxA/28HPr43k9i/5SDG7NmUDs=
+        b=Nc1bLzINjdazVaXYSB6kLqxmLBFm1mcQZmvi9fFnBzN6+qHdqKdpcbfxYwmk/BjNx
+         GYiKX2S8agY3UfmwTgBQeNkOYSNmV+XL/bJ1iMtZBSENETiO8w+xUZLCGbfMwzrnHR
+         CPFsIfQdttGCtWgXgGETerjY+eb293kUBq+wMKnc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tzung-Bi Shih <tzungbi@google.com>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org, Yao Wang <wangyao@lemote.com>,
+        Huacai Chen <chenhc@lemote.com>,
+        Guenter Roeck <linux@roeck-us.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 19/51] ASoC: dapm: Recalculate audio map forcely when card instantiated
-Date:   Fri, 14 Dec 2018 13:00:21 +0100
-Message-Id: <20181214115715.200081429@linuxfoundation.org>
+Subject: [PATCH 4.9 20/51] hwmon: (w83795) temp4_type has writable permission
+Date:   Fri, 14 Dec 2018 13:00:22 +0100
+Message-Id: <20181214115715.287478698@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115713.244259772@linuxfoundation.org>
 References: <20181214115713.244259772@linuxfoundation.org>
@@ -69,55 +70,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 882eab6c28d23a970ae73b7eb831b169a672d456 ]
+[ Upstream commit 09aaf6813cfca4c18034fda7a43e68763f34abb1 ]
 
-Audio map are possible in wrong state before card->instantiated has
-been set to true.  Imaging the following examples:
+Both datasheet and comments of store_temp_mode() tell us that temp1~4_type
+is writable, so fix it.
 
-time 1: at the beginning
-
-  in:-1    in:-1    in:-1    in:-1
- out:-1   out:-1   out:-1   out:-1
- SIGGEN        A        B      Spk
-
-time 2: after someone called snd_soc_dapm_new_widgets()
-(e.g. create_fill_widget_route_map() in sound/soc/codecs/hdac_hdmi.c)
-
-   in:1     in:0     in:0     in:0
-  out:0    out:0    out:0    out:1
- SIGGEN        A        B      Spk
-
-time 3: routes added
-
-   in:1     in:0     in:0     in:0
-  out:0    out:0    out:0    out:1
- SIGGEN -----> A -----> B ---> Spk
-
-In the end, the path should be powered on but it did not.  At time 3,
-"in" of SIGGEN and "out" of Spk did not propagate to their neighbors
-because snd_soc_dapm_add_path() will not invalidate the paths if
-the card has not instantiated (i.e. card->instantiated is false).
-To correct the state of audio map, recalculate the whole map forcely.
-
-Signed-off-by: Tzung-Bi Shih <tzungbi@google.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Yao Wang <wangyao@lemote.com>
+Signed-off-by: Huacai Chen <chenhc@lemote.com>
+Fixes: 39deb6993e7c (" hwmon: (w83795) Simplify temperature sensor type handling")
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/soc-core.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/hwmon/w83795.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
-index 4e3de566809c..168559b5e9f3 100644
---- a/sound/soc/soc-core.c
-+++ b/sound/soc/soc-core.c
-@@ -2018,6 +2018,7 @@ static int snd_soc_instantiate_card(struct snd_soc_card *card)
- 	}
- 
- 	card->instantiated = 1;
-+	dapm_mark_endpoints_dirty(card);
- 	snd_soc_dapm_sync(&card->dapm);
- 	mutex_unlock(&card->mutex);
- 	mutex_unlock(&client_mutex);
+diff --git a/drivers/hwmon/w83795.c b/drivers/hwmon/w83795.c
+index 49276bbdac3d..1bb80f992aa8 100644
+--- a/drivers/hwmon/w83795.c
++++ b/drivers/hwmon/w83795.c
+@@ -1691,7 +1691,7 @@ store_sf_setup(struct device *dev, struct device_attribute *attr,
+  * somewhere else in the code
+  */
+ #define SENSOR_ATTR_TEMP(index) {					\
+-	SENSOR_ATTR_2(temp##index##_type, S_IRUGO | (index < 4 ? S_IWUSR : 0), \
++	SENSOR_ATTR_2(temp##index##_type, S_IRUGO | (index < 5 ? S_IWUSR : 0), \
+ 		show_temp_mode, store_temp_mode, NOT_USED, index - 1),	\
+ 	SENSOR_ATTR_2(temp##index##_input, S_IRUGO, show_temp,		\
+ 		NULL, TEMP_READ, index - 1),				\
 -- 
 2.19.1
 
