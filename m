@@ -8,55 +8,55 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32055C43444
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 18:07:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D636CC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 18:08:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 487C3206DD
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 18:07:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 01796206DD
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 18:08:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KLCeEMx4"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pi+CVtWd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730541AbeLNSHz (ORCPT
+        id S1730554AbeLNSH7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 13:07:55 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:34911 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729619AbeLNSHw (ORCPT
+        Fri, 14 Dec 2018 13:07:59 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:45231 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730525AbeLNSHx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 13:07:52 -0500
-Received: by mail-pg1-f196.google.com with SMTP id s198so3046766pgs.2
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 10:07:51 -0800 (PST)
+        Fri, 14 Dec 2018 13:07:53 -0500
+Received: by mail-pg1-f193.google.com with SMTP id y4so3018209pgc.12
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 10:07:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=1VelzQFQHdXsP+QSJ8yT6J9xItK/RkT12tes7/ZUxvw=;
-        b=KLCeEMx41sHoSMdl5L4GtfcHYZC+V5jhqNTcyy4aTV6hWgbU7ivQ5os2SczZ3I0vmb
-         2zVgHoqpW8L8ZOp0eRnAlhAxta16FIkEyh4aLjUIru+N0/DWR4o+V1qvk6tca+npaUHF
-         R6dZz82sdebDDohHrAiIBX3HJggRHHvOFSzM1Fehv6UujT1BD+h2/Xfruwm9RyQDD8ZT
-         WFJ+6oAOwYaIt6bFTh+xQGx/ed44iHkH17q79NtWMxhFYIhPc5/KAH4MOWbW8NpIx4Kq
-         ChvT7fVZeEsIoIYh/eqOODy68Fzzx7KW1266po3aVVMAL0zjGKZLhO2HWLWX/bATk5vK
-         4TsA==
+        bh=Cu/OfW+cnoBt6sWD0vpNz1lk+tLpOk7IYLf+TPCUhnk=;
+        b=Pi+CVtWdIbcksx6L8kxgcpi+M3rxFgNK/QeCUI/Lb6gnQuuh1APN+0x7uSAK/HSWTf
+         EfgNsasJujMSFkW4NYTvYyJVID6Q3zI5FKXc74vMFifI7IKRZnfCVHw2HhknVy4+4Vnn
+         dUF9Xpeqbco6SScK8JjkMvinBvR0sDZi2qYHLe7OWD+XzmTM2Hk45tdVQDniDNNpzA9R
+         rW7LMwDL5WIgrmM1qao08ev0nIeO2sBNHos1gqRDYAuUJWYKDwcL5xYlIeX1SDaxXMGb
+         zYjfrECVPywTZbkxwRnUZ0Tvbhx7dVPfuofMfTrvtN2n402iStGfD7z8ebpYIAhn/Ek7
+         vNuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=1VelzQFQHdXsP+QSJ8yT6J9xItK/RkT12tes7/ZUxvw=;
-        b=eFlgZdfBpvdM/payJQkVE1EfApoMBA2gnt+vjAfNnSrSrdv4Q0ggTs0v5AaNPpS7q+
-         uCCAsXpJgcJ3VCMLC1wyZXTQZTIkmEdUXxiDe6jwekm4MbZvjJ0vrpXV0ti7SS2n/Z6g
-         u6/dcyHxHBpLgNTZO+JljljiUC3DbQ/QVb/prjk4iHj3N/zieZNPk1/mc5u8+05qmmXq
-         pawDxwihwHUdqhKJ4nPTEPyj/Ogiyenb2w2wPEJG11Dbal4puhVJv04thk+7+PxXqgUY
-         iqUEPN8lIMKdtkdduoSjQJtH2twDmz0ZCvlvmpYvlNvDRACCgS9yhU+J2iVV1JGvtUzI
-         KvSw==
-X-Gm-Message-State: AA+aEWa07RsYZMvF3BUKYRTi1ctnMyGrcOy8usbAdgpV36OOJEHi9zri
-        DlFixFqM0wKKiewWMJlA6vs=
-X-Google-Smtp-Source: AFSGD/W4Cc7ToC4d9AgB4o14yi89umfY2xin+8Mt9nYKf05sj754YKkQvNCOnkEjeJCE4/KVRv7IiQ==
-X-Received: by 2002:a63:4456:: with SMTP id t22mr3704422pgk.0.1544810870843;
-        Fri, 14 Dec 2018 10:07:50 -0800 (PST)
+        bh=Cu/OfW+cnoBt6sWD0vpNz1lk+tLpOk7IYLf+TPCUhnk=;
+        b=R1EGsO1dkXQBl91KWSXecNFQKpWtvBeQkRApr/MtHRUx6Sjsk8FCxEZMLxOTTEAVLs
+         CCFp38g+Yj6B/E3OGLaAhNNKxpK3SJFuhDQ0jY1ANHp3azbCMJ17xHq6ATrIMu4klcQ7
+         fCT6NKgh7bPYbwB5GardA5epGrrEZmt6Bg8YW6FyWdQKigqkmFt0gDC+s4BY/Uxf6wCj
+         V6cAZYeofucXw2FAaWwHJaCK9aY/M/Y/ccdXHPxJjHDjvaJgMdUvDWMmFjDXzogETkSx
+         WixURj8o3b+Bj/5LBSzVRnKbWEbKpjQWh2vr/dgZ8JZcVW7/brXiWGj4s/l2sIT6X6az
+         DYmA==
+X-Gm-Message-State: AA+aEWbB3LReHNbElOubjocittj+ntNTdbYv5WYo+BnyEUUpqke2YKxj
+        524q+thAvfN9Kb9JqamTihI=
+X-Google-Smtp-Source: AFSGD/VD0is3Q+pAGp89nOAYixxBISYVqLojxpQohIub8YkqkUnyrB8BTcraPNhySoe4+M8XsGdobg==
+X-Received: by 2002:a62:f5da:: with SMTP id b87mr3782352pfm.253.1544810872100;
+        Fri, 14 Dec 2018 10:07:52 -0800 (PST)
 Received: from tower.thefacebook.com ([2620:10d:c090:200::5:3d97])
-        by smtp.gmail.com with ESMTPSA id r2sm7180856pgo.18.2018.12.14.10.07.49
+        by smtp.gmail.com with ESMTPSA id r2sm7180856pgo.18.2018.12.14.10.07.50
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 14 Dec 2018 10:07:50 -0800 (PST)
+        Fri, 14 Dec 2018 10:07:51 -0800 (PST)
 From:   Roman Gushchin <guroan@gmail.com>
 X-Google-Original-From: Roman Gushchin <guro@fb.com>
 To:     linux-mm@kvack.org
@@ -65,9 +65,9 @@ Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
         Michal Hocko <mhocko@suse.com>,
         Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org,
         kernel-team@fb.com, Roman Gushchin <guro@fb.com>
-Subject: [RFC 3/4] mm: allocate vmalloc metadata in one allocation
-Date:   Fri, 14 Dec 2018 10:07:19 -0800
-Message-Id: <20181214180720.32040-4-guro@fb.com>
+Subject: [RFC 4/4] mm: show number of vmalloc pages in /proc/meminfo
+Date:   Fri, 14 Dec 2018 10:07:20 -0800
+Message-Id: <20181214180720.32040-5-guro@fb.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181214180720.32040-1-guro@fb.com>
 References: <20181214180720.32040-1-guro@fb.com>
@@ -78,360 +78,107 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently any vmalloc() call leads to at least 3 metadata allocations:
-1) struct vm_struct
-2) struct vm_area
-3) struct vm_struct->pages array
+Vmalloc() is getting more and more used these days (kernel stacks,
+bpf and percpu allocator are new top users), and the total %
+of memory consumed by vmalloc() can be pretty significant
+and changes dynamically.
 
-Especially for small allocations (e.g. 4 pages for kernel stacks,
-which seems to be one of the main vmalloc() usages these days),
-it creates some measurable overhead.
+/proc/meminfo is the best place to display this information:
+its top goal is to show top consumers of the memory.
 
-vm_struct->pages array has almost the same lifetime as vm_struct,
-and vm_area has a similar, but is freed lazily. So, it's perfectly
-possible to squeeze all 3 allocations into one:
-  [ struct vm_struct | struct vm_area | pages array ]
-
-This also slightly simplifies freeing and error handling paths
-(e.g. fewer ENOMEM handling points).
-
-On my setup it saves up to 4% cpu on allocation of 1000000 4-pages
-areas.
+Since the VmallocUsed field in /proc/meminfo is not in use
+for quite a long time (it has been defined to 0 by the
+commit a5ad88ce8c7f ("mm: get rid of 'vmalloc_info' from
+/proc/meminfo")), let's reuse it for showing the actual
+physical memory consumption of vmalloc().
 
 Signed-off-by: Roman Gushchin <guro@fb.com>
 Acked-by: Johannes Weiner <hannes@cmpxchg.org>
 ---
- arch/mips/mm/ioremap.c      |   7 +--
- arch/nios2/mm/ioremap.c     |   4 +-
- arch/sh/kernel/cpu/sh4/sq.c |   5 +-
- arch/sh/mm/ioremap.c        |   8 +--
- arch/x86/mm/ioremap.c       |   4 +-
- include/linux/vmalloc.h     |   3 +-
- mm/vmalloc.c                | 113 +++++++++++++++++++++---------------
- 7 files changed, 72 insertions(+), 72 deletions(-)
+ fs/proc/meminfo.c       |  2 +-
+ include/linux/vmalloc.h |  3 +++
+ mm/vmalloc.c            | 10 ++++++++++
+ 3 files changed, 14 insertions(+), 1 deletion(-)
 
-diff --git a/arch/mips/mm/ioremap.c b/arch/mips/mm/ioremap.c
-index 1601d90b087b..22fa47217a52 100644
---- a/arch/mips/mm/ioremap.c
-+++ b/arch/mips/mm/ioremap.c
-@@ -190,16 +190,11 @@ void __iomem * __ioremap(phys_addr_t phys_addr, phys_addr_t size, unsigned long
- 
- void __iounmap(const volatile void __iomem *addr)
- {
--	struct vm_struct *p;
--
- 	if (IS_KSEG1(addr))
- 		return;
- 
--	p = remove_vm_area((void *) (PAGE_MASK & (unsigned long __force) addr));
--	if (!p)
-+	if (remove_vm_area((void *) (PAGE_MASK & (unsigned long __force) addr)))
- 		printk(KERN_ERR "iounmap: bad address %p\n", addr);
--
--	kfree(p);
- }
- 
- EXPORT_SYMBOL(__ioremap);
-diff --git a/arch/nios2/mm/ioremap.c b/arch/nios2/mm/ioremap.c
-index 3a28177a01eb..0098494940ae 100644
---- a/arch/nios2/mm/ioremap.c
-+++ b/arch/nios2/mm/ioremap.c
-@@ -179,9 +179,7 @@ void __iounmap(void __iomem *addr)
- 	if ((unsigned long) addr > CONFIG_NIOS2_IO_REGION_BASE)
- 		return;
- 
--	p = remove_vm_area((void *) (PAGE_MASK & (unsigned long __force) addr));
--	if (!p)
-+	if (remove_vm_area((void *) (PAGE_MASK & (unsigned long __force) addr)))
- 		pr_err("iounmap: bad address %p\n", addr);
--	kfree(p);
- }
- EXPORT_SYMBOL(__iounmap);
-diff --git a/arch/sh/kernel/cpu/sh4/sq.c b/arch/sh/kernel/cpu/sh4/sq.c
-index 4ca78ed71ad2..50be8449a52d 100644
---- a/arch/sh/kernel/cpu/sh4/sq.c
-+++ b/arch/sh/kernel/cpu/sh4/sq.c
-@@ -229,10 +229,7 @@ void sq_unmap(unsigned long vaddr)
- 		/*
- 		 * Tear down the VMA in the MMU case.
- 		 */
--		struct vm_struct *vma;
--
--		vma = remove_vm_area((void *)(map->sq_addr & PAGE_MASK));
--		if (!vma) {
-+		if (remove_vm_area((void *)(map->sq_addr & PAGE_MASK))) {
- 			printk(KERN_ERR "%s: bad address 0x%08lx\n",
- 			       __func__, map->sq_addr);
- 			return;
-diff --git a/arch/sh/mm/ioremap.c b/arch/sh/mm/ioremap.c
-index d09ddfe58fd8..160853473afc 100644
---- a/arch/sh/mm/ioremap.c
-+++ b/arch/sh/mm/ioremap.c
-@@ -106,7 +106,6 @@ static inline int iomapping_nontranslatable(unsigned long offset)
- void __iounmap(void __iomem *addr)
- {
- 	unsigned long vaddr = (unsigned long __force)addr;
--	struct vm_struct *p;
- 
- 	/*
- 	 * Nothing to do if there is no translatable mapping.
-@@ -126,12 +125,7 @@ void __iounmap(void __iomem *addr)
- 	if (pmb_unmap(addr) == 0)
- 		return;
- 
--	p = remove_vm_area((void *)(vaddr & PAGE_MASK));
--	if (!p) {
-+	if (remove_vm_area((void *)(vaddr & PAGE_MASK)))
- 		printk(KERN_ERR "%s: bad address %p\n", __func__, addr);
--		return;
--	}
--
--	kfree(p);
- }
- EXPORT_SYMBOL(__iounmap);
-diff --git a/arch/x86/mm/ioremap.c b/arch/x86/mm/ioremap.c
-index 5378d10f1d31..6fb570b8874a 100644
---- a/arch/x86/mm/ioremap.c
-+++ b/arch/x86/mm/ioremap.c
-@@ -433,9 +433,7 @@ void iounmap(volatile void __iomem *addr)
- 	free_memtype(p->phys_addr, p->phys_addr + get_vm_area_size(p));
- 
- 	/* Finally remove it */
--	o = remove_vm_area((void __force *)addr);
--	BUG_ON(p != o || o == NULL);
--	kfree(p);
-+	BUG_ON(remove_vm_area((void __force *)addr));
- }
- EXPORT_SYMBOL(iounmap);
+diff --git a/fs/proc/meminfo.c b/fs/proc/meminfo.c
+index 568d90e17c17..465ea0153b2a 100644
+--- a/fs/proc/meminfo.c
++++ b/fs/proc/meminfo.c
+@@ -120,7 +120,7 @@ static int meminfo_proc_show(struct seq_file *m, void *v)
+ 	show_val_kb(m, "Committed_AS:   ", committed);
+ 	seq_printf(m, "VmallocTotal:   %8lu kB\n",
+ 		   (unsigned long)VMALLOC_TOTAL >> 10);
+-	show_val_kb(m, "VmallocUsed:    ", 0ul);
++	show_val_kb(m, "VmallocUsed:    ", vmalloc_nr_pages());
+ 	show_val_kb(m, "VmallocChunk:   ", 0ul);
+ 	show_val_kb(m, "Percpu:         ", pcpu_nr_pages());
  
 diff --git a/include/linux/vmalloc.h b/include/linux/vmalloc.h
-index 398e9c95cd61..1205f7a03b48 100644
+index 1205f7a03b48..ea3a0fb3a60f 100644
 --- a/include/linux/vmalloc.h
 +++ b/include/linux/vmalloc.h
-@@ -21,6 +21,7 @@ struct notifier_block;		/* in notifier.h */
- #define VM_UNINITIALIZED	0x00000020	/* vm_struct is not fully initialized */
- #define VM_NO_GUARD		0x00000040      /* don't add guard page */
- #define VM_KASAN		0x00000080      /* has allocated kasan shadow memory */
-+#define VM_EXT_PAGES		0x00000100	/* pages array is not embedded */
- /* bits [20..32] reserved for arch specific ioremap internals */
+@@ -64,10 +64,12 @@ extern void vm_unmap_aliases(void);
  
- /*
-@@ -132,7 +133,7 @@ extern struct vm_struct *__get_vm_area_caller(unsigned long size,
- 					unsigned long flags,
- 					unsigned long start, unsigned long end,
- 					const void *caller);
--extern struct vm_struct *remove_vm_area(const void *addr);
-+extern int remove_vm_area(const void *addr);
- extern struct vm_struct *find_vm_area(const void *addr);
+ #ifdef CONFIG_MMU
+ extern void __init vmalloc_init(void);
++extern unsigned long vmalloc_nr_pages(void);
+ #else
+ static inline void vmalloc_init(void)
+ {
+ }
++static inline unsigned long vmalloc_nr_pages(void) { return 0; }
+ #endif
  
- extern int map_vm_area(struct vm_struct *area, pgprot_t prot,
+ extern void *vmalloc(unsigned long size);
+@@ -83,6 +85,7 @@ extern void *__vmalloc_node_range(unsigned long size, unsigned long align,
+ 			unsigned long start, unsigned long end, gfp_t gfp_mask,
+ 			pgprot_t prot, unsigned long vm_flags, int node,
+ 			const void *caller);
++
+ #ifndef CONFIG_MMU
+ extern void *__vmalloc_node_flags(unsigned long size, int node, gfp_t flags);
+ static inline void *__vmalloc_node_flags_caller(unsigned long size, int node,
 diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index 24c8ab28254d..edd76953c23c 100644
+index edd76953c23c..39db12fe8931 100644
 --- a/mm/vmalloc.c
 +++ b/mm/vmalloc.c
-@@ -1388,12 +1388,20 @@ static void clear_vm_uninitialized_flag(struct vm_struct *vm)
- 	vm->flags &= ~VM_UNINITIALIZED;
- }
+@@ -340,6 +340,13 @@ static unsigned long cached_align;
  
-+static void *__vmalloc_node(unsigned long size, unsigned long align,
-+			    gfp_t gfp_mask, pgprot_t prot,
-+			    int node, const void *caller);
+ static unsigned long vmap_area_pcpu_hole;
+ 
++atomic_long_t nr_vmalloc_pages;
 +
- static struct vm_struct *__get_vm_area_node(unsigned long size,
- 		unsigned long align, unsigned long flags, unsigned long start,
- 		unsigned long end, int node, gfp_t gfp_mask, const void *caller)
++unsigned long vmalloc_nr_pages(void)
++{
++	return atomic_long_read(&nr_vmalloc_pages);
++}
++
+ static struct vmap_area *__find_vmap_area(unsigned long addr)
  {
- 	struct vmap_area *va;
- 	struct vm_struct *area;
-+	size_t area_size = sizeof(struct vmap_area) + sizeof(struct vm_struct);
-+	unsigned long nr_pages = 0;
-+	unsigned long pages_size;
-+	struct page **pages = NULL;
- 
- 	BUG_ON(in_interrupt());
- 	size = PAGE_ALIGN(size);
-@@ -1404,19 +1412,57 @@ static struct vm_struct *__get_vm_area_node(unsigned long size,
- 		align = 1ul << clamp_t(int, get_count_order_long(size),
- 				       PAGE_SHIFT, IOREMAP_MAX_ORDER);
- 
--	area = kzalloc_node(sizeof(*area), gfp_mask & GFP_RECLAIM_MASK, node);
--	if (unlikely(!area))
-+	if (flags & VM_UNINITIALIZED) {
-+		nr_pages = size >> PAGE_SHIFT;
-+		pages_size = nr_pages * sizeof(struct page *);
-+
-+		if (area_size + pages_size <= PAGE_SIZE) {
-+			/* area->pages array can be embedded */
-+			area_size += nr_pages * sizeof(struct page *);
-+		} else {
-+			/* area->pages array has to be allocated externally */
-+			const gfp_t nested_gfp = (gfp_mask & GFP_RECLAIM_MASK) |
-+				__GFP_ZERO;
-+			const gfp_t highmem_mask =
-+				(gfp_mask & (GFP_DMA | GFP_DMA32)) ?
-+				0 : __GFP_HIGHMEM;
-+
-+			flags |= VM_EXT_PAGES;
-+			pages = __vmalloc_node(pages_size, 1,
-+					       nested_gfp | highmem_mask,
-+					       PAGE_KERNEL, node, caller);
-+			if (!pages)
-+				return NULL;
-+		}
-+	}
-+
-+	/*
-+	 * We allocate va, area and optionally area->pages at once.
-+	 */
-+	va = kzalloc_node(area_size, gfp_mask & GFP_RECLAIM_MASK, node);
-+	if (unlikely(!va)) {
-+		vfree(pages);
- 		return NULL;
-+	}
- 
- 	if (!(flags & VM_NO_GUARD))
- 		size += PAGE_SIZE;
- 
--	va = alloc_vmap_area(size, align, start, end, node, gfp_mask);
--	if (IS_ERR(va)) {
--		kfree(area);
-+	if (init_vmap_area(va, size, align, start, end, node, gfp_mask)) {
-+		vfree(pages);
-+		kfree(va);
- 		return NULL;
- 	}
- 
-+	area = (struct vm_struct *)(va + 1);
-+	if (flags & VM_UNINITIALIZED) {
-+		area->nr_pages = nr_pages;
-+		if (flags & VM_EXT_PAGES)
-+			area->pages = pages;
-+		else
-+			area->pages = (struct page **)(area + 1);
-+	}
-+
- 	setup_vmalloc_vm(area, va, flags, caller);
- 
- 	return area;
-@@ -1480,7 +1526,7 @@ struct vm_struct *find_vm_area(const void *addr)
- 	return NULL;
- }
- 
--static struct vm_struct *__remove_vm_area(struct vmap_area *va)
-+static void __remove_vm_area(struct vmap_area *va)
- {
- 	struct vm_struct *vm = va->vm;
- 
-@@ -1494,8 +1540,6 @@ static struct vm_struct *__remove_vm_area(struct vmap_area *va)
- 
- 	kasan_free_shadow(vm);
- 	free_unmap_vmap_area(va);
--
--	return vm;
- }
- 
- /**
-@@ -1503,19 +1547,18 @@ static struct vm_struct *__remove_vm_area(struct vmap_area *va)
-  *	@addr:		base address
-  *
-  *	Search for the kernel VM area starting at @addr, and remove it.
-- *	This function returns the found VM area, but using it is NOT safe
-- *	on SMP machines, except for its size or flags.
-  */
--struct vm_struct *remove_vm_area(const void *addr)
-+int remove_vm_area(const void *addr)
- {
--	struct vm_struct *vm = NULL;
- 	struct vmap_area *va;
- 
- 	va = find_vmap_area((unsigned long)addr);
--	if (va && va->flags & VM_VM_AREA)
--		vm = __remove_vm_area(va);
-+	if (va && va->flags & VM_VM_AREA) {
-+		__remove_vm_area(va);
-+		return 0;
-+	}
- 
--	return vm;
-+	return -EFAULT;
- }
- 
- static void __vunmap(const void *addr, int deallocate_pages)
-@@ -1552,10 +1595,11 @@ static void __vunmap(const void *addr, int deallocate_pages)
+ 	struct rb_node *n = vmap_area_root.rb_node;
+@@ -1594,6 +1601,7 @@ static void __vunmap(const void *addr, int deallocate_pages)
+ 			BUG_ON(!page);
  			__free_pages(page, 0);
  		}
++		atomic_long_sub(area->nr_pages, &nr_vmalloc_pages);
  
--		kvfree(area->pages);
-+		if (area->flags & VM_EXT_PAGES)
-+			kvfree(area->pages);
- 	}
- 
--	kfree(area);
-+	WARN_ON(area != (struct vm_struct *)(va + 1));
- }
- 
- static inline void __vfree_deferred(const void *addr)
-@@ -1676,37 +1720,13 @@ void *vmap(struct page **pages, unsigned int count,
- }
- EXPORT_SYMBOL(vmap);
- 
--static void *__vmalloc_node(unsigned long size, unsigned long align,
--			    gfp_t gfp_mask, pgprot_t prot,
--			    int node, const void *caller);
- static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
- 				 pgprot_t prot, int node)
- {
--	struct page **pages;
--	unsigned int nr_pages, array_size, i;
--	const gfp_t nested_gfp = (gfp_mask & GFP_RECLAIM_MASK) | __GFP_ZERO;
- 	const gfp_t alloc_mask = gfp_mask | __GFP_NOWARN;
- 	const gfp_t highmem_mask = (gfp_mask & (GFP_DMA | GFP_DMA32)) ?
--					0 :
--					__GFP_HIGHMEM;
--
--	nr_pages = get_vm_area_size(area) >> PAGE_SHIFT;
--	array_size = (nr_pages * sizeof(struct page *));
--
--	area->nr_pages = nr_pages;
--	/* Please note that the recursion is strictly bounded. */
--	if (array_size > PAGE_SIZE) {
--		pages = __vmalloc_node(array_size, 1, nested_gfp|highmem_mask,
--				PAGE_KERNEL, node, area->caller);
--	} else {
--		pages = kmalloc_node(array_size, nested_gfp, node);
--	}
--	area->pages = pages;
--	if (!area->pages) {
--		remove_vm_area(area->addr);
--		kfree(area);
--		return NULL;
--	}
-+		0 : __GFP_HIGHMEM;
-+	unsigned int i;
- 
- 	for (i = 0; i < area->nr_pages; i++) {
- 		struct page *page;
-@@ -1726,7 +1746,7 @@ static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
+ 		if (area->flags & VM_EXT_PAGES)
+ 			kvfree(area->pages);
+@@ -1739,12 +1747,14 @@ static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
+ 		if (unlikely(!page)) {
+ 			/* Successfully allocated i pages, free them in __vunmap() */
+ 			area->nr_pages = i;
++			atomic_long_add(area->nr_pages, &nr_vmalloc_pages);
+ 			goto fail;
+ 		}
+ 		area->pages[i] = page;
+ 		if (gfpflags_allow_blocking(gfp_mask|highmem_mask))
  			cond_resched();
  	}
++	atomic_long_add(area->nr_pages, &nr_vmalloc_pages);
  
--	if (map_vm_area(area, prot, pages))
-+	if (map_vm_area(area, prot, area->pages))
+ 	if (map_vm_area(area, prot, area->pages))
  		goto fail;
- 	return area->addr;
- 
-@@ -2377,10 +2397,7 @@ EXPORT_SYMBOL_GPL(alloc_vm_area);
- 
- void free_vm_area(struct vm_struct *area)
- {
--	struct vm_struct *ret;
--	ret = remove_vm_area(area->addr);
--	BUG_ON(ret != area);
--	kfree(area);
-+	BUG_ON(remove_vm_area(area->addr));
- }
- EXPORT_SYMBOL_GPL(free_vm_area);
- 
 -- 
 2.19.2
 
