@@ -3,86 +3,93 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99400C67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 10:37:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E551C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 10:38:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6181F20879
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 10:37:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6181F20879
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id 0612620879
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 10:38:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0612620879
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729607AbeLNKhu (ORCPT
+        id S1729635AbeLNKiA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 05:37:50 -0500
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:38770 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726344AbeLNKht (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 05:37:49 -0500
-Received: by mail-vs1-f68.google.com with SMTP id x64so3082732vsa.5;
-        Fri, 14 Dec 2018 02:37:49 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ENn4Za+creVJyn2I1BgReQ+tzZBxG6cSghe70QpF7Ts=;
-        b=oDS0d6Mw3GHVS/BnmwjwhC4zALbefG01p2iQ7dTy3avBlD7b18dCd9FGw6e4Qog8Zr
-         GFMNw7J+Vl+pScANnNVnj4i3cnOUi5sU9ClIiXpJy9e2PAGSenvIvXWpIj+122iw8QhH
-         IjtB2mbLTdpemy6o1tZqvXJePfQ5YDIR7ZsdOZlWreeSH5y6CWISnpXEFzM9DmRZZcNr
-         sf2Svz+brV0q5h6jBGjJ65g3ndxskjpax7d6O9njeI4f5XZipuoSfH+OaQuKUAydnzJf
-         3OvR48oXObZ7AkvX5DIsjlh/+N0zqS203YIBcSkp4coZbsQNHQPr0RorZIzkL5zMfiVt
-         nPvw==
-X-Gm-Message-State: AA+aEWbuKpmlkDPJZfN61bhbTtjctNB7y38qPupAWh7mKL2ee97UlEYp
-        BLtvTO0j+RAdwIcfqj4TjROwUbyDbubuNevJ/PI=
-X-Google-Smtp-Source: AFSGD/UETcpoIn2Qj04r9RGe1PD5AcnOPWcRLhohFFfd5/ItsHsw085ahcz/5TnsMVlZpazlzj/Qg4UHqN+mACSoR/0=
-X-Received: by 2002:a67:f43:: with SMTP id 64mr1043181vsp.166.1544783868584;
- Fri, 14 Dec 2018 02:37:48 -0800 (PST)
+        Fri, 14 Dec 2018 05:38:00 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:46617 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726344AbeLNKiA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 05:38:00 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 43GRpF4STsz9v0tP;
+        Fri, 14 Dec 2018 11:37:57 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id 66xo2yDZCMVl; Fri, 14 Dec 2018 11:37:57 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 43GRpF3TgPz9v0t1;
+        Fri, 14 Dec 2018 11:37:57 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 9EE778B8B0;
+        Fri, 14 Dec 2018 11:37:58 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id ReCGMNRBk1YG; Fri, 14 Dec 2018 11:37:58 +0100 (CET)
+Received: from PO15451 (po15451.idsi0.si.c-s.fr [172.25.231.2])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 6C0228B8AF;
+        Fri, 14 Dec 2018 11:37:58 +0100 (CET)
+Subject: Re: [PATCH] powerpc/prom: fix early DEBUG messages
+To:     Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+References: <531e7e818b5c4867148412c7902a9cbeee5745ee.1544709040.git.christophe.leroy@c-s.fr>
+ <87pnu4vd94.fsf@concordia.ellerman.id.au>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Message-ID: <0cde4fdd-9d16-732f-ebf8-b06127929e63@c-s.fr>
+Date:   Fri, 14 Dec 2018 11:37:58 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-References: <1544732547-7094-1-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1544732547-7094-1-git-send-email-fabrizio.castro@bp.renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 14 Dec 2018 11:37:36 +0100
-Message-ID: <CAMuHMdW3_MAFbue0T2sosKQ_YbsLWsw8PXhqc6dbiuo52eyBUw@mail.gmail.com>
-Subject: Re: [PATCH] mmc: renesas_sdhi_internal_dmac: Whitelist r8a774c0
-To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linux MMC List <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <87pnu4vd94.fsf@concordia.ellerman.id.au>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 13, 2018 at 9:22 PM Fabrizio Castro
-<fabrizio.castro@bp.renesas.com> wrote:
-> From: Biju Das <biju.das@bp.renesas.com>
->
-> We need r8a774c0 to be whitelisted for SDHI to work on the RZ/G2E,
-> but we don't care about the revision of the SoC, so just whitelist
-> the generic part number.
->
-> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Gr{oetje,eeting}s,
+Le 14/12/2018 à 07:22, Michael Ellerman a écrit :
+> Christophe Leroy <christophe.leroy@c-s.fr> writes:
+> 
+>> diff --git a/arch/powerpc/kernel/prom.c b/arch/powerpc/kernel/prom.c
+>> index fe758cedb93f..d8e56e03c9c6 100644
+>> --- a/arch/powerpc/kernel/prom.c
+>> +++ b/arch/powerpc/kernel/prom.c
+>> @@ -749,7 +749,11 @@ void __init early_init_devtree(void *params)
+>>   	memblock_allow_resize();
+>>   	memblock_dump_all();
+>>   
+>> +#ifdef CONFIG_PHYS_64BIT
+>>   	DBG("Phys. mem: %llx\n", memblock_phys_mem_size());
+>> +#else
+>> +	DBG("Phys. mem: %x\n", memblock_phys_mem_size());
+>> +#endif
+> 
+> Can we just do:
+> 
+>    	DBG("Phys. mem: %llx\n", (unsigned long long)memblock_phys_mem_size());
+> 
+> ?
+> 
 
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Yes that's obviously better, especially as we don't fix the length of 
+the displayed value.
+Christophe
