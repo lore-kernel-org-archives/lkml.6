@@ -7,50 +7,50 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D58EC67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:22:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A486BC67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:22:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8A9C20892
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:22:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6100F20879
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:22:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544790136;
-	bh=SKY9M4NoCHPG2FHn4/esDtedDSh9+Q/wF3msCt+0yyc=;
+	s=default; t=1544790143;
+	bh=1WRiQa++7Mn1w5ae1EeV+gv1Mnnl3P6+Rw28IUGlZ5M=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=lm9D+ElKj0vHBr4tl/fTrlcYolx31hDm9uD2/gEfcP91zJeVXYcPjjCqDPx20ac9t
-	 T6IAHFS67ivmlDwQiY+Y0XPHjM0Nv4aOE9KxLvmTN+avrJXN92qL/i4fY2yfnthAKa
-	 4y0t1LHIEvKEGAiDTVT+/BYojTzHRLqhsd8Tolwc=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8A9C20892
+	b=1NLsHGmAfLk8+Zmo6wpiPvdBfZhUmB2x/vURqVNmHDScHpxdxth81J67JWpMG2KHR
+	 Khw4PJENCADXz26xEA56o/jmrb4+vA7bwraRtvUxAaixMMFA1SDu0pYSx1LQgdyp0Q
+	 TaAdiV67flpUsiRE5ARwNPAANT0XUcqf1Dvq1K+A=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6100F20879
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732317AbeLNMOU (ORCPT
+        id S1732043AbeLNMWW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:14:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33892 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:22:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33834 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731429AbeLNMOR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:14:17 -0500
+        id S1732295AbeLNMOO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:14:14 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D2C6F214DE;
-        Fri, 14 Dec 2018 12:14:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 649592151B;
+        Fri, 14 Dec 2018 12:14:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789656;
-        bh=SKY9M4NoCHPG2FHn4/esDtedDSh9+Q/wF3msCt+0yyc=;
+        s=default; t=1544789653;
+        bh=1WRiQa++7Mn1w5ae1EeV+gv1Mnnl3P6+Rw28IUGlZ5M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=w5trrtRpHMc90wtFk3k1PM2Qx0VXcoo9SmvehBHKg67H7IWXGKwRY4ZThX8DKdSmk
-         hXrwjdedWyGSLgikOyfyzM22vsKrUL+lpEEN18LfJcwDlGoi4RAX7onSFThL0hUsQ8
-         02kL3cVCo6hBU2Y5y4sQyMv+FMrDX186IPulC3YI=
+        b=z1jmb2Jb71JCPOUWxqwxMvD7aAlKiw2OBHwDfPHbyECnhMVG+AKzFs9dceIv9q9MT
+         OOtgDd5TEd6Na7oS6WjUn/ntH5L9VCrPDIMHQjMEQjY1zvdON49QS/MV+jCzv25Fgy
+         NEEUlr00h6byUGh3ygmKNSOSnggSuBtmzA18wwoQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yi Wang <wang.yi59@zte.com.cn>,
-        Paolo Bonzini <pbonzini@redhat.com>,
+        stable@vger.kernel.org, Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 26/88] KVM: x86: fix empty-body warnings
-Date:   Fri, 14 Dec 2018 13:00:00 +0100
-Message-Id: <20181214115704.251085182@linuxfoundation.org>
+Subject: [PATCH 4.4 25/88] USB: omap_udc: fix USB gadget functionality on Palm Tungsten E
+Date:   Fri, 14 Dec 2018 12:59:59 +0100
+Message-Id: <20181214115704.183262004@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115702.151309521@linuxfoundation.org>
 References: <20181214115702.151309521@linuxfoundation.org>
@@ -69,38 +69,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 354cb410d87314e2eda344feea84809e4261570a ]
+[ Upstream commit 2c2322fbcab8102b8cadc09d66714700a2da42c2 ]
 
-We get the following warnings about empty statements when building
-with 'W=1':
+On Palm TE nothing happens when you try to use gadget drivers and plug
+the USB cable. Fix by adding the board to the vbus sense quirk list.
 
-arch/x86/kvm/lapic.c:632:53: warning: suggest braces around empty body in an ‘if’ statement [-Wempty-body]
-arch/x86/kvm/lapic.c:1907:42: warning: suggest braces around empty body in an ‘if’ statement [-Wempty-body]
-arch/x86/kvm/lapic.c:1936:65: warning: suggest braces around empty body in an ‘if’ statement [-Wempty-body]
-arch/x86/kvm/lapic.c:1975:44: warning: suggest braces around empty body in an ‘if’ statement [-Wempty-body]
-
-Rework the debug helper macro to get rid of these warnings.
-
-Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Aaro Koskinen <aaro.koskinen@iki.fi>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kvm/lapic.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/gadget/udc/omap_udc.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
-index a1afd80a68aa..3c70f6c76d3a 100644
---- a/arch/x86/kvm/lapic.c
-+++ b/arch/x86/kvm/lapic.c
-@@ -56,7 +56,7 @@
- #define APIC_BUS_CYCLE_NS 1
- 
- /* #define apic_debug(fmt,arg...) printk(KERN_WARNING fmt,##arg) */
--#define apic_debug(fmt, arg...)
-+#define apic_debug(fmt, arg...) do {} while (0)
- 
- #define APIC_LVT_NUM			6
- /* 14 is the version for Xeon and Pentium 8.4.8*/
+diff --git a/drivers/usb/gadget/udc/omap_udc.c b/drivers/usb/gadget/udc/omap_udc.c
+index 653963459d78..d1ed92acafa3 100644
+--- a/drivers/usb/gadget/udc/omap_udc.c
++++ b/drivers/usb/gadget/udc/omap_udc.c
+@@ -2037,6 +2037,7 @@ static inline int machine_without_vbus_sense(void)
+ {
+ 	return machine_is_omap_innovator()
+ 		|| machine_is_omap_osk()
++		|| machine_is_omap_palmte()
+ 		|| machine_is_sx1()
+ 		/* No known omap7xx boards with vbus sense */
+ 		|| cpu_is_omap7xx();
 -- 
 2.19.1
 
