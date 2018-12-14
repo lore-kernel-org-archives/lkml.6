@@ -2,90 +2,175 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9A98C67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 07:36:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FC8AC67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 07:36:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 982702054F
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 07:36:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 982702054F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id EABA52054F
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 07:36:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=austad-us.20150623.gappssmtp.com header.i=@austad-us.20150623.gappssmtp.com header.b="NJhomcch"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EABA52054F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=austad.us
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727187AbeLNHgL (ORCPT
+        id S1727363AbeLNHgw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 02:36:11 -0500
-Received: from mga18.intel.com ([134.134.136.126]:49929 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726437AbeLNHgL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 02:36:11 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Dec 2018 23:36:10 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,352,1539673200"; 
-   d="scan'208";a="110321685"
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.130]) ([10.237.72.130])
-  by orsmga003.jf.intel.com with ESMTP; 13 Dec 2018 23:36:08 -0800
-Subject: Re: [PATCH V1] mmc: sdhci: Fix sdhci_do_enable_v4_mode
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        ulf.hansson@linaro.org, linux-mmc@vger.kernel.org
-Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1544733246-11678-1-git-send-email-skomatineni@nvidia.com>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <3c980500-77d8-c8a7-ce7a-31eb8df1b17a@intel.com>
-Date:   Fri, 14 Dec 2018 09:34:27 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Fri, 14 Dec 2018 02:36:52 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:37085 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726437AbeLNHgw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 02:36:52 -0500
+Received: by mail-lf1-f68.google.com with SMTP id y11so3529600lfj.4
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 23:36:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=austad-us.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=cdkHDS72Lx3kRWCN3iTYtLjij7R8E+qIfYJhOT1YICI=;
+        b=NJhomcchcwXqP0PbH+rh+VMhTRrTuIf4dEmzujcCP90TvDAiUTmZB2eWZZBPVyccnS
+         3rkr5g+ri4ixTELrLGnBAgw0Vc4cPiUQ/uK5QDjK/vZ4hZyCLVll+MUMd+VKq+TkECSk
+         KJOe1U+maNK46z9vMddACohRFAUBrG3QN5DeI8jeRjc7IV291WUT+sRdQa9LJrff44cq
+         nBX2byNagNfo9bchTfvrYf/V48fWSXRKuUZ18lqens0/F8ra3JN05XH7HPViQcKoQVEV
+         Hfsrfk2mcwM2vPBV1+oAsRYT/GUbc10LrLZ9XCPgMZvRb5hGCNGZF65Vk8rhq2uZh0Le
+         83mQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=cdkHDS72Lx3kRWCN3iTYtLjij7R8E+qIfYJhOT1YICI=;
+        b=SUtmEcJpL9OMKRhImB7lp+dco9Fpbwahr4bfRltz3K+xdlDiDWXdXd4/PIpTzGnv51
+         pv+M1PPR9hEkB/2Kse7AD7h5l5FPGgWwSS1BoST9++CtVGeQu3guwpQOJDNUe7SX6eQa
+         PZFLTPpFZf8yrv2uqMfOtBvfCMvcvJGRpRUBYArcn2bYovjd4Dc/5wIQaaGhcnxKFwAv
+         6BQ6w+M3c81si9THVGmlN9MUTG+nHlMTbXYZtsWmi7wUYuL/+/lkGd3eyfTG74251iFI
+         0CZu6TI1wDaVJb29ZQjMkI+fg686ZnhRDilcNDsz8im6JzZpAGwDNwKwI4fpaEw14Qfz
+         Hb3g==
+X-Gm-Message-State: AA+aEWZPi/5uGT6ekCp0zwrE3qbiYuZ4a1vZAblpkb6h11YaE+7K/6Vn
+        sj3CUBHzOsTOa3FhOhd8HF4b9w==
+X-Google-Smtp-Source: AFSGD/UCpoQbByZvFGRra4VWK+UOMHokfbJQihLhm4YQEhCsu6gHYsi5vVyQaKCgeiks9Ocm3I1Ilg==
+X-Received: by 2002:a19:200b:: with SMTP id g11mr1062893lfg.58.1544773009432;
+        Thu, 13 Dec 2018 23:36:49 -0800 (PST)
+Received: from icarus.home.austad.us (11.92-220-88.customer.lyse.net. [92.220.88.11])
+        by smtp.gmail.com with ESMTPSA id h85-v6sm715048ljf.68.2018.12.13.23.36.47
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 13 Dec 2018 23:36:48 -0800 (PST)
+Date:   Fri, 14 Dec 2018 08:36:46 +0100
+From:   Henrik Austad <henrik@austad.us>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        stable@vger.kernel.org, Henrik Austad <haustad@cisco.com>,
+        Peter Zijlstra <peterz@infradead.org>, juri.lelli@arm.com,
+        bigeasy@linutronix.de, rostedt@goodmis.org,
+        mathieu.desnoyers@efficios.com, jdesfossez@efficios.com,
+        dvhart@infradead.org, bristot@redhat.com,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH 00/17] Backport rt/deadline crash and the ardous story of
+ FUTEX_UNLOCK_PI to 4.4
+Message-ID: <20181214073646.77w2vxjiugjocur7@icarus.home.austad.us>
+References: <1541758065-10952-1-git-send-email-henrik@austad.us>
+ <20181109103531.GA9188@sisyphus.home.austad.us>
+ <20181119112720.GA29334@sisyphus.home.austad.us>
+ <20181214071826.GE31355@kroah.com>
 MIME-Version: 1.0
-In-Reply-To: <1544733246-11678-1-git-send-email-skomatineni@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="zcwbmt6exdfx3sj6"
+Content-Disposition: inline
+In-Reply-To: <20181214071826.GE31355@kroah.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13/12/18 10:34 PM, Sowjanya Komatineni wrote:
-> V4_MODE is Bit-15 of SDHCI_HOST_CONTROL2 register.
-> Need to perform word access to this register.
-> 
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 
-Fixes: b3f80b434f726 ("mmc: sdhci: Add sd host v4 mode")
+--zcwbmt6exdfx3sj6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+On Fri, Dec 14, 2018 at 08:18:26AM +0100, Greg Kroah-Hartman wrote:
+> On Mon, Nov 19, 2018 at 12:27:21PM +0100, Henrik Austad wrote:
+> > On Fri, Nov 09, 2018 at 11:35:31AM +0100, Henrik Austad wrote:
+> > > On Fri, Nov 09, 2018 at 11:07:28AM +0100, Henrik Austad wrote:
+> > > > From: Henrik Austad <haustad@cisco.com>
+> > > >=20
+> > > > Short story:
+> > >=20
+> > > Sorry for the spam, it looks like I was not very specific in /which/=
+=20
+> > > version I targeted this to, as well as not providing a full Cc-list f=
+or the=20
+> > > cover-letter.
+> >=20
+> > Gentle prod. I realize this was sent out just before plumbers and that=
+=20
+> > people had pretty packed agendas, so a small nudge to gain a spot close=
+r to=20
+> > the top of the inbox :)
+> >=20
+> > This series has now been running on an arm64 system for 9 days without =
+any=20
+> > issues and pi_stress showed a dramatic improvement from ~30 seconds and=
+ up=20
+> > to several ours (it finally deadlocked at 3.9e9 inversions).
+> >=20
+> > I'd greatly appreciate if someone could give the list of patches a quic=
+k=20
+> > glance to verify that I got all the required patches and then if it cou=
+ld=20
+> > be added to 4.4.y.
 
-> ---
->  drivers/mmc/host/sdhci.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-> index 99bdae53fa2e..fde984d10619 100644
-> --- a/drivers/mmc/host/sdhci.c
-> +++ b/drivers/mmc/host/sdhci.c
-> @@ -127,12 +127,12 @@ static void sdhci_do_enable_v4_mode(struct sdhci_host *host)
->  {
->  	u16 ctrl2;
->  
-> -	ctrl2 = sdhci_readb(host, SDHCI_HOST_CONTROL2);
-> +	ctrl2 = sdhci_readw(host, SDHCI_HOST_CONTROL2);
->  	if (ctrl2 & SDHCI_CTRL_V4_MODE)
->  		return;
->  
->  	ctrl2 |= SDHCI_CTRL_V4_MODE;
-> -	sdhci_writeb(host, ctrl2, SDHCI_HOST_CONTROL);
-> +	sdhci_writew(host, ctrl2, SDHCI_HOST_CONTROL2);
->  }
->  
->  /*
-> 
+Hi Greg,
 
+> This is a really intrusive series of patches, and without some testing
+> and verification by others, I am really reluctant to take these patches.
+
+Yes I know, they are intrusive, and they touch core parts of the kernel in=
+=20
+interesting ways.
+
+I completely agree with the need for testing, and I do not _expect_ these=
+=20
+pathces to be merged. It was a "this was useful for us, it is probably=20
+useful for others" kind of series.
+
+Perhaps it is not that many others out there using pi_futex shared between=
+=20
+a sched_rr thread and a sched_deadline thread, which is how you back=20
+yourself into this corner.
+
+> Why not just move to the 4.9.y tree, or better yet, 4.19.y to resolve
+> this issue for your systems?
+
+That would indeed be the best solution, but vendor will not update kernel=
+=20
+past 4.4 for this particular SoC, so we have no way of moving this to a=20
+later kernel :(
+
+Anyway, I'm happy to carry these in our local tree for our own use. If=20
+something pops up in our internal testing requiring update to the series,=
+=20
+I'll send an update for others to see should they experience the same=20
+issue. :)
+
+Thanks for the reply!
+
+--=20
+Henrik Austad
+
+--zcwbmt6exdfx3sj6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQQ+nZyAsQSTlWuC1BnqTlVPq/jmWQUCXBNdigAKCRDqTlVPq/jm
+WUj0AJ49y+fCNH3S5TVDbztlI08sp8qJwgCfTXo2BMZspup5mc8Pr1NdV3qoEO8=
+=xt77
+-----END PGP SIGNATURE-----
+
+--zcwbmt6exdfx3sj6--
