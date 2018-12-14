@@ -4,54 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B41EAC6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:05:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A4A5C6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:05:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 704DE214AE
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:05:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F12221479
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:05:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544789102;
-	bh=TsJtzxdF4wEBNtBIdJfxWIupsotyFWexn3/I/+niUvc=;
+	s=default; t=1544789108;
+	bh=LzfS57tvGt3yzYjRN9uBsWUZnVg/t/doG/+c6I7IB/U=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=AdOvNJ2zoiHVYAqYNfr2LYzWPRJn0Jn5REIXL6+8gF/gbbIIVjZT/ScT9DzEf/PsJ
-	 LzUx45vGJS/lbv0QZmdxPl94BsT43TTMXegtSidSDlJO4rsurkYbMN48/5jYw3pGed
-	 bRzCSYk5h5f5LwFu5/pKgTfa6eeTwKrAsPlja6DE=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 704DE214AE
+	b=Q4Sc5p21oHNpXwumYcmH5LkO4qMM8WxLRGJ47T63U4VrfcZe5vZQoUlMGbz+ebFKp
+	 SF14Ps+GlAoI3EArBolayrFVKDYYzrAj56Ris23fZO8Zo7V0/YAghyqsjDFFPWmKh/
+	 3nFawazTvQDJWrfqG2u0Y9WnvwQNUJWwkijxbqg4=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F12221479
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730611AbeLNMFA (ORCPT
+        id S1730633AbeLNMFH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:05:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49694 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:05:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49858 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730158AbeLNME5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:04:57 -0500
+        id S1730619AbeLNMFE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:05:04 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D1E0921479;
-        Fri, 14 Dec 2018 12:04:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B44BD21486;
+        Fri, 14 Dec 2018 12:05:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789096;
-        bh=TsJtzxdF4wEBNtBIdJfxWIupsotyFWexn3/I/+niUvc=;
+        s=default; t=1544789104;
+        bh=LzfS57tvGt3yzYjRN9uBsWUZnVg/t/doG/+c6I7IB/U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ftXzBGFSWyENSeKctd/giesAORFeCnyoLIQ0qma8Mm+4l2E9S6hussDKoE7vNnIb1
-         0HHKF/9CXLTC+8LHCBOujyb5rT1dySK5nPyf+scftolEY1vYCrz84+AdUmXMEoBt/7
-         wCp64eRk8pguCyx4mxK0oA3bw4H0qpi6o0o60h/U=
+        b=A5eQq9h6etPwMvRWp+a54ivfYoqsLp3NK6YjHaN4q2oko54boSzvMLeR1oNM3WW+s
+         Uba1f4NE85gQS6LTNUj+AlvjIulNKSyHVydPj4N43DysP97jKCe5rDuKLcaAKDRENY
+         2jLCBJcE6Wi1iJUamoec6xzI//JZWdcsjOYDIFE8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Robbie Ko <robbieko@synology.com>,
-        Filipe Manana <fdmanana@suse.com>,
-        David Sterba <dsterba@suse.com>,
+        stable@vger.kernel.org, Selvin Xavier <selvin.xavier@broadcom.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 070/142] Btrfs: send, fix infinite loop due to directory rename dependencies
-Date:   Fri, 14 Dec 2018 12:59:15 +0100
-Message-Id: <20181214115749.857248862@linuxfoundation.org>
+Subject: [PATCH 4.19 073/142] RDMA/bnxt_re: Fix system hang when registration with L2 driver fails
+Date:   Fri, 14 Dec 2018 12:59:18 +0100
+Message-Id: <20181214115749.982029974@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115747.053633987@linuxfoundation.org>
 References: <20181214115747.053633987@linuxfoundation.org>
@@ -70,198 +69,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit a4390aee72713d9e73f1132bcdeb17d72fbbf974 ]
+[ Upstream commit 3c4b1419c33c2417836a63f8126834ee36968321 ]
 
-When doing an incremental send, due to the need of delaying directory move
-(rename) operations we can end up in infinite loop at
-apply_children_dir_moves().
+Driver doesn't release rtnl lock if registration with
+L2 driver (bnxt_re_register_netdev) fais and this causes
+hang while requesting for the next lock.
 
-An example scenario that triggers this problem is described below, where
-directory names correspond to the numbers of their respective inodes.
+[  371.635416] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+[  371.635417] kworker/u48:1   D    0   634      2 0x80000000
+[  371.635423] Workqueue: bnxt_re bnxt_re_task [bnxt_re]
+[  371.635424] Call Trace:
+[  371.635426]  ? __schedule+0x36b/0xbd0
+[  371.635429]  schedule+0x39/0x90
+[  371.635430]  schedule_preempt_disabled+0x11/0x20
+[  371.635431]  __mutex_lock+0x45b/0x9c0
+[  371.635433]  ? __mutex_lock+0x16d/0x9c0
+[  371.635435]  ? bnxt_re_ib_reg+0x2b/0xb30 [bnxt_re]
+[  371.635438]  ? wake_up_klogd+0x37/0x40
+[  371.635442]  bnxt_re_ib_reg+0x2b/0xb30 [bnxt_re]
+[  371.635447]  bnxt_re_task+0xfd/0x180 [bnxt_re]
+[  371.635449]  process_one_work+0x216/0x5b0
+[  371.635450]  ? process_one_work+0x189/0x5b0
+[  371.635453]  worker_thread+0x4e/0x3d0
+[  371.635455]  kthread+0x10e/0x140
+[  371.635456]  ? process_one_work+0x5b0/0x5b0
+[  371.635458]  ? kthread_stop+0x220/0x220
+[  371.635460]  ret_from_fork+0x3a/0x50
+[  371.635477] INFO: task NetworkManager:1228 blocked for more than 120 seconds.
+[  371.635478]       Tainted: G    B      OE     4.20.0-rc1+ #42
+[  371.635479] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
 
-Parent snapshot:
+Release the rtnl_lock correctly in the failure path.
 
- .
- |--- 261/
-       |--- 271/
-             |--- 266/
-                   |--- 259/
-                   |--- 260/
-                   |     |--- 267
-                   |
-                   |--- 264/
-                   |     |--- 258/
-                   |           |--- 257/
-                   |
-                   |--- 265/
-                   |--- 268/
-                   |--- 269/
-                   |     |--- 262/
-                   |
-                   |--- 270/
-                   |--- 272/
-                   |     |--- 263/
-                   |     |--- 275/
-                   |
-                   |--- 274/
-                         |--- 273/
-
-Send snapshot:
-
- .
- |-- 275/
-      |-- 274/
-           |-- 273/
-                |-- 262/
-                     |-- 269/
-                          |-- 258/
-                               |-- 271/
-                                    |-- 268/
-                                         |-- 267/
-                                              |-- 270/
-                                                   |-- 259/
-                                                   |    |-- 265/
-                                                   |
-                                                   |-- 272/
-                                                        |-- 257/
-                                                             |-- 260/
-                                                             |-- 264/
-                                                                  |-- 263/
-                                                                       |-- 261/
-                                                                            |-- 266/
-
-When processing inode 257 we delay its move (rename) operation because its
-new parent in the send snapshot, inode 272, was not yet processed. Then
-when processing inode 272, we delay the move operation for that inode
-because inode 274 is its ancestor in the send snapshot. Finally we delay
-the move operation for inode 274 when processing it because inode 275 is
-its new parent in the send snapshot and was not yet moved.
-
-When finishing processing inode 275, we start to do the move operations
-that were previously delayed (at apply_children_dir_moves()), resulting in
-the following iterations:
-
-1) We issue the move operation for inode 274;
-
-2) Because inode 262 depended on the move operation of inode 274 (it was
-   delayed because 274 is its ancestor in the send snapshot), we issue the
-   move operation for inode 262;
-
-3) We issue the move operation for inode 272, because it was delayed by
-   inode 274 too (ancestor of 272 in the send snapshot);
-
-4) We issue the move operation for inode 269 (it was delayed by 262);
-
-5) We issue the move operation for inode 257 (it was delayed by 272);
-
-6) We issue the move operation for inode 260 (it was delayed by 272);
-
-7) We issue the move operation for inode 258 (it was delayed by 269);
-
-8) We issue the move operation for inode 264 (it was delayed by 257);
-
-9) We issue the move operation for inode 271 (it was delayed by 258);
-
-10) We issue the move operation for inode 263 (it was delayed by 264);
-
-11) We issue the move operation for inode 268 (it was delayed by 271);
-
-12) We verify if we can issue the move operation for inode 270 (it was
-    delayed by 271). We detect a path loop in the current state, because
-    inode 267 needs to be moved first before we can issue the move
-    operation for inode 270. So we delay again the move operation for
-    inode 270, this time we will attempt to do it after inode 267 is
-    moved;
-
-13) We issue the move operation for inode 261 (it was delayed by 263);
-
-14) We verify if we can issue the move operation for inode 266 (it was
-    delayed by 263). We detect a path loop in the current state, because
-    inode 270 needs to be moved first before we can issue the move
-    operation for inode 266. So we delay again the move operation for
-    inode 266, this time we will attempt to do it after inode 270 is
-    moved (its move operation was delayed in step 12);
-
-15) We issue the move operation for inode 267 (it was delayed by 268);
-
-16) We verify if we can issue the move operation for inode 266 (it was
-    delayed by 270). We detect a path loop in the current state, because
-    inode 270 needs to be moved first before we can issue the move
-    operation for inode 266. So we delay again the move operation for
-    inode 266, this time we will attempt to do it after inode 270 is
-    moved (its move operation was delayed in step 12). So here we added
-    again the same delayed move operation that we added in step 14;
-
-17) We attempt again to see if we can issue the move operation for inode
-    266, and as in step 16, we realize we can not due to a path loop in
-    the current state due to a dependency on inode 270. Again we delay
-    inode's 266 rename to happen after inode's 270 move operation, adding
-    the same dependency to the empty stack that we did in steps 14 and 16.
-    The next iteration will pick the same move dependency on the stack
-    (the only entry) and realize again there is still a path loop and then
-    again the same dependency to the stack, over and over, resulting in
-    an infinite loop.
-
-So fix this by preventing adding the same move dependency entries to the
-stack by removing each pending move record from the red black tree of
-pending moves. This way the next call to get_pending_dir_moves() will
-not return anything for the current parent inode.
-
-A test case for fstests, with this reproducer, follows soon.
-
-Signed-off-by: Robbie Ko <robbieko@synology.com>
-Reviewed-by: Filipe Manana <fdmanana@suse.com>
-[Wrote changelog with example and more clear explanation]
-Signed-off-by: Filipe Manana <fdmanana@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Fixes: de5c95d0f518 ("RDMA/bnxt_re: Fix system crash during RDMA resource initialization")
+Signed-off-by: Selvin Xavier <selvin.xavier@broadcom.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/btrfs/send.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ drivers/infiniband/hw/bnxt_re/main.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/fs/btrfs/send.c b/fs/btrfs/send.c
-index ba8950bfd9c7..84cb6e5ef36c 100644
---- a/fs/btrfs/send.c
-+++ b/fs/btrfs/send.c
-@@ -3344,7 +3344,8 @@ static void free_pending_move(struct send_ctx *sctx, struct pending_dir_move *m)
- 	kfree(m);
- }
- 
--static void tail_append_pending_moves(struct pending_dir_move *moves,
-+static void tail_append_pending_moves(struct send_ctx *sctx,
-+				      struct pending_dir_move *moves,
- 				      struct list_head *stack)
- {
- 	if (list_empty(&moves->list)) {
-@@ -3355,6 +3356,10 @@ static void tail_append_pending_moves(struct pending_dir_move *moves,
- 		list_add_tail(&moves->list, stack);
- 		list_splice_tail(&list, stack);
+diff --git a/drivers/infiniband/hw/bnxt_re/main.c b/drivers/infiniband/hw/bnxt_re/main.c
+index 85cd1a3593d6..bb3f16273938 100644
+--- a/drivers/infiniband/hw/bnxt_re/main.c
++++ b/drivers/infiniband/hw/bnxt_re/main.c
+@@ -1252,6 +1252,7 @@ static int bnxt_re_ib_reg(struct bnxt_re_dev *rdev)
+ 	/* Registered a new RoCE device instance to netdev */
+ 	rc = bnxt_re_register_netdev(rdev);
+ 	if (rc) {
++		rtnl_unlock();
+ 		pr_err("Failed to register with netedev: %#x\n", rc);
+ 		return -EINVAL;
  	}
-+	if (!RB_EMPTY_NODE(&moves->node)) {
-+		rb_erase(&moves->node, &sctx->pending_dir_moves);
-+		RB_CLEAR_NODE(&moves->node);
-+	}
- }
- 
- static int apply_children_dir_moves(struct send_ctx *sctx)
-@@ -3369,7 +3374,7 @@ static int apply_children_dir_moves(struct send_ctx *sctx)
- 		return 0;
- 
- 	INIT_LIST_HEAD(&stack);
--	tail_append_pending_moves(pm, &stack);
-+	tail_append_pending_moves(sctx, pm, &stack);
- 
- 	while (!list_empty(&stack)) {
- 		pm = list_first_entry(&stack, struct pending_dir_move, list);
-@@ -3380,7 +3385,7 @@ static int apply_children_dir_moves(struct send_ctx *sctx)
- 			goto out;
- 		pm = get_pending_dir_moves(sctx, parent_ino);
- 		if (pm)
--			tail_append_pending_moves(pm, &stack);
-+			tail_append_pending_moves(sctx, pm, &stack);
- 	}
- 	return 0;
- 
 -- 
 2.19.1
 
