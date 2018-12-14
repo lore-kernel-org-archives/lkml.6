@@ -2,130 +2,76 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B84B9C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 21:57:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72BC5C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 21:58:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A3AD2080F
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 21:58:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B097B2080F
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 21:58:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544824683;
+	bh=1yovWMreuXoUM+2b/iAO/D3FxA/cPQppWWV2o3g4cbs=;
+	h=In-Reply-To:Subject:To:References:From:Cc:Date:List-ID:From;
+	b=cyCIbC5PuUjPTz/iByz2grzLDMCJmNPqBQJIxqgYOQhNyv72t4a7/VHRxRv3RPjI6
+	 XLj1oyu3hI1ZDrJgcMPxOafNV14/1EwDqTYrZ9pyAUR/fLzYysPDbBq//oRGsOXScb
+	 /ifRhTmdqeqqZ/L0iNzjuvNcWxvTpv46UMDL61ZA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731344AbeLNV5y (ORCPT
+        id S1731380AbeLNV6C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 16:57:54 -0500
-Received: from mga01.intel.com ([192.55.52.88]:13324 "EHLO mga01.intel.com"
+        Fri, 14 Dec 2018 16:58:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52072 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731270AbeLNV5f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 16:57:35 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Dec 2018 13:57:34 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,354,1539673200"; 
-   d="scan'208";a="118650677"
-Received: from sjchrist-coffee.jf.intel.com ([10.54.74.154])
-  by FMSMGA003.fm.intel.com with ESMTP; 14 Dec 2018 13:57:34 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
-        linux-sgx@vger.kernel.org, Andy Lutomirski <luto@amacapital.net>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        Jethro Beekman <jethro@fortanix.com>,
-        "Dr . Greg Wettstein" <greg@enjellic.com>
-Subject: [RFC PATCH v5 4/5] x86/traps: Attempt to fixup exceptions in vDSO before signaling
-Date:   Fri, 14 Dec 2018 13:57:28 -0800
-Message-Id: <20181214215729.4221-5-sean.j.christopherson@intel.com>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20181214215729.4221-1-sean.j.christopherson@intel.com>
-References: <20181214215729.4221-1-sean.j.christopherson@intel.com>
+        id S1731362AbeLNV6A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 16:58:00 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 21183208C1;
+        Fri, 14 Dec 2018 21:58:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544824680;
+        bh=1yovWMreuXoUM+2b/iAO/D3FxA/cPQppWWV2o3g4cbs=;
+        h=In-Reply-To:Subject:To:References:From:Cc:Date:From;
+        b=XKORvEI5AlOTfIBKXUfAZGXBHqLuWcH0T1pp4UQGBTfNkSKgoqsWhLIvSIUGpO8Bc
+         mRCYqs5iFHW62LigjHuz79e2AdVS7y2G2UjvhE+sWN5XX+xAweZnhOK9jAUVlLt8Hf
+         UZuksrExUu3qAkRZaqrOzuPLXlMyWth4l5YUmXQ8=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20181210073240.32278-7-weiyi.lu@mediatek.com>
+Subject: Re: [PATCH v3 05/12] dt-bindings: ARM: Mediatek: Document bindings for MT8183
+To:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Rob Herring <robh@kernel.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Weiyi Lu <weiyi.lu@mediatek.com>
+References: <20181210073240.32278-1-weiyi.lu@mediatek.com> <20181210073240.32278-7-weiyi.lu@mediatek.com>
+Message-ID: <154482467901.19322.4603837071733892594@swboyd.mtv.corp.google.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+User-Agent: alot/0.8
+Cc:     James Liao <jamesjj.liao@mediatek.com>,
+        Fan Chen <fan.chen@mediatek.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
+        srv_heupstream@mediatek.com, stable@vger.kernel.org,
+        Weiyi Lu <weiyi.lu@mediatek.com>
+Date:   Fri, 14 Dec 2018 13:57:59 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Call fixup_vdso_exception() in all trap flows that generate signals to
-userspace immediately prior to generating any such signal.  If the
-exception is fixed, return cleanly and do not generate a signal.
+Quoting Weiyi Lu (2018-12-09 23:32:33)
+> This patch adds the binding documentation for apmixedsys, audiosys,
+> camsys, imgsys, infracfg, mcucfg, mfgcfg, mmsys, topckgen, vdecsys,
+> vencsys and ipu for Mediatek MT8183.
+>=20
+> Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> ---
 
-The goal of vDSO fixup is not to fixup all faults, nor is it to avoid
-all signals, but rather to report faults directly to userspace when the
-fault would otherwise directly result in a signal being sent to the
-process.
-
-Suggested-by: Andy Lutomirski <luto@amacapital.net>
-Cc: Andy Lutomirski <luto@amacapital.net>
-Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Josh Triplett <josh@joshtriplett.org>
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
----
- arch/x86/kernel/traps.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
-
-diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
-index 9b7c4ca8f0a7..b1ca05efb15e 100644
---- a/arch/x86/kernel/traps.c
-+++ b/arch/x86/kernel/traps.c
-@@ -61,6 +61,7 @@
- #include <asm/mpx.h>
- #include <asm/vm86.h>
- #include <asm/umip.h>
-+#include <asm/vdso.h>
- 
- #ifdef CONFIG_X86_64
- #include <asm/x86_init.h>
-@@ -209,6 +210,9 @@ do_trap_no_signal(struct task_struct *tsk, int trapnr, const char *str,
- 		tsk->thread.error_code = error_code;
- 		tsk->thread.trap_nr = trapnr;
- 		die(str, regs, error_code);
-+	} else {
-+		if (fixup_vdso_exception(regs, trapnr, error_code, 0))
-+			return 0;
- 	}
- 
- 	/*
-@@ -560,6 +564,9 @@ do_general_protection(struct pt_regs *regs, long error_code)
- 		return;
- 	}
- 
-+	if (fixup_vdso_exception(regs, X86_TRAP_GP, error_code, 0))
-+		return;
-+
- 	tsk->thread.error_code = error_code;
- 	tsk->thread.trap_nr = X86_TRAP_GP;
- 
-@@ -774,6 +781,10 @@ dotraplinkage void do_debug(struct pt_regs *regs, long error_code)
- 							SIGTRAP) == NOTIFY_STOP)
- 		goto exit;
- 
-+	if (user_mode(regs) &&
-+	    fixup_vdso_exception(regs, X86_TRAP_DB, error_code, 0))
-+		goto exit;
-+
- 	/*
- 	 * Let others (NMI) know that the debug stack is in use
- 	 * as we may switch to the interrupt stack.
-@@ -854,6 +865,9 @@ static void math_error(struct pt_regs *regs, int error_code, int trapnr)
- 	if (!si_code)
- 		return;
- 
-+	if (fixup_vdso_exception(regs, trapnr, error_code, 0))
-+		return;
-+
- 	force_sig_fault(SIGFPE, si_code,
- 			(void __user *)uprobe_get_trap_addr(regs), task);
- }
--- 
-2.19.2
+Acked-by: Stephen Boyd <sboyd@kernel.org>
 
