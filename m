@@ -7,51 +7,50 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37B45C67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:14:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 867CAC6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:14:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3D162151B
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:14:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C18121508
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:14:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544789695;
-	bh=LMSBCyueGi12ARYSytMibU2Y9n/7lz796ZXFrP+9uqM=;
+	s=default; t=1544789699;
+	bh=+nFA/6FtLROIO9Gt4DF9MVL1xXI929Uh5/kd2f2ZD/g=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=U5nZRtEPoWpBd08P4NzmUpwsB6lWpWzpR/3QKDHAqXY0V+5X+GOB221qMY9anwJBC
-	 EOpHmwd3xx3UExObxMEyDgZYN0S6rtIyUsJlhCNjYdam0CnU4ZdOAky+vyMR+YGgNT
-	 Q2GbLA7dpMNaXq6H+CYzc5uVvjBWvTD/L9pbqfvY=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3D162151B
+	b=Vl+dIDlGsaOK+fpUh4ICPEubJ7Vdgt+Ntv7nQT9JQ9nx3QUBvxNb5Ir3Sa5LLRv/Y
+	 qXWegqEPS0oEia4laepFAaoxCT9ejNfo8N7JkUFoqCeHpbNSIFL7Q7zVLaNxL3mKWg
+	 u+wVJV9n8oZTkgkncrk79wqv3eYP9DshJWpOqvxA=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C18121508
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732450AbeLNMOy (ORCPT
+        id S1732146AbeLNMO6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:14:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34614 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:14:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34690 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732434AbeLNMOu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:14:50 -0500
+        id S1731480AbeLNMOz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:14:55 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 41DF0214F1;
-        Fri, 14 Dec 2018 12:14:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 358D0214F0;
+        Fri, 14 Dec 2018 12:14:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789689;
-        bh=LMSBCyueGi12ARYSytMibU2Y9n/7lz796ZXFrP+9uqM=;
+        s=default; t=1544789694;
+        bh=+nFA/6FtLROIO9Gt4DF9MVL1xXI929Uh5/kd2f2ZD/g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=r9ZHtM1/xiAp5pjXCK7tj3phk+BR11zLodcSurW/MxA7/O8ZSnmaYAfAOiFGxMgOW
-         iec04tYU4qB9y7oMeVqZumnAwXbOterfE1wGSuBaSa1J1aBsF+AYKgWGrRckB07CQ7
-         hY7RL9bfX3KA0a/2uq+YxsTb1S4cBV67x2Eg1qvI=
+        b=ZqfwDHo1wJ3RNAI8K00k6CHsVsaBmhI/56wPlIasz8aqjtoRyckY6E5oNc6ZZXPue
+         vcopt7f84W6LY0UMxxNVNGH8wFgswU33kic9PhS36ATQ3vc1OvDLF8Om8u1CHCOdII
+         9DLjQxMEF9L0r+Ius9jDILFcOK8BieBYj9xtZcAg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yao Wang <wangyao@lemote.com>,
-        Huacai Chen <chenhc@lemote.com>,
-        Guenter Roeck <linux@roeck-us.net>,
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        David Howells <dhowells@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 16/88] hwmon: (w83795) temp4_type has writable permission
-Date:   Fri, 14 Dec 2018 12:59:50 +0100
-Message-Id: <20181214115703.464186318@linuxfoundation.org>
+Subject: [PATCH 4.4 33/88] fscache, cachefiles: remove redundant variable cache
+Date:   Fri, 14 Dec 2018 13:00:07 +0100
+Message-Id: <20181214115704.888003896@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115702.151309521@linuxfoundation.org>
 References: <20181214115702.151309521@linuxfoundation.org>
@@ -70,33 +69,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 09aaf6813cfca4c18034fda7a43e68763f34abb1 ]
+[ Upstream commit 31ffa563833576bd49a8bf53120568312755e6e2 ]
 
-Both datasheet and comments of store_temp_mode() tell us that temp1~4_type
-is writable, so fix it.
+Variable 'cache' is being assigned but is never used hence it is
+redundant and can be removed.
 
-Signed-off-by: Yao Wang <wangyao@lemote.com>
-Signed-off-by: Huacai Chen <chenhc@lemote.com>
-Fixes: 39deb6993e7c (" hwmon: (w83795) Simplify temperature sensor type handling")
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Cleans up clang warning:
+warning: variable 'cache' set but not used [-Wunused-but-set-variable]
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hwmon/w83795.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/cachefiles/rdwr.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/hwmon/w83795.c b/drivers/hwmon/w83795.c
-index 49276bbdac3d..1bb80f992aa8 100644
---- a/drivers/hwmon/w83795.c
-+++ b/drivers/hwmon/w83795.c
-@@ -1691,7 +1691,7 @@ store_sf_setup(struct device *dev, struct device_attribute *attr,
-  * somewhere else in the code
-  */
- #define SENSOR_ATTR_TEMP(index) {					\
--	SENSOR_ATTR_2(temp##index##_type, S_IRUGO | (index < 4 ? S_IWUSR : 0), \
-+	SENSOR_ATTR_2(temp##index##_type, S_IRUGO | (index < 5 ? S_IWUSR : 0), \
- 		show_temp_mode, store_temp_mode, NOT_USED, index - 1),	\
- 	SENSOR_ATTR_2(temp##index##_input, S_IRUGO, show_temp,		\
- 		NULL, TEMP_READ, index - 1),				\
+diff --git a/fs/cachefiles/rdwr.c b/fs/cachefiles/rdwr.c
+index 5b68cf526887..c05ab2ec0fef 100644
+--- a/fs/cachefiles/rdwr.c
++++ b/fs/cachefiles/rdwr.c
+@@ -963,11 +963,8 @@ int cachefiles_write_page(struct fscache_storage *op, struct page *page)
+ void cachefiles_uncache_page(struct fscache_object *_object, struct page *page)
+ {
+ 	struct cachefiles_object *object;
+-	struct cachefiles_cache *cache;
+ 
+ 	object = container_of(_object, struct cachefiles_object, fscache);
+-	cache = container_of(object->fscache.cache,
+-			     struct cachefiles_cache, cache);
+ 
+ 	_enter("%p,{%lu}", object, page->index);
+ 
 -- 
 2.19.1
 
