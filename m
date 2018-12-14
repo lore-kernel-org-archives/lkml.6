@@ -7,52 +7,51 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D57A2C6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:01:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F29CC67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:01:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D8DC2146E
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:01:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 16B222146E
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:01:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544788900;
-	bh=JrdWMq+DlAgt358f4V+N9SlrMJJKf1gEQpqgDuyfB7k=;
+	s=default; t=1544788905;
+	bh=mIc0a0PQkCa701ELA9Qnad0ARPP1NFgWr3SvntwFJkk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=kc8QuKOWcfeYXfSWOifNiHpHUEQbpURFTTtrvpzAEdFuYNtFde2GGhepUq7jHEfUS
-	 vrGWTyu1BFYjhHYjqVnXEtIi9TvfTW7W9eJqBAjBbCq6HfuB9YFCPEyO+AZ94ZtNy6
-	 tnYHmdep9E6sVOZvIDEtmR7aWGOsOuaJ/i3/WzoY=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D8DC2146E
+	b=TxWL7u0N07l7Rotp/Z94PaBYUogdWsgfJoRwOIa/kSI0uSaGa9eoBQrTrSOPQzDLq
+	 F3W8ZgKE07QY2Mx0+35OVDDjgfsKbzSxUuU4PJWBh7iZuSNzTSiFvPY2ksFcGdDaGH
+	 UA5+cGLL1e6C4+HjKhltdlbODMmnUGLqy+cLFBWk=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16B222146E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729810AbeLNMBj (ORCPT
+        id S1729827AbeLNMBo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:01:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44128 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:01:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44200 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729792AbeLNMBh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:01:37 -0500
+        id S1729805AbeLNMBj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:01:39 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 159DE2133F;
-        Fri, 14 Dec 2018 12:01:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A1B0F2145D;
+        Fri, 14 Dec 2018 12:01:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544788896;
-        bh=JrdWMq+DlAgt358f4V+N9SlrMJJKf1gEQpqgDuyfB7k=;
+        s=default; t=1544788899;
+        bh=mIc0a0PQkCa701ELA9Qnad0ARPP1NFgWr3SvntwFJkk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ucAjiJxHG/9FVNkBuyWjqrm68hqTuLzVChPUfy4OjUnBBUwDG2JU/w7OlqVl70xAF
-         QdRmfr1G3YjIrkUIl5w9sKO7ojrFxlUhPE/lTCQFCYmVofiSix6z+LbDJgZ32sYDaq
-         Qwq3DKjcGTYYYkTsPaFW8MJPvSQgC3DL18/57ut0=
+        b=Kr/WnLf8Ghb8FMFAaztfqJp4GvGGzWFU5EKR118CJluToLtZ/v1ANv0YI42D1WZnJ
+         Ne2TT4dwYn8YNVaG/B40C8KdAmMh32gUmwxEbNQp4uxMUfW43T4bKwpu+YqqQjMd+C
+         pl3yrnLNsfAkbggF09HqYfRrFhUsEDeL3uKg1Vmw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Rafael Tinoco <rafael.tinoco@linaro.org>,
-        Yuchung Cheng <ycheng@google.com>,
-        Eric Dumazet <edumazet@google.com>,
-        Neal Cardwell <ncardwell@google.com>,
+        stable@vger.kernel.org,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 015/142] tcp: fix NULL ref in tail loss probe
-Date:   Fri, 14 Dec 2018 12:58:20 +0100
-Message-Id: <20181214115747.658743162@linuxfoundation.org>
+Subject: [PATCH 4.19 016/142] tun: forbid iface creation with rtnl ops
+Date:   Fri, 14 Dec 2018 12:58:21 +0100
+Message-Id: <20181214115747.699726508@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115747.053633987@linuxfoundation.org>
 References: <20181214115747.053633987@linuxfoundation.org>
@@ -71,52 +70,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yuchung Cheng <ycheng@google.com>
+From: Nicolas Dichtel <nicolas.dichtel@6wind.com>
 
-[ Upstream commit b2b7af861122a0c0f6260155c29a1b2e594cd5b5 ]
+[ Upstream commit 35b827b6d06199841a83839e8bb69c0cd13a28be ]
 
-TCP loss probe timer may fire when the retranmission queue is empty but
-has a non-zero tp->packets_out counter. tcp_send_loss_probe will call
-tcp_rearm_rto which triggers NULL pointer reference by fetching the
-retranmission queue head in its sub-routines.
+It's not supported right now (the goal of the initial patch was to support
+'ip link del' only).
 
-Add a more detailed warning to help catch the root cause of the inflight
-accounting inconsistency.
+Before the patch:
+$ ip link add foo type tun
+[  239.632660] BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
+[snip]
+[  239.636410] RIP: 0010:register_netdevice+0x8e/0x3a0
 
-Reported-by: Rafael Tinoco <rafael.tinoco@linaro.org>
-Signed-off-by: Yuchung Cheng <ycheng@google.com>
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: Neal Cardwell <ncardwell@google.com>
+This panic occurs because dev->netdev_ops is not set by tun_setup(). But to
+have something usable, it will require more than just setting
+netdev_ops.
+
+Fixes: f019a7a594d9 ("tun: Implement ip link del tunXXX")
+CC: Eric W. Biederman <ebiederm@xmission.com>
+Signed-off-by: Nicolas Dichtel <nicolas.dichtel@6wind.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/tcp_output.c |   11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ drivers/net/tun.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/net/ipv4/tcp_output.c
-+++ b/net/ipv4/tcp_output.c
-@@ -2479,15 +2479,18 @@ void tcp_send_loss_probe(struct sock *sk
- 		goto rearm_timer;
- 	}
- 	skb = skb_rb_last(&sk->tcp_rtx_queue);
-+	if (unlikely(!skb)) {
-+		WARN_ONCE(tp->packets_out,
-+			  "invalid inflight: %u state %u cwnd %u mss %d\n",
-+			  tp->packets_out, sk->sk_state, tp->snd_cwnd, mss);
-+		inet_csk(sk)->icsk_pending = 0;
-+		return;
-+	}
+--- a/drivers/net/tun.c
++++ b/drivers/net/tun.c
+@@ -2268,9 +2268,9 @@ static void tun_setup(struct net_device
+ static int tun_validate(struct nlattr *tb[], struct nlattr *data[],
+ 			struct netlink_ext_ack *extack)
+ {
+-	if (!data)
+-		return 0;
+-	return -EINVAL;
++	NL_SET_ERR_MSG(extack,
++		       "tun/tap creation via rtnetlink is not supported.");
++	return -EOPNOTSUPP;
+ }
  
- 	/* At most one outstanding TLP retransmission. */
- 	if (tp->tlp_high_seq)
- 		goto rearm_timer;
- 
--	/* Retransmit last segment. */
--	if (WARN_ON(!skb))
--		goto rearm_timer;
--
- 	if (skb_still_in_host_queue(sk, skb))
- 		goto rearm_timer;
- 
+ static size_t tun_get_size(const struct net_device *dev)
 
 
