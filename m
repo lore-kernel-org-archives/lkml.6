@@ -2,148 +2,121 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D584C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:50:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2101FC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:50:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E57F206DD
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:50:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="Owk5wntK"
+	by mail.kernel.org (Postfix) with ESMTP id 67F86206DD
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:50:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731128AbeLNUud (ORCPT
+        id S1731142AbeLNUuf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 14 Dec 2018 15:50:35 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:39830 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730906AbeLNUud (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 14 Dec 2018 15:50:33 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:33900 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730822AbeLNUud (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 15:50:33 -0500
-Received: from zn.tnic (p200300EC2BCFEF006DA1B19390C695FF.dip0.t-ipconnect.de [IPv6:2003:ec:2bcf:ef00:6da1:b193:90c6:95ff])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C9AAF1EC0BE1;
-        Fri, 14 Dec 2018 21:50:31 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1544820632;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=sLnbk5UGQnKmWHIISghc80ciweUo0kju6QHbwoEfotE=;
-        b=Owk5wntK+DA3ithE9IyYxxSU8kXE6ZvsoXkKZ+dROF9BAB2mIXXOq2JDq28LjALzamCTFv
-        l5W4BFDykfiGJ8euDFFLR6e10Za/O6tHqBusryU8pMOE87N7Q1+gKdknUBUjMIRfIyeBOF
-        by6M1WHKJXvLzvwacypDMd0Wle5fQeE=
-Date:   Fri, 14 Dec 2018 21:50:23 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     "Lendacky, Thomas" <Thomas.Lendacky@amd.com>
-Cc:     "x86@kernel.org" <x86@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Jiri Kosina <jkosina@suse.cz>, Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        David Woodhouse <dwmw@amazon.co.uk>
-Subject: Re: [PATCH v3] x86/speculation: Add support for STIBP always-on
- preferred mode
-Message-ID: <20181214205023.GJ11710@zn.tnic>
-References: <20181213230352.6937.74943.stgit@tlendack-t1.amdoffice.net>
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBEKn28F149489
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 15:50:32 -0500
+Received: from e36.co.us.ibm.com (e36.co.us.ibm.com [32.97.110.154])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2pcjn7u22m-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 15:50:32 -0500
+Received: from localhost
+        by e36.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <mwb@linux.vnet.ibm.com>;
+        Fri, 14 Dec 2018 20:50:31 -0000
+Received: from b03cxnp08028.gho.boulder.ibm.com (9.17.130.20)
+        by e36.co.us.ibm.com (192.168.1.136) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 14 Dec 2018 20:50:30 -0000
+Received: from b03ledav003.gho.boulder.ibm.com (b03ledav003.gho.boulder.ibm.com [9.17.130.234])
+        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBEKoTcb26148890
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 14 Dec 2018 20:50:29 GMT
+Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 48A726A058;
+        Fri, 14 Dec 2018 20:50:29 +0000 (GMT)
+Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 35E3E6A054;
+        Fri, 14 Dec 2018 20:50:26 +0000 (GMT)
+Received: from powerkvm6.aus.stglabs.ibm.com (unknown [9.40.192.78])
+        by b03ledav003.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Fri, 14 Dec 2018 20:50:26 +0000 (GMT)
+Received: from powerkvm6.aus.stglabs.ibm.com (localhost [IPv6:::1])
+        by powerkvm6.aus.stglabs.ibm.com (Postfix) with ESMTP id 5CE8540E516A;
+        Fri, 14 Dec 2018 14:50:26 -0600 (CST)
+Subject: [RFC 1/6] powerpc:/drc Define interface to acquire arch-specific
+ drc info
+From:   Michael Bringmann <mwb@linux.vnet.ibm.com>
+To:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Cc:     Michael Ellerman <mpe@ellerman.id.au>,
+        Juliet Kim <minkim@us.ibm.com>,
+        Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
+        Thomas Falcon <tlfalcon@linux.vnet.ibm.com>
+Date:   Fri, 14 Dec 2018 14:50:26 -0600
+In-Reply-To: <20181214204914.16435.59083.stgit@powerkvm6.aus.stglabs.ibm.com>
+References: <20181214204914.16435.59083.stgit@powerkvm6.aus.stglabs.ibm.com>
+User-Agent: StGit/0.18-105-g416a-dirty
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20181213230352.6937.74943.stgit@tlendack-t1.amdoffice.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18121420-0020-0000-0000-00000E99F531
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010225; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000271; SDB=6.01131804; UDB=6.00588226; IPR=6.00911936;
+ MB=3.00024694; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-14 20:50:31
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18121420-0021-0000-0000-0000640E6872
+Message-Id: <20181214204957.16435.29255.stgit@powerkvm6.aus.stglabs.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-14_12:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=553 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1812140176
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 13, 2018 at 11:03:54PM +0000, Lendacky, Thomas wrote:
-> Different AMD processors may have different implementations of STIBP.
-> When STIBP is conditionally enabled, some implementations would benefit
-> from having STIBP always on instead of toggling the STIBP bit through MSR
-> writes. This preference is advertised through a CPUID feature bit.
-> 
-> When conditional STIBP support is requested at boot and the CPU advertises
-> STIBP always-on mode as preferred, switch to STIBP "on" support. To show
-> that this transition has occurred, create a new spectre_v2_user_mitigation
-> value and a new spectre_v2_user_strings message. The new mitigation value
-> is used in spectre_v2_user_select_mitigation() to print the new mitigation
-> message as well as to return a new string from stibp_state().
-> 
-> Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
-> ---
-> 
-> This patch is against the x86/pti branch of the tip tree:
->   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/pti
-> 
-> Changes from v2:
-> - Reverted back to original version of the patch
-> - Updated the messages that are issued. I'm not terribly happy with the
->   wording, so if there are any suggestions...
-> 
-> Changes from v1:
-> - Removed explicit SPECTRE_V2_USER_STRICT_PREFERRED mode
-> - Added a message when switching to always-on mode
-> - Set and used a static boolean for the string in stibp_state()
-> 
->  arch/x86/include/asm/cpufeatures.h   |    1 +
->  arch/x86/include/asm/nospec-branch.h |    1 +
->  arch/x86/kernel/cpu/bugs.c           |   28 ++++++++++++++++++++++------
->  3 files changed, 24 insertions(+), 6 deletions(-)
-> 
-> diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-> index 28c4a50..df8e94e2 100644
-> --- a/arch/x86/include/asm/cpufeatures.h
-> +++ b/arch/x86/include/asm/cpufeatures.h
-> @@ -284,6 +284,7 @@
->  #define X86_FEATURE_AMD_IBPB		(13*32+12) /* "" Indirect Branch Prediction Barrier */
->  #define X86_FEATURE_AMD_IBRS		(13*32+14) /* "" Indirect Branch Restricted Speculation */
->  #define X86_FEATURE_AMD_STIBP		(13*32+15) /* "" Single Thread Indirect Branch Predictors */
-> +#define X86_FEATURE_AMD_STIBP_ALWAYS_ON	(13*32+17) /* "" Single Thread Indirect Branch Predictors always-on preferred */
->  #define X86_FEATURE_AMD_SSBD		(13*32+24) /* "" Speculative Store Bypass Disable */
->  #define X86_FEATURE_VIRT_SSBD		(13*32+25) /* Virtualized Speculative Store Bypass Disable */
->  #define X86_FEATURE_AMD_SSB_NO		(13*32+26) /* "" Speculative Store Bypass is fixed in hardware. */
-> diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
-> index 032b600..dad12b7 100644
-> --- a/arch/x86/include/asm/nospec-branch.h
-> +++ b/arch/x86/include/asm/nospec-branch.h
-> @@ -232,6 +232,7 @@ enum spectre_v2_mitigation {
->  enum spectre_v2_user_mitigation {
->  	SPECTRE_V2_USER_NONE,
->  	SPECTRE_V2_USER_STRICT,
-> +	SPECTRE_V2_USER_STRICT_PREFERRED,
->  	SPECTRE_V2_USER_PRCTL,
->  	SPECTRE_V2_USER_SECCOMP,
->  };
-> diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-> index 58689ac..77bf225 100644
-> --- a/arch/x86/kernel/cpu/bugs.c
-> +++ b/arch/x86/kernel/cpu/bugs.c
-> @@ -262,10 +262,11 @@ enum spectre_v2_user_cmd {
->  };
->  
->  static const char * const spectre_v2_user_strings[] = {
-> -	[SPECTRE_V2_USER_NONE]		= "User space: Vulnerable",
-> -	[SPECTRE_V2_USER_STRICT]	= "User space: Mitigation: STIBP protection",
-> -	[SPECTRE_V2_USER_PRCTL]		= "User space: Mitigation: STIBP via prctl",
-> -	[SPECTRE_V2_USER_SECCOMP]	= "User space: Mitigation: STIBP via seccomp and prctl",
-> +	[SPECTRE_V2_USER_NONE]			= "User space: Vulnerable",
-> +	[SPECTRE_V2_USER_STRICT]		= "User space: Mitigation: STIBP protection",
-> +	[SPECTRE_V2_USER_STRICT_PREFERRED]	= "User space: Mitigation: STIBP always-on protection",
+Define interface to acquire arch-specific drc info to match against
+hotpluggable devices.  The current implementation exposes several
+pseries-specific dynamic memory properties in generic kernel code.
+This patch set provides an interface to pull that code out of the
+generic kernel.
 
-Barring the "preferred" vs "always-on" bikeshed controversy :-P, I don't
-see anything wrong with this version.
+Signed-off-by: Michael Bringmann <mwb@linux.vnet.ibm.com>
+---
+ include/linux/topology.h |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-The only thing that could be improved maybe is having the mode name
-and the user visible string match for ease of code staring during bug
-hunting...
+diff --git a/include/linux/topology.h b/include/linux/topology.h
+index cb0775e..df97f5f 100644
+--- a/include/linux/topology.h
++++ b/include/linux/topology.h
+@@ -44,6 +44,15 @@
+ 
+ int arch_update_cpu_topology(void);
+ 
++int arch_find_drc_match(struct device_node *dn,
++			bool (*usercb)(struct device_node *dn,
++				u32 drc_index, char *drc_name,
++				char *drc_type, u32 drc_power_domain,
++				void *data),
++			char *opt_drc_type, char *opt_drc_name,
++			bool match_drc_index, bool ck_php_type,
++			void *data);
++
+ /* Conform to ACPI 2.0 SLIT distance definitions */
+ #define LOCAL_DISTANCE		10
+ #define REMOTE_DISTANCE		20
 
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
