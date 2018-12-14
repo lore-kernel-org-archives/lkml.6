@@ -7,51 +7,50 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3934DC6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:14:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6068C6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:14:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E68A4214F0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:14:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C99D214F0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:14:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544789670;
-	bh=mdI3vam0vBbZGBCUaBkmDM6kz2k5JDPdNDk9PbyrU2U=;
+	s=default; t=1544789672;
+	bh=mLWHa1eacgUf5MnxIKuj3KaCEEaKAvRbVf/s1/NN5Ms=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=lcdPvEGZWUV3LsZoWMuYoK1cnyN1PDre5vdteWVCFE9Rnq7aSBqdwdZ3HI5cUMZAL
-	 +QmXBBPAW8iWdr1Y2wE8QXMY4s86uPDleuJYxL2cl1QVDWdpko+7PCPcLePy+tFHCZ
-	 qlfc3P0CSn5yV4j6lPSFAMxIcYALVymYcc0VBz3M=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E68A4214F0
+	b=LDL5c9ODnNc1lkIueEHNis5FxP7arfIC6trn1ks/0ZHOn1mdN7UJN7NOLFxEnHh87
+	 h5dVS/ETCH8MgEU2OJdVbnmXcwuNCZ0fDcnaeKMdJMc7C3eVliWvmlU5l/ltWUfHxg
+	 Sbw/sAKP4N/k0GpZd5EWs/Oha+DHQQ1h52aVfPzk=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C99D214F0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732347AbeLNMO3 (ORCPT
+        id S1731891AbeLNMOb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:14:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34052 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:14:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34164 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732335AbeLNMOZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:14:25 -0500
+        id S1732335AbeLNMOa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:14:30 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D2597214F0;
-        Fri, 14 Dec 2018 12:14:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BB12D214DE;
+        Fri, 14 Dec 2018 12:14:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789664;
-        bh=mdI3vam0vBbZGBCUaBkmDM6kz2k5JDPdNDk9PbyrU2U=;
+        s=default; t=1544789669;
+        bh=mLWHa1eacgUf5MnxIKuj3KaCEEaKAvRbVf/s1/NN5Ms=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZtDR6KtdAEwjPGfT5O3Wl2KGKUz7GFHK4Lsv4fxstYCyYgbuJZtFEkRZHSApCXlmd
-         b2B7NdGQQD8WMk65nygLebCQ/I7V4H7Q9rpFQGfi0NuZmlsr1Ph+N+5jd2DHFjQ1bJ
-         pEr6kFiJ40+pvpLGeKo4PvyJYR3D8NLLKJAS+lpk=
+        b=BuXKMTVAciLdcIgpvLaclQFV25dCt+9JFBb/DrYFrzilBLvX8gnoJ8XUoZlqAlmFo
+         IVbJD4sXl2QKHsT+ens6sTEzaqeWGH2FXhj2g53Xx8U+LcyY3TTL4s8yMuf3ZHtooo
+         6rClBMrobn3wEdRAchzQJtZXkX+Zzu9B8e2zV3bM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Josh Elsasser <jelsasser@appneta.com>,
-        Andrew Bowers <andrewx.bowers@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        stable@vger.kernel.org, "Y.C. Chen" <yc_chen@aspeedtech.com>,
+        Dave Airlie <airlied@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 28/88] ixgbe: recognize 1000BaseLX SFP modules as 1Gbps
-Date:   Fri, 14 Dec 2018 13:00:02 +0100
-Message-Id: <20181214115704.369804274@linuxfoundation.org>
+Subject: [PATCH 4.4 30/88] drm/ast: fixed reading monitor EDID not stable issue
+Date:   Fri, 14 Dec 2018 13:00:04 +0100
+Message-Id: <20181214115704.539590908@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115702.151309521@linuxfoundation.org>
 References: <20181214115702.151309521@linuxfoundation.org>
@@ -70,38 +69,92 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit a8bf879af7b1999eba36303ce9cc60e0e7dd816c ]
+[ Upstream commit 300625620314194d9e6d4f6dda71f2dc9cf62d9f ]
 
-Add the two 1000BaseLX enum values to the X550's check for 1Gbps modules,
-allowing the core driver code to establish a link over this SFP type.
+v1: over-sample data to increase the stability with some specific monitors
+v2: refine to avoid infinite loop
+v3: remove un-necessary "volatile" declaration
 
-This is done by the out-of-tree driver but the fix wasn't in mainline.
+[airlied: fix two checkpatch warnings]
 
-Fixes: e23f33367882 ("ixgbe: Fix 1G and 10G link stability for X550EM_x SFP+”)
-Fixes: 6a14ee0cfb19 ("ixgbe: Add X550 support function pointers")
-Signed-off-by: Josh Elsasser <jelsasser@appneta.com>
-Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Signed-off-by: Y.C. Chen <yc_chen@aspeedtech.com>
+Signed-off-by: Dave Airlie <airlied@redhat.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/1542858988-1127-1-git-send-email-yc_chen@aspeedtech.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/intel/ixgbe/ixgbe_x550.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/ast/ast_mode.c | 36 ++++++++++++++++++++++++++++------
+ 1 file changed, 30 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_x550.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_x550.c
-index ffd2e74e5638..dcd718ce13d5 100644
---- a/drivers/net/ethernet/intel/ixgbe/ixgbe_x550.c
-+++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_x550.c
-@@ -1429,7 +1429,9 @@ static s32 ixgbe_get_link_capabilities_X550em(struct ixgbe_hw *hw,
- 		*autoneg = false;
+diff --git a/drivers/gpu/drm/ast/ast_mode.c b/drivers/gpu/drm/ast/ast_mode.c
+index 21085f669e21..b19ba1792607 100644
+--- a/drivers/gpu/drm/ast/ast_mode.c
++++ b/drivers/gpu/drm/ast/ast_mode.c
+@@ -968,9 +968,21 @@ static int get_clock(void *i2c_priv)
+ {
+ 	struct ast_i2c_chan *i2c = i2c_priv;
+ 	struct ast_private *ast = i2c->dev->dev_private;
+-	uint32_t val;
++	uint32_t val, val2, count, pass;
++
++	count = 0;
++	pass = 0;
++	val = (ast_get_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xb7, 0x10) >> 4) & 0x01;
++	do {
++		val2 = (ast_get_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xb7, 0x10) >> 4) & 0x01;
++		if (val == val2) {
++			pass++;
++		} else {
++			pass = 0;
++			val = (ast_get_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xb7, 0x10) >> 4) & 0x01;
++		}
++	} while ((pass < 5) && (count++ < 0x10000));
  
- 		if (hw->phy.sfp_type == ixgbe_sfp_type_1g_sx_core0 ||
--		    hw->phy.sfp_type == ixgbe_sfp_type_1g_sx_core1) {
-+		    hw->phy.sfp_type == ixgbe_sfp_type_1g_sx_core1 ||
-+		    hw->phy.sfp_type == ixgbe_sfp_type_1g_lx_core0 ||
-+		    hw->phy.sfp_type == ixgbe_sfp_type_1g_lx_core1) {
- 			*speed = IXGBE_LINK_SPEED_1GB_FULL;
- 			return 0;
- 		}
+-	val = ast_get_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xb7, 0x10) >> 4;
+ 	return val & 1 ? 1 : 0;
+ }
+ 
+@@ -978,9 +990,21 @@ static int get_data(void *i2c_priv)
+ {
+ 	struct ast_i2c_chan *i2c = i2c_priv;
+ 	struct ast_private *ast = i2c->dev->dev_private;
+-	uint32_t val;
++	uint32_t val, val2, count, pass;
++
++	count = 0;
++	pass = 0;
++	val = (ast_get_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xb7, 0x20) >> 5) & 0x01;
++	do {
++		val2 = (ast_get_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xb7, 0x20) >> 5) & 0x01;
++		if (val == val2) {
++			pass++;
++		} else {
++			pass = 0;
++			val = (ast_get_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xb7, 0x20) >> 5) & 0x01;
++		}
++	} while ((pass < 5) && (count++ < 0x10000));
+ 
+-	val = ast_get_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xb7, 0x20) >> 5;
+ 	return val & 1 ? 1 : 0;
+ }
+ 
+@@ -993,7 +1017,7 @@ static void set_clock(void *i2c_priv, int clock)
+ 
+ 	for (i = 0; i < 0x10000; i++) {
+ 		ujcrb7 = ((clock & 0x01) ? 0 : 1);
+-		ast_set_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xb7, 0xfe, ujcrb7);
++		ast_set_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xb7, 0xf4, ujcrb7);
+ 		jtemp = ast_get_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xb7, 0x01);
+ 		if (ujcrb7 == jtemp)
+ 			break;
+@@ -1009,7 +1033,7 @@ static void set_data(void *i2c_priv, int data)
+ 
+ 	for (i = 0; i < 0x10000; i++) {
+ 		ujcrb7 = ((data & 0x01) ? 0 : 1) << 2;
+-		ast_set_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xb7, 0xfb, ujcrb7);
++		ast_set_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xb7, 0xf1, ujcrb7);
+ 		jtemp = ast_get_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xb7, 0x04);
+ 		if (ujcrb7 == jtemp)
+ 			break;
 -- 
 2.19.1
 
