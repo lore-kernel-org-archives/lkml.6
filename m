@@ -7,28 +7,28 @@ X-Spam-Status: No, score=-12.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89EE5C67839
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA961C67872
 	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:49:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48EDE208E7
+	by mail.kernel.org (Postfix) with ESMTP id 8191A214C1
 	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:49:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=default; t=1544791769;
-	bh=n/b9Ntwd8FYd5TkorgAHWMUUqe9y9ZKSEEgJjmhWz54=;
+	bh=kXFGYBUZzVyyXnYEu1D8y9I4FrrH1CAYEoD+29MWjAs=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=Sus1/mcTlpiGAvBoHtyD7SmW1n8h+8uXo/rq4C4MzNh6ZHwC33Ioh9ULPjaHUP9e4
-	 HhPRToJXK9IoM5+tB9HVknt/e/+nxT7vhm0Ny76U1W2pvo38pg8XQIqWNwe5H9JcOt
-	 nbrvVdDfJe2wQY26nxH8FIwE2pNRiXW2yBIntWD4=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48EDE208E7
+	b=Aw60J56B2rV0BYRM8m46dodQbyH/QEQD5cbcPckGVAgQ0I24Ehq3seTLRVEQuHzdC
+	 wku+kd8iAo/kT8PhOXEFYqsHh2OSaAMwNzAMvu8JcLL4zWnOA6++vEzqdJpfBbfc74
+	 4kMWFnjm13iKKvs0xocUgk50IQzMv5XptGvchlo8=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8191A214C1
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729759AbeLNMt1 (ORCPT
+        id S1729802AbeLNMt2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:49:27 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49788 "EHLO
+        Fri, 14 Dec 2018 07:49:28 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49828 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728415AbeLNMt1 (ORCPT
+        with ESMTP id S1729488AbeLNMt1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 14 Dec 2018 07:49:27 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -37,16 +37,16 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=OtfJBMfw6f/FsQU0lLWDwaOjWEb5yjwtTuKRw3CNUH0=; b=bLPYIWjDXP8L
-        qnrfcq02UmIWPiTtd+XFZzpAyhjolCZVdRaUUeG6A43U6CUVR7MxwcRi3vfzbi0szU7GHGFFVCvoY
-        szpwHQt7rN0aADRer6U1WvhfZsIP7qMAOzoiAjjIoDWJyZEUj0Q9oLZIymRJpPRW+snDIN44WchDj
-        zAUmg=;
+        List-Archive; bh=Ha+ZMm8IZIDTfcM6dTNAfGqvUgj/YlPZmWGjQbF0vio=; b=TOAatDnjHgw3
+        u3h5AyPIu2IHtyuebovrOeIq+u1DGwQjBWZ5sCPFhd+qX999ezwwoUjQEto1fB7RZjNfczJFNW4QY
+        dygy76ojBV/UexT3d3WPpY0opEM3UtdJCbAwAB4eNZl0nhb1t/ptQ5xMmpvG4DiH5wD5+9OP4ZOux
+        tjek4=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gXmu5-0006m3-Jb; Fri, 14 Dec 2018 12:49:17 +0000
+        id 1gXmu9-0006mF-4U; Fri, 14 Dec 2018 12:49:21 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 129B111258A2; Fri, 14 Dec 2018 12:49:17 +0000 (GMT)
+        id BE0F911258A2; Fri, 14 Dec 2018 12:49:20 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
 To:     Rohit kumar <rohitkr@codeaurora.org>
 Cc:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
@@ -57,11 +57,11 @@ Cc:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         rohkumar@qti.qualcomm.com, srinivas.kandagatla@linaro.org,
         asishb@codeaurora.org, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: qdsp6: q6routing: add display_port_rx port routing" to the asoc tree
-In-Reply-To:  <1544790569-10608-5-git-send-email-rohitkr@codeaurora.org>
+Subject: Applied "ASoC: qdsp6: qdafe: add support for display_port_rx" to the asoc tree
+In-Reply-To:  <1544790569-10608-3-git-send-email-rohitkr@codeaurora.org>
 X-Patchwork-Hint: ignore
-Message-Id: <20181214124917.129B111258A2@debutante.sirena.org.uk>
-Date:   Fri, 14 Dec 2018 12:49:17 +0000 (GMT)
+Message-Id: <20181214124920.BE0F911258A2@debutante.sirena.org.uk>
+Date:   Fri, 14 Dec 2018 12:49:20 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -69,7 +69,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: qdsp6: q6routing: add display_port_rx port routing
+   ASoC: qdsp6: qdafe: add support for display_port_rx
 
 has been applied to the asoc tree at
 
@@ -94,55 +94,50 @@ to this mail.
 Thanks,
 Mark
 
-From 0718f87b0df49570cdcb96179997bd372cac1742 Mon Sep 17 00:00:00 2001
+From 3f6856a28f5eeb4fcaeb3ae25118171747354e51 Mon Sep 17 00:00:00 2001
 From: Rohit kumar <rohitkr@codeaurora.org>
-Date: Fri, 14 Dec 2018 17:59:29 +0530
-Subject: [PATCH] ASoC: qdsp6: q6routing: add display_port_rx port routing
+Date: Fri, 14 Dec 2018 17:59:27 +0530
+Subject: [PATCH] ASoC: qdsp6: qdafe: add support for display_port_rx
 
-This patch add support to Display_port_rx mixers required to
-select path between ASM stream and AFE ports.
+This patch adds support for Display_Port_Rx
+port in AFE.
 
 Signed-off-by: Rohit kumar <rohitkr@codeaurora.org>
 Acked-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/qcom/qdsp6/q6routing.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ sound/soc/qcom/qdsp6/q6afe.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/sound/soc/qcom/qdsp6/q6routing.c b/sound/soc/qcom/qdsp6/q6routing.c
-index d61b8404f7da..ddcd9978cf57 100644
---- a/sound/soc/qcom/qdsp6/q6routing.c
-+++ b/sound/soc/qcom/qdsp6/q6routing.c
-@@ -453,6 +453,9 @@ static int msm_routing_put_audio_mixer(struct snd_kcontrol *kcontrol,
- static const struct snd_kcontrol_new hdmi_mixer_controls[] = {
- 	Q6ROUTING_RX_MIXERS(HDMI_RX) };
+diff --git a/sound/soc/qcom/qdsp6/q6afe.c b/sound/soc/qcom/qdsp6/q6afe.c
+index 829b5e987b2a..e0945f7a58c8 100644
+--- a/sound/soc/qcom/qdsp6/q6afe.c
++++ b/sound/soc/qcom/qdsp6/q6afe.c
+@@ -71,6 +71,7 @@
+ /* Port IDs */
+ #define AFE_API_VERSION_HDMI_CONFIG	0x1
+ #define AFE_PORT_ID_MULTICHAN_HDMI_RX	0x100E
++#define AFE_PORT_ID_HDMI_OVER_DP_RX	0x6020
  
-+static const struct snd_kcontrol_new display_port_mixer_controls[] = {
-+	Q6ROUTING_RX_MIXERS(DISPLAY_PORT_RX) };
-+
- static const struct snd_kcontrol_new primary_mi2s_rx_mixer_controls[] = {
- 	Q6ROUTING_RX_MIXERS(PRIMARY_MI2S_RX) };
+ #define AFE_API_VERSION_SLIMBUS_CONFIG 0x1
+ /* Clock set API version */
+@@ -704,6 +705,8 @@ static struct afe_port_map port_maps[AFE_PORT_MAX] = {
+ 				QUINARY_TDM_RX_7, 1, 1},
+ 	[QUINARY_TDM_TX_7] =  { AFE_PORT_ID_QUINARY_TDM_TX_7,
+ 				QUINARY_TDM_TX_7, 0, 1},
++	[DISPLAY_PORT_RX] = { AFE_PORT_ID_HDMI_OVER_DP_RX,
++				DISPLAY_PORT_RX, 1, 1},
+ };
  
-@@ -655,6 +658,10 @@ static const struct snd_soc_dapm_widget msm_qdsp6_widgets[] = {
- 			   hdmi_mixer_controls,
- 			   ARRAY_SIZE(hdmi_mixer_controls)),
+ static void q6afe_port_free(struct kref *ref)
+@@ -1384,6 +1387,7 @@ struct q6afe_port *q6afe_port_get_from_id(struct device *dev, int id)
  
-+	SND_SOC_DAPM_MIXER("DISPLAY_PORT_RX Audio Mixer", SND_SOC_NOPM, 0, 0,
-+			   display_port_mixer_controls,
-+			   ARRAY_SIZE(display_port_mixer_controls)),
-+
- 	SND_SOC_DAPM_MIXER("SLIMBUS_0_RX Audio Mixer", SND_SOC_NOPM, 0, 0,
- 			   slimbus_rx_mixer_controls,
- 			   ARRAY_SIZE(slimbus_rx_mixer_controls)),
-@@ -833,6 +840,8 @@ static const struct snd_soc_dapm_widget msm_qdsp6_widgets[] = {
- 
- static const struct snd_soc_dapm_route intercon[] = {
- 	Q6ROUTING_RX_DAPM_ROUTE("HDMI Mixer", "HDMI_RX"),
-+	Q6ROUTING_RX_DAPM_ROUTE("DISPLAY_PORT_RX Audio Mixer",
-+				"DISPLAY_PORT_RX"),
- 	Q6ROUTING_RX_DAPM_ROUTE("SLIMBUS_0_RX Audio Mixer", "SLIMBUS_0_RX"),
- 	Q6ROUTING_RX_DAPM_ROUTE("SLIMBUS_1_RX Audio Mixer", "SLIMBUS_1_RX"),
- 	Q6ROUTING_RX_DAPM_ROUTE("SLIMBUS_2_RX Audio Mixer", "SLIMBUS_2_RX"),
+ 	switch (port_id) {
+ 	case AFE_PORT_ID_MULTICHAN_HDMI_RX:
++	case AFE_PORT_ID_HDMI_OVER_DP_RX:
+ 		cfg_type = AFE_PARAM_ID_HDMI_CONFIG;
+ 		break;
+ 	case AFE_PORT_ID_SLIMBUS_MULTI_CHAN_0_TX:
 -- 
 2.19.0.rc2
 
