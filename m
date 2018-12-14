@@ -2,532 +2,113 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.9 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CE97C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 14:44:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47724C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 14:44:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7134720675
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 14:44:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A94D220675
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 14:44:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="P9JHmook"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730126AbeLNOoc (ORCPT
+        id S1730243AbeLNOoi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 09:44:32 -0500
-Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:59510 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729808AbeLNOoc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 09:44:32 -0500
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-        by mx0b-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wBEEdk0V031331;
-        Fri, 14 Dec 2018 08:44:18 -0600
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=rf@opensource.cirrus.com
-Received: from mail1.cirrus.com (mail1.cirrus.com [141.131.3.20])
-        by mx0b-001ae601.pphosted.com with ESMTP id 2pc7y5gvyn-1;
-        Fri, 14 Dec 2018 08:44:18 -0600
-Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
-        by mail1.cirrus.com (Postfix) with ESMTP id 9156E611C8B7;
-        Fri, 14 Dec 2018 08:44:17 -0600 (CST)
-Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
- (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Fri, 14 Dec 2018
- 14:44:16 +0000
-Received: from edi-sw-dsktp006.ad.cirrus.com (edi-sw-dsktp006.ad.cirrus.com
- [198.90.251.142])      by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id
- wBEEiG7T028135;        Fri, 14 Dec 2018 14:44:16 GMT
-From:   Richard Fitzgerald <rf@opensource.cirrus.com>
-To:     <tglx@linutronix.de>
-CC:     <patches@opensource.cirrus.com>, <linux-kernel@vger.kernel.org>,
-        <jason@lakedaemon.net>, <marc.zyngier@arm.com>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>
-Subject: [PATCH v13 RESEND2] irqchip: Add driver for Cirrus Logic Madera codecs
-Date:   Fri, 14 Dec 2018 14:44:16 +0000
-Message-ID: <20181214144416.24528-1-rf@opensource.cirrus.com>
-X-Mailer: git-send-email 2.11.0
+        Fri, 14 Dec 2018 09:44:38 -0500
+Received: from mail-eopbgr70082.outbound.protection.outlook.com ([40.107.7.82]:61664
+        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729808AbeLNOoi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 09:44:38 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=s/+VNbSLJtlc15Ftbl7eK/AqdOGZkKbFN5VSCo7ommU=;
+ b=P9JHmooktOOMmDkmcoEdMur8IvV5RIK6GH4JCeDDQ7I/iqm1DcqZHdtC3D8sZz+jhsVOCJKDMkvtcILjohgo49K50Tq1iJUIUwCOIV5oklxQHWGPlHAHxNHJ1dAH0RYMEENVLxdDAjeoSBuOseU0FsV1TAqGQHKZu+hbjFErHgA=
+Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com (52.134.3.153) by
+ VI1PR0402MB2911.eurprd04.prod.outlook.com (10.175.24.13) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1425.18; Fri, 14 Dec 2018 14:44:34 +0000
+Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com
+ ([fe80::e4fb:858:afdc:c40b]) by VI1PR0402MB3485.eurprd04.prod.outlook.com
+ ([fe80::e4fb:858:afdc:c40b%3]) with mapi id 15.20.1425.021; Fri, 14 Dec 2018
+ 14:44:33 +0000
+From:   Horia Geanta <horia.geanta@nxp.com>
+To:     Ioana Ciornei <ioana.ciornei@nxp.com>, Leo Li <leoyang.li@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+CC:     Laurentiu Tudor <laurentiu.tudor@nxp.com>,
+        Ioana Ciocoi Radulescu <ruxandra.radulescu@nxp.com>,
+        Roy Pledge <roy.pledge@nxp.com>
+Subject: Re: [PATCH 4/5] soc: fsl: dpio: add a device_link at
+ dpaa2_io_service_register
+Thread-Topic: [PATCH 4/5] soc: fsl: dpio: add a device_link at
+ dpaa2_io_service_register
+Thread-Index: AQHUkKhvJjp2Ah0odkm7dsNjIoy7zA==
+Date:   Fri, 14 Dec 2018 14:44:33 +0000
+Message-ID: <VI1PR0402MB3485C4800D690B2A27FAF04098A10@VI1PR0402MB3485.eurprd04.prod.outlook.com>
+References: <1544460591-14888-1-git-send-email-ioana.ciornei@nxp.com>
+ <1544460591-14888-5-git-send-email-ioana.ciornei@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=horia.geanta@nxp.com; 
+x-originating-ip: [86.34.165.90]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1PR0402MB2911;6:Yh7y5Iss1X3Qwqr6pM9xoyTdK517kXgC8L0Neo+WA5tPU2iMZCUZ+x2KXLi6PSXHIhJ/bpkqQTXdN6cDXW1A92r6PFfhVYDH3kgrBV57yoZgPDWnxSvvkgS+Vw3U4zLU97p4Z7Rlrhf6LHW9Of1kJBuyKgGATuodl8h3bgzYgYIwg7XmJdRMZROSHNE+uN/v0JQl+S+zFJJWWzFckVrUDRXsr10Kg3uSLV0afAbT2xnpxMUwZ6DMpT9hnecNuKQyrWXGvmE5YpBOhvNABr2b5A1Jb+HFmdB0CLXxImn7DcZYtUcMFKCMsg6IH924JyZee13gxu4DViXjNBGRIw9pTJg7RVAVIOgDrJV2fkyeaF8zLwQ6r2UI8G1oSVV/3OEwqTkRz6T3bo7tG+Xa2KrmcDymg5T3uG7PDmRR67e/y/pOwYaxXjF3kScM/8LFH3LyJlWUWLssUqnsfYGfFQt7Vg==;5:jyiu9p7t36EKS6F8PQRNRNT5dU3GAc1bf4S2i4MjiYc510LIEx6arhX0wSrZEJuVsbouU578nDMSVSIYBIqJiN2ocSPz7CDpgCMxa57qwVKl8QMV/gukInHPZcaqxEo46OJA8Asit6e4ymme+JWf7s2gFMfVTQgpk4oo7yS4nxY=;7:DbPrur6GPKqCEcZXBE+TIalAQRNaK5LUERqxrSWmYV0Tt6ghwRtru7ZO3wwnG7plljKxLadStQGKEMKTu+XbIRJLG9+Cpz8rVisJo6+bjMgK/TWHecvYj+Khql99mR6PU5qOtZ+ip845ByMpD/X+GA==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 7884bc1a-d0b4-4ae9-e4de-08d661d2a9ca
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR0402MB2911;
+x-ms-traffictypediagnostic: VI1PR0402MB2911:
+x-microsoft-antispam-prvs: <VI1PR0402MB2911B8B98FF9FD27F2C5F9D698A10@VI1PR0402MB2911.eurprd04.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(999002)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3002001)(3231475)(944501520)(52105112)(6055026)(148016)(149066)(150057)(6041310)(20161123562045)(20161123560045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:VI1PR0402MB2911;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0402MB2911;
+x-forefront-prvs: 08864C38AC
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(396003)(366004)(136003)(376002)(346002)(189003)(199004)(53936002)(2906002)(106356001)(229853002)(446003)(305945005)(6436002)(74316002)(6246003)(2201001)(97736004)(86362001)(478600001)(8936002)(110136005)(316002)(7736002)(26005)(4326008)(53546011)(2501003)(54906003)(76176011)(6506007)(102836004)(186003)(71190400001)(68736007)(71200400001)(81156014)(99286004)(33656002)(8676002)(66066001)(81166006)(14454004)(256004)(55016002)(3846002)(6116002)(105586002)(44832011)(5660300001)(9686003)(25786009)(486006)(7696005)(476003);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB2911;H:VI1PR0402MB3485.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: x/cpXho3qIVqO7ttwQrV6xBB5RvS3v744XWiiM2Lf+cOGc1UainhIE/88a6cGu0iaWLvJetSMrX4rBZbIYQs72iSOAYKbT5dHvOSxSGjPWqVOiwnZriaXKTz5o6Klr2DgsylMrQINu13Lrp6Wt7Ll37ggfwHr/yxSEdec1UmydmHH/5pygl1ERljOOZYmQ+zLWOKD6AluLHDzFSjcljZBS7riCv6V+5cMvPVo+pq1pKMpZfBUhEw2yCeD4NTaDCz97U3+snzwYg3eSNMLk4W6WR4Q+gGxJfnQa6UGQyRjMR1FCSWjIHe0QQ+SuBRTsUU
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-2"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1812140130
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7884bc1a-d0b4-4ae9-e4de-08d661d2a9ca
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Dec 2018 14:44:33.7245
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB2911
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Cirrus Logic Madera codecs (Cirrus Logic CS47L35/85/90/91 and WM1840)
-are highly complex devices containing up to 7 programmable DSPs and many
-other internal sources of interrupts plus a number of GPIOs that can be
-used as interrupt inputs. The large number (>150) of internal interrupt
-sources are managed by an on-board interrupt controller.
-
-This driver provides the handling for the interrupt controller. As the
-codec is accessed via regmap, we can make use of the generic IRQ
-functionality from regmap to do most of the work. Only around half of
-the possible interrupt source are currently of interest from the driver
-so only this subset is defined. Others can be added in future if needed.
-
-The KConfig options are not user-configurable because this driver is
-mandatory so is automatically included when the parent MFD driver is
-selected.
-
-Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
-Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
----
-The MFD dependency is now in Linus's tree so this patch should apply
-to the irq tree without breaking it.
----
- MAINTAINERS                        |   2 +
- drivers/irqchip/Kconfig            |   3 +
- drivers/irqchip/Makefile           |   1 +
- drivers/irqchip/irq-madera.c       | 256 +++++++++++++++++++++++++++++++++++++
- include/linux/irqchip/irq-madera.h | 132 +++++++++++++++++++
- 5 files changed, 394 insertions(+)
- create mode 100644 drivers/irqchip/irq-madera.c
- create mode 100644 include/linux/irqchip/irq-madera.h
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index f4855974f325..9060061f15f1 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -3604,8 +3604,10 @@ W:	https://github.com/CirrusLogic/linux-drivers/wiki
- S:	Supported
- F:	Documentation/devicetree/bindings/mfd/madera.txt
- F:	Documentation/devicetree/bindings/pinctrl/cirrus,madera-pinctrl.txt
-+F:	include/linux/irqchip/irq-madera*
- F:	include/linux/mfd/madera/*
- F:	drivers/gpio/gpio-madera*
-+F:	drivers/irqchip/irq-madera*
- F:	drivers/mfd/madera*
- F:	drivers/mfd/cs47l*
- F:	drivers/pinctrl/cirrus/*
-diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
-index 51a5ef0e96ed..a7252da28305 100644
---- a/drivers/irqchip/Kconfig
-+++ b/drivers/irqchip/Kconfig
-@@ -150,6 +150,9 @@ config IMGPDC_IRQ
- 	select GENERIC_IRQ_CHIP
- 	select IRQ_DOMAIN
- 
-+config MADERA_IRQ
-+	tristate
-+
- config IRQ_MIPS_CPU
- 	bool
- 	select GENERIC_IRQ_CHIP
-diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
-index 794c13d3ac3d..3dcea8a6e5de 100644
---- a/drivers/irqchip/Makefile
-+++ b/drivers/irqchip/Makefile
-@@ -91,3 +91,4 @@ obj-$(CONFIG_QCOM_PDC)			+= qcom-pdc.o
- obj-$(CONFIG_CSKY_MPINTC)		+= irq-csky-mpintc.o
- obj-$(CONFIG_CSKY_APB_INTC)		+= irq-csky-apb-intc.o
- obj-$(CONFIG_SIFIVE_PLIC)		+= irq-sifive-plic.o
-+obj-$(CONFIG_MADERA_IRQ)		+= irq-madera.o
-diff --git a/drivers/irqchip/irq-madera.c b/drivers/irqchip/irq-madera.c
-new file mode 100644
-index 000000000000..e9256dee1a45
---- /dev/null
-+++ b/drivers/irqchip/irq-madera.c
-@@ -0,0 +1,256 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Interrupt support for Cirrus Logic Madera codecs
-+ *
-+ * Copyright (C) 2015-2018 Cirrus Logic, Inc. and
-+ *                         Cirrus Logic International Semiconductor Ltd.
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/gpio.h>
-+#include <linux/interrupt.h>
-+#include <linux/irq.h>
-+#include <linux/irqdomain.h>
-+#include <linux/pm_runtime.h>
-+#include <linux/regmap.h>
-+#include <linux/slab.h>
-+#include <linux/of.h>
-+#include <linux/of_device.h>
-+#include <linux/of_gpio.h>
-+#include <linux/of_irq.h>
-+#include <linux/irqchip/irq-madera.h>
-+#include <linux/mfd/madera/core.h>
-+#include <linux/mfd/madera/pdata.h>
-+#include <linux/mfd/madera/registers.h>
-+
-+#define MADERA_IRQ(_irq, _reg)					\
-+	[MADERA_IRQ_ ## _irq] = {				\
-+		.reg_offset = (_reg) - MADERA_IRQ1_STATUS_2,	\
-+		.mask = MADERA_ ## _irq ## _EINT1		\
-+	}
-+
-+/* Mappings are the same for all Madera codecs */
-+static const struct regmap_irq madera_irqs[MADERA_NUM_IRQ] = {
-+	MADERA_IRQ(FLL1_LOCK,		MADERA_IRQ1_STATUS_2),
-+	MADERA_IRQ(FLL2_LOCK,		MADERA_IRQ1_STATUS_2),
-+	MADERA_IRQ(FLL3_LOCK,		MADERA_IRQ1_STATUS_2),
-+	MADERA_IRQ(FLLAO_LOCK,		MADERA_IRQ1_STATUS_2),
-+
-+	MADERA_IRQ(MICDET1,		MADERA_IRQ1_STATUS_6),
-+	MADERA_IRQ(MICDET2,		MADERA_IRQ1_STATUS_6),
-+	MADERA_IRQ(HPDET,		MADERA_IRQ1_STATUS_6),
-+
-+	MADERA_IRQ(MICD_CLAMP_RISE,	MADERA_IRQ1_STATUS_7),
-+	MADERA_IRQ(MICD_CLAMP_FALL,	MADERA_IRQ1_STATUS_7),
-+	MADERA_IRQ(JD1_RISE,		MADERA_IRQ1_STATUS_7),
-+	MADERA_IRQ(JD1_FALL,		MADERA_IRQ1_STATUS_7),
-+
-+	MADERA_IRQ(ASRC2_IN1_LOCK,	MADERA_IRQ1_STATUS_9),
-+	MADERA_IRQ(ASRC2_IN2_LOCK,	MADERA_IRQ1_STATUS_9),
-+	MADERA_IRQ(ASRC1_IN1_LOCK,	MADERA_IRQ1_STATUS_9),
-+	MADERA_IRQ(ASRC1_IN2_LOCK,	MADERA_IRQ1_STATUS_9),
-+	MADERA_IRQ(DRC2_SIG_DET,	MADERA_IRQ1_STATUS_9),
-+	MADERA_IRQ(DRC1_SIG_DET,	MADERA_IRQ1_STATUS_9),
-+
-+	MADERA_IRQ(DSP_IRQ1,		MADERA_IRQ1_STATUS_11),
-+	MADERA_IRQ(DSP_IRQ2,		MADERA_IRQ1_STATUS_11),
-+	MADERA_IRQ(DSP_IRQ3,		MADERA_IRQ1_STATUS_11),
-+	MADERA_IRQ(DSP_IRQ4,		MADERA_IRQ1_STATUS_11),
-+	MADERA_IRQ(DSP_IRQ5,		MADERA_IRQ1_STATUS_11),
-+	MADERA_IRQ(DSP_IRQ6,		MADERA_IRQ1_STATUS_11),
-+	MADERA_IRQ(DSP_IRQ7,		MADERA_IRQ1_STATUS_11),
-+	MADERA_IRQ(DSP_IRQ8,		MADERA_IRQ1_STATUS_11),
-+	MADERA_IRQ(DSP_IRQ9,		MADERA_IRQ1_STATUS_11),
-+	MADERA_IRQ(DSP_IRQ10,		MADERA_IRQ1_STATUS_11),
-+	MADERA_IRQ(DSP_IRQ11,		MADERA_IRQ1_STATUS_11),
-+	MADERA_IRQ(DSP_IRQ12,		MADERA_IRQ1_STATUS_11),
-+	MADERA_IRQ(DSP_IRQ13,		MADERA_IRQ1_STATUS_11),
-+	MADERA_IRQ(DSP_IRQ14,		MADERA_IRQ1_STATUS_11),
-+	MADERA_IRQ(DSP_IRQ15,		MADERA_IRQ1_STATUS_11),
-+	MADERA_IRQ(DSP_IRQ16,		MADERA_IRQ1_STATUS_11),
-+
-+	MADERA_IRQ(HP3R_SC,		MADERA_IRQ1_STATUS_12),
-+	MADERA_IRQ(HP3L_SC,		MADERA_IRQ1_STATUS_12),
-+	MADERA_IRQ(HP2R_SC,		MADERA_IRQ1_STATUS_12),
-+	MADERA_IRQ(HP2L_SC,		MADERA_IRQ1_STATUS_12),
-+	MADERA_IRQ(HP1R_SC,		MADERA_IRQ1_STATUS_12),
-+	MADERA_IRQ(HP1L_SC,		MADERA_IRQ1_STATUS_12),
-+
-+	MADERA_IRQ(SPK_OVERHEAT_WARN,	MADERA_IRQ1_STATUS_15),
-+	MADERA_IRQ(SPK_OVERHEAT,	MADERA_IRQ1_STATUS_15),
-+
-+	MADERA_IRQ(DSP1_BUS_ERR,	MADERA_IRQ1_STATUS_33),
-+	MADERA_IRQ(DSP2_BUS_ERR,	MADERA_IRQ1_STATUS_33),
-+	MADERA_IRQ(DSP3_BUS_ERR,	MADERA_IRQ1_STATUS_33),
-+	MADERA_IRQ(DSP4_BUS_ERR,	MADERA_IRQ1_STATUS_33),
-+	MADERA_IRQ(DSP5_BUS_ERR,	MADERA_IRQ1_STATUS_33),
-+	MADERA_IRQ(DSP6_BUS_ERR,	MADERA_IRQ1_STATUS_33),
-+	MADERA_IRQ(DSP7_BUS_ERR,	MADERA_IRQ1_STATUS_33),
-+};
-+
-+static const struct regmap_irq_chip madera_irq_chip = {
-+	.name		= "madera IRQ",
-+	.status_base	= MADERA_IRQ1_STATUS_2,
-+	.mask_base	= MADERA_IRQ1_MASK_2,
-+	.ack_base	= MADERA_IRQ1_STATUS_2,
-+	.runtime_pm	= true,
-+	.num_regs	= 32,
-+	.irqs		= madera_irqs,
-+	.num_irqs	= ARRAY_SIZE(madera_irqs),
-+};
-+
-+#ifdef CONFIG_PM_SLEEP
-+static int madera_suspend(struct device *dev)
-+{
-+	struct madera *madera = dev_get_drvdata(dev->parent);
-+
-+	dev_dbg(madera->irq_dev, "Suspend, disabling IRQ\n");
-+
-+	/*
-+	 * A runtime resume would be needed to access the chip interrupt
-+	 * controller but runtime pm doesn't function during suspend.
-+	 * Temporarily disable interrupts until we reach suspend_noirq state.
-+	 */
-+	disable_irq(madera->irq);
-+
-+	return 0;
-+}
-+
-+static int madera_suspend_noirq(struct device *dev)
-+{
-+	struct madera *madera = dev_get_drvdata(dev->parent);
-+
-+	dev_dbg(madera->irq_dev, "No IRQ suspend, reenabling IRQ\n");
-+
-+	/* Re-enable interrupts to service wakeup interrupts from the chip */
-+	enable_irq(madera->irq);
-+
-+	return 0;
-+}
-+
-+static int madera_resume_noirq(struct device *dev)
-+{
-+	struct madera *madera = dev_get_drvdata(dev->parent);
-+
-+	dev_dbg(madera->irq_dev, "No IRQ resume, disabling IRQ\n");
-+
-+	/*
-+	 * We can't handle interrupts until runtime pm is available again.
-+	 * Disable them temporarily.
-+	 */
-+	disable_irq(madera->irq);
-+
-+	return 0;
-+}
-+
-+static int madera_resume(struct device *dev)
-+{
-+	struct madera *madera = dev_get_drvdata(dev->parent);
-+
-+	dev_dbg(madera->irq_dev, "Resume, reenabling IRQ\n");
-+
-+	/* Interrupts can now be handled */
-+	enable_irq(madera->irq);
-+
-+	return 0;
-+}
-+#endif
-+
-+static const struct dev_pm_ops madera_irq_pm_ops = {
-+	SET_SYSTEM_SLEEP_PM_OPS(madera_suspend, madera_resume)
-+	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(madera_suspend_noirq,
-+				      madera_resume_noirq)
-+};
-+
-+static int madera_irq_probe(struct platform_device *pdev)
-+{
-+	struct madera *madera = dev_get_drvdata(pdev->dev.parent);
-+	struct irq_data *irq_data;
-+	unsigned int irq_flags = 0;
-+	int ret;
-+
-+	dev_dbg(&pdev->dev, "probe\n");
-+
-+	/*
-+	 * Read the flags from the interrupt controller if not specified
-+	 * by pdata
-+	 */
-+	irq_flags = madera->pdata.irq_flags;
-+	if (!irq_flags) {
-+		irq_data = irq_get_irq_data(madera->irq);
-+		if (!irq_data) {
-+			dev_err(&pdev->dev, "Invalid IRQ: %d\n", madera->irq);
-+			return -EINVAL;
-+		}
-+
-+		irq_flags = irqd_get_trigger_type(irq_data);
-+
-+		/* Codec defaults to trigger low, use this if no flags given */
-+		if (irq_flags == IRQ_TYPE_NONE)
-+			irq_flags = IRQF_TRIGGER_LOW;
-+	}
-+
-+	if (irq_flags & (IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING)) {
-+		dev_err(&pdev->dev, "Host interrupt not level-triggered\n");
-+		return -EINVAL;
-+	}
-+
-+	/*
-+	 * The silicon always starts at active-low, check if we need to
-+	 * switch to active-high.
-+	 */
-+	if (irq_flags & IRQF_TRIGGER_HIGH) {
-+		ret = regmap_update_bits(madera->regmap, MADERA_IRQ1_CTRL,
-+					 MADERA_IRQ_POL_MASK, 0);
-+		if (ret) {
-+			dev_err(&pdev->dev,
-+				"Failed to set IRQ polarity: %d\n", ret);
-+			return ret;
-+		}
-+	}
-+
-+	/*
-+	 * NOTE: regmap registers this against the OF node of the parent of
-+	 * the regmap - that is, against the mfd driver
-+	 */
-+	ret = regmap_add_irq_chip(madera->regmap, madera->irq, IRQF_ONESHOT, 0,
-+				  &madera_irq_chip, &madera->irq_data);
-+	if (ret) {
-+		dev_err(&pdev->dev, "add_irq_chip failed: %d\n", ret);
-+		return ret;
-+	}
-+
-+	/* Save dev in parent MFD struct so it is accessible to siblings */
-+	madera->irq_dev = &pdev->dev;
-+
-+	return 0;
-+}
-+
-+static int madera_irq_remove(struct platform_device *pdev)
-+{
-+	struct madera *madera = dev_get_drvdata(pdev->dev.parent);
-+
-+	/*
-+	 * The IRQ is disabled by the parent MFD driver before
-+	 * it starts cleaning up all child drivers
-+	 */
-+	madera->irq_dev = NULL;
-+	regmap_del_irq_chip(madera->irq, madera->irq_data);
-+
-+	return 0;
-+}
-+
-+static struct platform_driver madera_irq_driver = {
-+	.probe	= &madera_irq_probe,
-+	.remove = &madera_irq_remove,
-+	.driver = {
-+		.name	= "madera-irq",
-+		.pm	= &madera_irq_pm_ops,
-+	}
-+};
-+module_platform_driver(madera_irq_driver);
-+
-+MODULE_SOFTDEP("pre: madera");
-+MODULE_DESCRIPTION("Madera IRQ driver");
-+MODULE_AUTHOR("Richard Fitzgerald <rf@opensource.cirrus.com>");
-+MODULE_LICENSE("GPL v2");
-diff --git a/include/linux/irqchip/irq-madera.h b/include/linux/irqchip/irq-madera.h
-new file mode 100644
-index 000000000000..1160fa3769ae
---- /dev/null
-+++ b/include/linux/irqchip/irq-madera.h
-@@ -0,0 +1,132 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Interrupt support for Cirrus Logic Madera codecs
-+ *
-+ * Copyright (C) 2016-2018 Cirrus Logic, Inc. and
-+ *                         Cirrus Logic International Semiconductor Ltd.
-+ */
-+
-+#ifndef IRQCHIP_MADERA_H
-+#define IRQCHIP_MADERA_H
-+
-+#include <linux/interrupt.h>
-+#include <linux/mfd/madera/core.h>
-+
-+#define MADERA_IRQ_FLL1_LOCK		0
-+#define MADERA_IRQ_FLL2_LOCK		1
-+#define MADERA_IRQ_FLL3_LOCK		2
-+#define MADERA_IRQ_FLLAO_LOCK		3
-+#define MADERA_IRQ_CLK_SYS_ERR		4
-+#define MADERA_IRQ_CLK_ASYNC_ERR	5
-+#define MADERA_IRQ_CLK_DSP_ERR		6
-+#define MADERA_IRQ_HPDET		7
-+#define MADERA_IRQ_MICDET1		8
-+#define MADERA_IRQ_MICDET2		9
-+#define MADERA_IRQ_JD1_RISE		10
-+#define MADERA_IRQ_JD1_FALL		11
-+#define MADERA_IRQ_JD2_RISE		12
-+#define MADERA_IRQ_JD2_FALL		13
-+#define MADERA_IRQ_MICD_CLAMP_RISE	14
-+#define MADERA_IRQ_MICD_CLAMP_FALL	15
-+#define MADERA_IRQ_DRC2_SIG_DET		16
-+#define MADERA_IRQ_DRC1_SIG_DET		17
-+#define MADERA_IRQ_ASRC1_IN1_LOCK	18
-+#define MADERA_IRQ_ASRC1_IN2_LOCK	19
-+#define MADERA_IRQ_ASRC2_IN1_LOCK	20
-+#define MADERA_IRQ_ASRC2_IN2_LOCK	21
-+#define MADERA_IRQ_DSP_IRQ1		22
-+#define MADERA_IRQ_DSP_IRQ2		23
-+#define MADERA_IRQ_DSP_IRQ3		24
-+#define MADERA_IRQ_DSP_IRQ4		25
-+#define MADERA_IRQ_DSP_IRQ5		26
-+#define MADERA_IRQ_DSP_IRQ6		27
-+#define MADERA_IRQ_DSP_IRQ7		28
-+#define MADERA_IRQ_DSP_IRQ8		29
-+#define MADERA_IRQ_DSP_IRQ9		30
-+#define MADERA_IRQ_DSP_IRQ10		31
-+#define MADERA_IRQ_DSP_IRQ11		32
-+#define MADERA_IRQ_DSP_IRQ12		33
-+#define MADERA_IRQ_DSP_IRQ13		34
-+#define MADERA_IRQ_DSP_IRQ14		35
-+#define MADERA_IRQ_DSP_IRQ15		36
-+#define MADERA_IRQ_DSP_IRQ16		37
-+#define MADERA_IRQ_HP1L_SC		38
-+#define MADERA_IRQ_HP1R_SC		39
-+#define MADERA_IRQ_HP2L_SC		40
-+#define MADERA_IRQ_HP2R_SC		41
-+#define MADERA_IRQ_HP3L_SC		42
-+#define MADERA_IRQ_HP3R_SC		43
-+#define MADERA_IRQ_SPKOUTL_SC		44
-+#define MADERA_IRQ_SPKOUTR_SC		45
-+#define MADERA_IRQ_HP1L_ENABLE_DONE	46
-+#define MADERA_IRQ_HP1R_ENABLE_DONE	47
-+#define MADERA_IRQ_HP2L_ENABLE_DONE	48
-+#define MADERA_IRQ_HP2R_ENABLE_DONE	49
-+#define MADERA_IRQ_HP3L_ENABLE_DONE	50
-+#define MADERA_IRQ_HP3R_ENABLE_DONE	51
-+#define MADERA_IRQ_SPKOUTL_ENABLE_DONE	52
-+#define MADERA_IRQ_SPKOUTR_ENABLE_DONE	53
-+#define MADERA_IRQ_SPK_SHUTDOWN		54
-+#define MADERA_IRQ_SPK_OVERHEAT		55
-+#define MADERA_IRQ_SPK_OVERHEAT_WARN	56
-+#define MADERA_IRQ_GPIO1		57
-+#define MADERA_IRQ_GPIO2		58
-+#define MADERA_IRQ_GPIO3		59
-+#define MADERA_IRQ_GPIO4		60
-+#define MADERA_IRQ_GPIO5		61
-+#define MADERA_IRQ_GPIO6		62
-+#define MADERA_IRQ_GPIO7		63
-+#define MADERA_IRQ_GPIO8		64
-+#define MADERA_IRQ_DSP1_BUS_ERR		65
-+#define MADERA_IRQ_DSP2_BUS_ERR		66
-+#define MADERA_IRQ_DSP3_BUS_ERR		67
-+#define MADERA_IRQ_DSP4_BUS_ERR		68
-+#define MADERA_IRQ_DSP5_BUS_ERR		69
-+#define MADERA_IRQ_DSP6_BUS_ERR		70
-+#define MADERA_IRQ_DSP7_BUS_ERR		71
-+
-+#define MADERA_NUM_IRQ			72
-+
-+/*
-+ * These wrapper functions are for use by other child drivers of the
-+ * same parent MFD.
-+ */
-+static inline int madera_get_irq_mapping(struct madera *madera, int irq)
-+{
-+	if (!madera->irq_dev)
-+		return -ENODEV;
-+
-+	return regmap_irq_get_virq(madera->irq_data, irq);
-+}
-+
-+static inline int madera_request_irq(struct madera *madera, int irq,
-+				     const char *name,
-+				     irq_handler_t handler, void *data)
-+{
-+	irq = madera_get_irq_mapping(madera, irq);
-+	if (irq < 0)
-+		return irq;
-+
-+	return request_threaded_irq(irq, NULL, handler, IRQF_ONESHOT, name,
-+				    data);
-+}
-+
-+static inline void madera_free_irq(struct madera *madera, int irq, void *data)
-+{
-+	irq = madera_get_irq_mapping(madera, irq);
-+	if (irq < 0)
-+		return;
-+
-+	free_irq(irq, data);
-+}
-+
-+static inline int madera_set_irq_wake(struct madera *madera, int irq, int on)
-+{
-+	irq = madera_get_irq_mapping(madera, irq);
-+	if (irq < 0)
-+		return irq;
-+
-+	return irq_set_irq_wake(irq, on);
-+}
-+
-+#endif
--- 
-2.11.0
-
+On 12/10/2018 6:50 PM, Ioana Ciornei wrote:=0A=
+> Automatically add a device link between the actual device requesting the=
+=0A=
+> dpaa2_io_service_register and the underlying dpaa2_io used. This link=0A=
+> will ensure that when a DPIO device, which is indirectly used by other=0A=
+> devices, is unbound any consumer devices will be also unbound from their=
+=0A=
+> drivers.=0A=
+> =0A=
+> For example, any DPNI, bound to the dpaa2-eth driver, which is using=0A=
+> DPIO devices will be unbound before its supplier device.=0A=
+> =0A=
+> Also, add a new parameter to the dpaa2_io_service_[de]register functions=
+=0A=
+> to specify the requesting device (ie the consumer).=0A=
+> =0A=
+> Signed-off-by: Ioana Ciornei <ioana.ciornei@nxp.com>=0A=
+Reviewed-by: Horia Geant=E3 <horia.geanta@nxp.com>=0A=
+=0A=
+Thanks,=0A=
+Horia=0A=
