@@ -2,110 +2,131 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.9 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D04D9C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:56:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E597C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:56:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A092206DD
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:56:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CCC79206DD
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 20:56:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731110AbeLNU4C (ORCPT
+        id S1731179AbeLNU4G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 15:56:02 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:47335 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730739AbeLNU4C (ORCPT
+        Fri, 14 Dec 2018 15:56:06 -0500
+Received: from gateway20.websitewelcome.com ([192.185.47.18]:43742 "EHLO
+        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730848AbeLNU4F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 15:56:02 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBEKttEj1459265
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Fri, 14 Dec 2018 12:55:55 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBEKttMn1459262;
-        Fri, 14 Dec 2018 12:55:55 -0800
-Date:   Fri, 14 Dec 2018 12:55:55 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-xzkoo0gyr56gej39ltivuh9g@git.kernel.org>
-Cc:     arjan@linux.intel.com, linux-kernel@vger.kernel.org,
-        jolsa@kernel.org, hpa@zytor.com, mingo@kernel.org,
-        tglx@linutronix.de, namhyung@kernel.org, adrian.hunter@intel.com,
-        acme@redhat.com
-Reply-To: linux-kernel@vger.kernel.org, jolsa@kernel.org,
-          arjan@linux.intel.com, hpa@zytor.com, namhyung@kernel.org,
-          tglx@linutronix.de, adrian.hunter@intel.com, mingo@kernel.org,
-          acme@redhat.com
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf svghelper: Fix unchecked usage of strncpy()
-Git-Commit-ID: 7d81b2ac5dfe15ff8123eb7d004529fa93c906e7
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Fri, 14 Dec 2018 15:56:05 -0500
+Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
+        by gateway20.websitewelcome.com (Postfix) with ESMTP id BC61A400D4FFE
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 14:56:04 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id XuVAgIZBF2PzOXuVAg49y9; Fri, 14 Dec 2018 14:56:04 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.106.44] (port=51702 helo=[192.168.43.131])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gXuV7-001GHR-4D; Fri, 14 Dec 2018 14:56:01 -0600
+Subject: Re: [PATCH v2 3/3] PCI: imx: Add support for i.MX8MQ
+To:     Bjorn Helgaas <helgaas@kernel.org>,
+        Andrey Smirnov <andrew.smirnov@gmail.com>
+Cc:     linux-pci@vger.kernel.org, Fabio Estevam <fabio.estevam@nxp.com>,
+        cphealy@gmail.com, l.stach@pengutronix.de,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        "A.s. Dong" <aisheng.dong@nxp.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>, linux-imx@nxp.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org
+References: <20181206073545.10967-1-andrew.smirnov@gmail.com>
+ <20181206073545.10967-4-andrew.smirnov@gmail.com>
+ <20181214203042.GC20725@google.com>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Message-ID: <aacb613f-ad8b-8db9-1c63-a346ac62c772@embeddedor.com>
+Date:   Fri, 14 Dec 2018 14:55:49 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+In-Reply-To: <20181214203042.GC20725@google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.106.44
+X-Source-L: No
+X-Exim-ID: 1gXuV7-001GHR-4D
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.43.131]) [189.250.106.44]:51702
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 12
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  7d81b2ac5dfe15ff8123eb7d004529fa93c906e7
-Gitweb:     https://git.kernel.org/tip/7d81b2ac5dfe15ff8123eb7d004529fa93c906e7
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Thu, 6 Dec 2018 11:29:48 -0300
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Thu, 6 Dec 2018 16:41:29 -0300
+Hi,
 
-perf svghelper: Fix unchecked usage of strncpy()
+On 12/14/18 2:30 PM, Bjorn Helgaas wrote:
+> [+cc Gustavo for fallthrough annotation]
 
-The strncpy() function may leave the destination string buffer
-unterminated, better use strlcpy() that we have a __weak fallback
-implementation for systems without it.
+> 
+>> @@ -301,6 +312,7 @@ static void imx6_pcie_assert_core_reset(struct imx6_pcie *imx6_pcie)
+>>   
+>>   	switch (imx6_pcie->variant) {
+>>   	case IMX7D:
+>> +	case IMX8MQ: /* FALLTHROUGH */
+>>   		reset_control_assert(imx6_pcie->pciephy_reset);
+>>   		reset_control_assert(imx6_pcie->apps_reset);
+>>   		break;
+> 
+> I'm not an expert on fallthrough annotation (Gustavo, cc'd, is), but
+> this looks wrong.  It's the IMX7D case that falls through, not the
+> IMX8MQ case.
+> 
 
-In this specific case this would only happen if fgets() was buggy, as
-its man page states that it should read one less byte than the size of
-the destination buffer, so that it can put the nul byte at the end of
-it, so it would never copy 255 non-nul chars, as fgets reads into the
-orig buffer at most 254 non-nul chars and terminates it. But lets just
-switch to strlcpy to keep the original intent and silence the gcc 8.2
-warning.
+Correct.
 
-This fixes this warning on an Alpine Linux Edge system with gcc 8.2:
+> The recent annotations added by Gustavo are at the point where the
+> "break" would normally be, e.g.,
+> 
+>    case IMX7D:
+>      /* fall through */                    <--- annotation
+>    case IMX8MQ:
+>      <code>
+>      break;
+> 
+> But in this case there's actually no IMX7D-specific *code* there, so I
+> suspect the annotation is unnecessary.  It's obvious that IMX7D and
+> IMX8MQ are handled the same, so there's really no opportunity for the
+> "forgotten break" mistake -Wimplicit-fallthrough is trying to find.
+> 
 
-  In function 'cpu_model',
-      inlined from 'svg_cpu_box' at util/svghelper.c:378:2:
-  util/svghelper.c:337:5: error: 'strncpy' output may be truncated copying 255 bytes from a string of length 255 [-Werror=stringop-truncation]
-       strncpy(cpu_m, &buf[13], 255);
-       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Yep. That's correct. There is no need for those annotations in this patch.
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Arjan van de Ven <arjan@linux.intel.com>
-Fixes: f48d55ce7871 ("perf: Add a SVG helper library file")
-Link: https://lkml.kernel.org/n/tip-xzkoo0gyr56gej39ltivuh9g@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/util/svghelper.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> If we *do* want this annotation, we should spell it the same as
+> Gustavo has been, i.e., "fall through".
+> 
 
-diff --git a/tools/perf/util/svghelper.c b/tools/perf/util/svghelper.c
-index 1cbada2dc6be..f735ee038713 100644
---- a/tools/perf/util/svghelper.c
-+++ b/tools/perf/util/svghelper.c
-@@ -334,7 +334,7 @@ static char *cpu_model(void)
- 	if (file) {
- 		while (fgets(buf, 255, file)) {
- 			if (strstr(buf, "model name")) {
--				strncpy(cpu_m, &buf[13], 255);
-+				strlcpy(cpu_m, &buf[13], 255);
- 				break;
- 			}
- 		}
+This is a matter of style. For -Wimplicit-fallthrough, "FALLTHROUGH" is 
+as valid a "fall through".
+
+Although, currently, there are 1997 instances of "fall through" vs 235 
+of "FALLTHROUGH" in linux-next.
+
+Thanks
+--
+Gustavo
+
