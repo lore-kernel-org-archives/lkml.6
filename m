@@ -3,45 +3,45 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11AF9C6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 09:31:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39BDEC6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 09:31:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB0DF208E7
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 09:31:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB0DF208E7
+	by mail.kernel.org (Postfix) with ESMTP id 0A23C2080F
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 09:31:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A23C2080F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729250AbeLNJbE (ORCPT
+        id S1729054AbeLNJay (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 04:31:04 -0500
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:23676 "EHLO
+        Fri, 14 Dec 2018 04:30:54 -0500
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:6629 "EHLO
         heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728843AbeLNJa7 (ORCPT
+        with ESMTP id S1728866AbeLNJau (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 04:30:59 -0500
+        Fri, 14 Dec 2018 04:30:50 -0500
 X-IronPort-AV: E=Sophos;i="5.56,352,1539619200"; 
-   d="scan'208";a="49767757"
+   d="scan'208";a="49767742"
 Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 14 Dec 2018 17:30:55 +0800
+  by heian.cn.fujitsu.com with ESMTP; 14 Dec 2018 17:30:49 +0800
 Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
-        by cn.fujitsu.com (Postfix) with ESMTP id 3FEA34B734CC;
-        Fri, 14 Dec 2018 17:30:52 +0800 (CST)
+        by cn.fujitsu.com (Postfix) with ESMTP id 392FE4B734D8;
+        Fri, 14 Dec 2018 17:30:46 +0800 (CST)
 Received: from localhost.local (10.167.225.56) by
  G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Fri, 14 Dec 2018 17:30:51 +0800
+ (TLS) id 14.3.408.0; Fri, 14 Dec 2018 17:30:45 +0800
 From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
 To:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>, <bp@alien8.de>,
         <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>,
         <keescook@chromium.org>, <bhe@redhat.com>, <msys.mizuma@gmail.com>
 CC:     <indou.takao@jp.fujitsu.com>, <caoj.fnst@cn.fujitsu.com>,
         <fanc.fnst@cn.fujitsu.com>
-Subject: [PATCH v14 4/5] x86/boot: Parse SRAT address from RSDP and store immovable memory
-Date:   Fri, 14 Dec 2018 17:30:12 +0800
-Message-ID: <20181214093013.13370-5-fanc.fnst@cn.fujitsu.com>
+Subject: [PATCH v14 1/5] x86/boot: Introduce get_acpi_rsdp() to parse RSDP in cmdline from KEXEC
+Date:   Fri, 14 Dec 2018 17:30:09 +0800
+Message-ID: <20181214093013.13370-2-fanc.fnst@cn.fujitsu.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20181214093013.13370-1-fanc.fnst@cn.fujitsu.com>
 References: <20181214093013.13370-1-fanc.fnst@cn.fujitsu.com>
@@ -49,7 +49,7 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 7BIT
 Content-Type:   text/plain; charset=US-ASCII
 X-Originating-IP: [10.167.225.56]
-X-yoursite-MailScanner-ID: 3FEA34B734CC.AAEC1
+X-yoursite-MailScanner-ID: 392FE4B734D8.A8A8E
 X-yoursite-MailScanner: Found to be clean
 X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
@@ -57,251 +57,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SRAT should be parsed by RSDP to fix the conflict between KASLR
-and memory-hotremove, then find the immovable memory regions and store
-them in an array called immovable_mem[]. With immovable_mem[], KASLR
-can avoid to extract kernel to specific regions.
+Memory information in SRAT is necessary to fix the conflict between
+KASLR and memory-hotremove.
 
-Since 'RANDOMIZE_BASE' && 'MEMORY_HOTREMOVE' is needed, introduce
-'CONFIG_EARLY_PARSE_RSDP' to make ifdeffery clear.
+ACPI SRAT (System/Static Resource Affinity Table) shows the details
+about memory ranges, including ranges of memory provided by hot-added
+memory devices. SRAT is introduced by Root System Description
+Pointer(RSDP), so RSDP should be found firstly.
+
+When booting form KEXEC/EFI/BIOS, the methods to find RSDP
+are different. When booting from KEXEC, 'acpi_rsdp' may have been
+added to cmdline, so parse cmdline to find RSDP.
 
 Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
 ---
- arch/x86/Kconfig                  |  12 +++
- arch/x86/boot/compressed/Makefile |   2 +
- arch/x86/boot/compressed/acpi.c   | 128 ++++++++++++++++++++++++++++++
- arch/x86/boot/compressed/kaslr.c  |   4 -
- arch/x86/boot/compressed/misc.h   |  19 +++++
- 5 files changed, 161 insertions(+), 4 deletions(-)
+ arch/x86/boot/compressed/acpi.c | 30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
+ create mode 100644 arch/x86/boot/compressed/acpi.c
 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index ba7e3464ee92..333c383478b7 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -2149,6 +2149,18 @@ config X86_NEED_RELOCS
- 	def_bool y
- 	depends on RANDOMIZE_BASE || (X86_32 && RELOCATABLE)
- 
-+config EARLY_SRAT_PARSE
-+	bool "Early SRAT table parsing"
-+	def_bool y
-+	depends on RANDOMIZE_BASE && MEMORY_HOTREMOVE
-+	help
-+	  This option enables early SRAT parsing in compressed boot stage
-+	  so that memory hot-remove ranges do not overlap with KASLR
-+	  chosen ranges. Kernel won't be extracted in hot-removable
-+	  memory, so that make sure memory-hotremove works well with
-+	  KASLR enabled.
-+	  Say Y if you want to use both KASLR and memory-hotremove.
-+
- config PHYSICAL_ALIGN
- 	hex "Alignment value to which kernel should be aligned"
- 	default "0x200000"
-diff --git a/arch/x86/boot/compressed/Makefile b/arch/x86/boot/compressed/Makefile
-index 466f66c8a7f8..23491d74939d 100644
---- a/arch/x86/boot/compressed/Makefile
-+++ b/arch/x86/boot/compressed/Makefile
-@@ -84,6 +84,8 @@ ifdef CONFIG_X86_64
- 	vmlinux-objs-y += $(obj)/pgtable_64.o
- endif
- 
-+vmlinux-objs-$(CONFIG_EARLY_SRAT_PARSE) += $(obj)/acpi.o
-+
- $(obj)/eboot.o: KBUILD_CFLAGS += -fshort-wchar -mno-red-zone
- 
- vmlinux-objs-$(CONFIG_EFI_STUB) += $(obj)/eboot.o $(obj)/efi_stub_$(BITS).o \
 diff --git a/arch/x86/boot/compressed/acpi.c b/arch/x86/boot/compressed/acpi.c
-index 795a78559a58..89ed72fb664f 100644
---- a/arch/x86/boot/compressed/acpi.c
+new file mode 100644
+index 000000000000..44f19546c169
+--- /dev/null
 +++ b/arch/x86/boot/compressed/acpi.c
-@@ -11,6 +11,9 @@
- /* Max length of 64-bit hex address string is 18, prefix "0x" + 16 hex digit. */
- #define MAX_ADDRESS_LENGTH 18
- 
-+/* Immovable memory regions. */
-+struct mem_vector immovable_mem[MAX_NUMNODES*2];
+@@ -0,0 +1,30 @@
++// SPDX-License-Identifier: GPL-2.0
++#define BOOT_CTYPE_H
++#include "misc.h"
++#include "error.h"
 +
- static acpi_physical_address get_acpi_rsdp(void)
- {
- #ifdef CONFIG_KEXEC
-@@ -193,3 +196,128 @@ static acpi_physical_address bios_get_rsdp_addr(void)
- 	}
- 	return 0;
- }
++#include <linux/efi.h>
++#include <linux/numa.h>
++#include <linux/acpi.h>
++#include <asm/efi.h>
 +
-+/* Determine RSDP, based on acpi_os_get_root_pointer(). */
-+static acpi_physical_address get_rsdp_addr(void)
++/* Max length of 64-bit hex address string is 18, prefix "0x" + 16 hex digits */
++#define MAX_ADDRESS_LENGTH 18
++
++static acpi_physical_address get_acpi_rsdp(void)
 +{
-+	acpi_physical_address pa;
++#ifdef CONFIG_KEXEC
++	char val[MAX_ADDRESS_LENGTH+1];
++	unsigned long long res;
++	int len;
 +
-+	pa = get_acpi_rsdp();
++	len = cmdline_find_option("acpi_rsdp", val, MAX_ADDRESS_LENGTH+1);
++	if (len > 0) {
++		char *e;
 +
-+	if (!pa)
-+		pa = efi_get_rsdp_addr();
-+
-+	if (!pa)
-+		pa = bios_get_rsdp_addr();
-+
-+	return pa;
-+}
-+
-+/* Compute SRAT table from RSDP. */
-+static struct acpi_table_header *get_acpi_srat_table(void)
-+{
-+	acpi_physical_address acpi_table;
-+	acpi_physical_address root_table;
-+	struct acpi_table_header *header;
-+	struct acpi_table_rsdp *rsdp;
-+	u32 num_entries;
-+	char arg[10];
-+	u8 *entry;
-+	u32 size;
-+	u32 len;
-+
-+	rsdp = (struct acpi_table_rsdp *)get_rsdp_addr();
-+	if (!rsdp)
-+		return NULL;
-+
-+	/* Get RSDT or XSDT from RSDP. */
-+	if (!(cmdline_find_option("acpi", arg, sizeof(arg)) == 4 &&
-+	    !strncmp(arg, "rsdt", 4)) &&
-+	    rsdp->xsdt_physical_address &&
-+	    rsdp->revision > 1) {
-+		root_table = rsdp->xsdt_physical_address;
-+		size = ACPI_XSDT_ENTRY_SIZE;
-+	} else {
-+		root_table = rsdp->rsdt_physical_address;
-+		size = ACPI_RSDT_ENTRY_SIZE;
++		val[len] = '\0';
++		return (acpi_physical_address)simple_strtoull(val, &e, 16);
 +	}
-+
-+	/* Get ACPI root table from RSDT or XSDT.*/
-+	header = (struct acpi_table_header *)root_table;
-+	if (!header)
-+		return NULL;
-+
-+	len = header->length;
-+	if (len < sizeof(struct acpi_table_header) + size)
-+		return NULL;
-+
-+	num_entries = (u32)((len - sizeof(struct acpi_table_header)) / size);
-+	entry = ACPI_ADD_PTR(u8, header, sizeof(struct acpi_table_header));
-+
-+	while (num_entries--) {
-+		u64 address64;
-+
-+		if (size == ACPI_RSDT_ENTRY_SIZE)
-+			acpi_table = ((acpi_physical_address)
-+				      (*ACPI_CAST_PTR(u32, entry)));
-+		else {
-+			*(u64 *)(void *)&address64 = *(u64 *)(void *)entry;
-+			acpi_table = (acpi_physical_address) address64;
-+		}
-+
-+		if (acpi_table) {
-+			header = (struct acpi_table_header *)acpi_table;
-+
-+			if (ACPI_COMPARE_NAME(header->signature, ACPI_SIG_SRAT))
-+				return header;
-+		}
-+		entry += size;
-+	}
-+	return NULL;
-+}
-+
-+/*
-+ * According to ACPI table, filter the immovable memory regions
-+ * and store them in immovable_mem[].
-+ */
-+void get_immovable_mem(void)
-+{
-+	struct acpi_table_header *table_header;
-+	struct acpi_subtable_header *table;
-+	struct acpi_srat_mem_affinity *ma;
-+	unsigned long table_end;
-+	char arg[10];
-+	int i = 0;
-+
-+	if (cmdline_find_option("acpi", arg, sizeof(arg)) == 3 &&
-+	    !strncmp(arg, "off", 3))
-+		return;
-+
-+	table_header = get_acpi_srat_table();
-+	if (!table_header)
-+		return;
-+
-+	table_end = (unsigned long)table_header + table_header->length;
-+	table = (struct acpi_subtable_header *)
-+		((unsigned long)table_header + sizeof(struct acpi_table_srat));
-+
-+	while (((unsigned long)table) +
-+		       sizeof(struct acpi_subtable_header) < table_end) {
-+		if (table->type == ACPI_SRAT_TYPE_MEMORY_AFFINITY) {
-+			ma = (struct acpi_srat_mem_affinity *)table;
-+			if (!(ma->flags & ACPI_SRAT_MEM_HOT_PLUGGABLE)) {
-+				immovable_mem[i].start = ma->base_address;
-+				immovable_mem[i].size = ma->length;
-+				i++;
-+			}
-+
-+			if (i >= MAX_NUMNODES*2) {
-+				debug_putstr("Too many immovable memory regions, aborting.\n");
-+				return;
-+			}
-+		}
-+		table = (struct acpi_subtable_header *)
-+			((unsigned long)table + table->length);
-+	}
-+	num_immovable_mem = i;
-+}
-diff --git a/arch/x86/boot/compressed/kaslr.c b/arch/x86/boot/compressed/kaslr.c
-index 9ed9709d9947..b251572e77af 100644
---- a/arch/x86/boot/compressed/kaslr.c
-+++ b/arch/x86/boot/compressed/kaslr.c
-@@ -87,10 +87,6 @@ static unsigned long get_boot_seed(void)
- #define KASLR_COMPRESSED_BOOT
- #include "../../lib/kaslr.c"
- 
--struct mem_vector {
--	unsigned long long start;
--	unsigned long long size;
--};
- 
- /* Only supporting at most 4 unusable memmap regions with kaslr */
- #define MAX_MEMMAP_REGIONS	4
-diff --git a/arch/x86/boot/compressed/misc.h b/arch/x86/boot/compressed/misc.h
-index a1d5918765f3..b49748366a5b 100644
---- a/arch/x86/boot/compressed/misc.h
-+++ b/arch/x86/boot/compressed/misc.h
-@@ -77,6 +77,11 @@ void choose_random_location(unsigned long input,
- 			    unsigned long *output,
- 			    unsigned long output_size,
- 			    unsigned long *virt_addr);
-+struct mem_vector {
-+	unsigned long long start;
-+	unsigned long long size;
-+};
-+
- /* cpuflags.c */
- bool has_cpuflag(int flag);
- #else
-@@ -116,3 +121,17 @@ static inline void console_init(void)
- void set_sev_encryption_mask(void);
- 
- #endif
-+
-+/* acpi.c */
-+#ifdef CONFIG_RANDOMIZE_BASE
-+/* Amount of immovable memory regions */
-+int num_immovable_mem;
 +#endif
-+
-+#ifdef CONFIG_EARLY_SRAT_PARSE
-+void get_immovable_mem(void);
-+#else
-+static void get_immovable_mem(void)
-+{
++	return 0;
 +}
-+#endif
 -- 
 2.19.2
 
