@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-12.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA961C67872
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:49:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30019C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:49:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8191A214C1
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:49:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB76820892
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:49:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544791769;
-	bh=kXFGYBUZzVyyXnYEu1D8y9I4FrrH1CAYEoD+29MWjAs=;
+	s=default; t=1544791777;
+	bh=+tzHGSmDIefTope3vig1jOcVe5BGwL8HWt5DZTLBsRo=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=Aw60J56B2rV0BYRM8m46dodQbyH/QEQD5cbcPckGVAgQ0I24Ehq3seTLRVEQuHzdC
-	 wku+kd8iAo/kT8PhOXEFYqsHh2OSaAMwNzAMvu8JcLL4zWnOA6++vEzqdJpfBbfc74
-	 4kMWFnjm13iKKvs0xocUgk50IQzMv5XptGvchlo8=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8191A214C1
+	b=0loP5TJiu+2LjC+2nJIgUNhK1tRTnju0fDxY8rRvkqHob43TekJqkQpWrpoFkeg3a
+	 8oBq7/cRP3mZIYi3xZSo5bgI3Fw/BlEbpc7gwcMqpmMgrUjQKAli8vK09meyHxMAm6
+	 O2weDyTvRzFdXWeNxK+beDZyaZAUVHSKGNXO/GNQ=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB76820892
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729802AbeLNMt2 (ORCPT
+        id S1729824AbeLNMtg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:49:28 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49828 "EHLO
+        Fri, 14 Dec 2018 07:49:36 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49974 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729488AbeLNMt1 (ORCPT
+        with ESMTP id S1729488AbeLNMtd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:49:27 -0500
+        Fri, 14 Dec 2018 07:49:33 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=Ha+ZMm8IZIDTfcM6dTNAfGqvUgj/YlPZmWGjQbF0vio=; b=TOAatDnjHgw3
-        u3h5AyPIu2IHtyuebovrOeIq+u1DGwQjBWZ5sCPFhd+qX999ezwwoUjQEto1fB7RZjNfczJFNW4QY
-        dygy76ojBV/UexT3d3WPpY0opEM3UtdJCbAwAB4eNZl0nhb1t/ptQ5xMmpvG4DiH5wD5+9OP4ZOux
-        tjek4=;
+        List-Archive; bh=0bB4PLckI1shwNpPODpD2dsxpFJc4ybc7gMArjJbnfo=; b=Re/MJ+Km/ebX
+        LIV9b5B5eRjq56QgcJphWF79Tp5eeY8HwbxdngRAClwNmpIjiHMLX4HQXkEIUTr4W/duRkeqq8nIe
+        6ha/KWE1WnZ1ncthZkIyRsebWsg9jH3gVGRiGsJvpsye5oXbLfsmmfKtPAGqGFEpAqam7ro+emmXe
+        aFuq4=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gXmu9-0006mF-4U; Fri, 14 Dec 2018 12:49:21 +0000
+        id 1gXmuB-0006mS-0x; Fri, 14 Dec 2018 12:49:23 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id BE0F911258A2; Fri, 14 Dec 2018 12:49:20 +0000 (GMT)
+        id 9B3BE11258A2; Fri, 14 Dec 2018 12:49:22 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
 To:     Rohit kumar <rohitkr@codeaurora.org>
 Cc:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
@@ -57,11 +57,11 @@ Cc:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         rohkumar@qti.qualcomm.com, srinivas.kandagatla@linaro.org,
         asishb@codeaurora.org, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: qdsp6: qdafe: add support for display_port_rx" to the asoc tree
-In-Reply-To:  <1544790569-10608-3-git-send-email-rohitkr@codeaurora.org>
+Subject: Applied "ASoC: qdsp6: dt-bindings: Add q6afe display_port dt binding" to the asoc tree
+In-Reply-To:  <1544790569-10608-2-git-send-email-rohitkr@codeaurora.org>
 X-Patchwork-Hint: ignore
-Message-Id: <20181214124920.BE0F911258A2@debutante.sirena.org.uk>
-Date:   Fri, 14 Dec 2018 12:49:20 +0000 (GMT)
+Message-Id: <20181214124922.9B3BE11258A2@debutante.sirena.org.uk>
+Date:   Fri, 14 Dec 2018 12:49:22 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -69,7 +69,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: qdsp6: qdafe: add support for display_port_rx
+   ASoC: qdsp6: dt-bindings: Add q6afe display_port dt binding
 
 has been applied to the asoc tree at
 
@@ -94,50 +94,33 @@ to this mail.
 Thanks,
 Mark
 
-From 3f6856a28f5eeb4fcaeb3ae25118171747354e51 Mon Sep 17 00:00:00 2001
+From 76119509d23cdd9fbc71585042b27b6511b44b4d Mon Sep 17 00:00:00 2001
 From: Rohit kumar <rohitkr@codeaurora.org>
-Date: Fri, 14 Dec 2018 17:59:27 +0530
-Subject: [PATCH] ASoC: qdsp6: qdafe: add support for display_port_rx
+Date: Fri, 14 Dec 2018 17:59:26 +0530
+Subject: [PATCH] ASoC: qdsp6: dt-bindings: Add q6afe display_port dt binding
 
-This patch adds support for Display_Port_Rx
-port in AFE.
+This patch adds bindings required for DISPLAY_PORT_RX
+port on AFE.
 
 Signed-off-by: Rohit kumar <rohitkr@codeaurora.org>
 Acked-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/qcom/qdsp6/q6afe.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ include/dt-bindings/sound/qcom,q6afe.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/sound/soc/qcom/qdsp6/q6afe.c b/sound/soc/qcom/qdsp6/q6afe.c
-index 829b5e987b2a..e0945f7a58c8 100644
---- a/sound/soc/qcom/qdsp6/q6afe.c
-+++ b/sound/soc/qcom/qdsp6/q6afe.c
-@@ -71,6 +71,7 @@
- /* Port IDs */
- #define AFE_API_VERSION_HDMI_CONFIG	0x1
- #define AFE_PORT_ID_MULTICHAN_HDMI_RX	0x100E
-+#define AFE_PORT_ID_HDMI_OVER_DP_RX	0x6020
+diff --git a/include/dt-bindings/sound/qcom,q6afe.h b/include/dt-bindings/sound/qcom,q6afe.h
+index e2d3892240b8..1df06f8ad5c3 100644
+--- a/include/dt-bindings/sound/qcom,q6afe.h
++++ b/include/dt-bindings/sound/qcom,q6afe.h
+@@ -106,6 +106,7 @@
+ #define QUINARY_TDM_TX_6	101
+ #define QUINARY_TDM_RX_7	102
+ #define QUINARY_TDM_TX_7	103
++#define DISPLAY_PORT_RX		104
  
- #define AFE_API_VERSION_SLIMBUS_CONFIG 0x1
- /* Clock set API version */
-@@ -704,6 +705,8 @@ static struct afe_port_map port_maps[AFE_PORT_MAX] = {
- 				QUINARY_TDM_RX_7, 1, 1},
- 	[QUINARY_TDM_TX_7] =  { AFE_PORT_ID_QUINARY_TDM_TX_7,
- 				QUINARY_TDM_TX_7, 0, 1},
-+	[DISPLAY_PORT_RX] = { AFE_PORT_ID_HDMI_OVER_DP_RX,
-+				DISPLAY_PORT_RX, 1, 1},
- };
+ #endif /* __DT_BINDINGS_Q6_AFE_H__ */
  
- static void q6afe_port_free(struct kref *ref)
-@@ -1384,6 +1387,7 @@ struct q6afe_port *q6afe_port_get_from_id(struct device *dev, int id)
- 
- 	switch (port_id) {
- 	case AFE_PORT_ID_MULTICHAN_HDMI_RX:
-+	case AFE_PORT_ID_HDMI_OVER_DP_RX:
- 		cfg_type = AFE_PARAM_ID_HDMI_CONFIG;
- 		break;
- 	case AFE_PORT_ID_SLIMBUS_MULTI_CHAN_0_TX:
 -- 
 2.19.0.rc2
 
