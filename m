@@ -7,50 +7,50 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 365DDC67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:02:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60038C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:02:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEF022146E
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:02:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2781B2146F
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:02:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544788937;
-	bh=+rXu5PzA1ai6TprqTZjUcUvHXy5Olkm6B8xoQlrL7GI=;
+	s=default; t=1544788940;
+	bh=IDYmgvGFvvbu7Jr5AJIb7Y53/z8k1FD3I/c44so9IZQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=sP0wsebGuCSjQxpYW2l7HCva3uGTH1DhFkeMhxTj/rdHfIMd+CFCFI3N254DHu6mv
-	 0+3lhldda9CD4fhSwKmZPYg02mC0SCyfjSVDPgjGFcmSzHaO2C3qxs4UKYmj6qDZQ4
-	 LyDcvgrSAQBGqu7W16F9GBDrht2NwKiOodDB1Mss=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEF022146E
+	b=R3H0CQ9iAI8cIkDciEPMiJDay9Zo/5gnEAVXp47PlTllN1jElCQqwqyNUMEQDS0w5
+	 DGRVzxcmtbqZ3g+u4QdxRdrJ4wHRc8w1CZExvwcFdRXAd12Uup8wsWDBll8n6nP4EQ
+	 pvNSd9qNiDZqkbAjZ1RMAoJYQeDrVrda13Bpcu2A=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2781B2146F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729988AbeLNMCP (ORCPT
+        id S1730010AbeLNMCS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:02:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45028 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:02:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45096 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729969AbeLNMCN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:02:13 -0500
+        id S1729981AbeLNMCP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:02:15 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EC3EE2146F;
-        Fri, 14 Dec 2018 12:02:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A4C322145D;
+        Fri, 14 Dec 2018 12:02:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544788932;
-        bh=+rXu5PzA1ai6TprqTZjUcUvHXy5Olkm6B8xoQlrL7GI=;
+        s=default; t=1544788935;
+        bh=IDYmgvGFvvbu7Jr5AJIb7Y53/z8k1FD3I/c44so9IZQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jG95+VbsNtEUrHVTxxYSFWS6RfActorg7Rk+QUtwAy434pqjouf6k+DpWIy1/ltcQ
-         UQhZD5gFk1blXAD+uKVjHd6xOAag0dxODzwIsQFGWVcM0ew7aHysW0Mklo8uwYhM+H
-         AuufjMUodqqvxCn4B6JzwKhJUMKyEppbVwnVuY18=
+        b=biPFg4ODsGL42ZpInvi9e+5Qlp2yWXz39FcUoYhMZAXcih7isL7Z6lwJqPaQvzmx8
+         eiau9TUZuloKy0WBDwACIX2euQmExRnh9qJKFv3v4uspFGgoEo58IFZ/t3hVcyeiEk
+         D1JdTNDRvBsbfuzaIXPe/1f1kcRG2WMZQJm9vTas=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Adam Ford <aford173@gmail.com>,
         Tony Lindgren <tony@atomide.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 029/142] ARM: dts: logicpd-somlv: Fix interrupt on mmc3_dat1
-Date:   Fri, 14 Dec 2018 12:58:34 +0100
-Message-Id: <20181214115748.221048649@linuxfoundation.org>
+Subject: [PATCH 4.19 030/142] ARM: dts: am3517-som: Fix WL127x Wifi interrupt
+Date:   Fri, 14 Dec 2018 12:58:35 +0100
+Message-Id: <20181214115748.257417688@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115747.053633987@linuxfoundation.org>
 References: <20181214115747.053633987@linuxfoundation.org>
@@ -69,34 +69,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 3d8b804bc528d3720ec0c39c212af92dafaf6e84 ]
+[ Upstream commit 419b194cdedc76d0d3cd5b0900db0fa8177c4a52 ]
 
-The interrupt on mmc3_dat1 is wrong which prevents this from
-appearing in /proc/interrupts.
+At the same time the AM3517 EVM was gaining WiFi support,
+separate patches were introduced to move the interrupt
+from HIGH to RISING.  Because they overlapped, this was not
+done to the AM3517-EVM.  This patch fixes Kernel 4.19+
 
-Fixes: ab8dd3aed011 ("ARM: DTS: Add minimal Support for Logic PD
-DM3730 SOM-LV") #Kernel 4.9+
+Fixes: 6bf5e3410f19 ("ARM: dts: am3517-som: Add WL127x Wifi")
 
 Signed-off-by: Adam Ford <aford173@gmail.com>
 Signed-off-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/logicpd-som-lv.dtsi | 2 +-
+ arch/arm/boot/dts/am3517-som.dtsi | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/logicpd-som-lv.dtsi b/arch/arm/boot/dts/logicpd-som-lv.dtsi
-index ac343330d0c8..98b682a8080c 100644
---- a/arch/arm/boot/dts/logicpd-som-lv.dtsi
-+++ b/arch/arm/boot/dts/logicpd-som-lv.dtsi
-@@ -129,7 +129,7 @@
- };
- 
- &mmc3 {
--	interrupts-extended = <&intc 94 &omap3_pmx_core2 0x46>;
-+	interrupts-extended = <&intc 94 &omap3_pmx_core 0x136>;
- 	pinctrl-0 = <&mmc3_pins &wl127x_gpio>;
- 	pinctrl-names = "default";
- 	vmmc-supply = <&wl12xx_vmmc>;
+diff --git a/arch/arm/boot/dts/am3517-som.dtsi b/arch/arm/boot/dts/am3517-som.dtsi
+index dae6e458e59f..b1c988eed87c 100644
+--- a/arch/arm/boot/dts/am3517-som.dtsi
++++ b/arch/arm/boot/dts/am3517-som.dtsi
+@@ -163,7 +163,7 @@
+ 		compatible = "ti,wl1271";
+ 		reg = <2>;
+ 		interrupt-parent = <&gpio6>;
+-		interrupts = <10 IRQ_TYPE_LEVEL_HIGH>; /* gpio_170 */
++		interrupts = <10 IRQ_TYPE_EDGE_RISING>; /* gpio_170 */
+ 		ref-clock-frequency = <26000000>;
+ 		tcxo-clock-frequency = <26000000>;
+ 	};
 -- 
 2.19.1
 
