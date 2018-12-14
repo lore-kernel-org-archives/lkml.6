@@ -2,103 +2,102 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A29AC67872
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 04:19:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AABDC67872
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 04:27:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 112502080F
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 04:19:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 112502080F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
+	by mail.kernel.org (Postfix) with ESMTP id 6055A20645
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 04:27:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="ETV+eKf3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6055A20645
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727071AbeLNETs (ORCPT
+        id S1726900AbeLNE1D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 23:19:48 -0500
-Received: from mail-sh2.amlogic.com ([58.32.228.45]:31664 "EHLO
-        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726445AbeLNETr (ORCPT
+        Thu, 13 Dec 2018 23:27:03 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:43646 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726445AbeLNE1C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 23:19:47 -0500
-Received: from [10.18.29.207] (10.18.29.207) by mail-sh2.amlogic.com
- (10.18.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Fri, 14 Dec
- 2018 12:19:59 +0800
-Subject: Re: [PATCH RESEND v7 3/4] clk: meson: add sub MMC clock controller
- driver
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-CC:     Yixun Lan <yixun.lan@amlogic.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Liang Yang <liang.yang@amlogic.com>,
-        Jian Hu <jian.hu@amlogic.com>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        Hanjie Lin <hanjie.lin@amlogic.com>,
-        Victor Wan <victor.wan@amlogic.com>,
-        <linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <1544457877-51301-1-git-send-email-jianxin.pan@amlogic.com>
- <1544457877-51301-4-git-send-email-jianxin.pan@amlogic.com>
- <10f2875c9724d9d9dd4bd32eab1fa3f8e42a809c.camel@baylibre.com>
- <11bb5068-2c93-a415-b295-6ca994621280@amlogic.com>
- <2ed764a1c6a0fea5cb3e16dd48577c930ae28ca9.camel@baylibre.com>
-From:   Jianxin Pan <jianxin.pan@amlogic.com>
-Message-ID: <510be84d-5c47-cf94-254f-55dba6977f7e@amlogic.com>
-Date:   Fri, 14 Dec 2018 12:19:59 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.2
+        Thu, 13 Dec 2018 23:27:02 -0500
+Received: by mail-pl1-f194.google.com with SMTP id gn14so2106432plb.10
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 20:27:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=KPHbDV34yzR9ERzXsDpefC/OdXUniSJP9yj/1sPWB28=;
+        b=ETV+eKf3iJQ0jGIcJ9JqJfN+yZWK/rsZN+XRWhVe6xp/XNMfjTtQcpTidP3Jeqc3JU
+         TU3BJa+WZLmTUUkgIJczqsIw8QoNi5t0gWpTwhYcZ2z8iKiL5KSN53c/M0vqPduFlZhf
+         kSnG6DNxj0M1dR4sDrFwUNpZ6jpY/3GbrTeLl/fUpVzSiBOa+6FjvvS33veBpgWSxesf
+         hoyr3wgJ4GYkww4K1gN6WShwx4v4+LbaAp+04AZffYfoXe02QFx5XE6bIsVE4b6TkJHX
+         o0KmsQ9+EHbzCXXXXxQsknoW96tZzuLzxIVbVwjLiZfwIPHchr/VsbvYYAyZ0nl0Tuno
+         aKJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=KPHbDV34yzR9ERzXsDpefC/OdXUniSJP9yj/1sPWB28=;
+        b=PErSWpaPobonLB1CfP5PcboM8MZeRInjQV+1gtC+8e/IFLnkwyYIoMoudiv5hc6fUc
+         f3KNZypQ6Ndv9Mb3d+f37bTOyNRRqcWZe+9ZXUaija58YOThUWxXCpgC4CkJO131ttdc
+         U5ycjixMYDuPIQnLgaIY6SN2BenVJPawBrvOUzDEjIdNneWzql3Zq0OqjnliZICKSpln
+         InBywO8QVkknqYqCLMG/+pE/8v97rm0pgMyoeqIKolh8EvsBx3c5t3rZKdQHSISclXwE
+         uziLlRXS3GO8FUojInIOcXU733Tc82xPQhVX9kY4wkUWbeatZb1kOINSM56TRkVjiVef
+         KEvQ==
+X-Gm-Message-State: AA+aEWbqEUHRJwxWILhE3LUpE3ZzalX2gdguEltRFgy8NEfUlZHnWtjf
+        0p5ZJctQCLPFCACPeNEH7Amk7Gb/mWB+AQ==
+X-Google-Smtp-Source: AFSGD/VLuEMLa6QbDOUxUm4EFELnZ/jTKROs/FZQme5RyHCNUtK7dAmEGH3geC0YYj+tsMljKGmVpQ==
+X-Received: by 2002:a17:902:22f:: with SMTP id 44mr1477889plc.137.1544761621557;
+        Thu, 13 Dec 2018 20:27:01 -0800 (PST)
+Received: from [192.168.1.121] (66.29.188.166.static.utbb.net. [66.29.188.166])
+        by smtp.gmail.com with ESMTPSA id w185sm4625343pfb.135.2018.12.13.20.26.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 13 Dec 2018 20:27:00 -0800 (PST)
+Subject: Re: [PATCH V14 0/3] blk-mq: refactor and fix the code of issue
+ directly
+To:     Jianchao Wang <jianchao.w.wang@oracle.com>
+Cc:     ming.lei@redhat.com, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1544750900-1549-1-git-send-email-jianchao.w.wang@oracle.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <8035ac66-63a1-b03a-95f8-c11a5482e8d7@kernel.dk>
+Date:   Thu, 13 Dec 2018 21:26:58 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <2ed764a1c6a0fea5cb3e16dd48577c930ae28ca9.camel@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <1544750900-1549-1-git-send-email-jianchao.w.wang@oracle.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.18.29.207]
-X-ClientProxiedBy: mail-sh2.amlogic.com (10.18.11.6) To mail-sh2.amlogic.com
- (10.18.11.6)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/12/13 17:01, Jerome Brunet wrote:
-> On Thu, 2018-12-13 at 12:55 +0800, Jianxin Pan wrote:
->> On 2018/12/12 0:59, Jerome Brunet wrote:
->>> On Tue, 2018-12-11 at 00:04 +0800, Jianxin Pan wrote:
->>>> From: Yixun Lan <yixun.lan@amlogic.com>
->>>>
->> [...]
->>>>  
->>>> +config COMMON_CLK_MMC_MESON
->>>> +	tristate "Meson MMC Sub Clock Controller Driver"
->>>> +	select MFD_SYSCON
->>>> +	select COMMON_CLK_AMLOGIC
->>>> +	select COMMON_CLK_AMLOGIC_AUDIO
->>>
->>> No it is wrong for the mmc to select AUDIO clocks.
->>> If as a result of your patch sclk is needed for things, make the necessary
->>> change in the Makefile.
->> OK, I will add COMMON_CLK_AMLOGIC_SCLKDIV for sclk-div.
+On 12/13/18 6:28 PM, Jianchao Wang wrote:
+> Hi Jens
 > 
-> No! There is no reason to create a specific configuration for this.
-> please put it under COMMON_CLK_AMLOGIC
-OK, I will use COMMON_CLK_AMLOGIC and clkc.h for sclk-div in the next version. Thank you.
+> After commit c616cbee ( blk-mq: punt failed direct issue to dispatch
+> list ), we always insert request to hctx dispatch list whenever get a
+> BLK_STS_RESOURCE or BLK_STS_DEV_RESOURCE, this is overkill and will
+> harm the merging. We just need to do that for the requests that has
+> been through .queue_rq.
 > 
->> [...]>> +#include <linux/clk.h>
->>>> +#include <linux/clk-provider.h>
->>>> +#include <linux/module.h>
->>>> +#include <linux/regmap.h>
->>>> +#include <linux/slab.h>
->>>> +#include <linux/of_device.h>
->>>> +#include <linux/mfd/syscon.h>
-[...]
+> This patch set fixes the issue above and refactors the code of issue
+> request directly to unify the interface and make the code clearer and
+> more readable.
+> 
+> Please consider this patchset for 4.21.
 
+I'll throw this through all the testing tomorrow, looks good to me.
+If it passes, I'll add it for 4.21.
+
+-- 
+Jens Axboe
 
