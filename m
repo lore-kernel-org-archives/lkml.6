@@ -6,39 +6,39 @@ X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8E6EC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 14:34:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17A9AC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 14:35:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EDD56206C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 14:34:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E0CA206C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 14:35:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730260AbeLNOet convert rfc822-to-8bit (ORCPT
+        id S1730312AbeLNOfE convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 09:34:49 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:42186 "EHLO
+        Fri, 14 Dec 2018 09:35:04 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:56764 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730228AbeLNOeq (ORCPT
+        by vger.kernel.org with ESMTP id S1730039AbeLNOeo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 09:34:46 -0500
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wBEEVJel030825;
-        Fri, 14 Dec 2018 15:34:24 +0100
+        Fri, 14 Dec 2018 09:34:44 -0500
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wBEEXEM8026266;
+        Fri, 14 Dec 2018 15:34:22 +0100
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2p85qkm06e-1
+        by mx08-00178001.pphosted.com with ESMTP id 2p83ydv0pf-1
         (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Fri, 14 Dec 2018 15:34:24 +0100
+        Fri, 14 Dec 2018 15:34:22 +0100
 Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id AAB1D31;
-        Fri, 14 Dec 2018 14:34:23 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag6node3.st.com [10.75.127.18])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 8009752EC;
-        Fri, 14 Dec 2018 14:34:23 +0000 (GMT)
-Received: from SFHDAG6NODE2.st.com (10.75.127.17) by SFHDAG6NODE3.st.com
- (10.75.127.18) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 14 Dec
- 2018 15:34:23 +0100
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 36FBD34;
+        Fri, 14 Dec 2018 14:34:22 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag6node2.st.com [10.75.127.17])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 194BD52EC;
+        Fri, 14 Dec 2018 14:34:22 +0000 (GMT)
+Received: from SFHDAG6NODE2.st.com (10.75.127.17) by SFHDAG6NODE2.st.com
+ (10.75.127.17) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 14 Dec
+ 2018 15:34:21 +0100
 Received: from SFHDAG6NODE2.st.com ([fe80::a56f:c186:bab7:13d6]) by
  SFHDAG6NODE2.st.com ([fe80::a56f:c186:bab7:13d6%20]) with mapi id
- 15.00.1347.000; Fri, 14 Dec 2018 15:34:23 +0100
+ 15.00.1347.000; Fri, 14 Dec 2018 15:34:21 +0100
 From:   Pascal PAILLET-LME <p.paillet@st.com>
 To:     "broonie@kernel.org" <broonie@kernel.org>,
         "lgirdwood@gmail.com" <lgirdwood@gmail.com>
@@ -48,11 +48,11 @@ CC:     Alexandre TORGUE <alexandre.torgue@st.com>,
         "linux-arm-kernel@lists.infradead.org" 
         <linux-arm-kernel@lists.infradead.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [PATCH v8 4/6] input: stpmic1: add stpmic1 onkey driver
-Thread-Topic: [PATCH v8 4/6] input: stpmic1: add stpmic1 onkey driver
-Thread-Index: AQHUk7obfV2MfPTneUSIyd7WP5Q6bQ==
-Date:   Fri, 14 Dec 2018 14:34:22 +0000
-Message-ID: <1544798057-1499-5-git-send-email-p.paillet@st.com>
+Subject: [PATCH v8 1/6] dt-bindings: mfd: document stpmic1
+Thread-Topic: [PATCH v8 1/6] dt-bindings: mfd: document stpmic1
+Thread-Index: AQHUk7oa3egoGj+bnkaRLfXgE0IyKA==
+Date:   Fri, 14 Dec 2018 14:34:21 +0000
+Message-ID: <1544798057-1499-2-git-send-email-p.paillet@st.com>
 References: <1544798057-1499-1-git-send-email-p.paillet@st.com>
 In-Reply-To: <1544798057-1499-1-git-send-email-p.paillet@st.com>
 Accept-Language: en-US
@@ -72,262 +72,143 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The stpmic1 pmic is able to manage an onkey button. This driver exposes
-the stpmic1 onkey as an input device. It can also be configured to
-shut-down the power supplies on a long key-press with an adjustable
-duration.
+STPMIC1 is a PMIC from STMicroelectronics. The STPMIC1 integrates 10
+regulators, 3 power switches, a watchdog and an input for a power on key.
 
 Signed-off-by: Pascal Paillet <p.paillet@st.com>
-Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
 ---
 changes in v8: nothing
 
- drivers/input/misc/Kconfig         |  11 +++
- drivers/input/misc/Makefile        |   2 +
- drivers/input/misc/stpmic1_onkey.c | 198 +++++++++++++++++++++++++++++++++++++
- 3 files changed, 211 insertions(+)
- create mode 100644 drivers/input/misc/stpmic1_onkey.c
+ .../devicetree/bindings/mfd/st,stpmic1.txt         | 61 ++++++++++++++++++++++
+ include/dt-bindings/mfd/st,stpmic1.h               | 50 ++++++++++++++++++
+ 2 files changed, 111 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mfd/st,stpmic1.txt
+ create mode 100644 include/dt-bindings/mfd/st,stpmic1.h
 
-diff --git a/drivers/input/misc/Kconfig b/drivers/input/misc/Kconfig
-index ca59a2b..279fb02 100644
---- a/drivers/input/misc/Kconfig
-+++ b/drivers/input/misc/Kconfig
-@@ -851,4 +851,15 @@ config INPUT_SC27XX_VIBRA
- 	  To compile this driver as a module, choose M here. The module will
- 	  be called sc27xx_vibra.
- 
-+config INPUT_STPMIC1_ONKEY
-+	tristate "STPMIC1 PMIC Onkey support"
-+	depends on MFD_STPMIC1
-+	help
-+	  Say Y to enable support of onkey embedded into STPMIC1 PMIC. onkey
-+	  can be used to wakeup from low power modes and force a shut-down on
-+	  long press.
-+
-+	  To compile this driver as a module, choose M here: the
-+	  module will be called stpmic1_onkey.
-+
- endif
-diff --git a/drivers/input/misc/Makefile b/drivers/input/misc/Makefile
-index 9d0f9d1..1b44202 100644
---- a/drivers/input/misc/Makefile
-+++ b/drivers/input/misc/Makefile
-@@ -71,6 +71,7 @@ obj-$(CONFIG_INPUT_SGI_BTNS)		+= sgi_btns.o
- obj-$(CONFIG_INPUT_SIRFSOC_ONKEY)	+= sirfsoc-onkey.o
- obj-$(CONFIG_INPUT_SOC_BUTTON_ARRAY)	+= soc_button_array.o
- obj-$(CONFIG_INPUT_SPARCSPKR)		+= sparcspkr.o
-+obj-$(CONFIG_INPUT_STPMIC1_ONKEY)  	+= stpmic1_onkey.o
- obj-$(CONFIG_INPUT_TPS65218_PWRBUTTON)	+= tps65218-pwrbutton.o
- obj-$(CONFIG_INPUT_TWL4030_PWRBUTTON)	+= twl4030-pwrbutton.o
- obj-$(CONFIG_INPUT_TWL4030_VIBRA)	+= twl4030-vibra.o
-@@ -81,3 +82,4 @@ obj-$(CONFIG_INPUT_WM831X_ON)		+= wm831x-on.o
- obj-$(CONFIG_INPUT_XEN_KBDDEV_FRONTEND)	+= xen-kbdfront.o
- obj-$(CONFIG_INPUT_YEALINK)		+= yealink.o
- obj-$(CONFIG_INPUT_IDEAPAD_SLIDEBAR)	+= ideapad_slidebar.o
-+
-diff --git a/drivers/input/misc/stpmic1_onkey.c b/drivers/input/misc/stpmic1_onkey.c
+diff --git a/Documentation/devicetree/bindings/mfd/st,stpmic1.txt b/Documentation/devicetree/bindings/mfd/st,stpmic1.txt
 new file mode 100644
-index 0000000..7b49c99
+index 0000000..afd45c0
 --- /dev/null
-+++ b/drivers/input/misc/stpmic1_onkey.c
-@@ -0,0 +1,198 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (C) STMicroelectronics 2018
-+// Author: Pascal Paillet <p.paillet@st.com> for STMicroelectronics.
++++ b/Documentation/devicetree/bindings/mfd/st,stpmic1.txt
+@@ -0,0 +1,61 @@
++* STMicroelectronics STPMIC1 Power Management IC
 +
-+#include <linux/input.h>
-+#include <linux/interrupt.h>
-+#include <linux/mfd/stpmic1.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/property.h>
-+#include <linux/regmap.h>
++Required properties:
++- compatible:		: "st,stpmic1"
++- reg:			: The I2C slave address for the STPMIC1 chip.
++- interrupts:		: The interrupt line the device is connected to.
++- #interrupt-cells:	: Should be 1.
++- interrupt-controller:	: Marks the device node as an interrupt controller.
++			    Interrupt numbers are defined at
++			    dt-bindings/mfd/st,stpmic1.h.
 +
-+/**
-+ * struct stpmic1_onkey - OnKey data
-+ * @input_dev:		pointer to input device
-+ * @irq_falling:	irq that we are hooked on to
-+ * @irq_rising:		irq that we are hooked on to
++STPMIC1 consists in a varied group of sub-devices.
++Each sub-device binding is be described in own documentation file.
++
++Device			 Description
++------			------------
++st,stpmic1-onkey	: Power on key, see ../input/st,stpmic1-onkey.txt
++st,stpmic1-regulators	: Regulators, see ../regulator/st,stpmic1-regulator.txt
++st,stpmic1-wdt		: Watchdog, see ../watchdog/st,stpmic1-wdt.txt
++
++Example:
++
++#include <dt-bindings/mfd/st,stpmic1.h>
++
++pmic: pmic@33 {
++	compatible = "st,stpmic1";
++	reg = <0x33>;
++	interrupt-parent = <&gpioa>;
++	interrupts = <0 2>;
++
++	interrupt-controller;
++	#interrupt-cells = <2>;
++
++	onkey {
++		compatible = "st,stpmic1-onkey";
++		interrupts = <IT_PONKEY_F 0>,<IT_PONKEY_R 1>;
++		interrupt-names = "onkey-falling", "onkey-rising";
++		power-off-time-sec = <10>;
++	};
++
++	watchdog {
++		compatible = "st,stpmic1-wdt";
++	};
++
++	regulators {
++		compatible = "st,stpmic1-regulators";
++
++		vdd_core: buck1 {
++			regulator-name = "vdd_core";
++			regulator-boot-on;
++			regulator-min-microvolt = <700000>;
++			regulator-max-microvolt = <1200000>;
++		};
++		vdd: buck3 {
++			regulator-name = "vdd";
++			regulator-min-microvolt = <3300000>;
++			regulator-max-microvolt = <3300000>;
++			regulator-boot-on;
++			regulator-pull-down;
++		};
++	};
+diff --git a/include/dt-bindings/mfd/st,stpmic1.h b/include/dt-bindings/mfd/st,stpmic1.h
+new file mode 100644
+index 0000000..321cd087
+--- /dev/null
++++ b/include/dt-bindings/mfd/st,stpmic1.h
+@@ -0,0 +1,50 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (C) STMicroelectronics 2018 - All Rights Reserved
++ * Author: Philippe Peurichard <philippe.peurichard@st.com>,
++ * Pascal Paillet <p.paillet@st.com> for STMicroelectronics.
 + */
-+struct stpmic1_onkey {
-+	struct input_dev *input_dev;
-+	int irq_falling;
-+	int irq_rising;
-+};
 +
-+static irqreturn_t onkey_falling_irq(int irq, void *ponkey)
-+{
-+	struct stpmic1_onkey *onkey = ponkey;
-+	struct input_dev *input_dev = onkey->input_dev;
++#ifndef __DT_BINDINGS_STPMIC1_H__
++#define __DT_BINDINGS_STPMIC1_H__
 +
-+	input_report_key(input_dev, KEY_POWER, 1);
-+	pm_wakeup_event(input_dev->dev.parent, 0);
-+	input_sync(input_dev);
++/* IRQ definitions */
++#define IT_PONKEY_F	0
++#define IT_PONKEY_R	1
++#define IT_WAKEUP_F	2
++#define IT_WAKEUP_R	3
++#define IT_VBUS_OTG_F	4
++#define IT_VBUS_OTG_R	5
++#define IT_SWOUT_F	6
++#define IT_SWOUT_R	7
 +
-+	return IRQ_HANDLED;
-+}
++#define IT_CURLIM_BUCK1	8
++#define IT_CURLIM_BUCK2	9
++#define IT_CURLIM_BUCK3	10
++#define IT_CURLIM_BUCK4	11
++#define IT_OCP_OTG	12
++#define IT_OCP_SWOUT	13
++#define IT_OCP_BOOST	14
++#define IT_OVP_BOOST	15
 +
-+static irqreturn_t onkey_rising_irq(int irq, void *ponkey)
-+{
-+	struct stpmic1_onkey *onkey = ponkey;
-+	struct input_dev *input_dev = onkey->input_dev;
++#define IT_CURLIM_LDO1	16
++#define IT_CURLIM_LDO2	17
++#define IT_CURLIM_LDO3	18
++#define IT_CURLIM_LDO4	19
++#define IT_CURLIM_LDO5	20
++#define IT_CURLIM_LDO6	21
++#define IT_SHORT_SWOTG	22
++#define IT_SHORT_SWOUT	23
 +
-+	input_report_key(input_dev, KEY_POWER, 0);
-+	pm_wakeup_event(input_dev->dev.parent, 0);
-+	input_sync(input_dev);
++#define IT_TWARN_F	24
++#define IT_TWARN_R	25
++#define IT_VINLOW_F	26
++#define IT_VINLOW_R	27
++#define IT_SWIN_F	30
++#define IT_SWIN_R	31
 +
-+	return IRQ_HANDLED;
-+}
++/* BUCK MODES definitions */
++#define STPMIC1_BUCK_MODE_NORMAL 0
++#define STPMIC1_BUCK_MODE_LP 2
 +
-+static int stpmic1_onkey_probe(struct platform_device *pdev)
-+{
-+	struct stpmic1 *pmic = dev_get_drvdata(pdev->dev.parent);
-+	struct device *dev = &pdev->dev;
-+	struct input_dev *input_dev;
-+	struct stpmic1_onkey *onkey;
-+	unsigned int val, reg = 0;
-+	int error;
-+
-+	onkey = devm_kzalloc(dev, sizeof(*onkey), GFP_KERNEL);
-+	if (!onkey)
-+		return -ENOMEM;
-+
-+	onkey->irq_falling = platform_get_irq_byname(pdev, "onkey-falling");
-+	if (onkey->irq_falling < 0) {
-+		dev_err(dev, "failed: request IRQ onkey-falling %d\n",
-+			onkey->irq_falling);
-+		return onkey->irq_falling;
-+	}
-+
-+	onkey->irq_rising = platform_get_irq_byname(pdev, "onkey-rising");
-+	if (onkey->irq_rising < 0) {
-+		dev_err(dev, "failed: request IRQ onkey-rising %d\n",
-+			onkey->irq_rising);
-+		return onkey->irq_rising;
-+	}
-+
-+	if (!device_property_read_u32(dev, "power-off-time-sec", &val)) {
-+		if (val > 0 && val <= 16) {
-+			dev_dbg(dev, "power-off-time=%d seconds\n", val);
-+			reg |= PONKEY_PWR_OFF;
-+			reg |= ((16 - val) & PONKEY_TURNOFF_TIMER_MASK);
-+		} else {
-+			dev_err(dev, "power-off-time-sec out of range\n");
-+			return -EINVAL;
-+		}
-+	}
-+
-+	if (device_property_present(dev, "st,onkey-clear-cc-flag"))
-+		reg |= PONKEY_CC_FLAG_CLEAR;
-+
-+	error = regmap_update_bits(pmic->regmap, PKEY_TURNOFF_CR,
-+				   PONKEY_TURNOFF_MASK, reg);
-+	if (error) {
-+		dev_err(dev, "PKEY_TURNOFF_CR write failed: %d\n", error);
-+		return error;
-+	}
-+
-+	if (device_property_present(dev, "st,onkey-pu-inactive")) {
-+		error = regmap_update_bits(pmic->regmap, PADS_PULL_CR,
-+					   PONKEY_PU_INACTIVE,
-+					   PONKEY_PU_INACTIVE);
-+		if (error) {
-+			dev_err(dev, "ONKEY Pads configuration failed: %d\n",
-+				error);
-+			return error;
-+		}
-+	}
-+
-+	input_dev = devm_input_allocate_device(dev);
-+	if (!input_dev) {
-+		dev_err(dev, "Can't allocate Pwr Onkey Input Device\n");
-+		return -ENOMEM;
-+	}
-+
-+	input_dev->name = "pmic_onkey";
-+	input_dev->phys = "pmic_onkey/input0";
-+
-+	input_set_capability(input_dev, EV_KEY, KEY_POWER);
-+
-+	onkey->input_dev = input_dev;
-+
-+	/* interrupt is nested in a thread */
-+	error = devm_request_threaded_irq(dev, onkey->irq_falling, NULL,
-+					  onkey_falling_irq, IRQF_ONESHOT,
-+					  dev_name(dev), onkey);
-+	if (error) {
-+		dev_err(dev, "Can't get IRQ Onkey Falling: %d\n", error);
-+		return error;
-+	}
-+
-+	error = devm_request_threaded_irq(dev, onkey->irq_rising, NULL,
-+					  onkey_rising_irq, IRQF_ONESHOT,
-+					  dev_name(dev), onkey);
-+	if (error) {
-+		dev_err(dev, "Can't get IRQ Onkey Rising: %d\n", error);
-+		return error;
-+	}
-+
-+	error = input_register_device(input_dev);
-+	if (error) {
-+		dev_err(dev, "Can't register power button: %d\n", error);
-+		return error;
-+	}
-+
-+	platform_set_drvdata(pdev, onkey);
-+	device_init_wakeup(dev, true);
-+
-+	return 0;
-+}
-+
-+static int __maybe_unused stpmic1_onkey_suspend(struct device *dev)
-+{
-+	struct platform_device *pdev = to_platform_device(dev);
-+	struct stpmic1_onkey *onkey = platform_get_drvdata(pdev);
-+
-+	if (device_may_wakeup(dev)) {
-+		enable_irq_wake(onkey->irq_falling);
-+		enable_irq_wake(onkey->irq_rising);
-+	}
-+	return 0;
-+}
-+
-+static int __maybe_unused stpmic1_onkey_resume(struct device *dev)
-+{
-+	struct platform_device *pdev = to_platform_device(dev);
-+	struct stpmic1_onkey *onkey = platform_get_drvdata(pdev);
-+
-+	if (device_may_wakeup(dev)) {
-+		disable_irq_wake(onkey->irq_falling);
-+		disable_irq_wake(onkey->irq_rising);
-+	}
-+	return 0;
-+}
-+
-+static SIMPLE_DEV_PM_OPS(stpmic1_onkey_pm,
-+			 stpmic1_onkey_suspend,
-+			 stpmic1_onkey_resume);
-+
-+static const struct of_device_id of_stpmic1_onkey_match[] = {
-+	{ .compatible = "st,stpmic1-onkey" },
-+	{ },
-+};
-+
-+MODULE_DEVICE_TABLE(of, of_stpmic1_onkey_match);
-+
-+static struct platform_driver stpmic1_onkey_driver = {
-+	.probe	= stpmic1_onkey_probe,
-+	.driver	= {
-+		.name	= "stpmic1_onkey",
-+		.of_match_table = of_match_ptr(of_stpmic1_onkey_match),
-+		.pm	= &stpmic1_onkey_pm,
-+	},
-+};
-+module_platform_driver(stpmic1_onkey_driver);
-+
-+MODULE_DESCRIPTION("Onkey driver for STPMIC1");
-+MODULE_AUTHOR("Pascal Paillet <p.paillet@st.com>");
-+MODULE_LICENSE("GPL v2");
++#endif /* __DT_BINDINGS_STPMIC1_H__ */
 -- 
 1.9.1
