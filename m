@@ -7,50 +7,53 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14224C6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:13:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E49ABC67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:13:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D02D3214DE
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:13:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A0DFD20892
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:13:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544789598;
-	bh=wyNANDblERKyJXLqBuBHaKH/FzMh7hyUq3ng232NBV4=;
+	s=default; t=1544789601;
+	bh=6BaBqn6xvxrqoCJlqzGCNPS31Wf1R10vz4hze0sAsak=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=P+qG3/INV/VWBC8mMwuLGAQkxT9Co8UG1eCxFz3EEz5cLtQLOVLBQSv4c2/NvuI3J
-	 oetu+L9OUkUNcNnWfCYHa0VS8NenDbOoo2UXxUxnVNy/yxgGwUWoBWXndkmG/p2mWH
-	 e+qXypbMup+40qYFRZ3ULfUOBtYn6ZeY8J53HMnU=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D02D3214DE
+	b=ICOTlGJ1lkZ1JeU3oY8fjrlftloOWzabDSE3io4PgXXpJi/Gm6tq0jL7XBNaIIZkJ
+	 SXmGqJC3o9HrWeDx/dhWsln6osREzs9oF3OMABMvPZxsc+2Su+W5rOyMXzezykiqGt
+	 Y7e9j83EgViLzl5BLi1vwJGx8YDSFuuz+f+gDLs8=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0DFD20892
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732100AbeLNMNR (ORCPT
+        id S1732113AbeLNMNU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:13:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60732 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:13:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60812 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732086AbeLNMNN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:13:13 -0500
+        id S1730313AbeLNMNQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:13:16 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 585BB214E0;
-        Fri, 14 Dec 2018 12:13:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E2F3020892;
+        Fri, 14 Dec 2018 12:13:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789592;
-        bh=wyNANDblERKyJXLqBuBHaKH/FzMh7hyUq3ng232NBV4=;
+        s=default; t=1544789595;
+        bh=6BaBqn6xvxrqoCJlqzGCNPS31Wf1R10vz4hze0sAsak=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zK//gybuzDR31Lr7tLY79iyHGPPqRdxr8o8jvmyppc1HLcos2HOGmUjDmRXJqiVqu
-         jmY5c17gqBlbv0QUM/ua1DgHOWX6qcGxoc8vETy0WSsB/1Bvned5568WjQE38LI5Fu
-         8NesUe/u0/I8YRrEhHSlIzMyzwc5DwgQaaDIkdn8=
+        b=phe0W7jfyXcOSTJPODLoVpoO+OOpXlsHLTBRxFmWLaCcmuqt+eSDCYMoM8HMy9eae
+         TRwHt4n3JgDb3+nwpOGF5Tb8AEjjFc/IFOpSNm8XpVw7TR3/WEd9L31e+ckyUf5h35
+         KjBiqPDGWYoWCzoe3Khao6fR8JgqR858XCdFxIfw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Y.C. Chen" <yc_chen@aspeedtech.com>,
-        Dave Airlie <airlied@redhat.com>,
+        stable@vger.kernel.org,
+        Srikanth Boddepalli <boddepalli.srikanth@gmail.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Joey Pabalinas <joeypabalinas@gmail.com>,
+        Juergen Gross <jgross@suse.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 41/51] drm/ast: fixed reading monitor EDID not stable issue
-Date:   Fri, 14 Dec 2018 13:00:43 +0100
-Message-Id: <20181214115716.842801826@linuxfoundation.org>
+Subject: [PATCH 4.9 42/51] xen: xlate_mmu: add missing header to fix W=1 warning
+Date:   Fri, 14 Dec 2018 13:00:44 +0100
+Message-Id: <20181214115716.892557682@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115713.244259772@linuxfoundation.org>
 References: <20181214115713.244259772@linuxfoundation.org>
@@ -69,92 +72,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 300625620314194d9e6d4f6dda71f2dc9cf62d9f ]
+[ Upstream commit 72791ac854fea36034fa7976b748fde585008e78 ]
 
-v1: over-sample data to increase the stability with some specific monitors
-v2: refine to avoid infinite loop
-v3: remove un-necessary "volatile" declaration
+Add a missing header otherwise compiler warns about missed prototype:
 
-[airlied: fix two checkpatch warnings]
+drivers/xen/xlate_mmu.c:183:5: warning: no previous prototype for 'xen_xlate_unmap_gfn_range?' [-Wmissing-prototypes]
+  int xen_xlate_unmap_gfn_range(struct vm_area_struct *vma,
+      ^~~~~~~~~~~~~~~~~~~~~~~~~
 
-Signed-off-by: Y.C. Chen <yc_chen@aspeedtech.com>
-Signed-off-by: Dave Airlie <airlied@redhat.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/1542858988-1127-1-git-send-email-yc_chen@aspeedtech.com
+Signed-off-by: Srikanth Boddepalli <boddepalli.srikanth@gmail.com>
+Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Reviewed-by: Joey Pabalinas <joeypabalinas@gmail.com>
+Signed-off-by: Juergen Gross <jgross@suse.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/ast/ast_mode.c | 36 ++++++++++++++++++++++++++++------
- 1 file changed, 30 insertions(+), 6 deletions(-)
+ drivers/xen/xlate_mmu.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/ast/ast_mode.c b/drivers/gpu/drm/ast/ast_mode.c
-index 57205016b04a..201874b96dd6 100644
---- a/drivers/gpu/drm/ast/ast_mode.c
-+++ b/drivers/gpu/drm/ast/ast_mode.c
-@@ -954,9 +954,21 @@ static int get_clock(void *i2c_priv)
- {
- 	struct ast_i2c_chan *i2c = i2c_priv;
- 	struct ast_private *ast = i2c->dev->dev_private;
--	uint32_t val;
-+	uint32_t val, val2, count, pass;
-+
-+	count = 0;
-+	pass = 0;
-+	val = (ast_get_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xb7, 0x10) >> 4) & 0x01;
-+	do {
-+		val2 = (ast_get_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xb7, 0x10) >> 4) & 0x01;
-+		if (val == val2) {
-+			pass++;
-+		} else {
-+			pass = 0;
-+			val = (ast_get_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xb7, 0x10) >> 4) & 0x01;
-+		}
-+	} while ((pass < 5) && (count++ < 0x10000));
+diff --git a/drivers/xen/xlate_mmu.c b/drivers/xen/xlate_mmu.c
+index 23f1387b3ef7..e7df65d32c91 100644
+--- a/drivers/xen/xlate_mmu.c
++++ b/drivers/xen/xlate_mmu.c
+@@ -36,6 +36,7 @@
+ #include <asm/xen/hypervisor.h>
  
--	val = ast_get_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xb7, 0x10) >> 4;
- 	return val & 1 ? 1 : 0;
- }
- 
-@@ -964,9 +976,21 @@ static int get_data(void *i2c_priv)
- {
- 	struct ast_i2c_chan *i2c = i2c_priv;
- 	struct ast_private *ast = i2c->dev->dev_private;
--	uint32_t val;
-+	uint32_t val, val2, count, pass;
-+
-+	count = 0;
-+	pass = 0;
-+	val = (ast_get_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xb7, 0x20) >> 5) & 0x01;
-+	do {
-+		val2 = (ast_get_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xb7, 0x20) >> 5) & 0x01;
-+		if (val == val2) {
-+			pass++;
-+		} else {
-+			pass = 0;
-+			val = (ast_get_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xb7, 0x20) >> 5) & 0x01;
-+		}
-+	} while ((pass < 5) && (count++ < 0x10000));
- 
--	val = ast_get_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xb7, 0x20) >> 5;
- 	return val & 1 ? 1 : 0;
- }
- 
-@@ -979,7 +1003,7 @@ static void set_clock(void *i2c_priv, int clock)
- 
- 	for (i = 0; i < 0x10000; i++) {
- 		ujcrb7 = ((clock & 0x01) ? 0 : 1);
--		ast_set_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xb7, 0xfe, ujcrb7);
-+		ast_set_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xb7, 0xf4, ujcrb7);
- 		jtemp = ast_get_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xb7, 0x01);
- 		if (ujcrb7 == jtemp)
- 			break;
-@@ -995,7 +1019,7 @@ static void set_data(void *i2c_priv, int data)
- 
- 	for (i = 0; i < 0x10000; i++) {
- 		ujcrb7 = ((data & 0x01) ? 0 : 1) << 2;
--		ast_set_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xb7, 0xfb, ujcrb7);
-+		ast_set_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xb7, 0xf1, ujcrb7);
- 		jtemp = ast_get_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xb7, 0x04);
- 		if (ujcrb7 == jtemp)
- 			break;
+ #include <xen/xen.h>
++#include <xen/xen-ops.h>
+ #include <xen/page.h>
+ #include <xen/interface/xen.h>
+ #include <xen/interface/memory.h>
 -- 
 2.19.1
 
