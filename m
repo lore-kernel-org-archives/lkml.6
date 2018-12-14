@@ -4,56 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15327C6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:12:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC7AAC6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:12:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE85B2133F
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:12:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B3BF214E0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:12:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544789573;
-	bh=XfX/MPy75tFDAOzxEDwKsbJVyRvpamlSAf/pGDOJ82w=;
+	s=default; t=1544789576;
+	bh=cIMoUJUTGrI/0CKeaofH6yYkW23N0XYqLrgjn3jTL+k=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=HIBOTPah2QcgoinRZSkRelwJf09a/2QRcZgzBpISnBxaqEGcMDbDMg8Lk2AbTr1w5
-	 t3YJEKZFqA5A8F1GJnlsQbTP7eSlUKTxePg3Xx+SHcnQUchCD/wDZFbvnTs2WQkhdc
-	 6nyAUAdKRpM1sL5dbfJHNGfaczWR7fJKD4SJm/q4=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE85B2133F
+	b=xuOVP1MjyekwFQRmoZoMk3tjAN6kxCz7CeQOFdaDI6td646VMMFz/d6WzDSTvoK11
+	 oLd/eHvZRrtBTuEsVtn4k+mMVLq8VhGQNAfSXO52PmI91RiFYkzPYj3IlQp7v/1s0S
+	 k/Z7+opPBsRvCt6D/Dj96jHTdMZA9LHiebtIqLiM=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B3BF214E0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732014AbeLNMMw (ORCPT
+        id S1732024AbeLNMMz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:12:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60156 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:12:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60234 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731653AbeLNMMu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:12:50 -0500
+        id S1732009AbeLNMMx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:12:53 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E2DA320892;
-        Fri, 14 Dec 2018 12:12:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 77195214E0;
+        Fri, 14 Dec 2018 12:12:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789569;
-        bh=XfX/MPy75tFDAOzxEDwKsbJVyRvpamlSAf/pGDOJ82w=;
+        s=default; t=1544789572;
+        bh=cIMoUJUTGrI/0CKeaofH6yYkW23N0XYqLrgjn3jTL+k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0EXTzpTfzy6MLEMh184+W9Y58e4gno23zkpZFMbgtSybpnKBhro2sj3dVtkyPl+J9
-         GGjWeOokJYJXELrZXScFlUIeT8iBnFGwwgshPbnlZelsCrfYT+7lz3QMrPzUFj52ac
-         Qw+7eA4ayWT8ivcsK3sSr4UoQfKeXIanllVKf/bw=
+        b=U+ZO4Ouw3PkQBBbC3qfMMgk/Z0GL9Y0Gq+KG7vZz/E/01pU46gVtujOwo2N/sZzYT
+         zqbWNQRnMd78ZqHjXZgRsm4xxFa9tUYZ7tlUIiz/JsjExYbsXUdOIjZM5pDLka/xEi
+         yt96Zylv09Y80i+LvIYwAujUFfdBmXzTjBm0bDzs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Artem Savkov <asavkov@redhat.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 22/51] objtool: Fix segfault in .cold detection with -ffunction-sections
-Date:   Fri, 14 Dec 2018 13:00:24 +0100
-Message-Id: <20181214115715.473913882@linuxfoundation.org>
+        stable@vger.kernel.org, Robbie Ko <robbieko@synology.com>,
+        Filipe Manana <fdmanana@suse.com>,
+        David Sterba <dsterba@suse.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 23/51] Btrfs: send, fix infinite loop due to directory rename dependencies
+Date:   Fri, 14 Dec 2018 13:00:25 +0100
+Message-Id: <20181214115715.544230091@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115713.244259772@linuxfoundation.org>
 References: <20181214115713.244259772@linuxfoundation.org>
@@ -72,74 +70,198 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 22566c1603030f0a036ad564634b064ad1a55db2 ]
+[ Upstream commit a4390aee72713d9e73f1132bcdeb17d72fbbf974 ]
 
-Because find_symbol_by_name() traverses the same lists as
-read_symbols(), changing sym->name in place without copying it affects
-the result of find_symbol_by_name().  In the case where a ".cold"
-function precedes its parent in sec->symbol_list, it can result in a
-function being considered a parent of itself. This leads to function
-length being set to 0 and other consequent side-effects including a
-segfault in add_switch_table().  The effects of this bug are only
-visible when building with -ffunction-sections in KCFLAGS.
+When doing an incremental send, due to the need of delaying directory move
+(rename) operations we can end up in infinite loop at
+apply_children_dir_moves().
 
-Fix by copying the search string instead of modifying it in place.
+An example scenario that triggers this problem is described below, where
+directory names correspond to the numbers of their respective inodes.
 
-Signed-off-by: Artem Savkov <asavkov@redhat.com>
-Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Fixes: 13810435b9a7 ("objtool: Support GCC 8's cold subfunctions")
-Link: http://lkml.kernel.org/r/910abd6b5a4945130fd44f787c24e07b9e07c8da.1542736240.git.jpoimboe@redhat.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Parent snapshot:
+
+ .
+ |--- 261/
+       |--- 271/
+             |--- 266/
+                   |--- 259/
+                   |--- 260/
+                   |     |--- 267
+                   |
+                   |--- 264/
+                   |     |--- 258/
+                   |           |--- 257/
+                   |
+                   |--- 265/
+                   |--- 268/
+                   |--- 269/
+                   |     |--- 262/
+                   |
+                   |--- 270/
+                   |--- 272/
+                   |     |--- 263/
+                   |     |--- 275/
+                   |
+                   |--- 274/
+                         |--- 273/
+
+Send snapshot:
+
+ .
+ |-- 275/
+      |-- 274/
+           |-- 273/
+                |-- 262/
+                     |-- 269/
+                          |-- 258/
+                               |-- 271/
+                                    |-- 268/
+                                         |-- 267/
+                                              |-- 270/
+                                                   |-- 259/
+                                                   |    |-- 265/
+                                                   |
+                                                   |-- 272/
+                                                        |-- 257/
+                                                             |-- 260/
+                                                             |-- 264/
+                                                                  |-- 263/
+                                                                       |-- 261/
+                                                                            |-- 266/
+
+When processing inode 257 we delay its move (rename) operation because its
+new parent in the send snapshot, inode 272, was not yet processed. Then
+when processing inode 272, we delay the move operation for that inode
+because inode 274 is its ancestor in the send snapshot. Finally we delay
+the move operation for inode 274 when processing it because inode 275 is
+its new parent in the send snapshot and was not yet moved.
+
+When finishing processing inode 275, we start to do the move operations
+that were previously delayed (at apply_children_dir_moves()), resulting in
+the following iterations:
+
+1) We issue the move operation for inode 274;
+
+2) Because inode 262 depended on the move operation of inode 274 (it was
+   delayed because 274 is its ancestor in the send snapshot), we issue the
+   move operation for inode 262;
+
+3) We issue the move operation for inode 272, because it was delayed by
+   inode 274 too (ancestor of 272 in the send snapshot);
+
+4) We issue the move operation for inode 269 (it was delayed by 262);
+
+5) We issue the move operation for inode 257 (it was delayed by 272);
+
+6) We issue the move operation for inode 260 (it was delayed by 272);
+
+7) We issue the move operation for inode 258 (it was delayed by 269);
+
+8) We issue the move operation for inode 264 (it was delayed by 257);
+
+9) We issue the move operation for inode 271 (it was delayed by 258);
+
+10) We issue the move operation for inode 263 (it was delayed by 264);
+
+11) We issue the move operation for inode 268 (it was delayed by 271);
+
+12) We verify if we can issue the move operation for inode 270 (it was
+    delayed by 271). We detect a path loop in the current state, because
+    inode 267 needs to be moved first before we can issue the move
+    operation for inode 270. So we delay again the move operation for
+    inode 270, this time we will attempt to do it after inode 267 is
+    moved;
+
+13) We issue the move operation for inode 261 (it was delayed by 263);
+
+14) We verify if we can issue the move operation for inode 266 (it was
+    delayed by 263). We detect a path loop in the current state, because
+    inode 270 needs to be moved first before we can issue the move
+    operation for inode 266. So we delay again the move operation for
+    inode 266, this time we will attempt to do it after inode 270 is
+    moved (its move operation was delayed in step 12);
+
+15) We issue the move operation for inode 267 (it was delayed by 268);
+
+16) We verify if we can issue the move operation for inode 266 (it was
+    delayed by 270). We detect a path loop in the current state, because
+    inode 270 needs to be moved first before we can issue the move
+    operation for inode 266. So we delay again the move operation for
+    inode 266, this time we will attempt to do it after inode 270 is
+    moved (its move operation was delayed in step 12). So here we added
+    again the same delayed move operation that we added in step 14;
+
+17) We attempt again to see if we can issue the move operation for inode
+    266, and as in step 16, we realize we can not due to a path loop in
+    the current state due to a dependency on inode 270. Again we delay
+    inode's 266 rename to happen after inode's 270 move operation, adding
+    the same dependency to the empty stack that we did in steps 14 and 16.
+    The next iteration will pick the same move dependency on the stack
+    (the only entry) and realize again there is still a path loop and then
+    again the same dependency to the stack, over and over, resulting in
+    an infinite loop.
+
+So fix this by preventing adding the same move dependency entries to the
+stack by removing each pending move record from the red black tree of
+pending moves. This way the next call to get_pending_dir_moves() will
+not return anything for the current parent inode.
+
+A test case for fstests, with this reproducer, follows soon.
+
+Signed-off-by: Robbie Ko <robbieko@synology.com>
+Reviewed-by: Filipe Manana <fdmanana@suse.com>
+[Wrote changelog with example and more clear explanation]
+Signed-off-by: Filipe Manana <fdmanana@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/objtool/elf.c | 17 ++++++++++++++---
- 1 file changed, 14 insertions(+), 3 deletions(-)
+ fs/btrfs/send.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-diff --git a/tools/objtool/elf.c b/tools/objtool/elf.c
-index 3616d626991e..dd4ed7c3c062 100644
---- a/tools/objtool/elf.c
-+++ b/tools/objtool/elf.c
-@@ -31,6 +31,8 @@
- #include "elf.h"
- #include "warn.h"
+diff --git a/fs/btrfs/send.c b/fs/btrfs/send.c
+index 79dc3ee1de58..a45f26ac5da7 100644
+--- a/fs/btrfs/send.c
++++ b/fs/btrfs/send.c
+@@ -3349,7 +3349,8 @@ static void free_pending_move(struct send_ctx *sctx, struct pending_dir_move *m)
+ 	kfree(m);
+ }
  
-+#define MAX_NAME_LEN 128
-+
- struct section *find_section_by_name(struct elf *elf, const char *name)
+-static void tail_append_pending_moves(struct pending_dir_move *moves,
++static void tail_append_pending_moves(struct send_ctx *sctx,
++				      struct pending_dir_move *moves,
+ 				      struct list_head *stack)
  {
- 	struct section *sec;
-@@ -298,6 +300,8 @@ static int read_symbols(struct elf *elf)
- 	/* Create parent/child links for any cold subfunctions */
- 	list_for_each_entry(sec, &elf->sections, list) {
- 		list_for_each_entry(sym, &sec->symbol_list, list) {
-+			char pname[MAX_NAME_LEN + 1];
-+			size_t pnamelen;
- 			if (sym->type != STT_FUNC)
- 				continue;
- 			sym->pfunc = sym->cfunc = sym;
-@@ -305,9 +309,16 @@ static int read_symbols(struct elf *elf)
- 			if (!coldstr)
- 				continue;
+ 	if (list_empty(&moves->list)) {
+@@ -3360,6 +3361,10 @@ static void tail_append_pending_moves(struct pending_dir_move *moves,
+ 		list_add_tail(&moves->list, stack);
+ 		list_splice_tail(&list, stack);
+ 	}
++	if (!RB_EMPTY_NODE(&moves->node)) {
++		rb_erase(&moves->node, &sctx->pending_dir_moves);
++		RB_CLEAR_NODE(&moves->node);
++	}
+ }
  
--			coldstr[0] = '\0';
--			pfunc = find_symbol_by_name(elf, sym->name);
--			coldstr[0] = '.';
-+			pnamelen = coldstr - sym->name;
-+			if (pnamelen > MAX_NAME_LEN) {
-+				WARN("%s(): parent function name exceeds maximum length of %d characters",
-+				     sym->name, MAX_NAME_LEN);
-+				return -1;
-+			}
-+
-+			strncpy(pname, sym->name, pnamelen);
-+			pname[pnamelen] = '\0';
-+			pfunc = find_symbol_by_name(elf, pname);
+ static int apply_children_dir_moves(struct send_ctx *sctx)
+@@ -3374,7 +3379,7 @@ static int apply_children_dir_moves(struct send_ctx *sctx)
+ 		return 0;
  
- 			if (!pfunc) {
- 				WARN("%s(): can't find parent function",
+ 	INIT_LIST_HEAD(&stack);
+-	tail_append_pending_moves(pm, &stack);
++	tail_append_pending_moves(sctx, pm, &stack);
+ 
+ 	while (!list_empty(&stack)) {
+ 		pm = list_first_entry(&stack, struct pending_dir_move, list);
+@@ -3385,7 +3390,7 @@ static int apply_children_dir_moves(struct send_ctx *sctx)
+ 			goto out;
+ 		pm = get_pending_dir_moves(sctx, parent_ino);
+ 		if (pm)
+-			tail_append_pending_moves(pm, &stack);
++			tail_append_pending_moves(sctx, pm, &stack);
+ 	}
+ 	return 0;
+ 
 -- 
 2.19.1
 
