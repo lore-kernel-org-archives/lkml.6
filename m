@@ -7,52 +7,56 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09C84C67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:15:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21FD5C6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:15:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC4752148E
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:15:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB19D2148E
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:15:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544789752;
-	bh=NA/CroSSL+bvEfpjeWs5o5uXdxUj1FxpE8RFBFvqG8s=;
+	s=default; t=1544789757;
+	bh=prmj2rE5bCztstZF9F1lLHK03FQpkZRNwrPD3RzpNcQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=cq2ChA+S+xyWqFsw87+t0ngCINP0Cpdc+ycmz2FHd5+xHI2WAGG8oipNfZHT7vwVY
-	 qrQ+feujr8cV6J78INRjPD7E3lRKoxqA9BOkNFwpfCx4skk3EYP01ZD9r085KAHC5h
-	 VO4pTa9X5NoYcKu7XzqnviJuYzUW8tV5AcWpWxw0=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC4752148E
+	b=RPIzQXW2dsw/AD6mQpgzE/I2EWlf8KfY8SC3whm78J+Yy6Zgz+0cFlxnOxYHGFNmD
+	 mUwfCPSiyADgTB5GNPaij2fr6LuKYc2GNCxi3ncyNE0ZWWY28tfim2mFjTeUA2XxgP
+	 lvIEsOw5iEOIxQvnsZCEh0Y8A4fDYUgaR2X7LXrs=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB19D2148E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732039AbeLNMPv (ORCPT
+        id S1732655AbeLNMPz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:15:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35836 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:15:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35930 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732095AbeLNMPr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:15:47 -0500
+        id S1732640AbeLNMPv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:15:51 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3C03521479;
-        Fri, 14 Dec 2018 12:15:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 25A81214AE;
+        Fri, 14 Dec 2018 12:15:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789745;
-        bh=NA/CroSSL+bvEfpjeWs5o5uXdxUj1FxpE8RFBFvqG8s=;
+        s=default; t=1544789750;
+        bh=prmj2rE5bCztstZF9F1lLHK03FQpkZRNwrPD3RzpNcQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VKwq6lFEc0qm6Qcodi2TMXKZNY+qVAM82rkV9AdgJ3huV9ra3srHxUR9tMH7q77RF
-         GQyGxDUCZLKGw0omTuYlk8Qmy7r6PkTAYeaAB3t/Yse1cA2G+k1VbQlmjlaHyCGMNI
-         0251iDdnGlq8pvQNLeEO9BVnpgqN2tTjsRqqP+Ac=
+        b=TRFq1ZBJaRWyobAwA/5TUHgYF+SSXNhBPJg0amriO4a4RM/b8/lKTuf4jl6DKBaVn
+         lT0X6cY2NrU95PBA7IwhwNTakcfeJQPcOBqyytymK9jloMePl4+V5YXkjwV/DYCZ6k
+         H2XIctYDskZp91virqasvIgNlmUWw+DdbPGFk9Tc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jim Mattson <jmattson@google.com>,
-        Wincy Van <fanwenyi0529@gmail.com>,
-        Wanpeng Li <wanpeng.li@hotmail.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        stable@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-arch@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        kernel-hardening@lists.openwall.com,
+        Al Viro <viro@zeniv.linux.org.uk>, alan@linux.intel.com,
         Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.4 41/88] KVM: nVMX: fix msr bitmaps to prevent L2 from accessing L0 x2APIC
-Date:   Fri, 14 Dec 2018 13:00:15 +0100
-Message-Id: <20181214115705.548389759@linuxfoundation.org>
+Subject: [PATCH 4.4 55/88] x86/uaccess: Use __uaccess_begin_nospec() and uaccess_try_nospec
+Date:   Fri, 14 Dec 2018 13:00:29 +0100
+Message-Id: <20181214115707.004243853@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115702.151309521@linuxfoundation.org>
 References: <20181214115702.151309521@linuxfoundation.org>
@@ -71,253 +75,304 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Radim Krčmář" <rkrcmar@redhat.com>
+From: Dan Williams <dan.j.williams@intel.com>
 
-commit d048c098218e91ed0e10dfa1f0f80e2567fe4ef7 upstream.
+commit 304ec1b050310548db33063e567123fae8fd0301 upstream.
 
-msr bitmap can be used to avoid a VM exit (interception) on guest MSR
-accesses.  In some configurations of VMX controls, the guest can even
-directly access host's x2APIC MSRs.  See SDM 29.5 VIRTUALIZING MSR-BASED
-APIC ACCESSES.
+Quoting Linus:
 
-L2 could read all L0's x2APIC MSRs and write TPR, EOI, and SELF_IPI.
-To do so, L1 would first trick KVM to disable all possible interceptions
-by enabling APICv features and then would turn those features off;
-nested_vmx_merge_msr_bitmap() only disabled interceptions, so VMX would
-not intercept previously enabled MSRs even though they were not safe
-with the new configuration.
+    I do think that it would be a good idea to very expressly document
+    the fact that it's not that the user access itself is unsafe. I do
+    agree that things like "get_user()" want to be protected, but not
+    because of any direct bugs or problems with get_user() and friends,
+    but simply because get_user() is an excellent source of a pointer
+    that is obviously controlled from a potentially attacking user
+    space. So it's a prime candidate for then finding _subsequent_
+    accesses that can then be used to perturb the cache.
 
-Correctly re-enabling interceptions is not enough as a second bug would
-still allow L1+L2 to access host's MSRs: msr bitmap was shared for all
-VMCSs, so L1 could trigger a race to get the desired combination of msr
-bitmap and VMX controls.
+__uaccess_begin_nospec() covers __get_user() and copy_from_iter() where the
+limit check is far away from the user pointer de-reference. In those cases
+a barrier_nospec() prevents speculation with a potential pointer to
+privileged memory. uaccess_try_nospec covers get_user_try.
 
-This fix allocates a msr bitmap for every L1 VCPU, allows only safe
-x2APIC MSRs from L1's msr bitmap, and disables msr bitmaps if they would
-have to intercept everything anyway.
-
-Fixes: 3af18d9c5fe9 ("KVM: nVMX: Prepare for using hardware MSR bitmap")
-Reported-by: Jim Mattson <jmattson@google.com>
-Suggested-by: Wincy Van <fanwenyi0529@gmail.com>
-Reviewed-by: Wanpeng Li <wanpeng.li@hotmail.com>
-Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Suggested-by: Andi Kleen <ak@linux.intel.com>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-arch@vger.kernel.org
+Cc: Kees Cook <keescook@chromium.org>
+Cc: kernel-hardening@lists.openwall.com
+Cc: gregkh@linuxfoundation.org
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: alan@linux.intel.com
+Link: https://lkml.kernel.org/r/151727416953.33451.10508284228526170604.stgit@dwillia2-desk3.amr.corp.intel.com
 [bwh: Backported to 4.4:
- - handle_vmon() doesn't allocate a cached vmcs12
+ - Convert several more functions to use __uaccess_begin_nospec(), that
+   are just wrappers in mainline
  - Adjust context]
 Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kvm/vmx.c |   96 ++++++++++++++++++++---------------------------------
- 1 file changed, 38 insertions(+), 58 deletions(-)
+ arch/x86/include/asm/uaccess.h    |    6 +++---
+ arch/x86/include/asm/uaccess_32.h |   26 +++++++++++++-------------
+ arch/x86/include/asm/uaccess_64.h |   20 ++++++++++----------
+ arch/x86/lib/usercopy_32.c        |   10 +++++-----
+ 4 files changed, 31 insertions(+), 31 deletions(-)
 
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -431,6 +431,8 @@ struct nested_vmx {
- 	u16 posted_intr_nv;
- 	u64 msr_ia32_feature_control;
+--- a/arch/x86/include/asm/uaccess.h
++++ b/arch/x86/include/asm/uaccess.h
+@@ -436,7 +436,7 @@ do {									\
+ ({									\
+ 	int __gu_err;							\
+ 	unsigned long __gu_val;						\
+-	__uaccess_begin();						\
++	__uaccess_begin_nospec();					\
+ 	__get_user_size(__gu_val, (ptr), (size), __gu_err, -EFAULT);	\
+ 	__uaccess_end();						\
+ 	(x) = (__force __typeof__(*(ptr)))__gu_val;			\
+@@ -546,7 +546,7 @@ struct __large_struct { unsigned long bu
+  *	get_user_ex(...);
+  * } get_user_catch(err)
+  */
+-#define get_user_try		uaccess_try
++#define get_user_try		uaccess_try_nospec
+ #define get_user_catch(err)	uaccess_catch(err)
  
-+	unsigned long *msr_bitmap;
-+
- 	struct hrtimer preemption_timer;
- 	bool preemption_timer_expired;
+ #define get_user_ex(x, ptr)	do {					\
+@@ -581,7 +581,7 @@ extern void __cmpxchg_wrong_size(void)
+ 	__typeof__(ptr) __uval = (uval);				\
+ 	__typeof__(*(ptr)) __old = (old);				\
+ 	__typeof__(*(ptr)) __new = (new);				\
+-	__uaccess_begin();						\
++	__uaccess_begin_nospec();					\
+ 	switch (size) {							\
+ 	case 1:								\
+ 	{								\
+--- a/arch/x86/include/asm/uaccess_32.h
++++ b/arch/x86/include/asm/uaccess_32.h
+@@ -48,25 +48,25 @@ __copy_to_user_inatomic(void __user *to,
  
-@@ -912,7 +914,6 @@ static unsigned long *vmx_msr_bitmap_leg
- static unsigned long *vmx_msr_bitmap_longmode;
- static unsigned long *vmx_msr_bitmap_legacy_x2apic;
- static unsigned long *vmx_msr_bitmap_longmode_x2apic;
--static unsigned long *vmx_msr_bitmap_nested;
- static unsigned long *vmx_vmread_bitmap;
- static unsigned long *vmx_vmwrite_bitmap;
+ 		switch (n) {
+ 		case 1:
+-			__uaccess_begin();
++			__uaccess_begin_nospec();
+ 			__put_user_size(*(u8 *)from, (u8 __user *)to,
+ 					1, ret, 1);
+ 			__uaccess_end();
+ 			return ret;
+ 		case 2:
+-			__uaccess_begin();
++			__uaccess_begin_nospec();
+ 			__put_user_size(*(u16 *)from, (u16 __user *)to,
+ 					2, ret, 2);
+ 			__uaccess_end();
+ 			return ret;
+ 		case 4:
+-			__uaccess_begin();
++			__uaccess_begin_nospec();
+ 			__put_user_size(*(u32 *)from, (u32 __user *)to,
+ 					4, ret, 4);
+ 			__uaccess_end();
+ 			return ret;
+ 		case 8:
+-			__uaccess_begin();
++			__uaccess_begin_nospec();
+ 			__put_user_size(*(u64 *)from, (u64 __user *)to,
+ 					8, ret, 8);
+ 			__uaccess_end();
+@@ -111,17 +111,17 @@ __copy_from_user_inatomic(void *to, cons
  
-@@ -2358,7 +2359,7 @@ static void vmx_set_msr_bitmap(struct kv
- 	unsigned long *msr_bitmap;
+ 		switch (n) {
+ 		case 1:
+-			__uaccess_begin();
++			__uaccess_begin_nospec();
+ 			__get_user_size(*(u8 *)to, from, 1, ret, 1);
+ 			__uaccess_end();
+ 			return ret;
+ 		case 2:
+-			__uaccess_begin();
++			__uaccess_begin_nospec();
+ 			__get_user_size(*(u16 *)to, from, 2, ret, 2);
+ 			__uaccess_end();
+ 			return ret;
+ 		case 4:
+-			__uaccess_begin();
++			__uaccess_begin_nospec();
+ 			__get_user_size(*(u32 *)to, from, 4, ret, 4);
+ 			__uaccess_end();
+ 			return ret;
+@@ -162,17 +162,17 @@ __copy_from_user(void *to, const void __
  
- 	if (is_guest_mode(vcpu))
--		msr_bitmap = vmx_msr_bitmap_nested;
-+		msr_bitmap = to_vmx(vcpu)->nested.msr_bitmap;
- 	else if (vcpu->arch.apic_base & X2APIC_ENABLE) {
- 		if (is_long_mode(vcpu))
- 			msr_bitmap = vmx_msr_bitmap_longmode_x2apic;
-@@ -6192,13 +6193,6 @@ static __init int hardware_setup(void)
- 	if (!vmx_msr_bitmap_longmode_x2apic)
- 		goto out4;
+ 		switch (n) {
+ 		case 1:
+-			__uaccess_begin();
++			__uaccess_begin_nospec();
+ 			__get_user_size(*(u8 *)to, from, 1, ret, 1);
+ 			__uaccess_end();
+ 			return ret;
+ 		case 2:
+-			__uaccess_begin();
++			__uaccess_begin_nospec();
+ 			__get_user_size(*(u16 *)to, from, 2, ret, 2);
+ 			__uaccess_end();
+ 			return ret;
+ 		case 4:
+-			__uaccess_begin();
++			__uaccess_begin_nospec();
+ 			__get_user_size(*(u32 *)to, from, 4, ret, 4);
+ 			__uaccess_end();
+ 			return ret;
+@@ -190,17 +190,17 @@ static __always_inline unsigned long __c
  
--	if (nested) {
--		vmx_msr_bitmap_nested =
--			(unsigned long *)__get_free_page(GFP_KERNEL);
--		if (!vmx_msr_bitmap_nested)
--			goto out5;
--	}
--
- 	vmx_vmread_bitmap = (unsigned long *)__get_free_page(GFP_KERNEL);
- 	if (!vmx_vmread_bitmap)
- 		goto out6;
-@@ -6216,8 +6210,6 @@ static __init int hardware_setup(void)
- 
- 	memset(vmx_msr_bitmap_legacy, 0xff, PAGE_SIZE);
- 	memset(vmx_msr_bitmap_longmode, 0xff, PAGE_SIZE);
--	if (nested)
--		memset(vmx_msr_bitmap_nested, 0xff, PAGE_SIZE);
- 
- 	if (setup_vmcs_config(&vmcs_config) < 0) {
- 		r = -EIO;
-@@ -6354,9 +6346,6 @@ out8:
- out7:
- 	free_page((unsigned long)vmx_vmread_bitmap);
- out6:
--	if (nested)
--		free_page((unsigned long)vmx_msr_bitmap_nested);
--out5:
- 	free_page((unsigned long)vmx_msr_bitmap_longmode_x2apic);
- out4:
- 	free_page((unsigned long)vmx_msr_bitmap_longmode);
-@@ -6382,8 +6371,6 @@ static __exit void hardware_unsetup(void
- 	free_page((unsigned long)vmx_io_bitmap_a);
- 	free_page((unsigned long)vmx_vmwrite_bitmap);
- 	free_page((unsigned long)vmx_vmread_bitmap);
--	if (nested)
--		free_page((unsigned long)vmx_msr_bitmap_nested);
- 
- 	free_kvm_area();
- }
-@@ -6825,10 +6812,17 @@ static int handle_vmon(struct kvm_vcpu *
- 		return 1;
+ 		switch (n) {
+ 		case 1:
+-			__uaccess_begin();
++			__uaccess_begin_nospec();
+ 			__get_user_size(*(u8 *)to, from, 1, ret, 1);
+ 			__uaccess_end();
+ 			return ret;
+ 		case 2:
+-			__uaccess_begin();
++			__uaccess_begin_nospec();
+ 			__get_user_size(*(u16 *)to, from, 2, ret, 2);
+ 			__uaccess_end();
+ 			return ret;
+ 		case 4:
+-			__uaccess_begin();
++			__uaccess_begin_nospec();
+ 			__get_user_size(*(u32 *)to, from, 4, ret, 4);
+ 			__uaccess_end();
+ 			return ret;
+--- a/arch/x86/include/asm/uaccess_64.h
++++ b/arch/x86/include/asm/uaccess_64.h
+@@ -57,31 +57,31 @@ int __copy_from_user_nocheck(void *dst,
+ 		return copy_user_generic(dst, (__force void *)src, size);
+ 	switch (size) {
+ 	case 1:
+-		__uaccess_begin();
++		__uaccess_begin_nospec();
+ 		__get_user_asm(*(u8 *)dst, (u8 __user *)src,
+ 			      ret, "b", "b", "=q", 1);
+ 		__uaccess_end();
+ 		return ret;
+ 	case 2:
+-		__uaccess_begin();
++		__uaccess_begin_nospec();
+ 		__get_user_asm(*(u16 *)dst, (u16 __user *)src,
+ 			      ret, "w", "w", "=r", 2);
+ 		__uaccess_end();
+ 		return ret;
+ 	case 4:
+-		__uaccess_begin();
++		__uaccess_begin_nospec();
+ 		__get_user_asm(*(u32 *)dst, (u32 __user *)src,
+ 			      ret, "l", "k", "=r", 4);
+ 		__uaccess_end();
+ 		return ret;
+ 	case 8:
+-		__uaccess_begin();
++		__uaccess_begin_nospec();
+ 		__get_user_asm(*(u64 *)dst, (u64 __user *)src,
+ 			      ret, "q", "", "=r", 8);
+ 		__uaccess_end();
+ 		return ret;
+ 	case 10:
+-		__uaccess_begin();
++		__uaccess_begin_nospec();
+ 		__get_user_asm(*(u64 *)dst, (u64 __user *)src,
+ 			       ret, "q", "", "=r", 10);
+ 		if (likely(!ret))
+@@ -91,7 +91,7 @@ int __copy_from_user_nocheck(void *dst,
+ 		__uaccess_end();
+ 		return ret;
+ 	case 16:
+-		__uaccess_begin();
++		__uaccess_begin_nospec();
+ 		__get_user_asm(*(u64 *)dst, (u64 __user *)src,
+ 			       ret, "q", "", "=r", 16);
+ 		if (likely(!ret))
+@@ -190,7 +190,7 @@ int __copy_in_user(void __user *dst, con
+ 	switch (size) {
+ 	case 1: {
+ 		u8 tmp;
+-		__uaccess_begin();
++		__uaccess_begin_nospec();
+ 		__get_user_asm(tmp, (u8 __user *)src,
+ 			       ret, "b", "b", "=q", 1);
+ 		if (likely(!ret))
+@@ -201,7 +201,7 @@ int __copy_in_user(void __user *dst, con
  	}
+ 	case 2: {
+ 		u16 tmp;
+-		__uaccess_begin();
++		__uaccess_begin_nospec();
+ 		__get_user_asm(tmp, (u16 __user *)src,
+ 			       ret, "w", "w", "=r", 2);
+ 		if (likely(!ret))
+@@ -213,7 +213,7 @@ int __copy_in_user(void __user *dst, con
  
-+	if (cpu_has_vmx_msr_bitmap()) {
-+		vmx->nested.msr_bitmap =
-+				(unsigned long *)__get_free_page(GFP_KERNEL);
-+		if (!vmx->nested.msr_bitmap)
-+			goto out_msr_bitmap;
-+	}
-+
- 	if (enable_shadow_vmcs) {
- 		shadow_vmcs = alloc_vmcs();
- 		if (!shadow_vmcs)
--			return -ENOMEM;
-+			goto out_shadow_vmcs;
- 		/* mark vmcs as shadow */
- 		shadow_vmcs->revision_id |= (1u << 31);
- 		/* init shadow vmcs */
-@@ -6850,6 +6844,12 @@ static int handle_vmon(struct kvm_vcpu *
- 	skip_emulated_instruction(vcpu);
- 	nested_vmx_succeed(vcpu);
- 	return 1;
-+
-+out_shadow_vmcs:
-+	free_page((unsigned long)vmx->nested.msr_bitmap);
-+
-+out_msr_bitmap:
-+	return -ENOMEM;
- }
- 
- /*
-@@ -6919,6 +6919,10 @@ static void free_nested(struct vcpu_vmx
- 	vmx->nested.vmxon = false;
- 	free_vpid(vmx->nested.vpid02);
- 	nested_release_vmcs12(vmx);
-+	if (vmx->nested.msr_bitmap) {
-+		free_page((unsigned long)vmx->nested.msr_bitmap);
-+		vmx->nested.msr_bitmap = NULL;
-+	}
- 	if (enable_shadow_vmcs)
- 		free_vmcs(vmx->nested.current_shadow_vmcs);
- 	/* Unpin physical memory we referred to in current vmcs02 */
-@@ -9248,8 +9252,10 @@ static inline bool nested_vmx_merge_msr_
+ 	case 4: {
+ 		u32 tmp;
+-		__uaccess_begin();
++		__uaccess_begin_nospec();
+ 		__get_user_asm(tmp, (u32 __user *)src,
+ 			       ret, "l", "k", "=r", 4);
+ 		if (likely(!ret))
+@@ -224,7 +224,7 @@ int __copy_in_user(void __user *dst, con
+ 	}
+ 	case 8: {
+ 		u64 tmp;
+-		__uaccess_begin();
++		__uaccess_begin_nospec();
+ 		__get_user_asm(tmp, (u64 __user *)src,
+ 			       ret, "q", "", "=r", 8);
+ 		if (likely(!ret))
+--- a/arch/x86/lib/usercopy_32.c
++++ b/arch/x86/lib/usercopy_32.c
+@@ -570,7 +570,7 @@ do {									\
+ unsigned long __copy_to_user_ll(void __user *to, const void *from,
+ 				unsigned long n)
  {
- 	int msr;
- 	struct page *page;
--	unsigned long *msr_bitmap;
-+	unsigned long *msr_bitmap_l1;
-+	unsigned long *msr_bitmap_l0 = to_vmx(vcpu)->nested.msr_bitmap;
- 
-+	/* This shortcut is ok because we support only x2APIC MSRs so far. */
- 	if (!nested_cpu_has_virt_x2apic_mode(vmcs12))
- 		return false;
- 
-@@ -9258,58 +9264,32 @@ static inline bool nested_vmx_merge_msr_
- 		WARN_ON(1);
- 		return false;
- 	}
--	msr_bitmap = (unsigned long *)kmap(page);
-+	msr_bitmap_l1 = (unsigned long *)kmap(page);
-+
-+	memset(msr_bitmap_l0, 0xff, PAGE_SIZE);
- 
- 	if (nested_cpu_has_virt_x2apic_mode(vmcs12)) {
- 		if (nested_cpu_has_apic_reg_virt(vmcs12))
- 			for (msr = 0x800; msr <= 0x8ff; msr++)
- 				nested_vmx_disable_intercept_for_msr(
--					msr_bitmap,
--					vmx_msr_bitmap_nested,
-+					msr_bitmap_l1, msr_bitmap_l0,
- 					msr, MSR_TYPE_R);
--		/* TPR is allowed */
--		nested_vmx_disable_intercept_for_msr(msr_bitmap,
--				vmx_msr_bitmap_nested,
-+
-+		nested_vmx_disable_intercept_for_msr(
-+				msr_bitmap_l1, msr_bitmap_l0,
- 				APIC_BASE_MSR + (APIC_TASKPRI >> 4),
- 				MSR_TYPE_R | MSR_TYPE_W);
-+
- 		if (nested_cpu_has_vid(vmcs12)) {
--			/* EOI and self-IPI are allowed */
- 			nested_vmx_disable_intercept_for_msr(
--				msr_bitmap,
--				vmx_msr_bitmap_nested,
-+				msr_bitmap_l1, msr_bitmap_l0,
- 				APIC_BASE_MSR + (APIC_EOI >> 4),
- 				MSR_TYPE_W);
- 			nested_vmx_disable_intercept_for_msr(
--				msr_bitmap,
--				vmx_msr_bitmap_nested,
-+				msr_bitmap_l1, msr_bitmap_l0,
- 				APIC_BASE_MSR + (APIC_SELF_IPI >> 4),
- 				MSR_TYPE_W);
- 		}
--	} else {
--		/*
--		 * Enable reading intercept of all the x2apic
--		 * MSRs. We should not rely on vmcs12 to do any
--		 * optimizations here, it may have been modified
--		 * by L1.
--		 */
--		for (msr = 0x800; msr <= 0x8ff; msr++)
--			__vmx_enable_intercept_for_msr(
--				vmx_msr_bitmap_nested,
--				msr,
--				MSR_TYPE_R);
--
--		__vmx_enable_intercept_for_msr(
--				vmx_msr_bitmap_nested,
--				APIC_BASE_MSR + (APIC_TASKPRI >> 4),
--				MSR_TYPE_W);
--		__vmx_enable_intercept_for_msr(
--				vmx_msr_bitmap_nested,
--				APIC_BASE_MSR + (APIC_EOI >> 4),
--				MSR_TYPE_W);
--		__vmx_enable_intercept_for_msr(
--				vmx_msr_bitmap_nested,
--				APIC_BASE_MSR + (APIC_SELF_IPI >> 4),
--				MSR_TYPE_W);
- 	}
- 	kunmap(page);
- 	nested_release_page_clean(page);
-@@ -9729,10 +9709,10 @@ static void prepare_vmcs02(struct kvm_vc
- 	}
- 
- 	if (cpu_has_vmx_msr_bitmap() &&
--	    exec_control & CPU_BASED_USE_MSR_BITMAPS) {
--		nested_vmx_merge_msr_bitmap(vcpu, vmcs12);
--		/* MSR_BITMAP will be set by following vmx_set_efer. */
--	} else
-+	    exec_control & CPU_BASED_USE_MSR_BITMAPS &&
-+	    nested_vmx_merge_msr_bitmap(vcpu, vmcs12))
-+		; /* MSR_BITMAP will be set by following vmx_set_efer. */
-+	else
- 		exec_control &= ~CPU_BASED_USE_MSR_BITMAPS;
- 
- 	/*
+-	__uaccess_begin();
++	__uaccess_begin_nospec();
+ 	if (movsl_is_ok(to, from, n))
+ 		__copy_user(to, from, n);
+ 	else
+@@ -583,7 +583,7 @@ EXPORT_SYMBOL(__copy_to_user_ll);
+ unsigned long __copy_from_user_ll(void *to, const void __user *from,
+ 					unsigned long n)
+ {
+-	__uaccess_begin();
++	__uaccess_begin_nospec();
+ 	if (movsl_is_ok(to, from, n))
+ 		__copy_user_zeroing(to, from, n);
+ 	else
+@@ -596,7 +596,7 @@ EXPORT_SYMBOL(__copy_from_user_ll);
+ unsigned long __copy_from_user_ll_nozero(void *to, const void __user *from,
+ 					 unsigned long n)
+ {
+-	__uaccess_begin();
++	__uaccess_begin_nospec();
+ 	if (movsl_is_ok(to, from, n))
+ 		__copy_user(to, from, n);
+ 	else
+@@ -610,7 +610,7 @@ EXPORT_SYMBOL(__copy_from_user_ll_nozero
+ unsigned long __copy_from_user_ll_nocache(void *to, const void __user *from,
+ 					unsigned long n)
+ {
+-	__uaccess_begin();
++	__uaccess_begin_nospec();
+ #ifdef CONFIG_X86_INTEL_USERCOPY
+ 	if (n > 64 && cpu_has_xmm2)
+ 		n = __copy_user_zeroing_intel_nocache(to, from, n);
+@@ -627,7 +627,7 @@ EXPORT_SYMBOL(__copy_from_user_ll_nocach
+ unsigned long __copy_from_user_ll_nocache_nozero(void *to, const void __user *from,
+ 					unsigned long n)
+ {
+-	__uaccess_begin();
++	__uaccess_begin_nospec();
+ #ifdef CONFIG_X86_INTEL_USERCOPY
+ 	if (n > 64 && cpu_has_xmm2)
+ 		n = __copy_user_intel_nocache(to, from, n);
 
 
