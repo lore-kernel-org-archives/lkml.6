@@ -6,207 +6,198 @@ X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64072C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 15:48:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC160C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 15:49:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96EEF2070B
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 15:48:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 03A9B2070B
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 15:49:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727899AbeLNPsD (ORCPT
+        id S1728678AbeLNPtS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 10:48:03 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43746 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726344AbeLNPsC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 10:48:02 -0500
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wBEFiBn0196275
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 10:48:01 -0500
-Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2pcdga5knr-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 10:48:00 -0500
-Received: from localhost
-        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <eajames@linux.ibm.com>;
-        Fri, 14 Dec 2018 15:47:59 -0000
-Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
-        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 14 Dec 2018 15:47:55 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wBEFlsKB23331052
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 14 Dec 2018 15:47:54 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 64DB0B2066;
-        Fri, 14 Dec 2018 15:47:54 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C49E9B2065;
-        Fri, 14 Dec 2018 15:47:53 +0000 (GMT)
-Received: from oc6728276242.ibm.com (unknown [9.85.180.238])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Fri, 14 Dec 2018 15:47:53 +0000 (GMT)
-Subject: Re: [PATCH 2/2] clk: aspeed: Setup video engine clocking
-To:     Joel Stanley <joel@jms.id.au>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-aspeed@lists.ozlabs.org, Andrew Jeffery <andrew@aj.id.au>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-References: <1544559161-21468-1-git-send-email-eajames@linux.ibm.com>
- <1544559161-21468-3-git-send-email-eajames@linux.ibm.com>
- <CACPK8XcY_c9NzNv-WyZcz+mZ5c2jixyCzEQAK-+t0QvQ_uJXwg@mail.gmail.com>
-From:   Eddie James <eajames@linux.ibm.com>
-Date:   Fri, 14 Dec 2018 09:47:53 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 14 Dec 2018 10:49:18 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:38712 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726298AbeLNPtS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 10:49:18 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 2413A307D84C;
+        Fri, 14 Dec 2018 15:49:17 +0000 (UTC)
+Received: from [10.36.117.94] (ovpn-117-94.ams2.redhat.com [10.36.117.94])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1650A18E33;
+        Fri, 14 Dec 2018 15:49:14 +0000 (UTC)
+Subject: Re: [PATCH v2 1/1] mm, memory_hotplug: Initialize struct pages for
+ the full memory section
+From:   David Hildenbrand <david@redhat.com>
+To:     Mikhail Zaslonko <zaslonko@linux.ibm.com>,
+        akpm@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        mhocko@kernel.org, Pavel.Tatashin@microsoft.com,
+        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        gerald.schaefer@de.ibm.com
+References: <20181212172712.34019-1-zaslonko@linux.ibm.com>
+ <20181212172712.34019-2-zaslonko@linux.ibm.com>
+ <476a80cb-5524-16c1-6dd5-da5febbd6139@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <bcd0c49c-e417-ef8b-996f-99ecef540d9c@redhat.com>
+Date:   Fri, 14 Dec 2018 16:49:14 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-In-Reply-To: <CACPK8XcY_c9NzNv-WyZcz+mZ5c2jixyCzEQAK-+t0QvQ_uJXwg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <476a80cb-5524-16c1-6dd5-da5febbd6139@redhat.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18121415-0064-0000-0000-0000038668E7
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010224; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000271; SDB=6.01131703; UDB=6.00588165; IPR=6.00911835;
- MB=3.00024690; MTD=3.00000008; XFM=3.00000015; UTC=2018-12-14 15:47:58
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18121415-0065-0000-0000-00003BADFF45
-Message-Id: <81b100b7-252e-3145-fb34-17a9c0cdd91e@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-12-14_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1812140138
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Fri, 14 Dec 2018 15:49:17 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 12/13/2018 07:02 PM, Joel Stanley wrote:
-> Hi Eddie,
->
-> On Wed, 12 Dec 2018 at 06:42, Eddie James <eajames@linux.ibm.com> wrote:
->> Add the video engine reset bit. Add eclk mux and clock divider table.
+On 14.12.18 16:22, David Hildenbrand wrote:
+> On 12.12.18 18:27, Mikhail Zaslonko wrote:
+>> If memory end is not aligned with the sparse memory section boundary, the
+>> mapping of such a section is only partly initialized. This may lead to
+>> VM_BUG_ON due to uninitialized struct page access from
+>> is_mem_section_removable() or test_pages_in_a_zone() function triggered by
+>> memory_hotplug sysfs handlers:
 >>
->> Signed-off-by: Eddie James <eajames@linux.ibm.com>
->> Acked-by: Stephen Boyd <sboyd@kernel.org>
+>> Here are the the panic examples:
+>>  CONFIG_DEBUG_VM=y
+>>  CONFIG_DEBUG_VM_PGFLAGS=y
+>>
+>>  kernel parameter mem=2050M
+>>  --------------------------
+>>  page:000003d082008000 is uninitialized and poisoned
+>>  page dumped because: VM_BUG_ON_PAGE(PagePoisoned(p))
+>>  Call Trace:
+>>  ([<0000000000385b26>] test_pages_in_a_zone+0xde/0x160)
+>>   [<00000000008f15c4>] show_valid_zones+0x5c/0x190
+>>   [<00000000008cf9c4>] dev_attr_show+0x34/0x70
+>>   [<0000000000463ad0>] sysfs_kf_seq_show+0xc8/0x148
+>>   [<00000000003e4194>] seq_read+0x204/0x480
+>>   [<00000000003b53ea>] __vfs_read+0x32/0x178
+>>   [<00000000003b55b2>] vfs_read+0x82/0x138
+>>   [<00000000003b5be2>] ksys_read+0x5a/0xb0
+>>   [<0000000000b86ba0>] system_call+0xdc/0x2d8
+>>  Last Breaking-Event-Address:
+>>   [<0000000000385b26>] test_pages_in_a_zone+0xde/0x160
+>>  Kernel panic - not syncing: Fatal exception: panic_on_oops
+>>
+>>  kernel parameter mem=3075M
+>>  --------------------------
+>>  page:000003d08300c000 is uninitialized and poisoned
+>>  page dumped because: VM_BUG_ON_PAGE(PagePoisoned(p))
+>>  Call Trace:
+>>  ([<000000000038596c>] is_mem_section_removable+0xb4/0x190)
+>>   [<00000000008f12fa>] show_mem_removable+0x9a/0xd8
+>>   [<00000000008cf9c4>] dev_attr_show+0x34/0x70
+>>   [<0000000000463ad0>] sysfs_kf_seq_show+0xc8/0x148
+>>   [<00000000003e4194>] seq_read+0x204/0x480
+>>   [<00000000003b53ea>] __vfs_read+0x32/0x178
+>>   [<00000000003b55b2>] vfs_read+0x82/0x138
+>>   [<00000000003b5be2>] ksys_read+0x5a/0xb0
+>>   [<0000000000b86ba0>] system_call+0xdc/0x2d8
+>>  Last Breaking-Event-Address:
+>>   [<000000000038596c>] is_mem_section_removable+0xb4/0x190
+>>  Kernel panic - not syncing: Fatal exception: panic_on_oops
+>>
+>> Fix the problem by initializing the last memory section of each zone
+>> in memmap_init_zone() till the very end, even if it goes beyond the zone
+>> end.
+>>
+>> Signed-off-by: Mikhail Zaslonko <zaslonko@linux.ibm.com>
+>> Reviewed-by: Gerald Schaefer <gerald.schaefer@de.ibm.com>
+>> Cc: <stable@vger.kernel.org>
 >> ---
->>   drivers/clk/clk-aspeed.c | 41 +++++++++++++++++++++++++++++++++++++++--
->>   1 file changed, 39 insertions(+), 2 deletions(-)
+>>  mm/page_alloc.c | 12 ++++++++++++
+>>  1 file changed, 12 insertions(+)
 >>
->> diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
->> index 5961367..f16ce7d 100644
->> --- a/drivers/clk/clk-aspeed.c
->> +++ b/drivers/clk/clk-aspeed.c
->> @@ -87,7 +87,7 @@ struct aspeed_clk_gate {
->>   /* TODO: ask Aspeed about the actual parent data */
->>   static const struct aspeed_gate_data aspeed_gates[] = {
->>          /*                               clk rst   name                 parent  flags */
->> -       [ASPEED_CLK_GATE_ECLK] =        {  0, -1, "eclk-gate",          "eclk", 0 }, /* Video Engine */
->> +       [ASPEED_CLK_GATE_ECLK] =        {  0,  6, "eclk-gate",          "eclk", 0 }, /* Video Engine */
->
->>          [ASPEED_CLK_GATE_GCLK] =        {  1,  7, "gclk-gate",          NULL,   0 }, /* 2D engine */
->>          [ASPEED_CLK_GATE_MCLK] =        {  2, -1, "mclk-gate",          "mpll", CLK_IS_CRITICAL }, /* SDRAM */
->>          [ASPEED_CLK_GATE_VCLK] =        {  3,  6, "vclk-gate",          NULL,   0 }, /* Video Capture */
->> @@ -113,6 +113,24 @@ struct aspeed_clk_gate {
->>          [ASPEED_CLK_GATE_LHCCLK] =      { 28, -1, "lhclk-gate",         "lhclk", 0 }, /* LPC master/LPC+ */
->>   };
->>
->> +static const char * const eclk_parent_names[] = {
->> +       "mpll",
-> Is the mpll really an input to the eclk?
+>> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+>> index 2ec9cc407216..e2afdb2dc2c5 100644
+>> --- a/mm/page_alloc.c
+>> +++ b/mm/page_alloc.c
+>> @@ -5542,6 +5542,18 @@ void __meminit memmap_init_zone(unsigned long size, int nid, unsigned long zone,
+>>  			cond_resched();
+>>  		}
+>>  	}
+>> +#ifdef CONFIG_SPARSEMEM
+>> +	/*
+>> +	 * If the zone does not span the rest of the section then
+>> +	 * we should at least initialize those pages. Otherwise we
+>> +	 * could blow up on a poisoned page in some paths which depend
+>> +	 * on full sections being initialized (e.g. memory hotplug).
+>> +	 */
+>> +	while (end_pfn % PAGES_PER_SECTION) {
+>> +		__init_single_page(pfn_to_page(end_pfn), end_pfn, zone, nid);
+>> +		end_pfn++;
+> 
+> This page will not be marked as PG_reserved - although it is a physical
+> memory gap. Do we care?
+> 
 
-Yep, it's the default.
+Hm, or do we even have any idea what this is (e.g. could it also be
+something not a gap)?
 
->
->> +       "hpll",
->> +       "dpll",
-> We don't have a dpll in the driver that I can see.
+For physical memory gaps within a section, architectures usually exclude
+that memory from getting passed to e.g. the page allocator by
+memblock_reserve().
 
-True... I supposed I would just add the parent here now in case the dpll 
-clock is ever added.
+Before handing all free pages to the page allocator, all such reserved
+memblocks will be marked reserved.
 
->
->> +};
->> +
->> +static const struct clk_div_table ast2500_eclk_div_table[] = {
-> Is the clocking setup different on the ast2400?
+But this here seems to be different. We don't have a previous
+memblock_reserve(), because otherwise these pages would have properly
+been initialized already when marking them reserved.
 
-Yes, the dividers are the default ast2400 ones.
-
->
->> +       { 0x0, 2 },
->> +       { 0x1, 2 },
->> +       { 0x2, 3 },
->> +       { 0x3, 4 },
->> +       { 0x4, 5 },
->> +       { 0x5, 6 },
->> +       { 0x6, 7 },
->> +       { 0x7, 8 },
->> +       { 0 }
->> +};
->> @@ -317,6 +338,7 @@ struct aspeed_reset {
->>          [ASPEED_RESET_PECI]     = 10,
->>          [ASPEED_RESET_I2C]      =  2,
->>          [ASPEED_RESET_AHB]      =  1,
->> +       [ASPEED_RESET_VIDEO]    =  6,
-> You've added the reset line to the ASPEED_CLK_GATE_ECLK clock so you
-> do not need to separately expose the reset controller. Instead
-> enabling the clock will deassert the rest line for you.
->
-> This means you should drop the change from the header too, and it
-> affects the bindings document for the video engine.
-
-I want that reset available separately for use in the video engine 
-actually. I could do without it, but it's somewhat useful.
+-- 
 
 Thanks,
-Eddie
 
->
->>          /*
->>           * SCUD4 resets start at an offset to separate them from
->> @@ -522,6 +544,22 @@ static int aspeed_clk_probe(struct platform_device *pdev)
->>                  return PTR_ERR(hw);
->>          aspeed_clk_data->hws[ASPEED_CLK_24M] = hw;
->>
->> +       hw = clk_hw_register_mux(dev, "eclk-mux", eclk_parent_names,
->> +                                ARRAY_SIZE(eclk_parent_names), 0,
->> +                                scu_base + ASPEED_CLK_SELECTION, 2, 0x3, 0,
->> +                                &aspeed_clk_lock);
->> +       if (IS_ERR(hw))
->> +               return PTR_ERR(hw);
->> +       aspeed_clk_data->hws[ASPEED_CLK_ECLK_MUX] = hw;
->> +
->> +       hw = clk_hw_register_divider_table(dev, "eclk", "eclk-mux", 0,
->> +                                          scu_base + ASPEED_CLK_SELECTION, 28,
->> +                                          3, 0, soc_data->eclk_div_table,
->> +                                          &aspeed_clk_lock);
->> +       if (IS_ERR(hw))
->> +               return PTR_ERR(hw);
->> +       aspeed_clk_data->hws[ASPEED_CLK_ECLK] = hw;
->> +
->>          /*
->>           * TODO: There are a number of clocks that not included in this driver
->>           * as more information is required:
->> @@ -531,7 +569,6 @@ static int aspeed_clk_probe(struct platform_device *pdev)
->>           *   RGMII
->>           *   RMII
->>           *   UART[1..5] clock source mux
->> -        *   Video Engine (ECLK) mux and clock divider
->>           */
->>
->>          for (i = 0; i < ARRAY_SIZE(aspeed_gates); i++) {
->> --
->> 1.8.3.1
->>
-
+David / dhildenb
