@@ -7,50 +7,49 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF3CEC6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:07:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DBF1C6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:07:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94A0721479
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:07:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 260FB21486
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:07:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544789221;
-	bh=rgkShTxoicZXUSZZD+KQMeEUBJld1D5BDdR+aC7DTzk=;
+	s=default; t=1544789225;
+	bh=+kQ//yTwFiP4gPfSmKY2AA4OmHDf9R2TflKlrrRQfho=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=jvockoFg5tOWME/BJp1rQVK5ecJxcTBVfkHENoh5B7U9nXsDw9iwDH7DvP6GMVHmx
-	 vuVsMPxB1v4Rg1XEf8mkLTyiluTdOT/QonjNsRgRBJ7NmOS9meXtmgYpsHPfTOi4b+
-	 IhSYiz4WaGzLHbpXdxds4IQoVd70ch3Ql6Iv0rRA=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94A0721479
+	b=RkRJS6IX0f0DHR/QCtf9CjZbj1+1NfRv3LtIJalOawsHR0JuexOv9bbOhgtZ7uBg/
+	 xT8fo6XrppS7aB+jy1qgzje9UOMikcvRR8q9AAMi0BBA/ttyHyIgwySqnX5VSFUG2h
+	 93MxJNA1uvM5fcigjYG/TmFiwchVMZ1AkyMOsSac=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 260FB21486
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731027AbeLNMHA (ORCPT
+        id S1731038AbeLNMHD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:07:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52102 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:07:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52130 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730313AbeLNMG5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:06:57 -0500
+        id S1731021AbeLNMHA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:07:00 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C5EA921479;
-        Fri, 14 Dec 2018 12:06:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 473D121479;
+        Fri, 14 Dec 2018 12:06:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789217;
-        bh=rgkShTxoicZXUSZZD+KQMeEUBJld1D5BDdR+aC7DTzk=;
+        s=default; t=1544789219;
+        bh=+kQ//yTwFiP4gPfSmKY2AA4OmHDf9R2TflKlrrRQfho=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nTXb2PZRBWWwMSNOfWK2Fh8GkaLWlmVPvcBOwePk0sVvIs2e8MUdj17LvZ8gZHVtS
-         F75VtiUy4cfYY1iBBmPW/vQjo6IKpNCx8URzccvmInLlB5jh8ZBF6gCR/l6qyltZd8
-         xvof0zsRXxFJ2VbFJOcOLpfv9ilBoPfzoAPHlBQ0=
+        b=ad5p3y7eY9FS4ZS5/kfXMLEqUvWaSwJdFc2bcRi4W+Dqj95fmZ/WDdrZBMyjsijoe
+         3tzg5EC1ic/YVOmsHdfWx245TUsGZ8YZL84ETaRbT2rUaCQjujUUVtf9qOb5wJbzhd
+         /8BA60e4Yb/RbGWDGB0Is3elmCckfvjcwHC1J1dE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Drake <drake@endlessm.com>,
-        Jian-Hong Pan <jian-hong@endlessm.com>,
+        stable@vger.kernel.org, Hui Wang <hui.wang@canonical.com>,
         Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.19 139/142] ALSA: hda/realtek: Enable audio jacks of ASUS UX433FN/UX333FA with ALC294
-Date:   Fri, 14 Dec 2018 13:00:24 +0100
-Message-Id: <20181214115752.596932657@linuxfoundation.org>
+Subject: [PATCH 4.19 140/142] ALSA: hda/realtek - Fix the mute LED regresion on Lenovo X1 Carbon
+Date:   Fri, 14 Dec 2018 13:00:25 +0100
+Message-Id: <20181214115752.634467032@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115747.053633987@linuxfoundation.org>
 References: <20181214115747.053633987@linuxfoundation.org>
@@ -69,36 +68,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jian-Hong Pan <jian-hong@endlessm.com>
+From: Hui Wang <hui.wang@canonical.com>
 
-commit 0bea4cc8383519f78f3f74caca7bdebdfb346d3b upstream.
+commit 6ba189c5c1a4bda70dc1e4826c58b0246068bb8d upstream.
 
-The ASUS UX433FN and UX333FA with ALC294 cannot detect the headset MIC
-and output through the internal speaker and the headphone until
-ALC294_FIXUP_ASUS_SPK and ALC294_FIXUP_ASUS_HEADSET_MIC quirk applied.
+Users reported a mute LED regression on Lenovo X1 Carbon, the root
+cause is we applied the fixup of ALC285_FIXUP_LENOVO_HEADPHONE_NOISE
+to this machine, then the machine can't apply the fixup of
+ALC269_FIXUP_THINKPAD_ACPI anymore. To fix it, we chain two fixup
+together.
 
-Signed-off-by: Daniel Drake <drake@endlessm.com>
-Signed-off-by: Jian-Hong Pan <jian-hong@endlessm.com>
+Fixes: c4cfcf6f4297 ("ALSA: hda/realtek - fix the pop noise on headphone for lenovo laptops")
 Cc: <stable@vger.kernel.org>
+Signed-off-by: Hui Wang <hui.wang@canonical.com>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_realtek.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ sound/pci/hda/patch_realtek.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
 --- a/sound/pci/hda/patch_realtek.c
 +++ b/sound/pci/hda/patch_realtek.c
-@@ -7193,6 +7193,10 @@ static const struct snd_hda_pin_quirk al
- 		{0x14, 0x90170110},
- 		{0x1b, 0x90a70130},
- 		{0x21, 0x04211020}),
-+	SND_HDA_PIN_QUIRK(0x10ec0294, 0x1043, "ASUS", ALC294_FIXUP_ASUS_SPK,
-+		{0x12, 0x90a60130},
-+		{0x17, 0x90170110},
-+		{0x21, 0x04211020}),
- 	SND_HDA_PIN_QUIRK(0x10ec0295, 0x1028, "Dell", ALC269_FIXUP_DELL1_MIC_NO_PRESENCE,
- 		ALC295_STANDARD_PINS,
- 		{0x17, 0x21014020},
+@@ -6395,6 +6395,8 @@ static const struct hda_fixup alc269_fix
+ 	[ALC285_FIXUP_LENOVO_HEADPHONE_NOISE] = {
+ 		.type = HDA_FIXUP_FUNC,
+ 		.v.func = alc285_fixup_invalidate_dacs,
++		.chained = true,
++		.chain_id = ALC269_FIXUP_THINKPAD_ACPI
+ 	},
+ 	[ALC295_FIXUP_HP_AUTO_MUTE] = {
+ 		.type = HDA_FIXUP_FUNC,
 
 
