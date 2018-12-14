@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65817C6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 10:15:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D81C9C6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 10:16:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E02520811
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 10:15:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9424C20811
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 10:16:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jLZVNYXP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E02520811
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="VU1LNQg1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9424C20811
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729620AbeLNKP6 (ORCPT
+        id S1729657AbeLNKQC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 05:15:58 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:34376 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729585AbeLNKPy (ORCPT
+        Fri, 14 Dec 2018 05:16:02 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:32856 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729624AbeLNKP7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 05:15:54 -0500
-Received: by mail-pf1-f193.google.com with SMTP id h3so2637398pfg.1
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 02:15:53 -0800 (PST)
+        Fri, 14 Dec 2018 05:15:59 -0500
+Received: by mail-pg1-f194.google.com with SMTP id z11so2516759pgu.0
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 02:15:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=88unu+wr5jKW9r3TtHtSlTHkq7xupIQjYSmWeaTu8BE=;
-        b=jLZVNYXPI8sRndhzeySNVUXvkyvSG49GfBR/xdeF0n3/NHg6+M/EExbHnlCNgjqPz7
-         8hRFRtD9qzcoDO6pChiptapv7mwFljOBo3jh9X+o8n+yKKexkqvQ1MynFB4KGlY39doT
-         T94oOcFY21nPgyZY/zFogY9VzEpRSYvuPabGc=
+        bh=GuwS/J0VRMUUsTtu4AOCAiCLWgTA0AmO9JSD70SaiQk=;
+        b=VU1LNQg12XoWRQsPmxfL2kqW9a5aUSOuaM2mQcAPorUuaHGO6YvNZVCmjqU9i/eIIt
+         fs03GzcarocK5NeZkre3RGce7WeMcgRK0kk7eibnfwWd94CwOM0f1wrqf7d+AERTsp20
+         9EoLFoKTwcEyNhvJThmwovtYTS3qutHGRdjTM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=88unu+wr5jKW9r3TtHtSlTHkq7xupIQjYSmWeaTu8BE=;
-        b=FGhuUK3IPmPLC9eVX49x3fnssT1KLnFtI15XkuRldlOJCoeMlGSrHTLNFQA16nezHk
-         jmobp6jsu9ZIXwCiwjtKL6N4nDdrU+P92T7874zb4xIC//WJkntOBS52tK6nhJZ1gGMO
-         NBX9Wv3zlXpa/eE3ivW0S0eTIY17uqgHPBLUDi03nDUJaVLbCxVYapX9QUFeeIUYGHGE
-         B6DaHCuXTvE7I3a1fuEL8JfKBFEPEHrme0KUhjQI4Tnq218aeG69e8tel+A0GH0tEGeN
-         GVECRZ7TSqbhF1+WRv71cBJgVIb2qyV7U3WLeXYV1D594zZMvj4Hoom9LRigANKCcujf
-         asWQ==
-X-Gm-Message-State: AA+aEWZMIAjtf76gh/K0cxfs+tQVqXJDnoWrp3mX0LyS6ARUGamtzNtw
-        HGp6zPV/ipJIRv145unbsDwnwA==
-X-Google-Smtp-Source: AFSGD/VPjTk8TiXZ4p9d5IR/oT5FxJ0SXPUel4+K1pIrJp/ZMeQJuKgiGkqf3k+W4rcNf9JxMr0COQ==
-X-Received: by 2002:a63:fd0a:: with SMTP id d10mr2208487pgh.164.1544782553378;
-        Fri, 14 Dec 2018 02:15:53 -0800 (PST)
+        bh=GuwS/J0VRMUUsTtu4AOCAiCLWgTA0AmO9JSD70SaiQk=;
+        b=EJ0BKhvesBgFFbLZ4hmMe9ksnf6wTnhe7+EYpr96v8zWDTauu/udctmBta8/T+E/2K
+         F3cq3uVm8Fv6yF+atgAbb4c3D1sOg64Ja8q9HqFbgt30/eRavLRbjK7V9KlNPIRHArvM
+         9mwovIA4F54xqZMueAiaOsp4hOeaIpVr4QC44oytEcWylZLm3RHwU37vt1VkYRwzF6Pt
+         5D8mzA7wK4QKMVk17wFW3rrgkeHR+kFACuvxYuxhVCXcw7rZLljt/7VSmSW36EXtwxe8
+         EI7+gTq4oxzEtd/LgvSf7C7qFB6zVQopq1VCu2WkpsIZ+KgIm77YdBebO7rk75A9BiTg
+         1PMQ==
+X-Gm-Message-State: AA+aEWYKeKK2cXw9fnV4MII7Mkk4dz9V1HsRkSYV86IMJFyB5zvxgrIC
+        Prnbp3j2b/VrfrGUOeX9fd/ik3Grb+A=
+X-Google-Smtp-Source: AFSGD/W0mCDLMeH1N1KDnqDvAnn7s7SrtmmEmfIpwJ5rtQND3cc8+wWrqUqluNVBFSs48cCSfiUUbw==
+X-Received: by 2002:a65:4142:: with SMTP id x2mr2117023pgp.356.1544782559125;
+        Fri, 14 Dec 2018 02:15:59 -0800 (PST)
 Received: from localhost ([122.172.23.29])
-        by smtp.gmail.com with ESMTPSA id t24sm5697214pfh.21.2018.12.14.02.15.52
+        by smtp.gmail.com with ESMTPSA id b4sm4870265pgq.65.2018.12.14.02.15.58
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 14 Dec 2018 02:15:52 -0800 (PST)
+        Fri, 14 Dec 2018 02:15:58 -0800 (PST)
 From:   Viresh Kumar <viresh.kumar@linaro.org>
 To:     ulf.hansson@linaro.org, Rafael Wysocki <rjw@rjwysocki.net>,
         Kevin Hilman <khilman@kernel.org>,
@@ -65,9 +65,9 @@ Cc:     Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
         Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
         rnayak@codeaurora.org, niklas.cassel@linaro.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH V4 5/7] PM / Domains: Save OPP table pointer in genpd
-Date:   Fri, 14 Dec 2018 15:45:31 +0530
-Message-Id: <5603371d1ad204a7314a3618d362d583b555f6b6.1544782279.git.viresh.kumar@linaro.org>
+Subject: [PATCH V4 7/7] PM / Domains: Propagate performance state updates
+Date:   Fri, 14 Dec 2018 15:45:33 +0530
+Message-Id: <0c7ef1300e212f0ae06ccf10398f8c9453c064a5.1544782279.git.viresh.kumar@linaro.org>
 X-Mailer: git-send-email 2.19.1.568.g152ad8e3369a
 In-Reply-To: <cover.1544782279.git.viresh.kumar@linaro.org>
 References: <cover.1544782279.git.viresh.kumar@linaro.org>
@@ -78,104 +78,179 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-dev_pm_genpd_set_performance_state() will be required to call
-dev_pm_opp_xlate_performance_state() going forward to translate from
-performance state of a sub-domain to performance state of its master.
-And dev_pm_opp_xlate_performance_state() needs pointers to the OPP
-tables of both genpd and its master.
+Currently a genpd only handles the performance state requirements from
+the devices under its control. This commit extends that to also handle
+the performance state requirement(s) put on the master genpd by its
+sub-domains. There is a separate value required for each master that
+the genpd has and so a new field is added to the struct gpd_link
+(link->performance_state), which represents the link between a genpd and
+its master. The struct gpd_link also got another field
+prev_performance_state, which is used by genpd core as a temporary
+variable during transitions.
 
-Lets fetch and save them while the OPP tables are added. Fetching the
-OPP tables should never fail as we just added the OPP tables and so add
-a WARN_ON() for such a bug instead of full error paths.
+On a call to dev_pm_genpd_set_performance_state(), the genpd core first
+updates the performance state of the masters of the device's genpd and
+then updates the performance state of the genpd. The masters do the same
+and propagate performance state updates to their masters before updating
+their own. The performance state transition from genpd to its master is
+done with the help of dev_pm_opp_xlate_performance_state(), which looks
+at the OPP tables of both the domains to translate the state.
 
 Tested-by: Rajendra Nayak <rnayak@codeaurora.org>
 Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 ---
- drivers/base/power/domain.c | 23 +++++++++++++++++++++--
- include/linux/pm_domain.h   |  2 ++
- 2 files changed, 23 insertions(+), 2 deletions(-)
+ drivers/base/power/domain.c | 93 ++++++++++++++++++++++++++++++++-----
+ include/linux/pm_domain.h   |  4 ++
+ 2 files changed, 86 insertions(+), 11 deletions(-)
 
 diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-index 4a4e39d12354..1e98c637e069 100644
+index 808ba41b6580..611c0ccbad5f 100644
 --- a/drivers/base/power/domain.c
 +++ b/drivers/base/power/domain.c
-@@ -1896,12 +1896,21 @@ int of_genpd_add_provider_simple(struct device_node *np,
- 				ret);
- 			goto unlock;
- 		}
+@@ -244,6 +244,7 @@ static int _genpd_reeval_performance_state(struct generic_pm_domain *genpd,
+ {
+ 	struct generic_pm_domain_data *pd_data;
+ 	struct pm_domain_data *pdd;
++	struct gpd_link *link;
+ 
+ 	/* New requested state is same as Max requested state */
+ 	if (state == genpd->performance_state)
+@@ -262,31 +263,101 @@ static int _genpd_reeval_performance_state(struct generic_pm_domain *genpd,
+ 	}
+ 
+ 	/*
+-	 * We aren't propagating performance state changes of a subdomain to its
+-	 * masters as we don't have hardware that needs it. Over that, the
+-	 * performance states of subdomain and its masters may not have
+-	 * one-to-one mapping and would require additional information. We can
+-	 * get back to this once we have hardware that needs it. For that
+-	 * reason, we don't have to consider performance state of the subdomains
+-	 * of genpd here.
++	 * Traverse all sub-domains within the domain. This can be
++	 * done without any additional locking as the link->performance_state
++	 * field is protected by the master genpd->lock, which is already taken.
++	 *
++	 * Also note that link->performance_state (subdomain's performance state
++	 * requirement to master domain) is different from
++	 * link->slave->performance_state (current performance state requirement
++	 * of the devices/sub-domains of the subdomain) and so can have a
++	 * different value.
++	 *
++	 * Note that we also take vote from powered-off sub-domains into account
++	 * as the same is done for devices right now.
+ 	 */
++	list_for_each_entry(link, &genpd->master_links, master_node) {
++		if (link->performance_state > state)
++			state = link->performance_state;
++	}
 +
-+		/*
-+		 * Save table for faster processing while setting performance
-+		 * state.
-+		 */
-+		genpd->opp_table = dev_pm_opp_get_opp_table(&genpd->dev);
-+		WARN_ON(!genpd->opp_table);
- 	}
+ 	return state;
+ }
  
- 	ret = genpd_add_provider(np, genpd_xlate_simple, genpd);
- 	if (ret) {
--		if (genpd->set_performance_state)
-+		if (genpd->set_performance_state) {
-+			dev_pm_opp_put_opp_table(genpd->opp_table);
- 			dev_pm_opp_of_remove_table(&genpd->dev);
-+		}
+ static int _genpd_set_performance_state(struct generic_pm_domain *genpd,
+-					unsigned int state)
++					unsigned int state, int depth)
+ {
+-	int ret;
++	struct generic_pm_domain *master;
++	struct gpd_link *link;
++	int master_state, ret;
  
- 		goto unlock;
- 	}
-@@ -1954,6 +1963,13 @@ int of_genpd_add_provider_onecell(struct device_node *np,
- 					i, ret);
- 				goto error;
- 			}
+ 	if (state == genpd->performance_state)
+ 		return 0;
+ 
++	/* Propagate to masters of genpd */
++	list_for_each_entry(link, &genpd->slave_links, slave_node) {
++		master = link->master;
 +
-+			/*
-+			 * Save table for faster processing while setting
-+			 * performance state.
-+			 */
-+			genpd->opp_table = dev_pm_opp_get_opp_table_indexed(&genpd->dev, i);
-+			WARN_ON(!genpd->opp_table);
- 		}
++		if (!master->set_performance_state)
++			continue;
++
++		/* Find master's performance state */
++		ret = dev_pm_opp_xlate_performance_state(genpd->opp_table,
++							 master->opp_table,
++							 state);
++		if (unlikely(ret < 0))
++			goto err;
++
++		master_state = ret;
++
++		genpd_lock_nested(master, depth + 1);
++
++		link->prev_performance_state = link->performance_state;
++		link->performance_state = master_state;
++		master_state = _genpd_reeval_performance_state(master,
++						master_state);
++		ret = _genpd_set_performance_state(master, master_state, depth + 1);
++		if (ret)
++			link->performance_state = link->prev_performance_state;
++
++		genpd_unlock(master);
++
++		if (ret)
++			goto err;
++	}
++
+ 	ret = genpd->set_performance_state(genpd, state);
+ 	if (ret)
+-		return ret;
++		goto err;
  
- 		genpd->provider = &np->fwnode;
-@@ -1978,8 +1994,10 @@ int of_genpd_add_provider_onecell(struct device_node *np,
- 		genpd->provider = NULL;
- 		genpd->has_provider = false;
- 
--		if (genpd->set_performance_state)
-+		if (genpd->set_performance_state) {
-+			dev_pm_opp_put_opp_table(genpd->opp_table);
- 			dev_pm_opp_of_remove_table(&genpd->dev);
+ 	genpd->performance_state = state;
+ 	return 0;
++
++err:
++	/* Encountered an error, lets rollback */
++	list_for_each_entry_continue_reverse(link, &genpd->slave_links,
++					     slave_node) {
++		master = link->master;
++
++		if (!master->set_performance_state)
++			continue;
++
++		genpd_lock_nested(master, depth + 1);
++
++		master_state = link->prev_performance_state;
++		link->performance_state = master_state;
++
++		master_state = _genpd_reeval_performance_state(master,
++						master_state);
++		if (_genpd_set_performance_state(master, master_state, depth + 1)) {
++			pr_err("%s: Failed to roll back to %d performance state\n",
++			       master->name, master_state);
 +		}
- 	}
++
++		genpd_unlock(master);
++	}
++
++	return ret;
+ }
  
- 	mutex_unlock(&gpd_list_lock);
-@@ -2013,6 +2031,7 @@ void of_genpd_del_provider(struct device_node *np)
- 					if (!gpd->set_performance_state)
- 						continue;
+ /**
+@@ -331,7 +402,7 @@ int dev_pm_genpd_set_performance_state(struct device *dev, unsigned int state)
+ 	gpd_data->performance_state = state;
  
-+					dev_pm_opp_put_opp_table(gpd->opp_table);
- 					dev_pm_opp_of_remove_table(&gpd->dev);
- 				}
- 			}
+ 	state = _genpd_reeval_performance_state(genpd, state);
+-	ret = _genpd_set_performance_state(genpd, state);
++	ret = _genpd_set_performance_state(genpd, state, 0);
+ 	if (ret)
+ 		gpd_data->performance_state = prev;
+ 
 diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
-index 642036952553..9ad101362aef 100644
+index 9ad101362aef..dd364abb649a 100644
 --- a/include/linux/pm_domain.h
 +++ b/include/linux/pm_domain.h
-@@ -73,6 +73,7 @@ struct genpd_power_state {
+@@ -136,6 +136,10 @@ struct gpd_link {
+ 	struct list_head master_node;
+ 	struct generic_pm_domain *slave;
+ 	struct list_head slave_node;
++
++	/* Sub-domain's per-master domain performance state */
++	unsigned int performance_state;
++	unsigned int prev_performance_state;
+ };
  
- struct genpd_lock_ops;
- struct dev_pm_opp;
-+struct opp_table;
- 
- struct generic_pm_domain {
- 	struct device dev;
-@@ -94,6 +95,7 @@ struct generic_pm_domain {
- 	unsigned int performance_state;	/* Aggregated max performance state */
- 	int (*power_off)(struct generic_pm_domain *domain);
- 	int (*power_on)(struct generic_pm_domain *domain);
-+	struct opp_table *opp_table;	/* OPP table of the genpd */
- 	unsigned int (*opp_to_performance_state)(struct generic_pm_domain *genpd,
- 						 struct dev_pm_opp *opp);
- 	int (*set_performance_state)(struct generic_pm_domain *genpd,
+ struct gpd_timing_data {
 -- 
 2.19.1.568.g152ad8e3369a
 
