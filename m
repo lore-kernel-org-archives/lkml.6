@@ -2,85 +2,302 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,T_MIXED_ES,
+	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83319C67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 01:34:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E3F5C65BAE
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 01:35:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 504DB2075B
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 01:34:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 504DB2075B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
+	by mail.kernel.org (Postfix) with ESMTP id 09D182075B
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 01:35:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09D182075B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729218AbeLNBew (ORCPT
+        id S1728919AbeLNBfs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 20:34:52 -0500
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:24337 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727654AbeLNBev (ORCPT
+        Thu, 13 Dec 2018 20:35:48 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:59776 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728130AbeLNBfs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 20:34:51 -0500
-X-IronPort-AV: E=Sophos;i="5.56,350,1539619200"; 
-   d="scan'208";a="49733135"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 14 Dec 2018 09:34:46 +0800
-Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
-        by cn.fujitsu.com (Postfix) with ESMTP id 3A0F24B75BE3;
-        Fri, 14 Dec 2018 09:34:47 +0800 (CST)
-Received: from localhost.localdomain (10.167.225.56) by
- G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Fri, 14 Dec 2018 09:34:46 +0800
-Date:   Fri, 14 Dec 2018 09:34:21 +0800
-From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
-To:     Borislav Petkov <bp@alien8.de>
-CC:     Baoquan He <bhe@redhat.com>, <linux-kernel@vger.kernel.org>,
-        <x86@kernel.org>, <tglx@linutronix.de>, <mingo@redhat.com>,
-        <hpa@zytor.com>, <keescook@chromium.org>, <msys.mizuma@gmail.com>,
-        <indou.takao@jp.fujitsu.com>, <caoj.fnst@cn.fujitsu.com>
-Subject: Re: [PATCH v13 1/6] x86/boot: Introduce kstrtoull() to boot
- directory instead of simple_strtoull()
-Message-ID: <20181214013421.GE24409@localhost.localdomain>
-References: <20181212031053.1815-1-fanc.fnst@cn.fujitsu.com>
- <20181212031053.1815-2-fanc.fnst@cn.fujitsu.com>
- <20181212041218.GA28286@localhost.localdomain>
- <20181212080312.GP17340@MiWiFi-R3L-srv>
- <20181213132603.GD25287@zn.tnic>
+        Thu, 13 Dec 2018 20:35:48 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: koike)
+        with ESMTPSA id 9C6F5260732
+Subject: Re: [PATCH] drm: add capability DRM_CAP_ASYNC_UPDATE
+To:     Tomasz Figa <tfiga@chromium.org>
+Cc:     ville.syrjala@linux.intel.com, David Airlie <airlied@linux.ie>,
+        dnicoara@chromium.org,
+        =?UTF-8?Q?St=c3=a9phane_Marchesin?= <marcheu@google.com>,
+        Sean Paul <seanpaul@google.com>,
+        Alexandros Frantzis <alexandros.frantzis@collabora.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Gustavo Padovan <gustavo.padovan@collabora.com>,
+        kernel@collabora.com
+References: <20181123215326.14274-1-helen.koike@collabora.com>
+ <20181127133418.GT9144@intel.com>
+ <6aa39654-6949-88b3-b949-b338d915ffd2@collabora.com>
+ <CAAFQd5BczTNdwUNcx42hC=OKkgZTV9JevHetYOjfDCnEz29LpA@mail.gmail.com>
+From:   Helen Koike <helen.koike@collabora.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=helen.koike@collabora.com; keydata=
+ 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
+Message-ID: <0a0a35bf-69e4-8dcd-46fc-7053081480d5@collabora.com>
+Date:   Thu, 13 Dec 2018 23:35:35 -0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20181213132603.GD25287@zn.tnic>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Originating-IP: [10.167.225.56]
-X-yoursite-MailScanner-ID: 3A0F24B75BE3.AC080
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
+In-Reply-To: <CAAFQd5BczTNdwUNcx42hC=OKkgZTV9JevHetYOjfDCnEz29LpA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 13, 2018 at 02:26:03PM +0100, Borislav Petkov wrote:
->On Wed, Dec 12, 2018 at 04:03:12PM +0800, Baoquan He wrote:
->> Surely, using the old simple_strtoull() is fine too, we can take its
->> replacement into TODO list.
->
->Yes, that would be nice.
+Hi Tomasz,
 
-Thanks, then I can use simple_strtoull() for now.
+On 12/13/18 2:02 AM, Tomasz Figa wrote:
+> On Thu, Dec 6, 2018 at 1:12 AM Helen Koike <helen.koike@collabora.com> wrote:
+>>
+>> Hi Ville
+>>
+>> On 11/27/18 11:34 AM, Ville Syrjälä wrote:
+>>> On Fri, Nov 23, 2018 at 07:53:26PM -0200, Helen Koike wrote:
+>>>> Allow userspace to identify if the driver supports async update.
+>>>
+>>> And what exactly is an "async update"?
+>>
+>> I agree we are lacking docs on this, I'll send in the next version as
+>> soon as we agree on a name (please see below).
+>>
+>> For reference:
+>> https://lists.freedesktop.org/archives/dri-devel/2017-April/138586.html
+>>
+>>>
+>>> I keep asking people to come up with the a better name for this, and to
+>>> document what it actually means. Recently I've been think we should
+>>> maybe just adopt the vulkan terminology (immediate/fifo/mailbox) to
+>>> avoid introducing yet another set of names for the same thing. We'd
+>>> still want to document things properly though.
+>>
+>> Another name it was suggested was "atomic amend", this feature basically
+>> allows userspace to complement an update previously sent (i.e. its in
+>> the queue and wasn't commited yet), it allows adding a plane update to
+>> the next commit. So what do you think in renaming it to "atomic amend"?
+> 
+> Note that it doesn't seem to be what the code currently is doing. For
+> example, for cursor updates, it doesn't seem to be working on the
+> currently pending commit, but just directly issues an atomic async
+> update call to the planes. The code actually seems to fall back to a
+> normal sync commit, if there is an already pending commit touching the
+> same plane or including a modeset.
 
-Thanks,
-Chao Fan
+It should fail as discussed at:
+https://patchwork.freedesktop.org/patch/243088/
 
->
->-- 
->Regards/Gruss,
->    Boris.
->
->Good mailing practices for 400: avoid top-posting and trim the reply.
->
->
+There was the following code inside the drm_atomic_helper_async_check()
+in the previous patch which would fallback to a normal commit if there
+isn't any pending commit to amend:
 
++	if (!old_plane_state->commit)
++		return -EINVAL;
 
+In the v2 of the patch https://patchwork.freedesktop.org/patch/263712/
+this got removed, but which means that async update will be enabled
+anyway. So the following code is wrong:
+
+-	if (state->legacy_cursor_update)
++	if (state->async_update || state->legacy_cursor_update)
+ 		state->async_update = !drm_atomic_helper_async_check(dev, state);
+
+Does it make sense? If yes I'll fix this in the next version of the
+Atomic IOCTL patch (and also those two patches should be in the same
+series, I'll send them together next time).
+
+Thanks for pointing this out.
+
+Please let me know if you still don't agree on the name "atomic amend",
+or if I am missing something.
+
+Helen
+
+> 
+> Best regards,
+> Tomasz
+> 
+>> Or do you suggest another name? I am not familiar with vulkan terminology.
+>>
+>>
+>> Thanks
+>> Helen
+>>
+>>>
+>>>>
+>>>> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+>>>> [prepared for upstream]
+>>>> Signed-off-by: Helen Koike <helen.koike@collabora.com>
+>>>>
+>>>> ---
+>>>> Hi,
+>>>>
+>>>> This patch introduces the ASYNC_UPDATE cap, which originated from the
+>>>> discussion regarding DRM_MODE_ATOMIC_AMEND on [1], to allow user to
+>>>> figure that async_update exists.
+>>>>
+>>>> This was tested using a small program that exercises the uAPI for easy
+>>>> sanity testing. The program was created by Alexandros and modified by
+>>>> Enric to test the capability flag [2].
+>>>>
+>>>> The test worked on a rockchip Ficus v1.1 board on top of mainline plus
+>>>> the patch to update cursors asynchronously through atomic plus the patch
+>>>> that introduces the ATOMIC_AMEND flag for the drm/rockchip driver.
+>>>>
+>>>> To test, just build the program and use the --atomic flag to use the cursor
+>>>> plane with the ATOMIC_AMEND flag. E.g.
+>>>>
+>>>>   drm_cursor --atomic
+>>>>
+>>>> [1] https://patchwork.freedesktop.org/patch/243088/
+>>>> [2] https://gitlab.collabora.com/eballetbo/drm-cursor/commits/async-capability
+>>>>
+>>>> Thanks
+>>>> Helen
+>>>>
+>>>>
+>>>>  drivers/gpu/drm/drm_ioctl.c | 11 +++++++++++
+>>>>  include/uapi/drm/drm.h      |  1 +
+>>>>  2 files changed, 12 insertions(+)
+>>>>
+>>>> diff --git a/drivers/gpu/drm/drm_ioctl.c b/drivers/gpu/drm/drm_ioctl.c
+>>>> index 94bd872d56c4..4a7e0f874171 100644
+>>>> --- a/drivers/gpu/drm/drm_ioctl.c
+>>>> +++ b/drivers/gpu/drm/drm_ioctl.c
+>>>> @@ -31,6 +31,7 @@
+>>>>  #include <drm/drm_ioctl.h>
+>>>>  #include <drm/drmP.h>
+>>>>  #include <drm/drm_auth.h>
+>>>> +#include <drm/drm_modeset_helper_vtables.h>
+>>>>  #include "drm_legacy.h"
+>>>>  #include "drm_internal.h"
+>>>>  #include "drm_crtc_internal.h"
+>>>> @@ -229,6 +230,7 @@ static int drm_getcap(struct drm_device *dev, void *data, struct drm_file *file_
+>>>>  {
+>>>>      struct drm_get_cap *req = data;
+>>>>      struct drm_crtc *crtc;
+>>>> +    struct drm_plane *plane;
+>>>>
+>>>>      req->value = 0;
+>>>>
+>>>> @@ -292,6 +294,15 @@ static int drm_getcap(struct drm_device *dev, void *data, struct drm_file *file_
+>>>>      case DRM_CAP_CRTC_IN_VBLANK_EVENT:
+>>>>              req->value = 1;
+>>>>              break;
+>>>> +    case DRM_CAP_ASYNC_UPDATE:
+>>>> +            req->value = 1;
+>>>> +            list_for_each_entry(plane, &dev->mode_config.plane_list, head) {
+>>>> +                    if (!plane->helper_private->atomic_async_update) {
+>>>> +                            req->value = 0;
+>>>> +                            break;
+>>>> +                    }
+>>>> +            }
+>>>> +            break;
+>>>>      default:
+>>>>              return -EINVAL;
+>>>>      }
+>>>> diff --git a/include/uapi/drm/drm.h b/include/uapi/drm/drm.h
+>>>> index 300f336633f2..ff01540cbb1d 100644
+>>>> --- a/include/uapi/drm/drm.h
+>>>> +++ b/include/uapi/drm/drm.h
+>>>> @@ -649,6 +649,7 @@ struct drm_gem_open {
+>>>>  #define DRM_CAP_PAGE_FLIP_TARGET    0x11
+>>>>  #define DRM_CAP_CRTC_IN_VBLANK_EVENT        0x12
+>>>>  #define DRM_CAP_SYNCOBJ             0x13
+>>>> +#define DRM_CAP_ASYNC_UPDATE                0x14
+>>>>
+>>>>  /** DRM_IOCTL_GET_CAP ioctl argument type */
+>>>>  struct drm_get_cap {
+>>>> --
+>>>> 2.19.1
+>>>>
+>>>> _______________________________________________
+>>>> dri-devel mailing list
+>>>> dri-devel@lists.freedesktop.org
+>>>> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+>>>
