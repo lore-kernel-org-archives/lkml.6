@@ -7,51 +7,55 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CF90C6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:07:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAF55C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:07:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E837D2148E
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:07:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 725F5214C1
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:07:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544789234;
-	bh=ouMRBUYnSbpn4SyYKMrIYHr+Zz+f0iNrKgoHuL2LJ9c=;
+	s=default; t=1544789236;
+	bh=Zs1RgRxu20lBi7Ta1dfkWJ2ExyMXLJPCDavy9ULf3cg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=f0Hb7JFS4+MO+JmR49dJfK0xNK9Izfp8F4RTdY+fn2RUdoTS5n0EojXECHv1asXSZ
-	 mGf2wwFFRl7zDWqBXVndjH1/vAWDhql2eNMO8BBkBVPOfA9yzhLwWqS/OpxewrZWuH
-	 KpbkHWyeAiaLVKzOzPxmQg3+IqMqkBJuNAgEnei4=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E837D2148E
+	b=y+3yB2hPA0OOvtC1PK5eNC63F+eA2XUccLJqxr5Uw8xmAMhgCh1f0KZ11dqM5xtjD
+	 2uVJ6MzWGNRZRvMcQSmkoYD1eFvTvrMQkiDV9lRajRHbZxWVSRYvPBYnlpS3cTQThw
+	 6CUeIN8GeU38mQqj/fYNzqm1KCAv2Zfw/wMydOWM=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 725F5214C1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730568AbeLNMHN (ORCPT
+        id S1731081AbeLNMHP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:07:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52326 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:07:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52390 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731030AbeLNMHK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:07:10 -0500
+        id S1731065AbeLNMHN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:07:13 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 443E42147D;
-        Fri, 14 Dec 2018 12:07:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CFD6A214AE;
+        Fri, 14 Dec 2018 12:07:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789229;
-        bh=ouMRBUYnSbpn4SyYKMrIYHr+Zz+f0iNrKgoHuL2LJ9c=;
+        s=default; t=1544789232;
+        bh=Zs1RgRxu20lBi7Ta1dfkWJ2ExyMXLJPCDavy9ULf3cg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EaoYtQywcwzCO5Tjy/PIQ6/cfbax/x6MMY/5Gxr0LHQIrFugGV/qjBgwsKJQVcslO
-         jDrm0wOO2xm4htAL8JIFQgzzbrZh+JNyywRS3sgq5z0Bhs8v23zFpEo2m4EGEoeaCC
-         avcfJZzD4AnFKLimhSltJCffZyC4RZ1Ghh+X3yHc=
+        b=ceZVJtrAlPaIHGpNeccUdoX/oS4ehIxS9HWOAV1aYIoDvNKSXV4Ai6bWpkpJy7120
+         VAWu2pTvGS99ZyoNO457l3cQONokKYExVI7JZr+wTDWjiWaB8Z1H9kDEYIhT+Zlfex
+         50bCmkK+YNOFXPy7zqjAUW4LgOaYLe3TKMqEc48E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Prabhath Sajeepa <psajeepa@purestorage.com>,
-        Roland Dreier <roland@purestorage.com>,
-        Christoph Hellwig <hch@lst.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 122/142] nvme-rdma: fix double freeing of async event data
-Date:   Fri, 14 Dec 2018 13:00:07 +0100
-Message-Id: <20181214115751.910696070@linuxfoundation.org>
+        stable@vger.kernel.org, Patrick Bellasi <patrick.bellasi@arm.com>,
+        Hanjun Guo <hanjun.guo@linaro.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 123/142] ACPI/IORT: Fix iort_get_platform_device_domain() uninitialized pointer value
+Date:   Fri, 14 Dec 2018 13:00:08 +0100
+Message-Id: <20181214115751.954096793@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115747.053633987@linuxfoundation.org>
 References: <20181214115747.053633987@linuxfoundation.org>
@@ -70,41 +74,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 6344d02dc8f886b6bbcd922ae1a17e4a41500f2d ]
+[ Upstream commit ea2412dc21cc790335d319181dddc43682aef164 ]
 
-Some error paths in configuration of admin queue free data buffer
-associated with async request SQE without resetting the data buffer
-pointer to NULL, This buffer is also freed up again if the controller
-is shutdown or reset.
+Running the Clang static analyzer on IORT code detected the following
+error:
 
-Signed-off-by: Prabhath Sajeepa <psajeepa@purestorage.com>
-Reviewed-by: Roland Dreier <roland@purestorage.com>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
+Logic error: Branch condition evaluates to a garbage value
+
+in
+
+iort_get_platform_device_domain()
+
+If the named component associated with a given device has no IORT
+mappings, iort_get_platform_device_domain() exits its MSI mapping loop
+with msi_parent pointer containing garbage, which can lead to erroneous
+code path execution.
+
+Initialize the msi_parent pointer, fixing the bug.
+
+Fixes: d4f54a186667 ("ACPI: platform: setup MSI domain for ACPI based
+platform device")
+Reported-by: Patrick Bellasi <patrick.bellasi@arm.com>
+Reviewed-by: Hanjun Guo <hanjun.guo@linaro.org>
+Acked-by: Will Deacon <will.deacon@arm.com>
+Cc: Sudeep Holla <sudeep.holla@arm.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/nvme/host/rdma.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/acpi/arm64/iort.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/nvme/host/rdma.c b/drivers/nvme/host/rdma.c
-index dc042017c293..b6a28de682e8 100644
---- a/drivers/nvme/host/rdma.c
-+++ b/drivers/nvme/host/rdma.c
-@@ -184,6 +184,7 @@ static int nvme_rdma_alloc_qe(struct ib_device *ibdev, struct nvme_rdma_qe *qe,
- 	qe->dma = ib_dma_map_single(ibdev, qe->data, capsule_size, dir);
- 	if (ib_dma_mapping_error(ibdev, qe->dma)) {
- 		kfree(qe->data);
-+		qe->data = NULL;
- 		return -ENOMEM;
- 	}
- 
-@@ -816,6 +817,7 @@ static int nvme_rdma_configure_admin_queue(struct nvme_rdma_ctrl *ctrl,
- out_free_async_qe:
- 	nvme_rdma_free_qe(ctrl->device->dev, &ctrl->async_event_sqe,
- 		sizeof(struct nvme_command), DMA_TO_DEVICE);
-+	ctrl->async_event_sqe.data = NULL;
- out_free_queue:
- 	nvme_rdma_free_queue(&ctrl->queues[0]);
- 	return error;
+diff --git a/drivers/acpi/arm64/iort.c b/drivers/acpi/arm64/iort.c
+index 08f26db2da7e..e938576e58cb 100644
+--- a/drivers/acpi/arm64/iort.c
++++ b/drivers/acpi/arm64/iort.c
+@@ -700,7 +700,7 @@ static void iort_set_device_domain(struct device *dev,
+  */
+ static struct irq_domain *iort_get_platform_device_domain(struct device *dev)
+ {
+-	struct acpi_iort_node *node, *msi_parent;
++	struct acpi_iort_node *node, *msi_parent = NULL;
+ 	struct fwnode_handle *iort_fwnode;
+ 	struct acpi_iort_its_group *its;
+ 	int i;
 -- 
 2.19.1
 
