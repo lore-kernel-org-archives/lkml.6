@@ -2,191 +2,77 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.9 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2299C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 21:02:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE42BC43612
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 21:03:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5056208C1
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 21:02:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E5E7208C1
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 21:03:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544821435;
+	bh=/s9+oLePK1uAbNvVgTRM4G4l5aGyDZxa2ou9T0sNWf8=;
+	h=In-Reply-To:Subject:To:References:From:Cc:Date:List-ID:From;
+	b=jDoFEUJQkye+UoWsTP2Jr0NFiDGIw3DN5hf7Wds9UnFyoIMxudXGBlYEyn3W7Yf1S
+	 WhfjJpNYz29wwTk5PpVk7/ckTbpAHFdHA8iIxC74nkssvv/oBQpzaXYrFF3CCGyJy5
+	 QA9fA5PDOCRkRhv9A5I5eSXjBD8nNQdXRQljNw2w=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731261AbeLNVCs (ORCPT
+        id S1731198AbeLNVDx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 16:02:48 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:34903 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730952AbeLNVCr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 16:02:47 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wBEL2Gxf1460455
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Fri, 14 Dec 2018 13:02:16 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wBEL2FnM1460448;
-        Fri, 14 Dec 2018 13:02:15 -0800
-Date:   Fri, 14 Dec 2018 13:02:15 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
-Message-ID: <tip-4085fed6373f15892959e3392efe5552504cfc94@git.kernel.org>
-Cc:     rostedt@goodmis.org, acme@redhat.com, tglx@linutronix.de,
-        jolsa@kernel.org, namhyung@kernel.org, esyr@redhat.com,
-        peterz@infradead.org, fweisbec@gmail.com,
-        linux-kernel@vger.kernel.org, hpa@zytor.com, lclaudio@uudg.org,
-        mingo@kernel.org, ldv@altlinux.org,
-        alexander.shishkin@linux.intel.com
-Reply-To: lclaudio@uudg.org, mingo@kernel.org, hpa@zytor.com,
-          linux-kernel@vger.kernel.org, ldv@altlinux.org,
-          alexander.shishkin@linux.intel.com, fweisbec@gmail.com,
-          esyr@redhat.com, peterz@infradead.org, jolsa@kernel.org,
-          namhyung@kernel.org, acme@redhat.com, tglx@linutronix.de,
-          rostedt@goodmis.org
-In-Reply-To: <20181205160509.1168-9-jolsa@kernel.org>
-References: <20181205160509.1168-9-jolsa@kernel.org>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf trace: Add ordered processing
-Git-Commit-ID: 4085fed6373f15892959e3392efe5552504cfc94
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Fri, 14 Dec 2018 16:03:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53406 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730734AbeLNVDx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 16:03:53 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D19B32086D;
+        Fri, 14 Dec 2018 21:03:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544821432;
+        bh=/s9+oLePK1uAbNvVgTRM4G4l5aGyDZxa2ou9T0sNWf8=;
+        h=In-Reply-To:Subject:To:References:From:Cc:Date:From;
+        b=RdQE6aE34DiI7JTWtmpaHHXE7+nl/q3wiw99Eg1CgtRBK6KWSayayJuIrTM6AzJpO
+         TIYwWWxj4+OV9nQ/s8z1BYWD5L1wDRY+dAvUN3SnLriGMa8tFso1XyUxo4XZHKTTKr
+         nZHkgjwz/4/CD2hxwMnurOuuQugPkfX5K8Pn6oMQ=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1544797224-26627-1-git-send-email-abel.vesa@nxp.com>
+Subject: Re: [PATCH v2] clk: imx: Make the i.MX8MQ CCM clock driver CLK_IMX8MQ dependant
+To:     Abel Vesa <abel.vesa@nxp.com>, Aisheng Dong <aisheng.dong@nxp.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>
+References: <1544797224-26627-1-git-send-email-abel.vesa@nxp.com>
+Message-ID: <154482143165.19322.12454675199935637811@swboyd.mtv.corp.google.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+User-Agent: alot/0.8
+Cc:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Olof Johansson <olof@lixom.net>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Abel Vesa <abel.vesa@nxp.com>
+Date:   Fri, 14 Dec 2018 13:03:51 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  4085fed6373f15892959e3392efe5552504cfc94
-Gitweb:     https://git.kernel.org/tip/4085fed6373f15892959e3392efe5552504cfc94
-Author:     Jiri Olsa <jolsa@kernel.org>
-AuthorDate: Wed, 5 Dec 2018 17:05:09 +0100
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Thu, 6 Dec 2018 16:43:28 -0300
+Quoting Abel Vesa (2018-12-14 06:20:34)
+> Remove the dependency between the i.MX8MQ CCM clock driver
+> and the CONFIG_SOC_IMX8MQ and use CONFIG_CLK_IMX8MQ instead.
+> CONFIG_CLK_IMX8MQ depends on ARCH_MXC && ARM64.
+>=20
+> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+> ---
 
-perf trace: Add ordered processing
+Applied to clk-next with removal of that trailing file newline.
 
-Sort events to provide the precise outcome of ordered events, just like
-is done with 'perf report' and 'perf top'.
-
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Dmitry Levin <ldv@altlinux.org>
-Cc: Eugene Syromiatnikov <esyr@redhat.com>
-Cc: Frederic Weisbecker <fweisbec@gmail.com>
-Cc: Luis Cláudio Gonçalves <lclaudio@uudg.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/20181205160509.1168-9-jolsa@kernel.org
-[ split from a larger patch, added trace__ prefixes to new 'struct trace' methods ]
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/builtin-trace.c | 52 +++++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 51 insertions(+), 1 deletion(-)
-
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index 3b6b1fecf2bb..366ec3c8f580 100644
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -127,6 +127,10 @@ struct trace {
- 	bool			force;
- 	bool			vfs_getname;
- 	int			trace_pgfaults;
-+	struct {
-+		struct ordered_events	data;
-+		u64			last;
-+	} oe;
- };
- 
- struct tp_field {
-@@ -2652,6 +2656,42 @@ static int trace__deliver_event(struct trace *trace, union perf_event *event)
- 	return 0;
- }
- 
-+static int trace__flush_ordered_events(struct trace *trace)
-+{
-+	u64 first = ordered_events__first_time(&trace->oe.data);
-+	u64 flush = trace->oe.last - NSEC_PER_SEC;
-+
-+	/* Is there some thing to flush.. */
-+	if (first && first < flush)
-+		return ordered_events__flush_time(&trace->oe.data, flush);
-+
-+	return 0;
-+}
-+
-+static int trace__deliver_ordered_event(struct trace *trace, union perf_event *event)
-+{
-+	struct perf_evlist *evlist = trace->evlist;
-+	int err;
-+
-+	err = perf_evlist__parse_sample_timestamp(evlist, event, &trace->oe.last);
-+	if (err && err != -1)
-+		return err;
-+
-+	err = ordered_events__queue(&trace->oe.data, event, trace->oe.last, 0);
-+	if (err)
-+		return err;
-+
-+	return trace__flush_ordered_events(trace);
-+}
-+
-+static int ordered_events__deliver_event(struct ordered_events *oe,
-+					 struct ordered_event *event)
-+{
-+	struct trace *trace = container_of(oe, struct trace, oe.data);
-+
-+	return trace__deliver_event(trace, event->event);
-+}
-+
- static int trace__run(struct trace *trace, int argc, const char **argv)
- {
- 	struct perf_evlist *evlist = trace->evlist;
-@@ -2819,7 +2859,9 @@ again:
- 		while ((event = perf_mmap__read_event(md)) != NULL) {
- 			++trace->nr_events;
- 
--			trace__deliver_event(trace, event);
-+			err = trace__deliver_ordered_event(trace, event);
-+			if (err)
-+				goto out_disable;
- 
- 			perf_mmap__consume(md);
- 
-@@ -2842,6 +2884,9 @@ again:
- 				draining = true;
- 
- 			goto again;
-+		} else {
-+			if (trace__flush_ordered_events(trace))
-+				goto out_disable;
- 		}
- 	} else {
- 		goto again;
-@@ -2852,6 +2897,8 @@ out_disable:
- 
- 	perf_evlist__disable(evlist);
- 
-+	ordered_events__flush(&trace->oe.data, OE_FLUSH__FINAL);
-+
- 	if (!err) {
- 		if (trace->summary)
- 			trace__fprintf_thread_summary(trace, trace->output);
-@@ -3562,6 +3609,9 @@ int cmd_trace(int argc, const char **argv)
- 		}
- 	}
- 
-+	ordered_events__init(&trace.oe.data, ordered_events__deliver_event, &trace);
-+	ordered_events__set_copy_on_queue(&trace.oe.data, true);
-+
- 	/*
- 	 * If we are augmenting syscalls, then combine what we put in the
- 	 * __augmented_syscalls__ BPF map with what is in the
