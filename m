@@ -7,53 +7,52 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAE63C67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:18:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 096B3C6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:18:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71BE82133F
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:18:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C465B2148E
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:18:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544789915;
-	bh=jzpP3/UtKq9M6xr8u4qvO2Kr2Bybi6gJbZyUgZSI9tM=;
+	s=default; t=1544789920;
+	bh=8WAvJQX9jGcjF2U83WaTNd0zgluNShbDeW8S3zBpWXk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=zKnfo6A/CVIuafFok2omkyExMj4JdnLbKT97WCY5a3WXAIBtJBTX0Nl/riGstAN7K
-	 Wc2e7TiTBHamHp+m7/MSyg2WPijFC8+2IqOZK6XPXDfwk7zDKiqIdwOvJr6I7wtEVj
-	 gkLwi33FPITJ/YEMLW5F+4Qwg8xXEEaKYADmqU70=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71BE82133F
+	b=Cjnnk5qYAVRmlzecR1p4It4fZfXhOAKfUYW0VwVRw+0Zk8FqwX5wfkw/ZioH2T4hZ
+	 8H0ltolPvpmYbEfW9KyAzXj+xjZXvC3bfVA5wQ8iyCm0dQvAYRYZLwa0yQSOsXwzgr
+	 FFkfIEZ7W2XE7TFiSFiogQXYlzql/t6zxGvQHhOE=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C465B2148E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732740AbeLNMQW (ORCPT
+        id S1732767AbeLNMSj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:16:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36452 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:18:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36494 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732722AbeLNMQQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:16:16 -0500
+        id S1730605AbeLNMQT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:16:19 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4259021479;
-        Fri, 14 Dec 2018 12:16:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CF5272133F;
+        Fri, 14 Dec 2018 12:16:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789775;
-        bh=jzpP3/UtKq9M6xr8u4qvO2Kr2Bybi6gJbZyUgZSI9tM=;
+        s=default; t=1544789778;
+        bh=8WAvJQX9jGcjF2U83WaTNd0zgluNShbDeW8S3zBpWXk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KgqhYg6KA+Le7JxJUxIfKg7Qc+T6RH0ol+Q8MWqpFN+RM+72CZghzs+kK5TmBf0e/
-         p1qfI3PDAKNruXwPjkoCt+SWhiVrP0Gc41dSiPhgAEqwkF8C2PAba9ej/GmgGqBM/K
-         nuDA+on/V8ij3R79xfMLdzLkkqZkhxGoD6njIg1c=
+        b=jlNOcnZLrVJt+iem2sH4xZt7iRZ5ir+s51c5Gl+24/tPVkhnj/73T/XFjHX7DvxuV
+         +Yp9F5/h9KJfKpUJdXyHF5F2KYzYgc6xQY9tpRpLq8CaYNM2r42uoa93MhlJqro2fS
+         j6pARU7dI+8rSHdCAFC1BFLHUL6IAjl20TR3zfuY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Piotr Gabriel Kosinski <pg.kosinski@gmail.com>,
-        Daniel Shapira <daniel@twistlock.com>,
-        Kees Cook <keescook@chromium.org>,
-        Jens Axboe <axboe@kernel.dk>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@suse.de>, Ingo Molnar <mingo@kernel.org>,
         Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.4 73/88] sr: pass down correctly sized SCSI sense buffer
-Date:   Fri, 14 Dec 2018 13:00:47 +0100
-Message-Id: <20181214115708.230598781@linuxfoundation.org>
+Subject: [PATCH 4.4 56/88] x86/bugs, KVM: Support the combination of guest and host IBRS
+Date:   Fri, 14 Dec 2018 13:00:30 +0100
+Message-Id: <20181214115707.135880362@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115702.151309521@linuxfoundation.org>
 References: <20181214115702.151309521@linuxfoundation.org>
@@ -72,84 +71,81 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jens Axboe <axboe@kernel.dk>
+From: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 
-commit f7068114d45ec55996b9040e98111afa56e010fe upstream.
+commit 5cf687548705412da47c9cec342fd952d71ed3d5 upstream.
 
-We're casting the CDROM layer request_sense to the SCSI sense
-buffer, but the former is 64 bytes and the latter is 96 bytes.
-As we generally allocate these on the stack, we end up blowing
-up the stack.
+A guest may modify the SPEC_CTRL MSR from the value used by the
+kernel. Since the kernel doesn't use IBRS, this means a value of zero is
+what is needed in the host.
 
-Fix this by wrapping the scsi_execute() call with a properly
-sized sense buffer, and copying back the bits for the CDROM
-layer.
+But the 336996-Speculative-Execution-Side-Channel-Mitigations.pdf refers to
+the other bits as reserved so the kernel should respect the boot time
+SPEC_CTRL value and use that.
 
-Reported-by: Piotr Gabriel Kosinski <pg.kosinski@gmail.com>
-Reported-by: Daniel Shapira <daniel@twistlock.com>
-Tested-by: Kees Cook <keescook@chromium.org>
-Fixes: 82ed4db499b8 ("block: split scsi_request out of struct request")
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-[bwh: Despite what the "Fixes" field says, a buffer overrun was already
- possible if the sense data was really > 64 bytes long.
- Backported to 4.4:
- - We always need to allocate a sense buffer in order to call
-   scsi_normalize_sense()
- - Remove the existing conditional heap-allocation of the sense buffer]
+This allows to deal with future extensions to the SPEC_CTRL interface if
+any at all.
+
+Note: This uses wrmsrl() instead of native_wrmsl(). I does not make any
+difference as paravirt will over-write the callq *0xfff.. with the wrmsrl
+assembler code.
+
+Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Borislav Petkov <bp@suse.de>
+Reviewed-by: Ingo Molnar <mingo@kernel.org>
+[bwh: Backported to 4.4: This was partly applied before; apply just the
+ missing bits]
 Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/sr_ioctl.c |   21 +++++++--------------
- 1 file changed, 7 insertions(+), 14 deletions(-)
+ arch/x86/kvm/svm.c |    6 ++----
+ arch/x86/kvm/vmx.c |    6 ++----
+ 2 files changed, 4 insertions(+), 8 deletions(-)
 
---- a/drivers/scsi/sr_ioctl.c
-+++ b/drivers/scsi/sr_ioctl.c
-@@ -187,30 +187,25 @@ int sr_do_ioctl(Scsi_CD *cd, struct pack
- 	struct scsi_device *SDev;
- 	struct scsi_sense_hdr sshdr;
- 	int result, err = 0, retries = 0;
--	struct request_sense *sense = cgc->sense;
-+	unsigned char sense_buffer[SCSI_SENSE_BUFFERSIZE];
+--- a/arch/x86/kvm/svm.c
++++ b/arch/x86/kvm/svm.c
+@@ -3904,8 +3904,7 @@ static void svm_vcpu_run(struct kvm_vcpu
+ 	 * is no need to worry about the conditional branch over the wrmsr
+ 	 * being speculatively taken.
+ 	 */
+-	if (svm->spec_ctrl)
+-		native_wrmsrl(MSR_IA32_SPEC_CTRL, svm->spec_ctrl);
++	x86_spec_ctrl_set_guest(svm->spec_ctrl);
  
- 	SDev = cd->device;
+ 	asm volatile (
+ 		"push %%" _ASM_BP "; \n\t"
+@@ -4017,8 +4016,7 @@ static void svm_vcpu_run(struct kvm_vcpu
+ 	if (!msr_write_intercepted(vcpu, MSR_IA32_SPEC_CTRL))
+ 		svm->spec_ctrl = native_read_msr(MSR_IA32_SPEC_CTRL);
  
--	if (!sense) {
--		sense = kmalloc(SCSI_SENSE_BUFFERSIZE, GFP_KERNEL);
--		if (!sense) {
--			err = -ENOMEM;
--			goto out;
--		}
--	}
--
-       retry:
- 	if (!scsi_block_when_processing_errors(SDev)) {
- 		err = -ENODEV;
- 		goto out;
- 	}
+-	if (svm->spec_ctrl)
+-		native_wrmsrl(MSR_IA32_SPEC_CTRL, 0);
++	x86_spec_ctrl_restore_host(svm->spec_ctrl);
  
--	memset(sense, 0, sizeof(*sense));
-+	memset(sense_buffer, 0, sizeof(sense_buffer));
- 	result = scsi_execute(SDev, cgc->cmd, cgc->data_direction,
--			      cgc->buffer, cgc->buflen, (char *)sense,
-+			      cgc->buffer, cgc->buflen, sense_buffer,
- 			      cgc->timeout, IOCTL_RETRIES, 0, NULL);
+ 	/* Eliminate branch target predictions from guest mode */
+ 	vmexit_fill_RSB();
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -8658,8 +8658,7 @@ static void __noclone vmx_vcpu_run(struc
+ 	 * is no need to worry about the conditional branch over the wrmsr
+ 	 * being speculatively taken.
+ 	 */
+-	if (vmx->spec_ctrl)
+-		native_wrmsrl(MSR_IA32_SPEC_CTRL, vmx->spec_ctrl);
++	x86_spec_ctrl_set_guest(vmx->spec_ctrl);
  
--	scsi_normalize_sense((char *)sense, sizeof(*sense), &sshdr);
-+	scsi_normalize_sense(sense_buffer, sizeof(sense_buffer), &sshdr);
-+
-+	if (cgc->sense)
-+		memcpy(cgc->sense, sense_buffer, sizeof(*cgc->sense));
+ 	vmx->__launched = vmx->loaded_vmcs->launched;
+ 	asm(
+@@ -8797,8 +8796,7 @@ static void __noclone vmx_vcpu_run(struc
+ 	if (!msr_write_intercepted(vcpu, MSR_IA32_SPEC_CTRL))
+ 		vmx->spec_ctrl = native_read_msr(MSR_IA32_SPEC_CTRL);
  
- 	/* Minimal error checking.  Ignore cases we know about, and report the rest. */
- 	if (driver_byte(result) != 0) {
-@@ -261,8 +256,6 @@ int sr_do_ioctl(Scsi_CD *cd, struct pack
+-	if (vmx->spec_ctrl)
+-		native_wrmsrl(MSR_IA32_SPEC_CTRL, 0);
++	x86_spec_ctrl_restore_host(vmx->spec_ctrl);
  
- 	/* Wake up a process waiting for device */
-       out:
--	if (!cgc->sense)
--		kfree(sense);
- 	cgc->stat = err;
- 	return err;
- }
+ 	/* Eliminate branch target predictions from guest mode */
+ 	vmexit_fill_RSB();
 
 
