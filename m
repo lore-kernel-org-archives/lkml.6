@@ -2,86 +2,247 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FEC9C67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 13:06:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E38DC67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 13:11:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C63182133F
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 13:06:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544792800;
-	bh=wbxjKhc6jjziiU/uuePafFXbrTOvphkww8nwNXs6pJE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=eHOwDb6NUlv1C7K/fATV+jOQTD4pVCUUshuLySvsLwoXH6+ZL6J9o9HUvO5EClzvN
-	 Vd/IyyZB4gpmxOe8oHT3qgE8nig0qpjArve4qw/21Qh49vcGCWeayO7fqJt2YCour0
-	 ius2Y48g0NUanc28UfYZEFLc349sAAlmRKugY84o=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C63182133F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id AEAAC20672
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 13:11:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JHTVqBs5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEAAC20672
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729874AbeLNNGj (ORCPT
+        id S1729791AbeLNNLS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 08:06:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41756 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729706AbeLNNGj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 08:06:39 -0500
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 57C152145D
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 13:06:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544792798;
-        bh=wbxjKhc6jjziiU/uuePafFXbrTOvphkww8nwNXs6pJE=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=spy3UG87kDnebttATgeH3wfRGfVMQNPJIh5hBSU/4JiGmvHhLIt5nbH3jgy6h0kyh
-         Voha8o5sF3WRrEvxoZxMlJBWEGFCPFQ4JPuM/IsFE89HWaZRML/CSjQMRF2v0Liahr
-         Xsk1NmdG1LOzkg7uueUUyuFsOon+DtvvPOWuEuiI=
-Received: by mail-qk1-f174.google.com with SMTP id y78so3142438qka.12
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 05:06:38 -0800 (PST)
-X-Gm-Message-State: AA+aEWYEPEvdXrJhLRam4BhaOsZ372q3wFo3dQiMrGWH/yn6TyHu+6W5
-        oP9XReZ7x0fxtcq4mSpgaQYXzfa3hQymsUrObW8=
-X-Google-Smtp-Source: AFSGD/VNiCVavJ+RZ8X8vvmcDS1X4viE+ao5AlqlvdrWwBF8b8b9SO2foumq+OoEt3xDqukzX1LKPTaUAtg3HG0OCWo=
-X-Received: by 2002:a37:f706:: with SMTP id q6mr2362806qkj.96.1544792797550;
- Fri, 14 Dec 2018 05:06:37 -0800 (PST)
+        Fri, 14 Dec 2018 08:11:18 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:53356 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729641AbeLNNLS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 08:11:18 -0500
+Received: by mail-it1-f194.google.com with SMTP id g85so8765779ita.3
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 05:11:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=KBvuNcfB8m7/eSaZBjm0WY1BmxO9rB7g2gVJVK2p7Sc=;
+        b=JHTVqBs5VYkk0oxY4wg7q8I3LRL7KXV8yJEOtwYvi2E54AN3HKoZ5L42zTOHM2w2BL
+         /jqifaThZShN7joWgRR2f5ZjDxPrwB4Em8hyCYuk1k66e7vlERkO/7hENMjbARQTRWal
+         8xTe4FeBOy5hNMGculS7zgQkWdnrKb4LYpTr7Dtp3iZUfn5CYkXV340gjS/TTHKaFxjN
+         kinQjmvQiNG0x00yr7xUMJ/j5voEC1VCn6qJs1v33sJUEl4pyNVR4x64XJXQNV9xcySw
+         z/a4zP/tg+O78JOo8HxF1RuW71JfYFoHbBmkTT8HKPMxJm/D3v1DPWNQgTIEJbE07jQj
+         +6uQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=KBvuNcfB8m7/eSaZBjm0WY1BmxO9rB7g2gVJVK2p7Sc=;
+        b=qTE3+svimAY/+29xBdiDFNwqgsta5yzFeKg1fQx2aUN8t0SgAn1hg2sq6V8uZvSm1n
+         I+VL4y+AYmojtSLxTwKnZ6CfkufUcC8ydCcG0VguCN9+dG9NpaWxBhdOtYbQffqkjBsm
+         JQgT8T/q+osxidOwMdROl/F33cNzm+JcPCmPh2901VuHUX7H4cnKe7GqkiptbqoiyCzJ
+         LmMFXPdchsIbK8HzpEuKTueJNON3aYKi09TIK5nA7DUm39AlwA2cPwPoqwQP7o3nqvg+
+         D9NTRXOJ69AWaesVymGT9bmHg1BFDxbBOo2EL/pRswTtO8QKAljNGxLLho3xBNsVyJrm
+         zQIA==
+X-Gm-Message-State: AA+aEWaVvSW1HO79x0P2Ub1wBGZw0WXmLUx4LUf9lCiHcaALYONOys7B
+        k7aiG4iVZLuYUrnuDgjpj2w5z+Vrkt8agqoRR7sSfA==
+X-Google-Smtp-Source: AFSGD/W0azd8IKkAdjCV8uEX1YhKM5xNz0t9E5hDCV3ZwnX3IisynOFBg5ExoJIiVWWmxSv3l8Hj4GukBqpFMvXjJYI=
+X-Received: by 2002:a24:f14d:: with SMTP id q13mr2836381iti.166.1544793076240;
+ Fri, 14 Dec 2018 05:11:16 -0800 (PST)
 MIME-Version: 1.0
-References: <20181129183805.14808-1-john.allen@amd.com>
-In-Reply-To: <20181129183805.14808-1-john.allen@amd.com>
-From:   Josh Boyer <jwboyer@kernel.org>
-Date:   Fri, 14 Dec 2018 08:06:26 -0500
-X-Gmail-Original-Message-ID: <CA+5PVA7jALa3uZJuABiB4s_Z9kiqQxGpA7Td6bpmeMpP3+CdWg@mail.gmail.com>
-Message-ID: <CA+5PVA7jALa3uZJuABiB4s_Z9kiqQxGpA7Td6bpmeMpP3+CdWg@mail.gmail.com>
-Subject: Re: [PATCH] linux-firmware: Update AMD cpu microcode
-To:     John.Allen@amd.com
-Cc:     Linux Firmware <linux-firmware@kernel.org>,
-        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>,
-        Suravee.Suthikulpanit@amd.com,
-        Sherry Hurwitz <sherry.hurwitz@amd.com>
+References: <0000000000004ea80b057cfae21e@google.com>
+In-Reply-To: <0000000000004ea80b057cfae21e@google.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Fri, 14 Dec 2018 14:11:05 +0100
+Message-ID: <CACT4Y+Z+AhQxf6=ecOkX1bOU5h7kMHYnR6CAhBv9eO5jQVeG3g@mail.gmail.com>
+Subject: Re: general protection fault in watchdog
+To:     syzbot <syzbot+7713f3aa67be76b1552c@syzkaller.appspotmail.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        rafael.j.wysocki@intel.com,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        vkuznets@redhat.com, Linux-MM <linux-mm@kvack.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 29, 2018 at 6:13 PM Allen, John <John.Allen@amd.com> wrote:
+On Fri, Dec 14, 2018 at 1:51 PM syzbot
+<syzbot+7713f3aa67be76b1552c@syzkaller.appspotmail.com> wrote:
 >
-> * Update AMD cpu microcode for processor family 17h
+> Hello,
 >
-> Key Name        = AMD Microcode Signing Key (for signing microcode container files only)
-> Key ID          = F328AE73
-> Key Fingerprint = FC7C 6C50 5DAF CC14 7183 57CA E4BE 5339 F328 AE73
+> syzbot found the following crash on:
 >
-> Signed-off-by: John Allen <john.allen@amd.com>
+> HEAD commit:    f5d582777bcb Merge branch 'for-linus' of git://git.kernel...
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=16aca143400000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=c8970c89a0efbb23
+> dashboard link: https://syzkaller.appspot.com/bug?extid=7713f3aa67be76b1552c
+> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1131381b400000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13bae593400000
+>
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+7713f3aa67be76b1552c@syzkaller.appspotmail.com
+
++linux-mm for memcg question
+
+What the repro does is effectively just
+setsockopt(EBT_SO_SET_ENTRIES). This eats all machine memory and
+causes OOMs. Somehow it also caused the GPF in watchdog when it
+iterates over task list, perhaps some scheduler code leaves a dangling
+pointer on OOM failures.
+
+But what bothers me is a different thing. syzkaller test processes are
+sandboxed with a restrictive memcg which should prevent them from
+eating all memory. do_replace_finish calls vmalloc, which uses
+GFP_KERNEL, which does not include GFP_ACCOUNT (GFP_KERNEL_ACCOUNT
+does). And page alloc seems to change memory against memcg iff
+GFP_ACCOUNT is provided.
+Am I missing something or vmalloc is indeed not accounted (DoS)? I see
+some explicit uses of GFP_KERNEL_ACCOUNT, e.g. the one below, but they
+seem to be very sparse.
+
+static void *seq_buf_alloc(unsigned long size)
+{
+     return kvmalloc(size, GFP_KERNEL_ACCOUNT);
+}
+
+Now looking at the code I also don't see how kmalloc(GFP_KERNEL) is
+accounted... Which makes me think I am still missing something.
+
+
+
+
+> Node 0 DMA free:15908kB min:164kB low:204kB high:244kB active_anon:0kB
+> inactive_anon:0kB active_file:0kB inactive_file:0kB unevictable:0kB
+> writepending:0kB present:15992kB managed:15908kB mlocked:0kB
+> kernel_stack:0kB pagetables:0kB bounce:0kB free_pcp:0kB local_pcp:0kB
+> free_cma:0kB
+> kasan: CONFIG_KASAN_INLINE enabled
+> kasan: GPF could be caused by NULL-ptr deref or user memory access
+> general protection fault: 0000 [#1] PREEMPT SMP KASAN
+> CPU: 1 PID: 1019 Comm: khungtaskd Not tainted 4.20.0-rc6+ #150
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> RIP: 0010:check_hung_uninterruptible_tasks kernel/hung_task.c:197 [inline]
+> RIP: 0010:watchdog+0x492/0x1060 kernel/hung_task.c:289
+> Code: 44 89 b5 30 fe ff ff 48 c1 e8 03 4c 01 e8 48 89 85 e8 fd ff ff e9 f8
+> 00 00 00 e8 29 f3 ff ff 48 8d 7b 10 48 89 f8 48 c1 e8 03 <42> 80 3c 28 00
+> 0f 85 70 0a 00 00 4c 8b 73 10 bf 02 00 00 00 4c 89
+> RSP: 0018:ffff8881d7b37cc8 EFLAGS: 00010202
+> RAX: 01a5bfffffffff51 RBX: 0d2dfffffffffa7a RCX: ffffffff817f9259
+> RDX: 0000000000000000 RSI: ffffffff817f9147 RDI: 0d2dfffffffffa8a
+> xt_bpf: check failed: parse error
+> RBP: ffff8881d7b37f00 R08: ffff8881d7bae140 R09: ffffed103b5e5b5f
+> R10: ffffed103b5e5b5f R11: ffff8881daf2dafb R12: 00000000000003d6
+> R13: dffffc0000000000 R14: 1ffff1103af66fbb R15: 00000000003fffd7
+> FS:  0000000000000000(0000) GS:ffff8881daf00000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f98b2d7c324 CR3: 00000001931bf000 CR4: 00000000001406e0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+> lowmem_reserve[]: 0 2818 6321 6321
+> Node 0 DMA32 free:43812kB min:30052kB low:37564kB high:45076kB
+> active_anon:6236kB inactive_anon:0kB active_file:0kB inactive_file:80kB
+> unevictable:0kB writepending:0kB present:3129332kB managed:2888780kB
+> mlocked:0kB kernel_stack:32kB pagetables:0kB bounce:0kB free_pcp:200kB
+> local_pcp:200kB free_cma:0kB
+>   kthread+0x35a/0x440 kernel/kthread.c:246
+>   ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
+> Modules linked in:
+> lowmem_reserve[]: 0 0 3503 3503
+> Node 0 Normal free:158644kB min:37364kB low:46704kB high:56044kB
+> active_anon:4768kB inactive_anon:768kB active_file:556kB
+> inactive_file:1936kB unevictable:0kB writepending:0kB present:4718592kB
+> managed:3587816kB mlocked:0kB kernel_stack:5952kB pagetables:1172kB
+> bounce:0kB free_pcp:2416kB local_pcp:604kB free_cma:0kB
+> lowmem_reserve[]: 0 0 0 0
+> Node 0 DMA: 1*4kB (U) 0*8kB 0*16kB 1*32kB (U) 2*64kB (U) 1*128kB (U)
+> 1*256kB (U) 0*512kB 1*1024kB (U) 1*2048kB (M) 3*4096kB (M) = 15908kB
+> Node 0 DMA32: 21*4kB (UM) 19*8kB (ME) 17*16kB (UM) 15*32kB (UME) 13*64kB
+> (ME) 4*128kB (M) 3*256kB (UM) 16*512kB (UM) 12*1024kB (UME) 6*2048kB (UME)
+> 2*4096kB (UM) = 44060kB
+> Node 0 Normal: 366*4kB (UME) 308*8kB (UME) 615*16kB (UME) 146*32kB (UME)
+> 467*64kB (UME) 43*128kB (UM) 4*256kB (UM) 2*512kB (ME) 2*1024kB (ME)
+> 0*2048kB 0*4096kB = 57928kB
+> Node 0 hugepages_total=0 hugepages_free=0 hugepages_surp=0
+> hugepages_size=1048576kB
+> Node 0 hugepages_total=0 hugepages_free=0 hugepages_surp=0
+> hugepages_size=2048kB
+> 591 total pagecache pages
+> 0 pages in swap cache
+> Swap cache stats: add 0, delete 0, find 0/0
+> Free swap  = 0kB
+> Total swap = 0kB
+> 1965979 pages RAM
+> 0 pages HighMem/MovableOnly
+> 342853 pages reserved
+> 0 pages cma reserved
+> Unreclaimable slab info:
+> Name                      Used          Total
+> TIPC                       1KB          7KB
+> SCTPv6                     2KB          6KB
+> DCCPv6                     2KB          7KB
+> DCCP                       2KB          6KB
+> fib6_nodes                 0KB          4KB
+> ip6_dst_cache              4KB          7KB
+> RAWv6                      9KB         19KB
+> UDPv6                     14KB         14KB
+> TCPv6                     23KB         29KB
+> nf_conntrack               0KB          3KB
+> sd_ext_cdb                 0KB          3KB
+> scsi_sense_cache        1056KB       1060KB
+> virtio_scsi_cmd           16KB         16KB
+> ---[ end trace 92ff4e73865c48e6 ]---
+> sgpool-128                 8KB          8KB
+> RIP: 0010:check_hung_uninterruptible_tasks kernel/hung_task.c:197 [inline]
+> RIP: 0010:watchdog+0x492/0x1060 kernel/hung_task.c:289
+> sgpool-64                  4KB          6KB
+> sgpool-32                  2KB          7KB
+> Code: 44 89 b5 30 fe ff ff 48 c1 e8 03 4c 01 e8 48 89 85 e8 fd ff ff e9 f8
+> 00 00 00 e8 29 f3 ff ff 48 8d 7b 10 48 89 f8 48 c1 e8 03 <42> 80 3c 28 00
+> 0f 85 70 0a 00 00 4c 8b 73 10 bf 02 00 00 00 4c 89
+> sgpool-16                  1KB          3KB
+> RSP: 0018:ffff8881d7b37cc8 EFLAGS: 00010202
+> RAX: 01a5bfffffffff51 RBX: 0d2dfffffffffa7a RCX: ffffffff817f9259
+> RDX: 0000000000000000 RSI: ffffffff817f9147 RDI: 0d2dfffffffffa8a
+> RBP: ffff8881d7b37f00 R08: ffff8881d7bae140 R09: ffffed103b5e5b5f
+> sgpool-8                   0KB          3KB
+> mqueue_inode_cache          1KB          7KB
+> R10: ffffed103b5e5b5f R11: ffff8881daf2dafb R12: 00000000000003d6
+> R13: dffffc0000000000 R14: 1ffff1103af66fbb R15: 00000000003fffd7
+> bio_post_read_ctx         14KB         15KB
+> FS:  0000000000000000(0000) GS:ffff8881dae00000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> bio-2                     14KB         15KB
+> jfs_mp                     7KB          7KB
+> nfs_commit_data            3KB          7KB
+> CR2: 00000000004376a0 CR3: 000000016845e000 CR4: 00000000001406f0
+> nfs_write_data            32KB         32KB
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> ext4_system_zone           0KB          3KB
+>
+>
 > ---
->  WHENCE                                 |   2 +-
->  amd-ucode/microcode_amd_fam17h.bin     | Bin 3364 -> 6476 bytes
->  amd-ucode/microcode_amd_fam17h.bin.asc |  21 +++++++++++++--------
->  3 files changed, 14 insertions(+), 9 deletions(-)
-
-Applied and pushed out.
-
-josh
+> This bug is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>
+> syzbot will keep track of this bug report. See:
+> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
+> syzbot.
+> syzbot can test patches for this bug, for details see:
+> https://goo.gl/tpsmEJ#testing-patches
