@@ -2,220 +2,307 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05121C6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:11:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CB0BC6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:11:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B70C721473
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:11:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E788521104
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:11:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544789513;
-	bh=qo0xpTmDFTONCN/NIny6N2klldebo3D7WvN9fpHegKE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Sh/72nqfK9tT/IFQfks+nFHGhzETTftCguz/o9rxrSuluTpLLaNqEiPuobK6l/64h
-	 ifwjS8aPEdrmb8LACFM8rrUFaCV998l4YJ4YBjpNf02Ql2EC43OT3Zd3TWp6gu/QZn
-	 u6r3LaF7e17JAsV/J1L/wgTdE6/HPdanSFOU1yf4=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B70C721473
+	s=default; t=1544789519;
+	bh=09PPZgYMTvVMbzIbKLyOqpe7bqTQETrDDdHdK8Jk+Ec=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=Mevf8b3hlwlIz0/tpMVCh1p+pYMtGMIB4xSg8B1q/0CDLFDv3cuIGUMMF2S3Dgls6
+	 IYtnq3pOUi1kWArAPCME3JyESEtKQADBXdQsMKm0ZQovqK5RlbDQyyiNENZMvb745W
+	 BrSvkEB7hd0wiDFjO8q51pg9emmBbUSbqu5cjxWY=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E788521104
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731855AbeLNMLw (ORCPT
+        id S1731861AbeLNML5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:11:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58644 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:11:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58794 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731306AbeLNMLq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:11:46 -0500
+        id S1730665AbeLNMLy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:11:54 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 10E6921104;
-        Fri, 14 Dec 2018 12:11:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9F12120892;
+        Fri, 14 Dec 2018 12:11:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789505;
-        bh=qo0xpTmDFTONCN/NIny6N2klldebo3D7WvN9fpHegKE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=C2/XN8WpQIyLWR6n35nZk/G3/u0nHpEusv3VFs6Qq6nDbFNPYx7gYRfLmNBOvU5JU
-         T6h1E1PaB7SvqdiYfRK52G6owCdki0iIfcvND0vLjehOyRtON9uZA61DJGqe8zRIM2
-         RVxjnfPfMhAQtqzs3FBvdgJp/WTfSPW7TIC0zq3g=
+        s=default; t=1544789513;
+        bh=09PPZgYMTvVMbzIbKLyOqpe7bqTQETrDDdHdK8Jk+Ec=;
+        h=From:To:Cc:Subject:Date:From;
+        b=cc5FOSYeHQ0/PQckspjQAZ8J3XA20JLArpqayKUIkz9iUz2gfbcWOAOyVbelwKvJ6
+         l1JKv0QFLXKGgw2BXlFH9BUbHpdf0vpa4MNZhqVdq9ivjMnutq49/Rf4HlrDOvKZRa
+         qDQ3LW1qkB6TAWkxxx1DKFa/9GpHORRAUxGHvMww=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        John Fastabend <john.fastabend@gmail.com>,
-        Ido Schimmel <idosch@mellanox.com>,
-        David Ahern <dsahern@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 07/51] rtnetlink: ndo_dflt_fdb_dump() only work for ARPHRD_ETHER devices
-Date:   Fri, 14 Dec 2018 13:00:09 +0100
-Message-Id: <20181214115713.997493473@linuxfoundation.org>
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: [PATCH 4.9 00/51] 4.9.146-stable review
+Date:   Fri, 14 Dec 2018 13:00:02 +0100
+Message-Id: <20181214115713.244259772@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
-In-Reply-To: <20181214115713.244259772@linuxfoundation.org>
-References: <20181214115713.244259772@linuxfoundation.org>
+MIME-Version: 1.0
 User-Agent: quilt/0.65
 X-stable: review
 X-Patchwork-Hint: ignore
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.146-rc1.gz
+X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+X-KernelTest-Branch: linux-4.9.y
+X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
+X-KernelTest-Version: 4.9.146-rc1
+X-KernelTest-Deadline: 2018-12-16T11:57+00:00
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+This is the start of the stable review cycle for the 4.9.146 release.
+There are 51 patches in this series, all will be posted as a response
+to this one.  If anyone has any issues with these being applied, please
+let me know.
 
-------------------
+Responses should be made by Sun Dec 16 11:56:52 UTC 2018.
+Anything received after that time might be too late.
 
-From: Eric Dumazet <edumazet@google.com>
+The whole patch series can be found in one patch at:
+	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.146-rc1.gz
+or in the git tree and branch at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
+and the diffstat can be found below.
 
-[ Upstream commit 688838934c231bb08f46db687e57f6d8bf82709c ]
+thanks,
 
-kmsan was able to trigger a kernel-infoleak using a gre device [1]
+greg k-h
 
-nlmsg_populate_fdb_fill() has a hard coded assumption
-that dev->addr_len is ETH_ALEN, as normally guaranteed
-for ARPHRD_ETHER devices.
+-------------
+Pseudo-Shortlog of commits:
 
-A similar issue was fixed recently in commit da71577545a5
-("rtnetlink: Disallow FDB configuration for non-Ethernet device")
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Linux 4.9.146-rc1
 
-[1]
-BUG: KMSAN: kernel-infoleak in copyout lib/iov_iter.c:143 [inline]
-BUG: KMSAN: kernel-infoleak in _copy_to_iter+0x4c0/0x2700 lib/iov_iter.c:576
-CPU: 0 PID: 6697 Comm: syz-executor310 Not tainted 4.20.0-rc3+ #95
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x32d/0x480 lib/dump_stack.c:113
- kmsan_report+0x12c/0x290 mm/kmsan/kmsan.c:683
- kmsan_internal_check_memory+0x32a/0xa50 mm/kmsan/kmsan.c:743
- kmsan_copy_to_user+0x78/0xd0 mm/kmsan/kmsan_hooks.c:634
- copyout lib/iov_iter.c:143 [inline]
- _copy_to_iter+0x4c0/0x2700 lib/iov_iter.c:576
- copy_to_iter include/linux/uio.h:143 [inline]
- skb_copy_datagram_iter+0x4e2/0x1070 net/core/datagram.c:431
- skb_copy_datagram_msg include/linux/skbuff.h:3316 [inline]
- netlink_recvmsg+0x6f9/0x19d0 net/netlink/af_netlink.c:1975
- sock_recvmsg_nosec net/socket.c:794 [inline]
- sock_recvmsg+0x1d1/0x230 net/socket.c:801
- ___sys_recvmsg+0x444/0xae0 net/socket.c:2278
- __sys_recvmsg net/socket.c:2327 [inline]
- __do_sys_recvmsg net/socket.c:2337 [inline]
- __se_sys_recvmsg+0x2fa/0x450 net/socket.c:2334
- __x64_sys_recvmsg+0x4a/0x70 net/socket.c:2334
- do_syscall_64+0xcf/0x110 arch/x86/entry/common.c:291
- entry_SYSCALL_64_after_hwframe+0x63/0xe7
-RIP: 0033:0x441119
-Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 db 0a fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fffc7f008a8 EFLAGS: 00000207 ORIG_RAX: 000000000000002f
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 0000000000441119
-RDX: 0000000000000040 RSI: 00000000200005c0 RDI: 0000000000000003
-RBP: 00000000006cc018 R08: 0000000000000100 R09: 0000000000000100
-R10: 0000000000000100 R11: 0000000000000207 R12: 0000000000402080
-R13: 0000000000402110 R14: 0000000000000000 R15: 0000000000000000
+Guenter Roeck <linux@roeck-us.net>
+    staging: speakup: Replace strncpy with memcpy
 
-Uninit was stored to memory at:
- kmsan_save_stack_with_flags mm/kmsan/kmsan.c:246 [inline]
- kmsan_save_stack mm/kmsan/kmsan.c:261 [inline]
- kmsan_internal_chain_origin+0x13d/0x240 mm/kmsan/kmsan.c:469
- kmsan_memcpy_memmove_metadata+0x1a9/0xf70 mm/kmsan/kmsan.c:344
- kmsan_memcpy_metadata+0xb/0x10 mm/kmsan/kmsan.c:362
- __msan_memcpy+0x61/0x70 mm/kmsan/kmsan_instr.c:162
- __nla_put lib/nlattr.c:744 [inline]
- nla_put+0x20a/0x2d0 lib/nlattr.c:802
- nlmsg_populate_fdb_fill+0x444/0x810 net/core/rtnetlink.c:3466
- nlmsg_populate_fdb net/core/rtnetlink.c:3775 [inline]
- ndo_dflt_fdb_dump+0x73a/0x960 net/core/rtnetlink.c:3807
- rtnl_fdb_dump+0x1318/0x1cb0 net/core/rtnetlink.c:3979
- netlink_dump+0xc79/0x1c90 net/netlink/af_netlink.c:2244
- __netlink_dump_start+0x10c4/0x11d0 net/netlink/af_netlink.c:2352
- netlink_dump_start include/linux/netlink.h:216 [inline]
- rtnetlink_rcv_msg+0x141b/0x1540 net/core/rtnetlink.c:4910
- netlink_rcv_skb+0x394/0x640 net/netlink/af_netlink.c:2477
- rtnetlink_rcv+0x50/0x60 net/core/rtnetlink.c:4965
- netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
- netlink_unicast+0x1699/0x1740 net/netlink/af_netlink.c:1336
- netlink_sendmsg+0x13c7/0x1440 net/netlink/af_netlink.c:1917
- sock_sendmsg_nosec net/socket.c:621 [inline]
- sock_sendmsg net/socket.c:631 [inline]
- ___sys_sendmsg+0xe3b/0x1240 net/socket.c:2116
- __sys_sendmsg net/socket.c:2154 [inline]
- __do_sys_sendmsg net/socket.c:2163 [inline]
- __se_sys_sendmsg+0x305/0x460 net/socket.c:2161
- __x64_sys_sendmsg+0x4a/0x70 net/socket.c:2161
- do_syscall_64+0xcf/0x110 arch/x86/entry/common.c:291
- entry_SYSCALL_64_after_hwframe+0x63/0xe7
+Namhyung Kim <namhyung@kernel.org>
+    pstore: Convert console write to use ->write_buf
 
-Uninit was created at:
- kmsan_save_stack_with_flags mm/kmsan/kmsan.c:246 [inline]
- kmsan_internal_poison_shadow+0x6d/0x130 mm/kmsan/kmsan.c:170
- kmsan_kmalloc+0xa1/0x100 mm/kmsan/kmsan_hooks.c:186
- __kmalloc+0x14c/0x4d0 mm/slub.c:3825
- kmalloc include/linux/slab.h:551 [inline]
- __hw_addr_create_ex net/core/dev_addr_lists.c:34 [inline]
- __hw_addr_add_ex net/core/dev_addr_lists.c:80 [inline]
- __dev_mc_add+0x357/0x8a0 net/core/dev_addr_lists.c:670
- dev_mc_add+0x6d/0x80 net/core/dev_addr_lists.c:687
- ip_mc_filter_add net/ipv4/igmp.c:1128 [inline]
- igmp_group_added+0x4d4/0xb80 net/ipv4/igmp.c:1311
- __ip_mc_inc_group+0xea9/0xf70 net/ipv4/igmp.c:1444
- ip_mc_inc_group net/ipv4/igmp.c:1453 [inline]
- ip_mc_up+0x1c3/0x400 net/ipv4/igmp.c:1775
- inetdev_event+0x1d03/0x1d80 net/ipv4/devinet.c:1522
- notifier_call_chain kernel/notifier.c:93 [inline]
- __raw_notifier_call_chain kernel/notifier.c:394 [inline]
- raw_notifier_call_chain+0x13d/0x240 kernel/notifier.c:401
- __dev_notify_flags+0x3da/0x860 net/core/dev.c:1733
- dev_change_flags+0x1ac/0x230 net/core/dev.c:7569
- do_setlink+0x165f/0x5ea0 net/core/rtnetlink.c:2492
- rtnl_newlink+0x2ad7/0x35a0 net/core/rtnetlink.c:3111
- rtnetlink_rcv_msg+0x1148/0x1540 net/core/rtnetlink.c:4947
- netlink_rcv_skb+0x394/0x640 net/netlink/af_netlink.c:2477
- rtnetlink_rcv+0x50/0x60 net/core/rtnetlink.c:4965
- netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
- netlink_unicast+0x1699/0x1740 net/netlink/af_netlink.c:1336
- netlink_sendmsg+0x13c7/0x1440 net/netlink/af_netlink.c:1917
- sock_sendmsg_nosec net/socket.c:621 [inline]
- sock_sendmsg net/socket.c:631 [inline]
- ___sys_sendmsg+0xe3b/0x1240 net/socket.c:2116
- __sys_sendmsg net/socket.c:2154 [inline]
- __do_sys_sendmsg net/socket.c:2163 [inline]
- __se_sys_sendmsg+0x305/0x460 net/socket.c:2161
- __x64_sys_sendmsg+0x4a/0x70 net/socket.c:2161
- do_syscall_64+0xcf/0x110 arch/x86/entry/common.c:291
- entry_SYSCALL_64_after_hwframe+0x63/0xe7
+Pan Bian <bianpan2016@163.com>
+    ocfs2: fix potential use after free
 
-Bytes 36-37 of 105 are uninitialized
-Memory access of size 105 starts at ffff88819686c000
-Data copied to user address 0000000020000380
+Qian Cai <cai@gmx.us>
+    debugobjects: avoid recursive calls with kmemleak
 
-Fixes: d83b06036048 ("net: add fdb generic dump routine")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Cc: John Fastabend <john.fastabend@gmail.com>
-Cc: Ido Schimmel <idosch@mellanox.com>
-Cc: David Ahern <dsahern@gmail.com>
-Reviewed-by: Ido Schimmel <idosch@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/core/rtnetlink.c |    3 +++
- 1 file changed, 3 insertions(+)
+Pan Bian <bianpan2016@163.com>
+    hfsplus: do not free node before using
 
---- a/net/core/rtnetlink.c
-+++ b/net/core/rtnetlink.c
-@@ -3186,6 +3186,9 @@ int ndo_dflt_fdb_dump(struct sk_buff *sk
- {
- 	int err;
- 
-+	if (dev->type != ARPHRD_ETHER)
-+		return -EINVAL;
-+
- 	netif_addr_lock_bh(dev);
- 	err = nlmsg_populate_fdb(skb, cb, dev, idx, &dev->uc);
- 	if (err)
+Pan Bian <bianpan2016@163.com>
+    hfs: do not free node before using
+
+Larry Chen <lchen@suse.com>
+    ocfs2: fix deadlock caused by ocfs2_defrag_extent()
+
+Colin Ian King <colin.king@canonical.com>
+    fscache, cachefiles: remove redundant variable 'cache'
+
+NeilBrown <neilb@suse.com>
+    fscache: fix race between enablement and dropping of object
+
+Srikanth Boddepalli <boddepalli.srikanth@gmail.com>
+    xen: xlate_mmu: add missing header to fix 'W=1' warning
+
+Y.C. Chen <yc_chen@aspeedtech.com>
+    drm/ast: fixed reading monitor EDID not stable issue
+
+Pan Bian <bianpan2016@163.com>
+    net: hisilicon: remove unexpected free_netdev
+
+Josh Elsasser <jelsasser@appneta.com>
+    ixgbe: recognize 1000BaseLX SFP modules as 1Gbps
+
+Yunjian Wang <wangyunjian@huawei.com>
+    igb: fix uninitialized variables
+
+Kiran Kumar Modukuri <kiran.modukuri@gmail.com>
+    cachefiles: Fix page leak in cachefiles_read_backing_file while vmscan is active
+
+Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
+    net: thunderx: fix NULL pointer dereference in nic_remove
+
+Yi Wang <wang.yi59@zte.com.cn>
+    x86/kvm/vmx: fix old-style function declaration
+
+Yi Wang <wang.yi59@zte.com.cn>
+    KVM: x86: fix empty-body warnings
+
+Aaro Koskinen <aaro.koskinen@iki.fi>
+    USB: omap_udc: fix USB gadget functionality on Palm Tungsten E
+
+Aaro Koskinen <aaro.koskinen@iki.fi>
+    USB: omap_udc: fix omap_udc_start() on 15xx machines
+
+Aaro Koskinen <aaro.koskinen@iki.fi>
+    USB: omap_udc: fix crashes on probe error and module removal
+
+Aaro Koskinen <aaro.koskinen@iki.fi>
+    USB: omap_udc: use devm_request_irq()
+
+Xin Long <lucien.xin@gmail.com>
+    ipvs: call ip_vs_dst_notifier earlier than ipv6_dev_notf
+
+Martynas Pumputis <m@lambda.lt>
+    bpf: fix check of allowed specifiers in bpf_trace_printk
+
+Pan Bian <bianpan2016@163.com>
+    exportfs: do not read dentry after free
+
+Peter Ujfalusi <peter.ujfalusi@ti.com>
+    ASoC: omap-dmic: Add pm_qos handling to avoid overruns with CPU_IDLE
+
+Peter Ujfalusi <peter.ujfalusi@ti.com>
+    ASoC: omap-mcpdm: Add pm_qos handling to avoid under/overruns with CPU_IDLE
+
+Majd Dibbiny <majd@mellanox.com>
+    RDMA/mlx5: Fix fence type for IB_WR_LOCAL_INV WR
+
+Robbie Ko <robbieko@synology.com>
+    Btrfs: send, fix infinite loop due to directory rename dependencies
+
+Artem Savkov <asavkov@redhat.com>
+    objtool: Fix segfault in .cold detection with -ffunction-sections
+
+Artem Savkov <asavkov@redhat.com>
+    objtool: Fix double-free in .cold detection error path
+
+Huacai Chen <chenhc@lemote.com>
+    hwmon: (w83795) temp4_type has writable permission
+
+Tzung-Bi Shih <tzungbi@google.com>
+    ASoC: dapm: Recalculate audio map forcely when card instantiated
+
+Peter Ujfalusi <peter.ujfalusi@ti.com>
+    ASoC: omap-abe-twl6040: Fix missing audio card caused by deferred probing
+
+Nicolin Chen <nicoleotsuka@gmail.com>
+    hwmon: (ina2xx) Fix current value calculation
+
+Thomas Richter <tmricht@linux.ibm.com>
+    s390/cpum_cf: Reject request for sampling in event initialization
+
+Florian Westphal <fw@strlen.de>
+    selftests: add script to stress-test nft packet path vs. control plane
+
+YueHaibing <yuehaibing@huawei.com>
+    sysv: return 'err' instead of 0 in __sysv_write_inode
+
+Janusz Krzysztofik <jmkrzyszt@gmail.com>
+    ARM: OMAP1: ams-delta: Fix possible use of uninitialized field
+
+Adam Ford <aford173@gmail.com>
+    ARM: dts: logicpd-somlv: Fix interrupt on mmc3_dat1
+
+Nathan Chancellor <natechancellor@gmail.com>
+    ARM: OMAP2+: prm44xx: Fix section annotation on omap44xx_prm_enable_io_wakeup
+
+Stefano Brivio <sbrivio@redhat.com>
+    neighbour: Avoid writing before skb->head in neigh_hh_output()
+
+Nicolas Dichtel <nicolas.dichtel@6wind.com>
+    tun: forbid iface creation with rtnl ops
+
+Yuchung Cheng <ycheng@google.com>
+    tcp: fix NULL ref in tail loss probe
+
+Eric Dumazet <edumazet@google.com>
+    rtnetlink: ndo_dflt_fdb_dump() only work for ARPHRD_ETHER devices
+
+Christoph Paasch <cpaasch@apple.com>
+    net: Prevent invalid access to skb->prev in __qdisc_drop_all
+
+Heiner Kallweit <hkallweit1@gmail.com>
+    net: phy: don't allow __set_phy_supported to add unsupported modes
+
+Tarick Bedeir <tarick@google.com>
+    net/mlx4_core: Correctly set PFC param if global pause is turned off.
+
+Su Yanjun <suyj.fnst@cn.fujitsu.com>
+    net: 8139cp: fix a BUG triggered by changing mtu with network traffic
+
+Stefano Brivio <sbrivio@redhat.com>
+    ipv6: Check available headroom in ip6_xmit() even without options
+
+Jiri Wiesner <jwiesner@suse.com>
+    ipv4: ipv6: netfilter: Adjust the frag mem limit when truesize changes
+
+
+-------------
+
+Diffstat:
+
+ Makefile                                           |  4 +-
+ arch/arm/boot/dts/logicpd-som-lv.dtsi              |  2 +-
+ arch/arm/mach-omap1/board-ams-delta.c              |  3 +
+ arch/arm/mach-omap2/prm44xx.c                      |  2 +-
+ arch/s390/kernel/perf_cpum_cf.c                    |  2 +
+ arch/x86/kvm/lapic.c                               |  2 +-
+ arch/x86/kvm/vmx.c                                 |  8 +-
+ drivers/gpu/drm/ast/ast_mode.c                     | 36 +++++++--
+ drivers/hwmon/ina2xx.c                             |  2 +-
+ drivers/hwmon/w83795.c                             |  2 +-
+ drivers/infiniband/hw/mlx5/qp.c                    | 19 ++---
+ drivers/net/ethernet/cavium/thunder/nic_main.c     |  3 +
+ drivers/net/ethernet/hisilicon/hip04_eth.c         |  4 +-
+ drivers/net/ethernet/intel/igb/e1000_i210.c        |  1 +
+ drivers/net/ethernet/intel/ixgbe/ixgbe_x550.c      |  4 +-
+ drivers/net/ethernet/mellanox/mlx4/en_ethtool.c    |  4 +-
+ drivers/net/ethernet/realtek/8139cp.c              |  5 ++
+ drivers/net/phy/phy_device.c                       | 19 ++---
+ drivers/net/tun.c                                  |  6 +-
+ drivers/staging/speakup/kobjects.c                 |  4 +-
+ drivers/usb/gadget/udc/omap_udc.c                  | 87 ++++++++--------------
+ drivers/xen/xlate_mmu.c                            |  1 +
+ fs/btrfs/send.c                                    | 11 ++-
+ fs/cachefiles/rdwr.c                               |  9 ++-
+ fs/exportfs/expfs.c                                |  2 +-
+ fs/fscache/object.c                                |  3 +
+ fs/hfs/btree.c                                     |  3 +-
+ fs/hfsplus/btree.c                                 |  3 +-
+ fs/ocfs2/export.c                                  |  2 +-
+ fs/ocfs2/move_extents.c                            | 47 ++++++------
+ fs/pstore/platform.c                               |  4 +-
+ fs/sysv/inode.c                                    |  2 +-
+ include/net/neighbour.h                            | 28 +++++--
+ kernel/trace/bpf_trace.c                           |  8 +-
+ lib/debugobjects.c                                 |  3 +-
+ net/core/rtnetlink.c                               |  3 +
+ net/ipv4/ip_fragment.c                             |  7 ++
+ net/ipv4/tcp_output.c                              | 12 ++-
+ net/ipv6/ip6_output.c                              | 42 +++++------
+ net/ipv6/netfilter/nf_conntrack_reasm.c            |  8 +-
+ net/ipv6/reassembly.c                              |  8 +-
+ net/netfilter/ipvs/ip_vs_ctl.c                     |  3 +
+ net/sched/sch_netem.c                              |  3 +
+ sound/soc/omap/omap-abe-twl6040.c                  | 67 ++++++++---------
+ sound/soc/omap/omap-dmic.c                         |  9 +++
+ sound/soc/omap/omap-mcpdm.c                        | 43 ++++++++++-
+ sound/soc/soc-core.c                               |  1 +
+ tools/objtool/elf.c                                | 19 ++++-
+ tools/testing/selftests/Makefile                   |  1 +
+ tools/testing/selftests/netfilter/Makefile         |  6 ++
+ tools/testing/selftests/netfilter/config           |  2 +
+ .../selftests/netfilter/nft_trans_stress.sh        | 78 +++++++++++++++++++
+ 52 files changed, 439 insertions(+), 218 deletions(-)
 
 
