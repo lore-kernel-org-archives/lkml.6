@@ -2,206 +2,152 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7001C67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 01:29:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0B91C65BAE
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 01:29:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F3702075B
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 01:29:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F3702075B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
+	by mail.kernel.org (Postfix) with ESMTP id 9251A2075B
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 01:29:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ILgE9p+R"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9251A2075B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728983AbeLNB30 (ORCPT
+        id S1729204AbeLNB3l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 20:29:26 -0500
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:56048 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728433AbeLNB3X (ORCPT
+        Thu, 13 Dec 2018 20:29:41 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:42978 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728130AbeLNB3X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 13 Dec 2018 20:29:23 -0500
-X-IronPort-AV: E=Sophos;i="5.56,350,1539619200"; 
-   d="scan'208";a="49732740"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 14 Dec 2018 09:29:19 +0800
-Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
-        by cn.fujitsu.com (Postfix) with ESMTP id 0F8E64B734CC;
-        Fri, 14 Dec 2018 09:29:17 +0800 (CST)
-Received: from localhost.localdomain (10.167.225.56) by
- G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Fri, 14 Dec 2018 09:29:16 +0800
-Date:   Fri, 14 Dec 2018 09:28:51 +0800
-From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
-To:     Borislav Petkov <bp@alien8.de>
-CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
-        <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>,
-        <keescook@chromium.org>, <bhe@redhat.com>, <msys.mizuma@gmail.com>,
-        <indou.takao@jp.fujitsu.com>, <caoj.fnst@cn.fujitsu.com>
-Subject: Re: [PATCH v13 3/6] x86/boot: Introduce efi_get_rsdp_addr() to find
- RSDP from EFI table
-Message-ID: <20181214012848.GB24409@localhost.localdomain>
-References: <20181212031053.1815-1-fanc.fnst@cn.fujitsu.com>
- <20181212031053.1815-4-fanc.fnst@cn.fujitsu.com>
- <20181213202304.GG25287@zn.tnic>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20181213202304.GG25287@zn.tnic>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Originating-IP: [10.167.225.56]
-X-yoursite-MailScanner-ID: 0F8E64B734CC.AE91B
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wBE1OPWC158563;
+        Fri, 14 Dec 2018 01:29:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references; s=corp-2018-07-02;
+ bh=9TBTfJALae16hdD8OBiuBFcGlbqT897B63K0LtZfH2w=;
+ b=ILgE9p+RvdUGtweBOVpqN0z7tOjJy9sqeYhS79NcPjw+NKX2iiaVh4TTChbjaqPeiEbC
+ PcOVrRDb8cLBDul4iTlbXK+oGFsSYsuJmAmC014jUFPzzSKck+zs7RKh0Z+Tc28Yltil
+ XHRhkfbAeZpROGaLrLg6jReHsTcQKFOz+ruyt+WqnSjMXb8MDDNzCw1oXvVcSmYy7VS9
+ DxrMYFHtU1IBW4u7c1KiYWeIl2H5QahDMJqdmlM5LyLoUaiaL3+laKmFc6wcyskCFRpy
+ hjZfz145GBfGtWzofbXNgHB1O6CtdtAkhhfpR9nalzydPy7lqk96CbEI+DRyobC5usAl /w== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2120.oracle.com with ESMTP id 2pb7tf77ke-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 14 Dec 2018 01:29:19 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wBE1TItL015296
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 14 Dec 2018 01:29:19 GMT
+Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wBE1TIBW012393;
+        Fri, 14 Dec 2018 01:29:18 GMT
+Received: from will-ThinkCentre-M93p.cn.oracle.com (/10.182.70.234)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 13 Dec 2018 17:29:18 -0800
+From:   Jianchao Wang <jianchao.w.wang@oracle.com>
+To:     axboe@kernel.dk
+Cc:     ming.lei@redhat.com, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH V14 2/3] blk-mq: issue directly with bypass 'false' in blk_mq_sched_insert_requests
+Date:   Fri, 14 Dec 2018 09:28:19 +0800
+Message-Id: <1544750900-1549-3-git-send-email-jianchao.w.wang@oracle.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1544750900-1549-1-git-send-email-jianchao.w.wang@oracle.com>
+References: <1544750900-1549-1-git-send-email-jianchao.w.wang@oracle.com>
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9106 signatures=668679
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1812140011
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 13, 2018 at 09:23:04PM +0100, Borislav Petkov wrote:
->On Wed, Dec 12, 2018 at 11:10:50AM +0800, Chao Fan wrote:
->> Memory information in SRAT is necessary to fix the conflict between
->> KASLR and memory-hotremove. So RSDP and SRAT should be parsed.
->> 
->> When booting form KEXEC/EFI/BIOS, the methods to compute RSDP
->> are different. When booting from EFI, EFI table points to RSDP.
->> So parse the EFI table and find the RSDP.
->> 
->> Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
->> ---
->>  arch/x86/boot/compressed/acpi.c | 79 +++++++++++++++++++++++++++++++++
->>  1 file changed, 79 insertions(+)
->> 
->> diff --git a/arch/x86/boot/compressed/acpi.c b/arch/x86/boot/compressed/acpi.c
->> index cad15686f82c..c96008712ec9 100644
->> --- a/arch/x86/boot/compressed/acpi.c
->> +++ b/arch/x86/boot/compressed/acpi.c
->> @@ -28,3 +28,82 @@ static acpi_physical_address get_acpi_rsdp(void)
->>  	return 0;
->>  #endif
->>  }
->> +
->> +/* Search EFI table for RSDP. */
->> +static acpi_physical_address efi_get_rsdp_addr(void)
->> +{
->> +#ifdef CONFIG_EFI
->> +	acpi_physical_address rsdp_addr = 0;
->> +	efi_system_table_t *systab;
->> +	struct efi_info *e;
->> +	bool efi_64;
->> +	char *sig;
->> +	int size;
->> +	int i;
->> +
->> +	e = &boot_params->efi_info;
->> +	sig = (char *)&e->efi_loader_signature;
->> +
->> +	if (!strncmp(sig, EFI64_LOADER_SIGNATURE, 4))
->> +		efi_64 = true;
->> +	else if (!strncmp(sig, EFI32_LOADER_SIGNATURE, 4))
->> +		efi_64 = false;
->> +	else {
->> +		debug_putstr("Wrong EFI loader signature.\n");
->> +		return 0;
->> +	}
->
->Use curly braces for all three branches above.
->
+It is not necessary to issue request directly with bypass 'true'
+in blk_mq_sched_insert_requests and handle the non-issued requests
+itself. Just set bypass to 'false' and let blk_mq_try_issue_directly
+handle them totally. Remove the blk_rq_can_direct_dispatch check,
+because blk_mq_try_issue_directly can handle it well.If request is
+direct-issued unsuccessfully, insert the reset.
 
-OK, I will add in the first and second.
+Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
+---
+ block/blk-mq-sched.c |  8 +++-----
+ block/blk-mq.c       | 20 +++++++++-----------
+ 2 files changed, 12 insertions(+), 16 deletions(-)
 
->> +
->> +	/* Get systab from boot params. Based on efi_init(). */
->> +#ifdef CONFIG_X86_64
->> +	systab = (efi_system_table_t *)(e->efi_systab | ((__u64)e->efi_systab_hi<<32));
->> +#else
->> +	if (e->efi_systab_hi || e->efi_memmap_hi) {
->> +		debug_putstr("Error getting RSDP address: EFI system table located above 4GB.\n");
->> +		return 0;
->> +	}
->> +	systab = (efi_system_table_t *)e->efi_systab;
->> +#endif
->> +
->> +	if (!systab)
->> +		return 0;
->> +
->> +	/*
->> +	 * Get EFI tables from systab. Based on efi_config_init() and
->> +	 * efi_config_parse_tables().
->> +	 */
->> +	size = efi_64 ? sizeof(efi_config_table_64_t) :
->> +			sizeof(efi_config_table_32_t);
->> +
->> +	for (i = 0; i < systab->nr_tables; i++) {
->> +		void *config_tables;
->> +		unsigned long table;
->> +		efi_guid_t guid;
->> +
->> +		config_tables = (void *)(systab->tables + size * i);
->> +		if (efi_64) {
->> +			efi_config_table_64_t *tmp_table;
->> +
->> +			tmp_table = (efi_config_table_64_t *)config_tables;
->> +			guid = tmp_table->guid;
->> +			table = tmp_table->table;
->> +
->> +			if (!IS_ENABLED(CONFIG_X86_64) && table >> 32) {
->> +				debug_putstr("Error getting RSDP address: EFI system table located above 4GB.\n");
->
->Do s/system/config/ here so that this error message is different from
->the one above.
-
-Yes, will change it.
-
->
->> +				return 0;
->> +			}
->> +		} else {
->> +			efi_config_table_32_t *tmp_table;
->> +
->> +			tmp_table = (efi_config_table_32_t *)config_tables;
->> +			guid = tmp_table->guid;
->> +			table = tmp_table->table;
->> +		}
->> +
->> +		if (!(efi_guidcmp(guid, ACPI_TABLE_GUID)))
->> +			rsdp_addr = (acpi_physical_address)table;
->> +		else if (!(efi_guidcmp(guid, ACPI_20_TABLE_GUID)))
->> +			return (acpi_physical_address)table;
->> +	}
->> +	return rsdp_addr;
->> +#endif
->
->	}
->#endif
->	return rsdp_addr;
->}
->
->IOW, you have:
->
->static acpi_physical_address efi_get_rsdp_addr(void)
->{
->        acpi_physical_address rsdp_addr = 0;
->#ifdef CONFIG_EFI
->	...
->#endif
->	return rsdp_addr;
->}
-
-Make sense. Thanks.
-
-Thanks,
-Chao Fan
-
->
->-- 
->Regards/Gruss,
->    Boris.
->
->Good mailing practices for 400: avoid top-posting and trim the reply.
->
->
-
+diff --git a/block/blk-mq-sched.c b/block/blk-mq-sched.c
+index f096d898..5b4d52d 100644
+--- a/block/blk-mq-sched.c
++++ b/block/blk-mq-sched.c
+@@ -417,12 +417,10 @@ void blk_mq_sched_insert_requests(struct blk_mq_hw_ctx *hctx,
+ 		 * busy in case of 'none' scheduler, and this way may save
+ 		 * us one extra enqueue & dequeue to sw queue.
+ 		 */
+-		if (!hctx->dispatch_busy && !e && !run_queue_async) {
++		if (!hctx->dispatch_busy && !e && !run_queue_async)
+ 			blk_mq_try_issue_list_directly(hctx, list);
+-			if (list_empty(list))
+-				return;
+-		}
+-		blk_mq_insert_requests(hctx, ctx, list);
++		else
++			blk_mq_insert_requests(hctx, ctx, list);
+ 	}
+ 
+ 	blk_mq_run_hw_queue(hctx, run_queue_async);
+diff --git a/block/blk-mq.c b/block/blk-mq.c
+index af4dc82..90361fe 100644
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -1874,22 +1874,20 @@ blk_status_t blk_mq_request_issue_directly(struct request *rq, bool last)
+ void blk_mq_try_issue_list_directly(struct blk_mq_hw_ctx *hctx,
+ 		struct list_head *list)
+ {
++	blk_qc_t unused;
++	blk_status_t ret = BLK_STS_OK;
++
+ 	while (!list_empty(list)) {
+-		blk_status_t ret;
+ 		struct request *rq = list_first_entry(list, struct request,
+ 				queuelist);
+ 
+ 		list_del_init(&rq->queuelist);
+-		ret = blk_mq_request_issue_directly(rq, list_empty(list));
+-		if (ret != BLK_STS_OK) {
+-			if (ret == BLK_STS_RESOURCE ||
+-					ret == BLK_STS_DEV_RESOURCE) {
+-				blk_mq_request_bypass_insert(rq,
++		if (ret == BLK_STS_OK)
++			ret = blk_mq_try_issue_directly(hctx, rq, &unused,
++							false,
+ 							list_empty(list));
+-				break;
+-			}
+-			blk_mq_end_request(rq, ret);
+-		}
++		else
++			blk_mq_sched_insert_request(rq, false, true, false);
+ 	}
+ 
+ 	/*
+@@ -1897,7 +1895,7 @@ void blk_mq_try_issue_list_directly(struct blk_mq_hw_ctx *hctx,
+ 	 * the driver there was more coming, but that turned out to
+ 	 * be a lie.
+ 	 */
+-	if (!list_empty(list) && hctx->queue->mq_ops->commit_rqs)
++	if (ret != BLK_STS_OK && hctx->queue->mq_ops->commit_rqs)
+ 		hctx->queue->mq_ops->commit_rqs(hctx);
+ }
+ 
+-- 
+2.7.4
 
