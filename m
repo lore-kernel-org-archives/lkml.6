@@ -2,229 +2,212 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FROM_EXCESS_BASE64,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADDBFC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 16:57:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BF2EC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 16:59:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E9CB206BA
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 16:57:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F0743206BA
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 16:59:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ysoft.com header.i=@ysoft.com header.b="ldYZUmwc"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gvvibs+u"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730092AbeLNQ5m (ORCPT
+        id S1729997AbeLNQ7N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 11:57:42 -0500
-Received: from mail-eopbgr10059.outbound.protection.outlook.com ([40.107.1.59]:48273
-        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729709AbeLNQ5l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 11:57:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ysoft.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=22NlDsc6H8hXj0ueNZl0Du1AAlOcVxgmUKDVvVbtq3s=;
- b=ldYZUmwcpWqUGFMufWxMh8GMkCs0Whxbb92VifWIyPcSmSML10lEO8PL7xYneEhmOaRJcIqHuUpVVpKxvQM71lsSOdYV25HJ9u48BFjdzvlGM8IQNlNKILe2w3rBi/RfMoMK/uoNm1jmLw4W6xIwNL1gvy1G6WmgpsmvW92BbeE=
-Received: from DB7PR04MB4667.eurprd04.prod.outlook.com (52.135.139.13) by
- DB7PR04MB4396.eurprd04.prod.outlook.com (52.135.137.146) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1425.20; Fri, 14 Dec 2018 16:57:36 +0000
-Received: from DB7PR04MB4667.eurprd04.prod.outlook.com
- ([fe80::2561:ec02:4e5e:f490]) by DB7PR04MB4667.eurprd04.prod.outlook.com
- ([fe80::2561:ec02:4e5e:f490%3]) with mapi id 15.20.1425.021; Fri, 14 Dec 2018
- 16:57:36 +0000
-From:   =?utf-8?B?Vm9rw6HEjSBNaWNoYWw=?= <Michal.Vokac@ysoft.com>
-To:     =?utf-8?B?VXdlIEtsZWluZS1Lw7ZuaWc=?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Thierry Reding <thierry.reding@gmail.com>
-CC:     "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>
-Subject: Re: [PATCH 3/3] pwm: imx: Implement get_state() function for hardware
- readout
-Thread-Topic: [PATCH 3/3] pwm: imx: Implement get_state() function for
- hardware readout
-Thread-Index: AQHUWZHXwmLuwdujO02nf7niUqNv6qV7XvwAgAFwKICAAIhJAIAANmyAgAFbMwA=
-Date:   Fri, 14 Dec 2018 16:57:36 +0000
-Message-ID: <7561a6ac-4e6c-e01d-d46b-b572036afd11@ysoft.com>
-References: <1538403588-68850-1-git-send-email-michal.vokac@ysoft.com>
- <1538403588-68850-3-git-send-email-michal.vokac@ysoft.com>
- <20181212105432.GD17654@ulmo>
- <20181213085213.7k5ihn7bdrtess3g@pengutronix.de>
- <20181213170000.GA14581@ulmo>
- <20181213201447.v2ivule5q6knxqyp@pengutronix.de>
-In-Reply-To: <20181213201447.v2ivule5q6knxqyp@pengutronix.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: VI1P18901CA0015.EURP189.PROD.OUTLOOK.COM
- (2603:10a6:801::25) To DB7PR04MB4667.eurprd04.prod.outlook.com
- (2603:10a6:5:37::13)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Michal.Vokac@ysoft.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [89.24.100.190]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DB7PR04MB4396;6:4UEexXik7frgMAQ/AGIL/L+V7EeYMm6PWKkm2bk3p2BmJW7fuiqJ0hkISDhpANxIgR9zdWo0hntn4ugQYbTDDqfl/X1EOV6QgXdYcxFUv3ir6AQecVYUD82Xk4lAeLlbedyg0K8ocpA8IPXN/sYWQkag267bkfWVqLGaTL2HkpwstCuFeZ0NFCgrS3VVNvcWvdMMUzkYsyWwGgS50Zl2VnV7S0tP1Bht9xQz8MIoWdA9Ia4qQ1I37lypQvbPRUhN2jUFow5JvprUGXh1gqLQg3p/4222KMQOjBtjXwrhdoS/jgv/mcitXBmWO0t1gZulUDWYVA7Q7HOj+eo4ZrcPqReZYui4XJlmVKEZEKyoFCn4yQBJCcGUgB4jRsFszAOb67Bb/mDq9HCcjMjCFRroSEiM4upuZlFsRvUVEJBoXFXIlPSHPRceU90mRDkA04wbt5agvh6Jl8R1JpBTzOeSLQ==;5:Rmc63lj6jLXrqlsDpLz7i3zFJ0RD3tVefaSMKwnv3pHd7RbrZbfweDXiLQNcaeE6cEEXDjJat1HWvQAMlrvTfjbbMYLrO088A7wWNowO1HXBXLOMItZuOVmdxt/V4rOXYt3WmNkD/EgXgQMQrr6+Zk9XIW3WcNMA6mgAjEZN2i8=;7:sVpIw9MRoIxBt+N2j4LyEOMGj8MUJF6zXHbO2Qro8VaOmbKuJZNPdSISpKJWEpf0oT3sXAacTUtsfH2G7yOQH6Lf5BRSZDXXgGOcc4CXfMMoegi54ElpN3D0lCgJyM37J9OvJ5VKb2py5lR4z+UYbw==
-x-ms-office365-filtering-correlation-id: dfa8d571-6015-4c12-0f34-08d661e53f7e
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:DB7PR04MB4396;
-x-ms-traffictypediagnostic: DB7PR04MB4396:
-x-microsoft-antispam-prvs: <DB7PR04MB4396A14205154227848ACE9A9EA10@DB7PR04MB4396.eurprd04.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(3230021)(999002)(6040522)(2401047)(5005006)(8121501046)(3002001)(10201501046)(93006095)(93001095)(3231475)(944501520)(52105112)(148016)(149066)(150057)(6041310)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:DB7PR04MB4396;BCL:0;PCL:0;RULEID:;SRVR:DB7PR04MB4396;
-x-forefront-prvs: 08864C38AC
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(136003)(39850400004)(346002)(366004)(376002)(189003)(199004)(2906002)(81156014)(8676002)(8936002)(478600001)(72206003)(97736004)(110136005)(54906003)(93886005)(85182001)(316002)(66574011)(71190400001)(3846002)(6116002)(6486002)(14454004)(229853002)(5660300001)(66066001)(71200400001)(6436002)(14444005)(86362001)(4326008)(36756003)(25786009)(6246003)(53936002)(31696002)(256004)(386003)(6506007)(305945005)(7736002)(102836004)(26005)(186003)(11346002)(446003)(68736007)(99286004)(486006)(31686004)(81166006)(6512007)(106356001)(2616005)(105586002)(39060400002)(476003)(52116002)(76176011);DIR:OUT;SFP:1101;SCL:1;SRVR:DB7PR04MB4396;H:DB7PR04MB4667.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: ysoft.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: 9GbLmLGfF0klEnWbx1AVAcnMQq+dVuZz5W/mPtdORNezUIQkB9t/5E8wcJw6+Bfhcg1+Yy83eaySPtsmEPjAjRYCm3jwVBmPmKUD+kogeev/IoL/bZNzIm6ymGJTu+IKP6YTXQACxVvesUsjq9TKkPzQ/XTQzSTsfW07a7EhS/ofko9oPQPS2SgUrbfXQ4fkJopXiaBa1gzyGEjQhqbvWi2OQKHc0svjJh9e4E+F8Q4OClyvAO3yGvNck25RslSyccyMWUPyfS6FWqhm805lASHFxi7d4uSba3PUoWTYa0HdKyKUHGDBjAYSOpgHA3ij
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <D6585D1C879C1E4296D1C5A39D161000@eurprd04.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Fri, 14 Dec 2018 11:59:13 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:51808 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729409AbeLNQ7N (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 11:59:13 -0500
+Received: by mail-it1-f193.google.com with SMTP id x19so9822640itl.1
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 08:59:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=pX4aR1lu7wJBeZZTeK3sSpuD9jJX/CI6ffE/yAvqj3E=;
+        b=gvvibs+uTlUhw6zoMluwumFRecjSVusX13oex2s1l30bZGtESKpC7LGObtj6WyUzpj
+         8Z9pnTmEaIwpa6kZrnqpCXiLsa2lbgACDqeOffk3eK9cOtkN5hSO+0ha0Npx8W/WX8xD
+         bLGsppEfeRPpp6EV1SpVqnP2q3/hWJrLgKXzzb+tu5HS8XiB0ob/c99F3Q3iqcLNdZtV
+         OIRb3I5pWHttJjaQshzGOICrU5+RN4lq2l1YyMO33+3NALXWzxyUwH54I39zH8KgN+OX
+         ZDt1wbACx/tlYghIlYfHspWPWiGuqzD9LasIEMMfAOcgKxTiTJ4554NBwiiyjqbMDxmG
+         aPfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pX4aR1lu7wJBeZZTeK3sSpuD9jJX/CI6ffE/yAvqj3E=;
+        b=hW+NFntPbmvUudNOrKo4MBaf5MxiumCVY0KByLZh3r1hhdHiqivTn2+Uw3HmMnj53T
+         rGJcpv0P4hRjemzXPoxKYHcoTjkTFo27WNyO1oIgZY6/tJgNSoS9E46CMG4L8RRp7dNE
+         X6SvNTHoM7Jof6l/+X+wd8RGGe5vLv37eZeEQ5hiSqHpoSUZ8KwbmT4dwURnuxCLkT4C
+         BENgrcHt3WXswDRBcApTck4l3CXgogELw+Ik1DXR20j2yWiKEOOA806yJ96hIN4K+lPd
+         59USxA6FyNHTfefrXSCnCzBJwE1L1eC5Q3+1nqO3Gr/T0bspy3XVYk9vjfnifPx4An7R
+         zhtA==
+X-Gm-Message-State: AA+aEWbiy3e62YUC6S3bYXNJTwB5tAWITkzGfKKUCSEnOurcAQIgmNrk
+        sV5T+kEK6jBNAabzVvuctiV2834yqON1pmO5nmlErQ==
+X-Google-Smtp-Source: AFSGD/UG8x7sSNhNd7UzdfLJhXQpMe+VO0FVtGApvkejcciXZSsIZektQj3DJbyJXfi+YDUuYxtAWy6EoAYvzb79lbk=
+X-Received: by 2002:a24:b20e:: with SMTP id u14mr3885372ite.12.1544806751640;
+ Fri, 14 Dec 2018 08:59:11 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: ysoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: dfa8d571-6015-4c12-0f34-08d661e53f7e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Dec 2018 16:57:36.2256
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b5839965-430f-4be2-b282-d7a3149f2b37
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR04MB4396
+References: <0000000000004ea80b057cfae21e@google.com> <CACT4Y+Z+AhQxf6=ecOkX1bOU5h7kMHYnR6CAhBv9eO5jQVeG3g@mail.gmail.com>
+ <20181214132836.GE5343@dhcp22.suse.cz> <CACT4Y+aXFXnObgC-7NVe87-1bbqs2oNBBXe2mrfshLKnFqkTGA@mail.gmail.com>
+ <20181214135419.GG5343@dhcp22.suse.cz> <CACT4Y+b1Qc069LO25JhJh51zTAMBL6t_E7LRZiSPi8FP0v+zUQ@mail.gmail.com>
+ <20181214165258.GI5343@dhcp22.suse.cz>
+In-Reply-To: <20181214165258.GI5343@dhcp22.suse.cz>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Fri, 14 Dec 2018 17:59:00 +0100
+Message-ID: <CACT4Y+be8ZX8rTX9aogU23r267XR1_8P25iQ16YK72zFLd_u_w@mail.gmail.com>
+Subject: Re: general protection fault in watchdog
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Pablo Neira Ayuso <pablo@netfilter.org>,
+        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
+        Florian Westphal <fw@strlen.de>,
+        David Miller <davem@davemloft.net>,
+        NetFilter <netfilter-devel@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        syzbot <syzbot+7713f3aa67be76b1552c@syzkaller.appspotmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        rafael.j.wysocki@intel.com,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        vkuznets@redhat.com, Linux-MM <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gMTMuMTIuMjAxOCAyMToxNCwgVXdlIEtsZWluZS1Lw7ZuaWcgd3JvdGU6PiBPbiBUaHUsIERl
-YyAxMywgMjAxOCBhdCAwNjowMDowMFBNICswMTAwLCBUaGllcnJ5IFJlZGluZyB3cm90ZToNCj4+
-IE9uIFRodSwgRGVjIDEzLCAyMDE4IGF0IDA5OjUyOjEzQU0gKzAxMDAsIFV3ZSBLbGVpbmUtS8O2
-bmlnIHdyb3RlOg0KPj4+IE9uIFdlZCwgRGVjIDEyLCAyMDE4IGF0IDExOjU0OjMyQU0gKzAxMDAs
-IFRoaWVycnkgUmVkaW5nIHdyb3RlOg0KPj4+PiBPbiBNb24sIE9jdCAwMSwgMjAxOCBhdCAwNDox
-OTo0OFBNICswMjAwLCBNaWNoYWwgVm9rw6HEjSB3cm90ZToNCj4+Pj4+IEltcGxlbWVudCB0aGUg
-Z2V0X3N0YXRlKCkgZnVuY3Rpb24gYW5kIHNldCB0aGUgaW5pdGlhbCBzdGF0ZSB0byByZWZsZWN0
-DQo+Pj4+PiByZWFsIHN0YXRlIG9mIHRoZSBoYXJkd2FyZS4gVGhpcyBhbGxvd3MgdG8ga2VlcCB0
-aGUgUFdNIHJ1bm5pbmcgaWYgaXQgd2FzDQo+Pj4+PiBlbmFibGVkIGluIGJvb3Rsb2FkZXIuIEl0
-IGlzIHZlcnkgc2ltaWxhciB0byB0aGUgR1BJTyBiZWhhdmlvci4gR1BJTyBwaW4NCj4+Pj4+IHNl
-dCBhcyBvdXRwdXQgaW4gYm9vdGxvYWRlciBrZWVwIHRoZSBzYW1lIHNldHRpbmcgaW4gTGludXgg
-dW5sZXNzIGl0IGlzDQo+Pj4+PiByZWNvbmZpZ3VyZWQuDQo+Pj4+Pg0KPj4+Pj4gSWYgd2UgZmlu
-ZCB0aGUgUFdNIGJsb2NrIGVuYWJsZWQgd2UgbmVlZCB0byBwcmVwYXJlIGFuZCBlbmFibGUgaXRz
-IHNvdXJjZQ0KPj4+Pj4gY2xvY2sgb3RoZXJ3aXNlIHRoZSBjbG9jayB3aWxsIGJlIGRpc2FibGVk
-IGxhdGUgaW4gdGhlIGJvb3QgYXMgdW51c2VkLg0KPj4+Pj4gVGhhdCB3aWxsIGxlYXZlIHRoZSBQ
-V00gaW4gZW5hYmxlZCBzdGF0ZSBidXQgd2l0aCBkaXNhYmxlZCBjbG9jay4gVGhhdCBoYXMNCj4+
-Pj4+IGEgc2lkZSBlZmZlY3QgdGhhdCB0aGUgUFdNIG91dHB1dCBpcyBsZWZ0IGF0IGl0cyBjdXJy
-ZW50IGxldmVsIGF0IHdoaWNoDQo+Pj4+PiB0aGUgY2xvY2sgd2FzIGRpc2FibGVkLiBJdCBpcyB0
-b3RhbGx5IG5vbi1kZXRlcm1pbmlzdGljIGFuZCBpdCBtYXkgYmUgTE9XDQo+Pj4+PiBvciBISUdI
-Lg0KPj4+Pj4NCj4+Pj4+IFNpZ25lZC1vZmYtYnk6IE1pY2hhbCBWb2vDocSNIDxtaWNoYWwudm9r
-YWNAeXNvZnQuY29tPg0KPj4+Pj4gLS0tDQo+Pj4+PiAgIGRyaXZlcnMvcHdtL3B3bS1pbXguYyB8
-IDUzICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKw0K
-Pj4+Pj4gICAxIGZpbGUgY2hhbmdlZCwgNTMgaW5zZXJ0aW9ucygrKQ0KPj4+Pg0KPj4+PiBBcHBs
-aWVkLCB0aGFua3MuDQo+Pj4NCj4+PiBEaWQgeW91IG1pc3MgbXkgZmVlZGJhY2sgZm9yIHRoaXMg
-cGF0Y2ggb3IgZGlkIHlvdSBjaG9vc2UgdG8gaWdub3JlIGl0Pw0KPj4NCj4+IERvbid0IGhhdmUg
-YW55dGhpbmcgaW4gbXkgaW5ib3gsIGJ1dCBJIHNlZSB0aGF0IGl0J3MgdGhlcmUgb24gcGF0Y2h3
-b3JrLA0KPj4gc28gSSBzdXNwZWN0IGl0IHdhcyBlYXRlbiBieSB0aGUgc3BhbSBmaWx0ZXIuDQo+
-IA0KPiA6LXwNCj4gDQo+PiBMZXQgbWUgY29weS1wYXN0ZSBoZXJlIGFuZCBnbyB0aHJvdWdoIGl0
-Lg0KPj4NCj4+Pj4gQEAgLTkzLDYgKzk2LDU1IEBAIHN0cnVjdCBpbXhfY2hpcCB7DQo+Pj4+DQo+
-Pj4+ICAgI2RlZmluZSB0b19pbXhfY2hpcChjaGlwKSBjb250YWluZXJfb2YoY2hpcCwgc3RydWN0
-IGlteF9jaGlwLCBjaGlwKQ0KPj4+Pg0KPj4+PiArc3RhdGljIHZvaWQgaW14X3B3bV9nZXRfc3Rh
-dGUoc3RydWN0IHB3bV9jaGlwICpjaGlwLA0KPj4+PiArICBzdHJ1Y3QgcHdtX2RldmljZSAqcHdt
-LCBzdHJ1Y3QgcHdtX3N0YXRlICpzdGF0ZSkNCj4+Pg0KPj4+IGJyb2tlbiBhbGlnbm1lbnQuDQo+
-Pg0KPj4gSSBjYW4gZml4IHRoYXQgdXAsIG5vIG5lZWQgdG8gcmVzZW5kIGZvciB0aGF0Lg0KPiAN
-Cj4gZmluZS4NCj4gDQo+Pj4+ICt7DQo+Pj4+ICsgc3RydWN0IGlteF9jaGlwICppbXggPSB0b19p
-bXhfY2hpcChjaGlwKTsNCj4+Pj4gKyB1MzIgcGVyaW9kLCBwcmVzY2FsZXIsIHB3bV9jbGssIHJl
-dCwgdmFsOw0KPj4+PiArIHU2NCB0bXA7DQo+Pj4+ICsNCj4+Pj4gKyB2YWwgPSByZWFkbChpbXgt
-Pm1taW9fYmFzZSArIE1YM19QV01DUik7DQo+Pj4+ICsNCj4+Pj4gKyBpZiAodmFsICYgTVgzX1BX
-TUNSX0VOKSB7DQo+Pj4+ICsgIHN0YXRlLT5lbmFibGVkID0gdHJ1ZTsNCj4+Pj4gKyAgcmV0ID0g
-Y2xrX3ByZXBhcmVfZW5hYmxlKGlteC0+Y2xrX3Blcik7DQo+Pj4+ICsgIGlmIChyZXQpDQo+Pj4+
-ICsgICByZXR1cm47DQo+Pj4+ICsgfSBlbHNlIHsNCj4+Pj4gKyAgc3RhdGUtPmVuYWJsZWQgPSBm
-YWxzZTsNCj4+Pj4gKyB9DQo+Pj4+ICsNCj4+Pj4gKyBzd2l0Y2ggKEZJRUxEX0dFVChNWDNfUFdN
-Q1JfUE9VVEMsIHZhbCkpIHsNCj4+Pj4gKyBjYXNlIE1YM19QV01DUl9QT1VUQ19OT1JNQUw6DQo+
-Pj4+ICsgIHN0YXRlLT5wb2xhcml0eSA9IFBXTV9QT0xBUklUWV9OT1JNQUw7DQo+Pj4+ICsgIGJy
-ZWFrOw0KPj4+PiArIGNhc2UgTVgzX1BXTUNSX1BPVVRDX0lOVkVSVEVEOg0KPj4+PiArICBzdGF0
-ZS0+cG9sYXJpdHkgPSBQV01fUE9MQVJJVFlfSU5WRVJTRUQ7DQo+Pj4+ICsgIGJyZWFrOw0KPj4+
-PiArIGRlZmF1bHQ6DQo+Pj4+ICsgIGRldl93YXJuKGNoaXAtPmRldiwgImNhbid0IHNldCBwb2xh
-cml0eSwgb3V0cHV0IGRpc2Nvbm5lY3RlZCIpOw0KPj4+DQo+Pj4gU2hvdWxkIHdlIHJldHVybiBh
-biBlcnJvciBoZXJlPw0KPj4NCj4+IFdlIGNhbid0IHJldHVybiBhbiBlcnJvciBoZXJlIGJlY2F1
-c2UgdGhlIGZ1bmN0aW9uIGhhcyBhIHZvaWQgcmV0dXJuDQo+PiB0eXBlLiBJJ20gbm90IHN1cmUg
-d2hhdCBpdCBtZWFucyBpZiB0aGUgUE9VVEMgaXMgbmVpdGhlciAibm9ybWFsIiBub3INCj4+ICJp
-bnZlcnRlZCIsIGJ1dCBwZXJoYXBzIGEgZ29vZCBpZGVhIHdvdWxkIGJlIHRvIGRlZmF1bHQgdG8g
-ZWl0aGVyIG9mDQo+PiB0aG9zZSB0d28gaW4gdGhhdCBjYXNlLCBvciBwZXJoYXBzIGZvcmNpYmx5
-IGRpc2FibGUgdGhlIFBXTSBzbyB0aGF0DQo+PiB3ZSBnZXQga25vd24tZ29vZCB2YWx1ZXMgaW4g
-dGhlIHJlZ2lzdGVycz8NCj4gDQo+IFRoZSBtYW51YWwgc2F5cyAiUFdNIG91dHB1dCBpcyBkaXNj
-b25uZWN0ZWQiLiBTbyBJIHRoaW5rIHRoZSByaWdodCB0aGluZw0KPiB0byBkbyBpcyB0byBjb25z
-aWRlciB0aGUgcHdtIGFzIGRpc2FibGVkLiAoQnV0IGNoZWNraW5nIGhvdyB0aGUgb3V0cHV0DQo+
-IGFjdHVhbGx5IGJlaGF2ZXMgd291bGQgYmUgZ3JlYXQuKSAoTWF5YmUgdGhpcyBzZXR0aW5nIGlz
-IGV2ZW4gdGhlDQo+IHNvbHV0aW9uIHRvIG91ciAiTWFrZSB0aGUgb3V0cHV0IGhpZ2gtWiBvbiBk
-aXNhYmxlIiBkaXNjdXNzaW9uPykNCg0KSSBjaGVja2VkIHRoZSBiZWhhdmlvci4gSXQgY2FuIGJl
-IHVzZWQgdG8gZGlzY29ubmVjdCB0aGUgb3V0cHV0IGV2ZW4NCmlmIHRoZSBQV00gaXMgZW5hYmxl
-ZC4gSXQgZG9lcyBub3Qgc29sdmUgdGhlIHByb2JsZW0gd2l0aCB0aGUgTE9XDQpvdXRwdXQgbGV2
-ZWwgaW4gZGlzYWJsZWQgc3RhdGUuIFRoaXMgZ2F2ZSBtZSB0aGUgc2FtZSByZXN1bHRzLg0KV2hl
-biBQV00gaXMgZW5hYmxlZCBhbmQgdGhlIG91dHB1dCBpcyBkaXNjb25uZWN0ZWQgd2l0aCBQT1VU
-QyA9IDIsDQp0aGUgb3V0cHV0IGxldmVsIGlzIGFsd2F5cyBMT1cgYW5kIHRoZSBEU0UsIE9ERSwg
-YW5kIFBVUyBwYWQgY29udHJvbA0Kc2V0dGluZ3MgaGF2ZSBubyBlZmZlY3QuIEkgc3VwcG9zZSB0
-aGUgbWFpbiBwdXJwb3NlIG9mIHRoaXMgaXMgdG8NCmFsbG93IHRvIHF1aWNrbHkgZW5hYmxlL2Rp
-c2FibGUgdGhlIG91dHB1dCB3aXRob3V0IHRoZSBuZWVkIHRvIGVuYWJsZS8NCmRpc2FibGUgdGhl
-IHdob2xlIFBXTSBibG9jay4gU28gd2UgY2FuIG5vdCByZWFsbHkgc2F5IHRoZSBQV00gaXMNCmVu
-YWJsZWQvZGlzYWJsZWQgaGVyZSBhcyB0aGVyZSBpcyBhbm90aGVyIChFTikgYml0IGluIHRoZSBQ
-V01DUg0KcmVnaXN0ZXIgdGhhdCBjb250cm9scyB0aGF0Lg0KDQo+PiBJJ20gdGVtcHRlZCBub3Qg
-dG8gdHJlYXQgdGhpcyBhcyBhIGJsb2NrZXIgYmVjYXVzZSBpdCdzIG5vdCBhY3R1YWxseQ0KPj4g
-YSBidWcgb3IgYW55dGhpbmcuIFByaW9yIHRvIHRoaXMgcGF0Y2ggd2UgYWxzbyBpZ25vcmUgd2hh
-dGV2ZXIgdGhpcw0KPj4gZmllbGQgd2FzIHNldCB0by4NCj4gDQo+IFByaW9yIHRvIHRoaXMgcGF0
-Y2ggdGhpcyBmaWVsZCB3YXMgbmV2ZXIgcmVhZCBhcyB0aGlzIGlzIG9ubHkgbmVlZGVkIGluDQo+
-IC5nZXRfc3RhdGUuIEFuZCBpbiAuYXBwbHkgdGhlIHZhbHVlIGlzIGNvcnJlY3RseSB3cml0dGVu
-Lg0KPiANCj4+Pj4gKyB9DQo+Pj4+ICsNCj4+Pj4gKyBwcmVzY2FsZXIgPSBNWDNfUFdNQ1JfUFJF
-U0NBTEVSX0dFVCh2YWwpOw0KPj4+PiArIHB3bV9jbGsgPSBjbGtfZ2V0X3JhdGUoaW14LT5jbGtf
-cGVyKTsNCj4+Pj4gKyBwd21fY2xrID0gRElWX1JPVU5EX0NMT1NFU1RfVUxMKHB3bV9jbGssIHBy
-ZXNjYWxlcik7DQo+Pj4+ICsgdmFsID0gcmVhZGwoaW14LT5tbWlvX2Jhc2UgKyBNWDNfUFdNUFIp
-Ow0KPj4+DQo+Pj4gSXQgd291bGQgYmUgbW9yZSBjYXV0aW9ub3VzIHRvIG5vdCByZWx5IG9uIHRo
-ZSByZXNlcnZlZCBiaXRzIHRvIHJlYWQgYXMNCj4+PiB6ZXJvLiBTbyBJIHN1Z2dlc3QgdG8gbWFz
-ayB0aGUgdmFsdWUgd2l0aCAweGZmZmYuDQo+Pg0KPj4gSWYgdGhhdCdzIHdoYXQgdGhlIGRvY3Vt
-ZW50YXRpb24gc2F5cyBJIHRoaW5rIGl0J3Mgb2theSB0byByZWx5IG9uIGl0Lg0KPj4gQnV0IEkg
-Y2FuIGFkZCB0aGUgbWFzayBpZiB3ZSB3YW50IHRvIHBsYXkgaXQgZXh0cmEgc2FmZS4NCj4gDQo+
-IFRoZSBQRVJJT0QgZmllbGQgb25seSBjb3ZlcnMgYml0cyAwIHRvIDE1IGFuZCB0aGUgdXBwZXIg
-MTYgYml0cyBvZiB0aGlzDQo+IHJlZ2lzdGVyIGFyZSByZXNlcnZlZC4gVGhlIHJlZ2lzdGVycyBh
-cmUgZG9jdW1lbnRlZCB0byByZWFkIGFzIDAsIHN0aWxsDQo+IEknZCBwcmVmZXIgdG8gbWFzayB0
-aGVtIG91dCBmb3IgbWF4aW1hbCBjb3JyZWN0bmVzcy4NCg0KT0suDQoNCj4+Pj4gKyBwZXJpb2Qg
-PSB2YWwgPj0gTVgzX1BXTVBSX01BWCA/IE1YM19QV01QUl9NQVggOiB2YWw7DQo+Pj4+ICsNCj4+
-Pj4gKyAvKiBQV01PVVQgKEh6KSA9IFBXTUNMSyAvIChQV01QUiArIDIpICovDQo+Pj4+ICsgdG1w
-ID0gTlNFQ19QRVJfU0VDICogKHU2NCkocGVyaW9kICsgMik7DQo+Pj4+ICsgc3RhdGUtPnBlcmlv
-ZCA9IERJVl9ST1VORF9DTE9TRVNUX1VMTCh0bXAsIHB3bV9jbGspOw0KPj4+DQo+Pj4gV291bGQg
-aXQgbWFrZSBzZW5zZSB0byBpbnRyb2R1Y2UgYSBwb2xpY3kgYWJvdXQgaG93IHRvIHJvdW5kIGlu
-IHRoaXMNCj4+PiBjYXNlPyAoU2ltaWxhcmlseSBmb3IgLmFwcGx5PykgVGhpcyBpcyBvZiBjb3Vy
-c2Ugb3V0IG9mIHNjb3BlIGZvciB0aGlzDQo+Pj4gcGF0Y2guDQo+Pg0KPj4gSSdtIG5vdCBzdXJl
-IHdoYXQgeW91IG1lYW5zIGJ5IHBvbGljeS4gVGhlIGFib3ZlIGFscmVhZHkgZG9lcyByb3VuZCB0
-bw0KPj4gY2xvc2VzdC4gSXMgdGhhdCBub3QgYW4gYXBwcm9wcmlhdGUgcG9saWN5Pw0KPiANCj4g
-SSBtZWFuIHRvIGRvY3VtZW50IHRoZSBleHBlY3RhdGlvbiBvZiB0aGUgcHdtIGZyYW1ld29yayBo
-b3cgdGhlIGRyaXZlcg0KPiBpcyBzdXBwb3NlZCB0byBjb25maWd1cmUgdGhlIGhhcmR3YXJlIHdo
-ZW4gaXQgc2hvdWxkIHByb2dyYW0gdGhlIFBXTQ0KPiB3aXRoIHNheSBkdXR5X2N5Y2xlPTEwMG5z
-L3BlcmlvZD0zMDBucyBhbmQgYnV0IHRoZSBoYXJkd2FyZSBjYW4gb25seQ0KPiBpbXBsZW1lbnQg
-Ym90aCBkdXR5X2N5Y2xlIGFuZCBwZXJpb2QgaW4gc3RlcHMgb2YgM25zLiBTbyB0aGUgKElNSE8p
-IGdvb2QNCj4gY2FuZGlkYXRlcyBhcmU6DQo+IA0KPiAJZHV0eV9jeWNsZSA9IDk5bnMgLyBwZXJp
-b2QgPSAyOTducw0KPiAJZHV0eV9jeWNsZSA9IDk5bnMgLyBwZXJpb2QgPSAzMDBucw0KPiAJZHV0
-eV9jeWNsZSA9IDEwMm5zIC8gcGVyaW9kID0gMzAwbnMNCj4gCWR1dHlfY3ljbGUgPSAxMDJucyAv
-IHBlcmlvZCA9IDMwNm5zDQo+IA0KPiBBcyBpdCdzIG5vdCBvYnZpb3VzIHdoaWNoIGlzIHRoZSBi
-ZXN0IGhlcmUgKG9yIGlzIGl0PykgYW5kIHRha2luZyBpbnRvDQo+IGFjY291bnQgdGhhdCB0aGUg
-UFdNIHVzZXIgbWlnaHQgY2FyZSwgaXQgd291bGQgYmUgcmlnaHQgdG8gc3BlY2lmeQ0KPiBzb21l
-dGhpbmcgbGlrZToNCj4gDQo+ICAgIFRoZSBkcml2ZXIgaXMgc3VwcG9zZWQgdG8gY29uZmlndXJl
-IHRoZSBiaWdnZXN0IGR1dHlfY3ljbGUgdGhhdA0KPiAgICBpcyBub3QgZ3JlYXRlciB0aGFuIHRo
-ZSByZXF1ZXN0ZWQgZHV0eV9jeWNsZS4gU2ltaWxhcmlseSBpdCBzaG91bGQNCj4gICAgcGljayB0
-aGUgYmlnZ2VzdCBwb3NzaWJsZSBwZXJpb2QgdGhhdCBpcyBub3QgZ3JlYXRlciB0aGFuIHRoZQ0K
-PiAgICByZXF1ZXN0ZWQgcGVyaW9kLg0KPiANCj4gVG8gYWN0dWFsbHkgYWxsb3cgdGhlIHVzZXIg
-dG8gZmluZCB0aGUgc2V0dGluZyB0aGF0IGhlIG9yIHNoZSBwcmVmZXJzDQo+IHNvbWV0aGluZyBs
-aWtlIHRoZSBjbGsgZnJhbWV3b3JrIHByb3ZpZGVzIHdpdGggY2xrX3JvdW5kX3JhdGUoKSB3b3Vs
-ZCBiZQ0KPiBuZWVkZWQgb2YgY291cnNlLg0KPiANCj4gQW5kIGZvciAuZ2V0X3N0YXRlIEknZCBz
-cGVjaWZ5IHNvbWV0aGluZyBzaW1pbGFyIHRoYXQgZW5zdXJlcyB0aGF0IGluDQo+IHRoZSBzZXF1
-ZW5jZQ0KPiANCj4gCW15b3BzLT5nZXRfc3RhdGUoY2hpcCwgcHdtLCBzdGF0ZSk7DQo+IAlteW9w
-cy0+YXBwbHkoY2hpcCwgcHdtLCBzdGF0ZSk7DQo+IA0KPiB0aGUgbGF0dGVyIGlzIGEgbm9vcC4N
-Cg0KU291bmRzIGdvb2QuIFdvdWxkIGJlIGdyZWF0IHRvIGZpbmQgc29tZXRoaW5nIGxpa2UgdGhp
-cyBpbiB0aGUgZG9jcw0Kd2hpbGUgSSB3YXMgaW1wbGVtZW50aW5nIHRoZSAuZ2V0X3N0YXRlLg0K
-DQpJZiB0aGlzIGlzIG91dCBvZiBzY29wZSBmb3IgdGhpcyBwYXRjaCB0aGVuIHRoZXJlIGFyZSBv
-bmx5IHR3byBtaW5vcg0KaXNzdWVzIHRvIGZpeCAtIHRoZSBpbmNvcnJlY3QgaW5kZW50YXRpb24g
-YW5kIHRoZSBtYXNrIGZvciB0aGUgcGVyaW9kDQpyZWdpc3RlciwgcmlnaHQ/DQoNClNvIGdpdmVu
-IHRoZSBmYWN0IHRoYXQgVGhpZXJyeSBhbHJlYWR5IGFwcGxpZWQgdGhlIHNlcmllcyBJIGNhbiBz
-ZW5kDQphIHNlcGFyYXRlIHBhdGNoIHdpdGggdGhlc2UgZml4ZXMsIE9LPyBPciB5b3Ugd2lsbCBm
-aXggaXQgdXAgYWxsDQp5b3Vyc2VsZiwgVGhpZXJyeT8NCg0KQmVzdCByZWdhcmRzLA0KTWljaGFs
-DQo=
+On Fri, Dec 14, 2018 at 5:53 PM Michal Hocko <mhocko@kernel.org> wrote:
+>
+> On Fri 14-12-18 15:31:44, Dmitry Vyukov wrote:
+> > On Fri, Dec 14, 2018 at 2:54 PM Michal Hocko <mhocko@kernel.org> wrote:
+> > >
+> > > On Fri 14-12-18 14:42:33, Dmitry Vyukov wrote:
+> > > > On Fri, Dec 14, 2018 at 2:28 PM Michal Hocko <mhocko@kernel.org> wrote:
+> > > > >
+> > > > > On Fri 14-12-18 14:11:05, Dmitry Vyukov wrote:
+> > > > > > On Fri, Dec 14, 2018 at 1:51 PM syzbot
+> > > > > > <syzbot+7713f3aa67be76b1552c@syzkaller.appspotmail.com> wrote:
+> > > > > > >
+> > > > > > > Hello,
+> > > > > > >
+> > > > > > > syzbot found the following crash on:
+> > > > > > >
+> > > > > > > HEAD commit:    f5d582777bcb Merge branch 'for-linus' of git://git.kernel...
+> > > > > > > git tree:       upstream
+> > > > > > > console output: https://syzkaller.appspot.com/x/log.txt?x=16aca143400000
+> > > > > > > kernel config:  https://syzkaller.appspot.com/x/.config?x=c8970c89a0efbb23
+> > > > > > > dashboard link: https://syzkaller.appspot.com/bug?extid=7713f3aa67be76b1552c
+> > > > > > > compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> > > > > > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1131381b400000
+> > > > > > > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13bae593400000
+> > > > > > >
+> > > > > > > IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> > > > > > > Reported-by: syzbot+7713f3aa67be76b1552c@syzkaller.appspotmail.com
+> > > > > >
+> > > > > > +linux-mm for memcg question
+> > > > > >
+> > > > > > What the repro does is effectively just
+> > > > > > setsockopt(EBT_SO_SET_ENTRIES). This eats all machine memory and
+> > > > > > causes OOMs. Somehow it also caused the GPF in watchdog when it
+> > > > > > iterates over task list, perhaps some scheduler code leaves a dangling
+> > > > > > pointer on OOM failures.
+> > > > > >
+> > > > > > But what bothers me is a different thing. syzkaller test processes are
+> > > > > > sandboxed with a restrictive memcg which should prevent them from
+> > > > > > eating all memory. do_replace_finish calls vmalloc, which uses
+> > > > > > GFP_KERNEL, which does not include GFP_ACCOUNT (GFP_KERNEL_ACCOUNT
+> > > > > > does). And page alloc seems to change memory against memcg iff
+> > > > > > GFP_ACCOUNT is provided.
+> > > > > > Am I missing something or vmalloc is indeed not accounted (DoS)? I see
+> > > > > > some explicit uses of GFP_KERNEL_ACCOUNT, e.g. the one below, but they
+> > > > > > seem to be very sparse.
+> > > > > >
+> > > > > > static void *seq_buf_alloc(unsigned long size)
+> > > > > > {
+> > > > > >      return kvmalloc(size, GFP_KERNEL_ACCOUNT);
+> > > > > > }
+> > > > > >
+> > > > > > Now looking at the code I also don't see how kmalloc(GFP_KERNEL) is
+> > > > > > accounted... Which makes me think I am still missing something.
+> > > > >
+> > > > > You are not missing anything. We do not account all allocations and you
+> > > > > have to explicitly opt-in by __GFP_ACCOUNT. This is a deliberate
+> > > > > decision. If the allocation is directly controlable by an untrusted user
+> > > > > and the memory is associated with a process life time then this looks
+> > > > > like a good usecase for __GFP_ACCOUNT. If an allocation outlives a
+> > > > > process then there the flag should be considered with a great care
+> > > > > because oom killer is not able to resolve the memcg pressure and so the
+> > > > > limit enforcement is not effective.
+> > > >
+> > > > Interesting.
+> > > > I understand that namespaces, memcg's and processes (maybe even
+> > > > threads) can have arbitrary overlapping. But I naively thought that in
+> > > > canonical hierarchical cases it should all somehow work.
+> > > > Question 1: is there some other, stricter sandboxing mechanism?
+> > >
+> > > I do not think so
+> > >
+> > > > We try
+> > > > to sandbox syzkaller processes with everything available , because
+> > > > these OOMs usually leads either to dead machines or hang/stall false
+> > > > positives, which are nasty.
+> > >
+> > > Which is a useful test on its own. If you are able to trigger the global
+> > > OOM from a restricted environment then you have a good candidate to
+> > > consider a new __GFP_ACCOUNT user.
+> > >
+> > > > Question 2: this is a simple DoS vector, right? If I put a container
+> > > > into a 1MB memcg, it can still eat arbitrary amount of non-pagable
+> > > > kernel memory?
+> > >
+> > > As I've said. If there is a direct vector to allocated an unbounded
+> > > amount of memory from the userspace (trusted users aside) then yes this
+> > > sounds like a DoS to me.
+> >
+> > +netfilter maintainers for this easy DoS vector
+> > short story: vmalloc in do_replace_finish allows unbounded memory
+> > allocation not accounted to memcg
+>
+> Haven't we discussed that recently?
+
+I just gave an executive summary to the new people I added to CC.
+
+> > Looks pretty unbounded:
+> >
+> > [  763.451796] syz-executor681: vmalloc: allocation failure, allocated
+> > 1027440640 of 1879052288 bytes, mode:0x6000c0(GFP_KERNEL),
+> > nodemask=(null)
+> >
+> > But how does this play with what you said about memory outliving
+> > process? Netfilter tables can definitely outlive the process, they are
+> > attached to net ns.
+>
+> Not very well, but it is not hopeless either. The charged memory
+> wouldn't go away with oom victims so it will stay there until somebody
+> destroys those objects. On the other hand any process within that memcg
+> would be killed so a DoS should be somehow contained.
+>
+> > Also, am I reading this correctly that potentially thousands of kernel
+> > memory allocations need to be converted to ACCOUNT? I mean for small
+> > ones we maybe care less, but they _should_ be accounted. They can also
+> > build up, or just simply allow small repeated allocations.
+> >
+> > GFP_KERNEL Referenced in 11070 files:
+> > https://elixir.bootlin.com/linux/latest/ident/GFP_KERNEL
+> >
+> > GFP_KERNEL_ACCOUNT Referenced in 19 files:
+> > https://elixir.bootlin.com/linux/latest/ident/GFP_KERNEL_ACCOUNT
+>
+> Yes, we do not care about all kernel objects. Most of them are contained
+> by some high-level objects already. The purpose of the kmem accounting
+> is to limit those objects that can grow really large and are reclaimable
+> in some way.
+
+I see, thanks for the explanations.
