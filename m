@@ -7,51 +7,52 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BFB0C6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:09:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83289C6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:10:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23089214E0
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:09:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 45D8E214E0
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:10:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544789399;
-	bh=E6OkSgdvKY5ApcDBkLGyR6tT7OxnK6iFa3kuEj27NcE=;
+	s=default; t=1544789404;
+	bh=DBEF/xBM9PXIg9AOMwLI7z2CJpMt9Q0Ggg+PxFNQsJ4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=LcrEDgOl7OAJqGHX+/TOs6nMwyR2FX6Eqvs8zq6IGaUsUjkJ0CsL5ZDi41fP1DadY
-	 WG1Sere9iU1YGCsQnJ+5RGA90mqckbcrakqXNThI3n0cUkf9JfITDkFmdi6jx0dx2Q
-	 +ykg+jj/kbK6Ghg+gUhSfADXSsNmJxP89oNB9pl0=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23089214E0
+	b=HCxkLTC35Q52qz8nHaCgq+t7Ff2RaQayrpsJTiTxjeRA5UiAtWIug7xnqqo2+yjOF
+	 GOumxRkQ/Uynxy6IVmFg3qve6vd7MH1e1wm5dVZm1mwtVIPu7WSpw5YA9dUMdUoVQK
+	 xSluxPw9/lWxFAd0cuI9u8c19SSwNLyJtMii+5XI=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45D8E214E0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731540AbeLNMJ5 (ORCPT
+        id S1731558AbeLNMKD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:09:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55628 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:10:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55780 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731522AbeLNMJy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:09:54 -0500
+        id S1731542AbeLNMKA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:10:00 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0D899214DB;
-        Fri, 14 Dec 2018 12:09:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B0DE1214DE;
+        Fri, 14 Dec 2018 12:09:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789392;
-        bh=E6OkSgdvKY5ApcDBkLGyR6tT7OxnK6iFa3kuEj27NcE=;
+        s=default; t=1544789400;
+        bh=DBEF/xBM9PXIg9AOMwLI7z2CJpMt9Q0Ggg+PxFNQsJ4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RgmuTT5dh6u1mRSoBKnhHKQJH1n5dxWpVIA7qq6wzbEtq5EocUrhVHwlC008FB8kb
-         YReFTl+T6g8U/U+gabqkoY/uwSTHE9WoOnodtuE4ixna2Uc9stv1TmCrJc/2b3hILh
-         d43n++eCWmN4n+ywny5Ybpx8NF2M+VO77o4gDPm4=
+        b=avdmKEBd5taKA5qQQ2rcNzZ7w66ATbzqjEXAQ7hQ1H1tsi3W8plgoMBk+aiLMTiKE
+         5u7CDk0LDllhz2xOwWtyJTMVvptSQUTGrnQZAB3CeMIRV9LMnFCc8+WwBJajeebVRZ
+         7kvaNUWZnRdjo7aoVM7JGNl72/tL8fuXOWaaQTAg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Jarkko Nikula <jarkko.nikula@bitmer.com>,
-        Mark Brown <broonie@kernel.org>,
+        stable@vger.kernel.org,
+        syzbot+1ec5c5ec949c4adaa0c4@syzkaller.appspotmail.com,
+        Martynas Pumputis <m@lambda.lt>,
+        Daniel Borkmann <daniel@iogearbox.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 42/89] ASoC: omap-mcpdm: Add pm_qos handling to avoid under/overruns with CPU_IDLE
-Date:   Fri, 14 Dec 2018 12:59:55 +0100
-Message-Id: <20181214115731.750514335@linuxfoundation.org>
+Subject: [PATCH 4.14 45/89] bpf: fix check of allowed specifiers in bpf_trace_printk
+Date:   Fri, 14 Dec 2018 12:59:58 +0100
+Message-Id: <20181214115731.908325384@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115729.658859279@linuxfoundation.org>
 References: <20181214115729.658859279@linuxfoundation.org>
@@ -70,124 +71,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 373a500e34aea97971c9d71e45edad458d3da98f ]
+[ Upstream commit 1efb6ee3edea57f57f9fb05dba8dcb3f7333f61f ]
 
-We need to block sleep states which would require longer time to leave than
-the time the DMA must react to the DMA request in order to keep the FIFO
-serviced without under of overrun.
+A format string consisting of "%p" or "%s" followed by an invalid
+specifier (e.g. "%p%\n" or "%s%") could pass the check which
+would make format_decode (lib/vsprintf.c) to warn.
 
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Acked-by: Jarkko Nikula <jarkko.nikula@bitmer.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: 9c959c863f82 ("tracing: Allow BPF programs to call bpf_trace_printk()")
+Reported-by: syzbot+1ec5c5ec949c4adaa0c4@syzkaller.appspotmail.com
+Signed-off-by: Martynas Pumputis <m@lambda.lt>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/omap/omap-mcpdm.c | 43 ++++++++++++++++++++++++++++++++++++-
- 1 file changed, 42 insertions(+), 1 deletion(-)
+ kernel/trace/bpf_trace.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/sound/soc/omap/omap-mcpdm.c b/sound/soc/omap/omap-mcpdm.c
-index 64609c77a79d..44ffeb71cd1d 100644
---- a/sound/soc/omap/omap-mcpdm.c
-+++ b/sound/soc/omap/omap-mcpdm.c
-@@ -54,6 +54,8 @@ struct omap_mcpdm {
- 	unsigned long phys_base;
- 	void __iomem *io_base;
- 	int irq;
-+	struct pm_qos_request pm_qos_req;
-+	int latency[2];
- 
- 	struct mutex mutex;
- 
-@@ -277,6 +279,9 @@ static void omap_mcpdm_dai_shutdown(struct snd_pcm_substream *substream,
- 				  struct snd_soc_dai *dai)
- {
- 	struct omap_mcpdm *mcpdm = snd_soc_dai_get_drvdata(dai);
-+	int tx = (substream->stream == SNDRV_PCM_STREAM_PLAYBACK);
-+	int stream1 = tx ? SNDRV_PCM_STREAM_PLAYBACK : SNDRV_PCM_STREAM_CAPTURE;
-+	int stream2 = tx ? SNDRV_PCM_STREAM_CAPTURE : SNDRV_PCM_STREAM_PLAYBACK;
- 
- 	mutex_lock(&mcpdm->mutex);
- 
-@@ -289,6 +294,14 @@ static void omap_mcpdm_dai_shutdown(struct snd_pcm_substream *substream,
- 		}
- 	}
- 
-+	if (mcpdm->latency[stream2])
-+		pm_qos_update_request(&mcpdm->pm_qos_req,
-+				      mcpdm->latency[stream2]);
-+	else if (mcpdm->latency[stream1])
-+		pm_qos_remove_request(&mcpdm->pm_qos_req);
-+
-+	mcpdm->latency[stream1] = 0;
-+
- 	mutex_unlock(&mcpdm->mutex);
- }
- 
-@@ -300,7 +313,7 @@ static int omap_mcpdm_dai_hw_params(struct snd_pcm_substream *substream,
- 	int stream = substream->stream;
- 	struct snd_dmaengine_dai_dma_data *dma_data;
- 	u32 threshold;
--	int channels;
-+	int channels, latency;
- 	int link_mask = 0;
- 
- 	channels = params_channels(params);
-@@ -340,14 +353,25 @@ static int omap_mcpdm_dai_hw_params(struct snd_pcm_substream *substream,
- 
- 		dma_data->maxburst =
- 				(MCPDM_DN_THRES_MAX - threshold) * channels;
-+		latency = threshold;
- 	} else {
- 		/* If playback is not running assume a stereo stream to come */
- 		if (!mcpdm->config[!stream].link_mask)
- 			mcpdm->config[!stream].link_mask = (0x3 << 3);
- 
- 		dma_data->maxburst = threshold * channels;
-+		latency = (MCPDM_DN_THRES_MAX - threshold);
- 	}
- 
-+	/*
-+	 * The DMA must act to a DMA request within latency time (usec) to avoid
-+	 * under/overflow
-+	 */
-+	mcpdm->latency[stream] = latency * USEC_PER_SEC / params_rate(params);
-+
-+	if (!mcpdm->latency[stream])
-+		mcpdm->latency[stream] = 10;
-+
- 	/* Check if we need to restart McPDM with this stream */
- 	if (mcpdm->config[stream].link_mask &&
- 	    mcpdm->config[stream].link_mask != link_mask)
-@@ -362,6 +386,20 @@ static int omap_mcpdm_prepare(struct snd_pcm_substream *substream,
- 				  struct snd_soc_dai *dai)
- {
- 	struct omap_mcpdm *mcpdm = snd_soc_dai_get_drvdata(dai);
-+	struct pm_qos_request *pm_qos_req = &mcpdm->pm_qos_req;
-+	int tx = (substream->stream == SNDRV_PCM_STREAM_PLAYBACK);
-+	int stream1 = tx ? SNDRV_PCM_STREAM_PLAYBACK : SNDRV_PCM_STREAM_CAPTURE;
-+	int stream2 = tx ? SNDRV_PCM_STREAM_CAPTURE : SNDRV_PCM_STREAM_PLAYBACK;
-+	int latency = mcpdm->latency[stream2];
-+
-+	/* Prevent omap hardware from hitting off between FIFO fills */
-+	if (!latency || mcpdm->latency[stream1] < latency)
-+		latency = mcpdm->latency[stream1];
-+
-+	if (pm_qos_request_active(pm_qos_req))
-+		pm_qos_update_request(pm_qos_req, latency);
-+	else if (latency)
-+		pm_qos_add_request(pm_qos_req, PM_QOS_CPU_DMA_LATENCY, latency);
- 
- 	if (!omap_mcpdm_active(mcpdm)) {
- 		omap_mcpdm_start(mcpdm);
-@@ -423,6 +461,9 @@ static int omap_mcpdm_remove(struct snd_soc_dai *dai)
- 	free_irq(mcpdm->irq, (void *)mcpdm);
- 	pm_runtime_disable(mcpdm->dev);
- 
-+	if (pm_qos_request_active(&mcpdm->pm_qos_req))
-+		pm_qos_remove_request(&mcpdm->pm_qos_req);
-+
- 	return 0;
- }
- 
+diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+index 6350f64d5aa4..f9dd8fd055a6 100644
+--- a/kernel/trace/bpf_trace.c
++++ b/kernel/trace/bpf_trace.c
+@@ -161,11 +161,13 @@ BPF_CALL_5(bpf_trace_printk, char *, fmt, u32, fmt_size, u64, arg1,
+ 			i++;
+ 		} else if (fmt[i] == 'p' || fmt[i] == 's') {
+ 			mod[fmt_cnt]++;
+-			i++;
+-			if (!isspace(fmt[i]) && !ispunct(fmt[i]) && fmt[i] != 0)
++			/* disallow any further format extensions */
++			if (fmt[i + 1] != 0 &&
++			    !isspace(fmt[i + 1]) &&
++			    !ispunct(fmt[i + 1]))
+ 				return -EINVAL;
+ 			fmt_cnt++;
+-			if (fmt[i - 1] == 's') {
++			if (fmt[i] == 's') {
+ 				if (str_seen)
+ 					/* allow only one '%s' per fmt string */
+ 					return -EINVAL;
 -- 
 2.19.1
 
