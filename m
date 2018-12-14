@@ -2,164 +2,133 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A6EBC6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:36:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D13D7C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:37:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5487E20892
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:36:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5487E20892
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 8E3A620892
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:37:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544791032;
+	bh=Jm3Jbwbjv3lL2E/YJZaLbivBWy4VVWRA25LqVDzyAKw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=rGASLsw2po4qoN1hnB46+m19Dle4f9lsq1oCHb/riWGfOXhAE6/xs8MnSIc+fyE3K
+	 +SGybM+XO29XGBIPl2f4mImsHmIrVkxGc94/vDegiKNTcmLnBoWvCkIk625X/3593L
+	 tfJxZknmErkSYAVrpvt525dGdxPiTAzXWKy4DtmM=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E3A620892
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731157AbeLNMgx (ORCPT
+        id S1730796AbeLNMhL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:36:53 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:50526 "EHLO mx1.redhat.com"
+        Fri, 14 Dec 2018 07:37:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51546 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730860AbeLNMgs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:36:48 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1730929AbeLNMG3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:06:29 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B5F2FC0578FA;
-        Fri, 14 Dec 2018 12:36:47 +0000 (UTC)
-Received: from redhat.com (ovpn-121-101.rdu2.redhat.com [10.10.121.101])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 77D3F261A6;
-        Fri, 14 Dec 2018 12:36:46 +0000 (UTC)
-Date:   Fri, 14 Dec 2018 07:36:45 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 3/3] vhost: access vq metadata through kernel
- virtual address
-Message-ID: <20181214073332-mutt-send-email-mst@kernel.org>
-References: <20181213101022.12475-1-jasowang@redhat.com>
- <20181213101022.12475-4-jasowang@redhat.com>
- <20181213102713-mutt-send-email-mst@kernel.org>
- <d70c5ac1-c805-cefd-ace1-643a2e271ba0@redhat.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id DF6022147D;
+        Fri, 14 Dec 2018 12:06:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544789189;
+        bh=Jm3Jbwbjv3lL2E/YJZaLbivBWy4VVWRA25LqVDzyAKw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=RetLiqDxJm/8vp4NHdnxu2Ut6HvmYiX1bCRlvq2EJogQ8Gl2yMFdivZMPXpsWjAtg
+         AM8g9aiCL1uCIZQmssleu/QI5a7q4TI18Ctn929NMIVY4S55jRS8fF+QYcRFyx4JYx
+         oL994NX7ewgSgUFvOqZUICAbS1GODckTvkK5efCo=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Alexey Dobriyan <adobriyan@gmail.com>,
+        Rafael David Tinoco <rafael.tinoco@linaro.org>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 129/142] proc: fixup map_files test on arm
+Date:   Fri, 14 Dec 2018 13:00:14 +0100
+Message-Id: <20181214115752.202104280@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.0
+In-Reply-To: <20181214115747.053633987@linuxfoundation.org>
+References: <20181214115747.053633987@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <d70c5ac1-c805-cefd-ace1-643a2e271ba0@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Fri, 14 Dec 2018 12:36:47 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 14, 2018 at 11:57:35AM +0800, Jason Wang wrote:
-> 
-> On 2018/12/13 下午11:44, Michael S. Tsirkin wrote:
-> > On Thu, Dec 13, 2018 at 06:10:22PM +0800, Jason Wang wrote:
-> > > It was noticed that the copy_user() friends that was used to access
-> > > virtqueue metdata tends to be very expensive for dataplane
-> > > implementation like vhost since it involves lots of software check,
-> > > speculation barrier, hardware feature toggling (e.g SMAP). The
-> > > extra cost will be more obvious when transferring small packets.
-> > > 
-> > > This patch tries to eliminate those overhead by pin vq metadata pages
-> > > and access them through vmap(). During SET_VRING_ADDR, we will setup
-> > > those mappings and memory accessors are modified to use pointers to
-> > > access the metadata directly.
-> > > 
-> > > Note, this was only done when device IOTLB is not enabled. We could
-> > > use similar method to optimize it in the future.
-> > > 
-> > > Tests shows about ~24% improvement on TX PPS when using virtio-user +
-> > > vhost_net + xdp1 on TAP (CONFIG_HARDENED_USERCOPY is not enabled):
-> > > 
-> > > Before: ~5.0Mpps
-> > > After:  ~6.1Mpps
-> > > 
-> > > Signed-off-by: Jason Wang<jasowang@redhat.com>
-> > > ---
-> > >   drivers/vhost/vhost.c | 178 ++++++++++++++++++++++++++++++++++++++++++
-> > >   drivers/vhost/vhost.h |  11 +++
-> > >   2 files changed, 189 insertions(+)
-> > > 
-> > > diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-> > > index bafe39d2e637..1bd24203afb6 100644
-> > > --- a/drivers/vhost/vhost.c
-> > > +++ b/drivers/vhost/vhost.c
-> > > @@ -443,6 +443,9 @@ void vhost_dev_init(struct vhost_dev *dev,
-> > >   		vq->indirect = NULL;
-> > >   		vq->heads = NULL;
-> > >   		vq->dev = dev;
-> > > +		memset(&vq->avail_ring, 0, sizeof(vq->avail_ring));
-> > > +		memset(&vq->used_ring, 0, sizeof(vq->used_ring));
-> > > +		memset(&vq->desc_ring, 0, sizeof(vq->desc_ring));
-> > >   		mutex_init(&vq->mutex);
-> > >   		vhost_vq_reset(dev, vq);
-> > >   		if (vq->handle_kick)
-> > > @@ -614,6 +617,102 @@ static void vhost_clear_msg(struct vhost_dev *dev)
-> > >   	spin_unlock(&dev->iotlb_lock);
-> > >   }
-> > > +static int vhost_init_vmap(struct vhost_vmap *map, unsigned long uaddr,
-> > > +			   size_t size, int write)
-> > > +{
-> > > +	struct page **pages;
-> > > +	int npages = DIV_ROUND_UP(size, PAGE_SIZE);
-> > > +	int npinned;
-> > > +	void *vaddr;
-> > > +
-> > > +	pages = kmalloc_array(npages, sizeof(struct page *), GFP_KERNEL);
-> > > +	if (!pages)
-> > > +		return -ENOMEM;
-> > > +
-> > > +	npinned = get_user_pages_fast(uaddr, npages, write, pages);
-> > > +	if (npinned != npages)
-> > > +		goto err;
-> > > +
-> > As I said I have doubts about the whole approach, but this
-> > implementation in particular isn't a good idea
-> > as it keeps the page around forever.
-> > So no THP, no NUMA rebalancing,
-> 
-> 
-> This is the price of all GUP users not only vhost itself.
+4.19-stable review patch.  If anyone has any objections, please let me know.
 
-Yes. GUP is just not a great interface for vhost to use.
+------------------
 
-> What's more
-> important, the goal is not to be left too much behind for other backends
-> like DPDK or AF_XDP (all of which are using GUP).
+[ Upstream commit dbd4af54745fc0c805217693c807a3928b2d408b ]
+
+https://bugs.linaro.org/show_bug.cgi?id=3782
+
+Turns out arm doesn't permit mapping address 0, so try minimum virtual
+address instead.
+
+Link: http://lkml.kernel.org/r/20181113165446.GA28157@avx2
+Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
+Reported-by: Rafael David Tinoco <rafael.tinoco@linaro.org>
+Tested-by: Rafael David Tinoco <rafael.tinoco@linaro.org>
+Acked-by: Cyrill Gorcunov <gorcunov@gmail.com>
+Cc: Shuah Khan <shuah@kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ tools/testing/selftests/proc/proc-self-map-files-002.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/tools/testing/selftests/proc/proc-self-map-files-002.c b/tools/testing/selftests/proc/proc-self-map-files-002.c
+index 6f1f4a6e1ecb..85744425b08d 100644
+--- a/tools/testing/selftests/proc/proc-self-map-files-002.c
++++ b/tools/testing/selftests/proc/proc-self-map-files-002.c
+@@ -13,7 +13,7 @@
+  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+  */
+-/* Test readlink /proc/self/map_files/... with address 0. */
++/* Test readlink /proc/self/map_files/... with minimum address. */
+ #include <errno.h>
+ #include <sys/types.h>
+ #include <sys/stat.h>
+@@ -47,6 +47,11 @@ static void fail(const char *fmt, unsigned long a, unsigned long b)
+ int main(void)
+ {
+ 	const unsigned int PAGE_SIZE = sysconf(_SC_PAGESIZE);
++#ifdef __arm__
++	unsigned long va = 2 * PAGE_SIZE;
++#else
++	unsigned long va = 0;
++#endif
+ 	void *p;
+ 	int fd;
+ 	unsigned long a, b;
+@@ -55,7 +60,7 @@ int main(void)
+ 	if (fd == -1)
+ 		return 1;
+ 
+-	p = mmap(NULL, PAGE_SIZE, PROT_NONE, MAP_PRIVATE|MAP_FILE|MAP_FIXED, fd, 0);
++	p = mmap((void *)va, PAGE_SIZE, PROT_NONE, MAP_PRIVATE|MAP_FILE|MAP_FIXED, fd, 0);
+ 	if (p == MAP_FAILED) {
+ 		if (errno == EPERM)
+ 			return 2;
+-- 
+2.19.1
 
 
-So these guys assume userspace knows what it's doing.
-We can't assume that.
 
-> 
-> > userspace-controlled
-> > amount of memory locked up and not accounted for.
-> 
-> 
-> It's pretty easy to add this since the slow path was still kept. If we
-> exceeds the limitation, we can switch back to slow path.
-> 
-> > 
-> > Don't get me wrong it's a great patch in an ideal world.
-> > But then in an ideal world no barriers smap etc are necessary at all.
-> 
-> 
-> Again, this is only for metadata accessing not the data which has been used
-> for years for real use cases.
-> 
-> For SMAP, it makes senses for the address that kernel can not forcast. But
-> it's not the case for the vhost metadata since we know the address will be
-> accessed very frequently. For speculation barrier, it helps nothing for the
-> data path of vhost which is a kthread.
-
-I don't see how a kthread makes any difference. We do have a validation
-step which makes some difference.
-
-> Packet or AF_XDP benefit from
-> accessing metadata directly, we should do it as well.
-> 
-> Thanks
