@@ -2,141 +2,117 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C523BC6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 06:15:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C19FC6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 06:19:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8BC0B20866
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 06:15:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 62D2020811
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 06:19:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dt3ld9K9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BC0B20866
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="nkQGORe+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62D2020811
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726997AbeLNGP0 (ORCPT
+        id S1727020AbeLNGTU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 01:15:26 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:38610 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726437AbeLNGP0 (ORCPT
+        Fri, 14 Dec 2018 01:19:20 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:48784 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726437AbeLNGTT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 01:15:26 -0500
-Received: by mail-pl1-f193.google.com with SMTP id e5so2238353plb.5;
-        Thu, 13 Dec 2018 22:15:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=58i+t0kU8F4VDq4ZxuUKVo/OgJwAtPkO3y9tiFyJ/Bo=;
-        b=Dt3ld9K9kI5vmgBnLnAcBhIWJgkt1thXvuPlvMiNptKONNRi9f5En0TkP8ryO1cLeR
-         vXiwwarQdYvYDQX2/Gu97fn7zi7vzsOHZsZZ0aX+AeAvbk/147g3gKcmO3h6gNheliaJ
-         Q6AfuXFVUI5ZgSJznWAUaABLiXJKW6yFFbVQAmtrr026UCm7TxfIdiF9l86q5JvJR388
-         BPcApoTuxv+QTQm6U6iLYe5g6+I0wX+MIqV4p7+De97ptLHFtjgwLewh0hN3IjIlBxhI
-         Fnu8/gBxyKy3VYhVCQNXvhmvD3XIaNVl8y2Veu3OWb5fPTe1RormoHI/2k8ECmi95Uct
-         qmyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=58i+t0kU8F4VDq4ZxuUKVo/OgJwAtPkO3y9tiFyJ/Bo=;
-        b=a2Nfn7PR805c50BpwnFg109ynS6JlO20t3dsgNDANof5gro6vIM2IIULmJbz3qxlq1
-         rblQ+vZB6vjnODSvAHRCqCFXsV3kYk/qSxyzjWwXSBdx8KcvrjkpCshCNVbc5E68yEgi
-         ZSKPE243GOWznOgpmBSPl9k4sPd+amWBdYL2KeJ/bnCoKtj7faDgBdA9S/onGt+mPvmX
-         z6AZdpwkmdEygxr4Fym5KGBl6SBZolOBaX9UMEeI2VPmSqk0ioFliVjC+LQ7h7DmFzUB
-         7+IJ7mP3GhecLUk2IhFAssFmPesSJYqem4fQyKjwGFM8M/LbWKRZUnDitqZfrT/00cEV
-         deTQ==
-X-Gm-Message-State: AA+aEWZtdWb9xHFNT4gn00seMLaAh3Y4shtWVRb22gIa/OUczD5JzROw
-        KSE2FlbHCj1IjFIZYd7u1qes4xkUqL0=
-X-Google-Smtp-Source: AFSGD/Vgg9eJlQN+rgWpFX7vf1be4itDGESMbuRl/FLdDSAVXS2RAyOIeNd55RwbnAs8cjBhuzSprg==
-X-Received: by 2002:a17:902:9a07:: with SMTP id v7mr1659858plp.247.1544768125131;
-        Thu, 13 Dec 2018 22:15:25 -0800 (PST)
-Received: from [0.0.0.0] (104.194.84.186.16clouds.com. [104.194.84.186])
-        by smtp.gmail.com with ESMTPSA id 89sm6649679pfl.120.2018.12.13.22.15.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 13 Dec 2018 22:15:24 -0800 (PST)
-Subject: Re: ubifs: fix page_count in ->ubifs_migrate_page()
-To:     Dave Chinner <david@fromorbit.com>,
-        Richard Weinberger <richard@nod.at>
-Cc:     Artem Bityutskiy <dedekind1@gmail.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kirill.shutemov@linux.intel.com, hch@lst.de,
-        linux-fsdevel@vger.kernel.org
-References: <1544624037-3436-1-git-send-email-openzhangj@gmail.com>
- <5829763.q4qAXljTxb@blindfold> <20181213225736.GF29416@dastard>
-From:   zhangjun <openzhangj@gmail.com>
-Message-ID: <e477c69a-082b-586b-a45a-50dee2b530ca@gmail.com>
-Date:   Fri, 14 Dec 2018 14:15:18 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Fri, 14 Dec 2018 01:19:19 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wBE6IfJg146018;
+        Fri, 14 Dec 2018 06:18:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=p013JWnpjnca6mpV+iy5JtIUsLtbzpnYEmV0KlH72+k=;
+ b=nkQGORe+D2uoNaKYgD6vMQ+1mfNRv8rgFcwA7qe02zIFTSVhgt9bmGmwJpz1/drQh3HV
+ SzoMcOAqqpqv+qaZMmDWvxkv2AMbWW5liI2QczpYTEqbhKcVZm83uCTSORFSurdWws2b
+ TCIJiLLzZZAjI6z+BG4yp2K66nW5CeXDzp5kTrWVX4/MQV40nqgh1Ffp9va8bRYrH31v
+ xTh4oRMQdfEqc1FHj018TR920kfN4JlVB8A5STGwWRORznIbkINuoZDFXoUEFfMHoEiS
+ z/OCAK5xpCWjLc0i4rkuJ72PYAI/V5GUB0DM+29QCfOtG4acX4ZD5O89XStOnNEoYLst LQ== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by aserp2130.oracle.com with ESMTP id 2pawwpbdq3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 14 Dec 2018 06:18:49 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wBE6Imop017455
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 14 Dec 2018 06:18:48 GMT
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wBE6IkaO010051;
+        Fri, 14 Dec 2018 06:18:47 GMT
+Received: from kadam (/197.157.0.36)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 13 Dec 2018 22:18:46 -0800
+Date:   Fri, 14 Dec 2018 09:18:20 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Jeremy Fertic <jeremyfertic@gmail.com>
+Cc:     Jonathan Cameron <jic23@kernel.org>, devel@driverdev.osuosl.org,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        linux-iio@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Hartmut Knaack <knaack.h@gmx.de>
+Subject: Re: [PATCH 02/11] staging: iio: adt7316: invert the logic of the
+ check for an ldac pin
+Message-ID: <20181214061820.GV3116@kadam>
+References: <20181212005503.28054-1-jeremyfertic@gmail.com>
+ <20181212005503.28054-3-jeremyfertic@gmail.com>
+ <20181212081949.GH3116@kadam>
+ <20181213220629.GB2496@r2700x.localdomain>
 MIME-Version: 1.0
-In-Reply-To: <20181213225736.GF29416@dastard>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181213220629.GB2496@r2700x.localdomain>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9106 signatures=668679
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=467
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1812140058
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/12/14 上午6:57, Dave Chinner wrote:
-> On Thu, Dec 13, 2018 at 03:23:37PM +0100, Richard Weinberger wrote:
->> Hello zhangjun,
->>
->> thanks a lot for bringing this up!
->>
->> Am Mittwoch, 12. Dezember 2018, 15:13:57 CET schrieb zhangjun:
->>> Because the PagePrivate() in UBIFS is different meanings,
->>> alloc_cma() will fail when one dirty page cache located in
->>> the type of MIGRATE_CMA
->>>
->>> If not adjust the 'extra_count' for dirty page,
->>> ubifs_migrate_page() -> migrate_page_move_mapping() will
->>> always return -EAGAIN for:
->>> 	expected_count += page_has_private(page)
->>> This causes the migration to fail until the page cache is cleaned
->>>
->>> In general, PagePrivate() indicates that buff_head is already bound
->>> to this page, and at the same time page_count() will also increase.
->
-> That's an invalid assumption.
->
-> We should not be trying to infer what PagePrivate() means in code
-> that has no business using looking at it i.e. page->private is private
-> information for the owner of the page, and it's life cycle and
-> intent are unknown to anyone other than the page owner.
->
-> e.g. on XFS, a page cache page's page->private /might/ contain a
-> struct iomap_page, or it might be NULL. Assigning a struct
-> iomap_page to the page does not change the reference count on the
-> page.  IOWs, the page needs to be handled exactly the same
-> way by external code regardless of whether there is somethign
-> attached to page->private or not.
->
-> Hence it looks to me like the migration code is making invalid
-> assumptions about PagePrivate inferring reference counts and so the
-> migration code needs to be fixed. Requiring filesystems to work
-> around invalid assumptions in the migration code is a sure recipe
-> for problems with random filesystems using page->private for their
-> own internal purposes....
->
-> Cheers,
->
-> Dave.
-I agree with your main point of view, but for the buffer_head based file 
-system this assumption is no problem,
-and the parameters and comments from the migrate_page_move_mapping() 
-function:
-   * 3 for pages with a mapping and PagePrivate/PagePrivate2 set.
-This assumption has been explained.
-Or to accurately say that the migrate system does not currently have a 
-generic function for this case.
-Since you call the function implemented for buffer_head, you should 
-follow its rules.
+On Thu, Dec 13, 2018 at 03:06:29PM -0700, Jeremy Fertic wrote:
+> On Wed, Dec 12, 2018 at 11:19:49AM +0300, Dan Carpenter wrote:
+> > On Tue, Dec 11, 2018 at 05:54:54PM -0700, Jeremy Fertic wrote:
+> > > ADT7316_DA_EN_VIA_DAC_LDCA is set when the dac and ldac registers are being
+> > > used to update the dacs instead of the ldac pin. ADT7516_SEL_AIN3 is an adc
+> > > input that shares the ldac pin. Only set these bits if an ldac pin is not
+> > > being used.
+> > > 
+> > > Signed-off-by: Jeremy Fertic <jeremyfertic@gmail.com>
+> > 
+> > Huh...  This bug has always been there...
+> > 
+> > Fixes: 35f6b6b86ede ("staging: iio: new ADT7316/7/8 and ADT7516/7/9 driver")
+> > 
+> > regards,
+> > dan carpenter
+> > 
+> 
+> Should I include this Fixes tag in v2? I wasn't sure how important this was
+> in staging. I think most of the patches in this series fix bugs that date
+> back to the introduction of the driver.
 
+I was just curious to see if it was a cleanup which introduced the
+inverted if statement.
+
+I think the Fixes tag is always useful.  For example, it would be
+interesting to do some data mining to see how many bugs drivers
+normally have when they're first merged.
+
+regards,
+dan carpenter
