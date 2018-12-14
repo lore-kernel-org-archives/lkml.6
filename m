@@ -2,138 +2,94 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04F89C67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 08:05:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DABCC67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 08:06:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3D042080F
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 08:05:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3D042080F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id E38562080F
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 08:06:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="JaonNPXG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E38562080F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727556AbeLNIFR (ORCPT
+        id S1727856AbeLNIGN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 03:05:17 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:37110 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726494AbeLNIFR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 03:05:17 -0500
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 01C07974586CE;
-        Fri, 14 Dec 2018 16:05:13 +0800 (CST)
-Received: from [127.0.0.1] (10.142.63.192) by DGGEMS402-HUB.china.huawei.com
- (10.3.19.202) with Microsoft SMTP Server id 14.3.408.0; Fri, 14 Dec 2018
- 16:05:04 +0800
-CC:     <liuyu712@hisilicon.com>, Wangbinghui <wangbinghui@hisilicon.com>,
-        "Linux USB List" <linux-usb@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Suzhuangluan <suzhuangluan@hisilicon.com>,
-        <kongfei@hisilicon.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "John Stultz" <john.stultz@linaro.org>
-Subject: Re: [PATCH 01/10] dt-bindings: usb: add support for dwc3 controller
- on HiSilicon SoCs
-To:     Rob Herring <robh@kernel.org>
-References: <20181027095820.40056-1-chenyu56@huawei.com>
- <20181027095820.40056-2-chenyu56@huawei.com> <20181112160241.GA14074@bogus>
- <9fce6a58-d986-25e4-1791-ba375e4f075e@huawei.com>
- <CAL_JsqKObFGdf5tPdv=Ss2ZWCPBgimbEUn72rkR2+L7uRbAirg@mail.gmail.com>
-From:   Chen Yu <chenyu56@huawei.com>
-Message-ID: <8bd2e47a-5766-3236-2c89-a4eaf343991c@huawei.com>
-Date:   Fri, 14 Dec 2018 16:05:03 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
-MIME-Version: 1.0
-In-Reply-To: <CAL_JsqKObFGdf5tPdv=Ss2ZWCPBgimbEUn72rkR2+L7uRbAirg@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.142.63.192]
-X-CFilter-Loop: Reflected
+        Fri, 14 Dec 2018 03:06:13 -0500
+Received: from conuserg-08.nifty.com ([210.131.2.75]:28077 "EHLO
+        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727634AbeLNIGN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 03:06:13 -0500
+Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-08.nifty.com with ESMTP id wBE85gQS007194;
+        Fri, 14 Dec 2018 17:05:42 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com wBE85gQS007194
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1544774743;
+        bh=ArJU08QIaYQfsMfVzx2Mq0aAU+APf+PvHjRju2O0Aw4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=JaonNPXGoWQ6jrHHHisU8+Ps5kea5c26YXJrOkQhSVm7aVaHoyEwt5vB3Ayxf9trN
+         Kf3bDiPpJamoPmQ2BcvMA1eI5BifJGdhECYQL0JfPvxCs54t+myHNpvvl6Mj6DEEng
+         vA6MXTB8pBPsfx2SUvz51OmpBPu4M1y3BDcn88M24lHe6EIOwTWj5S17SG8hDd7BNQ
+         fstwAiOCppv9Y8EhTnZlfLLoPxZNsZ9OPssFqo/fMpNENTQKJCBlfUiOmt893h9u3k
+         ckpetzNe0hi0QcxYbgYcMEZiEgduNSfqyYMweUlb+/fckLFWKa/6ElRyjzPXmXLM3b
+         D4jy0CnGcaTzQ==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-kbuild@vger.kernel.org
+Cc:     Nick Desaulniers <ndesaulniers@google.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/3] kbuild: add -fno-PIE flag unconditionally
+Date:   Fri, 14 Dec 2018 17:05:37 +0900
+Message-Id: <1544774739-13471-1-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+This flag is documented in the GCC 4.6 manual, and recognized by
+Clang as well. Let's rip off the cc-option switch.
 
-On 2018/12/4 0:01, Rob Herring wrote:
-> On Fri, Nov 16, 2018 at 8:29 PM Chen Yu <chenyu56@huawei.com> wrote:
->>
->> Hi,
->>
->> On 2018/11/13 0:02, Rob Herring wrote:
->>> On Sat, Oct 27, 2018 at 05:58:11PM +0800, Yu Chen wrote:
->>>> This patch adds binding descriptions to support the dwc3 controller
->>>> on HiSilicon SoCs and boards like the HiKey960.
->>>>
->>>> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->>>> Cc: Rob Herring <robh+dt@kernel.org>
->>>> Cc: Mark Rutland <mark.rutland@arm.com>
->>>> Cc: John Stultz <john.stultz@linaro.org>
->>>> Signed-off-by: Yu Chen <chenyu56@huawei.com>
->>>> ---
->>>>  .../devicetree/bindings/usb/dwc3-hisi.txt          | 53 ++++++++++++++++++++++
->>>>  1 file changed, 53 insertions(+)
->>>>  create mode 100644 Documentation/devicetree/bindings/usb/dwc3-hisi.txt
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/usb/dwc3-hisi.txt b/Documentation/devicetree/bindings/usb/dwc3-hisi.txt
->>>> new file mode 100644
->>>> index 000000000000..e715e7b1c324
->>>> --- /dev/null
->>>> +++ b/Documentation/devicetree/bindings/usb/dwc3-hisi.txt
->>>> @@ -0,0 +1,53 @@
->>>> +HiSilicon DWC3 USB SoC controller
->>>> +
->>>> +This file documents the parameters for the dwc3-hisi driver.
->>>> +
->>>> +Required properties:
->>>> +- compatible:       should be "hisilicon,hi3660-dwc3"
->>>> +- clocks:   A list of phandle + clock-specifier pairs for the
->>>> +            clocks listed in clock-names
->>>> +- clock-names:      Specify clock names
->>>> +- resets:   list of phandle and reset specifier pairs.
->>>> +
->>>> +Sub-nodes:
->>>> +The dwc3 core should be added as subnode to HiSilicon DWC3 as shown in the
->>>> +example below. The DT binding details of dwc3 can be found in:
->>>> +Documentation/devicetree/bindings/usb/dwc3.txt
->>>
->>> If you only have clocks and resets and no glue registers, then you
->>> don't need a sub-node. Just make the controller one node.
->>>
->>
->> In dwc3 glue driver，the controller driver usually probed by call of_platform_populate
->> which will search the child node of glue driver.
->> The code of function of_platform_populate is as below:
->>
->>         for_each_child_of_node(root, child) {
->>                  rc = of_platform_bus_create(child, matches, lookup, parent, true);
->>                  if (rc) {
->>                          of_node_put(child);
->>                          break;
->>                  }
->>          }
->>
->> So I think the controller node should be a sub-node.
-> 
-> It was done that way, but has changed. See commit fe8abf332b8f ("usb:
-> dwc3: support clocks and resets for DWC3 core").
-> 
-I have read the commit and there is a question. If I make the controller one node,
-how can the pm suspend of the glue driver be guaranteed to be called after the pm suspend
-of dwc3 controller? And also the order of pm resume.
-There are some reset registers that should be configured before the initialization
-of dwc3 controller on Hi3660 platform.
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-> Rob
-> 
-> .
-> 
+ Makefile | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index f2c3423..3bbc16a 100644
+--- a/Makefile
++++ b/Makefile
+@@ -422,9 +422,9 @@ LINUXINCLUDE    := \
+ 		-I$(objtree)/include \
+ 		$(USERINCLUDE)
+ 
+-KBUILD_AFLAGS   := -D__ASSEMBLY__
++KBUILD_AFLAGS   := -D__ASSEMBLY__ -fno-PIE
+ KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
+-		   -fno-strict-aliasing -fno-common -fshort-wchar \
++		   -fno-strict-aliasing -fno-common -fshort-wchar -fno-PIE \
+ 		   -Werror-implicit-function-declaration \
+ 		   -Wno-format-security \
+ 		   -std=gnu89
+@@ -510,9 +510,6 @@ RETPOLINE_VDSO_CFLAGS := $(call cc-option,$(RETPOLINE_VDSO_CFLAGS_GCC),$(call cc
+ export RETPOLINE_CFLAGS
+ export RETPOLINE_VDSO_CFLAGS
+ 
+-KBUILD_CFLAGS	+= $(call cc-option,-fno-PIE)
+-KBUILD_AFLAGS	+= $(call cc-option,-fno-PIE)
+-
+ # check for 'asm goto'
+ ifeq ($(shell $(CONFIG_SHELL) $(srctree)/scripts/gcc-goto.sh $(CC) $(KBUILD_CFLAGS)), y)
+   CC_HAVE_ASM_GOTO := 1
+-- 
+2.7.4
 
