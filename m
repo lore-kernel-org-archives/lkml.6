@@ -7,54 +7,51 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77526C6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:03:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F019C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:03:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F8F721486
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:03:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 562082147C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:03:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544789025;
-	bh=jxSOx522DCKTv8/x8kr4hXDuk8BubicG0phQE09KSy8=;
+	s=default; t=1544789029;
+	bh=rmTb5UOv47vg4kth5Zv6gCy5saXcBqdhnMZlaBAIuNA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=TD7Iy25q+GFYDNux2F4PFwAM0Zon/8JF6f66MnXmZ60GQsXW/NBoDpXbQRMlvydLc
-	 76SPW5OeRnXatK2XSt1w0hC2S/iawGz1KeT/aLfdpoYdEaVfSVDpwz3SrLVOeS36Rs
-	 3zxkCgIH31SO65UE325EnEVibKgrOnMdac6zriVI=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F8F721486
+	b=2bNmegtwnWkJZ0jR0jKM2p69amgY70dHVuzWhiJ9VnL0mhUFVnb34R1NeiRJzm70o
+	 riGGIC1//GNG+ufAvZ7WUZDF8x3vZxyUC68SMvttjG1dGtIwU7kG4xh2vBDdu8FQZa
+	 cQGFnMOkICVyMGRnb7GU+BKbtJopJr/EykZ99b+o=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 562082147C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730363AbeLNMDo (ORCPT
+        id S1730375AbeLNMDr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:03:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47654 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:03:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47856 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730345AbeLNMDk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:03:40 -0500
+        id S1729821AbeLNMDp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:03:45 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ECBCC2145D;
-        Fri, 14 Dec 2018 12:03:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1A50B2146E;
+        Fri, 14 Dec 2018 12:03:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789019;
-        bh=jxSOx522DCKTv8/x8kr4hXDuk8BubicG0phQE09KSy8=;
+        s=default; t=1544789024;
+        bh=rmTb5UOv47vg4kth5Zv6gCy5saXcBqdhnMZlaBAIuNA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Zf6P6SD1E8zBTtJUes+tDkSDxskSjVVrG2GFRKF6r9lp43sa6DrO4CisXQzMUDFcY
-         agRiwqutJUW99g28lQ+ibGj2BnO42pidTHJ0KO+SmYEvWEg38h37fmvENCgvK8NQOe
-         BuLlA+WhxvKQ4y7PgKesW20pXUO7d+jMGAjZfWdc=
+        b=w3aVwJpUUAbjFNEuxl/6/a6ktyY/akKOczmki/kBNLGyfn3n2sJwU8fmkgGDT4HxJ
+         mW2rXgg4x07dVDNkL77aEBtmqmJs+KoJ0wnQpKEQAb2LHjmIPcqD3r0cZziVdXMFnz
+         6uOFcuvQeoGsMxvVaZ6DBRnak+yZybTHNzZsIxoo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Krister Johansen <kjlx@templeofstupid.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        stable@vger.kernel.org, Keyon Jie <yang.jie@linux.intel.com>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 062/142] perf tools: Restore proper cwd on return from mnt namespace
-Date:   Fri, 14 Dec 2018 12:59:07 +0100
-Message-Id: <20181214115749.533533277@linuxfoundation.org>
+Subject: [PATCH 4.19 064/142] ASoC: acpi: fix: continue searching when machine is ignored
+Date:   Fri, 14 Dec 2018 12:59:09 +0100
+Message-Id: <20181214115749.617884539@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115747.053633987@linuxfoundation.org>
 References: <20181214115747.053633987@linuxfoundation.org>
@@ -73,127 +70,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit b01c1f69c8660eaeab7d365cd570103c5c073a02 ]
+[ Upstream commit a3e620f8422832afd832ad5e20aa97d0c72bada8 ]
 
-When reporting on 'record' server we try to retrieve/use the mnt
-namespace of the profiled tasks. We use following API with cookie to
-hold the return namespace, roughly:
+The machine_quirk may return NULL which means the acpi entries should be
+skipped and search for next matched entry is needed, here add return
+check here and continue for NULL case.
 
-  nsinfo__mountns_enter(struct nsinfo *nsi, struct nscookie *nc)
-    setns(newns, 0);
-  ...
-  new ns related open..
-  ...
-  nsinfo__mountns_exit(struct nscookie *nc)
-    setns(nc->oldns)
-
-Once finished we setns to old namespace, which also sets the current
-working directory (cwd) to "/", trashing the cwd we had.
-
-This is mostly fine, because we use absolute paths almost everywhere,
-but it screws up 'perf diff':
-
-  # perf diff
-  failed to open perf.data: No such file or directory  (try 'perf record' first)
-  ...
-
-Adding the current working directory to be part of the cookie and
-restoring it in the nsinfo__mountns_exit call.
-
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Krister Johansen <kjlx@templeofstupid.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Fixes: 843ff37bb59e ("perf symbols: Find symbols in different mount namespace")
-Link: http://lkml.kernel.org/r/20181101170001.30019-1-jolsa@kernel.org
-[ No need to check for NULL args for free(), use zfree() for struct members ]
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Keyon Jie <yang.jie@linux.intel.com>
+Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/util/namespaces.c | 17 +++++++++++++++--
- tools/perf/util/namespaces.h |  1 +
- 2 files changed, 16 insertions(+), 2 deletions(-)
+ sound/soc/soc-acpi.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/tools/perf/util/namespaces.c b/tools/perf/util/namespaces.c
-index cf8bd123cf73..aed170bd4384 100644
---- a/tools/perf/util/namespaces.c
-+++ b/tools/perf/util/namespaces.c
-@@ -18,6 +18,7 @@
- #include <stdio.h>
- #include <string.h>
- #include <unistd.h>
-+#include <asm/bug.h>
- 
- struct namespaces *namespaces__new(struct namespaces_event *event)
+diff --git a/sound/soc/soc-acpi.c b/sound/soc/soc-acpi.c
+index b8e72b52db30..4fb29f0e561e 100644
+--- a/sound/soc/soc-acpi.c
++++ b/sound/soc/soc-acpi.c
+@@ -10,11 +10,17 @@ struct snd_soc_acpi_mach *
+ snd_soc_acpi_find_machine(struct snd_soc_acpi_mach *machines)
  {
-@@ -186,6 +187,7 @@ void nsinfo__mountns_enter(struct nsinfo *nsi,
- 	char curpath[PATH_MAX];
- 	int oldns = -1;
- 	int newns = -1;
-+	char *oldcwd = NULL;
+ 	struct snd_soc_acpi_mach *mach;
++	struct snd_soc_acpi_mach *mach_alt;
  
- 	if (nc == NULL)
- 		return;
-@@ -199,9 +201,13 @@ void nsinfo__mountns_enter(struct nsinfo *nsi,
- 	if (snprintf(curpath, PATH_MAX, "/proc/self/ns/mnt") >= PATH_MAX)
- 		return;
- 
-+	oldcwd = get_current_dir_name();
-+	if (!oldcwd)
-+		return;
+ 	for (mach = machines; mach->id[0]; mach++) {
+ 		if (acpi_dev_present(mach->id, NULL, -1)) {
+-			if (mach->machine_quirk)
+-				mach = mach->machine_quirk(mach);
++			if (mach->machine_quirk) {
++				mach_alt = mach->machine_quirk(mach);
++				if (!mach_alt)
++					continue; /* not full match, ignore */
++				mach = mach_alt;
++			}
 +
- 	oldns = open(curpath, O_RDONLY);
- 	if (oldns < 0)
--		return;
-+		goto errout;
- 
- 	newns = open(nsi->mntns_path, O_RDONLY);
- 	if (newns < 0)
-@@ -210,11 +216,13 @@ void nsinfo__mountns_enter(struct nsinfo *nsi,
- 	if (setns(newns, CLONE_NEWNS) < 0)
- 		goto errout;
- 
-+	nc->oldcwd = oldcwd;
- 	nc->oldns = oldns;
- 	nc->newns = newns;
- 	return;
- 
- errout:
-+	free(oldcwd);
- 	if (oldns > -1)
- 		close(oldns);
- 	if (newns > -1)
-@@ -223,11 +231,16 @@ void nsinfo__mountns_enter(struct nsinfo *nsi,
- 
- void nsinfo__mountns_exit(struct nscookie *nc)
- {
--	if (nc == NULL || nc->oldns == -1 || nc->newns == -1)
-+	if (nc == NULL || nc->oldns == -1 || nc->newns == -1 || !nc->oldcwd)
- 		return;
- 
- 	setns(nc->oldns, CLONE_NEWNS);
- 
-+	if (nc->oldcwd) {
-+		WARN_ON_ONCE(chdir(nc->oldcwd));
-+		zfree(&nc->oldcwd);
-+	}
-+
- 	if (nc->oldns > -1) {
- 		close(nc->oldns);
- 		nc->oldns = -1;
-diff --git a/tools/perf/util/namespaces.h b/tools/perf/util/namespaces.h
-index cae1a9a39722..d5f46c09ea31 100644
---- a/tools/perf/util/namespaces.h
-+++ b/tools/perf/util/namespaces.h
-@@ -38,6 +38,7 @@ struct nsinfo {
- struct nscookie {
- 	int			oldns;
- 	int			newns;
-+	char			*oldcwd;
- };
- 
- int nsinfo__init(struct nsinfo *nsi);
+ 			return mach;
+ 		}
+ 	}
 -- 
 2.19.1
 
