@@ -4,53 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 349A6C67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:04:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E070C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:04:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EAB2C21486
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:04:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 352D521479
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:04:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544789088;
-	bh=SENmB9h0Z+74h3yqtt43cYmiSwqQ73vTGDIOU1KpemI=;
+	s=default; t=1544789092;
+	bh=6xFWdTDZa2IBj6BdIGUeABL17ykVlZJ45tGFnaCCxaY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=rWWnMv8hWycevibYpDXkkU471oDYBIZD4UWZOqnP5tO/ZfO7LRZrMJvJq/Gkg7EVl
-	 g9rWM5lsvwsEyX1U4tHeV8+elZDRv6GpnkTkXUYuRrBSt0bsswPuIqVCAlDBJTlrIv
-	 HpaPhFzGWjrcsLgo6l0PJIwrA+P6xFw7j4yuXJNg=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAB2C21486
+	b=2bd31b/pykPhHbFpq+QlZLdOGXwML5yDrlixSa1/KkLM1ld3otV/c+CsO6oTIMtLt
+	 8tsafkLAPU6URNgNievzEP+Im0U6zqz3DYPzyPe/Y5l+azRCa+s5YSR2Ach6ybsiFR
+	 G3fnmZxyqzEB6euOe0264cIoUMvoQqUf/pLZQqoQ=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 352D521479
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730567AbeLNMEr (ORCPT
+        id S1730590AbeLNMEu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:04:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49422 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:04:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49504 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730552AbeLNMEl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:04:41 -0500
+        id S1730564AbeLNMEq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:04:46 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E8BFD21479;
-        Fri, 14 Dec 2018 12:04:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3FCE22148E;
+        Fri, 14 Dec 2018 12:04:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789080;
-        bh=SENmB9h0Z+74h3yqtt43cYmiSwqQ73vTGDIOU1KpemI=;
+        s=default; t=1544789085;
+        bh=6xFWdTDZa2IBj6BdIGUeABL17ykVlZJ45tGFnaCCxaY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AQAW5WgghmkfhjCTWpar1YhRFkeZZ9IG9BeUdzqW2DGocIYuGfkR5mVQaWR3IG3IR
-         oVeKPFs/Yi6WgpIgPZ0XvNDPoe3BMJofooapp4S9qoEtOKj9yoLfxccfHka3m9GWJq
-         hMoJZrZoPYJgpdqtZKCzi5+R2oriiMO68WqRE478=
+        b=ZLvUoBA+noTOrW12gjY15Lyklb1ORWp9JqhLncPkMNncvP5HuJjdweFbP2aKcO6jg
+         PAnBwfKXuORTP9DhCCdACOMfa3jGhLJlmo9zDrgESkoQfTnNbwozmW/N+OAM66Y5NP
+         jQg25/CymVLZLpfoxAR7u2R65gwJF2LxHPzaKl2w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Romain Izard <romain.izard.pro@gmail.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        stable@vger.kernel.org, Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 069/142] ARM: dts: at91: sama5d2: use the divided clock for SMC
-Date:   Fri, 14 Dec 2018 12:59:14 +0100
-Message-Id: <20181214115749.818717106@linuxfoundation.org>
+Subject: [PATCH 4.19 088/142] USB: omap_udc: fix USB gadget functionality on Palm Tungsten E
+Date:   Fri, 14 Dec 2018 12:59:33 +0100
+Message-Id: <20181214115750.576065592@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115747.053633987@linuxfoundation.org>
 References: <20181214115747.053633987@linuxfoundation.org>
@@ -69,39 +69,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 4ab7ca092c3c7ac8b16aa28eba723a8868f82f14 ]
+[ Upstream commit 2c2322fbcab8102b8cadc09d66714700a2da42c2 ]
 
-The SAMA5D2 is different from SAMA5D3 and SAMA5D4, as there are two
-different clocks for the peripherals in the SoC. The Static Memory
-controller is connected to the divided master clock.
+On Palm TE nothing happens when you try to use gadget drivers and plug
+the USB cable. Fix by adding the board to the vbus sense quirk list.
 
-Unfortunately, the device tree does not correctly show this and uses the
-master clock directly. This clock is then used by the code for the NAND
-controller to calculate the timings for the controller, and we end up with
-slow NAND Flash access.
-
-Fix the device tree, and the performance of Flash access is improved.
-
-Signed-off-by: Romain Izard <romain.izard.pro@gmail.com>
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Signed-off-by: Aaro Koskinen <aaro.koskinen@iki.fi>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/sama5d2.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/gadget/udc/omap_udc.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/sama5d2.dtsi b/arch/arm/boot/dts/sama5d2.dtsi
-index 61f68e5c48e9..b405992eb601 100644
---- a/arch/arm/boot/dts/sama5d2.dtsi
-+++ b/arch/arm/boot/dts/sama5d2.dtsi
-@@ -308,7 +308,7 @@
- 				  0x1 0x0 0x60000000 0x10000000
- 				  0x2 0x0 0x70000000 0x10000000
- 				  0x3 0x0 0x80000000 0x10000000>;
--			clocks = <&mck>;
-+			clocks = <&h32ck>;
- 			status = "disabled";
- 
- 			nand_controller: nand-controller {
+diff --git a/drivers/usb/gadget/udc/omap_udc.c b/drivers/usb/gadget/udc/omap_udc.c
+index 33250e569af8..9b23e04c8f02 100644
+--- a/drivers/usb/gadget/udc/omap_udc.c
++++ b/drivers/usb/gadget/udc/omap_udc.c
+@@ -2033,6 +2033,7 @@ static inline int machine_without_vbus_sense(void)
+ {
+ 	return machine_is_omap_innovator()
+ 		|| machine_is_omap_osk()
++		|| machine_is_omap_palmte()
+ 		|| machine_is_sx1()
+ 		/* No known omap7xx boards with vbus sense */
+ 		|| cpu_is_omap7xx();
 -- 
 2.19.1
 
