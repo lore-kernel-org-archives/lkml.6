@@ -2,135 +2,99 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEFDFC6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:26:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEB63C6786C
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:26:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4C5620892
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:26:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544790380;
-	bh=AcqPGrwQiEAtNqaMP/p5O6Sgew5sJvT4qyINc9qRQdM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=SnndouJOhCmuifaIZTwbUPiSrRd4oKOUrNnB8GC7eoFg2x+ZQgBbI1eZObcJVJCyV
-	 ek15FSHBLC9h01XQIa5+LidUNs/vq6QrYXQ6gs9OMmkQ7yoeulB0CmFCk7FmAYeQec
-	 P11x2cjxUComxZngFakkDffWFdy/hHebONQAbduY=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4C5620892
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id B6D4C20892
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:26:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="UkQA3jUK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6D4C20892
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731983AbeLNM0T (ORCPT
+        id S1732133AbeLNM0Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:26:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58918 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730665AbeLNML6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:11:58 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 966B221473;
-        Fri, 14 Dec 2018 12:11:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789518;
-        bh=AcqPGrwQiEAtNqaMP/p5O6Sgew5sJvT4qyINc9qRQdM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dVkZLmx+047I/wzXofhSku8zdDA+OAMGKnEnBAtV2H8a8Y+pww5o5mPFMHpGmmow8
-         +qJlxl7IQJDJfIu7G2TSGFvSGpJAagyucNpgeJyL/HAcwgC3RmAHI6dGRjoZIw1Mj3
-         09eTnCg+fiqf1XH90ZKV16u80rN7jqvF1SpMdcBY=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Majd Dibbiny <majd@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 24/51] RDMA/mlx5: Fix fence type for IB_WR_LOCAL_INV WR
-Date:   Fri, 14 Dec 2018 13:00:26 +0100
-Message-Id: <20181214115715.592508868@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.0
-In-Reply-To: <20181214115713.244259772@linuxfoundation.org>
-References: <20181214115713.244259772@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        Fri, 14 Dec 2018 07:26:24 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:41386 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730665AbeLNM0X (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:26:23 -0500
+Received: by mail-wr1-f68.google.com with SMTP id x10so5245136wrs.8
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 04:26:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=uYDmuUCRNFfuHQ8OAF81ypD3ZblmLZsnLEku4glONRQ=;
+        b=UkQA3jUKcfneEMRfR2lFynUyiIcZw4ZuJwlO8RFvMp/v4h/2rrsPb48kT5Tfi9Sn9h
+         44Li6qGlSYrJE9PSnO10QEQ4mgZJZteMnKCE14nokxtcKp5INwVtNJq9Jh2KV6soO9Sz
+         RDyYeqOdaePw8TN19ik44VmMOEdHiQfrvl4lo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=uYDmuUCRNFfuHQ8OAF81ypD3ZblmLZsnLEku4glONRQ=;
+        b=Byn2SLgGelXgFcypvMRaut9VRxT5DobFioW9xPMGzte/zEvjxQdqk93ypTgb5Uymsk
+         LmBpgoY1uXlRGZFvgQEjYwUF2ywSfHepb9qoZa2VAh+P3paltqUyCyz1GIBtmkpXr6SR
+         NurxdQDrVwsHNh1svDyu2vc9cUsVpN1UnFxkjmShl9/h/ax4JYnwBfr4Pe1RBFBCzX3U
+         fQGgZWmnAjQ6DOW+NNOYFwVp377le/HjYCHWm6NXh92CCn2AU1JblnSjXEAX7gz/QP5Z
+         zDGkPdhQbA8W1rMiRQdH0Qk7dgOUvM9z3QPC6LQS3jbQDJzHUGzoRHzSscVlZyDK+soc
+         W85Q==
+X-Gm-Message-State: AA+aEWbsElg/5A58SVX3hV3935koQ5A0yubeJQMapJ5I/CHTEV85mm07
+        hhbz6l11zBi3zV4fQuK1sRB7PA==
+X-Google-Smtp-Source: AFSGD/VUs1nLKy/FFlrIogRpNrUQdEvqLAojNtxljhbYEwkBkU1DUXZgblVFuZPLrHlmHrhwhAheLA==
+X-Received: by 2002:adf:ab51:: with SMTP id r17mr2469654wrc.62.1544790381075;
+        Fri, 14 Dec 2018 04:26:21 -0800 (PST)
+Received: from dell (host109-155-202-221.range109-155.btcentralplus.com. [109.155.202.221])
+        by smtp.gmail.com with ESMTPSA id k19sm6178167wre.5.2018.12.14.04.26.20
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 14 Dec 2018 04:26:20 -0800 (PST)
+Date:   Fri, 14 Dec 2018 12:26:19 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Christian Hohnstaedt <Christian.Hohnstaedt@wago.com>
+Cc:     "J, KEERTHY" <j-keerthy@ti.com>, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org
+Subject: Re: [PATCH] tps65218.c: fix IRQ resource leak in tps65218_probe()
+Message-ID: <20181214122619.GW4497@dell>
+References: <1544090279-26762-1-git-send-email-Christian.Hohnstaedt@wago.com>
+ <20181214122559.GV4497@dell>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181214122559.GV4497@dell>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+On Fri, 14 Dec 2018, Lee Jones wrote:
 
-------------------
+> On Thu, 06 Dec 2018, Christian Hohnstaedt wrote:
+> 
+> > Free allocated IRQ if reading the device ID fails.
+> 
+> The patch is fine.  However, in future please submit patches using the
+> format set (by precedent) by the subsystem.  I will fix the subject
+> for you this time.
+> 
+> To check the format, you can do:
+> 
+>   `git log --oneline -- <subsystem>`
 
-[ Upstream commit 074fca3a18e7e1e0d4d7dcc9d7badc43b90232f4 ]
+Patch applied, by the way.
 
-Currently, for IB_WR_LOCAL_INV WR, when the next fence is None, the
-current fence will be SMALL instead of Normal Fence.
-
-Without this patch krping doesn't work on CX-5 devices and throws
-following error:
-
-The error messages are from CX5 driver are: (from server side)
-[ 710.434014] mlx5_0:dump_cqe:278:(pid 2712): dump error cqe
-[ 710.434016] 00000000 00000000 00000000 00000000
-[ 710.434016] 00000000 00000000 00000000 00000000
-[ 710.434017] 00000000 00000000 00000000 00000000
-[ 710.434018] 00000000 93003204 100000b8 000524d2
-[ 710.434019] krping: cq completion failed with wr_id 0 status 4 opcode 128 vender_err 32
-
-Fixed the logic to set the correct fence type.
-
-Fixes: 6e8484c5cf07 ("RDMA/mlx5: set UMR wqe fence according to HCA cap")
-Signed-off-by: Majd Dibbiny <majd@mellanox.com>
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/infiniband/hw/mlx5/qp.c | 19 ++++++++++---------
- 1 file changed, 10 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/infiniband/hw/mlx5/qp.c b/drivers/infiniband/hw/mlx5/qp.c
-index f8f7a2191b98..f89489b28575 100644
---- a/drivers/infiniband/hw/mlx5/qp.c
-+++ b/drivers/infiniband/hw/mlx5/qp.c
-@@ -3888,17 +3888,18 @@ int mlx5_ib_post_send(struct ib_qp *ibqp, struct ib_send_wr *wr,
- 			goto out;
- 		}
- 
--		if (wr->opcode == IB_WR_LOCAL_INV ||
--		    wr->opcode == IB_WR_REG_MR) {
-+		if (wr->opcode == IB_WR_REG_MR) {
- 			fence = dev->umr_fence;
- 			next_fence = MLX5_FENCE_MODE_INITIATOR_SMALL;
--		} else if (wr->send_flags & IB_SEND_FENCE) {
--			if (qp->next_fence)
--				fence = MLX5_FENCE_MODE_SMALL_AND_FENCE;
--			else
--				fence = MLX5_FENCE_MODE_FENCE;
--		} else {
--			fence = qp->next_fence;
-+		} else  {
-+			if (wr->send_flags & IB_SEND_FENCE) {
-+				if (qp->next_fence)
-+					fence = MLX5_FENCE_MODE_SMALL_AND_FENCE;
-+				else
-+					fence = MLX5_FENCE_MODE_FENCE;
-+			} else {
-+				fence = qp->next_fence;
-+			}
- 		}
- 
- 		switch (ibqp->qp_type) {
 -- 
-2.19.1
-
-
-
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
