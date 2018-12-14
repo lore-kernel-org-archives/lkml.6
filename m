@@ -2,114 +2,135 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74004C65BAE
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 03:00:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B4FEC65BAE
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 03:01:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42DF92080F
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 03:00:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42DF92080F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
+	by mail.kernel.org (Postfix) with ESMTP id CBB852080F
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 03:01:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBB852080F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726652AbeLNDAC (ORCPT
+        id S1726926AbeLNDB1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 22:00:02 -0500
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:47824 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725949AbeLNDAB (ORCPT
+        Thu, 13 Dec 2018 22:01:27 -0500
+Received: from mailgw02.mediatek.com ([1.203.163.81]:34294 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726453AbeLNDB1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 22:00:01 -0500
-X-IronPort-AV: E=Sophos;i="5.56,351,1539619200"; 
-   d="scan'208";a="49739267"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 14 Dec 2018 10:59:43 +0800
-Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
-        by cn.fujitsu.com (Postfix) with ESMTP id A5F4C4B5CD7A;
-        Fri, 14 Dec 2018 10:59:42 +0800 (CST)
-Received: from localhost.localdomain (10.167.225.56) by
- G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Fri, 14 Dec 2018 10:59:42 +0800
-Date:   Fri, 14 Dec 2018 10:59:17 +0800
-From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
-To:     Borislav Petkov <bp@alien8.de>
-CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
-        <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>,
-        <keescook@chromium.org>, <bhe@redhat.com>, <msys.mizuma@gmail.com>,
-        <indou.takao@jp.fujitsu.com>, <caoj.fnst@cn.fujitsu.com>
-Subject: Re: [PATCH v13 1/6] x86/boot: Introduce kstrtoull() to boot
- directory instead of simple_strtoull()
-Message-ID: <20181214025917.GF24409@localhost.localdomain>
-References: <20181212031053.1815-1-fanc.fnst@cn.fujitsu.com>
- <20181212031053.1815-2-fanc.fnst@cn.fujitsu.com>
- <20181213125059.GC25287@zn.tnic>
+        Thu, 13 Dec 2018 22:01:27 -0500
+X-UUID: 668773d20f06480fbc8b31b94cf94e2d-20181214
+X-UUID: 668773d20f06480fbc8b31b94cf94e2d-20181214
+Received: from mtkcas36.mediatek.inc [(172.27.4.250)] by mailgw02.mediatek.com
+        (envelope-from <biao.huang@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 342136261; Fri, 14 Dec 2018 11:01:19 +0800
+Received: from MTKCAS32.mediatek.inc (172.27.4.184) by MTKMBS31DR.mediatek.inc
+ (172.27.6.102) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 14 Dec
+ 2018 11:01:17 +0800
+Received: from [10.17.3.153] (10.17.3.153) by MTKCAS32.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Fri, 14 Dec 2018 11:01:17 +0800
+Message-ID: <1544756477.24219.164.camel@mhfsdcap03>
+Subject: Re: [v7, PATCH 1/2] net:stmmac: dwmac-mediatek: add support for
+ mt2712
+From:   biao huang <biao.huang@mediatek.com>
+To:     Andrew Lunn <andrew@lunn.ch>
+CC:     <davem@davemloft.net>, <robh+dt@kernel.org>,
+        <honghui.zhang@mediatek.com>, <yt.shen@mediatek.com>,
+        <liguo.zhang@mediatek.com>, <mark.rutland@arm.com>,
+        <nelson.chang@mediatek.com>, <matthias.bgg@gmail.com>,
+        <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <joabreu@synopsys.com>
+Date:   Fri, 14 Dec 2018 11:01:17 +0800
+In-Reply-To: <20181213123346.GF1605@lunn.ch>
+References: <1544666173-5121-1-git-send-email-biao.huang@mediatek.com>
+         <1544666173-5121-2-git-send-email-biao.huang@mediatek.com>
+         <20181213123346.GF1605@lunn.ch>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20181213125059.GC25287@zn.tnic>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Originating-IP: [10.167.225.56]
-X-yoursite-MailScanner-ID: A5F4C4B5CD7A.AFA75
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->> +static inline u64 div_u64_rem(u64 dividend, u32 divisor, u32 *remainder)
->> +{
->> +	union {
->> +		u64 v64;
->> +		u32 v32[2];
->> +	} d = { dividend };
->> +	u32 upper;
->> +
->> +	upper = d.v32[1];
->> +	d.v32[1] = 0;
->> +	if (upper >= divisor) {
->> +		d.v32[1] = upper / divisor;
->> +		upper %= divisor;
->> +	}
->> +	asm ("divl %2" : "=a" (d.v32[0]), "=d" (*remainder) :
->> +		"rm" (divisor), "0" (d.v32[0]), "1" (upper));
->> +	return d.v64;
->> +}
->
->Why aren't you using the simple one from include/linux/math64.h ?
+Dear Andrew,
+	Thanks for your comments.
 
-Cant't use div_u64() in math64.h directly, because  that will cause ld error.
+On Thu, 2018-12-13 at 13:33 +0100, Andrew Lunn wrote:
+> Hi Biao
+> 
+> > +	case PHY_INTERFACE_MODE_RGMII:
+> > +		/* the PHY is not responsible for inserting any internal
+> > +		 * delay by itself in PHY_INTERFACE_MODE_RGMII case,
+> > +		 * so Ethernet MAC will insert delays for both transmit
+> > +		 * and receive path here.
+> > +		 */
+> 
+> What if the PCB designed has decided to do a kink in the clock to add
+> the delays? I don't think any of these delays should depend on the PHY
+> interface mode. It is up to the device tree writer to set both the PHY
+> delay and the MAC delay, based on knowledge of the board, including
+> any kicks in the tracks. The driver should then do what it is told.
+> 
+Originally, we recommend equal trace length on PCB, which means that
+RGMII delay by PCB traces is not recommended. so only PHY/MAC delay is
+taken into account in the transmit/receive path.
 
-Even in 64-bit environment, arch/x86/boot/*.o will be built as 32-bit
-binary. In 64-bit binary, the dividend is handled as 64-bit value,
-that's OK, but in 32-bit binary, that's wrong. So it's necessary
-to separate the dividend to upper and lower in 32-bit binary.
-That's why copy the needed div_u64() here.
+as you described above, maybe the equal PCB trace length assumption is
+not reasonable, and we'll only handle MAC delay-ps in our driver based
+on the device tree information no matter which rgmii is selected.
 
-So, when copying kstrtoull(), we should copy div_u64().
-When trying to include lib/kstrtox.c, even if other error in make period
-are solved, we will also meet this error. We should also copy div_u64
-also. And then cover the math64.h in boot/string.c, and hanlde the other
-error and warining who comes together.
+Since David already applied this patch, I'll send another patch to fix
+this issue.
+> > +	if (!of_property_read_u32(plat->np, "mediatek,tx-delay-ps", &tx_delay_ps)) {
+> > +		if (tx_delay_ps < plat->variant->tx_delay_max) {
+> > +			mac_delay->tx_delay = tx_delay_ps;
+> > +		} else {
+> > +			dev_err(plat->dev, "Invalid TX clock delay: %dps\n", tx_delay_ps);
+> > +			return -EINVAL;
+> > +		}
+> > +	}
+> > +
+> > +	if (!of_property_read_u32(plat->np, "mediatek,rx-delay-ps", &rx_delay_ps)) {
+> > +		if (rx_delay_ps < plat->variant->rx_delay_max) {
+> > +			mac_delay->rx_delay = rx_delay_ps;
+> > +		} else {
+> > +			dev_err(plat->dev, "Invalid RX clock delay: %dps\n", rx_delay_ps);
+> > +			return -EINVAL;
+> > +		}
+> > +	}
+> > +
+> > +	mac_delay->tx_inv = of_property_read_bool(plat->np, "mediatek,txc-inverse");
+> > +	mac_delay->rx_inv = of_property_read_bool(plat->np, "mediatek,rxc-inverse");
+> > +	mac_delay->fine_tune = of_property_read_bool(plat->np, "mediatek,fine-tune");
+> 
+> Why is fine tune needed? If the requested delay can be done using fine
+> tune, it should use fine tune. If not, it should use rough tune. The
+> driver can work this out itself.
 
-So just like Baoquan said, it's a good choice to use simple_strtoull()
-for now.
+find tune here represents a more accurate delay circuit than coarse
+tune, and it's a parallel circuit of coarse tune.
+For most delay, both fine and coarse tune can meet the requirement.
+It's up to the user to select which one.
 
-Thanks,
-Chao Fan
+But only one of them can work at the same time, so we need a switch
+flag(fine_tune here) to indicate which one is valid.
+Driver can hardly work out which one is working according to delay-ps.
 
->
->Rest looks ok.
->
->-- 
->Regards/Gruss,
->    Boris.
->
->Good mailing practices for 400: avoid top-posting and trim the reply.
->
->
+Please correct me if any misunderstanding.
+
+> 
+>        Thanks
+> 	Andrew
 
 
