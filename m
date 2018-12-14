@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6473C67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 10:41:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC80AC67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 10:41:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B20B20892
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 10:41:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A0EF20892
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 10:41:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="M63xiEdm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B20B20892
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Wu0NqPPZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A0EF20892
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729677AbeLNKlO (ORCPT
+        id S1729694AbeLNKlS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 05:41:14 -0500
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:36438 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726527AbeLNKlO (ORCPT
+        Fri, 14 Dec 2018 05:41:18 -0500
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:33103 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726683AbeLNKlR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 05:41:14 -0500
-Received: by mail-vs1-f68.google.com with SMTP id v205so3090676vsc.3
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 02:41:13 -0800 (PST)
+        Fri, 14 Dec 2018 05:41:17 -0500
+Received: by mail-ua1-f68.google.com with SMTP id t8so1831165uap.0
+        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 02:41:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=ThwQm9PelqlP9qLVsY5zCNAPR9ah2r4BHisRoLeS7lo=;
-        b=M63xiEdmiNn7Mcx6otub/UIkdS4co1WDfu2S2IdwoUQPJB7ZZEtPlS2Upu4NyUSnvM
-         pkF3Ar98em64JBCFSkwiw0XK9Y3sdWypBrWKcju0vEXIROaAW0JkH+5/xMFDF2n63l5u
-         Fqb1Nk+OZ3YJB7G2nm20E1LhzG6qzJKG7iqtU=
+        bh=WSjgLtKPy+OMFL+3EXCMhq0orR8xszZ9CZmatOoqlDk=;
+        b=Wu0NqPPZcD89x5z02lR1UMOM+Sh03V3QgFMikynskLQ/S9h+FxzgEJtMZmho7XfaaM
+         MFvJSbTEwNiomFV11oPGdJmzWQXYudA4jEYzaKLHuoF2L6gpDRztNMPdcYNkD/ASWWmx
+         v169gPZi1L2oT11q6nsAj8E2ejPNR4lByuLiA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=ThwQm9PelqlP9qLVsY5zCNAPR9ah2r4BHisRoLeS7lo=;
-        b=Q4xpwsQR69mB6R9HW0sw8BLrlg3J2qonuI7mmubmSQBBTwEBah9qZ+9MxI+2o0dHTM
-         1NqXYg4ykTOa+WWlyKxtTf3877TdizKQBM1GUzgJCnaqGmZY1G/ZPelyNa14BAZROFU4
-         sfmO4gZyX2aFzXNpgC+MNWAqaxJuwpVHNUYWKUhU+sEL3GwEPzvb90g5ucg6NB1WAzw8
-         oWGE/1w1mMZYGZvfWKuxBu6+iahlsLewqw/E/YuLmh6QEQ8jamk1H49BYXftoQOXIKFF
-         REnZj9N9nU2h9J8Dy87POLceXn0abcPtnvYafP2zaFKupezLN6HwHe2I3kIw8hOZXNGM
-         Tlmg==
-X-Gm-Message-State: AA+aEWZhJqu/WyYEWelbNn26Sm3kDxq5adCgm9655pSNSoT2gi/kV6Gg
-        Oz1zNWRTSn9r0k1MTIYLgzPkRnAkzQPbGb2J4Av1CQ==
-X-Google-Smtp-Source: AFSGD/VR+lzqYILdQ0l6BJiyZRKecoWDcdBkb3ExPONydpAcFrT3ylYyivQzw09YdaYPJJBeBP3yKmHJkr1FoVnwzRU=
-X-Received: by 2002:a67:b245:: with SMTP id s5mr1046509vsh.200.1544784072578;
- Fri, 14 Dec 2018 02:41:12 -0800 (PST)
+        bh=WSjgLtKPy+OMFL+3EXCMhq0orR8xszZ9CZmatOoqlDk=;
+        b=jMG89hFx56w5AlDlPvGkwd0MBY82W/7H95lbamuyDSr6zzKYuvjBfG3yN+YDoXcPR5
+         yG8ix2C2tp5VYj2CzHfWUoY15L/rX0HhWWuPPnjPfgUHcfmt1DfaXm5l4pXdRTLOhGVB
+         OtRUnKdjkm0vIkrCzvD7F3I9oQOMDgjGlOprWgSkg7w3sqbpYmZyv2bJmarsMbD9GFe9
+         q1JAaG7ScYQyuwQAB0V+zQeNfnUwlBGEN5h54pXicJ7sM9mTgdeY2PosNaKsj821XppB
+         Trph8veuWw0O9hwwVEkmfhIUjCDBxIhnR9eix2zElCrcprf+5xbhBD43qr06HV9yFrZ6
+         UmdQ==
+X-Gm-Message-State: AA+aEWZhsQDM4sFYNEFwchMWR96+Bms1O3mxC9LitRC2yYMfM0HED9Lt
+        lPo35vbWJV2q3R0DPy8xI4k8mm7YZEVi8JoWII0EhQ==
+X-Google-Smtp-Source: AFSGD/Wt13APKw+K1hlgjxX3HQw9cdt2ZvUCRekrQTgD/AyQgEPFGH2lFHO1fsS3/FLXINwTzoILK0318ITsMA6F0ZA=
+X-Received: by 2002:ab0:526:: with SMTP id 35mr1059480uax.25.1544784076617;
+ Fri, 14 Dec 2018 02:41:16 -0800 (PST)
 MIME-Version: 1.0
-References: <cover.1544782279.git.viresh.kumar@linaro.org> <184bbc28f982752cc040f0b9286516c3897e2808.1544782279.git.viresh.kumar@linaro.org>
-In-Reply-To: <184bbc28f982752cc040f0b9286516c3897e2808.1544782279.git.viresh.kumar@linaro.org>
+References: <cover.1544782279.git.viresh.kumar@linaro.org> <135e59ab6353cc086b15ef96e2882aaec08e3322.1544782279.git.viresh.kumar@linaro.org>
+In-Reply-To: <135e59ab6353cc086b15ef96e2882aaec08e3322.1544782279.git.viresh.kumar@linaro.org>
 From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Fri, 14 Dec 2018 11:40:36 +0100
-Message-ID: <CAPDyKFret-vV-jSMYtJD1JFDak6HB+xShn8ps0y337EhycGs5Q@mail.gmail.com>
-Subject: Re: [PATCH V4 2/7] OPP: Improve _find_table_of_opp_np()
+Date:   Fri, 14 Dec 2018 11:40:40 +0100
+Message-ID: <CAPDyKFqW5L_Bmfn6v2ymjeKWZ6jGd9TEvejBQK59r2vBROSviw@mail.gmail.com>
+Subject: Re: [PATCH V4 3/7] OPP: Add dev_pm_opp_xlate_performance_state() helper
 To:     Viresh Kumar <viresh.kumar@linaro.org>
 Cc:     Rafael Wysocki <rjw@rjwysocki.net>,
         Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
@@ -76,8 +76,21 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Fri, 14 Dec 2018 at 11:15, Viresh Kumar <viresh.kumar@linaro.org> wrote:
 >
-> Make _find_table_of_opp_np() more efficient by using of_get_parent() to
-> find the parent OPP table node.
+> dev_pm_genpd_set_performance_state() needs to handle performance state
+> propagation going forward. Currently this routine only gets the required
+> performance state of the device's genpd as an argument, but it doesn't
+> know how to translate that to master genpd(s) of the device's genpd.
+>
+> Introduce a new helper dev_pm_opp_xlate_performance_state() which will
+> be used to translate from performance state of a device (or genpd
+> sub-domain) to another device (or master genpd).
+>
+> Normally the src_table (of genpd sub-domain) will have the
+> "required_opps" property set to point to one of the OPPs in the
+> dst_table (of master genpd), but in some cases the genpd and its master
+> have one to one mapping of performance states and so none of them have
+> the "required-opps" property set. Return the performance state of the
+> src_table as it is in such cases.
 >
 > Tested-by: Rajendra Nayak <rnayak@codeaurora.org>
 > Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
@@ -89,43 +102,109 @@ Uffe
 
 
 > ---
->  drivers/opp/of.c | 14 ++++++++++----
->  1 file changed, 10 insertions(+), 4 deletions(-)
+>  drivers/opp/core.c     | 63 ++++++++++++++++++++++++++++++++++++++++++
+>  include/linux/pm_opp.h |  7 +++++
+>  2 files changed, 70 insertions(+)
 >
-> diff --git a/drivers/opp/of.c b/drivers/opp/of.c
-> index 3ef7f38c0986..8e57d257be77 100644
-> --- a/drivers/opp/of.c
-> +++ b/drivers/opp/of.c
-> @@ -114,19 +114,25 @@ static struct device_node *of_parse_required_opp(struct device_node *np,
->  static struct opp_table *_find_table_of_opp_np(struct device_node *opp_np)
->  {
->         struct opp_table *opp_table;
-> -       struct dev_pm_opp *opp;
-> +       struct device_node *opp_table_np;
->
->         lockdep_assert_held(&opp_table_lock);
->
-> +       opp_table_np = of_get_parent(opp_np);
-> +       if (!opp_table_np)
-> +               goto err;
-> +
-> +       /* It is safe to put the node now as all we need now is its address */
-> +       of_node_put(opp_table_np);
-> +
->         list_for_each_entry(opp_table, &opp_tables, node) {
-> -               opp = _find_opp_of_np(opp_table, opp_np);
-> -               if (opp) {
-> -                       dev_pm_opp_put(opp);
-> +               if (opp_table_np == opp_table->np) {
->                         _get_opp_table_kref(opp_table);
->                         return opp_table;
->                 }
->         }
->
-> +err:
->         return ERR_PTR(-ENODEV);
+> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
+> index 98e60f0ed8b0..e5507add8f04 100644
+> --- a/drivers/opp/core.c
+> +++ b/drivers/opp/core.c
+> @@ -1713,6 +1713,69 @@ void dev_pm_opp_put_genpd_virt_dev(struct opp_table *opp_table,
+>                 dev_err(virt_dev, "Failed to find required device entry\n");
 >  }
 >
+> +/**
+> + * dev_pm_opp_xlate_performance_state() - Find required OPP's pstate for src_table.
+> + * @src_table: OPP table which has dst_table as one of its required OPP table.
+> + * @dst_table: Required OPP table of the src_table.
+> + * @pstate: Current performance state of the src_table.
+> + *
+> + * This Returns pstate of the OPP (present in @dst_table) pointed out by the
+> + * "required-opps" property of the OPP (present in @src_table) which has
+> + * performance state set to @pstate.
+> + *
+> + * Return: Zero or positive performance state on success, otherwise negative
+> + * value on errors.
+> + */
+> +int dev_pm_opp_xlate_performance_state(struct opp_table *src_table,
+> +                                      struct opp_table *dst_table,
+> +                                      unsigned int pstate)
+> +{
+> +       struct dev_pm_opp *opp;
+> +       int dest_pstate = -EINVAL;
+> +       int i;
+> +
+> +       if (!pstate)
+> +               return 0;
+> +
+> +       /*
+> +        * Normally the src_table will have the "required_opps" property set to
+> +        * point to one of the OPPs in the dst_table, but in some cases the
+> +        * genpd and its master have one to one mapping of performance states
+> +        * and so none of them have the "required-opps" property set. Return the
+> +        * pstate of the src_table as it is in such cases.
+> +        */
+> +       if (!src_table->required_opp_count)
+> +               return pstate;
+> +
+> +       for (i = 0; i < src_table->required_opp_count; i++) {
+> +               if (src_table->required_opp_tables[i]->np == dst_table->np)
+> +                       break;
+> +       }
+> +
+> +       if (unlikely(i == src_table->required_opp_count)) {
+> +               pr_err("%s: Couldn't find matching OPP table (%p: %p)\n",
+> +                      __func__, src_table, dst_table);
+> +               return -EINVAL;
+> +       }
+> +
+> +       mutex_lock(&src_table->lock);
+> +
+> +       list_for_each_entry(opp, &src_table->opp_list, node) {
+> +               if (opp->pstate == pstate) {
+> +                       dest_pstate = opp->required_opps[i]->pstate;
+> +                       goto unlock;
+> +               }
+> +       }
+> +
+> +       pr_err("%s: Couldn't find matching OPP (%p: %p)\n", __func__, src_table,
+> +              dst_table);
+> +
+> +unlock:
+> +       mutex_unlock(&src_table->lock);
+> +
+> +       return dest_pstate;
+> +}
+> +
+>  /**
+>   * dev_pm_opp_add()  - Add an OPP table from a table definitions
+>   * @dev:       device for which we do this operation
+> diff --git a/include/linux/pm_opp.h b/include/linux/pm_opp.h
+> index 2b2c3fd985ab..0b04c2093eb9 100644
+> --- a/include/linux/pm_opp.h
+> +++ b/include/linux/pm_opp.h
+> @@ -128,6 +128,7 @@ struct opp_table *dev_pm_opp_register_set_opp_helper(struct device *dev, int (*s
+>  void dev_pm_opp_unregister_set_opp_helper(struct opp_table *opp_table);
+>  struct opp_table *dev_pm_opp_set_genpd_virt_dev(struct device *dev, struct device *virt_dev, int index);
+>  void dev_pm_opp_put_genpd_virt_dev(struct opp_table *opp_table, struct device *virt_dev);
+> +int dev_pm_opp_xlate_performance_state(struct opp_table *src_table, struct opp_table *dst_table, unsigned int pstate);
+>  int dev_pm_opp_set_rate(struct device *dev, unsigned long target_freq);
+>  int dev_pm_opp_set_sharing_cpus(struct device *cpu_dev, const struct cpumask *cpumask);
+>  int dev_pm_opp_get_sharing_cpus(struct device *cpu_dev, struct cpumask *cpumask);
+> @@ -280,6 +281,12 @@ static inline struct opp_table *dev_pm_opp_set_genpd_virt_dev(struct device *dev
+>  }
+>
+>  static inline void dev_pm_opp_put_genpd_virt_dev(struct opp_table *opp_table, struct device *virt_dev) {}
+> +
+> +static inline int dev_pm_opp_xlate_performance_state(struct opp_table *src_table, struct opp_table *dst_table, unsigned int pstate)
+> +{
+> +       return -ENOTSUPP;
+> +}
+> +
+>  static inline int dev_pm_opp_set_rate(struct device *dev, unsigned long target_freq)
+>  {
+>         return -ENOTSUPP;
 > --
 > 2.19.1.568.g152ad8e3369a
 >
