@@ -2,113 +2,121 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88FF9C6786C
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:27:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1539C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:27:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4CCDE20892
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:27:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="S4pG37de"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4CCDE20892
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 65CC820892
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:27:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1544790460;
+	bh=0pgjI2BkBtqotSlXIAUsbtHj5oZgxE2aJUxKuImszho=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=oy5hQZhTdkO7/pZHwxkj+e4p8s5auH0VBQ+fdiEYRbg62BSUjNRJmkrRKWj3MLh4/
+	 eRzsF8Ip8Ex4kl7r3a3heUxzAm/AKphLJ6Vm2CFKrqbbVZ1uWUJzhIPKQXcegU+7Eb
+	 Mn3/ZnueXHwACU4FYbY2Rl2ytZ51ykkVXNn/fpgo=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65CC820892
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732028AbeLNM1Q (ORCPT
+        id S1731757AbeLNMLU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:27:16 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:37585 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731456AbeLNM1N (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:27:13 -0500
-Received: by mail-wr1-f65.google.com with SMTP id s12so4821973wrt.4
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 04:27:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=PtrM3IXtbt8nwfcMS89hHRm88umcDtIpTZMA0MTgIX0=;
-        b=S4pG37dez+eLRCD8auY2EVne10+IPDlwPrpWRNoqXt6AXOspZXactIBop+rWTDk5lC
-         COQih7jRcUOLWdsD08s210pBj14KGPNuidY21bhyH415YD0SdoQyy1DoUgK6uL++w8BX
-         ScBixlHrIzLOXwPTNW66mJu+is/jaj2mJnZ/E=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=PtrM3IXtbt8nwfcMS89hHRm88umcDtIpTZMA0MTgIX0=;
-        b=euRpt7oHOHsK8KdjLEm0s1MCvUAbDIgdmSMZ7Mg2m/3yIMEb5n7NIF1N2t/qNJ/MPa
-         bdMpdLkRPTPIF4PkM0EZHkDYfmNMpzR2ygyDsjb2i9pvWiH7G9YJl6ZdJMR9bJChdUkb
-         YHWv99NgIc41vwKNgGT0/kcZJX1HNGRMFc74V5EfzLdW5gXWZvEtq4NFBB8GSPcbyCJI
-         3dcprpglznU+8nwpZAZlpVzcxjMmXYQWvOKuUphmuiX8tbw7qNzMI6wHSYyJTqPQhssQ
-         E7nuz5Hlzy3leSQyGcSUz9Dm4KX+yzOZ/XYVOqam1XUoExuHZ7mhykAjNmfmU08lYyJt
-         olrg==
-X-Gm-Message-State: AA+aEWbKb/XIrYFAqxZz7FftV1LNt2j04qQ+Fjc1/8+ujxRGUeylCxVD
-        kodCz7OuW0qbCRFyI7qpIi1J0Q==
-X-Google-Smtp-Source: AFSGD/X3Kimwdqw7IAKtmaSZExGZ6EqNrxZat5ZWuHGB/NXcuV8mcGY0fCCpeb3MoCCveV66e/PlAA==
-X-Received: by 2002:adf:eb45:: with SMTP id u5mr2330076wrn.102.1544790431370;
-        Fri, 14 Dec 2018 04:27:11 -0800 (PST)
-Received: from dell (host109-155-202-221.range109-155.btcentralplus.com. [109.155.202.221])
-        by smtp.gmail.com with ESMTPSA id c77sm5339554wmh.12.2018.12.14.04.27.10
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 14 Dec 2018 04:27:10 -0800 (PST)
-Date:   Fri, 14 Dec 2018 12:27:09 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Daniel Thompson <daniel.thompson@linaro.org>
-Cc:     Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jingoo Han <jingoohan1@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org
-Subject: Re: [PATCH] video/backlight: Use of_node_name_eq for node name
- comparisons
-Message-ID: <20181214122709.GX4497@dell>
-References: <20181205195050.4759-28-robh@kernel.org>
- <20181206140221.rq4zp74olghzipxu@holly.lan>
+        Fri, 14 Dec 2018 07:11:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57930 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730628AbeLNMLR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:11:17 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 840402133F;
+        Fri, 14 Dec 2018 12:11:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1544789477;
+        bh=0pgjI2BkBtqotSlXIAUsbtHj5oZgxE2aJUxKuImszho=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=I83DTDBjNSksJv9rTyAOkE6rgzTHvOi7DL8kRR1yUwjnWFr0Mwk8nQfOiF0Q6z52F
+         eXSVS5lwZAf1dHAiEJvahYaUimFejno2wE11NW07Cpkw9YFskhH7IWFjMICVR1rv0J
+         upb4Wzu4TNA1FfSZiyFwu2fk3xrjkAmPbkesNoeg=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
+        Samuel Thibault <samuel.thibault@ens-lyon.org>
+Subject: [PATCH 4.14 86/89] staging: speakup: Replace strncpy with memcpy
+Date:   Fri, 14 Dec 2018 13:00:39 +0100
+Message-Id: <20181214115733.941693560@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.0
+In-Reply-To: <20181214115729.658859279@linuxfoundation.org>
+References: <20181214115729.658859279@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181206140221.rq4zp74olghzipxu@holly.lan>
-User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 06 Dec 2018, Daniel Thompson wrote:
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-> On Wed, Dec 05, 2018 at 01:50:44PM -0600, Rob Herring wrote:
-> > Convert string compares of DT node names to use of_node_name_eq helper
-> > instead. This removes direct access to the node name pointer.
-> > 
-> > For instances using of_node_cmp, this has the side effect of now using
-> > case sensitive comparisons. This should not matter for any FDT based
-> > system which this is.
-> > 
-> > Cc: Lee Jones <lee.jones@linaro.org>
-> > Cc: Daniel Thompson <daniel.thompson@linaro.org>
-> > Cc: Jingoo Han <jingoohan1@gmail.com>
-> > Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> > Cc: dri-devel@lists.freedesktop.org
-> > Cc: linux-fbdev@vger.kernel.org
-> > Signed-off-by: Rob Herring <robh@kernel.org>
-> 
-> Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
-> 
-> [this is FAO Lee J. rather than recommending you take it via you tree]
+------------------
 
-Rob knows better than that. ;)
+From: Guenter Roeck <linux@roeck-us.net>
 
-Applied, thanks.
+commit fd29edc7232bc19f969e8f463138afc5472b3d5f upstream.
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+gcc 8.1.0 generates the following warnings.
+
+drivers/staging/speakup/kobjects.c: In function 'punc_store':
+drivers/staging/speakup/kobjects.c:522:2: warning:
+	'strncpy' output truncated before terminating nul
+	copying as many bytes from a string as its length
+drivers/staging/speakup/kobjects.c:504:6: note: length computed here
+
+drivers/staging/speakup/kobjects.c: In function 'synth_store':
+drivers/staging/speakup/kobjects.c:391:2: warning:
+	'strncpy' output truncated before terminating nul
+	copying as many bytes from a string as its length
+drivers/staging/speakup/kobjects.c:388:8: note: length computed here
+
+Using strncpy() is indeed less than perfect since the length of data to
+be copied has already been determined with strlen(). Replace strncpy()
+with memcpy() to address the warning and optimize the code a little.
+
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Reviewed-by: Samuel Thibault <samuel.thibault@ens-lyon.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ drivers/staging/speakup/kobjects.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+--- a/drivers/staging/speakup/kobjects.c
++++ b/drivers/staging/speakup/kobjects.c
+@@ -387,7 +387,7 @@ static ssize_t synth_store(struct kobjec
+ 	len = strlen(buf);
+ 	if (len < 2 || len > 9)
+ 		return -EINVAL;
+-	strncpy(new_synth_name, buf, len);
++	memcpy(new_synth_name, buf, len);
+ 	if (new_synth_name[len - 1] == '\n')
+ 		len--;
+ 	new_synth_name[len] = '\0';
+@@ -518,7 +518,7 @@ static ssize_t punc_store(struct kobject
+ 		return -EINVAL;
+ 	}
+ 
+-	strncpy(punc_buf, buf, x);
++	memcpy(punc_buf, buf, x);
+ 
+ 	while (x && punc_buf[x - 1] == '\n')
+ 		x--;
+
+
