@@ -7,53 +7,51 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE98EC67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:04:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47CE1C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:04:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C5E82145D
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:04:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F09F2147D
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 12:04:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1544789057;
-	bh=ksuse7HFfmNaurGItV3/+FtAPAUjp3T987tMu0ugo4I=;
+	s=default; t=1544789061;
+	bh=DVrn0PhYuJH23/mv4NOAJ9GaZ+ZBjjCQQjhveMLlqEk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=WM2Oq4zKPd4EYLFsvHb5ZP9nX4Duei46JDng2260wsXtia+Mad3Sezkb0x39BAYul
-	 gqJg4yjqT8iFC/O0GqIaMp6HpAjb7VcX+77dp6hoAcPxVIQEEY/dbXZcgs2wuF3pPb
-	 US09Ul6jRE8lcvMZI3Damnd4NNi+M+vKc/3Zgyy0=
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C5E82145D
+	b=mU/b6KAMMGuRsqthBwKtSaq+7iwyQD+ACjb1apyGlbCdYfOlJHQHMvgQtGngaRZOF
+	 m00hmNHoS0jftXdblPhUGaqtfEOG3qLi6qqsbfJQ7jC0Y/z0IaxZcK9l/WiWZjPKcm
+	 r/Qq20OmuFmukgxqa+xqkv1f/bdfyZTk1GAEj23c=
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F09F2147D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730476AbeLNMEQ (ORCPT
+        id S1730485AbeLNMEU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 07:04:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48846 "EHLO mail.kernel.org"
+        Fri, 14 Dec 2018 07:04:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48946 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730442AbeLNMEN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 07:04:13 -0500
+        id S1730442AbeLNMES (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 07:04:18 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EF3B92147D;
-        Fri, 14 Dec 2018 12:04:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 158D42146E;
+        Fri, 14 Dec 2018 12:04:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1544789052;
-        bh=ksuse7HFfmNaurGItV3/+FtAPAUjp3T987tMu0ugo4I=;
+        s=default; t=1544789057;
+        bh=DVrn0PhYuJH23/mv4NOAJ9GaZ+ZBjjCQQjhveMLlqEk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IjY+5Rd/w7b9TewCm30PwQzg5NoI5LlYSJcrG/VRLZaBcGTsk82QDevfUNf2isyAu
-         RKdSbsN/x22ywy7ITXgfKf4/Rlul1Z66P0Ko7SgZ9G+WN/eo/eHUFy+++g5wdo3qiL
-         41I2LqPdKihFYACAqB9rTxrgK1AcaUMpkQEXN8j4=
+        b=VlV9OIIJrSsSiY3PtUi9aWl1HCr93OqnHmsCXDTTs8s2Cc/CAxLIpAMlnizVO2SGP
+         IDs15ArvsVEjzlWIoSRWeqmevjPfHQtCxYRMZJnt1Tv+qTdlx1wydWi7Ov+bajAIkV
+         8ObNJAT77M7ohrKw1coEolT1/iAOWvLe/GNi5Lb0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Manu Gautam <mgautam@codeaurora.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
+        stable@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Jarkko Nikula <jarkko.nikula@bitmer.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 068/142] phy: qcom-qusb2: Fix HSTX_TRIM tuning with fused value for SDM845
-Date:   Fri, 14 Dec 2018 12:59:13 +0100
-Message-Id: <20181214115749.775097168@linuxfoundation.org>
+Subject: [PATCH 4.19 078/142] ASoC: omap-mcpdm: Add pm_qos handling to avoid under/overruns with CPU_IDLE
+Date:   Fri, 14 Dec 2018 12:59:23 +0100
+Message-Id: <20181214115750.185300545@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20181214115747.053633987@linuxfoundation.org>
 References: <20181214115747.053633987@linuxfoundation.org>
@@ -72,35 +70,124 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit c88520db18ba0b9a41326c3b8680e7c09eb4c381 ]
+[ Upstream commit 373a500e34aea97971c9d71e45edad458d3da98f ]
 
-Tune1 register on sdm845 is used to update HSTX_TRIM with fused
-setting. Enable same by specifying update_tune1_with_efuse flag
-for sdm845, otherwise driver ends up programming tune2 register.
+We need to block sleep states which would require longer time to leave than
+the time the DMA must react to the DMA request in order to keep the FIFO
+serviced without under of overrun.
 
-Fixes: ef17f6e212ca ("phy: qcom-qusb2: Add QUSB2 PHYs support for sdm845")
-Signed-off-by: Manu Gautam <mgautam@codeaurora.org>
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
-Acked-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Acked-by: Jarkko Nikula <jarkko.nikula@bitmer.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/phy/qualcomm/phy-qcom-qusb2.c | 1 +
- 1 file changed, 1 insertion(+)
+ sound/soc/omap/omap-mcpdm.c | 43 ++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 42 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/phy/qualcomm/phy-qcom-qusb2.c b/drivers/phy/qualcomm/phy-qcom-qusb2.c
-index 9d6c88064158..69c92843eb3b 100644
---- a/drivers/phy/qualcomm/phy-qcom-qusb2.c
-+++ b/drivers/phy/qualcomm/phy-qcom-qusb2.c
-@@ -231,6 +231,7 @@ static const struct qusb2_phy_cfg sdm845_phy_cfg = {
- 	.mask_core_ready = CORE_READY_STATUS,
- 	.has_pll_override = true,
- 	.autoresume_en	  = BIT(0),
-+	.update_tune1_with_efuse = true,
- };
+diff --git a/sound/soc/omap/omap-mcpdm.c b/sound/soc/omap/omap-mcpdm.c
+index 4c1be36c2207..7d5bdc5a2890 100644
+--- a/sound/soc/omap/omap-mcpdm.c
++++ b/sound/soc/omap/omap-mcpdm.c
+@@ -54,6 +54,8 @@ struct omap_mcpdm {
+ 	unsigned long phys_base;
+ 	void __iomem *io_base;
+ 	int irq;
++	struct pm_qos_request pm_qos_req;
++	int latency[2];
  
- static const char * const qusb2_phy_vreg_names[] = {
+ 	struct mutex mutex;
+ 
+@@ -277,6 +279,9 @@ static void omap_mcpdm_dai_shutdown(struct snd_pcm_substream *substream,
+ 				  struct snd_soc_dai *dai)
+ {
+ 	struct omap_mcpdm *mcpdm = snd_soc_dai_get_drvdata(dai);
++	int tx = (substream->stream == SNDRV_PCM_STREAM_PLAYBACK);
++	int stream1 = tx ? SNDRV_PCM_STREAM_PLAYBACK : SNDRV_PCM_STREAM_CAPTURE;
++	int stream2 = tx ? SNDRV_PCM_STREAM_CAPTURE : SNDRV_PCM_STREAM_PLAYBACK;
+ 
+ 	mutex_lock(&mcpdm->mutex);
+ 
+@@ -289,6 +294,14 @@ static void omap_mcpdm_dai_shutdown(struct snd_pcm_substream *substream,
+ 		}
+ 	}
+ 
++	if (mcpdm->latency[stream2])
++		pm_qos_update_request(&mcpdm->pm_qos_req,
++				      mcpdm->latency[stream2]);
++	else if (mcpdm->latency[stream1])
++		pm_qos_remove_request(&mcpdm->pm_qos_req);
++
++	mcpdm->latency[stream1] = 0;
++
+ 	mutex_unlock(&mcpdm->mutex);
+ }
+ 
+@@ -300,7 +313,7 @@ static int omap_mcpdm_dai_hw_params(struct snd_pcm_substream *substream,
+ 	int stream = substream->stream;
+ 	struct snd_dmaengine_dai_dma_data *dma_data;
+ 	u32 threshold;
+-	int channels;
++	int channels, latency;
+ 	int link_mask = 0;
+ 
+ 	channels = params_channels(params);
+@@ -344,14 +357,25 @@ static int omap_mcpdm_dai_hw_params(struct snd_pcm_substream *substream,
+ 
+ 		dma_data->maxburst =
+ 				(MCPDM_DN_THRES_MAX - threshold) * channels;
++		latency = threshold;
+ 	} else {
+ 		/* If playback is not running assume a stereo stream to come */
+ 		if (!mcpdm->config[!stream].link_mask)
+ 			mcpdm->config[!stream].link_mask = (0x3 << 3);
+ 
+ 		dma_data->maxburst = threshold * channels;
++		latency = (MCPDM_DN_THRES_MAX - threshold);
+ 	}
+ 
++	/*
++	 * The DMA must act to a DMA request within latency time (usec) to avoid
++	 * under/overflow
++	 */
++	mcpdm->latency[stream] = latency * USEC_PER_SEC / params_rate(params);
++
++	if (!mcpdm->latency[stream])
++		mcpdm->latency[stream] = 10;
++
+ 	/* Check if we need to restart McPDM with this stream */
+ 	if (mcpdm->config[stream].link_mask &&
+ 	    mcpdm->config[stream].link_mask != link_mask)
+@@ -366,6 +390,20 @@ static int omap_mcpdm_prepare(struct snd_pcm_substream *substream,
+ 				  struct snd_soc_dai *dai)
+ {
+ 	struct omap_mcpdm *mcpdm = snd_soc_dai_get_drvdata(dai);
++	struct pm_qos_request *pm_qos_req = &mcpdm->pm_qos_req;
++	int tx = (substream->stream == SNDRV_PCM_STREAM_PLAYBACK);
++	int stream1 = tx ? SNDRV_PCM_STREAM_PLAYBACK : SNDRV_PCM_STREAM_CAPTURE;
++	int stream2 = tx ? SNDRV_PCM_STREAM_CAPTURE : SNDRV_PCM_STREAM_PLAYBACK;
++	int latency = mcpdm->latency[stream2];
++
++	/* Prevent omap hardware from hitting off between FIFO fills */
++	if (!latency || mcpdm->latency[stream1] < latency)
++		latency = mcpdm->latency[stream1];
++
++	if (pm_qos_request_active(pm_qos_req))
++		pm_qos_update_request(pm_qos_req, latency);
++	else if (latency)
++		pm_qos_add_request(pm_qos_req, PM_QOS_CPU_DMA_LATENCY, latency);
+ 
+ 	if (!omap_mcpdm_active(mcpdm)) {
+ 		omap_mcpdm_start(mcpdm);
+@@ -427,6 +465,9 @@ static int omap_mcpdm_remove(struct snd_soc_dai *dai)
+ 	free_irq(mcpdm->irq, (void *)mcpdm);
+ 	pm_runtime_disable(mcpdm->dev);
+ 
++	if (pm_qos_request_active(&mcpdm->pm_qos_req))
++		pm_qos_remove_request(&mcpdm->pm_qos_req);
++
+ 	return 0;
+ }
+ 
 -- 
 2.19.1
 
