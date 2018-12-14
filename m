@@ -2,144 +2,230 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B24EEC67839
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 13:42:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17CD5C67839
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 13:44:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7919720656
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 13:42:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mUf/WW1H"
+	by mail.kernel.org (Postfix) with ESMTP id DCD4C20656
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 13:44:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729941AbeLNNmq (ORCPT
+        id S1729965AbeLNNoj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 14 Dec 2018 08:42:46 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:43367 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726554AbeLNNmp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 14 Dec 2018 08:42:45 -0500
-Received: by mail-io1-f65.google.com with SMTP id l3so4431163ioc.10
-        for <linux-kernel@vger.kernel.org>; Fri, 14 Dec 2018 05:42:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=HeoRAsyJlAWB5XR7Fa733uM2jLsUydPaembR30fp2/I=;
-        b=mUf/WW1HD+b9R+yNC30X7bwJSkdKcRgvUJEw0TrxQVBwKgqAfnr873OucxOLOC8QhK
-         komBw0HBvdyGrQDqGYmP51QED2p41GXIfVt5ItzoYBaeuZCCVRoueWyqzQOSEvT5ZB02
-         0FssmiNQSoX4F1UloFYfNOTUtR2iLuA+aJ5a3aXIYUKpDflxNH72MP0j+jZHyJ6xrvnR
-         6AROLEp1q2yqBnFoS/gpJh2yppIW2D8idbqnWrv7DInrIItpY4n3jt3sl8b0hJrIKd2u
-         i7fyCtq2qVDfpmqdGA10Y1oBWUZSjF2qFNLRZH90kctsZ8R2zO0hyERohZaoA+QkrIrl
-         fPhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=HeoRAsyJlAWB5XR7Fa733uM2jLsUydPaembR30fp2/I=;
-        b=Vmz25asRZZH3Pv/uD3nPW78ae5QpYLTEbD1htjAh0xH89ESTnBtsQGyc8XFwzPF9xn
-         XG3JsDszeYF35ftmqptL/94imR0//8V8X28LyREW8jbcdzx1QBgI9FzlzCDjXjJjRhGw
-         Rhm/g12exFpoTyF7ybNGmoOeQdRh5sofS4G5ewX/hcVb86ZfwIJIn/WL/q2rG7dNZogx
-         Qov7tNwIGQepl50DVOLLIWBGUtwD7glKZIL4hCAPixOmCXvHPPw2hB1r0SPLgJsS8iVd
-         uEBsYmN4K4tquJX50Aum6jztnUHpqtoV/Z/7V1WoUXv0z+yhCY+7rB31NoZIDeZqqFXh
-         NJIg==
-X-Gm-Message-State: AA+aEWbsLM31My6GQlk2E+gBLLZJfr784UmG0MwQB9OJfpFLXT4TWz29
-        YcePhcM9HZgDar5a2UMVNkxfQUmGiear5BpJQm4ghw==
-X-Google-Smtp-Source: AFSGD/VSibuWIOnZQTX9nt2AFKF4kL41xYMXPyYzRlkavoPlSwkDjUkPuy+FE8pApVokkMnwlHVOLoy52wMJwoDFRL8=
-X-Received: by 2002:a6b:fa0e:: with SMTP id p14mr2266905ioh.271.1544794964727;
- Fri, 14 Dec 2018 05:42:44 -0800 (PST)
+        Fri, 14 Dec 2018 08:44:39 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:20360 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726554AbeLNNoj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 14 Dec 2018 08:44:39 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C47AB3164698;
+        Fri, 14 Dec 2018 13:44:38 +0000 (UTC)
+Received: from localhost (unknown [10.36.118.25])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 41994600C1;
+        Fri, 14 Dec 2018 13:44:35 +0000 (UTC)
+Date:   Fri, 14 Dec 2018 13:44:34 +0000
+From:   Stefan Hajnoczi <stefanha@redhat.com>
+To:     Cornelia Huck <cohuck@redhat.com>
+Cc:     David Hildenbrand <david@redhat.com>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        Vivek Goyal <vgoyal@redhat.com>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        miklos@szeredi.hu, sweil@redhat.com, swhiteho@redhat.com
+Subject: Re: [PATCH 18/52] virtio-fs: Map cache using the values from the
+ capabilities
+Message-ID: <20181214134434.GA3882@stefanha-x1.localdomain>
+References: <20181210171318.16998-1-vgoyal@redhat.com>
+ <20181210171318.16998-19-vgoyal@redhat.com>
+ <de46a955-813b-355d-49f2-4d866603a8fa@redhat.com>
+ <20181213091320.GA2313@work-vm>
+ <d8c093db-9dda-1342-41c2-d08083cc150b@redhat.com>
+ <20181213100058.GC2313@work-vm>
+ <96d9ea85-ddf3-3331-77ce-124475b26da4@redhat.com>
+ <20181213121548.GN2313@work-vm>
+ <0f1b43f6-57e3-c6d2-7ffe-cf783e125a7b@redhat.com>
+ <20181213133823.2272736b.cohuck@redhat.com>
 MIME-Version: 1.0
-References: <0000000000004ea80b057cfae21e@google.com> <CACT4Y+Z+AhQxf6=ecOkX1bOU5h7kMHYnR6CAhBv9eO5jQVeG3g@mail.gmail.com>
- <20181214132836.GE5343@dhcp22.suse.cz>
-In-Reply-To: <20181214132836.GE5343@dhcp22.suse.cz>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Fri, 14 Dec 2018 14:42:33 +0100
-Message-ID: <CACT4Y+aXFXnObgC-7NVe87-1bbqs2oNBBXe2mrfshLKnFqkTGA@mail.gmail.com>
-Subject: Re: general protection fault in watchdog
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     syzbot <syzbot+7713f3aa67be76b1552c@syzkaller.appspotmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        rafael.j.wysocki@intel.com,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        vkuznets@redhat.com, Linux-MM <linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="6c2NcOVqGQ03X4Wi"
+Content-Disposition: inline
+In-Reply-To: <20181213133823.2272736b.cohuck@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Fri, 14 Dec 2018 13:44:38 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 14, 2018 at 2:28 PM Michal Hocko <mhocko@kernel.org> wrote:
->
-> On Fri 14-12-18 14:11:05, Dmitry Vyukov wrote:
-> > On Fri, Dec 14, 2018 at 1:51 PM syzbot
-> > <syzbot+7713f3aa67be76b1552c@syzkaller.appspotmail.com> wrote:
-> > >
-> > > Hello,
-> > >
-> > > syzbot found the following crash on:
-> > >
-> > > HEAD commit:    f5d582777bcb Merge branch 'for-linus' of git://git.kernel...
-> > > git tree:       upstream
-> > > console output: https://syzkaller.appspot.com/x/log.txt?x=16aca143400000
-> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=c8970c89a0efbb23
-> > > dashboard link: https://syzkaller.appspot.com/bug?extid=7713f3aa67be76b1552c
-> > > compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1131381b400000
-> > > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13bae593400000
-> > >
-> > > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> > > Reported-by: syzbot+7713f3aa67be76b1552c@syzkaller.appspotmail.com
-> >
-> > +linux-mm for memcg question
-> >
-> > What the repro does is effectively just
-> > setsockopt(EBT_SO_SET_ENTRIES). This eats all machine memory and
-> > causes OOMs. Somehow it also caused the GPF in watchdog when it
-> > iterates over task list, perhaps some scheduler code leaves a dangling
-> > pointer on OOM failures.
-> >
-> > But what bothers me is a different thing. syzkaller test processes are
-> > sandboxed with a restrictive memcg which should prevent them from
-> > eating all memory. do_replace_finish calls vmalloc, which uses
-> > GFP_KERNEL, which does not include GFP_ACCOUNT (GFP_KERNEL_ACCOUNT
-> > does). And page alloc seems to change memory against memcg iff
-> > GFP_ACCOUNT is provided.
-> > Am I missing something or vmalloc is indeed not accounted (DoS)? I see
-> > some explicit uses of GFP_KERNEL_ACCOUNT, e.g. the one below, but they
-> > seem to be very sparse.
-> >
-> > static void *seq_buf_alloc(unsigned long size)
-> > {
-> >      return kvmalloc(size, GFP_KERNEL_ACCOUNT);
-> > }
-> >
-> > Now looking at the code I also don't see how kmalloc(GFP_KERNEL) is
-> > accounted... Which makes me think I am still missing something.
->
-> You are not missing anything. We do not account all allocations and you
-> have to explicitly opt-in by __GFP_ACCOUNT. This is a deliberate
-> decision. If the allocation is directly controlable by an untrusted user
-> and the memory is associated with a process life time then this looks
-> like a good usecase for __GFP_ACCOUNT. If an allocation outlives a
-> process then there the flag should be considered with a great care
-> because oom killer is not able to resolve the memcg pressure and so the
-> limit enforcement is not effective.
 
-Interesting.
-I understand that namespaces, memcg's and processes (maybe even
-threads) can have arbitrary overlapping. But I naively thought that in
-canonical hierarchical cases it should all somehow work.
-Question 1: is there some other, stricter sandboxing mechanism? We try
-to sandbox syzkaller processes with everything available , because
-these OOMs usually leads either to dead machines or hang/stall false
-positives, which are nasty.
-Question 2: this is a simple DoS vector, right? If I put a container
-into a 1MB memcg, it can still eat arbitrary amount of non-pagable
-kernel memory?
+--6c2NcOVqGQ03X4Wi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Dec 13, 2018 at 01:38:23PM +0100, Cornelia Huck wrote:
+> On Thu, 13 Dec 2018 13:24:31 +0100
+> David Hildenbrand <david@redhat.com> wrote:
+>=20
+> > On 13.12.18 13:15, Dr. David Alan Gilbert wrote:
+> > > * David Hildenbrand (david@redhat.com) wrote: =20
+> > >> On 13.12.18 11:00, Dr. David Alan Gilbert wrote: =20
+> > >>> * David Hildenbrand (david@redhat.com) wrote: =20
+> > >>>> On 13.12.18 10:13, Dr. David Alan Gilbert wrote: =20
+> > >>>>> * David Hildenbrand (david@redhat.com) wrote: =20
+> > >>>>>> On 10.12.18 18:12, Vivek Goyal wrote: =20
+> > >>>>>>> Instead of assuming we had the fixed bar for the cache, use the
+> > >>>>>>> value from the capabilities.
+> > >>>>>>>
+> > >>>>>>> Signed-off-by: Dr. David Alan Gilbert <dgilbert@redhat.com>
+> > >>>>>>> ---
+> > >>>>>>>  fs/fuse/virtio_fs.c | 32 +++++++++++++++++---------------
+> > >>>>>>>  1 file changed, 17 insertions(+), 15 deletions(-)
+> > >>>>>>>
+> > >>>>>>> diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
+> > >>>>>>> index 60d496c16841..55bac1465536 100644
+> > >>>>>>> --- a/fs/fuse/virtio_fs.c
+> > >>>>>>> +++ b/fs/fuse/virtio_fs.c
+> > >>>>>>> @@ -14,11 +14,6 @@
+> > >>>>>>>  #include <uapi/linux/virtio_pci.h>
+> > >>>>>>>  #include "fuse_i.h"
+> > >>>>>>> =20
+> > >>>>>>> -enum {
+> > >>>>>>> -	/* PCI BAR number of the virtio-fs DAX window */
+> > >>>>>>> -	VIRTIO_FS_WINDOW_BAR =3D 2,
+> > >>>>>>> -};
+> > >>>>>>> -
+> > >>>>>>>  /* List of virtio-fs device instances and a lock for the list =
+*/
+> > >>>>>>>  static DEFINE_MUTEX(virtio_fs_mutex);
+> > >>>>>>>  static LIST_HEAD(virtio_fs_instances);
+> > >>>>>>> @@ -518,7 +513,7 @@ static int virtio_fs_setup_dax(struct virti=
+o_device *vdev, struct virtio_fs *fs)
+> > >>>>>>>  	struct dev_pagemap *pgmap;
+> > >>>>>>>  	struct pci_dev *pci_dev;
+> > >>>>>>>  	phys_addr_t phys_addr;
+> > >>>>>>> -	size_t len;
+> > >>>>>>> +	size_t bar_len;
+> > >>>>>>>  	int ret;
+> > >>>>>>>  	u8 have_cache, cache_bar;
+> > >>>>>>>  	u64 cache_offset, cache_len;
+> > >>>>>>> @@ -551,17 +546,13 @@ static int virtio_fs_setup_dax(struct vir=
+tio_device *vdev, struct virtio_fs *fs)
+> > >>>>>>>          }
+> > >>>>>>> =20
+> > >>>>>>>  	/* TODO handle case where device doesn't expose BAR? */ =20
+> > >>>>>>
+> > >>>>>> For virtio-pmem we decided to not go via BARs as this would effe=
+ctively
+> > >>>>>> make it only usable for virtio-pci implementers. Instead, we are=
+ going
+> > >>>>>> to export the applicable physical device region directly (e.g.
+> > >>>>>> phys_start, phys_size in virtio config), so it is decoupled from=
+ PCI
+> > >>>>>> details. Doing the same for virtio-fs would allow e.g. also virt=
+io-ccw
+> > >>>>>> to make eventually use of this. =20
+> > >>>>>
+> > >>>>> That makes it a very odd looking PCI device;  I can see that with
+> > >>>>> virtio-pmem it makes some sense, given that it's job is to expose
+> > >>>>> arbitrary chunks of memory.
+> > >>>>>
+> > >>>>> Dave =20
+> > >>>>
+> > >>>> Well, the fact that your are
+> > >>>>
+> > >>>> - including <uapi/linux/virtio_pci.h>
+> > >>>> - adding pci related code
+> > >>>>
+> > >>>> in/to fs/fuse/virtio_fs.c
+> > >>>>
+> > >>>> tells me that these properties might be better communicated on the
+> > >>>> virtio layer, not on the PCI layer.
+> > >>>>
+> > >>>> Or do you really want to glue virtio-fs to virtio-pci for all eter=
+nity? =20
+> > >>>
+> > >>> No, these need cleaning up; and the split within the bar
+> > >>> is probably going to change to be communicated via virtio layer
+> > >>> rather than pci capabilities.  However, I don't want to make our PCI
+> > >>> device look odd, just to make portability to non-PCI devices - so i=
+t's
+> > >>> right to make the split appropriately, but still to use PCI bars
+> > >>> for what they were designed for.
+> > >>>
+> > >>> Dave =20
+> > >>
+> > >> Let's discuss after the cleanup. In general I am not convinced this =
+is
+> > >> the right thing to do. Using virtio-pci for anything else than pure
+> > >> transport smells like bad design to me (well, I am no virtio expert
+> > >> after all ;) ). No matter what PCI bars were designed for. If we can=
+'t
+> > >> get the same running with e.g. virtio-ccw or virtio-whatever, it is
+> > >> broken by design (or an addon that is tightly glued to virtio-pci, if
+> > >> that is the general idea). =20
+> > >=20
+> > > I'm sure we can find alternatives for virtio-*, so I wouldn't expect
+> > > it to be glued to virtio-pci.
+> > >=20
+> > > Dave =20
+> >=20
+> > As s390x does not have the concept of memory mapped io (RAM is RAM,
+> > nothing else), this is not architectured. vitio-ccw can therefore not
+> > define anything similar like that. However, in virtual environments we
+> > can do whatever we want on top of the pure transport (e.g. on the virtio
+> > layer).
+> >=20
+> > Conny can correct me if I am wrong.
+>=20
+> I don't think you're wrong, but I haven't read the code yet and I'm
+> therefore not aware of the purpose of this BAR.
+>=20
+> Generally, if there is a memory location shared between host and guest,
+> we need a way to communicate its location, which will likely differ
+> between transports. For ccw, I could imagine a new channel command
+> dedicated to exchanging configuration information (similar to what
+> exists today to communicate the locations of virtqueues), but I'd
+> rather not go down this path.
+>=20
+> Without reading the code/design further, can we use one of the
+> following instead of a BAR:
+> - a virtqueue;
+> - something in config space?
+> That would be implementable by any virtio transport.
+
+The way I think about this is that we wish to extend the VIRTIO device
+model with the concept of shared memory.  virtio-fs, virtio-gpu, and
+virtio-vhost-user all have requirements for shared memory.
+
+This seems like a transport-level issue to me.  PCI supports
+memory-mapped I/O and that's the right place to do it.  If you try to
+put it into config space or the virtqueue, you'll end up with something
+that cannot be realized as a PCI device because it bypasses PCI bus
+address translation.
+
+If CCW needs a side-channel, that's fine.  But that side-channel is a
+CCW-specific mechanism and probably doesn't apply to all other
+transports.
+
+Stefan
+
+--6c2NcOVqGQ03X4Wi
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEcBAEBAgAGBQJcE7PCAAoJEJykq7OBq3PIMFYH/jeBc51Y0ll9T3VpqOnw+s8c
+rZm12EZkXgO4iQ+sVx/SizVXB6WaBsHiHmmH9HjwRCjVtToToTgr9D/nlp3txiiD
+TRaB5GkSVn0Tcj7CaR2JNOfyavyp2+w8eNJjPciYOhInZNBacYJGZHVRLL7kME3s
+OjItin/kK6VvN3sZ/T4+R4QFXxBUaYkFik5kcy1BpsTEvipDYBp2rg8M757CNfvt
+60bMNUyZbbwsz0GVeKTcm1y5iBsd86jIns83isPiFrQhqJLWDnAONrdmjJfQ+yQf
+StY0Z/obE7fxdX1Lf4Bj16wNoeS+0SSDZRipYTsZahVdKH+vETiDwyRVjAdXG+M=
+=OFja
+-----END PGP SIGNATURE-----
+
+--6c2NcOVqGQ03X4Wi--
