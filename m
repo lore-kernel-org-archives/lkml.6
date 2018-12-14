@@ -2,214 +2,238 @@ Return-Path: <SRS0=kF4g=OX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,T_MIXED_ES,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 384E4C65BAE
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 01:51:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7806C65BAE
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 01:54:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D696C2133F
-	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 01:51:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C2C820870
+	for <linux-kernel@archiver.kernel.org>; Fri, 14 Dec 2018 01:54:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="VUiNKLDt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D696C2133F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vVDIxD7/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C2C820870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728880AbeLNBvv (ORCPT
+        id S1728976AbeLNBy3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 13 Dec 2018 20:51:51 -0500
-Received: from ozlabs.org ([203.11.71.1]:39685 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728130AbeLNBvv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 13 Dec 2018 20:51:51 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43GD754TGbz9sBZ;
-        Fri, 14 Dec 2018 12:51:43 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1544752307;
-        bh=Ls236OSyXvNxmnsC2bBx2LjZqg43VKdCynJwFy7fPsg=;
-        h=Date:From:To:Cc:Subject:From;
-        b=VUiNKLDtAK5Zjd7bB2g/5FBURbxIUkK0eiptw7XiQwvEghgruF7qkcYdFAS8h/qdw
-         sinq7Mf0sYeWE1dDfSL0aLcWVKeIYnLxQapNO8pYEnte0ywKGrvIsWK0/S+djLSSxV
-         kSjEVxf2TvFDGfezj6wdIsAqS4V3WQw3GqQNz4Y2T8HeVgy1SQJzuSX1hyc+ulmUq2
-         LVD4GaR39L4dZfQuAn8rOWmEHMIRV3tbbQ5yXmB0/tx4xfdkUUyUUJS2m0ZLQF6L9G
-         FMeMA30iVQBxw//+nkpYF1pbRwL/XqM54H8GqcfykvugDo01O1mjL4Aqgzu4UKyvpq
-         hfTyfl/wu7JSg==
-Date:   Fri, 14 Dec 2018 12:51:43 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Dave Airlie <airlied@linux.ie>,
-        DRI <dri-devel@lists.freedesktop.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        Christian =?UTF-8?B?S8O2bmln?= <christian.koenig@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>
-Subject: linux-next: manual merge of the drm tree with the drm-fixes tree
-Message-ID: <20181214125143.3ecb367b@canb.auug.org.au>
+        Thu, 13 Dec 2018 20:54:29 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:33345 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728130AbeLNBy2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 13 Dec 2018 20:54:28 -0500
+Received: by mail-qt1-f195.google.com with SMTP id l11so4643023qtp.0
+        for <linux-kernel@vger.kernel.org>; Thu, 13 Dec 2018 17:54:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=vnphnwUMUM1c95PKYPagzYatlIXheXfw5CaBG5Ksa8U=;
+        b=vVDIxD7/tm2vyI/hM5YxhdTSPI1Zm42tnM3yPEGy1Kij4jAewhXPWUa1yueKugtByx
+         IrFWD42HC1kgRFAYZVayn+Moqv058patgSnC/TP+YOpBSb6nujQ0/8bVAmlF0P7LkNrs
+         ESc+jiM/1Oqy7PpeaN1vsflhxMDm9LR37oYBSuBsdnJJPV9zvlwwadQVXU4F68Mb/PIf
+         mjftBGZSFwV8bz2my3RPalHniQtF4dNedFjZr/FwvQYZ9/RWo/ACgd9IcZuKFfQFoJ40
+         5HSJqEdVqy/uhH+q+4CwuJ66VU9g9oYuB8Elr3w76D3VtkZdfLue2rPxHUqDd1fFMrIR
+         zODA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=vnphnwUMUM1c95PKYPagzYatlIXheXfw5CaBG5Ksa8U=;
+        b=CF/1sOEy/kLU0guy6QUm6nlcGoNfaFS51yY7cSP+uZqcF9ni9LTOUzHEafoB4G2dLN
+         VDQixNJo5gGsvntLMoo7yCdTyjftotCG5JX47gRMQKDLhNBNFhO+l12NA9XnHmkdESXH
+         Vn8qTNkpeN+pkhjDK/y/vM4HlVaVnTvsuRua99gPFRx2/ujZWdG/35nrgDqFDBAtES91
+         Z+FlBuU8Qrxeb9gF2kw6WoUUQOOFOBR6e2beZCl0sA1s/9xv/xsTSRNdEEJoRsDp8dBO
+         8UzbcWsCTX427OZ2YAoHvq7HPjvQVVFJbkmUBJr0kl+Qkzly+oITE3/2ENYYdsnGJ2z1
+         uwpQ==
+X-Gm-Message-State: AA+aEWa9TkbcdCaqouTorGW/ONTk3ge0Q3y1WvTgCYtvbLgHJsfiINbU
+        00bub+JPTntewfEWxXLaaMZodz5PiT/73R+dajE=
+X-Google-Smtp-Source: AFSGD/X/WaMV8mXDJgdpKj28tFbAh3ypdiFeq79ADcUF1MlZNOtDes8A07G3WsXbDRqs3b2DZvoa6soAaVhvUSK0MVU=
+X-Received: by 2002:aed:2f05:: with SMTP id l5mr1093988qtd.356.1544752466812;
+ Thu, 13 Dec 2018 17:54:26 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/gp/1vY5NFFltj0I6Ijc1CqF"; protocol="application/pgp-signature"
+From:   Dave Airlie <airlied@gmail.com>
+Date:   Fri, 14 Dec 2018 11:54:15 +1000
+Message-ID: <CAPM=9tx+7roxu+Ws70OWaYjV7V8FgHmqb=HN4LO0S5GgccJgTw@mail.gmail.com>
+Subject: [git pull] drm fixes for 4.20-rc7
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/gp/1vY5NFFltj0I6Ijc1CqF
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Linus,
 
-Hi all,
+While I hoped things would calm down, the world hasn't joined with me,
+but it's a few things scattered over a wide area. The i915 workarounds
+regression fix is probably the largest, the rest are more usual sized.
+We also get some new AMD PCI IDs.
 
-Today's linux-next merge of the drm tree got a conflict in:
+There is also a patch in here to MAINTAINERS to added Daniel as an
+official DRM toplevel co-maintainer, he's decided he wants to step up
+and share the glory, and he'll likely process next weeks fixes while
+I'm away on holidays.
 
-  drivers/gpu/drm/vmwgfx/vmwgfx_ttm_glue.c
+I'm also going to send an early drm-next to you today, it might get
+superseded but I'll get it out there in advance of holiday period.
 
-between commit:
+Dave.
 
-  fd567467753f ("drm/vmwgfx: Protect from excessive execbuf kernel memory a=
-llocations v3")
+summary:
 
-from the drm-fixes tree and commit:
+amdgpu:
+- some new PCI IDs,
+- fixed firmware image updates
+- power management fixes
+- locking warning fix
+nouveau:
+- framebuffer flushing fix
+- memory leak fix
+- tegra device init regression fix
+vmwgfx:
+ - OOM kernel memory fix
+ - excess return in function fix
+i915:
+ - the biggest fix is a regression fix where workarounds weren't
+getting reapplied after a gpu hang causing further crashing, this
+fixes the workaround application to make it happen again,
+ - GPU hang fixes for Braswell and some GEN3 GPUs.
+ - GVT fix for broadwell tiling
+rockchip:
+- revert to fix a regression causing a WARN on shutdown
+mediatek:
+- avoid crash attaching to non-existant bridges
 
-  a64f784bb14a ("drm/ttm: initialize globals during device init (v2)")
+drm-fixes-2018-12-14:
+drm vmwgfx, mediatek, nouveau, amdgpu, rockchip, intel fixes
+The following changes since commit 40e020c129cfc991e8ab4736d2665351ffd1468d:
 
-from the drm tree.
+  Linux 4.20-rc6 (2018-12-09 15:31:00 -0800)
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+are available in the Git repository at:
 
---=20
-Cheers,
-Stephen Rothwell
+  git://anongit.freedesktop.org/drm/drm tags/drm-fixes-2018-12-14
 
-diff --cc drivers/gpu/drm/vmwgfx/vmwgfx_ttm_glue.c
-index f88247046721,154eb09aa91e..000000000000
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_ttm_glue.c
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_ttm_glue.c
-@@@ -42,93 -42,3 +42,39 @@@ int vmw_mmap(struct file *filp, struct=20
-  	dev_priv =3D vmw_priv(file_priv->minor->dev);
-  	return ttm_bo_mmap(filp, vma, &dev_priv->bdev);
-  }
- +
-- static int vmw_ttm_mem_global_init(struct drm_global_reference *ref)
-- {
-- 	DRM_INFO("global init.\n");
-- 	return ttm_mem_global_init(ref->object);
-- }
--=20
-- static void vmw_ttm_mem_global_release(struct drm_global_reference *ref)
-- {
-- 	ttm_mem_global_release(ref->object);
-- }
--=20
-- int vmw_ttm_global_init(struct vmw_private *dev_priv)
-- {
-- 	struct drm_global_reference *global_ref;
-- 	int ret;
--=20
-- 	global_ref =3D &dev_priv->mem_global_ref;
-- 	global_ref->global_type =3D DRM_GLOBAL_TTM_MEM;
-- 	global_ref->size =3D sizeof(struct ttm_mem_global);
-- 	global_ref->init =3D &vmw_ttm_mem_global_init;
-- 	global_ref->release =3D &vmw_ttm_mem_global_release;
--=20
-- 	ret =3D drm_global_item_ref(global_ref);
-- 	if (unlikely(ret !=3D 0)) {
-- 		DRM_ERROR("Failed setting up TTM memory accounting.\n");
-- 		return ret;
-- 	}
--=20
-- 	dev_priv->bo_global_ref.mem_glob =3D
-- 		dev_priv->mem_global_ref.object;
-- 	global_ref =3D &dev_priv->bo_global_ref.ref;
-- 	global_ref->global_type =3D DRM_GLOBAL_TTM_BO;
-- 	global_ref->size =3D sizeof(struct ttm_bo_global);
-- 	global_ref->init =3D &ttm_bo_global_init;
-- 	global_ref->release =3D &ttm_bo_global_release;
-- 	ret =3D drm_global_item_ref(global_ref);
--=20
-- 	if (unlikely(ret !=3D 0)) {
-- 		DRM_ERROR("Failed setting up TTM buffer objects.\n");
-- 		goto out_no_bo;
-- 	}
--=20
-- 	return 0;
-- out_no_bo:
-- 	drm_global_item_unref(&dev_priv->mem_global_ref);
-- 	return ret;
-- }
--=20
-- void vmw_ttm_global_release(struct vmw_private *dev_priv)
-- {
-- 	drm_global_item_unref(&dev_priv->bo_global_ref.ref);
-- 	drm_global_item_unref(&dev_priv->mem_global_ref);
-- }
--=20
- +/* struct vmw_validation_mem callback */
- +static int vmw_vmt_reserve(struct vmw_validation_mem *m, size_t size)
- +{
- +	static struct ttm_operation_ctx ctx =3D {.interruptible =3D false,
- +					       .no_wait_gpu =3D false};
- +	struct vmw_private *dev_priv =3D container_of(m, struct vmw_private, vvm=
-);
- +
- +	return ttm_mem_global_alloc(vmw_mem_glob(dev_priv), size, &ctx);
- +}
- +
- +/* struct vmw_validation_mem callback */
- +static void vmw_vmt_unreserve(struct vmw_validation_mem *m, size_t size)
- +{
- +	struct vmw_private *dev_priv =3D container_of(m, struct vmw_private, vvm=
-);
- +
- +	return ttm_mem_global_free(vmw_mem_glob(dev_priv), size);
- +}
- +
- +/**
- + * vmw_validation_mem_init_ttm - Interface the validation memory tracker
- + * to ttm.
- + * @dev_priv: Pointer to struct vmw_private. The reason we choose a vmw p=
-rivate
- + * rather than a struct vmw_validation_mem is to make sure assumption in =
-the
- + * callbacks that struct vmw_private derives from struct vmw_validation_m=
-em
- + * holds true.
- + * @gran: The recommended allocation granularity
- + */
- +void vmw_validation_mem_init_ttm(struct vmw_private *dev_priv, size_t gra=
-n)
- +{
- +	struct vmw_validation_mem *vvm =3D &dev_priv->vvm;
- +
- +	vvm->reserve_mem =3D vmw_vmt_reserve;
- +	vvm->unreserve_mem =3D vmw_vmt_unreserve;
- +	vvm->gran =3D gran;
- +}
+for you to fetch changes up to 1df07a7f2244947c888dc35bba2b237f714afc56:
 
---Sig_/gp/1vY5NFFltj0I6Ijc1CqF
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+  Merge branch 'vmwgfx-fixes-4.20' of
+git://people.freedesktop.org/~thomash/linux into drm-fixes (2018-12-14
+05:37:44 +1000)
 
------BEGIN PGP SIGNATURE-----
+----------------------------------------------------------------
+drm vmwgfx, mediatek, nouveau, amdgpu, rockchip, intel fixes
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlwTDK8ACgkQAVBC80lX
-0GwWKQf/f9Tlmbt5Jvzi1hkZTvwBluO3OQ1eX7ahLgUiA3gD/LDgBUI7YHnkU705
-+zWqxFeY9rJAMAr5ZTdxOjkPK2e/qXIxIeSm9Wj02Vd+qAJiWQf1IBGw50o3xfEm
-OvtJI2/dsA+DtaGeLNBClurlYcizMZvBybdxwQ/6vZPXZ7v1H+6AmTr2w1VWGIII
-ZmsIHo1pHBt/9Oa45A3wLrUQGPkqLTLVG1MD77AEJfClEVf0YXOK8gsXzZTujt5Q
-gCEcGk0ZxkXnHHV46g5JQ6iW9VXsxgKq5DRxpNk5nsI8+aT+WLWaT6CNCxr5W/LV
-1TRoAzz5Aw2U2925h7XwvxzNNf4M/Q==
-=1amb
------END PGP SIGNATURE-----
+----------------------------------------------------------------
+Alex Deucher (5):
+      drm/amdgpu: update smu firmware images for VI variants (v2)
+      drm/amdgpu: add some additional vega10 pci ids
+      drm/amdgpu: add some additional vega20 pci ids
+      drm/amdkfd: add new vega10 pci ids
+      drm/amdkfd: add new vega20 pci id
 
---Sig_/gp/1vY5NFFltj0I6Ijc1CqF--
+Andrey Grodzovsky (1):
+      drm/amdgpu: Fix DEBUG_LOCKS_WARN_ON(depth <= 0) in amdgpu_ctx.lock
+
+Ben Skeggs (1):
+      drm/nouveau/kms/nv50-: also flush fb writes when rewinding push buffer
+
+Brian Norris (1):
+      Revert "drm/rockchip: Allow driver to be shutdown on reboot/kexec"
+
+Chris Wilson (3):
+      drm/i915/execlists: Apply a full mb before execution for Braswell
+      drm/i915: Allocate a common scratch page
+      drm/i915: Flush GPU relocs harder for gen3
+
+Colin Ian King (1):
+      drm/vmwgfx: remove redundant return ret statement
+
+Daniel Vetter (1):
+      MAINTAINERS: Daniel for drm co-maintainer
+
+Dave Airlie (7):
+      Merge tag 'drm-intel-fixes-2018-12-07' of
+git://anongit.freedesktop.org/drm/drm-intel into drm-fixes
+      Merge tag 'drm-intel-fixes-2018-12-12-1' of
+git://anongit.freedesktop.org/drm/drm-intel into drm-fixes
+      Merge tag 'drm-misc-fixes-2018-12-12' of
+git://anongit.freedesktop.org/drm/drm-misc into drm-fixes
+      Merge branch 'drm-fixes-4.20' of
+git://people.freedesktop.org/~agd5f/linux into drm-fixes
+      Merge branch 'linux-4.20' of git://github.com/skeggsb/linux into drm-fixes
+      Merge branch 'mediatek-drm-fixes-4.20' of
+https://github.com/ckhu-mediatek/linux.git-tags into drm-fixes
+      Merge branch 'vmwgfx-fixes-4.20' of
+git://people.freedesktop.org/~thomash/linux into drm-fixes
+
+Evan Quan (1):
+      drm/amdgpu: drop fclk/gfxclk ratio setting
+
+Joonas Lahtinen (1):
+      Merge tag 'gvt-fixes-2018-12-04' of
+https://github.com/intel/gvt-linux into drm-intel-fixes
+
+Junwei Zhang (1):
+      drm/amdgpu: update SMC firmware image for polaris10 variants
+
+Kenneth Feng (1):
+      drm/amdgpu/powerplay: Apply avfs cks-off voltages on VI
+
+Lyude Paul (1):
+      drm/nouveau/kms: Fix memory leak in nv50_mstm_del()
+
+Nicolas Boichat (1):
+      drm/mediatek: Only try to attach bridge if there is one
+
+Thierry Reding (1):
+      drm/nouveau/drm/nouveau: tegra: Call nouveau_drm_device_init()
+
+Thomas Hellstrom (1):
+      drm/vmwgfx: Protect from excessive execbuf kernel memory allocations v3
+
+Tina Zhang (1):
+      drm/i915/gvt: Fix tiled memory decoding bug on BDW
+
+Tvrtko Ursulin (2):
+      drm/i915: Record GT workarounds in a list
+      drm/i915: Introduce per-engine workarounds
+
+ MAINTAINERS                                        |   1 +
+ drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c            |  36 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_cs.c             |   4 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c            |   7 +
+ drivers/gpu/drm/amd/amdkfd/kfd_device.c            |   7 +
+ drivers/gpu/drm/amd/powerplay/hwmgr/vega20_hwmgr.c |   2 +-
+ drivers/gpu/drm/amd/powerplay/inc/smu7_ppsmc.h     |   2 +
+ .../drm/amd/powerplay/smumgr/polaris10_smumgr.c    |   6 +
+ drivers/gpu/drm/amd/powerplay/smumgr/smumgr.c      |   3 +
+ drivers/gpu/drm/i915/gvt/fb_decoder.c              |   2 +-
+ drivers/gpu/drm/i915/i915_drv.c                    |   1 +
+ drivers/gpu/drm/i915/i915_drv.h                    |   9 +
+ drivers/gpu/drm/i915/i915_gem.c                    |  54 +-
+ drivers/gpu/drm/i915/i915_gem_execbuffer.c         |   7 +-
+ drivers/gpu/drm/i915/i915_gpu_error.c              |   2 +-
+ drivers/gpu/drm/i915/intel_engine_cs.c             |  44 +-
+ drivers/gpu/drm/i915/intel_lrc.c                   |  30 +-
+ drivers/gpu/drm/i915/intel_ringbuffer.c            |  52 +-
+ drivers/gpu/drm/i915/intel_ringbuffer.h            |   7 +-
+ drivers/gpu/drm/i915/intel_workarounds.c           | 591 ++++++++++++++-------
+ drivers/gpu/drm/i915/intel_workarounds.h           |  26 +-
+ drivers/gpu/drm/mediatek/mtk_dsi.c                 |  11 +-
+ drivers/gpu/drm/nouveau/dispnv50/disp.c            |  30 +-
+ drivers/gpu/drm/nouveau/nouveau_drm.c              |   6 +
+ drivers/gpu/drm/rockchip/rockchip_drm_drv.c        |   6 -
+ drivers/gpu/drm/vmwgfx/vmwgfx_drv.c                |   4 +-
+ drivers/gpu/drm/vmwgfx/vmwgfx_drv.h                |   5 +
+ drivers/gpu/drm/vmwgfx/vmwgfx_execbuf.c            |   4 +-
+ drivers/gpu/drm/vmwgfx/vmwgfx_ttm_glue.c           |  36 ++
+ drivers/gpu/drm/vmwgfx/vmwgfx_validation.c         |  21 +-
+ drivers/gpu/drm/vmwgfx/vmwgfx_validation.h         |  37 ++
+ 31 files changed, 718 insertions(+), 335 deletions(-)
